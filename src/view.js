@@ -96,6 +96,18 @@ function pipsDetalhe(cost){
   return out.length?`<div class="cost">${out.join('')}</div>`
     :`<div class="cost"><span class="cost__none">SEM CUSTO</span></div>`;
 }
+// converte a string de custo do kits.json ("2 Tempestade + 1 livre") em {Tempestade:2, livre:1}
+function custoParaCost(str){
+  const cost={};
+  if(!str||str==='—'||/grátis/i.test(str))return cost;
+  str.split('+').forEach(p=>{
+    const m=p.trim().match(/^(\d+)\s+(.+)$/); if(!m)return;
+    const n=+m[1], nome=m[2].trim();
+    if(/^livres?$/i.test(nome))cost.livre=(cost.livre||0)+n;
+    else{const el=ELEMS.find(e=>e.toLowerCase()===nome.toLowerCase()); if(el)cost[el]=(cost[el]||0)+n;}
+  });
+  return cost;
+}
 const ALVO_TXT={'':'sem alvo',inimigo:'alvo único','2inimigos':'dois inimigos',
   aliado:'1 aliado','2aliados':'dois aliados','aliado+inimigo':'aliado e inimigo',
   todosInimigos:'área'};
@@ -537,7 +549,7 @@ function painelKitHTML(){
   const k=focoPk, g=RMAP[k], kit=KITMAP[k], liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
   const rar=(typeof RARIDADE!=='undefined'&&RARIDADE[k])||'';
   const linha=(rot,a)=>a?`<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
-      <span class="krow__meta">${a.custo?H(a.custo):'grátis'}${a.recarga?` · recarga ${a.recarga}`:''}</span></div>
+      <span class="krow__meta">${pipsDetalhe(custoParaCost(a.custo))}${a.recarga?`<span class="krow__cd">recarga ${a.recarga}</span>`:''}</span></div>
       <div class="krow__t">${H(a.efeito)}</div></div>`:'';
   let acao;
   if(dono!==null) acao=`<button class="b b--danger b--md" id="kitdel">Remover (J${dono+1})</button>`;
