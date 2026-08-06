@@ -1,4 +1,4 @@
-# INCURSION
+# INCURSION x3 Battle
 
 Combate tático por turnos 3v3 para celular (paisagem), com 100 deuses de 10
 mitologias do mundo. Mecânicas inspiradas no **Naruto-Arena**: 120 de vida para
@@ -16,7 +16,7 @@ PvP.
 ```bash
 npm install          # só jsdom, e só para os testes
 npm run build        # gera dist/incursion.html
-npm test             # 4 suítes, 43 asserções
+npm test             # 5 suítes (motor, capacidades, primitivas, auditoria, interface)
 ```
 
 Abra `dist/incursion.html` no navegador. **Nenhum servidor é necessário** — é um
@@ -57,6 +57,7 @@ data/bestiario.json  12 criaturas de PvE
 
 tests/motor.test.js        as 7 regras de resolução, isoladas
 tests/capacidades.test.js  seleção de 2 alvos, classe por habilidade, vínculo
+tests/primitivas.test.js   as 12 primitivas de efeito, cada uma isolada
 tests/auditoria.test.js    o motor conferido contra as regras da planilha
 tests/interface.test.js    a interface clicada de verdade, via jsdom
 
@@ -95,10 +96,11 @@ existir.
 
 | | |
 |---|---|
-| Motor | **11 dos 100** deuses implementados |
+| Motor | **11 dos 100** deuses implementados; **as 12 primitivas de efeito prontas** |
 | Cliente | seleção/coleção e batalha |
 | Servidor | não existe, e é de propósito (ver `ROTEIRO.md` fase 4) |
-| Testes | 4 suítes verdes |
+| Testes | 5 suítes verdes |
 
-Próximo passo em `ROTEIRO.md`: as ~12 primitivas de efeito que faltam.
-**Implemente a primitiva antes do deus** — é o risco nº 1 do projeto.
+Próximo passo em `ROTEIRO.md` (item 7): a **arena de auto-jogo** — o motor contra
+si mesmo por seed, para balancear os 100 deuses antes de escrever os 89 kits
+restantes. **Implemente a primitiva antes do deus** — é o risco nº 1 do projeto.
