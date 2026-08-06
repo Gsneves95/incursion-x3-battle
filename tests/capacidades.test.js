@@ -37,8 +37,8 @@ console.log('== seleção de 2 alvos: 2 inimigos com valores diferentes ==');
   ok(c1.length===2,'passo 2: o já escolhido deveria sair da lista');
   const [t1,t2]=[st.lados[1].units[0],st.lados[1].units[1]];
   E.agir(st,u.uid,'habilidade',[t1.uid,t2.uid]);
-  ok(t1.hp===100-22,`1º alvo deveria levar 22, levou ${100-t1.hp}`);
-  ok(t2.hp===100-12,`2º alvo deveria levar 12, levou ${100-t2.hp}`);
+  ok(t1.hp===120-22,`1º alvo deveria levar 22, levou ${120-t1.hp}`);
+  ok(t2.hp===120-12,`2º alvo deveria levar 12, levou ${120-t2.hp}`);
   console.log(`  ${t1.nome} -22 / ${t2.nome} -12  (ordem respeitada)`);
 }
 
@@ -96,7 +96,7 @@ console.log('== Thor: redução de 6 para o time todo ==');
   st.lados[0].orbs['Tempestade']=9;
   const alvo=st.lados[1].units[2];   // Cuca, sem redução própria
   E.agir(st,st.lados[0].units[0].uid,'basico',[alvo.uid]);   // 15 afetado
-  ok(100-alvo.hp===9,`15 menos 6 do Thor = 9, deu ${100-alvo.hp}`);
+  ok(120-alvo.hp===9,`15 menos 6 do Thor = 9, deu ${120-alvo.hp}`);
   st.lados[1].units[0].vivo=false;
   const h=alvo.hp;
   E.agir(st,st.lados[0].units[1].uid,'basico',[alvo.uid]);

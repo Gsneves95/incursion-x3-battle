@@ -387,7 +387,7 @@ console.log(`  passiva: "${$('.detail__name').textContent}"`);
 console.log('== 10. retrato abre a ficha da unidade ==');
 tap($$('.team--ally .portrait')[1]);
 ok($('.detail__name').textContent.length > 1, 'ficha deveria abrir no painel');
-ok($$('.detail__cd').some(e => /\d+\/100/.test(e.textContent)), 'ficha deveria mostrar vida');
+ok($$('.detail__cd').some(e => /\d+\/120/.test(e.textContent)), 'ficha deveria mostrar vida');
 console.log(`  ficha: "${$('.detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
 
 console.log('== 11. troca de energia em popup ==');
@@ -511,7 +511,7 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   ok(!$$('.portrait.is-target').some(e => e.dataset.uid === uid1), 'o já escolhido não deveria seguir selecionável');
   tap($$('.team--enemy .portrait.is-target').find(e => e.dataset.uid === uid2));
   const o = S().lados[1 - S().ativo].units;
-  const d1 = 100 - o.find(u => u.uid === uid1).hp, d2 = 100 - o.find(u => u.uid === uid2).hp;
+  const d1 = 120 - o.find(u => u.uid === uid1).hp, d2 = 120 - o.find(u => u.uid === uid2).hp;
   ok(d1 > d2, `o 1º alvo deveria levar mais dano (${d1} vs ${d2})`);
   console.log(`  Thor: alvo 1 \u2212${d1} \u00b7 alvo 2 \u2212${d2}`);
 

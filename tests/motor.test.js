@@ -34,7 +34,7 @@ function partidaAleatoria(seed, verbose = false) {
   }
   // invariantes
   for (const lado of st.lados) for (const u of lado.units) {
-    ok(u.hp >= 0 && u.hp <= 100, `HP fora de 0..100: ${u.nome}=${u.hp}`);
+    ok(u.hp >= 0 && u.hp <= u.maxHp, `HP fora de 0..${u.maxHp}: ${u.nome}=${u.hp}`);
     ok(u.shield >= 0, `escudo negativo`);
     for (const k in u.cd) ok(u.cd[k] >= 0, `recarga negativa`);
     if (!u.vivo) ok(u.hp === 0, `unidade morta com HP>0`);
@@ -64,8 +64,8 @@ console.log('== 2. regra 2 — redução antes do escudo ==');
   E.agir(st, st.lados[0].units[0].uid, 'habilidade', [alvo.uid]);  // 25 de dano
   // 25 (+5 Brigid ausente) -10 red = 15 no escudo -> escudo 5, HP intacto
   ok(alvo.shield === 5, `escudo deveria ser 5, é ${alvo.shield}`);
-  ok(alvo.hp === 100, `HP deveria ser 100, é ${alvo.hp}`);
-  console.log(`  escudo=${alvo.shield} hp=${alvo.hp}  (esperado 5 / 100)`);
+  ok(alvo.hp === 120, `HP deveria ser 120, é ${alvo.hp}`);
+  console.log(`  escudo=${alvo.shield} hp=${alvo.hp}  (esperado 5 / 120)`);
 }
 
 // ---------------------------------------------- 3) regra 3: DoT antes de agir
@@ -141,8 +141,8 @@ console.log('== 7. regra 7 — Invulnerável barra dano e efeito ==');
   E.agir(st, st.lados[0].units[0].uid, 'habilidade', [alvo.uid]);
   ok(!E.ef(alvo, 'adormecido'), 'não deveria adormecer alvo Invulnerável');
   E.agir(st, st.lados[0].units[1].uid, 'basico', [alvo.uid]);
-  ok(alvo.hp === 100, `Invulnerável não deveria sofrer dano, hp=${alvo.hp}`);
-  console.log(`  hp=${alvo.hp} adormecido=${!!E.ef(alvo, 'adormecido')}  (esperado 100 / false)`);
+  ok(alvo.hp === 120, `Invulnerável não deveria sofrer dano, hp=${alvo.hp}`);
+  console.log(`  hp=${alvo.hp} adormecido=${!!E.ef(alvo, 'adormecido')}  (esperado 120 / false)`);
 }
 { // imunidade a controle do Tyr
   const st = E.novoEstado(['tyr', 'zeus', 'zeus'], ['cuca', 'cuca', 'cuca'], 29);
@@ -181,8 +181,8 @@ console.log('== 9. passiva do Tyr ignora redução E escudo ==');
   alvo.shield = 50; alvo.efeitos.push({ type: 'dmgReduction', v: 15, dur: 9 });
   E.agir(st, st.lados[0].units[0].uid, 'basico', [alvo.uid]);   // 12, grátis
   ok(alvo.shield === 50, 'escudo não deveria ser tocado');
-  ok(alvo.hp === 88, `HP deveria ser 88, é ${alvo.hp}`);
-  console.log(`  escudo=${alvo.shield} hp=${alvo.hp}  (esperado 50 / 88)`);
+  ok(alvo.hp === 108, `HP deveria ser 108, é ${alvo.hp}`);
+  console.log(`  escudo=${alvo.shield} hp=${alvo.hp}  (esperado 50 / 108)`);
 }
 
 // ---------------------------------------------- 10) Nezha renasce 1x

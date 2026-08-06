@@ -242,7 +242,7 @@ function novaUnidade(key, idx, lado) {
   const g = GODS[key];
   return {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
-    hp: 100, maxHp: 100, vivo: true, agiu: false,
+    hp: 120, maxHp: 120, vivo: true, agiu: false,
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
     modo: 0, renasceu: false, lado,

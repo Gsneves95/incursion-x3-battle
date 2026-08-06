@@ -2,7 +2,7 @@
 
 Jogo de combate tático por turnos para celular (paisagem), com 100 deuses de
 10 mitologias do mundo. As mecânicas são inspiradas no **Naruto-Arena**: 3v3,
-100 de vida para todos, energia elemental por turno, habilidades com recarga.
+120 de vida para todos, energia elemental por turno, habilidades com recarga.
 Nada aqui deriva de propriedade intelectual do Naruto — só o gênero.
 
 Este arquivo é o contrato do projeto. **Leia até o fim antes de escrever código.**
@@ -60,7 +60,7 @@ perde os quatro de uma vez.
    esquiva percentual, bloqueio percentual nem "X% de chance". A versão original
    do roster tinha tudo isso e foi convertida em efeito determinístico.
 3. **Sem progressão de personagem.** Não existe nível, estrela, equipamento,
-   relíquia nem nível de habilidade. Todo deus tem 100 de vida. A diferença entre
+   relíquia nem nível de habilidade. Todo deus tem 120 de vida. A diferença entre
    um Guardião e um Atacante está no KIT.
 4. **Os números vêm de `data/kits.json`.** O motor não inventa valor de dano.
    Se um kit parece fraco, a discussão é de design, não de código.
@@ -132,7 +132,7 @@ Estas são tentações que já foram avaliadas e recusadas. Se você acha que um
 delas é boa ideia, leia `DECISOES.md` antes de propor.
 
 - **Não reintroduza progressão, nem "pequena".** "Cópias repetidas dão +5% de
-  dano" parece inofensivo e não é: com 100 de vida, 5% decide partida, e pior,
+  dano" parece inofensivo e não é: com 120 de vida, 5% decide partida, e pior,
   destrói a **leitura** — em Naruto-Arena o valor exato de cada habilidade é
   conhecimento público, e é isso que permite pensar "ele está com 22, o Fenrir
   dele executa em 20, preciso curar 3". Progressão vive no PvE e em nenhum outro

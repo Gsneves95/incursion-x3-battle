@@ -18,9 +18,10 @@ Você contra você mesmo, atenção real. A única pergunta: um turno parece uma
 
 **Por que nesta ordem:** Se a resposta for 'sequência óbvia', nada mais na lista importa. Todo o resto é multiplicador do núcleo: se o núcleo não é bom, 100 deuses são 100× de trabalho perdido. É a fase mais barata e a que mais economiza.
 
-### 2. Decidir 100 ou 120 de vida
+### 2. Decidir 100 ou 120 de vida ✓
 
-Jogo automatizado fecha em 8–18 turnos. Se com atenção você também fechar em ~10, o dano está alto para o tamanho da vida.
+DECIDIDO: **120**. Ver `DECISOES.md` §15. Nenhum dano dos kits existentes mudou;
+só o denominador. O orçamento de dano dos 89 kits restantes é calibrado para 120.
 
 **Depende de:** jogar 10 partidas
 

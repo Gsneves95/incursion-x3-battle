@@ -9,7 +9,7 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 ## 1. O jogo é gacha, mas o PvP é normalizado
 
 **Decidido:** invocação e Provações dão acesso a deuses. Nenhum sistema de
-progressão entra no PvP. Vida 100 para todos, dano em número inteiro fixo.
+progressão entra no PvP. Vida 120 para todos, dano em número inteiro fixo.
 
 **Recusado:** o modelo original — nível 1–70, estrela 3★–6★, relíquias com 6
 slots, Link Divino com 40 slots, nível de habilidade 1→4.
@@ -270,11 +270,29 @@ Nenhum apareceria numa revisão visual. Todos apareceram em partida automatizada
 
 ---
 
+## 15. Vida base 120, não 100
+
+**Decidido:** toda unidade tem 120 de vida. Nenhum número de dano dos 11 kits já
+escritos mudou; só o denominador.
+
+**Recusado:** manter 100.
+
+**Por quê:** o jogo aleatório fecha em ~13–15 turnos, mas jogo com atenção
+concentra dano e fecha mais rápido, e o valor inteiro do design está no meio-jogo
+(ler o oponente, contar a recarga da Defesa dele, escolher entre curar e pressionar).
+120 devolve um ou dois turnos desse espaço sem tocar num único valor de dano.
+A assimetria decidiu: subir a vida é uma linha; cortar 400 números de dano depois
+é uma semana — quando a opção barata e a que serve ao design coincidem, é ela.
+A "leitura" de valores exatos continua intacta: 120 muda o denominador, não a
+transparência. Custo aceito: o orçamento de dano dos 89 kits restantes é calibrado
+para 120, então cada Milagre de execução mira ~1/3 da vida, não ~2/5.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
 |---|---|
-| **Vida 100 ou 120** | Jogo automatizado fecha em 8–18 turnos, o que sugere dano alto para o tamanho da vida. Precisa de 10 partidas com atenção humana. **Decidir antes de escrever os 89 kits restantes**, porque o orçamento de dano depende disso. |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
 | **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |

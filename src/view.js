@@ -119,7 +119,7 @@ function efeitosHTML(u){
 
 /* ---------- retrato ---------- */
 function retrato(u,inimigo){
-  const pct=Math.max(0,Math.min(100,u.hp));
+  const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
   const g=GODS[u.key];
   const alvo=alvos.some(x=>x.uid===u.uid);
   const jaEscolhido=escolhidos.includes(u.uid);
@@ -129,7 +129,7 @@ function retrato(u,inimigo){
   if(jaEscolhido)cls.push('is-picked');
 
   if(hpAnt[u.uid]!==undefined&&hpAnt[u.uid]>u.hp)cls.push('hit');
-  const hpcls=['hp']; if(!u.vivo)hpcls.push('hp--empty'); else if(pct<=40)hpcls.push('hp--warn');
+  const hpcls=['hp']; if(!u.vivo)hpcls.push('hp--empty'); else if(u.hp<=40)hpcls.push('hp--warn');
   return `<div class="unit__portrait">
     <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''}>
       ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 30)}
@@ -140,7 +140,7 @@ function retrato(u,inimigo){
     </div>
     <div class="${hpcls.join(' ')}">
       ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
-      ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield)}%"></div>`:''}
+      ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield/u.maxHp*100)}%"></div>`:''}
       <div class="hp__label">${u.hp}${u.shield?' \u25e7'+u.shield:''}</div>
     </div></div>`;
 }
@@ -382,7 +382,7 @@ function overlayHTML(){
   }
   if(ov==='help'){
     return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>COMO JOGAR</h2>
-      <span class="sub">3V3 \u00b7 100 DE VIDA \u00b7 TURNOS ALTERNADOS</span>
+      <span class="sub">3V3 \u00b7 120 DE VIDA \u00b7 TURNOS ALTERNADOS</span>
       <span class="push"><button class="b b--quiet b--md" id="bclose">Fechar</button></span></div>
       <div class="ovb" style="font-size:13px;font-weight:600;line-height:1.5">
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">TURNO</b> \u2014 cada uma das suas 3 unidades faz UMA ação por turno: uma das 3 habilidades ou a Defesa. Elas resolvem uma por vez, na ordem que você escolher — e a ordem importa, porque o estado atualiza entre elas.</p>
@@ -745,7 +745,7 @@ function ficha(u){
   for(const k of['habilidade','milagre','defesa'])if(u.cd[k]>0)lin.push(`${k} em recarga ${u.cd[k]}t`);
   if(u.shield)lin.push(`escudo ${u.shield}`);
   detalhe={nome:u.nome.toUpperCase(),chave:'god-'+u.key,glifo:ini(u.nome),cor:COR(u.elem),
-    meta:`${u.hp}/100 \u00b7 ${ELAB[u.elem]}`,
+    meta:`${u.hp}/${u.maxHp} \u00b7 ${ELAB[u.elem]}`,
     texto:lin.join('  \u00b7  '),
     classes:`${u.classe} \u00b7 ${u.funcao} \u00b7 ${u.faccao||GODS[u.key].faccao}`.toUpperCase()};
   armado=null;alvos=[];escolhidos=[];render();

@@ -1,7 +1,7 @@
 # INCURSION
 
 Combate tático por turnos 3v3 para celular (paisagem), com 100 deuses de 10
-mitologias do mundo. Mecânicas inspiradas no **Naruto-Arena**: 100 de vida para
+mitologias do mundo. Mecânicas inspiradas no **Naruto-Arena**: 120 de vida para
 todos, energia elemental por turno, habilidades com recarga, zero progressão no
 PvP.
 
