@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#05040c">
+<title>INCURSION — protótipo de batalha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   INCURSION — TELA DE BATALHA JOGÁVEL
+   Base visual: battle-screen.html (canvas fixo 926x428, escalado).
+   Motor: função pura (estado, ação) -> novo estado, testado à parte.
+
+   ARTE: todo <div class="slot" data-slot="CHAVE"> é um encaixe.
+   Chaves geradas: god-<key> · skill-<key>-<slot> · effect-<tipo>
+   · player-<n>-avatar · detail. Troque por <img class="slot"> quando
+   a arte existir; a chave está sempre no data-slot.
+   ============================================================ */
+:root{
+  --bg:#07060f; --panel:rgba(24,20,44,.94); --panel-2:rgba(12,10,26,.94);
+  --gold:#d8b25a; --gold-soft:#8a6b2f; --gold-text:#ffd97a;
+  --ink:#e3ddf7; --ink-dim:#a99cd0; --ink-mute:#7d78a0;
+  --enemy:#e0607f; --danger:#ff3b3b;
+  --hp-ok-1:#7ff0a5; --hp-ok-2:#2f9d5c; --hp-warn-1:#ffd97a; --hp-warn-2:#d8853a;
+  /* seis elementos da planilha, com a paleta do seu design */
+  --e-Aurora:#ffc94a; --e-Tempestade:#9fd8ff; --e-Verdejante:#58d68d;
+  --e-Chama:#ff5c8a;  --e-Umbra:#a06bff;     --e-Mare:#4ad3c7;
+  --stage-w:926px; --stage-h:428px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#05040c;overflow:hidden}
+body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items:center;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;overscroll-behavior:none}
+
+#viewport{width:100vw;height:100dvh;height:100vh;display:grid;place-items:center}
+.stage{position:relative;width:var(--stage-w);height:var(--stage-h);overflow:hidden;
+  background:var(--bg);border:1px solid #2a2440;border-radius:10px;transform-origin:center}
+.stage__bg{position:absolute;inset:0;
+  background:
+    radial-gradient(60% 42% at 18% 12%,rgba(160,107,255,.16) 0%,transparent 70%),
+    radial-gradient(52% 40% at 84% 16%,rgba(224,96,127,.13) 0%,transparent 70%),
+    radial-gradient(80% 60% at 50% 108%,rgba(74,211,199,.10) 0%,transparent 70%),
+    linear-gradient(168deg,#120e26 0%,#0a0817 52%,#07060f 100%);
+  background-image:var(--art-bg,none),
+    radial-gradient(60% 42% at 18% 12%,rgba(160,107,255,.16) 0%,transparent 70%),
+    radial-gradient(52% 40% at 84% 16%,rgba(224,96,127,.13) 0%,transparent 70%),
+    radial-gradient(80% 60% at 50% 108%,rgba(74,211,199,.10) 0%,transparent 70%),
+    linear-gradient(168deg,#120e26 0%,#0a0817 52%,#07060f 100%);
+  background-size:cover;background-position:center}
+.stage__scrim{position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(38% 52% at 50% 46%,rgba(216,178,90,.05) 0%,transparent 72%),
+    radial-gradient(120% 90% at 50% 40%,rgba(10,9,25,.10) 0%,rgba(6,5,16,.74) 100%)}
+/* palco central: onde a arte de cenário entra. Emblema tênue enquanto não há arte. */
+.stagemark{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:1;
+  font-family:'Cinzel',serif;font-weight:900;font-size:104px;letter-spacing:.1em;
+  color:#ffd97a;opacity:.035;pointer-events:none;user-select:none;white-space:nowrap}
+
+/* encaixe de arte */
+.slot{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  object-fit:cover;background:#14112a;overflow:hidden}
+.slot>img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
+/* arte de habilidade é pensada em formato redondo: enquadra no centro */
+.slot--round>img{object-position:center center}
+.slot__glyph{font-family:'Cinzel',serif;font-weight:900;line-height:1;text-align:center}
+
+/* ---------- TOPO ---------- */
+.topbar{position:absolute;top:0;left:0;right:0;height:62px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 10px;z-index:3;
+  background:linear-gradient(180deg,rgba(9,8,20,.94) 0%,rgba(9,8,20,.62) 78%,rgba(9,8,20,0) 100%)}
+.player{display:flex;align-items:center;gap:8px}
+.player__avatar{width:38px;height:38px;border:1px solid var(--gold-soft);border-radius:4px;overflow:hidden}
+.player--enemy .player__avatar{border-color:#8a4a5c}
+.player__meta{display:flex;flex-direction:column;gap:1px}
+.player--enemy .player__meta{align-items:flex-end}
+.player__name{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--gold-text);line-height:1}
+.player--enemy .player__name{color:#ff8fae}
+.player__rank{font-size:11px;font-weight:600;letter-spacing:.08em;color:#b9aee0;line-height:1;white-space:nowrap}
+.player.dim{opacity:.42}
+
+.turnbox{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:8px}
+.timer{position:relative;width:300px;height:14px;border:1px solid var(--gold-soft);border-radius:3px;background:#120f24;overflow:hidden}
+.timer__fill{position:absolute;inset:0;background:linear-gradient(180deg,#ffd97a,#d8853a);
+  transition:width .95s linear}
+.timer.low .timer__fill{background:linear-gradient(180deg,#ff9a9a,#c03030)}
+.timer__label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:10px;letter-spacing:.1em;word-spacing:.2em;color:#0a0912}
+.energy{display:flex;gap:9px;align-items:center;min-height:19px}
+.energy__pill{display:flex;align-items:center;gap:4px;padding:1px 2px;cursor:pointer;
+  border-radius:3px;transition:.12s;background:transparent;border:1px solid transparent}
+.energy__pill.spend{border-color:var(--gold-text);background:rgba(255,217,122,.13)}
+.energy__pill.target{border-color:#7ff0a5;background:rgba(127,240,165,.16)}
+.energy__pill.zero{opacity:.34}
+.energy__dot{width:10px;height:10px;border-radius:2px;display:block}
+.energy__n{font-weight:700;font-size:13px;color:#fff;line-height:1}
+.energy__hint{font-size:9px;font-weight:700;letter-spacing:.1em;color:#5f5980;text-transform:uppercase}
+
+/* ---------- TIMES ---------- */
+.team{position:absolute;top:64px;display:flex;flex-direction:column;z-index:2}
+.team--ally{left:12px;gap:8px}
+.team--enemy{right:12px;gap:8px;align-items:flex-end}
+
+.unit,.unit--enemy{display:flex;align-items:flex-start;gap:7px}
+.unit__portrait{display:flex;flex-direction:column;gap:2px;width:100px}
+.portrait{position:relative;width:100px;height:66px;border:1px solid #3a3358;border-radius:4px;
+  overflow:hidden;background:#14112a;box-shadow:0 3px 9px rgba(0,0,0,.55);cursor:pointer}
+.portrait.is-down{border-color:#5a4f7a;box-shadow:none;cursor:default}
+.portrait.is-down .slot{filter:grayscale(1) brightness(.55)}
+.portrait__x{display:none;position:absolute;inset:0;pointer-events:none}
+.portrait.is-down .portrait__x{display:block}
+.portrait__x::before,.portrait__x::after{content:"";position:absolute;left:50%;top:50%;width:132%;height:3px;
+  background:var(--danger);box-shadow:0 0 6px rgba(0,0,0,.8)}
+.portrait__x::before{transform:translate(-50%,-50%) rotate(45deg)}
+.portrait__x::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.portrait__elem{position:absolute;left:0;top:0;bottom:0;width:3px}
+.portrait__pas{position:absolute;right:2px;top:2px;width:18px;height:18px;border-radius:2px;
+  background:rgba(6,5,16,.86);border:1px solid var(--gold);color:var(--gold-text);
+  font-family:'Cinzel',serif;font-weight:900;font-size:11px;line-height:16px;text-align:center;cursor:pointer}
+.portrait__pas.inert{border-color:#8a4a5c;color:#ff8fae}
+.unit.acted .portrait{opacity:.55}
+
+.portrait.is-picked{box-shadow:0 0 0 2px #7ff0a5,0 3px 9px rgba(0,0,0,.55)}
+.portrait.is-target{animation:tgt 1s ease-in-out infinite;cursor:crosshair}
+@keyframes tgt{0%,100%{box-shadow:0 0 0 1px #0a0912,0 0 0 2px rgba(255,59,59,.55)}
+  50%{box-shadow:0 0 0 1px #0a0912,0 0 14px 3px rgba(255,110,110,.9)}}
+.portrait.hit{animation:hit .32s ease}
+@keyframes hit{0%,100%{transform:translate(0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
+
+.hp{position:relative;height:14px;border:1px solid #0a0912;border-radius:2px;background:#3a1c22;overflow:hidden}
+.hp__fill{position:absolute;inset:0;background:linear-gradient(180deg,var(--hp-ok-1),var(--hp-ok-2));
+  transition:width .3s ease}
+.hp--warn .hp__fill{background:linear-gradient(180deg,var(--hp-warn-1),var(--hp-warn-2))}
+.hp--empty{background:#2a2440}
+.hp__shield{position:absolute;top:0;right:0;height:100%;background:#9fd8ff;opacity:.62}
+.hp__label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.9)}
+.hp--empty .hp__label{color:#cfc8ea}
+
+.effects{position:absolute;left:0;right:0;bottom:0;height:19px;display:flex;gap:2.5px;
+  align-items:center;padding:0 3px;
+  background:linear-gradient(0deg,rgba(6,5,16,.96) 0%,rgba(6,5,16,.72) 62%,transparent 100%)}
+.effects:empty{display:none}
+.effect{position:relative;width:15px;height:15px;border:0;border-radius:2px;
+  overflow:hidden;cursor:pointer;flex:none;background:#2a2440}
+.effect--buff{background:rgba(99,230,255,.22);box-shadow:inset 0 0 0 1px rgba(99,230,255,.5)}
+.effect--debuff{background:rgba(255,92,138,.22);box-shadow:inset 0 0 0 1px rgba(255,92,138,.5)}
+.effect--dot{background:rgba(255,138,74,.22);box-shadow:inset 0 0 0 1px rgba(255,138,74,.5)}
+.effect__g{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;color:var(--ink)}
+.effect--buff .effect__g{color:#63e6ff}
+.effect--debuff .effect__g{color:#ff8fae}
+.effect--dot .effect__g{color:#ffab7a}
+.effect__turns{position:absolute;right:0;bottom:-2px;min-width:6px;
+  font-weight:700;font-size:8.5px;line-height:9px;color:#fff;text-align:center;
+  text-shadow:0 0 3px #000,0 0 2px #000,0 0 1px #000}
+.fxmore{font-weight:700;font-size:9px;color:var(--ink-dim);padding-left:1px}
+
+.skills{display:flex;gap:5px;padding:3px 6px;border-radius:44px;background:rgba(18,15,36,.5);
+  transition:opacity .18s}
+.unit.acted .skills{opacity:.3}
+/* O botão continua QUADRADO (76x76) para o dedo; só o disco é recortado,
+   então o alvo de toque não encolhe 21% junto com a arte. */
+.skill{position:relative;width:76px;height:76px;border:0;background:none;padding:0;cursor:pointer}
+.skill__disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#171334;
+  border-style:solid;border-width:1px;transition:.14s}
+.skill--uni .skill__disc{border-style:dashed}
+/* anel = ELEMENTO (identidade, constante); espessura marca o tier */
+.skill--habilidade .skill__disc{border-width:2px}
+.skill--milagre .skill__disc{border-width:2px;box-shadow:0 0 0 1px rgba(255,217,122,.4)}
+/* brilho do disco = DISPONIBILIDADE (muda a cada turno) */
+.skill.is-off .skill__disc{filter:grayscale(.75) brightness(.5)}
+.skill.is-cooldown{cursor:default}
+/* halo dourado = ARMADA (momentâneo) */
+.skill.is-armed .skill__disc{box-shadow:0 0 0 2px rgba(255,217,122,.55),0 0 16px rgba(255,217,122,.55)}
+.skill__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-weight:900;font-size:19px;letter-spacing:.04em;opacity:.5}
+.skill.is-armed .skill__mono{opacity:.95}
+.skill.is-off .skill__mono{opacity:.3}
+/* máscaras acompanham o disco */
+.skill__cd{display:none;position:absolute;inset:0;border-radius:50%;background:rgba(6,5,16,.76);
+  align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;
+  font-size:30px;color:var(--gold-text);pointer-events:none}
+.skill.is-cooldown .skill__cd{display:flex}
+.skill__lock{display:none;position:absolute;inset:0;border-radius:50%;background:rgba(6,5,16,.66);
+  align-items:center;justify-content:center;font-size:20px;color:#ff8fae;pointer-events:none}
+.skill.is-locked .skill__lock{display:flex}
+/* custo vira SELO pendurado na borda inferior: não faz scrim sobre a arte
+   e ocupa o canto que o círculo deixa vazio */
+.skill__cost{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);
+  display:flex;gap:2px;align-items:center;padding:2px 4px;border-radius:8px;
+  background:rgba(6,5,16,.92);box-shadow:0 0 0 1px rgba(58,49,88,.9);pointer-events:none;z-index:2}
+.skill__cost i{width:7px;height:7px;border:1px solid rgba(6,5,16,.9);display:block;border-radius:50%}
+.skill__cost i.free{background:transparent;border-color:#9a8fc0}
+.skill__cost i.miss{background:transparent!important;border-color:var(--danger);
+  box-shadow:0 0 4px rgba(255,59,59,.9)}
+.skill__cost.gratis{padding:1px 5px}
+.skill__cost.gratis span{font-size:7.5px;font-weight:700;letter-spacing:.06em;color:var(--ink-mute)}
+.skill__tag{position:absolute;bottom:0;left:0;right:0;background:rgba(6,5,16,.78);
+  font-weight:700;font-size:8.5px;letter-spacing:.06em;text-align:center;color:var(--ink-dim);
+  text-transform:uppercase;pointer-events:none;line-height:12px}
+.skills--empty{width:281px;height:74px;border:1px dashed #2a2440;background:rgba(12,10,26,.35);
+  border-radius:5px;padding:0}
+
+/* fileira do inimigo: somente leitura — sem custo, sem rótulo, mais apagada */
+/* ===== ABA DE HABILIDADES DO INIMIGO =====
+   Fechada por padrão: só uma alça de 16px. O jogador abre a do personagem
+   que quiser consultar. Uma por vez. Abre para dentro do palco central,
+   em posição absoluta, então nada na tela se desloca. */
+.unit--enemy{position:relative}
+.foetab{flex:none;width:16px;align-self:stretch;margin:2px 0 16px;padding:0;cursor:pointer;
+  border:1px solid #4a3550;border-right:0;border-radius:3px 0 0 3px;
+  background:linear-gradient(90deg,rgba(30,18,38,.25),rgba(30,18,38,.7));
+  color:#8d7fa8;font-size:11px;line-height:1;transition:.15s;
+  display:flex;align-items:center;justify-content:center}
+.foetab:active{color:var(--gold-text);border-color:var(--gold-soft)}
+.foetab.open{background:linear-gradient(90deg,rgba(58,34,10,.4),rgba(58,34,10,.85));
+  border-color:var(--gold-soft);color:var(--gold-text)}
+.foetab__dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--hp-ok-1);
+  box-shadow:0 0 5px rgba(127,240,165,.9)}
+
+.foepanel{position:absolute;right:100%;top:0;margin-right:4px;z-index:6;
+  display:flex;gap:5px;padding:5px 8px;border-radius:34px;
+  background:rgba(16,11,30,.96);border:1px solid var(--gold-soft);
+  box-shadow:0 6px 20px rgba(0,0,0,.75)}
+.foesk{position:relative;width:52px;height:52px;border:1px solid rgba(224,96,127,.5);
+  border-radius:50%;background:rgba(24,16,40,.9);cursor:pointer;padding:0;overflow:hidden}
+.foesk--uni{border-style:dashed}
+.foesk__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-weight:900;font-size:14px;opacity:.72}
+.foesk__cd{position:absolute;inset:0;border-radius:50%;background:rgba(6,5,16,.78);display:flex;
+  align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;
+  font-size:22px;color:#ff8fae}
+.foesk__cost{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);display:flex;gap:2px;
+  padding:1px 3px;border-radius:6px;background:rgba(6,5,16,.9)}
+.foesk__cost i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(6,5,16,.9);display:block}
+.foesk__cost i.free{background:transparent;border-color:#9a8fc0}
+.foesk.peek{border-color:var(--gold-text);box-shadow:0 0 8px rgba(255,217,122,.55)}
+.foepanel__lbl{writing-mode:vertical-rl;transform:rotate(180deg);align-self:center;
+  font-size:8px;font-weight:700;letter-spacing:.12em;color:#6e6690;text-transform:uppercase}
+
+/* ---------- RODAPÉ ---------- */
+.footer{position:absolute;bottom:0;left:0;right:0;height:94px;display:flex;align-items:stretch;gap:9px;
+  padding:8px 10px;z-index:3;
+  background:linear-gradient(0deg,rgba(9,8,20,.97) 0%,rgba(9,8,20,.82) 70%,rgba(9,8,20,0) 100%)}
+/* ==================== SISTEMA DE BOTÕES ====================
+   Placa inscrita, não pílula com gradiente. A letra faz o trabalho;
+   o metal é só uma régua de 1px. Ouro preenchido existe UMA vez por tela.
+   Níveis:  primário · secundário · silencioso · perigo
+   Tamanhos: lg 44 · md 34 · icon 34
+   Estados:  repouso · pressionado (a placa recua) · desabilitado (sem régua)
+   Raio único de 3px em toda placa. Círculo é reservado a habilidade.       */
+.b{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'Cinzel',serif;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  border-radius:3px;border:1px solid transparent;background:transparent;cursor:pointer;
+  white-space:nowrap;transition:border-color .12s,color .12s,background .12s;
+  -webkit-tap-highlight-color:transparent}
+.b:active:not(:disabled){transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(0,0,0,.55)}
+.b:disabled{cursor:default;color:#5b5578;border-color:#262138;background:transparent;box-shadow:none}
+.b--lg{height:44px;padding:0 20px;font-size:13px}
+.b--md{height:34px;padding:0 14px;font-size:11px}
+.b--sm{height:30px;padding:0 12px;font-size:10px}
+.b--icon{width:34px;height:34px;padding:0;font-size:15px;letter-spacing:0}
+/* placa pequena: área de toque ampliada de forma invisível.
+   O canvas é escalado, então 30px de desenho viram ~22pt reais no celular;
+   o ::before devolve a margem que o dedo precisa sem inflar o layout. */
+.b--sm::before,.b--icon::before{content:"";position:absolute;inset:-9px}
+
+/* primário — o único ouro preenchido. Sem gradiente: metal batido. */
+.b--primary{color:#201604;background:var(--gold-text);border-color:#ffe9b0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 1px 0 rgba(0,0,0,.5)}
+.b--primary:active:not(:disabled){background:#e6c069;
+  box-shadow:inset 0 2px 5px rgba(80,54,0,.55)}
+/* secundário — régua de ouro, campo vazio */
+.b--sec{color:var(--gold-text);border-color:rgba(216,178,90,.5)}
+.b--sec:active:not(:disabled){border-color:var(--gold-text);background:rgba(216,178,90,.1)}
+/* silencioso — utilidades. Só a letra, régua discreta. */
+.b--quiet{color:var(--ink-dim);border-color:#2c2648;background:rgba(16,13,32,.55)}
+.b--quiet:active:not(:disabled){color:var(--ink);border-color:#4a4266}
+/* confirmar/perigo — aparecem apenas em diálogo */
+.b--ok{color:#0d2a1a;background:#7ff0a5;border-color:#b6ffd2;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 rgba(0,0,0,.5)}
+.b--ok:active:not(:disabled){background:#63d489}
+.b--danger{color:#ffc7d3;border-color:#8a4a5c;background:rgba(58,20,32,.6)}
+.b--danger:active:not(:disabled){background:#4a1c2a;border-color:#c2687f}
+.b__sub{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;opacity:.72}
+
+/* grupo de utilidades no alto à direita */
+.tools{display:flex;align-items:center;gap:5px}
+.menu{position:absolute;top:44px;right:10px;z-index:16;min-width:170px;padding:5px;
+  display:flex;flex-direction:column;gap:4px;border-radius:4px;
+  background:rgba(16,12,30,.98);border:1px solid var(--gold-soft);box-shadow:0 8px 26px rgba(0,0,0,.75)}
+.menu .b{justify-content:flex-start;width:100%}
+
+.detail{flex:1;min-width:0;display:flex;align-items:center;gap:14px;padding:10px 16px;
+  background:rgba(20,16,42,.72);border:1px solid #2c2648;border-radius:6px}
+.detail__icon{width:54px;height:54px;flex:none;border:1px solid #3a3358;border-radius:3px;overflow:hidden;background:#14112a}
+.detail__icon--skill{border-radius:50%}
+.detail__body{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
+.detail__head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.detail__name{font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.12em;color:var(--gold-text)}
+.cost{display:flex;align-items:center;gap:4px}
+.cost__pip{width:12px;height:12px;border:1px solid #0a0912}
+.cost__pip--empty{background:#1a1730;border-color:#4a3f72}
+.cost__none{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-mute)}
+.detail__sep{width:1px;height:12px;background:#3a3158}
+.detail__cd{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-dim)}
+.detail__text{font-size:13px;font-weight:600;line-height:1.3;color:var(--ink);text-wrap:pretty;
+  max-height:36px;overflow:hidden}
+.detail__classes{font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--ink-mute)}
+.detail__call{color:var(--gold-text);animation:blink 1.25s ease-in-out infinite}
+@keyframes blink{50%{opacity:.42}}
+.detail__log{font-size:12px;font-weight:600;line-height:1.34;color:var(--ink-dim);max-height:52px;overflow:hidden}
+.detail__log b{color:var(--ink-mute);font-weight:700;margin-right:5px}
+
+.endturn{flex:none;width:150px;flex-direction:column;gap:3px;height:auto;padding:9px 12px}
+.detail__act{flex:none;display:flex;flex-direction:column;gap:5px;width:112px;justify-content:center}
+.detail__act .b{width:100%}
+.b--wait{color:var(--gold-text);border-color:rgba(216,178,90,.45);border-style:dashed;
+  animation:blink 1.25s ease-in-out infinite;flex-direction:column;gap:1px;
+  font-size:10px;line-height:1.1;height:auto;padding:6px 6px}
+.endturn__l1{font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.1em;line-height:1;color:inherit}
+.endturn__hint{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.09em;
+  text-transform:uppercase;line-height:1;color:inherit;opacity:.68}
+
+/* ---------- SOBREPOSIÇÕES ---------- */
+.ov{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  background:rgba(5,4,12,.9);padding:16px}
+.ovbox{width:100%;max-width:800px;max-height:100%;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--gold-soft);border-radius:8px}
+.ovh{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid #3a3158}
+.ovh h2{margin:0;font-family:'Cinzel',serif;font-weight:900;font-size:15px;letter-spacing:.14em;color:var(--gold-text)}
+.ovh .sub{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--ink-mute)}
+.ovh .push{margin-left:auto;display:flex;gap:6px}
+
+.ovb{overflow-y:auto;padding:11px 14px}
+
+.log__row{display:flex;gap:9px;font-size:13px;font-weight:600;padding:1px 0;color:var(--ink-dim)}
+.log__row b{color:var(--ink-mute);width:22px;text-align:right;flex:none}
+.log__row.hi{color:var(--gold-text)}
+
+/* ===================== SELEÇÃO / COLEÇÃO =====================
+   Grade com TODOS os deuses. Liberados em cor; bloqueados
+   dessaturados mas legíveis — dá para ver quem é e querer. */
+.sel{position:absolute;inset:0;display:flex;flex-direction:column;z-index:8}
+.selhead{flex:none;height:52px;display:flex;align-items:center;gap:12px;padding:0 14px;
+  background:linear-gradient(180deg,rgba(9,8,20,.96),rgba(9,8,20,.6))}
+.selbrand{font-family:'Cinzel',serif;font-weight:900;font-size:17px;letter-spacing:.16em;color:var(--gold-text)}
+.selturn{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+.selturn b{color:#fff}
+.teams{margin-left:auto;display:flex;gap:12px}
+.tslot{display:flex;align-items:center;gap:5px}
+.tslot__l{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.1em;color:var(--ink-mute)}
+.tslot.act .tslot__l{color:var(--gold-text)}
+.tchip{width:30px;height:26px;border-radius:3px;border:1px dashed #3a3158;background:rgba(10,8,20,.6);
+  overflow:hidden;position:relative;cursor:pointer}
+.tchip.full{border-style:solid;border-color:var(--gold-soft)}
+.tslot.p2 .tchip.full{border-color:#8a4a5c}
+
+.selbody{flex:1;min-height:0;display:flex;align-items:center;gap:6px;padding:0 8px}
+.arrow{flex:none;width:32px;height:100px;font-size:20px;letter-spacing:0}
+.grid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(10,1fr);
+  grid-auto-rows:100px;gap:6px;align-content:center}
+
+.pk{position:relative;padding:0;border-radius:4px;overflow:hidden;cursor:pointer;
+  border:1px solid #3a3358;background:#14112a;transition:.14s}
+.pk__p{position:absolute;inset:0}
+.pk__p .slot{width:100%;height:100%}
+.pk__el{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pk__n{position:absolute;left:0;right:0;bottom:0;padding:2px 2px 3px;
+  background:linear-gradient(0deg,rgba(6,5,16,.94),rgba(6,5,16,.55));
+  font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.02em;
+  line-height:1.12;text-align:center;color:var(--ink);text-shadow:0 1px 2px #000;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pk.livre:active{border-color:var(--gold-text)}
+.pk.on{border-color:var(--gold-text);box-shadow:0 0 0 1px var(--gold-text) inset,0 0 10px rgba(255,217,122,.5)}
+.pk.on2{border-color:var(--enemy);box-shadow:0 0 0 1px var(--enemy) inset,0 0 10px rgba(224,96,127,.45)}
+.pk__mark{position:absolute;top:2px;right:2px;width:15px;height:15px;border-radius:2px;
+  font-family:'Cinzel',serif;font-weight:900;font-size:10px;line-height:14px;text-align:center;
+  background:rgba(6,5,16,.9);border:1px solid var(--gold-text);color:var(--gold-text)}
+.pk.on2 .pk__mark{border-color:var(--enemy);color:#ff8fae}
+/* bloqueado: dessaturado, mas a foto continua legível */
+.pk.trancado{cursor:pointer;border-color:#2a2440}
+.pk.trancado .pk__p{filter:grayscale(1) brightness(.62) contrast(.85);opacity:.6}
+.pk.trancado .pk__n{color:var(--ink-mute);background:linear-gradient(0deg,rgba(6,5,16,.9),rgba(6,5,16,.4))}
+.pk.trancado .pk__el{opacity:.35}
+.pk__lock{position:absolute;top:2px;left:4px;font-size:10px;color:#e0d4ff;text-shadow:0 1px 3px #000}
+.pk.semkit{border-style:dashed;border-color:#4a4266}
+.pk.semkit .pk__p{filter:grayscale(1) brightness(.42);opacity:.5}
+.pk__wip{position:absolute;top:2px;right:3px;font-size:7.5px;font-weight:700;letter-spacing:.06em;
+  color:#8d84ad;background:rgba(6,5,16,.8);border-radius:2px;padding:0 2px}
+.arrow{height:100px}
+
+.selfoot{flex:none;height:38px;display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:linear-gradient(0deg,rgba(9,8,20,.96),rgba(9,8,20,.6))}
+
+.finfo{flex:1;min-width:0;font-size:11.5px;font-weight:600;color:var(--ink-dim);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.finfo b{color:var(--gold-text);font-family:'Cinzel',serif;letter-spacing:.06em}
+.finfo i{font-style:normal;color:#ff8fae}
+.fpage{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.1em;color:var(--ink-mute);white-space:nowrap}
+.fbtn__badge{display:inline-block;margin-left:5px;min-width:14px;padding:0 3px;border-radius:7px;
+  background:var(--gold-text);color:#1a1204;font-size:9px;line-height:13px;text-align:center}
+
+/* ===================== TROCA DE ENERGIA =====================
+   Popup enxuto: escolhe o que receber, vê o que sai, confirma.
+   NÃO pausa o cronômetro do turno. */
+.cbox{width:100%;max-width:470px;border-radius:6px;overflow:hidden;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--gold-soft);box-shadow:0 12px 40px rgba(0,0,0,.8)}
+.cbox__h{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #3a3158}
+.cbox__h h2{margin:0;font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.14em;color:var(--gold-text)}
+.cbox__h span{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink-mute);margin-left:auto}
+.cbox__b{padding:12px 14px}
+.cbox__lbl{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.14em;
+  color:var(--ink-mute);margin-bottom:7px}
+.cgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.copt{position:relative;padding:8px 2px 6px;border-radius:4px;cursor:pointer;
+  border:1px solid #3a3158;background:rgba(12,10,26,.6);color:var(--ink-dim);
+  display:flex;flex-direction:column;align-items:center;gap:4px;transition:.12s}
+.copt:disabled{opacity:.3;cursor:default}
+.copt.on{border-color:#7ff0a5;background:rgba(127,240,165,.12);color:#c9ffdd}
+.copt__d{width:22px;height:22px;border-radius:50%}
+.copt__n{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.06em}
+.copt__q{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:#fff}
+.ctrade{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 2px;
+  padding:9px;border-radius:4px;background:rgba(10,8,22,.7);border:1px solid #2c2648}
+.ctrade__g{display:flex;align-items:center;gap:4px}
+.ctrade__p{width:14px;height:14px;border-radius:50%;border:1px solid rgba(6,5,16,.9)}
+.ctrade__a{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-text)}
+.ctrade__t{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute)}
+.cbox__f{display:flex;gap:7px;padding:0 14px 12px;justify-content:flex-end}
+.cnote{padding:0 14px 10px;font-size:11px;font-weight:600;color:var(--ink-mute);line-height:1.35}
+
+/* ===================== PAINEL DE FILTRO ===================== */
+.fpanel{position:absolute;inset:0;z-index:14;display:flex;align-items:center;justify-content:center;
+  background:rgba(5,4,12,.86);padding:14px}
+.fbox{width:100%;max-width:720px;max-height:100%;display:flex;flex-direction:column;border-radius:8px;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--gold-soft);
+  box-shadow:0 10px 40px rgba(0,0,0,.8)}
+.fbox__h{flex:none;display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid #3a3158}
+.fbox__h h2{margin:0;font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.14em;color:var(--gold-text)}
+.fbox__n{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-dim)}
+.fbox__n b{color:#fff;font-size:14px}
+.fbox__h .push{margin-left:auto;display:flex;gap:6px}
+.fbox__b{overflow-y:auto;padding:10px 14px 12px}
+.fgrp{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid rgba(58,49,88,.45)}
+.fgrp:last-child{border-bottom:0}
+.fgrp__l{flex:none;width:78px;padding-top:4px;font-family:'Cinzel',serif;font-weight:700;font-size:10px;
+  letter-spacing:.12em;color:var(--ink-mute)}
+.fgrp__c{flex:1;display:flex;flex-wrap:wrap;gap:5px}
+.chip2{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;cursor:pointer;
+  font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--ink-dim);
+  background:rgba(12,10,26,.7);border:1px solid #3a3158;transition:.12s;min-height:28px}
+.chip2:active{border-color:var(--ink-dim)}
+.chip2.on{border-color:var(--gold-text);background:#2a1f08;color:var(--gold-text)}
+.chip2__d{width:9px;height:9px;border-radius:2px;flex:none}
+.chip2__n{font-size:9.5px;color:var(--ink-mute)}
+.chip2.on .chip2__n{color:#c9b489}
+
+.result{text-align:center;padding:22px 14px}
+.result h1{margin:0 0 6px;font-family:'Cinzel',serif;font-weight:900;font-size:34px;letter-spacing:.1em;color:var(--gold-text)}
+.result p{margin:0 0 16px;font-size:14px;font-weight:600;color:var(--ink-dim);letter-spacing:.06em}
+
+/* aviso de orientação */
+#rot{display:none;position:fixed;inset:0;z-index:99;background:#05040c;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:28px}
+#rot .ph{width:50px;height:84px;border:2px solid var(--gold);border-radius:7px;animation:tip 1.9s ease-in-out infinite}
+@keyframes tip{0%,40%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
+#rot p{margin:0;font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.14em;color:var(--gold-text)}
+#rot small{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-mute)}
+@media (orientation:portrait) and (max-width:900px){#rot{display:flex}#viewport{display:none}}
+</style>
+</head>
+<body>
+<div id="rot"><div class="ph"></div><p>GIRE O APARELHO</p><small>a batalha usa a tela na horizontal</small></div>
+<div id="viewport"><div class="stage" id="stage"></div></div>
+
+<script>
+/*__ENGINE__*/
+/*__VIEW__*/
+</script>
+</body>
+</html>

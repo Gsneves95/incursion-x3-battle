@@ -1,0 +1,92 @@
+[
+ {
+  "key": "zeus",
+  "nome": "Zeus",
+  "faccao": "Grega",
+  "elemento": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "ensina": "Dano em área e controle seletivo de classe (trava habilidades Mágicas).",
+  "porque": "O deus mais reconhecível do jogo tem que ser grátis — é a cara do produto. E o kit é o mais didático que existe: um dano, um dano com controle, uma área com debuff, e um passivo que recompensa fechar abate."
+ },
+ {
+  "key": "ogum",
+  "nome": "Ogum",
+  "faccao": "Africana",
+  "elemento": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "ensina": "Como matar um tanque: dano perfurante, destruir Defesa Destrutível, dano puro.",
+  "porque": "Todo jogador novo trava na primeira parede de escudo e desiste. Ogum é a resposta desenhada para isso e precisa estar disponível desde o turno zero — sem ele, o iniciante conclui que o jogo é injusto."
+ },
+ {
+  "key": "tyr",
+  "nome": "Tyr",
+  "faccao": "Nórdica",
+  "elemento": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "ensina": "Provocar, redução de dano, e imunidade a controle para o time.",
+  "porque": "Básico grátis (economia), Provocar barato, e um Milagre que salva o time de uma prisão de controle. É o antídoto do arquétipo mais frustrante do jogo, na mão de quem tem menos ferramentas."
+ },
+ {
+  "key": "sobek",
+  "nome": "Sobek",
+  "faccao": "Egípcia",
+  "elemento": "Maré",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "ensina": "Submergir (tirar um inimigo do jogo por 1 turno) e explorar Encharcado.",
+  "porque": "Ensina que remover um inimigo do tabuleiro por um turno vale mais que 25 de dano. E o Dilúvio batendo 30 em Encharcados dá ao iniciante a primeira sinergia que ele descobre sozinho."
+ },
+ {
+  "key": "brigid",
+  "nome": "Brigid",
+  "faccao": "Celta",
+  "elemento": "Chama",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "ensina": "Curar e causar dano no mesmo golpe; DoT; buff permanente de time.",
+  "porque": "A Chama Sagrada cura os seus E queima os deles com uma ação. É a lição de eficiência de ação mais importante do jogo, e faz o iniciante entender por que uma ação vale mais que um número."
+ },
+ {
+  "key": "ganesha",
+  "nome": "Ganesha",
+  "faccao": "Hindu",
+  "elemento": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "ensina": "Remoção dupla (tira debuff do seu, tira buff do dele) e geração de orbe.",
+  "porque": "Recarga 1 no Abrir Caminho ensina dispel nos dois sentidos, que é a resposta a metade do roster. O passivo de 2 orbes no turno 1 dá ao iniciante o primeiro gostinho de vantagem econômica."
+ },
+ {
+  "key": "cuca",
+  "nome": "Cuca",
+  "faccao": "Brasileira",
+  "elemento": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "ensina": "Adormecer, e o combo controle → negação de orbe.",
+  "porque": "Adormecido recebe +8 de dano e não gera orbe. É a forma mais limpa de ensinar a lição central do jogo: privar o oponente de recurso vence mais partidas que causar dano."
+ },
+ {
+  "key": "fujin",
+  "nome": "Fujin",
+  "faccao": "Japonesa",
+  "elemento": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "ensina": "Guerra de recarga: atrasar a deles, adiantar a sua.",
+  "porque": "Não causa quase dano nenhum e ganha partidas. É a unidade que ensina que o relógio é um recurso — e o gancho para o jogador querer o Raijin, que é o parceiro escrito no kit."
+ },
+ {
+  "key": "nezha",
+  "nome": "Nezha",
+  "faccao": "Chinesa",
+  "elemento": "Chama",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "ensina": "Alternância de modo (Anel/Manto), imunidade a DoT, retorno após queda.",
+  "porque": "O único Híbrido inicial, então o iniciante tem uma unidade que não morre para controle e redução seletivos de classe. Arsenal Celeste com recarga 1 ensina a escolher entre controle e área a cada turno."
+ }
+]

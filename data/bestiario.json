@@ -1,0 +1,122 @@
+[
+ {
+  "num": 1,
+  "nome": "Servo de Cinzas",
+  "tier": "Comum",
+  "papel": "Atacante",
+  "elemento": "Umbra",
+  "tipo": "Físico",
+  "hp": 70,
+  "kit": "Básico: 12 de dano. Passiva: ao cair, explode causando 10 no aliado mais ferido do jogador."
+ },
+ {
+  "num": 2,
+  "nome": "Autômato de Bronze",
+  "tier": "Comum",
+  "papel": "Guardião",
+  "elemento": "Aurora",
+  "tipo": "Físico",
+  "hp": 120,
+  "kit": "Básico: 10 de dano. Habilidade (rec 2): Provoca todos por 1 turno + 15 de Defesa Destrutível."
+ },
+ {
+  "num": 3,
+  "nome": "Elemental de Chama",
+  "tier": "Comum",
+  "papel": "Atacante",
+  "elemento": "Chama",
+  "tipo": "Mágico",
+  "hp": 70,
+  "kit": "Básico: 10 + Queimadura (6/turno, 2 turnos). Habilidade (rec 2): 10 em 2 alvos + Queimadura."
+ },
+ {
+  "num": 4,
+  "nome": "Náiade da Correnteza",
+  "tier": "Comum",
+  "papel": "Suporte",
+  "elemento": "Maré",
+  "tipo": "Mágico",
+  "hp": 85,
+  "kit": "Básico: 8 + Encharcado. Habilidade (rec 3): cura 20 no aliado mais ferido."
+ },
+ {
+  "num": 5,
+  "nome": "Silfo Uivante",
+  "tier": "Comum",
+  "papel": "Manipulador",
+  "elemento": "Tempestade",
+  "tipo": "Mágico",
+  "hp": 65,
+  "kit": "Básico: 10 de dano. Habilidade (rec 2): remove 1 orbe do jogador."
+ },
+ {
+  "num": 6,
+  "nome": "Guardião do Bosque",
+  "tier": "Comum",
+  "papel": "Guardião",
+  "elemento": "Verdejante",
+  "tipo": "Físico",
+  "hp": 120,
+  "kit": "Básico: 10 de dano. Habilidade (rec 3): 1 herói não pode usar Habilidade por 1 turno + 15 de Def. Destrutível."
+ },
+ {
+  "num": 7,
+  "nome": "Ghoul Faminto",
+  "tier": "Comum",
+  "papel": "Atacante",
+  "elemento": "Umbra",
+  "tipo": "Físico",
+  "hp": 70,
+  "kit": "Básico: 12 (18 contra alvos abaixo de 40 de HP). Passiva: cura 6 do dano causado."
+ },
+ {
+  "num": 8,
+  "nome": "Aparição Sussurrante",
+  "tier": "Comum",
+  "papel": "Controlador",
+  "elemento": "Aurora",
+  "tipo": "Mágico",
+  "hp": 75,
+  "kit": "Básico: 10 de dano. Habilidade (rec 3): Silencia 1 herói por 1 turno."
+ },
+ {
+  "num": 9,
+  "nome": "Quimera",
+  "tier": "Elite",
+  "papel": "Atacante",
+  "elemento": "Chama",
+  "tipo": "Híbrido",
+  "hp": 130,
+  "kit": "Básico: 3 golpes de 6. Habilidade (rec 2): 15 a todos + Queimadura. Passiva: imune a controle de alvo único."
+ },
+ {
+  "num": 10,
+  "nome": "Golem Rúnico",
+  "tier": "Elite",
+  "papel": "Guardião",
+  "elemento": "Umbra",
+  "tipo": "Físico",
+  "hp": 180,
+  "kit": "Básico: 14. Habilidade (rec 3): 25 de Def. Destrutível + Provoca todos + reflete 8 por 2 turnos. Passiva: 10 de redução contra Mágico."
+ },
+ {
+  "num": 11,
+  "nome": "Vidente Corrompido",
+  "tier": "Elite",
+  "papel": "Controlador",
+  "elemento": "Tempestade",
+  "tipo": "Mágico",
+  "hp": 120,
+  "kit": "Básico: 12. Habilidade (rec 3): atordoa 1 herói por 1 turno + o time causa 8 menos de dano por 2 turnos."
+ },
+ {
+  "num": 12,
+  "nome": "Ceifador Errante",
+  "tier": "Elite",
+  "papel": "Atacante",
+  "elemento": "Umbra",
+  "tipo": "Físico",
+  "hp": 130,
+  "kit": "Básico: 16. Habilidade (rec 2): 24 de dano, elimina abaixo de 20 de HP, cura 10. Passiva: criaturas aliadas +4 de dano."
+ }
+]
