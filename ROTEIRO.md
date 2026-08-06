@@ -54,13 +54,18 @@ PRONTO. Cada habilidade tem classe própria: Físico, Mágico, Mental (controle)
 
 **Por que nesta ordem:** O silêncio agora lê a classe da HABILIDADE. Nezha tem Físico + Mental/Aflição + Mágico, então nenhum silêncio de classe cala o kit dele — é exatamente por isso que ele é o Híbrido inicial. Kits que alternam de modo trocam de classe com o modo.
 
-### 6. Primitivas de efeito que faltam
+### 6. Primitivas de efeito que faltam ✓
 
-Invocações (Shabti, Fera, clones), revives, contadores acumuláveis (Combo, Disco Solar, Caudas, Ataduras, Maldição, Podridão), estado global Dia/Noite, copiar habilidade (Ísis), dano armazenado (Xangô), contagem de morte (Yan Wong), escolha múltipla (Nüwa, Lugh, Tanuki), interceptar, contra-atacar, Vida Extra.
+PRONTO. Invocações (guarda/dano), revives (com `naoRevive`), contadores
+acumuláveis (com escala e consumo por dano), estado global Dia/Noite, copiar
+habilidade (Ísis), dano armazenado (Xangô), contagem de morte (por caído + Livro
+que executa), escolha múltipla (`opcoes`+`escolhas`), interceptar, contra-atacar,
+Vida Extra. Cada uma é acionada por dados no kit — o mapa está em `CLAUDE.md`
+("Primitivas de efeito — PRONTAS"). Coberto por `tests/primitivas.test.js`.
 
 **Depende de:** seleção de 2 alvos
 
-**Por que nesta ordem:** São ~14 primitivas. Cada uma destrava um grupo de deuses. Implementar a primitiva ANTES do deus evita descobrir na metade que o modelo de dados não cabe.
+**Por que nesta ordem:** Cada primitiva destrava um grupo de deuses. Implementar a primitiva ANTES do deus evita descobrir na metade que o modelo de dados não cabe.
 
 ### 7. Arena de auto-jogo
 

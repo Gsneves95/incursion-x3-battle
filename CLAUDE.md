@@ -16,9 +16,9 @@ O raciocínio completo está em `DECISOES.md`.
 
 | | |
 |---|---|
-| Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados |
+| Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas de efeito prontas** (destravam os 89 restantes) |
 | Cliente | 2 telas: seleção/coleção e batalha (hot-seat, dois jogadores na mesma tela) |
-| Testes | 4 suítes, 43 asserções, todas verdes |
+| Testes | 5 suítes, todas verdes (motor, capacidades, primitivas, auditoria, interface) |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 
@@ -167,13 +167,34 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 - **Arte de habilidade é redonda** (`object-position:center`); retrato de deus é
   enquadrado no alto (`center 18%`) porque as ilustrações são de corpo inteiro.
 
+## Primitivas de efeito — PRONTAS
+
+As 12 primitivas do `ROTEIRO.md` fase 1 item 6 estão no motor e cobertas por
+`tests/primitivas.test.js`. Cada kit novo as aciona por dados, sem tocar no motor:
+
+| Primitiva | Como o kit aciona | Deuses que destrava |
+|---|---|---|
+| Contadores acumuláveis | `{t:'contador', nome, v, alvo:'self'?, max}`; dano com `porContador`/`porContadorCampo`/`consomeContador` | Rá, Kitsune, Anúbis, Ah Puch, Ares… |
+| Estado Dia/Noite | `{t:'fase', v:'Dia'\|'Noite'\|null, dur}`; dano com `seDia`/`seNoite` | Amaterasu, Tsukuyomi, Hou Yi, Lugh… |
+| Vida Extra | `{t:'vidaExtra', hp}` — revive no ato ao cair | Bastet |
+| Revive | `{t:'revive', hp, escopo:'aliadoCaido'\|'todosCaidos'}`; respeita `naoRevive` | Osíris, Ísis, Anúbis… |
+| Contagem de morte | dano com `porAliadoCaido`/`porInimigoCaido`; efeito `livro` executa ao expirar | Osíris, Nüwa, Yan Wong |
+| Dano armazenado | `{t:'armazenaDano', dur, max}` — acumula o sofrido, devolve como puro | Xangô |
+| Interceptar | `{t:'intercepta', dur, contra:'unico'\|'todos', contraAtaca?}` | Loki, Bastet, Hanuman |
+| Contra-atacar | efeito `contraAtaca {v, contra}` — revida golpe de alvo único | Heimdall, Bastet, Guan Yu |
+| Escolha múltipla | ability com `opcoes:[{nome, fx}]`; `agir(...,escolhas:[i,…])` | Nüwa, Lugh, Tanuki, Exu… |
+| Copiar habilidade | `{t:'copiar', fonte:'ultimaHabilidadeAliada'}` | Ísis, Tanuki |
+| Invocações | `{t:'invocar', tipo:'guarda'\|'dano', hp, v, dur, provoca?}` | Khnum, Sun Wukong, Kitsune |
+| Seleção de 2 alvos | (já pronta) `alvo:'2inimigos'/'2aliados'`, efeitos com `idx` | Thor, Hera |
+
+**Regra que continua valendo: implemente a primitiva antes do deus.** Se um kit
+novo pedir uma mecânica que não existe, pare e adicione a primitiva + o teste
+antes de escrever o kit.
+
 ## Próximo passo
 
-`ROTEIRO.md`, fase 1, item "primitivas de efeito que faltam". São ~12 primitivas
-(invocação, revive, contadores acumuláveis, estado global Dia/Noite, copiar
-habilidade, dano armazenado, contagem de morte, escolha múltipla, interceptar,
-contra-atacar, Vida Extra) e cada uma destrava um grupo dos 89 deuses restantes.
-
-**Implemente a primitiva antes do deus.** Escrever kits sem a primitiva pronta
-foi identificado como o risco nº 1 do projeto: você descobre na metade que o
-modelo de dados não cabe e refaz o que já estava escrito.
+`ROTEIRO.md`, fase 1, item 7 — **arena de auto-jogo**. O motor roda contra si
+mesmo por seed, milhares de partidas, e reporta taxa de vitória por deus, duração
+média e combos que fecham cedo demais. É o que torna possível balancear 100
+deuses e o pré-requisito para escrever os 89 kits restantes (item 8) em lotes
+testados.

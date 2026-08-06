@@ -233,9 +233,9 @@ const DEFESA = {
 };
 
 const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado'];
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal'];
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo'];
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen'];
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
 
 // ------------------------------------------------------------- ESTADO
 function novaUnidade(key, idx, lado) {
@@ -245,6 +245,11 @@ function novaUnidade(key, idx, lado) {
     hp: 120, maxHp: 120, vivo: true, agiu: false,
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
+    // --- primitivas ---
+    contadores: {},      // contadores acumuláveis nomeados: { 'Disco Solar': 3, Atadura: 2 }
+    vidaExtra: null,     // Vida Extra pendente: { hp } — revive no ato ao cair
+    naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
+    usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
     modo: 0, renasceu: false, lado,
   };
 }
@@ -252,9 +257,10 @@ function novaUnidade(key, idx, lado) {
 function novoEstado(timeA, timeB, seed = 1) {
   const st = {
     turno: 1, ativo: 0, seed, rngN: 0, log: [], fim: null,
+    fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
     ],
   };
   log(st, `Turno 1 — vez do Jogador 1.`);
@@ -298,6 +304,34 @@ function aplicarDot(st, u, nome, v, dur) {
   else u.dots.push({ nome, v, dur });
 }
 
+// -------------------------------------------------- PRIMITIVAS: contadores
+// Contadores acumuláveis nomeados (Disco Solar, Cauda, Atadura, Podridão, Combo…).
+// Genéricos: somam, respeitam um teto opcional, podem ser lidos e consumidos.
+// O que cada contador FAZ (limiares, escalas) é decisão do kit; aqui só se guarda.
+function addContador(st, u, nome, v = 1, max = null) {
+  const atual = u.contadores[nome] || 0;
+  let novo = atual + v;
+  if (max != null) novo = Math.min(novo, max);
+  if (novo < 0) novo = 0;
+  u.contadores[nome] = novo;
+  if (novo !== atual) log(st, `${u.nome}: ${nome} ${novo > atual ? '+' : ''}${novo - atual} (=${novo}).`);
+  return novo;
+}
+function getContador(u, nome) { return u.contadores[nome] || 0; }
+function contadorNoCampo(st, nome, lado) {
+  return st.lados[lado].units.filter(u => u.vivo).reduce((s, u) => s + getContador(u, nome), 0);
+}
+
+// ----------------------------------------------- PRIMITIVA: estado Dia/Noite
+function definirFase(st, fase, dur) {
+  if (fase === null) { if (st.fase) log(st, `${st.fase} terminou.`); st.fase = null; st.faseDur = 0; return; }
+  st.fase = fase; st.faseDur = dur;
+  log(st, `${fase} ativado por ${dur} turno(s).`);
+}
+
+// contagem de quedas de um lado (para escalas "por aliado caído")
+function caidos(st, lado) { return st.lados[lado].units.filter(u => !u.vivo).length; }
+
 // -------------------------------------------------------------- DANO
 function bonusDano(st, atk) {
   let b = 0;
@@ -337,8 +371,29 @@ function calcDano(st, atk, alvo, base, kind, slot) {
   return { v, absorvido };
 }
 
-function bater(st, atk, alvo, base, kind, slot, semVinculo) {
+function bater(st, atk, alvo, base, kind, slot, opts = {}) {
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false } = opts;
   if (!alvo.vivo) return 0;
+
+  // PRIMITIVA interceptar — golpe de alvo único pode ser assumido por um protetor.
+  // Vale para efeito 'intercepta' (Loki, Bastet, Hanuman) e para invocação-guarda (Shabti, isca).
+  if (unico && !semIntercepta) {
+    const redir = acharInterceptador(st, alvo, atk);
+    if (redir) {
+      const ie = ef(redir, 'intercepta');
+      if (ie && ie.contra === 'unico') redir.efeitos = redir.efeitos.filter(e => e !== ie);
+      log(st, `${redir.nome} intercepta o golpe dirigido a ${alvo.nome}.`);
+      return bater(st, atk, redir, base, kind, slot, { ...opts, semIntercepta: true });
+    }
+    const guarda = acharGuarda(st, alvo);
+    if (guarda) {
+      const antes = guarda.hp;
+      guarda.hp = Math.max(0, guarda.hp - base);
+      log(st, `${guarda.nome} absorve o golpe dirigido a ${alvo.nome} (${antes}→${guarda.hp}).`);
+      if (guarda.hp === 0) removerInvocacao(st, guarda);
+      return base;
+    }
+  }
   if (ef(alvo, 'invulneravel')) { log(st, `${alvo.nome} está Invulnerável — sem dano.`); return 0; }
   if (ef(alvo, 'submerso')) { log(st, `${alvo.nome} está Submerso — não pode ser alvo.`); return 0; }
   // vínculo (Juramento Nupcial): o dano é dividido entre os dois vinculados
@@ -348,8 +403,8 @@ function bater(st, atk, alvo, base, kind, slot, semVinculo) {
     if (par && par.vivo) {
       const metade = Math.ceil(base / 2);
       log(st, `Vínculo: o golpe em ${alvo.nome} é dividido com ${par.nome}.`);
-      const a1 = bater(st, atk, alvo, metade, kind, slot, true);
-      const a2 = bater(st, atk, par, metade, kind, slot, true);
+      const a1 = bater(st, atk, alvo, metade, kind, slot, { ...opts, semVinculo: true });
+      const a2 = bater(st, atk, par, metade, kind, slot, { ...opts, semVinculo: true });
       return a1 + a2;
     }
   }
@@ -359,17 +414,36 @@ function bater(st, atk, alvo, base, kind, slot, semVinculo) {
   if (absorvido) txt += ` (${absorvido} no escudo)`;
   if (kind && kind !== 'afetado') txt += ` [${kind}]`;
   log(st, txt);
+  // PRIMITIVA dano armazenado — todo aliado do alvo com acumulador guarda o dano sofrido.
+  for (const x of st.lados[alvo.lado].units) {
+    const arm = ef(x, 'armazenaDano');
+    if (arm && x.vivo) arm.acc = (arm.acc || 0) + v;
+  }
   // acorda com dano de Habilidade/Milagre
   if (ef(alvo, 'adormecido') && (slot === 'habilidade' || slot === 'milagre')) {
     alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'adormecido');
     log(st, `${alvo.nome} acordou.`);
   }
-  if (alvo.hp === 0) matar(st, atk, alvo);
+  if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
+  // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
+  const ca = ef(alvo, 'contraAtaca');
+  if (ca && unico && !semContra && atk && atk.vivo && atk.lado !== alvo.lado) {
+    log(st, `${alvo.nome} contra-ataca ${atk.nome}.`);
+    bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
+    if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);
+  }
   return v;
 }
 
 function matar(st, atk, alvo) {
-  alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0;
+  // PRIMITIVA Vida Extra — revive no ato, antes de a morte se concretizar.
+  if (alvo.vidaExtra) {
+    const hp = alvo.vidaExtra.hp; alvo.vidaExtra = null;
+    alvo.hp = hp; alvo.shield = 0;
+    log(st, `Vida Extra: ${alvo.nome} revive na hora com ${hp} de HP.`);
+    return;
+  }
+  alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
   log(st, `${alvo.nome} caiu.`);
   if (alvo.key === 'nezha' && !alvo.renasceu) {
     alvo.renasceu = true; alvo.pendenteRenascer = true;
@@ -380,6 +454,24 @@ function matar(st, atk, alvo) {
     log(st, `Soberano: Zeus ganha 1 orbe de Tempestade.`);
   }
   checarFim(st);
+}
+
+// ----------------------------------- PRIMITIVA interceptar / invocação-guarda
+// Um protetor vivo com efeito 'intercepta' cobrindo o alvo (ou qualquer aliado).
+function acharInterceptador(st, alvo, atk) {
+  if (atk && atk.lado === alvo.lado) return null;   // só golpe inimigo é interceptado
+  return st.lados[alvo.lado].units.find(x => {
+    if (!x.vivo || x.uid === alvo.uid) return false;
+    const i = ef(x, 'intercepta');
+    return i && (i.protege === alvo.uid || i.protege === 'time');
+  });
+}
+function acharGuarda(st, alvo) {
+  const inv = (st.lados[alvo.lado].invocacoes || []).find(g => g.tipo === 'guarda' && g.hp > 0);
+  return inv || null;
+}
+function removerInvocacao(st, g) {
+  for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, `${g.nome} se desfez.`); } }
 }
 
 function curar(st, u, v) {
@@ -475,6 +567,14 @@ function iniciarTurno(st) {
     // regra 4 — recargas descontam no início do turno do dono
     for (const k in u.cd) if (u.cd[k] > 0) u.cd[k]--;
   }
+  // PRIMITIVA invocações — agem no início do turno do dono, depois expiram
+  for (const g of l.invocacoes.slice()) {
+    if (g.tipo === 'dano' && g.v > 0) {
+      const alvo = st.lados[1 - st.ativo].units.find(x => x.vivo);
+      if (alvo) { log(st, `${g.nome} ataca.`); bater(st, { nome: g.nome, key: '__inv', lado: st.ativo, vivo: true, efeitos: [], contadores: {} }, alvo, g.v, 'afetado', 'invocacao', {}); }
+    }
+    if (g.dur != null) { g.dur--; if (g.dur <= 0) removerInvocacao(st, g); }
+  }
   // geração de orbes
   const vivos = l.units.filter(u => u.vivo);
   const geram = vivos.filter(u => !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'dominado'));
@@ -493,11 +593,31 @@ function iniciarTurno(st) {
 
 function fimTurno(st) {
   const l = st.lados[st.ativo];
+  // PRIMITIVA dano armazenado — libera ao expirar (Xangô devolve como dano puro)
+  for (const u of l.units) {
+    const arm = ef(u, 'armazenaDano');
+    if (arm && arm.dur === 1 && u.vivo) {
+      const total = Math.min(arm.max || 9999, arm.acc || 0);
+      const alvo = st.lados[1 - u.lado].units.find(x => x.uid === arm.alvo && x.vivo)
+                 || st.lados[1 - u.lado].units.find(x => x.vivo);
+      if (total > 0 && alvo) { log(st, `${u.nome} devolve ${total} de dano armazenado a ${alvo.nome}.`); bater(st, u, alvo, total, 'puro', 'armazenado', {}); }
+    }
+  }
+  // PRIMITIVA contagem de morte (Livro) — executa quem chegou ao fim da contagem
+  for (const u of l.units) {
+    const lv = ef(u, 'livro');
+    if (lv && lv.dur === 1 && u.vivo) {
+      log(st, `Livro da Vida e Morte: ${u.nome} é executado.`);
+      u.naoRevive = true; matar(st, null, u);
+    }
+  }
   // regra 5 — durações descontam no FIM do turno de quem carrega o efeito
   for (const u of l.units) {
     u.efeitos = u.efeitos.map(e => ({ ...e, dur: e.dur - 1 })).filter(e => e.dur > 0);
     u.dots = u.dots.map(d => ({ ...d, dur: d.dur - 1 })).filter(d => d.dur > 0);
   }
+  // PRIMITIVA estado global Dia/Noite — conta um por turno de jogador
+  if (st.fase && st.faseDur > 0) { st.faseDur--; if (st.faseDur === 0) definirFase(st, null); }
   if (st.turno >= 40) {
     const hp = st.lados.map(x => x.units.reduce((s, u) => s + u.hp, 0));
     st.fim = hp[0] === hp[1] ? 'Empate' : `Jogador ${hp[0] > hp[1] ? 1 : 2} vence por HP (turno 40)`;
@@ -562,7 +682,7 @@ function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
 }
 
 // ------------------------------------------------------------ EXECUÇÃO
-function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
+function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null) {
   if (st.fim) return { ok: false, erro: 'A partida terminou.' };
   const l = st.lados[st.ativo];
   const u = l.units.find(x => x.uid === uid);
@@ -579,20 +699,41 @@ function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
   const inimigos = st.lados[1 - u.lado].units;
   const alvos = alvoUids.map(id => [...inimigos, ...l.units].find(x => x.uid === id)).filter(Boolean);
 
-  // Arsenal Celeste — alternância
+  // monta a lista de efeitos: modo alternado (Nezha), escolha múltipla (Lugh/Nüwa) ou fx fixo
   let fx = a.fx;
   if (a.alterna) {
     const modo = modoEscolha !== null ? modoEscolha : u.modo;
-    if (modo === 0) {
-      log(st, `Arsenal Celeste — ANEL.`);
-      fx = [{ t: 'apply', eff: { type: 'lockSkill', slot: 'habilidade', dur: 1 } }];
-    } else {
-      log(st, `Arsenal Celeste — MANTO.`);
-      fx = [{ t: 'dmg', v: 12, escopo: 'todosInimigos' }, { t: 'dot', nome: 'Queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }];
-    }
+    fx = modo === 0
+      ? [{ t: 'apply', eff: { type: 'lockSkill', slot: 'habilidade', dur: 1 } }]
+      : [{ t: 'dmg', v: 12, escopo: 'todosInimigos' }, { t: 'dot', nome: 'Queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }];
+    log(st, `Arsenal Celeste — ${modo === 0 ? 'ANEL' : 'MANTO'}.`);
     u.modo = 1 - modo;
+  } else if (a.opcoes) {                                   // PRIMITIVA escolha múltipla
+    const idxs = (escolhas && escolhas.length) ? escolhas : [0];
+    fx = [];
+    for (const i of idxs) if (a.opcoes[i]) fx.push(...a.opcoes[i].fx);
+    log(st, `${u.nome} usa ${a.nome} (${idxs.map(i => a.opcoes[i] && a.opcoes[i].nome).filter(Boolean).join(' + ')}).`);
+  } else {
+    log(st, `${u.nome} usa ${a.nome}.`);
   }
-  if (!a.alterna) log(st, `${u.nome} usa ${a.nome}.`);
+
+  // PRIMITIVA copiar habilidade — registra a última Habilidade real usada no lado (Ísis lê isto).
+  // Uma habilidade que É uma cópia não se registra: senão copiaria a si mesma em laço.
+  const eCopia = Array.isArray(fx) && fx.some(e => e.t === 'copiar');
+  if (slot === 'habilidade' && !a.alterna && !a.opcoes && !eCopia) l.ultHabilidade = { nome: a.nome, fx, alvoSpec: a.alvo, slot: 'habilidade' };
+
+  aplicarFx(st, u, fx, a, alvos, escolhas);
+  checarFim(st);
+  return { ok: true };
+}
+
+// -------------------------------------------- executor de efeitos (reutilizável)
+// Extraído de agir() para poder ser chamado também pela cópia de habilidade.
+// `a` fornece o alvo padrão (a.alvo) e o slot. `alvos` são as unidades escolhidas.
+function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
+  const l = st.lados[u.lado];
+  const inimigos = st.lados[1 - u.lado].units;
+  const unico = a.alvo === 'inimigo' || a.alvo === 'aliado';   // golpe de alvo único (interceptar/contra-atacar)
 
   for (const e of fx) {
     const escopo = e.escopo || a.alvo;
@@ -600,16 +741,15 @@ function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
     if (e.escopo === 'self') sel = [u];
     else if (escopo === 'time') sel = l.units.filter(x => x.vivo);
     else if (escopo === 'todosInimigos') sel = inimigos.filter(x => x.vivo);
+    else if (escopo === 'aliadoCaido') sel = alvos.filter(x => !x.vivo);
+    else if (escopo === 'todosCaidos') sel = l.units.filter(x => !x.vivo);
     else if (e.idx !== undefined) sel = alvos[e.idx] ? [alvos[e.idx]] : [];
     else sel = alvos;
 
     for (const t of sel) {
       if (e.t === 'dmg') {
-        let base = e.v;
-        if (e.seEncharcado && ef(t, 'encharcado')) base = e.seEncharcado;
-        if (e.seAdormecido && ef(t, 'adormecido')) base = e.seAdormecido;
-        if (e.seAliadoJaAgiu && l.units.some(x => x.uid !== u.uid && x.agiu)) base += e.seAliadoJaAgiu;
-        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot);
+        const base = danoBase(st, u, t, e, l);
+        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico });
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2));
       }
       else if (e.t === 'heal') curar(st, t, e.v);
@@ -618,6 +758,9 @@ function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, `${t.nome} está Invulnerável — efeito falhou.`); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }
+      else if (e.t === 'contador' && e.alvo !== 'self') addContador(st, t, e.nome, e.v, e.max);
+      else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, `${t.nome} recebeu Vida Extra (${e.hp}).`); }
+      else if (e.t === 'revive') reviver(st, t, e);
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, `Escudo de ${t.nome} destruído (${t.shield}).`); t.shield = 0; } }
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
       else if (e.t === 'stripBuffs') t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type));
@@ -626,9 +769,34 @@ function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
         if (i >= 0) { log(st, `${t.nome} perdeu ${t.efeitos[i].type}.`); t.efeitos.splice(i, 1); }
       }
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
-      else if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, `${u.nome} perdeu ${-e.v} de HP.`); }
       else if (e.t === 'shield') { t.shield += e.v; log(st, `${t.nome} ganhou ${e.v} de Defesa Destrutível.`); }
     }
+
+    // consumo de contador do próprio atacante: DEPOIS de escalar todos os alvos (Rá — Olho de Rá)
+    if (e.t === 'dmg' && e.consomeContador && getContador(u, e.consomeContador) > 0) {
+      log(st, `${u.nome} consome ${getContador(u, e.consomeContador)} de ${e.consomeContador}.`);
+      u.contadores[e.consomeContador] = 0;
+    }
+    // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):
+    if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, `${u.nome} perdeu ${-e.v} de HP.`); }
+    if (e.t === 'contador' && e.alvo === 'self') addContador(st, u, e.nome, e.v, e.max);
+    if (e.t === 'intercepta') {
+      const protege = e.protege === 'time' ? 'time' : (alvos[0] ? alvos[0].uid : u.uid);
+      aplicar(st, u, { type: 'intercepta', protege, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
+      if (e.contraAtaca) aplicar(st, u, { type: 'contraAtaca', v: e.contraAtaca, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
+      log(st, `${u.nome} passa a interceptar golpes${protege === 'time' ? ' do time' : ' dirigidos a um aliado'}.`);
+    }
+    if (e.t === 'armazenaDano') {
+      aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
+      log(st, `${u.nome} começa a armazenar o dano do time.`);
+    }
+    if (e.t === 'invocar') {
+      l.invocacoes.push({ nome: e.nome, tipo: e.tipo, hp: e.hp || 0, v: e.v || 0, dur: e.dur, dono: u.uid });
+      log(st, `${u.nome} invoca ${e.nome}${e.hp ? ` (${e.hp} de HP)` : ''}.`);
+      if (e.provoca && alvos[0]) aplicar(st, alvos[0], { type: 'taunt', dur: e.dur, origem: u.uid });
+    }
+    if (e.t === 'copiar') copiar(st, u, e);
+    if (e.t === 'fase') definirFase(st, e.v, e.dur);         // PRIMITIVA estado global Dia/Noite
     if (e.t === 'atordoaMenorHp') {
       const vivos = inimigos.filter(x => x.vivo);
       if (vivos.length) {
@@ -653,10 +821,50 @@ function agir(st, uid, slot, alvoUids = [], modoEscolha = null) {
       log(st, `+${e.n} orbes.`);
     }
   }
-  checarFim(st);
-  return { ok: true };
+}
+
+// -------- helpers de dano e das primitivas de execução --------
+function danoBase(st, u, t, e, l) {
+  let base = e.v;
+  if (e.seEncharcado && ef(t, 'encharcado')) base = e.seEncharcado;
+  if (e.seAdormecido && ef(t, 'adormecido')) base = e.seAdormecido;
+  if (e.seDia && st.fase === 'Dia') base = e.seDia;
+  if (e.seNoite && st.fase === 'Noite') base = e.seNoite;
+  if (e.seAliadoJaAgiu && l.units.some(x => x.uid !== u.uid && x.agiu)) base += e.seAliadoJaAgiu;
+  if (e.porContador) base += e.porContador.v * getContador(e.porContador.onde === 'alvo' ? t : u, e.porContador.nome);
+  if (e.porContadorCampo) base += e.porContadorCampo.v * contadorNoCampo(st, e.porContadorCampo.nome, e.porContadorCampo.lado === 'aliados' ? u.lado : 1 - u.lado);
+  if (e.porAliadoCaido) base += e.porAliadoCaido * caidos(st, u.lado);
+  if (e.porInimigoCaido) base += e.porInimigoCaido * caidos(st, 1 - u.lado);
+  return base;
+}
+
+// PRIMITIVA revive — traz um aliado caído de volta, salvo se ficou marcado como irrevivível
+function reviver(st, alvo, e) {
+  if (alvo.vivo) return;
+  if (alvo.naoRevive) { log(st, `${alvo.nome} não pode ser revivido.`); return; }
+  alvo.vivo = true; alvo.hp = Math.min(alvo.maxHp, e.hp); alvo.agiu = true;
+  alvo.efeitos = []; alvo.dots = []; alvo.shield = 0;
+  for (const k in alvo.cd) alvo.cd[k] = 0;
+  log(st, `${alvo.nome} foi revivido com ${alvo.hp} de HP.`);
+}
+
+// PRIMITIVA copiar habilidade — executa uma habilidade de outra fonte sem pagar o custo
+function copiar(st, u, e) {
+  if (e.fonte === 'ultimaHabilidadeAliada') {
+    const ref = st.lados[u.lado].ultHabilidade;
+    if (!ref) { log(st, `${u.nome} não encontrou uma Habilidade para copiar.`); return; }
+    log(st, `${u.nome} copia ${ref.nome}.`);
+    // alvo automático: o primeiro inimigo vivo (a cópia herda o alvo padrão da habilidade)
+    const alvo = st.lados[1 - u.lado].units.find(x => x.vivo);
+    aplicarFx(st, u, ref.fx, { alvo: ref.alvoSpec, slot: 'habilidade' }, alvo ? [alvo] : []);
+  }
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { GODS, DEFESA, ELEMS, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir, converter, planoConversao, CONV_CUSTO, totalOrbs, ef };
+  module.exports = {
+    GODS, DEFESA, ELEMS, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
+    converter, planoConversao, CONV_CUSTO, totalOrbs, ef,
+    // primitivas (para os testes exercitarem em isolamento, antes dos kits)
+    aplicarFx, bater, addContador, getContador, contadorNoCampo, definirFase, caidos, reviver,
+  };
 }
