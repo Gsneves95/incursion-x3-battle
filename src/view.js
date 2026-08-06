@@ -410,8 +410,10 @@ function overlayHTML(){
 /* ---------- SELEÇÃO / COLEÇÃO ---------- */
 const POR_PAG=30;
 const RMAP={}; ROSTER.forEach(e=>RMAP[e.key]=e);
+const KITMAP={}; if(typeof KITS!=='undefined')KITS.forEach(k=>KITMAP[k.key]=k);   // kit de design dos 100
 const temKit=k=>!!GODS[k];
 let pagina=0, filtro=0, tocado=null, vez=0, tudoLiberado=false;   // abre em LIBERADOS
+let focoPk=null;   // deus com o painel de kit aberto na seleção
 const FACCOES=['Grega','Nórdica','Egípcia','Japonesa','Chinesa','Hindu','Brasileira','Africana','Celta','Maia'];
 const FUNCOES=['Atacante','Guardião','Suporte','Controlador','Manipulador'];
 const CLASSES_G=['Físico','Mágico','Híbrido'];
@@ -439,6 +441,7 @@ function donoDe(k){return pick[0].includes(k)?0:pick[1].includes(k)?1:null;}
 function tileHTML(k){
   const g=RMAP[k], liv=liberado(k), kit=temKit(k), dono=donoDe(k);
   const cls=['pk'];
+  if(k===focoPk)cls.push('foco');
   if(liv&&kit)cls.push('livre'); else cls.push('trancado');
   if(liv&&!kit)cls.push('semkit');
   if(dono===0)cls.push('on'); if(dono===1)cls.push('on2');
@@ -496,6 +499,84 @@ function painelFiltroHTML(){
     </div></div></div>`;
 }
 
+/* ---- painel do kit (1 toque em qualquer deus, inclusive bloqueado) ---- */
+function painelKitHTML(){
+  if(!focoPk)return '';
+  const k=focoPk, g=RMAP[k], kit=KITMAP[k], liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
+  const rar=(typeof RARIDADE!=='undefined'&&RARIDADE[k])||'';
+  const linha=(rot,a)=>a?`<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
+      <span class="krow__meta">${a.custo?H(a.custo):'grátis'}${a.recarga?` · recarga ${a.recarga}`:''}</span></div>
+      <div class="krow__t">${H(a.efeito)}</div></div>`:'';
+  let acao;
+  if(dono!==null) acao=`<button class="b b--danger b--md" id="kitdel">Remover (J${dono+1})</button>`;
+  else if(!liv) acao=`<button class="b b--quiet b--md" disabled>Bloqueado</button>`;
+  else if(!jog) acao=`<button class="b b--quiet b--md" disabled>Kit em produção</button>`;
+  else if(pick[0].length>=3&&pick[1].length>=3) acao=`<button class="b b--quiet b--md" disabled>Times cheios</button>`;
+  else acao=`<button class="b b--primary b--md" id="kitadd">Adicionar (J${(pick[vez].length<3?vez:1-vez)+1})</button>`;
+  return `<div class="kpanel" id="kpanel"><div class="kbox">
+    <div class="kbox__h">
+      <span class="kbox__p">${slot('god-'+k,ini(g.nome),liv?COR(g.elem):'#8d84ad',30)}</span>
+      <div class="kbox__id"><h2>${H(g.nome)}${rar?` <span class="kbox__rar">${H(rar)}</span>`:''}</h2>
+        <span class="kbox__sub">${H(g.faccao)} · ${H(ELAB[g.elem])} · ${H(g.classe)} · ${H(g.funcao)}</span></div>
+      <span class="push">${acao}<button class="b b--quiet b--md" id="kitclose">Fechar</button></span></div>
+    <div class="kbox__b">
+      ${kit?`${linha('BÁS',kit.basico)}${linha('HAB',kit.habilidade)}${linha('MIL',kit.milagre)}
+        ${kit.passiva?`<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kit.passiva.nome)}</b></div><div class="krow__t">${H(kit.passiva.efeito)}</div></div>`:''}`
+      :`<div class="krow"><div class="krow__t">Kit em produção.</div></div>`}
+      ${!liv?`<div class="kbox__lock">⚿ Bloqueado — desbloqueie pela Provação ou por invocação. O kit é leitura pública mesmo assim.</div>`:''}
+    </div></div></div>`;
+}
+function adicionarPk(k){
+  if(!jogavel(k)||donoDe(k)!==null)return false;
+  if(pick[vez].length>=3){ if(pick[1-vez].length<3)vez=1-vez; else return false; }
+  if(pick[vez].length<3)pick[vez].push(k);
+  if(pick[vez].length===3&&pick[1-vez].length<3)vez=1-vez;
+  return true;
+}
+function removerPk(k){ const p=donoDe(k); if(p===null)return false; pick[p]=pick[p].filter(x=>x!==k); vez=p; return true; }
+function commitPk(k){ tocado=k; if(donoDe(k)!==null)removerPk(k); else adicionarPk(k); focoPk=null; }
+function previewPk(k){ tocado=k; focoPk=k; }
+// timer para distinguir 1 toque (ler kit) de 2 toques (adicionar/remover)
+let _tapT=null,_tapK=null;
+function toqueDeus(k){
+  if(_tapK===k&&_tapT){ clearTimeout(_tapT);_tapT=null;_tapK=null; commitPk(k); renderPick(); return; }
+  if(_tapT)clearTimeout(_tapT);
+  _tapK=k; _tapT=setTimeout(()=>{ _tapT=null;_tapK=null; previewPk(k); renderPick(); },260);
+}
+// arrastar um deus até um slot de time o adiciona àquele jogador
+function ligarArraste(b,k){
+  let x0,y0,ghost=null,drag=false;
+  b.addEventListener('pointerdown',e=>{
+    if(!jogavel(k)||donoDe(k)!==null)return;   // só arrasta quem dá pra adicionar
+    x0=e.clientX;y0=e.clientY;drag=false;
+    b.setPointerCapture&&b.setPointerCapture(e.pointerId);
+    const mv=ev=>{
+      if(!drag&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>8){
+        drag=true;if(_tapT){clearTimeout(_tapT);_tapT=null;_tapK=null;}
+        ghost=document.createElement('div');ghost.className='pkghost';
+        ghost.innerHTML=slot('god-'+k,ini(RMAP[k].nome),COR(RMAP[k].elem),24);
+        stage.appendChild(ghost);
+        stage.querySelectorAll('.tslot').forEach(t=>t.classList.add('drop'));
+      }
+      if(drag&&ghost){const r=stage.getBoundingClientRect();
+        ghost.style.left=(ev.clientX-r.left)+'px';ghost.style.top=(ev.clientY-r.top)+'px';}
+    };
+    const up=ev=>{
+      b.removeEventListener('pointermove',mv);b.removeEventListener('pointerup',up);
+      if(drag){
+        b._arrastou=true;
+        if(ghost)ghost.remove();
+        const el=document.elementFromPoint(ev.clientX,ev.clientY);
+        const alvo=el&&el.closest?el.closest('.tslot'):null;
+        if(alvo&&alvo.dataset.p!==undefined){ const p=+alvo.dataset.p;
+          if(donoDe(k)===null&&pick[p].length<3)pick[p].push(k); }
+        renderPick();
+      }
+    };
+    b.addEventListener('pointermove',mv);b.addEventListener('pointerup',up);
+  });
+}
+
 function renderPick(){
   const lista=listaFiltrada();
   const pags=Math.max(1,Math.ceil(lista.length/POR_PAG));
@@ -504,7 +585,7 @@ function renderPick(){
   const totalLiv=ROSTER.map(e=>e.key).filter(liberado).length;
   const pronto=pick[0].length===3&&pick[1].length===3;
 
-  const slotsTime=p=>`<div class="tslot ${p===1?'p2':''} ${vez===p?'act':''}">
+  const slotsTime=p=>`<div class="tslot ${p===1?'p2':''} ${vez===p?'act':''}" data-p="${p}">
     <span class="tslot__l">J${p+1}</span>
     ${[0,1,2].map(i=>{const k=pick[p][i];
       return `<span class="tchip ${k?'full':''}" data-tira="${p}|${i}">${
@@ -536,27 +617,27 @@ function renderPick(){
       <button class="b b--quiet b--sm" id="binvocar" title="tela de invocação (gacha)">✦ Invocar</button>
     </div>
   </div>
-  ${painelFiltroHTML()}`;
+  ${painelFiltroHTML()}
+  ${painelKitHTML()}`;
 
   const q=s=>stage.querySelector(s), qq=s=>[...stage.querySelectorAll(s)];
-  qq('.pk').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.k; tocado=k;
-    if(!jogavel(k)){renderPick();return;}
-    const dono=donoDe(k);
-    if(dono===vez){pick[vez]=pick[vez].filter(x=>x!==k);renderPick();return;}
-    if(dono!==null){renderPick();return;}
-    if(pick[vez].length>=3){
-      if(pick[1-vez].length<3){vez=1-vez;}
-      else{renderPick();return;}
-    }
-    if(pick[vez].length<3)pick[vez].push(k);
-    if(pick[vez].length===3&&pick[1-vez].length<3)vez=1-vez;
-    renderPick();});
+  // 1 toque = ler o kit · 2 toques = adicionar/remover · arrastar = soltar no slot
+  qq('.pk').forEach(b=>{
+    b.onclick=()=>{ if(b._arrastou){b._arrastou=false;return;} toqueDeus(b.dataset.k); };
+    ligarArraste(b,b.dataset.k);
+  });
   qq('[data-tira]').forEach(el=>el.onclick=()=>{
     const [p,i]=el.dataset.tira.split('|').map(Number);
-    vez=p;
-    if(pick[p][i]){tocado=pick[p][i];pick[p].splice(i,1);}
-    renderPick();});
+    if(pick[p][i])toqueDeus(pick[p][i]);
+  });
+  // painel do kit
+  const kp=q('#kpanel');
+  if(kp){
+    kp.onclick=ev=>{ if(ev.target===kp){focoPk=null;renderPick();} };
+    const ka=q('#kitadd'); if(ka)ka.onclick=()=>{adicionarPk(focoPk);focoPk=null;renderPick();};
+    const kd=q('#kitdel'); if(kd)kd.onclick=()=>{removerPk(focoPk);focoPk=null;renderPick();};
+    q('#kitclose').onclick=()=>{focoPk=null;renderPick();};
+  }
   q('#bprev').onclick=()=>{pagina--;renderPick();};
   q('#bnext').onclick=()=>{pagina++;renderPick();};
   q('#bfiltro').onclick=()=>{painelFiltro=true;renderPick();};
@@ -687,7 +768,7 @@ function ligar(){
     st.fim=`JOGADOR ${2-st.ativo} VENCE`; st.log.push({turno:st.turno,msg:`Jogador ${st.ativo+1} rendeu-se.`});
     ov=null;render();};
   const bn=q('#bnew'); if(bn)bn.onclick=()=>{
-    tela='pick';pick=[[],[]];vez=0;pagina=0;tocado=null;painelFiltro=false;
+    tela='pick';pick=[[],[]];vez=0;pagina=0;tocado=null;painelFiltro=false;focoPk=null;
     if(tick)clearInterval(tick);render();};
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
   const ls=q('#logscroll'); if(ls)ls.scrollTop=ls.scrollHeight;

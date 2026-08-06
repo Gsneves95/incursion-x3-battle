@@ -8,10 +8,11 @@ const roster = ler('src/roster_data.js');
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const raridades = ler('data/raridades.json').trim();
+const kits   = ler('data/kits.json').trim();
 const casca  = ler('src/shell.html');
 
 const saida = casca
-  .replace('/*__ENGINE__*/', roster + '\n' + motor)
+  .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

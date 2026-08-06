@@ -63,29 +63,45 @@ console.log('== 1. seleção: grade de coleção ==');
   ok(!!$('.pk.trancado .pk__n').textContent.trim(), 'o nome do bloqueado deveria aparecer');
   ok(!!$('.pk.trancado .pk__lock'), 'deveria haver marca de cadeado');
 
-  tap($('.pk.trancado'));
+  // 1 TOQUE em QUALQUER deus (inclusive bloqueado) abre o painel do kit — não adiciona
+  const lk = $('.pk.trancado').dataset.k;
+  w.eval(`previewPk("${lk}");renderPick()`);
+  ok(!!$('#kpanel'), 'tocar num deus deveria abrir o painel do kit');
+  ok($$('#kpanel .krow').length >= 4, 'o painel deveria listar Básico/Habilidade/Milagre/Passiva');
   ok(/BLOQUEADO/.test($('.finfo').textContent), 'deveria explicar que está bloqueado');
-  ok(/Rito|Provação|Ordália/.test($('.finfo').textContent), 'deveria citar a Provação/Ordália e a condição');
+  ok(/Rito|Provação|Ordália/.test($('.finfo').textContent), 'deveria citar a Provação/Ordália');
   ok(/dificuldade \d/.test($('.finfo').textContent), 'deveria dizer a dificuldade');
-  ok(w.eval('pick[0]').length === 0, 'bloqueado não pode ser escolhido');
+  ok(/Bloqueado/.test($('#kpanel').textContent), 'o kit é leitura pública mesmo bloqueado');
+  ok(w.eval('pick[0]').length === 0, 'abrir o kit de um bloqueado não adiciona');
+  tap($('#kitclose')); ok(!$('#kpanel'), 'Fechar deveria fechar o painel');
 
   // volta ao filtro de liberados para montar time
   tap($('#bfiltro')); tap($$('[data-fe]')[0]); tap($('#ffechar'));
   ok(/liberados/i.test($('#bfiltro').textContent), 'deveria voltar ao estado Liberados');
   ok($('#bgo').disabled, 'começar travado sem 3+3');
-  const livres = $$('.pk.livre');
-  ok(livres.length === 9, `deveria haver 9 liberados para escolher, há ${livres.length}`);
-  tap(livres[0]); tap(livres[1]); tap(livres[2]);
-  ok(w.eval('pick[0]').length === 3, 'J1 deveria ter 3');
+  const keys9 = $$('.pk.livre').map(b => b.dataset.k);
+  ok(keys9.length === 9, `deveria haver 9 liberados, há ${keys9.length}`);
+  const limpaTap = () => w.eval('if(_tapT){clearTimeout(_tapT);}_tapT=null;_tapK=null;');
+  const dtapK = k => { limpaTap(); const b = $(`.pk[data-k="${k}"]`); tap(b); tap(b); };   // 2 toques = commit
+
+  // 1 toque só NÃO adiciona (é leitura); 2 toques adicionam
+  limpaTap(); tap($(`.pk[data-k="${keys9[0]}"]`));
+  ok(w.eval('pick[0]').length === 0, 'um toque só não adiciona (abre o kit)');
+  dtapK(keys9[0]); dtapK(keys9[1]); dtapK(keys9[2]);
+  ok(w.eval('pick[0]').length === 3, `J1 deveria ter 3 por duplo-toque (tem ${w.eval('pick[0]').length})`);
   ok(w.eval('vez') === 1, 'a vez deveria passar ao J2 automaticamente');
   ok($$('.pk.on .pk__mark').length === 3, 'os escolhidos deveriam ter marcador do jogador');
 
-  tap($('.pk.on'));
-  ok(w.eval('pick[1]').length === 0 && w.eval('pick[0]').length === 3, 'não deveria roubar do outro jogador');
-  ok(/já escolhido/.test($('.finfo').textContent), 'deveria dizer que já foi escolhido');
+  // duplo-toque num deus JÁ no time o remove
+  dtapK(keys9[0]);
+  ok(w.eval('pick[0]').length === 2, `duplo-toque num escolhido deveria remover (tem ${w.eval('pick[0]').length})`);
 
-  tap($('[data-tira]'));
-  ok(w.eval('pick[0]').length === 2, 'tocar no slot do time deveria devolver o deus');
+  // o botão Adicionar do painel também comita (caminho explícito/acessível)
+  w.eval(`previewPk("${keys9[0]}");renderPick()`);
+  tap($('#kitadd'));
+  ok(w.eval(`pick.flat().includes("${keys9[0]}")`), 'o botão Adicionar do painel deveria recolocar o deus');
+  ok(!$('#kpanel'), 'adicionar pelo painel fecha o painel');
+  limpaTap();
 
   // critérios combináveis: OU dentro do eixo, E entre eixos
   tap($('#bfiltro'));
@@ -489,9 +505,11 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   const nomes = $$('.pk .pk__n').map(e => e.textContent.trim());
   ok(nomes.includes('Thor') && nomes.includes('Hera'), 'Thor e Hera deveriam estar na grade');
   const porNome = n => $$('.pk').find(b => b.querySelector('.pk__n').textContent.trim() === n);
-  ['Thor','Hera','Zeus'].forEach(n => tap(porNome(n)));
+  const clr = () => w.eval('if(_tapT){clearTimeout(_tapT);}_tapT=null;_tapK=null;');
+  const add = n => { clr(); const b = porNome(n); tap(b); tap(b); };   // duplo-toque adiciona
+  ['Thor','Hera','Zeus'].forEach(add);
   ok(w.eval('vez') === 1, 'deveria ter passado a vez');
-  ['Ogum','Tyr','Cuca'].forEach(n => tap(porNome(n)));
+  ['Ogum','Tyr','Cuca'].forEach(add);
   tap($('#bgo'));
   const l = S().lados[S().ativo];
   w.eval('ELEMS').forEach(e => l.orbs[e] = 9); w.eval('render()');
