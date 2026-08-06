@@ -150,6 +150,8 @@ console.log('== 1. seleção: grade de coleção ==');
   ok(!$('#bgo').disabled, 'times fixos deveriam liberar COMEÇAR');
 }
 tap($('#bgo'));
+// o cliente sorteia quem abre; nos testes fixamos o lado 0 para asserções determinísticas
+w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 
 console.log('== 2. estrutura da tela de batalha (design base) ==');
 const req = ['.stage__bg','.stage__scrim','.topbar','.timer','.timer__fill','.timer__label',
@@ -511,6 +513,7 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   ok(w.eval('vez') === 1, 'deveria ter passado a vez');
   ['Ogum','Tyr','Cuca'].forEach(add);
   tap($('#bgo'));
+  w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');   // fixa o lado 0 (starter é sorteado)
   const l = S().lados[S().ativo];
   w.eval('ELEMS').forEach(e => l.orbs[e] = 9); w.eval('render()');
 
