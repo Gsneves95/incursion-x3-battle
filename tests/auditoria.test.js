@@ -16,13 +16,27 @@ ok(E.ELEMS.length === 6, `deveriam ser 6 elementos, são ${E.ELEMS.length}`);
 
 console.log('== 1 energia por unidade VIVA por turno ==');
 {
-  const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 21);
-  ok(E.totalOrbs(st.lados[0]) === 3, `3 vivos = 3 energias, deu ${E.totalOrbs(st.lados[0])}`);
-  st.lados[0].units[2].vivo = false;
-  E.fimTurno(st); E.fimTurno(st);
-  const g = E.totalOrbs(st.lados[0]) - 3;
+  const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 21);   // lado 0 abre
+  ok(E.totalOrbs(st.lados[0]) === 1, `abertura: quem come\u00e7a recebe 1, deu ${E.totalOrbs(st.lados[0])}`);
+  E.fimTurno(st);                        // -> lado 1, 1\u00ba turno normal
+  ok(E.totalOrbs(st.lados[1]) === 3, `o 2\u00ba jogador recebe 3 (= vivos), deu ${E.totalOrbs(st.lados[1])}`);
+  st.lados[0].units[2].vivo = false;     // agora a regra por-unidade-viva num turno normal
+  const antes = E.totalOrbs(st.lados[0]);
+  E.fimTurno(st);                        // -> lado 0 de novo, 2 vivos
+  const g = E.totalOrbs(st.lados[0]) - antes;
   ok(g === 2, `com 2 vivos deveria gerar 2, gerou ${g}`);
-  console.log(`  3 vivos \u2192 3 \u00b7 2 vivos \u2192 2`);
+  console.log(`  abertura 1 \u00b7 2\u00ba jogador 3 \u00b7 depois = vivos (2)`);
+}
+
+console.log('== sorteio de quem abre a partida (comeca) ==');
+{
+  const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 21, 1);   // lado 1 abre
+  ok(st.ativo === 1 && st.starter === 1, 'o lado indicado por comeca deveria abrir');
+  ok(E.totalOrbs(st.lados[1]) === 1, `quem abre recebe 1, deu ${E.totalOrbs(st.lados[1])}`);
+  ok(E.totalOrbs(st.lados[0]) === 0, 'quem ainda não jogou não tem energia');
+  E.fimTurno(st); E.fimTurno(st);
+  ok(st.turno === 2, `o turno conta rodadas a partir de quem abriu, é ${st.turno}`);
+  console.log(`  comeca=1: lado 1 abre com 1 · rodadas contadas certo`);
 }
 
 console.log('== unidade sob controle não gera energia ==');

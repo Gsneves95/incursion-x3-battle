@@ -98,8 +98,12 @@ perde os quatro de uma vez.
 9. **Dano contínuo já aplicado atravessa Invulnerabilidade.** É a brecha
    desenhada. Sem ela, a rotação de Defesa anularia a ofensiva do jogo.
 10. **Energia:** 1 por unidade viva por turno, sorteada entre os elementos das
-    unidades vivas do time. Unidade sob controle não gera. Conversão: 3 quaisquer
-    → 1 escolhido, uma vez por turno, **paga sempre exatamente 3**.
+    unidades vivas do time (pode vir tipo que não serve — estilo NA). Unidade sob
+    controle não gera. **Abertura 1/3:** quem começa a partida é sorteado, e no
+    seu primeiro turno recebe só **1** energia (desvantagem de iniciativa); o
+    segundo jogador recebe 3; todo turno seguinte rende = unidades vivas. O sorteio
+    de quem abre é do CLIENTE (`comeca` em `novoEstado`); o motor segue determinístico.
+    Conversão: 3 quaisquer → 1 escolhido, uma vez por turno, **paga sempre exatamente 3**.
 11. **Classe pertence à HABILIDADE, não ao deus.** Físico, Mágico, Mental
     (controle) ou Aflição (DoT). É o que faz "trava as Mágicas dele" acertar
     parte do kit e não tudo. A Defesa é `Universal` e nenhum silêncio a pega.

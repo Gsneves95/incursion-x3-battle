@@ -672,7 +672,7 @@ function renderPick(){
     vez=0;renderPick();};
   q('#bgo').onclick=()=>{
     if(!(pick[0].length===3&&pick[1].length===3))return;
-    st=novoEstado(pick[0],pick[1],Math.floor(Math.random()*1e6));
+    st=novoEstado(pick[0],pick[1],Math.floor(Math.random()*1e6),Math.floor(Math.random()*2));
     tela='batalha';armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;
     iniciarRelogio();render();};
   fit();

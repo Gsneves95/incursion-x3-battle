@@ -254,16 +254,20 @@ function novaUnidade(key, idx, lado) {
   };
 }
 
-function novoEstado(timeA, timeB, seed = 1) {
+// `comeca` = lado que abre a partida (0 ou 1). Default 0 para determinismo dos
+// testes/replays; o CLIENTE sorteia (Math.random) e passa o valor — o motor
+// permanece puro. Quem abre recebe só 1 energia (abertura 1/3, estilo NA).
+function novoEstado(timeA, timeB, seed = 1, comeca = 0) {
   const st = {
-    turno: 1, ativo: 0, seed, rngN: 0, log: [], fim: null,
+    turno: 1, ativo: comeca, starter: comeca, aberturaFeita: false,
+    seed, rngN: 0, log: [], fim: null,
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
       { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
       { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
     ],
   };
-  log(st, `Turno 1 — vez do Jogador 1.`);
+  log(st, `Turno 1 — vez do Jogador ${comeca + 1} (abre a partida).`);
   iniciarTurno(st);
   return st;
 }
@@ -575,14 +579,18 @@ function iniciarTurno(st) {
     }
     if (g.dur != null) { g.dur--; if (g.dur <= 0) removerInvocacao(st, g); }
   }
-  // geração de orbes
+  // geração de orbes. Elemento sorteado entre os tipos do time (pode vir tipo
+  // que não serve — estilo NA). Abertura da partida: quem abre recebe só 1
+  // (desvantagem de iniciativa); todo turno seguinte rende = unidades vivas.
   const vivos = l.units.filter(u => u.vivo);
   const geram = vivos.filter(u => !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'dominado'));
   const tipos = [...new Set(vivos.map(u => u.elem))];
-  for (let i = 0; i < geram.length; i++) {
+  const nOrbs = st.aberturaFeita ? geram.length : 1;
+  for (let i = 0; i < nOrbs; i++) {
     const t = tipos[Math.floor(rng(st) * tipos.length)];
     l.orbs[t]++;
   }
+  if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, `Abertura: o Jogador que começa recebe 1 energia.`); }
   if (geram.length < vivos.length) log(st, `${vivos.length - geram.length} unidade(s) sob controle não geraram orbe.`);
   if (primeiro && l.units.some(u => u.key === 'ganesha')) { // passiva Ganesha
     for (let i = 0; i < 2; i++) { const t = tipos[Math.floor(rng(st) * tipos.length)]; l.orbs[t]++; }
@@ -624,7 +632,7 @@ function fimTurno(st) {
     return;
   }
   st.ativo = 1 - st.ativo;
-  if (st.ativo === 0) st.turno++;
+  if (st.ativo === st.starter) st.turno++;   // conta rodadas a partir de quem abriu
   log(st, `— Turno ${st.turno}, vez do Jogador ${st.ativo + 1} —`);
   iniciarTurno(st);
 }
