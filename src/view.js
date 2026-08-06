@@ -32,6 +32,15 @@ let st=null, tela='pick', pick=[[],[]], armado=null, alvos=[], escolhidos=[],
 
 const stage = document.getElementById('stage');
 const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// realça palavras-chave por categoria no painel de descrição (estilo Naruto-Arena).
+// Vocabulários disjuntos entre categorias -> substituição sequencial não duplo-envolve.
+const KW=[
+  ['ctrl',/(atordoa\w*|atordoad\w*|adormec\w*|silencia\w*|silenciad\w*|provoca\w*|provocad\w*|submerg\w*|submers\w*|domina\w*|dominad\w*|petrifica\w*|selad\w*|\bselo\b|controle)/gi],
+  ['dot', /(queimadura|veneno|envenena\w*|podridão|encharcad\w*|dano contínuo|maldição|sangramento)/gi],
+  ['def', /(invulner\w*|inalvej\w*|redução de dano|redução|defesa destrutível|escudo|imune\w*|imunidade|regenera\w*|vida extra)/gi],
+  ['neg', /(não pode ser (?:contra-atacad[oa]|reflet\w+|intercept\w+|reduzid[oa]|absorvid[oa]|curad[oa]|revivid[oa]|evitad[oa]|atingid[oa])|ignora [\wçãéíó]+|dano puro|perfurante)/gi],
+];
+function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span class="kw kw--${c}">${m}</span>`);}); return t; }
 
 /* ---------- escala do canvas fixo ---------- */
 function fit(){
@@ -213,7 +222,7 @@ function detalheHTML(){
       <div class="detail__body">
         <div class="detail__head"><div class="detail__name">${H(detalhe.nome)}</div>
           ${detalhe.pips||''}${detalhe.meta?`<div class="detail__sep"></div><div class="detail__cd">${H(detalhe.meta)}</div>`:''}</div>
-        <div class="detail__text">${H(detalhe.texto)}</div>
+        <div class="detail__text">${realce(detalhe.texto)}</div>
         <div class="detail__classes">${H(detalhe.classes||'')}</div>
       </div></div>`;
   }
