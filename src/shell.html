@@ -504,6 +504,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #rot p{margin:0;font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.14em;color:var(--gold-text)}
 #rot small{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-mute)}
 @media (orientation:portrait) and (max-width:900px){#rot{display:flex}#viewport{display:none}}
+#build{position:fixed;left:3px;bottom:2px;z-index:999;font:8px/1 monospace;color:rgba(227,221,247,.28);pointer-events:none;letter-spacing:.03em}
 
 /* ============ TELA DE INVOCAÇÃO (gacha) — tudo escopado em #iv ============ */
 #iv{position:absolute;inset:0;overflow:hidden;
@@ -599,6 +600,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 <body>
 <div id="rot"><div class="ph"></div><p>GIRE O APARELHO</p><small>a batalha usa a tela na horizontal</small></div>
 <div id="viewport"><div class="stage" id="stage"></div></div>
+<div id="build">build /*__BUILD__*/</div>
 
 <script>
 /*__ENGINE__*/

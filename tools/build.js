@@ -11,9 +11,13 @@ const raridades = ler('data/raridades.json').trim();
 const kits   = ler('data/kits.json').trim();
 const casca  = ler('src/shell.html');
 
+// carimbo de versão do build (hora da geração), pra saber na tela se é a versão nova
+const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
-  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc);
+  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc)
+  .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
   console.error('ERRO: marcador de injeção não substituído'); process.exit(1);
