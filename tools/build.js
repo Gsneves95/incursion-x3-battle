@@ -7,6 +7,7 @@ const motor  = ler('src/engine.js').split("if (typeof module !== 'undefined')")[
 const roster = ler('src/roster_data.js');
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
+const ia     = ler('src/ia.js').split("if (typeof module !== 'undefined')")[0];
 const raridades = ler('data/raridades.json').trim();
 const kits   = ler('data/kits.json').trim();
 const casca  = ler('src/shell.html');
@@ -16,7 +17,7 @@ const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
-  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc)
+  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

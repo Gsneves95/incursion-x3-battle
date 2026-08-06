@@ -29,6 +29,8 @@ const SYM = {
 const TURNO_SEG = 60;
 let st=null, tela='pick', pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, relogio=TURNO_SEG, tick=null, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
+let vsCPU=true, IA_LADO=1, iaAtiva=false;   // Jogador 2 controlado pela IA (modo vs CPU)
+const cpuControla=lado=>vsCPU&&lado===IA_LADO;
 
 const stage = document.getElementById('stage');
 const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -291,19 +293,21 @@ function topoHTML(){
       <span class="energy__dot" style="background:${COR(e)}"></span><span class="energy__n">${n}</span></button>`;
   }).join('');
   const mm=Math.floor(relogio/60), ss=String(relogio%60).padStart(2,'0');
-  const jog=p=>`<div class="player ${p==='enemy'?'player--enemy':''} ${(p==='enemy')===(st.ativo===0)?'':'dim'}">
+  const jog=p=>{const side=p==='enemy'?1-st.ativo:st.ativo;
+    const nome=cpuControla(side)?'CPU':'JOGADOR '+(side+1);
+    return `<div class="player ${p==='enemy'?'player--enemy':''} ${(p==='enemy')===(st.ativo===0)?'':'dim'}">
       ${p==='enemy'?'':`<div class="player__avatar">${slot('player-1-avatar','I',null,14)}</div>`}
       <div class="player__meta">
-        <div class="player__name">${p==='enemy'?'JOGADOR 2':'JOGADOR 1'}</div>
+        <div class="player__name">${nome}</div>
       </div>
       ${p==='enemy'?`<div class="player__avatar">${slot('player-2-avatar','K',null,14)}</div>`:''}
-    </div>`;
+    </div>`;};
   return `<header class="topbar">
     ${jog('ally')}
     <div class="turnbox">
       <div class="timer ${relogio<=10?'low':''}">
         <div class="timer__fill" style="width:${Math.round(relogio/TURNO_SEG*100)}%"></div>
-        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 JOGADOR ${st.ativo+1} \u00b7 ${mm}:${ss}</div>
+        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 ${cpuControla(st.ativo)?'CPU':'JOGADOR '+(st.ativo+1)} \u00b7 ${mm}:${ss}</div>
       </div>
       <div class="energy">${pills}
         <button class="b b--sec b--sm" id="btrocar" ${l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
@@ -657,6 +661,7 @@ function renderPick(){
       <button class="b b--quiet b--sm" id="brand">Sortear</button>
       <span class="finfo">${infoHTML()}</span>
       <span class="fpage">${totalLiv}/${ROSTER.length} LIBERADOS \u00b7 PÁG ${pagina+1}/${pags}</span>
+      <button class="b ${vsCPU?'b--sec':'b--quiet'} b--sm" id="bcpu" title="quem controla o Jogador 2">${vsCPU?'Oponente: CPU':'Oponente: 2 jogadores'}</button>
       <button class="b ${tudoLiberado?'b--sec':'b--quiet'} b--sm" id="bteste" title="afordância de protótipo">${tudoLiberado?'Teste: on':'Teste'}</button>
       <button class="b b--quiet b--sm" id="binvocar" title="tela de invocação (gacha)">✦ Invocar</button>
     </div>
@@ -700,6 +705,7 @@ function renderPick(){
     if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
     renderPick();};
   q('#binvocar').onclick=()=>{tela='invocacao';render();};
+  { const bc=q('#bcpu'); if(bc)bc.onclick=()=>{vsCPU=!vsCPU;renderPick();}; }
   q('#brand').onclick=()=>{
     const pool=ROSTER.map(e=>e.key).filter(jogavel);
     for(const p of[0,1]){const c=[...pool].filter(k=>!pick[1-p].includes(k));pick[p]=[];
@@ -726,7 +732,7 @@ function iniciarRelogio(){
     const lb=stage.querySelector('.timer__label');
     if(f)f.style.width=Math.round(relogio/TURNO_SEG*100)+'%';
     if(t)t.classList.toggle('low',relogio<=10);
-    if(lb)lb.textContent=`TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 JOGADOR ${st.ativo+1} \u00b7 0:${String(relogio).padStart(2,'0')}`;
+    if(lb)lb.textContent=`TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 ${cpuControla(st.ativo)?'CPU':'JOGADOR '+(st.ativo+1)} \u00b7 0:${String(relogio).padStart(2,'0')}`;
   },1000);
 }
 
@@ -828,12 +834,14 @@ function ligar(){
     if(tick)clearInterval(tick);render();};
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
   const ls=q('#logscroll'); if(ls)ls.scrollTop=ls.scrollHeight;
+  talvezIA();   // se for a vez da CPU, ela joga sozinha
 }
 
-function encerrarTurno(){
+function encerrarTurno(forcar){
+  if(!forcar && cpuControla(st.ativo)) return;   // o humano não encerra o turno da CPU
   // energia livre é escolhida no FIM do turno: se há dívida, abre a alocação primeiro
   const l=st.lados[st.ativo];
-  if((l.dividaLivre||0)>0 && ov!=='livre'){
+  if(!forcar && (l.dividaLivre||0)>0 && ov!=='livre'){
     ov='livre'; livrePlano={}; armado=null;alvos=[];escolhidos=[];detalhe=null;menuAberto=false; render(); return;
   }
   fimTurno(st); armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;
@@ -841,7 +849,20 @@ function encerrarTurno(){
   relogio=TURNO_SEG; render();
 }
 
+// ---- IA do oponente ----
+function talvezIA(){
+  if(iaAtiva||tela!=='batalha'||st.fim||!cpuControla(st.ativo))return;
+  iaAtiva=true; setTimeout(passoIA,600);
+}
+function passoIA(){
+  if(tela!=='batalha'||st.fim||!cpuControla(st.ativo)){iaAtiva=false;return;}
+  const a=iaProximaAcao(st);
+  if(a){ agir(st,a.uid,a.slot,a.alvos,a.escolhas); armado=null;alvos=[];escolhidos=[];detalhe=null; render(); setTimeout(passoIA,750); }
+  else { iaAtiva=false; encerrarTurno(true); }
+}
+
 function armar(uid,slot){
+  if(cpuControla(st.ativo))return;   // sem input humano no turno da CPU
   detalhe=null;menuAberto=false;
   if(armado&&armado.uid===uid&&armado.slot===slot){armado=null;alvos=[];escolhidos=[];render();return;}
   const u=st.lados[st.ativo].units.find(x=>x.uid===uid);

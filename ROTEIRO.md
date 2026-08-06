@@ -98,6 +98,12 @@ Guardar estado inicial + lista de ações. Reproduz qualquer partida.
 
 Simula 2–3 turnos à frente, avalia vida, energia, recargas e ameaça de abate.
 
+**Já existe uma versão base:** IA gulosa de 1 lance (`src/ia.js`) — clona o estado,
+aplica cada ação candidata pelo próprio motor, pontua a posição (vida aliada − vida
+inimiga, bônus por abate/controle/veneno) e escolhe o melhor ganho positivo. Controla
+o Jogador 2 no modo vs CPU (ligado por padrão). Falta a busca em profundidade real
+(2–3 turnos à frente) e os níveis de dificuldade (item 11).
+
 **Depende de:** os 91 deuses
 
 **Por que nesta ordem:** Informação perfeita, turnos discretos e poucas ações por turno: território ideal. Uma IA assim joga melhor que a maioria dos humanos no ranking baixo — 'offline é mais fácil' é escolha sua, não lei.

@@ -17,12 +17,13 @@ O raciocínio completo está em `DECISOES.md`.
 | | |
 |---|---|
 | Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas de efeito prontas** (destravam os 89 restantes) |
-| Cliente | 3 telas: seleção/coleção, batalha (hot-seat) e **invocação (gacha)** |
-| Testes | 6 suítes, todas verdes (motor, capacidades, primitivas, auditoria, interface, invocação) |
+| Cliente | 3 telas: seleção/coleção, batalha (hot-seat **ou vs CPU**) e **invocação (gacha)** |
+| CPU | **IA gulosa de 1 lance** controla o Jogador 2 (ligada por padrão; alterna em "Oponente" na seleção). Início da Fase 2 |
+| Testes | 7 suítes, todas verdes (motor, capacidades, primitivas, auditoria, ia, interface, invocação) |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 
-Rodar: `npm test` roda as 4 suítes. `npm run build` gera `dist/incursion.html`,
+Rodar: `npm test` roda as 7 suítes. `npm run build` gera `dist/incursion.html`,
 um arquivo único que abre no navegador sem servidor.
 
 ---

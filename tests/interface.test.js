@@ -11,6 +11,7 @@ const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
 const tap = el => { if (!el) { ok(false, 'elemento ausente'); return; } el.dispatchEvent(new w.MouseEvent('click', { bubbles: true })); };
 const S = () => w.eval('st');
 const encher = () => { const l = S().lados[S().ativo]; w.eval('ELEMS').forEach(e => l.orbs[e] = 6); w.eval('render()'); };
+w.eval('vsCPU=false');   // a suíte dirige os dois lados por toque; testa hot-seat (a IA tem suíte própria)
 
 console.log('== 0. arte dos 100 deuses ==');
 {
