@@ -16,7 +16,7 @@ PvP.
 ```bash
 npm install          # só jsdom, e só para os testes
 npm run build        # gera dist/incursion.html
-npm test             # 5 suítes (motor, capacidades, primitivas, auditoria, interface)
+npm test             # 6 suítes (motor, capacidades, primitivas, auditoria, interface, invocação)
 ```
 
 Abra `dist/incursion.html` no navegador. **Nenhum servidor é necessário** — é um
@@ -97,9 +97,9 @@ existir.
 | | |
 |---|---|
 | Motor | **11 dos 100** deuses implementados; **as 12 primitivas de efeito prontas** |
-| Cliente | seleção/coleção e batalha |
+| Cliente | seleção/coleção, batalha e invocação (gacha) |
 | Servidor | não existe, e é de propósito (ver `ROTEIRO.md` fase 4) |
-| Testes | 5 suítes verdes |
+| Testes | 6 suítes verdes |
 
 Próximo passo em `ROTEIRO.md` (item 7): a **arena de auto-jogo** — o motor contra
 si mesmo por seed, para balancear os 100 deuses antes de escrever os 89 kits

@@ -17,8 +17,8 @@ O raciocínio completo está em `DECISOES.md`.
 | | |
 |---|---|
 | Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas de efeito prontas** (destravam os 89 restantes) |
-| Cliente | 2 telas: seleção/coleção e batalha (hot-seat, dois jogadores na mesma tela) |
-| Testes | 5 suítes, todas verdes (motor, capacidades, primitivas, auditoria, interface) |
+| Cliente | 3 telas: seleção/coleção, batalha (hot-seat) e **invocação (gacha)** |
+| Testes | 6 suítes, todas verdes (motor, capacidades, primitivas, auditoria, interface, invocação) |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 

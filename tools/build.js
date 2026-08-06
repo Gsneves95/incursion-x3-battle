@@ -6,11 +6,13 @@ const ler = p => fs.readFileSync(path.join(raiz, p), 'utf8');
 const motor  = ler('src/engine.js').split("if (typeof module !== 'undefined')")[0];
 const roster = ler('src/roster_data.js');
 const visao  = ler('src/view.js');
+const invoc  = ler('src/invocacao.js');
+const raridades = ler('data/raridades.json').trim();
 const casca  = ler('src/shell.html');
 
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor)
-  .replace('/*__VIEW__*/', visao);
+  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
   console.error('ERRO: marcador de injeção não substituído'); process.exit(1);

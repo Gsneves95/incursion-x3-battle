@@ -304,8 +304,10 @@ function topoHTML(){
 }
 
 /* ---------- render ---------- */
+function voltarInvocacao(){tela='pick';render();}
 function render(){
   if(tela==='pick'){renderPick();return;}
+  if(tela==='invocacao'){INV.montar();return;}
   const l=st.lados[st.ativo], o=st.lados[1-st.ativo];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
@@ -531,6 +533,7 @@ function renderPick(){
       <span class="finfo">${infoHTML()}</span>
       <span class="fpage">${totalLiv}/${ROSTER.length} LIBERADOS \u00b7 PÁG ${pagina+1}/${pags}</span>
       <button class="b ${tudoLiberado?'b--sec':'b--quiet'} b--sm" id="bteste" title="afordância de protótipo">${tudoLiberado?'Teste: on':'Teste'}</button>
+      <button class="b b--quiet b--sm" id="binvocar" title="tela de invocação (gacha)">✦ Invocar</button>
     </div>
   </div>
   ${painelFiltroHTML()}`;
@@ -571,6 +574,7 @@ function renderPick(){
   q('#bteste').onclick=()=>{tudoLiberado=!tudoLiberado;pagina=0;
     if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
     renderPick();};
+  q('#binvocar').onclick=()=>{tela='invocacao';render();};
   q('#brand').onclick=()=>{
     const pool=ROSTER.map(e=>e.key).filter(jogavel);
     for(const p of[0,1]){const c=[...pool].filter(k=>!pick[1-p].includes(k));pick[p]=[];
