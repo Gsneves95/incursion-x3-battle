@@ -51,6 +51,33 @@ console.log('== unidade sob controle não gera energia ==');
   console.log(`  1 adormecido de 3 \u2192 gerou ${g}`);
 }
 
+console.log('== energia livre escolhida no FIM do turno ==');
+{
+  const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 31, 0);
+  const l = st.lados[0];
+  E.ELEMS.forEach(e => l.orbs[e] = 0); l.orbs['Tempestade'] = 3; l.orbs['Chama'] = 2; l.dividaLivre = 0;
+  E.agir(st, l.units[0].uid, 'milagre', []);   // Ira Celestial: 2 Tempestade + 1 livre
+  ok(l.orbs['Tempestade'] === 1, `o específico paga na hora (Tempestade 3→1), é ${l.orbs['Tempestade']}`);
+  ok(l.dividaLivre === 1, `o 'livre' vira dívida do turno, é ${l.dividaLivre}`);
+  ok(l.orbs['Chama'] === 2, 'nenhum orbe livre foi gasto ainda');
+  const r = E.alocarLivre(st, { Chama: 1 });
+  ok(r.ok && l.orbs['Chama'] === 1 && l.dividaLivre === 0, 'o jogador escolhe pagar o livre com Chama, quitando a dívida');
+  const r2 = E.alocarLivre(st, { Chama: 2 });
+  ok(!r2.ok, 'não pode alocar mais do que deve');
+  console.log(`  específico na hora · 1 livre escolhido como Chama no fim`);
+}
+{ // rede de segurança: sem escolher, o fimTurno aloca sozinho
+  const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 33, 0);
+  const l = st.lados[0];
+  E.ELEMS.forEach(e => l.orbs[e] = 0); l.orbs['Tempestade'] = 3; l.orbs['Maré'] = 2;
+  E.agir(st, l.units[0].uid, 'milagre', []);
+  ok(l.dividaLivre === 1, 'dívida de 1 pendente');
+  const antes = E.totalOrbs(l);
+  E.fimTurno(st);
+  ok(l.dividaLivre === 0 && E.totalOrbs(l) === antes - 1, 'ao encerrar sem escolher, aloca sozinho (−1 orbe)');
+  console.log(`  sem escolher: o fim do turno quita a dívida (−1)`);
+}
+
 console.log('== Defesa universal: 1 livre, recarga 4, invulnerável 1 turno ==');
 {
   const st = E.novoEstado(['zeus','zeus','zeus'], ['ogum','ogum','ogum'], 27);

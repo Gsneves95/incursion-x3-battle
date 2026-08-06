@@ -103,6 +103,10 @@ perde os quatro de uma vez.
     seu primeiro turno recebe só **1** energia (desvantagem de iniciativa); o
     segundo jogador recebe 3; todo turno seguinte rende = unidades vivas. O sorteio
     de quem abre é do CLIENTE (`comeca` em `novoEstado`); o motor segue determinístico.
+    **Custo "livre" é escolhido no FIM do turno:** o custo específico paga na hora,
+    mas a parte livre vira dívida do turno (`l.dividaLivre`) e o jogador escolhe
+    quais orbes a pagam ao ENCERRAR (`alocarLivre`); se não escolher, o motor aloca
+    do pool mais cheio (rede de segurança). `podePagar`/conversão já descontam a dívida.
     Conversão: 3 quaisquer → 1 escolhido, uma vez por turno, **paga sempre exatamente 3**.
 11. **Classe pertence à HABILIDADE, não ao deus.** Físico, Mágico, Mental
     (controle) ou Aflição (DoT). É o que faz "trava as Mágicas dele" acertar

@@ -263,8 +263,8 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0) {
     seed, rngN: 0, log: [], fim: null,
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
     ],
   };
   log(st, `Turno 1 — vez do Jogador ${comeca + 1} (abre a partida).`);
@@ -499,18 +499,35 @@ function totalOrbs(l) { return ELEMS.reduce((s, e) => s + l.orbs[e], 0); }
 function podePagar(l, cost) {
   const esp = { ...cost }; const livre = esp.livre || 0; delete esp.livre;
   for (const k in esp) if (l.orbs[k] < esp[k]) return false;
-  let sobra = totalOrbs(l);
+  let sobra = totalOrbs(l) - (l.dividaLivre || 0);   // orbes já reservados p/ a dívida livre não contam
   for (const k in esp) sobra -= esp[k];
   return sobra >= livre;
 }
 
+// A parte "livre" do custo NÃO é paga na hora: vira dívida do turno, e o jogador
+// escolhe quais orbes pagam no FIM do turno (alocarLivre). O específico paga já.
 function pagar(st, l, cost) {
-  const esp = { ...cost }; let livre = esp.livre || 0; delete esp.livre;
+  const esp = { ...cost }; const livre = esp.livre || 0; delete esp.livre;
   for (const k in esp) l.orbs[k] -= esp[k];
-  while (livre > 0) {                                              // gasta do pool mais cheio
+  l.dividaLivre = (l.dividaLivre || 0) + livre;
+}
+function pagarLivreGuloso(l, n) {   // rede de segurança: gasta do pool mais cheio
+  while (n > 0) {
     const alvo = ELEMS.slice().sort((a, b) => l.orbs[b] - l.orbs[a])[0];
-    l.orbs[alvo]--; livre--;
+    if (l.orbs[alvo] <= 0) break;
+    l.orbs[alvo]--; n--;
   }
+}
+// escolha do jogador de quais orbes pagam a dívida livre do turno
+function alocarLivre(st, plano) {
+  const l = st.lados[st.ativo], devido = l.dividaLivre || 0;
+  let soma = 0; for (const k in plano) soma += plano[k];
+  if (soma !== devido) return { ok: false, erro: `Aloque exatamente ${devido} energia(s) livre(s).` };
+  for (const k in plano) if ((l.orbs[k] || 0) < plano[k]) return { ok: false, erro: 'Orbes insuficientes.' };
+  for (const k in plano) l.orbs[k] -= plano[k];
+  l.dividaLivre = 0;
+  log(st, `Energia livre paga: ${Object.entries(plano).filter(([, n]) => n > 0).map(([e, n]) => `${n} ${e}`).join(', ') || '—'}.`);
+  return { ok: true };
 }
 
 const CONV_CUSTO = 3;   // 3 quaisquer -> 1 do tipo escolhido. Saldo líquido: -2.
@@ -535,6 +552,7 @@ function planoConversao(l, para) {
 function converter(st, para) {
   const l = st.lados[st.ativo];
   if (l.converteu) return { ok: false, erro: 'A conversão já foi usada neste turno.' };
+  if (totalOrbs(l) - (l.dividaLivre || 0) < CONV_CUSTO) return { ok: false, erro: `São necessários ${CONV_CUSTO} orbes livres (fora a dívida de energia livre).` };
   const gasto = planoConversao(l, para);
   if (!gasto) return { ok: false, erro: `São necessários ${CONV_CUSTO} orbes.` };
   let pagos = 0;
@@ -554,6 +572,7 @@ function iniciarTurno(st) {
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
   l.estreou = true;
   l.converteu = false;
+  l.dividaLivre = 0;               // a dívida do turno anterior já foi quitada no fimTurno
 
   for (const u of l.units) {
     if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 40; log(st, `Nezha renasceu com 40 de HP.`); }
@@ -601,6 +620,8 @@ function iniciarTurno(st) {
 
 function fimTurno(st) {
   const l = st.lados[st.ativo];
+  // dívida de energia livre não escolhida pelo jogador: aloca sozinha (rede de segurança)
+  if (l.dividaLivre > 0) { pagarLivreGuloso(l, l.dividaLivre); log(st, `${l.dividaLivre} energia(s) livre(s) alocada(s) automaticamente.`); l.dividaLivre = 0; }
   // PRIMITIVA dano armazenado — libera ao expirar (Xangô devolve como dano puro)
   for (const u of l.units) {
     const arm = ef(u, 'armazenaDano');
@@ -871,7 +892,7 @@ function copiar(st, u, e) {
 if (typeof module !== 'undefined') {
   module.exports = {
     GODS, DEFESA, ELEMS, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
-    converter, planoConversao, CONV_CUSTO, totalOrbs, ef,
+    converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
     aplicarFx, bater, addContador, getContador, contadorNoCampo, definirFase, caidos, reviver,
   };

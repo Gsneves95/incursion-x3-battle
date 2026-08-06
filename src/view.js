@@ -28,7 +28,7 @@ const SYM = {
 
 const TURNO_SEG = 60;
 let st=null, tela='pick', pick=[[],[]], armado=null, alvos=[], escolhidos=[],
-    ov=null, detalhe=null, hpAnt={}, relogio=TURNO_SEG, tick=null, peek=null, abaFoe=null, convAlvo=null, menuAberto=false;
+    ov=null, detalhe=null, hpAnt={}, relogio=TURNO_SEG, tick=null, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
 
 const stage = document.getElementById('stage');
 const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -332,7 +332,7 @@ function render(){
     ${detalheHTML()}
     <button class="b b--primary b--lg endturn" id="bend">
       <span class="endturn__l1">Encerrar turno</span>
-      <span class="endturn__hint">${prontas?prontas+(prontas>1?' unidades a agir':' unidade a agir'):'todas agiram'}</span>
+      <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' unidades a agir':' unidade a agir'):'todas agiram')}</span>
     </button>
   </footer>
   ${overlayHTML()}`;
@@ -376,7 +376,30 @@ function trocaHTML(){
     </div></div></div>`;
 }
 
+function livreHTML(){
+  const l=st.lados[st.ativo], devido=l.dividaLivre||0;
+  const escolhido=ELEMS.reduce((s,e)=>s+(livrePlano[e]||0),0);
+  const faltam=devido-escolhido;
+  const opts=ELEMS.map(e=>{
+    const disp=l.orbs[e]||0, m=livrePlano[e]||0;
+    return `<button class="copt ${m>0?'on':''}" data-lv="${e}" ${disp>0?'':'disabled'}>
+      <span class="copt__d" style="background:${COR(e)}"></span>
+      <span class="copt__n">${H(ELAB[e])}</span>
+      <span class="copt__q">${m}/${disp}</span></button>`;}).join('');
+  return `<div class="ov" id="ovlivre"><div class="cbox">
+    <div class="cbox__h"><h2>Pagar energia livre</h2>
+      <span>escolha <b>${devido}</b> ${devido>1?'orbes':'orbe'} · ${faltam>0?`faltam ${faltam}`:'pronto'}</span></div>
+    <div class="cbox__b">
+      <div class="cbox__lbl">Quais orbes pagam o custo livre deste turno?</div>
+      <div class="cgrid">${opts}</div></div>
+    <div class="cbox__f">
+      <button class="b b--quiet b--md" id="lvlimpar">Limpar</button>
+      <button class="b b--ok b--md" id="lvok" ${faltam===0?'':'disabled'}>Confirmar e encerrar</button>
+    </div></div></div>`;
+}
+
 function overlayHTML(){
+  if(ov==='livre')return livreHTML();
   if(ov==='conv')return trocaHTML();
   if(st.fim){
     return `<div class="ov"><div class="ovbox"><div class="result">
@@ -755,6 +778,18 @@ function ligar(){
     if(!r.ok)st.log.push({turno:st.turno,msg:'\u2717 '+r.erro});
     ov=null;convAlvo=null;render();};
   const oc=q('#ovconv'); if(oc)oc.onclick=ev=>{if(ev.target===oc){ov=null;convAlvo=null;render();}};
+  // overlay de energia livre (escolha no fim do turno)
+  stage.querySelectorAll('[data-lv]').forEach(b=>{if(b.disabled)return;
+    b.onclick=()=>{ const e=b.dataset.lv, l=st.lados[st.ativo];
+      const escolhido=ELEMS.reduce((s,x)=>s+(livrePlano[x]||0),0), faltam=(l.dividaLivre||0)-escolhido, m=livrePlano[e]||0;
+      if(m<(l.orbs[e]||0)&&faltam>0)livrePlano[e]=m+1; else livrePlano[e]=0;   // clique cicla; se cheio, zera
+      render();};});
+  const ll=q('#lvlimpar'); if(ll)ll.onclick=()=>{livrePlano={};render();};
+  const lo=q('#lvok'); if(lo&&!lo.disabled)lo.onclick=()=>{
+    const r=alocarLivre(st,livrePlano);
+    if(r.ok){ov=null;livrePlano={};encerrarTurno();}
+    else{st.log.push({turno:st.turno,msg:'✗ '+r.erro});render();}};
+  const ol=q('#ovlivre'); if(ol)ol.onclick=ev=>{if(ev.target===ol){ov=null;livrePlano={};render();}};
   const bl=q('#blog'); if(bl)bl.onclick=()=>{ov=ov==='log'?null:'log';menuAberto=false;render();};
   const bm=q('#bmenu'); if(bm)bm.onclick=()=>{menuAberto=!menuAberto;render();};
   const bh=q('#bhelp'); if(bh)bh.onclick=()=>{ov='help';menuAberto=false;render();};
@@ -784,8 +819,13 @@ function ligar(){
 }
 
 function encerrarTurno(){
+  // energia livre é escolhida no FIM do turno: se há dívida, abre a alocação primeiro
+  const l=st.lados[st.ativo];
+  if((l.dividaLivre||0)>0 && ov!=='livre'){
+    ov='livre'; livrePlano={}; armado=null;alvos=[];escolhidos=[];detalhe=null;menuAberto=false; render(); return;
+  }
   fimTurno(st); armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;
-  ov=null;menuAberto=false;
+  ov=null;livrePlano={};menuAberto=false;
   relogio=TURNO_SEG; render();
 }
 
