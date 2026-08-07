@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#05040c">
-<!-- modo app (F0.6 passo 3): tela cheia quando instalado na tela inicial -->
+<!-- modo app (F0.6 passo 3): manifest e ícones REAIS servidos no Pages (não blob:,
+     que o Chrome recusa para instalação — start_url inválido). No dist de dev o build
+     copia estes arquivos para junto do incursion.html. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- tela cheia quando instalado na tela inicial -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

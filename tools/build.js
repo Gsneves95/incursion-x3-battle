@@ -88,5 +88,13 @@ if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
 fs.mkdirSync(path.join(raiz, 'dist'), { recursive: true });
 const distAbs = path.join(raiz, 'dist/incursion.html');
 fs.writeFileSync(distAbs, saida);
+
+// assets do modo app (manifest + ícones): arquivos REAIS servidos no Pages. Copiados
+// para junto do incursion.html para o dist de dev também os encontrar. O invariante
+// "arquivo único" vale para o incursion.html; o artefato publicado é um site pequeno.
+const web = path.join(raiz, 'web');
+if (fs.existsSync(web)) for (const f of fs.readdirSync(web))
+  fs.copyFileSync(path.join(web, f), path.join(raiz, 'dist', f));
+
 smokeCarga(distAbs);
 console.log('dist/incursion.html —', (saida.length / 1024 / 1024).toFixed(2), 'MB · direção ui ok · smoke ok');

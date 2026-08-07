@@ -19,12 +19,25 @@ O raciocínio completo está em `DECISOES.md`.
 | Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas implementadas**, mas só **1 provada por kit real** (2 alvos); as outras 11 aguardam um deus que as use (ver `docs/inventario.md` §2b) |
 | Cliente | 3 telas: seleção/coleção, batalha (hot-seat **ou vs CPU**) e **invocação (gacha)** |
 | CPU | **IA gulosa de 1 lance** controla o Jogador 2 (ligada por padrão; alterna em "Oponente" na seleção). Início da Fase 2 |
-| Testes | 9 suítes, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia, rotas, interface, invocação) |
+| Testes | 10 suítes, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia, rotas, interface, invocação, **moldura**). A `moldura` roda em Chromium real (`playwright`); as outras 9 são jsdom |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 
-Rodar: `npm test` roda as 9 suítes. `npm run build` gera `dist/incursion.html`,
-um arquivo único que abre no navegador sem servidor.
+Rodar: `npm test` roda as 10 suítes (a `moldura` precisa de Chromium — `npx playwright
+install chromium`). `npm run build` gera `dist/incursion.html`.
+
+### Invariante do "arquivo único" — escopo (decisão do dono, F0.6)
+O **`incursion.html` de desenvolvimento** é um arquivo único, auto-contido, que abre no
+navegador sem servidor: dados embutidos (`KITS`/`RARIDADE`/`ECONOMIA`), zero `fetch`. Isso
+vale para o **`.html`** — é o que dá o ciclo rápido e o "abre e roda".
+
+Isso **NÃO** vale para o **artefato publicado**. O site do Pages é pequeno mas com mais de
+um arquivo: `index.html` + `manifest.webmanifest` + `icon-192.png` + `icon-512.png`. O
+manifest e os ícones **têm** de ser arquivos reais servidos por HTTP — um `manifest` por
+`blob:`/`data:` o Chrome **recusa para instalação** (`start_url` não resolve; provado por
+CDP `getInstallabilityErrors`). Os assets moram em `web/`; o `build.js` os copia para o
+`dist/` e o `pages.yml` para o `site/`. Forçar o manifest para dentro do `.html` custava
+mais (PWA que não instala) do que o invariante valia.
 
 ---
 

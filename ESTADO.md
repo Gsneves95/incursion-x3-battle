@@ -18,9 +18,12 @@ reserva) num lugar só, descontando safe areas (zero no aparelho, sem desconto d
 Refit em resize/orientationchange (+250ms atrasado)/visualViewport. Rect novo medido em
 726×312: **L25 T0 R701 B312, sem ⚠**, sem rolagem — palco 675×312 centrado. `interface.test`
 linha 609 passou a extrair a escala do `scale(...)` (método de medição, asserção intacta).
-Dono confirmou no aparelho. **Passo 3 (modo app):** manifest embutido em **runtime (Blob URL
-+ 2 ícones canvas 192/512)** — o deploy publica só o arquivo único, então nada de arquivo
-`.webmanifest` solto; `display:fullscreen`, `orientation:landscape`, tema `#05040c`.
+Dono confirmou no aparelho. **Passo 3 (modo app):** manifest + 2 ícones (192/512) como
+**ARQUIVOS REAIS** em `web/`, servidos no Pages. Tentei primeiro embutir por Blob (arquivo
+único), mas o CDP provou que o Chrome **recusa instalar** manifest `blob:`
+(`start-url-not-valid`); com arquivos reais o `getInstallabilityErrors` fica **vazio**.
+Dono decidiu: o invariante "arquivo único" vale para o dist de dev, não p/ o publicado
+(registrado no CLAUDE.md). `display:fullscreen`, `orientation:landscape`, tema `#05040c`.
 `requestFullscreen` oferecido no **1º gesto** (once, try/catch — oferece, não força), saída
 no menu ⋯ ("Tela cheia"/"Sair da tela cheia"), refit em `fullscreenchange`. Guarda de
 jsdom (`/jsdom/` no UA) evita o "Not implemented" do canvas no smoke. **UX:** painel de
@@ -146,9 +149,11 @@ técnica de duas camadas.
   rotas, interface, invocacao, **moldura**). A `moldura` roda em Chromium real
   (`playwright` devDep) — a única que precisa de navegador; as outras 9 são jsdom.
 - **Enquadramento/modo app (F0.6):** palco fixo centralizado (`translate(-50%,-50%)
-  scale`), escala por `visualViewport`; manifest embutido em runtime (Blob + ícones
-  canvas), `requestFullscreen` no 1º toque (uma vez por sessão), saída no menu ⋯,
-  refit em `fullscreenchange`. Painel de diagnóstico atrás de `?diag`/3-toques, com ✕.
+  scale`), escala por `visualViewport`; **manifest + ícones como ARQUIVOS REAIS** em
+  `web/` (o blob: não instala — Chrome recusa por `start_url` inválido, provado por CDP;
+  o `build.js` copia p/ `dist/` e o `pages.yml` p/ `site/`). `requestFullscreen` no 1º
+  toque (uma vez por sessão), saída no menu ⋯, refit em `fullscreenchange`. Painel de
+  diagnóstico atrás de `?diag`/3-toques, com ✕.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
 - **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).

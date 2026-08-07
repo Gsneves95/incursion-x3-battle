@@ -114,8 +114,10 @@ function ligarDiag(){
 /* ---------- modo app (F0.6, passo 3) ----------
    Tela cheia ganha ~15% de escala no aparelho (a barra do navegador come 74×48px).
    requestFullscreen só vale APÓS um gesto — por isso a oferta mora no 1º toque; se o
-   navegador recusar, o jogo segue normal. O manifest é embutido em runtime (Blob) para
-   não quebrar o invariante do arquivo único — o deploy publica só o dist. */
+   navegador recusar, o jogo segue normal. O manifest é ARQUIVO REAL servido no Pages
+   (link estático no <head>): blob: quebra a instalação (start_url inválido, provado por
+   CDP). O invariante "arquivo único" vale para o dist de dev, não para o artefato
+   publicado — ver CLAUDE.md. */
 function estaTelaCheia(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
 function pedirTelaCheia(){
   const de=document.documentElement, fn=de.requestFullscreen||de.webkitRequestFullscreen;
@@ -128,38 +130,6 @@ function sairTelaCheia(){
 }
 function alternarTelaCheia(){ if(estaTelaCheia())sairTelaCheia(); else pedirTelaCheia().catch(()=>{}); }
 
-// ícone PNG desenhado em canvas (emblema de bronze); null se o ambiente não tem canvas
-// (jsdom) — aí o manifest sai sem ícones, sem erro.
-function iconeApp(px){
-  try{
-    const c=document.createElement('canvas'); c.width=c.height=px;
-    const g=c.getContext&&c.getContext('2d'); if(!g)return null;
-    g.fillStyle='#05040c'; g.fillRect(0,0,px,px);
-    g.strokeStyle='#d8b25a'; g.lineWidth=Math.max(2,px*0.02);
-    const m=px*0.13; g.strokeRect(m,m,px-2*m,px-2*m);
-    g.fillStyle='#e8d9a0'; g.textAlign='center'; g.textBaseline='middle';
-    g.font='700 '+Math.round(px*0.4)+'px Cinzel,Georgia,serif';
-    g.fillText('IX', px/2, px*0.54);
-    return c.toDataURL('image/png');
-  }catch(e){ return null; }
-}
-function gerarManifesto(){
-  // jsdom (testes) não tem canvas/URL de verdade e loga "Not implemented" — pula sem tocar.
-  if(typeof navigator!=='undefined' && /jsdom/i.test(navigator.userAgent||''))return;
-  try{
-    const i192=iconeApp(192), i512=iconeApp(512), icons=[];
-    if(i192)icons.push({src:i192,sizes:'192x192',type:'image/png',purpose:'any'});
-    if(i512)icons.push({src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'});
-    const man={ name:'INCURSION x3 Battle', short_name:'INCURSION',
-      description:'Combate tático 3v3 por turnos.',
-      display:'fullscreen', orientation:'landscape', start_url:'.', scope:'.',
-      background_color:'#05040c', theme_color:'#05040c', icons };
-    const url=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}));
-    let link=document.querySelector('link[rel="manifest"]');
-    if(!link){ link=document.createElement('link'); link.rel='manifest'; document.head.appendChild(link); }
-    link.href=url;
-  }catch(e){ /* ambiente sem canvas/Blob/URL — segue sem manifest, jogo normal */ }
-}
 // oferta de tela cheia: no MÁXIMO uma vez por sessão. Se o jogador recusar (o
 // pedido falha, ou ele sai logo pelo gesto), não insistimos a cada toque — a
 // próxima oferta é só na sessão seguinte (recarga). Hoje a memória é de sessão
@@ -167,7 +137,7 @@ function gerarManifesto(){
 // sessões. NÃO oferecemos se já está em tela cheia (app instalado).
 let telaCheiaOfertada=false;
 function ligarModoApp(){
-  gerarManifesto();
+  // o manifest é um arquivo real (link estático no <head>) — não se gera aqui.
   const oferta=()=>{ if(telaCheiaOfertada)return; telaCheiaOfertada=true;
     removeEventListener('pointerdown',oferta,true);
     if(!estaTelaCheia())pedirTelaCheia().catch(()=>{}); };
