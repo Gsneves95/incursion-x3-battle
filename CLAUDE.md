@@ -16,7 +16,7 @@ O raciocínio completo está em `DECISOES.md`.
 
 | | |
 |---|---|
-| Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas de efeito prontas** (destravam os 89 restantes) |
+| Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas implementadas**, mas só **1 provada por kit real** (2 alvos); as outras 11 aguardam um deus que as use (ver `docs/inventario.md` §2b) |
 | Cliente | 3 telas: seleção/coleção, batalha (hot-seat **ou vs CPU**) e **invocação (gacha)** |
 | CPU | **IA gulosa de 1 lance** controla o Jogador 2 (ligada por padrão; alterna em "Oponente" na seleção). Início da Fase 2 |
 | Testes | 7 suítes, todas verdes (motor, capacidades, primitivas, auditoria, ia, interface, invocação) |
@@ -180,10 +180,13 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 - **Arte de habilidade é redonda** (`object-position:center`); retrato de deus é
   enquadrado no alto (`center 18%`) porque as ilustrações são de corpo inteiro.
 
-## Primitivas de efeito — PRONTAS
+## Primitivas de efeito — IMPLEMENTADAS (1 de 12 provada por kit real)
 
 As 12 primitivas do `ROTEIRO.md` fase 1 item 6 estão no motor e cobertas por
-`tests/primitivas.test.js`. Cada kit novo as aciona por dados, sem tocar no motor:
+`tests/primitivas.test.js` **em isolamento**. Mas só **1 (seleção de 2 alvos)** é
+exercitada por um deus dos 11 implementados; as outras 11 ainda não têm kit real que
+as prove (ver `docs/inventario.md` §2b). Cada kit novo as aciona por dados, sem tocar
+no motor:
 
 | Primitiva | Como o kit aciona | Deuses que destrava |
 |---|---|---|

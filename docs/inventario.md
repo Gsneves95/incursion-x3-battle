@@ -77,8 +77,48 @@ $ for p in contador fase invocar revive vidaExtra intercepta contraAtaca copiar 
 | Escolha múltipla | ✅ | `opcoes:[…]` + `agir(...,escolhas)` (11 ocorrências) |
 | Seleção de 2 alvos | ✅ | `alvo:'2inimigos'`/`'2aliados'` (4+4) |
 
-**Consequência:** o item 6 do ROTEIRO está fechado; o próximo trabalho de conteúdo
-(os 89 kits) não é bloqueado por primitiva faltante — é acionado por dado.
+### 2b. Implementada ≠ PROVADA
+
+Uma primitiva **implementada** tem código no motor e teste em isolamento
+(`primitivas.test.js`, com cenários sintéticos). Uma primitiva **provada** é
+exercitada por um **deus real do roster que está entre os 11 implementados**.
+São coisas diferentes, e a distinção muda o plano da Fase 1.
+
+Derivação — quais tipos/campos de primitiva aparecem **dentro do bloco de dados
+`GODS` (L48-227)**, isto é, no kit de um implementado:
+
+```
+$ sed -n '48,227p' src/engine.js | grep -oE "t:\s*'[a-zA-Z]+'|2inimigos|2aliados|contador|fase|revive|invocar|copiar|opcoes|intercepta|contraAtaca|armazenaDano|livro|vidaExtra"
+# só aparecem: 2inimigos / 2aliados
+```
+
+| Primitiva | Deus que a exercita (roster) | Entre os 11? | **PROVADA por kit real?** |
+|---|---|:--:|:--:|
+| Seleção de 2 alvos | **Thor, Hera, Nezha** | **sim** | ✅ **SIM** |
+| Contadores acumuláveis | Rá, Kitsune, Anúbis, Ah Puch, Ares | não | ❌ não |
+| Estado Dia/Noite (`fase`) | Amaterasu, Tsukuyomi, Hou Yi, Lugh | não | ❌ não |
+| Vida Extra | Bastet | não | ❌ não |
+| Revive | Osíris, Ísis, Anúbis | não | ❌ não |
+| Contagem de morte (`livro`) | Osíris, Nüwa, Yan Wong | não | ❌ não |
+| Dano armazenado | Xangô | não | ❌ não |
+| Interceptar | Loki, Bastet, Hanuman | não | ❌ não |
+| Contra-atacar | Heimdall, Bastet, Guan Yu | não | ❌ não |
+| Invocação | Khnum, Cernunnos, Sun Wukong, Kitsune | não | ❌ não |
+| Copiar habilidade | Ísis, Tanuki | não | ❌ não |
+| Escolha múltipla | Nüwa, Lugh, Tanuki, Exu | não | ❌ não |
+
+**Placar: 1 provada, 11 implementadas-mas-não-provadas.**
+
+**Consequência (corrigida):** o item 6 do ROTEIRO está implementado, mas os 89 kits
+**não** estão "desbloqueados por primitiva" e ponto. O correto é: **desbloqueados
+por primitiva implementada, com 11 das 12 ainda não provadas por kit real.** Uma
+primitiva só testada em isolamento pode ter arestas que um kit de verdade revela
+(foi assim que apareceram as 6 contradições de kit e os 4 bugs de motor).
+
+**Isto muda o plano da Fase 1:** antes dos lotes de ~15 deuses, a Fase 1 deve
+**implementar o primeiro deus de cada primitiva ainda não provada** (um Amaterasu
+para Dia/Noite, um Xangô para dano armazenado, um Khnum para invocação, etc.),
+provando as 11 primitivas contra kits reais. Só então os lotes.
 
 ---
 
@@ -123,32 +163,38 @@ intacto — o documento é o contrato, quem se ajusta é o código.
 
 > A vida 100→120 **já estava** documentada (DECISOES §15) e não precisou de correção.
 
-### 4b. Verificação dos invariantes contra o código — **nenhuma violação encontrada**
+### 4b. Verificação dos invariantes contra o código — **1 violação encontrada (INV 16)**
+
+**Verifiquei 5 dos 18 invariantes** (os de maior risco de regressão). Os outros
+13 ainda **não** foram auditados contra o código — listados como pendência no
+`ESTADO.md`.
+
+Os 5 verificados:
 
 | Inv | Verificação (comando) | Resultado |
 |---|---|---|
 | 1 — motor puro | `grep -nE "Math.random\|document\|fetch\|window\." src/engine.js` | só um **comentário** (L258); zero chamadas reais → **OK** |
+| 10 — abertura 1/3 de energia | `st.aberturaFeita`, `st.starter` no motor | **OK** (coberto por teste) |
 | 13 — tocar nunca gasta | `armar()` (`:865`) só arma; `confirmar()` (`:899`) comita | **OK** |
 | 14 — cronômetro nunca pausa | `setInterval` (`:727`) roda; comentário L728; sem `clearInterval` em overlay | **OK** |
 | 15 — inimigo só-leitura | `data-sk` só no botão **aliado** (`:217`); inimigo usa `data-look` (`:182`) | **OK** |
-| 10 — abertura 1/3 de energia | `st.aberturaFeita`, `st.starter` no motor | **OK** (coberto por teste) |
 
-### 4c. Ponto a confirmar com o dono (não é violação clara, mas encoste em INV 16)
+### 4c. Violação registrada (não corrigida): INV 16
 
 **INV 16 — "um botão primário por tela".** Há 1 primário por tela-base (batalha
 `#bend`, seleção `#bgo`). Mas as **sobreposições** trazem o próprio primário
 (`#ffechar` no filtro, `#kitadd` no kit, `#bnew` no resultado). Com uma dessas
-aberta **sobre** a seleção, existem 2 `b--primary` no DOM ao mesmo tempo — a base
-fica atrás do scrim.
+aberta **sobre** a seleção, existem **2 `b--primary` no DOM ao mesmo tempo** — a
+base atrás do scrim. É uma **violação da letra do invariante**, registrada aqui e
+**não corrigida** (o CLAUDE.md, que é o contrato, fica intacto).
 
 ```
 $ grep -nE "b--primary" src/view.js   # 5 ocorrências, em telas/overlays distintos
 ```
 
-Não reescrevi o invariante. **A F0.5b já prevê** "um teste que falha se aparecer um
-segundo primário" — é a hora de decidir se a sobreposição deve *rebaixar* o primário
-da base, ou se "por tela" já considera a sobreposição como a tela ativa. Deixo para
-sua decisão.
+**A F0.5b já prevê** "um teste que falha se aparecer um segundo primário" — é a hora
+de decidir se a sobreposição deve *rebaixar* o primário da base, ou se "por tela" já
+considera a sobreposição como a tela ativa. Decisão do dono.
 
 ---
 
@@ -251,7 +297,7 @@ O material foi implementado no commit anterior. Conferido contra os 8 critérios
 | # | Critério | Status | Evidência |
 |---|---|---|---|
 | 1 | Chanfro por `clip-path` (7px), não `border-radius` | ✅ | `shell.html:35` `--chanfro:7px`; `:525` polígono; `border-radius:0` nas placas |
-| 2 | **Técnica de duas camadas** (clip-path remove a borda) | ⚠️ **desvio** | usei **camada única** + régua por `inset 0 0 0 1px` (`:530`), que acompanha o chanfro. A borda-régua existe, mas **não** pela técnica de duas camadas pedida |
+| 2 | **Técnica de duas camadas** (clip-path remove a borda) | ❌ **falha (confirmada por teste)** | ver teste empírico abaixo |
 | 3 | Bisel: `inset` claro no topo, escuro na base | ✅ | `:531-532` |
 | 4 | Textura por `feTurbulence` em data URI | ✅ | `:36` `--grao` |
 | 5 | Moldura do campo com ornamento em L nos cantos | ✅ | `.field` + 4 `<i>` (`:543-548`); render em `view.js:340` |
@@ -263,15 +309,27 @@ O material foi implementado no commit anterior. Conferido contra os 8 critérios
 **1** em repouso (painel de detalhe), no máximo **2** (com menu ou um popup aberto).
 Na seleção, **0–1** (só quando abre filtro/kit). Bem abaixo de 5.
 
+### Teste empírico do critério 2 (não por opinião)
+
+Placa com chanfro exagerado (30px) e régua grossa (`inset 0 0 0 3px #ffcc33`),
+ampliada 4×. **Observado:** as **4 arestas retas** (topo, base, esquerda, direita)
+têm a régua amarela; as **4 diagonais do chanfro estão NUAS** — sem régua.
+
+**Por quê:** o `inset box-shadow` é pintado como um anel de 1px ao longo das 4
+arestas do **retângulo** (border-box); o `clip-path` então corta os cantos. As faixas
+horizontais/verticais terminam onde o corte começa, e a nova hipotenusa não recebe
+nenhuma faixa. **A hipótese do dono está confirmada:** régua por `inset box-shadow`
+não cobre as diagonais.
+
 ### Conclusão: **F0.5a NÃO está 100% pronta.** Fica **F0.5a-restante** na fila:
 
-1. **(critério 2)** decidir: reimplementar a régua pela **técnica de duas camadas**
-   (elemento externo cor-da-régua + interno `inset:1px`, ambos com clip-path), ou
-   aceitar formalmente a régua por `inset box-shadow` como equivalente. *Visualmente
-   o chanfro com borda já aparece; é uma questão de aderir à técnica pedida.*
+1. **(critério 2 — falha confirmada)** reimplementar a régua pela **técnica de duas
+   camadas**: elemento externo com o fundo na cor da régua + `clip-path` de 7px, e um
+   interno com `inset:1px`, fundo do campo e `clip-path` de 6px. É o único jeito de a
+   régua acompanhar as diagonais.
 2. **(critério 7)** aplicar o material à **barra de energia do topo**.
 
-Fora esses dois, os outros 6 critérios estão atendidos.
+Os outros 6 critérios estão atendidos.
 
 ---
 
@@ -284,3 +342,29 @@ Fora esses dois, os outros 6 critérios estão atendidos.
 - Passiva do Fujin (inerte sem Raijin no time).
 - Pick/ban (sem ele o meta converge para 8 deuses).
 - §4c acima: comportamento do primário sob sobreposição (INV 16).
+
+---
+
+## 9. Recomendação: como quebrar o `engine.js` (só recomendação, não executar)
+
+Hoje `engine.js` tem **899 linhas** e mistura **dados** (o bloco `GODS`, L48-227, e
+`DEFESA`, L229-233) com **regras** (resolução, dano, energia, primitivas). Na Fase 1,
+provar 11 primitivas + escrever 89 kits vai **inflar o bloco de dados** para muito
+além do dobro — os kits são dados, não lógica. Se ficarem no mesmo arquivo, o motor
+fica ilegível e o diff de cada kit novo polui a revisão da lógica.
+
+**Recomendação (para uma tarefa futura, provavelmente início da Fase 1):**
+
+1. **Extrair os kits dos 11 para `data/kits_motor.json`** (ou manter em
+   `data/kits.json`, que já tem os 100 em forma de design, e fazer o motor ler dali
+   uma forma normalizada). O `tools/build.js` já injeta JSON — o padrão existe.
+2. `engine.js` fica **só com regras**: `agir`, `bater`, `aplicarFx`, resolução de
+   turno, energia, as 12 primitivas. Passa a receber o kit por dado, como já recebe
+   `st.seed`.
+3. **Um único formato de kit** para os 100, validado por um teste de schema, para as
+   6 contradições-por-ambiguidade aparecerem como falha de dado, não de código.
+4. Ganho: cada kit novo é um objeto em JSON + um teste; a lógica do motor não muda e
+   o arquivo de regras para de crescer.
+
+**Não fazer agora** — é dependência da Fase 1 e deve ser a primeira tarefa dela,
+antes de provar as primitivas, para os novos kits já nascerem no formato certo.
