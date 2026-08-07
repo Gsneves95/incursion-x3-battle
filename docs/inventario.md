@@ -402,3 +402,45 @@ economia precisa existir antes de balancear a loja/gacha.
 **Recomendação:** ampliar o inventário para cobrir **números de economia** (não só
 regras), e criar `data/economia.json` como fonte única (pity, taxas, custos, banners),
 na reconciliação que antecede a Fase 3.
+
+### 10a. A fonte documentada EXISTE (no xlsx), o código divergiu dela
+
+**Resposta ao "a planilha original (pré-conversão) está no repo?": NÃO.** O único
+`.xlsx` é `docs/INCURSION_Roster_e_Kits_ESTILO_NA.xlsx` — a versão **convertida**
+(estilo NA), com um `LEIA-ME` que a declara fonte da verdade. Não há arquivo
+pré-conversão para renomear/remover. **Mas** esse xlsx tem a aba **"Aquisição — gacha
+sem poder"**, e é ali que mora a economia **documentada** — que o código NÃO seguiu:
+
+| Item | Implementado (`invocacao.js`) | **Documentado (xlsx "Aquisição")** | Delta |
+|---|---|---|---|
+| Taxa SS | 1,5% | **3%** | código é **metade** |
+| Taxa S | 8,5% | **17%** | código é **metade** |
+| Pity duro | 80 | **60 invocações** | +20 no código |
+| Custo avulso | 150 gema | **150 gema** | igual |
+| Custo pacote ×10 | 1500 gema | **1350 gema** | código **removeu o desconto** (~10%) |
+
+Ou seja: as taxas do código (1,5%/8,5%) são exatamente **metade** das documentadas — o
+padrão da planilha **original, pré-conversão**. O pity 74/80 **não vem de fonte
+nenhuma** do projeto — é convenção do gênero, preenchida no vazio. A causa comum das
+duas: **não existe `data/economia.json`** e o código foi escrito olhando fonte
+superada ou convenção, não a aba "Aquisição". A reconciliação (insumo em
+`docs/economia-divergencias.md`) precede a Fase 3.
+
+### 10b. Varredura de constantes numéricas embutidas (o critério pedido pelo dono)
+
+Procurei **constante de regra ou economia embutida em código**. Duas classes:
+
+- **ECONOMIA, SEM fonte em `data/` (o problema):** `invocacao.js` — `P.SS=0.015`,
+  `P.S=0.085`, soft pity `p5>=74`, hard pity `p5>=80`, garantia S `p4>=10`, custo
+  `1500`/`150`, carteira inicial `gemas=30000`/`perg=30`. Todos literais, sem json de
+  origem, e divergentes do xlsx (§10a). **É a lacuna a fechar com `data/economia.json`.**
+- **REGRA, com spec no xlsx mas não em `data/` (menor risco, consistente):** `HP 120`
+  e `maxHp` (engine `:245`), `CONV_CUSTO=3` (engine `:533`), `TURNO_SEG=60` (turno
+  `:7`), empate no turno 40. Batem com as abas "Regras de Combate"/"Resolução" do
+  xlsx; ficam em código como constantes. Candidatos a migrar para `data/` numa
+  reconciliação de regras (não urgente — não divergem).
+
+**Conclusão da ampliação:** a parte do jogo construída **sem arquivo de especificação**
+é a **economia** (invocação/gacha e, quando existir, loja). As regras de combate têm
+spec no xlsx e batem com o código. A economia é a única frente onde a lacuna virou
+número inventado — e é exatamente onde o `data/economia.json` tem de nascer primeiro.

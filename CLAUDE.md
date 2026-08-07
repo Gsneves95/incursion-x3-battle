@@ -203,6 +203,15 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   indisponível) é começo normal — silencioso. O alarme visível ao jogador é quando a
   **escrita** falha (cota, aba privada): é aí que há perda real. Vale para toda
   persistência que vier.
+- **Número que não está em `data/`: PARE e peça — não invente nem busque em doc
+  antigo.** Quando o arquivo de especificação não existe, a lacuna é preenchida em
+  silêncio (por convenção do gênero ou por uma planilha superada) e ninguém percebe.
+  Foi o que aconteceu com a economia da invocação (taxas pela metade da planilha
+  original, pity 74/80 por convenção; ver `docs/inventario.md §10`). A fonte da
+  verdade da economia é o `data/economia.json` — e ele **é gerado a partir de uma
+  decisão do dono, nunca o contrário**. Regras de combate têm spec no xlsx e podem
+  virar `data/` numa reconciliação; até lá, constante de regra em código só bate com
+  o xlsx, nunca inventada.
 
 ## Primitivas de efeito — IMPLEMENTADAS (1 de 12 provada por kit real)
 

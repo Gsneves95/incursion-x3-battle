@@ -201,3 +201,27 @@ sessão de reconciliação ou ao encostar em cada área.
 - [ ] Pick/ban (bloqueia PvP inteiro).
 - [ ] INV 16 sob sobreposição: a sobreposição rebaixa o primário da base? (F0.5b)
 - [ ] Ordem da Fase 1: confirmar "quebrar engine.js → provar 11 primitivas → lotes".
+- [ ] **50/50 da invocação (garantia de destaque) — MECÂNICA NÃO DESENHADA.** O `gf`
+      (após perder o SS para fora do destaque, o próximo SS é garantido featured) foi
+      **implementado sem estar em documento nenhum** — não foi decidido nem recusado.
+      Não é número divergente; é decisão de design tomada por outra pessoa. Definir:
+      (a) garantia **por banner ou global**? (b) **persiste** entre sessões? (c) é
+      **visível** ao jogador (contador/aviso)? (d) o que acontece com ela **ao trocar
+      de banner**? Só existe no destaque hoje. Decidir na reconciliação de economia.
+- [ ] Economia (reconciliação antes da Fase 3): pity 60×80, taxas 3/17 × 1,5/8,5,
+      pacote 1350×1500 (desconto), ordem A/S/SS × 5★, tier B vazio. Insumo:
+      `docs/economia-divergencias.md` (a preparar). Decisão do dono → aí gero
+      `data/economia.json`, nunca o contrário.
+
+## Migração de perfil V1→V2 — JÁ PREVISTA (deixa de ser andaime)
+O modelo shipado tem `invocacao: {total, desdeUltimoSS}` — **um** pity. Mas o jogo tem
+banners com pity **independente** + o estado de **50/50 (`gf`)**. A forma correta é
+**por banner**. Alvo da V2:
+```
+invocacao: { total, banners: { destaque:{desdeUltimoSS, garantiaFeat}, padrao:{...} } }
+```
+A `migrar()` v1→v2 converte `desdeUltimoSS` no pity do banner principal. Isto dá
+trabalho REAL à migração (não é mais exemplo). **Custo do interim atual (F0.4b):** só
+o pity do **banner principal** sobrevive ao reload; pity de banners secundários e o
+`gf` **se perdem** no reload — ganho parcial, não completo. Fazer junto da
+reconciliação de economia (a forma depende da decisão sobre o 50/50).
