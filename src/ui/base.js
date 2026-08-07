@@ -41,11 +41,51 @@ const KW=[
 function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span class="kw kw--${c}">${m}</span>`);}); return t; }
 
 /* ---------- escala do canvas fixo ---------- */
+let ultimaEscala = 1;   // exposta para o painel de diagnóstico (F0.6)
 function fit(){
   const s = Math.min(innerWidth/926, innerHeight/428);
+  ultimaEscala = s;
   stage.style.transform = 'scale('+s+')';
+  renderDiag();
 }
 addEventListener('resize',fit); addEventListener('orientationchange',fit);
+
+/* ---------- diagnóstico de enquadramento (F0.6, passo 1) ----------
+   Painel temporário: MEDIR antes de corrigir. Oculto no jogo normal; abre por
+   ?diag na URL ou por 3 toques no carimbo de build (canto inferior esquerdo). */
+function envPx(lado){ const p=document.getElementById('safeprobe'); if(!p)return 0;
+  return Math.round(parseFloat(getComputedStyle(p)['padding'+lado])||0); }
+function diagInfo(){
+  const vv = window.visualViewport, de = document.documentElement;
+  return [
+    ['inner',   innerWidth+' × '+innerHeight],
+    ['visualV', vv ? Math.round(vv.width)+' × '+Math.round(vv.height)+'  scale '+vv.scale.toFixed(2)+'  offTop '+Math.round(vv.offsetTop) : '(indisponível)'],
+    ['screen',  screen.width+' × '+screen.height+'   dpr '+devicePixelRatio],
+    ['orient',  (screen.orientation&&screen.orientation.type) || (typeof orientation!=='undefined'? orientation+'°' : '?')],
+    ['safe px', 'T'+envPx('Top')+' R'+envPx('Right')+' B'+envPx('Bottom')+' L'+envPx('Left')],
+    ['fit',     'escala '+ultimaEscala.toFixed(4)+'  palco '+Math.round(926*ultimaEscala)+' × '+Math.round(428*ultimaEscala)],
+    ['rect',    (()=>{ const r=stage.getBoundingClientRect();
+                  return 'L'+Math.round(r.left)+' T'+Math.round(r.top)+' R'+Math.round(r.right)+' B'+Math.round(r.bottom)+
+                    ((r.left<-0.5||r.top<-0.5||r.right>innerWidth+0.5||r.bottom>innerHeight+0.5)?'  ⚠ EXTRAPOLA':'  ok'); })()],
+    ['rola?',   'W '+de.scrollWidth+' vs '+de.clientWidth+' → '+(de.scrollWidth>de.clientWidth)+
+                ' · H '+de.scrollHeight+' vs '+de.clientHeight+' → '+(de.scrollHeight>de.clientHeight)],
+  ];
+}
+function renderDiag(){ const el=document.getElementById('diag'); if(!el||!el.classList.contains('on'))return;
+  el.textContent = diagInfo().map(([k,v])=>k.padEnd(8)+v).join('\n'); }
+function ligarDiag(){
+  const el=document.getElementById('diag'); if(!el)return;
+  if(/diag/i.test(location.search)||/diag/i.test(location.hash)) el.classList.add('on');
+  renderDiag();
+  const b=document.getElementById('build');
+  if(b){ let n=0,t; b.style.pointerEvents='auto'; b.style.cursor='pointer';
+    b.addEventListener('pointerdown',()=>{ clearTimeout(t);
+      if(++n>=3){ n=0; el.classList.toggle('on'); renderDiag(); }
+      t=setTimeout(()=>n=0,600); }); }
+  addEventListener('resize',renderDiag); addEventListener('orientationchange',renderDiag);
+  if(window.visualViewport){ visualViewport.addEventListener('resize',renderDiag);
+    visualViewport.addEventListener('scroll',renderDiag); }
+}
 
 /* ---------- encaixes de arte ---------- */
 function slot(chave,glifo,cor,tam,redondo){

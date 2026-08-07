@@ -511,7 +511,15 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #rot p{margin:0;font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.14em;color:var(--gold-text)}
 #rot small{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-mute)}
 @media (orientation:portrait) and (max-width:900px){#rot{display:flex}#viewport{display:none}}
-#build{position:fixed;left:3px;bottom:2px;z-index:999;font:8px/1 monospace;color:rgba(227,221,247,.28);pointer-events:none;letter-spacing:.03em}
+#build{position:fixed;left:3px;bottom:2px;z-index:999;font:8px/1 monospace;color:rgba(227,221,247,.28);letter-spacing:.03em}
+/* sonda para ler os env(safe-area-inset-*) em px (invisível, fora de fluxo) */
+#safeprobe{position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+/* painel de diagnóstico (F0.6) — oculto por padrão; abre por ?diag ou 3 toques no carimbo */
+#diag{position:fixed;right:6px;bottom:6px;z-index:1000;display:none;white-space:pre;margin:0;
+  font:10px/1.35 ui-monospace,monospace;color:#c9ffdd;background:rgba(6,5,16,.92);
+  border:1px solid var(--gold-soft);border-radius:6px;padding:8px 10px;max-width:70vw;pointer-events:none}
+#diag.on{display:block}
 
 /* ============================================================
    MATERIAL — placa de bronze votivo. Superfície reutilizável:
@@ -652,6 +660,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 <div id="rot"><div class="ph"></div><p>GIRE O APARELHO</p><small>a batalha usa a tela na horizontal</small></div>
 <div id="viewport"><div class="stage" id="stage"></div></div>
 <div id="build">build /*__BUILD__*/</div>
+<div id="safeprobe"></div>
+<pre id="diag"></pre>
 
 <script>
 /*__ENGINE__*/

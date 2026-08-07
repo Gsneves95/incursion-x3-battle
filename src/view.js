@@ -78,3 +78,4 @@ registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  a
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
 ir('selecao');
 render();
+ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
