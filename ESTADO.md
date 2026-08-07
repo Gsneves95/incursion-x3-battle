@@ -87,14 +87,27 @@ seed + pity no perfil) — ver Descobertas.
 - O `CLAUDE.md` é o contrato: **fato desatualizado** se corrige; **violação de
   invariante** se registra no inventário e se avisa o dono — não se reescreve o
   invariante.
-- Estado de UI hoje mora solto em `src/view.js:30-31` e `:464-471`. A F0.2/F0.3
-  vão organizar isso; até lá, é o que há.
+- Estado de UI agora dividido: sessão em `src/view.js` (topo do arquivo), relógio/IA
+  em `src/turno.js`, seleção em `src/ui/selecao.js`. Ainda globais no escopo
+  concatenado (o doc da F0.3 proíbe estado novo) — a extração para um store é
+  candidata a fase futura, não urgente.
 - Screenshots usam `playwright-core` + Chromium em `/opt/pw-browsers/chromium-1194`,
   instalado com `--no-save` e desinstalado antes do commit (devDependency = só
   `jsdom`). Deploy no GitHub Pages: push na `main` + `workflow_dispatch` manual do
   `pages.yml` (o push sozinho não vem disparando o workflow).
 
-## Auditoria de invariantes — só 5 dos 18 verificados
+## Verificações pedidas pelo dono — status
+> Verificação pedida NÃO é opcional nem vira bônus. Registrar aberta E resolvida.
+- **A — relógio pós-vitória (F0.3): RESOLVIDA.** A guarda `st.fim` sobreviveu à
+  mudança para os hooks; vive em `src/turno.js` `tique()` (e em `talvezIA`/`passoIA`).
+  Trava de teste em `tests/rotas.test.js` (partida encerrada → tique não conta nem
+  passa o turno). Não era bug.
+- **B — os 3 helpers (F0.3): RESOLVIDA.** `limparSobreposicao()` (view.js, limpa
+  sobreposição; chamado por aoSair de selecao/invocacao/batalha), `pararRelogio()`
+  (turno.js, limpa o relógio; chamado por sairBatalha), `sairBatalha()` (view.js,
+  composição; aoSair da batalha). Responsabilidades distintas.
+
+## Auditoria de invariantes — só 5 dos 18 verificados (ABERTA)
 Verificados contra o código na F0.1: **1** (motor puro), **10** (abertura 1/3),
 **13** (tocar não gasta), **14** (relógio não pausa), **15** (inimigo só-leitura) —
 todos OK, exceto que se achou **1 violação: INV 16** (2 primários no DOM sob
