@@ -90,6 +90,17 @@ console.log('== integração jsdom: o relógio REAL (tick) zera ao sair da batal
   ok(w.eval('tick') === null, 'ao sair da batalha, o relógio foi limpo (tick === null)');
   ok(w.eval("rotaAtual()") === 'selecao', 'voltou para a seleção');
   console.log('  tick != null na batalha, tick === null ao sair');
+
+  // V1: partida ENCERRADA — o tique não conta nem encerra o turno (a rota segue
+  // 'batalha' enquanto o resultado aparece; a guarda st.fim tem de segurar).
+  w.eval("st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); ir('batalha',{},{substituir:true}); render();");
+  w.eval("st.fim='JOGADOR 1 VENCE';");
+  const relAntes = w.eval('relogio'), turnoAntes = w.eval('st.turno'), ativoAntes = w.eval('st.ativo');
+  w.eval('tique(); tique(); tique();');   // avança o relógio três vezes, à mão
+  ok(w.eval('relogio') === relAntes, `com a partida encerrada, o relógio não muda (era ${relAntes}, ficou ${w.eval('relogio')})`);
+  ok(w.eval('st.turno') === turnoAntes && w.eval('st.ativo') === ativoAntes, 'com a partida encerrada, nenhum turno é encerrado');
+  w.eval('pararRelogio();');
+  console.log('  partida encerrada: tique não conta nem passa o turno');
 }
 
 console.log('');

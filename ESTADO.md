@@ -4,7 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-07
-**Tarefa:** F0.2 — Rotas e navegação (Fase 0). *(F0.1 fechada na sessão anterior.)*
+**Tarefa:** F0.3 — Quebrar o `view.js` (Fase 0). *(F0.1 e F0.2 fechadas antes.)*
+**Resultado:** `view.js` **939→64 linhas** (só orquestrador). Extraídos: `src/turno.js`
+(controlador de turno/relógio/ação, não-ui, com injeção `configurarTurno` para não
+apontar para cima), e `src/ui/{base,topo,campo,painel,sobrepor,selecao}.js` — cada um
+com HTML + seu próprio `ligar<X>()`; o `ligar()` do view virou despachante. Nenhum
+módulo > 300 linhas (maior: selecao 276). Camadas engine→turno→rotas→ui/base→ui/*→view.
+`build.js` ganhou **checagem de direção ui↛ui** (falha se um ui/ chamar função de
+outro ui/) e **smoke de carga jsdom** (falha se símbolo faltar por ordem de
+concatenação). O `#bnew` deixou de mexer no estado da seleção (era ui→ui); virou
+`ir('selecao',{novo:true})` + `aoEntrarSelecao`. Guarda `st.fim` do relógio extraída
+para `tique()` e travada por teste (V1). 8 suítes verdes; dist +0,25% (< 2%); sem
+regressão visual. Editada só a 1 linha já autorizada do `interface.test.js`.
+
+## Sessão F0.2 (anterior)
+**Tarefa:** F0.2 — Rotas e navegação.
 **Resultado:** criado `src/rotas.js` (navegação pura: `ir`/`voltar`/`rotaAtual`/
 `paramsAtuais`/`registrar`/`hooksAtuais`/`resetRotas`, com pilha de histórico). O
 `render()` virou despachante por rota; os ganchos `aoEntrar`/`aoSair` são donos do
@@ -40,27 +54,34 @@ técnica de duas camadas.
   Fase 1 começa provando as 11 (1 deus por primitiva) antes dos lotes.
 - **Telas existentes:** 3 — `selecao`, `batalha`, `invocacao`. **Com roteador**
   (`src/rotas.js`): `render()` despacha pela rota; ganchos `aoEntrar`/`aoSair` donos
-  do ciclo de vida; batalha entra por substituição (não empilha). Sobreposições
-  seguem sendo estado da tela, não rotas.
+  do ciclo de vida; batalha entra por substituição (não empilha).
+- **Visão modular:** `src/turno.js` (controlador) + `src/ui/{base,topo,campo,painel,
+  sobrepor,selecao}.js` + `src/view.js` (orquestrador, 64 linhas). Camadas
+  engine→turno→rotas→ui/base→ui/*→view; `build.js` valida direção ui↛ui e faz smoke
+  jsdom. Estado de UI ainda global (o doc da F0.3 proíbe estado novo).
 - **Suítes:** 8, todas verdes (motor, capacidades, primitivas, auditoria, ia, rotas,
-  interface, invocacao). Call-sites `ok(`: 31/22/32/30/7/~17/216/18.
+  interface, invocacao). Call-sites `ok(`: 31/22/32/30/7/~19/216/18.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
 - **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.3 — Quebrar o `view.js`** (refatoração pura, ordem do doc).
-Modularizar `src/view.js` (939 linhas) por responsabilidade em `src/ui/*` (base,
-topo, campo, painel, sobrepor, selecao); cada módulo devolve HTML + uma função de
-ligar eventos; nenhum acima de 300 linhas; `view.js` vira orquestrador; `build.js`
-concatena na ordem de dependência (agora com `rotas.js` já no bloco de visão). **Não
-tocar em `tests/`** — se precisar, PARAR e avisar. É aqui que o `view.js` finalmente
-encolhe.
+**ID e nome:** **F0.4 — Perfil e persistência** (`src/perfil.js` + `src/armazenamento.js`).
+Modelo de jogador (deuses/cópias, times até 5, moedas, provações, campanha, pity,
+histórico); funções PURAS no padrão do motor (recebem perfil, devolvem perfil novo);
+persistência em localStorage com migração de versão (escrever a estrutura de migração
+agora, com um exemplo v0→v1); cai para `novoPerfil()` se corrompido; botão "apagar
+dados" com confirmação NOMEADA. **Confirmar antes com o dono:** o doc pede parar se
+houver restrição de localStorage no ambiente. `tests/perfil.test.js` cobrindo novo
+perfil, creditar/debitar sem saldo negativo, salvar time acima do limite, migração,
+e carregar dado corrompido. **Ganchar aqui o risco da invocação** (sorteio puro com
+seed + pity no perfil) — ver Descobertas.
 
-**Ainda na fila (visuais, para colar juntas no fim da fase, F0.5b):**
+**Ainda na fila (visuais, para colar juntas no fim da fase, F0.5):**
 - **F0.5a-restante:** (crit. 7) material na barra de energia do topo; (crit. 2)
   régua do chanfro pela técnica de duas camadas (o `inset box-shadow` deixa as 4
   diagonais nuas — confirmado por teste).
+- **F0.5b:** sistema de botões (4 níveis, estados de verdade, teste "1 primário").
 
 **O que a próxima sessão precisa saber antes de começar:**
 - O `CLAUDE.md` é o contrato: **fato desatualizado** se corrige; **violação de
@@ -87,6 +108,18 @@ sessão de reconciliação ou ao encostar em cada área.
 - **INV 16 sob sobreposição:** com filtro/kit/resultado aberto sobre a tela-base,
   há 2 `b--primary` no DOM (base atrás do scrim). A F0.5b já prevê o teste que trava
   isso — decidir se a sobreposição rebaixa o primário da base. (inventário §4c)
+- **`listaFiltrada`/`liberado`/`jogavel` são regra de COLEÇÃO, não apresentação.**
+  Loja (F3), invocação e campanha vão querer as três. Ficam em `ui/selecao.js` por
+  ora, mas **migram para `src/colecao.js`** na F0.4 ou na F3. Não fazer agora.
+- **VOLTAR nativo do Android durante a partida (F4 — acabamento).** `voltar()`
+  devolvendo `false` não abandona a partida, o que está certo. Mas se o gesto/botão
+  nativo de voltar não fizer **nada**, o jogador de Android estranha (é expectativa
+  forte na plataforma). O correto durante a batalha é **abrir o menu ou a confirmação
+  de rendição**, não silêncio. Vira tarefa na F4.
+- **A tela de invocação foi ROTEADA — parece mais pronta do que é.** Rotear deu a
+  ela um ar de acabada, mas o risco abaixo continua de pé: o sorteio precisa virar
+  função pura com seed e o pity precisa morar no perfil. Não deixar a aparência de
+  "pronta" esconder isso.
 - **Invocação existe ANTES do perfil (F0.4) e da economia — RISCO DE RETRABALHO.**
   A tela de gacha já sorteia e conta pity, mas: (a) o sorteio precisa virar **função
   pura com seed** (hoje usa aleatório do cliente), e (b) o **pity precisa morar no

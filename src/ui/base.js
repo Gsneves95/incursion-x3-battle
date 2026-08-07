@@ -1,0 +1,124 @@
+// ui/base.js — helpers e constantes compartilhados. É o ÚNICO módulo de ui
+// que os outros podem usar. Sem dependência de outro ui/.
+/* ===================================================================
+   CAMADA DE VISÃO — desenha a tela de batalha a partir do estado.
+   Nada aqui altera regras; toda mutação passa pelo motor.
+   =================================================================== */
+const EVAR = {Tempestade:'--e-Tempestade',Umbra:'--e-Umbra','Maré':'--e-Mare',
+  Aurora:'--e-Aurora',Chama:'--e-Chama',Verdejante:'--e-Verdejante'};
+const COR = k => `var(${EVAR[k]})`;
+const ELAB = {Tempestade:'TEMPESTADE',Umbra:'UMBRA','Maré':'MARÉ',Aurora:'AURORA',Chama:'CHAMA',Verdejante:'VERDEJANTE'};
+const SLOTLAB = {basico:'básico',habilidade:'habilidade',milagre:'milagre',defesa:'defesa'};
+const GLIFO = {basico:'I',habilidade:'II',milagre:'III',defesa:'\u25c7'};
+
+const SYM = {
+  atordoado:['\u2715','debuff','Atordoado','A unidade perde a ação inteira. Ainda gera energia.'],
+  adormecido:['Z','debuff','Adormecido','Perde a ação, recebe +8 de dano e não gera energia. Acorda ao sofrer dano de Habilidade ou Milagre — Básico e dano contínuo não acordam.'],
+  submerso:['\u2248','debuff','Submerso','Fora do combate: não age, não pode ser alvo, não sofre dano contínuo e não gera energia.'],
+  taunt:['\u25ce','debuff','Provocado','Só pode atacar quem provocou. Se o provocador ficar Invulnerável, o efeito é suspenso.'],
+  silenceClass:['\u2298','debuff','Classe travada','As habilidades da classe indicada ficam indisponíveis. Básico e Defesa continuam liberados.'],
+  lockSkill:['\u229f','debuff','Habilidade travada','A entrada indicada fica indisponível. Não é silêncio — as outras seguem liberadas.'],
+  dmgDown:['\u25bc','debuff','Dano reduzido','Reduz o dano que esta unidade CAUSA. Soma com outros do mesmo tipo.'],
+  encharcado:['\u224b','debuff','Encharcado','Recebe +5 de dano de Maré e Tempestade, e serve de gatilho: vários kits têm bônus contra Encharcados.'],
+  noHeal:['\u2296','debuff','Sem cura','Bloqueia cura e regeneração.'],
+  dmgUp:['\u25b2','buff','Dano aumentado','Aumenta o dano que esta unidade CAUSA. Soma com outros do mesmo tipo.'],
+  dmgReduction:['\u2b13','buff','Redução de dano','Subtrai um valor fixo de cada golpe, aplicado ANTES do escudo. Não soma com outra redução — vale a maior.'],
+  invulneravel:['\u25c8','buff','Invulnerável','Imune a dano novo e a efeitos novos. Continua podendo ser alvo. Dano contínuo já aplicado ainda conta.'],
+  controlImmune:['\u229b','buff','Imune a controle','Ignora atordoar, adormecer, provocar, silenciar, submergir e dominar.'],
+  regen:['+','buff','Regeneração','Cura no início do turno. Não soma com outra regeneração — vale a maior.'],
+};
+
+const stage = document.getElementById('stage');
+const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// realça palavras-chave por categoria no painel de descrição (estilo Naruto-Arena).
+// Vocabulários disjuntos entre categorias -> substituição sequencial não duplo-envolve.
+const KW=[
+  ['ctrl',/(atordoa\w*|atordoad\w*|adormec\w*|silencia\w*|silenciad\w*|provoca\w*|provocad\w*|submerg\w*|submers\w*|domina\w*|dominad\w*|petrifica\w*|selad\w*|\bselo\b|controle)/gi],
+  ['dot', /(queimadura|veneno|envenena\w*|podridão|encharcad\w*|dano contínuo|maldição|sangramento)/gi],
+  ['def', /(invulner\w*|inalvej\w*|redução de dano|redução|defesa destrutível|escudo|imune\w*|imunidade|regenera\w*|vida extra)/gi],
+  ['neg', /(não pode ser (?:contra-atacad[oa]|reflet\w+|intercept\w+|reduzid[oa]|absorvid[oa]|curad[oa]|revivid[oa]|evitad[oa]|atingid[oa])|ignora [\wçãéíó]+|dano puro|perfurante)/gi],
+];
+function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span class="kw kw--${c}">${m}</span>`);}); return t; }
+
+/* ---------- escala do canvas fixo ---------- */
+function fit(){
+  const s = Math.min(innerWidth/926, innerHeight/428);
+  stage.style.transform = 'scale('+s+')';
+}
+addEventListener('resize',fit); addEventListener('orientationchange',fit);
+
+/* ---------- encaixes de arte ---------- */
+function slot(chave,glifo,cor,tam,redondo){
+  const m=/^god-(.+)$/.exec(chave);
+  const arte=m&&IMG[m[1]];
+  return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+
+    (arte?`<img src="${arte}" alt="">`
+     :(glifo?`<span class="slot__glyph" style="font-size:${tam||16}px;color:${cor||'var(--ink-dim)'}">${H(glifo)}</span>`:''))+
+    `</div>`;
+}
+const ini = n => n.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2).toUpperCase();
+const MONO_FIXO={defesa:'DEF'};
+function mono(a){
+  if(MONO_FIXO[a.slot])return MONO_FIXO[a.slot];
+  const p=a.nome.split(/[\s\u2014-]+/).filter(x=>x.length>2);
+  if(p.length>=2)return (p[0][0]+p[1][0]+(p[2]?p[2][0]:p[1][1])).toUpperCase();
+  return a.nome.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,3).toUpperCase();
+}
+
+/* ---------- custo ---------- */
+function planoPag(l,cost){
+  const o={...l.orbs},p={}; ELEMS.forEach(e=>p[e]=0);
+  const es={...cost}; let lv=es.livre||0; delete es.livre;
+  for(const k in es){p[k]+=es[k];o[k]-=es[k];}
+  while(lv>0){const a=ELEMS.slice().sort((x,y)=>o[y]-o[x])[0]; if(!a||o[a]<=0)break; p[a]++;o[a]--;lv--;}
+  return p;
+}
+function pipsMini(cost,orbs){
+  const out=[]; const disp=orbs?{...orbs}:null;
+  let sobra=disp?ELEMS.reduce((a,e)=>a+disp[e],0):0;
+  for(const k in cost){ if(k==='livre')continue;
+    for(let i=0;i<cost[k];i++){
+      const paga=!disp||disp[k]>0; if(disp&&paga){disp[k]--;sobra--;}
+      out.push(`<i class="${paga?'':'miss'}" style="background:${COR(k)}"></i>`);}}
+  for(let i=0;i<(cost.livre||0);i++){
+    const paga=!disp||sobra>0; if(disp&&paga)sobra--;
+    out.push(`<i class="free ${paga?'':'miss'}"></i>`);}
+  return out.length?`<div class="skill__cost">${out.join('')}</div>`
+    :`<div class="skill__cost gratis"><span>GRÁTIS</span></div>`;
+}
+function pipsDetalhe(cost){
+  const out=[];
+  for(const k in cost){for(let i=0;i<cost[k];i++)
+    out.push(k==='livre'?'<span class="cost__pip cost__pip--empty"></span>'
+      :`<span class="cost__pip" style="background:${COR(k)}"></span>`);}
+  return out.length?`<div class="cost">${out.join('')}</div>`
+    :`<div class="cost"><span class="cost__none">SEM CUSTO</span></div>`;
+}
+// converte a string de custo do kits.json ("2 Tempestade + 1 livre") em {Tempestade:2, livre:1}
+function custoParaCost(str){
+  const cost={};
+  if(!str||str==='—'||/grátis/i.test(str))return cost;
+  str.split('+').forEach(p=>{
+    const m=p.trim().match(/^(\d+)\s+(.+)$/); if(!m)return;
+    const n=+m[1], nome=m[2].trim();
+    if(/^livres?$/i.test(nome))cost.livre=(cost.livre||0)+n;
+    else{const el=ELEMS.find(e=>e.toLowerCase()===nome.toLowerCase()); if(el)cost[el]=(cost[el]||0)+n;}
+  });
+  return cost;
+}
+const ALVO_TXT={'':'sem alvo',inimigo:'alvo único','2inimigos':'dois inimigos',
+  aliado:'1 aliado','2aliados':'dois aliados','aliado+inimigo':'aliado e inimigo',
+  todosInimigos:'área'};
+function classesTxt(u,a){
+  const t=[a.classe||u.classe];
+  const ps=(a.passos||[]).join('+');
+  t.push(ALVO_TXT[ps==='inimigo+inimigo'?'2inimigos':ps==='aliado+aliado'?'2aliados':ps]
+    || (a.alvo==='todosInimigos'?'área':ps||'sem alvo'));
+  if(a.slot==='milagre')t.push('milagre');
+  if(a.slot==='defesa')t.push('universal');
+  return t.join(' \u00b7 ').toUpperCase();
+}
+
+/* ---------- efeitos ---------- */
+const FX_MAX=5;
+function todas(){return st.lados.flatMap(l=>l.units);}

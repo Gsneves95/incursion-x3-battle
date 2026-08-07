@@ -19,11 +19,11 @@ O raciocínio completo está em `DECISOES.md`.
 | Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas implementadas**, mas só **1 provada por kit real** (2 alvos); as outras 11 aguardam um deus que as use (ver `docs/inventario.md` §2b) |
 | Cliente | 3 telas: seleção/coleção, batalha (hot-seat **ou vs CPU**) e **invocação (gacha)** |
 | CPU | **IA gulosa de 1 lance** controla o Jogador 2 (ligada por padrão; alterna em "Oponente" na seleção). Início da Fase 2 |
-| Testes | 7 suítes, todas verdes (motor, capacidades, primitivas, auditoria, ia, interface, invocação) |
+| Testes | 8 suítes, todas verdes (motor, capacidades, primitivas, auditoria, ia, rotas, interface, invocação) |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 
-Rodar: `npm test` roda as 7 suítes. `npm run build` gera `dist/incursion.html`,
+Rodar: `npm test` roda as 8 suítes. `npm run build` gera `dist/incursion.html`,
 um arquivo único que abre no navegador sem servidor.
 
 ---
@@ -32,17 +32,29 @@ um arquivo único que abre no navegador sem servidor.
 
 ```
 src/engine.js     motor de regras — função pura, sem DOM, sem rede
-src/view.js       camada de visão — só desenha e captura toque
+src/turno.js      fluxo de turno + relógio + ação (controlador; não é ui)
+src/rotas.js      navegação: rota + pilha de histórico (puro, sem DOM)
+src/ui/base.js    helpers e constantes compartilhados (único ui que os outros usam)
+src/ui/topo.js    barra superior: jogadores, relógio, energia, menu
+src/ui/campo.js   as 3 bandas: retrato, vida, efeitos, discos, aba do inimigo
+src/ui/painel.js  painel de detalhe do rodapé e a ação primária
+src/ui/sobrepor.js  sobreposições: troca, energia livre, registro, ajuda, resultado
+src/ui/selecao.js  grade de coleção, filtro, montagem de time, kit
+src/view.js       orquestrador: estado de sessão, render por rota, cola dos módulos
 src/shell.html    casca + CSS (canvas fixo 926x428 escalado por transform)
 src/roster_data.js  ROSTER (100 deuses, metadados) + IMG (retratos em base64)
 data/*.json       fonte da verdade do design: kits, provações, iniciais, bestiário
 src/ia.js         IA do oponente (CPU) — busca gulosa de 1 lance
 src/invocacao.js  tela de invocação (gacha)
-tools/build.js    concatena os acima em dist/incursion.html
-tests/*.test.js   7 suítes: motor, capacidades, primitivas, auditoria, ia,
+tools/build.js    concatena na ordem de camadas; valida direção ui->ui e smoke jsdom
+tests/*.test.js   8 suítes: motor, capacidades, primitivas, auditoria, ia, rotas,
                   interface (jsdom), invocacao (jsdom)
 docs/*.xlsx       planilha de design completa (15 abas)
 docs/inventario.md  retrato derivado do que existe de fato (F0.1)
+
+Camadas (setas para baixo, cada uma só usa as anteriores):
+engine → turno → rotas → ui/base → ui/* → view (orquestrador). `build.js`
+falha se um módulo de ui/ chamar função de OUTRO ui/ (só base.js é livre).
 ```
 
 O motor ser **função pura e determinística** não é preciosismo. Ele paga em
