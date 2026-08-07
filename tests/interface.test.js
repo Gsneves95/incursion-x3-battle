@@ -503,7 +503,7 @@ console.log(`  ${$('.timer__label').textContent}`);
 console.log('== 11b. seleção de 2 alvos na interface ==');
 {
   // sai da seleção só-iniciais para poder usar Thor e Hera
-  w.eval("tela='pick'"); w.eval('pick=[[],[]]'); w.eval('vez=0');
+  w.eval("ir('selecao')"); w.eval('pick=[[],[]]'); w.eval('vez=0');
   w.eval('tudoLiberado=true'); w.eval('render()');
   const nomes = $$('.pk .pk__n').map(e => e.textContent.trim());
   ok(nomes.includes('Thor') && nomes.includes('Hera'), 'Thor e Hera deveriam estar na grade');

@@ -27,7 +27,7 @@ const SYM = {
 };
 
 const TURNO_SEG = 60;
-let st=null, tela='pick', pick=[[],[]], armado=null, alvos=[], escolhidos=[],
+let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, relogio=TURNO_SEG, tick=null, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
 let vsCPU=true, IA_LADO=1, iaAtiva=false;   // Jogador 2 controlado pela IA (modo vs CPU)
 const cpuControla=lado=>vsCPU&&lado===IA_LADO;
@@ -328,11 +328,20 @@ function topoHTML(){
   </div>`:''}`;
 }
 
-/* ---------- render ---------- */
-function voltarInvocacao(){tela='pick';render();}
-function render(){
-  if(tela==='pick'){renderPick();return;}
-  if(tela==='invocacao'){INV.montar();return;}
+/* ---------- render / navegação ---------- */
+function voltarInvocacao(){ if(!voltar())ir('selecao',{},{substituir:true}); render(); }
+
+// Ganchos de ciclo de vida das telas (donos, via rotas.js). Limpeza de
+// sobreposição e relógio moram AQUI, num lugar só, em vez de repetidos a cada
+// ponto de navegação.
+function limparSobreposicao(){ armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;menuAberto=false;ov=null;livrePlano={}; }
+function pararRelogio(){ if(tick){clearInterval(tick);tick=null;} }
+function sairBatalha(){ pararRelogio(); limparSobreposicao(); }
+
+// render() despacha pela ROTA: chama o gancho de render da tela atual.
+function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
+
+function renderBatalha(){
   const l=st.lados[st.ativo], o=st.lados[1-st.ativo];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
@@ -705,7 +714,7 @@ function renderPick(){
   q('#bteste').onclick=()=>{tudoLiberado=!tudoLiberado;pagina=0;
     if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
     renderPick();};
-  q('#binvocar').onclick=()=>{tela='invocacao';render();};
+  q('#binvocar').onclick=()=>{ir('invocacao');render();};
   { const bc=q('#bcpu'); if(bc)bc.onclick=()=>{vsCPU=!vsCPU;renderPick();}; }
   q('#brand').onclick=()=>{
     const pool=ROSTER.map(e=>e.key).filter(jogavel);
@@ -715,8 +724,10 @@ function renderPick(){
   q('#bgo').onclick=()=>{
     if(!(pick[0].length===3&&pick[1].length===3))return;
     st=novoEstado(pick[0],pick[1],Math.floor(Math.random()*1e6),Math.floor(Math.random()*2));
-    tela='batalha';armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;
-    iniciarRelogio();render();};
+    // batalha SUBSTITUI a seleção na pilha (não empilha): "voltar" não pode
+    // abandonar a partida. aoSair(selecao) limpa a sobreposição; aoEntrar(batalha)
+    // inicia o relógio — por isso não há mais limpeza nem iniciarRelogio aqui.
+    ir('batalha',{},{substituir:true});render();};
   fit();
 }
 
@@ -726,7 +737,7 @@ function iniciarRelogio(){
   if(tick)clearInterval(tick);
   tick=setInterval(()=>{
     // o cronômetro NÃO pausa por sobreposição: pausar seria explorável
-    if(tela!=='batalha'||st.fim){return;}
+    if(rotaAtual()!=='batalha'||st.fim){return;}
     relogio--;
     if(relogio<=0){encerrarTurno();return;}
     const t=stage.querySelector('.timer'); const f=stage.querySelector('.timer__fill');
@@ -831,8 +842,9 @@ function ligar(){
     st.fim=`JOGADOR ${2-st.ativo} VENCE`; st.log.push({turno:st.turno,msg:`Jogador ${st.ativo+1} rendeu-se.`});
     ov=null;render();};
   const bn=q('#bnew'); if(bn)bn.onclick=()=>{
-    tela='pick';pick=[[],[]];vez=0;pagina=0;tocado=null;painelFiltro=false;focoPk=null;
-    if(tick)clearInterval(tick);render();};
+    pick=[[],[]];vez=0;pagina=0;tocado=null;painelFiltro=false;focoPk=null;
+    // sai da batalha para a seleção; aoSair(batalha) para o relógio e limpa tudo.
+    ir('selecao',{},{substituir:true});render();};
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
   const ls=q('#logscroll'); if(ls)ls.scrollTop=ls.scrollHeight;
   talvezIA();   // se for a vez da CPU, ela joga sozinha
@@ -852,11 +864,11 @@ function encerrarTurno(forcar){
 
 // ---- IA do oponente ----
 function talvezIA(){
-  if(iaAtiva||tela!=='batalha'||st.fim||!cpuControla(st.ativo))return;
+  if(iaAtiva||rotaAtual()!=='batalha'||st.fim||!cpuControla(st.ativo))return;
   iaAtiva=true; setTimeout(passoIA,600);
 }
 function passoIA(){
-  if(tela!=='batalha'||st.fim||!cpuControla(st.ativo)){iaAtiva=false;return;}
+  if(rotaAtual()!=='batalha'||st.fim||!cpuControla(st.ativo)){iaAtiva=false;return;}
   const a=iaProximaAcao(st);
   if(a){ agir(st,a.uid,a.slot,a.alvos,a.escolhas); armado=null;alvos=[];escolhidos=[];detalhe=null; render(); setTimeout(passoIA,750); }
   else { iaAtiva=false; encerrarTurno(true); }
@@ -919,4 +931,9 @@ function ficha(u){
   armado=null;alvos=[];escolhidos=[];render();
 }
 
+/* ---------- bootstrap: registra as três telas e abre na seleção ---------- */
+registrar('selecao',   { render: renderPick,           aoSair: limparSobreposicao });
+registrar('batalha',   { render: renderBatalha,        aoEntrar: iniciarRelogio, aoSair: sairBatalha });
+registrar('invocacao', { render: ()=>INV.montar(),     aoSair: limparSobreposicao });
+ir('selecao');
 render();

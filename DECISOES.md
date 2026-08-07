@@ -310,6 +310,25 @@ puramente determinística sobre o estado.
 
 ---
 
+## 17. Batalha não entra na pilha de histórico
+
+**Decidido:** ao entrar na batalha, o roteador **substitui** o topo da pilha em vez
+de empilhar (`ir('batalha',{},{substituir:true})`). Assim a batalha fica sozinha na
+pilha e `voltar()` devolve `false` — não há como voltar. A saída da batalha acontece
+só por **rendição** ou **fim de partida** (o botão "Nova batalha" leva à seleção,
+também por substituição).
+
+**Recusado:** empilhar a batalha como uma tela qualquer.
+
+**Por quê:** se a batalha fosse item de histórico, um `voltar()` (gesto de sistema,
+botão de voltar do Android, etc.) **abandonaria a partida em andamento sem aviso** —
+perda de progresso silenciosa, o pior tipo. A partida é um compromisso; sair dela é
+uma decisão explícita (render-se), não um efeito colateral de navegação. O ciclo de
+vida da tela cuida do resto: `aoEntrar` inicia o relógio, `aoSair` o para e limpa a
+sobreposição, num lugar só (`src/rotas.js` + ganchos em `src/view.js`).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

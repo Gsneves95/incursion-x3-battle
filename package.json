@@ -5,12 +5,13 @@
   "description": "Combate tático por turnos 3v3 com 100 deuses de 10 mitologias. Protótipo.",
   "scripts": {
     "build": "node tools/build.js",
-    "test": "node tools/build.js && node tests/motor.test.js && node tests/capacidades.test.js && node tests/primitivas.test.js && node tests/auditoria.test.js && node tests/ia.test.js && node tests/interface.test.js && node tests/invocacao.test.js",
+    "test": "node tools/build.js && node tests/motor.test.js && node tests/capacidades.test.js && node tests/primitivas.test.js && node tests/auditoria.test.js && node tests/ia.test.js && node tests/rotas.test.js && node tests/interface.test.js && node tests/invocacao.test.js",
     "test:motor": "node tests/motor.test.js",
     "test:capacidades": "node tests/capacidades.test.js",
     "test:primitivas": "node tests/primitivas.test.js",
     "test:auditoria": "node tests/auditoria.test.js",
     "test:ia": "node tests/ia.test.js",
+    "test:rotas": "node tools/build.js && node tests/rotas.test.js",
     "test:interface": "node tools/build.js && node tests/interface.test.js",
     "test:invocacao": "node tools/build.js && node tests/invocacao.test.js"
   },

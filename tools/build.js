@@ -5,6 +5,7 @@ const ler = p => fs.readFileSync(path.join(raiz, p), 'utf8');
 
 const motor  = ler('src/engine.js').split("if (typeof module !== 'undefined')")[0];
 const roster = ler('src/roster_data.js');
+const rotas  = ler('src/rotas.js').split("if (typeof module !== 'undefined')")[0];
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const ia     = ler('src/ia.js').split("if (typeof module !== 'undefined')")[0];
@@ -17,7 +18,7 @@ const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
-  .replace('/*__VIEW__*/', visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', rotas + '\n' + visao + '\nconst RARIDADE=' + raridades + ';\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

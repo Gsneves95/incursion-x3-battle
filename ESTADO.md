@@ -4,7 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-07
-**Tarefa:** F0.1 — Inventário e reconciliação (Fase 0).
+**Tarefa:** F0.2 — Rotas e navegação (Fase 0). *(F0.1 fechada na sessão anterior.)*
+**Resultado:** criado `src/rotas.js` (navegação pura: `ir`/`voltar`/`rotaAtual`/
+`paramsAtuais`/`registrar`/`hooksAtuais`/`resetRotas`, com pilha de histórico). O
+`render()` virou despachante por rota; os ganchos `aoEntrar`/`aoSair` são donos do
+ciclo de vida (relógio + limpeza de sobreposição, num lugar só). **Batalha entra por
+substituição, não empilha** (DECISOES §17) — `voltar()` não abandona a partida. As 3
+telas existentes foram roteadas (`selecao`/`batalha`/`invocacao`); `pick`→`selecao`
+sem alias. `tests/rotas.test.js` novo (8ª suíte). Editada **1 linha** do
+`interface.test.js` (`tela='pick'`→`ir('selecao')`), sem tocar em asserção. 8 suítes
+verdes; navegação verificada no navegador (0 pageerror). **view.js 922→939 (+17):
+não encolheu** — a lógica saiu para `rotas.js`, mas os 3 helpers de ciclo de vida
+somam mais que os resets consolidados; a redução de `view.js` é a F0.3.
+
+## Sessão F0.1 (anterior)
+**Tarefa:** F0.1 — Inventário e reconciliação.
 **Resultado:** criado `docs/inventario.md` (tudo derivado de código, com o comando
 à mostra em cada número); `CLAUDE.md` e `DECISOES.md` reconciliados (correção do
 "4 suítes" → 7; entrada §16 sobre a CPU); este `ESTADO.md` criado. Zero mudança de
@@ -24,27 +38,29 @@ técnica de duas camadas.
   interceptar, contra-atacar, escolha múltipla). Ver `docs/inventario.md` §2b.
   → **Os 89 kits estão desbloqueados por primitiva IMPLEMENTADA, não provada.** A
   Fase 1 começa provando as 11 (1 deus por primitiva) antes dos lotes.
-- **Telas existentes:** 3 — seleção (`'pick'`), batalha (`'batalha'`), invocação
-  (`'invocacao'`). Sem roteador; navegação por `tela = '...'` + `render()`.
-- **Suítes:** 7, todas verdes (motor, capacidades, primitivas, auditoria, ia,
-  interface, invocacao). Call-sites `ok(`: 31/22/32/30/7/216/18.
+- **Telas existentes:** 3 — `selecao`, `batalha`, `invocacao`. **Com roteador**
+  (`src/rotas.js`): `render()` despacha pela rota; ganchos `aoEntrar`/`aoSair` donos
+  do ciclo de vida; batalha entra por substituição (não empilha). Sobreposições
+  seguem sendo estado da tela, não rotas.
+- **Suítes:** 8, todas verdes (motor, capacidades, primitivas, auditoria, ia, rotas,
+  interface, invocacao). Call-sites `ok(`: 31/22/32/30/7/~17/216/18.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
 - **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** decidir a ordem com o dono. Duas frentes prontas para começar:
+**ID e nome:** **F0.3 — Quebrar o `view.js`** (refatoração pura, ordem do doc).
+Modularizar `src/view.js` (939 linhas) por responsabilidade em `src/ui/*` (base,
+topo, campo, painel, sobrepor, selecao); cada módulo devolve HTML + uma função de
+ligar eventos; nenhum acima de 300 linhas; `view.js` vira orquestrador; `build.js`
+concatena na ordem de dependência (agora com `rotas.js` já no bloco de visão). **Não
+tocar em `tests/`** — se precisar, PARAR e avisar. É aqui que o `view.js` finalmente
+encolhe.
 
-1. **F0.5a-restante** (curto, visual) — fechar os 2 itens que faltaram no material:
-   - **(critério 7)** aplicar o material `.placa` à **barra de energia do topo**.
-   - **(critério 2 — falha confirmada por teste)** reimplementar a régua pela
-     **técnica de duas camadas** (externo cor-da-régua clip 7px + interno inset:1px
-     clip 6px). O `inset box-shadow` deixa as 4 diagonais sem régua.
-2. **F0.2 — Rotas e navegação** (refatoração pura) — extrair `src/rotas.js` com
-   histórico e `voltar()` em profundidade; render passa a despachar pela rota;
-   sobreposições continuam sendo estado da tela, não rotas. **Não tocar em
-   `tests/` — se algum teste precisar mudar, PARAR e avisar** (sinal de mudança de
-   comportamento). Criar `tests/rotas.test.js`.
+**Ainda na fila (visuais, para colar juntas no fim da fase, F0.5b):**
+- **F0.5a-restante:** (crit. 7) material na barra de energia do topo; (crit. 2)
+  régua do chanfro pela técnica de duas camadas (o `inset box-shadow` deixa as 4
+  diagonais nuas — confirmado por teste).
 
 **O que a próxima sessão precisa saber antes de começar:**
 - O `CLAUDE.md` é o contrato: **fato desatualizado** se corrige; **violação de
