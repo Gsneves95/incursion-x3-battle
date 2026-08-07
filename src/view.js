@@ -79,3 +79,4 @@ registrar('invocacao', { render: ()=>INV.montar(),                             a
 ir('selecao');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
+ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)

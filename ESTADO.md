@@ -18,9 +18,19 @@ reserva) num lugar só, descontando safe areas (zero no aparelho, sem desconto d
 Refit em resize/orientationchange (+250ms atrasado)/visualViewport. Rect novo medido em
 726×312: **L25 T0 R701 B312, sem ⚠**, sem rolagem — palco 675×312 centrado. `interface.test`
 linha 609 passou a extrair a escala do `scale(...)` (método de medição, asserção intacta).
-9 suítes verdes. **PARADO aqui: aguardando o dono confirmar o enquadramento no aparelho
-antes do Passo 3 (modo app: manifest fullscreen/landscape + requestFullscreen) e Passo 4
-(teste-matriz que falha se o palco transbordar).**
+Dono confirmou no aparelho. **Passo 3 (modo app):** manifest embutido em **runtime (Blob URL
++ 2 ícones canvas 192/512)** — o deploy publica só o arquivo único, então nada de arquivo
+`.webmanifest` solto; `display:fullscreen`, `orientation:landscape`, tema `#05040c`.
+`requestFullscreen` oferecido no **1º gesto** (once, try/catch — oferece, não força), saída
+no menu ⋯ ("Tela cheia"/"Sair da tela cheia"), refit em `fullscreenchange`. Guarda de
+jsdom (`/jsdom/` no UA) evita o "Not implemented" do canvas no smoke. **UX:** painel de
+diagnóstico ganhou ✕ (única parte clicável; `pointer-events:none` no resto) e texto em
+`#diagtext`. Medido em Chromium — **tela cheia 800×360: escala 0,8411** (palco 779×360,
+rect L11 T0 R789 B360); matriz de 9 tamanhos × (sem / com safe 48px) **toda dentro da
+viewport, sem rolar**. 9 suítes verdes.
+**PARADO no Passo 4:** o teste-matriz NÃO cabe no jsdom (sem layout → `getBoundingClientRect`
+é 0). Aguardando o dono decidir onde mora o teste real (Chromium via `test:frame`, pulando
+com aviso no `npm test`, OU playwright como devDep no CI).
 
 ## Sessão de economia (anterior)
 **Tarefa:** Reconciliação de economia + invocação lendo `data/economia.json`.

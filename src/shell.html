@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#05040c">
+<!-- modo app (F0.6 passo 3): tela cheia quando instalado na tela inicial -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="INCURSION">
 <title>INCURSION — protótipo de batalha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -520,11 +525,17 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* sonda para ler os env(safe-area-inset-*) em px (invisível, fora de fluxo) */
 #safeprobe{position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-/* painel de diagnóstico (F0.6) — oculto por padrão; abre por ?diag ou 3 toques no carimbo */
-#diag{position:fixed;right:6px;bottom:6px;z-index:1000;display:none;white-space:pre;margin:0;
-  font:10px/1.35 ui-monospace,monospace;color:#c9ffdd;background:rgba(6,5,16,.92);
-  border:1px solid var(--gold-soft);border-radius:6px;padding:8px 10px;max-width:70vw;pointer-events:none}
+/* painel de diagnóstico (F0.6) — oculto por padrão; abre por ?diag ou 3 toques no
+   carimbo. pointer-events:none no painel para NÃO bloquear o toque no que está atrás;
+   só o ✕ é clicável. */
+#diag{position:fixed;right:6px;bottom:6px;z-index:1000;display:none;margin:0;
+  background:rgba(6,5,16,.92);border:1px solid var(--gold-soft);border-radius:6px;
+  padding:8px 10px;max-width:70vw;pointer-events:none}
 #diag.on{display:block}
+#diagtext{margin:0;white-space:pre;font:10px/1.35 ui-monospace,monospace;color:#c9ffdd}
+#diagx{position:absolute;top:-9px;right:-9px;width:20px;height:20px;padding:0;
+  border:1px solid var(--gold-soft);border-radius:50%;background:#100b1e;color:#e3ddf7;
+  font:12px/1 ui-monospace,monospace;cursor:pointer;pointer-events:auto}
 
 /* ============================================================
    MATERIAL — placa de bronze votivo. Superfície reutilizável:
@@ -666,7 +677,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 <div id="viewport"><div class="stage" id="stage"></div></div>
 <div id="build">build /*__BUILD__*/</div>
 <div id="safeprobe"></div>
-<pre id="diag"></pre>
+<div id="diag"><button id="diagx" type="button" title="Fechar">✕</button><pre id="diagtext"></pre></div>
 
 <script>
 /*__ENGINE__*/
