@@ -1,0 +1,43 @@
+{
+  "_fonte": "Decisao do dono (reconciliacao de economia) + xlsx aba 'Aquisicao'. Esta e a fonte unica da economia. NAO editar por conveniencia de codigo — muda so por decisao do dono. O codigo LE daqui; nao ha literal de economia em invocacao.js.",
+  "moedas": ["gema", "essencia"],
+  "grantInicial": {
+    "gema": 1500,
+    "_nota": "Exatamente um pacote de 10: o novato faz uma invocacao completa no primeiro minuto. Vai para novoPerfil()."
+  },
+  "grantTeste": {
+    "gema": 30000,
+    "_nota": "Afordancia de TESTE (prototipo), como o botao Teste. NUNCA entra no perfil real; usada so pela recarga de prototipo."
+  },
+  "invocacao": {
+    "ordem": ["A", "S", "SS"],
+    "_ordem_nota": "Ordem A/S/SS em todo lugar. Sem 5*/4*/3*, sem tier B (vestigio removido).",
+    "custo": {
+      "avulso": 150,
+      "pacote10": 1350,
+      "_desconto": "1350 = 10x150 - 10%. O codigo antigo cobrava 1500 (sem desconto)."
+    },
+    "taxas": { "SS": 0.03, "S": 0.17, "A": 0.80 },
+    "pity": {
+      "duro": 60,
+      "suave": null,
+      "garantiaS": null,
+      "_nota": "Pity DURO puro: chegou a 60 sem SS, o proximo e SS garantido. SEM soft pity, SEM escada, SEM 50/50. A garantiaS (S a cada 10) do codigo antigo foi removida pela mesma logica de 'sem estado escondido' — CONFIRMAR."
+    },
+    "banners": {
+      "destaque": {
+        "rateUp": "deusEspecifico",
+        "_regra": "Rate-up destaca UM deus especifico. NAO aumenta a taxa de SS como categoria (isso seria poder por compra, contra o invariante 3). A taxa de SS continua 3% em todo banner. Na ordem SS do destaque, sai o deus destacado; o pity de 60 tambem entrega o destacado."
+      },
+      "padrao": { "rateUp": null },
+      "iniciante": { "gratis": true, "umaVez": true, "qtd": 10, "garanteSS": true }
+    },
+    "cinquentaCinquenta": false,
+    "_cinquentaCinquenta_nota": "REMOVIDO por decisao do dono: friccao redundante que contradiz 'repetido vira acesso, loja vende o deus'."
+  },
+  "_pendencias": {
+    "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
+    "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },
+    "pergaminhos": "O codigo tem 'pergaminhos' (bilhetes de invocacao) fora do documento e sem decisao. Nao incluidos aqui — decidir se existem."
+  }
+}

@@ -378,6 +378,42 @@ para a reconciliação de economia (DECISOES pendente + `docs/inventario.md §10
 
 ---
 
+## 20. Economia reconciliada: taxas/pity documentados, banner destaca DEUS, sem 50/50
+
+**Decidido (reconciliação de economia; fonte única `data/economia.json`):**
+
+- **Taxas e pity vêm do documentado**, não da planilha superada: SS **3%**, S **17%**,
+  A **80%**; pity **60, DURO** (sem soft pity, sem escada). Custo avulso **150**,
+  pacote de 10 por **1350** (desconto de 10%). O código estava com metade das taxas
+  (valores pré-conversão), pity 74/80 (convenção de gênero) e pacote 1500 (sem
+  desconto — terceira herança da fonte errada). Ordem **A/S/SS** em todo lugar; o
+  vocabulário `5★/4★` e o tier `B` (vazio, sem função) saem do código e dos dados.
+
+- **Grant inicial: 1500 Gema** (= um pacote de 10; o novato faz uma invocação completa
+  no primeiro minuto). Os 30000 de protótipo viram **constante de teste que nunca toca
+  o perfil**, mesmo padrão do botão "Teste".
+
+- **Banners com rate-up: mantidos**, com uma **restrição dura**: o rate-up destaca um
+  **DEUS específico**, nunca uma ordem inteira. Banner que aumenta a taxa de SS **como
+  categoria** é aumento de poder por compra e **contradiz o invariante 3** (sem
+  progressão/poder comprável). A taxa de SS continua 3% em todo banner; o que muda no
+  destaque é *qual* SS sai (o destacado), não *quanto* SS sai.
+
+- **50/50: REMOVIDO.** O 50/50 (garantir o destacado só na segunda vez, após "perder"
+  a primeira) existe para esticar o pity sem parecer que estica — o jogador bate a
+  garantia e ainda pode não receber o que queria. Num jogo cuja tese é "repetido vira
+  acesso, e a loja vende o deus específico", essa fricção é **redundante e contradiz a
+  promessa**. A garantia fica simples: pity 60 dá o SS; em destaque, dá o destacado.
+  Sem moeda escondida, sem estado invisível. **Consequência boa:** a migração V2 do
+  perfil encolhe — some `garantiaFeat`, e a forma vira só pity por banner.
+
+**Recusado:** manter os números do código (fonte superada) e o 50/50 (convenção de
+gênero adotada sem decisão). **Documentado mas ainda não implementado** (pendência,
+não fazer agora): rotação gratuita 8 deuses/semana (Fase 3) e aluguel no ranqueado
+(Fase 5, depende de pick/ban).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
