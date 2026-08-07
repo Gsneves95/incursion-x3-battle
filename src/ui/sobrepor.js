@@ -94,6 +94,19 @@ function overlayHTML(){
         <button class="b b--quiet b--md" id="bclose">Voltar</button>
         <button class="b b--danger b--md" id="bsurrok">Confirmar rendição</button></div></div></div></div>`;
   }
+  if(ov==='apagar'){
+    // confirmação NOMEADA: diz exatamente o que se perde, não um "Confirmar?" genérico.
+    const nd=perfil?Object.keys(perfil.deuses).length:0, nt=perfil?perfil.times.length:0;
+    const g=perfil?perfil.moedas.gema:0, es=perfil?perfil.moedas.essencia:0;
+    return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>APAGAR DADOS</h2>
+      <span class="push"><button class="b b--quiet b--md" id="bclose">Cancelar</button></span></div>
+      <div class="ovb" style="font-size:13px;font-weight:600;line-height:1.5">
+        <p style="margin:0 0 8px">Isto apaga <b style="color:var(--danger)">tudo</b> deste aparelho, sem desfazer:</p>
+        <p style="margin:0 0 8px">· <b>${nd}</b> deuses da coleção<br>· <b>${nt}</b> time(s) salvos<br>· <b>${g}</b> gemas e <b>${es}</b> essências<br>· progresso de campanha e provações</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+          <button class="b b--danger b--md" id="bapagarok">Apagar tudo</button></div>
+      </div></div></div>`;
+  }
   return '';
 }
 
@@ -121,6 +134,7 @@ function ligarSobrepor(){
     else{st.log.push({turno:st.turno,msg:'✗ '+r.erro});render();}};
   const ol=q('#ovlivre'); if(ol)ol.onclick=ev=>{if(ev.target===ol){ov=null;livrePlano={};render();}};
   const bl=q('#bclose'); if(bl)bl.onclick=()=>{ov=null;render();};
+  const ba=q('#bapagarok'); if(ba)ba.onclick=()=>{apagarDados();ov=null;render();};
   const bso=q('#bsurrok'); if(bso)bso.onclick=()=>{
     st.fim=`JOGADOR ${2-st.ativo} VENCE`; st.log.push({turno:st.turno,msg:`Jogador ${st.ativo+1} rendeu-se.`});
     ov=null;render();};

@@ -4,7 +4,22 @@
 
 ## Última sessão
 **Data:** 2026-08-07
-**Tarefa:** F0.3 — Quebrar o `view.js` (Fase 0). *(F0.1 e F0.2 fechadas antes.)*
+**Tarefa:** F0.4 — Perfil e persistência (Fase 0). *(F0.1–F0.3 fechadas antes.)*
+**Resultado:** `src/perfil.js` (modelo + funções PURAS: novoPerfil/adicionarDeus/
+salvarTime/removerTime/creditar/debitar/marcarFavorito/concluirProvacao + migrar +
+problemaDeForma) e `src/armazenamento.js` (carregar/salvar/apagar + histórico em chave
+própria). **Chave única `incursion:perfil`** (histórico em `incursion:historico`,
+dono separado). `salvar()` devolve {ok,erro} — falha vira aviso, não silêncio.
+`carregar()` valida a FORMA (não só JSON) e sempre passa por `migrar()`. Boot carrega
+o perfil; "Apagar dados" no menu ⋯ com confirmação NOMEADA. `tests/perfil.test.js`
+(9ª suíte): novo perfil, pureza, creditar/debitar sem negativo, time acima do limite,
+round-trip, migrar no caminho normal, salvar que reporta exceção, 4 formas inválidas
++ JSON quebrado, histórico separado. Verificado no navegador: 777 gemas persistem após
+reload (uma chave só), apagar zera e regrava, 0 pageerror. 9 suítes verdes.
+**F0.4b (invocação/pity) NÃO feita — separada de propósito.**
+
+## Sessão F0.3 (anterior)
+**Tarefa:** F0.3 — Quebrar o `view.js`.
 **Resultado:** `view.js` **939→64 linhas** (só orquestrador). Extraídos: `src/turno.js`
 (controlador de turno/relógio/ação, não-ui, com injeção `configurarTurno` para não
 apontar para cima), e `src/ui/{base,topo,campo,painel,sobrepor,selecao}.js` — cada um
@@ -59,23 +74,26 @@ técnica de duas camadas.
   sobrepor,selecao}.js` + `src/view.js` (orquestrador, 64 linhas). Camadas
   engine→turno→rotas→ui/base→ui/*→view; `build.js` valida direção ui↛ui e faz smoke
   jsdom. Estado de UI ainda global (o doc da F0.3 proíbe estado novo).
-- **Suítes:** 8, todas verdes (motor, capacidades, primitivas, auditoria, ia, rotas,
-  interface, invocacao). Call-sites `ok(`: 31/22/32/30/7/~19/216/18.
+- **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
+  (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
+  "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
+- **Suítes:** 9, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
+  rotas, interface, invocacao). Call-sites `ok(`: 31/22/32/30/~22/7/~19/216/18.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
 - **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.4 — Perfil e persistência** (`src/perfil.js` + `src/armazenamento.js`).
-Modelo de jogador (deuses/cópias, times até 5, moedas, provações, campanha, pity,
-histórico); funções PURAS no padrão do motor (recebem perfil, devolvem perfil novo);
-persistência em localStorage com migração de versão (escrever a estrutura de migração
-agora, com um exemplo v0→v1); cai para `novoPerfil()` se corrompido; botão "apagar
-dados" com confirmação NOMEADA. **Confirmar antes com o dono:** o doc pede parar se
-houver restrição de localStorage no ambiente. `tests/perfil.test.js` cobrindo novo
-perfil, creditar/debitar sem saldo negativo, salvar time acima do limite, migração,
-e carregar dado corrompido. **Ganchar aqui o risco da invocação** (sorteio puro com
-seed + pity no perfil) — ver Descobertas.
+**ID e nome:** **F0.4b — Ligar o pity da invocação ao perfil.** Hoje o sorteio da
+invocação usa aleatório do cliente e o pity vive só em RAM (some ao recarregar).
+Fazer: (1) sorteio vira **função pura com seed**; (2) o pity passa a **ler/gravar
+`perfil.invocacao`** (via `salvar`), e cada pull registra em `registrarHistorico`.
+**MUDANÇA DE COMPORTAMENTO OBSERVÁVEL** (jogador com 59 pulls passa a mantê-los ao
+recarregar) → **registrar em DECISOES.md** e, se `invocacao.test.js` precisar mudar,
+**PARAR e pedir autorização linha a linha** (como na F0.2). É a primeira leitura/
+escrita REAL pela camada nova — o teste de integração concreto da F0.4.
+
+**Depois (F0.5, visuais, colar juntas no fim da fase):**
 
 **Ainda na fila (visuais, para colar juntas no fim da fase, F0.5):**
 - **F0.5a-restante:** (crit. 7) material na barra de energia do topo; (crit. 2)
@@ -95,6 +113,14 @@ seed + pity no perfil) — ver Descobertas.
   instalado com `--no-save` e desinstalado antes do commit (devDependency = só
   `jsdom`). Deploy no GitHub Pages: push na `main` + `workflow_dispatch` manual do
   `pages.yml` (o push sozinho não vem disparando o workflow).
+
+## Lições
+- **Refactor que move ciclo de vida tem que levar as guardas junto — e o teste na
+  mesma tarefa.** A guarda `st.fim` do relógio NÃO sobreviveu à F0.2: ela reapareceu
+  na F0.3 (em `src/turno.js`, arquivo novo). Ou seja, foi reintroduzida, não
+  preservada — entre F0.2 e F0.3 provavelmente havia bug real (relógio contando com
+  a partida encerrada). Não repetir: ao mover relógio/turno/ciclo de vida, mover as
+  guardas no mesmo passo e travar com teste ali.
 
 ## Verificações pedidas pelo dono — status
 > Verificação pedida NÃO é opcional nem vira bônus. Registrar aberta E resolvida.

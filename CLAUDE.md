@@ -19,11 +19,11 @@ O raciocínio completo está em `DECISOES.md`.
 | Motor de regras | funcional, função pura, **11 dos 100 deuses** implementados; **as 12 primitivas implementadas**, mas só **1 provada por kit real** (2 alvos); as outras 11 aguardam um deus que as use (ver `docs/inventario.md` §2b) |
 | Cliente | 3 telas: seleção/coleção, batalha (hot-seat **ou vs CPU**) e **invocação (gacha)** |
 | CPU | **IA gulosa de 1 lance** controla o Jogador 2 (ligada por padrão; alterna em "Oponente" na seleção). Início da Fase 2 |
-| Testes | 8 suítes, todas verdes (motor, capacidades, primitivas, auditoria, ia, rotas, interface, invocação) |
+| Testes | 9 suítes, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia, rotas, interface, invocação) |
 | Arte | 100 retratos de deus embutidos; **faltam os 400 ícones de habilidade** |
 | Servidor | não existe ainda, e é de propósito (ver `ROTEIRO.md`, fase 4) |
 
-Rodar: `npm test` roda as 8 suítes. `npm run build` gera `dist/incursion.html`,
+Rodar: `npm test` roda as 9 suítes. `npm run build` gera `dist/incursion.html`,
 um arquivo único que abre no navegador sem servidor.
 
 ---
@@ -32,6 +32,8 @@ um arquivo único que abre no navegador sem servidor.
 
 ```
 src/engine.js     motor de regras — função pura, sem DOM, sem rede
+src/perfil.js     estado do jogador — funções puras (recebem perfil, devolvem perfil)
+src/armazenamento.js  persistência (localStorage): chave do perfil + chave do histórico
 src/turno.js      fluxo de turno + relógio + ação (controlador; não é ui)
 src/rotas.js      navegação: rota + pilha de histórico (puro, sem DOM)
 src/ui/base.js    helpers e constantes compartilhados (único ui que os outros usam)
@@ -47,13 +49,13 @@ data/*.json       fonte da verdade do design: kits, provações, iniciais, besti
 src/ia.js         IA do oponente (CPU) — busca gulosa de 1 lance
 src/invocacao.js  tela de invocação (gacha)
 tools/build.js    concatena na ordem de camadas; valida direção ui->ui e smoke jsdom
-tests/*.test.js   8 suítes: motor, capacidades, primitivas, auditoria, ia, rotas,
+tests/*.test.js   9 suítes: motor, capacidades, primitivas, auditoria, perfil, ia, rotas,
                   interface (jsdom), invocacao (jsdom)
 docs/*.xlsx       planilha de design completa (15 abas)
 docs/inventario.md  retrato derivado do que existe de fato (F0.1)
 
 Camadas (setas para baixo, cada uma só usa as anteriores):
-engine → turno → rotas → ui/base → ui/* → view (orquestrador). `build.js`
+engine → perfil → armazenamento → turno → rotas → ui/base → ui/* → view (orquestrador). `build.js`
 falha se um módulo de ui/ chamar função de OUTRO ui/ (só base.js é livre).
 ```
 

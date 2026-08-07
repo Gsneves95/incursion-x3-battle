@@ -329,6 +329,30 @@ sobreposição, num lugar só (`src/rotas.js` + ganchos em `src/view.js`).
 
 ---
 
+## 18. Persistência: uma chave por dono, escrita que fala, leitura que valida a forma
+
+**Decidido (F0.4):** o perfil do jogador é função pura (recebe perfil, devolve perfil
+novo), e a persistência é camada separada (`armazenamento.js`) com três escolhas:
+
+- **Uma chave por DONO, não por aplicação.** Perfil em `incursion:perfil`, histórico
+  em `incursion:historico`. **Recusado:** um blob só. O histórico cresce (200 entradas)
+  e seria reescrito a cada `salvar()`, inclusive em ação frequente; e se corromper,
+  levaria o perfil junto. Separados, o histórico pode sumir sem arranhar o estado.
+- **`salvar()` devolve `{ok,erro}`, nunca silencioso.** **Recusado:** engolir o erro.
+  `localStorage` estoura cota e a aba privada do iOS lança direto; perder progresso
+  sem aviso é o pior desfecho. A falha vira aviso visível. (Já no boot, ausência de
+  storage NÃO alarma — é começo normal; o alarme é na gravação, que é o que importa.)
+- **`carregar()` valida a FORMA, não só `JSON.parse`.** **Recusado:** confiar no parse.
+  Dado corrompido em geral é JSON válido com formato errado (deuses como array, moeda
+  negativa, time com 4 deuses, chave fora do roster). `problemaDeForma()` derruba para
+  `novoPerfil()` registrando o quê. E `migrar()` é chamada no caminho normal mesmo sem
+  trabalho — migração só exercitada quando precisa é migração nunca testada.
+
+A migração v0→v1 é andaime por ora (não há dado legado — nada persistia antes), mas a
+estrutura existe para a v2 não nascer sem caminho.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

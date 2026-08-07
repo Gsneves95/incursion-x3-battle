@@ -10,6 +10,18 @@
 let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
 
+// Perfil do jogador (persistido; ver src/perfil.js + src/armazenamento.js). Carregado
+// no bootstrap; a F0.4b liga o pity do gacha a ele.
+let perfil=null;
+
+// Apaga TODOS os dados: limpa as chaves, zera o perfil em memória e regrava o novo.
+// salvar() não é silencioso — se a escrita falhar, avisa no registro da partida.
+function apagarDados(){
+  apagar(); perfil=novoPerfil();
+  const r=salvar(perfil);
+  if(!r.ok && st) st.log.push({turno:st.turno,msg:'⚠ dados apagados, mas a gravação falhou: '+r.erro});
+}
+
 /* ---------- navegação ---------- */
 function voltarInvocacao(){ if(!voltar())ir('selecao',{},{substituir:true}); render(); }
 
@@ -55,7 +67,11 @@ function ligar(){
   talvezIA();
 }
 
-/* ---------- bootstrap: injeta o turno, registra as três telas e abre na seleção ---------- */
+/* ---------- bootstrap: carrega o perfil, injeta o turno, registra as telas ---------- */
+// Carrega o perfil. Só avisa se o dado estava CORROMPIDO (perda real); ambiente sem
+// localStorage é começo normal — o alarme de gravação (salvar) cobre a impossibilidade
+// de persistir, que é o que de fato importa ao jogador.
+{ const c=carregar(); perfil=c.perfil; if(c.motivo && !/inacess/.test(c.motivo))console.warn('perfil corrompido ('+c.motivo+') — comecei do zero'); }
 configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha' });
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
