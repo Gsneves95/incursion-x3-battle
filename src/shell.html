@@ -43,9 +43,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
   touch-action:manipulation;overscroll-behavior:none}
 
-#viewport{width:100vw;height:100dvh;height:100vh;display:grid;place-items:center}
-.stage{position:relative;width:var(--stage-w);height:var(--stage-h);overflow:hidden;
-  background:var(--bg);border:1px solid #2a2440;border-radius:10px;transform-origin:center}
+/* Contêiner fora do fluxo cobrindo a viewport; o palco é centrado pelo próprio
+   transform (translate -50% + scale), então a caixa de layout de 926x428 não
+   transborda mais. A tarja (letterbox) é o vazio do jogo, com o palco marcado
+   por uma borda sutil de bronze — limite intencional da área jogável. */
+#viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+.stage{position:absolute;left:50%;top:50%;width:var(--stage-w);height:var(--stage-h);overflow:hidden;
+  background:var(--bg);border:1px solid #2a2440;border-radius:10px;transform-origin:center;
+  box-shadow:0 0 0 1px rgba(216,178,90,.12),0 12px 48px rgba(0,0,0,.6)}
 .stage__bg{position:absolute;inset:0;
   background:
     radial-gradient(60% 42% at 18% 12%,rgba(160,107,255,.16) 0%,transparent 70%),

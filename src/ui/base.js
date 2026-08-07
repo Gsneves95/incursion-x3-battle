@@ -42,13 +42,34 @@ function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span c
 
 /* ---------- escala do canvas fixo ---------- */
 let ultimaEscala = 1;   // exposta para o painel de diagnóstico (F0.6)
+// Área útil num LUGAR SÓ: visualViewport quando existe (reporta a viewport visual
+// real), innerWidth/Height como reserva. Desconta as safe areas — que, sendo zero
+// no aparelho testado, não descontam nada (o innerWidth já exclui a barra de
+// navegação do Android; somar de novo seria desconto duplo).
+function areaUtil(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth;
+  const h = (vv && vv.height) || innerHeight;
+  return { w: Math.max(1, w - envPx('Left') - envPx('Right')),
+           h: Math.max(1, h - envPx('Top') - envPx('Bottom')) };
+}
 function fit(){
-  const s = Math.min(innerWidth/926, innerHeight/428);
+  const u = areaUtil();
+  const s = Math.min(u.w/926, u.h/428);
   ultimaEscala = s;
-  stage.style.transform = 'scale('+s+')';
+  // translate ANTES do scale, transform-origin no centro: centraliza sem depender
+  // da caixa de layout (que o scale não encolhe — era a causa do corte à direita).
+  stage.style.transform = 'translate(-50%,-50%) scale('+s+')';
   renderDiag();
 }
-addEventListener('resize',fit); addEventListener('orientationchange',fit);
+// refit em toda mudança de viewport; + um refit atrasado após girar, porque o
+// Android reporta dimensão velha logo depois do orientationchange.
+addEventListener('resize', fit);
+addEventListener('orientationchange', () => { fit(); setTimeout(fit, 250); });
+if (window.visualViewport) {
+  visualViewport.addEventListener('resize', fit);
+  visualViewport.addEventListener('scroll', fit);
+}
 
 /* ---------- diagnóstico de enquadramento (F0.6, passo 1) ----------
    Painel temporário: MEDIR antes de corrigir. Oculto no jogo normal; abre por

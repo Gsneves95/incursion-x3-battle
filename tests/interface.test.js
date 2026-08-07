@@ -606,7 +606,7 @@ console.log('== 14. escala do canvas em telas de celular ==');
     const s = dd.window.document.getElementById('stage').style.transform;
     const esp = Math.min(vw / 926, vh / 428).toFixed(3);
     ok(s.includes('scale('), `sem transform em ${vw}x${vh}`);
-    const got = parseFloat(s.replace(/[^0-9.]/g, '')).toFixed(3);
+    const got = parseFloat((s.match(/scale\(([0-9.]+)\)/) || [])[1]).toFixed(3);
     ok(got === esp, `escala em ${vw}x${vh}: esperado ${esp}, obtido ${got}`);
     dd.window.close();
   }

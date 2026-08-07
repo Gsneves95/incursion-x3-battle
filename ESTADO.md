@@ -4,6 +4,25 @@
 
 ## Última sessão
 **Data:** 2026-08-07
+**Tarefa:** F0.6 — enquadramento no celular (o jogo cortava à direita, injogável).
+**Resultado (passos 1 e 2 de 4):** **Passo 1** — painel de diagnóstico temporário
+(`#diag`, oculto; abre por `?diag` ou 3 toques no carimbo de build) que MEDE antes de
+corrigir; a linha `rect` (`getBoundingClientRect` com aviso `⚠ EXTRAPOLA`) foi decisiva —
+sem ela a medição diria "está tudo certo" com o jogo cortado. Medição do aparelho do dono
+(inner 726×312, safe 0) provou que a causa era **posição, não escala**: o `transform:scale`
+não encolhe a caixa de layout, então o palco de 926px transbordava à direita
+(rect antigo L125 T58 **R801** B370 ⚠, com R801 > 726). **Passo 2** — corrigido SÓ isto:
+`.stage` virou `position:absolute; left/top:50%; transform:translate(-50%,-50%) scale(S);
+transform-origin:center`, e a escala passou a ler `visualViewport` (com `innerW/H` de
+reserva) num lugar só, descontando safe areas (zero no aparelho, sem desconto duplo).
+Refit em resize/orientationchange (+250ms atrasado)/visualViewport. Rect novo medido em
+726×312: **L25 T0 R701 B312, sem ⚠**, sem rolagem — palco 675×312 centrado. `interface.test`
+linha 609 passou a extrair a escala do `scale(...)` (método de medição, asserção intacta).
+9 suítes verdes. **PARADO aqui: aguardando o dono confirmar o enquadramento no aparelho
+antes do Passo 3 (modo app: manifest fullscreen/landscape + requestFullscreen) e Passo 4
+(teste-matriz que falha se o palco transbordar).**
+
+## Sessão de economia (anterior)
 **Tarefa:** Reconciliação de economia + invocação lendo `data/economia.json`.
 **Resultado:** criado `data/economia.json` (fonte única, gerada da decisão do dono);
 `invocacao.js` passou a **ler dele** — ZERO literal de taxa/pity/custo. Aplicadas as
@@ -112,22 +131,19 @@ técnica de duas camadas.
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **RECONCILIAÇÃO DE ECONOMIA — decisão do dono (não é código).** A F0.4c
-foi **destravada como pendente**: descobriu-se que ela depende do **grant inicial de
-gemas** (`novoPerfil`), que é número de economia não decidido — assar 30000 contamina
-o dado persistido; começar em 0 quebra protótipo/`invocacao.test`. Então a ordem
-inverteu: **decide-se a economia primeiro.**
+**ID e nome:** **F0.6 — passos 3 e 4 (só após o dono confirmar o enquadramento).**
+Passo 3 = modo app: `manifest.webmanifest` (`display:fullscreen`, `orientation:landscape`,
+ícones, cor do tema) + `requestFullscreen` no primeiro toque + sair pelo menu ⋯. Ganha
+área real (tela cheia leva a escala de ~0,729 para ~0,841, +15%). Passo 4 = teste-matriz
+que FALHA se o palco transbordar (checa `scrollWidth`/`scrollHeight` E o rect, não só a
+escala) numa lista de tamanhos + safe areas laterais de 48px. O painel de diagnóstico fica
+permanente atrás do atalho discreto. **Só seguir com o "ok, enquadrou" do dono.**
 
-Insumo pronto: **`docs/economia-divergencias.md`** (tabela implementado × documentado
-× recomendação, com "o que quebra se mudar/ficar"). Cobre: taxas (1,5/8,5 × 3/17),
-pity (80 × 60), pacote (1500 × 1350 c/ desconto), pity suave e garantia S (não
-documentados), nomenclatura p5/5★/tier B, **banners + rate-up (não documentados)**,
-**50/50 (não desenhado)**, grant inicial, e o documentado-não-implementado (rotação
-grátis 8/sem, aluguel ranqueado).
-
-**Fluxo:** dono decide → eu gero `data/economia.json` a partir da decisão → **F0.4c**
-encana a carteira lendo esse arquivo (sem número inventado) → **F0.4b→V2** faz pity
-por banner + `gf` conforme a decisão.
+**Depois: F0.4c — carteira lê o grant 1500.** A F0.4c foi destravada quando a economia
+ficou pronta em `data/economia.json`: `novoPerfil` semeia `gema:1500` LENDO do arquivo
+(nunca literal); a invocação gasta/credita via `perfil.moedas.gema` (`debitar`/`creditar`)
+e persiste por `salvar`; o grant de teste 30000 continua FORA do perfil (só a recarga de
+protótipo). Insumo já existe (`data/economia.json`, DECISOES §20).
 
 **Depois (F0.5, visuais, colar juntas no fim da fase):**
 
