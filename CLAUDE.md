@@ -193,6 +193,16 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   Trocar por `<img class="slot">` quando a arte existir.
 - **Arte de habilidade é redonda** (`object-position:center`); retrato de deus é
   enquadrado no alto (`center 18%`) porque as ilustrações são de corpo inteiro.
+- **Instante e aleatório entram por PARÂMETRO, nunca de dentro.** Funções de estado
+  (motor, `perfil.js`, sorteio) recebem tempo (`agora`) e semente (`seed`) como
+  argumento; jamais chamam `Date.now()` ou `Math.random()` internamente. É o que as
+  faz puras e determinísticas — testáveis e reusáveis pelo servidor/simulador. O
+  aleatório do cliente (quem começa, seed de invocação) é sorteado na borda e passado
+  para dentro.
+- **Avisar na GRAVAÇÃO, não na leitura.** Boot sem dado salvo (localStorage vazio ou
+  indisponível) é começo normal — silencioso. O alarme visível ao jogador é quando a
+  **escrita** falha (cota, aba privada): é aí que há perda real. Vale para toda
+  persistência que vier.
 
 ## Primitivas de efeito — IMPLEMENTADAS (1 de 12 provada por kit real)
 
