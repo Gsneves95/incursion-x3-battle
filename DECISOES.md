@@ -289,6 +289,27 @@ para 120, então cada Milagre de execução mira ~1/3 da vida, não ~2/5.
 
 ---
 
+## 16. Oponente CPU: busca gulosa de 1 lance
+
+**Decidido:** o Jogador 2 pode ser controlado por uma IA (`src/ia.js`), ligada por
+padrão na seleção (alterna em "Oponente"). A IA clona o estado, aplica cada ação
+candidata **pelo próprio motor**, pontua a posição resultante (vida aliada − vida
+inimiga, com bônus por abate, controle e veneno) e escolhe o melhor ganho positivo;
+se nada melhora, encerra o turno.
+
+**Recusado (por ora):** busca em profundidade real (2–3 turnos à frente), que é o
+item 10 do ROTEIRO. A versão gulosa é o passo intermediário.
+
+**Por quê:** o dono precisava testar "um cenário mais realista de batalha" sem um
+segundo humano. A busca de 1 lance é barata, determinística (clona e usa `agir`, sem
+tocar no motor) e já joga o suficiente para exercitar combos e economia de energia.
+A profundidade e os níveis de dificuldade (item 11) ficam para quando os 100 deuses
+existirem e o balanceamento pedir. **Isto NÃO cria RNG no combate** (invariante 2): o
+único aleatório continua sendo o sorteio de energia, semeado por `st.seed`; a IA é
+puramente determinística sobre o estado.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

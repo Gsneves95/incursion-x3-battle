@@ -36,9 +36,13 @@ src/view.js       camada de visão — só desenha e captura toque
 src/shell.html    casca + CSS (canvas fixo 926x428 escalado por transform)
 src/roster_data.js  ROSTER (100 deuses, metadados) + IMG (retratos em base64)
 data/*.json       fonte da verdade do design: kits, provações, iniciais, bestiário
-tools/build.js    concatena os quatro acima em dist/incursion.html
-tests/*.test.js   motor, interface (jsdom), auditoria contra as regras, capacidades
+src/ia.js         IA do oponente (CPU) — busca gulosa de 1 lance
+src/invocacao.js  tela de invocação (gacha)
+tools/build.js    concatena os acima em dist/incursion.html
+tests/*.test.js   7 suítes: motor, capacidades, primitivas, auditoria, ia,
+                  interface (jsdom), invocacao (jsdom)
 docs/*.xlsx       planilha de design completa (15 abas)
+docs/inventario.md  retrato derivado do que existe de fato (F0.1)
 ```
 
 O motor ser **função pura e determinística** não é preciosismo. Ele paga em
@@ -158,7 +162,7 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   formas carregam categoria: retângulo = quem (deus), círculo = o que faz
   (habilidade), quadrado arredondado = estado (efeito).
 - **Não exponha ação destrutiva.** Render-se mora no menu `⋯`, com confirmação.
-- **Não comite com suíte vermelha.** As 4 suítes existem porque 6 contradições
+- **Não comite com suíte vermelha.** As 7 suítes existem porque 6 contradições
   reais nos kits e 4 bugs de motor (incluindo um exploit de energia infinita)
   foram achados por elas, não por inspeção visual.
 
@@ -202,8 +206,12 @@ antes de escrever o kit.
 
 ## Próximo passo
 
-`ROTEIRO.md`, fase 1, item 7 — **arena de auto-jogo**. O motor roda contra si
-mesmo por seed, milhares de partidas, e reporta taxa de vitória por deus, duração
-média e combos que fecham cedo demais. É o que torna possível balancear 100
-deuses e o pré-requisito para escrever os 89 kits restantes (item 8) em lotes
-testados.
+O ponteiro vivo é o **`ESTADO.md`** — atualizado ao fim de cada sessão, é onde a
+próxima sessão descobre o que fazer. O projeto está executando a **Fase 0
+(Fundação)**: inventário (F0.1, feito), rotas (F0.2), quebra do `view.js` (F0.3),
+perfil e persistência (F0.4), material e botões (F0.5). O `docs/inventario.md`
+tem o retrato derivado do repositório.
+
+Pendente do roteiro original de conteúdo: `ROTEIRO.md` fase 1 item 7 (**arena de
+auto-jogo**) e item 8 (os 89 kits restantes) — não bloqueados por primitiva, já
+que as 12 estão prontas.
