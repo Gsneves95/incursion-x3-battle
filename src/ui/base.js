@@ -160,11 +160,15 @@ function gerarManifesto(){
     link.href=url;
   }catch(e){ /* ambiente sem canvas/Blob/URL — segue sem manifest, jogo normal */ }
 }
+// oferta de tela cheia: no MÁXIMO uma vez por sessão. Se o jogador recusar (o
+// pedido falha, ou ele sai logo pelo gesto), não insistimos a cada toque — a
+// próxima oferta é só na sessão seguinte (recarga). Hoje a memória é de sessão
+// (esta variável); quando a F3 ligar o perfil, migra para lá para lembrar entre
+// sessões. NÃO oferecemos se já está em tela cheia (app instalado).
+let telaCheiaOfertada=false;
 function ligarModoApp(){
   gerarManifesto();
-  // oferta de tela cheia no PRIMEIRO gesto (uma vez); recusa é silenciosa
-  let ofereceu=false;
-  const oferta=()=>{ if(ofereceu)return; ofereceu=true;
+  const oferta=()=>{ if(telaCheiaOfertada)return; telaCheiaOfertada=true;
     removeEventListener('pointerdown',oferta,true);
     if(!estaTelaCheia())pedirTelaCheia().catch(()=>{}); };
   addEventListener('pointerdown',oferta,true);

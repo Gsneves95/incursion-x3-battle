@@ -28,9 +28,17 @@ diagnóstico ganhou ✕ (única parte clicável; `pointer-events:none` no resto)
 `#diagtext`. Medido em Chromium — **tela cheia 800×360: escala 0,8411** (palco 779×360,
 rect L11 T0 R789 B360); matriz de 9 tamanhos × (sem / com safe 48px) **toda dentro da
 viewport, sem rolar**. 9 suítes verdes.
-**PARADO no Passo 4:** o teste-matriz NÃO cabe no jsdom (sem layout → `getBoundingClientRect`
-é 0). Aguardando o dono decidir onde mora o teste real (Chromium via `test:frame`, pulando
-com aviso no `npm test`, OU playwright como devDep no CI).
+**Passo 4 (matriz):** decisão do dono — **playwright como devDep + CI**. `playwright`
+entrou nas devDependencies (antes: só jsdom); `tests/moldura.test.js` (**10ª suíte**) roda
+em **Chromium real** (o jsdom não faz layout → `getBoundingClientRect` é 0, não mediria o
+rect — foi o rect que achou o bug do passo 2). A matriz cobre 9 tamanhos × (sem / com safe
+48px lateral) e FALHA se o palco extrapolar a viewport, se a página rolar, se invadir a
+safe-area ou se a escala não for a de caber. Entrou no `npm test` (roda sempre) + script
+`test:frame`. Novo workflow `.github/workflows/ci.yml` (push/PR): `npm ci` →
+`npx playwright install chromium` → `npm test`. O teste acha o Chromium pré-provisionado em
+`/opt/pw-browsers` no dev e deixa o playwright resolver no CI. **10 suítes verdes.**
+Oferta de tela cheia agora é **no máximo uma por sessão** (recusa não insiste a cada toque;
+memória de sessão hoje, migra p/ perfil na F3). **F0.6 fechada — próxima é a F0.6b.**
 
 ## Sessão de economia (anterior)
 **Tarefa:** Reconciliação de economia + invocação lendo `data/economia.json`.
@@ -134,20 +142,24 @@ técnica de duas camadas.
 - **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
   (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
   "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
-- **Suítes:** 9, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
-  rotas, interface, invocacao). Call-sites `ok(`: 31/22/32/30/~22/7/~19/216/18.
+- **Suítes:** 10, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
+  rotas, interface, invocacao, **moldura**). A `moldura` roda em Chromium real
+  (`playwright` devDep) — a única que precisa de navegador; as outras 9 são jsdom.
+- **Enquadramento/modo app (F0.6):** palco fixo centralizado (`translate(-50%,-50%)
+  scale`), escala por `visualViewport`; manifest embutido em runtime (Blob + ícones
+  canvas), `requestFullscreen` no 1º toque (uma vez por sessão), saída no menu ⋯,
+  refit em `fullscreenchange`. Painel de diagnóstico atrás de `?diag`/3-toques, com ✕.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
 - **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.6 — passos 3 e 4 (só após o dono confirmar o enquadramento).**
-Passo 3 = modo app: `manifest.webmanifest` (`display:fullscreen`, `orientation:landscape`,
-ícones, cor do tema) + `requestFullscreen` no primeiro toque + sair pelo menu ⋯. Ganha
-área real (tela cheia leva a escala de ~0,729 para ~0,841, +15%). Passo 4 = teste-matriz
-que FALHA se o palco transbordar (checa `scrollWidth`/`scrollHeight` E o rect, não só a
-escala) numa lista de tamanhos + safe areas laterais de 48px. O painel de diagnóstico fica
-permanente atrás do atalho discreto. **Só seguir com o "ok, enquadrou" do dono.**
+**ID e nome:** **F0.6b — altura fixa, largura fluida.** O dono vai detalhar. Objetivo:
+não perder escala em aparelho de proporção diferente do canvas fixo (926×428 = 2,164; o
+aparelho do dono é 800×360 = 2,222). Hoje o canvas é fixo e a escala é `min(w/926,h/428)`;
+em telas mais largas que 2,164 sobra tarja lateral. A F0.6b mira travar a ALTURA (428) e
+deixar a LARGURA fluir, para telas largas usarem o espaço em vez de tarjar. **Esperar o
+detalhamento do dono antes de mexer.**
 
 **Depois: F0.4c — carteira lê o grant 1500.** A F0.4c foi destravada quando a economia
 ficou pronta em `data/economia.json`: `novoPerfil` semeia `gema:1500` LENDO do arquivo
@@ -205,6 +217,19 @@ sessão de reconciliação ou ao encostar em cada área.
 
 ## Descobertas que ainda não viraram tarefa
 > Notado durante o trabalho; não corrigir aqui.
+
+- **Menu ⋯ vira GLOBAL na F3.1 (decisão do dono).** Hoje o ⋯ só existe na batalha
+  (`ui/topo.js`). Nas próximas fases entram tela inicial, deuses, loja e campanha —
+  todas precisam de acesso a configurações. O ⋯ deve migrar para a CASCA (disponível em
+  qualquer rota), com itens variando por contexto: **render-se só na batalha**; **tela
+  cheia, apagar dados e como jogar em todas**. Fazer **junto da tela inicial, na F3.1**.
+  Por isso NÃO adicionei saída de tela cheia na seleção agora (o app instalado já nasce
+  em tela cheia; no navegador o Android sai pelo gesto/botão-voltar — botão nosso
+  duplicaria o sistema).
+- **Oferta de tela cheia — persistir a recusa no perfil (F3).** Hoje a memória é de
+  SESSÃO (`telaCheiaOfertada` em `ui/base.js`): recusou, não insiste; recarregou,
+  oferece de novo. Quando a F3 ligar o perfil, guardar a preferência lá para lembrar
+  entre sessões (não reoferecer a quem já recusou de propósito).
 
 - **INV 16 sob sobreposição:** com filtro/kit/resultado aberto sobre a tela-base,
   há 2 `b--primary` no DOM (base atrás do scrim). A F0.5b já prevê o teste que trava
