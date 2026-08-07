@@ -98,16 +98,22 @@ técnica de duas camadas.
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.4c — Carteira no perfil.** Hoje a carteira (gemas/pergaminhos) é
-interna da invocação (`S.gemas=30000`, `topup`, custo 150/1500). Levar para
-`perfil.moedas` (creditar/debitar de `perfil.js`, que já impõe "sem saldo negativo"),
-persistir com `salvar`, e o `topup`/recarga passa a creditar no perfil. **CUIDADO:** é
-onde mora parte da divergência de economia (custos/valores) — alinhar números só na
-reconciliação com `data/economia.json`, não agora. Registrar mudança observável.
+**ID e nome:** **RECONCILIAÇÃO DE ECONOMIA — decisão do dono (não é código).** A F0.4c
+foi **destravada como pendente**: descobriu-se que ela depende do **grant inicial de
+gemas** (`novoPerfil`), que é número de economia não decidido — assar 30000 contamina
+o dado persistido; começar em 0 quebra protótipo/`invocacao.test`. Então a ordem
+inverteu: **decide-se a economia primeiro.**
 
-**Reconciliação de economia (antes da Fase 3, ver Divergências):** criar
-`data/economia.json` (fonte única: pity, taxas, custos, banners), decidir pity 60×80
-e ordem A/S/SS × 5★, e resolver pity por-banner + `gf` persistido.
+Insumo pronto: **`docs/economia-divergencias.md`** (tabela implementado × documentado
+× recomendação, com "o que quebra se mudar/ficar"). Cobre: taxas (1,5/8,5 × 3/17),
+pity (80 × 60), pacote (1500 × 1350 c/ desconto), pity suave e garantia S (não
+documentados), nomenclatura p5/5★/tier B, **banners + rate-up (não documentados)**,
+**50/50 (não desenhado)**, grant inicial, e o documentado-não-implementado (rotação
+grátis 8/sem, aluguel ranqueado).
+
+**Fluxo:** dono decide → eu gero `data/economia.json` a partir da decisão → **F0.4c**
+encana a carteira lendo esse arquivo (sem número inventado) → **F0.4b→V2** faz pity
+por banner + `gf` conforme a decisão.
 
 **Depois (F0.5, visuais, colar juntas no fim da fase):**
 
