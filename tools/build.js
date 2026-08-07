@@ -62,6 +62,7 @@ const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const ia     = semGuard(ler('src/ia.js'));
 const raridades = ler('data/raridades.json').trim();
+const economia = ler('data/economia.json').trim();
 const kits   = ler('data/kits.json').trim();
 const casca  = ler('src/shell.html');
 
@@ -78,7 +79,7 @@ const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
-  .replace('/*__VIEW__*/', blocoVisao + '\nconst RARIDADE=' + raridades + ';\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', blocoVisao + '\nconst RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

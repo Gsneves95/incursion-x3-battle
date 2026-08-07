@@ -407,8 +407,17 @@ para a reconciliação de economia (DECISOES pendente + `docs/inventario.md §10
   Sem moeda escondida, sem estado invisível. **Consequência boa:** a migração V2 do
   perfil encolhe — some `garantiaFeat`, e a forma vira só pity por banner.
 
+**Pergaminhos (bilhete de invocação avulso): REMOVIDOS** — número/mecânica fora de
+`data/` e sem decisão (regra do CLAUDE.md). **Nota para não voltar errado:** a economia
+PREVÊ um item de invocação comprável com Essência, mas na forma **pacote de 10 por mês**,
+não bilhete pingado. O pergaminho era a mesma ideia na forma descartada (bilhete avulso
+confunde certeza com chance e é ruim de sentir). Volta na Fase 3 **na forma de pacote
+mensal**, não como reversão desta remoção.
+
 **Recusado:** manter os números do código (fonte superada) e o 50/50 (convenção de
-gênero adotada sem decisão). **Documentado mas ainda não implementado** (pendência,
+gênero adotada sem decisão). Também recusado o **soft pity** e a **garantia de S a cada
+10** (`p4`): garantia que o jogador não vê é moeda invisível — ele acha que teve sorte
+quando acionou regra escondida. Pity 60 duro é a única garantia, e ela é anunciada. **Documentado mas ainda não implementado** (pendência,
 não fazer agora): rotação gratuita 8 deuses/semana (Fase 3) e aluguel no ranqueado
 (Fase 5, depende de pick/ban).
 

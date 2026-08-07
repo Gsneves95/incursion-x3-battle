@@ -161,10 +161,10 @@ console.log('== validação usa o ROSTER (100), não os implementados (11) ==');
 console.log('== registrarInvocacao: coleção + total + pity, e sobrevive ao reload ==');
 {
   let p = P.novoPerfil();
-  const res = { resultados: [{ key: 'hades', raridade: 'SS' }, { key: 'zeus', raridade: 'A' }], p5: 0 };
+  const res = { resultados: [{ key: 'hades', raridade: 'SS' }, { key: 'zeus', raridade: 'A' }], pity: 0 };
   p = P.registrarInvocacao(p, res, 42);
   ok(p.invocacao.total === 2, 'total += 2');
-  ok(p.invocacao.desdeUltimoSS === 0, 'pity de saída (p5) gravado no perfil');
+  ok(p.invocacao.desdeUltimoSS === 0, 'pity de saída gravado no perfil');
   ok(p.deuses.hades && p.deuses.hades.copias === 1 && p.deuses.hades.obtidoEm === 42, 'deus novo entra na coleção com data');
   ok(p.deuses.zeus.copias === 2, 'deus repetido soma cópia');
   global.localStorage = fakeLS();

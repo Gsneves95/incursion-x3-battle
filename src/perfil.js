@@ -74,7 +74,7 @@ function concluirProvacao(perfil, key, turnos, agora = 0) {
 // Aplica o resultado de uma invocação ao perfil. QUEM MUTA O PERFIL VIVE AQUI —
 // invocacao.js é dono do sorteio/taxas/pity e COMPÕE chamando isto, para os
 // invariantes do perfil serem impostos e testados num lugar só. `resultado` vem do
-// sorteio (puro): { resultados:[{key,raridade}], p5 } — p5 é o pity de saída.
+// sorteio (puro): { resultados:[{key,raridade}], pity } — pity é o contador de saída.
 function registrarInvocacao(perfil, resultado, agora = 0) {
   const p = _clone(perfil);
   const res = resultado.resultados || [];
@@ -83,7 +83,7 @@ function registrarInvocacao(perfil, resultado, agora = 0) {
     else p.deuses[r.key] = { copias: 1, favorito: false, obtidoEm: agora };
   }
   p.invocacao.total += res.length;
-  if (typeof resultado.p5 === 'number') p.invocacao.desdeUltimoSS = resultado.p5;
+  if (typeof resultado.pity === 'number') p.invocacao.desdeUltimoSS = resultado.pity;
   return p;
 }
 

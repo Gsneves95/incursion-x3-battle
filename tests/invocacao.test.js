@@ -28,15 +28,15 @@ console.log('== 2. a tela monta a partir do botão Invocar ==');
   tap($('#binvocar'));
   ok(!!$('#iv'), 'a tela de invocação deveria montar');
   ok($$('#iv-tabs .iv-tab').length === 3, '3 banners (Destaque/Padrão/Iniciante)');
-  ok(/\/80/.test($('#iv-pity').textContent), 'o pity de SS (/80) deveria aparecer');
+  ok(/\/60/.test($('#iv-pity').textContent), 'o pity de SS (/60) deveria aparecer');
   ok(/Coleção/.test($('#iv-tally').textContent), 'o contador de coleção deveria aparecer');
   ok(!!$('#iv .iv-carta'), 'as cartas do destaque deveriam renderizar');
-  console.log(`  montou · 3 banners · pity 80 · destaque com ${$$('#iv .iv-feat .iv-carta').length} cartas`);
+  console.log(`  montou · 3 banners · pity 60 · destaque com ${$$('#iv .iv-feat .iv-carta').length} cartas`);
 }
 
 console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
 {
-  w.eval('INV.pull(10,false)');
+  w.eval('INV.pull(10)');
   const cartas = $$('#iv-cards .iv-carta');
   ok(cartas.length === 10, `deveriam revelar 10 cartas, revelou ${cartas.length}`);
   const htmlCartas = $('#iv-cards').innerHTML;
@@ -47,14 +47,22 @@ console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
   console.log(`  10 cartas · zero estrelas · raridade por letra · total 10`);
 }
 
-console.log('== 4. pity duro: SS garantido dentro de 80 (banner sem 50/50) ==');
+console.log('== 4. pity DURO, determinístico por semente (exercita a garantia de verdade) ==');
 {
-  w.eval("INV.setBanner('padrao'); INV.topup();");
-  for (let i = 0; i < 80; i++) w.eval('INV.pull(1,false)');
-  const m = $('#iv-tally').textContent.match(/SS\s*(\d+)/);
-  const ss = m ? Number(m[1]) : 0;
-  ok(ss >= 1, `com pity duro em 80, deveria ter saído ao menos 1 SS em 80+ pulls (saiu ${ss})`);
-  console.log(`  SS acumulados após 80+ pulls: ${ss} (pity duro funciona)`);
+  // `ss>=1` em 60 pulls passava ~84% por SORTE (SS natural antes da garantia), sem
+  // nunca exercitar o pity. Como INV.sortearLote é pura e semeada, testamos direto.
+  // Sementes achadas por busca sobre o build (200k seeds, banner 'padrao', pity 0):
+  //   seed 5  -> as 59 primeiras SEM SS; a 60ª é forçada pela garantia.
+  //   seed 1  -> SS natural no meio (o contador tem de zerar ali e contar dali).
+  const A = w.eval("(function(){var r=INV.sortearLote(5,'padrao',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
+  ok(A.rs.slice(0, 59).every(x => x !== 'SS'), 'seed 5: nenhum SS nas 59 primeiras (garantia ainda não disparou)');
+  ok(A.rs[59] === 'SS', 'seed 5: a 60ª é SS — o pity DURO disparou exatamente na garantia');
+  ok(A.pity === 0, 'o contador zera após o SS');
+  const B = w.eval("(function(){var r=INV.sortearLote(1,'padrao',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
+  const ultimoSS = B.rs.lastIndexOf('SS');
+  ok(ultimoSS >= 1 && ultimoSS < 59, 'seed 1: houve SS NATURAL antes da garantia');
+  ok(B.pity === 59 - ultimoSS, `após SS natural o contador zera e conta dali (pity=${B.pity}, esperado ${59 - ultimoSS})`);
+  console.log(`  garantia dispara no 60º (seed 5); SS natural zera o contador (seed 1: último SS no ${ultimoSS}, pity ${B.pity})`);
 }
 
 console.log('== 5. auditoria de taxas abre e tabela bate ==');

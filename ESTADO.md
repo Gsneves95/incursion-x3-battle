@@ -4,7 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-07
-**Tarefa:** F0.4b — Ligar o pity da invocação ao perfil. *(F0.1–F0.4 fechadas antes.)*
+**Tarefa:** Reconciliação de economia + invocação lendo `data/economia.json`.
+**Resultado:** criado `data/economia.json` (fonte única, gerada da decisão do dono);
+`invocacao.js` passou a **ler dele** — ZERO literal de taxa/pity/custo. Aplicadas as
+decisões: SS 3% / S 17% / A 80%; **pity 60 DURO** (removidos soft pity, garantia de S
+e **50/50**); custo 150 / **1350** (desconto); grant de teste 30000 (nunca toca o
+perfil). Removidos do código/dados/interface: `5★/4★`, tier `B`, `gf`, `p4`/`p5`
+(→`pity`), pergaminhos (`📜`), e o 2º argumento morto de `pull`. Comentários que
+descreviam mecânica removida → apagados (o "porquê" está em DECISOES §20). O teste de
+pity virou **determinístico por semente** (seed 5: garantia dispara no 60º; seed 1:
+SS natural zera o contador) — antes passava ~84% por sorte sem exercitar o pity;
+apertar 80→60 foi rigor, não cosmético. `build.js` embute `ECONOMIA` (sem fetch).
+9 suítes verdes. **F0.4c (carteira lendo o grant 1500) é a próxima.**
+
+## Sessão F0.4b (anterior)
+**Tarefa:** F0.4b — Ligar o pity da invocação ao perfil.
 **Resultado:** sorteio virou **função pura com semente** (`INV.sortearLote(seed,banner,
 pity,n)`, RNG `mulberry32` do motor — o simulador da Fase 3 chama só ela). A mutação
 do perfil mora em `perfil.js` (`registrarInvocacao`), e `invocacao.js` compõe. Ordem:
@@ -227,7 +241,7 @@ banners com pity **independente** + o estado de **50/50 (`gf`)**. A forma corret
 invocacao: { total, banners: { destaque:{desdeUltimoSS, garantiaFeat}, padrao:{...} } }
 ```
 A `migrar()` v1→v2 converte `desdeUltimoSS` no pity do banner principal. Isto dá
-trabalho REAL à migração (não é mais exemplo). **Custo do interim atual (F0.4b):** só
-o pity do **banner principal** sobrevive ao reload; pity de banners secundários e o
-`gf` **se perdem** no reload — ganho parcial, não completo. Fazer junto da
-reconciliação de economia (a forma depende da decisão sobre o 50/50).
+trabalho REAL à migração (não é mais exemplo). **Encolheu:** com o 50/50 removido, some
+o `garantiaFeat` — a forma alvo é só pity por banner (`{desdeUltimoSS}` por banner).
+**Custo do interim atual:** só o pity do **banner principal** sobrevive ao reload; pity
+de banners secundários se perde. Fazer quando o gacha ganhar banners de verdade.
