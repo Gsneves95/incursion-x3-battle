@@ -368,3 +368,37 @@ fica ilegível e o diff de cada kit novo polui a revisão da lógica.
 
 **Não fazer agora** — é dependência da Fase 1 e deve ser a primeira tarefa dela,
 antes de provar as primitivas, para os novos kits já nascerem no formato certo.
+
+---
+
+## 10. Divergência de ECONOMIA — a invocação foi construída contra a planilha ANTES da conversão NA (F0.4b)
+
+A F0.1 comparou código × documentação de **regras**, não de **números de economia**.
+Ao ligar o pity ao perfil (F0.4b), apareceu uma divergência de classe parecida: a
+tela de invocação (`src/invocacao.js`) parece ter saído da planilha **original**
+(5★/6★, pity 60), anterior à conversão para o estilo NA (ordem A/S/SS). **Não
+corrigido** — registrado para a reconciliação de economia (que precisa de
+`data/economia.json`, ver abaixo).
+
+| Item | Implementado (código) | Documentado (design NA) |
+|---|---|---|
+| Pity duro (SS garantido) | **80** (`st.p5>=80`) | **60** |
+| Pity suave | a partir do **74º** (`0.015+0.06*(p5-73)`) | não especificado aqui |
+| Nomenclatura interna | `p5`/`p4` + `RANKN={SS:'5★',S:'4★',A:'3★',B:'2★'}` | ordem **A/S/SS**, sem estrelas |
+| Tiers | SS, S, A **e um `B`** (`POOL.B`, vazio — "não temos B nos 100") | só **A/S/SS** (B não existe) |
+| Taxa SS | **1,5%** base (`P.SS=0.015`) | — |
+| Taxa S | **8,5%** (`P.S=0.085`); A = resto (~90%) | — |
+| Garantia S | `p4>=10` → S garantido (garantia de 4★) | — |
+| Custo avulso | **150** gemas | — |
+| Custo pacote ×10 | **1500** gemas (exatamente 10×, **sem desconto**) | — |
+| Banners com taxa diferente | **sim:** `destaque` (rate-up dobrado + **50/50** no SS via `gf`), `padrao` (pool cheio, sem rate-up/50-50), `iniciante` (grátis 1×, 10 com SS garantido) | — |
+| Carteira inicial (protótipo) | gemas **30000**, pergaminhos **30** | — (afordância de teste) |
+
+**`data/economia.json` NÃO existe.** É **pendência bloqueante da Fase 3**: a loja
+precifica por ordem e o simulador de economia lê esse arquivo. Sem ele, os números
+acima vivem espalhados em `invocacao.js` como literais — a fonte da verdade da
+economia precisa existir antes de balancear a loja/gacha.
+
+**Recomendação:** ampliar o inventário para cobrir **números de economia** (não só
+regras), e criar `data/economia.json` como fonte única (pity, taxas, custos, banners),
+na reconciliação que antecede a Fase 3.

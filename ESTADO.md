@@ -4,7 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-07
-**Tarefa:** F0.4 — Perfil e persistência (Fase 0). *(F0.1–F0.3 fechadas antes.)*
+**Tarefa:** F0.4b — Ligar o pity da invocação ao perfil. *(F0.1–F0.4 fechadas antes.)*
+**Resultado:** sorteio virou **função pura com semente** (`INV.sortearLote(seed,banner,
+pity,n)`, RNG `mulberry32` do motor — o simulador da Fase 3 chama só ela). A mutação
+do perfil mora em `perfil.js` (`registrarInvocacao`), e `invocacao.js` compõe. Ordem:
+sortear → aplicar → **salvar → só então revelar** (recompensa commitada antes de
+aparecer; zero janela de perda). O histórico guarda **semente + pity de entrada** (toda
+invocação reproduzível). Pity de SS agora persiste no perfil e é restaurado no boot.
+`invocacao.test.js` **passou sem mudança**. `perfil.test.js` +2 casos (valida contra
+ROSTER não GODS; registrarInvocacao + pity persistido). 9 suítes verdes.
+**INTERIM:** o modelo guarda **um** contador de pity (`desdeUltimoSS`); restaurado no
+banner principal. Pity por-banner e persistência do 50/50 (`gf`) ficam para a
+reconciliação de economia (ver Divergências). Carteira (gemas) NÃO migrou → **F0.4c**.
+
+## Sessão F0.4 (anterior)
+**Tarefa:** F0.4 — Perfil e persistência.
 **Resultado:** `src/perfil.js` (modelo + funções PURAS: novoPerfil/adicionarDeus/
 salvarTime/removerTime/creditar/debitar/marcarFavorito/concluirProvacao + migrar +
 problemaDeForma) e `src/armazenamento.js` (carregar/salvar/apagar + histórico em chave
@@ -84,14 +98,16 @@ técnica de duas camadas.
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.4b — Ligar o pity da invocação ao perfil.** Hoje o sorteio da
-invocação usa aleatório do cliente e o pity vive só em RAM (some ao recarregar).
-Fazer: (1) sorteio vira **função pura com seed**; (2) o pity passa a **ler/gravar
-`perfil.invocacao`** (via `salvar`), e cada pull registra em `registrarHistorico`.
-**MUDANÇA DE COMPORTAMENTO OBSERVÁVEL** (jogador com 59 pulls passa a mantê-los ao
-recarregar) → **registrar em DECISOES.md** e, se `invocacao.test.js` precisar mudar,
-**PARAR e pedir autorização linha a linha** (como na F0.2). É a primeira leitura/
-escrita REAL pela camada nova — o teste de integração concreto da F0.4.
+**ID e nome:** **F0.4c — Carteira no perfil.** Hoje a carteira (gemas/pergaminhos) é
+interna da invocação (`S.gemas=30000`, `topup`, custo 150/1500). Levar para
+`perfil.moedas` (creditar/debitar de `perfil.js`, que já impõe "sem saldo negativo"),
+persistir com `salvar`, e o `topup`/recarga passa a creditar no perfil. **CUIDADO:** é
+onde mora parte da divergência de economia (custos/valores) — alinhar números só na
+reconciliação com `data/economia.json`, não agora. Registrar mudança observável.
+
+**Reconciliação de economia (antes da Fase 3, ver Divergências):** criar
+`data/economia.json` (fonte única: pity, taxas, custos, banners), decidir pity 60×80
+e ordem A/S/SS × 5★, e resolver pity por-banner + `gf` persistido.
 
 **Depois (F0.5, visuais, colar juntas no fim da fase):**
 
@@ -155,17 +171,19 @@ sessão de reconciliação ou ao encostar em cada área.
   nativo de voltar não fizer **nada**, o jogador de Android estranha (é expectativa
   forte na plataforma). O correto durante a batalha é **abrir o menu ou a confirmação
   de rendição**, não silêncio. Vira tarefa na F4.
-- **A tela de invocação foi ROTEADA — parece mais pronta do que é.** Rotear deu a
-  ela um ar de acabada, mas o risco abaixo continua de pé: o sorteio precisa virar
-  função pura com seed e o pity precisa morar no perfil. Não deixar a aparência de
-  "pronta" esconder isso.
-- **Invocação existe ANTES do perfil (F0.4) e da economia — RISCO DE RETRABALHO.**
-  A tela de gacha já sorteia e conta pity, mas: (a) o sorteio precisa virar **função
-  pura com seed** (hoje usa aleatório do cliente), e (b) o **pity precisa morar no
-  perfil** (`invocacao: {total, desdeUltimoSS}` já está previsto no modelo da F0.4).
-  Sem isso, o **simulador de economia da Fase 3 não reusa o mesmo código** e vai
-  reimplementar as taxas — divergência garantida. Falta também `data/economia.json`.
-  Encostar nisso na F0.4 (perfil) e antes da Fase 3.
+- **DIVERGÊNCIA DE ECONOMIA — invocação contra a planilha ANTES da conversão NA.**
+  Detalhada em `docs/inventario.md §10`, com os números dos dois lados. Em resumo:
+  pity duro **80** (código) × **60** (doc); nomenclatura `p5`/`p4`/`5★`/`B` (original)
+  × ordem **A/S/SS** (NA); taxas SS 1,5% / S 8,5%; custo 150 / 1500 (10× sem desconto);
+  banners com taxa diferente (destaque rate-up + 50/50, padrao, iniciante).
+  **`data/economia.json` NÃO existe → pendência BLOQUEANTE da Fase 3** (loja precifica
+  por ordem; simulador lê o arquivo). Não corrigir agora; reconciliar antes da Fase 3.
+  Classe de achado que a F0.1 não pegou (cobriu regras, não números de economia).
+- **Invocação × perfil — parcialmente ligada (F0.4b).** Feito: sorteio puro com semente
+  + pity/coleção/total gravados no perfil + seed no histórico. Pendente: **carteira**
+  (gemas) → `perfil.moedas` (F0.4c); **coleção da seleção** ainda usa `inicial`/
+  `tudoLiberado`, não `perfil.deuses` (rewire futuro); pity **por-banner** e `gf`
+  (50/50) persistidos — hoje um contador único, interim (ver Divergência de economia).
 - **Quebrar o `engine.js`:** 899 linhas hoje, dobra na Fase 1 com os 89 kits. Tirar
   os dados (`GODS`/`DEFESA`) para `data/` e deixar o motor só com regras. Recomendação
   detalhada em `docs/inventario.md` §9. **Deve ser a 1ª tarefa da Fase 1**, antes de

@@ -143,6 +143,37 @@ console.log('== histórico: chave separada, teto 200, independente do perfil =='
   console.log('  chave separada; corrupção isolada; apagar limpa as duas');
 }
 
+console.log('== validação usa o ROSTER (100), não os implementados (11) ==');
+{
+  const rosterComHades = new Set([...RK, 'hades']);   // hades existe no roster, mas sem kit no motor
+  global.localStorage = fakeLS();
+  let p = P.novoPerfil(); p = P.adicionarDeus(p, 'hades', 1);
+  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(p));
+  const c = A.carregar({ rosterKeys: rosterComHades });
+  ok(c.motivo === null && !!c.perfil.deuses.hades, 'deus do roster SEM kit no motor carrega normal (valida contra os 100, não os 11)');
+  global.localStorage = fakeLS();
+  let q = P.novoPerfil(); q.deuses.zzznaoexiste = { copias: 1, favorito: false, obtidoEm: 0 };
+  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(q));
+  ok(/roster/.test(A.carregar({ rosterKeys: rosterComHades }).motivo || ''), 'deus fora do roster é rejeitado');
+  console.log('  hades (roster, sem kit) carrega; chave fora do roster cai para novo');
+}
+
+console.log('== registrarInvocacao: coleção + total + pity, e sobrevive ao reload ==');
+{
+  let p = P.novoPerfil();
+  const res = { resultados: [{ key: 'hades', raridade: 'SS' }, { key: 'zeus', raridade: 'A' }], p5: 0 };
+  p = P.registrarInvocacao(p, res, 42);
+  ok(p.invocacao.total === 2, 'total += 2');
+  ok(p.invocacao.desdeUltimoSS === 0, 'pity de saída (p5) gravado no perfil');
+  ok(p.deuses.hades && p.deuses.hades.copias === 1 && p.deuses.hades.obtidoEm === 42, 'deus novo entra na coleção com data');
+  ok(p.deuses.zeus.copias === 2, 'deus repetido soma cópia');
+  global.localStorage = fakeLS();
+  A.salvar(p);
+  const c = A.carregar({ rosterKeys: new Set([...RK, 'hades']) });
+  ok(c.perfil.invocacao.total === 2 && c.perfil.invocacao.desdeUltimoSS === 0, 'total e pity sobrevivem ao reload');
+  console.log('  invocação escreve coleção/total/pity via perfil.js e persiste');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PERFIL OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

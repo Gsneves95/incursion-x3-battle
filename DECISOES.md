@@ -353,6 +353,31 @@ estrutura existe para a v2 não nascer sem caminho.
 
 ---
 
+## 19. Invocação: sorteio puro por semente, pity no perfil, commit antes de revelar
+
+**Decidido (F0.4b):**
+
+- **Sorteio é função pura com semente** (`INV.sortearLote(seed, banner, pity, n)`,
+  RNG `mulberry32`). Não olha perfil, não grava, não desenha. O simulador de economia
+  da Fase 3 chama só ela, milhares de vezes. Aplicar o resultado ao perfil é outra
+  função, e mora em `perfil.js` (`registrarInvocacao`) — quem MUTA o perfil vive lá,
+  onde os invariantes são impostos e testados; `invocacao.js` compõe.
+- **Commit antes de revelar:** a ordem é sortear → aplicar → **salvar → revelar**.
+  **Recusado:** salvar ao fim da animação. Se o app morrer durante a revelação dos 10,
+  o jogador pagou e não recebeu. Recompensa se commita antes de aparecer, nunca depois.
+  Regra geral, não só do gacha.
+- **Histórico guarda a semente e o pity de entrada.** Qualquer invocação é reproduzível
+  exatamente — vale quando alguém disser que "o jogo roubou", e vira obrigatório na
+  Fase 5 (sorteio no servidor, auditável).
+
+**Mudança de comportamento OBSERVÁVEL:** o pity de SS agora **sobrevive ao recarregar**
+(antes vivia só em RAM). Um jogador com 59 invocações mantém as 59. É desejável, e está
+registrado aqui por ser observável. **Interim:** o modelo guarda um contador único
+(`desdeUltimoSS`); pity por-banner independente e a persistência do 50/50 (`gf`) ficam
+para a reconciliação de economia (DECISOES pendente + `docs/inventario.md §10`).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

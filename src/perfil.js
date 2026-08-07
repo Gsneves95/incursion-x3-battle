@@ -71,6 +71,22 @@ function concluirProvacao(perfil, key, turnos, agora = 0) {
   return p;
 }
 
+// Aplica o resultado de uma invocação ao perfil. QUEM MUTA O PERFIL VIVE AQUI —
+// invocacao.js é dono do sorteio/taxas/pity e COMPÕE chamando isto, para os
+// invariantes do perfil serem impostos e testados num lugar só. `resultado` vem do
+// sorteio (puro): { resultados:[{key,raridade}], p5 } — p5 é o pity de saída.
+function registrarInvocacao(perfil, resultado, agora = 0) {
+  const p = _clone(perfil);
+  const res = resultado.resultados || [];
+  for (const r of res) {
+    if (p.deuses[r.key]) p.deuses[r.key].copias++;
+    else p.deuses[r.key] = { copias: 1, favorito: false, obtidoEm: agora };
+  }
+  p.invocacao.total += res.length;
+  if (typeof resultado.p5 === 'number') p.invocacao.desdeUltimoSS = resultado.p5;
+  return p;
+}
+
 // Migração: SEMPRE chamada no carregar(), mesmo sem trabalho, para o caminho ser
 // exercitado. v0 -> v1 é a primeira versão numerada; ainda não converte dados, mas
 // a estrutura existe para a v2 não nascer sem caminho.
@@ -113,5 +129,5 @@ function ehPerfilValido(p, rosterKeys) { return problemaDeForma(p, rosterKeys) =
 if (typeof module !== 'undefined') module.exports = {
   VERSAO_PERFIL, INICIAIS, MAX_TIMES,
   novoPerfil, adicionarDeus, marcarFavorito, salvarTime, removerTime,
-  creditar, debitar, concluirProvacao, migrar, problemaDeForma, ehPerfilValido,
+  creditar, debitar, concluirProvacao, registrarInvocacao, migrar, problemaDeForma, ehPerfilValido,
 };

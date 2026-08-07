@@ -178,12 +178,21 @@ const INV = (function () {
   let S = { gemas: 30000, perg: 30,
     banners: { destaque: { p4: 0, p5: 0, gf: false }, padrao: { p4: 0, p5: 0, gf: false }, iniciante: { used: false } },
     owned: {}, stats: { SS: 0, S: 0, A: 0, B: 0, total: 0, fSS: 0 } };
+  // Restaura o pity de SS do perfil (persiste entre sessões). INTERIM: o modelo
+  // guarda um contador único (desdeUltimoSS), então restauro no banner principal;
+  // pity por-banner independente é divergência registrada (economia, ver ESTADO).
+  if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.banners.destaque.p5 = perfil.invocacao.desdeUltimoSS || 0;
 
-  const rand = a => a[Math.floor(Math.random() * a.length)];
+  // Aleatório: durante um lote, roda por SEMENTE (mulberry32 do motor), para o
+  // sorteio ser reproduzível e auditável. Fora de um lote, cai no Math.random do
+  // cliente (borda) só para gerar a semente.
+  let _rng = null;
+  const rnd = () => (_rng ? _rng() : Math.random());
+  const rand = a => a[Math.floor(rnd() * a.length)];
   function rollRarity(st) {
     st.p5++; st.p4++;
     let pSS = P.SS; if (st.p5 >= 74) pSS = 0.015 + 0.06 * (st.p5 - 73);   // soft pity
-    const x = Math.random();
+    const x = rnd();
     if (st.p5 >= 80 || x < pSS) return 'SS';                              // hard pity 80
     if (st.p4 >= 10) return 'S';                                          // garantia S em 10
     if (x < pSS + P.S) return 'S';
@@ -194,7 +203,7 @@ const INV = (function () {
     if (rar === 'SS') {
       st.p5 = 0; st.p4 = 0;
       if (b.feat) {
-        let feat = st.gf ? true : Math.random() < 0.5;
+        let feat = st.gf ? true : rnd() < 0.5;
         if (st.gf) st.gf = false; else if (!feat) st.gf = true;
         return feat ? byKey[FEAT_SS] : rand(POOL.SS.filter(u => u.key !== FEAT_SS) ) || byKey[FEAT_SS];
       }
@@ -202,13 +211,27 @@ const INV = (function () {
     }
     if (rar === 'S') {
       st.p4 = 0;
-      if (b.feat && Math.random() < 0.5) return byKey[rand(FEAT_S)];
+      if (b.feat && rnd() < 0.5) return byKey[rand(FEAT_S)];
       const semFeat = POOL.S.filter(u => !FEAT_S.includes(u.key));
       return b.feat ? (rand(semFeat) || rand(POOL.S)) : rand(POOL.S);
     }
     return rand(POOL.A.length ? POOL.A : POOL.S);
   }
   function doRoll(bkey, st) { const r = rollRarity(st); return { u: pickUnit(r, bkey, st), r }; }
+
+  // Sorteio PURO: dada uma semente, o banner, o pity de entrada e a quantidade,
+  // devolve o resultado e o pity de saída. Não olha perfil, não grava, não desenha
+  // — o simulador de economia da Fase 3 chama só isto, milhares de vezes.
+  function sortearLote(seed, bkey, pityEntrada, n) {
+    const anterior = _rng;
+    _rng = (typeof mulberry32 === 'function') ? mulberry32(seed >>> 0) : Math.random;
+    const st = { p4: pityEntrada.p4 || 0, p5: pityEntrada.p5 || 0, gf: !!pityEntrada.gf };
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(doRoll(bkey, st));
+    if (bkey === 'iniciante' && !out.some(o => o.r === 'SS')) out[out.length - 1] = { u: rand(POOL.SS), r: 'SS' };
+    _rng = anterior;
+    return { out, pity: st };
+  }
 
   function pull(n, useTicket) {
     if (cur === 'iniciante') {
@@ -219,19 +242,27 @@ const INV = (function () {
       if (useTicket) { if (S.perg < 1) { flash('Sem Pergaminhos.'); return; } S.perg -= 1; }
       else { if (S.gemas < cost) { flash('Gemas insuficientes — use o + para recarregar.'); return; } S.gemas -= cost; }
     }
-    const st = cur === 'iniciante' ? { p4: 0, p5: 0, gf: false } : S.banners[cur];
-    const out = [];
-    for (let i = 0; i < n; i++) out.push(doRoll(cur, st));
-    if (cur === 'iniciante') {
-      if (!out.some(o => o.r === 'SS')) out[out.length - 1] = { u: rand(POOL.SS), r: 'SS' };
-      S.banners.iniciante.used = true;
-    }
+    const bkey = cur;
+    const pityEntrada = bkey === 'iniciante' ? { p4: 0, p5: 0, gf: false } : { p4: S.banners[bkey].p4, p5: S.banners[bkey].p5, gf: S.banners[bkey].gf };
+    const seed = (Math.floor(Math.random() * 4294967296)) >>> 0;   // borda: semente do cliente
+    const { out, pity } = sortearLote(seed, bkey, pityEntrada, n);
+    if (bkey !== 'iniciante') { S.banners[bkey].p4 = pity.p4; S.banners[bkey].p5 = pity.p5; S.banners[bkey].gf = pity.gf; }
+    else S.banners.iniciante.used = true;
     out.forEach(o => {
       S.stats[o.r]++; S.stats.total++;
       if (o.r === 'SS' && o.u.key === FEAT_SS) S.stats.fSS++;
       o.novo = !S.owned[o.u.key];
       S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1;
     });
+    // PERSISTE ANTES de revelar: recompensa se commita antes de aparecer, nunca
+    // depois — se o app morrer na animação, o jogador já recebeu. O histórico
+    // guarda a SEMENTE e o pity de entrada: qualquer invocação é reproduzível.
+    if (typeof perfil !== 'undefined' && perfil && typeof registrarInvocacao === 'function') {
+      perfil = registrarInvocacao(perfil, { resultados: out.map(o => ({ key: o.u.key, raridade: o.r })), p5: pity.p5 });
+      if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'invocacao', banner: bkey, seed, pityEntrada: pityEntrada.p5, qtd: n, deuses: out.map(o => o.u.key) });
+      const rs = (typeof salvar === 'function') ? salvar(perfil) : { ok: true };
+      if (!rs.ok) flash('Invocado — mas não consegui salvar: ' + rs.erro);
+    }
     S._lastN = n; S._lastTicket = useTicket;
     showReveal(out); render();
   }
@@ -353,5 +384,5 @@ const INV = (function () {
 
   function montar() { document.getElementById('stage').innerHTML = SKELETON; render(); }
 
-  return { render, pull, setBanner, openAudit, topup, closeReveal, rollAgain, montar };
+  return { render, pull, setBanner, openAudit, topup, closeReveal, rollAgain, montar, sortearLote };
 })();
