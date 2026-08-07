@@ -337,6 +337,7 @@ function render(){
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
   stage.innerHTML = `<div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}
   <div class="stagemark">INCURSION</div>
   <section class="team team--ally">${l.units.map(u=>`
