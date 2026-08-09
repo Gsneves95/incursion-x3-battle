@@ -4,6 +4,23 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F0.5a-restante — os 2 critérios de material que faltavam (auditoria F0.1).
+**Resultado:** **crit. 2 (régua do chanfro)** refeita pela técnica de DUAS CAMADAS: o
+elemento vira a camada de trás (cor da régua, `clip-path` 7px) e um `::before` a da frente
+(preenchimento, `inset:1px`, `clip-path` 6px, `z-index:-1`, `pointer-events:none`,
+`isolation:isolate` no pai) — sobra 1px de régua em TODO o perímetro, incluindo as
+diagonais, que o `inset box-shadow` deixava nuas. Preenchimento e cor da régua por
+superfície via `--placa-fill`/`--placa-regua`. **crit. 7 (material na barra de energia):**
+`.energy` entrou no material (régua+chanfro+bisel), SEM grão (superfície pequena; grão só
+nas grandes → critério 8 segue em 1 textura permanente na batalha). **Provado por imagem**
+(método do dono repetido: placa exagerada 30px/régua 3px a 4× — nova tem régua nas 8
+arestas, velha tem as 4 diagonais nuas). Placas de material: batalha 2 em repouso
+(`.detail`+`.energy`), ≤3–4 com menu/popup; seleção 0 / 1 com filtro. Hit-test confirmou
+pílulas e Trocar clicáveis (o `::before` não intercepta). **13 suítes verdes.** Fica só
+**F0.5b** (botões) para a Fase 0 fechar.
+
+## Sessão F0.4c (anterior)
+**Data:** 2026-08-09
 **Tarefa:** F0.4c — ligar a carteira real (grant inicial 1500, débito na invocação).
 **Resultado:** achado um BUG que estava no ar — a carteira era FANTASMA: a invocação
 rodava sobre um `S.gemas` local semeado do grantTeste (30.000), nunca do perfil, e o
@@ -250,8 +267,10 @@ técnica de duas camadas.
   toque (uma vez por sessão), saída no menu ⋯, refit em `fullscreenchange`. Painel de
   diagnóstico atrás de `?diag`/3-toques, com ✕.
 - **CPU:** IA gulosa de 1 lance (`src/ia.js`) controla o J2; ligada por padrão.
-- **Material (F0.5a):** aplicado a painéis/menu/popups + moldura do campo; **falta**
-  a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
+- **Material (F0.5a + restante FEITO):** aplicado a painéis/menu/popups + moldura do campo
+  + **barra de energia do topo**. Régua pela **técnica de duas camadas** (elemento = cor da
+  régua chanfro 7px; `::before` = preenchimento inset 1px chanfro 6px) — acompanha as
+  diagonais, o que o `inset box-shadow` não fazia. Só **F0.5b** (botões) falta na Fase 0.
 
 ## Próxima tarefa
 **ID e nome:** **F0.4b — ligar o pity do gacha ao perfil de verdade.** Hoje o pity é
@@ -269,10 +288,12 @@ migração v<2→v2 backfilla o grant. Ver decisão 23.
 **Depois (F0.5, visuais, colar juntas no fim da fase):**
 
 **Ainda na fila (visuais, para colar juntas no fim da fase, F0.5):**
-- **F0.5a-restante:** (crit. 7) material na barra de energia do topo; (crit. 2)
-  régua do chanfro pela técnica de duas camadas (o `inset box-shadow` deixa as 4
-  diagonais nuas — confirmado por teste).
+- ~~**F0.5a-restante:**~~ **FEITO** — crit. 7 (material na barra de energia) e crit. 2
+  (régua por duas camadas) fechados e provados por imagem. Ver inventário §7.
 - **F0.5b:** sistema de botões (4 níveis, estados de verdade, teste "1 primário").
+  **É o ÚLTIMO item da Fase 0** — quando fechar, avisar o dono: ele escreve o material
+  da Fase 1 (quebrar engine.js → provar 11 primitivas com 1 deus real cada → arena → ~78
+  em lotes) no formato da Fase 0.
 
 **O que a próxima sessão precisa saber antes de começar:**
 - O `CLAUDE.md` é o contrato: **fato desatualizado** se corrige; **violação de

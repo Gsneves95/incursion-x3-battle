@@ -297,13 +297,13 @@ O material foi implementado no commit anterior. Conferido contra os 8 critérios
 | # | Critério | Status | Evidência |
 |---|---|---|---|
 | 1 | Chanfro por `clip-path` (7px), não `border-radius` | ✅ | `shell.html:35` `--chanfro:7px`; `:525` polígono; `border-radius:0` nas placas |
-| 2 | **Técnica de duas camadas** (clip-path remove a borda) | ❌ **falha (confirmada por teste)** | ver teste empírico abaixo |
+| 2 | **Técnica de duas camadas** (clip-path remove a borda) | ✅ **corrigido (F0.5a-restante)** | régua agora é camada de trás (elemento, cor da régua, chanfro 7px) + preenchimento na frente (`::before`, inset 1px, chanfro 6px); prova por teste abaixo |
 | 3 | Bisel: `inset` claro no topo, escuro na base | ✅ | `:531-532` |
 | 4 | Textura por `feTurbulence` em data URI | ✅ | `:36` `--grao` |
 | 5 | Moldura do campo com ornamento em L nos cantos | ✅ | `.field` + 4 `<i>` (`:543-548`); render em `view.js:340` |
 | 6 | Texto gravado nos títulos | ✅ | `:552` `--grav` aplicado aos títulos |
-| 7 | Aplicado a detalhe, **energia**, menu, popups; não aos discos/retratos | ⚠️ **incompleto** | detalhe/menu/popups ✅; discos/retratos corretamente de fora ✅; **a barra de energia do topo ficou SEM material** |
-| 8 | No máximo 5 elementos com textura na tela | ✅ | elementos com `--grao`: `.detail`(1) sempre + `.menu`/popup **um por vez** → **≤2 simultâneos** na batalha; ≤1 na seleção |
+| 7 | Aplicado a detalhe, **energia**, menu, popups; não aos discos/retratos | ✅ **corrigido (F0.5a-restante)** | barra de energia (`.energy`) agora tem material (régua+chanfro+bisel); discos/retratos seguem de fora |
+| 8 | No máximo 5 elementos com textura na tela | ✅ **mantido** | a barra de energia recebeu material mas SEM grão (superfície pequena; grão só nas grandes, `:44`) → textura permanente na batalha segue **1** (`.detail`), ≤2 com menu/popup; ≤1 na seleção |
 
 **Elementos com textura na tela (resposta à pergunta do critério):** na batalha,
 **1** em repouso (painel de detalhe), no máximo **2** (com menu ou um popup aberto).
@@ -321,15 +321,27 @@ horizontais/verticais terminam onde o corte começa, e a nova hipotenusa não re
 nenhuma faixa. **A hipótese do dono está confirmada:** régua por `inset box-shadow`
 não cobre as diagonais.
 
-### Conclusão: **F0.5a NÃO está 100% pronta.** Fica **F0.5a-restante** na fila:
+### Prova da CORREÇÃO do critério 2 (mesmo método, régua grossa 3px, chanfro 30px, 4×)
 
-1. **(critério 2 — falha confirmada)** reimplementar a régua pela **técnica de duas
-   camadas**: elemento externo com o fundo na cor da régua + `clip-path` de 7px, e um
-   interno com `inset:1px`, fundo do campo e `clip-path` de 6px. É o único jeito de a
-   régua acompanhar as diagonais.
-2. **(critério 7)** aplicar o material à **barra de energia do topo**.
+Duas placas lado a lado, ampliadas: a NOVA (duas camadas) tem a régua dourada nas **8
+arestas** — as 4 retas E as 4 diagonais. A VELHA (`inset box-shadow`, reproduzida) tem
+régua nas 4 retas e as **4 diagonais NUAS**, como antes. Na barra de energia real (régua
+de 1px) a régua acompanha os cantos chanfrados. A técnica de duas camadas resolve porque
+as duas camadas são chanfradas e deslocadas 1px — o anel de 1px sobra em todo o perímetro,
+não só nas arestas do retângulo.
 
-Os outros 6 critérios estão atendidos.
+### Conclusão: **F0.5a-restante FEITA.** Os 8 critérios estão atendidos.
+
+- **(critério 2)** régua pela técnica de duas camadas (`shell.html` — elemento = régua,
+  `::before` = preenchimento inset 1px, chanfros 7px/6px). Provado por imagem.
+- **(critério 7)** material aplicado à barra de energia (`.energy`), sem grão (superfície
+  pequena — critério 8 mantido em 1 textura permanente).
+
+Placas de material por tela (contagem depois da mudança): **batalha** 2 em repouso
+(`.detail` + `.energy`), ≤3–4 com menu/popup; **seleção** 0 em repouso, 1 com filtro/kit.
+`::before` é `pointer-events:none` — nenhum alvo de toque quebrou (pílulas e Trocar
+respondem no centro; hit-test confirmado). Falta só **F0.5b** (sistema de botões) para
+fechar a Fase 0.
 
 ---
 

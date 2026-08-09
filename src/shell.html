@@ -42,7 +42,8 @@
   /* ---- LINGUAGEM DE MATERIAL: bronze votivo sobre pedra escura ----
      grão = ruído SVG rasterizado uma vez (não é filter em runtime),
      usado só nas superfícies grandes. chanfro = assinatura de forma. */
-  --chanfro:7px;
+  --chanfro:7px;      /* chanfro externo (camada da régua) */
+  --chanfro-in:6px;   /* chanfro interno (camada do preenchimento, inset 1px) — régua de 1px */
   --grao:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
   --bronze:#c9a25a; --bronze-d:#7a5c2c;
   --grav:0 1px 0 rgba(0,0,0,.6),0 -1px 0 rgba(255,240,205,.10); /* texto entalhado */
@@ -111,7 +112,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .timer.low .timer__fill{background:linear-gradient(180deg,#ff9a9a,#c03030)}
 .timer__label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-weight:700;font-size:10px;letter-spacing:.1em;word-spacing:.2em;color:#0a0912}
-.energy{display:flex;gap:9px;align-items:center;min-height:19px}
+/* barra de energia: material (régua+chanfro+bisel) SEM grão — é superfície pequena, e o
+   grão é só para as grandes (ver :44) / critério 8 mantém 1 textura permanente na batalha */
+.energy{display:flex;gap:9px;align-items:center;min-height:19px;padding:4px 11px;
+  --placa-fill:linear-gradient(180deg,rgba(30,24,54,.82),rgba(15,12,32,.92));
+  --placa-regua:rgba(74,62,108,.95)}
 .energy__pill{display:flex;align-items:center;gap:4px;padding:1px 2px;cursor:pointer;
   border-radius:3px;transition:.12s;background:transparent;border:1px solid transparent}
 .energy__pill.spend{border-color:var(--gold-text);background:rgba(255,217,122,.13)}
@@ -556,23 +561,35 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    (têm linguagem própria) nem às placas pequenas de botão (tarefa 2).
    Ordem no arquivo: vem depois das regras originais para vencê-las.
    ============================================================ */
-.placa,.detail,.menu,.ovbox,.cbox,.fbox,.kbox{
-  position:relative;border:0;border-radius:0;
+/* TÉCNICA DE DUAS CAMADAS (não inset box-shadow — este deixava as 4 diagonais NUAS,
+   porque corre pelas arestas do RETÂNGULO e o clip-path corta os cantos depois).
+   Camada de trás = o ELEMENTO, na cor da régua, chanfro 7px. Camada da frente =
+   ::before, inset 1px, chanfro 6px, com o preenchimento. Sobra um anel de 1px de régua
+   em TODO o perímetro — inclusive nas diagonais, porque as duas camadas são chanfradas e
+   deslocadas 1px. `isolation:isolate` contém o z-index:-1 do ::before (fica atrás do
+   preenchimento mas não some atrás do pai). O conteúdo é fluxo normal → acima do ::before. */
+.placa,.detail,.menu,.ovbox,.cbox,.fbox,.kbox,.energy{
+  position:relative;isolation:isolate;border:0;border-radius:0;
+  background:var(--placa-regua,rgba(66,55,98,.9));   /* camada de trás: a RÉGUA */
   clip-path:polygon(var(--chanfro) 0,calc(100% - var(--chanfro)) 0,100% var(--chanfro),
     100% calc(100% - var(--chanfro)),calc(100% - var(--chanfro)) 100%,var(--chanfro) 100%,
     0 calc(100% - var(--chanfro)),0 var(--chanfro));
-  background-blend-mode:overlay,normal;
-  box-shadow:
-    inset 0 0 0 1px var(--placa-regua,rgba(66,55,98,.9)),  /* régua de metal */
-    inset 0 1px 0 rgba(255,241,208,.08),                   /* luz no topo */
-    inset 0 -2px 5px rgba(0,0,0,.5);                       /* sombra na base = espessura */
 }
-/* fill próprio de cada superfície, com o grão por cima em overlay */
-.detail{background:var(--grao),linear-gradient(180deg,rgba(30,24,54,.82),rgba(15,12,32,.92));
+.placa::before,.detail::before,.menu::before,.ovbox::before,.cbox::before,.fbox::before,.kbox::before,.energy::before{
+  content:'';position:absolute;inset:1px;z-index:-1;pointer-events:none;
+  background:var(--placa-fill);background-blend-mode:overlay,normal;
+  clip-path:polygon(var(--chanfro-in) 0,calc(100% - var(--chanfro-in)) 0,100% var(--chanfro-in),
+    100% calc(100% - var(--chanfro-in)),calc(100% - var(--chanfro-in)) 100%,var(--chanfro-in) 100%,
+    0 calc(100% - var(--chanfro-in)),0 var(--chanfro-in));
+  box-shadow:inset 0 1px 0 rgba(255,241,208,.08),   /* luz no topo (bisel) */
+    inset 0 -2px 5px rgba(0,0,0,.5);                 /* sombra na base = espessura */
+}
+/* preenchimento (--placa-fill) e cor da régua (--placa-regua) por superfície */
+.detail{--placa-fill:var(--grao),linear-gradient(180deg,rgba(30,24,54,.82),rgba(15,12,32,.92));
   --placa-regua:rgba(74,62,108,.95);filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
-.menu{background:var(--grao),rgba(16,12,30,.985);--placa-regua:var(--gold-soft);
+.menu{--placa-fill:var(--grao),rgba(16,12,30,.985);--placa-regua:var(--gold-soft);
   filter:drop-shadow(0 8px 22px rgba(0,0,0,.7))}
-.ovbox,.cbox,.fbox,.kbox{background:var(--grao),linear-gradient(180deg,var(--panel),var(--panel-2));
+.ovbox,.cbox,.fbox,.kbox{--placa-fill:var(--grao),linear-gradient(180deg,var(--panel),var(--panel-2));
   --placa-regua:var(--gold-soft);filter:drop-shadow(0 12px 30px rgba(0,0,0,.62))}
 
 /* moldura do CAMPO DE BATALHA: separa topo e rodapé do meio, com
