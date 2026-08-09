@@ -17,7 +17,12 @@ let perfil=null;
 // Apaga TODOS os dados: limpa as chaves, zera o perfil em memória e regrava o novo.
 // salvar() não é silencioso — se a escrita falhar, avisa no registro da partida.
 function apagarDados(){
-  apagar(); perfil=novoPerfil();
+  apagar();
+  // reset é recriação: novoPerfil() aplica o grant inicial (senão o jogador fica sem
+  // poder jogar) e a entrada de histórico marca que foi RESET, não grant normal.
+  const grant=(typeof ECONOMIA!=='undefined'&&ECONOMIA.grantInicial)?ECONOMIA.grantInicial.gema:0;
+  perfil=novoPerfil(0, grant);
+  registrarHistorico(entradaDeEvento({tipo:'recriacao', causa:'reset-manual', valor:grant}));
   const r=salvar(perfil);
   if(!r.ok && st) st.log.push({turno:st.turno,msg:'⚠ dados apagados, mas a gravação falhou: '+r.erro});
 }
@@ -79,7 +84,9 @@ function ligar(){
 // Carrega o perfil. Só avisa se o dado estava CORROMPIDO (perda real); ambiente sem
 // localStorage é começo normal — o alarme de gravação (salvar) cobre a impossibilidade
 // de persistir, que é o que de fato importa ao jogador.
-{ const c=carregar(); perfil=c.perfil; if(c.motivo && !/inacess/.test(c.motivo))console.warn('perfil corrompido ('+c.motivo+') — comecei do zero'); }
+{ const c=iniciar(); perfil=c.perfil;   // iniciar(): carrega + aplica/persiste grant inicial ou migração v2
+  if(c.salvou && !c.salvou.ok) console.warn('perfil criado, mas a gravação falhou: '+c.salvou.erro);
+  if(c.motivo && !/inacess/.test(c.motivo)) console.warn('perfil corrompido ('+c.motivo+') — recriei com o grant inicial'); }
 configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
   rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });

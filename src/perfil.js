@@ -4,20 +4,25 @@
 // parâmetro (`agora`), para as funções ficarem determinísticas/testáveis.
 // O HISTÓRICO NÃO mora no perfil (cresce e é reescrito a cada salvar) — vive em
 // chave própria, cuidada pelo armazenamento.js. Uma chave por DONO.
-const VERSAO_PERFIL = 1;
+const VERSAO_PERFIL = 2;   // v2: grant inicial (1500) passa a existir; migração backfilla v<2
 const INICIAIS = ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha']; // DECISOES §4
 const MAX_TIMES = 5;
 
 const _clone = p => JSON.parse(JSON.stringify(p));
 
-function novoPerfil(agora = 0) {
+// grantGema é o grant inicial (data/economia.json → grantInicial.gema = 1500). Entra por
+// PARÂMETRO, não por leitura de global: a função continua pura e testável, e a borda
+// (armazenamento/view, que veem ECONOMIA) é quem escolhe o valor. Default 0 = sem grant
+// (usado pelos testes puros). O grant é EVENTO DE CRIAÇÃO — a entrada de histórico é
+// escrita pela borda; aqui só nasce o saldo.
+function novoPerfil(agora = 0, grantGema = 0) {
   const deuses = {};
   for (const k of INICIAIS) deuses[k] = { copias: 1, favorito: false, obtidoEm: agora };
   return {
     versao: VERSAO_PERFIL,
     deuses,
     times: [],
-    moedas: { gema: 0, essencia: 0 },
+    moedas: { gema: grantGema, essencia: 0 },
     provacoes: {},
     campanha: { capitulo: 0, fase: 0, concluidas: [] },
     invocacao: { total: 0, desdeUltimoSS: 0 },   // pity; a F0.4b liga isto ao gacha
@@ -63,6 +68,18 @@ function debitar(perfil, moeda, valor) {
   p.moedas[moeda] = atual - valor;   // nunca fica negativo
   return p;
 }
+// Crédito de TESTE (afordância de protótipo, botão DEV). Credita de verdade E MARCA o
+// perfil como contaminado (p.dev): a nota do dado ("grantTeste nunca entra no perfil
+// real") é honrada no que importa — nenhum perfil de jogador recebe 30.000 sem que se
+// saiba. O rótulo fica no perfil, o indicador aparece na tela, e a entrada de histórico
+// (tipo próprio, escrita pela borda) nunca se confunde com transação de jogo.
+function creditarDev(perfil, moeda, valor, agora = 0) {
+  const p = _clone(perfil);
+  p.moedas[moeda] = (p.moedas[moeda] || 0) + valor;
+  if (!p.dev) p.dev = { creditosTeste: 0, primeiroEm: agora };
+  p.dev.creditosTeste += valor;
+  return p;
+}
 function concluirProvacao(perfil, key, turnos, agora = 0) {
   const p = _clone(perfil);
   const j = p.provacoes[key];
@@ -88,12 +105,20 @@ function registrarInvocacao(perfil, resultado, agora = 0) {
 }
 
 // Migração: SEMPRE chamada no carregar(), mesmo sem trabalho, para o caminho ser
-// exercitado. v0 -> v1 é a primeira versão numerada; ainda não converte dados, mas
-// a estrutura existe para a v2 não nascer sem caminho.
-function migrar(p) {
+// exercitado. v<2 -> v2 é o primeiro trabalho REAL da migração: credita o grant
+// inicial retroativo. Todo perfil anterior à v2 nasceu com a carteira FANTASMA (custo
+// de invocação era ficção, ninguém jamais recebeu as 1500), então dar o grant uma vez
+// a esses perfis é correto e SEGURO. A subida de versão trava a repetição: rodar
+// migrar() de novo num v2 não credita outra vez — é a "presença de versão", não
+// `gema || 1500`, que separa "nunca recebeu" (v<2) de "gastou tudo" (v2, gema 0).
+function migrar(p, grantGema = 0) {
   if (!p || typeof p !== 'object') return p;   // deixa a validação derrubar
-  let q = p;
-  if (typeof q.versao !== 'number' || q.versao < 1) q = Object.assign({}, q, { versao: 1 });
+  const v = (typeof p.versao === 'number') ? p.versao : 0;
+  if (v >= VERSAO_PERFIL) return p;            // já migrado: NADA a fazer (idempotente)
+  const q = Object.assign({}, p);
+  q.moedas = Object.assign({ gema: 0, essencia: 0 }, p.moedas);
+  q.moedas.gema = (typeof q.moedas.gema === 'number' ? q.moedas.gema : 0) + grantGema;
+  q.versao = VERSAO_PERFIL;
   return q;
 }
 
@@ -122,6 +147,12 @@ function problemaDeForma(p, rosterKeys) {
   if (!p.invocacao || typeof p.invocacao.total !== 'number' || typeof p.invocacao.desdeUltimoSS !== 'number') return 'invocacao inválida';
   if (!p.provacoes || typeof p.provacoes !== 'object') return 'provacoes ausente';
   if (!p.campanha || typeof p.campanha !== 'object') return 'campanha ausente';
+  // dev é OPCIONAL (só existe em perfil contaminado por crédito de teste). Se presente,
+  // valida a forma — assim corrupção nesse campo cai para novoPerfil como qualquer outra.
+  if ('dev' in p) {
+    const dv = p.dev;
+    if (!dv || typeof dv !== 'object' || typeof dv.creditosTeste !== 'number' || dv.creditosTeste < 0) return 'dev inválido';
+  }
   return null;
 }
 function ehPerfilValido(p, rosterKeys) { return problemaDeForma(p, rosterKeys) === null; }
@@ -129,5 +160,5 @@ function ehPerfilValido(p, rosterKeys) { return problemaDeForma(p, rosterKeys) =
 if (typeof module !== 'undefined') module.exports = {
   VERSAO_PERFIL, INICIAIS, MAX_TIMES,
   novoPerfil, adicionarDeus, marcarFavorito, salvarTime, removerTime,
-  creditar, debitar, concluirProvacao, registrarInvocacao, migrar, problemaDeForma, ehPerfilValido,
+  creditar, debitar, creditarDev, concluirProvacao, registrarInvocacao, migrar, problemaDeForma, ehPerfilValido,
 };

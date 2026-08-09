@@ -177,12 +177,19 @@ const INV = (function () {
   const P = { SS: ECONOMIA.invocacao.taxas.SS, S: ECONOMIA.invocacao.taxas.S };
   const PITY = ECONOMIA.invocacao.pity.duro;   // garantia dura (fonte: data/economia.json)
   let cur = 'destaque';
-  let S = { gemas: ECONOMIA.grantTeste.gema,
+  // S.gemas é MIRROR do perfil (perfil.moedas.gema é a verdade). A carteira já NÃO nasce
+  // do grantTeste — isso era a carteira FANTASMA (custo de invocação era ficção). Sincroniza
+  // em montar() e após cada mutação. Sem perfil (preview isolado), fica em 0 e não invoca pago.
+  let S = { gemas: 0,
     banners: { destaque: { pity: 0 }, padrao: { pity: 0 }, iniciante: { used: false } },
     owned: {}, stats: { SS: 0, S: 0, A: 0, total: 0, fSS: 0 } };
-  // Restaura o pity do perfil (persiste entre sessões). INTERIM: o modelo guarda um
-  // contador único (desdeUltimoSS), restaurado no banner principal (ver ESTADO).
-  if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.banners.destaque.pity = perfil.invocacao.desdeUltimoSS || 0;
+  // Sincroniza a tela com o perfil REAL (saldo + pity). Chamada em montar(): no load o
+  // perfil ainda é null (o boot carrega depois), então ler aqui, na abertura da tela, é
+  // o momento certo. INTERIM: o pity é um contador único (desdeUltimoSS) no banner principal.
+  function sincronizarCarteira() {
+    S.gemas = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
+    if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.banners.destaque.pity = perfil.invocacao.desdeUltimoSS || 0;
+  }
 
   // Aleatório: durante um lote, roda por SEMENTE (mulberry32 do motor), para o
   // sorteio ser reproduzível e auditável. Fora de um lote, cai no Math.random do
@@ -225,13 +232,17 @@ const INV = (function () {
   }
 
   function pull(n) {
+    let cost = 0;
     if (cur === 'iniciante') {
       if (S.banners.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
       n = ECONOMIA.invocacao.banners.iniciante.qtd;
     } else {
-      const cost = n === 10 ? ECONOMIA.invocacao.custo.pacote10 : ECONOMIA.invocacao.custo.avulso;
-      if (S.gemas < cost) { flash('Gemas insuficientes — use o + para recarregar.'); return; }
-      S.gemas -= cost;
+      cost = n === 10 ? ECONOMIA.invocacao.custo.pacote10 : ECONOMIA.invocacao.custo.avulso;
+      // SALDO INSUFICIENTE BLOQUEIA ANTES DE QUALQUER MUDANÇA DE ESTADO: sem sorteio, sem
+      // mexer no pity, sem gravar. Falha de pagamento não avança estado nenhum. Checa o
+      // PERFIL (a verdade), não o mirror. Sem perfil, também bloqueia (não há carteira).
+      const saldo = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
+      if (!(typeof perfil !== 'undefined' && perfil) || saldo < cost) { flash('Gemas insuficientes — use o + (DEV) para recarregar.'); return; }
     }
     const bkey = cur;
     const pityEntrada = bkey === 'iniciante' ? { pity: 0 } : { pity: S.banners[bkey].pity };
@@ -246,13 +257,16 @@ const INV = (function () {
       S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1;
     });
     // PERSISTE ANTES de revelar: recompensa se commita antes de aparecer, nunca
-    // depois — se o app morrer na animação, o jogador já recebeu. O histórico
-    // guarda a SEMENTE e o pity de entrada: qualquer invocação é reproduzível.
+    // depois — se o app morrer na animação, o jogador já recebeu. O DÉBITO das gemas
+    // entra AQUI, no mesmo commit: paga antes de ver (mesma regra da recompensa). O
+    // histórico guarda a SEMENTE, o pity de entrada e o custo: tudo reproduzível/auditável.
     if (typeof perfil !== 'undefined' && perfil && typeof registrarInvocacao === 'function') {
+      if (cost > 0 && typeof debitar === 'function') perfil = debitar(perfil, 'gema', cost);   // saldo já checado; nunca fica negativo
       perfil = registrarInvocacao(perfil, { resultados: out.map(o => ({ key: o.u.key, raridade: o.r })), pity: pity.pity });
-      if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'invocacao', banner: bkey, seed, pityEntrada: pityEntrada.pity, qtd: n, deuses: out.map(o => o.u.key) });
+      if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'invocacao', banner: bkey, seed, pityEntrada: pityEntrada.pity, qtd: n, custo: cost, deuses: out.map(o => o.u.key) });
       const rs = (typeof salvar === 'function') ? salvar(perfil) : { ok: true };
       if (!rs.ok) flash('Invocado — mas não consegui salvar: ' + rs.erro);
+      S.gemas = perfil.moedas.gema;   // mirror segue a verdade
     }
     S._lastN = n;
     showReveal(out); render();
@@ -294,7 +308,20 @@ const INV = (function () {
     document.getElementById('iv-audit').classList.add('iv-show');
   }
 
-  function topup() { S.gemas += ECONOMIA.grantTeste.gema; render(); flash('+' + ECONOMIA.grantTeste.gema.toLocaleString('pt-BR') + ' 💎 (modo teste)'); }
+  // Crédito DEV: credita de VERDADE no perfil (para exercitar invocação sem grindar) mas
+  // MARCA o perfil como contaminado (perfil.dev) e loga com tipo próprio 'dev-credito' —
+  // nunca confundível com transação de jogo. O indicador na tela (ver render) fica aceso
+  // enquanto o perfil estiver marcado. Sai antes do release (ver ESTADO).
+  function topup() {
+    if (typeof perfil === 'undefined' || !perfil || typeof creditarDev !== 'function') { flash('Sem perfil para creditar.'); return; }
+    const v = ECONOMIA.grantTeste.gema;
+    perfil = creditarDev(perfil, 'gema', v, 0);
+    if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'dev-credito', moeda: 'gema', valor: v });
+    if (typeof salvar === 'function') salvar(perfil);
+    S.gemas = perfil.moedas.gema;
+    render();
+    flash('+' + v.toLocaleString('pt-BR') + ' 💎 — DEV, contamina o perfil');
+  }
   let flashT;
   function flash(msg) {
     let t = document.getElementById('iv-toast');
@@ -308,6 +335,9 @@ const INV = (function () {
     const FW = Math.max(52, Math.min(92, Math.floor(_h / 3.48)));
     const FW5 = Math.max(58, Math.min(102, Math.floor(_h / 3.22)));
     document.getElementById('iv-gemas').textContent = S.gemas.toLocaleString('pt-BR');
+    // indicador de perfil CONTAMINADO por crédito de teste — discreto mas sempre presente
+    const dev = document.getElementById('iv-devmark');
+    if (dev) dev.style.display = (typeof perfil !== 'undefined' && perfil && perfil.dev) ? 'inline-flex' : 'none';
     document.getElementById('iv-tabs').innerHTML = Object.keys(BANNERS).map(k =>
       `<div class="iv-tab ${k === cur ? 'iv-on' : ''}" onclick="INV.setBanner('${k}')">${k === 'destaque' ? 'Destaque' : k === 'padrao' ? 'Padrão' : 'Iniciante'}</div>`).join('');
     const b = BANNERS[cur];
@@ -346,7 +376,8 @@ const INV = (function () {
     <div class="iv-topbar">
       <button class="iv-hbtn" onclick="voltarInvocacao()">‹ Voltar</button>
       <div class="iv-wallet">
-        <span class="iv-c">💎 <b id="iv-gemas">0</b> <span class="iv-plus" onclick="INV.topup()">+</span></span>
+        <span id="iv-devmark" class="iv-devmark" style="display:none" title="Perfil contaminado por crédito de teste (DEV) — sai antes do release">⚠ DEV</span>
+        <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+ DEV</button></span>
       </div>
     </div>
     <div class="iv-tabs" id="iv-tabs"></div>
@@ -370,7 +401,7 @@ const INV = (function () {
     <div class="iv-audit" id="iv-audit"><div class="iv-box" id="iv-auditBox"></div></div>
   </div>`;
 
-  function montar() { document.getElementById('stage').innerHTML = SKELETON; render(); }
+  function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = SKELETON; render(); }
 
   return { render, pull, setBanner, openAudit, topup, closeReveal, rollAgain, montar, sortearLote };
 })();

@@ -79,16 +79,77 @@ console.log('== round-trip: salvar -> carregar preserva ==');
   console.log('  ida e volta idêntica');
 }
 
-console.log('== migrar é chamada no caminho normal (mesmo sem trabalho) ==');
+console.log('== migração v<2 -> v2: backfill do grant inicial, UMA vez (idempotente) ==');
+{
+  // pura: migrar credita o grant uma vez; rodar de novo num v2 NÃO credita outra
+  const antigo = P.novoPerfil(); antigo.versao = 1; antigo.moedas.gema = 0;   // perfil pré-grant (carteira fantasma)
+  const m1 = P.migrar(antigo, 1500);
+  ok(m1.versao === P.VERSAO_PERFIL && m1.moedas.gema === 1500, 'v1 -> v2 credita 1500 uma vez');
+  const m2 = P.migrar(m1, 1500);
+  ok(m2.moedas.gema === 1500, 'rodar migrar() de novo num v2 NÃO credita outra vez (idempotente por versão)');
+  ok(antigo.moedas.gema === 0, 'migrar é puro: não mutou o original');
+  // via carregar: v1 no storage sobe para v2 com o grant e descreve um evento de migração
+  global.localStorage = fakeLS();
+  const v1 = P.novoPerfil(); v1.versao = 1; v1.moedas.gema = 0;
+  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(v1));
+  const c = A.carregar({ rosterKeys: RK, grantGema: 1500 });
+  ok(c.motivo === null && c.perfil.versao === P.VERSAO_PERFIL && c.perfil.moedas.gema === 1500, 'carregar migra v1 -> v2 e credita 1500');
+  ok(c.evento && c.evento.tipo === 'grant' && /migracao/.test(c.evento.motivo), 'evento de migração descrito para a borda logar');
+  console.log('  v1 -> v2 credita 1500 uma vez; idempotente; evento de migração');
+}
+
+console.log('== zero é legítimo: v2 com gema 0 carrega 0, NÃO 1500 ==');
 {
   global.localStorage = fakeLS();
-  // perfil de forma válida, mas versao 0 -> migrar tem de elevar para 1 no carregar
-  const antigo = P.novoPerfil(); antigo.versao = 0;
-  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(antigo));
-  const c = A.carregar({ rosterKeys: RK });
-  ok(c.motivo === null, 'carregou o perfil migrado');
-  ok(c.perfil.versao === 1, 'migrar elevou versao 0 -> 1 no caminho normal');
-  console.log('  v0 -> v1 no carregar, sem cair para novoPerfil');
+  const gastou = P.novoPerfil(); gastou.moedas.gema = 0;   // v2 atual, gastou tudo
+  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(gastou));
+  const c = A.carregar({ rosterKeys: RK, grantGema: 1500 });
+  ok(c.perfil.moedas.gema === 0, 'v2 com gema 0 permanece 0 (a leitura nunca recompleta o saldo)');
+  ok(c.evento == null, 'sem evento: nada foi creditado nem recriado');
+  console.log('  presença de VERSÃO, não `gema || 1500`: quem gastou fica em 0');
+}
+
+console.log('== recriação por corrupção: recebe o grant e o histórico diz "recriacao" ==');
+{
+  global.localStorage = fakeLS();
+  const p = P.novoPerfil(); p.moedas.gema = -5;   // forma inválida -> cai para novoPerfil
+  localStorage.setItem(A.CHAVE_PERFIL, JSON.stringify(p));
+  const c = A.carregar({ rosterKeys: RK, grantGema: 1500 });
+  ok(c.motivo && /forma inválida/.test(c.motivo), 'corrupção detectada');
+  ok(c.perfil.moedas.gema === 1500, 'perfil recriado recebe o grant (não fica sem poder jogar)');
+  ok(c.evento && c.evento.tipo === 'recriacao' && /inválida/.test(c.evento.causa || ''), 'evento de recriação com a causa junto');
+  const ent = A.entradaDeEvento(c.evento);
+  ok(ent.tipo === 'recriacao' && ent.valor === 1500 && !!ent.causa, 'entrada de histórico distinta de grant normal, com a causa');
+  console.log('  recriação credita 1500; entrada é "recriacao" com a causa, não grant normal');
+}
+
+console.log('== crédito DEV: credita de verdade, MARCA o perfil e é válido ==');
+{
+  let p = P.novoPerfil(0, 1500);
+  ok(!('dev' in p), 'perfil limpo não tem marca dev');
+  p = P.creditarDev(p, 'gema', 30000, 0);
+  ok(p.moedas.gema === 31500, 'creditou de verdade (1500 + 30000)');
+  ok(p.dev && p.dev.creditosTeste === 30000, 'perfil marcado como contaminado (dev.creditosTeste)');
+  p = P.creditarDev(p, 'gema', 30000, 0);
+  ok(p.dev.creditosTeste === 60000, 'créditos de teste acumulam na marca');
+  ok(P.problemaDeForma(p, RK) === null, 'perfil contaminado ainda é válido de forma');
+  let q = P.novoPerfil(); q.dev = { creditosTeste: 'muito' };
+  ok(/dev/.test(P.problemaDeForma(q, RK) || ''), 'dev com forma inválida é rejeitado');
+  console.log('  dev credita + marca perfil.dev; forma validada; entrada dev-credito é escrita pela borda');
+}
+
+console.log('== iniciar(): grant inicial credita, PERSISTE e loga UMA vez ==');
+{
+  global.localStorage = fakeLS();
+  const c = A.iniciar({ rosterKeys: RK, grantGema: 1500 });
+  ok(c.perfil.moedas.gema === 1500, 'perfil novo nasce com o grant');
+  ok(c.salvou && c.salvou.ok, 'iniciar persistiu o perfil');
+  const h = A.carregarHistorico();
+  ok(h.length === 1 && h[0].tipo === 'grant' && h[0].motivo === 'inicial' && h[0].valor === 1500, 'histórico tem a entrada de grant inicial');
+  const c2 = A.iniciar({ rosterKeys: RK, grantGema: 1500 });
+  ok(c2.perfil.moedas.gema === 1500 && c2.evento == null, 'segundo boot não credita de novo (idempotente)');
+  ok(A.carregarHistorico().length === 1, 'e não duplica a entrada de histórico');
+  console.log('  grant inicial credita/persiste/loga uma vez; boot seguinte é no-op');
 }
 
 console.log('== salvar reporta falha (não é silencioso) ==');

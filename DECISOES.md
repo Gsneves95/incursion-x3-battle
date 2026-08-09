@@ -521,6 +521,54 @@ legibilidade, não enfeite.
 
 ---
 
+## 23. Carteira real: grant é evento de criação, débito antes de revelar (F0.4c)
+
+**BUG ENCONTRADO (estava no ar):** a carteira era FANTASMA. A tela de invocação rodava
+sobre um `S.gemas` local semeado do `grantTeste` (30.000) no load, nunca do perfil. O
+custo da invocação (`S.gemas -= cost`) mexia só nesse fantasma; o commit-antes-de-revelar
+persistia deuses/pity/histórico mas **nunca debitava gema do perfil**. Ou seja: **invocar
+era de graça** — o gasto era ficção. Corrigido nesta fase.
+
+**Grant inicial (1500) é EVENTO DE CRIAÇÃO, não default de leitura.** Nasce em
+`novoPerfil()` (o valor vem por PARÂMETRO, da borda que vê `data/economia.json →
+grantInicial.gema`; a função pura não lê global) e vira **entrada de histórico** como
+qualquer transação. A leitura NUNCA completa saldo faltante.
+
+**"Zero é legítimo" resolvido por PRESENÇA DE VERSÃO, não `gema || 1500`.** Um jogador que
+gastou tudo tem gema 0 e não pode ganhar 1500 a cada carregamento. A distinção é a versão:
+`v<2` = perfil anterior ao grant (a carteira era fantasma, nunca recebeu) → a **migração**
+credita 1500 UMA vez e sobe para v2; `v2` com gema 0 = gastou tudo → recebe nada. O getter
+é `perfil.moedas.gema` puro, sem fallback. `migrar()` é idempotente pela versão (rodar de
+novo num v2 não credita). É o primeiro trabalho REAL da migração, que nasceu andaime.
+
+**Débito real na invocação:** saldo insuficiente **bloqueia ANTES de qualquer mudança de
+estado** — sem sorteio, sem consumir pity, sem gravar (falha de pagamento não avança estado
+nenhum, o invariante mais cravado). O débito acontece no **mesmo commit que persiste, ANTES
+de revelar** (paga antes de ver, espelho da regra da recompensa). Custo entra no histórico
+da invocação.
+
+**Crédito de teste (grantTeste 30.000) — o botão "+ DEV".** A nota do dado ("nunca entra no
+perfil real") existe pelo mesmo motivo do botão TESTE da seleção: afordância de protótipo
+não pode contaminar dado persistido sem que se saiba. Como a carteira real tira a única
+forma de exercitar invocação sem grindar, o crédito DEV **credita o perfil DE VERDADE mas o
+MARCA como contaminado**: campo `perfil.dev = { creditosTeste, primeiroEm }`, entrada de
+histórico com tipo próprio `dev-credito` (nunca confundível com transação de jogo), e um
+indicador `⚠ DEV` visível na tela enquanto a marca existir. Assim nenhum perfil de jogador
+de verdade recebe 30.000 sem que se saiba — a nota do dado é honrada no que importa. **O
+botão e a marca saem antes do release** (dívida no ESTADO).
+
+**Recriação por corrupção recebe 1500** (é `novoPerfil()`, grant é criação — quem perdeu
+tudo por corrupção não pode ficar sem poder jogar), mas o histórico distingue: entrada
+`tipo:'recriacao'` com a **causa** da corrupção junto, para responder depois "por que esse
+jogador tem 1500 do nada".
+
+Testes que travam tudo isso em `tests/perfil.test.js` (migração idempotente, zero-legítimo,
+recriação com causa, dev marca+valida, `iniciar()` credita/persiste/loga uma vez) e
+`tests/invocacao.test.js` (x10 debita o perfil de verdade; insuficiente bloqueia sem
+consumir pity nem gravar; DEV credita+marca+indicador+loga). **13 suítes verdes.**
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

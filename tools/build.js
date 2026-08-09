@@ -80,7 +80,9 @@ const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
   .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
-  .replace('/*__VIEW__*/', blocoVisao + '\nconst RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\n' + invoc + '\n' + ia)
+  // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
+  // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

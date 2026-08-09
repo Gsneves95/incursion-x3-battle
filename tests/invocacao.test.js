@@ -74,6 +74,39 @@ console.log('== 5. auditoria de taxas abre e tabela bate ==');
   console.log(`  auditoria de 1000 aberta com ${$$('#iv-auditBox table tr').length} linhas`);
 }
 
+console.log('== 6. carteira real: x10 debita o perfil; saldo insuficiente NÃO avança estado ==');
+{
+  // O grant inicial (1500) cobriu UM x10 (1350) na seção 3 -> sobram 150. Agora um x10
+  // (1350) tem de ser BLOQUEADO: sem revelar, sem consumir pity, sem gravar. Falha de
+  // pagamento não avança estado nenhum — é o invariante que o dono mais quer travado.
+  ok(w.eval('perfil.moedas.gema') === 150, `x10 debitou o perfil de verdade (grant 1500 - 1350 = 150, veio ${w.eval('perfil.moedas.gema')})`);
+  const saldoAntes = w.eval('perfil.moedas.gema');
+  const totalAntes = w.eval('perfil.invocacao.total');
+  const pityAntes  = w.eval('perfil.invocacao.desdeUltimoSS');
+  const salvoAntes = w.eval('localStorage.getItem("incursion:perfil")');
+  const cartasAntes = $$('#iv-cards .iv-carta').length;
+  w.eval('INV.pull(10)');   // custa 1350 > 150
+  ok(w.eval('perfil.moedas.gema') === saldoAntes, 'saldo intacto (nada debitado)');
+  ok(w.eval('perfil.invocacao.total') === totalAntes, 'total de invocações intacto (estado não avançou)');
+  ok(w.eval('perfil.invocacao.desdeUltimoSS') === pityAntes, 'pity intacto (não consumido)');
+  ok(w.eval('localStorage.getItem("incursion:perfil")') === salvoAntes, 'nada gravado no perfil persistido');
+  ok($$('#iv-cards .iv-carta').length === cartasAntes, 'não revelou cartas novas');
+  ok(/insufic/i.test($('#iv-toast') ? $('#iv-toast').textContent : ''), 'mensagem visível de gemas insuficientes');
+  console.log('  x10 debita de verdade; insuficiente bloqueia com aviso, pity/estado/persistência intactos');
+}
+
+console.log('== 7. crédito DEV credita o perfil, MARCA (perfil.dev) e mostra o indicador ==');
+{
+  const antes = w.eval('perfil.moedas.gema');   // 150
+  w.eval('INV.topup()');
+  ok(w.eval('perfil.moedas.gema') === antes + w.eval('ECONOMIA.grantTeste.gema'), 'DEV creditou o perfil de verdade');
+  ok(w.eval('!!(perfil.dev && perfil.dev.creditosTeste === ECONOMIA.grantTeste.gema)'), 'perfil marcado como contaminado (perfil.dev)');
+  ok($('#iv-devmark') && $('#iv-devmark').style.display !== 'none', 'indicador ⚠ DEV visível enquanto o perfil está marcado');
+  const h = w.eval('JSON.parse(localStorage.getItem("incursion:historico")||"[]")');
+  ok(h.some(e => e.tipo === 'dev-credito'), 'histórico tem entrada de tipo próprio "dev-credito" (nunca confundível com jogo)');
+  console.log('  DEV credita + marca perfil + acende indicador + loga dev-credito');
+}
+
 console.log('');
 console.log(falhas === 0 ? '>>> INVOCAÇÃO OK' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);

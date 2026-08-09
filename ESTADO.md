@@ -4,6 +4,26 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F0.4c — ligar a carteira real (grant inicial 1500, débito na invocação).
+**Resultado:** achado um BUG que estava no ar — a carteira era FANTASMA: a invocação
+rodava sobre um `S.gemas` local semeado do grantTeste (30.000), nunca do perfil, e o
+custo era ficção (invocar era de graça). Agora: (1) grant inicial de 1500 é EVENTO DE
+CRIAÇÃO em `novoPerfil(agora, grantGema)` — valor entra por parâmetro da borda (lê
+`ECONOMIA.grantInicial.gema`), a função pura não vê global; (2) "zero é legítimo" por
+PRESENÇA DE VERSÃO: `migrar(p, grant)` sobe `v<2 → v2` creditando 1500 UMA vez
+(idempotente), então v2 com gema 0 = gastou tudo, sem fallback `|| 1500` em lugar
+nenhum; (3) `carregar()` continua READ-ONLY e descreve um `evento`; `iniciar()` (novo,
+o boot chama) persiste+loga o grant uma vez; (4) invocação: saldo insuficiente BLOQUEIA
+antes de qualquer estado (sem pity, sem gravar) e o débito entra no commit ANTES de
+revelar; (5) botão "+ DEV": crédito de teste (30.000) credita o perfil MAS marca
+`perfil.dev`, loga `tipo:'dev-credito'` e acende um indicador `⚠ DEV` na tela — a nota
+do dado ("nunca no perfil real") honrada por rastreio, não por proibição. Ver decisão 23.
+Verificado em Chromium: perfil novo mostra 1.500; após +DEV, 31.500 + indicador. **13
+suítes verdes.** Fila: **F0.4b** (ligar o pity do gacha ao perfil de verdade — hoje é
+restaurado mas o modelo é um contador único; ver INTERIM em invocacao.js).
+
+## Sessão F0.6b (anterior)
+**Data:** 2026-08-09
 **Tarefa:** F0.6b — altura fixa (428), largura fluida.
 **Resultado:** a escala parava de cair junto com a tarja em proporção diferente de
 2,164:1 (iPhone SE 667×375 escalava 0,720 → texto de 9px virava ~6,5px). Regra nova:
@@ -203,8 +223,12 @@ técnica de duas camadas.
   engine→turno→rotas→ui/base→ui/*→view; `build.js` valida direção ui↛ui e faz smoke
   jsdom. Estado de UI ainda global (o doc da F0.3 proíbe estado novo).
 - **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
-  (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
-  "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
+  (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot por `iniciar()`
+  (carrega + aplica/persiste/loga o grant inicial ou a migração v2 uma vez); "Apagar dados"
+  no menu ⋯ (recria com grant, loga recriação). **Carteira REAL (F0.4c):** grant inicial
+  1500 em `novoPerfil`, invocação debita `perfil.moedas.gema` no commit antes de revelar,
+  insuficiente bloqueia sem avançar estado, botão "+ DEV" credita marcando `perfil.dev`.
+  Pity do gacha ainda NÃO ligado por banner (F0.4b / migração v3).
 - **Suítes:** 13, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
   rotas, **enquadramento**, interface, invocacao, **perspectiva**, **energia**, **moldura**).
   A `moldura` roda em Chromium real (`playwright` devDep); as outras 12 são node/jsdom.
@@ -230,11 +254,17 @@ técnica de duas camadas.
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.4c — carteira lê o grant 1500.** A F0.4c foi destravada quando a economia
-ficou pronta em `data/economia.json`: `novoPerfil` semeia `gema:1500` LENDO do arquivo
-(nunca literal); a invocação gasta/credita via `perfil.moedas.gema` (`debitar`/`creditar`)
-e persiste por `salvar`; o grant de teste 30000 continua FORA do perfil (só a recarga de
-protótipo). Insumo já existe (`data/economia.json`, DECISOES §20).
+**ID e nome:** **F0.4b — ligar o pity do gacha ao perfil de verdade.** Hoje o pity é
+restaurado do perfil no banner principal, mas o modelo é um contador único
+(`invocacao.desdeUltimoSS`) — o alvo é pity POR BANNER (migração v2→v3, ver seção de
+migração). Insumo: `invocacao.js` (INTERIM marcado), `perfil.js` `registrarInvocacao`.
+
+**FEITO nesta sessão — F0.4c (carteira real):** `novoPerfil(agora, grantGema)` semeia o
+grant LENDO de `data/economia.json` (grantInicial 1500, por parâmetro na borda, nunca
+literal); a invocação debita `perfil.moedas.gema` via `debitar` no commit ANTES de revelar,
+saldo insuficiente bloqueia sem avançar estado; grant de teste 30.000 credita mas MARCA o
+perfil (`perfil.dev` + `dev-credito` + `⚠ DEV`), fora do "perfil real" por rastreio. A
+migração v<2→v2 backfilla o grant. Ver decisão 23.
 
 **Depois (F0.5, visuais, colar juntas no fim da fase):**
 
@@ -286,6 +316,14 @@ sessão de reconciliação ou ao encostar em cada área.
 
 ## Descobertas que ainda não viraram tarefa
 > Notado durante o trabalho; não corrigir aqui.
+
+- **DÍVIDA: botão "+ DEV" e a marca `perfil.dev` SAEM ANTES DO RELEASE (F0.4c).** O crédito
+  de teste (grantTeste 30.000) credita o perfil de verdade para exercitar invocação sem
+  grindar, mas contamina: marca `perfil.dev`, loga `dev-credito`, acende `⚠ DEV`. É
+  afordância de protótipo — o botão, o `topup()`, o campo `perfil.dev` e o indicador têm de
+  sair (ou ficar atrás de um gate de build) antes de qualquer jogador real. O `grantTeste`
+  em `data/economia.json` sai junto. Quando sair, remover também o ramo `if (p.dev)` de
+  `problemaDeForma` — ou mantê-lo só para migrar perfis já contaminados para limpos.
 
 - **DÍVIDA: o motor ESCREVE TEXTO DE INTERFACE (candidata à Fase 1).** O `engine.js`
   emite strings prontas em português no log ("— Turno 3, vez do Jogador 1 —",
@@ -373,15 +411,20 @@ sessão de reconciliação ou ao encostar em cada área.
       `docs/economia-divergencias.md` (a preparar). Decisão do dono → aí gero
       `data/economia.json`, nunca o contrário.
 
-## Migração de perfil V1→V2 — JÁ PREVISTA (deixa de ser andaime)
-O modelo shipado tem `invocacao: {total, desdeUltimoSS}` — **um** pity. Mas o jogo tem
-banners com pity **independente** + o estado de **50/50 (`gf`)**. A forma correta é
-**por banner**. Alvo da V2:
+## Migração de perfil — V2 FEITA (grant); pity por banner vira V3
+**V2 (F0.4c, FEITO):** `VERSAO_PERFIL = 2`. `migrar(p, grant)` backfilla o grant inicial
+(1500) em todo perfil `v<2` — trabalho REAL, não mais andaime. Idempotente pela versão.
+Foi a primeira carga de verdade da migração.
+
+**V3 (PRÓXIMA carga da migração — antes era chamada de "V2"):** o modelo tem
+`invocacao: {total, desdeUltimoSS}` — **um** pity. O jogo quer pity **por banner**
+independente. Alvo:
 ```
-invocacao: { total, banners: { destaque:{desdeUltimoSS, garantiaFeat}, padrao:{...} } }
+invocacao: { total, banners: { destaque:{desdeUltimoSS}, padrao:{desdeUltimoSS} } }
 ```
-A `migrar()` v1→v2 converte `desdeUltimoSS` no pity do banner principal. Isto dá
-trabalho REAL à migração (não é mais exemplo). **Encolheu:** com o 50/50 removido, some
-o `garantiaFeat` — a forma alvo é só pity por banner (`{desdeUltimoSS}` por banner).
-**Custo do interim atual:** só o pity do **banner principal** sobrevive ao reload; pity
-de banners secundários se perde. Fazer quando o gacha ganhar banners de verdade.
+A `migrar()` v2→v3 converte `desdeUltimoSS` no pity do banner principal. **Encolheu:**
+com o 50/50 removido, some o `garantiaFeat` — só pity por banner. **Custo do interim
+atual:** só o pity do **banner principal** sobrevive ao reload; secundários se perdem.
+Fazer quando o gacha ganhar banners de verdade (ligado à fila F0.4b — ligar o pity de
+verdade). Ao subir para v3, `migrar` ganha o ramo `v===2 → v3` (o gate atual `v>=2 return`
+passa a `v>=VERSAO_PERFIL return`, que já é o que está escrito — só somar o passo).
