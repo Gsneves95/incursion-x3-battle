@@ -225,6 +225,13 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   decisão do dono, nunca o contrário**. Regras de combate têm spec no xlsx e podem
   virar `data/` numa reconciliação; até lá, constante de regra em código só bate com
   o xlsx, nunca inventada.
+- **Número que o dono deu de memória: VERIFIQUE no código/arte antes de usar.** Quando o
+  dono estima ("acho que é 8 ou 8,5", "o campo tem 426×121"), trate como hipótese a
+  conferir, não como fato. Numa sessão a estimativa errou DUAS vezes: o menor texto era
+  7,5px (não 8/8,5) e o campo media 438×123 (não 426/121). No caso do texto, 0,1px de
+  diferença era a fronteira entre o piso de legibilidade passar e falhar — aceitar a
+  estimativa teria escondido o bug. Varra o CSS/arte/dado, meça, e traga o número real;
+  se ele contradisser a memória do dono, é isso que se reporta, não o palpite.
 - **Mudança que altera o que APARECE na tela exige captura ANTES do commit — contra o
   dist recém-construído.** As suítes (mesmo 12) provam comportamento, não aparência:
   nesta fase a verificação visual pegou DUAS vezes o que os testes não pegaram (o palco
