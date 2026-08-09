@@ -72,6 +72,16 @@ engine → perfil → armazenamento → turno → rotas → ui/base → ui/* →
 falha se um módulo de ui/ chamar função de OUTRO ui/ (só base.js é livre).
 ```
 
+**Quando um DADO passar a ser lido no BOOT, revise a ordem de concatenação — não presuma
+que a ordem atual serve.** O bundle é escopo único concatenado: `const`/`let` têm TDZ, então
+código de topo que roda no load (ex.: o boot em `view.js`) só pode ler dados declarados
+ANTES dele na concatenação. Na F0.4c o boot passou a ler `ECONOMIA` para o grant, mas o
+`build.js` concatenava `ECONOMIA` DEPOIS do bloco da view → `ReferenceError` de TDZ só em
+runtime (nomeie a causa: dependência circular boot→dado, não "símbolo faltando"). Foi o
+**smoke jsdom do `build.js`** que pegou — erro de ordem em bundle concatenado não aparece
+em teste de unidade, só carregando o bundle. Regra: dado consumido no boot vem antes do
+bloco que o consome; e todo consumo novo no load é gatilho para reabrir a ordem do build.
+
 O motor ser **função pura e determinística** não é preciosismo. Ele paga em
 quatro lugares: o servidor autoritativo da fase 4 roda o mesmo código (anti-cheat
 de graça), replays são só estado inicial + lista de ações, as Provações são
@@ -212,6 +222,14 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   faz puras e determinísticas — testáveis e reusáveis pelo servidor/simulador. O
   aleatório do cliente (quem começa, seed de invocação) é sorteado na borda e passado
   para dentro.
+- **Número de versão de migração é RECURSO ESCASSO: quem consome, avisa e atualiza o que
+  estava reservado.** `VERSAO_PERFIL` é um contador de uma via — cada valor é um degrau de
+  migração que roda uma vez por perfil. Se você gastar um número que estava reservado para
+  outra migração (na F0.4c o `v2` estava planejado no ESTADO para o pity-por-banner e foi
+  usado para o grant), você DEVE: (1) avisar no relatório, (2) reescrever o plano que
+  reservava aquele número para o próximo livre (o pity virou `v3`), (3) confirmar que o gate
+  de `migrar()` comporta o passo futuro. Contabilidade de migração frouxa é onde nasce
+  corrupção silenciosa meses depois — dois "v2" com significados diferentes destroem dados.
 - **Avisar na GRAVAÇÃO, não na leitura.** Boot sem dado salvo (localStorage vazio ou
   indisponível) é começo normal — silencioso. O alarme visível ao jogador é quando a
   **escrita** falha (cota, aba privada): é aí que há perda real. Vale para toda
