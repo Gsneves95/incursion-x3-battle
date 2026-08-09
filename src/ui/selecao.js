@@ -56,7 +56,7 @@ function infoHTML(){
     return base+` \u2014 <i>BLOQUEADO.</i> ${p?`${H(p.nivel)} "${H(p.nome)}" (dificuldade ${p.dif}${p.req&&p.req!=='\u2014'?', requisito: '+H(p.req):''}): ${H(p.cond)}`:'Desbloqueie pela Provação dele ou por invocação.'}`;
   }
   if(!kit)return base+` \u2014 <i>kit ainda não implementado no protótipo.</i> ${GODS_FEITOS} de 100 prontos.`;
-  if(dono!==null&&dono!==vez)return base+` \u2014 <i>já escolhido pelo Jogador ${dono+1}.</i>`;
+  if(dono!==null&&dono!==vez)return base+` \u2014 <i>já escolhido ${modoPartida()==='hotseat'?'pelo Jogador '+(dono+1):(dono===0?'no seu time':'no time do oponente')}.</i>`;
   return base+` \u2014 ${H(GODS[tocado].passiva.nome)}: ${H(GODS[tocado].passiva.desc)}`;
 }
 const GODS_FEITOS=Object.keys(GODS).length;
@@ -195,7 +195,9 @@ function renderPick(){
   <div class="sel">
     <div class="selhead">
       <span class="selbrand">INCURSION</span>
-      <span class="selturn">${pronto?'<b>TIMES PRONTOS</b>':`JOGADOR <b>${vez+1}</b> escolhe · <b>${pick[vez].length}/3</b>`}</span>
+      <span class="selturn">${pronto?'<b>TIMES PRONTOS</b>':(modoPartida()==='hotseat'
+        ? `JOGADOR <b>${vez+1}</b> escolhe · <b>${pick[vez].length}/3</b>`
+        : `<b>${vez===0?'Seu time':'Time do oponente'}</b> · <b>${pick[vez].length}/3</b>`)}</span>
       <div class="teams">${slotsTime(0)}${slotsTime(1)}</div>
       <button class="b b--primary b--md" id="bgo" ${pronto?'':'disabled'}>Começar</button>
     </div>

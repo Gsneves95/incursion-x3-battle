@@ -1,6 +1,8 @@
 // ui/topo.js — barra superior: jogadores, relógio (só desenho), energia, menu.
 function topoHTML(){
-  const l=st.lados[st.ativo];
+  // a BARRA é o MEU painel de recurso (ladoExibido), em qualquer turno — no turno do
+  // oponente eu estou planejando o próximo. A energia DELE é contexto (mini-pips na placa).
+  const l=st.lados[ladoExibido()];
   let plano=null;
   if(armado){const u=l.units.find(x=>x.uid===armado.uid);
     const a=acoesDe(st,u).find(x=>x.slot===armado.slot); if(a)plano=planoPag(l,a.cost);}
@@ -14,12 +16,16 @@ function topoHTML(){
       <span class="energy__dot" style="background:${COR(e)}"></span><span class="energy__n">${n}</span></button>`;
   }).join('');
   const mm=Math.floor(relogio/60), ss=String(relogio%60).padStart(2,'0');
-  const jog=p=>{const side=p==='enemy'?1-st.ativo:st.ativo;
-    const nome=cpuControla(side)?'CPU':'JOGADOR '+(side+1);
-    return `<div class="player ${p==='enemy'?'player--enemy':''} ${(p==='enemy')===(st.ativo===0)?'':'dim'}">
+  // perspectiva fixa: aliado = ladoExibido (eu), inimigo = o outro. O esmaecido
+  // marca quem NÃO está agindo agora (st.ativo). A energia do OPONENTE aparece aqui
+  // como CONTEXTO (mini-pips) — minha energia mora na barra do rodapé.
+  const jog=p=>{const side=p==='enemy'?1-ladoExibido():ladoExibido();
+    const nome=rotuloLado(side).toUpperCase();
+    return `<div class="player ${p==='enemy'?'player--enemy':''} ${side===st.ativo?'':'dim'}">
       ${p==='enemy'?'':`<div class="player__avatar">${slot('player-1-avatar','I',null,14)}</div>`}
       <div class="player__meta">
         <div class="player__name">${nome}</div>
+        ${p==='enemy'?miniPips(st.lados[side]):''}
       </div>
       ${p==='enemy'?`<div class="player__avatar">${slot('player-2-avatar','K',null,14)}</div>`:''}
     </div>`;};
@@ -28,10 +34,10 @@ function topoHTML(){
     <div class="turnbox">
       <div class="timer ${relogio<=10?'low':''}">
         <div class="timer__fill" style="width:${Math.round(relogio/TURNO_SEG*100)}%"></div>
-        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 ${cpuControla(st.ativo)?'CPU':'JOGADOR '+(st.ativo+1)} \u00b7 ${mm}:${ss}</div>
+        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 ${rotuloLado(st.ativo).toUpperCase()} \u00b7 ${mm}:${ss}</div>
       </div>
       <div class="energy">${pills}
-        <button class="b b--sec b--sm" id="btrocar" ${l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
+        <button class="b b--sec b--sm" id="btrocar" ${!ehMeuTurno()||l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
           title="Trocar ${CONV_CUSTO} energias por 1 da sua escolha">\u21c4 Trocar</button>
       </div>
     </div>
@@ -55,6 +61,7 @@ function topoHTML(){
 function ligarTopo(){
   const q=s=>stage.querySelector(s);
   stage.querySelectorAll('[data-conv]').forEach(b=>b.onclick=()=>{
+    if(!ehMeuTurno())return;   // sem converter no turno do oponente (a barra é só leitura)
     const l0=st.lados[st.ativo];
     if(l0.converteu||totalOrbs(l0)<CONV_CUSTO)return;
     ov='conv';convAlvo=b.dataset.conv;

@@ -542,6 +542,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   border:1px solid var(--gold-soft);border-radius:50%;background:#100b1e;color:#e3ddf7;
   font:12px/1 ui-monospace,monospace;cursor:pointer;pointer-events:auto}
 
+/* mini-pips da energia do oponente na placa do topo (F0.7): contexto, não painel */
+.nrgmini{display:inline-flex;gap:2px;flex-wrap:wrap;max-width:130px;margin-top:3px}
+.nrgmini i{width:5px;height:5px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.35) inset}
+.nrgmini__zero{width:9px;border-radius:2px;background:rgba(227,221,247,.16);box-shadow:none}
+/* indicador de espera (modo espectador): ocupa o lugar do botão primário, sem ser botão */
+.endturn--wait{opacity:.6;pointer-events:none;font-style:normal}
+
 /* ============================================================
    MATERIAL — placa de bronze votivo. Superfície reutilizável:
    campo texturizado + bisel de 1px + cantos CHANFRADOS (clip-path).

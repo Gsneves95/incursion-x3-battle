@@ -61,7 +61,7 @@ function overlayHTML(){
   if(ov==='conv')return trocaHTML();
   if(st.fim){
     return `<div class="ov"><div class="ovbox"><div class="result">
-      <h1>${H(st.fim)}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
+      <h1>${H(traduzirRotulos(st.fim))}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
       <button class="b b--primary b--lg" id="bnew">Nova batalha</button></div></div></div>`;
   }
   if(ov==='log'){
@@ -69,7 +69,7 @@ function overlayHTML(){
       <span class="sub">${st.log.length} EVENTOS</span>
       <span class="push"><button class="b b--quiet b--md" id="bclose">Fechar</button></span></div>
       <div class="ovb" id="logscroll">${st.log.slice(-200).map(r=>
-        `<div class="log__row ${/caiu|vence|Turno|Empate|renasceu/.test(r.msg)?'hi':''}"><b>${r.turno}</b><span>${H(r.msg)}</span></div>`
+        `<div class="log__row ${/caiu|vence|Turno|Empate|renasceu/.test(r.msg)?'hi':''}"><b>${r.turno}</b><span>${H(traduzirRotulos(r.msg))}</span></div>`
       ).join('')}</div></div></div>`;
   }
   if(ov==='help'){
@@ -89,7 +89,7 @@ function overlayHTML(){
   }
   if(ov==='surr'){
     return `<div class="ov"><div class="ovbox"><div class="result">
-      <h1>RENDER-SE?</h1><p>O JOGADOR ${st.ativo+1} PERDE A BATALHA</p>
+      <h1>RENDER-SE?</h1><p>${H(rotuloLado(ladoExibido()).toUpperCase())} PERDE A BATALHA</p>
       <div style="display:flex;gap:8px;justify-content:center">
         <button class="b b--quiet b--md" id="bclose">Voltar</button>
         <button class="b b--danger b--md" id="bsurrok">Confirmar rendição</button></div></div></div></div>`;

@@ -40,6 +40,33 @@ const KW=[
 ];
 function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span class="kw kw--${c}">${m}</span>`);}); return t; }
 
+/* ---------- rótulo de lado por MODO de partida (F0.7) ----------
+   Perspectiva fixa: o texto fala de VOCÊ e do OPONENTE, não de "Jogador N" — exceto
+   em hot-seat, onde os dois são humanos na mesma tela e o número é a única distinção.
+   O rótulo sai do MODO (modoPartida em turno.js), não do lado. */
+function rotuloLado(lado){
+  if(modoPartida()==='hotseat') return 'Jogador '+(lado+1);
+  if(lado===ladoExibido()) return 'Você';
+  return modoPartida()==='cpu' ? 'CPU' : 'Oponente';
+}
+// REMENDO (F0.7) — NÃO é a solução. O motor emite TEXTO de interface já formatado
+// ("vez do Jogador 1", "JOGADOR 2 VENCE"); aqui traduzimos "Jogador N" por cima da
+// string pronta. A forma certa é o motor emitir EVENTOS estruturados e a visão
+// formatar — ver ESTADO.md "Dívida: o motor escreve texto de interface" (candidata à
+// Fase 1, junto de quebrar o engine.js). Enquanto essa dívida não é paga, isto vive.
+function traduzirRotulos(s){
+  return String(s)
+    .replace(/JOGADOR\s+(\d+)/g, (m,n)=>rotuloLado(+n-1).toUpperCase())
+    .replace(/Jogador\s+(\d+)/g, (m,n)=>rotuloLado(+n-1));
+}
+// mini-pips da energia de um lado (contexto no topo): um pip por orbe, colorido por
+// elemento — deixa "ele paga um Milagre?" legível sem somar número nenhum.
+function miniPips(l){
+  const out=[];
+  ELEMS.forEach(e=>{ for(let i=0;i<l.orbs[e];i++) out.push(`<i style="background:${COR(e)}"></i>`); });
+  return `<span class="nrgmini">${out.join('')||'<i class="nrgmini__zero"></i>'}</span>`;
+}
+
 /* ---------- escala do canvas fixo ---------- */
 let ultimaEscala = 1;   // exposta para o painel de diagnóstico (F0.6)
 // Área útil num LUGAR SÓ: visualViewport quando existe (reporta a viewport visual

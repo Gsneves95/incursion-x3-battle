@@ -9,11 +9,27 @@ let relogio = TURNO_SEG, tick = null;
 let vsCPU = true, IA_LADO = 1, iaAtiva = false;   // Jogador 2 controlado pela IA (modo vs CPU)
 const cpuControla = lado => vsCPU && lado === IA_LADO;
 
-// injeção do orquestrador
-let _redesenhar = () => {}, _emBatalha = () => false;
+// ---- perspectiva e modo de partida (F0.7) ----
+// O lado EXIBIDO à esquerda (com os discos) é PERSPECTIVA, não turno. Em hot-seat os
+// dois humanos dividem a tela, então acompanha st.ativo (a tela inverte, como sempre);
+// contra a CPU é fixo no humano (o processo da CPU fica oculto no turno dela).
+// online (Fase 5) fixaria no lado da conexão. Um lugar só — ninguém decide isso por ifs.
+function modoPartida() { return vsCPU ? 'cpu' : 'hotseat'; }   // 'online' entra na Fase 5
+function ladoExibido() { return vsCPU ? (1 - IA_LADO) : st.ativo; }
+function ehMeuTurno() { return st.ativo === ladoExibido(); }
+
+// resumo do turno do oponente (F0.7): quando o controle volta para mim, guardo as
+// linhas de log do turno dele (dado cru; a visão formata). Marco o log ao começar o
+// turno da CPU. Só existe quando NÃO é hot-seat (lá eu vejo tudo acontecer).
+let resumoTurno = null, _marcaLog = 0;
+
+// injeção do orquestrador (para não apontar para cima: turno < ui/base). _rotulo
+// formata o nome do lado por modo — a regra (Você/CPU/Jogador N) mora em ui/base.
+let _redesenhar = () => {}, _emBatalha = () => false, _rotulo = l => 'JOGADOR ' + (l + 1);
 function configurarTurno(deps) {
   if (deps.redesenhar) _redesenhar = deps.redesenhar;
   if (deps.emBatalha) _emBatalha = deps.emBatalha;
+  if (deps.rotulo) _rotulo = deps.rotulo;
 }
 
 // um segundo do relógio. Nomeada (não closure anônima) para ser testável: com a
@@ -27,7 +43,7 @@ function tique() {
   const lb = stage.querySelector('.timer__label');
   if (f) f.style.width = Math.round(relogio / TURNO_SEG * 100) + '%';
   if (t) t.classList.toggle('low', relogio <= 10);
-  if (lb) lb.textContent = `TURNO ${st.turno}${st.turno >= 30 ? '/40' : ''} · ${cpuControla(st.ativo) ? 'CPU' : 'JOGADOR ' + (st.ativo + 1)} · 0:${String(relogio).padStart(2, '0')}`;
+  if (lb) lb.textContent = `TURNO ${st.turno}${st.turno >= 30 ? '/40' : ''} · ${_rotulo(st.ativo)} · 0:${String(relogio).padStart(2, '0')}`;
 }
 function iniciarRelogio() {
   relogio = TURNO_SEG;
@@ -51,19 +67,25 @@ function encerrarTurno(forcar) {
 // ---- IA do oponente ----
 function talvezIA() {
   if (iaAtiva || !_emBatalha() || st.fim || !cpuControla(st.ativo)) return;
-  iaAtiva = true; setTimeout(passoIA, 600);
+  iaAtiva = true; _marcaLog = st.log.length; resumoTurno = null;   // marca o início do turno dele p/ o resumo
+  setTimeout(passoIA, 600);
 }
 function passoIA() {
   if (!_emBatalha() || st.fim || !cpuControla(st.ativo)) { iaAtiva = false; return; }
   const a = iaProximaAcao(st);
   if (a) { agir(st, a.uid, a.slot, a.alvos, a.escolhas); armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar(); setTimeout(passoIA, 750); }
-  else { iaAtiva = false; encerrarTurno(true); }
+  else {
+    iaAtiva = false;
+    // guarda o que ele fez (dado cru do log); a visão formata no painel de detalhe
+    resumoTurno = st.log.slice(_marcaLog);
+    encerrarTurno(true);
+  }
 }
 
 // ---- ação: armar / escolher alvo / confirmar ----
 function armar(uid, slot) {
   if (cpuControla(st.ativo)) return;   // sem input humano no turno da CPU
-  detalhe = null; menuAberto = false;
+  detalhe = null; menuAberto = false; resumoTurno = null;   // 1º toque some com o resumo
   if (armado && armado.uid === uid && armado.slot === slot) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
   const u = st.lados[st.ativo].units.find(x => x.uid === uid);
   const a = acoesDe(st, u).find(x => x.slot === slot);
@@ -105,4 +127,4 @@ function confirmar() {
   armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar();
 }
 
-if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla };
+if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno };

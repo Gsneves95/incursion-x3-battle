@@ -45,7 +45,9 @@ function retrato(u,inimigo){
 /* ---------- fileira de habilidades ---------- */
 function foeAba(u){
   if(!u.vivo)return '';
-  const aberta=abaFoe===u.uid;
+  // no turno do oponente a aba dele FECHA e não abre (é assistir à digitação alheia);
+  // no MEU turno ela é consultável — ler as habilidades dele é base da leitura do jogo.
+  const aberta=abaFoe===u.uid&&ehMeuTurno();
   const acs=acoesDe(st,u);
   // dica de leitura: a Defesa dele em recarga significa janela de abate aberta
   const defPronta=(u.cd.defesa||0)===0;
@@ -80,11 +82,12 @@ function habilidades(u){
     const semOrbe=!a.disponivel&&cd===0&&/orbes/.test(a.motivo||'');
     const travada=!a.disponivel&&cd===0&&!semOrbe;
     const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
-    const clicavel=a.disponivel&&podeAgir(u);
+    // modo espectador (F0.7): no turno do oponente meus discos ficam apagados e sem toque
+    const clicavel=a.disponivel&&podeAgir(u)&&ehMeuTurno();
     const cls=['skill']; if(a.universal)cls.push('skill--uni');
     if(cd>0)cls.push('is-cooldown');
     if(travada)cls.push('is-locked');
-    if(semOrbe||!podeAgir(u))cls.push('is-off');
+    if(semOrbe||!podeAgir(u)||!ehMeuTurno())cls.push('is-off');
     if(arm)cls.push('is-armed');
     cls.push('skill--'+a.slot);
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
@@ -118,6 +121,7 @@ function ligarCampo(){
   stage.querySelectorAll('.skill').forEach(b=>{if(b.disabled)return;
     b.onclick=()=>{const[uid,slot]=b.dataset.sk.split('|');armar(uid,slot);};});
   stage.querySelectorAll('[data-aba]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
+    if(!ehMeuTurno())return;   // a aba do oponente não abre no turno dele
     abaFoe=abaFoe===b.dataset.aba?null:b.dataset.aba; render();});
   stage.querySelectorAll('[data-look]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,slotk]=b.dataset.look.split('|');
@@ -158,4 +162,8 @@ function ligarCampo(){
       texto:'Dano contínuo. Conta no início do turno de quem sofre, ANTES de ele agir — pode matar sem que a unidade jogue.',
       classes:'DANO PURO · IGNORA REDUÇÃO E ESCUDO · ATRAVESSA INVULNERABILIDADE'};
     render();});
+  // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa. Só armo o
+  // ouvinte quando há resumo à mostra; captura antes do handler do alvo, que então
+  // redesenha já sem o resumo.
+  if(resumoTurno) stage.addEventListener('pointerdown',()=>{ resumoTurno=null; },{once:true,capture:true});
 }

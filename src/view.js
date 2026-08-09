@@ -34,7 +34,10 @@ function sairBatalha(){ pararRelogio(); limparSobreposicao(); }
 function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 
 function renderBatalha(){
-  const l=st.lados[st.ativo], o=st.lados[1-st.ativo];
+  // PERSPECTIVA fixa (F0.7): meu time (ladoExibido) SEMPRE à esquerda, com os discos;
+  // o oponente SEMPRE à direita, com a aba de consulta. Independe de quem está agindo.
+  const eu=ladoExibido();
+  const l=st.lados[eu], o=st.lados[1-eu];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
   stage.innerHTML = `<div class="stage__bg"></div><div class="stage__scrim"></div>
@@ -48,10 +51,15 @@ function renderBatalha(){
     <article class="unit--enemy">${foeAba(u)}${retrato(u,true)}</article>`).join('')}</section>
   <footer class="footer">
     ${detalheHTML()}
-    <button class="b b--primary b--lg endturn" id="bend">
+    ${ehMeuTurno()
+      ? `<button class="b b--primary b--lg endturn" id="bend">
       <span class="endturn__l1">Encerrar turno</span>
       <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' unidades a agir':' unidade a agir'):'todas agiram')}</span>
-    </button>
+    </button>`
+      : `<div class="endturn endturn--wait" aria-live="polite">
+      <span class="endturn__l1">Vez de ${H(rotuloLado(st.ativo))}</span>
+      <span class="endturn__hint">aguarde</span>
+    </div>`}
   </footer>
   ${overlayHTML()}`;
 
@@ -72,7 +80,8 @@ function ligar(){
 // localStorage é começo normal — o alarme de gravação (salvar) cobre a impossibilidade
 // de persistir, que é o que de fato importa ao jogador.
 { const c=carregar(); perfil=c.perfil; if(c.motivo && !/inacess/.test(c.motivo))console.warn('perfil corrompido ('+c.motivo+') — comecei do zero'); }
-configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha' });
+configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
+  rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });

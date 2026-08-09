@@ -4,6 +4,25 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F0.7 — perspectiva fixa do jogador (o lado é PERSPECTIVA, não turno).
+**Resultado:** meu time SEMPRE à esquerda (com os discos), o oponente à direita (aba de
+consulta), independente de quem age. Introduzido `ladoExibido()`/`ehMeuTurno()`/`modoPartida()`
+em `turno.js` (um lugar só, sem ifs espalhados): hot-seat acompanha `st.ativo` (a tela inverte,
+como antes → **nunca entra em espectador**); vs CPU fixa no humano; online (F5) no lado da
+conexão. **Modo espectador** no turno do oponente: meus discos apagados e sem toque, aba dele
+fechada e não abre, nenhum alvo pulsando, botão primário vira indicador de espera, relógio
+segue com o tempo DELE — mas o ESTADO (vida, escudo, efeitos, **energia dele em mini-pips na
+placa do topo**) permanece visível. **Resumo do turno**: ao voltar, o que o oponente fez
+(2–3 linhas no painel de detalhe, some ao 1º toque). **Rótulos por MODO** (`rotuloLado`): vs
+CPU/online falam de "Você"/"CPU"/"Oponente"; hot-seat mantém "Jogador 1/2". O **motor
+continua neutro** (emite "Jogador N"); a visão **traduz** por cima (log, banner, topo) — é
+REMENDO documentado, ver a dívida abaixo. Barra de energia agora é sempre a minha. 12ª suíte
+`perspectiva.test.js` (perspectiva nos dois turnos, espectador, hot-seat inverte, resumo,
+rótulos por modo). As 11 anteriores passam sem edição (interface roda em hot-seat → no-op).
+**12 suítes verdes.** Fila: **F0.6b** → **F0.4c**.
+
+## Sessão de energia (anterior)
+**Data:** 2026-08-09
 **Tarefa:** Geração de energia com sorte (parâmetro, não valor fixo).
 **Resultado:** bloco `energia` em `data/economia.json` (`modo "ponderado"`, `pesoTime 0.75`,
 `pesoLivre 0.25` — PROVISÓRIO, o dono ajusta jogando). O motor lê de `st.energia` (o cliente
@@ -162,10 +181,13 @@ técnica de duas camadas.
 - **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
   (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
   "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
-- **Suítes:** 11, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
-  rotas, interface, invocacao, **energia**, **moldura**). A `moldura` roda em Chromium real
-  (`playwright` devDep); as outras 10 são node/jsdom. `energia` simula 500 partidas IA×IA
-  (~16s) — regressão de balanceamento além de contrato de sorteio.
+- **Suítes:** 12, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
+  rotas, interface, invocacao, **perspectiva**, **energia**, **moldura**). A `moldura` roda em
+  Chromium real (`playwright` devDep); as outras 11 são node/jsdom. `energia` simula 500
+  partidas IA×IA (~16s) — regressão de balanceamento além de contrato de sorteio.
+- **Perspectiva/modo (F0.7):** `ladoExibido`/`ehMeuTurno`/`modoPartida` em `turno.js`; meu
+  time fixo à esquerda; modo espectador no turno do oponente; `rotuloLado` (Você/CPU/Oponente
+  ou Jogador N por modo); motor neutro + `traduzirRotulos` (remendo) na visão.
 - **Geração de energia:** `data/economia.json` bloco `energia` (ponderado 0.75/0.25); motor
   lê de `st.energia`, fallback `time`/1.0 (compat). Sorteio puro em `sortearElemento`.
 - **Enquadramento/modo app (F0.6):** palco fixo centralizado (`translate(-50%,-50%)
@@ -242,6 +264,20 @@ sessão de reconciliação ou ao encostar em cada área.
 
 ## Descobertas que ainda não viraram tarefa
 > Notado durante o trabalho; não corrigir aqui.
+
+- **DÍVIDA: o motor ESCREVE TEXTO DE INTERFACE (candidata à Fase 1).** O `engine.js`
+  emite strings prontas em português no log ("— Turno 3, vez do Jogador 1 —",
+  "Zeus → Cuca: 15 de dano", `st.fim='Jogador 2 vence'`). Funciona hoje, mas: (1) a Fase 5
+  quer o MESMO motor no servidor, onde essas strings não deveriam existir; (2) localização
+  fica impossível; (3) a tradução de rótulos da F0.7 (`traduzirRotulos` em `ui/base.js`) é um
+  **REMENDO por cima de texto já formatado**, não a solução — está marcado como tal no código,
+  apontando para aqui. **Forma alvo:** o motor emite EVENTOS estruturados
+  (`{tipo:'dano', origem, alvo, valor, kind}`, `{tipo:'vitoria', lado}`, `{tipo:'vezDe', lado}`)
+  e a visão formata. Mexe no motor → **fazer junto de quebrar o `engine.js`** (§9 do inventário),
+  as duas na mesma passada, no começo da Fase 1.
+- **Texto do COMO JOGAR desatualizado pela energia ponderada.** O `help` (`ui/sobrepor.js`)
+  diz "energia sorteada entre os elementos do seu próprio time" — desde a ponderação, cor
+  estrangeira pode cair. Corrigir quando mexer no help; não é invariante.
 
 - **Menu ⋯ vira GLOBAL na F3.1 (decisão do dono).** Hoje o ⋯ só existe na batalha
   (`ui/topo.js`). Nas próximas fases entram tela inicial, deuses, loja e campanha —
