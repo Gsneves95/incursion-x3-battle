@@ -4,6 +4,27 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F0.6b — altura fixa (428), largura fluida.
+**Resultado:** a escala parava de cair junto com a tarja em proporção diferente de
+2,164:1 (iPhone SE 667×375 escalava 0,720 → texto de 9px virava ~6,5px). Regra nova:
+escala pela ALTURA (`min(altÚtil/428, teto 1,25)`), largura de design = `clamp(largÚtil/
+escala, 780, 1200)`; se `largÚtil/escala < 780`, a largura manda (`escala=largÚtil/780`).
+Altura de design SEMPRE 428. A regra virou **função pura ÚNICA** `calcularEnquadramento`
+em `src/enquadramento.js`; o `fit()` (ui/base) só APLICA (largura por JS em `stage.style.
+width`, escala no transform). O teto 1,25 evita borrar a arte de 168px em tablet. SE agora
+**0,855** (+19%), medido em Chromium — palco preenche a largura, ~9px de tarja vertical;
+tablet 1180×820 trava no teto com tarja vertical intencional (borda sutil). **Testes sem
+recópia da fórmula:** `enquadramento.test.js` (13ª suíte, SPEC — os 6 casos da tabela
+cravados à mão, único lugar com número escrito); `moldura.test.js` e `interface.test.js`
+teste 14 **CHAMAM** a função e comparam com o que o navegador aplicou (escala + largura);
+`moldura` ganhou casos de RETRATO (360×740, 412×915 → aviso de girar). **13 suítes verdes.**
+**PENDENTE (decisão do dono):** o piso de escala 0,80 do teste 9 — o `726×312` na JANELA dá
+0,729 (altura 312 < 342 = 428×0,80; física, não bug); em TELA CHEIA (360) sobe p/ 0,841. O
+teste REPORTA os abaixo de 0,80 (só os de altura < 342), não crava o piso. Escopo do piso
+(só tela cheia? só altura ≥ 342?) é sua decisão. Fila: **F0.4c**.
+
+## Sessão F0.7 (anterior)
+**Data:** 2026-08-09
 **Tarefa:** F0.7 — perspectiva fixa do jogador (o lado é PERSPECTIVA, não turno).
 **Resultado:** meu time SEMPRE à esquerda (com os discos), o oponente à direita (aba de
 consulta), independente de quem age. Introduzido `ladoExibido()`/`ehMeuTurno()`/`modoPartida()`
@@ -181,10 +202,14 @@ técnica de duas camadas.
 - **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
   (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
   "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
-- **Suítes:** 12, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
-  rotas, interface, invocacao, **perspectiva**, **energia**, **moldura**). A `moldura` roda em
-  Chromium real (`playwright` devDep); as outras 11 são node/jsdom. `energia` simula 500
-  partidas IA×IA (~16s) — regressão de balanceamento além de contrato de sorteio.
+- **Suítes:** 13, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
+  rotas, **enquadramento**, interface, invocacao, **perspectiva**, **energia**, **moldura**).
+  A `moldura` roda em Chromium real (`playwright` devDep); as outras 12 são node/jsdom.
+  `enquadramento` é a SPEC pura da regra de enquadramento (F0.6b); `energia` simula 500
+  partidas IA×IA (~16s).
+- **Enquadramento (F0.6b):** `src/enquadramento.js` `calcularEnquadramento({larguraUtil,
+  alturaUtil})→{escala,larguraDesign}` — regra ÚNICA (altura fixa 428, largura fluida,
+  teto 1,25). `fit()` só aplica. Piso de escala 0,80 do teste 9 pendente de escopo.
 - **Perspectiva/modo (F0.7):** `ladoExibido`/`ehMeuTurno`/`modoPartida` em `turno.js`; meu
   time fixo à esquerda; modo espectador no turno do oponente; `rotuloLado` (Você/CPU/Oponente
   ou Jogador N por modo); motor neutro + `traduzirRotulos` (remendo) na visão.
@@ -201,14 +226,7 @@ técnica de duas camadas.
   a barra de energia do topo e a técnica de duas camadas na régua (ver abaixo).
 
 ## Próxima tarefa
-**ID e nome:** **F0.6b — altura fixa, largura fluida.** O dono vai detalhar. Objetivo:
-não perder escala em aparelho de proporção diferente do canvas fixo (926×428 = 2,164; o
-aparelho do dono é 800×360 = 2,222). Hoje o canvas é fixo e a escala é `min(w/926,h/428)`;
-em telas mais largas que 2,164 sobra tarja lateral. A F0.6b mira travar a ALTURA (428) e
-deixar a LARGURA fluir, para telas largas usarem o espaço em vez de tarjar. **Esperar o
-detalhamento do dono antes de mexer.**
-
-**Depois: F0.4c — carteira lê o grant 1500.** A F0.4c foi destravada quando a economia
+**ID e nome:** **F0.4c — carteira lê o grant 1500.** A F0.4c foi destravada quando a economia
 ficou pronta em `data/economia.json`: `novoPerfil` semeia `gema:1500` LENDO do arquivo
 (nunca literal); a invocação gasta/credita via `perfil.moedas.gema` (`debitar`/`creditar`)
 e persiste por `salvar`; o grant de teste 30000 continua FORA do perfil (só a recarga de
@@ -275,6 +293,12 @@ sessão de reconciliação ou ao encostar em cada área.
   (`{tipo:'dano', origem, alvo, valor, kind}`, `{tipo:'vitoria', lado}`, `{tipo:'vezDe', lado}`)
   e a visão formata. Mexe no motor → **fazer junto de quebrar o `engine.js`** (§9 do inventário),
   as duas na mesma passada, no começo da Fase 1.
+- **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
+  e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
+  de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção
+  de arte começar, o alvo deve ser **320px** em vez de 168. Custo estimado: o `dist` sobe
+  de ~1,1MB para ~2,3MB. O teto de escala 1,25 (`enquadramento.js`) existe justamente para
+  não ESTICAR os 168px além do razoável em tablet — some quando a arte for 320px.
 - **Texto do COMO JOGAR desatualizado pela energia ponderada.** O `help` (`ui/sobrepor.js`)
   diz "energia sorteada entre os elementos do seu próprio time" — desde a ponderação, cor
   estrangeira pode cair. Corrigir quando mexer no help; não é invariante.

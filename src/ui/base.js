@@ -67,8 +67,8 @@ function miniPips(l){
   return `<span class="nrgmini">${out.join('')||'<i class="nrgmini__zero"></i>'}</span>`;
 }
 
-/* ---------- escala do canvas fixo ---------- */
-let ultimaEscala = 1;   // exposta para o painel de diagnóstico (F0.6)
+/* ---------- enquadramento: altura fixa (428), largura fluida (F0.6b) ---------- */
+let ultimaEscala = 1, ultimaLarguraDesign = 926;   // expostas para o painel de diagnóstico
 // Área útil num LUGAR SÓ: visualViewport quando existe (reporta a viewport visual
 // real), innerWidth/Height como reserva. Desconta as safe areas — que, sendo zero
 // no aparelho testado, não descontam nada (o innerWidth já exclui a barra de
@@ -82,11 +82,14 @@ function areaUtil(){
 }
 function fit(){
   const u = areaUtil();
-  const s = Math.min(u.w/926, u.h/428);
-  ultimaEscala = s;
+  // a REGRA vive em calcularEnquadramento (src/enquadramento.js); aqui só APLICA.
+  const { escala, larguraDesign } = calcularEnquadramento({ larguraUtil: u.w, alturaUtil: u.h });
+  ultimaEscala = escala; ultimaLarguraDesign = larguraDesign;
+  // altura fica 428 (CSS var); largura é aplicada por JS — o CSS não sabe o valor.
+  stage.style.width = larguraDesign + 'px';
   // translate ANTES do scale, transform-origin no centro: centraliza sem depender
   // da caixa de layout (que o scale não encolhe — era a causa do corte à direita).
-  stage.style.transform = 'translate(-50%,-50%) scale('+s+')';
+  stage.style.transform = 'translate(-50%,-50%) scale('+escala+')';
   renderDiag();
 }
 // refit em toda mudança de viewport; + um refit atrasado após girar, porque o
@@ -111,7 +114,7 @@ function diagInfo(){
     ['screen',  screen.width+' × '+screen.height+'   dpr '+devicePixelRatio],
     ['orient',  (screen.orientation&&screen.orientation.type) || (typeof orientation!=='undefined'? orientation+'°' : '?')],
     ['safe px', 'T'+envPx('Top')+' R'+envPx('Right')+' B'+envPx('Bottom')+' L'+envPx('Left')],
-    ['fit',     'escala '+ultimaEscala.toFixed(4)+'  palco '+Math.round(926*ultimaEscala)+' × '+Math.round(428*ultimaEscala)],
+    ['fit',     'escala '+ultimaEscala.toFixed(4)+'  design '+Math.round(ultimaLarguraDesign)+'×428  palco '+Math.round(ultimaLarguraDesign*ultimaEscala)+' × '+Math.round(428*ultimaEscala)],
     ['rect',    (()=>{ const r=stage.getBoundingClientRect();
                   return 'L'+Math.round(r.left)+' T'+Math.round(r.top)+' R'+Math.round(r.right)+' B'+Math.round(r.bottom)+
                     ((r.left<-0.5||r.top<-0.5||r.right>innerWidth+0.5||r.bottom>innerHeight+0.5)?'  ⚠ EXTRAPOLA':'  ok'); })()],

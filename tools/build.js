@@ -58,6 +58,7 @@ const perfil = semGuard(ler('src/perfil.js'));
 const armaz  = semGuard(ler('src/armazenamento.js'));
 const turno  = semGuard(ler('src/turno.js'));
 const rotas  = semGuard(ler('src/rotas.js'));
+const enquadr= semGuard(ler('src/enquadramento.js'));
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const ia     = semGuard(ler('src/ia.js'));
@@ -69,7 +70,7 @@ const casca  = ler('src/shell.html');
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/* -> view.
 const blocoVisao = [
-  perfil, armaz, turno, rotas,
+  perfil, armaz, turno, rotas, enquadr,
   ler('src/ui/base.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
   ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'),
   visao,

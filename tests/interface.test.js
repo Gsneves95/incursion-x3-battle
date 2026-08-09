@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { JSDOM } = require('jsdom');
+const { calcularEnquadramento } = require('../src/enquadramento.js');   // a REGRA; o teste 14 a chama, não a recopia
 const html = fs.readFileSync(require('path').join(__dirname,'../dist/incursion.html'), 'utf8');
 
 let falhas = 0;
@@ -596,21 +597,27 @@ console.log('== 13. partida completa só por toques ==');
   ok($$('.pk').length > 0 && !!$('#bgo') && !!$('.grid'), 'nova batalha volta à grade de seleção');
 }
 
-console.log('== 14. escala do canvas em telas de celular ==');
+console.log('== 14. o fit APLICA o que a regra de enquadramento manda ==');
 {
+  // não recopiamos a fórmula: chamamos calcularEnquadramento (regra) e conferimos que
+  // o fit aplicou a MESMA escala e largura ao DOM. A spec dos números vive em
+  // tests/enquadramento.test.js; a matriz de rect real em tests/moldura.test.js.
   for (const [vw, vh] of [[568,320],[667,375],[844,390],[926,428],[1180,820]]) {
     const dd = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true });
     Object.defineProperty(dd.window, 'innerWidth', { value: vw, configurable: true });
     Object.defineProperty(dd.window, 'innerHeight', { value: vh, configurable: true });
     dd.window.dispatchEvent(new dd.window.Event('resize'));
-    const s = dd.window.document.getElementById('stage').style.transform;
-    const esp = Math.min(vw / 926, vh / 428).toFixed(3);
+    const el = dd.window.document.getElementById('stage');
+    const s = el.style.transform;
+    const regra = calcularEnquadramento({ larguraUtil: vw, alturaUtil: vh });
     ok(s.includes('scale('), `sem transform em ${vw}x${vh}`);
-    const got = parseFloat((s.match(/scale\(([0-9.]+)\)/) || [])[1]).toFixed(3);
-    ok(got === esp, `escala em ${vw}x${vh}: esperado ${esp}, obtido ${got}`);
+    const got = parseFloat((s.match(/scale\(([0-9.]+)\)/) || [])[1]);
+    ok(Math.abs(got - regra.escala) < 0.001, `escala aplicada em ${vw}x${vh}: ${got.toFixed(4)} != regra ${regra.escala.toFixed(4)}`);
+    const largAplicada = parseFloat(el.style.width);
+    ok(Math.abs(largAplicada - regra.larguraDesign) < 1, `largura aplicada em ${vw}x${vh}: ${Math.round(largAplicada)} != regra ${Math.round(regra.larguraDesign)}`);
     dd.window.close();
   }
-  console.log('  escala correta em 5 tamanhos');
+  console.log('  fit aplica escala + largura da regra em 5 tamanhos');
 }
 
 console.log('');
