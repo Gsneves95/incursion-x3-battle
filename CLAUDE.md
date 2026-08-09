@@ -225,6 +225,18 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   decisão do dono, nunca o contrário**. Regras de combate têm spec no xlsx e podem
   virar `data/` numa reconciliação; até lá, constante de regra em código só bate com
   o xlsx, nunca inventada.
+- **Mudança que altera o que APARECE na tela exige captura ANTES do commit — contra o
+  dist recém-construído.** As suítes (mesmo 12) provam comportamento, não aparência:
+  nesta fase a verificação visual pegou DUAS vezes o que os testes não pegaram (o palco
+  cortado à direita; a barra mostrando a energia da CPU). Fluxo: `node tools/build.js`
+  (ou `npm test`, que reconstrói) → screenshot via `playwright` contra
+  `dist/incursion.html` → olhar → só então commitar. Screenshot contra dist velho é
+  pior que nenhum: parece certo e mente (já tropecei nisso e refiz).
+- **O motor emite log SEM preposição contraída** (`Turno N · Jogador N joga`, não "vez
+  do Jogador N"). A visão traduz "Jogador N" → Você/CPU/Oponente (`traduzirRotulos`); com
+  a contração o resultado fica "vez do Você". É remendo até o motor emitir eventos
+  estruturados (dívida no ESTADO). Com o processo do oponente oculto (F0.7), o log é a
+  ÚNICA fonte do que a CPU fez — leitura obrigatória, não histórico opcional.
 
 ## Primitivas de efeito — IMPLEMENTADAS (1 de 12 provada por kit real)
 

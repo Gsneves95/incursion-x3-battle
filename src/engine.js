@@ -268,7 +268,7 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null) {
       { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
     ],
   };
-  log(st, `Turno 1 — vez do Jogador ${comeca + 1} (abre a partida).`);
+  log(st, `Turno 1 · Jogador ${comeca + 1} abre a partida.`);   // sem preposição contraída: a visão traduz "Jogador N" -> Você/CPU/Oponente
   iniciarTurno(st);
   return st;
 }
@@ -676,7 +676,7 @@ function fimTurno(st) {
   }
   st.ativo = 1 - st.ativo;
   if (st.ativo === st.starter) st.turno++;   // conta rodadas a partir de quem abriu
-  log(st, `— Turno ${st.turno}, vez do Jogador ${st.ativo + 1} —`);
+  log(st, `Turno ${st.turno} · Jogador ${st.ativo + 1} joga`);   // idem: formato sem preposição p/ a tradução da visão
   iniciarTurno(st);
 }
 
