@@ -3,7 +3,24 @@
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
 ## Última sessão
-**Data:** 2026-08-07
+**Data:** 2026-08-09
+**Tarefa:** Geração de energia com sorte (parâmetro, não valor fixo).
+**Resultado:** bloco `energia` em `data/economia.json` (`modo "ponderado"`, `pesoTime 0.75`,
+`pesoLivre 0.25` — PROVISÓRIO, o dono ajusta jogando). O motor lê de `st.energia` (o cliente
+passa `ECONOMIA.energia` em `novoEstado`); **sem config → fallback `time`/1.0**, contrato de
+compatibilidade que preserva as 9 suítes sem edição. Sorteio PURO com semente em
+`sortearElemento` (usado em `iniciarTurno` e na passiva do Ganesha). **Ponto fino travado por
+teste:** modo `time` = 1 sorteio/energia (fluxo do RNG idêntico); `ponderado` = 2 — mexer nisso
+quebra 4 suítes. `data/kits.json`: **0 básicos e 1 habilidade de 100** usam "livre" (só
+Milagre/Defesa, cd 4) → estrangeira é matéria de conversão 3→1, e o peso subiu de 0,6 p/ 0,75
+por causa disso. Nova suíte `energia.test.js` (11ª): testes 7–10 + medições (500 partidas
+IA×IA/célula): duração +1,8% variado / +4,9% mono (teto 20%), estrangeira parada 1,25/1,78 (< 4).
+Barra de energia já mostra cor com saldo>0 (confirmado); conversão já drena estrangeira
+(gasta o mais abundante). DECISOES §21 com a tabela, o dado do item 6 e o porquê de não ser
+uniforme. **11 suítes verdes.** Fila: **F0.7** (perspectiva — levantamento pronto, esperando
+2 decisões suas) → **F0.6b** → **F0.4c**.
+
+## Sessão F0.6 (anterior)
 **Tarefa:** F0.6 — enquadramento no celular (o jogo cortava à direita, injogável).
 **Resultado (passos 1 e 2 de 4):** **Passo 1** — painel de diagnóstico temporário
 (`#diag`, oculto; abre por `?diag` ou 3 toques no carimbo de build) que MEDE antes de
@@ -145,9 +162,12 @@ técnica de duas camadas.
 - **Perfil/persistência:** `src/perfil.js` (puro) + `src/armazenamento.js`
   (localStorage, chave `incursion:perfil` + `incursion:historico`). Boot carrega;
   "Apagar dados" no menu ⋯. Pity do gacha ainda NÃO ligado (F0.4b).
-- **Suítes:** 10, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
-  rotas, interface, invocacao, **moldura**). A `moldura` roda em Chromium real
-  (`playwright` devDep) — a única que precisa de navegador; as outras 9 são jsdom.
+- **Suítes:** 11, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
+  rotas, interface, invocacao, **energia**, **moldura**). A `moldura` roda em Chromium real
+  (`playwright` devDep); as outras 10 são node/jsdom. `energia` simula 500 partidas IA×IA
+  (~16s) — regressão de balanceamento além de contrato de sorteio.
+- **Geração de energia:** `data/economia.json` bloco `energia` (ponderado 0.75/0.25); motor
+  lê de `st.energia`, fallback `time`/1.0 (compat). Sorteio puro em `sortearElemento`.
 - **Enquadramento/modo app (F0.6):** palco fixo centralizado (`translate(-50%,-50%)
   scale`), escala por `visualViewport`; **manifest + ícones como ARQUIVOS REAIS** em
   `web/` (o blob: não instala — Chrome recusa por `start_url` inválido, provado por CDP;

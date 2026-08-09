@@ -423,6 +423,61 @@ não fazer agora): rotação gratuita 8 deuses/semana (Fase 3) e aluguel no ranq
 
 ---
 
+## 21. Geração de energia: sorte no sorteio, ponderada (não uniforme)
+
+**Problema.** A energia vinha só dos elementos do time (`iniciarTurno`, geração antiga).
+Isso garante ao time mono-elemento sempre ter o que precisa e o torna composição
+dominante. Queríamos sorte: cor estrangeira precisa poder cair. Mas o uniforme puro
+(entre os 6) é forte demais — corta pela metade também o time variado e deixa o jogo 2×
+mais lento.
+
+**O dado que decidiu o peso (item 6, derivado dos 100 kits em `data/kits.json`):**
+
+| slot | kits com parte "livre" | recarga |
+|---|---|---|
+| básico | **0** / 100 | — |
+| habilidade | **1** / 100 | — |
+| milagre | **100** / 100 (74×1, 26×2 pips) | cd 4 |
+| defesa (universal) | todos (1 pip) | cd 4 |
+
+Ou seja: energia estrangeira **quase nunca é gasta direto** (só Milagre e Defesa aceitam
+livre, ambos cd 4). Ela é, na prática, **matéria-prima de conversão 3→1** — e a conversão
+é **1 por turno**. Esse teto muda a conta:
+
+| pesoTime | variado (aproveitável/turno) | mono |
+|---|---|---|
+| 0,60 | 2,4 | 2,0 → mono −23%, variado −20% |
+| **0,75** | **2,7** | **2,3 → mono −23%, variado −10%** |
+| 0,85 | 2,8 | 2,5 |
+
+**Decisão: `modo "ponderado"`, `pesoTime 0.75 / pesoLivre 0.25`** (em `data/economia.json`,
+bloco `energia`). Corrige o mono na mesma medida que o 0,60, mas desacelera o time variado
+pela metade. **`pesoTime` é PROVISÓRIO** — o dono ajusta jogando. Não uniforme porque o
+uniforme cobra o preço do mono também do time variado, sem necessidade.
+
+**Fórmula.** Por energia: com prob `pesoTime` sorteia entre os elementos do time; com
+`pesoLivre`, entre os 6. P(elemento do time) = `pesoTime + pesoLivre·(k/6)`, k = elementos
+distintos do time.
+
+**Contrato de compatibilidade (NÃO é balanceamento).** Sem `st.energia` (ou `modo "time"`),
+o motor usa time/1.0 — comportar-se como antes. Isso preserva as suítes existentes sem
+edição. Quem ajusta o balanceamento é o `economia.json`, nunca esse fallback.
+
+**Ponto fino do RNG — NÃO MEXER sem ler isto.** O modo `time` consome **exatamente 1
+sorteio do `rng` por energia**; o `ponderado`, **2** (decidir o conjunto + escolher dentro).
+É por isso que o modo `time` reproduz o fluxo histórico e as suítes de motor passam com
+semente fixa. Mudar a contagem de sorteios do modo `time` quebra 4 suítes sem relação
+aparente. Travado em `tests/energia.test.js` (teste 7).
+
+**Medições (500 partidas IA×IA por célula, semente fixa — `tests/energia.test.js`):**
+duração time/1.0 → ponderado sobe **+1,8%** (variado) e **+4,9%** (mono), muito abaixo do
+teto de 20%. Energia estrangeira parada em média **1,25** (variado) / **1,78** (mono) —
+abaixo de 4, então a conversão 1/turno dá vazão suficiente **por ora**. Se um ajuste futuro
+de peso passar disso, reabrir a vazão da conversão (subir para 2/turno, ou 4→2 num gesto) —
+decisão do dono. A fome por falta de energia até CAIU com a ponderação (mais formas de agir).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

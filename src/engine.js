@@ -257,10 +257,11 @@ function novaUnidade(key, idx, lado) {
 // `comeca` = lado que abre a partida (0 ou 1). Default 0 para determinismo dos
 // testes/replays; o CLIENTE sorteia (Math.random) e passa o valor — o motor
 // permanece puro. Quem abre recebe só 1 energia (abertura 1/3, estilo NA).
-function novoEstado(timeA, timeB, seed = 1, comeca = 0) {
+function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null) {
   const st = {
     turno: 1, ativo: comeca, starter: comeca, aberturaFeita: false,
     seed, rngN: 0, log: [], fim: null,
+    energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
       { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
@@ -567,6 +568,27 @@ function converter(st, para) {
 }
 
 // -------------------------------------------------------- TURNO
+// Sorteia UM elemento para uma energia gerada. A regra vem de st.energia
+// (data/economia.json, bloco "energia"); o balanceamento vive LÁ, não aqui.
+//
+// FALLBACK DE COMPATIBILIDADE — NÃO AJUSTE: sem st.energia (ou modo "time"),
+// consome EXATAMENTE 1 sorteio do RNG, entre os elementos do time — idêntico ao
+// comportamento histórico. Isso mantém o fluxo do `rng` inalterado e é o que faz
+// as suítes de motor passarem sem edição. Modos "uniforme"/"ponderado" mudam o
+// fluxo DE PROPÓSITO (só quando configurados). O modo "ponderado" gasta 2
+// sorteios por energia (decidir o conjunto + escolher dentro dele); quem mexer
+// nessa contagem quebra 4 suítes com semente fixa — ver DECISOES.md.
+function sortearElemento(st, tiposTime) {
+  const cfg = st.energia;
+  const modo = (cfg && cfg.modo) || 'time';
+  if (modo === 'time') return tiposTime[Math.floor(rng(st) * tiposTime.length)];
+  if (modo === 'uniforme') return ELEMS[Math.floor(rng(st) * ELEMS.length)];
+  // ponderado: 1º sorteio escolhe o conjunto (time × os 6), 2º escolhe dentro
+  const pesoTime = cfg.pesoTime != null ? cfg.pesoTime : 0.75;
+  const pool = rng(st) < pesoTime ? tiposTime : ELEMS;
+  return pool[Math.floor(rng(st) * pool.length)];
+}
+
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
@@ -606,13 +628,13 @@ function iniciarTurno(st) {
   const tipos = [...new Set(vivos.map(u => u.elem))];
   const nOrbs = st.aberturaFeita ? geram.length : 1;
   for (let i = 0; i < nOrbs; i++) {
-    const t = tipos[Math.floor(rng(st) * tipos.length)];
+    const t = sortearElemento(st, tipos);
     l.orbs[t]++;
   }
   if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, `Abertura: o Jogador que começa recebe 1 energia.`); }
   if (geram.length < vivos.length) log(st, `${vivos.length - geram.length} unidade(s) sob controle não geraram orbe.`);
   if (primeiro && l.units.some(u => u.key === 'ganesha')) { // passiva Ganesha
-    for (let i = 0; i < 2; i++) { const t = tipos[Math.floor(rng(st) * tipos.length)]; l.orbs[t]++; }
+    for (let i = 0; i < 2; i++) { const t = sortearElemento(st, tipos); l.orbs[t]++; }
     log(st, `Senhor dos Começos: +2 orbes.`);
   }
   checarFim(st);
@@ -892,7 +914,7 @@ function copiar(st, u, e) {
 if (typeof module !== 'undefined') {
   module.exports = {
     GODS, DEFESA, ELEMS, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
-    converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre,
+    converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre, sortearElemento, iniciarTurno,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
     aplicarFx, bater, addContador, getContador, contadorNoCampo, definirFase, caidos, reviver,
   };
