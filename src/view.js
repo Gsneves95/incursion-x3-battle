@@ -45,7 +45,13 @@ function renderBatalha(){
   const l=st.lados[eu], o=st.lados[1-eu];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
-  stage.innerHTML = `<div class="stage__bg"></div><div class="stage__scrim"></div>
+  // Sobreposição COM SCRIM aberta? (todas as overlays de batalha são .ov, com scrim;
+  // o menu ⋯ NÃO tem scrim — não entra aqui.) Quando há, a base fica INERTE e o primário
+  // da base rebaixa (consequência do inert), para valer INV 16: no máximo um primário
+  // visível E acessível. A sobreposição é IRMÃ da #baselayer, então segue interativa.
+  const scrim = !!ov || !!st.fim;
+  stage.innerHTML = `<div id="baselayer"${scrim?' inert':''}>
+  <div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}
   <div class="stagemark">INCURSION</div>
@@ -57,7 +63,7 @@ function renderBatalha(){
   <footer class="footer">
     ${detalheHTML()}
     ${ehMeuTurno()
-      ? `<button class="b b--primary b--lg endturn" id="bend">
+      ? `<button class="b ${scrim?'b--sec':'b--primary'} b--lg endturn" id="bend">
       <span class="endturn__l1">Encerrar turno</span>
       <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' unidades a agir':' unidade a agir'):'todas agiram')}</span>
     </button>`
@@ -66,6 +72,7 @@ function renderBatalha(){
       <span class="endturn__hint">aguarde</span>
     </div>`}
   </footer>
+  </div>
   ${overlayHTML()}`;
 
   hpAnt={}; todas().forEach(u=>hpAnt[u.uid]=u.hp);

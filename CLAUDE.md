@@ -164,8 +164,15 @@ perde os quatro de uma vez.
     ajuda abertos. Pausar é explorável.
 15. **Habilidade inimiga é somente leitura.** Nunca recebe `data-sk`, só
     `data-look`. Existe um teste que falha se isso mudar.
-16. **Um botão primário por tela.** Ouro preenchido = a ação principal, e só ela.
-    Raio único de 3px em toda placa. Círculo é reservado a habilidade.
+16. **No máximo um primário VISÍVEL E ACESSÍVEL a qualquer momento.** Ouro
+    preenchido = a ação principal, e só ela. Não é contagem no DOM: é onde o olho
+    (e o foco/leitor de tela) vai. Quando há sobreposição com scrim, a camada de
+    base fica `inert` (fora da tabulação e do leitor de tela) e seu primário
+    rebaixa — consequência do `inert`, não regra à parte. Sobreposição sem scrim
+    (o menu ⋯) NÃO inerta a base: ela segue interativa, só não pode ter conflito de
+    foco nem um segundo primário. "No máximo" e não "exatamente": menu sem CTA fica
+    com zero primário, e forçar um inventaria hierarquia falsa. Raio único 3px em
+    toda placa; círculo é reservado a habilidade. Teste em interface.test.js §13.
 17. **Alvo de toque não encolhe com o desenho.** O botão de habilidade é um
     quadrado de 76px; só o disco interno é recortado. Placas pequenas ampliam a
     área com `::before{inset:-9px}` — o canvas é escalado, então 30px de desenho
@@ -243,6 +250,13 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   decisão do dono, nunca o contrário**. Regras de combate têm spec no xlsx e podem
   virar `data/` numa reconciliação; até lá, constante de regra em código só bate com
   o xlsx, nunca inventada.
+- **Material e textura são decisões SEPARADAS.** O "material" é a linguagem de placa
+  votiva: régua (duas camadas), chanfro (`clip-path`) e bisel. A **textura** (`--grao`,
+  ruído SVG) é outra coisa, e é reservada às **superfícies grandes** (`shell.html:44`) —
+  entra no critério 8 (≤5 texturadas na tela). Dar material a um elemento NÃO obriga a
+  texturá-lo: a barra de energia (F0.5a-restante) recebeu régua+chanfro+bisel SEM grão,
+  por ser faixa estreita. Ao aplicar material, decida a textura à parte, ou o critério 8
+  incha sem querer.
 - **Número que o dono deu de memória: VERIFIQUE no código/arte antes de usar.** Quando o
   dono estima ("acho que é 8 ou 8,5", "o campo tem 426×121"), trate como hipótese a
   conferir, não como fato. Numa sessão a estimativa errou DUAS vezes: o menor texto era

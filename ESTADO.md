@@ -4,6 +4,24 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F0.5b — sistema de botões / INV 16 (último item da Fase 0).
+**Resultado:** o sistema de botões já existia (4 níveis, 4 tamanhos, estados repouso/
+pressionado/desabilitado, raio 3px, expansão invisível de toque). O que faltava era a
+violação de **INV 16**: com sobreposição aberta havia 2 `.b--primary` no DOM (base atrás do
+scrim + o da sobreposição) e — pior — a base seguia no caminho de **tabulação e leitor de
+tela** (acessibilidade, não sutileza). Correção: quando há sobreposição **com scrim**, a
+camada de base (`#baselayer`, novo wrapper `position:absolute;inset:0`, neutro de layout)
+fica **`inert`**, e a sobreposição é sua IRMÃ no DOM (segue interativa); o primário da base
+rebaixa como consequência. O **menu ⋯ não tem scrim** → não inerta a base (fica interativa;
+não tem primário → sem conflito). INV 16 reescrito: "no máximo um primário visível E
+acessível". Verificado em Chromium (inert bloqueia foco de `#bgo`/`#bend` de verdade; layout
+da base idêntico) e por 12 asserções em `interface.test.js §13` (≤1 primário em toda
+sobreposição — menu/filtro/kit/registro/ajuda/rendição/troca/resultado; base inerte com
+scrim; nenhum focável solto; fechar restaura). **13 suítes verdes. FASE 0 COMPLETA** — só
+falta o dono escrever o material da Fase 1.
+
+## Sessão F0.5a-restante (anterior)
+**Data:** 2026-08-09
 **Tarefa:** F0.5a-restante — os 2 critérios de material que faltavam (auditoria F0.1).
 **Resultado:** **crit. 2 (régua do chanfro)** refeita pela técnica de DUAS CAMADAS: o
 elemento vira a camada de trás (cor da régua, `clip-path` 7px) e um `::before` a da frente
@@ -290,10 +308,11 @@ migração v<2→v2 backfilla o grant. Ver decisão 23.
 **Ainda na fila (visuais, para colar juntas no fim da fase, F0.5):**
 - ~~**F0.5a-restante:**~~ **FEITO** — crit. 7 (material na barra de energia) e crit. 2
   (régua por duas camadas) fechados e provados por imagem. Ver inventário §7.
-- **F0.5b:** sistema de botões (4 níveis, estados de verdade, teste "1 primário").
-  **É o ÚLTIMO item da Fase 0** — quando fechar, avisar o dono: ele escreve o material
-  da Fase 1 (quebrar engine.js → provar 11 primitivas com 1 deus real cada → arena → ~78
-  em lotes) no formato da Fase 0.
+- ~~**F0.5b:**~~ **FEITO** — o sistema de botões já existia (4 níveis, tamanhos, estados,
+  raio 3px); o que faltava era INV 16 sob sobreposição, resolvido por `inert` na camada de
+  base (ver inventário §4c). **FASE 0 COMPLETA.** Próximo: o dono escreve o material da
+  Fase 1 (quebrar engine.js → provar 11 primitivas com 1 deus real cada → arena → ~78 em
+  lotes) no formato da Fase 0.
 
 **O que a próxima sessão precisa saber antes de começar:**
 - O `CLAUDE.md` é o contrato: **fato desatualizado** se corrige; **violação de
@@ -331,8 +350,9 @@ migração v<2→v2 backfilla o grant. Ver decisão 23.
 Verificados contra o código na F0.1: **1** (motor puro), **10** (abertura 1/3),
 **13** (tocar não gasta), **14** (relógio não pausa), **15** (inimigo só-leitura) —
 todos OK, exceto que se achou **1 violação: INV 16** (2 primários no DOM sob
-sobreposição), registrada e não corrigida. **Pendente auditar os 13 restantes:**
-2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 17, 18 (e o próprio 16 a decidir). Fazer numa
+sobreposição) — **corrigida na F0.5b** (base `inert` sob scrim; invariante reescrito).
+**Pendente auditar os 12 restantes:**
+2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 17, 18. Fazer numa
 sessão de reconciliação ou ao encostar em cada área.
 
 ## Descobertas que ainda não viraram tarefa
@@ -379,9 +399,10 @@ sessão de reconciliação ou ao encostar em cada área.
   oferece de novo. Quando a F3 ligar o perfil, guardar a preferência lá para lembrar
   entre sessões (não reoferecer a quem já recusou de propósito).
 
-- **INV 16 sob sobreposição:** com filtro/kit/resultado aberto sobre a tela-base,
-  há 2 `b--primary` no DOM (base atrás do scrim). A F0.5b já prevê o teste que trava
-  isso — decidir se a sobreposição rebaixa o primário da base. (inventário §4c)
+- ~~**INV 16 sob sobreposição:**~~ **RESOLVIDO (F0.5b)** — camada de base fica `inert`
+  sob sobreposição com scrim (acessibilidade, não só contagem); primário rebaixa como
+  consequência; menu sem scrim não inerta. Invariante reescrito para "no máximo um primário
+  visível E acessível". Teste em interface.test.js §13. (inventário §4c)
 - **`listaFiltrada`/`liberado`/`jogavel` são regra de COLEÇÃO, não apresentação.**
   Loja (F3), invocação e campanha vão querer as três. Ficam em `ui/selecao.js` por
   ora, mas **migram para `src/colecao.js`** na F0.4 ou na F3. Não fazer agora.
@@ -418,7 +439,8 @@ sessão de reconciliação ou ao encostar em cada área.
 - [ ] Ordem A/S/SS atribuída aos 100 deuses (loja da fase 3 precifica por ela).
 - [ ] Passiva do Fujin (inerte sem Raijin no time).
 - [ ] Pick/ban (bloqueia PvP inteiro).
-- [ ] INV 16 sob sobreposição: a sobreposição rebaixa o primário da base? (F0.5b)
+- [x] INV 16 sob sobreposição: RESOLVIDO (F0.5b) — base `inert` sob scrim; primário
+      rebaixa como consequência; invariante reescrito "no máximo um visível E acessível".
 - [ ] Ordem da Fase 1: confirmar "quebrar engine.js → provar 11 primitivas → lotes".
 - [ ] **50/50 da invocação (garantia de destaque) — MECÂNICA NÃO DESENHADA.** O `gf`
       (após perder o SS para fora do destaque, o próximo SS é garantido featured) foi

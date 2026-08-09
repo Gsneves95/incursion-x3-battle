@@ -190,7 +190,10 @@ function renderPick(){
         k?slot('god-'+k,ini(GODS[k].nome),COR(GODS[k].elem),13):''}</span>`;}).join('')}
   </div>`;
 
-  stage.innerHTML=`<div class="stage__bg"></div><div class="stage__scrim"></div>
+  // painel COM SCRIM aberto (filtro ou kit)? base fica INERTE e o primário rebaixa —
+  // consequência do inert, não regra (INV 16). Os painéis são IRMÃOS da #baselayer.
+  const painelAberto = painelFiltro || !!focoPk;
+  stage.innerHTML=`<div id="baselayer"${painelAberto?' inert':''}><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
   <div class="sel">
     <div class="selhead">
@@ -199,7 +202,7 @@ function renderPick(){
         ? `JOGADOR <b>${vez+1}</b> escolhe · <b>${pick[vez].length}/3</b>`
         : `<b>${vez===0?'Seu time':'Time do oponente'}</b> · <b>${pick[vez].length}/3</b>`)}</span>
       <div class="teams">${slotsTime(0)}${slotsTime(1)}</div>
-      <button class="b b--primary b--md" id="bgo" ${pronto?'':'disabled'}>Começar</button>
+      <button class="b ${painelAberto?'b--sec':'b--primary'} b--md" id="bgo" ${pronto?'':'disabled'}>Começar</button>
     </div>
     <div class="selbody">
       <button class="b b--quiet arrow" id="bprev" ${pagina===0?'disabled':''}>‹</button>
@@ -217,6 +220,7 @@ function renderPick(){
       <button class="b ${tudoLiberado?'b--sec':'b--quiet'} b--sm" id="bteste" title="afordância de protótipo">${tudoLiberado?'Teste: on':'Teste'}</button>
       <button class="b b--quiet b--sm" id="binvocar" title="tela de invocação (gacha)">✦ Invocar</button>
     </div>
+  </div>
   </div>
   ${painelFiltroHTML()}
   ${painelKitHTML()}`;

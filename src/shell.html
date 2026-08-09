@@ -62,6 +62,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .stage{position:absolute;left:50%;top:50%;width:var(--stage-w);height:var(--stage-h);overflow:hidden;
   background:var(--bg);border:1px solid #2a2440;border-radius:10px;transform-origin:center;
   box-shadow:0 0 0 1px rgba(216,178,90,.12),0 12px 48px rgba(0,0,0,.6)}
+/* camada de base: envolve o conteúdo da tela (não as sobreposições, que são irmãs).
+   position:absolute;inset:0 é neutro de layout (os filhos já eram inset:0 sobre o palco).
+   Ganha `inert` quando há sobreposição com scrim — tira a base do foco/leitor de tela
+   (INV 16: no máximo um primário VISÍVEL E ACESSÍVEL). A régua/ouro do primário rebaixado
+   é consequência do inert, não a regra. */
+#baselayer{position:absolute;inset:0}
 .stage__bg{position:absolute;inset:0;
   background:
     radial-gradient(60% 42% at 18% 12%,rgba(160,107,255,.16) 0%,transparent 70%),

@@ -179,22 +179,23 @@ Os 5 verificados:
 | 14 — cronômetro nunca pausa | `setInterval` (`:727`) roda; comentário L728; sem `clearInterval` em overlay | **OK** |
 | 15 — inimigo só-leitura | `data-sk` só no botão **aliado** (`:217`); inimigo usa `data-look` (`:182`) | **OK** |
 
-### 4c. Violação registrada (não corrigida): INV 16
+### 4c. INV 16 — **RESOLVIDO (F0.5b)**
 
-**INV 16 — "um botão primário por tela".** Há 1 primário por tela-base (batalha
-`#bend`, seleção `#bgo`). Mas as **sobreposições** trazem o próprio primário
-(`#ffechar` no filtro, `#kitadd` no kit, `#bnew` no resultado). Com uma dessas
-aberta **sobre** a seleção, existem **2 `b--primary` no DOM ao mesmo tempo** — a
-base atrás do scrim. É uma **violação da letra do invariante**, registrada aqui e
-**não corrigida** (o CLAUDE.md, que é o contrato, fica intacto).
+**Era:** havia 2 `b--primary` no DOM com uma sobreposição aberta (base atrás do scrim +
+o primário da própria sobreposição — `#ffechar`/`#kitadd`/`#bnew`). Violação da letra, e —
+mais grave — a base atrás do scrim continuava no caminho de **tabulação e leitor de tela**:
+um jogador navegando por teclado achava dois primários, um invisível. Acessibilidade, não
+sutileza de invariante.
 
-```
-$ grep -nE "b--primary" src/view.js   # 5 ocorrências, em telas/overlays distintos
-```
-
-**A F0.5b já prevê** "um teste que falha se aparecer um segundo primário" — é a hora
-de decidir se a sobreposição deve *rebaixar* o primário da base, ou se "por tela" já
-considera a sobreposição como a tela ativa. Decisão do dono.
+**Correção (decisão do dono):** quando há sobreposição **com scrim**, a camada de base
+(`#baselayer`) fica **`inert`** — fora do foco e do leitor de tela — e a sobreposição é sua
+**irmã** no DOM (segue interativa). O rebaixamento visual do primário da base é consequência
+do `inert`, não regra à parte. O menu ⋯ **não tem scrim** → não inerta a base (fica
+interativa; não tem primário, então não há conflito). Invariante reescrito no CLAUDE.md:
+"**no máximo** um primário visível e acessível a qualquer momento" (menu sem CTA = zero
+primário é normal). Testes em `interface.test.js §13`: ≤1 primário no DOM em toda
+sobreposição (menu, filtro, kit, registro, ajuda, rendição, troca, resultado); base `inert`
+com scrim; nenhum focável da base solto; fechar restaura primário e focabilidade.
 
 ---
 

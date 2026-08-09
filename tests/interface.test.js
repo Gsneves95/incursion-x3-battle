@@ -620,6 +620,50 @@ console.log('== 14. o fit APLICA o que a regra de enquadramento manda ==');
   console.log('  fit aplica escala + largura da regra em 5 tamanhos');
 }
 
+console.log('== 13. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base inerte sob scrim) ==');
+{
+  const nprim = () => $$('.b--primary').length;
+  const baseInert = () => { const b = $('#baselayer'); return b ? b.hasAttribute('inert') : null; };
+  // focáveis "soltos": fora da sobreposição ativa, fora de [inert] e fora do #diag (painel
+  // de diagnóstico dev, display:none — não é camada de jogo, e o jsdom não computa layout).
+  const soltos = ovSel => $$('button:not([disabled]),[tabindex]:not([tabindex="-1"]),a[href]')
+    .filter(e => !e.closest(ovSel) && !e.closest('[inert]') && !e.closest('#diag')).length;
+
+  // --- batalha: entra numa batalha limpa (os testes anteriores deixaram a rota noutro
+  // lugar; renderPick ignora `ov`), depois percorre TODAS as sobreposições ---
+  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;st.fim=null;menuAberto=false;render()");
+  ok(nprim() === 1 && baseInert() === false, `batalha base: 1 primário e base não-inerte (prim ${nprim()}, inert ${baseInert()})`);
+  // o menu ⋯ NÃO tem scrim → base NÃO fica inerte (fica interativa), e não traz primário
+  w.eval('menuAberto=true;render()');
+  ok(baseInert() === false, 'menu (sem scrim): base NÃO fica inerte');
+  ok(nprim() <= 1, `menu: no máximo 1 primário (tem ${nprim()})`);
+  w.eval('menuAberto=false;render()');
+  for (const o of ['log', 'help', 'surr', 'apagar', 'conv', 'livre']) {
+    w.eval(`ov='${o}';render()`);
+    ok(nprim() <= 1, `overlay ${o}: no máximo 1 primário no DOM inteiro (tem ${nprim()})`);
+    ok(baseInert() === true, `overlay ${o}: camada de base inerte`);
+    ok(soltos('.ov') === 0, `overlay ${o}: nenhum focável da base fora do inerte (tem ${soltos('.ov')})`);
+  }
+  w.eval('ov=null;st.fim="Jogador 1 vence";render()');
+  ok(nprim() === 1 && baseInert() === true, `resultado: 1 primário e base inerte (prim ${nprim()}, inert ${baseInert()})`);
+  ok(!!$('#bnew') && $('#bnew').classList.contains('b--primary'), 'o único primário é o da sobreposição (#bnew)');
+  w.eval('st.fim=null;render()');
+  ok(baseInert() === false && !!$('#bend') && $('#bend').classList.contains('b--primary'), 'fechar restaura: base não-inerte e #bend volta a primário');
+
+  // --- seleção: filtro e kit ---
+  w.eval("ir('selecao');painelFiltro=false;focoPk=null;render()");
+  ok(nprim() === 1 && baseInert() === false, `seleção base: 1 primário e não-inerte (prim ${nprim()}, inert ${baseInert()})`);
+  w.eval('painelFiltro=true;render()');
+  ok(nprim() === 1 && baseInert() === true && soltos('.fpanel') === 0, 'filtro: 1 primário (o #ffechar), base inerte, sem focável solto');
+  ok(!!$('#ffechar') && $('#ffechar').classList.contains('b--primary'), 'o primário do filtro é o #ffechar');
+  ok(!!$('#bgo') && !$('#bgo').classList.contains('b--primary'), 'o #bgo da base foi rebaixado');
+  w.eval('painelFiltro=false;focoPk=(typeof ROSTER!=="undefined"&&ROSTER[0]&&ROSTER[0].key)||null;render()');
+  ok(nprim() <= 1 && baseInert() === true && soltos('.kpanel') === 0, `kit: <=1 primário, base inerte, sem focável solto (prim ${nprim()})`);
+  w.eval('focoPk=null;render()');
+  ok(baseInert() === false && !!$('#bgo') && $('#bgo').classList.contains('b--primary'), 'fechar kit restaura: base não-inerte e #bgo volta a primário');
+  console.log('  ≤1 primário em toda sobreposição; base inerte sob scrim; menu (sem scrim) não inerta; fechar restaura');
+}
+
 console.log('');
 console.log(falhas === 0 ? '>>> TUDO OK' : `>>> ${falhas} FALHA(S)`);
 w.close();
