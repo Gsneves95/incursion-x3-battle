@@ -474,7 +474,16 @@ duração time/1.0 → ponderado sobe **+1,8%** (variado) e **+4,9%** (mono), mu
 teto de 20%. Energia estrangeira parada em média **1,25** (variado) / **1,78** (mono) —
 abaixo de 4, então a conversão 1/turno dá vazão suficiente **por ora**. Se um ajuste futuro
 de peso passar disso, reabrir a vazão da conversão (subir para 2/turno, ou 4→2 num gesto) —
-decisão do dono. A fome por falta de energia até CAIU com a ponderação (mais formas de agir).
+decisão do dono. A fome por falta de energia até CAIU com a ponderação (12,7 → 9,39 no mono).
+
+**Leitura ao contrário (importante para futuros ajustes).** A fome caiu porque a estrangeira
+ACUMULA e vira conversão — isto é, a ponderação deu ao mono uma flexibilidade nova (converter
+o excedente na cor que falta), não só cortou o excesso de cor nativa. Consequência: **o efeito
+corretivo sobre o mono é MENOR do que a tabela de "aproveitável/turno" sugere** — a tabela
+conta só a energia direta, não o resgate por conversão. Se, jogando, o mono ainda parecer
+forte, o caminho é **ajustar `pesoTime` para ~0,65** (baixar de 0,75 → menos cor nativa
+garantida ao mono) **ou reduzir a vazão da conversão** (ela é o que salva o mono), **não mexer
+em kit**.
 
 ---
 
