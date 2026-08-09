@@ -26,7 +26,14 @@ const TAMANHOS = [
 const RETRATOS = [[360, 740], [412, 915]];
 const SAFE = 48;   // faixa de safe-area lateral simulada (notch/gestos)
 const EPS = 0.6;
-const PISO = 0.80; // piso de escala em celular — REPORTADO, não cravado (ver escopo p/ o dono)
+// Piso de LEGIBILIDADE (substitui o antigo piso de ESCALA 0,80 — ver DECISOES.md).
+// O que protege a leitura é o TAMANHO FINAL do texto em px FÍSICOS, não a proporção
+// do palco: menorTextoDesign × escala × DPR. Renderizamos de verdade em DPR 2 e 3
+// (o real dos aparelhos de hoje) e cobramos o piso — CRAVADO, não mais reportado.
+const MENOR_TEXTO_DESIGN = 8; // menor texto do jogo no palco, px de design (shell.html
+                              // .skill__cost.gratis span / .foepanel__lbl). Spec: enquadramento.test.js
+const PISO_FISICO = 11;       // px físicos mínimos para leitura confortável em celular
+const DPRS = [2, 3];          // DPR real dos aparelhos de hoje (não só 1)
 
 function acharChromium() {
   if (process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
@@ -73,7 +80,6 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   }
 
   console.log('== matriz: o jogo aplica o que a regra manda, dentro da viewport ==');
-  const linhas = [];
   for (const [w, h] of TAMANHOS) {
     for (const safe of [false, true]) {
       const r = await medir(w, h, safe);
@@ -94,7 +100,6 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       // 6) tarja ZERO em pelo menos um eixo (largura fluida cobre um dos dois)
       const cheioH = (r.R - r.L) >= larguraUtil - EPS, cheioV = (r.B - r.T) >= alturaUtil - EPS;
       ok(cheioH || cheioV, `${rot}: sobra tarja nos DOIS eixos (largura ${Math.round(r.R - r.L)}/${larguraUtil}, altura ${Math.round(r.B - r.T)}/${alturaUtil})`);
-      if (!safe) linhas.push({ rot: w + 'x' + h, escala: r.scale, larg: Math.round(r.boxW), h });
     }
   }
 
@@ -112,14 +117,31 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(vis.vp === 'none', `${w}x${h} retrato: palco deveria estar oculto (display ${vis.vp})`);
   }
 
-  // RELATÓRIO da escala por tamanho (sem safe). O piso de 0,80 é REPORTADO, não
-  // cravado: em altura < 342px (ex.: 726×312 na janela) a escala física não alcança
-  // 0,80 com altura de design 428 — em TELA CHEIA o mesmo aparelho sobe. Escopo do
-  // piso é decisão do dono; aqui só trago o número.
-  console.log('  escala por tamanho (paisagem):');
-  const abaixo = linhas.filter(l => l.escala < PISO);
-  linhas.forEach(l => console.log(`    ${l.rot.padEnd(9)} escala ${l.escala.toFixed(3)}  design ${l.larg}${l.escala < PISO ? '  ⚠ < ' + PISO + ' (altura ' + l.h + 'px)' : ''}`));
-  if (abaixo.length) console.log(`  ⚠ ${abaixo.length} tamanho(s) abaixo de ${PISO} — todos por altura < 342px (cobertos por tela cheia). Escopo do piso: decisão do dono.`);
+  // == legibilidade: menor texto físico >= piso, RENDERIZADO em DPR 2 e 3 ==
+  // Substitui o antigo piso de escala. Criamos um contexto por DPR (deviceScaleFactor),
+  // medimos a escala REALMENTE aplicada e cobramos menorTextoDesign × escala × DPR >=
+  // PISO_FISICO. A escala é independente do DPR (layout em px CSS) — medir nos dois prova
+  // isso e computa o tamanho físico do texto de verdade, não por fórmula recopiada.
+  console.log(`== legibilidade: menor texto físico >= ${PISO_FISICO}px (menor design ${MENOR_TEXTO_DESIGN}px, DPR ${DPRS.join(' e ')}) ==`);
+  for (const dpr of DPRS) {
+    const ctx = await browser.newContext({ deviceScaleFactor: dpr });
+    const pg = await ctx.newPage();
+    await pg.goto('file://' + distAbs, { waitUntil: 'load' });
+    console.log(`  -- DPR ${dpr} --`);
+    for (const [w, h] of TAMANHOS) {
+      await pg.setViewportSize({ width: w, height: h });
+      await pg.evaluate(() => dispatchEvent(new Event('resize')));
+      const escala = await pg.evaluate(() => {
+        const st = document.getElementById('stage');
+        return +((st.style.transform.match(/scale\(([0-9.]+)\)/) || [])[1]);
+      });
+      const fisico = MENOR_TEXTO_DESIGN * escala * dpr;
+      ok(fisico >= PISO_FISICO,
+        `${w}x${h} @DPR${dpr}: menor texto ${fisico.toFixed(1)}px < piso ${PISO_FISICO}px (escala ${escala.toFixed(3)})`);
+      console.log(`    ${(w + 'x' + h).padEnd(9)} escala ${escala.toFixed(3)}  texto ${fisico.toFixed(1)}px${fisico < PISO_FISICO ? '  XX < ' + PISO_FISICO : ''}`);
+    }
+    await ctx.close();
+  }
 
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);

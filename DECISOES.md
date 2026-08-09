@@ -487,6 +487,40 @@ em kit**.
 
 ---
 
+## 22. Piso de LEGIBILIDADE em pixels físicos, não piso de escala
+
+O primeiro teste de enquadramento cravava um piso de **escala** (0,80) — a proporção do
+palco em celular. Estava errado, e o erro era do dono: **legibilidade não é função da escala,
+é do TAMANHO FINAL do texto em pixels FÍSICOS**. Escala 0,729 num aparelho DPR 3 rende texto
+MAIOR que escala 0,90 num DPR 1. Especificar a proporção quando o que importa é o resultado
+media a coisa errada — e o piso de 0,80 era **fisicamente impossível** em altura útil < 342px
+(o aparelho do dono na janela, 726×312), forçando a exceção "reportado, não cravado".
+
+**A regra agora:** `menorTextoDesign × escala × DPR ≥ 11px físicos`, com a matriz cobrindo
+**DPR 2 e 3** (o real dos aparelhos de hoje, não só 1). O menor texto do jogo no palco era
+**7,5px** de design (`.skill__cost.gratis span`, `.pk__wip`) — subido para **8px**, igualando
+o `.foepanel__lbl` que já era o menor. A correção foi **subir o texto no design, não afrouxar
+o teste**. Números reais (Chromium, escala medida no render):
+
+| viewport | escala | DPR 2 | DPR 3 |
+|---|---|---|---|
+| 726×312 (janela do dono — PIOR caso) | 0,729 | **11,7px** | 17,5px |
+| 667×375 (iPhone SE) | 0,855 | 13,7px | 20,5px |
+| 926×428 | 1,000 | 16,0px | 24,0px |
+| 1180×820 (tablet) | 1,250 | 20,0px | 30,0px |
+
+O piso de 11 passa em toda a matriz, com folga de 0,7px no pior caso (726×312 @ DPR2). Antes
+do ajuste, esse caso dava 10,9px — 0,1px abaixo; foi o número trazido em vez de relaxar.
+Spec pura em `tests/enquadramento.test.js` (números à mão), verificação no render real em
+`tests/moldura.test.js` (contexto por DPR, escala medida × DPR).
+
+**Consequência útil (reforça a prioridade do PWA):** naquele mesmo aparelho, sair da janela
+para TELA CHEIA leva a escala de **0,729 → 0,841** (altura útil 312 → 360). Ou seja, o modo
+instalado não é preferência estética — é onde o jogo fica confortável. O PWA é requisito de
+legibilidade, não enfeite.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

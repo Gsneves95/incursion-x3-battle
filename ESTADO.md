@@ -18,10 +18,13 @@ recópia da fórmula:** `enquadramento.test.js` (13ª suíte, SPEC — os 6 caso
 cravados à mão, único lugar com número escrito); `moldura.test.js` e `interface.test.js`
 teste 14 **CHAMAM** a função e comparam com o que o navegador aplicou (escala + largura);
 `moldura` ganhou casos de RETRATO (360×740, 412×915 → aviso de girar). **13 suítes verdes.**
-**PENDENTE (decisão do dono):** o piso de escala 0,80 do teste 9 — o `726×312` na JANELA dá
-0,729 (altura 312 < 342 = 428×0,80; física, não bug); em TELA CHEIA (360) sobe p/ 0,841. O
-teste REPORTA os abaixo de 0,80 (só os de altura < 342), não crava o piso. Escopo do piso
-(só tela cheia? só altura ≥ 342?) é sua decisão. Fila: **F0.4c**.
+**RESOLVIDO — piso de LEGIBILIDADE (decisão 22).** O piso de escala 0,80 do teste 9 estava
+mal formulado: legibilidade é o TAMANHO FÍSICO do texto (`menorTextoDesign × escala × DPR`),
+não a escala. Substituído por piso de **11px físicos**, matriz agora com **DPR 2 e 3**. Menor
+texto do palco subiu de 7,5 → **8px** de design (correção no design, não no teste). Pior caso
+`726×312 @ DPR2 = 11,7px` (era 10,9 antes do ajuste). CRAVADO nas duas suítes. Consequência:
+tela cheia leva 0,729 → 0,841 no aparelho do dono → **o PWA é requisito de legibilidade**.
+Fila: **F0.4c** (carteira lendo o grant 1500).
 
 ## Sessão F0.7 (anterior)
 **Data:** 2026-08-09
@@ -209,7 +212,8 @@ técnica de duas camadas.
   partidas IA×IA (~16s).
 - **Enquadramento (F0.6b):** `src/enquadramento.js` `calcularEnquadramento({larguraUtil,
   alturaUtil})→{escala,larguraDesign}` — regra ÚNICA (altura fixa 428, largura fluida,
-  teto 1,25). `fit()` só aplica. Piso de escala 0,80 do teste 9 pendente de escopo.
+  teto 1,25). `fit()` só aplica. Teste 9 = piso de LEGIBILIDADE 11px físicos (menor texto
+  8px design × escala × DPR{2,3}), cravado — ver decisão 22.
 - **Perspectiva/modo (F0.7):** `ladoExibido`/`ehMeuTurno`/`modoPartida` em `turno.js`; meu
   time fixo à esquerda; modo espectador no turno do oponente; `rotuloLado` (Você/CPU/Oponente
   ou Jogador N por modo); motor neutro + `traduzirRotulos` (remendo) na visão.

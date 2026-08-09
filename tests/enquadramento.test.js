@@ -41,6 +41,31 @@ console.log('== invariantes da regra ==');
   console.log('  teto 1,25 · largura ∈ [780,1200] · altura 428');
 }
 
+console.log('== piso de LEGIBILIDADE: menor texto em pixels FÍSICOS (spec) ==');
+{
+  // Legibilidade NÃO é a escala (proporção do palco) — é o TAMANHO FINAL do texto em
+  // pixels FÍSICOS: menorTextoDesign × escala × DPR. Escala 0,729 num DPR 3 rende texto
+  // MAIOR que escala 0,90 num DPR 1. Por isso o piso é em px físicos, com DPR na conta.
+  // (Substitui o antigo piso de escala 0,80 — ver DECISOES.md.)
+  const MENOR = 8;  // menor texto do jogo no palco, em px de DESIGN. Fonte: shell.html
+                    // .skill__cost.gratis span e .foepanel__lbl. Único lugar à mão (spec).
+  const PISO = 11;  // px FÍSICOS mínimos para leitura confortável em celular
+  // físico esperado à mão por caso (a spec) — se a regra ou o menor texto mudar, falha.
+  const LEG = [
+    { w: 726,  h: 312, dpr: 2, fis: 11.7 }, // PIOR caso da matriz — folga ~0,7px sobre 11
+    { w: 726,  h: 312, dpr: 3, fis: 17.5 }, // mesmo aparelho em DPR 3: sobra enorme
+    { w: 667,  h: 375, dpr: 2, fis: 13.7 }, // iPhone SE (DPR 2 real)
+    { w: 1180, h: 820, dpr: 2, fis: 20.0 }, // tablet no teto de escala
+  ];
+  for (const c of LEG) {
+    const { escala } = calcularEnquadramento({ larguraUtil: c.w, alturaUtil: c.h });
+    const fisico = MENOR * escala * c.dpr;
+    ok(Math.abs(fisico - c.fis) < 0.1, `${c.w}x${c.h} @DPR${c.dpr}: físico ${fisico.toFixed(1)} esperava ${c.fis}`);
+    ok(fisico >= PISO, `${c.w}x${c.h} @DPR${c.dpr}: físico ${fisico.toFixed(1)} ABAIXO do piso ${PISO}`);
+  }
+  console.log(`  menor texto ${MENOR}px design · piso ${PISO}px físicos · pior caso 726x312@DPR2 = 11,7px`);
+}
+
 console.log('');
 console.log(f === 0 ? '>>> ENQUADRAMENTO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
