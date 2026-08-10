@@ -61,7 +61,7 @@ function overlayHTML(){
   if(ov==='conv')return trocaHTML();
   if(st.fim){
     return `<div class="ov"><div class="ovbox"><div class="result">
-      <h1>${H(traduzirRotulos(st.fim))}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
+      <h1>${H(narrar(st.fim))}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
       <button class="b b--primary b--lg" id="bnew">Nova batalha</button></div></div></div>`;
   }
   if(ov==='log'){
@@ -69,7 +69,7 @@ function overlayHTML(){
       <span class="sub">${st.log.length} EVENTOS</span>
       <span class="push"><button class="b b--quiet b--md" id="bclose">Fechar</button></span></div>
       <div class="ovb" id="logscroll">${st.log.slice(-200).map(r=>
-        `<div class="log__row ${/caiu|vence|Turno|Empate|renasceu/.test(r.msg)?'hi':''}"><b>${r.turno}</b><span>${H(traduzirRotulos(r.msg))}</span></div>`
+        `<div class="log__row ${LOG_MARCO.has(r.tipo)?'hi':''}"><b>${r.turno}</b><span>${H(narrar(r))}</span></div>`
       ).join('')}</div></div></div>`;
   }
   if(ov==='help'){
@@ -136,7 +136,10 @@ function ligarSobrepor(){
   const bl=q('#bclose'); if(bl)bl.onclick=()=>{ov=null;render();};
   const ba=q('#bapagarok'); if(ba)ba.onclick=()=>{apagarDados();ov=null;render();};
   const bso=q('#bsurrok'); if(bso)bso.onclick=()=>{
-    st.fim=`JOGADOR ${2-st.ativo} VENCE`; st.log.push({turno:st.turno,msg:`Jogador ${st.ativo+1} rendeu-se.`});
+    // rendição é decisão da VIEW (não do motor): st.fim estruturado (mesma forma da vitória
+    // por queda) + uma linha de registro autorada aqui, já em pt-BR (passa direto por narrar).
+    st.fim={tipo:'fim',resultado:'vitoria',lado:1-st.ativo};
+    st.log.push({turno:st.turno,msg:`${rotuloLado(st.ativo)} rendeu-se.`});
     ov=null;render();};
   const bn=q('#bnew'); if(bn)bn.onclick=()=>{
     // sai da batalha para a seleção pedindo um recomeço (aoEntrarSelecao zera a grade);

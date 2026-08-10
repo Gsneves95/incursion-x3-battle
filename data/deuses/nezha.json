@@ -41,7 +41,8 @@
       "cd": 1,
       "alvo": "auto",
       "desc": "Alterna a cada uso. ANEL: trava a Habilidade do alvo por 1 turno. MANTO: 12 a todos + Queimadura 8/turno.",
-      "alterna": true
+      "alterna": true,
+      "modos": ["ANEL", "MANTO"]
     },
     {
       "slot": "milagre",

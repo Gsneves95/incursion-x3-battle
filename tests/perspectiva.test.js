@@ -70,14 +70,15 @@ console.log('== 12. rótulos por modo ==');
   ok(aliado === 'VOCÊ', 'placa aliada = VOCÊ (veio ' + aliado + ')');
   ok(inimigo === 'CPU', 'placa inimiga = CPU (veio ' + inimigo + ')');
   ok(!!$('.player--enemy .nrgmini'), 'energia do oponente aparece como mini-pips na placa dele');
-  w.eval("st.fim='JOGADOR 2 VENCE'; render()");
-  ok($('.result h1').textContent.trim() === 'CPU VENCE', 'banner traduz JOGADOR 2 → CPU (veio ' + $('.result h1').textContent.trim() + ')');
+  // st.fim é EVENTO estruturado (docs/eventos.md); o narrador resolve lado -> rótulo por modo.
+  w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
+  ok($('.result h1').textContent.trim() === 'CPU VENCE', 'banner traduz lado 1 → CPU (veio ' + $('.result h1').textContent.trim() + ')');
   // hot-seat: numeração neutra
   w.eval("vsCPU=false"); batalha(0); w.eval("st.ativo=0; render()");
   const a2 = $('.player:not(.player--enemy) .player__name')?.textContent.trim();
   ok(a2 === 'JOGADOR 1', 'hot-seat mantém JOGADOR 1 (veio ' + a2 + ')');
-  w.eval("st.fim='JOGADOR 2 VENCE'; render()");
-  ok($('.result h1').textContent.trim() === 'JOGADOR 2 VENCE', 'hot-seat não traduz o banner');
+  w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
+  ok($('.result h1').textContent.trim() === 'JOGADOR 2 VENCE', 'hot-seat: lado 1 → JOGADOR 2 (numeração neutra)');
   console.log('  vs CPU: VOCÊ/CPU + banner traduzido · hot-seat: JOGADOR N');
 }
 

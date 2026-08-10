@@ -8,7 +8,11 @@ const raiz = path.join(__dirname, '..');
 const ler = p => fs.readFileSync(path.join(raiz, p), 'utf8');
 const semGuard = s => s.split("if (typeof module !== 'undefined')")[0];
 
-// ---------- 1. checagem de direção: nenhum ui/ referencia OUTRO ui/ (só base.js é livre) ----------
+// ---------- 1. checagem de direção: nenhum ui/ referencia OUTRO ui/ (só base.js e narrar.js) ----------
+// base.js e narrar.js são a FUNDAÇÃO: os outros ui/ podem chamá-los (helpers e o narrador),
+// mas eles só podem usar base.js entre si. narrar.js é o único tradutor evento->pt-BR; se
+// fosse um ui/ comum, quem renderiza o registro (painel, sobrepor) não poderia invocá-lo.
+const UI_FUNDACAO = new Set(['base.js', 'narrar.js']);
 function checarDirecaoUI() {
   const dir = path.join(raiz, 'src/ui');
   const mods = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
@@ -21,10 +25,10 @@ function checarDirecaoUI() {
   }
   const erros = [];
   for (const m of mods) {
-    if (m === 'base.js') continue;
+    if (m === 'base.js') continue;   // base.js não é checado como origem (fundação pura)
     const src = ler('src/ui/' + m);
     for (const outro of mods) {
-      if (outro === m || outro === 'base.js') continue;
+      if (outro === m || UI_FUNDACAO.has(outro)) continue;   // chamar base.js/narrar.js é livre
       for (const id of defs[outro]) {
         // casa CHAMADA (`id(`), não a palavra solta — evita falso positivo com
         // texto de ajuda e comentários; acoplamento ui->ui real é sempre chamada.
@@ -84,10 +88,10 @@ function checarKits() {
 checarKits();
 
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
-// engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/* -> view.
+// engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [
   perfil, armaz, turno, rotas, enquadr,
-  ler('src/ui/base.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
+  ler('src/ui/base.js'), ler('src/ui/narrar.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
   ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'),
   visao,
 ].join('\n');

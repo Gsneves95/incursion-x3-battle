@@ -79,7 +79,7 @@ function habilidades(u){
   return `<div class="skills">`
     +acs.map(a=>{
     const cd=u.cd[a.slot]||0;
-    const semOrbe=!a.disponivel&&cd===0&&/orbes/.test(a.motivo||'');
+    const semOrbe=!a.disponivel&&cd===0&&a.motivo==='sem_energia';
     const travada=!a.disponivel&&cd===0&&!semOrbe;
     const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
     // modo espectador (F0.7): no turno do oponente meus discos ficam apagados e sem toque
@@ -106,7 +106,7 @@ function ficha(u){
   const g=GODS[u.key],lin=[];
   lin.push(`${g.passiva.nome}: ${g.passiva.desc}`);
   for(const e of u.efeitos){const s=SYM[e.type];if(s)lin.push(`${s[2]}${e.v?' '+e.v:''} (${e.dur>90?'permanente':e.dur+'t'})`);}
-  for(const d of u.dots)lin.push(`${d.nome} ${d.v}/t (${d.dur}t)`);
+  for(const d of u.dots)lin.push(`${rotuloEfeito(d.nome)} ${d.v}/t (${d.dur}t)`);
   for(const k of['habilidade','milagre','defesa'])if(u.cd[k]>0)lin.push(`${k} em recarga ${u.cd[k]}t`);
   if(u.shield)lin.push(`escudo ${u.shield}`);
   detalhe={nome:u.nome.toUpperCase(),chave:'god-'+u.key,glifo:ini(u.nome),cor:COR(u.elem),
@@ -157,7 +157,7 @@ function ligarCampo(){
   stage.querySelectorAll('[data-dot]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,nm]=b.dataset.dot.split('|');const u=todas().find(x=>x.uid===uid);
     const d=u.dots.find(x=>x.nome===nm);
-    detalhe={nome:d.nome.toUpperCase(),chave:'effect-dot',glifo:'✹',
+    detalhe={nome:rotuloEfeito(d.nome).toUpperCase(),chave:'effect-dot',glifo:'✹',
       meta:u.nome.toUpperCase()+' · '+d.v+'/TURNO · '+d.dur+' TURNO(S)',
       texto:'Dano contínuo. Conta no início do turno de quem sofre, ANTES de ele agir — pode matar sem que a unidade jogue.',
       classes:'DANO PURO · IGNORA REDUÇÃO E ESCUDO · ATRAVESSA INVULNERABILIDADE'};

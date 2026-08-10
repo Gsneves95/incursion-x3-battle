@@ -28,6 +28,17 @@ const SYM = {
   regen:['+','buff','Regeneração','Cura no início do turno. Não soma com outra regeneração — vale a maior.'],
 };
 
+// mapa CHAVE -> nome exibível dos danos contínuos. O motor emite o DoT como CHAVE
+// (efeito:'queimadura'), nunca como nome (docs/eventos.md A); a tradução mora aqui,
+// compartilhada por narrar.js (registro) e campo.js (faixa de efeitos). Cresce com os DoTs.
+const NOMES_DOT = { queimadura: 'Queimadura' };
+// CHAVE de efeito -> rótulo humano. DoT pelo mapa acima; buff/debuff pelo rótulo do SYM;
+// senão devolve a própria chave (fica legível e nunca some). Único lugar de tradução de chave.
+function rotuloEfeito(k) { return NOMES_DOT[k] || (SYM[k] && SYM[k][2]) || k; }
+// tipos de evento que marcam MARCO no registro (recebem realce): virada de turno,
+// queda, renascimento. Substitui o regex que casava as strings prontas (caiu/Turno/…).
+const LOG_MARCO = new Set(['turno', 'queda', 'revive', 'passiva', 'fim']);
+
 const stage = document.getElementById('stage');
 const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 // realça palavras-chave por categoria no painel de descrição (estilo Naruto-Arena).
@@ -49,16 +60,9 @@ function rotuloLado(lado){
   if(lado===ladoExibido()) return 'Você';
   return modoPartida()==='cpu' ? 'CPU' : 'Oponente';
 }
-// REMENDO (F0.7) — NÃO é a solução. O motor emite TEXTO de interface já formatado
-// ("vez do Jogador 1", "JOGADOR 2 VENCE"); aqui traduzimos "Jogador N" por cima da
-// string pronta. A forma certa é o motor emitir EVENTOS estruturados e a visão
-// formatar — ver ESTADO.md "Dívida: o motor escreve texto de interface" (candidata à
-// Fase 1, junto de quebrar o engine.js). Enquanto essa dívida não é paga, isto vive.
-function traduzirRotulos(s){
-  return String(s)
-    .replace(/JOGADOR\s+(\d+)/g, (m,n)=>rotuloLado(+n-1).toUpperCase())
-    .replace(/Jogador\s+(\d+)/g, (m,n)=>rotuloLado(+n-1));
-}
+// (F1.0b) O remendo `traduzirRotulos` morreu: o motor não emite mais texto de interface,
+// emite EVENTOS estruturados (docs/eventos.md) e `narrar()` (ui/narrar.js) traduz na hora
+// de exibir — resolvendo `lado` por `rotuloLado`, sem regex por cima de string pronta.
 // mini-pips da energia de um lado (contexto no topo): um pip por orbe, colorido por
 // elemento — deixa "ele paga um Milagre?" legível sem somar número nenhum.
 function miniPips(l){

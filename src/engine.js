@@ -72,6 +72,9 @@ const TIPOS_FX = [
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
   'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
 ];
+// DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
+// nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
+const DOTS = ['queimadura'];   // cresce (veneno, sangramento…) ao provar os 73 kits
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
   elementos: ELEMS,
@@ -79,12 +82,29 @@ const VOCAB = {
   alvos: [...Object.keys(PASSOS), 'auto'],       // valores válidos de ability.alvo
   fx: TIPOS_FX,                                  // valores válidos de fx.t
   efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
+  dots: DOTS,                                    // chaves de DoT (fx dot.nome)
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu',
+  ],
+  // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
+  eventos: [
+    'abertura', 'turno', 'acao', 'dano', 'cura', 'dot', 'efeito', 'orbe', 'conversao',
+    'cd', 'bloqueio', 'imune', 'queda', 'revive', 'passiva', 'fase', 'fim',
+    'escudo', 'contador', 'acordar', 'controle',
+  ],
+  camposEvento: [   // nomes de campo CANÔNICOS permitidos num evento (nada de sinônimo)
+    'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
+    'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
+  ],
+  motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
+    'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
+    'sem_cura', 'nao_revive',                           // falha (noHeal / naoRevive)
+    'em_recarga', 'sem_energia', 'silenciado', 'travada', // indisponibilidade de ação (acoesDe)
+    'tempo',                                            // fim por esgotamento (turno 40)
   ],
 };
 
@@ -152,13 +172,15 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
       { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
     ],
   };
-  log(st, `Turno 1 · Jogador ${comeca + 1} abre a partida.`);   // sem preposição contraída: a visão traduz "Jogador N" -> Você/CPU/Oponente
+  log(st, { tipo: 'turno', turno: 1, lado: comeca });   // a visão traduz lado -> Você/CPU/Jogador N por modo
   iniciarTurno(st);
   return st;
 }
 
 function zeroOrbs() { const o = {}; ELEMS.forEach(e => o[e] = 0); return o; }
-function log(st, msg) { st.log.push({ turno: st.turno, msg }); }
+// log() empurra um EVENTO ESTRUTURADO (docs/eventos.md), nunca texto. O narrador (ui/narrar.js)
+// traduz para pt-BR na hora de exibir. `ev` é { tipo, ...campos canônicos }.
+function log(st, ev) { st.log.push({ turno: st.turno, ...ev }); }
 function rng(st) { const f = mulberry32(st.seed + st.rngN * 7919); st.rngN++; return f(); }
 
 // ------------------------------------------------------------ EFEITOS
@@ -169,10 +191,10 @@ function aplicar(st, u, eff) {
   const e = { ...eff };
   // regra 7 — proteção vence controle
   if (CONTROLES.includes(e.type) && ef(u, 'controlImmune')) {
-    log(st, `${u.nome} está imune a controle — ${e.type} falhou.`); return;
+    log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'controle_imune', efeito: e.type }); return;
   }
   if (e.type === 'adormecido' && u.key === 'cuca') {
-    log(st, `Cuca é imune a Adormecer.`); return;
+    log(st, { tipo: 'imune', alvo: u.key, efeito: 'adormecido' }); return;
   }
   const ja = ef(u, e.type);
   if (ja) {
@@ -187,7 +209,7 @@ function aplicar(st, u, eff) {
 }
 
 function aplicarDot(st, u, nome, v, dur) {
-  if (u.key === 'nezha') { log(st, `Nezha é imune a ${nome}.`); return; }
+  if (u.key === 'nezha') { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }
   const ja = u.dots.find(d => d.nome === nome);
   if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); }   // regra 6
   else u.dots.push({ nome, v, dur });
@@ -203,7 +225,7 @@ function addContador(st, u, nome, v = 1, max = null) {
   if (max != null) novo = Math.min(novo, max);
   if (novo < 0) novo = 0;
   u.contadores[nome] = novo;
-  if (novo !== atual) log(st, `${u.nome}: ${nome} ${novo > atual ? '+' : ''}${novo - atual} (=${novo}).`);
+  if (novo !== atual) log(st, { tipo: 'contador', origem: u.key, valor: novo - atual });
   return novo;
 }
 function getContador(u, nome) { return u.contadores[nome] || 0; }
@@ -213,9 +235,9 @@ function contadorNoCampo(st, nome, lado) {
 
 // ----------------------------------------------- PRIMITIVA: estado Dia/Noite
 function definirFase(st, fase, dur) {
-  if (fase === null) { if (st.fase) log(st, `${st.fase} terminou.`); st.fase = null; st.faseDur = 0; return; }
+  if (fase === null) { if (st.fase) log(st, { tipo: 'fase', efeito: st.fase, duracao: 0 }); st.fase = null; st.faseDur = 0; return; }
   st.fase = fase; st.faseDur = dur;
-  log(st, `${fase} ativado por ${dur} turno(s).`);
+  log(st, { tipo: 'fase', efeito: fase, duracao: dur });
 }
 
 // contagem de quedas de um lado (para escalas "por aliado caído")
@@ -271,27 +293,29 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     if (redir) {
       const ie = ef(redir, 'intercepta');
       if (ie && ie.contra === 'unico') redir.efeitos = redir.efeitos.filter(e => e !== ie);
-      log(st, `${redir.nome} intercepta o golpe dirigido a ${alvo.nome}.`);
+      log(st, { tipo: 'efeito', origem: redir.key, alvo: alvo.key, efeito: 'intercepta' });
       return bater(st, atk, redir, base, kind, slot, { ...opts, semIntercepta: true });
     }
     const guarda = acharGuarda(st, alvo);
     if (guarda) {
-      const antes = guarda.hp;
       guarda.hp = Math.max(0, guarda.hp - base);
-      log(st, `${guarda.nome} absorve o golpe dirigido a ${alvo.nome} (${antes}→${guarda.hp}).`);
+      // a guarda ASSUME o golpe dirigido a `alvo` (mesma forma do interceptador): um
+      // evento diz que interceptou, o outro conta o dano que ela levou (Regra 6).
+      log(st, { tipo: 'efeito', origem: guarda.key, alvo: alvo.key, efeito: 'intercepta' });
+      log(st, { tipo: 'dano', origem: atk.key, alvo: guarda.key, valor: base });
       if (guarda.hp === 0) removerInvocacao(st, guarda);
       return base;
     }
   }
-  if (ef(alvo, 'invulneravel')) { log(st, `${alvo.nome} está Invulnerável — sem dano.`); return 0; }
-  if (ef(alvo, 'submerso')) { log(st, `${alvo.nome} está Submerso — não pode ser alvo.`); return 0; }
+  if (ef(alvo, 'invulneravel')) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'invulneravel' }); return 0; }
+  if (ef(alvo, 'submerso')) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'submerso' }); return 0; }
   // vínculo (Juramento Nupcial): o dano é dividido entre os dois vinculados
   const vin = !semVinculo && ef(alvo, 'vinculo');
   if (vin) {
     const par = st.lados[alvo.lado].units.find(x => x.uid === vin.par);
     if (par && par.vivo) {
       const metade = Math.ceil(base / 2);
-      log(st, `Vínculo: o golpe em ${alvo.nome} é dividido com ${par.nome}.`);
+      log(st, { tipo: 'efeito', alvo: alvo.key, efeito: 'vinculo' });
       const a1 = bater(st, atk, alvo, metade, kind, slot, { ...opts, semVinculo: true });
       const a2 = bater(st, atk, par, metade, kind, slot, { ...opts, semVinculo: true });
       return a1 + a2;
@@ -299,10 +323,9 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   }
   const { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot);
   alvo.hp = Math.max(0, alvo.hp - v);
-  let txt = `${atk.nome} → ${alvo.nome}: ${v} de dano`;
-  if (absorvido) txt += ` (${absorvido} no escudo)`;
-  if (kind && kind !== 'afetado') txt += ` [${kind}]`;
-  log(st, txt);
+  const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
+  if (absorvido) evDano.absorvido = absorvido;
+  log(st, evDano);
   // PRIMITIVA dano armazenado — todo aliado do alvo com acumulador guarda o dano sofrido.
   for (const x of st.lados[alvo.lado].units) {
     const arm = ef(x, 'armazenaDano');
@@ -311,13 +334,13 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   // acorda com dano de Habilidade/Milagre
   if (ef(alvo, 'adormecido') && (slot === 'habilidade' || slot === 'milagre')) {
     alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'adormecido');
-    log(st, `${alvo.nome} acordou.`);
+    log(st, { tipo: 'acordar', alvo: alvo.key });
   }
   if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
   // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
   const ca = ef(alvo, 'contraAtaca');
   if (ca && unico && !semContra && atk && atk.vivo && atk.lado !== alvo.lado) {
-    log(st, `${alvo.nome} contra-ataca ${atk.nome}.`);
+    log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'contraAtaca' });
     bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
     if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);
   }
@@ -329,18 +352,18 @@ function matar(st, atk, alvo) {
   if (alvo.vidaExtra) {
     const hp = alvo.vidaExtra.hp; alvo.vidaExtra = null;
     alvo.hp = hp; alvo.shield = 0;
-    log(st, `Vida Extra: ${alvo.nome} revive na hora com ${hp} de HP.`);
+    log(st, { tipo: 'revive', alvo: alvo.key, valor: hp });
     return;
   }
   alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
-  log(st, `${alvo.nome} caiu.`);
+  log(st, { tipo: 'queda', alvo: alvo.key });
   if (alvo.key === 'nezha' && !alvo.renasceu) {
     alvo.renasceu = true; alvo.pendenteRenascer = true;
-    log(st, `Renascido do Lótus: Nezha volta no próximo turno com 40 de HP.`);
+    log(st, { tipo: 'passiva', origem: alvo.key });
   }
   if (atk && atk.key === 'zeus' && atk.vivo) {                      // passiva Zeus
     st.lados[atk.lado].orbs['Tempestade']++;
-    log(st, `Soberano: Zeus ganha 1 orbe de Tempestade.`);
+    log(st, { tipo: 'orbe', lado: atk.lado, valor: 1, para: 'Tempestade', passiva: atk.key });
   }
   checarFim(st);
 }
@@ -360,21 +383,21 @@ function acharGuarda(st, alvo) {
   return inv || null;
 }
 function removerInvocacao(st, g) {
-  for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, `${g.nome} se desfez.`); } }
+  for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, { tipo: 'efeito', efeito: 'invocacao', duracao: 0 }); } }
 }
 
 function curar(st, u, v) {
   if (!u.vivo) return;
-  if (ef(u, 'noHeal')) { log(st, `${u.nome} não pode ser curado.`); return; }
+  if (ef(u, 'noHeal')) { log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'sem_cura' }); return; }
   let bonus = 0;
-  const alguemQueima = st.lados.flatMap(l => l.units).some(x => x.vivo && x.dots.some(d => d.nome === 'Queimadura'));
+  const alguemQueima = st.lados.flatMap(l => l.units).some(x => x.vivo && x.dots.some(d => d.nome === 'queimadura'));
   if (alguemQueima && st.lados[u.lado].units.some(x => x.vivo && x.key === 'brigid')) bonus = 5;
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
-  if (u.hp > antes) log(st, `${u.nome} curou ${u.hp - antes}.`);
+  if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });
   // passiva Hera — Rainha Ciumenta
   if (st.lados[u.lado].units.some(x => x.vivo && x.key === 'hera')) {
-    u.shield += 10; log(st, `Rainha Ciumenta: ${u.nome} ganhou 10 de escudo.`);
+    u.shield += 10; log(st, { tipo: 'escudo', alvo: u.key, valor: 10, passiva: 'hera' });
   }
 }
 
@@ -411,7 +434,7 @@ function alocarLivre(st, plano) {
   for (const k in plano) if ((l.orbs[k] || 0) < plano[k]) return { ok: false, erro: 'Orbes insuficientes.' };
   for (const k in plano) l.orbs[k] -= plano[k];
   l.dividaLivre = 0;
-  log(st, `Energia livre paga: ${Object.entries(plano).filter(([, n]) => n > 0).map(([e, n]) => `${n} ${e}`).join(', ') || '—'}.`);
+  log(st, { tipo: 'orbe', lado: st.ativo, valor: -devido });
   return { ok: true };
 }
 
@@ -447,7 +470,7 @@ function converter(st, para) {
     return { ok: false, erro: 'Conversão inválida.' };
   }
   l.orbs[para]++; l.converteu = true;
-  log(st, `Conversão: ${CONV_CUSTO} orbes → 1 de ${para}.`);
+  log(st, { tipo: 'conversao', lado: st.ativo, valor: CONV_CUSTO, para });
   return { ok: true };
 }
 
@@ -481,13 +504,13 @@ function iniciarTurno(st) {
   l.dividaLivre = 0;               // a dívida do turno anterior já foi quitada no fimTurno
 
   for (const u of l.units) {
-    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 40; log(st, `Nezha renasceu com 40 de HP.`); }
+    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 40; log(st, { tipo: 'revive', alvo: u.key, valor: 40, passiva: u.key }); }
     if (!u.vivo) continue;
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
       u.hp = Math.max(0, u.hp - d.v);
-      log(st, `${d.nome} em ${u.nome}: ${d.v} de dano puro.`);
+      log(st, { tipo: 'dot', alvo: u.key, efeito: d.nome, valor: d.v });
       if (u.hp === 0) { matar(st, null, u); break; }
     }
     if (!u.vivo) continue;
@@ -500,7 +523,7 @@ function iniciarTurno(st) {
   for (const g of l.invocacoes.slice()) {
     if (g.tipo === 'dano' && g.v > 0) {
       const alvo = st.lados[1 - st.ativo].units.find(x => x.vivo);
-      if (alvo) { log(st, `${g.nome} ataca.`); bater(st, { nome: g.nome, key: '__inv', lado: st.ativo, vivo: true, efeitos: [], contadores: {} }, alvo, g.v, 'afetado', 'invocacao', {}); }
+      if (alvo) { log(st, { tipo: 'efeito', efeito: 'invocacao' }); bater(st, { nome: g.nome, key: '__inv', lado: st.ativo, vivo: true, efeitos: [], contadores: {} }, alvo, g.v, 'afetado', 'invocacao', {}); }
     }
     if (g.dur != null) { g.dur--; if (g.dur <= 0) removerInvocacao(st, g); }
   }
@@ -515,11 +538,11 @@ function iniciarTurno(st) {
     const t = sortearElemento(st, tipos);
     l.orbs[t]++;
   }
-  if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, `Abertura: o Jogador que começa recebe 1 energia.`); }
-  if (geram.length < vivos.length) log(st, `${vivos.length - geram.length} unidade(s) sob controle não geraram orbe.`);
+  if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, { tipo: 'abertura', lado: st.ativo, valor: 1 }); }
+  if (geram.length < vivos.length) log(st, { tipo: 'controle', lado: st.ativo, valor: vivos.length - geram.length });
   if (primeiro && l.units.some(u => u.key === 'ganesha')) { // passiva Ganesha
     for (let i = 0; i < 2; i++) { const t = sortearElemento(st, tipos); l.orbs[t]++; }
-    log(st, `Senhor dos Começos: +2 orbes.`);
+    log(st, { tipo: 'orbe', lado: st.ativo, valor: 2, passiva: 'ganesha' });
   }
   checarFim(st);
 }
@@ -527,7 +550,7 @@ function iniciarTurno(st) {
 function fimTurno(st) {
   const l = st.lados[st.ativo];
   // dívida de energia livre não escolhida pelo jogador: aloca sozinha (rede de segurança)
-  if (l.dividaLivre > 0) { pagarLivreGuloso(l, l.dividaLivre); log(st, `${l.dividaLivre} energia(s) livre(s) alocada(s) automaticamente.`); l.dividaLivre = 0; }
+  if (l.dividaLivre > 0) { const d = l.dividaLivre; pagarLivreGuloso(l, d); log(st, { tipo: 'orbe', lado: st.ativo, valor: -d }); l.dividaLivre = 0; }
   // PRIMITIVA dano armazenado — libera ao expirar (Xangô devolve como dano puro)
   for (const u of l.units) {
     const arm = ef(u, 'armazenaDano');
@@ -535,14 +558,14 @@ function fimTurno(st) {
       const total = Math.min(arm.max || 9999, arm.acc || 0);
       const alvo = st.lados[1 - u.lado].units.find(x => x.uid === arm.alvo && x.vivo)
                  || st.lados[1 - u.lado].units.find(x => x.vivo);
-      if (total > 0 && alvo) { log(st, `${u.nome} devolve ${total} de dano armazenado a ${alvo.nome}.`); bater(st, u, alvo, total, 'puro', 'armazenado', {}); }
+      if (total > 0 && alvo) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano', duracao: 0 }); bater(st, u, alvo, total, 'puro', 'armazenado', {}); }
     }
   }
   // PRIMITIVA contagem de morte (Livro) — executa quem chegou ao fim da contagem
   for (const u of l.units) {
     const lv = ef(u, 'livro');
     if (lv && lv.dur === 1 && u.vivo) {
-      log(st, `Livro da Vida e Morte: ${u.nome} é executado.`);
+      log(st, { tipo: 'efeito', alvo: u.key, efeito: 'livro' });
       u.naoRevive = true; matar(st, null, u);
     }
   }
@@ -555,18 +578,20 @@ function fimTurno(st) {
   if (st.fase && st.faseDur > 0) { st.faseDur--; if (st.faseDur === 0) definirFase(st, null); }
   if (st.turno >= 40) {
     const hp = st.lados.map(x => x.units.reduce((s, u) => s + u.hp, 0));
-    st.fim = hp[0] === hp[1] ? 'Empate' : `Jogador ${hp[0] > hp[1] ? 1 : 2} vence por HP (turno 40)`;
+    st.fim = hp[0] === hp[1]
+      ? { tipo: 'fim', resultado: 'empate', motivo: 'tempo' }
+      : { tipo: 'fim', resultado: 'vitoria', lado: hp[0] > hp[1] ? 0 : 1, motivo: 'tempo' };
     return;
   }
   st.ativo = 1 - st.ativo;
   if (st.ativo === st.starter) st.turno++;   // conta rodadas a partir de quem abriu
-  log(st, `Turno ${st.turno} · Jogador ${st.ativo + 1} joga`);   // idem: formato sem preposição p/ a tradução da visão
+  log(st, { tipo: 'turno', turno: st.turno, lado: st.ativo });
   iniciarTurno(st);
 }
 
 function checarFim(st) {
   for (let i = 0; i < 2; i++) {
-    if (st.lados[i].units.every(u => !u.vivo && !u.pendenteRenascer)) st.fim = `Jogador ${2 - i} vence`;
+    if (st.lados[i].units.every(u => !u.vivo && !u.pendenteRenascer)) st.fim = { tipo: 'fim', resultado: 'vitoria', lado: 1 - i };
   }
 }
 
@@ -578,13 +603,13 @@ function acoesDe(st, u) {
     let cost = a.cost;
     if (u.key === 'cuca' && a.slot === 'basico' && st.turno % 3 === 0) cost = {};   // passiva Cuca
     let motivo = null;
-    if (u.cd[a.slot] > 0) motivo = `recarga ${u.cd[a.slot]}`;
-    else if (!podePagar(l, cost)) motivo = 'orbes insuficientes';
+    if (u.cd[a.slot] > 0) motivo = 'em_recarga';
+    else if (!podePagar(l, cost)) motivo = 'sem_energia';
     else if (a.slot !== 'defesa') {
       const sil = ef(u, 'silenceClass');
-      if (sil && sil.cls === classeDe(st, u, a) && a.slot !== 'basico') motivo = `habilidades ${sil.cls} travadas`;
+      if (sil && sil.cls === classeDe(st, u, a) && a.slot !== 'basico') motivo = 'silenciado';
       const lk = ef(u, 'lockSkill');
-      if (lk && lk.slot === a.slot) motivo = 'habilidade travada';
+      if (lk && lk.slot === a.slot) motivo = 'travada';
     }
     return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
              passos: passosDe(u, a), disponivel: !motivo, motivo };
@@ -639,16 +664,16 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
     const modo = modoEscolha !== null ? modoEscolha : u.modo;
     fx = modo === 0
       ? [{ t: 'apply', eff: { type: 'lockSkill', slot: 'habilidade', dur: 1 } }]
-      : [{ t: 'dmg', v: 12, escopo: 'todosInimigos' }, { t: 'dot', nome: 'Queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }];
-    log(st, `Arsenal Celeste — ${modo === 0 ? 'ANEL' : 'MANTO'}.`);
+      : [{ t: 'dmg', v: 12, escopo: 'todosInimigos' }, { t: 'dot', nome: 'queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }];
+    log(st, { tipo: 'acao', origem: u.key, slot: a.slot, modo });
     u.modo = 1 - modo;
   } else if (a.opcoes) {                                   // PRIMITIVA escolha múltipla
     const idxs = (escolhas && escolhas.length) ? escolhas : [0];
     fx = [];
     for (const i of idxs) if (a.opcoes[i]) fx.push(...a.opcoes[i].fx);
-    log(st, `${u.nome} usa ${a.nome} (${idxs.map(i => a.opcoes[i] && a.opcoes[i].nome).filter(Boolean).join(' + ')}).`);
+    log(st, { tipo: 'acao', origem: u.key, slot: a.slot, opcoes: idxs });
   } else {
-    log(st, `${u.nome} usa ${a.nome}.`);
+    log(st, { tipo: 'acao', origem: u.key, slot: a.slot });
   }
 
   // PRIMITIVA copiar habilidade — registra a última Habilidade real usada no lado (Ísis lê isto).
@@ -692,44 +717,44 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'heal') curar(st, t, e.v);
       else if (e.t === 'dot') aplicarDot(st, t, e.nome, e.v, e.dur);
       else if (e.t === 'apply') {
-        if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, `${t.nome} está Invulnerável — efeito falhou.`); continue; }
+        if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }
       else if (e.t === 'contador' && e.alvo !== 'self') addContador(st, t, e.nome, e.v, e.max);
-      else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, `${t.nome} recebeu Vida Extra (${e.hp}).`); }
+      else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
       else if (e.t === 'revive') reviver(st, t, e);
-      else if (e.t === 'destroyShield') { if (t.shield) { log(st, `Escudo de ${t.nome} destruído (${t.shield}).`); t.shield = 0; } }
+      else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
       else if (e.t === 'stripBuffs') t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type));
       else if (e.t === 'stripOne') {
         const i = t.efeitos.findIndex(x => BUFFS.includes(x.type));
-        if (i >= 0) { log(st, `${t.nome} perdeu ${t.efeitos[i].type}.`); t.efeitos.splice(i, 1); }
+        if (i >= 0) { log(st, { tipo: 'efeito', alvo: t.key, efeito: t.efeitos[i].type, duracao: 0 }); t.efeitos.splice(i, 1); }
       }
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
-      else if (e.t === 'shield') { t.shield += e.v; log(st, `${t.nome} ganhou ${e.v} de Defesa Destrutível.`); }
+      else if (e.t === 'shield') { t.shield += e.v; log(st, { tipo: 'escudo', alvo: t.key, valor: e.v }); }
     }
 
     // consumo de contador do próprio atacante: DEPOIS de escalar todos os alvos (Rá — Olho de Rá)
     if (e.t === 'dmg' && e.consomeContador && getContador(u, e.consomeContador) > 0) {
-      log(st, `${u.nome} consome ${getContador(u, e.consomeContador)} de ${e.consomeContador}.`);
+      log(st, { tipo: 'contador', origem: u.key, valor: -getContador(u, e.consomeContador) });
       u.contadores[e.consomeContador] = 0;
     }
     // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):
-    if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, `${u.nome} perdeu ${-e.v} de HP.`); }
+    if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -e.v, kind: 'puro' }); }
     if (e.t === 'contador' && e.alvo === 'self') addContador(st, u, e.nome, e.v, e.max);
     if (e.t === 'intercepta') {
       const protege = e.protege === 'time' ? 'time' : (alvos[0] ? alvos[0].uid : u.uid);
       aplicar(st, u, { type: 'intercepta', protege, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
       if (e.contraAtaca) aplicar(st, u, { type: 'contraAtaca', v: e.contraAtaca, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
-      log(st, `${u.nome} passa a interceptar golpes${protege === 'time' ? ' do time' : ' dirigidos a um aliado'}.`);
+      log(st, { tipo: 'efeito', origem: u.key, efeito: 'intercepta' });
     }
     if (e.t === 'armazenaDano') {
       aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
-      log(st, `${u.nome} começa a armazenar o dano do time.`);
+      log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano' });
     }
     if (e.t === 'invocar') {
       l.invocacoes.push({ nome: e.nome, tipo: e.tipo, hp: e.hp || 0, v: e.v || 0, dur: e.dur, dono: u.uid });
-      log(st, `${u.nome} invoca ${e.nome}${e.hp ? ` (${e.hp} de HP)` : ''}.`);
+      log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao' });
       if (e.provoca && alvos[0]) aplicar(st, alvos[0], { type: 'taunt', dur: e.dur, origem: u.uid });
     }
     if (e.t === 'copiar') copiar(st, u, e);
@@ -738,24 +763,24 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       const vivos = inimigos.filter(x => x.vivo);
       if (vivos.length) {
         const alvoM = vivos.slice().sort((a, b) => a.hp - b.hp)[0];
-        if (ef(alvoM, 'invulneravel')) log(st, `${alvoM.nome} está Invulnerável — atordoamento falhou.`);
+        if (ef(alvoM, 'invulneravel')) log(st, { tipo: 'bloqueio', alvo: alvoM.key, motivo: 'invulneravel' });
         else aplicar(st, alvoM, { type: 'atordoado', dur: e.dur, origem: u.uid });
       }
     }
     if (e.t === 'vinculo' && alvos.length >= 2) {
       aplicar(st, alvos[0], { type: 'vinculo', par: alvos[1].uid, dur: e.dur, origem: u.uid });
       aplicar(st, alvos[1], { type: 'vinculo', par: alvos[0].uid, dur: e.dur, origem: u.uid });
-      log(st, `${alvos[0].nome} e ${alvos[1].nome} estão vinculados.`);
+      log(st, { tipo: 'efeito', alvo: alvos[0].key, efeito: 'vinculo' });
     }
     if (e.t === 'cdShift') {
       const tgt = e.lado === 'proprio' ? l : st.lados[1 - u.lado];
       for (const x of tgt.units) for (const k in x.cd) x.cd[k] = Math.max(0, x.cd[k] + e.v);
-      log(st, `Recargas do ${e.lado === 'proprio' ? 'seu time' : 'time inimigo'} ${e.v > 0 ? '+' : ''}${e.v}.`);
+      log(st, { tipo: 'cd', lado: e.lado === 'proprio' ? u.lado : 1 - u.lado, valor: e.v });
     }
     if (e.t === 'orbGain') {
       const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];
       for (let i = 0; i < e.n; i++) l.orbs[tipos[Math.floor(rng(st) * tipos.length)]]++;
-      log(st, `+${e.n} orbes.`);
+      log(st, { tipo: 'orbe', lado: u.lado, valor: e.n });
     }
   }
 }
@@ -778,19 +803,19 @@ function danoBase(st, u, t, e, l) {
 // PRIMITIVA revive — traz um aliado caído de volta, salvo se ficou marcado como irrevivível
 function reviver(st, alvo, e) {
   if (alvo.vivo) return;
-  if (alvo.naoRevive) { log(st, `${alvo.nome} não pode ser revivido.`); return; }
+  if (alvo.naoRevive) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'nao_revive' }); return; }
   alvo.vivo = true; alvo.hp = Math.min(alvo.maxHp, e.hp); alvo.agiu = true;
   alvo.efeitos = []; alvo.dots = []; alvo.shield = 0;
   for (const k in alvo.cd) alvo.cd[k] = 0;
-  log(st, `${alvo.nome} foi revivido com ${alvo.hp} de HP.`);
+  log(st, { tipo: 'revive', alvo: alvo.key, valor: alvo.hp });
 }
 
 // PRIMITIVA copiar habilidade — executa uma habilidade de outra fonte sem pagar o custo
 function copiar(st, u, e) {
   if (e.fonte === 'ultimaHabilidadeAliada') {
     const ref = st.lados[u.lado].ultHabilidade;
-    if (!ref) { log(st, `${u.nome} não encontrou uma Habilidade para copiar.`); return; }
-    log(st, `${u.nome} copia ${ref.nome}.`);
+    if (!ref) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'copiar' }); return; }
+    log(st, { tipo: 'acao', origem: u.key, slot: 'habilidade' });
     // alvo automático: o primeiro inimigo vivo (a cópia herda o alvo padrão da habilidade)
     const alvo = st.lados[1 - u.lado].units.find(x => x.vivo);
     aplicarFx(st, u, ref.fx, { alvo: ref.alvoSpec, slot: 'habilidade' }, alvo ? [alvo] : []);

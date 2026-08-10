@@ -111,7 +111,7 @@ console.log('== dano contínuo atravessa Invulnerabilidade ==');
 {
   const st = E.novoEstado(['brigid','zeus','zeus'], ['ogum','ogum','ogum'], 37);
   const alvo = st.lados[1].units[0];
-  alvo.dots.push({ nome: 'Queimadura', v: 8, dur: 3 });
+  alvo.dots.push({ nome: 'queimadura', v: 8, dur: 3 });   // DoT é CHAVE (docs/eventos.md A)
   alvo.efeitos.push({ type: 'invulneravel', dur: 3 });
   const hp = alvo.hp;
   E.fimTurno(st);
@@ -126,7 +126,7 @@ console.log('== empate técnico no turno 40 ==');
   while (!st.fim && g++ < 200) E.fimTurno(st);
   ok(!!st.fim, 'deveria terminar por tempo');
   ok(st.turno >= 40, `deveria fechar no turno 40, fechou em ${st.turno}`);
-  console.log(`  ${st.fim} no turno ${st.turno}`);
+  console.log(`  fim: ${st.fim.resultado} (${st.fim.motivo || 'queda'}) no turno ${st.turno}`);
 }
 
 console.log('== teto de dano por categoria (orçamento documentado) ==');

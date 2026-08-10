@@ -360,7 +360,7 @@ tap($('.team--enemy .portrait.is-target'));
 ok($$('.skill.is-armed').length === 0, 'deveria desarmar');
 ok(S().log.length > nlog, 'a ação deveria gerar registro');
 ok(foto() !== antes, 'a ação deveria alterar o estado do inimigo (vida ou efeito)');
-console.log(`  ${S().log[S().log.length - 1].msg}`);
+console.log(`  ${w.eval('narrar(st.log[st.log.length-1])')}`);
 
 console.log('== 7. ação sem alvo exige o botão CONFIRMAR ==');
 encher();
@@ -394,7 +394,7 @@ console.log(`  passiva: "${$('.detail__name').textContent}"`);
 {
   const u = S().lados[S().ativo].units[0];
   u.efeitos.push({ type: 'dmgUp', v: 8, dur: 2 });
-  u.dots.push({ nome: 'Queimadura', v: 5, dur: 2 });
+  u.dots.push({ nome: 'queimadura', v: 5, dur: 2 });   // DoT é CHAVE; a UI resolve p/ "Queimadura"
   w.eval('render()');
   ok($$('.effect').length >= 2, 'ícones de efeito deveriam aparecer');
   tap($('[data-ef]'));
@@ -644,7 +644,7 @@ console.log('== 13. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base 
     ok(baseInert() === true, `overlay ${o}: camada de base inerte`);
     ok(soltos('.ov') === 0, `overlay ${o}: nenhum focável da base fora do inerte (tem ${soltos('.ov')})`);
   }
-  w.eval('ov=null;st.fim="Jogador 1 vence";render()');
+  w.eval("ov=null;st.fim={tipo:'fim',resultado:'vitoria',lado:0};render()");
   ok(nprim() === 1 && baseInert() === true, `resultado: 1 primário e base inerte (prim ${nprim()}, inert ${baseInert()})`);
   ok(!!$('#bnew') && $('#bnew').classList.contains('b--primary'), 'o único primário é o da sobreposição (#bnew)');
   w.eval('st.fim=null;render()');

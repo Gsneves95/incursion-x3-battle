@@ -621,6 +621,70 @@ carimbo.
 
 ---
 
+## 25. Motor emite EVENTOS, não texto; um narrador TOTAL traduz (F1.0b)
+
+**O motor parou de escrever português.** `log()` empilha **eventos estruturados** em `st.log`
+(`{tipo, ...}`), e `st.fim` virou `{tipo:'fim', resultado, lado?, motivo?}`. Um único lugar
+traduz para pt-BR na hora de exibir: `src/ui/narrar.js`. Isto existe porque o mesmo motor roda
+no servidor (Fase 4/5), onde string de português não deveria existir, e mata o remendo
+`traduzirRotulos` (regex de "Jogador N" por cima de string pronta) — o narrador resolve `lado`
+por `rotuloLado`, sem remendo. A GRAMÁTICA é contrato escrito ANTES em `docs/eventos.md`.
+
+**As 5 regras (invioláveis, varridas por `tests/eventos.test.js`):** (1) todo evento tem `tipo`,
+que é a ÚNICA coisa que decide o formato; (2) campos **canônicos** reutilizados, sem sinônimo
+(dois eventos que falam de quantidade usam `valor`); (3) **sempre CHAVE, nunca nome exibível**
+(`alvo:'zeus'`, `lado:0` — o narrador resolve chave→nome, e o nome da habilidade pelo catálogo
+da partida via `origem`+`slot`); (4) **zero formatação** (`kind:'puro'`, não `'[puro]'`); (5) o
+narrador é **TOTAL** — evento de `tipo` desconhecido NÃO some do registro, cai num despejo cru
+dos campos. Log que engole evento é onde bug de motor se esconde, e nos 73 kits vai acontecer;
+o teste crava que um tipo inventado aparece. A varredura roda 24 partidas IA×IA (2824 eventos)
+e falha se qualquer campo, tipo ou `motivo` sair do vocabulário, ou se uma "chave" for na
+verdade nome exibível (`'Zeus'`, `lado 'Jogador 1'`, `kind '[puro]'`). Vocabulário mora em
+`E.VOCAB` (`eventos`/`camposEvento`/`motivos`) — mesma fonte única que já alimenta o schema.
+
+**Decisões de contrato do dono:** (A) **DoT vira CHAVE** (`efeito:'queimadura'`), sem campo
+isento — a exceção viraria o precedente que os 73 kits seguem, e "sempre chave" morreria por
+mil concessões. Tocou `data/deuses/brigid.json` e o schema passou a validar `dot.nome ∈ V.dots`;
+o mapa chave→nome (`NOMES_DOT`) mora em `ui/base.js` (compartilhado por `narrar.js` e `campo.js`).
+(B) **O narrador lê o catálogo da partida** (`CATALOGOS[st.catId]`) para resolver `origem`+`slot`
+→ nome de habilidade e `origem`→passiva. (C) **Um evento, um sujeito** (regra 6): um Milagre que
+atinge 3 emite **um `dano` por alvo** — cada alvo pode ter resultado diferente (um absorve no
+escudo, outro está Invulnerável, outro cai); um `valor` agregado mentiria. (D) **`motivo` é
+conjunto FECHADO** — é a porta dos fundos por onde o português voltaria ao motor ("porque estava
+Invulnerável"); é chave de um conjunto que a varredura valida.
+
+**Arquitetura:** `narrar.js` é **FUNDAÇÃO como `base.js`** — os outros `ui/` podem chamá-lo (quem
+renderiza registro/resumo/banner o invoca), mas ele só usa `base.js` e os globais do motor. A
+checagem de direção da build isenta os dois (`UI_FUNDACAO`), e `narrar.js` como origem continua
+checado (não pode chamar outro `ui/`).
+
+**Rugas achadas ao implementar (reportadas, não escondidas):**
+- **`motivo` reconciliado à realidade:** o motor emite `sem_cura`/`nao_revive` (falhas) e `tempo`
+  (fim por esgotamento no turno 40) que a gramática rascunhada não listava; `imune_tipo` estava
+  na lista mas o motor nunca o emite (imunidade sai como evento `imune` com `efeito`, não como
+  `bloqueio` com `motivo`). O conjunto fechado passou a ser exatamente o que se emite.
+- **Bug de conversão corrigido:** a invocação-guarda que assumia um golpe logava
+  `dano{absorvido:base}` — mas ela PERDE HP, nada é absorvido por escudo. Virou dois eventos
+  (regra 6): um `efeito:'intercepta'` (assumiu o golpe) + um `dano` limpo (o que levou).
+- **`ANEL`/`MANTO` saíram do motor:** o rótulo do modo alternado da Nezha estava chumbado no
+  `engine.js` (o pt-BR que a F1.0b existe para tirar). Foi para o kit (`ab.modos:["ANEL","MANTO"]`,
+  igual a `opcoes[].nome`); o schema passou a aceitar `modos`; o narrador lê do catálogo.
+- **`contador` e `fase` não disparam nos 11 kits** (0 kits usam esses `fx`). A chavagem dos seus
+  sub-tokens (nomes de contador; `Dia`/`Noite`) fica para quando o primeiro kit os exercitar —
+  mesma disciplina de "primitiva antes do deus"; o narrador já os trata de forma TOTAL.
+- **Simplificações de sabor** onde o evento carrega menos que a string antiga (quebra por
+  elemento da energia livre; parceiro do Vínculo; nome da invocação): o registro é narração
+  secundária ao estado real (unidades/HP/efeitos), e não há teste sobre a frase exata — aceito e
+  anotado, não é perda de verdade de jogo.
+
+**Migração de testes (método muda, verificação fica):** os testes que SETavam `st.fim` string
+(`perspectiva`, `interface`, `rotas`) passaram a setar o evento estruturado; a asserção sobre o
+BANNER renderizado ("CPU VENCE", "JOGADOR 2 VENCE") é a mesma — só o SET mudou, o VERIFY não. Os
+que empilhavam DoT à mão (`motor`, `auditoria`, `interface`) passaram a usar a chave `queimadura`;
+`interface` continua conferindo que a UI exibe "QUEIMADURA".
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

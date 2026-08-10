@@ -74,7 +74,7 @@ console.log('== 3. regra 3 — DoT conta antes de agir e pode matar ==');
   const st = E.novoEstado(['brigid', 'zeus', 'zeus'], ['ganesha', 'ganesha', 'ganesha'], 11);
   const alvo = st.lados[1].units[0];
   alvo.hp = 4;
-  alvo.dots.push({ nome: 'Queimadura', v: 5, dur: 2 });
+  alvo.dots.push({ nome: 'queimadura', v: 5, dur: 2 });   // DoT é CHAVE (docs/eventos.md A)
   E.fimTurno(st);   // passa para o jogador 2 -> DoT conta no início
   ok(!alvo.vivo, 'DoT deveria ter matado o alvo no início do turno dele');
   console.log(`  vivo=${alvo.vivo} hp=${alvo.hp}  (esperado false / 0)`);

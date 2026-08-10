@@ -3,6 +3,37 @@
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
 ## Última sessão
+**Data:** 2026-08-10
+**Tarefa:** F1.0b — motor emite EVENTOS estruturados; um narrador TOTAL traduz para pt-BR.
+**Resultado:** o motor **parou de escrever português**. `log()` empilha eventos `{tipo, ...}` em
+`st.log` (antes ~57 strings pt-BR chumbadas), e `st.fim` virou `{tipo:'fim', resultado, lado?,
+motivo?}`. Novo `src/ui/narrar.js` é o ÚNICO tradutor evento→pt-BR (resolve chave→nome pelo
+catálogo da partida, `CATALOGOS[st.catId]`); o remendo `traduzirRotulos` (regex de "Jogador N")
+**morreu**. A GRAMÁTICA está escrita ANTES em `docs/eventos.md` (contrato: 5 regras — `tipo`
+decide o formato; campos canônicos; sempre chave, nunca nome; zero formatação; narrador TOTAL).
+Nova `tests/eventos.test.js` **varre 24 partidas IA×IA (2824 eventos)** e falha se algum evento,
+campo ou `motivo` sair de `E.VOCAB`, ou se uma "chave" for nome exibível; parte jsdom crava que
+**tipo inventado aparece no registro** (regra 5) e que chave vira nome. **15 suítes verdes.**
+Registro/resumo/banner conferidos em Chromium contra o dist fresco (0 pageerror) — narração
+limpa ("Zeus → Cuca: 30 de dano", "Queimadura em Sobek: 5 de dano puro", "JOGADOR 1 VENCE").
+**Decisões do dono aplicadas:** (A) DoT vira CHAVE (`efeito:'queimadura'`, sem campo isento;
+schema agora valida `dot.nome ∈ V.dots`; mapa `NOMES_DOT` em `ui/base.js`); (B) narrador lê o
+catálogo; (C) um evento por alvo (regra 6); (D) `motivo` é conjunto FECHADO.
+**Rugas achadas e resolvidas (reportadas):** `motivo` reconciliado (o motor emite `sem_cura`/
+`nao_revive`/`tempo`; `imune_tipo` estava listado mas nunca é emitido — saiu). Bug de conversão:
+a invocação-guarda logava `dano{absorvido}` mas ela PERDE HP — virou `efeito:intercepta` + `dano`
+limpo (regra 6). `ANEL`/`MANTO` (pt-BR chumbado no motor) foi para o kit da Nezha
+(`ab.modos:[...]`, igual a `opcoes[].nome`; schema aceita `modos`). `contador` e `fase` **não
+disparam nos 11 kits** (0 usam esses fx) — chavagem dos seus sub-tokens (nomes de contador,
+`Dia`/`Noite`) fica para quando um kit os exercitar (primitiva antes do deus); o narrador já os
+trata TOTAL. `narrar.js` é FUNDAÇÃO como `base.js` (a build isenta os dois da checagem de
+direção ui→ui). Ver decisão 25.
+**Migração de testes (método muda, verificação fica):** `perspectiva`/`interface`/`rotas`
+passaram a setar `st.fim` estruturado (a asserção sobre o banner renderizado é a mesma);
+`motor`/`auditoria`/`interface` empilham DoT com a chave `queimadura` (a UI ainda exibe
+"QUEIMADURA"). Sem tocar na lógica de nenhuma suíte além do necessário para o novo formato.
+
+## Sessão F1.0a (anterior)
 **Data:** 2026-08-09
 **Tarefa:** F1.0a — separar DADOS de REGRAS no motor (início da Fase 1).
 **Resultado:** os 11 kits saíram de `engine.js` (literal `GODS`, ~180 linhas) para **um
@@ -395,16 +426,11 @@ sessão de reconciliação ou ao encostar em cada área.
   em `data/economia.json` sai junto. Quando sair, remover também o ramo `if (p.dev)` de
   `problemaDeForma` — ou mantê-lo só para migrar perfis já contaminados para limpos.
 
-- **DÍVIDA: o motor ESCREVE TEXTO DE INTERFACE (candidata à Fase 1).** O `engine.js`
-  emite strings prontas em português no log ("— Turno 3, vez do Jogador 1 —",
-  "Zeus → Cuca: 15 de dano", `st.fim='Jogador 2 vence'`). Funciona hoje, mas: (1) a Fase 5
-  quer o MESMO motor no servidor, onde essas strings não deveriam existir; (2) localização
-  fica impossível; (3) a tradução de rótulos da F0.7 (`traduzirRotulos` em `ui/base.js`) é um
-  **REMENDO por cima de texto já formatado**, não a solução — está marcado como tal no código,
-  apontando para aqui. **Forma alvo:** o motor emite EVENTOS estruturados
-  (`{tipo:'dano', origem, alvo, valor, kind}`, `{tipo:'vitoria', lado}`, `{tipo:'vezDe', lado}`)
-  e a visão formata. Mexe no motor → **fazer junto de quebrar o `engine.js`** (§9 do inventário),
-  as duas na mesma passada, no começo da Fase 1.
+- **~~DÍVIDA: o motor ESCREVE TEXTO DE INTERFACE~~ — PAGA na F1.0b (2026-08-10).** O motor
+  emitia strings pt-BR no log e `st.fim` string. Agora emite EVENTOS estruturados (`docs/eventos.md`),
+  `src/ui/narrar.js` traduz na hora de exibir, e o remendo `traduzirRotulos` foi removido. A
+  varredura `tests/eventos.test.js` mantém o contrato. Ver decisão 25. (O motor roda no servidor
+  da Fase 5 sem uma string de português; localização passa a ser trocar o narrador.)
 - **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
   e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
   de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção

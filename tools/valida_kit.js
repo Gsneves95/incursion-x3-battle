@@ -16,7 +16,7 @@ const E = require('../src/engine.js');
 const V = E.VOCAB;
 
 const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
-const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'opcoes', 'universal']);
+const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal']);
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
 
 function validarCusto(cost, ctx, errs) {
@@ -32,6 +32,8 @@ function validarFx(f, ctx, errs) {
   if (!V.fx.includes(f.t)) errs.push(`${ctx}: efeito com tipo que o motor não sabe executar: "${f.t}"`);
   if (f.t === 'apply' && (!f.eff || !V.efeitos.includes(f.eff.type)))
     errs.push(`${ctx}: apply com eff.type inválido: "${f.eff && f.eff.type}"`);
+  if (f.t === 'dot' && !V.dots.includes(f.nome))
+    errs.push(`${ctx}: dot com nome fora do vocabulário: "${f.nome}" (válidos: ${V.dots.join(', ')})`);
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 
