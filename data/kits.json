@@ -1484,7 +1484,7 @@
   },
   "passiva": {
    "nome": "Exílio Divino",
-   "efeito": "Cada ataque de Susanoo gera 2 de Combo; +6 de dano por aliado a menos que o inimigo."
+   "efeito": "Cada ataque de Susanoo gera 2 de Combo do time (pool por lado, teto 20); +6 de dano por aliado a menos que o inimigo."
   }
  },
  {

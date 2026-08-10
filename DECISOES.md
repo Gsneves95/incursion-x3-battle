@@ -759,6 +759,19 @@ kits vindo, isso vira bug. Tarefa aberta (ESTADO.md): um checador prosa↔motor 
 
 ---
 
+## 27. Sinergia declarada: Podridão (Ah Puch) × execução — NÃO é bug (F1.1)
+
+A Podridão do Ah Puch reduz o HP MÁXIMO do alvo (−10 por acúmulo). Depois da F1.0c, os limiares
+de execução são frações do máximo de PROJETO (120): ≤24 = 20%. Contra um alvo decaído a 80 de
+máximo, esse mesmo ≤24 vale 30% do máximo ATUAL dele — ou seja, a execução fica mais fácil quanto
+mais podre o alvo. **Isto é sinergia INTENCIONAL, não deriva de calibração:** Ah Puch amolece o
+alvo para o executor (Hades, Fenrir, Lugh…), que é o papel da dupla. O teste de fração (F1.0c)
+valida AUTORIA de kit contra o máximo de projeto e NÃO persegue o estado de runtime — de propósito.
+Registrado para que ninguém "conserte" isso depois achando que um limiar valendo 30% do máximo
+reduzido é erro. Se algum dia se quiser um limite sobre o máximo ATUAL, é decisão nova, não conserto.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

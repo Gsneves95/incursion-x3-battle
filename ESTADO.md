@@ -453,13 +453,30 @@ sessão de reconciliação ou ao encostar em cada área.
   `src/ui/narrar.js` traduz na hora de exibir, e o remendo `traduzirRotulos` foi removido. A
   varredura `tests/eventos.test.js` mantém o contrato. Ver decisão 25. (O motor roda no servidor
   da Fase 5 sem uma string de português; localização passa a ser trocar o narrador.)
-- **DÍVIDA: schema não pega divergência PROSA↔MOTOR (aberta na F1.0c).** O schema da F1.0a
-  (`tools/valida_kit.js`) valida a forma dos kits de máquina (`data/deuses`), mas NÃO compara com a
-  prosa do roster (`data/kits.json`) — o texto de um kit e o `fx` que o motor executa podem divergir
-  em silêncio. Hoje só a Nezha existe nos dois e foi mantida em sincronia à mão (revive 48 nos dois).
-  Com 73 kits vindo, prosa e código divergindo sem ninguém ver é o pior tipo de bug. **Forma-alvo:**
-  um checador na build que, para cada kit implementado, confira os números da prosa contra os do `fx`
-  (dano, cura, custo, recarga, limiar). Candidata a uma F1.0x antes dos lotes. Ver decisão 26.
+- **F1.0e (PRÓXIMA — antes da F1.1): checador de consistência da CADEIA de 3 elos.** A verdade do
+  kit passa por **planilha → `data/kits.json` → `data/deuses`**, e a divergência já EXISTE em pelo
+  menos dois pontos: (1) o Combo "pool do time, teto 20" está só na planilha, não no kits.json (agora
+  a prosa do Susanoo foi corrigida à mão); (2) a planilha ainda diz "100 de HP para todos" — parada
+  desde o §15 (jogo é 120). O schema da F1.0a só valida a FORMA de `data/deuses`; não compara número
+  nenhum entre elos. **A planilha ESTÁ no repo** (`docs/INCURSION_Roster_e_Kits_ESTILO_NA.xlsx`,
+  103 KB) e é legível sem dependência (xlsx é zip de XML: `xl/sharedStrings.xml` + `xl/worksheets/`).
+  **Forma-alvo:** um checador na build que confira número a número (dano, cura, custo, recarga, limiar,
+  teto de contador) nos dois hops, e que **liste o que existe só na planilha** (dado que o kits.json
+  não carrega) — senão o checador pega só metade do problema. Entregável extra do dono: **quantos
+  kits têm dado só na planilha.** Decisão aberta no plano: ler o xlsx via dep (`xlsx` npm) × parse cru
+  do XML (sem dep, no ethos do repo) × export commitado. Ver decisão 26.
+- **F1.1 (depois da F1.0e): SPEC TRAVADA — contadores acumuláveis, 6 deuses.** Rá (acumula no dono,
+  teto 6, escala, consome), Anúbis (acumula no ALVO, limiar 4→Selado, +2 dano/Atadura), Kitsune (teto
+  9, limiares 3→redução e 5→Domina, escala +3, consome), Susanoo (**Combo = contador de CAMPO por
+  lado, teto 20**, gera 2/ataque, escala +2, consome), Izanami, Ah Puch (Podridão reduz HP MÁXIMO −10,
+  clampa `hp=min(hp,maxHp)`, guarda o perdido p/ Itzamná restaurar; sinergia com execução é declarada,
+  §27). **Izanami (semântica travada pelo dono):** a Maldição de Yomi ESPALHA por CONTÁGIO — a fonte
+  RETÉM; os outros dois são IGUALADOS ao maior (NÃO aditivo — espalhar 2× sem novo acúmulo não muda
+  nada, travar em teste); **teto 5**. Motor precisa de 4 comportamentos novos, cada um provado por
+  teste antes do kit: limiar→aplica-efeito, contador-de-campo-por-lado, redução-de-HP-máximo+clamp,
+  espalhamento/contágio. **Diferido da F1.0b pago aqui:** evento `contador` ganha a CHAVE do contador
+  no campo canônico `efeito` (`{tipo:'contador',origem,valor,efeito:'disco_solar'}`); `NOMES_CONTADOR`
+  em `ui/base.js`; `OBRIGATORIOS['contador']` passa a exigir `efeito`.
 - **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
   e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
   de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção
