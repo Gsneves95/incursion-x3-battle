@@ -1,0 +1,53 @@
+{
+  "key": "ra",
+  "nome": "Rá",
+  "faccao": "Egípcia",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "inicial": false,
+  "passiva": {
+    "nome": "Barca do Sol",
+    "desc": "Rá ganha 1 Disco Solar por turno (máx. 6); aliados Aurora causam +5 de dano."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Raio Solar",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo; +1 Disco Solar.",
+      "fx": [
+        { "t": "dmg", "v": 15 },
+        { "t": "contador", "nome": "discoSolar", "v": 1, "max": 6, "alvo": "self" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Aurora Divina",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "O time causa +8 de dano por 2 turnos; +2 Discos Solares.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" },
+        { "t": "contador", "nome": "discoSolar", "v": 2, "max": 6, "alvo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Olho de Rá",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "16 de dano a todos os inimigos, +4 por Disco Solar (consome todos).",
+      "fx": [
+        { "t": "dmg", "v": 16, "escopo": "todosInimigos", "porContador": { "nome": "discoSolar", "onde": "self", "v": 4 }, "consomeContador": "discoSolar" }
+      ]
+    }
+  ]
+}

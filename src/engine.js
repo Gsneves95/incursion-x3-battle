@@ -76,6 +76,7 @@ const TIPOS_FX = [
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura'];   // cresce (veneno, sangramento…) ao provar os 73 kits
+const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit.
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
   elementos: ELEMS,
@@ -84,6 +85,7 @@ const VOCAB = {
   fx: TIPOS_FX,                                  // valores válidos de fx.t
   efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
   dots: DOTS,                                    // chaves de DoT (fx dot.nome)
+  contadores: CONTADORES,                        // chaves de contador (fx contador.nome)
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
@@ -315,6 +317,7 @@ function bonusDano(st, atk) {
   if (up) b += up.v;
   if (dn) b -= dn.v;
   if (meu.units.some(x => x.vivo && x.key === 'brigid')) b += 5;   // passiva Brigid
+  if (atk.elem === 'Aurora' && meu.units.some(x => x.vivo && x.key === 'ra')) b += 5;   // passiva Rá (Barca do Sol): aliados Aurora +5
   return b;
 }
 
@@ -616,6 +619,8 @@ function iniciarTurno(st) {
     for (let i = 0; i < 2; i++) { const t = sortearElemento(st, tipos); l.orbs[t]++; }
     log(st, { tipo: 'orbe', lado: st.ativo, valor: 2, passiva: 'ganesha' });
   }
+  const ra = l.units.find(u => u.key === 'ra' && u.vivo);   // passiva Rá (Barca do Sol): +1 Disco Solar/turno, teto 6
+  if (ra) addContador(st, ra, 'discoSolar', 1, 6);
   checarFim(st);
 }
 

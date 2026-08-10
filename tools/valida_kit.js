@@ -34,6 +34,8 @@ function validarFx(f, ctx, errs) {
     errs.push(`${ctx}: apply com eff.type inválido: "${f.eff && f.eff.type}"`);
   if (f.t === 'dot' && !V.dots.includes(f.nome))
     errs.push(`${ctx}: dot com nome fora do vocabulário: "${f.nome}" (válidos: ${V.dots.join(', ')})`);
+  if (f.t === 'contador' && !V.contadores.includes(f.nome))
+    errs.push(`${ctx}: contador com nome fora do vocabulário: "${f.nome}" (válidos: ${V.contadores.join(', ')})`);
   if ('limiar' in f) {   // gatilho-no-acúmulo: contador cruza `em` -> aplica `aplica` (F1.1)
     const L = f.limiar;
     if (!L || typeof L !== 'object') errs.push(`${ctx}: limiar não é objeto`);

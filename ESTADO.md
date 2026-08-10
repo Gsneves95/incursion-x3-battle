@@ -4,6 +4,36 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 — 1º kit de contador (Rá) + varredura das primitivas faltantes.
+**Resultado:** re-auditei a prosa INTEIRA da "Leva A" (regra nova do CLAUDE.md) e descobri que só o
+**Rá** é escrevível hoje com fx existente — Kitsune e Susanoo arrastam mecânica NÃO provada (ver
+abaixo). Escrevi **`data/deuses/ra.json`** (11→12 deuses): basico dmg15+Disco, habilidade dmgUp time+2
+Discos, milagre 16+4/Disco consome; passivas em `engine.js` (+1 Disco/turno teto 6 em `iniciarTurno`;
+aliados Aurora +5 em `bonusDano`). `V.contadores=['discoSolar']` + `valida_kit` valida `contador.nome`
+(gatilho "1º kit de contador"). **O checador da F1.0e rodou pela 1ª vez com dado novo:** 12 kits, 135
+conferências, **0 divergência**, +10 conferíveis + 1 não-conferível (ra.milagre "+4 por Disco",
+condicional). Examinou o Rá de fato (contagem subiu 124→135) — 0 divergência é real, não skip; e tem
+dentes (cadeia.test). Rá conferido em Chromium: 0 pageerror, basico dá 25 (15 + Brigid +5 + Aurora +5),
+Disco acumula, log narra "Rá: Disco Solar +1". 17 suítes verdes.
+
+**VARREDURA das 4 primitivas faltantes (dado, aguarda DECISÃO do dono onde cada uma entra):**
+- **execução genérica ≤N HP: 7 executores** (Hades, Fenrir, Ammit, Izanami, Iara, Lugh, Morrigan) +
+  Sun Wukong (imune). ≥5 → INFRAESTRUTURA, merece tarefa própria (a mesma que a F1.0c reescalou).
+- **Selado: 3** (Hades, Anúbis, Ammit). Entre "viaja com o kit" e "infra" — decisão do dono.
+- **dano-por-turno-por-contador: 1** (Izanami "6/turno por Maldição"). Viaja com o kit da Izanami.
+- **dano-tomado-por-contador: 1** (Anúbis "+2 dano por Atadura"). Viaja com o kit do Anúbis.
+
+**Leva A re-escopada (honesto, pela regra do full-prose):** só Rá saiu. Kitsune bloqueado por
+invocar-guarda (mecanismo existe, 0 kit prova) + "5+ Caudas→Domina" (apply-condicionado-por-contador,
+NÃO existe) + "a cada 3 Caudas +5 redução" (buff escalado por contador, não existe). Susanoo bloqueado
+por "8 golpes distribuídos" (multi-hit distribuído, NÃO existe) + hook por-ataque. Entram quando suas
+primitivas forem provadas.
+- **DÍVIDA DE UI (F1.1): contador não aparece no retrato.** `campo.js` mostra `efeitos` e `dots`, não
+  `contadores` — o Disco Solar do Rá é invisível na faixa (só no registro). 1º kit de contador expôs.
+  Forma-alvo: uma faixa/badge de contador no retrato (via `NOMES_CONTADOR`). Não bloqueia; anotado.
+
+## Sessão F1.1 primitiva 4 (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 primitiva 4 — espalhamento / contágio (Maldição de Yomi da Izanami). ÚLTIMA primitiva.
 **Resultado:** `espalharContador` iguala as unidades ao MAIOR contador entre elas (teto), roteando a
 subida por `aposAcumular` (limiar dispara: "chegar a N é chegar a N"). fx `{t:'espalha', nome, max,

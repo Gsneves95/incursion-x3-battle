@@ -266,6 +266,13 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   legibilidade passar de falhar — aceitar a estimativa teria escondido o bug. Varra o
   CSS/arte/dado, meça, e traga o número real; se ele contradisser a memória do dono, é isso
   que se reporta, não o palpite.
+- **Antes de declarar um kit ESCREVÍVEL, verifique o alcance da prosa INTEIRA, não só a coluna
+  que a tarefa foca.** Na F1.1 o dono e eu dissemos "o motor tem tudo que os 6 kits de contador
+  precisam" olhando só a parte de contador — mas a prosa completa dos mesmos 6 deuses arrastava
+  mecânicas NÃO-contador não provadas (Selado, execução genérica ≤N HP, dano-por-turno-por-contador,
+  dano-tomado-por-contador, hooks de passiva novos). "Provado para a faceta X" ≠ "kit escrevível".
+  Leia basico+habilidade+milagre+passiva inteiros, liste TODA mecânica que cada um exige, e só então
+  diga se o deus cabe no motor de hoje; senão descobre-se primitiva faltante no meio da escrita.
 - **Critério de LINHA é um proxy ruim quando o que importa é SEPARAÇÃO DE RESPONSABILIDADE.**
   "engine.js < 500 linhas" mirava a coisa errada — o alvo real era "nenhum dado de deus no
   motor", e o motivo do número ("o engine vai dobrar com os 73 kits") desapareceu quando a
