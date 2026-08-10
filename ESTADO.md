@@ -23,11 +23,15 @@ catálogo; (C) um evento por alvo (regra 6); (D) `motivo` é conjunto FECHADO.
 `nao_revive`/`tempo`; `imune_tipo` estava listado mas nunca é emitido — saiu). Bug de conversão:
 a invocação-guarda logava `dano{absorvido}` mas ela PERDE HP — virou `efeito:intercepta` + `dano`
 limpo (regra 6). `ANEL`/`MANTO` (pt-BR chumbado no motor) foi para o kit da Nezha
-(`ab.modos:[...]`, igual a `opcoes[].nome`; schema aceita `modos`). `contador` e `fase` **não
-disparam nos 11 kits** (0 usam esses fx) — chavagem dos seus sub-tokens (nomes de contador,
-`Dia`/`Noite`) fica para quando um kit os exercitar (primitiva antes do deus); o narrador já os
-trata TOTAL. `narrar.js` é FUNDAÇÃO como `base.js` (a build isenta os dois da checagem de
-direção ui→ui). Ver decisão 25.
+(`ab.modos:[...]`, igual a `opcoes[].nome`; schema aceita `modos`). `narrar.js` é FUNDAÇÃO como
+`base.js` (a build isenta os dois da checagem de direção ui→ui). Ver decisão 25.
+**AGENDADO PARA A F1.1 — chavagem de sub-tokens de `contador` e `fase` (decisão do dono):**
+`contador` e `fase` **não disparam nos 11 kits** (0 usam esses fx), então seus sub-tokens de
+exibição — o **nome do contador** (`{u}: {nome} +N`) e a **fase** (`Dia`/`Noite`) — ficaram como
+estão (o narrador os trata TOTAL). A F1.1 vai exercitar os dois (contadores acumuláveis e
+Dia/Noite): ao provar essas primitivas com kit real, **chavear os nomes de contador e `Dia`/`Noite`**
+(igual ao DoT `queimadura` da F1.0b) e resolver o nome exibível no narrador. NÃO esquecer quando
+os kits chegarem — é o mesmo "primitiva antes do deus".
 **Migração de testes (método muda, verificação fica):** `perspectiva`/`interface`/`rotas`
 passaram a setar `st.fim` estruturado (a asserção sobre o banner renderizado é a mesma);
 `motor`/`auditoria`/`interface` empilham DoT com a chave `queimadura` (a UI ainda exibe

@@ -43,7 +43,10 @@ function _narraEfeito(e) {
     case 'intercepta':
       return alvo ? `${origem} intercepta o golpe dirigido a ${alvo}.`
                   : `${origem} passa a interceptar golpes do time.`;
-    case 'vinculo': return `Vínculo: o golpe em ${alvo} é dividido.`;
+    // C-aparado (docs/eventos.md): o par carrega o ícone de Vínculo no retrato — o estado já
+    // mostra quem está ligado; a narração descreve o sujeito e para, sem nomear o parceiro nem
+    // prometer a divisão (os dois eventos `dano` seguintes a mostram).
+    case 'vinculo': return `Vínculo em ${alvo}.`;
     case 'contraAtaca': return `${origem} contra-ataca ${alvo}.`;
     case 'armazenaDano':
       return e.duracao === 0 ? `${origem} devolve o dano armazenado.`
@@ -90,7 +93,7 @@ const NARRA = {
   cura: e => `${nomeDeus(e.alvo)} curou ${e.valor}.`,
   dot: e => `${rotuloEfeito(e.efeito)} em ${nomeDeus(e.alvo)}: ${e.valor} de dano puro.`,
   orbe: e => {
-    if (e.valor < 0) return `${rotuloLado(e.lado)}: −${Math.abs(e.valor)} de energia (custo livre pago).`;
+    if (e.valor < 0) return `${rotuloLado(e.lado)}: −${Math.abs(e.valor)}${e.para ? ` de ${e.para}` : ''} (energia livre).`;
     const suj = e.passiva ? nomeDeus(e.passiva) : rotuloLado(e.lado);
     const pre = e.passiva ? `${nomePassiva(e.passiva)}: ` : '';
     const elem = e.para ? ` de ${e.para}` : '';
@@ -114,7 +117,7 @@ const NARRA = {
   revive: e => e.passiva
     ? `${nomePassiva(e.passiva)}: ${nomeDeus(e.alvo)} renasceu com ${e.valor} de HP.`
     : `${nomeDeus(e.alvo)} revive com ${e.valor} de HP.`,
-  passiva: e => `${nomePassiva(e.origem)}: ${nomeDeus(e.origem)} renasce no próximo turno.`,
+  passiva: e => `${nomePassiva(e.origem)}: ${nomeDeus(e.origem)} renasce no próximo turno${e.valor != null ? ` com ${e.valor} de HP` : ''}.`,
   escudo: e => {
     if (e.valor < 0) return `Escudo de ${nomeDeus(e.alvo)} destruído (${Math.abs(e.valor)}).`;
     if (e.passiva) return `${nomePassiva(e.passiva)}: ${nomeDeus(e.alvo)} ganhou ${e.valor} de escudo.`;

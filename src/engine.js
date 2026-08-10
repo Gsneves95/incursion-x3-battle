@@ -99,6 +99,9 @@ const VOCAB = {
   camposEvento: [   // nomes de campo CANÔNICOS permitidos num evento (nada de sinônimo)
     'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
+    // RESERVADOS p/ sub-tokens de 0-kit (nome canônico decidido agora, complete-by-construction):
+    'habilidadeCopiada',   // efeito:copiar — qual Habilidade foi copiada (Ísis, F1.3)
+    'invocacao',           // efeito:invocacao — qual invocação (kits de invocar, futuros)
   ],
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
     'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
@@ -359,7 +362,7 @@ function matar(st, atk, alvo) {
   log(st, { tipo: 'queda', alvo: alvo.key });
   if (alvo.key === 'nezha' && !alvo.renasceu) {
     alvo.renasceu = true; alvo.pendenteRenascer = true;
-    log(st, { tipo: 'passiva', origem: alvo.key });
+    log(st, { tipo: 'passiva', origem: alvo.key, valor: 40 });   // volta com 40 no próximo turno (iniciarTurno)
   }
   if (atk && atk.key === 'zeus' && atk.vivo) {                      // passiva Zeus
     st.lados[atk.lado].orbs['Tempestade']++;
@@ -420,11 +423,19 @@ function pagar(st, l, cost) {
   l.dividaLivre = (l.dividaLivre || 0) + livre;
 }
 function pagarLivreGuloso(l, n) {   // rede de segurança: gasta do pool mais cheio
+  const gasto = {};   // devolve a quebra {elemento: quantidade} para o registro (por elemento)
   while (n > 0) {
     const alvo = ELEMS.slice().sort((a, b) => l.orbs[b] - l.orbs[a])[0];
     if (l.orbs[alvo] <= 0) break;
-    l.orbs[alvo]--; n--;
+    l.orbs[alvo]--; n--; gasto[alvo] = (gasto[alvo] || 0) + 1;
   }
+  return gasto;
+}
+// energia livre paga vira UM evento orbe POR ELEMENTO (Regra 6 — cada elemento é um sujeito).
+// A quebra por elemento é a informação que o jogador precisa ao ler o turno do oponente; um
+// agregado (`valor:-3`) mentiria por omissão sobre QUAIS orbes saíram (docs/eventos.md).
+function logGastoLivre(st, lado, gasto) {
+  for (const k in gasto) if (gasto[k] > 0) log(st, { tipo: 'orbe', lado, valor: -gasto[k], para: k });
 }
 // escolha do jogador de quais orbes pagam a dívida livre do turno
 function alocarLivre(st, plano) {
@@ -434,7 +445,7 @@ function alocarLivre(st, plano) {
   for (const k in plano) if ((l.orbs[k] || 0) < plano[k]) return { ok: false, erro: 'Orbes insuficientes.' };
   for (const k in plano) l.orbs[k] -= plano[k];
   l.dividaLivre = 0;
-  log(st, { tipo: 'orbe', lado: st.ativo, valor: -devido });
+  logGastoLivre(st, st.ativo, plano);
   return { ok: true };
 }
 
@@ -550,7 +561,7 @@ function iniciarTurno(st) {
 function fimTurno(st) {
   const l = st.lados[st.ativo];
   // dívida de energia livre não escolhida pelo jogador: aloca sozinha (rede de segurança)
-  if (l.dividaLivre > 0) { const d = l.dividaLivre; pagarLivreGuloso(l, d); log(st, { tipo: 'orbe', lado: st.ativo, valor: -d }); l.dividaLivre = 0; }
+  if (l.dividaLivre > 0) { logGastoLivre(st, st.ativo, pagarLivreGuloso(l, l.dividaLivre)); l.dividaLivre = 0; }
   // PRIMITIVA dano armazenado — libera ao expirar (Xangô devolve como dano puro)
   for (const u of l.units) {
     const arm = ef(u, 'armazenaDano');

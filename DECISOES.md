@@ -663,25 +663,52 @@ checado (não pode chamar outro `ui/`).
   (fim por esgotamento no turno 40) que a gramática rascunhada não listava; `imune_tipo` estava
   na lista mas o motor nunca o emite (imunidade sai como evento `imune` com `efeito`, não como
   `bloqueio` com `motivo`). O conjunto fechado passou a ser exatamente o que se emite.
-- **Bug de conversão corrigido:** a invocação-guarda que assumia um golpe logava
-  `dano{absorvido:base}` — mas ela PERDE HP, nada é absorvido por escudo. Virou dois eventos
-  (regra 6): um `efeito:'intercepta'` (assumiu o golpe) + um `dano` limpo (o que levou).
+- **BUG DE MOTOR achado PELO refactor (anterior à F1.0b) — argumento a favor de eventos:** a
+  invocação-guarda que assumia um golpe de alvo único logava `absorvido` com o dano inteiro —
+  mas ela **perde HP**, nada é absorvido por escudo. Era mentira desde sempre; a string
+  `"absorve o golpe ({antes}→{hp})"` a **escondia** (parecia sabor, não campo errado). Ao virar
+  evento, `absorvido` ganhou significado exato (quanto o ESCUDO comeu) e a mentira ficou visível.
+  Corrigido para dois eventos (regra 6): `efeito:'intercepta'` (assumiu o golpe) + `dano` limpo
+  (o que a guarda levou). **Lição:** string livre esconde erro de dado; evento estruturado, com
+  cada campo significando uma coisa só, o expõe — é uma razão a mais para o motor emitir eventos.
 - **`ANEL`/`MANTO` saíram do motor:** o rótulo do modo alternado da Nezha estava chumbado no
   `engine.js` (o pt-BR que a F1.0b existe para tirar). Foi para o kit (`ab.modos:["ANEL","MANTO"]`,
   igual a `opcoes[].nome`); o schema passou a aceitar `modos`; o narrador lê do catálogo.
 - **`contador` e `fase` não disparam nos 11 kits** (0 kits usam esses `fx`). A chavagem dos seus
   sub-tokens (nomes de contador; `Dia`/`Noite`) fica para quando o primeiro kit os exercitar —
   mesma disciplina de "primitiva antes do deus"; o narrador já os trata de forma TOTAL.
-- **Simplificações de sabor** onde o evento carrega menos que a string antiga (quebra por
-  elemento da energia livre; parceiro do Vínculo; nome da invocação): o registro é narração
-  secundária ao estado real (unidades/HP/efeitos), e não há teste sobre a frase exata — aceito e
-  anotado, não é perda de verdade de jogo.
+- **Lacunas de narração** onde o evento carregava menos que a string antiga — VARRIDAS e fechadas
+  na F1.0b-cont (abaixo). Dos 57 textos antigos, 47 não perderam nada; das 10 lacunas, só 4
+  disparavam nos 11 kits.
 
 **Migração de testes (método muda, verificação fica):** os testes que SETavam `st.fim` string
 (`perspectiva`, `interface`, `rotas`) passaram a setar o evento estruturado; a asserção sobre o
 BANNER renderizado ("CPU VENCE", "JOGADOR 2 VENCE") é a mesma — só o SET mudou, o VERIFY não. Os
 que empilhavam DoT à mão (`motor`, `auditoria`, `interface`) passaram a usar a chave `queimadura`;
 `interface` continua conferindo que a UI exibe "QUEIMADURA".
+
+**F1.0b-cont — evento incompleto é dívida silenciosa (regra 6 da gramática).** Varredura das 57
+strings antigas contra o evento que cada uma emite hoje. Corte útil: por "dispara nos 11 kits", não
+por gravidade percebida.
+- **Corrigido (dispara hoje):** (A) **energia livre** virou UM evento `orbe` por elemento
+  (`{lado, valor:-n, para:<elem>}`) — a quebra por elemento é o que o jogador precisa ao ler o
+  turno do oponente, e o registro é a ÚNICA fonte disso desde a F0.7 (o processo da CPU é escondido
+  de propósito); (B) **passiva de renascer da Nezha** carrega `valor:40`; (C/D) **Vínculo** foi
+  APARADO para um sujeito ("Vínculo em X") — o par carrega o ícone no retrato, o estado já mostra a
+  ligação, então a narração descreve o sujeito e para (corolário registrado na gramática).
+- **Diferido (0-kit) com TRIPWIRE:** invocação, dano armazenado, Vida Extra, interceptar e contador
+  não disparam nos 11 kits; suas lacunas de sub-token ficam para quando o kit chegar. O que as torna
+  seguras (em vez de um aviso que alguém esquece) é o mapa `OBRIGATORIOS` em `tests/eventos.test.js`:
+  chave por tipo, e **chave composta `tipo:efeito`** para lacuna de sub-tipo (`efeito:copiar` exige
+  `habilidadeCopiada`; `efeito:invocacao` exige `invocacao`), resolvida mais-específica-primeiro.
+  Os nomes canônicos desses campos já estão RESERVADOS em `E.VOCAB.camposEvento` (complete-by-
+  construction). Quando o kit disparar o evento cru, o teste falha.
+- **BUG CONHECIDO (não é lacuna — narra ERRADO):** ao copiar (fx `copiar`, sucesso), o evento é
+  `acao{origem, slot:'habilidade'}`, então o narrador resolve a Habilidade PRÓPRIA de quem copia, não
+  a Habilidade COPIADA. É narração incorreta, não só incompleta. Só se manifesta quando **a Ísis
+  entrar, na F1.3** (0 kits copiam hoje) — a implementar por mim então: emitir `efeito:copiar` com
+  `habilidadeCopiada` (o tripwire `OBRIGATORIOS['efeito:copiar']` já força isso) em vez do `acao` que
+  mente. Registrado aqui para não reaparecer como surpresa na F1.3.
 
 ---
 

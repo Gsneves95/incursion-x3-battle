@@ -37,6 +37,18 @@ entra certo por construção, não por convenção lembrada tarde.
 5. **O narrador é TOTAL.** Evento de `tipo` desconhecido NÃO some do registro — aparece,
    nem que como despejo cru dos campos. Log que engole evento é onde bug de motor se
    esconde, e nos 73 kits isso vai acontecer. Teste crava: tipo inventado aparece.
+6. **EVENTO INCOMPLETO É DÍVIDA SILENCIOSA.** Um evento tem de carregar TUDO o que a narração
+   precisa. Se a frase antiga dizia mais do que o evento diz, **falta campo** — e o pior é que
+   isso não quebra teste nenhum, então ninguém revisa: a narração passa a mentir por omissão, e
+   com 73 kits vira muitos lugares assim. `tests/eventos.test.js` mantém um mapa
+   `OBRIGATORIOS[tipo]` (com chave composta `tipo:efeito` para lacuna de SUB-TIPO, resolvida
+   mais-específica-primeiro) e falha se um evento omitir campo obrigatório — inclusive os de
+   0-kit ainda não exercitados (tripwire), para o evento novo dos 73 kits não nascer incompleto.
+   **Corolário (decisão do dono):** quando o ESTADO já expõe o dado, a narração NÃO o duplica —
+   descreve o sujeito e para. Ex.: os dois vinculados carregam o ícone de Vínculo no retrato, então
+   `efeito:'vinculo'` narra só o sujeito ("Vínculo em X"), sem nomear o parceiro; não é perda de
+   informação, é a frase parar de prometer o que o evento não carrega (e não abrir dois sujeitos
+   por evento, contra a Regra 6, para repetir o que a tela já mostra).
 
 ## Tipos iniciais (derivados dos 11 kits — ~55 mensagens colapsadas)
 

@@ -63,6 +63,49 @@ function validarEvento(ev, ctx) {
   }
 }
 
+// EVENTO INCOMPLETO É DÍVIDA SILENCIOSA (docs/eventos.md): um evento tem de carregar TUDO o que
+// a narração precisa. Se a frase antiga dizia mais que o evento diz, falta campo — e isso não
+// quebra teste nenhum, então ninguém revisa. Este mapa é o contrato dos campos OBRIGATÓRIOS por
+// tipo; a chave pode ser composta (`efeito:copiar`) para alcançar lacuna de SUB-TIPO que um mapa
+// tipo->campos não pega. A varredura resolve a chave MAIS ESPECÍFICA primeiro.
+const OBRIGATORIOS = {
+  turno: ['turno', 'lado'],
+  abertura: ['lado', 'valor'],
+  acao: ['origem', 'slot'],
+  dano: ['origem', 'alvo', 'valor'],
+  cura: ['alvo', 'valor'],
+  dot: ['alvo', 'efeito', 'valor'],
+  orbe: ['lado', 'valor'],
+  conversao: ['lado', 'valor', 'para'],
+  cd: ['lado', 'valor'],
+  bloqueio: ['alvo', 'motivo'],
+  imune: ['alvo', 'efeito'],
+  queda: ['alvo'],
+  revive: ['alvo', 'valor'],
+  passiva: ['origem'],
+  escudo: ['alvo', 'valor'],
+  contador: ['origem', 'valor'],
+  acordar: ['alvo'],
+  controle: ['lado', 'valor'],
+  fase: ['efeito', 'duracao'],
+  fim: ['resultado'],
+  efeito: ['efeito'],
+  // ---- chaves de SUB-TIPO: tripwires dos 0-kit, forçam a forma-alvo quando o kit chegar ----
+  'efeito:copiar': ['origem', 'efeito', 'habilidadeCopiada'],   // Ísis (F1.3): QUAL Habilidade copiou
+  'efeito:invocacao': ['efeito', 'invocacao'],                  // kits de invocar: QUAL invocação
+};
+// resolve a chave mais específica (`tipo:efeito`) e cai para a genérica (`tipo`).
+function chaveObrig(ev) {
+  const comp = ev.efeito != null ? `${ev.tipo}:${ev.efeito}` : null;
+  if (comp && OBRIGATORIOS[comp]) return comp;
+  return ev.tipo;
+}
+// campos obrigatórios ausentes (undefined) — vazio = completo.
+function faltamCampos(ev) {
+  const req = OBRIGATORIOS[chaveObrig(ev)] || [];
+  return req.filter(c => ev[c] === undefined);
+}
+
 console.log('== A. varredura de gramática: toda partida só emite eventos do contrato ==');
 {
   const keys = Object.keys(E.GODS);
@@ -78,7 +121,12 @@ console.log('== A. varredura de gramática: toda partida só emite eventos do co
       if (st.fim) break;
       E.fimTurno(st);
     }
-    st.log.forEach((ev, i) => { validarEvento(ev, `seed ${s} log[${i}]`); vistos.add(ev.tipo); totalEventos++; });
+    st.log.forEach((ev, i) => {
+      validarEvento(ev, `seed ${s} log[${i}]`);
+      const faltam = faltamCampos(ev);
+      ok(faltam.length === 0, `seed ${s} log[${i}] [${ev.tipo}]: evento incompleto, falta(m) ${faltam.join(', ')}`);
+      vistos.add(ev.tipo); totalEventos++;
+    });
     // st.fim também é estruturado e segue a mesma gramática
     if (st.fim) { validarEvento(st.fim, `seed ${s} st.fim`); ok(st.fim.tipo === 'fim', `seed ${s}: st.fim.tipo deveria ser 'fim'`); }
   }
@@ -108,6 +156,23 @@ console.log('== A2. cenários determinísticos: DoT (chave) e modo alternado (r�
   ok(acaoModo && typeof acaoModo.modo === 'number', `acao alternada carrega modo numérico (veio ${acaoModo && acaoModo.modo})`);
   const nezhaKit = E.GODS['nezha'].ab.find(a => a.slot === 'habilidade');
   ok(Array.isArray(nezhaKit.modos) && nezhaKit.modos.length === 2, 'o kit da Nezha carrega os rótulos de modo (ANEL/MANTO)');
+}
+
+console.log('== A3. o verificador de completude tem dentes (e resolve sub-tipo) ==');
+{
+  // um dano sem valor é INCOMPLETO — o checador tem de apontar 'valor'
+  ok(faltamCampos({ tipo: 'dano', origem: 'zeus', alvo: 'cuca' }).includes('valor'),
+    'dano sem valor deveria acusar campo faltante');
+  // chave de SUB-TIPO vence a genérica: efeito:copiar exige habilidadeCopiada (tripwire da Ísis)
+  const fCopiar = faltamCampos({ tipo: 'efeito', efeito: 'copiar', origem: 'isis' });
+  ok(fCopiar.includes('habilidadeCopiada'), 'efeito:copiar sem habilidadeCopiada deveria acusar (sub-tipo)');
+  // efeito genérico (vinculo) NÃO cai na regra do copiar — só exige `efeito`, que está presente
+  ok(faltamCampos({ tipo: 'efeito', efeito: 'vinculo', alvo: 'hera' }).length === 0,
+    'efeito genérico completo não deveria acusar nada');
+  // invocação sem identidade é tripwire: quando um kit de invocar chegar, isto falha se vier cru
+  ok(faltamCampos({ tipo: 'efeito', efeito: 'invocacao' }).includes('invocacao'),
+    'efeito:invocacao sem a invocação deveria acusar (sub-tipo)');
+  console.log('  dano/valor, efeito:copiar/habilidadeCopiada, efeito:invocacao/invocacao — todos acusam');
 }
 
 console.log('== B. narrador TOTAL: tipo desconhecido não some, chave vira nome ==');
