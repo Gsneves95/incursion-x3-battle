@@ -4,6 +4,19 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.0e (elo B) — checador da cadeia de verdade `kits.json` (fonte) ↔ `data/deuses` (derivado).
+**Resultado:** `tools/checar_cadeia.js` confere número a número (nome, custo, recarga, dano, cura)
+na build (falha alto); DIVERGÊNCIA = presunção de erro no motor (kits.json é a fonte, §26/§28); só
+aponta, não conserta. Rodou nos 11: **122 match, 0 divergência, 2 não-conferível (1,6%)** — sob o
+teto de 20% do dono. **O checador se provou** (o dono: "se não achar divergência, desconfie"):
+apontou `nezha.habilidade` — a máquina não tem `dmg` no `ab.fx` porque o Arsenal Celeste é `alterna`
+e o dano da forma MANTO está **chumbado no `engine.js`**, não no kit (motor correto, mas dado fora do
+kit — cegueira do checador p/ `alterna`/`opcoes`, e resíduo da F1.0a; anotado abaixo, NÃO vira
+tarefa). Dentes provados em `tests/cadeia.test.js` (divergência sintética apontada). 17 suítes verdes.
+Só o **elo B**; elo A (planilha↔kits.json) ficou aberto por critério (ver abaixo). Ver decisão 28.
+
+## Sessão F1.0c (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.0c — reconciliar o orçamento de dano (calibrado p/ vida 100) com a vida 120.
 **Resultado:** ANÁLISE + reescala cirúrgica (nenhum valor de dano tocado). A vida virou 120 no
 §15 SEM mudar o dano bruto (jogo ~20% mais lento, de propósito), mas números que são FRAÇÃO da
@@ -453,18 +466,18 @@ sessão de reconciliação ou ao encostar em cada área.
   `src/ui/narrar.js` traduz na hora de exibir, e o remendo `traduzirRotulos` foi removido. A
   varredura `tests/eventos.test.js` mantém o contrato. Ver decisão 25. (O motor roda no servidor
   da Fase 5 sem uma string de português; localização passa a ser trocar o narrador.)
-- **F1.0e (PRÓXIMA — antes da F1.1): checador de consistência da CADEIA de 3 elos.** A verdade do
-  kit passa por **planilha → `data/kits.json` → `data/deuses`**, e a divergência já EXISTE em pelo
-  menos dois pontos: (1) o Combo "pool do time, teto 20" está só na planilha, não no kits.json (agora
-  a prosa do Susanoo foi corrigida à mão); (2) a planilha ainda diz "100 de HP para todos" — parada
-  desde o §15 (jogo é 120). O schema da F1.0a só valida a FORMA de `data/deuses`; não compara número
-  nenhum entre elos. **A planilha ESTÁ no repo** (`docs/INCURSION_Roster_e_Kits_ESTILO_NA.xlsx`,
-  103 KB) e é legível sem dependência (xlsx é zip de XML: `xl/sharedStrings.xml` + `xl/worksheets/`).
-  **Forma-alvo:** um checador na build que confira número a número (dano, cura, custo, recarga, limiar,
-  teto de contador) nos dois hops, e que **liste o que existe só na planilha** (dado que o kits.json
-  não carrega) — senão o checador pega só metade do problema. Entregável extra do dono: **quantos
-  kits têm dado só na planilha.** Decisão aberta no plano: ler o xlsx via dep (`xlsx` npm) × parse cru
-  do XML (sem dep, no ethos do repo) × export commitado. Ver decisão 26.
+- **~~F1.0e elo B~~ FEITO (checador kits.json↔data/deuses na build).** Ver "Última sessão". Fica a
+  cegueira anotada: `alterna`/`opcoes` (Nezha Arsenal Celeste; Lugh/Nüwa) têm o `fx` **chumbado no
+  `engine.js`**, não no kit — o checador não os confere (não-conferível) e é resíduo da F1.0a (dado
+  de kit no motor). NÃO vira tarefa agora (objetivo é deus no jogo). Se um dia se mover esses fx para
+  o dado, o checador passa a cobri-los.
+- **F1.0e ELO A — tarefa ABERTA (planilha ↔ kits.json), quando a Fase 1 fechar.** Não vira F1.0f
+  porque não contamina conteúdo futuro (kit novo nasce do kits.json, não da planilha) — é diagnóstico
+  de dívida que já existe. Método já decidido: **parse cru do XML, sem dep** (a planilha
+  `docs/INCURSION_Roster_e_Kits_ESTILO_NA.xlsx` é zip de XML: `xl/sharedStrings.xml` + `xl/worksheets/`).
+  Divergências já conhecidas a quantificar: o Combo "pool do time, teto 20" (só na planilha) e os
+  "100 de HP para todos" (planilha parada desde o §15). Entregável: **quantos kits têm dado só na
+  planilha.** Ver decisão 28.
 - **F1.1 (depois da F1.0e): SPEC TRAVADA — contadores acumuláveis, 6 deuses.** Rá (acumula no dono,
   teto 6, escala, consome), Anúbis (acumula no ALVO, limiar 4→Selado, +2 dano/Atadura), Kitsune (teto
   9, limiares 3→redução e 5→Domina, escala +3, consome), Susanoo (**Combo = contador de CAMPO por

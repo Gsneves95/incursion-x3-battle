@@ -87,6 +87,14 @@ function checarKits() {
 }
 checarKits();
 
+// ---------- 3b. CADEIA DE VERDADE, elo B: kits.json (prosa, fonte revisada) ↔ data/deuses (derivado) ----------
+// Falha alto, como o schema. DIVERGÊNCIA é presunção de erro no MOTOR (kits.json é a fonte, §26);
+// o checador só aponta. (Elo A, planilha↔kits.json, é tarefa aberta no ESTADO — parse cru de XML.)
+const cadeia = require('./checar_cadeia.js');
+if (cadeia.divergencias.length) {
+  console.error('ERRO de cadeia (kits.json ↔ data/deuses):\n  ' + cadeia.divergencias.join('\n  ')); process.exit(1);
+}
+
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [
@@ -124,4 +132,5 @@ if (fs.existsSync(web)) for (const f of fs.readdirSync(web))
   fs.copyFileSync(path.join(web, f), path.join(raiz, 'dist', f));
 
 smokeCarga(distAbs);
-console.log('dist/incursion.html —', (saida.length / 1024 / 1024).toFixed(2), 'MB · direção ui ok · smoke ok');
+console.log('dist/incursion.html —', (saida.length / 1024 / 1024).toFixed(2),
+  `MB · direção ui ok · smoke ok · cadeia ok (${cadeia.R.match} conf, ${cadeia.R.naoConf} não-conf)`);

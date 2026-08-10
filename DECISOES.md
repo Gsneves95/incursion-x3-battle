@@ -772,6 +772,35 @@ reduzido é erro. Se algum dia se quiser um limite sobre o máximo ATUAL, é dec
 
 ---
 
+## 28. Cadeia de verdade: kits.json é a fonte; checador na build (F1.0e, elo B)
+
+A verdade de um kit passa por **planilha → `data/kits.json` → `data/deuses`**. O `kits.json` (prosa
+revisada, o que o dono lê) é a **FONTE**; `data/deuses` (máquina) é DERIVADO. Divergência entre eles
+é **presunção de erro no motor**, e o checador só **APONTA** — nunca conserta sozinho.
+
+**Elo B (`tools/checar_cadeia.js`, na build, falha alto):** confere número a número — nome, custo,
+recarga, dano, cura — entre a prosa e o `fx`/`cost`/`cd` da máquina, nos kits implementados. Campo
+que o parser não resolve com segurança vira **NÃO-CONFERÍVEL** (reportado, nunca engolido). **Teto:
+se >20% não-conferível o checador não protege** — hoje 1,6% (2/124). O parser rejeita o que não é
+dano causado (`+N de dano`/`N menos de dano` são buff/debuff, não dano).
+
+**Achado que validou o checador** (o dono: "se não achar divergência, desconfie"): apontou
+`nezha.habilidade [dano]` — a máquina não tem `dmg` no `ab.fx` porque o Arsenal Celeste é `alterna`
+e o dano da forma MANTO está **chumbado no `engine.js`**, não no kit. O motor está correto (dá 12
+em MANTO), mas o valor não mora no dado — **cegueira do checador para `alterna`/`opcoes`** (marcados
+não-conferíveis) e **resíduo da F1.0a** (dado de kit no motor). Anotado no ESTADO, não vira tarefa
+(o objetivo das próximas sessões é deus no jogo, não fundação). Prova de dentes em `tests/cadeia.test.js`.
+
+**Elo A (planilha↔kits.json) — tarefa ABERTA, não agora.** Critério de infraestrutura que passa a
+valer: **a tarefa CONTAMINA o conteúdo que vem, ou é diagnóstico de dívida que já existe?** Elo B
+contamina (guarda os 6 kits da F1.1 e os 73 dos lotes — kit novo divergindo passaria em silêncio) →
+faz agora. Elo A é diagnóstico (o Susanoo já divergia antes desta conversa; os kits novos nascem do
+`kits.json`, não da planilha) → não protege kit futuro → ESTADO, com método já decidido (parse cru
+de XML, sem dep — a planilha `docs/*.xlsx` é zip de XML), para quando a Fase 1 fechar. Entregável de
+lá: quantos kits têm dado só na planilha (o "pool de time, teto 20" do Combo, os "100 de HP" parados).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
