@@ -965,6 +965,48 @@ especulativa; é a mesma faxina da F1.0a aplicada às passivas.
 - **F1.6** arena de auto-jogo.
 - **F1.7+** lotes de kit, por panteão.
 
+## 37. Bloco de 16 decisões da Fase 1 — batidas pelo dono (para F1.3/F1.4/F1.5)
+
+Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde
+minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro o argumento dele.
+
+**Bloco 1 — Morte & sobrevivência (F1.3):**
+1. Piso "não cai abaixo de 1 HP" = estado temporário; DoT e dano normal RESPEITAM; execução e efeitos
+   marcados `ignoraPiso` FURAM. (Shiva fura explicitamente → o piso tem de existir como estado real.)
+2. Execução por limiar de HP FURA o piso.
+3. Execução × imunidade-a-revive: ORTOGONAIS. Execução mata; "não revive" é marca separada aplicada no ato.
+4. **Execução FURA `vidaExtra` (o dono VIROU minha recomendação).** `vidaExtra` interceptando execução
+   esvaziaria a família: 7 kits pagam custo alto por um limiar de HP, e a Bastet com Sete Vidas anularia
+   todos os 7, sete vezes. Execução furar é o que a torna resposta a tanque. E o próprio dado confirma:
+   Sun Wukong tem imunidade DEDICADA a execução — se `vidaExtra` já protegesse, a imunidade dele seria
+   redundante, e kits não carregam redundância assim.
+5. Execução temporizada (Livro/Morrigan): a marca é debuff removível por `cleanse`; removida antes do fim,
+   não executa; a checagem roda no `fimTurno`.
+
+**Bloco 2 — Controle & vocabulário (F1.4):**
+6. Selado ≡ Silenciado = "só Básico" → um único tipo `selado`; "Silenciado (só Básico)" na prosa é
+   normalizado para ele. `silenceClass` (Zeus, trava por CLASSE) fica separado.
+7. **Pacificar NÃO zera cura.** Zera só o dano das ações do alvo; travar cura junto seria dois controles no
+   preço de um — travar cura é `noHeal`, que já existe e é outro efeito.
+8. **Torpor dispara POR AÇÃO, não por turno.** Hoje coincidem (o alvo age 1×/turno), mas "por turno" viraria
+   teto acidental se um kit conceder ação extra — e a Cuca já tem "Básico grátis a cada 3 turnos", o
+   precedente existe. Declarar por ação fica correto sozinho quando o caso aparecer.
+9. Medo = composto declarativo (`dmgDown` + trava-Milagre) com tag `medo` para imunidade (Guan Yu/Durga).
+10. Trava-Milagre = `lockSkill` com `slot: 'milagre'`.
+11. Redirecionar single-target tem PRECEDÊNCIA sobre `taunt`.
+
+**Bloco 3 — Modos, estado & escolha (F1.5):**
+12. A escolha chega ao motor via parâmetro `escolha` (array de índices, cobre o 2-de-5 da Nüwa), validado
+    contra `ab.opcoes`.
+13. Modo `alterna` NÃO reseta na morte; persiste a partida toda; a UI mostra o PRÓXIMO modo.
+14. Dia/Noite são mutuamente exclusivos (um só `st.fase`; ativar um remove o outro); ler estendido a cura,
+    buff, duração de controle e orbe.
+15. Invocação = pseudo-unidade alvoável (área a atinge); NÃO gera orbe, NÃO conta para vitória, NÃO é
+    revivível; some ao expirar. Iansã "destrói invocações" = remove todas.
+16. **A escolha é feita AO ARMAR, com commit num 2º gesto (invariante 13 — tocar nunca gasta).** Fluxo:
+    toca a habilidade → aparece a escolha → escolhe → CONFIRMAR resolve; cancelar em qualquer ponto não
+    gasta nada. Igual a alvo e igual à troca de energia.
+
 ---
 
 ## Decisões ainda ABERTAS
