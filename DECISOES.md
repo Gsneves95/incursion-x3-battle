@@ -822,6 +822,27 @@ não há novo cruzar). O efeito aplicado é do vocabulário existente — o gati
 
 ---
 
+## 30. Nome de contador é CHAVE no campo `efeito` do evento (F1.1, diferido da F1.0b pago)
+
+O evento `contador` passou a carregar a **chave** do contador no campo canônico `efeito`
+(`{tipo:'contador', origem, valor, efeito:'discoSolar'}`); o narrador resolve para o nome exibível
+via `NOMES_CONTADOR` (em `ui/base.js`, ao lado do `NOMES_DOT`), e `OBRIGATORIOS['contador']` passa a
+exigir `efeito`. As chaves são camelCase (`discoSolar`, `atadura`, `cauda`, `combo`, `podridao`,
+`maldicao`) — mesma convenção dos tipos de efeito, sem underscore, então a varredura de gramática as
+aceita sem afrouxar o regex.
+
+**Reusar `efeito` é economia, não sobrecarga (decisão consciente, a pedido do dono).** O campo
+`efeito` JÁ é polimórfico por `tipo`: `dot.efeito` é chave de DoT, `imune.efeito` é o efeito a que se
+é imune, `fase.efeito` é a fase, `efeito.efeito` é o tipo de efeito. Seu significado sempre foi "a
+coisa CHAVEADA que este evento trata", lida por `tipo`. Nenhum consumidor lê `.efeito` sem o `.tipo`
+(o narrador despacha por `tipo`; o `OBRIGATORIOS` chaveia por `tipo`), e a resolução do contador é
+SEPARADA (`nomeContador`, não o `rotuloEfeito` genérico) — então chave coincidente não cruza. A
+gramática proíbe **sinônimo** (dois campos p/ a mesma coisa); um campo `contador` novo é que seria a
+duplicata. Sem caso ambíguo → reuso. (`V.contadores` no schema, à la `V.dots`, fica para quando o
+primeiro kit de contador entrar em `data/deuses` — hoje 0 kits usam `fx.contador`.)
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

@@ -14,26 +14,26 @@ console.log('== 1. contadores acumuláveis: somam, teto, escalam dano, consomem 
 {
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 101);
   const u = st.lados[0].units[0];
-  E.aplicarFx(st, u, [{ t: 'contador', nome: 'Disco Solar', v: 1, alvo: 'self', max: 6 }], A('nenhum', 'basico'), []);
-  E.aplicarFx(st, u, [{ t: 'contador', nome: 'Disco Solar', v: 2, alvo: 'self', max: 6 }], A('nenhum', 'basico'), []);
-  ok(E.getContador(u, 'Disco Solar') === 3, `deveria somar para 3, tem ${E.getContador(u, 'Disco Solar')}`);
-  E.addContador(st, u, 'Disco Solar', 10, 6);
-  ok(E.getContador(u, 'Disco Solar') === 6, 'o teto de 6 deveria valer');
+  E.aplicarFx(st, u, [{ t: 'contador', nome: 'discoSolar', v: 1, alvo: 'self', max: 6 }], A('nenhum', 'basico'), []);
+  E.aplicarFx(st, u, [{ t: 'contador', nome: 'discoSolar', v: 2, alvo: 'self', max: 6 }], A('nenhum', 'basico'), []);
+  ok(E.getContador(u, 'discoSolar') === 3, `deveria somar para 3, tem ${E.getContador(u, 'discoSolar')}`);
+  E.addContador(st, u, 'discoSolar', 10, 6);
+  ok(E.getContador(u, 'discoSolar') === 6, 'o teto de 6 deveria valer');
   // Olho de Rá: 16 a todos, +4 por Disco (=40), consome todos
   const e0 = st.lados[1].units[0], e1 = st.lados[1].units[1], h0 = e0.hp, h1 = e1.hp;
-  E.aplicarFx(st, u, [{ t: 'dmg', v: 16, escopo: 'todosInimigos', porContador: { nome: 'Disco Solar', onde: 'self', v: 4 }, consomeContador: 'Disco Solar' }], A('todosInimigos', 'milagre'), []);
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 16, escopo: 'todosInimigos', porContador: { nome: 'discoSolar', onde: 'self', v: 4 }, consomeContador: 'discoSolar' }], A('todosInimigos', 'milagre'), []);
   ok(h0 - e0.hp === 40 && h1 - e1.hp === 40, `todos os inimigos deveriam levar 40, levaram ${h0 - e0.hp}/${h1 - e1.hp}`);
-  ok(E.getContador(u, 'Disco Solar') === 0, 'o contador deveria ser consumido depois de escalar TODOS os alvos');
+  ok(E.getContador(u, 'discoSolar') === 0, 'o contador deveria ser consumido depois de escalar TODOS os alvos');
   console.log(`  soma 3 · teto 6 · Olho de Rá 16+4×6=40 em todos · consumido a 0`);
 }
 { // contador no campo (Ah Puch: +8 por Podridão em campo)
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 102);
   const u = st.lados[0].units[0];
-  E.addContador(st, st.lados[1].units[0], 'Podridão', 2);
-  E.addContador(st, st.lados[1].units[1], 'Podridão', 1);
-  ok(E.contadorNoCampo(st, 'Podridão', 1) === 3, 'campo deveria somar 3 Podridões');
+  E.addContador(st, st.lados[1].units[0], 'podridao', 2);
+  E.addContador(st, st.lados[1].units[1], 'podridao', 1);
+  ok(E.contadorNoCampo(st, 'podridao', 1) === 3, 'campo deveria somar 3 Podridões');
   const e0 = st.lados[1].units[0], h0 = e0.hp;
-  E.aplicarFx(st, u, [{ t: 'dmg', v: 18, escopo: 'todosInimigos', porContadorCampo: { nome: 'Podridão', lado: 'inimigos', v: 8 } }], A('todosInimigos', 'milagre'), []);
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 18, escopo: 'todosInimigos', porContadorCampo: { nome: 'podridao', lado: 'inimigos', v: 8 } }], A('todosInimigos', 'milagre'), []);
   ok(h0 - e0.hp === 18 + 24, `18 + 8×3 = 42 esperado, deu ${h0 - e0.hp}`);
   console.log(`  Portões de Xibalbá: 18 + 8×3 Podridões = 42`);
 }

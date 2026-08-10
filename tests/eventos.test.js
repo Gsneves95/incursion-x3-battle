@@ -84,7 +84,7 @@ const OBRIGATORIOS = {
   revive: ['alvo', 'valor'],
   passiva: ['origem'],
   escudo: ['alvo', 'valor'],
-  contador: ['origem', 'valor'],
+  contador: ['origem', 'valor', 'efeito'],   // efeito = CHAVE do contador (F1.1 diferido da F1.0b)
   acordar: ['alvo'],
   controle: ['lado', 'valor'],
   fase: ['efeito', 'duracao'],
@@ -200,6 +200,10 @@ console.log('== B. narrador TOTAL: tipo desconhecido não some, chave vira nome 
     // 3) DoT: efeito CHAVE 'queimadura' vira "Queimadura" no registro
     w.eval("st.log.push({turno:st.turno,tipo:'dot',alvo:'cuca',efeito:'queimadura',valor:5}); render()");
     ok(/Queimadura/.test($('#logscroll').textContent), 'DoT chave "queimadura" é exibido como "Queimadura"');
+
+    // 3b) contador: a CHAVE no campo `efeito` vira o nome exibível (diferido da F1.0b)
+    w.eval("st.log.push({turno:st.turno,tipo:'contador',origem:'zeus',valor:1,efeito:'discoSolar'}); render()");
+    ok(/Disco Solar/.test($('#logscroll').textContent), 'contador chave "discoSolar" exibido como "Disco Solar"');
 
     // 4) linha autorada pela view (msg) passa direto pelo narrador
     ok(w.eval("narrar({tipo:'x', msg:'linha crua da view'})") === 'linha crua da view', 'linha com msg passa direto (autoria da view)');

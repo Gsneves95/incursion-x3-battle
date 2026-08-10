@@ -149,7 +149,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
     // --- primitivas ---
-    contadores: {},      // contadores acumuláveis nomeados: { 'Disco Solar': 3, Atadura: 2 }
+    contadores: {},      // contadores acumuláveis por CHAVE: { discoSolar: 3, atadura: 2 } (nome exibível no narrador)
     vidaExtra: null,     // Vida Extra pendente: { hp } — revive no ato ao cair
     naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
     usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
@@ -219,7 +219,7 @@ function aplicarDot(st, u, nome, v, dur) {
 }
 
 // -------------------------------------------------- PRIMITIVAS: contadores
-// Contadores acumuláveis nomeados (Disco Solar, Cauda, Atadura, Podridão, Combo…).
+// Contadores acumuláveis por CHAVE (discoSolar, cauda, atadura, podridao, combo…; nome no narrador).
 // Genéricos: somam, respeitam um teto opcional, podem ser lidos e consumidos.
 // O que cada contador FAZ (limiares, escalas) é decisão do kit; aqui só se guarda.
 function addContador(st, u, nome, v = 1, max = null) {
@@ -228,7 +228,7 @@ function addContador(st, u, nome, v = 1, max = null) {
   if (max != null) novo = Math.min(novo, max);
   if (novo < 0) novo = 0;
   u.contadores[nome] = novo;
-  if (novo !== atual) log(st, { tipo: 'contador', origem: u.key, valor: novo - atual });
+  if (novo !== atual) log(st, { tipo: 'contador', origem: u.key, valor: novo - atual, efeito: nome });
   return novo;
 }
 function getContador(u, nome) { return u.contadores[nome] || 0; }
@@ -756,7 +756,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
 
     // consumo de contador do próprio atacante: DEPOIS de escalar todos os alvos (Rá — Olho de Rá)
     if (e.t === 'dmg' && e.consomeContador && getContador(u, e.consomeContador) > 0) {
-      log(st, { tipo: 'contador', origem: u.key, valor: -getContador(u, e.consomeContador) });
+      log(st, { tipo: 'contador', origem: u.key, valor: -getContador(u, e.consomeContador), efeito: e.consomeContador });
       u.contadores[e.consomeContador] = 0;
     }
     // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):

@@ -35,6 +35,14 @@ const NOMES_DOT = { queimadura: 'Queimadura' };
 // CHAVE de efeito -> rótulo humano. DoT pelo mapa acima; buff/debuff pelo rótulo do SYM;
 // senão devolve a própria chave (fica legível e nunca some). Único lugar de tradução de chave.
 function rotuloEfeito(k) { return NOMES_DOT[k] || (SYM[k] && SYM[k][2]) || k; }
+// CHAVE de contador -> nome exibível. O motor emite o contador como CHAVE no campo `efeito` do
+// evento `contador` (mesmo campo polimórfico do DoT/fase, desambiguado por `tipo`); a resolução é
+// SEPARADA do rotuloEfeito (contador ≠ efeito), então chave coincidente não cruza. Cresce com os kits.
+const NOMES_CONTADOR = {
+  discoSolar: 'Disco Solar', atadura: 'Atadura', cauda: 'Cauda',
+  combo: 'Combo', podridao: 'Podridão', maldicao: 'Maldição de Yomi',
+};
+function nomeContador(k) { return NOMES_CONTADOR[k] || k; }
 // tipos de evento que marcam MARCO no registro (recebem realce): virada de turno,
 // queda, renascimento. Substitui o regex que casava as strings prontas (caiu/Turno/…).
 const LOG_MARCO = new Set(['turno', 'queda', 'revive', 'passiva', 'fim']);

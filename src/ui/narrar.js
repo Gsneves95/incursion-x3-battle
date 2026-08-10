@@ -123,7 +123,7 @@ const NARRA = {
     if (e.passiva) return `${nomePassiva(e.passiva)}: ${nomeDeus(e.alvo)} ganhou ${e.valor} de escudo.`;
     return `${nomeDeus(e.alvo)} ganhou ${e.valor} de Defesa Destrutível.`;
   },
-  contador: e => `${nomeDeus(e.origem)}: contador ${_sinal(e.valor)}${e.valor}.`,
+  contador: e => `${nomeDeus(e.origem)}: ${nomeContador(e.efeito)} ${_sinal(e.valor)}${e.valor}.`,
   acordar: e => `${nomeDeus(e.alvo)} acordou.`,
   controle: e => `${e.valor} unidade(s) de ${rotuloLado(e.lado)} sob controle não geraram orbe.`,
   fase: e => e.duracao > 0 ? `${e.efeito} ativado por ${e.duracao} turno(s).` : `${e.efeito} terminou.`,

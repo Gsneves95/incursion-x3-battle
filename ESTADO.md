@@ -4,6 +4,19 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 — pagar o diferido da F1.0b: chave do contador no evento + narração.
+**Resultado:** o evento `contador` agora carrega a CHAVE do contador no campo canônico `efeito`
+(`{tipo:'contador',origem,valor,efeito:'discoSolar'}`); `NOMES_CONTADOR` (`ui/base.js`) + `nomeContador`
+resolvem para o nome exibível ("Rá: Disco Solar +1"); `OBRIGATORIOS['contador']` exige `efeito`. Chaves
+camelCase (discoSolar/atadura/cauda/combo/podridao/maldicao) — passam na varredura sem afrouxar regex.
+**Reuso de `efeito` é decisão consciente (§30):** o campo já é polimórfico por `tipo`; ninguém lê
+`.efeito` sem `.tipo`; resolução do contador é separada (`nomeContador`, não `rotuloEfeito`) — sem
+ambiguidade, e reusar o canônico é o oposto de sinônimo (que a gramática proíbe). Migrei as tabelas de
+`primitivas.test §1` (`Disco Solar`→`discoSolar`, `Podridão`→`podridao`) e `eventos.test` narra um
+contador (chave→nome). `V.contadores` no schema fica p/ o 1º kit de contador. 17 suítes verdes.
+
+## Sessão F1.1 primitiva 1 (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 primitiva 1 — contador cruza limiar → aplica efeito (gatilho-no-acúmulo).
 **Resultado:** motor ganhou `fx.limiar:{em, aplica}` (config no DADO) + `cruzarLimiar` — quando um
 contador CRUZA `em` (de baixo para em-ou-acima), aplica o efeito UMA vez. Provado ANTES de qualquer
@@ -505,11 +518,12 @@ sessão de reconciliação ou ao encostar em cada área.
   [x] **1. limiar→aplica-efeito** (gatilho-no-acúmulo) — FEITO, `fx.limiar`, primitivas.test §1b, §29;
   [ ] 2. contador-de-campo-por-lado (Combo/Susanoo, teto 20); [ ] 3. redução-de-HP-máximo+clamp
   (Ah Puch, guarda o perdido); [ ] 4. espalhamento/contágio (Izanami). A família "condição-na-ação"
-  (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **Diferido da
-  F1.0b, ainda a pagar dentro da F1.1:** evento `contador` ganha a CHAVE do contador no campo canônico
-  `efeito` (`{tipo:'contador',origem,valor,efeito:'disco_solar'}`); `NOMES_CONTADOR` em `ui/base.js`;
-  `OBRIGATORIOS['contador']` exige `efeito`; kits usam a CHAVE (`atadura`, não `Atadura`) e as tabelas
-  atuais de teste (`Disco Solar`/`Podridão`) migram para chave. Depois disso, os 6 kits.
+  (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **[x] Diferido da
+  F1.0b PAGO** (chave do contador no evento `efeito` + `NOMES_CONTADOR` + `OBRIGATORIOS` + migração de
+  teste; reuso de `efeito` justificado no §30). **Ordem das 3 restantes (dono): campo → HP máximo →
+  contágio** (do mais simples ao que mais mexe em invariante; contágio por último porque interage com o
+  limiar recém-feito). No HP máximo: confirmar que `fracoes.test` lê `maxHp` de unidade NOVA (projeto),
+  nunca reduzida — já é o caso. Depois das 3, os 6 kits.
 - **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
   e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
   de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção
