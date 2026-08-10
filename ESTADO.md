@@ -4,6 +4,19 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 primitiva 4 — espalhamento / contágio (Maldição de Yomi da Izanami). ÚLTIMA primitiva.
+**Resultado:** `espalharContador` iguala as unidades ao MAIOR contador entre elas (teto), roteando a
+subida por `aposAcumular` (limiar dispara: "chegar a N é chegar a N"). fx `{t:'espalha', nome, max,
+escopo}`. `primitivas.test §1e` (bordas): iguala ao maior · **fonte retém de graça** (está no máximo,
+sem `if`) · espalhar 2× sem novo acúmulo não muda · teto · **contágio DISPARA o limiar de quem recebe**
+(via aposAcumular). Aditivo NÃO (evita laço multiplicativo). §33 registra, e marca contágio+limiar como
+combinação FORTE candidata a outlier na arena F1.4 (não é surpresa nem bug). 17 suítes verdes.
+**COM ISSO O MOTOR TEM TUDO QUE OS 6 KITS PRECISAM.** As 4 primitivas de contador estão provadas em
+isolamento; próximo passo = **escrever os 6 kits** (Rá/Anúbis/Kitsune/Susanoo/Izanami/Ah Puch), e o
+checador da cadeia (F1.0e) entra em ação pela 1ª vez com dado novo — é para isso que ele existe.
+
+## Sessão F1.1 primitiva 3 (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 primitiva 3 — redução de HP máximo + clamp (Podridão do Ah Puch).
 **Resultado:** `reduzirMaxHp` (piso 1) + campo `maxHpPerdido` (perda real guardada) + fx `restauraMax`
 (Itzamná devolve o máximo SEM curar). Gancho `aposAcumular` une limiar (prim.1) e redução à mesma
@@ -544,8 +557,12 @@ sessão de reconciliação ou ao encostar em cada área.
   [x] **2. contador-de-campo-por-lado** (Combo/Susanoo, teto 20) — FEITO, `st.lados[l].contadores` +
   `pool:'lado'`/`porContadorLado`/`consomeContadorLado`, primitivas.test §1c, §31; [ ] 3.
   [x] **3. redução-de-HP-máximo+clamp** (Ah Puch) — FEITO, `reduzirMaxHp` piso 1 + `maxHpPerdido` +
-  `restauraMax`, primitivas.test §1d, §32; [ ] 4. espalhamento/contágio (Izanami, por último — interage
-  c/ o limiar recém-feito: a Maldição espalhada conta para o limiar de quem recebe?). A família "condição-na-ação"
+  `restauraMax`, primitivas.test §1d, §32; [x] **4. espalhamento/contágio** (Izanami) — FEITO,
+  `espalharContador` (iguala ao maior, dispara limiar via aposAcumular), primitivas.test §1e, §33.
+  **As 4 primitivas de contador estão provadas — motor completo para os 6 kits.** PRÓXIMO: escrever
+  os 6 kits (`data/deuses/{ra,anubis,kitsune,susanoo,izanami,ahpuch}.json`), com o checador F1.0e
+  ligado. Abertos a decidir COM os kits: `maxHpPerdido` na queda/revive do Ah Puch (§32); e as chaves
+  de contador entram no `NOMES_CONTADOR`/`V.contadores` conforme os kits as usam. A família "condição-na-ação"
   (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **[x] Diferido da
   F1.0b PAGO** (chave do contador no evento `efeito` + `NOMES_CONTADOR` + `OBRIGATORIOS` + migração de
   teste; reuso de `efeito` justificado no §30). **Ordem das 3 restantes (dono): campo → HP máximo →

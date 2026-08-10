@@ -888,6 +888,30 @@ junto do kit.
 
 ---
 
+## 33. Contágio: iguala ao maior, fonte retém de graça, dispara limiar (F1.1, primitiva 4)
+
+A Maldição de Yomi (Izanami) se espalha para os três inimigos. Semântica travada:
+- **Iguala ao MAIOR, não aditivo.** `espalharContador` põe todos no maior contador entre eles (teto 5).
+  Aditivo comporia consigo mesmo — usar a habilidade 2× dobraria o campo (3→6→12) e, com 6 de dano puro
+  por acúmulo, furaria qualquer teto em três turnos. Igualar dá o contágio sem laço multiplicativo:
+  espalhar 2× sem novo acúmulo NÃO muda nada (todos já no máximo).
+- **A fonte RETÉM de graça.** Ela está no máximo, então igualar não a move — sem `if` especial
+  protegendo-a. Comentário no código avisa: quem adicionar um `if` para "proteger a fonte" está
+  consertando algo que o mecanismo já garante.
+- **A subida passa por `aposAcumular`: chegar a N é chegar a N.** Contágio que leva uma unidade a
+  cruzar um limiar DISPARA o limiar, igual a acúmulo direto. Um limiar que só dispara por certos
+  caminhos vira regra OCULTA — e regra oculta é o que viemos matando desde o soft pity e o 50/50
+  (§20/§21). Para a Maldição é indiferente (ela não tem limiar), mas o mecanismo vale para todo contador.
+- **Consequência registrada de frente (para a arena da F1.4):** contágio + limiar é uma combinação
+  FORTE — espalha e dispara em três alvos de uma vez. Não é acidente, é o que a mecânica promete; mas
+  é candidata a aparecer como outlier quando a arena medir números, e aí NÃO deve ser tratada como
+  surpresa nem "consertada" por reflexo — é design conhecido.
+
+Com a primitiva 4, o motor tem tudo que os 6 kits de contador precisam; o próximo passo é ESCREVER os
+kits, e é aí que o checador da cadeia (F1.0e, §28) entra em ação pela primeira vez com dado novo.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

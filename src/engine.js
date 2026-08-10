@@ -71,7 +71,7 @@ const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
   'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
-  'restauraMax',
+  'restauraMax', 'espalha',
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
@@ -258,6 +258,25 @@ function reduzirMaxHp(u, amt) {
 function aposAcumular(st, origem, alvo, e, antes) {
   cruzarLimiar(st, origem, alvo, e, antes);
   if (e.reduzMaxHp) { const d = getContador(alvo, e.nome) - antes; if (d > 0) reduzirMaxHp(alvo, e.reduzMaxHp * d); }
+}
+// PRIMITIVA contágio (F1.1, primitiva 4 — Maldição de Yomi): IGUALA todas as `unidades` ao MAIOR
+// contador entre elas (teto `e.max`). A fonte RETÉM DE GRAÇA — está no máximo, então igualar não a
+// move; NÃO precisa de `if` protegendo a fonte (quem adicionar um vira erro, não correção). Aditivo
+// NÃO: igualar dá contágio sem laço multiplicativo (espalhar 2× sem novo acúmulo não muda nada, pois
+// todas já estão no máximo). A subida passa por `aposAcumular`: chegar a N é chegar a N — contágio
+// dispara limiar/redução igual a acúmulo direto, sem regra oculta (§33). Só SOBE, nunca abaixa.
+function espalharContador(st, unidades, e, origem) {
+  const vivas = unidades.filter(u => u.vivo);
+  const teto = e.max != null ? e.max : Infinity;
+  const m = Math.min(teto, vivas.reduce((mx, u) => Math.max(mx, getContador(u, e.nome)), 0));
+  for (const u of vivas) {
+    const antes = getContador(u, e.nome);
+    if (m > antes) {
+      u.contadores[e.nome] = m;
+      log(st, { tipo: 'contador', origem: origem.key, valor: m - antes, efeito: e.nome });
+      aposAcumular(st, origem, u, e, antes);
+    }
+  }
 }
 function contadorNoCampo(st, nome, lado) {
   return st.lados[lado].units.filter(u => u.vivo).reduce((s, u) => s + getContador(u, nome), 0);
@@ -761,6 +780,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     else if (e.idx !== undefined) sel = alvos[e.idx] ? [alvos[e.idx]] : [];
     else sel = alvos;
 
+    // contágio (Maldição de Yomi): age no CONJUNTO de uma vez (precisa do maior entre eles), não alvo a alvo
+    if (e.t === 'espalha') { espalharContador(st, sel, e, u); continue; }
+
     for (const t of sel) {
       if (e.t === 'dmg') {
         const base = danoBase(st, u, t, e, l);
@@ -895,6 +917,6 @@ if (typeof module !== 'undefined') {
     GODS, DEFESA, ELEMS, VOCAB, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
     converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre, sortearElemento, iniciarTurno,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
-    aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, definirFase, caidos, reviver,
+    aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, espalharContador, definirFase, caidos, reviver,
   };
 }

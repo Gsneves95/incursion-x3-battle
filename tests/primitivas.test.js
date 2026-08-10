@@ -128,6 +128,34 @@ console.log('== 1d. redução de HP MÁXIMO (Podridão): -10/acúmulo, guarda o 
   ok(v.maxHp === 1 && v.hp === 1 && v.vivo, `5/10 + Podridão → 1/1 viva (${v.maxHp}/${v.hp} vivo=${v.vivo})`);
   console.log('  clamp não mata: 5/10 + Podridão → 1/1 viva');
 }
+console.log('== 1e. contágio (Maldição de Yomi): iguala ao maior, fonte retém, teto, dispara limiar ==');
+{
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 110);
+  const izan = st.lados[0].units[0];
+  const [a, b, c] = st.lados[1].units;
+  E.addContador(st, a, 'maldicao', 3);   // fonte com 3
+  E.addContador(st, b, 'maldicao', 1);   // c fica em 0
+  const ESPALHA = { t: 'espalha', nome: 'maldicao', max: 5, escopo: 'todosInimigos' };
+  E.aplicarFx(st, izan, [ESPALHA], A('todosInimigos', 'habilidade'), []);
+  ok(E.getContador(a, 'maldicao') === 3 && E.getContador(b, 'maldicao') === 3 && E.getContador(c, 'maldicao') === 3,
+    `todos igualados ao maior (3); fonte retém (${E.getContador(a, 'maldicao')}/${E.getContador(b, 'maldicao')}/${E.getContador(c, 'maldicao')})`);
+  E.aplicarFx(st, izan, [ESPALHA], A('todosInimigos', 'habilidade'), []);   // 2× sem novo acúmulo
+  ok(E.getContador(a, 'maldicao') === 3 && E.getContador(b, 'maldicao') === 3 && E.getContador(c, 'maldicao') === 3, 'espalhar 2× sem novo acúmulo NÃO aumenta');
+  E.addContador(st, a, 'maldicao', 10);   // força a acima do teto (artificial) p/ provar o cap do espalhamento
+  E.aplicarFx(st, izan, [ESPALHA], A('todosInimigos', 'habilidade'), []);
+  ok(E.getContador(b, 'maldicao') === 5 && E.getContador(c, 'maldicao') === 5, 'espalhamento respeita o teto 5 nos que recebem');
+  console.log('  iguala ao maior (fonte retém) · 2× não muda · teto 5');
+}
+{ // contágio DISPARA o limiar de quem recebe (chegar a N é chegar a N — §33)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 111);
+  const izan = st.lados[0].units[0];
+  const [a, b] = st.lados[1].units;
+  E.addContador(st, a, 'atadura', 4);   // fonte já em 4; b em 0
+  const ESPALHA = { t: 'espalha', nome: 'atadura', max: 9, escopo: 'todosInimigos', limiar: { em: 4, aplica: { type: 'atordoado', dur: 2 } } };
+  E.aplicarFx(st, izan, [ESPALHA], A('todosInimigos', 'habilidade'), []);
+  ok(E.getContador(b, 'atadura') === 4 && !!E.ef(b, 'atordoado'), 'contágio que leva b a 4 dispara o limiar (atordoa) — via aposAcumular');
+  console.log('  contágio dispara limiar em quem recebe (chegar a N é chegar a N)');
+}
 
 // ------------------------------------------------------- 2. estado Dia/Noite
 console.log('== 2. estado global Dia/Noite: ativa, escala dano, expira ==');
