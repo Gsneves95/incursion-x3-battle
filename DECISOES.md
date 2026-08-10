@@ -843,6 +843,30 @@ primeiro kit de contador entrar em `data/deuses` — hoje 0 kits usam `fx.contad
 
 ---
 
+## 31. Contador de CAMPO por LADO: pool do time, store separado, permanece na queda (F1.1, primitiva 2)
+
+O Combo é um **pool do TIME por lado**, não um contador por-unidade. `st.lados[l].contadores` é um
+store SEPARADO do `u.contadores`, e a separação não é estilística:
+- `contadorNoCampo` responde **"quanto o time TEM, somando as unidades vivas?"** — MUDA quando uma
+  unidade cai. O pool responde **"quanto o time ACUMULOU?"** — não deveria mudar por queda. São
+  perguntas diferentes que só coincidem por acidente hoje; unificar faria uma responder errado.
+
+**O pool PERMANECE quando o gerador cai** — e o argumento é do próprio kit, não "a planilha diz":
+o Milagre do Susanoo consome TODO o Combo; se o pool zerasse na queda, ele viraria armadilha
+(acumula 20 e perde tudo se o gerador morre antes de consumir), punindo a preparação que o kit pede.
+E há um segundo gerador previsto (Fujin dá +1 com Raijin no time) — com dois geradores, "de quem é o
+Combo" deixa de fazer sentido: é do LADO. Geração credita `origem` (quem gerou) no evento, mas o
+armazém é do lado.
+
+**Mecanismo (fx, dado):** `{t:'contador', pool:'lado', lado:'proprio'|'inimigo', nome, v, max}` gera
+no pool; `porContadorLado:{nome, lado, v}` escala dano pelo pool; `consomeContadorLado:nome` zera o
+pool do lado próprio após escalar. Quatro bordas em `primitivas.test §1c` — a 4ª é onde pool-por-lado
+vaza: **os dois lados são independentes de verdade** (Susanoo dos dois lados: cada um gera no seu
+pool, teto 20 é POR lado e não somado, consumo de um não toca o outro) — foi assim que o `_CAT` de
+módulo quase passou (§24), então travado explicitamente.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

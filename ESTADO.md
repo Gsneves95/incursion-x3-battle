@@ -4,6 +4,19 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 primitiva 2 — contador de CAMPO por lado (pool do time / Combo).
+**Resultado:** novo store `st.lados[l].contadores` (pool do time), SEPARADO dos contadores por-unidade —
+`contadorNoCampo` pergunta "quanto o time TEM (soma vivos)", o pool pergunta "quanto ACUMULOU" (não
+muda na queda). `addContadorLado`/`getContadorLado` + fx `{pool:'lado', lado, max}` (gera),
+`porContadorLado` (escala), `consomeContadorLado` (zera o pool do lado). Provado em `primitivas.test
+§1c` com 4 bordas: acumula+teto 20 · pool ≠ unidade · 18+2×20=58 e consome · **pool sobrevive à queda
+do gerador** · **os dois lados independentes** (geração simultânea, teto por-lado não somado, consumo
+não cruza — onde o `_CAT` de módulo quase passou, §24). Pool PERMANECE na queda (senão o finalizador
+"consome todo o Combo" viraria armadilha; e com 2 geradores "de quem é o Combo" não faz sentido — §31).
+17 suítes verdes. Sem kit ainda.
+
+## Sessão F1.1 diferido F1.0b (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 — pagar o diferido da F1.0b: chave do contador no evento + narração.
 **Resultado:** o evento `contador` agora carrega a CHAVE do contador no campo canônico `efeito`
 (`{tipo:'contador',origem,valor,efeito:'discoSolar'}`); `NOMES_CONTADOR` (`ui/base.js`) + `nomeContador`
@@ -516,8 +529,10 @@ sessão de reconciliação ou ao encostar em cada área.
   teste antes do kit: limiar→aplica-efeito, contador-de-campo-por-lado, redução-de-HP-máximo+clamp,
   espalhamento/contágio. **PROGRESSO — 4 comportamentos de motor, cada um provado antes do kit:**
   [x] **1. limiar→aplica-efeito** (gatilho-no-acúmulo) — FEITO, `fx.limiar`, primitivas.test §1b, §29;
-  [ ] 2. contador-de-campo-por-lado (Combo/Susanoo, teto 20); [ ] 3. redução-de-HP-máximo+clamp
-  (Ah Puch, guarda o perdido); [ ] 4. espalhamento/contágio (Izanami). A família "condição-na-ação"
+  [x] **2. contador-de-campo-por-lado** (Combo/Susanoo, teto 20) — FEITO, `st.lados[l].contadores` +
+  `pool:'lado'`/`porContadorLado`/`consomeContadorLado`, primitivas.test §1c, §31; [ ] 3.
+  redução-de-HP-máximo+clamp (Ah Puch, guarda o perdido — confirmar que `fracoes.test` lê `maxHp` de
+  unidade NOVA, já é o caso); [ ] 4. espalhamento/contágio (Izanami, por último — interage c/ o limiar). A família "condição-na-ação"
   (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **[x] Diferido da
   F1.0b PAGO** (chave do contador no evento `efeito` + `NOMES_CONTADOR` + `OBRIGATORIOS` + migração de
   teste; reuso de `efeito` justificado no §30). **Ordem das 3 restantes (dono): campo → HP máximo →

@@ -63,6 +63,44 @@ console.log('== 1b. limiar de contador: CRUZAR N dispara efeito UMA vez (gatilho
   ok(!E.ef(alvo, 'atordoado'), 'SEM retroação: cair a imunidade não aplica o efeito que falhou');
   console.log('  imune: contra-controle falha, contador segue, sem retroação');
 }
+console.log('== 1c. contador de CAMPO por LADO (pool do time, Combo): gera, teto, consome, dois lados independentes ==');
+{ // acumula no pool do LADO (não na unidade), teto 20, escala e consome
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 105);
+  const u = st.lados[0].units[0];
+  const GERA = (v, lado) => ({ t: 'contador', nome: 'combo', v, pool: 'lado', lado: lado || 'proprio', max: 20 });
+  E.aplicarFx(st, u, [GERA(8)], A('auto'), []);
+  E.aplicarFx(st, u, [GERA(8)], A('auto'), []);
+  E.aplicarFx(st, u, [GERA(8)], A('auto'), []);            // 24 -> teto 20
+  ok(E.getContadorLado(st, 0, 'combo') === 20, `pool do lado 0 no teto 20, tem ${E.getContadorLado(st, 0, 'combo')}`);
+  ok(E.getContador(u, 'combo') === 0, 'o pool NÃO é contador da unidade (u.combo continua 0)');
+  const e0 = st.lados[1].units[0], h0 = e0.hp;             // Fúria do Tufão: 18 + 2×Combo, consome
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 18, escopo: 'todosInimigos', porContadorLado: { nome: 'combo', lado: 'proprio', v: 2 }, consomeContadorLado: 'combo' }], A('todosInimigos', 'milagre'), []);
+  ok(h0 - e0.hp === 18 + 40, `18 + 2×20 = 58 esperado, deu ${h0 - e0.hp}`);
+  ok(E.getContadorLado(st, 0, 'combo') === 0, 'consumir zera o pool do lado');
+  console.log('  gera 8+8+8→teto 20 · pool ≠ unidade · 18+2×20=58 · consumido a 0');
+}
+{ // o pool é do LADO: sobrevive à queda do gerador (≠ contadorNoCampo, que soma vivos)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 106);
+  E.addContadorLado(st, 0, 'combo', 12);
+  st.lados[0].units[0].vivo = false;                      // gerador cai
+  ok(E.getContadorLado(st, 0, 'combo') === 12, 'o pool do lado NÃO cai com a morte de uma unidade (é do time)');
+  E.addContador(st, st.lados[0].units[1], 'atadura', 3);
+  ok(E.contadorNoCampo(st, 'atadura', 0) === 3, 'contadorNoCampo conta só vivos — pergunta diferente do pool');
+  console.log('  pool sobrevive à queda (12) · contadorNoCampo depende de quem vive');
+}
+{ // OS DOIS LADOS SÃO INDEPENDENTES: geração simultânea, teto por-lado, consumo não cruza
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 107);
+  const a = st.lados[0].units[0], b = st.lados[1].units[0];
+  const GERA = v => ({ t: 'contador', nome: 'combo', v, pool: 'lado', lado: 'proprio', max: 20 });
+  E.aplicarFx(st, a, [GERA(15)], A('auto'), []);
+  E.aplicarFx(st, b, [GERA(9)], A('auto'), []);
+  ok(E.getContadorLado(st, 0, 'combo') === 15 && E.getContadorLado(st, 1, 'combo') === 9, 'cada lado acumula no SEU pool');
+  E.aplicarFx(st, a, [GERA(10)], A('auto'), []);          // lado 0: 25 -> teto 20; lado 1 intocado
+  ok(E.getContadorLado(st, 0, 'combo') === 20 && E.getContadorLado(st, 1, 'combo') === 9, 'teto é POR LADO; o lado 1 não é somado nem tocado');
+  E.aplicarFx(st, a, [{ t: 'dmg', v: 0, escopo: 'todosInimigos', consomeContadorLado: 'combo' }], A('todosInimigos', 'milagre'), []);
+  ok(E.getContadorLado(st, 0, 'combo') === 0 && E.getContadorLado(st, 1, 'combo') === 9, 'consumir o lado 0 não toca o pool do lado 1');
+  console.log('  dois lados: pools separados · teto por lado · consumo não cruza');
+}
 
 // ------------------------------------------------------- 2. estado Dia/Noite
 console.log('== 2. estado global Dia/Noite: ativa, escala dano, expira ==');

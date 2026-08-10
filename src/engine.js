@@ -89,6 +89,7 @@ const VOCAB = {
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu', 'limiar',
+    'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -171,8 +172,8 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
     energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0, contadores: {} },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0, contadores: {} },
     ],
   };
   log(st, { tipo: 'turno', turno: 1, lado: comeca });   // a visão traduz lado -> Você/CPU/Jogador N por modo
@@ -244,6 +245,21 @@ function cruzarLimiar(st, origem, alvo, e, antes) {
 function contadorNoCampo(st, nome, lado) {
   return st.lados[lado].units.filter(u => u.vivo).reduce((s, u) => s + getContador(u, nome), 0);
 }
+// PRIMITIVA contador de CAMPO por LADO (F1.1, primitiva 2): pool do TIME, distinto dos contadores
+// por-unidade. `contadorNoCampo` pergunta "quanto o time TEM, somando as unidades" (MUDA com a queda
+// de uma unidade); o pool pergunta "quanto o time ACUMULOU" (NÃO muda com queda — o Combo é do lado).
+// São perguntas diferentes que só coincidem por acidente hoje; stores separados de propósito. O pool
+// permanece se o gerador cai (senão o finalizador que "consome TODO o Combo" viraria armadilha), e com
+// dois geradores (Susanoo + Fujin/Raijin) "de quem é o Combo" não faz sentido — é do lado (DECISÕES §31).
+function addContadorLado(st, lado, nome, v, max = null, origem = null) {
+  const l = st.lados[lado]; l.contadores = l.contadores || {};
+  const atual = l.contadores[nome] || 0;
+  let novo = atual + v; if (max != null) novo = Math.min(novo, max); if (novo < 0) novo = 0;
+  l.contadores[nome] = novo;
+  if (novo !== atual && origem) log(st, { tipo: 'contador', origem: origem.key, valor: novo - atual, efeito: nome });
+  return novo;
+}
+function getContadorLado(st, lado, nome) { return (st.lados[lado].contadores || {})[nome] || 0; }
 
 // ----------------------------------------------- PRIMITIVA: estado Dia/Noite
 function definirFase(st, fase, dur) {
@@ -740,7 +756,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }
-      else if (e.t === 'contador' && e.alvo !== 'self') { const antes = getContador(t, e.nome); addContador(st, t, e.nome, e.v, e.max); cruzarLimiar(st, u, t, e, antes); }
+      else if (e.t === 'contador' && e.alvo !== 'self' && !e.pool) { const antes = getContador(t, e.nome); addContador(st, t, e.nome, e.v, e.max); cruzarLimiar(st, u, t, e, antes); }
       else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
       else if (e.t === 'revive') reviver(st, t, e);
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
@@ -759,9 +775,16 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       log(st, { tipo: 'contador', origem: u.key, valor: -getContador(u, e.consomeContador), efeito: e.consomeContador });
       u.contadores[e.consomeContador] = 0;
     }
+    // consumo do POOL DO LADO (finalizador de Combo — Susanoo): zera SÓ o pool do lado próprio
+    if (e.t === 'dmg' && e.consomeContadorLado && getContadorLado(st, u.lado, e.consomeContadorLado) > 0) {
+      log(st, { tipo: 'contador', origem: u.key, valor: -getContadorLado(st, u.lado, e.consomeContadorLado), efeito: e.consomeContadorLado });
+      st.lados[u.lado].contadores[e.consomeContadorLado] = 0;
+    }
     // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):
     if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -e.v, kind: 'puro' }); }
-    if (e.t === 'contador' && e.alvo === 'self') { const antes = getContador(u, e.nome); addContador(st, u, e.nome, e.v, e.max); cruzarLimiar(st, u, u, e, antes); }
+    if (e.t === 'contador' && e.alvo === 'self' && !e.pool) { const antes = getContador(u, e.nome); addContador(st, u, e.nome, e.v, e.max); cruzarLimiar(st, u, u, e, antes); }
+    // contador de CAMPO por LADO (pool do time): gera no pool do lado próprio ou inimigo (F1.1 prim.2)
+    if (e.t === 'contador' && e.pool === 'lado') addContadorLado(st, e.lado === 'inimigo' ? 1 - u.lado : u.lado, e.nome, e.v, e.max, u);
     if (e.t === 'intercepta') {
       const protege = e.protege === 'time' ? 'time' : (alvos[0] ? alvos[0].uid : u.uid);
       aplicar(st, u, { type: 'intercepta', protege, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
@@ -815,6 +838,7 @@ function danoBase(st, u, t, e, l) {
   if (e.seAliadoJaAgiu && l.units.some(x => x.uid !== u.uid && x.agiu)) base += e.seAliadoJaAgiu;
   if (e.porContador) base += e.porContador.v * getContador(e.porContador.onde === 'alvo' ? t : u, e.porContador.nome);
   if (e.porContadorCampo) base += e.porContadorCampo.v * contadorNoCampo(st, e.porContadorCampo.nome, e.porContadorCampo.lado === 'aliados' ? u.lado : 1 - u.lado);
+  if (e.porContadorLado) base += e.porContadorLado.v * getContadorLado(st, e.porContadorLado.lado === 'inimigo' ? 1 - u.lado : u.lado, e.porContadorLado.nome);
   if (e.porAliadoCaido) base += e.porAliadoCaido * caidos(st, u.lado);
   if (e.porInimigoCaido) base += e.porInimigoCaido * caidos(st, 1 - u.lado);
   return base;
@@ -851,6 +875,6 @@ if (typeof module !== 'undefined') {
     GODS, DEFESA, ELEMS, VOCAB, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
     converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre, sortearElemento, iniciarTurno,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
-    aplicarFx, bater, addContador, getContador, contadorNoCampo, definirFase, caidos, reviver,
+    aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, definirFase, caidos, reviver,
   };
 }
