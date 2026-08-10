@@ -867,6 +867,27 @@ módulo quase passou (§24), então travado explicitamente.
 
 ---
 
+## 32. Redução de HP máximo (Podridão): piso 1, não é execução, restaura sem curar (F1.1, primitiva 3)
+
+A Podridão do Ah Puch reduz o HP MÁXIMO em 10 por acúmulo. Decisões:
+- **Piso 1 no máximo.** `hp` chegando a 0 é MORTE; `maxHp` é CAPACIDADE. Se a Podridão levasse o
+  máximo a 0 e matasse, seria **execução disfarçada sem limiar** — e os dois efeitos que matam sem
+  dano no jogo (execução por limiar, e a contagem do Yan Wong) são DECLARADOS como tal. A decomposição
+  deixa a unidade frágil (máximo 1), a morte fica por conta do dano. `reduzirMaxHp` para em 1.
+- **O clamp NUNCA mata.** Unidade 5/10 que ganha Podridão: máximo vai a 1 (piso), o clamp puxa hp de
+  5 para 1 — viva. É onde "piso 1" vazaria sem ninguém notar (a morte viria do clamp, não da redução);
+  como `maxHp≥1`, `hp=min(hp,maxHp)≥1`. Travado em `primitivas.test §1d`.
+- **Guarda a perda REAL** (`u.maxHpPerdido`, limitada pelo piso) para o Milagre do Itzamná restaurar.
+- **Restaurar devolve o máximo SEM curar** (`t.maxHp += maxHpPerdido`, `hp` fica). O Milagre do Itzamná
+  já cura 25 no time num efeito separado; se restaurar também curasse, seria cura dupla no mesmo botão.
+  A prosa distingue os dois; o motor distingue. Fx `restauraMax` (per-alvo, escopo time).
+
+**Aberto até o kit do Ah Puch:** `maxHpPerdido` some quando a unidade cai e volta por revive? Palpite:
+a unidade revive com o máximo REDUZIDO (a decomposição não se desfaz com a morte). Não decidido — trago
+junto do kit.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

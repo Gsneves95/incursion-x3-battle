@@ -71,6 +71,7 @@ const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
   'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
+  'restauraMax',
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
@@ -90,6 +91,7 @@ const VOCAB = {
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
+    'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -241,6 +243,21 @@ function getContador(u, nome) { return u.contadores[nome] || 0; }
 function cruzarLimiar(st, origem, alvo, e, antes) {
   const L = e.limiar; if (!L) return;
   if (antes < L.em && getContador(alvo, e.nome) >= L.em) aplicar(st, alvo, { ...L.aplica, origem: origem.uid });
+}
+// PRIMITIVA redução de HP MÁXIMO (F1.1, primitiva 3 — Podridão do Ah Puch): reduz `maxHp` com PISO 1
+// (hp a 0 é MORTE, maxHp é CAPACIDADE — se a decomposição matasse sozinha seria execução disfarçada
+// sem limiar; execução é sempre declarada, §32). GUARDA a perda real (`maxHpPerdido`) p/ o Itzamná
+// restaurar. O clamp de hp NUNCA mata: como maxHp tem piso 1, hp é puxado no mínimo até 1, não a 0.
+function reduzirMaxHp(u, amt) {
+  const alvoMax = Math.max(1, u.maxHp - amt);
+  u.maxHpPerdido = (u.maxHpPerdido || 0) + (u.maxHp - alvoMax);   // perda REAL (limitada pelo piso)
+  u.maxHp = alvoMax;
+  if (u.hp > u.maxHp) u.hp = u.maxHp;                             // clamp; maxHp≥1 => hp≥1, não mata
+}
+// pós-acúmulo de contador: o limiar (gatilho) e a redução de máximo reagem à MESMA mudança do número.
+function aposAcumular(st, origem, alvo, e, antes) {
+  cruzarLimiar(st, origem, alvo, e, antes);
+  if (e.reduzMaxHp) { const d = getContador(alvo, e.nome) - antes; if (d > 0) reduzirMaxHp(alvo, e.reduzMaxHp * d); }
 }
 function contadorNoCampo(st, nome, lado) {
   return st.lados[lado].units.filter(u => u.vivo).reduce((s, u) => s + getContador(u, nome), 0);
@@ -756,7 +773,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }
-      else if (e.t === 'contador' && e.alvo !== 'self' && !e.pool) { const antes = getContador(t, e.nome); addContador(st, t, e.nome, e.v, e.max); cruzarLimiar(st, u, t, e, antes); }
+      else if (e.t === 'contador' && e.alvo !== 'self' && !e.pool) { const antes = getContador(t, e.nome); addContador(st, t, e.nome, e.v, e.max); aposAcumular(st, u, t, e, antes); }
       else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
       else if (e.t === 'revive') reviver(st, t, e);
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
@@ -768,6 +785,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       }
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
       else if (e.t === 'shield') { t.shield += e.v; log(st, { tipo: 'escudo', alvo: t.key, valor: e.v }); }
+      else if (e.t === 'restauraMax') {   // Itzamná: devolve o HP máximo perdido (Podridão) — SEM curar (hp fica)
+        if (t.maxHpPerdido) { log(st, { tipo: 'efeito', alvo: t.key, efeito: 'restauraMax', valor: t.maxHpPerdido }); t.maxHp += t.maxHpPerdido; t.maxHpPerdido = 0; }
+      }
     }
 
     // consumo de contador do próprio atacante: DEPOIS de escalar todos os alvos (Rá — Olho de Rá)
@@ -782,7 +802,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     }
     // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):
     if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -e.v, kind: 'puro' }); }
-    if (e.t === 'contador' && e.alvo === 'self' && !e.pool) { const antes = getContador(u, e.nome); addContador(st, u, e.nome, e.v, e.max); cruzarLimiar(st, u, u, e, antes); }
+    if (e.t === 'contador' && e.alvo === 'self' && !e.pool) { const antes = getContador(u, e.nome); addContador(st, u, e.nome, e.v, e.max); aposAcumular(st, u, u, e, antes); }
     // contador de CAMPO por LADO (pool do time): gera no pool do lado próprio ou inimigo (F1.1 prim.2)
     if (e.t === 'contador' && e.pool === 'lado') addContadorLado(st, e.lado === 'inimigo' ? 1 - u.lado : u.lado, e.nome, e.v, e.max, u);
     if (e.t === 'intercepta') {

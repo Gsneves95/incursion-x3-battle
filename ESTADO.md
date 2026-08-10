@@ -4,6 +4,18 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 primitiva 3 — redução de HP máximo + clamp (Podridão do Ah Puch).
+**Resultado:** `reduzirMaxHp` (piso 1) + campo `maxHpPerdido` (perda real guardada) + fx `restauraMax`
+(Itzamná devolve o máximo SEM curar). Gancho `aposAcumular` une limiar (prim.1) e redução à mesma
+mudança do contador. `primitivas.test §1d` (4 bordas): 2 Podridão→máx 100 e guarda 20 · **piso 1** ·
+**o clamp NÃO mata** (5/10 + Podridão → 1/1 viva) · **restaura 120 sem curar**. **Piso 1 porque hp=0 é
+morte e maxHp=capacidade** — se a decomposição matasse seria execução disfarçada sem limiar, e execução
+é sempre declarada (§32). `restauraMax`: fx novo (TIPOS_FX), narra "recupera N de HP máximo". 17 suítes
+verdes. **Aberto até o kit do Ah Puch:** `maxHpPerdido` na queda/revive (palpite: revive com máximo
+reduzido) — trago com o kit.
+
+## Sessão F1.1 primitiva 2 (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 primitiva 2 — contador de CAMPO por lado (pool do time / Combo).
 **Resultado:** novo store `st.lados[l].contadores` (pool do time), SEPARADO dos contadores por-unidade —
 `contadorNoCampo` pergunta "quanto o time TEM (soma vivos)", o pool pergunta "quanto ACUMULOU" (não
@@ -531,8 +543,9 @@ sessão de reconciliação ou ao encostar em cada área.
   [x] **1. limiar→aplica-efeito** (gatilho-no-acúmulo) — FEITO, `fx.limiar`, primitivas.test §1b, §29;
   [x] **2. contador-de-campo-por-lado** (Combo/Susanoo, teto 20) — FEITO, `st.lados[l].contadores` +
   `pool:'lado'`/`porContadorLado`/`consomeContadorLado`, primitivas.test §1c, §31; [ ] 3.
-  redução-de-HP-máximo+clamp (Ah Puch, guarda o perdido — confirmar que `fracoes.test` lê `maxHp` de
-  unidade NOVA, já é o caso); [ ] 4. espalhamento/contágio (Izanami, por último — interage c/ o limiar). A família "condição-na-ação"
+  [x] **3. redução-de-HP-máximo+clamp** (Ah Puch) — FEITO, `reduzirMaxHp` piso 1 + `maxHpPerdido` +
+  `restauraMax`, primitivas.test §1d, §32; [ ] 4. espalhamento/contágio (Izanami, por último — interage
+  c/ o limiar recém-feito: a Maldição espalhada conta para o limiar de quem recebe?). A família "condição-na-ação"
   (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **[x] Diferido da
   F1.0b PAGO** (chave do contador no evento `efeito` + `NOMES_CONTADOR` + `OBRIGATORIOS` + migração de
   teste; reuso de `efeito` justificado no §30). **Ordem das 3 restantes (dono): campo → HP máximo →

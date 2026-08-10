@@ -57,6 +57,7 @@ function _narraEfeito(e) {
     case 'livro': return `Livro da Vida e Morte: ${alvo} é executado.`;
     case 'vidaExtra': return `${alvo} recebeu Vida Extra.`;
     case 'copiar': return `${origem} não encontrou uma Habilidade para copiar.`;
+    case 'restauraMax': return `${alvo} recupera ${e.valor} de HP máximo.`;
     // stripOne e afins: `efeito` é o tipo do buff removido -> rótulo humano
     default:
       return alvo ? `${alvo} perdeu ${rotuloEfeito(e.efeito)}.`

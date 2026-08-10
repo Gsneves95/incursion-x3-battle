@@ -101,6 +101,33 @@ console.log('== 1c. contador de CAMPO por LADO (pool do time, Combo): gera, teto
   ok(E.getContadorLado(st, 0, 'combo') === 0 && E.getContadorLado(st, 1, 'combo') === 9, 'consumir o lado 0 não toca o pool do lado 1');
   console.log('  dois lados: pools separados · teto por lado · consumo não cruza');
 }
+console.log('== 1d. redução de HP MÁXIMO (Podridão): -10/acúmulo, guarda o perdido, piso 1, clamp não mata, restaura sem curar ==');
+{
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 108);
+  const vitima = st.lados[0].units[0], ahpuch = st.lados[1].units[0], itzamna = st.lados[0].units[1];
+  const POD = v => ({ t: 'contador', nome: 'podridao', v, reduzMaxHp: 10 });
+  E.aplicarFx(st, ahpuch, [POD(2)], A('inimigo', 'habilidade'), [vitima]);   // 2 Podridão -> máx 100
+  ok(vitima.maxHp === 100 && vitima.hp === 100, `2 Podridão: máx 120→100, hp clampa (${vitima.maxHp}/${vitima.hp})`);
+  ok((vitima.maxHpPerdido || 0) === 20, `guardou 20 de máximo perdido (${vitima.maxHpPerdido})`);
+  E.aplicarFx(st, ahpuch, [POD(12)], A('inimigo', 'habilidade'), [vitima]);  // +12 -> máx tentaria -120, PISO 1
+  ok(vitima.maxHp === 1, `piso 1 no máximo (${vitima.maxHp})`);
+  ok(vitima.hp === 1 && vitima.vivo, `clamp puxa hp p/ 1, NÃO mata (hp ${vitima.hp}, vivo ${vitima.vivo})`);
+  // Itzamná restaura: devolve TODO o máximo perdido, SEM curar
+  vitima.hp = 1;
+  E.aplicarFx(st, itzamna, [{ t: 'restauraMax', escopo: 'time' }], A('auto', 'milagre'), []);
+  ok(vitima.maxHp === 120, `máximo restaurado a 120 (${vitima.maxHp})`);
+  ok(vitima.hp === 1, `restaurar NÃO cura — hp fica em 1 (${vitima.hp})`);
+  ok((vitima.maxHpPerdido || 0) === 0, 'perdido zerado após restaurar');
+  console.log('  2 Podridão→100 (guarda 20) · piso 1 · clamp não mata · restaura 120 sem curar');
+}
+{ // edge #4: a redução não mata por clamp mesmo com hp já baixo
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 109);
+  const a = st.lados[1].units[0], v = st.lados[0].units[0];
+  v.maxHp = 10; v.hp = 5;
+  E.aplicarFx(st, a, [{ t: 'contador', nome: 'podridao', v: 1, reduzMaxHp: 10 }], A('inimigo', 'habilidade'), [v]);
+  ok(v.maxHp === 1 && v.hp === 1 && v.vivo, `5/10 + Podridão → 1/1 viva (${v.maxHp}/${v.hp} vivo=${v.vivo})`);
+  console.log('  clamp não mata: 5/10 + Podridão → 1/1 viva');
+}
 
 // ------------------------------------------------------- 2. estado Dia/Noite
 console.log('== 2. estado global Dia/Noite: ativa, escala dano, expira ==');
