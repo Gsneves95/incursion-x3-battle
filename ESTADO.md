@@ -4,6 +4,24 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.0c — reconciliar o orçamento de dano (calibrado p/ vida 100) com a vida 120.
+**Resultado:** ANÁLISE + reescala cirúrgica (nenhum valor de dano tocado). A vida virou 120 no
+§15 SEM mudar o dano bruto (jogo ~20% mais lento, de propósito), mas números que são FRAÇÃO da
+vida — limiar de execução, portão "acima/abaixo de N de HP", HP fixo de revive — derivaram em
+silêncio (execução ≤25 era 25%, virou ~21%). Varredura das 57 strings + prosa do roster achou
+**exatamente 19** (7 execução, 1 portão-alto, 4 portão-baixo, 7 revive; Osíris 2×). Escolhida a
+opção **(c)** (reescalar ×1,2 só as frações; dano bruto e taxas ficam — CONTINUAÇÃO do §15, não
+revisão). Aplicado: execução 20→24 / 25→30, Durga 70→84 (só o portão; 48/32 ficam), portão-baixo
+50→60, revive 40→48 / 50→60 / 30→36 / 25→30 — tudo em `data/kits.json`; **só a Nezha** no motor
+(revive 40→48 em `engine.js` + `data/deuses/nezha.json`). **Dois achados corrigiram a proposta:**
+"não cai abaixo de 1" é BINÁRIO (1 HP em qualquer vida), fora do (c); e a Durga era BUFF acidental
+("acima de 70" alargou a faixa) — deriva de fração corta nos dois sentidos. Nova
+`tests/fracoes.test.js` (tabela FECHADA de frações, lê a vida do motor, TOL=0 para não mesclar as
+faixas 20%/25%) trava adiante — os 73 futuros nascem certos. **16 suítes verdes; auditoria de teto
+BRUTO segue verde** (prova de que nenhum dos 19 era dano disfarçado). Ver decisão 26.
+
+## Sessão F1.0b (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.0b — motor emite EVENTOS estruturados; um narrador TOTAL traduz para pt-BR.
 **Resultado:** o motor **parou de escrever português**. `log()` empilha eventos `{tipo, ...}` em
 `st.log` (antes ~57 strings pt-BR chumbadas), e `st.fim` virou `{tipo:'fim', resultado, lado?,
@@ -435,6 +453,13 @@ sessão de reconciliação ou ao encostar em cada área.
   `src/ui/narrar.js` traduz na hora de exibir, e o remendo `traduzirRotulos` foi removido. A
   varredura `tests/eventos.test.js` mantém o contrato. Ver decisão 25. (O motor roda no servidor
   da Fase 5 sem uma string de português; localização passa a ser trocar o narrador.)
+- **DÍVIDA: schema não pega divergência PROSA↔MOTOR (aberta na F1.0c).** O schema da F1.0a
+  (`tools/valida_kit.js`) valida a forma dos kits de máquina (`data/deuses`), mas NÃO compara com a
+  prosa do roster (`data/kits.json`) — o texto de um kit e o `fx` que o motor executa podem divergir
+  em silêncio. Hoje só a Nezha existe nos dois e foi mantida em sincronia à mão (revive 48 nos dois).
+  Com 73 kits vindo, prosa e código divergindo sem ninguém ver é o pior tipo de bug. **Forma-alvo:**
+  um checador na build que, para cada kit implementado, confira os números da prosa contra os do `fx`
+  (dano, cura, custo, recarga, limiar). Candidata a uma F1.0x antes dos lotes. Ver decisão 26.
 - **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
   e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
   de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção

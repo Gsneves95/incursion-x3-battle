@@ -362,7 +362,7 @@ function matar(st, atk, alvo) {
   log(st, { tipo: 'queda', alvo: alvo.key });
   if (alvo.key === 'nezha' && !alvo.renasceu) {
     alvo.renasceu = true; alvo.pendenteRenascer = true;
-    log(st, { tipo: 'passiva', origem: alvo.key, valor: 40 });   // volta com 40 no próximo turno (iniciarTurno)
+    log(st, { tipo: 'passiva', origem: alvo.key, valor: 48 });   // volta com 48 no próximo turno (iniciarTurno) — 40% de 120 (F1.0c)
   }
   if (atk && atk.key === 'zeus' && atk.vivo) {                      // passiva Zeus
     st.lados[atk.lado].orbs['Tempestade']++;
@@ -515,7 +515,7 @@ function iniciarTurno(st) {
   l.dividaLivre = 0;               // a dívida do turno anterior já foi quitada no fimTurno
 
   for (const u of l.units) {
-    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 40; log(st, { tipo: 'revive', alvo: u.key, valor: 40, passiva: u.key }); }
+    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 48; log(st, { tipo: 'revive', alvo: u.key, valor: 48, passiva: u.key }); }   // 40% de 120 (F1.0c)
     if (!u.vivo) continue;
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir

@@ -54,7 +54,7 @@
    "nome": "Portões do Submundo",
    "custo": "2 Umbra + 1 livre",
    "recarga": 4,
-   "efeito": "40 de dano a 1 inimigo; se ele estiver com 20 ou menos de HP, é eliminado. Rouba 1 orbe."
+   "efeito": "40 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe."
   },
   "passiva": {
    "nome": "Ceifador de Almas",
@@ -271,7 +271,7 @@
    "nome": "Estação Eterna",
    "custo": "2 Verdejante + 1 livre",
    "recarga": 4,
-   "efeito": "Revive 1 aliado caído com 40 de HP; se ninguém caiu, cura 25 no time."
+   "efeito": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time."
   },
   "passiva": {
    "nome": "Ciclo das Estações",
@@ -705,7 +705,7 @@
    "nome": "Fauces do Fim",
    "custo": "2 Umbra + 1 livre",
    "recarga": 4,
-   "efeito": "38 de dano a 1 inimigo; se ele estiver com 20 ou menos de HP, é eliminado."
+   "efeito": "38 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado."
   },
   "passiva": {
    "nome": "Fome Insaciável",
@@ -798,7 +798,7 @@
    "nome": "Salão dos Caídos",
    "custo": "2 Aurora + 1 livre",
    "recarga": 4,
-   "efeito": "Revive 1 aliado caído com 40 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos."
+   "efeito": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos."
   },
   "passiva": {
    "nome": "Seiðr",
@@ -1040,13 +1040,13 @@
    "nome": "Trigo do Renascimento",
    "custo": "2 Umbra",
    "recarga": 2,
-   "efeito": "Cura 20 em 1 aliado; se ele estiver abaixo de 50 de HP, ganha também 15 de Defesa Destrutível."
+   "efeito": "Cura 20 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
   },
   "milagre": {
    "nome": "Tribunal do Duat",
    "custo": "2 Umbra + 1 livre",
    "recarga": 4,
-   "efeito": "Revive 1 aliado caído com 50 de HP e remove os debuffs dele."
+   "efeito": "Revive 1 aliado caído com 60 de HP e remove os debuffs dele."
   },
   "passiva": {
    "nome": "Rei dos Mortos",
@@ -1077,7 +1077,7 @@
    "nome": "Ressurreição de Osíris",
    "custo": "2 Aurora + 2 livres",
    "recarga": 5,
-   "efeito": "Revive todos os aliados caídos com 30 de HP. Uma vez por partida."
+   "efeito": "Revive todos os aliados caídos com 36 de HP. Uma vez por partida."
   },
   "passiva": {
    "nome": "Nome Secreto",
@@ -1170,7 +1170,7 @@
    "nome": "Sete Vidas",
    "custo": "1 Aurora + 2 livres",
    "recarga": 4,
-   "efeito": "1 aliado ganha Vida Extra: na próxima vez que cair, revive na hora com 25 de HP."
+   "efeito": "1 aliado ganha Vida Extra: na próxima vez que cair, revive na hora com 30 de HP."
   },
   "passiva": {
    "nome": "Reflexos Felinos",
@@ -1232,7 +1232,7 @@
    "nome": "Devorar a Alma",
    "custo": "2 Umbra + 1 livre",
    "recarga": 4,
-   "efeito": "Elimina o alvo se ele estiver Atordoado, Selado ou com 25 ou menos de HP; senão, 35 de dano."
+   "efeito": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 35 de dano."
   },
   "passiva": {
    "nome": "Sentença Final",
@@ -1267,7 +1267,7 @@
   },
   "passiva": {
    "nome": "Imortal",
-   "efeito": "1× por partida, Bennu retorna no turno seguinte com 50 de HP após ser derrotado."
+   "efeito": "1× por partida, Bennu retorna no turno seguinte com 60 de HP após ser derrotado."
   }
  },
  {
@@ -1542,7 +1542,7 @@
    "nome": "Portal de Yomotsu",
    "custo": "2 Umbra + 1 livre",
    "recarga": 4,
-   "efeito": "20 de dano a todos os inimigos; elimina amaldiçoados com 25 ou menos de HP."
+   "efeito": "20 de dano a todos os inimigos; elimina amaldiçoados com 30 ou menos de HP."
   },
   "passiva": {
    "nome": "Mil por Dia",
@@ -1825,7 +1825,7 @@
   },
   "passiva": {
    "nome": "Regeneração Demoníaca",
-   "efeito": "Shuten cura 6 por turno (10 se estiver abaixo de 50 de HP)."
+   "efeito": "Shuten cura 6 por turno (10 se estiver abaixo de 60 de HP)."
   }
  },
  {
@@ -2011,7 +2011,7 @@
   },
   "passiva": {
    "nome": "Renascido do Lótus",
-   "efeito": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 40 de HP."
+   "efeito": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 48 de HP."
   }
  },
  {
@@ -2249,7 +2249,7 @@
    "nome": "Sede de Sangue",
    "custo": "2 Umbra",
    "recarga": 1,
-   "efeito": "20 de dano a 1 inimigo, +10 por inimigo abaixo de 50 de HP."
+   "efeito": "20 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP."
   },
   "milagre": {
    "nome": "Dança da Aniquilação",
@@ -2317,7 +2317,7 @@
    "nome": "Fim de Mahishasura",
    "custo": "2 Chama + 1 livre",
    "recarga": 4,
-   "efeito": "32 de dano (48 se o alvo estiver acima de 70 de HP) e atordoa por 1 turno."
+   "efeito": "32 de dano (48 se o alvo estiver acima de 84 de HP) e atordoa por 1 turno."
   },
   "passiva": {
    "nome": "Montaria Leonina",
@@ -2472,7 +2472,7 @@
    "nome": "Afogamento",
    "custo": "2 Maré + 1 livre",
    "recarga": 4,
-   "efeito": "18 de dano a todos os inimigos; elimina Encharcados com 20 ou menos de HP."
+   "efeito": "18 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
   },
   "passiva": {
    "nome": "Beleza Fatal",
@@ -2631,7 +2631,7 @@
   },
   "passiva": {
    "nome": "Sangue na Água",
-   "efeito": "O Sangramento causa +4 quando o alvo age; +8 de dano contra alvos abaixo de 50 de HP."
+   "efeito": "O Sangramento causa +4 quando o alvo age; +8 de dano contra alvos abaixo de 60 de HP."
   }
  },
  {
@@ -2875,7 +2875,7 @@
    "nome": "Funda de Balor",
    "custo": "2 Aurora + 1 livre",
    "recarga": 4,
-   "efeito": "38 de dano puro ao inimigo de maior HP; se ele estiver com 20 ou menos, é eliminado."
+   "efeito": "38 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado."
   },
   "passiva": {
    "nome": "Luz do Sol",
@@ -2900,7 +2900,7 @@
    "nome": "Presságio de Morte",
    "custo": "2 Umbra",
    "recarga": 2,
-   "efeito": "Por 2 turnos, 1 inimigo não pode ser curado e é eliminado se terminar um turno com 20 ou menos de HP."
+   "efeito": "Por 2 turnos, 1 inimigo não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP."
   },
   "milagre": {
    "nome": "As Três Irmãs",

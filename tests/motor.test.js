@@ -196,7 +196,7 @@ console.log('== 10. Nezha renasce uma única vez ==');
   E.agir(st, st.lados[1].units[0].uid, 'basico', [n.uid]);
   ok(!n.vivo && n.pendenteRenascer, 'deveria estar caído com renascimento pendente');
   E.fimTurno(st);
-  ok(n.vivo && n.hp === 40, `deveria voltar com 40, vivo=${n.vivo} hp=${n.hp}`);
+  ok(n.vivo && n.hp === 48, `deveria voltar com 48 (40% de 120, F1.0c), vivo=${n.vivo} hp=${n.hp}`);
   console.log(`  voltou vivo=${n.vivo} hp=${n.hp}`);
 }
 

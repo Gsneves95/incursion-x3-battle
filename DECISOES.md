@@ -712,6 +712,53 @@ por gravidade percebida.
 
 ---
 
+## 26. Fração implícita da vida reescalada para 120 (F1.0c) — CONTINUAÇÃO do §15, não revisão
+
+O §15 subiu a vida para 120 **sem tocar no dano bruto** (jogo ~20% mais lento, de propósito) e
+até previu a consequência numa linha — "cada Milagre de execução mira ~1/3 da vida, não ~2/5" —
+mas **glosou sem medir kit a kit**. O §26 fecha exatamente esse aberto. Não revê o §15: o dano
+bruto continua congelado (opção (b), decidida lá); aqui só se corrige o que o §15 deixou derivar.
+
+**O problema medido.** Números que são FRAÇÃO da vida não escalam sozinhos quando a vida sobe. A
+100, um limiar de execução "≤25" era 25% da vida; a 120 virou ~21%. É degradação silenciosa: não
+quebrava teste, ninguém revia. A varredura das 57 strings antigas (F1.0b) já tinha exposto a
+categoria; aqui ela foi medida.
+
+**Decisão: opção (c)** — reescalar ×1,2 SÓ o que é fração implícita da vida, mantendo o dano
+bruto e as taxas (cura, escudo, redução plana — que escalam junto com o dano, preservando a razão,
+então pertencem ao §15). (a) (escalar tudo) contradiz o §15; (b) puro deixa a degradação de pé.
+
+**Dois achados que corrigiram a proposta do dono (a deriva de fração corta nos DOIS sentidos):**
+- **"Não cai abaixo de 1 de HP" NÃO é fração — é binário.** 1 HP é 1 HP em qualquer vida máxima
+  (Hércules, Sun Wukong, Chang'e, Vishnu, Oxalá, Dagda, contador da Shiva). Reescalar não faz
+  sentido; ficam de fora. (O dono havia listado em (c); retirado.)
+- **A Durga era um BUFF acidental, não degradação.** O portão "48 se **acima** de 70 de HP" abria
+  o bônus para 70% da vida a 100; a 120, "acima de 70" pega tudo acima de 58% — faixa MAIOR. A
+  procura só por enfraquecimento teria perdido isso. Lição: fração à deriva enfraquece uns e
+  fortalece outros; auditar deriva é olhar os dois sentidos.
+
+**Os 19 números reescalados** (7 execução + 1 portão-alto + 4 portão-baixo + 7 revive; Osíris
+entra 2×, portão + revive; 18 kits, 19 linhas): execução 20→24 / 25→30; portão-alto (Durga)
+70→84 (só o portão; o dano 48/32 fica); portão-baixo 50→60; revive 40→48 / 50→60 / 30→36 / 25→30.
+Tudo na prosa do roster (`data/kits.json`), **só o dano bruto NÃO** foi tocado — a auditoria de
+teto bruto (`auditoria.test.js`) segue verde, prova de que nenhum dos 19 era dano disfarçado.
+**Só a Nezha está implementada no motor** (revive 40→48 em `engine.js`, prosa em `data/deuses`);
+os outros 18 são prosa até virarem kit de máquina.
+
+**Trava adiante (`tests/fracoes.test.js`).** Tabela FECHADA de frações pretendidas por categoria
+(execução {20%,25%}, portão-alto {70%}, portão-baixo {50%}, revive {25%,30%,40%,50%}); a varredura
+lê a vida DO MOTOR (não de um literal) e falha se um kit sentar fora de `round(fração × vida)`.
+Tolerância = 0 por decisão: o alvo é o inteiro exato, e ±1 mesclaria as faixas 20%/25% da execução
+(24 vs o velho 25). Se a vida mudar de novo, os alvos recomputam e o teste aponta o que reescalar
+— os 73 futuros nascem certos por construção, não por memória.
+
+**Lacuna aberta (schema não pega prosa↔motor).** O schema da F1.0a valida a forma dos kits de
+máquina (`data/deuses`), mas NÃO compara com a prosa do roster (`data/kits.json`); prosa e código
+podem divergir em silêncio. Hoje só a Nezha existe nos dois — mantidos em sincronia à mão. Com 73
+kits vindo, isso vira bug. Tarefa aberta (ESTADO.md): um checador prosa↔motor na build.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
