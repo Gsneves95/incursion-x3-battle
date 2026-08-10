@@ -4,6 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** Decisões pós-varredura — o dono montou o resto da Fase 1 (sem código).
+**Resultado (decisões do dono, registradas):** a decisão-mãe foi batida — **passiva ganha schema
+declarativo** e isso VIRA A F1.2, antes de execução/Selado (contamina como nada mais: sem ela, 89
+passivas viram 89 `if` no motor, o oposto da F1.0a; ver DECISOES §36). Nova ordem da Fase 1:
+- **F1.2** passiva declarativa (várias sessões; começa pelo "+N condicional" 38 kits, migra os 12 já
+  feitos, prova comportamento inalterado; depois uma categoria por sessão, na ordem de frequência).
+- **F1.3** Bloco 1 morte/sobrevivência — **piso-1-HP PRIMEIRO, execução depois**.
+- **F1.4** Bloco 2 controle/vocabulário (Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar).
+- **F1.5** Bloco 3 modos/estado/escolha múltipla.  **F1.6** arena de auto-jogo.  **F1.7+** kits por panteão.
+A lição do "número que mudou 3×" foi registrada em DECISOES §35 (eu media a dimensão errada: `fx` em vez
+de passivas). **PRÓXIMO:** plano da F1.2 enviado ao dono aguardando confirmação antes de código; e as ~15
+decisões dos 3 blocos foram mandadas em bloco (com recomendação em cada) para o dono responder numa mensagem.
+
+## Sessão — Varredura completa (anterior)
+**Data:** 2026-08-10
 **Tarefa:** Varredura COMPLETA das primitivas faltantes (100 kits), última tarefa de planejamento antes dos kits.
 **Resultado:** `docs/primitivas-faltantes.md` — leitura da prosa inteira dos 100 kits × vocabulário real do
 motor. Achado que fecha a conta: o número "muda toda vez" (12→11→4→7) porque contávamos a coisa errada —
@@ -15,7 +30,7 @@ reflete, piso-de-1-HP, redirecionar); B=fx-verde/parcial (Dia-Noite-ler, alterna
 invocações, cópia, contra-ataque, etc.); C=provadas; D=passivas por categoria. **~15 pontos precisam de
 decisão do dono**, agrupados em 3 blocos (Morte&sobrevivência / Controle&vocabulário / Modos-estado-passivas).
 **AGUARDA:** o dono monta o resto da Fase 1 a partir da tabela (quais viram tarefa, quais viajam, ordem dos lotes)
-e resolve os 3 blocos de decisão. F1.2 (execução+Selado) confirmada como próxima tarefa de código.
+e resolve os 3 blocos de decisão. [RESOLVIDO na sessão seguinte — ver bloco acima.]
 
 ## Sessão F1.1 Rá + varredura parcial (anterior)
 **Data:** 2026-08-10

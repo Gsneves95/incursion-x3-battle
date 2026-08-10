@@ -930,13 +930,48 @@ prosa pura, 11 feitas, e 38 do tipo "+N dano condicional" (colapsáveis num `bon
 data-driven). A tabela é a base para o dono montar o resto da Fase 1; as decisões dela ficam ABERTAS abaixo
 até serem batidas em bloco.
 
+**LIÇÃO (a mais cara do planejamento):** o número mudou TRÊS vezes (12→11→4→7) não porque a lista crescia,
+mas porque **eu media a dimensão errada** — contava `fx` faltante quando o custo real estava nas passivas.
+Medir a dimensão certa de uma vez (a varredura completa) valeu mais que qualquer contagem incremental. Antes
+de estimar "quanto falta", pergunte "estou contando a unidade certa?" — `fx` era o proxy fácil e errado.
+
+## 36. Passiva ganha SCHEMA DECLARATIVO — a decisão-mãe, vira a F1.2 (antes de execução e Selado)
+
+Decisão do dono a partir da varredura (§35): a passiva deixa de ser prosa-hardcoded e ganha `fx` declarado
+no kit, igual à habilidade. **Contamina como nada mais no projeto:** sem ela, 89 passivas viram 89 blocos
+`if (u.key===...)` no motor — o OPOSTO do que a F1.0a fez com os kits (tirar dado do motor), e o checador
+da F1.0e (§28) não alcança `if` em código. O número fecha: ~94 das 100 passivas caem em 6-7 formas
+declaráveis (+N condicional 38, imunidade estática 27, por-turno 15, on-kill 14, reativa 10, on-death 7,
+sinergia nomeada 7) — a diferença entre **6 mecanismos e 89 casos especiais**. Não é refatoração
+especulativa; é a mesma faxina da F1.0a aplicada às passivas.
+
+**Plano da F1.2 (várias sessões, UMA categoria por sessão):**
+1. Começar pelo **"+N condicional" (38 kits)** — a forma mais comum, valida o desenho. Declarar no kit, não
+   no motor. Migrar as passivas dos 12 já implementados que caem nessa forma (sobek, ra, ogum, brigid…) e
+   provar que o comportamento NÃO mudou (as suítes atuais são a rede).
+2. Depois as outras categorias, uma por sessão, na ordem de frequência. Cada uma com teste + migração dos já
+   implementados.
+3. O schema da F1.0a (`valida_kit`) passa a validar a FORMA da passiva declarada, igual valida habilidade.
+4. Ao fim: relatar quantas das 100 o schema já expressa e quantas ainda precisam de código. Se sobrarem 5-6
+   casos genuinamente únicos, **hardcode é a resposta certa para o que é único de verdade** — não forçar.
+
+**ORDEM do resto da Fase 1 (renumerada com a tabela na mão; SUBSTITUI as numerações anteriores de F1.3+):**
+- **F1.2** passiva declarativa (esta; a decisão-mãe, várias sessões)
+- **F1.3** Bloco 1 — morte e sobrevivência. Dentro: **PISO DE 1 HP PRIMEIRO, execução depois** (o Shiva fura
+  o piso explicitamente → o piso precisa existir como estado real antes de a execução decidir se respeita ou fura).
+- **F1.4** Bloco 2 — controle e vocabulário (Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre,
+  redirecionar). Tudo motor, tudo junto.
+- **F1.5** Bloco 3 — modos, estado e escolha múltipla.
+- **F1.6** arena de auto-jogo.
+- **F1.7+** lotes de kit, por panteão.
+
 ---
 
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
 |---|---|
-| **Blocos de decisão da Fase 1 (da varredura, §35)** | ~15 pontos precisam de decisão, em 3 blocos: (1) Morte&sobrevivência — execução por HP/status/tempo, piso-de-1-HP, e suas interações com revive-imune e `vidaExtra`; (2) Controle&vocabulário — unificar Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; (3) Modos-estado-passivas — escolha múltipla/alterna (F1.3), ler Dia/Noite além do dano, invocações, e a decisão-mãe: passiva ganha schema declarativo (a partir do `+N condicional`, 38 kits) ou fica hardcoded. Ver `docs/primitivas-faltantes.md`. |
+| **~15 decisões dos 3 blocos (da varredura, §35)** | Decisão-mãe BATIDA (§36: passiva declarativa = F1.2). Faltam ~15 pontos, para o dono responder EM BLOCO (uma mensagem), com recomendação minha em cada: Bloco 1 (F1.3) morte/sobrevivência — piso-1-HP, execução HP/status/tempo, interações com revive-imune/`vidaExtra`; Bloco 2 (F1.4) controle — Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; Bloco 3 (F1.5) modos/estado — escolha múltipla, alterna, ler Dia/Noite, invocações. Ver `docs/primitivas-faltantes.md`. |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
 | **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |
