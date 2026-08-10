@@ -801,6 +801,27 @@ lá: quantos kits têm dado só na planilha (o "pool de time, teto 20" do Combo,
 
 ---
 
+## 29. Contador com limiar: duas FAMÍLIAS distintas (F1.1, primitiva 1)
+
+Ao ler o número de um contador contra um alvo, há **duas famílias**, e modelá-las como uma só
+produziria um mecanismo que faz as duas coisas mal:
+- **Gatilho-no-acúmulo** — dispara SOZINHO quando o número muda e cruza um limiar. Ex.: Anúbis,
+  "quem chegar a 4 Ataduras fica Selado". É um evento no momento do acúmulo.
+- **Condição-na-ação** — o número é LIDO quando o jogador aperta o botão, para escalar/desbloquear.
+  Ex.: Kitsune, "com 5+ Caudas, Domina"; Rá, "+4 por Disco Solar". É `porContador`, que já existe
+  (primitivas.test §1) — condição sobre um mecanismo existente, não mecanismo novo.
+
+**Primitiva 1 entrega só o gatilho-no-acúmulo** (`fx.limiar:{em, aplica}`, config no DADO;
+`cruzarLimiar` no motor). Três bordas travadas em `primitivas.test §1b` — é onde esse padrão sempre
+quebra: (1) **dispara ao CRUZAR, uma vez** — "chegar a 4", não "estar em 4+"; acúmulo já acima NÃO
+redispara (a prosa do Anúbis pede isso); (2) **cruzar de uma vez** conta — +2 de 3→5 dispara o 4 sem
+parar nele (o Milagre do Anúbis dá +2 em todos, então acontece de verdade); (3) **imunidade** —
+`aplicar` recusa o controle no alvo imune, mas o contador acumula normalmente e **não há retroação**
+(cair a imunidade depois não aplica o efeito perdido; só um novo CRUZAR aplicaria, e acima do limiar
+não há novo cruzar). O efeito aplicado é do vocabulário existente — o gatilho é a primitiva, não o efeito.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

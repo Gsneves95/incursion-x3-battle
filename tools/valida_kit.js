@@ -34,6 +34,14 @@ function validarFx(f, ctx, errs) {
     errs.push(`${ctx}: apply com eff.type inválido: "${f.eff && f.eff.type}"`);
   if (f.t === 'dot' && !V.dots.includes(f.nome))
     errs.push(`${ctx}: dot com nome fora do vocabulário: "${f.nome}" (válidos: ${V.dots.join(', ')})`);
+  if ('limiar' in f) {   // gatilho-no-acúmulo: contador cruza `em` -> aplica `aplica` (F1.1)
+    const L = f.limiar;
+    if (!L || typeof L !== 'object') errs.push(`${ctx}: limiar não é objeto`);
+    else {
+      if (typeof L.em !== 'number' || !Number.isInteger(L.em) || L.em <= 0) errs.push(`${ctx}: limiar.em inválido (${JSON.stringify(L.em)}; inteiro > 0)`);
+      if (!L.aplica || !V.efeitos.includes(L.aplica.type)) errs.push(`${ctx}: limiar.aplica.type inválido: "${L.aplica && L.aplica.type}"`);
+    }
+  }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

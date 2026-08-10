@@ -37,6 +37,32 @@ console.log('== 1. contadores acumuláveis: somam, teto, escalam dano, consomem 
   ok(h0 - e0.hp === 18 + 24, `18 + 8×3 = 42 esperado, deu ${h0 - e0.hp}`);
   console.log(`  Portões de Xibalbá: 18 + 8×3 Podridões = 42`);
 }
+console.log('== 1b. limiar de contador: CRUZAR N dispara efeito UMA vez (gatilho-no-acúmulo, F1.1) ==');
+{ // família "gatilho-no-acúmulo": dispara sozinho quando o número cruza `em` (≠ condição-na-ação)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 103);
+  const u = st.lados[0].units[0], alvo = st.lados[1].units[0];
+  const FX = v => ({ t: 'contador', nome: 'atadura', v, limiar: { em: 4, aplica: { type: 'atordoado', dur: 2 } } });
+  E.aplicarFx(st, u, [FX(3)], A('inimigo', 'milagre'), [alvo]);          // 3: abaixo do limiar
+  ok(E.getContador(alvo, 'atadura') === 3 && !E.ef(alvo, 'atordoado'), 'abaixo de 4 não dispara');
+  E.aplicarFx(st, u, [FX(2)], A('inimigo', 'milagre'), [alvo]);          // 3->5: cruza o 4 DE UMA VEZ (edge #2)
+  ok(E.getContador(alvo, 'atadura') === 5 && !!E.ef(alvo, 'atordoado'), 'cruzar de uma vez (3→5) dispara o limiar');
+  alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'atordoado');       // limpa e acumula a 6ª (edge #1)
+  E.aplicarFx(st, u, [FX(1)], A('inimigo', 'milagre'), [alvo]);
+  ok(E.getContador(alvo, 'atadura') === 6 && !E.ef(alvo, 'atordoado'), 'acúmulo acima do limiar NÃO redispara (chegar a 4, não estar em 4+)');
+  console.log('  <4 nada · 3→5 cruza e dispara · 6ª acima não redispara');
+}
+{ // edge #3: cruza o limiar, mas o controle FALHA por imunidade; contador fica, SEM retroação
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 104);
+  const u = st.lados[0].units[0], alvo = st.lados[1].units[0];
+  alvo.efeitos.push({ type: 'controlImmune', dur: 9 });
+  const FX = v => ({ t: 'contador', nome: 'atadura', v, limiar: { em: 4, aplica: { type: 'atordoado', dur: 2 } } });
+  E.aplicarFx(st, u, [FX(4)], A('inimigo', 'milagre'), [alvo]);          // cruza 4, mas atordoar falha (imune)
+  ok(E.getContador(alvo, 'atadura') === 4 && !E.ef(alvo, 'atordoado'), 'imune: cruza mas o controle falha; contador acumula até 4');
+  alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'controlImmune');   // imunidade cai; 5ª não re-cruza
+  E.aplicarFx(st, u, [FX(1)], A('inimigo', 'milagre'), [alvo]);
+  ok(!E.ef(alvo, 'atordoado'), 'SEM retroação: cair a imunidade não aplica o efeito que falhou');
+  console.log('  imune: contra-controle falha, contador segue, sem retroação');
+}
 
 // ------------------------------------------------------- 2. estado Dia/Noite
 console.log('== 2. estado global Dia/Noite: ativa, escala dano, expira ==');

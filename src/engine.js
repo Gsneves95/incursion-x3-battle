@@ -88,7 +88,7 @@ const VOCAB = {
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
-    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu',
+    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu', 'limiar',
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -232,6 +232,15 @@ function addContador(st, u, nome, v = 1, max = null) {
   return novo;
 }
 function getContador(u, nome) { return u.contadores[nome] || 0; }
+// PRIMITIVA limiar-de-contador (F1.1, família "gatilho-no-acúmulo"): CRUZAR de baixo de `em` para
+// em-ou-acima dispara UMA vez o efeito `aplica`. Regras travadas em teste: (1) dispara ao CRUZAR,
+// uma vez — acúmulo já ≥ em NÃO redispara ("chegar a 4", não "estar em 4+"); (2) cruzar de uma vez
+// (3→5 por +2) conta, não precisa parar no limiar; (3) `aplicar` respeita imunidade — o efeito
+// falha, o contador fica, sem retroação. A config mora no DADO (fx.limiar), não no motor.
+function cruzarLimiar(st, origem, alvo, e, antes) {
+  const L = e.limiar; if (!L) return;
+  if (antes < L.em && getContador(alvo, e.nome) >= L.em) aplicar(st, alvo, { ...L.aplica, origem: origem.uid });
+}
 function contadorNoCampo(st, nome, lado) {
   return st.lados[lado].units.filter(u => u.vivo).reduce((s, u) => s + getContador(u, nome), 0);
 }
@@ -731,7 +740,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }
-      else if (e.t === 'contador' && e.alvo !== 'self') addContador(st, t, e.nome, e.v, e.max);
+      else if (e.t === 'contador' && e.alvo !== 'self') { const antes = getContador(t, e.nome); addContador(st, t, e.nome, e.v, e.max); cruzarLimiar(st, u, t, e, antes); }
       else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
       else if (e.t === 'revive') reviver(st, t, e);
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
@@ -752,7 +761,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     }
     // efeitos "uma vez" — não iteram sobre a seleção (agem em self ou globalmente):
     if (e.t === 'selfHp') { u.hp = Math.max(1, u.hp + e.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -e.v, kind: 'puro' }); }
-    if (e.t === 'contador' && e.alvo === 'self') addContador(st, u, e.nome, e.v, e.max);
+    if (e.t === 'contador' && e.alvo === 'self') { const antes = getContador(u, e.nome); addContador(st, u, e.nome, e.v, e.max); cruzarLimiar(st, u, u, e, antes); }
     if (e.t === 'intercepta') {
       const protege = e.protege === 'time' ? 'time' : (alvos[0] ? alvos[0].uid : u.uid);
       aplicar(st, u, { type: 'intercepta', protege, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });

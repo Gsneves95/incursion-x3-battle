@@ -4,6 +4,20 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** F1.1 primitiva 1 — contador cruza limiar → aplica efeito (gatilho-no-acúmulo).
+**Resultado:** motor ganhou `fx.limiar:{em, aplica}` (config no DADO) + `cruzarLimiar` — quando um
+contador CRUZA `em` (de baixo para em-ou-acima), aplica o efeito UMA vez. Provado ANTES de qualquer
+kit ("primitiva antes do deus"). **Reusei `tests/primitivas.test.js` §1** (é a home da primitiva de
+contador — "somam, teto, escalam, consomem") em vez de criar `contadores.test.js`: novo bloco **§1b**
+com as 3 bordas do dono — (1) dispara ao CRUZAR, uma vez (6ª acima NÃO redispara); (2) cruzar de uma
+vez (3→5 por +2) dispara; (3) imunidade: cruza mas o controle falha, contador acumula, SEM retroação.
+Schema aceita `limiar` (`valida_kit` valida `em` e `aplica.type ∈ V.efeitos`). Descoberta ao ler o
+código (rule 7): `porContador`/`consomeContador`/`contadorNoCampo` **já existem e são testados** — a
+família "condição-na-ação" (Kitsune "5+ Caudas", Rá "+4 por Disco") é mecanismo existente, não novo
+(§29 registra as duas famílias). 17 suítes verdes. NÃO escrevi kit ainda (primitiva isolada).
+
+## Sessão F1.0e (elo B) (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.0e (elo B) — checador da cadeia de verdade `kits.json` (fonte) ↔ `data/deuses` (derivado).
 **Resultado:** `tools/checar_cadeia.js` confere número a número (nome, custo, recarga, dano, cura)
 na build (falha alto); DIVERGÊNCIA = presunção de erro no motor (kits.json é a fonte, §26/§28); só
@@ -487,9 +501,15 @@ sessão de reconciliação ou ao encostar em cada área.
   RETÉM; os outros dois são IGUALADOS ao maior (NÃO aditivo — espalhar 2× sem novo acúmulo não muda
   nada, travar em teste); **teto 5**. Motor precisa de 4 comportamentos novos, cada um provado por
   teste antes do kit: limiar→aplica-efeito, contador-de-campo-por-lado, redução-de-HP-máximo+clamp,
-  espalhamento/contágio. **Diferido da F1.0b pago aqui:** evento `contador` ganha a CHAVE do contador
-  no campo canônico `efeito` (`{tipo:'contador',origem,valor,efeito:'disco_solar'}`); `NOMES_CONTADOR`
-  em `ui/base.js`; `OBRIGATORIOS['contador']` passa a exigir `efeito`.
+  espalhamento/contágio. **PROGRESSO — 4 comportamentos de motor, cada um provado antes do kit:**
+  [x] **1. limiar→aplica-efeito** (gatilho-no-acúmulo) — FEITO, `fx.limiar`, primitivas.test §1b, §29;
+  [ ] 2. contador-de-campo-por-lado (Combo/Susanoo, teto 20); [ ] 3. redução-de-HP-máximo+clamp
+  (Ah Puch, guarda o perdido); [ ] 4. espalhamento/contágio (Izanami). A família "condição-na-ação"
+  (Kitsune "5+ Caudas", Rá "escala") já é mecanismo existente (`porContador`, §29). **Diferido da
+  F1.0b, ainda a pagar dentro da F1.1:** evento `contador` ganha a CHAVE do contador no campo canônico
+  `efeito` (`{tipo:'contador',origem,valor,efeito:'disco_solar'}`); `NOMES_CONTADOR` em `ui/base.js`;
+  `OBRIGATORIOS['contador']` exige `efeito`; kits usam a CHAVE (`atadura`, não `Atadura`) e as tabelas
+  atuais de teste (`Disco Solar`/`Podridão`) migram para chave. Depois disso, os 6 kits.
 - **DÍVIDA: arte sub-resolvida para telas de alta densidade (F0.6b).** Com escala ~0,84
   e DPR 3, um retrato de 100×66 design vira ~270px físicos, mas a arte-fonte tem só 168px
   de largura — está sub-resolvida. Não é urgente (o protótipo roda), mas quando a produção
