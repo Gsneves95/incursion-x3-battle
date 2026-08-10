@@ -4,6 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-10
+**Tarefa:** Varredura COMPLETA das primitivas faltantes (100 kits), última tarefa de planejamento antes dos kits.
+**Resultado:** `docs/primitivas-faltantes.md` — leitura da prosa inteira dos 100 kits × vocabulário real do
+motor. Achado que fecha a conta: o número "muda toda vez" (12→11→4→7) porque contávamos a coisa errada —
+o motor **já cobre ~90% das habilidades no nível de `fx`** (25/25 tipos com handler); o custo real está em
+(a) `fx` declarado-mas-verde estreando (o trap do contador) e (b) **as 100 passivas são prosa pura,
+hardcoded uma a uma** (11 feitas; 38 são "+N dano condicional" — colapsáveis num `bonusDano condicional`).
+Tabelas: A=sem-fx (10 primitivas: execução, Selado, Pacificar, Torpor, multi-hit distribuído, vulnerabilidade,
+reflete, piso-de-1-HP, redirecionar); B=fx-verde/parcial (Dia-Noite-ler, alterna data-driven, escolha múltipla,
+invocações, cópia, contra-ataque, etc.); C=provadas; D=passivas por categoria. **~15 pontos precisam de
+decisão do dono**, agrupados em 3 blocos (Morte&sobrevivência / Controle&vocabulário / Modos-estado-passivas).
+**AGUARDA:** o dono monta o resto da Fase 1 a partir da tabela (quais viram tarefa, quais viajam, ordem dos lotes)
+e resolve os 3 blocos de decisão. F1.2 (execução+Selado) confirmada como próxima tarefa de código.
+
+## Sessão F1.1 Rá + varredura parcial (anterior)
+**Data:** 2026-08-10
 **Tarefa:** F1.1 — 1º kit de contador (Rá) + varredura das primitivas faltantes.
 **Resultado:** re-auditei a prosa INTEIRA da "Leva A" (regra nova do CLAUDE.md) e descobri que só o
 **Rá** é escrevível hoje com fx existente — Kitsune e Susanoo arrastam mecânica NÃO provada (ver

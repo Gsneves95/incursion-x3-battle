@@ -912,10 +912,31 @@ kits, e é aí que o checador da cadeia (F1.0e, §28) entra em ação pela prime
 
 ---
 
+## 34. Contador não aparece no retrato: dívida de UI com endereço na F4 (não "algum dia")
+
+O 1º kit de contador (Rá, §30) expôs que `campo.js` desenha `efeitos` e `dots` na faixa do retrato, mas
+**não `contadores`** — o Disco Solar existe só no registro. É **informação escondida**, exatamente a classe
+de problema que viemos matando desde o soft pity e o 50/50 (§20/§21): o jogador decide sobre um recurso que
+não vê. Não bloqueia escrever kits (o motor conta certo; só a exibição falta), então **não vira tarefa
+agora** — mas entra com **endereço fixo na F4 (acabamento visual)**, junto do resto da arte de faixa, não em
+"algum dia". Forma-alvo: badge/contador no retrato via `NOMES_CONTADOR` (já existe em `ui/base.js`).
+
+## 35. A varredura das primitivas é ÚNICA e substitui a descoberta de-kit-em-kit (planejamento)
+
+`docs/primitivas-faltantes.md` lê a prosa inteira dos 100 kits de uma vez. O achado que fecha a conta: o
+número de "primitivas faltantes" mudava (12→11→4→7) porque contávamos `fx` faltante, quando o custo real
+é (a) `fx` declarado-mas-verde estreando (o trap do contador, §30) e (b) **passivas hardcoded** — as 100 são
+prosa pura, 11 feitas, e 38 do tipo "+N dano condicional" (colapsáveis num `bonusDano condicional`
+data-driven). A tabela é a base para o dono montar o resto da Fase 1; as decisões dela ficam ABERTAS abaixo
+até serem batidas em bloco.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
 |---|---|
+| **Blocos de decisão da Fase 1 (da varredura, §35)** | ~15 pontos precisam de decisão, em 3 blocos: (1) Morte&sobrevivência — execução por HP/status/tempo, piso-de-1-HP, e suas interações com revive-imune e `vidaExtra`; (2) Controle&vocabulário — unificar Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; (3) Modos-estado-passivas — escolha múltipla/alterna (F1.3), ler Dia/Noite além do dano, invocações, e a decisão-mãe: passiva ganha schema declarativo (a partir do `+N condicional`, 38 kits) ou fica hardcoded. Ver `docs/primitivas-faltantes.md`. |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
 | **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |
