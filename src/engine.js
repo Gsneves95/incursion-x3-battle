@@ -16,9 +16,9 @@ const ELEMS = ['Tempestade', 'Umbra', 'Maré', 'Aurora', 'Chama', 'Verdejante'];
 const CLASSES = ['Físico', 'Mágico', 'Mental', 'Aflição'];
 
 // Alguns kits alternam de modo e trocam de classe com ele (Nezha).
-function classeDe(u, a) {
+function classeDe(st, u, a) {
   if (a.classePorModo) return a.classePorModo[u.modo] || a.classePorModo[0];
-  return a.classe || GODS[u.key].classe;
+  return a.classe || kitDe(st, u).classe;   // kit vem do catálogo da partida (st.catId), não de GODS global
 }
 
 // ---- especificação de alvos ----
@@ -45,186 +45,11 @@ function mulberry32(a) {
 }
 
 // ------------------------------------------------------------- DEUSES
-const GODS = {
-  zeus: {
-    nome: 'Zeus', faccao: 'Grega', elem: 'Tempestade', classe: 'Mágico', funcao: 'Atacante',
-    inicial: true,
-    passiva: { nome: 'Soberano', desc: 'Ao derrotar um inimigo, ganha 1 orbe de Tempestade.' },
-    ab: [
-      { slot: 'basico', classe: 'Mágico', nome: 'Cetro do Trovão', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '15 de dano a 1 inimigo.', fx: [{ t: 'dmg', v: 15 }] },
-      { slot: 'habilidade', classe: 'Mágico', nome: 'Julgamento do Trovão', cost: { Tempestade: 2 }, cd: 2, alvo: 'inimigo',
-        desc: '25 de dano; trava as habilidades Mágicas do alvo por 1 turno.',
-        fx: [{ t: 'dmg', v: 25 }, { t: 'apply', eff: { type: 'silenceClass', cls: 'Mágico', dur: 1 } }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Ira Celestial', cost: { Tempestade: 2, livre: 1 }, cd: 4, alvo: 'todosInimigos',
-        desc: '20 de dano a todos; eles causam 5 menos de dano por 2 turnos.',
-        fx: [{ t: 'dmg', v: 20 }, { t: 'apply', eff: { type: 'dmgDown', v: 5, dur: 2 } }] },
-    ],
-  },
-  ogum: {
-    nome: 'Ogum', faccao: 'Africana', elem: 'Verdejante', classe: 'Físico', funcao: 'Atacante',
-    inicial: true,
-    passiva: { nome: 'Senhor do Ferro', desc: '+10 de dano contra alvos com escudo ou redução; o dano de Ogum não pode ser reduzido.' },
-    ab: [
-      { slot: 'basico', classe: 'Físico', nome: 'Facão de Ferro', cost: { Verdejante: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '15 de dano perfurante.', fx: [{ t: 'dmg', v: 15, kind: 'perfurante' }] },
-      { slot: 'habilidade', classe: 'Físico', nome: 'Abrir Caminho à Força', cost: { Verdejante: 2 }, cd: 1, alvo: 'inimigo',
-        desc: 'Destrói todo o escudo do alvo e seus buffs defensivos; 20 de dano.',
-        fx: [{ t: 'destroyShield' }, { t: 'stripDef' }, { t: 'dmg', v: 20 }] },
-      { slot: 'milagre', classe: 'Físico', nome: 'Forja de Guerra', cost: { Verdejante: 2, livre: 1 }, cd: 4, alvo: 'inimigo',
-        desc: '38 de dano puro; Ogum causa +10 de dano pelo resto da partida.',
-        fx: [{ t: 'dmg', v: 38, kind: 'puro' }, { t: 'apply', eff: { type: 'dmgUp', v: 10, dur: 99 }, escopo: 'self' }] },
-    ],
-  },
-  tyr: {
-    nome: 'Tyr', faccao: 'Nórdica', elem: 'Aurora', classe: 'Físico', funcao: 'Guardião',
-    inicial: true,
-    passiva: { nome: 'O Maneta', desc: 'O dano de Tyr não pode ser reduzido nem absorvido por escudo.' },
-    ab: [
-      { slot: 'basico', classe: 'Físico', nome: 'Espada de Uma Mão', cost: {}, cd: 0, alvo: 'inimigo',
-        desc: 'Grátis. 12 de dano.', fx: [{ t: 'dmg', v: 12 }] },
-      { slot: 'habilidade', classe: 'Mental', nome: 'Duelo de Honra', cost: { Aurora: 2 }, cd: 1, alvo: 'inimigo',
-        desc: 'Provoca o alvo por 2 turnos; Tyr recebe 15 de redução por 2 turnos.',
-        fx: [{ t: 'apply', eff: { type: 'taunt', dur: 2 } },
-             { t: 'apply', eff: { type: 'dmgReduction', v: 15, dur: 2 }, escopo: 'self' }] },
-      { slot: 'milagre', classe: 'Físico', nome: 'Sacrifício do Bravo', cost: { Aurora: 1, livre: 2 }, cd: 4, alvo: 'nenhum',
-        desc: 'Tyr perde 20 de HP; o time fica imune a controle e causa +8 de dano por 2 turnos.',
-        fx: [{ t: 'selfHp', v: -20 },
-             { t: 'apply', eff: { type: 'controlImmune', dur: 2 }, escopo: 'time' },
-             { t: 'apply', eff: { type: 'dmgUp', v: 8, dur: 2 }, escopo: 'time' }] },
-    ],
-  },
-  sobek: {
-    nome: 'Sobek', faccao: 'Egípcia', elem: 'Maré', classe: 'Físico', funcao: 'Guardião',
-    inicial: true,
-    passiva: { nome: 'Pele de Couraça', desc: '10 de redução contra Básicos; +6 de dano contra alvos com debuff.' },
-    ab: [
-      { slot: 'basico', classe: 'Físico', nome: 'Mordida Brutal', cost: { Maré: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '15 de dano.', fx: [{ t: 'dmg', v: 15 }] },
-      { slot: 'habilidade', classe: 'Mental', nome: 'Arrasto do Nilo', cost: { Maré: 2 }, cd: 3, alvo: 'inimigo',
-        desc: 'Submerge o alvo por 1 turno (não age, não pode ser alvo, não gera orbe); ao voltar, fica Encharcado.',
-        fx: [{ t: 'apply', eff: { type: 'submerso', dur: 1 } },
-             { t: 'apply', eff: { type: 'encharcado', dur: 3 } }] },
-      { slot: 'milagre', classe: 'Físico', nome: 'Dilúvio', cost: { Maré: 2, livre: 1 }, cd: 4, alvo: 'todosInimigos',
-        desc: '18 de dano a todos; Encharcados sofrem 30.',
-        fx: [{ t: 'dmg', v: 18, seEncharcado: 30 }] },
-    ],
-  },
-  brigid: {
-    nome: 'Brigid', faccao: 'Celta', elem: 'Chama', classe: 'Mágico', funcao: 'Suporte',
-    inicial: true,
-    passiva: { nome: 'Ferreira Divina', desc: 'O time causa +5 de dano (permanente); curas curam +5 se alguém no campo estiver com Queimadura.' },
-    ab: [
-      { slot: 'basico', classe: 'Aflição', nome: 'Fagulha da Forja', cost: {}, cd: 0, alvo: 'inimigo',
-        desc: 'Grátis. 10 de dano + Queimadura (5/turno por 2 turnos).',
-        fx: [{ t: 'dmg', v: 10 }, { t: 'dot', nome: 'Queimadura', v: 5, dur: 2 }] },
-      { slot: 'habilidade', classe: 'Mágico', nome: 'Chama Sagrada', cost: { Chama: 2 }, cd: 2, alvo: 'nenhum',
-        desc: 'Cura 15 no time E causa 12 de dano a todos os inimigos.',
-        fx: [{ t: 'heal', v: 15, escopo: 'time' }, { t: 'dmg', v: 12, escopo: 'todosInimigos' }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Poço de Cura', cost: { Chama: 2, livre: 1 }, cd: 4, alvo: 'nenhum',
-        desc: 'Cura 25 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.',
-        fx: [{ t: 'heal', v: 25, escopo: 'time' }, { t: 'cleanse', escopo: 'time' },
-             { t: 'apply', eff: { type: 'regen', v: 8, dur: 2 }, escopo: 'time' }] },
-    ],
-  },
-  ganesha: {
-    nome: 'Ganesha', faccao: 'Hindu', elem: 'Verdejante', classe: 'Mágico', funcao: 'Suporte',
-    inicial: true,
-    passiva: { nome: 'Senhor dos Começos', desc: 'No turno 1, o time ganha 2 orbes extras.' },
-    ab: [
-      { slot: 'basico', classe: 'Mágico', nome: 'Presa Quebrada', cost: {}, cd: 0, alvo: 'inimigo',
-        desc: 'Grátis. 10 de dano.', fx: [{ t: 'dmg', v: 10 }] },
-      { slot: 'habilidade', classe: 'Mágico', nome: 'Abrir Caminho', cost: { Verdejante: 1 }, cd: 1, alvo: 'aliado',
-        desc: 'Remove todos os debuffs de 1 aliado e 1 buff de cada inimigo.',
-        fx: [{ t: 'cleanse' }, { t: 'stripOne', escopo: 'todosInimigos' }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Bênção do Início', cost: { Verdejante: 2, livre: 1 }, cd: 4, alvo: 'nenhum',
-        desc: 'Remove todo controle e debuff do time, reduz as recargas em 1 e o time ganha 2 orbes.',
-        fx: [{ t: 'cleanse', escopo: 'time' }, { t: 'cdShift', v: -1, lado: 'proprio' }, { t: 'orbGain', n: 2 }] },
-    ],
-  },
-  cuca: {
-    nome: 'Cuca', faccao: 'Brasileira', elem: 'Umbra', classe: 'Mágico', funcao: 'Controlador',
-    inicial: true,
-    passiva: { nome: 'Só Dorme de Sete em Sete Anos', desc: 'Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe.' },
-    ab: [
-      { slot: 'basico', classe: 'Mágico', nome: 'Garra de Jacaré', cost: { Umbra: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '12 de dano.', fx: [{ t: 'dmg', v: 12 }] },
-      { slot: 'habilidade', classe: 'Mental', nome: 'Nana Neném', cost: { Umbra: 2 }, cd: 2, alvo: 'inimigo',
-        desc: 'Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre.',
-        fx: [{ t: 'apply', eff: { type: 'adormecido', dur: 2 } }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'O Papão', cost: { Umbra: 2, livre: 1 }, cd: 3, alvo: 'inimigo',
-        desc: '25 de dano (38 se estiver Adormecido, +8 do próprio sono = 46); Cuca cura metade do dano causado.',
-        fx: [{ t: 'dmg', v: 25, seAdormecido: 38, curaMetade: true }] },
-    ],
-  },
-  fujin: {
-    nome: 'Fujin', faccao: 'Japonesa', elem: 'Tempestade', classe: 'Mágico', funcao: 'Manipulador',
-    inicial: true,
-    passiva: { nome: 'Companheiro de Raijin', desc: 'INERTE neste protótipo — só funciona com Raijin no time, que não é inicial.', inerte: true },
-    ab: [
-      { slot: 'basico', classe: 'Mágico', nome: 'Rajada', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '12 de dano.', fx: [{ t: 'dmg', v: 12 }] },
-      { slot: 'habilidade', classe: 'Mental', nome: 'Saco dos Ventos', cost: { Tempestade: 2 }, cd: 2, alvo: 'nenhum',
-        desc: 'Aumenta em 1 turno todas as recargas do time inimigo.',
-        fx: [{ t: 'cdShift', v: 1, lado: 'inimigo' }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Vendaval', cost: { Tempestade: 1, livre: 2 }, cd: 4, alvo: 'todosInimigos',
-        desc: '15 de dano a todos; reduz em 1 turno todas as recargas do seu time.',
-        fx: [{ t: 'dmg', v: 15 }, { t: 'cdShift', v: -1, lado: 'proprio' }] },
-    ],
-  },
-  nezha: {
-    nome: 'Nezha', faccao: 'Chinesa', elem: 'Chama', classe: 'Híbrido', funcao: 'Atacante',
-    inicial: true,
-    passiva: { nome: 'Renascido do Lótus', desc: 'Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 40 de HP.' },
-    ab: [
-      { slot: 'basico', classe: 'Físico', nome: 'Lança de Ponta Flamejante', cost: { Chama: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '15 de dano.', fx: [{ t: 'dmg', v: 15 }] },
-      { slot: 'habilidade', nome: 'Arsenal Celeste', classePorModo: { 0: 'Mental', 1: 'Aflição' },
-        cost: { Chama: 2 }, cd: 1, alvo: 'auto',
-        desc: 'Alterna a cada uso. ANEL: trava a Habilidade do alvo por 1 turno. MANTO: 12 a todos + Queimadura 8/turno.',
-        alterna: true },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Rodas de Vento e Fogo', cost: { Chama: 2, livre: 1 }, cd: 4, alvo: '2inimigos',
-        desc: '22 de dano a 2 inimigos; +10 cada se outro aliado já agiu neste turno.',
-        fx: [{ t: 'dmg', v: 22, seAliadoJaAgiu: 10 }] },
-    ],
-  },
-
-  // ---- primeiros dois dos 91 restantes: validam seleção de 2 alvos ----
-  thor: {
-    nome: 'Thor', faccao: 'Nórdica', elem: 'Tempestade', classe: 'Físico', funcao: 'Guardião',
-    passiva: { nome: 'Protetor de Midgard', desc: 'Todos os aliados recebem 6 de redução de dano.' },
-    provacao: { nome: 'O Trovão de Asgard', nivel: 'Provação', dif: 2,
-      cond: 'Vença sem perder um aliado contra Kagutsuchi, Jörmungandr e Ah Puch — três fontes de dano puro, que a passiva do Thor não reduz.' },
-    ab: [
-      { slot: 'basico', classe: 'Físico', nome: 'Golpe de Mjölnir', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '15 de dano a 1 inimigo.', fx: [{ t: 'dmg', v: 15 }] },
-      { slot: 'habilidade', classe: 'Físico', nome: 'Arremesso de Mjölnir', cost: { Tempestade: 2 }, cd: 1, alvo: '2inimigos',
-        desc: '22 de dano no primeiro alvo e 12 no segundo.',
-        fx: [{ t: 'dmg', v: 22, idx: 0 }, { t: 'dmg', v: 12, idx: 1 }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Tempestade de Asgard', cost: { Tempestade: 2, livre: 1 }, cd: 4, alvo: 'todosInimigos',
-        desc: '20 de dano a todos os inimigos; atordoa o de menor HP por 1 turno.',
-        fx: [{ t: 'dmg', v: 20 }, { t: 'atordoaMenorHp', dur: 1 }] },
-    ],
-  },
-  hera: {
-    nome: 'Hera', faccao: 'Grega', elem: 'Tempestade', classe: 'Mágico', funcao: 'Suporte',
-    passiva: { nome: 'Rainha Ciumenta', desc: 'Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível.' },
-    provacao: { nome: 'O Juramento', nivel: 'Provação', dif: 2,
-      cond: 'Vença sem perder um aliado contra Zeus, Perseu e Durga, e o Juramento Nupcial precisa estar ativo no turno em que o último inimigo cai.' },
-    ab: [
-      { slot: 'basico', classe: 'Mágico', nome: 'Cetro Real', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo',
-        desc: '12 de dano a 1 inimigo.', fx: [{ t: 'dmg', v: 12 }] },
-      { slot: 'habilidade', classe: 'Mágico', nome: 'Bênção Real', cost: { Tempestade: 2 }, cd: 2, alvo: '2aliados',
-        desc: '2 aliados causam +8 de dano e recebem 10 de redução por 2 turnos.',
-        fx: [{ t: 'apply', eff: { type: 'dmgUp', v: 8, dur: 2 } },
-             { t: 'apply', eff: { type: 'dmgReduction', v: 10, dur: 2 } }] },
-      { slot: 'milagre', classe: 'Mágico', nome: 'Juramento Nupcial', cost: { Tempestade: 1, livre: 2 }, cd: 4, alvo: '2aliados',
-        desc: 'Vincula 2 aliados por 2 turnos: o dano que cada um recebe é dividido entre os dois, e ambos ficam imunes a controle.',
-        fx: [{ t: 'vinculo', dur: 2 },
-             { t: 'apply', eff: { type: 'controlImmune', dur: 2 } }] },
-    ],
-  },
-};
+// Os KITS dos deuses NÃO moram mais aqui — são dados, um arquivo por deus em
+// data/deuses/<key>.json, montados no catálogo por src/catalogo.js. O motor RECEBE
+// o catálogo (via novoEstado) e ASSA o kit em cada unidade (u.kit); a resolução lê
+// u.kit, nunca um GODS global. Assim o motor não possui dados e o estado é auto-contido
+// (o seed determina a partida inteira mesmo se um kit for rebalanceado — ver DECISOES §24).
 
 const DEFESA = {
   slot: 'defesa', nome: 'Defesa', cost: { livre: 1 }, cd: 4, alvo: 'nenhum', universal: true,
@@ -237,9 +62,64 @@ const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo'];
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
 
+// VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
+// (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
+// TIPOS_FX é também a lista que o motor usa para RECUSAR em runtime um fx.t desconhecido
+// (ver aplicarFx): efeito com typo não passa em silêncio. Ao ensinar o motor um fx.t novo,
+// some-o aqui (e um fxKey novo, se o efeito ler um campo novo) — mesma disciplina de "primitiva antes do deus".
+const TIPOS_FX = [
+  'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
+  'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
+  'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
+];
+const VOCAB = {
+  classes: CLASSES,                              // classe de habilidade
+  elementos: ELEMS,
+  custo: [...ELEMS, 'livre'],                    // chaves válidas em cost{}
+  alvos: [...Object.keys(PASSOS), 'auto'],       // valores válidos de ability.alvo
+  fx: TIPOS_FX,                                  // valores válidos de fx.t
+  efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
+  // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
+  fxKeys: [
+    't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
+    'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
+    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
+    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu',
+  ],
+};
+
 // ------------------------------------------------------------- ESTADO
-function novaUnidade(key, idx, lado) {
-  const g = GODS[key];
+// Catálogo ATIVO por padrão: no browser é o global GODS (montado por catalogo.js a partir
+// de data/deuses); no Node é o export de catalogo.js (o MESMO objeto que os testes mutam
+// como E.GODS). novoEstado recebe o catálogo — este é só o default.
+function catalogoAtivo() {
+  if (typeof GODS !== 'undefined') return GODS;
+  if (typeof require !== 'undefined') return require('./catalogo.js').GODS;
+  return {};
+}
+
+// REGISTRO DE CATÁLOGOS POR CHAVE. Um SNAPSHOT congelado por catálogo distinto, indexado por
+// `st.catId` (string curta que SOBREVIVE ao JSON.stringify). A resolução lê o kit por chave
+// (kitDe), NÃO do estado. Por quê assim, e não as alternativas:
+//  - assar o kit em cada unidade: a IA clona o estado por JSON.stringify a cada nó da busca, e
+//    assar dobrava o clone (ia.test 600→1040ms);
+//  - `_CAT` em nível de módulo: quebraria com DUAS partidas coexistindo (novoEstado(B) sobrescreve
+//    o catálogo de A, e agir(A) leria o de B) — a arena da F1.4 cria milhares de estados;
+//  - WeakMap: o clone por JSON.stringify não estaria nele.
+// Com o registro por chave, várias partidas coexistem: cada st lê o SEU catálogo por catId, e os
+// clones da IA carregam só o catId (sem custo de clone). Congelado no início → rebalancear no meio
+// não altera a partida em andamento (o seed determina a partida inteira). (DECISOES §24.)
+const CATALOGOS = {};
+function _hashCat(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function registrarCatalogo(catalogo) {
+  const id = 'c' + _hashCat(JSON.stringify(catalogo));   // por CONTEÚDO: catálogos iguais reusam o snapshot (arena não vaza registro)
+  if (!CATALOGOS[id]) CATALOGOS[id] = Object.freeze(Object.assign({}, catalogo));
+  return id;
+}
+function kitDe(st, u) { return (CATALOGOS[st.catId] || catalogoAtivo())[u.key]; }
+
+function novaUnidade(key, idx, lado, catalogo) {
+  const g = catalogo[key];
   return {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
     hp: 120, maxHp: 120, vivo: true, agiu: false,
@@ -257,15 +137,19 @@ function novaUnidade(key, idx, lado) {
 // `comeca` = lado que abre a partida (0 ou 1). Default 0 para determinismo dos
 // testes/replays; o CLIENTE sorteia (Math.random) e passa o valor — o motor
 // permanece puro. Quem abre recebe só 1 energia (abertura 1/3, estilo NA).
-function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null) {
+// `catalogo` é RECEBIDO (o motor não possui os dados). Default = catálogo ativo, para os
+// testes que chamam com chaves e mutam E.GODS seguirem valendo sem edição.
+function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo = catalogoAtivo()) {
+  const catId = registrarCatalogo(catalogo);   // snapshot congelado, indexado por chave (ver acima)
   const st = {
     turno: 1, ativo: comeca, starter: comeca, aberturaFeita: false,
+    catId,                    // chave do catálogo desta partida (sobrevive ao clone da IA)
     seed, rngN: 0, log: [], fim: null,
     energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0 },
     ],
   };
   log(st, `Turno 1 · Jogador ${comeca + 1} abre a partida.`);   // sem preposição contraída: a visão traduz "Jogador N" -> Você/CPU/Oponente
@@ -688,9 +572,8 @@ function checarFim(st) {
 
 // ------------------------------------------------------ DISPONIBILIDADE
 function acoesDe(st, u) {
-  const g = GODS[u.key];
   const l = st.lados[u.lado];
-  const lista = [...g.ab, DEFESA];
+  const lista = [...kitDe(st, u).ab, DEFESA];   // ab vem do catálogo da partida (st.catId); DEFESA é regra universal, não deus
   return lista.map(a => {
     let cost = a.cost;
     if (u.key === 'cuca' && a.slot === 'basico' && st.turno % 3 === 0) cost = {};   // passiva Cuca
@@ -699,11 +582,11 @@ function acoesDe(st, u) {
     else if (!podePagar(l, cost)) motivo = 'orbes insuficientes';
     else if (a.slot !== 'defesa') {
       const sil = ef(u, 'silenceClass');
-      if (sil && sil.cls === classeDe(u, a) && a.slot !== 'basico') motivo = `habilidades ${sil.cls} travadas`;
+      if (sil && sil.cls === classeDe(st, u, a) && a.slot !== 'basico') motivo = `habilidades ${sil.cls} travadas`;
       const lk = ef(u, 'lockSkill');
       if (lk && lk.slot === a.slot) motivo = 'habilidade travada';
     }
-    return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(u, a),
+    return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
              passos: passosDe(u, a), disponivel: !motivo, motivo };
   });
 }
@@ -787,6 +670,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
   const unico = a.alvo === 'inimigo' || a.alvo === 'aliado';   // golpe de alvo único (interceptar/contra-atacar)
 
   for (const e of fx) {
+    // RECUSA em runtime um efeito que o motor não sabe executar — typo não passa em silêncio
+    // (o mesmo TIPOS_FX é a fonte do validador de build). Ver acréscimo 3 da F1.0a.
+    if (!TIPOS_FX.includes(e.t)) throw new Error(`fx desconhecido: "${e.t}"${a && a.nome ? ` em "${a.nome}"` : ''}`);
     const escopo = e.escopo || a.alvo;
     let sel = [];
     if (e.escopo === 'self') sel = [u];
@@ -912,8 +798,12 @@ function copiar(st, u, e) {
 }
 
 if (typeof module !== 'undefined') {
+  // GODS vem do catálogo (data/deuses via catalogo.js) — o motor não possui os dados.
+  // É o MESMO objeto que catalogoAtivo() retorna (require em cache), então os testes que
+  // mutam E.GODS.tnuwa e chamam novoEstado(['tnuwa']) continuam valendo sem edição.
+  const { GODS } = require('./catalogo.js');
   module.exports = {
-    GODS, DEFESA, ELEMS, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
+    GODS, DEFESA, ELEMS, VOCAB, novoEstado, agir, fimTurno, acoesDe, alvosValidos, podeAgir,
     converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre, sortearElemento, iniciarTurno,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
     aplicarFx, bater, addContador, getContador, contadorNoCampo, definirFase, caidos, reviver,

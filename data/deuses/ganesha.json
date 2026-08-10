@@ -1,0 +1,77 @@
+{
+  "key": "ganesha",
+  "nome": "Ganesha",
+  "faccao": "Hindu",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "inicial": true,
+  "passiva": {
+    "nome": "Senhor dos Começos",
+    "desc": "No turno 1, o time ganha 2 orbes extras."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Presa Quebrada",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "Grátis. 10 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Abrir Caminho",
+      "cost": {
+        "Verdejante": 1
+      },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "Remove todos os debuffs de 1 aliado e 1 buff de cada inimigo.",
+      "fx": [
+        {
+          "t": "cleanse"
+        },
+        {
+          "t": "stripOne",
+          "escopo": "todosInimigos"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Bênção do Início",
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Remove todo controle e debuff do time, reduz as recargas em 1 e o time ganha 2 orbes.",
+      "fx": [
+        {
+          "t": "cleanse",
+          "escopo": "time"
+        },
+        {
+          "t": "cdShift",
+          "v": -1,
+          "lado": "proprio"
+        },
+        {
+          "t": "orbGain",
+          "n": 2
+        }
+      ]
+    }
+  ]
+}

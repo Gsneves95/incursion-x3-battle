@@ -258,12 +258,21 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   por ser faixa estreita. Ao aplicar material, decida a textura à parte, ou o critério 8
   incha sem querer.
 - **Número que o dono deu de memória: VERIFIQUE no código/arte antes de usar.** Quando o
-  dono estima ("acho que é 8 ou 8,5", "o campo tem 426×121"), trate como hipótese a
-  conferir, não como fato. Numa sessão a estimativa errou DUAS vezes: o menor texto era
-  7,5px (não 8/8,5) e o campo media 438×123 (não 426/121). No caso do texto, 0,1px de
-  diferença era a fronteira entre o piso de legibilidade passar e falhar — aceitar a
-  estimativa teria escondido o bug. Varra o CSS/arte/dado, meça, e traga o número real;
-  se ele contradisser a memória do dono, é isso que se reporta, não o palpite.
+  dono estima ("acho que é 8 ou 8,5", "o campo tem 426×121", "o motor cabe em <500 linhas"),
+  trate como hipótese a conferir, não como fato. Numa sessão a estimativa errou TRÊS vezes: o
+  menor texto era 7,5px (não 8/8,5); o campo media 438×123 (não 426/121); e o "< 500 linhas"
+  do motor supunha que boa parte das 900 era dado — era ~185 de dado e ~715 de regra, então o
+  alvo era inatingível só extraindo dado. No caso do texto, 0,1px separava o piso de
+  legibilidade passar de falhar — aceitar a estimativa teria escondido o bug. Varra o
+  CSS/arte/dado, meça, e traga o número real; se ele contradisser a memória do dono, é isso
+  que se reporta, não o palpite.
+- **Critério de LINHA é um proxy ruim quando o que importa é SEPARAÇÃO DE RESPONSABILIDADE.**
+  "engine.js < 500 linhas" mirava a coisa errada — o alvo real era "nenhum dado de deus no
+  motor", e o motivo do número ("o engine vai dobrar com os 73 kits") desapareceu quando a
+  tarefa moveu os kits para `data/`. Um contador de linhas não sabe distinguir 200 linhas de
+  dado de 200 de regra. Prefira o critério que nomeia a responsabilidade; se quiser um limite
+  numérico, ponha-o como **gatilho medido sobre a coisa certa** (ex.: "se `aplicarFx` passar de
+  150 linhas, extrair para `src/execucao.js`"), não como teto de arquivo inteiro.
 - **Mudança que altera o que APARECE na tela exige captura ANTES do commit — contra o
   dist recém-construído.** As suítes (mesmo 12) provam comportamento, não aparência:
   nesta fase a verificação visual pegou DUAS vezes o que os testes não pegaram (o palco

@@ -1,0 +1,72 @@
+{
+  "key": "cuca",
+  "nome": "Cuca",
+  "faccao": "Brasileira",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "inicial": true,
+  "passiva": {
+    "nome": "Só Dorme de Sete em Sete Anos",
+    "desc": "Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Garra de Jacaré",
+      "cost": {
+        "Umbra": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Nana Neném",
+      "cost": {
+        "Umbra": 2
+      },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "adormecido",
+            "dur": 2
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "O Papão",
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "25 de dano (38 se estiver Adormecido, +8 do próprio sono = 46); Cuca cura metade do dano causado.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 25,
+          "seAdormecido": 38,
+          "curaMetade": true
+        }
+      ]
+    }
+  ]
+}

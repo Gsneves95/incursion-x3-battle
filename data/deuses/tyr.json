@@ -1,0 +1,94 @@
+{
+  "key": "tyr",
+  "nome": "Tyr",
+  "faccao": "Nórdica",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "inicial": true,
+  "passiva": {
+    "nome": "O Maneta",
+    "desc": "O dano de Tyr não pode ser reduzido nem absorvido por escudo."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Espada de Uma Mão",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "Grátis. 12 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Duelo de Honra",
+      "cost": {
+        "Aurora": 2
+      },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "Provoca o alvo por 2 turnos; Tyr recebe 15 de redução por 2 turnos.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "taunt",
+            "dur": 2
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgReduction",
+            "v": 15,
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Sacrifício do Bravo",
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Tyr perde 20 de HP; o time fica imune a controle e causa +8 de dano por 2 turnos.",
+      "fx": [
+        {
+          "t": "selfHp",
+          "v": -20
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "controlImmune",
+            "dur": 2
+          },
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ]
+    }
+  ]
+}

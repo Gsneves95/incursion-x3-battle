@@ -1,0 +1,91 @@
+{
+  "key": "brigid",
+  "nome": "Brigid",
+  "faccao": "Celta",
+  "elem": "Chama",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "inicial": true,
+  "passiva": {
+    "nome": "Ferreira Divina",
+    "desc": "O time causa +5 de dano (permanente); curas curam +5 se alguém no campo estiver com Queimadura."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Aflição",
+      "nome": "Fagulha da Forja",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "Grátis. 10 de dano + Queimadura (5/turno por 2 turnos).",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        },
+        {
+          "t": "dot",
+          "nome": "Queimadura",
+          "v": 5,
+          "dur": 2
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Chama Sagrada",
+      "cost": {
+        "Chama": 2
+      },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Cura 15 no time E causa 12 de dano a todos os inimigos.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 15,
+          "escopo": "time"
+        },
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Poço de Cura",
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 25 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 25,
+          "escopo": "time"
+        },
+        {
+          "t": "cleanse",
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "regen",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ]
+    }
+  ]
+}

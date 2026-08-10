@@ -1,0 +1,82 @@
+{
+  "key": "thor",
+  "nome": "Thor",
+  "faccao": "Nórdica",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Protetor de Midgard",
+    "desc": "Todos os aliados recebem 6 de redução de dano."
+  },
+  "provacao": {
+    "nome": "O Trovão de Asgard",
+    "nivel": "Provação",
+    "dif": 2,
+    "cond": "Vença sem perder um aliado contra Kagutsuchi, Jörmungandr e Ah Puch — três fontes de dano puro, que a passiva do Thor não reduz."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Golpe de Mjölnir",
+      "cost": {
+        "Tempestade": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Arremesso de Mjölnir",
+      "cost": {
+        "Tempestade": 2
+      },
+      "cd": 1,
+      "alvo": "2inimigos",
+      "desc": "22 de dano no primeiro alvo e 12 no segundo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 22,
+          "idx": 0
+        },
+        {
+          "t": "dmg",
+          "v": 12,
+          "idx": 1
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Tempestade de Asgard",
+      "cost": {
+        "Tempestade": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "20 de dano a todos os inimigos; atordoa o de menor HP por 1 turno.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 20
+        },
+        {
+          "t": "atordoaMenorHp",
+          "dur": 1
+        }
+      ]
+    }
+  ]
+}

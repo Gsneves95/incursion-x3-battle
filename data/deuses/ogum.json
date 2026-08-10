@@ -1,0 +1,84 @@
+{
+  "key": "ogum",
+  "nome": "Ogum",
+  "faccao": "Africana",
+  "elem": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "inicial": true,
+  "passiva": {
+    "nome": "Senhor do Ferro",
+    "desc": "+10 de dano contra alvos com escudo ou redução; o dano de Ogum não pode ser reduzido."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Facão de Ferro",
+      "cost": {
+        "Verdejante": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano perfurante.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "kind": "perfurante"
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Abrir Caminho à Força",
+      "cost": {
+        "Verdejante": 2
+      },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "Destrói todo o escudo do alvo e seus buffs defensivos; 20 de dano.",
+      "fx": [
+        {
+          "t": "destroyShield"
+        },
+        {
+          "t": "stripDef"
+        },
+        {
+          "t": "dmg",
+          "v": 20
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Forja de Guerra",
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "38 de dano puro; Ogum causa +10 de dano pelo resto da partida.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 38,
+          "kind": "puro"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 10,
+            "dur": 99
+          },
+          "escopo": "self"
+        }
+      ]
+    }
+  ]
+}

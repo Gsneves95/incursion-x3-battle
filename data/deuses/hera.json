@@ -1,0 +1,91 @@
+{
+  "key": "hera",
+  "nome": "Hera",
+  "faccao": "Grega",
+  "elem": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Rainha Ciumenta",
+    "desc": "Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível."
+  },
+  "provacao": {
+    "nome": "O Juramento",
+    "nivel": "Provação",
+    "dif": 2,
+    "cond": "Vença sem perder um aliado contra Zeus, Perseu e Durga, e o Juramento Nupcial precisa estar ativo no turno em que o último inimigo cai."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Cetro Real",
+      "cost": {
+        "Tempestade": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Bênção Real",
+      "cost": {
+        "Tempestade": 2
+      },
+      "cd": 2,
+      "alvo": "2aliados",
+      "desc": "2 aliados causam +8 de dano e recebem 10 de redução por 2 turnos.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgReduction",
+            "v": 10,
+            "dur": 2
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Juramento Nupcial",
+      "cost": {
+        "Tempestade": 1,
+        "livre": 2
+      },
+      "cd": 4,
+      "alvo": "2aliados",
+      "desc": "Vincula 2 aliados por 2 turnos: o dano que cada um recebe é dividido entre os dois, e ambos ficam imunes a controle.",
+      "fx": [
+        {
+          "t": "vinculo",
+          "dur": 2
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "controlImmune",
+            "dur": 2
+          }
+        }
+      ]
+    }
+  ]
+}

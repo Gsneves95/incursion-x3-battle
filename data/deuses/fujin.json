@@ -1,0 +1,74 @@
+{
+  "key": "fujin",
+  "nome": "Fujin",
+  "faccao": "Japonesa",
+  "elem": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "inicial": true,
+  "passiva": {
+    "nome": "Companheiro de Raijin",
+    "desc": "INERTE neste protótipo — só funciona com Raijin no time, que não é inicial.",
+    "inerte": true
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Rajada",
+      "cost": {
+        "Tempestade": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Saco dos Ventos",
+      "cost": {
+        "Tempestade": 2
+      },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Aumenta em 1 turno todas as recargas do time inimigo.",
+      "fx": [
+        {
+          "t": "cdShift",
+          "v": 1,
+          "lado": "inimigo"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Vendaval",
+      "cost": {
+        "Tempestade": 1,
+        "livre": 2
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "15 de dano a todos; reduz em 1 turno todas as recargas do seu time.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        },
+        {
+          "t": "cdShift",
+          "v": -1,
+          "lado": "proprio"
+        }
+      ]
+    }
+  ]
+}

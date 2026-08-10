@@ -569,6 +569,58 @@ consumir pity nem gravar; DEV credita+marca+indicador+loga). **13 suítes verdes
 
 ---
 
+## 24. Motor: dados fora, regras dentro; catálogo CONGELADO por partida (F1.0a)
+
+**Separação dados/regras.** Os kits dos deuses saíram de `engine.js` (literal `GODS` de ~180
+linhas) para **um arquivo por deus** em `data/deuses/<key>.json` — facilita revisar,
+versionar e ver diff de balanceamento, e o motor para de crescer quando os 73 kits entrarem
+(eram dados, não lógica). `src/catalogo.js` monta o `GODS` a partir desses arquivos (Node lê
+via `fs`; browser recebe o array injetado pelo build) e é o ÚNICO que declara `GODS` — a UI
+lê esse global; o motor não possui dado de deus nenhum.
+
+**Schema validado na BUILD, vocabulário derivado do MOTOR.** `tools/valida_kit.js` lê
+`E.VOCAB` (classes, tipos de `fx.t`, tipos de `eff.type`, alvos, chaves de custo e de efeito)
+do próprio `engine.js` — o schema não pode divergir do que o motor executa. A build falha
+alto em campo desconhecido, custo mal formado, classe/alvo inválidos, `fx.t` ou `eff.type`
+que o motor não sabe executar. Prova pelos dois lados: os 11 kits reais passam sem exceção; um
+kit corrompido lista os 8 erros e sai com código 1. Reforço em runtime: `aplicarFx` **RECUSA**
+(lança) um `fx.t` fora de `TIPOS_FX` — efeito com typo não passa em silêncio, que é como se
+escreveria 73 kits com um erro sem descobrir. A **Defesa** (regra universal, fica no motor)
+é validada pelo mesmo schema: tem formato de habilidade e não pode ficar para trás.
+
+**Catálogo CONGELADO por partida (não assado no estado) — mudança da decisão de mecanismo,
+não do objetivo.** A intenção era o estado carregar o kit para o **seed determinar a partida
+inteira**: rebalancear um kit no meio da Fase 1 não pode alterar uma partida em andamento nem
+tornar a **arena não-reproduzível**. Assar o kit em cada unidade entregava isso, MAS a IA
+clona o estado por `JSON.stringify` a cada nó da busca e o kit assado **dobrava o clone**
+(`ia.test` 600 → 1040 ms, +73%; pior ainda com a busca em profundidade da fase 2). Nuance que
+decidiu o mecanismo: `JSON.stringify` **não tem referência** — pôr o kit "por referência" na
+unidade não adianta, o clone copia o objeto do mesmo jeito; só **manter o kit FORA do estado**
+resolve. Solução: **REGISTRO COM CHAVE.** `novoEstado` recebe o catálogo, congela um snapshot e
+o indexa por `st.catId` (string curta = hash do conteúdo, que SOBREVIVE ao `JSON.stringify`); a
+resolução lê o kit por `CATALOGOS[st.catId]` (`kitDe`), a unidade carrega só a chave, o clone da
+IA volta a ser barato (~490 ms). **Por que registro com chave e não um `_CAT` de módulo:** um
+`_CAT` global quebraria com duas partidas coexistindo — `novoEstado(B)` sobrescreveria o
+catálogo de A e `agir(A)` leria o de B, em silêncio; a arena da F1.4 cria milhares de estados.
+Não cabe pôr o catálogo dentro de `st` (volta a perf) nem num WeakMap (o clone por
+`JSON.stringify` não o acompanharia). Id por **conteúdo** faz catálogos iguais reusarem o
+snapshot — o registro não vaza com os milhares de estados da arena. Congelado no início,
+rebalancear no meio não altera a partida — o objetivo (seed determina a partida) é preservado.
+Travado em `tests/catalogo.test.js` (duas partidas, catálogos diferentes, em sequência, cada uma
+respeitando o seu; clone só com o `catId` lê o mesmo snapshot).
+
+**Limite e forma-alvo (Fase 2, NÃO implementar agora).** O estado serializado carrega só o
+`catId`, não o kit — uma Provação/replay salvo lê o kit VIVO ao recarregar. Em vez de assar o
+kit (caro), a forma-alvo é um **CARIMBO DE VERSÃO do catálogo** no estado salvo (hash do
+conteúdo ou número incrementado). Ao carregar, compara-se: **Provação** usa o kit vivo de
+propósito (o jogador precisa aprender o deus que existe HOJE), mas se o carimbo divergir,
+marca-se para **RE-VERIFICAÇÃO** (a solução gravada é reexecutada para provar que o puzzle
+continua vencível); **Replay**, se o carimbo divergir, **avisa que a reprodução pode não ser
+exata**, em vez de reproduzir errado em silêncio. O `catId` por conteúdo já é meio caminho — é o
+carimbo.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

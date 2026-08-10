@@ -4,6 +4,35 @@
 
 ## Última sessão
 **Data:** 2026-08-09
+**Tarefa:** F1.0a — separar DADOS de REGRAS no motor (início da Fase 1).
+**Resultado:** os 11 kits saíram de `engine.js` (literal `GODS`, ~180 linhas) para **um
+arquivo por deus** em `data/deuses/<key>.json` (extraídos mecanicamente do motor, fidelidade
+garantida). Novo `src/catalogo.js` monta o `GODS` (Node lê via `fs`; browser recebe o array
+`DEUSES` injetado pelo build) — ÚNICO dono de `GODS`; a UI lê o global, o motor não possui
+dado de deus (grep confirma: zero dado de deus em engine.js). O motor **recebe** o catálogo
+via `novoEstado`, que congela um snapshot e o indexa num **REGISTRO POR CHAVE** (`CATALOGOS[st.catId]`,
+`catId` = hash do conteúdo que sobrevive ao `JSON.stringify`); a resolução lê o kit por
+`kitDe(st,u)`, fora do estado. Novo `tools/valida_kit.js`: schema validado na build,
+**vocabulário derivado de `E.VOCAB`** (não pode divergir do motor); build falha alto em
+campo/custo/classe/alvo/`fx.t`/`eff.type` inválidos — provado corrompendo um kit (8 erros,
+exit 1) e confirmando os 11 reais passam limpos. `aplicarFx` **RECUSA** `fx.t` desconhecido em
+runtime (lança). Defesa fica no motor (regra) e é validada pelo mesmo schema. **14 suítes
+verdes** (nova `catalogo.test.js`) SEM alterar suíte existente (`git diff` nas 13 antigas vazio).
+Batalha/seleção idênticas em Chromium (0 pageerror). Ver decisão 24.
+**Registro por chave (correção do dono):** um `_CAT` de módulo quebraria com duas partidas
+coexistindo (a arena da F1.4 cria milhares de estados) — `novoEstado(B)` sobrescreveria o
+catálogo de A. Agora cada `st` leva o `catId` e lê o SEU snapshot; clones da IA carregam só o
+`catId` (sem custo). `tests/catalogo.test.js` trava isso. `ia.test` ~490ms (assar dava 1040).
+**Critério "< 500 linhas" RETIRADO pelo dono:** era estimativa (supunha mais dado nas 900
+linhas) e o motivo dele (motor dobra com os 73 kits) morreu ao mover kits p/ dados. Aceito
+motor-só-de-regras em 799 linhas. **NÃO partir as regras agora** (refatoração especulativa).
+**GATILHO MEDIDO:** se `aplicarFx` passar de **150 linhas** durante F1.1–F1.3 (que a editam
+pesado ao provar as primitivas), extrair para `src/execucao.js`. Hoje `aplicarFx` ≈ 97 linhas.
+**Forma-alvo (Fase 2, não implementar):** carimbo de versão do catálogo no estado salvo →
+Provação usa kit vivo mas marca RE-VERIFICAÇÃO se divergir; Replay avisa se divergir. Ver §24.
+
+## Sessão F0.5b (anterior)
+**Data:** 2026-08-09
 **Tarefa:** F0.5b — sistema de botões / INV 16 (último item da Fase 0).
 **Resultado:** o sistema de botões já existia (4 níveis, 4 tamanhos, estados repouso/
 pressionado/desabilitado, raio 3px, expansão invisível de toque). O que faltava era a
@@ -264,9 +293,9 @@ técnica de duas camadas.
   1500 em `novoPerfil`, invocação debita `perfil.moedas.gema` no commit antes de revelar,
   insuficiente bloqueia sem avançar estado, botão "+ DEV" credita marcando `perfil.dev`.
   Pity do gacha ainda NÃO ligado por banner (F0.4b / migração v3).
-- **Suítes:** 13, todas verdes (motor, capacidades, primitivas, auditoria, perfil, ia,
-  rotas, **enquadramento**, interface, invocacao, **perspectiva**, **energia**, **moldura**).
-  A `moldura` roda em Chromium real (`playwright` devDep); as outras 12 são node/jsdom.
+- **Suítes:** 14, todas verdes (motor, **catalogo**, capacidades, primitivas, auditoria, perfil,
+  ia, rotas, **enquadramento**, interface, invocacao, **perspectiva**, **energia**, **moldura**).
+  A `moldura` roda em Chromium real (`playwright` devDep); as outras 13 são node/jsdom.
   `enquadramento` é a SPEC pura da regra de enquadramento (F0.6b); `energia` simula 500
   partidas IA×IA (~16s).
 - **Enquadramento (F0.6b):** `src/enquadramento.js` `calcularEnquadramento({larguraUtil,
@@ -424,10 +453,10 @@ sessão de reconciliação ou ao encostar em cada área.
   (gemas) → `perfil.moedas` (F0.4c); **coleção da seleção** ainda usa `inicial`/
   `tudoLiberado`, não `perfil.deuses` (rewire futuro); pity **por-banner** e `gf`
   (50/50) persistidos — hoje um contador único, interim (ver Divergência de economia).
-- **Quebrar o `engine.js`:** 899 linhas hoje, dobra na Fase 1 com os 89 kits. Tirar
-  os dados (`GODS`/`DEFESA`) para `data/` e deixar o motor só com regras. Recomendação
-  detalhada em `docs/inventario.md` §9. **Deve ser a 1ª tarefa da Fase 1**, antes de
-  provar as primitivas, para os kits novos já nascerem no formato certo.
+- ~~**Quebrar o `engine.js`:**~~ **FEITO (F1.0a)** — kits → `data/deuses/*.json`, catálogo em
+  `src/catalogo.js`, schema em `tools/valida_kit.js`, registro por chave. `DEFESA` fica no
+  motor (regra). Motor sem dado de deus. Critério `<500 linhas` **retirado pelo dono** (era
+  proxy ruim); gatilho medido no lugar: `aplicarFx` > 150 linhas → `src/execucao.js`.
 - **Fontes externas:** `shell.html` puxa Cinzel/Rajdhani do Google Fonts; o `dist/`
   não é 100% offline na tipografia. Não é invariante.
 - **Heurística de função longa** falha no `engine.js` por causa do bloco `const

@@ -1,0 +1,78 @@
+{
+  "key": "sobek",
+  "nome": "Sobek",
+  "faccao": "Egípcia",
+  "elem": "Maré",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "inicial": true,
+  "passiva": {
+    "nome": "Pele de Couraça",
+    "desc": "10 de redução contra Básicos; +6 de dano contra alvos com debuff."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Mordida Brutal",
+      "cost": {
+        "Maré": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Arrasto do Nilo",
+      "cost": {
+        "Maré": 2
+      },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Submerge o alvo por 1 turno (não age, não pode ser alvo, não gera orbe); ao voltar, fica Encharcado.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "submerso",
+            "dur": 1
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "encharcado",
+            "dur": 3
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Dilúvio",
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos; Encharcados sofrem 30.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 18,
+          "seEncharcado": 30
+        }
+      ]
+    }
+  ]
+}

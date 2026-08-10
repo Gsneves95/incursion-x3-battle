@@ -1,0 +1,66 @@
+{
+  "key": "nezha",
+  "nome": "Nezha",
+  "faccao": "Chinesa",
+  "elem": "Chama",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "inicial": true,
+  "passiva": {
+    "nome": "Renascido do Lótus",
+    "desc": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 40 de HP."
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lança de Ponta Flamejante",
+      "cost": {
+        "Chama": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "nome": "Arsenal Celeste",
+      "classePorModo": {
+        "0": "Mental",
+        "1": "Aflição"
+      },
+      "cost": {
+        "Chama": 2
+      },
+      "cd": 1,
+      "alvo": "auto",
+      "desc": "Alterna a cada uso. ANEL: trava a Habilidade do alvo por 1 turno. MANTO: 12 a todos + Queimadura 8/turno.",
+      "alterna": true
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Rodas de Vento e Fogo",
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "2inimigos",
+      "desc": "22 de dano a 2 inimigos; +10 cada se outro aliado já agiu neste turno.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 22,
+          "seAliadoJaAgiu": 10
+        }
+      ]
+    }
+  ]
+}

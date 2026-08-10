@@ -53,6 +53,7 @@ function smokeCarga(distAbs) {
 checarDirecaoUI();
 
 const motor  = semGuard(ler('src/engine.js'));
+const catalogo = semGuard(ler('src/catalogo.js'));   // só montarCatalogo no browser (fs cai no semGuard)
 const roster = ler('src/roster_data.js');
 const perfil = semGuard(ler('src/perfil.js'));
 const armaz  = semGuard(ler('src/armazenamento.js'));
@@ -67,6 +68,21 @@ const economia = ler('data/economia.json').trim();
 const kits   = ler('data/kits.json').trim();
 const casca  = ler('src/shell.html');
 
+// ---------- 3. schema de kit: um arquivo por deus em data/deuses/, validado na build ----------
+// (falha alto, como a direção ui e o smoke) — impede erro silencioso ao escrever os 73 kits.
+const deuses = fs.readdirSync(path.join(raiz, 'data', 'deuses'))
+  .filter(f => f.endsWith('.json')).sort()
+  .map(f => JSON.parse(ler('data/deuses/' + f)));
+function checarKits() {
+  const { validarDeus, validarHabilidade } = require('./valida_kit.js');
+  const E = require('../src/engine.js');
+  const erros = [];
+  for (const g of deuses) erros.push(...validarDeus(g));
+  validarHabilidade(E.DEFESA, 'DEFESA (regra universal)', erros);   // a Defesa tem o formato de habilidade
+  if (erros.length) { console.error('ERRO de schema de kit:\n  ' + erros.join('\n  ')); process.exit(1); }
+}
+checarKits();
+
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/* -> view.
 const blocoVisao = [
@@ -79,7 +95,11 @@ const blocoVisao = [
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
-  .replace('/*__ENGINE__*/', roster + '\n' + motor + '\nconst KITS=' + kits + ';')
+  // Os kits vêm de data/deuses/* → array DEUSES → catalogo.js monta o global GODS ANTES do
+  // motor (o motor lê GODS só em runtime, mas a UI o lê no render; e é "dado consumido cedo").
+  .replace('/*__ENGINE__*/',
+    'const DEUSES=' + JSON.stringify(deuses) + ';\n' + catalogo + '\nconst GODS=montarCatalogo(DEUSES);\n'
+    + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
   .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
