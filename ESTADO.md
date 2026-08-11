@@ -3,6 +3,22 @@
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
 ## Última sessão
+**Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 1 — passiva declarativa, gatilho `bonusDano` com condição fechada.
+**Resultado:** schema da passiva declarativa (`docs/passivas.md`): `passiva.fx=[{gatilho,v,escopo,quando}]`.
+Vocabulário FECHADO de 9 condições em `E.VOCAB` (`condicoes`/`condicoesDef`); `valida_kit` valida a forma e
+falha em voz alta (gatilho/condição/valor/reservada — provado); motor lê em `calcDano` via
+`bonusDanoDeclarativo`; `tests/passiva.test.js` cobre as 7 condições avaliáveis + escopo self/time + dono-morto
++ ponta-a-ponta. **Achado que virou a sessão:** o "+N condicional (38)" não era uma forma — eram nove; o rótulo
+agrupava por SINTOMA, não por mecanismo (lição em DECISOES §37). Fechei contra as **18** planas reais (não os 4).
+**Migrei ZERO reais:** os 12 implementados têm passiva multi-parte e migração é por DEUS INTEIRO (§37) — nenhum
+é migrável com um gatilho só sem deixar hardcode invisível; mecanismo provado num deus sintético. Cobertura das
+18: **18/18 estrutural, 15/18 escrevíveis hoje** (babi/horus/tsukuyomi esperam uma tag da fase própria; validador
+recusa com motivo, sem exceção). Precisei liberar o campo `inerte` no schema da passiva (Fujin já usava — não é
+mudança de comportamento). Suítes atuais passam SEM alteração (18 marcos verdes). **PRÓXIMO:** sessão 2 da F1.2
+(próxima categoria de passiva por frequência — imunidade estática 27, ou o dono escolhe a ordem).
+
+## Sessão — decisões pós-varredura (anterior)
 **Data:** 2026-08-10
 **Tarefa:** Decisões pós-varredura — o dono montou o resto da Fase 1 (sem código).
 **Resultado (decisões do dono, registradas):** a decisão-mãe foi batida — **passiva ganha schema

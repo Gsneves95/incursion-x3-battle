@@ -16,6 +16,8 @@ const E = require('../src/engine.js');
 const V = E.VOCAB;
 
 const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
+const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
+const CHAVES_PASSIVA_FX = new Set(['gatilho', 'escopo', 'v', 'quando']);
 const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal']);
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
 
@@ -45,6 +47,44 @@ function validarFx(f, ctx, errs) {
     }
   }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
+}
+
+// Valida a CONDIÇÃO `quando` de um fx de passiva (F1.2). O conjunto de condições e COMO validar o
+// valor de cada uma vêm de V.condicoesDef (o motor), não são redigitados aqui. `pendente` = condição
+// no vocabulário mas cujo estado o motor ainda não rastreia: recusa em voz alta (não vira falso silencioso).
+function validarQuando(q, ctx, errs) {
+  if (!q || typeof q !== 'object' || Array.isArray(q)) { errs.push(`${ctx}: quando não é objeto`); return; }
+  const chaves = Object.keys(q);
+  if (chaves.length !== 1) errs.push(`${ctx}: quando deve ter exatamente 1 condição (tem ${chaves.length})`);
+  for (const k of chaves) {
+    const def = V.condicoesDef[k];
+    if (!def) { errs.push(`${ctx}: condição desconhecida "${k}" (válidas: ${V.condicoes.join(', ')})`); continue; }
+    if (def.pendente) { errs.push(`${ctx}: condição "${k}" reservada — ${def.pendente}`); continue; }
+    const val = q[k];
+    if (def.bool) { if (val !== true) errs.push(`${ctx}: condição "${k}" espera true (recebeu ${JSON.stringify(val)})`); }
+    else if (def.hp) {
+      if (!val || typeof val !== 'object' || !['cheio', 'abaixo', 'acima'].includes(val.op)) errs.push(`${ctx}: alvoHp.op inválido (${JSON.stringify(val && val.op)}; cheio|abaixo|acima)`);
+      else if ((val.op === 'abaixo' || val.op === 'acima') && typeof val.v !== 'number') errs.push(`${ctx}: alvoHp.v ausente para op "${val.op}"`);
+    }
+    else if (def.sub) { if (!def.sub.includes(val)) errs.push(`${ctx}: valor "${val}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ') || '(vazio)'})`); }
+  }
+}
+
+// Valida a PASSIVA declarativa (F1.2). Prosa (nome/desc) é livre; se houver fx, ele tem forma fechada.
+function validarPassiva(p, ctx, errs) {
+  if (!p || typeof p !== 'object') { errs.push(`${ctx}: passiva não é objeto`); return; }
+  for (const k of Object.keys(p)) if (!CHAVES_PASSIVA.has(k)) errs.push(`${ctx}: campo desconhecido na passiva: "${k}"`);
+  if (!('fx' in p)) return;   // passiva ainda em prosa pura (hardcoded no motor) — permitido
+  if (!Array.isArray(p.fx)) { errs.push(`${ctx}: passiva.fx não é array`); return; }
+  p.fx.forEach((f, i) => {
+    const c = `${ctx}.fx[${i}]`;
+    if (!f || typeof f !== 'object') { errs.push(`${c}: fx de passiva não é objeto`); return; }
+    for (const k of Object.keys(f)) if (!CHAVES_PASSIVA_FX.has(k)) errs.push(`${c}: campo desconhecido no fx de passiva: "${k}"`);
+    if (!V.gatilhosPassiva.includes(f.gatilho)) errs.push(`${c}: gatilho inválido "${f.gatilho}" (válidos: ${V.gatilhosPassiva.join(', ')})`);
+    if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
+    if (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
+    if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
+  });
 }
 
 // Valida uma habilidade OU a Defesa (mesmo formato).
@@ -83,9 +123,10 @@ function validarDeus(g) {
   if (typeof g.key !== 'string') errs.push(`${ctx}: key ausente ou não-string`);
   if (typeof g.nome !== 'string') errs.push(`${ctx}: nome ausente ou não-string`);
   if ('classe' in g && !CLASSES_DEUS.has(g.classe)) errs.push(`${ctx}: classe de deus inválida "${g.classe}"`);
+  if ('passiva' in g) validarPassiva(g.passiva, `${ctx}.passiva`, errs);
   if (!Array.isArray(g.ab)) errs.push(`${ctx}: ab não é array`);
   else g.ab.forEach((ab, i) => validarHabilidade(ab, `${ctx}.ab[${i}](${(ab && ab.nome) || '?'})`, errs));
   return errs;
 }
 
-module.exports = { validarDeus, validarHabilidade, validarFx, validarCusto };
+module.exports = { validarDeus, validarHabilidade, validarFx, validarCusto, validarPassiva };

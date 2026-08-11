@@ -955,6 +955,15 @@ especulativa; é a mesma faxina da F1.0a aplicada às passivas.
 4. Ao fim: relatar quantas das 100 o schema já expressa e quantas ainda precisam de código. Se sobrarem 5-6
    casos genuinamente únicos, **hardcode é a resposta certa para o que é único de verdade** — não forçar.
 
+**SESSÃO 1 FEITA (gatilho `bonusDano`).** Schema em `docs/passivas.md`; vocabulário fechado (9 chaves de
+condição) em `E.VOCAB`; `valida_kit` valida a forma; motor lê em `calcDano` via `bonusDanoDeclarativo`;
+`tests/passiva.test.js` prova as 7 condições avaliáveis + escopo + falhas do validador. **Migrou ZERO reais:**
+os 12 implementados têm passiva multi-parte (ogum/ra/sobek/brigid têm um clause `bonusDano` + outra metade
+de outro gatilho), e migração é por DEUS INTEIRO — provado no sintético. Cobertura das 18 "+N condicional"
+planas: **18/18 estrutural, 15/18 escrevíveis hoje**; as 3 (babi=`medo`→F1.4, horus=`alvoMarca`→vulnerabilidade,
+tsukuyomi=`alvoCuradoAntes`→rastreio) esperam uma TAG que a fase própria delas introduz — o validador as
+recusa em voz alta, sem exceção aberta. Nenhuma das 3 pede chave NOVA de condição = vocabulário completo.
+
 **ORDEM do resto da Fase 1 (renumerada com a tabela na mão; SUBSTITUI as numerações anteriores de F1.3+):**
 - **F1.2** passiva declarativa (esta; a decisão-mãe, várias sessões)
 - **F1.3** Bloco 1 — morte e sobrevivência. Dentro: **PISO DE 1 HP PRIMEIRO, execução depois** (o Shiva fura
@@ -966,6 +975,13 @@ especulativa; é a mesma faxina da F1.0a aplicada às passivas.
 - **F1.7+** lotes de kit, por panteão.
 
 ## 37. Bloco de 16 decisões da Fase 1 — batidas pelo dono (para F1.3/F1.4/F1.5)
+
+**LIÇÃO (segunda vez o mesmo padrão em duas sessões — vira regra).** Ao fechar o vocabulário da F1.2
+sessão 1, o "+N condicional (38)" se revelou NÃO uma forma, e sim nove: o rótulo agrupava por SINTOMA
+(+N de dano) e não por MECANISMO (o que a condição LÊ). Fechar contra os 4 deuses migrados teria perdido
+elemento, HP, buff, marca, controle e fase — o cenário do tier B. É a mesma classe de erro do §35 (medir
+a dimensão errada). **Regra: antes de fechar um conjunto, verifique se o rótulo descreve um MECANISMO ou
+uma APARÊNCIA.** O 18 verdadeiro vale mais que o 38 falso, porque é verdadeiro.
 
 Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde
 minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro o argumento dele.

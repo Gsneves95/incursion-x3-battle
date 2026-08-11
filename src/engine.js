@@ -77,6 +77,29 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura'];   // cresce (veneno, sangramento…) ao provar os 73 kits
 const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit.
+// PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
+// motor não carregar um `if (u.key===...)` por deus. A SESSÃO 1 abre UM gatilho só: bonusDano.
+// Migração é por DEUS INTEIRO (§37): um deus só migra quando TODOS os gatilhos da sua passiva
+// existem — meio-migrado deixa hardcode invisível. Por isso a sessão 1 migra ZERO reais (os 12
+// implementados têm passiva multi-parte) e prova o mecanismo num deus sintético (tests/passiva.test.js).
+const GATILHOS_PASSIVA = ['bonusDano'];    // cresce por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
+const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
+const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
+// `quando` (condição do bônus) — conjunto FECHADO. Cada chave declara COMO validar o valor:
+//   sub  → valor ∈ lista   ·   bool → valor === true   ·   hp → {op, v}
+// `pendente` = condição no vocabulário mas cujo ESTADO o motor ainda não rastreia; valida_kit
+// RECUSA em voz alta (nunca vira falso silencioso). Ausência de `quando` = sempre. Ver docs/passivas.md.
+const CONDICOES = {
+  alvoDebuff:      { sub: [...DEBUFFS, 'qualquer', 'controle'] },   // alvo tem debuff (nome, 'qualquer' ou 'controle')
+  alvoBuff:        { sub: [...BUFFS, 'qualquer'] },                 // alvo tem buff
+  alvoDefesa:      { bool: true },                                 // alvo tem escudo OU redução de dano
+  alvoElem:        { sub: ELEMS },                                 // alvo é do elemento
+  alvoHp:          { hp: true },                                   // {op:'cheio'|'abaixo'|'acima', v?}
+  atacanteElem:    { sub: ELEMS },                                 // quem ataca é do elemento (escopo aliados)
+  fase:            { sub: ['Dia', 'Noite'] },                      // estado global Dia/Noite
+  alvoMarca:       { sub: MARCAS, pendente: 'marca ofensiva (Olho) ainda não existe — vem com a vulnerabilidade' },
+  alvoCuradoAntes: { bool: true, pendente: 'o motor ainda não rastreia cura-no-turno-anterior' },
+};
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
   elementos: ELEMS,
@@ -86,6 +109,10 @@ const VOCAB = {
   efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
   dots: DOTS,                                    // chaves de DoT (fx dot.nome)
   contadores: CONTADORES,                        // chaves de contador (fx contador.nome)
+  gatilhosPassiva: GATILHOS_PASSIVA,             // valores válidos de passiva.fx[].gatilho (F1.2)
+  escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
+  condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
+  condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
@@ -321,12 +348,61 @@ function bonusDano(st, atk) {
   return b;
 }
 
+// PASSIVA declarativa (F1.2) — avalia UMA condição `quando` (objeto de 1 chave). Ausente = sempre.
+// Só lê estado; conjunto FECHADO (CONDICOES). alvoMarca/alvoCuradoAntes são `pendente` no schema
+// (valida_kit os barra), então nunca chegam aqui com dado válido — caem no `return false`.
+function condOK(q, atk, alvo, st) {
+  if (!q) return true;
+  if ('alvoDebuff' in q) {
+    const val = q.alvoDebuff;
+    if (val === 'qualquer') return alvo.efeitos.some(e => DEBUFFS.includes(e.type));
+    if (val === 'controle') return alvo.efeitos.some(e => CONTROLES.includes(e.type));
+    return alvo.efeitos.some(e => e.type === val) || (DOTS.includes(val) && alvo.dots.some(d => d.nome === val));
+  }
+  if ('alvoBuff' in q) {
+    const val = q.alvoBuff;
+    if (val === 'qualquer') return alvo.efeitos.some(e => BUFFS.includes(e.type)) || alvo.shield > 0;
+    return alvo.efeitos.some(e => e.type === val);
+  }
+  if ('alvoDefesa' in q) return alvo.shield > 0 || !!ef(alvo, 'dmgReduction');
+  if ('alvoElem' in q) return alvo.elem === q.alvoElem;
+  if ('alvoHp' in q) {
+    const h = q.alvoHp;
+    if (h.op === 'cheio') return alvo.hp >= alvo.maxHp;
+    if (h.op === 'abaixo') return alvo.hp < h.v;
+    if (h.op === 'acima') return alvo.hp > h.v;
+    return false;
+  }
+  if ('atacanteElem' in q) return atk.elem === q.atacanteElem;
+  if ('fase' in q) return st.fase === q.fase;
+  return false;
+}
+
+// Soma o +v das passivas declarativas (gatilho bonusDano) no lado do atacante. escopo self =
+// só quando o dono é o atacante; time = qualquer aliado vivo (sujeito ao `quando`). Ver DECISOES §36.
+function bonusDanoDeclarativo(st, atk, alvo) {
+  let b = 0;
+  for (const u of st.lados[atk.lado].units) {
+    if (!u.vivo) continue;
+    const p = kitDe(st, u).passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho !== 'bonusDano') continue;
+      if ((f.escopo || 'self') === 'self' && u !== atk) continue;
+      if (condOK(f.quando, atk, alvo, st)) b += f.v;
+    }
+  }
+  return b;
+}
+
 function calcDano(st, atk, alvo, base, kind, slot) {
   let v = base + bonusDano(st, atk);
-  // passivas ofensivas
+  v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
+  // passivas ofensivas AINDA hardcoded — migração é por DEUS INTEIRO (§37): ogum/sobek têm outra
+  // metade de passiva (dano irredutível / redução de Básico) que só migra quando o gatilho dela existir.
   if (atk.key === 'ogum' && (alvo.shield > 0 || ef(alvo, 'dmgReduction'))) v += 10;
   if (atk.key === 'sobek' && alvo.efeitos.some(e => DEBUFFS.includes(e.type))) v += 6;
-  if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca
+  if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
   if (v < 0) v = 0;
 
   const ignoraReducao = kind === 'perfurante' || kind === 'puro' || atk.key === 'ogum' || atk.key === 'tyr';
@@ -923,5 +999,6 @@ if (typeof module !== 'undefined') {
     converter, planoConversao, CONV_CUSTO, totalOrbs, ef, alocarLivre, sortearElemento, iniciarTurno,
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
     aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, espalharContador, definirFase, caidos, reviver,
+    bonusDanoDeclarativo,   // passiva declarativa (F1.2) — testada em isolamento
   };
 }
