@@ -1158,6 +1158,54 @@ valor final. Mecanismo migrado com `reviveProximoTurno` (faz-only, guarda `!vivo
 
 ---
 
+## 41. `bonusCura` é gatilho PRÓPRIO (não campo do bonusDano); a cura tem eixo de condição próprio (F1.2, sessão 8)
+
+Migração da Brigid (deus inteiro, duas cláusulas). O dono pediu a varredura da família de cura ANTES da forma,
+com três perguntas. As respostas:
+
+**Q3 — quantas passivas de cura existem (o número decide a forma).** A varredura dos 100 (aba "Kits NA" da
+planilha) acha **20 que MENCIONAM cura** — mas isso é balde, não família, exatamente como os "27" da imunidade
+(§37, 5º caso). Categorizado por MECANISMO:
+- **A. "curas curam +N" (bonusCura próprio, soma à MAGNITUDE): 7** — Hel, Nefertem, Dagda, Brigid, Cernunnos,
+  Chaac, Itzamná.
+- **B. cura PLANA disparada por gatilho (`faz` heal, NÃO bonusCura): 9** — Hades/Kali/Morrigan/Ah Puch (aoCair
+  inimigo), Ymir (aoCair self), Khnum (aoCair aliado), Deméter/Shuten (porTurno), Boitatá (reativa/onHit).
+- **C. "aliado curado causa +N dano" (bonusDano disparado por ter sido curado): 2** — Freyja, Oxum (é a condição
+  `alvoCuradoAntes`, já RESERVADA em `quando`).
+- **D. cura como gatilho de outra coisa / piso: 3** — Hera (aoCurar→escudo), Dagda-2ª (piso), Tsukuyomi
+  (bonusDano vs curado).
+
+Sexta vez que varrer o CONJUNTO INTEIRO corrige um número: **20 vira 7**. E o achado paralelo é maior que a
+pergunta: a categoria **B (9) é maior que o próprio bonusCura (7)** e é a mesma lição do `faz:[fx]` do Rá — a
+cura importa mais como EFEITO EMBRULHADO por outro gatilho do que como escalar. Destrava-se adicionando um `heal`
+a `V.fxTurno`/`faz` (F1.x), não mexendo em bonusCura. Registrado como propriedade da família.
+
+**Q1 — o `quando` do bonusDano serve, ou a cura pede eixo próprio?** Pede eixo próprio, como o `contra` da
+sessão 3. As 9 chaves de `quando` são todas indexadas nos participantes de um ATAQUE (`atk`, `alvo`-de-golpe). A
+cura não tem ataque: não há atacante nem alvo-de-golpe. Das 7 do grupo A, 5 têm condição e NENHUMA mapeia em
+`quando`: paridade de turno (Hel), facção do CURADOR (Nefertem), tipo=regeneração (Cernunnos/Chaac), e a da
+Brigid — "existe INIMIGO com Queimadura", que é estado de LADO, não `alvoDebuff` do alvo de um golpe. Terceiro
+eixo: **`quandoCura`** (sessão 7 abre só `inimigoTem`; cresce por deus). Reusar `quando` repetiria o erro que a
+sessão 3 corrigiu (misturar eixos de contexto diferentes num vocabulário só).
+
+**Forma decidida: gatilho próprio `bonusCura`,** por três razões independentes — (1) caminho de valor diferente
+(soma dentro de `curar`, não de `bonusDano`); (2) evento diferente (`cura`, não `dano`); (3) eixo de condição
+disjunto (`quandoCura`). Um campo do bonusDano teria de carregar as três divergências — seria sobrecarga, não
+economia. 7 membros é família povoada (mesmo porte de bonusDano/reducao), então não é over-engineering.
+
+**Q2 — duas cláusulas, migração inteira.** +5 de dano ao time = `{bonusDano, v:5, escopo:'time'}` (o
+`bonusDanoDeclarativo` já pulava unidade morta → some com a Brigid, idêntico ao hardcode). Cura condicional =
+`{bonusCura, v:5, quandoCura:{inimigoTem:'queimadura'}}`. Caracterização Lote B (ambas, incl. o §39 "só inimigo")
+verde SEM alteração; `grep key==='brigid'` vazio. Consumo de RNG: nenhuma das duas sorteia (§38, item RNG OK).
+
+**Nota "permanente" (não-bloqueante).** A prosa da 1ª cláusula diz "+5 (permanente)". Li como "não expira por
+turno" (contraste com buff temporário), NÃO "sobrevive à morte da Brigid" — o hardcode sempre exigiu Brigid viva
+(igual a toda aura de time, ex.: thor −6), e a migração preserva isso. Se o dono quis dizer survives-death, é
+mudança de comportamento (§39, prosa vence) — mas aí me avise, porque hoje diverge do implementado. **Placar
+9→10/12.**
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

@@ -94,6 +94,7 @@ const GATILHOS_PASSIVA = {
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
+  bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 7)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -142,6 +143,14 @@ const CONDICOES = {
   alvoMarca:       { sub: MARCAS, pendente: 'marca ofensiva (Olho) ainda não existe — vem com a vulnerabilidade' },
   alvoCuradoAntes: { bool: true, pendente: 'o motor ainda não rastreia cura-no-turno-anterior' },
 };
+// `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
+// ATAQUE) e de `contra` (defensivo: lê o golpe que chega). A cura não tem ataque: a condição lê o CONTEXTO da
+// cura (quem curou, que tipo, estado do campo). Reusar `quando` seria repetir o erro que a sessão 3 corrigiu.
+// Fechado; abre só `inimigoTem` p/ a Brigid. As outras formas da família (paridade de turno=Hel, facção do
+// curador=Nefertem, tipo=regeneração=Cernunnos/Chaac) entram por deus. Ausência = toda cura. Ver docs/passivas.md.
+const CONDICOES_CURA = {
+  inimigoTem: { sub: DOTS },   // existe inimigo VIVO (do lado curado) com a tag DoT (brigid: 'queimadura'); cresce p/ debuff/controle por deus
+};
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
   elementos: ELEMS,
@@ -162,6 +171,8 @@ const VOCAB = {
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
+  condicoesCura: Object.keys(CONDICOES_CURA),    // chaves válidas em bonusCura.quandoCura (eixo da CURA, 3º eixo)
+  condicoesCuraDef: CONDICOES_CURA,               // como validar cada chave de quandoCura (valida_kit lê)
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
@@ -406,11 +417,9 @@ function caidos(st, lado) { return st.lados[lado].units.filter(u => !u.vivo).len
 // -------------------------------------------------------------- DANO
 function bonusDano(st, atk) {
   let b = 0;
-  const meu = st.lados[atk.lado];
   const up = ef(atk, 'dmgUp'), dn = ef(atk, 'dmgDown');
   if (up) b += up.v;
   if (dn) b -= dn.v;
-  if (meu.units.some(x => x.vivo && x.key === 'brigid')) b += 5;   // passiva Brigid
   return b;
 }
 
@@ -457,6 +466,32 @@ function bonusDanoDeclarativo(st, atk, alvo) {
       if (f.gatilho !== 'bonusDano') continue;
       if ((f.escopo || 'self') === 'self' && u !== atk) continue;
       if (condOK(f.quando, atk, alvo, st)) b += f.v;
+    }
+  }
+  return b;
+}
+
+// bonusCura (F1.2 sessão 7) — avalia a condição `quandoCura` (eixo próprio da cura). Lê o contexto da cura,
+// NÃO um ataque: `u` é a unidade CURADA; a condição olha o campo/lado. Conjunto FECHADO (CONDICOES_CURA).
+function condCuraOK(q, u, st) {
+  if (!q) return true;
+  if ('inimigoTem' in q) {   // existe inimigo VIVO (do lado oposto ao curado) com a tag DoT
+    return st.lados[1 - u.lado].units.some(x => x.vivo && x.dots.some(d => d.nome === q.inimigoTem));
+  }
+  return false;
+}
+// Soma o +v das passivas bonusCura no lado do CURADO (u). O dono precisa estar VIVO (a passiva some com ele,
+// igual ao bonusDano). Estrutura espelha bonusDanoDeclarativo. Brigid: +5 se algum inimigo com Queimadura.
+function bonusCuraDeclarativo(st, u) {
+  let b = 0;
+  for (const dono of st.lados[u.lado].units) {
+    if (!dono.vivo) continue;
+    const g = kitDe(st, dono);
+    const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho !== 'bonusCura') continue;
+      if (condCuraOK(f.quandoCura, u, st)) b += f.v;
     }
   }
   return b;
@@ -636,11 +671,9 @@ function removerInvocacao(st, g) {
 function curar(st, u, v) {
   if (!u.vivo) return;
   if (ef(u, 'noHeal')) { log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'sem_cura' }); return; }
-  let bonus = 0;
-  // passiva Brigid — "curas curam +5 se algum INIMIGO estiver com Queimadura". §39: a prosa VENCE; o
-  // hardcode antigo varria os dois lados (qualquer aliado queimando ativava — sinergia que ninguém concedeu).
-  const inimigoQueima = st.lados[1 - u.lado].units.some(x => x.vivo && x.dots.some(d => d.nome === 'queimadura'));
-  if (inimigoQueima && st.lados[u.lado].units.some(x => x.vivo && x.key === 'brigid')) bonus = 5;
+  // passiva Brigid (declarativa, gatilho bonusCura): +v se a condição quandoCura vale. §39: só INIMIGO com
+  // Queimadura conta (não aliado) — travado no eixo `inimigoTem` (lê o lado oposto ao curado).
+  const bonus = bonusCuraDeclarativo(st, u);
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
   if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });

@@ -8,7 +8,11 @@
   "inicial": true,
   "passiva": {
     "nome": "Ferreira Divina",
-    "desc": "O time causa +5 de dano (permanente); curas curam +5 se alguém no campo estiver com Queimadura."
+    "desc": "O time causa +5 de dano (permanente); curas no time curam +5 se algum inimigo estiver com Queimadura.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 5, "escopo": "time" },
+      { "gatilho": "bonusCura", "v": 5, "quandoCura": { "inimigoTem": "queimadura" } }
+    ]
   },
   "ab": [
     {

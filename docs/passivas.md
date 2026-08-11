@@ -36,11 +36,17 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
   - `aoCair` (sessão 6) — quando alguém CAI, faz X. Campos: `quem` (obrig, o SUJEITO da morte) + `faz` (obrig,
     o efeito no reator). UM gatilho, não dois (onKill/onDeath): a morte é UM momento (uma unidade a 0 em `matar`);
     só o sujeito varia — eixo de sujeito, igual à imunidade (declaração uniforme), diferente do por-turno (3
-    momentos → 3 gatilhos). `quem` ∈ `V.aoCairQuem`, abre só `'inimigo'` (matador-bound: "ao derrotar" — zeus).
-    Cresce por deus: `'self'` (o dono morre — nezha/ymir), `'aliado'`, `'qualquerInimigo'` (hades). `faz` reusa
+    momentos → 3 gatilhos). `quem` ∈ `V.aoCairQuem`, abre `'inimigo'` (matador-bound: "ao derrotar" — zeus) e
+    `'self'` (o dono morre — nezha). Cresce por deus: `'aliado'` (khnum), `'qualquerInimigo'` (hades). `faz` reusa
     `V.fxTurno` (+ `orbGain.para` = elemento fixo). **AMBIGUIDADE aberta (DECISOES):** "quando um inimigo é
     derrotado, [eu] X" não diz se é matador-bound ou qualquer-morte — decisão do dono ao migrar morrigan/iansa/ahpuch.
-  - próximos: `bonusCura`, `reativa`, `aCadaN`, e os demais sujeitos de `aoCair`…
+  - `bonusCura` (sessão 7) — soma `v` à MAGNITUDE das curas no lado do dono (Brigid: +5). Campos: `v` (obrig),
+    `quandoCura`. Gatilho PRÓPRIO, não campo do `bonusDano`: caminho de valor diferente (soma em `curar`, não em
+    `bonusDano`), evento diferente (`cura`, não `dano`), e condição de eixo diferente (`quandoCura`, abaixo). A
+    varredura achou **7** membros "curas curam +N" (não os 20 que MENCIONAM cura — o resto é cura-plana-por-gatilho
+    ou bônus-de-dano-por-ter-sido-curado; ver DECISOES §41).
+  - próximos: `reativa` (hera), `aCadaN` (cuca), os demais sujeitos de `aoCair`, e `heal` como fx de `faz`
+    (destrava as 9 passivas de cura-plana-por-gatilho — Hades/Deméter/Ymir/… — maiores que o próprio bonusCura).
 
 ## "Imune" na prosa engana: três famílias diferentes, não uma
 
@@ -74,14 +80,29 @@ esses deuses migrarem. Os eventos gerados por um `faz` recebem `passiva: <key do
 (ABSOLUTO, da partida). Kitsune ("a cada 2 turnos") e Boto ("a cada 3 turnos") podem ser RELATIVOS (desde o
 último disparo). Se forem, são dois comportamentos e o `aCadaN` precisa dizer qual — decidir na sessão dele.
 
-## Dois vocabulários que NUNCA se misturam: ofensivo (`quando`) × defensivo (`contra`)
+## TRÊS vocabulários que NUNCA se misturam: ofensivo (`quando`) × defensivo (`contra`) × de-cura (`quandoCura`)
 
 `quando` (gatilho bonusDano) lê o lado **OFENSIVO** de um ataque do dono: quem ataca (`atacanteElem`), quem é
 atacado (`alvoDebuff`/`alvoBuff`/`alvoElem`/`alvoHp`/`alvoDefesa`/`alvoMarca`), e o estado do campo (`fase`).
-`contra` (gatilho reducao) lê o **GOLPE QUE CHEGA** ao dono. São eixos SEPARADOS — um bônus de dano nunca
-condiciona pelo golpe recebido, e uma redução nunca condiciona por quem o dono ataca. Não reusar um pelo
-outro: se `quando` ganhasse "slot do ataque recebido", o eixo ofensivo passaria a ler defesa e o significado
-de cada chave viraria ambíguo (foi o que o `de:'basico'` sobrecarregado teria feito — daí `contra:{slot}`).
+`contra` (gatilho reducao) lê o **GOLPE QUE CHEGA** ao dono. `quandoCura` (gatilho bonusCura, sessão 7) lê o
+**CONTEXTO DE UMA CURA** — que não tem ataque nenhum: não há `atk` nem `alvo`-de-golpe, então nenhuma chave de
+`quando` serve. São TRÊS eixos SEPARADOS — um bônus de dano nunca condiciona pelo golpe recebido, uma redução
+nunca condiciona por quem o dono ataca, e um bônus de cura nunca lê participantes de um ataque que não houve.
+Não reusar um pelo outro: se `quando` ganhasse "slot do ataque recebido", o eixo ofensivo passaria a ler defesa
+e o significado de cada chave viraria ambíguo (foi o que o `de:'basico'` sobrecarregado teria feito — daí
+`contra:{slot}`); reusar `quando` na cura repetiria o mesmo erro (a condição da Brigid é "existe INIMIGO com
+Queimadura" — estado de lado, não `alvoDebuff` do alvo de um golpe).
+
+**`quandoCura` — condição da cura (fechada; abre só `inimigoTem` na sessão 7):**
+
+| chave | valor | lê |
+|---|---|---|
+| `quandoCura.inimigoTem` | ∈ `V.dots` (`queimadura`, `veneno`) | existe inimigo VIVO (do lado curado) com a tag DoT (brigid: `queimadura`) |
+
+Objeto de UMA chave, ausente = toda cura. As outras formas da família (paridade de turno → Hel; facção do
+curador → Nefertem; tipo=regeneração → Cernunnos/Chaac) entram POR DEUS quando migrarem — cada uma como chave
+nova de `quandoCura`, revisada, nunca à força. `V.dots` cresce para debuff/controle se um deus condicionar cura
+por eles.
 
 **`contra` — condição defensiva (fechada; abre só `slot` na sessão 3):**
 
@@ -171,10 +192,15 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **9/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
+- **10/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
   `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo),
-  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self').
-- Faltam 3: brigid → `bonusCura` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1].
+  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self'), **brigid** (sessão 8, `bonusDano` time + `bonusCura`).
+- Faltam 2: hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1].
+- **Brigid fechada (sessão 8):** duas cláusulas migradas juntas (deus inteiro, §37): +5 de dano ao time =
+  `{bonusDano, v:5, escopo:'time'}` (some com Brigid morta — comportamento atual preservado); cura +5 se inimigo
+  com Queimadura = `{bonusCura, v:5, quandoCura:{inimigoTem:'queimadura'}}`. A caracterização Lote B (ambas as
+  cláusulas, incl. o §39 "só inimigo, não aliado") seguiu verde SEM alteração. O `desc` do JSON dizia "alguém no
+  campo" (o texto largo do §39); alinhei à planilha ("algum inimigo"), que é a prosa que VENCE.
 - **Nezha fechada (sessão 7):** `aoCair` já existia; abrir o sujeito `'self'` fechou a passiva. Os 4 travas de
   ORDEM foram caracterizados VERDE contra o hardcode ANTES de migrar e continuaram verdes depois — não houve
   divergência (a prosa "retorna no turno seguinte, 48 HP, 1×" bate com o motor): (1) revive DEPOIS da limpeza de

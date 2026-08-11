@@ -4,6 +4,25 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 8 — gatilho `bonusCura`; migração de **brigid** (deus inteiro, 2 cláusulas).
+**Resultado:** varredura da família de cura ANTES da forma (3 perguntas do dono). **Q3:** dos 100, **20 MENCIONAM
+cura mas só 7 são `bonusCura` próprio** (soma à magnitude) — o resto é balde: 9 cura-plana-por-gatilho (`faz`
+heal — MAIOR que bonusCura, mesma lição do `faz:[fx]` do Rá; destrava com um `heal` em fxTurno na F1.x), 2
+bônus-de-dano-por-ter-sido-curado (`alvoCuradoAntes`, já reservado), 3 outros. **Sexta correção de número por
+varredura do conjunto inteiro (20→7).** **Q1:** o `quando` do bonusDano NÃO serve — as 9 chaves leem participantes
+de um ATAQUE; cura não tem ataque. 3º eixo **`quandoCura`** (como o `contra` da sessão 3), abre só `inimigoTem`
+(existe inimigo vivo do lado curado com tag DoT). **Q2/forma:** gatilho PRÓPRIO (não campo do bonusDano) por 3
+razões — caminho de valor (`curar` ≠ `bonusDano`), evento (`cura` ≠ `dano`), eixo de condição disjunto. Migradas
+as 2 cláusulas: +5 dano ao time = `{bonusDano,v:5,escopo:'time'}` (some com Brigid morta); cura +5 se inimigo
+queima = `{bonusCura,v:5,quandoCura:{inimigoTem:'queimadura'}}`. Caracterização Lote B (ambas, incl. §39 "só
+inimigo") verde SEM alteração; `grep key==='brigid'` vazio; suíte inteira verde. Alinhei o `desc` do JSON
+("alguém no campo" → "algum inimigo") à planilha (§39, prosa vence). **Nota não-bloqueante:** "permanente" da 1ª
+cláusula lido como "não expira por turno", não "sobrevive à morte" (hardcode sempre exigiu Brigid viva, igual a
+thor −6); se o dono quis survives-death, é §39 e me avisa. DECISOES §41. **Placar 9→10/12.** **PRÓXIMO (dono):**
+faltam 2 — `reativa`→hera, `aCadaN`→cuca.
+
+## Sessão — F1.2 sessão 7 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 7 — abrir o sujeito `aoCair` quem:'self'; migração de **nezha** (revive próprio).
 **Resultado:** a Nezha é o único caso em que o efeito reage à morte DO PRÓPRIO SUJEITO → a caracterização travou
 ORDEM, não só magnitude/escopo. Os **4 travas** ficaram VERDES contra o hardcode ANTES de migrar e continuaram

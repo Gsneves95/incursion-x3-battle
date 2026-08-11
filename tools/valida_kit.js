@@ -82,6 +82,19 @@ function validarContra(c, ctx, errs) {
   }
 }
 
+// Valida a CONDIÇÃO `quandoCura` do gatilho bonusCura (F1.2 sessão 7). TERCEIRO eixo, separado de `quando`
+// (ofensivo) e `contra` (defensivo): a cura não tem ataque, então lê o contexto da cura. Vem de V.condicoesCuraDef.
+function validarQuandoCura(q, ctx, errs) {
+  if (!q || typeof q !== 'object' || Array.isArray(q)) { errs.push(`${ctx}: quandoCura não é objeto`); return; }
+  const chaves = Object.keys(q);
+  if (chaves.length !== 1) errs.push(`${ctx}: quandoCura deve ter exatamente 1 condição (tem ${chaves.length})`);
+  for (const k of chaves) {
+    const def = V.condicoesCuraDef[k];
+    if (!def) { errs.push(`${ctx}: condição de cura desconhecida "${k}" (válidas: ${V.condicoesCura.join(', ')})`); continue; }
+    if (def.sub && !def.sub.includes(q[k])) errs.push(`${ctx}: valor "${q[k]}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`);
+  }
+}
+
 // Valida o `faz` de um gatilho de turno (F1.2 sessão 4). Reusa validarFx (o fx é normal), mas EXIGE que o
 // tipo esteja no subconjunto turno-seguro (V.fxTurno) e que o alvo seja fixo — um gatilho de turno não
 // escolhe alvo. Sem isso, alguém declara faz:[{t:'dmg'}] sem alvo e o motor descobre em runtime.
@@ -114,6 +127,7 @@ function validarPassiva(p, ctx, errs) {
     if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0)) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
+    if ('quandoCura' in f) validarQuandoCura(f.quandoCura, `${c}.quandoCura`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('quem' in f && !V.aoCairQuem.includes(f.quem)) errs.push(`${c}: aoCair.quem inválido "${f.quem}" (válidos: ${V.aoCairQuem.join(', ')})`);

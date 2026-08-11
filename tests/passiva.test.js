@@ -369,7 +369,7 @@ const base = () => ({
 });
 ok(validarDeus(base()).length === 0, 'a passiva declarativa base deve ser VÁLIDA: ' + JSON.stringify(validarDeus(base())));
 const err = (mut, frag) => { const g = base(); mut(g); const e = validarDeus(g); ok(e.some(x => x.includes(frag)), `esperava erro contendo "${frag}", veio: ${JSON.stringify(e)}`); };
-err(g => g.passiva.fx[0].gatilho = 'bonusCura', 'gatilho inválido');            // gatilho fora do conjunto
+err(g => g.passiva.fx[0].gatilho = 'gatilhoInexistente', 'gatilho inválido');   // gatilho fora do conjunto
 err(g => g.passiva.fx[0].quando = { foo: true }, 'condição desconhecida');       // chave de condição inventada
 err(g => g.passiva.fx[0].quando = { alvoElem: 'Plasma' }, 'fora do sub-vocabulário'); // valor fora do sub-vocab
 err(g => g.passiva.fx[0].quando = { alvoMarca: 'olho' }, 'reservada');           // condição pendente (marca)
@@ -402,6 +402,13 @@ err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] })
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado'/'qualquerInimigo' ainda não abertos (F1.4)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
+// gatilho bonusCura (sessão 7): soma à MAGNITUDE da cura; eixo próprio `quandoCura` (3º eixo, separado de quando/contra)
+err(g => g.passiva.fx.push({ gatilho: 'bonusCura' }), 'exige o campo "v"');                                          // falta v
+err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) NÃO vai em bonusCura — eixo errado
+err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho');  // contra (defensivo) NÃO vai em bonusCura
+err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, quandoCura: { alvoDebuff: 'queimadura' } }), 'desconhecida'); // chave de quando não existe em quandoCura (eixos não se misturam)
+err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, quandoCura: { inimigoTem: 'medo' } }), 'fora do sub-vocabulário'); // 'medo' não é DoT (F1.4 amplia)
+err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, quandoCura: { inimigoTem: 'queimadura' } }), 'não pertence ao gatilho'); // quandoCura NÃO vai em bonusDano
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
