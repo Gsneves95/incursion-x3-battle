@@ -60,3 +60,38 @@ provado num deus sintético (`tests/passiva.test.js`).
 
   Nenhuma das 3 pede chave NOVA de condição — só um valor/estado que sua fase adiciona. É a prova de
   que o vocabulário de condição está completo.
+
+## Ordem das próximas sessões — por DESTRAVE, não por frequência
+
+Ordenar por frequência deixa deuses pela metade esperando o último gatilho (hardcode convivendo com dado
+no mesmo deus — onde alguém edita o lugar errado). Ordenar por DESTRAVE termina deuses: o checador confere,
+a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposição das 12 passivas em gatilhos
+(bonusDano já existe ✓):
+
+| deus | gatilhos da passiva | faltam | # |
+|---|---|---|---|
+| fujin | (inerte — sem hardcode no motor) | — | **0** |
+| ogum | bonusDano✓ + **danoIrredutivel** | danoIrredutivel | 1 |
+| tyr | **danoIrredutivel** (+ inabsorvível) | danoIrredutivel | 1 |
+| sobek | bonusDano✓ + **reducao** (só de Básicos) | reducao | 1 |
+| thor | **reducao** (time, plana) | reducao | 1 |
+| ra | bonusDano✓ + **porTurno** (contador/turno) | porTurno | 1 |
+| ganesha | **porTurno** (orbe no turno 1) | porTurno | 1 |
+| brigid | bonusDano✓ + **bonusCura** (condicional) | bonusCura | 1 |
+| zeus | **onKill** (orbe) | onKill | 1 |
+| hera | **reativa** (on-cura → escudo) | reativa | 1 |
+| cuca | **imunidade** + **porTurno** (ação grátis/3 turnos) | imunidade, porTurno | 2 |
+| nezha | **imunidade** + **onDeath** (revive 1×) | imunidade, onDeath | 2 |
+
+**Quantos deuses cada gatilho TERMINA (dado que bonusDano já existe):**
+- `danoIrredutivel` → **2** (ogum, tyr) — hardcodes adjacentes em `calcDano` (ignoraReducao/ignoraEscudo); migração cirúrgica.
+- `reducao` → **2** (sobek, thor) — precisa de condição (por slot/fonte do dano recebido) + escopo.
+- `porTurno` → **2** (ra, ganesha) — SE o gatilho cobrir tanto "todo turno" quanto "turno 1", e tanto contador quanto orbe; senão 1+1 (sub-formas diferentes).
+- `bonusCura` → 1 (brigid) · `onKill` → 1 (zeus) · `reativa` → 1 (hera) · `imunidade`/`onDeath` → 0 sozinhos (cuca/nezha precisam de dois).
+
+**Sequências que mais terminam:** `danoIrredutivel + reducao` = **4 deuses** (ogum, tyr, sobek, thor) em 2 gatilhos, os dois de destrave mais SÓLIDO (o "2" do porTurno é mole — depende de unir sub-formas). Somando `porTurno` = 6. Depois `imunidade` (destrava cuca+nezha junto com porTurno/onDeath), `bonusCura`, `onKill`, `reativa` fecham o resto.
+
+**Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
+que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO
+uma caracterização primeiro (é acrescentar cobertura, não alterar suíte) — só então migro, com a suíte provando
+que o dado reproduz o hardcode.

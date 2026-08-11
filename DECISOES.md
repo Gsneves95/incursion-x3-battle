@@ -976,12 +976,19 @@ recusa em voz alta, sem exceção aberta. Nenhuma das 3 pede chave NOVA de condi
 
 ## 37. Bloco de 16 decisões da Fase 1 — batidas pelo dono (para F1.3/F1.4/F1.5)
 
-**LIÇÃO (segunda vez o mesmo padrão em duas sessões — vira regra).** Ao fechar o vocabulário da F1.2
+**LIÇÃO A (segunda vez o mesmo padrão em duas sessões — vira regra).** Ao fechar o vocabulário da F1.2
 sessão 1, o "+N condicional (38)" se revelou NÃO uma forma, e sim nove: o rótulo agrupava por SINTOMA
 (+N de dano) e não por MECANISMO (o que a condição LÊ). Fechar contra os 4 deuses migrados teria perdido
 elemento, HP, buff, marca, controle e fase — o cenário do tier B. É a mesma classe de erro do §35 (medir
 a dimensão errada). **Regra: antes de fechar um conjunto, verifique se o rótulo descreve um MECANISMO ou
 uma APARÊNCIA.** O 18 verdadeiro vale mais que o 38 falso, porque é verdadeiro.
+
+**LIÇÃO B (a regra contrariou quem a escreveu — é assim que se sabe que ela segura algo).** Na mesma
+mensagem, o dono BATEU a regra "migração é por DEUS INTEIRO" (decisão 2) e ela CANCELOU o item que ele
+tinha APROVADO uma frase antes ("migrar os 3": ogum/ra/sobek). Os três são multi-parte; migrar a metade
+`bonusDano` deixaria um `if (u.key===...)` invisível num deus que a documentação diria migrado. Registrado
+de propósito: **uma regra que nunca contraria o próprio autor não está segurando nada.** O valor de uma
+invariante aparece justamente quando ela veta uma vontade — inclusive a de quem a escreveu.
 
 Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde
 minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro o argumento dele.

@@ -4,6 +4,19 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** Plano da F1.2 sessão 2 — ordem de migração por DESTRAVE (leitura de dado).
+**Resultado:** decompus as 12 passivas em gatilhos (ver `docs/passivas.md` → "Ordem das próximas sessões").
+Só `bonusDano` existe; o resto ainda é hardcode. Contagem de DESTRAVE (deuses TERMINADOS por gatilho):
+`danoIrredutivel`→2 (ogum, tyr), `reducao`→2 (sobek, thor), `porTurno`→2 mole (ra, ganesha), demais→1 ou 0.
+Sequência que mais termina: **danoIrredutivel + reducao = 4 deuses** (os dois destraves mais sólidos).
+Recomendo abrir a sessão 2 por **danoIrredutivel** (hardcodes de ogum/tyr adjacentes em `calcDano`, migração
+cirúrgica, 2 deuses terminados). Registrado no §37 a LIÇÃO B (a regra "migração por deus" cancelou o item que
+o próprio dono aprovara — é assim que se sabe que a invariante segura algo). **Rede de equivalência:** `ra` não
+tem suíte que asserte a passiva, `thor`/`fujin` finas — antes de migrar sem asserção, adiciono caracterização
+primeiro. **AGUARDA:** o dono escolhe o gatilho (ou a sequência) da sessão 2 a partir da tabela.
+
+## Sessão — F1.2 sessão 1 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 1 — passiva declarativa, gatilho `bonusDano` com condição fechada.
 **Resultado:** schema da passiva declarativa (`docs/passivas.md`): `passiva.fx=[{gatilho,v,escopo,quando}]`.
 Vocabulário FECHADO de 9 condições em `E.VOCAB` (`condicoes`/`condicoesDef`); `valida_kit` valida a forma e
