@@ -266,6 +266,14 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   legibilidade passar de falhar — aceitar a estimativa teria escondido o bug. Varra o
   CSS/arte/dado, meça, e traga o número real; se ele contradisser a memória do dono, é isso
   que se reporta, não o palpite.
+- **Verificar que o teste EXISTE não é verificar que ele COBRE o que você precisa.** Nova nuance
+  do padrão acima (5ª vez que uma afirmação de memória do dono não sobreviveu à verificação). Na F1.2
+  o dono disse "ogum e tyr têm suíte" olhando a EXISTÊNCIA de suíte, não a COBERTURA dela: as suítes
+  do Ogum testavam a HABILIDADE destroyShield, não a PASSIVA (+10/irredutível). Migrar confiando nisso
+  teria trocado hardcode por dado sem nada provando equivalência — e o teste seguiria verde, provando
+  OUTRA coisa. Antes de confiar numa rede de teste, LEIA o bloco e confirme que ele asserta o
+  comportamento específico que você vai mexer; `grep <nome-do-deus>` acha o deus no roster, não a
+  asserção da mecânica. Rede escrita/suposta com pressa prova a coisa errada.
 - **Antes de declarar um kit ESCREVÍVEL, verifique o alcance da prosa INTEIRA, não só a coluna
   que a tarefa foca.** Na F1.1 o dono e eu dissemos "o motor tem tudo que os 6 kits de contador
   precisam" olhando só a parte de contador — mas a prosa completa dos mesmos 6 deuses arrastava

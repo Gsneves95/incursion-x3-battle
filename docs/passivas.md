@@ -106,6 +106,27 @@ no motor não retorna nada e a suíte que o cobre passa contra o dado.
 - **Nota do fujin:** conta como terminado porque a passiva é inerte e não tem hardcode — mas ela NÃO funciona
   (depende do Raijin, que não é inicial). Decisão aberta desde a Fase 0; volta à mesa quando o Raijin entrar (F1.8).
 
+### Auditoria da rede de equivalência (cobertura de passiva dos 9 hardcoded)
+
+Dois furos em duas sessões (Rá, Ogum) motivaram auditar TODOS os 9 antes de qualquer migração. Lendo os
+BLOCOS (não grepando o nome — existência ≠ cobertura), a rede real:
+
+| deus | passiva (cláusulas) | asserta a passiva? | o que cobre / falta |
+|---|---|---|---|
+| **thor** | −6 de dano ao time | **SIM** | capacidades: 15−6=9 vivo, 15 caído (magnitude + escopo + condição-vivo) |
+| **hera** | curado → +10 escudo | **PARCIAL** | capacidades: escudo APARECE nos 3 (`shield>0`); a magnitude **10** não é travada |
+| **nezha** | imune Veneno/Queimadura · revive 1× | **PARCIAL** | motor #10: revive 1× exato; a **imunidade** a Veneno/Queimadura não é testada |
+| **brigid** | +5 dano time (plano) · cura +5 se Queimadura | **NÃO** | só testam o DoT do básico e a IA; a passiva (dano/cura) não |
+| **cuca** | imune Dormir · Básico grátis a cada 3 turnos | **NÃO** | nada |
+| **ganesha** | turno 1: +2 orbes | **NÃO** | nada |
+| **ra** | aliados Aurora +5 · +1 Disco/turno | **NÃO** | nada (o kit foi conferido por screenshot, não por suíte) |
+| **sobek** | +6 vs debuff · −10 de Básicos | **NÃO** | nada (aparece só como roster/inimigo) |
+| **zeus** | ao derrotar: +1 orbe Tempestade | **NÃO** | nada |
+
+**Resultado: 1 SIM, 2 PARCIAL, 6 NÃO.** A maioria está descoberta — a rede é maior que uma sessão, então
+a tarefa se PARTE (decisão do dono). Cláusulas a caracterizar: ~13 (6 deuses do zero + fechar 2 parciais).
+Nenhuma migração até a rede existir. **`sobek` é o único pré-requisito direto da sessão 3** (reducao → sobek+thor).
+
 **Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
 que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO
 uma caracterização primeiro (é acrescentar cobertura, não alterar suíte) — só então migro, com a suíte provando
