@@ -26,7 +26,26 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
     (só o dono, ex.: sobek) ou time (todos os aliados, ex.: thor). `red = Math.max(red, v)` (regra 6, não
     soma). `contra` = condição DEFENSIVA (abaixo); ausente = todo ataque.
   - `porTurno` / `abertura` (sessão 4) — gatilhos de TURNO. Campo `faz` (obrig): ver "família por-turno" abaixo.
-  - próximos: `bonusCura`, `onKill`, `onDeath`, `reativa`, `imunidade`, `aCadaN`…
+  - `imunidade` (sessão 5) — imune a status nomeado(s). Campo `a` (obrig): array de tags ∈ `V.imunizaveis`
+    (`CONTROLES ∪ DOTS ∪ 'controle'`). UM gatilho: a declaração é uniforme ("imune a X"); só o enforcement
+    varia (controle em `aplicar`, DoT em `aplicarDot`) — enforcement é implementação, vocabulário é contrato.
+    O **coringa `'controle'`** cobre TODO controle (Jörmungandr, Ísis dizem "imune a controle", não listam):
+    cobre controle FUTURO por construção, então a **F1.4** (Pacificar, Torpor, Medo) amplia essas duas passivas
+    automaticamente — declarado aqui para não ser surpresa. NÃO cobre imunidade a MECÂNICA (execução → F1.3;
+    contágio) nem CONDICIONAL (yamato "com 15+ Combo", guanyu "com 3 vivos") — famílias próprias.
+  - próximos: `bonusCura`, `onKill`, `onDeath`, `reativa`, `aCadaN`…
+
+## "Imune" na prosa engana: três famílias diferentes, não uma
+
+A palavra "imune" no texto do kit cobre coisas de semântica OPOSTA. A próxima varredura vai tropeçar aqui se
+não estiver escrito:
+- **imunidade** (o gatilho): AUTO-imunidade a um status (o dono não recebe controle/DoT). 12 kits.
+- **anti-revive** (`naoRevive`, OUTRA família): marca no MORTO ou no INIMIGO ("quem Ammit derrota não revive",
+  "inimigos com Atadura não revivem"). 6 kits (cerberus, mimir, anubis, ammit, yanwong, ahpuch). Se tivesse
+  entrado no gatilho `imunidade`, ele carregaria duas semânticas opostas (proteger a si × punir o outro).
+  Viaja com morte/execução, não com imunidade.
+- **imunidade condicional** (OUTRA família): "imune enquanto/com N" (yamato 15+ Combo, guanyu 3 vivos) — não é
+  estática, depende de estado, fecha com os deuses dela.
 
 ## Família por-turno: o gatilho EMBRULHA um efeito (`faz`), não um escalar
 
@@ -148,9 +167,17 @@ no motor não retorna nada e a suíte que o cobre passa contra o dado.
 - **7/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
   `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`; ra inteiro: `porTurno`+`bonusDano`).
 - Faltam 5, TODOS bloqueados em gatilho que ainda não existe (a curva desce por gatilho novo):
-  brigid → `bonusCura` [1] · zeus → `onKill` [1] · hera → `reativa` [1] · cuca → `imunidade`+`aCadaN` [2] ·
-  nezha → `imunidade`+`onDeath` [2]. Destravam 3 com 1 gatilho cada (bonusCura/onKill/reativa); cuca+nezha
-  precisam de 2 (imunidade compartilhado).
+  brigid → `bonusCura` [1] · zeus → `onKill` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1] ·
+  nezha → `imunidade`(feito)+`onDeath` [1]. Destravam 3 com 1 gatilho cada (bonusCura/onKill/reativa); cuca+nezha
+  já têm `imunidade`, faltam `aCadaN`/`onDeath`.
+
+**Sessão 5 (`imunidade`) — infraestrutura, placar PARADO em 7/12 (0 migração real, como a sessão 1).** O que
+justifica a sessão não é o placar e sim o destrave FUTURO: `imunidade` é o **2º mecanismo mais populoso** —
+**12** kits o exigem. Depois desta sessão, **2** deles (jörmungandr, ísis) ficam com a PASSIVA inteira
+declarável (imunidade + a única outra cláusula, que já existe); os outros 10 precisam de +1 gatilho/tag cada
+(medo/agarrar → F1.4; veneno → DoT novo; on-kill/reflexo/scaled/sinergia → gatilhos futuros). Nenhum dos 12
+implementados era finalizável por `imunidade` (cuca/nezha precisam de `aCadaN`/`onDeath`), daí o placar parado —
+avisado antes de começar.
 - **Nota do fujin:** conta como terminado porque a passiva é inerte e não tem hardcode — mas ela NÃO funciona
   (depende do Raijin, que não é inicial). Decisão aberta desde a Fase 0; volta à mesa quando o Raijin entrar (F1.8).
 

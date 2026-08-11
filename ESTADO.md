@@ -4,6 +4,22 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 5 — gatilho `imunidade` (infraestrutura; migra 0 real, como a sessão 1).
+**Resultado:** varredura das imunidades: o "27" era balde 2,25× maior que a família real — somava imunidade (12)
++ redução (já migrada) + anti-revive (6) + condicionais (2). Gatilho `imunidade` com `a:[tags]`, sub-vocab
+FECHADO `CONTROLES ∪ DOTS ∪ 'controle'` (coringa = todo controle). UM gatilho (declaração uniforme; enforcement
+varia: `aplicar` p/ controle, `aplicarDot` p/ DoT — provado no sintético controle+DoT+coringa). Migrei 0 real
+(cuca/nezha precisam de `aCadaN`/`onDeath` também); enforcement é no-op nos reais (sem `imunidade` fx). **Placar
+PARADO em 7/12** (avisado antes). Confirmei lendo a prosa: jörmungandr/ísis dizem "imune a controle" (coringa é
+o contrato) → **F1.4 amplia essas duas por construção** (registrado). NÃO inclui imunidade-a-mecânica (execução
+→F1.3) nem condicional. §37 ganhou o 5º caso (varredura corrige número: 27→12); §38 o item de checklist de RNG;
+docs registram a separação "imune engana: imunidade × anti-revive × condicional". **Justificativa da sessão
+(destrave futuro):** `imunidade` é o 2º mecanismo mais populoso (12 kits o exigem); 2 (jörmungandr, ísis) ficam
+com passiva inteira declarável. 17 marcos verdes. **PRÓXIMO (dono escolhe):** os de-1 (`bonusCura`→brigid,
+`onKill`→zeus, `reativa`→hera) fecham 1 deus cada e movem o placar; `aCadaN`/`onDeath` fecham cuca/nezha.
+
+## Sessão — F1.2 sessão 4 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 4 — gatilhos de turno (`porTurno`+`abertura`); migração de ra + ganesha.
 **Resultado:** a família por-turno tem 3 formas distintas (todo-turno 7 / abertura 7 / a-cada-N 4) → **3 gatilhos
 nomeados**, não eixo temporal. Abri `porTurno` (todo turno) e `abertura` (1º turno); `aCadaN` fica para depois.

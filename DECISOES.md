@@ -991,19 +991,24 @@ de propósito: **uma regra que nunca contraria o próprio autor não está segur
 invariante aparece justamente quando ela veta uma vontade — inclusive a de quem a escreveu.
 
 **LIÇÃO C (padrão CONSOLIDADO, não caso isolado): varra a FAMÍLIA INTEIRA antes de fechar, não os poucos
-que vai migrar.** Três vezes seguidas isso evitou o tier B: (1) o "+N condicional" eram 9 formas, não 1
-(fechar nos 4 migrados perderia elemento/HP/buff/marca/fase); (2) a auditoria de cobertura achou 6 furos onde
-eu supunha rede; (3) o gatilho `reducao` — ao varrer as ~15 passivas de redução (não só sobek+thor), o eixo
-da condição se revelou MÚLTIPLO (slot, classe, elemento-negado, fase, paridade, contador, contagem, elemento-do-
-receptor), então abri só `slot` e declarei o resto como crescimento por deus. Já não é sorte: **antes de fechar
-qualquer conjunto/vocabulário, a varredura da família inteira é obrigatória** — o custo dela é sempre menor que
-o de uma exceção descoberta num lote distante.
+que vai migrar.** CINCO vezes seguidas isso evitou o tier B ou corrigiu um número que eu ia usar para planejar:
+(1) o "+N condicional" eram 9 formas, não 1 (fechar nos 4 migrados perderia elemento/HP/buff/marca/fase);
+(2) a auditoria de cobertura achou 6 furos onde eu supunha rede; (3) o gatilho `reducao` — ao varrer as ~15
+passivas de redução, o eixo se revelou MÚLTIPLO (slot/classe/elemento-negado/fase/paridade/contador/contagem/
+elemento-do-receptor), abri só `slot`; (4) a família por-turno eram 3 formas distintas (todo-turno/abertura/
+a-cada-N), 3 gatilhos nomeados, não um eixo temporal; (5) o gatilho `imunidade` — o balde "27 imunidades
+estáticas" era **2,25× maior que a família real**: somava imunidade (12) + redução (já migrada, sessão 3) +
+anti-revive (6, outra família) + condicionais (2, outra família). Eu ia planejar "maior que tudo que a F1.2
+fez" a partir de 27; a família real é 12, uma sessão. Já não é sorte: **antes de fechar qualquer conjunto/
+vocabulário, a varredura da família inteira é obrigatória** — o custo dela é sempre menor que o de uma exceção
+(ou de um plano) descoberto errado num lote distante.
 
-**O detalhe que faz a lição funcionar:** não foi prudência genérica. A varredura evitou o tier B nas três
-vezes porque foi feita contra o **CONJUNTO INTEIRO**, não contra os casos em mãos. Varrer só os dois que eu ia
-migrar teria falhado nas três (fecharia no debuff/defesa do sobek e perderia elemento/HP/marca; confirmaria
-"ogum/tyr têm suíte" sem ver que era da habilidade; fecharia o `reducao` no slot do sobek e perderia classe/
-elemento/paridade). **É a diferença entre varrer e varrer o SUFICIENTE** — a família toda, não a amostra que a
+**O detalhe que faz a lição funcionar:** não foi prudência genérica. A varredura acertou nas cinco vezes
+porque foi feita contra o **CONJUNTO INTEIRO**, não contra os casos em mãos. Varrer só os que eu ia migrar
+teria falhado em todas (fecharia no debuff/defesa do sobek e perderia elemento/HP/marca; confirmaria "ogum/tyr
+têm suíte" sem ver que era da habilidade; fecharia o `reducao` no slot do sobek; e contaria 2 imunidades — as
+da cuca/nezha — em vez de ver que a família são 12 e o balde somava 27). **É a diferença entre varrer e varrer
+o SUFICIENTE** — a família toda, não a amostra que a
 tarefa colocou na frente.
 
 Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde

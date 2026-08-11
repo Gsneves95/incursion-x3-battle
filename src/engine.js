@@ -91,7 +91,15 @@ const GATILHOS_PASSIVA = {
   reducao:         { campos: ['v', 'escopo', 'contra'], obrig: ['v'] },        // reduz o dano recebido (sessão 3)
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
+  imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
 };
+// `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
+// 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
+// enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
+// contrato. NÃO cobre imunidade a MECÂNICA (execução/contágio: viaja com a mecânica) nem CONDICIONAL (yamato/
+// guanyu: família própria). CORINGA 'controle' cobre controle FUTURO por construção — a F1.4 (Pacificar,
+// Torpor, Medo) amplia Jörmungandr e Ísis automaticamente (declarado, não surpresa).
+const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle'];
 // `faz` (efeito de um gatilho de turno) é PROPRIEDADE da família por-turno: o gatilho EMBRULHA um efeito,
 // não um escalar (como bonusDano/reducao). Reusa o vocabulário de fx, mas SÓ os que não exigem alvo escolhido
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
@@ -139,6 +147,7 @@ const VOCAB = {
   contra: Object.keys(CONTRA),                     // chaves válidas em reducao.contra (eixo DEFENSIVO)
   contraDef: CONTRA,                               // como validar cada chave de contra
   fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
+  imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -251,14 +260,31 @@ function rng(st) { const f = mulberry32(st.seed + st.rngN * 7919); st.rngN++; re
 function ef(u, type) { return u.efeitos.find(e => e.type === type); }
 function temControle(u) { return u.efeitos.some(e => CONTROLES.includes(e.type)); }
 
+// imunidade declarativa (F1.2 sessão 5) — u é imune a `tag` (um tipo de CONTROLE ou nome de DoT). O coringa
+// 'controle' cobre TODO controle. Lê a passiva do dono; enforcement em aplicar (controle) e aplicarDot (DoT).
+function imuneA(st, u, tag) {
+  const g = kitDe(st, u); const p = g && g.passiva;
+  if (!p || !Array.isArray(p.fx)) return false;
+  const ehControle = CONTROLES.includes(tag);
+  for (const f of p.fx) {
+    if (f.gatilho !== 'imunidade') continue;
+    if (f.a.includes(tag)) return true;
+    if (ehControle && f.a.includes('controle')) return true;   // coringa cobre todo controle
+  }
+  return false;
+}
+
 function aplicar(st, u, eff) {
   const e = { ...eff };
   // regra 7 — proteção vence controle
   if (CONTROLES.includes(e.type) && ef(u, 'controlImmune')) {
     log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'controle_imune', efeito: e.type }); return;
   }
-  if (e.type === 'adormecido' && u.key === 'cuca') {
+  if (e.type === 'adormecido' && u.key === 'cuca') {   // hardcode Cuca (fica até a Cuca migrar inteira: imunidade+aCadaN)
     log(st, { tipo: 'imune', alvo: u.key, efeito: 'adormecido' }); return;
+  }
+  if (CONTROLES.includes(e.type) && imuneA(st, u, e.type)) {   // imunidade declarativa (controle)
+    log(st, { tipo: 'imune', alvo: u.key, efeito: e.type }); return;
   }
   const ja = ef(u, e.type);
   if (ja) {
@@ -276,6 +302,7 @@ function aplicarDot(st, u, nome, v, dur) {
   // passiva Nezha — "imune a Veneno e Queimadura". §39: a prosa VENCE; o hardcode antigo bloqueava TODO
   // DoT (imunidade que crescia sozinha a cada DoT novo). Lista fechada até a Nezha migrar (gatilho imunidade).
   if (u.key === 'nezha' && (nome === 'veneno' || nome === 'queimadura')) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }
+  if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (DoT)
   const ja = u.dots.find(d => d.nome === nome);
   if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); }   // regra 6
   else u.dots.push({ nome, v, dur });

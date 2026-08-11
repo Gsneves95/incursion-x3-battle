@@ -116,6 +116,10 @@ function validarPassiva(p, ctx, errs) {
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
+    if ('a' in f) {   // imunidade: array não-vazio de tags do sub-vocabulário (controle/DoT/'controle')
+      if (!Array.isArray(f.a) || f.a.length === 0) errs.push(`${c}: a deve ser array não-vazio (${V.imunizaveis.join('|')})`);
+      else for (const tag of f.a) if (!V.imunizaveis.includes(tag)) errs.push(`${c}: imunidade a "${tag}" fora do sub-vocabulário (válidos: ${V.imunizaveis.join(', ')})`);
+    }
     if ('ignora' in f) {
       if (!Array.isArray(f.ignora) || f.ignora.length === 0) errs.push(`${c}: ignora deve ser array não-vazio (${V.ignoraveis.join('|')})`);
       else for (const x of f.ignora) if (!V.ignoraveis.includes(x)) errs.push(`${c}: ignora com valor inválido "${x}" (válidos: ${V.ignoraveis.join(', ')})`);

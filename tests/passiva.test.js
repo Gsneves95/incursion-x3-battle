@@ -286,6 +286,44 @@ console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correç�
   ok(nezha.dots.some(d => d.nome === 'sangramento'), '§39: DoT FORA da lista (sangramento) NÃO é bloqueado — a folga latente morreu');
 }
 
+// IMUNIDADE (sessão 5): provada no SINTÉTICO (migra 0 real — cuca/nezha precisam de aCadaN/onDeath também).
+// Um gatilho, sub-vocab CONTROLES ∪ DOTS ∪ 'controle' (coringa). Enforcement: aplicar (controle) / aplicarDot (DoT).
+console.log('== IMUNIDADE declarativa: controle nomeado, DoT nomeado, coringa "controle" ==');
+const imuneGod = (a) => ({ nome: 'TImune', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: '-', desc: '-', fx: [{ gatilho: 'imunidade', a }] } });
+const apToInimigos = (st, caster, fx) => E.aplicarFx(st, caster, fx, { alvo: 'todosInimigos', slot: 'habilidade' }, []);
+{ // controle NOMEADO — só aquele controle
+  E.GODS.timune = imuneGod(['adormecido']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timune', 'zeus', 'zeus'], 501);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0], outro = st.lados[1].units[1];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'adormecido', dur: 2 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'adormecido'), 'imune a adormecido (controle nomeado)');
+  ok(!!E.ef(outro, 'adormecido'), 'ESCOPO: o outro inimigo NÃO é imune');
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'taunt', dur: 2 }, escopo: 'todosInimigos' }]);
+  ok(!!E.ef(imune, 'taunt'), 'a:[adormecido] NÃO cobre outro controle (taunt aplica)');
+  delete E.GODS.timune;
+}
+{ // DoT nomeado
+  E.GODS.timune = imuneGod(['queimadura']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timune', 'zeus', 'zeus'], 502);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0], outro = st.lados[1].units[1];
+  apToInimigos(st, caster, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }]);
+  ok(imune.dots.length === 0, 'imune a queimadura (DoT nomeado)');
+  ok(outro.dots.some(d => d.nome === 'queimadura'), 'ESCOPO: o outro inimigo RECEBE queimadura');
+  delete E.GODS.timune;
+}
+{ // CORINGA 'controle' — cobre TODO controle, mas NÃO DoT
+  E.GODS.timune = imuneGod(['controle']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timune', 'zeus', 'zeus'], 503);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'atordoado'), 'coringa: imune a atordoado');
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'taunt', dur: 2 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'taunt'), 'coringa: imune a taunt (todo controle)');
+  apToInimigos(st, caster, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }]);
+  ok(imune.dots.some(d => d.nome === 'queimadura'), 'coringa é SÓ controle — DoT (queimadura) NÃO é bloqueado');
+  delete E.GODS.timune;
+}
+
 console.log('== valida_kit FALHA em voz alta: gatilho, condição, valor e reservada ==');
 const base = () => ({
   key: 'tp', nome: 'TP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', inicial: false,
@@ -321,6 +359,11 @@ err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico
 err(g => g.passiva.fx.push({ gatilho: 'porTurno' }), 'exige o campo "faz"');                                        // falta faz
 err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno');    // dmg fora de fxTurno
 err(g => g.passiva.fx.push({ gatilho: 'abertura', faz: [{ t: 'contador', nome: 'discoSolar', v: 1, alvo: 'inimigo' }] }), 'faz não escolhe alvo'); // alvo não pode ser inimigo
+// gatilho imunidade (sessão 5): `a` = array não-vazio de tags do sub-vocabulário
+err(g => g.passiva.fx.push({ gatilho: 'imunidade' }), 'exige o campo "a"');                       // falta a
+err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: [] }), 'array não-vazio');                   // a vazio
+err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'] }), 'fora do sub-vocabulário');     // medo ainda não é controle (F1.4)
+err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), 'não pertence ao gatilho'); // v não vai em imunidade
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
