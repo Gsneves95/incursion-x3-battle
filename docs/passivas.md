@@ -16,9 +16,14 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
 }
 ```
 
-- `gatilho` — o que a passiva faz. Conjunto FECHADO `V.gatilhosPassiva`. **Sessão 1 abre só `bonusDano`**
-  (soma `v` ao dano de um ataque). Próximos: `bonusCura`, `reducao`, `onKill`, `onDeath`, `porTurno`, `reativa`…
-- `v` — inteiro > 0.
+- `gatilho` — o que a passiva faz. Conjunto FECHADO `V.gatilhosPassiva`; cada gatilho declara em
+  `V.gatilhosPassivaDef` os CAMPOS que aceita e os obrigatórios, e o validador dispara por gatilho (um
+  campo de outro gatilho é recusado como "não pertence"). Cresce um por sessão.
+  - `bonusDano` (sessão 1) — soma `v` ao dano de um ataque. Campos: `v` (obrig), `escopo`, `quando`.
+  - `danoIrredutivel` (sessão 2) — o dano do DONO fura redução e/ou escudo. Campo: `ignora` (obrig),
+    subconjunto de `['reducao','escudo']` (`V.ignoraveis`). Sempre self (é propriedade do próprio dano).
+  - próximos: `reducao`, `bonusCura`, `onKill`, `onDeath`, `porTurno`, `reativa`, `imunidade`…
+- `v` — inteiro > 0 (só em `bonusDano`).
 - `escopo` — `self` (vale só quando o DONO ataca) ou `time` (qualquer aliado vivo). Default `self`.
 - `quando` — a condição (objeto de **uma** chave; ausente = sempre). Conjunto FECHADO abaixo.
 
@@ -90,6 +95,16 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 - `bonusCura` → 1 (brigid) · `onKill` → 1 (zeus) · `reativa` → 1 (hera) · `imunidade`/`onDeath` → 0 sozinhos (cuca/nezha precisam de dois).
 
 **Sequências que mais terminam:** `danoIrredutivel + reducao` = **4 deuses** (ogum, tyr, sobek, thor) em 2 gatilhos, os dois de destrave mais SÓLIDO (o "2" do porTurno é mole — depende de unir sub-formas). Somando `porTurno` = 6. Depois `imunidade` (destrava cuca+nezha junto com porTurno/onDeath), `bonusCura`, `onKill`, `reativa` fecham o resto.
+
+### Placar de deuses TERMINADOS (passiva 100% declarativa, zero hardcode)
+
+A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
+no motor não retorna nada e a suíte que o cobre passa contra o dado.
+
+- **3/12** — **fujin** (inerte, sem hardcode; ver nota), **ogum** e **tyr** (F1.2 sessão 2, gatilho `danoIrredutivel`).
+- Faltam 9: brigid, cuca, ganesha, hera, nezha, ra, sobek, thor, zeus (ainda com `if (u.key===...)` no motor).
+- **Nota do fujin:** conta como terminado porque a passiva é inerte e não tem hardcode — mas ela NÃO funciona
+  (depende do Raijin, que não é inicial). Decisão aberta desde a Fase 0; volta à mesa quando o Raijin entrar (F1.8).
 
 **Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
 que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO

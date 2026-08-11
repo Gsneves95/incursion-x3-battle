@@ -129,6 +129,25 @@ console.log('== ponta-a-ponta: o bônus FLUI para o dano real (bater) ==');
   ok(h - e.hp === 20, `bater 10 + passiva 10 = 20 de HP, deu ${h - e.hp}`);
 }
 
+// CARACTERIZAÇÃO dos deuses migrados (F1.2 sessão 2, gatilho danoIrredutivel). É a REDE de
+// equivalência: passa contra o hardcode HOJE e tem de continuar passando depois de virar dado
+// (dado reproduz o hardcode). Ogum não tinha asserção da passiva (furo achado ao verificar) — esta
+// é a cobertura que faltava, adicionada ANTES de migrar. Tyr já tem rede em motor.test.js #9.
+console.log('== caracterização OGUM: +10 vs defesa, dano não-reduzível, mas absorvível por escudo ==');
+{
+  const st = E.novoEstado(['ogum', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 301);
+  const ogum = st.lados[0].units[0];
+  const limpo = st.lados[1].units[0], comReducao = st.lados[1].units[1], comEscudo = st.lados[1].units[2];
+  let h = limpo.hp; E.bater(st, ogum, limpo, 15, 'afetado', 'basico');
+  ok(h - limpo.hp === 15, `ogum vs alvo limpo: 15 (deu ${h - limpo.hp})`);
+  comReducao.efeitos.push({ type: 'dmgReduction', v: 8, dur: 9 });
+  h = comReducao.hp; E.bater(st, ogum, comReducao, 15, 'afetado', 'basico');
+  ok(h - comReducao.hp === 25, `ogum vs redução: 15+10, redução IGNORADA = 25 (deu ${h - comReducao.hp})`);
+  comEscudo.shield = 100; h = comEscudo.hp; const s = comEscudo.shield;
+  E.bater(st, ogum, comEscudo, 15, 'afetado', 'basico');
+  ok(comEscudo.hp === h && s - comEscudo.shield === 25, `ogum vs escudo: 25 absorvidos, HP intacto (escudo ${s}->${comEscudo.shield})`);
+}
+
 console.log('== valida_kit FALHA em voz alta: gatilho, condição, valor e reservada ==');
 const base = () => ({
   key: 'tp', nome: 'TP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', inicial: false,
@@ -148,7 +167,12 @@ err(g => g.passiva.fx[0].quando = { alvoMarca: 'olho' }, 'reservada');          
 err(g => g.passiva.fx[0].quando = { alvoCuradoAntes: true }, 'reservada');       // condição pendente (cura-anterior)
 err(g => g.passiva.fx[0].v = 0, 'v mal formado');                               // v não-positivo
 err(g => g.passiva.fx[0].escopo = 'ambos', 'escopo inválido');                  // escopo fora do conjunto
-err(g => g.passiva.fx[0].zzz = 1, 'campo desconhecido no fx de passiva');        // campo desconhecido
+err(g => g.passiva.fx[0].zzz = 1, 'não pertence ao gatilho');                    // campo fora do gatilho bonusDano
+// gatilho danoIrredutivel (sessão 2): campos POR gatilho e valores de `ignora`
+err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel' }), 'exige o campo "ignora"');            // falta ignora (obrigatório)
+err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel', ignora: ['plasma'] }), 'ignora com valor inválido'); // valor fora de IGNORAVEIS
+err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel', ignora: ['reducao'], v: 5 }), 'não pertence ao gatilho'); // v não pertence a danoIrredutivel
+err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, ignora: ['reducao'] }), 'não pertence ao gatilho');       // ignora não pertence a bonusDano
 
 delete E.GODS.tpass; delete E.GODS.taur; delete E.GODS.ttem;
 console.log('');

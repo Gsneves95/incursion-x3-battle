@@ -4,6 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 2 — gatilho `danoIrredutivel`; migração de ogum e tyr (por DEUS inteiro).
+**Resultado:** `GATILHOS_PASSIVA` virou spec por gatilho (campos/obrigatórios); `danoIrredutivel` lê `ignora ⊆
+[reducao,escudo]`, aplicado em `calcDano` via `danoImune`. Migrados INTEIROS: **ogum** (bonusDano +10 vs defesa
++ danoIrredutivel[reducao]) e **tyr** (danoIrredutivel[reducao,escudo]); os 4 hardcodes saíram do motor.
+`valida_kit` dispara por gatilho (campo de outro gatilho → "não pertence"; `ignora` fora de IGNORAVEIS → recusa).
+**Furo achado ao verificar (não supor):** ogum NÃO tinha asserção da passiva (só da habilidade) — era furo como
+o Rá. Escrevi a caracterização do ogum ANTES de migrar (rede que faltava); tyr já tinha rede (motor.test #9).
+Ambas passam contra o dado → prova de equivalência. Regra registrada (§38): CARACTERIZAR ANTES DE MIGRAR, com
+a distinção acrescentar-cobertura ≠ alterar-suíte. Guarda contra invocação sem kit (`__inv`) em danoImune/
+bonusDanoDeclarativo. **Placar: TERMINADOS 3/12** (ogum, tyr, fujin*). `grep key==='ogum'|'tyr'` vazio no motor.
+18 marcos verdes. **PRÓXIMO:** antes da sessão 3 (gatilho `reducao` → sobek+thor), escrever as caracterizações
+de ra, thor e fujin (rede completa antes de precisar).
+
+## Sessão — plano F1.2 sessão 2 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** Plano da F1.2 sessão 2 — ordem de migração por DESTRAVE (leitura de dado).
 **Resultado:** decompus as 12 passivas em gatilhos (ver `docs/passivas.md` → "Ordem das próximas sessões").
 Só `bonusDano` existe; o resto ainda é hardcode. Contagem de DESTRAVE (deuses TERMINADOS por gatilho):

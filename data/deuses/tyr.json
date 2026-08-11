@@ -8,7 +8,10 @@
   "inicial": true,
   "passiva": {
     "nome": "O Maneta",
-    "desc": "O dano de Tyr não pode ser reduzido nem absorvido por escudo."
+    "desc": "O dano de Tyr não pode ser reduzido nem absorvido por escudo.",
+    "fx": [
+      { "gatilho": "danoIrredutivel", "ignora": ["reducao", "escudo"] }
+    ]
   },
   "ab": [
     {

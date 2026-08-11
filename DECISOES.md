@@ -1030,6 +1030,27 @@ minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro 
     toca a habilidade → aparece a escolha → escolhe → CONFIRMAR resolve; cancelar em qualquer ponto não
     gasta nada. Igual a alvo e igual à troca de energia.
 
+## 38. CARACTERIZAR ANTES DE MIGRAR — a rede tem de existir antes de se confiar nela (F1.2)
+
+Quando a passiva de um deus vira dado, a suíte que o cobre deixa de provar "o hardcode funciona" e passa a
+provar "o dado REPRODUZ o hardcode" — é a rede de equivalência. Mas a regra "não altere as suítes dos 12"
+pressupõe que essa rede EXISTE, e a varredura mostrou que não existe em todo lugar: o **Rá não tinha
+asserção da passiva**, e ao migrar o `danoIrredutivel` descobri que o **Ogum também não** (a única suíte
+dele testava a habilidade destroyShield, não a passiva +10/irredutível). Migrar ali seria trocar hardcode
+por dado sem nada provando equivalência.
+
+**Regra:** antes de migrar um deus sem asserção da passiva, ESCREVER a caracterização primeiro (assertar o
+comportamento atual do hardcode), rodá-la verde, e só então migrar — a mesma suíte então prova que o dado
+reproduz o hardcode. **Distinção explícita, senão alguém lê "não toque nas suítes" e paralisa:**
+ACRESCENTAR cobertura que faltava ≠ ALTERAR uma asserção existente. A primeira é construir a rede; a segunda
+seria mudar o alvo. Só a segunda é proibida. (Antes da F1.2 sessão 3, escrever as caracterizações de ra,
+thor e fujin — prefiro a rede completa antes de precisar dela a achar outro furo no meio de uma migração.)
+
+**Métrica que passa a ser acompanhada:** deuses TERMINADOS (passiva 100% declarativa, zero hardcode),
+não "quantos gatilhos existem". Verificável: `grep "key === '<deus>'"` vazio no motor + suíte verde.
+Placar vivo em `docs/passivas.md`. Hoje: **3/12** — ogum, tyr (sessão 2) e fujin (inerte, sem hardcode; a
+passiva não funciona pois depende do Raijin — decisão aberta desde a Fase 0, volta na F1.8).
+
 ---
 
 ## Decisões ainda ABERTAS

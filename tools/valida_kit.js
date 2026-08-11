@@ -17,7 +17,6 @@ const V = E.VOCAB;
 
 const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
-const CHAVES_PASSIVA_FX = new Set(['gatilho', 'escopo', 'v', 'quando']);
 const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal']);
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
 
@@ -79,11 +78,20 @@ function validarPassiva(p, ctx, errs) {
   p.fx.forEach((f, i) => {
     const c = `${ctx}.fx[${i}]`;
     if (!f || typeof f !== 'object') { errs.push(`${c}: fx de passiva não é objeto`); return; }
-    for (const k of Object.keys(f)) if (!CHAVES_PASSIVA_FX.has(k)) errs.push(`${c}: campo desconhecido no fx de passiva: "${k}"`);
-    if (!V.gatilhosPassiva.includes(f.gatilho)) errs.push(`${c}: gatilho inválido "${f.gatilho}" (válidos: ${V.gatilhosPassiva.join(', ')})`);
+    const def = V.gatilhosPassivaDef[f.gatilho];
+    if (!def) { errs.push(`${c}: gatilho inválido "${f.gatilho}" (válidos: ${V.gatilhosPassiva.join(', ')})`); return; }
+    // campos permitidos/obrigatórios são POR GATILHO — um campo de outro gatilho é recusado
+    const permitidos = new Set(['gatilho', ...def.campos]);
+    for (const k of Object.keys(f)) if (!permitidos.has(k)) errs.push(`${c}: campo "${k}" não pertence ao gatilho "${f.gatilho}"`);
+    for (const req of def.obrig) if (!(req in f)) errs.push(`${c}: gatilho "${f.gatilho}" exige o campo "${req}"`);
+    // validações de valor (só se o campo pertence ao gatilho)
+    if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0)) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
-    if (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
+    if ('ignora' in f) {
+      if (!Array.isArray(f.ignora) || f.ignora.length === 0) errs.push(`${c}: ignora deve ser array não-vazio (${V.ignoraveis.join('|')})`);
+      else for (const x of f.ignora) if (!V.ignoraveis.includes(x)) errs.push(`${c}: ignora com valor inválido "${x}" (válidos: ${V.ignoraveis.join(', ')})`);
+    }
   });
 }
 

@@ -82,7 +82,14 @@ const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); n
 // Migração é por DEUS INTEIRO (§37): um deus só migra quando TODOS os gatilhos da sua passiva
 // existem — meio-migrado deixa hardcode invisível. Por isso a sessão 1 migra ZERO reais (os 12
 // implementados têm passiva multi-parte) e prova o mecanismo num deus sintético (tests/passiva.test.js).
-const GATILHOS_PASSIVA = ['bonusDano'];    // cresce por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
+// Cada gatilho declara os CAMPOS que aceita e os OBRIGatórios — o validador dispara por gatilho, então
+// um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
+// Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
+const GATILHOS_PASSIVA = {
+  bonusDano:       { campos: ['v', 'escopo', 'quando'], obrig: ['v'] },        // soma v ao dano (sessão 1)
+  danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
+};
+const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
 // `quando` (condição do bônus) — conjunto FECHADO. Cada chave declara COMO validar o valor:
@@ -109,7 +116,9 @@ const VOCAB = {
   efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
   dots: DOTS,                                    // chaves de DoT (fx dot.nome)
   contadores: CONTADORES,                        // chaves de contador (fx contador.nome)
-  gatilhosPassiva: GATILHOS_PASSIVA,             // valores válidos de passiva.fx[].gatilho (F1.2)
+  gatilhosPassiva: Object.keys(GATILHOS_PASSIVA), // valores válidos de passiva.fx[].gatilho (F1.2)
+  gatilhosPassivaDef: GATILHOS_PASSIVA,           // campos/obrigatórios por gatilho (valida_kit dispara por isto)
+  ignoraveis: IGNORAVEIS,                          // valores válidos em danoIrredutivel.ignora
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -384,7 +393,8 @@ function bonusDanoDeclarativo(st, atk, alvo) {
   let b = 0;
   for (const u of st.lados[atk.lado].units) {
     if (!u.vivo) continue;
-    const p = kitDe(st, u).passiva;
+    const g = kitDe(st, u);                     // guarda defensiva: unidade sem kit no catálogo
+    const p = g && g.passiva;
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusDano') continue;
@@ -395,18 +405,30 @@ function bonusDanoDeclarativo(st, atk, alvo) {
   return b;
 }
 
+// danoIrredutivel (F1.2 sessão 2) — o dano do PRÓPRIO atacante fura redução e/ou escudo. Lê a passiva
+// declarativa do atacante (é propriedade do dono, então sempre self). ogum fura redução; tyr, ambos.
+function danoImune(st, atk) {
+  const out = { reducao: false, escudo: false };
+  const g = kitDe(st, atk);                    // invocações (key '__inv') não têm kit — guarda
+  const p = g && g.passiva;
+  if (p && Array.isArray(p.fx)) for (const f of p.fx) {
+    if (f.gatilho === 'danoIrredutivel') for (const x of f.ignora) out[x] = true;
+  }
+  return out;
+}
+
 function calcDano(st, atk, alvo, base, kind, slot) {
   let v = base + bonusDano(st, atk);
   v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
-  // passivas ofensivas AINDA hardcoded — migração é por DEUS INTEIRO (§37): ogum/sobek têm outra
-  // metade de passiva (dano irredutível / redução de Básico) que só migra quando o gatilho dela existir.
-  if (atk.key === 'ogum' && (alvo.shield > 0 || ef(alvo, 'dmgReduction'))) v += 10;
+  // passivas ofensivas AINDA hardcoded — migração é por DEUS INTEIRO (§37): sobek tem outra metade
+  // (redução de Básico) que só migra quando o gatilho `reducao` existir (sessão 3).
   if (atk.key === 'sobek' && alvo.efeitos.some(e => DEBUFFS.includes(e.type))) v += 6;
   if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
   if (v < 0) v = 0;
 
-  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || atk.key === 'ogum' || atk.key === 'tyr';
-  const ignoraEscudo = kind === 'puro' || atk.key === 'tyr';
+  const irred = danoImune(st, atk);   // ogum/tyr migrados: danoIrredutivel declarativo (§37)
+  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || irred.reducao;
+  const ignoraEscudo = kind === 'puro' || irred.escudo;
 
   // regra 2 — redução ANTES do escudo
   if (!ignoraReducao) {

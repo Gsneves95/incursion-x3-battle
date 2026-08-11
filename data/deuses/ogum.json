@@ -8,7 +8,11 @@
   "inicial": true,
   "passiva": {
     "nome": "Senhor do Ferro",
-    "desc": "+10 de dano contra alvos com escudo ou redução; o dano de Ogum não pode ser reduzido."
+    "desc": "+10 de dano contra alvos com escudo ou redução; o dano de Ogum não pode ser reduzido.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 10, "escopo": "self", "quando": { "alvoDefesa": true } },
+      { "gatilho": "danoIrredutivel", "ignora": ["reducao"] }
+    ]
   },
   "ab": [
     {
