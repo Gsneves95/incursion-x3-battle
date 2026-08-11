@@ -4,6 +4,23 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 4 — gatilhos de turno (`porTurno`+`abertura`); migração de ra + ganesha.
+**Resultado:** a família por-turno tem 3 formas distintas (todo-turno 7 / abertura 7 / a-cada-N 4) → **3 gatilhos
+nomeados**, não eixo temporal. Abri `porTurno` (todo turno) e `abertura` (1º turno); `aCadaN` fica para depois.
+**Propriedade da família (não detalhe do ra): o gatilho de turno EMBRULHA um efeito (`faz`), não um escalar.**
+`faz` reusa o vocabulário de fx mas FECHADO aos turno-seguros (`V.fxTurno`=`contador`,`orbGain`); alvo fixo
+self/lado (valida_kit recusa fx fora do conjunto e alvo≠self); eventos recebem `passiva:<key>`. Migrados
+INTEIROS: **ra** (`porTurno` Disco + `bonusDano` Aurora+5) e **ganesha** (`abertura` +2 orbes); 3 hardcodes
+saíram; `sortearElemento`==orbGain garante RNG idêntico (nenhuma partida seeded mudou). Rede provou: Lote A (ra)
+e Lote B (ganesha) verdes SEM alteração. `grep key==='ra'|'ganesha'` vazio. **Placar TERMINADOS 5→7/12.**
+Nota registrada (docs): quando o `aCadaN` chegar, decidir se `n` é absoluto (cuca=turno%3) ou relativo (kitsune/boto).
+17 marcos verdes. **A curva desce por gatilho novo — faltam 5, TODOS bloqueados:** brigid→`bonusCura`[1],
+zeus→`onKill`[1], hera→`reativa`[1], cuca→`imunidade`+`aCadaN`[2], nezha→`imunidade`+`onDeath`[2].
+**PRÓXIMO:** gatilho que destrava mais — `imunidade` avança cuca+nezha (2, mas cada um precisa de +1); ou os
+de-1 (bonusCura/onKill/reativa). Dono escolhe.
+
+## Sessão — F1.2 sessão 3 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 3 — gatilho `reducao`; migração de sobek + thor (por DEUS inteiro).
 **Resultado:** gatilho `reducao` (`v`, `escopo` self|time, `contra` defensivo), `red = Math.max(red, v)` (regra
 6). **Eixo defensivo `contra` SEPARADO do `quando` ofensivo** — `quando` lê quem ataca/é atacado/estado do

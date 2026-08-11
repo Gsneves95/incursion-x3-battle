@@ -25,7 +25,28 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
   - `reducao` (sessão 3) — reduz o dano RECEBIDO. Campos: `v` (obrig), `escopo`, `contra`. `escopo` self
     (só o dono, ex.: sobek) ou time (todos os aliados, ex.: thor). `red = Math.max(red, v)` (regra 6, não
     soma). `contra` = condição DEFENSIVA (abaixo); ausente = todo ataque.
-  - próximos: `bonusCura`, `onKill`, `onDeath`, `porTurno`, `reativa`, `imunidade`…
+  - `porTurno` / `abertura` (sessão 4) — gatilhos de TURNO. Campo `faz` (obrig): ver "família por-turno" abaixo.
+  - próximos: `bonusCura`, `onKill`, `onDeath`, `reativa`, `imunidade`, `aCadaN`…
+
+## Família por-turno: o gatilho EMBRULHA um efeito (`faz`), não um escalar
+
+Propriedade da FAMÍLIA (não detalhe de um deus): diferente de `bonusDano`/`reducao` (efeito escalar `+v`),
+um gatilho de turno dispara um EFEITO — "no gatilho, FAÇA X". A varredura achou **3 formas distintas** (7/7/4),
+então são **3 gatilhos nomeados**, não um eixo temporal `quando:{turno:{op}}`:
+- `porTurno` — `faz` roda a cada início de turno do dono (ra: +1 Disco).
+- `abertura` — `faz` roda UMA vez, no 1º turno do lado (ganesha: +2 orbes).
+- `aCadaN` (ainda NÃO existe) — periódico, com campo `n` (cuca, kitsune, boto).
+
+**`faz` é uma lista de fx, mas fechada aos que NÃO exigem alvo escolhido nem seletor.** O alvo de um `faz` é
+FIXO: `self` (o dono) ou o lado; um gatilho de turno não tem jogador escolhendo. `V.fxTurno` abre só
+`contador` (ra) e `orbGain` (ganesha); `valida_kit` recusa fx fora disso (`{t:'dmg'}` não dispara por turno)
+e recusa `alvo` que não seja `self`. `heal`/`cdShift`/`apply` entram por deus; os SELETORES ("aliado mais
+ferido" da Deméter, "inimigo de maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando
+esses deuses migrarem. Os eventos gerados por um `faz` recebem `passiva: <key do dono>` (o narrador sabe a origem).
+
+**Nota para quando o `aCadaN` chegar (NÃO resolver agora):** o `n` é contado desde quando? A Cuca é `turno % 3`
+(ABSOLUTO, da partida). Kitsune ("a cada 2 turnos") e Boto ("a cada 3 turnos") podem ser RELATIVOS (desde o
+último disparo). Se forem, são dois comportamentos e o `aCadaN` precisa dizer qual — decidir na sessão dele.
 
 ## Dois vocabulários que NUNCA se misturam: ofensivo (`quando`) × defensivo (`contra`)
 
@@ -124,9 +145,12 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **5/12** — **fujin** (inerte, sem hardcode; ver nota), **ogum** e **tyr** (sessão 2, `danoIrredutivel`),
-  **sobek** e **thor** (sessão 3, `reducao`; sobek migrou inteiro: `bonusDano`+`reducao`).
-- Faltam 7: brigid, cuca, ganesha, hera, nezha, ra, zeus (ainda com `if (u.key===...)` no motor).
+- **7/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
+  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`; ra inteiro: `porTurno`+`bonusDano`).
+- Faltam 5, TODOS bloqueados em gatilho que ainda não existe (a curva desce por gatilho novo):
+  brigid → `bonusCura` [1] · zeus → `onKill` [1] · hera → `reativa` [1] · cuca → `imunidade`+`aCadaN` [2] ·
+  nezha → `imunidade`+`onDeath` [2]. Destravam 3 com 1 gatilho cada (bonusCura/onKill/reativa); cuca+nezha
+  precisam de 2 (imunidade compartilhado).
 - **Nota do fujin:** conta como terminado porque a passiva é inerte e não tem hardcode — mas ela NÃO funciona
   (depende do Raijin, que não é inicial). Decisão aberta desde a Fase 0; volta à mesa quando o Raijin entrar (F1.8).
 

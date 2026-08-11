@@ -8,7 +8,10 @@
   "inicial": true,
   "passiva": {
     "nome": "Senhor dos Começos",
-    "desc": "No turno 1, o time ganha 2 orbes extras."
+    "desc": "No turno 1, o time ganha 2 orbes extras.",
+    "fx": [
+      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 2 } ] }
+    ]
   },
   "ab": [
     {

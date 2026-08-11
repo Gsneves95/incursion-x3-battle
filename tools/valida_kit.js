@@ -82,6 +82,19 @@ function validarContra(c, ctx, errs) {
   }
 }
 
+// Valida o `faz` de um gatilho de turno (F1.2 sessão 4). Reusa validarFx (o fx é normal), mas EXIGE que o
+// tipo esteja no subconjunto turno-seguro (V.fxTurno) e que o alvo seja fixo — um gatilho de turno não
+// escolhe alvo. Sem isso, alguém declara faz:[{t:'dmg'}] sem alvo e o motor descobre em runtime.
+function validarFaz(faz, ctx, errs) {
+  if (!Array.isArray(faz) || faz.length === 0) { errs.push(`${ctx}: faz deve ser array não-vazio`); return; }
+  faz.forEach((fx, i) => {
+    const cc = `${ctx}[${i}]`;
+    validarFx(fx, cc, errs);
+    if (fx && typeof fx === 'object' && !V.fxTurno.includes(fx.t)) errs.push(`${cc}: fx "${fx.t}" não pode disparar por turno (válidos: ${V.fxTurno.join(', ')}) — exigiria alvo escolhido ou seletor`);
+    if (fx && typeof fx === 'object' && 'alvo' in fx && fx.alvo !== 'self') errs.push(`${cc}: faz não escolhe alvo — alvo deve ser 'self' (o dono) ou ausente (o lado)`);
+  });
+}
+
 // Valida a PASSIVA declarativa (F1.2). Prosa (nome/desc) é livre; se houver fx, ele tem forma fechada.
 function validarPassiva(p, ctx, errs) {
   if (!p || typeof p !== 'object') { errs.push(`${ctx}: passiva não é objeto`); return; }
@@ -102,6 +115,7 @@ function validarPassiva(p, ctx, errs) {
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
+    if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('ignora' in f) {
       if (!Array.isArray(f.ignora) || f.ignora.length === 0) errs.push(`${c}: ignora deve ser array não-vazio (${V.ignoraveis.join('|')})`);
       else for (const x of f.ignora) if (!V.ignoraveis.includes(x)) errs.push(`${c}: ignora com valor inválido "${x}" (válidos: ${V.ignoraveis.join(', ')})`);

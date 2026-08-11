@@ -8,7 +8,11 @@
   "inicial": false,
   "passiva": {
     "nome": "Barca do Sol",
-    "desc": "Rá ganha 1 Disco Solar por turno (máx. 6); aliados Aurora causam +5 de dano."
+    "desc": "Rá ganha 1 Disco Solar por turno (máx. 6); aliados Aurora causam +5 de dano.",
+    "fx": [
+      { "gatilho": "porTurno", "faz": [ { "t": "contador", "nome": "discoSolar", "v": 1, "max": 6, "alvo": "self" } ] },
+      { "gatilho": "bonusDano", "v": 5, "escopo": "time", "quando": { "atacanteElem": "Aurora" } }
+    ]
   },
   "ab": [
     {

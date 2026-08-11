@@ -89,7 +89,15 @@ const GATILHOS_PASSIVA = {
   bonusDano:       { campos: ['v', 'escopo', 'quando'], obrig: ['v'] },        // soma v ao dano (sessão 1)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra'], obrig: ['v'] },        // reduz o dano recebido (sessão 3)
+  porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
+  abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
 };
+// `faz` (efeito de um gatilho de turno) é PROPRIEDADE da família por-turno: o gatilho EMBRULHA um efeito,
+// não um escalar (como bonusDano/reducao). Reusa o vocabulário de fx, mas SÓ os que não exigem alvo escolhido
+// pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
+// contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
+// "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
+const FX_TURNO = ['contador', 'orbGain'];
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -130,6 +138,7 @@ const VOCAB = {
   ignoraveis: IGNORAVEIS,                          // valores válidos em danoIrredutivel.ignora
   contra: Object.keys(CONTRA),                     // chaves válidas em reducao.contra (eixo DEFENSIVO)
   contraDef: CONTRA,                               // como validar cada chave de contra
+  fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -366,7 +375,6 @@ function bonusDano(st, atk) {
   if (up) b += up.v;
   if (dn) b -= dn.v;
   if (meu.units.some(x => x.vivo && x.key === 'brigid')) b += 5;   // passiva Brigid
-  if (atk.elem === 'Aurora' && meu.units.some(x => x.vivo && x.key === 'ra')) b += 5;   // passiva Rá (Barca do Sol): aliados Aurora +5
   return b;
 }
 
@@ -703,6 +711,24 @@ function sortearElemento(st, tiposTime) {
   return pool[Math.floor(rng(st) * pool.length)];
 }
 
+// executa o `faz` de um gatilho de turno para o dono `u`. Alvo FIXO (self = o dono; orbGain = o lado),
+// sem escolha nem seletor. Atribui os eventos gerados ao dono (passiva:u.key) para o narrador saber a origem.
+// Executor MÍNIMO (não o aplicarFx completo): gatilho de turno não tem ability nem alvo escolhido. Reproduz
+// exatamente os hardcodes antigos de ra (addContador) e ganesha (orbGain via sortearElemento — mesmo rng).
+function rodarFaz(st, u, faz) {
+  const antes = st.log.length;
+  const l = st.lados[u.lado];
+  for (const f of faz) {
+    if (f.t === 'contador') addContador(st, u, f.nome, f.v, f.max != null ? f.max : null);
+    else if (f.t === 'orbGain') {
+      const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];
+      for (let i = 0; i < f.n; i++) l.orbs[sortearElemento(st, tipos)]++;
+      log(st, { tipo: 'orbe', lado: u.lado, valor: f.n });
+    }
+  }
+  for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = u.key;
+}
+
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
@@ -747,12 +773,16 @@ function iniciarTurno(st) {
   }
   if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, { tipo: 'abertura', lado: st.ativo, valor: 1 }); }
   if (geram.length < vivos.length) log(st, { tipo: 'controle', lado: st.ativo, valor: vivos.length - geram.length });
-  if (primeiro && l.units.some(u => u.key === 'ganesha')) { // passiva Ganesha
-    for (let i = 0; i < 2; i++) { const t = sortearElemento(st, tipos); l.orbs[t]++; }
-    log(st, { tipo: 'orbe', lado: st.ativo, valor: 2, passiva: 'ganesha' });
+  // gatilhos de turno declarativos (F1.2 sessão 4): porTurno roda todo turno; abertura só no 1º (primeiro)
+  for (const u of l.units) {
+    if (!u.vivo) continue;
+    const g = kitDe(st, u); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho === 'porTurno') rodarFaz(st, u, f.faz);
+      else if (f.gatilho === 'abertura' && primeiro) rodarFaz(st, u, f.faz);
+    }
   }
-  const ra = l.units.find(u => u.key === 'ra' && u.vivo);   // passiva Rá (Barca do Sol): +1 Disco Solar/turno, teto 6
-  if (ra) addContador(st, ra, 'discoSolar', 1, 6);
   checarFim(st);
 }
 

@@ -317,8 +317,10 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Mági
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { slot: 'ultimate' } }), 'fora do sub-vocabulário'); // slot inválido
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) não vai em reducao
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho'); // contra (defensivo) não vai em bonusDano
-
-delete E.GODS.tpass; delete E.GODS.taur; delete E.GODS.ttem;
+// gatilhos de turno (sessão 4): faz reusa fx, mas só os turno-seguros e sem alvo escolhido
+err(g => g.passiva.fx.push({ gatilho: 'porTurno' }), 'exige o campo "faz"');                                        // falta faz
+err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno');    // dmg fora de fxTurno
+err(g => g.passiva.fx.push({ gatilho: 'abertura', faz: [{ t: 'contador', nome: 'discoSolar', v: 1, alvo: 'inimigo' }] }), 'faz não escolhe alvo'); // alvo não pode ser inimigo
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
