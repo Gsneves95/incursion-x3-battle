@@ -71,11 +71,12 @@ const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
   'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
-  'restauraMax', 'espalha',
+  'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
-const DOTS = ['queimadura'];   // cresce (veneno, sangramento…) ao provar os 73 kits
+const DOTS = ['queimadura', 'veneno'];   // cresce (sangramento…) ao provar os 73 kits. 'veneno' entrou p/ a
+// imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
 const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit.
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
 // motor não carregar um `if (u.key===...)` por deus. A SESSÃO 1 abre UM gatilho só: bonusDano.
@@ -101,7 +102,7 @@ const GATILHOS_PASSIVA = {
 //   'self' (o dono morre — nezha/ymir), 'aliado' (um aliado cai), 'qualquerInimigo' (qualquer inimigo cai — hades).
 // AMBIGUIDADE aberta (decisão do dono ao migrar morrigan/iansa/ahpuch): "quando um inimigo é derrotado, [eu] X"
 // não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
-const AOCAIR_QUEM = ['inimigo'];
+const AOCAIR_QUEM = ['inimigo', 'self'];
 // `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
 // 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
 // enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
@@ -114,7 +115,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle'];
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain'];
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno'];   // reviveProximoTurno: só faz sentido em aoCair self (guarda em rodarFaz)
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -310,10 +311,7 @@ function aplicar(st, u, eff) {
 }
 
 function aplicarDot(st, u, nome, v, dur) {
-  // passiva Nezha — "imune a Veneno e Queimadura". §39: a prosa VENCE; o hardcode antigo bloqueava TODO
-  // DoT (imunidade que crescia sozinha a cada DoT novo). Lista fechada até a Nezha migrar (gatilho imunidade).
-  if (u.key === 'nezha' && (nome === 'veneno' || nome === 'queimadura')) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }
-  if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (DoT)
+  if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (Nezha: veneno+queimadura)
   const ja = u.dots.find(d => d.nome === nome);
   if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); }   // regra 6
   else u.dots.push({ nome, v, dur });
@@ -600,12 +598,14 @@ function matar(st, atk, alvo) {
   }
   alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
   log(st, { tipo: 'queda', alvo: alvo.key });
-  if (alvo.key === 'nezha' && !alvo.renasceu) {
-    alvo.renasceu = true; alvo.pendenteRenascer = true;
-    log(st, { tipo: 'passiva', origem: alvo.key, valor: 48 });   // volta com 48 no próximo turno (iniciarTurno) — 40% de 120 (F1.0c)
-  }
-  // gatilho aoCair (F1.2 sessão 6) — quem:'inimigo' é matador-bound: o MATADOR (atk vivo) reagiu à morte de um
-  // inimigo. Fira após a queda estar registrada (mesma posição do hardcode antigo do zeus). Roda o `faz` no reator.
+  // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
+  // efeitos (a ordem é a rede: renasce sem os efeitos que tinha ao cair). A unidade nunca sai do array.
+  { const g = kitDe(st, alvo); const p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) {
+      if (f.gatilho === 'aoCair' && f.quem === 'self') rodarFaz(st, alvo, f.faz);
+    } }
+  // aoCair quem:'inimigo' — matador-bound: o MATADOR (atk vivo) reagiu à morte de um inimigo. Mesma posição do
+  // hardcode antigo do zeus. Roda o `faz` no reator (o matador).
   if (atk && atk.vivo) {
     const g = kitDe(st, atk); const p = g && g.passiva;
     if (p && Array.isArray(p.fx)) for (const f of p.fx) {
@@ -767,6 +767,9 @@ function rodarFaz(st, u, faz) {
       for (let i = 0; i < f.n; i++) l.orbs[f.para || sortearElemento(st, tipos)]++;   // para = elemento FIXO (sem rng)
       log(st, f.para ? { tipo: 'orbe', lado: u.lado, valor: f.n, para: f.para } : { tipo: 'orbe', lado: u.lado, valor: f.n });
     }
+    else if (f.t === 'reviveProximoTurno') {   // Nezha: retorna no turno seguinte, 1× por partida. Só p/ quem caiu.
+      if (!u.vivo && !u.renasceu) { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
+    }
   }
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = u.key;
 }
@@ -779,7 +782,7 @@ function iniciarTurno(st) {
   l.dividaLivre = 0;               // a dívida do turno anterior já foi quitada no fimTurno
 
   for (const u of l.units) {
-    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = 48; log(st, { tipo: 'revive', alvo: u.key, valor: 48, passiva: u.key }); }   // 40% de 120 (F1.0c)
+    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = u.reviveHp || 48; log(st, { tipo: 'revive', alvo: u.key, valor: u.hp, passiva: u.key }); }   // Nezha 48 = 40% de 120 (F1.0c)
     if (!u.vivo) continue;
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir

@@ -4,6 +4,24 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 7 — abrir o sujeito `aoCair` quem:'self'; migração de **nezha** (revive próprio).
+**Resultado:** a Nezha é o único caso em que o efeito reage à morte DO PRÓPRIO SUJEITO → a caracterização travou
+ORDEM, não só magnitude/escopo. Os **4 travas** ficaram VERDES contra o hardcode ANTES de migrar e continuaram
+verdes depois — **nenhuma divergência** com a prosa ("retorna no turno seguinte, 48 HP, 1×"): (1) revive DEPOIS
+da limpeza de efeitos (renasce sem os efeitos que tinha ao cair); (2) queda-pendente NÃO conta p/ derrota (time
+todo caído com Nezha pendente não perde até renascer/esgotar — `checarFim` respeita `pendenteRenascer`); (3) 1×
+por partida (guarda `!renasceu`); (4) turno SEGUINTE, não o mesmo. Novo fx `reviveProximoTurno` (faz-only, em
+`FX_TURNO`, executado por `rodarFaz` sob `!vivo && !renasceu`); `AOCAIR_QUEM` ganhou `'self'`; o revive-HP virou
+parâmetro (`reviveHp`, default 48) reusável pelo Bennu (hp:60) na F1.x. `DOTS` ganhou `'veneno'` (imunidade da
+Nezha; DoT real sem aplicador ainda). Hardcodes saíram de `matar` (revive), `aplicarDot` (imunidade agora via
+`imuneA` declarativo). Rede: **motor #10 (Nezha renasce 1×)** e a **Lote B (imunidade: veneno bloqueia,
+sangramento não)** verdes SEM alteração; `grep key==='nezha'` vazio. **Placar 8→9/12.** Suíte inteira verde.
+**AMBIGUIDADE ainda aberta (DECISOES):** `aoCair` quem `aliado`/`qualquerInimigo` + matador-bound vs qualquer-morte
+(morrigan/iansa/ahpuch) — decisão do dono ao migrá-los. **PRÓXIMO (dono):** faltam 3 — `bonusCura`→brigid,
+`reativa`→hera, `aCadaN`→cuca.
+
+## Sessão — F1.2 sessão 6 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 6 — gatilho `aoCair` (onKill+onDeath varridos juntos); migração de zeus.
 **Resultado:** varredura dos 21 (onKill+onDeath) por SUJEITO: a morte é UM momento (`matar`), só o sujeito varia
 → **UM gatilho `aoCair {quem, faz}`** (eixo de sujeito, igual à imunidade), NÃO dois. `quem` abre só `'inimigo'`

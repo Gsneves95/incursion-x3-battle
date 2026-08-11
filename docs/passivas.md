@@ -171,11 +171,17 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **8/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
-  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo).
-- Faltam 4: brigid → `bonusCura` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1] ·
-  nezha → `imunidade`(feito)+**`aoCair` quem:'self'** [1, já parcialmente pronto]. **Nezha destravável antes do
-  previsto:** `aoCair` já existe; abrir o sujeito `'self'` (+ caracterizar o timing do revive) fecha a Nezha.
+- **9/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
+  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo),
+  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self').
+- Faltam 3: brigid → `bonusCura` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1].
+- **Nezha fechada (sessão 7):** `aoCair` já existia; abrir o sujeito `'self'` fechou a passiva. Os 4 travas de
+  ORDEM foram caracterizados VERDE contra o hardcode ANTES de migrar e continuaram verdes depois — não houve
+  divergência (a prosa "retorna no turno seguinte, 48 HP, 1×" bate com o motor): (1) revive DEPOIS da limpeza de
+  efeitos (renasce sem os efeitos que tinha ao cair); (2) queda-pendente NÃO conta p/ derrota (time todo caído
+  com Nezha pendente não perde até renascer ou o revive esgotar); (3) 1× por partida (2ª queda não renasce);
+  (4) revive no turno SEGUINTE, não no mesmo. O `reviveProximoTurno` é `faz`-only, guardado em `rodarFaz` a
+  `!vivo && !renasceu`; o revive-HP virou parâmetro (`reviveHp`), reusável pelo Bennu (hp:60) na F1.x.
 
 **Sessão 5 (`imunidade`) — infraestrutura, placar PARADO em 7/12 (0 migração real, como a sessão 1).** O que
 justifica a sessão não é o placar e sim o destrave FUTURO: `imunidade` é o **2º mecanismo mais populoso** —

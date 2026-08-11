@@ -324,6 +324,39 @@ const apToInimigos = (st, caster, fx) => E.aplicarFx(st, caster, fx, { alvo: 'to
   delete E.GODS.timune;
 }
 
+// CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
+// morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
+console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
+{ // 1. ORDEM: renasce DEPOIS da limpeza — 48 HP e SEM os efeitos que tinha ao cair. 4. TIMING: turno seguinte.
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 601);
+  const atk = st.lados[0].units[0], nezha = st.lados[1].units[0];
+  nezha.efeitos.push({ type: 'dmgDown', v: 5, dur: 9 }); nezha.dots.push({ nome: 'queimadura', v: 8, dur: 9 });
+  nezha.hp = 5; E.bater(st, atk, nezha, 15, 'afetado', 'basico');
+  ok(!nezha.vivo && nezha.pendenteRenascer, 'caiu com revive pendente');
+  ok(nezha.efeitos.length === 0 && nezha.dots.length === 0, 'ORDEM: efeitos/dots limpos ao cair');
+  ok(!nezha.vivo, 'TIMING: NÃO renasce no mesmo turno (segue caída)');
+  E.fimTurno(st);   // vira para o lado da Nezha -> iniciarTurno revive
+  ok(nezha.vivo && nezha.hp === 48 && nezha.efeitos.length === 0, 'renasce no turno seguinte: 48 HP, sem efeitos');
+}
+{ // 3. UMA VEZ: cai, renasce, cai de novo -> NÃO renasce a segunda vez.
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 602);
+  const atk = st.lados[0].units[0], nezha = st.lados[1].units[0];
+  nezha.hp = 5; E.bater(st, atk, nezha, 15, 'afetado', 'basico'); E.fimTurno(st);
+  ok(nezha.vivo, '1ª queda renasceu');
+  nezha.hp = 5; E.bater(st, atk, nezha, 15, 'afetado', 'basico');
+  ok(!nezha.vivo && !nezha.pendenteRenascer, 'UMA VEZ: 2ª queda NÃO renasce');
+}
+{ // 2. VITÓRIA: caída-pendente NÃO perde (mesmo com os outros mortos); perde só quando o revive se esgota.
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 603);
+  const atk = st.lados[0].units[0], L1 = st.lados[1];
+  for (const alvo of [L1.units[1], L1.units[2], L1.units[0]]) { alvo.hp = 5; E.bater(st, atk, alvo, 15, 'afetado', 'basico'); }
+  ok(st.fim === null, 'VITÓRIA: time todo caído mas Nezha pendente -> NÃO perde ainda');
+  E.fimTurno(st);
+  ok(L1.units[0].vivo, 'Nezha renasce -> time sobrevive');
+  L1.units[0].hp = 5; E.bater(st, atk, L1.units[0], 15, 'afetado', 'basico');   // 2ª morte, revive esgotado, todos mortos
+  ok(st.fim && st.fim.lado === 0, 'revive ESGOTADO + todos mortos -> aí sim o outro lado vence');
+}
+
 console.log('== valida_kit FALHA em voz alta: gatilho, condição, valor e reservada ==');
 const base = () => ({
   key: 'tp', nome: 'TP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', inicial: false,
@@ -367,7 +400,7 @@ err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), '
 // gatilho aoCair (sessão 6): quem (sujeito) + faz (efeito no reator)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "quem"');        // falta quem
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
-err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'self', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'self' ainda não aberto
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado'/'qualquerInimigo' ainda não abertos (F1.4)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);

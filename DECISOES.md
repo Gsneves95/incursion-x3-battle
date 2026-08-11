@@ -1130,12 +1130,40 @@ futuro parecer exceção, PARAR e perguntar em vez de assumir.
 
 ---
 
+## 40. Caracterizar efeito que reage à PRÓPRIA morte trava ORDEM, não só magnitude/escopo (F1.2, sessão 7)
+
+Todas as migrações até aqui caracterizaram *quanto* e *sobre quem* (magnitude + escopo). A Nezha é o primeiro
+caso em que o efeito reage à **morte do próprio sujeito** (revive) — e aí magnitude/escopo não bastam, porque o
+comportamento certo depende de QUANDO e EM QUE ORDEM, coisas que uma asserção de valor final não pega. O revive
+"48 HP" está certo em magnitude e ainda assim pode estar errado se disparar no turno errado, antes da limpeza,
+ou uma segunda vez. Quatro travas de ORDEM, verdes contra o hardcode ANTES de migrar:
+
+1. **Pós-limpeza:** renasce DEPOIS de `alvo.efeitos = []` — 48 HP e SEM os efeitos que tinha ao cair. (Se
+   revivesse antes, herdaria os DoTs que o mataram.)
+2. **Vitória adiada:** a queda-pendente NÃO conta para derrota — `checarFim` trata `pendenteRenascer` como
+   "ainda em jogo". Time todo caído com a Nezha pendente não perde até ela renascer ou o revive esgotar.
+3. **Uma vez:** guarda `!renasceu` — cai, renasce, cai de novo → não renasce a 2ª. Travado dos DOIS lados
+   (renasce na 1ª, NÃO renasce na 2ª).
+4. **Turno seguinte:** o revive dispara em `iniciarTurno` do lado dela, não no `matar` — `pendenteRenascer`
+   separa a marcação (no `aoCair`) da execução (no início do turno).
+
+**Resultado nesta sessão: nenhuma das 4 divergiu da prosa** ("retorna no turno seguinte com 48 de HP, 1× por
+partida"). Diferente do §39 (a imunidade larga da Nezha, que DIVERGIA): ali o hardcode fazia mais que a prosa;
+aqui bate. Registro os dois juntos porque são a mesma disciplina em resultados opostos — caracterizar é comparar
+com a prosa, e o resultado tanto pode ser "diverge, PARAR" (§39) quanto "confere, seguir" (§40). O que muda é o
+que se OLHA: para um efeito auto-reativo, olhar só o número esconde os três erros de ordem que não aparecem no
+valor final. Mecanismo migrado com `reviveProximoTurno` (faz-only, guarda `!vivo && !renasceu` em `rodarFaz`) +
+`AOCAIR_QUEM` ganhando `'self'`; o revive-HP virou parâmetro (`reviveHp`) reusável pelo Bennu (60). **Placar
+8→9/12.**
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
 |---|---|
 | **~15 decisões dos 3 blocos (da varredura, §35)** | Decisão-mãe BATIDA (§36: passiva declarativa = F1.2). Faltam ~15 pontos, para o dono responder EM BLOCO (uma mensagem), com recomendação minha em cada: Bloco 1 (F1.3) morte/sobrevivência — piso-1-HP, execução HP/status/tempo, interações com revive-imune/`vidaExtra`; Bloco 2 (F1.4) controle — Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; Bloco 3 (F1.5) modos/estado — escolha múltipla, alterna, ler Dia/Noite, invocações. Ver `docs/primitivas-faltantes.md`. |
-| **`aoCair` — matador-bound vs qualquer-morte (F1.2)** | O eixo `quem:'inimigo'` do gatilho `aoCair` cobre "ao derrotar um inimigo" (matador-bound: o reator matou — zeus, inequívoco). Mas 3 passivas dizem "quando um inimigo é derrotado, [eu] X" (morrigan, iansa, ahpuch) SEM dizer se o reator precisa ser o matador ou se vale QUALQUER morte de inimigo — e hades é explicitamente "qualquer". Decidir ao migrar esses 4: `quem:'inimigo'` (matador) vs um `quem:'qualquerInimigo'` (qualquer morte). Zeus não depende disso. |
+| **`aoCair` — matador-bound vs qualquer-morte (F1.2)** | `quem:'inimigo'` (matador-bound: zeus, feito na sessão 6) e `quem:'self'` (auto-reativo: nezha, feito na sessão 7) estão abertos. Falta decidir ao migrar morrigan/iansa/ahpuch: 3 passivas dizem "quando um inimigo é derrotado, [eu] X" SEM dizer se o reator precisa ser o matador ou se vale QUALQUER morte de inimigo — e hades é explicitamente "qualquer". `quem:'inimigo'` (matador) vs um `quem:'qualquerInimigo'` (qualquer morte); `quem:'aliado'` também ainda não aberto. |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
 | **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |

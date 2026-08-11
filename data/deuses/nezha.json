@@ -8,7 +8,11 @@
   "inicial": true,
   "passiva": {
     "nome": "Renascido do Lótus",
-    "desc": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 48 de HP."
+    "desc": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 48 de HP.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "veneno", "queimadura" ] },
+      { "gatilho": "aoCair", "quem": "self", "faz": [ { "t": "reviveProximoTurno", "hp": 48 } ] }
+    ]
   },
   "ab": [
     {
