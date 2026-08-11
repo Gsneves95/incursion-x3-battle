@@ -8,7 +8,11 @@
   "inicial": true,
   "passiva": {
     "nome": "Pele de Couraça",
-    "desc": "10 de redução contra Básicos; +6 de dano contra alvos com debuff."
+    "desc": "10 de redução contra Básicos; +6 de dano contra alvos com debuff.",
+    "fx": [
+      { "gatilho": "reducao", "v": 10, "escopo": "self", "contra": { "slot": "basico" } },
+      { "gatilho": "bonusDano", "v": 6, "escopo": "self", "quando": { "alvoDebuff": "qualquer" } }
+    ]
   },
   "ab": [
     {

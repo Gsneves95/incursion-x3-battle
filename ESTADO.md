@@ -4,6 +4,21 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 3 — gatilho `reducao`; migração de sobek + thor (por DEUS inteiro).
+**Resultado:** gatilho `reducao` (`v`, `escopo` self|time, `contra` defensivo), `red = Math.max(red, v)` (regra
+6). **Eixo defensivo `contra` SEPARADO do `quando` ofensivo** — `quando` lê quem ataca/é atacado/estado do
+campo; `contra` lê o GOLPE QUE CHEGA; não se misturam (declarado em docs/passivas.md). Nome `contra:{slot}` em
+vez de `de:'basico'` (que sobrecarregaria: slot/classe/elemento no mesmo campo sem desambiguar). Abri só `slot`;
+as outras 8 formas da família de redução entram por deus. Migrados INTEIROS: **sobek** (`bonusDano`+6 +
+`reducao`10 contra básico) e **thor** (`reducao`6 time); 3 hardcodes saíram. Rede provou equivalência: Lote A do
+sobek e capacidades #93 do thor passaram SEM alteração. `grep key==='sobek'|'thor'` vazio no motor (só 2
+comentários). **Placar TERMINADOS 3→5/12** (falta brigid, cuca, ganesha, hera, nezha, ra, zeus). §37 ganhou a
+LIÇÃO C (varredura da família inteira antes de fechar = padrão consolidado, 3ª vez). 17 marcos verdes.
+**PRÓXIMO:** próxima categoria de gatilho por frequência/destrave — candidatos: `porTurno` (destrava ra+ganesha,
+2), `bonusCura` (brigid), `onKill` (zeus), `reativa` (hera), `imunidade`+`onDeath` (nezha), `porTurno` (cuca). Dono escolhe.
+
+## Sessão — rede Lote B + correções §39 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** Rede de equivalência — Lote B + correção das duas divergências prosa-hardcode (§39).
 **Resultado:** **rede COMPLETA** — os 9 hardcoded têm caracterização que cobre a passiva de fato (magnitude E
 escopo exatos, verde contra o hardcode). Lote B em `tests/passiva.test.js`: brigid (+5 team qualquer elemento;

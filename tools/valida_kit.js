@@ -69,6 +69,19 @@ function validarQuando(q, ctx, errs) {
   }
 }
 
+// Valida a CONDIÇÃO DEFENSIVA `contra` do gatilho reducao (F1.2 sessão 3). Eixo SEPARADO do `quando`
+// (que é ofensivo): `contra` lê o golpe que chega. Conjunto e sub-vocabulário vêm de V.contraDef (o motor).
+function validarContra(c, ctx, errs) {
+  if (!c || typeof c !== 'object' || Array.isArray(c)) { errs.push(`${ctx}: contra não é objeto`); return; }
+  const chaves = Object.keys(c);
+  if (chaves.length !== 1) errs.push(`${ctx}: contra deve ter exatamente 1 condição (tem ${chaves.length})`);
+  for (const k of chaves) {
+    const def = V.contraDef[k];
+    if (!def) { errs.push(`${ctx}: condição de redução desconhecida "${k}" (válidas: ${V.contra.join(', ')})`); continue; }
+    if (def.sub && !def.sub.includes(c[k])) errs.push(`${ctx}: valor "${c[k]}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`);
+  }
+}
+
 // Valida a PASSIVA declarativa (F1.2). Prosa (nome/desc) é livre; se houver fx, ele tem forma fechada.
 function validarPassiva(p, ctx, errs) {
   if (!p || typeof p !== 'object') { errs.push(`${ctx}: passiva não é objeto`); return; }
@@ -88,6 +101,7 @@ function validarPassiva(p, ctx, errs) {
     if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0)) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
+    if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('ignora' in f) {
       if (!Array.isArray(f.ignora) || f.ignora.length === 0) errs.push(`${c}: ignora deve ser array não-vazio (${V.ignoraveis.join('|')})`);
       else for (const x of f.ignora) if (!V.ignoraveis.includes(x)) errs.push(`${c}: ignora com valor inválido "${x}" (válidos: ${V.ignoraveis.join(', ')})`);

@@ -88,10 +88,19 @@ const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); n
 const GATILHOS_PASSIVA = {
   bonusDano:       { campos: ['v', 'escopo', 'quando'], obrig: ['v'] },        // soma v ao dano (sessão 1)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
+  reducao:         { campos: ['v', 'escopo', 'contra'], obrig: ['v'] },        // reduz o dano recebido (sessão 3)
 };
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
+const SLOTS_ATAQUE = ['basico', 'habilidade', 'milagre'];
+// `contra` (condição DEFENSIVA do gatilho reducao) — EIXO SEPARADO do `quando`: `quando` lê o lado
+// OFENSIVO (quem ataca, quem é atacado, estado do campo); `contra` lê o GOLPE QUE CHEGA. Os dois
+// vocabulários NÃO se misturam (ver docs/passivas.md). Fechado; abre só `slot` na sessão 3 — as outras
+// (classe do oni, elemNao do baldur, …) entram por deus. Uma chave por condição; ausência = todo ataque.
+const CONTRA = {
+  slot: { sub: SLOTS_ATAQUE },   // reduz só golpes deste slot (sobek: 'basico')
+};
 // `quando` (condição do bônus) — conjunto FECHADO. Cada chave declara COMO validar o valor:
 //   sub  → valor ∈ lista   ·   bool → valor === true   ·   hp → {op, v}
 // `pendente` = condição no vocabulário mas cujo ESTADO o motor ainda não rastreia; valida_kit
@@ -119,6 +128,8 @@ const VOCAB = {
   gatilhosPassiva: Object.keys(GATILHOS_PASSIVA), // valores válidos de passiva.fx[].gatilho (F1.2)
   gatilhosPassivaDef: GATILHOS_PASSIVA,           // campos/obrigatórios por gatilho (valida_kit dispara por isto)
   ignoraveis: IGNORAVEIS,                          // valores válidos em danoIrredutivel.ignora
+  contra: Object.keys(CONTRA),                     // chaves válidas em reducao.contra (eixo DEFENSIVO)
+  contraDef: CONTRA,                               // como validar cada chave de contra
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -419,12 +430,32 @@ function danoImune(st, atk) {
   return out;
 }
 
+// reducao (F1.2 sessão 3) — reduz o dano RECEBIDO por `alvo`. Lê a passiva de quem protege (self = só o
+// dono; time = qualquer aliado vivo) e a condição DEFENSIVA `contra`, que lê o GOLPE que chega (slot).
+// Regra 6: pega o MAIOR, não soma. `contra` é eixo separado do `quando` ofensivo (ver docs/passivas.md).
+function contraCasou(c, slot) {
+  if ('slot' in c) return c.slot === slot;
+  return false;   // chaves futuras (classe, elemNao) ainda não abertas — valida_kit já as recusaria
+}
+function reducaoDeclarativa(st, alvo, slot) {
+  let r = 0;
+  for (const u of st.lados[alvo.lado].units) {
+    if (!u.vivo) continue;
+    const g = kitDe(st, u); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho !== 'reducao') continue;
+      if ((f.escopo || 'self') === 'self' && u !== alvo) continue;   // self protege só o dono
+      if (f.contra && !contraCasou(f.contra, slot)) continue;        // condição do golpe que chega
+      r = Math.max(r, f.v);
+    }
+  }
+  return r;
+}
+
 function calcDano(st, atk, alvo, base, kind, slot) {
   let v = base + bonusDano(st, atk);
   v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
-  // passivas ofensivas AINDA hardcoded — migração é por DEUS INTEIRO (§37): sobek tem outra metade
-  // (redução de Básico) que só migra quando o gatilho `reducao` existir (sessão 3).
-  if (atk.key === 'sobek' && alvo.efeitos.some(e => DEBUFFS.includes(e.type))) v += 6;
   if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
   if (v < 0) v = 0;
 
@@ -437,8 +468,7 @@ function calcDano(st, atk, alvo, base, kind, slot) {
     let red = 0;
     const r = ef(alvo, 'dmgReduction');
     if (r) red = Math.max(red, r.v);                                // regra 6 — pega o maior
-    if (alvo.key === 'sobek' && slot === 'basico') red = Math.max(red, 10);
-    if (st.lados[alvo.lado].units.some(x => x.vivo && x.key === 'thor')) red = Math.max(red, 6);
+    red = Math.max(red, reducaoDeclarativa(st, alvo, slot));        // sobek/thor migrados: reducao declarativo (§37)
     v = Math.max(0, v - red);
   }
   let absorvido = 0;

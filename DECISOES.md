@@ -990,6 +990,15 @@ tinha APROVADO uma frase antes ("migrar os 3": ogum/ra/sobek). Os três são mul
 de propósito: **uma regra que nunca contraria o próprio autor não está segurando nada.** O valor de uma
 invariante aparece justamente quando ela veta uma vontade — inclusive a de quem a escreveu.
 
+**LIÇÃO C (padrão CONSOLIDADO, não caso isolado): varra a FAMÍLIA INTEIRA antes de fechar, não os poucos
+que vai migrar.** Três vezes seguidas isso evitou o tier B: (1) o "+N condicional" eram 9 formas, não 1
+(fechar nos 4 migrados perderia elemento/HP/buff/marca/fase); (2) a auditoria de cobertura achou 6 furos onde
+eu supunha rede; (3) o gatilho `reducao` — ao varrer as ~15 passivas de redução (não só sobek+thor), o eixo
+da condição se revelou MÚLTIPLO (slot, classe, elemento-negado, fase, paridade, contador, contagem, elemento-do-
+receptor), então abri só `slot` e declarei o resto como crescimento por deus. Já não é sorte: **antes de fechar
+qualquer conjunto/vocabulário, a varredura da família inteira é obrigatória** — o custo dela é sempre menor que
+o de uma exceção descoberta num lote distante.
+
 Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde
 minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro o argumento dele.
 

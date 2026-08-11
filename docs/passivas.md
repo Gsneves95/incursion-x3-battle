@@ -22,7 +22,30 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
   - `bonusDano` (sessão 1) — soma `v` ao dano de um ataque. Campos: `v` (obrig), `escopo`, `quando`.
   - `danoIrredutivel` (sessão 2) — o dano do DONO fura redução e/ou escudo. Campo: `ignora` (obrig),
     subconjunto de `['reducao','escudo']` (`V.ignoraveis`). Sempre self (é propriedade do próprio dano).
-  - próximos: `reducao`, `bonusCura`, `onKill`, `onDeath`, `porTurno`, `reativa`, `imunidade`…
+  - `reducao` (sessão 3) — reduz o dano RECEBIDO. Campos: `v` (obrig), `escopo`, `contra`. `escopo` self
+    (só o dono, ex.: sobek) ou time (todos os aliados, ex.: thor). `red = Math.max(red, v)` (regra 6, não
+    soma). `contra` = condição DEFENSIVA (abaixo); ausente = todo ataque.
+  - próximos: `bonusCura`, `onKill`, `onDeath`, `porTurno`, `reativa`, `imunidade`…
+
+## Dois vocabulários que NUNCA se misturam: ofensivo (`quando`) × defensivo (`contra`)
+
+`quando` (gatilho bonusDano) lê o lado **OFENSIVO** de um ataque do dono: quem ataca (`atacanteElem`), quem é
+atacado (`alvoDebuff`/`alvoBuff`/`alvoElem`/`alvoHp`/`alvoDefesa`/`alvoMarca`), e o estado do campo (`fase`).
+`contra` (gatilho reducao) lê o **GOLPE QUE CHEGA** ao dono. São eixos SEPARADOS — um bônus de dano nunca
+condiciona pelo golpe recebido, e uma redução nunca condiciona por quem o dono ataca. Não reusar um pelo
+outro: se `quando` ganhasse "slot do ataque recebido", o eixo ofensivo passaria a ler defesa e o significado
+de cada chave viraria ambíguo (foi o que o `de:'basico'` sobrecarregado teria feito — daí `contra:{slot}`).
+
+**`contra` — condição defensiva (fechada; abre só `slot` na sessão 3):**
+
+| chave | valor | lê |
+|---|---|---|
+| `contra.slot` | ∈ `{basico, habilidade, milagre}` | reduz só golpes deste slot (sobek: `basico`) |
+
+Objeto de UMA chave, sub-vocabulário próprio (validado por `valida_kit`), ausente = todo ataque. As outras oito
+formas de redução da família (classe → oni; elemento-negado → baldur; paridade → hel; contador → kitsune;
+contagem de aliados → guanyu; elemento-do-receptor → poseidon) entram POR DEUS quando migrarem — cada uma
+como chave nova de `contra` (ou refinamento de `escopo`), revisada, nunca à força.
 - `v` — inteiro > 0 (só em `bonusDano`).
 - `escopo` — `self` (vale só quando o DONO ataca) ou `time` (qualquer aliado vivo). Default `self`.
 - `quando` — a condição (objeto de **uma** chave; ausente = sempre). Conjunto FECHADO abaixo.
@@ -101,8 +124,9 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **3/12** — **fujin** (inerte, sem hardcode; ver nota), **ogum** e **tyr** (F1.2 sessão 2, gatilho `danoIrredutivel`).
-- Faltam 9: brigid, cuca, ganesha, hera, nezha, ra, sobek, thor, zeus (ainda com `if (u.key===...)` no motor).
+- **5/12** — **fujin** (inerte, sem hardcode; ver nota), **ogum** e **tyr** (sessão 2, `danoIrredutivel`),
+  **sobek** e **thor** (sessão 3, `reducao`; sobek migrou inteiro: `bonusDano`+`reducao`).
+- Faltam 7: brigid, cuca, ganesha, hera, nezha, ra, zeus (ainda com `if (u.key===...)` no motor).
 - **Nota do fujin:** conta como terminado porque a passiva é inerte e não tem hardcode — mas ela NÃO funciona
   (depende do Raijin, que não é inicial). Decisão aberta desde a Fase 0; volta à mesa quando o Raijin entrar (F1.8).
 
@@ -128,7 +152,7 @@ trava o NÚMERO e os dois lados de cada condição — o erro da Hera (asseverar
 **REDE COMPLETA: os 9 hardcoded têm asserção que cobre a passiva de fato.** No caminho, dois furos do 3º tipo
 (hardcode > prosa) achados e CORRIGIDOS (prosa vence, §39): nezha imunizava todo DoT (→ lista veneno+queimadura);
 brigid disparava a cura-bônus com queimadura em qualquer lado (→ só inimigo). Impacto no jogo hoje: nenhum
-(nenhum kit dos 12 queima aliado). Migração pode começar (sessão 3 = `reducao` → sobek+thor).
+(nenhum kit dos 12 queima aliado). Sessão 3 FEITA: `reducao` migrou sobek+thor (placar 5/12).
 
 **Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
 que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO

@@ -7,7 +7,10 @@
   "funcao": "Guardião",
   "passiva": {
     "nome": "Protetor de Midgard",
-    "desc": "Todos os aliados recebem 6 de redução de dano."
+    "desc": "Todos os aliados recebem 6 de redução de dano.",
+    "fx": [
+      { "gatilho": "reducao", "v": 6, "escopo": "time" }
+    ]
   },
   "provacao": {
     "nome": "O Trovão de Asgard",

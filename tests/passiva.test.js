@@ -311,6 +311,12 @@ err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel' }), 'exige o campo "igno
 err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel', ignora: ['plasma'] }), 'ignora com valor inválido'); // valor fora de IGNORAVEIS
 err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel', ignora: ['reducao'], v: 5 }), 'não pertence ao gatilho'); // v não pertence a danoIrredutivel
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, ignora: ['reducao'] }), 'não pertence ao gatilho');       // ignora não pertence a bonusDano
+// gatilho reducao (sessão 3): eixo defensivo `contra` (separado do `quando` ofensivo)
+err(g => g.passiva.fx.push({ gatilho: 'reducao' }), 'exige o campo "v"');                                          // falta v
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' } }), 'desconhecida');          // classe ainda não aberta em contra
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { slot: 'ultimate' } }), 'fora do sub-vocabulário'); // slot inválido
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) não vai em reducao
+err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho'); // contra (defensivo) não vai em bonusDano
 
 delete E.GODS.tpass; delete E.GODS.taur; delete E.GODS.ttem;
 console.log('');
