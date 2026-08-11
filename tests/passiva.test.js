@@ -364,6 +364,11 @@ err(g => g.passiva.fx.push({ gatilho: 'imunidade' }), 'exige o campo "a"');     
 err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: [] }), 'array não-vazio');                   // a vazio
 err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'] }), 'fora do sub-vocabulário');     // medo ainda não é controle (F1.4)
 err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), 'não pertence ao gatilho'); // v não vai em imunidade
+// gatilho aoCair (sessão 6): quem (sujeito) + faz (efeito no reator)
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "quem"');        // falta quem
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'self', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'self' ainda não aberto
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -8,7 +8,10 @@
   "inicial": true,
   "passiva": {
     "nome": "Soberano",
-    "desc": "Ao derrotar um inimigo, ganha 1 orbe de Tempestade."
+    "desc": "Ao derrotar um inimigo, ganha 1 orbe de Tempestade.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "inimigo", "faz": [ { "t": "orbGain", "n": 1, "para": "Tempestade" } ] }
+    ]
   },
   "ab": [
     {

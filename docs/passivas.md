@@ -33,7 +33,14 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
     cobre controle FUTURO por construção, então a **F1.4** (Pacificar, Torpor, Medo) amplia essas duas passivas
     automaticamente — declarado aqui para não ser surpresa. NÃO cobre imunidade a MECÂNICA (execução → F1.3;
     contágio) nem CONDICIONAL (yamato "com 15+ Combo", guanyu "com 3 vivos") — famílias próprias.
-  - próximos: `bonusCura`, `onKill`, `onDeath`, `reativa`, `aCadaN`…
+  - `aoCair` (sessão 6) — quando alguém CAI, faz X. Campos: `quem` (obrig, o SUJEITO da morte) + `faz` (obrig,
+    o efeito no reator). UM gatilho, não dois (onKill/onDeath): a morte é UM momento (uma unidade a 0 em `matar`);
+    só o sujeito varia — eixo de sujeito, igual à imunidade (declaração uniforme), diferente do por-turno (3
+    momentos → 3 gatilhos). `quem` ∈ `V.aoCairQuem`, abre só `'inimigo'` (matador-bound: "ao derrotar" — zeus).
+    Cresce por deus: `'self'` (o dono morre — nezha/ymir), `'aliado'`, `'qualquerInimigo'` (hades). `faz` reusa
+    `V.fxTurno` (+ `orbGain.para` = elemento fixo). **AMBIGUIDADE aberta (DECISOES):** "quando um inimigo é
+    derrotado, [eu] X" não diz se é matador-bound ou qualquer-morte — decisão do dono ao migrar morrigan/iansa/ahpuch.
+  - próximos: `bonusCura`, `reativa`, `aCadaN`, e os demais sujeitos de `aoCair`…
 
 ## "Imune" na prosa engana: três famílias diferentes, não uma
 
@@ -164,12 +171,11 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **7/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
-  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`; ra inteiro: `porTurno`+`bonusDano`).
-- Faltam 5, TODOS bloqueados em gatilho que ainda não existe (a curva desce por gatilho novo):
-  brigid → `bonusCura` [1] · zeus → `onKill` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1] ·
-  nezha → `imunidade`(feito)+`onDeath` [1]. Destravam 3 com 1 gatilho cada (bonusCura/onKill/reativa); cuca+nezha
-  já têm `imunidade`, faltam `aCadaN`/`onDeath`.
+- **8/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
+  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo).
+- Faltam 4: brigid → `bonusCura` [1] · hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1] ·
+  nezha → `imunidade`(feito)+**`aoCair` quem:'self'** [1, já parcialmente pronto]. **Nezha destravável antes do
+  previsto:** `aoCair` já existe; abrir o sujeito `'self'` (+ caracterizar o timing do revive) fecha a Nezha.
 
 **Sessão 5 (`imunidade`) — infraestrutura, placar PARADO em 7/12 (0 migração real, como a sessão 1).** O que
 justifica a sessão não é o placar e sim o destrave FUTURO: `imunidade` é o **2º mecanismo mais populoso** —

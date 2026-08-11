@@ -4,6 +4,22 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** F1.2 sessão 6 — gatilho `aoCair` (onKill+onDeath varridos juntos); migração de zeus.
+**Resultado:** varredura dos 21 (onKill+onDeath) por SUJEITO: a morte é UM momento (`matar`), só o sujeito varia
+→ **UM gatilho `aoCair {quem, faz}`** (eixo de sujeito, igual à imunidade), NÃO dois. `quem` abre só `'inimigo'`
+(matador-bound: zeus "ao derrotar"); cresce por deus (`self`/`aliado`/`qualquerInimigo`). `faz` reusa `V.fxTurno`
+(+ `orbGain.para` = elemento fixo, p/ zeus: 1 Tempestade — sem rng, fluxo idêntico). Migrado: **zeus** (hardcode
+saiu do `matar`). Rede: zeus (Lote B) verde SEM alteração; `grep key==='zeus'` vazio. **Placar 7→8/12.**
+**Q2 (timing):** `aoCair` dispara em `matar` após a queda registrada (unidade nunca sai do array; `pendenteRenascer`
+funciona pós-limpeza) — mesma posição do hardcode antigo, comportamento atual, não inventado. **Nezha destravável
+antes do previsto:** `aoCair` já existe; abrir `quem:'self'` + caracterizar o timing do revive fecha a Nezha
+(imunidade já feita). **AMBIGUIDADE aberta (DECISOES):** "quando um inimigo é derrotado, [eu] X" (morrigan/iansa/
+ahpuch) não diz matador-bound vs qualquer-morte — decisão do dono ao migrá-los; zeus é inequívoco. 17 marcos verdes.
+**PRÓXIMO (dono):** os de-1 restantes (`bonusCura`→brigid, `reativa`→hera) movem o placar; `aoCair`+self→nezha;
+`aCadaN`→cuca.
+
+## Sessão — F1.2 sessão 5 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 5 — gatilho `imunidade` (infraestrutura; migra 0 real, como a sessão 1).
 **Resultado:** varredura das imunidades: o "27" era balde 2,25× maior que a família real — somava imunidade (12)
 + redução (já migrada) + anti-revive (6) + condicionais (2). Gatilho `imunidade` com `a:[tags]`, sub-vocab

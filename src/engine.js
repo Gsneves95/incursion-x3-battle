@@ -92,7 +92,16 @@ const GATILHOS_PASSIVA = {
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
+  aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
 };
+// `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
+// a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
+// uniforme → um gatilho com sub-vocabulário), diferente do por-turno (3 MOMENTOS → 3 gatilhos). Abre só
+// 'inimigo' (matador-bound: "ao derrotar um inimigo" — zeus) na sessão 6. Os outros sujeitos crescem por deus:
+//   'self' (o dono morre — nezha/ymir), 'aliado' (um aliado cai), 'qualquerInimigo' (qualquer inimigo cai — hades).
+// AMBIGUIDADE aberta (decisão do dono ao migrar morrigan/iansa/ahpuch): "quando um inimigo é derrotado, [eu] X"
+// não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
+const AOCAIR_QUEM = ['inimigo'];
 // `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
 // 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
 // enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
@@ -148,6 +157,7 @@ const VOCAB = {
   contraDef: CONTRA,                               // como validar cada chave de contra
   fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
   imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
+  aoCairQuem: AOCAIR_QUEM,                          // valores válidos em aoCair.quem (sujeito da morte)
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -159,6 +169,7 @@ const VOCAB = {
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
+    'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -593,9 +604,13 @@ function matar(st, atk, alvo) {
     alvo.renasceu = true; alvo.pendenteRenascer = true;
     log(st, { tipo: 'passiva', origem: alvo.key, valor: 48 });   // volta com 48 no próximo turno (iniciarTurno) — 40% de 120 (F1.0c)
   }
-  if (atk && atk.key === 'zeus' && atk.vivo) {                      // passiva Zeus
-    st.lados[atk.lado].orbs['Tempestade']++;
-    log(st, { tipo: 'orbe', lado: atk.lado, valor: 1, para: 'Tempestade', passiva: atk.key });
+  // gatilho aoCair (F1.2 sessão 6) — quem:'inimigo' é matador-bound: o MATADOR (atk vivo) reagiu à morte de um
+  // inimigo. Fira após a queda estar registrada (mesma posição do hardcode antigo do zeus). Roda o `faz` no reator.
+  if (atk && atk.vivo) {
+    const g = kitDe(st, atk); const p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) {
+      if (f.gatilho === 'aoCair' && f.quem === 'inimigo') rodarFaz(st, atk, f.faz);
+    }
   }
   checarFim(st);
 }
@@ -749,8 +764,8 @@ function rodarFaz(st, u, faz) {
     if (f.t === 'contador') addContador(st, u, f.nome, f.v, f.max != null ? f.max : null);
     else if (f.t === 'orbGain') {
       const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];
-      for (let i = 0; i < f.n; i++) l.orbs[sortearElemento(st, tipos)]++;
-      log(st, { tipo: 'orbe', lado: u.lado, valor: f.n });
+      for (let i = 0; i < f.n; i++) l.orbs[f.para || sortearElemento(st, tipos)]++;   // para = elemento FIXO (sem rng)
+      log(st, f.para ? { tipo: 'orbe', lado: u.lado, valor: f.n, para: f.para } : { tipo: 'orbe', lado: u.lado, valor: f.n });
     }
   }
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = u.key;

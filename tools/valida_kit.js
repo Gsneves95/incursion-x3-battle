@@ -116,6 +116,7 @@ function validarPassiva(p, ctx, errs) {
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
+    if ('quem' in f && !V.aoCairQuem.includes(f.quem)) errs.push(`${c}: aoCair.quem inválido "${f.quem}" (válidos: ${V.aoCairQuem.join(', ')})`);
     if ('a' in f) {   // imunidade: array não-vazio de tags do sub-vocabulário (controle/DoT/'controle')
       if (!Array.isArray(f.a) || f.a.length === 0) errs.push(`${c}: a deve ser array não-vazio (${V.imunizaveis.join('|')})`);
       else for (const tag of f.a) if (!V.imunizaveis.includes(tag)) errs.push(`${c}: imunidade a "${tag}" fora do sub-vocabulário (válidos: ${V.imunizaveis.join(', ')})`);
