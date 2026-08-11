@@ -999,6 +999,13 @@ receptor), então abri só `slot` e declarei o resto como crescimento por deus. 
 qualquer conjunto/vocabulário, a varredura da família inteira é obrigatória** — o custo dela é sempre menor que
 o de uma exceção descoberta num lote distante.
 
+**O detalhe que faz a lição funcionar:** não foi prudência genérica. A varredura evitou o tier B nas três
+vezes porque foi feita contra o **CONJUNTO INTEIRO**, não contra os casos em mãos. Varrer só os dois que eu ia
+migrar teria falhado nas três (fecharia no debuff/defesa do sobek e perderia elemento/HP/marca; confirmaria
+"ogum/tyr têm suíte" sem ver que era da habilidade; fecharia o `reducao` no slot do sobek e perderia classe/
+elemento/paridade). **É a diferença entre varrer e varrer o SUFICIENTE** — a família toda, não a amostra que a
+tarefa colocou na frente.
+
 Respondidas em bloco. Guardadas porque uma sessão sem memória vai implementá-las meses depois. Onde
 minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro o argumento dele.
 
