@@ -253,7 +253,9 @@ function aplicar(st, u, eff) {
 }
 
 function aplicarDot(st, u, nome, v, dur) {
-  if (u.key === 'nezha') { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }
+  // passiva Nezha — "imune a Veneno e Queimadura". §39: a prosa VENCE; o hardcode antigo bloqueava TODO
+  // DoT (imunidade que crescia sozinha a cada DoT novo). Lista fechada até a Nezha migrar (gatilho imunidade).
+  if (u.key === 'nezha' && (nome === 'veneno' || nome === 'queimadura')) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }
   const ja = u.dots.find(d => d.nome === nome);
   if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); }   // regra 6
   else u.dots.push({ nome, v, dur });
@@ -555,8 +557,10 @@ function curar(st, u, v) {
   if (!u.vivo) return;
   if (ef(u, 'noHeal')) { log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'sem_cura' }); return; }
   let bonus = 0;
-  const alguemQueima = st.lados.flatMap(l => l.units).some(x => x.vivo && x.dots.some(d => d.nome === 'queimadura'));
-  if (alguemQueima && st.lados[u.lado].units.some(x => x.vivo && x.key === 'brigid')) bonus = 5;
+  // passiva Brigid — "curas curam +5 se algum INIMIGO estiver com Queimadura". §39: a prosa VENCE; o
+  // hardcode antigo varria os dois lados (qualquer aliado queimando ativava — sinergia que ninguém concedeu).
+  const inimigoQueima = st.lados[1 - u.lado].units.some(x => x.vivo && x.dots.some(d => d.nome === 'queimadura'));
+  if (inimigoQueima && st.lados[u.lado].units.some(x => x.vivo && x.key === 'brigid')) bonus = 5;
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
   if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });

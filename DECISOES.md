@@ -1046,6 +1046,14 @@ ACRESCENTAR cobertura que faltava ≠ ALTERAR uma asserção existente. A primei
 seria mudar o alvo. Só a segunda é proibida. (Antes da F1.2 sessão 3, escrever as caracterizações de ra,
 thor e fujin — prefiro a rede completa antes de precisar dela a achar outro furo no meio de uma migração.)
 
+**EXCEÇÃO DECLARADA (dono) — a única em que alterar uma asserção existente é permitido:** corrigir uma
+divergência prosa-hardcode (§39). Quando a prosa vence e o hardcode largo é estreitado, a caracterização que
+travava o comportamento largo TEM de mudar para travar o estreito — isso é corrigir o alvo, não mudá-lo por
+conveniência. **"Corrigir divergência prosa-hardcode" é motivo válido; "fazer a suíte passar" NUNCA é.** Ao
+fazer, mostrar o diff das asserções linha a linha. (Nesta sessão a exceção NÃO precisou ser usada: as
+correções de nezha/brigid eram invisíveis à suíte — nenhuma asserção existente travava o comportamento largo,
+então nada mudou; só a caracterização NOVA já nasceu no escopo estreito.)
+
 **Métrica que passa a ser acompanhada:** deuses TERMINADOS (passiva 100% declarativa, zero hardcode),
 não "quantos gatilhos existem". Verificável: `grep "key === '<deus>'"` vazio no motor + suíte verde.
 Placar vivo em `docs/passivas.md`. Hoje: **3/12** — ogum, tyr (sessão 2) e fujin (inerte, sem hardcode; a
@@ -1070,8 +1078,25 @@ do que o kit descreve. Dois casos achados ao escrever a rede:
   travar o escopo CORRETO (inimigo) — e aí é decisão do dono: a rede prova o hardcode atual (largo) ou a
   prosa (estreito)? Se divergem, é mudança de comportamento, não de forma — PARAR e perguntar.
 
-Regra: a caracterização prova o HARDCODE ATUAL (é a rede de equivalência). Mas quando o hardcode diverge da
-prosa, REGISTRAR e trazer ao dono antes de migrar — a migração "fiel ao hardcode" perpetuaria a folga.
+**LIÇÃO do terceiro tipo:** caracterizar NÃO é só travar o que o código faz — é COMPARAR o que ele faz com o
+que ele PROMETEU (a prosa). Onde divergem, o hardcode ganhou comportamento que ninguém decidiu. O da Nezha
+não se acha lendo, testando ou jogando: aparece meses depois num lote distante (o 3º DoT) e ninguém liga a
+causa. A caracterização o expôs porque forçou olhar o ESCOPO do hardcode em vez de confirmar que ele funciona.
+
+**REGRA GERAL (dono):** quando hardcode e prosa divergem, **a PROSA VENCE** — ela foi revisada, está na
+planilha, e é o que o jogador leu ao desbloquear o deus. Hardcode divergente é BUG, não recurso. Se um caso
+futuro parecer exceção, PARAR e perguntar em vez de assumir.
+
+**RESOLUÇÃO (dono decidiu as duas; corrigidas nesta sessão):**
+- **Nezha → lista [veneno, queimadura]**, não "todos". Imunidade larga é vantagem que ninguém concedeu e que
+  CRESCE SOZINHA a cada DoT novo (a pior dívida). Corrigido em `aplicarDot`; caracterização prova que um DoT
+  fora da lista (sangramento) NÃO é bloqueado.
+- **Brigid → "inimigo"**, não qualquer lado. Com o escopo largo, a própria Brigid queimando um aliado ativaria
+  o bônus de cura dela — sinergia acidental na curandeira que mais jogador novo usa. Corrigido em `curar`.
+- **Impacto no jogo hoje: nenhum.** Entre os 12, só Brigid e Nezha aplicam queimadura, e ambas em INIMIGOS
+  (`alvo:inimigo`/`todosInimigos`) — nenhum kit consegue queimar um aliado, então o caso divergente é
+  inalcançável e a suíte seguiu verde sem uma asserção mudar. A correção só passa a importar quando existir
+  um kit que queime o próprio time. Registrado porque a folga estava LÁ, latente.
 
 ---
 

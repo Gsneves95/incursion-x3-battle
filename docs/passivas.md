@@ -118,17 +118,17 @@ BLOCOS (não grepando o nome — existência ≠ cobertura), a rede real:
 | **hera** | curado → +10 escudo | **SIM** (Lote A) | passiva.test: escudo === 10 exato, só o curado, só com Hera viva |
 | **nezha** | imune Veneno/Queimadura · revive 1× | **SIM** (Lote A + motor #10) | queimadura bloqueada 100% só na Nezha (+ revive 1× em motor #10) |
 | **ra** | aliados Aurora +5 · +1 Disco/turno | **SIM** (Lote A) | passiva.test: +5 só a Aurora, não Tempestade, só com Rá vivo; Disco +1/turno teto 6 só no turno do Rá |
-| **brigid** | +5 dano time (plano) · cura +5 se Queimadura | **NÃO** (Lote B) | só testam o DoT do básico e a IA; a passiva (dano/cura) não |
-| **cuca** | imune Dormir · Básico grátis a cada 3 turnos | **NÃO** (Lote B) | nada |
-| **ganesha** | turno 1: +2 orbes | **NÃO** (Lote B) | nada |
-| **zeus** | ao derrotar: +1 orbe Tempestade | **NÃO** (Lote B) | nada |
+| **brigid** | +5 dano time (plano) · cura +5 se INIMIGO com Queimadura | **SIM** (Lote B) | +5 team qualquer elemento, some com Brigid morta; cura +5 só com INIMIGO queimando (aliado não — §39) |
+| **cuca** | imune Dormir · Básico grátis a cada 3 turnos | **SIM** (Lote B) | adormecido bloqueado só na Cuca; Básico custo {} só em turno%3===0, só o Básico |
+| **ganesha** | turno 1: +2 orbes | **SIM** (Lote B) | evento orbe valor 2 na abertura; não repete nos turnos seguintes |
+| **zeus** | ao derrotar: +1 orbe Tempestade | **SIM** (Lote B) | +1 Tempestade quando o Zeus mata; não quando outro aliado mata |
 
-**Auditoria inicial: 1 SIM, 2 PARCIAL, 6 NÃO** — maioria descoberta, então a rede se partiu em dois lotes.
-**Lote A FEITO** (sobek, hera, nezha, ra — 6 cláusulas, magnitude E escopo exatos, verde contra o hardcode,
-zero migração). Falta o **Lote B** (brigid, cuca, ganesha, zeus). Toda caracterização trava o NÚMERO e os
-dois lados de cada condição — o erro da Hera (asseverar existência) não se repete. Terceiro tipo de furo
-achado no Lote A (hardcode > prosa: nezha imune a todo DoT; brigid dispara com queimadura em qualquer lado):
-ver DECISOES §39.
+**Auditoria inicial: 1 SIM, 2 PARCIAL, 6 NÃO** → rede partida em dois lotes, ambos FEITOS. Toda caracterização
+trava o NÚMERO e os dois lados de cada condição — o erro da Hera (asseverar existência) não se repete.
+**REDE COMPLETA: os 9 hardcoded têm asserção que cobre a passiva de fato.** No caminho, dois furos do 3º tipo
+(hardcode > prosa) achados e CORRIGIDOS (prosa vence, §39): nezha imunizava todo DoT (→ lista veneno+queimadura);
+brigid disparava a cura-bônus com queimadura em qualquer lado (→ só inimigo). Impacto no jogo hoje: nenhum
+(nenhum kit dos 12 queima aliado). Migração pode começar (sessão 3 = `reducao` → sobek+thor).
 
 **Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
 que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO

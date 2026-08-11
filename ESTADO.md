@@ -4,6 +4,20 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** Rede de equivalência — Lote B + correção das duas divergências prosa-hardcode (§39).
+**Resultado:** **rede COMPLETA** — os 9 hardcoded têm caracterização que cobre a passiva de fato (magnitude E
+escopo exatos, verde contra o hardcode). Lote B em `tests/passiva.test.js`: brigid (+5 team qualquer elemento;
+cura +5 só com INIMIGO queimando), cuca (adormecido só na Cuca; Básico grátis só em turno%3===0), ganesha (+2
+orbes na abertura, não repete), zeus (+1 Tempestade só quando o Zeus mata). **Corrigidas as duas divergências
+(prosa VENCE, §39):** `aplicarDot` — nezha só imune a veneno+queimadura (era todo DoT, folga que crescia
+sozinha); `curar` — brigid cura-bônus só com INIMIGO queimando (era qualquer lado). **Impacto no jogo hoje:
+nenhum** (nenhum dos 12 queima aliado → caso divergente inalcançável; suíte verde sem uma asserção mudar, então
+a exceção do §38 não precisou ser usada). §38 ganhou a exceção declarada (corrigir divergência prosa-hardcode);
+§39 ganhou a lição do 3º tipo + a regra "prosa vence". 17 marcos verdes. **PRÓXIMO:** sessão 3 — gatilho
+`reducao` migra sobek+thor (rede pronta para ambos), placar TERMINADOS 3→5/12.
+
+## Sessão — rede Lote A + auditoria (anterior)
+**Data:** 2026-08-11
 **Tarefa:** Rede de equivalência — auditoria dos 9 + Lote A de caracterizações (sem migração).
 **Resultado:** auditei a cobertura de passiva dos 9 hardcoded lendo os BLOCOS (não grepando o nome): **1 SIM
 (thor), 2 PARCIAL (hera só afirmava escudo>0, não =10; nezha só cobria revive), 6 NÃO** — maioria descoberta,

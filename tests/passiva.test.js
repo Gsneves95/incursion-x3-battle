@@ -216,6 +216,76 @@ console.log('== caracterização LOTE A: magnitude E escopo exatos (contra o har
   ok(E.getContador(ra, 'discoSolar') === 2, `ESCOPO: no turno do inimigo o Rá NÃO ganha Disco (deu ${E.getContador(ra, 'discoSolar')})`);
 }
 
+console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correção §39 da Nezha) ==');
+{ // BRIGID — +5 de dano ao TIME (plano, qualquer elemento, sempre); some com Brigid morta
+  const st = E.novoEstado(['brigid', 'zeus', 'cuca'], ['zeus', 'zeus', 'zeus'], 407);
+  const brigid = st.lados[0].units[0], zeusAlly = st.lados[0].units[1], cucaAlly = st.lados[0].units[2];
+  const alvo = st.lados[1].units[0];
+  let h = alvo.hp; E.bater(st, zeusAlly, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 20, `brigid: aliado (zeus) 15+5=20 (deu ${h - alvo.hp})`);
+  h = alvo.hp; E.bater(st, cucaAlly, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 20, `ESCOPO: time (qualquer elemento) ganha — cuca também = 20 (deu ${h - alvo.hp})`);
+  brigid.vivo = false; h = alvo.hp; E.bater(st, zeusAlly, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 15, `com Brigid morta: 15 (deu ${h - alvo.hp})`);
+}
+{ // BRIGID — cura +5 SE INIMIGO com Queimadura (§39: não aliado; não sem queimadura)
+  const st = E.novoEstado(['brigid', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 408);
+  const a1 = st.lados[0].units[1], aliado2 = st.lados[0].units[2], inimigo = st.lados[1].units[0];
+  a1.hp = 90; E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
+  ok(a1.hp === 110, `sem queimadura: cura 20 (90->110), deu ${a1.hp}`);
+  a1.hp = 90; inimigo.dots.push({ nome: 'queimadura', v: 8, dur: 2 });
+  E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
+  ok(a1.hp === 115, `INIMIGO queima: cura 20+5=25 (90->115), deu ${a1.hp}`);
+  inimigo.dots = []; aliado2.dots.push({ nome: 'queimadura', v: 8, dur: 2 });
+  a1.hp = 90; E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
+  ok(a1.hp === 110, `§39 ESCOPO: só ALIADO queima -> SEM bônus, cura 20 (90->110), deu ${a1.hp}`);
+}
+{ // CUCA — imune a Dormir (adormecido); só a Cuca
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['cuca', 'zeus', 'zeus'], 409);
+  const caster = st.lados[0].units[0], cuca = st.lados[1].units[0], outro = st.lados[1].units[1];
+  E.aplicarFx(st, caster, [{ t: 'apply', eff: { type: 'adormecido', dur: 2 }, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'habilidade' }, []);
+  ok(!E.ef(cuca, 'adormecido'), 'cuca IMUNE a Dormir');
+  ok(!!E.ef(outro, 'adormecido'), 'ESCOPO: o outro inimigo ADORMECE');
+}
+{ // CUCA — Básico grátis quando turno%3===0; só o Básico, só a Cuca
+  const st = E.novoEstado(['cuca', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 410);
+  const cuca = st.lados[0].units[0], zeusAlly = st.lados[0].units[1];
+  const acao = (u, slot) => E.acoesDe(st, u).find(a => a.slot === slot);
+  st.turno = 3;
+  ok(Object.keys(acao(cuca, 'basico').cost).length === 0, `turno 3: Básico da Cuca GRÁTIS (${JSON.stringify(acao(cuca, 'basico').cost)})`);
+  ok(Object.keys(acao(cuca, 'habilidade').cost).length > 0, `ESCOPO: só o Básico é grátis, não a Habilidade`);
+  ok(Object.keys(acao(zeusAlly, 'basico').cost).length > 0, `ESCOPO: só a Cuca (zeus paga o Básico)`);
+  st.turno = 4;
+  ok(Object.keys(acao(cuca, 'basico').cost).length > 0, `turno 4 (não múltiplo de 3): Básico da Cuca volta a custar`);
+}
+{ // GANESHA — turno 1: +2 orbes (na abertura, que o novoEstado já roda); não repete depois
+  const st = E.novoEstado(['ganesha', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 411);   // side0 abre → iniciarTurno já rodou
+  const ev1 = st.log.filter(e => e.tipo === 'orbe' && e.passiva === 'ganesha');
+  ok(ev1.length === 1 && ev1[0].valor === 2, `turno 1: +2 orbes da Ganesha (${JSON.stringify(ev1)})`);
+  const n0 = st.log.length; st.ativo = 0; E.iniciarTurno(st);
+  const ev2 = st.log.slice(n0).filter(e => e.tipo === 'orbe' && e.passiva === 'ganesha');
+  ok(ev2.length === 0, `ESCOPO: turno seguinte NÃO repete os +2 (só turno 1)`);
+}
+{ // ZEUS — ao derrotar inimigo: +1 orbe Tempestade; só o Zeus
+  const st = E.novoEstado(['zeus', 'sobek', 'zeus'], ['cuca', 'cuca', 'cuca'], 412);
+  const zeus = st.lados[0].units[0], sobekAlly = st.lados[0].units[1];
+  const alvo1 = st.lados[1].units[0], alvo2 = st.lados[1].units[1];
+  const o0 = st.lados[0].orbs['Tempestade'];
+  alvo1.hp = 5; E.bater(st, zeus, alvo1, 15, 'afetado', 'basico');
+  ok(!alvo1.vivo && st.lados[0].orbs['Tempestade'] === o0 + 1, `zeus mata -> +1 Tempestade (${o0} -> ${st.lados[0].orbs['Tempestade']})`);
+  const o1 = st.lados[0].orbs['Tempestade'];
+  alvo2.hp = 5; E.bater(st, sobekAlly, alvo2, 15, 'afetado', 'basico');
+  ok(!alvo2.vivo && st.lados[0].orbs['Tempestade'] === o1, `ESCOPO: sobek mata -> SEM orbe do Zeus (${o1} -> ${st.lados[0].orbs['Tempestade']})`);
+}
+{ // NEZHA (correção §39) — imune a veneno E queimadura, mas NÃO a um DoT fora da lista
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 413);
+  const caster = st.lados[0].units[0], nezha = st.lados[1].units[0];
+  E.aplicarFx(st, caster, [{ t: 'dot', nome: 'veneno', v: 8, dur: 2, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'habilidade' }, []);
+  ok(!nezha.dots.some(d => d.nome === 'veneno'), 'nezha imune a veneno (na lista)');
+  E.aplicarFx(st, caster, [{ t: 'dot', nome: 'sangramento', v: 8, dur: 2, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'habilidade' }, []);
+  ok(nezha.dots.some(d => d.nome === 'sangramento'), '§39: DoT FORA da lista (sangramento) NÃO é bloqueado — a folga latente morreu');
+}
+
 console.log('== valida_kit FALHA em voz alta: gatilho, condição, valor e reservada ==');
 const base = () => ({
   key: 'tp', nome: 'TP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', inicial: false,
