@@ -1048,6 +1048,15 @@ minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro 
 
 ## 38. CARACTERIZAR ANTES DE MIGRAR — a rede tem de existir antes de se confiar nela (F1.2)
 
+**CHECKLIST de migração (cresce com o que cada sessão ensina):**
+1. A passiva tem asserção que cobre o comportamento ESPECÍFICO? Se não, caracterizar ANTES (não supor).
+2. Magnitude E escopo EXATOS, os dois lados de cada condição (o erro da Hera: afirmar existência ≠ valor).
+3. Hardcode diverge da prosa? Prosa vence (§39) — registrar e trazer ao dono; não perpetuar a folga.
+4. **Quando o hardcode consome RNG, PROVE que o declarativo consome o MESMO fluxo** (sessão 4: `sortearElemento`
+   == o `rng` inline do `orbGain`, mesmo nº de chamadas). Se divergirem, a suíte passa mas a ARENA começa a
+   produzir resultado diferente do relatório anterior, e ninguém liga a causa. É migração fiel vs aproximada.
+5. Ao fim: `grep "key === '<deus>'"` vazio no motor + placar TERMINADOS atualizado.
+
 Quando a passiva de um deus vira dado, a suíte que o cobre deixa de provar "o hardcode funciona" e passa a
 provar "o dado REPRODUZ o hardcode" — é a rede de equivalência. Mas a regra "não altere as suítes dos 12"
 pressupõe que essa rede EXISTE, e a varredura mostrou que não existe em todo lugar: o **Rá não tinha
