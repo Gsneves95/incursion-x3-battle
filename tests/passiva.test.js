@@ -148,6 +148,74 @@ console.log('== caracterização OGUM: +10 vs defesa, dano não-reduzível, mas 
   ok(comEscudo.hp === h && s - comEscudo.shield === 25, `ogum vs escudo: 25 absorvidos, HP intacto (escudo ${s}->${comEscudo.shield})`);
 }
 
+// LOTE A da rede (F1.2): sobek, hera, nezha, ra. Cada cláusula trava MAGNITUDE exata e ESCOPO exato
+// (os dois lados de toda condição) — o erro da Hera foi asseverar existência ("ganhou escudo"), não valor.
+// Verde contra o HARDCODE atual; zero migração. Vira prova de equivalência quando estes deuses migrarem.
+console.log('== caracterização LOTE A: magnitude E escopo exatos (contra o hardcode) ==');
+{ // SOBEK — +6 de dano contra alvo com debuff; SÓ quando o Sobek ataca
+  const st = E.novoEstado(['sobek', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 401);
+  const sobek = st.lados[0].units[0], zeus = st.lados[0].units[1];
+  const limpo = st.lados[1].units[0], comDebuff = st.lados[1].units[1];
+  comDebuff.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 });   // um debuff qualquer
+  let h = limpo.hp; E.bater(st, sobek, limpo, 15, 'afetado', 'basico');
+  ok(h - limpo.hp === 15, `sobek vs alvo limpo: 15 (deu ${h - limpo.hp})`);
+  h = comDebuff.hp; E.bater(st, sobek, comDebuff, 15, 'afetado', 'basico');
+  ok(h - comDebuff.hp === 21, `sobek vs alvo com debuff: 15+6=21 (deu ${h - comDebuff.hp})`);
+  h = comDebuff.hp; E.bater(st, zeus, comDebuff, 15, 'afetado', 'basico');
+  ok(h - comDebuff.hp === 15, `ESCOPO: zeus vs mesmo alvo com debuff = 15 (o +6 é só do sobek) (deu ${h - comDebuff.hp})`);
+}
+{ // SOBEK — recebe -10 de dano de BÁSICOS; não de Habilidade
+  const st = E.novoEstado(['sobek', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 402);
+  const sobek = st.lados[0].units[0], atacante = st.lados[1].units[0];
+  let h = sobek.hp; E.bater(st, atacante, sobek, 15, 'afetado', 'basico');
+  ok(h - sobek.hp === 5, `básico vs sobek: 15-10=5 (deu ${h - sobek.hp})`);
+  h = sobek.hp; E.bater(st, atacante, sobek, 15, 'afetado', 'habilidade');
+  ok(h - sobek.hp === 15, `ESCOPO: habilidade vs sobek NÃO reduz = 15 (deu ${h - sobek.hp})`);
+}
+{ // HERA — aliado curado ganha EXATAMENTE 10 de escudo; só o curado; só com Hera viva
+  const st = E.novoEstado(['hera', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 403);
+  const hera = st.lados[0].units[0], a1 = st.lados[0].units[1], a2 = st.lados[0].units[2];
+  a1.hp = 100;
+  E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
+  ok(a1.shield === 10, `curado ganha escudo EXATAMENTE 10 (deu ${a1.shield})`);
+  ok(a2.shield === 0 && hera.shield === 0, `ESCOPO: só o curado ganha (a2=${a2.shield}, hera=${hera.shield})`);
+  hera.vivo = false; a2.hp = 100;
+  E.aplicarFx(st, a2, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
+  ok(a2.shield === 0, `ESCOPO: com Hera morta, cura NÃO dá escudo (deu ${a2.shield})`);
+}
+{ // NEZHA — imune a Queimadura (bloqueia 100%); só a Nezha
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 404);
+  const caster = st.lados[0].units[0];
+  const nezha = st.lados[1].units[0], outro = st.lados[1].units[1];
+  E.aplicarFx(st, caster, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 2, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'habilidade' }, []);
+  ok(nezha.dots.length === 0, `nezha IMUNE: 0 queimadura (tem ${nezha.dots.length})`);
+  const q = outro.dots.find(d => d.nome === 'queimadura');
+  ok(q && q.v === 8, `ESCOPO: o outro inimigo RECEBE queimadura v8 (${q && q.v})`);
+}
+{ // RÁ — aliados AURORA +5 de dano; não outros elementos; só com Rá vivo
+  const st = E.novoEstado(['ra', 'tyr', 'zeus'], ['cuca', 'cuca', 'cuca'], 405);
+  const ra = st.lados[0].units[0], tyrAurora = st.lados[0].units[1], zeusTemp = st.lados[0].units[2];
+  const alvo = st.lados[1].units[0];
+  let h = alvo.hp; E.bater(st, tyrAurora, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 20, `aliado Aurora (tyr): 15+5=20 (deu ${h - alvo.hp})`);
+  h = alvo.hp; E.bater(st, zeusTemp, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 15, `ESCOPO: aliado Tempestade (zeus) NÃO ganha = 15 (deu ${h - alvo.hp})`);
+  h = alvo.hp; E.bater(st, ra, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 20, `o próprio Rá (Aurora) ganha: 20 (deu ${h - alvo.hp})`);
+  ra.vivo = false; h = alvo.hp; E.bater(st, tyrAurora, alvo, 15, 'afetado', 'basico');
+  ok(h - alvo.hp === 15, `ESCOPO: com Rá morto, aliado Aurora volta a 15 (deu ${h - alvo.hp})`);
+}
+{ // RÁ — +1 Disco Solar por turno, teto 6; só no turno do próprio Rá
+  const st = E.novoEstado(['ra', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 406);
+  const ra = st.lados[0].units[0];
+  st.ativo = 0; const d0 = E.getContador(ra, 'discoSolar'); E.iniciarTurno(st);
+  ok(E.getContador(ra, 'discoSolar') === d0 + 1, `+1 Disco no turno do Rá (${d0} -> ${E.getContador(ra, 'discoSolar')})`);
+  ra.contadores.discoSolar = 6; st.ativo = 0; E.iniciarTurno(st);
+  ok(E.getContador(ra, 'discoSolar') === 6, `teto 6: não passa de 6 (deu ${E.getContador(ra, 'discoSolar')})`);
+  ra.contadores.discoSolar = 2; st.ativo = 1; E.iniciarTurno(st);
+  ok(E.getContador(ra, 'discoSolar') === 2, `ESCOPO: no turno do inimigo o Rá NÃO ganha Disco (deu ${E.getContador(ra, 'discoSolar')})`);
+}
+
 console.log('== valida_kit FALHA em voz alta: gatilho, condição, valor e reservada ==');
 const base = () => ({
   key: 'tp', nome: 'TP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', inicial: false,

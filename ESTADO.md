@@ -4,6 +4,20 @@
 
 ## Última sessão
 **Data:** 2026-08-11
+**Tarefa:** Rede de equivalência — auditoria dos 9 + Lote A de caracterizações (sem migração).
+**Resultado:** auditei a cobertura de passiva dos 9 hardcoded lendo os BLOCOS (não grepando o nome): **1 SIM
+(thor), 2 PARCIAL (hera só afirmava escudo>0, não =10; nezha só cobria revive), 6 NÃO** — maioria descoberta,
+tarefa partida em 2 lotes (dono bateu Lote A agora, tirando o Rá do B para ele não virar caminho crítico da
+sessão 4). **Lote A escrito** em `tests/passiva.test.js` (6 cláusulas, magnitude E escopo EXATOS contra o
+hardcode, zero migração): sobek (+6 vs debuff / −10 só de básico), hera (escudo ===10, só o curado, só Hera
+viva), nezha (queimadura 100% bloqueada só na Nezha), ra (+5 só Aurora / Disco +1/turno teto 6 só no turno do
+Rá). **Terceiro tipo de furo achado** (hardcode > prosa, §39): nezha é imune a TODO DoT (prosa: veneno+queimadura);
+brigid dispara o +5 de cura com queimadura em QUALQUER lado (prosa: inimigo) — trazer ao dono ao migrar cada um.
+CLAUDE.md: lição "teste que existe ≠ teste que cobre". 18 marcos verdes. **PRÓXIMO:** Lote B (brigid, cuca,
+ganesha, zeus) — completa a rede; depois a sessão 3 (gatilho `reducao` → migra sobek+thor, placar 5/12).
+
+## Sessão — F1.2 sessão 2 (anterior)
+**Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 2 — gatilho `danoIrredutivel`; migração de ogum e tyr (por DEUS inteiro).
 **Resultado:** `GATILHOS_PASSIVA` virou spec por gatilho (campos/obrigatórios); `danoIrredutivel` lê `ignora ⊆
 [reducao,escudo]`, aplicado em `calcDano` via `danoImune`. Migrados INTEIROS: **ogum** (bonusDano +10 vs defesa

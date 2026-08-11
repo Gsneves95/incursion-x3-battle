@@ -1051,6 +1051,28 @@ não "quantos gatilhos existem". Verificável: `grep "key === '<deus>'"` vazio n
 Placar vivo em `docs/passivas.md`. Hoje: **3/12** — ogum, tyr (sessão 2) e fujin (inerte, sem hardcode; a
 passiva não funciona pois depende do Raijin — decisão aberta desde a Fase 0, volta na F1.8).
 
+**Auditoria dos 9 (antes de escrever a rede):** 1 SIM (thor), 2 PARCIAL (hera só afirmava que o escudo
+APARECE, não que é 10; nezha só cobria o revive, não a imunidade), 6 NÃO. Maioria descoberta → a tarefa de
+rede se partiu em dois lotes. **Lote A escrito** (sobek, hera, nezha, ra — 6 cláusulas, magnitude E escopo
+exatos, verde contra o hardcode; nenhuma migração). Falta o **Lote B**: brigid, cuca, ganesha, zeus.
+
+## 39. Terceiro tipo de furo: o HARDCODE faz MAIS do que a prosa promete (achado ao caracterizar o Lote A)
+
+Além de (1) rótulo por sintoma e (2) teste que existe mas não cobre, um terceiro: o motor implementa MAIS
+do que o kit descreve. Dois casos achados ao escrever a rede:
+- **nezha — imunidade larga demais.** `aplicarDot` bloqueia TODO DoT para a Nezha (qualquer `nome`), mas a
+  prosa diz "imune a Veneno e Queimadura". Hoje coincidem (só existe `queimadura`); quando um 3º DoT entrar
+  (ex.: sangramento), a Nezha ficaria imune a ele DE GRAÇA, sem o kit prometer. Ao migrar, a passiva
+  declarativa deve listar os DoTs imunizados (veneno, queimadura), não "todos" — senão herda a folga.
+- **brigid — condição larga demais.** O +5 de cura dispara se ALGUÉM no campo (qualquer lado) tem
+  queimadura (`alguemQueima` varre os dois lados), mas a prosa diz "se algum INIMIGO estiver com Queimadura".
+  Uma queimadura num ALIADO hoje já ativa o bônus. Ao migrar a Brigid (Lote B), a caracterização tem de
+  travar o escopo CORRETO (inimigo) — e aí é decisão do dono: a rede prova o hardcode atual (largo) ou a
+  prosa (estreito)? Se divergem, é mudança de comportamento, não de forma — PARAR e perguntar.
+
+Regra: a caracterização prova o HARDCODE ATUAL (é a rede de equivalência). Mas quando o hardcode diverge da
+prosa, REGISTRAR e trazer ao dono antes de migrar — a migração "fiel ao hardcode" perpetuaria a folga.
+
 ---
 
 ## Decisões ainda ABERTAS

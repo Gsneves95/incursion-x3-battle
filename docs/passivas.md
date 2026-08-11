@@ -113,19 +113,22 @@ BLOCOS (não grepando o nome — existência ≠ cobertura), a rede real:
 
 | deus | passiva (cláusulas) | asserta a passiva? | o que cobre / falta |
 |---|---|---|---|
-| **thor** | −6 de dano ao time | **SIM** | capacidades: 15−6=9 vivo, 15 caído (magnitude + escopo + condição-vivo) |
-| **hera** | curado → +10 escudo | **PARCIAL** | capacidades: escudo APARECE nos 3 (`shield>0`); a magnitude **10** não é travada |
-| **nezha** | imune Veneno/Queimadura · revive 1× | **PARCIAL** | motor #10: revive 1× exato; a **imunidade** a Veneno/Queimadura não é testada |
-| **brigid** | +5 dano time (plano) · cura +5 se Queimadura | **NÃO** | só testam o DoT do básico e a IA; a passiva (dano/cura) não |
-| **cuca** | imune Dormir · Básico grátis a cada 3 turnos | **NÃO** | nada |
-| **ganesha** | turno 1: +2 orbes | **NÃO** | nada |
-| **ra** | aliados Aurora +5 · +1 Disco/turno | **NÃO** | nada (o kit foi conferido por screenshot, não por suíte) |
-| **sobek** | +6 vs debuff · −10 de Básicos | **NÃO** | nada (aparece só como roster/inimigo) |
-| **zeus** | ao derrotar: +1 orbe Tempestade | **NÃO** | nada |
+| **thor** | −6 de dano ao time | **SIM** (já existia) | capacidades: 15−6=9 vivo, 15 caído (magnitude + escopo + condição-vivo) |
+| **sobek** | +6 vs debuff · −10 de Básicos | **SIM** (Lote A) | passiva.test: +6 só do sobek vs debuff; −10 só de básico, não de habilidade |
+| **hera** | curado → +10 escudo | **SIM** (Lote A) | passiva.test: escudo === 10 exato, só o curado, só com Hera viva |
+| **nezha** | imune Veneno/Queimadura · revive 1× | **SIM** (Lote A + motor #10) | queimadura bloqueada 100% só na Nezha (+ revive 1× em motor #10) |
+| **ra** | aliados Aurora +5 · +1 Disco/turno | **SIM** (Lote A) | passiva.test: +5 só a Aurora, não Tempestade, só com Rá vivo; Disco +1/turno teto 6 só no turno do Rá |
+| **brigid** | +5 dano time (plano) · cura +5 se Queimadura | **NÃO** (Lote B) | só testam o DoT do básico e a IA; a passiva (dano/cura) não |
+| **cuca** | imune Dormir · Básico grátis a cada 3 turnos | **NÃO** (Lote B) | nada |
+| **ganesha** | turno 1: +2 orbes | **NÃO** (Lote B) | nada |
+| **zeus** | ao derrotar: +1 orbe Tempestade | **NÃO** (Lote B) | nada |
 
-**Resultado: 1 SIM, 2 PARCIAL, 6 NÃO.** A maioria está descoberta — a rede é maior que uma sessão, então
-a tarefa se PARTE (decisão do dono). Cláusulas a caracterizar: ~13 (6 deuses do zero + fechar 2 parciais).
-Nenhuma migração até a rede existir. **`sobek` é o único pré-requisito direto da sessão 3** (reducao → sobek+thor).
+**Auditoria inicial: 1 SIM, 2 PARCIAL, 6 NÃO** — maioria descoberta, então a rede se partiu em dois lotes.
+**Lote A FEITO** (sobek, hera, nezha, ra — 6 cláusulas, magnitude E escopo exatos, verde contra o hardcode,
+zero migração). Falta o **Lote B** (brigid, cuca, ganesha, zeus). Toda caracterização trava o NÚMERO e os
+dois lados de cada condição — o erro da Hera (asseverar existência) não se repete. Terceiro tipo de furo
+achado no Lote A (hardcode > prosa: nezha imune a todo DoT; brigid dispara com queimadura em qualquer lado):
+ver DECISOES §39.
 
 **Rede de equivalência (a suíte que prova dado==hardcode):** existe para a maioria, mas **`ra` não tem suíte
 que asserte sua passiva** e `thor`/`fujin` são finas. Antes de migrar um deus sem asserção da passiva, ADICIONO
