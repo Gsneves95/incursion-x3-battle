@@ -1061,6 +1061,13 @@ minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro 
    == o `rng` inline do `orbGain`, mesmo nº de chamadas). Se divergirem, a suíte passa mas a ARENA começa a
    produzir resultado diferente do relatório anterior, e ninguém liga a causa. É migração fiel vs aproximada.
 5. Ao fim: `grep "key === '<deus>'"` vazio no motor + placar TERMINADOS atualizado.
+6. **SANIDADE DE AMBIENTE (antes de tocar em código):** se o código contradiz o que o ESTADO.md/§ diz que já
+   foi feito — um hardcode "de volta", um marker ausente, um deus já migrado que aparece cru — NÃO corrija o
+   sintoma. Verifique `git log --oneline -1` e `git log origin/<branch> -1`; se o HEAD local está atrás,
+   `git fetch && git reset --hard origin/<branch>` e reconfira. Duas vezes nesta jornada o container
+   reprovisionou num commit velho (clone fresco atrasado), e as duas vezes o sintoma foi "a Nezha/o deus X
+   voltou a ter hardcode". "Corrigir" teria reescrito trabalho já pronto e criado divergência com o origin. O
+   ESTADO.md é a fonte da verdade do que foi feito; o working tree pode estar mentindo.
 
 Quando a passiva de um deus vira dado, a suíte que o cobre deixa de provar "o hardcode funciona" e passa a
 provar "o dado REPRODUZ o hardcode" — é a rede de equivalência. Mas a regra "não altere as suítes dos 12"
@@ -1237,6 +1244,16 @@ turno 1 (não há entrada em campo no meio — invocações são unidades `__inv
 absoluto por construção. A dúvida que o docs tinha anotado (kitsune/boto poderiam ser relativos) NÃO se
 materializa no texto. `turno % n === 0`, `n` absoluto sobre o contador global de rodadas (`st.turno`).
 
+**A prova (3) é ESTRUTURAL e vale para QUALQUER dúvida futura de cadência (registrar).** As provas (1) e (2) são
+leitura de código e de prosa — evidência, mas contestável (um kit futuro pode ter prosa relativa). A (3) fecha a
+questão de um jeito que nenhuma leitura fecharia: **num 3v3 sem entrada em campo no meio da partida, "desde a
+entrada" e "absoluto desde o turno 1" são o MESMO ponto de partida para todos — coincidem por construção, não por
+coincidência.** Relativo-vs-absoluto só pode DIVERGIR se (a) unidades entrarem em turnos diferentes, ou (b) a
+cadência puder ser pausada/pulada (morto/silenciado quando deveria disparar). Enquanto nenhuma das duas existir,
+a distinção é vazia e absoluto é a única forma. Quando uma delas entrar (invocações que contam cadência própria;
+uma cadência que pula turno morto), aí sim relativo passa a ser um comportamento distinto — e é o gatilho de
+`n` que terá de dizer qual. Antes disso, não inventar o eixo.
+
 **Eixo B — o que cada um FAZ? 3 são `faz:[fx]`, a Cuca é a EXCEÇÃO.** Inari (orbGain), Kitsune (contador Cauda),
 Boto (apply Inalvejável self) são efeitos disparados — `faz`, o mesmo molde do porTurno. **A Cuca não:** "Básico
 de graça" é MODIFICAÇÃO DE CUSTO que vale no turno, lida em `acoesDe` no momento da ação — não é um efeito que
@@ -1255,6 +1272,55 @@ Nota: `aCadaN` com n=1 seria o porTurno; o validador recusa n<2 para não haver 
 `acoesDe`). Caracterização Lote B (imune a Dormir só a Cuca; Básico grátis no turno 3, custa no turno 4, só o
 Básico, só a Cuca) verde SEM alteração; `grep key==='cuca'` vazio; suíte inteira verde. RNG: nenhuma sorteia
 (§38). **Placar 10→11/12.** Falta 1: hera (`reativa`).
+
+---
+
+## 44. `reativa` é BALDE, não gatilho — família de 6 ganchos por EVENTO; só `aoCurar` (Hera) agora (F1.2, sessão 10)
+
+Última migração da F1.2 (fecha 12/12). O dono suspeitava que "reativa" fosse balde por ser NOME DE CATEGORIA,
+não de mecanismo — confirmado. As 10 "reativas" da varredura original classificadas por GATILHO REAL (reage a
+QUÊ, e onde no motor):
+
+| deus | reage a | gatilho real | onde |
+|---|---|---|---|
+| Zeus | morte de inimigo | **aoCair** quem:inimigo | `matar` — **JÁ FEITO (sessão 6)** |
+| Erínias | morte de aliado | aoCair quem:aliado | `matar` (futuro) |
+| Ymir | própria morte | aoCair quem:self | `matar` (futuro) |
+| Nüwa | morte de aliado | aoCair quem:aliado | `matar` (futuro) |
+| **Hera** | **cura de aliado** | **aoCurar** | `curar` — **esta sessão** |
+| Bragi | uso de Milagre por aliado | aoUsarHabilidade | resolução de ação (futuro) |
+| Khonshu | controle iminente em aliado | aoReceberControle (anula 1×) | `aplicar` (futuro) |
+| Boitatá | ser atingida (Chama) | aoSerAtingido | `bater` recebido (futuro) |
+| Xangô | aliado ser atingido | aoSerAtingido | `bater` recebido (futuro) |
+| Cernunnos | próprio ataque | aoAtacar | `bater` desferido (futuro) |
+
+**"reativa" = 6 ganchos distintos, cada um num lugar diferente do motor** (aoCair, aoCurar, aoUsarHabilidade,
+aoReceberControle, aoSerAtingido, aoAtacar). NÃO é um gatilho — é uma FAMÍLIA de gatilhos, como o dono previu.
+E **4 das 10 nem são novas**: são `aoCair` (morte), o gatilho da sessão 6 — só faltam sujeitos (`aliado`/`self`).
+Como nos sujeitos do aoCair, abro só o da Hera agora e deixo cada gancho para o deus dele. Sexto balde que a
+varredura do conjunto corrige (§37): "reativa" contava 10, mas o gatilho novo desta sessão cobre **1**.
+
+**bonusCura vs aoCurar — dois mecanismos, confirmado.** `bonusCura` (sessão 8) MODIFICA a magnitude da cura
+(soma `+v` dentro de `curar`, antes do clamp). `aoCurar` DISPARA um efeito DEPOIS da cura (Hera: escudo +10),
+independente de quanto curou. Posição no código diferente, evento diferente (`escudo` ≠ `cura`), semântica de
+valor diferente. Não são o mesmo eixo.
+
+**A Hera CABE como `faz` de `aoCurar` — é o gêmeo do `aoCair`, com UMA generalização.** Estruturalmente idêntico:
+um evento entrega um SUJEITO e roda um `faz` nele. Mas o `aoCair` teve sorte — lá o reator É o dono (zeus ganha
+orbe: dono=reator=alvo do efeito). Na Hera o efeito cai no CURADO (o sujeito do evento), que NÃO é o dono (a
+Hera). Duas consequências que forçaram generalizar o `rodarFaz`: (1) o `faz` roda numa unidade ≠ dono (o curado);
+(2) o evento tem de ser creditado ao DONO (`passiva:'hera'`) mesmo aplicando no curado — então `rodarFaz` ganhou
+um `tagKey` opcional (default = a própria unidade; só o aoCurar o usa). Com isso, a Hera é
+`{gatilho:'aoCurar', faz:[{t:'shield', v:10}]}` — sem mecanismo especial, só `faz` rodando no sujeito do evento.
+`shield` entrou em `V.fxTurno` (é turno-seguro; o alvo é o sujeito do evento, não escolha do jogador). O
+seletor "sujeito do evento" é implícito ao gatilho (como o reator do aoCair), não um campo `alvo`.
+
+**Migração:** hardcode da Hera sai do `curar`. Caracterização Lote A (curado ganha EXATAMENTE 10 de escudo; só
+o curado, não os outros nem a Hera; nada com a Hera morta) + o teste de capacidades (escudo nos 3, Ogum zera)
+verdes SEM alteração; `grep key==='hera'` vazio; suíte inteira verde. RNG: nenhuma sorteia (§38). **Placar
+11→12/12. A F1.2 FECHA:** as 12 passivas dos deuses implementados são 100% declarativas, zero `if (u.key===...)`
+no motor. Restam ganchos abertos para deuses ainda não implementados (os 5 reativos futuros, sujeitos do aoCair,
+`heal`/`apply` em `faz`, `aCadaN.faz`), mas nenhum deus implementado carrega hardcode de passiva.
 
 ---
 

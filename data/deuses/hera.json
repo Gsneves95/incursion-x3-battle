@@ -7,7 +7,10 @@
   "funcao": "Suporte",
   "passiva": {
     "nome": "Rainha Ciumenta",
-    "desc": "Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível."
+    "desc": "Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível.",
+    "fx": [
+      { "gatilho": "aoCurar", "faz": [ { "t": "shield", "v": 10 } ] }
+    ]
   },
   "provacao": {
     "nome": "O Juramento",

@@ -49,8 +49,13 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
     porTurno — inari/kitsune/boto, futuros) XOR `custoGratis:{slot}` (modificação de custo — cuca: Básico grátis).
     Validador exige EXATAMENTE um payload. `custoGratis` NÃO é `faz:[fx]` (não dispara efeito; lido em `acoesDe`).
     Ver "família a-cada-N" e DECISOES §43.
-  - próximos: `reativa` (hera), os demais sujeitos de `aoCair`, e `heal` como fx de `faz`
-    (destrava as 9 passivas de cura-plana-por-gatilho — Hades/Deméter/Ymir/… — maiores que o próprio bonusCura).
+  - `aoCurar` (sessão 10) — quando um aliado é curado, roda `faz` NO CURADO (Hera: `+10 escudo`). Campo `faz`
+    (obrig). Gêmeo do `aoCair` (evento entrega um sujeito, roda efeito nele), mas o sujeito (o curado) ≠ dono, então
+    `rodarFaz` ganhou `tagKey` (crédito ao dono, efeito no curado). NÃO é bonusCura (aquele MODIFICA a magnitude;
+    este DISPARA efeito depois). "reativa" era balde: 6 ganchos por evento (ver DECISOES §44); só este agora.
+  - próximos (a família `reativa`, um gancho por deus): `aoUsarHabilidade` (bragi), `aoReceberControle` (khonshu),
+    `aoSerAtingido` (boitatá/xangô), `aoAtacar` (cernunnos); os demais sujeitos de `aoCair` (erínias/ymir/nüwa);
+    e `heal`/`apply` como fx de `faz` (destrava as 9 de cura-plana-por-gatilho — Hades/Deméter/Ymir/…).
 
 ## "Imune" na prosa engana: três famílias diferentes, não uma
 
@@ -199,11 +204,18 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **11/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
-  `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo),
-  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self'), **brigid** (sessão 8, `bonusDano` time + `bonusCura`),
-  **cuca** (sessão 9, `imunidade` + `aCadaN` custoGratis).
-- Falta 1: hera → `reativa` [1].
+- **12/12 — F1.2 COMPLETA.** As 12 passivas dos deuses implementados são 100% declarativas, zero `if (u.key===...)`
+  de passiva no motor. **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor**
+  (sessão 3, `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair`
+  quem:inimigo), **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self'), **brigid** (sessão 8, `bonusDano` time
+  + `bonusCura`), **cuca** (sessão 9, `imunidade` + `aCadaN` custoGratis), **hera** (sessão 10, `aoCurar`).
+- **Ganchos abertos para deuses NÃO implementados** (não são hardcode; são frentes de vocabulário): os 5 gatilhos
+  reativos futuros (§44), os sujeitos `aliado`/`self` do `aoCair`, `heal`/`apply` em `faz`, o payload `faz` do
+  `aCadaN`. Cada um entra com o deus que o exigir — nunca à força.
+- **Hera fechada (sessão 10):** `aoCurar` (quando um aliado é curado, `+10 escudo` no curado). Gêmeo do `aoCair`;
+  como o sujeito (curado) ≠ dono, `rodarFaz` ganhou `tagKey` (efeito no curado, crédito à Hera). "reativa" era
+  balde de 6 ganchos por evento — só o da Hera agora (§44). Lote A (curado ganha EXATAMENTE 10; só o curado; nada
+  com Hera morta) + capacidades (escudo nos 3, Ogum zera) verdes SEM alteração.
 - **Cuca fechada (sessão 9):** deus inteiro — imune a Dormir (`imunidade a:['adormecido']`, some o hardcode do
   `aplicar`) + Básico grátis a cada 3 turnos (`aCadaN n:3 custoGratis:{slot:'basico'}`, some o hardcode do
   `acoesDe`). O `custoGratis` NÃO é `faz:[fx]` — é modificação de custo lida em `acoesDe` (§43). Lote B (imune +

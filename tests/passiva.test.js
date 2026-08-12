@@ -418,6 +418,11 @@ err(g => g.passiva.fx.push({ gatilho: 'aCadaN', n: 3, custoGratis: { slot: 'defe
 err(g => g.passiva.fx.push({ gatilho: 'aCadaN', n: 3, custoGratis: { slot: 'basico', v: 2 } }), 'custoGratis só aceita');    // campo extra em custoGratis
 err(g => g.passiva.fx.push({ gatilho: 'aCadaN', n: 3, faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno');         // faz turno-seguro (reusa validarFaz)
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, custoGratis: { slot: 'basico' } }), 'não pertence ao gatilho');     // custoGratis NÃO vai em bonusDano
+// gatilho aoCurar (sessão 10): faz roda NO CURADO; reusa validarFaz (fx turno-seguro, sem alvo escolhido)
+err(g => g.passiva.fx.push({ gatilho: 'aoCurar' }), 'exige o campo "faz"');                                                  // falta faz
+err(g => g.passiva.fx.push({ gatilho: 'aoCurar', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno');              // dmg não é faz-seguro
+err(g => g.passiva.fx.push({ gatilho: 'aoCurar', faz: [{ t: 'shield', v: 10, alvo: 'inimigo' }] }), 'faz não escolhe alvo'); // alvo não pode ser escolhido
+err(g => g.passiva.fx.push({ gatilho: 'aoCurar', v: 5, faz: [{ t: 'shield', v: 10 }] }), 'não pertence ao gatilho');         // v não vai em aoCurar
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

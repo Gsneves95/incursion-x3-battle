@@ -96,6 +96,7 @@ const GATILHOS_PASSIVA = {
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
   bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 8)
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
+  aoCurar:         { campos: ['faz'], obrig: ['faz'] },                        // quando um aliado é CURADO, faz X no curado (sessão 10)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -117,7 +118,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle'];
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno'];   // reviveProximoTurno: só faz sentido em aoCair self (guarda em rodarFaz)
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield'];   // reviveProximoTurno: aoCair self; shield: aoCurar (Hera), no SUJEITO do evento
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -676,9 +677,14 @@ function curar(st, u, v) {
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
   if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });
-  // passiva Hera — Rainha Ciumenta
-  if (st.lados[u.lado].units.some(x => x.vivo && x.key === 'hera')) {
-    u.shield += 10; log(st, { tipo: 'escudo', alvo: u.key, valor: 10, passiva: 'hera' });
+  // gatilho aoCurar (F1.2 sessão 10) — quando um aliado é curado, o DONO reage com um faz NO CURADO (Hera:
+  // +10 escudo). Difere do aoCair: o SUJEITO do evento (o curado `u`) NÃO é o dono; o efeito vai nele, o
+  // crédito (passiva) vai no dono. Difere do bonusCura: dispara efeito DEPOIS, não modifica a magnitude.
+  for (const dono of st.lados[u.lado].units) {
+    if (!dono.vivo) continue;
+    const g = kitDe(st, dono); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) if (f.gatilho === 'aoCurar') rodarFaz(st, u, f.faz, dono.key);
   }
 }
 
@@ -789,7 +795,10 @@ function sortearElemento(st, tiposTime) {
 // sem escolha nem seletor. Atribui os eventos gerados ao dono (passiva:u.key) para o narrador saber a origem.
 // Executor MÍNIMO (não o aplicarFx completo): gatilho de turno não tem ability nem alvo escolhido. Reproduz
 // exatamente os hardcodes antigos de ra (addContador) e ganesha (orbGain via sortearElemento — mesmo rng).
-function rodarFaz(st, u, faz) {
+// rodarFaz executa um `faz` na unidade `u` (o SUJEITO: o dono no porTurno, o reator no aoCair, o curado no
+// aoCurar). `tagKey` = de quem é a passiva no evento (default = u; no aoCurar difere: efeito no curado, crédito
+// à Hera). Executor FECHADO aos fx turno-seguros (V.fxTurno) — não é o aplicarFx geral.
+function rodarFaz(st, u, faz, tagKey) {
   const antes = st.log.length;
   const l = st.lados[u.lado];
   for (const f of faz) {
@@ -802,8 +811,10 @@ function rodarFaz(st, u, faz) {
     else if (f.t === 'reviveProximoTurno') {   // Nezha: retorna no turno seguinte, 1× por partida. Só p/ quem caiu.
       if (!u.vivo && !u.renasceu) { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
     }
+    else if (f.t === 'shield') { u.shield += f.v; log(st, { tipo: 'escudo', alvo: u.key, valor: f.v }); }   // Hera (aoCurar): escudo no curado
   }
-  for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = u.key;
+  const tag = tagKey || u.key;
+  for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;
 }
 
 function iniciarTurno(st) {

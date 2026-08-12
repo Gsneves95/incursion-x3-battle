@@ -4,6 +4,26 @@
 
 ## Última sessão
 **Data:** 2026-08-12
+**Tarefa:** F1.2 sessão 10 — gatilho `aoCurar`; migração de **hera**. **FECHA A F1.2 (12/12).**
+**Resultado:** varredura das "reativas" (o dono suspeitava balde, por ser NOME DE CATEGORIA). Confirmado: as 10
+classificadas por GATILHO REAL (reage a quê, onde no motor) dão **6 ganchos distintos** — `aoCair` (morte: zeus
+feito, erínias/ymir/nüwa futuros), `aoCurar` (cura: HERA), `aoUsarHabilidade` (bragi), `aoReceberControle`
+(khonshu), `aoSerAtingido` (boitatá/xangô), `aoAtacar` (cernunnos). "reativa" NÃO é gatilho, é FAMÍLIA; **4 das 10
+nem são novas** (são aoCair, faltam sujeitos). Abri só o da Hera, como fiz com os sujeitos do aoCair. **bonusCura
+≠ aoCurar** (um MODIFICA a magnitude; o outro DISPARA efeito depois — confirmado dois mecanismos). **A Hera CABE
+como `faz` de aoCurar** (gêmeo do aoCair), com UMA generalização: o sujeito do evento (o curado) ≠ dono, então (1)
+o `faz` roda no curado, (2) o crédito vai no dono — `rodarFaz` ganhou `tagKey` opcional. Hera =
+`{aoCurar, faz:[{t:'shield', v:10}]}`; `shield` entrou em `V.fxTurno` (turno-seguro, alvo = sujeito do evento).
+Hardcode saiu do `curar`; Lote A (curado ganha EXATAMENTE 10, só o curado, nada com Hera morta) + capacidades
+(escudo nos 3, Ogum zera) verdes SEM alteração; `grep key==='hera'` vazio; suíte inteira verde. Registrei §44
+(reativa=balde), a prova ESTRUTURAL do absoluto em §43 (num 3v3 entrada≡absoluto por construção — vale p/ qualquer
+cadência futura), e o item de sanidade de ambiente no checklist do §38 (código contradiz ESTADO.md → conferir HEAD
+vs origin ANTES de tocar; o container reprovisionou 2× num commit velho). **Placar 11→12/12. F1.2 COMPLETA:** zero
+hardcode de passiva nos 12 implementados. **PRÓXIMO (dono):** a F1.2 acabou; próxima fase (F1.3 execução/morte, ou
+o que o dono priorizar). Ganchos abertos ficam para os deuses que os exigirem.
+
+## Sessão — F1.2 sessão 9 (anterior)
+**Data:** 2026-08-12
 **Tarefa:** F1.2 sessão 9 — gatilho `aCadaN`; migração de **cuca** (deus inteiro: imunidade + aCadaN).
 **Resultado:** varredura dos quatro da família (inari/kitsune/cuca/boto) nos DOIS eixos. **Eixo A (absoluto vs
 relativo): TODOS ABSOLUTOS** — nenhum tem linguagem relativa ("desde a entrada"/"após o último uso"); a Cuca é
