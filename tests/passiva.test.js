@@ -216,6 +216,33 @@ console.log('== caracterização LOTE A: magnitude E escopo exatos (contra o har
   ok(E.getContador(ra, 'discoSolar') === 2, `ESCOPO: no turno do inimigo o Rá NÃO ganha Disco (deu ${E.getContador(ra, 'discoSolar')})`);
 }
 
+console.log('== F1.2.5: faz-heal e faz-apply (self|time), alvo FIXO, apply só BUFF (sintético, migra 0 real) ==');
+{ // faz-heal self: cura só o dono
+  E.GODS.tfh = { nome: 'TFH', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10 }] }] } };
+  const st = E.novoEstado(['tfh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 900);
+  const d = st.lados[0].units; d[0].hp = 50; d[1].hp = 50;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(d[0].hp === 60 && d[1].hp === 50, `faz-heal self: só o dono cura 10 (dono ${d[0].hp}, aliado ${d[1].hp})`);
+  delete E.GODS.tfh;
+}
+{ // faz-heal time: cura o lado todo vivo
+  E.GODS.tft = { nome: 'TFT', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'porTurno', faz: [{ t: 'heal', v: 8, escopo: 'time' }] }] } };
+  const st = E.novoEstado(['tft', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 901);
+  const d = st.lados[0].units; d[0].hp = 50; d[1].hp = 50; d[2].hp = 50; d[2].vivo = false;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(d[0].hp === 58 && d[1].hp === 58, `faz-heal time: vivos curam 8 (${d[0].hp}/${d[1].hp})`);
+  ok(d[2].hp === 50, `faz-heal time: morto NÃO cura (${d[2].hp})`);
+  delete E.GODS.tft;
+}
+{ // faz-apply buff self: aplica dmgReduction no dono (BUFF, alvo fixo)
+  E.GODS.tfa = { nome: 'TFA', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { type: 'dmgReduction', v: 5, dur: 1 } }] }] } };
+  const st = E.novoEstado(['tfa', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 902);
+  const d = st.lados[0].units;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(!!E.ef(d[0], 'dmgReduction') && !E.ef(d[1], 'dmgReduction'), `faz-apply buff: só o dono ganha dmgReduction`);
+  delete E.GODS.tfa;
+}
+
 console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correção §39 da Nezha) ==');
 { // BRIGID — +5 de dano ao TIME (plano, qualquer elemento, sempre); some com Brigid morta
   const st = E.novoEstado(['brigid', 'zeus', 'cuca'], ['zeus', 'zeus', 'zeus'], 407);
@@ -423,6 +450,12 @@ err(g => g.passiva.fx.push({ gatilho: 'aoCurar' }), 'exige o campo "faz"');     
 err(g => g.passiva.fx.push({ gatilho: 'aoCurar', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno');              // dmg não é faz-seguro
 err(g => g.passiva.fx.push({ gatilho: 'aoCurar', faz: [{ t: 'shield', v: 10, alvo: 'inimigo' }] }), 'faz não escolhe alvo'); // alvo não pode ser escolhido
 err(g => g.passiva.fx.push({ gatilho: 'aoCurar', v: 5, faz: [{ t: 'shield', v: 10 }] }), 'não pertence ao gatilho');         // v não vai em aoCurar
+// F1.2.5: heal/apply entram no faz — mas apply é FECHADO a BUFF, e o alvo de heal/apply é self|time (nunca inimigo)
+err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { type: 'atordoado', dur: 1 } }] }), 'só aplica BUFF'); // controle exigiria alvo inimigo
+err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { type: 'dmgDown', v: 5, dur: 2 } }] }), 'só aplica BUFF'); // debuff idem
+err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10, escopo: 'inimigo' }] }), 'escopo de faz inválido'); // escopo inimigo proibido
+{ const g = base(); g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10, escopo: 'time' }] }); ok(validarDeus(g).length === 0, 'faz-heal escopo time é VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { type: 'dmgReduction', v: 5, dur: 2 } }] }); ok(validarDeus(g).length === 0, 'faz-apply BUFF é VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

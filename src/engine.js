@@ -118,7 +118,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle'];
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield'];   // reviveProximoTurno: aoCair self; shield: aoCurar (Hera), no SUJEITO do evento
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo)
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -168,6 +168,7 @@ const VOCAB = {
   contra: Object.keys(CONTRA),                     // chaves válidas em reducao.contra (eixo DEFENSIVO)
   contraDef: CONTRA,                               // como validar cada chave de contra
   fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
+  buffs: BUFFS,                                    // efeitos BENÉFICOS — o único conjunto que `apply` pode aplicar dentro de um faz (F1.2.5)
   imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
   aoCairQuem: AOCAIR_QUEM,                          // valores válidos em aoCair.quem (sujeito da morte)
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
@@ -812,6 +813,14 @@ function rodarFaz(st, u, faz, tagKey) {
       if (!u.vivo && !u.renasceu) { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
     }
     else if (f.t === 'shield') { u.shield += f.v; log(st, { tipo: 'escudo', alvo: u.key, valor: f.v }); }   // Hera (aoCurar): escudo no curado
+    else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
+      const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
+      for (const t of alvos) curar(st, t, f.v);
+    }
+    else if (f.t === 'apply') {   // F1.2.5: aplica um BUFF (⊆ V.buffs) em self OU own-lado. Nunca controle/debuff (exigiria alvo inimigo).
+      const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
+      for (const t of alvos) aplicar(st, t, { ...f.eff });
+    }
   }
   const tag = tagKey || u.key;
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;

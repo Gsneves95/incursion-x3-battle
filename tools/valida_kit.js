@@ -105,6 +105,10 @@ function validarFaz(faz, ctx, errs) {
     validarFx(fx, cc, errs);
     if (fx && typeof fx === 'object' && !V.fxTurno.includes(fx.t)) errs.push(`${cc}: fx "${fx.t}" não pode disparar por turno (válidos: ${V.fxTurno.join(', ')}) — exigiria alvo escolhido ou seletor`);
     if (fx && typeof fx === 'object' && 'alvo' in fx && fx.alvo !== 'self') errs.push(`${cc}: faz não escolhe alvo — alvo deve ser 'self' (o dono) ou ausente (o lado)`);
+    // F1.2.5: alvo de heal/apply num faz é FIXO — escopo self|time (self ou own-lado), nunca escolhido/inimigo.
+    if (fx && typeof fx === 'object' && 'escopo' in fx && !['self', 'time'].includes(fx.escopo)) errs.push(`${cc}: escopo de faz inválido "${fx.escopo}" (só self|time — o lado do sujeito, nunca inimigo)`);
+    // apply dentro de um faz só aplica BUFF — um controle/debuff exigiria um alvo inimigo ESCOLHIDO, que o faz proíbe.
+    if (fx && typeof fx === 'object' && fx.t === 'apply' && fx.eff && !V.buffs.includes(fx.eff.type)) errs.push(`${cc}: apply dentro de faz só aplica BUFF (${V.buffs.join('|')}); "${fx.eff.type}" é controle/debuff e exigiria alvo inimigo escolhido`);
   });
 }
 

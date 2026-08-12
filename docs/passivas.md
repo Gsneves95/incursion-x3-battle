@@ -79,11 +79,19 @@ então são **3 gatilhos nomeados**, não um eixo temporal `quando:{turno:{op}}`
 - `aCadaN` (sessão 9) — periódico, campo `n` ABSOLUTO (`turno % n`); payload polimórfico (`faz` XOR `custoGratis`).
 
 **`faz` é uma lista de fx, mas fechada aos que NÃO exigem alvo escolhido nem seletor.** O alvo de um `faz` é
-FIXO: `self` (o dono) ou o lado; um gatilho de turno não tem jogador escolhendo. `V.fxTurno` abre só
-`contador` (ra) e `orbGain` (ganesha); `valida_kit` recusa fx fora disso (`{t:'dmg'}` não dispara por turno)
-e recusa `alvo` que não seja `self`. `heal`/`cdShift`/`apply` entram por deus; os SELETORES ("aliado mais
-ferido" da Deméter, "inimigo de maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando
-esses deuses migrarem. Os eventos gerados por um `faz` recebem `passiva: <key do dono>` (o narrador sabe a origem).
+FIXO: `self` (o dono/reator/sujeito do evento) ou `time` (o lado do sujeito); um gatilho de turno não tem
+jogador escolhendo. `V.fxTurno` abre: `contador` (ra), `orbGain` (ganesha), `reviveProximoTurno` (nezha),
+`shield` (hera), e **`heal`/`apply` (F1.2.5)**. `valida_kit` recusa fx fora disso (`{t:'dmg'}` não dispara por
+turno), recusa `alvo` que não seja `self`, e recusa `escopo` que não seja `self|time`.
+- **`heal`** — cura `v` em `self` ou no `time` (own-lado vivo). Passa por `curar` (respeita noHeal, dispara
+  bonusCura/aoCurar). Para Hades/Ymir/Khnum/Shuten/Boitatá/Morrigan/AhPuch (cura-plana-por-gatilho).
+- **`apply`** — aplica um efeito em `self`/`time`, **FECHADO a BUFF** (`eff.type ∈ V.buffs`). Um controle/debuff
+  em `faz` exigiria um alvo INIMIGO escolhido, o que o faz proíbe — então `apply` de controle é recusado em voz
+  alta. Preserva a garantia "faz tem alvo fixo" (a razão de ser da família, sessão 4). Para Hel (dmgReduction),
+  Boto (invulnerável).
+Os SELETORES ("aliado mais ferido" da Deméter, "recarga mais longa" do Huang Di) e o `cdShift` em faz NÃO
+existem — a Deméter/Huang Di ficam com o gancho `seletor`/`faz-cdShift` até o deus deles. Os eventos gerados por
+um `faz` recebem `passiva: <tagKey>` (o dono; no aoCurar difere do sujeito — ver §44).
 
 **`aCadaN` (sessão 9) — RESOLVIDO ABSOLUTO.** A varredura dos quatro (inari/kitsune/cuca/boto) não achou NENHUMA
 linguagem relativa: todos dizem "a cada N turnos" chapado. Como num 3v3 todos entram no turno 1, "desde a

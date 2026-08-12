@@ -71,3 +71,27 @@ sentidos** — a verificação pontual achou erros dos dois lados: um leitor mar
 ganchos → AMARELO). Corrigidos os que a amostragem pegou. O VERDE exato pode oscilar 4–7 num audit deus-a-deus,
 mas a DECISÃO (≈5, não 30) e o RANKING de ganchos (os clusters) são robustos ao ruído. Fonte por deus em
 `scratch`/`final.json` da sessão; re-audit deus-a-deus disponível se a fronteira exata amarelo/verde importar.
+
+## Curva do VERDE — F1.2.5 sessão 1 (`faz-vocab`)
+
+| marco | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| triagem inicial | 4 | 36 | 48 |
+| após `faz-heal`/`faz-apply` | **5** | 39 | 44 |
+
+**Subiu MENOS que o projetado (4→5, não 4→7) — e isso é o diagnóstico que o dono pediu.** O ranking projetava
+`faz-vocab` flipando 3 sozinho (freyja, ymir, oxum). A varredura da família mostrou o porquê:
+- **`faz-vocab` era BALDE** (alerta #3): 11 na contagem = heal (7) + apply (2) + cdShift (1, adiado) — e **freyja/oxum
+  estavam MAL-CLASSIFICADOS**: "aliado curado causa +5 no turno seguinte" é `bonusDano` com `quando:alvoCuradoAntes`
+  (reservado), NÃO `faz-apply`. Então `faz-heal/apply` flipou **só ymir**.
+- **Mas fez trabalho de INFRA:** 4 deuses foram VERMELHO→AMARELO (ahpuch→antirevive, khnum→aoCair-aliado,
+  shutendoji→torpor, demeter→seletor) — montados para flipar quando o 2º gancho vier. A extensão HABILITA verde
+  mais do que FLIPA verde agora, como previsto.
+- **Alerta #2 (`apply`) tratado:** `apply` em faz fechado a BUFF (`V.buffs`) + alvo self|time; controle/debuff
+  recusado em voz alta. A garantia "faz tem alvo fixo" (sessão 4) preservada.
+- **cdShift adiado:** 1 deus (Huang Di) e ainda precisa de seletor — baixo ROI, entra com o seletor.
+
+**Lição para as próximas duas extensões:** a projeção "flip sozinho" da triagem é otimista quando o gancho é
+balde — vale re-varrer a família antes e re-triar depois, exatamente como o dono pediu. `reducao-cond` (próxima,
+projeta 5 flips) merece a mesma desconfiança: se as 9 redução-condicionais pedirem eixos diferentes (classe vs
+elemento vs contagem), o flip real é menor.
