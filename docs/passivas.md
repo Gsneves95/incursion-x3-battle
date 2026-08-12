@@ -40,12 +40,16 @@ na build; `src/engine.js` executa. Cresce **um gatilho por sessão**.
     `'self'` (o dono morre — nezha). Cresce por deus: `'aliado'` (khnum), `'qualquerInimigo'` (hades). `faz` reusa
     `V.fxTurno` (+ `orbGain.para` = elemento fixo). **AMBIGUIDADE aberta (DECISOES):** "quando um inimigo é
     derrotado, [eu] X" não diz se é matador-bound ou qualquer-morte — decisão do dono ao migrar morrigan/iansa/ahpuch.
-  - `bonusCura` (sessão 7) — soma `v` à MAGNITUDE das curas no lado do dono (Brigid: +5). Campos: `v` (obrig),
+  - `bonusCura` (sessão 8) — soma `v` à MAGNITUDE das curas no lado do dono (Brigid: +5). Campos: `v` (obrig),
     `quandoCura`. Gatilho PRÓPRIO, não campo do `bonusDano`: caminho de valor diferente (soma em `curar`, não em
     `bonusDano`), evento diferente (`cura`, não `dano`), e condição de eixo diferente (`quandoCura`, abaixo). A
     varredura achou **7** membros "curas curam +N" (não os 20 que MENCIONAM cura — o resto é cura-plana-por-gatilho
     ou bônus-de-dano-por-ter-sido-curado; ver DECISOES §41).
-  - próximos: `reativa` (hera), `aCadaN` (cuca), os demais sujeitos de `aoCair`, e `heal` como fx de `faz`
+  - `aCadaN` (sessão 9) — cadência ABSOLUTA (`turno % n`, `n` obrig ≥ 2). Payload POLIMÓRFICO: `faz` (efeito, como
+    porTurno — inari/kitsune/boto, futuros) XOR `custoGratis:{slot}` (modificação de custo — cuca: Básico grátis).
+    Validador exige EXATAMENTE um payload. `custoGratis` NÃO é `faz:[fx]` (não dispara efeito; lido em `acoesDe`).
+    Ver "família a-cada-N" e DECISOES §43.
+  - próximos: `reativa` (hera), os demais sujeitos de `aoCair`, e `heal` como fx de `faz`
     (destrava as 9 passivas de cura-plana-por-gatilho — Hades/Deméter/Ymir/… — maiores que o próprio bonusCura).
 
 ## "Imune" na prosa engana: três famílias diferentes, não uma
@@ -67,7 +71,7 @@ um gatilho de turno dispara um EFEITO — "no gatilho, FAÇA X". A varredura ach
 então são **3 gatilhos nomeados**, não um eixo temporal `quando:{turno:{op}}`:
 - `porTurno` — `faz` roda a cada início de turno do dono (ra: +1 Disco).
 - `abertura` — `faz` roda UMA vez, no 1º turno do lado (ganesha: +2 orbes).
-- `aCadaN` (ainda NÃO existe) — periódico, com campo `n` (cuca, kitsune, boto).
+- `aCadaN` (sessão 9) — periódico, campo `n` ABSOLUTO (`turno % n`); payload polimórfico (`faz` XOR `custoGratis`).
 
 **`faz` é uma lista de fx, mas fechada aos que NÃO exigem alvo escolhido nem seletor.** O alvo de um `faz` é
 FIXO: `self` (o dono) ou o lado; um gatilho de turno não tem jogador escolhendo. `V.fxTurno` abre só
@@ -76,15 +80,18 @@ e recusa `alvo` que não seja `self`. `heal`/`cdShift`/`apply` entram por deus; 
 ferido" da Deméter, "inimigo de maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando
 esses deuses migrarem. Os eventos gerados por um `faz` recebem `passiva: <key do dono>` (o narrador sabe a origem).
 
-**Nota para quando o `aCadaN` chegar (NÃO resolver agora):** o `n` é contado desde quando? A Cuca é `turno % 3`
-(ABSOLUTO, da partida). Kitsune ("a cada 2 turnos") e Boto ("a cada 3 turnos") podem ser RELATIVOS (desde o
-último disparo). Se forem, são dois comportamentos e o `aCadaN` precisa dizer qual — decidir na sessão dele.
+**`aCadaN` (sessão 9) — RESOLVIDO ABSOLUTO.** A varredura dos quatro (inari/kitsune/cuca/boto) não achou NENHUMA
+linguagem relativa: todos dizem "a cada N turnos" chapado. Como num 3v3 todos entram no turno 1, "desde a
+entrada" ≡ absoluto por construção; e a Cuca é `turno % 3` no motor. Fechado `turno % n`, `n` ≥ 2 (n=1 é o
+porTurno). O EIXO B (o que cada um faz) é que dividiu: 3 são `faz:[fx]` (inari orbGain, kitsune contador, boto
+apply-self), a **Cuca é a exceção** — "Básico grátis" é modificação de CUSTO, não efeito disparado. Daí o payload
+polimórfico `faz` XOR `custoGratis`. Ver DECISOES §43.
 
 ## TRÊS vocabulários que NUNCA se misturam: ofensivo (`quando`) × defensivo (`contra`) × de-cura (`quandoCura`)
 
 `quando` (gatilho bonusDano) lê o lado **OFENSIVO** de um ataque do dono: quem ataca (`atacanteElem`), quem é
 atacado (`alvoDebuff`/`alvoBuff`/`alvoElem`/`alvoHp`/`alvoDefesa`/`alvoMarca`), e o estado do campo (`fase`).
-`contra` (gatilho reducao) lê o **GOLPE QUE CHEGA** ao dono. `quandoCura` (gatilho bonusCura, sessão 7) lê o
+`contra` (gatilho reducao) lê o **GOLPE QUE CHEGA** ao dono. `quandoCura` (gatilho bonusCura, sessão 8) lê o
 **CONTEXTO DE UMA CURA** — que não tem ataque nenhum: não há `atk` nem `alvo`-de-golpe, então nenhuma chave de
 `quando` serve. São TRÊS eixos SEPARADOS — um bônus de dano nunca condiciona pelo golpe recebido, uma redução
 nunca condiciona por quem o dono ataca, e um bônus de cura nunca lê participantes de um ataque que não houve.
@@ -93,7 +100,7 @@ e o significado de cada chave viraria ambíguo (foi o que o `de:'basico'` sobrec
 `contra:{slot}`); reusar `quando` na cura repetiria o mesmo erro (a condição da Brigid é "existe INIMIGO com
 Queimadura" — estado de lado, não `alvoDebuff` do alvo de um golpe).
 
-**`quandoCura` — condição da cura (fechada; abre só `inimigoTem` na sessão 7):**
+**`quandoCura` — condição da cura (fechada; abre só `inimigoTem` na sessão 8):**
 
 | chave | valor | lê |
 |---|---|---|
@@ -192,10 +199,15 @@ a suíte cobre, e um `grep 'key===<deus>'` prova que não sobrou `if`. Decomposi
 A métrica a acompanhar (não "quantos gatilhos existem"). Um deus é TERMINADO quando `grep "key === '<deus>'"`
 no motor não retorna nada e a suíte que o cobre passa contra o dado.
 
-- **10/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
+- **11/12** — **fujin** (inerte), **ogum**/**tyr** (sessão 2, `danoIrredutivel`), **sobek**/**thor** (sessão 3,
   `reducao`), **ra**/**ganesha** (sessão 4, `porTurno`/`abertura`), **zeus** (sessão 6, `aoCair` quem:inimigo),
-  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self'), **brigid** (sessão 8, `bonusDano` time + `bonusCura`).
-- Faltam 2: hera → `reativa` [1] · cuca → `imunidade`(feito)+`aCadaN` [1].
+  **nezha** (sessão 7, `imunidade` + `aoCair` quem:'self'), **brigid** (sessão 8, `bonusDano` time + `bonusCura`),
+  **cuca** (sessão 9, `imunidade` + `aCadaN` custoGratis).
+- Falta 1: hera → `reativa` [1].
+- **Cuca fechada (sessão 9):** deus inteiro — imune a Dormir (`imunidade a:['adormecido']`, some o hardcode do
+  `aplicar`) + Básico grátis a cada 3 turnos (`aCadaN n:3 custoGratis:{slot:'basico'}`, some o hardcode do
+  `acoesDe`). O `custoGratis` NÃO é `faz:[fx]` — é modificação de custo lida em `acoesDe` (§43). Lote B (imune +
+  grátis no turno 3, custa no 4, só o Básico, só a Cuca) verde SEM alteração.
 - **Brigid fechada (sessão 8):** duas cláusulas migradas juntas (deus inteiro, §37): +5 de dano ao time =
   `{bonusDano, v:5, escopo:'time'}` (some com Brigid morta — comportamento atual preservado); cura +5 se inimigo
   com Queimadura = `{bonusCura, v:5, quandoCura:{inimigoTem:'queimadura'}}`. A caracterização Lote B (ambas as

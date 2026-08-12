@@ -8,7 +8,11 @@
   "inicial": true,
   "passiva": {
     "nome": "Só Dorme de Sete em Sete Anos",
-    "desc": "Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe."
+    "desc": "Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "adormecido" ] },
+      { "gatilho": "aCadaN", "n": 3, "custoGratis": { "slot": "basico" } }
+    ]
   },
   "ab": [
     {

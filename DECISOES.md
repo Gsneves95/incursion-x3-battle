@@ -1206,6 +1206,58 @@ mudança de comportamento (§39, prosa vence) — mas aí me avise, porque hoje 
 
 ---
 
+## 42. Propriedade TRANSVERSAL: um conceito que aparece mais como EFEITO de gatilho que como gatilho próprio tem família menor que o balde (F1.2)
+
+Generalização do achado da sessão 8 (cura: balde 20, família 7, porque 9 eram cura-EMBRULHADA em outro gatilho).
+Não é sobre cura — é sobre como contar famílias. **Quando um conceito aparece no texto dos kits mais como
+PAYLOAD de um gatilho do que como o gatilho em si, a família própria dele é menor do que a varredura ingênua
+sugere, e o resto pertence a `faz` (ou ao payload de outro gatilho).** Já aconteceu três vezes:
+- **Cura:** 20 mencionam, 7 são `bonusCura`; 9 são `faz` heal (aoCair/porTurno/onHit). §41.
+- **Contador (Cauda, Disco, Podridão…):** poucos são "o contador É a passiva"; a maioria é `faz:[{contador}]`
+  disparado por turno/cadência (ra, kitsune). O contador é primitiva de payload, não gatilho.
+- **Orbe:** ninguém tem "gatilho orbe"; orbe é sempre `faz:[{orbGain}]` de porTurno/abertura/aoCair (ganesha,
+  zeus, inari).
+
+**Consequência para a varredura:** ao fechar um eixo, separar SEMPRE "quantos têm isto como o gatilho" de
+"quantos têm isto como efeito embrulhado". O segundo grupo não dimensiona o gatilho — dimensiona o vocabulário
+de `faz`. Contar os dois juntos infla o gatilho e esconde que o trabalho real está no wrapper. É por que a
+sessão 4 registrou "o gatilho de turno EMBRULHA um efeito": o wrapper é onde mora a alavanca, não o escalar.
+
+---
+
+## 43. `aCadaN` — cadência ABSOLUTA com payload POLIMÓRFICO (faz OU custoGratis); a Cuca não é `faz:[fx]` (F1.2, sessão 9)
+
+Migração da Cuca (deus inteiro: imunidade + aCadaN). Varredura dos quatro da família (inari, kitsune, cuca,
+boto), nos DOIS eixos que o dono pediu.
+
+**Eixo A — n ABSOLUTO ou RELATIVO? Todos ABSOLUTOS. Fechado absoluto.** Os quatro dizem "a cada N turnos" sem
+NENHUMA linguagem relativa ("desde que entrou", "após o último uso"). Três provas convergentes: (1) a Cuca é
+`st.turno % 3` no motor (confirmado); (2) a prosa é uniforme, sem cláusula relativa; (3) num 3v3 todos entram no
+turno 1 (não há entrada em campo no meio — invocações são unidades `__inv` à parte), então "desde a entrada" ≡
+absoluto por construção. A dúvida que o docs tinha anotado (kitsune/boto poderiam ser relativos) NÃO se
+materializa no texto. `turno % n === 0`, `n` absoluto sobre o contador global de rodadas (`st.turno`).
+
+**Eixo B — o que cada um FAZ? 3 são `faz:[fx]`, a Cuca é a EXCEÇÃO.** Inari (orbGain), Kitsune (contador Cauda),
+Boto (apply Inalvejável self) são efeitos disparados — `faz`, o mesmo molde do porTurno. **A Cuca não:** "Básico
+de graça" é MODIFICAÇÃO DE CUSTO que vale no turno, lida em `acoesDe` no momento da ação — não é um efeito que
+dispara e altera estado. É exatamente o que o dono previu no ponto 3: forçar a Cuca no molde `faz:[fx]` seria
+inventar um "fx que não faz nada mas muda custo". Não forcei.
+
+**Forma: `aCadaN` é UM gatilho (cadência `n` absoluta) com payload POLIMÓRFICO** — `faz` (efeito, para os 3
+futuros) XOR `custoGratis` (modificação de custo, para a Cuca). A cadência é genuinamente compartilhada pelos
+quatro; só o payload varia. Um gatilho separado só para a Cuca DUPLICARIA a lógica de cadência. O validador
+exige EXATAMENTE um payload (nunca os dois, nunca nenhum). `custoGratis: { slot }` zera o custo daquele slot; a
+Cuca é `{ n:3, custoGratis:{ slot:'basico' } }`. Esta sessão implementa `n` + `custoGratis` (o que a Cuca usa);
+o payload `faz` de aCadaN entra quando inari/kitsune/boto migrarem (reusa `rodarFaz` sob a guarda de cadência).
+Nota: `aCadaN` com n=1 seria o porTurno; o validador recusa n<2 para não haver duas formas do mesmo gatilho.
+
+**Migração inteira:** imunidade (`a:['adormecido']`, some o hardcode do `aplicar`) + aCadaN (some o hardcode do
+`acoesDe`). Caracterização Lote B (imune a Dormir só a Cuca; Básico grátis no turno 3, custa no turno 4, só o
+Básico, só a Cuca) verde SEM alteração; `grep key==='cuca'` vazio; suíte inteira verde. RNG: nenhuma sorteia
+(§38). **Placar 10→11/12.** Falta 1: hera (`reativa`).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

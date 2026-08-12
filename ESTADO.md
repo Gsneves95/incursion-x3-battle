@@ -3,6 +3,24 @@
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
 ## Última sessão
+**Data:** 2026-08-12
+**Tarefa:** F1.2 sessão 9 — gatilho `aCadaN`; migração de **cuca** (deus inteiro: imunidade + aCadaN).
+**Resultado:** varredura dos quatro da família (inari/kitsune/cuca/boto) nos DOIS eixos. **Eixo A (absoluto vs
+relativo): TODOS ABSOLUTOS** — nenhum tem linguagem relativa ("desde a entrada"/"após o último uso"); a Cuca é
+`st.turno % 3` no motor; e num 3v3 todos entram no turno 1, então entrada-relativa ≡ absoluta por construção. A
+dúvida que o docs anotara (kitsune/boto relativos) NÃO se materializou. Fechado absoluto (`turno % n`, n≥2; n=1 é
+porTurno). **Eixo B (o que faz): 3 são `faz:[fx]`** (inari orbGain, kitsune contador, boto apply-self) **e a Cuca
+é a EXCEÇÃO** — "Básico grátis" é modificação de CUSTO lida em `acoesDe`, não efeito disparado (o dono previu no
+ponto 3; não forcei no molde faz). **Forma: `aCadaN` = cadência `n` + payload POLIMÓRFICO** `faz` XOR
+`custoGratis:{slot}` (validador exige exatamente um). Cuca = `{n:3, custoGratis:{slot:'basico'}}`. Implementei
+`n`+`custoGratis` (o que a Cuca usa); payload `faz` entra com inari/kitsune/boto. Migração inteira: imunidade
+`a:['adormecido']` (some hardcode do `aplicar`) + aCadaN (some hardcode do `acoesDe`). Lote B (imune só a Cuca;
+Básico grátis turno 3, custa turno 4, só o Básico, só a Cuca) verde SEM alteração; `grep key==='cuca'` vazio;
+suíte inteira verde. Registrei §42 (LIÇÃO TRANSVERSAL, pedida pelo dono: conceito que aparece mais como EFEITO de
+gatilho que como gatilho próprio → família menor que o balde; cura/contador/orbe) e §43 (aCadaN). **Placar
+10→11/12.** **PRÓXIMO (dono):** falta 1 — `reativa`→hera (gatilho novo, família ainda não varrida).
+
+## Sessão — F1.2 sessão 8 (anterior)
 **Data:** 2026-08-11
 **Tarefa:** F1.2 sessão 8 — gatilho `bonusCura`; migração de **brigid** (deus inteiro, 2 cláusulas).
 **Resultado:** varredura da família de cura ANTES da forma (3 perguntas do dono). **Q3:** dos 100, **20 MENCIONAM

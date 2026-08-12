@@ -94,7 +94,8 @@ const GATILHOS_PASSIVA = {
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
-  bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 7)
+  bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 8)
+  aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -173,6 +174,7 @@ const VOCAB = {
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
   condicoesCura: Object.keys(CONDICOES_CURA),    // chaves válidas em bonusCura.quandoCura (eixo da CURA, 3º eixo)
   condicoesCuraDef: CONDICOES_CURA,               // como validar cada chave de quandoCura (valida_kit lê)
+  slotsAtaque: SLOTS_ATAQUE,                       // slots que atacam (basico/habilidade/milagre) — usado em aCadaN.custoGratis.slot
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
@@ -303,10 +305,7 @@ function aplicar(st, u, eff) {
   if (CONTROLES.includes(e.type) && ef(u, 'controlImmune')) {
     log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'controle_imune', efeito: e.type }); return;
   }
-  if (e.type === 'adormecido' && u.key === 'cuca') {   // hardcode Cuca (fica até a Cuca migrar inteira: imunidade+aCadaN)
-    log(st, { tipo: 'imune', alvo: u.key, efeito: 'adormecido' }); return;
-  }
-  if (CONTROLES.includes(e.type) && imuneA(st, u, e.type)) {   // imunidade declarativa (controle)
+  if (CONTROLES.includes(e.type) && imuneA(st, u, e.type)) {   // imunidade declarativa (controle) — Cuca: adormecido
     log(st, { tipo: 'imune', alvo: u.key, efeito: e.type }); return;
   }
   const ja = ef(u, e.type);
@@ -471,7 +470,7 @@ function bonusDanoDeclarativo(st, atk, alvo) {
   return b;
 }
 
-// bonusCura (F1.2 sessão 7) — avalia a condição `quandoCura` (eixo próprio da cura). Lê o contexto da cura,
+// bonusCura (F1.2 sessão 8) — avalia a condição `quandoCura` (eixo próprio da cura). Lê o contexto da cura,
 // NÃO um ataque: `u` é a unidade CURADA; a condição olha o campo/lado. Conjunto FECHADO (CONDICOES_CURA).
 function condCuraOK(q, u, st) {
   if (!q) return true;
@@ -912,13 +911,25 @@ function checarFim(st) {
   }
 }
 
+// aCadaN quem zera custo (F1.2 sessão 9) — payload `custoGratis` do gatilho aCadaN. NÃO é `faz` (não dispara
+// efeito): é modificação de CUSTO na cadência ABSOLUTA `turno % n`. O dono é o próprio `u` (passiva do agente).
+// Cuca: a cada 3 turnos o Básico não custa orbe.
+function custoGratisDe(st, u, slot) {
+  const g = kitDe(st, u); const p = g && g.passiva;
+  if (!p || !Array.isArray(p.fx)) return false;
+  for (const f of p.fx) {
+    if (f.gatilho === 'aCadaN' && f.custoGratis && f.custoGratis.slot === slot && st.turno % f.n === 0) return true;
+  }
+  return false;
+}
+
 // ------------------------------------------------------ DISPONIBILIDADE
 function acoesDe(st, u) {
   const l = st.lados[u.lado];
   const lista = [...kitDe(st, u).ab, DEFESA];   // ab vem do catálogo da partida (st.catId); DEFESA é regra universal, não deus
   return lista.map(a => {
     let cost = a.cost;
-    if (u.key === 'cuca' && a.slot === 'basico' && st.turno % 3 === 0) cost = {};   // passiva Cuca
+    if (a.slot !== 'defesa' && custoGratisDe(st, u, a.slot)) cost = {};   // passiva Cuca (aCadaN custoGratis)
     let motivo = null;
     if (u.cd[a.slot] > 0) motivo = 'em_recarga';
     else if (!podePagar(l, cost)) motivo = 'sem_energia';

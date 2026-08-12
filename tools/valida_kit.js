@@ -131,6 +131,17 @@ function validarPassiva(p, ctx, errs) {
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('quem' in f && !V.aoCairQuem.includes(f.quem)) errs.push(`${c}: aoCair.quem inválido "${f.quem}" (válidos: ${V.aoCairQuem.join(', ')})`);
+    if (f.gatilho === 'aCadaN') {   // cadência ABSOLUTA n + EXATAMENTE um payload (faz OU custoGratis — nunca os dois, nunca nenhum)
+      if (typeof f.n !== 'number' || !Number.isInteger(f.n) || f.n < 2) errs.push(`${c}: aCadaN.n inválido (${JSON.stringify(f.n)}; inteiro >= 2 — n=1 é porTurno)`);
+      const payloads = ['faz', 'custoGratis'].filter(k => k in f);
+      if (payloads.length !== 1) errs.push(`${c}: aCadaN exige EXATAMENTE um payload (faz OU custoGratis; tem ${payloads.length ? payloads.join('+') : 'nenhum'})`);
+    }
+    if ('custoGratis' in f) {   // payload de aCadaN: zera o custo de um slot de ataque
+      const cg = f.custoGratis;
+      if (!cg || typeof cg !== 'object' || Array.isArray(cg)) errs.push(`${c}: custoGratis não é objeto`);
+      else if (!V.slotsAtaque.includes(cg.slot)) errs.push(`${c}: custoGratis.slot inválido "${cg.slot}" (válidos: ${V.slotsAtaque.join(', ')})`);
+      else if (Object.keys(cg).length !== 1) errs.push(`${c}: custoGratis só aceita "slot" (tem: ${Object.keys(cg).join(', ')})`);
+    }
     if ('a' in f) {   // imunidade: array não-vazio de tags do sub-vocabulário (controle/DoT/'controle')
       if (!Array.isArray(f.a) || f.a.length === 0) errs.push(`${c}: a deve ser array não-vazio (${V.imunizaveis.join('|')})`);
       else for (const tag of f.a) if (!V.imunizaveis.includes(tag)) errs.push(`${c}: imunidade a "${tag}" fora do sub-vocabulário (válidos: ${V.imunizaveis.join(', ')})`);
