@@ -1322,6 +1322,18 @@ verdes SEM alteração; `grep key==='hera'` vazio; suíte inteira verde. RNG: ne
 no motor. Restam ganchos abertos para deuses ainda não implementados (os 5 reativos futuros, sujeitos do aoCair,
 `heal`/`apply` em `faz`, `aCadaN.faz`), mas nenhum deus implementado carrega hardcode de passiva.
 
+**DISCIPLINA (dono, registrar): antes de criar um gatilho novo, TESTE se um existente serve com generalização
+MÍNIMA — e se servir, generalize em vez de duplicar.** A Hera parecia pedir mecanismo próprio ("reage a cura,
+dá escudo"); a pergunta certa não foi "que gatilho novo?" e sim "o `aoCair` (evento→sujeito→faz) serve?". Serve,
+com duas linhas: o `faz` roda num sujeito ≠ dono, e o crédito vai no dono (`tagKey`). Reconhecer que a máquina
+existente cobre o caso com ajuste pequeno é MAIS DIFÍCIL que construir algo próprio — construir é a saída
+confortável (código novo, nome novo, sensação de progresso), mas cada gatilho novo é vocabulário que alguém tem
+de manter e que pode divergir. A ordem: (1) mapear o caso ao gatilho mais próximo; (2) medir a generalização que
+faltaria; (3) se for pequena e não borrar o significado do gatilho, generalizar; (4) só criar gatilho novo quando
+a generalização mínima já distorceria o existente (foi o caso do `bonusCura` vs `bonusDano`: eixo, evento e
+caminho de valor todos diferentes — aí duplicar seria errado, e criar é o certo). O `tagKey` da Hera é o exemplo
+de (3); o `bonusCura` é o exemplo de (4). A disciplina é saber em qual dos dois se está.
+
 ---
 
 ## Decisões ainda ABERTAS
