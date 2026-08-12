@@ -95,3 +95,43 @@ mas a DECISÃO (≈5, não 30) e o RANKING de ganchos (os clusters) são robusto
 balde — vale re-varrer a família antes e re-triar depois, exatamente como o dono pediu. `reducao-cond` (próxima,
 projeta 5 flips) merece a mesma desconfiança: se as 9 redução-condicionais pedirem eixos diferentes (classe vs
 elemento vs contagem), o flip real é menor.
+
+## Métrica DUPLA e a distinção projeção-vs-execução (dono, registrar)
+
+**Acompanhar DUAS séries, não uma:** VERDE (jogável hoje) e VERMELHO (travado em 2+). A curva do VERDE sozinha
+SUBESTIMA o progresso — a F1.2.5 sessão 1 subiu o VERDE só 4→5, mas derrubou o VERMELHO 48→44 (4 deuses
+VERMELHO→AMARELO, montados p/ flipar no 2º gancho). **Se o VERMELHO cai mais rápido que o VERDE sobe, a fase vai
+bem mesmo com o placar de VERDE parado** — "habilita verde" precede "flipa verde".
+
+**Projeção ≠ execução, e só a medição separa:** quando a curva sobe menos que o previsto, há duas causas OPOSTAS
+e a correção de cada uma é oposta — (a) a EXTENSÃO rendeu menos que devia (corrige-se a extensão) ou (b) a
+PROJEÇÃO estava errada (corrige-se a triagem, não a extensão). Na sessão 1 foi (b): freyja/oxum eram
+alvoCuradoAntes, não faz-apply — a extensão fez o que devia, a previsão é que superestimou. Sem a re-triagem, isso
+teria passado como "faz-vocab rendeu pouco" e alguém "consertaria" uma extensão que estava certa. Re-triar depois
+de cada extensão é o que torna a distinção visível.
+
+## `reducao-cond` — a DIVISÃO golpe-vs-estado (trazida ANTES de escrever, F1.2.5 sessão 2)
+
+A família de redução tem ~15 passivas; ~9 condicionais. Classificadas por **o que a condição LÊ**:
+
+| eixo | lê | exemplo | cabe no `contra`? |
+|---|---|---|---|
+| slot | o golpe | Sobek "de Básicos" | JÁ EXISTE |
+| **classe** | o golpe | Oni "de Mágicas" | **sim — contra.classe** |
+| **elemento(-negado)** | o golpe | Baldur "exceto Verdejante" | **sim — contra.elemNao** |
+| **alcance** | o golpe | Afrodite "alvo único" | **sim — contra.alcance** |
+| paridade de turno | o CAMPO | Hel "turnos pares" | NÃO (turno % 2) |
+| contagem de aliados vivos | o CAMPO | Guan Yu "3 vivos" | NÃO |
+| fase Dia/Noite | o CAMPO | Amaterasu "durante o Dia" | NÃO (= dia-noite-ler) |
+| contador próprio | o CAMPO | Kitsune "a cada 3 Caudas" | NÃO |
+| primeiro-por-turno | o CAMPO | Bastet "o primeiro ... por turno" | NÃO |
+| por-elemento-do-receptor | quem RECEBE | Poseidon "aliados Maré" | não (é escopo) |
+
+**Divisão: 3 golpe (novos) / 5 estado / 1 escopo — é o caso "3-6".** Os 3 de golpe são extensão barata do `contra`
+(flipam oni, baldur, afrodite). Os 5 de estado NÃO cabem no `contra` — e o achado que muda a sessão: **eles não
+são de redução, são de ESTADO, e OUTROS gatilhos querem os mesmos.** fase=dia-noite-ler (6 deuses), paridade=Hel
+também no bonusCura, contagem-de-aliados=Osiris no bonusDano + Guan Yu na imunidade, contador-próprio=kitsune.
+**"contra cresce E nasce um eixo de estado"** — exatamente o que o dono previu. O eixo de estado é um QUARTO eixo
+de condição (ao lado de quando/contra/quandoCura), mas lê o CAMPO em vez do ataque, e é transversal aos gatilhos.
+Decisão do dono: fazer os 3 de golpe agora (barato, on-plan) e o eixo de estado como sessão própria (maior,
+transversal, decisão de design) — ou pivotar direto para o eixo de estado, que destrava mais.
