@@ -124,16 +124,20 @@ curador → Nefertem; tipo=regeneração → Cernunnos/Chaac) entram POR DEUS qu
 nova de `quandoCura`, revisada, nunca à força. `V.dots` cresce para debuff/controle se um deus condicionar cura
 por eles.
 
-**`contra` — condição defensiva (fechada; abre só `slot` na sessão 3):**
+**`contra` — condição defensiva (lê SÓ o golpe; slot na s3, classe/elemNao/alcance na F1.2.5 s2):**
 
 | chave | valor | lê |
 |---|---|---|
 | `contra.slot` | ∈ `{basico, habilidade, milagre}` | reduz só golpes deste slot (sobek: `basico`) |
+| `contra.classe` | ∈ `V.classes` | reduz só golpes desta classe (oni: `Mágico`) |
+| `contra.elemNao` | ∈ `V.elementos` | reduz TODO golpe EXCETO os deste elemento (baldur: exceto `Verdejante`) |
+| `contra.alcance` | ∈ `{unico, area}` | reduz só golpes deste alcance (afrodite: `unico`) |
 
-Objeto de UMA chave, sub-vocabulário próprio (validado por `valida_kit`), ausente = todo ataque. As outras oito
-formas de redução da família (classe → oni; elemento-negado → baldur; paridade → hel; contador → kitsune;
-contagem de aliados → guanyu; elemento-do-receptor → poseidon) entram POR DEUS quando migrarem — cada uma
-como chave nova de `contra` (ou refinamento de `escopo`), revisada, nunca à força.
+Objeto de UMA chave, sub-vocabulário próprio (validado por `valida_kit`), ausente = todo ataque. **`contra` lê SÓ
+o golpe — nunca o estado do campo.** As reduções que leem o CAMPO (paridade → hel; contagem de vivos → guanyu;
+fase → amaterasu; contador próprio → kitsune) NÃO entram no `contra`: são um QUARTO eixo (de ESTADO), transversal
+aos gatilhos, a nascer à parte (F1.2.5 s3). Manter o `contra` puro impede o erro do `de:'basico'` sobrecarregado
+(s3) de se repetir com estado. `poseidon` (redução só a aliados de um elemento) é refinamento de `escopo`.
 - `v` — inteiro > 0 (só em `bonusDano`).
 - `escopo` — `self` (vale só quando o DONO ataca) ou `time` (qualquer aliado vivo). Default `self`.
 - `quando` — a condição (objeto de **uma** chave; ausente = sempre). Conjunto FECHADO abaixo.

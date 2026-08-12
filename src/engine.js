@@ -128,7 +128,10 @@ const SLOTS_ATAQUE = ['basico', 'habilidade', 'milagre'];
 // vocabulários NÃO se misturam (ver docs/passivas.md). Fechado; abre só `slot` na sessão 3 — as outras
 // (classe do oni, elemNao do baldur, …) entram por deus. Uma chave por condição; ausência = todo ataque.
 const CONTRA = {
-  slot: { sub: SLOTS_ATAQUE },   // reduz só golpes deste slot (sobek: 'basico')
+  slot:    { sub: SLOTS_ATAQUE },   // reduz só golpes deste slot (sobek: 'basico')
+  classe:  { sub: CLASSES },        // reduz só golpes desta classe (oni: 'Mágico')
+  elemNao: { sub: ELEMS },          // reduz TODO golpe EXCETO os deste elemento (baldur: exceto 'Verdejante')
+  alcance: { sub: ['unico', 'area'] },  // reduz só golpes deste alcance (afrodite: 'unico')
 };
 // `quando` (condição do bônus) — conjunto FECHADO. Cada chave declara COMO validar o valor:
 //   sub  → valor ∈ lista   ·   bool → valor === true   ·   hp → {op, v}
@@ -513,11 +516,14 @@ function danoImune(st, atk) {
 // reducao (F1.2 sessão 3) — reduz o dano RECEBIDO por `alvo`. Lê a passiva de quem protege (self = só o
 // dono; time = qualquer aliado vivo) e a condição DEFENSIVA `contra`, que lê o GOLPE que chega (slot).
 // Regra 6: pega o MAIOR, não soma. `contra` é eixo separado do `quando` ofensivo (ver docs/passivas.md).
-function contraCasou(c, slot) {
-  if ('slot' in c) return c.slot === slot;
-  return false;   // chaves futuras (classe, elemNao) ainda não abertas — valida_kit já as recusaria
+function contraCasou(c, golpe) {
+  if ('slot' in c) return c.slot === golpe.slot;
+  if ('classe' in c) return c.classe === golpe.classe;                 // classe da habilidade que chega
+  if ('elemNao' in c) return golpe.elem !== c.elemNao;                 // aplica a TODO golpe menos os deste elemento
+  if ('alcance' in c) return (golpe.unico ? 'unico' : 'area') === c.alcance;
+  return false;
 }
-function reducaoDeclarativa(st, alvo, slot) {
+function reducaoDeclarativa(st, alvo, golpe) {
   let r = 0;
   for (const u of st.lados[alvo.lado].units) {
     if (!u.vivo) continue;
@@ -526,14 +532,15 @@ function reducaoDeclarativa(st, alvo, slot) {
     for (const f of p.fx) {
       if (f.gatilho !== 'reducao') continue;
       if ((f.escopo || 'self') === 'self' && u !== alvo) continue;   // self protege só o dono
-      if (f.contra && !contraCasou(f.contra, slot)) continue;        // condição do golpe que chega
+      if (f.contra && !contraCasou(f.contra, golpe)) continue;        // condição do golpe que chega
       r = Math.max(r, f.v);
     }
   }
   return r;
 }
 
-function calcDano(st, atk, alvo, base, kind, slot) {
+function calcDano(st, atk, alvo, base, kind, slot, golpe) {
+  golpe = golpe || { slot, elem: atk && atk.elem };   // eixo `contra` lê o golpe (slot/classe/elem/alcance)
   let v = base + bonusDano(st, atk);
   v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
   if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
@@ -548,7 +555,7 @@ function calcDano(st, atk, alvo, base, kind, slot) {
     let red = 0;
     const r = ef(alvo, 'dmgReduction');
     if (r) red = Math.max(red, r.v);                                // regra 6 — pega o maior
-    red = Math.max(red, reducaoDeclarativa(st, alvo, slot));        // sobek/thor migrados: reducao declarativo (§37)
+    red = Math.max(red, reducaoDeclarativa(st, alvo, golpe));        // sobek/thor migrados: reducao declarativo (§37)
     v = Math.max(0, v - red);
   }
   let absorvido = 0;
@@ -560,8 +567,10 @@ function calcDano(st, atk, alvo, base, kind, slot) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false } = opts;
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null } = opts;
   if (!alvo.vivo) return 0;
+  // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
+  const golpe = { slot, classe, elem: atk && atk.elem, unico };
 
   // PRIMITIVA interceptar — golpe de alvo único pode ser assumido por um protetor.
   // Vale para efeito 'intercepta' (Loki, Bastet, Hanuman) e para invocação-guarda (Shabti, isca).
@@ -598,7 +607,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       return a1 + a2;
     }
   }
-  const { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot);
+  const { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot, golpe);
   alvo.hp = Math.max(0, alvo.hp - v);
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
@@ -1062,7 +1071,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     for (const t of sel) {
       if (e.t === 'dmg') {
         const base = danoBase(st, u, t, e, l);
-        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico });
+        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a) });
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2));
       }
       else if (e.t === 'heal') curar(st, t, e.v);

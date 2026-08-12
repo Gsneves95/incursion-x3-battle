@@ -172,6 +172,37 @@ console.log('== caracterização LOTE A: magnitude E escopo exatos (contra o har
   h = sobek.hp; E.bater(st, atacante, sobek, 15, 'afetado', 'habilidade');
   ok(h - sobek.hp === 15, `ESCOPO: habilidade vs sobek NÃO reduz = 15 (deu ${h - sobek.hp})`);
 }
+console.log('== F1.2.5 s2: contra por classe / elemNao / alcance (golpe puro, sintético) ==');
+{ // contra.classe — reduz só golpes da classe
+  E.GODS.trc = { nome: 'TRC', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['trc', 'zeus', 'zeus'], 950);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  let h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { classe: 'Mágico' });
+  ok(h - def.hp === 10, `contra.classe: golpe Mágico reduz 20-10=10 (deu ${h - def.hp})`);
+  h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { classe: 'Físico' });
+  ok(h - def.hp === 20, `contra.classe: golpe Físico NÃO reduz = 20 (deu ${h - def.hp})`);
+  delete E.GODS.trc;
+}
+{ // contra.elemNao — reduz TODO golpe EXCETO os do elemento negado (baldur)
+  E.GODS.tre = { nome: 'TRE', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 15, contra: { elemNao: 'Verdejante' } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tre', 'zeus', 'zeus'], 951);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  let h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 5, `contra.elemNao: golpe Tempestade (≠Verdejante) reduz 20-15=5 (deu ${h - def.hp})`);
+  atk.elem = 'Verdejante'; h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 20, `contra.elemNao: golpe Verdejante NÃO reduz = 20 (deu ${h - def.hp})`);
+  delete E.GODS.tre;
+}
+{ // contra.alcance — reduz só golpes de alvo único (afrodite)
+  E.GODS.tra = { nome: 'TRA', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 8, contra: { alcance: 'unico' } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tra', 'zeus', 'zeus'], 952);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  let h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { unico: true });
+  ok(h - def.hp === 12, `contra.alcance unico: reduz 20-8=12 (deu ${h - def.hp})`);
+  h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { unico: false });
+  ok(h - def.hp === 20, `contra.alcance: golpe em ÁREA NÃO reduz = 20 (deu ${h - def.hp})`);
+  delete E.GODS.tra;
+}
 { // HERA — aliado curado ganha EXATAMENTE 10 de escudo; só o curado; só com Hera viva
   const st = E.novoEstado(['hera', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 403);
   const hera = st.lados[0].units[0], a1 = st.lados[0].units[1], a2 = st.lados[0].units[2];
@@ -411,8 +442,14 @@ err(g => g.passiva.fx.push({ gatilho: 'danoIrredutivel', ignora: ['reducao'], v:
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, ignora: ['reducao'] }), 'não pertence ao gatilho');       // ignora não pertence a bonusDano
 // gatilho reducao (sessão 3): eixo defensivo `contra` (separado do `quando` ofensivo)
 err(g => g.passiva.fx.push({ gatilho: 'reducao' }), 'exige o campo "v"');                                          // falta v
-err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' } }), 'desconhecida');          // classe ainda não aberta em contra
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Plasma' } }), 'fora do sub-vocabulário'); // classe aberta (F1.2.5 s2), valor inválido
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { elemNao: 'Plasma' } }), 'fora do sub-vocabulário'); // elemNao aberto, valor fora dos ELEMS
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { alcance: 'medio' } }), 'fora do sub-vocabulário'); // alcance só unico|area
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { paridade: 'par' } }), 'desconhecida');            // ESTADO (paridade) NÃO entra no contra — 4º eixo (s3)
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { slot: 'ultimate' } }), 'fora do sub-vocabulário'); // slot inválido
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' } }); ok(validarDeus(g).length === 0, 'contra.classe VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 15, contra: { elemNao: 'Verdejante' } }); ok(validarDeus(g).length === 0, 'contra.elemNao VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 8, contra: { alcance: 'unico' } }); ok(validarDeus(g).length === 0, 'contra.alcance VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) não vai em reducao
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho'); // contra (defensivo) não vai em bonusDano
 // gatilhos de turno (sessão 4): faz reusa fx, mas só os turno-seguros e sem alvo escolhido

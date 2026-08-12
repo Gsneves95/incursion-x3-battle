@@ -135,3 +135,25 @@ também no bonusCura, contagem-de-aliados=Osiris no bonusDano + Guan Yu na imuni
 de condição (ao lado de quando/contra/quandoCura), mas lê o CAMPO em vez do ataque, e é transversal aos gatilhos.
 Decisão do dono: fazer os 3 de golpe agora (barato, on-plan) e o eixo de estado como sessão própria (maior,
 transversal, decisão de design) — ou pivotar direto para o eixo de estado, que destrava mais.
+
+
+## Curva DUPLA — F1.2.5 sessão 2 (`contra` golpe: classe/elemNao/alcance)
+
+| marco | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| triagem inicial | 4 | 36 | 48 |
+| após faz-heal/apply (s1) | 5 | 39 | 44 |
+| após contra golpe (s2) | **8** | 36 | 44 |
+
+**VERDE +3 (oni, baldur, afrodite), VERMELHO parado.** Perfil OPOSTO ao da s1: o faz-vocab STAGED vermelhos em
+amarelos (VERDE +1, VERMELHO −4); o contra-golpe FLIPOU amarelos direto em verdes (VERDE +3, VERMELHO flat). Os
+dois são progresso, formas diferentes — a métrica dupla mostra as duas.
+
+**Projeção era 5 flips; foram 3 — de novo o balde.** `reducao-cond` (9) = golpe (3, construído) + estado (5) +
+escopo (1). Só o subconjunto de GOLPE flipou. **bastet** não (precisa de `alcance` E "primeiro-por-turno", ESTADO);
+**poseidon** não (escopo por elemento); **hel/kitsune/amaterasu** ficam no eixo de ESTADO. Terceira vez que a
+projeção "flip sozinho" superestima porque o gancho era balde — a causa é sempre a mesma. **A sessão 3 (eixo de
+estado) destrava bastet/poseidon-vizinhos e os 5 de estado — confirmando a promoção dela.**
+
+`contra` permanece PURO (só golpe). O validador recusa `contra:{paridade}` em voz alta — a fronteira fica óbvia
+para a s3 desenhar o 4º eixo.
