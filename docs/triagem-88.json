@@ -1,8 +1,8 @@
 {
  "dist": {
-  "AMARELO": 34,
+  "AMARELO": 35,
   "VERDE": 20,
-  "VERMELHO": 34
+  "VERMELHO": 33
  },
  "gods": [
   {
@@ -471,17 +471,15 @@
   {
    "key": "fenrir",
    "ganchos": [
-    "agarrar",
-    "execucao-hp"
+    "agarrar"
    ],
    "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "hades",
    "ganchos": [
     "aoCair-qualquerInimigo",
-    "execucao-hp",
     "selado-so-basico"
    ],
    "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis.",

@@ -1433,6 +1433,41 @@ testável "família varrida + vocabulário fechável sem dúvida", nunca o nome.
 
 ---
 
+## 47. Execução é caminho PRÓPRIO à morte (não é dano): fura piso e vidaExtra, mas termina no `matar` comum (F1.3)
+
+Varredura dos 7 kits de execução. **Limiares batem com o §26** (20→24 / 25→30, ×1.2 com a vida 100→120): hades/
+fenrir/iara/lugh/morrigan = 24, ammit/izanami = 30. **Nenhum diverge — a F1.0c não passou por cima de nenhum.**
+
+**Regra do dono: EXECUÇÃO FURA O PISO.** O vocabulário decide: o piso diz "não cai abaixo de 1 de HP" — é regra
+sobre DANO; execução não causa dano, ELIMINA — operações diferentes. Prova: o Sun Wukong precisa de imunidade
+DEDICADA a execução; se o piso já barrasse, seria redundante, e kits não carregam redundância (mesmo argumento
+do `vidaExtra`). Logo execução **também fura o vidaExtra** — senão a imunidade dedicada seria redundante de novo.
+
+**Forma (não é dano, é caminho próprio):** o `dmg` carrega `executaAbaixoDe:N`; APÓS o golpe, se `hp<=N`, chama
+`matar` DIRETO — não reusa `bater`/`ignoraPiso` (isso seria "golpe que fura"; execução não é golpe). `matar`
+ganhou `opts.execucao` (pula o vidaExtra, tagueia a queda com `execucao:true`).
+
+**As 3 perguntas de borda (o dono usou p/ decidir se execução é tipo-de-dano ou mecanismo à parte) — respondidas
+porque execução TERMINA no `matar` comum:**
+1. **aoCair DISPARA** — a unidade caiu, seja por dano ou execução; o `matar` roda os aoCair.
+2. **Matador ATRIBUÍDO** — `matar(st, atk, alvo)`, o executor é o matador.
+3. **Zeus GANHA orbe por execução** — o aoCair-inimigo do Zeus roda no `matar`. Provado no sintético.
+Ou seja: execução é mecanismo à parte na DECISÃO (elimina ignorando dano/piso/vidaExtra), mas compartilha a
+CONSEQUÊNCIA (a morte comum). O melhor dos dois: não duplica a máquina de morte.
+
+**imunidade-a-execução:** tag `'execucao'` em `IMUNIZAVEIS` (Sun Wukong: `imunidade a:['execucao']`). **Amplia o
+§5** — é a PRIMEIRA imunidade-a-mecânica; cabe no gatilho imunidade como tag explícita (o coringa 'controle' não a
+cobre, execução não é controle).
+
+**A execução-hp é NÚCLEO uniforme + WRAPPERS por deus (o §46 de novo, até no "confiável"):** o núcleo (limiar →
+elimina) é um só e está feito; mas cada deus o EMBRULHA diferente — condicional (izanami: amaldiçoados; iara:
+Encharcados), por-status (ammit: Atordoado/Selado, sem limiar de HP), seletor (lugh: maior HP), timing (morrigan:
+fim de turno). Plenamente coberto pelo `executaAbaixoDe` puro: **hades/fenrir** (fenrir → AMARELO). Os wrappers
+viajam com os outros ganchos desses deuses. Registrado p/ a próxima varredura não achar "falta 1" quando falta o
+wrapper de cada um.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
