@@ -279,7 +279,7 @@ um passo barato antes dos blocos pesados.
 | marco | VERDE | AMARELO | VERMELHO |
 |---|---|---|---|
 | re-triagem (base) | 17 | 31 | 40 |
-| Passo 0 (aoUsarHabilidade + sinergia=aliadoPresente) + piso-1hp | **21** | 32 | **34** |
+| Passo 0 (aoUsarHabilidade + sinergia=aliadoPresente) + piso-1hp | **20** | 34 | **34** |
 
 Flips: bragi/brahma (aoUsarHabilidade), inari (sinergia), change (piso+sinergia). **O VERMELHO caiu 40→34** — o
 sinal que o dono pediu para acompanhar no bloco de morte: mesmo com o VERDE quase parado nas sessões seguintes do
