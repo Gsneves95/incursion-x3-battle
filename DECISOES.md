@@ -1069,6 +1069,18 @@ minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro 
    voltou a ter hardcode". "Corrigir" teria reescrito trabalho já pronto e criado divergência com o origin. O
    ESTADO.md é a fonte da verdade do que foi feito; o working tree pode estar mentindo.
 
+**PROCEDIMENTO DE COMMIT (dono, F1.2.5 — o revert do container mudou de categoria):** o 5º revert reprovisionou
+o repo ENTRE o teste verde e o commit, apagando edições NÃO-commitadas do disco; o commit seguinte capturou o
+motor estale (lixo). O §38 recupera trabalho COMMITADO, não edição no disco. Então a ordem inverte — commitar
+ANTES de testar o pesado:
+1. Commite cada bloco de edição assim que estiver COERENTE, sem esperar a suíte lenta.
+2. Verifique `git rev-parse --short HEAD` contra origin IMEDIATAMENTE antes de cada commit (se divergiu, `reset --hard origin` e reaplique).
+3. A suíte completa roda DEPOIS, sobre o COMMIT; se apontar algo, corrige em commit novo (fix-forward).
+4. NUNCA deixe edição no disco durante espera longa em background (é quando o revert bate).
+A rede de testes continua sendo a garantia — só passa a rodar sobre commit em vez de sobre disco. Commits
+ruidosos são baratos; refazer edição inteira não é, e commit pequeno é mais fácil de revisar/reverter. (Investigar
+por que o container reprovisiona: decisão do dono — é ambiente, provável fora de alcance, custo alto p/ ganho incerto.)
+
 Quando a passiva de um deus vira dado, a suíte que o cobre deixa de provar "o hardcode funciona" e passa a
 provar "o dado REPRODUZ o hardcode" — é a rede de equivalência. Mas a regra "não altere as suítes dos 12"
 pressupõe que essa rede EXISTE, e a varredura mostrou que não existe em todo lugar: o **Rá não tinha

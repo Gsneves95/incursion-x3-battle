@@ -157,3 +157,16 @@ estado) destrava bastet/poseidon-vizinhos e os 5 de estado — confirmando a pro
 
 `contra` permanece PURO (só golpe). O validador recusa `contra:{paridade}` em voz alta — a fronteira fica óbvia
 para a s3 desenhar o 4º eixo.
+
+
+## Duas leituras que a s1 e a s2 provaram (dono, registrar)
+
+**A métrica única enganava — o par de medições é a evidência.** s1: VERDE +1 / VERMELHO −4 (staging). s2: VERDE
++3 / VERMELHO flat (flip). Formas OPOSTAS de progresso: pela curva do VERDE só, a s1 pareceria fraca e a s2
+forte; as duas avançaram igual. Acompanhar VERDE e VERMELHO juntos é o que torna as duas formas visíveis.
+
+**A projeção "flip sozinho" é TETO, não estimativa.** Errou 3 vezes na MESMA direção (faz-vocab 3→1, contra 5→3,
+e a de bonusDano-escala há de errar também): o real é SEMPRE ≤ a projeção, e a diferença é o tamanho do BALDE.
+Padrão, não coincidência — a contagem do gancho junta formas que pedem eixos diferentes, e só o subconjunto
+homogêneo flipa. Ler a projeção como teto (não como número esperado) evita a leitura falsa de "a extensão rendeu
+pouco" quando o que houve foi balde previsto errado.
