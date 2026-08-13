@@ -199,3 +199,23 @@ ativo" do Dagda).
 2. **`primeiro-alvo-único-por-turno` não é leitura pura** — precisa de bookkeeping (flag por-unidade resetado a
    cada turno: "já sofri um golpe de alvo único neste turno?"). Compõe `contra:{alcance:unico}` + `estado:{primeiroPorTurno}`,
    mas o "primeiro" exige o motor RASTREAR, não só ler. Confirmar que o custo de rastreio é aceitável.
+
+
+## Curva DUPLA — F1.2.5 sessão 3 (`estado`: campo universal, 5 condições de leitura)
+
+| marco | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| após contra golpe (s2) | 8 | 36 | 44 |
+| após estado leitura (s3) | **~10** | ~35 | ~43 |
+
+Flips CLAROS: **Hel** (paridade resolvia as DUAS cláusulas — reducao par + bonusCura ímpar) e **Itzamná** (fase
+resolvia o "+1 orbe/turno durante o Dia"). Os demais donos de estado NÃO flipam porque estado não era o único
+gancho: kitsune (aCadaN-faz), boto (aCadaN-faz), guanyu (medo), shuten (torpor), lugh (cdShift-no-Dia + escolha),
+bastet/saci/mnevis (primeiroPorTurno reservado). Vários vão VERMELHO→AMARELO (a cláusula de estado resolve,
+sobra 1 gancho) — VERMELHO cede devagar. (Números ~ porque o per-deus da triagem é transitório no scratch; os
+flips claros são derivados, não medidos — Hel/Itzamná certos.)
+
+Fim da F1.2.5 (as 3 extensões F1.2-adjacentes): VERDE 4→~10, VERMELHO 48→~43. A curva dupla mostra o que a
+única esconderia — muito do ganho foi staging (VERMELHO→AMARELO), não flip. O eixo de estado deixou os 5 de
+leitura prontos; `primeiroPorTurno` e a sessão esquiva/intercepta (bastet/saci/mnevis) ficam para a fase de
+mecanismos.

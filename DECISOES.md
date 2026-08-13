@@ -1348,6 +1348,40 @@ de (3); o `bonusCura` é o exemplo de (4). A disciplina é saber em qual dos doi
 
 ---
 
+## 45. `estado` é CAMPO UNIVERSAL (composa com o eixo), não 4º eixo — decidido PELOS DADOS (F1.2.5 s3)
+
+A pergunta de forma tinha resposta EMPÍRICA, e por pouco não foi decidida por elegância antes da varredura:
+`quando`/`contra`/`quandoCura` são eixos de UM gatilho cada (só-um-por-fx). O eixo de estado é transversal a
+vários gatilhos — dúvida: 4º eixo irmão, ou campo que qualquer gatilho aceita ALÉM do seu eixo?
+
+**Decidido pelos dados: campo universal.** A varredura achou TRÊS passivas que condicionam no GOLPE E no ESTADO
+ao mesmo tempo — Bastet, Saci, Mnevis, todas o composto "primeiro ataque de alvo único por turno" (`alcance`
+[golpe] + `primeiroPorTurno` [estado]). Um 4º eixo (só-um-por-fx) não expressaria isso; um campo universal
+composa `contra:{alcance}` E `estado:{primeiroPorTurno}` no mesmo fx. Regra do dono: se ≥1 deus precisa das duas
+juntas, a resposta é campo universal e a decisão está tomada — não por gosto. **A forma reflete a NATUREZA:**
+transversal → campo ortogonal, não item na lista dos três. `estado` é permitido em TODO gatilho (no validador,
+entra no conjunto base junto com `gatilho`), e cada gatilho compõe (AND) o seu eixo com ele.
+
+**5 condições de LEITURA PURA abertas** (o motor só LÊ contra o dono do fx): `paridade` (turno%2, Hel), `fase`
+(Dia/Noite — Amaterasu/Boto/Lugh/Itzamná), `aliadosVivos` {op,n} (Guan Yu), `contador` {nome,op,n} (Kitsune),
+`hpProprio` {op,v} (Shuten). Composição provada no sintético: `contra:{classe}` + `estado:{paridade}` dispara SÓ
+com as duas, falha nos 3 outros casos — a garantia que justifica campo universal em vez de 4º eixo.
+
+**`fase` MIGROU do `quando` para o `estado`.** Ela entrou no `quando` na sessão 1 por ser o único eixo que
+existia, não porque pertencia lá — fase é estado-de-campo, não propriedade do ataque. Migração completa, sem
+retrocompatibilidade (custo real zero: só o Lugh a usa, não implementado); o validador RECUSA `quando:{fase}`
+apontando para `estado:{fase}`, p/ quem escrever kit não errar por memória. Duas casas para a mesma condição é
+semente de confusão.
+
+**`primeiroPorTurno` RESERVADO** (recusado em voz alta) — as outras condições o motor LÊ; essa exige RASTREIO
+(flag por-unidade resetado por turno). Misturar leitura e bookkeeping seria como forçar o `custoGratis` da Cuca
+no `faz` (§43). **E os três donos dela (bastet/saci/mnevis) não são uma condição faltante — são TRÊS mecanismos:**
+Bastet REDUZ, Saci ESQUIVA (o golpe falha), Mnevis INTERCEPTA. A sessão deles não é "abrir primeiroPorTurno" — é
+esquiva + intercepta, com o `primeiro` como condição COMPARTILHADA. Registrado assim para a próxima varredura não
+contar "falta 1 condição" quando faltam 3 mecanismos.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
