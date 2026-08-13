@@ -106,7 +106,7 @@ const GATILHOS_PASSIVA = {
 //   'self' (o dono morre — nezha/ymir), 'aliado' (um aliado cai), 'qualquerInimigo' (qualquer inimigo cai — hades).
 // AMBIGUIDADE aberta (decisão do dono ao migrar morrigan/iansa/ahpuch): "quando um inimigo é derrotado, [eu] X"
 // não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
-const AOCAIR_QUEM = ['inimigo', 'self'];
+const AOCAIR_QUEM = ['inimigo', 'self', 'qualquerInimigo'];
 // `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
 // 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
 // enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
@@ -693,6 +693,18 @@ function matar(st, atk, alvo, opts = {}) {
     const g = kitDe(st, atk); const p = g && g.passiva;
     if (p && Array.isArray(p.fx)) for (const f of p.fx) {
       if (f.gatilho === 'aoCair' && f.quem === 'inimigo' && (!f.estado || estadoOK(f.estado, atk, st))) rodarFaz(st, atk, f.faz);
+    }
+  }
+  // aoCair quem:'qualquerInimigo' — QUALQUER morte de um inimigo (NÃO matador-bound): todo reator vivo do lado
+  // OPOSTO ao caído reage, tenha matado ou não. Voz passiva da planilha ("quando um inimigo é derrotado" —
+  // hades/iansa/morrigan/ahpuch) vs "ao derrotar" (matador, quem:'inimigo' — zeus). Dispara mesmo SEM atk (morte
+  // por DoT/execução/Livro). Coexiste com 'inimigo': um dono com os DOIS dispara os dois quando ELE mata (dois
+  // faz distintos) — cada gatilho é uma declaração independente, o motor não deduplica (§49).
+  for (const r of st.lados[1 - alvo.lado].units) {
+    if (!r.vivo) continue;
+    const g = kitDe(st, r); const p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) {
+      if (f.gatilho === 'aoCair' && f.quem === 'qualquerInimigo' && (!f.estado || estadoOK(f.estado, r, st))) rodarFaz(st, r, f.faz);
     }
   }
   checarFim(st);

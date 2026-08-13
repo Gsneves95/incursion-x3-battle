@@ -472,6 +472,44 @@ console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correç�
   alvo2.hp = 5; E.bater(st, sobekAlly, alvo2, 15, 'afetado', 'basico');
   ok(!alvo2.vivo && st.lados[0].orbs['Tempestade'] === o1, `ESCOPO: sobek mata -> SEM orbe do Zeus (${o1} -> ${st.lados[0].orbs['Tempestade']})`);
 }
+// aoCair quem:'qualquerInimigo' (F1.3 morte 4/4) — QUALQUER morte de inimigo, não matador-bound (hades/iansa/etc.)
+console.log('== F1.3 morte: aoCair-qualquerInimigo (voz passiva) + coexistência com matador-bound ==');
+E.GODS.tqi = { nome: 'TQI', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoCair', quem: 'qualquerInimigo', faz: [{ t: 'orbGain', n: 1, para: 'Umbra' }] }] } };
+{ // dispara MESMO quando quem mata é um ALIADO do reator (não o reator) — a diferença vs matador-bound
+  const st = E.novoEstado(['tqi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 420);
+  const tqi = st.lados[0].units[0], aliado = st.lados[0].units[1], alvo = st.lados[1].units[0];
+  const u0 = st.lados[0].orbs.Umbra;
+  alvo.hp = 5; E.bater(st, aliado, alvo, 15, 'afetado', 'basico');   // o ALIADO mata, não o tqi
+  ok(!alvo.vivo && st.lados[0].orbs.Umbra === u0 + 1, `aliado mata -> tqi ainda reage (${u0} -> ${st.lados[0].orbs.Umbra})`);
+}
+{ // dispara SEM matador (morte por DoT — atk=null)
+  const st = E.novoEstado(['tqi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 421);
+  const alvo = st.lados[1].units[0];
+  const u0 = st.lados[0].orbs.Umbra;
+  alvo.hp = 3; alvo.dots.push({ nome: 'veneno', v: 8, dur: 2 });
+  E.fimTurno(st); E.fimTurno(st);   // DoT no início do turno do lado 1 mata sem atacante
+  ok(!alvo.vivo && st.lados[0].orbs.Umbra > u0, `morte por DoT (sem matador) -> tqi reage`);
+}
+{ // NÃO dispara quando cai um ALIADO do reator (o caído não é inimigo do tqi)
+  const st = E.novoEstado(['tqi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 422);
+  const aliado = st.lados[0].units[1], inimigo = st.lados[1].units[0];
+  const u0 = st.lados[0].orbs.Umbra;
+  aliado.hp = 5; E.bater(st, inimigo, aliado, 15, 'afetado', 'basico');   // um ALIADO do tqi cai
+  ok(!aliado.vivo && st.lados[0].orbs.Umbra === u0, `aliado do reator cai -> tqi NÃO reage (${u0} -> ${st.lados[0].orbs.Umbra})`);
+}
+{ // COEXISTÊNCIA (§49): um dono com 'inimigo' E 'qualquerInimigo' dispara OS DOIS quando ELE mata (efeitos distintos)
+  E.GODS.tboth = { nome: 'TB', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [
+    { gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'orbGain', n: 1, para: 'Umbra' }] },
+    { gatilho: 'aoCair', quem: 'qualquerInimigo', faz: [{ t: 'orbGain', n: 1, para: 'Chama' }] } ] } };
+  const st = E.novoEstado(['tboth', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 423);
+  const tb = st.lados[0].units[0], aliado = st.lados[0].units[1], a1 = st.lados[1].units[0], a2 = st.lados[1].units[1];
+  const u0 = st.lados[0].orbs.Umbra, c0 = st.lados[0].orbs.Chama;
+  a1.hp = 5; E.bater(st, tb, a1, 15, 'afetado', 'basico');   // TB mata: matador(Umbra) + qualquer(Chama) = DOIS disparos
+  ok(st.lados[0].orbs.Umbra === u0 + 1 && st.lados[0].orbs.Chama === c0 + 1, `TB mata -> dispara os DOIS (Umbra ${u0}->${st.lados[0].orbs.Umbra}, Chama ${c0}->${st.lados[0].orbs.Chama})`);
+  const u1 = st.lados[0].orbs.Umbra, c1 = st.lados[0].orbs.Chama;
+  a2.hp = 5; E.bater(st, aliado, a2, 15, 'afetado', 'basico');   // ALIADO mata: só qualquer(Chama), matador NÃO
+  ok(st.lados[0].orbs.Umbra === u1 && st.lados[0].orbs.Chama === c1 + 1, `aliado mata -> só qualquerInimigo (Umbra fixo ${u1}, Chama ${c1}->${st.lados[0].orbs.Chama})`);
+}
 { // NEZHA (correção §39) — imune a veneno E queimadura, mas NÃO a um DoT fora da lista
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['nezha', 'zeus', 'zeus'], 413);
   const caster = st.lados[0].units[0], nezha = st.lados[1].units[0];
@@ -616,7 +654,7 @@ err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), '
 // gatilho aoCair (sessão 6): quem (sujeito) + faz (efeito no reator)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "quem"');        // falta quem
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
-err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado'/'qualquerInimigo' ainda não abertos (F1.4)
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado' ainda não aberto (F1.4); 'qualquerInimigo' abriu na F1.3 morte 4/4
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
 // gatilho bonusCura (sessão 7): soma à MAGNITUDE da cura; eixo próprio `quandoCura` (3º eixo, separado de quando/contra)
 err(g => g.passiva.fx.push({ gatilho: 'bonusCura' }), 'exige o campo "v"');                                          // falta v
