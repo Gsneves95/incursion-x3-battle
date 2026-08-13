@@ -45,6 +45,7 @@ function validarFx(f, ctx, errs) {
       if (!L.aplica || !V.efeitos.includes(L.aplica.type)) errs.push(`${ctx}: limiar.aplica.type inválido: "${L.aplica && L.aplica.type}"`);
     }
   }
+  if ('executaAbaixoDe' in f && (!Number.isInteger(f.executaAbaixoDe) || f.executaAbaixoDe <= 0)) errs.push(`${ctx}: executaAbaixoDe mal formado (${JSON.stringify(f.executaAbaixoDe)}; inteiro > 0)`);
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

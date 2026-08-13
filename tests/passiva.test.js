@@ -261,6 +261,49 @@ console.log('== Passo 0: aoUsarHabilidade (reativo a uso de slot) + estado.aliad
   ok(orbEv() === 1, `MILAGRE dispara aoUsarHabilidade: 1 evento de orbe do tuh (eventos: ${orbEv()})`);
   delete E.GODS.tuh;
 }
+console.log('== F1.3 morte: execução (caminho PRÓPRIO; fura piso e vidaExtra; dispara aoCair) ==');
+{ // executa se hp <= N; acima do limiar não
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 990);
+  const atk = st.lados[0].units[0], a = st.lados[1].units;
+  a[0].hp = 50;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 40, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [a[0]]);
+  ok(!a[0].vivo, `executa: 50-40=10 <=24 -> eliminado (vivo ${a[0].vivo})`);
+  a[1].hp = 100;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 40, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [a[1]]);
+  ok(a[1].vivo && a[1].hp === 60, `acima do limiar: 100-40=60 >24 -> NÃO executa (hp ${a[1].hp})`);
+}
+{ // execução FURA o piso
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 991);
+  const atk = st.lados[0].units[0], t = st.lados[1].units[0];
+  t.hp = 50; t.efeitos.push({ type: 'pisoVida', dur: 2 });
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 100, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(!t.vivo, `execução FURA o piso: o dano clampa a 1, a execução elimina (vivo ${t.vivo})`);
+}
+{ // execução FURA o vidaExtra
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 992);
+  const atk = st.lados[0].units[0], t = st.lados[1].units[0];
+  t.hp = 20; t.vidaExtra = { hp: 30 };
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 10, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(!t.vivo, `execução FURA o vidaExtra: elimina apesar do vidaExtra (vivo ${t.vivo})`);
+}
+{ // dispara aoCair -> Zeus ganha orbe por execução; queda tagueada
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 993);
+  const zeus = st.lados[0].units[0], t = st.lados[1].units[0];
+  t.hp = 20; const o0 = st.lados[0].orbs.Tempestade;
+  E.aplicarFx(st, zeus, [{ t: 'dmg', v: 10, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(!t.vivo, `zeus executa: alvo eliminado`);
+  ok(st.lados[0].orbs.Tempestade === o0 + 1, `Zeus GANHA orbe por execução (aoCair dispara): ${o0} -> ${st.lados[0].orbs.Tempestade}`);
+  ok(st.log.some(e => e.tipo === 'queda' && e.alvo === t.key && e.execucao === true), `queda tagueada execucao:true`);
+}
+{ // imune a execução (Sun Wukong)
+  E.GODS.timexe = { nome: 'TIE', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'imunidade', a: ['execucao'] }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timexe', 'zeus', 'zeus'], 994);
+  const atk = st.lados[0].units[0], t = st.lados[1].units[0];
+  t.hp = 10;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 5, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(t.vivo, `imune a execução: NÃO é eliminado (vivo ${t.vivo}, hp ${t.hp})`);
+  delete E.GODS.timexe;
+}
 console.log('== F1.3 morte: pisoVida (não cai abaixo de 1 HP) — buff real, furável ==');
 { // clamp a 1 no golpe letal; sem piso morre; ignoraPiso (Shiva) fura
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 980);

@@ -113,7 +113,7 @@ const AOCAIR_QUEM = ['inimigo', 'self'];
 // contrato. NÃO cobre imunidade a MECÂNICA (execução/contágio: viaja com a mecânica) nem CONDICIONAL (yamato/
 // guanyu: família própria). CORINGA 'controle' cobre controle FUTURO por construção — a F1.4 (Pacificar,
 // Torpor, Medo) amplia Jörmungandr e Ísis automaticamente (declarado, não surpresa).
-const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle'];
+const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execucao' = imunidade à MECÂNICA (Sun Wukong) — amplia o §5
 // `faz` (efeito de um gatilho de turno) é PROPRIEDADE da família por-turno: o gatilho EMBRULHA um efeito,
 // não um escalar (como bonusDano/reducao). Reusa o vocabulário de fx, mas SÓ os que não exigem alvo escolhido
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
@@ -204,6 +204,7 @@ const VOCAB = {
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
+    'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -217,6 +218,7 @@ const VOCAB = {
     // RESERVADOS p/ sub-tokens de 0-kit (nome canônico decidido agora, complete-by-construction):
     'habilidadeCopiada',   // efeito:copiar — qual Habilidade foi copiada (Ísis, F1.3)
     'invocacao',           // efeito:invocacao — qual invocação (kits de invocar, futuros)
+    'execucao',            // queda:execucao — a morte foi por execução (Yan Wong reage a isto)
   ],
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
     'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
@@ -663,16 +665,17 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   return v;
 }
 
-function matar(st, atk, alvo) {
-  // PRIMITIVA Vida Extra — revive no ato, antes de a morte se concretizar.
-  if (alvo.vidaExtra) {
+function matar(st, atk, alvo, opts = {}) {
+  // PRIMITIVA Vida Extra — revive no ato, antes de a morte se concretizar. EXECUÇÃO fura vidaExtra
+  // (execução ELIMINA, não é golpe letal; o Sun Wukong precisa de imunidade DEDICADA — §47).
+  if (!opts.execucao && alvo.vidaExtra) {
     const hp = alvo.vidaExtra.hp; alvo.vidaExtra = null;
     alvo.hp = hp; alvo.shield = 0;
     log(st, { tipo: 'revive', alvo: alvo.key, valor: hp });
     return;
   }
   alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
-  log(st, { tipo: 'queda', alvo: alvo.key });
+  log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
   // efeitos (a ordem é a rede: renasce sem os efeitos que tinha ao cair). A unidade nunca sai do array.
   { const g = kitDe(st, alvo); const p = g && g.passiva;
@@ -1112,6 +1115,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         const base = danoBase(st, u, t, e, l);
         const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a) });
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2));
+        // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
+        // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.
+        if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao')) matar(st, u, t, { execucao: true });
       }
       else if (e.t === 'heal') curar(st, t, e.v);
       else if (e.t === 'dot') aplicarDot(st, t, e.nome, e.v, e.dur);
