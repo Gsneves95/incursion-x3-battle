@@ -57,7 +57,10 @@ const DEFESA = {
   fx: [{ t: 'apply', eff: { type: 'invulneravel', dur: 1 }, escopo: 'self' }],
 };
 
-const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar'];
+const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar', 'pacificado'];
+// pacificado (Oxalá): a unidade AGE mas causa 0 de dano (direto e DoT que aplicaria no turno). NÃO trava slot nem a
+// ação (fora de SLOTS_TRAVADOS e de podeAgir); zera dano na fonte (bater v→0; dot pulado). Cura e DoT já ATIVO seguem
+// (o tick não é a unidade agindo). Em CONTROLES → controlImmune o barra e existe 'imune a Pacificar' por etiqueta (§58).
 // slot-lock NOMEADO (F1.4) — controles que travam um CONJUNTO fixo de slots. Cada NOME é um `type` próprio, e a
 // ETIQUETA (o type) é o que a imunidade mira: imune a Selado ≠ imune a Agarrar, mesmo os dois travando slots (§53).
 // Vocabulário FECHADO: {selado, agarrar, medo}. selado≡Silenciado≡Enraizado = {Hab,Mil} (um nome canônico; §53).
@@ -650,7 +653,8 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       return a1 + a2;
     }
   }
-  const { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot, golpe);
+  let { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot, golpe);
+  if (atk && ef(atk, 'pacificado')) { v = 0; absorvido = 0; }   // Pacificar (Oxalá): o pacificado AGE mas causa 0 de dano
   const pisoAtk = !ignoraPiso && ef(alvo, 'pisoVida');   // 'não cai abaixo de 1 HP' — a menos que o golpe fure (Shiva)
   alvo.hp = Math.max(pisoAtk ? 1 : 0, alvo.hp - v);
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
@@ -1205,7 +1209,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao')) matar(st, u, t, { execucao: true });
       }
       else if (e.t === 'heal') curar(st, t, e.v);
-      else if (e.t === 'dot') aplicarDot(st, t, e.nome, e.v, e.dur, u.uid);   // origem = o lançador (aoAgirSobEfeito lê para saber o dono do gatilho)
+      else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid); }   // origem = o lançador; Pacificar zera o DoT que o pacificado aplicaria neste turno (é dano que ele causaria)
       else if (e.t === 'apply') {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });

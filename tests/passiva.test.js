@@ -709,6 +709,51 @@ console.log('== aoAgirSobEfeito: dono do gatilho = quem APLICOU (origem); dispar
   console.log('  dono caído → não reage');
 }
 
+// Pacificar (F1.4) — a unidade AGE mas causa 0 de dano (direto + DoT que aplicaria). Cura e DoT ATIVO seguem. Controle nomeado.
+console.log('== Pacificar: age mas 0 de dano (direto + DoT aplicado); cura intacta; DoT ativo corre; imune por etiqueta ==');
+{ // 1. dano direto → 0 ; 2. DoT que ele aplicaria no turno → não cola ; cura → intacta (não é "dois controles")
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 590);
+  const pac = st.lados[0].units[0], inimigo = st.lados[1].units[0];
+  pac.efeitos.push({ type: 'pacificado', dur: 1 });
+  const h0 = inimigo.hp;
+  E.aplicarFx(st, pac, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'habilidade' }, [inimigo]);
+  ok(inimigo.hp === h0, `1. dano DIRETO do pacificado = 0 (${h0}→${inimigo.hp})`);
+  E.aplicarFx(st, pac, [{ t: 'dot', nome: 'veneno', v: 8, dur: 2 }], { alvo: 'inimigo', slot: 'habilidade' }, [inimigo]);
+  ok(!inimigo.dots.some(d => d.nome === 'veneno'), '2. DoT que o pacificado aplicaria no turno = não cola (é dano que ele causaria)');
+  pac.hp = 50;
+  E.aplicarFx(st, pac, [{ t: 'heal', v: 15, escopo: 'self' }], { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(pac.hp === 65, `CURA do pacificado INTACTA (50→${pac.hp}) — zera dano, não cura (senão eram dois controles)`);
+  console.log('  1) dano direto 0 · 2) DoT aplicado não cola · cura segue');
+}
+{ // 3. DoT JÁ ATIVO segue correndo — o tick não é a unidade agindo
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 591);
+  const pac = st.lados[0].units[0], vitima = st.lados[1].units[0];
+  vitima.dots.push({ nome: 'queimadura', v: 8, dur: 3 });   // DoT ATIVO (aplicado antes do Pacificar)
+  pac.efeitos.push({ type: 'pacificado', dur: 5 });
+  const h0 = vitima.hp;
+  E.fimTurno(st);   // encerra o turno do lado 0 → começa o do lado 1: o DoT ativo tica
+  ok(vitima.hp === h0 - 8, `3. DoT ATIVO segue correndo apesar do Pacificar (${h0}→${vitima.hp})`);
+  console.log('  3) DoT ativo continua (o tick não é ação do pacificado)');
+}
+{ // FORMA: pacificado AGE (não é atordoamento) — só o dano é 0
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 592);
+  const pac = st.lados[0].units[0]; st.lados[0].orbs['Tempestade'] = 9;
+  pac.efeitos.push({ type: 'pacificado', dur: 1 });
+  ok(E.podeAgir(pac), 'pacificado PODE agir (não trava a ação — só zera o dano)');
+  ok(E.acoesDe(st, pac).find(a => a.slot === 'basico').disponivel, 'o Básico do pacificado segue disponível');
+  console.log('  pacificado age normalmente (nenhum slot travado)');
+}
+{ // IMUNIDADE por etiqueta própria (controle nomeado) + coringa controle
+  E.GODS.timP = imuneGod(['pacificado']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timP', 'zeus', 'zeus'], 593);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0], outro = st.lados[1].units[1];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'pacificado', dur: 2 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'pacificado'), 'imune a Pacificar (etiqueta própria) → não cola');
+  ok(!!E.ef(outro, 'pacificado'), 'ESCOPO: o outro NÃO é imune → Pacificar cola');
+  delete E.GODS.timP;
+  console.log('  imune a Pacificar existe como etiqueta (controle nomeado)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
