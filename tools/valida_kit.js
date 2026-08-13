@@ -56,6 +56,7 @@ function validarQuando(q, ctx, errs) {
   const chaves = Object.keys(q);
   if (chaves.length !== 1) errs.push(`${ctx}: quando deve ter exatamente 1 condição (tem ${chaves.length})`);
   for (const k of chaves) {
+    if (k === 'fase') { errs.push(`${ctx}: "fase" MIGROU para o campo estado (é estado-de-campo, não do ataque) — use estado:{fase}`); continue; }
     const def = V.condicoesDef[k];
     if (!def) { errs.push(`${ctx}: condição desconhecida "${k}" (válidas: ${V.condicoes.join(', ')})`); continue; }
     if (def.pendente) { errs.push(`${ctx}: condição "${k}" reservada — ${def.pendente}`); continue; }
@@ -112,6 +113,32 @@ function validarFaz(faz, ctx, errs) {
   });
 }
 
+// Valida o campo `estado` (F1.2.5 s3) — CAMPO UNIVERSAL de condição de estado, composável com o eixo do gatilho.
+// Conjunto e validação vêm de V.estadoCondDef. `pendente` = precisa de rastreio (primeiroPorTurno): recusa em voz alta.
+function validarEstado(e, ctx, errs) {
+  if (!e || typeof e !== 'object' || Array.isArray(e)) { errs.push(`${ctx}: estado não é objeto`); return; }
+  const chaves = Object.keys(e);
+  if (chaves.length !== 1) errs.push(`${ctx}: estado deve ter exatamente 1 condição (tem ${chaves.length})`);
+  for (const k of chaves) {
+    const def = V.estadoCondDef[k];
+    if (!def) { errs.push(`${ctx}: condição de estado desconhecida "${k}" (válidas: ${V.estadoCond.join(', ')})`); continue; }
+    if (def.pendente) { errs.push(`${ctx}: condição de estado "${k}" reservada — ${def.pendente}`); continue; }
+    const val = e[k];
+    if (def.sub) { if (!def.sub.includes(val)) errs.push(`${ctx}: valor "${val}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`); }
+    else if (def.bool) { if (val !== true) errs.push(`${ctx}: condição "${k}" espera true`); }
+    else if (def.count) {
+      if (!val || typeof val !== 'object' || !['min', 'max', 'exato'].includes(val.op) || typeof val.n !== 'number' || !Number.isInteger(val.n)) errs.push(`${ctx}: ${k} espera {op:min|max|exato, n:inteiro} (recebeu ${JSON.stringify(val)})`);
+    }
+    else if (def.contadorCmp) {
+      if (!val || typeof val !== 'object' || typeof val.nome !== 'string' || !V.contadores.includes(val.nome) || !['min', 'max', 'exato'].includes(val.op) || typeof val.n !== 'number') errs.push(`${ctx}: contador espera {nome∈(${V.contadores.join('|')}), op:min|max|exato, n:inteiro} (recebeu ${JSON.stringify(val)})`);
+    }
+    else if (def.hp) {
+      if (!val || typeof val !== 'object' || !['cheio', 'abaixo', 'acima'].includes(val.op)) errs.push(`${ctx}: hpProprio.op inválido (cheio|abaixo|acima)`);
+      else if ((val.op === 'abaixo' || val.op === 'acima') && typeof val.v !== 'number') errs.push(`${ctx}: hpProprio.v ausente para op "${val.op}"`);
+    }
+  }
+}
+
 // Valida a PASSIVA declarativa (F1.2). Prosa (nome/desc) é livre; se houver fx, ele tem forma fechada.
 function validarPassiva(p, ctx, errs) {
   if (!p || typeof p !== 'object') { errs.push(`${ctx}: passiva não é objeto`); return; }
@@ -124,13 +151,14 @@ function validarPassiva(p, ctx, errs) {
     const def = V.gatilhosPassivaDef[f.gatilho];
     if (!def) { errs.push(`${c}: gatilho inválido "${f.gatilho}" (válidos: ${V.gatilhosPassiva.join(', ')})`); return; }
     // campos permitidos/obrigatórios são POR GATILHO — um campo de outro gatilho é recusado
-    const permitidos = new Set(['gatilho', ...def.campos]);
+    const permitidos = new Set(['gatilho', 'estado', ...def.campos]);   // `estado` é CAMPO universal (F1.2.5 s3): qualquer gatilho o aceita
     for (const k of Object.keys(f)) if (!permitidos.has(k)) errs.push(`${c}: campo "${k}" não pertence ao gatilho "${f.gatilho}"`);
     for (const req of def.obrig) if (!(req in f)) errs.push(`${c}: gatilho "${f.gatilho}" exige o campo "${req}"`);
     // validações de valor (só se o campo pertence ao gatilho)
     if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v <= 0)) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro > 0)`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
+    if ('estado' in f) validarEstado(f.estado, `${c}.estado`, errs);
     if ('quandoCura' in f) validarQuandoCura(f.quandoCura, `${c}.quandoCura`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);

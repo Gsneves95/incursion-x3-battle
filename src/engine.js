@@ -144,7 +144,6 @@ const CONDICOES = {
   alvoElem:        { sub: ELEMS },                                 // alvo é do elemento
   alvoHp:          { hp: true },                                   // {op:'cheio'|'abaixo'|'acima', v?}
   atacanteElem:    { sub: ELEMS },                                 // quem ataca é do elemento (escopo aliados)
-  fase:            { sub: ['Dia', 'Noite'] },                      // estado global Dia/Noite
   alvoMarca:       { sub: MARCAS, pendente: 'marca ofensiva (Olho) ainda não existe — vem com a vulnerabilidade' },
   alvoCuradoAntes: { bool: true, pendente: 'o motor ainda não rastreia cura-no-turno-anterior' },
 };
@@ -155,6 +154,18 @@ const CONDICOES = {
 // curador=Nefertem, tipo=regeneração=Cernunnos/Chaac) entram por deus. Ausência = toda cura. Ver docs/passivas.md.
 const CONDICOES_CURA = {
   inimigoTem: { sub: DOTS },   // existe inimigo VIVO (do lado curado) com a tag DoT (brigid: 'queimadura'); cresce p/ debuff/controle por deus
+};
+// `estado` (F1.2.5 s3) — CAMPO UNIVERSAL: qualquer gatilho compõe (AND) o seu eixo (quando/contra/quandoCura)
+// com uma condição de ESTADO DO CAMPO, lida contra o DONO do fx. NÃO é 4º eixo (irmão dos três, um-por-fx) —
+// é ORTOGONAL: um fx pode ter `contra:{alcance}` E `estado:{primeiroPorTurno}` (bastet). Decidido pelos dados
+// (bastet/saci/mnevis precisam de golpe E estado juntos). Só LEITURA — nada de rastreio por-turno. Ver §45.
+const ESTADO_COND = {
+  paridade:     { sub: ['par', 'impar'] },   // turno % 2 (Hel)
+  fase:         { sub: ['Dia', 'Noite'] },    // st.fase (Amaterasu/Boto/Lugh/Itzamná) — MIGROU do `quando`, é campo, não ataque
+  aliadosVivos: { count: true },              // {op:'min'|'max'|'exato', n} — vivos no lado do dono (Guan Yu '3 vivos')
+  contador:     { contadorCmp: true },        // {nome, op, n} — contador do dono cruza o limiar (Kitsune '3 Caudas')
+  hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
+  primeiroPorTurno: { bool: true, pendente: 'RASTREIO por-turno (não leitura). Vem com esquiva/intercepta — bastet/saci/mnevis; ver §45' },
 };
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
@@ -177,6 +188,8 @@ const VOCAB = {
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
+  estadoCond: Object.keys(ESTADO_COND),          // chaves válidas em fx.estado (CAMPO universal — F1.2.5 s3)
+  estadoCondDef: ESTADO_COND,                     // como validar cada condição de estado (valida_kit lê)
   condicoesCura: Object.keys(CONDICOES_CURA),    // chaves válidas em bonusCura.quandoCura (eixo da CURA, 3º eixo)
   condicoesCuraDef: CONDICOES_CURA,               // como validar cada chave de quandoCura (valida_kit lê)
   slotsAtaque: SLOTS_ATAQUE,                       // slots que atacam (basico/habilidade/milagre) — usado em aCadaN.custoGratis.slot
@@ -430,6 +443,17 @@ function bonusDano(st, atk) {
 // PASSIVA declarativa (F1.2) — avalia UMA condição `quando` (objeto de 1 chave). Ausente = sempre.
 // Só lê estado; conjunto FECHADO (CONDICOES). alvoMarca/alvoCuradoAntes são `pendente` no schema
 // (valida_kit os barra), então nunca chegam aqui com dado válido — caem no `return false`.
+function cmpLimiar(val, spec) { if (spec.op === 'min') return val >= spec.n; if (spec.op === 'max') return val <= spec.n; if (spec.op === 'exato') return val === spec.n; return false; }
+// `estado` — condição de CAMPO, lida contra o DONO do fx (u). Universal: composto (AND) com o eixo de cada gatilho.
+function estadoOK(e, u, st) {
+  if (!e) return true;
+  if ('paridade' in e) return (st.turno % 2 === 0 ? 'par' : 'impar') === e.paridade;
+  if ('fase' in e) return st.fase === e.fase;
+  if ('aliadosVivos' in e) return cmpLimiar(st.lados[u.lado].units.filter(x => x.vivo).length, e.aliadosVivos);
+  if ('contador' in e) return cmpLimiar(getContador(u, e.contador.nome), e.contador);
+  if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
+  return false;   // primeiroPorTurno é `pendente` (valida_kit barra); nunca chega aqui com dado válido
+}
 function condOK(q, atk, alvo, st) {
   if (!q) return true;
   if ('alvoDebuff' in q) {
@@ -453,7 +477,6 @@ function condOK(q, atk, alvo, st) {
     return false;
   }
   if ('atacanteElem' in q) return atk.elem === q.atacanteElem;
-  if ('fase' in q) return st.fase === q.fase;
   return false;
 }
 
@@ -469,6 +492,7 @@ function bonusDanoDeclarativo(st, atk, alvo) {
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusDano') continue;
       if ((f.escopo || 'self') === 'self' && u !== atk) continue;
+      if (f.estado && !estadoOK(f.estado, u, st)) continue;   // compõe (AND) com o `quando`
       if (condOK(f.quando, atk, alvo, st)) b += f.v;
     }
   }
@@ -495,6 +519,7 @@ function bonusCuraDeclarativo(st, u) {
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusCura') continue;
+      if (f.estado && !estadoOK(f.estado, dono, st)) continue;   // compõe com o `quandoCura`
       if (condCuraOK(f.quandoCura, u, st)) b += f.v;
     }
   }
@@ -533,6 +558,7 @@ function reducaoDeclarativa(st, alvo, golpe) {
       if (f.gatilho !== 'reducao') continue;
       if ((f.escopo || 'self') === 'self' && u !== alvo) continue;   // self protege só o dono
       if (f.contra && !contraCasou(f.contra, golpe)) continue;        // condição do golpe que chega
+      if (f.estado && !estadoOK(f.estado, u, st)) continue;           // compõe (AND) com o `contra` — a garantia do campo universal
       r = Math.max(r, f.v);
     }
   }
@@ -647,14 +673,14 @@ function matar(st, atk, alvo) {
   // efeitos (a ordem é a rede: renasce sem os efeitos que tinha ao cair). A unidade nunca sai do array.
   { const g = kitDe(st, alvo); const p = g && g.passiva;
     if (p && Array.isArray(p.fx)) for (const f of p.fx) {
-      if (f.gatilho === 'aoCair' && f.quem === 'self') rodarFaz(st, alvo, f.faz);
+      if (f.gatilho === 'aoCair' && f.quem === 'self' && (!f.estado || estadoOK(f.estado, alvo, st))) rodarFaz(st, alvo, f.faz);
     } }
   // aoCair quem:'inimigo' — matador-bound: o MATADOR (atk vivo) reagiu à morte de um inimigo. Mesma posição do
   // hardcode antigo do zeus. Roda o `faz` no reator (o matador).
   if (atk && atk.vivo) {
     const g = kitDe(st, atk); const p = g && g.passiva;
     if (p && Array.isArray(p.fx)) for (const f of p.fx) {
-      if (f.gatilho === 'aoCair' && f.quem === 'inimigo') rodarFaz(st, atk, f.faz);
+      if (f.gatilho === 'aoCair' && f.quem === 'inimigo' && (!f.estado || estadoOK(f.estado, atk, st))) rodarFaz(st, atk, f.faz);
     }
   }
   checarFim(st);
@@ -694,7 +720,7 @@ function curar(st, u, v) {
     if (!dono.vivo) continue;
     const g = kitDe(st, dono); const p = g && g.passiva;
     if (!p || !Array.isArray(p.fx)) continue;
-    for (const f of p.fx) if (f.gatilho === 'aoCurar') rodarFaz(st, u, f.faz, dono.key);
+    for (const f of p.fx) if (f.gatilho === 'aoCurar' && (!f.estado || estadoOK(f.estado, dono, st))) rodarFaz(st, u, f.faz, dono.key);
   }
 }
 
@@ -885,6 +911,7 @@ function iniciarTurno(st) {
     const g = kitDe(st, u); const p = g && g.passiva;
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) {
+      if (f.estado && !estadoOK(f.estado, u, st)) continue;   // estado compõe com o gatilho de turno
       if (f.gatilho === 'porTurno') rodarFaz(st, u, f.faz);
       else if (f.gatilho === 'abertura' && primeiro) rodarFaz(st, u, f.faz);
     }
