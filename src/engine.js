@@ -57,7 +57,13 @@ const DEFESA = {
   fx: [{ t: 'apply', eff: { type: 'invulneravel', dur: 1 }, escopo: 'self' }],
 };
 
-const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado'];
+const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar'];
+// slot-lock NOMEADO (F1.4) — controles que travam um CONJUNTO fixo de slots. Cada NOME é um `type` próprio, e a
+// ETIQUETA (o type) é o que a imunidade mira: imune a Selado ≠ imune a Agarrar, mesmo os dois travando slots (§53).
+// Vocabulário FECHADO: {selado, agarrar, medo}. selado≡Silenciado≡Enraizado = {Hab,Mil} (um nome canônico; §53).
+// medo = slot-lock{Milagre}+dmgDown (bundle reservado, ainda não construído). silenceClass fica FORA — trava por
+// CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
+const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
@@ -1019,8 +1025,9 @@ function acoesDe(st, u) {
     else if (a.slot !== 'defesa') {
       const sil = ef(u, 'silenceClass');
       if (sil && sil.cls === classeDe(st, u, a) && a.slot !== 'basico') motivo = 'silenciado';
-      const lk = ef(u, 'lockSkill');
-      if (lk && lk.slot === a.slot) motivo = 'travada';
+      // slot-lock: NOMEADO (SLOTS_TRAVADOS, conjunto fixo por type) OU genérico (lockSkill.slot único, legado).
+      // Varre TODOS os efeitos — a unidade pode carregar mais de uma trava (ex.: Selado {Hab,Mil} + um lockSkill).
+      else if (u.efeitos.some(e => (SLOTS_TRAVADOS[e.type] && SLOTS_TRAVADOS[e.type].includes(a.slot)) || (e.type === 'lockSkill' && e.slot === a.slot))) motivo = 'travada';
     }
     return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
              passos: passosDe(u, a), disponivel: !motivo, motivo };

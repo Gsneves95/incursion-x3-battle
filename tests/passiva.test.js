@@ -557,6 +557,50 @@ const apToInimigos = (st, caster, fx) => E.aplicarFx(st, caster, fx, { alvo: 'to
   delete E.GODS.timune;
 }
 
+// SLOT-LOCK NOMEADO (F1.4) — controle que trava um CONJUNTO de slots; a ETIQUETA (o type) é o que a imunidade mira.
+console.log('== slot-lock nomeado: Selado {Hab,Mil}, Agarrar {Hab}; imunidade por ETIQUETA (§53) ==');
+{ // SELADO trava Hab+Mil, poupa Básico e Defesa ("só Básico")
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['ogum', 'ogum', 'ogum'], 560);
+  const u = st.lados[0].units[0]; st.lados[0].orbs['Tempestade'] = 9;
+  u.efeitos.push({ type: 'selado', dur: 2 });
+  const acs = E.acoesDe(st, u);
+  ok(acs.find(a => a.slot === 'basico').disponivel, 'Selado poupa o Básico');
+  ok(acs.find(a => a.slot === 'defesa').disponivel, 'Selado poupa a Defesa');
+  ok(acs.find(a => a.slot === 'habilidade').motivo === 'travada', 'Selado trava a Habilidade');
+  ok(acs.find(a => a.slot === 'milagre').motivo === 'travada', 'Selado trava o Milagre');
+  console.log('  Selado: só Básico (Hab+Mil travados; Básico/Defesa livres)');
+}
+{ // AGARRAR trava só Hab; Milagre segue — conjunto DIFERENTE do Selado
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['ogum', 'ogum', 'ogum'], 561);
+  const u = st.lados[0].units[0]; st.lados[0].orbs['Tempestade'] = 9;
+  u.efeitos.push({ type: 'agarrar', dur: 1 });
+  const acs = E.acoesDe(st, u);
+  ok(acs.find(a => a.slot === 'habilidade').motivo === 'travada', 'Agarrar trava a Habilidade');
+  ok(acs.find(a => a.slot === 'milagre').disponivel, 'Agarrar NÃO trava o Milagre (≠ Selado)');
+  console.log('  Agarrar: só Hab travada (Milagre livre)');
+}
+{ // IMUNIDADE POR ETIQUETA: imune a Agarrar (fenrir/kraken) NÃO protege de Selado
+  E.GODS.timAg = imuneGod(['agarrar']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timAg', 'zeus', 'zeus'], 562);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'agarrar', dur: 1 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'agarrar'), 'imune a Agarrar: o Agarrar NÃO cola');
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'selado', dur: 1 }, escopo: 'todosInimigos' }]);
+  ok(!!E.ef(imune, 'selado'), 'MAS imune a Agarrar NÃO protege de Selado — etiqueta distinta, Selado cola');
+  delete E.GODS.timAg;
+  console.log('  imune a Agarrar ⇏ imune a Selado (a etiqueta é o que a imunidade mira)');
+}
+{ // coringa 'controle' cobre AMBOS os slot-locks nomeados
+  E.GODS.timC = imuneGod(['controle']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timC', 'zeus', 'zeus'], 563);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'selado', dur: 1 }, escopo: 'todosInimigos' }]);
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'agarrar', dur: 1 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'selado') && !E.ef(imune, 'agarrar'), 'coringa "controle" bloqueia Selado E Agarrar');
+  delete E.GODS.timC;
+  console.log('  imune a controle (coringa) cobre os dois slot-locks nomeados');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
