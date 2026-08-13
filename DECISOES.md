@@ -1391,6 +1391,36 @@ contar "falta 1 condição" quando faltam 3 mecanismos.
 
 ---
 
+## 46. Sequenciamento: fase de EXTENSÃO por flip, fase de MECANISMO por BLOCO (F1.2.5 → F1.3+)
+
+A F1.2.5 sequenciou por DESTRAVE (flip): as 3 extensões flipavam deuses baratos, e a curva do VERDE subia. Na
+fase de MECANISMOS o critério INVERTE, e a re-triagem prova por quê: os topos do ranking têm **flip ZERO** —
+execucao-hp trava 7 e não deixa NENHUM deus jogável sozinho, porque os deuses de morte são multi-gancho. Sequenciar
+por flip aqui não produziria deus jogável nenhum até o fim do bloco. **Regra: fase de EXTENSÃO (gancho é uma chave
+a mais num gatilho existente) sequencia-se por flip; fase de MECANISMO (gancho é subsistema novo) sequencia-se por
+BLOCO — F1.3 morte inteira, F1.4 controle inteira — e os flips chegam no FIM do bloco.** E o topo do ranking (bonusDano-
+escala, trava 10) é o mais provável BALDE (4 fontes de N): sequenciar pelo 10 cru repetiria as 3 projeções erradas.
+
+**Passo 0 (os flips baratos que sobraram antes dos blocos) — a varredura reduziu de 4 para 2 fecháveis sem dúvida:**
+- **aoUsarHabilidade** — FECHÁVEL. bragi/brahma/shiva, todos "quando um aliado usa um Milagre", payload = faz existente. Feito.
+- **sinergia-nomeada** — CONFIRMADO que NÃO é gatilho, é CONDIÇÃO: "com Fulano no time" é um read de roster (`estado.aliadoPresente`)
+  que compõe com efeitos existentes. Dissolveu do ranking. Feito (odin "2+ Nórdicos" é variante faccao-count, futura).
+- **aoSerAtingido — DÚVIDA (separado).** medusa "quem a atinge com Física recebe Veneno" aplica um DEBUFF no ATACANTE —
+  fura a garantia faz-BUFF (§F1.2.5 s1). E é mini-balde: medusa (self-atingido, debuff no atacante) ≠ xango (aliado-atingido,
+  contador em si). Dois eixos de variação. Não forçar; entra com a decisão sobre "hook reativo pode aplicar debuff no sujeito".
+- **bonusCura-cond-nova — DÚVIDA (separado).** Precisa de RASTREIO novo, não de chave: nefertem (facção do CURADOR — `curar`
+  não sabe quem curou) e cernunnos/chaac (tipo=regeneração — `curar` não sabe a FONTE do heal). Duas formas, ambas exigindo
+  passar contexto novo ao `curar`. Não é "mais uma chave de quandoCura".
+- **marca-vulnerabilidade — DÚVIDA (separado).** O "5" é EMARANHADO: mistura o EFEITO de-receber-mais (aquiles sofre +10,
+  durga/erinias aplicam via habilidade) com bonusDano-OFENSIVO-vs-marcado (horus "+8 contra marcados" = precisa do `alvoMarca`
+  reservado, coisa diferente). Não é um mecanismo só — varrer separando o efeito-vulnerável do alvoMarca antes de fechar.
+
+Lição: o Passo 0 do dono tinha 3 de 4 itens com dúvida escondida atrás do NOME do gancho — a mesma armadilha do balde,
+mas na direção do "parece extensão barata e é mecanismo". O critério "família varrida + vocabulário fechável sem dúvida"
+pegou os três. Só flipar quando fecha sem dúvida.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
