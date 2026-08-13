@@ -1073,13 +1073,22 @@ minha recomendação foi mantida, registro curto; onde o dono a VIROU, registro 
 o repo ENTRE o teste verde e o commit, apagando edições NÃO-commitadas do disco; o commit seguinte capturou o
 motor estale (lixo). O §38 recupera trabalho COMMITADO, não edição no disco. Então a ordem inverte — commitar
 ANTES de testar o pesado:
-1. Commite cada bloco de edição assim que estiver COERENTE, sem esperar a suíte lenta.
+1. Commite cada bloco na MENOR UNIDADE QUE MANTÉM A SUÍTE VERDE (não a menor que compila), sem esperar a suíte
+   lenta. **Quando uma mudança de motor EXIGE uma migração de teste para a suíte passar (ex.: `fase`→`estado`
+   quebrou o teste que usava `quando:{fase}`), as duas vão no MESMO commit** — separá-las produz vermelho
+   garantido no histórico. O bloco continua pequeno o bastante para proteger do revert.
 2. Verifique `git rev-parse --short HEAD` contra origin IMEDIATAMENTE antes de cada commit (se divergiu, `reset --hard origin` e reaplique).
 3. A suíte completa roda DEPOIS, sobre o COMMIT; se apontar algo, corrige em commit novo (fix-forward).
 4. NUNCA deixe edição no disco durante espera longa em background (é quando o revert bate).
 A rede de testes continua sendo a garantia — só passa a rodar sobre commit em vez de sobre disco. Commits
 ruidosos são baratos; refazer edição inteira não é, e commit pequeno é mais fácil de revisar/reverter. (Investigar
 por que o container reprovisiona: decisão do dono — é ambiente, provável fora de alcance, custo alto p/ ganho incerto.)
+
+**LIÇÃO (o furo veio de um adjetivo impreciso do dono, achado uma sessão depois):** a 1ª versão dizia "bloco
+COERENTE", e "coerente" não é verificável — engine+validador sem o teste migrado É coerente como feature, mas
+quebra a suíte. "Verde" é verificável; "coerente" é interpretação. **Critério de procedimento tem de ser TESTÁVEL,
+senão vira interpretação e cada um decide um limite diferente.** (E: deixar o commit vermelho transitório no
+histórico e AVISAR, em vez de reescrever para esconder — histórico honesto vale mais que histórico bonito.)
 
 Quando a passiva de um deus vira dado, a suíte que o cobre deixa de provar "o hardcode funciona" e passa a
 provar "o dado REPRODUZ o hardcode" — é a rede de equivalência. Mas a regra "não altere as suítes dos 12"
