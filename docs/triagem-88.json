@@ -1,8 +1,8 @@
 {
  "dist": {
-  "VERDE": 20,
-  "AMARELO": 39,
-  "VERMELHO": 29
+  "VERDE": 23,
+  "AMARELO": 41,
+  "VERMELHO": 24
  },
  "gods": [
   {
@@ -11,6 +11,14 @@
     "antirevive"
    ],
    "nota": "Passiva on-kill nao-matador (aoCair-qualquerInimigo) e Podridao bloqueia revive (antirevive); reduzMaxHp/porContador/selfHp/noHeal expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "anubis",
+   "ganchos": [
+    "antirevive"
+   ],
+   "nota": "limiar de Atadura->Selado(trava Hab+Mil) e Atadura bloqueia revive. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -62,11 +70,27 @@
    "cor": "AMARELO"
   },
   {
+   "key": "curupira",
+   "ganchos": [
+    "redirecionar"
+   ],
+   "nota": "Hab forca retarget de golpes inimigos (redirecionar); Milagre trava Hab+Mil juntas (selado-so-basico); reducao/bonusDano-elem expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "demeter",
    "ganchos": [
     "seletor"
    ],
    "nota": "regen/revive-cond/heal expressiveis; passiva cura 'o aliado mais ferido' exige seletor (faz-heal so tem self|time).",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "dionisio",
+   "ganchos": [
+    "nega-orbe?"
+   ],
+   "nota": "Silenciado(so Basico)=selado-so-basico; dominado-area e roubo-orbe ok; passiva 'controlados nao geram orbes' e supressao de geracao de orbe, inexistente. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -78,27 +102,11 @@
    "cor": "AMARELO"
   },
   {
-   "key": "fenrir",
-   "ganchos": [
-    "agarrar"
-   ],
-   "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "guanyu",
    "ganchos": [
     "medo"
    ],
    "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "hades",
-   "ganchos": [
-    "selado-so-basico"
-   ],
-   "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
    "cor": "AMARELO"
   },
   {
@@ -142,6 +150,14 @@
    "cor": "AMARELO"
   },
   {
+   "key": "iara",
+   "ganchos": [
+    "execucao-hp"
+   ],
+   "nota": "Hab Silencia so-Basico (selado-so-basico); Milagre elimina Encharcados com HP<=20 (execucao-hp); taunt/apply/contra-alcance expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "isis",
    "ganchos": [
     "copiar-ultima"
@@ -155,14 +171,6 @@
     "amplifica-dot?"
    ],
    "nota": "'todas as Queimaduras no campo causam +4' amplifica um tipo de DoT no campo inteiro (não é bonusDano do próprio); auto-dano por turno cobre-se por selfHp.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "kraken",
-   "ganchos": [
-    "agarrar"
-   ],
-   "nota": "lockSkill, area-puro, reducao/imunidade-taunt ok; 'imune a Agarrar' depende do controle novo agarrar existir como tag.",
    "cor": "AMARELO"
   },
   {
@@ -294,6 +302,14 @@
    "cor": "AMARELO"
   },
   {
+   "key": "tsukuyomi",
+   "ganchos": [
+    "alvo-curado-recente?"
+   ],
+   "nota": "Silencia=so-Basico durante Noite; +dano vs quem foi curado no turno anterior é condicao temporal inexistente. | §53: slot-lock nomeado (selado/agarrar) construído.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "vishnu",
    "ganchos": [
     "modo-alterna"
@@ -372,9 +388,21 @@
    "cor": "VERDE"
   },
   {
+   "key": "fenrir",
+   "ganchos": [],
+   "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir. | §53: slot-lock nomeado (selado/agarrar) construído.",
+   "cor": "VERDE"
+  },
+  {
    "key": "freyja",
    "ganchos": [],
    "nota": "heal+dmgUp em aliados, ramo revive-ou-buff via estado(aliadosVivos), passiva aoCurar+apply — tudo expressivel.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "hades",
+   "ganchos": [],
+   "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte). | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "VERDE"
   },
   {
@@ -426,6 +454,12 @@
    "cor": "VERDE"
   },
   {
+   "key": "kraken",
+   "ganchos": [],
+   "nota": "lockSkill, area-puro, reducao/imunidade-taunt ok; 'imune a Agarrar' depende do controle novo agarrar existir como tag. | §53: slot-lock nomeado (selado/agarrar) construído.",
+   "cor": "VERDE"
+  },
+  {
    "key": "oxum",
    "ganchos": [],
    "nota": "VERDE: aoCurar{faz apply dmgUp} cobre 'curados causam +5'; heal/regen/orbGain todos existentes.",
@@ -445,15 +479,6 @@
     "execucao-status"
    ],
    "nota": "Devorar elimina por HP<=25 ou Atordoado/Selado; on-kill aplica naoRevive.",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "anubis",
-   "ganchos": [
-    "antirevive",
-    "selado-so-basico"
-   ],
-   "nota": "limiar de Atadura->Selado(trava Hab+Mil) e Atadura bloqueia revive.",
    "cor": "VERMELHO"
   },
   {
@@ -494,30 +519,12 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "curupira",
-   "ganchos": [
-    "redirecionar",
-    "selado-so-basico"
-   ],
-   "nota": "Hab forca retarget de golpes inimigos (redirecionar); Milagre trava Hab+Mil juntas (selado-so-basico); reducao/bonusDano-elem expressiveis.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "dagda",
    "ganchos": [
     "iniciativa",
     "suspende-buff?"
    ],
    "nota": "Milagre time age primeiro (iniciativa) e buffs inimigos suspensos-temporario (novo); passiva piso-1hp condicional; regen/bonusCura-flat/heal-a-cada-3 expressiveis.",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "dionisio",
-   "ganchos": [
-    "nega-orbe?",
-    "selado-so-basico"
-   ],
-   "nota": "Silenciado(so Basico)=selado-so-basico; dominado-area e roubo-orbe ok; passiva 'controlados nao geram orbes' e supressao de geracao de orbe, inexistente.",
    "cor": "VERMELHO"
   },
   {
@@ -564,15 +571,6 @@
     "multi-hit-distribuido"
    ],
    "nota": "dano condicional por elemento=quando e remover DIA=fase; Nove Flechas reparte 9 golpes à escolha e a passiva 'Ignora Inalvejável' fura invulnerabilidade.",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "iara",
-   "ganchos": [
-    "execucao-hp",
-    "selado-so-basico"
-   ],
-   "nota": "Hab Silencia so-Basico (selado-so-basico); Milagre elimina Encharcados com HP<=20 (execucao-hp); taunt/apply/contra-alcance expressiveis.",
    "cor": "VERMELHO"
   },
   {
@@ -688,15 +686,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "tsukuyomi",
-   "ganchos": [
-    "alvo-curado-recente?",
-    "selado-so-basico"
-   ],
-   "nota": "Silencia=so-Basico durante Noite; +dano vs quem foi curado no turno anterior é condicao temporal inexistente.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "yanwong",
    "ganchos": [
     "execucao-temporizada",
@@ -714,10 +703,10 @@
    "stage": 6
   },
   {
-   "gancho": "selado-so-basico",
-   "trava": 6,
-   "flip": 1,
-   "stage": 5
+   "gancho": "antirevive",
+   "trava": 5,
+   "flip": 4,
+   "stage": 1
   },
   {
    "gancho": "marca-vulnerabilidade",
@@ -732,12 +721,6 @@
    "stage": 2
   },
   {
-   "gancho": "antirevive",
-   "trava": 5,
-   "flip": 3,
-   "stage": 2
-  },
-  {
    "gancho": "seletor",
    "trava": 5,
    "flip": 2,
@@ -746,8 +729,8 @@
   {
    "gancho": "execucao-hp",
    "trava": 5,
-   "flip": 0,
-   "stage": 5
+   "flip": 1,
+   "stage": 4
   },
   {
    "gancho": "primeiroPorTurno",
@@ -786,12 +769,6 @@
    "stage": 2
   },
   {
-   "gancho": "agarrar",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0
-  },
-  {
    "gancho": "faz-cdShift",
    "trava": 2,
    "flip": 1,
@@ -806,8 +783,8 @@
   {
    "gancho": "nega-orbe?",
    "trava": 2,
-   "flip": 1,
-   "stage": 1
+   "flip": 2,
+   "stage": 0
   },
   {
    "gancho": "aoReceberControle",
@@ -824,8 +801,8 @@
   {
    "gancho": "redirecionar",
    "trava": 2,
-   "flip": 0,
-   "stage": 2
+   "flip": 1,
+   "stage": 1
   },
   {
    "gancho": "aoCair-aliado",
@@ -974,8 +951,8 @@
   {
    "gancho": "alvo-curado-recente?",
    "trava": 1,
-   "flip": 0,
-   "stage": 1
+   "flip": 1,
+   "stage": 0
   },
   {
    "gancho": "execucao-temporizada",

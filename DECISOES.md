@@ -1638,6 +1638,41 @@ com selado). aoCair-aliado a qualquer hora (extensão barata).
 
 ---
 
+## §53 — slot-lock NOMEADO (F1.4 controle 1/N): a etiqueta é vocabulário fechado, não a mecânica
+
+Generalização do `lockSkill` (que travava UM slot) para um controle que trava um CONJUNTO de slots. Mas o achado do
+dono é o que diferencia isto de "um lockSkill com dois slots": **a ETIQUETA**. Três coisas de desenho, explícitas:
+
+**1. A etiqueta é o que habilita a IMUNIDADE, então é vocabulário FECHADO.** Fenrir e Kraken são imunes a Agarrar;
+alguém pode ser imune a Selado sem ser imune a Agarrar, mesmo os dois travando slots. Implementação: cada NOME é um
+`type` próprio em `CONTROLES` (`selado`, `agarrar`), e a imunidade mira o type — `imuneA(u,'agarrar')` casa por
+type, o coringa `'controle'` cobre ambos. Sai de graça, sem tocar `aplicar`/`imuneA`. **Conjunto fechado de
+slot-locks nomeados: `{selado, agarrar, medo}`.** Se um 7º nome aparecer na próxima varredura, é EXCEÇÃO num
+conjunto fechado — e a gente sabe onde isso dá (uma imunidade nova ou uma trava de slot-set inédita).
+
+**2. Selado ≡ Silenciado ≡ Enraizado — UM mecanismo, três nomes de prosa (não três etiquetas).** Li a prosa dos
+donos: hades "Selado (só Básico)", dionisio/iara "Silenciado (só Básico)", curupira "Enraíza (não podem usar
+Habilidade nem Milagre)", anubis/tsukuyomi "Selado/Silencia" — **todos = trava `{Hab, Mil}`**. E o decisivo para
+imunidade: **NENHUMA imunidade da família inteira mira Selado/Silenciado/Enraizado por nome** (as imunidades
+nomeadas são a Provocar, Agarrar, Medo, Atordoar, Dormir — varridas nos 100 kits). Como nada os distingue, a prosa
+NÃO os separa → **um nome canônico `selado`**; Silenciado/Enraizado são sinônimos de prosa que aplicam `selado`.
+"Imune a Selado" protege dos três. (Três etiquetas travando o mesmo seria vocabulário inflado sem ganho — posição do dono.)
+
+**3. `silenceClass` (Zeus, "habilidades Mágicas") fica FORA da família — trava por CLASSE, não por slot.** É outro
+mecanismo, já existe. Registrado AQUI de propósito: sem isto, a próxima varredura acha que são quatro nomes para o
+mesmo e tenta mergear. São eixos diferentes (classe vs slot); não se tocam.
+
+**Forma:** `SLOTS_TRAVADOS = { selado:['habilidade','milagre'], agarrar:['habilidade'] }`; `acoesDe` varre TODOS os
+efeitos (uma unidade pode carregar mais de uma trava) e mantém o `lockSkill{slot}` legado. `basico`/`defesa` nunca
+entram num conjunto ("só Básico"). **medo reservado** (= slot-lock`{Mil}` + `dmgDown` + a imunidade cobrindo os
+dois — é BUNDLE, não slot-lock puro; próximo passo, não decidido em silêncio aqui).
+
+**Curva (valida o §51/§52 de primeira):** VERDE **20 → 23** — fenrir, kraken (agarrar) e hades (selado) flipam
+NA HORA em que o gancho abre, INCREMENTAL, porque não têm ganchos depois. É o oposto da morte (staging): a previsão
+front-loaded do §52 bateu no primeiro gancho do controle. VERMELHO 29 → 24 (curupira/anubis/dionisio/iara cederam p/ AMARELO).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

@@ -313,12 +313,23 @@ falta). **O bloco fecha um MECANISMO, não um DEUS.** Correção do modelo: em p
 curupira, fenrir, guanyu, hades, kraken, medusa, oxala, piranha, shutendoji, xango. **9 são AMARELO de gancho único**
 (flipam INCREMENTALMENTE ao abrir o gancho, não no fecho); só curupira é 2-de-controle.
 
-| | previsão ANTES | resultado (preencher no fecho) |
+| | previsão ANTES | resultado (em andamento) |
 |---|---|---|
-| VERDE no fecho do CONTROLE | **~30** (20 + 10) | — |
-| forma | FRONT-loaded (flip por gancho, não massa no fim) | — |
+| VERDE no fecho do CONTROLE | **~30** (20 + 10) | 23 após o 1º gancho (slot-lock) |
+| forma | FRONT-loaded (flip por gancho, não massa no fim) | ✔ confirmado: +3 no 1º gancho |
 
 Diferença-chave vs MORTE: os deuses de controle estão perto do FIM da fase, quase não têm ganchos depois → flipam
 ao abrir o gancho. Se o VERDE NÃO chegar perto de 30, o §51 está errado. **Merges (§52):** os 9 nomes do dono
 colapsam em ~6 mecanismos (slot-lock-nomeado generaliza o `lockSkill` e absorve selado+agarrar+medo-lock;
 torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor que a lista.
+
+### Andamento do bloco CONTROLE
+
+| gancho | VERDE | AMARELO | VERMELHO | flips |
+|---|---|---|---|---|
+| (base, pós-morte) | 20 | 39 | 29 | — |
+| slot-lock nomeado (§53) | **23** | 41 | 24 | fenrir, kraken (agarrar), hades (selado) — INCREMENTAL |
+
+O 1º gancho já flipou +3 na hora, front-loaded — a previsão do §52 bateu, o §51 se sustenta (deus de controle não
+tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: aoSerAtingido (medusa/xango), torpor≡aoAgirSobEfeito
+(shuten/piranha), pacificar (oxala), medo (guanyu); curupira flipa quando redirecionar cair também.
