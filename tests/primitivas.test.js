@@ -215,12 +215,64 @@ console.log('== 5. contagem de morte: escala por aliado caído + Livro executa =
 { // Livro da Vida e Morte executa ao fim da contagem
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 107);
   const x = st.lados[1].units[0];
-  x.efeitos.push({ type: 'livro', dur: 1 });     // inscrito, contagem termina neste turno dele
+  x.efeitos.push({ type: 'livro', dur: 1, naoRevive: true });   // o efeito 'livro' CARREGA naoRevive (propriedade do debuff)
   E.fimTurno(st);   // encerra turno do Jogador 1 → passa para o 2
   E.fimTurno(st);   // encerra turno do Jogador 2 → o Livro dispara
   ok(!x.vivo, 'o inscrito deveria ser executado ao fim da contagem');
-  ok(x.naoRevive, 'quem morre sob o Livro não pode ser revivido');
+  ok(x.naoRevive, 'quem morre sob o Livro não pode ser revivido');   // selado pelo snapshot geral em matar, não por set imperativo
   console.log(`  inscrito executado ao zerar a contagem · marcado irrevivível`);
+}
+
+// -------------------------------------------------- 5b. antirevive (núcleo F1.3)
+console.log('== 5b. antirevive: gate completo (fura auto-renascimento tb) + source geral + contra-jogo ==');
+{ // GATE: quem cai marcado irrevivível NÃO auto-renasce (reviveProximoTurno da Nezha), não só o revive-por-aliado
+  const st = E.novoEstado(['nezha', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 130);
+  const nezha = st.lados[0].units[0], atk = st.lados[1].units[0];
+  nezha.efeitos.push({ type: 'marca', dur: 3, naoRevive: true });   // marca prévia que proíbe revive (ex.: Marca da Morte)
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 400 }], A('inimigo', 'milagre'), [nezha]);
+  ok(!nezha.vivo && nezha.naoRevive, 'ao cair com a marca, deveria ficar irrevivível');
+  ok(!nezha.pendenteRenascer, 'o auto-renascimento (reviveProximoTurno) NÃO deveria ser agendado');
+  E.iniciarTurno(st); E.fimTurno(st); E.fimTurno(st);
+  ok(!nezha.vivo, 'e não deveria voltar no turno seguinte');
+  console.log('  Nezha marcada cai → não agenda renascimento → segue caída');
+}
+{ // CONTROLE: a mesma Nezha SEM a marca renasce normalmente (o gate não vaza)
+  const st = E.novoEstado(['nezha', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 131);
+  const nezha = st.lados[0].units[0], atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 400 }], A('inimigo', 'milagre'), [nezha]);
+  ok(!nezha.vivo && nezha.pendenteRenascer && !nezha.naoRevive, 'sem marca, agenda renascimento e não fica irrevivível');
+  console.log('  Nezha sem marca cai → agenda renascimento (gate não vaza)');
+}
+{ // SOURCE GERAL via DOT: marcador naoRevive num dot também sela ao cair
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 132);
+  const alvo = st.lados[0].units[1], heal = st.lados[0].units[0];
+  alvo.dots.push({ nome: 'marcaMortal', v: 5, dur: 2, naoRevive: true });
+  alvo.hp = 1; E.aplicarFx(st, st.lados[1].units[0], [{ t: 'dmg', v: 20 }], A('inimigo', 'basico'), [alvo]);
+  ok(!alvo.vivo && alvo.naoRevive, 'dot com naoRevive deveria selar ao cair');
+  E.reviver(st, alvo, { hp: 50 });
+  ok(!alvo.vivo, 'e o revive-por-aliado deveria ser bloqueado');
+  console.log('  marcador naoRevive em dot → selado → revive bloqueado');
+}
+{ // CONTRA-JOGO: limpar o marcador ANTES de cair libera o revive
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 133);
+  const alvo = st.lados[0].units[1];
+  alvo.efeitos.push({ type: 'marca', dur: 3, naoRevive: true });
+  alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'marca');   // cleanse ANTES da morte
+  alvo.hp = 1; E.aplicarFx(st, st.lados[1].units[0], [{ t: 'dmg', v: 20 }], A('inimigo', 'basico'), [alvo]);
+  ok(!alvo.vivo && !alvo.naoRevive, 'limpo antes de cair → NÃO fica irrevivível (contra-jogo)');
+  E.reviver(st, alvo, { hp: 50 });
+  ok(alvo.vivo && alvo.hp === 50, 'e o revive deveria funcionar');
+  console.log('  cleanse antes da queda → revive liberado');
+}
+{ // FRONTEIRA vidaExtra: antirevive é PÓS-morte; vidaExtra (pré-morte) segue intacto — não redundante com execução
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 134);
+  const alvo = st.lados[0].units[1];
+  alvo.efeitos.push({ type: 'marca', dur: 3, naoRevive: true });
+  alvo.vidaExtra = { hp: 30 };   // sobrevive 1× ao letal
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'dmg', v: 400 }], A('inimigo', 'milagre'), [alvo]);
+  ok(alvo.vivo && alvo.hp === 30, 'vidaExtra segura o letal — antirevive não interfere na sobrevivência');
+  ok(!alvo.naoRevive, 'não morreu → não é marcado irrevivível');
+  console.log('  vidaExtra segura o letal · naoRevive só age PÓS-morte (ortogonal à execução)');
 }
 
 // -------------------------------------------------------- 6. dano armazenado

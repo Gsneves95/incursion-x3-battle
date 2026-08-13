@@ -674,6 +674,11 @@ function matar(st, atk, alvo, opts = {}) {
     log(st, { tipo: 'revive', alvo: alvo.key, valor: hp });
     return;
   }
+  // PRIMITIVA antirevive (source geral) — snapshot NO ATO da morte: se a unidade cai carregando um
+  // marcador `naoRevive` (efeito/dot com a propriedade — ex.: Marca da Morte da Hel, Livro do Yan Wong),
+  // o flag persiste e o gate no revive-site a segura. Limpar o marcador ANTES de cair libera o revive
+  // (contra-jogo). vidaExtra já retornou acima: quem sobrevive ao letal não morreu — nada a travar.
+  if (alvo.efeitos.some(e => e.naoRevive) || alvo.dots.some(d => d.naoRevive)) alvo.naoRevive = true;
   alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
@@ -852,7 +857,10 @@ function rodarFaz(st, u, faz, tagKey) {
       log(st, f.para ? { tipo: 'orbe', lado: u.lado, valor: f.n, para: f.para } : { tipo: 'orbe', lado: u.lado, valor: f.n });
     }
     else if (f.t === 'reviveProximoTurno') {   // Nezha: retorna no turno seguinte, 1× por partida. Só p/ quem caiu.
-      if (!u.vivo && !u.renasceu) { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
+      if (!u.vivo && !u.renasceu) {
+        if (u.naoRevive) log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'nao_revive' });   // antirevive fura o auto-renascimento tb, não só o revive-por-aliado
+        else { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
+      }
     }
     else if (f.t === 'shield') { u.shield += f.v; log(st, { tipo: 'escudo', alvo: u.key, valor: f.v }); }   // Hera (aoCurar): escudo no curado
     else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
@@ -945,7 +953,7 @@ function fimTurno(st) {
     const lv = ef(u, 'livro');
     if (lv && lv.dur === 1 && u.vivo) {
       log(st, { tipo: 'efeito', alvo: u.key, efeito: 'livro' });
-      u.naoRevive = true; matar(st, null, u);
+      matar(st, null, u);   // o próprio efeito 'livro' carrega naoRevive → o snapshot em matar sela o irrevivível
     }
   }
   // regra 5 — durações descontam no FIM do turno de quem carrega o efeito
