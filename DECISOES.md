@@ -1576,6 +1576,68 @@ metade, e o motivo é estrutural, não de execução.
 
 ---
 
+## §51 — Correção do modelo de blocos, com o erro do dono nomeado (ele pediu para registrar)
+
+**Erro previsto pelo dono:** "um bloco de mecanismo entrega os flips no FIM do bloco." A métrica DUPLA mostrou que
+só a metade "mecanismo = staging" bateu (VERMELHO cedeu monotônico); a metade "flip no fim do bloco" NÃO — o VERDE
+ficou 20 as 4 sessões da morte, inclusive no fecho. **Por que vale registrar assim:** o dono pediu explicitamente
+para eu contar SE falhasse; se eu tivesse reportado o fecho como "esperado", ele seguiria com o modelo errado por
+mais um bloco. O valor da triagem durável + métrica dupla é justamente tornar a falha de previsão VISÍVEL antes de
+custar um bloco.
+
+**Modelo corrigido (o dono incorporou):** um deus flipa quando cai o ÚLTIMO gancho DELE. Logo o que decide
+flip-vs-staging num bloco NÃO é "extensão vs mecanismo" — é **se os deuses daquele gancho ainda têm ganchos em
+blocos POSTERIORES**. Morte staged porque seus deuses carregam ganchos de controle (hades/anubis: selado; morrigan:
+medo). O VERDE é back-loaded para o fim da FASE — mais precisamente, para o ÚLTIMO bloco de cada deus. Corolário
+testável: um bloco perto do FIM da fase (poucos ganchos depois) deve flipar muito; um no começo, pouco. O §52 usa
+isso para prever o CONTROLE ANTES de começar.
+
+---
+
+## §52 — Varredura do bloco CONTROLE (F1.4) ANTES de abrir gancho: previsão testável + merges (§46 aplicado antes)
+
+**PREVISÃO REGISTRADA ANTES (para comparar depois): 10 deuses têm CONTROLE como ÚLTIMO bloco** — ganchos restantes
+todos de controle, flipam quando o bloco fechar: curupira, fenrir, guanyu, hades, kraken, medusa, oxala, piranha,
+shutendoji, xango. **9 são AMARELO de gancho ÚNICO de controle** (flipam INCREMENTALMENTE, no instante em que o
+gancho abre — não no fecho); só curupira é 2-de-controle (redirecionar+selado, flipa quando os dois caírem).
+**Previsão numérica: VERDE 20 → ~30 ao longo do bloco, FRONT-loaded** — o oposto da morte. É a confirmação do §51:
+a morte staged porque seus deuses tinham controle pela frente; o controle está perto do fim da fase, então seus
+deuses não têm quase nada depois → flipam. Se o VERDE NÃO chegar perto de 30 no fecho do controle, o §51 está
+errado e quero saber (mesmo contrato do §50).
+
+**MERGES (§46 antes de começar — nome de prosa não é evidência sobre natureza). A lista do dono tinha 9 nomes;
+a varredura da prosa colapsa para ~6 mecanismos, e 1 deles é generalização do que já existe:**
+- **Família SLOT-LOCK — 1 mecanismo (generaliza o `lockSkill` existente), absorve 4 nomes.** O motor já tem
+  `lockSkill{UM slot}` e `silenceClass{classe}`. Falta o **slot-lock NOMEADO com CONJUNTO de slots**:
+  - *Selado ≡ Silenciado ≡ Enraizado* = trava `{Hab, Mil}` ("só Básico") — hades, iara, dionisio, anubis,
+    tsukuyomi, curupira(milagre). ← precisa de multi-slot (o único novo de verdade).
+  - *trava-Milagre* (metade do Medo) = trava `{Mil}` = `lockSkill{milagre}` — **já expressível**.
+  - *Agarrar* (kraken) = trava `{Hab}` = `lockSkill{habilidade}` + **tag-nome** (p/ "imune a Agarrar" do fenrir/kraken).
+  - *Petrificar* (medusa milagre) ≈ atordoado (já existe). *Medusa-hab* = `lockSkill{habilidade}` (já existe).
+  Ou seja o gancho REAL = adicionar `slots:[…]` + `nome` ao `lockSkill`. **Medo** = `dmgDown`(existe) +
+  slot-lock`{Mil}` + tag`medo` (p/ guanyu "imune a Medo" e babi "+10 vs Medo") — **nenhum mecanismo novo além do slot-lock**.
+- **torpor ≡ aoAgirSobEfeito — 1 gatilho reativo, 2 nomes.** shuten: "quando o alvo agir sob Torpor, roubo HP+orbe";
+  piranha: "o Sangramento causa +4 quando o alvo AGE". Mesmo gancho (dispara quando uma unidade AGE sob um debuff, o
+  dono do debuff reage). Merge confirmado.
+- **aoSerAtingido{quem} — reativo com eixo de SUJEITO** (self=medusa "quem me atinge recebe Veneno"; aliado=xango
+  "quando um aliado é atingido, acumulo dano"). Um gatilho, dois sujeitos — igual ao eixo do `aoCair`.
+- **aoCair quem:'aliado'/'qualquerAliado' — EXTENSÃO do gatilho que acabei de construir** (erinias/nuwa: "quando um
+  aliado cai, +dano resto da partida"). Trivial: só o sujeito 'aliado' no eixo já pronto + faz apply-dmgUp-permanente.
+- **pacificar** (oxala: age mas dano→0) e **redirecionar** (loki/curupira: força retarget do próximo alvo-único) —
+  DISTINTOS, não merge com nada. redirecionar cobre 2 (loki+curupira) num mecanismo.
+
+**Contagem real do bloco:** 9 nomes → **slot-lock-nomeado (generaliza lockSkill), pacificar, redirecionar,
+aoSerAtingido, aoAgirSobEfeito(≡torpor), aoCair-aliado(extensão)** = 6 mecanismos, dos quais 1 é generalização e 1
+é extensão trivial. **O bloco É menor que a lista sugere** — exatamente o que o dono mandou procurar.
+
+**Ordem recomendada (o dono disse que importa menos que o número, mas trago):** começar pelo **slot-lock-nomeado** —
+maior alavanca (absorve selado+agarrar+medo-lock; pode flipar fenrir, kraken, hades e guanyu de uma vez, ~+4 VERDE)
+e é generalização do que já existe. Depois os que flipam AMARELOs de gancho único: aoSerAtingido (+2 medusa/xango),
+aoAgirSobEfeito≡torpor (+2 shuten/piranha), pacificar (+1 oxala); redirecionar (staging: loki multi; curupira flipa
+com selado). aoCair-aliado a qualquer hora (extensão barata).
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

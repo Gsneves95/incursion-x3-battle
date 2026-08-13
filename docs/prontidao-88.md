@@ -306,3 +306,19 @@ mas o flip-no-fecho NÃO — nenhuma das 4 mecânicas de morte zerou um deus. Um
 gancho, e os de morte carregam ganchos de outros blocos (selado, medo, execução-variante, antirevive-source que
 falta). **O bloco fecha um MECANISMO, não um DEUS.** Correção do modelo: em plano dominado por mecanismo, o VERDE
 é back-loaded para o fim da FASE (o último bloco de cada deus), não de cada bloco. Fonte por-deus em docs/triagem-88.json.
+
+## PREVISÃO REGISTRADA ANTES do bloco CONTROLE (F1.4) — testa o §51/§52
+
+**10 deuses têm CONTROLE como último bloco** (ganchos restantes todos de controle → flipam quando o bloco fechar):
+curupira, fenrir, guanyu, hades, kraken, medusa, oxala, piranha, shutendoji, xango. **9 são AMARELO de gancho único**
+(flipam INCREMENTALMENTE ao abrir o gancho, não no fecho); só curupira é 2-de-controle.
+
+| | previsão ANTES | resultado (preencher no fecho) |
+|---|---|---|
+| VERDE no fecho do CONTROLE | **~30** (20 + 10) | — |
+| forma | FRONT-loaded (flip por gancho, não massa no fim) | — |
+
+Diferença-chave vs MORTE: os deuses de controle estão perto do FIM da fase, quase não têm ganchos depois → flipam
+ao abrir o gancho. Se o VERDE NÃO chegar perto de 30, o §51 está errado. **Merges (§52):** os 9 nomes do dono
+colapsam em ~6 mecanismos (slot-lock-nomeado generaliza o `lockSkill` e absorve selado+agarrar+medo-lock;
+torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor que a lista.
