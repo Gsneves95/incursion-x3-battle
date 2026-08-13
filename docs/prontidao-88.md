@@ -273,3 +273,16 @@ sequencia por flip aqui; sequencia-se por BLOCO (F1.3 morte inteira, F1.4 contro
 quando o último gancho de cada deus cai. Os poucos flips-sozinhos baratos que restam (aoUsarHabilidade f2, aoSerAtingido f2,
 bonusCura-cond-nova f2, marca-vuln f2) são extensões pequenas que rendem 2 verdes cada — o análogo da F1.2.5, se quiser mais
 um passo barato antes dos blocos pesados.
+
+## Curva DUPLA — Passo 0 + F1.3 morte (piso-1hp)
+
+| marco | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| re-triagem (base) | 17 | 31 | 40 |
+| Passo 0 (aoUsarHabilidade + sinergia=aliadoPresente) + piso-1hp | **21** | 32 | **34** |
+
+Flips: bragi/brahma (aoUsarHabilidade), inari (sinergia), change (piso+sinergia). **O VERMELHO caiu 40→34** — o
+sinal que o dono pediu para acompanhar no bloco de morte: mesmo com o VERDE quase parado nas sessões seguintes do
+bloco, o VERMELHO deve ceder a cada gancho; se ficar parado, o gancho não travava o que a triagem dizia. `piso-1hp`
+sozinho não flipa (os deuses de piso são multi-gancho — vishnu/oxala foram só p/ AMARELO), confirmando o §46:
+fase de mecanismo é staging, o placar do VERDE se move no FIM do bloco. Fonte por-deus em docs/triagem-88.json.

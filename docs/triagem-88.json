@@ -1,8 +1,8 @@
 {
  "dist": {
-  "VERMELHO": 40,
-  "AMARELO": 31,
-  "VERDE": 17
+  "AMARELO": 34,
+  "VERDE": 20,
+  "VERMELHO": 34
  },
  "gods": [
   {
@@ -39,19 +39,15 @@
   },
   {
    "key": "bragi",
-   "ganchos": [
-    "aoUsarHabilidade"
-   ],
+   "ganchos": [],
    "nota": "passiva dispara quando um aliado usa Milagre — gatilho reativo inexistente.",
-   "cor": "AMARELO"
+   "cor": "VERDE"
   },
   {
    "key": "brahma",
-   "ganchos": [
-    "aoUsarHabilidade"
-   ],
+   "ganchos": [],
    "nota": "shield inicial=abertura:faz:shield e +4 acumulável=contador; só '+3 por Milagre aliado usado' precisa do reativo aoUsarHabilidade.",
-   "cor": "AMARELO"
+   "cor": "VERDE"
   },
   {
    "key": "cerberus",
@@ -111,11 +107,9 @@
   },
   {
    "key": "inari",
-   "ganchos": [
-    "sinergia-nomeada"
-   ],
+   "ganchos": [],
    "nota": "aCadaN+faz:orbGain e orbGain/heal são expressíveis; só a cláusula 'se a Kitsune está no time' precisa de sinergia nomeada.",
-   "cor": "AMARELO"
+   "cor": "VERDE"
   },
   {
    "key": "isis",
@@ -297,9 +291,11 @@
   },
   {
    "key": "guanyu",
-   "ganchos": [],
+   "ganchos": [
+    "medo"
+   ],
    "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade.",
-   "cor": "VERDE"
+   "cor": "AMARELO"
   },
   {
    "key": "hercules",
@@ -422,12 +418,9 @@
   },
   {
    "key": "change",
-   "ganchos": [
-    "piso-1hp",
-    "sinergia-nomeada"
-   ],
+   "ganchos": [],
    "nota": "cura-30-durante-NOITE já é estado{fase}; falta o piso 'não cai abaixo de 1 HP' e a sinergia 'com Hou Yi no time'.",
-   "cor": "VERMELHO"
+   "cor": "VERDE"
   },
   {
    "key": "curupira",
@@ -442,7 +435,6 @@
    "key": "dagda",
    "ganchos": [
     "iniciativa",
-    "piso-1hp",
     "suspende-buff?"
    ],
    "nota": "Milagre time age primeiro (iniciativa) e buffs inimigos suspensos-temporario (novo); passiva piso-1hp condicional; regen/bonusCura-flat/heal-a-cada-3 expressiveis.",
@@ -498,11 +490,10 @@
   {
    "key": "hanuman",
    "ganchos": [
-    "seletor",
-    "sinergia-nomeada"
+    "seletor"
    ],
    "nota": "Milagre cura no 'aliado mais ferido' (seletor); passiva 'com Sun Wukong no time' e sinergia-nomeada; intercepta/dmgUp existem.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "hel",
@@ -612,8 +603,7 @@
    "key": "mnevis",
    "ganchos": [
     "primeiroPorTurno",
-    "reflete-dano",
-    "sinergia-nomeada"
+    "reflete-dano"
    ],
    "nota": "reflete % de todo dano, sinergia 'com Ra no time' e interceptacao do primeiro ataque por turno.",
    "cor": "VERMELHO"
@@ -649,20 +639,18 @@
   {
    "key": "odin",
    "ganchos": [
-    "ignora-invuln",
-    "sinergia-nomeada"
+    "ignora-invuln"
    ],
    "nota": "basico ignora Invuln+Inalvejavel (danoIrredutivel so fura reducao/escudo); marca+bonusDano-time e selfHp+cdShift+dmgUp ok; passiva '2+ Nordicos' = sinergia-nomeada por faccao.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "oxala",
    "ganchos": [
-    "pacificar",
-    "piso-1hp"
+    "pacificar"
    ],
    "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "raijin",
@@ -685,11 +673,10 @@
   {
    "key": "shiva",
    "ganchos": [
-    "aoUsarHabilidade",
     "ignora-invuln"
    ],
    "nota": "Terceiro Olho fura Invulnerabilidade (escudo já é danoIrredutivel; furar o piso-1hp depende do piso existir) e a passiva reage a qualquer aliado usar Milagre.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "susanoo",
@@ -712,11 +699,10 @@
   {
    "key": "vishnu",
    "ganchos": [
-    "modo-alterna",
-    "piso-1hp"
+    "modo-alterna"
    ],
    "nota": "Encarnação é toggle declarativo NARASIMHA/KURMA e o milagre concede 'não cai abaixo de 1 HP'; stripOne e redução são expressíveis.",
-   "cor": "VERMELHO"
+   "cor": "AMARELO"
   },
   {
    "key": "yanwong",
@@ -755,12 +741,6 @@
    "stage": 6
   },
   {
-   "gancho": "seletor",
-   "trava": 5,
-   "flip": 1,
-   "stage": 4
-  },
-  {
    "gancho": "marca-vulnerabilidade",
    "trava": 5,
    "flip": 2,
@@ -769,20 +749,14 @@
   {
    "gancho": "ignora-invuln",
    "trava": 5,
-   "flip": 1,
-   "stage": 4
+   "flip": 3,
+   "stage": 2
   },
   {
-   "gancho": "sinergia-nomeada",
+   "gancho": "seletor",
    "trava": 5,
-   "flip": 1,
-   "stage": 4
-  },
-  {
-   "gancho": "aoCair-qualquerInimigo",
-   "trava": 4,
-   "flip": 0,
-   "stage": 4
+   "flip": 2,
+   "stage": 3
   },
   {
    "gancho": "primeiroPorTurno",
@@ -791,40 +765,22 @@
    "stage": 3
   },
   {
-   "gancho": "multi-hit-distribuido",
-   "trava": 4,
-   "flip": 0,
-   "stage": 4
-  },
-  {
    "gancho": "escolha-efeito",
    "trava": 4,
    "flip": 1,
    "stage": 3
   },
   {
-   "gancho": "piso-1hp",
+   "gancho": "aoCair-qualquerInimigo",
    "trava": 4,
    "flip": 0,
    "stage": 4
   },
   {
-   "gancho": "iniciativa",
-   "trava": 3,
-   "flip": 1,
-   "stage": 2
-  },
-  {
-   "gancho": "aoUsarHabilidade",
-   "trava": 3,
-   "flip": 2,
-   "stage": 1
-  },
-  {
-   "gancho": "medo",
-   "trava": 3,
+   "gancho": "multi-hit-distribuido",
+   "trava": 4,
    "flip": 0,
-   "stage": 3
+   "stage": 4
   },
   {
    "gancho": "bonusCura-cond-nova",
@@ -833,10 +789,34 @@
    "stage": 1
   },
   {
+   "gancho": "iniciativa",
+   "trava": 3,
+   "flip": 1,
+   "stage": 2
+  },
+  {
+   "gancho": "medo",
+   "trava": 3,
+   "flip": 0,
+   "stage": 3
+  },
+  {
    "gancho": "faz-cdShift",
    "trava": 2,
    "flip": 1,
    "stage": 1
+  },
+  {
+   "gancho": "agarrar",
+   "trava": 2,
+   "flip": 1,
+   "stage": 1
+  },
+  {
+   "gancho": "aoSerAtingido",
+   "trava": 2,
+   "flip": 2,
+   "stage": 0
   },
   {
    "gancho": "nega-orbe?",
@@ -851,22 +831,10 @@
    "stage": 1
   },
   {
-   "gancho": "aoSerAtingido",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0
-  },
-  {
-   "gancho": "aoCair-aliado",
+   "gancho": "dia-noite-ler-extra",
    "trava": 2,
    "flip": 0,
    "stage": 2
-  },
-  {
-   "gancho": "agarrar",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1
   },
   {
    "gancho": "redirecionar",
@@ -875,28 +843,10 @@
    "stage": 2
   },
   {
-   "gancho": "dia-noite-ler-extra",
+   "gancho": "aoCair-aliado",
    "trava": 2,
    "flip": 0,
    "stage": 2
-  },
-  {
-   "gancho": "reducao-escopo-elem",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "transfere-status?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "cura-escala-alvos?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
   },
   {
    "gancho": "orbe-protecao",
@@ -905,55 +855,31 @@
    "stage": 0
   },
   {
-   "gancho": "passiva-ativa-morto?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
    "gancho": "copiar-ultima",
    "trava": 1,
    "flip": 1,
    "stage": 0
   },
   {
-   "gancho": "execucao-status",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "marca-punicao-aoMatar?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "lifesteal?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "reflete-dano",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "alvo-curado-recente?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "aoAtacar",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
    "gancho": "amplifica-dot?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "acao-atrasada?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "aoAgirSobEfeito",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "reducao-escopo-elem",
    "trava": 1,
    "flip": 1,
    "stage": 0
@@ -971,25 +897,13 @@
    "stage": 0
   },
   {
-   "gancho": "execucao-temporizada",
+   "gancho": "execucao-status",
    "trava": 1,
    "flip": 0,
    "stage": 1
   },
   {
-   "gancho": "modo-alterna",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "acao-garantida?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "esquiva",
+   "gancho": "lifesteal?",
    "trava": 1,
    "flip": 0,
    "stage": 1
@@ -1001,19 +915,31 @@
    "stage": 1
   },
   {
-   "gancho": "aoAgirSobEfeito",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "pacificar",
+   "gancho": "suspende-buff?",
    "trava": 1,
    "flip": 0,
    "stage": 1
   },
   {
-   "gancho": "suspende-buff?",
+   "gancho": "cura-escala-alvos?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "marca-punicao-aoMatar?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "acao-garantida?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "transfere-status?",
    "trava": 1,
    "flip": 0,
    "stage": 1
@@ -1025,10 +951,52 @@
    "stage": 1
   },
   {
-   "gancho": "acao-atrasada?",
+   "gancho": "passiva-ativa-morto?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "reflete-dano",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "pacificar",
    "trava": 1,
    "flip": 1,
    "stage": 0
+  },
+  {
+   "gancho": "aoAtacar",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "esquiva",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "alvo-curado-recente?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
+  },
+  {
+   "gancho": "modo-alterna",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "execucao-temporizada",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1
   }
  ]
 }

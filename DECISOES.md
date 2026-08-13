@@ -1415,9 +1415,21 @@ escala, trava 10) é o mais provável BALDE (4 fontes de N): sequenciar pelo 10 
   durga/erinias aplicam via habilidade) com bonusDano-OFENSIVO-vs-marcado (horus "+8 contra marcados" = precisa do `alvoMarca`
   reservado, coisa diferente). Não é um mecanismo só — varrer separando o efeito-vulnerável do alvoMarca antes de fechar.
 
-Lição: o Passo 0 do dono tinha 3 de 4 itens com dúvida escondida atrás do NOME do gancho — a mesma armadilha do balde,
-mas na direção do "parece extensão barata e é mecanismo". O critério "família varrida + vocabulário fechável sem dúvida"
-pegou os três. Só flipar quando fecha sem dúvida.
+**LIÇÃO (par, uma coisa só): o NOME do gancho não é evidência sobre TAMANHO nem sobre NATUREZA, em nenhuma direção.**
+São a mesma armadilha em sentidos opostos: (a) balde — o nome sugere 1 mecanismo e são vários (reducao-cond 3-6,
+faz-vocab, "escala 10"); (b) o reverso — o nome sugere extensão barata e é mecanismo (aoSerAtingido/bonusCura-cond/
+marca-vuln do Passo 0). Nos dois casos, a contagem do gancho e a suposição de "é só mais uma chave" vêm do rótulo,
+não da coisa. O antídoto é o mesmo: varrer a FAMÍLIA antes de fechar, e só flipar quando fecha sem dúvida — o critério
+testável "família varrida + vocabulário fechável sem dúvida", nunca o nome.
+
+**ENDEREÇO das três dúvidas (dono — vão para dentro dos blocos, não viram sessão própria):**
+- **aoSerAtingido → F1.4 (controle).** A pergunta que levanta ("hook reativo pode aplicar debuff no atacante?") é de
+  vocabulário de controle/aflição (Medusa aplica Veneno), e os reativos vizinhos (esquiva do Saci, intercepta do Mnevis)
+  já estão marcados p/ lá. Uma decisão em vez de três.
+- **bonusCura-cond-nova → DEPOIS dos dois blocos.** Precisa de contexto novo no `curar` (quem curou, qual a fonte);
+  nenhum bloco depende dela; não trava deus de morte nem de controle.
+- **marca-vulnerabilidade → varre junto do Horus.** Emaranhada com `alvoMarca` (condição ofensiva reservada desde a
+  sessão 1); separar o efeito-vulnerável do alvoMarca só faz sentido com o dono na mão.
 
 ---
 
