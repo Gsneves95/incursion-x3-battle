@@ -1788,6 +1788,50 @@ agarrar, que travam slots. Zera o dano na fonte, deixa a ação acontecer.
 
 ---
 
+## §59 — O par §54 / §58: duas ferramentas com ESCOPO separado (do dono)
+
+O §54 ("duas coisas são uma se ninguém as distingue") e o §58 (Pacificar) parecem se contradizer, mas não: têm
+escopos diferentes, e ter os dois com escopo separado importa mais que ter os dois.
+- **§54 responde "são A MESMA coisa?"** e só vale **quando os mecanismos coincidem**. Aí, se ninguém no jogo os
+  distingue, são um (Selado ≡ Silenciado).
+- **§58 é o outro caso: quando os mecanismos DIFEREM.** Pacificar (hard-0) ≠ dmgDown (flat), mecanicamente. Aí a
+  ausência de menção **não é evidência de nada** — ninguém nomear Pacificar não o torna um dmgDown; o que decide é a
+  impossibilidade mecânica. É o OPOSTO do §54: lá a ausência de distinção funde; aqui a diferença de mecanismo separa,
+  independentemente de menção.
+- **Regra de uso:** primeiro pergunte se os mecanismos coincidem. SE coincidem → §54 (ausência de distinção = são um).
+  SE diferem → §58 (ausência de menção = irrelevante, são dois). Aplicar o §54 a mecanismos que diferem é o erro que
+  transformaria Pacificar num dmgDown; aplicar o §58 a mecanismos iguais infla vocabulário. As duas ferramentas, com
+  gatilho separado, evitam os dois erros.
+
+---
+
+## §60 — Medo (F1.4 controle 5/N): compósito de UM nome, e o flip do Guan Yu que NÃO vem
+
+**Forma — a prosa confirmou a posição do dono (imune a Medo cobre AS DUAS metades).** As duas perguntas da varredura:
+1. **Alguém trata as metades em separado?** NÃO — babi aplica "Medo por 2 turnos: causam 8 menos de dano E não podem
+   usar Milagre" (as duas sob um nome); morrigan/mula aplicam "Medo por 2 turnos"; guanyu/durga são "imune a Medo" (o
+   todo). Ninguém é "imune ao dmgDown do Medo".
+2. **Mesma duração?** SIM — as duas metades sempre sob a mesma "por 2 turnos". (Se divergissem, teriam de ser dois
+   efeitos, e a forma mudaria por necessidade, como o Pacificar mudou — não divergem.)
+Logo Medo é **UM efeito composto**: `type:'medo'` em CONTROLES + SLOTS_TRAVADOS{milagre} (trava o Milagre) e carrega
+`dmgDown` (lido em bonusDano, reduz o dano de saída). Uma checagem de `imuneA` barra o efeito INTEIRO — "imune a Medo"
+tira lock E dmgDown juntos, o que a ficha promete. **É o oposto da imunidade larga da Nezha (§39): lá o hardcode dava
+MAIS que a prosa; uma imunidade meia-boca aqui daria MENOS.**
+
+**O flip do Guan Yu NÃO vem — avisado ANTES, como o dono pediu.** O "com 3 aliados vivos, imune a Medo" é imunidade
+**CONDICIONAL** — a família não-estática da F1.2 s5. Hoje `imuneA` **ignora o campo `estado`** (só lê `f.a`), então
+imunidade condicional NÃO existe. Construir Medo (o controle) não destrava o Guan Yu: o gancho dele é
+`imunidade-condicional`, re-triado. **Correção da previsão do §52:** ela contava 10 flips no fecho do controle; 2
+deles eram falsos — **shutendoji** (o `torpor` era bundle: trigger + roubo-de-orbe, §56) e **guanyu** (o `medo` era
+imunidade-condicional). Os dois têm ganchos de NOME de controle mas SUBSTÂNCIA de outro mecanismo (§46 de novo). O
+fecho real do bloco será ~**28** (não 30): 7 já fliparam + curupira quando redirecionar cair. Medo em si flipa 0
+(babi segue VERMELHO; morrigan/mula cedem p/ AMARELO).
+
+**Curva:** VERDE **27 → 27** (Medo não flipa ninguém — os apliadores são multi-gancho, o único "flip" previsto era o
+Guan Yu, que é imunidade-condicional). VERMELHO **24 → 22**.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

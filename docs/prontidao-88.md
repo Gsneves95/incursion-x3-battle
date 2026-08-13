@@ -331,9 +331,11 @@ torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor 
 | slot-lock nomeado (§53) | 23 | 41 | 24 | fenrir, kraken (agarrar), hades (selado) — INCREMENTAL |
 | aoSerAtingido (§55) | 25 | 39 | 24 | medusa, xango — INCREMENTAL |
 | aoAgirSobEfeito (§56) | 26 | 38 | 24 | piranha — INCREMENTAL (shuten → resíduo nega-orbe) |
-| Pacificar (§58) | **27** | 37 | 24 | oxala — INCREMENTAL |
+| Pacificar (§58) | 27 | 37 | 24 | oxala — INCREMENTAL |
+| Medo (§60) | **27** | 39 | 22 | NENHUM (apliadores multi-gancho; guanyu é imunidade-condicional) |
 
-Quatro ganchos, +7 VERDE (20→27), todos front-loaded — a previsão do §52 segue batendo, o §51 se sustenta (deus de
-controle não tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: medo (guanyu, bundle);
-curupira flipa quando redirecionar cair junto do selado. Nota: shuten NÃO flipou — o `torpor` era bundle
-(trigger + roubo-de-orbe); o trigger caiu, o roubo-de-orbe resta (nega-orbe, com dionisio/mimir).
+Cinco ganchos, +7 VERDE (20→27), front-loaded — o §51 se sustenta. **Correção da previsão do §52 (avisada antes do
+fecho):** ela contava 10 flips; DOIS eram falsos — shuten (`torpor` era bundle: trigger + roubo-de-orbe, §56) e guanyu
+(`medo` era imunidade CONDICIONAL, que não existe — imuneA ignora estado, §60). Ambos têm gancho de NOME de controle
+mas SUBSTÂNCIA de outro mecanismo (§46). **Fecho real do bloco ≈ 28** (não 30): 7 já fliparam + curupira quando
+redirecionar cair. Medo em si flipa 0 (babi segue VERMELHO; morrigan/mula → AMARELO). Falta redirecionar p/ fechar.

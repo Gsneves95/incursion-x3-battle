@@ -1,8 +1,8 @@
 {
  "dist": {
   "VERDE": 27,
-  "AMARELO": 37,
-  "VERMELHO": 24
+  "AMARELO": 39,
+  "VERMELHO": 22
  },
  "gods": [
   {
@@ -104,9 +104,9 @@
   {
    "key": "guanyu",
    "ganchos": [
-    "medo"
+    "imunidade-condicional?"
    ],
-   "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade.",
+   "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade. | §60: 'imune a Medo com 3 vivos' é imunidade CONDICIONAL (imuneA ignora estado) — não é o gancho 'medo'; NÃO flipa.",
    "cor": "AMARELO"
   },
   {
@@ -187,6 +187,22 @@
     "passiva-ativa-morto?"
    ],
    "nota": "concede aura de +dano mesmo derrotado (passiva do tumulo) e naoRevive em si mesmo. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "morrigan",
+   "ganchos": [
+    "execucao-hp"
+   ],
+   "nota": "Hab elimina se fim de turno com HP<=20 (execucao-hp); Milagre Medo; passiva on-kill nao-matador (aoCair-qualquerInimigo); noHeal/faz:[heal] expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte). | §60: Medo (compósito) construído; o deus o APLICA.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "mulasemcabeca",
+   "ganchos": [
+    "bonusDano-escala-dinamica"
+   ],
+   "nota": "Milagre aplica Medo; passiva '+1 por 5 HP perdido' e escala por HP-faltante; controlImmune/dot/imune-Queimadura expressiveis. | §60: Medo (compósito) construído; o deus o APLICA.",
    "cor": "AMARELO"
   },
   {
@@ -486,10 +502,9 @@
    "key": "babi",
    "ganchos": [
     "lifesteal?",
-    "medo",
     "multi-hit-distribuido"
    ],
-   "nota": "Medo(dmgDown+trava-Milagre), 4 golpes repartidos a escolha e cura=metade do dano causado.",
+   "nota": "Medo(dmgDown+trava-Milagre), 4 golpes repartidos a escolha e cura=metade do dano causado. | §60: Medo (compósito) construído; o deus o APLICA.",
    "cor": "VERMELHO"
   },
   {
@@ -624,24 +639,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "morrigan",
-   "ganchos": [
-    "execucao-hp",
-    "medo"
-   ],
-   "nota": "Hab elimina se fim de turno com HP<=20 (execucao-hp); Milagre Medo; passiva on-kill nao-matador (aoCair-qualquerInimigo); noHeal/faz:[heal] expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "mulasemcabeca",
-   "ganchos": [
-    "bonusDano-escala-dinamica",
-    "medo"
-   ],
-   "nota": "Milagre aplica Medo; passiva '+1 por 5 HP perdido' e escala por HP-faltante; controlImmune/dot/imune-Queimadura expressiveis.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "nuwa",
    "ganchos": [
     "aoCair-aliado",
@@ -691,8 +688,8 @@
   {
    "gancho": "bonusDano-escala-dinamica",
    "trava": 10,
-   "flip": 4,
-   "stage": 6
+   "flip": 5,
+   "stage": 5
   },
   {
    "gancho": "antirevive",
@@ -721,17 +718,11 @@
   {
    "gancho": "execucao-hp",
    "trava": 5,
-   "flip": 1,
-   "stage": 4
-  },
-  {
-   "gancho": "primeiroPorTurno",
-   "trava": 4,
-   "flip": 1,
+   "flip": 2,
    "stage": 3
   },
   {
-   "gancho": "medo",
+   "gancho": "primeiroPorTurno",
    "trava": 4,
    "flip": 1,
    "stage": 3
@@ -795,6 +786,12 @@
    "trava": 2,
    "flip": 0,
    "stage": 2
+  },
+  {
+   "gancho": "imunidade-condicional?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
   },
   {
    "gancho": "orbe-protecao",
