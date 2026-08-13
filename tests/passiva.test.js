@@ -261,6 +261,32 @@ console.log('== Passo 0: aoUsarHabilidade (reativo a uso de slot) + estado.aliad
   ok(orbEv() === 1, `MILAGRE dispara aoUsarHabilidade: 1 evento de orbe do tuh (eventos: ${orbEv()})`);
   delete E.GODS.tuh;
 }
+console.log('== F1.3 morte: pisoVida (não cai abaixo de 1 HP) — buff real, furável ==');
+{ // clamp a 1 no golpe letal; sem piso morre; ignoraPiso (Shiva) fura
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 980);
+  const atk = st.lados[0].units[0], a = st.lados[1].units;
+  a[0].hp = 30; a[0].efeitos.push({ type: 'pisoVida', dur: 2 });
+  E.bater(st, atk, a[0], 100, 'afetado', 'basico');
+  ok(a[0].vivo && a[0].hp === 1, `pisoVida: golpe letal deixa em 1, vivo (hp ${a[0].hp}, vivo ${a[0].vivo})`);
+  a[1].hp = 30;
+  E.bater(st, atk, a[1], 100, 'afetado', 'basico');
+  ok(!a[1].vivo, `sem piso: golpe letal MATA (vivo ${a[1].vivo})`);
+  a[2].hp = 30; a[2].efeitos.push({ type: 'pisoVida', dur: 2 });
+  E.bater(st, atk, a[2], 100, 'afetado', 'basico', { ignoraPiso: true });
+  ok(!a[2].vivo, `ignoraPiso (Shiva fura): MATA apesar do piso (vivo ${a[2].vivo})`);
+}
+{ // o DoT também respeita o piso
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 981);
+  const u = st.lados[1].units[0]; u.hp = 5; u.efeitos.push({ type: 'pisoVida', dur: 2 }); u.dots.push({ nome: 'queimadura', v: 20, dur: 2 });
+  st.ativo = 1; E.iniciarTurno(st);
+  ok(u.vivo && u.hp === 1, `DoT respeita o piso: fica em 1, vivo (hp ${u.hp})`);
+}
+{ // aplicável de verdade via apply (escopo time) — prova que é buff real
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 982);
+  const caster = st.lados[0].units[0];
+  E.aplicarFx(st, caster, [{ t: 'apply', eff: { type: 'pisoVida', dur: 1 }, escopo: 'time' }], { alvo: 'time', slot: 'milagre' }, []);
+  ok(!!E.ef(st.lados[0].units[1], 'pisoVida'), 'apply pisoVida escopo time: aliado ganha o piso');
+}
 { // estado.aliadoPresente: sinergia = condição (bonusDano só com deus X no time)
   E.GODS.tsin = { nome: 'TSIN', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', v: 8, estado: { aliadoPresente: 'ganesha' } }] } };
   let st = E.novoEstado(['tsin', 'ganesha', 'zeus'], ['zeus', 'zeus', 'zeus'], 971);

@@ -59,7 +59,7 @@ const DEFESA = {
 
 const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado'];
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
-const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo'];
+const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
@@ -596,7 +596,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null } = opts;
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false } = opts;
   if (!alvo.vivo) return 0;
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
   const golpe = { slot, classe, elem: atk && atk.elem, unico };
@@ -637,7 +637,8 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     }
   }
   const { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot, golpe);
-  alvo.hp = Math.max(0, alvo.hp - v);
+  const pisoAtk = !ignoraPiso && ef(alvo, 'pisoVida');   // 'não cai abaixo de 1 HP' — a menos que o golpe fure (Shiva)
+  alvo.hp = Math.max(pisoAtk ? 1 : 0, alvo.hp - v);
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
   log(st, evDano);
@@ -877,7 +878,7 @@ function iniciarTurno(st) {
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
-      u.hp = Math.max(0, u.hp - d.v);
+      u.hp = Math.max(ef(u, 'pisoVida') ? 1 : 0, u.hp - d.v);   // o piso também segura o DoT
       log(st, { tipo: 'dot', alvo: u.key, efeito: d.nome, valor: d.v });
       if (u.hp === 0) { matar(st, null, u); break; }
     }
