@@ -287,17 +287,22 @@ bloco, o VERMELHO deve ceder a cada gancho; se ficar parado, o gancho não trava
 sozinho não flipa (os deuses de piso são multi-gancho — vishnu/oxala foram só p/ AMARELO), confirmando o §46:
 fase de mecanismo é staging, o placar do VERDE se move no FIM do bloco. Fonte por-deus em docs/triagem-88.json.
 
-## Curva DUPLA — F1.3 morte, bloco em andamento (VERDE parado, VERMELHO cede a cada gancho)
+## Curva DUPLA — F1.3 morte, BLOCO FECHADO (as 4 sessões)
 
 | marco | VERDE | AMARELO | VERMELHO |
 |---|---|---|---|
 | Passo 0 + piso-1hp | 20 | 34 | 34 |
 | + execução-hp (§47) | 20 | 34 | 33 |
-| + antirevive (§48) | **20** | 36 | **32** |
+| + antirevive (§48) | 20 | 36 | 32 |
+| + aoCair-qualquerInimigo (§49, FECHA) | **20** | 39 | **29** |
 
-**VERDE 20 travado nas três sessões do bloco — é o esperado (§46: mecanismo sequencia por bloco, o VERDE se move
-no fim).** O VERMELHO é o sinal vivo: execução-hp cedeu 1 (fenrir → AMARELO), antirevive cedeu 1 (mimir → AMARELO).
-Cada um cede POUCO porque são ganchos de STAGING (flip ~0-1): os deuses que travam carregam outros ganchos, então
-limpar um raramente flipa sozinho. O núcleo de cada gancho cobre um SUBCONJUNTO (o source uniforme); os wrappers
-por-deus viajam com os outros ganchos — antirevive caiu de trava 8 → 5 (restam os 4 source-owners: matador-hook,
-aura, temporal, contador-carregado). Fonte por-deus em docs/triagem-88.json. Falta no bloco: aoCair-qualquerInimigo.
+**VERMELHO 40→29 (−11) monotônico; VERDE parado em 20 as QUATRO sessões — inclusive no fecho.** O VERMELHO é o
+sinal vivo: cada gancho cedeu 1-3 (fenrir por execução; mimir por antirevive; ahpuch/hades/iansa por qualquerInimigo).
+Cede POUCO porque são ganchos de STAGING (flip ~0-1): os deuses que travam carregam outros ganchos, então limpar um
+raramente flipa sozinho.
+
+**A previsão do dono ("flips no fim do BLOCO") ficou HALF-CONFIRMADA (§50):** staging bateu (VERMELHO monotônico),
+mas o flip-no-fecho NÃO — nenhuma das 4 mecânicas de morte zerou um deus. Um deus flipa quando cai seu ÚLTIMO
+gancho, e os de morte carregam ganchos de outros blocos (selado, medo, execução-variante, antirevive-source que
+falta). **O bloco fecha um MECANISMO, não um DEUS.** Correção do modelo: em plano dominado por mecanismo, o VERDE
+é back-loaded para o fim da FASE (o último bloco de cada deus), não de cada bloco. Fonte por-deus em docs/triagem-88.json.

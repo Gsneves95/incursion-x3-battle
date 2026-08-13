@@ -1,10 +1,18 @@
 {
  "dist": {
   "VERDE": 20,
-  "AMARELO": 36,
-  "VERMELHO": 32
+  "AMARELO": 39,
+  "VERMELHO": 29
  },
  "gods": [
+  {
+   "key": "ahpuch",
+   "ganchos": [
+    "antirevive"
+   ],
+   "nota": "Passiva on-kill nao-matador (aoCair-qualquerInimigo) e Podridao bloqueia revive (antirevive); reduzMaxHp/porContador/selfHp/noHeal expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
+   "cor": "AMARELO"
+  },
   {
    "key": "aokuang",
    "ganchos": [
@@ -86,6 +94,14 @@
    "cor": "AMARELO"
   },
   {
+   "key": "hades",
+   "ganchos": [
+    "selado-so-basico"
+   ],
+   "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
+   "cor": "AMARELO"
+  },
+  {
    "key": "hanuman",
    "ganchos": [
     "seletor"
@@ -115,6 +131,14 @@
     "faz-cdShift"
    ],
    "nota": "cdShift/cleanse ativos expressíveis; a passiva reduz 'a recarga mais longa do time' por turno = cdShift em faz + seletor.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "iansa",
+   "ganchos": [
+    "antirevive"
+   ],
+   "nota": "Milagre impede revives (antirevive); passiva on-kill nao-matador (aoCair-qualquerInimigo); strip/removerInvocacao/dmgDown expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
    "cor": "AMARELO"
   },
   {
@@ -414,15 +438,6 @@
    "cor": "VERDE"
   },
   {
-   "key": "ahpuch",
-   "ganchos": [
-    "antirevive",
-    "aoCair-qualquerInimigo"
-   ],
-   "nota": "Passiva on-kill nao-matador (aoCair-qualquerInimigo) e Podridao bloqueia revive (antirevive); reduzMaxHp/porContador/selfHp/noHeal expressiveis.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "ammit",
    "ganchos": [
     "antirevive",
@@ -525,15 +540,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "hades",
-   "ganchos": [
-    "aoCair-qualquerInimigo",
-    "selado-so-basico"
-   ],
-   "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "hel",
    "ganchos": [
     "bonusDano-escala-dinamica",
@@ -558,15 +564,6 @@
     "multi-hit-distribuido"
    ],
    "nota": "dano condicional por elemento=quando e remover DIA=fase; Nove Flechas reparte 9 golpes à escolha e a passiva 'Ignora Inalvejável' fura invulnerabilidade.",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "iansa",
-   "ganchos": [
-    "antirevive",
-    "aoCair-qualquerInimigo"
-   ],
-   "nota": "Milagre impede revives (antirevive); passiva on-kill nao-matador (aoCair-qualquerInimigo); strip/removerInvocacao/dmgDown expressiveis.",
    "cor": "VERMELHO"
   },
   {
@@ -639,11 +636,10 @@
   {
    "key": "morrigan",
    "ganchos": [
-    "aoCair-qualquerInimigo",
     "execucao-hp",
     "medo"
    ],
-   "nota": "Hab elimina se fim de turno com HP<=20 (execucao-hp); Milagre Medo; passiva on-kill nao-matador (aoCair-qualquerInimigo); noHeal/faz:[heal] expressiveis.",
+   "nota": "Hab elimina se fim de turno com HP<=20 (execucao-hp); Milagre Medo; passiva on-kill nao-matador (aoCair-qualquerInimigo); noHeal/faz:[heal] expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
    "cor": "VERMELHO"
   },
   {
@@ -720,8 +716,8 @@
   {
    "gancho": "selado-so-basico",
    "trava": 6,
-   "flip": 0,
-   "stage": 6
+   "flip": 1,
+   "stage": 5
   },
   {
    "gancho": "marca-vulnerabilidade",
@@ -738,8 +734,8 @@
   {
    "gancho": "antirevive",
    "trava": 5,
-   "flip": 1,
-   "stage": 4
+   "flip": 3,
+   "stage": 2
   },
   {
    "gancho": "seletor",
@@ -760,22 +756,16 @@
    "stage": 3
   },
   {
-   "gancho": "escolha-efeito",
-   "trava": 4,
-   "flip": 1,
-   "stage": 3
-  },
-  {
    "gancho": "medo",
    "trava": 4,
    "flip": 1,
    "stage": 3
   },
   {
-   "gancho": "aoCair-qualquerInimigo",
+   "gancho": "escolha-efeito",
    "trava": 4,
-   "flip": 0,
-   "stage": 4
+   "flip": 1,
+   "stage": 3
   },
   {
    "gancho": "multi-hit-distribuido",
@@ -796,16 +786,16 @@
    "stage": 2
   },
   {
-   "gancho": "faz-cdShift",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1
-  },
-  {
    "gancho": "agarrar",
    "trava": 2,
    "flip": 2,
    "stage": 0
+  },
+  {
+   "gancho": "faz-cdShift",
+   "trava": 2,
+   "flip": 1,
+   "stage": 1
   },
   {
    "gancho": "aoSerAtingido",
@@ -868,6 +858,18 @@
    "stage": 0
   },
   {
+   "gancho": "passiva-ativa-morto?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "pacificar",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
    "gancho": "aoAgirSobEfeito",
    "trava": 1,
    "flip": 1,
@@ -887,6 +889,12 @@
   },
   {
    "gancho": "invuln-por-alcance?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "modo-alterna",
    "trava": 1,
    "flip": 1,
    "stage": 0
@@ -946,22 +954,10 @@
    "stage": 1
   },
   {
-   "gancho": "passiva-ativa-morto?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
    "gancho": "reflete-dano",
    "trava": 1,
    "flip": 0,
    "stage": 1
-  },
-  {
-   "gancho": "pacificar",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
   },
   {
    "gancho": "aoAtacar",
@@ -980,12 +976,6 @@
    "trava": 1,
    "flip": 0,
    "stage": 1
-  },
-  {
-   "gancho": "modo-alterna",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
   },
   {
    "gancho": "execucao-temporizada",

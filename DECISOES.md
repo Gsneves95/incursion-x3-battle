@@ -1510,12 +1510,78 @@ estava coberto (linha do Livro) — foi contado a mais na 1ª triagem.
 
 ---
 
+## §49 — aoCair `quem:'qualquerInimigo'`: qualquer-morte, e coexiste com o matador-bound (F1.3 morte 4/4, fecha o bloco)
+
+**Decisão do dono (para não travar): QUALQUER MORTE, não matador-bound.** Dois motivos, e a varredura confirmou os dois:
+- **Textual:** "quando um inimigo é derrotado" é **voz passiva sem agente**; se a prosa quisesse matador, diria "ao
+  derrotar", como o Zeus diz. A distinção existe no vocabulário da planilha. Varredura global: os 4 (ahpuch, hades,
+  iansa, morrigan) são voz passiva ("é derrotado"; hades é literal "**qualquer** inimigo"); só o **zeus** é voz de
+  matador ("**ao derrotar**", = `quem:'inimigo'`). Bônus: **erinias** é "quando um **aliado** é derrotado" — mesma
+  voz passiva, sujeito ALIADO (outra família, `qualquerAliado`). Nenhum dos 4 contradiz — decisão firme.
+- **Design:** matador-bound já existe (`quem:'inimigo'`, zeus). Se os 4 fossem matador-bound seriam o MESMO gancho
+  e a triagem não os teria separado. Que a varredura os isole é evidência de que são outra coisa.
+
+**Forma:** o reator é todo vivo do lado OPOSTO ao caído; dispara mesmo SEM atacante (morte por DoT/execução/Livro)
+— por isso itera o lado, não usa `atk`. É o 3º sujeito do eixo `aoCair` (self, inimigo, qualquerInimigo).
+
+**Coexistência (pergunta 1 do dono) — os dois convivem SEM ambiguidade, e um dono com os DOIS dispara os DOIS
+quando ELE mata.** `inimigo` (matador) e `qualquerInimigo` (qualquer) são superset/subset no gatilho, mas cada fx
+é uma **declaração independente com seu próprio `faz`**; o motor não deduplica entre gatilhos. Logo uma morte que
+o dono causa satisfaz os dois → dois disparos de efeitos DIFERENTES — correto, não bug. Se apontassem ao mesmo
+efeito seria erro de autoria, não do motor. Provado em teste: TB com os dois dispara Umbra(matador)+Chama(qualquer)
+quando mata; quando um ALIADO mata, só Chama(qualquer). Nenhum precisa excluir o outro.
+
+**Fecho do bloco — a curva (pergunta 2 do dono), e o achado que CONTRARIA metade da previsão:** ver §50.
+
+---
+
+## §50 — Dois achados do bloco MORTE que o dono pediu para registrar
+
+**(A) Achado-BUG pelo método (não falta de mecanismo) — contado, ao lado do da invocação-guarda (§25).** O
+`naoRevive` gateava o revive-por-aliado (`reviver`) mas **não** o auto-renascimento (`reviveProximoTurno`): um
+Nezha marcado pelo Ammit renasceria. O bug já estava no motor; só apareceu porque, ao generalizar o antirevive,
+fui olhar os **dois** caminhos de revive em vez de assumir "o gate existe". **Casos contados de "refactor/varredura
+expõe bug anterior" (argumento a favor do método):** (1) §25 — a invocação-guarda logava `absorvido` com o dano
+inteiro; o refactor de eventos expôs. (2) §50 — o gate de `naoRevive` cobria metade das formas de revive; a
+varredura dos dois caminhos expôs. **Padrão:** quando um refactor/varredura obriga a olhar TODOS os caminhos de
+um mecanismo já existente, ele acha o caminho que ninguém testou. Vale contar — é evidência de que o método paga.
+
+**(B) Regra nova (3ª ocorrência): em família de MORTE, varra por SUJEITO antes de contar.** Três vezes o sujeito
+foi onde os baldes de morte se partiram: execução (matar-quem × por-status × seletor × timing), antirevive (5
+sujeitos: prévia-carregada, no-ato-pelo-matador, aura, janela-temporal, auto-marca), e aoCair (self × inimigo ×
+qualquerInimigo × aliado). Eu previa 3 sujeitos no antirevive; a varredura achou 5 (o dono previu prévia/auto/aura,
+eu achei "no ato pelo matador" e "janela temporal"). **Já é regra: gancho de morte nomeado esconde N sujeitos;
+varra por sujeito antes de contar trava/flip.**
+
+**Curva do bloco MORTE inteiro (4 sessões) — e a previsão do dono half-confirmada:**
+
+| sessão | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| base (re-triagem) | 17 | 31 | 40 |
+| Passo 0 + piso-1hp | 20 | 34 | 34 |
+| + execução-hp | 20 | 34 | 33 |
+| + antirevive | 20 | 36 | 32 |
+| + aoCair-qualquerInimigo (fecha) | **20** | 39 | **29** |
+
+**O VERMELHO caiu 40→29 (−11); o VERDE NÃO subiu no fecho — ficou 20 as quatro sessões.** A previsão do dono
+("bloco de mecanismo entrega os flips no FIM") está **half-confirmada**: a metade "mecanismo = staging" bateu (o
+VERMELHO cedeu a cada sessão, monotônico); a metade "flips no fim do BLOCO" **não** — nenhuma das 4 mecânicas de
+morte zerou um deus. **Diagnóstico:** um deus flipa quando cai seu ÚLTIMO gancho, e os deuses de morte carregam
+ganchos de OUTROS blocos (hades/anubis: selado; morrigan: medo+execução-variante; iansa/ahpuch: antirevive-source
+que falta). O bloco fecha um MECANISMO, não um DEUS. **Correção do modelo:** os flips não chegam no fim de cada
+bloco — chegam no fim do ÚLTIMO bloco de que cada deus depende. Em plano dominado por mecanismo, o VERDE é
+back-loaded para o fim da FASE inteira, não de cada bloco. (Os 3 flips que houve — bragi/brahma/inari/change — vieram
+das EXTENSÕES do Passo 0, não das mecânicas de morte.) O dono pediu para saber se a previsão falhasse: falhou nessa
+metade, e o motivo é estrutural, não de execução.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
 |---|---|
 | **~15 decisões dos 3 blocos (da varredura, §35)** | Decisão-mãe BATIDA (§36: passiva declarativa = F1.2). Faltam ~15 pontos, para o dono responder EM BLOCO (uma mensagem), com recomendação minha em cada: Bloco 1 (F1.3) morte/sobrevivência — piso-1-HP, execução HP/status/tempo, interações com revive-imune/`vidaExtra`; Bloco 2 (F1.4) controle — Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; Bloco 3 (F1.5) modos/estado — escolha múltipla, alterna, ler Dia/Noite, invocações. Ver `docs/primitivas-faltantes.md`. |
-| **`aoCair` — matador-bound vs qualquer-morte (F1.2)** | `quem:'inimigo'` (matador-bound: zeus, feito na sessão 6) e `quem:'self'` (auto-reativo: nezha, feito na sessão 7) estão abertos. Falta decidir ao migrar morrigan/iansa/ahpuch: 3 passivas dizem "quando um inimigo é derrotado, [eu] X" SEM dizer se o reator precisa ser o matador ou se vale QUALQUER morte de inimigo — e hades é explicitamente "qualquer". `quem:'inimigo'` (matador) vs um `quem:'qualquerInimigo'` (qualquer morte); `quem:'aliado'` também ainda não aberto. |
+| **`aoCair` — matador-bound vs qualquer-morte** | **RESOLVIDO (§49): qualquer-morte.** `quem:'qualquerInimigo'` construído (F1.3 morte 4/4); coexiste com `quem:'inimigo'` (matador, zeus). Falta ainda `quem:'aliado'`/`qualquerAliado` (erinias/nuwa/khnum — família F1.4). |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
 | **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |
