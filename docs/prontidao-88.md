@@ -286,3 +286,18 @@ sinal que o dono pediu para acompanhar no bloco de morte: mesmo com o VERDE quas
 bloco, o VERMELHO deve ceder a cada gancho; se ficar parado, o gancho não travava o que a triagem dizia. `piso-1hp`
 sozinho não flipa (os deuses de piso são multi-gancho — vishnu/oxala foram só p/ AMARELO), confirmando o §46:
 fase de mecanismo é staging, o placar do VERDE se move no FIM do bloco. Fonte por-deus em docs/triagem-88.json.
+
+## Curva DUPLA — F1.3 morte, bloco em andamento (VERDE parado, VERMELHO cede a cada gancho)
+
+| marco | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| Passo 0 + piso-1hp | 20 | 34 | 34 |
+| + execução-hp (§47) | 20 | 34 | 33 |
+| + antirevive (§48) | **20** | 36 | **32** |
+
+**VERDE 20 travado nas três sessões do bloco — é o esperado (§46: mecanismo sequencia por bloco, o VERDE se move
+no fim).** O VERMELHO é o sinal vivo: execução-hp cedeu 1 (fenrir → AMARELO), antirevive cedeu 1 (mimir → AMARELO).
+Cada um cede POUCO porque são ganchos de STAGING (flip ~0-1): os deuses que travam carregam outros ganchos, então
+limpar um raramente flipa sozinho. O núcleo de cada gancho cobre um SUBCONJUNTO (o source uniforme); os wrappers
+por-deus viajam com os outros ganchos — antirevive caiu de trava 8 → 5 (restam os 4 source-owners: matador-hook,
+aura, temporal, contador-carregado). Fonte por-deus em docs/triagem-88.json. Falta no bloco: aoCair-qualquerInimigo.

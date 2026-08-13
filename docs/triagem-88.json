@@ -1,8 +1,8 @@
 {
  "dist": {
-  "AMARELO": 35,
   "VERDE": 20,
-  "VERMELHO": 33
+  "AMARELO": 36,
+  "VERMELHO": 32
  },
  "gods": [
   {
@@ -38,18 +38,6 @@
    "cor": "AMARELO"
   },
   {
-   "key": "bragi",
-   "ganchos": [],
-   "nota": "passiva dispara quando um aliado usa Milagre — gatilho reativo inexistente.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "brahma",
-   "ganchos": [],
-   "nota": "shield inicial=abertura:faz:shield e +4 acumulável=contador; só '+3 por Milagre aliado usado' precisa do reativo aoUsarHabilidade.",
-   "cor": "VERDE"
-  },
-  {
    "key": "cerberus",
    "ganchos": [
     "antirevive"
@@ -82,6 +70,30 @@
    "cor": "AMARELO"
   },
   {
+   "key": "fenrir",
+   "ganchos": [
+    "agarrar"
+   ],
+   "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "guanyu",
+   "ganchos": [
+    "medo"
+   ],
+   "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "hanuman",
+   "ganchos": [
+    "seletor"
+   ],
+   "nota": "Milagre cura no 'aliado mais ferido' (seletor); passiva 'com Sun Wukong no time' e sinergia-nomeada; intercepta/dmgUp existem.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "heimdall",
    "ganchos": [
     "orbe-protecao"
@@ -104,12 +116,6 @@
    ],
    "nota": "cdShift/cleanse ativos expressíveis; a passiva reduz 'a recarga mais longa do time' por turno = cdShift em faz + seletor.",
    "cor": "AMARELO"
-  },
-  {
-   "key": "inari",
-   "ganchos": [],
-   "nota": "aCadaN+faz:orbGain e orbGain/heal são expressíveis; só a cláusula 'se a Kitsune está no time' precisa de sinergia nomeada.",
-   "cor": "VERDE"
   },
   {
    "key": "isis",
@@ -152,11 +158,27 @@
    "cor": "AMARELO"
   },
   {
+   "key": "mimir",
+   "ganchos": [
+    "passiva-ativa-morto?"
+   ],
+   "nota": "concede aura de +dano mesmo derrotado (passiva do tumulo) e naoRevive em si mesmo. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
+   "cor": "AMARELO"
+  },
+  {
    "key": "nefertem",
    "ganchos": [
     "bonusCura-cond-nova"
    ],
    "nota": "amplia cura condicionada a faccao do curador (Egipcios); quandoCura so tem inimigoTem.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "odin",
+   "ganchos": [
+    "ignora-invuln"
+   ],
+   "nota": "basico ignora Invuln+Inalvejavel (danoIrredutivel so fura reducao/escudo); marca+bonusDano-time e selfHp+cdShift+dmgUp ok; passiva '2+ Nordicos' = sinergia-nomeada por faccao.",
    "cor": "AMARELO"
   },
   {
@@ -184,6 +206,14 @@
    "cor": "AMARELO"
   },
   {
+   "key": "oxala",
+   "ganchos": [
+    "pacificar"
+   ],
+   "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "perseu",
    "ganchos": [
     "aoReceberControle"
@@ -208,6 +238,14 @@
    "cor": "AMARELO"
   },
   {
+   "key": "shiva",
+   "ganchos": [
+    "ignora-invuln"
+   ],
+   "nota": "Terceiro Olho fura Invulnerabilidade (escudo já é danoIrredutivel; furar o piso-1hp depende do piso existir) e a passiva reage a qualquer aliado usar Milagre.",
+   "cor": "AMARELO"
+  },
+  {
    "key": "shutendoji",
    "ganchos": [
     "torpor"
@@ -229,6 +267,14 @@
     "escolha-efeito"
    ],
    "nota": "copiar-básico-de-aliado usa fx copiar existente; as três cláusulas 'Escolha:' (hab, milagre, orbe inicial) exigem resolução de escolha 1-de-N.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "vishnu",
+   "ganchos": [
+    "modo-alterna"
+   ],
+   "nota": "Encarnação é toggle declarativo NARASIMHA/KURMA e o milagre concede 'não cai abaixo de 1 HP'; stripOne e redução são expressíveis.",
    "cor": "AMARELO"
   },
   {
@@ -284,23 +330,39 @@
    "cor": "VERDE"
   },
   {
+   "key": "bragi",
+   "ganchos": [],
+   "nota": "passiva dispara quando um aliado usa Milagre — gatilho reativo inexistente.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "brahma",
+   "ganchos": [],
+   "nota": "shield inicial=abertura:faz:shield e +4 acumulável=contador; só '+3 por Milagre aliado usado' precisa do reativo aoUsarHabilidade.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "change",
+   "ganchos": [],
+   "nota": "cura-30-durante-NOITE já é estado{fase}; falta o piso 'não cai abaixo de 1 HP' e a sinergia 'com Hou Yi no time'.",
+   "cor": "VERDE"
+  },
+  {
    "key": "freyja",
    "ganchos": [],
    "nota": "heal+dmgUp em aliados, ramo revive-ou-buff via estado(aliadosVivos), passiva aoCurar+apply — tudo expressivel.",
    "cor": "VERDE"
   },
   {
-   "key": "guanyu",
-   "ganchos": [
-    "medo"
-   ],
-   "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "hercules",
    "ganchos": [],
    "nota": "dano perfurante, escalada +4/uso via contador/porContador, sobrevive letal 1x via vidaExtra - tudo provado.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "inari",
+   "ganchos": [],
+   "nota": "aCadaN+faz:orbGain e orbGain/heal são expressíveis; só a cláusula 'se a Kitsune está no time' precisa de sinergia nomeada.",
    "cor": "VERDE"
   },
   {
@@ -417,12 +479,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "change",
-   "ganchos": [],
-   "nota": "cura-30-durante-NOITE já é estado{fase}; falta o piso 'não cai abaixo de 1 HP' e a sinergia 'com Hou Yi no time'.",
-   "cor": "VERDE"
-  },
-  {
    "key": "curupira",
    "ganchos": [
     "redirecionar",
@@ -469,14 +525,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "fenrir",
-   "ganchos": [
-    "agarrar"
-   ],
-   "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "hades",
    "ganchos": [
     "aoCair-qualquerInimigo",
@@ -486,21 +534,12 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "hanuman",
-   "ganchos": [
-    "seletor"
-   ],
-   "nota": "Milagre cura no 'aliado mais ferido' (seletor); passiva 'com Sun Wukong no time' e sinergia-nomeada; intercepta/dmgUp existem.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "hel",
    "ganchos": [
-    "antirevive",
     "bonusDano-escala-dinamica",
     "cura-escala-alvos?"
    ],
-   "nota": "Marca da Morte aplica naoRevive=antirevive; milagre +5 por debuff (escala-status) e cura 5 POR alvo atingido (cura dinamica por hit); passiva paridade par/impar via estado(paridade) - expressivel.",
+   "nota": "Marca da Morte aplica naoRevive=antirevive; milagre +5 por debuff (escala-status) e cura 5 POR alvo atingido (cura dinamica por hit); passiva paridade par/impar via estado(paridade) - expressivel. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
    "cor": "VERMELHO"
   },
   {
@@ -589,15 +628,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "mimir",
-   "ganchos": [
-    "antirevive",
-    "passiva-ativa-morto?"
-   ],
-   "nota": "concede aura de +dano mesmo derrotado (passiva do tumulo) e naoRevive em si mesmo.",
-   "cor": "VERMELHO"
-  },
-  {
    "key": "mnevis",
    "ganchos": [
     "primeiroPorTurno",
@@ -635,22 +665,6 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "odin",
-   "ganchos": [
-    "ignora-invuln"
-   ],
-   "nota": "basico ignora Invuln+Inalvejavel (danoIrredutivel so fura reducao/escudo); marca+bonusDano-time e selfHp+cdShift+dmgUp ok; passiva '2+ Nordicos' = sinergia-nomeada por faccao.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "oxala",
-   "ganchos": [
-    "pacificar"
-   ],
-   "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "raijin",
    "ganchos": [
     "aoAtacar",
@@ -667,14 +681,6 @@
    ],
    "nota": "Passiva: primeiro alvo-unico por turno falha (esquiva+primeiroPorTurno); contraAtaca/invulneravel/dot ja existem.",
    "cor": "VERMELHO"
-  },
-  {
-   "key": "shiva",
-   "ganchos": [
-    "ignora-invuln"
-   ],
-   "nota": "Terceiro Olho fura Invulnerabilidade (escudo já é danoIrredutivel; furar o piso-1hp depende do piso existir) e a passiva reage a qualquer aliado usar Milagre.",
-   "cor": "AMARELO"
   },
   {
    "key": "susanoo",
@@ -695,21 +701,12 @@
    "cor": "VERMELHO"
   },
   {
-   "key": "vishnu",
-   "ganchos": [
-    "modo-alterna"
-   ],
-   "nota": "Encarnação é toggle declarativo NARASIMHA/KURMA e o milagre concede 'não cai abaixo de 1 HP'; stripOne e redução são expressíveis.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "yanwong",
    "ganchos": [
-    "antirevive",
     "execucao-temporizada",
     "marca-vulnerabilidade"
    ],
-   "nota": "Livro mata em 3 turnos (temporizada, milagre acelera), '+8 de dano recebido' é marca de vulnerabilidade e 'não pode ser revivido' é antirevive.",
+   "nota": "Livro mata em 3 turnos (temporizada, milagre acelera), '+8 de dano recebido' é marca de vulnerabilidade e 'não pode ser revivido' é antirevive. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
    "cor": "VERMELHO"
   }
  ],
@@ -719,18 +716,6 @@
    "trava": 10,
    "flip": 4,
    "stage": 6
-  },
-  {
-   "gancho": "antirevive",
-   "trava": 8,
-   "flip": 1,
-   "stage": 7
-  },
-  {
-   "gancho": "execucao-hp",
-   "trava": 7,
-   "flip": 0,
-   "stage": 7
   },
   {
    "gancho": "selado-so-basico",
@@ -751,10 +736,22 @@
    "stage": 2
   },
   {
+   "gancho": "antirevive",
+   "trava": 5,
+   "flip": 1,
+   "stage": 4
+  },
+  {
    "gancho": "seletor",
    "trava": 5,
    "flip": 2,
    "stage": 3
+  },
+  {
+   "gancho": "execucao-hp",
+   "trava": 5,
+   "flip": 0,
+   "stage": 5
   },
   {
    "gancho": "primeiroPorTurno",
@@ -764,6 +761,12 @@
   },
   {
    "gancho": "escolha-efeito",
+   "trava": 4,
+   "flip": 1,
+   "stage": 3
+  },
+  {
+   "gancho": "medo",
    "trava": 4,
    "flip": 1,
    "stage": 3
@@ -793,12 +796,6 @@
    "stage": 2
   },
   {
-   "gancho": "medo",
-   "trava": 3,
-   "flip": 0,
-   "stage": 3
-  },
-  {
    "gancho": "faz-cdShift",
    "trava": 2,
    "flip": 1,
@@ -807,8 +804,8 @@
   {
    "gancho": "agarrar",
    "trava": 2,
-   "flip": 1,
-   "stage": 1
+   "flip": 2,
+   "stage": 0
   },
   {
    "gancho": "aoSerAtingido",
@@ -951,8 +948,8 @@
   {
    "gancho": "passiva-ativa-morto?",
    "trava": 1,
-   "flip": 0,
-   "stage": 1
+   "flip": 1,
+   "stage": 0
   },
   {
    "gancho": "reflete-dano",

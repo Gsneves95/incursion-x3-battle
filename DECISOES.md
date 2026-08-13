@@ -1468,6 +1468,48 @@ wrapper de cada um.
 
 ---
 
+## §48 — antirevive: o balde que o dono suspeitava, partido por SUJEITO (F1.3 morte 3/4)
+
+O dono marcou antirevive como o mais suspeito de balde do bloco (trava 8, flip 1, stage 7). A varredura dos 8
+(cerberus/ahpuch/ammit/anubis/hel/iansa/mimir/yanwong) confirmou: "não revive" é UM efeito aparente com **quatro
+donos de SOURCE diferentes** — o mesmo lugar onde a varredura de morte já tinha partido baldes (o SUJEITO).
+
+**As três perguntas do dono, respondidas pela prosa:**
+1. **QUEM CARREGA A MARCA.** (a) **Prévia carregada pelo inimigo** (marcador que já existe e proíbe ao cair):
+   hel (Marca da Morte=DoT), yanwong (Livro=efeito), ahpuch (Podridão=**contador**), anubis (Atadura=**contador**).
+   (b) **No ato, pelo matador, sem prévia**: ammit ("quem Ammit derrota", "de forma alguma"). (c) **Aura enquanto
+   o dono vive**: cerberus. (d) **Janela temporal global**: iansa ("por 2 turnos"). (e) **Auto-marca**: mimir.
+2. **QUANDO É APLICADA.** A prosa DIZ, caso a caso — não precisei arbitrar. Os do grupo (a) são **prévios e
+   cleansáveis** (o yanwong até diz "se o efeito não for removido") → **contra-jogo**: limpar antes de cair libera
+   o revive. Os (b)-(d) são **no ato**, sem janela.
+3. **CONTRA O QUÊ PROTEGE.** Nenhuma prosa bloqueia `vidaExtra`. "Não pode ser revivido" = revive **PÓS-morte**:
+   `reviver` (por-aliado, Ísis/Osíris) + `reviveProximoTurno` (auto, Nezha). `vidaExtra` é sobrevivência PRÉ-morte
+   — não é "revive". Mesmo o "de forma alguma" do ammit se aplica a quem ele DERROTA; vidaExtra impede a derrota.
+
+**Fronteira execução × antirevive (a pergunta que o dono levantou por causa da sessão de hoje):** NÃO são
+redundantes. execução/`vidaExtra` agem PRÉ-morte (sobreviver ao letal); antirevive age PÓS-morte (voltar após
+cair). Janelas disjuntas, nenhum toca a do outro. A redundância que ele temia não existe — a prosa os mantém
+distintos.
+
+**Núcleo uniforme construído (o motor quase já tinha — §44):** o flag `naoRevive`, o log `nao_revive` e o gate em
+`reviver` JÁ existiam. Faltava metade: (1) **gate completo** — `reviveProximoTurno` (auto-renascimento) passa a
+respeitar `naoRevive`; antes um Nezha marcado renasceria (o flag travava só o revive-por-aliado). (2) **source
+geral** — snapshot NO ATO da morte em `matar` (após vidaExtra, antes da limpeza): se a unidade cai carregando um
+efeito/dot com a propriedade `naoRevive`, o flag persiste; limpar antes libera (contra-jogo). O caso Livro
+deixou de ser set imperativo — o efeito carrega a propriedade e o snapshot o sela.
+
+**Núcleo + WRAPPERS por SOURCE-OWNER (o §46/§47 de novo):** o núcleo cobre só o source **efeito/dot-carregado** —
+hel/yanwong/mimir (mimir → AMARELO; hel/yanwong seguem VERMELHOS por outros ganchos). Ficam para os deuses:
+matador-hook (ammit), aura-enquanto-vivo (cerberus), janela-temporal (iansa), contador-carregado (ahpuch/anubis —
+Podridão/Atadura são contadores, não efeitos/dots; o snapshot não os lê). `antirevive` cai de trava 8 → **5**
+(esses 5 são exatamente os 4 source-owners que faltam). **Ruído de triagem anotado:** o antirevive do yanwong já
+estava coberto (linha do Livro) — foi contado a mais na 1ª triagem.
+
+**Curva dupla:** VERDE **20** (parado — bloco de mecanismo, sequência por bloco não por flip) · VERMELHO **33→32**
+(mimir flipou p/ AMARELO). O VERMELHO cai de novo, como o dono pediu para o bloco.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |
