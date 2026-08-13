@@ -97,6 +97,7 @@ const GATILHOS_PASSIVA = {
   bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 8)
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
   aoCurar:         { campos: ['faz'], obrig: ['faz'] },                        // quando um aliado é CURADO, faz X no curado (sessão 10)
+  aoUsarHabilidade:{ campos: ['slot', 'faz'], obrig: ['slot', 'faz'] },        // quando um aliado usa habilidade do slot, faz X no dono (Passo 0)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -165,6 +166,7 @@ const ESTADO_COND = {
   aliadosVivos: { count: true },              // {op:'min'|'max'|'exato', n} — vivos no lado do dono (Guan Yu '3 vivos')
   contador:     { contadorCmp: true },        // {nome, op, n} — contador do dono cruza o limiar (Kitsune '3 Caudas')
   hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
+  aliadoPresente:{ godkey: true },            // <key> — um deus específico está no time do dono (sinergia: 'com Fulano no time') — Passo 0
   primeiroPorTurno: { bool: true, pendente: 'RASTREIO por-turno (não leitura). Vem com esquiva/intercepta — bastet/saci/mnevis; ver §45' },
 };
 const VOCAB = {
@@ -452,6 +454,7 @@ function estadoOK(e, u, st) {
   if ('aliadosVivos' in e) return cmpLimiar(st.lados[u.lado].units.filter(x => x.vivo).length, e.aliadosVivos);
   if ('contador' in e) return cmpLimiar(getContador(u, e.contador.nome), e.contador);
   if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
+  if ('aliadoPresente' in e) return st.lados[u.lado].units.some(x => x.key === e.aliadoPresente);   // deus X no time (roster)
   return false;   // primeiroPorTurno é `pendente` (valida_kit barra); nunca chega aqui com dado válido
 }
 function condOK(q, atk, alvo, st) {
@@ -1066,6 +1069,14 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
   if (slot === 'habilidade' && !a.alterna && !a.opcoes && !eCopia) l.ultHabilidade = { nome: a.nome, fx, alvoSpec: a.alvo, slot: 'habilidade' };
 
   aplicarFx(st, u, fx, a, alvos, escolhas);
+  // gatilho aoUsarHabilidade (Passo 0) — um aliado (incl. o próprio) usou uma ação do slot; os donos do gatilho
+  // no mesmo lado reagem com um faz. bragi/shiva/brahma: 'quando um aliado usa um Milagre'.
+  for (const dono of l.units) {
+    if (!dono.vivo) continue;
+    const g = kitDe(st, dono); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) if (f.gatilho === 'aoUsarHabilidade' && f.slot === slot && (!f.estado || estadoOK(f.estado, dono, st))) rodarFaz(st, dono, f.faz);
+  }
   checarFim(st);
   return { ok: true };
 }

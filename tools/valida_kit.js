@@ -136,6 +136,7 @@ function validarEstado(e, ctx, errs) {
       if (!val || typeof val !== 'object' || !['cheio', 'abaixo', 'acima'].includes(val.op)) errs.push(`${ctx}: hpProprio.op inválido (cheio|abaixo|acima)`);
       else if ((val.op === 'abaixo' || val.op === 'acima') && typeof val.v !== 'number') errs.push(`${ctx}: hpProprio.v ausente para op "${val.op}"`);
     }
+    else if (def.godkey) { if (typeof val !== 'string' || !val) errs.push(`${ctx}: aliadoPresente espera a KEY de um deus (string)`); }
   }
 }
 
@@ -163,6 +164,7 @@ function validarPassiva(p, ctx, errs) {
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('quem' in f && !V.aoCairQuem.includes(f.quem)) errs.push(`${c}: aoCair.quem inválido "${f.quem}" (válidos: ${V.aoCairQuem.join(', ')})`);
+    if (f.gatilho === 'aoUsarHabilidade' && !V.slotsAtaque.includes(f.slot)) errs.push(`${c}: aoUsarHabilidade.slot inválido "${f.slot}" (válidos: ${V.slotsAtaque.join(', ')})`);
     if (f.gatilho === 'aCadaN') {   // cadência ABSOLUTA n + EXATAMENTE um payload (faz OU custoGratis — nunca os dois, nunca nenhum)
       if (typeof f.n !== 'number' || !Number.isInteger(f.n) || f.n < 2) errs.push(`${c}: aCadaN.n inválido (${JSON.stringify(f.n)}; inteiro >= 2 — n=1 é porTurno)`);
       const payloads = ['faz', 'custoGratis'].filter(k => k in f);

@@ -245,6 +245,32 @@ console.log('== F1.2.5 s3: estado COMPÕE com o eixo (contra + estado, AND) + as
   ok(h - def.hp === 20, `contador min 3: com 1 -> NÃO reduz = 20 (deu ${h - def.hp})`);
   delete E.GODS.tct;
 }
+console.log('== Passo 0: aoUsarHabilidade (reativo a uso de slot) + estado.aliadoPresente (sinergia=condição) ==');
+{ // aoUsarHabilidade: quando um aliado usa Milagre, o dono reage (shiva: +1 orbe). Checa o EVENTO (evita conta de custo).
+  E.GODS.tuh = { nome: 'TUH', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoUsarHabilidade', slot: 'milagre', faz: [{ t: 'orbGain', n: 1, para: 'Umbra' }] }] },
+    ab: [{ slot: 'basico', classe: 'Mágico', nome: 'b', cost: {}, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] },
+         { slot: 'habilidade', classe: 'Mágico', nome: 'h', cost: {}, cd: 1, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] },
+         { slot: 'milagre', classe: 'Mágico', nome: 'm', cost: {}, cd: 4, alvo: 'inimigo', fx: [{ t: 'dmg', v: 20 }] }] };
+  const st = E.novoEstado(['tuh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 970);
+  const tuh = st.lados[0].units[0]; st.ativo = 0; tuh.agiu = false;
+  const enemy = st.lados[1].units[0].uid;
+  const orbEv = () => st.log.filter(e => e.tipo === 'orbe' && e.passiva === 'tuh').length;
+  E.agir(st, tuh.uid, 'basico', [enemy]);
+  ok(orbEv() === 0, `básico NÃO dispara aoUsarHabilidade (eventos: ${orbEv()})`);
+  tuh.agiu = false; E.agir(st, tuh.uid, 'milagre', [enemy]);
+  ok(orbEv() === 1, `MILAGRE dispara aoUsarHabilidade: 1 evento de orbe do tuh (eventos: ${orbEv()})`);
+  delete E.GODS.tuh;
+}
+{ // estado.aliadoPresente: sinergia = condição (bonusDano só com deus X no time)
+  E.GODS.tsin = { nome: 'TSIN', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', v: 8, estado: { aliadoPresente: 'ganesha' } }] } };
+  let st = E.novoEstado(['tsin', 'ganesha', 'zeus'], ['zeus', 'zeus', 'zeus'], 971);
+  let atk = st.lados[0].units[0], e = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, atk, e) === 8, `com ganesha no time: +8 (deu ${E.bonusDanoDeclarativo(st, atk, e)})`);
+  st = E.novoEstado(['tsin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 972);
+  atk = st.lados[0].units[0]; e = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, atk, e) === 0, `SEM ganesha no time: 0 (deu ${E.bonusDanoDeclarativo(st, atk, e)})`);
+  delete E.GODS.tsin;
+}
 { // HERA — aliado curado ganha EXATAMENTE 10 de escudo; só o curado; só com Hera viva
   const st = E.novoEstado(['hera', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 403);
   const hera = st.lados[0].units[0], a1 = st.lados[0].units[1], a2 = st.lados[0].units[2];
@@ -501,6 +527,12 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { aliadosVivos: {
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 5, contra: { classe: 'Mágico' }, estado: { paridade: 'par' } }); ok(validarDeus(g).length === 0, 'contra + estado COMPÕEM (universal): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, estado: { fase: 'Dia' } }); ok(validarDeus(g).length === 0, 'bonusDano + estado.fase VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { hpProprio: { op: 'abaixo', v: 50 } } }); ok(validarDeus(g).length === 0, 'estado.hpProprio VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+// Passo 0: aoUsarHabilidade (slot obrig) + estado.aliadoPresente
+err(g => g.passiva.fx.push({ gatilho: 'aoUsarHabilidade', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "slot"'); // falta slot
+err(g => g.passiva.fx.push({ gatilho: 'aoUsarHabilidade', slot: 'ultimate', faz: [{ t: 'orbGain', n: 1 }] }), 'slot inválido'); // slot fora
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { aliadoPresente: 123 } }), 'a KEY de um deus'); // key não-string
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoUsarHabilidade', slot: 'milagre', faz: [{ t: 'orbGain', n: 1 }] }); ok(validarDeus(g).length === 0, 'aoUsarHabilidade VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'bonusDano', v: 8, estado: { aliadoPresente: 'ganesha' } }); ok(validarDeus(g).length === 0, 'estado.aliadoPresente VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) não vai em reducao
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho'); // contra (defensivo) não vai em bonusDano
 // gatilhos de turno (sessão 4): faz reusa fx, mas só os turno-seguros e sem alvo escolhido
