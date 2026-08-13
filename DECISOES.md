@@ -1673,7 +1673,46 @@ front-loaded do §52 bateu no primeiro gancho do controle. VERMELHO 29 → 24 (c
 
 ---
 
-## Decisões ainda ABERTAS
+## §54 — Método: duas coisas são UMA se ninguém no jogo as distingue (do dono)
+
+Ao decidir Selado ≡ Silenciado ≡ Enraizado (§53), meu argumento era economia de vocabulário; o do dono foi melhor
+e virou método: **quando duas coisas parecem distintas, veja se ALGUÉM no jogo as distingue. Se ninguém distingue,
+são uma.** A prova para o slot-lock foi objetiva — varri as imunidades dos 100 kits e nenhuma mira Selado/Silenciado/
+Enraizado por nome; logo nada os separa, logo são um nome canônico. Isto é mais forte que "economia": economia é
+gosto; "ninguém os distingue" é evidência. Aplica-se além de nomes — a qualquer par que se pense em fundir ou
+separar: a pergunta é se existe uma REGRA no jogo (imunidade, condição, seletor, bônus) que trate um diferente do
+outro. Se existe, são dois; se não, são um. (É o §46 — nome não é evidência — com um teste positivo em vez de só a advertência.)
+
+---
+
+## §55 — aoSerAtingido (F1.4 controle 2/N): efeito no SUJEITO do evento, com a garantia BUFF-only intacta
+
+O gancho reativo "reajo a ser atingido". A família (varrida por SUJEITO, §46/§50): **medusa** (self → Veneno no
+ATACANTE), **xango** (aliado → +dano em SI), **boitata** (self → cura em SI). Eixo `quem` FECHADO contra a família:
+`{self, aliado}` — não há 'inimigo' (reagir a ATINGIR um inimigo é `aoAtacar`, outro gancho); contraAtaca/intercepta/
+reflete já existem e não são isto.
+
+**A pergunta do dono (a Medusa aplica DEBUFF no atacante, o que fura a garantia BUFF-only do `faz`).** Resposta,
+com a avaliação do tripwire que ele pediu: **a garantia NÃO precisou ser reformulada.** Ela vive no VALIDADOR, sobre
+o campo `faz` (valida_kit: apply em faz só BUFF). O `faz` continua sendo self/lado BUFF-only, intacto. O efeito no
+atacante entra por um payload SEPARADO — `noAtacante` — com sua própria regra (DoT/apply-DEBUFF permitido; dmg
+proibido p/ não recursar; buff proibido pois é inútil no inimigo). O tripwire ("se a garantia estiver amarrada de
+um jeito que não separa buff-em-aliado de efeito-no-sujeito, PARE e me mostre") **não disparou** — a garantia era
+bem-fatorada, separável por campo.
+
+**Reuso da máquina (o que o dono pediu: generalizar em vez de criar).** `noAtacante` roda pela MESMA `rodarFaz`, com
+o SUJEITO trocado para o atacante e o CRÉDITO no reator — exatamente o padrão `tagKey` da Hera (efeito num, crédito
+noutro). A única adição à máquina foi o ramo `dot` em rodarFaz (o Veneno da Medusa), que só o `noAtacante` usa — o
+`faz` segue sem dot (o validador o barra lá). Princípio que justifica o debuff: **o alvo vem do EVENTO, não é
+ESCOLHIDO** — é a mesma situação da Hera. A garantia BUFF-only protegia contra "gatilho sem alvo aplica debuff em
+quem eu quiser"; aqui o alvo é entregue pelo evento, então a proteção não é necessária e não foi afrouxada — só não
+se aplica a um payload que não é `faz`.
+
+**`contra` ganhou `elem` positivo** (só golpes deste elemento — boitata: Chama), ao lado do `elemNao` (negativo) que
+já existia. Generalização mínima do eixo do golpe; a Medusa usa `classe: 'Físico'`, que já existia.
+
+**Curva:** VERDE **23 → 25** (medusa e xango flipam — gancho único de controle, incremental, como o §52 previu).
+Segue o front-load do bloco. boitata não flipa (carrega ignora-invuln).
 
 | Assunto | Situação |
 |---|---|

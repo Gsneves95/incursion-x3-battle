@@ -328,8 +328,9 @@ torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor 
 | gancho | VERDE | AMARELO | VERMELHO | flips |
 |---|---|---|---|---|
 | (base, pós-morte) | 20 | 39 | 29 | — |
-| slot-lock nomeado (§53) | **23** | 41 | 24 | fenrir, kraken (agarrar), hades (selado) — INCREMENTAL |
+| slot-lock nomeado (§53) | 23 | 41 | 24 | fenrir, kraken (agarrar), hades (selado) — INCREMENTAL |
+| aoSerAtingido (§55) | **25** | 39 | 24 | medusa, xango — INCREMENTAL |
 
-O 1º gancho já flipou +3 na hora, front-loaded — a previsão do §52 bateu, o §51 se sustenta (deus de controle não
-tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: aoSerAtingido (medusa/xango), torpor≡aoAgirSobEfeito
+Dois ganchos, +5 VERDE (20→25), todos front-loaded — a previsão do §52 segue batendo, o §51 se sustenta (deus de
+controle não tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: torpor≡aoAgirSobEfeito
 (shuten/piranha), pacificar (oxala), medo (guanyu); curupira flipa quando redirecionar cair também.

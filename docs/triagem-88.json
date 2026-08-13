@@ -1,7 +1,7 @@
 {
  "dist": {
-  "VERDE": 23,
-  "AMARELO": 41,
+  "VERDE": 25,
+  "AMARELO": 39,
   "VERMELHO": 24
  },
  "gods": [
@@ -182,14 +182,6 @@
    "cor": "AMARELO"
   },
   {
-   "key": "medusa",
-   "ganchos": [
-    "aoSerAtingido"
-   ],
-   "nota": "veneno-DoT, lockSkill+marca(contador), limiar 3-marcas->atordoado ok; passiva 'quem a atinge com Fisico recebe veneno' = reativo aoSerAtingido.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "mimir",
    "ganchos": [
     "passiva-ativa-morto?"
@@ -315,14 +307,6 @@
     "modo-alterna"
    ],
    "nota": "Encarnação é toggle declarativo NARASIMHA/KURMA e o milagre concede 'não cai abaixo de 1 HP'; stripOne e redução são expressíveis.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "xango",
-   "ganchos": [
-    "aoSerAtingido"
-   ],
-   "nota": "Passiva acumula dano quando um aliado e atingido (aoSerAtingido); armazenaDano fx e dmg-condicional-buff existem.",
    "cor": "AMARELO"
   },
   {
@@ -460,9 +444,21 @@
    "cor": "VERDE"
   },
   {
+   "key": "medusa",
+   "ganchos": [],
+   "nota": "veneno-DoT, lockSkill+marca(contador), limiar 3-marcas->atordoado ok; passiva 'quem a atinge com Fisico recebe veneno' = reativo aoSerAtingido. | §55: aoSerAtingido construído.",
+   "cor": "VERDE"
+  },
+  {
    "key": "oxum",
    "ganchos": [],
    "nota": "VERDE: aoCurar{faz apply dmgUp} cobre 'curados causam +5'; heal/regen/orbGain todos existentes.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "xango",
+   "ganchos": [],
+   "nota": "Passiva acumula dano quando um aliado e atingido (aoSerAtingido); armazenaDano fx e dmg-condicional-buff existem. | §55: aoSerAtingido construído.",
    "cor": "VERDE"
   },
   {
@@ -769,22 +765,22 @@
    "stage": 2
   },
   {
-   "gancho": "faz-cdShift",
+   "gancho": "redirecionar",
    "trava": 2,
    "flip": 1,
    "stage": 1
-  },
-  {
-   "gancho": "aoSerAtingido",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0
   },
   {
    "gancho": "nega-orbe?",
    "trava": 2,
    "flip": 2,
    "stage": 0
+  },
+  {
+   "gancho": "faz-cdShift",
+   "trava": 2,
+   "flip": 1,
+   "stage": 1
   },
   {
    "gancho": "aoReceberControle",
@@ -797,12 +793,6 @@
    "trava": 2,
    "flip": 0,
    "stage": 2
-  },
-  {
-   "gancho": "redirecionar",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1
   },
   {
    "gancho": "aoCair-aliado",
@@ -866,6 +856,12 @@
   },
   {
    "gancho": "invuln-por-alcance?",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0
+  },
+  {
+   "gancho": "alvo-curado-recente?",
    "trava": 1,
    "flip": 1,
    "stage": 0
@@ -947,12 +943,6 @@
    "trava": 1,
    "flip": 0,
    "stage": 1
-  },
-  {
-   "gancho": "alvo-curado-recente?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
   },
   {
    "gancho": "execucao-temporizada",
