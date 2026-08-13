@@ -170,3 +170,32 @@ e a de bonusDano-escala há de errar também): o real é SEMPRE ≤ a projeção
 Padrão, não coincidência — a contagem do gancho junta formas que pedem eixos diferentes, e só o subconjunto
 homogêneo flipa. Ler a projeção como teto (não como número esperado) evita a leitura falsa de "a extensão rendeu
 pouco" quando o que houve foi balde previsto errado.
+
+## Eixo de ESTADO — varredura e forma (F1.2.5 sessão 3, DESENHO antes de código)
+
+**A pergunta que decide a forma (dono): existe passiva que condicione no GOLPE E no ESTADO ao mesmo tempo?**
+SIM — três, e todas o MESMO composto:
+- **Bastet**: "o primeiro ataque de ALVO ÚNICO [golpe: alcance] em cada turno [estado: primeiro-por-turno] causa 8 menos" — reducao.
+- **Saci**: "o primeiro ataque de alvo único por turno FALHA" — esquiva.
+- **Mnevis**: "intercepta o primeiro ataque de alvo único por turno" — intercepta.
+
+**Decisão TOMADA PELOS DADOS: `estado` é CAMPO UNIVERSAL, não quarto eixo.** Como ≥1 deus precisa de golpe E
+estado juntos, `estado:{...}` tem de coexistir com o eixo do gatilho (`contra:{alcance}` E `estado:{primeiroPorTurno}`
+no mesmo fx). Um quarto eixo irmão (só-um-por-fx) não expressaria bastet/saci/mnevis. Composição AND.
+
+**Natureza (a distinção que o dono levantou):** `quando`/`contra`/`quandoCura` são eixos de UM gatilho cada
+(ofensivo/defensivo/de-cura). `estado` é ORTOGONAL — transversal a vários gatilhos, e por isso é um CAMPO que
+qualquer gatilho aceita ao lado do seu eixo, não um eixo a mais na mesma lista. A forma reflete a natureza.
+
+**Membros do sub-vocabulário `estado` (13 deuses, ~7 formas):** paridade de turno (Hel) · fase Dia/Noite
+(Amaterasu/Boto/Lugh/Itzamná) · aliados vivos (Guan Yu "3 vivos") · contador próprio (Kitsune "3 Caudas") · HP
+próprio (Shuten "abaixo de 50") · primeiro-alvo-único-por-turno (Bastet/Saci/Mnevis) · flag nomeada ("Caldeirão
+ativo" do Dagda).
+
+**Duas sub-questões de desenho para o dono (antes de código):**
+1. **`fase` já mora em `quando`** (é chave do bonusDano hoje). Se `estado` é o lar do estado-de-campo, `fase`
+   deveria MIGRAR de `quando` para `estado` (estava mal-colocada no eixo ofensivo — fase é campo, não ataque).
+   É cleanup de uma chave existente; confirmar.
+2. **`primeiro-alvo-único-por-turno` não é leitura pura** — precisa de bookkeeping (flag por-unidade resetado a
+   cada turno: "já sofri um golpe de alvo único neste turno?"). Compõe `contra:{alcance:unico}` + `estado:{primeiroPorTurno}`,
+   mas o "primeiro" exige o motor RASTREAR, não só ler. Confirmar que o custo de rastreio é aceitável.
