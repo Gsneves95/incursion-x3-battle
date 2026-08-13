@@ -160,6 +160,23 @@ rastreia o estado, então `valida_kit` recusa em voz alta (nunca vira falso sile
 | `alvoMarca` | (reservada) | marca ofensiva (Olho) — **pendente**: chega com a vulnerabilidade |
 | `alvoCuradoAntes` | (reservada) | curado no turno anterior — **pendente**: o motor não rastreia ainda |
 
+## `estado` — CAMPO universal de condição (F1.2.5 s3), composa com o eixo do gatilho
+
+Diferente de `quando`/`contra`/`quandoCura` (cada um é o eixo de UM gatilho), `estado` é ORTOGONAL: um campo que
+QUALQUER gatilho aceita ALÉM do seu eixo. Um fx pode ter `contra:{alcance:unico}` **E** `estado:{primeiroPorTurno}`
+(bastet) — o efeito dispara só quando AMBOS valem (composição AND). Decidido pelos dados: bastet/saci/mnevis
+precisam de golpe E estado juntos, o que um 4º eixo (só-um-por-fx) não expressaria (§45). Lê o CAMPO contra o
+DONO do fx — nunca o ataque nem o alvo-de-ataque.
+
+| chave | valor | lê |
+|---|---|---|
+| `estado.paridade` | `par` \| `impar` | `turno % 2` (Hel) |
+| `estado.fase` | `Dia` \| `Noite` | `st.fase` — **MIGROU do `quando`** (é campo, não ataque; `quando:{fase}` é recusado) |
+| `estado.aliadosVivos` | `{op:min\|max\|exato, n}` | nº de vivos no lado do dono (Guan Yu "3 vivos") |
+| `estado.contador` | `{nome, op, n}` | contador do dono cruza o limiar (Kitsune "3 Caudas") |
+| `estado.hpProprio` | `{op:cheio\|abaixo\|acima, v}` | HP do DONO (Shuten "abaixo de 50") |
+| `estado.primeiroPorTurno` | reservado | exige RASTREIO (não leitura); vem com esquiva/intercepta — bastet/saci/mnevis são 3 mecanismos, não 1 condição (§45) |
+
 ## Migração é por DEUS INTEIRO (§37)
 
 Um deus só migra da prosa-hardcoded para `fx` quando **todos** os gatilhos da sua passiva existem.
