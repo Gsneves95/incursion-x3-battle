@@ -1751,6 +1751,43 @@ coisas (o trigger, agora construído, + o roubo de orbe).
 
 ---
 
+## §57 — Padrão: restrição herdada por analogia é restrição sem dono (do dono)
+
+Quando um SEGUNDO caso chega, NÃO copie a restrição do primeiro sem testar se ela se aplica **pelo mesmo motivo**.
+O caso: o `noAtacante` (aoSerAtingido) proíbe `dmg` porque on-hit **recursa** (bate→reage→bate). Ao chegar o
+`noAtor` (aoAgirSobEfeito), o reflexo seria herdar a proibição — mas o motivo NÃO se aplica: on-act não recursa
+(dano não re-dispara uma ação). Então `noAtor` PERMITE dmg. **A restrição pertence ao MOTIVO, não ao formato do
+payload.** Uma proibição copiada por analogia é uma proibição sem dono — ninguém sabe por que existe, e vira lei
+por inércia. Teste sempre: "a razão da restrição do 1º caso existe também no 2º?" Se não, a restrição não viaja.
+(É o par do §54: lá, dois efeitos só são um se ninguém os distingue; aqui, duas restrições só são a mesma se têm o
+mesmo motivo. Ambos: identidade por RAZÃO, não por aparência.)
+
+---
+
+## §58 — Pacificar (F1.4 controle 4/N): controle NOMEADO, decidido por PROVA de que não é dmgDown
+
+**Forma (a pergunta do dono: controle nomeado ou dmgDown-100%?) — controle nomeado, e a prova é mecânica, não de
+gosto.** `dmgDown` é FLAT (subtrai `v` do dano); não consegue zerar dano de tamanho ARBITRÁRIO — um golpe de 50 sob
+dmgDown-40 ainda causa 10. "Causam 0 de dano" é zero DURO, de qualquer tamanho → precisa de flag dedicada, não de
+dmgDown. Logo **NÃO é balde-de-um**; é mecanismo próprio. Entra em `CONTROLES` → `controlImmune` o barra e **"imune
+a Pacificar" existe como etiqueta**. (Pelo §54: ninguém nos 100 kits menciona Pacificar além do Oxalá — mas isso
+não o torna um dmgDown; o que decide é que o MECANISMO difere, não que alguém o nomeie.)
+
+**Granularidade (os 3 casos que o dono mandou travar), da decisão da sessão das 15 (zera dano, não cura):**
+1. **Dano DIRETO do pacificado → 0.** `bater` zera `v` quando o atacante está pacificado.
+2. **DoT que ele APLICARIA no turno → não cola.** É dano que ele causaria; o `dot`-fx é pulado quando o ator está
+   pacificado. (Zerar o DoT é parte de "zerar dano" — UM controle; zerar a CURA seria o segundo, e o dono vetou.)
+3. **DoT já ATIVO → segue correndo.** O tick acontece no início do turno da vítima, não é a unidade pacificada
+   agindo; e o DoT não foi aplicado sob Pacificar. Preservado naturalmente (só zero na AÇÃO, não no tick).
+**Cura intacta.** Só o dano é 0 — Pacificar faz UMA coisa.
+
+**"Podem agir":** pacificado NÃO trava a ação (fora de `podeAgir` e de `SLOTS_TRAVADOS`) — diferente de selado/
+agarrar, que travam slots. Zera o dano na fonte, deixa a ação acontecer.
+
+**Curva:** VERDE **26 → 27** (oxala flipa — gancho único, incremental). Front-load do bloco segue.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

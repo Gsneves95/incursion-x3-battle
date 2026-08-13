@@ -330,9 +330,10 @@ torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor 
 | (base, pós-morte) | 20 | 39 | 29 | — |
 | slot-lock nomeado (§53) | 23 | 41 | 24 | fenrir, kraken (agarrar), hades (selado) — INCREMENTAL |
 | aoSerAtingido (§55) | 25 | 39 | 24 | medusa, xango — INCREMENTAL |
-| aoAgirSobEfeito (§56) | **26** | 38 | 24 | piranha — INCREMENTAL (shuten → resíduo nega-orbe) |
+| aoAgirSobEfeito (§56) | 26 | 38 | 24 | piranha — INCREMENTAL (shuten → resíduo nega-orbe) |
+| Pacificar (§58) | **27** | 37 | 24 | oxala — INCREMENTAL |
 
-Três ganchos, +6 VERDE (20→26), todos front-loaded — a previsão do §52 segue batendo, o §51 se sustenta (deus de
-controle não tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: pacificar (oxala), medo
-(guanyu); curupira flipa quando redirecionar cair também. Nota: shuten NÃO flipou — o `torpor` era bundle
+Quatro ganchos, +7 VERDE (20→27), todos front-loaded — a previsão do §52 segue batendo, o §51 se sustenta (deus de
+controle não tem bloco depois → flipa ao abrir o gancho). Restam para chegar aos ~30: medo (guanyu, bundle);
+curupira flipa quando redirecionar cair junto do selado. Nota: shuten NÃO flipou — o `torpor` era bundle
 (trigger + roubo-de-orbe); o trigger caiu, o roubo-de-orbe resta (nega-orbe, com dionisio/mimir).

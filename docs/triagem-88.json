@@ -1,7 +1,7 @@
 {
  "dist": {
-  "VERDE": 26,
-  "AMARELO": 38,
+  "VERDE": 27,
+  "AMARELO": 37,
   "VERMELHO": 24
  },
  "gods": [
@@ -230,14 +230,6 @@
    "cor": "AMARELO"
   },
   {
-   "key": "oxala",
-   "ganchos": [
-    "pacificar"
-   ],
-   "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "perseu",
    "ganchos": [
     "aoReceberControle"
@@ -439,6 +431,12 @@
    "key": "medusa",
    "ganchos": [],
    "nota": "veneno-DoT, lockSkill+marca(contador), limiar 3-marcas->atordoado ok; passiva 'quem a atinge com Fisico recebe veneno' = reativo aoSerAtingido. | §55: aoSerAtingido construído.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "oxala",
+   "ganchos": [],
+   "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis. | §58: Pacificar (controle nomeado) construído.",
    "cor": "VERDE"
   },
   {
@@ -824,12 +822,6 @@
   },
   {
    "gancho": "passiva-ativa-morto?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "pacificar",
    "trava": 1,
    "flip": 1,
    "stage": 0
