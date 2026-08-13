@@ -104,6 +104,7 @@ const GATILHOS_PASSIVA = {
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
   aoCurar:         { campos: ['faz'], obrig: ['faz'] },                        // quando um aliado é CURADO, faz X no curado (sessão 10)
   aoUsarHabilidade:{ campos: ['slot', 'faz'], obrig: ['slot', 'faz'] },        // quando um aliado usa habilidade do slot, faz X no dono (Passo 0)
+  aoSerAtingido:   { campos: ['quem', 'contra', 'faz', 'noAtacante', 'estado'], obrig: ['quem'] },   // reage a SER atingido (F1.4): faz no reator (BUFF) / noAtacante no atacante (debuff — sujeito do evento)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -113,6 +114,7 @@ const GATILHOS_PASSIVA = {
 // AMBIGUIDADE aberta (decisão do dono ao migrar morrigan/iansa/ahpuch): "quando um inimigo é derrotado, [eu] X"
 // não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
 const AOCAIR_QUEM = ['inimigo', 'self', 'qualquerInimigo'];
+const AOSERATINGIDO_QUEM = ['self', 'aliado'];   // sujeito do golpe que dispara: o próprio (medusa/boitata) ou um aliado (xango)
 // `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
 // 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
 // enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
@@ -136,7 +138,8 @@ const SLOTS_ATAQUE = ['basico', 'habilidade', 'milagre'];
 // (classe do oni, elemNao do baldur, …) entram por deus. Uma chave por condição; ausência = todo ataque.
 const CONTRA = {
   slot:    { sub: SLOTS_ATAQUE },   // reduz só golpes deste slot (sobek: 'basico')
-  classe:  { sub: CLASSES },        // reduz só golpes desta classe (oni: 'Mágico')
+  classe:  { sub: CLASSES },        // reduz só golpes desta classe (oni: 'Mágico'; aoSerAtingido medusa: 'Físico')
+  elem:    { sub: ELEMS },          // só golpes DESTE elemento (positivo — aoSerAtingido boitata: 'Chama')
   elemNao: { sub: ELEMS },          // reduz TODO golpe EXCETO os deste elemento (baldur: exceto 'Verdejante')
   alcance: { sub: ['unico', 'area'] },  // reduz só golpes deste alcance (afrodite: 'unico')
 };
@@ -193,6 +196,7 @@ const VOCAB = {
   buffs: BUFFS,                                    // efeitos BENÉFICOS — o único conjunto que `apply` pode aplicar dentro de um faz (F1.2.5)
   imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
   aoCairQuem: AOCAIR_QUEM,                          // valores válidos em aoCair.quem (sujeito da morte)
+  aoSerAtingidoQuem: AOSERATINGIDO_QUEM,            // valores válidos em aoSerAtingido.quem (sujeito do golpe)
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
   condicoes: Object.keys(CONDICOES),             // chaves válidas em passiva.fx[].quando
   condicoesDef: CONDICOES,                        // como validar o valor de cada condição (valida_kit lê)
@@ -555,6 +559,7 @@ function danoImune(st, atk) {
 function contraCasou(c, golpe) {
   if ('slot' in c) return c.slot === golpe.slot;
   if ('classe' in c) return c.classe === golpe.classe;                 // classe da habilidade que chega
+  if ('elem' in c) return golpe.elem === c.elem;                       // só golpes deste elemento (positivo)
   if ('elemNao' in c) return golpe.elem !== c.elemNao;                 // aplica a TODO golpe menos os deste elemento
   if ('alcance' in c) return (golpe.unico ? 'unico' : 'area') === c.alcance;
   return false;
@@ -667,6 +672,26 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'contraAtaca' });
     bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
     if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);
+  }
+  // aoSerAtingido — reação passiva a SER ATINGIDO por golpe de habilidade inimiga. O SUJEITO do evento é o ATACANTE
+  // (entregue pelo evento, não escolhido). quem:self = o alvo reage; quem:aliado = um aliado do alvo reage. `contra`
+  // lê o golpe (classe/elem/…). `faz` roda no reator (self/lado, BUFF-only — a garantia da F1.2.5 fica INTACTA);
+  // `noAtacante` roda no ATACANTE via a MESMA máquina (rodarFaz, sujeito trocado), com DoT/debuff permitido — o alvo
+  // vem do evento, como a Hera (§54/§55). Só slot de ataque real (não contra-ataque/DoT) e só se o alvo sobreviveu.
+  if (atk && atk.vivo && atk.lado !== alvo.lado && SLOTS_ATAQUE.includes(slot)) {
+    for (const r of st.lados[alvo.lado].units) {
+      if (!r.vivo) continue;
+      const rel = r === alvo ? 'self' : 'aliado';
+      const g = kitDe(st, r); const p = g && g.passiva;
+      if (!p || !Array.isArray(p.fx)) continue;
+      for (const f of p.fx) {
+        if (f.gatilho !== 'aoSerAtingido' || f.quem !== rel) continue;
+        if (f.contra && !contraCasou(f.contra, golpe)) continue;
+        if (f.estado && !estadoOK(f.estado, r, st)) continue;
+        if (f.faz) rodarFaz(st, r, f.faz);
+        if (f.noAtacante && atk.vivo) rodarFaz(st, atk, f.noAtacante, r.key);   // sujeito = atacante; crédito = reator (padrão Hera)
+      }
+    }
   }
   return v;
 }
@@ -880,6 +905,7 @@ function rodarFaz(st, u, faz, tagKey) {
         else { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
       }
     }
+    else if (f.t === 'dot') aplicarDot(st, u, f.nome, f.v, f.dur);   // só no `noAtacante` (aoSerAtingido): DoT no ATACANTE — nunca no `faz` (o validador barra dot no faz)
     else if (f.t === 'shield') { u.shield += f.v; log(st, { tipo: 'escudo', alvo: u.key, valor: f.v }); }   // Hera (aoCurar): escudo no curado
     else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];

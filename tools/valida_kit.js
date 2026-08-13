@@ -114,6 +114,27 @@ function validarFaz(faz, ctx, errs) {
   });
 }
 
+// Valida o `noAtacante` do aoSerAtingido (F1.4) — payload que roda no ATACANTE (sujeito ENTREGUE pelo evento, não
+// escolhido — §55). Ao contrário do `faz` (BUFF-only em self/lado, garantia intacta), aqui o alvo é o INIMIGO do
+// evento, então DoT e apply-DEBUFF são PERMITIDOS. Proíbe dmg (recursaria em bater) e apply-BUFF (buff no inimigo é inútil).
+function validarNoAtacante(payload, ctx, errs) {
+  if (!Array.isArray(payload) || payload.length === 0) { errs.push(`${ctx}: noAtacante deve ser array não-vazio`); return; }
+  payload.forEach((fx, i) => {
+    const cc = `${ctx}[${i}]`;
+    if (!fx || typeof fx !== 'object') { errs.push(`${cc}: fx não é objeto`); return; }
+    if (!['dot', 'apply'].includes(fx.t)) { errs.push(`${cc}: noAtacante só aceita dot|apply no atacante ("${fx.t}" não — dmg recursaria, buff no inimigo é inútil)`); return; }
+    if (fx.t === 'dot') {
+      if (typeof fx.nome !== 'string' || !fx.nome) errs.push(`${cc}: dot.nome ausente`);
+      if (typeof fx.v !== 'number' || !Number.isInteger(fx.v) || fx.v <= 0) errs.push(`${cc}: dot.v inválido (${JSON.stringify(fx.v)}; inteiro > 0)`);
+      if (typeof fx.dur !== 'number' || !Number.isInteger(fx.dur) || fx.dur <= 0) errs.push(`${cc}: dot.dur inválido (${JSON.stringify(fx.dur)}; inteiro > 0)`);
+    }
+    if (fx.t === 'apply') {
+      if (!fx.eff || !V.efeitos.includes(fx.eff.type)) errs.push(`${cc}: apply.eff.type inválido "${fx.eff && fx.eff.type}"`);
+      else if (V.buffs.includes(fx.eff.type)) errs.push(`${cc}: noAtacante aplica DEBUFF/controle no atacante, não BUFF ("${fx.eff.type}" é buff)`);
+    }
+  });
+}
+
 // Valida o campo `estado` (F1.2.5 s3) — CAMPO UNIVERSAL de condição de estado, composável com o eixo do gatilho.
 // Conjunto e validação vêm de V.estadoCondDef. `pendente` = precisa de rastreio (primeiroPorTurno): recusa em voz alta.
 function validarEstado(e, ctx, errs) {
@@ -164,7 +185,12 @@ function validarPassiva(p, ctx, errs) {
     if ('quandoCura' in f) validarQuandoCura(f.quandoCura, `${c}.quandoCura`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
-    if ('quem' in f && !V.aoCairQuem.includes(f.quem)) errs.push(`${c}: aoCair.quem inválido "${f.quem}" (válidos: ${V.aoCairQuem.join(', ')})`);
+    if ('noAtacante' in f) validarNoAtacante(f.noAtacante, `${c}.noAtacante`, errs);
+    if ('quem' in f) {   // `quem` é POR gatilho: aoCair (sujeito da morte) ≠ aoSerAtingido (sujeito do golpe)
+      const vocab = f.gatilho === 'aoSerAtingido' ? V.aoSerAtingidoQuem : V.aoCairQuem;
+      if (!vocab.includes(f.quem)) errs.push(`${c}: ${f.gatilho}.quem inválido "${f.quem}" (válidos: ${vocab.join(', ')})`);
+    }
+    if (f.gatilho === 'aoSerAtingido' && !('faz' in f) && !('noAtacante' in f)) errs.push(`${c}: aoSerAtingido exige um payload (faz no reator OU noAtacante no atacante)`);
     if (f.gatilho === 'aoUsarHabilidade' && !V.slotsAtaque.includes(f.slot)) errs.push(`${c}: aoUsarHabilidade.slot inválido "${f.slot}" (válidos: ${V.slotsAtaque.join(', ')})`);
     if (f.gatilho === 'aCadaN') {   // cadência ABSOLUTA n + EXATAMENTE um payload (faz OU custoGratis — nunca os dois, nunca nenhum)
       if (typeof f.n !== 'number' || !Number.isInteger(f.n) || f.n < 2) errs.push(`${c}: aCadaN.n inválido (${JSON.stringify(f.n)}; inteiro >= 2 — n=1 é porTurno)`);

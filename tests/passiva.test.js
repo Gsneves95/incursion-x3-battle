@@ -601,6 +601,57 @@ console.log('== slot-lock nomeado: Selado {Hab,Mil}, Agarrar {Hab}; imunidade po
   console.log('  imune a controle (coringa) cobre os dois slot-locks nomeados');
 }
 
+// aoSerAtingido (F1.4) — reage a SER ATINGIDO. faz no reator (BUFF, garantia intacta) / noAtacante no atacante (debuff, sujeito do evento).
+console.log('== aoSerAtingido: debuff no ATACANTE (medusa) / buff no reator (xango) / cura self (boitata) ==');
+{ // MEDUSA — atingida por Física, o ATACANTE recebe Veneno (efeito no sujeito ENTREGUE pelo evento, não escolhido)
+  E.GODS.tmed = { nome: 'TMed', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoSerAtingido', quem: 'self', contra: { classe: 'Físico' }, noAtacante: [{ t: 'dot', nome: 'veneno', v: 8, dur: 2 }] }] } };
+  const st = E.novoEstado(['tmed', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 570);
+  const med = st.lados[0].units[0], atk = st.lados[1].units[0];
+  E.bater(st, atk, med, 10, 'afetado', 'habilidade', { classe: 'Físico', unico: true });
+  ok(atk.dots.some(d => d.nome === 'veneno'), 'atingida por Física → o ATACANTE recebe Veneno (crédito Medusa)');
+  const st2 = E.novoEstado(['tmed', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 571);
+  const med2 = st2.lados[0].units[0], atk2 = st2.lados[1].units[0];
+  E.bater(st2, atk2, med2, 10, 'afetado', 'habilidade', { classe: 'Mágico', unico: true });
+  ok(!atk2.dots.some(d => d.nome === 'veneno'), 'atingida por Mágica → contra.classe não casa → sem Veneno');
+  delete E.GODS.tmed;
+  console.log('  Medusa: Física → Veneno no atacante · Mágica → nada (condição do golpe)');
+}
+{ // MEDUSA + atacante IMUNE a veneno: a imunidade do sujeito vale (o efeito passa por aplicarDot)
+  E.GODS.tmed = { nome: 'TMed', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoSerAtingido', quem: 'self', contra: { classe: 'Físico' }, noAtacante: [{ t: 'dot', nome: 'veneno', v: 8, dur: 2 }] }] } };
+  E.GODS.timV = { nome: 'ImV', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Guardião', passiva: { nome: '-', desc: '-', fx: [{ gatilho: 'imunidade', a: ['veneno'] }] } };
+  const st = E.novoEstado(['tmed', 'zeus', 'zeus'], ['timV', 'zeus', 'zeus'], 572);
+  const med = st.lados[0].units[0], atk = st.lados[1].units[0];
+  E.bater(st, atk, med, 10, 'afetado', 'habilidade', { classe: 'Físico', unico: true });
+  ok(!atk.dots.some(d => d.nome === 'veneno'), 'atacante imune a Veneno → não cola (imunidade do sujeito vale)');
+  delete E.GODS.tmed; delete E.GODS.timV;
+  console.log('  imunidade do atacante ao Veneno é respeitada');
+}
+{ // XANGO — quando um ALIADO é atingido, o reator ganha buff em SI (faz BUFF-only, garantia intacta)
+  E.GODS.txan = { nome: 'TXan', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoSerAtingido', quem: 'aliado', faz: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 9 }, escopo: 'self' }] }] } };
+  const st = E.novoEstado(['txan', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 573);
+  const xan = st.lados[0].units[0], aliado = st.lados[0].units[1], atk = st.lados[1].units[0];
+  E.bater(st, atk, aliado, 10, 'afetado', 'habilidade', { unico: true });   // um ALIADO do xango é atingido
+  ok(E.ef(xan, 'dmgUp'), 'aliado atingido → xango (quem:aliado) ganha dmgUp em SI');
+  const d0 = E.ef(xan, 'dmgUp').v;
+  E.bater(st, atk, xan, 10, 'afetado', 'habilidade', { unico: true });      // o PRÓPRIO xango é atingido: quem:aliado NÃO dispara
+  ok(E.ef(xan, 'dmgUp').v === d0, 'xango atingido em SI → quem:aliado NÃO dispara (só reage a aliado)');
+  delete E.GODS.txan;
+  console.log('  Xangô: aliado atingido → +dmgUp em si · self atingido → não (sujeito é aliado)');
+}
+{ // BOITATA — atingida por CHAMA, cura em SI (contra.elem positivo; faz heal self)
+  E.GODS.tboi = { nome: 'TBoi', faccao: 'T', elem: 'Verdejante', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoSerAtingido', quem: 'self', contra: { elem: 'Chama' }, faz: [{ t: 'heal', v: 10, escopo: 'self' }] }] } };
+  const st = E.novoEstado(['tboi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 574);
+  const boi = st.lados[0].units[0], atk = st.lados[1].units[0];
+  atk.elem = 'Chama'; boi.hp = 50;
+  E.bater(st, atk, boi, 10, 'afetado', 'habilidade', { unico: true });   // atingida (perde 10) e cura 10 (contra.elem casa)
+  ok(boi.hp === 50, `Chama: -10 do golpe +10 da cura = 50 (deu ${boi.hp})`);
+  atk.elem = 'Tempestade'; const h = boi.hp;
+  E.bater(st, atk, boi, 10, 'afetado', 'habilidade', { unico: true });   // não-Chama: só o dano
+  ok(boi.hp === h - 10, 'não-Chama → contra.elem não casa → só o dano, sem cura');
+  delete E.GODS.tboi;
+  console.log('  Boitatá: Chama → cura self · outro elem → nada (contra.elem positivo)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -700,6 +751,16 @@ err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] })
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado' ainda não aberto (F1.4); 'qualquerInimigo' abriu na F1.3 morte 4/4
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
+// gatilho aoSerAtingido (F1.4): quem próprio {self,aliado}; faz BUFF-only (garantia intacta); noAtacante = debuff no atacante
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', faz: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 2 }, escopo: 'self' }] }), 'exige o campo "quem"'); // falta quem
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'inimigo', faz: [{ t: 'shield', v: 5 }] }), 'aoSerAtingido.quem inválido'); // 'inimigo' não é sujeito de aoSerAtingido (só self|aliado)
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self' }), 'exige um payload'); // nem faz nem noAtacante
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', faz: [{ t: 'apply', eff: { type: 'atordoado', dur: 1 }, escopo: 'self' }] }), 'só aplica BUFF'); // GARANTIA INTACTA: faz não aplica debuff
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', noAtacante: [{ t: 'dmg', v: 10 }] }), 'só aceita dot|apply'); // noAtacante não faz dano (recursaria)
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', noAtacante: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 2 } }] }), 'não BUFF'); // buff no atacante é inútil
+err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', contra: { elem: 'Plasma' }, faz: [{ t: 'heal', v: 5, escopo: 'self' }] }), 'fora do sub-vocabulário'); // contra.elem inválido
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'aliado', faz: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 9 }, escopo: 'self' }] }); ok(validarDeus(g).length === 0, 'aoSerAtingido faz-BUFF VÁLIDO (xango): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', contra: { classe: 'Físico' }, noAtacante: [{ t: 'dot', nome: 'veneno', v: 8, dur: 2 }] }); ok(validarDeus(g).length === 0, 'aoSerAtingido noAtacante-DoT VÁLIDO (medusa): ' + JSON.stringify(validarDeus(g))); }
 // gatilho bonusCura (sessão 7): soma à MAGNITUDE da cura; eixo próprio `quandoCura` (3º eixo, separado de quando/contra)
 err(g => g.passiva.fx.push({ gatilho: 'bonusCura' }), 'exige o campo "v"');                                          // falta v
 err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) NÃO vai em bonusCura — eixo errado
