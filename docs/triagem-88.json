@@ -1,7 +1,7 @@
 {
  "dist": {
-  "VERDE": 25,
-  "AMARELO": 39,
+  "VERDE": 26,
+  "AMARELO": 38,
   "VERMELHO": 24
  },
  "gods": [
@@ -246,14 +246,6 @@
    "cor": "AMARELO"
   },
   {
-   "key": "piranha",
-   "ganchos": [
-    "aoAgirSobEfeito"
-   ],
-   "nota": "Passiva Sangramento causa +4 quando o alvo age (gatilho ao-agir-sob-efeito); multi-hit/condicional-status/bonusDano-alvoHp expressiveis.",
-   "cor": "AMARELO"
-  },
-  {
    "key": "poseidon",
    "ganchos": [
     "reducao-escopo-elem"
@@ -272,9 +264,9 @@
   {
    "key": "shutendoji",
    "ganchos": [
-    "torpor"
+    "nega-orbe?"
    ],
-   "nota": "cura por turno c/ condição de HP é faz:heal+estado{hpProprio}; só o Torpor (ao agir sob efeito, dono rouba HP/orbe) não existe.",
+   "nota": "cura por turno c/ condição de HP é faz:heal+estado{hpProprio}; só o Torpor (ao agir sob efeito, dono rouba HP/orbe) não existe. | §56: torpor(trigger) construído; resta o roubo de ORBE (nega-orbe, com dionisio/mimir).",
    "cor": "AMARELO"
   },
   {
@@ -453,6 +445,12 @@
    "key": "oxum",
    "ganchos": [],
    "nota": "VERDE: aoCurar{faz apply dmgUp} cobre 'curados causam +5'; heal/regen/orbGain todos existentes.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "piranha",
+   "ganchos": [],
+   "nota": "Passiva Sangramento causa +4 quando o alvo age (gatilho ao-agir-sob-efeito); multi-hit/condicional-status/bonusDano-alvoHp expressiveis. | §56: aoAgirSobEfeito construído.",
    "cor": "VERDE"
   },
   {
@@ -759,6 +757,12 @@
    "stage": 1
   },
   {
+   "gancho": "nega-orbe?",
+   "trava": 3,
+   "flip": 3,
+   "stage": 0
+  },
+  {
    "gancho": "iniciativa",
    "trava": 3,
    "flip": 1,
@@ -769,12 +773,6 @@
    "trava": 2,
    "flip": 1,
    "stage": 1
-  },
-  {
-   "gancho": "nega-orbe?",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0
   },
   {
    "gancho": "faz-cdShift",
@@ -837,19 +835,7 @@
    "stage": 0
   },
   {
-   "gancho": "aoAgirSobEfeito",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
    "gancho": "reducao-escopo-elem",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "torpor",
    "trava": 1,
    "flip": 1,
    "stage": 0

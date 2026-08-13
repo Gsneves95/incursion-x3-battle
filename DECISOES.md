@@ -1714,6 +1714,45 @@ já existia. Generalização mínima do eixo do golpe; a Medusa usa `classe: 'F�
 **Curva:** VERDE **23 → 25** (medusa e xango flipam — gancho único de controle, incremental, como o §52 previu).
 Segue o front-load do bloco. boitata não flipa (carrega ignora-invuln).
 
+**Proteção anti-recursão do `noAtacante` (o dono pediu para registrar aqui — só aparece com DOIS reativos no jogo).**
+O `noAtacante` (efeito no atacante) RECUSA `dmg`. Se aplicasse dano no atacante, dispararia o `aoSerAtingido` DELE, e
+potencialmente em laço (bate → reage → bate → reage). É o tipo de proteção que ninguém lembra de adicionar depois —
+ela só fica visível quando existem dois reativos que podem se acionar. Contraste com o §56: o `noAtor` do
+aoAgirSobEfeito PERMITE `dmg`, porque o gatilho é por AÇÃO (não por golpe) e dano não re-dispara uma ação. **A regra
+não é "efeito no sujeito do evento nunca causa dano" — é "não cause dano por um caminho que possa se re-disparar".**
+O risco de laço vem do GATILHO (on-hit recursa; on-act não), não do payload.
+
+---
+
+## §56 — aoAgirSobEfeito ≡ torpor (F1.4 controle 3/N): o dono do gatilho é quem APLICOU (origem)
+
+O merge que o dono mandou (§52): torpor (shuten) e aoAgirSobEfeito (piranha) são UM gatilho — "o ator age sob um
+efeito → alguém reage". Mas, ao contrário do aoSerAtingido (onde o reator é quem SOFRE), aqui **o reator é quem
+APLICOU o efeito**, e o sujeito do efeito é o inimigo. As duas coisas que o dono mandou fechar:
+
+**1. Quem é o DONO do gatilho.** É quem APLICOU o efeito, não quem o carrega (Shuten aplica Torpor e reage). O
+efeito precisa lembrar o aplicador — e ele já lembra: **`origem`** está em todo `apply` (injetado no aplicarFx desde
+o Provocar/regra 7). O que FALTAVA: os **DoTs não carregavam `origem`** — Piranha marca com Sangramento, que é DoT.
+Adicionei `origem` ao `aplicarDot` e o `dmg`-fx a injeta (`u.uid`). Agora o marcador serve em efeito (Torpor) E em
+DoT (Sangramento). Isso era o "o que falta" que o dono pediu para eu reportar — reusei `origem`, faltava só estendê-lo aos DoTs.
+
+**2. Quantas vezes dispara.** Por AÇÃO, não por turno (decisão do dono na sessão das 15 — hoje coincidem, mas a Cuca
+já tem Básico grátis, o precedente existe). A implementação segue por ação porque o gatilho corre dentro de `agir`,
+que é UMA ação. Provado nos dois casos: uma ação → um disparo; segunda ação no mesmo turno → segundo disparo.
+
+**Payload (espelha o aoSerAtingido).** `faz` no DONO (self/lado, BUFF-only, garantia intacta); `noAtor` no ATOR
+(sujeito do evento). Diferença crucial vs `noAtacante`: **`noAtor` PERMITE `dmg`** (ver §55) — on-act não recursa.
+Cobre **piranha** (Sangramento → +4 no ator, flipa). **shuten**: o roubo de HP cabe (dmg no ator + heal no dono),
+mas o roubo de ORBE precisa da primitiva de remoção-de-orbe que ainda não existe — então re-triei o gancho dele de
+`torpor` para `nega-orbe` (o resíduo, compartilhado com dionisio/mimir/orfeu). Achado de bundle: `torpor` eram DUAS
+coisas (o trigger, agora construído, + o roubo de orbe).
+
+**Curva:** VERDE **25 → 26** (piranha flipa; shuten fica AMARELO no resíduo nega-orbe). Front-load do bloco segue.
+
+---
+
+## Decisões ainda ABERTAS
+
 | Assunto | Situação |
 |---|---|
 | **~15 decisões dos 3 blocos (da varredura, §35)** | Decisão-mãe BATIDA (§36: passiva declarativa = F1.2). Faltam ~15 pontos, para o dono responder EM BLOCO (uma mensagem), com recomendação minha em cada: Bloco 1 (F1.3) morte/sobrevivência — piso-1-HP, execução HP/status/tempo, interações com revive-imune/`vidaExtra`; Bloco 2 (F1.4) controle — Selado≡Silenciado, Pacificar, Torpor, Medo, trava-Milagre, redirecionar; Bloco 3 (F1.5) modos/estado — escolha múltipla, alterna, ler Dia/Noite, invocações. Ver `docs/primitivas-faltantes.md`. |
