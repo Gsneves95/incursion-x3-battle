@@ -135,6 +135,28 @@ function validarNoAtacante(payload, ctx, errs) {
   });
 }
 
+// Valida o `noAtor` do aoAgirSobEfeito (F1.4) — payload no ATOR (sujeito do evento). Ao contrário do `noAtacante`
+// (aoSerAtingido, que PROÍBE dmg p/ não recursar), aqui dmg É permitido: o gatilho é por AÇÃO, não por golpe, então
+// dano no ator não re-dispara o gatilho (§56). Proíbe apply-BUFF (buff no inimigo é inútil).
+function validarNoAtor(payload, ctx, errs) {
+  if (!Array.isArray(payload) || payload.length === 0) { errs.push(`${ctx}: noAtor deve ser array não-vazio`); return; }
+  payload.forEach((fx, i) => {
+    const cc = `${ctx}[${i}]`;
+    if (!fx || typeof fx !== 'object') { errs.push(`${cc}: fx não é objeto`); return; }
+    if (!['dmg', 'dot', 'apply'].includes(fx.t)) { errs.push(`${cc}: noAtor só aceita dmg|dot|apply no ator ("${fx.t}" não)`); return; }
+    if (fx.t === 'dmg' && (typeof fx.v !== 'number' || !Number.isInteger(fx.v) || fx.v <= 0)) errs.push(`${cc}: dmg.v inválido (${JSON.stringify(fx.v)}; inteiro > 0)`);
+    if (fx.t === 'dot') {
+      if (typeof fx.nome !== 'string' || !fx.nome) errs.push(`${cc}: dot.nome ausente`);
+      if (typeof fx.v !== 'number' || !Number.isInteger(fx.v) || fx.v <= 0) errs.push(`${cc}: dot.v inválido (${JSON.stringify(fx.v)}; inteiro > 0)`);
+      if (typeof fx.dur !== 'number' || !Number.isInteger(fx.dur) || fx.dur <= 0) errs.push(`${cc}: dot.dur inválido (${JSON.stringify(fx.dur)}; inteiro > 0)`);
+    }
+    if (fx.t === 'apply') {
+      if (!fx.eff || !V.efeitos.includes(fx.eff.type)) errs.push(`${cc}: apply.eff.type inválido "${fx.eff && fx.eff.type}"`);
+      else if (V.buffs.includes(fx.eff.type)) errs.push(`${cc}: noAtor aplica DEBUFF no ator, não BUFF ("${fx.eff.type}")`);
+    }
+  });
+}
+
 // Valida o campo `estado` (F1.2.5 s3) — CAMPO UNIVERSAL de condição de estado, composável com o eixo do gatilho.
 // Conjunto e validação vêm de V.estadoCondDef. `pendente` = precisa de rastreio (primeiroPorTurno): recusa em voz alta.
 function validarEstado(e, ctx, errs) {
@@ -186,6 +208,11 @@ function validarPassiva(p, ctx, errs) {
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('noAtacante' in f) validarNoAtacante(f.noAtacante, `${c}.noAtacante`, errs);
+    if ('noAtor' in f) validarNoAtor(f.noAtor, `${c}.noAtor`, errs);
+    if (f.gatilho === 'aoAgirSobEfeito') {
+      if (typeof f.efeito !== 'string' || !f.efeito) errs.push(`${c}: aoAgirSobEfeito.efeito deve ser o nome (string) do efeito-marcador`);
+      if (!('faz' in f) && !('noAtor' in f)) errs.push(`${c}: aoAgirSobEfeito exige um payload (faz no dono OU noAtor no ator)`);
+    }
     if ('quem' in f) {   // `quem` é POR gatilho: aoCair (sujeito da morte) ≠ aoSerAtingido (sujeito do golpe)
       const vocab = f.gatilho === 'aoSerAtingido' ? V.aoSerAtingidoQuem : V.aoCairQuem;
       if (!vocab.includes(f.quem)) errs.push(`${c}: ${f.gatilho}.quem inválido "${f.quem}" (válidos: ${vocab.join(', ')})`);

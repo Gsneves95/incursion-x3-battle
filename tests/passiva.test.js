@@ -652,6 +652,63 @@ console.log('== aoSerAtingido: debuff no ATACANTE (medusa) / buff no reator (xan
   console.log('  Boitatá: Chama → cura self · outro elem → nada (contra.elem positivo)');
 }
 
+// aoAgirSobEfeito (F1.4) — quando o ATOR age sob um efeito, o DONO (origem = quem aplicou) reage. Torpor ≡ aoAgirSobEfeito.
+console.log('== aoAgirSobEfeito: dono do gatilho = quem APLICOU (origem); dispara POR AÇÃO ==');
+{ // SHUTEN — Torpor (efeito): quando o ator age, Shuten cura em SI (faz) e dana o ator (noAtor). Por AÇÃO.
+  E.GODS.tshu = { nome: 'TShu', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', faz: [{ t: 'heal', v: 10, escopo: 'self' }], noAtor: [{ t: 'dmg', v: 10 }] }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tshu', 'zeus', 'zeus'], 580);
+  st.lados[0].orbs['Tempestade'] = 9;
+  const ator = st.lados[0].units[0], shu = st.lados[1].units[0], alvo = st.lados[1].units[2];
+  shu.hp = 50; ator.efeitos.push({ type: 'torpor', dur: 5, origem: shu.uid });   // Torpor aplicado por Shuten (origem)
+  const h0 = ator.hp;
+  E.agir(st, ator.uid, 'basico', [alvo.uid]);   // o ATOR age → Shuten (dono do Torpor) reage UMA vez
+  ok(ator.hp === h0 - 10, `1 ação sob Torpor: ator -10 (${h0}→${ator.hp})`);
+  ok(shu.hp === 60, `Shuten cura 10 (50→${shu.hp})`);
+  // SEGUNDA ação no mesmo turno (precedente: Básico grátis da Cuca) → SEGUNDO disparo (por ação, não por turno)
+  ator.agiu = false; const h1 = ator.hp, s1 = shu.hp;
+  E.agir(st, ator.uid, 'basico', [alvo.uid]);
+  ok(ator.hp === h1 - 10 && shu.hp === s1 + 10, `2ª ação → 2º disparo (por AÇÃO: ator ${h1}→${ator.hp}, shuten ${s1}→${shu.hp})`);
+  delete E.GODS.tshu;
+  console.log('  Shuten: cada ação sob Torpor → cura no dono + dano no ator (por ação, não por turno)');
+}
+{ // PIRANHA — Sangramento (DoT com origem): o ator sob Sangramento leva +4 ao agir
+  E.GODS.tpir = { nome: 'TPir', faccao: 'T', elem: 'Maré', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoAgirSobEfeito', efeito: 'sangramento', noAtor: [{ t: 'dmg', v: 4 }] }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tpir', 'zeus', 'zeus'], 581);
+  st.lados[0].orbs['Tempestade'] = 9;
+  const ator = st.lados[0].units[0], pir = st.lados[1].units[0], alvo = st.lados[1].units[2];
+  ator.dots.push({ nome: 'sangramento', v: 6, dur: 3, origem: pir.uid });   // DoT com origem (aplicarDot passa u.uid)
+  const h0 = ator.hp;
+  E.agir(st, ator.uid, 'basico', [alvo.uid]);
+  ok(ator.hp === h0 - 4, `ator sob Sangramento leva +4 ao agir (${h0}→${ator.hp}) — marcador em DoT`);
+  delete E.GODS.tpir;
+  console.log('  Piranha: agir sob Sangramento → +4 no ator (origem em DoT)');
+}
+{ // ORIGEM É O DONO: só quem APLICOU reage, não qualquer um com a passiva
+  E.GODS.tshu = { nome: 'TShu', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', faz: [{ t: 'heal', v: 10, escopo: 'self' }] }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tshu', 'tshu', 'zeus'], 582);
+  st.lados[0].orbs['Tempestade'] = 9;
+  const ator = st.lados[0].units[0], aplicou = st.lados[1].units[0], outro = st.lados[1].units[1], alvo = st.lados[1].units[2];
+  aplicou.hp = 50; outro.hp = 50;
+  ator.efeitos.push({ type: 'torpor', dur: 5, origem: aplicou.uid });   // origem = aplicou, NÃO outro
+  E.agir(st, ator.uid, 'basico', [alvo.uid]);
+  ok(aplicou.hp === 60, 'quem APLICOU o Torpor reage (cura 10)');
+  ok(outro.hp === 50, 'o outro TShu (mesma passiva, NÃO aplicou) NÃO reage — o gatilho é do aplicador');
+  delete E.GODS.tshu;
+  console.log('  origem: só o aplicador reage, não qualquer portador da passiva');
+}
+{ // DONO MORTO não reage
+  E.GODS.tshu = { nome: 'TShu', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', noAtor: [{ t: 'dmg', v: 10 }] }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tshu', 'zeus', 'zeus'], 583);
+  st.lados[0].orbs['Tempestade'] = 9;
+  const ator = st.lados[0].units[0], shu = st.lados[1].units[0], alvo = st.lados[1].units[2];
+  shu.vivo = false; ator.efeitos.push({ type: 'torpor', dur: 5, origem: shu.uid });
+  const h0 = ator.hp;
+  E.agir(st, ator.uid, 'basico', [alvo.uid]);
+  ok(ator.hp === h0, 'dono morto → sem reação (o gatilho é de uma unidade viva)');
+  delete E.GODS.tshu;
+  console.log('  dono caído → não reage');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -761,6 +818,13 @@ err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', noAtacante:
 err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', contra: { elem: 'Plasma' }, faz: [{ t: 'heal', v: 5, escopo: 'self' }] }), 'fora do sub-vocabulário'); // contra.elem inválido
 { const g = base(); g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'aliado', faz: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 9 }, escopo: 'self' }] }); ok(validarDeus(g).length === 0, 'aoSerAtingido faz-BUFF VÁLIDO (xango): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'aoSerAtingido', quem: 'self', contra: { classe: 'Físico' }, noAtacante: [{ t: 'dot', nome: 'veneno', v: 8, dur: 2 }] }); ok(validarDeus(g).length === 0, 'aoSerAtingido noAtacante-DoT VÁLIDO (medusa): ' + JSON.stringify(validarDeus(g))); }
+// gatilho aoAgirSobEfeito (F1.4): efeito (marcador) obrig; faz no dono (BUFF) / noAtor no ator (dmg PERMITIDO — por ação, não recursa)
+err(g => g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', faz: [{ t: 'heal', v: 5, escopo: 'self' }] }), 'exige o campo "efeito"'); // falta efeito
+err(g => g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor' }), 'exige um payload'); // nem faz nem noAtor
+err(g => g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', noAtor: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 2 } }] }), 'não BUFF'); // buff no ator é inútil
+err(g => g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', faz: [{ t: 'apply', eff: { type: 'atordoado', dur: 1 }, escopo: 'self' }] }), 'só aplica BUFF'); // faz segue BUFF-only (garantia intacta)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', faz: [{ t: 'heal', v: 10, escopo: 'self' }], noAtor: [{ t: 'dmg', v: 10 }] }); ok(validarDeus(g).length === 0, 'aoAgirSobEfeito dmg-no-ator VÁLIDO (shuten): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'sangramento', noAtor: [{ t: 'dmg', v: 4 }] }); ok(validarDeus(g).length === 0, 'aoAgirSobEfeito só-noAtor VÁLIDO (piranha): ' + JSON.stringify(validarDeus(g))); }
 // gatilho bonusCura (sessão 7): soma à MAGNITUDE da cura; eixo próprio `quandoCura` (3º eixo, separado de quando/contra)
 err(g => g.passiva.fx.push({ gatilho: 'bonusCura' }), 'exige o campo "v"');                                          // falta v
 err(g => g.passiva.fx.push({ gatilho: 'bonusCura', v: 5, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) NÃO vai em bonusCura — eixo errado

@@ -105,6 +105,7 @@ const GATILHOS_PASSIVA = {
   aoCurar:         { campos: ['faz'], obrig: ['faz'] },                        // quando um aliado é CURADO, faz X no curado (sessão 10)
   aoUsarHabilidade:{ campos: ['slot', 'faz'], obrig: ['slot', 'faz'] },        // quando um aliado usa habilidade do slot, faz X no dono (Passo 0)
   aoSerAtingido:   { campos: ['quem', 'contra', 'faz', 'noAtacante', 'estado'], obrig: ['quem'] },   // reage a SER atingido (F1.4): faz no reator (BUFF) / noAtacante no atacante (debuff — sujeito do evento)
+  aoAgirSobEfeito: { campos: ['efeito', 'faz', 'noAtor', 'estado'], obrig: ['efeito'] },             // quando o ATOR age carregando `efeito` (aplicado por MIM — origem), reajo: faz (no dono) / noAtor (no ator)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -352,11 +353,11 @@ function aplicar(st, u, eff) {
   }
 }
 
-function aplicarDot(st, u, nome, v, dur) {
+function aplicarDot(st, u, nome, v, dur, origem = null) {
   if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (Nezha: veneno+queimadura)
   const ja = u.dots.find(d => d.nome === nome);
-  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); }   // regra 6
-  else u.dots.push({ nome, v, dur });
+  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); if (origem != null) ja.origem = origem; }   // regra 6
+  else u.dots.push(origem != null ? { nome, v, dur, origem } : { nome, v, dur });   // origem = quem aplicou (aoAgirSobEfeito lê isto, como os efeitos)
 }
 
 // -------------------------------------------------- PRIMITIVAS: contadores
@@ -920,6 +921,18 @@ function rodarFaz(st, u, faz, tagKey) {
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;
 }
 
+// executa o payload `noAtor` do aoAgirSobEfeito NO ATOR (o inimigo que agiu — sujeito do evento), crédito ao `dono`
+// (quem aplicou o efeito). dmg É permitido aqui, ao contrário do `noAtacante` do aoSerAtingido: o gatilho é por
+// AÇÃO, não por golpe — dano no ator NÃO re-dispara aoAgirSobEfeito (que só corre em `agir`), então não há laço.
+// O slot 'torpor' fica fora de SLOTS_ATAQUE, então o dano tampouco dispara o aoSerAtingido do ator (§56).
+function rodarNoAtor(st, dono, ator, payload) {
+  for (const f of payload) {
+    if (f.t === 'dmg') bater(st, dono, ator, f.v, 'puro', 'torpor', {});
+    else if (f.t === 'dot') aplicarDot(st, ator, f.nome, f.v, f.dur, dono.uid);
+    else if (f.t === 'apply') aplicar(st, ator, { ...f.eff, origem: dono.uid });
+  }
+}
+
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
@@ -1134,6 +1147,25 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) if (f.gatilho === 'aoUsarHabilidade' && f.slot === slot && (!f.estado || estadoOK(f.estado, dono, st))) rodarFaz(st, dono, f.faz);
   }
+  // gatilho aoAgirSobEfeito (F1.4) — o ATOR (u) agiu carregando um efeito/dot cujo DONO (origem = quem o aplicou)
+  // tem o gatilho. O gatilho pertence a quem APLICOU (Shuten aplica Torpor e reage), NÃO a quem carrega — por isso
+  // lê `origem` (uid do aplicador, já em todo apply e agora nos dots). Dispara UMA vez por AÇÃO (este `agir`): se
+  // houver duas ações, dispara duas. `faz` corre no DONO (ganho self/lado); `noAtor` corre no ATOR (sujeito do evento).
+  if (u.vivo) {
+    for (const m of [...u.efeitos, ...u.dots]) {   // cópia: noAtor pode aplicar dot novo sem afetar a iteração
+      if (m.origem == null) continue;
+      const dono = st.lados[1 - u.lado].units.find(x => x.uid === m.origem && x.vivo);
+      if (!dono) continue;
+      const kit = kitDe(st, dono); const pp = kit && kit.passiva;
+      if (!pp || !Array.isArray(pp.fx)) continue;
+      const marca = m.type || m.nome;
+      for (const f of pp.fx) {
+        if (f.gatilho !== 'aoAgirSobEfeito' || f.efeito !== marca || (f.estado && !estadoOK(f.estado, dono, st))) continue;
+        if (f.faz) rodarFaz(st, dono, f.faz);
+        if (f.noAtor && u.vivo) rodarNoAtor(st, dono, u, f.noAtor);
+      }
+    }
+  }
   checarFim(st);
   return { ok: true };
 }
@@ -1173,7 +1205,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao')) matar(st, u, t, { execucao: true });
       }
       else if (e.t === 'heal') curar(st, t, e.v);
-      else if (e.t === 'dot') aplicarDot(st, t, e.nome, e.v, e.dur);
+      else if (e.t === 'dot') aplicarDot(st, t, e.nome, e.v, e.dur, u.uid);   // origem = o lançador (aoAgirSobEfeito lê para saber o dono do gatilho)
       else if (e.t === 'apply') {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
