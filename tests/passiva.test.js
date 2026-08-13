@@ -96,8 +96,8 @@ console.log('== ESCOPO self vs time, sem-quando, e dono morto ==');
   ok(B(st, tpass, e) === 5, 'escopo self: o dono Aurora ganha');
   ok(B(st, taur, e) === 0, 'escopo self: outro aliado Aurora NÃO ganha (não é o dono)');
 }
-{ // fase Dia/Noite
-  const st = setup([{ gatilho: 'bonusDano', v: 10, quando: { fase: 'Dia' } }]);
+{ // fase Dia/Noite — MIGROU para estado (F1.2.5 s3): fase é estado-de-campo, não do ataque
+  const st = setup([{ gatilho: 'bonusDano', v: 10, estado: { fase: 'Dia' } }]);
   const atk = st.lados[0].units[0], e = st.lados[1].units[0];
   ok(B(st, atk, e) === 0, 'fase Dia: sem fase → 0');
   E.definirFase(st, 'Dia', 3);
@@ -202,6 +202,48 @@ console.log('== F1.2.5 s2: contra por classe / elemNao / alcance (golpe puro, si
   h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { unico: false });
   ok(h - def.hp === 20, `contra.alcance: golpe em ÁREA NÃO reduz = 20 (deu ${h - def.hp})`);
   delete E.GODS.tra;
+}
+console.log('== F1.2.5 s3: estado COMPÕE com o eixo (contra + estado, AND) + as condições de leitura ==');
+{ // COMPOSIÇÃO — a garantia que justifica campo universal: reduz SÓ se golpe Mágico E turno par
+  E.GODS.tcp = { nome: 'TCP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' }, estado: { paridade: 'par' } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tcp', 'zeus', 'zeus'], 960);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  const hit = (classe, turno) => { st.turno = turno; const h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', { classe }); return h - def.hp; };
+  ok(hit('Mágico', 2) === 10, `COMPÕE: Mágico E par -> reduz 20-10=10 (deu ${hit('Mágico', 2)})`);
+  ok(hit('Mágico', 3) === 20, `COMPÕE: Mágico mas ÍMPAR -> NÃO reduz = 20`);
+  ok(hit('Físico', 2) === 20, `COMPÕE: par mas FÍSICO -> NÃO reduz = 20`);
+  ok(hit('Físico', 3) === 20, `COMPÕE: Físico e ímpar -> NÃO reduz = 20`);
+  delete E.GODS.tcp;
+}
+{ // aliadosVivos (Guan Yu): reduz só com >= n vivos no lado do dono
+  E.GODS.tav = { nome: 'TAV', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 6, estado: { aliadosVivos: { op: 'min', n: 3 } } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tav', 'zeus', 'zeus'], 961);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  let h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 14, `aliadosVivos min 3: 3 vivos -> reduz 20-6=14 (deu ${h - def.hp})`);
+  st.lados[1].units[1].vivo = false; h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 20, `aliadosVivos min 3: 2 vivos -> NÃO reduz = 20 (deu ${h - def.hp})`);
+  delete E.GODS.tav;
+}
+{ // hpProprio (Shuten): reduz só com HP do DONO abaixo de 50
+  E.GODS.thp = { nome: 'THP', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 8, estado: { hpProprio: { op: 'abaixo', v: 50 } } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['thp', 'zeus', 'zeus'], 962);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  def.hp = 40; let h = def.hp; E.bater(st, atk, def, 10, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 2, `hpProprio abaixo 50: HP 40 -> reduz 10-8=2 (deu ${h - def.hp})`);
+  def.hp = 120; h = def.hp; E.bater(st, atk, def, 10, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 10, `hpProprio abaixo 50: HP 120 -> NÃO reduz = 10 (deu ${h - def.hp})`);
+  delete E.GODS.thp;
+}
+{ // contador (Kitsune): reduz só com contador do dono >= n
+  E.GODS.tct = { nome: 'TCT', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 5, estado: { contador: { nome: 'discoSolar', op: 'min', n: 3 } } }] } };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tct', 'zeus', 'zeus'], 963);
+  const atk = st.lados[0].units[0], def = st.lados[1].units[0];
+  def.contadores.discoSolar = 3; let h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 15, `contador min 3: com 3 -> reduz 20-5=15 (deu ${h - def.hp})`);
+  def.contadores.discoSolar = 1; h = def.hp; E.bater(st, atk, def, 20, 'afetado', 'habilidade', {});
+  ok(h - def.hp === 20, `contador min 3: com 1 -> NÃO reduz = 20 (deu ${h - def.hp})`);
+  delete E.GODS.tct;
 }
 { // HERA — aliado curado ganha EXATAMENTE 10 de escudo; só o curado; só com Hera viva
   const st = E.novoEstado(['hera', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 403);
@@ -450,6 +492,15 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { slot: 'ultimat
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { classe: 'Mágico' } }); ok(validarDeus(g).length === 0, 'contra.classe VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 15, contra: { elemNao: 'Verdejante' } }); ok(validarDeus(g).length === 0, 'contra.elemNao VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 8, contra: { alcance: 'unico' } }); ok(validarDeus(g).length === 0, 'contra.alcance VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+// F1.2.5 s3: estado é CAMPO UNIVERSAL (composa com o eixo); fase MIGROU do quando; primeiroPorTurno reservado
+err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, quando: { fase: 'Dia' } }), 'MIGROU para o campo estado'); // fase saiu do quando
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { primeiroPorTurno: true } }), 'reservada');           // exige rastreio (sessão futura)
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { foo: true } }), 'condição de estado desconhecida');   // chave inventada
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { paridade: 'terça' } }), 'fora do sub-vocabulário');   // valor inválido
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { aliadosVivos: { op: 'quase', n: 3 } } }), 'op:min|max|exato'); // op inválido
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 5, contra: { classe: 'Mágico' }, estado: { paridade: 'par' } }); ok(validarDeus(g).length === 0, 'contra + estado COMPÕEM (universal): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, estado: { fase: 'Dia' } }); ok(validarDeus(g).length === 0, 'bonusDano + estado.fase VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { hpProprio: { op: 'abaixo', v: 50 } } }); ok(validarDeus(g).length === 0, 'estado.hpProprio VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, quando: { alvoDebuff: 'qualquer' } }), 'não pertence ao gatilho'); // quando (ofensivo) não vai em reducao
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, contra: { slot: 'basico' } }), 'não pertence ao gatilho'); // contra (defensivo) não vai em bonusDano
 // gatilhos de turno (sessão 4): faz reusa fx, mas só os turno-seguros e sem alvo escolhido
