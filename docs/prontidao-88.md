@@ -219,3 +219,57 @@ Fim da F1.2.5 (as 3 extensões F1.2-adjacentes): VERDE 4→~10, VERMELHO 48→~4
 única esconderia — muito do ganho foi staging (VERMELHO→AMARELO), não flip. O eixo de estado deixou os 5 de
 leitura prontos; `primeiroPorTurno` e a sessão esquiva/intercepta (bastet/saci/mnevis) ficam para a fase de
 mecanismos.
+
+## RE-TRIAGEM COMPLETA — vocabulário atual (pós-F1.2.5). Per-deus em `docs/triagem-88.json`
+
+**1. Distribuição EXATA** (a F1.2.5 projetou ~16 verdes; deu 16 — a projeção da fase inteira acertou):
+
+- **VERDE (16):** afrodite, amaterasu, apolo, atena, baldur, bennu, freyja, hercules, itzamna, izanagi, jormungandr, kali, khnum, kitsune, oxum, ymir.
+- **AMARELO (32):** aokuang, aquiles, bastet, boitata, bragi, brahma, cerberus, chaac, demeter, durga, guanyu, heimdall, hermes, huangdi, inari, isis, kagutsuchi, kraken, kukulkan, medusa, nefertem, oni, orfeu, osiris, perseu, piranha, poseidon, shutendoji, sunwukong, tanuki, xango, yamatotakeru.
+- **VERMELHO (40):** ahpuch, ammit, anubis, ares, babi, boto, cernunnos, change, curupira, dagda, dionisio, erinias, exu, fenrir, hades, hanuman, hel, horus, houyi, iansa, iara, izanami, khonshu, krishna, loki, lugh, mimir, mnevis, morrigan, mulasemcabeca, nuwa, odin, oxala, raijin, saci, shiva, susanoo, tsukuyomi, vishnu, yanwong.
+
+**2. Ranking de ganchos — trava (quantos precisam) | flip (destrava sozinho → vira VERDE) | stage (um de vários):**
+
+| gancho | trava | flip | stage | bloco |
+|---|---|---|---|---|
+| bonusDano-escala-dinamica | 10 | 4 | 6 | escala |
+| antirevive | 8 | 1 | 7 | morte (F1.3) |
+| execucao-hp | 7 | 0 | 7 | morte (F1.3) |
+| selado-so-basico | 6 | 0 | 6 | controle (F1.4) |
+| seletor | 5 | 1 | 4 | mira |
+| marca-vulnerabilidade | 5 | 2 | 3 | dano |
+| ignora-invuln | 5 | 1 | 4 | extensão danoIrredutivel |
+| sinergia-nomeada | 5 | 1 | 4 | passiva |
+| aoCair-qualquerInimigo | 4 | 0 | 4 | reativo (§44) |
+| multi-hit-distribuido | 4 | 0 | 4 | combate |
+| escolha-efeito | 4 | 1 | 3 | modo (F1.3) |
+| piso-1hp | 4 | 0 | 4 | morte (F1.3) |
+| primeiroPorTurno | 4 | 1 | 3 | esquiva/intercepta |
+| medo | 3 | 0 | 3 | controle (F1.4) |
+| aoUsarHabilidade | 3 | 2 | 1 | reativo (§44) |
+| bonusCura-cond-nova | 3 | 2 | 1 | extensão bonusCura |
+| iniciativa | 3 | 1 | 2 | ordem |
+| (aoSerAtingido 2·f2, aoReceberControle 2·f1, aoCair-aliado 2, redirecionar 2, dia-noite-ler-extra 2, agarrar 2, faz-cdShift 2, nega-orbe 2, + ~16 caudas de 1) | | | | |
+
+**3. BUCKET-SUSPIC (a projeção erra pra cima por balde — quais suspeito que se partam):**
+- **bonusDano-escala-dinamica (10) — ALTA suspeita.** "Escala por quê" varia: HP-faltante (ares/mula), contagem-de-status
+  (erinias/hel/aokuang), aliados-caídos (osiris/susanoo), Combo (oni/yamato). Provável que colapse num ÚNICO mecanismo
+  ("+v por N", N = quantidade contada) parametrizado pela FONTE da contagem — mas se cada fonte precisar de leitura
+  diferente, o real destravado é < 10. É o topo do ranking E o mais provável balde: NÃO sequenciar por esse 10 cru.
+- **seletor (5) — ALTA.** "mais ferido" (deméter/hanuman) ≠ "maior HP" (izanami/lugh) ≠ "mais dano turno anterior"
+  (krishna, ainda precisa de rastreio de dano). Três seletores, o último com bookkeeping. Parte em ≥2, um deles pesado.
+- **sinergia-nomeada (5) — ALTA.** Provável que NÃO seja mecanismo, e sim uma CONDIÇÃO ("aliado X no time") que compõe
+  com efeitos existentes — dissolve num campo de condição + gatilhos que já existem. O "5" superestima um mecanismo real.
+- **antirevive (8) — MÉDIA.** O EFEITO (naoRevive) é 1 mecanismo; os 8 incluem variedade de GATILHO (self=mimir,
+  ao-matar=cerberus/hel/ahpuch/iansa, por-status=anubis/yanwong) que reusa aoCair/apply já existentes. O mecanismo novo
+  é pequeno; o "8" é o efeito + disparadores já cobertos.
+- **CONFIÁVEIS (não suspeito balde):** execucao-hp (7), selado-so-basico (6), piso-1hp (4), medo (3), ignora-invuln (5),
+  marca-vulnerabilidade (5) — mecanismos uniformes, contagem firme.
+
+**Insight de SEQUENCIAMENTO (a lição da F1.2.5 aplicada):** ao contrário da F1.2.5 (extensões baratas flipavam alguns),
+a fase de mecanismos é STAGING-dominada — os topos do ranking têm **flip 0** (execucao-hp, selado, piso, aoCair-qualquerInimigo,
+multi-hit): NENHUM deles vira um deus VERDE sozinho, porque os deuses de morte/controle são multi-gancho. Então NÃO se
+sequencia por flip aqui; sequencia-se por BLOCO (F1.3 morte inteira, F1.4 controle inteiro), e os flips vêm no FIM do bloco
+quando o último gancho de cada deus cai. Os poucos flips-sozinhos baratos que restam (aoUsarHabilidade f2, aoSerAtingido f2,
+bonusCura-cond-nova f2, marca-vuln f2) são extensões pequenas que rendem 2 verdes cada — o análogo da F1.2.5, se quiser mais
+um passo barato antes dos blocos pesados.
