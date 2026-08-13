@@ -57,16 +57,19 @@ const DEFESA = {
   fx: [{ t: 'apply', eff: { type: 'invulneravel', dur: 1 }, escopo: 'self' }],
 };
 
-const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar', 'pacificado'];
+const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar', 'pacificado', 'medo'];
 // pacificado (Oxalá): a unidade AGE mas causa 0 de dano (direto e DoT que aplicaria no turno). NÃO trava slot nem a
 // ação (fora de SLOTS_TRAVADOS e de podeAgir); zera dano na fonte (bater v→0; dot pulado). Cura e DoT já ATIVO seguem
 // (o tick não é a unidade agindo). Em CONTROLES → controlImmune o barra e existe 'imune a Pacificar' por etiqueta (§58).
 // slot-lock NOMEADO (F1.4) — controles que travam um CONJUNTO fixo de slots. Cada NOME é um `type` próprio, e a
 // ETIQUETA (o type) é o que a imunidade mira: imune a Selado ≠ imune a Agarrar, mesmo os dois travando slots (§53).
 // Vocabulário FECHADO: {selado, agarrar, medo}. selado≡Silenciado≡Enraizado = {Hab,Mil} (um nome canônico; §53).
-// medo = slot-lock{Milagre}+dmgDown (bundle reservado, ainda não construído). silenceClass fica FORA — trava por
-// CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
-const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'] };
+// medo = COMPÓSITO NOMEADO (F1.4 §60): UM efeito que trava {Milagre} E reduz o dano de saída do portador (`dmgDown`
+// no próprio 'medo', lido em bonusDano). "Imune a Medo" barra o efeito INTEIRO (uma checagem de imuneA) — as duas
+// metades caem juntas, com a MESMA duração. Prova de forma: a prosa dá as duas sob "Medo por 2 turnos" (mesma dur) e
+// nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
+// fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
+const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
@@ -455,6 +458,7 @@ function bonusDano(st, atk) {
   const up = ef(atk, 'dmgUp'), dn = ef(atk, 'dmgDown');
   if (up) b += up.v;
   if (dn) b -= dn.v;
+  const md = ef(atk, 'medo'); if (md) b -= (md.dmgDown || 0);   // Medo (§60): a metade dmgDown do compósito reduz o dano de saída
   return b;
 }
 

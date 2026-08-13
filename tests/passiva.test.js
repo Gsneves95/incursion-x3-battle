@@ -754,6 +754,41 @@ console.log('== Pacificar: age mas 0 de dano (direto + DoT aplicado); cura intac
   console.log('  imune a Pacificar existe como etiqueta (controle nomeado)');
 }
 
+// Medo (F1.4) — COMPÓSITO nomeado: trava {Milagre} + reduz dano de saída, UM efeito. "Imune a Medo" cobre AS DUAS metades.
+console.log('== Medo: compósito (lock Milagre + dmgDown), um efeito; imune cobre as duas metades; mesma duração ==');
+{ // as DUAS metades num efeito só: trava Milagre E reduz o dano de saída
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 594);
+  const u = st.lados[0].units[0], alvo = st.lados[1].units[0]; st.lados[0].orbs['Tempestade'] = 9;
+  u.efeitos.push({ type: 'medo', dur: 2, dmgDown: 8 });
+  const acs = E.acoesDe(st, u);
+  ok(acs.find(a => a.slot === 'milagre').motivo === 'travada', 'metade 1: Medo trava o Milagre');
+  ok(acs.find(a => a.slot === 'habilidade').disponivel && acs.find(a => a.slot === 'basico').disponivel, 'Medo NÃO trava Hab/Básico (só Milagre)');
+  const h0 = alvo.hp;
+  E.bater(st, u, alvo, 20, 'afetado', 'basico', { unico: true });
+  ok(h0 - alvo.hp === 12, `metade 2: dano de saída -8 (20→12), deu ${h0 - alvo.hp}`);
+  console.log('  Medo: Milagre travado + dano de saída -8 (duas metades, um efeito)');
+}
+{ // IMUNE A MEDO cobre AS DUAS metades — um efeito, uma checagem de imuneA
+  E.GODS.timM = imuneGod(['medo']);
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['timM', 'zeus', 'zeus'], 595);
+  const caster = st.lados[0].units[0], imune = st.lados[1].units[0], alvo = st.lados[0].units[1];
+  apToInimigos(st, caster, [{ t: 'apply', eff: { type: 'medo', dur: 2, dmgDown: 8 }, escopo: 'todosInimigos' }]);
+  ok(!E.ef(imune, 'medo'), 'imune a Medo: o efeito INTEIRO não cola (nem lock, nem dmgDown — é UM efeito)');
+  const h0 = alvo.hp;
+  E.bater(st, imune, alvo, 20, 'afetado', 'basico', { unico: true });
+  ok(h0 - alvo.hp === 20, `imune: dano CHEIO 20 (a metade dmgDown foi barrada junto), deu ${h0 - alvo.hp}`);
+  delete E.GODS.timM;
+  console.log('  imune a Medo cobre as DUAS metades (composto, não dois efeitos com um nome)');
+}
+{ // MESMA duração: as duas metades expiram JUNTAS (um efeito, um dur)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 596);
+  const u = st.lados[0].units[0];
+  u.efeitos.push({ type: 'medo', dur: 1, dmgDown: 8 });
+  E.fimTurno(st);   // regra 5: dur decrementa no fim do turno do portador
+  ok(!E.ef(u, 'medo'), 'dur 1 → após um fim de turno, Medo INTEIRO expira (as duas metades juntas)');
+  console.log('  as duas metades expiram juntas (uma duração)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -846,7 +881,8 @@ err(g => g.passiva.fx.push({ gatilho: 'abertura', faz: [{ t: 'contador', nome: '
 // gatilho imunidade (sessão 5): `a` = array não-vazio de tags do sub-vocabulário
 err(g => g.passiva.fx.push({ gatilho: 'imunidade' }), 'exige o campo "a"');                       // falta a
 err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: [] }), 'array não-vazio');                   // a vazio
-err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'] }), 'fora do sub-vocabulário');     // medo ainda não é controle (F1.4)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'] }); ok(validarDeus(g).length === 0, `imune a Medo VÁLIDO (§60: medo virou controle nomeado): ${JSON.stringify(validarDeus(g))}`); }
+{ const g = base(); g.passiva.fx[0] = { gatilho: 'bonusDano', v: 10, quando: { alvoDebuff: 'medo' } }; ok(validarDeus(g).length === 0, `"+dano vs Medo" (babi) VÁLIDO — medo é DEBUFF: ${JSON.stringify(validarDeus(g))}`); }
 err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), 'não pertence ao gatilho'); // v não vai em imunidade
 // gatilho aoCair (sessão 6): quem (sujeito) + faz (efeito no reator)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "quem"');        // falta quem
