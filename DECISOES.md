@@ -16,8 +16,15 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 **A LIÇÃO CENTRAL — a tradução-antes-de-construir (§73/§74) fechou com 0 erro.** A tabela do §74 previu o gancho de
 cada um dos 8; em obra, **nenhum precisou de correção de rota, nenhum revelou um segundo buraco escondido, nenhum
 travou.** É o contraste direto com a reconciliação (§61: ~80%, erra p/ cima): a reconciliação prometeu verde e entregou
-hook 5 vezes (§70); a **tradução** prometeu 8 hooks-pequenos e entregou 8 hooks-pequenos. **Confirma a escada do §61 com
-o experimento invertido: quando você TRADUZ antes de prometer, o teto some — a tradução é o único degrau que não mente.**
+hook 5 vezes (§70); a **tradução** prometeu 8 hooks-pequenos e entregou 8 hooks-pequenos.
+
+**O EXPERIMENTO INVERTIDO — a EVIDÊNCIA POSITIVA do método (o achado da sessão, apontado pelo dono).** Até aqui o §61
+só tinha provas NEGATIVAS: toda vez que se previa sobre a triagem, errava-se para cima (o flip §46, os 5 verdes §70, o
+balde §72). Provar um método por ele falhar de novo é fraco. Esta sessão prova pelo AVESSO: **inverteu-se a ordem —
+traduziu-se ANTES de prometer — e o erro sumiu (8 previstos, 8 entregues, 0 surpresa).** É a primeira vez que o §61 é
+confirmado por ACERTO, não por erro repetido. Fica registrado como a evidência positiva: *a tradução não é só o degrau
+que corrige os outros; quando ela vem primeiro, não há o que corrigir. Traduzir-antes é o método; reconciliar-antes é o
+atalho que mente para cima.*
 
 **OS 8 GANCHOS ABERTOS (todos pequenos, regra 3 do dono respeitada):**
 - **roubaOrbe + protegeOrbe** (nega-orbe) — remove/rouba do maior pool inimigo; protegeOrbe barra. Serve hades+heimdall+fila.
@@ -39,8 +46,14 @@ o experimento invertido: quando você TRADUZ antes de prometer, o teto some — 
 
 **chaac foi o único duplo-travado** (2 ganchos), como o §74 previu. O único refino que a tradução one-line não pegou (e
 que só apareceu ao construir) foi o **2º caminho de queda do Khnum** (invocação-guarda ≠ unidade) — mas pequeno o
-bastante para ficar na leva, não virar decisão. Registro como precedente: *"OU" numa prosa costuma nomear dois mecanismos
-distintos, não um sinônimo.*
+bastante para ficar na leva, não virar decisão.
+
+**O PADRÃO DO KHNUM — o §46 na CONJUNÇÃO (ordem do dono: some ao §46).** O §46 diz que um NOME de prosa não é evidência
+sobre a natureza — a armadilha morava no SUBSTANTIVO (um nome agregando mecânicas distintas). Khnum mostra a mesma
+armadilha na CONJUNÇÃO: **"o Shabti OU um aliado" não era um sinônimo com dois rótulos — eram dois MECANISMOS de morte
+distintos** (unidade real via `matar`; invocação-guarda via `bater`, que nem passa por `matar`). Fica a regra, mesma
+família do §46: **um "OU" na prosa costuma nomear dois mecanismos, não duas palavras para um. Varra os dois lados da
+conjunção como mecânicas separadas antes de traduzir — como se varre um substantivo-agregador.**
 
 **Órfão? Não.** Todos os 8 passam validarDeus+smoke E têm o fio (enforce/leitor) do §74. FUNCIONAL subiu junto com IMPL
 (37→46 vs 36→45), a distância órfã ficou constante em 1 (afrodite).
