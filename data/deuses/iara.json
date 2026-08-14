@@ -1,0 +1,56 @@
+{
+  "key": "iara",
+  "nome": "Iara",
+  "faccao": "Brasileira",
+  "elem": "Maré",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Beleza Fatal",
+    "desc": "Ataques de alvo único contra Iara causam 5 menos de dano; +8 de dano contra Encharcados.",
+    "fx": [
+      { "gatilho": "reducao", "v": 5, "contra": { "alcance": "unico" } },
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "encharcado" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Canto Suave",
+      "cost": { "Maré": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano + Encharcado por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "apply", "eff": { "type": "encharcado", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Canto da Sedução",
+      "cost": { "Maré": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Provoca 1 inimigo por 2 turnos e o Silencia (só Básico).",
+      "fx": [
+        { "t": "apply", "eff": { "type": "taunt", "dur": 2 } },
+        { "t": "apply", "eff": { "type": "selado", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Afogamento",
+      "cost": { "Maré": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP.",
+      "fx": [
+        { "t": "dmg", "v": 18, "executaAbaixoDe": 24, "execIf": { "alvoDebuff": "encharcado" }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

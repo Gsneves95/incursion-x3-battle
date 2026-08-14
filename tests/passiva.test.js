@@ -1002,6 +1002,17 @@ console.log('== F1.6 nega-orbe: roubaOrbe remove/rouba do maior pool inimigo; pr
   delete E.GODS.theim;
   console.log('  nega-orbe: roubaOrbe (maior pool, rouba→próprio) + protegeOrbe barra');
 }
+console.log('== F1.6 execIf: execução FILTRADA por status (Iara — elimina só Encharcados) ==');
+{ // dois alvos ≤24 HP: só o Encharcado é executado
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 614);
+  const u = st.lados[0].units[0], a = st.lados[1].units;
+  a[0].hp = 20; a[0].efeitos.push({ type: 'encharcado', dur: 2 });
+  a[1].hp = 20;
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 1, executaAbaixoDe: 24, execIf: { alvoDebuff: 'encharcado' }, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'milagre' }, a);
+  ok(!a[0].vivo, `Encharcado ≤24: EXECUTADO (vivo=${a[0].vivo})`);
+  ok(a[1].vivo, `SEM Encharcado ≤24: NÃO executado (vivo=${a[1].vivo})`);
+  console.log('  execIf: execução só nos que casam o status');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

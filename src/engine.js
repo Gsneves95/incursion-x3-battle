@@ -223,7 +223,7 @@ const VOCAB = {
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'curaMetade',
-    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar',
+    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
     'se', 'entao', 'senao',   // fx condicional (F1.6, Freyja): se(estado) ? entao : senao
@@ -1256,7 +1256,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2), u);   // dreno: o próprio atacante é o curador
         // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
         // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.
-        if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao')) matar(st, u, t, { execucao: true });
+        if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao') && (!e.execIf || condOK(e.execIf, u, t, st))) matar(st, u, t, { execucao: true });   // execIf (F1.6, Iara): filtro de STATUS na execução — "elimina só os Encharcados" (reusa condOK)
       }
       else if (e.t === 'heal') curar(st, t, e.v, u);   // curador = quem lança a habilidade
       else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid); }   // origem = o lançador; Pacificar zera o DoT que o pacificado aplicaria neste turno (é dano que ele causaria)
