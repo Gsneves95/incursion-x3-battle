@@ -1,0 +1,63 @@
+{
+  "key": "medusa",
+  "nome": "Medusa",
+  "faccao": "Grega",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Cabelos de Serpente",
+    "desc": "Quem atinge Medusa com habilidade Física recebe Veneno (8/turno por 2 turnos).",
+    "fx": [
+      {
+        "gatilho": "aoSerAtingido",
+        "quem": "self",
+        "contra": { "classe": "Físico" },
+        "noAtacante": [
+          { "t": "dot", "nome": "veneno", "v": 8, "dur": 2 }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Presa Peçonhenta",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano + Veneno (8 de dano puro/turno por 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 10 },
+        { "t": "dot", "nome": "veneno", "v": 8, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Olhar Petrificante",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "20 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra.",
+      "fx": [
+        { "t": "dmg", "v": 20 },
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 } },
+        { "t": "contador", "nome": "Pedra", "v": 1, "limiar": { "em": 3, "aplica": { "type": "atordoado", "dur": 1 }, "consome": true } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Face da Górgona",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "+1 marca de Pedra em todos os inimigos. Com 3 marcas, o inimigo é Petrificado por 1 turno e perde as marcas.",
+      "fx": [
+        { "t": "contador", "nome": "Pedra", "v": 1, "escopo": "todosInimigos", "limiar": { "em": 3, "aplica": { "type": "atordoado", "dur": 1 }, "consome": true } }
+      ]
+    }
+  ]
+}

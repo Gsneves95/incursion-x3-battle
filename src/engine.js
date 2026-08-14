@@ -90,7 +90,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno', 'sangramento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô acumula dano de retribuição.
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3).
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
 // motor não carregar um `if (u.key===...)` por deus. A SESSÃO 1 abre UM gatilho só: bonusDano.
 // Migração é por DEUS INTEIRO (§37): um deus só migra quando TODOS os gatilhos da sua passiva
@@ -391,7 +391,10 @@ function getContador(u, nome) { return u.contadores[nome] || 0; }
 // falha, o contador fica, sem retroação. A config mora no DADO (fx.limiar), não no motor.
 function cruzarLimiar(st, origem, alvo, e, antes) {
   const L = e.limiar; if (!L) return;
-  if (antes < L.em && getContador(alvo, e.nome) >= L.em) aplicar(st, alvo, { ...L.aplica, origem: origem.uid });
+  if (antes < L.em && getContador(alvo, e.nome) >= L.em) {
+    aplicar(st, alvo, { ...L.aplica, origem: origem.uid });
+    if (L.consome) { const tinha = getContador(alvo, e.nome); alvo.contadores[e.nome] = 0; log(st, { tipo: 'contador', origem: origem.key, valor: -tinha, efeito: e.nome }); }   // F1.6 (Medusa): 'perde as marcas' ao petrificar — zera o contador ao cruzar o limiar
+  }
 }
 // PRIMITIVA redução de HP MÁXIMO (F1.1, primitiva 3 — Podridão do Ah Puch): reduz `maxHp` com PISO 1
 // (hp a 0 é MORTE, maxHp é CAPACIDADE — se a decomposição matasse sozinha seria execução disfarçada

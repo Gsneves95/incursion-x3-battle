@@ -917,6 +917,18 @@ console.log('== F1.6 Freyja: fx CONDICIONAL por estado — aliadoCaido ? revive 
   ok(E.ef(c2, 'dmgUp') && E.ef(c2, 'dmgUp').v === 12, `SENAO (ninguém caiu): o time ganha dmgUp+12 (${E.ef(c2, 'dmgUp') && E.ef(c2, 'dmgUp').v})`);
   console.log('  Freyja: fx condicional (aliadoCaido ? revive : buff time)');
 }
+console.log('== F1.6 Medusa: limiar com CONSOME — ao cruzar em:3, aplica atordoado E zera as marcas ==');
+{ // acumula Pedra; na 3ª marca petrifica (atordoado) e o contador volta a 0 ("perde as marcas")
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 607);
+  const caster = st.lados[0].units[0], t = st.lados[1].units[0];
+  const marca = [{ t: 'contador', nome: 'Pedra', v: 1, limiar: { em: 3, aplica: { type: 'atordoado', dur: 1 }, consome: true } }];
+  E.aplicarFx(st, caster, marca, { alvo: 'inimigo', slot: 'habilidade' }, [t]);
+  E.aplicarFx(st, caster, marca, { alvo: 'inimigo', slot: 'habilidade' }, [t]);
+  ok(E.getContador(t, 'Pedra') === 2 && !E.ef(t, 'atordoado'), `2 marcas: ainda não petrifica (pedra=${E.getContador(t, 'Pedra')})`);
+  E.aplicarFx(st, caster, marca, { alvo: 'inimigo', slot: 'habilidade' }, [t]);
+  ok(E.ef(t, 'atordoado') && E.getContador(t, 'Pedra') === 0, `3ª marca: PETRIFICADO e marcas ZERADAS (consome): pedra=${E.getContador(t, 'Pedra')} atordoado=${!!E.ef(t, 'atordoado')}`);
+  console.log('  Medusa: limiar-consome (petrifica em 3, perde as marcas)');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
