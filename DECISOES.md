@@ -1832,6 +1832,61 @@ Guan Yu, que é imunidade-condicional). VERMELHO **24 → 22**.
 
 ---
 
+## §61 — A TRIAGEM herda o §46: toda previsão sobre ela é TETO (do dono)
+
+Os dois falsos flips do fecho do controle (shuten, guanyu) tinham gancho com NOME de controle (`torpor`, `medo`) e
+SUBSTÂNCIA de outro mecanismo (roubo-de-orbe, imunidade-condicional). Isso não é acidente: **a rubrica de triagem
+classifica pelo NOME do gancho**, então ela carrega o MESMO viés que a varredura da prosa corrige (§46 — nome não é
+evidência). Consequência prática: **toda previsão feita sobre a triagem é um TETO, igual à projeção de flip** (a
+projeção "flip-sozinho" errou 3× alto lá atrás). É a lição do §37 (varrer o conjunto inteiro corrige um número) um
+nível ACIMA: lá a varredura corrige a triagem; aqui, a previsão feita SOBRE a triagem herda o erro que só a varredura
+seguinte corrige. Regra: ao prever sobre a triagem, trate o número como limite superior e espere que a varredura de
+cada gancho revele bundles/mislabels que o reduzem. **Corolário provado:** a previsão §52 (VERDE ~30) era teto; a
+varredura de cada gancho revelou 2 mislabels; o fecho real bateu 28 — o método certo, o teto corrigido pelos itens.
+
+**Nota de honestidade (Medo):** a posição do dono (imune a Medo cobre as duas metades) estava certa, mas o argumento
+DECISIVO foi a **duração idêntica** (evidência da prosa), não a coerência-com-a-ficha que ele deu. A posição estava
+certa; a razão dada estava incompleta. Registrado porque "certo pela razão errada" e "certo pela razão certa" têm
+valor diferente numa base que explica de onde vêm as decisões.
+
+---
+
+## §62 — Redirecionar (F1.4 controle 6/N): fecha o bloco, e a previsão corrigida BATE
+
+**Forma (as duas perguntas do dono):**
+1. **Próximo vs janela — mesmo núcleo, lifetime diferente.** Loki redireciona o PRÓXIMO golpe = consumo-único
+   (`contra:'unico'`, que se apaga após um uso — REUSA o bookkeeping que o `intercepta` já tinha); Curupira redireciona
+   por 2 turnos = janela (dur). A distinção consumo-vs-janela não é nova — o intercepta já a tinha. Não são dois
+   mecanismos; é um com dois tempos de vida.
+2. **Para quem — escolhido, e coincidem.** Loki manda "a um inimigo", Curupira "a um aliado deles (você escolhe)" —
+   ambos para um alvo ESCOLHIDO no lado do ATACANTE (fogo amigo), carregado no efeito como `destino=uid`. NÃO é o dono
+   (não é auto-redirect). Os dois coincidem no destino.
+
+**Precedência sobre taunt (confirmada, da sessão das 15):** o taunt decide o alvo ANTES (na mira), mas o redirect roda
+em `bater` e tem a ÚLTIMA palavra sobre onde o golpe cai. Um golpe forçado ao taunter é redirecionado ao sink. Provado.
+Só alvo único (área não redireciona, como o intercepta).
+
+**FECHO DO BLOCO CONTROLE (6 sessões) — contra a previsão corrigida:**
+
+| sessão | VERDE | AMARELO | VERMELHO |
+|---|---|---|---|
+| base (pós-morte) | 20 | 39 | 29 |
+| §53 slot-lock | 23 | 41 | 24 |
+| §55 aoSerAtingido | 25 | 39 | 24 |
+| §56 aoAgirSobEfeito | 26 | 38 | 24 |
+| §58 Pacificar | 27 | 37 | 24 |
+| §60 Medo | 27 | 39 | 22 |
+| §62 redirecionar (FECHA) | **28** | 38 | **22** |
+
+**VERDE 20→28 (+8), VERMELHO 29→22 (−7). A previsão §52 corrigida (28) BATEU exatamente.** Os 8 flips: fenrir,
+kraken, hades, medusa, xango, piranha, oxala, curupira — todos FRONT-loaded (cada um flipou ao abrir seu gancho),
+confirmando o §51 (deus de controle não tem bloco depois → flipa na hora, oposto da morte). Os 2 que a previsão bruta
+(10) contava e não vieram — shuten (roubo-de-orbe) e guanyu (imunidade-condicional) — são o §61: nome de controle,
+substância de outro mecanismo. **O método estava certo; o teto (10) caiu para 8 quando a varredura de cada gancho
+identificou os 2 mislabels — exatamente o que o §61 prevê.**
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

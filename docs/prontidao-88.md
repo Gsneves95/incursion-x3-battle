@@ -332,10 +332,13 @@ torpor≡aoAgirSobEfeito; aoCair-aliado é extensão trivial). O bloco é menor 
 | aoSerAtingido (§55) | 25 | 39 | 24 | medusa, xango — INCREMENTAL |
 | aoAgirSobEfeito (§56) | 26 | 38 | 24 | piranha — INCREMENTAL (shuten → resíduo nega-orbe) |
 | Pacificar (§58) | 27 | 37 | 24 | oxala — INCREMENTAL |
-| Medo (§60) | **27** | 39 | 22 | NENHUM (apliadores multi-gancho; guanyu é imunidade-condicional) |
+| Medo (§60) | 27 | 39 | 22 | NENHUM (apliadores multi-gancho; guanyu é imunidade-condicional) |
+| redirecionar (§62, FECHA) | **28** | 38 | 22 | curupira — INCREMENTAL (loki estagia) |
 
-Cinco ganchos, +7 VERDE (20→27), front-loaded — o §51 se sustenta. **Correção da previsão do §52 (avisada antes do
-fecho):** ela contava 10 flips; DOIS eram falsos — shuten (`torpor` era bundle: trigger + roubo-de-orbe, §56) e guanyu
-(`medo` era imunidade CONDICIONAL, que não existe — imuneA ignora estado, §60). Ambos têm gancho de NOME de controle
-mas SUBSTÂNCIA de outro mecanismo (§46). **Fecho real do bloco ≈ 28** (não 30): 7 já fliparam + curupira quando
-redirecionar cair. Medo em si flipa 0 (babi segue VERMELHO; morrigan/mula → AMARELO). Falta redirecionar p/ fechar.
+**BLOCO CONTROLE FECHADO: VERDE 20→28 (+8), VERMELHO 29→22 (−7).** Os 8 flips (fenrir, kraken, hades, medusa, xango,
+piranha, oxala, curupira) foram todos FRONT-loaded — cada um flipou ao abrir seu gancho, confirmando o §51 (deus de
+controle não tem bloco depois → flipa na hora, oposto da morte back-loaded). **A previsão §52 corrigida (28) BATEU
+exatamente.** A bruta (10 flips / ~30) era TETO: a varredura de cada gancho revelou 2 mislabels — shuten (roubo-de-orbe)
+e guanyu (imunidade-condicional), gancho de NOME de controle e substância de outro mecanismo. É o §61: previsão sobre a
+triagem é teto, porque a triagem herda o viés-do-nome (§46) que só a varredura seguinte corrige. Método certo, teto
+corrigido pelos itens identificados.

@@ -1,7 +1,7 @@
 {
  "dist": {
-  "VERDE": 27,
-  "AMARELO": 39,
+  "VERDE": 28,
+  "AMARELO": 38,
   "VERMELHO": 22
  },
  "gods": [
@@ -67,14 +67,6 @@
     "bonusCura-cond-nova"
    ],
    "nota": "Passiva 'regeneracoes curam +4' (bonusCura por tipo-de-cura); apply-Encharcado/heal/condicional-status/atordoa/bonusDano expressiveis.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "curupira",
-   "ganchos": [
-    "redirecionar"
-   ],
-   "nota": "Hab forca retarget de golpes inimigos (redirecionar); Milagre trava Hab+Mil juntas (selado-so-basico); reducao/bonusDano-elem expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -372,6 +364,12 @@
    "cor": "VERDE"
   },
   {
+   "key": "curupira",
+   "ganchos": [],
+   "nota": "Hab forca retarget de golpes inimigos (redirecionar); Milagre trava Hab+Mil juntas (selado-so-basico); reducao/bonusDano-elem expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído. | §62: redirecionar construído.",
+   "cor": "VERDE"
+  },
+  {
    "key": "fenrir",
    "ganchos": [],
    "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir. | §53: slot-lock nomeado (selado/agarrar) construído.",
@@ -611,10 +609,9 @@
    "key": "loki",
    "ganchos": [
     "primeiroPorTurno",
-    "redirecionar",
     "transfere-status?"
    ],
-   "nota": "inalvejavel ok mas 'redireciona proximo ataque' = redirecionar; milagre rouba buffs+transfere debuffs do time->inimigos (transferencia de status, nao so strip); passiva nega 1o controle/turno = primeiroPorTurno+negacao.",
+   "nota": "inalvejavel ok mas 'redireciona proximo ataque' = redirecionar; milagre rouba buffs+transfere debuffs do time->inimigos (transferencia de status, nao so strip); passiva nega 1o controle/turno = primeiroPorTurno+negacao. | §62: redirecionar construído.",
    "cor": "VERMELHO"
   },
   {
@@ -756,12 +753,6 @@
    "trava": 3,
    "flip": 1,
    "stage": 2
-  },
-  {
-   "gancho": "redirecionar",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1
   },
   {
    "gancho": "faz-cdShift",
