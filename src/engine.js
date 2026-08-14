@@ -246,7 +246,7 @@ const VOCAB = {
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
     'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
     'sem_cura', 'nao_revive',                           // falha (noHeal / naoRevive)
-    'em_recarga', 'sem_energia', 'silenciado', 'travada', // indisponibilidade de ação (acoesDe)
+    'em_recarga', 'sem_energia', 'silenciado', 'travada', 'ja_usou', // indisponibilidade de ação (acoesDe)
     'tempo',                                            // fim por esgotamento (turno 40)
   ],
 };
@@ -1104,7 +1104,8 @@ function acoesDe(st, u) {
     let cost = a.cost;
     if (a.slot !== 'defesa' && custoGratisDe(st, u, a.slot)) cost = {};   // passiva Cuca (aCadaN custoGratis)
     let motivo = null;
-    if (u.cd[a.slot] > 0) motivo = 'em_recarga';
+    if (a.umaVez && u.usos[a.slot]) motivo = 'ja_usou';   // F1.6 (Ísis/Shiva): habilidade "1× por partida" já gasta — trava PERMANENTE (o campo `usos` existia sem fio; agora ligado)
+    else if (u.cd[a.slot] > 0) motivo = 'em_recarga';
     else if (!podePagar(l, cost)) motivo = 'sem_energia';
     else if (a.slot !== 'defesa') {
       const sil = ef(u, 'silenceClass');
@@ -1156,6 +1157,7 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
   pagar(st, l, a.cost);
   u.agiu = true;
   if (a.cd) u.cd[a.slot] = a.cd;
+  if (a.umaVez) u.usos[a.slot] = true;   // F1.6: marca a habilidade "1× por partida" como gasta (trava permanente em acoesDe)
 
   const inimigos = st.lados[1 - u.lado].units;
   const alvos = alvoUids.map(id => [...inimigos, ...l.units].find(x => x.uid === id)).filter(Boolean);

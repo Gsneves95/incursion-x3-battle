@@ -945,6 +945,21 @@ console.log('== F1.6 Nefertem: bonusCura por FACÇÃO do curador — +5 só quan
   delete E.GODS.tnefer; delete E.GODS.tegp; delete E.GODS.tgrg;
   console.log('  Nefertem: bonusCura lê a facção de QUEM curou (curador), não do curado');
 }
+console.log('== F1.6 umaVez: habilidade "1× por partida" trava PERMANENTE após um uso (Ísis/Shiva) ==');
+{ // o campo `usos` existia sem fio; agora ligado — acoesDe trava, agir marca
+  E.GODS.tuma = { key: 'tuma', nome: 'TUma', faccao: 'T', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [] }, ab: [
+    { slot: 'basico', classe: 'Mágico', nome: 'b', cost: {}, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] },
+    { slot: 'milagre', classe: 'Mágico', nome: 'm', cost: {}, cd: 0, umaVez: true, alvo: 'nenhum', fx: [{ t: 'heal', v: 5, escopo: 'time' }] }
+  ] };
+  const st = E.novoEstado(['tuma', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 609);
+  const u = st.lados[0].units[0];
+  ok(E.acoesDe(st, u).find(a => a.slot === 'milagre').disponivel, 'milagre umaVez disponível ANTES de usar');
+  E.agir(st, u.uid, 'milagre', []);
+  const m = E.acoesDe(st, u).find(a => a.slot === 'milagre');
+  ok(!m.disponivel && m.motivo === 'ja_usou' && u.usos.milagre === true, `milagre umaVez TRAVADO após 1 uso, mesmo com cd:0 (motivo=${m.motivo} usos=${JSON.stringify(u.usos)})`);
+  delete E.GODS.tuma;
+  console.log('  umaVez: trava permanente (ja_usou), o cd:0 não reabre');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

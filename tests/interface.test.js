@@ -505,17 +505,10 @@ console.log(`  ${$('.timer__label').textContent}`);
 
 console.log('== 11b. seleção de 2 alvos na interface ==');
 {
-  // sai da seleção só-iniciais para poder usar Thor e Hera
-  w.eval("ir('selecao')"); w.eval('pick=[[],[]]'); w.eval('vez=0');
-  w.eval('tudoLiberado=true'); w.eval('render()');
-  const nomes = $$('.pk .pk__n').map(e => e.textContent.trim());
-  ok(nomes.includes('Thor') && nomes.includes('Hera'), 'Thor e Hera deveriam estar na grade');
-  const porNome = n => $$('.pk').find(b => b.querySelector('.pk__n').textContent.trim() === n);
-  const clr = () => w.eval('if(_tapT){clearTimeout(_tapT);}_tapT=null;_tapK=null;');
-  const add = n => { clr(); const b = porNome(n); tap(b); tap(b); };   // duplo-toque adiciona
-  ['Thor','Hera','Zeus'].forEach(add);
-  ok(w.eval('vez') === 1, 'deveria ter passado a vez');
-  ['Ogum','Tyr','Cuca'].forEach(add);
+  // times fixos por CHAVE (idioma robusto à paginação — a grade cresce p/ 100 e navegar por nome quebra: ver §71)
+  w.eval("ir('selecao');pick=[['thor','hera','zeus'],['ogum','tyr','cuca']];vez=1;tudoLiberado=true;render()");
+  const jogaveis = w.eval("ROSTER.filter(e=>!!GODS[e.key]).map(e=>e.nome)");
+  ok(jogaveis.includes('Thor') && jogaveis.includes('Hera'), 'Thor e Hera deveriam estar jogáveis');
   tap($('#bgo'));
   w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');   // fixa o lado 0 (starter é sorteado)
   const l = S().lados[S().ativo];

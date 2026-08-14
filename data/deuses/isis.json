@@ -1,0 +1,52 @@
+{
+  "key": "isis",
+  "nome": "Ísis",
+  "faccao": "Egípcia",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Nome Secreto",
+    "desc": "Ísis é imune a controle.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "controle" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Verbo Mágico",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Feitiço Roubado",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Copia e usa imediatamente a última Habilidade usada por um aliado (sem pagar o custo dela).",
+      "fx": [
+        { "t": "copiar", "fonte": "ultimaHabilidadeAliada" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Ressurreição de Osíris",
+      "cost": { "Aurora": 2, "livre": 2 },
+      "cd": 5,
+      "umaVez": true,
+      "alvo": "nenhum",
+      "desc": "Revive todos os aliados caídos com 36 de HP. Uma vez por partida.",
+      "fx": [
+        { "t": "revive", "hp": 36, "escopo": "todosCaidos" }
+      ]
+    }
+  ]
+}
