@@ -929,6 +929,22 @@ console.log('== F1.6 Medusa: limiar com CONSOME — ao cruzar em:3, aplica atord
   ok(E.ef(t, 'atordoado') && E.getContador(t, 'Pedra') === 0, `3ª marca: PETRIFICADO e marcas ZERADAS (consome): pedra=${E.getContador(t, 'Pedra')} atordoado=${!!E.ef(t, 'atordoado')}`);
   console.log('  Medusa: limiar-consome (petrifica em 3, perde as marcas)');
 }
+console.log('== F1.6 Nefertem: bonusCura por FACÇÃO do curador — +5 só quando quem cura é Egípcio ==');
+{ // nefertem no time; cura de Egípcio ganha +5, cura de Grego não
+  E.GODS.tnefer = { nome: 'TNef', faccao: 'Egípcia', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusCura', v: 5, quandoCura: { curadorFaccao: 'Egípcia' } }] } };
+  E.GODS.tegp = { nome: 'TEgp', faccao: 'Egípcia', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [] } };
+  E.GODS.tgrg = { nome: 'TGrg', faccao: 'Grega', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [] } };
+  const st = E.novoEstado(['tnefer', 'tegp', 'tgrg'], ['zeus', 'zeus', 'zeus'], 608);
+  const nefer = st.lados[0].units[0], egp = st.lados[0].units[1], grg = st.lados[0].units[2];
+  nefer.hp = 50; const h0 = nefer.hp;
+  E.aplicarFx(st, egp, [{ t: 'heal', v: 10 }], { alvo: 'aliado', slot: 'habilidade' }, [nefer]);
+  ok(nefer.hp === h0 + 15, `curador Egípcio: 10 + 5 do bonusCura = 15 (${h0}→${nefer.hp})`);
+  nefer.hp = 50; const h1 = nefer.hp;
+  E.aplicarFx(st, grg, [{ t: 'heal', v: 10 }], { alvo: 'aliado', slot: 'habilidade' }, [nefer]);
+  ok(nefer.hp === h1 + 10, `curador Grego: só 10, sem bônus (${h1}→${nefer.hp})`);
+  delete E.GODS.tnefer; delete E.GODS.tegp; delete E.GODS.tgrg;
+  console.log('  Nefertem: bonusCura lê a facção de QUEM curou (curador), não do curado');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

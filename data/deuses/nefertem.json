@@ -1,0 +1,55 @@
+{
+  "key": "nefertem",
+  "nome": "Nefertem",
+  "faccao": "Egípcia",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Fragrância Serena",
+    "desc": "Curas feitas por aliados Egípcios curam +5.",
+    "fx": [
+      { "gatilho": "bonusCura", "v": 5, "quandoCura": { "curadorFaccao": "Egípcia" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Pétala Cortante",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 10 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Perfume de Lótus",
+      "cost": { "Verdejante": 1 },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "Remove 1 debuff de 1 aliado; ele causa +8 de dano por 2 turnos.",
+      "fx": [
+        { "t": "cleanse" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Desabrochar da Aurora",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 18 no time e regenera 8 por turno durante 3 turnos.",
+      "fx": [
+        { "t": "heal", "v": 18, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "regen", "v": 8, "dur": 3 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

@@ -170,8 +170,10 @@ const CONDICOES = {
 // cura (quem curou, que tipo, estado do campo). Reusar `quando` seria repetir o erro que a sessão 3 corrigiu.
 // Fechado; abre só `inimigoTem` p/ a Brigid. As outras formas da família (paridade de turno=Hel, facção do
 // curador=Nefertem, tipo=regeneração=Cernunnos/Chaac) entram por deus. Ausência = toda cura. Ver docs/passivas.md.
+const FACCOES_VOCAB = ['Africana', 'Brasileira', 'Celta', 'Chinesa', 'Egípcia', 'Grega', 'Hindu', 'Japonesa', 'Maia', 'Nórdica'];   // (a UI tem sua própria FACCOES; nome distinto p/ não colidir no dist concatenado)
 const CONDICOES_CURA = {
   inimigoTem: { sub: DOTS },   // existe inimigo VIVO (do lado curado) com a tag DoT (brigid: 'queimadura'); cresce p/ debuff/controle por deus
+  curadorFaccao: { sub: FACCOES_VOCAB },   // F1.6 (Nefertem): a cura foi FEITA por um curador desta facção (lê quem curou)
 };
 // `estado` (F1.2.5 s3) — CAMPO UNIVERSAL: qualquer gatilho compõe (AND) o seu eixo (quando/contra/quandoCura)
 // com uma condição de ESTADO DO CAMPO, lida contra o DONO do fx. NÃO é 4º eixo (irmão dos três, um-por-fx) —
@@ -532,16 +534,20 @@ function bonusDanoDeclarativo(st, atk, alvo) {
 
 // bonusCura (F1.2 sessão 8) — avalia a condição `quandoCura` (eixo próprio da cura). Lê o contexto da cura,
 // NÃO um ataque: `u` é a unidade CURADA; a condição olha o campo/lado. Conjunto FECHADO (CONDICOES_CURA).
-function condCuraOK(q, u, st) {
+function condCuraOK(q, u, st, curador) {
   if (!q) return true;
   if ('inimigoTem' in q) {   // existe inimigo VIVO (do lado oposto ao curado) com a tag DoT
     return st.lados[1 - u.lado].units.some(x => x.vivo && x.dots.some(d => d.nome === q.inimigoTem));
+  }
+  if ('curadorFaccao' in q) {   // F1.6 (Nefertem): a CURA foi feita por um curador da facção X (lê quem curou, não o curado)
+    const g = curador && kitDe(st, curador);
+    return !!g && g.faccao === q.curadorFaccao;
   }
   return false;
 }
 // Soma o +v das passivas bonusCura no lado do CURADO (u). O dono precisa estar VIVO (a passiva some com ele,
 // igual ao bonusDano). Estrutura espelha bonusDanoDeclarativo. Brigid: +5 se algum inimigo com Queimadura.
-function bonusCuraDeclarativo(st, u) {
+function bonusCuraDeclarativo(st, u, curador) {
   let b = 0;
   for (const dono of st.lados[u.lado].units) {
     if (!dono.vivo) continue;
@@ -551,7 +557,7 @@ function bonusCuraDeclarativo(st, u) {
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusCura') continue;
       if (f.estado && !estadoOK(f.estado, dono, st)) continue;   // compõe com o `quandoCura`
-      if (condCuraOK(f.quandoCura, u, st)) b += f.v;
+      if (condCuraOK(f.quandoCura, u, st, curador)) b += f.v;
     }
   }
   return b;
@@ -791,12 +797,13 @@ function removerInvocacao(st, g) {
   for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, { tipo: 'efeito', efeito: 'invocacao', duracao: 0 }); } }
 }
 
-function curar(st, u, v) {
+function curar(st, u, v, curador = null) {
   if (!u.vivo) return;
   if (ef(u, 'noHeal')) { log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'sem_cura' }); return; }
   // passiva Brigid (declarativa, gatilho bonusCura): +v se a condição quandoCura vale. §39: só INIMIGO com
   // Queimadura conta (não aliado) — travado no eixo `inimigoTem` (lê o lado oposto ao curado).
-  const bonus = bonusCuraDeclarativo(st, u);
+  // `curador` = quem fez a cura (Nefertem lê a FACÇÃO dele); null quando a origem não é uma unidade (regen).
+  const bonus = bonusCuraDeclarativo(st, u, curador);
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
   if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });
@@ -944,7 +951,7 @@ function rodarFaz(st, u, faz, tagKey) {
     }
     else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
-      for (const t of alvos) curar(st, t, f.v);
+      for (const t of alvos) curar(st, t, f.v, u);   // curador = o sujeito do faz
     }
     else if (f.t === 'apply') {   // F1.2.5: aplica um BUFF (⊆ V.buffs) em self OU own-lado. Nunca controle/debuff (exigiria alvo inimigo).
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
@@ -1241,12 +1248,12 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       if (e.t === 'dmg') {
         const base = danoBase(st, u, t, e, l);
         const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a) });
-        if (e.curaMetade) curar(st, u, Math.floor(feito / 2));
+        if (e.curaMetade) curar(st, u, Math.floor(feito / 2), u);   // dreno: o próprio atacante é o curador
         // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
         // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.
         if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao')) matar(st, u, t, { execucao: true });
       }
-      else if (e.t === 'heal') curar(st, t, e.v);
+      else if (e.t === 'heal') curar(st, t, e.v, u);   // curador = quem lança a habilidade
       else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid); }   // origem = o lançador; Pacificar zera o DoT que o pacificado aplicaria neste turno (é dano que ele causaria)
       else if (e.t === 'apply') {
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
