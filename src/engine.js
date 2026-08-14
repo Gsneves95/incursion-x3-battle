@@ -219,6 +219,7 @@ const VOCAB = {
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
+    'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
@@ -930,7 +931,10 @@ function rodarFaz(st, u, faz, tagKey) {
       }
     }
     else if (f.t === 'dot') aplicarDot(st, u, f.nome, f.v, f.dur);   // só no `noAtacante` (aoSerAtingido): DoT no ATACANTE — nunca no `faz` (o validador barra dot no faz)
-    else if (f.t === 'shield') { u.shield += f.v; log(st, { tipo: 'escudo', alvo: u.key, valor: f.v }); }   // Hera (aoCurar): escudo no curado
+    else if (f.t === 'shield') {   // Hera (aoCurar): escudo no curado (self). escopo:'time' escuda o lado (Brahma 'Defesa Destrutível' na abertura)
+      const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
+      for (const t of alvos) { t.shield += f.v; log(st, { tipo: 'escudo', alvo: t.key, valor: f.v }); }
+    }
     else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
       for (const t of alvos) curar(st, t, f.v);
@@ -1307,9 +1311,19 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       log(st, { tipo: 'efeito', alvo: alvos[0].key, efeito: 'vinculo' });
     }
     if (e.t === 'cdShift') {
-      const tgt = e.lado === 'proprio' ? l : st.lados[1 - u.lado];
-      for (const x of tgt.units) for (const k in x.cd) x.cd[k] = Math.max(0, x.cd[k] + e.v);
-      log(st, { tipo: 'cd', lado: e.lado === 'proprio' ? u.lado : 1 - u.lado, valor: e.v });
+      if (e.unidade) {   // MIRADO (F1.6): 1 unidade escolhida (alvos[0], em geral um aliado) — Bragi (1 recarga), Brahma (zera todas)
+        const x = alvos[0];
+        if (x) {
+          if (e.soMaior) {   // só a MAIOR recarga ativa muda (Bragi: "1 recarga reduzida em 1 turno")
+            let maior = null; for (const k in x.cd) if (x.cd[k] > 0 && (maior === null || x.cd[k] > x.cd[maior])) maior = k;
+            if (maior !== null) { x.cd[maior] = Math.max(0, x.cd[maior] + e.v); log(st, { tipo: 'cd', lado: x.lado, alvo: x.key, valor: e.v }); }
+          } else { for (const k in x.cd) x.cd[k] = Math.max(0, x.cd[k] + e.v); log(st, { tipo: 'cd', lado: x.lado, alvo: x.key, valor: e.v }); }   // todas (Brahma: v:-99 zera)
+        }
+      } else {
+        const tgt = e.lado === 'proprio' ? l : st.lados[1 - u.lado];   // LADO inteiro (legado)
+        for (const x of tgt.units) for (const k in x.cd) x.cd[k] = Math.max(0, x.cd[k] + e.v);
+        log(st, { tipo: 'cd', lado: e.lado === 'proprio' ? u.lado : 1 - u.lado, valor: e.v });
+      }
     }
     if (e.t === 'orbGain') {
       const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];

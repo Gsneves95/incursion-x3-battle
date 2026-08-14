@@ -1,0 +1,67 @@
+{
+  "key": "brahma",
+  "nome": "Brahma",
+  "faccao": "Hindu",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Pai dos Deuses",
+    "desc": "O time começa com 12 de Defesa Destrutível; cada Milagre aliado usado dá +3 de dano permanente ao time.",
+    "fx": [
+      {
+        "gatilho": "abertura",
+        "faz": [
+          { "t": "shield", "v": 12, "escopo": "time" }
+        ]
+      },
+      {
+        "gatilho": "aoUsarHabilidade",
+        "slot": "milagre",
+        "faz": [
+          { "t": "apply", "eff": { "type": "dmgUp", "v": 3, "dur": 99 }, "escopo": "time" }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Cajado do Criador",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 12 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Quatro Faces",
+      "cost": { "Verdejante": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "O time causa +4 de dano — permanente e acumulável a cada uso.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 4, "dur": 99 }, "escopo": "time" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Sopro da Criação",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "aliado",
+      "desc": "1 aliado zera todas as recargas e cura 18; o time ganha 3 orbes.",
+      "fx": [
+        { "t": "cdShift", "unidade": true, "v": -99 },
+        { "t": "heal", "v": 18 },
+        { "t": "orbGain", "n": 3 }
+      ]
+    }
+  ]
+}

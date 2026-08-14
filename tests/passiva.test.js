@@ -873,6 +873,20 @@ console.log('== F1.6 dano condicional: seCond bumpa por estado do alvo (reusa co
   ok(a[1].hp === h1 - 30, `seCond COM buff: bump para 30 (${h1}→${a[1].hp})`);
   console.log('  seCond: base sem condição, bump quando o alvo casa condOK');
 }
+console.log('== F1.6 cdShift MIRADO: 1 unidade (Bragi só a maior recarga; Brahma zera todas) ==');
+{ // soMaior toca só a maior recarga ativa; sem soMaior (v:-99) zera todas as recargas da unidade; não toca outros
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 603);
+  const caster = st.lados[0].units[0], ally = st.lados[0].units[1], other = st.lados[0].units[2];
+  ally.cd = { habilidade: 3, milagre: 1 };
+  E.aplicarFx(st, caster, [{ t: 'cdShift', unidade: true, soMaior: true, v: -1 }], { alvo: 'aliado', slot: 'habilidade' }, [ally]);
+  ok(ally.cd.habilidade === 2 && ally.cd.milagre === 1, `soMaior (Bragi): só a MAIOR recarga cai -1 (${JSON.stringify(ally.cd)})`);
+  ally.cd = { habilidade: 2, milagre: 4 };
+  other.cd = { habilidade: 3 };
+  E.aplicarFx(st, caster, [{ t: 'cdShift', unidade: true, v: -99 }], { alvo: 'aliado', slot: 'milagre' }, [ally]);
+  ok(ally.cd.habilidade === 0 && ally.cd.milagre === 0, `zera-todas (Brahma): todas as recargas da unidade a 0 (${JSON.stringify(ally.cd)})`);
+  ok(other.cd.habilidade === 3, `MIRADO: não toca outros aliados (${JSON.stringify(other.cd)})`);
+  console.log('  cdShift mirado: soMaior (Bragi) vs zera-todas (Brahma), 1 unidade só');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

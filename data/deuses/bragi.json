@@ -1,0 +1,61 @@
+{
+  "key": "bragi",
+  "nome": "Bragi",
+  "faccao": "Nórdica",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Eloquência",
+    "desc": "Quando um aliado usa um Milagre, o time causa +5 de dano naquele turno.",
+    "fx": [
+      {
+        "gatilho": "aoUsarHabilidade",
+        "slot": "milagre",
+        "faz": [
+          { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 1 }, "escopo": "time" }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Verso Cortante",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 10 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Saga Heroica",
+      "cost": { "Aurora": 1 },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "1 aliado causa +8 de dano por 2 turnos e tem 1 recarga reduzida em 1 turno.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 } },
+        { "t": "cdShift", "unidade": true, "soMaior": true, "v": -1 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Canção de Valhalla",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Remove todo controle e debuff do time; o time ganha 2 orbes.",
+      "fx": [
+        { "t": "cleanse", "escopo": "time" },
+        { "t": "orbGain", "n": 2 }
+      ]
+    }
+  ]
+}
