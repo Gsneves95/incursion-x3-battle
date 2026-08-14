@@ -110,7 +110,7 @@
    "nome": "Égide",
    "custo": "2 Aurora",
    "recarga": 2,
-   "efeito": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, quem o atingir com habilidade Física sofre 10 de dano."
+   "efeito": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
   },
   "milagre": {
    "nome": "Estratégia Divina",

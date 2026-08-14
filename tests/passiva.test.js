@@ -1014,6 +1014,24 @@ console.log('== F1.6 execIf: execução FILTRADA por status (Iara — elimina s�
   console.log('  execIf: execução só nos que casam o status');
 }
 
+console.log('== F1.6 contraClasse: contra-ataque FILTRADO por classe do golpe (Atena — só Físico) ==');
+{ // o defensor carrega contraAtaca{contraClasse:'Físico'}: revida golpe Físico, IGNORA golpe Mágico
+  E.GODS.tfis = { nome: 'TFis', faccao: 'T', elem: 'Tempestade', classe: 'Físico', funcao: 'Atacante', passiva: { nome: '-', desc: '-' }, ab: [{ slot: 'basico', classe: 'Físico', nome: 'Soco', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  E.GODS.tmag = { nome: 'TMag', faccao: 'T', elem: 'Tempestade', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: '-', desc: '-' }, ab: [{ slot: 'basico', classe: 'Mágico', nome: 'Raio', cost: { Tempestade: 1 }, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  const st = E.novoEstado(['tfis', 'tmag', 'zeus'], ['zeus', 'zeus', 'zeus'], 615);
+  st.lados[0].orbs['Tempestade'] = 9;
+  const fis = st.lados[0].units[0], mag = st.lados[0].units[1], def = st.lados[1].units[0];
+  def.efeitos.push({ type: 'contraAtaca', v: 10, dur: 3, contraClasse: 'Físico', origem: def.uid });
+  const hf = fis.hp;
+  E.agir(st, fis.uid, 'basico', [def.uid]);
+  ok(fis.hp === hf - 10, `golpe Físico → contra-atacado por 10 (${hf}→${fis.hp})`);
+  const hm = mag.hp;
+  E.agir(st, mag.uid, 'basico', [def.uid]);
+  ok(mag.hp === hm, `golpe Mágico → NÃO contra-atacado (${hm}→${mag.hp})`);
+  delete E.GODS.tfis; delete E.GODS.tmag;
+  console.log('  contraClasse: revida só a classe casada, ignora o resto');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

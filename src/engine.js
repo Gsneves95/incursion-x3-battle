@@ -709,7 +709,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
   // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
   const ca = ef(alvo, 'contraAtaca');
-  if (ca && unico && !semContra && atk && atk.vivo && atk.lado !== alvo.lado) {
+  if (ca && unico && !semContra && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse)) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X (ex.: 'Físico')
     log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'contraAtaca' });
     bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
     if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);

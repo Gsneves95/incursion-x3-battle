@@ -1,0 +1,54 @@
+{
+  "key": "atena",
+  "nome": "Atena",
+  "faccao": "Grega",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Sabedoria Tática",
+    "desc": "O time começa a partida com 1 orbe de Aurora extra; o time causa +5 de dano contra inimigos sob controle.",
+    "fx": [
+      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 1, "para": "Aurora" } ] },
+      { "gatilho": "bonusDano", "v": 5, "escopo": "time", "quando": { "alvoDebuff": "controle" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Lança de Prata",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Égide",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física.",
+      "fx": [
+        { "t": "shield", "v": 25 },
+        { "t": "apply", "eff": { "type": "contraAtaca", "v": 10, "dur": 2, "contraClasse": "Físico" } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Estratégia Divina",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Remove todos os debuffs do time; o time causa +8 de dano por 2 turnos.",
+      "fx": [
+        { "t": "cleanse", "escopo": "time" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" }
+      ]
+    }
+  ]
+}
