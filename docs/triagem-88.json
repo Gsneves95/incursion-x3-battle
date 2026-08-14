@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 42,
-    "IMPLEMENTADO": 17,
+    "AMARELO": 41,
+    "IMPLEMENTADO": 18,
     "VERMELHO": 29
   },
   "gods": [
@@ -245,7 +245,9 @@
     },
     {
       "key": "afrodite",
-      "ganchos": [],
+      "ganchos": [
+        "dominado-meio-implementado-PENDENTE"
+      ],
       "cor": "IMPLEMENTADO",
       "impl": true
     },
@@ -351,7 +353,7 @@
     {
       "key": "kitsune",
       "ganchos": [
-        "dominar"
+        "dominado-basico-forcado-PENDENTE"
       ],
       "cor": "AMARELO"
     },
@@ -373,7 +375,7 @@
       "ganchos": [
         "bonusCura-faccao"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "oni",
@@ -1056,7 +1058,7 @@
     "projecao_impl": "20 -> 26 (hooks) -> ~30 (decisoes)"
   },
   "lote2_hooks": {
-    "feito": "hooks 1-8 → 9 kits (IMPL 20→29)",
+    "feito": "hooks 1-9 → 10 kits (IMPL 20→30)",
     "hercules": "vidaExtra no rodarFaz",
     "curupira": "redirect-apply (quita dívida §62)",
     "xango": "seCond em danoBase",
@@ -1080,6 +1082,13 @@
       "kitsune": "dominado JÁ existe em CONTROLES — reavaliar",
       "nefertem": "bonusCura-facção",
       "amaterasu": "modo Dia F1.5"
-    }
+    },
+    "nefertem": "bonusCura curadorFaccao (curador threaded)"
+  },
+  "segunda_onda": {
+    "kitsune": "95% limpa; trava só na Domina (dominado=Básico-forçado, NÃO construído — grande, adiado)",
+    "nefertem": "FEITO",
+    "afrodite": "lote-1, aplica dominado meio-implementado — conserta junto quando o mecanismo existir",
+    "amaterasu": "modo Dia F1.5"
   }
 }

@@ -1912,6 +1912,70 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §69 — 2ª ONDA: nefertem fecha (IMPL 30 — meta do §64 batida); kitsune trava na "Domina"; DESENHO do dominado; afrodite pendente; e a leitura da re-triagem
+
+**(A) NEFERTEM — feito.** Gancho pequeno: a condição `quandoCura` ganhou `curadorFaccao` — lê a FACÇÃO de QUEM curou
+(não do curado). `curar/bonusCuraDeclarativo/condCuraOK` passam o `curador` (threaded nos 4 sítios de cura; regen fica
+null). `FACCOES_VOCAB` distinta da `FACCOES` da UI (senão colide no dist concatenado — bug pego na hora). **IMPL 30 —
+a meta honesta do §64 (12→~30) batida na conta.**
+
+**(B) KITSUNE — 95% limpa, trava SÓ na "Domina" (a previsão do dono bateu: a triagem errou para cima de novo).** A
+tradução inteira mapeou em vocabulário existente: passiva "1 Cauda a cada 2 turnos" = `aCadaN{n:2}`+contador; "a cada
+3 Caudas 5 de redução" (ESCALA) = **3× `reducao` com `estado:{contador Cauda min 3/6/9}`** e a regra do MÁXIMO escolhe
+o tier (escala sem hook!); "isca que absorve o próximo ataque único" = `invocar{tipo:'guarda', hp:1}` (a isca é
+invocação-guarda, o motor absorve total e consome); "+3 por Cauda" = `porContador`; "com 5+ Caudas Domina" =
+`condicional{se:{contador Cauda min 5}}` (a primitiva da Freyja!). Só a `Cauda` faltaria no vocabulário. **Não fosse a
+Domina, IMPL 31 sem gancho.**
+
+**(C) O DESENHO DO DOMINADO (o dono pediu SÓ desenhar, não construir):**
+
+- **O que é, de verdade.** Pelo catálogo (afrodite, boto): "Domina 1 inimigo por 1 turno: **ele usa o próprio Básico
+  contra um aliado dele**" — fogo amigo forçado. NÃO é a linha 1009 (negar orbe — isso é a regra que a *passiva do
+  Dionísio* descreve; varri o `src/` e é a única leitura de `dominado`). O mecanismo do Básico-forçado NÃO existe.
+- **Onde mora.** `agir(st, uid, slot, alvos)` é o CHOKE POINT único — tanto o humano quanto a CPU chamam por ali. O
+  override entra na entrada do `agir`: se a unidade que age tem `dominado`, IGNORA o `slot`/`alvos` do chamador e força
+  `slot='basico'` contra um ALIADO da própria unidade dominada. Um ponto só cobre humano e CPU.
+- **Custo.** Motor: ~15-30 linhas no `agir` (detecta, força o slot, escolhe o aliado, resolve via `bater` que já
+  existe). UI: superfície para MOSTRAR que a ação está forçada (o jogador não deve "escolher" e ver outra coisa
+  acontecer) — a parte fuzzy. Testes: dominado → básico no aliado.
+- **Decisões abertas (para quando construir).** (1) QUAL aliado — aleatório, o de menor HP, ou o primeiro? (2) PAGA
+  custo? provavelmente forçado-de-graça (não é ação escolhida). (3) sem aliado vivo → fizzle. (4) mantém a linha 1009
+  (nega orbe) OU dobra na nova regra? sugiro MANTER (é a regra do Dionísio, ortogonal).
+- **Riscos.** O contrato do `agir` muda (a ação do chamador é sobrescrita) — a UI PRECISA refletir, senão o jogador
+  fica confuso. O fogo-amigo reusa `bater`, então redirect/intercepta compõem (bom, mas testar). 
+- **Veredito de tamanho: MÉDIO** — motor contido, UI fuzzy. Maior que os 9 hooks pequenos, menor que uma fase. Fica
+  desenhado; aguarda o go do dono para construir.
+
+**(D) AFRODITE — registrada como pendente-do-dominado (decisão do dono: consertar junto).** A afrodite (lote-1) já está
+no ar aplicando `dominado` (habilidade "Domina 1 inimigo... usa o Básico contra um aliado"). Como só a metade
+orbe-denial existe, ela está MEIO-IMPLEMENTADA. Quando o mecanismo do Básico-forçado for construído, **ela passa a
+funcionar à risca SEM tocar no kit** (a tag já está lá). **5º caso "método expõe bug anterior" — e o primeiro em que
+traduzir um kit NOVO (kitsune) revelou o buraco de um kit JÁ ENTREGUE (afrodite).** O `validarDeus+smoke` do lote-1 não
+pega (a tag aplica, não quebra); só a tradução pega. Ledger: §25, §50, §64-matar, §66-auditor, **§69-dominado/afrodite**.
+
+**(E) A LEITURA DA RE-TRIAGEM (a pergunta do dono — 30 escritos, ~58 restantes, vale re-triar antes da F1.5?).**
+
+Minha leitura honesta: **sim, PAGA — mas só se for reconciliada contra o motor, não uma varredura por nome.** As três
+últimas triagens erraram para cima TODA vez pela mesma causa (§46/§61): classificam pelo NOME do gancho e não
+reconciliam contra o que o motor REALMENTE tem. E o motor cresceu MUITO nesta onda — 10 mecanismos novos que são
+vocabulário agora: `condicional` (qualquer "se estado então X senão Y"), `seCond` (qualquer dano condicional),
+`reducao`-tierada por contador (qualquer escala por acúmulo), `invocar-guarda` (qualquer isca), `curadorFaccao` (abre
+a família facção-do-curador: Hel/paridade, Cernunnos/tipo-de-cura seguem o mesmo molde), `antiRevive`, `limparInvocacoes`,
+`limiar-consome`, `cdShift-mirado`, `vidaExtra`-passivo. **Cada um desses rebaixa AMARELOS que a triagem atual ainda
+conta como travados** — exatamente como os 12 viraram 9 e a kitsune quase virou 31.
+
+**Mas o AVISO é o próprio §61:** uma re-triagem por NOME erraria para cima DE NOVO (varredura por varredura). O valor
+só aparece se cada AMARELO for reconciliado contra a lista real de fx/gatilhos de hoje. Isso é ~80% do custo de
+traduzir. **Recomendação: NÃO uma re-triagem completa nova; e sim uma passada de RECONCILIAÇÃO sobre os 41 AMARELO** —
+para cada um, confrontar o gancho-nome que o trava contra o vocabulário atual (existe agora? virou barato?). É
+bounded (41 deuses, uma pergunta cada), alto-rendimento (vai revelar os "kitsunes escondidos"), e honesta (não promete
+o que só a tradução entrega). O VERMELHO (29) provavelmente fica — são mecânicas estruturais (iniciativa, esquiva,
+escolha-múltipla-de-efeito) que nenhum hook desta onda tocou. **Se o dono topar, faço a reconciliação dos 41 antes da
+F1.5; senão, sigo traduzindo-para-descobrir (a tradução é o único degrau que não mente, e cada kit escrito é uma
+reconciliação real de graça).**
+
+---
+
 ## §68 — CAUDA DURA FECHADA: medusa (IMPL 28→29); duas decisões do dono registradas
 
 Fechado o último kit da cauda com as duas rulings do dono:
