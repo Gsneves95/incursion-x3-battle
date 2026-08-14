@@ -1912,6 +1912,53 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §65 — LOTE 2: o verde acabou no lote 1, e a escada (§64) provou-se na hora — mas o balde não é UM gancho
+
+Tradução-verificação dos 12 "verdes-restantes" contra o vocabulário REAL (não o nome-do-gancho). **Resultado:
+ZERO escrevem limpos.** Cada um carrega UM gancho oculto que a triagem, classificando por nome, não via — o §64(A)
+ao pé da letra. Mas a varredura da tradução também revelou o oposto do desânimo: o motor é MUITO mais rico do que a
+triagem creditava (`revive`, `stripOne/stripBuffs`, `armazenaDano`, `invocar`, `fase`, `cdShift`, `intercepta`,
+`regen`, `alvoHp/alvoBuff/alvoDebuff` em `condOK`, `seDia/seNoite/porContador{onde:alvo}` em `danoBase` — TODOS já
+existem). O viés-do-nome me mordeu a mim primeiro: grep pelos MEUS nomes inventados (`zeraRecarga`, `removerBuff`,
+`setFase`) deu zero; os mecanismos existiam sob os nomes reais. **Por isso a maioria dos 12 está a UM gancho pequeno
+de fechar — os §53–§62 já construíram os 80% difíceis.**
+
+**A tabela de lacunas (o gancho que falta a cada um, e quanto do kit já está limpo):**
+
+| deus | passiva | básico | habilidade | milagre | lacuna única |
+|---|---|---|---|---|---|
+| curupira | ✓ | ✓ | **redirect-APPLY** | ✓ | §62 só construiu o CONSUMO do redirect; falta o fx que APLICA (resolve `destino` do alvo escolhido) |
+| iansa | ✓ (fenrir) | ✓ stripOne | ✓ | **destruir-invocação** | não há fx que limpa `l.invocacoes` inimigas |
+| hercules | **vidaExtra-na-passiva** | ✓ | ✓ | ✓ perfurante | `rodarFaz` (faz da passiva) não trata `t:'vidaExtra'` |
+| medusa | ✓ (§55) | ✓ | ✓ agarrar(§54) | **limiar-CONSOME** | `cruzarLimiar` APLICA no limiar mas não zera o contador ("perde as marcas") |
+| xango | ✓ (Rá) | ✓ | ✓ armazenaDano | **dano-cond-por-buff** | `danoBase` não bumpa dano por estado do alvo (buff/dot) |
+| piranha | ✓ (§56+alvoHp) | ✓ | **dano-cond-por-DoT** | **idem** | mesma lacuna do xango: bump condicional por DoT do alvo |
+| bragi | ✓ | ✓ | cd-granular | ✓ | DECISÃO: `cdShift` é do LADO inteiro; prosa diz "1 recarga" |
+| brahma | ✓ | ✓ | ✓ | cd-granular | DECISÃO: idem — "1 aliado zera recargas" vs `cdShift` do lado |
+| amaterasu | ✓ (reducao+fase) | — | Dia-regra-global | apply-cond-fase | DECISÃO: "aliados Aurora +8 no Dia" é regra intrínseca do Dia ou autoral? |
+| freyja | aoCurar | ✓ | ✓ | branch-condicional | DECISÃO: "revive OU buffa se ninguém caiu" — fx condicional-por-estado (≠ alterna/opcoes) |
+| kitsune | reducao-escala | ✓ | ✓ intercepta(isca) | **dominar** | 2ª onda: controle mental novo + reducao escalada por contador |
+| nefertem | **bonusCura-facção** | ✓ | ✓ | ✓ regen | 2ª onda: condicionar bonusCura pela FACÇÃO de quem cura |
+
+**As três camadas do "balde" — e por que NÃO é um gancho-balde só (a resposta à pergunta do dono):**
+
+1. **GANCHOS PEQUENOS (5 hooks → 6 kits, IMPL 20→26).** Cada um ~poucas linhas, cada um fecha um kit quase-pronto:
+   `seCond` em `danoBase` reusando `condOK` (→ **xango** + **piranha**); `t:'redirect'` espelhando o `intercepta`
+   (→ **curupira**, e QUITA a dívida de autoria do §62); fx destruir-invocação (→ **iansa**); `vidaExtra` no
+   `rodarFaz` (→ **hercules**); `consome:true` no `cruzarLimiar` (→ **medusa**).
+2. **DECISÕES DO DONO (~4 kits, 26→~30).** cd-granularidade (bragi+brahma, uma decisão); regra-global-do-Dia
+   (amaterasu); branch-condicional (freyja). Não faltam mecanismos — falta a INTERPRETAÇÃO.
+3. **2ª ONDA REAL (2 kits).** kitsune (dominar) e nefertem (bonusCura-facção) — gancho de verdade.
+
+**A meta ~30 É alcançável em 4 lotes — mas por HOOKS PEQUENOS + decisões, não por tradução limpa.** O "verde" como
+categoria de-escrever-sem-tocar-o-motor acabou no lote 1 (os 8). Isto NÃO contradiz o GO do §64: é o §64(A) fechando
+o ciclo — a tradução é a reconciliação final, e ela disse que o próximo passo barato não é um balde-gancho do topo
+(bonusDano-escala, que flipa AMARELOS não-traduzidos), e sim o LOTE de 5 hooks minúsculos que terminam kits já 80%
+prontos. **Decisão do dono: autorizar o lote-de-hooks (retoma o motor, cirúrgico) ou ir ao balde-gancho.** Recomendo
+o lote-de-hooks — maior alavanca por linha, e fecha a dívida do §62 de quebra.
+
+---
+
 ## §64 — A escada de tetos, o "rouba" no vocabulário, e o alvo honesto (GO do dono — escrevendo kits)
 
 O dono deu GO: parar o motor, escrever os verdes; a métrica passa a ser **IMPLEMENTADOS** (12 na hora do go). Três

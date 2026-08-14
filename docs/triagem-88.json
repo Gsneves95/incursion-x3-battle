@@ -1,996 +1,1058 @@
 {
- "dist": {
-  "AMARELO": 39,
-  "VERDE": 12,
-  "VERMELHO": 29
- },
- "gods": [
-  {
-   "key": "ahpuch",
-   "ganchos": [
-    "antirevive-contador"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "aokuang",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "aquiles",
-   "ganchos": [
-    "vulnerabilidade-classe-atacante?"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "baldur",
-   "ganchos": [
-    "reducao-escopo-elem"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "bastet",
-   "ganchos": [
-    "primeiroPorTurno"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "boitata",
-   "ganchos": [
-    "ignora-invuln"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "cerberus",
-   "ganchos": [
-    "antirevive-aura"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "demeter",
-   "ganchos": [
-    "seletor"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "durga",
-   "ganchos": [
-    "marca-vulnerabilidade"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "guanyu",
-   "ganchos": [
-    "imunidade-condicional"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "heimdall",
-   "ganchos": [
-    "orbe-protecao"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "hermes",
-   "ganchos": [
-    "iniciativa"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "huangdi",
-   "ganchos": [
-    "faz-cdShift"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "inari",
-   "ganchos": [
-    "sinergia-nomeada"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "isis",
-   "ganchos": [
-    "copiar-ultima"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "itzamna",
-   "ganchos": [
-    "dia-noite-ler-extra"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "izanagi",
-   "ganchos": [
-    "bonusCura-cond-nova"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "izanami",
-   "ganchos": [
-    "seletor"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "jormungandr",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "kagutsuchi",
-   "ganchos": [
-    "amplifica-dot"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "kali",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "khnum",
-   "ganchos": [
-    "aoCair-aliado"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "kukulkan",
-   "ganchos": [
-    "acao-atrasada"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "morrigan",
-   "ganchos": [
-    "execucao-timing"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "mulasemcabeca",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "orfeu",
-   "ganchos": [
-    "bloqueia-geracao-orbe?"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "osiris",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "perseu",
-   "ganchos": [
-    "aoReceberControle"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "poseidon",
-   "ganchos": [
-    "reducao-escopo-elem"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "raijin",
-   "ganchos": [
-    "aoAtacar"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "shutendoji",
-   "ganchos": [
-    "nega-orbe"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "tsukuyomi",
-   "ganchos": [
-    "alvo-curado-recente"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "vishnu",
-   "ganchos": [
-    "modo-alterna"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "yamatotakeru",
-   "ganchos": [
-    "imunidade-condicional"
-   ],
-   "cor": "AMARELO"
-  },
-  {
-   "key": "afrodite",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "amaterasu",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "apolo",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "atena",
-   "ganchos": [
-    "contraAtaca-classe"
-   ],
-   "cor": "AMARELO",
-   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
-  },
-  {
-   "key": "bennu",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "bragi",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "brahma",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "chaac",
-   "ganchos": [
-    "bonusCura-cond-nova"
-   ],
-   "cor": "AMARELO",
-   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
-  },
-  {
-   "key": "curupira",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "fenrir",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "freyja",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "hades",
-   "ganchos": [
-    "nega-orbe"
-   ],
-   "cor": "AMARELO",
-   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
-  },
-  {
-   "key": "hercules",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "iansa",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "iara",
-   "ganchos": [
-    "execucao-status"
-   ],
-   "cor": "AMARELO",
-   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
-  },
-  {
-   "key": "kitsune",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "kraken",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "medusa",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "nefertem",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "oni",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "AMARELO",
-   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
-  },
-  {
-   "key": "oxala",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "oxum",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "piranha",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "xango",
-   "ganchos": [],
-   "cor": "VERDE"
-  },
-  {
-   "key": "ymir",
-   "ganchos": [],
-   "cor": "IMPLEMENTADO",
-   "impl": true
-  },
-  {
-   "key": "ammit",
-   "ganchos": [
-    "antirevive-matador",
-    "bonusDano-escala-dinamica",
-    "execucao-status"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "anubis",
-   "ganchos": [
-    "antirevive-contador",
-    "marca-vulnerabilidade",
-    "saldo-debuff-buff?"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "ares",
-   "ganchos": [
-    "bonusDano-escala-dinamica",
-    "faz-cdShift"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "babi",
-   "ganchos": [
-    "lifesteal",
-    "multi-hit-distribuido"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "boto",
-   "ganchos": [
-    "cura-igual-dano",
-    "dia-noite-ler-extra"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "cernunnos",
-   "ganchos": [
-    "aoAtacar",
-    "bonusDano-escala-dinamica"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "change",
-   "ganchos": [
-    "dia-noite-ler-extra",
-    "sinergia-nomeada"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "dagda",
-   "ganchos": [
-    "iniciativa",
-    "suspende-buff"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "dionisio",
-   "ganchos": [
-    "bloqueia-geracao-orbe?",
-    "nega-orbe"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "erinias",
-   "ganchos": [
-    "aoCair-aliado",
-    "bonusDano-escala-dinamica",
-    "marca-vulnerabilidade"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "exu",
-   "ganchos": [
-    "escolha-efeito",
-    "iniciativa",
-    "nega-orbe"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "hanuman",
-   "ganchos": [
-    "seletor",
-    "sinergia-nomeada"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "hel",
-   "ganchos": [
-    "bonusDano-escala-dinamica",
-    "cura-escala-alvos"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "horus",
-   "ganchos": [
-    "ignora-invuln",
-    "marca-vulnerabilidade"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "houyi",
-   "ganchos": [
-    "ignora-invuln",
-    "multi-hit-distribuido",
-    "remove-fase?"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "khonshu",
-   "ganchos": [
-    "aoReceberControle",
-    "marca-punicao-aoMatar"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "krishna",
-   "ganchos": [
-    "acao-garantida",
-    "seletor-maior-dano?"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "loki",
-   "ganchos": [
-    "primeiroPorTurno",
-    "transfere-status"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "lugh",
-   "ganchos": [
-    "dia-noite-ler-extra",
-    "escolha-efeito",
-    "inevitavel",
-    "seletor"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "mimir",
-   "ganchos": [
-    "nega-orbe",
-    "passiva-ativa-morto"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "mnevis",
-   "ganchos": [
-    "reflete-dano",
-    "sinergia-nomeada"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "nuwa",
-   "ganchos": [
-    "aoCair-aliado",
-    "escolha-efeito"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "odin",
-   "ganchos": [
-    "ignora-invuln",
-    "sinergia-faccao?"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "saci",
-   "ganchos": [
-    "esquiva",
-    "nega-orbe"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "shiva",
-   "ganchos": [
-    "ignora-invuln",
-    "ignora-pisoVida?"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "sunwukong",
-   "ganchos": [
-    "imune-execucao?",
-    "invuln-por-alcance"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "susanoo",
-   "ganchos": [
-    "bonusDano-escala-dinamica",
-    "multi-hit-distribuido"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "tanuki",
-   "ganchos": [
-    "escolha-efeito",
-    "nega-orbe"
-   ],
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "yanwong",
-   "ganchos": [
-    "execucao-temporizada",
-    "marca-vulnerabilidade"
-   ],
-   "cor": "VERMELHO"
+  "dist": {
+    "AMARELO": 51,
+    "IMPLEMENTADO": 8,
+    "VERMELHO": 29
+  },
+  "gods": [
+    {
+      "key": "ahpuch",
+      "ganchos": [
+        "antirevive-contador"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "aokuang",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "aquiles",
+      "ganchos": [
+        "vulnerabilidade-classe-atacante?"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "baldur",
+      "ganchos": [
+        "reducao-escopo-elem"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "bastet",
+      "ganchos": [
+        "primeiroPorTurno"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "boitata",
+      "ganchos": [
+        "ignora-invuln"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "cerberus",
+      "ganchos": [
+        "antirevive-aura"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "demeter",
+      "ganchos": [
+        "seletor"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "durga",
+      "ganchos": [
+        "marca-vulnerabilidade"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "guanyu",
+      "ganchos": [
+        "imunidade-condicional"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "heimdall",
+      "ganchos": [
+        "orbe-protecao"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "hermes",
+      "ganchos": [
+        "iniciativa"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "huangdi",
+      "ganchos": [
+        "faz-cdShift"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "inari",
+      "ganchos": [
+        "sinergia-nomeada"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "isis",
+      "ganchos": [
+        "copiar-ultima"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "itzamna",
+      "ganchos": [
+        "dia-noite-ler-extra"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "izanagi",
+      "ganchos": [
+        "bonusCura-cond-nova"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "izanami",
+      "ganchos": [
+        "seletor"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "jormungandr",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "kagutsuchi",
+      "ganchos": [
+        "amplifica-dot"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "kali",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "khnum",
+      "ganchos": [
+        "aoCair-aliado"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "kukulkan",
+      "ganchos": [
+        "acao-atrasada"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "morrigan",
+      "ganchos": [
+        "execucao-timing"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "mulasemcabeca",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "orfeu",
+      "ganchos": [
+        "bloqueia-geracao-orbe?"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "osiris",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "perseu",
+      "ganchos": [
+        "aoReceberControle"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "poseidon",
+      "ganchos": [
+        "reducao-escopo-elem"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "raijin",
+      "ganchos": [
+        "aoAtacar"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "shutendoji",
+      "ganchos": [
+        "nega-orbe"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "tsukuyomi",
+      "ganchos": [
+        "alvo-curado-recente"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "vishnu",
+      "ganchos": [
+        "modo-alterna"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "yamatotakeru",
+      "ganchos": [
+        "imunidade-condicional"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "afrodite",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "amaterasu",
+      "ganchos": [
+        "dia-regra-global-DECISAO"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "apolo",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "atena",
+      "ganchos": [
+        "contraAtaca-classe"
+      ],
+      "cor": "AMARELO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+    },
+    {
+      "key": "bennu",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "bragi",
+      "ganchos": [
+        "cd-granular-DECISAO"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "brahma",
+      "ganchos": [
+        "cd-granular-DECISAO"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "chaac",
+      "ganchos": [
+        "bonusCura-cond-nova"
+      ],
+      "cor": "AMARELO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+    },
+    {
+      "key": "curupira",
+      "ganchos": [
+        "redirect-apply"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "fenrir",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "freyja",
+      "ganchos": [
+        "branch-condicional-DECISAO"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "hades",
+      "ganchos": [
+        "nega-orbe"
+      ],
+      "cor": "AMARELO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+    },
+    {
+      "key": "hercules",
+      "ganchos": [
+        "vidaExtra-na-passiva"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "iansa",
+      "ganchos": [
+        "destruir-invocacao"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "iara",
+      "ganchos": [
+        "execucao-status"
+      ],
+      "cor": "AMARELO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+    },
+    {
+      "key": "kitsune",
+      "ganchos": [
+        "dominar"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "kraken",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "medusa",
+      "ganchos": [
+        "limiar-consome"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "nefertem",
+      "ganchos": [
+        "bonusCura-faccao"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "oni",
+      "ganchos": [
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "AMARELO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+    },
+    {
+      "key": "oxala",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "oxum",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "piranha",
+      "ganchos": [
+        "dano-cond-por-dot"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "xango",
+      "ganchos": [
+        "dano-cond-por-buff"
+      ],
+      "cor": "AMARELO"
+    },
+    {
+      "key": "ymir",
+      "ganchos": [],
+      "cor": "IMPLEMENTADO",
+      "impl": true
+    },
+    {
+      "key": "ammit",
+      "ganchos": [
+        "antirevive-matador",
+        "bonusDano-escala-dinamica",
+        "execucao-status"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "anubis",
+      "ganchos": [
+        "antirevive-contador",
+        "marca-vulnerabilidade",
+        "saldo-debuff-buff?"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "ares",
+      "ganchos": [
+        "bonusDano-escala-dinamica",
+        "faz-cdShift"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "babi",
+      "ganchos": [
+        "lifesteal",
+        "multi-hit-distribuido"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "boto",
+      "ganchos": [
+        "cura-igual-dano",
+        "dia-noite-ler-extra"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "cernunnos",
+      "ganchos": [
+        "aoAtacar",
+        "bonusDano-escala-dinamica"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "change",
+      "ganchos": [
+        "dia-noite-ler-extra",
+        "sinergia-nomeada"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "dagda",
+      "ganchos": [
+        "iniciativa",
+        "suspende-buff"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "dionisio",
+      "ganchos": [
+        "bloqueia-geracao-orbe?",
+        "nega-orbe"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "erinias",
+      "ganchos": [
+        "aoCair-aliado",
+        "bonusDano-escala-dinamica",
+        "marca-vulnerabilidade"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "exu",
+      "ganchos": [
+        "escolha-efeito",
+        "iniciativa",
+        "nega-orbe"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "hanuman",
+      "ganchos": [
+        "seletor",
+        "sinergia-nomeada"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "hel",
+      "ganchos": [
+        "bonusDano-escala-dinamica",
+        "cura-escala-alvos"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "horus",
+      "ganchos": [
+        "ignora-invuln",
+        "marca-vulnerabilidade"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "houyi",
+      "ganchos": [
+        "ignora-invuln",
+        "multi-hit-distribuido",
+        "remove-fase?"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "khonshu",
+      "ganchos": [
+        "aoReceberControle",
+        "marca-punicao-aoMatar"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "krishna",
+      "ganchos": [
+        "acao-garantida",
+        "seletor-maior-dano?"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "loki",
+      "ganchos": [
+        "primeiroPorTurno",
+        "transfere-status"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "lugh",
+      "ganchos": [
+        "dia-noite-ler-extra",
+        "escolha-efeito",
+        "inevitavel",
+        "seletor"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "mimir",
+      "ganchos": [
+        "nega-orbe",
+        "passiva-ativa-morto"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "mnevis",
+      "ganchos": [
+        "reflete-dano",
+        "sinergia-nomeada"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "nuwa",
+      "ganchos": [
+        "aoCair-aliado",
+        "escolha-efeito"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "odin",
+      "ganchos": [
+        "ignora-invuln",
+        "sinergia-faccao?"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "saci",
+      "ganchos": [
+        "esquiva",
+        "nega-orbe"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "shiva",
+      "ganchos": [
+        "ignora-invuln",
+        "ignora-pisoVida?"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "sunwukong",
+      "ganchos": [
+        "imune-execucao?",
+        "invuln-por-alcance"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "susanoo",
+      "ganchos": [
+        "bonusDano-escala-dinamica",
+        "multi-hit-distribuido"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "tanuki",
+      "ganchos": [
+        "escolha-efeito",
+        "nega-orbe"
+      ],
+      "cor": "VERMELHO"
+    },
+    {
+      "key": "yanwong",
+      "ganchos": [
+        "execucao-temporizada",
+        "marca-vulnerabilidade"
+      ],
+      "cor": "VERMELHO"
+    }
+  ],
+  "ranking": [
+    {
+      "gancho": "bonusDano-escala-dinamica",
+      "trava": 11,
+      "flip": 5,
+      "stage": 6,
+      "balde": true
+    },
+    {
+      "gancho": "nega-orbe",
+      "trava": 6,
+      "flip": 1,
+      "stage": 5,
+      "balde": true
+    },
+    {
+      "gancho": "marca-vulnerabilidade",
+      "trava": 5,
+      "flip": 1,
+      "stage": 4,
+      "balde": false
+    },
+    {
+      "gancho": "ignora-invuln",
+      "trava": 5,
+      "flip": 1,
+      "stage": 4,
+      "balde": true
+    },
+    {
+      "gancho": "seletor",
+      "trava": 4,
+      "flip": 2,
+      "stage": 2,
+      "balde": true
+    },
+    {
+      "gancho": "sinergia-nomeada",
+      "trava": 4,
+      "flip": 1,
+      "stage": 3,
+      "balde": true
+    },
+    {
+      "gancho": "escolha-efeito",
+      "trava": 4,
+      "flip": 0,
+      "stage": 4,
+      "balde": true
+    },
+    {
+      "gancho": "dia-noite-ler-extra",
+      "trava": 4,
+      "flip": 1,
+      "stage": 3,
+      "balde": true
+    },
+    {
+      "gancho": "iniciativa",
+      "trava": 3,
+      "flip": 1,
+      "stage": 2,
+      "balde": false
+    },
+    {
+      "gancho": "aoCair-aliado",
+      "trava": 3,
+      "flip": 1,
+      "stage": 2,
+      "balde": false
+    },
+    {
+      "gancho": "multi-hit-distribuido",
+      "trava": 3,
+      "flip": 0,
+      "stage": 3,
+      "balde": false
+    },
+    {
+      "gancho": "reducao-escopo-elem",
+      "trava": 2,
+      "flip": 2,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "faz-cdShift",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "bloqueia-geracao-orbe?",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "aoReceberControle",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "primeiroPorTurno",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "antirevive-contador",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": true
+    },
+    {
+      "gancho": "aoAtacar",
+      "trava": 2,
+      "flip": 1,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "imunidade-condicional",
+      "trava": 2,
+      "flip": 2,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "vulnerabilidade-classe-atacante?",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "antirevive-aura",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "sinergia-faccao?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "transfere-status",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "cura-escala-alvos",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "orbe-protecao",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "passiva-ativa-morto",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "copiar-ultima",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "saldo-debuff-buff?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "antirevive-matador",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "execucao-status",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "marca-punicao-aoMatar",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "lifesteal",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "reflete-dano",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "alvo-curado-recente",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "bonusCura-cond-nova",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "amplifica-dot",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "imune-execucao?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "invuln-por-alcance",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "remove-fase?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "execucao-temporizada",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": true
+    },
+    {
+      "gancho": "ignora-pisoVida?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "modo-alterna",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "acao-garantida",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "seletor-maior-dano?",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "esquiva",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "cura-igual-dano",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "suspende-buff",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "inevitavel",
+      "trava": 1,
+      "flip": 0,
+      "stage": 1,
+      "balde": false
+    },
+    {
+      "gancho": "execucao-timing",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    },
+    {
+      "gancho": "acao-atrasada",
+      "trava": 1,
+      "flip": 1,
+      "stage": 0,
+      "balde": false
+    }
+  ],
+  "implementados": [
+    "afrodite",
+    "apolo",
+    "bennu",
+    "fenrir",
+    "kraken",
+    "oxala",
+    "oxum",
+    "ymir"
+  ],
+  "lote2": {
+    "achado": "0 dos 12 verdes-restantes escrevem limpos; cada um a 1 gancho oculto (escada §64/§65)",
+    "hooks_pequenos": {
+      "seCond-danoBase": [
+        "xango",
+        "piranha"
+      ],
+      "redirect-apply": [
+        "curupira"
+      ],
+      "destruir-invocacao": [
+        "iansa"
+      ],
+      "vidaExtra-rodarFaz": [
+        "hercules"
+      ],
+      "cruzarLimiar-consome": [
+        "medusa"
+      ]
+    },
+    "decisoes_dono": {
+      "cd-granular": [
+        "bragi",
+        "brahma"
+      ],
+      "dia-regra-global": [
+        "amaterasu"
+      ],
+      "branch-condicional": [
+        "freyja"
+      ]
+    },
+    "segunda_onda_real": [
+      "kitsune",
+      "nefertem"
+    ],
+    "projecao_impl": "20 -> 26 (hooks) -> ~30 (decisoes)"
   }
- ],
- "ranking": [
-  {
-   "gancho": "bonusDano-escala-dinamica",
-   "trava": 11,
-   "flip": 5,
-   "stage": 6,
-   "balde": true
-  },
-  {
-   "gancho": "nega-orbe",
-   "trava": 6,
-   "flip": 1,
-   "stage": 5,
-   "balde": true
-  },
-  {
-   "gancho": "marca-vulnerabilidade",
-   "trava": 5,
-   "flip": 1,
-   "stage": 4,
-   "balde": false
-  },
-  {
-   "gancho": "ignora-invuln",
-   "trava": 5,
-   "flip": 1,
-   "stage": 4,
-   "balde": true
-  },
-  {
-   "gancho": "seletor",
-   "trava": 4,
-   "flip": 2,
-   "stage": 2,
-   "balde": true
-  },
-  {
-   "gancho": "sinergia-nomeada",
-   "trava": 4,
-   "flip": 1,
-   "stage": 3,
-   "balde": true
-  },
-  {
-   "gancho": "escolha-efeito",
-   "trava": 4,
-   "flip": 0,
-   "stage": 4,
-   "balde": true
-  },
-  {
-   "gancho": "dia-noite-ler-extra",
-   "trava": 4,
-   "flip": 1,
-   "stage": 3,
-   "balde": true
-  },
-  {
-   "gancho": "iniciativa",
-   "trava": 3,
-   "flip": 1,
-   "stage": 2,
-   "balde": false
-  },
-  {
-   "gancho": "aoCair-aliado",
-   "trava": 3,
-   "flip": 1,
-   "stage": 2,
-   "balde": false
-  },
-  {
-   "gancho": "multi-hit-distribuido",
-   "trava": 3,
-   "flip": 0,
-   "stage": 3,
-   "balde": false
-  },
-  {
-   "gancho": "reducao-escopo-elem",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "faz-cdShift",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "bloqueia-geracao-orbe?",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "aoReceberControle",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "primeiroPorTurno",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "antirevive-contador",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": true
-  },
-  {
-   "gancho": "aoAtacar",
-   "trava": 2,
-   "flip": 1,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "imunidade-condicional",
-   "trava": 2,
-   "flip": 2,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "vulnerabilidade-classe-atacante?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "antirevive-aura",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "sinergia-faccao?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "transfere-status",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "cura-escala-alvos",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "orbe-protecao",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "passiva-ativa-morto",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "copiar-ultima",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "saldo-debuff-buff?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "antirevive-matador",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "execucao-status",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "marca-punicao-aoMatar",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "lifesteal",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "reflete-dano",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "alvo-curado-recente",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "bonusCura-cond-nova",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "amplifica-dot",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "imune-execucao?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "invuln-por-alcance",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "remove-fase?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "execucao-temporizada",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": true
-  },
-  {
-   "gancho": "ignora-pisoVida?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "modo-alterna",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "acao-garantida",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "seletor-maior-dano?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "esquiva",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "cura-igual-dano",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "suspende-buff",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "inevitavel",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1,
-   "balde": false
-  },
-  {
-   "gancho": "execucao-timing",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  },
-  {
-   "gancho": "acao-atrasada",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0,
-   "balde": false
-  }
- ],
- "implementados": [
-  "afrodite",
-  "apolo",
-  "bennu",
-  "fenrir",
-  "kraken",
-  "oxala",
-  "oxum",
-  "ymir"
- ]
 }
