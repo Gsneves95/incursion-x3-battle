@@ -1912,6 +1912,40 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §72 — VARREDURA DO BALDE ESCALA-DINÂMICA: partiu, e pior que "três pequenos" — é um wrapper + 3 fontes + 3 buracos-segundos
+
+O dono mandou desconfiar dele especialmente. Desconfiança confirmada. Tracei a escala EXATA dos 5, contra as fontes de
+escala que o `danoBase` JÁ tem (`porAliadoCaido`, `porContadorLado`, `porContador`, `porInimigoCaido`, `porContadorCampo`):
+
+| deus | "+X por…" | fonte da contagem | existe? | 2º buraco (não-escala) |
+|---|---|---|---|---|
+| **oni** | +1 por 4 Combo | contador-de-lado (Combo) | **✓ porContadorLado** | — (limpo com o wrapper) |
+| **osiris** | +8 por aliado caído | aliados caídos | **✓ porAliadoCaido** | habilidade: shield condicional ao HP do aliado |
+| **mulasemcabeca** | +1 por 5 HP perdido | HP-próprio-faltante | ✗ NOVA | — (limpo com a fonte) |
+| **aokuang** | +5 por inimigo Encharcado | contagem-de-inimigos-com-tag | ✗ NOVA | milagre: atordoar SÓ os Encharcados (apply filtrado) |
+| **kali** | +10 por inimigo <60 HP | contagem-de-inimigos-abaixo-de-HP | ✗ NOVA | milagre: auto-ataque no fim do turno |
+
+**O achado — o balde não é UM hook MID, é uma soma de peças à la carte:**
+1. **UM wrapper** compartilhado: o `bonusDano` DECLARATIVO (passivo) hoje só soma `f.v` FIXO — não escala. Todos os 5
+   precisam que o passivo bonusDano possa ESCALAR por uma fonte. É o único pedaço comum.
+2. **2 fontes JÁ EXISTEM** (porAliadoCaido, porContadorLado): com só o wrapper, **oni fecha limpo** e **osiris-passivo**
+   também (osiris ainda tem o 2º buraco na habilidade).
+3. **3 fontes NOVAS**, uma por deus: HP-próprio-faltante (mula), contagem-de-status (aokuang), contagem-abaixo-de-HP
+   (kali) — exatamente as quatro que o dono previu que partiriam (HP-faltante, status, caídos, Combo), com "caídos" e
+   "Combo" já prontos.
+4. **3 dos 5 têm um 2º buraco NÃO-relacionado** à escala (osiris shield-condicional, aokuang apply-filtrado, kali
+   auto-ataque-fim-de-turno). Então mesmo com a fonte, eles NÃO fecham limpos.
+
+**Veredito (a decisão que o dono pediu): NÃO vale como bloco único.** O "flip 5" é uma miragem — na prática o wrapper +
+fontes existentes flipa **2 limpos (oni, mulasemcabeca)**; os outros 3 arrastam um 2º buraco cada. Recomendação: tratar
+como peças pequenas independentes, não como balde. **A ordem de melhor rendimento por linha:** (a) o wrapper
+bonusDano-escala + reusar porContadorLado → **oni** (1 peça, 1 deus limpo); (b) fonte HP-faltante → **mulasemcabeca**
+(1 peça, 1 deus limpo). Os outros 3 (osiris/aokuang/kali) só depois, cada um com seu 2º buraco. **O rótulo "balde
+escala-dinâmica trava 5" era o §46 mais uma vez: um NOME agregando cinco mecânicas distintas que só a varredura
+separa.** O topo do ranking desde a triagem-1 não era um balde — eram cinco baldinhos que rimam no nome.
+
+---
+
 ## §71 — O TETO DA RECONCILIAÇÃO TESTADO (4/5), a VARREDURA DE ETIQUETAS ÓRFÃS (1 órfã), e o número FUNCIONAL no placar
 
 **(A) O teto da reconciliação, testado pela escrita (o dono pediu).** Dos 5 verdes-por-reconciliação, escritos: **4
