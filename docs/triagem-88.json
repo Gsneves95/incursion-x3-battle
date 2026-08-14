@@ -1,7 +1,7 @@
 {
  "dist": {
-  "VERDE": 25,
-  "AMARELO": 34,
+  "AMARELO": 39,
+  "VERDE": 12,
   "VERMELHO": 29
  },
  "gods": [
@@ -246,7 +246,8 @@
   {
    "key": "afrodite",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "amaterasu",
@@ -256,17 +257,22 @@
   {
    "key": "apolo",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "atena",
-   "ganchos": [],
-   "cor": "VERDE"
+   "ganchos": [
+    "contraAtaca-classe"
+   ],
+   "cor": "AMARELO",
+   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
   },
   {
    "key": "bennu",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "bragi",
@@ -280,8 +286,11 @@
   },
   {
    "key": "chaac",
-   "ganchos": [],
-   "cor": "VERDE"
+   "ganchos": [
+    "bonusCura-cond-nova"
+   ],
+   "cor": "AMARELO",
+   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
   },
   {
    "key": "curupira",
@@ -291,7 +300,8 @@
   {
    "key": "fenrir",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "freyja",
@@ -300,8 +310,11 @@
   },
   {
    "key": "hades",
-   "ganchos": [],
-   "cor": "VERDE"
+   "ganchos": [
+    "nega-orbe"
+   ],
+   "cor": "AMARELO",
+   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
   },
   {
    "key": "hercules",
@@ -315,8 +328,11 @@
   },
   {
    "key": "iara",
-   "ganchos": [],
-   "cor": "VERDE"
+   "ganchos": [
+    "execucao-status"
+   ],
+   "cor": "AMARELO",
+   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
   },
   {
    "key": "kitsune",
@@ -326,7 +342,8 @@
   {
    "key": "kraken",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "medusa",
@@ -340,18 +357,23 @@
   },
   {
    "key": "oni",
-   "ganchos": [],
-   "cor": "VERDE"
+   "ganchos": [
+    "bonusDano-escala-dinamica"
+   ],
+   "cor": "AMARELO",
+   "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
   },
   {
    "key": "oxala",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "oxum",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "piranha",
@@ -366,7 +388,8 @@
   {
    "key": "ymir",
    "ganchos": [],
-   "cor": "VERDE"
+   "cor": "IMPLEMENTADO",
+   "impl": true
   },
   {
    "key": "ammit",
@@ -959,5 +982,15 @@
    "stage": 0,
    "balde": false
   }
+ ],
+ "implementados": [
+  "afrodite",
+  "apolo",
+  "bennu",
+  "fenrir",
+  "kraken",
+  "oxala",
+  "oxum",
+  "ymir"
  ]
 }

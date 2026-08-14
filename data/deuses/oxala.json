@@ -1,0 +1,52 @@
+{
+  "key": "oxala",
+  "nome": "Oxalá",
+  "faccao": "Africana",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "O Mais Velho",
+    "desc": "O time recebe 5 de redução de dano e começa a partida com 1 orbe de Aurora extra.",
+    "fx": [
+      { "gatilho": "reducao", "v": 5, "escopo": "time" },
+      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 1, "para": "Aurora" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Opaxorô",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Paz de Oxalá",
+      "cost": { "Aurora": 2 },
+      "cd": 3,
+      "alvo": "todosInimigos",
+      "desc": "Por 1 turno, os inimigos podem agir mas causam 0 de dano.",
+      "fx": [ { "t": "apply", "eff": { "type": "pacificado", "dur": 1 }, "escopo": "todosInimigos" } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Manto Branco",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Remove todos os debuffs do time, concede 20 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno.",
+      "fx": [
+        { "t": "cleanse", "escopo": "time" },
+        { "t": "shield", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "pisoVida", "dur": 1 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

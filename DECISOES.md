@@ -1912,6 +1912,44 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §64 — A escada de tetos, o "rouba" no vocabulário, e o alvo honesto (GO do dono — escrevendo kits)
+
+O dono deu GO: parar o motor, escrever os verdes; a métrica passa a ser **IMPLEMENTADOS** (12 na hora do go). Três
+registros desta virada.
+
+**(A) A ESCADA — prosa → varredura → triagem → tradução, cada degrau um TETO corrigido pelo seguinte.** É o §61 no
+seu nível final. A prosa promete; a varredura conta ganchos; a triagem classifica por NOME-de-gancho (e por isso herda
+o viés-do-nome, §46) e projeta — mas projeção sobre triagem é TETO, como a projeção sobre flip era teto. **A tradução
+(escrever o kit) é a reconciliação FINAL:** confronta a prosa com o vocabulário real de `fx`, e pega o que nenhuma
+varredura pega. Foi assim que "verdes" caíram para AMARELO ao serem escritos — oni (bonusDano é `+f.v` fixo, não
+escala), atena (contraAtaca não filtra classe), chaac (bonusCura não condiciona por tipo-de-cura), iara (execução não
+filtra status): cada um tinha nome-de-verde e substância-de-gancho, e só a caneta no `fx` revelou. **Nenhum degrau é
+mentira; cada um é um teto que só o próximo baixa.**
+
+**(B) O bug do Fenrir prova a mesma coisa PELO OUTRO LADO — "método expõe bug anterior".** O 1º kit real de execução
+(Fenrir, `executaAbaixoDe:24`) fez 8 testes quebrarem em "unidade morta com HP>0": `matar` nunca zerava `hp`, e nada
+antes tinha matado por execução para expor. Some ao ledger dos casos onde um método novo revela um bug antigo dormente:
+
+| § | método que expôs | bug dormente |
+|---|---|---|
+| §25 | invocação-guarda | log registrava `absorvido` errado |
+| §50 | antirevive (naoRevive) | gate meio-ligado |
+| §64 | execução real (Fenrir) | `matar` não zerava `hp` |
+
+O padrão: **o motor guarda bugs invisíveis até o primeiro uso que os exercita.** Escrever kits reais é esse uso — a
+tradução não só baixa o teto da triagem (A), como testa o motor de um jeito que a construção isolada não testava.
+
+**(C) "GANHA vs ROUBA" existe no vocabulário — registrado para a próxima varredura não reabrir.** "ganha 1 orbe" é
+ganho próprio (limpo, sem gancho). "**rouba** 1 orbe" TIRA do inimigo — é o gancho `nega-orbe`, não construído. Prova
+estrutural: Shuten "rouba 10 HP e 1 orbe" — o roubo-de-HP remove da vítima, e o orbe está na mesma cláusula, mesmo
+verbo. A distinção é do verbo, não do número. Isso derrubou ~7 supostos-verdes que diziam "rouba orbe" para AMARELO.
+
+**O ALVO HONESTO, corrigido:** a projeção original (12→~37 em 4 lotes) assumia 25 verdes; a tradução (A) + o "rouba"
+(C) revelaram que o verde real é ~menos. **Meta honesta: 12 → ~30 em 4 lotes.** O que sobra de AMARELO é a 2ª onda,
+liberada por um gancho-balde do topo — `bonusDano-escala-dinamica` (trava 11, flip ~5) é o candidato nº1.
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

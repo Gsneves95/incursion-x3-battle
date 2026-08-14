@@ -34,6 +34,7 @@ function danosProsa(ef) {
   for (const m of ef.matchAll(/(\d+)\s+de dano/g)) {
     const pre = ef.slice(Math.max(0, m.index - 8), m.index);
     if (/[+]\s*$|menos\s+$|mais\s+$/.test(pre)) continue;
+    if (m[1] === '0' && /causam\s+$/.test(pre)) continue;   // Pacificar: "causam 0 de dano" descreve o EFEITO (dano do ALVO→0), não o dano DESTA habilidade — nenhuma habilidade "causa 0"
     out.push(+m[1]);
   }
   return out;
