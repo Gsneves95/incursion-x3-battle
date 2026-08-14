@@ -1,0 +1,68 @@
+{
+  "key": "freyja",
+  "nome": "Freyja",
+  "faccao": "Nórdica",
+  "elem": "Aurora",
+  "classe": "Híbrido",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Seiðr",
+    "desc": "Aliados curados por Freyja causam +5 de dano no turno seguinte.",
+    "fx": [
+      {
+        "gatilho": "aoCurar",
+        "faz": [
+          { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 2 } }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lâmina de Brísingamen",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 12 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Bênção de Fólkvangr",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "2aliados",
+      "desc": "Cura 20 em 2 aliados; eles causam +6 de dano por 2 turnos.",
+      "fx": [
+        { "t": "heal", "v": 20 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 6, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Salão dos Caídos",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos.",
+      "fx": [
+        {
+          "t": "condicional",
+          "se": { "aliadoCaido": true },
+          "entao": [
+            { "t": "revive", "hp": 48, "escopo": "umCaido" }
+          ],
+          "senao": [
+            { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "time" }
+          ]
+        }
+      ]
+    }
+  ]
+}

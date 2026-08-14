@@ -51,6 +51,15 @@ function validarFx(f, ctx, errs) {
     if (!s || typeof s !== 'object' || typeof s.v !== 'number' || !Number.isInteger(s.v) || s.v <= 0) errs.push(`${ctx}: seCond.v mal formado (${JSON.stringify(s && s.v)}; inteiro > 0)`);
     else validarQuando(s.quando, `${ctx}.seCond.quando`, errs);
   }
+  if (f.t === 'condicional') {   // F1.6 (Freyja): se(estado) ? entao[fx] : senao[fx]
+    if (!('se' in f)) errs.push(`${ctx}: condicional exige 'se' (condição de estado)`); else validarEstado(f.se, `${ctx}.se`, errs);
+    if (!('entao' in f) && !('senao' in f)) errs.push(`${ctx}: condicional exige ao menos um ramo (entao/senao)`);
+    for (const ramo of ['entao', 'senao']) {
+      if (!(ramo in f)) continue;
+      if (!Array.isArray(f[ramo]) || f[ramo].length === 0) errs.push(`${ctx}.${ramo}: deve ser array de fx não-vazio`);
+      else f[ramo].forEach((x, i) => validarFx(x, `${ctx}.${ramo}[${i}]`, errs));
+    }
+  }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

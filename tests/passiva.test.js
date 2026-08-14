@@ -903,6 +903,20 @@ console.log('== F1.6 Iansã: limparInvocacoes destrói invocações inimigas; an
   ok(!t.vivo, `revive BLOQUEADO pelo naoRevive proativo (vivo=${t.vivo})`);
   console.log('  Iansã: limparInvocacoes + antiRevive (naoRevive proativo nos vivos)');
 }
+console.log('== F1.6 Freyja: fx CONDICIONAL por estado — aliadoCaido ? revive : buff time ==');
+{ // ramo ENTAO (há caído): revive 1 caído, sem buff. ramo SENAO (ninguém caiu): time ganha dmgUp
+  const mil = [{ t: 'condicional', se: { aliadoCaido: true }, entao: [{ t: 'revive', hp: 48, escopo: 'umCaido' }], senao: [{ t: 'apply', eff: { type: 'dmgUp', v: 12, dur: 2 }, escopo: 'time' }] }];
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 605);
+  const caster = st.lados[0].units[0], a1 = st.lados[0].units[1];
+  a1.vivo = false; a1.hp = 0;
+  E.aplicarFx(st, caster, mil, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(a1.vivo && a1.hp === 48 && !E.ef(caster, 'dmgUp'), `ENTAO (há caído): revive a 48 e NÃO buffa (vivo=${a1.vivo} hp=${a1.hp} buff=${!!E.ef(caster, 'dmgUp')})`);
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 606);
+  const c2 = st2.lados[0].units[0];
+  E.aplicarFx(st2, c2, mil, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(E.ef(c2, 'dmgUp') && E.ef(c2, 'dmgUp').v === 12, `SENAO (ninguém caiu): o time ganha dmgUp+12 (${E.ef(c2, 'dmgUp') && E.ef(c2, 'dmgUp').v})`);
+  console.log('  Freyja: fx condicional (aliadoCaido ? revive : buff time)');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

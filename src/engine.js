@@ -84,6 +84,7 @@ const TIPOS_FX = [
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
+  'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
@@ -183,6 +184,7 @@ const ESTADO_COND = {
   contador:     { contadorCmp: true },        // {nome, op, n} — contador do dono cruza o limiar (Kitsune '3 Caudas')
   hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
   aliadoPresente:{ godkey: true },            // <key> — um deus específico está no time do dono (sinergia: 'com Fulano no time') — Passo 0
+  aliadoCaido:  { bool: true },               // há ao menos um aliado CAÍDO no lado do dono (Freyja: 'se ninguém caiu' = ramo senão)
   primeiroPorTurno: { bool: true, pendente: 'RASTREIO por-turno (não leitura). Vem com esquiva/intercepta — bastet/saci/mnevis; ver §45' },
 };
 const VOCAB = {
@@ -220,6 +222,7 @@ const VOCAB = {
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
+    'se', 'entao', 'senao',   // fx condicional (F1.6, Freyja): se(estado) ? entao : senao
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
@@ -476,6 +479,7 @@ function estadoOK(e, u, st) {
   if ('contador' in e) return cmpLimiar(getContador(u, e.contador.nome), e.contador);
   if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
   if ('aliadoPresente' in e) return st.lados[u.lado].units.some(x => x.key === e.aliadoPresente);   // deus X no time (roster)
+  if ('aliadoCaido' in e) return caidos(st, u.lado) > 0;   // há aliado caído no lado do dono (Freyja)
   return false;   // primeiroPorTurno é `pendente` (valida_kit barra); nunca chega aqui com dado válido
 }
 function condOK(q, atk, alvo, st) {
@@ -1220,11 +1224,15 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     else if (escopo === 'todosInimigos') sel = inimigos.filter(x => x.vivo);
     else if (escopo === 'aliadoCaido') sel = alvos.filter(x => !x.vivo);
     else if (escopo === 'todosCaidos') sel = l.units.filter(x => !x.vivo);
+    else if (escopo === 'umCaido') { const c = l.units.find(x => !x.vivo); sel = c ? [c] : []; }   // F1.6 (Freyja): 1 aliado caído (o primeiro) — 'revive 1 caído' sem alvo escolhido
     else if (e.idx !== undefined) sel = alvos[e.idx] ? [alvos[e.idx]] : [];
     else sel = alvos;
 
     // contágio (Maldição de Yomi): age no CONJUNTO de uma vez (precisa do maior entre eles), não alvo a alvo
     if (e.t === 'espalha') { espalharContador(st, sel, e, u); continue; }
+
+    // F1.6 (Freyja) — fx CONDICIONAL: roda `entao` OU `senao` (arrays de fx) conforme o estado `se`, via o próprio executor
+    if (e.t === 'condicional') { const ramo = estadoOK(e.se, u, st) ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, a, alvos, escolhas); continue; }
 
     for (const t of sel) {
       if (e.t === 'dmg') {
