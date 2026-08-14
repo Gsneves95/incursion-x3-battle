@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 51,
-    "IMPLEMENTADO": 8,
+    "AMARELO": 45,
+    "IMPLEMENTADO": 14,
     "VERMELHO": 29
   },
   "gods": [
@@ -281,14 +281,14 @@
       "ganchos": [
         "cd-granular-DECISAO"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "brahma",
       "ganchos": [
         "cd-granular-DECISAO"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "chaac",
@@ -303,7 +303,7 @@
       "ganchos": [
         "redirect-apply"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "fenrir",
@@ -331,7 +331,7 @@
       "ganchos": [
         "vidaExtra-na-passiva"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "iansa",
@@ -400,14 +400,14 @@
       "ganchos": [
         "dano-cond-por-dot"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "xango",
       "ganchos": [
         "dano-cond-por-buff"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "ymir",
@@ -1054,5 +1054,24 @@
       "nefertem"
     ],
     "projecao_impl": "20 -> 26 (hooks) -> ~30 (decisoes)"
+  },
+  "lote2_hooks": {
+    "feito": "hooks 1-5 → 6 kits (IMPL 20→26)",
+    "hercules": "vidaExtra no rodarFaz",
+    "curupira": "redirect-apply (quita dívida §62)",
+    "xango": "seCond em danoBase",
+    "piranha": "sangramento vocab (seCond já existia)",
+    "bragi": "cdShift mirado soMaior",
+    "brahma": "cdShift mirado zera-todas + shield escopo:time",
+    "restante": {
+      "iansa": "destruir-invocacao + antiRevive-control (2 hooks)",
+      "medusa": "DoT-checker exclude [gated] + Pedra vocab + limiar-consome",
+      "freyja": "fx condicional-por-estado (primitiva de controle de fluxo)"
+    },
+    "adiados": {
+      "amaterasu": "modo Dia F1.5",
+      "kitsune": "2a onda (mas dominado JÁ existe em CONTROLES)",
+      "nefertem": "2a onda bonusCura-facção"
+    }
   }
 }

@@ -1912,6 +1912,50 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §66 — LOTE-DE-HOOKS: 5 hooks pequenos → 6 kits (IMPL 20→26), e o motor era mais rico do que a triagem via
+
+Executado o plano do §65 (2ª onda = hooks pequenos, não um balde-gancho), com as 3 decisões do dono resolvidas
+(cd-mirado, Dia adiado p/ F1.5, freyja-fx-condicional). **IMPL 20→26 em 5 hooks + 6 kits, todos CI-verde:**
+
+| # | hook (linhas de motor) | kit(s) | nota |
+|---|---|---|---|
+| 1 | `vidaExtra` no `rodarFaz` + FX_TURNO | hercules | passiva de abertura arma a rede de sobrevivência |
+| 2 | `t:'redirect'` (autoria) em aplicarFx | curupira | **quita a dívida do §62** — só o consumo existia |
+| 3 | `seCond` em `danoBase` (reusa condOK) | xango | maior alavanca — também abre piranha |
+| 4 | `cdShift` MIRADO (`unidade`/`soMaior`) + shield escopo:time | bragi, brahma | decisão do dono: 1 recarga / 1 aliado |
+| 5 | `sangramento` no vocabulário (DoT) | piranha | seCond já bastava; só faltava a palavra |
+
+**O §46/§61 mordeu a MIM na varredura:** grep pelos meus nomes inventados (`zeraRecarga`, `removerBuff`, `setFase`)
+deu ZERO; os mecanismos existiam sob os nomes reais (`cdShift`, `stripBuffs`, `fase`, `revive`, `armazenaDano`,
+`intercepta`, `condOK.alvoHp/alvoBuff`, `danoBase.seDia/porContador`). **O motor era muito mais rico do que a triagem
+creditava** — por isso 6 dos "12 AMARELO-por-tradução" fecharam com hooks minúsculos: os §53–§62 já tinham feito os
+80% difíceis.
+
+**DIVERGÊNCIAS DE ORÇAMENTO (req. 2 do dono — número do catálogo, marcado, NÃO corrigido):** Xangô/Trovão e Fogo
+(30 em área contra buff) e Piranha/Águas Vermelhas (28 em área contra Sangrando/Encharcado) passam o teto de área
+(22). São bônus CONDICIONAIS previstos — entram na allowlist do auditor junto de Dilúvio (Sobek, 30) e O Papão (38).
+Não mexi nos números; registrei a exceção onde ela mora (o próprio auditor).
+
+**"MÉTODO EXPÕE BUG ANTERIOR" — 4º caso (o auditor cego ao seCond):** ao escrever a Piranha (com `seEncharcado:28`),
+o auditor de orçamento disparou — e ao consertá-lo para checar TAMBÉM o `seCond`, ele revelou que o 30-área do Xangô
+(hook 3, já commitado e CI-verde) tinha ESCAPADO, porque o auditor não olhava seCond. Some ao ledger (§25
+invocação-guarda, §50 gate naoRevive, §64 matar-sem-hp, **§66 auditor cego ao seCond**). O padrão de novo: um método
+(kit real com seCond) expõe um buraco que o método anterior (kit sem seCond) não exercia.
+
+**A CAUDA DURA que sobra (3 kits, cada um cruza território maior ou GATED):**
+- **iansa** — 2 hooks: `t:'limparInvocacoes'` (destrói invocações inimigas) + um controle `antiRevive` novo (marca
+  naoRevive proativo por 2 turnos nos vivos). Passiva/básico/habilidade já limpos (aoCair-qualquerInimigo + stripOne).
+- **medusa** — precisa do **exclude do checar_cadeia** para o DoT em prosa ("8 de dano puro/turno" do Veneno é tick,
+  não dano da habilidade) — território que o dono GATED (exclude específico); + `Pedra` no vocabulário de contador +
+  `consome` no `cruzarLimiar` (limiar aplica mas não zera "perde as marcas"). Petrificado = atordoado; lock-hab = lockSkill.
+- **freyja** — a primitiva de **fx condicional-por-estado** ("revive; se ninguém caiu, buffa o time"): controle de
+  fluxo novo (≠ alterna/opcoes), o maior dos três + aoCurar-turno-seguinte.
+
+**Nota p/ a 2ª onda:** `dominado` JÁ existe em CONTROLES — kitsune ("Domina 1 inimigo") pode estar menos travado do
+que a triagem disse; reavaliar na tradução (o §61 de novo).
+
+---
+
 ## §65 — LOTE 2: o verde acabou no lote 1, e a escada (§64) provou-se na hora — mas o balde não é UM gancho
 
 Tradução-verificação dos 12 "verdes-restantes" contra o vocabulário REAL (não o nome-do-gancho). **Resultado:
