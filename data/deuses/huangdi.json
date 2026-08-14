@@ -1,0 +1,53 @@
+{
+  "key": "huangdi",
+  "nome": "Huang Di",
+  "faccao": "Chinesa",
+  "elem": "Aurora",
+  "classe": "Híbrido",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Soberano Civilizador",
+    "desc": "No início de cada turno, a recarga mais longa do time é reduzida em 1.",
+    "fx": [
+      { "gatilho": "porTurno", "faz": [ { "t": "cdShift", "soMaiorDoTime": true, "v": -1 } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Espada Xuanyuan",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Ordem Imperial",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Reduz em 1 turno todas as recargas do time; o time causa +5 de dano por 2 turnos.",
+      "fx": [
+        { "t": "cdShift", "v": -1, "lado": "proprio" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 2 }, "escopo": "time" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Carruagem que Aponta o Sul",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "2aliados",
+      "desc": "Zera todas as recargas de 2 aliados e remove os debuffs deles.",
+      "fx": [
+        { "t": "cdShift", "unidade": true, "v": -99 },
+        { "t": "cleanse" }
+      ]
+    }
+  ]
+}

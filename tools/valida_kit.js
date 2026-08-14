@@ -141,6 +141,9 @@ function validarFaz(faz, ctx, errs) {
     if (fx && typeof fx === 'object' && 'escopo' in fx && !['self', 'time'].includes(fx.escopo)) errs.push(`${cc}: escopo de faz inválido "${fx.escopo}" (só self|time — o lado do sujeito, nunca inimigo)`);
     // apply dentro de um faz só aplica BUFF — um controle/debuff exigiria um alvo inimigo ESCOLHIDO, que o faz proíbe.
     if (fx && typeof fx === 'object' && fx.t === 'apply' && fx.eff && !V.buffs.includes(fx.eff.type)) errs.push(`${cc}: apply dentro de faz só aplica BUFF (${V.buffs.join('|')}); "${fx.eff.type}" é controle/debuff e exigiria alvo inimigo escolhido`);
+    // cdShift no faz SÓ na forma soMaiorDoTime (F1.6, Huangdi): próprio lado, sem alvo escolhido. As formas `unidade`
+    // (escolhe unidade) e `lado:'inimigo'` (alveja o inimigo) exigiriam escolha/alvo que o faz proíbe.
+    if (fx && typeof fx === 'object' && fx.t === 'cdShift' && !fx.soMaiorDoTime) errs.push(`${cc}: cdShift no faz só na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — 'unidade'/'lado' exigiriam alvo`);
   });
 }
 

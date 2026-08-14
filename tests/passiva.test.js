@@ -1118,6 +1118,51 @@ console.log('== F1.6 apply soSe: apply FILTRADO por status do alvo — atordoa s
   console.log('  soSe: aplica só nos alvos que casam a condição de status');
 }
 
+console.log('== F1.6 cdShift CLUSTER (Huangdi): team-longest -1/turno (desempate DETERMINÍSTICO), lado inteiro, mirado-2 ==');
+{ // PASSIVA porTurno: "a recarga mais longa do time -1" — EXTRA, além do tick geral (que já baixa tudo -1)
+  const st = E.novoEstado(['huangdi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 624);
+  const u = st.lados[0].units;
+  u[0].cd = { habilidade: 2 }; u[1].cd = { milagre: 5 }; u[2].cd = { habilidade: 3 };
+  st.ativo = 0; E.iniciarTurno(st);
+  // tick geral: hab 2→1, mil 5→4, hab 3→2; passiva pega a MAIOR pós-tick (u[1].mil=4) → 3
+  ok(u[1].cd.milagre === 3, `a recarga mais longa do time leva o -1 EXTRA (tick+passiva: 5→3) [${u[1].cd.milagre}]`);
+  ok(u[0].cd.habilidade === 1 && u[2].cd.habilidade === 2, `as outras só o tick geral (2→1, 3→2) [${u[0].cd.habilidade},${u[2].cd.habilidade}]`);
+}
+{ // DESEMPATE 1 — duas unidades com a mesma maior: a de MENOR índice cede (trava replay/cadeia)
+  const st = E.novoEstado(['huangdi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 625);
+  const u = st.lados[0].units;
+  u[0].cd = {}; u[1].cd = { milagre: 4 }; u[2].cd = { milagre: 4 };
+  st.ativo = 0; E.iniciarTurno(st);
+  // tick: ambas 4→3; empate em 3 → menor índice (u[1]) cede → 2; u[2] fica 3
+  ok(u[1].cd.milagre === 2 && u[2].cd.milagre === 3, `empate → menor índice cede (u[1]=2, u[2]=3) [${u[1].cd.milagre},${u[2].cd.milagre}]`);
+}
+{ // DESEMPATE 2 — mesma unidade, dois slots na maior: ordem de slot (basico→hab→milagre) → habilidade cede
+  const st = E.novoEstado(['huangdi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 626);
+  const u = st.lados[0].units;
+  u[0].cd = {}; u[1].cd = { habilidade: 4, milagre: 4 }; u[2].cd = {};
+  st.ativo = 0; E.iniciarTurno(st);
+  // tick: hab 4→3, mil 4→3; empate → ordem de slot → habilidade cede → 2; milagre fica 3
+  ok(u[1].cd.habilidade === 2 && u[1].cd.milagre === 3, `empate no mesmo deus → slot habilidade antes de milagre (hab=2, mil=3) [${u[1].cd.habilidade},${u[1].cd.milagre}]`);
+}
+{ // HABILIDADE: escopo-de-lado próprio (reduz TODAS as recargas do time -1) + dmgUp no time
+  const st = E.novoEstado(['huangdi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 627);
+  const u = st.lados[0].units;
+  u[1].cd = { milagre: 3 }; u[2].cd = { habilidade: 2 };
+  E.aplicarFx(st, u[0], [{ t: 'cdShift', v: -1, lado: 'proprio' }, { t: 'apply', eff: { type: 'dmgUp', v: 5, dur: 2 }, escopo: 'time' }], { alvo: 'nenhum', slot: 'habilidade' }, []);
+  ok(u[1].cd.milagre === 2 && u[2].cd.habilidade === 1, `habilidade: TODAS as recargas do time -1 (3→2, 2→1) [${u[1].cd.milagre},${u[2].cd.habilidade}]`);
+  ok(!!E.ef(u[0], 'dmgUp') && !!E.ef(u[1], 'dmgUp'), `dmgUp no time inteiro`);
+}
+{ // MILAGRE: mirado em 2 aliados (zera TODAS as recargas dos DOIS) + cleanse nos dois
+  const st = E.novoEstado(['huangdi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 628);
+  const u = st.lados[0].units;
+  u[1].cd = { milagre: 4, habilidade: 2 }; u[2].cd = { habilidade: 3 };
+  u[1].efeitos.push({ type: 'atordoado', dur: 2 }); u[2].efeitos.push({ type: 'dmgDown', v: 5, dur: 2 });
+  E.aplicarFx(st, u[0], [{ t: 'cdShift', unidade: true, v: -99 }, { t: 'cleanse' }], { alvo: '2aliados', slot: 'milagre' }, [u[1], u[2]]);
+  ok(u[1].cd.milagre === 0 && u[1].cd.habilidade === 0 && u[2].cd.habilidade === 0, `mirado-2: zera TODAS as recargas dos DOIS [${u[1].cd.milagre},${u[1].cd.habilidade},${u[2].cd.habilidade}]`);
+  ok(!E.ef(u[1], 'atordoado') && !E.ef(u[2], 'dmgDown'), `cleanse nos dois aliados escolhidos`);
+  console.log('  cdShift-cluster: team-longest (desempate índice→slot), lado-inteiro e mirado-2 — Huang Di inteiro');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

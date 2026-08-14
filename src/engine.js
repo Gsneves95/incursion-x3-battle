@@ -137,7 +137,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execu
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -233,7 +233,8 @@ const VOCAB = {
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
-    'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
+    'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1+ unidades escolhidas; soMaior = só a maior recarga (Bragi/Brahma)
+    'soMaiorDoTime',   // cdShift (F1.6, Huangdi): a MAIOR recarga cruzando o time (faz-only, porTurno)
     'se', 'entao', 'senao',   // fx condicional (F1.6, Freyja): se(estado) ? entao : senao
     'rouba',   // roubaOrbe (F1.6): true = o orbe removido vai p/ o próprio lado (Hades); ausente = só remove
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
@@ -957,6 +958,20 @@ function sortearElemento(st, tiposTime) {
 
 // executa o `faz` de um gatilho de turno para o dono `u`. Alvo FIXO (self = o dono; orbGain = o lado),
 // sem escolha nem seletor. Atribui os eventos gerados ao dono (passiva:u.key) para o narrador saber a origem.
+// cdShift "a recarga mais longa DO TIME" (F1.6, Huangdi): acha a MAIOR recarga cruzando o LADO inteiro (inclui o
+// próprio dono — "do time" não o exclui) e a desloca por v; UMA só por chamada (a prosa é singular → auto-limitante).
+// Desempate DETERMINÍSTICO (obrigatório: senão quebra replay/cadeia em silêncio): menor índice de unidade, depois
+// ordem de slot (basico → habilidade → milagre). Iterar nessa ordem trocando só em `>` ESTRITO faz o 1º empatado vencer.
+function cdShiftMaiorDoTime(st, lado, v) {
+  const ORDEM = ['basico', 'habilidade', 'milagre'];
+  let alvoU = null, alvoK = null, maior = 0;
+  for (const x of st.lados[lado].units) {
+    if (!x.vivo) continue;
+    for (const k of ORDEM) if ((x.cd[k] || 0) > maior) { maior = x.cd[k]; alvoU = x; alvoK = k; }
+  }
+  if (alvoU) { alvoU.cd[alvoK] = Math.max(0, alvoU.cd[alvoK] + v); log(st, { tipo: 'cd', lado, alvo: alvoU.key, valor: v }); }
+}
+
 // Executor MÍNIMO (não o aplicarFx completo): gatilho de turno não tem ability nem alvo escolhido. Reproduz
 // exatamente os hardcodes antigos de ra (addContador) e ganesha (orbGain via sortearElemento — mesmo rng).
 // rodarFaz executa um `faz` na unidade `u` (o SUJEITO: o dono no porTurno, o reator no aoCair, o curado no
@@ -995,6 +1010,7 @@ function rodarFaz(st, u, faz, tagKey) {
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
       for (const t of alvos) { t.vidaExtra = { hp: f.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
     }
+    else if (f.t === 'cdShift' && f.soMaiorDoTime) cdShiftMaiorDoTime(st, u.lado, f.v);   // F1.6 (Huangdi porTurno): "a recarga mais longa do time −1". VARRE p/ ESCOLHER onde agir, mas o alvo é o PRÓPRIO lado e o jogador não escolhe nada — a garantia do FX_TURNO (sem alvo escolhido pelo jogador) fica INTACTA. Distinção a lembrar: varrer-p/-escolher ≠ varrer-p/-alvejar.
   }
   const tag = tagKey || u.key;
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;
@@ -1370,9 +1386,8 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       log(st, { tipo: 'efeito', alvo: alvos[0].key, efeito: 'vinculo' });
     }
     if (e.t === 'cdShift') {
-      if (e.unidade) {   // MIRADO (F1.6): 1 unidade escolhida (alvos[0], em geral um aliado) — Bragi (1 recarga), Brahma (zera todas)
-        const x = alvos[0];
-        if (x) {
+      if (e.unidade) {   // MIRADO (F1.6): CADA unidade escolhida — 1 (Bragi/Brahma/Oni/Itzamná) ou 2 (Huangdi milagre: "2 aliados")
+        for (const x of alvos) {
           if (e.soMaior) {   // só a MAIOR recarga ativa muda (Bragi: "1 recarga reduzida em 1 turno")
             let maior = null; for (const k in x.cd) if (x.cd[k] > 0 && (maior === null || x.cd[k] > x.cd[maior])) maior = k;
             if (maior !== null) { x.cd[maior] = Math.max(0, x.cd[maior] + e.v); log(st, { tipo: 'cd', lado: x.lado, alvo: x.key, valor: e.v }); }
