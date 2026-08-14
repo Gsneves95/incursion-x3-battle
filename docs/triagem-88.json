@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 37,
-    "IMPLEMENTADO": 22,
+    "AMARELO": 34,
+    "IMPLEMENTADO": 25,
     "VERMELHO": 29
   },
   "gods": [
@@ -135,9 +135,7 @@
       "ganchos": [
         "copiar-ultima"
       ],
-      "cor": "AMARELO",
-      "reconc": "HOOK-pequeno",
-      "reconc_nota": "TRAVOU na tradução: once-per-match p/ habilidade não existe (a reconciliação viu copiar+revive)"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "itzamna",
@@ -220,9 +218,7 @@
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO",
-      "reconc": "BALDE:escala-dinamica",
-      "reconc_nota": "+1 por 5 HP perdido (escala por hp-próprio)"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "orfeu",
@@ -454,10 +450,8 @@
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
-      "reconc": "BALDE:escala-dinamica",
-      "reconc_nota": "+1 por 4 Combo (bonusDano escala por contador)"
+      "cor": "IMPLEMENTADO",
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
     },
     {
       "key": "oxala",
@@ -1184,12 +1178,12 @@
     }
   },
   "placar": {
-    "IMPL": 34,
-    "FUNCIONAL": 33,
+    "IMPL": 37,
+    "FUNCIONAL": 36,
     "orfaos": {
-      "afrodite": "dominado (Básico-forçado inerte; só nega-orbe)"
+      "afrodite": "dominado (Básico-forçado inerte)"
     },
-    "nota": "FUNCIONAL = IMPL menos órfãs; fecha quando dominado for construído"
+    "nota": "FUNCIONAL=IMPL menos órfãs (afrodite/dominado)"
   },
   "teto_reconciliacao_teste": {
     "escritos": [
@@ -1202,5 +1196,23 @@
       "isis"
     ],
     "veredito": "4/5 limpos; reconciliar-contra-motor é confiável mas continua TETO — só a tradução prova"
+  },
+  "reconciliacao_taxa": {
+    "valor": "~80% (4/5 no teste isis)",
+    "vies": "sempre para CIMA (promete verde, entrega hook)",
+    "uso": "bom p/ SEQUENCIAR, ruim p/ PROMETER — a escrita é a única prova (§61)"
+  },
+  "balde_escala_dinamica": {
+    "wrapper": "construído (escalaContagem, um helper só)",
+    "feitos": [
+      "oni (Combo, passo 4)",
+      "mulasemcabeca (HP-faltante, passo 5)"
+    ],
+    "restam": {
+      "osiris": "porAliadoCaido existe + 2º buraco (shield-condicional)",
+      "aokuang": "fonte contagem-status NOVA + 2º buraco (apply-filtrado)",
+      "kali": "fonte contagem-abaixo-hp NOVA + 2º buraco (auto-ataque)"
+    },
+    "nota": "partiu como previsto; wrapper+2 fontes existentes flipou 2 limpos"
   }
 }

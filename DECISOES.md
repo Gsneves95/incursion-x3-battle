@@ -1912,6 +1912,38 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §73 — ISIS FECHA (taxa do §61 medida), o campo `usos` sem-fio (2º caso da família dominado), e o wrapper de escala DEDUP-clean (Oni + Mula)
+
+**(A) A TAXA DO §61, MEDIDA (o dono: mais útil que a regra qualitativa).** O teste de teto (§71) deu **~80% (4/5)**, e o
+erro é **sempre para CIMA** (a reconciliação promete VERDE e entrega HOOK — nunca o contrário, porque ler-a-lista vê
+mecanismos presentes mas não restrições de nível-de-habilidade). Registrado como número: **bom o bastante para
+SEQUENCIAR (ordena a fila com confiança), ruim o bastante para nunca PROMETER (a escrita é a única prova).** Em
+`docs/triagem-88.json` (`reconciliacao_taxa`).
+
+**(B) ISIS FECHADA — e um 2º caso "campo preparado sem fio".** O guard once-per-match não existia como MECANISMO, mas
+o CAMPO `usos:{}` da unidade já estava lá (linha 295) — declarado e **nunca referenciado**, exatamente como o
+`dominado` (tag aplicada, orb-denial só). Liguei: `acoesDe` trava a habilidade `umaVez` gasta (`ja_usou`, permanente —
+cd:0 não reabre), `agir` marca. **Generaliza o padrão do §69/§71: além de etiquetas-órfãs (aplicadas sem enforce), há
+CAMPOS-órfãos (preparados sem fio).** Ambos passam por `validarDeus+smoke`; só o uso real (escrever isis) os expõe.
+Varredura de "uma vez por partida": 2 kits (isis + shiva-futuro) — o hook serve os dois. IMPL 34→35, FUNCIONAL 33→34.
+
+**(C) O WRAPPER DE ESCALA — DEDUP-CLEAN (a garantia que o dono exigiu antes de construir).** O risco: o `danoBase` já
+escala dano por contador (`porContador*`, `porAliadoCaido`…); um wrapper que escalasse o `bonusDano` passivo por
+CAMINHO SEPARADO viraria "dois jeitos de fazer o mesmo" — dívida que só aparece quando alguém escreve o kit errado.
+**Solução: extraí `escalaContagem(st,u,t,spec)` como o ÚNICO mecanismo — chamado por danoBase (por-ability, sem mudança
+de comportamento, os testes de porContador seguem verdes) E por bonusDanoDeclarativo (passivo).** Um caminho só, mesma
+forma de descritor dos dois lados. Adições: `passo` (default 1 — `+v a cada passo`; Oni "+1 por 4 Combo") e a fonte
+`porHpFaltante` (Mula "+1 por 5 de HP perdido"). `v:0` liberado no bonusDano quando há descritor de escala (bônus
+puramente escalado). **Flipou 2 limpos: Oni (Combo) e Mula (HP-faltante) — IMPL 35→37.**
+
+**(D) O BALDE CONFIRMADO COMO NÃO-BLOCO.** Como o §72 previu: o wrapper + as 2 fontes que já existiam (porContadorLado,
+porAliadoCaido) flipou só **2** (Oni, Mula). Os outros 3 (osiris, aokuang, kali) arrastam cada um um 2º buraco
+(shield-condicional, apply-filtrado, auto-ataque) — ficam para depois, à la carte. **O "balde trava 5" era um nome
+sobre cinco mecânicas distintas; construir o wrapper (o único pedaço comum) rendeu 2, e o resto não é dívida do
+wrapper.** Placar: **IMPL 37 / FUNCIONAL 36** (a única órfã segue afrodite/dominado).
+
+---
+
 ## §72 — VARREDURA DO BALDE ESCALA-DINÂMICA: partiu, e pior que "três pequenos" — é um wrapper + 3 fontes + 3 buracos-segundos
 
 O dono mandou desconfiar dele especialmente. Desconfiança confirmada. Tracei a escala EXATA dos 5, contra as fontes de
