@@ -70,7 +70,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 // nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
 // fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro', 'antiRevive'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect'];
 
@@ -82,7 +82,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
-  'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
+  'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
@@ -734,7 +734,7 @@ function matar(st, atk, alvo, opts = {}) {
   // marcador `naoRevive` (efeito/dot com a propriedade — ex.: Marca da Morte da Hel, Livro do Yan Wong),
   // o flag persiste e o gate no revive-site a segura. Limpar o marcador ANTES de cair libera o revive
   // (contra-jogo). vidaExtra já retornou acima: quem sobrevive ao letal não morreu — nada a travar.
-  if (alvo.efeitos.some(e => e.naoRevive) || alvo.dots.some(d => d.naoRevive)) alvo.naoRevive = true;
+  if (alvo.efeitos.some(e => e.naoRevive || e.type === 'antiRevive') || alvo.dots.some(d => d.naoRevive)) alvo.naoRevive = true;   // 'antiRevive' (F1.6, Iansã): debuff PROATIVO nos vivos — quem cai carregando-o não revive (impede revive por N turnos)
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
@@ -1289,6 +1289,10 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (e.t === 'redirect' && alvos[0]) {
       aplicar(st, u, { type: 'redirect', destino: alvos[0].uid, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, alvo: alvos[0].key, efeito: 'redirect' });
+    }
+    if (e.t === 'limparInvocacoes') {   // F1.6 (Iansã 'Guardiã dos Eguns') — destrói as invocações do lado inimigo
+      const li = st.lados[1 - u.lado];
+      if (li.invocacoes.length) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao', valor: -li.invocacoes.length }); li.invocacoes = []; }
     }
     if (e.t === 'invocar') {
       l.invocacoes.push({ nome: e.nome, tipo: e.tipo, hp: e.hp || 0, v: e.v || 0, dur: e.dur, dono: u.uid });

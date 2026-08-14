@@ -887,6 +887,22 @@ console.log('== F1.6 cdShift MIRADO: 1 unidade (Bragi só a maior recarga; Brahm
   ok(other.cd.habilidade === 3, `MIRADO: não toca outros aliados (${JSON.stringify(other.cd)})`);
   console.log('  cdShift mirado: soMaior (Bragi) vs zera-todas (Brahma), 1 unidade só');
 }
+console.log('== F1.6 Iansã: limparInvocacoes destrói invocações inimigas; antiRevive = naoRevive proativo nos vivos ==');
+{ // destrói invocações do lado inimigo; marca antiRevive num vivo → ao cair, não revive
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 604);
+  const iansa = st.lados[0].units[0], inimigos = st.lados[1].units;
+  st.lados[1].invocacoes.push({ nome: 'Egum', tipo: 'x', hp: 10, v: 5, dur: 3, dono: inimigos[0].uid });
+  E.aplicarFx(st, iansa, [{ t: 'limparInvocacoes' }], { alvo: 'todosInimigos', slot: 'milagre' }, inimigos);
+  ok(st.lados[1].invocacoes.length === 0, `limparInvocacoes: invocações inimigas destruídas (restam ${st.lados[1].invocacoes.length})`);
+  const t = inimigos[0];
+  E.aplicarFx(st, iansa, [{ t: 'apply', eff: { type: 'antiRevive', dur: 2 }, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'milagre' }, inimigos);
+  t.hp = 5;
+  E.bater(st, iansa, t, 999, 'afetado', 'basico', { unico: true });   // cai carregando antiRevive
+  ok(!t.vivo && t.naoRevive, `antiRevive: caiu com a marca → naoRevive selado (vivo=${t.vivo} naoRevive=${t.naoRevive})`);
+  E.reviver(st, t, { hp: 40 });
+  ok(!t.vivo, `revive BLOQUEADO pelo naoRevive proativo (vivo=${t.vivo})`);
+  console.log('  Iansã: limparInvocacoes + antiRevive (naoRevive proativo nos vivos)');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

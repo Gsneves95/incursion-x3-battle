@@ -1,0 +1,64 @@
+{
+  "key": "iansa",
+  "nome": "Iansã",
+  "faccao": "Africana",
+  "elem": "Tempestade",
+  "classe": "Híbrido",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Corisco",
+    "desc": "Quando um inimigo é derrotado, Iansã ganha 1 orbe e causa +8 de dano pelo resto da partida.",
+    "fx": [
+      {
+        "gatilho": "aoCair",
+        "quem": "qualquerInimigo",
+        "faz": [
+          { "t": "orbGain", "n": 1 },
+          { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 99 }, "escopo": "self" }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Espada de Vento",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo; remove 1 buff dele.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "stripOne" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Ventania",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "Remove 1 buff de cada inimigo; eles causam 5 menos de dano por 2 turnos.",
+      "fx": [
+        { "t": "stripOne", "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "dmgDown", "v": 5, "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Guardiã dos Eguns",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; destrói todas as invocações inimigas e impede revives por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
+        { "t": "limparInvocacoes" },
+        { "t": "apply", "eff": { "type": "antiRevive", "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}
