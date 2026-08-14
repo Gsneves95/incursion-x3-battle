@@ -1912,6 +1912,43 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §74 — VARREDURA DE CAMPOS-ÓRFÃOS (limpa) + a TRADUÇÃO dos 10 hook-pequenos ANTES de construir (agrupamento por gancho)
+
+**(A) A 2ª METADE DA VARREDURA DE ÓRFÃOS — campos, não etiquetas (o dono pediu). LIMPA.** Chequei TODO campo de
+`novaUnidade` (unidade) e `novoEstado` (lado + estado) por um LEITOR (refs − writes ≥ 1 read). **Todos têm leitor.**
+O `usos` era o único campo-órfão (declarado sem fio há muito) e foi ligado no §73. Não há mais campo preparado-sem-fio.
+Fica a regra: **duas espécies de órfão — etiqueta aplicada-sem-enforce (dominado) e campo declarado-sem-fio (usos);
+as duas passam por validarDeus+smoke; as duas se pegam por varredura cruzada (aplica-vs-enforce / declara-vs-lê), não
+por teste de kit.** Re-rodar as duas a cada onda.
+
+**(B) A TRADUÇÃO DOS 10 (antes de construir — a isis provou que a reconciliação erra ~20% p/ cima).** Confirmado: cada
+um dos 10 é "hook-pequeno" de verdade (1 gancho), MENOS as exceções que só a tradução pega:
+
+| deus | gancho (tradução) | tamanho | nota |
+|---|---|---|---|
+| **boitata** | **NENHUM — escreve JÁ** | — | "ignora Inalvejável" é clause INERTE (Inalvejável não existe); o resto (aoSerAtingido{Chama}→cura §55 + imune Queimadura + seCond) é limpo. **6º verde-escondido; reconciliação errou p/ cima de novo.** |
+| hades | **nega-orbe** (milagre "rouba orbe") + DoT-nome (hab "10 puro/turno") | pequeno×2, MULTI | nega-orbe serve hades+heimdall+hermes/shutendoji |
+| heimdall | **nega-orbe** (passiva anti-roubo, acoplada) | — | básico/hab/milagre limpos (contraAtaca é intrínseco a alvo-único); a passiva SÓ funciona quando nega-orbe existir |
+| iara | execução-status-filter (milagre "elimina Encharcados ≤24") | pequeno, MULTI | serve iara + morrigan |
+| atena | contraAtaca-classe-filter (hab "quem atinge com Física") | pequeno, single | contraAtaca hoje dispara em QUALQUER golpe único, sem filtro de classe |
+| durga | vulnerabilidade-debuff (hab "recebe +8 de dano") | pequeno, single | efeito "toma +N" (genérico; hoje só o adormecido dá +8 hardcoded) |
+| khnum | aoCair-quem:aliado (passiva) | pequeno, MULTI | serve khnum + erinias/nuwa (família F1.4) |
+| poseidon | reducao-por-elem-do-aliado (passiva "aliados Maré") | pequeno, single | reducao hoje não condiciona pelo elem do PROTEGIDO |
+| chaac | **DOIS**: bonusCura-por-tipo-de-cura (passiva "regen +4") + apply-filtrado-por-status (milagre "atordoa Encharcados") | pequeno×2 | apply-filtrado serve chaac + aokuang |
+| **huangdi** | **cdShift-CLUSTER** (cdShift em FX_TURNO + "recarga mais longa DO TIME" = max-across-team + mirado-multi) | **MÉDIO, single** | **SAI DA LEVA — vira decisão própria, como o dominado (regra 3 do dono)** |
+
+**(C) O AGRUPAMENTO POR GANCHO (regra 1 do dono):** só **nega-orbe** agrupa 2-nesta-leva (hades+heimdall); constrói
+uma vez, escreve os dois. Os outros são 1-deus-1-gancho (como os nove), embora vários sirvam MAIS deuses na fila
+(execução-status→iara+morrigan; aoCair-aliado→khnum+erinias/nuwa; bonusCura-tipo→chaac+cernunnos; apply-filtrado→
+chaac+aokuang). **Nenhum gancho da leva é médio-single EXCETO huangdi** — que por isso sai. **chaac é o único
+duplo-travado** (2 ganchos).
+
+**O plano da leva (8 deuses, IMPL 37→45 + boitata de graça = ~45; huangdi à parte):** boitata (0 gancho) → nega-orbe
+(hades+heimdall) → os 6 single/multi pequenos (iara, atena, durga, khnum, poseidon, chaac[×2]). huangdi fora, aguardando
+a decisão do dono sobre o cdShift-cluster médio. **Aguarda o go do dono para o 1º; depois sigo sozinho pelos oito.**
+
+---
+
 ## §73 — ISIS FECHA (taxa do §61 medida), o campo `usos` sem-fio (2º caso da família dominado), e o wrapper de escala DEDUP-clean (Oni + Mula)
 
 **(A) A TAXA DO §61, MEDIDA (o dono: mais útil que a regra qualitativa).** O teste de teto (§71) deu **~80% (4/5)**, e o
