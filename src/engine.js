@@ -103,7 +103,7 @@ const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx
 const GATILHOS_PASSIVA = {
   bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73, mesmo helper do danoBase)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
-  reducao:         { campos: ['v', 'escopo', 'contra'], obrig: ['v'] },        // reduz o dano recebido (sessão 3)
+  reducao:         { campos: ['v', 'escopo', 'contra', 'protegido'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré)
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
@@ -152,6 +152,11 @@ const CONTRA = {
   elem:    { sub: ELEMS },          // só golpes DESTE elemento (positivo — aoSerAtingido boitata: 'Chama')
   elemNao: { sub: ELEMS },          // reduz TODO golpe EXCETO os deste elemento (baldur: exceto 'Verdejante')
   alcance: { sub: ['unico', 'area'] },  // reduz só golpes deste alcance (afrodite: 'unico')
+};
+// `protegido` (F1.6, Poseidon) — eixo DEFENSIVO que lê o BENEFICIÁRIO (o aliado protegido), não o golpe.
+// Contraparte de `contra`: `contra` filtra o ataque que chega, `protegido` filtra QUEM recebe a redução.
+const PROTEGIDO = {
+  elem: { sub: ELEMS },   // reduz só o aliado protegido DESTE elemento (Poseidon: 'aliados Maré')
 };
 // `quando` (condição do bônus) — conjunto FECHADO. Cada chave declara COMO validar o valor:
 //   sub  → valor ∈ lista   ·   bool → valor === true   ·   hp → {op, v}
@@ -205,6 +210,8 @@ const VOCAB = {
   ignoraveis: IGNORAVEIS,                          // valores válidos em danoIrredutivel.ignora
   contra: Object.keys(CONTRA),                     // chaves válidas em reducao.contra (eixo DEFENSIVO)
   contraDef: CONTRA,                               // como validar cada chave de contra
+  protegido: Object.keys(PROTEGIDO),               // chaves válidas em reducao.protegido (eixo do BENEFICIÁRIO)
+  protegidoDef: PROTEGIDO,                          // como validar cada chave de protegido
   fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
   buffs: BUFFS,                                    // efeitos BENÉFICOS — o único conjunto que `apply` pode aplicar dentro de um faz (F1.2.5)
   imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
@@ -589,6 +596,10 @@ function contraCasou(c, golpe) {
   if ('alcance' in c) return (golpe.unico ? 'unico' : 'area') === c.alcance;
   return false;
 }
+function protegidoCasou(pr, alvo) {   // `protegido` lê o BENEFICIÁRIO (o aliado que recebe a redução), não o golpe
+  if ('elem' in pr) return alvo.elem === pr.elem;
+  return false;
+}
 function reducaoDeclarativa(st, alvo, golpe) {
   let r = 0;
   for (const u of st.lados[alvo.lado].units) {
@@ -598,6 +609,7 @@ function reducaoDeclarativa(st, alvo, golpe) {
     for (const f of p.fx) {
       if (f.gatilho !== 'reducao') continue;
       if ((f.escopo || 'self') === 'self' && u !== alvo) continue;   // self protege só o dono
+      if (f.protegido && !protegidoCasou(f.protegido, alvo)) continue;   // condição do BENEFICIÁRIO (Poseidon: só aliado Maré)
       if (f.contra && !contraCasou(f.contra, golpe)) continue;        // condição do golpe que chega
       if (f.estado && !estadoOK(f.estado, u, st)) continue;           // compõe (AND) com o `contra` — a garantia do campo universal
       r = Math.max(r, f.v);

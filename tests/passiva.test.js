@@ -1076,6 +1076,20 @@ console.log('== F1.6 aoCair quem:aliado: reage à queda de aliado REAL e de invo
   console.log('  aoCair aliado: aliado real + invocação-guarda disparam; inimigo não');
 }
 
+console.log('== F1.6 reducao protegido: redução FILTRADA pelo elemento do beneficiário (Poseidon — só Maré) ==');
+{ // protetor Maré protege o time, mas só os aliados Maré recebem a redução
+  E.GODS.tpo = { nome: 'TPo', faccao: 'T', elem: 'Maré', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 5, escopo: 'time', protegido: { elem: 'Maré' } }] } };
+  E.GODS.tmare = { nome: 'TMare', faccao: 'T', elem: 'Maré', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: '-', desc: '-' } };
+  const st = E.novoEstado(['tpo', 'tmare', 'zeus'], ['zeus', 'zeus', 'zeus'], 620);
+  const po = st.lados[0].units[0], mare = st.lados[0].units[1], outro = st.lados[0].units[2], enemy = st.lados[1].units[0];
+  const bate = (alvo) => { const h = alvo.hp; E.aplicarFx(st, enemy, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [alvo]); return h - alvo.hp; };
+  ok(bate(mare) === 15, `aliado Maré: 20-5 = 15 de dano recebido`);
+  ok(bate(po) === 15, `o próprio protetor (Maré) também recebe -5`);
+  ok(bate(outro) === 20, `aliado NÃO-Maré (Tempestade): 20 cheio, sem redução`);
+  delete E.GODS.tpo; delete E.GODS.tmare;
+  console.log('  protegido: filtra o beneficiário, não o golpe — só o elemento casado reduz');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

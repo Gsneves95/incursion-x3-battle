@@ -99,6 +99,19 @@ function validarContra(c, ctx, errs) {
   }
 }
 
+// Valida o eixo `protegido` do gatilho reducao (F1.6, Poseidon): filtra o BENEFICIÁRIO (o aliado protegido),
+// não o golpe. Contraparte de `contra`. Conjunto e sub-vocabulário vêm de V.protegidoDef (o motor).
+function validarProtegido(pr, ctx, errs) {
+  if (!pr || typeof pr !== 'object' || Array.isArray(pr)) { errs.push(`${ctx}: protegido não é objeto`); return; }
+  const chaves = Object.keys(pr);
+  if (chaves.length !== 1) errs.push(`${ctx}: protegido deve ter exatamente 1 condição (tem ${chaves.length})`);
+  for (const k of chaves) {
+    const def = V.protegidoDef[k];
+    if (!def) { errs.push(`${ctx}: condição de protegido desconhecida "${k}" (válidas: ${V.protegido.join(', ')})`); continue; }
+    if (def.sub && !def.sub.includes(pr[k])) errs.push(`${ctx}: valor "${pr[k]}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`);
+  }
+}
+
 // Valida a CONDIÇÃO `quandoCura` do gatilho bonusCura (F1.2 sessão 7). TERCEIRO eixo, separado de `quando`
 // (ofensivo) e `contra` (defensivo): a cura não tem ataque, então lê o contexto da cura. Vem de V.condicoesCuraDef.
 function validarQuandoCura(q, ctx, errs) {
@@ -223,6 +236,7 @@ function validarPassiva(p, ctx, errs) {
     if ('estado' in f) validarEstado(f.estado, `${c}.estado`, errs);
     if ('quandoCura' in f) validarQuandoCura(f.quandoCura, `${c}.quandoCura`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
+    if ('protegido' in f) validarProtegido(f.protegido, `${c}.protegido`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('noAtacante' in f) validarNoAtacante(f.noAtacante, `${c}.noAtacante`, errs);
     if ('noAtor' in f) validarNoAtor(f.noAtor, `${c}.noAtor`, errs);
