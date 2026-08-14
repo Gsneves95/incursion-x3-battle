@@ -81,7 +81,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 // some-o aqui (e um fxKey novo, se o efeito ler um campo novo) — mesma disciplina de "primitiva antes do deus".
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
-  'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta',
+  'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'armazenaDano', 'invocar', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
 ];
@@ -1278,6 +1278,13 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (e.t === 'armazenaDano') {
       aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano' });
+    }
+    // AUTORIA do redirect (F1.6) — o §62 construiu só o CONSUMO (bater); aqui o fx que APLICA. O portador é o CASTER
+    // (Curupira, no lado DEFENSOR: golpe único inimigo mira o time dela → `bater` acha o portador nesse lado), e o
+    // SINK é o inimigo ESCOLHIDO (alvos[0], no lado do atacante). Espelha o intercepta (destino vem de alvos[0]).
+    if (e.t === 'redirect' && alvos[0]) {
+      aplicar(st, u, { type: 'redirect', destino: alvos[0].uid, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
+      log(st, { tipo: 'efeito', origem: u.key, alvo: alvos[0].key, efeito: 'redirect' });
     }
     if (e.t === 'invocar') {
       l.invocacoes.push({ nome: e.nome, tipo: e.tipo, hp: e.hp || 0, v: e.v || 0, dur: e.dur, dono: u.uid });

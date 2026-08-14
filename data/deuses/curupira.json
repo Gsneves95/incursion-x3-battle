@@ -1,0 +1,55 @@
+{
+  "key": "curupira",
+  "nome": "Curupira",
+  "faccao": "Brasileira",
+  "elem": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Protetor dos Bichos",
+    "desc": "Os aliados recebem 5 de redução de dano; Curupira causa +10 de dano contra unidades Chama.",
+    "fx": [
+      { "gatilho": "reducao", "v": 5, "escopo": "time" },
+      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoElem": "Chama" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Cipó Chicoteante",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 15 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Pés Virados",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo).",
+      "fx": [
+        { "t": "redirect", "dur": 2 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fúria da Floresta",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 15 no time.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "selado", "dur": 1 }, "escopo": "todosInimigos" },
+        { "t": "heal", "v": 15, "escopo": "time" }
+      ]
+    }
+  ]
+}

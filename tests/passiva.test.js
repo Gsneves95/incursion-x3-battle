@@ -847,6 +847,18 @@ console.log('== Redirecionar: golpe de alvo único → sink no lado do atacante;
   ok(alvo.hp === hAlvo - 15 && sink.hp === hSink, 'golpe de ÁREA NÃO é redirecionado (só alvo único)');
   console.log('  área não redireciona (só alvo único, como intercepta)');
 }
+{ // AUTORIA F1.6: aplicarFx APLICA o redirect — o §62 só testou o CONSUMO via push sintético. Portador = o CASTER
+  // (lado defensor); destino = o inimigo ESCOLHIDO (alvos[0], lado atacante). Fecha a dívida de autoria do §62 (Curupira).
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 601);
+  const dono = st.lados[0].units[0], alvo = st.lados[0].units[1], atk = st.lados[1].units[0], sink = st.lados[1].units[1];
+  E.aplicarFx(st, dono, [{ t: 'redirect', dur: 2 }], { alvo: 'inimigo', slot: 'habilidade' }, [sink]);
+  const rd = E.ef(dono, 'redirect');
+  ok(rd && rd.destino === sink.uid, `AUTORIA: aplicarFx arma redirect no caster, destino = sink escolhido (${rd && rd.destino} == ${sink.uid})`);
+  const hSink = sink.hp, hAlvo = alvo.hp;
+  E.bater(st, atk, alvo, 12, 'afetado', 'basico', { unico: true });
+  ok(sink.hp === hSink - 12 && alvo.hp === hAlvo, `golpe único inimigo cai no sink escolhido (sink ${hSink}→${sink.hp}, alvo intacto ${alvo.hp})`);
+  console.log('  AUTORIA redirect (Curupira): fx aplica no caster, destino do inimigo escolhido');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
