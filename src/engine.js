@@ -85,10 +85,11 @@ const TIPOS_FX = [
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
+  'roubaOrbe',   // F1.6 (Hades/Hermes/Shuten): remove n orbes do inimigo (rouba=vai p/ o próprio); bloqueado por protegeOrbe (Heimdall)
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
-const DOTS = ['queimadura', 'veneno', 'sangramento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
+const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
 const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3).
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -113,6 +114,7 @@ const GATILHOS_PASSIVA = {
   aoUsarHabilidade:{ campos: ['slot', 'faz'], obrig: ['slot', 'faz'] },        // quando um aliado usa habilidade do slot, faz X no dono (Passo 0)
   aoSerAtingido:   { campos: ['quem', 'contra', 'faz', 'noAtacante', 'estado'], obrig: ['quem'] },   // reage a SER atingido (F1.4): faz no reator (BUFF) / noAtacante no atacante (debuff — sujeito do evento)
   aoAgirSobEfeito: { campos: ['efeito', 'faz', 'noAtor', 'estado'], obrig: ['efeito'] },             // quando o ATOR age carregando `efeito` (aplicado por MIM — origem), reajo: faz (no dono) / noAtor (no ator)
+  protegeOrbe:     { campos: [], obrig: [] },                                                        // F1.6 (Heimdall): enquanto vivo, o roubaOrbe inimigo contra o time é bloqueado (marcador declarativo)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -225,6 +227,7 @@ const VOCAB = {
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
     'se', 'entao', 'senao',   // fx condicional (F1.6, Freyja): se(estado) ? entao : senao
+    'rouba',   // roubaOrbe (F1.6): true = o orbe removido vai p/ o próprio lado (Hades); ausente = só remove
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
@@ -246,7 +249,7 @@ const VOCAB = {
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
     'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
     'sem_cura', 'nao_revive',                           // falha (noHeal / naoRevive)
-    'em_recarga', 'sem_energia', 'silenciado', 'travada', 'ja_usou', // indisponibilidade de ação (acoesDe)
+    'em_recarga', 'sem_energia', 'silenciado', 'travada', 'ja_usou', 'orbe_protegido', // indisponibilidade de ação (acoesDe) / roubo de orbe barrado (Heimdall)
     'tempo',                                            // fim por esgotamento (turno 40)
   ],
 };
@@ -1353,6 +1356,21 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];
       for (let i = 0; i < e.n; i++) l.orbs[tipos[Math.floor(rng(st) * tipos.length)]]++;
       log(st, { tipo: 'orbe', lado: u.lado, valor: e.n });
+    }
+    if (e.t === 'roubaOrbe') {   // F1.6 — remove e.n orbes do MAIOR pool do inimigo (rouba: vai p/ o próprio); Heimdall (protegeOrbe) barra
+      const li = st.lados[1 - u.lado];
+      const protegido = li.units.some(x => { if (!x.vivo) return false; const g = kitDe(st, x); const p = g && g.passiva; return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'protegeOrbe'); });
+      if (protegido) { log(st, { tipo: 'bloqueio', lado: 1 - u.lado, motivo: 'orbe_protegido' }); }
+      else {
+        let n = 0;
+        for (let i = 0; i < e.n; i++) {
+          const el = ELEMS.filter(x => li.orbs[x] > 0).sort((a, b) => li.orbs[b] - li.orbs[a])[0];
+          if (!el) break;
+          li.orbs[el]--; n++;
+          if (e.rouba) l.orbs[el]++;
+        }
+        if (n) { log(st, { tipo: 'orbe', lado: 1 - u.lado, valor: -n }); if (e.rouba) log(st, { tipo: 'orbe', lado: u.lado, valor: n }); }
+      }
     }
   }
 }

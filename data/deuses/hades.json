@@ -1,0 +1,60 @@
+{
+  "key": "hades",
+  "nome": "Hades",
+  "faccao": "Grega",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Ceifador de Almas",
+    "desc": "Quando qualquer inimigo é derrotado, Hades cura 15 e o time ganha 1 orbe de Umbra.",
+    "fx": [
+      {
+        "gatilho": "aoCair",
+        "quem": "qualquerInimigo",
+        "faz": [
+          { "t": "heal", "v": 15 },
+          { "t": "orbGain", "n": 1, "para": "Umbra" }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Toque Fúnebre",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Correntes do Tártaro",
+      "cost": { "Umbra": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "1 inimigo fica Selado por 1 turno (só Básico) e sofre 10 de dano puro por turno durante 2 turnos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "selado", "dur": 1 } },
+        { "t": "dot", "nome": "tormento", "v": 10, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Portões do Submundo",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "40 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe.",
+      "fx": [
+        { "t": "dmg", "v": 40, "executaAbaixoDe": 24 },
+        { "t": "roubaOrbe", "n": 1, "rouba": true }
+      ]
+    }
+  ]
+}

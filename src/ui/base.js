@@ -31,7 +31,7 @@ const SYM = {
 // mapa CHAVE -> nome exibível dos danos contínuos. O motor emite o DoT como CHAVE
 // (efeito:'queimadura'), nunca como nome (docs/eventos.md A); a tradução mora aqui,
 // compartilhada por narrar.js (registro) e campo.js (faixa de efeitos). Cresce com os DoTs.
-const NOMES_DOT = { queimadura: 'Queimadura', veneno: 'Veneno', sangramento: 'Sangramento' };
+const NOMES_DOT = { queimadura: 'Queimadura', veneno: 'Veneno', sangramento: 'Sangramento', tormento: 'Tormento' };
 // CHAVE de efeito -> rótulo humano. DoT pelo mapa acima; buff/debuff pelo rótulo do SYM;
 // senão devolve a própria chave (fica legível e nunca some). Único lugar de tradução de chave.
 function rotuloEfeito(k) { return NOMES_DOT[k] || (SYM[k] && SYM[k][2]) || k; }

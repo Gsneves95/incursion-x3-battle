@@ -983,6 +983,25 @@ console.log('== F1.6 (§73) wrapper: bonusDano PASSIVO escala por contagem (MESM
   delete E.GODS.thp;
   console.log('  §73: porHpFaltante escala pelo HP-faltante do próprio atacante');
 }
+console.log('== F1.6 nega-orbe: roubaOrbe remove/rouba do maior pool inimigo; protegeOrbe (Heimdall) barra ==');
+{ // rouba 1 do maior pool inimigo → vai p/ o próprio
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 612);
+  const u = st.lados[0].units[0];
+  E.ELEMS.forEach(e => { st.lados[1].orbs[e] = 0; st.lados[0].orbs[e] = 0; });
+  st.lados[1].orbs.Tempestade = 3; st.lados[1].orbs.Umbra = 1;
+  E.aplicarFx(st, u, [{ t: 'roubaOrbe', n: 1, rouba: true }], { alvo: 'inimigo', slot: 'milagre' }, [st.lados[1].units[0]]);
+  ok(st.lados[1].orbs.Tempestade === 2 && st.lados[0].orbs.Tempestade === 1, `rouba 1 do MAIOR pool inimigo (Tempestade 3→${st.lados[1].orbs.Tempestade}) e ganha (${st.lados[0].orbs.Tempestade})`);
+}
+{ // protegeOrbe (Heimdall) barra o roubo
+  E.GODS.theim = { key: 'theim', nome: 'THeim', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'protegeOrbe' }] }, ab: [{ slot: 'basico', classe: 'Físico', nome: 'b', cost: {}, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['theim', 'zeus', 'zeus'], 613);
+  const u = st.lados[0].units[0];
+  E.ELEMS.forEach(e => st.lados[1].orbs[e] = 0); st.lados[1].orbs.Umbra = 5;
+  E.aplicarFx(st, u, [{ t: 'roubaOrbe', n: 2, rouba: true }], { alvo: 'inimigo', slot: 'milagre' }, [st.lados[1].units[0]]);
+  ok(st.lados[1].orbs.Umbra === 5, `protegeOrbe (Heimdall vivo) BARRA o roubo (Umbra segue 5)`);
+  delete E.GODS.theim;
+  console.log('  nega-orbe: roubaOrbe (maior pool, rouba→próprio) + protegeOrbe barra');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

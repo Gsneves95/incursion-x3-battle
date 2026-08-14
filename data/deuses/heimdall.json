@@ -1,0 +1,52 @@
+{
+  "key": "heimdall",
+  "nome": "Heimdall",
+  "faccao": "Nórdica",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Sentinela",
+    "desc": "O inimigo não pode roubar nem remover orbes do time.",
+    "fx": [
+      { "gatilho": "protegeOrbe" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lâmina Vigilante",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Visão de Cem Léguas",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Por 2 turnos, 1 aliado contra-ataca por 15 quem o atingir com alvo único.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "contraAtaca", "v": 15, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Chamado do Gjallarhorn",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time ganha 20 de Defesa Destrutível e imunidade a controle por 2 turnos.",
+      "fx": [
+        { "t": "shield", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "controlImmune", "dur": 2 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

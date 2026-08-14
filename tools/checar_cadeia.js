@@ -35,8 +35,8 @@ function danosProsa(ef) {
     const pre = ef.slice(Math.max(0, m.index - 8), m.index);
     if (/[+]\s*$|menos\s+$|mais\s+$/.test(pre)) continue;
     if (m[1] === '0' && /causam\s+$/.test(pre)) continue;   // Pacificar: "causam 0 de dano" descreve o EFEITO (dano do ALVO→0), não o dano DESTA habilidade — nenhuma habilidade "causa 0"
-    const post = ef.slice(m.index + m[0].length, m.index + m[0].length + 12);
-    if (/^\s*(puro\s*)?\/\s*turno|^\s+por\s+turno/.test(post)) continue;   // TICK de DoT ("N de dano [puro]/turno" / "por turno" — Veneno/Sangramento): é o dano do EFEITO ao longo do tempo, não o dano DESTA habilidade. Padrão específico (dono §67): não casa "N de dano a 1 inimigo"
+    const post = ef.slice(m.index + m[0].length, m.index + m[0].length + 16);
+    if (/^\s*(?:(?:puro\s*)?\/\s*turno|(?:puro\s+)?por\s+turno)/.test(post)) continue;   // TICK de DoT ("N de dano [puro]/turno" OU "N de dano [puro] por turno" — Veneno/Sangramento/Tormento): dano do EFEITO ao longo do tempo, não o dano DESTA habilidade. Específico (dono §67): não casa "N de dano a 1 inimigo"
     out.push(+m[1]);
   }
   return out;
