@@ -1090,6 +1090,34 @@ console.log('== F1.6 reducao protegido: redução FILTRADA pelo elemento do bene
   console.log('  protegido: filtra o beneficiário, não o golpe — só o elemento casado reduz');
 }
 
+console.log('== F1.6 bonusCura viaRegen: só o TICK de regeneração recebe o bônus (Chaac) ==');
+{ // "regenerações no time curam +4" — o bônus entra no tick de regen, NÃO numa cura direta
+  E.GODS.tch = { nome: 'TCh', faccao: 'T', elem: 'Maré', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusCura', v: 4, quandoCura: { viaRegen: true } }] } };
+  // 1. tick de regen num aliado → +4
+  let st = E.novoEstado(['tch', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 621);
+  let ally = st.lados[0].units[1]; ally.hp = 50; ally.efeitos.push({ type: 'regen', v: 10, dur: 3 });
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(ally.hp === 64, `regen tick 10 +4 (viaRegen) = 14 (50→${ally.hp})`);
+  // 2. cura DIRETA (não-regen) NÃO recebe o bônus
+  st = E.novoEstado(['tch', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 622);
+  ally = st.lados[0].units[1]; ally.hp = 50;
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'heal', v: 10, escopo: 'time' }], { alvo: 'time', slot: 'habilidade' }, []);
+  ok(ally.hp === 60, `cura direta 10 SEM bônus (viaRegen só no tick) (50→${ally.hp})`);
+  delete E.GODS.tch;
+  console.log('  viaRegen: o bônus lê a ORIGEM da cura (tick de regen), não a magnitude');
+}
+
+console.log('== F1.6 apply soSe: apply FILTRADO por status do alvo — atordoa só os Encharcados (Chaac) ==');
+{ // milagre em área: atordoa apenas os alvos que já estão Encharcados
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 623);
+  const atk = st.lados[0].units[0], e0 = st.lados[1].units[0], e1 = st.lados[1].units[1];
+  e0.efeitos.push({ type: 'encharcado', dur: 2 });   // só e0 está Encharcado
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 1 }, escopo: 'todosInimigos', soSe: { alvoDebuff: 'encharcado' } }], { alvo: 'todosInimigos', slot: 'milagre' }, []);
+  ok(!!E.ef(e0, 'atordoado'), `alvo Encharcado → atordoado`);
+  ok(!E.ef(e1, 'atordoado'), `alvo seco → NÃO atordoado (soSe filtra)`);
+  console.log('  soSe: aplica só nos alvos que casam a condição de status');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

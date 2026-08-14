@@ -181,6 +181,7 @@ const FACCOES_VOCAB = ['Africana', 'Brasileira', 'Celta', 'Chinesa', 'Egípcia',
 const CONDICOES_CURA = {
   inimigoTem: { sub: DOTS },   // existe inimigo VIVO (do lado curado) com a tag DoT (brigid: 'queimadura'); cresce p/ debuff/controle por deus
   curadorFaccao: { sub: FACCOES_VOCAB },   // F1.6 (Nefertem): a cura foi FEITA por um curador desta facção (lê quem curou)
+  viaRegen: { bool: true },   // F1.6 (Chaac): a cura veio de um TICK de regeneração (não de habilidade/milagre) — "regenerações curam +N"
 };
 // `estado` (F1.2.5 s3) — CAMPO UNIVERSAL: qualquer gatilho compõe (AND) o seu eixo (quando/contra/quandoCura)
 // com uma condição de ESTADO DO CAMPO, lida contra o DONO do fx. NÃO é 4º eixo (irmão dos três, um-por-fx) —
@@ -238,6 +239,7 @@ const VOCAB = {
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
+    'soSe',   // apply FILTRADO por status do alvo (F1.6, Chaac): aplica só nos alvos que casam a condição (atordoa só os Encharcados)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -544,7 +546,7 @@ function bonusDanoDeclarativo(st, atk, alvo) {
 
 // bonusCura (F1.2 sessão 8) — avalia a condição `quandoCura` (eixo próprio da cura). Lê o contexto da cura,
 // NÃO um ataque: `u` é a unidade CURADA; a condição olha o campo/lado. Conjunto FECHADO (CONDICOES_CURA).
-function condCuraOK(q, u, st, curador) {
+function condCuraOK(q, u, st, curador, via) {
   if (!q) return true;
   if ('inimigoTem' in q) {   // existe inimigo VIVO (do lado oposto ao curado) com a tag DoT
     return st.lados[1 - u.lado].units.some(x => x.vivo && x.dots.some(d => d.nome === q.inimigoTem));
@@ -553,11 +555,12 @@ function condCuraOK(q, u, st, curador) {
     const g = curador && kitDe(st, curador);
     return !!g && g.faccao === q.curadorFaccao;
   }
+  if ('viaRegen' in q) return via === 'regen';   // F1.6 (Chaac): só o TICK de regeneração conta
   return false;
 }
 // Soma o +v das passivas bonusCura no lado do CURADO (u). O dono precisa estar VIVO (a passiva some com ele,
 // igual ao bonusDano). Estrutura espelha bonusDanoDeclarativo. Brigid: +5 se algum inimigo com Queimadura.
-function bonusCuraDeclarativo(st, u, curador) {
+function bonusCuraDeclarativo(st, u, curador, via) {
   let b = 0;
   for (const dono of st.lados[u.lado].units) {
     if (!dono.vivo) continue;
@@ -567,7 +570,7 @@ function bonusCuraDeclarativo(st, u, curador) {
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusCura') continue;
       if (f.estado && !estadoOK(f.estado, dono, st)) continue;   // compõe com o `quandoCura`
-      if (condCuraOK(f.quandoCura, u, st, curador)) b += f.v;
+      if (condCuraOK(f.quandoCura, u, st, curador, via)) b += f.v;
     }
   }
   return b;
@@ -827,13 +830,14 @@ function removerInvocacao(st, g) {
   for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, { tipo: 'efeito', efeito: 'invocacao', duracao: 0 }); } }
 }
 
-function curar(st, u, v, curador = null) {
+function curar(st, u, v, curador = null, via = null) {
   if (!u.vivo) return;
   if (ef(u, 'noHeal')) { log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'sem_cura' }); return; }
   // passiva Brigid (declarativa, gatilho bonusCura): +v se a condição quandoCura vale. §39: só INIMIGO com
   // Queimadura conta (não aliado) — travado no eixo `inimigoTem` (lê o lado oposto ao curado).
   // `curador` = quem fez a cura (Nefertem lê a FACÇÃO dele); null quando a origem não é uma unidade (regen).
-  const bonus = bonusCuraDeclarativo(st, u, curador);
+  // `via` = 'regen' quando a cura é um tick de regeneração (Chaac: "regenerações curam +N").
+  const bonus = bonusCuraDeclarativo(st, u, curador, via);
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
   if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });
@@ -1027,7 +1031,7 @@ function iniciarTurno(st) {
     }
     if (!u.vivo) continue;
     const rg = ef(u, 'regen');
-    if (rg) curar(st, u, rg.v);
+    if (rg) curar(st, u, rg.v, null, 'regen');   // tick de regeneração: via='regen' (Chaac lê isto no bonusCura)
     // regra 4 — recargas descontam no início do turno do dono
     for (const k in u.cd) if (u.cd[k] > 0) u.cd[k]--;
   }
@@ -1288,6 +1292,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'heal') curar(st, t, e.v, u);   // curador = quem lança a habilidade
       else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid); }   // origem = o lançador; Pacificar zera o DoT que o pacificado aplicaria neste turno (é dano que ele causaria)
       else if (e.t === 'apply') {
+        if (e.soSe && !condOK(e.soSe, u, t, st)) continue;   // F1.6 (Chaac): apply FILTRADO por status do alvo — atordoa só os Encharcados de uma área
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
         aplicar(st, t, { ...e.eff, origem: u.uid });
       }

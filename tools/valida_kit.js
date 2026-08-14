@@ -47,6 +47,7 @@ function validarFx(f, ctx, errs) {
   }
   if ('executaAbaixoDe' in f && (!Number.isInteger(f.executaAbaixoDe) || f.executaAbaixoDe <= 0)) errs.push(`${ctx}: executaAbaixoDe mal formado (${JSON.stringify(f.executaAbaixoDe)}; inteiro > 0)`);
   if ('execIf' in f) validarQuando(f.execIf, `${ctx}.execIf`, errs);   // F1.6 (Iara): filtro de status na execução, mesma gramática do condOK
+  if ('soSe' in f) validarQuando(f.soSe, `${ctx}.soSe`, errs);   // F1.6 (Chaac): apply filtrado por status do alvo, mesma gramática do condOK
   if ('seCond' in f) {   // F1.6: bump condicional geral — {quando: <condição ofensiva>, v: dano quando a condição bate}
     const s = f.seCond;
     if (!s || typeof s !== 'object' || typeof s.v !== 'number' || !Number.isInteger(s.v) || s.v <= 0) errs.push(`${ctx}: seCond.v mal formado (${JSON.stringify(s && s.v)}; inteiro > 0)`);
@@ -122,6 +123,7 @@ function validarQuandoCura(q, ctx, errs) {
     const def = V.condicoesCuraDef[k];
     if (!def) { errs.push(`${ctx}: condição de cura desconhecida "${k}" (válidas: ${V.condicoesCura.join(', ')})`); continue; }
     if (def.sub && !def.sub.includes(q[k])) errs.push(`${ctx}: valor "${q[k]}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`);
+    else if (def.bool && q[k] !== true) errs.push(`${ctx}: "${k}" é booleano — valor deve ser true (veio ${JSON.stringify(q[k])})`);
   }
 }
 
