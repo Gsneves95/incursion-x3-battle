@@ -1,0 +1,52 @@
+{
+  "key": "boitata",
+  "nome": "Boitatá",
+  "faccao": "Brasileira",
+  "elem": "Chama",
+  "classe": "Mágico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Guardiã dos Campos",
+    "desc": "Imune a Queimadura e cura 10 sempre que uma habilidade de Chama a atinge; o time ignora Inalvejável.",
+    "fx": [
+      { "gatilho": "aoSerAtingido", "quem": "self", "contra": { "elem": "Chama" }, "faz": [ { "t": "heal", "v": 10 } ] },
+      { "gatilho": "imunidade", "a": [ "queimadura" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Bote Flamejante",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Olhos de Brasa",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "Todos os inimigos causam 10 menos de dano por 2 turnos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgDown", "v": 10, "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Cobra de Fogo",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "20 de dano a todos os inimigos; 32 em quem estiver com Queimadura.",
+      "fx": [
+        { "t": "dmg", "v": 20, "seCond": { "quando": { "alvoDebuff": "queimadura" }, "v": 32 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}
