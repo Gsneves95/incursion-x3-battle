@@ -859,6 +859,20 @@ console.log('== Redirecionar: golpe de alvo único → sink no lado do atacante;
   ok(sink.hp === hSink - 12 && alvo.hp === hAlvo, `golpe único inimigo cai no sink escolhido (sink ${hSink}→${sink.hp}, alvo intacto ${alvo.hp})`);
   console.log('  AUTORIA redirect (Curupira): fx aplica no caster, destino do inimigo escolhido');
 }
+console.log('== F1.6 dano condicional: seCond bumpa por estado do alvo (reusa condOK) — Xangô "30 em quem tiver buff" ==');
+{ // sem a condição, dano base; com a condição (alvo tem buff), bump ao valor de seCond.v
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 602);
+  const atk = st.lados[0].units[0], a = st.lados[1].units;
+  const fx = [{ t: 'dmg', v: 20, seCond: { quando: { alvoBuff: 'qualquer' }, v: 30 } }];
+  const h0 = a[0].hp;
+  E.aplicarFx(st, atk, fx, { alvo: 'inimigo', slot: 'milagre' }, [a[0]]);
+  ok(a[0].hp === h0 - 20, `seCond SEM buff: dano base 20 (${h0}→${a[0].hp})`);
+  a[1].efeitos.push({ type: 'dmgUp', v: 5, dur: 2 });   // um buff qualquer no alvo
+  const h1 = a[1].hp;
+  E.aplicarFx(st, atk, fx, { alvo: 'inimigo', slot: 'milagre' }, [a[1]]);
+  ok(a[1].hp === h1 - 30, `seCond COM buff: bump para 30 (${h1}→${a[1].hp})`);
+  console.log('  seCond: base sem condição, bump quando o alvo casa condOK');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

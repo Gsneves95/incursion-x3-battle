@@ -89,7 +89,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno'];   // cresce (sangramento…) ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit.
+const CONTADORES = ['discoSolar', 'Coroa'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô acumula dano de retribuição.
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
 // motor não carregar um `if (u.key===...)` por deus. A SESSÃO 1 abre UM gatilho só: bonusDano.
 // Migração é por DEUS INTEIRO (§37): um deus só migra quando TODOS os gatilhos da sua passiva
@@ -217,7 +217,7 @@ const VOCAB = {
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
-    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seAliadoJaAgiu', 'limiar',
+    'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'reduzMaxHp',   // Podridão: reduz o HP máximo por acúmulo (F1.1 primitiva 3)
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
@@ -1326,6 +1326,7 @@ function danoBase(st, u, t, e, l) {
   if (e.seAdormecido && ef(t, 'adormecido')) base = e.seAdormecido;
   if (e.seDia && st.fase === 'Dia') base = e.seDia;
   if (e.seNoite && st.fase === 'Noite') base = e.seNoite;
+  if (e.seCond && condOK(e.seCond.quando, u, t, st)) base = e.seCond.v;   // F1.6: bump condicional GERAL por estado do alvo (reusa condOK: alvoBuff/alvoDebuff/alvoHp/alvoElem) — Xangô "30 em quem tiver buff", Piranha "28 em quem Sangrando"
   if (e.seAliadoJaAgiu && l.units.some(x => x.uid !== u.uid && x.agiu)) base += e.seAliadoJaAgiu;
   if (e.porContador) base += e.porContador.v * getContador(e.porContador.onde === 'alvo' ? t : u, e.porContador.nome);
   if (e.porContadorCampo) base += e.porContadorCampo.v * contadorNoCampo(st, e.porContadorCampo.nome, e.porContadorCampo.lado === 'aliados' ? u.lado : 1 - u.lado);

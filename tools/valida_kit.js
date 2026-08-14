@@ -46,6 +46,11 @@ function validarFx(f, ctx, errs) {
     }
   }
   if ('executaAbaixoDe' in f && (!Number.isInteger(f.executaAbaixoDe) || f.executaAbaixoDe <= 0)) errs.push(`${ctx}: executaAbaixoDe mal formado (${JSON.stringify(f.executaAbaixoDe)}; inteiro > 0)`);
+  if ('seCond' in f) {   // F1.6: bump condicional geral — {quando: <condição ofensiva>, v: dano quando a condição bate}
+    const s = f.seCond;
+    if (!s || typeof s !== 'object' || typeof s.v !== 'number' || !Number.isInteger(s.v) || s.v <= 0) errs.push(`${ctx}: seCond.v mal formado (${JSON.stringify(s && s.v)}; inteiro > 0)`);
+    else validarQuando(s.quando, `${ctx}.seCond.quando`, errs);
+  }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

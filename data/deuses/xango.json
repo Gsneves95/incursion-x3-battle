@@ -1,0 +1,59 @@
+{
+  "key": "xango",
+  "nome": "Xangô",
+  "faccao": "Africana",
+  "elem": "Chama",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Coroa de Xangô",
+    "desc": "Quando um aliado é atingido, Xangô acumula +3 de dano no próximo ataque (até +15).",
+    "fx": [
+      {
+        "gatilho": "aoSerAtingido",
+        "quem": "aliado",
+        "faz": [
+          { "t": "contador", "nome": "Coroa", "v": 3, "max": 15 }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Machado Oxê",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 15, "porContador": { "onde": "self", "nome": "Coroa", "v": 1 }, "consomeContador": "Coroa" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Balança da Justiça",
+      "cost": { "Chama": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Por 2 turnos Xangô armazena todo o dano que o time recebe; ao fim, devolve o total (máx. 50) a 1 inimigo como dano puro.",
+      "fx": [
+        { "t": "armazenaDano", "dur": 2, "max": 50 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Trovão e Fogo",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "20 de dano a todos os inimigos; 30 em quem tiver algum buff.",
+      "fx": [
+        { "t": "dmg", "v": 20, "seCond": { "quando": { "alvoBuff": "qualquer" }, "v": 30 }, "escopo": "todosInimigos", "porContador": { "onde": "self", "nome": "Coroa", "v": 1 }, "consomeContador": "Coroa" }
+      ]
+    }
+  ]
+}
