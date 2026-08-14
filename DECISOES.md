@@ -1912,6 +1912,33 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §67 — CAUDA DURA (parcial): iansa + freyja (IMPL 26→28); medusa aguarda o OK do exclude
+
+Fechados os dois kits da cauda que NÃO tocam no `checar_cadeia` (decisão do dono: "iansa+freyja; medusa depois do teu OK").
+
+- **iansa (hook 6)** — dois hooks pequenos: `t:'limparInvocacoes'` (destrói invocações inimigas) e o controle
+  **`antiRevive`** (debuff proativo nos vivos; o snapshot do `matar` passa a reconhecer o `type`, além da propriedade
+  `naoRevive`). Resto já limpo (aoCair-qualquerInimigo §49 + stripOne). Kit 100% do catálogo.
+- **freyja (hook 7)** — a primitiva **`t:'condicional'`** (`se(estado) ? entao[fx] : senao[fx]`, rodada pelo próprio
+  executor por recursão) + estado `aliadoCaido` + escopo `umCaido`. É controle-de-fluxo novo, reutilizável.
+  **DUAS DIVERGÊNCIAS anotadas (o dono decide se merecem hook):** (1) a passiva usa `aoCurar`, que dispara em QUALQUER
+  cura de aliado — não só "por Freyja"; é o §54 (Freyja é a curadora do time, ninguém distingue na prática), mas um
+  2º curador distinguiria. (2) "no turno seguinte" está aproximado por `dur:2` (o timing exato é caracterização,
+  dispensada para kits). Nenhuma bloqueia; ambas ficam no relato.
+
+**PENDENTE — medusa (o item GATED):** precisa do exclude do `checar_cadeia` para o Veneno em prosa. O padrão específico
+proposto: um `N de dano` seguido de `puro/turno`, `/turno` ou `por turno` é TICK de DoT (dano do efeito ao longo do
+tempo), não o dano DESTA habilidade — falso-positivo idêntico em espírito ao `causam 0 de dano` do Pacificar. Não
+captura dano real (nenhuma habilidade se descreve "N de dano/turno"). Aguarda o "OK" do dono no padrão antes de eu
+mexer no checador (a regra do dono: "me diga antes de largar" nos padrões de checker). Com o OK, medusa fecha com:
+exclude + `Pedra` no vocabulário de contador + `consome` no `cruzarLimiar` (limiar aplica mas não zera as marcas) +
+`lockSkill`(hab) + petrificado=`atordoado`.
+
+**IMPL 12→28 (global): 8 do lote-1 + 8 do lote-de-hooks.** Sobram da cauda: medusa (pendente OK) e, na 2ª onda real,
+kitsune (mas `dominado` já existe) e nefertem (bonusCura-facção). amaterasu adiada p/ F1.5 (modo Dia).
+
+---
+
 ## §66 — LOTE-DE-HOOKS: 5 hooks pequenos → 6 kits (IMPL 20→26), e o motor era mais rico do que a triagem via
 
 Executado o plano do §65 (2ª onda = hooks pequenos, não um balde-gancho), com as 3 decisões do dono resolvidas

@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 45,
-    "IMPLEMENTADO": 14,
+    "AMARELO": 43,
+    "IMPLEMENTADO": 16,
     "VERMELHO": 29
   },
   "gods": [
@@ -316,7 +316,7 @@
       "ganchos": [
         "branch-condicional-DECISAO"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "hades",
@@ -338,7 +338,7 @@
       "ganchos": [
         "destruir-invocacao"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "iara",
@@ -1056,7 +1056,7 @@
     "projecao_impl": "20 -> 26 (hooks) -> ~30 (decisoes)"
   },
   "lote2_hooks": {
-    "feito": "hooks 1-5 → 6 kits (IMPL 20→26)",
+    "feito": "hooks 1-7 → 8 kits (IMPL 20→28)",
     "hercules": "vidaExtra no rodarFaz",
     "curupira": "redirect-apply (quita dívida §62)",
     "xango": "seCond em danoBase",
@@ -1072,6 +1072,11 @@
       "amaterasu": "modo Dia F1.5",
       "kitsune": "2a onda (mas dominado JÁ existe em CONTROLES)",
       "nefertem": "2a onda bonusCura-facção"
+    },
+    "iansa": "limparInvocacoes + antiRevive",
+    "freyja": "fx condicional-por-estado (aliadoCaido/umCaido) — DIVERGÊNCIAS: aoCurar dispara em qualquer cura; turno-seguinte aprox por dur:2",
+    "pendente_dono": {
+      "medusa": "exclude DoT-tick no checar_cadeia (N de dano [puro]/turno) — aguarda OK do dono"
     }
   }
 }
