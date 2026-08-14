@@ -1,0 +1,100 @@
+{
+  "key": "oxum",
+  "nome": "Oxum",
+  "faccao": "Africana",
+  "elem": "Maré",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Doçura e Ouro",
+    "desc": "Aliados curados por Oxum causam +5 de dano no turno seguinte.",
+    "fx": [
+      {
+        "gatilho": "aoCurar",
+        "faz": [
+          {
+            "t": "apply",
+            "eff": {
+              "type": "dmgUp",
+              "v": 5,
+              "dur": 2
+            },
+            "escopo": "self"
+          }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Espelho Dourado",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Águas de Oxum",
+      "cost": {
+        "Maré": 1
+      },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "Cura 20 em 1 aliado; o time ganha 1 orbe de Maré.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 20
+        },
+        {
+          "t": "orbGain",
+          "n": 1,
+          "para": "Maré"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Rio de Ouro",
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 20 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 20,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "regen",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "time"
+        },
+        {
+          "t": "orbGain",
+          "n": 2,
+          "para": "Maré"
+        }
+      ]
+    }
+  ]
+}

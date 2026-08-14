@@ -1,0 +1,92 @@
+{
+  "key": "afrodite",
+  "nome": "Afrodite",
+  "faccao": "Olímpica",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Beleza Irresistível",
+    "desc": "Ataques de alvo único contra Afrodite causam 5 menos de dano.",
+    "fx": [
+      {
+        "gatilho": "reducao",
+        "v": 5,
+        "contra": {
+          "alcance": "unico"
+        }
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Sussurro Encantado",
+      "cost": {
+        "Aurora": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Encanto",
+      "cost": {
+        "Aurora": 2
+      },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Domina 1 inimigo por 1 turno: ele usa o próprio Básico contra um aliado dele.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dominado",
+            "dur": 1
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Paixão Fatal",
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Todos os inimigos causam 10 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno.",
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgDown",
+            "v": 10,
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "lockSkill",
+            "slot": "habilidade",
+            "dur": 1
+          },
+          "escopo": "todosInimigos"
+        }
+      ]
+    }
+  ]
+}

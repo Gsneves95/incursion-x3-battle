@@ -734,7 +734,7 @@ function matar(st, atk, alvo, opts = {}) {
   // o flag persiste e o gate no revive-site a segura. Limpar o marcador ANTES de cair libera o revive
   // (contra-jogo). vidaExtra já retornou acima: quem sobrevive ao letal não morreu — nada a travar.
   if (alvo.efeitos.some(e => e.naoRevive) || alvo.dots.some(d => d.naoRevive)) alvo.naoRevive = true;
-  alvo.vivo = false; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};
+  alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
   // efeitos (a ordem é a rede: renasce sem os efeitos que tinha ao cair). A unidade nunca sai do array.

@@ -1,0 +1,88 @@
+{
+  "key": "kraken",
+  "nome": "Kraken",
+  "faccao": "Nórdica",
+  "elem": "Maré",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Massa Colossal",
+    "desc": "Kraken recebe 10 de redução de dano; imune a Provocar e a Agarrar.",
+    "fx": [
+      {
+        "gatilho": "reducao",
+        "v": 10
+      },
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "taunt",
+          "agarrar"
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Investida de Tentáculo",
+      "cost": {
+        "Maré": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Agarre Abissal",
+      "cost": {
+        "Maré": 2
+      },
+      "cd": 2,
+      "alvo": "2inimigos",
+      "desc": "15 de dano a 2 inimigos; eles não podem usar Habilidade por 1 turno.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "agarrar",
+            "dur": 1
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fúria do Abismo",
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "22 de dano puro a todos os inimigos.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 22,
+          "kind": "puro",
+          "escopo": "todosInimigos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "key": "ymir",
+  "nome": "Ymir",
+  "faccao": "Nórdica",
+  "elem": "Maré",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Carne Primordial",
+    "desc": "Ao ser derrotado, Ymir cura 25 no time.",
+    "fx": [
+      {
+        "gatilho": "aoCair",
+        "quem": "self",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 25,
+            "escopo": "time"
+          }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Punho de Gelo",
+      "cost": {
+        "Maré": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Sopro de Niflheim",
+      "cost": {
+        "Maré": 2
+      },
+      "cd": 3,
+      "alvo": "todosInimigos",
+      "desc": "12 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "lockSkill",
+            "slot": "habilidade",
+            "dur": 1
+          },
+          "escopo": "todosInimigos"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Corpo do Mundo",
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time ganha 25 de Defesa Destrutível por 2 turnos.",
+      "fx": [
+        {
+          "t": "shield",
+          "v": 25,
+          "escopo": "time"
+        }
+      ]
+    }
+  ]
+}

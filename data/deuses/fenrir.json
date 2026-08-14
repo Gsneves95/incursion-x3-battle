@@ -1,0 +1,98 @@
+{
+  "key": "fenrir",
+  "nome": "Fenrir",
+  "faccao": "Nórdica",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Fome Insaciável",
+    "desc": "Fenrir causa +8 de dano por inimigo derrotado; imune a Provocar e a Agarrar.",
+    "fx": [
+      {
+        "gatilho": "aoCair",
+        "quem": "inimigo",
+        "faz": [
+          {
+            "t": "apply",
+            "eff": {
+              "type": "dmgUp",
+              "v": 8,
+              "dur": 99
+            },
+            "escopo": "self"
+          }
+        ]
+      },
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "taunt",
+          "agarrar"
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Mordida",
+      "cost": {
+        "Umbra": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Presas Rompedoras",
+      "cost": {
+        "Umbra": 2
+      },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "25 de dano a 1 inimigo; ele não pode ser curado por 2 turnos.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 25
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "noHeal",
+            "dur": 2
+          }
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fauces do Fim",
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "38 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 38,
+          "executaAbaixoDe": 24
+        }
+      ]
+    }
+  ]
+}

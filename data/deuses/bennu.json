@@ -1,0 +1,87 @@
+{
+  "key": "bennu",
+  "nome": "Bennu",
+  "faccao": "Egípcia",
+  "elem": "Chama",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Imortal",
+    "desc": "1x por partida, Bennu retorna no turno seguinte com 60 de HP após ser derrotado.",
+    "fx": [
+      {
+        "gatilho": "aoCair",
+        "quem": "self",
+        "faz": [
+          {
+            "t": "reviveProximoTurno",
+            "hp": 60
+          }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Bico Flamejante",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Chama Purificadora",
+      "cost": {
+        "Chama": 2
+      },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "12 de dano a todos os inimigos; cura 12 no time.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 12,
+          "escopo": "time"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Renascer das Cinzas",
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 25 no time e remove todos os debuffs.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 25,
+          "escopo": "time"
+        },
+        {
+          "t": "cleanse",
+          "escopo": "time"
+        }
+      ]
+    }
+  ]
+}

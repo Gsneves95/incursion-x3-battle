@@ -1,0 +1,88 @@
+{
+  "key": "apolo",
+  "nome": "Apolo",
+  "faccao": "Olímpica",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Presságio",
+    "desc": "Apolo causa +6 de dano contra inimigos com HP cheio.",
+    "fx": [
+      {
+        "gatilho": "bonusDano",
+        "v": 6,
+        "escopo": "self",
+        "quando": {
+          "alvoHp": {
+            "op": "cheio"
+          }
+        }
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Flecha Solar",
+      "cost": {
+        "Aurora": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Canção da Cura",
+      "cost": {
+        "Aurora": 1,
+        "livre": 1
+      },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Cura 25 em 1 aliado e remove Veneno, Queimadura e Sangramento dele.",
+      "fx": [
+        {
+          "t": "heal",
+          "v": 25
+        },
+        {
+          "t": "cleanse"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Alvorada Radiante",
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "20 de dano a todos os inimigos; o time cura 12.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 20,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 12,
+          "escopo": "time"
+        }
+      ]
+    }
+  ]
+}

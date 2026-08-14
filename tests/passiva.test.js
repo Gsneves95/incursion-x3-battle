@@ -291,7 +291,7 @@ console.log('== F1.3 morte: execução (caminho PRÓPRIO; fura piso e vidaExtra;
   const zeus = st.lados[0].units[0], t = st.lados[1].units[0];
   t.hp = 20; const o0 = st.lados[0].orbs.Tempestade;
   E.aplicarFx(st, zeus, [{ t: 'dmg', v: 10, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
-  ok(!t.vivo, `zeus executa: alvo eliminado`);
+  ok(!t.vivo && t.hp === 0, `zeus executa: alvo eliminado E hp=0 (morto⟹hp=0, mesmo vindo de hp>0 — Fenrir expôs)`);
   ok(st.lados[0].orbs.Tempestade === o0 + 1, `Zeus GANHA orbe por execução (aoCair dispara): ${o0} -> ${st.lados[0].orbs.Tempestade}`);
   ok(st.log.some(e => e.tipo === 'queda' && e.alvo === t.key && e.execucao === true), `queda tagueada execucao:true`);
 }
