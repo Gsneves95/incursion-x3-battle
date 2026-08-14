@@ -1,0 +1,59 @@
+{
+  "key": "hercules",
+  "nome": "Hércules",
+  "faccao": "Grega",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Coragem Mortal",
+    "desc": "1× por partida, Hércules sobrevive a um golpe letal com 1 de HP.",
+    "fx": [
+      {
+        "gatilho": "abertura",
+        "faz": [
+          { "t": "vidaExtra", "hp": 1, "escopo": "self" }
+        ]
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Punho Hercúleo",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 15 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Os Doze Trabalhos",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "20 de dano a 1 inimigo; +4 de dano permanente a cada uso na partida.",
+      "fx": [
+        { "t": "dmg", "v": 20 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 4, "dur": 99 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Força Sobre-humana",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "40 de dano perfurante a 1 inimigo (ignora redução de dano).",
+      "fx": [
+        { "t": "dmg", "v": 40, "kind": "perfurante" }
+      ]
+    }
+  ]
+}

@@ -304,6 +304,21 @@ console.log('== F1.3 morte: execução (caminho PRÓPRIO; fura piso e vidaExtra;
   ok(t.vivo, `imune a execução: NÃO é eliminado (vivo ${t.vivo}, hp ${t.hp})`);
   delete E.GODS.timexe;
 }
+console.log('== F1.6 sobrevivência: passiva abertura ARMA vidaExtra (hook rodarFaz) — Hércules Coragem Mortal ==');
+{ // a passiva abertura arma o vidaExtra pelo NOVO ramo do rodarFaz; o golpe letal é sobrevivido 1× com 1 HP; o 2º mata
+  E.GODS.tvidae = { nome: 'TVE', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'abertura', faz: [{ t: 'vidaExtra', hp: 1, escopo: 'self' }] }] } };
+  const st = E.novoEstado(['tvidae', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 996);
+  const h = st.lados[0].units[0];
+  if (!h.vidaExtra) { st.ativo = 0; st.lados[0].estreou = false; E.iniciarTurno(st); }   // garante que o lado do tvidae rodou sua abertura
+  ok(h.vidaExtra && h.vidaExtra.hp === 1, `passiva abertura ARMA vidaExtra{hp:1} via rodarFaz: ${JSON.stringify(h.vidaExtra)}`);
+  const atk = st.lados[1].units[0];
+  h.hp = 20; E.bater(st, atk, h, 999, 'afetado', 'basico', { unico: true });
+  ok(h.vivo && h.hp === 1, `sobrevive ao golpe letal com 1 HP (vidaExtra consumido): vivo=${h.vivo} hp=${h.hp}`);
+  ok(!h.vidaExtra, `vidaExtra gasto — a rede é 1× por partida`);
+  h.hp = 20; E.bater(st, atk, h, 999, 'afetado', 'basico', { unico: true });
+  ok(!h.vivo && h.hp === 0, `2º golpe letal mata (rede já gasta): vivo=${h.vivo} hp=${h.hp}`);
+  delete E.GODS.tvidae;
+}
 console.log('== F1.3 morte: pisoVida (não cai abaixo de 1 HP) — buff real, furável ==');
 { // clamp a 1 no golpe letal; sem piso morre; ignoraPiso (Shiva) fura
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 980);
