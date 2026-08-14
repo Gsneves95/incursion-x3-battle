@@ -147,7 +147,7 @@ console.log('== teto de dano por categoria (orçamento documentado) ==');
     }
   }
   // Dilúvio (30 em Encharcado) e O Papão (38 em Adormecido) são bônus condicionais previstos
-  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo/.test(p));   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6)
+  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo|Fim de Mahishasura/.test(p));   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6). Fim de Mahishasura (48 em alvo acima de 84 HP, Durga): bump anti-chefe condicional
   ok(inesperados.length === 0, 'fora do orçamento: ' + inesperados.join(' | '));
   console.log(`  ${piores.length} acima do teto base, todos com condição: ${piores.join(' | ') || 'nenhum'}`);
 }

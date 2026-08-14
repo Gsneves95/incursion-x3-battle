@@ -1,0 +1,59 @@
+{
+  "key": "durga",
+  "nome": "Durga",
+  "faccao": "Hindu",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Montaria Leonina",
+    "desc": "Imune a Medo; +8 de dano contra inimigos com qualquer debuff.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "medo" ] },
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "qualquer" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lâminas dos Deuses",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "2 golpes de 7 em 1 inimigo.",
+      "fx": [
+        { "t": "dmg", "v": 7 },
+        { "t": "dmg", "v": 7 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Arsenal dos Deuses",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "20 de dano a 1 inimigo; ele causa 8 menos de dano, recebe +8 de dano e não pode usar Habilidade por 1 turno.",
+      "fx": [
+        { "t": "dmg", "v": 20 },
+        { "t": "apply", "eff": { "type": "dmgDown", "v": 8, "dur": 1 } },
+        { "t": "apply", "eff": { "type": "vulneravel", "v": 8, "dur": 1 } },
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fim de Mahishasura",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "32 de dano (48 se o alvo estiver acima de 84 de HP) e atordoa por 1 turno.",
+      "fx": [
+        { "t": "dmg", "v": 32, "seCond": { "quando": { "alvoHp": { "op": "acima", "v": 84 } }, "v": 48 } },
+        { "t": "apply", "eff": { "type": "atordoado", "dur": 1 } }
+      ]
+    }
+  ]
+}

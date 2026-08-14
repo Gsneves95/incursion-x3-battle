@@ -70,7 +70,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 // nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
 // fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro', 'antiRevive'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect'];
 
@@ -359,7 +359,7 @@ function aplicar(st, u, eff) {
   const ja = ef(u, e.type);
   if (ja) {
     // regra 6 — acúmulo por categoria
-    if (e.type === 'dmgUp' || e.type === 'dmgDown') { ja.v += e.v; ja.dur = Math.max(ja.dur, e.dur); }
+    if (e.type === 'dmgUp' || e.type === 'dmgDown' || e.type === 'vulneravel') { ja.v += e.v; ja.dur = Math.max(ja.dur, e.dur); }
     else if (e.type === 'dmgReduction' || e.type === 'regen') { ja.v = Math.max(ja.v, e.v); ja.dur = Math.max(ja.dur, e.dur); }
     else if (CONTROLES.includes(e.type)) { ja.dur = Math.max(ja.dur, e.dur); }
     else { ja.dur = Math.max(ja.dur, e.dur); }
@@ -611,6 +611,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
   let v = base + bonusDano(st, atk);
   v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
   if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
+  const vul = ef(alvo, 'vulneravel'); if (vul) v += vul.v;          // vulneravel (Durga): debuff "recebe +N de dano" — soma no dano de ENTRADA, antes de redução/escudo
   if (v < 0) v = 0;
 
   const irred = danoImune(st, atk);   // ogum/tyr migrados: danoIrredutivel declarativo (§37)

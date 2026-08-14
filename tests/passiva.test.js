@@ -1032,6 +1032,24 @@ console.log('== F1.6 contraClasse: contra-ataque FILTRADO por classe do golpe (A
   console.log('  contraClasse: revida só a classe casada, ignora o resto');
 }
 
+console.log('== F1.6 vulneravel: debuff "recebe +N de dano" soma no dano de ENTRADA (Durga) ==');
+{ // vulneravel amplia o dano SOFRIDO pelo alvo (não o dano de saída de quem carrega)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 616);
+  const atk = st.lados[0].units[0], alvo = st.lados[1].units[0];
+  const bater10 = () => E.aplicarFx(st, atk, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [alvo]);
+  const aplicaVul = () => E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'vulneravel', v: 8, dur: 3 } }], { alvo: 'inimigo', slot: 'habilidade' }, [alvo]);
+  const h0 = alvo.hp; bater10();
+  ok(alvo.hp === h0 - 10, `sem vulnerável: 10 de dano (${h0}→${alvo.hp})`);
+  aplicaVul(); const h1 = alvo.hp; bater10();
+  ok(alvo.hp === h1 - 18, `com vulnerável +8: 10→18 de dano (${h1}→${alvo.hp})`);
+  aplicaVul(); const h2 = alvo.hp; bater10();   // reaplicar EMPILHA (família dmgUp/dmgDown)
+  ok(alvo.hp === h2 - 26, `vulnerável empilha (+8+8): 10→26 de dano (${h2}→${alvo.hp})`);
+  E.aplicarFx(st, alvo, [{ t: 'cleanse', escopo: 'time' }], { alvo: 'time', slot: 'milagre' }, []);   // o próprio lado limpa: vulneravel ∈ DEBUFFS
+  const h3 = alvo.hp; bater10();
+  ok(alvo.hp === h3 - 10, `cleanse remove vulnerável: volta a 10 (${h3}→${alvo.hp})`);
+  console.log('  vulneravel: soma no dano de entrada, empilha, é cleansável');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
