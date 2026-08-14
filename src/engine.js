@@ -72,7 +72,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'encharcado', 'noHeal', 'livro'];
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano'];
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect'];
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -617,10 +617,25 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false } = opts;
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false } = opts;
   if (!alvo.vivo) return 0;
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
   const golpe = { slot, classe, elem: atk && atk.elem, unico };
+
+  // PRIMITIVA redirecionar (Loki/Curupira) — o lado do ALVO carrega um efeito 'redirect' que manda o golpe de alvo
+  // ÚNICO para um SINK escolhido no lado do ATACANTE (fogo amigo). PRECEDE o taunt: o taunt decide o alvo antes, mas
+  // o redirect tem a última palavra sobre onde o golpe cai (§62 — mais específico e temporário). Lifetime: consumo-
+  // único (Loki: 'proximo' → contra:'unico', reusa o padrão do intercepta) ou janela por dur (Curupira: 2 turnos).
+  if (unico && !semRedirect && atk && atk.lado !== alvo.lado) {
+    const dono = st.lados[alvo.lado].units.find(x => x.vivo && ef(x, 'redirect'));
+    const rd = dono && ef(dono, 'redirect');
+    const sink = rd && st.lados[atk.lado].units.find(x => x.vivo && x.uid === rd.destino);
+    if (sink && sink !== atk) {   // não redireciona o golpe de volta ao próprio atacante ('aliado deles', não ele)
+      if (rd.contra === 'unico') dono.efeitos = dono.efeitos.filter(e => e !== rd);
+      log(st, { tipo: 'efeito', origem: dono.key, alvo: sink.key, efeito: 'redirect' });
+      return bater(st, atk, sink, base, kind, slot, { ...opts, semRedirect: true });
+    }
+  }
 
   // PRIMITIVA interceptar — golpe de alvo único pode ser assumido por um protetor.
   // Vale para efeito 'intercepta' (Loki, Bastet, Hanuman) e para invocação-guarda (Shabti, isca).

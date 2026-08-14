@@ -789,6 +789,50 @@ console.log('== Medo: compósito (lock Milagre + dmgDown), um efeito; imune cobr
   console.log('  as duas metades expiram juntas (uma duração)');
 }
 
+// Redirecionar (F1.4) — o golpe de alvo único vai para um SINK escolhido no lado do atacante. Loki: consumo-único; Curupira: janela.
+console.log('== Redirecionar: golpe de alvo único → sink no lado do atacante; consumo-único (Loki) vs janela (Curupira); precede taunt ==');
+{ // LOKI — consumo-único: um golpe redireciona, o efeito se gasta; o próximo cai normal
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 597);
+  const dono = st.lados[0].units[0], alvo = st.lados[0].units[1], atk = st.lados[1].units[0], sink = st.lados[1].units[1];
+  dono.efeitos.push({ type: 'redirect', destino: sink.uid, contra: 'unico' });
+  const hAlvo = alvo.hp, hSink = sink.hp;
+  E.bater(st, atk, alvo, 20, 'afetado', 'basico', { unico: true });
+  ok(alvo.hp === hAlvo && sink.hp === hSink - 20, `redirecionado ao SINK (aliado do atacante): alvo ${hAlvo}→${alvo.hp}, sink ${hSink}→${sink.hp}`);
+  ok(!E.ef(dono, 'redirect'), 'consumo-único (Loki): redirect gasto após um uso (bookkeeping)');
+  const hAlvo2 = alvo.hp;
+  E.bater(st, atk, alvo, 20, 'afetado', 'basico', { unico: true });
+  ok(alvo.hp === hAlvo2 - 20, 'o próximo golpe cai NORMAL (redirect já gasto)');
+  console.log('  Loki: 1 golpe → sink · efeito consumido · 2º golpe normal');
+}
+{ // CURUPIRA — janela: dois golpes na duração, o efeito permanece
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 598);
+  const dono = st.lados[0].units[0], alvo = st.lados[0].units[1], atk = st.lados[1].units[0], sink = st.lados[1].units[1];
+  dono.efeitos.push({ type: 'redirect', destino: sink.uid, dur: 2 });   // janela (sem contra:'unico')
+  const hSink = sink.hp;
+  E.bater(st, atk, alvo, 10, 'afetado', 'basico', { unico: true });
+  E.bater(st, atk, alvo, 10, 'afetado', 'basico', { unico: true });
+  ok(sink.hp === hSink - 20 && !!E.ef(dono, 'redirect'), `janela (Curupira): DOIS golpes redirecionados, efeito permanece (sink ${hSink}→${sink.hp})`);
+  console.log('  Curupira: janela redireciona vários golpes (não consome)');
+}
+{ // PRECEDE TAUNT: o golpe forçado ao taunter é redirecionado ao sink (redirect tem a última palavra)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 599);
+  const taunter = st.lados[0].units[0], atk = st.lados[1].units[0], sink = st.lados[1].units[1];
+  taunter.efeitos.push({ type: 'redirect', destino: sink.uid, dur: 2 });
+  const hT = taunter.hp, hS = sink.hp;
+  E.bater(st, atk, taunter, 20, 'afetado', 'basico', { unico: true });   // atacante provocado mira o taunter → redirect intercepta
+  ok(taunter.hp === hT && sink.hp === hS - 20, 'redirect PRECEDE taunt: o golpe mirado no taunter cai no sink');
+  console.log('  redirect > taunt: golpe forçado ao taunter vai para o sink');
+}
+{ // ÁREA não é redirecionada (só alvo único)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 600);
+  const dono = st.lados[0].units[0], alvo = st.lados[0].units[1], atk = st.lados[1].units[0], sink = st.lados[1].units[1];
+  dono.efeitos.push({ type: 'redirect', destino: sink.uid, dur: 2 });
+  const hAlvo = alvo.hp, hSink = sink.hp;
+  E.bater(st, atk, alvo, 15, 'afetado', 'milagre', { unico: false });   // ÁREA
+  ok(alvo.hp === hAlvo - 15 && sink.hp === hSink, 'golpe de ÁREA NÃO é redirecionado (só alvo único)');
+  console.log('  área não redireciona (só alvo único, como intercepta)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
