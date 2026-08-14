@@ -1,0 +1,57 @@
+{
+  "key": "vishnu",
+  "nome": "Vishnu",
+  "faccao": "Hindu",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Serpente Ananta",
+    "desc": "O time recebe 5 de redução de dano.",
+    "fx": [
+      { "gatilho": "reducao", "v": 5, "escopo": "time" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Chakra Sudarshana",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo; remove 1 buff dele.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "stripOne" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Encarnação",
+      "cost": { "Aurora": 2 },
+      "cd": 1,
+      "alvo": "nenhum",
+      "desc": "Alterna: NARASIMHA (time causa +8 de dano por 2 turnos) ou KURMA (time ganha 15 de Defesa Destrutível).",
+      "opcoes": [
+        { "nome": "NARASIMHA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" } ] },
+        { "nome": "KURMA", "fx": [ { "t": "shield", "v": 15, "escopo": "time" } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Preservação Cósmica",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 5,
+      "alvo": "nenhum",
+      "desc": "Cura 25 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno.",
+      "fx": [
+        { "t": "heal", "v": 25, "escopo": "time" },
+        { "t": "cleanse", "escopo": "time" },
+        { "t": "apply", "eff": { "type": "pisoVida", "dur": 1 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "key": "itzamna",
+  "nome": "Itzamná",
+  "faccao": "Maia",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Guardião do Dia",
+    "desc": "Curas no time curam +5; durante o DIA, o time ganha 1 orbe extra por turno.",
+    "fx": [
+      { "gatilho": "bonusCura", "v": 5 },
+      { "gatilho": "porTurno", "estado": { "fase": "Dia" }, "faz": [ { "t": "orbGain", "n": 1 } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Glifo Sagrado",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Escrita Sagrada",
+      "cost": { "Aurora": 1 },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "1 aliado tem todas as recargas reduzidas em 1 turno e causa +5 de dano por 2 turnos (acumulável).",
+      "fx": [
+        { "t": "cdShift", "unidade": true, "v": -1 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Aurora da Criação",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 25 no time, restaura todo HP máximo perdido (Podridão) e remove todos os debuffs.",
+      "fx": [
+        { "t": "heal", "v": 25, "escopo": "time" },
+        { "t": "restauraMax", "escopo": "time" },
+        { "t": "cleanse", "escopo": "time" }
+      ]
+    }
+  ]
+}

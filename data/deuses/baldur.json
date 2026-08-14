@@ -1,0 +1,52 @@
+{
+  "key": "baldur",
+  "nome": "Baldur",
+  "faccao": "Nórdica",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Bênção de Frigga",
+    "desc": "Baldur recebe 15 de redução de dano, exceto de habilidades Verdejantes (o visco).",
+    "fx": [
+      { "gatilho": "reducao", "v": 15, "contra": { "elemNao": "Verdejante" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Golpe Radiante",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Luz Purificadora",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Cura 20 em 1 aliado e remove todos os debuffs dele.",
+      "fx": [
+        { "t": "heal", "v": 20 },
+        { "t": "cleanse" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Invulnerabilidade de Baldur",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "aliado",
+      "desc": "1 aliado (ou Baldur) fica Invulnerável por 2 turnos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "invulneravel", "dur": 2 } }
+      ]
+    }
+  ]
+}

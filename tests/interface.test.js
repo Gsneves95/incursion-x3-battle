@@ -139,8 +139,10 @@ console.log('== 1. seleção: grade de coleção ==');
   ok(!$('.fbtn__badge'), 'sem critérios extras não deveria haver contador no botão');
 
   tap($('#bteste'));
-  ok($$('.pk').length === w.eval('Object.keys(GODS).length'),
-    `TESTE deveria liberar os ${w.eval('Object.keys(GODS).length')} kits prontos, mostrou ${$$('.pk').length}`);
+  // TESTE libera todos os kits prontos; a 1ª página mostra até POR_PAG (paginação — a lista cresce p/ 100).
+  const prontos = w.eval('Object.keys(GODS).length'), porPag = w.eval('POR_PAG');
+  ok($$('.pk').length === Math.min(prontos, porPag),
+    `1ª página deveria mostrar min(${prontos} prontos, ${porPag}/pág), mostrou ${$$('.pk').length}`);
   tap($('#brand'));
   ok(!$('#bgo').disabled, 'sorteio deveria liberar COMEÇAR');
   console.log(`  100 no roster \u00b7 30/página em 4 páginas \u00b7 9 em cor \u00b7 arte em todos \u00b7 filtro por facção`);
