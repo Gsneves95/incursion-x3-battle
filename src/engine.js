@@ -100,7 +100,7 @@ const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx
 // um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
 // Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
 const GATILHOS_PASSIVA = {
-  bonusDano:       { campos: ['v', 'escopo', 'quando'], obrig: ['v'] },        // soma v ao dano (sessão 1)
+  bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73, mesmo helper do danoBase)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra'], obrig: ['v'] },        // reduz o dano recebido (sessão 3)
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
@@ -220,7 +220,7 @@ const VOCAB = {
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
-    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'curaMetade',
+    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1 unidade (alvos[0]); soMaior = só a maior recarga (Bragi/Brahma)
@@ -526,7 +526,7 @@ function bonusDanoDeclarativo(st, atk, alvo) {
       if (f.gatilho !== 'bonusDano') continue;
       if ((f.escopo || 'self') === 'self' && u !== atk) continue;
       if (f.estado && !estadoOK(f.estado, u, st)) continue;   // compõe (AND) com o `quando`
-      if (condOK(f.quando, atk, alvo, st)) b += f.v;
+      if (condOK(f.quando, atk, alvo, st)) b += f.v + escalaContagem(st, atk, alvo, f);   // v FIXO + escala por contagem (MESMO helper do danoBase — Oni +1/4 Combo, Osíris +8/caído). §73
     }
   }
   return b;
@@ -1358,6 +1358,21 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
 }
 
 // -------- helpers de dano e das primitivas de execução --------
+// ESCALA POR CONTAGEM DINÂMICA (F1.6, §73) — o ADD escalado a partir de um `spec` (contador por-unidade/campo/lado;
+// aliados/inimigos caídos). UM mecanismo, chamado por danoBase (por-ability) E bonusDanoDeclarativo (passivo) — sem
+// caminho duplicado (a dívida que o dono apontou: dois jeitos de escalar o mesmo). `passo` (default 1): +v a cada
+// `passo` de contagem — Oni "+1 de dano por 4 de Combo" = {porContadorLado:{nome:'combo', v:1, passo:4}}.
+function escalaContagem(st, u, t, spec) {
+  let add = 0;
+  const porN = (v, count, passo) => v * Math.floor(count / (passo || 1));
+  if (spec.porContador) add += porN(spec.porContador.v, getContador(spec.porContador.onde === 'alvo' ? t : u, spec.porContador.nome), spec.porContador.passo);
+  if (spec.porContadorCampo) add += porN(spec.porContadorCampo.v, contadorNoCampo(st, spec.porContadorCampo.nome, spec.porContadorCampo.lado === 'aliados' ? u.lado : 1 - u.lado), spec.porContadorCampo.passo);
+  if (spec.porContadorLado) add += porN(spec.porContadorLado.v, getContadorLado(st, spec.porContadorLado.lado === 'inimigo' ? 1 - u.lado : u.lado, spec.porContadorLado.nome), spec.porContadorLado.passo);
+  if (spec.porAliadoCaido) add += spec.porAliadoCaido * caidos(st, u.lado);
+  if (spec.porInimigoCaido) add += spec.porInimigoCaido * caidos(st, 1 - u.lado);
+  if (spec.porHpFaltante) add += porN(spec.porHpFaltante.v, u.maxHp - u.hp, spec.porHpFaltante.passo);   // Mula sem Cabeça: "+1 por 5 de HP perdido" (HP do próprio u)
+  return add;
+}
 function danoBase(st, u, t, e, l) {
   let base = e.v;
   if (e.seEncharcado && ef(t, 'encharcado')) base = e.seEncharcado;
@@ -1366,11 +1381,7 @@ function danoBase(st, u, t, e, l) {
   if (e.seNoite && st.fase === 'Noite') base = e.seNoite;
   if (e.seCond && condOK(e.seCond.quando, u, t, st)) base = e.seCond.v;   // F1.6: bump condicional GERAL por estado do alvo (reusa condOK: alvoBuff/alvoDebuff/alvoHp/alvoElem) — Xangô "30 em quem tiver buff", Piranha "28 em quem Sangrando"
   if (e.seAliadoJaAgiu && l.units.some(x => x.uid !== u.uid && x.agiu)) base += e.seAliadoJaAgiu;
-  if (e.porContador) base += e.porContador.v * getContador(e.porContador.onde === 'alvo' ? t : u, e.porContador.nome);
-  if (e.porContadorCampo) base += e.porContadorCampo.v * contadorNoCampo(st, e.porContadorCampo.nome, e.porContadorCampo.lado === 'aliados' ? u.lado : 1 - u.lado);
-  if (e.porContadorLado) base += e.porContadorLado.v * getContadorLado(st, e.porContadorLado.lado === 'inimigo' ? 1 - u.lado : u.lado, e.porContadorLado.nome);
-  if (e.porAliadoCaido) base += e.porAliadoCaido * caidos(st, u.lado);
-  if (e.porInimigoCaido) base += e.porInimigoCaido * caidos(st, 1 - u.lado);
+  base += escalaContagem(st, u, t, e);   // escala por contagem dinâmica (contador/caídos) — MESMO mecanismo do bonusDano passivo (§73: um caminho só)
   return base;
 }
 

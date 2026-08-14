@@ -1,0 +1,55 @@
+{
+  "key": "mulasemcabeca",
+  "nome": "Mula sem Cabeça",
+  "faccao": "Brasileira",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Maldição de Quinta-feira",
+    "desc": "+1 de dano por cada 5 de HP perdido; imune a Queimadura.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porHpFaltante": { "v": 1, "passo": 5 } },
+      { "gatilho": "imunidade", "a": [ "queimadura" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Coice",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Galope em Chamas",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "15 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno.",
+      "fx": [
+        { "t": "dmg", "v": 15, "escopo": "todosInimigos" },
+        { "t": "dot", "nome": "queimadura", "v": 8, "dur": 2, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "controlImmune", "dur": 1 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Relincho Infernal",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "22 de dano a todos os inimigos + Medo por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 22, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "medo", "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

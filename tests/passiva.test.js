@@ -960,6 +960,29 @@ console.log('== F1.6 umaVez: habilidade "1× por partida" trava PERMANENTE após
   delete E.GODS.tuma;
   console.log('  umaVez: trava permanente (ja_usou), o cd:0 não reabre');
 }
+console.log('== F1.6 (§73) wrapper: bonusDano PASSIVO escala por contagem (MESMO helper do danoBase) — Oni +1 por 4 Combo ==');
+{ // v FIXO (0 aqui) + escala; passo:4 → +floor(count/4). Sem caminho duplicado — reusa escalaContagem.
+  E.GODS.tesc = { key: 'tesc', nome: 'TEsc', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', v: 0, escopo: 'self', porContadorLado: { nome: 'combo', v: 1, passo: 4 } }] }, ab: [{ slot: 'basico', classe: 'Físico', nome: 'b', cost: {}, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  const st = E.novoEstado(['tesc', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 610);
+  const u = st.lados[0].units[0], alvo = st.lados[1].units[0];
+  const h0 = alvo.hp; E.bater(st, u, alvo, 10, 'afetado', 'basico', {});
+  ok(alvo.hp === h0 - 10, `0 Combo: v:0 + escala 0 = 10 (${h0}→${alvo.hp})`);
+  E.addContadorLado(st, 0, 'combo', 9); alvo.hp = 100;
+  E.bater(st, u, alvo, 10, 'afetado', 'basico', {});
+  ok(alvo.hp === 100 - 12, `9 Combo (passo 4): +floor(9/4)=+2 → 12 (${alvo.hp})`);
+  delete E.GODS.tesc;
+  console.log('  §73: bonusDano passivo escala pelo MESMO helper (passo), sem caminho duplicado com o danoBase');
+}
+{ // porHpFaltante — Mula "+1 por 5 de HP perdido" (HP do próprio atacante)
+  E.GODS.thp = { key: 'thp', nome: 'THp', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', v: 0, escopo: 'self', porHpFaltante: { v: 1, passo: 5 } }] }, ab: [{ slot: 'basico', classe: 'Físico', nome: 'b', cost: {}, cd: 0, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  const st = E.novoEstado(['thp', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 611);
+  const u = st.lados[0].units[0], alvo = st.lados[1].units[0];
+  u.hp = u.maxHp - 12;   // 12 de HP perdido → floor(12/5)=2
+  alvo.hp = 100; E.bater(st, u, alvo, 10, 'afetado', 'basico', {});
+  ok(alvo.hp === 100 - 12, `12 HP perdido (passo 5): +floor(12/5)=+2 → 10+2=12 (${alvo.hp})`);
+  delete E.GODS.thp;
+  console.log('  §73: porHpFaltante escala pelo HP-faltante do próprio atacante');
+}
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.

@@ -1,0 +1,54 @@
+{
+  "key": "oni",
+  "nome": "Oni",
+  "faccao": "Japonesa",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Casca Demoníaca",
+    "desc": "Oni recebe 10 de redução de dano de habilidades Mágicas; +1 de dano por 4 de Combo.",
+    "fx": [
+      { "gatilho": "reducao", "v": 10, "contra": { "classe": "Mágico" } },
+      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porContadorLado": { "nome": "combo", "v": 1, "passo": 4 } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Kanabō",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Investida Brutal",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "22 de dano a 1 inimigo; Provoca o alvo por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 22 },
+        { "t": "apply", "eff": { "type": "taunt", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fúria Demoníaca",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "38 de dano a 1 inimigo; aumenta em 2 turnos todas as recargas dele.",
+      "fx": [
+        { "t": "dmg", "v": 38 },
+        { "t": "cdShift", "unidade": true, "v": 2 }
+      ]
+    }
+  ]
+}
