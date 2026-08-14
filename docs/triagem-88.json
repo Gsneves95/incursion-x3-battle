@@ -1178,12 +1178,30 @@
     }
   },
   "placar": {
-    "IMPL": 37,
-    "FUNCIONAL": 36,
+    "IMPL": 46,
+    "FUNCIONAL": 45,
     "orfaos": {
       "afrodite": "dominado (Básico-forçado inerte)"
     },
     "nota": "FUNCIONAL=IMPL menos órfãs (afrodite/dominado)"
+  },
+  "leva_74_hook_pequenos": {
+    "feitos": [
+      "boitata (0 gancho — 6º verde-escondido)",
+      "hades + heimdall (nega-orbe: roubaOrbe + protegeOrbe)",
+      "iara (execIf — execução filtrada por status)",
+      "atena (contraClasse — contra-ataque filtrado por classe)",
+      "durga (vulneravel — debuff 'recebe +N de dano')",
+      "khnum (aoCair quem:aliado — 2 caminhos: unidade real + invocação-guarda)",
+      "poseidon (reducao protegido — filtra o beneficiário pelo elem)",
+      "chaac (DUPLO: bonusCura viaRegen + apply soSe)"
+    ],
+    "fora": "huangdi (cdShift-cluster MÉDIO — decisão própria, como o dominado)",
+    "veredito": "a tradução do §74 valeu EXATO: 8 construídos, 0 surpresa em obra. reconciliar erra ~20% p/ cima (§61); traduzir não erra. IMPL 37→46",
+    "budget_allowlist": [
+      "Fim de Mahishasura (durga 48-single, bump anti-chefe por HP)",
+      "Tempestade de Raios (chaac 32-area, seCond em Encharcado)"
+    ]
   },
   "teto_reconciliacao_teste": {
     "escritos": [
@@ -1210,7 +1228,7 @@
     ],
     "restam": {
       "osiris": "porAliadoCaido existe + 2º buraco (shield-condicional)",
-      "aokuang": "fonte contagem-status NOVA + 2º buraco (apply-filtrado)",
+      "aokuang": "fonte contagem-status NOVA (2º buraco apply-filtrado JÁ aberto — chaac §75/soSe)",
       "kali": "fonte contagem-abaixo-hp NOVA + 2º buraco (auto-ataque)"
     },
     "nota": "partiu como previsto; wrapper+2 fontes existentes flipou 2 limpos"

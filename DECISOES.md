@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §75 — A LEVA DOS 8 CONSTRUÍDA (sozinho): a tradução do §74 valeu EXATO, 0 surpresa em obra (IMPL 37→46)
+
+**O RESULTADO.** Os 8 da leva foram construídos, um commit por gancho, cada um `>>> TUDO OK` + `CADEIA OK` +
+`AUDITORIA OK` + CI verde: **boitata** (0 gancho, 6º verde-escondido) → **hades+heimdall** (nega-orbe) → **iara**
+(execIf) → **atena** (contraClasse) → **durga** (vulneravel) → **khnum** (aoCair-aliado) → **poseidon** (protegido) →
+**chaac** (viaRegen + soSe). **IMPL 37→46. FUNCIONAL 45** (só afrodite/dominado segue órfã). huangdi ficou de fora.
+
+**A LIÇÃO CENTRAL — a tradução-antes-de-construir (§73/§74) fechou com 0 erro.** A tabela do §74 previu o gancho de
+cada um dos 8; em obra, **nenhum precisou de correção de rota, nenhum revelou um segundo buraco escondido, nenhum
+travou.** É o contraste direto com a reconciliação (§61: ~80%, erra p/ cima): a reconciliação prometeu verde e entregou
+hook 5 vezes (§70); a **tradução** prometeu 8 hooks-pequenos e entregou 8 hooks-pequenos. **Confirma a escada do §61 com
+o experimento invertido: quando você TRADUZ antes de prometer, o teto some — a tradução é o único degrau que não mente.**
+
+**OS 8 GANCHOS ABERTOS (todos pequenos, regra 3 do dono respeitada):**
+- **roubaOrbe + protegeOrbe** (nega-orbe) — remove/rouba do maior pool inimigo; protegeOrbe barra. Serve hades+heimdall+fila.
+- **execIf** (dmg) — filtro de status na execução (`executaAbaixoDe` + `execIf:{quando}`). Iara elimina só Encharcados.
+- **contraClasse** (efeito contraAtaca) — revida SÓ a classe casada. Atena/Égide: só Físico. Prosa segue o idioma do
+  corpo ("contra-ataca por N", NÃO "sofre N de dano" — que não dava exclude seguro: colide com a marca real da Iemanjá).
+- **vulneravel** (debuff) — "recebe +N de dano", modificador de ENTRADA (simétrico ao dmgUp de SAÍDA; empilha, cleansável).
+  O motor **já previa** a vulnerabilidade (MARCAS/alvoMarca pendentes; Cuca adormecido+8 hardcoded) — Durga é o 1º
+  portador declarativo; migrar a Cuca é futuro.
+- **aoCair quem:'aliado'** (gatilho) — reator do MESMO lado do caído reage. **DOIS caminhos de queda** (a prosa "o Shabti
+  OU um aliado" nomeia os dois porque são mecanicamente distintos): unidade real via `matar`, invocação-guarda via `bater`
+  (só morte por DANO — expiração e limparInvocacoes NÃO disparam). Khnum estreia a invocação-guarda em data/deuses.
+- **reducao `protegido`** (eixo) — contraparte do `contra`: `contra` lê o GOLPE que chega, `protegido` lê o BENEFICIÁRIO.
+  Poseidon protege o time mas só os aliados Maré recebem a redução.
+- **bonusCura `viaRegen`** (condição quandoCura) — lê a ORIGEM da cura (tick de regen via `via` encadeado
+  curar→bonusCuraDeclarativo→condCuraOK), não a magnitude. Chaac: "regenerações curam +4"; cura direta não recebe.
+- **apply `soSe`** (fx apply) — filtrado por status do alvo (mesma gramática do condOK). Chaac atordoa só os Encharcados
+  de uma área. **Serve aokuang** (fecha o 2º buraco dele — sobra a fonte contagem-status).
+
+**chaac foi o único duplo-travado** (2 ganchos), como o §74 previu. O único refino que a tradução one-line não pegou (e
+que só apareceu ao construir) foi o **2º caminho de queda do Khnum** (invocação-guarda ≠ unidade) — mas pequeno o
+bastante para ficar na leva, não virar decisão. Registro como precedente: *"OU" numa prosa costuma nomear dois mecanismos
+distintos, não um sinônimo.*
+
+**Órfão? Não.** Todos os 8 passam validarDeus+smoke E têm o fio (enforce/leitor) do §74. FUNCIONAL subiu junto com IMPL
+(37→46 vs 36→45), a distância órfã ficou constante em 1 (afrodite).
+
+**PENDENTE — huangdi.** Fora da leva por ser o único **médio-single** (cdShift-cluster: cdShift em FX_TURNO +
+"recarga mais longa DO TIME" = max-across-team + mirado-multi). Aguarda a decisão de DESENHO do dono, como o dominado e
+a afrodite. **A leva acabou; trago o huangdi para desenho quando o dono quiser.**
+
+---
+
 ## 1. O jogo é gacha, mas o PvP é normalizado
 
 **Decidido:** invocação e Provações dão acesso a deuses. Nenhum sistema de
