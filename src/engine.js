@@ -123,7 +123,7 @@ const GATILHOS_PASSIVA = {
 //   'self' (o dono morre — nezha/ymir), 'aliado' (um aliado cai), 'qualquerInimigo' (qualquer inimigo cai — hades).
 // AMBIGUIDADE aberta (decisão do dono ao migrar morrigan/iansa/ahpuch): "quando um inimigo é derrotado, [eu] X"
 // não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
-const AOCAIR_QUEM = ['inimigo', 'self', 'qualquerInimigo'];
+const AOCAIR_QUEM = ['inimigo', 'self', 'qualquerInimigo', 'aliado'];
 const AOSERATINGIDO_QUEM = ['self', 'aliado'];   // sujeito do golpe que dispara: o próprio (medusa/boitata) ou um aliado (xango)
 // `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
 // 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
@@ -672,7 +672,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       // evento diz que interceptou, o outro conta o dano que ela levou (Regra 6).
       log(st, { tipo: 'efeito', origem: guarda.key, alvo: alvo.key, efeito: 'intercepta' });
       log(st, { tipo: 'dano', origem: atk.key, alvo: guarda.key, valor: base });
-      if (guarda.hp === 0) removerInvocacao(st, guarda);
+      if (guarda.hp === 0) { removerInvocacao(st, guarda); reagirAoCairAliado(st, alvo.lado); }   // Shabti caiu por dano: conta como queda de aliado (Khnum). Só aqui (morte por dano); expiração/limparInvocacoes NÃO disparam
       return base;
     }
   }
@@ -780,7 +780,21 @@ function matar(st, atk, alvo, opts = {}) {
       if (f.gatilho === 'aoCair' && f.quem === 'qualquerInimigo' && (!f.estado || estadoOK(f.estado, r, st))) rodarFaz(st, r, f.faz);
     }
   }
+  reagirAoCairAliado(st, alvo.lado);   // aoCair quem:'aliado' — reatores do MESMO lado do caído (Khnum cura ao perder aliado)
   checarFim(st);
+}
+
+// aoCair quem:'aliado' — QUALQUER queda no MESMO lado (unidade real via matar, OU invocação-guarda via bater):
+// todo reator vivo do lado do caído reage. Simétrico ao 'qualquerInimigo' (lado oposto). O caído já está morto
+// (vivo=false) ou é uma invocação sem unidade, então nunca reage à própria queda — isso é o 'self' (§76, Khnum).
+function reagirAoCairAliado(st, lado) {
+  for (const r of st.lados[lado].units) {
+    if (!r.vivo) continue;
+    const g = kitDe(st, r); const p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) {
+      if (f.gatilho === 'aoCair' && f.quem === 'aliado' && (!f.estado || estadoOK(f.estado, r, st))) rodarFaz(st, r, f.faz);
+    }
+  }
 }
 
 // ----------------------------------- PRIMITIVA interceptar / invocação-guarda

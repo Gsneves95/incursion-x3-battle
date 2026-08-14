@@ -1,0 +1,50 @@
+{
+  "key": "khnum",
+  "nome": "Khnum",
+  "faccao": "Egípcia",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Modelador",
+    "desc": "Quando o Shabti ou um aliado cai, o time cura 12.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "heal", "v": 12, "escopo": "time" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Torno de Barro",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Moldar Vida",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Invoca um Shabti (30 de HP) que Provoca 1 inimigo e absorve o dano dele por 2 turnos.",
+      "fx": [ { "t": "invocar", "nome": "Shabti", "tipo": "guarda", "hp": 30, "dur": 2, "provoca": true } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Sopro da Criação",
+      "cost": { "Verdejante": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "aliado",
+      "desc": "O time ganha 20 de Defesa Destrutível; 1 aliado causa +12 de dano por 2 turnos.",
+      "fx": [
+        { "t": "shield", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 } }
+      ]
+    }
+  ]
+}

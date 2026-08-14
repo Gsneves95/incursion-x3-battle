@@ -1050,6 +1050,32 @@ console.log('== F1.6 vulneravel: debuff "recebe +N de dano" soma no dano de ENTR
   console.log('  vulneravel: soma no dano de entrada, empilha, é cleansável');
 }
 
+console.log('== F1.6 aoCair quem:aliado: reage à queda de aliado REAL e de invocação-guarda (Khnum) ==');
+{ // Khnum: quando um aliado (ou o Shabti) cai, o time cura 12
+  E.GODS.tkh = { nome: 'TKh', faccao: 'T', elem: 'Verdejante', classe: 'Mágico', funcao: 'Manipulador', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'heal', v: 12, escopo: 'time' }] }] }, ab: [{ slot: 'habilidade', classe: 'Mágico', nome: 'Molda', cost: { Verdejante: 2 }, cd: 3, alvo: 'inimigo', fx: [{ t: 'invocar', nome: 'Shabti', tipo: 'guarda', hp: 30, dur: 2, provoca: true }] }] };
+  // 1. aliado REAL cai → cura o time
+  let st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 617);
+  let kh = st.lados[0].units[0], ally = st.lados[0].units[1], enemy = st.lados[1].units[0];
+  kh.hp = 50; ally.hp = 5;
+  E.aplicarFx(st, enemy, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [ally]);
+  ok(!ally.vivo && kh.hp === 62, `aliado real caiu → time cura 12 (Khnum 50→${kh.hp})`);
+  // 2. invocação-guarda (Shabti) cai POR DANO → conta como queda de aliado
+  st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 618);
+  kh = st.lados[0].units[0]; ally = st.lados[0].units[1]; enemy = st.lados[1].units[0];
+  st.lados[0].orbs['Verdejante'] = 9; kh.hp = 50;
+  E.agir(st, kh.uid, 'habilidade', [enemy.uid]);
+  E.aplicarFx(st, enemy, [{ t: 'dmg', v: 40 }], { alvo: 'inimigo', slot: 'basico' }, [ally]);
+  ok(st.lados[0].invocacoes.length === 0 && kh.hp === 62, `Shabti caiu por dano → time cura 12 (Khnum 50→${kh.hp})`);
+  // 3. lado: a queda de um INIMIGO não dispara (quem:aliado é só o MESMO lado)
+  st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 619);
+  kh = st.lados[0].units[0]; const inimigo = st.lados[1].units[0];
+  kh.hp = 50; inimigo.hp = 5;
+  E.aplicarFx(st, kh, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [inimigo]);
+  ok(!inimigo.vivo && kh.hp === 50, `queda de inimigo NÃO dispara quem:aliado (Khnum ${kh.hp})`);
+  delete E.GODS.tkh;
+  console.log('  aoCair aliado: aliado real + invocação-guarda disparam; inimigo não');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -1148,7 +1174,7 @@ err(g => g.passiva.fx.push({ gatilho: 'imunidade', a: ['adormecido'], v: 5 }), '
 // gatilho aoCair (sessão 6): quem (sujeito) + faz (efeito no reator)
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', faz: [{ t: 'orbGain', n: 1 }] }), 'exige o campo "quem"');        // falta quem
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo' }), 'exige o campo "faz"');                        // falta faz
-err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado' ainda não aberto (F1.4); 'qualquerInimigo' abriu na F1.3 morte 4/4
+err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'qualquerAliado', faz: [{ t: 'orbGain', n: 1 }] }), 'quem inválido'); // 'aliado' abriu na F1.6 (§76, Khnum); 'qualquerInimigo' na F1.3 morte 4/4; 'qualquerAliado' segue fora do vocab
 err(g => g.passiva.fx.push({ gatilho: 'aoCair', quem: 'inimigo', faz: [{ t: 'dmg', v: 10 }] }), 'não pode disparar por turno'); // faz turno-seguro
 // gatilho aoSerAtingido (F1.4): quem próprio {self,aliado}; faz BUFF-only (garantia intacta); noAtacante = debuff no atacante
 err(g => g.passiva.fx.push({ gatilho: 'aoSerAtingido', faz: [{ t: 'apply', eff: { type: 'dmgUp', v: 3, dur: 2 }, escopo: 'self' }] }), 'exige o campo "quem"'); // falta quem
