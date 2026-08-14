@@ -1912,6 +1912,31 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §68 — CAUDA DURA FECHADA: medusa (IMPL 28→29); duas decisões do dono registradas
+
+Fechado o último kit da cauda com as duas rulings do dono:
+
+**(A) EXCLUDE DO DoT-TICK — aprovado (registrado no `checar_cadeia`).** Um `N de dano` seguido de `puro/turno`,
+`/turno` ou `por turno` é TICK de DoT (dano do efeito ao longo do tempo), não o dano DESTA habilidade. Padrão
+específico (não casa "N de dano a 1 inimigo") — mesma família do `causam 0 de dano` do Pacificar. Fecha o Veneno da
+Medusa ("8 de dano puro/turno"), o Sangramento da Piranha, e qualquer DoT-em-prosa futuro. A regra do dono cumprida:
+trouxe o padrão exato antes de mexer; com o OK, apliquei.
+
+**(B) DIVERGÊNCIAS DA FREYJA — aceitas como §54 (sem hook).** `aoCurar` dispara em qualquer cura de aliado (não só
+"por Freyja"); "no turno seguinte" aproximado por `dur:2`. O dono decidiu: §54 (Freyja é a curadora do time, ninguém
+distingue na prática) — não vale um gancho `aoCurar-porMim`. Fica anotado como divergência-conhecida-aceita.
+
+**Medusa (hook 8):** `cruzarLimiar` ganha `consome` (zera as marcas ao petrificar). `Pedra` no vocabulário; limiar
+em:3 → `atordoado` (petrificado ≡ atordoado, §54); lock-hab = `lockSkill`. Passiva = aoSerAtingido{contra:classe
+Físico} → Veneno no atacante (§55, o exemplo canônico já tinha teste).
+
+**FECHO DO LOTE-DE-HOOKS: 8 hooks → 9 kits, IMPL 12→29 (global).** A cauda dura (iansa/medusa/freyja), que parecia
+exigir "ganchos de verdade", rendeu com hooks contidos porque os §53–§62 já tinham a fundação. **Sobra a 2ª onda
+real:** kitsune (mas `dominado` JÁ existe — reavaliar na tradução, o §61 de novo), nefertem (bonusCura-facção),
+amaterasu (modo Dia, adiada p/ F1.5). A meta honesta do §64 (12→~30 em 4 lotes) praticamente batida: 29.
+
+---
+
 ## §67 — CAUDA DURA (parcial): iansa + freyja (IMPL 26→28); medusa aguarda o OK do exclude
 
 Fechados os dois kits da cauda que NÃO tocam no `checar_cadeia` (decisão do dono: "iansa+freyja; medusa depois do teu OK").

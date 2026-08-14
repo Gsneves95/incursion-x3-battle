@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 43,
-    "IMPLEMENTADO": 16,
+    "AMARELO": 42,
+    "IMPLEMENTADO": 17,
     "VERMELHO": 29
   },
   "gods": [
@@ -366,7 +366,7 @@
       "ganchos": [
         "limiar-consome"
       ],
-      "cor": "AMARELO"
+      "cor": "IMPLEMENTADO"
     },
     {
       "key": "nefertem",
@@ -1056,7 +1056,7 @@
     "projecao_impl": "20 -> 26 (hooks) -> ~30 (decisoes)"
   },
   "lote2_hooks": {
-    "feito": "hooks 1-7 → 8 kits (IMPL 20→28)",
+    "feito": "hooks 1-8 → 9 kits (IMPL 20→29)",
     "hercules": "vidaExtra no rodarFaz",
     "curupira": "redirect-apply (quita dívida §62)",
     "xango": "seCond em danoBase",
@@ -1075,8 +1075,11 @@
     },
     "iansa": "limparInvocacoes + antiRevive",
     "freyja": "fx condicional-por-estado (aliadoCaido/umCaido) — DIVERGÊNCIAS: aoCurar dispara em qualquer cura; turno-seguinte aprox por dur:2",
-    "pendente_dono": {
-      "medusa": "exclude DoT-tick no checar_cadeia (N de dano [puro]/turno) — aguarda OK do dono"
+    "medusa": "limiar-consome + exclude DoT-tick (aprovado)",
+    "segunda_onda_real": {
+      "kitsune": "dominado JÁ existe em CONTROLES — reavaliar",
+      "nefertem": "bonusCura-facção",
+      "amaterasu": "modo Dia F1.5"
     }
   }
 }
