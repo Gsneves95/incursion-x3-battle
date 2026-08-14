@@ -6,6 +6,48 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §76 — HUANG DI: o "cluster" médio já existia (o viés do rótulo corta TAMANHO, não só prontidão)
+
+**A VARREDURA RESPONDEU MELHOR QUE A PERGUNTA.** A pergunta do dono antes de construir: *quantos deuses pedem
+cdShift-cluster além do huangdi?* — se 2-3, é infra e vale; se só ele, é médio-single e espera. A varredura dos 100
+achou: **o "cluster" (mexer no time inteiro de uma vez) JÁ EXISTE** — é o ramo escopo-de-lado do cdShift, *legado*,
+**vivo em fujin (hab: +1 no time inimigo; milagre: −1 no próprio) e ganesha (−1 no próprio).** E **dois terços do Huang
+Di eram escrevíveis desde sempre**: a habilidade ("todas as recargas do time") é o escopo-de-lado que já roda; o milagre
+("2 aliados") é um fix de 2 linhas no mirado (varrer `alvos`, não só `alvos[0]`). **Só a passiva era nova** — "a recarga
+mais longa DO TIME", o único agregado-de-recarga-do-time em todo o catálogo (0 outros deuses o pedem).
+
+**O ACHADO — o viés do rótulo corta nas DUAS direções (o dono).** Até aqui a tradução desinflava o teto de PRONTIDÃO:
+a triagem prometia VERDE e a obra entregava HOOK (o flip §46, os 5 verdes §70, a leva §75 — sempre "mais fácil do que
+é"). Aqui a tradução desinflou o teto de TAMANHO na direção oposta: o §74 rotulou "MÉDIO" (por reconciliação, pelo nome
+"cdShift-cluster") e a obra entregou **~10 linhas**. **Fica a regra: "grande demais para agora" merece a MESMA
+desconfiança que "pronto para escrever". O rótulo mente para os dois lados — o de prontidão erra para o verde, o de
+tamanho pode errar para o grande. Só a tradução mede.** (A régra "médio-single espera" continua válida — mas ela vale
+para tamanho-dominado; um rótulo "médio" não é evidência de que É médio.)
+
+**AS QUATRO DECISÕES (do dono), travadas:**
+1. **Construir** — sim: não é médio, é pequeno, e 2/3 já eram de graça.
+2. **Desempate DETERMINÍSTICO** (o mais sério — quebra replay/cadeia em silêncio se falhar): a maior recarga do time,
+   empate resolvido por **menor índice de unidade, depois ordem de slot (basico→hab→milagre)**. Iterar nessa ordem
+   trocando só em `>` estrito faz o 1º empatado vencer. **Provado em TESTE, não em comentário** (dois testes de empate:
+   duas unidades mesma maior → menor índice cede; mesma unidade dois slots → habilidade antes de milagre).
+3. **"do time" inclui o próprio Huang Di** — a prosa não o exclui; se quisesse, diria "de um aliado".
+4. **Uma recarga por turno** (a prosa é singular) — e isso torna o efeito **auto-limitante**: com "a mais longa de cada
+   unidade" a passiva viraria −3/turno no time. O singular é provavelmente de propósito.
+
+**A DISTINÇÃO DO FX_TURNO — varrer-para-ESCOLHER ≠ varrer-para-ALVEJAR (registrar, o dono avisou).** O cdShift-team-longest
+é o 1º fx de FX_TURNO que varre o time para decidir ONDE agir. Parece furar a garantia do FX_TURNO ("sem alvo escolhido
+pelo jogador"), mas NÃO fura: ele varre para **escolher** o alvo internamente (determinístico), e o alvo continua sendo o
+**próprio lado**; o jogador não escolhe nada. A garantia era sobre *escolha do jogador*, e essa fica intacta. **Fica a
+distinção para o próximo caso, que vai parecer igual e pode não ser: um fx-turno pode LER o campo para se auto-direcionar,
+desde que (a) a leitura seja determinística e (b) o alvo não venha do jogador. Se o alvo viesse de uma escolha, aí sim
+furaria.** O validador reforça: cdShift no faz SÓ na forma soMaiorDoTime — `unidade`/`lado:inimigo` (que exigiriam
+escolha/alvo inimigo) são barradas.
+
+**DEUS-OU-NADA (corolário §73/§74).** Não escrevi as duas cláusulas fáceis (hab+milagre) deixando a passiva órfã — uma
+passiva declarada-sem-fio é exatamente o órfão da família §73. Huang Di entrou inteiro (IMPL 46→47) ou não entraria.
+
+---
+
 ## §75 — A LEVA DOS 8 CONSTRUÍDA (sozinho): a tradução do §74 valeu EXATO, 0 surpresa em obra (IMPL 37→46)
 
 **O RESULTADO.** Os 8 da leva foram construídos, um commit por gancho, cada um `>>> TUDO OK` + `CADEIA OK` +

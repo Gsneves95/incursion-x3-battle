@@ -1178,12 +1178,17 @@
     }
   },
   "placar": {
-    "IMPL": 46,
-    "FUNCIONAL": 45,
+    "IMPL": 47,
+    "FUNCIONAL": 46,
     "orfaos": {
       "afrodite": "dominado (Básico-forçado inerte)"
     },
     "nota": "FUNCIONAL=IMPL menos órfãs (afrodite/dominado)"
+  },
+  "huangdi_cdShift_cluster": {
+    "veredito": "o 'cluster' MÉDIO do §74 já existia (escopo-de-lado legado, live em fujin+ganesha); só a passiva team-longest era nova (~10 linhas). §76: o viés do rótulo desinfla TAMANHO tb, não só prontidão",
+    "novo": "cdShiftMaiorDoTime (desempate índice→slot, determinístico); cdShift em FX_TURNO só soMaiorDoTime; mirado varre alvos (milagre 2-aliados)",
+    "IMPL": "46→47"
   },
   "leva_74_hook_pequenos": {
     "feitos": [
@@ -1196,7 +1201,7 @@
       "poseidon (reducao protegido — filtra o beneficiário pelo elem)",
       "chaac (DUPLO: bonusCura viaRegen + apply soSe)"
     ],
-    "fora": "huangdi (cdShift-cluster MÉDIO — decisão própria, como o dominado)",
+    "fora": "huangdi saiu p/ desenho próprio — FEITO no §76 (o 'médio' era ~10 linhas; cluster já existia)",
     "veredito": "a tradução do §74 valeu EXATO: 8 construídos, 0 surpresa em obra. reconciliar erra ~20% p/ cima (§61); traduzir não erra. IMPL 37→46",
     "budget_allowlist": [
       "Fim de Mahishasura (durga 48-single, bump anti-chefe por HP)",
