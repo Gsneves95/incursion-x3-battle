@@ -1,7 +1,7 @@
 {
   "dist": {
-    "AMARELO": 41,
-    "IMPLEMENTADO": 18,
+    "AMARELO": 37,
+    "IMPLEMENTADO": 22,
     "VERMELHO": 29
   },
   "gods": [
@@ -37,8 +37,7 @@
       "ganchos": [
         "reducao-escopo-elem"
       ],
-      "cor": "AMARELO",
-      "reconc": "VERDE-agora",
+      "cor": "IMPLEMENTADO",
       "reconc_nota": "reducao contra:elemNao já existe"
     },
     {
@@ -137,16 +136,15 @@
         "copiar-ultima"
       ],
       "cor": "AMARELO",
-      "reconc": "VERDE-agora",
-      "reconc_nota": "copiar já existe; revive todosCaidos + cd:99≈1x"
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "TRAVOU na tradução: once-per-match p/ habilidade não existe (a reconciliação viu copiar+revive)"
     },
     {
       "key": "itzamna",
       "ganchos": [
         "dia-noite-ler-extra"
       ],
-      "cor": "AMARELO",
-      "reconc": "VERDE-agora",
+      "cor": "IMPLEMENTADO",
       "reconc_nota": "restauraMax + porTurno estado:fase:Dia + bonusCura já existem"
     },
     {
@@ -231,8 +229,7 @@
       "ganchos": [
         "bloqueia-geracao-orbe?"
       ],
-      "cor": "AMARELO",
-      "reconc": "VERDE-agora",
+      "cor": "IMPLEMENTADO",
       "reconc_nota": "bonusDano alvoDebuff:adormecido + orb-denial já é regra (1009)"
     },
     {
@@ -294,8 +291,7 @@
       "ganchos": [
         "modo-alterna"
       ],
-      "cor": "AMARELO",
-      "reconc": "VERDE-agora",
+      "cor": "IMPLEMENTADO",
       "reconc_nota": "opcoes/alterna já existe (NARASIMHA/KURMA)"
     },
     {
@@ -1186,5 +1182,25 @@
       "F1.5": 1,
       "PENDENTE-dominado": 1
     }
+  },
+  "placar": {
+    "IMPL": 34,
+    "FUNCIONAL": 33,
+    "orfaos": {
+      "afrodite": "dominado (Básico-forçado inerte; só nega-orbe)"
+    },
+    "nota": "FUNCIONAL = IMPL menos órfãs; fecha quando dominado for construído"
+  },
+  "teto_reconciliacao_teste": {
+    "escritos": [
+      "baldur",
+      "orfeu",
+      "itzamna",
+      "vishnu"
+    ],
+    "travou": [
+      "isis"
+    ],
+    "veredito": "4/5 limpos; reconciliar-contra-motor é confiável mas continua TETO — só a tradução prova"
   }
 }

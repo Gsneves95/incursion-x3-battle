@@ -1912,6 +1912,41 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §71 — O TETO DA RECONCILIAÇÃO TESTADO (4/5), a VARREDURA DE ETIQUETAS ÓRFÃS (1 órfã), e o número FUNCIONAL no placar
+
+**(A) O teto da reconciliação, testado pela escrita (o dono pediu).** Dos 5 verdes-por-reconciliação, escritos: **4
+saíram limpos, 1 travou.** baldur/orfeu/itzamna/vishnu fecharam (IMPL 30→34). **isis TRAVOU** — o milagre "Revive todos
+os caídos… **uma vez por partida**" precisa de guarda once-per-match para HABILIDADE, que não existe (só `renasceu`
+por-unidade; o cd:5 do catálogo não trava). **A reconciliação (ler a lista) viu `copiar`+`revive` e disse verde; só a
+TRADUÇÃO pegou a restrição de nível-de-habilidade.** É o §61 no alvo exato que o dono mirou: **ler a lista real é TETO,
+traduzir é a verdade.** Veredito: reconciliar-contra-o-motor é método CONFIÁVEL (80% acerto no teste), mas continua
+sendo teto — a escrita é a única prova. isis vira HOOK-pequeno (once-per-match), não verde.
+
+**(B) A VARREDURA DE ETIQUETAS ÓRFÃS (o dono pediu quando o dominado apareceu; agora feita).** Método: coletei TODO
+`apply eff.type` / `dot` / fx aplicado pelos 34 kits escritos e cruzei com o que o motor ENFORCE (não só aceita).
+Resultado: **de ~20 tipos de efeito aplicados, TODOS são enforced — MENOS UM.**
+
+| efeito | kits que aplicam | enforce? |
+|---|---|---|
+| adormecido, atordoado, submerso, selado, agarrar, lockSkill, silenceClass, taunt, pacificado | vários | ✓ (podeAgir / SLOTS_TRAVADOS / acoesDe / bater) |
+| dmgUp, dmgDown, dmgReduction, controlImmune, invulneravel, noHeal, pisoVida | vários | ✓ (bonusDano / calcDano / curar / bater) |
+| regen, antiRevive, redirect, vidaExtra, encharcado, DoTs | vários | ✓ (curar-tick / snapshot / matar / marcador lido) |
+| **dominado** | **afrodite** | **✗ SÓ nega-orbe (1009); o Básico-forçado é INERTE** |
+
+**UMA órfã: `dominado`, em UM kit: afrodite.** Os outros 33 estão FUNCIONAIS (todo efeito que aplicam, o motor
+executa — algumas com divergências-de-granularidade anotadas, mas essas AGEM, não são inertes). afrodite é o único
+PARCIAL: a habilidade nega orbe (metade) mas não força o Básico (a metade que é a alma do efeito).
+
+**(C) O NÚMERO FUNCIONAL NO PLACAR (o dono: "métrica que conta o que não funciona engana").** A partir daqui o placar
+carrega DOIS números: **IMPL 34** (escritos) e **FUNCIONAL 33** (escritos cujos efeitos o motor todo executa). A
+diferença é exatamente 1 — afrodite/dominado — e fecha sozinha quando o mecanismo do Básico-forçado for construído (a
+tag já está lá, §69D). O IMPL sozinho enganava do mesmo jeito que a curva-única do VERDE (§64): contava a afrodite
+como pronta. **De agora, FUNCIONAL é o número honesto; IMPL é o teto.** Registrado em `docs/triagem-88.json` (campo
+`placar`). E a lição-de-processo: `validarDeus + smoke` não vê órfã (a tag aplica, não quebra) — só a varredura
+cruzando aplica-vs-enforce vê. Vale re-rodar a varredura a cada onda, como o auditor (§66).
+
+---
+
 ## §70 — RECONCILIAÇÃO DOS 41 AMARELO contra o motor de hoje: a triagem errava para cima (5 verdes escondidos), e o resto colapsa em 4 baldes
 
 Feita a passada que o dono pediu: cada AMARELO confrontado NÃO pelo nome do gancho, mas pelo vocabulário REAL de hoje
