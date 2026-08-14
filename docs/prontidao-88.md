@@ -342,3 +342,41 @@ exatamente.** A bruta (10 flips / ~30) era TETO: a varredura de cada gancho reve
 e guanyu (imunidade-condicional), gancho de NOME de controle e substância de outro mecanismo. É o §61: previsão sobre a
 triagem é teto, porque a triagem herda o viés-do-nome (§46) que só a varredura seguinte corrige. Método certo, teto
 corrigido pelos itens identificados.
+## RE-TRIAGEM 2 — pós-F1.4 (varredura fresca dos 88, 4 agentes) + a decisão parar-motor-ou-escrever
+
+**Distribuição (corrigida): VERDE 25 · AMARELO 34 · VERMELHO 29.** (A varredura crua deu 23; a reconciliação achou 2
+falsos-negativos — bragi/brahma tinham `aoAliadoUsarMilagre` marcado como gancho, mas `aoUsarHabilidade` JÁ dispara
+para aliados desde o Passo 0. **É o §61 recursivo: a PRÓPRIA re-triagem herdou o viés-do-nome** — mesmo uma varredura
+fresca é teto até reconciliar contra o que existe. Também explica a deriva da triagem incremental, que marcava 28.)
+
+**VERDE (25):** afrodite, amaterasu, apolo, atena, bennu, bragi, brahma, chaac, curupira, fenrir, freyja, hades,
+hercules, iansa, iara, kitsune, kraken, medusa, nefertem, oni, oxala, oxum, piranha, xango, ymir. (±1-2 de ruído de
+re-triagem — ex.: iansa depende de o antirevive-temporal contar como já-expressível.)
+
+**Ranking dos ganchos que travam os 63 não-verdes (trava | flip | stage | balde?):**
+
+| gancho | trava | flip | stage | balde? |
+|---|---|---|---|---|
+| bonusDano-escala-dinamica | 11 | 5 | 6 | BALDE (HP-faltante × contagem-status × aliados-caídos) |
+| nega-orbe (remover orbe do inimigo) | 6 | 1 | 5 | BALDE? (remover × suprimir-geração) |
+| marca-vulnerabilidade | 5 | 1 | 4 | — |
+| ignora-invuln | 5 | 1 | 4 | BALDE? (invuln × piso × def-destrutível) |
+| seletor | 4 | 2 | 2 | BALDE (mais-ferido × maior-HP × maior-dano) |
+| sinergia-nomeada | 4 | 1 | 3 | BALDE (1 por par de deuses) |
+| escolha-efeito | 4 | 0 | 4 | BALDE (1-de-N × K-de-N) |
+| dia-noite-ler-extra | 4 | 1 | 3 | BALDE (duração × orbe × cura) |
+| iniciativa · aoCair-aliado · multi-hit-distribuido | 3 cada | — | — | — |
+| + ~40 ganchos de cauda | 1-2 cada | | | 31 travam UM só deus |
+
+**PROJEÇÃO (a pergunta que decide a estratégia): os 63 não-verdes se ESPALHAM, não se concentram.** 50 ganchos
+distintos; top-6 cobrem só 35% das travas; **31 dos 50 ganchos travam UM único deus.** O limiar do dono era "concentra
+em 5-6 → terminar motor; espalha em 20 → escrever agora". Espalha em **50** (com cauda de 31 single-deus). Construir o
+motor até o fim = ~50 mecanismos, 31 deles por um deus só, ANTES de ver um deus novo.
+
+**CUSTO DE KIT VERDE:** o catálogo (kits.json) já carrega número, `custo`, `recarga` e prosa por habilidade — escrever
+um verde é TRADUZIR prosa→fx (não desenhar). ~80 linhas de JSON, tudo primitiva existente. **~6-8 por sessão.**
+
+**RECOMENDAÇÃO: parar o motor e escrever os 25 verdes.** Em ~4 sessões o placar de IMPLEMENTADOS salta de 12 para
+~37 — o indicador parado desde o Rá anda de verdade. A alternativa (terminar o motor primeiro) constrói 50 mecanismos,
+31 para um deus cada, antes do primeiro deus novo. O AMARELO (34) fica como segunda onda: os poucos ganchos-balde do
+topo (bonusDano-escala, seletor, nega-orbe), construídos DEPOIS dos verdes, flipam um lote a mais.

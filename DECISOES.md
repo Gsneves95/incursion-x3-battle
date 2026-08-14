@@ -1887,6 +1887,31 @@ identificou os 2 mislabels — exatamente o que o §61 prevê.**
 
 ---
 
+## §63 — Re-triagem 2 (pós-F1.4) e a decisão parar-motor-ou-escrever (do dono — PENDENTE)
+
+Re-varredura fresca dos 88 por 4 agentes contra o vocabulário atual. **VERDE 25 · AMARELO 34 · VERMELHO 29.** Três
+achados:
+
+**(A) O §61 é RECURSIVO — a própria re-triagem herdou o viés-do-nome.** Dois agentes marcaram `aoAliadoUsarMilagre`
+como gancho do bragi/brahma; mas `aoUsarHabilidade` JÁ dispara para aliados (Passo 0). Falso-gancho, corrigido →
+bragi/brahma são VERDE. Confirma o §61 num nível a mais: **mesmo uma varredura fresca é TETO até reconciliar contra
+o que existe.** (Também explica a deriva da triagem incremental, que dizia 28: a manutenção-por-remoção drifta, por
+isso o dono pede re-triagem completa entre fases — a lição do §37/§61 mais uma vez.)
+
+**(B) A projeção que decide a estratégia: os 63 não-verdes ESPALHAM.** 50 ganchos distintos; **31 travam UM só deus**;
+top-6 cobrem 35% das travas. O limiar do dono ("concentra em 5-6 → motor; espalha em 20 → kits") aponta decisivamente
+para KITS: espalha em 50. Terminar o motor = ~50 mecanismos (31 por um deus) antes de um deus novo.
+
+**(C) Custo de kit VERDE é baixo:** o catálogo já traz número/custo/recarga/prosa; escrever é TRADUZIR prosa→fx, não
+desenhar. ~6-8 por sessão → os 25 verdes em ~4 sessões → IMPLEMENTADOS 12→~37.
+
+**Recomendação (decisão do dono):** parar o motor e escrever os 25 verdes; o indicador de implementados (parado em 12
+desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os poucos ganchos-balde do topo
+(bonusDano-escala flip 5, seletor, nega-orbe) flipa outro lote. Detalhe e ranking em `docs/prontidao-88.md`
+(RE-TRIAGEM 2) e per-deus em `docs/triagem-88.json`. **Aguarda o go do dono.**
+
+---
+
 ## Decisões ainda ABERTAS
 
 | Assunto | Situação |

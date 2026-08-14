@@ -1,24 +1,15 @@
 {
  "dist": {
-  "VERDE": 28,
-  "AMARELO": 38,
-  "VERMELHO": 22
+  "VERDE": 25,
+  "AMARELO": 34,
+  "VERMELHO": 29
  },
  "gods": [
   {
    "key": "ahpuch",
    "ganchos": [
-    "antirevive"
+    "antirevive-contador"
    ],
-   "nota": "Passiva on-kill nao-matador (aoCair-qualquerInimigo) e Podridao bloqueia revive (antirevive); reduzMaxHp/porContador/selfHp/noHeal expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "anubis",
-   "ganchos": [
-    "antirevive"
-   ],
-   "nota": "limiar de Atadura->Selado(trava Hab+Mil) e Atadura bloqueia revive. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -26,15 +17,20 @@
    "ganchos": [
     "bonusDano-escala-dinamica"
    ],
-   "nota": "Encharcado/dmgDown/atordoar expressíveis, imune-a-Provocar=imunidade{a}; '+5 por inimigo Encharcado' passivo é escala por contagem-de-status.",
    "cor": "AMARELO"
   },
   {
    "key": "aquiles",
    "ganchos": [
-    "marca-vulnerabilidade"
+    "vulnerabilidade-classe-atacante?"
    ],
-   "nota": "puro/invuln/reducao ok; 'sofre +10 de Manipuladores' e amplificacao de dano RECEBIDO (mirror do dmgDown), condicionada por classe do atacante - inexistente.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "baldur",
+   "ganchos": [
+    "reducao-escopo-elem"
+   ],
    "cor": "AMARELO"
   },
   {
@@ -42,7 +38,6 @@
    "ganchos": [
     "primeiroPorTurno"
    ],
-   "nota": "reducao do primeiro ataque unico por turno precisa de rastreio; intercepta/contraAtaca/vidaExtra existem.",
    "cor": "AMARELO"
   },
   {
@@ -50,23 +45,13 @@
    "ganchos": [
     "ignora-invuln"
    ],
-   "nota": "'time ignora Inalvejavel' nao expressivel; cura-por-atingido e faz:[heal] (boitata-o-heal) e dmgDown/condicional expressiveis.",
    "cor": "AMARELO"
   },
   {
    "key": "cerberus",
    "ganchos": [
-    "antirevive"
+    "antirevive-aura"
    ],
-   "nota": "taunt/shield/reducao-self ok; passiva 'inimigos nao podem ser revividos enquanto vive' = naoRevive, inexistente.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "chaac",
-   "ganchos": [
-    "bonusCura-cond-nova"
-   ],
-   "nota": "Passiva 'regeneracoes curam +4' (bonusCura por tipo-de-cura); apply-Encharcado/heal/condicional-status/atordoa/bonusDano expressiveis.",
    "cor": "AMARELO"
   },
   {
@@ -74,15 +59,6 @@
    "ganchos": [
     "seletor"
    ],
-   "nota": "regen/revive-cond/heal expressiveis; passiva cura 'o aliado mais ferido' exige seletor (faz-heal so tem self|time).",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "dionisio",
-   "ganchos": [
-    "nega-orbe?"
-   ],
-   "nota": "Silenciado(so Basico)=selado-so-basico; dominado-area e roubo-orbe ok; passiva 'controlados nao geram orbes' e supressao de geracao de orbe, inexistente. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -90,23 +66,13 @@
    "ganchos": [
     "marca-vulnerabilidade"
    ],
-   "nota": "Hab '+8 de dano recebido' e marca-vulnerabilidade; dmgDown/lockSkill/quando-alvoHp/imune-Medo/bonusDano-debuff todos expressiveis.",
    "cor": "AMARELO"
   },
   {
    "key": "guanyu",
    "ganchos": [
-    "imunidade-condicional?"
+    "imunidade-condicional"
    ],
-   "nota": "vínculo+contraAtaca provados, imune-a-Medo-com-3-vivos e redução são imunidade+estado{aliadosVivos}, '+8 por aliado vivo' fica no dano da habilidade. | §60: 'imune a Medo com 3 vivos' é imunidade CONDICIONAL (imuneA ignora estado) — não é o gancho 'medo'; NÃO flipa.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "hanuman",
-   "ganchos": [
-    "seletor"
-   ],
-   "nota": "Milagre cura no 'aliado mais ferido' (seletor); passiva 'com Sun Wukong no time' e sinergia-nomeada; intercepta/dmgUp existem.",
    "cor": "AMARELO"
   },
   {
@@ -114,7 +80,6 @@
    "ganchos": [
     "orbe-protecao"
    ],
-   "nota": "contraAtaca(hab), shield+controlImmune-time ok; passiva 'inimigo nao pode roubar nem remover orbes' = orbe-protecao.",
    "cor": "AMARELO"
   },
   {
@@ -122,7 +87,6 @@
    "ganchos": [
     "iniciativa"
    ],
-   "nota": "multi-hit, cdShift-aliado, roubo-orbe+stripOne ok; reducao vs alvo-unico via contra(alcance); 'age primeiro no turno 1' = iniciativa.",
    "cor": "AMARELO"
   },
   {
@@ -130,23 +94,13 @@
    "ganchos": [
     "faz-cdShift"
    ],
-   "nota": "cdShift/cleanse ativos expressíveis; a passiva reduz 'a recarga mais longa do time' por turno = cdShift em faz + seletor.",
    "cor": "AMARELO"
   },
   {
-   "key": "iansa",
+   "key": "inari",
    "ganchos": [
-    "antirevive"
+    "sinergia-nomeada"
    ],
-   "nota": "Milagre impede revives (antirevive); passiva on-kill nao-matador (aoCair-qualquerInimigo); strip/removerInvocacao/dmgDown expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte).",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "iara",
-   "ganchos": [
-    "execucao-hp"
-   ],
-   "nota": "Hab Silencia so-Basico (selado-so-basico); Milagre elimina Encharcados com HP<=20 (execucao-hp); taunt/apply/contra-alcance expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -154,39 +108,69 @@
    "ganchos": [
     "copiar-ultima"
    ],
-   "nota": "copiar exige a nocao de 'ultima habilidade usada'; revive-time e imunidade existem.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "itzamna",
+   "ganchos": [
+    "dia-noite-ler-extra"
+   ],
+   "cor": "AMARELO"
+  },
+  {
+   "key": "izanagi",
+   "ganchos": [
+    "bonusCura-cond-nova"
+   ],
+   "cor": "AMARELO"
+  },
+  {
+   "key": "izanami",
+   "ganchos": [
+    "seletor"
+   ],
+   "cor": "AMARELO"
+  },
+  {
+   "key": "jormungandr",
+   "ganchos": [
+    "bonusDano-escala-dinamica"
+   ],
    "cor": "AMARELO"
   },
   {
    "key": "kagutsuchi",
    "ganchos": [
-    "amplifica-dot?"
+    "amplifica-dot"
    ],
-   "nota": "'todas as Queimaduras no campo causam +4' amplifica um tipo de DoT no campo inteiro (não é bonusDano do próprio); auto-dano por turno cobre-se por selfHp.",
+   "cor": "AMARELO"
+  },
+  {
+   "key": "kali",
+   "ganchos": [
+    "bonusDano-escala-dinamica"
+   ],
+   "cor": "AMARELO"
+  },
+  {
+   "key": "khnum",
+   "ganchos": [
+    "aoCair-aliado"
+   ],
    "cor": "AMARELO"
   },
   {
    "key": "kukulkan",
    "ganchos": [
-    "acao-atrasada?"
+    "acao-atrasada"
    ],
-   "nota": "Hab telegrafa dano no turno seguinte (acao-atrasada, sem fx); invulneravel/dmgUp-area/bonusDano-Encharcado/orbe-turno1 expressiveis.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "mimir",
-   "ganchos": [
-    "passiva-ativa-morto?"
-   ],
-   "nota": "concede aura de +dano mesmo derrotado (passiva do tumulo) e naoRevive em si mesmo. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
    "cor": "AMARELO"
   },
   {
    "key": "morrigan",
    "ganchos": [
-    "execucao-hp"
+    "execucao-timing"
    ],
-   "nota": "Hab elimina se fim de turno com HP<=20 (execucao-hp); Milagre Medo; passiva on-kill nao-matador (aoCair-qualquerInimigo); noHeal/faz:[heal] expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte). | §60: Medo (compósito) construído; o deus o APLICA.",
    "cor": "AMARELO"
   },
   {
@@ -194,39 +178,13 @@
    "ganchos": [
     "bonusDano-escala-dinamica"
    ],
-   "nota": "Milagre aplica Medo; passiva '+1 por 5 HP perdido' e escala por HP-faltante; controlImmune/dot/imune-Queimadura expressiveis. | §60: Medo (compósito) construído; o deus o APLICA.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "nefertem",
-   "ganchos": [
-    "bonusCura-cond-nova"
-   ],
-   "nota": "amplia cura condicionada a faccao do curador (Egipcios); quandoCura so tem inimigoTem.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "odin",
-   "ganchos": [
-    "ignora-invuln"
-   ],
-   "nota": "basico ignora Invuln+Inalvejavel (danoIrredutivel so fura reducao/escudo); marca+bonusDano-time e selfHp+cdShift+dmgUp ok; passiva '2+ Nordicos' = sinergia-nomeada por faccao.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "oni",
-   "ganchos": [
-    "bonusDano-escala-dinamica"
-   ],
-   "nota": "redução vs Mágico é contra:classe (expressível); '+1 de dano por 4 de Combo' é bonusDano passivo que escala por contador, e o +N passivo é fixo.",
    "cor": "AMARELO"
   },
   {
    "key": "orfeu",
    "ganchos": [
-    "nega-orbe?"
+    "bloqueia-geracao-orbe?"
    ],
-   "nota": "adormecido, dmgDown-area+heal ok; +dano vs adormecido via quando(status); 'nao geram orbes' = supressao de geracao de orbe, inexistente.",
    "cor": "AMARELO"
   },
   {
@@ -234,7 +192,6 @@
    "ganchos": [
     "bonusDano-escala-dinamica"
    ],
-   "nota": "+8 por aliado caido é escala dinamica; heal+shield-condicional e revive+cleanse existem.",
    "cor": "AMARELO"
   },
   {
@@ -242,7 +199,6 @@
    "ganchos": [
     "aoReceberControle"
    ],
-   "nota": "petrify=atordoado, noHeal, imunidade(a) ok; passiva 'quem tentar atordoar fica atordoado' = reativo aoReceberControle.",
    "cor": "AMARELO"
   },
   {
@@ -250,47 +206,27 @@
    "ganchos": [
     "reducao-escopo-elem"
    ],
-   "nota": "+dano vs Encharcado e quando(alvoDebuff); mas 'aliados Mare recebem reducao' e reducao com escopo por elemento do aliado, inexistente.",
    "cor": "AMARELO"
   },
   {
-   "key": "shiva",
+   "key": "raijin",
    "ganchos": [
-    "ignora-invuln"
+    "aoAtacar"
    ],
-   "nota": "Terceiro Olho fura Invulnerabilidade (escudo já é danoIrredutivel; furar o piso-1hp depende do piso existir) e a passiva reage a qualquer aliado usar Milagre.",
    "cor": "AMARELO"
   },
   {
    "key": "shutendoji",
    "ganchos": [
-    "nega-orbe?"
+    "nega-orbe"
    ],
-   "nota": "cura por turno c/ condição de HP é faz:heal+estado{hpProprio}; só o Torpor (ao agir sob efeito, dono rouba HP/orbe) não existe. | §56: torpor(trigger) construído; resta o roubo de ORBE (nega-orbe, com dionisio/mimir).",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "sunwukong",
-   "ganchos": [
-    "invuln-por-alcance?"
-   ],
-   "nota": "clones=invocar, sobrevive-letal=vidaExtra, imune-a-execução=imunidade{a}; só 'Inalvejável apenas por habilidades de alvo único' é invulnerabilidade com escopo por alcance.",
-   "cor": "AMARELO"
-  },
-  {
-   "key": "tanuki",
-   "ganchos": [
-    "escolha-efeito"
-   ],
-   "nota": "copiar-básico-de-aliado usa fx copiar existente; as três cláusulas 'Escolha:' (hab, milagre, orbe inicial) exigem resolução de escolha 1-de-N.",
    "cor": "AMARELO"
   },
   {
    "key": "tsukuyomi",
    "ganchos": [
-    "alvo-curado-recente?"
+    "alvo-curado-recente"
    ],
-   "nota": "Silencia=so-Basico durante Noite; +dano vs quem foi curado no turno anterior é condicao temporal inexistente. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "AMARELO"
   },
   {
@@ -298,193 +234,156 @@
    "ganchos": [
     "modo-alterna"
    ],
-   "nota": "Encarnação é toggle declarativo NARASIMHA/KURMA e o milagre concede 'não cai abaixo de 1 HP'; stripOne e redução são expressíveis.",
    "cor": "AMARELO"
   },
   {
    "key": "yamatotakeru",
    "ganchos": [
-    "bonusDano-escala-dinamica"
+    "imunidade-condicional"
    ],
-   "nota": "Inalvejável, dano puro e imune-a-controle-com-15-Combo (imunidade+estado{contador}) expressíveis; '+1 por 3 de Combo' passivo precisa de escala dinâmica.",
    "cor": "AMARELO"
   },
   {
    "key": "afrodite",
    "ganchos": [],
-   "nota": "dominado, dmgDown-area+lockSkill(hab), e reducao vs alvo-unico via contra(alcance) novo na F1.2.5.",
    "cor": "VERDE"
   },
   {
    "key": "amaterasu",
    "ganchos": [],
-   "nota": "fase(ativar Dia)+heal, dano/reducao/lockSkill condicionados por fase via estado — tudo expressivel.",
    "cor": "VERDE"
   },
   {
    "key": "apolo",
    "ganchos": [],
-   "nota": "heal+cleanse-DoT, area+heal-time, passiva +dano vs alvo HP-cheio via quando(alvoHp==100) - tudo expressivel.",
    "cor": "VERDE"
   },
   {
    "key": "atena",
    "ganchos": [],
-   "nota": "shield+contraAtaca(fisico) expressivel, cleanse+dmgUp time, orbe inicial e +dano vs controlado via quando(alvoDebuff/status) - tudo no vocabulario.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "baldur",
-   "ganchos": [],
-   "nota": "reducao com contra:elemNao(Verdejante); heal/cleanse/invulneravel ja existem.",
    "cor": "VERDE"
   },
   {
    "key": "bennu",
    "ganchos": [],
-   "nota": "aoCair(self)->faz:reviveProximoTurno com HP fixo, limitado por contador — expressivel.",
    "cor": "VERDE"
   },
   {
    "key": "bragi",
    "ganchos": [],
-   "nota": "passiva dispara quando um aliado usa Milagre — gatilho reativo inexistente.",
    "cor": "VERDE"
   },
   {
    "key": "brahma",
    "ganchos": [],
-   "nota": "shield inicial=abertura:faz:shield e +4 acumulável=contador; só '+3 por Milagre aliado usado' precisa do reativo aoUsarHabilidade.",
    "cor": "VERDE"
   },
   {
-   "key": "change",
+   "key": "chaac",
    "ganchos": [],
-   "nota": "cura-30-durante-NOITE já é estado{fase}; falta o piso 'não cai abaixo de 1 HP' e a sinergia 'com Hou Yi no time'.",
    "cor": "VERDE"
   },
   {
    "key": "curupira",
    "ganchos": [],
-   "nota": "Hab forca retarget de golpes inimigos (redirecionar); Milagre trava Hab+Mil juntas (selado-so-basico); reducao/bonusDano-elem expressiveis. | §53: slot-lock nomeado (selado/agarrar) construído. | §62: redirecionar construído.",
    "cor": "VERDE"
   },
   {
    "key": "fenrir",
    "ganchos": [],
-   "nota": "noHeal ok; execucao-hp<=20 no milagre; escalada +8/kill via aoCair-inimigo(matador)+contador expressivel; 'imune a Agarrar' depende de agarrar existir. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "VERDE"
   },
   {
    "key": "freyja",
    "ganchos": [],
-   "nota": "heal+dmgUp em aliados, ramo revive-ou-buff via estado(aliadosVivos), passiva aoCurar+apply — tudo expressivel.",
    "cor": "VERDE"
   },
   {
    "key": "hades",
    "ganchos": [],
-   "nota": "Selado(so Basico) na hab, execucao-hp<=20 no milagre, passiva dispara com QUALQUER inimigo derrotado (nao-matador); cura+orbe sao faz-heal/orbGain expressiveis. | §49: aoCair-qualquerInimigo construído (qualquer-morte). | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "VERDE"
   },
   {
    "key": "hercules",
    "ganchos": [],
-   "nota": "dano perfurante, escalada +4/uso via contador/porContador, sobrevive letal 1x via vidaExtra - tudo provado.",
    "cor": "VERDE"
   },
   {
-   "key": "inari",
+   "key": "iansa",
    "ganchos": [],
-   "nota": "aCadaN+faz:orbGain e orbGain/heal são expressíveis; só a cláusula 'se a Kitsune está no time' precisa de sinergia nomeada.",
    "cor": "VERDE"
   },
   {
-   "key": "itzamna",
+   "key": "iara",
    "ganchos": [],
-   "nota": "VERDE: DIA da orbe-extra por turno = porTurno+estado:fase+faz:orbGain (itzamna-fase-orbe reclassificado); cdShift/restauraMax/cleanse/bonusCura-flat existentes.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "izanagi",
-   "ganchos": [],
-   "nota": "cleanse+heal, shield+regen e imunidade{a} a Maldição/espalha são todos expressíveis; o +10 condicional ao que foi limpo é micro-detalhe de dado.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "jormungandr",
-   "ganchos": [],
-   "nota": "dot/dmgDown/imunidade-controle/bonusDano-por-elemento e escala por veneno via contador — tudo cabe no vocab.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "kali",
-   "ganchos": [],
-   "nota": "'+10 por inimigo <50HP' fica no dano da habilidade, ataque-grátis-por-turno modela-se como invocar, noHeal existe e a passiva por-abate é aoCair-inimigo(matador)+faz:heal/apply.",
-   "cor": "VERDE"
-  },
-  {
-   "key": "khnum",
-   "ganchos": [],
-   "nota": "invocar(Shabti/taunt) provado e aoCair->faz:heal no time — ambos expressiveis.",
    "cor": "VERDE"
   },
   {
    "key": "kitsune",
    "ganchos": [],
-   "nota": "isca=intercepta, +3 por Cauda=porContador, Dominar com 5+ Caudas e redução por Caudas=estado{contador} (kitsune-cond já resolvido).",
    "cor": "VERDE"
   },
   {
    "key": "kraken",
    "ganchos": [],
-   "nota": "lockSkill, area-puro, reducao/imunidade-taunt ok; 'imune a Agarrar' depende do controle novo agarrar existir como tag. | §53: slot-lock nomeado (selado/agarrar) construído.",
    "cor": "VERDE"
   },
   {
    "key": "medusa",
    "ganchos": [],
-   "nota": "veneno-DoT, lockSkill+marca(contador), limiar 3-marcas->atordoado ok; passiva 'quem a atinge com Fisico recebe veneno' = reativo aoSerAtingido. | §55: aoSerAtingido construído.",
+   "cor": "VERDE"
+  },
+  {
+   "key": "nefertem",
+   "ganchos": [],
+   "cor": "VERDE"
+  },
+  {
+   "key": "oni",
+   "ganchos": [],
    "cor": "VERDE"
   },
   {
    "key": "oxala",
    "ganchos": [],
-   "nota": "Hab Pacificar (age, dano->0); Milagre 'nao cai abaixo de 1 HP' (piso-1hp); cleanse/shield/reducao/orbe-inicio expressiveis. | §58: Pacificar (controle nomeado) construído.",
    "cor": "VERDE"
   },
   {
    "key": "oxum",
    "ganchos": [],
-   "nota": "VERDE: aoCurar{faz apply dmgUp} cobre 'curados causam +5'; heal/regen/orbGain todos existentes.",
    "cor": "VERDE"
   },
   {
    "key": "piranha",
    "ganchos": [],
-   "nota": "Passiva Sangramento causa +4 quando o alvo age (gatilho ao-agir-sob-efeito); multi-hit/condicional-status/bonusDano-alvoHp expressiveis. | §56: aoAgirSobEfeito construído.",
    "cor": "VERDE"
   },
   {
    "key": "xango",
    "ganchos": [],
-   "nota": "Passiva acumula dano quando um aliado e atingido (aoSerAtingido); armazenaDano fx e dmg-condicional-buff existem. | §55: aoSerAtingido construído.",
    "cor": "VERDE"
   },
   {
    "key": "ymir",
    "ganchos": [],
-   "nota": "aoCair(self)->faz:heal no time — expressivel pos-F1.2.5.",
    "cor": "VERDE"
   },
   {
    "key": "ammit",
    "ganchos": [
-    "antirevive",
-    "execucao-hp",
+    "antirevive-matador",
+    "bonusDano-escala-dinamica",
     "execucao-status"
    ],
-   "nota": "Devorar elimina por HP<=25 ou Atordoado/Selado; on-kill aplica naoRevive.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "anubis",
+   "ganchos": [
+    "antirevive-contador",
+    "marca-vulnerabilidade",
+    "saldo-debuff-buff?"
+   ],
    "cor": "VERMELHO"
   },
   {
@@ -493,43 +392,54 @@
     "bonusDano-escala-dinamica",
     "faz-cdShift"
    ],
-   "nota": "hab e passiva escalam dano por HP-faltante (bonusDano fixo nao cobre); milagre zera a propria recarga ao matar (cdShift disparado por kill).",
    "cor": "VERMELHO"
   },
   {
    "key": "babi",
    "ganchos": [
-    "lifesteal?",
+    "lifesteal",
     "multi-hit-distribuido"
    ],
-   "nota": "Medo(dmgDown+trava-Milagre), 4 golpes repartidos a escolha e cura=metade do dano causado. | §60: Medo (compósito) construído; o deus o APLICA.",
    "cor": "VERMELHO"
   },
   {
    "key": "boto",
    "ganchos": [
-    "cura-igual-dano?",
+    "cura-igual-dano",
     "dia-noite-ler-extra"
    ],
-   "nota": "Hab cura = dano causado pelo dominado (novo); passiva NOITE estende Dominacao (dia-noite-ler-extra); inalvejavel-self via faz:[apply].",
    "cor": "VERMELHO"
   },
   {
    "key": "cernunnos",
    "ganchos": [
-    "bonusCura-cond-nova",
+    "aoAtacar",
     "bonusDano-escala-dinamica"
    ],
-   "nota": "Milagre escala por contagem de regens ativas (escala-dinamica); passiva 'regeneracoes curam +4' (bonusCura por tipo-de-cura); invocar/Fera existem.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "change",
+   "ganchos": [
+    "dia-noite-ler-extra",
+    "sinergia-nomeada"
+   ],
    "cor": "VERMELHO"
   },
   {
    "key": "dagda",
    "ganchos": [
     "iniciativa",
-    "suspende-buff?"
+    "suspende-buff"
    ],
-   "nota": "Milagre time age primeiro (iniciativa) e buffs inimigos suspensos-temporario (novo); passiva piso-1hp condicional; regen/bonusCura-flat/heal-a-cada-3 expressiveis.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "dionisio",
+   "ganchos": [
+    "bloqueia-geracao-orbe?",
+    "nega-orbe"
+   ],
    "cor": "VERMELHO"
   },
   {
@@ -539,25 +449,31 @@
     "bonusDano-escala-dinamica",
     "marca-vulnerabilidade"
    ],
-   "nota": "marca '+8 de todas as fontes'=marca-vulnerabilidade; milagre +10 por debuff ativo (escala por contagem-status); passiva dispara aoCair-aliado.",
    "cor": "VERMELHO"
   },
   {
    "key": "exu",
    "ganchos": [
     "escolha-efeito",
-    "iniciativa"
+    "iniciativa",
+    "nega-orbe"
    ],
-   "nota": "Hab ABRIR/FECHAR (escolha 1-de-N); passiva age primeiro (iniciativa); orbGain/cdShift/lockSkill/strip expressiveis.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "hanuman",
+   "ganchos": [
+    "seletor",
+    "sinergia-nomeada"
+   ],
    "cor": "VERMELHO"
   },
   {
    "key": "hel",
    "ganchos": [
     "bonusDano-escala-dinamica",
-    "cura-escala-alvos?"
+    "cura-escala-alvos"
    ],
-   "nota": "Marca da Morte aplica naoRevive=antirevive; milagre +5 por debuff (escala-status) e cura 5 POR alvo atingido (cura dinamica por hit); passiva paridade par/impar via estado(paridade) - expressivel. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
    "cor": "VERMELHO"
   },
   {
@@ -566,52 +482,39 @@
     "ignora-invuln",
     "marca-vulnerabilidade"
    ],
-   "nota": "basico fura Inalvejavel e o Olho da +dano de todas as fontes.",
    "cor": "VERMELHO"
   },
   {
    "key": "houyi",
    "ganchos": [
     "ignora-invuln",
-    "multi-hit-distribuido"
+    "multi-hit-distribuido",
+    "remove-fase?"
    ],
-   "nota": "dano condicional por elemento=quando e remover DIA=fase; Nove Flechas reparte 9 golpes à escolha e a passiva 'Ignora Inalvejável' fura invulnerabilidade.",
-   "cor": "VERMELHO"
-  },
-  {
-   "key": "izanami",
-   "ganchos": [
-    "execucao-hp",
-    "seletor"
-   ],
-   "nota": "elimina amaldicoados com HP<=25 e passiva aplica Maldicao no inimigo de maior HP (seletor).",
    "cor": "VERMELHO"
   },
   {
    "key": "khonshu",
    "ganchos": [
     "aoReceberControle",
-    "marca-punicao-aoMatar?"
+    "marca-punicao-aoMatar"
    ],
-   "nota": "anula atordoamento em aliado (reativo a controle) e marca que retalia se o inimigo derrubar aliado.",
    "cor": "VERMELHO"
   },
   {
    "key": "krishna",
    "ganchos": [
-    "acao-garantida?",
-    "seletor"
+    "acao-garantida",
+    "seletor-maior-dano?"
    ],
-   "nota": "Ação Perfeita (próxima habilidade não pode ser evitada/absorvida/contra-atacada) é buff de bypass novo; a passiva mira 'quem causou mais dano no turno anterior' (seletor + rastreio de dano).",
    "cor": "VERMELHO"
   },
   {
    "key": "loki",
    "ganchos": [
     "primeiroPorTurno",
-    "transfere-status?"
+    "transfere-status"
    ],
-   "nota": "inalvejavel ok mas 'redireciona proximo ataque' = redirecionar; milagre rouba buffs+transfere debuffs do time->inimigos (transferencia de status, nao so strip); passiva nega 1o controle/turno = primeiroPorTurno+negacao. | §62: redirecionar construído.",
    "cor": "VERMELHO"
   },
   {
@@ -619,20 +522,25 @@
    "ganchos": [
     "dia-noite-ler-extra",
     "escolha-efeito",
-    "execucao-hp",
-    "inevitavel?",
+    "inevitavel",
     "seletor"
    ],
-   "nota": "Hab escolha-1-de-3; Milagre alvo maior-HP (seletor) + execucao-hp; passiva DIA reseta recarga (dia-noite-ler-extra); Basico inevitavel/incontra-atacavel (novo); +10 DIA via estado.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "mimir",
+   "ganchos": [
+    "nega-orbe",
+    "passiva-ativa-morto"
+   ],
    "cor": "VERMELHO"
   },
   {
    "key": "mnevis",
    "ganchos": [
-    "primeiroPorTurno",
-    "reflete-dano"
+    "reflete-dano",
+    "sinergia-nomeada"
    ],
-   "nota": "reflete % de todo dano, sinergia 'com Ra no time' e interceptacao do primeiro ataque por turno.",
    "cor": "VERMELHO"
   },
   {
@@ -641,25 +549,38 @@
     "aoCair-aliado",
     "escolha-efeito"
    ],
-   "nota": "Pedras das Cinco Cores é escolha 2-de-5; passiva dispara quando um ALIADO cai (aoCair-aliado).",
    "cor": "VERMELHO"
   },
   {
-   "key": "raijin",
+   "key": "odin",
    "ganchos": [
-    "aoAtacar",
-    "multi-hit-distribuido"
+    "ignora-invuln",
+    "sinergia-faccao?"
    ],
-   "nota": "Raio em Cadeia tem dano por-alvo decrescente (18/12/8, não é área uniforme) e a passiva gera Combo a cada alvo atingido (reativo ao atacar).",
    "cor": "VERMELHO"
   },
   {
    "key": "saci",
    "ganchos": [
     "esquiva",
-    "primeiroPorTurno"
+    "nega-orbe"
    ],
-   "nota": "Passiva: primeiro alvo-unico por turno falha (esquiva+primeiroPorTurno); contraAtaca/invulneravel/dot ja existem.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "shiva",
+   "ganchos": [
+    "ignora-invuln",
+    "ignora-pisoVida?"
+   ],
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "sunwukong",
+   "ganchos": [
+    "imune-execucao?",
+    "invuln-por-alcance"
+   ],
    "cor": "VERMELHO"
   },
   {
@@ -668,7 +589,14 @@
     "bonusDano-escala-dinamica",
     "multi-hit-distribuido"
    ],
-   "nota": "8 golpes repartidos a escolha e +6 por aliado a menos (escala dinamica); combo(contador) é bakeavel no fx.",
+   "cor": "VERMELHO"
+  },
+  {
+   "key": "tanuki",
+   "ganchos": [
+    "escolha-efeito",
+    "nega-orbe"
+   ],
    "cor": "VERMELHO"
   },
   {
@@ -677,244 +605,359 @@
     "execucao-temporizada",
     "marca-vulnerabilidade"
    ],
-   "nota": "Livro mata em 3 turnos (temporizada, milagre acelera), '+8 de dano recebido' é marca de vulnerabilidade e 'não pode ser revivido' é antirevive. | §48: antirevive coberto pelo núcleo (source efeito/dot).",
    "cor": "VERMELHO"
   }
  ],
  "ranking": [
   {
    "gancho": "bonusDano-escala-dinamica",
-   "trava": 10,
+   "trava": 11,
    "flip": 5,
-   "stage": 5
+   "stage": 6,
+   "balde": true
   },
   {
-   "gancho": "antirevive",
-   "trava": 5,
-   "flip": 4,
-   "stage": 1
+   "gancho": "nega-orbe",
+   "trava": 6,
+   "flip": 1,
+   "stage": 5,
+   "balde": true
   },
   {
    "gancho": "marca-vulnerabilidade",
    "trava": 5,
-   "flip": 2,
-   "stage": 3
+   "flip": 1,
+   "stage": 4,
+   "balde": false
   },
   {
    "gancho": "ignora-invuln",
    "trava": 5,
-   "flip": 3,
-   "stage": 2
+   "flip": 1,
+   "stage": 4,
+   "balde": true
   },
   {
    "gancho": "seletor",
-   "trava": 5,
+   "trava": 4,
    "flip": 2,
-   "stage": 3
+   "stage": 2,
+   "balde": true
   },
   {
-   "gancho": "execucao-hp",
-   "trava": 5,
-   "flip": 2,
-   "stage": 3
-  },
-  {
-   "gancho": "primeiroPorTurno",
+   "gancho": "sinergia-nomeada",
    "trava": 4,
    "flip": 1,
-   "stage": 3
+   "stage": 3,
+   "balde": true
   },
   {
    "gancho": "escolha-efeito",
    "trava": 4,
-   "flip": 1,
-   "stage": 3
-  },
-  {
-   "gancho": "multi-hit-distribuido",
-   "trava": 4,
    "flip": 0,
-   "stage": 4
+   "stage": 4,
+   "balde": true
   },
   {
-   "gancho": "bonusCura-cond-nova",
-   "trava": 3,
-   "flip": 2,
-   "stage": 1
-  },
-  {
-   "gancho": "nega-orbe?",
-   "trava": 3,
-   "flip": 3,
-   "stage": 0
+   "gancho": "dia-noite-ler-extra",
+   "trava": 4,
+   "flip": 1,
+   "stage": 3,
+   "balde": true
   },
   {
    "gancho": "iniciativa",
    "trava": 3,
    "flip": 1,
-   "stage": 2
+   "stage": 2,
+   "balde": false
+  },
+  {
+   "gancho": "aoCair-aliado",
+   "trava": 3,
+   "flip": 1,
+   "stage": 2,
+   "balde": false
+  },
+  {
+   "gancho": "multi-hit-distribuido",
+   "trava": 3,
+   "flip": 0,
+   "stage": 3,
+   "balde": false
+  },
+  {
+   "gancho": "reducao-escopo-elem",
+   "trava": 2,
+   "flip": 2,
+   "stage": 0,
+   "balde": false
   },
   {
    "gancho": "faz-cdShift",
    "trava": 2,
    "flip": 1,
-   "stage": 1
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "bloqueia-geracao-orbe?",
+   "trava": 2,
+   "flip": 1,
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "aoReceberControle",
    "trava": 2,
    "flip": 1,
-   "stage": 1
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "dia-noite-ler-extra",
+   "gancho": "primeiroPorTurno",
    "trava": 2,
-   "flip": 0,
-   "stage": 2
+   "flip": 1,
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "aoCair-aliado",
+   "gancho": "antirevive-contador",
    "trava": 2,
-   "flip": 0,
-   "stage": 2
+   "flip": 1,
+   "stage": 1,
+   "balde": true
   },
   {
-   "gancho": "imunidade-condicional?",
+   "gancho": "aoAtacar",
+   "trava": 2,
+   "flip": 1,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "imunidade-condicional",
+   "trava": 2,
+   "flip": 2,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "vulnerabilidade-classe-atacante?",
    "trava": 1,
    "flip": 1,
-   "stage": 0
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "antirevive-aura",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "sinergia-faccao?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "transfere-status",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "cura-escala-alvos",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "orbe-protecao",
    "trava": 1,
    "flip": 1,
-   "stage": 0
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "passiva-ativa-morto",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "copiar-ultima",
    "trava": 1,
    "flip": 1,
-   "stage": 0
+   "stage": 0,
+   "balde": false
   },
   {
-   "gancho": "amplifica-dot?",
+   "gancho": "saldo-debuff-buff?",
    "trava": 1,
-   "flip": 1,
-   "stage": 0
+   "flip": 0,
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "acao-atrasada?",
+   "gancho": "antirevive-matador",
    "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "passiva-ativa-morto?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "reducao-escopo-elem",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "invuln-por-alcance?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "alvo-curado-recente?",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
-  },
-  {
-   "gancho": "modo-alterna",
-   "trava": 1,
-   "flip": 1,
-   "stage": 0
+   "flip": 0,
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "execucao-status",
    "trava": 1,
    "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "lifesteal?",
+   "gancho": "marca-punicao-aoMatar",
    "trava": 1,
    "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "cura-igual-dano?",
+   "gancho": "lifesteal",
    "trava": 1,
    "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "suspende-buff?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "cura-escala-alvos?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "marca-punicao-aoMatar?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "acao-garantida?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "transfere-status?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
-  },
-  {
-   "gancho": "inevitavel?",
-   "trava": 1,
-   "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "reflete-dano",
    "trava": 1,
    "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": false
   },
   {
-   "gancho": "aoAtacar",
+   "gancho": "alvo-curado-recente",
    "trava": 1,
-   "flip": 0,
-   "stage": 1
+   "flip": 1,
+   "stage": 0,
+   "balde": false
   },
   {
-   "gancho": "esquiva",
+   "gancho": "bonusCura-cond-nova",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "amplifica-dot",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "imune-execucao?",
    "trava": 1,
    "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "invuln-por-alcance",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "remove-fase?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
   },
   {
    "gancho": "execucao-temporizada",
    "trava": 1,
    "flip": 0,
-   "stage": 1
+   "stage": 1,
+   "balde": true
+  },
+  {
+   "gancho": "ignora-pisoVida?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "modo-alterna",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "acao-garantida",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "seletor-maior-dano?",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "esquiva",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "cura-igual-dano",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "suspende-buff",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "inevitavel",
+   "trava": 1,
+   "flip": 0,
+   "stage": 1,
+   "balde": false
+  },
+  {
+   "gancho": "execucao-timing",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
+  },
+  {
+   "gancho": "acao-atrasada",
+   "trava": 1,
+   "flip": 1,
+   "stage": 0,
+   "balde": false
   }
  ]
 }
