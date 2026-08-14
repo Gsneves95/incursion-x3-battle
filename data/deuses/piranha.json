@@ -1,0 +1,70 @@
+{
+  "key": "piranha",
+  "nome": "Piranha",
+  "faccao": "Brasileira",
+  "elem": "Maré",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Sangue na Água",
+    "desc": "O Sangramento causa +4 quando o alvo age; +8 de dano contra alvos abaixo de 60 de HP.",
+    "fx": [
+      {
+        "gatilho": "aoAgirSobEfeito",
+        "efeito": "sangramento",
+        "noAtor": [
+          { "t": "dmg", "v": 4 }
+        ]
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": { "alvoHp": { "op": "abaixo", "v": 60 } }
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Mordidas",
+      "cost": { "Maré": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "3 golpes de 5 + Sangramento (6/turno por 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 5 },
+        { "t": "dmg", "v": 5 },
+        { "t": "dmg", "v": 5 },
+        { "t": "dot", "nome": "sangramento", "v": 6, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Frenesi Alimentar",
+      "cost": { "Maré": 2 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "4 golpes de 6 em 1 inimigo; +3 por golpe se ele estiver Sangrando.",
+      "fx": [
+        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
+        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
+        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
+        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Águas Vermelhas",
+      "cost": { "Maré": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado.",
+      "fx": [
+        { "t": "dmg", "v": 18, "seEncharcado": 28, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 28 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

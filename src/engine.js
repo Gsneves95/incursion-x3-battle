@@ -87,7 +87,7 @@ const TIPOS_FX = [
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
-const DOTS = ['queimadura', 'veneno'];   // cresce (sangramento…) ao provar os 73 kits. 'veneno' entrou p/ a
+const DOTS = ['queimadura', 'veneno', 'sangramento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
 const CONTADORES = ['discoSolar', 'Coroa'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô acumula dano de retribuição.
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -155,7 +155,7 @@ const CONTRA = {
 // `pendente` = condição no vocabulário mas cujo ESTADO o motor ainda não rastreia; valida_kit
 // RECUSA em voz alta (nunca vira falso silencioso). Ausência de `quando` = sempre. Ver docs/passivas.md.
 const CONDICOES = {
-  alvoDebuff:      { sub: [...DEBUFFS, 'qualquer', 'controle'] },   // alvo tem debuff (nome, 'qualquer' ou 'controle')
+  alvoDebuff:      { sub: [...DEBUFFS, ...DOTS, 'qualquer', 'controle'] },   // alvo tem debuff/DoT (nome, 'qualquer' ou 'controle') — condOK checa efeitos E dots (Piranha: 'sangramento')
   alvoBuff:        { sub: [...BUFFS, 'qualquer'] },                 // alvo tem buff
   alvoDefesa:      { bool: true },                                 // alvo tem escudo OU redução de dano
   alvoElem:        { sub: ELEMS },                                 // alvo é do elemento
