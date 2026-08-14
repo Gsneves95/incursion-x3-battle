@@ -1983,6 +1983,13 @@ deu ZERO; os mecanismos existiam sob os nomes reais (`cdShift`, `stripBuffs`, `f
 creditava** — por isso 6 dos "12 AMARELO-por-tradução" fecharam com hooks minúsculos: os §53–§62 já tinham feito os
 80% difíceis.
 
+**A NUANCE (dono): a lição-do-nome vale contra quem a ESCREVEU.** O §46 nasceu apontando o viés de classificar o
+mecanismo alheio pelo nome. Aqui ele se virou para o implementador: **inventar o nome de um mecanismo e concluir que
+ele não existe é o MESMO erro, na direção do construtor.** `grep zeraRecarga → 0` não é "não há redução de recarga";
+é "não há `zeraRecarga`". A varredura por nome mente para os dois lados — o triador que lê a prosa e o implementador
+que lê o motor. O antídoto é o mesmo: reconciliar contra o que EXISTE (ler a lista real de fx/gatilhos), não contra
+o nome que a cabeça já tinha.
+
 **DIVERGÊNCIAS DE ORÇAMENTO (req. 2 do dono — número do catálogo, marcado, NÃO corrigido):** Xangô/Trovão e Fogo
 (30 em área contra buff) e Piranha/Águas Vermelhas (28 em área contra Sangrando/Encharcado) passam o teto de área
 (22). São bônus CONDICIONAIS previstos — entram na allowlist do auditor junto de Dilúvio (Sobek, 30) e O Papão (38).
@@ -1993,6 +2000,13 @@ o auditor de orçamento disparou — e ao consertá-lo para checar TAMBÉM o `se
 (hook 3, já commitado e CI-verde) tinha ESCAPADO, porque o auditor não olhava seCond. Some ao ledger (§25
 invocação-guarda, §50 gate naoRevive, §64 matar-sem-hp, **§66 auditor cego ao seCond**). O padrão de novo: um método
 (kit real com seCond) expõe um buraco que o método anterior (kit sem seCond) não exercia.
+
+**A MORAL (dono) — o melhor caso da série, porque é bug que EU introduzi e uma correção adjacente achou:** o 30-área
+do Xangô passou VERDE três commits antes; foi um conserto vizinho (ensinar o auditor a ver `seCond`) que o denunciou.
+E o porquê é a lição: **um auditor cego não FALHA, ele APROVA.** Cobertura que falta não grita — assina embaixo. Por
+isso **ampliar a cobertura de um auditor SEMPRE exige re-rodar contra tudo o que já passou** — a coisa que o novo olho
+enxerga pode já estar no verde. Foi exatamente o que aconteceu: o novo `Math.max(..., seCond)` reprovou um commit
+antigo. Regra prática: todo alargamento de auditor é retroativo até prova em contrário.
 
 **A CAUDA DURA que sobra (3 kits, cada um cruza território maior ou GATED):**
 - **iansa** — 2 hooks: `t:'limparInvocacoes'` (destrói invocações inimigas) + um controle `antiRevive` novo (marca
