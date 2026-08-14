@@ -10,126 +10,162 @@
       "ganchos": [
         "antirevive-contador"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "Podridão-contador + antirevive-por-marcador"
     },
     {
       "key": "aokuang",
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:escala-dinamica",
+      "reconc_nota": "+5 por inimigo Encharcado — dano escala por CONTAGEM de status"
     },
     {
       "key": "aquiles",
       "ganchos": [
         "vulnerabilidade-classe-atacante?"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "vulnerabilidade-por-FUNÇÃO (Manipulador)"
     },
     {
       "key": "baldur",
       "ganchos": [
         "reducao-escopo-elem"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "VERDE-agora",
+      "reconc_nota": "reducao contra:elemNao já existe"
     },
     {
       "key": "bastet",
       "ganchos": [
         "primeiroPorTurno"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "primeiroPorTurno (PENDENTE, não rastreado)"
     },
     {
       "key": "boitata",
       "ganchos": [
         "ignora-invuln"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "ignora-Inalvejável; resto writable (aoSerAtingido Chama §55)"
     },
     {
       "key": "cerberus",
       "ganchos": [
         "antirevive-aura"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "antirevive-AURA (enquanto vive)"
     },
     {
       "key": "demeter",
       "ganchos": [
         "seletor"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:seletor",
+      "reconc_nota": "porTurno cura o aliado MAIS FERIDO; milagre já writable (condicional)"
     },
     {
       "key": "durga",
       "ganchos": [
         "marca-vulnerabilidade"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "vulnerabilidade-debuff (recebe +8); passiva+milagre writable"
     },
     {
       "key": "guanyu",
       "ganchos": [
         "imunidade-condicional"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:imunidade-cond",
+      "reconc_nota": "imune-se-3-vivos + por-aliado-vivo"
     },
     {
       "key": "heimdall",
       "ganchos": [
         "orbe-protecao"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "passiva inerte até nega-orbe; abilities writable"
     },
     {
       "key": "hermes",
       "ganchos": [
         "iniciativa"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:nega-orbe+iniciativa",
+      "reconc_nota": "iniciativa (ordem de turno) + rouba orbe"
     },
     {
       "key": "huangdi",
       "ganchos": [
         "faz-cdShift"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "cdShift em FX_TURNO + mirado-multi"
     },
     {
       "key": "inari",
       "ganchos": [
         "sinergia-nomeada"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "sinergia Kitsune-Cauda (niche); resto writable"
     },
     {
       "key": "isis",
       "ganchos": [
         "copiar-ultima"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "VERDE-agora",
+      "reconc_nota": "copiar já existe; revive todosCaidos + cd:99≈1x"
     },
     {
       "key": "itzamna",
       "ganchos": [
         "dia-noite-ler-extra"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "VERDE-agora",
+      "reconc_nota": "restauraMax + porTurno estado:fase:Dia + bonusCura já existem"
     },
     {
       "key": "izanagi",
       "ganchos": [
         "bonusCura-cond-nova"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "imune-Maldição/espalha + condicional-pós-remoção"
     },
     {
       "key": "izanami",
       "ganchos": [
         "seletor"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:seletor",
+      "reconc_nota": "porTurno Maldição no inimigo de MAIOR HP (seletor+faz-inimigo)"
     },
     {
       "key": "jormungandr",
@@ -150,98 +186,126 @@
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:escala-dinamica",
+      "reconc_nota": "+10 por inimigo <60HP + auto-ataque fim-de-turno"
     },
     {
       "key": "khnum",
       "ganchos": [
         "aoCair-aliado"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "aoCair-quem:aliado (compartilha erinias/nuwa)"
     },
     {
       "key": "kukulkan",
       "ganchos": [
         "acao-atrasada"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "ação-atrasada (habilidade); passiva+milagre writable"
     },
     {
       "key": "morrigan",
       "ganchos": [
         "execucao-timing"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "execução-fim-de-turno + marca profetizado"
     },
     {
       "key": "mulasemcabeca",
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:escala-dinamica",
+      "reconc_nota": "+1 por 5 HP perdido (escala por hp-próprio)"
     },
     {
       "key": "orfeu",
       "ganchos": [
         "bloqueia-geracao-orbe?"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "VERDE-agora",
+      "reconc_nota": "bonusDano alvoDebuff:adormecido + orb-denial já é regra (1009)"
     },
     {
       "key": "osiris",
       "ganchos": [
         "bonusDano-escala-dinamica"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:escala-dinamica",
+      "reconc_nota": "+8 por aliado caído (passiva time-wide)"
     },
     {
       "key": "perseu",
       "ganchos": [
         "aoReceberControle"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "reflete-controle (aoReceberControle)"
     },
     {
       "key": "poseidon",
       "ganchos": [
         "reducao-escopo-elem"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "reducao-por-elem-do-aliado (ou over-deliver p/ time)"
     },
     {
       "key": "raijin",
       "ganchos": [
         "aoAtacar"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "aoAtacar (gatilho on-hit-by-me)"
     },
     {
       "key": "shutendoji",
       "ganchos": [
         "nega-orbe"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:nega-orbe",
+      "reconc_nota": "rouba HP+orbe no Torpor"
     },
     {
       "key": "tsukuyomi",
       "ganchos": [
         "alvo-curado-recente"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "AMARELO-real",
+      "reconc_nota": "alvoCuradoAntes-PENDENTE + modo-Noite-F1.5"
     },
     {
       "key": "vishnu",
       "ganchos": [
         "modo-alterna"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "VERDE-agora",
+      "reconc_nota": "opcoes/alterna já existe (NARASIMHA/KURMA)"
     },
     {
       "key": "yamatotakeru",
       "ganchos": [
         "imunidade-condicional"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "BALDE:imunidade-cond",
+      "reconc_nota": "imune-se-15-Combo + Inalvejável"
     },
     {
       "key": "afrodite",
@@ -256,7 +320,9 @@
       "ganchos": [
         "dia-regra-global-DECISAO"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "F1.5",
+      "reconc_nota": "modo Dia — decidido adiar"
     },
     {
       "key": "apolo",
@@ -270,7 +336,9 @@
         "contraAtaca-classe"
       ],
       "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "contraAtaca-classe-filter; passiva já writable (alvoDebuff:controle)"
     },
     {
       "key": "bennu",
@@ -298,7 +366,9 @@
         "bonusCura-cond-nova"
       ],
       "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "bonusCura-por-tipo-de-cura (regen +4); resto writable"
     },
     {
       "key": "curupira",
@@ -326,7 +396,9 @@
         "nega-orbe"
       ],
       "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "só nega-orbe (rouba 1 orbe) trava; resto writable"
     },
     {
       "key": "hercules",
@@ -348,14 +420,18 @@
         "execucao-status"
       ],
       "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
+      "reconc": "HOOK-pequeno",
+      "reconc_nota": "execução-status-filter (elimina só Encharcados)"
     },
     {
       "key": "kitsune",
       "ganchos": [
         "dominado-basico-forcado-PENDENTE"
       ],
-      "cor": "AMARELO"
+      "cor": "AMARELO",
+      "reconc": "PENDENTE-dominado",
+      "reconc_nota": "desenho entregue; aguarda go"
     },
     {
       "key": "kraken",
@@ -383,7 +459,9 @@
         "bonusDano-escala-dinamica"
       ],
       "cor": "AMARELO",
-      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO."
+      "nota": "| §64: falso-verde, gancho revelado na TRADUÇÃO.",
+      "reconc": "BALDE:escala-dinamica",
+      "reconc_nota": "+1 por 4 Combo (bonusDano escala por contador)"
     },
     {
       "key": "oxala",
@@ -1090,5 +1168,23 @@
     "nefertem": "FEITO",
     "afrodite": "lote-1, aplica dominado meio-implementado — conserta junto quando o mecanismo existir",
     "amaterasu": "modo Dia F1.5"
+  },
+  "reconciliacao_41": {
+    "data": "pós-2ª-onda",
+    "verdes_agora": [
+      "baldur",
+      "isis",
+      "itzamna",
+      "orfeu",
+      "vishnu"
+    ],
+    "resumo": {
+      "VERDE-agora": 5,
+      "HOOK-pequeno": 12,
+      "BALDE": 11,
+      "AMARELO-real": 9,
+      "F1.5": 1,
+      "PENDENTE-dominado": 1
+    }
   }
 }

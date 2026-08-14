@@ -1912,6 +1912,55 @@ desde o Rá) anda de verdade. O AMARELO (34) vira 2ª onda: construir DEPOIS os 
 
 ---
 
+## §70 — RECONCILIAÇÃO DOS 41 AMARELO contra o motor de hoje: a triagem errava para cima (5 verdes escondidos), e o resto colapsa em 4 baldes
+
+Feita a passada que o dono pediu: cada AMARELO confrontado NÃO pelo nome do gancho, mas pelo vocabulário REAL de hoje
+(28 fx, 13 gatilhos, condOK com alvoBuff/alvoDebuff/alvoHp/alvoElem, estado com fase/contador/aliadoCaido, reducao com
+elemNao, `condicional`, `copiar`, `opcoes`, `restauraMax`, `invocar-guarda`, `porContador*`…). Resultado dos 41:
+
+| categoria | n | quem |
+|---|---|---|
+| **VERDE-agora** (writable JÁ, zero hook) | **5** | baldur, isis, itzamna, orfeu, vishnu |
+| **HOOK-pequeno** (1 hook, como os 9 da onda) | **12** | hades, iara, atena, chaac, durga, khnum, huangdi, poseidon, boitata, heimdall, kukulkan, inari |
+| **BALDE** (compartilha 1 hook MID) | **11** | escala-dinâmica(5), nega-orbe(2), seletor(2), imunidade-cond(2) |
+| **AMARELO-real** (estrutural, fica) | **9** | ahpuch, aquiles, bastet, cerberus, izanagi, morrigan, perseu, raijin, tsukuyomi |
+| F1.5 / pendente | **2** | amaterasu (Dia), kitsune (dominado) |
+
+**(A) OS 5 VERDES ESCONDIDOS — o §46/§61 provado com nome e sobrenome.** Estavam escrevíveis O TEMPO TODO; a triagem
+os chamou de travados por LER O NOME do gancho:
+- **baldur** "15 reducao exceto de Verdejantes" = `reducao{contra:{elemNao:'Verdejante'}}` — elemNao existe desde a F1.2.
+- **isis** "copia a última Habilidade de um aliado" = `copiar` — existe (era o rótulo "copiar-ultima" que assustou).
+- **itzamna** "restaura HP máximo (Podridão)" = `restauraMax`; "+1 orbe no Dia" = `porTurno{estado:fase:Dia}` — tudo existe.
+- **orfeu** "+8 contra Adormecidos, que não geram orbe" = `bonusDano{alvoDebuff:adormecido}` + a regra 1009 (já é global).
+- **vishnu** "Alterna: NARASIMHA ou KURMA" = `opcoes` — existe (Lugh/Nüwa).
+**Escrevê-los é IMPL 30→35 sem tocar uma linha de motor.** (Ceteris paribus: reconciliação é TETO — só a escrita
+confirma, o §61 final. Mas a confiança aqui é alta: os mecanismos foram lidos na lista real, não inventados.)
+
+**(B) O RESTO COLAPSA EM POUCOS HOOKS.** Os 12 "hook-pequeno" e os 11 "balde" não são 23 problemas — são ~7 hooks:
+- **escala-dinâmica** (dano escala por CONTAGEM dinâmica): aokuang(inimigos Encharcados), kali(inimigos <60HP),
+  osiris(aliados caídos), oni(Combo), mulasemcabeca(HP perdido) — **5 deuses, 1 balde**. O TOPO, como a triagem-1 já
+  suspeitava. Hoje o `porContador` escala por contador FIXO; falta escalar por CONTAGEM-de-condição (inimigos-com-tag,
+  hp-próprio). Um hook MID abre 5.
+- **nega-orbe** (roubar/remover orbe): hades, hermes, shutendoji, heimdall(proteção) — ~4.
+- **seletor** (mirar o "mais X"): demeter(mais ferido), izanami(maior HP) — 2 (e osiris/habilidade).
+- **imunidade-condicional** (imune se estado): guanyu(3 vivos), yamatotakeru(15 Combo) — 2.
+- **aoCair-quem:aliado**: khnum (+ erinias/nuwa da família F1.4) — pequeno.
+- **execução-status-filter**: iara, morrigan(meio) — pequeno.
+- **vulnerabilidade-debuff** (recebe +N): durga — pequeno.
+
+**(C) SÓ 9 SÃO ESTRUTURAIS DE VERDADE** (AMARELO-real): Podridão-antirevive (ahpuch), vulnerabilidade-por-função
+(aquiles), primeiroPorTurno-pendente (bastet), antirevive-aura (cerberus), imune-Maldição+condicional-pós-remoção
+(izanagi), execução-fim-de-turno+profetizado (morrigan), reflete-controle (perseu), aoAtacar-gatilho (raijin),
+alvoCuradoAntes-pendente+Noite-F1.5 (tsukuyomi). Esses pedem mecânica nova de verdade; ficam para depois.
+
+**A LEITURA CONFIRMADA:** a re-triagem PAGOU exatamente como previsto (§69E). Reconciliada-contra-o-motor (não por
+nome), ela achou 5 kitsunes-escondidos de graça e mapeou os outros 36 em ~7 hooks + 9 estruturais — em vez dos "41
+travados" que o nome dizia. **A régua nova (o motor pós-2ª-onda) reclassifica sozinha um terço da lista.** Próximo
+passo natural: escrever os 5 verdes (IMPL 35), depois atacar o balde-escala-dinâmica (abre +5). Detalhe per-deus em
+`docs/triagem-88.json` (campo `reconc`).
+
+---
+
 ## §69 — 2ª ONDA: nefertem fecha (IMPL 30 — meta do §64 batida); kitsune trava na "Domina"; DESENHO do dominado; afrodite pendente; e a leitura da re-triagem
 
 **(A) NEFERTEM — feito.** Gancho pequeno: a condição `quandoCura` ganhou `curadorFaccao` — lê a FACÇÃO de QUEM curou
