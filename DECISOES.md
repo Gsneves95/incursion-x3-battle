@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §77 — RÓTULO CRAVADO ENVELHECE MAL (nos DOIS sentidos); a F1.8 mediu o 80% na VERMELHO — 0 puro-motor-zero
+
+**A LIÇÃO (do dono, generalizando o §76).** Um rótulo de triagem cravado ANTES de uma onda de ganchos envelhece mal —
+e nos DOIS sentidos. O AMARELO cravado antes de aoCair-aliado/vulneravel/viaRegen escondeu verdes; o VERMELHO cravado
+antes deles escondeu pequenos. **Consequência prática, que vira regra de processo: toda vez que a gente fecha um BLOCO
+de ganchos, a fila INTEIRA precisa ser reconciliada de novo — não só a parte que parecia perto.** O rótulo não é um fato
+sobre o deus; é uma foto do motor no dia em que foi tirada, e o motor anda.
+
+**A F1.8 MEDIU ISSO NA HORA (o degrau de 80% do §61, agora na VERMELHO — e mordeu a MINHA reconciliação desta sessão).**
+Na varredura (§76-report) chamei erinias/nuwa/cernunnos/ammit de "verdes-escondidos de graça". Traduzindo os 14
+VERMELHO-reconciliados-pequeno cláusula a cláusula contra o motor real: **0 são puro-motor-zero.** O padrão é limpo e
+repetido: **as PASSIVAS e os alvos-únicos foram destravados pela leva (aoCair-aliado, vulneravel, viaRegen, execIf); os
+MILAGRES não.** O milagre é onde mora o gancho que falta, quase sempre. Minha reconciliação (2h atrás) prometeu verde e
+a tradução (mesma sessão) entregou hook — o §61 medido no menor intervalo possível.
+
+**MAS O ERRO É ESTRUTURADO, não ruído — os bloqueios se AGRUPAM (o achado que salva a F1.8).** Traduzir não só derrubou
+o "zero-motor"; mostrou que os ganchos que faltam são POUCOS e COMPARTILHADOS:
+- **por-contagem-de-status** (`+N por debuff/buff/regeneração ativa`) — o maior: trava erinias, hel, ammit, cernunnos
+  (+ a variante "por aliado a menos" do susanoo). **UM source de escala novo (irmão dos do §73) destrava ~5 milagres.**
+- **multi-golpe distribuído** (`N golpes de M, o jogador reparte`) — trava babi, susanoo, houyi (3).
+- singletons: cura-por-alvo (hel), opcoes-contar-2 (nuwa), recarga-override (change/lugh), killer-zera-cd (ares),
+  invocação-atacante-variante (cernunnos: cura-o-dono/auto-renasce), reflete (mnevis), aoUsarMilagre (shiva),
+  anula-controle-1× (khonshu), condição-comparativa (anubis "mais debuffs que buffs"), execIf-multi-condição (ammit).
+
+**Releitura da F1.8:** ela NÃO é "escrever verdes de graça" — isso era o teto da reconciliação. É **"abrir 2 ganchos
+compartilhados (por-contagem-de-status + multi-golpe-distribuído) e ~7 milagres caem"**. Continua barato e de alta
+alavanca (como o nega-orbe foi), só não é zero-motor. A escada do §61 de novo: a reconciliação disse "de graça", a
+tradução disse "2 ganchos pequenos" — os dois certos sobre o TAMANHO, discordam só sobre o "motor zero".
+
+**O SEQUENCIAMENTO DA FASE (do dono), registrado:**
+- **F1.7 — ARTE DAS HABILIDADES (primeiro).** As 401 imagens existem, nomeadas no padrão, encaixes esperando. Estava na
+  F4 porque no dia do roteiro era produção futura; hoje é pasta pronta — manter na F4 seria seguir um plano que descreve
+  um mundo que mudou (o erro que a varredura corrige). Risco que quer ser descoberto cedo: a arte do Itzamná é creme+dourada
+  e o anel do elemento quase some; se repetir em 10 das 401, melhor saber com 47 escritos que com 100 (corrige-se o anel
+  1× ou as artes 10×). **NÃO começar ainda — as imagens entram pelo lado do dono (anexo não chega ao disco, foi o que
+  travou o teste do Itzamná); o dono avisa quando estiverem no repo.**
+- **F1.8** — os verdes-escondidos → RELIDA acima (2 ganchos compartilhados, não zero-motor).
+- **F1.9 — INALVEJÁVEL** — o maior desbloqueio: trava 5 (loki, tanuki, sunwukong, saci, boto) e está INERTE.
+- **F1.10** — os 4 pequenos + os 9 AMARELO-real.
+- **F1.11** — os baldes menores (marca/Olho, seletor).
+- **F1.12+** — os ~6 estruturais, um desenho por vez, no formato do dominado (mimir aura-pós-morte, yanwong
+  morte-por-contagem, krishna rastreio-de-dano, exu+dagda iniciativa, loki transferência-em-massa).
+
+---
+
 ## §76 — HUANG DI: o "cluster" médio já existia (o viés do rótulo corta TAMANHO, não só prontidão)
 
 **A VARREDURA RESPONDEU MELHOR QUE A PERGUNTA.** A pergunta do dono antes de construir: *quantos deuses pedem
