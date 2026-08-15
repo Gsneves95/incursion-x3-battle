@@ -92,6 +92,8 @@ const TIPOS_FX = [
 const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
 const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3).
+const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
+const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
 // motor não carregar um `if (u.key===...)` por deus. A SESSÃO 1 abre UM gatilho só: bonusDano.
 // Migração é por DEUS INTEIRO (§37): um deus só migra quando TODOS os gatilhos da sua passiva
@@ -101,7 +103,7 @@ const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx
 // um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
 // Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
 const GATILHOS_PASSIVA = {
-  bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73, mesmo helper do danoBase)
+  bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78, mesmo helper do danoBase)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré)
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
@@ -206,6 +208,8 @@ const VOCAB = {
   efeitos: [...new Set([...DEBUFFS, ...BUFFS])], // valores válidos de eff.type (t:'apply')
   dots: DOTS,                                    // chaves de DoT (fx dot.nome)
   contadores: CONTADORES,                        // chaves de contador (fx contador.nome)
+  statusCategorias: STATUS_CATEGORIAS,           // porStatus.categoria (F1.8): nome de efeito OU coringa de família
+  statusEscopos: STATUS_ESCOPOS,                 // porStatus.onde (F1.8): alvo|self|time|timeInimigo
   gatilhosPassiva: Object.keys(GATILHOS_PASSIVA), // valores válidos de passiva.fx[].gatilho (F1.2)
   gatilhosPassivaDef: GATILHOS_PASSIVA,           // campos/obrigatórios por gatilho (valida_kit dispara por isto)
   ignoraveis: IGNORAVEIS,                          // valores válidos em danoIrredutivel.ignora
@@ -230,7 +234,7 @@ const VOCAB = {
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
-    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'curaMetade',
+    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'curaMetade',
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1+ unidades escolhidas; soMaior = só a maior recarga (Bragi/Brahma)
@@ -1427,6 +1431,28 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
 // aliados/inimigos caídos). UM mecanismo, chamado por danoBase (por-ability) E bonusDanoDeclarativo (passivo) — sem
 // caminho duplicado (a dívida que o dono apontou: dois jeitos de escalar o mesmo). `passo` (default 1): +v a cada
 // `passo` de contagem — Oni "+1 de dano por 4 de Combo" = {porContadorLado:{nome:'combo', v:1, passo:4}}.
+// porStatus (F1.8): "+N por [debuff/buff/DoT/status] em [escopo]". UM source parametrizado, não quatro (varredura §78):
+// conta INSTÂNCIAS de efeito da categoria no escopo — como efeitos deduplicam por unidade, "por debuff nele" (escopo
+// alvo) e "por inimigo Encharcado" (escopo timeInimigo, categoria encharcado) caem no MESMO contador. `categoria` aceita
+// um coringa de família (debuff/buff/dot/controle) OU um nome específico (encharcado/veneno/regen/…).
+function statusCasou(cat, tipo) {
+  if (cat === 'debuff') return DEBUFFS.includes(tipo) || DOTS.includes(tipo);   // "debuff" inclui DoT, como o alvoDebuff
+  if (cat === 'buff') return BUFFS.includes(tipo);
+  if (cat === 'dot') return DOTS.includes(tipo);
+  if (cat === 'controle') return CONTROLES.includes(tipo);
+  return cat === tipo;   // nome específico
+}
+function contarStatus(st, u, t, spec) {
+  const uni = spec.onde === 'alvo' ? [t] : spec.onde === 'self' ? [u]
+    : spec.onde === 'time' ? st.lados[u.lado].units.filter(x => x.vivo)
+    : st.lados[1 - u.lado].units.filter(x => x.vivo);   // timeInimigo
+  let n = 0;
+  for (const x of uni) {
+    for (const e of x.efeitos) if (statusCasou(spec.categoria, e.type)) n++;
+    for (const d of x.dots) if (statusCasou(spec.categoria, d.nome)) n++;
+  }
+  return n;
+}
 function escalaContagem(st, u, t, spec) {
   let add = 0;
   const porN = (v, count, passo) => v * Math.floor(count / (passo || 1));
@@ -1436,6 +1462,7 @@ function escalaContagem(st, u, t, spec) {
   if (spec.porAliadoCaido) add += spec.porAliadoCaido * caidos(st, u.lado);
   if (spec.porInimigoCaido) add += spec.porInimigoCaido * caidos(st, 1 - u.lado);
   if (spec.porHpFaltante) add += porN(spec.porHpFaltante.v, u.maxHp - u.hp, spec.porHpFaltante.passo);   // Mula sem Cabeça: "+1 por 5 de HP perdido" (HP do próprio u)
+  if (spec.porStatus) add += porN(spec.porStatus.v, contarStatus(st, u, t, spec.porStatus), spec.porStatus.passo);   // F1.8: "+N por debuff/regen/… no escopo"
   return add;
 }
 function danoBase(st, u, t, e, l) {

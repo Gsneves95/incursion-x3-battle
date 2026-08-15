@@ -1,0 +1,56 @@
+{
+  "key": "jormungandr",
+  "nome": "Jörmungandr",
+  "faccao": "Nórdica",
+  "elem": "Maré",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Serpente do Mundo",
+    "desc": "Imune a controle; +8 de dano contra unidades Tempestade.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "controle" ] },
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoElem": "Tempestade" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Bote Venenoso",
+      "cost": { "Maré": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano + Veneno (8 de dano/turno por 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 10 },
+        { "t": "dot", "nome": "veneno", "v": 8, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Anel do Mundo",
+      "cost": { "Maré": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "Veneno (10 de dano/turno por 2 turnos) em todos os inimigos; eles causam 5 menos de dano.",
+      "fx": [
+        { "t": "dot", "nome": "veneno", "v": 10, "dur": 2, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "dmgDown", "v": 5, "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Veneno do Ragnarök",
+      "cost": { "Maré": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "16 de dano a todos os inimigos, +8 por inimigo envenenado.",
+      "fx": [
+        { "t": "dmg", "v": 16, "porStatus": { "v": 8, "categoria": "veneno", "onde": "timeInimigo" }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

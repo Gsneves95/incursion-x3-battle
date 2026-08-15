@@ -1,0 +1,53 @@
+{
+  "key": "erinias",
+  "nome": "Erínias",
+  "faccao": "Grega",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Fúria Vingativa",
+    "desc": "Quando um aliado é derrotado, Erínias causa +8 de dano pelo resto da partida.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 99 }, "escopo": "self" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Chicote de Sangue",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Perseguição",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Marca 1 inimigo por 2 turnos: ele recebe +8 de dano de todas as fontes e não pode ser curado.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "vulneravel", "v": 8, "dur": 2 } },
+        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Julgamento das Fúrias",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "25 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs.",
+      "fx": [
+        { "t": "dmg", "v": 25, "porStatus": { "v": 10, "categoria": "debuff", "onde": "alvo" } },
+        { "t": "cleanse" }
+      ]
+    }
+  ]
+}

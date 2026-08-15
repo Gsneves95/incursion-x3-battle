@@ -48,6 +48,7 @@ function validarFx(f, ctx, errs) {
   if ('executaAbaixoDe' in f && (!Number.isInteger(f.executaAbaixoDe) || f.executaAbaixoDe <= 0)) errs.push(`${ctx}: executaAbaixoDe mal formado (${JSON.stringify(f.executaAbaixoDe)}; inteiro > 0)`);
   if ('execIf' in f) validarQuando(f.execIf, `${ctx}.execIf`, errs);   // F1.6 (Iara): filtro de status na execução, mesma gramática do condOK
   if ('soSe' in f) validarQuando(f.soSe, `${ctx}.soSe`, errs);   // F1.6 (Chaac): apply filtrado por status do alvo, mesma gramática do condOK
+  if ('porStatus' in f) validarPorStatus(f.porStatus, `${ctx}.porStatus`, errs);   // F1.8: escala por contagem de status (dmg)
   if ('seCond' in f) {   // F1.6: bump condicional geral — {quando: <condição ofensiva>, v: dano quando a condição bate}
     const s = f.seCond;
     if (!s || typeof s !== 'object' || typeof s.v !== 'number' || !Number.isInteger(s.v) || s.v <= 0) errs.push(`${ctx}: seCond.v mal formado (${JSON.stringify(s && s.v)}; inteiro > 0)`);
@@ -111,6 +112,16 @@ function validarProtegido(pr, ctx, errs) {
     if (!def) { errs.push(`${ctx}: condição de protegido desconhecida "${k}" (válidas: ${V.protegido.join(', ')})`); continue; }
     if (def.sub && !def.sub.includes(pr[k])) errs.push(`${ctx}: valor "${pr[k]}" fora do sub-vocabulário de "${k}" (válidos: ${def.sub.join(', ')})`);
   }
+}
+
+// Valida o source de escala `porStatus` (F1.8): "+v por status da categoria no escopo". Categoria e escopo vêm de
+// V.statusCategorias / V.statusEscopos (o motor). Um valor fora do vocab contaria 0 em silêncio — recusa em voz alta.
+function validarPorStatus(ps, ctx, errs) {
+  if (!ps || typeof ps !== 'object' || Array.isArray(ps)) { errs.push(`${ctx}: porStatus não é objeto`); return; }
+  if (typeof ps.v !== 'number' || !Number.isInteger(ps.v) || ps.v <= 0) errs.push(`${ctx}: porStatus.v mal formado (${JSON.stringify(ps.v)}; inteiro > 0)`);
+  if (!V.statusCategorias.includes(ps.categoria)) errs.push(`${ctx}: categoria "${ps.categoria}" fora do vocabulário (válidas: nome de efeito/DoT ou debuff|buff|dot|controle)`);
+  if (!V.statusEscopos.includes(ps.onde)) errs.push(`${ctx}: onde "${ps.onde}" inválido (válidos: ${V.statusEscopos.join(', ')})`);
+  if ('passo' in ps && (!Number.isInteger(ps.passo) || ps.passo <= 0)) errs.push(`${ctx}: porStatus.passo mal formado (${JSON.stringify(ps.passo)}; inteiro > 0)`);
 }
 
 // Valida a CONDIÇÃO `quandoCura` do gatilho bonusCura (F1.2 sessão 7). TERCEIRO eixo, separado de `quando`
@@ -234,7 +245,7 @@ function validarPassiva(p, ctx, errs) {
     for (const req of def.obrig) if (!(req in f)) errs.push(`${c}: gatilho "${f.gatilho}" exige o campo "${req}"`);
     // validações de valor (só se o campo pertence ao gatilho)
     // v:0 é permitido QUANDO o bônus é puramente escalado (Oni: "+1 por 4 Combo", sem parte fixa) — §73
-    const temEscala = ['porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante'].some(k => k in f);
+    const temEscala = ['porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'].some(k => k in f);
     if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v < (temEscala ? 0 : 1))) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro ${temEscala ? '>= 0' : '> 0'})`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);
@@ -242,6 +253,7 @@ function validarPassiva(p, ctx, errs) {
     if ('quandoCura' in f) validarQuandoCura(f.quandoCura, `${c}.quandoCura`, errs);
     if ('contra' in f) validarContra(f.contra, `${c}.contra`, errs);
     if ('protegido' in f) validarProtegido(f.protegido, `${c}.protegido`, errs);
+    if ('porStatus' in f) validarPorStatus(f.porStatus, `${c}.porStatus`, errs);
     if ('faz' in f) validarFaz(f.faz, `${c}.faz`, errs);
     if ('noAtacante' in f) validarNoAtacante(f.noAtacante, `${c}.noAtacante`, errs);
     if ('noAtor' in f) validarNoAtor(f.noAtor, `${c}.noAtor`, errs);

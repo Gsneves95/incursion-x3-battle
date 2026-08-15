@@ -1163,6 +1163,31 @@ console.log('== F1.6 cdShift CLUSTER (Huangdi): team-longest -1/turno (desempate
   console.log('  cdShift-cluster: team-longest (desempate índice→slot), lado-inteiro e mirado-2 — Huang Di inteiro');
 }
 
+console.log('== F1.8 porStatus: escala por contagem de status (UM source, 2 escopos) — Erínias / Ao Kuang ==');
+{ // ERÍNIAS-shape: dmg base + v por debuff NO ALVO (conta efeitos+DoTs; "debuff" inclui DoT como o alvoDebuff)
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 629);
+  const atk = st.lados[0].units[0], t = st.lados[1].units[0];
+  let h = t.hp;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 25, porStatus: { v: 10, categoria: 'debuff', onde: 'alvo' } }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(t.hp === h - 25, `alvo limpo: só a base 25 (sem escala) [${h - t.hp}]`);
+  t.efeitos.push({ type: 'encharcado', dur: 2 }); t.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 }); t.dots.push({ nome: 'veneno', v: 8, dur: 2 });
+  h = t.hp;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 25, porStatus: { v: 10, categoria: 'debuff', onde: 'alvo' } }], { alvo: 'inimigo', slot: 'milagre' }, [t]);
+  ok(t.hp === h - 55, `3 debuffs (encharcado+dmgDown+veneno) → 25 + 10×3 = 55 [${h - t.hp}]`);
+}
+{ // AOKUANG/JÖRMUNGANDR-shape: bonusDano PASSIVO escala por contagem de UNIDADES com o status no time inimigo
+  E.GODS.tps = { nome: 'TPS', faccao: 'T', elem: 'Maré', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', v: 0, porStatus: { v: 5, categoria: 'encharcado', onde: 'timeInimigo' } }] } };
+  const st = E.novoEstado(['tps', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 630);
+  const atk = st.lados[0].units[0], e = st.lados[1].units;
+  ok(E.bonusDanoDeclarativo(st, atk, e[0]) === 0, 'nenhum Encharcado: +0');
+  e[0].efeitos.push({ type: 'encharcado', dur: 2 });
+  ok(E.bonusDanoDeclarativo(st, atk, e[0]) === 5, '1 inimigo Encharcado: +5');
+  e[1].efeitos.push({ type: 'encharcado', dur: 2 }); e[2].efeitos.push({ type: 'encharcado', dur: 2 });
+  ok(E.bonusDanoDeclarativo(st, atk, e[0]) === 15, '3 inimigos Encharcados: +15 (escopo timeInimigo conta unidades)');
+  delete E.GODS.tps;
+  console.log('  porStatus: MESMO source escala por efeitos-no-alvo (Erínias) e por unidades-com-status-no-lado (Ao Kuang)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -141,13 +141,14 @@ console.log('== teto de dano por categoria (orçamento documentado) ==');
         if (e.t !== 'dmg') continue;
         const area = (e.escopo || a.alvo) === 'todosInimigos';
         const lim = area ? AREA[a.slot] : TETO[a.slot];
-        const val = Math.max(e.v, e.seEncharcado || 0, e.seAdormecido || 0, (e.seCond && e.seCond.v) || 0);   // seCond (F1.6) entra no teto: bump condicional é dano potencial, como seEncharcado
+        const escala = e.porStatus ? e.porStatus.v * 3 : 0;   // porStatus (F1.8): +v por status; teto potencial ~3 (time cheio / debuffs típicos) — o auditor não pode ficar cego à escala nova (§66)
+        const val = Math.max(e.v, e.seEncharcado || 0, e.seAdormecido || 0, (e.seCond && e.seCond.v) || 0) + escala;
         if (val > lim) piores.push(`${g.nome}/${a.nome}: ${val} > ${lim}${area ? ' (área)' : ''}`);
       }
     }
   }
   // Dilúvio (30 em Encharcado) e O Papão (38 em Adormecido) são bônus condicionais previstos
-  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo|Fim de Mahishasura|Tempestade de Raios/.test(p));   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6). Fim de Mahishasura (48 em alvo acima de 84 HP, Durga): bump anti-chefe condicional
+  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo|Fim de Mahishasura|Tempestade de Raios|Julgamento das F\u00farias|Veneno do Ragnar\u00f6k/.test(p));   // Julgamento (Er\u00ednias: 25+10/debuff) e Veneno do Ragnar\u00f6k (J\u00f6rmungandr: 16+8/envenenado) \u2014 bumps por-status condicionais (F1.8)   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6). Fim de Mahishasura (48 em alvo acima de 84 HP, Durga): bump anti-chefe condicional
   ok(inesperados.length === 0, 'fora do orçamento: ' + inesperados.join(' | '));
   console.log(`  ${piores.length} acima do teto base, todos com condição: ${piores.join(' | ') || 'nenhum'}`);
 }
