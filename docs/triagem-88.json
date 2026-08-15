@@ -1178,12 +1178,23 @@
     }
   },
   "placar": {
-    "IMPL": 47,
-    "FUNCIONAL": 46,
+    "IMPL": 50,
+    "FUNCIONAL": 49,
     "orfaos": {
       "afrodite": "dominado (Básico-forçado inerte)"
     },
     "nota": "FUNCIONAL=IMPL menos órfãs (afrodite/dominado)"
+  },
+  "F1_8_porStatus": {
+    "veredito": "0 verdes-motor-zero (§77/§78: a leva destravou passivas, nao milagres). Mas o source por-contagem-de-status eh 1 parametrizado (nao 4), destrava 3 milagres cheios",
+    "feitos": [ "erinias (por debuff no alvo)", "aokuang (por inimigo Encharcado)", "jormungandr (por inimigo envenenado)" ],
+    "restam_com_2o_buraco": {
+      "hel": "por-debuff OK, falta cura-por-alvo no milagre",
+      "ammit": "por-debuff OK, falta execIf-multi-condicao + matador-veta-revive",
+      "cernunnos": "por-regen OK, falta Fera-atacante-variante (cura-dono/auto-renasce)"
+    },
+    "fora_da_familia": "aliado-a-menos (susanoo) + aliado-vivo (guanyu) = tamanho-de-lado, nao status",
+    "IMPL": "47->50"
   },
   "huangdi_cdShift_cluster": {
     "veredito": "o 'cluster' MÉDIO do §74 já existia (escopo-de-lado legado, live em fujin+ganesha); só a passiva team-longest era nova (~10 linhas). §76: o viés do rótulo desinfla TAMANHO tb, não só prontidão",

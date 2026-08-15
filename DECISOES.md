@@ -6,6 +6,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §79 — porStatus: UM source parametrizado (não quatro), e a heurística do milagre deu o número real (3, não 5)
+
+**A VARREDURA DA FAMÍLIA (pedida pelo dono antes de construir) — é UM source, não quatro.** "Por contagem de status"
+aparecia com quatro rótulos na fila (debuff, buff, regeneração, aliado-a-menos). Varrendo os 100: **três deles
+(debuff/buff/regen) são o MESMO contador** — como efeito deduplica por unidade, "contar efeitos da categoria X no escopo
+Y" cobre tanto "por debuff NELE" (onde:alvo) quanto "por inimigo Encharcado" (onde:timeInimigo, categoria:encharcado). É
+um `porStatus: {v, categoria, onde, passo}` só. **O quarto (aliado-a-menos, susanoo + guanyu) NÃO é status — é
+tamanho-de-lado**, vizinho do `porAliadoCaido` que já existe; ficou de fora. E entrou no `escalaContagem` como **uma
+chave a mais** — o caminho único do §73 intacto, sem segundo jeito de escalar (a garantia que o dono pediu no wrapper).
+
+**A HEURÍSTICA DO MILAGRE (§78) deu o número REAL antes de escrever: 3, não ~5.** Seis deuses referenciam o source.
+Olhando o MILAGRE de cada um primeiro: limpo em **erinias** (por debuff, alvo), **aokuang** (por Encharcado, timeInimigo),
+**jörmungandr** (por envenenado, timeInimigo) → escritos, IMPL 47→50. Nos outros três o milagre tem um SEGUNDO buraco além
+do por-status: **hel** (cura-por-alvo), **ammit** (execIf-multi-condição + matador-veta-revive), **cernunnos**
+(Fera-atacante que cura o dono / auto-renasce). O source é necessário mas não suficiente p/ eles — esperam o 2º gancho.
+A heurística do milagre pagou: previu "3 cheios" e a escrita confirmou 3, sem retrabalho.
+
+**AUDITOR — não fica cego à escala nova (§66 aplicado proativamente).** porStatus é bump condicional como o seCond, então
+entra no teto do auditor (potencial ~`v×3`, time cheio). Julgamento das Fúrias (25+10/debuff = 55) e Veneno do Ragnarök
+(16+8/envenenado = 40) passam a ser FLAGRADOS e catalogados no allowlist — não aprovados em silêncio. Foi de propósito
+antes de o auditor ter chance de errar: widening retroativo (§66) é dívida, widening junto com o source é limpo.
+
+---
+
 ## §78 — A HEURÍSTICA DO MILAGRE (o gancho mora no milagre) e a auto-correção medida contra mim mesmo
 
 **A AUTO-CORREÇÃO, sem suavizar (o dono pediu assim).** Na varredura (§77) prometi erinias/nuwa/cernunnos/ammit como
