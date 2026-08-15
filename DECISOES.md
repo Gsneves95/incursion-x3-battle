@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §78 — A HEURÍSTICA DO MILAGRE (o gancho mora no milagre) e a auto-correção medida contra mim mesmo
+
+**A AUTO-CORREÇÃO, sem suavizar (o dono pediu assim).** Na varredura (§77) prometi erinias/nuwa/cernunnos/ammit como
+"verdes de graça". Duas horas depois, traduzindo, **0 de 14 saíram limpos** — a minha própria promessa falhou na
+medição. Não foi a triagem antiga que errou: fui EU, nesta sessão, com o motor de hoje na mão. É o §61 medido no menor
+intervalo possível — reconciliação→tradução em 2h — e contra o próprio autor. Fica registrado como FALHA da promessa,
+não como "a reconciliação é um teto" abstrato: **quem reconcilia herda o viés, inclusive quem já sabe do viés.**
+
+**A HEURÍSTICA DO MILAGRE (do dono — vale mais que o número).** O padrão dos 14 foi limpo e único: **a leva destravou as
+PASSIVAS e os alvos-únicos; os MILAGRES não.** O gancho que falta mora quase sempre no milagre. E isso é REGULARIDADE
+ESTRUTURAL, não coincidência: **o milagre é onde os kits concentram a mecânica cara — é a habilidade de maior custo e
+maior recarga, então é onde o designer põe o efeito que justifica os dois.** Vira heurística de triagem:
+> **Ao reconciliar, olhe o MILAGRE primeiro. Se ele estiver limpo, o deus provavelmente está. Se só a passiva estiver
+> limpa, isso não diz quase nada.**
+
+**E ISSO EXPLICA POR QUE A RECONCILIAÇÃO ERRA SISTEMATICAMENTE PARA CIMA (o mecanismo do viés, não só a taxa).** A
+reconciliação lê a lista de mecanismos do deus e procura casar cada um com o motor. Ela ACHA os das passivas — porque a
+leva mais recente acabou de abri-los — e não sente o buraco do milagre, que é o mais caro e o menos coberto. O viés não
+é aleatório: é a passiva (barata, recém-coberta) ofuscando o milagre (caro, descoberto). Ler o milagre primeiro ataca a
+causa, não o sintoma.
+
+---
+
 ## §77 — RÓTULO CRAVADO ENVELHECE MAL (nos DOIS sentidos); a F1.8 mediu o 80% na VERMELHO — 0 puro-motor-zero
 
 **A LIÇÃO (do dono, generalizando o §76).** Um rótulo de triagem cravado ANTES de uma onda de ganchos envelhece mal —
