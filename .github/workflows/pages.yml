@@ -32,6 +32,8 @@ jobs:
           cp dist/incursion.html site/index.html
           # manifest + ícones como arquivos REAIS (PWA instalável; blob: não instala)
           cp web/manifest.webmanifest web/icon-192.png web/icon-512.png site/
+          # artes de habilidade (F1.7): 401 arquivos REAIS servidos ao lado do index (não base64 — o bundle ficaria ~7MB)
+          cp -r web/skills site/skills
       - uses: actions/configure-pages@v5
         with:
           enablement: true

@@ -212,6 +212,9 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-family:'Cinzel',serif;font-weight:900;font-size:19px;letter-spacing:.04em;opacity:.5}
 .skill.is-armed .skill__mono{opacity:.95}
 .skill.is-off .skill__mono{opacity:.3}
+/* arte de habilidade presente (F1.7) -> esconde o monograma-placeholder; ausente (onerror removeu o img) -> reaparece */
+.skill__disc:has(.slot__art) .skill__mono{opacity:0}
+.foesk:has(.slot__art) .foesk__mono{opacity:0}
 /* máscaras acompanham o disco */
 .skill__cd{display:none;position:absolute;inset:0;border-radius:50%;background:rgba(6,5,16,.76);
   align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;

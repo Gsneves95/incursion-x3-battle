@@ -129,7 +129,7 @@ fs.writeFileSync(distAbs, saida);
 // "arquivo único" vale para o incursion.html; o artefato publicado é um site pequeno.
 const web = path.join(raiz, 'web');
 if (fs.existsSync(web)) for (const f of fs.readdirSync(web))
-  fs.copyFileSync(path.join(web, f), path.join(raiz, 'dist', f));
+  fs.cpSync(path.join(web, f), path.join(raiz, 'dist', f), { recursive: true });   // recursive: cobre web/skills/ (401 artes F1.7), não só os arquivos-topo
 
 smokeCarga(distAbs);
 console.log('dist/incursion.html —', (saida.length / 1024 / 1024).toFixed(2),

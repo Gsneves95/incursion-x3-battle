@@ -192,11 +192,18 @@ function ligarModoApp(){
 /* ---------- encaixes de arte ---------- */
 function slot(chave,glifo,cor,tam,redondo){
   const m=/^god-(.+)$/.exec(chave);
-  const arte=m&&IMG[m[1]];
-  return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+
-    (arte?`<img src="${arte}" alt="">`
-     :(glifo?`<span class="slot__glyph" style="font-size:${tam||16}px;color:${cor||'var(--ink-dim)'}">${H(glifo)}</span>`:''))+
-    `</div>`;
+  const arteGod=m&&IMG[m[1]];
+  // arte de habilidade (F1.7): ARQUIVO em web/skills/skill-<deus>-<slot>.webp (não base64 — 401 imagens embutidas
+  // inflariam o bundle de ~1.4MB p/ ~7MB). A chave BATE o nome do arquivo. A Defesa é arte ÚNICA compartilhada
+  // (skill-defesa.webp), não uma por deus. Se a arte não existir (deus futuro), onerror remove o <img> e o
+  // monograma-irmão reaparece (o :has do CSS o esconde só enquanto a arte está presente).
+  const ehSkill=/^skill-/.test(chave);
+  const arq=ehSkill?(/-defesa$/.test(chave)?'skill-defesa':chave):null;
+  let inner='';
+  if(arteGod)inner=`<img src="${arteGod}" alt="">`;
+  else if(ehSkill)inner=`<img class="slot__art" src="skills/${H(arq)}.webp" alt="" loading="lazy" onerror="this.remove()">`;
+  else if(glifo)inner=`<span class="slot__glyph" style="font-size:${tam||16}px;color:${cor||'var(--ink-dim)'}">${H(glifo)}</span>`;
+  return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+inner+`</div>`;
 }
 const ini = n => n.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2).toUpperCase();
 const MONO_FIXO={defesa:'DEF'};
