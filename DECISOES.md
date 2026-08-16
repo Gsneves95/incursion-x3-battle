@@ -6,6 +6,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §80 — A CAPTURA É ÁRBITRO: a verificação visual acha o que teste e revisão não acham; a métrica sozinha superestima
+
+**(A) O BUG DA DEFESA — só a TELA pegou.** Os discos DEF pediam `skill-<deus>-defesa.webp` (uma por deus), mas a arte é
+COMPARTILHADA (`skill-defesa.webp`). O prompt foi escrito sem lembrar disso; `npm test` passou (a lógica não sabe de
+arquivo); a revisão do código não pegou (a chave `skill-<deus>-<slot>` "bate o nome do arquivo" — verdade para 400, não
+para a Defesa). **Só a captura de tela mostrou os discos DEF caídos no monograma.** Fica no registro dos casos em que a
+verificação VISUAL acha o que teste e revisão não acham: quando o defeito é um asset ausente / um caminho que resolve em
+404, nenhuma asserção lógica o sente — a tela é o único oráculo. Regra: **toda mudança que liga arte/asset se verifica
+renderizando, não só com teste verde.**
+
+**(B) MÉTRICA DE CONTRASTE SOZINHA SUPERESTIMA FALHA — a montagem é o árbitro.** Medi o contraste anel↔arte (WCAG,
+luminância) e a métrica crua deu **79/400** "anéis sumindo". Renderizei a montagem e vi o erro: **anel roxo (Umbra) sobre
+arte roxa-escura pontua baixo em luminância mas continua visível** — a diferença é de MATIZ, que a luminância não captura.
+Refiltrei para o caso que o olho confirma E que o conserto (contorno escuro) resolve — **borda CLARA** — e caiu para
+**45**. Distinguir "baixa luminância" de "invisível" exigiu OLHAR, não medir. Fica a regra, gêmea de (A): **a métrica
+PROPÕE (rankeia, prioriza, dá o número bruto); a montagem DISPÕE (decide o que é falha real). Nunca reportar um número de
+falha visual sem a montagem que o arbitra** — foi a métrica que quase me fez consertar 34 discos que não precisavam.
+
+**O CONSERTO (contorno §5), pelas três regras do dono:** por FORA (não come 1px de arte × 401), UNIFORME (não detecta
+arte clara — comportamento por-asset é imprevisível e intestável), e a montagem before/after dos 45 provou que resolve os
+casos, não só muda o número. O halo dourado do Milagre (tier) sobrevive via `outline-offset` (contorno fora do halo).
+
+---
+
 ## §79 — porStatus: UM source parametrizado (não quatro), e a heurística do milagre deu o número real (3, não 5)
 
 **A VARREDURA DA FAMÍLIA (pedida pelo dono antes de construir) — é UM source, não quatro.** "Por contagem de status"
