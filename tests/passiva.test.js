@@ -1305,6 +1305,38 @@ console.log('== F1.8 sinergiaAliado (Inari→Kitsune): no 1º turno o aliado NOM
   console.log('  sinergiaAliado: só no primeiro turno (primeiro), acha o aliado por key; sem o aliado nomeado é no-op');
 }
 
+console.log('== F1.9-pre marca ofensiva: RÓTULO puro lido por alvoMarca; nome=etiqueta, qualquer=guarda-chuva (§83) ==');
+{
+  E.GODS.tho = { nome: 'THo', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', quando: { alvoMarca: 'olho' }, v: 8 }] } };
+  E.GODS.thq = { nome: 'THq', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'bonusDano', quando: { alvoMarca: 'qualquer' }, v: 8 }] } };
+  const st = E.novoEstado(['tho', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 650);
+  const ho = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.aplicarFx(st, ho, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [foe]);
+  ok(h - foe.hp === 10, `sem marca: 10, sem +8 (${h - foe.hp})`);
+  // a marca 'olho' aplicada sozinha é RÓTULO: não causa dano por si — o +8 vem do bonusDano
+  foe.efeitos.push({ type: 'olho', dur: 2 });
+  h = foe.hp; E.aplicarFx(st, ho, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [foe]);
+  ok(h - foe.hp === 18, `com olho: 10 +8; a marca é rótulo, o +dano é do bonusDano (${h - foe.hp})`);
+  // ETIQUETAS distintas (§54): quem lê 'olho' NÃO dispara contra 'marcado'
+  const st2 = E.novoEstado(['tho', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 651);
+  const ho2 = st2.lados[0].units[0], f2 = st2.lados[1].units[0]; f2.efeitos.push({ type: 'marcado', dur: 2 });
+  h = f2.hp; E.aplicarFx(st2, ho2, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [f2]);
+  ok(h - f2.hp === 10, `'olho' específico não dispara contra 'marcado' — etiquetas distintas (${h - f2.hp})`);
+  // GUARDA-CHUVA 'qualquer': pune a marca de OUTRO deus (vocabulário compartilhado, §83)
+  const st3 = E.novoEstado(['thq', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 652);
+  const hq3 = st3.lados[0].units[0], f3 = st3.lados[1].units[0]; f3.efeitos.push({ type: 'marcado', dur: 2 });
+  h = f3.hp; E.aplicarFx(st3, hq3, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [f3]);
+  ok(h - f3.hp === 18, `'qualquer' pune 'marcado' de outro deus — marca é vocabulário compartilhado (${h - f3.hp})`);
+  // decisão (a): vulneravel IRMÃO — o +dano all-source soma por fora, a marca não o carrega
+  const st4 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 653);
+  const atk4 = st4.lados[0].units[0], f4 = st4.lados[1].units[0];
+  f4.efeitos.push({ type: 'olho', dur: 2 }); f4.efeitos.push({ type: 'vulneravel', v: 8, dur: 2 });
+  h = f4.hp; E.aplicarFx(st4, atk4, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [f4]);
+  ok(h - f4.hp === 18, `olho(rótulo)+vulneravel(irmão): 10 +8 all-source; a marca não duplica (${h - f4.hp})`);
+  delete E.GODS.tho; delete E.GODS.thq;
+  console.log('  marca = rótulo puro; alvoMarca:nome é etiqueta (§54), :qualquer é guarda-chuva compartilhado (§83)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -1353,8 +1385,9 @@ const err = (mut, frag) => { const g = base(); mut(g); const e = validarDeus(g);
 err(g => g.passiva.fx[0].gatilho = 'gatilhoInexistente', 'gatilho inválido');   // gatilho fora do conjunto
 err(g => g.passiva.fx[0].quando = { foo: true }, 'condição desconhecida');       // chave de condição inventada
 err(g => g.passiva.fx[0].quando = { alvoElem: 'Plasma' }, 'fora do sub-vocabulário'); // valor fora do sub-vocab
-err(g => g.passiva.fx[0].quando = { alvoMarca: 'olho' }, 'reservada');           // condição pendente (marca)
-err(g => g.passiva.fx[0].quando = { alvoCuradoAntes: true }, 'reservada');       // condição pendente (cura-anterior)
+{ const g = base(); g.passiva.fx[0].quando = { alvoMarca: 'olho' }; ok(validarDeus(g).length === 0, 'alvoMarca:olho agora é VÁLIDA (§83, saiu de pendente): ' + JSON.stringify(validarDeus(g))); }
+err(g => g.passiva.fx[0].quando = { alvoMarca: 'nuvem' }, 'fora do sub-vocabulário'); // marca fora do vocabulário FECHADO de MARCAS
+err(g => g.passiva.fx[0].quando = { alvoCuradoAntes: true }, 'reservada');       // condição pendente (cura-anterior) — segue reservada
 err(g => g.passiva.fx[0].v = 0, 'v mal formado');                               // v não-positivo
 err(g => g.passiva.fx[0].escopo = 'ambos', 'escopo inválido');                  // escopo fora do conjunto
 err(g => g.passiva.fx[0].zzz = 1, 'não pertence ao gatilho');                    // campo fora do gatilho bonusDano

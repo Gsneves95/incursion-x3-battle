@@ -6,6 +6,58 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §83 — MARCA OFENSIVA: rótulo puro, vocabulário COMPARTILHADO; e a fronteira limpa com a execução diferida
+
+**O que se construiu (F1.9-pre, aprovado pelo dono após o desenho da fronteira).** A infra da MARCA OFENSIVA — os
+rótulos `olho/livro/pressagio/marcado` no `MARCAS`, a condição `alvoMarca` (saiu de `pendente`), e o ramo em `condOK`
+espelhando `alvoDebuff`. ~9 linhas de motor; o resto é composição no dado. IMPL não anda (nenhum deus novo ainda).
+
+**As três decisões do desenho (o dono):**
+
+- **(a) A marca é RÓTULO PURO — o +dano é IRMÃO, não intrínseco.** Uma marca não carrega `v`. Hórus aplica DOIS efeitos
+  irmãos: `{type:'olho'}` (rótulo) + `{type:'vulneravel',v:8}` (o +dano all-source, que JÁ existia, §Durga). O motivo
+  é o que o desenho provou: se a marca ganhar `v`, ela deixa de ser rótulo e a resposta à pergunta "rótulo ou efeito?"
+  se inverte. Reusar `vulneravel` mantém a fronteira. (Os outros leitores — Odin `+6`, Morrigan `+25` — são
+  `bonusDano quando:{alvoMarca}` com o `v` no LEITOR, não na marca.)
+
+- **(b) Dano condicional de habilidade = DOIS FX COM CONDIÇÃO, não `quando` no `dmg`.** "45 puro se tem Olho, senão 32"
+  são dois efeitos ALTERNATIVOS, não um efeito com modificador. O `dmg` já tem `seCond/execIf/soSe/porContador/
+  porStatus/porHpFaltante`; somar `quando` faria dele o fx mais sobrecarregado do motor — é onde a próxima ambiguidade
+  moraria. Dois fx expõem a alternância; um fx com modificador a esconde. (Máquina p/ o guard-por-alvo + negação nos dois
+  fx ainda não existe — chega com o Hórus.)
+
+- **(c) MARCA SOZINHA primeiro.** Serve os leitores de imediato; é a peça que NÃO sabe de execução. Uma peça por vez foi
+  o que fez as últimas dez levas saírem sem surpresa.
+
+**A DECISÃO QUE VAI PARECER BUG (o dono mandou registrar):** marca é **vocabulário COMPARTILHADO, não propriedade privada
+de cada deus.** `alvoMarca:'qualquer'` casa TODAS as marcas — então o `+8` do Hórus atinge quem o Odin marcou. É coerente
+com a prosa ("contra marcados OU com o Olho": o OR existe justamente porque são conjuntos diferentes e ele quer os dois).
+**Quem pune marca pune QUALQUER marca.** Quem olhar `condOK` depois e achar que é vazamento: não é — é o guarda-chuva.
+E §54: as marcas são etiquetas DISTINTAS (o milagre do Hórus lê `olho` específico; o do Yan Wong só acelera `inscritos`),
+com o guarda-chuva por cima — igual ao `alvoDebuff:{sub:[...DEBUFFS,'qualquer','controle']}`.
+
+**A FRONTEIRA com a execução diferida (o desenho aceito):** são DOIS mecanismos independentes com uma junta limpa
+(status + `condOK`), e **metade da execução diferida já está feita.** O gatilho da morte difere:
+- **Yan Wong (`livro`)**: a MARCA EXPIRANDO mata — `fimTurno` já mata quem tem `livro` com `dur===1`. A execução é
+  CARGA da marca (timer intrínseco). **Já construído.**
+- **Morrigan (`pressagio`)**: um gatilho SEPARADO de fim-de-turno lê a marca como PORTA — se `hp ≤ limiar` no fim do
+  turno, executa; se o HP nunca cai, a marca expira inócua. A execução é CONSUMIDORA da marca. **Novo** (~7 linhas), e é
+  um `executaAbaixoDe` deslocado no tempo (o primitivo instantâneo já existe, F1.3).
+
+**§59 à espreita — GATILHO DE REVISÃO REGISTRADO:** NÃO fundir os dois tempos de execução (timer vs limiar-em-janela) num
+"rider letal genérico". Dois casos com condicionais diferentes não justificam a abstração; o `livro` fica como está e o
+`pressagio` entra como segundo leitor pequeno. **Se um TERCEIRO deus de execução diferida aparecer, aí sim se reavalia.**
+(O §59 nasceu de duas ferramentas com escopo mal separado — a lição é não abstrair cedo demais.)
+
+**A AUTO-CORREÇÃO DO DESENHO (§82 na prática).** Meu desenho vendeu Odin e Hórus como "quase de graça, composição de
+primitivos". A auditoria do motor derrubou isso: os DOIS básicos dependem de **Inalvejável** — um status que NÃO existe
+(é a F1.9, que o dono sequenciou para DEPOIS) e que 12 kits citam. Além disso Odin arrasta `ignora-Invulnerabilidade`,
+`cdReset` e `abertura-por-contagem-de-facção`; o milagre do Hórus precisa da máquina da decisão (b). A marca (leitor) é
+real e testada; os DEUS-CONSUMIDORES estão TODOS enredados (Odin/Hórus → F1.9; Yan Wong/Morrigan → execução diferida).
+Registrado ANTES de escrever os kits, para o dono re-escolher o escopo — não depois.
+
+---
+
 ## §82 — RELATO DE PROCESSO TAMBÉM PRECISA DE VERIFICAÇÃO (não só o código)
 
 **A lição (o dono, sobre a auto-correção do §38 corolário 2).** Eu ESCREVI no registro que tinha commitado Aquiles+Perseu

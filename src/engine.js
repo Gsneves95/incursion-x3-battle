@@ -71,7 +71,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 // nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
 // fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
 const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect'];
 
@@ -149,7 +149,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execu
 const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
-const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
+const MARCAS = ['marcado', 'olho', 'livro', 'pressagio'];   // marcas ofensivas — RÓTULOS lidos por `alvoMarca`. Vocabulário FECHADO e COMPARTILHADO (não é propriedade privada de um deus): quem pune marca (`alvoMarca:'qualquer'`) pune QUALQUER marca. marcado=Odin, olho=Hórus, livro=Yan Wong (já tinha timer letal), pressagio=Morrigan. §54: são etiquetas distintas (o milagre do Hórus lê 'olho' específico; o do Yan Wong acelera só 'inscritos'), com o guarda-chuva 'qualquer'. Ver DECISOES §83
 const SLOTS_ATAQUE = ['basico', 'habilidade', 'milagre'];
 // `contra` (condição DEFENSIVA do gatilho reducao) — EIXO SEPARADO do `quando`: `quando` lê o lado
 // OFENSIVO (quem ataca, quem é atacado, estado do campo); `contra` lê o GOLPE QUE CHEGA. Os dois
@@ -178,7 +178,7 @@ const CONDICOES = {
   alvoElem:        { sub: ELEMS },                                 // alvo é do elemento
   alvoHp:          { hp: true },                                   // {op:'cheio'|'abaixo'|'acima', v?}
   atacanteElem:    { sub: ELEMS },                                 // quem ataca é do elemento (escopo aliados)
-  alvoMarca:       { sub: MARCAS, pendente: 'marca ofensiva (Olho) ainda não existe — vem com a vulnerabilidade' },
+  alvoMarca:       { sub: [...MARCAS, 'qualquer'] },               // alvo tem a marca ofensiva nomeada, OU 'qualquer' (tem qualquer marca) — espelha alvoDebuff. §83
   alvoCuradoAntes: { bool: true, pendente: 'o motor ainda não rastreia cura-no-turno-anterior' },
 };
 // `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
@@ -533,6 +533,11 @@ function condOK(q, atk, alvo, st) {
   if ('alvoBuff' in q) {
     const val = q.alvoBuff;
     if (val === 'qualquer') return alvo.efeitos.some(e => BUFFS.includes(e.type)) || alvo.shield > 0;
+    return alvo.efeitos.some(e => e.type === val);
+  }
+  if ('alvoMarca' in q) {   // F1.9-pre: alvo tem a marca ofensiva nomeada, OU 'qualquer' (tem qualquer marca de MARCAS). Espelha alvoDebuff; a marca é rótulo puro (o +dano é vulneravel irmão ou o v deste bonusDano). §83
+    const val = q.alvoMarca;
+    if (val === 'qualquer') return alvo.efeitos.some(e => MARCAS.includes(e.type));
     return alvo.efeitos.some(e => e.type === val);
   }
   if ('alvoDefesa' in q) return alvo.shield > 0 || !!ef(alvo, 'dmgReduction');
