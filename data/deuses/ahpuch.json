@@ -1,0 +1,57 @@
+{
+  "key": "ahpuch",
+  "nome": "Ah Puch",
+  "faccao": "Maia",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Senhor da Morte",
+    "desc": "Quando um inimigo é derrotado, Ah Puch cura 15 e ganha 1 orbe; quem tem Podridão não pode ser revivido.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" }, { "t": "orbGain", "n": 1, "para": "Umbra" } ] },
+      { "gatilho": "antiReviveContador", "contador": "podridao" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Toque da Podridão",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano + 1 Podridão.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "contador", "nome": "podridao", "v": 1, "reduzMaxHp": 10 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Decomposição",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "+1 Podridão em 1 inimigo. Cada Podridão reduz o HP máximo dele em 10 e ele não pode ser curado.",
+      "fx": [
+        { "t": "contador", "nome": "podridao", "v": 1, "reduzMaxHp": 10 },
+        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Portões de Xibalbá",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Ah Puch perde 15 de HP; 18 de dano a todos os inimigos, +8 por Podridão no campo.",
+      "fx": [
+        { "t": "selfHp", "v": -15 },
+        { "t": "dmg", "v": 18, "porContadorCampo": { "nome": "podridao", "v": 8, "lado": "inimigo" }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

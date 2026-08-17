@@ -1188,6 +1188,38 @@ console.log('== F1.8 porStatus: escala por contagem de status (UM source, 2 esco
   console.log('  porStatus: MESMO source escala por efeitos-no-alvo (Erínias) e por unidades-com-status-no-lado (Ao Kuang)');
 }
 
+console.log('== F1.8 antirevive A (por-contador, Ah Puch): quem cai com Podridão não revive (snapshot na morte) ==');
+{
+  E.GODS.tap = { nome: 'TAp', faccao: 'T', elem: 'Umbra', classe: 'Mágico', funcao: 'Controlador', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'antiReviveContador', contador: 'podridao' }] } };
+  const st = E.novoEstado(['tap', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 631);
+  const ap = st.lados[0].units[0], comP = st.lados[1].units[0], semP = st.lados[1].units[1];
+  comP.contadores.podridao = 1; comP.hp = 5; semP.hp = 5;
+  E.aplicarFx(st, ap, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [comP]);
+  E.aplicarFx(st, ap, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [semP]);
+  ok(!comP.vivo && comP.naoRevive === true, `caiu COM Podridão → naoRevive (${comP.naoRevive})`);
+  ok(!semP.vivo && !semP.naoRevive, `caiu SEM Podridão → revive livre (${semP.naoRevive})`);
+  E.reviver(st, comP, { hp: 40 }); E.reviver(st, semP, { hp: 40 });
+  ok(!comP.vivo, 'quem tinha Podridão continua caído após tentar reviver');
+  ok(semP.vivo, 'quem não tinha revive normalmente');
+  delete E.GODS.tap;
+  console.log('  A: o contador declarado bloqueia o revive; snapshot no ato da morte');
+}
+
+console.log('== F1.8 antirevive B (aura, Cérberus): inimigo não revive enquanto o dono vive — DINÂMICO ==');
+{
+  E.GODS.tcb = { nome: 'TCb', faccao: 'T', elem: 'Umbra', classe: 'Físico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'antiReviveAura' }] } };
+  const st = E.novoEstado(['tcb', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 632);
+  const cb = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.vivo = false; foe.hp = 0;
+  E.reviver(st, foe, { hp: 40 });
+  ok(!foe.vivo, 'com o dono da aura VIVO, o inimigo não revive');
+  cb.vivo = false;   // aura cai
+  E.reviver(st, foe, { hp: 40 });
+  ok(foe.vivo, 'com o dono da aura MORTO, o revive volta (aura é dinâmica, não snapshot)');
+  delete E.GODS.tcb;
+  console.log('  B: aura checada no ato do revive; o próprio aliado da aura não é afetado (só inimigos)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

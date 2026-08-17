@@ -1,0 +1,53 @@
+{
+  "key": "cerberus",
+  "nome": "Cérberus",
+  "faccao": "Grega",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Corrente do Submundo",
+    "desc": "Enquanto Cérberus vive, inimigos não podem ser revividos.",
+    "fx": [
+      { "gatilho": "antiReviveAura" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Dentada Tripla",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "todosInimigos",
+      "desc": "8 de dano em até 3 inimigos.",
+      "fx": [ { "t": "dmg", "v": 8, "escopo": "todosInimigos" } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Marca do Guardião",
+      "cost": { "Umbra": 2 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "Provoca 1 inimigo por 2 turnos; Cérberus recebe 15 de redução de dano por 2 turnos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "taunt", "dur": 2 } },
+        { "t": "apply", "eff": { "type": "dmgReduction", "v": 15, "dur": 2 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Vigília Infernal",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Provoca todos os inimigos por 1 turno; Cérberus ganha 25 de Defesa Destrutível.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "taunt", "dur": 1 }, "escopo": "todosInimigos" },
+        { "t": "shield", "v": 25, "escopo": "self" }
+      ]
+    }
+  ]
+}

@@ -91,7 +91,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa', 'Pedra'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3).
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3); 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
 const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -117,6 +117,8 @@ const GATILHOS_PASSIVA = {
   aoSerAtingido:   { campos: ['quem', 'contra', 'faz', 'noAtacante', 'estado'], obrig: ['quem'] },   // reage a SER atingido (F1.4): faz no reator (BUFF) / noAtacante no atacante (debuff — sujeito do evento)
   aoAgirSobEfeito: { campos: ['efeito', 'faz', 'noAtor', 'estado'], obrig: ['efeito'] },             // quando o ATOR age carregando `efeito` (aplicado por MIM — origem), reajo: faz (no dono) / noAtor (no ator)
   protegeOrbe:     { campos: [], obrig: [] },                                                        // F1.6 (Heimdall): enquanto vivo, o roubaOrbe inimigo contra o time é bloqueado (marcador declarativo)
+  antiReviveContador:{ campos: ['contador'], obrig: ['contador'] },   // F1.8 (Ah Puch/Anubis): quem CAI carregando o contador X não revive (snapshot no ato da morte)
+  antiReviveAura:  { campos: [], obrig: [] },                          // F1.8 (Cérberus): enquanto o DONO vive, inimigos não revivem (checado no ato do revive)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -772,6 +774,10 @@ function matar(st, atk, alvo, opts = {}) {
   // o flag persiste e o gate no revive-site a segura. Limpar o marcador ANTES de cair libera o revive
   // (contra-jogo). vidaExtra já retornou acima: quem sobrevive ao letal não morreu — nada a travar.
   if (alvo.efeitos.some(e => e.naoRevive || e.type === 'antiRevive') || alvo.dots.some(d => d.naoRevive)) alvo.naoRevive = true;   // 'antiRevive' (F1.6, Iansã): debuff PROATIVO nos vivos — quem cai carregando-o não revive (impede revive por N turnos)
+  if (!alvo.naoRevive) {   // A (F1.8): quem cai carregando um contador declarado antiReviveContador (Ah Puch: Podridão) não revive. Snapshot ANTES de limpar os contadores; incondicional (não exige o declarante vivo — a prosa não o exige)
+    for (const lado of st.lados) for (const x of lado.units) { const g = kitDe(st, x), p = g && g.passiva;
+      if (p && Array.isArray(p.fx)) for (const f of p.fx) if (f.gatilho === 'antiReviveContador' && (alvo.contadores[f.contador] || 0) > 0) alvo.naoRevive = true; }
+  }
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
@@ -1040,7 +1046,9 @@ function iniciarTurno(st) {
   l.dividaLivre = 0;               // a dívida do turno anterior já foi quitada no fimTurno
 
   for (const u of l.units) {
-    if (u.pendenteRenascer) { u.pendenteRenascer = false; u.vivo = true; u.hp = u.reviveHp || 48; log(st, { tipo: 'revive', alvo: u.key, valor: u.hp, passiva: u.key }); }   // Nezha 48 = 40% de 120 (F1.0c)
+    if (u.pendenteRenascer) { u.pendenteRenascer = false;   // Nezha 48 = 40% de 120 (F1.0c). Aura (B) é DINÂMICA: checa no ato do renascer (o Cérberus pode ter caído no intervalo)
+      if (reviveBloqueadoPorAura(st, u)) log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'nao_revive' });
+      else { u.vivo = true; u.hp = u.reviveHp || 48; log(st, { tipo: 'revive', alvo: u.key, valor: u.hp, passiva: u.key }); } }
     if (!u.vivo) continue;
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir
@@ -1477,10 +1485,16 @@ function danoBase(st, u, t, e, l) {
   return base;
 }
 
+// B (F1.8, Cérberus): enquanto um inimigo VIVO carrega a passiva antiReviveAura, `u` não revive. Checado no ATO
+// do revive (dinâmico: se o Cérberus morre, o revive volta a ser possível) — diferente do naoRevive, que é snapshot.
+function reviveBloqueadoPorAura(st, u) {
+  return st.lados[1 - u.lado].units.some(x => { if (!x.vivo) return false; const g = kitDe(st, x), p = g && g.passiva;
+    return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'antiReviveAura'); });
+}
 // PRIMITIVA revive — traz um aliado caído de volta, salvo se ficou marcado como irrevivível
 function reviver(st, alvo, e) {
   if (alvo.vivo) return;
-  if (alvo.naoRevive) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'nao_revive' }); return; }
+  if (alvo.naoRevive || reviveBloqueadoPorAura(st, alvo)) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'nao_revive' }); return; }
   alvo.vivo = true; alvo.hp = Math.min(alvo.maxHp, e.hp); alvo.agiu = true;
   alvo.efeitos = []; alvo.dots = []; alvo.shield = 0;
   for (const k in alvo.cd) alvo.cd[k] = 0;
