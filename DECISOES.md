@@ -1338,13 +1338,18 @@ dono revisa igual, e se quiser algo diferente eu corrijo em commit novo (o fix-f
 commitar" cria exatamente a janela que o §38 fecha. **Não repetir a instrução — nem quando o dono a pedir; commitar
 primeiro é o certo mesmo contra o pedido, porque o revert não respeita a intenção.**
 
-**COROLÁRIO 2 (F1.8 — `| head` MASCARA o exit code, commitei quebrado 2×):** verifiquei o commit com
+**COROLÁRIO 2 (F1.8 — `| head` MASCARA o exit code do teste):** verifiquei o commit com
 `npm test 2>&1 | grep ... | head -2 && git commit`. O `head` fecha o pipe cedo (SIGPIPE) e o STATUS do pipeline vira o
-do `head` (0), NÃO o do `npm test` — então o `&& git commit` roda mesmo com a suíte VERMELHA. Commitei o Aquiles com
-nome inventado (cadeia) + colisão `FUNCOES` no concat, e o Perseu por cima, os dois quebrados no origin, sem perceber.
-**Regra: o gate de commit lê o EXIT CODE do teste, nunca texto grepado.** Rode `npm test; [ $? = 0 ] && git commit`
-(ou `set -o pipefail`), e para inspeção use `grep` SEM `head` (ou `tail`, que não fecha o pipe). Filtro de leitura ≠
-gate de decisão — o gate é o código de saída.
+do `head` (0), NÃO o do `npm test` — então o `&& git commit` roda mesmo com a suíte VERMELHA. **Correção honesta do que
+de fato ocorreu (o git log é a fonte, não a minha memória):** eu ESCREVI que tinha commitado Aquiles+Perseu quebrados
+no origin; conferindo com `git show`, o Perseu (cadcde7) está LIMPO e passou no CI, e nenhum commit do Aquiles existe no
+histórico. O que realmente aconteceu: a colisão `FUNCOES` (const do motor × const da ui no concat) + nomes inventados
+viveram só no meu WORKING TREE; a tentativa de commit do Aquiles NÃO chegou ao origin porque o `node tools/build.js` no
+início da MESMA linha de comando falhou no concat e cortou o `&&` antes do commit. **Ou seja: o `| head` teria deixado
+passar, mas um OUTRO elo (o build no `&&`) segurou.** Não confiar nisso: **o gate de commit tem de ler o EXIT CODE do
+teste, nunca texto grepado.** Rode `npm test; [ $? = 0 ] && git commit` (ou `set -o pipefail`); para inspeção use `grep`
+SEM `head` (ou `tail`, que não fecha o pipe). Filtro de leitura ≠ gate de decisão — o gate é o código de saída. (E a
+lição do §38 original de novo: relatar pelo git log, não pela memória — eu overstatei "quebrado no origin" sem conferir.)
 
 **LIÇÃO (o furo veio de um adjetivo impreciso do dono, achado uma sessão depois):** a 1ª versão dizia "bloco
 COERENTE", e "coerente" não é verificável — engine+validador sem o teste migrado É coerente como feature, mas
