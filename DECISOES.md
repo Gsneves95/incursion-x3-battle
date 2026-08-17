@@ -56,6 +56,12 @@ primitivos". A auditoria do motor derrubou isso: os DOIS básicos dependem de **
 real e testada; os DEUS-CONSUMIDORES estão TODOS enredados (Odin/Hórus → F1.9; Yan Wong/Morrigan → execução diferida).
 Registrado ANTES de escrever os kits, para o dono re-escolher o escopo — não depois.
 
+**A LIÇÃO DE REVISÃO (o dono a fez explícita):** o desenho que vendeu "quase de graça" passou pela revisão do DONO e
+NENHUM dos dois viu o buraco da Inalvejável. **O rótulo (§46) engana quem ESCREVE e quem APROVA** — a revisão humana não
+é rede contra ele, porque o revisor lê o mesmo rótulo. A rede foi a AUDITORIA DO MOTOR (ir ver o que `MARCAS`, `condOK`,
+`IGNORAVEIS` de fato têm), não uma segunda leitura da prosa. Corolário prático: antes de aprovar um desenho que diz
+"reusa o que já existe", conferir contra o motor QUE existe — não contra a lembrança do que existe.
+
 ---
 
 ## §82 — RELATO DE PROCESSO TAMBÉM PRECISA DE VERIFICAÇÃO (não só o código)
