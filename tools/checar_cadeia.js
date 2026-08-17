@@ -42,7 +42,10 @@ function danosProsa(ef) {
   return out;
 }
 const curasProsa = ef => [...ef.matchAll(/cura\s+(\d+)/gi)].map(m => +m[1]);
-const danosFx = fx => (fx || []).filter(e => e.t === 'dmg').map(e => e.v);
+// dmg do fx, RECURSANDO no `condicional` (F1.9, Hórus §87): os dmg dos ramos entao/senao SÃO o dano da habilidade,
+// só que condicionais — caem no balde "multi/condicional" (naoConf) via dM.length>1, com os dois valores à vista.
+const danosFx = fx => (fx || []).flatMap(e => e.t === 'dmg' ? [e.v]
+  : (e.t === 'condicional' ? [...(e.entao || []), ...(e.senao || [])].filter(x => x.t === 'dmg').map(x => x.v) : []));
 const curasFx = fx => (fx || []).filter(e => e.t === 'heal').map(e => e.v);
 
 // COMPARA prosa↔máquina. Puro (recebe os dados), para o teste exercitar com entradas sintéticas.

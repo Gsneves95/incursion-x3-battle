@@ -6,6 +6,42 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §87 — HÓRUS + a decisão-(b): EXCLUSÃO POR CONSTRUÇÃO vence exclusão por disciplina; e minha instrução foi superada
+
+**A leva.** Hórus (IMPL 58) — consome a MARCA, então a lista de infra-ociosa cai **3 → 2** (sobram `livro` e `intercepta`,
+os resíduos antigos da fase-primitivas). O `kind` (puro/perfurante) já era campo de dmg — a troca de categoria de dano
+(32 normal → 45 puro) custou ZERO. Só a EXCLUSÃO MÚTUA precisava de forma.
+
+**A decisão-(b), resolvida: `condicional` lê a condição do ALVO (não só do campo).** O fx `condicional` (Freyja, `se/entao/
+senao`) só lia `estadoOK` (campo/self). Agora o `se` desambigua pela CHAVE: se ∈ `CONDICOES` (`alvoMarca`, `alvoDebuff`…)
+lê o ALVO via `condOK(alvos[0])`; senão lê o campo via `estadoOK`. O milagre do Hórus:
+`{condicional, se:{alvoMarca:'olho'}, entao:[dmg 45 puro], senao:[dmg 32]}`.
+
+**MINHA INSTRUÇÃO FOI SUPERADA PELA ANÁLISE (o dono mandou registrar).** O dono decidiu "DOIS FX COM CONDIÇÃO". A análise
+achou melhor: **UM fx com DOIS RAMOS.** Ela atende o MOTIVO do dono (os dois alternativos VISÍVEIS, nada escondido num
+modificador) SEM o risco que a forma dele carregava. A forma "dois fx com guardas complementares" (Opção B) depende de os
+dois guardas permanecerem negações perfeitas — editar um produz `32+45` ou uma lacuna, em silêncio, e nenhum teste sente:
+é a fragilidade que o §59 registra. **Estrutura que só funciona se ninguém errar não é estrutura.** O `condicional` dá
+**EXCLUSÃO POR CONSTRUÇÃO**: só um ramo roda, `32+45` é impossível — não por disciplina, por forma. Registrado que a
+instrução original era pior que a análise que a cumpriu.
+
+**O caveat e o cadeado.** `condicional.se` ganhar dois sentidos é aceitável porque a desambiguação é ESTRUTURAL — a chave
+pertence a um vocabulário OU ao outro, o validador decide sem heurística (o mesmo teste que o reuso de `efeito` para nome
+de contador passou: nenhum consumidor lê um sem saber qual é). MAS isso só vale enquanto as famílias forem DISJUNTAS. O
+cadeado: **`valida_kit` FALHA ALTO no load se `CONDICOES ∩ ESTADO_COND ≠ ∅`** — hoje é vazio, e o guarda impede que alguém
+crie a colisão depois. Duas linhas que matam a única forma de o caveat virar bug. Teste em `primitivas.test.js` (13).
+
+**PENDÊNCIA CONHECIDA + gatilho de revisão.** O `condicional` ramifica sobre `alvos[0]` — **alvo ÚNICO**. NÃO ramifica
+por-alvo numa AoE (cada inimigo com/sem a marca). O milagre do Hórus é alvo único, então cabe. **Se aparecer um kit que
+precise ramificar por alvo em área, reavaliar** (provavelmente um `condicional` que roda dentro do laço de `sel`, por
+alvo). Registrado para não ser redescoberto como bug.
+
+**checar_cadeia.** O `danosFx` agora recursa nos ramos `entao/senao` do `condicional` — os dmg deles SÃO o dano da
+habilidade, só condicionais, e caem no balde "multi/condicional" (naoConf) com os dois valores à vista. Não afeta a
+Freyja (ramos revive/apply, sem dmg).
+
+---
+
 ## §86 — O QUARTO TIPO DE ÓRFÃO: PROSA-SEM-FX; e a leva de CONSUMO (Sun Wukong + Boitatá)
 
 **A leva.** O número de calibração (§ anterior: 4 infra ociosas, 2 deste arco) mandou CONSUMIR, não construir. Esta leva

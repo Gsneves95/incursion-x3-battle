@@ -1,0 +1,59 @@
+{
+  "key": "horus",
+  "nome": "Hórus",
+  "faccao": "Egípcia",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Herdeiro do Trono",
+    "desc": "+8 de dano contra inimigos marcados ou com o Olho.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoMarca": "qualquer" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Garras do Céu",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "ignoraInalvejavel": true,
+      "desc": "15 de dano a 1 inimigo; ignora Inalvejável.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Olho de Hórus",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "20 de dano perfurante; aplica o Olho por 2 turnos (o alvo recebe +8 de dano de todas as fontes).",
+      "fx": [
+        { "t": "dmg", "v": 20, "kind": "perfurante" },
+        { "t": "apply", "eff": { "type": "olho", "dur": 2 } },
+        { "t": "apply", "eff": { "type": "vulneravel", "v": 8, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Mergulho do Falcão",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "32 de dano; se o alvo tem o Olho, 45 de dano puro.",
+      "fx": [
+        {
+          "t": "condicional",
+          "se": { "alvoMarca": "olho" },
+          "entao": [ { "t": "dmg", "v": 45, "kind": "puro" } ],
+          "senao": [ { "t": "dmg", "v": 32 } ]
+        }
+      ]
+    }
+  ]
+}

@@ -1374,8 +1374,15 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     // contágio (Maldição de Yomi): age no CONJUNTO de uma vez (precisa do maior entre eles), não alvo a alvo
     if (e.t === 'espalha') { espalharContador(st, sel, e, u); continue; }
 
-    // F1.6 (Freyja) — fx CONDICIONAL: roda `entao` OU `senao` (arrays de fx) conforme o estado `se`, via o próprio executor
-    if (e.t === 'condicional') { const ramo = estadoOK(e.se, u, st) ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, a, alvos, escolhas); continue; }
+    // F1.6 (Freyja) — fx CONDICIONAL: roda `entao` OU `senao` (arrays de fx) conforme `se`, via o próprio executor.
+    // F1.9 (Hórus §87): `se` desambigua ESTRUTURALMENTE pela chave — se ∈ CONDICOES (alvoMarca, alvoDebuff…) lê o
+    // ALVO via condOK; senão lê o CAMPO/self via estadoOK. As duas famílias são DISJUNTAS (valida_kit falha se cruzarem),
+    // então não há heurística. Ramifica sobre alvos[0] (alvo único); AoE-por-alvo é pendência conhecida (§87).
+    if (e.t === 'condicional') {
+      const chave = e.se && Object.keys(e.se)[0];
+      const cond = (chave && CONDICOES[chave]) ? (alvos[0] ? condOK(e.se, u, alvos[0], st) : false) : estadoOK(e.se, u, st);
+      const ramo = cond ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, a, alvos, escolhas); continue;
+    }
 
     for (const t of sel) {
       if (e.t === 'dmg') {

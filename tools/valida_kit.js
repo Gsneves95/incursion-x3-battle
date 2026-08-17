@@ -15,6 +15,14 @@
 const E = require('../src/engine.js');
 const V = E.VOCAB;
 
+// §87: `condicional.se` desambigua pela chave (CONDICOES → alvo/condOK; ESTADO_COND → campo/estadoOK). A desambiguação
+// só é ESTRUTURAL enquanto as duas famílias forem DISJUNTAS. Se uma chave existir nas duas, vira ambígua — FALHA ALTO
+// AQUI, no load, para ninguém criar a colisão depois (hoje não há interseção; este guarda a mantém).
+{
+  const inter = Object.keys(V.condicoesDef).filter(k => k in V.estadoCondDef);
+  if (inter.length) throw new Error(`VOCAB inválido: CONDICOES ∩ ESTADO_COND = [${inter.join(', ')}] — condicional.se ficaria ambíguo (§87). Renomeie uma das chaves.`);
+}
+
 const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
 const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c
@@ -55,7 +63,11 @@ function validarFx(f, ctx, errs) {
     else validarQuando(s.quando, `${ctx}.seCond.quando`, errs);
   }
   if (f.t === 'condicional') {   // F1.6 (Freyja): se(estado) ? entao[fx] : senao[fx]
-    if (!('se' in f)) errs.push(`${ctx}: condicional exige 'se' (condição de estado)`); else validarEstado(f.se, `${ctx}.se`, errs);
+    if (!('se' in f)) errs.push(`${ctx}: condicional exige 'se' (condição de estado ou do alvo)`);
+    else { const ch = f.se && typeof f.se === 'object' && !Array.isArray(f.se) && Object.keys(f.se)[0];
+      if (ch && ch in V.condicoesDef) validarQuando(f.se, `${ctx}.se`, errs);   // §87: `se` do ALVO (alvoMarca…) → mesma gramática do condOK
+      else validarEstado(f.se, `${ctx}.se`, errs); }                             // `se` de CAMPO/self → estadoOK
+
     if (!('entao' in f) && !('senao' in f)) errs.push(`${ctx}: condicional exige ao menos um ramo (entao/senao)`);
     for (const ramo of ['entao', 'senao']) {
       if (!(ramo in f)) continue;

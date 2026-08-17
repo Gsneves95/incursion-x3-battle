@@ -481,6 +481,31 @@ console.log('== 12d. INVARIANTE ESTRUTURAL (§84): nenhum ef(...,inalvejavel) de
   console.log('  guarda estrutural: um if(inalvejavel) no bater quebraria redirect-atinge-sink e AoE-atinge — o teste apita');
 }
 
+// ------------------------------------------------------------ 13. condicional com `se` do ALVO (Hórus §87)
+console.log('== 13. condicional ramifica pela condição do ALVO (§87): EXCLUSÃO POR CONSTRUÇÃO — nunca soma os ramos ==');
+{
+  // atacante PLANO (zeus, sem passiva de bônus) isola o mecanismo: 45 puro COM Olho, 32 SEM, JAMAIS 77.
+  const mil = [{ t: 'condicional', se: { alvoMarca: 'olho' }, entao: [{ t: 'dmg', v: 45, kind: 'puro' }], senao: [{ t: 'dmg', v: 32 }] }];
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 200);
+  const z = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.aplicarFx(st, z, mil, A('inimigo', 'milagre'), [foe]);
+  ok(h - foe.hp === 32, `SEM Olho: ramo senao, 32 (${h - foe.hp})`);
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 201);
+  const z2 = st2.lados[0].units[0], foe2 = st2.lados[1].units[0]; foe2.efeitos.push({ type: 'olho', dur: 2 });
+  h = foe2.hp; E.aplicarFx(st2, z2, mil, A('inimigo', 'milagre'), [foe2]);
+  ok(h - foe2.hp === 45, `COM Olho: ramo entao, 45 puro — NÃO 77 (32+45). Só um ramo roda (${h - foe2.hp})`);
+  // regressão: `se` de CAMPO (estadoOK) ainda funciona — Freyja, aliadoCaido
+  const st3 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 202);
+  const z3 = st3.lados[0].units[0], foe3 = st3.lados[1].units[0];
+  const campo = [{ t: 'condicional', se: { aliadoCaido: true }, entao: [{ t: 'dmg', v: 99 }], senao: [{ t: 'dmg', v: 10 }] }];
+  h = foe3.hp; E.aplicarFx(st3, z3, campo, A('inimigo', 'milagre'), [foe3]);
+  ok(h - foe3.hp === 10, `se de CAMPO (aliadoCaido) ainda via estadoOK: ninguém caiu → ramo senao 10 (${h - foe3.hp})`);
+  // §87: os dois vocabulários de `se` são DISJUNTOS (senão a desambiguação vira ambígua)
+  const inter = E.VOCAB.condicoes.filter(k => E.VOCAB.estadoCond.includes(k));
+  ok(inter.length === 0, `CONDICOES ∩ ESTADO_COND = [${inter}] deve ser vazio (§87: valida_kit falha alto se cruzarem)`);
+  console.log('  se∈CONDICOES→condOK(alvo) · se∈ESTADO_COND→estadoOK(campo) · disjuntos · um ramo só, nunca soma');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
