@@ -40,6 +40,12 @@ alvo). Registrado para não ser redescoberto como bug.
 habilidade, só condicionais, e caem no balde "multi/condicional" (naoConf) com os dois valores à vista. Não afeta a
 Freyja (ramos revive/apply, sem dmg).
 
+**GENERALIZAÇÃO — o §87 aplicado à ESCOLHA DE FRENTE, não só de mecanismo (o dono):** assim como um mecanismo nasce com
+consumidor para não virar ocioso, uma FRENTE se escolhe pela que **CONSOME ocioso**, não pela que só entrega largura. O
+`primeiroPorTurno` ganhou não por servir 3 (largura), mas porque construir bastet/mnevis **drena o `intercepta`** da lista
+de ociosas. Regra: **entre duas frentes de mérito parecido, prefira a que retira infra ociosa da lista à que só adiciona
+kits.** É o mesmo princípio (não deixar motor sem consumo) subindo um nível — da peça para o roteiro.
+
 ---
 
 ## §86 — O QUARTO TIPO DE ÓRFÃO: PROSA-SEM-FX; e a leva de CONSUMO (Sun Wukong + Boitatá)
@@ -97,6 +103,14 @@ AMANHÃ adicione o filtro no `bater` e, para compensar, ajuste o próprio teste.
 só o sintoma. É a gêmea estrutural do §80 (a captura é árbitro do pixel) e do §37 (varrer o conjunto, não a amostra):
 três formas de checar o que o teste comportamental sozinho não pega. Usar quando a invariante for "X não aparece em Y",
 "só a função Z toca W", "nenhum `require` cruzado entre A e B" (o `checarDirecaoUI` do build já é um exemplo vivo disto).
+
+**IRMÃ (F1.9 Hórus §87, o dono mandou registrar junto): INVARIANTE DE VOCABULÁRIO travada por GUARDA NO LOAD.** Quando a
+correção de um mecanismo depende de dois CONJUNTOS serem disjuntos — `CONDICOES ∩ ESTADO_COND = ∅`, para o `condicional.se`
+desambiguar pela chave sem heurística — a disjunção NÃO pode ser convenção ("hoje não cruzam, é só não cruzar"). Uma
+convenção quebra calada quando alguém adiciona uma chave. A defesa é um **guarda no LOAD** que FALHA ALTO se a interseção
+existir (`valida_kit` lança no require). É a mesma família do teste-que-lê-o-fonte: a garantia estrutural (dois conjuntos
+disjuntos, um token ausente, uma direção de dependência) precisa de uma checagem estrutural que roda sempre, não de
+disciplina. Regra: **se a correção assume "X e Y não se cruzam", ponha o guarda que falha quando se cruzarem.**
 
 ---
 
