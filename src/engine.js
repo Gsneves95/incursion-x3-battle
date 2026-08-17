@@ -205,7 +205,7 @@ const ESTADO_COND = {
   hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
   aliadoPresente:{ godkey: true },            // <key> — um deus específico está no time do dono (sinergia: 'com Fulano no time') — Passo 0
   aliadoCaido:  { bool: true },               // há ao menos um aliado CAÍDO no lado do dono (Freyja: 'se ninguém caiu' = ramo senão)
-  primeiroPorTurno: { bool: true, pendente: 'RASTREIO por-turno (não leitura). Vem com esquiva/intercepta — bastet/saci/mnevis; ver §45' },
+  primeiroPorTurno: { bool: true },   // F1.9 (Bastet): RASTREIO por-turno — flag u.golpeUnicoNoTurno (escrito no bater p/ golpe ÚNICO, resetado no iniciarTurno do dono). true = este é o 1º golpe único contra o dono neste turno. §88
 };
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
@@ -313,6 +313,7 @@ function novaUnidade(key, idx, lado, catalogo) {
   return {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
     hp: 120, maxHp: 120, vivo: true, agiu: false,
+    golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
     // --- primitivas ---
@@ -521,7 +522,8 @@ function estadoOK(e, u, st) {
   if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
   if ('aliadoPresente' in e) return st.lados[u.lado].units.some(x => x.key === e.aliadoPresente);   // deus X no time (roster)
   if ('aliadoCaido' in e) return caidos(st, u.lado) > 0;   // há aliado caído no lado do dono (Freyja)
-  return false;   // primeiroPorTurno é `pendente` (valida_kit barra); nunca chega aqui com dado válido
+  if ('primeiroPorTurno' in e) return !u.golpeUnicoNoTurno;   // F1.9 (Bastet §88): LEITOR — true enquanto o dono NÃO sofreu golpe único neste turno (o próprio golpe seta o flag DEPOIS de ler)
+  return false;
 }
 function condOK(q, atk, alvo, st) {
   if (!q) return true;
@@ -758,6 +760,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (atk && ef(atk, 'pacificado')) { v = 0; absorvido = 0; }   // Pacificar (Oxalá): o pacificado AGE mas causa 0 de dano
   const pisoAtk = !ignoraPiso && ef(alvo, 'pisoVida');   // 'não cai abaixo de 1 HP' — a menos que o golpe fure (Shiva)
   alvo.hp = Math.max(pisoAtk ? 1 : 0, alvo.hp - v);
+  if (unico) alvo.golpeUnicoNoTurno = true;   // F1.9 (Bastet §88): ESCRITOR do rastreio. SÓ golpe único (a AoE não consome a proteção); DEPOIS do calcDano (a reducao deste golpe já leu o flag ainda limpo). Quem intercepta/redireciona seta o flag do RECEPTOR (a recursão do bater), não do alvo original
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
   log(st, evDano);
@@ -1094,6 +1097,7 @@ function iniciarTurno(st) {
       else { u.vivo = true; u.hp = u.reviveHp || 48; log(st, { tipo: 'revive', alvo: u.key, valor: u.hp, passiva: u.key }); } }
     if (!u.vivo) continue;
     u.agiu = false;
+    u.golpeUnicoNoTurno = false;   // F1.9 (Bastet §88): RESETADOR — no turno do DONO, deixando o flag armado para o turno INIMIGO seguinte (quando o golpe chega). Resetar no turno do atacante daria a proteção 2× por rodada num hot-seat
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
       const dano = d.v + ampDot(st, d.nome);   // amplificaDot (F1.8, Kagutsuchi): +v em todo tick de `nome` no campo, enquanto o dono vive

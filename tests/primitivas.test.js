@@ -506,6 +506,44 @@ console.log('== 13. condicional ramifica pela condição do ALVO (§87): EXCLUS�
   console.log('  se∈CONDICOES→condOK(alvo) · se∈ESTADO_COND→estadoOK(campo) · disjuntos · um ramo só, nunca soma');
 }
 
+// ------------------------------------------------------------ 14. primeiroPorTurno (RASTREIO, Bastet §88)
+console.log('== 14. primeiroPorTurno: flag por-turno — 1º golpe único reduz, os seguintes não; AoE não consome ==');
+{
+  // Bastet REAL: reducao v:8 + contra:{alcance:unico} + estado:{primeiroPorTurno}. Prova a cadeia inteira.
+  // caso base + caso 3 (dois golpes únicos no mesmo turno): 1º reduz, 2º não.
+  let st = E.novoEstado(['bastet', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 300);
+  let b = st.lados[0].units[0], atk = st.lados[1].units[0];
+  let h = b.hp; E.bater(st, atk, b, 20, 'afetado', 'basico', { unico: true });
+  ok(h - b.hp === 12, `1º golpe único: 20-8 = 12 (${h - b.hp})`);
+  h = b.hp; E.bater(st, atk, b, 20, 'afetado', 'basico', { unico: true });
+  ok(h - b.hp === 20, `2º golpe único no mesmo turno: 20, sem redução (${h - b.hp})`);
+
+  // caso 2 (o dono insistiu): a AoE NÃO marca o flag no ESCRITOR — se marcasse, consumiria a proteção sem acioná-la.
+  st = E.novoEstado(['bastet', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 301);
+  b = st.lados[0].units[0]; atk = st.lados[1].units[0];
+  h = b.hp; E.bater(st, atk, b, 20, 'afetado', 'milagre', { unico: false });
+  ok(h - b.hp === 20 && b.golpeUnicoNoTurno === false, `AoE: dano cheio 20 E flag intacto (${h - b.hp}/${b.golpeUnicoNoTurno})`);
+  h = b.hp; E.bater(st, atk, b, 20, 'afetado', 'basico', { unico: true });
+  ok(h - b.hp === 12, `o golpe único DEPOIS da AoE ainda é o primeiro: 12 (${h - b.hp})`);
+
+  // caso 1 (o dono insistiu): reset no turno do DONO, não do atacante (senão a proteção 2× por rodada num hot-seat)
+  st = E.novoEstado(['bastet', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 302);
+  b = st.lados[0].units[0]; atk = st.lados[1].units[0];
+  E.bater(st, atk, b, 20, 'afetado', 'basico', { unico: true });
+  ok(b.golpeUnicoNoTurno === true, 'flag marcado após o golpe');
+  st.ativo = 1; E.iniciarTurno(st);
+  ok(b.golpeUnicoNoTurno === true, 'iniciarTurno do INIMIGO NÃO reseta o flag da Bastet (é do lado dela)');
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(b.golpeUnicoNoTurno === false, 'iniciarTurno do DONO reseta — armado para o turno inimigo seguinte');
+
+  // dois dmg num MESMO fx contam como dois golpes (o básico da Bastet é 2×7): o 2º já não é o primeiro
+  st = E.novoEstado(['bastet', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 303);
+  b = st.lados[0].units[0]; atk = st.lados[1].units[0];
+  h = b.hp; E.aplicarFx(st, atk, [{ t: 'dmg', v: 20 }, { t: 'dmg', v: 20 }], A('inimigo', 'basico'), [b]);
+  ok(h - b.hp === 12 + 20, `dois dmg num fx = dois golpes: 12 + 20 = 32 (${h - b.hp})`);
+  console.log('  1º único reduz · 2º não · AoE não marca · reset no turno do dono · dois dmg = dois golpes');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

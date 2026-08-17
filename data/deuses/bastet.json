@@ -1,0 +1,51 @@
+{
+  "key": "bastet",
+  "nome": "Bastet",
+  "faccao": "Egípcia",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Reflexos Felinos",
+    "desc": "O primeiro ataque de alvo único contra Bastet em cada turno causa 8 menos de dano.",
+    "fx": [
+      { "gatilho": "reducao", "v": 8, "contra": { "alcance": "unico" }, "estado": { "primeiroPorTurno": true } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Arranhão Rápido",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "2 golpes de 7 em 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 7 }, { "t": "dmg", "v": 7 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Vigília da Gata",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Bastet intercepta o próximo ataque de alvo único contra 1 aliado e contra-ataca por 15.",
+      "fx": [
+        { "t": "intercepta", "dur": 2, "contra": "unico", "contraAtaca": 15 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Sete Vidas",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "aliado",
+      "desc": "1 aliado ganha Vida Extra: na próxima vez que cair, revive na hora com 30 de HP.",
+      "fx": [
+        { "t": "vidaExtra", "hp": 30 }
+      ]
+    }
+  ]
+}

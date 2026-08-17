@@ -1423,7 +1423,7 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 10, contra: { slot: 'ultimat
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 8, contra: { alcance: 'unico' } }); ok(validarDeus(g).length === 0, 'contra.alcance VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 // F1.2.5 s3: estado é CAMPO UNIVERSAL (composa com o eixo); fase MIGROU do quando; primeiroPorTurno reservado
 err(g => g.passiva.fx.push({ gatilho: 'bonusDano', v: 5, quando: { fase: 'Dia' } }), 'MIGROU para o campo estado'); // fase saiu do quando
-err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { primeiroPorTurno: true } }), 'reservada');           // exige rastreio (sessão futura)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { primeiroPorTurno: true } }); ok(validarDeus(g).length === 0, 'primeiroPorTurno agora é VÁLIDA (§88, saiu de pendente): ' + JSON.stringify(validarDeus(g))); }   // era reservada; o rastreio existe (Bastet)
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { foo: true } }), 'condição de estado desconhecida');   // chave inventada
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { paridade: 'terça' } }), 'fora do sub-vocabulário');   // valor inválido
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, estado: { aliadosVivos: { op: 'quase', n: 3 } } }), 'op:min|max|exato'); // op inválido

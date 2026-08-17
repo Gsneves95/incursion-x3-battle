@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §88 — primeiroPorTurno: o RASTREIO nasce com os quatro pontos juntos (antídoto do §73); e Bastet drena o intercepta
+
+**A leva.** Bastet (IMPL 59) — o mínimo limpo: UM mecanismo novo (o flag), ZERO payload novo, e a habilidade dela
+consome `intercepta`. A lista de infra-ociosa cai **2 → 1** (sobra só `livro`). Escolhida sobre o Mnevis porque troca
+"1 mecanismo, 0 novo" por "2, 1 novo" — o §87 aplicado à frente: prefere-se a que drena ocioso.
+
+**O que faltava era SÓ o flag.** A `reducao` já compunha `estado` E `contra:{alcance}` (o wiring do §45 já existia:
+`reducaoDeclarativa` checa `estadoOK`, `contraCasou` resolve `alcance`). O único pendente era o `primeiroPorTurno` — e ele
+é a ÚNICA condição de `estado` que exige RASTREIO (bookkeeping), não LEITURA: as outras leem estado que já existe
+(paridade, fase, contador, hp, aliados); esta escreve um flag por unidade e o reseta por turno. A distinção da F1.2.5 s3
+segue de pé.
+
+**OS QUATRO PONTOS NASCEM JUNTOS (o antídoto do §73 — campo declarado sem leitor/escritor nasce órfão):**
+1. **Casa** — `golpeUnicoNoTurno: false` em `novaUnidade`.
+2. **Escritor** — no `bater`, DEPOIS do `calcDano` (a reducao deste golpe já leu o flag limpo), `if (unico) alvo.golpe
+   UnicoNoTurno = true`.
+3. **Resetador** — em `iniciarTurno`, ao lado do `u.agiu = false`.
+4. **Leitor** — `estadoOK`: `primeiroPorTurno = !u.golpeUnicoNoTurno`.
+
+**AS DUAS DECISÕES DE TIMING (o dono insistiu — cada uma travada em teste):**
+- **RESET NO TURNO DO DONO, não do atacante.** "cada turno" para um efeito DEFENSIVO significa "cada RODADA em que eu
+  possa ser atingido". Resetar no turno do dono deixa o flag ARMADO para o turno inimigo seguinte, que é quando o golpe
+  chega. Resetar no turno do atacante daria a proteção 2× por rodada num hot-seat.
+- **`unico` NO ESCRITOR, não só no leitor.** Se a AoE marcasse o flag, ela CONSUMIRIA a proteção sem acioná-la — o jogador
+  levaria área e depois o primeiro golpe único passaria limpo. O escritor é escopado a `unico`; a AoE não marca.
+- **Derivada:** dois dmg num MESMO fx contam como dois golpes (o `bater` roda por dmg) — o 2º já não é o primeiro. O básico
+  2×7 da Bastet torna o caso alcançável numa ação; travado.
+
+**INTERAÇÃO com intercepta/redirect:** o flag é setado no RECEPTOR (a recursão do `bater` seta o flag de quem de fato
+leva), não no alvo original — quem tem o golpe desviado/interceptado não marca o próprio flag. Cai da forma do §84 (a
+reatribuição da vítima acontece dentro do `bater`).
+
+---
+
 ## §87 — HÓRUS + a decisão-(b): EXCLUSÃO POR CONSTRUÇÃO vence exclusão por disciplina; e minha instrução foi superada
 
 **A leva.** Hórus (IMPL 58) — consome a MARCA, então a lista de infra-ociosa cai **3 → 2** (sobram `livro` e `intercepta`,
