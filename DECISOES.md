@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §84 — F1.9 INALVEJÁVEL: dois eixos (mira vs dano), a cláusula-satisfeita-pela-arquitetura, e as decisões (a/b/c)
+
+**A varredura (antes do desenho, como sempre).** Inalvejável = 11 kits (7 aplicam, 4 ignoram); o número engana no sentido
+INVERSO ao usual — o alcance é MAIOR que 11, porque o mecanismo mora no núcleo de mira (`alvosValidos`) que toda
+habilidade de alvo único atravessa e a IA cruza milhares de vezes. Invulnerável = 4 kits, e o status JÁ existe (Aquiles/
+Baldur aplicam; a linha 737 zera o dano).
+
+**§54 DEFINITIVO — Inalvejável e Invulnerável são DOIS mecanismos, em CAMADAS diferentes:**
+- **Inalvejável** = não-pode-ser-ALVO (camada de MIRA: sai da lista selecionável).
+- **Invulnerável** = o DANO vai a ZERO (camada de DANO: pode ser mirado, o golpe é anulado).
+- A prova é o **Odin**: "ignora Invulnerabilidade **e** Inalvejável" — nomeia os DOIS na mesma cláusula. Kits não carregam
+  redundância assim; se fossem um, a segunda menção não existiria. **É o mesmo argumento que separou `vidaExtra` de
+  `execução`** (§Bloco-1). Reforço: Shiva fura Invulnerabilidade e é SILENCIOSO sobre Inalvejável (perfura dano, não mira).
+- E **"ignora X" é DOIS mecanismos**: ignora-Inalvejável = override de MIRA (poder selecionar o oculto); ignora-
+  Invulnerabilidade = override de DANO (o golpe passa) = terceira entrada em `IGNORAVEIS`/`danoIrredutivel` (~3 linhas).
+
+**A CLÁUSULA SATISFEITA PELA ARQUITETURA (o dono mandou nomear — o oposto da etiqueta órfã).** "Inalvejável **por
+habilidades de alvo único**" (Sun Wukong) custa ZERO código: a AoE passa por outro caminho (linha 1346, filtra só `vivo`)
+e a Inalvejável não tem zera-dano — então a área já a ignora sozinha. Dois casos de lacuna prosa↔código, sinais opostos,
+ambos merecem nome:
+- **Etiqueta órfã** (§71): a prosa promete, o código é silencioso → BURACO. (Ex.: cláusula vácua da afrodite.)
+- **Cláusula satisfeita pela arquitetura** (§84): a prosa promete, a arquitetura JÁ entrega sem código → OK, mas tem de
+  ser NOMEADA, senão alguém "implementa" o que já funciona e QUEBRA (ex.: um `if(inalvejavel) return 0` defensivo no
+  `bater` mataria o "AoE ignora" e o "redirect atinge o sink"). Nomear é o que impede a regressão.
+
+**As decisões do dono (F1.9, antes de qualquer linha de motor):**
+- **(a) Inalvejável = evasão, SÓ mira INIMIGA. Cura aliada alcança.** O `submerso` bloqueia todos porque é PRISÃO (não
+  distingue quem se aproxima); a Inalvejável é EVASÃO (contra quem te caça). Confirmação estrutural: ela é BUFF auto-
+  aplicado — se bloqueasse cura aliada, puniria o próprio dono, e buff que atrapalha o dono não é buff.
+- **(b) Dispel/stripBuffs REMOVE a Inalvejável.** É buff defensivo; a simetria com `reducao`/`escudo` (que o inimigo
+  limpa) vale. Registrado para não parecer bug depois.
+- **(c) ignora-Inalvejável em DOIS pontos** (passiva PERMANENTE — Hou Yi, Boitatá-time; flag de habilidade PONTUAL —
+  Odin, Hórus no básico). Espelha o `danoIrredutivel` (que é passiva). Forçar um só ponto faria uma das duas mentir.
+
+**A LIÇÃO DE MÉTODO (o dono):** as duas descobertas que derrubaram o custo (o `submerso` já é metade da Inalvejável; o
+"só vs alvo único" cai de graça) vieram de OLHAR O MOTOR, não o rótulo — a mesma rede do §83 (a auditoria, não a segunda
+leitura da prosa).
+
+**A INVARIANTE que sai da matriz (detalhada no desenho da matriz, aprovação pendente):** a Inalvejável mora SÓ na SELEÇÃO
+(`alvosValidos`), NUNCA no IMPACTO (`bater`). Redirect e intercepta operam ABAIXO da seleção (reatribuem a vítima dentro
+do `bater`, sem reconsultar a lista), então o golpe ATINGE um sink inalvejável e um interceptador inalvejável se oferece
+e recebe. "Protege da seleção, não do impacto."
+
+---
+
 ## §83 — MARCA OFENSIVA: rótulo puro, vocabulário COMPARTILHADO; e a fronteira limpa com a execução diferida
 
 **O que se construiu (F1.9-pre, aprovado pelo dono após o desenho da fronteira).** A infra da MARCA OFENSIVA — os
