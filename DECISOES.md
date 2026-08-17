@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §82 — RELATO DE PROCESSO TAMBÉM PRECISA DE VERIFICAÇÃO (não só o código)
+
+**A lição (o dono, sobre a auto-correção do §38 corolário 2).** Eu ESCREVI no registro que tinha commitado Aquiles+Perseu
+quebrados no origin. Fui conferir com `git show` — e era FALSO: o Perseu estava limpo, passou no CI, e nenhum commit do
+Aquiles existia. Reescrevi o registro para MENOS grave. **Isso é mais difícil que reportar uma falha, porque não há
+pressão externa para fazê-lo** — ninguém cobra a correção de um relato inflado; a falha já estava "admitida". Mas um
+registro inflado envenena a decisão futura tanto quanto um omitido: o próximo que ler o §38 vai calibrar o medo do
+`| head` por um estrago que não houve, ou desconfiar de um mecanismo (o build no `&&`) que na verdade salvou.
+
+**A regra, gêmea do §80 (a captura é árbitro) mas aplicada ao TEXTO, não ao pixel:** o código passa por teste; a
+CAPTURA passa pelo olho; **o RELATO DE PROCESSO precisa passar pela FONTE PRIMÁRIA — `git show`/`git log`, não a
+memória.** Antes de registrar "commitei X", "quebrou no origin", "o container reverteu Y", conferir contra o git. A
+memória do que eu fiz é tão teto quanto a reconciliação (§61): erra, e aqui erra tanto para "mais grave" quanto para
+"menos grave". Faithful reporting vale para o diário de bordo, não só para o placar. **Verificar o próprio relato é
+parte de escrevê-lo.**
+
+---
+
 ## §81 — A heurística do milagre virou REGULARIDADE (3/3 levas); e a varredura antirevive achou 7, não 2
 
 **A TAXA DO §78, MEDIDA em três levas (o dono: já é regularidade, não observação).** Em todas as três últimas levas o
