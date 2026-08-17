@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §85 — INVARIANTE DE ARQUITETURA TRAVADA POR TESTE QUE LÊ O CÓDIGO-FONTE (não por comentário)
+
+**A técnica (o dono a nomeou como o item mais valioso da sessão da Inalvejável).** Quando uma decisão de arquitetura
+depende de algo **NÃO estar** em certo lugar — a Inalvejável mora só em `alvosValidos`, NUNCA no `bater` — um comentário
+não a protege: o conserto "defensivo" (`if (ef(alvo,'inalvejavel')) return 0` no `bater`, espelhando o `submerso`) parece
+CERTO para quem chega depois e não sabe por que a camada existe. A defesa é um **teste que lê o CÓDIGO-FONTE** e apita se
+o token proibido aparecer na região proibida:
+
+```js
+const src = fs.readFileSync('src/engine.js','utf8');
+const corpo = src.slice(src.indexOf('function bater('), src.indexOf('\nfunction ', ...));
+ok(!/inalvejavel/.test(corpo), 'o corpo de bater() NÃO menciona inalvejavel');
+```
+
+**A regra reusável:** **comportamento prova comportamento; AUSÊNCIA ESTRUTURAL precisa de LEITURA ESTRUTURAL.** Um teste
+de comportamento (o redirect-para-sink-inalvejável ATINGE) prova a consequência HOJE; mas ele não impede que alguém
+AMANHÃ adicione o filtro no `bater` e, para compensar, ajuste o próprio teste. O teste que lê o fonte trava a CAUSA, não
+só o sintoma. É a gêmea estrutural do §80 (a captura é árbitro do pixel) e do §37 (varrer o conjunto, não a amostra):
+três formas de checar o que o teste comportamental sozinho não pega. Usar quando a invariante for "X não aparece em Y",
+"só a função Z toca W", "nenhum `require` cruzado entre A e B" (o `checarDirecaoUI` do build já é um exemplo vivo disto).
+
+---
+
 ## §84 — F1.9 INALVEJÁVEL: dois eixos (mira vs dano), a cláusula-satisfeita-pela-arquitetura, e as decisões (a/b/c)
 
 **A varredura (antes do desenho, como sempre).** Inalvejável = 11 kits (7 aplicam, 4 ignoram); o número engana no sentido
