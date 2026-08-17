@@ -119,6 +119,7 @@ const GATILHOS_PASSIVA = {
   protegeOrbe:     { campos: [], obrig: [] },                                                        // F1.6 (Heimdall): enquanto vivo, o roubaOrbe inimigo contra o time é bloqueado (marcador declarativo)
   antiReviveContador:{ campos: ['contador'], obrig: ['contador'] },   // F1.8 (Ah Puch/Anubis): quem CAI carregando o contador X não revive (snapshot no ato da morte)
   antiReviveAura:  { campos: [], obrig: [] },                          // F1.8 (Cérberus): enquanto o DONO vive, inimigos não revivem (checado no ato do revive)
+  refleteControle: { campos: ['a', 'dur'], obrig: ['a'] },             // F1.8 (Perseu): quem TENTA um controle de `a` no dono leva o mesmo controle (na TENTATIVA — antes da imunidade)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -222,6 +223,7 @@ const VOCAB = {
   fxTurno: FX_TURNO,                               // tipos de fx válidos num `faz` (gatilho de turno)
   buffs: BUFFS,                                    // efeitos BENÉFICOS — o único conjunto que `apply` pode aplicar dentro de um faz (F1.2.5)
   imunizaveis: IMUNIZAVEIS,                         // valores válidos em imunidade.a (controle/DoT/'controle')
+  controles: CONTROLES,                             // só os CONTROLES (refleteControle.a, F1.8)
   aoCairQuem: AOCAIR_QUEM,                          // valores válidos em aoCair.quem (sujeito da morte)
   aoSerAtingidoQuem: AOSERATINGIDO_QUEM,            // valores válidos em aoSerAtingido.quem (sujeito do golpe)
   escoposPassiva: ESCOPOS_PASSIVA,               // valores válidos de passiva.fx[].escopo
@@ -365,6 +367,15 @@ function imuneA(st, u, tag) {
 
 function aplicar(st, u, eff) {
   const e = { ...eff };
+  // reflete-controle (F1.8, Perseu): quem TENTA um controle de `a` no dono leva o MESMO controle. Dispara na
+  // TENTATIVA — ANTES das imunidades abaixo (o dono é imune, mas o reflexo acontece igual; o dono: "a tentativa é o
+  // gatilho"). `origem` (posto por aplicarFx desde o Provocar/§56) diz QUEM tentou; `refletido` corta o loop.
+  if (CONTROLES.includes(e.type) && !e.refletido && e.origem != null) {
+    const g = kitDe(st, u), p = g && g.passiva;
+    const rf = p && Array.isArray(p.fx) && p.fx.find(f => f.gatilho === 'refleteControle' && f.a.includes(e.type));
+    if (rf) { const atk = st.lados[1 - u.lado].units.find(x => x.uid === e.origem);
+      if (atk && atk.vivo) { log(st, { tipo: 'efeito', origem: u.key, alvo: atk.key, efeito: e.type }); aplicar(st, atk, { type: e.type, dur: rf.dur || 1, origem: u.uid, refletido: true }); } }
+  }
   // regra 7 — proteção vence controle
   if (CONTROLES.includes(e.type) && ef(u, 'controlImmune')) {
     log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'controle_imune', efeito: e.type }); return;

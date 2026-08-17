@@ -1220,6 +1220,24 @@ console.log('== F1.8 antirevive B (aura, Cérberus): inimigo não revive enquant
   console.log('  B: aura checada no ato do revive; o próprio aliado da aura não é afetado (só inimigos)');
 }
 
+console.log('== F1.8 refleteControle (Perseu): a TENTATIVA é o gatilho — reflete MESMO com o dono imune ==');
+{
+  E.GODS.tpe = { nome: 'TPe', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'imunidade', a: ['atordoado'] }, { gatilho: 'refleteControle', a: ['atordoado'], dur: 1 }] } };
+  let st = E.novoEstado(['tpe', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 633);
+  const per = st.lados[0].units[0], atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [per]);
+  ok(!E.ef(per, 'atordoado'), 'o dono é imune — não é atordoado');
+  ok(!!E.ef(atk, 'atordoado'), 'quem TENTOU leva o atordoar de volta (reflete mesmo com a falha por imunidade)');
+  // controle FORA de `a` não reflete
+  st = E.novoEstado(['tpe', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 634);
+  const per2 = st.lados[0].units[0], atk2 = st.lados[1].units[0];
+  E.aplicarFx(st, atk2, [{ t: 'apply', eff: { type: 'selado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [per2]);
+  ok(!E.ef(atk2, 'selado'), 'controle fora de `a` (selado) não é refletido');
+  ok(!!E.ef(per2, 'selado'), 'e o dono, não sendo imune a ele, o recebe normalmente');
+  delete E.GODS.tpe;
+  console.log('  refleteControle: dispara na tentativa (antes da imunidade), escopado por `a`, sem loop (refletido)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

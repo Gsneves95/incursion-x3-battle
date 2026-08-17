@@ -1,0 +1,54 @@
+{
+  "key": "perseu",
+  "nome": "Perseu",
+  "faccao": "Grega",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Espelho de Bronze",
+    "desc": "Perseu é imune a Atordoar e Petrificar; quem tentar atordoá-lo fica atordoado por 1 turno.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "atordoado" ] },
+      { "gatilho": "refleteControle", "a": [ "atordoado" ], "dur": 1 }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lâmina Curva",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Foice Adamantina",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "25 de dano a 1 inimigo; ele não pode ser curado por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 25 },
+        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Cabeça da Medusa",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "28 de dano a 1 inimigo e o Petrifica (atordoamento total) por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 28 },
+        { "t": "apply", "eff": { "type": "atordoado", "dur": 2 } }
+      ]
+    }
+  ]
+}
