@@ -55,9 +55,11 @@ function iaAlvoSets(a, ini, ali) {
 function iaCandidatos(st, u) {
   const out = [];
   const acs = acoesDe(st, u).filter(a => a.disponivel && a.slot !== 'defesa');
-  const ini = st.lados[1 - u.lado].units.filter(x => x.vivo);
   const ali = st.lados[u.lado].units.filter(x => x.vivo);
   for (const a of acs) {
+    // F1.9: a IA mira SÓ de alvosValidos — respeita Inalvejável/Submerso/Provocar/ignora-mira, como o jogador.
+    // Sem isto, a IA atacaria um Inalvejável (o bater não tem rede — a evasão mora só na seleção, §84 invariante).
+    const ini = alvosValidos(st, u, a).filter(x => x.lado !== u.lado);   // só inimigos (para habilidade de aliado, o passo 0 são aliados → ini vazio; iaAlvoSets usa `ali`)
     for (const alvos of iaAlvoSets(a, ini, ali)) {
       if (a.opcoes) { for (let i = 0; i < a.opcoes.length; i++) out.push({ uid: u.uid, slot: a.slot, alvos, escolhas: [i] }); }
       else out.push({ uid: u.uid, slot: a.slot, alvos, escolhas: null });

@@ -400,6 +400,87 @@ console.log('== 11. invocações: guarda que absorve e clone que bate por turno 
   console.log(`  2 clones × 8 = 16 no início do turno do dono`);
 }
 
+// ----------------------------------------------------------- 12. Inalvejável (F1.9): mira, não impacto (§84)
+console.log('== 12. Inalvejável: evasão na SELEÇÃO; AoE atinge; cura aliada alcança (§84 a) ==');
+{
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 130);
+  const atk = st.lados[0].units[0], foe0 = st.lados[1].units[0], foe1 = st.lados[1].units[1];
+  foe0.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  const val = E.alvosValidos(st, atk, { alvo: 'inimigo' }).map(x => x.uid);
+  ok(!val.includes(foe0.uid) && val.includes(foe1.uid), `alvo único não mira o Inalvejável (${val.length} de 3 selecionáveis)`);
+  const h = foe0.hp; E.bater(st, atk, foe0, 12, 'afetado', 'milagre', { unico: false });   // AoE = golpe não-único; o bater não filtra
+  ok(h - foe0.hp === 12, `AoE ATINGE o Inalvejável: 12 (${h - foe0.hp}) — a evasão mora só na seleção`);
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 131);
+  const healer = st2.lados[0].units[0], ally = st2.lados[0].units[1];
+  ally.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  ok(E.alvosValidos(st2, healer, { alvo: 'aliado' }).map(x => x.uid).includes(ally.uid), 'cura ALIADA alcança o aliado Inalvejável (ramo aliado não filtra)');
+  console.log('  seleção INIMIGA filtra; AoE e ramo ALIADO não — a evasão é da mira, não do impacto');
+}
+
+console.log('== 12b. Inalvejável × redirect (sink inalvejável) e × intercepta (interceptador inalvejável): ATINGEM ==');
+{
+  // redirect com o SINK Inalvejável: o golpe CAI nele — desvio pós-mira, a evasão não protege de ricochete
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 132);
+  const atk = st.lados[0].units[0], sink = st.lados[0].units[1], alvo = st.lados[1].units[0];
+  sink.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  alvo.efeitos.push({ type: 'redirect', destino: sink.uid, dur: 2, contra: 'todos', origem: alvo.uid });
+  const hs = sink.hp, ha = alvo.hp;
+  E.bater(st, atk, alvo, 15, 'afetado', 'basico', { unico: true });
+  ok(ha === alvo.hp, 'o alvo original foi desviado (redirect)');
+  ok(hs - sink.hp === 15, `o golpe CAI no sink Inalvejável: 15 (${hs - sink.hp})`);
+  // intercepta: o interceptador Inalvejável se oferece e recebe (interceptar é escolher SER atingido)
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 133);
+  const atk2 = st2.lados[1].units[0], ally2 = st2.lados[0].units[0], inter = st2.lados[0].units[1];
+  inter.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  inter.efeitos.push({ type: 'intercepta', protege: ally2.uid, dur: 2, contra: 'todos', origem: inter.uid });
+  const hi = inter.hp, hy = ally2.hp;
+  E.bater(st2, atk2, ally2, 15, 'afetado', 'basico', { unico: true });
+  ok(hy === ally2.hp, 'o protegido não sofre');
+  ok(hi - inter.hp === 15, `o interceptador Inalvejável recebe: 15 (${hi - inter.hp})`);
+  console.log('  redirect e intercepta operam ABAIXO da seleção — Inalvejável não os alcança');
+}
+
+console.log('== 12c. Inalvejável: dispel remove (b); Provocar suspenso; ignora-mira (flag + passiva self/time, c) ==');
+{
+  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 134);
+  const u = st.lados[1].units[0]; u.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'stripBuffs' }], A('inimigo', 'habilidade'), [u]);
+  ok(!E.ef(u, 'inalvejavel'), 'stripBuffs REMOVE a Inalvejável (buff defensivo, decisão b) — a trava é só na seleção dela');
+  // Provocar suspenso se o provocador está Inalvejável
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 135);
+  const atk2 = st2.lados[0].units[0], prov = st2.lados[1].units[0];
+  prov.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  atk2.efeitos.push({ type: 'taunt', origem: prov.uid, dur: 2 });
+  const vt = E.alvosValidos(st2, atk2, { alvo: 'inimigo' }).map(x => x.uid);
+  ok(!vt.includes(prov.uid) && vt.length === 2, 'Provocar suspenso: não se é forçado a mirar quem não se pode selecionar');
+  // ignora-mira por FLAG de habilidade (Odin/Hórus no básico)
+  const st3 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 136);
+  const atk3 = st3.lados[0].units[0], foe3 = st3.lados[1].units[0]; foe3.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  ok(E.alvosValidos(st3, atk3, { alvo: 'inimigo', ignoraInalvejavel: true }).map(x => x.uid).includes(foe3.uid), 'flag de habilidade ignoraInalvejavel mira o oculto');
+  // ignora-mira por PASSIVA: self (Hou Yi — só o dono) e time (Boitatá — o lado)
+  E.GODS.thouyi = { nome: 'THouYi', faccao: 'T', elem: 'Aurora', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'ignoraInalvejavel' }] } };
+  E.GODS.tboita = { nome: 'TBoita', faccao: 'T', elem: 'Chama', classe: 'Mágico', funcao: 'Guardião', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'ignoraInalvejavel', escopo: 'time' }] } };
+  const st4 = E.novoEstado(['thouyi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 137);
+  const hy4 = st4.lados[0].units[0], zA4 = st4.lados[0].units[1], foe4 = st4.lados[1].units[0]; foe4.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  ok(E.alvosValidos(st4, hy4, { alvo: 'inimigo' }).map(x => x.uid).includes(foe4.uid), 'passiva self (Hou Yi): o DONO mira o oculto');
+  ok(!E.alvosValidos(st4, zA4, { alvo: 'inimigo' }).map(x => x.uid).includes(foe4.uid), 'passiva self NÃO estende ao aliado (só o dono)');
+  const st5 = E.novoEstado(['tboita', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 138);
+  const zA5 = st5.lados[0].units[1], foe5 = st5.lados[1].units[0]; foe5.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  ok(E.alvosValidos(st5, zA5, { alvo: 'inimigo' }).map(x => x.uid).includes(foe5.uid), 'passiva time (Boitatá): o ALIADO também mira o oculto');
+  delete E.GODS.thouyi; delete E.GODS.tboita;
+  console.log('  dispel remove (b); Provocar suspenso; ignora-mira em dois pontos — flag (pontual) + passiva self/time (c)');
+}
+
+console.log('== 12d. INVARIANTE ESTRUTURAL (§84): nenhum ef(...,inalvejavel) dentro do bater ==');
+{
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'src', 'engine.js'), 'utf8');
+  const i = src.indexOf('function bater(');
+  const j = src.indexOf('\nfunction ', i + 1);
+  const corpo = src.slice(i, j > i ? j : undefined);
+  ok(i >= 0 && !/inalvejavel/.test(corpo), 'o corpo de bater() NÃO menciona inalvejavel — a evasão mora só na seleção');
+  console.log('  guarda estrutural: um if(inalvejavel) no bater quebraria redirect-atinge-sink e AoE-atinge — o teste apita');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

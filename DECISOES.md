@@ -35,8 +35,15 @@ ambos merecem nome:
 - **(a) Inalvejável = evasão, SÓ mira INIMIGA. Cura aliada alcança.** O `submerso` bloqueia todos porque é PRISÃO (não
   distingue quem se aproxima); a Inalvejável é EVASÃO (contra quem te caça). Confirmação estrutural: ela é BUFF auto-
   aplicado — se bloqueasse cura aliada, puniria o próprio dono, e buff que atrapalha o dono não é buff.
-- **(b) Dispel/stripBuffs REMOVE a Inalvejável.** É buff defensivo; a simetria com `reducao`/`escudo` (que o inimigo
-  limpa) vale. Registrado para não parecer bug depois.
+- **(b) CORRIGIDA (a matriz revelou uma tensão).** "Dispel remove a evasão" continua verdade — é buff defensivo, simetria
+  com `reducao`/`escudo`. MAS a matriz mostrou que um dispel de **alvo único** não consegue SELECIONAR o inalvejável para
+  limpá-lo (a mesma trava de mira). **Regra (iii): dispel de alvo único NÃO alcança a Inalvejável;** consequência (i): ela
+  só é removível por AoE-dispel ou por um atacante que ignora-Inalvejável. Recusada a (ii) (dar furo-de-mira ao dispel) —
+  acoplaria as camadas que a tese inteira existe para separar; uma exceção ali e "Inalvejável só na seleção" morre no
+  primeiro caso especial. Não é bug: é a mesma trava operando consistente — **quem evade a mira evade TODA mira, inclusive
+  a benéfica-para-o-inimigo.** E a SIMETRIA com (a): cura ALIADA alcança porque o ramo aliado não filtra; dispel INIMIGO
+  não alcança porque o ramo inimigo filtra. As duas caem do MESMO lugar (`alvosValidos`), sem regra especial — sinal de
+  que a camada está no lugar certo.
 - **(c) ignora-Inalvejável em DOIS pontos** (passiva PERMANENTE — Hou Yi, Boitatá-time; flag de habilidade PONTUAL —
   Odin, Hórus no básico). Espelha o `danoIrredutivel` (que é passiva). Forçar um só ponto faria uma das duas mentir.
 
@@ -48,6 +55,25 @@ leitura da prosa).
 (`alvosValidos`), NUNCA no IMPACTO (`bater`). Redirect e intercepta operam ABAIXO da seleção (reatribuem a vítima dentro
 do `bater`, sem reconsultar a lista), então o golpe ATINGE um sink inalvejável e um interceptador inalvejável se oferece
 e recebe. "Protege da seleção, não do impacto."
+
+**CONSTRUÍDO (infra, testada em sintético — sem consumidor ainda, como a marca do §83).** Status `inalvejavel` em BUFFS;
+exclusão em `alvosValidos` (só ramo inimigo, só alvo único); gatilho `ignoraInalvejavel` (passiva self/time) + flag de
+habilidade homônima (os DOIS pontos da decisão c); helper `temIgnoraInalvejavel`. A matriz virou 4 blocos de teste em
+`primitivas.test.js` (12/12a-d), incluindo o **teste da invariante** (redirect-para-sink-inalvejável ATINGE) e a **guarda
+estrutural** (lê o corpo de `bater()` e falha se `inalvejavel` aparecer lá — o conserto "defensivo" que apodrece calado).
+
+**OS DOIS RISCOS confirmados-falhando-e-corrigidos NA MESMA SESSÃO (o dono exigiu antes, não depois):**
+- **(b) A IA não mirava de `alvosValidos`** — construía alvos de `units.filter(vivo)` cru. Para `submerso` a rede era o
+  zera-dano (a IA descartava o lance de ganho-zero); a Inalvejável NÃO tem rede (invariante), então a IA a ignoraria por
+  completo. Corrigido: `iaCandidatos` agora tira inimigos de `alvosValidos`.
+- **(a) `acoesDe` não barrava habilidade sem alvo** — corrigido com o motivo `sem_alvo` (só quando `passos.length>0` e
+  `alvosValidos` vazio; a AoE, `passos` vazio, não é barrada). Fecha o estado "time inteiro Inalvejável".
+
+**ignora-Invulnerabilidade ADIADO (com correção de forma — §46 outra vez).** No desenho eu disse "estende o
+`danoIrredutivel`" (passiva). ERRADO: os usuários reais são de HABILIDADE (Odin no básico, Shiva no milagre), não passiva.
+A forma certa é uma flag/rider de habilidade na camada de dano (pular o `return 0` da linha do `invulneravel`), não o
+gatilho passivo. Como não há consumidor agora (Odin travado por outras deps, Shiva não construído), ADIEI — construir a
+forma sem o consumidor que a valida é como o buraco que o §83 pegou. Entra com o Odin/Shiva.
 
 ---
 

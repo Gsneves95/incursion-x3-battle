@@ -73,7 +73,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect'];
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel'];   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -124,6 +124,7 @@ const GATILHOS_PASSIVA = {
   vulnerabilidade: { campos: ['v', 'deFuncao'], obrig: ['v'] },        // F1.8 (Aquiles): o dono sofre +v de atacantes da função `deFuncao` (lê o atacante)
   amplificaDot:    { campos: ['nome', 'v'], obrig: ['nome', 'v'] },     // F1.8 (Kagutsuchi): +v em todo tick do DoT `nome` no campo, enquanto o dono vive
   sinergiaAliado:  { campos: ['aliado', 'contador', 'v'], obrig: ['aliado', 'contador', 'v'] },   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe v do contador
+  ignoraInalvejavel:{ campos: ['escopo'], obrig: [] },   // F1.9 (Hou Yi escopo:self; Boitatá escopo:time): o dono (ou o time) PODE mirar inimigos Inalvejáveis — override de MIRA, não de dano. §84 decisão c (ponto passivo; o pontual é a flag de habilidade)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -272,7 +273,7 @@ const VOCAB = {
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
     'invulneravel', 'submerso', 'controle_imune',       // bloqueio de efeito
     'sem_cura', 'nao_revive',                           // falha (noHeal / naoRevive)
-    'em_recarga', 'sem_energia', 'silenciado', 'travada', 'ja_usou', 'orbe_protegido', // indisponibilidade de ação (acoesDe) / roubo de orbe barrado (Heimdall)
+    'em_recarga', 'sem_energia', 'silenciado', 'travada', 'ja_usou', 'orbe_protegido', 'sem_alvo', // indisponibilidade de ação (acoesDe) / roubo de orbe barrado (Heimdall) / sem alvo válido (F1.9: todos Inalvejáveis/Submersos)
     'tempo',                                            // fim por esgotamento (turno 40)
   ],
 };
@@ -1224,8 +1225,12 @@ function acoesDe(st, u) {
       // Varre TODOS os efeitos — a unidade pode carregar mais de uma trava (ex.: Selado {Hab,Mil} + um lockSkill).
       else if (u.efeitos.some(e => (SLOTS_TRAVADOS[e.type] && SLOTS_TRAVADOS[e.type].includes(a.slot)) || (e.type === 'lockSkill' && e.slot === a.slot))) motivo = 'travada';
     }
+    const passos = passosDe(u, a);
+    // sem alvo válido: a habilidade EXIGE alvo escolhido mas não há nenhum (todos Inalvejáveis/Submersos). AoE
+    // (passos vazio, alvo:'auto'/'todosInimigos') NÃO é barrada — ela não seleciona (§84: a área ignora Inalvejável).
+    if (!motivo && a.slot !== 'defesa' && passos.length > 0 && alvosValidos(st, u, a).length === 0) motivo = 'sem_alvo';
     return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
-             passos: passosDe(u, a), disponivel: !motivo, motivo };
+             passos, disponivel: !motivo, motivo };
   });
 }
 
@@ -1234,20 +1239,36 @@ function podeAgir(u) {
 }
 
 // candidatos para o passo `i` de seleção, já excluindo quem foi escolhido antes
+// F1.9: o dono PODE mirar Inalvejáveis? passiva ignoraInalvejavel escopo self (só o dono) ou time (qualquer aliado
+// vivo dá o override ao lado — Boitatá). Estrutura espelha bonusDanoDeclarativo (§36). A flag de habilidade é checada à parte.
+function temIgnoraInalvejavel(st, u) {
+  for (const x of st.lados[u.lado].units) {
+    if (!x.vivo) continue;
+    const g = kitDe(st, x), p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho !== 'ignoraInalvejavel') continue;
+      if ((f.escopo || 'self') === 'self' && x !== u) continue;
+      return true;
+    }
+  }
+  return false;
+}
 function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
   const passos = a.passos || passosDe(u, a);
   const tipo = passos[i];
   if (!tipo) return [];
   let lista;
   if (tipo === 'aliado') {
-    lista = st.lados[u.lado].units.filter(x => x.vivo);
+    lista = st.lados[u.lado].units.filter(x => x.vivo);   // aliado NÃO filtra Inalvejável: evasão é contra o inimigo, cura aliada alcança (§84 decisão a)
   } else {
-    lista = st.lados[1 - u.lado].units.filter(x => x.vivo && !ef(x, 'submerso'));
+    const ignoraInalv = a.ignoraInalvejavel || temIgnoraInalvejavel(st, u);   // F1.9: flag de habilidade (Odin/Hórus) OU passiva (Hou Yi/Boitatá) miram o oculto
+    lista = st.lados[1 - u.lado].units.filter(x => x.vivo && !ef(x, 'submerso') && (ignoraInalv || !ef(x, 'inalvejavel')));   // Inalvejável mora AQUI (seleção), nunca no bater (§84 invariante)
     const tt = ef(u, 'taunt');
     if (tt) {
-      // regra 7 — Provocar suspenso se o provocador está intocável
+      // regra 7 — Provocar suspenso se o provocador está intocável (invulnerável/submerso/inalvejável, salvo ignore-mira)
       const prov = st.lados[1 - u.lado].units.find(x => x.uid === tt.origem);
-      if (prov && prov.vivo && !ef(prov, 'invulneravel') && !ef(prov, 'submerso')) lista = [prov];
+      if (prov && prov.vivo && !ef(prov, 'invulneravel') && !ef(prov, 'submerso') && (ignoraInalv || !ef(prov, 'inalvejavel'))) lista = [prov];
     }
   }
   return lista.filter(x => !jaEscolhidos.includes(x.uid));
