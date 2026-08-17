@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §86 — O QUARTO TIPO DE ÓRFÃO: PROSA-SEM-FX; e a leva de CONSUMO (Sun Wukong + Boitatá)
+
+**A leva.** O número de calibração (§ anterior: 4 infra ociosas, 2 deste arco) mandou CONSUMIR, não construir. Esta leva
+não tocou mecanismo: **Sun Wukong** (IMPL 57, kit limpo — consome Inalvejável, imunidade-a-execução e vidaExtra num só
+kit) + **Boitatá** (fecha um órfão). Depois dela, a lista de ociosas cai de **4 → 3** (marca, livro, intercepta): a
+Inalvejável saiu (2 consumidores). A marca ainda espera o Hórus (que custa 1 mecanismo — decisão à parte).
+
+**§61 CONFIRMADO com kit real.** A imunidade-a-`execucao` estava construída há sessões e NUNCA fora exercitada por deus
+real (só o motor a tinha). O Sun Wukong a provou: abaixo do limiar ele NÃO morre; um zeus sem imunidade morre (não era
+falso-verde). Teste permanente. Zero bug latente — o §61 (mecanismo existe mas ninguém provou com kit) deu verde aqui.
+
+**O QUARTO TIPO DE ÓRFÃO (o dono pediu para nomear) — PROSA-SEM-FX.** A taxonomia de órfão agora tem quatro:
+1. **etiqueta-sem-enforce** (dominado): o token ESTÁ no fx, mas o motor não o faz cumprir.
+2. **campo-sem-fio** (usos): o CAMPO existe no estado, mas nada o lê/escreve.
+3. **cláusula-satisfeita-pela-arquitetura** (Sun Wukong "só alvo único", §84): a prosa promete e a arquitetura JÁ entrega
+   sem código — o órfão BENIGNO (só precisa ser nomeado p/ ninguém "implementar" e quebrar).
+4. **prosa-sem-fx** (Boitatá "o time ignora Inalvejável"): a prosa promete na DESCRIÇÃO e o fx **nunca declarou o
+   gatilho**. O kit mente por omissão.
+
+**Por que o (4) é o mais traiçoeiro:** os outros três têm um TOKEN no código (a etiqueta, o campo, a arquitetura) que uma
+varredura de vocabulário pode achar. O prosa-sem-fx **não tem token no fx** — não há órfão a *encontrar* por varredura de
+símbolo. Só a leitura PROSA-vs-FX o pega (a gêmea não-numérica do `checar_cadeia`, que hoje só confere números).
+
+**Vale uma varredura desse tipo nos 56? Resposta calibrada: NÃO como leva dedicada agora.** Uma heurística prosa-vs-fx
+(promessa na desc → gatilho esperado) varreu os 56 e achou **0 além do Boitatá** (1 falso-positivo, o Huang Di, cujo "no
+início de cada turno" usa `porTurno` corretamente). Sinal fraco. E há uma razão estrutural: o Boitatá orfanou porque, quando
+foi escrito, o gatilho `ignoraInalvejavel` **não existia** — o autor escreveu a prosa e deixou o fx incompleto, um pendente
+esquecido. **Prosa-sem-fx agrupa-se em torno de mecânicas que estavam PENDENTES quando o kit foi escrito.** Isso dá o lugar
+barato de olhar: **quando um gatilho novo nasce, varrer a prosa dos kits JÁ escritos por cláusulas que ele agora satisfaz**
+(foi exatamente assim que o Boitatá caiu, na varredura da Inalvejável). Recomendação: virar PASSO do checklist de construir
+mecanismo, não uma leva de auditoria. O elo-C (prosa-de-mecânica ↔ fx-gatilho) no `checar_cadeia` pode crescer
+incrementalmente, um clause-check por gatilho, se algum dia o sinal subir.
+
+---
+
 ## §85 — INVARIANTE DE ARQUITETURA TRAVADA POR TESTE QUE LÊ O CÓDIGO-FONTE (não por comentário)
 
 **A técnica (o dono a nomeou como o item mais valioso da sessão da Inalvejável).** Quando uma decisão de arquitetura
