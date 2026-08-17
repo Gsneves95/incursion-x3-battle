@@ -10,7 +10,8 @@
     "desc": "Imune a Queimadura e cura 10 sempre que uma habilidade de Chama a atinge; o time ignora Inalvejável.",
     "fx": [
       { "gatilho": "aoSerAtingido", "quem": "self", "contra": { "elem": "Chama" }, "faz": [ { "t": "heal", "v": 10 } ] },
-      { "gatilho": "imunidade", "a": [ "queimadura" ] }
+      { "gatilho": "imunidade", "a": [ "queimadura" ] },
+      { "gatilho": "ignoraInalvejavel", "escopo": "time" }
     ]
   },
   "ab": [

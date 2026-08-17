@@ -1337,6 +1337,21 @@ console.log('== F1.9-pre marca ofensiva: RÓTULO puro lido por alvoMarca; nome=e
   console.log('  marca = rótulo puro; alvoMarca:nome é etiqueta (§54), :qualquer é guarda-chuva compartilhado (§83)');
 }
 
+console.log('== §61 imunidade a EXECUÇÃO exercitada por KIT REAL (Sun Wukong): construída há sessões, nunca provada ==');
+{
+  // Sun Wukong tem imunidade:{a:['execucao']}. Abaixo do limiar, a execução NÃO o mata; um zeus sem imunidade morre.
+  const st = E.novoEstado(['sunwukong', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 640);
+  const wk = st.lados[0].units[0], atk = st.lados[1].units[0];
+  wk.hp = 20;
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 5, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [wk]);
+  ok(wk.vivo && wk.hp === 15, `Sun Wukong com HP 15 (≤24) NÃO é executado — imunidade a execucao (${wk.vivo}/${wk.hp})`);
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 641);
+  const z = st2.lados[0].units[0], a2 = st2.lados[1].units[0]; z.hp = 20;
+  E.aplicarFx(st2, a2, [{ t: 'dmg', v: 5, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [z]);
+  ok(!z.vivo, 'controle: zeus SEM imunidade É executado — o mecanismo dispara de fato (não é falso-verde)');
+  console.log('  §61 confirmado: a imunidade-a-execução funciona; primeiro kit real a exercê-la');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -1,0 +1,54 @@
+{
+  "key": "sunwukong",
+  "nome": "Sun Wukong",
+  "faccao": "Chinesa",
+  "elem": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Corpo Imortal",
+    "desc": "Não pode ser eliminado por execução; 1× por partida sobrevive a um golpe letal com 1 de HP.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "execucao" ] },
+      { "gatilho": "abertura", "faz": [ { "t": "vidaExtra", "hp": 1, "escopo": "self" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Bastão Ruyi Jingu",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "2inimigos",
+      "desc": "15 de dano a 1 inimigo e 10 a outro.",
+      "fx": [ { "t": "dmg", "v": 15, "idx": 0 }, { "t": "dmg", "v": 10, "idx": 1 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Fios de Cabelo",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "Cria 2 clones que causam 8 de dano cada por turno durante 2 turnos.",
+      "fx": [
+        { "t": "invocar", "nome": "Clone", "tipo": "dano", "v": 8, "dur": 2 },
+        { "t": "invocar", "nome": "Clone", "tipo": "dano", "v": 8, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "72 Transformações",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Por 2 turnos, Wukong causa +12 de dano e é Inalvejável por habilidades de alvo único.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "self" },
+        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 2 }, "escopo": "self" }
+      ]
+    }
+  ]
+}
