@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §81 — A heurística do milagre virou REGULARIDADE (3/3 levas); e a varredura antirevive achou 7, não 2
+
+**A TAXA DO §78, MEDIDA em três levas (o dono: já é regularidade, não observação).** Em todas as três últimas levas o
+MILAGRE previu o bloqueio e a passiva quase nunca previu nada:
+- **§77 (F1.8 VERMELHO-pequenos):** 14 deuses — passivas/alvo-único destravados, o gancho no milagre.
+- **§79 (porStatus):** 6 deuses — o milagre carregava o `porStatus` que faltava.
+- **§80/F1.8 (esta leva):** 12 deuses — **10 de 12 com o milagre limpo**; o gancho mora na passiva (só morrigan foge,
+  com marca no milagre).
+Fica travado como **HEURÍSTICA con taxa 3/3**: ao reconciliar, olhar o MILAGRE primeiro não é preferência — prevê o
+bloqueio em quase todo caso, e "passiva limpa" não é evidência de nada (§78). A causa é estrutural (§78): o milagre é a
+habilidade cara, onde o designer põe o mecanismo que justifica custo+recarga.
+
+**A VARREDURA ANTIREVIVE (o dono mandou desconfiar do balde) — achou 7, não 2, e NÃO cabem num só.** O balde-antirevive
+parecia agrupar 2 (cerberus + ahpuch); a varredura da família no catálogo achou **7** sujeitos, em **5 condições-de-gatilho
+distintas**:
+| deus | condição | mecanismo |
+|---|---|---|
+| hel | Marca da Morte (debuff aplicado) | **já existe** (`antiRevive`, Iansã) |
+| ahpuch | tem Podridão (contador) | **A: por-contador** |
+| anubis | tem Atadura (contador) | **A: por-contador** |
+| cerberus | enquanto o DONO vive | **B: aura (checada no revive)** |
+| ammit | morto POR Ammit (matador) | C — fora |
+| yanwong | morto sob o Livro (debuff carregado) | ~D (perto do `naoRevive`-em-debuff) — fora |
+| mimir | ELE PRÓPRIO não revive | E (self) — fora |
+**Não unificam** — a condição varia (contador-da-vítima ≠ dono-vivo ≠ matador ≠ debuff ≠ self). Mas **A agrupa DOIS**
+(ahpuch + anubis) e **B serve cerberus**. Regra do dono aplicada: fiz A+B (o que os dois da leva pedem; A ainda destrava
+a cláusula do anubis de brinde), e **ficam de fora ammit/yanwong/mimir** (condições próprias) e hel (já resolvido). O
+balde que parecia 1 mecanismo era 5 — a desconfiança do dono estava certa.
+
+---
+
 ## §80 — A CAPTURA É ÁRBITRO: a verificação visual acha o que teste e revisão não acham; a métrica sozinha superestima
 
 **(A) O BUG DA DEFESA — só a TELA pegou.** Os discos DEF pediam `skill-<deus>-defesa.webp` (uma por deus), mas a arte é
@@ -1299,6 +1330,13 @@ ANTES de testar o pesado:
 A rede de testes continua sendo a garantia — só passa a rodar sobre commit em vez de sobre disco. Commits
 ruidosos são baratos; refazer edição inteira não é, e commit pequeno é mais fácil de revisar/reverter. (Investigar
 por que o container reprovisiona: decisão do dono — é ambiente, provável fora de alcance, custo alto p/ ganho incerto.)
+
+**COROLÁRIO (F1.7, o dono — "mostrar antes de commitar" é instrução RUIM neste ambiente):** pediram para eu mostrar
+a captura ANTES de commitar as partes 1-2 da arte; segurei o commit, o container reverteu na janela, e o trabalho
+não-commitado sumiu (tive de refazer). A ordem correta é **COMMITE E DEPOIS MOSTRE**: o que está no origin não some, o
+dono revisa igual, e se quiser algo diferente eu corrijo em commit novo (o fix-forward do item 3). "Mostrar antes de
+commitar" cria exatamente a janela que o §38 fecha. **Não repetir a instrução — nem quando o dono a pedir; commitar
+primeiro é o certo mesmo contra o pedido, porque o revert não respeita a intenção.**
 
 **LIÇÃO (o furo veio de um adjetivo impreciso do dono, achado uma sessão depois):** a 1ª versão dizia "bloco
 COERENTE", e "coerente" não é verificável — engine+validador sem o teste migrado É coerente como feature, mas
