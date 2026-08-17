@@ -1352,6 +1352,46 @@ console.log('== §61 imunidade a EXECUÇÃO exercitada por KIT REAL (Sun Wukong)
   console.log('  §61 confirmado: a imunidade-a-execução funciona; primeiro kit real a exercê-la');
 }
 
+console.log('== §89 Yan Wong: Livro É execução; naoRevive-em-apply (§61); orbe-por-execução uniforme ==');
+{
+  const hab = E.GODS.yanwong.ab.find(a => a.slot === 'habilidade').fx;
+  // §61: aplicar efeito com naoRevive nunca fora exercitado por kit. Livro mata pelo timer → execução + naoRevive.
+  let st = E.novoEstado(['yanwong', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 400);
+  let yw = st.lados[0].units[0], foe = st.lados[1].units[0];
+  E.aplicarFx(st, yw, hab, { alvo: 'inimigo', slot: 'habilidade' }, [foe]);
+  ok(E.ef(foe, 'livro') && E.ef(foe, 'livro').naoRevive === true, 'habilidade aplica livro COM naoRevive (§61: 1º kit a exercê-lo)');
+  ok(!!E.ef(foe, 'vulneravel'), 'e o vulneravel irmão (+8 enquanto marcado, decisão-(a) do §83)');
+  E.ef(foe, 'livro').dur = 1; st.ativo = 1; E.fimTurno(st);
+  ok(!foe.vivo && foe.naoRevive === true, 'Livro mata (timer) E sela naoRevive');
+  E.reviver(st, foe, { hp: 40 });
+  ok(!foe.vivo, 'não revive sob o Livro — só a execução entrega morte definitiva');
+  // Livro É execução: o Sun Wukong (imune a execução) é o COUNTER estrutural
+  st = E.novoEstado(['yanwong', 'zeus', 'zeus'], ['sunwukong', 'zeus', 'zeus'], 401);
+  yw = st.lados[0].units[0]; const wk = st.lados[1].units[0];
+  E.aplicarFx(st, yw, hab, { alvo: 'inimigo', slot: 'habilidade' }, [wk]);
+  E.ef(wk, 'livro').dur = 1; st.ativo = 1; E.fimTurno(st);
+  ok(wk.vivo, 'Sun Wukong SOBREVIVE ao Livro (imune a execução) — o counter estrutural (§89: parece bug, é design)');
+  // vidaExtra NÃO salva do Livro (execução fura vidaExtra — senão a vítima sobreviveria e a cláusula anti-revive nunca valeria)
+  st = E.novoEstado(['yanwong', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 402);
+  yw = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.vidaExtra = { hp: 30 };
+  E.aplicarFx(st, yw, hab, { alvo: 'inimigo', slot: 'habilidade' }, [foe]);
+  E.ef(foe, 'livro').dur = 1; st.ativo = 1; E.fimTurno(st);
+  ok(!foe.vivo, 'vidaExtra NÃO salva do Livro — a morte é definitiva');
+  // orbe-por-execução UNIFORME: dispara em QUALQUER execução (aqui via executaAbaixoDe, isolado de fimTurno)
+  st = E.novoEstado(['yanwong', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 403);
+  yw = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.hp = 20;
+  const orbes0 = Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
+  E.aplicarFx(st, yw, [{ t: 'dmg', v: 5, executaAbaixoDe: 24 }], { alvo: 'inimigo', slot: 'milagre' }, [foe]);
+  const orbes1 = Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
+  ok(!foe.vivo && orbes1 - orbes0 === 1, `execução de OUTRA fonte (executaAbaixoDe) também dá +1 orbe: leitura literal de "por execução" (${orbes1 - orbes0})`);
+  // aceleraLivro: dur -= 1 (piso 1)
+  st = E.novoEstado(['yanwong', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 404);
+  yw = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'livro', dur: 3, naoRevive: true });
+  E.aplicarFx(st, yw, [{ t: 'aceleraLivro', escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'milagre' }, []);
+  ok(E.ef(foe, 'livro').dur === 2, `aceleraLivro: 3 → 2 (${E.ef(foe, 'livro').dur})`);
+  console.log('  Livro é execução (Wukong imune, vidaExtra não salva, naoRevive vale); orbe uniforme; aceleraLivro piso 1');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

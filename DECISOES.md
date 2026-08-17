@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §89 — YAN WONG zera as ociosas; o Livro É EXECUÇÃO (definido na estreia); e o Sun Wukong vira counter estrutural
+
+**A LISTA DE OCIOSAS ZEROU.** Yan Wong (IMPL 60) drena o `livro` — o último resíduo da fase-primitivas. **Ociosa: 1 → 0.**
+Daqui em diante todo mecanismo do motor tem consumidor: o padrão saudável (§87) deixou de ser meta e passou a ser o
+único estado do projeto.
+
+**DECISÃO: a morte-por-Livro É execução (`matar(..., {execucao:true})`).** Definida na ESTREIA — o `livro` não tinha
+consumidor, então não há comportamento a mudar, só a definir (mais barato que definir depois). O argumento decisivo é de
+COERÊNCIA INTERNA (o dono): a passiva diz "não pode ser revivido sob o Livro". Se o Livro NÃO fosse execução, o `vidaExtra`
+salvaria a vítima — ela sobreviveria com 1 HP e a cláusula anti-revive NUNCA se aplicaria (não houve morte). A prosa
+promete morte definitiva; só a execução entrega. E o `livro` já carregava `naoRevive` (o snapshot do `matar` o lê) — mas
+`naoRevive` sem morte definitiva é letra morta.
+
+**PARECERÁ BUG, É DESIGN (o dono mandou registrar): o Sun Wukong é o COUNTER ESTRUTURAL do Yan Wong.** Ele é o ÚNICO imune
+a execução no jogo (§89 — a imunidade-a-`execucao`, provada no §86). Como o Livro é execução, o Sun Wukong SOBREVIVE ao
+Livro. Quem vir o Livro "falhando" contra ele vai achar bug — é design caindo de graça (o Rei Macaco furta o livro-razão
+do submundo). O bloco do Livro respeita `imuneA(execucao)`, como a execução-por-limiar já fazia.
+
+**A VARREDURA DE CONSUMIDORES DE `execucao` (o dono exigiu antes de mudar o flag).** Marcar o Livro como execução aciona
+TODO leitor de `execucao`; varridos e confirmados um a um: (1) `imuneA(execucao)` — Sun Wukong sobrevive ✓; (2) o furo no
+`vidaExtra` (linha 811) — não salva do Livro ✓; (3) o snapshot `naoRevive` (821) — selado ✓; (4) o log `queda:execucao`
+(827) — dispara o `porExecucao` ✓; (5) o `aoCair` NÃO filtra por execução, então não muda. Cada um se comportou certo: o
+flag carrega exatamente "morte definitiva", nem mais nem menos.
+
+**ESCOPO do "orbe por execução": UNIFORME (qualquer execução inimiga), não só a do Livro.** Leitura LITERAL — a prosa diz
+"por execução", não "por execução dele". A literal ganha quando não há ambiguidade (o mesmo critério do "rouba vs ganha" e
+do "OU" do Khnum). Um gatilho `porExecucao` (novo): quando um inimigo morre por QUALQUER execução (Livro, `executaAbaixoDe`
+do Hades/Fenrir/Iara), o lado oposto ao morto ganha o `faz` (1 orbe). Testado com as duas fontes.
+
+**§61 outra vez:** aplicar um efeito com `naoRevive` (a Hel/o Livro) o motor suportava e NENHUM kit exercia — Yan Wong é o
+primeiro. Verde. **Dois mecanismos novos** (`porExecucao`, `aceleraLivro`), ambos nascidos COM o Yan Wong — não sobem em
+lista nenhuma (a lista está vazia).
+
+---
+
 ## §88 — primeiroPorTurno: o RASTREIO nasce com os quatro pontos juntos (antídoto do §73); e Bastet drena o intercepta
 
 **A leva.** Bastet (IMPL 59) — o mínimo limpo: UM mecanismo novo (o flag), ZERO payload novo, e a habilidade dela

@@ -85,6 +85,7 @@ const TIPOS_FX = [
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
+  'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
   'roubaOrbe',   // F1.6 (Hades/Hermes/Shuten): remove n orbes do inimigo (rouba=vai p/ o próprio); bloqueado por protegeOrbe (Heimdall)
 ];
@@ -125,6 +126,7 @@ const GATILHOS_PASSIVA = {
   amplificaDot:    { campos: ['nome', 'v'], obrig: ['nome', 'v'] },     // F1.8 (Kagutsuchi): +v em todo tick do DoT `nome` no campo, enquanto o dono vive
   sinergiaAliado:  { campos: ['aliado', 'contador', 'v'], obrig: ['aliado', 'contador', 'v'] },   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe v do contador
   ignoraInalvejavel:{ campos: ['escopo'], obrig: [] },   // F1.9 (Hou Yi escopo:self; Boitatá escopo:time): o dono (ou o time) PODE mirar inimigos Inalvejáveis — override de MIRA, não de dano. §84 decisão c (ponto passivo; o pontual é a flag de habilidade)
+  porExecucao:     { campos: ['faz'], obrig: ['faz'] },   // F1.9 (Yan Wong §89): quando um INIMIGO morre por EXECUÇÃO (qualquer — Livro, executaAbaixoDe), o dono faz X (1 orbe). Leitura LITERAL de "por execução": qualquer, não só a do dono
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -825,6 +827,15 @@ function matar(st, atk, alvo, opts = {}) {
   }
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
+  // gatilho porExecucao (F1.9, Yan Wong §89) — morte por EXECUÇÃO de um inimigo: o lado OPOSTO ao morto reage (1 orbe).
+  // Uniforme: qualquer execução (Livro, executaAbaixoDe), não só a do dono — leitura literal de "por execução".
+  if (opts.execucao) {
+    for (const x of st.lados[1 - alvo.lado].units) {
+      if (!x.vivo) continue;
+      const g = kitDe(st, x); const p = g && g.passiva;
+      if (p && Array.isArray(p.fx)) for (const f of p.fx) if (f.gatilho === 'porExecucao') rodarFaz(st, x, f.faz);
+    }
+  }
   // gatilho aoCair quem:'self' — o PRÓPRIO que caiu reage (Nezha: revive próximo turno). APÓS a limpeza dos
   // efeitos (a ordem é a rede: renasce sem os efeitos que tinha ao cair). A unidade nunca sai do array.
   { const g = kitDe(st, alvo); const p = g && g.passiva;
@@ -1165,12 +1176,15 @@ function fimTurno(st) {
       if (total > 0 && alvo) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano', duracao: 0 }); bater(st, u, alvo, total, 'puro', 'armazenado', {}); }
     }
   }
-  // PRIMITIVA contagem de morte (Livro) — executa quem chegou ao fim da contagem
+  // PRIMITIVA contagem de morte (Livro) — EXECUTA quem chegou ao fim da contagem. F1.9 (Yan Wong §89): a morte-por-Livro
+  // É execução (opts.execucao) — só a execução entrega morte DEFINITIVA (fura vidaExtra, senão a cláusula "não revive sob o
+  // Livro" nunca se aplicaria: a vítima sobreviveria com 1 HP). Respeita a imunidade-a-execução (o Sun Wukong é o counter).
   for (const u of l.units) {
     const lv = ef(u, 'livro');
     if (lv && lv.dur === 1 && u.vivo) {
+      if (imuneA(st, u, 'execucao')) { log(st, { tipo: 'imune', alvo: u.key, efeito: 'execucao' }); continue; }   // §89: o Livro é execução → a imunidade do Sun Wukong o salva (registrado: parece bug, é design)
       log(st, { tipo: 'efeito', alvo: u.key, efeito: 'livro' });
-      matar(st, null, u);   // o próprio efeito 'livro' carrega naoRevive → o snapshot em matar sela o irrevivível
+      matar(st, null, u, { execucao: true });   // o próprio efeito 'livro' carrega naoRevive → o snapshot em matar sela o irrevivível
     }
   }
   // regra 5 — durações descontam no FIM do turno de quem carrega o efeito
@@ -1408,6 +1422,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'vidaExtra') { t.vidaExtra = { hp: e.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
       else if (e.t === 'revive') reviver(st, t, e);
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
+      else if (e.t === 'aceleraLivro') { const lv = ef(t, 'livro'); if (lv) { lv.dur = Math.max(1, lv.dur - 1); log(st, { tipo: 'efeito', alvo: t.key, efeito: 'livro' }); } }   // F1.9 (Yan Wong §89): acelera a contagem (piso 1 — não some sem matar)
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
       else if (e.t === 'stripBuffs') t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type));
       else if (e.t === 'stripOne') {
