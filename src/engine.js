@@ -92,7 +92,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô (retribuição); 'Pedra' = Medusa (marca → petrifica em 3); 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8).
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (Inari dá 1 de sinergia, F1.8).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
 const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -123,6 +123,7 @@ const GATILHOS_PASSIVA = {
   refleteControle: { campos: ['a', 'dur'], obrig: ['a'] },             // F1.8 (Perseu): quem TENTA um controle de `a` no dono leva o mesmo controle (na TENTATIVA — antes da imunidade)
   vulnerabilidade: { campos: ['v', 'deFuncao'], obrig: ['v'] },        // F1.8 (Aquiles): o dono sofre +v de atacantes da função `deFuncao` (lê o atacante)
   amplificaDot:    { campos: ['nome', 'v'], obrig: ['nome', 'v'] },     // F1.8 (Kagutsuchi): +v em todo tick do DoT `nome` no campo, enquanto o dono vive
+  sinergiaAliado:  { campos: ['aliado', 'contador', 'v'], obrig: ['aliado', 'contador', 'v'] },   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe v do contador
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -1130,6 +1131,11 @@ function iniciarTurno(st) {
       if (f.estado && !estadoOK(f.estado, u, st)) continue;   // estado compõe com o gatilho de turno
       if (f.gatilho === 'porTurno') rodarFaz(st, u, f.faz);
       else if (f.gatilho === 'abertura' && primeiro) rodarFaz(st, u, f.faz);
+      else if (f.gatilho === 'aCadaN' && f.faz && st.turno % f.n === 0) rodarFaz(st, u, f.faz);   // F1.8 (Inari): a cadência ABSOLUTA também dispara um `faz` (não só zera custo) — o outro ramo do aCadaN
+      else if (f.gatilho === 'sinergiaAliado' && primeiro) {   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe o contador (Kitsune começa com 1 Cauda)
+        const amigo = l.units.find(x => x.key === f.aliado);
+        if (amigo) { addContador(st, amigo, f.contador, f.v, null); }
+      }
     }
   }
   checarFim(st);

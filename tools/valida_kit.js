@@ -285,6 +285,10 @@ function validarPassiva(p, ctx, errs) {
     if (f.gatilho === 'antiReviveContador' && !V.contadores.includes(f.contador)) errs.push(`${c}: antiReviveContador.contador "${f.contador}" fora do vocabulário (válidos: ${V.contadores.join(', ')})`);   // F1.8: contador que bloqueia revive
     if (f.gatilho === 'vulnerabilidade' && 'deFuncao' in f && !V.funcoes.includes(f.deFuncao)) errs.push(`${c}: vulnerabilidade.deFuncao "${f.deFuncao}" fora do vocabulário (válidos: ${V.funcoes.join(', ')})`);   // F1.8 (Aquiles)
     if (f.gatilho === 'amplificaDot' && !V.dots.includes(f.nome)) errs.push(`${c}: amplificaDot.nome "${f.nome}" não é DoT (válidos: ${V.dots.join(', ')})`);   // F1.8 (Kagutsuchi)
+    if (f.gatilho === 'sinergiaAliado') {   // F1.8 (Inari)
+      if (typeof f.aliado !== 'string' || !f.aliado) errs.push(`${c}: sinergiaAliado.aliado deve ser a chave (string) do deus`);
+      if (!V.contadores.includes(f.contador)) errs.push(`${c}: sinergiaAliado.contador "${f.contador}" fora do vocabulário (válidos: ${V.contadores.join(', ')})`);
+    }
     if (f.gatilho === 'refleteControle') {   // F1.8 (Perseu): reflete controles nomeados; `a` = array de CONTROLES
       if (!Array.isArray(f.a) || f.a.length === 0) errs.push(`${c}: refleteControle.a deve ser array não-vazio de controles`);
       else for (const t of f.a) if (!V.controles.includes(t)) errs.push(`${c}: refleteControle.a "${t}" não é controle (válidos: ${V.controles.join(', ')})`);

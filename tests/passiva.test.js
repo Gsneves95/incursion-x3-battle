@@ -1273,6 +1273,38 @@ console.log('== F1.8 amplificaDot (Kagutsuchi): +v em todo tick de queimadura no
   console.log('  amplificaDot: field-wide enquanto vivo, escopado pelo nome do DoT');
 }
 
+console.log('== F1.8 aCadaN faz (Inari): a cadência ABSOLUTA dispara um faz (orbe periódico), não só zera custo ==');
+{
+  // time sem membro Verdejante: a geração normal nunca sorteia Verdejante, então o único
+  // orbe Verdejante possível vem do faz com para:'Verdejante' — isola o efeito da cadência.
+  E.GODS.tin = { nome: 'TIn', faccao: 'T', elem: 'Chama', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aCadaN', n: 3, faz: [{ t: 'orbGain', n: 1, para: 'Verdejante' }] }] } };
+  const st = E.novoEstado(['tin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 640);
+  st.ativo = 0;
+  st.turno = 2; let v = st.lados[0].orbs.Verdejante; E.iniciarTurno(st);
+  ok(st.lados[0].orbs.Verdejante === v, `turno 2 (2%3≠0): nenhum orbe Verdejante extra (${st.lados[0].orbs.Verdejante - v})`);
+  st.turno = 3; v = st.lados[0].orbs.Verdejante; E.iniciarTurno(st);
+  ok(st.lados[0].orbs.Verdejante === v + 1, `turno 3 (3%3=0): +1 orbe Verdejante do faz (${st.lados[0].orbs.Verdejante - v})`);
+  delete E.GODS.tin;
+  console.log('  aCadaN.faz: dispara em turno%n==0; para:Verdejante é FIXO (o outro ramo do aCadaN, o custoGratis, é o §9)');
+}
+
+console.log('== F1.8 sinergiaAliado (Inari→Kitsune): no 1º turno o aliado NOMEADO ganha o contador; sem ele, no-op ==');
+{
+  E.GODS.tin2 = { nome: 'TIn2', faccao: 'T', elem: 'Verdejante', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'sinergiaAliado', aliado: 'tks', contador: 'cauda', v: 1 }] } };
+  E.GODS.tks = { nome: 'TKs', faccao: 'T', elem: 'Verdejante', classe: 'Físico', funcao: 'Atacante', passiva: { nome: '-', desc: '-' } };
+  const st = E.novoEstado(['tin2', 'tks', 'zeus'], ['zeus', 'zeus', 'zeus'], 641);
+  const ks = st.lados[0].units[1];
+  st.ativo = 0; E.iniciarTurno(st);
+  ok((ks.contadores.cauda || 0) === 1, `Kitsune começa com 1 Cauda quando a Inari está no time (${ks.contadores.cauda || 0})`);
+  // sem a Inari: a Kitsune não recebe Cauda de sinergia
+  const st2 = E.novoEstado(['tks', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 642);
+  const ks2 = st2.lados[0].units[0];
+  st2.ativo = 0; E.iniciarTurno(st2);
+  ok((ks2.contadores.cauda || 0) === 0, `sem a Inari, a Kitsune não ganha Cauda (${ks2.contadores.cauda || 0})`);
+  delete E.GODS.tin2; delete E.GODS.tks;
+  console.log('  sinergiaAliado: só no primeiro turno (primeiro), acha o aliado por key; sem o aliado nomeado é no-op');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

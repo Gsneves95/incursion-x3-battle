@@ -1,0 +1,51 @@
+{
+  "key": "inari",
+  "nome": "Inari",
+  "faccao": "Japonesa",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Mensageiros Kitsune",
+    "desc": "A cada 3 turnos o time ganha 1 orbe de Verdejante; se a Kitsune está no time, ela começa com 1 Cauda.",
+    "fx": [
+      { "gatilho": "aCadaN", "n": 3, "faz": [ { "t": "orbGain", "n": 1, "para": "Verdejante" } ] },
+      { "gatilho": "sinergiaAliado", "aliado": "kitsune", "contador": "cauda", "v": 1 }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Espiga Dourada",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Colheita Abençoada",
+      "cost": { "Verdejante": 1 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "O time ganha 2 orbes de Verdejante.",
+      "fx": [ { "t": "orbGain", "n": 2, "para": "Verdejante" } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Bênção das Mil Portas",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time ganha 3 orbes livres e cura 15.",
+      "fx": [
+        { "t": "orbGain", "n": 3 },
+        { "t": "heal", "v": 15, "escopo": "time" }
+      ]
+    }
+  ]
+}
