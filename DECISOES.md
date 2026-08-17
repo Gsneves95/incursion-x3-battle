@@ -1338,6 +1338,14 @@ dono revisa igual, e se quiser algo diferente eu corrijo em commit novo (o fix-f
 commitar" cria exatamente a janela que o §38 fecha. **Não repetir a instrução — nem quando o dono a pedir; commitar
 primeiro é o certo mesmo contra o pedido, porque o revert não respeita a intenção.**
 
+**COROLÁRIO 2 (F1.8 — `| head` MASCARA o exit code, commitei quebrado 2×):** verifiquei o commit com
+`npm test 2>&1 | grep ... | head -2 && git commit`. O `head` fecha o pipe cedo (SIGPIPE) e o STATUS do pipeline vira o
+do `head` (0), NÃO o do `npm test` — então o `&& git commit` roda mesmo com a suíte VERMELHA. Commitei o Aquiles com
+nome inventado (cadeia) + colisão `FUNCOES` no concat, e o Perseu por cima, os dois quebrados no origin, sem perceber.
+**Regra: o gate de commit lê o EXIT CODE do teste, nunca texto grepado.** Rode `npm test; [ $? = 0 ] && git commit`
+(ou `set -o pipefail`), e para inspeção use `grep` SEM `head` (ou `tail`, que não fecha o pipe). Filtro de leitura ≠
+gate de decisão — o gate é o código de saída.
+
 **LIÇÃO (o furo veio de um adjetivo impreciso do dono, achado uma sessão depois):** a 1ª versão dizia "bloco
 COERENTE", e "coerente" não é verificável — engine+validador sem o teste migrado É coerente como feature, mas
 quebra a suíte. "Verde" é verificável; "coerente" é interpretação. **Critério de procedimento tem de ser TESTÁVEL,
