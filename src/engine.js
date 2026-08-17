@@ -14,6 +14,7 @@ const ELEMS = ['Tempestade', 'Umbra', 'Maré', 'Aurora', 'Chama', 'Verdejante'];
 //   resto                                                           -> Tipo do deus (Físico/Mágico)
 // A Defesa universal é 'Universal' e nenhum silêncio a alcança.
 const CLASSES = ['Físico', 'Mágico', 'Mental', 'Aflição'];
+const FUNCOES_VOCAB = ['Atacante', 'Guardião', 'Suporte', 'Controlador', 'Manipulador'];   // função do deus (vulnerabilidade.deFuncao, F1.8)
 
 // Alguns kits alternam de modo e trocam de classe com ele (Nezha).
 function classeDe(st, u, a) {
@@ -120,6 +121,8 @@ const GATILHOS_PASSIVA = {
   antiReviveContador:{ campos: ['contador'], obrig: ['contador'] },   // F1.8 (Ah Puch/Anubis): quem CAI carregando o contador X não revive (snapshot no ato da morte)
   antiReviveAura:  { campos: [], obrig: [] },                          // F1.8 (Cérberus): enquanto o DONO vive, inimigos não revivem (checado no ato do revive)
   refleteControle: { campos: ['a', 'dur'], obrig: ['a'] },             // F1.8 (Perseu): quem TENTA um controle de `a` no dono leva o mesmo controle (na TENTATIVA — antes da imunidade)
+  vulnerabilidade: { campos: ['v', 'deFuncao'], obrig: ['v'] },        // F1.8 (Aquiles): o dono sofre +v de atacantes da função `deFuncao` (lê o atacante)
+  amplificaDot:    { campos: ['nome', 'v'], obrig: ['nome', 'v'] },     // F1.8 (Kagutsuchi): +v em todo tick do DoT `nome` no campo, enquanto o dono vive
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -142,7 +145,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execu
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = [];                          // marcas ofensivas (Olho etc.) — VAZIO hoje; chega com a vulnerabilidade
@@ -204,6 +207,7 @@ const ESTADO_COND = {
 };
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
+  funcoes: FUNCOES_VOCAB,                              // função do deus (vulnerabilidade.deFuncao, F1.8)
   elementos: ELEMS,
   custo: [...ELEMS, 'livre'],                    // chaves válidas em cost{}
   alvos: [...Object.keys(PASSOS), 'auto'],       // valores válidos de ability.alvo
@@ -638,6 +642,25 @@ function reducaoDeclarativa(st, alvo, golpe) {
   }
   return r;
 }
+// amplificaDot (F1.8, Kagutsuchi): +v em todo tick do DoT `nome` NO CAMPO (ambos os lados), enquanto o dono vive.
+function ampDot(st, nome) {
+  let a = 0;
+  for (const lado of st.lados) for (const x of lado.units) { if (!x.vivo) continue; const g = kitDe(st, x), p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) if (f.gatilho === 'amplificaDot' && f.nome === nome) a += f.v; }
+  return a;
+}
+// vulnerabilidade PASSIVA (F1.8, Aquiles): o dono sofre +v de atacantes de uma FUNÇÃO (lê o atacante, não o golpe —
+// eixo distinto do `contra` do reducao). Aditivo (soma todas as fontes ativas do próprio alvo). Sem `deFuncao` = todo golpe.
+function vulnerabilidadeDeclarativa(st, alvo, atk) {
+  const g = kitDe(st, alvo); const p = g && g.passiva;
+  if (!p || !Array.isArray(p.fx)) return 0;
+  const fn = atk && kitDe(st, atk) && kitDe(st, atk).funcao;
+  let add = 0;
+  for (const f of p.fx) { if (f.gatilho !== 'vulnerabilidade') continue;
+    if (f.deFuncao && f.deFuncao !== fn) continue;
+    add += f.v; }
+  return add;
+}
 
 function calcDano(st, atk, alvo, base, kind, slot, golpe) {
   golpe = golpe || { slot, elem: atk && atk.elem };   // eixo `contra` lê o golpe (slot/classe/elem/alcance)
@@ -645,6 +668,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
   v += bonusDanoDeclarativo(st, atk, alvo);   // passivas declarativas (F1.2, gatilho bonusDano)
   if (ef(alvo, 'adormecido')) v += 8;                               // Cuca — passiva de Orfeu/Cuca (vulnerabilidade, não migrada)
   const vul = ef(alvo, 'vulneravel'); if (vul) v += vul.v;          // vulneravel (Durga): debuff "recebe +N de dano" — soma no dano de ENTRADA, antes de redução/escudo
+  v += vulnerabilidadeDeclarativa(st, alvo, atk);                   // vulnerabilidade PASSIVA por função do ATACANTE (Aquiles: +10 de Manipuladores)
   if (v < 0) v = 0;
 
   const irred = danoImune(st, atk);   // ogum/tyr migrados: danoIrredutivel declarativo (§37)
@@ -1032,6 +1056,7 @@ function rodarFaz(st, u, faz, tagKey) {
       for (const t of alvos) { t.vidaExtra = { hp: f.hp }; log(st, { tipo: 'efeito', alvo: t.key, efeito: 'vidaExtra' }); }
     }
     else if (f.t === 'cdShift' && f.soMaiorDoTime) cdShiftMaiorDoTime(st, u.lado, f.v);   // F1.6 (Huangdi porTurno): "a recarga mais longa do time −1". VARRE p/ ESCOLHER onde agir, mas o alvo é o PRÓPRIO lado e o jogador não escolhe nada — a garantia do FX_TURNO (sem alvo escolhido pelo jogador) fica INTACTA. Distinção a lembrar: varrer-p/-escolher ≠ varrer-p/-alvejar.
+    else if (f.t === 'selfHp') { u.hp = Math.max(1, u.hp + f.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -f.v, kind: 'puro' }); }   // F1.8 (Kagutsuchi porTurno): "perde N de HP por turno" — dreno no próprio dono, piso 1 (nunca se auto-mata)
   }
   const tag = tagKey || u.key;
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;
@@ -1064,8 +1089,9 @@ function iniciarTurno(st) {
     u.agiu = false;
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
-      u.hp = Math.max(ef(u, 'pisoVida') ? 1 : 0, u.hp - d.v);   // o piso também segura o DoT
-      log(st, { tipo: 'dot', alvo: u.key, efeito: d.nome, valor: d.v });
+      const dano = d.v + ampDot(st, d.nome);   // amplificaDot (F1.8, Kagutsuchi): +v em todo tick de `nome` no campo, enquanto o dono vive
+      u.hp = Math.max(ef(u, 'pisoVida') ? 1 : 0, u.hp - dano);   // o piso também segura o DoT
+      log(st, { tipo: 'dot', alvo: u.key, efeito: d.nome, valor: dano });
       if (u.hp === 0) { matar(st, null, u); break; }
     }
     if (!u.vivo) continue;

@@ -1,0 +1,98 @@
+{
+  "key": "aquiles",
+  "nome": "Aquiles",
+  "faccao": "Grega",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Calcanhar de Aquiles",
+    "desc": "Aquiles recebe 12 de redução de dano, mas sofre +10 de dano de Manipuladores.",
+    "fx": [
+      {
+        "gatilho": "reducao",
+        "v": 12
+      },
+      {
+        "gatilho": "vulnerabilidade",
+        "v": 10,
+        "deFuncao": "Manipulador"
+      }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Estocada de Peleu",
+      "cost": {
+        "Chama": 1
+      },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Lança Implacável",
+      "cost": {
+        "Chama": 2
+      },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "25 de dano puro a 1 inimigo (ignora redução e Defesa Destrutível).",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 25,
+          "kind": "puro"
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fúria de Aquiles",
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "4 golpes de 11 no mesmo alvo; Aquiles fica Invulnerável por 1 turno.",
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 11
+        },
+        {
+          "t": "dmg",
+          "v": 11
+        },
+        {
+          "t": "dmg",
+          "v": 11
+        },
+        {
+          "t": "dmg",
+          "v": 11
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "invulneravel",
+            "dur": 1
+          },
+          "escopo": "self"
+        }
+      ]
+    }
+  ]
+}

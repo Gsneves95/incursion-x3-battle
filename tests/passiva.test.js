@@ -1238,6 +1238,41 @@ console.log('== F1.8 refleteControle (Perseu): a TENTATIVA é o gatilho — refl
   console.log('  refleteControle: dispara na tentativa (antes da imunidade), escopado por `a`, sem loop (refletido)');
 }
 
+console.log('== F1.8 vulnerabilidade por-função (Aquiles): +v só de atacantes da função (lê o atacante) ==');
+{
+  E.GODS.taq = { nome: 'TAq', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'reducao', v: 12 }, { gatilho: 'vulnerabilidade', v: 10, deFuncao: 'Manipulador' }] } };
+  E.GODS.tman = { nome: 'TMan', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Manipulador', passiva: { nome: '-', desc: '-' } };
+  E.GODS.tatk = { nome: 'TAtk', faccao: 'T', elem: 'Chama', classe: 'Físico', funcao: 'Atacante', passiva: { nome: '-', desc: '-' } };
+  const st = E.novoEstado(['taq', 'zeus', 'zeus'], ['tman', 'tatk', 'zeus'], 635);
+  const aq = st.lados[0].units[0], man = st.lados[1].units[0], atk = st.lados[1].units[1];
+  let h = aq.hp; E.aplicarFx(st, man, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [aq]);
+  ok(h - aq.hp === 18, `Manipulador: 20 +10 vuln -12 red = 18 (${h - aq.hp})`);
+  h = aq.hp; E.aplicarFx(st, atk, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [aq]);
+  ok(h - aq.hp === 8, `Atacante: 20 -12 red, sem vuln = 8 (${h - aq.hp})`);
+  delete E.GODS.taq; delete E.GODS.tman; delete E.GODS.tatk;
+  console.log('  vulnerabilidade: lê a FUNÇÃO do atacante (eixo distinto do contra do reducao)');
+}
+
+console.log('== F1.8 amplificaDot (Kagutsuchi): +v em todo tick de queimadura no campo, enquanto o dono vive ==');
+{
+  E.GODS.tka = { nome: 'TKa', faccao: 'T', elem: 'Chama', classe: 'Mágico', funcao: 'Atacante', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'amplificaDot', nome: 'queimadura', v: 4 }] } };
+  const st = E.novoEstado(['tka', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 636);
+  const ka = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.dots.push({ nome: 'queimadura', v: 8, dur: 3 });
+  let h = foe.hp; st.ativo = 1; E.iniciarTurno(st);
+  ok(h - foe.hp === 12, `com o dono vivo: queimadura 8+4 = 12 (${h - foe.hp})`);
+  ka.vivo = false;
+  foe.dots = [{ nome: 'queimadura', v: 8, dur: 3 }]; h = foe.hp; st.ativo = 1; E.iniciarTurno(st);
+  ok(h - foe.hp === 8, `com o dono morto: queimadura volta a 8 (${h - foe.hp})`);
+  // veneno NÃO é amplificado (só queimadura)
+  const st2 = E.novoEstado(['tka', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 637);
+  const f2 = st2.lados[1].units[0]; f2.dots.push({ nome: 'veneno', v: 8, dur: 3 });
+  h = f2.hp; st2.ativo = 1; E.iniciarTurno(st2);
+  ok(h - f2.hp === 8, `veneno não é amplificado (nome: queimadura só) (${h - f2.hp})`);
+  delete E.GODS.tka;
+  console.log('  amplificaDot: field-wide enquanto vivo, escopado pelo nome do DoT');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
