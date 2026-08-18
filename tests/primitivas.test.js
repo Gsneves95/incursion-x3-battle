@@ -630,6 +630,39 @@ console.log('== 17. payload da fase: Dia favorece Aurora / pune Umbra; Noite esp
   console.log('  Dia: Aurora+8/Umbra−5 · Noite espelha · global por elemento · faseDur reseta por escrita (troca = relógio novo)');
 }
 
+// ------------------------------------------------------------ 18. RASTREIO curado-no-turno-anterior (§97, Tsukuyomi)
+console.log('== 18. rastreio de dois tempos: curado-agora vira curado-antes no giro; janela de 1 turno; borda mesmo-turno ==');
+{
+  const heal = u => E.aplicarFx(st, u, [{ t: 'heal', v: 20, escopo: 'self' }], A('nenhum'), []);
+  let st;
+  const novo = () => { st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 700); return st; };
+  const bateT = foe => { const h = foe.hp; E.aplicarFx(st, st.lados[0].units[0], [{ t: 'dmg', v: 12 }], A('inimigo', 'basico'), [foe]); return h - foe.hp; };
+
+  // ESCRITOR + PROMOTOR: cura marca 'agora'; o iniciarTurno promove 'agora'→'antes' (dos DOIS lados)
+  novo(); let foe = st.lados[1].units[0]; foe.hp = 50; heal(foe);
+  ok(foe.curadoAgora && !foe.curadoAntes, 'cura marca curadoAgora, não curadoAntes ainda');
+  st.ativo = 1; E.iniciarTurno(st);
+  ok(!foe.curadoAgora && foe.curadoAntes, 'o giro promove agora→antes (inimigo é do lado INATIVO — a promoção cruza o lado)');
+  ok(bateT(foe) === 22, `Tsukuyomi lê alvoCuradoAntes: 12+10 = 22 (${bateT(foe)})`);
+
+  // JANELA de 1 turno: mais um giro sem nova cura → fecha
+  novo(); foe = st.lados[1].units[0]; foe.hp = 50; heal(foe);
+  st.ativo = 1; E.iniciarTurno(st); st.ativo = 0; E.iniciarTurno(st);
+  ok(!foe.curadoAntes, 'dois giros sem nova cura: a janela fecha (curadoAntes volta a false)');
+  ok(bateT(foe) === 12, `sem o bônus depois da janela: 12 (${bateT(foe)})`);
+
+  // BORDA mesmo-turno: curar e bater no MESMO turno NÃO conta (é o turno ANTERIOR que importa)
+  novo(); foe = st.lados[1].units[0]; foe.hp = 50; heal(foe);
+  ok(bateT(foe) === 12, `curou e bateu no mesmo turno: 12, sem bônus (só 'agora', não 'antes')`);
+
+  // ESCRITOR só conta cura REAL: bloqueada (noHeal) e no-teto não marcam
+  novo(); foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'noHeal', dur: 2 }); heal(foe);
+  ok(!foe.curadoAgora, 'cura BLOQUEADA (noHeal) não marca o rastreio');
+  novo(); foe = st.lados[1].units[0]; foe.hp = foe.maxHp; heal(foe);
+  ok(!foe.curadoAgora, 'cura no TETO (hp cheio, nada subiu) não marca o rastreio');
+  console.log('  escritor=cura real · promotor gira agora→antes nos 2 lados · janela 1 turno · mesmo-turno não conta');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

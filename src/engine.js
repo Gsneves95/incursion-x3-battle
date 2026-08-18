@@ -183,7 +183,7 @@ const CONDICOES = {
   alvoHp:          { hp: true },                                   // {op:'cheio'|'abaixo'|'acima', v?}
   atacanteElem:    { sub: ELEMS },                                 // quem ataca é do elemento (escopo aliados)
   alvoMarca:       { sub: [...MARCAS, 'qualquer'] },               // alvo tem a marca ofensiva nomeada, OU 'qualquer' (tem qualquer marca) — espelha alvoDebuff. §83
-  alvoCuradoAntes: { bool: true, pendente: 'o motor ainda não rastreia cura-no-turno-anterior' },
+  alvoCuradoAntes: { bool: true },   // §97 (Tsukuyomi): alvo foi curado no turno ANTERIOR (rastreio de dois tempos — não mais pendente)
 };
 // `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
 // ATAQUE) e de `contra` (defensivo: lê o golpe que chega). A cura não tem ataque: a condição lê o CONTEXTO da
@@ -322,6 +322,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
     hp: 120, maxHp: 120, vivo: true, agiu: false,
     golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
+    curadoAgora: false, curadoAntes: false,   // F1.9 (Tsukuyomi §97): RASTREIO de dois tempos — 'curado neste turno' (escrito em curar) e 'curado no turno ANTERIOR' (leitor, alvoCuradoAntes). Promovidos (agora→antes) no iniciarTurno p/ TODAS as unidades dos DOIS lados: é leitura OFENSIVA cruzando o lado, não ancorada ao dono (≠ §88)
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
     // --- primitivas ---
@@ -571,6 +572,7 @@ function condOK(q, atk, alvo, st) {
     return false;
   }
   if ('atacanteElem' in q) return atk.elem === q.atacanteElem;
+  if ('alvoCuradoAntes' in q) return !!alvo.curadoAntes;   // §97 (Tsukuyomi): o alvo foi curado no turno ANTERIOR (rastreio de dois tempos)
   return false;
 }
 
@@ -923,7 +925,7 @@ function curar(st, u, v, curador = null, via = null) {
   const bonus = bonusCuraDeclarativo(st, u, curador, via);
   const antes = u.hp;
   u.hp = Math.min(u.maxHp, u.hp + v + bonus);
-  if (u.hp > antes) log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes });
+  if (u.hp > antes) { log(st, { tipo: 'cura', alvo: u.key, valor: u.hp - antes }); u.curadoAgora = true; }   // §97: ESCRITOR do rastreio — só cura REAL (hp subiu; bloqueada/no teto não conta)
   // gatilho aoCurar (F1.2 sessão 10) — quando um aliado é curado, o DONO reage com um faz NO CURADO (Hera:
   // +10 escudo). Difere do aoCair: o SUJEITO do evento (o curado `u`) NÃO é o dono; o efeito vai nele, o
   // crédito (passiva) vai no dono. Difere do bonusCura: dispara efeito DEPOIS, não modifica a magnitude.
@@ -1113,6 +1115,10 @@ function rodarNoAtor(st, dono, ator, payload) {
 
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
+  // §97 (Tsukuyomi): PROMOTOR do rastreio de cura — 'agora' vira 'antes', 'agora' zera. Roda p/ TODAS as unidades
+  // dos DOIS lados a cada início de turno (não só a ativa): a leitura é OFENSIVA e cruza o lado, então a janela
+  // 'curado no turno anterior' tem de ser de um turno só, global. ANTES da regen deste turno (que reescreve 'agora').
+  for (const lado of st.lados) for (const u of lado.units) { u.curadoAntes = u.curadoAgora; u.curadoAgora = false; }
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
   l.estreou = true;
   l.converteu = false;

@@ -1481,6 +1481,45 @@ console.log('== §96 Amaterasu: Amanhecer ativa o Dia + cura; passiva reducao-no
   console.log('  Amanhecer→Dia+cura · reducao-no-Dia (some com a fonte) · Luz da Caverna 18→36(28+payload) e trava no Dia');
 }
 
+console.log('== §97 Tsukuyomi: passiva +10 a curado-no-anterior; Anoitecer escreve a Noite + adormece; Julgamento silencia na Noite ==');
+{
+  // passiva pelo caminho REAL da batalha: inimigo curado, gira o turno, Tsukuyomi bate +10 (e a Noite não interfere: alvo Umbra? não — o payload some sem fase)
+  let st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 720);
+  let t = st.lados[0].units[0], foe = st.lados[1].units[0]; foe.hp = 50;
+  E.aplicarFx(st, foe, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'nenhum' }, []);
+  st.ativo = 1; E.iniciarTurno(st);   // promove o rastreio do inimigo (lado inativo)
+  let h = foe.hp; E.aplicarFx(st, t, E.GODS.tsukuyomi.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [foe]);
+  ok(h - foe.hp === 22, `passiva: +10 contra curado-no-turno-anterior (12+10=22): ${h - foe.hp}`);
+  // um inimigo NÃO curado no anterior: sem bônus
+  const foe2 = st.lados[1].units[1]; h = foe2.hp;
+  E.aplicarFx(st, t, E.GODS.tsukuyomi.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [foe2]);
+  ok(h - foe2.hp === 12, `sem cura no anterior: 12, sem bônus (${h - foe2.hp})`);
+
+  // Anoitecer: escreve a Noite (escritor da metade que estava ociosa) + adormece 1 inimigo
+  st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 721);
+  t = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  E.aplicarFx(st, t, E.GODS.tsukuyomi.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'inimigo', slot: 'habilidade' }, [foe]);
+  ok(st.fase === 'Noite' && st.faseDur === 3, `Anoitecer escreve a Noite por 3 (${st.fase}/${st.faseDur})`);
+  ok(!!E.ef(foe, 'adormecido'), 'e adormece o inimigo alvo');
+  // na Noite o payload vale: um Umbra bate +8 (a própria Tsukuyomi é Umbra)
+  const h2 = st.lados[1].units[1].hp;
+  E.aplicarFx(st, t, [{ t: 'dmg', v: 12 }], { alvo: 'inimigo', slot: 'basico' }, [st.lados[1].units[1]]);
+  ok(h2 - st.lados[1].units[1].hp === 20, `Noite acordada: Tsukuyomi (Umbra) bate 12+8=20 (${h2 - st.lados[1].units[1].hp})`);
+
+  // Julgamento da Lua: 18 área; na Noite, Silencia (selado) todos
+  st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 722);
+  t = st.lados[0].units[0]; const mil = E.GODS.tsukuyomi.ab.find(a => a.slot === 'milagre').fx;
+  let e0 = st.lados[1].units[0]; h = e0.hp;
+  E.aplicarFx(st, t, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
+  ok(h - e0.hp === 18 && !E.ef(e0, 'selado'), `fora da Noite: 18 e SEM silêncio (${h - e0.hp})`);
+  st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 723);
+  t = st.lados[0].units[0]; E.definirFase(st, 'Noite', 3); e0 = st.lados[1].units[0]; h = e0.hp;
+  E.aplicarFx(st, t, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
+  // 18 + 8 (Tsukuyomi Umbra na sua Noite) = 26; e silencia todos
+  ok(h - e0.hp === 26 && !!E.ef(e0, 'selado'), `na Noite: 18+8(payload)=26 e Silencia todos (${h - e0.hp}/${!!E.ef(e0, 'selado')})`);
+  console.log('  passiva +10 a curado-no-anterior · Anoitecer acorda a Noite + adormece · Julgamento silencia na Noite');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -1531,7 +1570,7 @@ err(g => g.passiva.fx[0].quando = { foo: true }, 'condição desconhecida');    
 err(g => g.passiva.fx[0].quando = { alvoElem: 'Plasma' }, 'fora do sub-vocabulário'); // valor fora do sub-vocab
 { const g = base(); g.passiva.fx[0].quando = { alvoMarca: 'olho' }; ok(validarDeus(g).length === 0, 'alvoMarca:olho agora é VÁLIDA (§83, saiu de pendente): ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx[0].quando = { alvoMarca: 'nuvem' }, 'fora do sub-vocabulário'); // marca fora do vocabulário FECHADO de MARCAS
-err(g => g.passiva.fx[0].quando = { alvoCuradoAntes: true }, 'reservada');       // condição pendente (cura-anterior) — segue reservada
+{ const g = base(); g.passiva.fx[0].quando = { alvoCuradoAntes: true }; ok(validarDeus(g).length === 0, 'alvoCuradoAntes agora é VÁLIDA (§97, saiu de pendente): ' + JSON.stringify(validarDeus(g))); }   // era reservada; o rastreio de dois tempos existe (Tsukuyomi)
 err(g => g.passiva.fx[0].v = 0, 'v mal formado');                               // v não-positivo
 err(g => g.passiva.fx[0].escopo = 'ambos', 'escopo inválido');                  // escopo fora do conjunto
 err(g => g.passiva.fx[0].zzz = 1, 'não pertence ao gatilho');                    // campo fora do gatilho bonusDano

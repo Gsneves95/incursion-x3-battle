@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §97 — RASTREIO "curado no turno anterior" (Tsukuyomi): dois tempos, promoção global, e a família que era 1
+
+**A família era 1 (§46 de novo).** A varredura da cura (F1.2 s8) rotulou Freyja/Oxum/Tsukuyomi como `alvoCuradoAntes`. Mas
+Freyja e Oxum são `aoCurar` → aplicam `dmgUp` no curado: "EU curo, EU buffo meu aliado" — o curador controla as duas pontas,
+então um BUFF-com-duração basta, **sem rastreio**. A Tsukuyomi lê o histórico de cura de um INIMIGO que ela não controla —
+leitura OFENSIVA que precisa do estado rastreado. O rastreio nasce **singleto**. O rótulo enganou; a substância é que decide.
+
+**A FORMA: dois booleanos rotativos (`curadoAgora` / `curadoAntes`).** O tempo é a diferença com o `primeiroPorTurno` da
+Bastet (§88): lá era "neste turno", aqui é "no turno ANTERIOR". Um bit não basta — é preciso distinguir "curado agora" de
+"curado no turno passado". Recusadas: (a) um MARCADOR-efeito aplicado na cura falha a borda cura-no-mesmo-turno (uma cura
+reativa no turno da Tsukuyomi marcaria o alvo e daria +10 indevido); (b) um contador único (`==1`) funciona mas a magia do 1
+e a sentinela de "nunca curado" são mais frágeis que dois bits nomeados. Dois booleanos leem como o que são.
+
+**Os quatro pontos, nascendo juntos (a lição do §88):**
+1. **Casa** — `curadoAgora/curadoAntes:false` em `novaUnidade`.
+2. **Escritor** — em `curar`, no ponto exato de `hp > antes`: só cura REAL marca (bloqueada por `noHeal` ou no teto NÃO marca).
+3. **Promotor** — em `iniciarTurno`, `antes = agora; agora = false` para **TODAS as unidades dos DOIS lados**, ANTES da regen.
+4. **Leitor** — `condOK`: `alvoCuradoAntes → alvo.curadoAntes`; tirei o `pendente` do schema (o validador o recusava).
+
+**A ANCORAGEM — e por que difere do §88 (o ponto que "vale duas rodadas ou nenhuma" se errar).** O resetador da Bastet mora
+no turno do DONO (defensivo: o flag vive do golpe-que-chega ao próximo turno dela). O `curadoAntes` é OFENSIVO e cruza o lado:
+a Tsukuyomi lê o estado do INIMIGO quando ELA ataca. Então a promoção roda em **todo início de turno, para os dois lados** —
+não ancorada ao dono. A janela "curado no turno anterior" fica de **um turno só**: inimigo cura no turno-E → início do turno-T
+promove (`antes=true`, Tsukuyomi +10) → próximo início-E promove de novo (`antes=false`, fecha). Ancorar à leitora (como a
+Bastet) deixaria o flag do inimigo sem rotacionar direito. Travado em teste: a janela de 1 turno E a borda cura-no-mesmo-turno.
+
+**Tsukuyomi (IMPL 66) — fase + rastreio, sem 3º mecanismo (§93 checado):** básico 12; Anoitecer = escritor da NOITE (§96,
+que estava construída e ociosa — payload sem escritor) + `adormecido`; Julgamento da Lua 18 área + `condicional se:{fase:Noite}`
+→ `selado` (Silenciar); passiva = o rastreio. **Ela acorda a metade NOITE** — o payload Umbra/Aurora da Noite, que existia sem
+quem o ativasse (§95, o gêmeo do §61, resolvido pela ponta que faltava). Nenhuma entrada nova no auditor (18 área ≤ teto).
+
+---
+
 ## §96 — O PAYLOAD DA FASE (a fase era um flag inerte) + Amaterasu; e a alavanca real medida (2, não 7)
 
 **A varredura mudou a premissa, o dono escolheu "payload + Amaterasu".** A fase tinha SETE leitores no catálogo mas **UM

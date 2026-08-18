@@ -1,0 +1,53 @@
+{
+  "key": "tsukuyomi",
+  "nome": "Tsukuyomi",
+  "faccao": "Japonesa",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Vingança do Banquete",
+    "desc": "Tsukuyomi causa +10 de dano contra inimigos que foram curados no turno anterior.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoCuradoAntes": true } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Lâmina Crescente",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Anoitecer",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Ativa a NOITE por 3 turnos (aliados Umbra +8 de dano; inimigos Aurora causam 5 menos); adormece 1 inimigo por 1 turno.",
+      "fx": [
+        { "t": "fase", "v": "Noite", "dur": 3 },
+        { "t": "apply", "eff": { "type": "adormecido", "dur": 1 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Julgamento da Lua",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
+        { "t": "condicional", "se": { "fase": "Noite" }, "entao": [ { "t": "apply", "eff": { "type": "selado", "dur": 2 }, "escopo": "todosInimigos" } ] }
+      ]
+    }
+  ]
+}
