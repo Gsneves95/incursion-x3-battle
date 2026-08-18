@@ -573,6 +573,33 @@ console.log('== 15. multi-golpe distribuído: N golpes repartidos igual, EXTRA p
   console.log('  8 golpes/3 alvos = 9/9/6 · extra p/ os primeiros SELECIONADOS (ordem manda) · 1 alvo = 24');
 }
 
+// ------------------------------------------------------------ 16. remoção SELETIVA de fase (§94, Hou Yi)
+console.log('== 16. fase.remove: limpa SÓ a fase nomeada — remove:Dia zera o Dia, não toca a Noite ==');
+{
+  // O modelo é UM st.fase global, sem dono, mutuamente exclusivo (só um valor por vez). A remoção é seletiva:
+  // remove:'Dia' zera SÓ se a fase atual for Dia. Se for Noite (ou nula), é no-op — o "abater o Sol" não apaga a Lua.
+  const A = a => ({ alvo: a, slot: 'habilidade' });
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 500);
+  E.definirFase(st, 'Dia', 3);
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'fase', remove: 'Dia' }], A('nenhum'), []);
+  ok(st.fase === null && st.faseDur === 0, `remove:Dia com Dia ativo → limpo (fase=${st.fase}, dur=${st.faseDur})`);
+
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 501);
+  E.definirFase(st, 'Noite', 3);
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'fase', remove: 'Dia' }], A('nenhum'), []);
+  ok(st.fase === 'Noite' && st.faseDur === 3, `remove:Dia com Noite ativa → NÃO toca (fase=${st.fase}, dur=${st.faseDur})`);
+
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 502);
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'fase', remove: 'Dia' }], A('nenhum'), []);
+  ok(st.fase === null, 'remove:Dia sem fase alguma → no-op silencioso');
+
+  // e a ATIVAÇÃO (a outra forma do mesmo fx) segue funcionando — não quebrei o escritor
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 503);
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'fase', v: 'Dia', dur: 3 }], A('nenhum'), []);
+  ok(st.fase === 'Dia' && st.faseDur === 3, 'fase.v ainda ATIVA (a remoção não quebrou o escritor)');
+  console.log('  remove:Dia zera o Dia · poupa a Noite · no-op sem fase · ativação (v) intacta');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

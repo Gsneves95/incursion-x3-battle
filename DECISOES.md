@@ -6,6 +6,61 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §94 — REMOÇÃO SELETIVA DE FASE (Hou Yi): a varredura confirmou "sai em ~3 linhas", com uma dobra (seletivo) e uma dormência
+
+**A VARREDURA DA FAMÍLIA (o dono exigiu, antes de escrever) — duas perguntas, duas respostas:**
+
+1. **Quantos removem fase? Seletivo?** No catálogo inteiro, **só o Hou Yi** remove fase — nasce SINGLETON, não família (o dono
+   já suspeitava: "um gancho contra os três do Susanoo"). E é **SELETIVO**: "remove o DIA" (não a Noite). Isso MUDA A FORMA — não
+   é `fase = null` incondicional (que apagaria a Noite também), é **limpar SÓ se a fase atual for a nomeada**. A dobra que o dono
+   mandou procurar existe, e é pequena: um `if (st.fase === e.remove) definirFase(st, null)`.
+
+2. **Dono / disputa / duração?** O modelo (confirmado na implementação, como o dono decidiu na sessão 15): **UM `st.fase` global,
+   sem dono, Dia/Noite mutuamente exclusivos** (campo único), duração global `st.faseDur`, **último-a-escrever-vence**;
+   `definirFase(st, null)` já zera fase E duração, e a expiração natural (turno) usa o MESMO caminho. A remoção é só mais um
+   escritor que zera — **não precisa de dono, disputa nem duração nova**: dois deuses de fase em lados opostos já resolvem pelo
+   campo único (o último escreve), e o "abater o Sol" limpa o Dia global de quem quer que o tenha erguido. **Cabe no modelo. Nada
+   a trazer antes.** Logo, escrevi o Hou Yi na mesma sessão (a condição do dono).
+
+**FORMA:** `{t:'fase', remove:'Dia'}` — o mesmo fx que ATIVA (`v:'Dia', dur:N`) agora também REMOVE (`remove:'Dia'`), seletivo.
+`remove` ∈ {Dia,Noite}, validado; `remove` fora do fx `fase` é erro em voz alta (typo não passa). ~3 linhas de motor + validação.
+
+**Hou Yi (IMPL 64) — fiel ao catálogo:** básico `kind:'perfurante'` (15, como Horus/Ogum); habilidade 25 **/40 vs Aurora**
+(`seCond alvoElem`) + `fase remove:Dia`; milagre **Nove Flechas** = 9×5 distribuído (§92) **/8 vs Aurora**; passiva
+`ignoraInalvejavel` + `bonusDano +8 vs buff`. Duas entradas de allowlist (bumps condicionais por elemento): **Abater o Sol** (40)
+e **Nove Flechas** (72 = 9×8 se TODAS em Aurora — o **72 segue candidato a revisão**, não aprovado).
+
+**A DORMÊNCIA HONESTA (§61 ao contrário):** os ESCRITORES de fase (Amaterasu=Dia, Tsukuyomi=Noite) **ainda não estão
+construídos** — só um LEITOR (Itzamná). Então a remoção do Hou Yi é correta e testada em isolamento, mas **em partida real fica
+dormente até a Amaterasu existir** (sem Dia erguido, não há o que remover). É o inverso do §61 (lá o motor esperava o kit; aqui
+o CONSUMIDOR chega antes do PRODUTOR) — e é bom: quando a Amaterasu cair, a interação já está pronta e travada em teste. O resto
+do Hou Yi (perfurante, 9-flechas, ignora-inalvejável, +8 vs buff) é live já. Anotado, não escondido.
+
+---
+
+## §93 — COINCIDÊNCIA DE FAMÍLIA NÃO É ESCREVIBILIDADE: o §46 sobrevive ao §54 (são perguntas diferentes)
+
+**A virada do §92 destilada.** Aprovei "multi-golpe distribuído" como FRENTE com três consumidores (Susanoo/Babi/Hou Yi). O §54
+validou que os três COINCIDEM no mecanismo — e coincidem. Mas só o Babi era escrevível: Susanoo e Hou Yi **travam noutra coisa**
+(dispel+combo+tamanho-de-lado; remoção-de-fase). **O §54 valida a COINCIDÊNCIA do mecanismo — não os OUTROS mecanismos que cada
+consumidor ARRASTA.** São duas perguntas: (1) "esses kits coincidem no mecanismo X?" e (2) "esses kits são escrevíveis com o que
+existe + X?". Eu tratei como uma. O rótulo de família enganou **mesmo DEPOIS do §54** — o §46 (nome não é evidência) tem um
+alcance maior do que eu registrara: vale para a família inteira, e sobrevive ao teste que eu achava que o dissolvia.
+
+**A regra nova:** ao aprovar uma frente por um mecanismo comum, rode o §54 para a coincidência E uma varredura de
+ESCREVIBILIDADE por consumidor (quais OUTROS mecanismos cada kit puxa, e quais existem). A coincidência dá o mecanismo; a
+escrevibilidade dá QUANTOS deuses saem na leva. Quase sempre são números diferentes — e o menor é o honesto (§90).
+
+**Dois acréscimos aos ledgers:**
+- **"Método expõe bug anterior" (o mais valioso do §92):** o auditor de teto era **cego ao total empilhado** de um distribuído
+  (via `e.v`, não N×v). Sem a correção, a PRÓXIMA distribuída passaria em silêncio. Some à lista onde o método (somar o pior
+  caso) revela o furo que a régua velha não via — como o 30-área do Xangô (§66).
+- **§61 em 4/4:** o Babi fechando a metade OCIOSA do Medo (a Mula aplicava `medo` sem `dmgDown` desde a F1.4, esperando quem
+  preenchesse) é o §60 se cumprindo como previsto. Quatro mecanismos que o motor tinha e nenhum kit exercia, agora provados: Sun
+  Wukong (execução-imune), Yan Wong (naoRevive-em-apply), Shiva (ignoraPiso), Babi (dmgDown do Medo). Zero falha em quatro.
+
+---
+
 ## §92 — MULTI-GOLPE DISTRIBUÍDO: mecanismo + Forma A + auditor N×v; e a varredura dos consumidores só deixou 1 (Babi)
 
 **O ACHADO DE BALANCEAMENTO (maior que o de interface).** O auditor de teto olha CADA golpe (`e.v`) — mas o TOTAL empilhado

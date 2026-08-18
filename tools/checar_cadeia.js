@@ -71,7 +71,9 @@ function conferir(prosaByKey, deusesArray) {
       const dP = danosProsa(ps.efeito).sort((a, b) => a - b), dM = danosFx(ab.fx).sort((a, b) => a - b);
       if (dP.length === 0 && dM.length === 0) { /* nada a conferir */ }
       else if (fxDinamico) reg(g.key, slot, 'dano', 'naoConf', 'fx dinâmico (alterna/opcoes): valor mora no motor');
-      else if (dM.length > 1 || /golpes|por (Disco|Combo|Cauda|Podrid|Atadura|inimigo|aliado)/i.test(ps.efeito))
+      else if (dM.length > 1 || (ab.fx || []).some(e => e.golpes) || /golpes|por (Disco|Combo|Cauda|Podrid|Atadura|inimigo|aliado)/i.test(ps.efeito))
+        // multi-golpe DISTRIBUÍDO (§92): a CONTAGEM mora na prosa ("9 flechas de 5"), o valor-por-golpe no motor —
+        // detecta pelo fx (`golpes`), não pela palavra da prosa (a prosa diz "flechas", "golpes", etc.: robusto ao substantivo).
         reg(g.key, slot, 'dano', 'naoConf', `multi/condicional: prosa=${JSON.stringify(dP)} motor=${JSON.stringify(dM)}`);
       else reg(g.key, slot, 'dano', mesmoArr(dP, dM) ? 'match' : 'diverge', `motor ${JSON.stringify(dM)} ≠ prosa ${JSON.stringify(dP)}`);
       const hP = curasProsa(ps.efeito).sort((a, b) => a - b), hM = curasFx(ab.fx).sort((a, b) => a - b);

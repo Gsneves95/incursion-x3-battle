@@ -1,0 +1,51 @@
+{
+  "key": "houyi",
+  "nome": "Hou Yi",
+  "faccao": "Chinesa",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Olho de Águia",
+    "desc": "Hou Yi ignora Inalvejável; causa +8 de dano contra inimigos com qualquer buff.",
+    "fx": [
+      { "gatilho": "ignoraInalvejavel" },
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoBuff": "qualquer" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Flecha Solar",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano perfurante a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15, "kind": "perfurante" } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Abater o Sol",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "25 de dano a 1 inimigo (40 se ele for Aurora); remove o DIA.",
+      "fx": [
+        { "t": "dmg", "v": 25, "seCond": { "quando": { "alvoElem": "Aurora" }, "v": 40 } },
+        { "t": "fase", "remove": "Dia" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Nove Flechas",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "distribui",
+      "desc": "9 flechas de 5 de dano (8 contra alvos de Aurora), repartidas entre os inimigos que você escolher. O extra da divisão vai para os primeiros selecionados.",
+      "fx": [ { "t": "dmg", "v": 5, "golpes": 9, "seCond": { "quando": { "alvoElem": "Aurora" }, "v": 8 } } ]
+    }
+  ]
+}

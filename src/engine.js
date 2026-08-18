@@ -262,6 +262,7 @@ const VOCAB = {
     'soSe',   // apply FILTRADO por status do alvo (F1.6, Chaac): aplica só nos alvos que casam a condição (atordoa só os Encharcados)
     'ignoraInvuln', 'ignoraPiso',   // F1.9 (Shiva/Odin §91): dmg fura Invulnerabilidade / o 'não cai abaixo de 1 HP' — flags de habilidade que fluem p/ o bater
     'golpes',   // F1.9 (§92): multi-golpe DISTRIBUÍDO — N golpes de v repartidos igual entre os alvos selecionados (alvo:'distribui')
+    'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1501,7 +1502,13 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       if (e.provoca && alvos[0]) aplicar(st, alvos[0], { type: 'taunt', dur: e.dur, origem: u.uid });
     }
     if (e.t === 'copiar') copiar(st, u, e);
-    if (e.t === 'fase') definirFase(st, e.v, e.dur);         // PRIMITIVA estado global Dia/Noite
+    if (e.t === 'fase') {
+      // PRIMITIVA estado global Dia/Noite. `remove` (§94, Hou Yi "abater o Sol"): limpa a fase SELETIVAMENTE —
+      // só se a fase atual for a nomeada (remove:'Dia' não toca a Noite). O modelo é UM `st.fase` global, sem dono,
+      // mutuamente exclusivo, último-a-escrever-vence (§ da sessão 15); a remoção é só mais um escritor que zera.
+      if (e.remove) { if (st.fase === e.remove) definirFase(st, null); }
+      else definirFase(st, e.v, e.dur);
+    }
     if (e.t === 'atordoaMenorHp') {
       const vivos = inimigos.filter(x => x.vivo);
       if (vivos.length) {

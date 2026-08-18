@@ -45,6 +45,12 @@ function validarFx(f, ctx, errs) {
     errs.push(`${ctx}: dot com nome fora do vocabulário: "${f.nome}" (válidos: ${V.dots.join(', ')})`);
   if (f.t === 'contador' && !V.contadores.includes(f.nome))
     errs.push(`${ctx}: contador com nome fora do vocabulário: "${f.nome}" (válidos: ${V.contadores.join(', ')})`);
+  if (f.t === 'fase') {   // F1.9 (§94): ativa (v ∈ Dia/Noite) OU remove SELETIVAMENTE (remove ∈ Dia/Noite). Uma das duas.
+    const faseVoc = (V.estadoCondDef.fase && V.estadoCondDef.fase.sub) || ['Dia', 'Noite'];
+    if ('remove' in f) { if (!faseVoc.includes(f.remove)) errs.push(`${ctx}: fase.remove fora do vocabulário: "${f.remove}" (válidos: ${faseVoc.join(', ')})`); }
+    else if (!faseVoc.includes(f.v)) errs.push(`${ctx}: fase (ativação) exige v ∈ ${faseVoc.join('/')} — ou 'remove' p/ limpar (veio "${f.v}")`);
+  }
+  if ('remove' in f && f.t !== 'fase') errs.push(`${ctx}: 'remove' só existe no fx 'fase' (remoção seletiva de Dia/Noite); veio no fx "${f.t}"`);
   if ('limiar' in f) {   // gatilho-no-acúmulo: contador cruza `em` -> aplica `aplica` (F1.1)
     const L = f.limiar;
     if (!L || typeof L !== 'object') errs.push(`${ctx}: limiar não é objeto`);
