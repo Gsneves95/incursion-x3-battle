@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §98 — QUEM CONTROLA AS DUAS PONTAS não precisa de rastreio; quem LÊ o histórico de outro precisa
+
+**A distinção que o rótulo "curado antes" escondia** (o dono passou 3 no prompt, a varredura achou 1). Freyja/Oxum e
+Tsukuyomi todos "reagem a uma cura", mas de lados opostos da causalidade:
+- **Controla as duas pontas** (Freyja: EU curo → EU buffo meu aliado). O mesmo ator é dono do EVENTO e da REAÇÃO. Um
+  **buff com duração** aplicado no instante do evento CARREGA o estado para frente — nada a rastrear. `aoCurar → dmgUp dur:2`.
+- **Lê o histórico de quem NÃO controla** (Tsukuyomi: um INIMIGO foi curado por alguém → EU puno). O leitor não é dono do
+  evento, e o momento da leitura (o ataque dela) é OUTRO, desacoplado da cura. Não há buff-portador que o leitor controle,
+  então o estado tem de ser **RASTREADO** na vítima do evento (§97).
+
+**A regra geral, porque vai reaparecer:** toda condição da forma "Y aconteceu com Z" racha por QUEM pergunta.
+- Se quem pergunta CAUSOU o Y → aplique um efeito no instante do Y (buff/debuff com duração). Sem rastreio.
+- Se quem pergunta só OBSERVA o Y (causado por outro) → rastreie o estado em Z, com os quatro pontos do §88.
+O rótulo pela AÇÃO ("curado", "atingido", "morto") cobre os dois e apaga a diferença; a pergunta certa é **de quem é o
+evento e de quem é a leitura**. Mesmo erro do §46 (nome não é evidência), agora no eixo da CAUSALIDADE, não do mecanismo.
+
+---
+
 ## §97 — RASTREIO "curado no turno anterior" (Tsukuyomi): dois tempos, promoção global, e a família que era 1
 
 **A família era 1 (§46 de novo).** A varredura da cura (F1.2 s8) rotulou Freyja/Oxum/Tsukuyomi como `alvoCuradoAntes`. Mas
