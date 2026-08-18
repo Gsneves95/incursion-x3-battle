@@ -544,6 +544,35 @@ console.log('== 14. primeiroPorTurno: flag por-turno — 1º golpe único reduz,
   console.log('  1º único reduz · 2º não · AoE não marca · reset no turno do dono · dois dmg = dois golpes');
 }
 
+// ------------------------------------------------------------ 15. multi-golpe DISTRIBUÍDO (§92)
+console.log('== 15. multi-golpe distribuído: N golpes repartidos igual, EXTRA p/ os primeiros; degenerado concentra ==');
+{
+  // DIVISÃO DESIGUAL (a posição do dono, travada em teste): 8 golpes entre 3 alvos = 3/3/2, e o EXTRA vai para
+  // os PRIMEIROS SELECIONADOS. A ordem de `alvos` É a ordem de seleção do jogador (Forma A), então o teste passa
+  // os alvos numa ordem conhecida e confere que o resto (8%3=2) caiu nos dois primeiros — não nos últimos.
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 400);
+  let u = st.lados[0].units[0];
+  let [a0, a1, a2] = st.lados[1].units;
+  let h = [a0.hp, a1.hp, a2.hp];
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 3, golpes: 8 }], A('distribui', 'habilidade'), [a0, a1, a2]);
+  const dano = [h[0] - a0.hp, h[1] - a1.hp, h[2] - a2.hp];
+  ok(dano[0] === 9 && dano[1] === 9 && dano[2] === 6, `8 golpes de 3 entre 3 = 3/3/2 golpes = 9/9/6; extra p/ os PRIMEIROS (${dano})`);
+  // e a ordem MANDA: se o 3º entra primeiro, ELE leva o extra (prova que não é "sempre o mesmo slot")
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 401);
+  u = st.lados[0].units[0]; [a0, a1, a2] = st.lados[1].units;
+  h = [a0.hp, a1.hp, a2.hp];
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 3, golpes: 8 }], A('distribui', 'habilidade'), [a2, a0, a1]);   // a2 selecionado 1º
+  ok(a2.hp === h[2] - 9 && a0.hp === h[0] - 9 && a1.hp === h[1] - 6, `ordem manda: a2 escolhido 1º leva o extra (a2=${h[2] - a2.hp} a0=${h[0] - a0.hp} a1=${h[1] - a1.hp})`);
+
+  // DEGENERADO no motor: um só alvo selecionado concentra TODOS os golpes (8×3=24) — nada se perde.
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 402);
+  u = st.lados[0].units[0]; a0 = st.lados[1].units[0];
+  h = a0.hp;
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 3, golpes: 8 }], A('distribui', 'habilidade'), [a0]);
+  ok(h - a0.hp === 24, `1 alvo concentra tudo: 8×3 = 24 (${h - a0.hp})`);
+  console.log('  8 golpes/3 alvos = 9/9/6 · extra p/ os primeiros SELECIONADOS (ordem manda) · 1 alvo = 24');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

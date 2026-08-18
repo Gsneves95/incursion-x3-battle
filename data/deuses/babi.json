@@ -1,0 +1,49 @@
+{
+  "key": "babi",
+  "nome": "Babi",
+  "faccao": "Egípcia",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Devorador de Entranhas",
+    "desc": "Babi causa +10 de dano contra inimigos com Medo.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoDebuff": "medo" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Presas Selvagens",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Rugido Aterrorizante",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "Medo em todos os inimigos por 2 turnos: causam 8 menos de dano e não podem usar Milagre.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "medo", "dur": 2, "dmgDown": 8 }, "escopo": "todosInimigos" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Frenesi Sanguinário",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 3,
+      "alvo": "distribui",
+      "desc": "4 golpes de 10 de dano, distribuídos entre os inimigos que você escolher; Babi cura metade do dano TOTAL causado. O extra da divisão vai para os primeiros selecionados.",
+      "fx": [ { "t": "dmg", "v": 10, "golpes": 4, "curaMetade": true } ]
+    }
+  ]
+}

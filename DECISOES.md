@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §92 — MULTI-GOLPE DISTRIBUÍDO: mecanismo + Forma A + auditor N×v; e a varredura dos consumidores só deixou 1 (Babi)
+
+**O ACHADO DE BALANCEAMENTO (maior que o de interface).** O auditor de teto olha CADA golpe (`e.v`) — mas o TOTAL empilhado
+num alvo passa despercebido. Um distribuído de 9×5 faz **45 num alvo** (72 num rider); 8×4 faz **32** — a régua velha nunca
+previu o formato DISTRIBUÍDO (cada golpe pequeno, o total enorme). **Consertado:** o auditor passa a somar o PIOR CASO de uma
+habilidade distribuída — **N×v + riders condicionais** (`seCond` etc.), teto de ALVO ÚNICO (o stack É permitido, então o pior
+caso é tudo num alvo — `distribui` ≠ área). E ao consertá-lo, **re-rodei contra tudo** (§66). Resultado da re-rodada: nenhum
+deus construído HOJE tripa — o único distribuído que entrou (Babi, 4×10=40) senta EXATO no teto de milagre. A allowlist NÃO
+ganhou entrada nova: a régua nova é que passou a enxergar o formato; ela só vai morder quando um distribuído over-teto for
+escrito (então Hou Yi/Susanoo entram como exceção — ver abaixo).
+
+**INTERFACE: Forma A — seleciona alvos, split automático igual.** O argumento decisivo NÃO é o teto de gestos — é que os
+intents reais são FOCAR ou ESPALHAR; split fino tipo 5/3 é liberdade que existe no papel e não no uso (a Forma B pagaria 7
+toques por uma opção que ninguém planeja). **Nota prosa-vs-mecânica:** "como você quiser" passa a significar **focar num, ou
+dividir igual entre os escolhidos** — é honesto e é o que o jogador faria. `alvo:'distribui'` (multi-select por TOGGLE,
+CONFIRMAR explícito, sem auto-confirmar); o motor reparte igual, EXTRA p/ os primeiros SELECIONADOS (a ordem de seleção manda).
+
+**Três invariantes de construção (todas com TESTE, não só nota):**
+1. **Degenerado:** 1 inimigo vivo → pula a distribuição, vira fluxo normal de alvo único (toque resolve); 2+ vivos → pede
+   seleção. A TRANSIÇÃO é o que parece bug se falhar. (interface.test.js §11c + primitivas §15.)
+2. **Divisão desigual:** 8 golpes entre 3 = 3/3/2; o EXTRA vai para o **primeiro selecionado** (previsível — a ordem de
+   `alvos` É a ordem de seleção). Travado em teste, inclusive a prova de que a ORDEM manda (o 3º escolhido 1º leva o extra).
+3. **Invariante 13 (o mais antigo):** armar → selecionar dois alvos → cancelar = ZERO orbe gasto, ZERO recarga acionada,
+   ZERO HP. É o primeiro caso do projeto com estado parcial ACUMULADO; o gasto só ocorre no commit (`agir`/`confirmar`).
+
+**A VARREDURA DOS CONSUMIDORES (§54/§87) — 3 candidatos viram 1.** A triagem marcou Susanoo/Babi/Hou Yi com o gancho
+`multi-hit-distribuido`, mas cada kit do catálogo COMPÕE um SEGUNDO mecanismo. Varri os três contra o que o motor já tem:
+- **Babi (IMPL 63) — ÚNICO construído.** Milagre = 4 golpes de 10 distribuídos + `curaMetade` (§92 puro); habilidade = Medo
+  em todos (Medo §60 JÁ EXISTE); passiva = +10 vs Medo (`bonusDano quando:{alvoDebuff:'medo'}`, já existe). **Zero motor novo
+  além do §92.** E fecha um §61: a habilidade da Babi carrega `dmgDown:8` no `medo` — a Mula aplicava `medo` SEM `dmgDown` (a
+  metade "8 menos de dano" estava ociosa desde a F1.4); a Babi é a 1ª a exercê-la. O §60 previu isto ("babi aplica as duas
+  metades sob um nome") — cumprido agora. **§61 4/4 verde.**
+- **Susanoo — ADIADO.** Precisa de TRÊS mecanismos que não existem: `dispel`-1 (básico "remove 1 buff"), geração-de-Combo-
+  por-ataque (passiva) e ESCALA-POR-TAMANHO-DE-LADO ("+6 por aliado a menos que o inimigo" — o "fora da família" já anotado
+  na triagem: tamanho-de-lado, não status). Só o milagre-Combo (`consomeContadorLado`) já daria. Multi-mecanismo: leva própria.
+- **Hou Yi — ADIADO por UM.** Milagre = 9 flechas de 5 +3 vs Aurora (`seCond alvoElem:'Aurora'`, §92 puro) e passiva
+  (`ignoraInalvejavel` + `bonusDano quando:alvoBuff`) já são construíveis; o ÚNICO bloqueio é a habilidade "remove o DIA" =
+  **remoção-de-fase** (novo). Fica a um mecanismo. QUANDO entrar: milagre = 45 num alvo, **72 se todas caírem em Aurora** →
+  allowlist "Nove Flechas", com o **72 como CANDIDATO A REVISÃO, não aprovado** (medir na arena — o dono já sinalizou).
+
+**A leitura honesta (§46/§90 outra vez):** "três consumidores" era rótulo da triagem (nome do gancho, não substância). O §92
+nasceu COM consumidor real (Babi) — não vira ociosa. Os outros dois não são §92-blocked; são bloqueados por OUTROS mecanismos
+(dispel/combo/tamanho-de-lado; remoção-de-fase), que são as próximas frentes.
+
+---
+
 ## §91 — ignora-Invulnerabilidade (fecho mais barato) fecha o Shiva E o Odin na mesma leva; "cdReset" era miragem
 
 **Shiva (IMPL 61) — ignora-Invulnerabilidade, forma corrigida (§84):** flag de HABILIDADE no `dmg` (`ignoraInvuln`) que flui

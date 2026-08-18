@@ -29,6 +29,7 @@ const PASSOS = {
   inimigo: ['inimigo'], aliado: ['aliado'],
   '2inimigos': ['inimigo', 'inimigo'], '2aliados': ['aliado', 'aliado'],
   'aliado+inimigo': ['aliado', 'inimigo'],
+  distribui: ['inimigo'],   // F1.9 §92: multi-golpe distribuído — 1 passo p/ a GUARDA (sem_alvo/validade); a seleção múltipla (subconjunto) mora no fluxo (turno.js), não no comprimento fixo.
 };
 function passosDe(u, a) {
   if (a.alterna) return u.modo === 0 ? ['inimigo'] : [];
@@ -260,6 +261,7 @@ const VOCAB = {
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
     'soSe',   // apply FILTRADO por status do alvo (F1.6, Chaac): aplica só nos alvos que casam a condição (atordoa só os Encharcados)
     'ignoraInvuln', 'ignoraPiso',   // F1.9 (Shiva/Odin §91): dmg fura Invulnerabilidade / o 'não cai abaixo de 1 HP' — flags de habilidade que fluem p/ o bater
+    'golpes',   // F1.9 (§92): multi-golpe DISTRIBUÍDO — N golpes de v repartidos igual entre os alvos selecionados (alvo:'distribui')
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1395,6 +1397,23 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
 
     // contágio (Maldição de Yomi): age no CONJUNTO de uma vez (precisa do maior entre eles), não alvo a alvo
     if (e.t === 'espalha') { espalharContador(st, sel, e, u); continue; }
+
+    // MULTI-GOLPE DISTRIBUÍDO (F1.9 §92, Susanoo/Babi/Hou Yi): N golpes de v repartidos entre os alvos SELECIONADOS,
+    // o mais igual possível; o EXTRA vai para os PRIMEIROS selecionados (previsível — o jogador controla a ordem).
+    // Cada golpe passa por danoBase (seCond per-alvo: Hou Yi +3 vs Aurora) e bater. curaMetade = metade do TOTAL (Babi).
+    if (e.t === 'dmg' && e.golpes) {
+      const vivos = sel.filter(x => x.vivo); const nA = vivos.length;
+      if (nA > 0) {
+        let total = 0;
+        for (let i = 0; i < nA; i++) {
+          const g = Math.floor(e.golpes / nA) + (i < e.golpes % nA ? 1 : 0);
+          for (let k = 0; k < g && vivos[i].vivo; k++)
+            total += bater(st, u, vivos[i], danoBase(st, u, vivos[i], e, l), e.kind || 'afetado', a.slot, { classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso });
+        }
+        if (e.curaMetade) curar(st, u, Math.floor(total / 2), u);
+      }
+      continue;
+    }
 
     // F1.6 (Freyja) — fx CONDICIONAL: roda `entao` OU `senao` (arrays de fx) conforme `se`, via o próprio executor.
     // F1.9 (Hórus §87): `se` desambigua ESTRUTURALMENTE pela chave — se ∈ CONDICOES (alvoMarca, alvoDebuff…) lê o

@@ -29,12 +29,16 @@ function detalheHTML(){
         <div class="detail__classes">${classesTxt(u,a)}</div>
       </div>
       <div class="detail__act">
-        ${falta>0
-          ? `<button class="b b--wait" disabled>${
-              armado.passos.length>1
-                ? `<span>Alvo ${escolhidos.length+1}/${armado.passos.length}</span><span class="b__sub">${passoAtual==='aliado'?'aliado':'inimigo'}</span>`
-                : `<span>${passoAtual==='aliado'?'Toque o aliado':'Toque o alvo'}</span>`}</button>`
-          : `<button class="b b--ok b--md" id="bconf">Confirmar</button>`}
+        ${armado.distribui
+          ? (escolhidos.length
+              ? `<button class="b b--ok b--md" id="bconf"><span>Confirmar</span><span class="b__sub">${escolhidos.length} alvo${escolhidos.length>1?'s':''} · reparte</span></button>`
+              : `<button class="b b--wait" disabled><span>Toque os alvos</span><span class="b__sub">reparte entre eles</span></button>`)
+          : (falta>0
+            ? `<button class="b b--wait" disabled>${
+                armado.passos.length>1
+                  ? `<span>Alvo ${escolhidos.length+1}/${armado.passos.length}</span><span class="b__sub">${passoAtual==='aliado'?'aliado':'inimigo'}</span>`
+                  : `<span>${passoAtual==='aliado'?'Toque o aliado':'Toque o alvo'}</span>`}</button>`
+            : `<button class="b b--ok b--md" id="bconf">Confirmar</button>`)}
         <button class="b b--quiet b--md" id="bcanc">Cancelar</button>
       </div></div>`;
   }

@@ -142,7 +142,10 @@ console.log('== teto de dano por categoria (orçamento documentado) ==');
         const area = (e.escopo || a.alvo) === 'todosInimigos';
         const lim = area ? AREA[a.slot] : TETO[a.slot];
         const escala = e.porStatus ? e.porStatus.v * 3 : 0;   // porStatus (F1.8): +v por status; teto potencial ~3 (time cheio / debuffs típicos) — o auditor não pode ficar cego à escala nova (§66)
-        const val = Math.max(e.v, e.seEncharcado || 0, e.seAdormecido || 0, (e.seCond && e.seCond.v) || 0) + escala;
+        // MULTI-GOLPE DISTRIBUÍDO (§92): o stack É permitido, então o pior caso é N golpes num só alvo — soma N×v (+ riders
+        // por-golpe: seCond etc.). Sem `golpes`, o multiplicador é 1 (dmg comum). O teto é o de alvo único (distribui ≠ área).
+        const golpes = e.golpes || 1;
+        const val = golpes * Math.max(e.v, e.seEncharcado || 0, e.seAdormecido || 0, (e.seCond && e.seCond.v) || 0) + escala;
         if (val > lim) piores.push(`${g.nome}/${a.nome}: ${val} > ${lim}${area ? ' (área)' : ''}`);
       }
     }

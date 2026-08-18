@@ -559,6 +559,73 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   console.log('  classe por habilidade visível no painel');
 }
 
+console.log('== 11c. multi-golpe distribuído (§92): seleção múltipla, toggle, degenerado, invariante 13 ==');
+{
+  // Babi (milagre = 4 golpes de 10 distribuídos) no lado 0. Times fixos por CHAVE (robusto à paginação, §71).
+  w.eval("ir('selecao');pick=[['babi','zeus','ogum'],['tyr','cuca','sobek']];vez=0;tudoLiberado=true;render()");
+  tap($('#bgo'));
+  w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
+  const l = S().lados[S().ativo];
+  w.eval('ELEMS').forEach(e => l.orbs[e] = 9); w.eval('render()');
+  const babi = l.units.find(u => u.nome === 'Babi');
+  const armaBabi = () => tap($$('.skill').find(b => b.dataset.sk === babi.uid + '|milagre'));
+  const alvos = () => $$('.team--enemy .portrait.is-target');
+  const alvoUid = uid => alvos().find(e => e.dataset.uid === uid);
+
+  // --- SELEÇÃO (3 inimigos vivos): distribui é multi-select e NÃO auto-confirma ---
+  armaBabi();
+  ok(alvos().length === 3, `distribui: os 3 inimigos vivos deveriam ser alvos (${alvos().length})`);
+  ok(!$('#bconf'), 'distribui sem alvo: CONFIRMAR ainda não aparece');
+  ok(!!$('.b--wait') && /toque/i.test($('.b--wait').textContent), 'deveria pedir para tocar os alvos');
+  const u1 = alvos()[0].dataset.uid, u2 = alvos()[1].dataset.uid;
+  tap(alvoUid(u1));
+  ok($$('.portrait.is-picked').length === 1, 'o 1º alvo tocado deveria ficar marcado');
+  ok($$('.skill.is-armed').length === 1, 'distribui NÃO auto-confirma: segue armado após o 1º toque');
+  ok(!!$('#bconf'), 'com 1 alvo já dá para CONFIRMAR (o extra de golpes cai nele)');
+  tap(alvoUid(u2));
+  ok($$('.portrait.is-picked').length === 2, 'o 2º alvo também marca');
+  tap(alvoUid(u1));   // TOGGLE: tocar de novo desmarca
+  ok($$('.portrait.is-picked').length === 1, 'tocar de novo no mesmo alvo desmarca (toggle)');
+  tap($('#bcanc'));
+  ok($$('.skill.is-armed').length === 0, 'cancelar desarma');
+
+  // --- INVARIANTE 13: armar → selecionar dois → CANCELAR → nada gasto (orbe, recarga, HP) ---
+  const orbAntes = w.eval('totalOrbs(st.lados[st.ativo])');
+  const cdAntes = babi.cd.milagre || 0;
+  const hpAntes = S().lados[1].units.map(u => u.hp).join(',');
+  armaBabi();
+  tap(alvos()[0]); tap(alvos().find(e => !$$('.portrait.is-picked').some(p => p.dataset.uid === e.dataset.uid)));
+  ok($$('.portrait.is-picked').length === 2, 'dois alvos selecionados antes de cancelar');
+  tap($('#bcanc'));
+  ok(w.eval('totalOrbs(st.lados[st.ativo])') === orbAntes, `INV 13: nenhum orbe gasto ao cancelar (${orbAntes})`);
+  ok((babi.cd.milagre || 0) === cdAntes, 'INV 13: nenhuma recarga acionada ao cancelar');
+  ok(S().lados[1].units.map(u => u.hp).join(',') === hpAntes, 'INV 13: nenhum inimigo tomou dano');
+
+  // --- CONFIRMAR resolve e distribui (4 golpes de 10 entre 2 = 20/20) ---
+  armaBabi();
+  const g1 = alvos()[0].dataset.uid, g2 = alvos()[1].dataset.uid;
+  const foe = uid => S().lados[1].units.find(u => u.uid === uid);
+  const h1 = foe(g1).hp, h2 = foe(g2).hp;
+  tap(alvoUid(g1)); tap(alvoUid(g2));
+  tap($('#bconf'));
+  ok($$('.skill.is-armed').length === 0, 'confirmar resolve e desarma');
+  ok(h1 - foe(g1).hp === 20 && h2 - foe(g2).hp === 20, `4 golpes de 10 entre 2 = 20/20 (${h1 - foe(g1).hp}/${h2 - foe(g2).hp})`);
+
+  // --- DEGENERADO: com 1 inimigo vivo, distribui vira alvo único (toque RESOLVE, sem CONFIRMAR) ---
+  const fs = S().lados[1].units;
+  fs[1].vivo = false; fs[1].hp = 0; fs[2].vivo = false; fs[2].hp = 0;
+  babi.agiu = false; babi.cd.milagre = 0;
+  w.eval('ELEMS').forEach(e => S().lados[0].orbs[e] = 9); w.eval('render()');
+  armaBabi();
+  ok(alvos().length === 1, `degenerado: só 1 alvo válido (${alvos().length})`);
+  ok(!$('#bconf'), 'degenerado: sem CONFIRMAR — comporta-se como alvo único');
+  const lone = fs[0], hLone = lone.hp;
+  tap(alvos()[0]);
+  ok($$('.skill.is-armed').length === 0, 'degenerado: tocar o único alvo RESOLVE (auto-confirma, como single-target)');
+  ok(hLone - lone.hp === 40, `degenerado concentra os 4 golpes num só: 40 (${hLone - lone.hp})`);
+  console.log('  multi-select + toggle · INV 13 (cancelar não gasta) · confirmar distribui 20/20 · degenerado = alvo único');
+}
+
 console.log('== 12b. COMO JOGAR e render-se fora do rodapé ==');
 {
   tap($('#bmenu'));

@@ -92,6 +92,10 @@ function armar(uid, slot) {
   if (!a || !a.disponivel || !podeAgir(u)) return;
   escolhidos = [];
   armado = { uid, slot, passos: (a.passos || []).slice() };
+  // MULTI-GOLPE DISTRIBUÍDO (§92, Forma A): o jogador escolhe um SUBCONJUNTO e confirma; o motor reparte igual.
+  // DEGENERADO: com 1 inimigo válido não há o que repartir — cai no fluxo normal de alvo único (toque = resolve).
+  // Só com 2+ vira modo distribui (toggle, sem auto-confirmar). Ver §92 e o teste de transição do degenerado.
+  if (a.alvo === 'distribui' && alvosValidos(st, u, a, 0, []).length > 1) { armado.distribui = true; armado.passos = []; }
   atualizarAlvos();
   _redesenhar();
 }
@@ -103,15 +107,27 @@ function atualizarAlvos() {
   if (!u) return;
   const a = acoesDe(st, u).find(x => x.slot === armado.slot);
   if (!a) return;
+  // distribui: a piscina é SEMPRE todos os inimigos válidos (a UI realça os já escolhidos); não encurta por passo.
+  if (armado.distribui) { alvos = alvosValidos(st, u, a, 0, []); return; }
   const i = escolhidos.length;
   if (i >= armado.passos.length) return;
   const c = alvosValidos(st, u, a, i, escolhidos);
   if (!c.length) { armado.passos = armado.passos.slice(0, i); return; }
   alvos = c;
 }
-function faltamAlvos() { return armado ? armado.passos.length - escolhidos.length : 0; }
+// distribui: falta = 1 até haver ≥1 selecionado (mantém o CONFIRMAR escondido com zero alvos), depois 0.
+function faltamAlvos() { return armado ? (armado.distribui ? (escolhidos.length ? 0 : 1) : armado.passos.length - escolhidos.length) : 0; }
 function alvo(uid) {
-  if (!armado || faltamAlvos() <= 0) return;
+  if (!armado) return;
+  // distribui: TOGGLE, nunca auto-confirma — o gasto só acontece no CONFIRMAR explícito (invariante 13).
+  if (armado.distribui) {
+    if (!alvos.some(x => x.uid === uid)) return;
+    const j = escolhidos.indexOf(uid);
+    if (j >= 0) escolhidos.splice(j, 1); else escolhidos.push(uid);
+    _redesenhar();
+    return;
+  }
+  if (faltamAlvos() <= 0) return;
   if (!alvos.some(x => x.uid === uid)) return;
   escolhidos.push(uid);
   atualizarAlvos();
@@ -119,6 +135,7 @@ function alvo(uid) {
 }
 function confirmar() {
   if (!armado) return;
+  if (armado.distribui && escolhidos.length === 0) return;   // sem alvo escolhido, nada a repartir — não gasta
   const u = st.lados[st.ativo].units.find(x => x.uid === armado.uid);
   const a = acoesDe(st, u).find(x => x.slot === armado.slot);
   if (!a || !a.disponivel) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
