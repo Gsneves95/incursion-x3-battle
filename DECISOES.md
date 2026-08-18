@@ -26,6 +26,13 @@ em-apply, Shiva=ignora-piso): mecanismo que o motor tinha e nenhum kit provara. 
 **Duas coisas viraram JÁ-DÁ ao olhar o motor** (a triagem as chamara de mecanismo): "zera recargas" (é `cdShift v:-99`) e
 o Odin inteiro além do `faccaoConta`. O `faccaoConta` nasceu COM o Odin — ociosa segue em 0.
 
+**A TAXA DO §61 — 3/3, todos verdes (o dono mandou MEDIR, não assumir).** Três mecanismos que o motor suportava e nenhum
+kit havia exercido, agora provados por kit real, TODOS passaram: imunidade-a-execução (Sun Wukong, §86), `naoRevive`-em-
+apply (Yan Wong, §89), `ignoraPiso` (Shiva, §91). Zero falha em três tentativas. **A leitura:** o motor é mais confiável do
+que o §61 temia — a construção-com-teste-primeiro (a fase-primitivas, `primitivas.test.js`) pagou; o "mecanismo existe mas
+ninguém provou" tem dado verde. Vale MEDIR a taxa (3/3 até aqui) em vez de assumir o pior — mas seguir exercitando cada um
+por kit, porque o custo de descobrir tarde é alto e o de confirmar é um teste.
+
 ---
 
 ## §90 — O §46 SUBIU DE NÍVEL: o rótulo engana sobre a FAMÍLIA, não só sobre o mecanismo; e o §54 valida se a família EXISTE
