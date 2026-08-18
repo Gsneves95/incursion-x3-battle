@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §95 — O GÊMEO DO §61: consumidor sem produtor é tão invisível quanto mecanismo sem consumidor
+
+**A varredura da fase revelou o espelho.** O §61 mede uma direção: **mecanismo sem consumidor** (o motor suporta, nenhum kit
+exerce — Sun Wukong/execução, Shiva/piso, Babi/dmgDown-do-Medo). A fase mostra a OUTRA direção: **consumidor sem produtor**. Há
+**sete LEITORES de fase no catálogo e ZERO ESCRITORES construídos**. O Itzamná (único leitor escrito) lê `st.fase` — um campo que
+nunca muda, porque ninguém o ativa. A remoção-de-Dia do Hou Yi (§94) remove um Dia que ninguém ergue. São consumidores lendo o
+vazio.
+
+**Por que é tão invisível quanto o §61.** As duas pontas passam por `validarDeus`, pelo smoke e pela suíte inteira sem uma
+falha — porque cada lado é internamente coerente; o furo está na JUNÇÃO, que nenhum teste de um-kit-só exercita. O mecanismo
+ocioso espera um kit que o chame; o consumidor órfão espera um kit que escreva o que ele lê. **Nenhum dos dois aparece até a
+outra ponta chegar.** A varredura de ociosas (que roda hoje) mede mecanismo→consumidor; falta a espelhada, consumidor→produtor.
+
+**A regra nova (prontidão em DUAS direções):** ao varrer prontidão, pergunte os dois lados —
+1. **§61:** todo mecanismo do motor tem ao menos um kit que o exerce? (mecanismo→consumidor)
+2. **§95:** todo campo/estado que um kit LÊ tem ao menos um kit que o ESCREVE? (consumidor→produtor)
+Um `grep` dos leitores de `st.fase` cruzado com os escritores de `st.fase` teria previsto a dormência do Hou Yi antes de eu a
+descobrir escrevendo. É o mesmo método do §37 (varrer o conjunto corrige o número), aplicado ao GRAFO produtor→consumidor, não a
+um mecanismo isolado.
+
+---
+
 ## §94 — REMOÇÃO SELETIVA DE FASE (Hou Yi): a varredura confirmou "sai em ~3 linhas", com uma dobra (seletivo) e uma dormência
 
 **A VARREDURA DA FAMÍLIA (o dono exigiu, antes de escrever) — duas perguntas, duas respostas:**
