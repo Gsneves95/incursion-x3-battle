@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §90 — O §46 SUBIU DE NÍVEL: o rótulo engana sobre a FAMÍLIA, não só sobre o mecanismo; e o §54 valida se a família EXISTE
+
+**A re-triagem dos 40 (pós-F1.8, com 15 mecanismos novos desde a última).** Três baldes-teto: JÁ-DÁ ~7, HOOK ~22,
+MECANISMO ~11. A virada É real e inédita no projeto: a fila **converge** — a primeira metade era 50 ganchos com 31 de
+deus-único; esta agrupa de verdade. MAS o número honesto sai DEPOIS do §54, não antes.
+
+**A ARMADILHA (o dono a nomeou):** eu primeiro reportei "8 famílias cobrem 25 dos 33" — e o número estava INFLADO por
+rótulo. Agrupei deuses por RÓTULO-DE-FAMÍLIA, não por mecanismo. **É o §46/§76 um nível acima:** antes o rótulo enganava
+sobre o mecanismo de UM deus; agora engana sobre a FAMÍLIA de mecanismos. As duas primeiras famílias racharam no §54:
+- **ação-adiada (5)** → NÃO é família. Cinco disparos distintos com um rótulo: one-shot-próximo-turno (Kukulkán),
+  recorrente-fim-de-turno (Kali), limiar-fim-de-turno (Morrigan — o §83 PROIBIU fundir com timer), renascimento-de-invocação
+  (Cernunnos), e Dionísio que nem agenda (é `dominado`-em-todos). Fundir violaria §59+§83.
+- **cd-manipulação (5)** → 2 já-dão (`cdShift {unidade, v:-99}` já zera todas — Odin/Mimir), 1 hook (Ares), 2 reais
+  (Chang'e/Lugh = recarga-base-condicional).
+
+**A REGRA (o dono):** o §54 não é só "dois efeitos são um?" — é o **teste que valida se uma FAMÍLIA existe antes de se
+sequenciar por ela**. Aplicá-lo DEPOIS de escolher a frente é tarde: aí já se escolheu por rótulo. Passa-se o §54 na
+família ANTES de tratá-la como infra. A virada continua real, só menor — e o número honesto é o pós-§54.
+
+**§54 nas três candidatas que sobraram** (resultado no chat): multi-golpe-distribuído = 3 reais (todos escolha-do-jogador,
+coincidem; custam INTERFACE); iniciativa = 3 mas TODOS entre-turnos (mexem no laço de turno → MECANISMO pesado, não hook);
+seletor-por-HP = 2 (mais-ferido/maior-HP = min/max, coincidem; Hanuman SAI, o "Senhor" dele é aliado-designado, não HP).
+
+---
+
 ## §89 — YAN WONG zera as ociosas; o Livro É EXECUÇÃO (definido na estreia); e o Sun Wukong vira counter estrutural
 
 **A LISTA DE OCIOSAS ZEROU.** Yan Wong (IMPL 60) drena o `livro` — o último resíduo da fase-primitivas. **Ociosa: 1 → 0.**
