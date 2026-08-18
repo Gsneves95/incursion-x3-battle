@@ -1392,6 +1392,38 @@ console.log('== §89 Yan Wong: Livro É execução; naoRevive-em-apply (§61); o
   console.log('  Livro é execução (Wukong imune, vidaExtra não salva, naoRevive vale); orbe uniforme; aceleraLivro piso 1');
 }
 
+console.log('== §91 Shiva: ignora-Invulnerabilidade (flag de habilidade) + ignora-piso (§61, 1º kit); puro fura escudo ==');
+{
+  const mil = E.GODS.shiva.ab.find(a => a.slot === 'milagre').fx;
+  // ignora-Invuln: o milagre fura Invulnerabilidade (o golpe normal NÃO)
+  let st = E.novoEstado(['shiva', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 500);
+  let s = st.lados[0].units[0], foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'invulneravel', dur: 2 });
+  let h = foe.hp; E.aplicarFx(st, s, mil, { alvo: 'inimigo', slot: 'milagre' }, [foe]);
+  ok(h - foe.hp === 45, `milagre FURA Invulnerabilidade: 45 (${h - foe.hp})`);
+  st = E.novoEstado(['shiva', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 501);
+  s = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'invulneravel', dur: 2 });
+  h = foe.hp; E.aplicarFx(st, s, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [foe]);
+  ok(h - foe.hp === 0, `golpe normal (sem a flag) continua BARRADO por Invulnerabilidade (${h - foe.hp})`);
+  // §61: ignora-piso — a flag existia em opts, nenhum kit a exercia. Shiva é o 1º: fura o 'não cai abaixo de 1 HP'
+  st = E.novoEstado(['shiva', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 502);
+  s = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.hp = 5; foe.efeitos.push({ type: 'pisoVida', dur: 2 });
+  E.aplicarFx(st, s, mil, { alvo: 'inimigo', slot: 'milagre' }, [foe]);
+  ok(!foe.vivo, 'FURA o piso (não cai abaixo de 1 HP): mata mesmo com pisoVida — §61, 1º kit a exercê-lo');
+  // Defesa Destrutível: kind:puro fura o escudo (sem consumi-lo)
+  st = E.novoEstado(['shiva', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 503);
+  s = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.shield = 20; h = foe.hp;
+  E.aplicarFx(st, s, mil, { alvo: 'inimigo', slot: 'milagre' }, [foe]);
+  ok(h - foe.hp === 45 && foe.shield === 20, `puro FURA a Defesa Destrutível: 45 no HP, escudo intacto (${h - foe.hp}/${foe.shield})`);
+  // permanente por uso (padrão Brahma): dmgUp empilha
+  st = E.novoEstado(['shiva', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 504);
+  s = st.lados[0].units[0];
+  const hab = E.GODS.shiva.ab.find(a => a.slot === 'habilidade').fx;
+  E.aplicarFx(st, s, hab, { alvo: 'todosInimigos', slot: 'habilidade' }, st.lados[1].units);
+  E.aplicarFx(st, s, hab, { alvo: 'todosInimigos', slot: 'habilidade' }, st.lados[1].units);
+  ok(E.ef(s, 'dmgUp') && E.ef(s, 'dmgUp').v === 12, `+6 permanente acumula: 2 usos = 12 (${E.ef(s, 'dmgUp') && E.ef(s, 'dmgUp').v})`);
+  console.log('  ignoraInvuln fura só com a flag; ignora-piso exercitado (§61); puro fura escudo; +6 permanente acumula');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -257,6 +257,7 @@ const VOCAB = {
     'para',   // orbGain com elemento FIXO (zeus: 1 orbe de Tempestade); ausente = elemento sorteado do time
     'executaAbaixoDe',   // dmg: após o dano, ELIMINA o alvo se hp <= N (execução — F1.3)
     'soSe',   // apply FILTRADO por status do alvo (F1.6, Chaac): aplica só nos alvos que casam a condição (atordoa só os Encharcados)
+    'ignoraInvuln', 'ignoraPiso',   // F1.9 (Shiva/Odin §91): dmg fura Invulnerabilidade / o 'não cai abaixo de 1 HP' — flags de habilidade que fluem p/ o bater
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -703,7 +704,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false } = opts;
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84)
   if (!alvo.vivo) return 0;
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
   const golpe = { slot, classe, elem: atk && atk.elem, unico };
@@ -744,7 +745,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       return base;
     }
   }
-  if (ef(alvo, 'invulneravel')) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'invulneravel' }); return 0; }
+  if (ef(alvo, 'invulneravel') && !ignoraInvuln) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'invulneravel' }); return 0; }   // §91: o Shiva/Odin fura (ignoraInvuln)
   if (ef(alvo, 'submerso')) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'submerso' }); return 0; }
   // vínculo (Juramento Nupcial): o dano é dividido entre os dois vinculados
   const vin = !semVinculo && ef(alvo, 'vinculo');
@@ -1405,7 +1406,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     for (const t of sel) {
       if (e.t === 'dmg') {
         const base = danoBase(st, u, t, e, l);
-        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a) });
+        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso });   // §91 (Shiva): flags de "ignora" da habilidade fluem p/ o bater — ignoraInvuln (novo) e ignoraPiso (param existia, sem consumidor de kit)
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2), u);   // dreno: o próprio atacante é o curador
         // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
         // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.

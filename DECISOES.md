@@ -29,6 +29,19 @@ família ANTES de tratá-la como infra. A virada continua real, só menor — e 
 coincidem; custam INTERFACE); iniciativa = 3 mas TODOS entre-turnos (mexem no laço de turno → MECANISMO pesado, não hook);
 seletor-por-HP = 2 (mais-ferido/maior-HP = min/max, coincidem; Hanuman SAI, o "Senhor" dele é aliado-designado, não HP).
 
+**DUAS RECLASSIFICAÇÕES, as duas por OLHAR O MOTOR em vez do rótulo:** (a) iniciativa saiu da família de gancho — dentro do
+lado a ordem já é livre (`agir(uid)` de qualquer unidade), então "age primeiro" só pode ser ENTRE-turnos (`st.ativo`/
+`starter`), que é o laço; (b) Hanuman saiu do seletor-por-HP — o "Senhor" é aliado DESIGNADO, o HP é só fallback.
+
+**O NÚMERO HONESTO (pós-§54), a correção do "8 famílias/25":** **3 famílias reais** (distribuído 3, seletor 2, +as de-2 do
+platô), um **platô de famílias-de-2** (recarga-base-condicional, buff-steal, ataque-inevitável, ignora-Invuln, pendente-
+próximo-turno), **~14 singletons** (Kali, Morrigan, Cernunnos, Dionísio, Hanuman, Mnevis, Tsukuyomi, Boto, Izanagi,
+Khonshu, Ares, Yamato, Guan Yu, Anúbis/Ammit) e **~7 traduções** (Osíris, Amaterasu, Shuten, Kitsune, Nüwa, Raijin,
+Odin/Mimir-cdShift). A convergência é REAL mas modesta — o topo é 3, não 5. Saber isto agora vale mais que o número otimista.
+
+**GATILHO DE REVISÃO — INICIATIVA POR ÚLTIMO:** ela mexe no laço de turno (o coração do motor); mexer nele com 40 kits pela
+metade é onde um bug se esconde por levas. Entra QUANDO OS KITS ESTIVEREM ESCRITOS, não antes.
+
 ---
 
 ## §89 — YAN WONG zera as ociosas; o Livro É EXECUÇÃO (definido na estreia); e o Sun Wukong vira counter estrutural

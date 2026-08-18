@@ -148,7 +148,7 @@ console.log('== teto de dano por categoria (orçamento documentado) ==');
     }
   }
   // Dilúvio (30 em Encharcado) e O Papão (38 em Adormecido) são bônus condicionais previstos
-  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo|Fim de Mahishasura|Tempestade de Raios|Julgamento das F\u00farias|Veneno do Ragnar\u00f6k/.test(p));   // Julgamento (Er\u00ednias: 25+10/debuff) e Veneno do Ragnar\u00f6k (J\u00f6rmungandr: 16+8/envenenado) \u2014 bumps por-status condicionais (F1.8)   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6). Fim de Mahishasura (48 em alvo acima de 84 HP, Durga): bump anti-chefe condicional
+  const inesperados = piores.filter(p => !/Dil\u00favio|Pap\u00e3o|\u00c1guas Vermelhas|Trov\u00e3o e Fogo|Cobra de Fogo|Fim de Mahishasura|Tempestade de Raios|Julgamento das F\u00farias|Veneno do Ragnar\u00f6k|Terceiro Olho/.test(p));   // Julgamento (Er\u00ednias: 25+10/debuff) e Veneno do Ragnar\u00f6k (J\u00f6rmungandr: 16+8/envenenado) \u2014 bumps por-status condicionais (F1.8)   // \u00c1guas Vermelhas (28 em Sangrando/Encharcado, Piranha) e Trov\u00e3o e Fogo (30 em buff, Xang\u00f4): b\u00f4nus condicionais previstos do cat\u00e1logo (F1.6). Fim de Mahishasura (48 em alvo acima de 84 HP, Durga): bump anti-chefe condicional. Terceiro Olho (Shiva: 45 puro, UMA VEZ por partida, fura tudo): nuke-de-fim-de-jogo previsto (F1.9)
   ok(inesperados.length === 0, 'fora do orçamento: ' + inesperados.join(' | '));
   console.log(`  ${piores.length} acima do teto base, todos com condição: ${piores.join(' | ') || 'nenhum'}`);
 }

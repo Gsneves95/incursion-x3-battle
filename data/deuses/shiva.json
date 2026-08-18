@@ -1,0 +1,53 @@
+{
+  "key": "shiva",
+  "nome": "Shiva",
+  "faccao": "Hindu",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Ascese Cósmica",
+    "desc": "Quando qualquer aliado usa um Milagre, Shiva ganha 1 orbe de Umbra.",
+    "fx": [
+      { "gatilho": "aoUsarHabilidade", "slot": "milagre", "faz": [ { "t": "orbGain", "n": 1, "para": "Umbra" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Tridente Trishula",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Tandava",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "12 de dano a todos os inimigos; +6 de dano permanente a cada uso na partida.",
+      "fx": [
+        { "t": "dmg", "v": 12, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 6, "dur": 99 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Terceiro Olho",
+      "cost": { "Umbra": 2, "livre": 2 },
+      "cd": 5,
+      "alvo": "inimigo",
+      "umaVez": true,
+      "desc": "45 de dano puro a 1 inimigo; ignora Invulnerabilidade, Defesa Destrutível e 'não cai abaixo de 1 HP'. UMA VEZ POR PARTIDA.",
+      "fx": [
+        { "t": "dmg", "v": 45, "kind": "puro", "ignoraInvuln": true, "ignoraPiso": true }
+      ]
+    }
+  ]
+}
