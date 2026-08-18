@@ -1,0 +1,53 @@
+{
+  "key": "amaterasu",
+  "nome": "Amaterasu",
+  "faccao": "Japonesa",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Soberana Celestial",
+    "desc": "Durante o DIA, o time recebe 6 de redução de dano.",
+    "fx": [
+      { "gatilho": "reducao", "v": 6, "escopo": "time", "estado": { "fase": "Dia" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Espelho Yata",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Amanhecer",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 12 no time.",
+      "fx": [
+        { "t": "fase", "v": "Dia", "dur": 3 },
+        { "t": "heal", "v": 12, "escopo": "time" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Luz da Caverna",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno.",
+      "fx": [
+        { "t": "dmg", "v": 18, "seDia": 28, "escopo": "todosInimigos" },
+        { "t": "condicional", "se": { "fase": "Dia" }, "entao": [ { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 }, "escopo": "todosInimigos" } ] }
+      ]
+    }
+  ]
+}

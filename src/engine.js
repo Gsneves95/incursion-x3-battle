@@ -108,7 +108,7 @@ const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff'
 const GATILHOS_PASSIVA = {
   bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78, mesmo helper do danoBase)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
-  reducao:         { campos: ['v', 'escopo', 'contra', 'protegido'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré)
+  reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
@@ -507,12 +507,21 @@ function definirFase(st, fase, dur) {
 function caidos(st, lado) { return st.lados[lado].units.filter(u => !u.vivo).length; }
 
 // -------------------------------------------------------------- DANO
+// PAYLOAD da fase (§96): o Dia/Noite não é só um flag — carrega um modificador GLOBAL de dano por ELEMENTO do
+// ATACANTE (ambos os lados; a fase é um só `st.fase`, sem dono). Dia favorece a Aurora e pune a Umbra; a Noite
+// espelha. É a DEFINIÇÃO da fase (por isso mora no motor, tabela fixa), lida em bonusDano — soma de saída, como o dmgUp.
+const FASE_MOD = { Dia: { Aurora: 8, Umbra: -5 }, Noite: { Umbra: 8, Aurora: -5 } };
+function bonusFase(st, atk) {
+  if (!st.fase || !atk) return 0;
+  return (FASE_MOD[st.fase] && FASE_MOD[st.fase][atk.elem]) || 0;
+}
 function bonusDano(st, atk) {
   let b = 0;
   const up = ef(atk, 'dmgUp'), dn = ef(atk, 'dmgDown');
   if (up) b += up.v;
   if (dn) b -= dn.v;
   const md = ef(atk, 'medo'); if (md) b -= (md.dmgDown || 0);   // Medo (§60): a metade dmgDown do compósito reduz o dano de saída
+  b += bonusFase(st, atk);   // §96: modificador global Dia/Noite por elemento do atacante
   return b;
 }
 

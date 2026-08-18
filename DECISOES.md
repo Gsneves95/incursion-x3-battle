@@ -6,6 +6,44 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §96 — O PAYLOAD DA FASE (a fase era um flag inerte) + Amaterasu; e a alavanca real medida (2, não 7)
+
+**A varredura mudou a premissa, o dono escolheu "payload + Amaterasu".** A fase tinha SETE leitores no catálogo mas **UM
+construído** (Itzamná) e — o achado maior — **ZERO payload**: ativar o Dia só ligava um booleano que a matemática de dano não
+lia. "Acordar a fase" não era escrever dois kits sobre mecanismo pronto; era **construir o mecanismo** (o §93 mordendo: a
+coincidência "as duas escrevem fase" escondia o payload + reducao-na-fase + alvoCuradoAntes).
+
+**O PAYLOAD — modificador GLOBAL por elemento do atacante.** `FASE_MOD = { Dia:{Aurora:+8, Umbra:−5}, Noite:{Umbra:+8,
+Aurora:−5} }`, somado em `bonusDano` (saída, como o dmgUp). É a DEFINIÇÃO da fase, então mora no motor como tabela fixa.
+**Decisão de forma: GLOBAL por elemento, não relativo ao lado.** A prosa fraseia do ponto de vista de quem ativa ("aliados
+Aurora +8"), mas um `st.fase` ÚNICO não pode ser relativo-ao-lado — os dois lados leem o mesmo campo. A leitura coerente e
+simétrica (Dia favorece a luz e pune a treva, nos DOIS lados) é a única que cabe no modelo, e é a que o próprio dono
+conceituou no cabo-de-guerra da varredura. **Consequência aceita:** o Dia da Amaterasu fortalece Aurora INIMIGA também — e
+o SEU próprio milagre (Luz da Caverna 28 → 36 no Dia, porque ela é Aurora). Intencional: deusa do sol é mais forte de dia.
+
+**reducao-na-fase saiu de graça (o §95 na prática):** a Amaterasu quer "durante o DIA, 6 de redução ao time". O motor
+(`reducaoDeclarativa`) JÁ gateava por `estado` via `estadoOK` — só o VALIDADOR não listava `estado` nos campos do gatilho
+`reducao`. Uma palavra. O consumidor estava pronto, esperando o produtor — exatamente a lição que acabei de registrar.
+
+**Amaterasu (IMPL 65) — fiel ao catálogo:** básico 12; Amanhecer ativa o Dia por 3 + cura 12 no time; passiva `reducao v:6
+escopo:time estado:{fase:Dia}`; Luz da Caverna 18 área, `seDia:28` + trava-Habilidade (`lockSkill slot:habilidade` via
+`condicional se:{fase:Dia}`). Allowlist: **Luz da Caverna** (28 área no Dia — bump condicional de fase). A trava usa o
+mesmo `lockSkill slot:habilidade` da Nezha; o `condicional` ramifica por `estado` (fase), não por alvo (§87).
+
+**Q3 do dono — a duração:** `definirFase` faz `st.faseDur = dur` — **RESETA para os 3 turnos cheios do novo escritor, não
+herda o restante**. Logo: virar a fase é instantâneo (último-a-escrever-vence) mas *custa um relógio novo* — segurar uma fase
+contra um oponente é gastar a habilidade (recarga 2) a cada ~3 turnos. Jogável, não caótico — e hoje ainda mais ameno, porque
+só o Itzamná oscila com ela.
+
+**A ALAVANCA REAL (o número que o dono pediu): 2, não 7.** Escrever a Amaterasu acorda o DIA. Ganham comportamento AGORA:
+**Itzamná** (+1 orbe no Dia) e **Hou Yi** (o remove-Dia do §94 sai da dormência) — 2 deuses já construídos — mais a própria
+Amaterasu. Os outros leitores (change, boto, lugh) e a metade NOITE (Tsukuyomi/change/boto) seguem dormentes: **não existem**.
+O payload da Noite foi construído e testado em isolamento, mas fica ocioso até um escritor da Noite (Tsukuyomi) cair —
+que arrasta o `alvoCuradoAntes` (singleto `pendente`), trazido à parte como o dono mandou. A "maior alavanca" era 2, não 7:
+o §95 medido em número.
+
+---
+
 ## §95 — O GÊMEO DO §61: consumidor sem produtor é tão invisível quanto mecanismo sem consumidor
 
 **A varredura da fase revelou o espelho.** O §61 mede uma direção: **mecanismo sem consumidor** (o motor suporta, nenhum kit

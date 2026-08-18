@@ -600,6 +600,36 @@ console.log('== 16. fase.remove: limpa SÓ a fase nomeada — remove:Dia zera o 
   console.log('  remove:Dia zera o Dia · poupa a Noite · no-op sem fase · ativação (v) intacta');
 }
 
+// ------------------------------------------------------------ 17. PAYLOAD da fase (§96): modificador global por elemento
+console.log('== 17. payload da fase: Dia favorece Aurora / pune Umbra; Noite espelha; faseDur RESETA por escrita ==');
+{
+  // O modificador é de SAÍDA, por elemento do ATACANTE, GLOBAL (vale nos dois lados). Meço o DELTA contra o sem-fase
+  // com o MESMO atacante/alvo — assim qualquer passiva constante do alvo se cancela e sobra só o payload.
+  // perseu=Aurora, babi=Umbra (passivas não mexem em dano de saída); alvo zeus (sem redução).
+  const st = E.novoEstado(['perseu', 'babi', 'zeus'], ['zeus', 'zeus', 'zeus'], 600);
+  const aur = st.lados[0].units[0], umb = st.lados[0].units[1], alvo = st.lados[1].units[0];
+  const bate = (atk) => { const h = alvo.hp; E.bater(st, atk, alvo, 12, 'afetado', 'basico', { semContra: true }); const d = h - alvo.hp; alvo.hp = 120; return d; };
+  const base0Aur = bate(aur), base0Umb = bate(umb);
+  ok(base0Aur === 12 && base0Umb === 12, `sem fase: 12/12 (${base0Aur}/${base0Umb})`);
+  E.definirFase(st, 'Dia', 3);
+  ok(bate(aur) === 20 && bate(umb) === 7, `Dia: Aurora +8 (20), Umbra −5 (7)`);
+  E.definirFase(st, 'Noite', 3);
+  ok(bate(aur) === 7 && bate(umb) === 20, `Noite espelha: Aurora −5 (7), Umbra +8 (20)`);
+  // o payload é GLOBAL (não do lado de quem ativou): um Aurora INIMIGO também ganha no Dia
+  E.definirFase(st, 'Dia', 3);
+  const inimAur = st.lados[1].units[0];   // zeus… precisa de um Aurora do outro lado — usa o alvo como atacante contra um aliado
+  const alvo2 = st.lados[0].units[2]; const hh = alvo2.hp;
+  E.bater(st, aur, alvo2, 12, 'afetado', 'basico', { semContra: true });   // Aurora batendo no próprio lado (prova de que é por elemento, não por lado)
+  ok(hh - alvo2.hp === 20, `payload é por ELEMENTO, não por lado (Aurora bate 20 mesmo num aliado): ${hh - alvo2.hp}`);
+
+  // Q3: faseDur RESETA a cada escrita (não herda o tempo restante)
+  const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 601);
+  E.definirFase(st2, 'Dia', 3); st2.faseDur = 1;   // simula 2 turnos já corridos
+  E.definirFase(st2, 'Noite', 3);
+  ok(st2.fase === 'Noite' && st2.faseDur === 3, `escrever a fase RESETA a duração para 3 (${st2.faseDur}), não herda o 1 restante`);
+  console.log('  Dia: Aurora+8/Umbra−5 · Noite espelha · global por elemento · faseDur reseta por escrita (troca = relógio novo)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

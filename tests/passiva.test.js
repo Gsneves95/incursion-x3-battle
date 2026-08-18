@@ -1447,6 +1447,40 @@ console.log('== §91 Odin: faccaoConta (2+ Nórdicos → orbe na abertura), marc
   console.log('  faccaoConta gateia por facção (small-serve-um); marca+time-bônus; ignora-Invuln no básico');
 }
 
+console.log('== §96 Amaterasu: Amanhecer ativa o Dia + cura; passiva reducao-no-Dia; Luz da Caverna 28+trava no Dia ==');
+{
+  const hab = E.GODS.amaterasu.ab.find(a => a.slot === 'habilidade').fx;
+  const mil = E.GODS.amaterasu.ab.find(a => a.slot === 'milagre').fx;
+  // Amanhecer: ativa o Dia por 3 e cura 12 no time
+  let st = E.novoEstado(['amaterasu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 700);
+  let a = st.lados[0].units[0], ally = st.lados[0].units[1]; a.hp = 80; ally.hp = 80;
+  E.aplicarFx(st, a, hab, { alvo: 'nenhum', slot: 'habilidade' }, []);
+  ok(st.fase === 'Dia' && st.faseDur === 3, `Amanhecer ativa o Dia por 3 (${st.fase}/${st.faseDur})`);
+  ok(a.hp === 92 && ally.hp === 92, `e cura 12 no time (${a.hp}/${ally.hp})`);
+  // passiva reducao 6 durante o Dia: um atacante REDUZÍVEL (zeus) bate 20 → 14; sem a Amaterasu viva, 20
+  const foe = st.lados[1].units[0]; let h = ally.hp;
+  E.bater(st, foe, ally, 20, 'afetado', 'basico', { semContra: true });
+  ok(h - ally.hp === 14, `passiva: 6 de redução ao time no Dia (20→14): ${h - ally.hp}`);
+  a.vivo = false; h = ally.hp;
+  E.bater(st, foe, ally, 20, 'afetado', 'basico', { semContra: true });
+  ok(h - ally.hp === 20, `redução some quando a Amaterasu cai (fonte da passiva): ${h - ally.hp}`);
+  // Luz da Caverna: 18 fora do Dia; 28 + trava-Habilidade no Dia
+  st = E.novoEstado(['amaterasu', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 701);  // tyr defensor: dano reduzível não confunde (é o atacante que importa)
+  a = st.lados[0].units[0]; let e0 = st.lados[1].units[0]; h = e0.hp;
+  E.aplicarFx(st, a, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
+  ok(h - e0.hp === 18 && !E.ef(e0, 'lockSkill'), `fora do Dia: 18 e SEM trava (${h - e0.hp})`);
+  st = E.novoEstado(['amaterasu', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 702);
+  a = st.lados[0].units[0]; e0 = st.lados[1].units[0]; E.definirFase(st, 'Dia', 3);
+  E.ELEMS.forEach(x => st.lados[1].orbs[x] = 9);   // energia p/ o inimigo: assim o único bloqueio da Habilidade é a TRAVA, não falta de orbe
+  h = e0.hp;
+  E.aplicarFx(st, a, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
+  // 28 (seDia) + 8 (a própria Amaterasu é Aurora e bate mais no SEU Dia — payload §96 aplica ao atacante Aurora) = 36
+  ok(h - e0.hp === 36 && !!E.ef(e0, 'lockSkill'), `no Dia: 28+8(payload Aurora)=36 e trava a Habilidade de todos (${h - e0.hp}/${!!E.ef(e0, 'lockSkill')})`);
+  const hab2 = E.acoesDe(st, e0).find(x => x.slot === 'habilidade');
+  ok(!hab2.disponivel && hab2.motivo === 'travada', `e a Habilidade travada fica indisponível (${hab2.motivo})`);
+  console.log('  Amanhecer→Dia+cura · reducao-no-Dia (some com a fonte) · Luz da Caverna 18→36(28+payload) e trava no Dia');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
