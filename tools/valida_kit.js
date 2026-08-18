@@ -236,6 +236,9 @@ function validarEstado(e, ctx, errs) {
       if (!val || typeof val !== 'object' || !['cheio', 'abaixo', 'acima'].includes(val.op)) errs.push(`${ctx}: hpProprio.op inválido (cheio|abaixo|acima)`);
       else if ((val.op === 'abaixo' || val.op === 'acima') && typeof val.v !== 'number') errs.push(`${ctx}: hpProprio.v ausente para op "${val.op}"`);
     }
+    else if (def.faccaoCount) {   // F1.9 (Odin §91): {faccao∈V.faccoes, op:min|max|exato, n:inteiro}
+      if (!val || typeof val !== 'object' || !V.faccoes.includes(val.faccao) || !['min', 'max', 'exato'].includes(val.op) || typeof val.n !== 'number' || !Number.isInteger(val.n)) errs.push(`${ctx}: faccaoConta espera {faccao∈(${V.faccoes.join('|')}), op:min|max|exato, n:inteiro} (recebeu ${JSON.stringify(val)})`);
+    }
     else if (def.godkey) { if (typeof val !== 'string' || !val) errs.push(`${ctx}: aliadoPresente espera a KEY de um deus (string)`); }
   }
 }

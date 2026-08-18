@@ -207,11 +207,13 @@ const ESTADO_COND = {
   hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
   aliadoPresente:{ godkey: true },            // <key> — um deus específico está no time do dono (sinergia: 'com Fulano no time') — Passo 0
   aliadoCaido:  { bool: true },               // há ao menos um aliado CAÍDO no lado do dono (Freyja: 'se ninguém caiu' = ramo senão)
+  faccaoConta:  { faccaoCount: true },         // F1.9 (Odin §91): {faccao, op, n} — nº de aliados vivos DA FACÇÃO cruza o limiar ('2+ Nórdicos'). Pequeno-serve-um (só Odin, varrido)
   primeiroPorTurno: { bool: true },   // F1.9 (Bastet): RASTREIO por-turno — flag u.golpeUnicoNoTurno (escrito no bater p/ golpe ÚNICO, resetado no iniciarTurno do dono). true = este é o 1º golpe único contra o dono neste turno. §88
 };
 const VOCAB = {
   classes: CLASSES,                              // classe de habilidade
   funcoes: FUNCOES_VOCAB,                              // função do deus (vulnerabilidade.deFuncao, F1.8)
+  faccoes: FACCOES_VOCAB,                              // facção do deus (faccaoConta.faccao, F1.9 §91)
   elementos: ELEMS,
   custo: [...ELEMS, 'livre'],                    // chaves válidas em cost{}
   alvos: [...Object.keys(PASSOS), 'auto'],       // valores válidos de ability.alvo
@@ -525,6 +527,7 @@ function estadoOK(e, u, st) {
   if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
   if ('aliadoPresente' in e) return st.lados[u.lado].units.some(x => x.key === e.aliadoPresente);   // deus X no time (roster)
   if ('aliadoCaido' in e) return caidos(st, u.lado) > 0;   // há aliado caído no lado do dono (Freyja)
+  if ('faccaoConta' in e) { const q = e.faccaoConta; const n = st.lados[u.lado].units.filter(x => x.vivo && kitDe(st, x) && kitDe(st, x).faccao === q.faccao).length; return cmpLimiar(n, q); }   // F1.9 (Odin §91): aliados vivos da facção cruzam o limiar
   if ('primeiroPorTurno' in e) return !u.golpeUnicoNoTurno;   // F1.9 (Bastet §88): LEITOR — true enquanto o dono NÃO sofreu golpe único neste turno (o próprio golpe seta o flag DEPOIS de ler)
   return false;
 }

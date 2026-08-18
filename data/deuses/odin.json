@@ -1,0 +1,55 @@
+{
+  "key": "odin",
+  "nome": "Odin",
+  "faccao": "Nórdica",
+  "elem": "Umbra",
+  "classe": "Híbrido",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Rei de Asgard",
+    "desc": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra; o time causa +6 de dano contra marcados.",
+    "fx": [
+      { "gatilho": "abertura", "estado": { "faccaoConta": { "faccao": "Nórdica", "op": "min", "n": 2 } }, "faz": [ { "t": "orbGain", "n": 1 } ] },
+      { "gatilho": "bonusDano", "v": 6, "escopo": "time", "quando": { "alvoMarca": "qualquer" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Gungnir",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "ignoraInalvejavel": true,
+      "desc": "15 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável.",
+      "fx": [ { "t": "dmg", "v": 15, "ignoraInvuln": true } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Huginn e Muninn",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "Marca todos os inimigos por 2 turnos: o time causa +6 de dano contra marcados.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "marcado", "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Sabedoria do Enforcado",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 3,
+      "alvo": "aliado",
+      "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +10 de dano por 2 turnos.",
+      "fx": [
+        { "t": "selfHp", "v": -15 },
+        { "t": "cdShift", "unidade": true, "v": -99 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 2 } }
+      ]
+    }
+  ]
+}

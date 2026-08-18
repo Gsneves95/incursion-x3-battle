@@ -1424,6 +1424,29 @@ console.log('== §91 Shiva: ignora-Invulnerabilidade (flag de habilidade) + igno
   console.log('  ignoraInvuln fura só com a flag; ignora-piso exercitado (§61); puro fura escudo; +6 permanente acumula');
 }
 
+console.log('== §91 Odin: faccaoConta (2+ Nórdicos → orbe na abertura), marca+time-bônus, ignora-Invuln no básico ==');
+{
+  // faccaoConta ISOLADO com um Nórdico sintético inerte: 2+ → +1 orbe na abertura; <2 → nada. (novoEstado já roda a abertura)
+  E.GODS.tnord = { nome: 'TNord', faccao: 'Nórdica', elem: 'Umbra', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: '-', desc: '-' }, ab: [] };
+  const orbs = team => Object.values(E.novoEstado(team, ['zeus', 'zeus', 'zeus'], 700).lados[0].orbs).reduce((a, b) => a + b, 0);
+  ok(orbs(['odin', 'tnord', 'zeus']) === 2, `2 Nórdicos: 1 abertura + 1 extra = 2 (${orbs(['odin', 'tnord', 'zeus'])})`);
+  ok(orbs(['odin', 'zeus', 'zeus']) === 1, `1 Nórdico: só a abertura = 1, sem extra (${orbs(['odin', 'zeus', 'zeus'])})`);
+  delete E.GODS.tnord;
+  // marca (habilidade) + time causa +6 contra marcados (passiva bonusDano escopo:time)
+  let st = E.novoEstado(['odin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 602);
+  const o = st.lados[0].units[0], ally = st.lados[0].units[1], foe = st.lados[1].units[0];
+  E.aplicarFx(st, o, E.GODS.odin.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'todosInimigos', slot: 'habilidade' }, st.lados[1].units);
+  ok(!!E.ef(foe, 'marcado'), 'habilidade marca todos os inimigos');
+  let h = foe.hp; E.aplicarFx(st, ally, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [foe]);
+  ok(h - foe.hp === 16, `ALIADO do Odin causa +6 contra marcado: 10+6 = 16 (${h - foe.hp})`);
+  // ignora-Invuln no básico
+  st = E.novoEstado(['odin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 603);
+  const o2 = st.lados[0].units[0], f2 = st.lados[1].units[0]; f2.efeitos.push({ type: 'invulneravel', dur: 2 });
+  h = f2.hp; E.aplicarFx(st, o2, E.GODS.odin.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [f2]);
+  ok(h - f2.hp === 15, `básico fura Invulnerabilidade: 15 (${h - f2.hp})`);
+  console.log('  faccaoConta gateia por facção (small-serve-um); marca+time-bônus; ignora-Invuln no básico');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

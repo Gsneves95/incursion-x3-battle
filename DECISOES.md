@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §91 — ignora-Invulnerabilidade (fecho mais barato) fecha o Shiva E o Odin na mesma leva; "cdReset" era miragem
+
+**Shiva (IMPL 61) — ignora-Invulnerabilidade, forma corrigida (§84):** flag de HABILIDADE no `dmg` (`ignoraInvuln`) que flui
+p/ o `opts` do `bater`, não passiva. ~3 linhas. E o `ignoraPiso` (param de `opts` que EXISTIA sem consumidor de kit) foi
+exercitado junto — Shiva é o 1º a furar o piso. **§61 pela terceira vez** (Sun Wukong=execução-imune, Yan Wong=naoRevive-
+em-apply, Shiva=ignora-piso): mecanismo que o motor tinha e nenhum kit provara. O `kind:puro` já cobre a Defesa Destrutível
+(escudo); as duas flags cobrem o resto. Terceiro Olho (45, umaVez) entrou na allowlist do auditor (nuke-de-fim, não correção).
+
+**Odin (IMPL 62) — FECHADO na MESMA leva: estava a UM gancho.** Depois do ignora-Invuln, varri o Odin e ele estava a UM só:
+- básico: ignora-Invuln (esta leva) + ignora-Inalvej (§84) ✓
+- habilidade: marca (§83) — e o "+6 contra marcados" mora na PASSIVA (`bonusDano escopo:time quando:{alvoMarca:qualquer}`),
+  não na habilidade (que só APLICA a marca). Aplicador e leitor são fx separados, como toda marca ofensiva (§83) ✓
+- milagre: `selfHp -15` + "zera todas as recargas de 1 aliado" = **`cdShift {unidade, v:-99}` — JÁ EXISTIA** (o "cdReset" da
+  triagem era MIRAGEM; §46 de novo) + `apply dmgUp` ✓
+- passiva: abertura+orbGain ✓ + o ÚNICO gancho novo → **`faccaoConta`** (nº de aliados de uma facção cruza um limiar,
+  "2+ Nórdicos"). Pequeno, **serve SÓ o Odin** (varrido) — small-serve-um, regra 3.
+
+**Duas coisas viraram JÁ-DÁ ao olhar o motor** (a triagem as chamara de mecanismo): "zera recargas" (é `cdShift v:-99`) e
+o Odin inteiro além do `faccaoConta`. O `faccaoConta` nasceu COM o Odin — ociosa segue em 0.
+
+---
+
 ## §90 — O §46 SUBIU DE NÍVEL: o rótulo engana sobre a FAMÍLIA, não só sobre o mecanismo; e o §54 valida se a família EXISTE
 
 **A re-triagem dos 40 (pós-F1.8, com 15 mecanismos novos desde a última).** Três baldes-teto: JÁ-DÁ ~7, HOOK ~22,
