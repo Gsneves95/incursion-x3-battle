@@ -872,6 +872,67 @@ console.log('== 24b. intercepta-passiva-nomeada: a passiva do Mnevis re-arma int
   console.log('  arma só com Rá · 1º golpe por turno · re-arma no porTurno · gateado por aliadoPresente');
 }
 
+// ------------------------------------------------------------ 25. acaoPerfeita + rastreio de dano causado (§111, Krishna)
+console.log('== 25a. acaoPerfeita: buff TRANSFERIDO que torna a HABILIDADE do portador não-evitável/reduzível/absorvível/contra-atacável ==');
+{
+  // não-reduzível + não-absorvível: a habilidade fura redução E escudo (os dois nomes = o MESMO danoIrredutivel)
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 960);
+  let atk = st.lados[0].units[0], foe = st.lados[1].units[0];
+  atk.efeitos.push({ type: 'acaoPerfeita', dur: 2 });
+  foe.shield = 50; foe.efeitos.push({ type: 'dmgReduction', v: 10, dur: 9 });
+  let h = foe.hp;
+  E.bater(st, atk, foe, 30, 'afetado', 'habilidade', { unico: true });
+  ok(h - foe.hp === 30 && foe.shield === 50, `habilidade com Ação Perfeita fura redução E escudo (30 no HP, escudo 50 intacto) (${h - foe.hp}/${foe.shield})`);
+  // MESMO portador, MESMO golpe, slot BÁSICO: NÃO fura (só a habilidade herda — "a próxima habilidade")
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 961);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  atk.efeitos.push({ type: 'acaoPerfeita', dur: 2 });
+  foe.shield = 50; foe.efeitos.push({ type: 'dmgReduction', v: 10, dur: 9 });
+  h = foe.hp; let sh = foe.shield;
+  E.bater(st, atk, foe, 30, 'afetado', 'basico', { unico: true });
+  ok(h - foe.hp === 0 && foe.shield === 30, `básico do mesmo portador NÃO fura: 30−10 red = 20 absorvido pelo escudo (HP intacto, escudo 50→30) (${h - foe.hp}/${foe.shield})`);
+  // não-contra-atacável: a habilidade não aciona o contraAtaca do alvo
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['atena', 'zeus', 'zeus'], 962);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  atk.efeitos.push({ type: 'acaoPerfeita', dur: 2 }); foe.efeitos.push({ type: 'contraAtaca', v: 10, dur: 9 });
+  let ha = atk.hp;
+  E.bater(st, atk, foe, 15, 'afetado', 'habilidade', { unico: true });
+  ok(ha - atk.hp === 0, `habilidade com Ação Perfeita não sofre contra-ataque (${ha - atk.hp})`);
+  // controle: sem o buff, o mesmo golpe sofre o contra (prova de que é o buff que barra)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['atena', 'zeus', 'zeus'], 963);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'contraAtaca', v: 10, dur: 9 });
+  ha = atk.hp;
+  E.bater(st, atk, foe, 15, 'afetado', 'habilidade', { unico: true });
+  ok(ha - atk.hp === 10, `sem o buff: a habilidade sofre o contra de 10 (${ha - atk.hp})`);
+  // não-evitável: a MIRA da habilidade alcança Inalvejável; a do básico NÃO (só a habilidade herda — §84 no eixo da mira)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 964);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  atk.efeitos.push({ type: 'acaoPerfeita', dur: 2 }); foe.efeitos.push({ type: 'inalvejavel', dur: 9 });
+  const vHab = E.alvosValidos(st, atk, { slot: 'habilidade', alvo: 'inimigo' });
+  const vBas = E.alvosValidos(st, atk, { slot: 'basico', alvo: 'inimigo' });
+  ok(vHab.some(x => x.uid === foe.uid) && !vBas.some(x => x.uid === foe.uid), `Inalvejável mirável na HABILIDADE, não no básico (hab ${vHab.length}, bas ${vBas.length})`);
+  console.log('  fura red+escudo+contra só na habilidade · básico não herda · mira alcança Inalvejável só na habilidade');
+}
+console.log('== 25b. rastreio de dano causado: escritor (dano líquido em inimigo), promotor ANCORADO ao lado ativo (≠ global do §97) ==');
+{
+  // ESCRITOR: bater credita ao atacante o dano LÍQUIDO em inimigo; dano em aliado NÃO conta
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 965);
+  let atk = st.lados[0].units[0], foe = st.lados[1].units[0], ali = st.lados[0].units[1];
+  foe.shield = 5;
+  E.bater(st, atk, foe, 20, 'afetado', 'basico', { unico: true });   // 20−5 escudo = 15 líquido
+  ok(atk.danoAgora === 15, `escritor credita o dano LÍQUIDO (20−5 escudo = 15) (${atk.danoAgora})`);
+  E.bater(st, atk, ali, 10, 'afetado', 'basico', {});   // dano no próprio lado NÃO é "causar dano"
+  ok(atk.danoAgora === 15, `dano em aliado não é creditado (segue 15) (${atk.danoAgora})`);
+  // PROMOTOR ancorado: iniciarTurno promove SÓ o lado ATIVO (o §97 promove os dois; este é o gêmeo de âncora oposta)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 966);
+  let u0 = st.lados[0].units[0], u1 = st.lados[1].units[0];
+  u0.danoAgora = 20; u1.danoAgora = 30;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(u0.danoAntes === 20 && u0.danoAgora === 0, `lado ATIVO promovido (antes 20, agora 0) (${u0.danoAntes}/${u0.danoAgora})`);
+  ok(u1.danoAntes === 0 && u1.danoAgora === 30, `lado INATIVO intacto (antes 0, agora 30 ainda) — âncora ao dono, não global (${u1.danoAntes}/${u1.danoAgora})`);
+  console.log('  escritor = dano líquido em inimigo · aliado não conta · promotor ancorado ao lado ativo (≠ §97 global)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

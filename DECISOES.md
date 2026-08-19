@@ -6,6 +6,54 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §111 — KRISHNA: os quatro ignores JÁ compõem (o Lugh prova); o novo é a TRANSFERÊNCIA; e a passiva arrasta um 2º mecanismo
+
+**Krishna arrastou DOIS mecanismos — o dono nomeou um (a cola da Ação Perfeita) e não viu o outro (o rastreio de dano da
+passiva). §93 de novo: quem aprova coincidência de família não vê a escrevibilidade.**
+
+**As três checagens da Ação Perfeita, respondidas:**
+
+1. **Os quatro ignores NÃO são homogêneos — moram em DUAS fases, e nenhum lê um buff em runtime.** "não-reduzível/
+   não-absorvível" e "não-contra-atacável" agem no IMPACTO (bater); "não-evitável" age na MIRA (`alvosValidos`), e o §84 é
+   invariante: Inalvejável NUNCA toca o bater. Além disso, as fontes de hoje são fx/kit, não efeito: `semContra` é flag do fx;
+   `danoIrredutivel` lê a PASSIVA do atacante; `ignoraInalvejavel` lê a passiva do ator. **Nenhum olhava um BUFF temporário.**
+   Então não era "um buff que liga quatro flags que o bater já lê" — faltava a cola.
+
+2. **"Próxima ação" NÃO cabia em `contra:'unico'` nem em `usos`.** O `contra:'unico'` consome numa REAÇÃO defensiva
+   (interceptar/revidar), não quando o portador AGE. O `usos` é teto por partida da PRÓPRIA habilidade do dono, marcado
+   quando ele age — não um buff que OUTRO aplica e que a ação do portador gasta. "Ação Perfeita de outro" é um terceiro
+   gatilho de consumo: **consome-no-próximo-agir-de-habilidade-do-portador** (§102-A: um caminho — o strip no fim do `agir`).
+
+3. **Os quatro nomes da prosa mapeiam em TRÊS mecanismos, sem sobrar quinto.** `danoIrredutivel` já embrulha
+   reducao+escudo, então "não-reduzível" e "não-absorvível" são o MESMO mecanismo. `ignoraInvuln` (furar Invulnerável) NÃO
+   está na prosa da Ação Perfeita — não sobra um quinto conceito, ele simplesmente não faz parte. **E o Lugh (§105) prova que
+   os quatro ignores JÁ COMPÕEM como flags do próprio fx** (o básico dele é "não pode ser evitado nem contra-atacado", zero
+   mecanismo novo). Logo o inédito do Krishna não são os ignores — é **TRANSFERI-LOS para a próxima habilidade de outro**.
+
+**O que a cola é:** um BUFF `acaoPerfeita` que o Krishna arma num aliado; três leitores passaram a consultá-lo — a MIRA
+(`alvosValidos`, o não-evitável), e o bater em dois pontos (redução/escudo via `calcDano`; contra-ataque via `semContraEf`),
+**todos gateados em `slot==='habilidade'`** (só a próxima habilidade herda; básico/milagre não). Consumido no fim do `agir`
+de habilidade do portador. Pacote FIXO dos quatro (fiel ao catálogo; o Lugh usa subconjunto no próprio fx, mas ninguém
+TRANSFERE subconjunto — se surgir, refatora). `dur:2` desconta só no fim do turno do dono (regra 5), então sobrevive à
+alternância até o aliado usar a habilidade.
+
+**O 2º mecanismo (o que o dono não viu): rastreio de DANO CAUSADO — gêmeo do §97, ÂNCORA OPOSTA.** A passiva "o aliado que
+causou mais dano no turno anterior +5" precisa de rastreio de dois tempos igual ao `curadoAntes` (§97): escritor no `bater`
+(dano líquido em inimigo), promotor no `iniciarTurno`, leitor `atacanteMaiorDanoAntes` + seletor top-do-time. MAS a âncora
+DIFERE, e o teste pegou: o `curadoAntes` promove os DOIS lados (o sujeito lido — o inimigo curado — age no turno
+IMEDIATAMENTE anterior, janela global de 1 turno cabe); o `danoAntes` lê um ALIADO, que age na cadência do PRÓPRIO time (o
+turno anterior DELE, com o turno inimigo no meio) — então promove SÓ o lado ATIVO, ancorado ao dono (como o resetador §88).
+**Gêmeo aparente, âncora oposta — exatamente a lição do §100/§110: a âncora segue a cadência do SUJEITO lido, não a forma do
+rastreio.** Escrevi global primeiro; a asserção da passiva ficou vermelha (o dano do aliado era zerado pela promoção do turno
+inimigo no meio); corrigi para lado-ativo.
+
+**Krishna (IMPL 73, FUNCIONAL 73):** Flauta Divina (12 a 1); Conselho do Gita (arma a Ação Perfeita num aliado); Forma
+Universal (+12 de dano ao time por 2 turnos + 2 orbes); Auriga de Arjuna (o top-dano do turno anterior do time +5).
+Isolamento em `primitivas §25` (acaoPerfeita fura os 4 só na habilidade, básico não herda; rastreio: escritor líquido,
+promotor ancorado ≠ §97 global); comportamento em `passiva §111`.
+
+---
+
 ## §110 — "PRIMEIRO POR TURNO" tem DUAS naturezas: condição-que-se-rastreia (Bastet) vs efeito-que-se-consome (Mnevis)
 
 **O mesmo conceito — "só vale para o primeiro golpe do turno" — foi construído de dois jeitos opostos, e a escolha não é

@@ -74,7 +74,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano'];   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita'];   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -185,6 +185,7 @@ const CONDICOES = {
   atacanteElem:    { sub: ELEMS },                                 // quem ataca é do elemento (escopo aliados)
   alvoMarca:       { sub: [...MARCAS, 'qualquer'] },               // alvo tem a marca ofensiva nomeada, OU 'qualquer' (tem qualquer marca) — espelha alvoDebuff. §83
   alvoCuradoAntes: { bool: true },   // §97 (Tsukuyomi): alvo foi curado no turno ANTERIOR (rastreio de dois tempos — não mais pendente)
+  atacanteMaiorDanoAntes: { bool: true },   // §111 (Krishna): o ATACANTE é o aliado que causou MAIS dano no turno anterior (gêmeo ofensivo do alvoCuradoAntes; escopo:'time'). Empate → menor índice; ninguém se ninguém causou dano
 };
 // `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
 // ATAQUE) e de `contra` (defensivo: lê o golpe que chega). A cura não tem ataque: a condição lê o CONTEXTO da
@@ -327,6 +328,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
     hp: 120, maxHp: 120, vivo: true, agiu: false,
     golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
+    danoAgora: 0, danoAntes: 0,   // §111 (Krishna): RASTREIO de dois tempos do DANO CAUSADO — 'dano neste turno' (escrito em bater) e 'dano no turno ANTERIOR' (leitor, atacanteMaiorDanoAntes). Promovidos no iniciarTurno p/ os DOIS lados, gêmeo do curadoAntes (§97)
     curadoAgora: false, curadoAntes: false,   // F1.9 (Tsukuyomi §97): RASTREIO de dois tempos — 'curado neste turno' (escrito em curar) e 'curado no turno ANTERIOR' (leitor, alvoCuradoAntes). Promovidos (agora→antes) no iniciarTurno p/ TODAS as unidades dos DOIS lados: é leitura OFENSIVA cruzando o lado, não ancorada ao dono (≠ §88)
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
     efeitos: [], dots: [], shield: 0,
@@ -578,7 +580,20 @@ function condOK(q, atk, alvo, st) {
   }
   if ('atacanteElem' in q) return atk.elem === q.atacanteElem;
   if ('alvoCuradoAntes' in q) return !!alvo.curadoAntes;   // §97 (Tsukuyomi): o alvo foi curado no turno ANTERIOR (rastreio de dois tempos)
+  if ('atacanteMaiorDanoAntes' in q) return atk === maiorDanoAntes(st, atk.lado);   // §111 (Krishna): o atacante é o TOP-dano do time no turno anterior
   return false;
+}
+
+// §111 (Krishna) — o aliado que causou MAIS dano no turno anterior (lê danoAntes, promovido no iniciarTurno).
+// Empate → MENOR ÍNDICE (o primeiro no strict >). Ninguém (null) se o time inteiro causou 0 no turno anterior:
+// "quem causou mais" não existe sem dano. Gêmeo do maior/menor-HP (§103), mas sobre o rastreio de dano.
+function maiorDanoAntes(st, lado) {
+  let best = null;
+  for (const u of st.lados[lado].units) {
+    if (!u.vivo || !(u.danoAntes > 0)) continue;
+    if (!best || u.danoAntes > best.danoAntes) best = u;
+  }
+  return best;
 }
 
 // Soma o +v das passivas declarativas (gatilho bonusDano) no lado do atacante. escopo self =
@@ -706,8 +721,9 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
   if (v < 0) v = 0;
 
   const irred = danoImune(st, atk);   // ogum/tyr migrados: danoIrredutivel declarativo (§37)
-  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || irred.reducao;
-  const ignoraEscudo = kind === 'puro' || irred.escudo;
+  const ap = slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita');   // §111 (Krishna): Ação Perfeita fura redução E escudo — SÓ na habilidade do portador (não-reduzível + não-absorvível). Os dois nomes da prosa = o MESMO danoIrredutivel; aqui via BUFF transferido em vez de passiva do dono
+  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || irred.reducao || ap;
+  const ignoraEscudo = kind === 'puro' || irred.escudo || ap;
 
   // regra 2 — redução ANTES do escudo
   if (!ignoraReducao) {
@@ -728,6 +744,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84)
   if (!alvo.vivo) return 0;
+  const semContraEf = semContra || (slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita'));   // §111 (Krishna): não-contra-atacável via BUFF transferido — SÓ na habilidade do portador. O reflexo/contra recursam com slot próprio, então não reentram aqui
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
   const golpe = { slot, classe, elem: atk && atk.elem, unico };
 
@@ -789,6 +806,10 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
   log(st, evDano);
+  // §111 (Krishna) — ESCRITOR do rastreio de dano causado: credita ao ATACANTE o dano LÍQUIDO em inimigo (v>0).
+  // Só unidade real (a invocação-stub '__inv' não tem o campo → pulada) e só dano cruzando o lado (dano em si/aliado
+  // não é "causar dano"). O reflexo/contra creditam quem revida — é dano que ele de fato causou.
+  if (v > 0 && atk && typeof atk.danoAgora === 'number' && atk.lado !== alvo.lado) atk.danoAgora += v;
   // PRIMITIVA dano armazenado — todo aliado do alvo com acumulador guarda o dano sofrido.
   for (const x of st.lados[alvo.lado].units) {
     const arm = ef(x, 'armazenaDano');
@@ -809,7 +830,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
   // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
   const ca = ef(alvo, 'contraAtaca');
-  if (ca && unico && !semContra && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse)) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X (ex.: 'Físico')
+  if (ca && unico && !semContraEf && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse)) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X (ex.: 'Físico'). §111: semContraEf também barra pela Ação Perfeita
     log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'contraAtaca' });
     bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
     if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);
@@ -1137,6 +1158,11 @@ function iniciarTurno(st) {
   // dos DOIS lados a cada início de turno (não só a ativa): a leitura é OFENSIVA e cruza o lado, então a janela
   // 'curado no turno anterior' tem de ser de um turno só, global. ANTES da regen deste turno (que reescreve 'agora').
   for (const lado of st.lados) for (const u of lado.units) { u.curadoAntes = u.curadoAgora; u.curadoAgora = false; }
+  // §111 (Krishna): promove o rastreio de DANO CAUSADO — MESMA forma de dois tempos do §97, ANCORA DIFERENTE. O
+  // curadoAntes é global (dois lados): o sujeito lido (o inimigo curado) age no turno IMEDIATAMENTE anterior, então a
+  // janela de um turno cabe. O danoAntes lê um ALIADO, que age na cadência do PRÓPRIO time (o turno anterior DELE, não
+  // o do inimigo no meio) — logo promove SÓ o lado ATIVO, ancorado ao dono (como o resetador §88). Gêmeo aparente, âncora oposta (§100/§110).
+  for (const u of l.units) { u.danoAntes = u.danoAgora; u.danoAgora = 0; }
   const primeiro = !l.estreou;     // "turno 1" é por LADO, não global
   l.estreou = true;
   l.converteu = false;
@@ -1325,7 +1351,7 @@ function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
   if (tipo === 'aliado') {
     lista = st.lados[u.lado].units.filter(x => x.vivo);   // aliado NÃO filtra Inalvejável: evasão é contra o inimigo, cura aliada alcança (§84 decisão a)
   } else {
-    const ignoraInalv = a.ignoraInalvejavel || temIgnoraInalvejavel(st, u);   // F1.9: flag de habilidade (Odin/Hórus) OU passiva (Hou Yi/Boitatá) miram o oculto
+    const ignoraInalv = a.ignoraInalvejavel || temIgnoraInalvejavel(st, u) || (a.slot === 'habilidade' && !!ef(u, 'acaoPerfeita'));   // F1.9: flag de habilidade (Odin/Hórus) OU passiva (Hou Yi/Boitatá) miram o oculto. §111 (Krishna): a Ação Perfeita torna a habilidade NÃO-EVITÁVEL — é override de MIRA (§84: o não-evitável mora AQUI, não no bater)
     lista = st.lados[1 - u.lado].units.filter(x => x.vivo && !ef(x, 'submerso') && (ignoraInalv || !ef(x, 'inalvejavel')));   // Inalvejável mora AQUI (seleção), nunca no bater (§84 invariante)
     const tt = ef(u, 'taunt');
     if (tt) {
@@ -1407,6 +1433,10 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
       }
     }
   }
+  // §111 (Krishna) — CONSOME a Ação Perfeita: ela vale para a PRÓXIMA HABILIDADE do portador; usada esta, some.
+  // Depois do aplicarFx (os bater desta habilidade já a leram), só no slot habilidade (básico/milagre não gastam
+  // nem herdam — "a próxima habilidade" da prosa). Krishna, que ARMA a Ação num aliado, não a carrega: não se auto-consome.
+  if (slot === 'habilidade' && ef(u, 'acaoPerfeita')) { u.efeitos = u.efeitos.filter(e => e.type !== 'acaoPerfeita'); log(st, { tipo: 'efeito', alvo: u.key, efeito: 'acaoPerfeita', duracao: 0 }); }
   checarFim(st);
   return { ok: true };
 }

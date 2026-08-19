@@ -1,0 +1,50 @@
+{
+  "key": "krishna",
+  "nome": "Krishna",
+  "faccao": "Hindu",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Auriga de Arjuna",
+    "desc": "O aliado que causou mais dano no turno anterior causa +5 de dano.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 5, "escopo": "time", "quando": { "atacanteMaiorDanoAntes": true } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Flauta Divina",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Conselho do Gita",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Ação Perfeita em 1 aliado: a próxima habilidade dele não pode ser evitada, reduzida, absorvida nem contra-atacada.",
+      "fx": [ { "t": "apply", "eff": { "type": "acaoPerfeita", "dur": 2 } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Forma Universal",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time causa +12 de dano por 2 turnos e ganha 2 orbes.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "time" },
+        { "t": "orbGain", "n": 2 }
+      ]
+    }
+  ]
+}

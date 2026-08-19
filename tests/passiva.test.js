@@ -1746,6 +1746,57 @@ console.log('== §109 Mnevis (fecha a família guarda): thorns no milagre + inte
   console.log('  Chifrada 15 · Investida 15×2 + escudo 15 · Fúria provoca todos + thorns 10 · Montaria intercepta Rá (1º/turno, só com Rá)');
 }
 
+console.log('== §111 Krishna: Ação Perfeita (buff transferido, os 4 ignores, próxima habilidade) + passiva top-dano ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico Flauta Divina: 12 a 1 inimigo (sem custo)
+  let st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 980); orbs(st.lados[0]);
+  let kr = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp;
+  E.agir(st, kr.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12, `Flauta Divina: 12 a 1 inimigo (${h - foe.hp})`);
+
+  // Conselho do Gita ARMA a Ação Perfeita num aliado; Krishna não a carrega
+  st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 981); orbs(st.lados[0]);
+  kr = st.lados[0].units[0]; let ally = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  foe.shield = 100; foe.efeitos.push({ type: 'dmgReduction', v: 10, dur: 9 });
+  E.agir(st, kr.uid, 'habilidade', [ally.uid]);
+  ok(E.ef(ally, 'acaoPerfeita') && !E.ef(kr, 'acaoPerfeita'), 'Conselho do Gita: o ALIADO recebe a Ação Perfeita, Krishna não a carrega');
+  // a HABILIDADE do aliado fura escudo E redução e é consumida em seguida
+  h = foe.hp;
+  E.agir(st, ally.uid, 'habilidade', [foe.uid]);
+  ok(h - foe.hp > 0 && foe.shield === 100, `a habilidade do aliado fura escudo E redução (HP caiu, escudo 100 intacto) (${h - foe.hp}/${foe.shield})`);
+  ok(!E.ef(ally, 'acaoPerfeita'), 'consumida após a habilidade (a PRÓXIMA habilidade, uma só)');
+
+  // GATING: o básico do portador NÃO consome (nem herda) — só a habilidade; e o buff sobrevive à alternância (dur 2, tick só no lado ativo)
+  st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 982); orbs(st.lados[0]);
+  kr = st.lados[0].units[0]; ally = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  E.agir(st, kr.uid, 'habilidade', [ally.uid]);
+  E.agir(st, ally.uid, 'basico', [foe.uid]);
+  ok(E.ef(ally, 'acaoPerfeita'), 'o básico do portador NÃO consome a Ação Perfeita');
+  E.fimTurno(st); E.fimTurno(st); orbs(st.lados[0]);   // volta ao time (fimTurno já re-inicia o turno)
+  ok(E.ef(ally, 'acaoPerfeita'), 'sobrevive à alternância (dur 2, desconta só no fim do turno do dono)');
+  E.agir(st, ally.uid, 'habilidade', [foe.uid]);
+  ok(!E.ef(ally, 'acaoPerfeita'), 'a habilidade seguinte consome');
+
+  // milagre Forma Universal: +12 de dano ao TIME por 2 turnos (+ 2 orbes)
+  st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 983); orbs(st.lados[0]);
+  kr = st.lados[0].units[0]; ally = st.lados[0].units[1];
+  E.agir(st, kr.uid, 'milagre', []);
+  const up = E.ef(ally, 'dmgUp'), upK = E.ef(kr, 'dmgUp');
+  ok(up && up.v === 12 && upK && upK.v === 12, `Forma Universal: +12 de dano em TODO o time (${up && up.v})`);
+
+  // passiva Auriga de Arjuna: quem causou MAIS dano no turno anterior (do time) causa +5
+  st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 984); orbs(st.lados[0]);
+  let z1 = st.lados[0].units[1], z2 = st.lados[0].units[2], f0 = st.lados[1].units[0], f1 = st.lados[1].units[1];
+  E.agir(st, z1.uid, 'basico', [f0.uid]);   // z1 causa dano no turno; z2 não
+  E.fimTurno(st); E.fimTurno(st); orbs(st.lados[0]);   // enemy + volta: promove o lado do time → z1 é o top-dano-anterior
+  let a = f0.hp; E.agir(st, z1.uid, 'basico', [f0.uid]); let d1 = a - f0.hp;
+  let b = f1.hp; E.agir(st, z2.uid, 'basico', [f1.uid]); let d2 = b - f1.hp;
+  ok(d1 === d2 + 5, `o top-dano do turno anterior (z1) causa +5 vs o não-top (z2) (${d1} vs ${d2})`);
+  console.log('  Flauta 12 · Ação Perfeita arma no aliado, fura os 4, só na próxima habilidade · Forma Universal +12 time · passiva top-dano +5');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
