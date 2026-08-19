@@ -1797,6 +1797,47 @@ console.log('== §111 Krishna: Ação Perfeita (buff transferido, os 4 ignores, 
   console.log('  Flauta 12 · Ação Perfeita arma no aliado, fura os 4, só na próxima habilidade · Forma Universal +12 time · passiva top-dano +5');
 }
 
+console.log('== §114 Izanami: contágio (espalha) + DoT escalado por Maldição + execução dos amaldiçoados ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico Toque de Yomi: 12 + 1 Maldição no alvo (delta, isolando o tique de abertura da passiva)
+  let st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 980); orbs(st.lados[0]);
+  let iz = st.lados[0].units[0], f0 = st.lados[1].units[0];
+  let h = f0.hp, c = E.getContador(f0, 'maldicao');
+  E.agir(st, iz.uid, 'basico', [f0.uid]);
+  ok(h - f0.hp === 12 && E.getContador(f0, 'maldicao') - c === 1, `Toque de Yomi: 12 de dano + 1 Maldição (${h - f0.hp}, +${E.getContador(f0, 'maldicao') - c})`);
+
+  // passiva Mil por Dia: no início do turno, o inimigo de MAIOR HP ganha 1 Maldição
+  st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 981); orbs(st.lados[0]);
+  let e = st.lados[1].units;
+  e.forEach(x => x.contadores.maldicao = 0);        // limpa o tique de abertura
+  e[0].hp = 100; e[1].hp = 90; e[2].hp = 118;       // e2 é o de maior HP
+  E.fimTurno(st); E.fimTurno(st);                    // volta ao turno da Izanami → a passiva roda
+  ok(E.getContador(e[2], 'maldicao') === 1 && E.getContador(e[0], 'maldicao') === 0 && E.getContador(e[1], 'maldicao') === 0,
+    `Mil por Dia: só o de maior HP (e2) ganha Maldição — 1º porTurno que toca inimigo, auto-alvo (${e.map(x => E.getContador(x, 'maldicao'))})`);
+
+  // habilidade Praga: espalha (iguala ao máximo) + o DoT escalado tica 6×acúmulo/turno
+  st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 982); orbs(st.lados[0]);
+  iz = st.lados[0].units[0]; e = st.lados[1].units;
+  e[0].contadores.maldicao = 3; e[1].contadores.maldicao = 1; e[2].contadores.maldicao = 0;
+  E.agir(st, iz.uid, 'habilidade', []);
+  ok(e.every(x => E.getContador(x, 'maldicao') === 3), `Praga espalha: todos igualados ao máximo 3 (${e.map(x => E.getContador(x, 'maldicao'))})`);
+  ok(e.every(x => x.dots.some(d => d.nome === 'maldicao')), 'Praga aplica o DoT da Maldição a todos');
+  const hp0 = e[0].hp;
+  E.fimTurno(st);   // vai aos inimigos → o DoT tica no iniciarTurno deles
+  ok(hp0 - e[0].hp === 18, `o DoT escalado tica 6×3 = 18 puro/turno (${hp0 - e[0].hp})`);
+
+  // milagre Portal de Yomotsu: 20 a todos + elimina amaldiçoados com ≤30 HP
+  st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 983); orbs(st.lados[0]);
+  iz = st.lados[0].units[0]; e = st.lados[1].units;
+  e[0].hp = 45; e[0].contadores.maldicao = 1;   // 45−20=25 ≤30 E amaldiçoado → executa
+  e[1].hp = 45; e[1].contadores.maldicao = 0;   // 25 ≤30 mas SEM Maldição → sobrevive
+  e[2].hp = 100; e[2].contadores.maldicao = 2;  // 80 → sobrevive
+  E.agir(st, iz.uid, 'milagre', []);
+  ok(!e[0].vivo && e[1].vivo && e[2].vivo, `Portal: 20 a todos + executa só o amaldiçoado ≤30 (${e.map(x => x.vivo)})`);
+  console.log('  Toque 12+Maldição · Mil por Dia no maior HP · Praga espalha+DoT 6×acúmulo · Portal 20 + executa amaldiçoados ≤30');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

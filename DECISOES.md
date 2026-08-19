@@ -6,31 +6,72 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
-## §113 — A VARREDURA DE ÓRFÃOS pós-F1.9, e duas lições: o exemplo pode ser o contraexemplo; relato de processo também precisa de §82
+## §114 — IZANAMI: o tique escalado é COMPOSIÇÃO (reusa o escalador do dano), e o 1º porTurno que toca inimigo
+
+**A varredura da família DoT-por-contador, respondida:** o "cada Maldição causa 6 de dano puro por turno" tem **um só
+consumidor** (Izanami — a "Marca da Morte" 10/turno é DoT FIXO, os clones são invocação, a Queimadura da Nezha é DoT fixo).
+E a pergunta do dono — o tique lê o mesmo escalador do dano de habilidade, ou tem caminho próprio? — deu **composição**: o
+laço do DoT no `iniciarTurno` passou a chamar `escalaContagem` (o MESMO helper que o `danoBase` usa para `porContador`),
+lendo o contador do PRÓPRIO portador ao vivo. Um DoT ganhou um campo `escala` (spec `porContador`); o tique faz
+`v + ampDot + escalaContagem(...)`. Zero caminho novo de dano — o escalador de habilidade e o de tique são o mesmo código.
+
+**A Maldição é UM conceito em DOIS stores.** O contador `maldicao` (o acúmulo: básico +1, passiva +1, espalhado pela
+habilidade) e o DoT `maldicao` (o veículo do dano 6×acúmulo/turno, aplicado pela Praga) têm o MESMO nome mas vivem em
+`u.contadores` e `u.dots` — stores separados que o motor nunca confunde. O DoT lê o contador; o contador não sabe do DoT.
+Registrar o nome duplo de propósito: "Maldição de Yomi" é uma coisa no jogo, duas no dado.
+
+**O 1º porTurno que toca INIMIGO — e o invariante turno-seguro, reafinado.** A passiva "o inimigo de maior HP ganha 1
+Maldição por turno" é o primeiro `porTurno` cujo `faz` mira o lado inimigo (até aqui: self/próprio-lado, F1.2.5). **Decisão
+(dono): turno-seguro significa "o jogador não ESCOLHE o alvo", não "só o próprio lado".** O `rodarFaz` do `contador` ganhou
+o seletor `alvoHp` (auto-seleciona o inimigo de maior HP, como a Deméter §103 auto-seleciona o aliado mais ferido) — a
+garantia da F1.2.5 (nenhuma escolha do jogador num gatilho de turno) fica INTACTA; só o LADO do auto-alvo mudou. A Maldição
+ser contador NEUTRO (marcador, não debuff) ajuda: não é "controle no inimigo sem escolha", é acúmulo.
+
+**Peças menores:** `alvoContador` — condição nova ("o alvo carrega o contador cruzando {op,n}"), gêmea do `estadoCond.contador`
+mas lendo o ALVO; usada no `execIf` do milagre ("elimina amaldiçoados" = maldicao ≥ 1). E o `espalha` (contágio que iguala
+todos ao máximo) já existia desde a F1.1 SEM consumidor — Izanami é o consumidor que faltava (resolve 1 dos 4 reservados do
+§113; o §61-espelho fecha).
+
+**Izanami (IMPL 74, FUNCIONAL 74):** Toque de Yomi (12 + 1 Maldição); Praga de Yomi (espalha as Maldições ao máximo + DoT
+que tica 6×acúmulo/turno); Portal de Yomotsu (20 a todos + executa amaldiçoados com ≤30 HP); Mil por Dia (o inimigo de maior
+HP ganha 1 Maldição por turno). Isolamento em `primitivas §26` (DoT escalado reusa escalaContagem; alvoContador gateia a
+execução); comportamento em `passiva §114`. **Limpeza dobrada nesta leva:** removido o `stripBuffs` (§113, produtor-sem-
+consumidor especulativo — §87) e o comentário obsoleto do `atordoaMenorHp`.
+
+---
+
+## §113 — A VARREDURA DE ÓRFÃOS pós-F1.9: UM item real, e o §82 aplicado a um FALSO-POSITIVO que eu mesmo plantei
 
 **Varri as quatro espécies de órfão nos 73 kits escritos + no motor (a última sistemática foi na F1.8; desde então ~15
-mecanismos e ~20 kits novos). Resultado: DOIS itens reais. O ritmo das levas não deixou pilha.**
+mecanismos e ~20 kits novos). Resultado: UM item real (`stripBuffs`). O ritmo das levas não deixou pilha.**
 
 - **etiqueta-sem-enforce: 0.** (selado/agarrar/medo travam slot via `SLOTS_TRAVADOS`; tormento é DoT no tique genérico.)
 - **campo-sem-fio: 0.** (todo campo de `novaUnidade`/`novoEstado` lido E escrito; `usos` escreve por índice.)
-- **prosa-sem-fx: 1** — o básico do Lugh (ver lição abaixo).
-- **produtor-sem-consumidor: 1 morto** (`stripBuffs`) **+ 4 reservados** (`espalha`→Izanami, `paridade`→Hel,
-  `aliadosVivos`→Guan Yu, `hpProprio`→Shuten — capacidade à frente do consumidor, o espelho benigno do §95) **+ 1
-  comentário obsoleto** (`atordoaMenorHp`, handler já removido no §105).
+- **prosa-sem-fx: 0.** (Ver a correção abaixo — o único candidato, o Lugh, era falso-positivo.)
+- **produtor-sem-consumidor: 1 morto** (`stripBuffs`, removido nesta leva) **+ 4 reservados** (`espalha`→Izanami,
+  `paridade`→Hel, `aliadosVivos`→Guan Yu, `hpProprio`→Shuten — capacidade à frente do consumidor, o espelho benigno do §95)
+  **+ 1 comentário obsoleto** (`atordoaMenorHp`, handler já removido no §105; comentário removido nesta leva).
+- **nezha (5ª forma, prose≠fx, achada pela varredura):** a prosa do milagre diz "+10 se Nezha já agiu"; o fx faz
+  `seAliadoJaAgiu` ("outro aliado já agiu"). Sob o modelo de UMA ação por turno, `u.agiu` já é true quando ela lança o
+  milagre → a leitura literal seria "+10 SEMPRE" (mais forte, não mais fiel). **Decisão: MANTER o impl como leitura-de-
+  intenção** — "outro aliado já agiu" é o único sentido não-vacuo (combo de time); a `desc` do kit já documenta a versão
+  do fx. A premissa de "a prosa é mais estrita" estava INVERTIDA aqui, e por isso a prosa NÃO venceu (≠ Brigid §39): quando
+  a letra é degenerada, a intenção vence.
 
-**LIÇÃO A — o exemplo usado para provar uma tese pode ser o CONTRAEXEMPLO dela, e ninguém checa o exemplo.** No §111
-escrevi que "o Lugh (§105) prova que os quatro ignores já compõem como flags do fx — o básico dele é 'não pode ser evitado
-nem contra-atacado', zero mecanismo novo". A varredura mostrou que o básico do Lugh implementa `semContra` (o
-contra-atacado) mas NÃO o `ignoraInalvejavel` (o evitado) — o exemplo que citei como prova estava incompleto: ele compõe UM
-dos dois ignores que promete. A tese continua verdadeira (os ignores COMPÕEM; o `ignoraInalvejavel` é flag de habilidade,
-usado por Odin/Hórus/Hou Yi/Boitatá), mas a EVIDÊNCIA que usei era um gap. Quando uma decisão se apoia num exemplo concreto,
-o exemplo entra no escopo da verificação — não só a tese.
+**CORREÇÃO — LIÇÃO A revista (o falso-positivo que eu plantei): verificar contra o MOTOR RODANDO, não contra uma vista
+parcial do dado.** Reportei o básico do Lugh como `prosa-sem-fx` ("promete 'não pode ser evitado' mas o fx só tem
+`semContra`"). ERRADO. O `ignoraInalvejavel` do Lugh é uma **flag de nível de HABILIDADE** (`"ignoraInalvejavel": true` no
+objeto da ação, lido em `alvosValidos`), NÃO um campo dentro do array `fx`. O subagente que varreu leu só o array `fx` e não
+viu; e eu "confirmei" com um `node -e` que imprimia só `.fx` — a MESMA vista parcial. Dois §82 compostos: um falso-positivo
+que sobreviveu porque a verificação repetiu o erro da fonte. **A checagem certa era rodar o motor** (`alvosValidos` mira o
+inimigo Inalvejável? → true). O §111 estava CERTO desde o começo: o básico do Lugh compõe os DOIS ignores. A "ironia" que
+registrei ontem era ela mesma o erro — corrigida aqui.
 
 **LIÇÃO B — relato de processo também precisa de §82 (verificar contra a fonte).** Reportei o `atordoaMenorHp` como handler
 morto vivo no `aplicarFx`. Era verdade no que eu estava LENDO — mas o que eu lia era o container revertido a um commit
 antigo; no origin/main o §105 já tinha removido o handler. O §82 (verificar contra o git, não contra a memória) vale para o
-RELATO tanto quanto para o código: um "eu vi X no arquivo" só é confiável depois de confirmar que o arquivo é o do estado
-canônico. Corrigir o próprio relato custa uma frase; deixar passar planta um fato falso no registro.
+RELATO tanto quanto para o código. **As duas lições são a mesma:** um "eu vi X" só vale depois de confirmar que o X veio do
+estado canônico, rodando — não de uma leitura parcial nem de um container fora de sincronia.
 
 ---
 

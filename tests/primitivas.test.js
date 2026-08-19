@@ -444,8 +444,8 @@ console.log('== 12c. Inalvejável: dispel remove (b); Provocar suspenso; ignora-
 {
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 134);
   const u = st.lados[1].units[0]; u.efeitos.push({ type: 'inalvejavel', dur: 2 });
-  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'stripBuffs' }], A('inimigo', 'habilidade'), [u]);
-  ok(!E.ef(u, 'inalvejavel'), 'stripBuffs REMOVE a Inalvejável (buff defensivo, decisão b) — a trava é só na seleção dela');
+  E.aplicarFx(st, st.lados[0].units[0], [{ t: 'stripOne' }], A('inimigo', 'habilidade'), [u]);
+  ok(!E.ef(u, 'inalvejavel'), 'dispel (stripOne) REMOVE a Inalvejável (buff defensivo, decisão b) — a trava é só na seleção dela');
   // Provocar suspenso se o provocador está Inalvejável
   const st2 = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 135);
   const atk2 = st2.lados[0].units[0], prov = st2.lados[1].units[0];
@@ -931,6 +931,46 @@ console.log('== 25b. rastreio de dano causado: escritor (dano líquido em inimig
   ok(u0.danoAntes === 20 && u0.danoAgora === 0, `lado ATIVO promovido (antes 20, agora 0) (${u0.danoAntes}/${u0.danoAgora})`);
   ok(u1.danoAntes === 0 && u1.danoAgora === 30, `lado INATIVO intacto (antes 0, agora 30 ainda) — âncora ao dono, não global (${u1.danoAntes}/${u1.danoAgora})`);
   console.log('  escritor = dano líquido em inimigo · aliado não conta · promotor ancorado ao lado ativo (≠ §97 global)');
+}
+
+// ------------------------------------------------------------ 26. DoT escalado por contador + alvoContador (§114, Izanami)
+console.log('== 26a. DoT escalado: o tique lê o MESMO escalador do dano de habilidade (porContador), ao vivo, no portador ==');
+{
+  const A = (alvo, slot) => ({ alvo, slot: slot || 'habilidade' });
+  // aplica via fx real; o dot guarda o escalador; o tique faz v(0) + 6×contador
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 970);
+  let atk = st.lados[0].units[0], u = st.lados[1].units[0];
+  u.contadores.maldicao = 3;
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'maldicao', v: 0, porContador: { nome: 'maldicao', onde: 'self', v: 6 }, dur: 9 }], A('inimigo', 'habilidade'), [u]);
+  const d = u.dots.find(x => x.nome === 'maldicao');
+  ok(d && d.escala, 'o dot guardou o escalador (porContador) para ler no tique');
+  let h = u.hp; st.ativo = 1; E.iniciarTurno(st);
+  ok(h - u.hp === 18, `tique = v(0) + 6×3 = 18 (${h - u.hp})`);
+  // contador maior → tique maior (lê AO VIVO): 6×5 = 30, em estado separado (sem re-init duplo)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 971);
+  atk = st.lados[0].units[0]; u = st.lados[1].units[0]; u.contadores.maldicao = 5;
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'maldicao', v: 0, porContador: { nome: 'maldicao', onde: 'self', v: 6 }, dur: 9 }], A('inimigo', 'habilidade'), [u]);
+  h = u.hp; st.ativo = 1; E.iniciarTurno(st);
+  ok(h - u.hp === 30, `contador 5 → tique 6×5 = 30 (o escalador é o mesmo do dano de habilidade) (${h - u.hp})`);
+  // sem contador → tique 0 (inofensivo)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 972);
+  atk = st.lados[0].units[0]; u = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'maldicao', v: 0, porContador: { nome: 'maldicao', onde: 'self', v: 6 }, dur: 9 }], A('inimigo', 'habilidade'), [u]);
+  h = u.hp; st.ativo = 1; E.iniciarTurno(st);
+  ok(h - u.hp === 0, `sem acúmulo → 0 no tique (${h - u.hp})`);
+  console.log('  o tique reusa escalaContagem · lê o contador do portador ao vivo · 6×N puro/turno');
+}
+console.log('== 26b. alvoContador: condição "o alvo tem o contador cruzando o limiar" (execIf: elimina só amaldiçoados) ==');
+{
+  const A = (alvo, slot) => ({ alvo, slot: slot || 'habilidade' });
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 973);
+  let atk = st.lados[0].units[0], e = st.lados[1].units;
+  e[0].hp = 25; e[0].contadores.maldicao = 1;   // ≤30 E amaldiçoado → executa
+  e[1].hp = 25; e[1].contadores.maldicao = 0;   // ≤30 mas SEM maldicao → sobrevive
+  e[2].hp = 80; e[2].contadores.maldicao = 3;   // amaldiçoado mas HP alto → sobrevive
+  E.aplicarFx(st, atk, [{ t: 'dmg', v: 1, escopo: 'todosInimigos', executaAbaixoDe: 30, execIf: { alvoContador: { nome: 'maldicao', op: 'min', n: 1 } } }], A('todosInimigos', 'milagre'), []);
+  ok(!e[0].vivo && e[1].vivo && e[2].vivo, `execIf alvoContador: elimina só o amaldiçoado ≤30 (e0), poupa o não-amaldiçoado (e1) e o de HP alto (e2) (${e.map(x => x.vivo)})`);
+  console.log('  alvoContador gateia a execução · só quem carrega a Maldição é elegível');
 }
 
 console.log('');

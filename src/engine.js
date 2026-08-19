@@ -83,7 +83,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 // some-o aqui (e um fxKey novo, se o efeito ler um campo novo) — mesma disciplina de "primitiva antes do deus".
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
-  'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  'stripDef', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
   'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
@@ -93,9 +93,9 @@ const TIPOS_FX = [
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
-const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento'];   // cresce ao provar os 73 kits. 'veneno' entrou p/ a
+const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento', 'maldicao'];   // 'maldicao' (§114, Izanami): MESMO conceito do contador homônimo — o contador é o acúmulo, o DoT é o veículo do dano 6×acúmulo/turno (stores separados; o DoT lê o contador via porContador). cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (Inari dá 1 de sinergia, F1.8).
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (Inari dá 1 de sinergia, F1.8); 'maldicao' = Izanami (§114: espalha por contágio + DoT escalado 6/acúmulo + execução dos amaldiçoados).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
 const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -186,6 +186,7 @@ const CONDICOES = {
   alvoMarca:       { sub: [...MARCAS, 'qualquer'] },               // alvo tem a marca ofensiva nomeada, OU 'qualquer' (tem qualquer marca) — espelha alvoDebuff. §83
   alvoCuradoAntes: { bool: true },   // §97 (Tsukuyomi): alvo foi curado no turno ANTERIOR (rastreio de dois tempos — não mais pendente)
   atacanteMaiorDanoAntes: { bool: true },   // §111 (Krishna): o ATACANTE é o aliado que causou MAIS dano no turno anterior (gêmeo ofensivo do alvoCuradoAntes; escopo:'time'). Empate → menor índice; ninguém se ninguém causou dano
+  alvoContador: { contadorCmp: true },   // §114 (Izanami): o ALVO tem {nome} cruzando {op:min|max|exato, n} — p/ execIf "elimina amaldiçoados" (maldicao ≥ 1)
 };
 // `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
 // ATAQUE) e de `contra` (defensivo: lê o golpe que chega). A cura não tem ataque: a condição lê o CONTEXTO da
@@ -418,11 +419,11 @@ function aplicar(st, u, eff) {
   }
 }
 
-function aplicarDot(st, u, nome, v, dur, origem = null) {
+function aplicarDot(st, u, nome, v, dur, origem = null, escala = null) {   // escala (§114, Izanami): spec porContador lida NO TIQUE (dano dinâmico por acúmulo), reusa escalaContagem
   if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (Nezha: veneno+queimadura)
   const ja = u.dots.find(d => d.nome === nome);
-  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); if (origem != null) ja.origem = origem; }   // regra 6
-  else u.dots.push(origem != null ? { nome, v, dur, origem } : { nome, v, dur });   // origem = quem aplicou (aoAgirSobEfeito lê isto, como os efeitos)
+  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); if (origem != null) ja.origem = origem; if (escala) ja.escala = escala; }   // regra 6
+  else { const d = { nome, v, dur }; if (origem != null) d.origem = origem; if (escala) d.escala = escala; u.dots.push(d); }   // origem = quem aplicou (aoAgirSobEfeito lê isto, como os efeitos)
 }
 
 // -------------------------------------------------- PRIMITIVAS: contadores
@@ -581,6 +582,7 @@ function condOK(q, atk, alvo, st) {
   if ('atacanteElem' in q) return atk.elem === q.atacanteElem;
   if ('alvoCuradoAntes' in q) return !!alvo.curadoAntes;   // §97 (Tsukuyomi): o alvo foi curado no turno ANTERIOR (rastreio de dois tempos)
   if ('atacanteMaiorDanoAntes' in q) return atk === maiorDanoAntes(st, atk.lado);   // §111 (Krishna): o atacante é o TOP-dano do time no turno anterior
+  if ('alvoContador' in q) { const c = getContador(alvo, q.alvoContador.nome), { op, n } = q.alvoContador; return op === 'min' ? c >= n : op === 'max' ? c <= n : c === n; }   // §114 (Izanami): o alvo carrega o contador cruzando o limiar
   return false;
 }
 
@@ -1098,7 +1100,7 @@ function rodarFaz(st, u, faz, tagKey) {
   const antes = st.log.length;
   const l = st.lados[u.lado];
   for (const f of faz) {
-    if (f.t === 'contador') addContador(st, u, f.nome, f.v, f.max != null ? f.max : null);
+    if (f.t === 'contador') { const alvos = f.alvoHp ? selByHp(st, u, f.alvoHp) : [u]; for (const t of alvos) addContador(st, t, f.nome, f.v, f.max != null ? f.max : null); }   // §114 (Izanami passiva): alvoHp AUTO-seleciona (o inimigo de maior HP) — turno-seguro = "o jogador não escolhe", não "só o próprio lado" (o 1º porTurno que toca inimigo; a Maldição é contador neutro, não debuff)
     else if (f.t === 'orbGain') {
       const tipos = [...new Set(l.units.filter(x => x.vivo).map(x => x.elem))];
       for (let i = 0; i < f.n; i++) l.orbs[f.para || sortearElemento(st, tipos)]++;   // para = elemento FIXO (sem rng)
@@ -1177,7 +1179,7 @@ function iniciarTurno(st) {
     u.golpeUnicoNoTurno = false;   // F1.9 (Bastet §88): RESETADOR — no turno do DONO, deixando o flag armado para o turno INIMIGO seguinte (quando o golpe chega). Resetar no turno do atacante daria a proteção 2× por rodada num hot-seat
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
-      const dano = d.v + ampDot(st, d.nome);   // amplificaDot (F1.8, Kagutsuchi): +v em todo tick de `nome` no campo, enquanto o dono vive
+      const dano = d.v + ampDot(st, d.nome) + (d.escala ? escalaContagem(st, u, u, d.escala) : 0);   // amplificaDot (F1.8, Kagutsuchi): +v em todo tick de `nome` no campo. §114 (Izanami): escala lê o contador do PRÓPRIO portador (u) via o MESMO escalador do dano de habilidade — composição, não caminho próprio
       u.hp = Math.max(ef(u, 'pisoVida') ? 1 : 0, u.hp - dano);   // o piso também segura o DoT
       log(st, { tipo: 'dot', alvo: u.key, efeito: d.nome, valor: dano });
       if (u.hp === 0) { matar(st, null, u); break; }
@@ -1553,7 +1555,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao') && (!e.execIf || condOK(e.execIf, u, t, st))) matar(st, u, t, { execucao: true });   // execIf (F1.6, Iara): filtro de STATUS na execução — "elimina só os Encharcados" (reusa condOK)
       }
       else if (e.t === 'heal') curar(st, t, e.v, u);   // curador = quem lança a habilidade
-      else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid); }   // origem = o lançador; Pacificar zera o DoT que o pacificado aplicaria neste turno (é dano que ele causaria)
+      else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid, e.porContador || e.porContadorCampo || e.porContadorLado || e.porHpFaltante || e.porStatus || e.porAliadoCaido || e.porInimigoCaido ? e : null); }   // origem = o lançador; §114: se o dot carrega escalador, passa o próprio fx como spec (escalaContagem o lê no tique). Pacificar zera o DoT do pacificado (é dano que ele causaria)
       else if (e.t === 'apply') {
         if (e.soSe && !condOK(e.soSe, u, t, st)) continue;   // F1.6 (Chaac): apply FILTRADO por status do alvo — atordoa só os Encharcados de uma área
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
@@ -1565,7 +1567,6 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'destroyShield') { if (t.shield) { log(st, { tipo: 'escudo', alvo: t.key, valor: -t.shield }); t.shield = 0; } }
       else if (e.t === 'aceleraLivro') { const lv = ef(t, 'livro'); if (lv) { lv.dur = Math.max(1, lv.dur - 1); log(st, { tipo: 'efeito', alvo: t.key, efeito: 'livro' }); } }   // F1.9 (Yan Wong §89): acelera a contagem (piso 1 — não some sem matar)
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
-      else if (e.t === 'stripBuffs') t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type));
       else if (e.t === 'stripOne') {
         const i = t.efeitos.findIndex(x => BUFFS.includes(x.type));
         if (i >= 0) { log(st, { tipo: 'efeito', alvo: t.key, efeito: t.efeitos[i].type, duracao: 0 }); t.efeitos.splice(i, 1); }
@@ -1626,9 +1627,6 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       if (e.remove) { if (st.fase === e.remove) definirFase(st, null); }
       else definirFase(st, e.v, e.dur);
     }
-    // §105: `atordoaMenorHp` (fx hardcoded do Thor) ABSORVIDO pelo seletor geral (§103): agora é `apply atordoado
-    // alvoHp:{inimigo,min}`. A esquisitice "não atordoa invulnerável" NÃO virou campo — o caminho geral do `apply` já
-    // barra controle em INIMIGO invulnerável (ef(t,'invulneravel') && t.lado!==u.lado). Zero linha nova, a regra já era essa.
     if (e.t === 'vinculo' && alvos.length >= 2) {
       aplicar(st, alvos[0], { type: 'vinculo', par: alvos[1].uid, dur: e.dur, origem: u.uid });
       aplicar(st, alvos[1], { type: 'vinculo', par: alvos[0].uid, dur: e.dur, origem: u.uid });

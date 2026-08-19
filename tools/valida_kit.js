@@ -106,6 +106,9 @@ function validarQuando(q, ctx, errs) {
     if (def.pendente) { errs.push(`${ctx}: condição "${k}" reservada — ${def.pendente}`); continue; }
     const val = q[k];
     if (def.bool) { if (val !== true) errs.push(`${ctx}: condição "${k}" espera true (recebeu ${JSON.stringify(val)})`); }
+    else if (def.contadorCmp) {   // §114 (Izanami): alvoContador — {nome∈CONTADORES, op:min|max|exato, n:inteiro}
+      if (!val || typeof val !== 'object' || typeof val.nome !== 'string' || !V.contadores.includes(val.nome) || !['min', 'max', 'exato'].includes(val.op) || !Number.isInteger(val.n)) errs.push(`${ctx}: "${k}" espera {nome∈(${V.contadores.join('|')}), op:min|max|exato, n:inteiro} (recebeu ${JSON.stringify(val)})`);
+    }
     else if (def.hp) {
       if (!val || typeof val !== 'object' || !['cheio', 'abaixo', 'acima'].includes(val.op)) errs.push(`${ctx}: alvoHp.op inválido (${JSON.stringify(val && val.op)}; cheio|abaixo|acima)`);
       else if ((val.op === 'abaixo' || val.op === 'acima') && typeof val.v !== 'number') errs.push(`${ctx}: alvoHp.v ausente para op "${val.op}"`);
