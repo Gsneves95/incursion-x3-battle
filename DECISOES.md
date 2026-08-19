@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §112 — REGRA DA ÂNCORA: um rastreio de dois tempos promove no lado do SUJEITO LIDO, não pela forma do mecanismo
+
+**Terceira vez que a âncora decide um rastreio (§88 Bastet, §97 curadoAntes, §111 danoAntes) — vira regra utilizável.**
+
+Todo rastreio de dois tempos ("no turno ANTERIOR") tem a MESMA estrutura — escritor no evento, promotor no `iniciarTurno`,
+leitor na condição. O que MUDA entre eles, e o que erra se copiado por analogia, é **ONDE o promotor roda**. A resposta não
+vem da forma do mecanismo (todos são iguais); vem de **QUEM é o sujeito lido**:
+
+- **Rastreio de INIMIGO → promove nos DOIS lados (global).** O sujeito age no turno IMEDIATAMENTE anterior ao da leitura
+  (o inimigo agiu; agora eu, do outro lado, leio). A janela de "um turno" é global e cabe. — `curadoAntes` (§97): a
+  Tsukuyomi lê o inimigo curado no turno passado.
+- **Rastreio de ALIADO → promove SÓ no lado do DONO (ancorado, como o resetador §88).** O sujeito age na cadência do
+  PRÓPRIO time — o "turno anterior dele" tem o turno inimigo no MEIO. Promover global zeraria o dado no turno inimigo antes
+  da leitura. — `danoAntes` (§111): o Krishna lê o aliado que mais causou dano no turno do time passado; `golpeUnicoNoTurno`
+  (§88): a Bastet reseta no próprio turno para a proteção valer no turno inimigo seguinte.
+
+**A regra em uma linha:** *dois mecanismos idênticos em estrutura têm âncoras OPOSTAS se os sujeitos lidos estão em lados
+diferentes.* Ao escrever um rastreio novo, a primeira pergunta não é "como os outros fazem" — é "o sujeito que eu leio age
+no meu turno ou no do inimigo?". Escrevi o `danoAntes` global por analogia com o `curadoAntes`; o teste da passiva ficou
+vermelho (o dano do aliado sumia no turno inimigo do meio); a âncora-por-sujeito é o conserto e a lição.
+
+---
+
 ## §111 — KRISHNA: os quatro ignores JÁ compõem (o Lugh prova); o novo é a TRANSFERÊNCIA; e a passiva arrasta um 2º mecanismo
 
 **Krishna arrastou DOIS mecanismos — o dono nomeou um (a cola da Ação Perfeita) e não viu o outro (o rastreio de dano da
