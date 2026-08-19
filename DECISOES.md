@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §99 — DOMINAR (a órfã mais antiga, §71): fecha a Afrodite retroativamente + escreve o Boto; e a varredura que rachou os 3
+
+**A varredura §93 dos três leitores dormentes — nenhum limpo, e a suspeita do dono virou ao contrário.** Os três coincidem
+em ler a fase; a escrevibilidade divergiu: **Boto → `dominado`** (a habilidade dele É a dominação); **Chang'e → cd-condicional**
+("Elixir passa a recarga 2 com Hou Yi"); **Lugh → cd-condicional + seletor-maior-HP** (o milagre mira "o de maior HP"). O Lugh,
+que o dono chamou de "mais limpo", é o **mais sujo** — o "+10 no Dia" é trivial (`bonusDanoDeclarativo` já gateia por `estado`,
+só o validador não lista — igual à `reducao` do §96), mas a passiva tem uma SEGUNDA cláusula ("Samildánach sem recarga") e o
+milagre puxa um seletor. Achado lateral: Lugh e Chang'e arrastam o MESMO mecanismo (cd-condicional) — uma família de dois.
+Nenhum deus escrito nesta leva por esse eixo; trouxe as gavetas.
+
+**`dominado` estava pior que órfã tipo-1: INERTE.** Vivia só em `CONTROLES` e negava orbe por 1 turno; o `podeAgir` nem
+bloqueava, e o "usa o Básico contra um aliado" NUNCA acontecia. A Afrodite estava no ar com um `Encanto` que só negava 1 orbe
+(§71). Construir o comportamento fecha **Afrodite (retroativa) + Boto = +2 funcional** (66→68).
+
+**As três decisões (formato marca/Inalvejável, trazidas antes do código):**
+1. **Momento: IMEDIATO no lançamento** — o golpe-fantoche resolve quando Encanto/Baile é lançado (computo o Básico da vítima
+   e aplico no aliado). NÃO sequestra o fluxo de turno nem a IA. "Por 1 turno" vira o resíduo (o tag). O menor que funciona.
+2. **Alvo: o DOMINADOR escolhe os dois** (a vítima E o aliado que leva o golpe — Afrodite "você escolhe o alvo"). Reusa o
+   `2inimigos` que já existe; zero interface nova.
+3. **Resíduo: SÓ nega orbe** (o `dominado` fica `dur` turnos negando geração — o que o motor já fazia). Sem travar a ação.
+
+**A forma:** fx `dominar` — `aplicar('dominado', dur)` na vítima (alvos[0]) + o Básico dela (via `danoBase`+`bater`, fogo amigo
+com `semContra/semIntercepta/semRedirect`) no aliado (alvos[1]); `curaCausador` dreba o dano no lançador (Boto); `durNoite`
+estende o tag na Noite (Boto, +1 — a cláusula de fase da passiva, realizada na habilidade). **Imunidade a controle barra a
+dominação INTEIRA** (tag E golpe) — mesma dupla checagem do `aplicar` (`controlImmune` OU imunidade declarativa), senão o golpe
+vazaria a imunidade. Degenerado (1 inimigo): aplica o tag, sem golpe (não há aliado).
+
+**Boto (IMPL 67) + Afrodite (fechada):** Afrodite `Encanto` agora `2inimigos`+`dominar`; Boto = Baile (`dominar` curaCausador +
+durNoite) + milagre (trava Milagre de todos via `lockSkill slot:milagre` + cura 15 time) + passiva (aCadaN Inalvejável; a
+cláusula "+1 na Noite" mora no `durNoite` do Baile). Nenhuma entrada nova no auditor.
+
+---
+
 ## §98 — QUEM CONTROLA AS DUAS PONTAS não precisa de rastreio; quem LÊ o histórico de outro precisa
 
 **A distinção que o rótulo "curado antes" escondia** (o dono passou 3 no prompt, a varredura achou 1). Freyja/Oxum e

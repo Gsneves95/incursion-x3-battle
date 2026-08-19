@@ -1520,6 +1520,32 @@ console.log('== §97 Tsukuyomi: passiva +10 a curado-no-anterior; Anoitecer escr
   console.log('  passiva +10 a curado-no-anterior · Anoitecer acorda a Noite + adormece · Julgamento silencia na Noite');
 }
 
+console.log('== §99 dominar: Afrodite (fechada retroativamente) e Boto (lifesteal + Noite +1) — a órfã mais antiga (§71) ==');
+{
+  // Afrodite RETROATIVA: o Encanto antes era inerte (só aplicava a tag); agora a vítima bate no aliado dela.
+  let st = E.novoEstado(['afrodite', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 900);
+  let a = st.lados[0].units[0], vitima = st.lados[1].units[0], aliado = st.lados[1].units[1];
+  let h = aliado.hp;
+  E.aplicarFx(st, a, E.GODS.afrodite.ab.find(x => x.slot === 'habilidade').fx, { alvo: '2inimigos', slot: 'habilidade' }, [vitima, aliado]);
+  ok(h - aliado.hp === 12 && !!E.ef(vitima, 'dominado'), `Afrodite: a vítima usa o Básico dela (12) no aliado, e fica dominada (${h - aliado.hp})`);
+
+  // Boto: lifesteal do golpe-fantoche + Baile
+  st = E.novoEstado(['boto', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 901);
+  const b = st.lados[0].units[0]; b.hp = 40; vitima = st.lados[1].units[0]; aliado = st.lados[1].units[1];
+  h = aliado.hp;
+  E.aplicarFx(st, b, E.GODS.boto.ab.find(x => x.slot === 'habilidade').fx, { alvo: '2inimigos', slot: 'habilidade' }, [vitima, aliado]);
+  ok(h - aliado.hp === 12 && b.hp === 52, `Boto: golpe 12 no aliado e Boto dreba (40+12=52): ${h - aliado.hp}/${b.hp}`);
+
+  // Boto milagre: trava o Milagre de todos + cura o time
+  st = E.novoEstado(['boto', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 902);
+  const b2 = st.lados[0].units[0], ally2 = st.lados[0].units[1]; ally2.hp = 60;
+  E.ELEMS.forEach(x => st.lados[1].orbs[x] = 9);
+  E.aplicarFx(st, b2, E.GODS.boto.ab.find(x => x.slot === 'milagre').fx, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
+  const mil = E.acoesDe(st, st.lados[1].units[0]).find(x => x.slot === 'milagre');
+  ok(!mil.disponivel && mil.motivo === 'travada' && ally2.hp === 75, `Festa de São João: Milagre inimigo travado e time curado 15 (${mil.motivo}/${ally2.hp})`);
+  console.log('  Afrodite fechada (vítima bate no aliado) · Boto dreba o golpe · milagre trava Milagre + cura');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -44,15 +44,12 @@
         "Aurora": 2
       },
       "cd": 3,
-      "alvo": "inimigo",
-      "desc": "Domina 1 inimigo por 1 turno: ele usa o próprio Básico contra um aliado dele.",
+      "alvo": "2inimigos",
+      "desc": "Domina 1 inimigo por 1 turno: ele usa o próprio Básico contra um aliado dele (você escolhe o alvo).",
       "fx": [
         {
-          "t": "apply",
-          "eff": {
-            "type": "dominado",
-            "dur": 1
-          }
+          "t": "dominar",
+          "dur": 1
         }
       ]
     },

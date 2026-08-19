@@ -89,6 +89,7 @@ const TIPOS_FX = [
   'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
   'roubaOrbe',   // F1.6 (Hades/Hermes/Shuten): remove n orbes do inimigo (rouba=vai p/ o próprio); bloqueado por protegeOrbe (Heimdall)
+  'dominar',   // F1.9 (§99, Afrodite/Boto): a vítima usa o Básico DELA contra um aliado dela (o lançador escolhe os dois); tag 'dominado' fica dur turnos (nega orbe). Fecha a órfã mais antiga (§71)
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
@@ -263,6 +264,7 @@ const VOCAB = {
     'ignoraInvuln', 'ignoraPiso',   // F1.9 (Shiva/Odin §91): dmg fura Invulnerabilidade / o 'não cai abaixo de 1 HP' — flags de habilidade que fluem p/ o bater
     'golpes',   // F1.9 (§92): multi-golpe DISTRIBUÍDO — N golpes de v repartidos igual entre os alvos selecionados (alvo:'distribui')
     'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
+    'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1413,6 +1415,27 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
 
     // contágio (Maldição de Yomi): age no CONJUNTO de uma vez (precisa do maior entre eles), não alvo a alvo
     if (e.t === 'espalha') { espalharContador(st, sel, e, u); continue; }
+
+    // DOMINAR (§99, Afrodite/Boto): a VÍTIMA (alvos[0]) usa o Básico DELA contra um ALIADO dela (alvos[1], escolhido pelo
+    // lançador). Resolve IMEDIATO no lançamento (fogo amigo forçado, sem contra/intercepta/redirect); o tag 'dominado' fica
+    // `dur` turnos como resíduo (só nega orbe — o que o motor já fazia). Boto: curaCausador dreba o dano no lançador.
+    if (e.t === 'dominar') {
+      const vitima = alvos[0], alvoAliado = alvos[1];
+      if (vitima && vitima.vivo) {
+        if (ef(vitima, 'controlImmune') || imuneA(st, vitima, 'dominado')) { log(st, { tipo: 'imune', alvo: vitima.key, efeito: 'dominado' }); continue; }   // imune a controle barra a dominação INTEIRA (tag E golpe): mesma dupla checagem do aplicar (regra 7 + imunidade declarativa)
+        const dur = (st.fase === 'Noite' && e.durNoite) ? e.durNoite : (e.dur || 1);
+        aplicar(st, vitima, { type: 'dominado', dur, origem: u.uid });
+        log(st, { tipo: 'efeito', origem: u.key, alvo: vitima.key, efeito: 'dominado' });
+        const kit = kitDe(st, vitima);
+        const bas = kit && kit.ab && kit.ab.find(x => x.slot === 'basico');
+        const dmgFx = bas && bas.fx && bas.fx.find(f => f.t === 'dmg');
+        if (alvoAliado && alvoAliado.vivo && dmgFx) {
+          const dano = bater(st, vitima, alvoAliado, danoBase(st, vitima, alvoAliado, dmgFx, st.lados[vitima.lado]), dmgFx.kind || 'afetado', 'basico', { classe: classeDe(st, vitima, bas), semContra: true, semIntercepta: true, semRedirect: true });
+          if (e.curaCausador) curar(st, u, dano, u);
+        }
+      }
+      continue;
+    }
 
     // MULTI-GOLPE DISTRIBUÍDO (F1.9 §92, Susanoo/Babi/Hou Yi): N golpes de v repartidos entre os alvos SELECIONADOS,
     // o mais igual possível; o EXTRA vai para os PRIMEIROS selecionados (previsível — o jogador controla a ordem).

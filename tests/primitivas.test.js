@@ -663,6 +663,51 @@ console.log('== 18. rastreio de dois tempos: curado-agora vira curado-antes no g
   console.log('  escritor=cura real · promotor gira agora→antes nos 2 lados · janela 1 turno · mesmo-turno não conta');
 }
 
+// ------------------------------------------------------------ 19. DOMINAR (§99, Afrodite/Boto) — a órfã mais antiga (§71)
+console.log('== 19. dominar: a vítima usa o Básico DELA contra um aliado dela; tag nega orbe; curaCausador dreba; imune barra ==');
+{
+  // O fx `dominar` age sobre alvos[0]=vítima e alvos[1]=aliado-alvo (fogo amigo). Testo em ISOLAMENTO com aplicarFx.
+  // perseu (básico 12) domina, babi leva o golpe. u = o lançador (zeus aqui) — só importa p/ curaCausador.
+  const A2 = { alvo: '2inimigos', slot: 'habilidade' };
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 800);
+  let u = st.lados[0].units[0], vitima = st.lados[1].units[0], aliado = st.lados[1].units[1];
+  let h = aliado.hp;
+  E.aplicarFx(st, u, [{ t: 'dominar', dur: 1 }], A2, [vitima, aliado]);
+  ok(h - aliado.hp === 12 && !!E.ef(vitima, 'dominado'), `vítima (perseu, básico 12) bate no aliado: 12 e fica dominada (${h - aliado.hp}/${!!E.ef(vitima, 'dominado')})`);
+
+  // curaCausador (Boto): o LANÇADOR dreba o dano do golpe-fantoche
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 801);
+  u = st.lados[0].units[0]; u.hp = 50; vitima = st.lados[1].units[0]; aliado = st.lados[1].units[1];
+  E.aplicarFx(st, u, [{ t: 'dominar', dur: 1, curaCausador: true }], A2, [vitima, aliado]);
+  ok(u.hp === 62, `curaCausador: o lançador cura o dano causado (50+12=62): ${u.hp}`);
+
+  // durNoite: a tag dura +1 na Noite (Boto)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 802); E.definirFase(st, 'Noite', 3);
+  u = st.lados[0].units[0]; vitima = st.lados[1].units[0];
+  E.aplicarFx(st, u, [{ t: 'dominar', dur: 1, durNoite: 2 }], A2, [vitima, st.lados[1].units[1]]);
+  ok((E.ef(vitima, 'dominado') || {}).dur === 2, `durNoite: na Noite a Dominação dura 2 (${(E.ef(vitima, 'dominado') || {}).dur})`);
+
+  // RESÍDUO: o dominado nega geração de orbe (o que o motor já fazia)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 803);
+  u = st.lados[0].units[0]; E.aplicarFx(st, u, [{ t: 'dominar', dur: 1 }], A2, [st.lados[1].units[0], st.lados[1].units[1]]);
+  const antes = E.totalOrbs(st.lados[1]); st.ativo = 1; E.iniciarTurno(st);
+  ok(E.totalOrbs(st.lados[1]) - antes === 2, `dominado nega orbe: 3 vivos, 1 dominado → gera 2 (${E.totalOrbs(st.lados[1]) - antes})`);
+
+  // DEGENERADO: 1 inimigo vivo — aplica a tag, sem golpe (não há aliado)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 804);
+  u = st.lados[0].units[0]; vitima = st.lados[1].units[0];
+  E.aplicarFx(st, u, [{ t: 'dominar', dur: 1 }], A2, [vitima]);   // só a vítima
+  ok(!!E.ef(vitima, 'dominado'), 'degenerado (sem aliado): a tag aplica, sem golpe (nada a golpear)');
+
+  // IMUNE a controle barra a dominação inteira (tag E golpe)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['perseu', 'babi', 'tyr'], 805);
+  u = st.lados[0].units[0]; vitima = st.lados[1].units[0]; aliado = st.lados[1].units[1];
+  vitima.efeitos.push({ type: 'controlImmune', dur: 9 }); h = aliado.hp;
+  E.aplicarFx(st, u, [{ t: 'dominar', dur: 1 }], A2, [vitima, aliado]);
+  ok(!E.ef(vitima, 'dominado') && aliado.hp === h, `imune a controle barra tudo: sem tag, sem golpe (${!!E.ef(vitima, 'dominado')}/${h - aliado.hp})`);
+  console.log('  vítima bate no aliado dela · curaCausador dreba · durNoite +1 · nega orbe · degenerado só marca · imune barra');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

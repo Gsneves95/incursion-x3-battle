@@ -1,0 +1,50 @@
+{
+  "key": "boto",
+  "nome": "Boto",
+  "faccao": "Brasileira",
+  "elem": "Maré",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Some ao Amanhecer",
+    "desc": "A cada 3 turnos, Boto fica Inalvejável por 1 turno; durante a NOITE, a Dominação dura +1 turno.",
+    "fx": [
+      { "gatilho": "aCadaN", "n": 3, "faz": [ { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Nadadeira Ágil",
+      "cost": { "Maré": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Baile do Boto",
+      "cost": { "Maré": 2 },
+      "cd": 2,
+      "alvo": "2inimigos",
+      "desc": "Domina 1 inimigo por 1 turno (usa o Básico contra um aliado dele, você escolhe); Boto cura o dano causado. Na NOITE, a Dominação dura +1 turno.",
+      "fx": [ { "t": "dominar", "dur": 1, "durNoite": 2, "curaCausador": true } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Festa de São João",
+      "cost": { "Maré": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 15.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "milagre", "dur": 2 }, "escopo": "todosInimigos" },
+        { "t": "heal", "v": 15, "escopo": "time" }
+      ]
+    }
+  ]
+}
