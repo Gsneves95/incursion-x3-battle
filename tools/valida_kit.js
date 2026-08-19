@@ -89,6 +89,11 @@ function validarFx(f, ctx, errs) {
       else f[ramo].forEach((x, i) => validarFx(x, `${ctx}.${ramo}[${i}]`, errs));
     }
   }
+  if (f.t === 'agendar') {   // §117 (M1): agenda um payload de fx p/ o próximo turno; valida o array recursivamente + o alvo
+    if (!Array.isArray(f.agenda) || f.agenda.length === 0) errs.push(`${ctx}: agendar exige "agenda" (array de fx não-vazio)`);
+    else f.agenda.forEach((x, i) => validarFx(x, `${ctx}.agenda[${i}]`, errs));
+    if ('alvo' in f && !V.alvos.includes(f.alvo)) errs.push(`${ctx}: agendar.alvo inválido "${f.alvo}" (válidos: ${V.alvos.join(', ')})`);
+  }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

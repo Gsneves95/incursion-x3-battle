@@ -1838,6 +1838,43 @@ console.log('== §114 Izanami: contágio (espalha) + DoT escalado por Maldição
   console.log('  Toque 12+Maldição · Mil por Dia no maior HP · Praga espalha+DoT 6×acúmulo · Portal 20 + executa amaldiçoados ≤30');
 }
 
+console.log('== §117 Kukulkán (M1, agendador): habilidade telegrafada (Inalvejável + AoE no próximo turno) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico 15
+  let st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 985); orbs(st.lados[0]);
+  let k = st.lados[0].units[0], e = st.lados[1].units;
+  let h = e[0].hp;
+  E.agir(st, k.uid, 'basico', [e[0].uid]);
+  ok(h - e[0].hp === 15, `Presas do Vento: 15 (${h - e[0].hp})`);
+
+  // habilidade: NO lançamento fica Inalvejável e agenda; o AoE 25 só cai no próximo turno do Kukulkán
+  st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 986); orbs(st.lados[0]);
+  k = st.lados[0].units[0]; e = st.lados[1].units; const hb = e.map(x => x.hp);
+  E.agir(st, k.uid, 'habilidade', []);
+  ok(!!E.ef(k, 'inalvejavel') && e.every((x, i) => x.hp === hb[i]), 'Voo da Serpente: Inalvejável no lançamento, AoE ainda não caiu');
+  E.fimTurno(st);   // turno inimigo — protegido, e o AoE não dispara aqui
+  ok(!!E.ef(k, 'inalvejavel') && e.every((x, i) => x.hp === hb[i]), 'durante o turno inimigo: ainda Inalvejável, AoE não disparou');
+  E.fimTurno(st);   // volta ao Kukulkán → o payload dispara
+  ok(e.every((x, i) => hb[i] - x.hp === 25), `no próximo turno do Kukulkán: 25 a TODOS (${e.map((x, i) => hb[i] - x.hp)})`);
+
+  // milagre: 20 a todos + o time causa +10 por 2 turnos
+  st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 987); orbs(st.lados[0]);
+  k = st.lados[0].units[0]; const ally = st.lados[0].units[1]; e = st.lados[1].units; const hm = e.map(x => x.hp);
+  E.agir(st, k.uid, 'milagre', []);
+  const up = E.ef(ally, 'dmgUp');
+  ok(e.every((x, i) => hm[i] - x.hp === 20) && up && up.v === 10, `Estrela da Manhã: 20 a todos + time dmgUp 10 (${e.map((x, i) => hm[i] - x.hp)}, up ${up && up.v})`);
+
+  // passiva: +8 contra Encharcados
+  st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 988); orbs(st.lados[0]);
+  k = st.lados[0].units[0]; const foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'encharcado', dur: 9 });
+  const hf = foe.hp;
+  E.agir(st, k.uid, 'basico', [foe.uid]);
+  ok(hf - foe.hp === 23, `Deus-Rei: +8 vs Encharcado (15+8=23) (${hf - foe.hp})`);
+  console.log('  Presas 15 · Voo da Serpente telegrafado (Inalvejável agora, 25 a todos no próximo turno) · Estrela 20+dmgUp · +8 vs Encharcado');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

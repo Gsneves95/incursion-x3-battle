@@ -973,6 +973,36 @@ console.log('== 26b. alvoContador: condição "o alvo tem o contador cruzando o 
   console.log('  alvoContador gateia a execução · só quem carrega a Maldição é elegível');
 }
 
+// ------------------------------------------------------------ 27. agendador de payload (§117, M1/Kukulkán)
+console.log('== 27. agendar: no lançamento só guarda; dispara no PRÓXIMO iniciarTurno do dono; ordem por índice; sem fila global ==');
+{
+  const A = (alvo, slot) => ({ alvo: alvo || 'nenhum', slot: slot || 'habilidade' });
+  // lançar NÃO dispara — só empilha no pendente do dono
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 975);
+  let u = st.lados[0].units[0], e = st.lados[1].units;
+  const h = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'agendar', alvo: 'todosInimigos', agenda: [{ t: 'dmg', v: 25, escopo: 'todosInimigos' }] }], A('nenhum'), []);
+  ok(u.pendente.length === 1 && e.every((x, i) => x.hp === h[i]), `no lançamento: guarda o payload, NÃO dispara (pend ${u.pendente.length}, dano ${e.map((x, i) => h[i] - x.hp)})`);
+  // dispara no iniciarTurno do dono, e é consumido
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(e.every((x, i) => h[i] - x.hp === 25) && u.pendente.length === 0, `dispara no iniciarTurno do dono: 25 a todos, pendente limpo (${e.map((x, i) => h[i] - x.hp)}, pend ${u.pendente.length})`);
+  // determinismo: dois payloads no MESMO dono disparam em ordem de inserção (sem fila global)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 976);
+  u = st.lados[0].units[0]; e = st.lados[1].units; const h2 = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'agendar', alvo: 'todosInimigos', agenda: [{ t: 'dmg', v: 10, escopo: 'todosInimigos' }] }], A('nenhum'), []);
+  E.aplicarFx(st, u, [{ t: 'agendar', alvo: 'todosInimigos', agenda: [{ t: 'dmg', v: 5, escopo: 'todosInimigos' }] }], A('nenhum'), []);
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(e.every((x, i) => h2[i] - x.hp === 15), `dois payloads no mesmo dono empilham (10+5=15) (${e.map((x, i) => h2[i] - x.hp)})`);
+  // unidade morta não dispara (e não crasha)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 977);
+  u = st.lados[0].units[0]; e = st.lados[1].units; const h3 = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'agendar', alvo: 'todosInimigos', agenda: [{ t: 'dmg', v: 25, escopo: 'todosInimigos' }] }], A('nenhum'), []);
+  u.vivo = false; u.hp = 0;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(e.every((x, i) => x.hp === h3[i]), `dono morto não dispara o payload (${e.map((x, i) => h3[i] - x.hp)})`);
+  console.log('  guarda no lançamento · dispara no iniciarTurno do dono · ordem de inserção · dono morto não dispara');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

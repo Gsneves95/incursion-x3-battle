@@ -85,7 +85,8 @@ const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
-  'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
+  'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz. NÃO absorvido pelo agendador geral (§117): dispara em unidade MORTA + alimenta checarFim — folá-lo forçaria caso especial (§106 ao contrário)
+  'agendar',   // §117 (M1, Kukulkán): AGENDA um payload de fx p/ o próximo turno do dono (lista pendente por-unidade, disparada no iniciarTurno). "ação telegrafada". Alvo/escopo fixados no lançamento; nenhuma escolha nova ao disparar
   'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
   'roubaOrbe',   // F1.6 (Hades/Hermes/Shuten): remove n orbes do inimigo (rouba=vai p/ o próprio); bloqueado por protegeOrbe (Heimdall)
@@ -270,6 +271,7 @@ const VOCAB = {
     'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
     'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
     'alvoSenhor',   // F1.9 (§107, Hanuman): seletor AUTO do aliado designado (intercepta.protege), fallback mais ferido (alvoHp)
+    'agenda',   // §117 (M1): payload de fx do `agendar` — array de fx disparado no próximo turno do dono
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -339,6 +341,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
     usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
     modo: 0, renasceu: false, lado,
+    pendente: [],   // §117 (M1): payloads agendados (fx) p/ disparar no próximo iniciarTurno do dono. Lista (não campo único) — robusto se um dia dois caírem na mesma unidade; disparo em ordem de inserção, e a ordem ENTRE unidades cai da iteração por índice do iniciarTurno
   };
 }
 
@@ -1190,6 +1193,13 @@ function iniciarTurno(st) {
     // regra 4 — recargas descontam no início do turno do dono
     for (const k in u.cd) if (u.cd[k] > 0) u.cd[k]--;
   }
+  // §117 (M1) — dispara os payloads AGENDADOS: pass próprio, unidades VIVAS em ordem de índice (o desempate padrão cai
+  // de graça daqui). Alvo/escopo já fixados no lançamento → sem escolha do jogador, turno-seguro. Só o lado ativo.
+  for (const u of l.units) {
+    if (!u.vivo || !u.pendente.length) continue;
+    const fila = u.pendente; u.pendente = [];
+    for (const p of fila) aplicarFx(st, u, p.agenda, { alvo: p.alvo, slot: 'habilidade' }, []);
+  }
   // PRIMITIVA invocações — agem no início do turno do dono, depois expiram
   for (const g of l.invocacoes.slice()) {
     if (g.tipo === 'dano' && g.v > 0) {
@@ -1602,6 +1612,10 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (e.t === 'armazenaDano') {
       aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano' });
+    }
+    if (e.t === 'agendar') {   // §117 (M1): guarda o payload no dono p/ disparar no próximo iniciarTurno dele. Alvo/escopo já fixados aqui (no lançamento) — o disparo não escolhe nada
+      u.pendente.push({ agenda: e.agenda, alvo: e.alvo || 'nenhum' });
+      log(st, { tipo: 'efeito', origem: u.key, efeito: 'agendar' });
     }
     // AUTORIA do redirect (F1.6) — o §62 construiu só o CONSUMO (bater); aqui o fx que APLICA. O portador é o CASTER
     // (Curupira, no lado DEFENSOR: golpe único inimigo mira o time dela → `bater` acha o portador nesse lado), e o

@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §117 — M1: o AGENDADOR de payload (Kukulkán) — lista por-unidade, sem fila global; o revive NÃO absorvido (§106 ao contrário)
+
+**A primeira das quatro de sistema (§116), a menos invasiva.** Um agendador GERAL de "ação telegrafada": um payload de fx
+que dispara no PRÓXIMO turno do dono. fx `agendar` (payload `agenda` + `alvo`), guardado numa lista `pendente` por-unidade,
+disparado num pass próprio do `iniciarTurno` (unidades vivas, ordem de índice).
+
+**§93 — só UM dos três consumidores fecha com M1 sozinho.** kukulkán agenda "25 a todos" = `dmg` AoE que JÁ existe → fecha.
+saci agenda "rouba 1 buff" = buff-STEAL (aquisição, metade do M5) → espera. dionísio agenda "todos os inimigos usam o Básico
+contra aliados deles" = dominar-em-massa-agendado → espera. A família (agendamento) coincide; a escrevibilidade não. **M1 é o
+mecanismo; kukulkán é o consumidor que o prova.**
+
+**A FORMA (a pergunta do dono): lista por-unidade, SEM fila global.** Os três agendam payloads presos a uma UNIDADE, que
+disparam no `iniciarTurno` dela — kukulkán/saci em SI, dionísio em cada inimigo (lado oposto). **Dois payloads nunca caem na
+mesma unidade**, então não há colisão a desempatar DENTRO de uma unidade. Quando dois disparam no mesmo turno (dois
+agendadores no mesmo time), a ordem cai de graça da iteração por índice que o `iniciarTurno` já faz. Logo: uma lista
+`pendente:[]` por unidade (disparo em ordem de inserção), sem fila global com ordenação própria — a forma menor e já
+determinística. (Lista, não campo único como o `pendenteRenascer`, por robustez barata caso um dia dois caiam na mesma
+unidade.)
+
+**O revive NÃO foi absorvido — e isto é o §106 AO CONTRÁRIO.** O `reviveProximoTurno` é um agendador bespoke; a tentação era
+folá-lo no geral (§106, que já se pagou no atordoaMenorHp e no Thor). Mas verifiquei: o revive dispara numa unidade MORTA
+(linha 1174, ANTES do `!vivo continue`) e alimenta o `checarFim` (um revive pendente segura o lado vivo). O agendador geral
+roda em unidades VIVAS, depois do `continue`. Absorver forçaria um ramo especial "dispara-se-morto" + uma varredura no
+`checarFim` — **acrescenta** caso especial em vez de remover dívida. O §106 vale quando o geral JÁ cobre o especial; aqui o
+geral não cobre "disparar morto". Então: separados de propósito, e o revive segue intacto (travado em teste).
+
+**Kukulkán (IMPL 75, FUNCIONAL 75):** Presas do Vento (15); Voo da Serpente (Inalvejável 1 turno [dur 2 p/ cobrir o turno
+inimigo] + agenda 25 a todos p/ o próximo turno); Estrela da Manhã (20 a todos + time +10 por 2 turnos); Deus-Rei (+8 vs
+Encharcados + 1 orbe no turno 1). Isolamento em `primitivas §27` (agendar: guarda no lançamento, dispara no iniciarTurno do
+dono, ordem de inserção, dono morto não dispara); comportamento em `passiva §117`; o `checar_cadeia` recursa no `agenda`
+(o dano agendado é dano da habilidade).
+
+---
+
 ## §116 — RE-TRIAGEM DOS 26 (pós-74 escritos): a cauda concentrou em 9 mecanismos, 4 destravam 10 — e a ordem por RISCO
 
 **Gravado ANTES de sequenciar, como a previsão do §52 — para conferir contra a realidade depois.** Reconciliei os 26 kits

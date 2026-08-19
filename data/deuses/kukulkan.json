@@ -1,0 +1,54 @@
+{
+  "key": "kukulkan",
+  "nome": "Kukulkán",
+  "faccao": "Maia",
+  "elem": "Tempestade",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Deus-Rei",
+    "desc": "+8 de dano contra Encharcados; o time ganha 1 orbe extra no turno 1.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "encharcado" } },
+      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 1 } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Presas do Vento",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Voo da Serpente",
+      "cost": { "Tempestade": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "Kukulkán fica Inalvejável por 1 turno; no turno seguinte causa 25 de dano a todos os inimigos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 2 }, "escopo": "self" },
+        { "t": "agendar", "alvo": "todosInimigos", "agenda": [ { "t": "dmg", "v": 25, "escopo": "todosInimigos" } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Estrela da Manhã",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "20 de dano a todos; o time causa +10 de dano por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 20, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 2 }, "escopo": "time" }
+      ]
+    }
+  ]
+}
