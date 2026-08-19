@@ -6,6 +6,27 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §104 — DOIS LEDGERS: a família cresce por invisibilidade OPOSTA; e "fx com campo novo → confira TODOS os executores"
+
+**A. Uma família cresce por dois tipos de invisibilidade, e o segundo é PIOR.** O seletor-por-HP (§103) cresceu de 2→3→5. Os
+dois que ninguém tinha contado eram invisíveis por motivos OPOSTOS:
+- **Lugh** — membro que ninguém VIU (não estava construído, o gancho passou na triagem). Invisível por ausência.
+- **Thor** — membro já IMPLEMENTADO sob outro nome (o `atordoaMenorHp`, um fx hardcoded que É o seletor de menor-HP). Invisível
+  por disfarce.
+O segundo é pior: **conta como "pronto" na contagem de KITS e como "não existe" na de MECANISMOS.** As duas contagens se
+contradizem e nenhuma sozinha percebe — só a varredura de SUBSTÂNCIA (o que o fx FAZ, não como se chama) reconcilia. Regra: ao
+varrer uma família, procure não só quem falta escrever, mas quem já faz a coisa sob um nome específico (o hardcode-one-off é o
+mecanismo geral disfarçado — §46/§71). O `grep` do NOME nunca acha esse; só ler o que o motor executa.
+
+**B. Fx com campo novo → confira TODOS os executores (o §102-A em runtime).** O `alvoHp` (§103) nasceu no `aplicarFx` e o
+`rodarFaz` (dispatch PRÓPRIO, para faz turno-seguros) o ignorava — a passiva `porTurno` da Deméter curava o dono, não o mais
+ferido. Duas máquinas de executar fx, o campo novo só numa. É o §102-A (um resultado, dois caminhos) em runtime: os caminhos
+DIVERGEM no fx que só um conhece. **Item de checklist:** quando um fx ganha campo novo (ou um fx novo entra), varra TODOS os
+executores — hoje `aplicarFx` E `rodarFaz` — não só o principal. O teste que exercita o campo pelo caminho secundário (o faz)
+é o que pega isto; o que exercita só o `aplicarFx` passa cego.
+
+---
+
 ## §103 — SELETOR POR HP (alvoHp): a família era MAIOR (5, com um consumidor escondido em hardcode); Deméter
 
 **A varredura corrigiu o número — pela terceira vez o §93 mordeu.** O §54 dera 2 (Deméter, Izanami); a varredura das fases
