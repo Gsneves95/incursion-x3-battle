@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §100 — DOIS LEDGERS: o §93 pega quem APROVOU (não quem executa); e guarda de imunidade à mão erra por omissão
+
+**A. O §93 corrige a premissa de quem APROVA a frente, não a de quem executa.** Duas vezes no arco a varredura de
+escrevibilidade derrubou o NÚMERO/ranking que o dono deu ao aprovar a frente:
+- **Multi-golpe (§92/§93):** aprovado com "3 consumidores" (Susanoo/Babi/Hou Yi) — era **1** (só o Babi escrevível; os outros
+  arrastavam combo/dispel/tamanho-de-lado e remoção-de-fase).
+- **Leitores de fase (§99):** aprovado "o Lugh é o mais limpo" — era o **mais sujo** (duas cláusulas escondidas atrás do "+10
+  no Dia": cd-condicional + seletor-maior-HP).
+O erro não é de execução; mora na **camada de aprovação** — rotular uma frente pela COINCIDÊNCIA (mesmo gancho) ou pelo
+pedaço que se olhou primeiro. É o §46 (nome não é evidência) subindo um nível: a rubrica de quem aprova carrega o mesmo viés
+que a varredura de substância corrige. **Regra:** trate todo número/ranking dado na aprovação como HIPÓTESE, não spec; rode o
+§93 contra a premissa da aprovação, sempre, antes de escrever. A varredura serve ao aprovador tanto quanto ao executor.
+
+**B. Guarda de imunidade escrita à mão erra por OMISSÃO — reuse a checagem canônica.** No §99 meu primeiro guarda do `dominar`
+só chamava `imuneA` (imunidade declarativa) e deixava o `controlImmune` (o BUFF, regra 7) VAZAR — o golpe-fantoche furava a
+imunidade. **O teste pegou; a revisão (minha leitura) não.** Um guarda à mão DUPLICA uma checagem que o caminho canônico
+(`aplicar`) já faz — e duplicata DERIVA em silêncio: só a checagem dupla do `aplicar` (`ef(controlImmune)` **E** `imuneA`) está
+certa. A correção reusou exatamente as duas. **Regra:** ao barrar por uma condição que o motor já barra noutro lugar, CHAME o
+mesmo predicado; nunca re-derive à mão. Re-derivação some do radar até um teste com o caso omitido bater — então o teste do
+caso-omitido é obrigatório, não a leitura.
+
+---
+
 ## §99 — DOMINAR (a órfã mais antiga, §71): fecha a Afrodite retroativamente + escreve o Boto; e a varredura que rachou os 3
 
 **A varredura §93 dos três leitores dormentes — nenhum limpo, e a suspeita do dono virou ao contrário.** Os três coincidem
