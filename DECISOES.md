@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §113 — A VARREDURA DE ÓRFÃOS pós-F1.9, e duas lições: o exemplo pode ser o contraexemplo; relato de processo também precisa de §82
+
+**Varri as quatro espécies de órfão nos 73 kits escritos + no motor (a última sistemática foi na F1.8; desde então ~15
+mecanismos e ~20 kits novos). Resultado: DOIS itens reais. O ritmo das levas não deixou pilha.**
+
+- **etiqueta-sem-enforce: 0.** (selado/agarrar/medo travam slot via `SLOTS_TRAVADOS`; tormento é DoT no tique genérico.)
+- **campo-sem-fio: 0.** (todo campo de `novaUnidade`/`novoEstado` lido E escrito; `usos` escreve por índice.)
+- **prosa-sem-fx: 1** — o básico do Lugh (ver lição abaixo).
+- **produtor-sem-consumidor: 1 morto** (`stripBuffs`) **+ 4 reservados** (`espalha`→Izanami, `paridade`→Hel,
+  `aliadosVivos`→Guan Yu, `hpProprio`→Shuten — capacidade à frente do consumidor, o espelho benigno do §95) **+ 1
+  comentário obsoleto** (`atordoaMenorHp`, handler já removido no §105).
+
+**LIÇÃO A — o exemplo usado para provar uma tese pode ser o CONTRAEXEMPLO dela, e ninguém checa o exemplo.** No §111
+escrevi que "o Lugh (§105) prova que os quatro ignores já compõem como flags do fx — o básico dele é 'não pode ser evitado
+nem contra-atacado', zero mecanismo novo". A varredura mostrou que o básico do Lugh implementa `semContra` (o
+contra-atacado) mas NÃO o `ignoraInalvejavel` (o evitado) — o exemplo que citei como prova estava incompleto: ele compõe UM
+dos dois ignores que promete. A tese continua verdadeira (os ignores COMPÕEM; o `ignoraInalvejavel` é flag de habilidade,
+usado por Odin/Hórus/Hou Yi/Boitatá), mas a EVIDÊNCIA que usei era um gap. Quando uma decisão se apoia num exemplo concreto,
+o exemplo entra no escopo da verificação — não só a tese.
+
+**LIÇÃO B — relato de processo também precisa de §82 (verificar contra a fonte).** Reportei o `atordoaMenorHp` como handler
+morto vivo no `aplicarFx`. Era verdade no que eu estava LENDO — mas o que eu lia era o container revertido a um commit
+antigo; no origin/main o §105 já tinha removido o handler. O §82 (verificar contra o git, não contra a memória) vale para o
+RELATO tanto quanto para o código: um "eu vi X no arquivo" só é confiável depois de confirmar que o arquivo é o do estado
+canônico. Corrigir o próprio relato custa uma frase; deixar passar planta um fato falso no registro.
+
+---
+
 ## §112 — REGRA DA ÂNCORA: um rastreio de dois tempos promove no lado do SUJEITO LIDO, não pela forma do mecanismo
 
 **Terceira vez que a âncora decide um rastreio (§88 Bastet, §97 curadoAntes, §111 danoAntes) — vira regra utilizável.**
