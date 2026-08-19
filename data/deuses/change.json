@@ -1,0 +1,51 @@
+{
+  "key": "change",
+  "nome": "Chang'e",
+  "faccao": "Chinesa",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Saudade de Hou Yi",
+    "desc": "Com Hou Yi no time, Chang'e causa +8 de dano e o Elixir passa a ter recarga 2.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 8, "escopo": "self", "estado": { "aliadoPresente": "houyi" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Véu de Luar",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Elixir da Imortalidade",
+      "cost": { "Umbra": 2 },
+      "cd": 3,
+      "cdSe": { "estado": { "aliadoPresente": "houyi" }, "cd": 2 },
+      "alvo": "aliado",
+      "desc": "1 aliado não cai abaixo de 1 de HP por 2 turnos. Com Hou Yi no time, recarga 2.",
+      "fx": [ { "t": "apply", "eff": { "type": "pisoVida", "dur": 2 } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Luz do Jade",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Cura 20 no time e regenera 8 por turno durante 2 turnos; durante a NOITE, cura 30.",
+      "fx": [
+        { "t": "condicional", "se": { "fase": "Noite" }, "entao": [ { "t": "heal", "v": 30, "escopo": "time" } ], "senao": [ { "t": "heal", "v": 20, "escopo": "time" } ] },
+        { "t": "apply", "eff": { "type": "regen", "v": 8, "dur": 2 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

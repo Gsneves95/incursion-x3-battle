@@ -1546,6 +1546,44 @@ console.log('== §99 dominar: Afrodite (fechada retroativamente) e Boto (lifeste
   console.log('  Afrodite fechada (vítima bate no aliado) · Boto dreba o golpe · milagre trava Milagre + cura');
 }
 
+console.log('== §101 Chang’e: recarga condicional (Elixir 3→2 com Hou Yi) + +8 com Hou Yi + Luz do Jade 20/30 na Noite ==');
+{
+  const acao = (st, u, slot) => E.acoesDe(st, u).find(a => a.slot === slot);
+  // cd condicional por composição de time (a gaveta do §101): sem Hou Yi 3, com Hou Yi 2
+  let st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 950);
+  ok(acao(st, st.lados[0].units[0], 'habilidade').cd === 3, 'Elixir sem Hou Yi: recarga 3');
+  st = E.novoEstado(['change', 'houyi', 'zeus'], ['zeus', 'zeus', 'zeus'], 951);
+  ok(acao(st, st.lados[0].units[0], 'habilidade').cd === 2, 'Elixir com Hou Yi: recarga 2 (cdSe por aliadoPresente)');
+
+  // Elixir aplica pisoVida (não cai abaixo de 1) no aliado escolhido
+  st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 952);
+  const ch = st.lados[0].units[0], ally = st.lados[0].units[1];
+  E.aplicarFx(st, ch, E.GODS.change.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'aliado', slot: 'habilidade' }, [ally]);
+  ally.hp = 1; E.bater(st, st.lados[1].units[0], ally, 999, 'afetado', 'basico', {});
+  ok(ally.vivo && ally.hp === 1, 'Elixir: pisoVida segura o aliado em 1 de HP');
+
+  // passiva +8 só com Hou Yi no time (escopo self — a metade fiel que mora na Chang’e; ver §101)
+  st = E.novoEstado(['change', 'houyi', 'zeus'], ['zeus', 'zeus', 'zeus'], 953);
+  let c = st.lados[0].units[0], foe = st.lados[1].units[0], h = foe.hp;
+  E.bater(st, c, foe, 10, 'afetado', 'basico', {});
+  ok(h - foe.hp === 18, `+8 com Hou Yi no time: 10+8=18 (${h - foe.hp})`);
+  st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 954);
+  c = st.lados[0].units[0]; foe = st.lados[1].units[0]; h = foe.hp;
+  E.bater(st, c, foe, 10, 'afetado', 'basico', {});
+  ok(h - foe.hp === 10, `sem Hou Yi: 10, sem bônus (${h - foe.hp})`);
+
+  // Luz do Jade: 20 fora da Noite, 30 na Noite (+ regen no time)
+  st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 955);
+  c = st.lados[0].units[0]; c.hp = 50;
+  E.aplicarFx(st, c, E.GODS.change.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(c.hp === 70 && !!E.ef(c, 'regen'), `fora da Noite: cura 20 (50→70) e regen aplicado (${c.hp})`);
+  st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 956); E.definirFase(st, 'Noite', 3);
+  c = st.lados[0].units[0]; c.hp = 50;
+  E.aplicarFx(st, c, E.GODS.change.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(c.hp === 80, `na Noite: cura 30 (50→80): ${c.hp}`);
+  console.log('  Elixir 3→2 com Hou Yi (cdSe) · pisoVida segura em 1 · +8 self com Hou Yi · Luz do Jade 20/30 na Noite');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

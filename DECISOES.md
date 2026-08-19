@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §101 — RECARGA CONDICIONAL (cdSe): uma gaveta, não duas; e o teto-invisível que o dono previu
+
+**A varredura desmontou a suspeita das "duas gavetas": é UMA.** O dono viu duas formas possíveis para "recarga X quando
+⟨estado⟩": (a) a base mudando enquanto a condição vale, lida na disponibilidade (Lugh, "sem recarga no Dia"); (b) uma alteração
+permanente disparada ao formar o time (Chang'e, "recarga 2 com Hou Yi"), que seria `abertura` com efeito — outra gaveta. **A
+resposta: ler a base AO VIVO na disponibilidade subsume as duas.** `aliadoPresente` (Hou Yi no time) é CONSTANTE na partida (o
+array de unidades não muda; morto continua rosterado) — então ler ao vivo dá o mesmo que um efeito permanente, sem o segundo
+caminho. Uma forma: `cdSe:{estado, cd}` na habilidade, avaliado em `acoesDe` via `estadoOK`. `cd 0` dispensa o `em_recarga`
+inteiro (Lugh usa toda rodada no Dia); `cd 2` só troca a base (Chang'e). O `abertura`-permanente seria caminho a mais para
+nada. **Varredura dos 100:** só Chang'e e Lugh; o Bragi ("recarga reduzida em 1") era MIRAGEM — é o `cdShift` MIRADO que já
+existe (manipulação ativa), não base condicional. Família de 2, gaveta nasce ocupada.
+
+**O TETO-INVISÍVEL (o dono pegou antes de mim, como no multi-golpe):** recarga 0 = usar a habilidade TODA RODADA, e o auditor
+de teto não vê FREQUÊNCIA — só valor-por-uso. Num MILAGRE (nuke de valor alto), cd 0 seria o empilhamento do §92 de novo,
+invisível. Confirmado que o Samildánach do Lugh é **HABILIDADE** (rec 1), não milagre — habilidade/básico recorrem por
+natureza, e o teto-por-uso da habilidade (GUERRA 15 área ≤ 15) segura. Mas **barrei na fonte** (valida_kit): `cdSe.cd 0` num
+`milagre` é erro em voz alta. Barrar onde o auditor é cego é a lição do §66 aplicada preventivamente.
+
+**Chang'e (IMPL 68) — consumidora real do cdSe:** Elixir `pisoVida` 2t (base rec 3, `cdSe → 2` com Hou Yi); Luz do Jade cura
+20/30 na Noite (`condicional se:{fase:Noite}`, e o `curasFx` do checar_cadeia passou a recursar no condicional, espelhando o
+`danosFx`) + regen; passiva +8 com Hou Yi (`bonusDano estado:{aliadoPresente}` — o `estado` entrou nos campos do gatilho, o
+motor já gateava, igual à `reducao` do §96). **Nota de fidelidade (ambos +8):** a prosa diz "ambos" (Chang'e E Hou Yi), mas o
+recíproco teria de morar na passiva do Hou Yi, que o catálogo NÃO dá (Olho de Águia não cita a Chang'e). Realizei a metade que
+mora na Chang'e — `escopo:self` (não `time`, que superdimensionaria o 3º aliado). O Lugh consome o cdSe também (Samildánach),
+mas segue bloqueado pelo **seletor-maior-HP** do milagre — a próxima gaveta dele.
+
+---
+
 ## §100 — DOIS LEDGERS: o §93 pega quem APROVOU (não quem executa); e guarda de imunidade à mão erra por omissão
 
 **A. O §93 corrige a premissa de quem APROVA a frente, não a de quem executa.** Duas vezes no arco a varredura de

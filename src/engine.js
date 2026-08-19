@@ -107,7 +107,7 @@ const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff'
 // um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
 // Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
 const GATILHOS_PASSIVA = {
-  bonusDano:       { campos: ['v', 'escopo', 'quando', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78, mesmo helper do danoBase)
+  bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
@@ -1256,9 +1256,14 @@ function acoesDe(st, u) {
   return lista.map(a => {
     let cost = a.cost;
     if (a.slot !== 'defesa' && custoGratisDe(st, u, a.slot)) cost = {};   // passiva Cuca (aCadaN custoGratis)
+    // RECARGA CONDICIONAL (§101, Lugh/Chang'e): a base da recarga muda enquanto uma condição de campo vale, LIDA AQUI
+    // (na disponibilidade). cdSe:{estado, cd}. cd 0 = "sem recarga na condição" → dispensa o em_recarga inteiro (Lugh no
+    // Dia: usa toda rodada). Chang'e (aliadoPresente, constante) só troca a base de 3 p/ 2. Uma gaveta: ler ao vivo cobre
+    // o caso "permanente" (aliadoPresente é constante na partida, então ler ao vivo = constante). Ver §101.
+    const cdEf = (a.cdSe && estadoOK(a.cdSe.estado, u, st)) ? a.cdSe.cd : (a.cd || 0);
     let motivo = null;
     if (a.umaVez && u.usos[a.slot]) motivo = 'ja_usou';   // F1.6 (Ísis/Shiva): habilidade "1× por partida" já gasta — trava PERMANENTE (o campo `usos` existia sem fio; agora ligado)
-    else if (u.cd[a.slot] > 0) motivo = 'em_recarga';
+    else if (u.cd[a.slot] > 0 && cdEf > 0) motivo = 'em_recarga';   // cdEf 0 (sem recarga na condição) dispensa o bloqueio
     else if (!podePagar(l, cost)) motivo = 'sem_energia';
     else if (a.slot !== 'defesa') {
       const sil = ef(u, 'silenceClass');
@@ -1271,7 +1276,7 @@ function acoesDe(st, u) {
     // sem alvo válido: a habilidade EXIGE alvo escolhido mas não há nenhum (todos Inalvejáveis/Submersos). AoE
     // (passos vazio, alvo:'auto'/'todosInimigos') NÃO é barrada — ela não seleciona (§84: a área ignora Inalvejável).
     if (!motivo && a.slot !== 'defesa' && passos.length > 0 && alvosValidos(st, u, a).length === 0) motivo = 'sem_alvo';
-    return { ...a, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
+    return { ...a, cd: cdEf, cost, classe: a.slot === 'defesa' ? 'Universal' : classeDe(st, u, a),
              passos, disponivel: !motivo, motivo };
   });
 }

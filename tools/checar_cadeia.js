@@ -46,7 +46,10 @@ const curasProsa = ef => [...ef.matchAll(/cura\s+(\d+)/gi)].map(m => +m[1]);
 // só que condicionais — caem no balde "multi/condicional" (naoConf) via dM.length>1, com os dois valores à vista.
 const danosFx = fx => (fx || []).flatMap(e => e.t === 'dmg' ? [e.v]
   : (e.t === 'condicional' ? [...(e.entao || []), ...(e.senao || [])].filter(x => x.t === 'dmg').map(x => x.v) : []));
-const curasFx = fx => (fx || []).filter(e => e.t === 'heal').map(e => e.v);
+// cura do fx, RECURSANDO no `condicional` (§101, Chang'e): "cura 20; na NOITE cura 30" mora em entao/senao — os dois
+// valores SÃO a cura da habilidade (um ramo por vez), como o danosFx faz com o dano condicional.
+const curasFx = fx => (fx || []).flatMap(e => e.t === 'heal' ? [e.v]
+  : (e.t === 'condicional' ? [...(e.entao || []), ...(e.senao || [])].filter(x => x.t === 'heal').map(x => x.v) : []));
 
 // COMPARA prosa↔máquina. Puro (recebe os dados), para o teste exercitar com entradas sintéticas.
 function conferir(prosaByKey, deusesArray) {

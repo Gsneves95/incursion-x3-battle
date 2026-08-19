@@ -708,6 +708,38 @@ console.log('== 19. dominar: a vítima usa o Básico DELA contra um aliado dela;
   console.log('  vítima bate no aliado dela · curaCausador dreba · durNoite +1 · nega orbe · degenerado só marca · imune barra');
 }
 
+// ------------------------------------------------------------ 20. RECARGA CONDICIONAL (§101, cdSe) — Lugh/Chang'e
+console.log('== 20. cdSe: base condicional lida na disponibilidade; cd 0 dispensa a recarga (usa toda rodada); teto-invisível barrado ==');
+{
+  // deus de teste com Samildánach-like: recarga 2, mas 0 no Dia (a forma do Lugh). aliadoPresente cobre a do Chang'e.
+  E.GODS.tcd = { nome: 'TCD', faccao: 'Celta', elem: 'Aurora', classe: 'Mágico', funcao: 'Suporte', passiva: { nome: '-', desc: '-' },
+    ab: [{ slot: 'habilidade', classe: 'Mágico', nome: 'H', cost: {}, cd: 2, cdSe: { estado: { fase: 'Dia' }, cd: 0 }, alvo: 'inimigo', fx: [{ t: 'dmg', v: 10 }] }] };
+  const acao = (st, u, slot) => E.acoesDe(st, u).find(a => a.slot === slot);
+  let st = E.novoEstado(['tcd', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 900);
+  let u = st.lados[0].units[0];
+  ok(acao(st, u, 'habilidade').cd === 2, `fora do Dia: recarga base 2 (${acao(st, u, 'habilidade').cd})`);
+  // com uma recarga STALE (usou antes): fora do Dia fica em_recarga; no Dia é dispensada
+  u.cd.habilidade = 1;
+  ok(acao(st, u, 'habilidade').motivo === 'em_recarga', 'com recarga pendente e sem Dia: em_recarga');
+  E.definirFase(st, 'Dia', 3);
+  const ad = acao(st, u, 'habilidade');
+  ok(ad.cd === 0 && ad.disponivel, `no Dia: recarga efetiva 0 e DISPONÍVEL mesmo com recarga pendente (usa toda rodada) (${ad.cd}/${ad.disponivel})`);
+  delete E.GODS.tcd;
+
+  // Chang'e (real): base condicional por COMPOSIÇÃO de time (aliadoPresente) — constante na partida, lida ao vivo = constante
+  st = E.novoEstado(['change', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 901);
+  ok(acao(st, st.lados[0].units[0], 'habilidade').cd === 3, 'Chang’e sem Hou Yi: Elixir recarga 3');
+  st = E.novoEstado(['change', 'houyi', 'zeus'], ['zeus', 'zeus', 'zeus'], 902);
+  ok(acao(st, st.lados[0].units[0], 'habilidade').cd === 2, 'Chang’e com Hou Yi: Elixir recarga 2 (uma gaveta: ler ao vivo cobre o caso constante)');
+
+  // GUARDA do teto-invisível (§101): cdSe cd 0 num MILAGRE é barrado; numa habilidade/básico é ok
+  const errM = []; require('../tools/valida_kit.js').validarHabilidade({ slot: 'milagre', nome: 'X', cd: 4, cdSe: { estado: { fase: 'Dia' }, cd: 0 }, alvo: 'inimigo', fx: [{ t: 'dmg', v: 40 }] }, 'X', errM);
+  ok(errM.some(e => /teto invis/.test(e)), 'cdSe cd 0 num MILAGRE barrado (nuke toda rodada — o auditor não vê frequência)');
+  const errH = []; require('../tools/valida_kit.js').validarHabilidade({ slot: 'habilidade', nome: 'Y', cd: 1, cdSe: { estado: { fase: 'Dia' }, cd: 0 }, alvo: 'inimigo', fx: [{ t: 'dmg', v: 15 }] }, 'Y', errH);
+  ok(errH.length === 0, 'cdSe cd 0 numa HABILIDADE é ok (Samildánach do Lugh)');
+  console.log('  base condicional na disponibilidade · cd 0 dispensa recarga · aliadoPresente = constante · milagre-0 barrado');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

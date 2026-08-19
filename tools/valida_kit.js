@@ -25,7 +25,7 @@ const V = E.VOCAB;
 
 const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
-const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c
+const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'cdSe', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c. cdSe (§101): recarga condicional
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
 
 function validarCusto(cost, ctx, errs) {
@@ -331,6 +331,17 @@ function validarHabilidade(ab, ctx, errs) {
   if ('classePorModo' in ab) for (const m of Object.values(ab.classePorModo))
     if (!V.classes.includes(m)) errs.push(`${ctx}: classePorModo com classe inválida "${m}"`);
   if ('cd' in ab && (typeof ab.cd !== 'number' || ab.cd < 0)) errs.push(`${ctx}: cd inválido (${JSON.stringify(ab.cd)})`);
+  if ('cdSe' in ab) {   // §101: recarga condicional — {estado, cd}. cd inteiro >= 0.
+    const s = ab.cdSe;
+    if (!s || typeof s !== 'object') errs.push(`${ctx}: cdSe não é objeto`);
+    else {
+      if (typeof s.cd !== 'number' || !Number.isInteger(s.cd) || s.cd < 0) errs.push(`${ctx}: cdSe.cd inválido (${JSON.stringify(s.cd)}; inteiro >= 0)`);
+      // GUARDA do teto-invisível (o dono, §101): recarga 0 num MILAGRE = nuke toda rodada, e o auditor não vê frequência.
+      // Igual ao empilhamento do multi-golpe (§92) — barrado na fonte. Básico/Habilidade recorrem por natureza; Milagre não.
+      if (s.cd === 0 && ab.slot === 'milagre') errs.push(`${ctx}: cdSe.cd 0 num MILAGRE é teto invisível (nuke toda rodada) — proibido (§101)`);
+      validarEstado(s.estado, `${ctx}.cdSe.estado`, errs);
+    }
+  }
   if ('alvo' in ab && !V.alvos.includes(ab.alvo)) errs.push(`${ctx}: alvo inexistente "${ab.alvo}" (válidos: ${V.alvos.join(', ')})`);
   if ('cost' in ab) validarCusto(ab.cost, ctx, errs);
   if ('fx' in ab) {
