@@ -6,6 +6,48 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §116 — RE-TRIAGEM DOS 26 (pós-74 escritos): a cauda concentrou em 9 mecanismos, 4 destravam 10 — e a ordem por RISCO
+
+**Gravado ANTES de sequenciar, como a previsão do §52 — para conferir contra a realidade depois.** Reconciliei os 26 kits
+não-escritos contra o motor de hoje (milagre-primeiro §78, teto ~80% erro-para-cima). Cada ausência foi verificada CONTRA O
+MOTOR RODANDO (§115), não contra a leitura dos subagentes — o M4 é o melhor caso: o próprio comentário do motor (l.145)
+nomeia as duas lacunas de imunidade.
+
+**Os três baldes:**
+- **JÁ DÁ (4):** hermes, mimir, osiris, nuwa.
+- **HOOK PEQUENO (9):** susanoo, kali, hel, anubis, morrigan, tanuki, shutendoji, kitsune, raijin. (Cada um pede um
+  campo/termo/condição sobre framework existente: termo novo em `escalaContagem`, condição comparativa, execução no
+  `fimTurno`, `roubaOrbe` em executor reativo, etc. Ressalva de teto: raijin [feed de pool por golpe] e shutendoji [roubaOrbe
+  reativo] são os hooks mais perto de escorregar para mecanismo real.)
+- **MECANISMO REAL (13):** dionisio, saci, kukulkan, exu, dagda, khonshu, ammit, ares, izanagi, yamatotakeru, loki, guanyu,
+  cernunnos.
+
+**Os 9 mecanismos distintos que travam a cauda (não 15 — CONCENTROU):**
+
+| # | Mecanismo | Destrava | Ausência confirmada no motor |
+|---|---|---|---|
+| M1 | Agendador de payload p/ o próximo turno (ação telegrafada) | dionisio, saci, kukulkan | só `reviveProximoTurno`/`pendenteRenascer` (bespoke do revive) |
+| M2 | Iniciativa / ordem de turno | exu, dagda | `st.ativo = 1-ativo` estrito, sem reorder |
+| M3 | Consequência de abate com alcance cross-side (onKill/aoCair→abatedor ou cadáver inimigo) | khonshu, ammit, ares | `onKill`/`onDeath` "a crescer" (l.108); aoCair-faz é self/lado |
+| M4 | Extensão da imunidade (a contágio + condicional-por-pool) | izanagi, yamatotakeru | l.145 marca os dois como não-cobertos |
+| M5 | Realocação de status entre times (rouba buffs + transfere debuffs) | loki | grep vazio |
+| M6 | Suspensão temporária de buffs (desativa-e-devolve ≠ strip) | dagda | só strip permanente |
+| M7 | Contra-ataque delegado (dmg ao atacante quando o ALIADO é atingido) | guanyu | `noAtacante` proíbe dmg (l.198) |
+| M8 | Invocação abatível + respawn após N turnos | cernunnos | invocações fora de `units`, sem timer |
+| M9 | Guarda de controle p/ aliado, com carga (nega, não reflete) | khonshu | `refleteControle` é self, sem carga |
+
+(dagda = M2+M6; khonshu = M3+M9.) **Quatro mecanismos de sistema (M1–M4) destravam 10 dos 13; os 5 restantes (M5–M9) são
+singletons.** Com 74 escritos, a cauda consolidou como esperado — o custo restante da Fase 1 é ~4 mecanismos de peso + uma
+franja de acréscimos pequenos, não 13 levas independentes.
+
+**ORDEM DAS QUATRO DE SISTEMA (decisão do dono, por RISCO não por tamanho): M1 → M3 → M4 → M2.**
+- **M1** tem precedente (o `reviveProximoTurno` é um agendador bespoke — generalizar é o padrão §106; talvez ele já quase faça).
+- **M3** e **M4** são extensões de eixos que já existem (aoCair/onKill; imunidade).
+- **M2** mexe no laço de turno — a coisa mais cara de errar no motor; adiado de propósito, e com 26 kits ainda por escrever o
+  argumento de adiar continua valendo. Faz por último.
+
+---
+
 ## §115 — VERIFICAR UMA ALEGAÇÃO SOBRE ESTRUTURA LENDO A MESMA ESTRUTURA É REPETIÇÃO, NÃO PROVA
 
 **A generalização do falso-positivo do Lugh (§113).** A alegação era estrutural: "o básico não implementa 'não-evitável'".
