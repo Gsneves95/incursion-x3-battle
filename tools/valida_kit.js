@@ -60,6 +60,14 @@ function validarFx(f, ctx, errs) {
     }
   }
   if ('executaAbaixoDe' in f && (!Number.isInteger(f.executaAbaixoDe) || f.executaAbaixoDe <= 0)) errs.push(`${ctx}: executaAbaixoDe mal formado (${JSON.stringify(f.executaAbaixoDe)}; inteiro > 0)`);
+  if ('alvoHp' in f) {   // §103: seletor auto por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}
+    const s = f.alvoHp;
+    if (!s || typeof s !== 'object') errs.push(`${ctx}: alvoHp não é objeto`);
+    else {
+      if (!['inimigo', 'aliado'].includes(s.lado)) errs.push(`${ctx}: alvoHp.lado inválido "${s.lado}" (inimigo|aliado)`);
+      if (!['max', 'min'].includes(s.ext)) errs.push(`${ctx}: alvoHp.ext inválido "${s.ext}" (max|min)`);
+    }
+  }
   if ('execIf' in f) validarQuando(f.execIf, `${ctx}.execIf`, errs);   // F1.6 (Iara): filtro de status na execução, mesma gramática do condOK
   if ('soSe' in f) validarQuando(f.soSe, `${ctx}.soSe`, errs);   // F1.6 (Chaac): apply filtrado por status do alvo, mesma gramática do condOK
   if ('porStatus' in f) validarPorStatus(f.porStatus, `${ctx}.porStatus`, errs);   // F1.8: escala por contagem de status (dmg)

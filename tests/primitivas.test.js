@@ -740,6 +740,38 @@ console.log('== 20. cdSe: base condicional lida na disponibilidade; cd 0 dispens
   console.log('  base condicional na disponibilidade · cd 0 dispensa recarga · aliadoPresente = constante · milagre-0 barrado');
 }
 
+// ------------------------------------------------------------ 21. SELETOR POR HP (§103, alvoHp) — max/min, aliado/inimigo, empate
+console.log('== 21. alvoHp: escolhe AUTO por HP (max/min, aliado/inimigo); empate = MENOR ÍNDICE (determinístico) ==');
+{
+  const A = (alvo, slot) => ({ alvo: alvo || 'auto', slot: slot || 'milagre' });
+  // max-inimigo (Lugh): dmg no de MAIOR HP
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 900);
+  let u = st.lados[0].units[0], fo = st.lados[1].units; fo[0].hp = 50; fo[1].hp = 90; fo[2].hp = 70;
+  let h = fo.map(x => x.hp); E.aplicarFx(st, u, [{ t: 'dmg', v: 20, alvoHp: { lado: 'inimigo', ext: 'max' } }], A(), []);
+  ok(h[1] - fo[1].hp === 20 && fo[0].hp === h[0] && fo[2].hp === h[2], `max-inimigo: só o de 90 leva 20 (${fo.map((x, i) => h[i] - x.hp)})`);
+  // min-inimigo (Thor)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 901);
+  u = st.lados[0].units[0]; fo = st.lados[1].units; fo[0].hp = 50; fo[1].hp = 90; fo[2].hp = 30;
+  h = fo.map(x => x.hp); E.aplicarFx(st, u, [{ t: 'dmg', v: 20, alvoHp: { lado: 'inimigo', ext: 'min' } }], A(), []);
+  ok(h[2] - fo[2].hp === 20 && fo[0].hp === h[0] && fo[1].hp === h[1], `min-inimigo: só o de 30 leva 20 (${fo.map((x, i) => h[i] - x.hp)})`);
+  // min-aliado (Deméter mais ferido) via aplicarFx direto
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 902);
+  u = st.lados[0].units[0]; let al = st.lados[0].units; al[0].hp = 100; al[1].hp = 40; al[2].hp = 80;
+  E.aplicarFx(st, u, [{ t: 'heal', v: 6, alvoHp: { lado: 'aliado', ext: 'min' } }], A('nenhum'), []);
+  ok(al[1].hp === 46 && al[0].hp === 100 && al[2].hp === 80, `min-aliado (mais ferido): só o de 40 cura (${al.map(x => x.hp)})`);
+  // EMPATE → menor índice (o replay/arena não podem divergir — a posição do dono, como o Huang Di)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 903);
+  u = st.lados[0].units[0]; fo = st.lados[1].units; fo[0].hp = 90; fo[1].hp = 90; fo[2].hp = 50;
+  h = fo.map(x => x.hp); E.aplicarFx(st, u, [{ t: 'dmg', v: 20, alvoHp: { lado: 'inimigo', ext: 'max' } }], A(), []);
+  ok(h[0] - fo[0].hp === 20 && fo[1].hp === h[1], `empate no 90: o MENOR ÍNDICE (0) leva, não o 1 (${fo.map((x, i) => h[i] - x.hp)})`);
+  // caminho do FAZ (rodarFaz, Deméter porTurno): o mesmo seletor no faz-heal
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 904);
+  al = st.lados[0].units; al[0].hp = 100; al[1].hp = 30; al[2].hp = 100;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(al[1].hp === 36, `no faz (porTurno da Deméter): o mais ferido (índice 1) curou 6 (${al[1].hp})`);
+  console.log('  max/min · aliado/inimigo · empate = menor índice · funciona no fx E no faz (rodarFaz)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

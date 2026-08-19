@@ -1584,6 +1584,37 @@ console.log('== §101 Chang’e: recarga condicional (Elixir 3→2 com Hou Yi) +
   console.log('  Elixir 3→2 com Hou Yi (cdSe) · pisoVida segura em 1 · +8 self com Hou Yi · Luz do Jade 20/30 na Noite');
 }
 
+console.log('== §103 Deméter: seletor-por-HP (aliado mais ferido cura 6 por turno) + regen no time + revive-ou-cura ==');
+{
+  // passiva porTurno: o aliado MAIS FERIDO cura 6 no início do turno da Deméter (o seletor por HP no faz)
+  let st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 970);
+  let al = st.lados[0].units; al[0].hp = 100; al[1].hp = 25; al[2].hp = 90;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(al[1].hp === 31 && al[0].hp === 100 && al[2].hp === 90, `passiva: só o mais ferido (25→31) curou (${al.map(x => x.hp)})`);
+  // empate no mais ferido → menor índice
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 971);
+  al = st.lados[0].units; al[0].hp = 40; al[1].hp = 40; al[2].hp = 100;
+  st.ativo = 0; E.iniciarTurno(st);
+  ok(al[0].hp === 46 && al[1].hp === 40, `empate no mais ferido: menor índice (0) cura, não o 1 (${al[0].hp}/${al[1].hp})`);
+
+  // habilidade: regen 12 no time por 2 turnos
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 972);
+  const d = st.lados[0].units[0];
+  E.aplicarFx(st, d, E.GODS.demeter.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'nenhum', slot: 'habilidade' }, []);
+  ok(st.lados[0].units.every(x => E.ef(x, 'regen') && E.ef(x, 'regen').v === 12), 'Dádiva: regen 12 em todo o time');
+
+  // milagre: revive 1 caído (48) OU, sem caídos, cura 25 no time
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 973);
+  const d2 = st.lados[0].units[0], caido = st.lados[0].units[1]; caido.vivo = false; caido.hp = 0;
+  E.aplicarFx(st, d2, E.GODS.demeter.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(caido.vivo && caido.hp === 48, `milagre com caído: revive com 48 (${caido.vivo}/${caido.hp})`);
+  st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 974);
+  const d3 = st.lados[0].units[0]; st.lados[0].units.forEach(x => x.hp = 50);
+  E.aplicarFx(st, d3, E.GODS.demeter.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
+  ok(st.lados[0].units.every(x => x.hp === 75), `milagre sem caído: cura 25 no time (${st.lados[0].units.map(x => x.hp)})`);
+  console.log('  aliado mais ferido cura 6/turno (empate=menor índice) · regen 12 no time · revive 48 ou cura 25');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

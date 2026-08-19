@@ -265,6 +265,7 @@ const VOCAB = {
     'golpes',   // F1.9 (§92): multi-golpe DISTRIBUÍDO — N golpes de v repartidos igual entre os alvos selecionados (alvo:'distribui')
     'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
     'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
+    'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1084,8 +1085,9 @@ function rodarFaz(st, u, faz, tagKey) {
       const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
       for (const t of alvos) { t.shield += f.v; log(st, { tipo: 'escudo', alvo: t.key, valor: f.v }); }
     }
-    else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo escolhido). escopo 'time' = todo o lado vivo do sujeito.
-      const alvos = f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u];
+    else if (f.t === 'heal') {   // F1.2.5: cura self OU own-lado (nunca alvo ESCOLHIDO). escopo 'time' = todo o lado vivo do sujeito.
+      // §103: alvoHp AUTO-seleciona 1 alvo por HP (Deméter porTurno: o aliado mais ferido) — segue turno-seguro (o jogador não escolhe).
+      const alvos = f.alvoHp ? selByHp(st, u, f.alvoHp) : (f.escopo === 'time' ? l.units.filter(x => x.vivo) : [u]);
       for (const t of alvos) curar(st, t, f.v, u);   // curador = o sujeito do faz
     }
     else if (f.t === 'apply') {   // F1.2.5: aplica um BUFF (⊆ V.buffs) em self OU own-lado. Nunca controle/debuff (exigiria alvo inimigo).
@@ -1395,6 +1397,20 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
   return { ok: true };
 }
 
+// SELETOR POR HP (§103, Lugh/Chang'e/Deméter/Izanami): escolhe AUTO 1 unidade de um lado pelo HP absoluto — ext:'max'
+// (de maior HP) ou 'min' (de menor HP / mais ferido). min e max são o MESMO mecanismo, comparador invertido. Empate →
+// MENOR ÍNDICE de unidade (comparação ESTRITA: o primeiro da varredura vence), determinístico como o Huang Di — sem isso o
+// replay e a arena divergem em silêncio. lado:'inimigo' = o lado oposto ao dono; 'aliado' = o do dono. É AUTO (alvo:'auto'
+// no primário, ou rider num AoE/faz): o jogador não escolhe. 'mais ferido' = menor HP absoluto (≡ menor HP quando maxHp igual).
+function selByHp(st, u, spec) {
+  const lado = spec.lado === 'inimigo' ? 1 - u.lado : u.lado;
+  const vivos = st.lados[lado].units.filter(x => x.vivo);
+  if (!vivos.length) return [];
+  let best = vivos[0];
+  for (const x of vivos) if (spec.ext === 'max' ? x.hp > best.hp : x.hp < best.hp) best = x;
+  return [best];
+}
+
 // -------------------------------------------- executor de efeitos (reutilizável)
 // Extraído de agir() para poder ser chamado também pela cópia de habilidade.
 // `a` fornece o alvo padrão (a.alvo) e o slot. `alvos` são as unidades escolhidas.
@@ -1409,7 +1425,8 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (!TIPOS_FX.includes(e.t)) throw new Error(`fx desconhecido: "${e.t}"${a && a.nome ? ` em "${a.nome}"` : ''}`);
     const escopo = e.escopo || a.alvo;
     let sel = [];
-    if (e.escopo === 'self') sel = [u];
+    if (e.alvoHp) sel = selByHp(st, u, e.alvoHp);   // §103: seletor AUTO por HP (max/min de um lado) — precede escopo
+    else if (e.escopo === 'self') sel = [u];
     else if (escopo === 'time') sel = l.units.filter(x => x.vivo);
     else if (escopo === 'todosInimigos') sel = inimigos.filter(x => x.vivo);
     else if (escopo === 'aliadoCaido') sel = alvos.filter(x => !x.vivo);

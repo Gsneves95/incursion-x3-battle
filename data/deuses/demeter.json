@@ -1,0 +1,49 @@
+{
+  "key": "demeter",
+  "nome": "Deméter",
+  "faccao": "Grega",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Ciclo das Estações",
+    "desc": "No início de cada turno, o aliado mais ferido cura 6.",
+    "fx": [
+      { "gatilho": "porTurno", "faz": [ { "t": "heal", "v": 6, "alvoHp": { "lado": "aliado", "ext": "min" } } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Foice de Ouro",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Dádiva da Terra",
+      "cost": { "Verdejante": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "O time regenera 12 de HP por turno durante 2 turnos.",
+      "fx": [ { "t": "apply", "eff": { "type": "regen", "v": 12, "dur": 2 }, "escopo": "time" } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Estação Eterna",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time.",
+      "fx": [
+        { "t": "condicional", "se": { "aliadoCaido": true }, "entao": [ { "t": "revive", "hp": 48, "escopo": "umCaido" } ], "senao": [ { "t": "heal", "v": 25, "escopo": "time" } ] }
+      ]
+    }
+  ]
+}

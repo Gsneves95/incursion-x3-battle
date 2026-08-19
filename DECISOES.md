@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §103 — SELETOR POR HP (alvoHp): a família era MAIOR (5, com um consumidor escondido em hardcode); Deméter
+
+**A varredura corrigiu o número — pela terceira vez o §93 mordeu.** O §54 dera 2 (Deméter, Izanami); a varredura das fases
+somou o Lugh (3); a varredura dos 100 AGORA acha **5**: + **Thor** (que já seleciona o de MENOR HP via um fx HARDCODED,
+`atordoaMenorHp` — o mecanismo geral existia disfarçado de one-off, §46/§71) + **Hanuman** (o "mais ferido" como FALLBACK do
+Senhor designado). "Se aparecer um quarto, a família é maior do que qualquer varredura disse" — apareceu um quarto E um quinto.
+
+**As duas suspeitas, resolvidas:**
+1. **min e max são o MESMO mecanismo, comparador invertido** — confirmado. `alvoHp:{lado, ext}`, `ext:'max'` (de maior HP,
+   Lugh/Izanami) ou `'min'` (de menor HP / mais ferido, Thor/Deméter/Hanuman). "mais ferido" = menor HP ABSOLUTO (≡ menor HP;
+   diverge de hp-faltante só quando maxHp difere — raro; o modelo min/max do dono usa uma métrica só).
+2. **Cabe no vocabulário SEM alvo novo.** Não é `alvo` de jogador — é AUTO. Mora como campo do FX (`alvoHp`), resolvido em
+   `aplicarFx` (e em `rodarFaz`, p/ o `porTurno` da Deméter) antes do escopo. O `alvo` da habilidade é `'auto'` (primário,
+   Lugh) ou o fx é rider num AoE/faz. `lado:'inimigo'` = oposto ao dono; `'aliado'` = o do dono.
+
+**O DESEMPATE (o que mata determinismo):** empate de HP → **MENOR ÍNDICE de unidade**, comparação ESTRITA (o primeiro da
+varredura vence), como o dono pediu e como o Huang Di. Travado em teste (empate no 90 → índice 0, não 1). Sem isso, replay e
+arena divergem em silêncio — o risco que o próprio dono levantou lá.
+
+**Deméter (IMPL 69) — a consumidora LIMPA:** básico 10; Dádiva (regen 12 time 2t); Estação Eterna (revive 48 OU cura 25 —
+condicional aliadoCaido, padrão Freyja); passiva `porTurno` → o aliado mais ferido cura 6 (`heal alvoHp:{aliado,min}`). Só
+o seletor era novo; o resto é construído.
+
+**O que NÃO fiz, e por quê (§93 + §102-A):** os outros consumidores arrastam mais. **Izanami** puxa o DoT-por-Maldição-de-Yomi
+(contador que tica dano). **Lugh** ainda trava no básico "não pode ser CONTRA-ATACADO" (flag de habilidade nova; o "não
+evitado" é `ignoraInalvejavel`, que existe). **Thor** já usa o seletor via `atordoaMenorHp` — ABSORVÊ-LO no geral é a jogada
+§46/§102-A (um resultado, um caminho), MAS muda o comportamento dele: o `atordoaMenorHp` tem uma esquisitice (não atordoa
+inimigo INVULNERÁVEL) que a via geral (`apply`, que checa `controlImmune`, não invuln) não tem. Absorção é decisão à parte
+(migrar com a mudança de comportamento vs preservar a esquisitice) — trago quando o dono quiser fechar o Thor/Lugh/Izanami.
+
+---
+
 ## §102 — TRÊS PRINCÍPIOS do §101: leitura-ao-vivo subsume o estático; barra-antes-do-buraco; divergência-com-gatilho
 
 **A. Leitura ao vivo subsume o estático — não construa o segundo caminho.** Quando uma leitura AO VIVO cobre o caso estático,
