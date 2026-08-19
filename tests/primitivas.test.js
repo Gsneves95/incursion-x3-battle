@@ -790,6 +790,33 @@ console.log('== 22. semContra: o golpe não aciona contraAtaca; sem a flag, acio
   console.log('  semContra barra o contraAtaca do alvo · sem a flag o contra acontece');
 }
 
+// ------------------------------------------------------------ 23. alvoSenhor (§107, Hanuman) — o aliado designado, fallback mais ferido
+console.log('== 23. alvoSenhor: mira o aliado que a intercepta protege; sem Senhor, cai no mais ferido (alvoHp) ==');
+{
+  const A = a => ({ alvo: a || 'nenhum', slot: 'milagre' });
+  // COM Senhor: a intercepta{protege: X} do dono → o heal alvoSenhor vai em X, mesmo que outro esteja MAIS ferido
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 900);
+  let u = st.lados[0].units[0], senhor = st.lados[0].units[1], outro = st.lados[0].units[2];
+  senhor.hp = 70; outro.hp = 30;
+  E.aplicarFx(st, u, [{ t: 'intercepta', dur: 2, contra: 'todos' }], { alvo: 'aliado', slot: 'habilidade' }, [senhor]);
+  E.aplicarFx(st, u, [{ t: 'heal', v: 30, alvoSenhor: true }], A(), []);
+  ok(senhor.hp === 100 && outro.hp === 30, `com Senhor: cura o DESIGNADO (70→100), não o mais ferido (30 intacto) (${senhor.hp}/${outro.hp})`);
+  // SEM Senhor: sem intercepta → fallback no mais ferido (alvoHp min)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 901);
+  u = st.lados[0].units[0]; let a1 = st.lados[0].units[1], a2 = st.lados[0].units[2];
+  a1.hp = 90; a2.hp = 40;
+  E.aplicarFx(st, u, [{ t: 'heal', v: 30, alvoSenhor: true }], A(), []);
+  ok(a2.hp === 70 && a1.hp === 90, `sem Senhor: fallback no mais ferido (40→70), não no de 90 (${a2.hp}/${a1.hp})`);
+  // Senhor CAIU → também cai no fallback (a intercepta aponta p/ um morto)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 902);
+  u = st.lados[0].units[0]; senhor = st.lados[0].units[1]; outro = st.lados[0].units[2];
+  E.aplicarFx(st, u, [{ t: 'intercepta', dur: 2, contra: 'todos' }], { alvo: 'aliado', slot: 'habilidade' }, [senhor]);
+  senhor.vivo = false; senhor.hp = 0; outro.hp = 50;
+  E.aplicarFx(st, u, [{ t: 'heal', v: 30, alvoSenhor: true }], A(), []);
+  ok(outro.hp === 80, `Senhor caído: fallback no mais ferido vivo (50→80) (${outro.hp})`);
+  console.log('  mira o designado (intercepta.protege) · sem/caído → mais ferido (alvoHp) · sem 2º lugar guardando o Senhor');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

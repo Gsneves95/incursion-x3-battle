@@ -1,0 +1,54 @@
+{
+  "key": "hanuman",
+  "nome": "Hanuman",
+  "faccao": "Hindu",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Filho do Vento",
+    "desc": "Imune a Queimadura; com Sun Wukong no time, Hanuman causa +8 de dano.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "queimadura" ] },
+      { "gatilho": "bonusDano", "v": 8, "escopo": "self", "estado": { "aliadoPresente": "sunwukong" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Maça Gada",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Devoção a Rama",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Adota 1 aliado como Senhor por 2 turnos: Hanuman intercepta todo o dano dirigido a ele e causa +10 de dano.",
+      "fx": [
+        { "t": "intercepta", "dur": 2, "contra": "todos" },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 2 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Montanha Dronagiri",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos e cura 30 no Senhor (ou no aliado mais ferido).",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
+        { "t": "heal", "v": 30, "alvoSenhor": true }
+      ]
+    }
+  ]
+}

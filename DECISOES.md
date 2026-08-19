@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §107 — SENHOR designado (Hanuman): a habilidade sai de GRAÇA (intercepta.protege), só o milagre custa ~8 linhas
+
+**As três checagens do dono, respondidas:**
+1. **Quantos designam aliado? DOIS, de tipos diferentes.** Hanuman (Senhor, escolhido DINAMICAMENTE pela habilidade) e Mnevis
+   (Rá, designado por NOME, numa PASSIVA, intercepta o 1º golpe único contra Rá por turno). Vizinhos, triggers opostos (ativo-
+   escolhido vs passivo-por-nome-e-por-turno). Mnevis é build à parte.
+2. **O `intercepta` já protege designado? SIM — a resposta do Thor de novo.** A fx `intercepta` já resolve `protege =
+   alvos[0].uid` (o aliado escolhido) ou `'time'`, e a **Bastet já usa a forma designada**. Então a habilidade "Devoção a
+   Rama" (intercepta o dano dirigido ao Senhor + Hanuman +10) é **ZERO mecanismo novo** — `intercepta{protege, contra:'todos',
+   dur:2}` + `dmgUp`.
+3. **O fallback é composição; o alvo-primário não.** "cura 30 no Senhor OU no mais ferido": o fallback (mais ferido) é o
+   `alvoHp:{aliado,min}` (§103, pronto). Só o primário ("o Senhor") custou — um seletor `alvoSenhor` que LÊ o
+   `intercepta.protege` ativo do dono (fallback `alvoHp` min se não houver Senhor vivo). ~8 linhas, e **sem 2º lugar guardando
+   o Senhor** (ele já mora no `intercepta.protege` — §102-A respeitado).
+
+**Hanuman (IMPL 71):** básico 15; Devoção adota o Senhor (intercepta designado + Hanuman +10); Montanha Dronagiri = 18 área +
+cura 30 no Senhor (`alvoSenhor`, fallback mais ferido); passiva imune a Queimadura + "+8 com Sun Wukong" (`escopo:self`,
+divergência-com-gatilho §102-C — o recíproco não mora no catálogo do Sun Wukong, mesmo caso da Chang'e).
+
+**Bônus (§66 de novo): o roster crescer expôs um evento MALFORMADO antigo.** Ao adicionar o Hanuman, o seed 24 do
+`eventos.test.js` caiu num `roubaOrbe`-vs-Heimdall e o `bloqueio:orbe_protegido` (F1.6) apareceu **sem `alvo`** (só `lado`),
+violando a gramática. Não era meu código — o método (mexer no roster) expôs furo antigo. Corrigido: o bloqueio agora nomeia o
+PROTETOR (Heimdall) como `alvo`. Terceira vez que o método expõe bug anterior (auditor-cego-formato §66, auditor-cego-
+empilhamento §93, evento-sem-alvo §107).
+
+---
+
 ## §106 — A EXISTÊNCIA DE UM ONE-OFF NÃO É PROVA DE QUE ELE É ESPECIAL (o erro nomeado do dono no Thor)
 
 **O erro, nomeado pelo dono:** ao autorizar a migração do Thor, ele presumiu que o `atordoaMenorHp` existia porque fazia algo

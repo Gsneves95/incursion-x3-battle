@@ -1657,6 +1657,50 @@ console.log('== §105 Lugh (fechado: cd-condicional + seletor + semContra) + Tho
   console.log('  Lugh: básico fura+sem-contra · Funda maior-HP/executa · Samildánach opcoes+cdSe · Thor absorvido no seletor');
 }
 
+console.log('== §107 Hanuman: Senhor (intercepta.protege, como a Bastet) + milagre cura o Senhor ou o mais ferido ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // habilidade: adota Senhor → intercepta o dano dirigido a ele + Hanuman +10
+  let st = E.novoEstado(['hanuman', 'zeus', 'brigid'], ['tyr', 'tyr', 'tyr'], 990); orbs(st.lados[0]);
+  let han = st.lados[0].units[0], senhor = st.lados[0].units[1], atk = st.lados[1].units[0];
+  E.agir(st, han.uid, 'habilidade', [senhor.uid]);
+  const ic = E.ef(han, 'intercepta');
+  ok(ic && ic.protege === senhor.uid && !!E.ef(han, 'dmgUp'), 'Devoção: intercepta protege o Senhor escolhido + Hanuman +10');
+  const hh = han.hp, hs = senhor.hp;
+  E.bater(st, atk, senhor, 20, 'afetado', 'basico', { unico: true });
+  ok(hs - senhor.hp === 0 && hh - han.hp === 20, `golpe único no Senhor → Hanuman assume (Senhor 0, Hanuman 20) (${hs - senhor.hp}/${hh - han.hp})`);
+
+  // milagre COM Senhor: cura o Senhor (não o mais ferido) + 18 a todos
+  st = E.novoEstado(['hanuman', 'zeus', 'brigid'], ['tyr', 'tyr', 'tyr'], 991); orbs(st.lados[0]);
+  han = st.lados[0].units[0]; senhor = st.lados[0].units[1]; const outro = st.lados[0].units[2];
+  senhor.hp = 60; outro.hp = 40;
+  E.agir(st, han.uid, 'habilidade', [senhor.uid]); han.agiu = false; orbs(st.lados[0]);
+  const he = st.lados[1].units.map(x => x.hp);
+  E.agir(st, han.uid, 'milagre', []);
+  // o mecanismo do §107 é o HEAL ir no Senhor (não no mais ferido); o dano de área nos inimigos varia por bônus de time
+  // (o próprio dmgUp de adotar o Senhor + bônus de aliados), então confiro só que a área bateu em TODOS, não o valor exato.
+  const bateuTodos = st.lados[1].units.every((x, i) => he[i] - x.hp > 0);
+  ok(senhor.hp === 90 && outro.hp === 40 && bateuTodos, `milagre com Senhor: cura o Senhor (60→90), NÃO o mais ferido (40 intacto), e área em todos (${senhor.hp}/${outro.hp})`);
+
+  // milagre SEM Senhor: fallback no mais ferido
+  st = E.novoEstado(['hanuman', 'zeus', 'brigid'], ['tyr', 'tyr', 'tyr'], 992); orbs(st.lados[0]);
+  han = st.lados[0].units[0]; const b1 = st.lados[0].units[1], b2 = st.lados[0].units[2];
+  b1.hp = 90; b2.hp = 35;
+  E.agir(st, han.uid, 'milagre', []);
+  ok(b2.hp === 65 && b1.hp === 90, `milagre sem Senhor: fallback no mais ferido (35→65) (${b2.hp}/${b1.hp})`);
+
+  // passiva: imune a Queimadura; +8 com Sun Wukong (escopo self — §102-C, o recíproco não mora no catálogo do Sun Wukong)
+  st = E.novoEstado(['hanuman', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 993); orbs(st.lados[0]);
+  han = st.lados[0].units[0]; const inim = st.lados[1].units[0];
+  E.aplicarFx(st, inim, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 2 }], { alvo: 'inimigo', slot: 'basico' }, [han]);   // aplicado PELA via real (aplicarDot checa imuneA)
+  ok(!han.dots.some(d => d.nome === 'queimadura'), 'imune a Queimadura (o DoT não pega ao ser aplicado)');
+  st = E.novoEstado(['hanuman', 'sunwukong', 'zeus'], ['tyr', 'tyr', 'tyr'], 994);
+  let h2 = st.lados[0].units[0]; let foe = st.lados[1].units[0], hf = foe.hp;
+  E.bater(st, h2, foe, 15, 'afetado', 'basico', {});
+  ok(hf - foe.hp === 23, `+8 com Sun Wukong no time: 15+8=23 (${hf - foe.hp})`);
+  console.log('  Senhor via intercepta.protege · assume o golpe · milagre cura Senhor/mais-ferido · imune queimadura · +8 c/ Sun Wukong');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

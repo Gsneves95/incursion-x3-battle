@@ -267,6 +267,7 @@ const VOCAB = {
     'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
     'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
     'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
+    'alvoSenhor',   // F1.9 (§107, Hanuman): seletor AUTO do aliado designado (intercepta.protege), fallback mais ferido (alvoHp)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1412,6 +1413,18 @@ function selByHp(st, u, spec) {
   return [best];
 }
 
+// SELETOR DO SENHOR (§107, Hanuman): o aliado DESIGNADO — o que a intercepta ativa do dono protege (protege != 'time').
+// Não há segundo lugar guardando "o Senhor": ele JÁ mora no `intercepta.protege` (§102-A). Se não houver Senhor vivo (a
+// intercepta expirou ou nunca existiu), cai no mais ferido — o `alvoHp` (§103) faz o fallback. Só leitura, determinístico.
+function selSenhor(st, u) {
+  const ic = ef(u, 'intercepta');
+  if (ic && ic.protege && ic.protege !== 'time') {
+    const s = st.lados[u.lado].units.find(x => x.uid === ic.protege && x.vivo);
+    if (s) return [s];
+  }
+  return selByHp(st, u, { lado: 'aliado', ext: 'min' });   // fallback: o aliado mais ferido
+}
+
 // -------------------------------------------- executor de efeitos (reutilizável)
 // Extraído de agir() para poder ser chamado também pela cópia de habilidade.
 // `a` fornece o alvo padrão (a.alvo) e o slot. `alvos` são as unidades escolhidas.
@@ -1427,6 +1440,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     const escopo = e.escopo || a.alvo;
     let sel = [];
     if (e.alvoHp) sel = selByHp(st, u, e.alvoHp);   // §103: seletor AUTO por HP (max/min de um lado) — precede escopo
+    else if (e.alvoSenhor) sel = selSenhor(st, u);   // §107: o aliado designado (intercepta.protege), fallback mais ferido
     else if (e.escopo === 'self') sel = [u];
     else if (escopo === 'time') sel = l.units.filter(x => x.vivo);
     else if (escopo === 'todosInimigos') sel = inimigos.filter(x => x.vivo);
@@ -1599,8 +1613,8 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     }
     if (e.t === 'roubaOrbe') {   // F1.6 — remove e.n orbes do MAIOR pool do inimigo (rouba: vai p/ o próprio); Heimdall (protegeOrbe) barra
       const li = st.lados[1 - u.lado];
-      const protegido = li.units.some(x => { if (!x.vivo) return false; const g = kitDe(st, x); const p = g && g.passiva; return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'protegeOrbe'); });
-      if (protegido) { log(st, { tipo: 'bloqueio', lado: 1 - u.lado, motivo: 'orbe_protegido' }); }
+      const protetor = li.units.find(x => { if (!x.vivo) return false; const g = kitDe(st, x); const p = g && g.passiva; return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'protegeOrbe'); });
+      if (protetor) { log(st, { tipo: 'bloqueio', alvo: protetor.key, lado: 1 - u.lado, motivo: 'orbe_protegido' }); }   // §107: o bloqueio precisa de `alvo` (gramática de eventos) — nomeia o PROTETOR (Heimdall). Bug pré-existente da F1.6 exposto quando o roster cresceu e o seed 24 caiu num roubaOrbe-vs-Heimdall (§66: o método expõe furo antigo)
       else {
         let n = 0;
         for (let i = 0; i < e.n; i++) {
