@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §115 — VERIFICAR UMA ALEGAÇÃO SOBRE ESTRUTURA LENDO A MESMA ESTRUTURA É REPETIÇÃO, NÃO PROVA
+
+**A generalização do falso-positivo do Lugh (§113).** A alegação era estrutural: "o básico não implementa 'não-evitável'".
+A verificação leu o array `fx` — a MESMA estrutura da alegação — e não viu a flag, que morava um nível acima (no objeto da
+ação, `ignoraInalvejavel: true`, lido em `alvosValidos`). O subagente leu só o `fx`; eu "confirmei" com um comando que
+imprimia só o `fx`. Duas leituras da mesma vista parcial concordaram — e concordância não é prova, é **repetição do ponto
+cego**.
+
+**A regra:** a prova de uma alegação tem de vir de OUTRO NÍVEL que não aquele em que a alegação foi feita. Para "o básico
+mira o Inalvejável?", a prova não é reler o dado — é **rodar o motor** (`alvosValidos` devolve o inimigo oculto? → true).
+É o §85 na direção inversa: lá, um invariante ESTRUTURAL ("nenhum apply de debuff no faz") pede leitura de CÓDIGO, e um
+invariante de COMPORTAMENTO pede EXECUÇÃO. Aqui a alegação era sobre estrutura mas a verdade dependia de COMO o motor CONSOME
+essa estrutura — então só a execução decide. Quando não sei em que nível a verdade mora, o comportamento é o árbitro: ele
+integra todos os níveis (o dado, quem o lê, onde). Reler o dado só confirma o dado.
+
+**A ironia de segunda ordem, escrita porque dói:** o §111 estava CERTO (o básico do Lugh compõe os dois ignores), e a minha
+"correção" dele (a Lição A do §113, ontem) era o ERRO. **Um registro corrigido pode ficar pior que o original.** Então
+corrigir um registro exige a MESMA prova que criá-lo — não a impressão de que "agora sei melhor". A correção de ontem tinha a
+forma de uma lição elegante (o exemplo-que-é-contraexemplo) e nenhuma execução por trás. Elegância não é evidência (§46 no
+próprio registro).
+
+---
+
 ## §114 — IZANAMI: o tique escalado é COMPOSIÇÃO (reusa o escalador do dano), e o 1º porTurno que toca inimigo
 
 **A varredura da família DoT-por-contador, respondida:** o "cada Maldição causa 6 de dano puro por turno" tem **um só
