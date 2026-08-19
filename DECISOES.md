@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §102 — TRÊS PRINCÍPIOS do §101: leitura-ao-vivo subsume o estático; barra-antes-do-buraco; divergência-com-gatilho
+
+**A. Leitura ao vivo subsume o estático — não construa o segundo caminho.** Quando uma leitura AO VIVO cobre o caso estático,
+não construa também o caminho estático. No cdSe (§101): ler a base na disponibilidade cobre "recarga 2 com Hou Yi" porque
+`aliadoPresente` é constante na partida — um efeito de `abertura` daria o MESMO resultado por um segundo caminho. **Dois
+caminhos para um resultado é dívida que só aparece quando DIVERGEM** (um é corrigido, o outro não; ou o estado se dessincroniza).
+O teste "os dois batem hoje" não protege — a dívida é latente. Regra: um resultado, um caminho; prefira o que já existe e é lido
+ao vivo.
+
+**B. Barra na fonte ANTES do buraco (§66 preventivo).** Ao adicionar um mecanismo cujo TETO o auditor não enxerga, ponha a
+guarda no validador NA MESMA leva — não espere a violação aparecer. O `cdSe.cd 0` num milagre (nuke toda rodada, frequência
+invisível ao teto) foi barrado no `valida_kit` junto com o mecanismo. O §66 nasceu corretivo (o 30-área do Xangô, 3 commits
+depois); a forma madura é preventiva: quem constrói o formato novo constrói a guarda do formato novo.
+
+**C. Divergência conhecida COM GATILHO (o recíproco da Chang'e).** A prosa da Chang'e diz "ambos +8" (ela E o Hou Yi), mas o
+catálogo do Hou Yi (Olho de Águia) NÃO carrega a metade dele. Inventá-la seria escrever kit fora do catálogo — pior que a
+divergência. Decisão do dono: **fica a metade da Chang'e (escopo:self); registrada como divergência conhecida COM GATILHO** —
+se algum dia o catálogo do Hou Yi ganhar a cláusula, a metade dele entra LÁ, não na Chang'e. O gatilho é o que separa "bug
+esquecido" de "decisão com data de revisão": a divergência tem um evento nomeado que a resolve.
+
+---
+
 ## §101 — RECARGA CONDICIONAL (cdSe): uma gaveta, não duas; e o teto-invisível que o dono previu
 
 **A varredura desmontou a suspeita das "duas gavetas": é UMA.** O dono viu duas formas possíveis para "recarga X quando
