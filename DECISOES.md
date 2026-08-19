@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §105 — semContra (fecha o Lugh) + a absorção do Thor que custou ZERO linha (a esquisitice já era a regra)
+
+**semContra — a varredura achou 2, mas UM é §46.** "não pode ser contra-atacado": Lugh (flag ESTÁTICA no próprio básico) e
+Krishna ("Ação Perfeita" — um BUFF que faz a PRÓXIMA habilidade do aliado não-evitável/reduzível/absorvível/contra-atacável).
+Mesma palavra, substância oposta: o Lugh é um flag pontual, a Krishna é um pacote-de-4-ignores num buff-para-a-próxima-ação —
+mecanismo À PARTE (fica pra depois). Então o flag `semContra` nasce SINGLETO (Lugh). Vizinhos confirmados distintos: é a
+NEGAÇÃO do `contraAtaca` (Atena/Heimdall/Bastet) — não é `intercepta` (protetor assume o golpe) nem `reflete` (devolve controle).
+Forma: `semContra` no dmg, flui p/ o `opts` do `bater` (que já tinha o param), nos DOIS executores de dmg (§104-B).
+
+**Lugh (IMPL 70) — FECHADO: três gavetas viraram deus.** cd-condicional (§101) + seletor-maior-HP (§103) + semContra (§105),
+todas pagas em levas anteriores; faltava só o último flag. básico 15 fura Inalvejável (`ignoraInalvejavel` = "não evitado") e
+não é contra-atacado (`semContra`); Samildánach = `opcoes` (GUERRA/CURA/FORJA) sem recarga no Dia (`cdSe`); Funda de Balor = 38
+puro ao de maior HP (`alvoHp`) + executa ≤24; passiva +10 no Dia (`bonusDano estado`). É o payoff do §93 invertido: quando as
+gavetas de um deus complexo são pagas uma a uma, a última leva o converte inteiro.
+
+**A absorção do Thor (§46/§102-A) custou ZERO linha — a "esquisitice" já era a regra geral.** O dono mandou migrar o
+`atordoaMenorHp` preservando a esquisitice (não atordoa invulnerável) via um campo "respeita Invulnerável", "se couber em duas
+linhas". Não coube em duas: **coube em ZERO.** O caminho geral do `apply` JÁ barra controle em INIMIGO invulnerável
+(`ef(t,'invulneravel') && t.lado!==u.lado`, uma linha que já existia). Então o Thor migrou p/ `apply atordoado
+alvoHp:{inimigo,min}` e a esquisitice caiu fora como caso particular da regra que sempre esteve lá — o hardcoded `atordoaMenorHp`
+saiu do motor (TIPOS_FX e branch). A lição: às vezes a "regra declarada nova" que absorveria a esquisitice **já está escrita**;
+antes de adicionar o campo, cheque se o comportamento não é o default do caminho geral. O one-off era redundante, não especial.
+
+---
+
 ## §104 — DOIS LEDGERS: a família cresce por invisibilidade OPOSTA; e "fx com campo novo → confira TODOS os executores"
 
 **A. Uma família cresce por dois tipos de invisibilidade, e o segundo é PIOR.** O seletor-por-HP (§103) cresceu de 2→3→5. Os

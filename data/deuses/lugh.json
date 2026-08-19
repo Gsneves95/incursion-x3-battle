@@ -1,0 +1,53 @@
+{
+  "key": "lugh",
+  "nome": "Lugh",
+  "faccao": "Celta",
+  "elem": "Aurora",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Luz do Sol",
+    "desc": "Durante o DIA, Lugh causa +10 de dano e Samildánach fica sem recarga.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 10, "escopo": "self", "estado": { "fase": "Dia" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Lança de Assal",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "ignoraInalvejavel": true,
+      "desc": "15 de dano a 1 inimigo; não pode ser evitado nem contra-atacado.",
+      "fx": [ { "t": "dmg", "v": 15, "semContra": true } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Samildánach",
+      "cost": { "Aurora": 2 },
+      "cd": 1,
+      "cdSe": { "estado": { "fase": "Dia" }, "cd": 0 },
+      "alvo": "nenhum",
+      "desc": "Escolha: GUERRA (15 de dano a todos) · CURA (18 no time) · FORJA (time causa +8 de dano por 2 turnos). Sem recarga durante o DIA.",
+      "opcoes": [
+        { "nome": "GUERRA", "fx": [ { "t": "dmg", "v": 15, "escopo": "todosInimigos" } ] },
+        { "nome": "CURA", "fx": [ { "t": "heal", "v": 18, "escopo": "time" } ] },
+        { "nome": "FORJA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Funda de Balor",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "auto",
+      "desc": "38 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado.",
+      "fx": [ { "t": "dmg", "v": 38, "kind": "puro", "alvoHp": { "lado": "inimigo", "ext": "max" }, "executaAbaixoDe": 24 } ]
+    }
+  ]
+}

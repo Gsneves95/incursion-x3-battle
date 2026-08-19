@@ -76,8 +76,9 @@
           "v": 20
         },
         {
-          "t": "atordoaMenorHp",
-          "dur": 1
+          "t": "apply",
+          "eff": { "type": "atordoado", "dur": 1 },
+          "alvoHp": { "lado": "inimigo", "ext": "min" }
         }
       ]
     }

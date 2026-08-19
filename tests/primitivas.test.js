@@ -772,6 +772,24 @@ console.log('== 21. alvoHp: escolhe AUTO por HP (max/min, aliado/inimigo); empat
   console.log('  max/min · aliado/inimigo · empate = menor índice · funciona no fx E no faz (rodarFaz)');
 }
 
+// ------------------------------------------------------------ 22. semContra (§105, Lugh) — "não pode ser contra-atacado"
+console.log('== 22. semContra: o golpe não aciona contraAtaca; sem a flag, aciona (negação do contraAtaca, ≠ intercepta/reflete) ==');
+{
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['atena', 'zeus', 'zeus'], 900);
+  let atk = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'contraAtaca', v: 10, dur: 9 });
+  let h = atk.hp;
+  E.bater(st, atk, foe, 15, 'afetado', 'basico', { unico: true, semContra: true });
+  ok(h - atk.hp === 0, `com semContra: o atacante NÃO sofre o contra-ataque (${h - atk.hp})`);
+  // controle: sem a flag, o mesmo golpe sofre o contra (prova de que é a flag que barra)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['atena', 'zeus', 'zeus'], 901);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'contraAtaca', v: 10, dur: 9 });
+  h = atk.hp;
+  E.bater(st, atk, foe, 15, 'afetado', 'basico', { unico: true });
+  ok(h - atk.hp === 10, `sem a flag: o golpe único sofre o contra-ataque de 10 (${h - atk.hp})`);
+  console.log('  semContra barra o contraAtaca do alvo · sem a flag o contra acontece');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

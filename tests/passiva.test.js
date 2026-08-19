@@ -1615,6 +1615,48 @@ console.log('== §103 Deméter: seletor-por-HP (aliado mais ferido cura 6 por tu
   console.log('  aliado mais ferido cura 6/turno (empate=menor índice) · regen 12 no time · revive 48 ou cura 25');
 }
 
+console.log('== §105 Lugh (fechado: cd-condicional + seletor + semContra) + Thor migrado ao seletor geral ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico: não pode ser contra-atacado (semContra) nem evitado (ignoraInalvejavel)
+  let st = E.novoEstado(['lugh', 'zeus', 'zeus'], ['atena', 'zeus', 'zeus'], 990); orbs(st.lados[0]);
+  let lugh = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'contraAtaca', v: 10, dur: 9 }); foe.efeitos.push({ type: 'inalvejavel', dur: 9 });
+  const hl = lugh.hp, hf = foe.hp;
+  E.agir(st, lugh.uid, 'basico', [foe.uid]);
+  ok(hl - lugh.hp === 0 && hf - foe.hp === 15, `básico: fura Inalvejável (15) e NÃO é contra-atacado (${hf - foe.hp}/${hl - lugh.hp})`);
+
+  // milagre Funda de Balor: 38 puro ao de MAIOR HP + executa <=24
+  st = E.novoEstado(['lugh', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 991); orbs(st.lados[0]);
+  lugh = st.lados[0].units[0]; let f = st.lados[1].units; f[0].hp = 100; f[1].hp = 20; f[2].hp = 60;
+  E.agir(st, lugh.uid, 'milagre', []);
+  ok(f[0].hp === 62 && f[1].hp === 20, `Funda: 38 ao de maior HP (100→62), não toca os outros (${f[0].hp})`);
+  st = E.novoEstado(['lugh', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 992); orbs(st.lados[0]);
+  lugh = st.lados[0].units[0]; f = st.lados[1].units; f[0].hp = 24; f[1].hp = 10; f[2].hp = 8;
+  E.agir(st, lugh.uid, 'milagre', []);
+  ok(!f[0].vivo, 'Funda: o de maior HP com <=24 é ELIMINADO (executa)');
+
+  // Samildánach: opcoes (GUERRA/CURA/FORJA) e cdSe 0 no Dia
+  st = E.novoEstado(['lugh', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 993); orbs(st.lados[0]);
+  lugh = st.lados[0].units[0]; f = st.lados[1].units; const hh = f.map(x => x.hp);
+  E.agir(st, lugh.uid, 'habilidade', [], 0);   // opção 0 = GUERRA (15 a todos)
+  ok(f.every((x, i) => hh[i] - x.hp === 15), `Samildánach GUERRA: 15 a todos (${f.map((x, i) => hh[i] - x.hp)})`);
+  E.definirFase(st, 'Dia', 3);
+  ok(E.acoesDe(st, lugh).find(a => a.slot === 'habilidade').cd === 0, 'Samildánach sem recarga no Dia (cdSe)');
+
+  // Thor MIGRADO: milagre atordoa o de menor HP via o seletor geral; e não atordoa invulnerável (esquisitice preservada)
+  st = E.novoEstado(['thor', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 994); orbs(st.lados[0]);
+  const thor = st.lados[0].units[0]; f = st.lados[1].units; f[0].hp = 100; f[1].hp = 40; f[2].hp = 70;
+  E.agir(st, thor.uid, 'milagre', []);
+  ok(!!E.ef(f[1], 'atordoado') && !E.ef(f[0], 'atordoado'), 'Thor migrado: atordoa só o de menor HP (índice 1)');
+  st = E.novoEstado(['thor', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 995); orbs(st.lados[0]);
+  const t2 = st.lados[0].units[0]; f = st.lados[1].units; f[0].hp = 100; f[1].hp = 40; f[2].hp = 70;
+  f[1].efeitos.push({ type: 'invulneravel', dur: 2 });
+  E.agir(st, t2.uid, 'milagre', []);
+  ok(!E.ef(f[1], 'atordoado'), 'Thor migrado: NÃO atordoa o menor-HP se INVULNERÁVEL (esquisitice preservada, regra geral do apply)');
+  console.log('  Lugh: básico fura+sem-contra · Funda maior-HP/executa · Samildánach opcoes+cdSe · Thor absorvido no seletor');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

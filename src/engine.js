@@ -84,7 +84,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripBuffs', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
-  'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'atordoaMenorHp', 'vinculo', 'cdShift', 'orbGain',
+  'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz
   'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
@@ -266,6 +266,7 @@ const VOCAB = {
     'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
     'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
     'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
+    'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -1469,7 +1470,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         for (let i = 0; i < nA; i++) {
           const g = Math.floor(e.golpes / nA) + (i < e.golpes % nA ? 1 : 0);
           for (let k = 0; k < g && vivos[i].vivo; k++)
-            total += bater(st, u, vivos[i], danoBase(st, u, vivos[i], e, l), e.kind || 'afetado', a.slot, { classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso });
+            total += bater(st, u, vivos[i], danoBase(st, u, vivos[i], e, l), e.kind || 'afetado', a.slot, { classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso, semContra: e.semContra });   // §105: semContra flui no distribuído também (§104-B: todos os executores)
         }
         if (e.curaMetade) curar(st, u, Math.floor(total / 2), u);
       }
@@ -1489,7 +1490,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     for (const t of sel) {
       if (e.t === 'dmg') {
         const base = danoBase(st, u, t, e, l);
-        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso });   // §91 (Shiva): flags de "ignora" da habilidade fluem p/ o bater — ignoraInvuln (novo) e ignoraPiso (param existia, sem consumidor de kit)
+        const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso, semContra: e.semContra });   // §91 (Shiva): flags de "ignora" da habilidade fluem p/ o bater — ignoraInvuln (novo) e ignoraPiso (param existia). §105 (Lugh): semContra = "não pode ser contra-atacado"
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2), u);   // dreno: o próprio atacante é o curador
         // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
         // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.
@@ -1569,14 +1570,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       if (e.remove) { if (st.fase === e.remove) definirFase(st, null); }
       else definirFase(st, e.v, e.dur);
     }
-    if (e.t === 'atordoaMenorHp') {
-      const vivos = inimigos.filter(x => x.vivo);
-      if (vivos.length) {
-        const alvoM = vivos.slice().sort((a, b) => a.hp - b.hp)[0];
-        if (ef(alvoM, 'invulneravel')) log(st, { tipo: 'bloqueio', alvo: alvoM.key, motivo: 'invulneravel' });
-        else aplicar(st, alvoM, { type: 'atordoado', dur: e.dur, origem: u.uid });
-      }
-    }
+    // §105: `atordoaMenorHp` (fx hardcoded do Thor) ABSORVIDO pelo seletor geral (§103): agora é `apply atordoado
+    // alvoHp:{inimigo,min}`. A esquisitice "não atordoa invulnerável" NÃO virou campo — o caminho geral do `apply` já
+    // barra controle em INIMIGO invulnerável (ef(t,'invulneravel') && t.lado!==u.lado). Zero linha nova, a regra já era essa.
     if (e.t === 'vinculo' && alvos.length >= 2) {
       aplicar(st, alvos[0], { type: 'vinculo', par: alvos[1].uid, dur: e.dur, origem: u.uid });
       aplicar(st, alvos[1], { type: 'vinculo', par: alvos[0].uid, dur: e.dur, origem: u.uid });
