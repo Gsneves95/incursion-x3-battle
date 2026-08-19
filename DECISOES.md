@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §108 — O DESLOCAMENTO DE SEED é uma varredura INVOLUNTÁRIA: cada kit novo re-amostra o espaço de estados
+
+**A quarta forma de expor bug antigo, e a mais interessante — não foi método, foi RNG.** As três anteriores foram
+deliberadas (auditor-cego-formato §66, auditor-cego-empilhamento §93, absorção-deleta-morto §106). A do §107 foi diferente:
+adicionar o Hanuman mudou o SORTEIO de todos os testes de seed fixo (o roster é a fonte do RNG dos times), e o seed 24 do
+`eventos.test` caiu num `roubaOrbe`-vs-Heimdall que nunca tinha sorteado — expondo um evento malformado da F1.6, muitas
+sessões depois. **Consequência prática:** um teste de seed fixo que passa HOJE pode expor bug antigo AMANHÃ só porque o roster
+cresceu. Adicionar um kit é uma **varredura involuntária do espaço de estados** — a suíte re-amostra sozinha a cada deus. Isso
+é BOM: explica por que a suíte fica mais valiosa a cada kit (cobertura que ninguém escreveu, o RNG escreve). E avisa: uma
+falha de seed que aparece "do nada" depois de um kit novo provavelmente não é regressão do kit — é bug antigo recém-sorteado;
+investigue o evento/estado, não só o diff.
+
+**Nota de teste (o +5 do Hanuman):** a asserção original fixava o dano de área do milagre num número (28) que dependia de
+BÔNUS DE COMPOSIÇÃO de time (o +5 de um aliado + o dmgUp de adotar o Senhor). Número de composição em asserção é FRÁGIL —
+quebra quando o time muda. Troquei pelo que o teste realmente prova (o heal foi no Senhor, não no mais ferido; a área bateu em
+todos), não pelo valor exato. Isolar o +5 e entender de onde vinha (§82) antes de relaxar a asserção foi o certo — relaxar sem
+entender esconderia um bug real sob "é bônus de time".
+
+---
+
 ## §107 — SENHOR designado (Hanuman): a habilidade sai de GRAÇA (intercepta.protege), só o milagre custa ~8 linhas
 
 **As três checagens do dono, respondidas:**
