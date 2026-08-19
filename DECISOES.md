@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §110 — "PRIMEIRO POR TURNO" tem DUAS naturezas: condição-que-se-rastreia (Bastet) vs efeito-que-se-consome (Mnevis)
+
+**O mesmo conceito — "só vale para o primeiro golpe do turno" — foi construído de dois jeitos opostos, e a escolha não é
+gosto: é a NATUREZA do que "o primeiro" governa.**
+
+- **Bastet (§88) — condição DEFENSIVA PASSIVA → exige RASTREIO de quatro pontos.** "O primeiro golpe único contra a Bastet
+  no turno é reduzido." O "primeiro" aqui é uma PROPRIEDADE que tem de ser lembrada, porque nada a consome: o flag
+  `golpeUnicoNoTurno` existe INERTE (verdadeiro ou falso) tenha ou não chegado golpe. Precisa de quatro peças — o ESCRITOR
+  (arma o flag), o LEITOR (a condição checa), o RESETADOR (limpa), e a ÂNCORA (reseta no turno de QUEM — no turno do DONO,
+  deixando armado para o turno inimigo seguinte, senão a proteção valeria 2× por rodada num hot-seat). É rastreio porque a
+  condição é passiva: ninguém "gasta" o primeiro golpe; o motor tem de contar.
+
+- **Mnevis (§109) — efeito que SE CONSOME → arma-consome-rearma, ZERO rastreio.** "Intercepta o primeiro golpe único contra
+  Rá no turno." O "primeiro" aqui cai de graça de `intercepta{contra:'unico'}` (consome ao interceptar) re-armada pelo
+  `porTurno`. Não há flag nem contador: o PRÓPRIO efeito é o token. Ele existe só quando armado, some quando consumido, e o
+  início do turno re-arma. O ciclo aplica/consome/re-arma É a memória de "já usei hoje".
+
+**A distinção operacional:** o rastreio só é necessário quando NADA consome a coisa. Se o "primeiro" é uma condição que o
+motor precisa checar sem que nenhuma ação a gaste (Bastet: reduzir dano não "gasta" nada), precisa de escritor+leitor+
+resetador+âncora. Se o "primeiro" é um efeito que a própria ação de disparo CONSOME (Mnevis: interceptar remove a
+`intercepta`), o consumo é o relógio — de graça. **Da próxima vez que "primeiro por turno" aparecer, a pergunta certa não é
+"como rastreio", é "algo consome isto?": se sim, arma-consome-rearma; se não, rastreio de quatro pontos.**
+
+---
+
 ## §109 — MNEVIS fecha a família guarda: intercepta-passiva-por-nome COMPÕE do que existe; só o THORNS é mecanismo novo
 
 **As três checagens do dono, respondidas — duas dão "compõe do que existe", uma é singleto:**
