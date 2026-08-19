@@ -74,7 +74,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel'];   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano'];   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -110,7 +110,7 @@ const GATILHOS_PASSIVA = {
   bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
-  porTurno:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda a cada início de turno do dono (sessão 4)
+  porTurno:        { campos: ['faz', 'estado'], obrig: ['faz'] },               // faz roda a cada início de turno do dono (sessão 4). estado (§109): gateia por campo (Mnevis: só com Rá no time)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
@@ -151,7 +151,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execu
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp'];   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp', 'intercepta'];   // intercepta (§109, Mnevis): a passiva re-aplica por turno protegendo um aliado NOMEADO (protege por key), sem alvo escolhido   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = ['marcado', 'olho', 'livro', 'pressagio'];   // marcas ofensivas — RÓTULOS lidos por `alvoMarca`. Vocabulário FECHADO e COMPARTILHADO (não é propriedade privada de um deus): quem pune marca (`alvoMarca:'qualquer'`) pune QUALQUER marca. marcado=Odin, olho=Hórus, livro=Yan Wong (já tinha timer letal), pressagio=Morrigan. §54: são etiquetas distintas (o milagre do Hórus lê 'olho' específico; o do Yan Wong acelera só 'inscritos'), com o guarda-chuva 'qualquer'. Ver DECISOES §83
@@ -794,6 +794,13 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     const arm = ef(x, 'armazenaDano');
     if (arm && x.vivo) arm.acc = (arm.acc || 0) + v;
   }
+  // PRIMITIVA thorns (§109, Mnevis): quem carrega refleteDano devolve v FIXO ao atacante. O golpe de reflexo usa slot
+  // 'reflexo' e NÃO re-reflete (guarda contra loop entre dois portadores). Só se o dano de fato entrou (v > 0).
+  const refl = ef(alvo, 'refleteDano');
+  if (refl && v > 0 && slot !== 'reflexo' && atk && atk.vivo && atk.lado !== alvo.lado) {
+    log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'refleteDano' });
+    bater(st, alvo, atk, refl.v, 'afetado', 'reflexo', { semContra: true, semIntercepta: true, semRedirect: true });
+  }
   // acorda com dano de Habilidade/Milagre
   if (ef(alvo, 'adormecido') && (slot === 'habilidade' || slot === 'milagre')) {
     alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'adormecido');
@@ -1102,6 +1109,11 @@ function rodarFaz(st, u, faz, tagKey) {
     }
     else if (f.t === 'cdShift' && f.soMaiorDoTime) cdShiftMaiorDoTime(st, u.lado, f.v);   // F1.6 (Huangdi porTurno): "a recarga mais longa do time −1". VARRE p/ ESCOLHER onde agir, mas o alvo é o PRÓPRIO lado e o jogador não escolhe nada — a garantia do FX_TURNO (sem alvo escolhido pelo jogador) fica INTACTA. Distinção a lembrar: varrer-p/-escolher ≠ varrer-p/-alvejar.
     else if (f.t === 'selfHp') { u.hp = Math.max(1, u.hp + f.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -f.v, kind: 'puro' }); }   // F1.8 (Kagutsuchi porTurno): "perde N de HP por turno" — dreno no próprio dono, piso 1 (nunca se auto-mata)
+    else if (f.t === 'intercepta') {   // §109 (Mnevis): a passiva re-aplica a intercepta protegendo um aliado NOMEADO (protege por CHAVE de deus). contra:'unico' + porTurno = "primeiro golpe por turno" de graça.
+      let protege = f.protege;
+      if (protege && protege !== 'time') { const al = l.units.find(x => x.key === protege && x.vivo); protege = al ? al.uid : null; }
+      if (protege) aplicar(st, u, { type: 'intercepta', protege, dur: f.dur, contra: f.contra || 'todos', origem: u.uid });   // sem aliado nomeado vivo, não arma nada
+    }
   }
   const tag = tagKey || u.key;
   for (let i = antes; i < st.log.length; i++) if (st.log[i].passiva === undefined) st.log[i].passiva = tag;
@@ -1178,7 +1190,7 @@ function iniciarTurno(st) {
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) {
       if (f.estado && !estadoOK(f.estado, u, st)) continue;   // estado compõe com o gatilho de turno
-      if (f.gatilho === 'porTurno') rodarFaz(st, u, f.faz);
+      if (f.gatilho === 'porTurno' && (!f.estado || estadoOK(f.estado, u, st))) rodarFaz(st, u, f.faz);   // §109: estado gateia (Mnevis: só com Rá no time)
       else if (f.gatilho === 'abertura' && primeiro) rodarFaz(st, u, f.faz);
       else if (f.gatilho === 'aCadaN' && f.faz && st.turno % f.n === 0) rodarFaz(st, u, f.faz);   // F1.8 (Inari): a cadência ABSOLUTA também dispara um `faz` (não só zera custo) — o outro ramo do aCadaN
       else if (f.gatilho === 'sinergiaAliado' && primeiro) {   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe o contador (Kitsune começa com 1 Cauda)

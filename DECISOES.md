@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §109 — MNEVIS fecha a família guarda: intercepta-passiva-por-nome COMPÕE do que existe; só o THORNS é mecanismo novo
+
+**As três checagens do dono, respondidas — duas dão "compõe do que existe", uma é singleto:**
+
+1. **`intercepta` numa PASSIVA, não numa habilidade → COMPÕE, de graça.** A habilidade do Hanuman (§107) aplica `intercepta`
+   UMA vez, ao agir. A passiva do Mnevis quer "o PRIMEIRO golpe único contra Rá EM CADA TURNO" — que é exatamente
+   `intercepta{contra:'unico'}` (consome ao interceptar) **re-armada pelo `porTurno`**. O "1º por turno" não custou nada: cai
+   de graça da composição `porTurno` × `contra:'unico'` (arma no início do turno, o 1º golpe consome, o resto do turno passa,
+   o próximo `porTurno` re-arma). Nenhum contador, nenhum flag de "já interceptei hoje" — o próprio ciclo aplica/consome é o
+   relógio. **§102-A na prática:** um só caminho para o "primeiro por turno", não um novo campo ao lado do que já existe.
+
+2. **`protege` por NOME (chave de deus), não por uid → COMPÕE, mas o executor do faz precisou aprender a resolver.** O
+   `intercepta.protege` guarda um **uid** (a Bastet, o Hanuman escolhem uma unidade viva no ato). O Mnevis designa "Rá" por
+   NOME antes da partida existir. A resolução mora no `rodarFaz` (o executor do `porTurno`): quando `f.protege` é uma string
+   de chave, procura a unidade viva com aquela `key` e converte para uid ali; sem o aliado nomeado vivo, **não arma nada**
+   (o `estado:{aliadoPresente:'ra'}` já gateia no `iniciarTurno`, mas a checagem no ato do armar é a rede — Rá pode ter caído).
+   Isso é o §104-B de novo (fx com campo novo → conferir o executor certo): a `intercepta` do `aplicarFx` recebe uid pronto;
+   a do `rodarFaz` recebe chave e resolve. Um campo, dois executores, cada um com a forma que lhe chega.
+
+3. **THORNS (`refleteDano`) É mecanismo novo — singleto, mas real.** "Reflete 10 de todo dano que recebe" não era nenhum dos
+   que existiam: não é `contraAtaca` (esse revida só golpe ÚNICO, com o dano DO REVIDANTE, e é negável por `semContra`); não é
+   `armazenaDano` (acumula para depois); não é `intercepta` (redireciona, não devolve). É **devolver um valor FIXO ao atacante
+   sempre que o dano entra**, área inclusa. Construído como BUFF temporário (`refleteDano{v,dur}`) + um gancho no `bater` DEPOIS
+   que o dano assenta (`v > 0`). Duas travas contra laço: o golpe de reflexo usa `slot:'reflexo'` e o gancho ignora esse slot
+   (dois portadores frente a frente não ricocheteiam ao infinito), e vai com `semContra/semIntercepta/semRedirect` (o reflexo
+   é dano puro de retorno, não re-entra nas primitivas defensivas). Duração **2 turnos, junto do Provocar** do milagre — o
+   Mnevis vira ímã (taunt em todos) que pune quem morde (thorns), as duas metades do mesmo milagre.
+
+**O que a família guarda tinha e agora tem:** interceptar dano dirigido a um aliado apareceu em três formas — **aplicada** e
+escolhida no ato (Bastet, Hanuman via habilidade), e agora **designada por nome numa passiva** (Mnevis). As três são o MESMO
+`intercepta`; o que muda é quem preenche o `protege` e quando. Fechá-la sem inventar um segundo mecanismo de "guardião nomeado"
+é a mesma lição do Thor (§106): o geral já fazia; faltava um executor saber resolver a chave.
+
+**Mnevis (IMPL 72, FUNCIONAL 72):** básico Chifrada (15 a 1); Investida Solar (15 a 2 inimigos + 15 de Defesa Destrutível em
+si); Fúria do Touro de Rá (provoca todos 2 turnos + thorns de 10 por 2 turnos); passiva Montaria do Sol (com Rá no time,
+intercepta o 1º golpe único contra Rá por turno). **IMPL = FUNCIONAL = 72.** Isolamento em `primitivas §24` (thorns: reflexo
+fixo, sem loop, só com `v>0`; intercepta-passiva-nomeada: arma só com Rá, 1º por turno, re-arma no `porTurno`, gateada por
+`aliadoPresente`); comportamento em `passiva §109`.
+
+---
+
 ## §108 — O DESLOCAMENTO DE SEED é uma varredura INVOLUNTÁRIA: cada kit novo re-amostra o espaço de estados
 
 **A quarta forma de expor bug antigo, e a mais interessante — não foi método, foi RNG.** As três anteriores foram

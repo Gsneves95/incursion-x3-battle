@@ -817,6 +817,61 @@ console.log('== 23. alvoSenhor: mira o aliado que a intercepta protege; sem Senh
   console.log('  mira o designado (intercepta.protege) · sem/caído → mais ferido (alvoHp) · sem 2º lugar guardando o Senhor');
 }
 
+// ------------------------------------------------------------ 24. refleteDano (thorns) + intercepta-passiva-nomeada (§109, Mnevis)
+console.log('== 24a. refleteDano (thorns): devolve v FIXO ao atacante quando o portador sofre dano; não faz loop; só se o dano entrou ==');
+{
+  // o portador de refleteDano devolve v FIXO (10) ao atacante — independente do dano que sofreu
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 940);
+  let carr = st.lados[0].units[0], atk = st.lados[1].units[0];
+  carr.efeitos.push({ type: 'refleteDano', v: 10, dur: 2 });
+  let ha = atk.hp;
+  E.bater(st, atk, carr, 20, 'afetado', 'basico', { unico: true });
+  ok(ha - atk.hp === 10, `o atacante sofre o reflexo FIXO de 10 (não os 20 do golpe) (${ha - atk.hp})`);
+  // sem loop entre DOIS portadores: o golpe de reflexo usa slot 'reflexo' e NÃO re-reflete
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 941);
+  carr = st.lados[0].units[0]; atk = st.lados[1].units[0];
+  carr.efeitos.push({ type: 'refleteDano', v: 10, dur: 2 });
+  atk.efeitos.push({ type: 'refleteDano', v: 10, dur: 2 });   // o atacante TAMBÉM reflete
+  ha = atk.hp; let hc = carr.hp;
+  E.bater(st, atk, carr, 20, 'afetado', 'basico', { unico: true });
+  ok(hc - carr.hp === 20 && ha - atk.hp === 10, `sem loop: portador leva 20, atacante leva só o reflexo de 10 (o reflexo não re-reflete) (${hc - carr.hp}/${ha - atk.hp})`);
+  // só reflete se o dano ENTROU (v > 0): golpe barrado por invulnerável → sem reflexo
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 942);
+  carr = st.lados[0].units[0]; atk = st.lados[1].units[0];
+  carr.efeitos.push({ type: 'refleteDano', v: 10, dur: 2 }, { type: 'invulneravel', dur: 2 });
+  ha = atk.hp;
+  E.bater(st, atk, carr, 20, 'afetado', 'basico', { unico: true });
+  ok(ha - atk.hp === 0, `dano barrado (v=0) → NÃO reflete (${ha - atk.hp})`);
+  console.log('  reflexo FIXO · slot reflexo não re-reflete (sem loop) · só com v>0');
+}
+console.log('== 24b. intercepta-passiva-nomeada: a passiva do Mnevis re-arma intercepta protegendo Rá por NOME, 1º golpe por turno, só com Rá no time ==');
+{
+  // COM Rá no time: iniciarTurno arma a intercepta no Mnevis protegendo Rá (contra:'unico' + porTurno)
+  let st = E.novoEstado(['mnevis', 'ra', 'zeus'], ['zeus', 'zeus', 'zeus'], 943);
+  let mnevis = st.lados[0].units[0], ra = st.lados[0].units[1], foe = st.lados[1].units[0];
+  st.ativo = 0; E.iniciarTurno(st);
+  let hr = ra.hp, hm = mnevis.hp;
+  E.bater(st, foe, ra, 18, 'afetado', 'basico', { unico: true });
+  ok(ra.hp === hr && hm - mnevis.hp === 18, `1º golpe único contra Rá é INTERCEPTADO: Rá intacto, Mnevis leva 18 (Rá ${hr - ra.hp}, Mnevis ${hm - mnevis.hp})`);
+  // 2º golpe no MESMO turno: a intercepta foi consumida (contra:'unico') → Rá leva
+  hr = ra.hp;
+  E.bater(st, foe, ra, 18, 'afetado', 'basico', { unico: true });
+  ok(hr - ra.hp === 18, `2º golpe no mesmo turno NÃO é interceptado (primeiro-por-turno) (${hr - ra.hp})`);
+  // turno seguinte: porTurno re-arma → intercepta de novo
+  E.iniciarTurno(st);
+  hr = ra.hp; hm = mnevis.hp;
+  E.bater(st, foe, ra, 18, 'afetado', 'basico', { unico: true });
+  ok(ra.hp === hr && hm - mnevis.hp === 18, `no turno seguinte a passiva re-armou: 1º golpe interceptado de novo (Rá ${hr - ra.hp}, Mnevis ${hm - mnevis.hp})`);
+  // SEM Rá no time: o estado (aliadoPresente:'ra') não bate → nada é armado
+  st = E.novoEstado(['mnevis', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 944);
+  mnevis = st.lados[0].units[0]; let ali = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  st.ativo = 0; E.iniciarTurno(st);
+  let hal = ali.hp;
+  E.bater(st, foe, ali, 18, 'afetado', 'basico', { unico: true });
+  ok(hal - ali.hp === 18, `sem Rá no time: nada é interceptado (aliadoPresente gateia) (${hal - ali.hp})`);
+  console.log('  arma só com Rá · 1º golpe por turno · re-arma no porTurno · gateado por aliadoPresente');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

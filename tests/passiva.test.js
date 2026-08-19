@@ -1701,6 +1701,51 @@ console.log('== §107 Hanuman: Senhor (intercepta.protege, como a Bastet) + mila
   console.log('  Senhor via intercepta.protege · assume o golpe · milagre cura Senhor/mais-ferido · imune queimadura · +8 c/ Sun Wukong');
 }
 
+console.log('== §109 Mnevis (fecha a família guarda): thorns no milagre + intercepta-passiva-nomeada de Rá ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico Chifrada: 15 a um inimigo
+  let st = E.novoEstado(['mnevis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 995); orbs(st.lados[0]);
+  let m = st.lados[0].units[0], foe = st.lados[1].units;
+  let h = foe.map(x => x.hp);
+  E.agir(st, m.uid, 'basico', [foe[0].uid]);
+  ok(h[0] - foe[0].hp === 15, `Chifrada: 15 a 1 inimigo (${h[0] - foe[0].hp})`);
+
+  // habilidade Investida Solar: 15 a DOIS inimigos + 15 de Defesa Destrutível em si
+  st = E.novoEstado(['mnevis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 996); orbs(st.lados[0]);
+  m = st.lados[0].units[0]; foe = st.lados[1].units; h = foe.map(x => x.hp);
+  E.agir(st, m.uid, 'habilidade', [foe[0].uid, foe[1].uid]);
+  ok(h[0] - foe[0].hp === 15 && h[1] - foe[1].hp === 15 && foe[2].hp === h[2] && m.shield === 15,
+    `Investida Solar: 15 nos DOIS mirados, 3º intacto, +15 escudo self (${h[0] - foe[0].hp}/${h[1] - foe[1].hp}/${h[2] - foe[2].hp}, escudo ${m.shield})`);
+
+  // milagre Fúria do Touro de Rá: provoca todos + Mnevis ganha thorns (reflete 10)
+  st = E.novoEstado(['mnevis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 997); orbs(st.lados[0]);
+  m = st.lados[0].units[0]; foe = st.lados[1].units;
+  E.agir(st, m.uid, 'milagre', []);
+  const provocouTodos = foe.every(x => !!E.ef(x, 'taunt'));
+  const thorns = E.ef(m, 'refleteDano');
+  ok(provocouTodos && thorns && thorns.v === 10 && thorns.dur === 2, `Fúria: provoca TODOS (2 turnos) + thorns de 10 em Mnevis (${provocouTodos}/${JSON.stringify(thorns)})`);
+  const hm = m.hp, hf = foe[0].hp;
+  E.bater(st, foe[0], m, 20, 'afetado', 'basico', { unico: true });
+  ok(hm - m.hp === 20 && hf - foe[0].hp === 10, `com thorns: o atacante que bate 20 sofre 10 de volta (Mnevis ${hm - m.hp}, atacante ${hf - foe[0].hp})`);
+
+  // passiva Montaria do Sol: COM Rá no time, intercepta o 1º golpe único contra Rá por turno
+  st = E.novoEstado(['mnevis', 'ra', 'zeus'], ['tyr', 'tyr', 'tyr'], 998);
+  m = st.lados[0].units[0]; let ra = st.lados[0].units[1]; foe = st.lados[1].units;
+  st.ativo = 0; E.iniciarTurno(st);
+  const ic = E.ef(m, 'intercepta');
+  ok(ic && ic.protege === ra.uid && ic.contra === 'unico', `Montaria: passiva arma intercepta em Mnevis protegendo Rá, contra:unico (${JSON.stringify(ic)})`);
+  const hr = ra.hp, hmm = m.hp;
+  E.bater(st, foe[0], ra, 18, 'afetado', 'basico', { unico: true });
+  ok(ra.hp === hr && hmm - m.hp === 18, `1º golpe único contra Rá → Mnevis assume (Rá intacto, Mnevis 18) (${hr - ra.hp}/${hmm - m.hp})`);
+
+  // SEM Rá no time: a passiva não arma nada (aliadoPresente gateia)
+  st = E.novoEstado(['mnevis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 999);
+  m = st.lados[0].units[0]; st.ativo = 0; E.iniciarTurno(st);
+  ok(!E.ef(m, 'intercepta'), 'sem Rá no time: a Montaria não arma intercepta (aliadoPresente gateia)');
+  console.log('  Chifrada 15 · Investida 15×2 + escudo 15 · Fúria provoca todos + thorns 10 · Montaria intercepta Rá (1º/turno, só com Rá)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -1,0 +1,54 @@
+{
+  "key": "mnevis",
+  "nome": "Mnevis",
+  "faccao": "Egípcia",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Montaria do Sol",
+    "desc": "Com Rá no time, Mnevis intercepta o primeiro ataque de alvo único contra Rá em cada turno.",
+    "fx": [
+      { "gatilho": "porTurno", "estado": { "aliadoPresente": "ra" }, "faz": [ { "t": "intercepta", "protege": "ra", "contra": "unico", "dur": 1 } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Chifrada",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Investida Solar",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "2inimigos",
+      "desc": "15 de dano a 2 inimigos; Mnevis ganha 15 de Defesa Destrutível.",
+      "fx": [
+        { "t": "dmg", "v": 15, "idx": 0 },
+        { "t": "dmg", "v": 15, "idx": 1 },
+        { "t": "shield", "v": 15, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Fúria do Touro de Rá",
+      "cost": { "Aurora": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Provoca todos os inimigos por 2 turnos; Mnevis reflete 10 de todo dano que recebe.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "taunt", "dur": 2 }, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "refleteDano", "v": 10, "dur": 2 }, "escopo": "self" }
+      ]
+    }
+  ]
+}
