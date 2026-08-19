@@ -6,6 +6,23 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §106 — A EXISTÊNCIA DE UM ONE-OFF NÃO É PROVA DE QUE ELE É ESPECIAL (o erro nomeado do dono no Thor)
+
+**O erro, nomeado pelo dono:** ao autorizar a migração do Thor, ele presumiu que o `atordoaMenorHp` existia porque fazia algo
+DIFERENTE do caminho geral (daí pedir um campo "respeita Invulnerável" para preservar a "esquisitice"). Mas o one-off existia
+porque **ninguém checou se o geral já fazia** — e fazia (o `apply` já barra controle em inimigo invulnerável). A esquisitice era
+o DEFAULT, não uma exceção; o hardcode nunca precisou existir. **Regra:** a existência de um one-off NÃO é evidência de que ele
+é especial — é evidência de que, quando foi escrito, ninguém checou o geral. Antes de construir o campo que ABSORVE uma exceção,
+teste se a exceção já é o default do caminho geral. A resposta pode ser que o campo custa zero e o one-off era redundante. É o
+§46 num eixo novo: lá o NOME engana; aqui a EXISTÊNCIA engana (um fx no motor parece necessário só por estar lá).
+
+**Ledger "método expõe bug anterior" (+1):** absorver o `atordoaMenorHp` no seletor geral (§103) DELETOU código morto — um
+segundo caminho que duplicava o `apply`+`alvoHp`. O método (§46/§102-A: um resultado, um caminho) não só evitou dívida nova;
+removeu dívida ANTIGA que ninguém tinha visto. Junto com o auditor-cego-ao-empilhamento (§93) e o auditor-cego-ao-formato (§66):
+três vezes o método de varrer/absorver expôs um furo que já estava no código, não um que eu ia criar.
+
+---
+
 ## §105 — semContra (fecha o Lugh) + a absorção do Thor que custou ZERO linha (a esquisitice já era a regra)
 
 **semContra — a varredura achou 2, mas UM é §46.** "não pode ser contra-atacado": Lugh (flag ESTÁTICA no próprio básico) e
