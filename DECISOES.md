@@ -190,6 +190,20 @@ corrigir um registro exige a MESMA prova que criá-lo — não a impressão de q
 forma de uma lição elegante (o exemplo-que-é-contraexemplo) e nenhuma execução por trás. Elegância não é evidência (§46 no
 próprio registro).
 
+**Adendo §120 — afirmação certa-por-coincidência ainda é afirmação errada.** No §113 removi o `stripBuffs` afirmando
+"nenhum deus do catálogo remove TODOS os buffs". A AÇÃO era certa (remover primitiva sem consumidor shippável, §87/§61); a
+AFIRMAÇÃO era falsa (o yamato remove — "remove todos os buffs dele"). A consequência COINCIDIU com a verdade (o stripBuffs
+sai agora e volta com o yamato, exatamente como planejado), então o erro sobreviveu sem custo imediato. **Mas afirmação que
+sobrevive porque a consequência coincidiu ainda é afirmação errada — e ela ENVENENA a próxima decisão:** o "não há consumidor
+no catálogo" viraria premissa de um sequenciamento futuro, e aí o yamato apareceria como surpresa. Voltar para corrigir o
+ARGUMENTO (não só a ação) é o que impede o veneno. Verificar a ação não basta; a afirmação que a justifica também entra no §82.
+
+**Corolário do comentário (a linha 148 do §120):** comentário é FONTE que não se verifica sozinha (só o código roda). E
+comentário que descreve uma LACUNA ("não cobre X") envelhece MAIS RÁPIDO que o que descreve COMPORTAMENTO — porque a lacuna
+é justamente o que a gente FECHA. Todo comentário-de-lacuna é uma data de validade não-escrita; ao fechar a lacuna (execução,
+§84), o comentário que a listava virou mentira e ninguém o revisou. Comentário-de-lacuna deve apontar para o § que o fecharia,
+ou ser relido a cada vez que a família cresce.
+
 ---
 
 ## §114 — IZANAMI: o tique escalado é COMPOSIÇÃO (reusa o escalador do dano), e o 1º porTurno que toca inimigo
