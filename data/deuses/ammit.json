@@ -1,0 +1,68 @@
+{
+  "key": "ammit",
+  "nome": "Ammit",
+  "faccao": "Egípcia",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Sentença Final",
+    "desc": "Quem Ammit derrota não pode ser revivido de forma alguma.",
+    "fx": [
+      { "gatilho": "abateNaoRevive" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Mandíbula",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Faro do Pecado",
+      "cost": { "Umbra": 2 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "22 de dano a 1 inimigo, +6 por debuff ativo nele.",
+      "fx": [ { "t": "dmg", "v": 22, "porStatus": { "v": 6, "categoria": "debuff", "onde": "alvo" } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Devorar a Alma",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 35 de dano.",
+      "fx": [
+        {
+          "t": "condicional",
+          "se": { "alvoDebuff": "atordoado" },
+          "entao": [ { "t": "dmg", "v": 0, "executaAbaixoDe": 200 } ],
+          "senao": [
+            {
+              "t": "condicional",
+              "se": { "alvoDebuff": "selado" },
+              "entao": [ { "t": "dmg", "v": 0, "executaAbaixoDe": 200 } ],
+              "senao": [
+                {
+                  "t": "condicional",
+                  "se": { "alvoHp": { "op": "abaixo", "v": 31 } },
+                  "entao": [ { "t": "dmg", "v": 0, "executaAbaixoDe": 200 } ],
+                  "senao": [ { "t": "dmg", "v": 35 } ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

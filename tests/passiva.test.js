@@ -1875,6 +1875,51 @@ console.log('== §117 Kukulkán (M1, agendador): habilidade telegrafada (Inalvej
   console.log('  Presas 15 · Voo da Serpente telegrafado (Inalvejável agora, 25 a todos no próximo turno) · Estrela 20+dmgUp · +8 vs Encharcado');
 }
 
+console.log('== §118 Ares + Ammit (M3, consequência de abate): zeraCd-ao-abater (si) + naoRevive-ao-abater (o morto) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ARES básico 15 + cura 6
+  let st = E.novoEstado(['ares', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 990); orbs(st.lados[0]);
+  let a = st.lados[0].units[0], foe = st.lados[1].units[0]; a.hp = 100;   // 20 perdidos → passiva +2
+  const h = foe.hp;
+  E.agir(st, a.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 17 && a.hp === 106, `Golpe Sanguinário: 15 + passiva(+2 por 20 HP perdido) = 17; Ares cura 6 (100→106) (${h - foe.hp}, hp ${a.hp})`);
+  // ARES passiva + escalador da habilidade: +1/4 HP-falta (hab) e +1/10 HP-perdido (passiva)
+  st = E.novoEstado(['ares', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 991); orbs(st.lados[0]);
+  a = st.lados[0].units[0]; foe = st.lados[1].units[0]; a.hp = 90;   // 30 perdidos
+  const h2 = foe.hp; E.agir(st, a.uid, 'habilidade', [foe.uid]);   // 22 + floor(30/4)=7 (hab) + floor(30/10)=3 (passiva) = 32
+  ok(h2 - foe.hp === 32, `Sede de Sangue: 22 + 7 (hab /4 de 30) + 3 (passiva /10) = 32 (${h2 - foe.hp})`);
+  // ARES milagre: 4×12; ao abater, a recarga do Massacre zera
+  st = E.novoEstado(['ares', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 992); orbs(st.lados[0]);
+  a = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.hp = 40;
+  E.agir(st, a.uid, 'milagre', [foe.uid]);
+  ok(!foe.vivo && a.cd.milagre === 0, `Massacre abate → recarga volta (cd ${a.cd.milagre})`);
+
+  // AMMIT básico 15; habilidade +6 por debuff
+  st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 993); orbs(st.lados[0]);
+  let am = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 }, { type: 'vulneravel', v: 5, dur: 2 });   // 2 debuffs
+  const h3 = foe.hp; E.agir(st, am.uid, 'habilidade', [foe.uid]);   // 22 + 6×2 = 34, +5 vulneravel de entrada = 39
+  ok(h3 - foe.hp === 39, `Faro do Pecado: 22 + 6×2 debuffs = 34, +5 (vulnerável) = 39 (${h3 - foe.hp})`);
+  // AMMIT milagre: elimina Atordoado/Selado/≤30; senão 35
+  st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 994); orbs(st.lados[0]);
+  am = st.lados[0].units[0]; let e = st.lados[1].units;
+  e[0].hp = 120; e[0].efeitos.push({ type: 'selado', dur: 2 });
+  E.agir(st, am.uid, 'milagre', [e[0].uid]);
+  ok(!e[0].vivo, 'Devorar a Alma: elimina Selado mesmo com 120 HP');
+  st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 995); orbs(st.lados[0]);
+  am = st.lados[0].units[0]; e = st.lados[1].units; e[0].hp = 100;
+  const h4 = e[0].hp; E.agir(st, am.uid, 'milagre', [e[0].uid]);
+  ok(e[0].vivo && h4 - e[0].hp === 35, `Devorar sem gatilho: 35 de dano (${h4 - e[0].hp})`);
+  // AMMIT passiva: quem ele abate não revive (mesmo Nezha, que renasceria)
+  st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['nezha', 'tyr', 'tyr'], 996); orbs(st.lados[0]);
+  am = st.lados[0].units[0]; const nez = st.lados[1].units[0]; nez.efeitos = []; nez.hp = 5;
+  E.agir(st, am.uid, 'basico', [nez.uid]);
+  E.fimTurno(st); E.fimTurno(st);   // o turno da Nezha voltaria — mas naoRevive a segura
+  ok(!nez.vivo, `Sentença Final: quem Ammit abate NÃO revive (Nezha fica caída) (vivo ${nez.vivo})`);
+  console.log('  Ares: +HP-falta, cura, Massacre-volta-ao-abater · Ammit: +debuff, elimina-condicional, abatido-não-revive');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

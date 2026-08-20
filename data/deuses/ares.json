@@ -1,0 +1,51 @@
+{
+  "key": "ares",
+  "nome": "Ares",
+  "faccao": "Grega",
+  "elem": "Chama",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Fúria Marcial",
+    "desc": "Ares causa +1 de dano por cada 10 de HP perdido; ao abater um inimigo, sua recarga volta.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 0, "porHpFaltante": { "v": 1, "passo": 10 } },
+      { "gatilho": "aoCair", "quem": "inimigo", "faz": [ { "t": "zeraCd" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Golpe Sanguinário",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo; Ares cura 6.",
+      "fx": [
+        { "t": "dmg", "v": 15 },
+        { "t": "heal", "v": 6, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Sede de Sangue",
+      "cost": { "Chama": 2 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "22 de dano a 1 inimigo, +1 de dano por cada 4 de HP que falta em Ares.",
+      "fx": [ { "t": "dmg", "v": 22, "porHpFaltante": { "v": 1, "passo": 4 } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Massacre",
+      "cost": { "Chama": 2, "livre": 1 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "4 golpes de 12 no mesmo alvo; se o alvo for derrotado, a recarga do Massacre zera.",
+      "fx": [ { "t": "dmg", "v": 12, "golpes": 4 } ]
+    }
+  ]
+}

@@ -1003,6 +1003,31 @@ console.log('== 27. agendar: no lançamento só guarda; dispara no PRÓXIMO inic
   console.log('  guarda no lançamento · dispara no iniciarTurno do dono · ordem de inserção · dono morto não dispara');
 }
 
+// ------------------------------------------------------------ 28. consequência de abate (§118, M3): zeraCd + abateNaoRevive
+console.log('== 28. consequência de abate: zeraCd (aoCair inimigo, self) + abateNaoRevive (leitor do matar, carimba o MORTO) ==');
+{
+  // zeraCd via aoCair{quem:inimigo}: Ares abate → sua recarga zera (self); sem abate, fica
+  let st = E.novoEstado(['ares', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 978);
+  let a = st.lados[0].units[0], foe = st.lados[1].units[0];
+  a.cd.milagre = 3; foe.hp = 8;
+  E.bater(st, a, foe, 20, 'afetado', 'basico', {});   // 20 > 8 → matar → aoCair inimigo → zeraCd
+  ok(!foe.vivo && a.cd.milagre === 0, `abate → zeraCd no PRÓPRIO (recarga 3→0) (${a.cd.milagre}, foe vivo ${foe.vivo})`);
+  st = E.novoEstado(['ares', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 979);
+  a = st.lados[0].units[0]; foe = st.lados[1].units[0]; a.cd.milagre = 3;
+  E.bater(st, a, foe, 20, 'afetado', 'basico', {});   // não mata
+  ok(foe.vivo && a.cd.milagre === 3, `sem abate: a recarga fica (${a.cd.milagre})`);
+  // abateNaoRevive: quem o MATADOR (com a passiva) abate leva naoRevive; matador comum não
+  st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 980);
+  let am = st.lados[0].units[0], v = st.lados[1].units[0]; v.hp = 5;
+  E.bater(st, am, v, 15, 'afetado', 'basico', {});
+  ok(!v.vivo && v.naoRevive === true, `abatido por Ammit → naoRevive (carimba o morto, keyed pelo matador) (${v.naoRevive})`);
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 981);
+  let z = st.lados[0].units[0], v2 = st.lados[1].units[0]; v2.hp = 5;
+  E.bater(st, z, v2, 15, 'afetado', 'basico', {});
+  ok(!v2.vivo && !v2.naoRevive, `abatido por matador comum → SEM naoRevive (${v2.naoRevive})`);
+  console.log('  zeraCd só ao abater, no próprio · abateNaoRevive carimba o morto só se o matador tem a passiva');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

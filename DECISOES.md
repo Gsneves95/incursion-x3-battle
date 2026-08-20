@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §118 — M3 se DISSOLVEU: a "consequência de abate" não é um mecanismo, são três pequenos por DIREÇÃO (Ares, Ammit; Khonshu → M9)
+
+**A segunda das quatro de sistema (§116), e a varredura a desfez — §46 pela 4ª vez na família de morte.** Os três consumidores
+"compartilham" um GATILHO (uma morte) mas se partem por DIREÇÃO e por payload; não há um mecanismo M3 único.
+
+- **Ares — sobre SI:** "abati com o Massacre → a recarga volta." Cabe INTEIRO no `aoCair{quem:'inimigo'}` que já existe (o
+  matador reage, faz roda em si) + um faz-safe novo `zeraCd` (zera a recarga do próprio). **Divergência conhecida:** dispara
+  em QUALQUER abate de Ares, não só o do Massacre (o `quem:'inimigo'` não distingue slot) — mais forte que a letra, registrado
+  como o recíproco da Chang'e (§101): divergência com gatilho, não silenciosa.
+- **Ammit — sobre o MORTO:** "quem eu derroto não revive." Um LEITOR do `matar` (§89): carimba `naoRevive` na vítima, keyed
+  pela passiva do MATADOR (≠ o snapshot que lê o que a VÍTIMA carrega). §81 sujeito C. Alcance cross-side (toca o cadáver),
+  mas é FLAG, na mesma zona do snapshot — sem dano, sem re-entrância. + milagre "elimina se Atordoado/Selado/≤30, senão 35":
+  o OR de três condições vira `condicional` ANINHADO (ramos senão), execução via `executaAbaixoDe` alto — composto do que existe.
+- **Khonshu — sobre o MATADOR:** "marca 1 inimigo; se ele derrubar um aliado, sofre 30." É o único que precisaria de dano
+  reativo alcançando o matador (o caso que o `noAtacante` PROÍBE por recursar). **Adiado para o M9**, porque a PASSIVA dele
+  ("1× por partida, anula o atordoamento de um aliado") é o próprio M9 (guarda-de-controle-para-aliado) — §116 já o marcava
+  M3+M9. Construir a marca-retaliação agora seria um mecanismo delicado para um deus não-shippável (§61). Ele sai no M9, com a
+  marca-retaliação junto.
+
+**O eixo `quem` do aoCair JÁ estava completo (§106 não se aplica):** o que faltava não era "de quem é a morte" (self/inimigo/
+qualquerInimigo/aliado — todos construídos) e sim PARA ONDE a reação vai. E a resposta não foi estender o `faz` para
+cross-side (que abriria dano reativo, a armadilha do `noAtacante`) — foi **leitores do `matar`** (Ammit) e um hook no aoCair
+existente (Ares). Os 5 leitores do `matar` (§89) seguem intactos: o de Ammit é um carimbo de flag na zona do snapshot de
+naoRevive; o dano-dentro-do-matar (Khonshu) — a parte que exigiria re-verificar re-entrância — foi adiado com ele.
+
+**Veredito (a sua suspeita, confirmada): o M3 real é MENOR que três.** Não há mecanismo M3 único — são um hook (Ares) + um
+leitor pequeno (Ammit) agora, e o único que era "mecanismo real" (Khonshu, dano cross-side) migrou para o M9 por arrastar o
+M9 na passiva. **Ares + Ammit (IMPL 77, FUNCIONAL 77).** Isolamento em `primitivas §28` (zeraCd só ao abater/no próprio;
+abateNaoRevive carimba o morto só se o matador tem a passiva); comportamento em `passiva §118`. O `checar_cadeia` agora
+recursa FUNDO no `condicional` (o milagre do Ammit aninha 3 níveis).
+
+---
+
 ## §117 — M1: o AGENDADOR de payload (Kukulkán) — lista por-unidade, sem fila global; o revive NÃO absorvido (§106 ao contrário)
 
 **A primeira das quatro de sistema (§116), a menos invasiva.** Um agendador GERAL de "ação telegrafada": um payload de fx

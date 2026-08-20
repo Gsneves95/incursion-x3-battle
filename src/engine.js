@@ -87,6 +87,7 @@ const TIPOS_FX = [
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz. NÃO absorvido pelo agendador geral (§117): dispara em unidade MORTA + alimenta checarFim — folá-lo forçaria caso especial (§106 ao contrário)
   'agendar',   // §117 (M1, Kukulkán): AGENDA um payload de fx p/ o próximo turno do dono (lista pendente por-unidade, disparada no iniciarTurno). "ação telegrafada". Alvo/escopo fixados no lançamento; nenhuma escolha nova ao disparar
+  'zeraCd',   // §118 (M3, Ares): zera as recargas do PRÓPRIO dono. faz-safe (self, sem escolha). aoCair{quem:'inimigo'} → "abati, minha recarga volta"
   'aceleraLivro',   // F1.9 (Yan Wong §89): acelera em 1 a contagem do Livro nos inscritos (dur -= 1, piso 1)
   'condicional',   // F1.6 (Freyja): ramo por estado — se(estado) ? entao[fx] : senao[fx]
   'roubaOrbe',   // F1.6 (Hades/Hermes/Shuten): remove n orbes do inimigo (rouba=vai p/ o próprio); bloqueado por protegeOrbe (Heimdall)
@@ -130,6 +131,7 @@ const GATILHOS_PASSIVA = {
   sinergiaAliado:  { campos: ['aliado', 'contador', 'v'], obrig: ['aliado', 'contador', 'v'] },   // F1.8 (Inari): no início, se o aliado NOMEADO está no time, dá-lhe v do contador
   ignoraInalvejavel:{ campos: ['escopo'], obrig: [] },   // F1.9 (Hou Yi escopo:self; Boitatá escopo:time): o dono (ou o time) PODE mirar inimigos Inalvejáveis — override de MIRA, não de dano. §84 decisão c (ponto passivo; o pontual é a flag de habilidade)
   porExecucao:     { campos: ['faz'], obrig: ['faz'] },   // F1.9 (Yan Wong §89): quando um INIMIGO morre por EXECUÇÃO (qualquer — Livro, executaAbaixoDe), o dono faz X (1 orbe). Leitura LITERAL de "por execução": qualquer, não só a do dono
+  abateNaoRevive:  { campos: [], obrig: [] },   // §118 (M3, Ammit): quem o DONO abate não revive de forma alguma — carimba naoRevive no MORTO (lido no matar, keyed pelo matador). §81 sujeito C. Sem payload: a consequência é o carimbo
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -152,7 +154,7 @@ const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execu
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
 // contador (ra) + orbGain (ganesha). heal/cdShift/apply entram por deus; seletores ("mais ferido" da Deméter,
 // "maior HP" da Izanami) NÃO existem — entram como campo novo revisado quando o deus deles migrar.
-const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp', 'intercepta'];   // intercepta (§109, Mnevis): a passiva re-aplica por turno protegendo um aliado NOMEADO (protege por key), sem alvo escolhido   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
+const FX_TURNO = ['contador', 'orbGain', 'reviveProximoTurno', 'shield', 'heal', 'apply', 'vidaExtra', 'cdShift', 'selfHp', 'intercepta', 'zeraCd'];   // zeraCd (§118, Ares): zera a recarga do PRÓPRIO dono num faz-de-turno (aoCair inimigo) — self, sem escolha, turno-seguro   // intercepta (§109, Mnevis): a passiva re-aplica por turno protegendo um aliado NOMEADO (protege por key), sem alvo escolhido   // heal/apply (F1.2.5): alvo FIXO self|time (nunca escolhido); apply só BUFF (senão exigiria alvo inimigo). vidaExtra (F1.6): rede de sobrevivência no self (Hércules) — alvo é sempre o dono, turno-seguro. cdShift (F1.6, Huangdi): SÓ na forma soMaiorDoTime (próprio lado, sem alvo escolhido) — o validador barra as outras formas no faz
 const IGNORAVEIS = ['reducao', 'escudo'];  // o que danoIrredutivel pode furar (ogum: reducao; tyr: ambos)
 const ESCOPOS_PASSIVA = ['self', 'time'];  // self = vale só quando o DONO ataca; time = qualquer aliado vivo
 const MARCAS = ['marcado', 'olho', 'livro', 'pressagio'];   // marcas ofensivas — RÓTULOS lidos por `alvoMarca`. Vocabulário FECHADO e COMPARTILHADO (não é propriedade privada de um deus): quem pune marca (`alvoMarca:'qualquer'`) pune QUALQUER marca. marcado=Odin, olho=Hórus, livro=Yan Wong (já tinha timer letal), pressagio=Morrigan. §54: são etiquetas distintas (o milagre do Hórus lê 'olho' específico; o do Yan Wong acelera só 'inscritos'), com o guarda-chuva 'qualquer'. Ver DECISOES §83
@@ -881,6 +883,8 @@ function matar(st, atk, alvo, opts = {}) {
     for (const lado of st.lados) for (const x of lado.units) { const g = kitDe(st, x), p = g && g.passiva;
       if (p && Array.isArray(p.fx)) for (const f of p.fx) if (f.gatilho === 'antiReviveContador' && (alvo.contadores[f.contador] || 0) > 0) alvo.naoRevive = true; }
   }
+  // §118 (M3, Ammit): quem o MATADOR abate não revive — keyed pela passiva do atk (não pelo que a vítima carrega, ≠ o snapshot acima). Alcance cross-side (carimba o MORTO), mas sem dano: é flag, na mesma zona do snapshot de naoRevive
+  if (atk && atk.vivo) { const ga = kitDe(st, atk), pa = ga && ga.passiva; if (pa && Array.isArray(pa.fx) && pa.fx.some(f => f.gatilho === 'abateNaoRevive')) alvo.naoRevive = true; }
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho porExecucao (F1.9, Yan Wong §89) — morte por EXECUÇÃO de um inimigo: o lado OPOSTO ao morto reage (1 orbe).
@@ -1135,6 +1139,7 @@ function rodarFaz(st, u, faz, tagKey) {
     }
     else if (f.t === 'cdShift' && f.soMaiorDoTime) cdShiftMaiorDoTime(st, u.lado, f.v);   // F1.6 (Huangdi porTurno): "a recarga mais longa do time −1". VARRE p/ ESCOLHER onde agir, mas o alvo é o PRÓPRIO lado e o jogador não escolhe nada — a garantia do FX_TURNO (sem alvo escolhido pelo jogador) fica INTACTA. Distinção a lembrar: varrer-p/-escolher ≠ varrer-p/-alvejar.
     else if (f.t === 'selfHp') { u.hp = Math.max(1, u.hp + f.v); log(st, { tipo: 'dano', origem: u.key, alvo: u.key, valor: -f.v, kind: 'puro' }); }   // F1.8 (Kagutsuchi porTurno): "perde N de HP por turno" — dreno no próprio dono, piso 1 (nunca se auto-mata)
+    else if (f.t === 'zeraCd') { for (const k in u.cd) u.cd[k] = 0; log(st, { tipo: 'cd', lado: u.lado, origem: u.key, valor: 0 }); }   // §118 (Ares aoCair inimigo): "abati → minha recarga volta". Só o PRÓPRIO dono (self); zera o cd que o agir acabou de setar (o Massacre volta p/ o próximo turno)
     else if (f.t === 'intercepta') {   // §109 (Mnevis): a passiva re-aplica a intercepta protegendo um aliado NOMEADO (protege por CHAVE de deus). contra:'unico' + porTurno = "primeiro golpe por turno" de graça.
       let protege = f.protege;
       if (protege && protege !== 'time') { const al = l.units.find(x => x.key === protege && x.vivo); protege = al ? al.uid : null; }
