@@ -72,9 +72,9 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 // nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
 // fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado'];   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado', 'torpor'];   // 'torpor' (§135, Shuten): MARCADOR (não trava ação — o portador AGE; lido por aoAgirSobEfeito: "quando ele agir, eu reajo"). Debuff p/ ser cleansável e p/ o apply aceitá-lo   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita'];   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita', 'danoFimTurno'];   // 'danoFimTurno' (§135, Kali): buff no PRÓPRIO — no fim de cada turno do dono, ataca de graça por v um inimigo, por dur turnos. Lido no fimTurno. É buff (auto-aplicado, o dono age)   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -139,6 +139,7 @@ const GATILHOS_PASSIVA = {
   negaOrbe:        { campos: ['a'], obrig: ['a'] },   // §130 (Dionísio): enquanto o dono vive, INIMIGOS carregando os controles em `a` não geram orbe (estende a exclusão de renda, que já barra adormecido/submerso/dominado, p/ selado). Cross-side, lido no iniciarTurno do lado inimigo
   evadeContra:     { campos: ['v'], obrig: ['v'] },   // §130 (Saci): o PRIMEIRO golpe único por turno contra o dono FALHA (nulificado) e revida v ao atacante. Lido no bater (usa o flag primeiroPorTurno do §88). v = o contra-ataque
   evadeControle:   { campos: [], obrig: [] },   // §131 (Loki): a PRIMEIRA tentativa de controle por turno contra o dono FALHA. Irmão do evadeContra mas no eixo CONTROLE (lido em aplicar, flag controleNoTurno). Sem payload
+  geraContadorPorGolpe: { campos: ['contador', 'v', 'max'], obrig: ['contador'] },   // §135 (Raijin): cada alvo ATINGIDO pelo dono gera v no pool do lado (por-GOLPE, gancho no bater). ≠ contador pool:'lado' num fx (que é por-ATAQUE)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -288,6 +289,10 @@ const VOCAB = {
     'agenda',   // §117 (M1): payload de fx do `agendar` — array de fx disparado no próximo turno do dono
     'naoRevive',   // §127 (Hel): dot que carimba naoRevive no portador ao cair (Marca da Morte); flui p/ aplicarDot
     'curaPorAlvo',   // §127 (Hel): dmg que cura o lançador em N por alvo atingido (soma na área)
+    'porInimigoHp',   // §135 (Kali): scaler "+N por inimigo abaixo de X HP" ({v, abaixo})
+    'dreno',   // §135 (Shuten): dmg do noAtor que vira cura no dono (lifesteal — "rouba HP")
+    'posicional',   // §135 (Raijin): dmg posicional — array [v0,v1,v2] por ordem de seleção do alvo
+    'porAlvoComStatus',   // §135 (Shuten milagre): roubaOrbe cujo n = nº de inimigos com o status nomeado
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -933,6 +938,12 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       }
     }
   }
+  // §135 (Raijin, Ritmo do Trovão): CADA alvo atingido pelo dono gera contador no pool do lado. Gancho no bater
+  // (por-GOLPE, ≠ por-ATAQUE do Susanoo §126 — a fratura da preposição §126). Só golpe inimigo real (não invocação-stub).
+  if (atk && atk.lado !== alvo.lado && atk.key !== '__inv') {
+    const ga = kitDe(st, atk), pa = ga && ga.passiva;
+    if (pa && Array.isArray(pa.fx)) for (const fp of pa.fx) if (fp.gatilho === 'geraContadorPorGolpe') addContadorLado(st, atk.lado, fp.contador, fp.v || 1, fp.max != null ? fp.max : null, atk);
+  }
   return v;
 }
 
@@ -1229,9 +1240,10 @@ function rodarFaz(st, u, faz, tagKey) {
 // O slot 'torpor' fica fora de SLOTS_ATAQUE, então o dano tampouco dispara o aoSerAtingido do ator (§56).
 function rodarNoAtor(st, dono, ator, payload) {
   for (const f of payload) {
-    if (f.t === 'dmg') bater(st, dono, ator, f.v, 'puro', 'torpor', {});
+    if (f.t === 'dmg') { const feito = bater(st, dono, ator, f.v, 'puro', 'torpor', {}); if (f.dreno) curar(st, dono, feito, dono); }   // §135 (Shuten): dreno = "rouba HP" (lifesteal — o dano vira cura no dono). O contra do noAtor já não recursa (§F1.4)
     else if (f.t === 'dot') aplicarDot(st, ator, f.nome, f.v, f.dur, dono.uid);
     else if (f.t === 'apply') aplicar(st, ator, { ...f.eff, origem: dono.uid });
+    else if (f.t === 'roubaOrbe') { const li = st.lados[ator.lado]; let n = 0; for (let i = 0; i < (f.n || 1); i++) { const el = ELEMS.filter(x => li.orbs[x] > 0).sort((a, b) => li.orbs[b] - li.orbs[a])[0]; if (!el) break; li.orbs[el]--; n++; if (f.rouba) st.lados[dono.lado].orbs[el]++; } if (n) { log(st, { tipo: 'orbe', lado: ator.lado, valor: -n }); if (f.rouba) log(st, { tipo: 'orbe', lado: dono.lado, valor: n }); } }   // §135 (Shuten): roubaOrbe REATIVO no noAtor — "rouba 1 orbe dele" quando o ator age
   }
 }
 
@@ -1367,6 +1379,12 @@ function fimTurno(st) {
       log(st, { tipo: 'efeito', alvo: u.key, efeito: 'pressagio' });
       matar(st, null, u, { execucao: true });
     }
+  }
+  // §135 (Kali, Dança da Aniquilação): ATAQUE RECORRENTE no fim do turno — quem carrega 'danoFimTurno' bate de graça por v
+  // num inimigo vivo (1º, determinístico). Roda ANTES do desconto de duração (regra 5), então o buff ainda está presente.
+  for (const u of l.units) {
+    const df = u.vivo && ef(u, 'danoFimTurno');
+    if (df) { const alvo = st.lados[1 - st.ativo].units.find(x => x.vivo); if (alvo) bater(st, u, alvo, df.v, 'afetado', 'basico', {}); }
   }
   // regra 5 — durações descontam no FIM do turno de quem carrega o efeito
   for (const u of l.units) {
@@ -1631,6 +1649,17 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       continue;
     }
 
+    // §135 (Raijin, Raio em Cadeia): dano POSICIONAL — o i-ésimo alvo SELECIONADO leva posicional[i]. Ordem de SELEÇÃO
+    // (§46: a prosa "1º alvo" não diz seleção-vs-slot; a decisão do dono é ORDEM DE SELEÇÃO — o jogador controla, determinístico
+    // sem regra extra). Distinto do split-igual §92 (que reparte N golpes): aqui cada posição tem seu próprio v. Além do array = 0.
+    if (e.t === 'dmg' && e.posicional) {
+      for (let i = 0; i < alvos.length; i++) {
+        const dv = e.posicional[i];
+        if (dv == null || !alvos[i] || !alvos[i].vivo) continue;
+        bater(st, u, alvos[i], danoBase(st, u, alvos[i], { ...e, v: dv }, l), e.kind || 'afetado', a.slot, { unico: true, classe: classeDe(st, u, a), semContra: e.semContra });
+      }
+      continue;
+    }
     // MULTI-GOLPE DISTRIBUÍDO (F1.9 §92, Susanoo/Babi/Hou Yi): N golpes de v repartidos entre os alvos SELECIONADOS,
     // o mais igual possível; o EXTRA vai para os PRIMEIROS selecionados (previsível — o jogador controla a ordem).
     // Cada golpe passa por danoBase (seCond per-alvo: Hou Yi +3 vs Aurora) e bater. curaMetade = metade do TOTAL (Babi).
@@ -1812,11 +1841,12 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     }
     if (e.t === 'roubaOrbe') {   // F1.6 — remove e.n orbes do MAIOR pool do inimigo (rouba: vai p/ o próprio); Heimdall (protegeOrbe) barra
       const li = st.lados[1 - u.lado];
+      const nRoubo = e.porAlvoComStatus ? li.units.filter(x => x.vivo && ef(x, e.porAlvoComStatus)).length : e.n;   // §135 (Shuten milagre): "1 orbe por alvo com Torpor" — n = nº de inimigos vivos carregando o status
       const protetor = li.units.find(x => { if (!x.vivo) return false; const g = kitDe(st, x); const p = g && g.passiva; return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'protegeOrbe'); });
       if (protetor) { log(st, { tipo: 'bloqueio', alvo: protetor.key, lado: 1 - u.lado, motivo: 'orbe_protegido' }); }   // §107: o bloqueio precisa de `alvo` (gramática de eventos) — nomeia o PROTETOR (Heimdall). Bug pré-existente da F1.6 exposto quando o roster cresceu e o seed 24 caiu num roubaOrbe-vs-Heimdall (§66: o método expõe furo antigo)
       else {
         let n = 0;
-        for (let i = 0; i < e.n; i++) {
+        for (let i = 0; i < nRoubo; i++) {
           const el = ELEMS.filter(x => li.orbs[x] > 0).sort((a, b) => li.orbs[b] - li.orbs[a])[0];
           if (!el) break;
           li.orbs[el]--; n++;
@@ -1867,6 +1897,7 @@ function escalaContagem(st, u, t, spec) {
   if (spec.porStatus) add += porN(spec.porStatus.v, contarStatus(st, u, t, spec.porStatus), spec.porStatus.passo);   // F1.8: "+N por debuff/regen/… no escopo"
   if (spec.porDeficitAliados) add += spec.porDeficitAliados.v * Math.max(0, st.lados[1 - u.lado].units.filter(x => x.vivo).length - st.lados[u.lado].units.filter(x => x.vivo).length);   // §126 (Susanoo): "+N por aliado a MENOS que o inimigo" — déficit de unidades vivas (piso 0). Escala pelo mesmo helper (§73)
   if (spec.porAliadoVivo) add += spec.porAliadoVivo * st.lados[u.lado].units.filter(x => x.vivo).length;   // §132 (Guan Yu milagre): "+N por aliado vivo" — conta as unidades vivas do próprio lado (inclui o dono)
+  if (spec.porInimigoHp) add += spec.porInimigoHp.v * st.lados[1 - u.lado].units.filter(x => x.vivo && x.hp < spec.porInimigoHp.abaixo).length;   // §135 (Kali hab): "+N por inimigo abaixo de X de HP" — conta inimigos vivos sob o limiar
   return add;
 }
 function danoBase(st, u, t, e, l) {

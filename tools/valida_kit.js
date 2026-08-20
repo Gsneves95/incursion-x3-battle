@@ -226,7 +226,7 @@ function validarNoAtor(payload, ctx, errs) {
   payload.forEach((fx, i) => {
     const cc = `${ctx}[${i}]`;
     if (!fx || typeof fx !== 'object') { errs.push(`${cc}: fx não é objeto`); return; }
-    if (!['dmg', 'dot', 'apply'].includes(fx.t)) { errs.push(`${cc}: noAtor só aceita dmg|dot|apply no ator ("${fx.t}" não)`); return; }
+    if (!['dmg', 'dot', 'apply', 'roubaOrbe'].includes(fx.t)) { errs.push(`${cc}: noAtor só aceita dmg|dot|apply|roubaOrbe no ator ("${fx.t}" não)`); return; }   // §135 (Shuten): roubaOrbe REATIVO no noAtor ("rouba 1 orbe dele quando age")
     if (fx.t === 'dmg' && (typeof fx.v !== 'number' || !Number.isInteger(fx.v) || fx.v <= 0)) errs.push(`${cc}: dmg.v inválido (${JSON.stringify(fx.v)}; inteiro > 0)`);
     if (fx.t === 'dot') {
       if (typeof fx.nome !== 'string' || !fx.nome) errs.push(`${cc}: dot.nome ausente`);

@@ -1,0 +1,53 @@
+{
+  "key": "raijin",
+  "nome": "Raijin",
+  "faccao": "Japonesa",
+  "elem": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Ritmo do Trovão",
+    "desc": "Cada alvo atingido por Raijin gera 1 de Combo.",
+    "fx": [
+      { "gatilho": "geraContadorPorGolpe", "contador": "combo", "v": 1, "max": 20 }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Tambor Trovejante",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Raio em Cadeia",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "distribui",
+      "desc": "18 de dano ao 1º alvo, 12 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno.",
+      "fx": [
+        { "t": "dmg", "posicional": [ 18, 12, 8 ] },
+        { "t": "apply", "eff": { "type": "atordoado", "dur": 1 }, "idx": 0 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Tempestade dos Tambores",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "22 de dano a todos os inimigos; +4 de Combo.",
+      "fx": [
+        { "t": "dmg", "v": 22, "escopo": "todosInimigos" },
+        { "t": "contador", "nome": "combo", "pool": "lado", "v": 4, "max": 20 }
+      ]
+    }
+  ]
+}

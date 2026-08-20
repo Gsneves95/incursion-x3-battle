@@ -1,0 +1,52 @@
+{
+  "key": "shutendoji",
+  "nome": "Shuten Dōji",
+  "faccao": "Japonesa",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Regeneração Demoníaca",
+    "desc": "Shuten cura 6 por turno (10 se estiver abaixo de 60 de HP).",
+    "fx": [
+      { "gatilho": "porTurno", "faz": [ { "t": "heal", "v": 6, "escopo": "self" } ], "estado": { "hpProprio": { "op": "acima", "v": 59 } } },
+      { "gatilho": "porTurno", "faz": [ { "t": "heal", "v": 10, "escopo": "self" } ], "estado": { "hpProprio": { "op": "abaixo", "v": 60 } } },
+      { "gatilho": "aoAgirSobEfeito", "efeito": "torpor", "noAtor": [ { "t": "dmg", "v": 10, "dreno": true }, { "t": "roubaOrbe", "n": 1, "rouba": true } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Garra Ébria",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Aflição",
+      "nome": "Saké Envenenado",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Torpor em 1 inimigo por 2 turnos: quando ele agir, Shuten rouba 10 de HP e 1 orbe dele.",
+      "fx": [ { "t": "apply", "eff": { "type": "torpor", "dur": 2 } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Aflição",
+      "nome": "Banquete de Ōe",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos; rouba 1 orbe por alvo com Torpor.",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
+        { "t": "roubaOrbe", "porAlvoComStatus": "torpor", "rouba": true }
+      ]
+    }
+  ]
+}

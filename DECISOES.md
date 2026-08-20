@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §135 — FASE B / B4 (os 3 REBAIXADOS: Kali, Shuten, Raijin): os tells acertaram, cada um exigiu um mecanismo real
+
+**Os três que o §125 rebaixou de HOOK para MECANISMO REAL (tell de arrasto conhecido). Traduzidos juntos e com precisão (a exigência do dono p/ tells conhecidos). IMPL 92 → 95, FUNCIONAL 95.** Cada tell acertou — cada um precisou de um mecanismo que NÃO era campo:
+
+- **Kali** (tell "no fim do turno"): a `danoFimTurno` — buff no dono que ataca de graça por v no fim de cada turno dele, por dur turnos (leitor no fimTurno, ao lado do pressagio §127 e do Livro). AÇÃO-RECORRENTE-AGENDADA, como o §125 previu. + `porInimigoHp` (scaler "+N por inimigo abaixo de X HP", gêmeo dos scalers de contagem) + noHeal. Passiva porInimigoCaido + aoCair heal (existentes).
+- **Shuten** (tell "quando ele agir"): LIFESTEAL + roubaOrbe REATIVOS no `noAtor` do aoAgirSobEfeito — o `dreno` (o dano do noAtor vira cura no dono) e o `roubaOrbe` reativo (rodarNoAtor ganhou os dois; o validador do noAtor abriu p/ roubaOrbe). `torpor` entrou como MARCADOR (debuff que não trava ação — o portador age, e É por agir que a reação dispara). Milagre: roubaOrbe com `porAlvoComStatus` (n = nº de inimigos com Torpor). Passiva porTurno-com-estado-hpProprio (composição existente).
+- **Raijin** (tell "cada alvo atingido / por golpe"): `geraContadorPorGolpe` — gatilho lido no BATER (cada alvo que o dono atinge gera contador no pool do lado). Feed-de-pool POR-GOLPE, o gancho no bater que o §125 previu. + dano POSICIONAL (`posicional:[18,12,8]`, ver abaixo). Milagre: contador pool:'lado' +4 (existente) — que COMPÕE com a passiva por-golpe (a AoE de 3 gera 3 + 4 = 7 Combo).
+
+**A PERGUNTA do Raijin, respondida (§46, o degrau da preposição de novo):** o "18 ao 1º alvo, 12 ao 2º, 8 ao 3º" é dano POSICIONAL, distinto do split-igual §92. A prosa "1º alvo" NÃO diz se é posição de SELEÇÃO (o 1º que o jogador escolheu) ou de SLOT (o de cima). **Decisão do dono, adotada: ORDEM DE SELEÇÃO** — o jogador controla, determinístico sem regra extra. Implementado indexando `alvos` (a ordem em que os uids chegam). Testado: seleção [e2,e0,e1] → 18/12/8 seguem a SELEÇÃO, não o slot.
+
+**O tell "por-ataque × por-golpe" (§126) CONFIRMADO 3ª vez:** Susanoo (por-ataque, `contador pool:'lado'` num fx, escrevível) × Raijin (por-golpe, gancho `geraContadorPorGolpe` no bater). Mesma família de Combo, escrevibilidades opostas pela preposição. O par que a triagem uniu se partiu exatamente onde o tell dizia.
+
+**A rede §134 pagou:** as 3 construções abriram campos cross-boundary novos (`dreno`, `posicional`, `porAlvoComStatus`, `geraContadorPorGolpe.contador`, `danoFimTurno`), e cada um foi provado NOS DOIS LADOS no mesmo commit (a regra §134: checar a junta na hora de abri-la, não depois). Nenhuma junta-não-ligada nova.
+
+**Fase B restante:** B5 = bloco final (dagda, khonshu, yamato, exu — e o Yamato já tem metade destravada pelo imuneA+estado §132). Depois, a leva solo do Cernunnos (§133).
+
+---
+
 ## §134 — VARREDURA DIRIGIDA da 5ª espécie (junta-não-ligada): LIMPA — e a lição é que juntas moram no SEAM do código novo
 
 **Antecipada a pedido do dono (a 5ª espécie apareceu 2× em 3 levas — Hel §127, Guan Yu §132 — frequente demais p/ esperar o fim da Fase 1). Não a varredura completa (O(pares)), mas a DIRIGIDA: cada campo que atravessa aplicação-e-consumo, confirmando que os dois lados concordam. Bounded.**

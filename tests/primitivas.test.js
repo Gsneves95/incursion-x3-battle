@@ -1266,6 +1266,44 @@ console.log('== 36. §132: contraAtaca delegado (protege um aliado) · imuneA co
   console.log('  contraAtaca delegado (protetor revida por aliado) · imuneA condicional por estado · porAliadoVivo');
 }
 
+// ------------------------------------------------------------ 37. B4 (§135): porInimigoHp · danoFimTurno · dano posicional · roubaOrbe por-status
+console.log('== 37. §135: porInimigoHp · danoFimTurno (ataque recorrente) · posicional (ordem de seleção) · roubaOrbe porAlvoComStatus ==');
+{
+  // (a) porInimigoHp: +v por inimigo abaixo do limiar de HP
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1150);
+  let u = st.lados[0].units[0], e = st.lados[1].units; e[0].hp = 50; e[1].hp = 40;   // 2 abaixo de 60
+  let h = e[0].hp; E.aplicarFx(st, u, [{ t: 'dmg', v: 20, porInimigoHp: { v: 10, abaixo: 60 } }], A('inimigo', 'habilidade'), [e[0]]);
+  ok(h - e[0].hp === 40, `20 + 10×2 inimigos <60 = 40 (${h - e[0].hp})`);
+
+  // (b) danoFimTurno: buff que ataca de graça no fim do turno do dono
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1151);
+  u = st.lados[0].units[0]; const foe = st.lados[1].units[0];
+  st.ativo = 0;   // o danoFimTurno dispara no fim do turno do DONO (lado ativo)
+  E.aplicarFx(st, u, [{ t: 'apply', eff: { type: 'danoFimTurno', v: 12, dur: 2 }, escopo: 'self' }], A('nenhum', 'milagre'), []);
+  const hf = foe.hp; E.fimTurno(st);
+  ok(hf - foe.hp === 12, `danoFimTurno: 12 de graça no fim do turno (${hf - foe.hp})`);
+
+  // (c) dano posicional: i-ésimo alvo SELECIONADO leva posicional[i] (ordem de seleção)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1152);
+  u = st.lados[0].units[0]; e = st.lados[1].units; const hp0 = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'dmg', posicional: [18, 12, 8] }], A('distribui', 'habilidade'), [e[0], e[1], e[2]]);
+  ok(e.every((x, i) => hp0[i] - x.hp === [18, 12, 8][i]), `posicional 18/12/8 por ordem de seleção (${e.map((x, i) => hp0[i] - x.hp)})`);
+  // ordem INVERTIDA de seleção → os valores seguem a seleção, não o slot
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1153);
+  u = st.lados[0].units[0]; e = st.lados[1].units; const q0 = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'dmg', posicional: [18, 12, 8] }], A('distribui', 'habilidade'), [e[2], e[0], e[1]]);
+  ok(q0[2] - e[2].hp === 18 && q0[0] - e[0].hp === 12 && q0[1] - e[1].hp === 8, `seleção [e2,e0,e1] → 18/12/8 seguem a SELEÇÃO (${e.map((x, i) => q0[i] - x.hp)})`);
+
+  // (d) roubaOrbe porAlvoComStatus: n = nº de inimigos com o status
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1154);
+  E.ELEMS.forEach(x => { st.lados[0].orbs[x] = 0; st.lados[1].orbs[x] = 3; });
+  u = st.lados[0].units[0]; e = st.lados[1].units; e[0].efeitos.push({ type: 'torpor', dur: 2 }); e[2].efeitos.push({ type: 'torpor', dur: 2 });
+  const a0 = E.totalOrbs(st.lados[1]);
+  E.aplicarFx(st, u, [{ t: 'roubaOrbe', porAlvoComStatus: 'torpor', rouba: true }], A('todosInimigos', 'milagre'), []);
+  ok(a0 - E.totalOrbs(st.lados[1]) === 2 && E.totalOrbs(st.lados[0]) === 2, `roubaOrbe por Torpor: 2 carregam → rouba 2 (inimigo ${a0 - E.totalOrbs(st.lados[1])}, self ${E.totalOrbs(st.lados[0])})`);
+  console.log('  porInimigoHp · danoFimTurno · posicional-por-seleção · roubaOrbe-por-status');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -1,0 +1,52 @@
+{
+  "key": "kali",
+  "nome": "Kali",
+  "faccao": "Hindu",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Guirlanda de Caveiras",
+    "desc": "Por inimigo derrotado, Kali causa +10 de dano e cura 15.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porInimigoCaido": 10 },
+      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Golpe da Foice",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Sede de Sangue",
+      "cost": { "Umbra": 2 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "20 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP.",
+      "fx": [ { "t": "dmg", "v": 20, "porInimigoHp": { "v": 10, "abaixo": 60 } } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Dança da Aniquilação",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos; por 2 turnos Kali ataca de graça por 12 no fim do turno, mas não pode ser curada.",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "danoFimTurno", "v": 12, "dur": 2 }, "escopo": "self" },
+        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 }, "escopo": "self" }
+      ]
+    }
+  ]
+}

@@ -2351,6 +2351,69 @@ console.log('== §132 B3/Guan Yu (M7 delegado): Juramento (contra delegado) + In
   console.log('  Guan Yu: Inabalável (imunidade+reducao condicionais a 3 vivos) · Juramento (contra delegado) · Investida (porAliadoVivo)');
 }
 
+console.log('== §135 B4 (os 3 rebaixados): Kali (ação recorrente) · Shuten (lifesteal+roubaOrbe reativo) · Raijin (feed por-golpe + posicional) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- KALI ----
+  let st = E.novoEstado(['kali', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1100, 0); orbs(st.lados[0]);
+  let ka = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, ka.uid, 'basico', [foe.uid]); ok(h - foe.hp === 15, `Golpe da Foice: 15 (${h - foe.hp})`);
+  // passiva: +10/inimigo caído + cura 15 ao abater
+  st = E.novoEstado(['kali', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1101, 0);
+  ka = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, ka, foe) === 0, `Guirlanda: 0 caídos → +0`);
+  st.lados[1].units[1].vivo = false;
+  ok(E.bonusDanoDeclarativo(st, ka, foe) === 10, `1 inimigo caído → +10`);
+  st = E.novoEstado(['kali', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1102, 0); ka = st.lados[0].units[0]; ka.hp = 80; foe = st.lados[1].units[0]; foe.hp = 5;
+  E.bater(st, ka, foe, 15, 'afetado', 'basico', {}); ok(ka.hp === 95, `ao abater: Kali cura 15 (80→${ka.hp})`);
+  // habilidade: +10 por inimigo <60
+  st = E.novoEstado(['kali', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1103, 0); orbs(st.lados[0]);
+  ka = st.lados[0].units[0]; const e = st.lados[1].units; e[0].hp = 50; e[1].hp = 40;
+  h = e[0].hp; E.agir(st, ka.uid, 'habilidade', [e[0].uid]); ok(h - e[0].hp === 40, `Sede de Sangue: 20 + 10×2 (<60) = 40 (${h - e[0].hp})`);
+  // milagre: 18 AoE + ataque recorrente 12/fim-turno + noHeal
+  st = E.novoEstado(['kali', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1104, 0); orbs(st.lados[0]);
+  ka = st.lados[0].units[0]; const ke = st.lados[1].units; const kh = ke.map(x => x.hp);
+  E.agir(st, ka.uid, 'milagre', []);
+  ok(ke.every((x, i) => kh[i] - x.hp === 18) && !!E.ef(ka, 'danoFimTurno') && !!E.ef(ka, 'noHeal'), `Dança: 18 a todos + ataque-recorrente + noHeal`);
+  const he = ke[0].hp; E.fimTurno(st); ok(he - ke[0].hp === 12, `no fim do turno: ataca de graça por 12 (${he - ke[0].hp})`);
+
+  // ---- SHUTEN ----
+  st = E.novoEstado(['shutendoji', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1105, 0);
+  let sh = st.lados[0].units[0]; sh.hp = 40; E.iniciarTurno(st);
+  ok(sh.hp === 50, `Regeneração (hp 40 <60): +10 (${sh.hp})`);
+  // habilidade torpor + reação (lifesteal + roubaOrbe quando o inimigo age)
+  st = E.novoEstado(['shutendoji', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1106, 0); orbs(st.lados[0]);
+  sh = st.lados[0].units[0]; sh.hp = 80; foe = st.lados[1].units[0];
+  E.agir(st, sh.uid, 'habilidade', [foe.uid]);
+  ok(!!E.ef(foe, 'torpor'), `Saké Envenenado: Torpor aplicado`);
+  st.ativo = 1; orbs(st.lados[1]); const s0 = E.totalOrbs(st.lados[0]); const foeH = foe.hp;
+  E.agir(st, foe.uid, 'basico', [st.lados[1].units[1].uid]);   // foe age (contra aliado, p/ isolar o dreno)
+  ok(foeH - foe.hp === 10 && sh.hp === 90 && E.totalOrbs(st.lados[0]) - s0 === 1, `ao agir sob Torpor: Shuten drena 10 (cura 80→${sh.hp}) + rouba 1 orbe`);
+  // milagre: rouba 1 orbe por alvo com Torpor
+  st = E.novoEstado(['shutendoji', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1107, 0); orbs(st.lados[0]);
+  sh = st.lados[0].units[0]; const se = st.lados[1].units; E.ELEMS.forEach(x => st.lados[1].orbs[x] = 3);
+  se[0].efeitos.push({ type: 'torpor', dur: 2 }); se[2].efeitos.push({ type: 'torpor', dur: 2 });
+  const b0 = E.totalOrbs(st.lados[1]); E.agir(st, sh.uid, 'milagre', []);
+  ok(b0 - E.totalOrbs(st.lados[1]) === 2, `Banquete: 2 com Torpor → rouba 2 orbes (${b0 - E.totalOrbs(st.lados[1])})`);
+
+  // ---- RAIJIN ----
+  st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1108, 0); orbs(st.lados[0]);
+  let ra = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, ra.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 15 && E.getContadorLado(st, 0, 'combo') === 1, `Tambor: 15 + 1 Combo (1 alvo atingido) (combo ${E.getContadorLado(st, 0, 'combo')})`);
+  // habilidade posicional 18/12/8 + atordoa o 1º + 3 Combo
+  st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1109, 0); orbs(st.lados[0]);
+  ra = st.lados[0].units[0]; const re = st.lados[1].units; const rh = re.map(x => x.hp);
+  E.agir(st, ra.uid, 'habilidade', [re[0].uid, re[1].uid, re[2].uid]);
+  ok(re.every((x, i) => rh[i] - x.hp === [18, 12, 8][i]) && !!E.ef(re[0], 'atordoado') && E.getContadorLado(st, 0, 'combo') === 3, `Raio em Cadeia: 18/12/8 + atordoa o 1º + 3 Combo (${re.map((x, i) => rh[i] - x.hp)})`);
+  // milagre 22 AoE + 4 Combo (+3 por-golpe da passiva = 7)
+  st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1110, 0); orbs(st.lados[0]);
+  ra = st.lados[0].units[0]; const me = st.lados[1].units; const mh = me.map(x => x.hp);
+  E.agir(st, ra.uid, 'milagre', []);
+  ok(me.every((x, i) => mh[i] - x.hp === 22) && E.getContadorLado(st, 0, 'combo') === 7, `Tempestade: 22 a todos + 4 Combo + 3 por-golpe (passiva) = 7 (combo ${E.getContadorLado(st, 0, 'combo')})`);
+  console.log('  Kali (porInimigoCaido+aoCair+porInimigoHp+ataque-recorrente) · Shuten (porTurno-hp+lifesteal+roubaOrbe reativo) · Raijin (feed por-golpe+posicional)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2520,6 +2583,10 @@ err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   
 // §132 B3: imunidade.estado (condicional) · contraAtaca fx (delegado)
 { const g = base(); g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'], escopo: 'time', estado: { aliadosVivos: { op: 'min', n: 3 } } }); ok(validarDeus(g).length === 0, 'imunidade.estado (condicional) VÁLIDA (Guan Yu): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[1].fx = [{ t: 'contraAtaca', v: 15, protege: 'alvo', contra: 'unico', dur: 2 }]; ok(validarDeus(g).length === 0, 'contraAtaca fx delegado VÁLIDO (Guan Yu): ' + JSON.stringify(validarDeus(g))); }
+// §135 B4: geraContadorPorGolpe (Raijin) · dano posicional (Raijin) · noAtor com roubaOrbe (Shuten)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'geraContadorPorGolpe', contador: 'combo', v: 1, max: 20 }); ok(validarDeus(g).length === 0, 'geraContadorPorGolpe VÁLIDO (Raijin): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].fx = [{ t: 'dmg', posicional: [18, 12, 8] }]; g.ab[1].alvo = 'distribui'; ok(validarDeus(g).length === 0, 'dano posicional VÁLIDO (Raijin): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', noAtor: [{ t: 'dmg', v: 10, dreno: true }, { t: 'roubaOrbe', n: 1, rouba: true }] }); ok(validarDeus(g).length === 0, 'noAtor com roubaOrbe VÁLIDO (Shuten): ' + JSON.stringify(validarDeus(g))); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

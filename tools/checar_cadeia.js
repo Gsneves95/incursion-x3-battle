@@ -44,7 +44,7 @@ function danosProsa(ef) {
 const curasProsa = ef => [...ef.matchAll(/cura\s+(\d+)/gi)].map(m => +m[1]);
 // dmg do fx, RECURSANDO no `condicional` (F1.9, Hórus §87): os dmg dos ramos entao/senao SÃO o dano da habilidade,
 // só que condicionais — caem no balde "multi/condicional" (naoConf) via dM.length>1, com os dois valores à vista.
-const danosFx = fx => (fx || []).flatMap(e => e.t === 'dmg' ? [e.v]
+const danosFx = fx => (fx || []).flatMap(e => e.t === 'dmg' ? (e.posicional || [e.v])   // §135 (Raijin): dano posicional [18,12,8] — cada posição é um valor da habilidade
   : (e.t === 'condicional' ? danosFx([...(e.entao || []), ...(e.senao || [])])   // §118 (Ammit): recursa FUNDO — condicional aninhado (OR de status via ramos senão) leva o dmg vários níveis abaixo
   : (e.t === 'agendar' ? danosFx(e.agenda || []) : [])));   // §117: o dano AGENDADO (Kukulkán) mora no payload `agenda` — é dano da habilidade, só que no próximo turno
 // cura do fx, RECURSANDO no `condicional` (§101, Chang'e): "cura 20; na NOITE cura 30" mora em entao/senao — os dois
