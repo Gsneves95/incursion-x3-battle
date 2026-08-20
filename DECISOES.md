@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §128 — FECHO DA FASE A: o balde HOOK ZEROU; os 12 restantes são TODOS MECANISMO REAL; e o catálogo de tells cresceu de 5 p/ 13
+
+**Fase A completa (6 HOOK: Susanoo/Kitsune/Anúbis §126 + Hel/Morrigan/Tanuki §127). IMPL 79 → 88, FUNCIONAL 88.** Os dois entregáveis combinados:
+
+**(1) Lista atualizada do MECANISMO REAL — o balde HOOK está VAZIO.** Os 12 deuses não-escritos são AGORA, todos, MECANISMO REAL:
+- **9 originais do §116:** dionisio, saci, exu, dagda, khonshu, yamatotakeru, loki, guanyu, cernunnos.
+- **3 rebaixados de HOOK (§125/§127):** kali, shutendoji, raijin.
+Não sobrou nem JÁ-DÁ nem HOOK. A cauda da Fase 1 é pura de mecanismo grande — o que valida a §116 mais uma vez: os baldes de baixo esvaziam primeiro, o erro-de-um-degrau já foi todo pago (nada mais pode vazar PARA CIMA, MECANISMO REAL é o teto). Ressalva honesta: o **saci** lê mais leve que o balde (evasão+contra-ataque + inalvejável-then-rouba + lockSkill parecem quase compor de primitivos) — mas §124 diz que o erro nunca inverte (nunca super-estima), então NÃO afirmo que ele é HOOK sem traduzir; anoto a suspeita p/ traduzir cedo.
+
+**(2) Triagem TELL-DIRIGIDA dos 12 — o catálogo funcionou como discriminador limpo.** As 5 assinaturas de ARRASTO ("no fim do turno", "quando ele agir", "cada alvo/golpe", "mesmo derrotado", "por golpe/alvo") dispararam em EXATAMENTE os 3 rebaixados (kali=no-fim-do-turno; shutendoji=quando-ele-agir + por-alvo; raijin=cada-alvo-atingido) e em NENHUM dos outros 9. Zero falso-positivo, zero arrasto-surpresa. Como os 9 já são o balde-teto, não há para onde vazarem — o catálogo de arrasto não tinha o que achar neles, e corretamente não achou.
+
+**Oito assinaturas NOVAS (de MECANISMO, não de arrasto) — o catálogo dobrou.** Os 9 sem tell-de-arrasto carregam, cada um, uma assinatura que NOMEIA o mecanismo (classe diferente: não prevê que arrasta, prevê O QUE é). Registradas p/ virar a ferramenta de triagem da Fase 2:
+1. **"age primeiro"** → M2 iniciativa (exu, dagda) — já era o tell do Hermes (§121); agora catalogado formalmente.
+2. **"rouba todos os buffs / transfere os debuffs ... para"** → M5 realocação de status (loki).
+3. **"se ele derrubar/matar um aliado, [sofre/…]"** → M3 marca-retaliação-por-evento-futuro (khonshu).
+4. **"o próximo ataque dele é [puro/…]"** → modificador de próximo-golpe (yamatotakeru; família da acaoPerfeita §111).
+5. **"contra-ataca quem atingir o aliado"** → M7 contra-ataque delegado (guanyu).
+6. **"buffs ... suspensos"** → M6 suspensão temporária de buff, ≠ strip (dagda).
+7. **"invoca ... se cair, renasce em N turnos"** → M8 invocação-abatível-com-respawn (cernunnos).
+8. **"usam/usa o Básico contra aliados deles"** → dominação em massa (dionisio; dominar §99 em AoE).
+
+**Catálogo de tells agora com 13 assinaturas** (5 de arrasto + 8 de mecanismo). A distinção importa: **tell-de-arrasto** prevê SUB-estimação (JÁ-DÁ/HOOK que sobe de balde); **tell-de-mecanismo** classifica um MECANISMO REAL pela prosa (qual dos M1–M9 / singleton). Para a Fase 2, a triagem tell-dirigida pode bucketar por prosa antes de traduzir — o catálogo melhorou sozinho de novo, e agora tem as duas funções.
+
+---
+
+## §127 — FASE A / Leva 2 (Hel, Morrigan, Tanuki): as duas investigações do dono confirmadas; e §115 na forma "a fonte não CONTÉM a informação"
+
+**Leva 2 dos HOOK, traduzida junto antes de escrever (§124). IMPL 85 → 88, FUNCIONAL 88.** As duas investigações que o dono pediu ANTES do build:
+
+**Investigação 1 — MORRIGAN e a execução diferida (§83/§59).** Varri os 15 não-escritos por um TERCEIRO caso de execução-diferida-por-limiar (o gatilho de revisão do §59). Achados: Hel = DoT-com-naoRevive (não é limiar-em-janela), Kali = ataque-recorrente-no-fim-do-turno (não é execução), Cernunnos = respawn (não é execução). **Nenhum terceiro caso.** Morrigan segue sendo o SEGUNDO (ao lado do Livro do Yan Wong, timer-intrínseco). §59 mantido: NÃO fundir os dois tempos (timer vs limiar). Construí o `pressagio` como leitor separado no fimTurno (~8 linhas), consumidor da marca (se o hp nunca cai, a marca expira inócua).
+
+**Investigação 2 — HEL e o comentário da l.905 ("Marca da Morte da Hel").** O dono suspeitou: comentário que ANTECIPA é da mesma classe do da l.148, que envelheceu errado. **Confirmado, com uma diferença.** O probe contra o motor rodando mostrou: o LEITOR (`matar` checa `dots.some(d => d.naoRevive)`) EXISTE e está certo; mas o ALIMENTADOR (`aplicarDot`) **nunca copiou `naoRevive`** — ele só guardava `{nome,v,dur,origem,escala}`. Então NENHUM DoT podia carregar o carimbo. O comentário não descrevia o motor: descrevia uma INTENÇÃO meio-wireada (a metade leitora feita, a metade escritora não). Diferente da l.148 (que envelheceu ERRADA — descrevia lacuna já preenchida); esta envelheceu INCOMPLETA-mas-coerente. Em ambos os casos a regra vale: **NÃO construir sobre o comentário; construir sobre o que o motor faz.** Fechei a metade que faltava (aplicarDot preserva naoRevive) e aí escrevi a Hel.
+
+**Os acréscimos da Leva 2:** Hel foi a mais movimentada (3 pequenos: `estado` no bonusCura — o executor já lia, faltava o schema; `naoRevive` no DoT; `curaPorAlvo`). Morrigan 1 (execução diferida por limiar). Tanuki 1 (fonte `basicoAliado` no copiar) + a aproximação da abertura ("1 orbe de qualquer elemento" virou 1 orbe do próprio elemento — escolha-de-elemento não modelada, irmã da §123.1).
+
+**§115 NA FORMA MAIS CONVINCENTE (o dono nomeou):** o probe pegou dois furos que LEITURA NENHUMA pegaria — o ramo herdando `a.alvo` (§126) e o alimentador ausente do naoRevive (§127). A lição não é "desconfie da fonte". É mais forte: **a fonte NÃO CONTÉM a informação.** Ler o `aplicarDot` dez vezes nunca revelaria que o `matar` espera um campo que ele não escreve — a relação entre os dois só aparece EXECUTANDO. Corolário: quando a pergunta é sobre a JUNTA entre duas peças (uma escreve, outra lê), a leitura de qualquer uma das peças é estruturalmente cega; só o motor rodando expõe a junta.
+
+**E §46 NO NÍVEL MAIS FINO DO PROJETO (o dono mandou escrever assim):** a fratura Susanoo×Raijin (§126) enganou por uma PALAVRA FUNCIONAL — a preposição em "por *ataque*" vs "por *golpe*" — não por um substantivo. O rótulo que engana (§46) opera até no nível da preposição. **Consequência operacional para a triagem por tell: ler a FRASE INTEIRA, não os termos.** Uma varredura que casasse só substantivos ("Combo", "dano", "orbe") perderia a fratura; ela mora na função gramatical que liga os substantivos. O catálogo de tells (§128) é de FRASES/padrões, não de palavras-chave, por causa disto.
+
+---
+
 ## §126 — FASE A / Leva 1 (Susanoo, Kitsune, Anúbis): os 3 seguraram como HOOK; o tell "por-ataque × por-golpe" CONFIRMADO
 
 **Primeira das duas levas de 3 dos HOOK (§125). Traduzi as três juntas antes de escrever (§124). Todas seguraram — IMPL 82 → 85, FUNCIONAL 85.** Um acréscimo de motor por deus (Anúbis levou dois, ambos pequenos):

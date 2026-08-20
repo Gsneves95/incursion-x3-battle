@@ -95,7 +95,7 @@ const TIPOS_FX = [
 ];
 // DoTs são efeitos NOMEADOS — viram CHAVE como todo o resto (ver docs/eventos.md A). O
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
-const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento', 'maldicao'];   // 'maldicao' (§114, Izanami): MESMO conceito do contador homônimo — o contador é o acúmulo, o DoT é o veículo do dano 6×acúmulo/turno (stores separados; o DoT lê o contador via porContador). cresce ao provar os 73 kits. 'veneno' entrou p/ a
+const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento', 'maldicao', 'marcaMorte'];   // 'marcaMorte' (§127, Hel): DoT puro-por-natureza (o tique subtrai HP direto, sem redução/escudo) que carrega naoRevive — a Marca da Morte que o comentário da l.905 antecipava mas o alimentador (aplicarDot) não wireava.   // 'maldicao' (§114, Izanami): MESMO conceito do contador homônimo — o contador é o acúmulo, o DoT é o veículo do dano 6×acúmulo/turno (stores separados; o DoT lê o contador via porContador). cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
 const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao', 'atadura', 'combo'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (§126: aCadaN + reducao escalada); 'maldicao' = Izanami (§114); 'atadura' = Anúbis (§126: antiReviveContador + bonusDano porContador onde:alvo); 'combo' = pool POR LADO (Oni consome via porContadorLado; §126 Susanoo é o 1º a GERAR via contador pool:'lado', expondo o nome ao validador).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
@@ -116,7 +116,7 @@ const GATILHOS_PASSIVA = {
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a', 'escopo'], obrig: ['a'] },                  // imune a status nomeado(s) (sessão 5). §120: escopo 'self' (default) OU 'time' (izanagi: o time inteiro imune) — imuneA varre o lado
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
-  bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 8)
+  bonusCura:       { campos: ['v', 'quandoCura', 'estado'], obrig: ['v'] },     // soma v à MAGNITUDE das curas no lado do dono (sessão 8). estado (§127, Hel): gateia por campo/paridade — bonusCuraDeclarativo já lê f.estado; faltava só liberar o campo (comentário anti-envelhecido: o executor precedeu o schema)
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
   aoCurar:         { campos: ['faz'], obrig: ['faz'] },                        // quando um aliado é CURADO, faz X no curado (sessão 10)
   aoUsarHabilidade:{ campos: ['slot', 'faz'], obrig: ['slot', 'faz'] },        // quando um aliado usa habilidade do slot, faz X no dono (Passo 0)
@@ -279,6 +279,8 @@ const VOCAB = {
     'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
     'alvoSenhor',   // F1.9 (§107, Hanuman): seletor AUTO do aliado designado (intercepta.protege), fallback mais ferido (alvoHp)
     'agenda',   // §117 (M1): payload de fx do `agendar` — array de fx disparado no próximo turno do dono
+    'naoRevive',   // §127 (Hel): dot que carimba naoRevive no portador ao cair (Marca da Morte); flui p/ aplicarDot
+    'curaPorAlvo',   // §127 (Hel): dmg que cura o lançador em N por alvo atingido (soma na área)
   ],
   // ---- gramática de EVENTOS (docs/eventos.md); a varredura (tests/eventos.test.js) valida ----
   eventos: [
@@ -440,11 +442,11 @@ function aplicar(st, u, eff) {
   }
 }
 
-function aplicarDot(st, u, nome, v, dur, origem = null, escala = null) {   // escala (§114, Izanami): spec porContador lida NO TIQUE (dano dinâmico por acúmulo), reusa escalaContagem
+function aplicarDot(st, u, nome, v, dur, origem = null, escala = null, naoRevive = false) {   // escala (§114, Izanami): spec porContador lida NO TIQUE (dano dinâmico por acúmulo), reusa escalaContagem
   if (imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return; }   // imunidade declarativa (Nezha: veneno+queimadura)
   const ja = u.dots.find(d => d.nome === nome);
-  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); if (origem != null) ja.origem = origem; if (escala) ja.escala = escala; }   // regra 6
-  else { const d = { nome, v, dur }; if (origem != null) d.origem = origem; if (escala) d.escala = escala; u.dots.push(d); }   // origem = quem aplicou (aoAgirSobEfeito lê isto, como os efeitos)
+  if (ja) { ja.v = Math.max(ja.v, v); ja.dur = Math.max(ja.dur, dur); if (origem != null) ja.origem = origem; if (escala) ja.escala = escala; if (naoRevive) ja.naoRevive = true; }   // regra 6
+  else { const d = { nome, v, dur }; if (origem != null) d.origem = origem; if (escala) d.escala = escala; if (naoRevive) d.naoRevive = true; u.dots.push(d); }   // origem = quem aplicou (aoAgirSobEfeito lê isto). §127 (Hel): naoRevive no DoT — o LEITOR (matar, l.905) já existia (comentário "Marca da Morte da Hel"), mas o ALIMENTADOR não; agora um DoT pode carregar o carimbo (a Marca da Morte)
 }
 
 // -------------------------------------------------- PRIMITIVAS: contadores
@@ -1296,6 +1298,18 @@ function fimTurno(st) {
       matar(st, null, u, { execucao: true });   // o próprio efeito 'livro' carrega naoRevive → o snapshot em matar sela o irrevivível
     }
   }
+  // §127 (Morrigan): execução DIFERIDA por LIMIAR — quem termina o turno com 'pressagio' e hp <= execLimiar é eliminado.
+  // SEGUNDO caso da família de execução diferida (o 1º é o Livro, timer-intrínseco). §83/§59: NÃO fundir os dois tempos
+  // (timer vs limiar-em-janela) enquanto forem só dois — a varredura dos 15 restantes (§127) NÃO achou um terceiro, então
+  // fica separado. CONSUMIDORA da marca (≠ carga do Livro): se o hp nunca cai, a marca expira inócua na regra 5 abaixo.
+  for (const u of l.units) {
+    const pg = ef(u, 'pressagio');
+    if (u.vivo && pg && pg.execLimiar != null && u.hp <= pg.execLimiar) {
+      if (imuneA(st, u, 'execucao')) { log(st, { tipo: 'imune', alvo: u.key, efeito: 'execucao' }); continue; }   // respeita a imunidade-a-execução (§89, Sun Wukong)
+      log(st, { tipo: 'efeito', alvo: u.key, efeito: 'pressagio' });
+      matar(st, null, u, { execucao: true });
+    }
+  }
   // regra 5 — durações descontam no FIM do turno de quem carrega o efeito
   for (const u of l.units) {
     u.efeitos = u.efeitos.map(e => ({ ...e, dur: e.dur - 1 })).filter(e => e.dur > 0);
@@ -1615,12 +1629,13 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         const base = danoBase(st, u, t, e, l);
         const feito = bater(st, u, t, base, e.kind || 'afetado', a.slot, { unico, classe: classeDe(st, u, a), ignoraInvuln: e.ignoraInvuln, ignoraPiso: e.ignoraPiso, semContra: e.semContra });   // §91 (Shiva): flags de "ignora" da habilidade fluem p/ o bater — ignoraInvuln (novo) e ignoraPiso (param existia). §105 (Lugh): semContra = "não pode ser contra-atacado"
         if (e.curaMetade) curar(st, u, Math.floor(feito / 2), u);   // dreno: o próprio atacante é o curador
+        if (e.curaPorAlvo) curar(st, u, e.curaPorAlvo, u);   // §127 (Hel milagre): "cura N por alvo atingido" — cura fixa por golpe (soma 5×alvos na área); o curador é o lançador
         // EXECUÇÃO (F1.3): caminho PRÓPRIO, não é dano — após o golpe, se hp <= N, ELIMINA via matar (que dispara
         // aoCair, atribui o matador, dá orbe ao Zeus). Fura o piso e o vidaExtra; respeita imunidade-a-execução.
         if (e.executaAbaixoDe != null && t.vivo && t.hp <= e.executaAbaixoDe && !imuneA(st, t, 'execucao') && (!e.execIf || condOK(e.execIf, u, t, st))) matar(st, u, t, { execucao: true });   // execIf (F1.6, Iara): filtro de STATUS na execução — "elimina só os Encharcados" (reusa condOK)
       }
       else if (e.t === 'heal') curar(st, t, e.v, u);   // curador = quem lança a habilidade
-      else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid, e.porContador || e.porContadorCampo || e.porContadorLado || e.porHpFaltante || e.porStatus || e.porAliadoCaido || e.porInimigoCaido ? e : null); }   // origem = o lançador; §114: se o dot carrega escalador, passa o próprio fx como spec (escalaContagem o lê no tique). Pacificar zera o DoT do pacificado (é dano que ele causaria)
+      else if (e.t === 'dot') { if (!ef(u, 'pacificado')) aplicarDot(st, t, e.nome, e.v, e.dur, u.uid, e.porContador || e.porContadorCampo || e.porContadorLado || e.porHpFaltante || e.porStatus || e.porAliadoCaido || e.porInimigoCaido ? e : null, !!e.naoRevive); }   // origem = o lançador; §114: se o dot carrega escalador, passa o próprio fx como spec (escalaContagem o lê no tique). §127 (Hel): naoRevive flui p/ o dot (Marca da Morte). Pacificar zera o DoT do pacificado
       else if (e.t === 'apply') {
         if (e.soSe && !condOK(e.soSe, u, t, st)) continue;   // F1.6 (Chaac): apply FILTRADO por status do alvo — atordoa só os Encharcados de uma área
         if (ef(t, 'invulneravel') && t.lado !== u.lado) { log(st, { tipo: 'bloqueio', alvo: t.key, motivo: 'invulneravel' }); continue; }
@@ -1688,7 +1703,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao' });
       if (e.provoca && alvos[0]) aplicar(st, alvos[0], { type: 'taunt', dur: e.dur, origem: u.uid });
     }
-    if (e.t === 'copiar') copiar(st, u, e);
+    if (e.t === 'copiar') copiar(st, u, e, alvos);
     if (e.t === 'fase') {
       // PRIMITIVA estado global Dia/Noite. `remove` (§94, Hou Yi "abater o Sol"): limpa a fase SELETIVAMENTE —
       // só se a fase atual for a nomeada (remove:'Dia' não toca a Noite). O modelo é UM `st.fase` global, sem dono,
@@ -1807,7 +1822,7 @@ function reviver(st, alvo, e) {
 }
 
 // PRIMITIVA copiar habilidade — executa uma habilidade de outra fonte sem pagar o custo
-function copiar(st, u, e) {
+function copiar(st, u, e, alvos = []) {
   if (e.fonte === 'ultimaHabilidadeAliada') {
     const ref = st.lados[u.lado].ultHabilidade;
     if (!ref) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'copiar' }); return; }
@@ -1815,6 +1830,14 @@ function copiar(st, u, e) {
     // alvo automático: o primeiro inimigo vivo (a cópia herda o alvo padrão da habilidade)
     const alvo = st.lados[1 - u.lado].units.find(x => x.vivo);
     aplicarFx(st, u, ref.fx, { alvo: ref.alvoSpec, slot: 'habilidade' }, alvo ? [alvo] : []);
+  }
+  else if (e.fonte === 'basicoAliado') {   // §127 (Tanuki): copia o BÁSICO de um aliado ESCOLHIDO (alvos[0]), pago pelo Tanuki. O executor (u) é o Tanuki; o alvo do golpe copiado é o 1º inimigo vivo (herda o alvo padrão do básico)
+    const ali = alvos[0]; const g = ali && kitDe(st, ali);
+    const bas = g && g.ab && g.ab.find(x => x.slot === 'basico');
+    if (!bas) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'copiar' }); return; }
+    log(st, { tipo: 'acao', origem: u.key, slot: 'basico' });
+    const alvo = st.lados[1 - u.lado].units.find(x => x.vivo);
+    aplicarFx(st, u, bas.fx, { alvo: bas.alvo, slot: 'basico' }, alvo ? [alvo] : []);
   }
 }
 

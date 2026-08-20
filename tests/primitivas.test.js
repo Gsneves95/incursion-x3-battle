@@ -1136,6 +1136,49 @@ console.log('== 32. §126: porDeficitAliados (piso 0) · alvoMaisDebuffs (compar
   console.log('  déficit com piso 0 · comparativo debuff>buff · condicional AoE por-alvo (o ramo mira só o alvo casado, não re-expande)');
 }
 
+// ------------------------------------------------------------ 33. Leva 2 do HOOK (§127): naoRevive-no-DoT (alimentador) · execução DIFERIDA por limiar · curaPorAlvo · copiar básico de aliado
+console.log('== 33. §127: DoT carrega naoRevive (o alimentador que faltava) · execução diferida (pressagio+limiar) · curaPorAlvo · copiar basicoAliado ==');
+{
+  // (a) naoRevive-no-DoT: o LEITOR (matar l.905) existia; o ALIMENTADOR (aplicarDot) não. Agora um DoT sela naoRevive
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1110);
+  let atk = st.lados[0].units[0], foe = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'marcaMorte', v: 10, dur: 2, naoRevive: true }], A('inimigo', 'habilidade'), [foe]);
+  ok(foe.dots[0] && foe.dots[0].naoRevive === true, `DoT carrega naoRevive (alimentador wireado) (${foe.dots[0] && foe.dots[0].naoRevive})`);
+  foe.hp = 8; E.bater(st, atk, foe, 15, 'afetado', 'basico', {});
+  ok(!foe.vivo && foe.naoRevive === true, `morto sob o DoT-naoRevive → selado (o leitor da l.905 agora tem quem o alimente) (${foe.naoRevive})`);
+  // um DoT comum (sem naoRevive) NÃO sela — regressão
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1111);
+  atk = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 2 }], A('inimigo', 'habilidade'), [foe]);
+  foe.hp = 8; E.bater(st, atk, foe, 15, 'afetado', 'basico', {});
+  ok(!foe.vivo && !foe.naoRevive, `DoT comum não sela naoRevive (${foe.naoRevive})`);
+
+  // (b) execução DIFERIDA por limiar (pressagio): no fimTurno, portador com hp <= execLimiar é executado; senão a marca é inócua
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1112);
+  let u = st.lados[0].units[0]; u.hp = 20;   // o portador está no LADO ATIVO (fimTurno processa st.ativo)
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'apply', eff: { type: 'pressagio', dur: 2, execLimiar: 24 } }], A('inimigo', 'habilidade'), [u]);
+  E.fimTurno(st);
+  ok(!u.vivo, `hp 20 ≤ 24 + pressagio → executado no fim do turno (vivo ${u.vivo})`);
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1113);
+  u = st.lados[0].units[0]; u.hp = 80;
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'apply', eff: { type: 'pressagio', dur: 2, execLimiar: 24 } }], A('inimigo', 'habilidade'), [u]);
+  E.fimTurno(st);
+  ok(u.vivo, `hp 80 > 24 → a marca é inócua, sobrevive (vivo ${u.vivo})`);
+
+  // (c) curaPorAlvo: cura fixa por alvo atingido na área (soma v × nº de golpes)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1114);
+  u = st.lados[0].units[0]; u.hp = 50;
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 10, escopo: 'todosInimigos', curaPorAlvo: 5 }], A('todosInimigos', 'milagre'), []);
+  ok(u.hp === 65, `curaPorAlvo 5 × 3 alvos = +15 (50→65) (${u.hp})`);
+
+  // (d) copiar basicoAliado: executa o Básico do aliado escolhido, pago pelo copiador (Xangô básico = 15)
+  st = E.novoEstado(['zeus', 'xango', 'zeus'], ['zeus', 'zeus', 'zeus'], 1115);
+  u = st.lados[0].units[0]; const ali = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  const h = foe.hp; E.aplicarFx(st, u, [{ t: 'copiar', fonte: 'basicoAliado' }], A('aliado', 'habilidade'), [ali]);
+  ok(h - foe.hp === 15, `copiar basicoAliado: o Machado Oxê (15) do Xangô cai no 1º inimigo (${h - foe.hp})`);
+  console.log('  DoT-naoRevive (alimentador) · execução diferida por limiar · curaPorAlvo · copiar básico de aliado escolhido');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

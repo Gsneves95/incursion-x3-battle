@@ -1,0 +1,55 @@
+{
+  "key": "hel",
+  "nome": "Hel",
+  "faccao": "Nórdica",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Metade Viva, Metade Morta",
+    "desc": "Em turnos pares, Hel recebe 10 de redução de dano; em turnos ímpares, suas curas curam +8.",
+    "fx": [
+      { "gatilho": "reducao", "v": 10, "estado": { "paridade": "par" } },
+      { "gatilho": "bonusCura", "v": 8, "estado": { "paridade": "impar" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Toque Gélido",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo; Hel cura 8.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "heal", "v": 8, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Domínio de Helheim",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Marca da Morte em 1 inimigo por 2 turnos: 10 de dano puro/turno e ele não pode ser revivido.",
+      "fx": [
+        { "t": "dot", "nome": "marcaMorte", "v": 10, "dur": 2, "naoRevive": true }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Colheita Fúnebre",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos, +5 por debuff ativo no time inimigo; Hel cura 5 por alvo atingido.",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos", "porStatus": { "v": 5, "categoria": "debuff", "onde": "timeInimigo" }, "curaPorAlvo": 5 }
+      ]
+    }
+  ]
+}

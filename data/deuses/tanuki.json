@@ -1,0 +1,54 @@
+{
+  "key": "tanuki",
+  "nome": "Tanuki",
+  "faccao": "Japonesa",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Fortuna",
+    "desc": "No início da partida, Tanuki ganha 1 orbe extra do seu elemento.",
+    "fx": [
+      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 1, "para": "Verdejante" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Pancada da Barriga",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Metamorfose",
+      "cost": { "Verdejante": 1 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Escolha: copia o Básico de um aliado, OU Tanuki fica Inalvejável por 1 turno.",
+      "opcoes": [
+        { "nome": "MÍMICA", "fx": [ { "t": "copiar", "fonte": "basicoAliado" } ] },
+        { "nome": "ILUSÃO", "fx": [ { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Golpe da Sorte",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "Escolha: 35 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +12 de dano por 2 turnos.",
+      "opcoes": [
+        { "nome": "MORTE", "fx": [ { "t": "dmg", "v": 35, "kind": "puro" } ] },
+        { "nome": "ROUBO", "fx": [ { "t": "roubaOrbe", "n": 2, "rouba": true } ] },
+        { "nome": "FORTUNA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "time" } ] }
+      ]
+    }
+  ]
+}

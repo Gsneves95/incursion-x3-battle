@@ -1,0 +1,53 @@
+{
+  "key": "morrigan",
+  "nome": "Morrigan",
+  "faccao": "Celta",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Forma de Corvo",
+    "desc": "Quando um inimigo é derrotado, Morrigan cura 15 e ganha 1 orbe de Umbra.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" }, { "t": "orbGain", "n": 1, "para": "Umbra" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Bico de Corvo",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Presságio de Morte",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Por 2 turnos, 1 inimigo não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } },
+        { "t": "apply", "eff": { "type": "pressagio", "dur": 2, "execLimiar": 24 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mental",
+      "nome": "As Três Irmãs",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "15 de dano a todos + Medo por 2 turnos; 25 nos profetizados.",
+      "fx": [
+        { "t": "dmg", "v": 15, "escopo": "todosInimigos", "seCond": { "quando": { "alvoMarca": "pressagio" }, "v": 25 } },
+        { "t": "apply", "eff": { "type": "medo", "dur": 2 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

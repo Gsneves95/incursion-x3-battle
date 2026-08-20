@@ -2140,6 +2140,87 @@ console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · K
   console.log('  Susanoo déficit+Combo-por-ataque · Kitsune reducao-por-Cauda+isca+Domina-condicional · Anúbis Atadura (antirevive + +2/atadura + Selado-AoE-por-alvo)');
 }
 
+console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morrigan (execução diferida) · Tanuki (copia básico) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- HEL ----
+  // básico 12 + Hel cura 8 (self)
+  let st = E.novoEstado(['hel', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1050); orbs(st.lados[0]);
+  let he = st.lados[0].units[0], foe = st.lados[1].units[0]; he.hp = 100;
+  let h = foe.hp; E.agir(st, he.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12 && he.hp > 100, `Toque Gélido: 12 + Hel se cura (dano ${h - foe.hp}, hp ${he.hp})`);
+  // passiva paridade: turno ÍMPAR (1) → sem reducao (curas +8); turno PAR → reducao 10
+  st = E.novoEstado(['hel', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1051);
+  he = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = he.hp; E.bater(st, foe, he, 20, 'afetado', 'basico', {}); ok(h - he.hp === 20, `turno ímpar (${st.turno}): sem reducao → sofre 20 (${h - he.hp})`);
+  st.turno = 2; h = he.hp; E.bater(st, foe, he, 20, 'afetado', 'basico', {}); ok(h - he.hp === 10, `turno par: reducao 10 → sofre 10 (${h - he.hp})`);
+  // habilidade Marca da Morte: DoT 10/turno + naoRevive (o alimentador §127)
+  st = E.novoEstado(['hel', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1052); orbs(st.lados[0]);
+  he = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  E.agir(st, he.uid, 'habilidade', [foe.uid]);
+  ok(foe.dots.some(d => d.nome === 'marcaMorte' && d.naoRevive), `Domínio de Helheim: DoT marcaMorte com naoRevive`);
+  foe.hp = 5; E.bater(st, st.lados[0].units[1], foe, 15, 'afetado', 'basico', {});
+  ok(!foe.vivo && foe.naoRevive === true, `caiu sob a Marca da Morte → não revive (${foe.naoRevive})`);
+  // milagre: 18 + 5/debuff no time inimigo; Hel cura 5 por alvo. Turno PAR p/ isolar do bonusCura (+8 em ímpar)
+  st = E.novoEstado(['hel', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1053); orbs(st.lados[0]); st.turno = 2;
+  he = st.lados[0].units[0]; he.hp = 50; const e = st.lados[1].units;
+  e[0].efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }); e[1].efeitos.push({ type: 'noHeal', dur: 3 });   // 2 debuffs no time (nenhum mexe no dano de entrada)
+  const hp0 = e.map(x => x.hp); E.agir(st, he.uid, 'milagre', []);
+  ok(e.every((x, i) => hp0[i] - x.hp === 28) && he.hp === 65, `Colheita Fúnebre: 18 + 5×2 debuffs = 28 a todos; Hel cura 5×3 = +15 (dano ${e.map((x, i) => hp0[i] - x.hp)}, hp ${he.hp})`);
+
+  // ---- MORRIGAN ----
+  // básico 12
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1054, 1); orbs(st.lados[1]);
+  let mo = st.lados[1].units[0]; foe = st.lados[0].units[0];
+  h = foe.hp; E.agir(st, mo.uid, 'basico', [foe.uid]); ok(h - foe.hp === 12, `Bico de Corvo: 12 (${h - foe.hp})`);
+  // habilidade + execução DIFERIDA: pressagio + hp≤24 no fim do turno → executa; senão inócua
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1055, 1); orbs(st.lados[1]);
+  mo = st.lados[1].units[0]; foe = st.lados[0].units[0]; foe.hp = 20;
+  E.agir(st, mo.uid, 'habilidade', [foe.uid]);
+  ok(!!E.ef(foe, 'noHeal') && !!E.ef(foe, 'pressagio'), `Presságio de Morte: noHeal + pressagio (limiar 24)`);
+  st.ativo = 0; E.fimTurno(st);   // fim do turno do lado do foe (hp 20 ≤ 24)
+  ok(!foe.vivo, `execução diferida: fim de turno com hp 20 ≤ 24 → eliminado (${foe.vivo})`);
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1056, 1); orbs(st.lados[1]);
+  mo = st.lados[1].units[0]; foe = st.lados[0].units[0]; foe.hp = 80;
+  E.agir(st, mo.uid, 'habilidade', [foe.uid]); st.ativo = 0; E.fimTurno(st);
+  ok(foe.vivo, `hp 80 > 24: a marca é inócua, sobrevive (${foe.vivo})`);
+  // passiva Forma de Corvo: inimigo cai → Morrigan cura 15 + 1 orbe Umbra
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1057, 1);
+  mo = st.lados[1].units[0]; mo.hp = 80; foe = st.lados[0].units[0]; foe.hp = 5;
+  const orbAntes = st.lados[1].orbs.Umbra || 0;
+  E.bater(st, mo, foe, 15, 'afetado', 'basico', {});
+  ok(mo.hp === 95 && (st.lados[1].orbs.Umbra || 0) === orbAntes + 1, `Forma de Corvo: inimigo caiu → Morrigan +15 HP (${mo.hp}) + 1 orbe Umbra`);
+  // milagre: 15 a todos + Medo; 25 nos profetizados (alvoMarca pressagio)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1058, 1); orbs(st.lados[1]);
+  mo = st.lados[1].units[0]; const me = st.lados[0].units; me[0].efeitos.push({ type: 'pressagio', dur: 2, execLimiar: 24 });
+  const mh = me.map(x => x.hp); E.agir(st, mo.uid, 'milagre', []);
+  ok(mh[0] - me[0].hp === 25 && mh[1] - me[1].hp === 15 && me.every(x => !!E.ef(x, 'medo')), `As Três Irmãs: 25 no profetizado, 15 nos outros, Medo em todos (${me.map((x, i) => mh[i] - x.hp)})`);
+
+  // ---- TANUKI ----
+  // passiva Fortuna: abertura → +1 orbe Verdejante
+  st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1059, 0);
+  ok(st.lados[0].orbs.Verdejante >= 1, `Fortuna: abertura dá 1 orbe Verdejante (${st.lados[0].orbs.Verdejante})`);
+  // básico 12
+  st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1060, 0); orbs(st.lados[0]);
+  let ta = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, ta.uid, 'basico', [foe.uid]); ok(h - foe.hp === 12, `Pancada da Barriga: 12 (${h - foe.hp})`);
+  // habilidade MÍMICA: copia o básico do aliado escolhido (Xangô = 15)
+  st = E.novoEstado(['tanuki', 'xango', 'zeus'], ['zeus', 'zeus', 'zeus'], 1061, 0); orbs(st.lados[0]);
+  ta = st.lados[0].units[0]; const alX = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, ta.uid, 'habilidade', [alX.uid], [0]);
+  ok(h - foe.hp === 15, `Metamorfose/MÍMICA: copia o Machado Oxê do Xangô (15) (${h - foe.hp})`);
+  // habilidade ILUSÃO: Tanuki fica Inalvejável
+  st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1062, 0); orbs(st.lados[0]);
+  ta = st.lados[0].units[0]; E.agir(st, ta.uid, 'habilidade', [ta.uid], [1]);
+  ok(!!E.ef(ta, 'inalvejavel'), `Metamorfose/ILUSÃO: Inalvejável`);
+  // milagre MORTE: 35 puro (fura escudo)
+  st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1063, 0); orbs(st.lados[0]);
+  ta = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.shield = 10;
+  h = foe.hp; E.agir(st, ta.uid, 'milagre', [foe.uid], [0]);
+  ok(h - foe.hp === 35 && foe.shield === 10, `Golpe da Sorte/MORTE: 35 puro fura o escudo (dano ${h - foe.hp}, escudo ${foe.shield})`);
+  console.log('  Hel paridade+Marca-da-Morte(naoRevive)+curaPorAlvo · Morrigan execução-diferida+aoCair+profetizado · Tanuki copia-básico+ilusão');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2295,6 +2376,9 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, mesmoMorto: true }), 'nã
 { const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 0, porContador: { nome: 'cauda', v: 5, passo: 3 } }); ok(validarDeus(g).length === 0, 'reducao.porContador (v:0 escalado) VÁLIDO (Kitsune): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx[0] = { gatilho: 'bonusDano', v: 10, quando: { alvoMaisDebuffs: true } }; ok(validarDeus(g).length === 0, 'alvoMaisDebuffs é condição VÁLIDA (Anúbis): ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, porDeficitAliados: { v: 6 } }), 'não pertence ao gatilho'); // porDeficitAliados só de bonusDano
+// §127 Leva 2: bonusCura.estado (o executor já lia; faltava o campo no schema) · dot.naoRevive · dot.nome novo (marcaMorte)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'bonusCura', v: 8, estado: { paridade: 'impar' } }); ok(validarDeus(g).length === 0, 'bonusCura.estado (paridade) VÁLIDO (Hel): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].fx = [{ t: 'dot', nome: 'marcaMorte', v: 10, dur: 2, naoRevive: true }]; ok(validarDeus(g).length === 0, 'dot marcaMorte + naoRevive VÁLIDO (Hel): ' + JSON.stringify(validarDeus(g))); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

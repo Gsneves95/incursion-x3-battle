@@ -50,6 +50,7 @@ const danosFx = fx => (fx || []).flatMap(e => e.t === 'dmg' ? [e.v]
 // cura do fx, RECURSANDO no `condicional` (§101, Chang'e): "cura 20; na NOITE cura 30" mora em entao/senao — os dois
 // valores SÃO a cura da habilidade (um ramo por vez). §118: recursa fundo (condicional aninhado).
 const curasFx = fx => (fx || []).flatMap(e => e.t === 'heal' ? [e.v]
+  : e.curaPorAlvo ? [e.curaPorAlvo]   // §127 (Hel): "cura N por alvo atingido" — o N é a cura da habilidade (rider no dmg)
   : (e.t === 'condicional' ? curasFx([...(e.entao || []), ...(e.senao || [])]) : []));
 
 // COMPARA prosa↔máquina. Puro (recebe os dados), para o teste exercitar com entradas sintéticas.
