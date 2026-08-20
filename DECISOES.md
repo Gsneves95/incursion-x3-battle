@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §122 — NOMEAR O BLOQUEIO é hipótese sobre um SLOT, não sobre o deus: a peça nomeada pode estar pronta e OUTRA travar
+
+**Segunda vez nesta forma exata (Krishna §111, Exu §121).** Quando o dono (ou eu) diz "esse deus trava no mecanismo X", isso
+é uma hipótese sobre UM slot — e a varredura §93 repetidamente mostra que o slot nomeado está PRONTO enquanto um slot que
+ninguém olhou é o que arrasta:
+- **Krishna (§111):** nomeado "a cola da Ação Perfeita" (habilidade). A cola saiu; a PASSIVA arrastou um rastreio de dano
+  que ninguém tinha olhado.
+- **Exu (§121):** nomeado "M2 / iniciativa" (passiva). A passiva saiu de graça (regra de setup); a HABILIDADE arrastou
+  mira-por-opção em lados opostos.
+
+**A regra:** o rótulo de bloqueio ("trava no X") aponta um SLOT, não o deus. Antes de aceitar que um deus fecha (ou trava)
+por causa de X, **traduza os QUATRO slots** — o slot nomeado é a hipótese mais visível, logo a menos informativa (§46: o
+nome do bloqueio não é evidência do bloqueio). O bloqueio real mora com frequência no slot que a prosa faz parecer trivial.
+Corolário operacional: a tradução-dos-quatro-antes-de-escrever (o degrau que não mente) é justamente o que expõe o slot
+não-nomeado — por isso ela vem ANTES do veredito de escrevibilidade, não depois.
+
+---
+
 ## §121 — M2: "age primeiro" = SER O STARTER (regra de setup, sem tocar o laço); Hermes fecha, Exu arrasta, Dagda ao fim
 
 **Última das quatro de sistema (§116), a que o dono adiou por ser a mais cara de errar (mexe no laço). O desenho antes de
