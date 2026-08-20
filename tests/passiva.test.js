@@ -1920,6 +1920,37 @@ console.log('== §118 Ares + Ammit (M3, consequência de abate): zeraCd-ao-abate
   console.log('  Ares: +HP-falta, cura, Massacre-volta-ao-abater · Ammit: +debuff, elimina-condicional, abatido-não-revive');
 }
 
+console.log('== §120 Izanagi (M4, extensão da imunidade): o TIME imune a Maldição + a contágio (mecânica) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico 12
+  let st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 997); orbs(st.lados[0]);
+  let iz = st.lados[0].units[0], foe = st.lados[1].units[0];
+  const h = foe.hp; E.agir(st, iz.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12, `Lança Ame-no-Nuboko: 12 (${h - foe.hp})`);
+  // habilidade Misogi: cleanse + cura 20 no aliado (sem Maldição → sem o +10 time)
+  st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 998); orbs(st.lados[0]);
+  iz = st.lados[0].units[0]; const al = st.lados[0].units[1]; al.hp = 40; al.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 });
+  E.agir(st, iz.uid, 'habilidade', [al.uid]);
+  ok(al.hp === 60 && !al.efeitos.some(x => x.type === 'dmgDown'), `Misogi: cleanse + cura 20 (40→60) (${al.hp})`);
+  // milagre Criação das Ilhas: time +20 escudo + regen 8
+  st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 999); orbs(st.lados[0]);
+  iz = st.lados[0].units[0]; const a2 = st.lados[0].units[1];
+  E.agir(st, iz.uid, 'milagre', []);
+  ok(a2.shield === 20 && E.ef(a2, 'regen') && E.ef(a2, 'regen').v === 8, `Criação das Ilhas: time +20 escudo + regen 8 (escudo ${a2.shield})`);
+  // passiva Fuga de Yomi: o TIME de Izanagi é imune ao contador de Maldição (básico do Izanami) E ao contágio (Praga)
+  st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['izanagi', 'tyr', 'tyr'], 1000); orbs(st.lados[0]);
+  const izm = st.lados[0].units[0], izg = st.lados[1].units[0], teamAlly = st.lados[1].units[1];
+  E.agir(st, izm.uid, 'basico', [izg.uid]);
+  ok(E.getContador(izg, 'maldicao') === 0, `Fuga de Yomi: Izanagi imune ao contador de Maldição (${E.getContador(izg, 'maldicao')})`);
+  // e o ALIADO de Izanagi também (escopo:time), inclusive contra o contágio da Praga
+  st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['izanagi', 'tyr', 'tyr'], 1001); orbs(st.lados[0]);
+  const izm2 = st.lados[0].units[0]; const e = st.lados[1].units; e[1].contadores.maldicao = 4;   // valor forçado num aliado
+  E.agir(st, izm2.uid, 'habilidade', []);   // Praga espalha — mas o time do Izanagi é imune
+  ok(E.getContador(e[0], 'maldicao') === 0 && E.getContador(e[2], 'maldicao') === 0, `contágio da Praga não alcança o time do Izanagi (${e.map(x => E.getContador(x, 'maldicao'))})`);
+  console.log('  Lança 12 · Misogi cleanse+cura20(+10 se Maldição) · Criação escudo20+regen8 · Fuga de Yomi: TIME imune a Maldição + contágio');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

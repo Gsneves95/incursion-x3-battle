@@ -1,0 +1,58 @@
+{
+  "key": "izanagi",
+  "nome": "Izanagi",
+  "faccao": "Japonesa",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Fuga de Yomi",
+    "desc": "O time é imune a Maldição de Yomi e a qualquer efeito que se espalhe.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "maldicao", "contagio" ], "escopo": "time" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Lança Ame-no-Nuboko",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Misogi",
+      "cost": { "Verdejante": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Remove todos os debuffs de 1 aliado e cura 20; se removeu uma Maldição, cura 10 no time.",
+      "fx": [
+        { "t": "cleanse" },
+        { "t": "heal", "v": 20 },
+        {
+          "t": "condicional",
+          "se": { "alvoContador": { "nome": "maldicao", "op": "min", "n": 1 } },
+          "entao": [ { "t": "heal", "v": 10, "escopo": "time" } ]
+        }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Criação das Ilhas",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time ganha 20 de Defesa Destrutível e regenera 8 por turno durante 3 turnos.",
+      "fx": [
+        { "t": "shield", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "regen", "v": 8, "dur": 3 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

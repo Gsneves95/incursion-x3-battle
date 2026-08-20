@@ -1028,6 +1028,33 @@ console.log('== 28. consequência de abate: zeraCd (aoCair inimigo, self) + abat
   console.log('  zeraCd só ao abater, no próprio · abateNaoRevive carimba o morto só se o matador tem a passiva');
 }
 
+// ------------------------------------------------------------ 29. extensões da imunidade (§120, M4/izanagi)
+console.log('== 29. imunidade: TEAM-scope (um aliado protege o lado) + MECÂNICA contágio (espalha) + bloqueia GANHAR o contador ==');
+{
+  const Ai = (alvo, slot) => ({ alvo: alvo || 'inimigo', slot: slot || 'habilidade' });
+  // TEAM-scope: izanagi (imune escopo:time) protege o ALIADO; Nezha (self) NÃO
+  let st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 982);
+  let ali = st.lados[0].units[1], atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'maldicao', v: 6, dur: 9 }], Ai('inimigo'), [ali]);
+  ok(!ali.dots.some(d => d.nome === 'maldicao'), 'escopo:time — o aliado do izanagi é imune (a imunidade varre o lado)');
+  st = E.novoEstado(['nezha', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 983);
+  ali = st.lados[0].units[1]; atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'dot', nome: 'queimadura', v: 8, dur: 3 }], Ai('inimigo'), [ali]);
+  ok(ali.dots.some(d => d.nome === 'queimadura'), 'escopo:self (Nezha) NÃO vaza p/ o aliado');
+  // MECÂNICA contágio: espalharContador pula o contagio-imune (izanagi)
+  st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 984);
+  const u0 = st.lados[0].units[0], u1 = st.lados[0].units[1];
+  u1.contadores.maldicao = 5;
+  E.espalharContador(st, [u0, u1], { nome: 'maldicao' }, u1);
+  ok(E.getContador(u0, 'maldicao') === 0, `contágio: izanagi (imune) não é alcançado pelo espalha (${E.getContador(u0, 'maldicao')})`);
+  // bloqueia GANHAR o contador (addContador via fx) — mas o consumo/decremento passa
+  st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 985);
+  const alvo = st.lados[0].units[0];   // izanagi (imune a maldicao)
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'contador', nome: 'maldicao', v: 1 }], Ai('inimigo'), [alvo]);
+  ok(E.getContador(alvo, 'maldicao') === 0, `imune a Maldição bloqueia GANHAR o contador (${E.getContador(alvo, 'maldicao')})`);
+  console.log('  team-scope varre o lado · self não vaza · contágio (mecânica) pula o imune · ganho de contador bloqueado');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

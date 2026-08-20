@@ -6,6 +6,60 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §120 — M4: a imunidade-a-MECÂNICA (contágio) é o irmão da execução (§84); izanagi fecha, yamato adia com a CONDICIONAL
+
+**Terceira das quatro de sistema (§116). O comentário do motor (l.148) nomeava as duas lacunas — e ENVELHECEU: dizia
+"não cobre execução/contágio", mas execução JÁ era coberta (Sun Wukong, §84, `'execucao'` em IMUNIZAVEIS).** Corrigido: a
+imunidade-a-MECÂNICA existe (execução); contágio é o IRMÃO — mesmo padrão, +1 valor (`'contagio'`) +1 site de enforcement
+(`espalharContador`). §115 na prática: o comentário era a fonte, e a fonte estava desatualizada; confirmei contra o código.
+
+**As duas lacunas NÃO são a mesma família (§46):**
+- **contágio (izanagi) = imunidade-a-MECÂNICA** — "imune a qualquer efeito que se espalhe". Cabe no lugar da execução (§84):
+  `'contagio'` em IMUNIZAVEIS + um `if (imuneA(u,'contagio')) continue` no `espalharContador`. O M4-real.
+- **condicional (yamato) = imunidade-a-controle-COM-condição** — família própria, ADIADA (ver abaixo).
+
+**izanagi FECHA com o M4 (§93) — mas arrastou DUAS extensões pequenas de imunidade, ambas coerentes com a família:**
+1. **team-scope:** "O TIME é imune" — o `imuneA` lia só o PRÓPRIO; agora VARRE o lado (escopo self default / 'time' protege
+   todos), espelhando `temIgnoraInalvejavel`/`bonusDanoDeclarativo`. `escopo` entrou nos campos do gatilho imunidade.
+2. **bloquear GANHAR o contador:** "imune a Maldição" — o `addContador` passou a respeitar `imuneA(nome)` (simétrico ao
+   `aplicarDot`), só no ganho (v>0). No-op para contadores não-imunizáveis (discoSolar/Combo). Junto com o dot-immunity
+   (maldicao ∈ DOTS) e o contágio, izanagi fica imune à Maldição por TODAS as vias (dot, contador direto, espalha).
+   E o "se removeu uma Maldição" do Misogi cai de graça: `condicional{alvoContador:maldicao}` LIDO APÓS o cleanse (o cleanse
+   tira o DOT, não o CONTADOR) → order-independent; as partes sempre-acontecem (cleanse+cura 20) HOISTED para fora do
+   condicional (senão o checar_cadeia conta a cura comum 2×).
+
+**yamato ADIADO (como o Khonshu no §118): a CONDICIONAL não é o único bloqueio.** "imune a controle com 15+ Combo" precisa
+de (a) o `imuneA` LER `estado` (§96-shape: gate universal que o motor ainda não lê na imunidade) E (b) uma condição de
+estado que leia o POOL de Combo (o `estadoOK.contador` lê o contador POR-UNIDADE, não o `contadorLado`). E o deus arrasta
+ainda "próximo ataque vira puro" (buff inexistente) e **`stripBuffs`** ("remove todos os buffs dele"). Construir a
+imuneA-lê-estado agora seria mecanismo sem consumidor shippável (§61) — sai com o yamato.
+
+**Correção do §113 (§115 de novo):** removi o `stripBuffs` afirmando "nenhum deus do catálogo remove TODOS os buffs". O
+yamato remove ("remove todos os buffs dele") — meu scan do catálogo no §113 não o viu. A AÇÃO segue certa (remover-até-o-
+consumidor-chegar, como o §113 previu: "volta com o consumidor"); a AFIRMAÇÃO estava errada. O `stripBuffs` volta com o yamato.
+
+**Izanagi (IMPL 78, FUNCIONAL 78):** Lança (12); Misogi (cleanse + cura 20; +10 no time se o aliado tinha Maldição);
+Criação das Ilhas (time +20 escudo + regen 8 por 3); Fuga de Yomi (o TIME imune a Maldição e a contágio). Isolamento em
+`primitivas §29` (team-scope varre o lado; self não vaza; contágio pula o imune; ganho de contador bloqueado); comportamento
+em `passiva §120`.
+
+---
+
+## §119 — A FAMÍLIA DE MORTE se parte por DIREÇÃO — 4 vezes é padrão: varra por direção ANTES de contar
+
+**Quarta vez que "algo relacionado a morte" se revelou não-um-mecanismo, mas vários por DIREÇÃO/sujeito.** As quatro:
+§76 (Khnum: `aoCair` self vs aliado — o caído não reage à própria queda); §81 (os sujeitos do `aoCair`: inimigo/self/
+qualquerInimigo/aliado); §89 (o `matar` e seus 5 leitores; `porExecucao` vs `aoCair`); §118 (M3: si [Ares] / o morto
+[Ammit] / o matador [Khonshu] — três direções, nenhum mecanismo único).
+
+**A regra:** toda vez que uma família nova toca a MORTE (cair, abater, executar, reviver, marcar-o-cadáver), a primeira
+pergunta não é "quantos consumidores" — é "**em quantas DIREÇÕES a reação vai?**" (sobre quem morre / quem matou / quem
+reage / o time de cada um). A morte tem 3+ participantes, e o rótulo da planilha quase sempre agrupa direções distintas
+como se fossem uma. Contar antes de varrer por direção super-conta (parece 1 mecanismo, são 3) OU sub-conta (parece 3
+consumidores de 1 mecanismo, são 3 mecanismos). Varra por direção primeiro; o número real cai depois.
+
+---
+
 ## §118 — M3 se DISSOLVEU: a "consequência de abate" não é um mecanismo, são três pequenos por DIREÇÃO (Ares, Ammit; Khonshu → M9)
 
 **A segunda das quatro de sistema (§116), e a varredura a desfez — §46 pela 4ª vez na família de morte.** Os três consumidores

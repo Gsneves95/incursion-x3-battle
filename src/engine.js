@@ -114,7 +114,7 @@ const GATILHOS_PASSIVA = {
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz', 'estado'], obrig: ['faz'] },               // faz roda a cada início de turno do dono (sessão 4). estado (§109): gateia por campo (Mnevis: só com Rá no time)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
-  imunidade:       { campos: ['a'], obrig: ['a'] },                            // imune a status nomeado(s) (sessão 5)
+  imunidade:       { campos: ['a', 'escopo'], obrig: ['a'] },                  // imune a status nomeado(s) (sessão 5). §120: escopo 'self' (default) OU 'time' (izanagi: o time inteiro imune) — imuneA varre o lado
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
   bonusCura:       { campos: ['v', 'quandoCura'], obrig: ['v'] },              // soma v à MAGNITUDE das curas no lado do dono (sessão 8)
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
@@ -142,13 +142,15 @@ const GATILHOS_PASSIVA = {
 // não diz se é matador-bound ou qualquer-morte. Zeus é inequívoco ("ao derrotar" = matador).
 const AOCAIR_QUEM = ['inimigo', 'self', 'qualquerInimigo', 'aliado'];
 const AOSERATINGIDO_QUEM = ['self', 'aliado'];   // sujeito do golpe que dispara: o próprio (medusa/boitata) ou um aliado (xango)
-// `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, ou o CORINGA
-// 'controle' (todo controle). Um só vocabulário, um só gatilho: a DECLARAÇÃO é uniforme ("imune a X"), só o
-// enforcement varia (controle bloqueia em aplicar; DoT em aplicarDot) — e enforcement é implementação, não
-// contrato. NÃO cobre imunidade a MECÂNICA (execução/contágio: viaja com a mecânica) nem CONDICIONAL (yamato/
-// guanyu: família própria). CORINGA 'controle' cobre controle FUTURO por construção — a F1.4 (Pacificar,
-// Torpor, Medo) amplia Jörmungandr e Ísis automaticamente (declarado, não surpresa).
-const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao'];   // 'execucao' = imunidade à MECÂNICA (Sun Wukong) — amplia o §5
+// `a` (o que a imunidade bloqueia) — sub-vocabulário FECHADO: tipos de controle, nomes de DoT, o CORINGA
+// 'controle' (todo controle), ou uma MECÂNICA ('execucao', 'contagio'). Um só vocabulário, um só gatilho: a
+// DECLARAÇÃO é uniforme ("imune a X"), só o enforcement varia (controle em aplicar; DoT em aplicarDot; execução
+// no matar; contágio em espalharContador) — e enforcement é implementação, não contrato. §120: a imunidade a
+// MECÂNICA já existia p/ execução (Sun Wukong, §84); contágio (izanagi) é o irmão — mesmo padrão, +1 valor +1 site.
+// FALTA ainda a CONDICIONAL (yamato: imune a controle COM 15+ Combo — imuneA precisa ler `estado`; adiado com o yamato).
+// CORINGA 'controle' cobre controle FUTURO por construção — a F1.4 (Pacificar, Torpor, Medo) amplia Jörmungandr e Ísis
+// automaticamente (declarado, não surpresa).
+const IMUNIZAVEIS = [...CONTROLES, ...DOTS, 'controle', 'execucao', 'contagio'];   // 'execucao'/'contagio' = imunidade à MECÂNICA (Sun Wukong / izanagi, §84/§120) — ampliam o §5
 // `faz` (efeito de um gatilho de turno) é PROPRIEDADE da família por-turno: o gatilho EMBRULHA um efeito,
 // não um escalar (como bonusDano/reducao). Reusa o vocabulário de fx, mas SÓ os que não exigem alvo escolhido
 // pelo jogador nem seletor — o alvo de um `faz` é FIXO: self (o dono) ou o lado. Conjunto fechado; abre
@@ -383,13 +385,18 @@ function temControle(u) { return u.efeitos.some(e => CONTROLES.includes(e.type))
 // imunidade declarativa (F1.2 sessão 5) — u é imune a `tag` (um tipo de CONTROLE ou nome de DoT). O coringa
 // 'controle' cobre TODO controle. Lê a passiva do dono; enforcement em aplicar (controle) e aplicarDot (DoT).
 function imuneA(st, u, tag) {
-  const g = kitDe(st, u); const p = g && g.passiva;
-  if (!p || !Array.isArray(p.fx)) return false;
   const ehControle = CONTROLES.includes(tag);
-  for (const f of p.fx) {
-    if (f.gatilho !== 'imunidade') continue;
-    if (f.a.includes(tag)) return true;
-    if (ehControle && f.a.includes('controle')) return true;   // coringa cobre todo controle
+  // §120 (izanagi): VARRE o lado do alvo — a imunidade pode ser do PRÓPRIO (escopo self, default) ou do TIME (escopo:'time',
+  // um aliado protege o lado). Espelha temIgnoraInalvejavel/bonusDanoDeclarativo. Self-scope (Nezha/Cuca) só protege o dono.
+  for (const dono of st.lados[u.lado].units) {
+    if (!dono.vivo) continue;
+    const g = kitDe(st, dono); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if (f.gatilho !== 'imunidade') continue;
+      if ((f.escopo || 'self') === 'self' && dono !== u) continue;   // escopo self: só o dono; time: qualquer aliado
+      if (f.a.includes(tag) || (ehControle && f.a.includes('controle'))) return true;   // coringa 'controle' cobre todo controle
+    }
   }
   return false;
 }
@@ -436,6 +443,7 @@ function aplicarDot(st, u, nome, v, dur, origem = null, escala = null) {   // es
 // Genéricos: somam, respeitam um teto opcional, podem ser lidos e consumidos.
 // O que cada contador FAZ (limiares, escalas) é decisão do kit; aqui só se guarda.
 function addContador(st, u, nome, v = 1, max = null) {
+  if (v > 0 && imuneA(st, u, nome)) { log(st, { tipo: 'imune', alvo: u.key, efeito: nome }); return getContador(u, nome); }   // §120 (izanagi): "imune a Maldição" bloqueia GANHAR o contador (simétrico ao aplicarDot). Só ganho (v>0); consumo/decremento passa. Só afeta contador imunizável (maldicao) — no-op p/ discoSolar/Combo/etc.
   const atual = u.contadores[nome] || 0;
   let novo = atual + v;
   if (max != null) novo = Math.min(novo, max);
@@ -483,6 +491,7 @@ function espalharContador(st, unidades, e, origem) {
   const teto = e.max != null ? e.max : Infinity;
   const m = Math.min(teto, vivas.reduce((mx, u) => Math.max(mx, getContador(u, e.nome)), 0));
   for (const u of vivas) {
+    if (imuneA(st, u, 'contagio')) { log(st, { tipo: 'imune', alvo: u.key, efeito: 'contagio' }); continue; }   // §120 (izanagi): imune à MECÂNICA de contágio ("qualquer efeito que se espalhe") — o spread não o alcança (irmão do Sun Wukong / execução, §84)
     const antes = getContador(u, e.nome);
     if (m > antes) {
       u.contadores[e.nome] = m;
