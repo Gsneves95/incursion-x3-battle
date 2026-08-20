@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §134 — VARREDURA DIRIGIDA da 5ª espécie (junta-não-ligada): LIMPA — e a lição é que juntas moram no SEAM do código novo
+
+**Antecipada a pedido do dono (a 5ª espécie apareceu 2× em 3 levas — Hel §127, Guan Yu §132 — frequente demais p/ esperar o fim da Fase 1). Não a varredura completa (O(pares)), mas a DIRIGIDA: cada campo que atravessa aplicação-e-consumo, confirmando que os dois lados concordam. Bounded.**
+
+**Campos verificados (escritor ↔ leitor, ambos concordam):** `protege` (intercepta/contraAtaca fx ↔ acharInterceptador + bater; fix §132), `naoRevive` (aplicarDot/apply ↔ matar; fix §127), `origem` (aplicar/aplicarDot ↔ aoAgirSobEfeito/refleteControle), `escala` (aplicarDot ↔ tique), `contra` (aplicações ↔ consumo/contraCasou), `contraClasse` (Atena via apply ↔ bater), `execLimiar` (apply ↔ fimTurno), `destino` (redirect ↔ bater), `acc/alvo/max` (armazenaDano+bater ↔ fimTurno), `vidaExtra` (fx ↔ matar), `danoAgora/danoAntes` (bater/iniciarTurno ↔ maiorDanoAntes), `ultHabilidade` (agir ↔ copiar), `curadoAgora/curadoAntes` (curar/iniciarTurno ↔ alvoCuradoAntes), `execLimiar`/`renasceu`/`pendente` (§117/§127). **NENHUMA junta nova.**
+
+**Um achado ADJACENTE (não é junta, mas vale a nota):** o campo `contra` é SOBRECARREGADO por gatilho — nas reducao/aoSerAtingido é um OBJETO (`{classe|elem|alcance|slot}`, casado por contraCasou); nas intercepta/redirect/contraAtaca é uma STRING (`'unico'|'todos'`, lida no consumo). Duas formas no mesmo nome de campo. Nenhum kit as cruza hoje, mas um autor que puser `contra:{alcance:'unico'}` numa intercepta (esperando casamento) seria lido como `contra==='unico'` (string) → falso silencioso. Registrado como dívida-de-forma (não junta): o nome `contra` faz dois trabalhos.
+
+**A LIÇÃO (mais afiada que "varra no fim da Fase 1"):** as duas juntas achadas estavam no SEAM de código NOVO — Hel (um LEITOR especulativo plantado sem alimentador) e Guan Yu (um campo `protege` novo cujo CONSUMO não o respeitava). O código assentado (F1.x, exercitado pelas suítes) não escondia juntas — uma junta ali já teria aparecido como kit que não funciona. **Juntas se concentram onde UMA metade é adicionada sem a outra; então o momento de checar os dois lados é NA HORA de adicionar um campo cross-boundary, não depois.** Corolário operacional adotado: ao abrir um campo que se escreve num lugar e se lê noutro, provar os DOIS lados no mesmo commit (foi o que o probe forçou no §132; agora é regra). A varredura completa O(pares) do fim da Fase 1 vira rede de segurança, não a defesa primária.
+
+**Resultado p/ o B4:** a rede está limpa antes das três construções. Pode seguir.
+
+---
+
 ## §133 — CERNUNNOS (M8) ADIADO para leva própria: o mecanismo mais pesado do balde não leva meia-medida
 
 **Decisão do dono, após a §132 mostrar que a Fera precisa ser ABATÍVEL (não só um timer).** O M8 (invocação-alvejável + respawn) é o mecanismo mais pesado do balde MECANISMO REAL: exige que invocações virem corpos que o inimigo mira e derruba — um subsistema que toca `alvosValidos`, o `bater` (dano EM invocação, não só DE invocação), a morte de invocação e a IA. As opções na mesa eram (a) Fera alvejável (fiel, pesada), (b) Fera-guarda (reúso do mecanismo de guarda-isca, mas adiciona papel defensivo que a prosa não pede) e (c) adiar.
