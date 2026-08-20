@@ -33,10 +33,10 @@
       "cost": { "Tempestade": 1 },
       "cd": 1,
       "alvo": "nenhum",
-      "desc": "Saci fica Inalvejável por 1 turno; ao voltar, remove 1 buff de um inimigo.",
+      "desc": "Saci fica Inalvejável por 1 turno; ao voltar, rouba 1 buff de um inimigo.",
       "fx": [
         { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
-        { "t": "agendar", "alvo": "nenhum", "agenda": [ { "t": "stripOne", "alvoHp": { "lado": "inimigo", "ext": "max" } } ] }
+        { "t": "agendar", "alvo": "nenhum", "agenda": [ { "t": "stripOne", "rouba": true, "alvoHp": { "lado": "inimigo", "ext": "max" } } ] }
       ]
     },
     {

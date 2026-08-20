@@ -2280,6 +2280,45 @@ console.log('== §130 B1 do MECANISMO REAL: Dionísio (negaOrbe + Bacanal em mas
   console.log('  Dionísio negaOrbe(selado)+Delírio+Bacanal-massa-via-M1 · Saci evade+contra (1 gatilho) + o resto compõe (mais leve que o balde)');
 }
 
+console.log('== §131 B2 do MECANISMO REAL: Loki (M5 realoca: rouba buffs + transfere debuffs) + evadeControle; Saci migrado ao roubo real ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- LOKI ----
+  // básico 15
+  let st = E.novoEstado(['loki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1080, 0); orbs(st.lados[0]);
+  let lo = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, lo.uid, 'basico', [foe.uid]); ok(h - foe.hp === 15, `Adaga Traiçoeira: 15 (${h - foe.hp})`);
+  // passiva Metamorfo: 1ª tentativa de controle falha, 2ª aplica
+  st = E.novoEstado(['loki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1081, 0);
+  lo = st.lados[0].units[0]; const atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [lo]);
+  ok(!E.ef(lo, 'atordoado'), `Metamorfo: 1ª tentativa de controle falha`);
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [lo]);
+  ok(!!E.ef(lo, 'atordoado'), `2ª tentativa aplica`);
+  // habilidade Ilusão: Inalvejável + redirect (golpe único no time → inimigo)
+  st = E.novoEstado(['loki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1082, 0); orbs(st.lados[0]);
+  lo = st.lados[0].units[0]; const sink = st.lados[1].units[0], ali = st.lados[0].units[1];
+  E.agir(st, lo.uid, 'habilidade', [sink.uid]);
+  ok(!!E.ef(lo, 'inalvejavel') && !!E.ef(lo, 'redirect'), `Ilusão: Inalvejável + redirect armado`);
+  const hs = sink.hp, hal = ali.hp; E.bater(st, st.lados[1].units[1], ali, 15, 'afetado', 'basico', { unico: true });
+  ok(hal - ali.hp === 0 && hs - sink.hp === 15, `golpe único no aliado é redirecionado ao inimigo (aliado ${hal - ali.hp}, sink ${hs - sink.hp})`);
+  // milagre Trama do Caos: rouba TODOS os buffs dos inimigos p/ Loki + transfere TODOS os debuffs do time p/ inimigos
+  st = E.novoEstado(['loki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1083, 0); orbs(st.lados[0]);
+  lo = st.lados[0].units[0]; const e = st.lados[1].units; const al2 = st.lados[0].units[1];
+  e[0].efeitos.push({ type: 'dmgUp', v: 8, dur: 3 }); e[1].efeitos.push({ type: 'regen', v: 5, dur: 3 });
+  al2.efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }); al2.dots.push({ nome: 'veneno', v: 6, dur: 2 });
+  E.agir(st, lo.uid, 'milagre', []);
+  ok(lo.efeitos.some(x => x.type === 'dmgUp') && lo.efeitos.some(x => x.type === 'regen'), `Trama: Loki rouba os buffs dos inimigos (${lo.efeitos.map(x => x.type)})`);
+  ok(!al2.efeitos.some(x => x.type === 'dmgDown') && al2.dots.length === 0 && e.every(x => x.efeitos.some(y => y.type === 'dmgDown') && x.dots.some(d => d.nome === 'veneno')), `Trama: time limpo de debuffs, inimigos recebem (incl. DoT)`);
+
+  // ---- SACI migrado (§131): "rouba 1 buff" agora é ROUBO real (o buff vai p/ Saci) ----
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1084, 0); orbs(st.lados[0]);
+  const sa = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.hp = 120; foe.efeitos.push({ type: 'dmgUp', v: 7, dur: 5 });
+  E.agir(st, sa.uid, 'habilidade', []); E.fimTurno(st); E.fimTurno(st);
+  ok(!E.ef(foe, 'dmgUp') && !!E.ef(sa, 'dmgUp'), `Saci migrado: "ao voltar" ROUBA o buff (sai do inimigo, entra no Saci) — não mais só remove`);
+  console.log('  Loki: evadeControle + Ilusão(redirect) + Trama(realoca buff→self, debuff→inimigos) · Saci migrado ao roubo real (§131, fecha a aproximação da §130)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2442,6 +2481,10 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, porDeficitAliados: { v: 6
 { const g = base(); g.passiva.fx.push({ gatilho: 'negaOrbe', a: ['selado'] }); ok(validarDeus(g).length === 0, 'negaOrbe a:[selado] VÁLIDO (Dionísio): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'evadeContra', v: 10 }); ok(validarDeus(g).length === 0, 'evadeContra v VÁLIDO (Saci): ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   // evadeContra sem v
+// §131 B2: evadeControle (sem payload) · realoca (categoria+de+para de vocabulário fechado)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'evadeControle' }); ok(validarDeus(g).length === 0, 'evadeControle sem payload VÁLIDO (Loki): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[2].fx = [{ t: 'realoca', categoria: 'buff', de: 'inimigos', para: 'self' }]; ok(validarDeus(g).length === 0, 'realoca (buff/inimigos/self) VÁLIDO (Loki): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[2].fx = [{ t: 'realoca', categoria: 'aura', de: 'inimigos', para: 'self' }]; ok(validarDeus(g).length > 0, 'realoca.categoria inválida RECUSADA'); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

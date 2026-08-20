@@ -1203,6 +1203,35 @@ console.log('== 34. §130: evadeContra (Saci — 1º golpe único falha + revida
   console.log('  evade 1º único + contra (área não consome) · dominar em massa (fogo amigo determinístico, sem escolha)');
 }
 
+// ------------------------------------------------------------ 35. B2 (§131): realoca (M5, um mecanismo/dois usos) · evadeControle · stripOne rouba
+console.log('== 35. §131: realoca buff(inimigos→self) + debuff(time→inimigos) · evadeControle (1ª tentativa falha) · stripOne rouba ==');
+{
+  // (a) realoca — MOVE todos os efeitos da categoria. Mesma primitiva, dois usos por parâmetro
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1130);
+  let u = st.lados[0].units[0], ali = st.lados[0].units[1], e = st.lados[1].units;
+  e[0].efeitos.push({ type: 'dmgUp', v: 8, dur: 3 }); e[1].efeitos.push({ type: 'regen', v: 5, dur: 3 });
+  E.aplicarFx(st, u, [{ t: 'realoca', categoria: 'buff', de: 'inimigos', para: 'self' }], A('nenhum', 'milagre'), []);
+  ok(u.efeitos.some(x => x.type === 'dmgUp') && u.efeitos.some(x => x.type === 'regen') && !e[0].efeitos.some(x => x.type === 'dmgUp'), `realoca buff inimigos→self: Loki ganha, inimigos perdem (${u.efeitos.map(x => x.type)})`);
+  ali.efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }); ali.dots.push({ nome: 'veneno', v: 6, dur: 2 });
+  E.aplicarFx(st, u, [{ t: 'realoca', categoria: 'debuff', de: 'time', para: 'inimigos' }], A('nenhum', 'milagre'), []);
+  ok(!ali.efeitos.some(x => x.type === 'dmgDown') && ali.dots.length === 0 && e.every(x => x.efeitos.some(y => y.type === 'dmgDown') && x.dots.some(d => d.nome === 'veneno')), `realoca debuff time→inimigos: time limpo, inimigos recebem (incl. DoT)`);
+
+  // (b) evadeControle (Loki): a 1ª tentativa de controle por turno falha; a 2ª aplica; refletido não conta
+  st = E.novoEstado(['loki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1131);
+  const lo = st.lados[0].units[0], atk = st.lados[1].units[0];
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], A('inimigo', 'habilidade'), [lo]);
+  ok(!E.ef(lo, 'atordoado'), `1ª tentativa de controle FALHA (${!!E.ef(lo, 'atordoado')})`);
+  E.aplicarFx(st, atk, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], A('inimigo', 'habilidade'), [lo]);
+  ok(!!E.ef(lo, 'atordoado'), `2ª tentativa aplica (proteção do turno já usada) (${!!E.ef(lo, 'atordoado')})`);
+
+  // (c) stripOne rouba: o buff removido vai p/ o lançador (roubo de UM, ≠ realoca de todos)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1132);
+  u = st.lados[0].units[0]; const foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgUp', v: 7, dur: 5 });
+  E.aplicarFx(st, u, [{ t: 'stripOne', rouba: true }], A('inimigo', 'habilidade'), [foe]);
+  ok(!E.ef(foe, 'dmgUp') && !!E.ef(u, 'dmgUp'), `stripOne rouba: o buff sai do inimigo e entra no lançador (foe ${!!E.ef(foe, 'dmgUp')}, u ${!!E.ef(u, 'dmgUp')})`);
+  console.log('  realoca (um mecanismo, dois usos) · evadeControle (1ª falha) · stripOne rouba (roubo de 1, distinto do realoca de todos)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

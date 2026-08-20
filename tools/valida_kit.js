@@ -94,6 +94,11 @@ function validarFx(f, ctx, errs) {
     else f.agenda.forEach((x, i) => validarFx(x, `${ctx}.agenda[${i}]`, errs));
     if ('alvo' in f && !V.alvos.includes(f.alvo)) errs.push(`${ctx}: agendar.alvo inválido "${f.alvo}" (válidos: ${V.alvos.join(', ')})`);
   }
+  if (f.t === 'realoca') {   // §131 (M5, Loki): categoria+de+para — os três obrigatórios e de vocabulário fechado
+    if (!['buff', 'debuff'].includes(f.categoria)) errs.push(`${ctx}: realoca.categoria inválida "${f.categoria}" (buff|debuff)`);
+    if (!['time', 'inimigos'].includes(f.de)) errs.push(`${ctx}: realoca.de inválido "${f.de}" (time|inimigos)`);
+    if (!['self', 'time', 'inimigos'].includes(f.para)) errs.push(`${ctx}: realoca.para inválido "${f.para}" (self|time|inimigos)`);
+  }
   for (const k of Object.keys(f)) if (!V.fxKeys.includes(k)) errs.push(`${ctx}: campo desconhecido no efeito: "${k}"`);
 }
 

@@ -1,0 +1,53 @@
+{
+  "key": "loki",
+  "nome": "Loki",
+  "faccao": "Nórdica",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Metamorfo",
+    "desc": "A primeira tentativa de controle contra Loki em cada turno falha.",
+    "fx": [
+      { "gatilho": "evadeControle" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Adaga Traiçoeira",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Ilusão",
+      "cost": { "Umbra": 1 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "Loki fica Inalvejável por 1 turno; o próximo ataque de alvo único contra o time é redirecionado a um inimigo.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
+        { "t": "redirect", "contra": "unico", "dur": 1 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Trama do Caos",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "Rouba todos os buffs dos inimigos e transfere todos os debuffs do time para eles.",
+      "fx": [
+        { "t": "realoca", "categoria": "buff", "de": "inimigos", "para": "self" },
+        { "t": "realoca", "categoria": "debuff", "de": "time", "para": "inimigos" }
+      ]
+    }
+  ]
+}

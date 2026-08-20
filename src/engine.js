@@ -84,6 +84,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'stripDef', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  'realoca',   // §131 (M5, Loki): MOVE todos os efeitos de uma categoria de um conjunto p/ outro. UM mecanismo parametrizado (categoria+de+para) que serve as DUAS metades: rouba buffs (buff, inimigos→self) E transfere debuffs (debuff, time→inimigos). §46: a direção/destino são PARÂMETROS, não dois códigos
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz. NÃO absorvido pelo agendador geral (§117): dispara em unidade MORTA + alimenta checarFim — folá-lo forçaria caso especial (§106 ao contrário)
   'agendar',   // §117 (M1, Kukulkán): AGENDA um payload de fx p/ o próximo turno do dono (lista pendente por-unidade, disparada no iniciarTurno). "ação telegrafada". Alvo/escopo fixados no lançamento; nenhuma escolha nova ao disparar
@@ -136,6 +137,7 @@ const GATILHOS_PASSIVA = {
   naoRevivivel:    { campos: [], obrig: [] },   // §123 (Mimir): o PRÓPRIO dono não pode ser revivido — self-direction do naoRevive (§119: a família de morte por eixo). Carimba naoRevive no MORTO ao cair, keyed pela própria passiva. Sem payload
   negaOrbe:        { campos: ['a'], obrig: ['a'] },   // §130 (Dionísio): enquanto o dono vive, INIMIGOS carregando os controles em `a` não geram orbe (estende a exclusão de renda, que já barra adormecido/submerso/dominado, p/ selado). Cross-side, lido no iniciarTurno do lado inimigo
   evadeContra:     { campos: ['v'], obrig: ['v'] },   // §130 (Saci): o PRIMEIRO golpe único por turno contra o dono FALHA (nulificado) e revida v ao atacante. Lido no bater (usa o flag primeiroPorTurno do §88). v = o contra-ataque
+  evadeControle:   { campos: [], obrig: [] },   // §131 (Loki): a PRIMEIRA tentativa de controle por turno contra o dono FALHA. Irmão do evadeContra mas no eixo CONTROLE (lido em aplicar, flag controleNoTurno). Sem payload
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -278,6 +280,7 @@ const VOCAB = {
     'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
     'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
     'massa',   // §130 (Dionísio): dominar em MASSA — cada inimigo vira vítima (alvo do fogo-amigo determinístico)
+    'categoria', 'de',   // §131 (realoca, M5): categoria ∈ buff|debuff, de ∈ time|inimigos (destino = `para`: self|time|inimigos)
     'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
     'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
     'alvoSenhor',   // F1.9 (§107, Hanuman): seletor AUTO do aliado designado (intercepta.protege), fallback mais ferido (alvoHp)
@@ -343,6 +346,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
     hp: 120, maxHp: 120, vivo: true, agiu: false,
     golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
+    controleNoTurno: false,   // §131 (Loki): já sofreu TENTATIVA de controle neste turno? Escrito em aplicar (evadeControle), resetado no iniciarTurno do dono. Gêmeo do golpeUnicoNoTurno no eixo controle
     danoAgora: 0, danoAntes: 0,   // §111 (Krishna): RASTREIO de dois tempos do DANO CAUSADO — 'dano neste turno' (escrito em bater) e 'dano no turno ANTERIOR' (leitor, atacanteMaiorDanoAntes). Promovidos no iniciarTurno p/ os DOIS lados, gêmeo do curadoAntes (§97)
     curadoAgora: false, curadoAntes: false,   // F1.9 (Tsukuyomi §97): RASTREIO de dois tempos — 'curado neste turno' (escrito em curar) e 'curado no turno ANTERIOR' (leitor, alvoCuradoAntes). Promovidos (agora→antes) no iniciarTurno p/ TODAS as unidades dos DOIS lados: é leitura OFENSIVA cruzando o lado, não ancorada ao dono (≠ §88)
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
@@ -425,6 +429,17 @@ function aplicar(st, u, eff) {
     const rf = p && Array.isArray(p.fx) && p.fx.find(f => f.gatilho === 'refleteControle' && f.a.includes(e.type));
     if (rf) { const atk = st.lados[1 - u.lado].units.find(x => x.uid === e.origem);
       if (atk && atk.vivo) { log(st, { tipo: 'efeito', origem: u.key, alvo: atk.key, efeito: e.type }); aplicar(st, atk, { type: e.type, dur: rf.dur || 1, origem: u.uid, refletido: true }); } }
+  }
+  // §131 (Loki, Metamorfo): a PRIMEIRA tentativa de controle por turno FALHA. ANTES das imunidades (a tentativa é
+  // o gatilho, como o refleteControle), mas DEPOIS do reflexo. Consome a proteção do turno na 1ª tentativa; as
+  // seguintes passam. `refletido` não conta (não é uma tentativa do inimigo).
+  if (CONTROLES.includes(e.type) && !e.refletido) {
+    const gv = kitDe(st, u), pv = gv && gv.passiva;
+    if (pv && Array.isArray(pv.fx) && pv.fx.some(f => f.gatilho === 'evadeControle') && !u.controleNoTurno) {
+      u.controleNoTurno = true;
+      log(st, { tipo: 'efeito', alvo: u.key, efeito: 'evade' });
+      return;
+    }
   }
   // regra 7 — proteção vence controle
   if (CONTROLES.includes(e.type) && ef(u, 'controlImmune')) {
@@ -1240,6 +1255,7 @@ function iniciarTurno(st) {
     if (!u.vivo) continue;
     u.agiu = false;
     u.golpeUnicoNoTurno = false;   // F1.9 (Bastet §88): RESETADOR — no turno do DONO, deixando o flag armado para o turno INIMIGO seguinte (quando o golpe chega). Resetar no turno do atacante daria a proteção 2× por rodada num hot-seat
+    u.controleNoTurno = false;   // §131 (Loki): mesmo resetador, eixo controle
     // regra 3 — DoT no início, ANTES de agir
     for (const d of u.dots) {
       const dano = d.v + ampDot(st, d.nome) + (d.escala ? escalaContagem(st, u, u, d.escala) : 0);   // amplificaDot (F1.8, Kagutsuchi): +v em todo tick de `nome` no campo. §114 (Izanami): escala lê o contador do PRÓPRIO portador (u) via o MESMO escalador do dano de habilidade — composição, não caminho próprio
@@ -1669,7 +1685,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
       else if (e.t === 'stripOne') {
         const i = t.efeitos.findIndex(x => BUFFS.includes(x.type));
-        if (i >= 0) { log(st, { tipo: 'efeito', alvo: t.key, efeito: t.efeitos[i].type, duracao: 0 }); t.efeitos.splice(i, 1); }
+        if (i >= 0) { const rem = t.efeitos[i]; log(st, { tipo: 'efeito', alvo: t.key, efeito: rem.type, duracao: 0 }); t.efeitos.splice(i, 1); if (e.rouba) aplicar(st, u, { ...rem, origem: u.uid }); }   // §131 (Saci migrado): rouba=true → o buff removido vai p/ o lançador (roubo de 1 buff, ≠ realoca que move TODOS)
       }
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
       else if (e.t === 'shield') { t.shield += e.v; log(st, { tipo: 'escudo', alvo: t.key, valor: e.v }); }
@@ -1702,6 +1718,25 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (e.t === 'armazenaDano') {
       aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano' });
+    }
+    if (e.t === 'realoca') {   // §131 (M5, Loki): MOVE efeitos de uma categoria da FONTE p/ o DESTINO. Coleta+remove da fonte, aplica ao destino (reusa aplicar/aplicarDot → respeita imunidades no destino). Um mecanismo, dois usos por parâmetro
+      const ehBuff = e.categoria === 'buff';
+      const membro = tipo => (ehBuff ? BUFFS : DEBUFFS).includes(tipo);
+      const fonte = (e.de === 'time' ? l.units : inimigos).filter(x => x.vivo);
+      const dest = e.para === 'self' ? [u] : (e.para === 'time' ? l.units.filter(x => x.vivo) : inimigos.filter(x => x.vivo));
+      const coletados = [];
+      for (const src of fonte) {
+        const fica = []; let tirou = 0;
+        for (const x of src.efeitos) { if (membro(x.type)) { coletados.push({ ...x }); tirou++; } else fica.push(x); }
+        src.efeitos = fica;
+        if (!ehBuff && src.dots.length) { for (const d of src.dots) coletados.push({ dot: true, ...d }); tirou += src.dots.length; src.dots = []; }   // "debuff" inclui DoT (como em statusCasou/alvoDebuff)
+        if (tirou) log(st, { tipo: 'efeito', alvo: src.key, efeito: e.categoria, duracao: 0 });
+      }
+      for (const dst of dest) for (const c of coletados) {
+        if (c.dot) aplicarDot(st, dst, c.nome, c.v, c.dur, u.uid, c.escala, !!c.naoRevive);
+        else aplicar(st, dst, { ...c, origem: u.uid });
+      }
+      continue;
     }
     if (e.t === 'agendar') {   // §117 (M1): guarda o payload no dono p/ disparar no próximo iniciarTurno dele. Alvo/escopo já fixados aqui (no lançamento) — o disparo não escolhe nada
       u.pendente.push({ agenda: e.agenda, alvo: e.alvo || 'nenhum' });

@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §131 — FASE B / B2 (Loki, M5): UM mecanismo parametrizado (realoca), não dois; e o stripBuffs volta com o YAMATO, não com o Loki
+
+**Loki, o M5. Traduzido antes de escrever. IMPL 90 → 91, FUNCIONAL 91.** As três perguntas do dono, respondidas contra o motor:
+
+**Q2 — o M5 é UM mecanismo ou dois?** UM, parametrizado. "Rouba buffs" e "transfere debuffs" têm direção e destino DIFERENTES (§46: a fratura mora aí), mas a OPERAÇÃO é idêntica: *mover todos os efeitos de uma categoria de um conjunto A para um conjunto B*. Construí `realoca {categoria, de, para}` — um código, dois usos: `{buff, inimigos, self}` (rouba) e `{debuff, time, inimigos}` (transfere). A direção/destino são PARÂMETROS, não dois caminhos (a varredura §78 de novo: um source parametrizado, não N). A remoção-da-fonte é INTERNA ao realoca (coleta+aplica+remove atômico), parametrizada por categoria — serve as DUAS metades.
+
+**Q3 — destino do roubo?** Para o LOKI (o lançador). A prosa dá só a FONTE ("rouba ... DOS inimigos", via "dos") e nenhum destino; "transfere ... PARA eles" dá o destino explícito (via "para"). Como "rouba" nomeia só a origem, o destino default é o sujeito (Loki). Logo: **cai de graça, sem mira nova** (para:'self'). §46-por-preposição de novo — a preposição decide a direção, e a AUSÊNCIA de "para" decide o destino.
+
+**Q1 — migração do Saci: FEITA na mesma leva.** O `stripOne` do Saci (§130, aproximado como "remove") virou roubo real: adicionei o flag `rouba` ao stripOne (o buff removido vai p/ o lançador) — ~1 linha no executor. Saci agora "rouba 1 buff" fielmente (o buff sai do inimigo e entra no Saci). Fecha a aproximação da §130 retroativamente, como a Afrodite fechou com o dominado (§99). NOTA: é um mecanismo DISTINTO do realoca — stripOne-rouba move UM buff (escolha/seletor), realoca move TODOS de uma categoria. Não se fundem (§59: dois usos com cardinalidade diferente não justificam abstração).
+
+**A CORREÇÃO do stripBuffs (o dono mandou distinguir política de argumento) — e uma inversão a mais:**
+- **Política certa, argumento errado (§113):** o §113 removeu o stripBuffs dizendo (a) política: "remove, não guarde — volta com o consumidor" e (b) argumento: "nenhum deus do catálogo o pede". A política ACERTOU (o produtor-órfão saiu e a peça voltaria com quem a usasse). O argumento ERROU — o Yamato pede "remove todos os buffs dele". **Distinção registrada: a política pode estar certa APESAR de o argumento que a sustentou estar errado.** Não confundir "a decisão foi boa" com "a razão dada foi boa".
+- **A INVERSÃO que o build revelou (correção à expectativa do dono):** o dono disse "o Loki traz de volta o stripBuffs". NÃO trouxe. O M5 do Loki é RELOCAÇÃO (realoca), e o realoca faz a própria remoção internamente — não precisa de um `stripBuffs` avulso. O `stripBuffs` PURO (remove-tudo SEM destino) é o que o **Yamato** pede (remover ≠ mover: Yamato só apaga os buffs do alvo, não os leva a lugar nenhum). Então **o stripBuffs volta com o YAMATO (B5), não com o Loki (B2)** — a §113 "volta com o consumidor" continua certa, mas o consumidor é outro. É o §122 de novo: nomear o consumidor é hipótese; o build achou o consumidor real num slot que ninguém tinha olhado.
+
+**Loki, o resto:** passiva `evadeControle` (a 1ª tentativa de controle por turno falha — gêmeo do `evadeContra` do Saci §130, no eixo controle: flag `controleNoTurno` em aplicar, ao lado do `golpeUnicoNoTurno` no bater); habilidade Ilusão = Inalvejável + `redirect` (§62, existente). Loki bate o balde MECANISMO REAL: realoca (novo) + evadeControle (novo) + reuso.
+
+---
+
+## §130.1 — DUAS DISTINÇÕES que evitam conclusões erradas: "piso do balde" ≠ "balde errado"; e catálogo que CORRIGE ≠ catálogo que CONFIRMA
+
+**Registradas a pedido do dono, porque cada uma bloqueia uma leitura errada tentadora.**
+
+**(1) "Menor que o balde sugere" NÃO significa "no balde errado" (Saci, §130).** O Saci é o PISO do MECANISMO REAL — o membro mais leve — mas ainda É MECANISMO REAL (precisou de um gatilho, não de um campo). A intuição do dono acertou a POSIÇÃO dentro do balde; a §116 acertou o BALDE. As duas convivem. A conclusão errada a evitar: "o Saci saiu leve → a §116 errou o balde dele". Não errou — estimar a posição-dentro-do-balde é um eixo diferente de estimar o balde, e a §124 (o erro não inverte de balde) segue intacta: nada saiu ABAIXO do próprio balde.
+
+**(2) Um catálogo que cresce pelo SILÊNCIO se CORRIGE; um que só cresce ao acertar se CONFIRMA (§130).** O tell do Saci foi achado porque o catálogo estava CEGO para ele (a varredura §128 não achou tell, e o Saci saiu leve mesmo assim → havia uma assinatura não-catalogada). Catalogar a partir do silêncio (a 14ª assinatura, evade-e-contra) é o catálogo detectando a PRÓPRIA lacuna — auto-correção. Se ele só ganhasse assinatura quando confirma um acerto, seria auto-confirmação (só validaria o que já sabe). **O que valida o catálogo como ferramenta é ele encontrar o que NÃO sabia, não repetir o que sabia.**
+
+---
+
 ## §130 — FASE B / B1 (Dionísio + Saci): Dionísio pesado (bate o balde), Saci o MAIS LEVE do balde — mas nenhum caiu abaixo dele
 
 **Primeira leva da Fase B, sequenciada por AFINIDADE de mecanismo: os dois que dependem do M1 (agendador, §117, já existe). Traduzi os dois juntos antes de escrever (§124). IMPL 88 → 90, FUNCIONAL 90.**
