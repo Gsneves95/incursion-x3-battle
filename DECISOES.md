@@ -6,6 +6,16 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §133 — CERNUNNOS (M8) ADIADO para leva própria: o mecanismo mais pesado do balde não leva meia-medida
+
+**Decisão do dono, após a §132 mostrar que a Fera precisa ser ABATÍVEL (não só um timer).** O M8 (invocação-alvejável + respawn) é o mecanismo mais pesado do balde MECANISMO REAL: exige que invocações virem corpos que o inimigo mira e derruba — um subsistema que toca `alvosValidos`, o `bater` (dano EM invocação, não só DE invocação), a morte de invocação e a IA. As opções na mesa eram (a) Fera alvejável (fiel, pesada), (b) Fera-guarda (reúso do mecanismo de guarda-isca, mas adiciona papel defensivo que a prosa não pede) e (c) adiar.
+
+**O dono escolheu (c) — adiar para leva própria.** Motivo: o mecanismo mais pesado não deve sair como meia-medida encaixada no fim de uma leva; merece desenho dedicado (o subsistema de invocação-alvejável desenhado com calma, provavelmente destravando outras invocações futuras de uma vez). **Cernunnos sai da fila da Fase B e vira leva solo**, depois do B4/B5. Registrado para não reaparecer como "o que faltou" — é adiamento deliberado, com endereço (o subsistema alvejável), não esquecimento.
+
+**Fase B revisada:** B3 fechou com o Guan Yu só (o M7 compôs); B4 (kali/shutendoji/raijin, os rebaixados) segue; B5 é o bloco final (dagda/khonshu/yamato/exu); e o **Cernunnos é a leva solo pós-B5**.
+
+---
+
 ## §132 — FASE B / B3-a (Guan Yu, M7): o delegado COMPÔS (3º §106); imuneA lê estado e DESTRAVA o Yamato; e o padrão §122 do acoplamento
 
 **Guan Yu, o M7. Traduzido antes de escrever. IMPL 91 → 92, FUNCIONAL 92.** As respostas às perguntas do dono, verificadas CONTRA o motor (não assumidas — a lição do stripBuffs):
