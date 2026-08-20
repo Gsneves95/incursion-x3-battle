@@ -83,6 +83,7 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 // some-o aqui (e um fxKey novo, se o efeito ler um campo novo) — mesma disciplina de "primitiva antes do deus".
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
+  'contraAtaca',   // §132 (Guan Yu, M7): aplica contraAtaca no dono, DELEGÁVEL — protege='alvo' arma o revide p/ quando um ALIADO escolhido for atingido (§106 3º caso: a mesma op do contraAtaca-self com sujeito trocado, como o intercepta.protege)
   'stripDef', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
   'realoca',   // §131 (M5, Loki): MOVE todos os efeitos de uma categoria de um conjunto p/ outro. UM mecanismo parametrizado (categoria+de+para) que serve as DUAS metades: rouba buffs (buff, inimigos→self) E transfere debuffs (debuff, time→inimigos). §46: a direção/destino são PARÂMETROS, não dois códigos
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
@@ -115,7 +116,7 @@ const GATILHOS_PASSIVA = {
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado', 'porContador'], obrig: ['v'] },   // porContador (§126, Kitsune): reducao ESCALADA por contador do dono ("a cada 3 Caudas, +5"); v pode ser 0 (fixo) + a escala   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz', 'estado'], obrig: ['faz'] },               // faz roda a cada início de turno do dono (sessão 4). estado (§109): gateia por campo (Mnevis: só com Rá no time)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
-  imunidade:       { campos: ['a', 'escopo'], obrig: ['a'] },                  // imune a status nomeado(s) (sessão 5). §120: escopo 'self' (default) OU 'time' (izanagi: o time inteiro imune) — imuneA varre o lado
+  imunidade:       { campos: ['a', 'escopo', 'estado'], obrig: ['a'] },        // imune a status nomeado(s) (sessão 5). §120: escopo 'self'/'time'. §132: estado gateia (Guan Yu: imune a Medo com 3 aliados vivos; Yamato: imune a controle com 15+ Combo) — imuneA lê estadoOK
   aoCair:          { campos: ['quem', 'faz'], obrig: ['quem', 'faz'] },        // quando alguém CAI, faz X (sessão 6)
   bonusCura:       { campos: ['v', 'quandoCura', 'estado'], obrig: ['v'] },     // soma v à MAGNITUDE das curas no lado do dono (sessão 8). estado (§127, Hel): gateia por campo/paridade — bonusCuraDeclarativo já lê f.estado; faltava só liberar o campo (comentário anti-envelhecido: o executor precedeu o schema)
   aCadaN:          { campos: ['n', 'faz', 'custoGratis'], obrig: ['n'] },      // cadência ABSOLUTA (turno % n): faz X OU zera custo (sessão 9)
@@ -264,7 +265,7 @@ const VOCAB = {
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
-    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados', 'curaMetade',   // porDeficitAliados (§126, Susanoo): scaler por déficit de unidades vivas — no dano ou no bonusDano
+    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados', 'porAliadoVivo', 'curaMetade',   // porDeficitAliados (§126, Susanoo) e porAliadoVivo (§132, Guan Yu): scalers por contagem de unidades vivas
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1+ unidades escolhidas; soMaior = só a maior recarga (Bragi/Brahma)
@@ -413,6 +414,7 @@ function imuneA(st, u, tag) {
     for (const f of p.fx) {
       if (f.gatilho !== 'imunidade') continue;
       if ((f.escopo || 'self') === 'self' && dono !== u) continue;   // escopo self: só o dono; time: qualquer aliado
+      if (f.estado && !estadoOK(f.estado, dono, st)) continue;   // §132 (Guan Yu): imunidade CONDICIONAL — gateia por estado (3 aliados vivos → imune a Medo). Destrava tb o Yamato (imune a controle com 15+ Combo). §116 pendência fechada
       if (f.a.includes(tag) || (ehControle && f.a.includes('controle'))) return true;   // coringa 'controle' cobre todo controle
     }
   }
@@ -894,10 +896,22 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
   // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
   const ca = ef(alvo, 'contraAtaca');
-  if (ca && unico && !semContraEf && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse)) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X (ex.: 'Físico'). §111: semContraEf também barra pela Ação Perfeita
+  if (ca && unico && !semContraEf && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse) && (!ca.protege || ca.protege === alvo.uid || ca.protege === 'time')) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X. §111: semContraEf barra pela Ação Perfeita. §132: um contraAtaca DELEGADO (protege=outro) NÃO self-dispara no portador — só o revide-por-aliado abaixo o usa
     log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'contraAtaca' });
     bater(st, alvo, atk, ca.v, 'afetado', 'contra', { semContra: true });
     if (ca.contra === 'unico') alvo.efeitos = alvo.efeitos.filter(e => e !== ca);
+  }
+  // §132 (Guan Yu, M7): contra-ataque DELEGADO — um ALIADO do alvo carrega contraAtaca com protege==alvo (ou 'time')
+  // e revida por ele. Sujeito trocado do contraAtaca-self acima (§106): o protetor bate, não o atingido. semContra corta o loop.
+  if (unico && !semContraEf && atk && atk.vivo && atk.lado !== alvo.lado) {
+    for (const prot of st.lados[alvo.lado].units) {
+      if (prot === alvo || !prot.vivo) continue;
+      const cd = ef(prot, 'contraAtaca');
+      if (cd && (cd.protege === alvo.uid || cd.protege === 'time') && (!cd.contraClasse || classe === cd.contraClasse)) {
+        log(st, { tipo: 'efeito', origem: prot.key, alvo: atk.key, efeito: 'contraAtaca' });
+        bater(st, prot, atk, cd.v, 'afetado', 'contra', { semContra: true });
+      }
+    }
   }
   // aoSerAtingido — reação passiva a SER ATINGIDO por golpe de habilidade inimiga. O SUJEITO do evento é o ATACANTE
   // (entregue pelo evento, não escolhido). quem:self = o alvo reage; quem:aliado = um aliado do alvo reage. `contra`
@@ -1719,6 +1733,12 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       aplicar(st, u, { type: 'armazenaDano', dur: e.dur, max: e.max, alvo: alvos[0] ? alvos[0].uid : null, acc: 0, origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, efeito: 'armazenaDano' });
     }
+    if (e.t === 'contraAtaca') {   // §132 (Guan Yu): arma o contra-ataque no dono. protege='alvo' → DELEGADO ao aliado escolhido (alvos[0]); 'time' → o lado; ausente → self (o próprio dono)
+      const protege = e.protege === 'time' ? 'time' : e.protege === 'alvo' ? (alvos[0] ? alvos[0].uid : u.uid) : u.uid;
+      aplicar(st, u, { type: 'contraAtaca', v: e.v, dur: e.dur, contra: e.contra || 'unico', protege, origem: u.uid });
+      log(st, { tipo: 'efeito', origem: u.key, efeito: 'contraAtaca' });
+      continue;
+    }
     if (e.t === 'realoca') {   // §131 (M5, Loki): MOVE efeitos de uma categoria da FONTE p/ o DESTINO. Coleta+remove da fonte, aplica ao destino (reusa aplicar/aplicarDot → respeita imunidades no destino). Um mecanismo, dois usos por parâmetro
       const ehBuff = e.categoria === 'buff';
       const membro = tipo => (ehBuff ? BUFFS : DEBUFFS).includes(tipo);
@@ -1846,6 +1866,7 @@ function escalaContagem(st, u, t, spec) {
   if (spec.porHpFaltante) add += porN(spec.porHpFaltante.v, u.maxHp - u.hp, spec.porHpFaltante.passo);   // Mula sem Cabeça: "+1 por 5 de HP perdido" (HP do próprio u)
   if (spec.porStatus) add += porN(spec.porStatus.v, contarStatus(st, u, t, spec.porStatus), spec.porStatus.passo);   // F1.8: "+N por debuff/regen/… no escopo"
   if (spec.porDeficitAliados) add += spec.porDeficitAliados.v * Math.max(0, st.lados[1 - u.lado].units.filter(x => x.vivo).length - st.lados[u.lado].units.filter(x => x.vivo).length);   // §126 (Susanoo): "+N por aliado a MENOS que o inimigo" — déficit de unidades vivas (piso 0). Escala pelo mesmo helper (§73)
+  if (spec.porAliadoVivo) add += spec.porAliadoVivo * st.lados[u.lado].units.filter(x => x.vivo).length;   // §132 (Guan Yu milagre): "+N por aliado vivo" — conta as unidades vivas do próprio lado (inclui o dono)
   return add;
 }
 function danoBase(st, u, t, e, l) {

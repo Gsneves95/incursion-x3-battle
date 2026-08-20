@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §132 — FASE B / B3-a (Guan Yu, M7): o delegado COMPÔS (3º §106); imuneA lê estado e DESTRAVA o Yamato; e o padrão §122 do acoplamento
+
+**Guan Yu, o M7. Traduzido antes de escrever. IMPL 91 → 92, FUNCIONAL 92.** As respostas às perguntas do dono, verificadas CONTRA o motor (não assumidas — a lição do stripBuffs):
+
+**Q1 — o M7 é composição? SIM, 3º caso do §106.** O `contraAtaca` era self (quem é atingido revida). Delegar é a MESMA operação com o sujeito trocado — exatamente o `intercepta.protege` (§107) e o `evadeControle` gêmeo do `evadeContra` (§131). Testei: o `contraAtaca` NÃO lia `protege` no consumo (era só self). Adicionei (a) um fx `contraAtaca` standalone com `protege:'alvo'|'time'` e (b) um segundo laço no bater que varre os aliados do atingido por um protetor. **Bug pego no probe (§115 de novo):** o check self-contraAtaca disparava mesmo com `protege` de OUTRO — o portador se contra-atacava quando ELE era atingido, não só quando o aliado era. Corrigido gateando o self-check por `(!protege || protege===self || protege==='time')`. Leitura nenhuma pegaria: o campo `protege` existia na aplicação mas o CONSUMO não o respeitava — outra junta-não-ligada (§129), agora fechada.
+
+**Q3 CONFIRMADO ANTES de assumir — imuneA lê estado, e isso DESTRAVA metade do Yamato.** O dono avisou "confirme antes de assumir, porque foi assim que errei o consumidor do stripBuffs". Confirmei: `imuneA` não lia `estado`; adicionei `if (f.estado && !estadoOK(...)) continue` (1 linha). Guan Yu ("imune a Medo com 3 aliados vivos") funciona, E a mesma linha atende o Yamato ("imune a controle com 15+ Combo", a pendência que o §116 marcou no comentário l.152). **Desta vez a hipótese de acoplamento se confirmou** — porque foi verificada, não assumida. O resto do Guan Yu compõe: reducao-com-estado (aliadosVivos, existente), `porAliadoVivo` (scaler novo, gêmeo do porDeficitAliados §126). Guan Yu é MECANISMO REAL LEVE (como o Saci §130): o eixo novo (delegar) compôs.
+
+**A LACUNA do Cernunnos (B3-b) — confirmada contra o motor, hipótese do dono NÃO se sustenta.** O dono perguntou onde mora o timer de respawn e supôs "se for no dono, é a lista `pendente` que já existe → M8 menor". Verifiquei: **o timer é o problema fácil; o difícil é a Fera ser ABATÍVEL.** `alvosValidos` mira só `units` — invocações NÃO estão lá, então o inimigo não consegue atingir uma invocação 'dano'. A Fera "30 de HP que cai" precisa ser um CORPO alvejável, e o modelo atual só deixa a `guarda`-isca morrer (interceptando, l.834), não uma invocação de dano. Então o M8 NÃO é só um timer: é invocação-alvejável + morte + respawn. **A hipótese "menor do que o nome" não se sustenta** — e (de novo) só o motor rodando mostrou isso, não a leitura. O timer em si pode morar no lado (a `invocacoes` já tica no iniciarTurno), NÃO no `pendente` do dono (invocação não é unidade; o pendente dispara em 1 turno, não 2). Levado ao dono como fork ANTES de construir.
+
+---
+
+## §132.1 — DOIS PADRÕES do dono, registrados: hipótese-de-acoplamento (§122 nesta forma) e o §46 no LIMITE (a preposição ausente)
+
+**(1) "X traz Y de volta" / "X trava por Z" é HIPÓTESE SOBRE O ACOPLAMENTO — e o acoplamento é o que só o build revela (2º caso do §122 nesta forma).** Duas vezes agora o dono nomeou o acoplamento errado:
+- **Exu (§121):** nomeado "trava por M2/iniciativa"; travava por mira-por-opção (a habilidade), não pelo M2.
+- **stripBuffs (§131):** nomeado "o Loki o traz de volta"; quem o traz é o Yamato (o realoca do Loki remove internamente).
+O padrão: quando eu (ou o dono) digo "X acopla com Y", isso é uma hipótese sobre uma LIGAÇÃO entre duas peças — e a ligação, por definição (§129, §115-forma-do-dono), é o que a leitura de qualquer peça isolada NÃO contém. **Corolário: toda afirmação de acoplamento ("traz de volta", "trava por", "destrava", "depende de") é hipótese até o build; verificar antes de sequenciar por ela.** (Foi o que salvou o Q3 do Guan Yu: confirmado, não assumido.)
+
+**(2) §46 no LIMITE: a prosa carrega informação na preposição que ela NÃO usa.** O destino do roubo do Loki (§131) foi decidido pela AUSÊNCIA de "para": "rouba dos inimigos" (só fonte) vs "transfere para eles" (destino explícito) → sem "para", o destino é o sujeito. **Regra para o catálogo de tells:** destino não-nomeado ⇒ destino = sujeito (o lançador). É a forma mais fina do §46 até agora — antes a fratura morava numa preposição PRESENTE (por-ataque × por-golpe, §126); agora mora numa preposição AUSENTE. A varredura por tell lê a frase inteira E o que ela deixa de dizer.
+
+---
+
 ## §131 — FASE B / B2 (Loki, M5): UM mecanismo parametrizado (realoca), não dois; e o stripBuffs volta com o YAMATO, não com o Loki
 
 **Loki, o M5. Traduzido antes de escrever. IMPL 90 → 91, FUNCIONAL 91.** As três perguntas do dono, respondidas contra o motor:

@@ -2319,6 +2319,38 @@ console.log('== §131 B2 do MECANISMO REAL: Loki (M5 realoca: rouba buffs + tran
   console.log('  Loki: evadeControle + Ilusão(redirect) + Trama(realoca buff→self, debuff→inimigos) · Saci migrado ao roubo real (§131, fecha a aproximação da §130)');
 }
 
+console.log('== §132 B3/Guan Yu (M7 delegado): Juramento (contra delegado) + Inabalável (imunidade condicional, destrava o Yamato) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // básico 15
+  let st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1090, 0); orbs(st.lados[0]);
+  let gy = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, gy.uid, 'basico', [foe.uid]); ok(h - foe.hp === 15, `Lâmina do Dragão Verde: 15 (${h - foe.hp})`);
+  // passiva Inabalável: 3 aliados vivos → imune a Medo + reducao 5; cai p/ 2 vivos
+  st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1091, 0);
+  gy = st.lados[0].units[0]; const en = st.lados[1].units[0];
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'medo', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [gy]);
+  h = gy.hp; E.bater(st, en, gy, 20, 'afetado', 'basico', {});
+  ok(!E.ef(gy, 'medo') && h - gy.hp === 15, `Inabalável (3 vivos): imune a Medo + reducao 5 (sofre ${h - gy.hp})`);
+  st.lados[0].units[2].vivo = false;
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'medo', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [gy]);
+  h = gy.hp; E.bater(st, en, gy, 20, 'afetado', 'basico', {});
+  ok(!!E.ef(gy, 'medo') && h - gy.hp === 20, `2 vivos: sem imunidade nem reducao (com Medo, sofre ${h - gy.hp})`);
+  // habilidade Juramento: ambos +8 + contra delegado 15 (o contra ganha o +8 do próprio Guan Yu → 23)
+  st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1092, 0); orbs(st.lados[0]);
+  gy = st.lados[0].units[0]; const ali = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  E.agir(st, gy.uid, 'habilidade', [ali.uid]);
+  ok(!!E.ef(gy, 'dmgUp') && !!E.ef(ali, 'dmgUp'), `Juramento: ambos ganham +8 de dano`);
+  const ha = foe.hp; E.bater(st, foe, ali, 15, 'afetado', 'basico', { unico: true });
+  ok(ha - foe.hp === 23, `atingir o aliado → Guan Yu contra-ataca 15 (+8 do próprio buff = 23) (${ha - foe.hp})`);
+  // milagre Investida: 15 + 8 por aliado vivo (3 vivos → 39)
+  st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1093, 0); orbs(st.lados[0]);
+  gy = st.lados[0].units[0]; const e = st.lados[1].units; const hp0 = e.map(x => x.hp);
+  E.agir(st, gy.uid, 'milagre', []);
+  ok(e.every((x, i) => hp0[i] - x.hp === 39), `Investida: 15 + 8×3 aliados vivos = 39 a todos (${e.map((x, i) => hp0[i] - x.hp)})`);
+  console.log('  Guan Yu: Inabalável (imunidade+reducao condicionais a 3 vivos) · Juramento (contra delegado) · Investida (porAliadoVivo)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2485,6 +2517,9 @@ err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   
 { const g = base(); g.passiva.fx.push({ gatilho: 'evadeControle' }); ok(validarDeus(g).length === 0, 'evadeControle sem payload VÁLIDO (Loki): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[2].fx = [{ t: 'realoca', categoria: 'buff', de: 'inimigos', para: 'self' }]; ok(validarDeus(g).length === 0, 'realoca (buff/inimigos/self) VÁLIDO (Loki): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[2].fx = [{ t: 'realoca', categoria: 'aura', de: 'inimigos', para: 'self' }]; ok(validarDeus(g).length > 0, 'realoca.categoria inválida RECUSADA'); }
+// §132 B3: imunidade.estado (condicional) · contraAtaca fx (delegado)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'imunidade', a: ['medo'], escopo: 'time', estado: { aliadosVivos: { op: 'min', n: 3 } } }); ok(validarDeus(g).length === 0, 'imunidade.estado (condicional) VÁLIDA (Guan Yu): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].fx = [{ t: 'contraAtaca', v: 15, protege: 'alvo', contra: 'unico', dur: 2 }]; ok(validarDeus(g).length === 0, 'contraAtaca fx delegado VÁLIDO (Guan Yu): ' + JSON.stringify(validarDeus(g))); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

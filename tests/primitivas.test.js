@@ -1232,6 +1232,40 @@ console.log('== 35. §131: realoca buff(inimigos→self) + debuff(time→inimigo
   console.log('  realoca (um mecanismo, dois usos) · evadeControle (1ª falha) · stripOne rouba (roubo de 1, distinto do realoca de todos)');
 }
 
+// ------------------------------------------------------------ 36. B3/Guan Yu (§132): contraAtaca DELEGADO · imuneA lê estado · porAliadoVivo
+console.log('== 36. §132: contraAtaca delegado (protege um aliado) · imuneA condicional (estado) · porAliadoVivo ==');
+{
+  // (a) contraAtaca DELEGADO: o protetor arma contraAtaca com protege=aliado; quem atinge o aliado leva o revide do PROTETOR
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1140);
+  let prot = st.lados[0].units[0], ali = st.lados[0].units[1], atk = st.lados[1].units[0];
+  E.aplicarFx(st, prot, [{ t: 'contraAtaca', v: 15, protege: 'alvo', contra: 'unico', dur: 2 }], A('aliado', 'habilidade'), [ali]);
+  ok((E.ef(prot, 'contraAtaca') || {}).protege === ali.uid, `protetor arma contraAtaca protege=aliado`);
+  let ha = atk.hp, hp = prot.hp; E.bater(st, atk, ali, 15, 'afetado', 'basico', { unico: true });
+  ok(ha - atk.hp === 15 && hp === prot.hp, `atingir o aliado → o PROTETOR revida 15 (atacante ${ha - atk.hp}); o protetor não é tocado`);
+  // o próprio protetor sendo atingido NÃO dispara (é protege=outro, não self) — sem dupla contagem
+  ha = atk.hp; E.bater(st, atk, prot, 15, 'afetado', 'basico', { unico: true });
+  ok(ha - atk.hp === 0, `atingir o PROTETOR não dispara o contra delegado (protege é do aliado) (${ha - atk.hp})`);
+
+  // (b) imuneA lê estado: imunidade CONDICIONAL por estado (3 aliados vivos)
+  st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1141);
+  const gy = st.lados[0].units[0], en = st.lados[1].units[0];
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'medo', dur: 2 } }], A('inimigo', 'habilidade'), [gy]);
+  ok(!E.ef(gy, 'medo'), `3 aliados vivos → imune a Medo (${!!E.ef(gy, 'medo')})`);
+  st.lados[0].units[2].vivo = false;   // 2 vivos → condição cai
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'medo', dur: 2 } }], A('inimigo', 'habilidade'), [gy]);
+  ok(!!E.ef(gy, 'medo'), `2 aliados vivos → imunidade cai, Medo aplica (${!!E.ef(gy, 'medo')})`);
+
+  // (c) porAliadoVivo: +v por aliado vivo do próprio lado
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1142);
+  const u = st.lados[0].units[0], e = st.lados[1].units[0];
+  let h = e.hp; E.aplicarFx(st, u, [{ t: 'dmg', v: 15, porAliadoVivo: 8 }], A('inimigo', 'basico'), [e]);
+  ok(h - e.hp === 39, `15 + 8×3 aliados vivos = 39 (${h - e.hp})`);
+  st.lados[0].units[1].vivo = false; h = e.hp;
+  E.aplicarFx(st, u, [{ t: 'dmg', v: 15, porAliadoVivo: 8 }], A('inimigo', 'basico'), [e]);
+  ok(h - e.hp === 31, `15 + 8×2 aliados vivos = 31 (${h - e.hp})`);
+  console.log('  contraAtaca delegado (protetor revida por aliado) · imuneA condicional por estado · porAliadoVivo');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
