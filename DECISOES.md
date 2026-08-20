@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §125 — TRADUÇÃO DOS 9 DO HOOK (antes de sequenciar): 6 seguram, 3 vazaram — e os 3 tells estavam TODOS na prosa
+
+**Traduzi os 9 do balde HOOK PEQUENO (§116) ANTES de qualquer sequenciamento (§124: bloco-antes-de-escrever é o instrumento de medida). Cada slot foi verificado contra o MOTOR RODANDO — as funções de dispatch inteiras (escalaContagem, condOK, estadoOK, reducaoDeclarativa, rodarNoAtor, fimTurno), não uma fatia (§115 evita o §113).**
+
+**Seguram como HOOK (6):** susanoo, hel, anubis, morrigan, tanuki, kitsune. Cada um pede um campo/termo/condição sobre framework existente:
+- **susanoo** — 1 scaler novo (`+6 por aliado a menos que o inimigo` = déficit-de-unidades). O feed de Combo NÃO vazou: "cada *ataque* gera 2" é escrevível hoje como fx `contador pool:'lado' v:2 max:20` nos 3 slots (por-ataque = por-ability). básico stripOne, habilidade multi-golpe §92, milagre consomeContadorLado — todos prontos.
+- **hel** — paridade já existe em estadoOK (reducao gateia); falta só `estado` no bonusCura (curas +8 em ímpares) + heal-por-alvo-atingido. Marca da Morte (DoT puro + naoRevive) já é nomeada no motor (l.894).
+- **anubis** — antiReviveContador(Atadura) + bonusDano porContador{onde:alvo} prontos; falta a condição comparativa `mais debuffs que buffs` + resolver a condicional-por-alvo em AoE (a lacuna §87 conhecida).
+- **morrigan** — aoCair, noHeal, marca `pressagio` (já em MARCAS) e `alvoMarca:pressagio` prontos; falta 1 leitor no fimTurno (portador de pressagio com hp≤24 → executa).
+- **tanuki** — milagre 100% pronto (opcoes dmg-puro/roubaOrbe/dmgUp); falta uma FONTE nova de `copiar` (o Básico de um aliado escolhido) + escolha-de-elemento no orbGain de abertura.
+- **kitsune** — dominar-com-limiar-de-contador pronto (condicional estado.contador §114); falta reducao-escalada-por-contador (reducaoDeclarativa não tem escalaContagem) + a isca-intercepta-de-time (o motor já ANTECIPA "isca" na l.791).
+
+**Vazaram para MECANISMO REAL (3):** kali, shutendoji, raijin. Não é campo — é comportamento novo:
+- **kali** — o milagre "ataca de graça por 12 **no fim do turno** por 2 turnos" é uma ação-recorrente-agendada no fimTurno (não é DoT: DoT fere o portador; isto ataca o inimigo). O resto da Kali é limpo/hook (passiva porInimigoCaido+aoCair; hab 1 scaler `por inimigo abaixo de 60`).
+- **shutendoji** — a habilidade quer, no `noAtor` reativo (aoAgirSobEfeito), lifesteal (`rouba 10 HP` = dmg+cura ao dono) E `roubaOrbe` reativo — rodarNoAtor só faz dmg/dot/apply. Era o risco pré-marcado pela §116 ("roubaOrbe reativo"); cruzou.
+- **raijin** — a passiva "cada **alvo atingido** gera 1 de Combo" é feed-de-pool POR GOLPE (precisa de gancho no `bater`, gatilho novo), não escrevível como fx fixo; e a habilidade "18/12/8" é dano posicional-decrescente (≠ split-igual §92). Era o outro risco pré-marcado; cruzou por dois motivos.
+
+**Os três tells estavam na prosa (§124 confirmado):** kali "ataca de graça **no fim do turno**", shutendoji "rouba HP e orbe **[quando ele agir]**", raijin "cada **alvo atingido** gera Combo" + "**18/12/8**". Assinaturas legíveis, todas.
+
+**Leituras para o dono:**
+1. **Taxa e direção iguais ao JÁ-DÁ:** ~1/3 vazou (3/9), SEMPRE um balde e SEMPRE para cima (nenhum HOOK acabou sendo JÁ-DÁ escrevível-limpo; o erro nunca inverteu). O teto-com-desconto-de-um-degrau (§124) segurou a terceira vez seguida.
+2. **A §116 já tinha pré-marcado 2 dos 3** (raijin, shutendoji) como "perto de escorregar". Acertou os dois. **Errou só o kali** — mas o tell do kali estava na prosa, então uma triagem tell-dirigida (§124) o teria pego. Isto é a prova do §124: catalogar o tell > descontar o balde.
+3. **O feed de Combo se PARTE:** a §116 nomeou "Susanoo + Raijin" como os dois geradores. Só o Raijin vaza — porque o tell separa por-*ataque* (Susanoo, escrevível hoje) de por-*golpe* (Raijin, gancho no bater). Mesma família de mecanismo, escrevibilidades opostas — §93 de novo, dentro de um par que a triagem tinha juntado.
+
+**Sugestão de sequência (o dono crava):** os 6 HOOK são levas curtas de 1 acréscimo cada; os 3 que vazaram (kali/shuten/raijin) descem para o balde MECANISMO REAL e entram na fila dos singletons (ao lado de M5–M9), não na franja de acréscimos pequenos.
+
+---
+
 ## §124 — A §116 é TETO COM DESCONTO DE UM DEGRAU (taxa + direção juntas); e o tell-na-prosa faz o teto MELHORAR, não só descontar
 
 **Fecho operacional da leva JÁ DÁ (§123). Três coisas que só valem registradas juntas:**
