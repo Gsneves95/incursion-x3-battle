@@ -1951,6 +1951,32 @@ console.log('== §120 Izanagi (M4, extensão da imunidade): o TIME imune a Maldi
   console.log('  Lança 12 · Misogi cleanse+cura20(+10 se Maldição) · Criação escudo20+regen8 · Fuga de Yomi: TIME imune a Maldição + contágio');
 }
 
+console.log('== §121 Hermes (M2, iniciativa como regra de setup): age primeiro (starter) + reducao·unico ==');
+{
+  // passiva iniciativa: o lado do Hermes ABRE (força o starter), mesmo contra o comeca sorteado
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['hermes', 'zeus', 'zeus'], 5, 0);
+  ok(st.starter === 1 && st.ativo === 1, `Hermes age primeiro: o lado dele abre (starter ${st.starter}), apesar de comeca=0`);
+  ok(E.totalOrbs(st.lados[1]) === 1, `e paga o custo de abertura como todo starter: 1 orbe (${E.totalOrbs(st.lados[1])})`);
+  // básico Golpe Alado: 2×8 = 16
+  st = E.novoEstado(['hermes', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 5, 0);
+  E.ELEMS.forEach(e => st.lados[0].orbs[e] = 9); st.lados[0].orbs.livre = 9;
+  let hrm = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, hrm.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 16, `Golpe Alado: 2 golpes de 8 = 16 (${h - foe.hp})`);
+  // passiva reducao·unico: golpe ÚNICO contra Hermes −5; ÁREA não
+  let hh = hrm.hp; E.bater(st, foe, hrm, 15, 'afetado', 'basico', { unico: true });
+  ok(hh - hrm.hp === 10, `golpe único contra Hermes: 15−5 = 10 (${hh - hrm.hp})`);
+  hh = hrm.hp; E.bater(st, foe, hrm, 15, 'afetado', 'basico', {});
+  ok(hh - hrm.hp === 15, `golpe de área NÃO é reduzido (só alcance único) (${hh - hrm.hp})`);
+  // habilidade Passo Alado: −1 nas recargas de 1 aliado
+  st = E.novoEstado(['hermes', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 5, 0);
+  E.ELEMS.forEach(e => st.lados[0].orbs[e] = 9); st.lados[0].orbs.livre = 9;
+  hrm = st.lados[0].units[0]; const al = st.lados[0].units[1]; al.cd.milagre = 4; al.cd.habilidade = 2;
+  E.agir(st, hrm.uid, 'habilidade', [al.uid]);
+  ok(al.cd.milagre === 3 && al.cd.habilidade === 1, `Passo Alado: −1 em todas as recargas do aliado (mil 4→3, hab 2→1) (${al.cd.milagre}/${al.cd.habilidade})`);
+  console.log('  age primeiro = starter (paga a abertura) · Golpe Alado 16 · reducao só do único · Passo Alado −1 recargas');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');

@@ -6,6 +6,49 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §121 — M2: "age primeiro" = SER O STARTER (regra de setup, sem tocar o laço); Hermes fecha, Exu arrasta, Dagda ao fim
+
+**Última das quatro de sistema (§116), a que o dono adiou por ser a mais cara de errar (mexe no laço). O desenho antes de
+qualquer linha mostrou que NÃO precisa tocar o laço — para dois dos três.**
+
+**LEITURA-DE-INTENÇÃO (§113), decidida pelo dono: "age primeiro" = LIDERAR a rodada, e no modelo 1-1 isso é SER O STARTER.**
+O laço é alternância estrita (`st.ativo` flipa, `st.turno++` quando volta ao starter) → o starter lidera TODA rodada,
+automaticamente. Então "age primeiro" (Hermes T1, Exu sempre) colapsa em "ser o starter" — uma regra de SETUP (`novoEstado`
+força `comeca`), NÃO uma mudança no laço. Dois motivos do dono: (1) o jogo JÁ precifica abrir como vantagem (o starter recebe
+1 orbe, não 3 — "desvantagem de iniciativa"), então liderar-sempre é a vantagem pretendida, com custo já pago; (2) golpe-extra
+quebraria os NOVE pontos que assumem alternância (DoT/orbes/recarga/durações/fase/curadoAntes/danoAntes/golpeUnico/contador
+de turno), o que prova que golpe-extra NUNCA esteve no modelo — se a prosa o quisesse, a estrutura de turno seria outra desde
+o início. **Gatilho de revisão:** se um dia o laço permitir turno extra, os três (Hermes/Exu/Dagda) voltam à mesa.
+
+**Simetria com o §113 (Nezha):** lá a letra era vacuamente VERDADEIRA (`u.agiu` sempre true no lançamento → "+10 sempre");
+aqui a letra (golpe-extra) é estruturalmente IMPOSSÍVEL (quebraria o laço). Duas formas de "a letra não pode ser o que diz",
+e nas duas a leitura correta é **a única que o modelo comporta** — não a mais literal.
+
+**A regra (regra de setup, ~8 linhas, ZERO no laço):** `novoEstado` checa a passiva `iniciativa` nos dois lados. Um só lado
+a tem → ele é o starter. **AMBOS têm → CANCELAM, e o `comeca` sorteado (o param) vale** (empate DETERMINÍSTICO — cancelar é
+mais legível que sortear entre dois efeitos, e não injeta aleatoriedade nova). Nenhum → baseline intacto. O custo de abertura
+(1 orbe) segue para quem ganhar o starter por passiva — se não seguisse, a passiva seria mais forte que a prosa.
+
+**§93: a regra fecha o HERMES, mas o EXU ARRASTA (e não pelo M2).** Hermes fecha limpo (Golpe Alado 2×8; Passo Alado cdShift;
+Roubo Divino roubaOrbe+stripOne; passiva iniciativa + reducao·único — tudo mecanismo-único). O EXU tem a passiva satisfeita
+pela regra, MAS a habilidade "ABRIR (1 aliado zera recarga) OU FECHAR (trava Hab/Mil de 1 inimigo)" arrasta **mira-por-opção
+em lados OPOSTOS** (ABRIR mira aliado, FECHAR mira inimigo — alvo único que muda de lado conforme a opção). O `opcoes` de hoje
+é escopo-based (Lugh: todosInimigos/time, sem escolha de alvo único); `cdShift{unidade}` bate em TODOS os `alvos` (sem idx);
+`'aliado+inimigo'` são DOIS alvos, não "um de cada lado". Não compõe sem um mecanismo novo de mira-por-opção. **Exu ADIADO**
+(como Khonshu §118 / yamato §120 — passiva pronta, outro slot arrasta). Inverteu a expectativa "dois deuses por uma regra":
+a regra rende UM (Hermes); o Exu espera a mira-por-opção.
+
+**Dagda ao FIM (bloco final), com o loop-reorder e o M6.** "O time age primeiro no PRÓXIMO turno" é o único que MID-MATCH
+reordena o laço (turno-duplo/pulo → quebra os nove pontos); + arrasta o M6 (buff-suspension). Adiado até os últimos kits, para
+o bug-no-laço (se houver) vir isolado, não confundido com escrita de kit.
+
+**Hermes (IMPL 79, FUNCIONAL 79).** Isolamento em `primitivas §30` (um lado abre; ambos cancelam; nenhum = baseline; custo de
+abertura preservado); comportamento em `passiva §121`. **BLOCO FINAL pendente (para sequenciar quando os ~21 kits restantes
+estiverem escritos): Dagda (M2-reorder + M6), Khonshu (M3-marca-retaliação + M9), yamato (M4-condicional + próximo-golpe-puro +
+stripBuffs), Exu (mira-por-opção).**
+
+---
+
 ## §120 — M4: a imunidade-a-MECÂNICA (contágio) é o irmão da execução (§84); izanagi fecha, yamato adia com a CONDICIONAL
 
 **Terceira das quatro de sistema (§116). O comentário do motor (l.148) nomeava as duas lacunas — e ENVELHECEU: dizia

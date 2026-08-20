@@ -1055,6 +1055,26 @@ console.log('== 29. imunidade: TEAM-scope (um aliado protege o lado) + MECÂNICA
   console.log('  team-scope varre o lado · self não vaza · contágio (mecânica) pula o imune · ganho de contador bloqueado');
 }
 
+// ------------------------------------------------------------ 30. iniciativa (§121, M2/Hermes/Exu): "age primeiro" = ser o starter, regra de SETUP
+console.log('== 30. iniciativa: um lado com a passiva ABRE (força o starter); ambos CANCELAM (comeca sorteado vale); o custo de abertura segue ==');
+{
+  // UM lado com iniciativa → ABRE, mesmo contra o comeca sorteado
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['hermes', 'zeus', 'zeus'], 5, 0);
+  ok(st.starter === 1 && st.ativo === 1, `iniciativa no lado 1 → ele abre apesar de comeca=0 (starter ${st.starter})`);
+  ok(E.totalOrbs(st.lados[1]) === 1 && E.totalOrbs(st.lados[0]) === 0, `o starter-por-passiva paga o custo de abertura (1 orbe, não 3) (${E.totalOrbs(st.lados[1])})`);
+  st = E.novoEstado(['hermes', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 5, 1);
+  ok(st.starter === 0, `iniciativa no lado 0 → ele abre apesar de comeca=1 (starter ${st.starter})`);
+  // AMBOS os lados com iniciativa → CANCELAM (determinístico), o comeca SORTEADO vale
+  st = E.novoEstado(['hermes', 'zeus', 'zeus'], ['hermes', 'zeus', 'zeus'], 5, 1);
+  ok(st.starter === 1, `ambos com iniciativa → cancelam, comeca=1 sorteado vale (${st.starter})`);
+  st = E.novoEstado(['hermes', 'zeus', 'zeus'], ['hermes', 'zeus', 'zeus'], 5, 0);
+  ok(st.starter === 0, `ambos com iniciativa → comeca=0 sorteado vale (${st.starter})`);
+  // NENHUM → comeca sorteado intacto (regressão: a regra não muda o baseline)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 5, 1);
+  ok(st.starter === 1, `nenhum com iniciativa → comeca sorteado (1) intacto (${st.starter})`);
+  console.log('  um lado abre · ambos cancelam (sorteio vale) · nenhum = baseline · custo de abertura preservado');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -1,0 +1,51 @@
+{
+  "key": "hermes",
+  "nome": "Hermes",
+  "faccao": "Grega",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Mensageiro dos Deuses",
+    "desc": "Hermes age primeiro no turno 1; ataques de alvo único contra ele causam 5 menos de dano.",
+    "fx": [
+      { "gatilho": "iniciativa" },
+      { "gatilho": "reducao", "v": 5, "contra": { "alcance": "unico" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Golpe Alado",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "2 golpes de 8 em 1 inimigo (16 total).",
+      "fx": [ { "t": "dmg", "v": 8, "golpes": 2 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Passo Alado",
+      "cost": { "Tempestade": 1 },
+      "cd": 1,
+      "alvo": "aliado",
+      "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno.",
+      "fx": [ { "t": "cdShift", "unidade": true, "v": -1 } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Roubo Divino",
+      "cost": { "Tempestade": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Rouba 2 orbes do inimigo e remove 1 buff de cada inimigo.",
+      "fx": [
+        { "t": "roubaOrbe", "n": 2, "rouba": true },
+        { "t": "stripOne", "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

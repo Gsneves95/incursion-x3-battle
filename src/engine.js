@@ -132,6 +132,7 @@ const GATILHOS_PASSIVA = {
   ignoraInalvejavel:{ campos: ['escopo'], obrig: [] },   // F1.9 (Hou Yi escopo:self; Boitatá escopo:time): o dono (ou o time) PODE mirar inimigos Inalvejáveis — override de MIRA, não de dano. §84 decisão c (ponto passivo; o pontual é a flag de habilidade)
   porExecucao:     { campos: ['faz'], obrig: ['faz'] },   // F1.9 (Yan Wong §89): quando um INIMIGO morre por EXECUÇÃO (qualquer — Livro, executaAbaixoDe), o dono faz X (1 orbe). Leitura LITERAL de "por execução": qualquer, não só a do dono
   abateNaoRevive:  { campos: [], obrig: [] },   // §118 (M3, Ammit): quem o DONO abate não revive de forma alguma — carimba naoRevive no MORTO (lido no matar, keyed pelo matador). §81 sujeito C. Sem payload: a consequência é o carimbo
+  iniciativa:      { campos: [], obrig: [] },   // §121 (M2, Exu/Hermes): "age primeiro" = LIDERAR a rodada = SER O STARTER (no modelo 1-1, leitura-de-intenção §121). Regra de SETUP (novoEstado força comeca), NÃO toca o laço. Sem payload
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -367,6 +368,12 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
       { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0, contadores: {} },
     ],
   };
+  // §121 (M2): iniciativa PERMANENTE (Exu/Hermes) força o starter no SETUP — "age primeiro" = liderar a rodada = ser o
+  // starter (modelo 1-1). Um só lado com iniciativa → ele abre. AMBOS → CANCELAM, e o `comeca` sorteado (o param) vale
+  // (empate determinístico, sem nova aleatoriedade). O custo de abertura (1 orbe, não 3) segue valendo p/ quem ganhar o starter.
+  const iniA = temIniciativa(st, 0), iniB = temIniciativa(st, 1);
+  if (iniA && !iniB) comeca = 0; else if (iniB && !iniA) comeca = 1;
+  st.ativo = comeca; st.starter = comeca;
   log(st, { tipo: 'turno', turno: 1, lado: comeca });   // a visão traduz lado -> Você/CPU/Jogador N por modo
   iniciarTurno(st);
   return st;
@@ -1368,6 +1375,14 @@ function temIgnoraInalvejavel(st, u) {
     }
   }
   return false;
+}
+// §121 (M2): um lado tem iniciativa PERMANENTE (Exu/Hermes: "age primeiro")? Lido só no SETUP (novoEstado) p/ escolher o
+// starter — nunca no laço. Todas as unidades estão vivas na abertura, então sem checagem de vivo.
+function temIniciativa(st, lado) {
+  return st.lados[lado].units.some(u => {
+    const g = kitDe(st, u), p = g && g.passiva;
+    return p && Array.isArray(p.fx) && p.fx.some(f => f.gatilho === 'iniciativa');
+  });
 }
 function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
   const passos = a.passos || passosDe(u, a);
