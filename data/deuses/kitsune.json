@@ -1,0 +1,54 @@
+{
+  "key": "kitsune",
+  "nome": "Kitsune",
+  "faccao": "Japonesa",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Yokai Ancestral",
+    "desc": "Kitsune ganha 1 Cauda a cada 2 turnos (máx. 9); a cada 3 Caudas, recebe 5 de redução de dano.",
+    "fx": [
+      { "gatilho": "aCadaN", "n": 2, "faz": [ { "t": "contador", "nome": "cauda", "v": 1, "max": 9 } ] },
+      { "gatilho": "reducao", "v": 0, "porContador": { "nome": "cauda", "v": 5, "passo": 3 } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Fogo-fátuo",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Ilusão da Raposa",
+      "cost": { "Umbra": 1 },
+      "cd": 1,
+      "alvo": "nenhum",
+      "desc": "Cria uma isca que absorve o próximo ataque de alvo único contra o time; +1 Cauda.",
+      "fx": [
+        { "t": "intercepta", "protege": "time", "contra": "unico", "dur": 99 },
+        { "t": "contador", "nome": "cauda", "v": 1, "max": 9, "alvo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Nove Caudas",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "12 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno.",
+      "fx": [
+        { "t": "dmg", "v": 12, "escopo": "todosInimigos", "porContador": { "onde": "self", "nome": "cauda", "v": 3, "passo": 1 } },
+        { "t": "condicional", "se": { "contador": { "nome": "cauda", "op": "min", "n": 5 } }, "entao": [ { "t": "dominar", "dur": 1 } ] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "key": "anubis",
+  "nome": "Anúbis",
+  "faccao": "Egípcia",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Pesador de Almas",
+    "desc": "Inimigos com Atadura não podem ser revividos e recebem +2 de dano por Atadura.",
+    "fx": [
+      { "gatilho": "antiReviveContador", "contador": "atadura" },
+      { "gatilho": "bonusDano", "v": 0, "escopo": "time", "porContador": { "onde": "alvo", "nome": "atadura", "v": 2 } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Toque do Embalsamador",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo + 1 Atadura.",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "contador", "nome": "atadura", "v": 1 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Pesagem do Coração",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 25 de dano.",
+      "fx": [
+        { "t": "condicional", "se": { "alvoMaisDebuffs": true },
+          "entao": [ { "t": "apply", "eff": { "type": "atordoado", "dur": 1 } }, { "t": "contador", "nome": "atadura", "v": 2 } ],
+          "senao": [ { "t": "dmg", "v": 25 } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mental",
+      "nome": "Sentença do Duat",
+      "cost": { "Umbra": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "+2 Ataduras em todos os inimigos; quem chegar a 4 Ataduras fica Selado por 2 turnos.",
+      "fx": [
+        { "t": "contador", "nome": "atadura", "v": 2, "escopo": "todosInimigos" },
+        { "t": "condicional", "escopo": "todosInimigos", "se": { "alvoContador": { "nome": "atadura", "op": "min", "n": 4 } },
+          "entao": [ { "t": "apply", "eff": { "type": "selado", "dur": 2 } } ] }
+      ]
+    }
+  ]
+}

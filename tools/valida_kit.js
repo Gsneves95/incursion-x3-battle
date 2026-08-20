@@ -282,7 +282,7 @@ function validarPassiva(p, ctx, errs) {
     for (const req of def.obrig) if (!(req in f)) errs.push(`${c}: gatilho "${f.gatilho}" exige o campo "${req}"`);
     // validações de valor (só se o campo pertence ao gatilho)
     // v:0 é permitido QUANDO o bônus é puramente escalado (Oni: "+1 por 4 Combo", sem parte fixa) — §73
-    const temEscala = ['porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'].some(k => k in f);
+    const temEscala = ['porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados'].some(k => k in f);
     if ('v' in f && (typeof f.v !== 'number' || !Number.isInteger(f.v) || f.v < (temEscala ? 0 : 1))) errs.push(`${c}: v mal formado (${JSON.stringify(f.v)}; inteiro ${temEscala ? '>= 0' : '> 0'})`);
     if ('escopo' in f && !V.escoposPassiva.includes(f.escopo)) errs.push(`${c}: escopo inválido "${f.escopo}" (válidos: ${V.escoposPassiva.join(', ')})`);
     if ('quando' in f) validarQuando(f.quando, `${c}.quando`, errs);

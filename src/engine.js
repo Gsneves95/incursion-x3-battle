@@ -97,7 +97,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento', 'maldicao'];   // 'maldicao' (§114, Izanami): MESMO conceito do contador homônimo — o contador é o acúmulo, o DoT é o veículo do dano 6×acúmulo/turno (stores separados; o DoT lê o contador via porContador). cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (Inari dá 1 de sinergia, F1.8); 'maldicao' = Izanami (§114: espalha por contágio + DoT escalado 6/acúmulo + execução dos amaldiçoados).
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao', 'atadura', 'combo'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (§126: aCadaN + reducao escalada); 'maldicao' = Izanami (§114); 'atadura' = Anúbis (§126: antiReviveContador + bonusDano porContador onde:alvo); 'combo' = pool POR LADO (Oni consome via porContadorLado; §126 Susanoo é o 1º a GERAR via contador pool:'lado', expondo o nome ao validador).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
 const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -109,9 +109,9 @@ const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff'
 // um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
 // Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
 const GATILHOS_PASSIVA = {
-  bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'mesmoMorto'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time). mesmoMorto (§123, Mimir): o +v vale MESMO com o dono derrotado (bonusDanoDeclarativo relaxa o gate de vivo só p/ este fx)
+  bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados', 'mesmoMorto'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time). mesmoMorto (§123, Mimir): o +v vale MESMO com o dono derrotado (bonusDanoDeclarativo relaxa o gate de vivo só p/ este fx)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
-  reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
+  reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado', 'porContador'], obrig: ['v'] },   // porContador (§126, Kitsune): reducao ESCALADA por contador do dono ("a cada 3 Caudas, +5"); v pode ser 0 (fixo) + a escala   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz', 'estado'], obrig: ['faz'] },               // faz roda a cada início de turno do dono (sessão 4). estado (§109): gateia por campo (Mnevis: só com Rá no time)
   abertura:        { campos: ['faz'], obrig: ['faz'] },                        // faz roda UMA vez, no 1º turno do lado (sessão 4)
   imunidade:       { campos: ['a', 'escopo'], obrig: ['a'] },                  // imune a status nomeado(s) (sessão 5). §120: escopo 'self' (default) OU 'time' (izanagi: o time inteiro imune) — imuneA varre o lado
@@ -194,6 +194,7 @@ const CONDICOES = {
   alvoCuradoAntes: { bool: true },   // §97 (Tsukuyomi): alvo foi curado no turno ANTERIOR (rastreio de dois tempos — não mais pendente)
   atacanteMaiorDanoAntes: { bool: true },   // §111 (Krishna): o ATACANTE é o aliado que causou MAIS dano no turno anterior (gêmeo ofensivo do alvoCuradoAntes; escopo:'time'). Empate → menor índice; ninguém se ninguém causou dano
   alvoContador: { contadorCmp: true },   // §114 (Izanami): o ALVO tem {nome} cruzando {op:min|max|exato, n} — p/ execIf "elimina amaldiçoados" (maldicao ≥ 1)
+  alvoMaisDebuffs: { bool: true },   // §126 (Anubis): o alvo tem MAIS debuffs que buffs (comparativo de contagem). true = d>b, false = d<=b
 };
 // `quandoCura` — condição do gatilho bonusCura. TERCEIRO eixo, separado de `quando` (ofensivo: lê atk/alvo do
 // ATAQUE) e de `contra` (defensivo: lê o golpe que chega). A cura não tem ataque: a condição lê o CONTEXTO da
@@ -259,7 +260,7 @@ const VOCAB = {
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
     'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
-    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'curaMetade',
+    'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados', 'curaMetade',   // porDeficitAliados (§126, Susanoo): scaler por déficit de unidades vivas — no dano ou no bonusDano
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
     'unidade', 'soMaior',   // cdShift MIRADO (F1.6): 1+ unidades escolhidas; soMaior = só a maior recarga (Bragi/Brahma)
@@ -605,6 +606,11 @@ function condOK(q, atk, alvo, st) {
   if ('alvoCuradoAntes' in q) return !!alvo.curadoAntes;   // §97 (Tsukuyomi): o alvo foi curado no turno ANTERIOR (rastreio de dois tempos)
   if ('atacanteMaiorDanoAntes' in q) return atk === maiorDanoAntes(st, atk.lado);   // §111 (Krishna): o atacante é o TOP-dano do time no turno anterior
   if ('alvoContador' in q) { const c = getContador(alvo, q.alvoContador.nome), { op, n } = q.alvoContador; return op === 'min' ? c >= n : op === 'max' ? c <= n : c === n; }   // §114 (Izanami): o alvo carrega o contador cruzando o limiar
+  if ('alvoMaisDebuffs' in q) {   // §126 (Anubis): o alvo tem MAIS debuffs que buffs — condição COMPARATIVA de contagem (não presença). debuff inclui DoT (como alvoDebuff); buff conta efeitos BUFFS + escudo
+    const d = alvo.efeitos.filter(e => DEBUFFS.includes(e.type)).length + alvo.dots.length;
+    const b = alvo.efeitos.filter(e => BUFFS.includes(e.type)).length + (alvo.shield > 0 ? 1 : 0);
+    return q.alvoMaisDebuffs ? d > b : d <= b;
+  }
   return false;
 }
 
@@ -710,7 +716,8 @@ function reducaoDeclarativa(st, alvo, golpe) {
       if (f.protegido && !protegidoCasou(f.protegido, alvo)) continue;   // condição do BENEFICIÁRIO (Poseidon: só aliado Maré)
       if (f.contra && !contraCasou(f.contra, golpe)) continue;        // condição do golpe que chega
       if (f.estado && !estadoOK(f.estado, u, st)) continue;           // compõe (AND) com o `contra` — a garantia do campo universal
-      r = Math.max(r, f.v);
+      r = Math.max(r, f.v + escalaContagem(st, u, u, f));            // §126 (Kitsune): reducao ESCALADA por contador ("a cada 3 Caudas, +5") — mesmo helper do dano (§73); f.v fixo + escala. porContador onde:self (o dono), t=u é inócuo
+
     }
   }
   return r;
@@ -1580,11 +1587,27 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     // F1.6 (Freyja) — fx CONDICIONAL: roda `entao` OU `senao` (arrays de fx) conforme `se`, via o próprio executor.
     // F1.9 (Hórus §87): `se` desambigua ESTRUTURALMENTE pela chave — se ∈ CONDICOES (alvoMarca, alvoDebuff…) lê o
     // ALVO via condOK; senão lê o CAMPO/self via estadoOK. As duas famílias são DISJUNTAS (valida_kit falha se cruzarem),
-    // então não há heurística. Ramifica sobre alvos[0] (alvo único); AoE-por-alvo é pendência conhecida (§87).
+    // então não há heurística.
+    // §126 (Anubis): a pendência §87 (AoE-por-alvo) fechou. Se a condição lê o ALVO, ramifica POR-ALVO sobre o conjunto
+    // (alvos escolhidos, ou o escopo AoE quando o milagre não pede alvo) — cada alvo avalia o próprio `se`. Alvo único
+    // (alvos=[um]) cai no laço uma vez → comportamento idêntico ao de antes (Freyja/Osíris/Ammit intactos).
     if (e.t === 'condicional') {
       const chave = e.se && Object.keys(e.se)[0];
-      const cond = (chave && CONDICOES[chave]) ? (alvos[0] ? condOK(e.se, u, alvos[0], st) : false) : estadoOK(e.se, u, st);
-      const ramo = cond ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, a, alvos, escolhas); continue;
+      if (chave && CONDICOES[chave]) {
+        const escC = e.escopo || a.alvo;
+        // cada ramo roda sobre UM alvo por vez — e o `a` do ramo precisa apontar alvo ÚNICO, senão um fx sem escopo
+        // próprio herdaria o alvo AoE (a.alvo='todosInimigos') e re-expandiria p/ todos (bug pego no probe §126).
+        let tgts, aUnico;
+        if (alvos.length) { tgts = alvos; aUnico = a.alvo; }
+        else if (escC === 'todosInimigos') { tgts = inimigos.filter(x => x.vivo); aUnico = 'inimigo'; }
+        else if (escC === 'time') { tgts = l.units.filter(x => x.vivo); aUnico = 'aliado'; }
+        else { tgts = []; aUnico = a.alvo; }
+        const aT = { ...a, alvo: aUnico };
+        for (const t of tgts) { const ramo = condOK(e.se, u, t, st) ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, aT, [t], escolhas); }
+      } else {
+        const ramo = estadoOK(e.se, u, st) ? e.entao : e.senao; if (ramo) aplicarFx(st, u, ramo, a, alvos, escolhas);
+      }
+      continue;
     }
 
     for (const t of sel) {
@@ -1752,6 +1775,7 @@ function escalaContagem(st, u, t, spec) {
   if (spec.porInimigoCaido) add += spec.porInimigoCaido * caidos(st, 1 - u.lado);
   if (spec.porHpFaltante) add += porN(spec.porHpFaltante.v, u.maxHp - u.hp, spec.porHpFaltante.passo);   // Mula sem Cabeça: "+1 por 5 de HP perdido" (HP do próprio u)
   if (spec.porStatus) add += porN(spec.porStatus.v, contarStatus(st, u, t, spec.porStatus), spec.porStatus.passo);   // F1.8: "+N por debuff/regen/… no escopo"
+  if (spec.porDeficitAliados) add += spec.porDeficitAliados.v * Math.max(0, st.lados[1 - u.lado].units.filter(x => x.vivo).length - st.lados[u.lado].units.filter(x => x.vivo).length);   // §126 (Susanoo): "+N por aliado a MENOS que o inimigo" — déficit de unidades vivas (piso 0). Escala pelo mesmo helper (§73)
   return add;
 }
 function danoBase(st, u, t, e, l) {

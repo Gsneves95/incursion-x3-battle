@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §126 — FASE A / Leva 1 (Susanoo, Kitsune, Anúbis): os 3 seguraram como HOOK; o tell "por-ataque × por-golpe" CONFIRMADO
+
+**Primeira das duas levas de 3 dos HOOK (§125). Traduzi as três juntas antes de escrever (§124). Todas seguraram — IMPL 82 → 85, FUNCIONAL 85.** Um acréscimo de motor por deus (Anúbis levou dois, ambos pequenos):
+
+- **Susanoo** — 1 scaler novo `porDeficitAliados` (piso 0: "+6 por aliado a MENOS que o inimigo"; +0 quando se tem mais). O feed de Combo saiu SEM motor novo: `contador pool:'lado' v:2 max:20` nos slots de ataque (o teto 20 é o `max` do addContadorLado; o milagre NÃO re-gera, só consome — "consome todo o Combo" vence "cada ataque gera"). básico stripOne + habilidade multi-golpe §92 + milagre `consomeContadorLado` já prontos.
+- **Kitsune** — 1 acréscimo: `reducao` ESCALADA por contador (reducaoDeclarativa passou a somar `escalaContagem`; "a cada 3 Caudas, +5"). A isca saiu SEM motor novo: `intercepta {protege:'time', contra:'unico'}` já existia (o motor até nomeava "isca" na l.791) e se consome no 1º golpe único. Domina-com-5-Caudas = `condicional {se:{contador}}` (estadoOK) + `dominar` (§99), tudo pronto.
+- **Anúbis** — 2 acréscimos pequenos: a condição comparativa `alvoMaisDebuffs` (conta debuffs vs buffs, ≠ presença) e o FECHAMENTO da pendência §87 (condicional POR-ALVO em AoE). O resto pronto: `antiReviveContador:'atadura'` + `bonusDano porContador onde:'alvo'` (+2 por Atadura, escopo:time).
+
+**§87 fechada (condicional AoE por-alvo).** Era pendência desde o Hórus. O Anúbis milagre forçou: "+2 Atadura em todos; quem chegar a 4 → Selado". Agora, quando o `se` lê o ALVO, a condicional ramifica sobre o CONJUNTO (alvos escolhidos, ou o escopo AoE) — cada alvo avalia o próprio `se`. Alvo único cai no laço uma vez → Freyja/Osíris/Ammit intactos (regressão verde). **Bug pego no probe (§115 ganhou o dia de novo):** o ramo herdava `a.alvo='todosInimigos'` e re-expandia o `apply` p/ TODOS os inimigos (selava os 3, não só os ≥4). Corrigido forçando `a.alvo` a alvo-único na recursão por-alvo. O probe contra o motor rodando pegou; a leitura da estrutura não teria.
+
+**O tell "por-ataque × por-golpe" CONFIRMADO (o teste que o dono cravou).** A §125 previu: Susanoo é "cada *ataque* gera Combo" (escrevível hoje), Raijin é "cada *golpe/alvo atingido*" (gancho no bater). **Susanoo saiu limpo no feed de Combo — o tell se confirma como discriminador utilizável.** A mesma palavra ("gera Combo") separa dois destinos de escrevibilidade pela preposição que a acompanha: *por ataque* (por-ability, um fx fixo) vs *por golpe* (por-hit, gancho no executor de dano). **Registrado porque é sutil e reaparece:** sempre que a prosa disser "por/a cada [ataque|golpe|alvo|acerto]", desambigue ANTES — ataque=ability (fx fixo), golpe/alvo=hit (gancho). É o §93 no nível mais fino visto até aqui: dentro de um par que a triagem tinha unido (os "dois geradores de Combo"), a fratura mora numa preposição.
+
+**Placar da Fase A:** Leva 1 fechada (Susanoo 80? não — IMPL 83, Kitsune 84, Anúbis 85). Falta a Leva 2 (hel, morrigan, tanuki). Ao fim da Fase A dou a lista atualizada do balde MECANISMO REAL (agora +3: kali, shutendoji, raijin) e a triagem TELL-DIRIGIDA dos que sobrarem, como o dono pediu.
+
+---
+
 ## §125 — TRADUÇÃO DOS 9 DO HOOK (antes de sequenciar): 6 seguram, 3 vazaram — e os 3 tells estavam TODOS na prosa
 
 **Traduzi os 9 do balde HOOK PEQUENO (§116) ANTES de qualquer sequenciamento (§124: bloco-antes-de-escrever é o instrumento de medida). Cada slot foi verificado contra o MOTOR RODANDO — as funções de dispatch inteiras (escalaContagem, condOK, estadoOK, reducaoDeclarativa, rodarNoAtor, fimTurno), não uma fatia (§115 evita o §113).**

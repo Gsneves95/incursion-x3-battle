@@ -2060,6 +2060,86 @@ console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arr
   console.log('  Osíris limpo (revive+escudo-condicional+porCaído) · Nüwa limpa (opcoes-2+aoCair) · Mimir arrastou mesmoMorto+naoRevivivel');
 }
 
+console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · Kitsune (reducao-por-Cauda + isca) · Anúbis (Atadura) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- SUSANOO ----
+  // básico 15 + stripOne + gera 2 de Combo (o tell "por-ataque": escrevível como fx, sem gancho no bater)
+  let st = E.novoEstado(['susanoo', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1030); orbs(st.lados[0]);
+  let su = st.lados[0].units[0], foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 });
+  let h = foe.hp; E.agir(st, su.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 15 && !E.ef(foe, 'dmgUp') && E.getContadorLado(st, 0, 'combo') === 2, `Corte de Kusanagi: 15 + remove buff + 2 Combo (dano ${h - foe.hp}, combo ${E.getContadorLado(st, 0, 'combo')})`);
+  // passiva déficit: mate 2 aliados → +6×2 = +12 no próprio ataque (escopo self)
+  st = E.novoEstado(['susanoo', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1031); orbs(st.lados[0]);
+  su = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, su, foe) === 0, `Exílio Divino: 3×3 déficit 0 → +0 (${E.bonusDanoDeclarativo(st, su, foe)})`);
+  st.lados[0].units[1].vivo = false; st.lados[0].units[2].vivo = false;
+  ok(E.bonusDanoDeclarativo(st, su, foe) === 12, `déficit 2 → +12 (${E.bonusDanoDeclarativo(st, su, foe)})`);
+  // milagre 18 + 2/Combo, consome tudo (o Combo NÃO é re-gerado no milagre: "consome todo")
+  st = E.novoEstado(['susanoo', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1032); orbs(st.lados[0]);
+  su = st.lados[0].units[0]; st.lados[0].contadores.combo = 5; const e0 = st.lados[1].units.map(x => x.hp);
+  E.agir(st, su.uid, 'milagre', []);
+  ok(st.lados[1].units.every((x, i) => e0[i] - x.hp === 28) && E.getContadorLado(st, 0, 'combo') === 0, `Fúria do Tufão: 18 + 2×5 = 28 a todos, Combo zerado (${st.lados[1].units.map((x, i) => e0[i] - x.hp)}, combo ${E.getContadorLado(st, 0, 'combo')})`);
+
+  // ---- KITSUNE ----
+  // passiva reducao ESCALADA por Cauda: a cada 3 Caudas, +5 (a cada terco; piso 0). Atacante ZEUS: o Tyr tem
+  // danoIrredutivel e FURARIA a reducao (comportamento correto do motor — §121), mascarando o que se testa aqui.
+  st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1033);
+  let ki = st.lados[0].units[0], atk = st.lados[1].units[0];
+  h = ki.hp; E.bater(st, atk, ki, 20, 'afetado', 'basico', {}); ok(h - ki.hp === 20, `0 Caudas: reducao 0 → sofre 20 (${h - ki.hp})`);
+  st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1034);
+  ki = st.lados[0].units[0]; atk = st.lados[1].units[0]; ki.contadores.cauda = 6;
+  h = ki.hp; E.bater(st, atk, ki, 20, 'afetado', 'basico', {}); ok(h - ki.hp === 10, `6 Caudas: reducao 10 → sofre 10 (${h - ki.hp})`);
+  // habilidade: isca (intercepta protege time, contra único, consumida na 1ª) + 1 Cauda
+  st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1035); orbs(st.lados[0]);
+  ki = st.lados[0].units[0]; const ali = st.lados[0].units[1];
+  E.agir(st, ki.uid, 'habilidade', []);
+  ok(E.getContador(ki, 'cauda') === 1 && !!E.ef(ki, 'intercepta'), `Ilusão da Raposa: isca (intercepta time) + 1 Cauda (${E.getContador(ki, 'cauda')})`);
+  const ha = ali.hp, hk = ki.hp; E.bater(st, st.lados[1].units[0], ali, 15, 'afetado', 'basico', { unico: true });
+  ok(ha - ali.hp === 0 && hk - ki.hp === 15, `isca absorve o golpe único ao aliado (aliado ${ha - ali.hp}, Kitsune ${hk - ki.hp})`);
+  // milagre: 12 + 3/Cauda a todos; com 5+ Caudas Domina 1 (o alvo escolhido)
+  st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1036); orbs(st.lados[0]);
+  ki = st.lados[0].units[0]; ki.contadores.cauda = 5; const ke = st.lados[1].units; const kh = ke.map(x => x.hp);
+  E.agir(st, ki.uid, 'milagre', [ke[0].uid]);
+  ok(ke.every((x, i) => kh[i] - x.hp === 27) && !!E.ef(ke[0], 'dominado'), `Nove Caudas: 12 + 3×5 = 27 a todos + Domina o alvo (${ke.map((x, i) => kh[i] - x.hp)}, dominado ${!!E.ef(ke[0], 'dominado')})`);
+  // com <5 Caudas: sem dominar
+  st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1037); orbs(st.lados[0]);
+  ki = st.lados[0].units[0]; ki.contadores.cauda = 4; const ke2 = st.lados[1].units;
+  E.agir(st, ki.uid, 'milagre', [ke2[0].uid]);
+  ok(!E.ef(ke2[0], 'dominado'), `com 4 Caudas (<5): sem Dominar (${!!E.ef(ke2[0], 'dominado')})`);
+
+  // ---- ANÚBIS ----
+  // básico 12 + 1 Atadura
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1038); orbs(st.lados[0]);
+  let an = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, an.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12 && E.getContador(foe, 'atadura') === 1, `Toque do Embalsamador: 12 + 1 Atadura (${h - foe.hp}, atadura ${E.getContador(foe, 'atadura')})`);
+  // passiva: +2 dano por Atadura (escopo time — vale p/ aliado) + Atadura bloqueia revive
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1039);
+  const aliA = st.lados[0].units[1]; foe = st.lados[1].units[0]; foe.contadores.atadura = 3;
+  ok(E.bonusDanoDeclarativo(st, aliA, foe) === 6, `Pesador de Almas: +2×3 Ataduras = +6 (escopo time) (${E.bonusDanoDeclarativo(st, aliA, foe)})`);
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1040);
+  foe = st.lados[1].units[0]; foe.contadores.atadura = 1; foe.hp = 5;
+  E.bater(st, st.lados[0].units[1], foe, 15, 'afetado', 'basico', {});
+  ok(!foe.vivo && foe.naoRevive === true, `inimigo com Atadura abatido → naoRevive (antiReviveContador) (${foe.naoRevive})`);
+  // habilidade condicional: mais debuffs que buffs → atordoa + 2 Atadura; senão 25
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1041); orbs(st.lados[0]);
+  an = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }, { type: 'vulneravel', v: 5, dur: 3 });
+  h = foe.hp; E.agir(st, an.uid, 'habilidade', [foe.uid]);
+  ok(h - foe.hp === 0 && !!E.ef(foe, 'atordoado') && E.getContador(foe, 'atadura') === 2, `Pesagem (mais debuffs): atordoa + 2 Atadura, 0 dano (atordoado ${!!E.ef(foe, 'atordoado')}, atadura ${E.getContador(foe, 'atadura')})`);
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1042); orbs(st.lados[0]);
+  an = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 });
+  h = foe.hp; E.agir(st, an.uid, 'habilidade', [foe.uid]);
+  ok(h - foe.hp === 25, `Pesagem (mais buffs): 25 de dano (${h - foe.hp})`);
+  // milagre: +2 Atadura a todos; quem chega a 4 → Selado (a condicional AoE por-alvo, §87)
+  st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1043); orbs(st.lados[0]);
+  an = st.lados[0].units[0]; const ae = st.lados[1].units;
+  ae[0].contadores.atadura = 2; ae[1].contadores.atadura = 0; ae[2].contadores.atadura = 3;
+  E.agir(st, an.uid, 'milagre', []);
+  ok(ae.map(x => E.getContador(x, 'atadura')).join(',') === '4,2,5' && !!E.ef(ae[0], 'selado') && !E.ef(ae[1], 'selado') && !!E.ef(ae[2], 'selado'), `Sentença do Duat: +2 a todos (4/2/5), sela só ≥4 (${ae.map(x => (!!E.ef(x, 'selado')))})`);
+  console.log('  Susanoo déficit+Combo-por-ataque · Kitsune reducao-por-Cauda+isca+Domina-condicional · Anúbis Atadura (antirevive + +2/atadura + Selado-AoE-por-alvo)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2210,6 +2290,11 @@ err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10, esco
 { const g = base(); g.passiva.fx.push({ gatilho: 'naoRevivivel' }); ok(validarDeus(g).length === 0, 'naoRevivivel sem payload é VÁLIDO (Mimir): ' + JSON.stringify(validarDeus(g))); }
 err(g => g.passiva.fx.push({ gatilho: 'naoRevivivel', v: 1 }), 'não pertence ao gatilho');   // naoRevivivel não carrega payload
 err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, mesmoMorto: true }), 'não pertence ao gatilho'); // mesmoMorto é só de bonusDano
+// §126 Leva 1: porDeficitAliados (bonusDano, v:0 permitido por ser escalador) · reducao.porContador · alvoMaisDebuffs (condição)
+{ const g = base(); g.passiva.fx[0] = { gatilho: 'bonusDano', v: 0, escopo: 'self', porDeficitAliados: { v: 6 } }; ok(validarDeus(g).length === 0, 'bonusDano.porDeficitAliados (v:0 escalado) VÁLIDO (Susanoo): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'reducao', v: 0, porContador: { nome: 'cauda', v: 5, passo: 3 } }); ok(validarDeus(g).length === 0, 'reducao.porContador (v:0 escalado) VÁLIDO (Kitsune): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx[0] = { gatilho: 'bonusDano', v: 10, quando: { alvoMaisDebuffs: true } }; ok(validarDeus(g).length === 0, 'alvoMaisDebuffs é condição VÁLIDA (Anúbis): ' + JSON.stringify(validarDeus(g))); }
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, porDeficitAliados: { v: 6 } }), 'não pertence ao gatilho'); // porDeficitAliados só de bonusDano
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

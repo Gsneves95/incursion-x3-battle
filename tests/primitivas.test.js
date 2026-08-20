@@ -1100,6 +1100,42 @@ console.log('== 31. Mimir: bonusDano mesmoMorto vale MORTO (gate por-fx) + naoRe
   console.log('  +6 mesmo morto · gate por-fx (Osíris não vaza) · self-naoRevive trava o revive');
 }
 
+// ------------------------------------------------------------ 32. Leva 1 do HOOK (§126): déficit-de-aliados · condição comparativa · condicional POR-ALVO em AoE (§87 fechada)
+console.log('== 32. §126: porDeficitAliados (piso 0) · alvoMaisDebuffs (comparativo) · condicional AoE por-alvo (a pendência §87) ==');
+{
+  // (a) porDeficitAliados (Susanoo): +v por unidade viva a MENOS que o inimigo; piso 0 (nunca negativo)
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1100);
+  let u = st.lados[0].units[0], foes = st.lados[1].units;
+  let h = foes[0].hp; E.aplicarFx(st, u, [{ t: 'dmg', v: 5, porDeficitAliados: { v: 6 } }], A('inimigo', 'basico'), [foes[0]]);
+  ok(h - foes[0].hp === 5, `déficit 0 (3×3): 5 + 0 = 5 (${h - foes[0].hp})`);
+  st.lados[0].units[1].vivo = false; st.lados[0].units[2].vivo = false;   // 1 aliado vivo × 3 inimigos = déficit 2
+  h = foes[0].hp; E.aplicarFx(st, u, [{ t: 'dmg', v: 5, porDeficitAliados: { v: 6 } }], A('inimigo', 'basico'), [foes[0]]);
+  ok(h - foes[0].hp === 17, `déficit 2: 5 + 6×2 = 17 (${h - foes[0].hp})`);
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1101);   // agora mais aliados que inimigos → piso 0
+  u = st.lados[0].units[0]; foes = st.lados[1].units; foes[1].vivo = false; foes[2].vivo = false;   // 3 aliados × 1 inimigo = déficit -2
+  h = foes[0].hp; E.aplicarFx(st, u, [{ t: 'dmg', v: 5, porDeficitAliados: { v: 6 } }], A('inimigo', 'basico'), [foes[0]]);
+  ok(h - foes[0].hp === 5, `déficit negativo → piso 0: 5 + 0 = 5 (${h - foes[0].hp})`);
+
+  // (b) alvoMaisDebuffs (Anúbis): condição COMPARATIVA de contagem (não presença) — debuff inclui DoT; buff inclui escudo
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1102);
+  u = st.lados[0].units[0]; let foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }, { type: 'noHeal', dur: 3 });   // 2 debuffs, 0 buffs (nenhum mexe no dano de ENTRADA — o teste mede o ramo, não riders)
+  const cond = [{ t: 'condicional', se: { alvoMaisDebuffs: true }, entao: [{ t: 'dmg', v: 10 }], senao: [{ t: 'dmg', v: 1 }] }];
+  h = foe.hp; E.aplicarFx(st, u, cond, A('inimigo', 'habilidade'), [foe]);
+  ok(h - foe.hp === 10, `2 debuffs > 0 buffs → ramo entao (10) (${h - foe.hp})`);
+  foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 }, { type: 'intercepta', dur: 3 }, { type: 'regen', v: 5, dur: 3 });   // agora 3 buffs vs 2 debuffs
+  h = foe.hp; E.aplicarFx(st, u, cond, A('inimigo', 'habilidade'), [foe]);
+  ok(h - foe.hp === 1, `2 debuffs <= 3 buffs → ramo senao (1) (${h - foe.hp})`);
+
+  // (c) condicional POR-ALVO em AoE (§87 fechada, Anúbis milagre): cada inimigo avalia o próprio `se`; o ramo NÃO re-expande
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1103);
+  u = st.lados[0].units[0]; const e = st.lados[1].units;
+  e[0].contadores.atadura = 4; e[1].contadores.atadura = 2; e[2].contadores.atadura = 5;
+  E.aplicarFx(st, u, [{ t: 'condicional', escopo: 'todosInimigos', se: { alvoContador: { nome: 'atadura', op: 'min', n: 4 } }, entao: [{ t: 'apply', eff: { type: 'selado', dur: 2 } }] }], A('todosInimigos', 'milagre'), []);
+  ok(!!E.ef(e[0], 'selado') && !E.ef(e[1], 'selado') && !!E.ef(e[2], 'selado'), `por-alvo: sela só quem tem ≥4 (4/2/5 → sela/não/sela) (${e.map(x => !!E.ef(x, 'selado'))})`);
+  console.log('  déficit com piso 0 · comparativo debuff>buff · condicional AoE por-alvo (o ramo mira só o alvo casado, não re-expande)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

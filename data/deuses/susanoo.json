@@ -1,0 +1,56 @@
+{
+  "key": "susanoo",
+  "nome": "Susanoo",
+  "faccao": "Japonesa",
+  "elem": "Tempestade",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Exílio Divino",
+    "desc": "Cada ataque de Susanoo gera 2 de Combo do time (teto 20); +6 de dano por aliado a menos que o inimigo.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porDeficitAliados": { "v": 6 } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Corte de Kusanagi",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo; remove 1 buff dele. Gera 2 de Combo.",
+      "fx": [
+        { "t": "dmg", "v": 15 },
+        { "t": "stripOne" },
+        { "t": "contador", "nome": "combo", "pool": "lado", "v": 2, "max": 20 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Yamata no Orochi",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "8 golpes de 4 distribuídos entre os inimigos (32 total). Gera 2 de Combo.",
+      "fx": [
+        { "t": "dmg", "v": 4, "golpes": 8, "escopo": "todosInimigos" },
+        { "t": "contador", "nome": "combo", "pool": "lado", "v": 2, "max": 20 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Fúria do Tufão",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo).",
+      "fx": [
+        { "t": "dmg", "v": 18, "escopo": "todosInimigos", "porContadorLado": { "nome": "combo", "v": 2, "passo": 1 }, "consomeContadorLado": "combo" }
+      ]
+    }
+  ]
+}
