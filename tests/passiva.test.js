@@ -2414,6 +2414,65 @@ console.log('== §135 B4 (os 3 rebaixados): Kali (ação recorrente) · Shuten (
   console.log('  Kali (porInimigoCaido+aoCair+porInimigoHp+ataque-recorrente) · Shuten (porTurno-hp+lifesteal+roubaOrbe reativo) · Raijin (feed por-golpe+posicional)');
 }
 
+console.log('== §136 B5 (3 de 4): Yamato (stripBuffs+puro+15Combo) · Khonshu (guardaControle+retaliacao) · Exu (mira-por-opção) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- YAMATO ----
+  let st = E.novoEstado(['yamatotakeru', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1120, 0);
+  let ya = st.lados[0].units[0], foe = st.lados[1].units[0];
+  // passiva imune a controle com 15+ Combo (pool do lado)
+  st.lados[0].contadores.combo = 15;
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [ya]);
+  ok(!E.ef(ya, 'atordoado'), `Espírito de Kusanagi: 15 Combo → imune a controle`);
+  st.lados[0].contadores.combo = 14; ya.efeitos = [];
+  E.aplicarFx(st, st.lados[1].units[0], [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [ya]);
+  ok(!!E.ef(ya, 'atordoado'), `14 Combo → não imune`);
+  // habilidade Disfarce: Inalvejável + próximo golpe puro; milagre: 28 + stripBuffs
+  st = E.novoEstado(['yamatotakeru', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1121, 0); orbs(st.lados[0]);
+  ya = st.lados[0].units[0]; E.agir(st, ya.uid, 'habilidade', []);
+  ok(!!E.ef(ya, 'inalvejavel') && !!E.ef(ya, 'proximoGolpePuro'), `Disfarce: Inalvejável + próximo-golpe-puro`);
+  st = E.novoEstado(['yamatotakeru', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1122, 0); orbs(st.lados[0]);
+  ya = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 }); foe.shield = 15;
+  st.lados[0].contadores.combo = 5; let h = foe.hp;
+  E.agir(st, ya.uid, 'milagre', [foe.uid]);
+  ok(!E.ef(foe, 'dmgUp') && foe.shield === 0 && st.lados[0].contadores.combo === 0, `Corte Ceifa-Ervas: remove buffs (+escudo) e consome o Combo (${h - foe.hp} de dano)`);
+
+  // ---- KHONSHU ----
+  st = E.novoEstado(['khonshu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1123, 0);
+  const ali = st.lados[0].units[1], en = st.lados[1].units[0];
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [ali]);
+  ok(!E.ef(ali, 'atordoado'), `Guardião: 1ª atordoar num aliado anulada`);
+  E.aplicarFx(st, en, [{ t: 'apply', eff: { type: 'atordoado', dur: 2 } }], { alvo: 'inimigo', slot: 'habilidade' }, [ali]);
+  ok(!!E.ef(ali, 'atordoado'), `2ª atordoar aplica (carga 1×/partida gasta)`);
+  // milagre: heal time + retaliacao; marcado derruba aliado → 30 puro
+  st = E.novoEstado(['khonshu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1124, 0); orbs(st.lados[0]);
+  const kh = st.lados[0].units[0]; kh.hp = 100; const ka = st.lados[0].units[1]; foe = st.lados[1].units[0]; foe.hp = 100;
+  E.agir(st, kh.uid, 'milagre', [foe.uid]);
+  ok(kh.hp === 120 && !!E.ef(foe, 'retaliacao'), `Luar Vingador: cura 20 no time + marca retaliação`);
+  ka.hp = 5; E.bater(st, foe, ka, 15, 'afetado', 'basico', {});
+  ok(!ka.vivo && foe.hp === 70, `o marcado derruba um aliado → sofre 30 puro (${foe.hp})`);
+
+  // ---- EXU (mira-por-opção) ----
+  st = E.novoEstado(['exu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1125, 0); orbs(st.lados[0]);
+  let ex = st.lados[0].units[0], exAli = st.lados[0].units[1];
+  h = st.lados[1].units[0].hp; E.agir(st, ex.uid, 'basico', [st.lados[1].units[0].uid]);
+  ok(h - st.lados[1].units[0].hp === 10, `Padê: 10 (${h - st.lados[1].units[0].hp})`);
+  // ABRIR (opção com alvo=aliado)
+  st = E.novoEstado(['exu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1126, 0); orbs(st.lados[0]);
+  ex = st.lados[0].units[0]; exAli = st.lados[0].units[1]; exAli.cd = { basico: 0, habilidade: 3, milagre: 2 };
+  E.agir(st, ex.uid, 'habilidade', [exAli.uid], [0]);
+  ok(exAli.cd.habilidade === 0 && exAli.cd.milagre === 2, `ABRIR (alvo=aliado): zera a maior recarga do aliado (hab 3→0)`);
+  // FECHAR (opção com alvo=inimigo)
+  st = E.novoEstado(['exu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1127, 0); orbs(st.lados[0]);
+  ex = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  E.agir(st, ex.uid, 'habilidade', [foe.uid], [1]);
+  ok(foe.efeitos.some(x => x.type === 'lockSkill' && x.slot === 'habilidade'), `FECHAR (alvo=inimigo): trava a Habilidade do inimigo`);
+  // passiva iniciativa (reúso §121)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['exu', 'zeus', 'zeus'], 5, 0);
+  ok(st.starter === 1, `Senhor das Encruzilhadas: Exu abre (iniciativa §121) (starter ${st.starter})`);
+  console.log('  Yamato (imune-15Combo + próximo-puro + stripBuffs) · Khonshu (guardaControle 1× + retaliação no matar) · Exu (mira-por-opção: ABRIR aliado / FECHAR inimigo)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2587,6 +2646,11 @@ err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   
 { const g = base(); g.passiva.fx.push({ gatilho: 'geraContadorPorGolpe', contador: 'combo', v: 1, max: 20 }); ok(validarDeus(g).length === 0, 'geraContadorPorGolpe VÁLIDO (Raijin): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[1].fx = [{ t: 'dmg', posicional: [18, 12, 8] }]; g.ab[1].alvo = 'distribui'; ok(validarDeus(g).length === 0, 'dano posicional VÁLIDO (Raijin): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'aoAgirSobEfeito', efeito: 'torpor', noAtor: [{ t: 'dmg', v: 10, dreno: true }, { t: 'roubaOrbe', n: 1, rouba: true }] }); ok(validarDeus(g).length === 0, 'noAtor com roubaOrbe VÁLIDO (Shuten): ' + JSON.stringify(validarDeus(g))); }
+// §136 B5: guardaControle (Khonshu) · imunidade.estado.contadorLado (Yamato) · opcoes.alvo (Exu mira-por-opção)
+{ const g = base(); g.passiva.fx.push({ gatilho: 'guardaControle', a: ['atordoado'] }); ok(validarDeus(g).length === 0, 'guardaControle VÁLIDO (Khonshu): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'imunidade', a: ['controle'], estado: { contadorLado: { nome: 'combo', op: 'min', n: 15 } } }); ok(validarDeus(g).length === 0, 'imunidade.estado.contadorLado VÁLIDA (Yamato): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].alvo = 'inimigo'; g.ab[1].fx = undefined; delete g.ab[1].fx; g.ab[1].opcoes = [{ nome: 'A', alvo: 'aliado', fx: [{ t: 'cdShift', unidade: true, soMaior: true, v: -99 }] }, { nome: 'B', alvo: 'inimigo', fx: [{ t: 'apply', eff: { type: 'lockSkill', slot: 'habilidade', dur: 2 } }] }]; ok(validarDeus(g).length === 0, 'opcoes com alvo por-opção VÁLIDO (Exu): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].fx = undefined; delete g.ab[1].fx; g.ab[1].opcoes = [{ nome: 'X', alvo: 'foo', fx: [{ t: 'dmg', v: 5 }] }]; ok(validarDeus(g).some(x => x.includes('alvo inválido')), 'opcoes.alvo inválido RECUSADO'); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

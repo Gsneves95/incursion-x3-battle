@@ -1,0 +1,57 @@
+{
+  "key": "exu",
+  "nome": "Exu",
+  "faccao": "Brasileira",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Senhor das Encruzilhadas",
+    "desc": "Exu age primeiro em todos os turnos.",
+    "fx": [
+      { "gatilho": "iniciativa" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Padê",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo; o time ganha 1 orbe de Umbra.",
+      "fx": [
+        { "t": "dmg", "v": 10 },
+        { "t": "orbGain", "n": 1, "para": "Umbra" }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Abrir e Fechar Caminhos",
+      "cost": { "Umbra": 1 },
+      "cd": 1,
+      "alvo": "inimigo",
+      "desc": "Escolha: ABRIR (1 aliado zera 1 recarga) ou FECHAR (trava a Habilidade de 1 inimigo por 2 turnos).",
+      "opcoes": [
+        { "nome": "ABRIR", "alvo": "aliado", "fx": [ { "t": "cdShift", "unidade": true, "soMaior": true, "v": -99 } ] },
+        { "nome": "FECHAR", "alvo": "inimigo", "fx": [ { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 2 } } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Encruzilhada",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Rouba 2 orbes do inimigo, remove 1 buff de cada inimigo e trava o Milagre deles por 1 turno.",
+      "fx": [
+        { "t": "roubaOrbe", "n": 2, "rouba": true },
+        { "t": "stripOne", "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "milagre", "dur": 1 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}

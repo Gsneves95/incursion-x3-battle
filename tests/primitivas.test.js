@@ -1304,6 +1304,40 @@ console.log('== 37. §135: porInimigoHp · danoFimTurno (ataque recorrente) · p
   console.log('  porInimigoHp · danoFimTurno · posicional-por-seleção · roubaOrbe-por-status');
 }
 
+// ------------------------------------------------------------ 38. B5 (§136): stripBuffs · proximoGolpePuro · retaliacao (dano no matar) · opcoes mira-por-opção
+console.log('== 38. §136: stripBuffs (remove todos) · proximoGolpePuro (fura escudo, consome) · retaliacao no matar · opcoes por-opção ==');
+{
+  // (a) stripBuffs: remove TODOS os buffs (efeitos BUFFS + escudo); ≠ stripOne (um) e ≠ realoca (move)
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1160);
+  let u = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 }, { type: 'regen', v: 5, dur: 3 }); foe.shield = 20;
+  E.aplicarFx(st, u, [{ t: 'stripBuffs' }], A('inimigo', 'milagre'), [foe]);
+  ok(!foe.efeitos.some(x => ['dmgUp', 'regen'].includes(x.type)) && foe.shield === 0, `stripBuffs: buffs e escudo zerados (${foe.efeitos.map(x => x.type)}, escudo ${foe.shield})`);
+
+  // (b) proximoGolpePuro: o próximo ataque fura escudo; consumido no 1º uso
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1161);
+  u = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.shield = 20;
+  u.efeitos.push({ type: 'proximoGolpePuro', dur: 9 });
+  let h = foe.hp; E.bater(st, u, foe, 15, 'afetado', 'basico', {});
+  ok(h - foe.hp === 15 && foe.shield === 20 && !E.ef(u, 'proximoGolpePuro'), `puro fura escudo (15 no hp, escudo intacto), consumido (${h - foe.hp}/${foe.shield})`);
+  h = foe.hp; E.bater(st, u, foe, 15, 'afetado', 'basico', {});
+  ok(h - foe.hp === 0 && foe.shield === 5, `2º golpe não é puro: escudo absorve (${h - foe.hp}, escudo ${foe.shield})`);
+
+  // (c) retaliacao: o matador marcado que derruba um aliado do marcador sofre v puro (dano DENTRO do matar)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1162);
+  const killer = st.lados[1].units[0], vitima = st.lados[0].units[0];
+  killer.efeitos.push({ type: 'retaliacao', v: 30, dur: 9 }); killer.hp = 100; vitima.hp = 5;
+  E.bater(st, killer, vitima, 15, 'afetado', 'basico', {});
+  ok(!vitima.vivo && killer.hp === 70, `retaliacao: matador marcado derruba aliado → sofre 30 (${killer.hp})`);
+  // fogo amigo (mesmo lado) NÃO retalia
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1163);
+  const k2 = st.lados[1].units[0], aliadoDele = st.lados[1].units[1];
+  k2.efeitos.push({ type: 'retaliacao', v: 30, dur: 9 }); k2.hp = 100; aliadoDele.hp = 5;
+  E.bater(st, k2, aliadoDele, 15, 'afetado', 'basico', {});
+  ok(k2.hp === 100, `fogo amigo (mesmo lado) não retalia (${k2.hp})`);
+  console.log('  stripBuffs (todos) · proximoGolpePuro (consome) · retaliacao no matar (cross-side) · [opcoes por-opção testado em §136]');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

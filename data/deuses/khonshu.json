@@ -1,0 +1,50 @@
+{
+  "key": "khonshu",
+  "nome": "Khonshu",
+  "faccao": "Egípcia",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Guardião dos Viajantes",
+    "desc": "1× por partida, quando um aliado seria atordoado, Khonshu anula o efeito.",
+    "fx": [
+      { "gatilho": "guardaControle", "a": [ "atordoado" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Foice Lunar",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Passagem do Tempo",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "Aumenta em 1 turno todas as recargas de 1 inimigo.",
+      "fx": [ { "t": "cdShift", "unidade": true, "v": 1 } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Luar Vingador",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "Cura 20 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro.",
+      "fx": [
+        { "t": "heal", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "retaliacao", "v": 30, "dur": 9 } }
+      ]
+    }
+  ]
+}

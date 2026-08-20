@@ -72,9 +72,9 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 // nenhum kit as trata em separado; se as durações divergissem, teriam de ser dois efeitos (não divergem). silenceClass
 // fica FORA — trava por CLASSE, não por slot. 'basico'/'defesa' nunca entram num conjunto travado (Selado = "só Básico").
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
-const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado', 'torpor'];   // 'torpor' (§135, Shuten): MARCADOR (não trava ação — o portador AGE; lido por aoAgirSobEfeito: "quando ele agir, eu reajo"). Debuff p/ ser cleansável e p/ o apply aceitá-lo   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
+const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado', 'torpor', 'retaliacao'];   // 'retaliacao' (§136, Khonshu, M3): marca no inimigo — se ELE derrubar um aliado do marcador, sofre v puro (lido DENTRO do matar). Carrega v; cleansável   // 'torpor' (§135, Shuten): MARCADOR (não trava ação — o portador AGE; lido por aoAgirSobEfeito: "quando ele agir, eu reajo"). Debuff p/ ser cleansável e p/ o apply aceitá-lo   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita', 'danoFimTurno'];   // 'danoFimTurno' (§135, Kali): buff no PRÓPRIO — no fim de cada turno do dono, ataca de graça por v um inimigo, por dur turnos. Lido no fimTurno. É buff (auto-aplicado, o dono age)   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita', 'danoFimTurno', 'proximoGolpePuro'];   // 'proximoGolpePuro' (§136, Yamato): o PRÓXIMO ataque do portador é dano puro (fura redução E escudo). Buff no self, consumido no 1º ataque. Irmão do acaoPerfeita (§111), mas p/ QUALQUER slot e só o eixo "puro"   // 'danoFimTurno' (§135, Kali): buff no PRÓPRIO — no fim de cada turno do dono, ataca de graça por v um inimigo, por dur turnos. Lido no fimTurno. É buff (auto-aplicado, o dono age)   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -84,7 +84,9 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'contraAtaca',   // §132 (Guan Yu, M7): aplica contraAtaca no dono, DELEGÁVEL — protege='alvo' arma o revide p/ quando um ALIADO escolhido for atingido (§106 3º caso: a mesma op do contraAtaca-self com sujeito trocado, como o intercepta.protege)
-  'stripDef', 'stripOne', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  'stripDef', 'stripOne', 'stripBuffs', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  // 'stripBuffs' (§136, Yamato): remove TODOS os buffs do alvo (sem realocar — ≠ realoca). O §113 o removeu por não ter
+  // consumidor; volta com o Yamato, o consumidor real (§131 previu; o dono nomeou o Loki, era o Yamato — §132.1)
   'realoca',   // §131 (M5, Loki): MOVE todos os efeitos de uma categoria de um conjunto p/ outro. UM mecanismo parametrizado (categoria+de+para) que serve as DUAS metades: rouba buffs (buff, inimigos→self) E transfere debuffs (debuff, time→inimigos). §46: a direção/destino são PARÂMETROS, não dois códigos
   'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz. NÃO absorvido pelo agendador geral (§117): dispara em unidade MORTA + alimenta checarFim — folá-lo forçaria caso especial (§106 ao contrário)
@@ -140,6 +142,7 @@ const GATILHOS_PASSIVA = {
   evadeContra:     { campos: ['v'], obrig: ['v'] },   // §130 (Saci): o PRIMEIRO golpe único por turno contra o dono FALHA (nulificado) e revida v ao atacante. Lido no bater (usa o flag primeiroPorTurno do §88). v = o contra-ataque
   evadeControle:   { campos: [], obrig: [] },   // §131 (Loki): a PRIMEIRA tentativa de controle por turno contra o dono FALHA. Irmão do evadeContra mas no eixo CONTROLE (lido em aplicar, flag controleNoTurno). Sem payload
   geraContadorPorGolpe: { campos: ['contador', 'v', 'max'], obrig: ['contador'] },   // §135 (Raijin): cada alvo ATINGIDO pelo dono gera v no pool do lado (por-GOLPE, gancho no bater). ≠ contador pool:'lado' num fx (que é por-ATAQUE)
+  guardaControle:  { campos: ['a'], obrig: ['a'] },   // §136 (Khonshu, M9): 1× por partida, quando um aliado (ou o dono) SERIA afetado por um controle em `a`, o dono ANULA o efeito e gasta a carga. Lido em aplicar; carga no flag guardaControleUsado (bespoke, como o renasceu da Nezha)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -222,6 +225,7 @@ const ESTADO_COND = {
   fase:         { sub: ['Dia', 'Noite'] },    // st.fase (Amaterasu/Boto/Lugh/Itzamná) — MIGROU do `quando`, é campo, não ataque
   aliadosVivos: { count: true },              // {op:'min'|'max'|'exato', n} — vivos no lado do dono (Guan Yu '3 vivos')
   contador:     { contadorCmp: true },        // {nome, op, n} — contador do dono cruza o limiar (Kitsune '3 Caudas')
+  contadorLado: { contadorCmp: true },        // §136 (Yamato): {nome, op, n} — POOL do lado cruza o limiar (Combo '15+'); ≠ contador (por-unidade)
   hpProprio:    { hp: true },                 // {op:'cheio'|'abaixo'|'acima', v} — HP do DONO (Shuten 'abaixo de 50')
   aliadoPresente:{ godkey: true },            // <key> — um deus específico está no time do dono (sinergia: 'com Fulano no time') — Passo 0
   aliadoCaido:  { bool: true },               // há ao menos um aliado CAÍDO no lado do dono (Freyja: 'se ninguém caiu' = ramo senão)
@@ -353,6 +357,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     hp: 120, maxHp: 120, vivo: true, agiu: false,
     golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
     controleNoTurno: false,   // §131 (Loki): já sofreu TENTATIVA de controle neste turno? Escrito em aplicar (evadeControle), resetado no iniciarTurno do dono. Gêmeo do golpeUnicoNoTurno no eixo controle
+    guardaControleUsado: false,   // §136 (Khonshu, M9): a carga 1×-por-partida do guardaControle já foi gasta? (bespoke, como o renasceu da Nezha)
     danoAgora: 0, danoAntes: 0,   // §111 (Krishna): RASTREIO de dois tempos do DANO CAUSADO — 'dano neste turno' (escrito em bater) e 'dano no turno ANTERIOR' (leitor, atacanteMaiorDanoAntes). Promovidos no iniciarTurno p/ os DOIS lados, gêmeo do curadoAntes (§97)
     curadoAgora: false, curadoAntes: false,   // F1.9 (Tsukuyomi §97): RASTREIO de dois tempos — 'curado neste turno' (escrito em curar) e 'curado no turno ANTERIOR' (leitor, alvoCuradoAntes). Promovidos (agora→antes) no iniciarTurno p/ TODAS as unidades dos DOIS lados: é leitura OFENSIVA cruzando o lado, não ancorada ao dono (≠ §88)
     cd: { habilidade: 0, milagre: 0, defesa: 0 },
@@ -446,6 +451,19 @@ function aplicar(st, u, eff) {
       u.controleNoTurno = true;
       log(st, { tipo: 'efeito', alvo: u.key, efeito: 'evade' });
       return;
+    }
+  }
+  // §136 (Khonshu, M9): 1× por partida, um GUARDA no lado de `u` anula um controle em `a` (protege aliado ou self).
+  // ANTES das imunidades (é anulação por carga, não imunidade permanente); consome a carga (flag bespoke, ≠ imuneA).
+  if (CONTROLES.includes(e.type) && !e.refletido) {
+    for (const guarda of st.lados[u.lado].units) {
+      if (!guarda.vivo || guarda.guardaControleUsado) continue;
+      const gg = kitDe(st, guarda), pg = gg && gg.passiva;
+      if (pg && Array.isArray(pg.fx) && pg.fx.some(f => f.gatilho === 'guardaControle' && f.a.includes(e.type))) {
+        guarda.guardaControleUsado = true;
+        log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'controle_imune', efeito: e.type });
+        return;
+      }
     }
   }
   // regra 7 — proteção vence controle
@@ -595,6 +613,7 @@ function estadoOK(e, u, st) {
   if ('fase' in e) return st.fase === e.fase;
   if ('aliadosVivos' in e) return cmpLimiar(st.lados[u.lado].units.filter(x => x.vivo).length, e.aliadosVivos);
   if ('contador' in e) return cmpLimiar(getContador(u, e.contador.nome), e.contador);
+  if ('contadorLado' in e) return cmpLimiar(getContadorLado(st, u.lado, e.contadorLado.nome), e.contadorLado);   // §136 (Yamato): limiar sobre o POOL do lado (Combo), não o contador por-unidade — "imune a controle com 15+ Combo"
   if ('hpProprio' in e) { const h = e.hpProprio; if (h.op === 'cheio') return u.hp >= u.maxHp; if (h.op === 'abaixo') return u.hp < h.v; if (h.op === 'acima') return u.hp > h.v; return false; }
   if ('aliadoPresente' in e) return st.lados[u.lado].units.some(x => x.key === e.aliadoPresente);   // deus X no time (roster)
   if ('aliadoCaido' in e) return caidos(st, u.lado) > 0;   // há aliado caído no lado do dono (Freyja)
@@ -780,8 +799,10 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 
   const irred = danoImune(st, atk);   // ogum/tyr migrados: danoIrredutivel declarativo (§37)
   const ap = slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita');   // §111 (Krishna): Ação Perfeita fura redução E escudo — SÓ na habilidade do portador (não-reduzível + não-absorvível). Os dois nomes da prosa = o MESMO danoIrredutivel; aqui via BUFF transferido em vez de passiva do dono
-  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || irred.reducao || ap;
-  const ignoraEscudo = kind === 'puro' || irred.escudo || ap;
+  const puroAgora = atk && SLOTS_ATAQUE.includes(slot) && !!ef(atk, 'proximoGolpePuro');   // §136 (Yamato): "o próximo ataque é puro" — fura redução E escudo, em qualquer slot de ataque; consumido no 1º uso
+  if (puroAgora) atk.efeitos = atk.efeitos.filter(e => e.type !== 'proximoGolpePuro');
+  const ignoraReducao = kind === 'perfurante' || kind === 'puro' || irred.reducao || ap || puroAgora;
+  const ignoraEscudo = kind === 'puro' || irred.escudo || ap || puroAgora;
 
   // regra 2 — redução ANTES do escudo
   if (!ignoraReducao) {
@@ -1007,6 +1028,13 @@ function matar(st, atk, alvo, opts = {}) {
     }
   }
   reagirAoCairAliado(st, alvo.lado);   // aoCair quem:'aliado' — reatores do MESMO lado do caído (Khnum cura ao perder aliado)
+  // §136 (Khonshu, M3): marca-retaliação — se o MATADOR carrega 'retaliacao' e a vítima era do lado OPOSTO (um aliado
+  // do marcador), o matador sofre v de dano PURO. Dano DENTRO do matar (o desenho do §118), keyed pela marca no atk.
+  // Cross-side gate (alvo.lado !== atk.lado) exclui o fogo-amigo (dominar) — só "derrubar um aliado [do marcador]" conta.
+  if (atk && atk.vivo && alvo.lado !== atk.lado) {
+    const rt = ef(atk, 'retaliacao');
+    if (rt) { log(st, { tipo: 'dano', origem: atk.key, alvo: atk.key, valor: -rt.v, kind: 'puro' }); atk.hp = Math.max(0, atk.hp - rt.v); if (atk.hp === 0) matar(st, null, atk); }
+  }
   checarFim(st);
 }
 
@@ -1534,9 +1562,16 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
     u.modo = 1 - modo;
   } else if (a.opcoes) {                                   // PRIMITIVA escolha múltipla
     const idxs = (escolhas && escolhas.length) ? escolhas : [0];
-    fx = [];
-    for (const i of idxs) if (a.opcoes[i]) fx.push(...a.opcoes[i].fx);
     log(st, { tipo: 'acao', origem: u.key, slot: a.slot, opcoes: idxs });
+    // §136 (Exu): MIRA-POR-OPÇÃO — se alguma opção escolhida tem `alvo` próprio (ABRIR=aliado, FECHAR=inimigo),
+    // aplica CADA opção com o SEU alvo (o `opcoes` combinado só serve quando todas compartilham a mira — Lugh/Nüwa/Tanuki).
+    if (idxs.some(i => a.opcoes[i] && a.opcoes[i].alvo)) {
+      for (const i of idxs) if (a.opcoes[i]) aplicarFx(st, u, a.opcoes[i].fx, { ...a, alvo: a.opcoes[i].alvo || a.alvo }, alvos, escolhas);
+      fx = [];   // já aplicado por-opção; o aplicarFx geral abaixo não repete
+    } else {
+      fx = [];
+      for (const i of idxs) if (a.opcoes[i]) fx.push(...a.opcoes[i].fx);
+    }
   } else {
     log(st, { tipo: 'acao', origem: u.key, slot: a.slot });
   }
@@ -1730,6 +1765,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         const i = t.efeitos.findIndex(x => BUFFS.includes(x.type));
         if (i >= 0) { const rem = t.efeitos[i]; log(st, { tipo: 'efeito', alvo: t.key, efeito: rem.type, duracao: 0 }); t.efeitos.splice(i, 1); if (e.rouba) aplicar(st, u, { ...rem, origem: u.uid }); }   // §131 (Saci migrado): rouba=true → o buff removido vai p/ o lançador (roubo de 1 buff, ≠ realoca que move TODOS)
       }
+      else if (e.t === 'stripBuffs') { t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type)); t.shield = 0; }   // §136 (Yamato): remove TODOS os buffs (efeitos BUFFS + escudo); ≠ stripOne (um) e ≠ realoca (move)
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
       else if (e.t === 'shield') { t.shield += e.v; log(st, { tipo: 'escudo', alvo: t.key, valor: e.v }); }
       else if (e.t === 'restauraMax') {   // Itzamná: devolve o HP máximo perdido (Podridão) — SEM curar (hp fica)

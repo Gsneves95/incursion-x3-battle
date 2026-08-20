@@ -374,6 +374,7 @@ function validarHabilidade(ab, ctx, errs) {
     else ab.opcoes.forEach((o, i) => {
       if (!o || !Array.isArray(o.fx)) errs.push(`${ctx} opcoes[${i}]: sem fx[]`);
       else o.fx.forEach((f, j) => validarFx(f, `${ctx} opcoes[${i}].fx[${j}]`, errs));
+      if (o && 'alvo' in o && !V.alvos.includes(o.alvo)) errs.push(`${ctx} opcoes[${i}]: alvo inválido "${o.alvo}" (§136 mira-por-opção; válidos: ${V.alvos.join(', ')})`);   // §136 (Exu): opção com mira própria
     });
   }
   // toda habilidade precisa de UMA forma de efeito: fx, alterna (Nezha) ou opcoes (escolha múltipla)

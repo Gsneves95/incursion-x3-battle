@@ -1,0 +1,54 @@
+{
+  "key": "yamatotakeru",
+  "nome": "Yamato Takeru",
+  "faccao": "Japonesa",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "passiva": {
+    "nome": "Espírito de Kusanagi",
+    "desc": "+1 de dano por 3 de Combo; imune a controle com 15 ou mais de Combo.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porContadorLado": { "nome": "combo", "v": 1, "passo": 3 } },
+      { "gatilho": "imunidade", "a": [ "controle" ], "estado": { "contadorLado": { "nome": "combo", "op": "min", "n": 15 } } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Kusanagi",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano perfurante a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15, "kind": "perfurante" } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Disfarce",
+      "cost": { "Tempestade": 1 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Yamato fica Inalvejável por 1 turno; o próximo ataque dele é dano puro.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
+        { "t": "apply", "eff": { "type": "proximoGolpePuro", "dur": 9 }, "escopo": "self" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Corte Ceifa-Ervas",
+      "cost": { "Tempestade": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "inimigo",
+      "desc": "28 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele.",
+      "fx": [
+        { "t": "dmg", "v": 28, "porContadorLado": { "nome": "combo", "v": 2, "passo": 1 }, "consomeContadorLado": "combo" },
+        { "t": "stripBuffs" }
+      ]
+    }
+  ]
+}

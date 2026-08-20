@@ -6,6 +6,61 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §137 — DESENHO DO DAGDA (M2 loop-reorder + M6), PENDENTE DE AUTORIZAÇÃO: antes de qualquer linha
+
+**O Dagda é o único que reordena o LAÇO; o dono adiou duas vezes por isso e pediu o desenho ANTES de qualquer linha, com os nove pontos que dependem de alternância analisados. NÃO construído — este é o desenho para autorizar.**
+
+**As peças fáceis (compõem, sem risco de laço):**
+- passiva "curas +5" = `bonusCura v:5` (existe). O "Caldeirão ativo → aliados não caem abaixo de 1 HP no turno em que forem curados" = um `pisoVida` CONDICIONAL (gated por um flag de campo "Caldeirão" + só no turno da cura). Hook pequeno: um flag de lado + leitura no curar/matar.
+- básico "a cada 3º uso, cura 20 em vez de atacar" = contador de USO (≠ aCadaN, que é por-turno): um contador no dono que no 3º incremento troca o efeito. Hook pequeno.
+- habilidade "regenera 12 por 3 turnos" = `apply regen escopo:time` (existe) + liga o flag Caldeirão.
+- **M6 (milagre, "buffs inimigos suspensos por 1 turno")**: SUSPENDER ≠ strip. Desenho: marcar os buffs do inimigo como inativos por 1 turno (um flag `suspensoAte` no efeito, lido onde o buff age — bater/calcDano/mira), e reativá-los depois. É contido (não toca o laço); a única exigência é que TODO leitor de buff cheque o flag de suspensão — uma varredura §134 (junta) dedicada. Risco médio, mas LOCAL.
+
+**M2 loop-reorder (milagre, "o time age primeiro no próximo turno") — o ponto perigoso. Três modelos:**
+
+- **Modelo A — turno extra (pula o inimigo):** depois do Dagda, o time joga de novo no lugar do inimigo. QUEBRA os nove de forma ASSIMÉTRICA: o time dobra renda de orbe, tick de cd, e ganha alívio (os DoTs do inimigo não tickam), enquanto o contador de `turno` e a `fase` contam errado (o invariante "starter lidera a rodada" cai). **Recusado:** é o que fez o dono adiar; corrompe os nove.
+- **Modelo B — troca de ordem verdadeira (sem turno extra):** inverter quem lidera a próxima rodada. No modelo de flip estrito (`st.ativo = 1-st.ativo`), "ir primeiro" só difere de "ir segundo" DESLOCANDO o turno do outro — então B, num 1-1 puro, colapsa em A (não há meio-termo sem deslocar). **Inviável sem reescrever o laço.**
+- **Modelo A2 — PASSE FORÇADO do inimigo (recomendado):** o próximo turno do inimigo ACONTECE normalmente (iniciarTurno + fimTurno rodam: DoT/orbe/cd/duração/fase/rastreios todos tickam UMA vez, como sempre), mas o inimigo NÃO PODE AGIR (passe forçado, via um flag lido em podeAgir/acoesDe que auto-encerra o turno). Entrega o "age primeiro" (o time age, o inimigo tem um turno morto, o time age de novo — tempo sem resposta) SEM corromper os nove, porque cada turno ainda tick uma vez por lado.
+
+**Os NOVE pontos sob o Modelo A2 (por que ele é seguro):**
+
+| # | Ponto (assume alternância) | Sob A2 (passe forçado) |
+|---|---|---|
+| 1 | DoT tica no iniciarTurno do portador | tica normal (o turno do inimigo acontece) ✓ |
+| 2 | Renda de orbe no iniciarTurno | inimigo ainda gera (ou nega-se? decisão do dono) — default: gera ✓ |
+| 3 | cd decrementa no iniciarTurno | decrementa normal ✓ |
+| 4 | durações no fimTurno | descontam normal ✓ |
+| 5 | fase (faseDur por turno) | tica uma vez, normal ✓ |
+| 6 | curadoAntes (promoção) | promove normal ✓ |
+| 7 | danoAntes (promoção §111) | promove normal ✓ |
+| 8 | golpeUnicoNoTurno / controleNoTurno (reset) | reseta normal ✓ |
+| 9 | contador de `turno` (starter lidera) | **intacto** — o flip continua `1-ativo`, o inimigo só não age; o invariante do starter não quebra ✓ |
+
+**A única mudança de A2:** o inimigo perde a AÇÃO de um turno. Os nove ficam INTACTOS porque o turno ainda ocorre — o passe força a inação, não a ausência do turno. É a diferença entre "pular o turno" (Modelo A, quebra tudo) e "passar no turno" (A2, o turno roda, o ator não age).
+
+**Decisão em aberto para o dono (as que o desenho não crava):**
+1. **Modelo A2 vs. algo mais simples?** (recomendo A2.)
+2. **Ponto 2 — o inimigo em passe forçado GERA orbe?** A prosa não diz. Sugiro SIM (o turno acontece; negar orbe seria um segundo efeito não escrito) — mas é decisão de balanceamento do dono.
+3. **A auto-inação:** via um efeito `passeForcado dur:1` no lado inimigo, lido em `podeAgir`/`acoesDe` (todas as ações indisponíveis → o turno auto-encerra). Custo em linhas: ~pequeno (o flag + a checagem + o auto-fimTurno na IA/fluxo). NÃO toca o `st.ativo = 1-st.ativo`.
+
+**Peço autorização do Modelo A2 (com a decisão do ponto 2) antes de escrever a primeira linha do Dagda.**
+
+---
+
+## §136 — FASE B / B5 (3 de 4: Yamato, Khonshu, Exu): as três perguntas respondidas contra o motor; o stripBuffs voltou com o consumidor certo
+
+**Os três primeiros do bloco final, traduzidos juntos. IMPL 95 → 98, FUNCIONAL 98. O Dagda vem SÓ como desenho (§137), por reordenar o laço.**
+
+**Yamato (o mais leve — escrito 1º p/ validar o bloco):** a outra metade NÃO era só stripBuffs + próximo-golpe-puro — havia um terceiro: `estado.contadorLado` (a imunidade "15+ Combo" lê o POOL do lado, não o contador por-unidade; o §132 deu imuneA+estado, mas faltava o eixo lado). Os três hooks: `stripBuffs` re-adicionado (o §113 o removeu; VOLTOU com o Yamato, o consumidor real — §131/§132.1 previram que era o Yamato, não o Loki), `proximoGolpePuro` (buff que torna o próximo ataque puro, consumido no 1º uso — irmão do acaoPerfeita §111, mas p/ qualquer slot e só o eixo puro), `contadorLado` estado. Perfurante no básico + porContadorLado no milagre já existiam.
+
+**Khonshu (o §118 confirmado):** re-li o `matar` (mudou muito desde §118 — naoRevivivel §123, retaliação agora) e o desenho da marca-retaliação AINDA vale: `retaliacao` é marca no inimigo, lida DENTRO do matar; se o marcado derruba um aliado do marcador (gate cross-side `alvo.lado !== atk.lado`, exclui fogo-amigo), sofre v puro. + M9 `guardaControle` (1×/partida anula um controle num aliado — carga no flag bespoke `guardaControleUsado`, como o `renasceu` da Nezha). Q3 respondida: o desenho sobreviveu às mudanças do matar.
+
+**Exu (a mira-por-opção, o que o §121 adiou):** Q2 respondida — é CAMPO por opção, não mecanismo. O `opcoes` ganhou `alvo` por opção (ABRIR alvo:'aliado', FECHAR alvo:'inimigo'); quando alguma opção escolhida tem alvo próprio, cada uma aplica com o SEU alvo. O precedente do Tanuki NÃO cobria isto (as opções dele compartilham a mira 'aliado'/self); Exu é o 1º com miras OPOSTAS por opção. Ressalva de UI registrada: o motor aplica com o alvo-por-opção, mas o fluxo de seleção (turno.js/`passosDe`) ainda lê o `a.alvo` base — a UI precisa aprender a mirar por-opção (fora do escopo do kit; o motor e os testes já funcionam com uids explícitos). A passiva iniciativa reusa §121.
+
+**A rede §134 pagou de novo:** campos cross-boundary novos (`retaliacao.v` lido no matar, `proximoGolpePuro`/`guardaControleUsado` consumidos, `opcao.alvo`) — cada um provado nos dois lados no mesmo commit. Nenhuma junta nova.
+
+---
+
 ## §135 — FASE B / B4 (os 3 REBAIXADOS: Kali, Shuten, Raijin): os tells acertaram, cada um exigiu um mecanismo real
 
 **Os três que o §125 rebaixou de HOOK para MECANISMO REAL (tell de arrasto conhecido). Traduzidos juntos e com precisão (a exigência do dono p/ tells conhecidos). IMPL 92 → 95, FUNCIONAL 95.** Cada tell acertou — cada um precisou de um mecanismo que NÃO era campo:
