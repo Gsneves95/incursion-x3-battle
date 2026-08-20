@@ -134,6 +134,8 @@ const GATILHOS_PASSIVA = {
   abateNaoRevive:  { campos: [], obrig: [] },   // §118 (M3, Ammit): quem o DONO abate não revive de forma alguma — carimba naoRevive no MORTO (lido no matar, keyed pelo matador). §81 sujeito C. Sem payload: a consequência é o carimbo
   iniciativa:      { campos: [], obrig: [] },   // §121 (M2, Exu/Hermes): "age primeiro" = LIDERAR a rodada = SER O STARTER (no modelo 1-1, leitura-de-intenção §121). Regra de SETUP (novoEstado força comeca), NÃO toca o laço. Sem payload
   naoRevivivel:    { campos: [], obrig: [] },   // §123 (Mimir): o PRÓPRIO dono não pode ser revivido — self-direction do naoRevive (§119: a família de morte por eixo). Carimba naoRevive no MORTO ao cair, keyed pela própria passiva. Sem payload
+  negaOrbe:        { campos: ['a'], obrig: ['a'] },   // §130 (Dionísio): enquanto o dono vive, INIMIGOS carregando os controles em `a` não geram orbe (estende a exclusão de renda, que já barra adormecido/submerso/dominado, p/ selado). Cross-side, lido no iniciarTurno do lado inimigo
+  evadeContra:     { campos: ['v'], obrig: ['v'] },   // §130 (Saci): o PRIMEIRO golpe único por turno contra o dono FALHA (nulificado) e revida v ao atacante. Lido no bater (usa o flag primeiroPorTurno do §88). v = o contra-ataque
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -275,6 +277,7 @@ const VOCAB = {
     'golpes',   // F1.9 (§92): multi-golpe DISTRIBUÍDO — N golpes de v repartidos igual entre os alvos selecionados (alvo:'distribui')
     'remove',   // F1.9 (§94): fase.remove — REMOÇÃO SELETIVA de fase (Hou Yi "remove o Dia"): limpa st.fase só se == remove
     'durNoite', 'curaCausador',   // F1.9 (§99, dominar): durNoite = dur do 'dominado' quando Noite (Boto +1); curaCausador = o lançador dreba o dano do golpe-fantoche (Boto)
+    'massa',   // §130 (Dionísio): dominar em MASSA — cada inimigo vira vítima (alvo do fogo-amigo determinístico)
     'alvoHp',   // F1.9 (§103): seletor AUTO por HP — {lado:'inimigo'|'aliado', ext:'max'|'min'}; empate = menor índice (Lugh/Deméter/Izanami)
     'semContra',   // F1.9 (§105, Lugh): dmg "não pode ser contra-atacado" — flui p/ o opts do bater (que já tem semContra)
     'alvoSenhor',   // F1.9 (§107, Hanuman): seletor AUTO do aliado designado (intercepta.protege), fallback mais ferido (alvoHp)
@@ -775,7 +778,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84)
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false, semEvade = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84). semEvade (§130, Saci): o contra-ataque da evasão não re-dispara evasão
   if (!alvo.vivo) return 0;
   const semContraEf = semContra || (slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita'));   // §111 (Krishna): não-contra-atacável via BUFF transferido — SÓ na habilidade do portador. O reflexo/contra recursam com slot próprio, então não reentram aqui
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
@@ -815,6 +818,19 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       log(st, { tipo: 'dano', origem: atk.key, alvo: guarda.key, valor: base });
       if (guarda.hp === 0) { removerInvocacao(st, guarda); reagirAoCairAliado(st, alvo.lado); }   // Shabti caiu por dano: conta como queda de aliado (Khnum). Só aqui (morte por dano); expiração/limparInvocacoes NÃO disparam
       return base;
+    }
+  }
+  // §130 (Saci, Gorro Vermelho): EVADE o 1º golpe ÚNICO por turno e revida. Lê o flag primeiroPorTurno (§88, ainda limpo
+  // aqui — o escritor da l.838 só o seta depois); nulifica o golpe (falha) e contra-ataca v ao atacante (semContra/semEvade
+  // p/ não recursar). Só golpe inimigo, só único (a AoE não consome a proteção — mesma regra do §88).
+  if (unico && !semEvade && atk && atk.lado !== alvo.lado && !alvo.golpeUnicoNoTurno) {
+    const ge = kitDe(st, alvo), pe = ge && ge.passiva;
+    const ev = pe && Array.isArray(pe.fx) && pe.fx.find(f => f.gatilho === 'evadeContra');
+    if (ev) {
+      alvo.golpeUnicoNoTurno = true;
+      log(st, { tipo: 'efeito', origem: alvo.key, alvo: atk.key, efeito: 'evade' });
+      if (ev.v && atk.vivo) bater(st, alvo, atk, ev.v, 'afetado', 'contra', { semContra: true, semIntercepta: true, semRedirect: true, semEvade: true });
+      return 0;
     }
   }
   if (ef(alvo, 'invulneravel') && !ignoraInvuln) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'invulneravel' }); return 0; }   // §91: o Shiva/Odin fura (ignoraInvuln)
@@ -1190,6 +1206,17 @@ function rodarNoAtor(st, dono, ator, payload) {
   }
 }
 
+// §130 (Dionísio): controles que uma passiva `negaOrbe` VIVA do lado OPOSTO a `lado` barra na renda de orbe de `lado`.
+// Cross-side (a passiva do inimigo afeta a MINHA renda), lido no iniciarTurno. Vazio = nada além da exclusão base.
+function controlesNegadosPorInimigo(st, lado) {
+  const out = [];
+  for (const u of st.lados[1 - lado].units) {
+    if (!u.vivo) continue;
+    const g = kitDe(st, u), p = g && g.passiva;
+    if (p && Array.isArray(p.fx)) for (const f of p.fx) if (f.gatilho === 'negaOrbe' && Array.isArray(f.a)) out.push(...f.a);
+  }
+  return out;
+}
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
   // §97 (Tsukuyomi): PROMOTOR do rastreio de cura — 'agora' vira 'antes', 'agora' zera. Roda p/ TODAS as unidades
@@ -1245,7 +1272,8 @@ function iniciarTurno(st) {
   // que não serve — estilo NA). Abertura da partida: quem abre recebe só 1
   // (desvantagem de iniciativa); todo turno seguinte rende = unidades vivas.
   const vivos = l.units.filter(u => u.vivo);
-  const geram = vivos.filter(u => !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'dominado'));
+  const negadosPorInimigo = controlesNegadosPorInimigo(st, st.ativo);   // §130 (Dionísio): controles que uma passiva negaOrbe do LADO INIMIGO barra na renda deste lado
+  const geram = vivos.filter(u => !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'dominado') && !negadosPorInimigo.some(c => ef(u, c)));
   const tipos = [...new Set(vivos.map(u => u.elem))];
   const nOrbs = st.aberturaFeita ? geram.length : 1;
   for (let i = 0; i < nOrbs; i++) {
@@ -1564,20 +1592,12 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     // lançador). Resolve IMEDIATO no lançamento (fogo amigo forçado, sem contra/intercepta/redirect); o tag 'dominado' fica
     // `dur` turnos como resíduo (só nega orbe — o que o motor já fazia). Boto: curaCausador dreba o dano no lançador.
     if (e.t === 'dominar') {
-      const vitima = alvos[0], alvoAliado = alvos[1];
-      if (vitima && vitima.vivo) {
-        if (ef(vitima, 'controlImmune') || imuneA(st, vitima, 'dominado')) { log(st, { tipo: 'imune', alvo: vitima.key, efeito: 'dominado' }); continue; }   // imune a controle barra a dominação INTEIRA (tag E golpe): mesma dupla checagem do aplicar (regra 7 + imunidade declarativa)
-        const dur = (st.fase === 'Noite' && e.durNoite) ? e.durNoite : (e.dur || 1);
-        aplicar(st, vitima, { type: 'dominado', dur, origem: u.uid });
-        log(st, { tipo: 'efeito', origem: u.key, alvo: vitima.key, efeito: 'dominado' });
-        const kit = kitDe(st, vitima);
-        const bas = kit && kit.ab && kit.ab.find(x => x.slot === 'basico');
-        const dmgFx = bas && bas.fx && bas.fx.find(f => f.t === 'dmg');
-        if (alvoAliado && alvoAliado.vivo && dmgFx) {
-          const dano = bater(st, vitima, alvoAliado, danoBase(st, vitima, alvoAliado, dmgFx, st.lados[vitima.lado]), dmgFx.kind || 'afetado', 'basico', { classe: classeDe(st, vitima, bas), semContra: true, semIntercepta: true, semRedirect: true });
-          if (e.curaCausador) curar(st, u, dano, u);
+      if (e.massa) {   // §130 (Dionísio, Bacanal): dominação em MASSA — CADA inimigo vira vítima e ataca um aliado DELE. Alvo do fogo-amigo é DETERMINÍSTICO (1º vivo ≠ ele; "você escolhe" não é modelado, como as escolhas-de-UI §123.1). Disparada pelo agendador M1 ("no próximo turno")
+        for (const v of inimigos.filter(x => x.vivo)) {
+          const ali = st.lados[v.lado].units.find(x => x.vivo && x !== v);
+          dominarUm(st, u, v, ali, e);
         }
-      }
+      } else dominarUm(st, u, alvos[0], alvos[1], e);
       continue;
     }
 
@@ -1821,6 +1841,22 @@ function reviver(st, alvo, e) {
   log(st, { tipo: 'revive', alvo: alvo.key, valor: alvo.hp });
 }
 
+// DOMINAR de uma vítima (§99, extraído p/ o massa §130): aplica 'dominado' + força o Básico dela contra um aliado dela.
+// Resolve IMEDIATO (fogo amigo, sem contra/intercepta/redirect); imune a controle barra a dominação inteira.
+function dominarUm(st, u, vitima, alvoAliado, e) {
+  if (!vitima || !vitima.vivo) return;
+  if (ef(vitima, 'controlImmune') || imuneA(st, vitima, 'dominado')) { log(st, { tipo: 'imune', alvo: vitima.key, efeito: 'dominado' }); return; }
+  const dur = (st.fase === 'Noite' && e.durNoite) ? e.durNoite : (e.dur || 1);
+  aplicar(st, vitima, { type: 'dominado', dur, origem: u.uid });
+  log(st, { tipo: 'efeito', origem: u.key, alvo: vitima.key, efeito: 'dominado' });
+  const kit = kitDe(st, vitima);
+  const bas = kit && kit.ab && kit.ab.find(x => x.slot === 'basico');
+  const dmgFx = bas && bas.fx && bas.fx.find(f => f.t === 'dmg');
+  if (alvoAliado && alvoAliado.vivo && dmgFx) {
+    const dano = bater(st, vitima, alvoAliado, danoBase(st, vitima, alvoAliado, dmgFx, st.lados[vitima.lado]), dmgFx.kind || 'afetado', 'basico', { classe: classeDe(st, vitima, bas), semContra: true, semIntercepta: true, semRedirect: true });
+    if (e.curaCausador) curar(st, u, dano, u);
+  }
+}
 // PRIMITIVA copiar habilidade — executa uma habilidade de outra fonte sem pagar o custo
 function copiar(st, u, e, alvos = []) {
   if (e.fonte === 'ultimaHabilidadeAliada') {

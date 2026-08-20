@@ -1,0 +1,52 @@
+{
+  "key": "dionisio",
+  "nome": "Dionísio",
+  "faccao": "Grega",
+  "elem": "Verdejante",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "passiva": {
+    "nome": "Êxtase",
+    "desc": "Inimigos Silenciados, Dominados ou Adormecidos não geram orbes.",
+    "fx": [
+      { "gatilho": "negaOrbe", "a": [ "selado", "adormecido", "dominado" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Taça Derramada",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Delírio",
+      "cost": { "Verdejante": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "1 inimigo é Silenciado por 1 turno (só Básico) e o time inimigo perde 1 orbe.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "selado", "dur": 1 } },
+        { "t": "roubaOrbe", "n": 1 }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mental",
+      "nome": "Bacanal",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "No próximo turno, todos os inimigos usam o Básico contra aliados deles.",
+      "fx": [
+        { "t": "agendar", "alvo": "nenhum", "agenda": [ { "t": "dominar", "massa": true, "dur": 1 } ] }
+      ]
+    }
+  ]
+}

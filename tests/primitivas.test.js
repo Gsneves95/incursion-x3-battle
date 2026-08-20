@@ -1179,6 +1179,30 @@ console.log('== 33. §127: DoT carrega naoRevive (o alimentador que faltava) · 
   console.log('  DoT-naoRevive (alimentador) · execução diferida por limiar · curaPorAlvo · copiar básico de aliado escolhido');
 }
 
+// ------------------------------------------------------------ 34. B1 (§130): evadeContra (evade 1º único + contra) · dominar em MASSA
+console.log('== 34. §130: evadeContra (Saci — 1º golpe único falha + revida) · dominar MASSA (Dionísio — todos os inimigos batem num aliado) ==');
+{
+  // (a) evadeContra: o 1º golpe ÚNICO por turno falha e revida v; o 2º passa; a ÁREA não consome a proteção
+  let st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1120);
+  let sa = st.lados[0].units[0], atk = st.lados[1].units[0];
+  let hs = sa.hp, ha = atk.hp; E.bater(st, atk, sa, 20, 'afetado', 'basico', { unico: true });
+  ok(hs - sa.hp === 0 && ha - atk.hp === 10, `1º golpe único: falha (0) + contra 10 no atacante (sofreu ${hs - sa.hp}, contra ${ha - atk.hp})`);
+  hs = sa.hp; E.bater(st, atk, sa, 20, 'afetado', 'basico', { unico: true });
+  ok(hs - sa.hp === 20, `2º golpe único do turno: passa (${hs - sa.hp})`);
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1121);
+  sa = st.lados[0].units[0]; atk = st.lados[1].units[0]; hs = sa.hp;
+  E.bater(st, atk, sa, 20, 'afetado', 'basico', {});   // AoE (unico=false)
+  ok(hs - sa.hp === 20, `golpe de ÁREA não é evadido nem consome a proteção (${hs - sa.hp})`);
+
+  // (b) dominar MASSA: cada inimigo vira vítima e bate no 1º aliado vivo ≠ ele (determinístico); sem alvo escolhido
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1122);
+  const u = st.lados[0].units[0], e = st.lados[1].units; const hp0 = e.map(x => x.hp);
+  E.aplicarFx(st, u, [{ t: 'dominar', massa: true, dur: 1 }], A('nenhum', 'milagre'), []);
+  ok(e.every(x => !!E.ef(x, 'dominado')), `massa: todos os inimigos dominados (${e.map(x => !!E.ef(x, 'dominado'))})`);
+  ok(e.some((x, i) => hp0[i] - x.hp > 0), `massa: fogo amigo aconteceu (dano ${e.map((x, i) => hp0[i] - x.hp)})`);
+  console.log('  evade 1º único + contra (área não consome) · dominar em massa (fogo amigo determinístico, sem escolha)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

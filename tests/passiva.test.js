@@ -2221,6 +2221,65 @@ console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morriga
   console.log('  Hel paridade+Marca-da-Morte(naoRevive)+curaPorAlvo · Morrigan execução-diferida+aoCair+profetizado · Tanuki copia-básico+ilusão');
 }
 
+console.log('== §130 B1 do MECANISMO REAL: Dionísio (negaOrbe + Bacanal em massa via M1) · Saci (evade+contra, mais leve que o balde) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- DIONÍSIO ----
+  // básico 10
+  let st = E.novoEstado(['dionisio', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1070, 0); orbs(st.lados[0]);
+  let di = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, di.uid, 'basico', [foe.uid]); ok(h - foe.hp === 10, `Taça Derramada: 10 (${h - foe.hp})`);
+  // habilidade Delírio: selado (só básico) + inimigo perde 1 orbe
+  st = E.novoEstado(['dionisio', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1071, 0); orbs(st.lados[0]);
+  di = st.lados[0].units[0]; foe = st.lados[1].units[0]; st.lados[1].orbs.Chama = 3; const a0 = E.totalOrbs(st.lados[1]);
+  E.agir(st, di.uid, 'habilidade', [foe.uid]);
+  ok(!!E.ef(foe, 'selado') && a0 - E.totalOrbs(st.lados[1]) === 1, `Delírio: Silenciado (selado) + inimigo perde 1 orbe (selado ${!!E.ef(foe, 'selado')})`);
+  // passiva Êxtase (negaOrbe): inimigo selado não gera orbe na renda (cross-side, só com Dionísio vivo)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['dionisio', 'zeus', 'zeus'], 1072, 0);
+  st.ativo = 0; st.aberturaFeita = true; st.lados[0].units[0].efeitos.push({ type: 'selado', dur: 2 });
+  E.ELEMS.forEach(x => st.lados[0].orbs[x] = 0); st.lados[0].orbs.livre = 0;
+  E.iniciarTurno(st);
+  ok(E.totalOrbs(st.lados[0]) === 2, `Êxtase: 1 de 3 inimigos Silenciado → rende 2 (o selado não gera) (${E.totalOrbs(st.lados[0])})`);
+  // sem Dionísio: selado rende normal (regressão — a regra é da passiva, não global)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1073, 0);
+  st.ativo = 0; st.aberturaFeita = true; st.lados[0].units[0].efeitos.push({ type: 'selado', dur: 2 });
+  E.ELEMS.forEach(x => st.lados[0].orbs[x] = 0); st.lados[0].orbs.livre = 0;
+  E.iniciarTurno(st);
+  ok(E.totalOrbs(st.lados[0]) === 3, `sem Dionísio: Silenciado rende normal (${E.totalOrbs(st.lados[0])})`);
+  // milagre Bacanal: agenda a dominação em massa p/ o próximo turno de Dionísio (M1)
+  st = E.novoEstado(['dionisio', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1074, 0); orbs(st.lados[0]);
+  di = st.lados[0].units[0]; const e = st.lados[1].units; const hp0 = e.map(x => x.hp);
+  E.agir(st, di.uid, 'milagre', []);
+  ok(di.pendente.length === 1 && e.every((x, i) => hp0[i] === x.hp), `Bacanal: agenda (telegrafado), nada acontece agora (pend ${di.pendente.length})`);
+  E.fimTurno(st); E.fimTurno(st);   // volta ao Dionísio → dispara
+  ok(e.every(x => !!E.ef(x, 'dominado')) && e.some((x, i) => hp0[i] - x.hp > 0), `no disparo: todos dominados + fogo amigo (${e.map((x, i) => hp0[i] - x.hp)})`);
+
+  // ---- SACI (mais leve que o balde: 1 gatilho novo, o resto compõe) ----
+  // básico 12 + Queimadura 5/turno
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1075, 0); orbs(st.lados[0]);
+  let sa = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, sa.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12 && foe.dots.some(d => d.nome === 'queimadura' && d.v === 5), `Cachimbo em Brasa: 12 + Queimadura 5 (${h - foe.hp})`);
+  // passiva Gorro Vermelho: 1º golpe único falha + contra 10
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1076, 0);
+  sa = st.lados[0].units[0]; const atk = st.lados[1].units[0];
+  const hs = sa.hp, ha = atk.hp; E.bater(st, atk, sa, 20, 'afetado', 'basico', { unico: true });
+  ok(hs - sa.hp === 0 && ha - atk.hp === 10, `Gorro Vermelho: 1º único falha (0) + contra 10 (sofreu ${hs - sa.hp}, contra ${ha - atk.hp})`);
+  // habilidade Redemoinho: Inalvejável + agenda o roubo-de-buff p/ "ao voltar"
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1077, 0); orbs(st.lados[0]);
+  sa = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.hp = 120; foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 5 });
+  E.agir(st, sa.uid, 'habilidade', []);
+  ok(!!E.ef(sa, 'inalvejavel') && sa.pendente.length === 1, `Redemoinho: Inalvejável + agenda "ao voltar" (pend ${sa.pendente.length})`);
+  E.fimTurno(st); E.fimTurno(st);
+  ok(!E.ef(foe, 'dmgUp'), `ao voltar: remove 1 buff do inimigo (dmgUp removido ${!E.ef(foe, 'dmgUp')})`);
+  // milagre Travessura Maior: rouba 2 orbes + trava a Habilidade de todos
+  st = E.novoEstado(['saci', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1078, 0); orbs(st.lados[0]);
+  sa = st.lados[0].units[0]; st.lados[1].orbs.Chama = 5; const b0 = E.totalOrbs(st.lados[1]);
+  E.agir(st, sa.uid, 'milagre', []);
+  ok(b0 - E.totalOrbs(st.lados[1]) === 2 && st.lados[1].units.every(x => x.efeitos.some(ef => ef.type === 'lockSkill')), `Travessura Maior: −2 orbes + Habilidade travada em todos`);
+  console.log('  Dionísio negaOrbe(selado)+Delírio+Bacanal-massa-via-M1 · Saci evade+contra (1 gatilho) + o resto compõe (mais leve que o balde)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2379,6 +2438,10 @@ err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, porDeficitAliados: { v: 6
 // §127 Leva 2: bonusCura.estado (o executor já lia; faltava o campo no schema) · dot.naoRevive · dot.nome novo (marcaMorte)
 { const g = base(); g.passiva.fx.push({ gatilho: 'bonusCura', v: 8, estado: { paridade: 'impar' } }); ok(validarDeus(g).length === 0, 'bonusCura.estado (paridade) VÁLIDO (Hel): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[1].fx = [{ t: 'dot', nome: 'marcaMorte', v: 10, dur: 2, naoRevive: true }]; ok(validarDeus(g).length === 0, 'dot marcaMorte + naoRevive VÁLIDO (Hel): ' + JSON.stringify(validarDeus(g))); }
+// §130 B1: negaOrbe.a (controle) · evadeContra.v · dominar massa
+{ const g = base(); g.passiva.fx.push({ gatilho: 'negaOrbe', a: ['selado'] }); ok(validarDeus(g).length === 0, 'negaOrbe a:[selado] VÁLIDO (Dionísio): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'evadeContra', v: 10 }); ok(validarDeus(g).length === 0, 'evadeContra v VÁLIDO (Saci): ' + JSON.stringify(validarDeus(g))); }
+err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   // evadeContra sem v
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -6,6 +6,43 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §130 — FASE B / B1 (Dionísio + Saci): Dionísio pesado (bate o balde), Saci o MAIS LEVE do balde — mas nenhum caiu abaixo dele
+
+**Primeira leva da Fase B, sequenciada por AFINIDADE de mecanismo: os dois que dependem do M1 (agendador, §117, já existe). Traduzi os dois juntos antes de escrever (§124). IMPL 88 → 90, FUNCIONAL 90.**
+
+**Dionísio — PESADO, bate o balde MECANISMO REAL.** Dois mecanismos novos + o M1:
+- **`negaOrbe`** (passiva Êxtase): cross-side — enquanto Dionísio vive, INIMIGOS com os controles listados não geram orbe. Estende a exclusão de renda (que já barrava adormecido/submerso/dominado) para `selado`. Lido no iniciarTurno do lado inimigo (a passiva de um lado mexe na RENDA do outro — precedente do Heimdall/protegeOrbe, invertido).
+- **dominar em MASSA** (milagre Bacanal): cada inimigo vira vítima e bate num aliado dele; alvo do fogo-amigo DETERMINÍSTICO (1º vivo ≠ ele). Disparado pelo M1 ("no próximo turno") — telegrafado, resolve no próximo turno de Dionísio. Ressalva de timing registrada: o M1 dispara no turno do DONO, não no turno dos inimigos, então "no próximo turno, os inimigos usam o Básico" acontece na virada de Dionísio, não na deles — aproximação aceita do M1 (§117).
+- silêncio "só Básico" = `selado` (que já trava Hab+Milagre — reuso, não mecanismo).
+
+**Saci — o MAIS LEVE do balde, mas NÃO caiu abaixo dele.** Um único gatilho novo (`evadeContra`: o 1º golpe único por turno falha + revida v, lido no bater sobre o flag primeiroPorTurno §88); TODO o resto compõe de peças existentes: básico dmg+dot; habilidade Inalvejável + M1 (agenda o roubo-de-buff p/ "ao voltar"); milagre roubaOrbe + lockSkill. **Resposta direta à pergunta do dono ("algum é menor que o balde?"):** Saci é o membro mais LEVE do MECANISMO REAL — mas ainda precisou de UM mecanismo real (o `evadeContra` é gatilho, não campo). Então **não caiu de balde** — §124 intacto (nada saiu ABAIXO do próprio balde; a direção do erro não inverteu). O que a §116 acertou foi o balde; o que a intuição do dono acertou foi a POSIÇÃO dentro dele (o piso).
+
+**O tell previu o tamanho? Sim para um, silêncio para o outro — e o silêncio virou uma assinatura nova.**
+- **Dionísio:** o tell-de-mecanismo "usa o Básico contra aliados deles" (§128) previa dominação em massa → previa PESADO. Confirmado. O tell-de-mecanismo acertou o tamanho porque nomear o mecanismo já dimensiona.
+- **Saci:** a varredura §128 não achou tell ("nenhum tell conhecido") — o catálogo estava CEGO para ele. Agora sei por quê: faltava a assinatura. Registro a **14ª**: **"o primeiro ataque ... falha; quando falha, contra-ataca"** → EVADE-E-CONTRA (esquiva-do-1º-por-turno + revida). É tell-de-mecanismo (classifica), e a lição é a mesma do §128: o catálogo cresce ao encontrar o silêncio, não só ao confirmar o acerto.
+
+**Aproximação registrada (irmã da §123.1):** Saci "rouba 1 buff" virou "remove 1 buff" (`stripOne`). Roubar (mover o buff pro Saci) é M5 (Loki, B2); remover erra p/ menos (Saci não ganha o buff) mas mantém Saci leve. Anotado: se o M5 do Loki (B2) generalizar o roubo-de-buff-único, o Saci pode migrar de `stripOne` p/ o roubo real.
+
+---
+
+## §129 — 5ª ESPÉCIE DE ÓRFÃO: a JUNTA-NÃO-LIGADA (leitor certo + alimentador presente mas que não produz o que o leitor espera)
+
+**A Hel (§127) expôs uma espécie que a varredura de órfãos do §113 não cobria.** As quatro espécies do §113 olham UMA peça de cada vez:
+1. **etiqueta-sem-enforce** — um status/rótulo que nada faz cumprir.
+2. **campo-sem-fio** — um campo escrito e nunca lido (ou vice-versa) DENTRO de uma estrutura.
+3. **prosa-sem-fx** — a prosa promete o que o fx não faz.
+4. **produtor-sem-consumidor** — um fx produz algo que ninguém lê (saída morta).
+
+**A 5ª — JUNTA-NÃO-LIGADA:** o LEITOR existe e está certo (`matar` checa `dots.some(d => d.naoRevive)`), o ALIMENTADOR existe e está certo (`aplicarDot` aplica DoTs corretamente) — mas o alimentador **não produz a propriedade específica que o leitor espera** (`aplicarDot` nunca copiava `naoRevive`). As duas peças passam na inspeção individual; NENHUMA está errada. O defeito é a JUNTA entre elas — a ligação que faria a saída de uma casar com a entrada da outra.
+
+**Por que nenhuma varredura ESTRUTURAL a acha:** as quatro espécies são detectáveis lendo uma peça (existe o enforce? o campo é lido? a prosa bate com o fx? a saída é lida?). A 5ª não mora em peça nenhuma — mora ENTRE duas, e cada uma, lida sozinha, está completa e correta. É a forma mais pura do §115 que o dono nomeou (§127): **a fonte não contém a informação porque a informação É a junta.** Só o motor RODANDO (aplicar o DoT e depois matar sob ele) expõe que a ligação não fecha.
+
+**Distinção da 4ª (não confundir):** produtor-sem-consumidor = há saída, ninguém lê (desperdício). Junta-não-ligada = há leitor E há produtor, mas o produtor não emite o que aquele leitor consome (promessa meio-wireada). Uma é saída órfã; a outra é uma ponte com um vão no meio.
+
+**Consequência e decisão (o dono):** se existe uma vez, provavelmente existe outras — um leitor especulativo escrito "para o futuro" cujo alimentador nunca veio (a l.905 era literalmente comentada "Marca da Morte da Hel", um leitor plantado à espera). **MAS não varrer agora:** a Fase B é curta e a varredura por-junta é cara (é O(pares de peças), não O(peças) — tem de cruzar cada leitor com cada produtor possível). **Anotado para o FIM da Fase 1**, quando os 100 kits estiverem escritos e a varredura puder cruzar tudo de uma vez — o mesmo critério de custo do §113 (varrer quando a cobertura compensa o preço).
+
+---
+
 ## §128 — FECHO DA FASE A: o balde HOOK ZEROU; os 12 restantes são TODOS MECANISMO REAL; e o catálogo de tells cresceu de 5 p/ 13
 
 **Fase A completa (6 HOOK: Susanoo/Kitsune/Anúbis §126 + Hel/Morrigan/Tanuki §127). IMPL 79 → 88, FUNCIONAL 88.** Os dois entregáveis combinados:

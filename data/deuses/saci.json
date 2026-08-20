@@ -1,0 +1,56 @@
+{
+  "key": "saci",
+  "nome": "Saci",
+  "faccao": "Brasileira",
+  "elem": "Tempestade",
+  "classe": "Físico",
+  "funcao": "Manipulador",
+  "passiva": {
+    "nome": "Gorro Vermelho",
+    "desc": "O primeiro ataque de alvo único contra Saci em cada turno falha; quando falha, Saci contra-ataca por 10.",
+    "fx": [
+      { "gatilho": "evadeContra", "v": 10 }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Cachimbo em Brasa",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano + Queimadura leve (5/turno por 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 12 },
+        { "t": "dot", "nome": "queimadura", "v": 5, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Redemoinho",
+      "cost": { "Tempestade": 1 },
+      "cd": 1,
+      "alvo": "nenhum",
+      "desc": "Saci fica Inalvejável por 1 turno; ao voltar, remove 1 buff de um inimigo.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
+        { "t": "agendar", "alvo": "nenhum", "agenda": [ { "t": "stripOne", "alvoHp": { "lado": "inimigo", "ext": "max" } } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Travessura Maior",
+      "cost": { "Tempestade": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "Rouba 2 orbes do inimigo e trava a Habilidade de cada inimigo por 1 turno.",
+      "fx": [
+        { "t": "roubaOrbe", "n": 2, "rouba": true },
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 }, "escopo": "todosInimigos" }
+      ]
+    }
+  ]
+}
