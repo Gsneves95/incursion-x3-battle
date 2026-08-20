@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §124 — A §116 é TETO COM DESCONTO DE UM DEGRAU (taxa + direção juntas); e o tell-na-prosa faz o teto MELHORAR, não só descontar
+
+**Fecho operacional da leva JÁ DÁ (§123). Três coisas que só valem registradas juntas:**
+
+**1. Taxa e direção são inúteis separadas, planejáveis juntas.** "~50% de erro" na triagem soa como ruído — jogaria fora a §116 inteira. Mas o erro observado é **sempre de exatamente um balde, sempre para baixo** (JÁ-DÁ vaza para HOOK, nunca para MECANISMO REAL; a peça é maior do que a prosa sugere, nunca menor). Então a §116 não é estimativa com barra de erro simétrica — é **teto com desconto conhecido de um degrau**: leia cada balde como "isto OU o balde imediatamente acima", nunca dois acima. Isso é sequenciável. Registrar a taxa sozinha teria enterrado o achado; registrar a direção junto o torna uma ferramenta.
+
+**2. Traduzir TODOS antes de escrever QUALQUER UM é o que produz o número honesto.** Se eu tivesse escrito o Osíris primeiro e traduzido o resto depois, o Mimir apareceria como *surpresa no meio da leva* em vez de *fato antes dela* — e a taxa de vazamento viraria anedota, não medida. A tradução-em-bloco é o instrumento de medição; escrever-e-descobrir é o instrumento que a contamina. (Reforça §122: o degrau que não mente só não mente se for dado ANTES.)
+
+**3. O tell-na-prosa faz o teto MELHORAR de verdade.** Todo vazamento até agora teve tell legível na prosa: Mimir "**mesmo derrotado**" (bonusDano sobrevive à morte), Hermes "**age primeiro**" (ordem de turno). Se os vazamentos têm assinatura textual, a PRÓXIMA triagem pode procurá-la ativamente — e aí o teto sobe (menos vazamento não-previsto) em vez de só carregar o desconto de um degrau. **Regra: para cada peça que vaza, registre se o tell estava na prosa e qual era.** O acúmulo desses tells vira o checklist de leitura da triagem seguinte. (É o oposto de descontar: descontar aceita o erro; catalogar o tell reduz o erro.)
+
+---
+
+## §123.1 — DÍVIDA COM ENDEREÇO: a contagem "escolha N" do `opcoes` não é validada no motor (Fase 5, servidor autoritativo)
+
+**Uma das duas aproximações da Nüwa (§123). A do `cleanse`-remove-todos é decisão fechada (err-para-cima dentro do teto, sem primitiva remove-1). Esta é dívida, não decisão fechada — e leva endereço.**
+
+O `opcoes` (idiom do Lugh) aplica os índices que o cliente escolhe (`agir(...,escolhas)`); a contagem "escolha 2" da Nüwa mora na UI e **não é validada no motor** — igual ao "escolha 1" do Lugh, nenhum kit encoda o número. Hoje o jogo é local e o cliente é confiável, então não importa: um cliente honesto manda 2 índices.
+
+**O endereço:** na Fase 5, com **servidor autoritativo**, um cliente adulterado poderia mandar 5 índices e aplicar as 5 opções de um `opcoes` escolha-2. Vira **validação obrigatória** — um campo `escolher: N` no kit (ou por-slot) + checagem no executor (`agir`) e no `valida_kit`. Registrado agora para não reaparecer como bug de balanceamento "misterioso" quando o servidor entrar: o buraco é conhecido, tem dono (o executor de `opcoes` + o validador) e tem gatilho (a virada para servidor autoritativo).
+
+---
+
 ## §123 — Leva JÁ DÁ como TESTE do teto §116: 2 de 3 limpos, Mimir arrastou 2 hooks; o balde JÁ-DÁ vazou ~erro-de-um-balde
 
 **A leva não foi só três kits — foi o teste do teto da re-triagem §116 (que marcou 26 kits como JÁ DÁ · HOOK PEQUENO · MECANISMO REAL, tratados como ~80% com erro sempre para cima).** Traduzi os três ANTES de escrever qualquer um (o degrau que não mente, §122):
