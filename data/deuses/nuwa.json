@@ -1,0 +1,56 @@
+{
+  "key": "nuwa",
+  "nome": "Nüwa",
+  "faccao": "Chinesa",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Mãe da Humanidade",
+    "desc": "Quando um aliado cai, os demais causam +10 de dano pelo resto da partida.",
+    "fx": [
+      { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 99 }, "escopo": "time" } ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Escama Celeste",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Pedras das Cinco Cores",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Escolha 2: cura 20 no time · time causa +8 de dano por 2 turnos · time ganha 15 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe.",
+      "opcoes": [
+        { "nome": "CURA", "fx": [ { "t": "heal", "v": 20, "escopo": "time" } ] },
+        { "nome": "FÚRIA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" } ] },
+        { "nome": "ESCUDO", "fx": [ { "t": "shield", "v": 15, "escopo": "time" } ] },
+        { "nome": "PURIFICA", "fx": [ { "t": "cleanse", "escopo": "time" } ] },
+        { "nome": "ORBE", "fx": [ { "t": "orbGain", "n": 1 } ] }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Remendar o Céu",
+      "cost": { "Aurora": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time ganha 20 de Defesa Destrutível e regenera 10 por turno durante 3 turnos.",
+      "fx": [
+        { "t": "shield", "v": 20, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "regen", "v": 10, "dur": 3 }, "escopo": "time" }
+      ]
+    }
+  ]
+}

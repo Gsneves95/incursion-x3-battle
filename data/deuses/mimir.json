@@ -1,0 +1,54 @@
+{
+  "key": "mimir",
+  "nome": "Mimir",
+  "faccao": "Nórdica",
+  "elem": "Umbra",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Cabeça Falante",
+    "desc": "Mesmo derrotado, Mimir concede +6 de dano ao time — mas não pode ser revivido.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 6, "escopo": "time", "mesmoMorto": true },
+      { "gatilho": "naoRevivivel" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Sussurro Ancestral",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Conselho do Poço",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "aliado",
+      "desc": "Remove 1 orbe do inimigo; 1 aliado causa +8 de dano por 2 turnos.",
+      "fx": [
+        { "t": "roubaOrbe", "n": 1 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Segredos de Mímir",
+      "cost": { "Umbra": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "aliado",
+      "desc": "Zera todas as recargas de 1 aliado; ele causa +10 de dano por 2 turnos.",
+      "fx": [
+        { "t": "cdShift", "unidade": true, "v": -99 },
+        { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 2 } }
+      ]
+    }
+  ]
+}

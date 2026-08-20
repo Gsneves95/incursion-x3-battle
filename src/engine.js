@@ -109,7 +109,7 @@ const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff'
 // um `v` num danoIrredutivel ou um `ignora` num bonusDano é recusado como "campo não pertence ao gatilho".
 // Cresce um gatilho por sessão: bonusCura, reducao, onKill, onDeath, porTurno, reativa…
 const GATILHOS_PASSIVA = {
-  bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time)
+  bonusDano:       { campos: ['v', 'escopo', 'quando', 'estado', 'porContador', 'porContadorCampo', 'porContadorLado', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'mesmoMorto'], obrig: ['v'] },   // soma v (FIXO) + escala por contagem (§73/§78). estado (§101): gateia por fase/campo — bonusDanoDeclarativo já lê f.estado (Chang'e: +8 com Hou Yi no time). mesmoMorto (§123, Mimir): o +v vale MESMO com o dono derrotado (bonusDanoDeclarativo relaxa o gate de vivo só p/ este fx)
   danoIrredutivel: { campos: ['ignora'], obrig: ['ignora'] },                  // dano do DONO fura redução/escudo (sessão 2)
   reducao:         { campos: ['v', 'escopo', 'contra', 'protegido', 'estado'], obrig: ['v'] },   // reduz o dano recebido (sessão 3). protegido (F1.6): filtra o beneficiário (Poseidon: só aliado Maré). estado (§96): condiciona à fase/campo (Amaterasu: só durante o Dia) — reducaoDeclarativa já gateia por estadoOK
   porTurno:        { campos: ['faz', 'estado'], obrig: ['faz'] },               // faz roda a cada início de turno do dono (sessão 4). estado (§109): gateia por campo (Mnevis: só com Rá no time)
@@ -133,6 +133,7 @@ const GATILHOS_PASSIVA = {
   porExecucao:     { campos: ['faz'], obrig: ['faz'] },   // F1.9 (Yan Wong §89): quando um INIMIGO morre por EXECUÇÃO (qualquer — Livro, executaAbaixoDe), o dono faz X (1 orbe). Leitura LITERAL de "por execução": qualquer, não só a do dono
   abateNaoRevive:  { campos: [], obrig: [] },   // §118 (M3, Ammit): quem o DONO abate não revive de forma alguma — carimba naoRevive no MORTO (lido no matar, keyed pelo matador). §81 sujeito C. Sem payload: a consequência é o carimbo
   iniciativa:      { campos: [], obrig: [] },   // §121 (M2, Exu/Hermes): "age primeiro" = LIDERAR a rodada = SER O STARTER (no modelo 1-1, leitura-de-intenção §121). Regra de SETUP (novoEstado força comeca), NÃO toca o laço. Sem payload
+  naoRevivivel:    { campos: [], obrig: [] },   // §123 (Mimir): o PRÓPRIO dono não pode ser revivido — self-direction do naoRevive (§119: a família de morte por eixo). Carimba naoRevive no MORTO ao cair, keyed pela própria passiva. Sem payload
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
 // a morte é UM momento (uma unidade chega a 0 em `matar`); só o sujeito varia. Igual à imunidade (declaração
@@ -624,12 +625,12 @@ function maiorDanoAntes(st, lado) {
 function bonusDanoDeclarativo(st, atk, alvo) {
   let b = 0;
   for (const u of st.lados[atk.lado].units) {
-    if (!u.vivo) continue;
     const g = kitDe(st, u);                     // guarda defensiva: unidade sem kit no catálogo
     const p = g && g.passiva;
     if (!p || !Array.isArray(p.fx)) continue;
     for (const f of p.fx) {
       if (f.gatilho !== 'bonusDano') continue;
+      if (!u.vivo && !f.mesmoMorto) continue;   // §123 (Mimir): morto só contribui se o fx é mesmoMorto ("cabeça falante"); o gate de vivo vira por-fx
       if ((f.escopo || 'self') === 'self' && u !== atk) continue;
       if (f.estado && !estadoOK(f.estado, u, st)) continue;   // compõe (AND) com o `quando`
       if (condOK(f.quando, atk, alvo, st)) b += f.v + escalaContagem(st, atk, alvo, f);   // v FIXO + escala por contagem (MESMO helper do danoBase — Oni +1/4 Combo, Osíris +8/caído). §73
@@ -901,6 +902,8 @@ function matar(st, atk, alvo, opts = {}) {
   }
   // §118 (M3, Ammit): quem o MATADOR abate não revive — keyed pela passiva do atk (não pelo que a vítima carrega, ≠ o snapshot acima). Alcance cross-side (carimba o MORTO), mas sem dano: é flag, na mesma zona do snapshot de naoRevive
   if (atk && atk.vivo) { const ga = kitDe(st, atk), pa = ga && ga.passiva; if (pa && Array.isArray(pa.fx) && pa.fx.some(f => f.gatilho === 'abateNaoRevive')) alvo.naoRevive = true; }
+  // §123 (Mimir): o próprio dono declara-se irrevivível — self-direction do naoRevive (§119). Keyed pela passiva do MORTO (não do matador ≠ abateNaoRevive), na mesma zona do snapshot
+  { const gm = kitDe(st, alvo), pm = gm && gm.passiva; if (pm && Array.isArray(pm.fx) && pm.fx.some(f => f.gatilho === 'naoRevivivel')) alvo.naoRevive = true; }
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
   // gatilho porExecucao (F1.9, Yan Wong §89) — morte por EXECUÇÃO de um inimigo: o lado OPOSTO ao morto reage (1 orbe).

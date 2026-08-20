@@ -1977,6 +1977,89 @@ console.log('== §121 Hermes (M2, iniciativa como regra de setup): age primeiro 
   console.log('  age primeiro = starter (paga a abertura) · Golpe Alado 16 · reducao só do único · Passo Alado −1 recargas');
 }
 
+console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arrastou 2 hooks: mesmoMorto + naoRevivivel) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // ---- OSÍRIS (limpo): revive/almas ----
+  // básico 12
+  let st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1010); orbs(st.lados[0]);
+  let os = st.lados[0].units[0], foe = st.lados[1].units[0];
+  let h = foe.hp; E.agir(st, os.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12, `Cajado e Mangual: 12 (${h - foe.hp})`);
+  // habilidade: cura 20; aliado ABAIXO de 60 ganha 15 de escudo (condição lida ANTES da cura — err p/ cima)
+  st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1011); orbs(st.lados[0]);
+  os = st.lados[0].units[0]; let al = st.lados[0].units[1]; al.hp = 40;
+  E.agir(st, os.uid, 'habilidade', [al.uid]);
+  ok(al.hp === 60 && al.shield === 15, `Trigo do Renascimento: aliado a 40 (<60) → escudo 15 + cura 20 = 60 HP (${al.hp}/${al.shield})`);
+  // aliado saudável (>=60): só cura, sem escudo
+  st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1012); orbs(st.lados[0]);
+  os = st.lados[0].units[0]; al = st.lados[0].units[1]; al.hp = 70;
+  E.agir(st, os.uid, 'habilidade', [al.uid]);
+  ok(al.hp === 90 && al.shield === 0, `aliado a 70 (>=60): cura 20 (→90), SEM escudo (${al.hp}/${al.shield})`);
+  // milagre: revive 1 caído com 60 e limpa os debuffs dele (o reviver já zera efeitos/dots)
+  st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1013); orbs(st.lados[0]);
+  os = st.lados[0].units[0]; const caido = st.lados[0].units[1]; caido.hp = 5;
+  E.bater(st, st.lados[1].units[0], caido, 15, 'afetado', 'basico', {});   // derruba o aliado
+  ok(!caido.vivo, 'aliado caiu (pré-condição do revive)');
+  E.agir(st, os.uid, 'milagre', []);
+  ok(caido.vivo && caido.hp === 60 && caido.efeitos.length === 0, `Tribunal do Duat: revive com 60 e sem debuffs (vivo ${caido.vivo}, hp ${caido.hp})`);
+  // passiva Rei dos Mortos: +8 de dano ao TIME por aliado caído
+  st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1014);
+  let atk = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 0, `Rei dos Mortos: 0 caídos → +0 (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  st.lados[0].units[2].vivo = false;
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 8, `1 caído → +8 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+
+  // ---- NÜWA (limpo): opcoes escolha-2 (idiom do Lugh) + aoCair (idiom da Erínias) ----
+  // básico 12
+  st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1015); orbs(st.lados[0]);
+  let nu = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, nu.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 12, `Escama Celeste: 12 (${h - foe.hp})`);
+  // habilidade Pedras: escolha 2 = CURA(0) + ESCUDO(2) → time cura 20 e ganha 15 de escudo (as duas opções aplicadas)
+  st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1016); orbs(st.lados[0]);
+  nu = st.lados[0].units[0]; st.lados[0].units.forEach(u => u.hp = 50);
+  E.agir(st, nu.uid, 'habilidade', [], [0, 2]);
+  ok(st.lados[0].units.every(u => u.hp === 70 && u.shield === 15), `Pedras (CURA+ESCUDO): time cura 20 (→70) e escuda 15 (${st.lados[0].units.map(u => u.hp + '/' + u.shield)})`);
+  // milagre Remendar o Céu: time +20 escudo + regen 10 por 3
+  st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1017); orbs(st.lados[0]);
+  nu = st.lados[0].units[0]; const na = st.lados[0].units[1];
+  E.agir(st, nu.uid, 'milagre', []);
+  ok(na.shield === 20 && E.ef(na, 'regen') && E.ef(na, 'regen').v === 10, `Remendar o Céu: time +20 escudo + regen 10 (escudo ${na.shield})`);
+  // passiva Mãe da Humanidade: quando um aliado cai, os VIVOS ganham dmgUp +10 (resto da partida)
+  st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1018); orbs(st.lados[0]);
+  const surv = st.lados[0].units[1], dying = st.lados[0].units[2]; dying.hp = 5;
+  E.bater(st, st.lados[1].units[0], dying, 15, 'afetado', 'basico', {});
+  const dU = surv.efeitos.find(x => x.type === 'dmgUp');
+  ok(dU && dU.v === 10, `Mãe da Humanidade: queda de aliado → sobrevivente ganha dmgUp +10 (${dU ? dU.v : 'nenhum'})`);
+
+  // ---- MIMIR (arrastou): suporte pós-morte — os 2 hooks já provados em primitivas §31, aqui o KIT ----
+  // básico 10
+  st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1019); orbs(st.lados[0]);
+  let mi = st.lados[0].units[0]; foe = st.lados[1].units[0];
+  h = foe.hp; E.agir(st, mi.uid, 'basico', [foe.uid]);
+  ok(h - foe.hp === 16, `Sussurro Ancestral: 10 + a própria passiva (+6 ao time, Mimir incluso) = 16 (${h - foe.hp})`);
+  // habilidade Conselho do Poço: remove 1 orbe do inimigo + 1 aliado causa +8 por 2 turnos
+  st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1020); orbs(st.lados[0]);
+  mi = st.lados[0].units[0]; al = st.lados[0].units[1];
+  st.lados[1].orbs.Chama = 3; const antes = E.totalOrbs(st.lados[1]);
+  E.agir(st, mi.uid, 'habilidade', [al.uid]);
+  const buff = al.efeitos.find(x => x.type === 'dmgUp');
+  ok(E.totalOrbs(st.lados[1]) === antes - 1 && buff && buff.v === 8 && buff.dur === 2, `Conselho do Poço: −1 orbe inimigo + aliado dmgUp 8/2 (orbes ${antes}→${E.totalOrbs(st.lados[1])}, buff ${buff ? buff.v : '-'})`);
+  // milagre Segredos de Mímir: zera TODAS as recargas de 1 aliado (cdShift v:-99) + ele causa +10 por 2
+  st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1021); orbs(st.lados[0]);
+  mi = st.lados[0].units[0]; al = st.lados[0].units[1]; al.cd.habilidade = 2; al.cd.milagre = 4;
+  E.agir(st, mi.uid, 'milagre', [al.uid]);
+  const b2 = al.efeitos.find(x => x.type === 'dmgUp');
+  ok(al.cd.habilidade === 0 && al.cd.milagre === 0 && b2 && b2.v === 10, `Segredos: zera as recargas do aliado + dmgUp 10 (cds ${al.cd.habilidade}/${al.cd.milagre}, buff ${b2 ? b2.v : '-'})`);
+  // passiva Cabeça Falante (o KIT, não o hook): Mimir MORTO ainda dá +6 ao time
+  st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1022);
+  mi = st.lados[0].units[0]; atk = st.lados[0].units[1]; foe = st.lados[1].units[0];
+  mi.vivo = false;
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Cabeça Falante: Mimir derrotado ainda concede +6 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  console.log('  Osíris limpo (revive+escudo-condicional+porCaído) · Nüwa limpa (opcoes-2+aoCair) · Mimir arrastou mesmoMorto+naoRevivivel');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2122,6 +2205,11 @@ err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { typ
 err(g => g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10, escopo: 'inimigo' }] }), 'escopo de faz inválido'); // escopo inimigo proibido
 { const g = base(); g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'heal', v: 10, escopo: 'time' }] }); ok(validarDeus(g).length === 0, 'faz-heal escopo time é VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.passiva.fx.push({ gatilho: 'porTurno', faz: [{ t: 'apply', eff: { type: 'dmgReduction', v: 5, dur: 2 } }] }); ok(validarDeus(g).length === 0, 'faz-apply BUFF é VÁLIDO: ' + JSON.stringify(validarDeus(g))); }
+// §123 Mimir: bonusDano.mesmoMorto (booleano do gatilho) + naoRevivivel (gatilho sem payload)
+{ const g = base(); g.passiva.fx[0] = { gatilho: 'bonusDano', v: 6, escopo: 'time', mesmoMorto: true }; ok(validarDeus(g).length === 0, 'bonusDano.mesmoMorto é VÁLIDO (Mimir): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.passiva.fx.push({ gatilho: 'naoRevivivel' }); ok(validarDeus(g).length === 0, 'naoRevivivel sem payload é VÁLIDO (Mimir): ' + JSON.stringify(validarDeus(g))); }
+err(g => g.passiva.fx.push({ gatilho: 'naoRevivivel', v: 1 }), 'não pertence ao gatilho');   // naoRevivivel não carrega payload
+err(g => g.passiva.fx.push({ gatilho: 'reducao', v: 5, mesmoMorto: true }), 'não pertence ao gatilho'); // mesmoMorto é só de bonusDano
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

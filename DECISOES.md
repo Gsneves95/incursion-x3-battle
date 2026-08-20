@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §123 — Leva JÁ DÁ como TESTE do teto §116: 2 de 3 limpos, Mimir arrastou 2 hooks; o balde JÁ-DÁ vazou ~erro-de-um-balde
+
+**A leva não foi só três kits — foi o teste do teto da re-triagem §116 (que marcou 26 kits como JÁ DÁ · HOOK PEQUENO · MECANISMO REAL, tratados como ~80% com erro sempre para cima).** Traduzi os três ANTES de escrever qualquer um (o degrau que não mente, §122):
+
+- **Osíris — LIMPO.** revive `escopo:umCaido` (idiom da Freyja/Deméter, o reviver já limpa os debuffs), heal + escudo-condicional `se{alvoHp abaixo 60}` (a condição lida ANTES da cura — err p/ cima: um aliado a 50 ganha escudo mesmo que a cura o passe de 60), passiva `bonusDano{porAliadoCaido:8, escopo:time}`. Zero engine novo.
+- **Nüwa — LIMPO.** `opcoes` escolha-2 (idiom do Lugh: o motor aplica os índices escolhidos, a contagem "2" mora na UI, não é validada — igual ao "escolha 1" do Lugh, nenhum campo novo), milagre escudo+regen no time, passiva `aoCair{quem:aliado}` (idiom da Erínias, `escopo:time` em vez de `self`). Uma aproximação-de-teto anotada: "remove 1 debuff de cada aliado" virou `cleanse` (remove TODOS) — não há primitiva remove-1, e cleanse erra p/ cima (mais generoso), dentro do teto.
+- **Mimir — ARRASTOU 2 hooks pequenos.** A cláusula "**mesmo derrotado**" era o sinal (previsível, §122: o bloqueio morava no slot que a prosa faz parecer trivial — a passiva):
+  1. `bonusDano.mesmoMorto` — o gate de vivo em `bonusDanoDeclarativo` virou **por-fx**: `if (!u.vivo && !f.mesmoMorto) continue`. Antes pulava a unidade morta inteira; agora um fx marcado sobrevive à morte do dono. Prova do gate por-fx: um `bonusDano` SEM a flag (Osíris) morto contribui 0 mesmo virando um caído que faria o `porAliadoCaido` render.
+  2. `naoRevivivel` (gatilho sem payload) — self-direction do naoRevive (§119: a família de morte por eixo; este é o eixo "eu mesmo não volto", ao lado do `abateNaoRevive` matador-bound do §118). Reader no `matar`, keyed pela passiva do MORTO. Nota de escrevibilidade: o zeraCd-de-aliado do milagre NÃO arrastou — `cdShift{unidade:true, v:-99}` já zera todas as recargas de um alvo (idiom do Brahma).
+
+**Leitura do teto (o que o dono pediu no fecho):**
+1. **Quantos JÁ DÁ saíram limpos:** 2 de 3 nesta leva (Osíris, Nüwa). Contando o Hermes (o 4º que a §116 marcou JÁ DÁ e que a §121 mostrou arrastando a regra de iniciativa): **~2 de 4 = metade do balde JÁ-DÁ vazou.**
+2. **O que arrastou e se era previsível:** Mimir (cláusula "mesmo derrotado" = tell claro) e Hermes (iniciativa). Ambos vazaram **para HOOK-sized, nunca para MECANISMO REAL** — o teto segurou DIRECIONALMENTE (o erro é sempre de um balde, nunca dois).
+3. **O balde HOOK PEQUENO (9) merece re-verificação antes de sequenciar?** SIM. Com ~50% de vazamento JÁ-DÁ→HOOK, a mesma taxa marginal provavelmente empurra alguns HOOK→MECANISMO REAL. O erro-de-um-balde é a lei observada; então traduzir os 9 do HOOK ANTES de sequenciar por eles, senão o plano herda o mesmo viés-para-baixo que a §116 já demonstrou ter.
+
+**IMPL 82, FUNCIONAL 82.**
+
+---
+
 ## §122 — NOMEAR O BLOQUEIO é hipótese sobre um SLOT, não sobre o deus: a peça nomeada pode estar pronta e OUTRA travar
 
 **Segunda vez nesta forma exata (Krishna §111, Exu §121).** Quando o dono (ou eu) diz "esse deus trava no mecanismo X", isso

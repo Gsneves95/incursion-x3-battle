@@ -1075,6 +1075,31 @@ console.log('== 30. iniciativa: um lado com a passiva ABRE (força o starter); a
   console.log('  um lado abre · ambos cancelam (sorteio vale) · nenhum = baseline · custo de abertura preservado');
 }
 
+// ------------------------------------------------------------ 31. Mimir (§123): bonusDano `mesmoMorto` (vale derrotado) + gatilho `naoRevivivel` (self não revive)
+console.log('== 31. Mimir: bonusDano mesmoMorto vale MORTO (gate por-fx) + naoRevivivel carimba o próprio morto ==');
+{
+  // (a) mesmoMorto: Mimir VIVO dá +6 ao time; MORTO continua dando +6 (a "Cabeça Falante" fala do além)
+  let st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 990);
+  let mimir = st.lados[0].units[0], atk = st.lados[0].units[1], foe = st.lados[1].units[0];
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Mimir vivo: +6 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  mimir.vivo = false;
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Mimir MORTO: +6 continua (mesmoMorto relaxa o gate de vivo) (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  // (b) o gate é POR-FX, não por-unidade: um bonusDano SEM mesmoMorto (Osíris) morto contribui 0,
+  //     mesmo sendo agora 1 caído que faria o porAliadoCaido:8 render — o fx é pulado antes de escalar
+  st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 991);
+  let osi = st.lados[0].units[0], atk2 = st.lados[0].units[1], foe2 = st.lados[1].units[0];
+  osi.vivo = false;
+  ok(E.bonusDanoDeclarativo(st, atk2, foe2) === 0, `Osíris (sem mesmoMorto) morto: 0 — o gate é por-fx, não vaza (${E.bonusDanoDeclarativo(st, atk2, foe2)})`);
+  // (c) naoRevivivel: Mimir abatido fica irrevivível — o snapshot em matar lê a PRÓPRIA passiva (self-direction, §119)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['mimir', 'zeus', 'zeus'], 992);
+  let killer = st.lados[0].units[0], m2 = st.lados[1].units[0]; m2.hp = 5;
+  E.bater(st, killer, m2, 15, 'afetado', 'basico', {});
+  ok(!m2.vivo && m2.naoRevive === true, `Mimir abatido → naoRevive carimbado pela própria passiva (matador comum) (${m2.naoRevive})`);
+  E.reviver(st, m2, { hp: 60 });
+  ok(!m2.vivo, `reviver falha: a Cabeça Falante não volta (vivo ${m2.vivo})`);
+  console.log('  +6 mesmo morto · gate por-fx (Osíris não vaza) · self-naoRevive trava o revive');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
