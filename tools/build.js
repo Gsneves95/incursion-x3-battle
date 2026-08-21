@@ -112,15 +112,23 @@ if (cadeia.divergencias.length) {
     // Kit rebalanceado não quebra a build; marca as Provações a re-solver. Aviso VISÍVEL (banner ⚠) + lista.
     const { catalogoHash } = require('../src/provacao.js');
     const E = require('../src/engine.js');
-    const velhas = [], semCarimbo = [];
+    const velhas = [], semCarimbo = [], mentiras = [];
     for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
       const prov = JSON.parse(ler('data/provacoes/' + f));
       if (!prov.verificacao) { semCarimbo.push(prov.key); continue; }
-      if (prov.verificacao.hash !== catalogoHash(prov, E.GODS)) velhas.push(prov.key);
+      // §150 IDENTIDADE: o nível declarado da Provação tem de ser IDENTICAMENTE o carimbado. Divergência de
+      // identidade é MENTIRA (o carimbo garante contra um oponente que o jogo não roda) → FALHA, não avisa.
+      const nivelDecl = prov.nivelIA || 'normal';
+      if (prov.verificacao.nivelIA !== nivelDecl) mentiras.push(`${prov.key} (declara "${nivelDecl}", carimbado contra "${prov.verificacao.nivelIA}")`);
+      if (prov.verificacao.hash !== catalogoHash(prov, E.GODS)) velhas.push(prov.key);   // carimbo velho = AVISO
+    }
+    if (mentiras.length) {   // identidade divergente FALHA a build
+      console.error('ERRO de carimbo de Provação — IDENTIDADE de IA divergente (§150: o carimbo garante contra um oponente que o jogo não roda):\n  ' + mentiras.join('\n  ') + '\n  re-carimbe contra o nível declarado: node tools/solucionador.js --carimbar <deus>');
+      process.exit(1);
     }
     if (velhas.length || semCarimbo.length) {
       console.warn('\n⚠️  ============ CARIMBO DE PROVAÇÃO ============');
-      if (velhas.length) console.warn(`⚠️  ${velhas.length} Provação(ões) com carimbo VELHO — kit mudou, RE-SOLVER: ${velhas.join(', ')}`);
+      if (velhas.length) console.warn(`⚠️  ${velhas.length} Provação(ões) com carimbo VELHO (hash) — kit mudou, RE-SOLVER: ${velhas.join(', ')}`);
       if (semCarimbo.length) console.warn(`⚠️  ${semCarimbo.length} Provação(ões) SEM carimbo — nunca verificadas: ${semCarimbo.join(', ')}`);
       console.warn('⚠️     rode: node tools/solucionador.js --carimbar <deus>');
       console.warn('⚠️  =============================================\n');

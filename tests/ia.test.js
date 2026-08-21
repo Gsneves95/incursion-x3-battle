@@ -58,6 +58,28 @@ console.log('== partida IA vs IA termina e mantém invariantes ==');
   console.log(`  ${jogos} partidas IA vs IA · média ${(somaTurnos / jogos).toFixed(1)} turnos · sem desfecho: ${semFim}`);
 }
 
+console.log('== NÍVEIS de IA (F2.2): determinísticos, facil só-Básico, dificil 2-ply ==');
+{
+  const { NIVEIS_IA } = require('../src/ia.js');
+  ok(Array.isArray(NIVEIS_IA) && NIVEIS_IA.join(',') === 'facil,normal,dificil', 'os 3 níveis existem');
+  // determinismo: a MESMA posição decide o MESMO lance, em cada nível (sem random, sem corte por tempo)
+  for (const nivel of NIVEIS_IA) {
+    const st = E.novoEstado(['zeus', 'brigid', 'ogum'], ['ogum', 'zeus', 'brigid'], 7, 0);
+    E.ELEMS.forEach(e => st.lados[0].orbs[e] = 9);
+    const a1 = JSON.stringify(iaProximaAcao(st, nivel)), a2 = JSON.stringify(iaProximaAcao(st, nivel));
+    ok(a1 === a2, `${nivel}: mesma posição → mesmo lance (determinístico)`);
+  }
+  // facil SÓ usa o Básico (nunca habilidade/milagre)
+  {
+    const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 8, 0);
+    E.ELEMS.forEach(e => st.lados[0].orbs[e] = 9);
+    let soBasico = true;
+    for (let p = 0, a; p < 6 && (a = iaProximaAcao(st, 'facil')); p++) { if (a.slot !== 'basico') soBasico = false; E.agir(st, a.uid, a.slot, a.alvos, a.escolhas); }
+    ok(soBasico, 'facil só escolhe o Básico');
+  }
+  console.log('  3 níveis · cada um determinístico · facil = só Básico');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> IA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

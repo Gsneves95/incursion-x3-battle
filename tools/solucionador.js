@@ -24,7 +24,7 @@ Object.assign(global, E);                        // agir/acoesDe/podeAgir/alvosV
 const ia = require(path.join(__dirname, '..', 'src', 'ia.js'));
 const PROV = require(path.join(__dirname, '..', 'src', 'provacao.js'));
 
-const NIVEL_IA = 'gulosa';                        // §147: a IA por níveis vem na F2.2; grave o nível usado
+const NIVEL_PADRAO = 'normal';                    // §150: a Provação pina no 'normal' (a gulosa); IDENTIDADE — verificar contra o MESMO oponente que o jogo roda
 
 // clone barato: o log CRESCE, então não o serializo — cada nó recebe uma cópia RASA do array (os eventos são
 // imutáveis: o motor só empilha objetos novos, nunca muta os antigos), como a ia.js faz com o clone da IA.
@@ -74,11 +74,11 @@ function movimentos(st) {
   return out;
 }
 
-function avancarOponente(st) {   // roda o turno da IA gulosa (determinística) até voltar ao jogador
+function avancarOponente(st, nivel) {   // roda o turno da IA (determinística, nível da Provação) até voltar ao jogador
   let guard = 0;
   while (!st.fim && st.ativo === 1 && guard++ < 60) {
     let a, p = 0;
-    while (!st.fim && (a = ia.iaProximaAcao(st)) && p++ < 8) E.agir(st, a.uid, a.slot, a.alvos, a.escolhas);
+    while (!st.fim && (a = ia.iaProximaAcao(st, nivel)) && p++ < 8) E.agir(st, a.uid, a.slot, a.alvos, a.escolhas);
     if (st.fim) break;
     E.fimTurno(st);
   }
@@ -111,9 +111,10 @@ function heuristica(st, prov, ctx) {
 // ACIONÁVEL: distingue "orçamento" (heurística progredindo) de "dica" (heurística estagnou).
 function resolver(prov, opts = {}) {
   const orcamento = opts.orcamentoNos || 200000;
+  const NIVEL_IA = prov.nivelIA || NIVEL_PADRAO;   // IDENTIDADE: verifica contra o oponente que a Provação declara
   const ctx = ctxDe(prov);
   const t0 = Date.now();
-  const raiz = PROV.montarProvacao(prov); avancarOponente(raiz);
+  const raiz = PROV.montarProvacao(prov); avancarOponente(raiz, NIVEL_IA);
   let nos = 0, maxHeap = 0, maxRam = 0, melhorH = Infinity, noDoMelhorH = 0;
   const visto = new Set([chave(raiz, prov, ctx)]);
   const heap = new MinHeap();
@@ -143,14 +144,14 @@ function resolver(prov, opts = {}) {
       const k = chave(cl, prov, ctx); if (visto.has(k)) continue; visto.add(k);
       heap.push({ st: cl, path: [...path, rotulo(st, mv)], h: heuristica(cl, prov, ctx) });
     }
-    { const cl = clonar(st); E.fimTurno(cl); avancarOponente(cl);   // "passar": encerra o turno e roda o oponente
+    { const cl = clonar(st); E.fimTurno(cl); avancarOponente(cl, NIVEL_IA);   // "passar": encerra o turno e roda o oponente
       const k = chave(cl, prov, ctx); if (!visto.has(k)) { visto.add(k); heap.push({ st: cl, path: [...path, 'passar'], h: heuristica(cl, prov, ctx) }); } }
   }
   // fronteira ESGOTADA (exaustão real) sem caminho → INVENCÍVEL. Só aqui, nunca por orçamento.
   return { veredito: 'INVENCIVEL', motivo: 'espaço de estados ESGOTADO sem caminho de vitória (exaustão real)', nos, maxHeap, maxRam, ms: Date.now() - t0, nivelIA: NIVEL_IA };
 }
 
-module.exports = { resolver, NIVEL_IA };
+module.exports = { resolver, NIVEL_PADRAO };
 
 // ---------- CLI ----------
 //   node tools/solucionador.js [deus] [orçamento]              — resolve e imprime

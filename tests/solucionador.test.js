@@ -16,7 +16,7 @@ console.log('== 1. Poseidon: VENCÍVEL com um caminho (jogabilidade) ==');
   ok(r.veredito === 'VENCIVEL', `Poseidon deveria ser VENCÍVEL (veio ${r.veredito})`);
   ok(Array.isArray(r.sequencia) && r.sequencia.length > 0, 'traz um caminho não-vazio');
   ok(r.comprimento === r.sequencia.length, 'comprimento = lances NESTE caminho (não o mínimo)');
-  ok(r.nivelIA === 'gulosa', 'grava o nível de IA contra o qual verificou');
+  ok(r.nivelIA === 'normal', 'grava o nível de IA (normal) contra o qual verificou');
   ok(r.nos < 1000, `resolve em poucos nós (${r.nos}) — a heurística simples basta, não sofisticar`);
   console.log(`  VENCÍVEL em ${r.nos} nós · ${r.comprimento} lances · IA ${r.nivelIA}: ${r.sequencia.join(' → ')}`);
 }

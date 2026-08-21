@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §150 — F2.2: a IA por níveis. A Provação pina no 'normal'; a trava é IDENTIDADE (build FALHA na divergência).
+
+**Correção de vocabulário (registrada a pedido do dono):** o dono disse "previsível"; a propriedade exata é **DETERMINÍSTICO**. Forte-e-determinístico preserva o carimbo; fraco-e-aleatório não. A palavra certa muda o invariante: não é "a IA tem de ser fácil de prever", é "a mesma posição decide o mesmo lance, sempre".
+
+**Mas o argumento DECISIVO não é o determinismo — é a IDENTIDADE (o dono afiou):** o solucionador tem de verificar contra o MESMO oponente que o jogador enfrenta. Se divergirem, o carimbo não é garantia, é aposta. Determinismo é necessário; identidade é o que torna o carimbo uma prova.
+
+**Invariante travado (mais forte do que eu propus):** não basta o nível ser determinístico — o nível VERIFICADO tem de ser IDENTICAMENTE o que o jogo roda naquela Provação. O `verificacao.nivelIA` é o contrato, e a **build FALHA** (não avisa) se uma Provação declarar `nivelIA` ≠ o carimbado. **Aviso serve para carimbo velho** (hash — kit mudou, re-solver); **identidade divergente é MENTIRA** (o carimbo garante contra um oponente que o jogo não roda), e mentira falha. (`build.js §3d`: hash divergente → ⚠ aviso; nivelIA divergente → `exit 1`.)
+
+**Decisão 1 — a Provação pina no 'normal' (a gulosa); a dificuldade vive no estado+condição, nunca na força da IA.** A dificuldade já tem duas alavancas melhores (estado inicial e condição) e uma terceira que o dono acrescentou: **a Provação ENSINA a pilotar o deus** — um oponente que joga diferente a cada nível ensinaria coisas diferentes, contradizendo o propósito.
+
+**Decisão 2 — os níveis são para o JOGO NORMAL e a ARENA; Ordália não escala IA.** `NIVEIS_IA = [facil, normal, dificil]` em `src/ia.js`, todos determinísticos: **nenhum `Math.random`, nenhum corte por tempo** (corte por tempo é não-determinismo disfarçado — a mesma posição decide diferente conforme a máquina). `facil` = só o Básico; `normal` = a gulosa de 1 lance (histórico); `dificil` = gulosa com 2-ply DENTRO do turno (soma o melhor lance seguinte do próprio lado, sem modelar o oponente).
+
+**Custo medido (`ia.test` por nível, 30 partidas IA×IA):** facil 547ms · normal 781ms · **dificil 2545ms (~3,3× normal)**. O 2-ply é branching² por lance → afordável para um turno interativo de CPU (o humano espera entre lances), mais pesado para a arena em lote (medir se a Fase 3 depender). Sem `Math.random`, sem corte por tempo.
+
+**Ressalva com GATILHO DE REVISÃO (a pedido do dono):** "jogável porque o oponente é cego" (a gulosa subvaloriza setup, §141) é aceitável HOJE só porque o jogo roda a MESMA gulosa nas Provações — o exploit está legitimamente disponível ao jogador. **Gatilho:** se algum dia o CPU do jogo mudar de nível nas Provações, os 91 carimbos viram inválidos de uma vez. A trava de IDENTIDADE (build falha) é o que impede isso de passar em silêncio — quem mudar o nível de uma Provação sem re-carimbar quebra a build.
+
+---
+
 ## §149 — AFROUXAR × DAR DICA: as duas correções de um INDETERMINADO são diferentes, e uma é balanceamento disfarçado.
 
 **O risco, com nome (a pedido do dono, porque volta 91 vezes).** Quando uma Provação sai INDETERMINADO, há DUAS correções, e elas não são intercambiáveis:

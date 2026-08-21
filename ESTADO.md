@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.1: o solucionador (prova JOGABILIDADE, não solubilidade)
+## Última sessão — F2.2: a IA por níveis (Provação pina no 'normal'; trava = IDENTIDADE)
+**Data:** 2026-08-21
+**Tarefa:** F2.2 — IA por níveis; decisão embutida: qual nível a Provação usa. §150.
+**Resultado:** correção de vocabulário — "previsível" → **DETERMINÍSTICO**; e o argumento decisivo é a
+**IDENTIDADE** (o solucionador verifica contra o MESMO oponente que o jogador enfrenta; divergir = o carimbo
+é aposta). `NIVEIS_IA=[facil,normal,dificil]` em `src/ia.js`, todos determinísticos (SEM Math.random, SEM
+corte por tempo): facil=só-Básico, normal=gulosa, dificil=2-ply-dentro-do-turno. **A Provação pina no 'normal'**;
+dificuldade vive no estado+condição, não na IA (níveis são p/ jogo normal+arena; Ordália não escala IA; e a
+Provação ENSINA a pilotar → oponente uniforme). **Trava de IDENTIDADE:** `build.js §3d` FALHA (exit 1) se
+`prov.nivelIA` ≠ `verificacao.nivelIA` (mentira); hash velho segue só AVISO. Custo `ia.test`/nível (30 partidas):
+facil 547 · normal 781 · **dificil 2545ms (~3,3×)** — afordável interativo, medir p/ arena em lote. poseidon
+re-carimbado (nivelIA 'normal'). Testes: ia.test +bloco de níveis; solucionador.test nivelIA→'normal'. **22
+suítes verdes.** Gatilho de revisão: se o CPU do jogo mudar de nível nas Provações, os 91 carimbos invalidam —
+a trava de identidade impede passar em silêncio. **PRÓXIMO (dono):** construir as 91 estruturadas em lote
+(regra §149: INDETERMINADO → parar e reportar, dono decide afrouxar×dica; §5 usa lancesNesteCaminho como sinal
+grosso); checador cross-file provacoes.json↔roster_data.js (§146) quando as 91 forem geradas.
+
+## Sessão — F2.1: o solucionador (prova JOGABILIDADE, não solubilidade) (anterior)
 **Data:** 2026-08-21
 **Tarefa:** F2.1 — `tools/solucionador.js`, prova que cada Provação tem um caminho de vitória. §148.
 **Resultado:** a busca exaustiva mais-curta (BFS) DIVERGE já no Poseidon raso (20k nós, fila 90k crescendo) —

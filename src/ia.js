@@ -77,24 +77,53 @@ function iaCandidatos(st, u) {
   return out;
 }
 
-// melhor próxima ação do lado ativo, ou null se nada melhora a posição
-function iaProximaAcao(st) {
-  const lado = st.ativo;
-  const base = iaPontuar(st, lado);
-  let melhor = null, melhorDelta = 1e-6;   // exige ganho estritamente positivo
+// NÍVEIS de IA (F2.2) — todos DETERMINÍSTICOS: sem Math.random, sem corte por tempo (corte por tempo é
+// não-determinismo disfarçado — a mesma posição decide diferente conforme a máquina). Servem o jogo normal e a
+// arena; a PROVAÇÃO pina no 'normal' (§150: identidade — o solucionador verifica contra o MESMO oponente que o
+// jogador enfrenta). A dificuldade da Provação vive no estado+condição, nunca na força da IA.
+//   facil   — só o Básico (ignora habilidade/milagre): claramente mais fraco, previsível
+//   normal  — a gulosa de 1 lance (o comportamento histórico)
+//   dificil — gulosa com 2-ply DENTRO do turno (soma o melhor lance seguinte); mais forte, ainda determinístico
+const NIVEIS_IA = ['facil', 'normal', 'dificil'];
+
+function iaCandidatosLado(st, lado, nivel) {
+  const out = [];
   for (const u of st.lados[lado].units) {
     if (!podeAgir(u)) continue;
     for (const c of iaCandidatos(st, u)) {
-      const cl = iaClonar(st);
-      const r = agir(cl, c.uid, c.slot, c.alvos, c.escolhas);
-      if (!r || !r.ok) continue;
-      const d = iaPontuar(cl, lado) - base;
-      if (d > melhorDelta) { melhorDelta = d; melhor = c; }
+      if (nivel === 'facil' && c.slot !== 'basico') continue;   // Fácil: só o Básico
+      out.push(c);
     }
+  }
+  return out;
+}
+
+// melhor próxima ação do lado ativo, ou null se nada melhora a posição. `nivel` default 'normal' (compat.).
+function iaProximaAcao(st, nivel = 'normal') {
+  const lado = st.ativo;
+  const base = iaPontuar(st, lado);
+  let melhor = null, melhorDelta = 1e-6;   // exige ganho estritamente positivo
+  for (const c of iaCandidatosLado(st, lado, nivel)) {
+    const cl = iaClonar(st);
+    const r = agir(cl, c.uid, c.slot, c.alvos, c.escolhas);
+    if (!r || !r.ok) continue;
+    let ganho = iaPontuar(cl, lado) - base;
+    if (nivel === 'dificil') {   // 2-ply dentro do turno: + o melhor lance SEGUINTE do próprio lado (sem oponente, determinístico)
+      const baseSeg = iaPontuar(cl, lado);
+      let melhorSeg = 0;
+      for (const c2 of iaCandidatosLado(cl, lado, nivel)) {
+        const cl2 = iaClonar(cl);
+        const r2 = agir(cl2, c2.uid, c2.slot, c2.alvos, c2.escolhas);
+        if (!r2 || !r2.ok) continue;
+        melhorSeg = Math.max(melhorSeg, iaPontuar(cl2, lado) - baseSeg);
+      }
+      ganho += melhorSeg;
+    }
+    if (ganho > melhorDelta) { melhorDelta = ganho; melhor = c; }
   }
   return melhor;
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { iaProximaAcao, iaPontuar };
+  module.exports = { iaProximaAcao, iaPontuar, NIVEIS_IA };
 }

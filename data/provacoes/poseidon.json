@@ -52,11 +52,11 @@
   ],
   "verificacao": {
     "hash": "30fc1362",
-    "nivelIA": "gulosa",
+    "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 3,
     "nos": 4,
-    "ms": 26,
+    "ms": 36,
     "caminho": [
       "poseidon Maremoto",
       "sobek Dilúvio",
