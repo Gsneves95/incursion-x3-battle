@@ -107,6 +107,24 @@ if (cadeia.divergencias.length) {
       erros.push(...validarProvacao(JSON.parse(ler('data/provacoes/' + f))));
     }
     if (erros.length) { console.error('ERRO de schema de Provação:\n  ' + erros.join('\n  ')); process.exit(1); }
+
+    // ---------- 3d. CARIMBO DE VERSÃO (F2.1, §148): AVISA (não falha) quando o catálogo mudou desde a verificação ----------
+    // Kit rebalanceado não quebra a build; marca as Provações a re-solver. Aviso VISÍVEL (banner ⚠) + lista.
+    const { catalogoHash } = require('../src/provacao.js');
+    const E = require('../src/engine.js');
+    const velhas = [], semCarimbo = [];
+    for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
+      const prov = JSON.parse(ler('data/provacoes/' + f));
+      if (!prov.verificacao) { semCarimbo.push(prov.key); continue; }
+      if (prov.verificacao.hash !== catalogoHash(prov, E.GODS)) velhas.push(prov.key);
+    }
+    if (velhas.length || semCarimbo.length) {
+      console.warn('\n⚠️  ============ CARIMBO DE PROVAÇÃO ============');
+      if (velhas.length) console.warn(`⚠️  ${velhas.length} Provação(ões) com carimbo VELHO — kit mudou, RE-SOLVER: ${velhas.join(', ')}`);
+      if (semCarimbo.length) console.warn(`⚠️  ${semCarimbo.length} Provação(ões) SEM carimbo — nunca verificadas: ${semCarimbo.join(', ')}`);
+      console.warn('⚠️     rode: node tools/solucionador.js --carimbar <deus>');
+      console.warn('⚠️  =============================================\n');
+    }
   }
 }
 

@@ -63,6 +63,15 @@ const PREDICADOS = {
       return n >= c.quantos ? 'ok' : 'pendente';   // nunca 'falha': até o fim pode acontecer; o gate de base-vitória barra o 'pendente'
     },
   },
+  acumulo: {   // §146/§147: uma QUANTIDADE (fonte) tem de atingir um limiar. Nasce com as 9 fontes da varredura
+    // dos 91 (§87). Modo log: nunca falha cedo (sempre pode acumular); o gate de base-vitória barra o 'pendente'.
+    // "Modo saindo de onde se lê" — a quantidade vem da fonte certa. golpe-final-com-limiar (susanoo/yamato) é
+    // OUTRO predicado, não acumulo (§46: mesma palavra, leituras diferentes).
+    modo: 'log', obrig: ['fonte', 'limiar'],
+    aval: (st, c, ctx) => acumuladoDe(st, c, ctx) >= c.limiar ? 'ok' : 'pendente',
+    chave: (st, c, ctx) => { try { return String(acumuladoDe(st, c, ctx)); } catch { return ''; } },   // progresso p/ o dedup do solucionador
+    distancia: (st, c, ctx) => { try { return Math.max(0, c.limiar - acumuladoDe(st, c, ctx)); } catch { return 0; } },   // quanto falta p/ o limiar (heurística do best-first)
+  },
 
   // ---- FINAL (só julgável no fim) ----
   hpNoFim: {   // no golpe final, o HP de `quem` (chave de unidade) satisfaz op v — só faz sentido no estado final
@@ -75,6 +84,29 @@ const PREDICADOS = {
   },
 };
 
+// as 9 FONTES de acúmulo, da varredura dos 91 (§146/§147): nasce com todas registradas (§87). A implementação
+// de `acumuladoDe` cobre as de-log baratas hoje; as demais lançam ao serem USADAS (ao construir a Provação),
+// nunca silenciam. golpe-final-com-limiar (susanoo/yamato) NÃO está aqui — é outro predicado (§46).
+const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoBonus', 'contador', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
+function _somaLog(st, f) { let s = 0; for (const e of st.log) s += (f(e) || 0); return s; }
+function acumuladoDe(st, c, ctx) {
+  switch (c.fonte) {
+    case 'danoRefletido': return _somaLog(st, e => e.tipo === 'dano' && e.kind === 'reflexo' && ctx.ladoDe(e.origem) === 0 ? e.valor : 0);
+    case 'danoAbsorvido': return _somaLog(st, e => e.tipo === 'dano' && ctx.ladoDe(e.alvo) === 0 ? (e.absorvido || 0) : 0);
+    case 'curaAcumulada': return _somaLog(st, e => e.tipo === 'cura' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);
+    case 'orbesGuardados': return Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
+    case 'contador': { const u = st.lados[0].units.find(x => x.key === c.quem) || st.lados[0].units[0]; return (u && u.contadores[c.contador]) || 0; }
+    default: throw new Error(`acumulo: fonte "${c.fonte}" registrada mas acumuladoDe() ainda não implementado — implementar ao construir a Provação que a usa`);
+  }
+}
+
+// -------- carimbo de versão (pendente desde a F1.0a): hash do catálogo com que a Provação foi verificada --------
+function _djb2(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
+function catalogoHash(prov, gods) {
+  const keys = [...new Set([...(prov.aliados || []), ...(prov.inimigos || [])])].sort();
+  return _djb2(keys.map(k => k + ':' + JSON.stringify(gods[k] || null)).join('|'));
+}
+
 // -------- validação de FORMA (chamada na BUILD; falha alto, não em runtime) --------
 function validarProvacao(prov) {
   const erros = [];
@@ -86,6 +118,7 @@ function validarProvacao(prov) {
     const def = PREDICADOS[c.predicado];
     if (!def) { erros.push(`${nome}: predicado DESCONHECIDO "${c.predicado}" (conjunto fechado: ${Object.keys(PREDICADOS).join(', ')})`); continue; }
     for (const campo of def.obrig) if (c[campo] === undefined) erros.push(`${nome}.${c.predicado}: falta o campo obrigatório "${campo}"`);
+    if (c.predicado === 'acumulo' && c.fonte !== undefined && !FONTES_ACUMULO.includes(c.fonte)) erros.push(`${nome}.acumulo: fonte DESCONHECIDA "${c.fonte}" (fechado: ${FONTES_ACUMULO.join(', ')})`);
     if ('quando' in c) erros.push(`${nome}.${c.predicado}: "quando" é DERIVADO do modo (${MODOS[def.modo]}), não pode ser declarado`);
     if ('modo' in c) erros.push(`${nome}.${c.predicado}: "modo" é do predicado, não do kit — não declare`);
   }
@@ -138,5 +171,5 @@ function avaliarProvacao(st, prov) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PREDICADOS, MODOS, validarProvacao, montarProvacao, avaliarProvacao };
+  module.exports = { PREDICADOS, MODOS, FONTES_ACUMULO, validarProvacao, montarProvacao, avaliarProvacao, catalogoHash };
 }

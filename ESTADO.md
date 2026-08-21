@@ -2,7 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — a mira `distribui` na IA (§144 resolvido, pré-F2.1)
+## Última sessão — F2.1: o solucionador (prova JOGABILIDADE, não solubilidade)
+**Data:** 2026-08-21
+**Tarefa:** F2.1 — `tools/solucionador.js`, prova que cada Provação tem um caminho de vitória. §148.
+**Resultado:** a busca exaustiva mais-curta (BFS) DIVERGE já no Poseidon raso (20k nós, fila 90k crescendo) —
+exaustão é intratável. Reformulado (dono): o solucionador prova **JOGABILIDADE** (existe caminho), não
+solubilidade. Estratégia **C** = best-first (min-heap, `h = HP inimigo + falta da condição`, a heurística mais
+simples) + exaustão-quando-cabe. 3 vereditos: **VENCÍVEL** ("existe caminho, aqui está um" — NÃO o mínimo;
+`lancesNesteCaminho` é teto solto) · **INVENCÍVEL** só por exaustão real (NUNCA por orçamento) · **INDETERMINADO
+ACIONÁVEL** (orcamento vs dica). Poseidon (montar tunado p/ vencível): **VENCÍVEL em 4 nós, 26ms**, caminho
+Maremoto→Dilúvio→Afogamento (3 inimigos caem Encharcados) — heurística simples bastou, não sofistiquei.
+Carimbo de versão (pendente desde a F1.0a): `verificacao:{hash, nivelIA, veredito, caminho, ...}` gravado via
+`--carimbar`; `build.js §3d` AVISA (não falha) quando o hash diverge/falta. `acumulo{fonte,limiar}` com as 9
+fontes. `tests/solucionador.test.js` (6 blocos). **22 suítes verdes.** Ferramentas: `node tools/solucionador.js
+[deus] [orç]` e `--carimbar`. **Observação p/ os lotes:** se o solucionador precisar de `dica` p/ achar o
+caminho, essa Provação pode ser impossível p/ o jogador sem dica — o `acionavel:'dica'` é o detector.
+**PRÓXIMO (dono):** F2.x — construir as 91 estruturadas em lote (o §5 do prompt de lote agora usa
+`lancesNesteCaminho` como sinal grosso, não medida); a IA por níveis (F2.2) re-carimba o que foi achado contra
+a gulosa. Pendência: checador cross-file provacoes.json↔roster_data.js (§146) quando as 91 forem geradas.
+
+## Sessão — a mira `distribui` na IA (§144 resolvido) (anterior)
 **Data:** 2026-08-21
 **Tarefa:** dar à IA gulosa uma regra de mira para `alvo:'distribui'` (§144), ANTES do solucionador — porque
 8 times inimigos das 91 têm kit distribui e o solucionador gravaria SEQUÊNCIAS contra um oponente cego

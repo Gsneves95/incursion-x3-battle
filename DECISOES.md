@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §148 — F2.1: o solucionador prova JOGABILIDADE, não solubilidade. Best-first (C); 3 vereditos reformulados.
+
+**O número mudou o que o solucionador PROMETE (reformulação do dono).** "Sequência mais curta" e "INVENCÍVEL com razão" pressupunham EXAUSTÃO — e a exaustão não existe neste espaço. A busca exaustiva mais-curta (BFS) **diverge** já no Poseidon RASO (8 turnos): 20.000 nós → 23 s, fila 90.378 e **crescendo ~4,5× mais rápido que a expansão**. Não é lento-convergindo; é intratável. Nem o caso fácil resolve por exaustão. Então:
+
+**O solucionador prova JOGABILIDADE — "existe um caminho de vitória contra o oponente declarado" — não SOLUBILIDADE.** É menos do que se queria e é o que a fase precisa: um puzzle sem caminho conhecido é o risco real; um cuja sequência mínima é 7 em vez de 6 não é.
+
+**Os 3 vereditos, reformulados (travados em `tests/solucionador.test.js`):**
+- **VENCÍVEL = "existe caminho, aqui está um"** — NÃO o melhor. O `verificacao.lancesNesteCaminho` é "lances até vencer neste caminho", um TETO SOLTO, não o mínimo. Sinal grosso de dificuldade (Rito que precisa de 12 lances segue suspeito), não medida.
+- **INVENCÍVEL só por EXAUSTÃO REAL** — a fronteira esvaziou. **NUNCA por orçamento** (o pior erro possível: descartaria uma Provação boa). Se não dá para esgotar, é INDETERMINADO.
+- **INDETERMINADO ACIONÁVEL** — o relatório diz o que faltou: `orcamento` (heurística ainda progredindo → aumentar o orçamento) ou `dica` (heurística ESTAGNOU → a Provação precisa de dica de sequência). O orçamento nunca vira veredito negativo.
+
+**Estratégia C (best-first + exaustão-quando-cabe):** min-heap por `h = HP inimigo somado + o que falta em cada condição` (a heurística MAIS SIMPLES, como o dono pediu). Best-first acha um caminho rápido; a exaustão (INVENCÍVEL) cai de graça quando a fronteira esvazia dentro do orçamento (espaço pequeno). Poda: alvos equivalentes (chave canônica ordenada), ação-sem-efeito e estados repetidos (dedup por chave que INCLUI o progresso das condições → dedup são p/ cumulativos). Clone barato (log compartilhado, eventos imutáveis).
+
+**Custo medido (o Poseidon, tunado p/ ser vencível — a montar faz parte do spec):** best-first resolve em **4 nós, 26 ms, heap máx 39**, caminho `Maremoto → Dilúvio → Afogamento` (3 lances, os 3 inimigos caem Encharcados). A heurística simples resolveu em 4 nós → **não sofistiquei** (o dono: "se resolver em poucos milhares, não sofistique"). No Poseidon DIFÍCIL (inimigos a 120 HP) o mesmo solucionador retorna, honestamente, INDETERMINADO com `acionavel:'dica'` (heurística estagnou em melhorH=46) — a máquina se auto-diagnostica.
+
+**Carimbo de versão (pendente desde a F1.0a):** `verificacao:{hash, nivelIA, veredito, lancesNesteCaminho, nos, ms, caminho}` gravado no `data/provacoes/<deus>.json` via `--carimbar`. **Grava contra O QUE foi achado — hash do catálogo E nível da IA** (§: uma sequência achada contra a gulosa pode não valer contra a Difícil da F2.2). `build.js §3d` recomputa o hash e **AVISA** (⚠ banner + lista, não falha) quando diverge ou falta — a rede de regressão.
+
+**`acumulo{fonte, limiar}` nasceu com as 9 fontes** da varredura (§146): danoAbsorvido, danoRefletido, danoArmazenado, danoBonus, contador, buffsRoubados, orbesRoubados, orbesGuardados, curaAcumulada. Modo log; fonte desconhecida recusada na build.
+
+**A pergunta que o resultado levanta (a observar nos lotes, não responder agora):** se o espaço é grande demais para EXAUSTÃO, talvez seja grande demais para o JOGADOR achar por tentativa e erro. Se o solucionador precisar de heurística dirigida (ou de DICA) para achar o caminho, algumas das 91 podem ser puzzles que ninguém acha sem dica. O `acionavel:'dica'` já é o detector: as Provações que só resolvem com dica são as candidatas. Observar quando os lotes rodarem.
+
+---
+
 ## §147 — A mira `distribui` na IA (§144 resolvido, antes da F2.1). A arena passa a medir 100/100.
 
 **Feito ANTES do solucionador, e por um motivo que inverte a minha recomendação (a do dono):** eu propus construir o solucionador já e marcar os 8 times-inimigos-com-distribui como "veredito otimista". O dono recusou pelo argumento fino — **a marca protege o VEREDITO, mas não o ARTEFATO**: o carimbo de versão grava a SEQUÊNCIA no arquivo da Provação, e 8 sequências achadas contra um oponente cego viram referência guardada. **Sequência errada é pior que veredito errado — ela parece prova.** E o custo de inverter era baixo (4 kits, buraco já localizado). Registro a lição: quando a saída de uma tarefa é PERSISTIDA como referência, "marcar o resultado como suspeito" não basta — a fonte suspeita não pode ser gerada.

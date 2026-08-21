@@ -3,15 +3,64 @@
   "titulo": "A Maré Não Espera",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": ["poseidon", "iara", "sobek"],
-  "inimigos": ["ares", "thor", "ogum"],
+  "aliados": [
+    "poseidon",
+    "iara",
+    "sobek"
+  ],
+  "inimigos": [
+    "ares",
+    "thor",
+    "ogum"
+  ],
   "montar": {
     "seed": 2,
     "comeca": 0,
-    "orbs": { "0": { "Maré": 3 } }
+    "orbs": {
+      "0": {
+        "Maré": 9
+      }
+    },
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "hp": 60
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "hp": 60
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "hp": 60
+      }
+    ]
   },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 8 },
-    { "predicado": "morteEmEstado", "quem": "inimigo", "estado": "encharcado" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 8
+    },
+    {
+      "predicado": "morteEmEstado",
+      "quem": "inimigo",
+      "estado": "encharcado"
+    }
+  ],
+  "verificacao": {
+    "hash": "30fc1362",
+    "nivelIA": "gulosa",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 3,
+    "nos": 4,
+    "ms": 26,
+    "caminho": [
+      "poseidon Maremoto",
+      "sobek Dilúvio",
+      "iara Afogamento"
+    ]
+  }
 }

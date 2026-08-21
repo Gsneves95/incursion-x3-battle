@@ -17,9 +17,10 @@ console.log('== 1. montar: a Provação carrega um estado jogável (novoEstado +
   const st = PROV.montarProvacao(poseidon);
   ok(st.lados[0].units.map(u => u.key).join(',') === 'poseidon,iara,sobek', 'aliados montados');
   ok(st.lados[1].units.map(u => u.key).join(',') === 'ares,thor,ogum', 'inimigos montados');
-  ok(st.lados[0].orbs['Maré'] === 3, `override de orbe aplicado (Maré=${st.lados[0].orbs['Maré']})`);
+  ok(st.lados[0].orbs['Maré'] === 9, `override de orbe aplicado (Maré=${st.lados[0].orbs['Maré']})`);
+  ok(st.lados[1].units.every(u => u.hp === 60), `override de HP dos inimigos aplicado (montar.unidades)`);
   ok(st.turno === 1 && !st.fim, 'partida em andamento no turno 1');
-  console.log('  poseidon carrega: 3v3, Maré=3, turno 1');
+  console.log('  poseidon carrega: 3v3, Maré=9, inimigos a 60 HP, turno 1');
 }
 
 console.log('== 2. Poseidon RESOLVE: deadline (contínuo) + morteEmEstado (log) ==');
