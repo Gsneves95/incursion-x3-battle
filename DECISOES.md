@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §147 — A mira `distribui` na IA (§144 resolvido, antes da F2.1). A arena passa a medir 100/100.
+
+**Feito ANTES do solucionador, e por um motivo que inverte a minha recomendação (a do dono):** eu propus construir o solucionador já e marcar os 8 times-inimigos-com-distribui como "veredito otimista". O dono recusou pelo argumento fino — **a marca protege o VEREDITO, mas não o ARTEFATO**: o carimbo de versão grava a SEQUÊNCIA no arquivo da Provação, e 8 sequências achadas contra um oponente cego viram referência guardada. **Sequência errada é pior que veredito errado — ela parece prova.** E o custo de inverter era baixo (4 kits, buraco já localizado). Registro a lição: quando a saída de uma tarefa é PERSISTIDA como referência, "marcar o resultado como suspeito" não basta — a fonte suspeita não pode ser gerada.
+
+**A regra (o mínimo que funciona, §92 + Forma A da interface):** `iaAlvoSets` (`src/ia.js`) ganhou o caso `distribui` com os DOIS intents reais — **focar** tudo no mais fraco, ou **dividir** igual entre os vivos. Ordem = seleção (§92: o 1º leva o extra da divisão desigual; o posicional do Raijin segue a seleção) → ordeno por menor HP, o mais fraco em 1º. **No máx 2 conjuntos por ação** (1 se só há 1 inimigo) — o mínimo É a poda; não abri o espaço de subconjuntos todo.
+
+**Custo medido:** `ia.test` ~1000ms antes → ~810–906ms depois (variância de máquina; sem regressão — distribui são 4 de 100 kits, ≤2 conjuntos a mais só neles). Confirmado ao vivo: com 3 inimigos a 8 HP, a IA escolhe Fios de Cabelo e divide 4×8 nos três (`["1-0","1-1","1-2"]`), matando os 3.
+
+**Delta da arena (`docs/arena_pos_distribui.txt` vs `arena_pos_invocacao.txt`) — os 4 que eram invisíveis agora aparecem:** Babi 32,1→38,9 (+6,8) · Hou Yi 39,6→46,4 (+6,8) · Raijin 44,0→46,1 (+2,1) · Sun Wukong 56,3→59,4 (+3,1). **Nenhum saltou muito** (máx +6,8) — os slots `distribui` valiam ~2–7 pts que a §141 não media; nenhum kit se revela quebrado. As entradas "nunca usou" dos slots distribui limparam (Babi milagre, Hou Yi milagre, Raijin habilidade, Sun Wukong habilidade agora usados; o milagre-self do Wukong segue não-usado — é o viés-de-setup, não buraco de mira). Distribuição geral intacta: média 50,0%, desvio 14,0→13,9.
+
+**A linha de base agora mede 100 de 100.** A ressalva do §141-A (96) está levantada — a arena da Fase 2 compara contra 100. O item da F2.2 (mira distribui antes da arena Difícil) foi cumprido aqui, adiantado porque também bloqueava as Provações.
+
+---
+
 ## §146 — Reescritas as 4 condições de invocação (#42/56/91/96). Dois achados fora da tarefa: prosa DUPLICADA (§134) e prosa-sem-fx em campo não-varrido.
 
 **As 4 condições que citavam invocação, reescritas** (a pedido do dono, para deixar as 91 uniformes antes da F2.1): Khnum (Couraça absorve ≥60), Kitsune (iscas→miragens), Iansã (remover todo buff dos 3 antes da 1ª queda; time trocado p/ Ogum·Susanoo·Thor), Cernunnos (Fúria reflete ≥50 e ativa no golpe final).
@@ -129,7 +143,7 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **Decisão:** **nada foi alterado.** O dono pediu a distribuição antes de tocar em qualquer coisa; o balanceamento é decisão dele. A arena fica como ferramenta (roda quando quiser: `node tools/arena.js [rodadas]`). Quando a Fase 2 trocar o guloso por lookahead, esta leitura muda — re-rodar é obrigatório antes de concluir qualquer coisa sobre poder de kit.
 
-**§141-A — LINHA DE BASE p/ a arena da Fase 2 (registrado a pedido do dono, sem conclusão):** dispersão do win-rate = **desvio-padrão 14,1 pts, miolo de 86 deuses em [29%, 71%]**, média 50,0%, ~192 jogos/deus (SE ~3,6 pts). Descontado o viés do guloso, ainda sugere dispersão REAL — mas não se conclui nada agora. Número guardado para a arena da Fase 2 (com lookahead) comparar contra ele. **RESSALVA (§144): a linha de base mede 96 de 100 — a IA não sabe mirar `distribui`, então babi/houyi/raijin/sunwukong têm o win-rate viciado (nunca lançam a habilidade/milagre `distribui`). Comparar contra este número exige a mesma ressalva, ou a regra de mira `distribui` na IA ANTES de re-rodar.**
+**§141-A — LINHA DE BASE p/ a arena da Fase 2 (registrado a pedido do dono, sem conclusão):** dispersão do win-rate = **desvio-padrão 14,1 pts, miolo de 86 deuses em [29%, 71%]**, média 50,0%, ~192 jogos/deus (SE ~3,6 pts). Descontado o viés do guloso, ainda sugere dispersão REAL — mas não se conclui nada agora. Número guardado para a arena da Fase 2 (com lookahead) comparar contra ele. **RESSALVA (§144): a linha de base mede 96 de 100 — a IA não sabe mirar `distribui`, então babi/houyi/raijin/sunwukong têm o win-rate viciado (nunca lançam a habilidade/milagre `distribui`). Comparar contra este número exige a mesma ressalva, ou a regra de mira `distribui` na IA ANTES de re-rodar.** — **LEVANTADA (§147):** a mira `distribui` foi construída; a arena agora mede 100/100 (baseline vivo em `docs/arena_pos_distribui.txt`).
 
 **§141-B — PERGUNTA ABERTA p/ a arena da Fase 2 (o achado mais confiável da corrida):** Odin 33% e Kitsune 35% NÃO são fraqueza de kit — são **sinergia nomeada com parceiro que raramente cai no time SORTEADO** (Odin `faccaoConta` ≥2 Nórdicos; Kitsune sinergia com Inari). No jogo real o jogador ESCOLHE o time → são condicionais FORTES, não fracos. A arena atual não responde **quanto vale a sinergia quando ela existe**. Fase 2: rodar com times sorteados E com times sinérgicos, comparar — é isso que diz se a sinergia está bem precificada.
 

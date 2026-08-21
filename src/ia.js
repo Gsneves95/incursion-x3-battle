@@ -48,6 +48,15 @@ function iaAlvoSets(a, ini, ali) {
     case '2inimigos':      return ini.length >= 2 ? [menorHp(ini).slice(0, 2).map(e => e.uid)] : (ini.length ? [[ini[0].uid]] : [[]]);
     case '2aliados':       return ali.length >= 2 ? [menorHp(ali).slice(0, 2).map(x => x.uid)] : (ali.length ? [[ali[0].uid]] : [[]]);
     case 'aliado+inimigo': return (ali.length && ini.length) ? [[menorHp(ali)[0].uid, menorHp(ini)[0].uid]] : [[]];
+    // §144: multi-golpe distribuído. Os DOIS intents reais da Forma A (o jogador não faz split fino, a IA
+    // também não): FOCAR tudo no mais fraco, ou DIVIDIR igual entre os vivos. A ordem é a seleção (§92: o 1º
+    // leva o extra da divisão desigual; o posicional do Raijin segue a seleção) → ordeno por menor HP, o mais
+    // fraco em 1º, p/ o extra e o golpe posicional mais forte caírem no abatível. No máx 2 conjuntos por ação.
+    case 'distribui': {
+      if (!ini.length) return [[]];
+      const ord = menorHp(ini).map(e => e.uid);
+      return ini.length === 1 ? [[ord[0]]] : [[ord[0]], ord];   // [focar no mais fraco] · [dividir entre todos]
+    }
     default:               return [[]];   // nenhum, todosInimigos, auto
   }
 }

@@ -2,7 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — reescrita das 4 condições de invocação (pré-F2.1)
+## Última sessão — a mira `distribui` na IA (§144 resolvido, pré-F2.1)
+**Data:** 2026-08-21
+**Tarefa:** dar à IA gulosa uma regra de mira para `alvo:'distribui'` (§144), ANTES do solucionador — porque
+8 times inimigos das 91 têm kit distribui e o solucionador gravaria SEQUÊNCIAS contra um oponente cego
+(sequência errada parece prova; §147). §147.
+**Resultado:** `iaAlvoSets` (`src/ia.js`) ganhou o caso `distribui` com os 2 intents reais (focar no mais
+fraco / dividir igual entre vivos), ordem por menor-HP (§92: 1º leva o extra), no máx 2 conjuntos/ação — o
+mínimo é a poda. Custo: `ia.test` ~1000ms→~810–906ms (sem regressão). Ao vivo: a IA divide 4×8 e mata 3.
+Arena re-rodada (`docs/arena_pos_distribui.txt`): os 4 invisíveis apareceram — Babi +6,8 · Hou Yi +6,8 ·
+Raijin +2,1 · Sun Wukong +3,1; nenhum saltou muito; distribuição intacta (média 50%, dp 14,0→13,9). **A
+linha de base agora mede 100/100** (ressalva do §141-A levantada). 21 suítes verdes. **PRÓXIMO:** F2.1 — o
+solucionador (plano aprovado inteiro: 3 vereditos, carimbo de versão, custo medido, Poseidon resolvido;
+`acumulo` nasce com as 9 fontes / 16 consumidores, §146/§147).
+
+## Sessão — reescrita das 4 condições de invocação (anterior)
 **Data:** 2026-08-21
 **Tarefa:** reescrever as 4 condições de Provação que dependiam de invocação (#42/56/91/96), deixando as 91
 uniformes antes do solucionador. §146.
