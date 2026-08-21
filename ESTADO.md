@@ -2,7 +2,65 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão
+## FASE 1 — FECHAMENTO (resumo da fase)
+**Data:** 2026-08-21
+**Placar:** **IMPL 100 / FUNCIONAL 100.** Os 100 kits estão em `data/deuses/*.json`, todos com passiva + 3
+habilidades declarativas. 20 suítes verdes, cadeia sem DIVERGE, 0 partidas sem desfecho em nenhum harness.
+
+### O que MUDOU DE ESTRUTURA na fase
+- **De hardcode a declarativo.** No começo (root `bc21d52`) o motor era ~870 linhas com kits embutidos em código.
+  Hoje `src/engine.js` tem 2085 linhas e é um **interpretador puro** de kits-JSON: nenhum `if key==='fulano'`. Toda
+  a variação de deus mora em `data/deuses/*.json`, validada por `tools/valida_kit.js` (que lê o `VOCAB` do motor,
+  fonte única) e conferida contra a prosa por `tools/checar_cadeia.js` (o build falha em DIVERGE).
+- **Modularização.** `src/` foi de 3 arquivos / 1627 linhas para **18 arquivos / 4384 linhas** (a `view.js`
+  monolítica de 754 linhas virou `src/ui/*` + `turno.js`/`perfil.js`/`invocacao.js`/`ia.js`/`rotas.js`/…).
+- **O motor cresceu por VOCABULÁRIO, não por casos.** Hoje: **30** gatilhos de passiva · **37** verbos de `fx`
+  (72 chaves de `fx` no total) · **24** condições (11 de alvo + 10 de estado/campo + 3 de cura) · **5** eixos de
+  `contra` (classe/elem/funcao/alcance/slot) · **40** efeitos (11 controles + 18 buffs + debuffs) · **6** DoTs ·
+  **9** contadores · **50** categorias de status · **9** alvos · **21** tipos de evento no narrador.
+- **Os 9 mecanismos de sistema (M1–M9)** foram desenhados ANTES de construídos: agendador (M1), iniciativa (M2),
+  consequência-de-abate (M3, que se dissolveu em três pequenos), extensão-de-imunidade (M4), realoca (M5),
+  buffs-suspensos (M6), contra-delegado (M7), **invocação-alvejável (M8, só o Cernunnos)**, retaliação (M9).
+- **Disciplina de teste em camadas:** isolamento (`primitivas.test.js`), comportamento (`passiva.test.js`),
+  gramática de eventos (`eventos.test.js`), teto de dano (`auditoria.test.js`), prosa↔motor (`cadeia.test.js`),
+  frações da vida (`fracoes.test.js`), IA/perfil/rotas/UI/enquadramento/invocação/perspectiva/energia/moldura.
+
+### Quantas AMBIGUIDADES DE KIT apareceram
+A tradução foi o degrau que mais achou. Sinais medíveis, ao fim da fase:
+- **26 pares prosa↔motor não-conferíveis (2,3% de 1116)** no `checar_cadeia` — prosa que enuncia intenção sem um
+  número que o fx carregue (ex.: "remove 1 debuff de cada aliado" → `cleanse` remove todos; erra p/ CIMA, dentro
+  do teto). São aproximações-de-teto anotadas, não bugs.
+- **20 habilidades acima do teto-base de dano** (allowlist do auditor), **todas condicionais** — bumps por-status,
+  multi-golpe concentrado, ou nukes-de-fim-de-jogo previstos do catálogo. Nenhuma é dano-base estourado.
+- **3 divergências-conhecidas-COM-GATILHO** (prosa diz mais do que o motor faz, de propósito, com evento nomeado
+  que as resolve): Chang'e (§102-C, "ambos +8" → só self), Ares/Massacre (§118, recíproco), Sun Wukong (§102-C).
+- **As 5 "espécies órfãs"** (§113 + §129): etiqueta-sem-enforce, campo-sem-fio, prosa-sem-fx, produtor-sem-
+  consumidor, e a 5ª — **junta-não-ligada** (leitor certo + alimentador presente mas não produzindo) — que SÓ o
+  motor rodando expõe. A varredura dirigida da 5ª (§134) deu LIMPA.
+- **Lição transversal (§46):** o NOME não é evidência. Repetidamente a família sugerida pela prosa era menor que o
+  balde (cura 20→7, reativa 10→6, invocação 4→3). O tell da prosa CLASSIFICA o mecanismo; o motor rodando CONFIRMA.
+
+### O que a FASE 2 precisa saber
+- **A IA é gulosa de 1 lance (`src/ia.js`), não minimax.** Ela pontua a posição imediata → **subestima
+  setup/buff/control/invocação** (delta≈0 em 1 ply) e **superestima AoE+cura imediatos**. Isso enviesa QUALQUER
+  leitura de balanceamento pela arena (ver abaixo). Minimax/lookahead é trabalho da Fase 2 e mudaria o ranking.
+- **Dívidas com endereço** (ainda abertas, todas com dono e gatilho):
+  1. **`opcoes` sem validação de contagem** (§123.1): o "escolha N" mora na UI, o motor aplica os índices que o
+     cliente manda. Gatilho: **servidor autoritativo (Fase 5)** → vira `escolher:N` no kit + checagem em `agir` e
+     `valida_kit`. Dono: o executor de `opcoes` + o validador.
+  2. **`contra` sobrecarregado** (§134): o campo é OBJETO (`{classe|elem|alcance|slot}`) em reducao/aoSerAtingido
+     e STRING (`'unico'|'todos'`) em intercepta/redirect/contraAtaca. Nenhum kit cruza as formas hoje; um autor que
+     puser `contra:{alcance:'unico'}` numa intercepta teria falso silencioso. Dívida-de-FORMA (não junta).
+  3. **Nove Flechas = 72** (Hou Yi, §94): candidato a revisão desde a construção. **A arena mediu:** Hou Yi 40,1%
+     de vitória — o 72 exige as 9 flechas em alvos-Aurora, condição rara; NÃO é dominante na prática. Decisão do
+     dono.
+  4. **M8 serve UM kit** (§139): a invocação-alvejável é do Cernunnos só; os clones do Wukong não têm corpo. Não
+     amortiza na família — é aceito, não é dívida a pagar.
+- **Ferramenta nova:** `tools/arena.js` (a arena de balanceamento) roda IA×IA sobre o roster e imprime win-rate por
+  deus, duração, fora-da-curva e habilidades-nunca-usadas. Determinística (PRNG semeado). Relatório da 1ª corrida
+  completa em `docs/arena_fase1.txt`. **Nenhum número foi tocado** — o balanceamento é decisão do dono.
+
+## Sessão — F1.2 sessão 10 (anterior)
 **Data:** 2026-08-12
 **Tarefa:** F1.2 sessão 10 — gatilho `aoCurar`; migração de **hera**. **FECHA A F1.2 (12/12).**
 **Resultado:** varredura das "reativas" (o dono suspeitava balde, por ser NOME DE CATEGORIA). Confirmado: as 10

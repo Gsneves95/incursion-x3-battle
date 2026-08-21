@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §141 — A ARENA COM OS 100 (1ª leitura de balanceamento com dado real). NENHUM número tocado — decisão do dono.
+
+**A arena existe desde a F1.4 e nunca vira o roster completo.** `tools/arena.js` (novo): IA×IA gulosa sobre os 100, PRNG semeado (determinístico, sem `Math.random`), amostragem round-robin (cada rodada embaralha os 100, forma times de 3, emparelha adjacentes; `comeca` alterna). 200 rodadas = 3200 partidas, ~192 jogos/deus. Relatório salvo em `docs/arena_fase1.txt`.
+
+**Sanidade primeiro (a arena está medindo certo):** win-rate MÉDIO **exatamente 50,0%** (jogo é soma-zero e simétrico — se desse ≠50 haveria viés no harness), duração 13,8 turnos (bate com os 13,5–14,8 do perf-test da `energia`), **0 sem desfecho**, 1 empate em 3200 (0,0%). Erro-padrão de um win-rate 50% a 192 jogos: ~3,6 pts.
+
+**A DISTRIBUIÇÃO (desvio-padrão 14,1 pts):**
+- **▲ FORA por cima (>71%):** Brigid 91% · Brahma 89% · Oxum 86% · Mimir 79% · Nüwa 77% · Guan Yu 75% · Freyja 74% · Bennu 73% · Thor 73% · Oxalá 72%.
+- **▼ FORA por baixo (<29%):** Cérberus 29% · Boto 29% · Bastet 27% · Fujin 26%.
+- O miolo (86 deuses) está em [29%, 71%], concentrado em 35–60%.
+
+**O CAVEAT que governa a leitura inteira — a IA é o instrumento, e ela tem viés conhecido (`src/ia.js`: gulosa de 1 lance, não minimax).** Ela pontua a posição IMEDIATA. Logo:
+1. **Superestima AoE+cura imediatos.** O topo (Brigid/Oxum/Brahma) são kits cujo valor é dano-em-área + cura no mesmo lance — delta grande em 1 ply, e a IA os spamma. Parte do 91% da Brigid é a IA jogando o brinquedo favorito dela, não só poder de kit.
+2. **Subestima setup/buff/control/invocação** (delta≈0 em 1 ply). Daí a lista gigante de **"habilidade nunca usada" (41 deuses)**: não são habilidades mortas — são buffs/setup/summon/control que o guloso não sabe valorizar. 59 deuses USARAM habilidade (a IA CONSEGUE escolhê-la — a Brigid do `ia.test` prova), então não é bug; é cegueira de 1-ply.
+3. **Penaliza sinergia de facção/nomeada em time ALEATÓRIO.** Odin (33%, `faccaoConta` precisa de 2+ Nórdicos), Kitsune (35%, sinergia com Inari), Nefertem (cura por curador Egípcio) raramente têm o parceiro no time sorteado. O piso deles é confundido pela amostragem, não é só kit fraco.
+
+**O que a arena RESOLVEU de dívida aberta:** o **Nove Flechas = 72** do Hou Yi (§94, "candidato a revisão, medir na arena"). Hou Yi ficou em **40,1%** — o 72 exige as 9 flechas caírem TODAS em alvos-Aurora, condição rara; não é dominante na prática. O número tem dado agora; a decisão é do dono.
+
+**Decisão:** **nada foi alterado.** O dono pediu a distribuição antes de tocar em qualquer coisa; o balanceamento é decisão dele. A arena fica como ferramenta (roda quando quiser: `node tools/arena.js [rodadas]`). Quando a Fase 2 trocar o guloso por lookahead, esta leitura muda — re-rodar é obrigatório antes de concluir qualquer coisa sobre poder de kit.
+
+---
+
 ## §140 — CERNUNNOS, o 100º: M8 (Fera livre-alvejável) construído. **FASE 1 FECHADA: IMPL 100 / FUNCIONAL 100.**
 
 **Modelo A (Fera livre-alvejável), como o dono cravou.** A alternativa (Modelo B — a Fera como um "papel" que o inimigo só sofre, sem corpo) foi recusada pela mesma razão que a Nezha, a Brigid e o Selado: **inventa papel em vez de dar corpo.** A Fera É um corpo (30 HP em `l.invocacoes`, `tipo:'fera'`, alvejável), não um efeito abstrato no inimigo. O achado do ponto 2 da §139 — o M8 serve UM kit, não a família — não mudou a decisão, só o custo: valeu a pena para o 100º.
