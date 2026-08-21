@@ -6,6 +6,27 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §144 — A JUNTA-NÃO-LIGADA MORA NA IA (não só no motor): `iaAlvoSets` cega para `distribui`. A arena mede 96, não 100.
+
+**O modo-de-errar da hipótese do Cernunnos vale registro (pedido do dono).** Apostei no reflexo; ele NUNCA disparou (a IA gulosa não lança setup). O ganho veio da passiva. **Direção certa, canal errado.** A distinção útil: **quando um kit muda em DUAS cláusulas e o número se move, atribuir a mudança à cláusula mais VISÍVEL é hipótese, não leitura.** A leitura é o **uso por slot** — o dado que a arena já coletava (`nunca usou habilidade`), que mostrou que a cláusula visível (o reflexo, na habilidade) nunca rodou. Regra: antes de atribuir um delta a uma cláusula, cheque se a cláusula foi EXERCITADA.
+
+**A §129 (junta-não-ligada) não é só do motor — ela mora na IA também.** `iaAlvoSets` (`src/ia.js`) é o LEITOR; os tipos de alvo do kit são o ALIMENTADOR; a junta entre eles tem um vão: **`distribui` não tem caso**, cai no `default: [[]]` (alvo vazio). Cada peça, lida sozinha, está certa (a IA mira o que conhece; o kit declara alvo válido) — o defeito é a ligação. Confirmado ao vivo: `agir(...,alvos=[])` de um multi-golpe distribuído retorna `ok:true` e aplica **0 de dano** (MISFIRE) → a IA pontua delta zero → nunca escolhe. Apaga da medição os **4** kits `distribui`: **babi, houyi, raijin, sun wukong**.
+
+**A varredura dos 9 tipos de alvo × `iaAlvoSets` (leitura, a pedido do dono — decide se a linha de base serve):**
+| tipo | habs | iaAlvoSets | veredito |
+|---|---|---|---|
+| inimigo · aliado · 2inimigos · 2aliados · aliado+inimigo | 191 | caso explícito | MEDIDO |
+| nenhum (48) · todosInimigos (55) · auto (2) | 105 | default `[[]]` | **OK — verificado ao vivo:** todosInimigos acerta 3/3 por escopo; `auto` (lugh/nezha) auto-seleciona (alvoHp); `nenhum` é self/time. `[[]]` é a entrada CERTA — nada a mirar. |
+| **distribui (4)** | 4 | default `[[]]` | **BURACO** — precisa de subconjunto escolhido; `[[]]` → misfire |
+
+**Resultado: UM buraco só — `distribui`. Nenhum outro.** A §141 mede **96 de 100**, não menos. Os cinco tipos explícitos e os três de-escopo (nenhum/todosInimigos/auto) são medidos de verdade. (Distinção importante: um kit `nenhum`/`todosInimigos` que a IA gulosa NÃO lança — Sun Wukong milagre, p.ex. — é o viés-de-setup já registrado na §141, NÃO um buraco de mira; a IA PODE lançá-lo e ele resolve. O `distribui` é diferente: a IA fisicamente não consegue mirá-lo.)
+
+**Nota de escopo:** `alterna`/`opcoes` (modo/escolha) são OUTRO eixo, não de alvo — a IA enumera `opcoes` (iaCandidatos) mas lança `alterna` só no modo padrão. Fora desta varredura (que era de `alvo`); anotado para não se confundir com buraco de mira.
+
+**ITEM EXPLÍCITO DA F2.2 (a pedido do dono):** a IA precisa de **regra de mira para `distribui`** ANTES de a arena ser re-rodada no nível Difícil. Sem isso, comparar níveis compararia a MESMA cegueira duas vezes (o Difícil também não miraria os 4 kits). O caso em `iaAlvoSets`: para `distribui`, gerar candidatos que repartem N golpes entre os inimigos vivos (o motor já distribui — só falta a IA propor o subconjunto).
+
+---
+
 ## §143 — §46 num eixo novo (HOMONÍMIA) · a convenção-vs-checador (§106) · e o delta da arena pós-remoção
 
 **§46 por HOMONÍMIA (eixo novo, registrado a pedido do dono).** A varredura da remoção teve de separar DOIS "invocação" de mesmo nome e domínios sem relação: a invocação de BATALHA (`invocar` fx, `l.invocacoes`, a Fera) e a invocação-GACHA (`perfil.invocacao`/pity, `registrarInvocacao`, a tela "Invocar", `economia.json`). Tratar como um só teria quebrado a rolagem de deuses. O §46 vinha dizendo "o nome não é evidência do MECANISMO" (o balde que engana por agrupamento). Este é um eixo DISTINTO: **o nome engana por HOMONÍMIA — dois domínios, um rótulo.** A regra operacional para a varredura-por-nome: perguntar **"é o mesmo DOMÍNIO?" ANTES de "é o mesmo mecanismo?"**. Homônimo cruza a fronteira do domínio; balde não.
@@ -69,7 +90,7 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **Decisão:** **nada foi alterado.** O dono pediu a distribuição antes de tocar em qualquer coisa; o balanceamento é decisão dele. A arena fica como ferramenta (roda quando quiser: `node tools/arena.js [rodadas]`). Quando a Fase 2 trocar o guloso por lookahead, esta leitura muda — re-rodar é obrigatório antes de concluir qualquer coisa sobre poder de kit.
 
-**§141-A — LINHA DE BASE p/ a arena da Fase 2 (registrado a pedido do dono, sem conclusão):** dispersão do win-rate = **desvio-padrão 14,1 pts, miolo de 86 deuses em [29%, 71%]**, média 50,0%, ~192 jogos/deus (SE ~3,6 pts). Descontado o viés do guloso, ainda sugere dispersão REAL — mas não se conclui nada agora. Número guardado para a arena da Fase 2 (com lookahead) comparar contra ele.
+**§141-A — LINHA DE BASE p/ a arena da Fase 2 (registrado a pedido do dono, sem conclusão):** dispersão do win-rate = **desvio-padrão 14,1 pts, miolo de 86 deuses em [29%, 71%]**, média 50,0%, ~192 jogos/deus (SE ~3,6 pts). Descontado o viés do guloso, ainda sugere dispersão REAL — mas não se conclui nada agora. Número guardado para a arena da Fase 2 (com lookahead) comparar contra ele. **RESSALVA (§144): a linha de base mede 96 de 100 — a IA não sabe mirar `distribui`, então babi/houyi/raijin/sunwukong têm o win-rate viciado (nunca lançam a habilidade/milagre `distribui`). Comparar contra este número exige a mesma ressalva, ou a regra de mira `distribui` na IA ANTES de re-rodar.**
 
 **§141-B — PERGUNTA ABERTA p/ a arena da Fase 2 (o achado mais confiável da corrida):** Odin 33% e Kitsune 35% NÃO são fraqueza de kit — são **sinergia nomeada com parceiro que raramente cai no time SORTEADO** (Odin `faccaoConta` ≥2 Nórdicos; Kitsune sinergia com Inari). No jogo real o jogador ESCOLHE o time → são condicionais FORTES, não fracos. A arena atual não responde **quanto vale a sinergia quando ela existe**. Fase 2: rodar com times sorteados E com times sinérgicos, comparar — é isso que diz se a sinergia está bem precificada.
 
