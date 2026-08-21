@@ -26,6 +26,17 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **Decisão:** **nada foi alterado.** O dono pediu a distribuição antes de tocar em qualquer coisa; o balanceamento é decisão dele. A arena fica como ferramenta (roda quando quiser: `node tools/arena.js [rodadas]`). Quando a Fase 2 trocar o guloso por lookahead, esta leitura muda — re-rodar é obrigatório antes de concluir qualquer coisa sobre poder de kit.
 
+**§141-A — LINHA DE BASE p/ a arena da Fase 2 (registrado a pedido do dono, sem conclusão):** dispersão do win-rate = **desvio-padrão 14,1 pts, miolo de 86 deuses em [29%, 71%]**, média 50,0%, ~192 jogos/deus (SE ~3,6 pts). Descontado o viés do guloso, ainda sugere dispersão REAL — mas não se conclui nada agora. Número guardado para a arena da Fase 2 (com lookahead) comparar contra ele.
+
+**§141-B — PERGUNTA ABERTA p/ a arena da Fase 2 (o achado mais confiável da corrida):** Odin 33% e Kitsune 35% NÃO são fraqueza de kit — são **sinergia nomeada com parceiro que raramente cai no time SORTEADO** (Odin `faccaoConta` ≥2 Nórdicos; Kitsune sinergia com Inari). No jogo real o jogador ESCOLHE o time → são condicionais FORTES, não fracos. A arena atual não responde **quanto vale a sinergia quando ela existe**. Fase 2: rodar com times sorteados E com times sinérgicos, comparar — é isso que diz se a sinergia está bem precificada.
+
+**§141-C — OS 26 NÃO-CONFERÍVEIS do `checar_cadeia` (2,3% de 1116): NÃO são 26 casos distintos.** Colapsam em UMA causa-raiz (o parser só confirma um `N de dano` FLAT; recusa — corretamente — tudo que não é número flat) em TRÊS formas legítimas de design:
+- **Multi-golpe (14):** a contagem mora na prosa ("9 flechas de 5"), o valor-por-golpe no motor; o parser lê `de dano` e não multiplica. `ares.mil ammit(→cond) aquiles.mil babi.mil bastet.bas durga.bas hermes.bas houyi.mil mnevis.hab piranha.bas piranha.hab raijin.hab(posicional) sunwukong.bas susanoo.hab thor.hab`.
+- **Condicional/escalado (8):** o BASE bate com a prosa; um ramo (§87) ou escalador (`porStatus/porContador/porAliadoVivo/porInimigoHp/COND`) torna o total condicional, e o parser não confirma número que depende de estado. `ahpuch.mil guanyu.mil horus.mil(dois ramos, ambos batem) jormungandr.mil kali.hab kitsune.mil ra.mil ammit.mil(exec aninhado)`.
+- **fx dinâmico (4):** valor escolhido em runtime (`alterna`/`opcoes`) → mora no motor. `lugh.hab nezha.hab nuwa.hab(cura) tanuki.mil`.
+
+**Não é lacuna que esconde bug — é o parser desenhando fronteira HONESTA.** Cada caso que ele recusa é coberto por OUTRA camada: `auditoria` (teto) pega os bumps condicionais; `primitivas` §92/§135 pega o multi-golpe; §87/§101/§118 pega o condicional; `capacidades` pega alterna/opcoes. É o custo normal de prosa livre + design rico, não 26 pontas soltas.
+
 ---
 
 ## §140 — CERNUNNOS, o 100º: M8 (Fera livre-alvejável) construído. **FASE 1 FECHADA: IMPL 100 / FUNCIONAL 100.**
