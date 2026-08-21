@@ -6,6 +6,32 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §140 — CERNUNNOS, o 100º: M8 (Fera livre-alvejável) construído. **FASE 1 FECHADA: IMPL 100 / FUNCIONAL 100.**
+
+**Modelo A (Fera livre-alvejável), como o dono cravou.** A alternativa (Modelo B — a Fera como um "papel" que o inimigo só sofre, sem corpo) foi recusada pela mesma razão que a Nezha, a Brigid e o Selado: **inventa papel em vez de dar corpo.** A Fera É um corpo (30 HP em `l.invocacoes`, `tipo:'fera'`, alvejável), não um efeito abstrato no inimigo. O achado do ponto 2 da §139 — o M8 serve UM kit, não a família — não mudou a decisão, só o custo: valeu a pena para o 100º.
+
+**O subsistema, em cinco peças no motor:**
+1. **`invocar` ramo `tipo:'fera'`** — cria corpo alvejável (`ehInvocacao`, `hp/maxHp`, `curaDono`, `respawn`), com **anti-duplicata**: filtra qualquer Fera do mesmo dono antes de empurrar (invocar de novo substitui, não acumula).
+2. **`bater` caminho `alvo.ehInvocacao`** — dano direto no corpo (sem shield/redução/passiva de unidade), a 0 → `matarInvocacao`.
+3. **`matarInvocacao`** — DELIBERADAMENTE seco: `vivo=false`, `hp=0`, log de queda, arma `respawnEm=respawn`. **Nenhuma máquina de `matar`** (sem `aoCair`, sem execução, sem `checarFim`, sem orbe). É a diferença entre derrubar um corpo invocado e abater um deus.
+4. **tick `else if (g.tipo === 'fera')`** — dono morto → a Fera some com o dono (`removerInvocacao`); dono vivo + Fera viva → ataca 10 + cura o dono em 8; Fera caída + `respawnEm>0` + **`!st.fim`** → decrementa, a 0 revive com HP cheio.
+5. **`alvosValidos` + `agir`** — a Fera entra na lista de alvos (respeitando `submerso`/`inalvejavel`), então IA e jogador miram nela.
+
+**As 5 TRAVES que o dono pediu cravadas (§139 em `passiva.test.js`, todas verdes):**
+- **T1 — aoCair mudo:** a Fera cai e o `aoCair` do Zeus NÃO ganha orbe. `matarInvocacao` não chama a máquina de queda de unidade. ✔
+- **T2 — invisível ao `checarFim`:** um lado com só a Fera viva PERDE (a Fera não conta como unidade viva). ✔
+- **T3 — IA sem regressão:** `ia.test` ~1.3s antes e depois (30 partidas, 0 sem desfecho). O corpo a mais na mira é um aumento modesto de candidatos 1-ply, não uma regressão. ✔
+- **T4a — respawn morre com o dono:** dono abatido → a Fera não renasce (some). **T4b — sem duplicata:** invocar de novo antes do respawn não cria uma segunda. ✔
+- **T5 — Inalvejável coerente:** `inalvejavel` na Fera a tira de `alvosValidos` como tira uma unidade; `ignoraInalv` (mira-forçada) a alcança igual. ✔
+
+**Guard-rail que só o motor rodando expôs:** o `respawnEm` decrementa dentro do `!st.fim` — sem isso, uma Fera caída no turno que encerra a partida renasceria em partida encerrada (a 5ª espécie órfã da §113, JUNTA-NÃO-LIGADA: o timer lia certo, mas ninguém o desligava no fim). Travado em T2+T4.
+
+**Auditoria:** Caçada Selvagem (milagre 18 + 5/regen no time = 33 em área, teto 22) entra na allowlist com a mesma justificativa da família Colheita Fúnebre/Veneno: escalador CONDICIONAL (`porStatus`), não dano-base estourado.
+
+**O fecho.** São 100 deuses em `data/deuses/`, IMPL 100 / FUNCIONAL 100, 20 suítes verdes, cadeia sem DIVERGE. A Fase 1 está fechada.
+
+---
+
 ## §139 — VARREDURA DA FAMÍLIA DE INVOCAÇÃO (antes do Cernunnos) + desenho do M8, PENDENTE: o subsistema serve UM kit, não a família
 
 **A varredura combinada da §133, antes de qualquer linha do Cernunnos (o 100º). Os 5 pontos, verificados contra o motor:**

@@ -1,0 +1,47 @@
+{
+  "key": "cernunnos",
+  "nome": "Cernunnos",
+  "faccao": "Celta",
+  "elem": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "passiva": {
+    "nome": "Ciclo da Vida",
+    "desc": "Regenerações no time curam +4; a Fera cura 8 em Cernunnos ao atacar.",
+    "fx": [
+      { "gatilho": "bonusCura", "v": 4, "quandoCura": { "viaRegen": true } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Chifres do Bosque",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "15 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 15 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Chamado da Matilha",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "Invoca uma Fera (30 de HP) que causa 10 de dano por turno; se cair, renasce em 2 turnos.",
+      "fx": [ { "t": "invocar", "nome": "Fera", "tipo": "fera", "hp": 30, "v": 10, "curaDono": 8, "respawn": 2 } ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Físico",
+      "nome": "Caçada Selvagem",
+      "cost": { "Verdejante": 2, "livre": 1 },
+      "cd": 4,
+      "alvo": "todosInimigos",
+      "desc": "18 de dano a todos os inimigos, +5 por efeito de regeneração ativo no time.",
+      "fx": [ { "t": "dmg", "v": 18, "escopo": "todosInimigos", "porStatus": { "v": 5, "categoria": "regen", "onde": "time" } } ]
+    }
+  ]
+}

@@ -2506,6 +2506,66 @@ console.log('== §138 B5/Dagda (M2 A2 + M6): Clava (3º uso cura) · Caldeirão 
   console.log('  Dagda: Clava (ciclo por-uso) · Caldeirão (regen + piso condicional) · Harpa (A2 passe forçado + M6 buffs suspensos)');
 }
 
+console.log('== §139 Cernunnos (M8, o 100º): Fera livre-alvejável — as 5 TRAVES ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  const feraDe = st => st.lados[0].invocacoes.find(g => g.tipo === 'fera');
+  // núcleo: invoca (30 HP), alvejável, ataca 10 + cura o dono 8
+  let st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1140, 0); orbs(st.lados[0]);
+  let ce = st.lados[0].units[0]; ce.hp = 100;
+  E.agir(st, ce.uid, 'habilidade', []);
+  let fera = feraDe(st);
+  ok(fera && fera.hp === 30 && fera.ehInvocacao, `Chamado da Matilha: Fera 30 HP (corpo)`);
+  const en = st.lados[1].units[0];
+  ok(E.alvosValidos(st, en, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid), `a Fera é alvejável (entra em alvosValidos do inimigo)`);
+  const foeHp = en.hp; E.fimTurno(st); E.fimTurno(st);   // volta ao Cernunnos → a Fera ataca + cura o dono
+  ok(en.hp < foeHp && ce.hp === 108, `a Fera ataca 10 e cura 8 em Cernunnos (100→${ce.hp})`);
+
+  // TRAVE 1: matarInvocacao NÃO dispara o aoCair (o Zeus não ganha orbe ao derrubar a Fera)
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1141, 0); orbs(st.lados[0]); orbs(st.lados[1]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
+  const zeus = st.lados[1].units[0]; const o0 = E.totalOrbs(st.lados[1]);
+  E.bater(st, zeus, fera, 40, 'afetado', 'basico', {});
+  ok(!fera.vivo && E.totalOrbs(st.lados[1]) === o0, `TRAVE1: Fera cai, o aoCair do Zeus NÃO ganha orbe (${E.totalOrbs(st.lados[1]) - o0})`);
+
+  // TRAVE 2: checarFim invisível — lado só com a Fera viva PERDE (a regra é 3 unidades reais)
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1142, 0); orbs(st.lados[0]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
+  const atk = st.lados[1].units[0];
+  for (const u of st.lados[0].units) { u.hp = 5; E.bater(st, atk, u, 15, 'afetado', 'basico', {}); }
+  ok(fera.vivo && st.fim && st.fim.lado === 1, `TRAVE2: 3 reais mortas + Fera viva → lado1 vence (a Fera não conta p/ a vitória)`);
+
+  // TRAVE 4a: respawn morre com o dono — Fera cai, Cernunnos cai antes → não renasce
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1143, 0); orbs(st.lados[0]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
+  E.bater(st, st.lados[1].units[0], fera, 40, 'afetado', 'basico', {});
+  ok(fera.respawnEm === 2, `Fera cai → respawn agendado (respawnEm 2)`);
+  ce.vivo = false; E.fimTurno(st); E.fimTurno(st);
+  ok(!feraDe(st), `TRAVE4a: Cernunnos morto → a Fera (renascendo) some com o dono, não renasce`);
+  // TRAVE 4b: re-invocar não acumula
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1144, 0); orbs(st.lados[0]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); ce.cd.habilidade = 0; E.agir(st, ce.uid, 'habilidade', []);
+  ok(st.lados[0].invocacoes.filter(g => g.tipo === 'fera').length === 1, `TRAVE4b: re-invocar não cria uma 2ª Fera`);
+
+  // TRAVE 5: Inalvejável alcança a Fera coerentemente (ela nunca o tem, mas o caminho é simétrico)
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1145, 0); orbs(st.lados[0]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
+  const enemy = st.lados[1].units[0];
+  const antes = E.alvosValidos(st, enemy, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid);
+  fera.efeitos.push({ type: 'inalvejavel', dur: 2 });
+  const depois = E.alvosValidos(st, enemy, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid);
+  ok(antes && !depois, `TRAVE5: o filtro Inalvejável alcança a Fera (alvo sem, filtrada com) — sem assimetria`);
+
+  // respawn feliz: Fera cai, Cernunnos VIVO → renasce após 2 turnos
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1146, 0); orbs(st.lados[0]);
+  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
+  E.bater(st, st.lados[1].units[0], fera, 40, 'afetado', 'basico', {});
+  E.fimTurno(st); E.fimTurno(st); E.fimTurno(st); E.fimTurno(st);   // 2 turnos do Cernunnos
+  const fr = feraDe(st);
+  ok(fr && fr.vivo && fr.hp === 30, `respawn: com o dono vivo, a Fera renasce em 2 turnos (viva ${fr && fr.vivo}, hp ${fr && fr.hp})`);
+  console.log('  Cernunnos: Fera livre-alvejável · 5 traves (aoCair-mudo · vitória-invisível · respawn-morre-com-dono · sem-duplicata · Inalvejável-coerente) + respawn');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
