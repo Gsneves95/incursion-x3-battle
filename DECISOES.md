@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §145 — F2.0: o FORMATO da Provação. Fecha por MODO (não por forma); `quando` derivado; matador/estados caem do log (§106).
+
+**A varredura das 91 (excluídas as 4 de invocação, planilha #42/56/91/96) deu MAIS que 8 formas — ~17.** Mas elas colapsam em **3 MODOS de avaliação**, e é por MODO que o vocabulário fecha, não por forma: forma nova cai num modo existente sem tocar o avaliador. Fechar por forma seria fechar contra a superfície (o argumento do dono).
+- **final** — predicado sobre o estado no fim (só julgável no fim): `hpNoFim`, sobreviventes, ≥N-orbes-no-fim.
+- **log** — predicado sobre o stream de eventos (falha CEDO, quando impossível): `morteEmEstado`, `abatePeloProprioLado` (fogo amigo), `proibirSlotProprio`, `negarAcaoInimigo`, `semPerderAliado`, usar-X-vezes, acúmulo.
+- **contínuo** — invariante checado a cada turno (falha CEDO, no turno em que quebra): `deadline`, uptime, evento-proibido, sobreviver-N.
+
+**§46 na contagem de CONDIÇÕES (não de mecanismos) — registrado a pedido do dono.** O dono agrupou por SINTOMA quando o discriminador era o PREDICADO: "golpe final" ficou dentro de "acúmulo" (mas um lê *contagem corrente*, o outro lê *o último evento*); "evento proibido" ficou dentro de "sem perder aliado" (mas "sem perder aliado" é o subconjunto "nenhum aliado *morre*" de "um evento é proibido"). As duas destampadas são famílias próprias, do tamanho dos baldes médios (~9–11 cada). É o §46 num terceiro eixo: agrupar por sintoma esconde o predicado.
+
+**`quando` (cedo|fim) é DERIVADO do modo, nunca declarado** (instr. 2): campo derivado não pode divergir do modo; declarado, poderia (mesmo princípio da faixa derivada dos pontos no ranqueado). log/contínuo → cedo; final → fim. O validador RECUSA um `quando` (ou `modo`) declarado no kit.
+
+**§106 testado no fogo amigo e no morrer-em-estado — o log NÃO carregava, mas a informação existia (instr. 1).** O `queda` só tinha `alvo`/`execucao`. Verifiquei ANTES de inventar rastreio: (a) o **matador** já era conhecido dentro do `matar` (o §118 `abateNaoRevive` é keyed por ele) — levá-lo ao evento (`queda.matador`) faz fogo-amigo (matador e alvo no mesmo lado) cair como predicado sobre o log, zero rastreio novo; (b) o **estado-na-morte** não estava em lugar nenhum — capturei o snapshot dos status ANTES do clear (`queda.estados`), a única adição de fato nova. Os dois campos entraram no `VOCAB.camposEvento` e na gramática de eventos.
+
+**Recusa na BUILD, não em runtime (instr. 3).** `validarProvacao` roda em `tools/build.js` (§3c): predicado desconhecido, campo obrigatório ausente, ou `quando`/`modo` declarado → `process.exit(1)`. Provado: um `data/provacoes/_bad.json` com predicado inventado quebra a build (exit 1). Uma condição que só falha quando alguém a joga é o pior caso (§71).
+
+**`proibirSlotProprio` × `negarAcaoInimigo` são DOIS predicados, não um com escopo (instr. 4).** O primeiro lê `acao` do SEU lado; o segundo, do lado do OPONENTE. O segundo depende do que o inimigo faz — mantê-los separados no vocabulário preserva essa dependência.
+
+**A 9ª forma é a mais interessante, e é FRÁGIL — anotado p/ re-verificação quando o solucionador rodar (a pedido do dono).** `abatePeloProprioLado` (fogo amigo, Afrodite/Curupira) é a ÚNICA condição definida por uma ação do OPONENTE — o jogador não pode garanti-la sozinho, depende de o inimigo ter alvo válido para o Encanto/Pés Virados. Consequência de desenho: se o solucionador da Fase 2 mostrar que ela é frágil, essas **duas Provações podem ser as mais difíceis das 91 sem que a dificuldade declarada (2/3) saiba disso**. Candidata a re-verificação.
+
+**Formato:** `data/provacoes/<deus>.json` = `aliados` + `inimigos` + `montar` (estado à mão via `novoEstado` + overrides de hp/orbe/efeito/contador) + `condicoes:[{predicado,...}]`. Avaliador em `src/provacao.js` (puro sobre st + log, não toca o motor). Exemplo: **Poseidon** — `deadline` (contínuo) + `morteEmEstado` (log), dois modos num kit, resolvendo (vitória com os 3 Encharcados em ≤8; derrota-cedo com um seco; derrota no turno 9).
+
+---
+
 ## §144 — A JUNTA-NÃO-LIGADA MORA NA IA (não só no motor): `iaAlvoSets` cega para `distribui`. A arena mede 96, não 100.
 
 **O modo-de-errar da hipótese do Cernunnos vale registro (pedido do dono).** Apostei no reflexo; ele NUNCA disparou (a IA gulosa não lança setup). O ganho veio da passiva. **Direção certa, canal errado.** A distinção útil: **quando um kit muda em DUAS cláusulas e o número se move, atribuir a mudança à cláusula mais VISÍVEL é hipótese, não leitura.** A leitura é o **uso por slot** — o dado que a arena já coletava (`nunca usou habilidade`), que mostrou que a cláusula visível (o reflexo, na habilidade) nunca rodou. Regra: antes de atribuir um delta a uma cláusula, cheque se a cláusula foi EXERCITADA.

@@ -2,6 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## Última sessão — F2.0: o FORMATO da Provação
+**Data:** 2026-08-21
+**Tarefa:** F2.0 — definir o formato da Provação (estado + condição, sem conteúdo ainda). §145.
+**Resultado:** varri as 91 condições (`data/provacoes.json`) ANTES de fechar — são ~17 formas, não 8, mas
+colapsam em **3 MODOS** (final/log/contínuo). Fecha por MODO, não por forma (forma nova cai num modo sem
+tocar o avaliador). Duas formas que o dono tinha dobrado saíram como próprias: "golpe final" (≠ acúmulo: lê o
+último evento, não a contagem) e "evento proibido" (⊃ sem-perder-aliado) — §46 na contagem de CONDIÇÕES.
+A 9ª mais interessante: **fogo amigo** (abate pelo próprio lado do inimigo, Afrodite/Curupira) — única condição
+definida por ação do OPONENTE; FRÁGIL (depende de o inimigo ter alvo), candidata a re-verificação quando o
+solucionador rodar (pode ser a mais difícil das 91 sem a dificuldade saber). Construído: `src/provacao.js`
+(registry fechado por modo + `montarProvacao` + `avaliarProvacao`, puro sobre st+log, não toca o motor);
+`quando` DERIVADO do modo (validador recusa se declarado); `queda.matador` + `queda.estados` levados ao evento
+(§106: o matador já existia no `matar` via §118; o estado-na-morte foi a única adição real) → fogo-amigo e
+morrer-em-estado caem do log. `tools/build.js` §3c recusa predicado desconhecido na BUILD (exit 1, provado).
+`proibirSlotProprio` × `negarAcaoInimigo` mantidos como 2 predicados (SEU lado × lado do oponente). Exemplo
+`data/provacoes/poseidon.json` (deadline+morteEmEstado, 2 modos) carrega e resolve. `tests/provacao.test.js`
+(6 blocos). **21 suítes verdes.** **PENDENTE p/ a Fase 2:** as 4 condições de invocação (#42/56/91/96) esperam
+o `REMOCAO-invocacao.md` do dono; a regra de mira `distribui` na IA (§144, F2.2) antes de re-rodar a arena no
+Difícil. **PRÓXIMO (dono):** conteúdo das Provações / próxima tarefa da F2.
+
 ## FASE 1 — FECHAMENTO (resumo da fase)
 **Data:** 2026-08-21
 **Placar:** **IMPL 100 / FUNCIONAL 100.** Os 100 kits estão em `data/deuses/*.json`, todos com passiva + 3

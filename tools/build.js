@@ -95,6 +95,21 @@ if (cadeia.divergencias.length) {
   console.error('ERRO de cadeia (kits.json ↔ data/deuses):\n  ' + cadeia.divergencias.join('\n  ')); process.exit(1);
 }
 
+// ---------- 3c. schema de Provação: um arquivo por deus em data/provacoes/, validado na build (F2.0) ----------
+// Predicado desconhecido FALHA AQUI, não em runtime (§71): uma Provação com condição inválida que só quebra
+// quando alguém a joga passa em todo teste e falha no jogador. O vocabulário de condição é conjunto fechado.
+{
+  const dir = path.join(raiz, 'data', 'provacoes');
+  if (fs.existsSync(dir)) {
+    const { validarProvacao } = require('../src/provacao.js');
+    const erros = [];
+    for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
+      erros.push(...validarProvacao(JSON.parse(ler('data/provacoes/' + f))));
+    }
+    if (erros.length) { console.error('ERRO de schema de Provação:\n  ' + erros.join('\n  ')); process.exit(1); }
+  }
+}
+
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [

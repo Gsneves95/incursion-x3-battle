@@ -34,7 +34,7 @@ function erroCampo(k, val, ev) {
       return typeof val === 'number' ? null : `${k} deveria ser número, veio ${JSON.stringify(val)}`;
     case 'lado':
       return val === 0 || val === 1 ? null : `lado deveria ser 0/1 (não rótulo), veio ${JSON.stringify(val)}`;
-    case 'origem': case 'alvo': case 'passiva':
+    case 'origem': case 'alvo': case 'passiva': case 'matador':
       return typeof val === 'string' && CHAVE.test(val) ? null : `${k} deveria ser CHAVE minúscula, veio ${JSON.stringify(val)}`;
     case 'kind':
       return KIND_OK.has(val) ? null : `kind fora do conjunto / formatado, veio ${JSON.stringify(val)}`;
@@ -50,6 +50,8 @@ function erroCampo(k, val, ev) {
       return val === 'vitoria' || val === 'empate' ? null : `resultado inválido, veio ${JSON.stringify(val)}`;
     case 'opcoes':
       return Array.isArray(val) && val.every(x => typeof x === 'number') ? null : `opcoes deveria ser array de índices, veio ${JSON.stringify(val)}`;
+    case 'estados':
+      return Array.isArray(val) && val.every(x => typeof x === 'string' && EFEITO_OK.test(x)) ? null : `estados deveria ser array de CHAVEs de status, veio ${JSON.stringify(val)}`;
     default: return null;
   }
 }

@@ -1,0 +1,101 @@
+// tests/provacao.test.js — o FORMATO da Provação (F2.0).
+// Prova: montar carrega um estado jogável; o avaliador resolve (vitória/derrota) pelos 3 MODOS; falha CEDO
+// nos modos log/continuo; o `matador`/`estados` no evento `queda` fazem fogo-amigo e morrer-em-estado caírem
+// do log (§106); proibirSlotProprio × negarAcaoInimigo são distintos (§144 instr. 4); `quando` é derivado.
+
+const E = require('../src/engine.js');
+Object.assign(global, E);   // novoEstado etc. como globais p/ montarProvacao
+const PROV = require('../src/provacao.js');
+const poseidon = require('../data/provacoes/poseidon.json');
+
+let f = 0; const ok = (c, m) => { if (!c) { console.log('  FALHA: ' + m); f++; } };
+const encharca = u => u.efeitos.push({ type: 'encharcado', dur: 3 });
+const matar = (st, atk, alvo) => { alvo.hp = 1; E.bater(st, atk, alvo, 999, 'afetado', 'basico', { unico: false }); };
+
+console.log('== 1. montar: a Provação carrega um estado jogável (novoEstado + overrides) ==');
+{
+  const st = PROV.montarProvacao(poseidon);
+  ok(st.lados[0].units.map(u => u.key).join(',') === 'poseidon,iara,sobek', 'aliados montados');
+  ok(st.lados[1].units.map(u => u.key).join(',') === 'ares,thor,ogum', 'inimigos montados');
+  ok(st.lados[0].orbs['Maré'] === 3, `override de orbe aplicado (Maré=${st.lados[0].orbs['Maré']})`);
+  ok(st.turno === 1 && !st.fim, 'partida em andamento no turno 1');
+  console.log('  poseidon carrega: 3v3, Maré=3, turno 1');
+}
+
+console.log('== 2. Poseidon RESOLVE: deadline (contínuo) + morteEmEstado (log) ==');
+{
+  // vitória: os três inimigos caem Encharcados, dentro de 8 turnos
+  let st = PROV.montarProvacao(poseidon);
+  const meu = st.lados[0].units[0];
+  st.lados[1].units.forEach(encharca);
+  st.lados[1].units.slice().forEach(inim => matar(st, meu, inim));
+  ok(st.fim && st.fim.lado === 0, 'base-vitória (os três inimigos caíram)');
+  let r = PROV.avaliarProvacao(st, poseidon);
+  ok(r.resultado === 'vitoria', `vitória quando os três caem Encharcados em ≤8 turnos (veio ${r.resultado} ${r.motivo || ''})`);
+
+  // derrota LOG (falha cedo): um inimigo cai SECO → morteEmEstado impossível, antes mesmo da base-vitória
+  st = PROV.montarProvacao(poseidon);
+  matar(st, st.lados[0].units[0], st.lados[1].units[0]);   // sem Encharcado
+  r = PROV.avaliarProvacao(st, poseidon);
+  ok(r.resultado === 'derrota' && r.motivo === 'morteEmEstado', `derrota cedo quando um inimigo cai seco (${r.resultado}/${r.motivo})`);
+
+  // derrota CONTÍNUO: passou do turno 8 sem vencer
+  st = PROV.montarProvacao(poseidon);
+  st.turno = 9;
+  r = PROV.avaliarProvacao(st, poseidon);
+  ok(r.resultado === 'derrota' && r.motivo === 'deadline', `derrota quando o relógio estoura (${r.resultado}/${r.motivo})`);
+  console.log('  vitória (3 Encharcados ≤8) · derrota-cedo (seco) · derrota (turno 9)');
+}
+
+console.log('== 3. fogo amigo cai do LOG (§106): matador no evento queda, sem rastreio novo ==');
+{
+  const st = PROV.montarProvacao(poseidon);
+  const [ares, thor] = st.lados[1].units;             // dois INIMIGOS
+  matar(st, ares, thor);                              // um inimigo abate o outro (matador e alvo no mesmo lado)
+  const q = st.log.find(e => e.tipo === 'queda' && e.alvo === 'thor');
+  ok(q && q.matador === 'ares', `o evento queda carrega o matador (${q && q.matador})`);
+  const ctx = { ladoDe: k => new Set(poseidon.aliados).has(k) ? 0 : new Set(poseidon.inimigos).has(k) ? 1 : undefined };
+  ok(PROV.PREDICADOS.abatePeloProprioLado.aval(st, { quantos: 1 }, ctx) === 'ok', 'abatePeloProprioLado conta o abate por aliado do inimigo');
+  ok(PROV.PREDICADOS.abatePeloProprioLado.aval(st, { quantos: 2 }, ctx) === 'pendente', 'abatePeloProprioLado ainda pendente para 2 (nunca falha cedo)');
+  console.log('  queda.matador presente · fogo-amigo é predicado sobre o log');
+}
+
+console.log('== 4. proibirSlotProprio × negarAcaoInimigo são DISTINTOS (§144 instr. 4) ==');
+{
+  const ctx = { ladoDe: k => new Set(poseidon.aliados).has(k) ? 0 : new Set(poseidon.inimigos).has(k) ? 1 : undefined };
+  // só o INIMIGO usou o Milagre
+  let st = PROV.montarProvacao(poseidon);
+  st.log.push({ tipo: 'acao', origem: 'ares', slot: 'milagre' });
+  ok(PROV.PREDICADOS.proibirSlotProprio.aval(st, { slot: 'milagre' }, ctx) === 'ok', 'proibir slot PRÓPRIO: inimigo usando não viola');
+  ok(PROV.PREDICADOS.negarAcaoInimigo.aval(st, { slot: 'milagre' }, ctx) === 'falha', 'negar ação INIMIGA: inimigo usando viola');
+  // só o ALIADO usou o Milagre
+  st = PROV.montarProvacao(poseidon);
+  st.log.push({ tipo: 'acao', origem: 'poseidon', slot: 'milagre' });
+  ok(PROV.PREDICADOS.proibirSlotProprio.aval(st, { slot: 'milagre' }, ctx) === 'falha', 'proibir slot PRÓPRIO: aliado usando viola');
+  ok(PROV.PREDICADOS.negarAcaoInimigo.aval(st, { slot: 'milagre' }, ctx) === 'ok', 'negar ação INIMIGA: aliado usando não viola');
+  console.log('  os dois predicados leem lados opostos — não é um com escopo, são dois');
+}
+
+console.log('== 5. validação de FORMA (a build recusa condição inválida) ==');
+{
+  ok(PROV.validarProvacao(poseidon).length === 0, 'a Provação de exemplo é válida');
+  const desc = PROV.validarProvacao({ key: 'x', aliados: ['zeus'], inimigos: ['zeus'], condicoes: [{ predicado: 'inventado' }] });
+  ok(desc.some(e => /DESCONHECIDO/.test(e)), 'predicado desconhecido é recusado (falha alto)');
+  const semCampo = PROV.validarProvacao({ key: 'y', aliados: ['zeus'], inimigos: ['zeus'], condicoes: [{ predicado: 'deadline' }] });
+  ok(semCampo.some(e => /turnos/.test(e)), 'campo obrigatório ausente é recusado');
+  const declQuando = PROV.validarProvacao({ key: 'z', aliados: ['zeus'], inimigos: ['zeus'], condicoes: [{ predicado: 'deadline', turnos: 5, quando: 'fim' }] });
+  ok(declQuando.some(e => /DERIVADO/.test(e)), '`quando` declarado é recusado (é derivado do modo)');
+  console.log('  exemplo válido · desconhecido/sem-campo/quando-declarado recusados');
+}
+
+console.log('== 6. `quando` é DERIVADO do modo (não declarado) ==');
+{
+  ok(PROV.MODOS[PROV.PREDICADOS.deadline.modo] === 'cedo', 'contínuo → falha cedo');
+  ok(PROV.MODOS[PROV.PREDICADOS.morteEmEstado.modo] === 'cedo', 'log → falha cedo');
+  ok(PROV.MODOS[PROV.PREDICADOS.hpNoFim.modo] === 'fim', 'final → julga no fim');
+  console.log('  deadline/morteEmEstado → cedo · hpNoFim → fim');
+}
+
+console.log('');
+console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
+process.exit(f ? 1 : 0);

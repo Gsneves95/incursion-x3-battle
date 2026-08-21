@@ -312,6 +312,8 @@ const VOCAB = {
   camposEvento: [   // nomes de campo CANÔNICOS permitidos num evento (nada de sinônimo)
     'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
+    'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
+    'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
     // RESERVADOS p/ sub-tokens de 0-kit (nome canônico decidido agora, complete-by-construction):
     'habilidadeCopiada',   // efeito:copiar — qual Habilidade foi copiada (Ísis, F1.3)
     'execucao',            // queda:execucao — a morte foi por execução (Yan Wong reage a isto)
@@ -985,8 +987,19 @@ function matar(st, atk, alvo, opts = {}) {
   if (atk && atk.vivo) { const ga = kitDe(st, atk), pa = ga && ga.passiva; if (pa && Array.isArray(pa.fx) && pa.fx.some(f => f.gatilho === 'abateNaoRevive')) alvo.naoRevive = true; }
   // §123 (Mimir): o próprio dono declara-se irrevivível — self-direction do naoRevive (§119). Keyed pela passiva do MORTO (não do matador ≠ abateNaoRevive), na mesma zona do snapshot
   { const gm = kitDe(st, alvo), pm = gm && gm.passiva; if (pm && Array.isArray(pm.fx) && pm.fx.some(f => f.gatilho === 'naoRevivivel')) alvo.naoRevive = true; }
+  // `estados` (F2.0): SNAPSHOT dos status do morto NO ATO da queda — capturado ANTES do clear abaixo. O §106 testado:
+  // o `queda` NÃO carregava o estado-na-morte, então a condição "morrer Encharcado/Envenenado" não caía do log de
+  // graça; levar o snapshot ao evento a torna um predicado sobre o log (sem o avaliador re-observar cada turno).
+  const estadosNaQueda = [...alvo.efeitos.map(e => e.type), ...alvo.dots.map(d => d.nome)];
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
-  log(st, opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key });
+  // `matador` (F2.0): quem desferiu o golpe letal, quando há um. O motor já conhece o atk aqui (o §118
+  // abateNaoRevive é keyed por ele); levá-lo ao evento faz a condição "abate pelo próprio lado" (fogo amigo:
+  // matador e alvo no MESMO lado) cair como predicado sobre o log, sem rastreio novo (§106). Ausente em morte
+  // sem golpe (DoT sem atk, tempo).
+  { const ev = opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key };
+    if (atk && atk.key) ev.matador = atk.key;
+    if (estadosNaQueda.length) ev.estados = estadosNaQueda;
+    log(st, ev); }
   // gatilho porExecucao (F1.9, Yan Wong §89) — morte por EXECUÇÃO de um inimigo: o lado OPOSTO ao morto reage (1 orbe).
   // Uniforme: qualquer execução (Livro, executaAbaixoDe), não só a do dono — leitura literal de "por execução".
   if (opts.execucao) {

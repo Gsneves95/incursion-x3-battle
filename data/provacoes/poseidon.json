@@ -1,0 +1,17 @@
+{
+  "key": "poseidon",
+  "titulo": "A Maré Não Espera",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": ["poseidon", "iara", "sobek"],
+  "inimigos": ["ares", "thor", "ogum"],
+  "montar": {
+    "seed": 2,
+    "comeca": 0,
+    "orbs": { "0": { "Maré": 3 } }
+  },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 8 },
+    { "predicado": "morteEmEstado", "quem": "inimigo", "estado": "encharcado" }
+  ]
+}
