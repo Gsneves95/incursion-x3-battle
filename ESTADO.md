@@ -17,9 +17,13 @@ Carimbo de versão (pendente desde a F1.0a): `verificacao:{hash, nivelIA, veredi
 fontes. `tests/solucionador.test.js` (6 blocos). **22 suítes verdes.** Ferramentas: `node tools/solucionador.js
 [deus] [orç]` e `--carimbar`. **Observação p/ os lotes:** se o solucionador precisar de `dica` p/ achar o
 caminho, essa Provação pode ser impossível p/ o jogador sem dica — o `acionavel:'dica'` é o detector.
-**PRÓXIMO (dono):** F2.x — construir as 91 estruturadas em lote (o §5 do prompt de lote agora usa
-`lancesNesteCaminho` como sinal grosso, não medida); a IA por níveis (F2.2) re-carimba o que foi achado contra
-a gulosa. Pendência: checador cross-file provacoes.json↔roster_data.js (§146) quando as 91 forem geradas.
+**REGRA DOS LOTES (§149):** quando uma Provação der INDETERMINADO, PARAR e reportar (acionavel + estado inicial
++ o que mudaria); o dono decide **afrouxar × dar dica** (afrouxar = balanceamento disfarçado, invisível no
+relatório). Nunca corrigir sozinho. O `poseidon.json` de hoje é o exemplo TUNADO, não a Provação do catálogo.
+**PRÓXIMO (dono):** F2.2 — a IA por níveis (vem ANTES dos lotes: o carimbo grava o nível, re-carimbar 91 é
+pior que definir os níveis antes). Decisão embutida em aberto: qual nível a Provação usa (minha leitura
+trazida com argumento, aguardando o dono). Depois: construir as 91 em lote (§5 usa `lancesNesteCaminho` como
+sinal grosso, não medida); checador cross-file provacoes.json↔roster_data.js (§146) quando as 91 forem geradas.
 
 ## Sessão — a mira `distribui` na IA (§144 resolvido) (anterior)
 **Data:** 2026-08-21

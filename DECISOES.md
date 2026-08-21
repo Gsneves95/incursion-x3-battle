@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §149 — AFROUXAR × DAR DICA: as duas correções de um INDETERMINADO são diferentes, e uma é balanceamento disfarçado.
+
+**O risco, com nome (a pedido do dono, porque volta 91 vezes).** Quando uma Provação sai INDETERMINADO, há DUAS correções, e elas não são intercambiáveis:
+- **AFROUXAR o estado inicial** (mais orbes, menos HP inimigo, inimigos mais fracos, mais turnos) → torna o puzzle **mais fácil**. É **balanceamento disfarçado de correção técnica**: parece "fazer o solucionador achar", mas mudou o QUE o puzzle é.
+- **DAR UMA DICA** (uma sequência-semente, uma poda específica) → torna o caminho **achável sem mudar o puzzle**.
+
+**Por que afrouxar é perigoso:** ele SEMPRE funciona (basta enfraquecer o suficiente) e é **invisível no relatório** (o veredito vira VENCÍVEL, ninguém vê que o puzzle encolheu). Se ninguém vigiar, os 91 lotes convergem para **91 puzzles fáceis**, porque afrouxar é o caminho de menor resistência. É a versão-do-estado-inicial do §147 (sequência-como-prova-falsa): um caminho contra um estado afrouxado é uma garantia REAL, mas para um puzzle mais fácil do que o pretendido.
+
+**E o `acionavel:'dica'` do §148 NÃO distingue os dois:** "heurística estagnou" pode significar "o caminho existe mas a heurística não acha" (→ dica) OU "o puzzle é quase-invencível como está" (→ afrouxar). O solucionador não sabe qual; só um humano decide.
+
+**REGRA PARA OS LOTES (travada):** quando uma Provação der INDETERMINADO, o construtor **PARA e reporta** — o `acionavel`, o estado inicial ATUAL, e o que mudaria — e **o dono decide** entre afrouxar e dar dica. **Nunca corrigir sozinho, mesmo que a correção pareça óbvia** (a óbvia é quase sempre afrouxar).
+
+**Nota sobre o exemplo de hoje:** o `data/provacoes/poseidon.json` é o Poseidon **TUNADO** (montar afrouxado — inimigos a 60 HP, Maré:9 — para servir de exemplo vencível), **não** a Provação do catálogo (`data/provacoes.json`, inimigos a 120 HP, que sai INDETERMINADO/dica). Quando o lote do Poseidon chegar, o estado inicial precisa ser revisto por esta regra — afrouxar vs dica é decisão do dono, não herança do exemplo.
+
+---
+
 ## §148 — F2.1: o solucionador prova JOGABILIDADE, não solubilidade. Best-first (C); 3 vereditos reformulados.
 
 **O número mudou o que o solucionador PROMETE (reformulação do dono).** "Sequência mais curta" e "INVENCÍVEL com razão" pressupunham EXAUSTÃO — e a exaustão não existe neste espaço. A busca exaustiva mais-curta (BFS) **diverge** já no Poseidon RASO (8 turnos): 20.000 nós → 23 s, fila 90.378 e **crescendo ~4,5× mais rápido que a expansão**. Não é lento-convergindo; é intratável. Nem o caso fácil resolve por exaustão. Então:
