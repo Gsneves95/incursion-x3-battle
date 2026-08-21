@@ -6,6 +6,42 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §139 — VARREDURA DA FAMÍLIA DE INVOCAÇÃO (antes do Cernunnos) + desenho do M8, PENDENTE: o subsistema serve UM kit, não a família
+
+**A varredura combinada da §133, antes de qualquer linha do Cernunnos (o 100º). Os 5 pontos, verificados contra o motor:**
+
+**1. Quantas formas e como cada uma morre.** DUAS formas de invocação hoje (em `l.invocacoes`, nunca em `units`):
+- **`guarda`** (Khnum/Shabti): tem HP (30), Provoca + absorve; morre por DANO (o bloco acharGuarda no bater: `guarda.hp -= base`; a 0 → `removerInvocacao` + `reagirAoCairAliado`) OU por expiração de `dur`.
+- **`dano`** (Sun Wukong/2 clones): SEM HP-morte (hp:0), ataca no tick, morre SÓ por `dur`. Não alvejável.
+- **Divergência registrada:** a "isca" da Kitsune que o dono listou como invocação NÃO é invocação — eu a construí (§126) como `intercepta {protege:'time'}`, um BUFF, não uma entrada em `invocacoes`. Então só TRÊS invocam de verdade (Khnum, Wukong, Cernunnos); a isca é intercepta.
+
+**2. Quais deveriam ser alvejáveis pela prosa.** SÓ a Fera ("30 de HP que cai" = corpo que o inimigo derruba). O Shabti tem HP mas é GUARDA (absorve o dano provocado, não é alvo livre). Os clones NÃO têm corpo (dano temporizado, sem HP). **Então o subsistema de invocação-alvejável (M8) serve UM kit — a Fera — não amortiza na família.** O dono esperava que os clones do Wukong tivessem corpo; não têm. É o achado que muda o custo/benefício: o M8 é para um deus, não para dois.
+
+**3. O que muda na IA.** A IA mira de `alvosValidos(...).filter(inimigo)` (§84). Pôr invocações lá → a IA passa a considerá-las (mais alvos por ação → mais candidatos pontuados; 1-ply, aumento modesto) E muda o COMPORTAMENTO (a IA pode gastar ataques na Fera p/ estancar o 10/turno). A mira do JOGADOR (UI) também passa a mostrá-las. Custo real, não nulo.
+
+**4. Condição de vitória — CONFIRMADO seguro.** `checarFim` lê `st.lados[i].units` SÓ; invocações (em `invocacoes`) são invisíveis à vitória. Enquanto a Fera ficar em `invocacoes` e NUNCA em `units`, a morte dela nunca conta para a regra das 3 unidades reais. **Restrição-chave do desenho: alvejável-mas-não-unidade.**
+
+**5. Respawn — mora no LADO, não no M1.** A Fera não é unidade → `pendente`/M1 (por-unidade, 1 turno) não serve. O timer mora em `l.invocacoes` (uma entrada morta com contador `respawnEm`, ticada no tick de invocação que já roda no iniciarTurno). Confirma o §132: o timer é a parte fácil.
+
+**O DESENHO do M8 (pendente de autorização) — duas opções, porque o achado do ponto 2 mudou o custo:**
+- **Opção A — Fera livre-alvejável (fiel, o subsistema cheio):** nova `tipo:'fera'` alvejável; entra em `alvosValidos`; o `bater` detecta `ehInvocacao` cedo e usa um caminho SIMPLIFICADO (reduz hp; a 0 → `matarInvocacao`, NÃO o `matar` de unidade — senão rodaria aoCair/checarFim numa não-unidade); respawn no lado. Toca alvosValidos + bater + IA. Serve UM kit.
+- **Opção B — Fera-guarda (barata, reúsa tudo):** a Fera é `tipo:'guarda'` que também dá dano; "cai" ABSORVENDO (o caminho de morte da guarda já existe), respawn é o único acréscimo. Reúsa o subsistema inteiro; adiciona um papel defensivo que a prosa não pede ("30 HP que cai" vira "cai ao proteger").
+
+**Decisões em aberto para o dono (o desenho não crava, e o ponto 2 pesa):**
+1. **A ou B?** A é fiel mas o subsistema serve um só kit (não amortiza); B é barata mas muda a Fera de atacante-alvejável para guarda-que-ataca. (Antes do achado do ponto 2, A parecia amortizar; agora não.)
+2. Se A: **confirmar o custo na IA** (invocações em alvosValidos).
+3. **Dois commits** (desenho agora; build depois), como o dono pediu — este é o desenho.
+
+**Peço a escolha (A ou B) antes da primeira linha do Cernunnos.**
+
+---
+
+## §138.1 — VARREDURA PREVENTIVA não é a que ACHA o bug, é a que MUDA A DECISÃO antes de o bug existir
+
+**O dono cristalizou (a partir do M6 §138).** A varredura de junta do M6 NÃO achou um furo — ela escolheu a FORMA sem furo. Quatro classes de leitor de buff = quatro juntas potenciais com um flag; o remove-e-guarda deu ZERO porque ausência é o que todo leitor já trata. **A distinção:** a varredura corretiva (§113, §134-dirigida) procura um bug que já existe; a varredura PREVENTIVA (§138 M6) roda ANTES de escrever e muda a decisão de projeto para uma onde o bug não pode nascer. As duas usam a mesma técnica (enumerar os leitores/juntas), mas uma corrige e a outra PREVINE — e a preventiva vale mais, porque o custo dela é uma leitura e o retorno é um mecanismo inteiro que não precisa de rede depois. **Regra: ao abrir um mecanismo que muitos leitores tocam, enumerar os leitores ANTES e escolher a forma que a ausência (ou o invariante existente) já cobre.**
+
+---
+
 ## §138 — DAGDA CONSTRUÍDO (M2 via A2 + M6): "passar no turno ≠ pular o turno"; o laço nunca foi tocado (2/2 no M2)
 
 **O dono autorizou o Modelo A2 (§137). Dagda construído — o 99º. IMPL 98 → 99, FUNCIONAL 99. Só o Cernunnos falta.**
