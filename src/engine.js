@@ -74,7 +74,7 @@ const CONTROLES = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass
 const SLOTS_TRAVADOS = { selado: ['habilidade', 'milagre'], agarrar: ['habilidade'], medo: ['milagre'] };
 const DEBUFFS = [...CONTROLES, 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado', 'torpor', 'retaliacao'];   // 'retaliacao' (§136, Khonshu, M3): marca no inimigo — se ELE derrubar um aliado do marcador, sofre v puro (lido DENTRO do matar). Carrega v; cleansável   // 'torpor' (§135, Shuten): MARCADOR (não trava ação — o portador AGE; lido por aoAgirSobEfeito: "quando ele agir, eu reajo"). Debuff p/ ser cleansável e p/ o apply aceitá-lo   // antiRevive (F1.6): marca proativa de irrevivível nos vivos (Iansã) — debuff puro, cleansável, não trava ação. vulneravel (F1.6, Durga): "recebe +N de dano" — modificador de dano de ENTRADA no alvo (simétrico ao dmgUp de SAÍDA), lido em calcDano. olho/pressagio/marcado (F1.9-pre): MARCAS ofensivas — RÓTULOS puros (nenhum carrega dano; o +dano é `vulneravel` irmão ou `bonusDano quando:alvoMarca`); são debuff p/ serem cleansáveis e p/ o apply aceitá-las (V.efeitos)
 const BUFFS_DEF = ['dmgReduction', 'shield', 'invulneravel', 'controlImmune', 'vinculo', 'pisoVida'];   // pisoVida: 'não cai abaixo de 1 HP' (F1.3 morte)
-const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita', 'danoFimTurno', 'proximoGolpePuro'];   // 'proximoGolpePuro' (§136, Yamato): o PRÓXIMO ataque do portador é dano puro (fura redução E escudo). Buff no self, consumido no 1º ataque. Irmão do acaoPerfeita (§111), mas p/ QUALQUER slot e só o eixo "puro"   // 'danoFimTurno' (§135, Kali): buff no PRÓPRIO — no fim de cada turno do dono, ataca de graça por v um inimigo, por dur turnos. Lido no fimTurno. É buff (auto-aplicado, o dono age)   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
+const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'armazenaDano', 'redirect', 'inalvejavel', 'refleteDano', 'acaoPerfeita', 'danoFimTurno', 'proximoGolpePuro', 'caldeirao'];   // 'caldeirao' (§138, Dagda): buff-marcador do "Caldeirão ativo" — enquanto presente, o portador curado NESTE turno (curadoAgora) não cai abaixo de 1 HP (piso condicional, lido no bater)   // 'proximoGolpePuro' (§136, Yamato): o PRÓXIMO ataque do portador é dano puro (fura redução E escudo). Buff no self, consumido no 1º ataque. Irmão do acaoPerfeita (§111), mas p/ QUALQUER slot e só o eixo "puro"   // 'danoFimTurno' (§135, Kali): buff no PRÓPRIO — no fim de cada turno do dono, ataca de graça por v um inimigo, por dur turnos. Lido no fimTurno. É buff (auto-aplicado, o dono age)   // acaoPerfeita (§111, Krishna): Ação Perfeita — a PRÓXIMA HABILIDADE do portador não pode ser evitada/reduzida/absorvida/contra-atacada. BUFF transferível (Krishna arma num aliado); consumido no próximo agir de habilidade do portador; lido na MIRA (não-evitável) e no bater (os outros três)   // refleteDano (§109, Mnevis): thorns TEMPORÁRIO — devolve v fixo ao atacante quando o portador sofre dano; lido no bater   // inalvejavel (F1.9): EVASÃO — sai da lista de mira inimiga de alvo único. É BUFF (auto-aplicado, a unidade AGE; strippable por dispel — §84 decisão b). Mora SÓ em alvosValidos (seleção), NUNCA no bater (impacto): §84 invariante
 
 // VOCABULÁRIO DO MOTOR — fonte ÚNICA do que o motor sabe executar. O validador de kits
 // (tools/valida_kit.js) LÊ isto, então o schema não pode divergir do que o motor faz.
@@ -84,7 +84,12 @@ const BUFFS = [...BUFFS_DEF, 'dmgUp', 'regen', 'intercepta', 'contraAtaca', 'arm
 const TIPOS_FX = [
   'dmg', 'heal', 'dot', 'apply', 'contador', 'vidaExtra', 'revive', 'destroyShield',
   'contraAtaca',   // §132 (Guan Yu, M7): aplica contraAtaca no dono, DELEGÁVEL — protege='alvo' arma o revide p/ quando um ALIADO escolhido for atingido (§106 3º caso: a mesma op do contraAtaca-self com sujeito trocado, como o intercepta.protege)
-  'stripDef', 'stripOne', 'stripBuffs', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  'stripDef', 'stripOne', 'stripBuffs', 'suspendeBuffs', 'passeForcado', 'cleanse', 'shield', 'selfHp', 'intercepta', 'redirect',
+  // 'passeForcado' (§138, Dagda M2/A2): o alvo (o time inimigo) perde a AÇÃO do próximo turno; o turno acontece (os nove tickam), só a ação é negada. Lido em podeAgir; NÃO toca o laço de turno (§137 Modelo A2)
+  // 'suspendeBuffs' (§138, Dagda M6): SUSPENDE (desativa-e-devolve ≠ strip) os buffs do alvo por `dur` turnos dele.
+  // REMOVE-E-GUARDA, não flag: estoca efeitos BUFFS + escudo em u.suspensos e os retira; restaura no fimTurno após dur
+  // turnos. A varredura §138 provou que remover é junta-PROOF (todo leitor já trata AUSÊNCIA); um flag exigiria tocar os
+  // 4 tipos de leitor (ef/shield/alvoBuff/statusCasou) = 4 juntas em potencial.
   // 'stripBuffs' (§136, Yamato): remove TODOS os buffs do alvo (sem realocar — ≠ realoca). O §113 o removeu por não ter
   // consumidor; volta com o Yamato, o consumidor real (§131 previu; o dono nomeou o Loki, era o Yamato — §132.1)
   'realoca',   // §131 (M5, Loki): MOVE todos os efeitos de uma categoria de um conjunto p/ outro. UM mecanismo parametrizado (categoria+de+para) que serve as DUAS metades: rouba buffs (buff, inimigos→self) E transfere debuffs (debuff, time→inimigos). §46: a direção/destino são PARÂMETROS, não dois códigos
@@ -101,7 +106,7 @@ const TIPOS_FX = [
 // nome exibível ("Queimadura") mora no narrador (ui/base.js NOMES_DOT), não no motor.
 const DOTS = ['queimadura', 'veneno', 'sangramento', 'tormento', 'maldicao', 'marcaMorte'];   // 'marcaMorte' (§127, Hel): DoT puro-por-natureza (o tique subtrai HP direto, sem redução/escudo) que carrega naoRevive — a Marca da Morte que o comentário da l.905 antecipava mas o alimentador (aplicarDot) não wireava.   // 'maldicao' (§114, Izanami): MESMO conceito do contador homônimo — o contador é o acúmulo, o DoT é o veículo do dano 6×acúmulo/turno (stores separados; o DoT lê o contador via porContador). cresce ao provar os 73 kits. 'veneno' entrou p/ a
 // imunidade da Nezha ("imune a Veneno e Queimadura") — é DoT real (Medusa/Jörmungandr aplicam), ainda sem applier.
-const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao', 'atadura', 'combo'];   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (§126: aCadaN + reducao escalada); 'maldicao' = Izanami (§114); 'atadura' = Anúbis (§126: antiReviveContador + bonusDano porContador onde:alvo); 'combo' = pool POR LADO (Oni consome via porContadorLado; §126 Susanoo é o 1º a GERAR via contador pool:'lado', expondo o nome ao validador).
+const CONTADORES = ['discoSolar', 'Coroa', 'Pedra', 'podridao', 'cauda', 'maldicao', 'atadura', 'combo', 'clava'];   // 'clava' (§138, Dagda): contador de USO do básico (a cada 3º uso, cura em vez de atacar — ciclo por-uso, ≠ aCadaN por-turno).   // CHAVES de contador (fx contador.nome); nome exibível em ui/base.js NOMES_CONTADOR. Cresce por kit. 'Coroa' = Xangô; 'Pedra' = Medusa; 'podridao' = Ah Puch (reduz maxHP + bloqueia revive, F1.8); 'cauda' = Kitsune (§126: aCadaN + reducao escalada); 'maldicao' = Izanami (§114); 'atadura' = Anúbis (§126: antiReviveContador + bonusDano porContador onde:alvo); 'combo' = pool POR LADO (Oni consome via porContadorLado; §126 Susanoo é o 1º a GERAR via contador pool:'lado', expondo o nome ao validador).
 const STATUS_ESCOPOS = ['alvo', 'self', 'time', 'timeInimigo'];   // porStatus (F1.8): onde contar os efeitos
 const STATUS_CATEGORIAS = [...new Set([...DEBUFFS, ...BUFFS, ...DOTS]), 'debuff', 'buff', 'dot', 'controle'];   // porStatus.categoria: nome específico OU coringa de família
 // PASSIVAS DECLARATIVAS (F1.2, DECISOES §36) — a passiva ganha `fx` como a habilidade, para o
@@ -365,6 +370,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     // --- primitivas ---
     contadores: {},      // contadores acumuláveis por CHAVE: { discoSolar: 3, atadura: 2 } (nome exibível no narrador)
     vidaExtra: null,     // Vida Extra pendente: { hp } — revive no ato ao cair
+    suspensos: null,     // §138 (Dagda M6): buffs SUSPENSOS (remove-e-guarda): { efeitos:[...], shield:N, restauraEm } — restaurados no fimTurno
     naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
     usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
     modo: 0, renasceu: false, lado,
@@ -892,7 +898,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   }
   let { v, absorvido } = calcDano(st, atk, alvo, base, kind, slot, golpe);
   if (atk && ef(atk, 'pacificado')) { v = 0; absorvido = 0; }   // Pacificar (Oxalá): o pacificado AGE mas causa 0 de dano
-  const pisoAtk = !ignoraPiso && ef(alvo, 'pisoVida');   // 'não cai abaixo de 1 HP' — a menos que o golpe fure (Shiva)
+  const pisoAtk = !ignoraPiso && (ef(alvo, 'pisoVida') || (ef(alvo, 'caldeirao') && alvo.curadoAgora));   // 'não cai abaixo de 1 HP' — a menos que o golpe fure (Shiva). §138 (Dagda): Caldeirão ativo + curado NESTE turno = mesmo piso
   alvo.hp = Math.max(pisoAtk ? 1 : 0, alvo.hp - v);
   if (unico) alvo.golpeUnicoNoTurno = true;   // F1.9 (Bastet §88): ESCRITOR do rastreio. SÓ golpe único (a AoE não consome a proteção); DEPOIS do calcDano (a reducao deste golpe já leu o flag ainda limpo). Quem intercepta/redireciona seta o flag do RECEPTOR (a recursão do bater), não do alvo original
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
@@ -1288,6 +1294,9 @@ function controlesNegadosPorInimigo(st, lado) {
 }
 function iniciarTurno(st) {
   const l = st.lados[st.ativo];
+  // §138 (Dagda M2/A2): se o lado ativo começa o turno em passe forçado, registra o evento (visível — o jogador que
+  // perde a ação vê por quê; F0.7). O turno segue normal (os nove tickam); só nenhuma unidade poderá agir.
+  if (l.units.some(u => u.vivo && ef(u, 'passeForcado'))) log(st, { tipo: 'bloqueio', lado: st.ativo, motivo: 'passe_forcado' });
   // §97 (Tsukuyomi): PROMOTOR do rastreio de cura — 'agora' vira 'antes', 'agora' zera. Roda p/ TODAS as unidades
   // dos DOIS lados a cada início de turno (não só a ativa): a leitura é OFENSIVA e cruza o lado, então a janela
   // 'curado no turno anterior' tem de ser de um turno só, global. ANTES da regen deste turno (que reescreve 'agora').
@@ -1419,6 +1428,17 @@ function fimTurno(st) {
     u.efeitos = u.efeitos.map(e => ({ ...e, dur: e.dur - 1 })).filter(e => e.dur > 0);
     u.dots = u.dots.map(d => ({ ...d, dur: d.dur - 1 })).filter(d => d.dur > 0);
   }
+  // §138 (Dagda M6): RESTAURA os buffs suspensos após `restauraEm` turnos do portador. DEPOIS da regra 5 (o buff
+  // resume com o dur estocado, não descontado durante a suspensão — congelado, não corroído). Os buffs voltaram por
+  // aplicar/soma de escudo; nenhum leitor precisou de flag (a ausência já era universal — §138 junta-proof).
+  for (const u of l.units) {
+    if (!u.suspensos) continue;
+    if (--u.suspensos.restauraEm > 0) continue;
+    for (const e of u.suspensos.efeitos) aplicar(st, u, e);
+    if (u.suspensos.shield > 0) u.shield += u.suspensos.shield;
+    log(st, { tipo: 'efeito', alvo: u.key, efeito: 'suspendeBuffs', duracao: 0 });
+    u.suspensos = null;
+  }
   // PRIMITIVA estado global Dia/Noite — conta um por turno de jogador
   if (st.fase && st.faseDur > 0) { st.faseDur--; if (st.faseDur === 0) definirFase(st, null); }
   if (st.turno >= 40) {
@@ -1485,8 +1505,8 @@ function acoesDe(st, u) {
 }
 
 function podeAgir(u) {
-  return u.vivo && !u.agiu && !ef(u, 'atordoado') && !ef(u, 'adormecido') && !ef(u, 'submerso');
-}
+  return u.vivo && !u.agiu && !ef(u, 'atordoado') && !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'passeForcado');
+}   // §138 (Dagda M2/A2): passeForcado = perde a AÇÃO (não o turno — os nove tickam normal). NÃO é CONTROLE (não passa por imuneA/controlImmune): é tempo, não debuff no inimigo
 
 // candidatos para o passo `i` de seleção, já excluindo quem foi escolhido antes
 // F1.9: o dono PODE mirar Inalvejáveis? passiva ignoraInalvejavel escopo self (só o dono) ou time (qualquer aliado
@@ -1820,6 +1840,24 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       for (const dst of dest) for (const c of coletados) {
         if (c.dot) aplicarDot(st, dst, c.nome, c.v, c.dur, u.uid, c.escala, !!c.naoRevive);
         else aplicar(st, dst, { ...c, origem: u.uid });
+      }
+      continue;
+    }
+    if (e.t === 'passeForcado') {   // §138 (Dagda M2/A2): o time inimigo PERDE a ação do próximo turno ("o time age primeiro"). O turno ACONTECE (os nove tickam); só a ação é negada. Modelo A2 (§137): não toca st.ativo
+      const alvosP = e.escopo === 'todosInimigos' ? inimigos.filter(x => x.vivo) : (e.escopo === 'time' ? l.units.filter(x => x.vivo) : alvos);
+      for (const t of alvosP) { t.efeitos.push({ type: 'passeForcado', dur: e.dur || 1, origem: u.uid }); log(st, { tipo: 'efeito', origem: u.key, alvo: t.key, efeito: 'passeForcado', duracao: e.dur || 1 }); }   // visível + nomeando a origem (o dono, ex.: Dagda), p/ o jogador que perde a ação entender por quê (§138 dir.1, F0.7)
+      continue;
+    }
+    if (e.t === 'suspendeBuffs') {   // §138 (Dagda M6): SUSPENDE (remove-e-guarda) os buffs do alvo por `dur` turnos DELE
+      const alvosS = e.escopo === 'todosInimigos' ? inimigos.filter(x => x.vivo) : (e.escopo === 'time' ? l.units.filter(x => x.vivo) : alvos);
+      for (const t of alvosS) {
+        const buffs = t.efeitos.filter(x => BUFFS.includes(x.type));
+        if (!buffs.length && t.shield <= 0) continue;
+        t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type));
+        const prev = t.suspensos;   // acúmulo raro: se já havia suspensão, mescla (soma o escudo, junta os efeitos, renova o prazo)
+        t.suspensos = { efeitos: [...(prev ? prev.efeitos : []), ...buffs], shield: (prev ? prev.shield : 0) + t.shield, restauraEm: e.dur || 1 };
+        t.shield = 0;
+        log(st, { tipo: 'efeito', alvo: t.key, efeito: 'suspendeBuffs', duracao: e.dur || 1 });
       }
       continue;
     }

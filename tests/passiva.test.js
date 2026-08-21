@@ -2473,6 +2473,39 @@ console.log('== §136 B5 (3 de 4): Yamato (stripBuffs+puro+15Combo) · Khonshu (
   console.log('  Yamato (imune-15Combo + próximo-puro + stripBuffs) · Khonshu (guardaControle 1× + retaliação no matar) · Exu (mira-por-opção: ABRIR aliado / FECHAR inimigo)');
 }
 
+console.log('== §138 B5/Dagda (M2 A2 + M6): Clava (3º uso cura) · Caldeirão (regen+piso) · Harpa (passe forçado + buffs suspensos) ==');
+{
+  const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
+  // passiva bonusCura +5
+  let st = E.novoEstado(['dagda', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1130, 0);
+  let da = st.lados[0].units[0], ali = st.lados[0].units[1]; ali.hp = 50;
+  E.aplicarFx(st, da, [{ t: 'heal', v: 10 }], { alvo: 'aliado', slot: 'habilidade' }, [ali]);
+  ok(ali.hp === 65, `Pai dos Deuses: cura 10 + 5 = 15 (${ali.hp})`);
+  // básico: usos 1/2 dão dano; 3º cura um aliado (em vez de atacar) + reseta o ciclo
+  st = E.novoEstado(['dagda', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1131, 0); orbs(st.lados[0]);
+  da = st.lados[0].units[0]; let foe = st.lados[1].units[0]; ali = st.lados[0].units[1]; ali.hp = 40;
+  let h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]); const u1 = h - foe.hp;
+  E.fimTurno(st); E.fimTurno(st); h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]); const u2 = h - foe.hp;
+  E.fimTurno(st); E.fimTurno(st); const ah = ali.hp; h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]);
+  ok(u1 === 12 && u2 === 12 && h - foe.hp === 0 && ali.hp - ah === 25, `Clava: usos 1/2 = 12; 3º cura 20+5 um aliado (dano ${h - foe.hp}, cura ${ali.hp - ah})`);
+  // habilidade: regen 12 + Caldeirão; piso condicional (curado neste turno não cai abaixo de 1)
+  st = E.novoEstado(['dagda', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1132, 0); orbs(st.lados[0]);
+  da = st.lados[0].units[0]; ali = st.lados[0].units[1];
+  E.agir(st, da.uid, 'habilidade', []);
+  ok(E.ef(ali, 'regen') && E.ef(ali, 'regen').v === 12 && !!E.ef(ali, 'caldeirao'), `Caldeirão: regen 12 + marca Caldeirão`);
+  ali.curadoAgora = true; ali.hp = 8; E.bater(st, st.lados[1].units[0], ali, 50, 'afetado', 'basico', {});
+  ok(ali.vivo && ali.hp === 1, `Caldeirão-piso: aliado curado neste turno não cai abaixo de 1 (${ali.hp})`);
+  // milagre Harpa: o time inimigo perde a ação do próximo turno + buffs suspensos
+  st = E.novoEstado(['dagda', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1133, 0); orbs(st.lados[0]);
+  da = st.lados[0].units[0]; const e = st.lados[1].units; e[0].efeitos.push({ type: 'dmgUp', v: 8, dur: 3 }); e[0].shield = 15;
+  E.agir(st, da.uid, 'milagre', []);
+  ok(e.every(x => !E.podeAgir(x)) && !E.ef(e[0], 'dmgUp') && e[0].shield === 0, `Harpa: inimigos em passe forçado + buffs suspensos`);
+  // o turno do inimigo acontece (orbe gerado) mas ninguém age — os nove tickam
+  const o0 = E.totalOrbs(st.lados[1]); E.fimTurno(st);
+  ok(E.totalOrbs(st.lados[1]) > o0 && st.lados[1].units.every(x => !E.podeAgir(x)), `passe forçado: o turno acontece (orbe +) mas o inimigo não age`);
+  console.log('  Dagda: Clava (ciclo por-uso) · Caldeirão (regen + piso condicional) · Harpa (A2 passe forçado + M6 buffs suspensos)');
+}
+
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à
 // morte DO PRÓPRIO SUJEITO (vivo=false + efeitos limpos). Verde contra o hardcode atual, ANTES de migrar.
 console.log('== caracterização NEZHA revive: ordem, vitória, 1x, timing (contra o hardcode) ==');
@@ -2651,6 +2684,10 @@ err(g => g.passiva.fx.push({ gatilho: 'evadeContra' }), 'exige o campo "v"');   
 { const g = base(); g.passiva.fx.push({ gatilho: 'imunidade', a: ['controle'], estado: { contadorLado: { nome: 'combo', op: 'min', n: 15 } } }); ok(validarDeus(g).length === 0, 'imunidade.estado.contadorLado VÁLIDA (Yamato): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[1].alvo = 'inimigo'; g.ab[1].fx = undefined; delete g.ab[1].fx; g.ab[1].opcoes = [{ nome: 'A', alvo: 'aliado', fx: [{ t: 'cdShift', unidade: true, soMaior: true, v: -99 }] }, { nome: 'B', alvo: 'inimigo', fx: [{ t: 'apply', eff: { type: 'lockSkill', slot: 'habilidade', dur: 2 } }] }]; ok(validarDeus(g).length === 0, 'opcoes com alvo por-opção VÁLIDO (Exu): ' + JSON.stringify(validarDeus(g))); }
 { const g = base(); g.ab[1].fx = undefined; delete g.ab[1].fx; g.ab[1].opcoes = [{ nome: 'X', alvo: 'foo', fx: [{ t: 'dmg', v: 5 }] }]; ok(validarDeus(g).some(x => x.includes('alvo inválido')), 'opcoes.alvo inválido RECUSADO'); }
+// §138 B5: suspendeBuffs · passeForcado · apply caldeirao (Dagda M6/M2)
+{ const g = base(); g.ab[2].fx = [{ t: 'suspendeBuffs', escopo: 'todosInimigos', dur: 1 }]; ok(validarDeus(g).length === 0, 'suspendeBuffs VÁLIDO (Dagda M6): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[2].fx = [{ t: 'passeForcado', escopo: 'todosInimigos', dur: 1 }]; ok(validarDeus(g).length === 0, 'passeForcado VÁLIDO (Dagda A2): ' + JSON.stringify(validarDeus(g))); }
+{ const g = base(); g.ab[1].fx = [{ t: 'apply', eff: { type: 'caldeirao', dur: 3 }, escopo: 'time' }]; ok(validarDeus(g).length === 0, 'apply caldeirao VÁLIDO (Dagda): ' + JSON.stringify(validarDeus(g))); }
 console.log('');
 console.log(f === 0 ? '>>> PASSIVA OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

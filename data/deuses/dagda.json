@@ -1,0 +1,58 @@
+{
+  "key": "dagda",
+  "nome": "Dagda",
+  "faccao": "Celta",
+  "elem": "Verdejante",
+  "classe": "Híbrido",
+  "funcao": "Suporte",
+  "passiva": {
+    "nome": "Pai dos Deuses",
+    "desc": "Curas no time curam +5; com o Caldeirão ativo, aliados não caem abaixo de 1 de HP no turno em que forem curados.",
+    "fx": [
+      { "gatilho": "bonusCura", "v": 5 }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Clava de Dois Fins",
+      "cost": {},
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 20 em 1 aliado.",
+      "fx": [
+        { "t": "contador", "nome": "clava", "alvo": "self", "v": 1, "max": 3 },
+        { "t": "condicional", "se": { "contador": { "nome": "clava", "op": "min", "n": 3 } },
+          "entao": [ { "t": "heal", "v": 20, "alvoHp": { "lado": "aliado", "ext": "min" } }, { "t": "contador", "nome": "clava", "alvo": "self", "v": -3 } ],
+          "senao": [ { "t": "dmg", "v": 12 } ] }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Caldeirão da Fartura",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "O time regenera 12 por turno durante 3 turnos.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "regen", "v": 12, "dur": 3 }, "escopo": "time" },
+        { "t": "apply", "eff": { "type": "caldeirao", "dur": 3 }, "escopo": "time" }
+      ]
+    },
+    {
+      "slot": "milagre",
+      "classe": "Mágico",
+      "nome": "Harpa Uaithne",
+      "cost": { "Verdejante": 1, "livre": 2 },
+      "cd": 4,
+      "alvo": "nenhum",
+      "desc": "O time age primeiro no próximo turno e todos os buffs inimigos ficam suspensos por 1 turno.",
+      "fx": [
+        { "t": "passeForcado", "escopo": "todosInimigos", "dur": 1 },
+        { "t": "suspendeBuffs", "escopo": "todosInimigos", "dur": 1 }
+      ]
+    }
+  ]
+}

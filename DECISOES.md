@@ -6,7 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
-## §137 — DESENHO DO DAGDA (M2 loop-reorder + M6), PENDENTE DE AUTORIZAÇÃO: antes de qualquer linha
+## §138 — DAGDA CONSTRUÍDO (M2 via A2 + M6): "passar no turno ≠ pular o turno"; o laço nunca foi tocado (2/2 no M2)
+
+**O dono autorizou o Modelo A2 (§137). Dagda construído — o 99º. IMPL 98 → 99, FUNCIONAL 99. Só o Cernunnos falta.**
+
+**O INSIGHT (o dono mandou registrar a frase, porque é o insight e não o detalhe):**
+> **Os nove pontos de alternância dependem do turno ACONTECER, não do ator AGIR.**
+Por isso "passar no turno" (A2 — o turno roda, o inimigo não age) é seguro e "pular o turno" (A — o turno some) quebra tudo. A distinção não é de implementação; é a leitura do que o modelo garante. O `passeForcado` nega a AÇÃO (lido em `podeAgir`), e o `st.ativo = 1-st.ativo` fica intocado.
+
+**2/2 no M2, e o laço nunca foi tocado.** Os dois pedidos de "reordenar o turno" saíram de RELER o que o modelo já garante, não de mudá-lo:
+- **Hermes/Exu (§121):** "age primeiro" → SER O STARTER (regra de setup, novoEstado).
+- **Dagda (§138):** "age primeiro no próximo turno" → PASSAR o turno do inimigo (a ação, não o turno).
+Ambos evitaram o loop-reorder que o dono adiou duas vezes. **Regra: quando um efeito parece exigir mexer no laço, reler primeiro o que o laço já garante — duas vezes o "reorder" era um caso especial de algo que o modelo já fazia.**
+
+**O inimigo em passe forçado GERA orbe (decisão do dono, com precedente):** negar a geração seria um SEGUNDO efeito que a prosa não escreve — "perde a ação" já é o efeito inteiro. Precedente direto: `agiu`/`podeAgir` já separam "não pode agir" de "não recebe nada", e **os treze controles operam assim** (atordoado não age e continua gerando orbe). A decisão fica consistente com treze controles, não isolada.
+
+**O passe forçado é VISÍVEL (dir. do dono, F0.7):** o `apply` loga `passeForcado` nomeando a origem (o Dagda), e o `iniciarTurno` loga um `bloqueio motivo:passe_forcado` quando o lado ativo começa em passe — o jogador que perde a ação vê por quê, não parece bug.
+
+**M6 (suspensão de buffs) — a varredura §134 ANTES de construir (dir. do dono):** listei os leitores de buff — `ef()` (~15 sítios), `u.shield` (absorção no bater + alvoBuff/alvoDefesa), `alvoBuff` (condOK), `statusCasou` (porStatus categoria buff), mais os removedores e o desconto de duração. **Um FLAG exigiria tocar 4 tipos de leitor (ef/shield/alvoBuff/statusCasou) = 4 juntas em potencial.** Escolhi **REMOVE-E-GUARDA** (estoca os buffs+escudo, remove, restaura após dur turnos): durante a suspensão os buffs estão AUSENTES, e todo leitor já trata ausência (provado pelas suítes). **Zero juntas** — é o "desativa-e-devolve ≠ strip" do §116, e a varredura VALIDOU a escolha em vez de descobrir o furo depois. A dur do buff congela (fora de efeitos, a regra 5 não a corrói) e resume ao restaurar.
+
+**As peças fáceis, como previsto:** bonusCura +5 (existe), regen na habilidade (existe), Caldeirão-piso (buff `caldeirao` + piso condicional no bater: curado NESTE turno via `curadoAgora` §97), básico "a cada 3º uso" (contador `clava` de USO + condicional — ciclo por-uso, ≠ aCadaN por-turno; o 3º uso cura o mais-ferido via alvoHp, evitando a mira-por-condição).
+
+**Rede §134 pagou 3ª vez:** os campos novos (`suspensos`, `passeForcado`, `caldeirao`+`curadoAgora`, `clava`) provados nos dois lados no mesmo commit.
+
+**Falta só o Cernunnos** — e ele volta com a varredura da família de invocação (§133), não sozinho.
+
+---
+
+## §137 — DESENHO DO DAGDA (M2 loop-reorder + M6), AUTORIZADO (Modelo A2) — construído no §138
 
 **O Dagda é o único que reordena o LAÇO; o dono adiou duas vezes por isso e pediu o desenho ANTES de qualquer linha, com os nove pontos que dependem de alternância analisados. NÃO construído — este é o desenho para autorizar.**
 

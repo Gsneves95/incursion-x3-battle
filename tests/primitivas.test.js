@@ -1338,6 +1338,39 @@ console.log('== 38. §136: stripBuffs (remove todos) · proximoGolpePuro (fura e
   console.log('  stripBuffs (todos) · proximoGolpePuro (consome) · retaliacao no matar (cross-side) · [opcoes por-opção testado em §136]');
 }
 
+// ------------------------------------------------------------ 39. B5/Dagda (§138): suspendeBuffs (remove-e-guarda) · passeForcado (A2) · caldeirão-piso
+console.log('== 39. §138: suspendeBuffs (desativa-e-devolve) · passeForcado (perde a AÇÃO, não o turno) · caldeirão-piso ==');
+{
+  // (a) suspendeBuffs: remove-e-guarda; ausente durante a suspensão; restaurado após dur turnos (congelado, não corroído)
+  let st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1170, 0);
+  let u = st.lados[0].units[0], foe = st.lados[1].units[0];
+  foe.efeitos.push({ type: 'dmgUp', v: 8, dur: 5 }); foe.shield = 20;
+  E.aplicarFx(st, u, [{ t: 'suspendeBuffs', escopo: 'todosInimigos', dur: 1 }], A('todosInimigos', 'milagre'), []);
+  ok(!E.ef(foe, 'dmgUp') && foe.shield === 0 && !!foe.suspensos, `suspendeBuffs: buffs+escudo removidos e guardados`);
+  E.fimTurno(st); E.fimTurno(st);   // 1 turno do inimigo → restaura
+  ok(!!E.ef(foe, 'dmgUp') && foe.shield === 20 && !foe.suspensos, `restaurado após 1 turno (dur do buff congelada: ${(E.ef(foe, 'dmgUp') || {}).dur} = 5)`);
+
+  // (b) passeForcado: perde a AÇÃO, mas o turno ACONTECE (orbe gerado — os nove tickam)
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1171, 0);
+  u = st.lados[0].units[0];
+  E.aplicarFx(st, u, [{ t: 'passeForcado', escopo: 'todosInimigos', dur: 1 }], A('todosInimigos', 'milagre'), []);
+  ok(st.lados[1].units.every(x => !E.podeAgir(x)), `passeForcado: inimigos não podem agir`);
+  E.fimTurno(st);   // turno do inimigo (passa)
+  ok(st.lados[1].units.every(x => !E.podeAgir(x)) && E.totalOrbs(st.lados[1]) > 0, `o turno acontece (orbe gerado) mas ninguém age`);
+  E.fimTurno(st);   // fim do turno passado → expira
+  ok(!E.ef(st.lados[1].units[0], 'passeForcado'), `expira após o turno perdido (só a ação, não o turno)`);
+
+  // (c) caldeirão-piso: curado NESTE turno + caldeirao ativo → não cai abaixo de 1
+  st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1172, 0);
+  const alvo = st.lados[0].units[0]; alvo.efeitos.push({ type: 'caldeirao', dur: 3 }); alvo.curadoAgora = true; alvo.hp = 10;
+  E.bater(st, st.lados[1].units[0], alvo, 50, 'afetado', 'basico', {});
+  ok(alvo.vivo && alvo.hp === 1, `caldeirão + curado neste turno: golpe letal para em 1 (${alvo.hp})`);
+  const alvo2 = st.lados[0].units[1]; alvo2.efeitos.push({ type: 'caldeirao', dur: 3 }); alvo2.curadoAgora = false; alvo2.hp = 10;
+  E.bater(st, st.lados[1].units[0], alvo2, 50, 'afetado', 'basico', {});
+  ok(!alvo2.vivo, `caldeirão SEM cura neste turno: sem piso (morre) — a cura é a condição (${alvo2.hp})`);
+  console.log('  suspendeBuffs (remove-e-guarda, congela dur) · passeForcado (ação, não turno) · caldeirão-piso (só com cura no turno)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PRIMITIVAS OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
