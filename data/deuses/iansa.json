@@ -53,10 +53,10 @@
       "cost": { "Tempestade": 2, "livre": 1 },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "18 de dano a todos os inimigos; destrói todas as invocações inimigas e impede revives por 2 turnos.",
+      "desc": "18 de dano a todos os inimigos; remove todos os buffs deles e impede revives por 2 turnos.",
       "fx": [
         { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
-        { "t": "limparInvocacoes" },
+        { "t": "stripBuffs", "escopo": "todosInimigos" },
         { "t": "apply", "eff": { "type": "antiRevive", "dur": 2 }, "escopo": "todosInimigos" }
       ]
     }

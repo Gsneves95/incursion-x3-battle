@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §142 — REMOÇÃO DO SUBSISTEMA DE INVOCAÇÃO: 3v3 é 3v3. M8 aposentado, 5 kits reescritos com primitivas existentes.
+
+**Decisão do dono: nada entra no campo além dos seis deuses.** Removido TODO o subsistema de invocação de batalha — o M8 (Fera alvejável, §139/§140) e a família guarda/clone que o antecedeu. **−67 linhas líquidas no `engine.js` (2085→2018).**
+
+**Ordem (a que o dono cravou): varrer → reescrever kits → remover motor → provar sem órfão.**
+
+**A varredura primeiro (§115 respeitado): um ponto NÃO previsto.** O dono listou "KHNUM: 1 aliado ganha Provocar". Mas Provocar (taunt) como construído **fixa `origem: u.uid`** (engine.js apply-fx) — quem lança vira o ímã; não há como um ALIADO escolhido virar o ímã. O Shabti nunca usou taunt pra isso: drenava fogo pelo `acharGuarda` (deletado). Levado ao dono como fork. **Decisão dele: `intercepta {protege: aliado}`** (a primitiva do "Senhor" da Bastet/Hanuman) — Khnum intercepta os golpes de alvo único contra o aliado, que ganha o escudo. Fiel à intenção (o aliado escudado é protegido) sem código novo.
+
+**Os 5 kits, só com primitivas que já existiam:**
+- **Khnum** — hab "Couraça de Barro": `intercepta{contra:'todos',dur:2}` + `shield 25` (alvo=aliado). Passiva: só a prosa perdeu o "Shabti" (o fx `aoCair{quem:aliado}→heal 12` já era exatamente isso).
+- **Cernunnos** — hab "Fúria da Matilha": `apply refleteDano{v:10,dur:2} escopo:time` (o thorns do Mnevis, no time). Passiva: `aoSerAtingido{quem:aliado}→heal 8` + o `bonusCura viaRegen +4` que já tinha.
+- **Sun Wukong** — hab "Fios de Cabelo": `dmg v:8 golpes:4` (alvo=distribui) — multi-golpe §92, mesmo total 32 dos 2 clones. Entra na allowlist do auditor (32>25 hab), irmão do Yamata no Orochi.
+- **Kitsune** — SÓ prosa ("isca"→"miragem intercepta"): o fx já era `intercepta{protege:'time'}`. Zero mudança de código.
+- **Iansã** — milagre: `limparInvocacoes` → `stripBuffs escopo:todosInimigos`. O stripBuffs (§136, Yamato) ganha o 2º consumidor que a §131 previa.
+
+**Uma torção de prosa forçada pelo checador (família §141-C):** "causa 10 de dano" na Fúria da Matilha fazia o `checar_cadeia` ler um dano-flat que o `refleteDano` não carrega (DIVERGE). Reescrito "reflete 10 ao atacante" — a MESMA convenção que o Mnevis já usava ("reflete 10 de todo dano") para dodge do parser de dano-flat. Não ensinei o checador (ensiná-lo quebraria o Mnevis, que dodge por prosa); segui a convenção existente.
+
+**Removido do motor:** fx `invocar`/`limparInvocacoes`; funções `acharGuarda`/`removerInvocacao`/`matarInvocacao`; campo `l.invocacoes`; ramos de `bater` (`ehInvocacao` + guarda), o tique de invocação no `iniciarTurno`, a Fera em `alvosValidos`/`agir`; fxKeys `tipo`/`provoca`/`curaDono`/`respawn`; o campo-de-evento reservado `invocacao`; e o `case 'invocacao'` do narrador (UI). O `reagirAoCairAliado` FICOU (é o aoCair-de-aliado das unidades reais); só o call-site do guarda saiu.
+
+**O caminho de dano do `bater` ficou mais simples, como o dono previu:** de TRÊS ramos de roteamento (corpo-direto `ehInvocacao` no topo, `acharGuarda` no meio, `acharInterceptador`) para UM (`acharInterceptador`). O desvio de guarda era um dos ramos mais densos — sumiu.
+
+**Prova de que não sobrou nada — a varredura das 5 espécies (§113 + §129) contra o motor sem invocação, LIMPA:** (1) etiqueta-sem-enforce: nenhum token de invocação no VOCAB, todo fx verb ainda tem handler; (2) campo-sem-fio: nenhum `invocacoes`/`ehInvocacao`/`respawnEm`/`curaDono`/`__inv`/`__fera` no motor; (3) prosa-sem-fx: nenhum dos 100 kits (×4 campos + arquetipo) menciona invocação; (4) produtor-sem-consumidor: nenhum push/log de invocação; (5) junta-não-ligada: nenhum leitor de `tipo:'fera|guarda|dano'`/`ehInvocacao`/`respawn` sem produtor. **IMPL 100 / FUNCIONAL 100, 20 suítes verdes.** (O gacha — `perfil.invocacao`/`registrarInvocacao`/tela "Invocar" — é outro namespace, intocado.)
+
+**Nota:** a leitura da arena (§141-A/B) precede esta mudança — os 5 kits mudaram de comportamento, então aquele snapshot está velho para eles. Re-rodar quando quiser.
+
+---
+
 ## §141 — A ARENA COM OS 100 (1ª leitura de balanceamento com dado real). NENHUM número tocado — decisão do dono.
 
 **A arena existe desde a F1.4 e nunca vira o roster completo.** `tools/arena.js` (novo): IA×IA gulosa sobre os 100, PRNG semeado (determinístico, sem `Math.random`), amostragem round-robin (cada rodada embaralha os 100, forma times de 3, emparelha adjacentes; `comeca` alterna). 200 rodadas = 3200 partidas, ~192 jogos/deus. Relatório salvo em `docs/arena_fase1.txt`.

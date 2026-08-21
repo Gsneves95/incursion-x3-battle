@@ -7,9 +7,10 @@
   "funcao": "Guardião",
   "passiva": {
     "nome": "Ciclo da Vida",
-    "desc": "Regenerações no time curam +4; a Fera cura 8 em Cernunnos ao atacar.",
+    "desc": "Regenerações no time curam +4; quando um aliado é atingido, Cernunnos cura 8.",
     "fx": [
-      { "gatilho": "bonusCura", "v": 4, "quandoCura": { "viaRegen": true } }
+      { "gatilho": "bonusCura", "v": 4, "quandoCura": { "viaRegen": true } },
+      { "gatilho": "aoSerAtingido", "quem": "aliado", "faz": [ { "t": "heal", "v": 8, "escopo": "self" } ] }
     ]
   },
   "ab": [
@@ -26,12 +27,12 @@
     {
       "slot": "habilidade",
       "classe": "Físico",
-      "nome": "Chamado da Matilha",
+      "nome": "Fúria da Matilha",
       "cost": { "Verdejante": 2 },
       "cd": 3,
       "alvo": "nenhum",
-      "desc": "Invoca uma Fera (30 de HP) que causa 10 de dano por turno; se cair, renasce em 2 turnos.",
-      "fx": [ { "t": "invocar", "nome": "Fera", "tipo": "fera", "hp": 30, "v": 10, "curaDono": 8, "respawn": 2 } ]
+      "desc": "Por 2 turnos, todo aliado atingido reflete 10 ao atacante.",
+      "fx": [ { "t": "apply", "eff": { "type": "refleteDano", "v": 10, "dur": 2 }, "escopo": "time" } ]
     },
     {
       "slot": "milagre",

@@ -374,32 +374,6 @@ console.log('== 10. copiar: repete a última Habilidade de um aliado sem custo =
   delete E.GODS.tcopia;
 }
 
-// ------------------------------------------------------------ 11. invocações
-console.log('== 11. invocações: guarda que absorve e clone que bate por turno ==');
-{
-  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 113);
-  const u = st.lados[0].units[0], ally = st.lados[0].units[1], atk = st.lados[1].units[0];
-  E.aplicarFx(st, u, [{ t: 'invocar', nome: 'Shabti', tipo: 'guarda', hp: 30, dur: 2 }], A('nenhum', 'habilidade'), []);
-  const hp0 = ally.hp;
-  E.bater(st, atk, ally, 15, 'afetado', 'basico', { unico: true });
-  ok(ally.hp === hp0, 'o Shabti deveria absorver o golpe dirigido ao aliado');
-  ok(st.lados[0].invocacoes[0].hp === 15, `o Shabti deveria ficar com 15 de HP, tem ${st.lados[0].invocacoes[0].hp}`);
-  console.log(`  Shabti absorve 15 (30→15), aliado intacto`);
-}
-{ // clones batem no início do turno do dono
-  const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 114);
-  const u = st.lados[0].units[0], e0 = st.lados[1].units[0];
-  E.aplicarFx(st, u, [
-    { t: 'invocar', nome: 'Clone', tipo: 'dano', v: 8, dur: 2 },
-    { t: 'invocar', nome: 'Clone', tipo: 'dano', v: 8, dur: 2 },
-  ], A('nenhum', 'habilidade'), []);
-  const h0 = e0.hp;
-  E.fimTurno(st);   // → Jogador 2
-  E.fimTurno(st);   // → volta ao Jogador 1: os 2 clones agem
-  ok(h0 - e0.hp === 16, `2 clones de 8 deveriam somar 16, deram ${h0 - e0.hp}`);
-  console.log(`  2 clones × 8 = 16 no início do turno do dono`);
-}
-
 // ----------------------------------------------------------- 12. Inalvejável (F1.9): mira, não impacto (§84)
 console.log('== 12. Inalvejável: evasão na SELEÇÃO; AoE atinge; cura aliada alcança (§84 a) ==');
 {

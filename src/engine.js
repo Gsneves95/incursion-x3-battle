@@ -93,7 +93,7 @@ const TIPOS_FX = [
   // 'stripBuffs' (§136, Yamato): remove TODOS os buffs do alvo (sem realocar — ≠ realoca). O §113 o removeu por não ter
   // consumidor; volta com o Yamato, o consumidor real (§131 previu; o dono nomeou o Loki, era o Yamato — §132.1)
   'realoca',   // §131 (M5, Loki): MOVE todos os efeitos de uma categoria de um conjunto p/ outro. UM mecanismo parametrizado (categoria+de+para) que serve as DUAS metades: rouba buffs (buff, inimigos→self) E transfere debuffs (debuff, time→inimigos). §46: a direção/destino são PARÂMETROS, não dois códigos
-  'armazenaDano', 'invocar', 'limparInvocacoes', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
+  'armazenaDano', 'copiar', 'fase', 'vinculo', 'cdShift', 'orbGain',
   'restauraMax', 'espalha', 'reviveProximoTurno',   // reviveProximoTurno: faz-only (aoCair self), executado por rodarFaz. NÃO absorvido pelo agendador geral (§117): dispara em unidade MORTA + alimenta checarFim — folá-lo forçaria caso especial (§106 ao contrário)
   'agendar',   // §117 (M1, Kukulkán): AGENDA um payload de fx p/ o próximo turno do dono (lista pendente por-unidade, disparada no iniciarTurno). "ação telegrafada". Alvo/escopo fixados no lançamento; nenhuma escolha nova ao disparar
   'zeraCd',   // §118 (M3, Ares): zera as recargas do PRÓPRIO dono. faz-safe (self, sem escolha). aoCair{quem:'inimigo'} → "abati, minha recarga volta"
@@ -274,7 +274,7 @@ const VOCAB = {
   // campos que o motor LÊ num fx (danoBase + aplicarFx). Um fx com campo fora disto é typo.
   fxKeys: [
     't', 'v', 'kind', 'eff', 'escopo', 'nome', 'dur', 'idx', 'n', 'lado', 'max', 'hp',
-    'tipo', 'provoca', 'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador', 'curaDono', 'respawn',   // §139 (Cernunnos M8): invocar tipo:'fera' — curaDono (cura o dono ao atacar) + respawn (turnos p/ renascer)
+    'contra', 'contraAtaca', 'protege', 'fonte', 'alvo', 'consomeContador',
     'porContador', 'porContadorCampo', 'porAliadoCaido', 'porInimigoCaido', 'porHpFaltante', 'porStatus', 'porDeficitAliados', 'porAliadoVivo', 'curaMetade',   // porDeficitAliados (§126, Susanoo) e porAliadoVivo (§132, Guan Yu): scalers por contagem de unidades vivas
     'seEncharcado', 'seAdormecido', 'seDia', 'seNoite', 'seCond', 'seAliadoJaAgiu', 'limiar', 'execIf',
     'pool', 'porContadorLado', 'consomeContadorLado',   // contador de campo por LADO (pool do time, F1.1)
@@ -314,7 +314,6 @@ const VOCAB = {
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
     // RESERVADOS p/ sub-tokens de 0-kit (nome canônico decidido agora, complete-by-construction):
     'habilidadeCopiada',   // efeito:copiar — qual Habilidade foi copiada (Ísis, F1.3)
-    'invocacao',           // efeito:invocacao — qual invocação (kits de invocar, futuros)
     'execucao',            // queda:execucao — a morte foi por execução (Yan Wong reage a isto)
   ],
   motivos: [        // conjunto FECHADO — motivo nunca é texto livre (docs/eventos.md)
@@ -392,8 +391,8 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
     energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0, contadores: {} },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, invocacoes: [], ultHabilidade: null, dividaLivre: 0, contadores: {} },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
     ],
   };
   // §121 (M2): iniciativa PERMANENTE (Exu/Hermes) força o starter no SETUP — "age primeiro" = liderar a rodada = ser o
@@ -733,7 +732,7 @@ function bonusCuraDeclarativo(st, u, curador, via) {
 // declarativa do atacante (é propriedade do dono, então sempre self). ogum fura redução; tyr, ambos.
 function danoImune(st, atk) {
   const out = { reducao: false, escudo: false };
-  const g = kitDe(st, atk);                    // invocações (key '__inv') não têm kit — guarda
+  const g = kitDe(st, atk);
   const p = g && g.passiva;
   if (p && Array.isArray(p.fx)) for (const f of p.fx) {
     if (f.gatilho === 'danoIrredutivel') for (const x of f.ignora) out[x] = true;
@@ -829,12 +828,6 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false, semEvade = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84). semEvade (§130, Saci): o contra-ataque da evasão não re-dispara evasão
   if (!alvo.vivo) return 0;
-  if (alvo.ehInvocacao) {   // §139 (Cernunnos M8): CORPO de invocação (Fera) — dano DIRETO (sem calcDano/reducao/escudo, como a guarda) e morte por matarInvocacao, NUNCA o `matar` de unidade (senão os 5 leitores — execução/vidaExtra/naoRevive/aoCair/queda — disparariam por uma Fera). Antes de intercepta/redirect: o corpo é alvo direto
-    alvo.hp = Math.max(0, alvo.hp - base);
-    log(st, { tipo: 'dano', origem: atk && atk.key, alvo: alvo.key, valor: base });
-    if (alvo.hp === 0) matarInvocacao(st, alvo);
-    return base;
-  }
   const semContraEf = semContra || (slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita'));   // §111 (Krishna): não-contra-atacável via BUFF transferido — SÓ na habilidade do portador. O reflexo/contra recursam com slot próprio, então não reentram aqui
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
   const golpe = { slot, classe, elem: atk && atk.elem, unico };
@@ -855,7 +848,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   }
 
   // PRIMITIVA interceptar — golpe de alvo único pode ser assumido por um protetor.
-  // Vale para efeito 'intercepta' (Loki, Bastet, Hanuman) e para invocação-guarda (Shabti, isca).
+  // Vale para o efeito 'intercepta' (Loki, Bastet, Hanuman, Khnum).
   if (unico && !semIntercepta) {
     const redir = acharInterceptador(st, alvo, atk);
     if (redir) {
@@ -863,16 +856,6 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       if (ie && ie.contra === 'unico') redir.efeitos = redir.efeitos.filter(e => e !== ie);
       log(st, { tipo: 'efeito', origem: redir.key, alvo: alvo.key, efeito: 'intercepta' });
       return bater(st, atk, redir, base, kind, slot, { ...opts, semIntercepta: true });
-    }
-    const guarda = acharGuarda(st, alvo);
-    if (guarda) {
-      guarda.hp = Math.max(0, guarda.hp - base);
-      // a guarda ASSUME o golpe dirigido a `alvo` (mesma forma do interceptador): um
-      // evento diz que interceptou, o outro conta o dano que ela levou (Regra 6).
-      log(st, { tipo: 'efeito', origem: guarda.key, alvo: alvo.key, efeito: 'intercepta' });
-      log(st, { tipo: 'dano', origem: atk.key, alvo: guarda.key, valor: base });
-      if (guarda.hp === 0) { removerInvocacao(st, guarda); reagirAoCairAliado(st, alvo.lado); }   // Shabti caiu por dano: conta como queda de aliado (Khnum). Só aqui (morte por dano); expiração/limparInvocacoes NÃO disparam
-      return base;
     }
   }
   // §130 (Saci, Gorro Vermelho): EVADE o 1º golpe ÚNICO por turno e revida. Lê o flag primeiroPorTurno (§88, ainda limpo
@@ -911,8 +894,8 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (absorvido) evDano.absorvido = absorvido;
   log(st, evDano);
   // §111 (Krishna) — ESCRITOR do rastreio de dano causado: credita ao ATACANTE o dano LÍQUIDO em inimigo (v>0).
-  // Só unidade real (a invocação-stub '__inv' não tem o campo → pulada) e só dano cruzando o lado (dano em si/aliado
-  // não é "causar dano"). O reflexo/contra creditam quem revida — é dano que ele de fato causou.
+  // Só dano cruzando o lado (dano em si/aliado não é "causar dano"). O reflexo/contra creditam quem revida —
+  // é dano que ele de fato causou.
   if (v > 0 && atk && typeof atk.danoAgora === 'number' && atk.lado !== alvo.lado) atk.danoAgora += v;
   // PRIMITIVA dano armazenado — todo aliado do alvo com acumulador guarda o dano sofrido.
   for (const x of st.lados[alvo.lado].units) {
@@ -972,8 +955,8 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     }
   }
   // §135 (Raijin, Ritmo do Trovão): CADA alvo atingido pelo dono gera contador no pool do lado. Gancho no bater
-  // (por-GOLPE, ≠ por-ATAQUE do Susanoo §126 — a fratura da preposição §126). Só golpe inimigo real (não invocação-stub).
-  if (atk && atk.lado !== alvo.lado && atk.key !== '__inv') {
+  // (por-GOLPE, ≠ por-ATAQUE do Susanoo §126 — a fratura da preposição §126). Só golpe inimigo real.
+  if (atk && atk.lado !== alvo.lado) {
     const ga = kitDe(st, atk), pa = ga && ga.passiva;
     if (pa && Array.isArray(pa.fx)) for (const fp of pa.fx) if (fp.gatilho === 'geraContadorPorGolpe') addContadorLado(st, atk.lado, fp.contador, fp.v || 1, fp.max != null ? fp.max : null, atk);
   }
@@ -1050,9 +1033,9 @@ function matar(st, atk, alvo, opts = {}) {
   checarFim(st);
 }
 
-// aoCair quem:'aliado' — QUALQUER queda no MESMO lado (unidade real via matar, OU invocação-guarda via bater):
-// todo reator vivo do lado do caído reage. Simétrico ao 'qualquerInimigo' (lado oposto). O caído já está morto
-// (vivo=false) ou é uma invocação sem unidade, então nunca reage à própria queda — isso é o 'self' (§76, Khnum).
+// aoCair quem:'aliado' — QUALQUER queda de unidade no MESMO lado: todo reator vivo do lado do caído reage.
+// Simétrico ao 'qualquerInimigo' (lado oposto). O caído já está morto (vivo=false), então nunca reage à
+// própria queda — isso é o 'self' (§76, Khnum).
 function reagirAoCairAliado(st, lado) {
   for (const r of st.lados[lado].units) {
     if (!r.vivo) continue;
@@ -1063,7 +1046,7 @@ function reagirAoCairAliado(st, lado) {
   }
 }
 
-// ----------------------------------- PRIMITIVA interceptar / invocação-guarda
+// ----------------------------------- PRIMITIVA interceptar
 // Um protetor vivo com efeito 'intercepta' cobrindo o alvo (ou qualquer aliado).
 function acharInterceptador(st, alvo, atk) {
   if (atk && atk.lado === alvo.lado) return null;   // só golpe inimigo é interceptado
@@ -1072,22 +1055,6 @@ function acharInterceptador(st, alvo, atk) {
     const i = ef(x, 'intercepta');
     return i && (i.protege === alvo.uid || i.protege === 'time');
   });
-}
-function acharGuarda(st, alvo) {
-  const inv = (st.lados[alvo.lado].invocacoes || []).find(g => g.tipo === 'guarda' && g.hp > 0);
-  return inv || null;
-}
-function removerInvocacao(st, g) {
-  for (const l of st.lados) { const i = l.invocacoes.indexOf(g); if (i >= 0) { l.invocacoes.splice(i, 1); log(st, { tipo: 'efeito', efeito: 'invocacao', duracao: 0 }); } }
-}
-// §139 (Cernunnos M8): morte da Fera — caminho PRÓPRIO, NÃO o `matar` de unidade. NENHUM dos 5 leitores do matar
-// (execução/vidaExtra/naoRevive/aoCair/queda-para-vitória) dispara: a Fera não é unidade. Se tem respawn, agenda o
-// renascimento (respawnEm) e fica no lado como placeholder morto; senão, é removida no tick.
-function matarInvocacao(st, g) {
-  if (!g.vivo) return;
-  g.vivo = false; g.hp = 0;
-  log(st, { tipo: 'queda', alvo: g.key });
-  if (g.respawn > 0) g.respawnEm = g.respawn;
 }
 
 function curar(st, u, v, curador = null, via = null) {
@@ -1354,24 +1321,6 @@ function iniciarTurno(st) {
     const fila = u.pendente; u.pendente = [];
     for (const p of fila) aplicarFx(st, u, p.agenda, { alvo: p.alvo, slot: 'habilidade' }, []);
   }
-  // PRIMITIVA invocações — agem no início do turno do dono, depois expiram
-  for (const g of l.invocacoes.slice()) {
-    if (g.tipo === 'dano' && g.v > 0) {
-      const alvo = st.lados[1 - st.ativo].units.find(x => x.vivo);
-      if (alvo) { log(st, { tipo: 'efeito', efeito: 'invocacao' }); bater(st, { nome: g.nome, key: '__inv', lado: st.ativo, vivo: true, efeitos: [], contadores: {} }, alvo, g.v, 'afetado', 'invocacao', {}); }
-    }
-    else if (g.tipo === 'fera') {   // §139 (Cernunnos M8): a Fera ataca 10/turno e cura o dono; e renasce (respawnEm). "A Fera é dele" (#4): morre com o dono
-      const dono = l.units.find(x => x.uid === g.dono);
-      if (!dono || !dono.vivo) { removerInvocacao(st, g); continue; }   // #4: a Fera (viva OU renascendo) morre com o dono
-      if (g.vivo && g.v > 0) {
-        const alvo = st.lados[1 - st.ativo].units.find(x => x.vivo);
-        if (alvo) { log(st, { tipo: 'efeito', efeito: 'invocacao' }); bater(st, { nome: g.nome, key: '__fera', lado: st.ativo, vivo: true, efeitos: [], contadores: {} }, alvo, g.v, 'afetado', 'invocacao', {}); if (g.curaDono) curar(st, dono, g.curaDono, dono); }   // "a Fera cura N em Cernunnos ao atacar"
-      } else if (!g.vivo && g.respawnEm > 0 && !st.fim) {   // #4: renasce — mas NUNCA em partida encerrada (st.fim)
-        if (--g.respawnEm === 0) { g.vivo = true; g.hp = g.maxHp; log(st, { tipo: 'revive', alvo: g.key, valor: g.hp }); }
-      }
-    }
-    if (g.dur != null) { g.dur--; if (g.dur <= 0) removerInvocacao(st, g); }
-  }
   // geração de orbes. Elemento sorteado entre os tipos do time (pode vir tipo
   // que não serve — estilo NA). Abertura da partida: quem abre recebe só 1
   // (desvantagem de iniciativa); todo turno seguinte rende = unidades vivas.
@@ -1567,7 +1516,6 @@ function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
   } else {
     const ignoraInalv = a.ignoraInalvejavel || temIgnoraInalvejavel(st, u) || (a.slot === 'habilidade' && !!ef(u, 'acaoPerfeita'));   // F1.9: flag de habilidade (Odin/Hórus) OU passiva (Hou Yi/Boitatá) miram o oculto. §111 (Krishna): a Ação Perfeita torna a habilidade NÃO-EVITÁVEL — é override de MIRA (§84: o não-evitável mora AQUI, não no bater)
     lista = st.lados[1 - u.lado].units.filter(x => x.vivo && !ef(x, 'submerso') && (ignoraInalv || !ef(x, 'inalvejavel')));   // Inalvejável mora AQUI (seleção), nunca no bater (§84 invariante)
-    for (const g of (st.lados[1 - u.lado].invocacoes || [])) if (g.tipo === 'fera' && g.vivo && !ef(g, 'submerso') && (ignoraInalv || !ef(g, 'inalvejavel'))) lista.push(g);   // §139 (M8): a Fera é CORPO alvejável — passa pelo MESMO filtro de mira (Inalvejável/Submerso a alcançam coerentemente; ela nunca os tem hoje — §5, sem assimetria). ANTES do taunt: Provocar ainda sobrepõe
     const tt = ef(u, 'taunt');
     if (tt) {
       // regra 7 — Provocar suspenso se o provocador está intocável (invulnerável/submerso/inalvejável, salvo ignore-mira)
@@ -1595,7 +1543,7 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
   if (a.umaVez) u.usos[a.slot] = true;   // F1.6: marca a habilidade "1× por partida" como gasta (trava permanente em acoesDe)
 
   const inimigos = st.lados[1 - u.lado].units;
-  const alvos = alvoUids.map(id => [...inimigos, ...l.units, ...st.lados[0].invocacoes, ...st.lados[1].invocacoes].find(x => x.uid === id)).filter(Boolean);   // §139 (M8): inclui invocações-corpo (Fera) no mapeamento de alvo — o inimigo pode mirá-la
+  const alvos = alvoUids.map(id => [...inimigos, ...l.units].find(x => x.uid === id)).filter(Boolean);
 
   // monta a lista de efeitos: modo alternado (Nezha), escolha múltipla (Lugh/Nüwa) ou fx fixo
   let fx = a.fx;
@@ -1897,21 +1845,6 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
     if (e.t === 'redirect' && alvos[0]) {
       aplicar(st, u, { type: 'redirect', destino: alvos[0].uid, dur: e.dur, contra: e.contra || 'todos', origem: u.uid });
       log(st, { tipo: 'efeito', origem: u.key, alvo: alvos[0].key, efeito: 'redirect' });
-    }
-    if (e.t === 'limparInvocacoes') {   // F1.6 (Iansã 'Guardiã dos Eguns') — destrói as invocações do lado inimigo
-      const li = st.lados[1 - u.lado];
-      if (li.invocacoes.length) { log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao', valor: -li.invocacoes.length }); li.invocacoes = []; }
-    }
-    if (e.t === 'invocar') {
-      if (e.tipo === 'fera') {   // §139 (Cernunnos M8): CORPO alvejável (em invocacoes, NUNCA em units → invisível ao checarFim). Sem duplicata (#4): um novo substitui o anterior (vivo OU renascendo)
-        l.invocacoes = l.invocacoes.filter(g => !(g.tipo === 'fera' && g.dono === u.uid));
-        l.invocacoes.push({ nome: e.nome, tipo: 'fera', uid: `inv-${u.uid}-fera`, key: '__fera', lado: u.lado, dono: u.uid, vivo: true, hp: e.hp || 30, maxHp: e.hp || 30, v: e.v || 0, curaDono: e.curaDono || 0, respawn: e.respawn || 0, respawnEm: 0, efeitos: [], dots: [], shield: 0, contadores: {}, ehInvocacao: true });
-        log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao' });
-      } else {
-        l.invocacoes.push({ nome: e.nome, tipo: e.tipo, hp: e.hp || 0, v: e.v || 0, dur: e.dur, dono: u.uid });
-        log(st, { tipo: 'efeito', origem: u.key, efeito: 'invocacao' });
-        if (e.provoca && alvos[0]) aplicar(st, alvos[0], { type: 'taunt', dur: e.dur, origem: u.uid });
-      }
     }
     if (e.t === 'copiar') copiar(st, u, e, alvos);
     if (e.t === 'fase') {

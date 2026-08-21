@@ -887,13 +887,15 @@ console.log('== F1.6 cdShift MIRADO: 1 unidade (Bragi só a maior recarga; Brahm
   ok(other.cd.habilidade === 3, `MIRADO: não toca outros aliados (${JSON.stringify(other.cd)})`);
   console.log('  cdShift mirado: soMaior (Bragi) vs zera-todas (Brahma), 1 unidade só');
 }
-console.log('== F1.6 Iansã: limparInvocacoes destrói invocações inimigas; antiRevive = naoRevive proativo nos vivos ==');
-{ // destrói invocações do lado inimigo; marca antiRevive num vivo → ao cair, não revive
+console.log('== Iansã (Guardiã dos Eguns): stripBuffs remove TODOS os buffs dos inimigos; antiRevive = naoRevive proativo nos vivos ==');
+{ // remove todos os buffs do lado inimigo; marca antiRevive num vivo → ao cair, não revive
   const st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 604);
   const iansa = st.lados[0].units[0], inimigos = st.lados[1].units;
-  st.lados[1].invocacoes.push({ nome: 'Egum', tipo: 'x', hp: 10, v: 5, dur: 3, dono: inimigos[0].uid });
-  E.aplicarFx(st, iansa, [{ t: 'limparInvocacoes' }], { alvo: 'todosInimigos', slot: 'milagre' }, inimigos);
-  ok(st.lados[1].invocacoes.length === 0, `limparInvocacoes: invocações inimigas destruídas (restam ${st.lados[1].invocacoes.length})`);
+  inimigos[0].efeitos.push({ type: 'dmgUp', v: 8, dur: 3 }); inimigos[0].shield = 20;
+  inimigos[1].efeitos.push({ type: 'regen', v: 5, dur: 3 });
+  E.aplicarFx(st, iansa, [{ t: 'stripBuffs', escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'milagre' }, inimigos);
+  ok(inimigos[0].efeitos.length === 0 && inimigos[0].shield === 0 && inimigos[1].efeitos.length === 0,
+    `stripBuffs: todos os buffs + escudo removidos de todos os inimigos (e0 ef=${inimigos[0].efeitos.length} sh=${inimigos[0].shield}, e1 ef=${inimigos[1].efeitos.length})`);
   const t = inimigos[0];
   E.aplicarFx(st, iansa, [{ t: 'apply', eff: { type: 'antiRevive', dur: 2 }, escopo: 'todosInimigos' }], { alvo: 'todosInimigos', slot: 'milagre' }, inimigos);
   t.hp = 5;
@@ -901,7 +903,7 @@ console.log('== F1.6 Iansã: limparInvocacoes destrói invocações inimigas; an
   ok(!t.vivo && t.naoRevive, `antiRevive: caiu com a marca → naoRevive selado (vivo=${t.vivo} naoRevive=${t.naoRevive})`);
   E.reviver(st, t, { hp: 40 });
   ok(!t.vivo, `revive BLOQUEADO pelo naoRevive proativo (vivo=${t.vivo})`);
-  console.log('  Iansã: limparInvocacoes + antiRevive (naoRevive proativo nos vivos)');
+  console.log('  Iansã: stripBuffs (todos os buffs + escudo) + antiRevive (naoRevive proativo nos vivos)');
 }
 console.log('== F1.6 Freyja: fx CONDICIONAL por estado — aliadoCaido ? revive : buff time ==');
 { // ramo ENTAO (há caído): revive 1 caído, sem buff. ramo SENAO (ninguém caiu): time ganha dmgUp
@@ -1050,30 +1052,23 @@ console.log('== F1.6 vulneravel: debuff "recebe +N de dano" soma no dano de ENTR
   console.log('  vulneravel: soma no dano de entrada, empilha, é cleansável');
 }
 
-console.log('== F1.6 aoCair quem:aliado: reage à queda de aliado REAL e de invocação-guarda (Khnum) ==');
-{ // Khnum: quando um aliado (ou o Shabti) cai, o time cura 12
-  E.GODS.tkh = { nome: 'TKh', faccao: 'T', elem: 'Verdejante', classe: 'Mágico', funcao: 'Manipulador', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'heal', v: 12, escopo: 'time' }] }] }, ab: [{ slot: 'habilidade', classe: 'Mágico', nome: 'Molda', cost: { Verdejante: 2 }, cd: 3, alvo: 'inimigo', fx: [{ t: 'invocar', nome: 'Shabti', tipo: 'guarda', hp: 30, dur: 2, provoca: true }] }] };
+console.log('== aoCair quem:aliado: reage à queda de aliado REAL (Khnum); a queda de inimigo NÃO dispara ==');
+{ // Khnum: quando um aliado cai, o time cura 12
+  E.GODS.tkh = { nome: 'TKh', faccao: 'T', elem: 'Verdejante', classe: 'Mágico', funcao: 'Manipulador', passiva: { nome: 'p', desc: 'd', fx: [{ gatilho: 'aoCair', quem: 'aliado', faz: [{ t: 'heal', v: 12, escopo: 'time' }] }] }, ab: [{ slot: 'habilidade', classe: 'Mágico', nome: 'Molda', cost: { Verdejante: 2 }, cd: 3, alvo: 'aliado', fx: [{ t: 'intercepta', contra: 'todos', dur: 2 }, { t: 'shield', v: 25 }] }] };
   // 1. aliado REAL cai → cura o time
   let st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 617);
   let kh = st.lados[0].units[0], ally = st.lados[0].units[1], enemy = st.lados[1].units[0];
   kh.hp = 50; ally.hp = 5;
   E.aplicarFx(st, enemy, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [ally]);
   ok(!ally.vivo && kh.hp === 62, `aliado real caiu → time cura 12 (Khnum 50→${kh.hp})`);
-  // 2. invocação-guarda (Shabti) cai POR DANO → conta como queda de aliado
-  st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 618);
-  kh = st.lados[0].units[0]; ally = st.lados[0].units[1]; enemy = st.lados[1].units[0];
-  st.lados[0].orbs['Verdejante'] = 9; kh.hp = 50;
-  E.agir(st, kh.uid, 'habilidade', [enemy.uid]);
-  E.aplicarFx(st, enemy, [{ t: 'dmg', v: 40 }], { alvo: 'inimigo', slot: 'basico' }, [ally]);
-  ok(st.lados[0].invocacoes.length === 0 && kh.hp === 62, `Shabti caiu por dano → time cura 12 (Khnum 50→${kh.hp})`);
-  // 3. lado: a queda de um INIMIGO não dispara (quem:aliado é só o MESMO lado)
+  // 2. a queda de um INIMIGO não dispara (quem:aliado é só o MESMO lado)
   st = E.novoEstado(['tkh', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 619);
   kh = st.lados[0].units[0]; const inimigo = st.lados[1].units[0];
   kh.hp = 50; inimigo.hp = 5;
   E.aplicarFx(st, kh, [{ t: 'dmg', v: 20 }], { alvo: 'inimigo', slot: 'basico' }, [inimigo]);
   ok(!inimigo.vivo && kh.hp === 50, `queda de inimigo NÃO dispara quem:aliado (Khnum ${kh.hp})`);
   delete E.GODS.tkh;
-  console.log('  aoCair aliado: aliado real + invocação-guarda disparam; inimigo não');
+  console.log('  aoCair aliado: a queda de aliado real dispara (time cura 12); a de inimigo não');
 }
 
 console.log('== F1.6 reducao protegido: redução FILTRADA pelo elemento do beneficiário (Poseidon — só Maré) ==');
@@ -2506,64 +2501,33 @@ console.log('== §138 B5/Dagda (M2 A2 + M6): Clava (3º uso cura) · Caldeirão 
   console.log('  Dagda: Clava (ciclo por-uso) · Caldeirão (regen + piso condicional) · Harpa (A2 passe forçado + M6 buffs suspensos)');
 }
 
-console.log('== §139 Cernunnos (M8, o 100º): Fera livre-alvejável — as 5 TRAVES ==');
+console.log('== Cernunnos (sem invocação): Fúria da Matilha (refleteDano no TIME) + passiva aoSerAtingido{aliado}→cura 8 ==');
 {
   const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
-  const feraDe = st => st.lados[0].invocacoes.find(g => g.tipo === 'fera');
-  // núcleo: invoca (30 HP), alvejável, ataca 10 + cura o dono 8
+  // habilidade Fúria da Matilha: TODO o time ganha refleteDano 10 por 2 turnos (thorns do Mnevis, escopo time)
   let st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1140, 0); orbs(st.lados[0]);
-  let ce = st.lados[0].units[0]; ce.hp = 100;
+  let ce = st.lados[0].units[0];
   E.agir(st, ce.uid, 'habilidade', []);
-  let fera = feraDe(st);
-  ok(fera && fera.hp === 30 && fera.ehInvocacao, `Chamado da Matilha: Fera 30 HP (corpo)`);
-  const en = st.lados[1].units[0];
-  ok(E.alvosValidos(st, en, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid), `a Fera é alvejável (entra em alvosValidos do inimigo)`);
-  const foeHp = en.hp; E.fimTurno(st); E.fimTurno(st);   // volta ao Cernunnos → a Fera ataca + cura o dono
-  ok(en.hp < foeHp && ce.hp === 108, `a Fera ataca 10 e cura 8 em Cernunnos (100→${ce.hp})`);
+  ok(st.lados[0].units.every(u => E.ef(u, 'refleteDano') && E.ef(u, 'refleteDano').v === 10),
+    `Fúria da Matilha: refleteDano 10 nos 3 aliados`);
+  // um aliado (zeus) é atingido → o atacante sofre 10 refletidos
+  const ally = st.lados[0].units[1], atk = st.lados[1].units[0], atkHp = atk.hp;
+  E.bater(st, atk, ally, 12, 'afetado', 'basico', { unico: true });
+  ok(atkHp - atk.hp === 10, `aliado atingido reflete 10 ao atacante (${atkHp - atk.hp})`);
 
-  // TRAVE 1: matarInvocacao NÃO dispara o aoCair (o Zeus não ganha orbe ao derrubar a Fera)
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1141, 0); orbs(st.lados[0]); orbs(st.lados[1]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
-  const zeus = st.lados[1].units[0]; const o0 = E.totalOrbs(st.lados[1]);
-  E.bater(st, zeus, fera, 40, 'afetado', 'basico', {});
-  ok(!fera.vivo && E.totalOrbs(st.lados[1]) === o0, `TRAVE1: Fera cai, o aoCair do Zeus NÃO ganha orbe (${E.totalOrbs(st.lados[1]) - o0})`);
-
-  // TRAVE 2: checarFim invisível — lado só com a Fera viva PERDE (a regra é 3 unidades reais)
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1142, 0); orbs(st.lados[0]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
-  const atk = st.lados[1].units[0];
-  for (const u of st.lados[0].units) { u.hp = 5; E.bater(st, atk, u, 15, 'afetado', 'basico', {}); }
-  ok(fera.vivo && st.fim && st.fim.lado === 1, `TRAVE2: 3 reais mortas + Fera viva → lado1 vence (a Fera não conta p/ a vitória)`);
-
-  // TRAVE 4a: respawn morre com o dono — Fera cai, Cernunnos cai antes → não renasce
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1143, 0); orbs(st.lados[0]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
-  E.bater(st, st.lados[1].units[0], fera, 40, 'afetado', 'basico', {});
-  ok(fera.respawnEm === 2, `Fera cai → respawn agendado (respawnEm 2)`);
-  ce.vivo = false; E.fimTurno(st); E.fimTurno(st);
-  ok(!feraDe(st), `TRAVE4a: Cernunnos morto → a Fera (renascendo) some com o dono, não renasce`);
-  // TRAVE 4b: re-invocar não acumula
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1144, 0); orbs(st.lados[0]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); ce.cd.habilidade = 0; E.agir(st, ce.uid, 'habilidade', []);
-  ok(st.lados[0].invocacoes.filter(g => g.tipo === 'fera').length === 1, `TRAVE4b: re-invocar não cria uma 2ª Fera`);
-
-  // TRAVE 5: Inalvejável alcança a Fera coerentemente (ela nunca o tem, mas o caminho é simétrico)
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1145, 0); orbs(st.lados[0]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
-  const enemy = st.lados[1].units[0];
-  const antes = E.alvosValidos(st, enemy, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid);
-  fera.efeitos.push({ type: 'inalvejavel', dur: 2 });
-  const depois = E.alvosValidos(st, enemy, { alvo: 'inimigo', slot: 'basico' }).some(x => x.uid === fera.uid);
-  ok(antes && !depois, `TRAVE5: o filtro Inalvejável alcança a Fera (alvo sem, filtrada com) — sem assimetria`);
-
-  // respawn feliz: Fera cai, Cernunnos VIVO → renasce após 2 turnos
-  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1146, 0); orbs(st.lados[0]);
-  ce = st.lados[0].units[0]; E.agir(st, ce.uid, 'habilidade', []); fera = feraDe(st);
-  E.bater(st, st.lados[1].units[0], fera, 40, 'afetado', 'basico', {});
-  E.fimTurno(st); E.fimTurno(st); E.fimTurno(st); E.fimTurno(st);   // 2 turnos do Cernunnos
-  const fr = feraDe(st);
-  ok(fr && fr.vivo && fr.hp === 30, `respawn: com o dono vivo, a Fera renasce em 2 turnos (viva ${fr && fr.vivo}, hp ${fr && fr.hp})`);
-  console.log('  Cernunnos: Fera livre-alvejável · 5 traves (aoCair-mudo · vitória-invisível · respawn-morre-com-dono · sem-duplicata · Inalvejável-coerente) + respawn');
+  // passiva aoSerAtingido{aliado}: quando um ALIADO é atingido, Cernunnos cura 8 (o próprio golpe acima já disparou;
+  // Cernunnos abriu em 120, então testo num estado limpo com Cernunnos ferido)
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1141, 0);
+  ce = st.lados[0].units[0]; ce.hp = 100;
+  const ally2 = st.lados[0].units[1], en = st.lados[1].units[0];
+  E.bater(st, en, ally2, 15, 'afetado', 'basico', { unico: true });   // aliado atingido → Cernunnos cura 8
+  ok(ce.hp === 108, `aliado atingido → Cernunnos cura 8 (100→${ce.hp})`);
+  // e quando o PRÓPRIO Cernunnos é atingido, NÃO cura (quem:'aliado' é outro, não self)
+  st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1142, 0);
+  ce = st.lados[0].units[0]; ce.hp = 100;
+  E.bater(st, st.lados[1].units[0], ce, 15, 'afetado', 'basico', { unico: true });
+  ok(ce.hp === 85, `Cernunnos atingido em si NÃO auto-cura (quem:aliado ≠ self): 100−15=${ce.hp}`);
+  console.log('  Cernunnos: Fúria da Matilha (refleteDano 10 no time) · passiva cura 8 quando um aliado (não ele) é atingido');
 }
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à

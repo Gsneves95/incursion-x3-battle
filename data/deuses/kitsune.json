@@ -31,7 +31,7 @@
       "cost": { "Umbra": 1 },
       "cd": 1,
       "alvo": "nenhum",
-      "desc": "Cria uma isca que absorve o próximo ataque de alvo único contra o time; +1 Cauda.",
+      "desc": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda.",
       "fx": [
         { "t": "intercepta", "protege": "time", "contra": "unico", "dur": 99 },
         { "t": "contador", "nome": "cauda", "v": 1, "max": 9, "alvo": "self" }

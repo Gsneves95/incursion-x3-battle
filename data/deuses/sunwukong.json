@@ -30,12 +30,9 @@
       "nome": "Fios de Cabelo",
       "cost": { "Verdejante": 2 },
       "cd": 3,
-      "alvo": "nenhum",
-      "desc": "Cria 2 clones que causam 8 de dano cada por turno durante 2 turnos.",
-      "fx": [
-        { "t": "invocar", "nome": "Clone", "tipo": "dano", "v": 8, "dur": 2 },
-        { "t": "invocar", "nome": "Clone", "tipo": "dano", "v": 8, "dur": 2 }
-      ]
+      "alvo": "distribui",
+      "desc": "4 golpes de 8 distribuídos entre os inimigos.",
+      "fx": [ { "t": "dmg", "v": 8, "golpes": 4 } ]
     },
     {
       "slot": "milagre",

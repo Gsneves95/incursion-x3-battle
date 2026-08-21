@@ -51,9 +51,6 @@ function _narraEfeito(e) {
     case 'armazenaDano':
       return e.duracao === 0 ? `${origem} devolve o dano armazenado.`
                              : `${origem} começa a armazenar o dano do time.`;
-    case 'invocacao':
-      return e.duracao === 0 ? 'Uma invocação se desfez.'
-           : origem ? `${origem} invoca uma unidade.` : 'A invocação ataca.';
     case 'livro': return `Livro da Vida e Morte: ${alvo} é executado.`;
     case 'vidaExtra': return `${alvo} recebeu Vida Extra.`;
     case 'copiar': return `${origem} não encontrou uma Habilidade para copiar.`;

@@ -1278,17 +1278,17 @@
   "elemento": "Verdejante",
   "tipo": "Mágico",
   "funcao": "Manipulador",
-  "arquetipo": "Invocador/criador",
+  "arquetipo": "Guardião/protetor",
   "basico": {
    "nome": "Torno de Barro",
    "custo": "1 Verdejante",
    "efeito": "12 de dano a 1 inimigo."
   },
   "habilidade": {
-   "nome": "Moldar Vida",
+   "nome": "Couraça de Barro",
    "custo": "2 Verdejante",
    "recarga": 3,
-   "efeito": "Invoca um Shabti (30 de HP) que Provoca 1 inimigo e absorve o dano dele por 2 turnos."
+   "efeito": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 25 de Defesa Destrutível."
   },
   "milagre": {
    "nome": "Sopro da Criação",
@@ -1298,7 +1298,7 @@
   },
   "passiva": {
    "nome": "Modelador",
-   "efeito": "Quando o Shabti ou um aliado cai, o time cura 12."
+   "efeito": "Quando um aliado cai, o time cura 12."
   }
  },
  {
@@ -1722,7 +1722,7 @@
    "nome": "Ilusão da Raposa",
    "custo": "1 Umbra",
    "recarga": 1,
-   "efeito": "Cria uma isca que absorve o próximo ataque de alvo único contra o time; +1 Cauda."
+   "efeito": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda."
   },
   "milagre": {
    "nome": "Nove Caudas",
@@ -1867,7 +1867,7 @@
   "elemento": "Verdejante",
   "tipo": "Físico",
   "funcao": "Atacante",
-  "arquetipo": "DPS de clones",
+  "arquetipo": "DPS multi-golpe",
   "basico": {
    "nome": "Bastão Ruyi Jingu",
    "custo": "1 Verdejante",
@@ -1877,7 +1877,7 @@
    "nome": "Fios de Cabelo",
    "custo": "2 Verdejante",
    "recarga": 3,
-   "efeito": "Cria 2 clones que causam 8 de dano cada por turno durante 2 turnos."
+   "efeito": "4 golpes de 8 distribuídos entre os inimigos."
   },
   "milagre": {
    "nome": "72 Transformações",
@@ -2797,7 +2797,7 @@
   "elemento": "Tempestade",
   "tipo": "Híbrido",
   "funcao": "Controlador",
-  "arquetipo": "Anti-invocação/vento",
+  "arquetipo": "Vento/anti-buff",
   "basico": {
    "nome": "Espada de Vento",
    "custo": "1 Tempestade",
@@ -2813,7 +2813,7 @@
    "nome": "Guardiã dos Eguns",
    "custo": "2 Tempestade + 1 livre",
    "recarga": 4,
-   "efeito": "18 de dano a todos; destrói todas as invocações inimigas e impede revives por 2 turnos."
+   "efeito": "18 de dano a todos os inimigos; remove todos os buffs deles e impede revives por 2 turnos."
   },
   "passiva": {
    "nome": "Corisco",
@@ -2952,17 +2952,17 @@
   "elemento": "Verdejante",
   "tipo": "Físico",
   "funcao": "Guardião",
-  "arquetipo": "Invocador da natureza",
+  "arquetipo": "Guardião da natureza",
   "basico": {
    "nome": "Chifres do Bosque",
    "custo": "1 Verdejante",
    "efeito": "15 de dano a 1 inimigo."
   },
   "habilidade": {
-   "nome": "Chamado da Matilha",
+   "nome": "Fúria da Matilha",
    "custo": "2 Verdejante",
    "recarga": 3,
-   "efeito": "Invoca uma Fera (30 de HP) que causa 10 de dano por turno; se cair, renasce em 2 turnos."
+   "efeito": "Por 2 turnos, todo aliado atingido reflete 10 ao atacante."
   },
   "milagre": {
    "nome": "Caçada Selvagem",
@@ -2972,7 +2972,7 @@
   },
   "passiva": {
    "nome": "Ciclo da Vida",
-   "efeito": "Regenerações no time curam +4; a Fera cura 8 em Cernunnos ao atacar."
+   "efeito": "Regenerações no time curam +4; quando um aliado é atingido, Cernunnos cura 8."
   }
  },
  {

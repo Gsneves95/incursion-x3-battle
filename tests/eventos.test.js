@@ -92,7 +92,6 @@ const OBRIGATORIOS = {
   efeito: ['efeito'],
   // ---- chaves de SUB-TIPO: tripwires dos 0-kit, forçam a forma-alvo quando o kit chegar ----
   'efeito:copiar': ['origem', 'efeito', 'habilidadeCopiada'],   // Ísis (F1.3): QUAL Habilidade copiou
-  'efeito:invocacao': ['efeito', 'invocacao'],                  // kits de invocar: QUAL invocação
 };
 // resolve a chave mais específica (`tipo:efeito`) e cai para a genérica (`tipo`).
 function chaveObrig(ev) {
@@ -169,10 +168,7 @@ console.log('== A3. o verificador de completude tem dentes (e resolve sub-tipo) 
   // efeito genérico (vinculo) NÃO cai na regra do copiar — só exige `efeito`, que está presente
   ok(faltamCampos({ tipo: 'efeito', efeito: 'vinculo', alvo: 'hera' }).length === 0,
     'efeito genérico completo não deveria acusar nada');
-  // invocação sem identidade é tripwire: quando um kit de invocar chegar, isto falha se vier cru
-  ok(faltamCampos({ tipo: 'efeito', efeito: 'invocacao' }).includes('invocacao'),
-    'efeito:invocacao sem a invocação deveria acusar (sub-tipo)');
-  console.log('  dano/valor, efeito:copiar/habilidadeCopiada, efeito:invocacao/invocacao — todos acusam');
+  console.log('  dano/valor, efeito:copiar/habilidadeCopiada — todos acusam');
 }
 
 console.log('== B. narrador TOTAL: tipo desconhecido não some, chave vira nome ==');

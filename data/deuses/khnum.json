@@ -7,7 +7,7 @@
   "funcao": "Manipulador",
   "passiva": {
     "nome": "Modelador",
-    "desc": "Quando o Shabti ou um aliado cai, o time cura 12.",
+    "desc": "Quando um aliado cai, o time cura 12.",
     "fx": [
       { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "heal", "v": 12, "escopo": "time" } ] }
     ]
@@ -26,12 +26,12 @@
     {
       "slot": "habilidade",
       "classe": "Mágico",
-      "nome": "Moldar Vida",
+      "nome": "Couraça de Barro",
       "cost": { "Verdejante": 2 },
       "cd": 3,
-      "alvo": "inimigo",
-      "desc": "Invoca um Shabti (30 de HP) que Provoca 1 inimigo e absorve o dano dele por 2 turnos.",
-      "fx": [ { "t": "invocar", "nome": "Shabti", "tipo": "guarda", "hp": 30, "dur": 2, "provoca": true } ]
+      "alvo": "aliado",
+      "desc": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 25 de Defesa Destrutível.",
+      "fx": [ { "t": "intercepta", "contra": "todos", "dur": 2 }, { "t": "shield", "v": 25 } ]
     },
     {
       "slot": "milagre",
