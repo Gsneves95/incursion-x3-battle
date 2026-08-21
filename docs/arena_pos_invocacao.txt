@@ -1,0 +1,175 @@
+────────────────────────────────────────────────────────────────
+ARENA — 200 rodadas · 3200 partidas · roster 100 deuses
+────────────────────────────────────────────────────────────────
+
+DURAÇÃO: média 13.9 turnos · empates(turno 40) 1 (0.0%) · sem desfecho 0
+WIN-RATE: média 50.0% · desvio-padrão 14.0 pts · jogos/deus ~192
+(erro-padrão de um win-rate 50%: ~3.6 pts — diferenças menores que isso são ruído)
+
+HISTOGRAMA DE WIN-RATE (deuses por faixa de 5 pts):
+  20-25% │ 0
+  25-30% │████ 4
+  30-35% │████████ 8
+  35-40% │█████████████████ 17
+  40-45% │████████████ 12
+  45-50% │████████████ 12
+  50-55% │████████████████ 16
+  55-60% │█████████ 9
+  60-65% │█████ 5
+  65-70% │██████ 6
+  70-75% │██████ 6
+  75-80% │██ 2
+  80-85% │ 0
+  85-90% │██ 2
+  90-95% │█ 1
+
+RANKING COMPLETO (win-rate ↓):
+    1. Brigid            91.5%  (172V 16D 0E / 188) ▲FORA
+    2. Brahma            89.1%  (171V 21D 0E / 192) ▲FORA
+    3. Oxum              85.4%  (164V 28D 0E / 192) ▲FORA
+    4. Mimir             78.3%  (148V 41D 0E / 189) ▲FORA
+    5. Nüwa              76.7%  (145V 44D 0E / 189) ▲FORA
+    6. Guan Yu           74.1%  (143V 50D 0E / 193) ▲FORA
+    7. Freyja            73.5%  (139V 50D 0E / 189) ▲FORA
+    8. Bennu             73.0%  (143V 53D 0E / 196) ▲FORA
+    9. Thor              72.7%  (136V 51D 0E / 187) ▲FORA
+   10. Oxalá             71.4%  (132V 53D 0E / 185) ▲FORA
+   11. Piranha           70.5%  (136V 57D 0E / 193)
+   12. Vishnu            68.0%  (132V 62D 0E / 194)
+   13. Curupira          67.7%  (132V 63D 0E / 195)
+   14. Mula sem Cabeça   66.8%  (129V 64D 0E / 193)
+   15. Deméter           66.5%  (127V 64D 0E / 191)
+   16. Osíris            65.5%  (127V 67D 0E / 194)
+   17. Orfeu             65.1%  (125V 67D 0E / 192)
+   18. Izanagi           63.0%  (119V 70D 0E / 189)
+   19. Perseu            62.0%  (119V 72D 1E / 192)
+   20. Hades             60.7%  (116V 75D 0E / 191)
+   21. Rá                60.1%  (116V 77D 0E / 193)
+   22. Kukulkán          60.0%  (114V 76D 0E / 190)
+   23. Kali              59.4%  (114V 78D 0E / 192)
+   24. Nefertem          57.5%  (107V 79D 0E / 186)
+   25. Hanuman           56.8%  (109V 83D 0E / 192)
+   26. Aquiles           56.3%  (108V 84D 0E / 192)
+   27. Ares              56.3%  (108V 84D 0E / 192)
+   28. Sun Wukong        56.3%  (108V 84D 0E / 192)
+   29. Kagutsuchi        55.9%  (109V 86D 0E / 195)
+   30. Itzamná           55.9%  (105V 83D 0E / 188)
+   31. Shiva             55.7%  (107V 85D 0E / 192)
+   32. Krishna           55.0%  (105V 85D 1E / 191)
+   33. Kraken            54.7%  (105V 87D 0E / 192)
+   34. Inari             53.9%  (103V 88D 0E / 191)
+   35. Dagda             53.8%  (105V 90D 0E / 195)
+   36. Chang'e           53.1%  (102V 90D 0E / 192)
+   37. Anúbis            52.9%  (101V 90D 0E / 191)
+   38. Hel               52.6%  (102V 92D 0E / 194)
+   39. Hércules          52.3%  (102V 93D 0E / 195)
+   40. Ogum              51.9%  (98V 91D 0E / 189)
+   41. Saci              51.6%  (99V 92D 1E / 192)
+   42. Sobek             51.6%  (99V 93D 0E / 192)
+   43. Nezha             51.5%  (100V 94D 0E / 194)
+   44. Zeus              51.3%  (101V 96D 0E / 197)
+   45. Exu               50.8%  (97V 94D 0E / 191)
+   46. Apolo             50.5%  (96V 94D 0E / 190)
+   47. Jörmungandr       50.0%  (94V 94D 0E / 188)
+   48. Huang Di          49.0%  (94V 98D 0E / 192)
+   49. Mnevis            48.4%  (91V 97D 0E / 188)
+   50. Iara              47.9%  (93V 101D 0E / 194)
+   51. Chaac             47.7%  (92V 101D 0E / 193)
+   52. Oni               47.4%  (91V 101D 0E / 192)
+   53. Bragi             47.3%  (87V 97D 0E / 184)
+   54. Hórus             47.2%  (91V 102D 0E / 193)
+   55. Shuten Dōji       47.1%  (89V 100D 0E / 189)
+   56. Xangô             46.1%  (88V 103D 0E / 191)
+   57. Fenrir            45.5%  (87V 104D 0E / 191)
+   58. Ísis              45.4%  (89V 106D 1E / 196)
+   59. Ganesha           45.2%  (89V 108D 0E / 197)
+   60. Poseidon          44.6%  (86V 107D 0E / 193)
+   61. Cernunnos         44.2%  (87V 110D 0E / 197)
+   62. Raijin            44.0%  (85V 108D 0E / 193)
+   63. Tyr               44.0%  (85V 108D 0E / 193)
+   64. Baldur            43.6%  (82V 105D 1E / 188)
+   65. Durga             43.0%  (83V 110D 0E / 193)
+   66. Medusa            43.0%  (83V 110D 0E / 193)
+   67. Tanuki            42.9%  (82V 109D 0E / 191)
+   68. Ah Puch           42.3%  (83V 113D 0E / 196)
+   69. Khnum             41.2%  (80V 114D 0E / 194)
+   70. Susanoo           41.1%  (81V 116D 0E / 197)
+   71. Loki              40.7%  (79V 115D 0E / 194)
+   72. Hera              39.9%  (75V 113D 0E / 188)
+   73. Hou Yi            39.6%  (76V 116D 0E / 192)
+   74. Cuca              39.5%  (77V 118D 0E / 195)
+   75. Heimdall          39.3%  (75V 116D 0E / 191)
+   76. Amaterasu         39.1%  (75V 117D 0E / 192)
+   77. Lugh              38.5%  (74V 118D 0E / 192)
+   78. Yamato Takeru     38.5%  (75V 120D 0E / 195)
+   79. Iansã             37.7%  (72V 119D 0E / 191)
+   80. Morrigan          37.6%  (73V 121D 0E / 194)
+   81. Ymir              37.6%  (71V 118D 0E / 189)
+   82. Atena             37.1%  (73V 124D 0E / 197)
+   83. Hermes            35.8%  (68V 122D 0E / 190)
+   84. Boitatá           35.8%  (69V 124D 0E / 193)
+   85. Izanami           35.8%  (69V 124D 0E / 193)
+   86. Dionísio          35.7%  (70V 126D 0E / 196)
+   87. Ammit             35.6%  (68V 123D 0E / 191)
+   88. Kitsune           35.4%  (67V 122D 0E / 189)
+   89. Yan Wong          34.4%  (65V 124D 0E / 189)
+   90. Ao Kuang          33.8%  (66V 129D 0E / 195)
+   91. Erínias           33.5%  (63V 125D 0E / 188)
+   92. Khonshu           33.0%  (64V 130D 0E / 194)
+   93. Odin              33.0%  (62V 125D 1E / 188)
+   94. Afrodite          32.5%  (63V 131D 0E / 194)
+   95. Tsukuyomi         32.5%  (63V 131D 0E / 194)
+   96. Babi              32.1%  (61V 129D 0E / 190)
+   97. Boto              29.4%  (57V 137D 0E / 194)
+   98. Cérberus          28.9%  (57V 140D 0E / 197) ▼FORA
+   99. Bastet            26.8%  (51V 139D 0E / 190) ▼FORA
+  100. Fujin             26.7%  (52V 143D 0E / 195) ▼FORA
+
+FORA DA CURVA (> ±1.5 desvios da média = fora de [29.1%, 71.0%]):
+  ACIMA (10): Brigid 91% · Brahma 89% · Oxum 85% · Mimir 78% · Nüwa 77% · Guan Yu 74% · Freyja 74% · Bennu 73% · Thor 73% · Oxalá 71%
+  ABAIXO (3): Cérberus 29% · Bastet 27% · Fujin 27%
+
+HABILIDADES QUE O AGENTE GULOSO NUNCA USOU (defesa é excluída por construção):
+  Anúbis           nunca usou: milagre  (191 jogos)
+  Babi             nunca usou: habilidade, milagre  (190 jogos)
+  Baldur           nunca usou: milagre  (188 jogos)
+  Bastet           nunca usou: habilidade, milagre  (190 jogos)
+  Bragi            nunca usou: habilidade  (184 jogos)
+  Brahma           nunca usou: habilidade  (192 jogos)
+  Cernunnos        nunca usou: habilidade  (197 jogos)
+  Chang'e          nunca usou: habilidade  (192 jogos)
+  Curupira         nunca usou: habilidade  (195 jogos)
+  Dagda            nunca usou: habilidade  (195 jogos)
+  Deméter          nunca usou: habilidade  (191 jogos)
+  Dionísio         nunca usou: habilidade, milagre  (196 jogos)
+  Fujin            nunca usou: habilidade  (195 jogos)
+  Guan Yu          nunca usou: habilidade  (193 jogos)
+  Hanuman          nunca usou: habilidade  (192 jogos)
+  Heimdall         nunca usou: habilidade  (191 jogos)
+  Hera             nunca usou: habilidade, milagre  (188 jogos)
+  Hermes           nunca usou: habilidade, milagre  (190 jogos)
+  Hou Yi           nunca usou: milagre  (192 jogos)
+  Huang Di         nunca usou: habilidade  (192 jogos)
+  Inari            nunca usou: habilidade  (191 jogos)
+  Itzamná          nunca usou: habilidade  (188 jogos)
+  Izanami          nunca usou: habilidade  (193 jogos)
+  Khonshu          nunca usou: habilidade  (194 jogos)
+  Kitsune          nunca usou: habilidade  (189 jogos)
+  Krishna          nunca usou: habilidade, milagre  (191 jogos)
+  Kukulkán         nunca usou: habilidade  (190 jogos)
+  Loki             nunca usou: habilidade  (194 jogos)
+  Medusa           nunca usou: milagre  (193 jogos)
+  Mimir            nunca usou: habilidade, milagre  (189 jogos)
+  Nezha            nunca usou: habilidade  (194 jogos)
+  Odin             nunca usou: habilidade, milagre  (188 jogos)
+  Oxalá            nunca usou: habilidade  (185 jogos)
+  Rá               nunca usou: habilidade  (193 jogos)
+  Raijin           nunca usou: habilidade  (193 jogos)
+  Saci             nunca usou: habilidade  (192 jogos)
+  Shuten Dōji      nunca usou: habilidade  (189 jogos)
+  Sun Wukong       nunca usou: habilidade, milagre  (192 jogos)
+  Tyr              nunca usou: milagre  (193 jogos)
+  Xangô            nunca usou: habilidade  (191 jogos)
+  Yamato Takeru    nunca usou: habilidade  (195 jogos)
+
+────────────────────────────────────────────────────────────────

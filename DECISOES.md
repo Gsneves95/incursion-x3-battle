@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §143 — §46 num eixo novo (HOMONÍMIA) · a convenção-vs-checador (§106) · e o delta da arena pós-remoção
+
+**§46 por HOMONÍMIA (eixo novo, registrado a pedido do dono).** A varredura da remoção teve de separar DOIS "invocação" de mesmo nome e domínios sem relação: a invocação de BATALHA (`invocar` fx, `l.invocacoes`, a Fera) e a invocação-GACHA (`perfil.invocacao`/pity, `registrarInvocacao`, a tela "Invocar", `economia.json`). Tratar como um só teria quebrado a rolagem de deuses. O §46 vinha dizendo "o nome não é evidência do MECANISMO" (o balde que engana por agrupamento). Este é um eixo DISTINTO: **o nome engana por HOMONÍMIA — dois domínios, um rótulo.** A regra operacional para a varredura-por-nome: perguntar **"é o mesmo DOMÍNIO?" ANTES de "é o mesmo mecanismo?"**. Homônimo cruza a fronteira do domínio; balde não.
+
+**A convenção vence o checador (§106 na direção certa).** "Causa 10 de dano" na Fúria da Matilha fazia o `checar_cadeia` DIVERGIR (lê dano-flat que o `refleteDano` não carrega). Duas saídas: ensinar o checador (add `refleteDano.v` a `danosFx`) OU seguir a prosa do Mnevis ("reflete 10 de todo dano", que dodge o parser). **Ensinar quebraria o Mnevis** (ele passa HOJE justamente por dodge; ensinado, o `dP=[]≠dM=[10]` do Mnevis viraria DIVERGE). A convenção já existia e era barata — segui-la, não reescrever o checador + o Mnevis, é o §106 (o caminho menor que não desfaz o que já funciona).
+
+**O DELTA da arena (re-rodada pós-remoção, `docs/arena_pos_invocacao.txt` vs `arena_fase1.txt`, 200 rodadas, mesmas sementes). Leitura, sem correção:**
+- **Distribuição geral: não se moveu.** Média 50,0% (obrigatório, soma-zero) · desvio 14,1→14,0 pts · duração 13,8→13,9. Topo-10 idêntico; ▼FORA 4→3 só porque o Boto (28,9→29,4%) cruzou o limiar [média−1,5σ] por causa do micro-shift do desvio — o Boto não mudou, o corte mudou.
+- **Os 5 kits:** Kitsune 35,4→35,4 (fx idêntico, só prosa — e a igualdade ao decimal CONFIRMA o determinismo). Iansã 37,7→37,7, **V/D byte-idêntico (72V 119D)** — `limparInvocacoes` já era inerte em time sorteado (nada a limpar) e o `stripBuffs` não virou UMA partida das 191. Khnum 40,7→41,2 e Sun Wukong 56,8→56,3: ruído (SE~3,6). Cernunnos **39,1→44,2 (+5,1)**, acima do ruído.
+- **O +5 do Cernunnos é sobre a IA, não sobre o kit — e o canal NÃO é o que o dono supôs.** O dono apostou no reflexo (só rende se o inimigo ataca). Mas o Cernunnos segue **"nunca usou habilidade" ANTES e DEPOIS** — a IA gulosa nunca lança a habilidade (o reflexo é setup, delta≈0 em 1 ply; o invocar antigo, idem). Então o reflexo nunca disparou na arena. O +5 vem da **PASSIVA nova** (`aoSerAtingido{aliado}→cura 8`): a IA sempre ataca → sempre acerta um aliado do Cernunnos → sustain grátis todo turno inimigo. A intuição do dono (a IA que sempre ataca infla o kit reativo) estava certa na DIREÇÃO; o canal exato é a passiva, não o reflexo — e o reflexo nem foi medido.
+- **Sun Wukong: a habilidade nova é INVISÍVEL à arena.** `iaAlvoSets` (`src/ia.js`) não tem caso para `alvo:'distribui'` → cai no `default:[[]]` (alvo vazio) → a IA nunca consegue mirar um multi-golpe distribuído. Vale para os 4 kits `distribui` (babi/houyi/raijin/sunwukong). O 56,3% do Sun Wukong é só básico+passiva (inalterados); o troco dos clones→Fios de Cabelo não foi medido. **Lacuna concreta para a IA da Fase 2: uma regra de mira para `distribui`.**
+
+**Arquétipos (3ª espécie de órfão, prosa-sem-fx no rótulo): varridos os 100.** Os 4 obsoletos corrigidos na remoção (Khnum→Guardião/protetor, Cernunnos→Guardião da natureza, Sun Wukong→DPS multi-golpe, Iansã→Vento/anti-buff; Kitsune segue Ilusionista, correto). Nenhum outro dos 100 é obsoleto — o único que a varredura-por-palavra sinalizou, `curupira: Misdireção/guarda`, é FALSO-POSITIVO: "guarda" ali é o PAPEL (ela protege por redirect + reducao no time), não a invocação-guarda removida. (De novo o §46-homonímia: "guarda" o papel × "guarda" a invocação.)
+
+---
+
 ## §142 — REMOÇÃO DO SUBSISTEMA DE INVOCAÇÃO: 3v3 é 3v3. M8 aposentado, 5 kits reescritos com primitivas existentes.
 
 **Decisão do dono: nada entra no campo além dos seis deuses.** Removido TODO o subsistema de invocação de batalha — o M8 (Fera alvejável, §139/§140) e a família guarda/clone que o antecedeu. **−67 linhas líquidas no `engine.js` (2085→2018).**
