@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.0: o FORMATO da Provação
+## Última sessão — reescrita das 4 condições de invocação (pré-F2.1)
+**Data:** 2026-08-21
+**Tarefa:** reescrever as 4 condições de Provação que dependiam de invocação (#42/56/91/96), deixando as 91
+uniformes antes do solucionador. §146.
+**Resultado:** as 4 reescritas (Khnum Couraça≥60 · Kitsune iscas→miragens · Iansã remover-buff-antes-da-queda
++ time novo · Cernunnos Fúria-reflete≥50-e-ativa-no-final). **Classificação: 0 modos novos, ~6 predicados
+dentro dos 3 modos** — valida o fecho-por-modo com 4 antes do lote 1. Dois achados fora da tarefa: (1) a prosa
+está DUPLICADA em `data/provacoes.json` E `src/roster_data.js` (5 campos: titulo/nivel/dif/req/cond; inimigos
+só no 1º) — §134; editei os dois lados; auditoria cross-file dos 91 = 0 divergências; dívida-com-endereço: um
+checador cross-file na build (candidato p/ quando a F2.1 gerar as 91 estruturadas). (2) o `inimigos` citava
+mecânica morta — prosa-sem-fx (3ª espécie) num campo que a varredura de kits não olha; alcance ampliado: varrer
+TODO campo de texto que descreve mecânica. #96 confirmado no motor: refleteDano é buff, a Ventania/stripBuffs
+da Iansã o apagam — a Provação ficou mais coerente que com invocação. `roster_data.js` (986K tokens, imagens
+embutidas) editado por script de string-replace verificado (cada troca 1×). **21 suítes verdes.** **PRÓXIMO:**
+F2.1 — o solucionador (prova de solubilidade das 91); e, ao fechar o `acumulo` parametrizado, varrer os 91
+antes (§46/§146). Pendências herdadas: mira `distribui` na IA (§144) antes da arena Difícil.
+
+## Sessão — F2.0: o FORMATO da Provação (anterior)
 **Data:** 2026-08-21
 **Tarefa:** F2.0 — definir o formato da Provação (estado + condição, sem conteúdo ainda). §145.
 **Resultado:** varri as 91 condições (`data/provacoes.json`) ANTES de fechar — são ~17 formas, não 8, mas

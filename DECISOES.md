@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §146 — Reescritas as 4 condições de invocação (#42/56/91/96). Dois achados fora da tarefa: prosa DUPLICADA (§134) e prosa-sem-fx em campo não-varrido.
+
+**As 4 condições que citavam invocação, reescritas** (a pedido do dono, para deixar as 91 uniformes antes da F2.1): Khnum (Couraça absorve ≥60), Kitsune (iscas→miragens), Iansã (remover todo buff dos 3 antes da 1ª queda; time trocado p/ Ogum·Susanoo·Thor), Cernunnos (Fúria reflete ≥50 e ativa no golpe final).
+
+**Achado 1 — a prosa da condição está DUPLICADA em dois arquivos: §134 num lugar onde ninguém procurou.** A condição vive em `data/provacoes.json` (motor/catálogo) E em `src/roster_data.js` (`prov.cond`, a tela de desbloqueio). Editar só um faria a tela mostrar a condição velha e o motor a nova — **sem teste nenhum acusando**. Provei os dois lados no mesmo commit. **Campos duplicados entre os dois: 5** — `titulo↔nome`, `nivel`, `dificuldade↔dif`, `requisito↔req`, `condicao↔cond`. Só o `inimigos` é exclusivo do `provacoes.json`. Auditoria cross-file dos 91: **0 divergências** hoje (os 87 não-tocados já batiam). **Dívida com endereço:** o fix durável é um checador cross-file (como o `checar_cadeia` dos kits) que falhe a build se os 5 campos divergirem; candidato a construir quando a F2.1 gerar as 91 estruturadas (agora o risco é baixo — 0 divergências e a fonte é a mesma revisão).
+
+**Achado 2 — o `inimigos` citava mecânica morta: prosa-sem-fx (3ª espécie, §113) num campo que a varredura de kits NUNCA olha.** A varredura de prosa-sem-fx varre os 4 slots do kit (basico/hab/milagre/passiva); **não olha descrições de Provação** (`inimigos`, `condicao`, `titulo`). Os parentéticos do `inimigos` das 4 ainda diziam "Iansã destrói invocações" / "isca" / "os três invocam". **Alcance ampliado (registrado):** a varredura de prosa-sem-fx precisa cobrir TODO campo de texto que descreve mecânica, não só os 4 slots do kit. (Varredura final pós-edição: LIMPO em todo campo dos 91, nos dois arquivos.)
+
+**A classificação das 4 valida o fecho-por-modo ANTES do lote 1 (o teste que o dono queria com 4, não 15):** 4 condições novas → **0 modos novos**, ~6 predicados, todos DENTRO de final/log/contínuo. #42 Khnum (log: acúmulo-absorvido) · #56 Kitsune (log: usar-com-contador + contínuo: sobreviver-até) · #91 Iansã (log: estado-antes-da-queda) · #96 Cernunnos (log: acúmulo-refletido + final: buff-ativo-no-golpe-final). Nenhuma forçou um 4º modo — a aposta do §145 (forma nova cai em modo existente) confirmada.
+
+**§46 na direção certa — #42 e #96 são o MESMO predicado (acúmulo até limiar, quantidades diferentes: absorvido × refletido).** Dois nomes, um mecanismo. Para a F2.1: um `acumulo` PARAMETRIZADO (fonte da quantidade), não dois predicados. E **varrer os 91 antes de fechá-lo** — se houver mais acúmulos (Combo, orbes roubados, cura, Podridão, Discos…), ele nasce com mais consumidores.
+
+**Verdade mecânica do #96, confirmada no motor (a pedido do dono):** `refleteDano ∈ VOCAB.buffs`; a Ventania da Iansã (`stripOne`) o remove, e a Guardiã dos Eguns (`stripBuffs`) também. Logo "Iansã remove buffs — apaga a Fúria da Matilha" não é só explicação, é fato — e a Provação ficou MAIS coerente do que era com invocação (o antagonista tem uma interação real com a condição).
+
+---
+
 ## §145 — F2.0: o FORMATO da Provação. Fecha por MODO (não por forma); `quando` derivado; matador/estados caem do log (§106).
 
 **A varredura das 91 (excluídas as 4 de invocação, planilha #42/56/91/96) deu MAIS que 8 formas — ~17.** Mas elas colapsam em **3 MODOS de avaliação**, e é por MODO que o vocabulário fecha, não por forma: forma nova cai num modo existente sem tocar o avaliador. Fechar por forma seria fechar contra a superfície (o argumento do dono).

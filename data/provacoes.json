@@ -424,8 +424,8 @@
   "nivel": "Provação",
   "dificuldade": 2,
   "titulo": "O Torno",
-  "inimigos": "Iansã · Thor · Heimdall (Iansã destrói invocações)",
-  "condicao": "O Shabti tem de absorver no mínimo 60 de dano acumulado. Iansã destrói invocações com o Milagre — você tem de moldar de novo e proteger.",
+  "inimigos": "Iansã · Thor · Heimdall (Iansã remove buffs com a Ventania)",
+  "condicao": "A Couraça de Barro tem de absorver no mínimo 60 de dano acumulado. Iansã remove buffs com a Ventania — você tem de remoldar e proteger.",
   "requisito": "—"
  },
  {
@@ -567,8 +567,8 @@
   "nivel": "Provação",
   "dificuldade": 2,
   "titulo": "Nove Caudas",
-  "inimigos": "Ogum · Iansã · Susanoo (os três removem buff e isca)",
-  "condicao": "Nove Caudas tem de ser disparado com as 9 Caudas. Isso exige sobreviver 18 turnos contra um time que destrói suas iscas — e o empate técnico é no turno 40, então há margem, mas pouca.",
+  "inimigos": "Ogum · Iansã · Susanoo (os três removem buff e miragem)",
+  "condicao": "Nove Caudas tem de ser disparado com as 9 Caudas. Isso exige sobreviver 18 turnos contra um time que destrói suas miragens — e o empate técnico é no turno 40, então há margem, mas pouca.",
   "requisito": "Possuir Inari"
  },
  {
@@ -908,8 +908,8 @@
   "nivel": "Rito",
   "dificuldade": 1,
   "titulo": "O Corisco",
-  "inimigos": "Khnum · Cernunnos · Sun Wukong (os três invocam)",
-  "condicao": "Vença destruindo todas as invocações inimigas antes de derrubar qualquer deus. Um deus caindo antes da última invocação anula a Provação.",
+  "inimigos": "Ogum · Susanoo · Thor (os três se enchem de buffs)",
+  "condicao": "Vença removendo todo buff dos três inimigos antes de derrubar qualquer deus.",
   "requisito": "—"
  },
  {
@@ -952,8 +952,8 @@
   "nivel": "Rito",
   "dificuldade": 1,
   "titulo": "A Matilha",
-  "inimigos": "Iansã · Ogum · Susanoo (Iansã destrói invocações)",
-  "condicao": "A Fera tem de morrer e renascer no mínimo 2 vezes, e estar viva no golpe final.",
+  "inimigos": "Iansã · Ogum · Susanoo (Iansã remove buffs — apaga a Fúria da Matilha)",
+  "condicao": "A Fúria da Matilha tem de refletir no mínimo 50 de dano acumulado, e estar ativa no golpe final.",
   "requisito": "—"
  },
  {
