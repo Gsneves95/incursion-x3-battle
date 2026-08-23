@@ -360,7 +360,7 @@ function novaUnidade(key, idx, lado, catalogo) {
   const g = catalogo[key];
   return {
     uid: `${lado}-${idx}`, key, nome: g.nome, elem: g.elem, classe: g.classe, funcao: g.funcao,
-    hp: 120, maxHp: 120, vivo: true, agiu: false,
+    hp: g.hp || 120, maxHp: g.hp || 120, vivo: true, agiu: false,   // F2.3: HP vem do kit (bestiário: tropa fora da faixa, chefe 200-300). Default 120 = os 100 deuses SEM `hp` nascem inalterados (§134: o campo atravessa toda unidade; o default é o que mantém o outro lado)
     golpeUnicoNoTurno: false,   // F1.9 (Bastet §88): RASTREIO — já sofreu golpe de alvo ÚNICO neste turno? Escrito no bater (unico), resetado no iniciarTurno do dono. Lido por estado:{primeiroPorTurno} (= !este flag)
     controleNoTurno: false,   // §131 (Loki): já sofreu TENTATIVA de controle neste turno? Escrito em aplicar (evadeControle), resetado no iniciarTurno do dono. Gêmeo do golpeUnicoNoTurno no eixo controle
     guardaControleUsado: false,   // §136 (Khonshu, M9): a carga 1×-por-partida do guardaControle já foi gasta? (bespoke, como o renasceu da Nezha)

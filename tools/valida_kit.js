@@ -23,7 +23,7 @@ const V = E.VOCAB;
   if (inter.length) throw new Error(`VOCAB inválido: CONDICOES ∩ ESTADO_COND = [${inter.join(', ')}] — condicional.se ficaria ambíguo (§87). Renomeie uma das chaves.`);
 }
 
-const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab']);
+const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab', 'hp']);   // F2.3: `hp` opcional — ausente = 120 (os 100 deuses); presente = HP do kit (bestiário fora da faixa, chefe)
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
 const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'cdSe', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c. cdSe (§101): recarga condicional
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
@@ -390,6 +390,7 @@ function validarDeus(g) {
   if (typeof g.key !== 'string') errs.push(`${ctx}: key ausente ou não-string`);
   if (typeof g.nome !== 'string') errs.push(`${ctx}: nome ausente ou não-string`);
   if ('classe' in g && !CLASSES_DEUS.has(g.classe)) errs.push(`${ctx}: classe de deus inválida "${g.classe}"`);
+  if ('hp' in g && !(typeof g.hp === 'number' && Number.isInteger(g.hp) && g.hp > 0)) errs.push(`${ctx}: hp mal formado (${JSON.stringify(g.hp)}; esperado inteiro > 0)`);   // F2.3
   if ('passiva' in g) validarPassiva(g.passiva, `${ctx}.passiva`, errs);
   if (!Array.isArray(g.ab)) errs.push(`${ctx}: ab não é array`);
   else g.ab.forEach((ab, i) => validarHabilidade(ab, `${ctx}.ab[${i}](${(ab && ab.nome) || '?'})`, errs));

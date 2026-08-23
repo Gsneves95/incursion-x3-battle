@@ -200,6 +200,24 @@ console.log('== 10. Nezha renasce uma única vez ==');
   console.log(`  voltou vivo=${n.vivo} hp=${n.hp}`);
 }
 
+// ---------------------------------------------- HP vem do kit (F2.3): os dois sentidos do campo que atravessa (§134)
+console.log('== HP do kit: deus SEM hp nasce 120, criatura COM hp nasce com o dela ==');
+{
+  // LADO A — o default: nenhum dos 100 deuses declara `hp`; todos nascem 120 (o campo novo não os move)
+  let comHp = 0;
+  for (const k of Object.keys(E.GODS)) if ('hp' in E.GODS[k]) comHp++;
+  ok(comHp === 0, `nenhum dos 100 deuses deve declarar hp (declaram: ${comHp})`);
+  const st = E.novoEstado(['zeus', 'brigid', 'ogum'], ['zeus', 'brigid', 'ogum'], 1, 0);
+  const todos120 = st.lados.every(l => l.units.every(u => u.hp === 120 && u.maxHp === 120));
+  ok(todos120, 'deus sem hp no kit deve nascer 120/120');
+  // LADO B — a criatura: catálogo com `hp` nasce com o seu (não 120)
+  const cat = { bicho: { key: 'bicho', nome: 'Bicho', elem: 'Umbra', classe: 'Físico', funcao: 'Atacante', hp: 70, ab: [] } };
+  const st2 = E.novoEstado(['bicho'], ['bicho'], 1, 0, null, cat);
+  const b = st2.lados[0].units[0];
+  ok(b.hp === 70 && b.maxHp === 70, `criatura com hp:70 deve nascer 70/70 (nasceu ${b.hp}/${b.maxHp})`);
+  console.log(`  ${comHp} deuses com hp · deus→120 · criatura hp:70→70 (os dois sentidos, §134)`);
+}
+
 console.log('');
 console.log(falhas === 0 ? '>>> TODOS OS TESTES PASSARAM' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);
