@@ -6,7 +6,16 @@ const E = require('../src/engine.js');
 Object.assign(global, E);
 const PROV = require('../src/provacao.js');
 const SOL = require('../tools/solucionador.js');
-const poseidon = require('../data/provacoes/poseidon.json');
+// FIXTURE TUNADO, não o catálogo: o data/provacoes/poseidon.json de produção é a Provação DIFÍCIL (120 HP,
+// resolve com dica em ~90k nós) — o §149 diz que o exemplo tunado é do TESTE, não do catálogo. Este fixture é
+// o Poseidon fácil (inimigos a 60 HP, Maré=9) que resolve em poucos nós: a suíte de regressão precisa de uma
+// entrada CONTROLADA e estável, desacoplada do conteúdo do catálogo (que muda a cada lote/rebalanceamento).
+const poseidon = {
+  key: 'poseidon', titulo: 'A Maré Não Espera (fixture tunado)',
+  aliados: ['poseidon', 'iara', 'sobek'], inimigos: ['ares', 'thor', 'ogum'],
+  montar: { seed: 2, comeca: 0, orbs: { '0': { 'Maré': 9 } }, unidades: [{ lado: 1, idx: 0, hp: 60 }, { lado: 1, idx: 1, hp: 60 }, { lado: 1, idx: 2, hp: 60 }] },
+  condicoes: [{ predicado: 'deadline', turnos: 8 }, { predicado: 'morteEmEstado', quem: 'inimigo', estado: 'encharcado' }],
+};
 
 let f = 0; const ok = (c, m) => { if (!c) { console.log('  FALHA: ' + m); f++; } };
 
@@ -55,8 +64,10 @@ console.log('== 5. carimbo de versão: hash estável, muda com o catálogo ==');
   ok(h1 === h2 && typeof h1 === 'string', 'hash determinístico');
   const godsAlt = Object.assign({}, E.GODS, { poseidon: Object.assign({}, E.GODS.poseidon, { _mudou: true }) });
   ok(PROV.catalogoHash(poseidon, godsAlt) !== h1, 'hash MUDA quando o kit muda (rede de regressão)');
-  ok(poseidon.verificacao && poseidon.verificacao.hash === h1, 'o carimbo gravado bate com o catálogo atual');
-  console.log(`  hash ${h1} · muda com o kit · carimbo do arquivo confere`);
+  // o carimbo vive no arquivo: uma Provação REAL carimbada bate com seu catálogo merged (a mesma checagem do build §3d)
+  const real = require('../data/provacoes/apolo.json');
+  ok(real.verificacao && real.verificacao.hash === PROV.catalogoHash(real), 'o carimbo de uma Provação real confere com o catálogo');
+  console.log(`  hash ${h1} · muda com o kit · carimbo real (apolo) confere`);
 }
 
 console.log('== 6. acumulo{fonte,limiar}: nasce com as 9 fontes; fonte desconhecida é recusada ==');

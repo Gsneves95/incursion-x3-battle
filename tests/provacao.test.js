@@ -6,7 +6,14 @@
 const E = require('../src/engine.js');
 Object.assign(global, E);   // novoEstado etc. como globais p/ montarProvacao
 const PROV = require('../src/provacao.js');
-const poseidon = require('../data/provacoes/poseidon.json');
+// FIXTURE TUNADO, não o catálogo (§149): o data/provacoes/poseidon.json de produção é a Provação DIFÍCIL
+// (120 HP, dica). Este é o Poseidon fácil (60 HP, Maré=9) — entrada CONTROLADA da suíte, estável ao catálogo.
+const poseidon = {
+  key: 'poseidon', titulo: 'A Maré Não Espera (fixture tunado)',
+  aliados: ['poseidon', 'iara', 'sobek'], inimigos: ['ares', 'thor', 'ogum'],
+  montar: { seed: 2, comeca: 0, orbs: { '0': { 'Maré': 9 } }, unidades: [{ lado: 1, idx: 0, hp: 60 }, { lado: 1, idx: 1, hp: 60 }, { lado: 1, idx: 2, hp: 60 }] },
+  condicoes: [{ predicado: 'deadline', turnos: 8 }, { predicado: 'morteEmEstado', quem: 'inimigo', estado: 'encharcado' }],
+};
 
 let f = 0; const ok = (c, m) => { if (!c) { console.log('  FALHA: ' + m); f++; } };
 const encharca = u => u.efeitos.push({ type: 'encharcado', dur: 3 });

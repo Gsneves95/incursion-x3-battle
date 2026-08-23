@@ -3,11 +3,79 @@
   "titulo": "A Maré Não Espera",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "poseidon", "iara", "sobek" ],
-  "inimigos": [ "kagutsuchi", "mulasemcabeca", "hercules" ],
-  "montar": { "seed": 1, "comeca": 0 },
+  "aliados": [
+    "poseidon",
+    "iara",
+    "sobek"
+  ],
+  "inimigos": [
+    "kagutsuchi",
+    "mulasemcabeca",
+    "hercules"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "dica": [
+    {
+      "deus": "iara",
+      "slot": "basico",
+      "alvos": [
+        "kagutsuchi"
+      ]
+    },
+    "passar",
+    {
+      "deus": "poseidon",
+      "slot": "habilidade",
+      "alvos": [
+        "mulasemcabeca",
+        "hercules"
+      ]
+    }
+  ],
   "condicoes": [
-    { "predicado": "deadline", "turnos": 8 },
-    { "predicado": "morteEmEstado", "quem": "inimigo", "estado": "encharcado" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 8
+    },
+    {
+      "predicado": "morteEmEstado",
+      "quem": "inimigo",
+      "estado": "encharcado"
+    }
+  ],
+  "verificacao": {
+    "hash": "a017f4b",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": true,
+    "nos": 90077,
+    "ms": 34094,
+    "caminho": [
+      "iara Canto Suave → kagutsuchi",
+      "passar",
+      "poseidon Tridente Colossal → mulasemcabeca+hercules",
+      "sobek Mordida Brutal → kagutsuchi",
+      "passar",
+      "sobek Mordida Brutal → mulasemcabeca",
+      "iara Canto da Sedução → mulasemcabeca",
+      "passar",
+      "poseidon Tridente Colossal → kagutsuchi+mulasemcabeca",
+      "sobek Mordida Brutal → mulasemcabeca",
+      "passar",
+      "sobek Dilúvio",
+      "passar",
+      "iara Canto Suave → kagutsuchi",
+      "poseidon Tridente Colossal → kagutsuchi+hercules",
+      "passar",
+      "sobek Mordida Brutal → hercules",
+      "iara Canto Suave → hercules",
+      "passar",
+      "iara Canto Suave → hercules",
+      "sobek Mordida Brutal → hercules"
+    ]
+  }
 }

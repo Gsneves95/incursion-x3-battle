@@ -105,6 +105,26 @@ function heuristica(st, prov, ctx) {
   return h;
 }
 
+// aplica a DICA (prefixo forçado) a partir da raiz e devolve os rótulos dos lances (p/ o caminho carimbado).
+// Entrada em `prov.dica`: lista de {deus, slot, alvos?[chaves de deus/uid], escolhas?, modo?} ou "passar".
+// Referência por CHAVE de deus (estável: a ordem dos aliados/inimigos é fixa na Provação); um lance inválido
+// LANÇA (a dica é parte da spec — dica que não se aplica é erro de montagem, não silêncio).
+function aplicarDica(raiz, prov, NIVEL_IA) {
+  const path = [];
+  if (!prov.dica || !prov.dica.length) return path;
+  const uidDe = (chave, lado) => { const u = raiz.lados[lado].units.find(x => x.key === chave); return u && u.uid; };
+  for (const d of prov.dica) {
+    if (d === 'passar') { E.fimTurno(raiz); avancarOponente(raiz, NIVEL_IA); path.push('passar'); continue; }
+    const uid = d.uid || uidDe(d.deus, 0);
+    const alvos = (d.alvos || []).map(a => /^\d+-\d+$/.test(a) ? a : (uidDe(a, 1) || uidDe(a, 0)));
+    const mv = { uid, slot: d.slot, alvos, escolhas: d.escolhas, modo: d.modo };
+    path.push(rotulo(raiz, mv));
+    const res = E.agir(raiz, uid, d.slot, alvos, d.escolhas, d.modo);
+    if (!res || !res.ok) throw new Error(`dica inválida em ${prov.key}: ${JSON.stringify(d)} → ${res && res.erro}`);
+  }
+  return path;
+}
+
 // C (§): o solucionador prova JOGABILIDADE, não solubilidade — "existe um caminho de vitória contra o oponente
 // declarado", não "o melhor". Best-first acha um caminho rápido; INVENCÍVEL SÓ quando a fronteira esvazia
 // (exaustão real), NUNCA por orçamento (o pior erro: descartaria uma Provação boa). Orçamento → INDETERMINADO
@@ -115,10 +135,14 @@ function resolver(prov, opts = {}) {
   const ctx = ctxDe(prov);
   const t0 = Date.now();
   const raiz = PROV.montarProvacao(prov); avancarOponente(raiz, NIVEL_IA);
+  // DICA (§149): semente de sequência — um PREFIXO de lances forçado a partir da raiz, antes do best-first.
+  // É o "dar dica" (≠ afrouxar): não muda o puzzle (HP/orbes/inimigos), só ancora a abertura que o jogador
+  // teria de descobrir. Legível por CHAVE de deus (estável); "passar" encerra o turno + roda o oponente.
+  const dicaPath = aplicarDica(raiz, prov, NIVEL_IA);
   let nos = 0, maxHeap = 0, maxRam = 0, melhorH = Infinity, noDoMelhorH = 0;
   const visto = new Set([chave(raiz, prov, ctx)]);
   const heap = new MinHeap();
-  heap.push({ st: raiz, path: [], h: heuristica(raiz, prov, ctx) });
+  heap.push({ st: raiz, path: [...dicaPath], h: heuristica(raiz, prov, ctx) });
   while (heap.size()) {
     maxHeap = Math.max(maxHeap, heap.size());
     if (nos >= orcamento) {   // ORÇAMENTO nunca vira veredito negativo — é INDETERMINADO, e acionável
@@ -176,6 +200,7 @@ if (require.main === module) {
       prov.verificacao = {
         hash: PROV.catalogoHash(prov), nivelIA: r.nivelIA, veredito: r.veredito,   // hash do catálogo MERGED (deuses∪bestiário) — o que o jogo roda
         lancesNesteCaminho: r.comprimento != null ? r.comprimento : null,   // NÃO o mínimo (§): teto solto
+        comDica: !!(prov.dica && prov.dica.length),   // §149: a Provação foi resolvida COM dica (a semente faz parte dela)
         nos: r.nos, ms: r.ms, caminho: r.sequencia || null,
       };
       fs.writeFileSync(path.join(dir, f), JSON.stringify(prov, null, 2) + '\n');

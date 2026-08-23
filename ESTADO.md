@@ -2,7 +2,33 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.3: o bestiário (12 criaturas PvE; régua de tropa; 11/11 destravadas)
+## Última sessão — F2.4 lote 1: as 6 Provações limite-de-turnos (5 fechadas; dionisio + saci ao dono)
+**Data:** 2026-08-23
+**Tarefa:** F2.4 lote 1 — a forma "limite de turnos". Traduzir antes de escrever (§124), rodar o solucionador,
+carimbar, medir a taxa. §152.
+**Resultado:** a tradução (§124) desmontou a organização de lotes: **a forma real é o RIDER, não o relógio**
+(§46 no nível da fase) — das 15 "limite de turnos", só **6** têm o deadline como espinha; as 9 restantes são
+outras formas (cada uma precisa de predicado próprio → vão pro lote da forma delas). O dono aprovou o escopo (as
+6) e registrou: **time aliado é DESIGN** (parte da spec, nunca esteve na planilha). **Verdictos (HP padrão, sem
+afrouxar):** apolo ✓, bragi ✓ (usa 3 criaturas do bestiário) — VENCÍVEL direto; **poseidon ✓** — VENCÍVEL com
+**DICA** (mecanismo novo: `prov.dica` = semente de sequência forçada no solucionador, `comDica` no carimbo);
+**boto ✓** — só o fix de `comeca:1` (a distância caiu 136→2, `acionavel` virou `dica`→`orcamento`, 400k nós);
+**dionisio** — `comeca:1` removeu o INVENCÍVEL (era estrutural: inimigo Milagrava no turno 1 com 3 de energia da
+abertura), mas segue **INDETERMINADO/dica** (melhorH=167) → decisão do dono (dica/time/afrouxar). **saci** —
+segurado (fontes `orbesRoubados`/`buffsRoubados` + tag de log §106 pedem varredura própria: quantas das 91
+precisam da distinção roubo≠ganho). **PRINCÍPIO travado (dono):** setup que torna a condição impossível antes da
+1ª ação do jogador é ERRO DE MONTAGEM, não dificuldade — corrigir é obrigatório (`comeca` muda se o puzzle é
+coerente; ≠ afrouxar). **Taxa 5/6: 2 diretas, 2 fix/dica, 1 pendente + 1 segurada ⇒ revisão da expectativa: ~12
+sessões p/ as 91, não 6.** Os INDETERMINADO iniciais foram todos `dica` (nunca `orcamento`) → confirma a F2.1;
+**consequência de produto (dono trata depois): o jogo vai precisar de um SISTEMA DE DICAS.** Ambiguidades
+decididas: perseu "petrificado"≡atordoado (§54, sinônimo de prosa); izanagi "morrer de DoT"→"cair CARREGANDO
+DoT" (§106); kraken "golpe final" precisa de `queda.slotAbate` — **é barato** (o `slot` já está no `bater`),
+entra quando o lote da forma "abate-por-slot" chegar. Desacoplamento: `solucionador.test`/`provacao.test` liam o
+`poseidon.json` de produção (agora difícil) — o fixture tunado (60 HP) mudou-se p/ DENTRO das suítes. **21 suítes
+verdes.** **PRÓXIMO (dono):** decidir dionisio (dica/time/afrouxar) e saci (varredura do tag de roubo); depois os
+lotes das formas-rider (o dono re-sequencia); as 9 Camada-C ainda esperam predicado próprio.
+
+## Sessão — F2.3: o bestiário (12 criaturas PvE; régua de tropa; 11/11 destravadas) (anterior)
 **Data:** 2026-08-23
 **Tarefa:** F2.3 — as 12 criaturas de PvE (vêm ANTES dos lotes: 11 das 91 dependem delas). §151.
 **Resultado:** as 12 em `data/bestiario/*.json`, **forma de deus + campo `hp`**, **zero mecanismo novo**

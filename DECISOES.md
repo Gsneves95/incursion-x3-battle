@@ -31,6 +31,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **O 1º INVENCÍVEL estrutural — e ele não é budget (§148: INVENCÍVEL só por exaustão real, nunca por orçamento).** `dionisio` (deadline 12 + `negarAcaoInimigo` milagre) esgota em 38 nós: com `comeca:0` o INIMIGO recebe **3 de energia no turno 1** (abertura 1/3) e a IA gulosa lança `ra/milagre` no turno 1 — o jogador (1 de energia, joga antes) não tem como travar os 3. A condição "nenhum inimigo usa Milagre" é impossível quando o inimigo pode Milagrar no turno 1. **`comeca:1` (inimigo abre com 1 de energia, não 3) remove o Milagre-turno-1** — e `comeca` é ALAVANCA DE SETUP (iniciativa), NÃO afrouxar (§149 lista orbes/HP/turnos/inimigos, não quem abre). Decisão do dono pendente: `comeca:1` é o setup correto das Provações de negação, ou é afrouxar disfarçado? (Vale p/ dionisio E boto.)
 
+**— RESOLUÇÃO (decisões do dono aplicadas) —**
+
+**PRINCÍPIO travado (dono): setup que torna a condição impossível ANTES da 1ª ação do jogador é ERRO DE MONTAGEM, não dificuldade — corrigi-lo é OBRIGATÓRIO, não opcional.** A §149 fala de HP/orbes/turnos/inimigos porque essas mudam o QUANTO o puzzle exige; `comeca` muda se ele é sequer COERENTE. "Nenhum inimigo usa Milagre" com o inimigo abrindo com 3 de energia é auto-contraditória. `comeca:1` aplicado a **dionisio E boto**.
+
+**DICA = semente de sequência (mecanismo novo no solucionador, §149).** `prov.dica` = prefixo de lances forçado a partir da raiz (por CHAVE de deus, legível/estável; `"passar"` encerra o turno), aplicado ANTES do best-first. É o "dar dica" (≠ afrouxar): não muda HP/orbes/inimigos, só ancora a abertura que o jogador teria de descobrir. O carimbo grava `comDica:true`. O caminho carimbado começa pela dica.
+
+**Verdictos finais das 6 (HP padrão, sem afrouxar):**
+| Provação | setup | veredito | como fechou |
+|---|---|---|---|
+| apolo | comeca:0 | **VENCÍVEL** carimbada | direto (22127 nós) |
+| bragi | comeca:0 | **VENCÍVEL** carimbada | direto (83 nós) |
+| **poseidon** | comeca:0 + **dica** | **VENCÍVEL** carimbada | dica (iara Canto Suave→kagutsuchi · passar · poseidon Tridente→mulasemcabeca+hercules) → 90k nós, comDica:true |
+| **boto** | **comeca:1** | **VENCÍVEL** carimbada | só o fix de setup: distância 136→**2** (acionavel `dica`→`orcamento`), 400k nós, comDica:false |
+| **dionisio** | **comeca:1** | **INDETERMINADO/`dica`** | fix removeu o INVENCÍVEL (agora coerente), mas estagna longe (melhorH=167) — decisão do dono pendente (dica/time/afrouxar) |
+| saci | — | segurado (dono) | fontes `orbesRoubados`/`buffsRoubados` + tag de log §106 aguardam varredura própria |
+
+**A lição do boto (registrada): `comeca:1` não só tornou coerente — quase resolveu.** A distância caiu de 136 p/ 2 e o `acionavel` VIROU de `dica` (estagnado) p/ `orcamento` (progredindo) — prova de que o 136 era o setup incoerente, não puzzle difícil. dionisio, mesmo fix, seguiu em `dica`/167: mesma condição, times diferentes — o time do dionisio controla mas não fecha o dano. (O `acionavel` distinguiu os dois casos sem eu adivinhar.)
+
+**REVISÃO DA EXPECTATIVA (dono): 1 decisão a cada ~2,5 Provações ⇒ 91 são ~12 sessões, não 6.** Melhor saber no lote 1. E os dois INDETERMINADO iniciais serem `dica` confirmou a F2.1 no 1º lote — **consequência de produto (o dono trata depois deste lote): se Provações exigem dica p/ serem achadas, o jogo precisa de um SISTEMA DE DICAS que não está no plano.**
+
+**Débito de motor registrado (saci, §106): o log NÃO distingue roubo de ganho de orbe.** Antes de construir o tag (`orbe`/`efeito` com marca de roubo), VARRER quantas das 91 precisam da distinção `orbesRoubados`/`buffsRoubados` — a informação nasce com TODOS os consumidores (§104/§146), não só o saci.
+
+**Desacoplamento de teste (§149, consequência): `solucionador.test`/`provacao.test` liam o `poseidon.json` de PRODUÇÃO como fixture.** Agora que ele é a Provação DIFÍCIL (120 HP, dica, 90k nós), o fixture tunado (60 HP, Maré=9, ~4 nós) mudou-se para DENTRO das suítes — entrada controlada, estável ao catálogo. Uma suíte de regressão que lê dado de produção quebra a cada rebalanceamento; o fixture é do teste.
+
 ---
 
 ## §151 — F2.3: o bestiário (12 criaturas PvE). Régua PRÓPRIA de tropa (teste que morde), HP do kit nos dois sentidos, e 11/11 destravadas.

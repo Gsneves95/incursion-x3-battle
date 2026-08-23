@@ -3,11 +3,68 @@
   "titulo": "Festa de São João",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "boto", "tsukuyomi", "iansa" ],
-  "inimigos": [ "ra", "brahma", "shiva" ],
-  "montar": { "seed": 1, "comeca": 0 },
+  "aliados": [
+    "boto",
+    "tsukuyomi",
+    "iansa"
+  ],
+  "inimigos": [
+    "ra",
+    "brahma",
+    "shiva"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 1
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 12 },
-    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "negarAcaoInimigo",
+      "slot": "milagre"
+    }
+  ],
+  "verificacao": {
+    "hash": "7670b073",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 225401,
+    "ms": 162436,
+    "caminho": [
+      "tsukuyomi Anoitecer → brahma",
+      "boto Nadadeira Ágil → brahma",
+      "passar",
+      "boto Festa de São João",
+      "passar",
+      "iansa Espada de Vento → shiva",
+      "passar",
+      "iansa Espada de Vento → shiva",
+      "tsukuyomi Anoitecer → shiva",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "passar",
+      "boto Festa de São João",
+      "passar",
+      "tsukuyomi Anoitecer → shiva",
+      "boto Baile do Boto → ra+shiva",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "boto Nadadeira Ágil → brahma",
+      "passar",
+      "iansa Espada de Vento → brahma",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "tsukuyomi Anoitecer → ra",
+      "passar",
+      "iansa Espada de Vento → ra",
+      "tsukuyomi Lâmina Crescente → ra"
+    ]
+  }
 }
