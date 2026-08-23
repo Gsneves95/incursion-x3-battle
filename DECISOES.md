@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §152 — F2.4 (lote 1): a forma real é o RIDER, não o relógio (§46 no nível da FASE). Time é design. E o 1º INVENCÍVEL estrutural.
+
+**A CORREÇÃO, com a consequência (a pedido do dono).** Eu organizara os 6 lotes pelo que APARECE na condição; o discriminador certo é o que a DEFINE. O **deadline é pressão universal** (o anti-estol de quase toda Provação), não a essência. Traduzindo as 15 "limite de turnos" (§124, antes de escrever): só **6** têm o relógio como espinha com rider já suportado; nas outras **9** o rider É a forma (perseu=controle, heimdall=roubo-de-orbe, huangdi=recarga, nefertem=debuff-uptime, kali=cura-negada, izanagi=morte-por-DoT, kraken=abate-por-slot, exu=uso-contado, kukulkan=condicional-por-ação). É o **§46 no nível da fase**: agrupar por sintoma (o turno que aparece) esconde a forma (o rider). **Consequência:** a forma real de uma Provação é o rider; isso REORDENA os 6 lotes — o dono refaz o sequenciamento. Escopo do lote 1 travado: as **6** (Camadas A+B); as 9 vão para o lote da forma-rider de cada uma (construir predicado fora da varredura da sua forma seria construir a forma no lote errado).
+
+**Time aliado é DESIGN, não catálogo (decisão do dono, registrada).** A planilha nunca teve o time do jogador — só o deus-título e os inimigos. A partir de agora o time é **parte da especificação da Provação**. Regras: (a) o deus-título SEMPRE joga (é a Provação dele); (b) os 2 companheiros tornam a condição ALCANÇÁVEL, sem carregar o puzzle — o deus-título é o protagonista da solução; (c) a composição vai no relato, com o motivo em 1 linha (discordância é troca barata).
+
+**As 3 ambiguidades, decididas pelo dono:**
+- **perseu: "petrificado" não existe** no motor. A Medusa aplica `atordoado`, e o §54 já decidiu Petrificar ≡ atordoado. A condição é "nenhum aliado atordoado ou selado". **Sinônimo de prosa, não status novo.**
+- **izanagi: "morrer de DoT"** → use "morreu CARREGANDO DoT" (o que a `queda.estados` já traz). §106: não inventar rastreio de causa-da-morte antes de provar que o existente não serve; se uma Provação futura exigir a causa de verdade, a informação nasce com consumidor.
+- **kraken: "golpe final" precisa do SLOT do abate.** A `queda` tem `matador` (§145), não o slot. **É BARATO:** `bater` já tem o `slot` em escopo (engine.js:830); passá-lo a `matar` e gravar `queda.slotAbate` é o mesmo padrão do `matador`. Logo o Kraken NÃO espera por custo — espera só por ser Camada C (forma-rider). Quando o lote da forma "abate-por-slot" chegar, o campo entra barato.
+
+**LOTE 1 — as 6, montadas com HP padrão (120, sem afrouxar, §149). Taxa e padrão do `acionavel`:**
+| Provação | time (deus-título + 2) | veredito | nós/ms | acionavel |
+|---|---|---|---|---|
+| apolo | apolo·zeus·ares | **VENCÍVEL** | 22127 / 9,8s | — |
+| bragi | bragi·zeus·houyi | **VENCÍVEL** | 83 / 75ms | — |
+| poseidon | poseidon·iara·sobek | **INDETERMINADO** | 200k / 72s | **dica** (melhorH parou em 37) |
+| boto | boto·tsukuyomi·iansa | **INDETERMINADO** | 200k / 126s | **dica** (melhorH parou em 136) |
+| dionisio | dionisio·anubis·iansa | **INVENCÍVEL** | 38 / 55ms | (exaustão real) |
+| saci | — | (pendente: `orbesRoubados`/`buffsRoubados` precisam de impl em `acumuladoDe` + tag de log §106) | | |
+
+**Taxa (5 de 6 rodadas): 2 VENCÍVEL · 2 INDETERMINADO · 1 INVENCÍVEL.** Sinal de calibração p/ os outros 5 lotes: uma Provação em ~2,5 exige o dono. **Padrão do `acionavel`: os DOIS INDETERMINADO são `dica`, nenhum `orcamento`** — confirma a hipótese aberta na F2.1 (§148): algumas das 91 são puzzles que ninguém acha sem dica; não é o solucionador faltando nós.
+
+**O 1º INVENCÍVEL estrutural — e ele não é budget (§148: INVENCÍVEL só por exaustão real, nunca por orçamento).** `dionisio` (deadline 12 + `negarAcaoInimigo` milagre) esgota em 38 nós: com `comeca:0` o INIMIGO recebe **3 de energia no turno 1** (abertura 1/3) e a IA gulosa lança `ra/milagre` no turno 1 — o jogador (1 de energia, joga antes) não tem como travar os 3. A condição "nenhum inimigo usa Milagre" é impossível quando o inimigo pode Milagrar no turno 1. **`comeca:1` (inimigo abre com 1 de energia, não 3) remove o Milagre-turno-1** — e `comeca` é ALAVANCA DE SETUP (iniciativa), NÃO afrouxar (§149 lista orbes/HP/turnos/inimigos, não quem abre). Decisão do dono pendente: `comeca:1` é o setup correto das Provações de negação, ou é afrouxar disfarçado? (Vale p/ dionisio E boto.)
+
+---
+
 ## §151 — F2.3: o bestiário (12 criaturas PvE). Régua PRÓPRIA de tropa (teste que morde), HP do kit nos dois sentidos, e 11/11 destravadas.
 
 **As 12 se exprimem SEM mecanismo novo — varrido contra o motor de hoje, não contra a memória (§93).** Uma achou `curaPorAlvo` (fixo, por alvo atingido, curador = atacante) na via de dmg de qualquer slot; outra reusou `imunidade a:[controle]` (Ísis), `taunt`+`shield` (Cérberus), `alvoHp{aliado,min}` (Dagda), `reducao contra:{classe}` (Oni), `refleteDano`, `selado`, `lockSkill`, `seCond{alvoHp}` (Durga). Zero primitiva.

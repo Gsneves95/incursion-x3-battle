@@ -3,64 +3,11 @@
   "titulo": "A Maré Não Espera",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [
-    "poseidon",
-    "iara",
-    "sobek"
-  ],
-  "inimigos": [
-    "ares",
-    "thor",
-    "ogum"
-  ],
-  "montar": {
-    "seed": 2,
-    "comeca": 0,
-    "orbs": {
-      "0": {
-        "Maré": 9
-      }
-    },
-    "unidades": [
-      {
-        "lado": 1,
-        "idx": 0,
-        "hp": 60
-      },
-      {
-        "lado": 1,
-        "idx": 1,
-        "hp": 60
-      },
-      {
-        "lado": 1,
-        "idx": 2,
-        "hp": 60
-      }
-    ]
-  },
+  "aliados": [ "poseidon", "iara", "sobek" ],
+  "inimigos": [ "kagutsuchi", "mulasemcabeca", "hercules" ],
+  "montar": { "seed": 1, "comeca": 0 },
   "condicoes": [
-    {
-      "predicado": "deadline",
-      "turnos": 8
-    },
-    {
-      "predicado": "morteEmEstado",
-      "quem": "inimigo",
-      "estado": "encharcado"
-    }
-  ],
-  "verificacao": {
-    "hash": "30fc1362",
-    "nivelIA": "normal",
-    "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 3,
-    "nos": 4,
-    "ms": 36,
-    "caminho": [
-      "poseidon Maremoto",
-      "sobek Dilúvio",
-      "iara Afogamento"
-    ]
-  }
+    { "predicado": "deadline", "turnos": 8 },
+    { "predicado": "morteEmEstado", "quem": "inimigo", "estado": "encharcado" }
+  ]
 }

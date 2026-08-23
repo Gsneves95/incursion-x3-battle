@@ -1,0 +1,58 @@
+{
+  "key": "bragi",
+  "titulo": "A Saga",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "bragi",
+    "zeus",
+    "houyi"
+  ],
+  "inimigos": [
+    "vidente_corrompido",
+    "aparicao",
+    "golem_runico"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 9
+    },
+    {
+      "predicado": "proibirSlotProprio",
+      "slot": "basico"
+    }
+  ],
+  "verificacao": {
+    "hash": "f98019a3",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 18,
+    "nos": 83,
+    "ms": 70,
+    "caminho": [
+      "passar",
+      "houyi Nove Flechas → aparicao",
+      "passar",
+      "houyi Abater o Sol → vidente_corrompido",
+      "passar",
+      "passar",
+      "zeus Ira Celestial",
+      "houyi Abater o Sol → vidente_corrompido",
+      "passar",
+      "houyi Nove Flechas → golem_runico",
+      "zeus Julgamento do Trovão → golem_runico",
+      "passar",
+      "houyi Abater o Sol → vidente_corrompido",
+      "passar",
+      "bragi Saga Heroica → houyi",
+      "passar",
+      "houyi Nove Flechas → vidente_corrompido+golem_runico",
+      "zeus Julgamento do Trovão → golem_runico"
+    ]
+  }
+}

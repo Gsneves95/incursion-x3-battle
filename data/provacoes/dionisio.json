@@ -1,0 +1,13 @@
+{
+  "key": "dionisio",
+  "titulo": "O Banquete",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [ "dionisio", "anubis", "iansa" ],
+  "inimigos": [ "ra", "brahma", "itzamna" ],
+  "montar": { "seed": 1, "comeca": 0 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 12 },
+    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "key": "apolo",
+  "titulo": "A Aurora Não Erra",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "apolo",
+    "zeus",
+    "ares"
+  ],
+  "inimigos": [
+    "medusa",
+    "jormungandr",
+    "kagutsuchi"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "bfea177c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 15,
+    "nos": 22127,
+    "ms": 9809,
+    "caminho": [
+      "zeus Cetro do Trovão → medusa",
+      "passar",
+      "ares Massacre → kagutsuchi",
+      "passar",
+      "ares Golpe Sanguinário → medusa",
+      "passar",
+      "ares Sede de Sangue → kagutsuchi",
+      "passar",
+      "zeus Julgamento do Trovão → kagutsuchi",
+      "passar",
+      "zeus Ira Celestial",
+      "ares Massacre → medusa",
+      "passar",
+      "ares Massacre → jormungandr",
+      "zeus Cetro do Trovão → jormungandr"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "key": "boto",
+  "titulo": "Festa de São João",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [ "boto", "tsukuyomi", "iansa" ],
+  "inimigos": [ "ra", "brahma", "shiva" ],
+  "montar": { "seed": 1, "comeca": 0 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 12 },
+    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
+  ]
+}
