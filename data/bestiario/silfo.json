@@ -1,0 +1,30 @@
+{
+  "key": "silfo",
+  "nome": "Silfo Uivante",
+  "elem": "Tempestade",
+  "classe": "Mágico",
+  "funcao": "Manipulador",
+  "hp": 65,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Rajada Cortante",
+      "cost": { "Tempestade": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Sopro Dissonante",
+      "cost": { "Tempestade": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Remove 1 orbe do maior pool do inimigo.",
+      "fx": [ { "t": "roubaOrbe", "n": 1 } ]
+    }
+  ]
+}

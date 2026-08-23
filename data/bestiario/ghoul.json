@@ -1,0 +1,22 @@
+{
+  "key": "ghoul",
+  "nome": "Ghoul Faminto",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "hp": 70,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Mordida Voraz",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo (18 contra alvos abaixo de 40 de HP); cura 6 do dano causado.",
+      "fx": [
+        { "t": "dmg", "v": 12, "seCond": { "quando": { "alvoHp": { "op": "abaixo", "v": 40 } }, "v": 18 }, "curaPorAlvo": 6 }
+      ]
+    }
+  ]
+}

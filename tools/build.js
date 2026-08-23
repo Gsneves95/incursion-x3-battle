@@ -87,6 +87,21 @@ function checarKits() {
 }
 checarKits();
 
+// ---------- 3-bis. schema do BESTIÁRIO: as criaturas PvE em data/bestiario/, validadas na build (F2.3) ----------
+// Mesma forma de deus (validarDeus reusado) + campo `hp`. Falha alto, como os kits de deus. NÃO passam pela
+// cadeia (não há prosa-fonte em kits.json) nem pelo checar_cadeia; o TETO de tropa é teste (tests/bestiario.test.js),
+// não build — a régua de balanceamento mora na suíte, o schema mora aqui (§ owner F2.3: "um teste que RODA").
+{
+  const dirB = path.join(raiz, 'data', 'bestiario');
+  if (fs.existsSync(dirB)) {
+    const { validarDeus } = require('./valida_kit.js');
+    const erros = [];
+    for (const f of fs.readdirSync(dirB).filter(f => f.endsWith('.json')).sort())
+      erros.push(...validarDeus(JSON.parse(ler('data/bestiario/' + f))));
+    if (erros.length) { console.error('ERRO de schema de bestiário:\n  ' + erros.join('\n  ')); process.exit(1); }
+  }
+}
+
 // ---------- 3b. CADEIA DE VERDADE, elo B: kits.json (prosa, fonte revisada) ↔ data/deuses (derivado) ----------
 // Falha alto, como o schema. DIVERGÊNCIA é presunção de erro no MOTOR (kits.json é a fonte, §26);
 // o checador só aponta. (Elo A, planilha↔kits.json, é tarefa aberta no ESTADO — parse cru de XML.)
@@ -120,7 +135,7 @@ if (cadeia.divergencias.length) {
       // identidade é MENTIRA (o carimbo garante contra um oponente que o jogo não roda) → FALHA, não avisa.
       const nivelDecl = prov.nivelIA || 'normal';
       if (prov.verificacao.nivelIA !== nivelDecl) mentiras.push(`${prov.key} (declara "${nivelDecl}", carimbado contra "${prov.verificacao.nivelIA}")`);
-      if (prov.verificacao.hash !== catalogoHash(prov, E.GODS)) velhas.push(prov.key);   // carimbo velho = AVISO
+      if (prov.verificacao.hash !== catalogoHash(prov)) velhas.push(prov.key);   // carimbo velho = AVISO (catalogoHash usa o catálogo MERGED deuses∪bestiário — o que o jogo roda)
     }
     if (mentiras.length) {   // identidade divergente FALHA a build
       console.error('ERRO de carimbo de Provação — IDENTIDADE de IA divergente (§150: o carimbo garante contra um oponente que o jogo não roda):\n  ' + mentiras.join('\n  ') + '\n  re-carimbe contra o nível declarado: node tools/solucionador.js --carimbar <deus>');

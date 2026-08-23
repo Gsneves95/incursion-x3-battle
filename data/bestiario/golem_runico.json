@@ -1,0 +1,41 @@
+{
+  "key": "golem_runico",
+  "nome": "Golem Rúnico",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "hp": 180,
+  "passiva": {
+    "nome": "Runas de Proteção",
+    "desc": "Recebe 10 de redução contra dano de habilidades Mágicas.",
+    "fx": [
+      { "gatilho": "reducao", "v": 10, "contra": { "classe": "Mágico" } }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Punho Rúnico",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "14 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 14 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Muralha Rúnica",
+      "cost": { "Umbra": 2 },
+      "cd": 3,
+      "alvo": "nenhum",
+      "desc": "Ganha 25 de Defesa Destrutível, provoca todos os inimigos por 1 turno e reflete 8 de dano por 2 turnos.",
+      "fx": [
+        { "t": "shield", "v": 25, "escopo": "self" },
+        { "t": "apply", "eff": { "type": "taunt", "dur": 1 }, "escopo": "todosInimigos" },
+        { "t": "apply", "eff": { "type": "refleteDano", "v": 8, "dur": 2 }, "escopo": "self" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "key": "servo_cinzas",
+  "nome": "Servo de Cinzas",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "hp": 70,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Garra Cinérea",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 12 } ]
+    }
+  ]
+}

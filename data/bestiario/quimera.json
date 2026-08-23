@@ -1,0 +1,40 @@
+{
+  "key": "quimera",
+  "nome": "Quimera",
+  "elem": "Chama",
+  "classe": "Híbrido",
+  "funcao": "Atacante",
+  "hp": 130,
+  "passiva": {
+    "nome": "Natureza Monstruosa",
+    "desc": "Imune a controle.",
+    "fx": [
+      { "gatilho": "imunidade", "a": [ "controle" ] }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Três Fauces",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "3 golpes de 6 de dano em 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 6, "golpes": 3 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Sopro Trívio",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "todosInimigos",
+      "desc": "15 de dano a todos os inimigos e Queimadura (6 por turno, 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 15 },
+        { "t": "dot", "nome": "queimadura", "v": 6, "dur": 2 }
+      ]
+    }
+  ]
+}

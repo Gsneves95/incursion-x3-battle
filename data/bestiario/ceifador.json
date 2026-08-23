@@ -1,0 +1,39 @@
+{
+  "key": "ceifador",
+  "nome": "Ceifador Errante",
+  "elem": "Umbra",
+  "classe": "Físico",
+  "funcao": "Atacante",
+  "hp": 130,
+  "passiva": {
+    "nome": "Presságio de Morte",
+    "desc": "As criaturas aliadas causam 4 de dano a mais.",
+    "fx": [
+      { "gatilho": "bonusDano", "v": 4, "escopo": "time" }
+    ]
+  },
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Foice Ceifadora",
+      "cost": { "Umbra": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "16 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 16 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Colheita Final",
+      "cost": { "Umbra": 2 },
+      "cd": 2,
+      "alvo": "inimigo",
+      "desc": "24 de dano a 1 inimigo; elimina-o se ficar abaixo de 20 de HP; cura 10.",
+      "fx": [
+        { "t": "dmg", "v": 24, "executaAbaixoDe": 20, "curaPorAlvo": 10 }
+      ]
+    }
+  ]
+}

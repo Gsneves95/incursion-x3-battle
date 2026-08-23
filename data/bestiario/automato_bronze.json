@@ -1,0 +1,33 @@
+{
+  "key": "automato_bronze",
+  "nome": "Autômato de Bronze",
+  "elem": "Aurora",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "hp": 120,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Soco de Bronze",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Postura de Guarda",
+      "cost": { "Aurora": 2 },
+      "cd": 2,
+      "alvo": "nenhum",
+      "desc": "Provoca todos os inimigos por 1 turno e ganha 15 de Defesa Destrutível.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "taunt", "dur": 1 }, "escopo": "todosInimigos" },
+        { "t": "shield", "v": 15, "escopo": "self" }
+      ]
+    }
+  ]
+}

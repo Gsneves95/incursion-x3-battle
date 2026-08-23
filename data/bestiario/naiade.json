@@ -1,0 +1,35 @@
+{
+  "key": "naiade",
+  "nome": "Náiade da Correnteza",
+  "elem": "Maré",
+  "classe": "Mágico",
+  "funcao": "Suporte",
+  "hp": 85,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Jato d'Água",
+      "cost": { "Maré": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "8 de dano a 1 inimigo e o deixa Encharcado por 2 turnos.",
+      "fx": [
+        { "t": "dmg", "v": 8 },
+        { "t": "apply", "eff": { "type": "encharcado", "dur": 2 } }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Corrente Restauradora",
+      "cost": { "Maré": 2 },
+      "cd": 3,
+      "alvo": "auto",
+      "desc": "Cura 20 no aliado mais ferido.",
+      "fx": [
+        { "t": "heal", "v": 20, "alvoHp": { "lado": "aliado", "ext": "min" } }
+      ]
+    }
+  ]
+}

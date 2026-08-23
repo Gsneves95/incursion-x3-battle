@@ -101,8 +101,19 @@ function acumuladoDe(st, c, ctx) {
 }
 
 // -------- carimbo de versão (pendente desde a F1.0a): hash do catálogo com que a Provação foi verificada --------
+// CATÁLOGO da Provação = os 100 deuses ∪ o bestiário PvE (as criaturas são inimigos das Ordálias; os aliados
+// são deuses). Dual, como o catalogoAtivo() do motor: no bundle (futuro da UI de Ordália) GODS/BESTIARIO são
+// globais; em Node lê os módulos. É o catálogo que o jogo REALMENTE roda — o hash e o montar têm de vê-lo (§150:
+// o carimbo garante contra o oponente que o jogo roda; um bestiário fora do hash deixaria criatura rebalanceada
+// passar em silêncio).
+function catalogoProvacao() {
+  const gods = (typeof GODS !== 'undefined') ? GODS : require('./catalogo.js').GODS;
+  const best = (typeof BESTIARIO !== 'undefined') ? BESTIARIO : require('./bestiario.js').BESTIARIO;
+  return { ...gods, ...best };
+}
+
 function _djb2(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
-function catalogoHash(prov, gods) {
+function catalogoHash(prov, gods = catalogoProvacao()) {
   const keys = [...new Set([...(prov.aliados || []), ...(prov.inimigos || [])])].sort();
   return _djb2(keys.map(k => k + ':' + JSON.stringify(gods[k] || null)).join('|'));
 }
@@ -128,11 +139,16 @@ function validarProvacao(prov) {
 // -------- montar o estado inicial (o "estado montado à mão") --------
 function montarProvacao(prov) {
   const m = prov.montar || {};
-  const st = novoEstado(prov.aliados, prov.inimigos, m.seed || 1, m.comeca || 0);   // novoEstado: global (bundle) / via Object.assign nos testes
+  // catálogo MERGED (deuses ∪ bestiário): os inimigos de uma Ordália podem ser criaturas. novoEstado recebe o
+  // catálogo (o motor não possui dados); passo energia=null p/ manter o default de geração.
+  const st = novoEstado(prov.aliados, prov.inimigos, m.seed || 1, m.comeca || 0, null, catalogoProvacao());
   if (m.orbs) for (const l of [0, 1]) if (m.orbs[l]) for (const el in m.orbs[l]) st.lados[l].orbs[el] = m.orbs[l][el];
   for (const u of (m.unidades || [])) {
     const un = st.lados[u.lado] && st.lados[u.lado].units[u.idx];
     if (!un) continue;
+    // CHEFE = deus do roster + HP inflado: maxHp ANTES do hp (o hp não pode nascer acima do teto). "deus + 200-300"
+    // é o mecanismo de chefe — não há kit de chefe separado; a Provação sobe o maxHp da unidade aqui (§ owner F2.3).
+    if (u.maxHp != null) un.maxHp = u.maxHp;
     if (u.hp != null) un.hp = u.hp;
     if (u.shield != null) un.shield = u.shield;
     if (u.efeitos) un.efeitos.push(...u.efeitos);
@@ -171,5 +187,5 @@ function avaliarProvacao(st, prov) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PREDICADOS, MODOS, FONTES_ACUMULO, validarProvacao, montarProvacao, avaliarProvacao, catalogoHash };
+  module.exports = { PREDICADOS, MODOS, FONTES_ACUMULO, validarProvacao, montarProvacao, avaliarProvacao, catalogoHash, catalogoProvacao };
 }

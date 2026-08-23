@@ -1,0 +1,33 @@
+{
+  "key": "guardiao_bosque",
+  "nome": "Guardião do Bosque",
+  "elem": "Verdejante",
+  "classe": "Físico",
+  "funcao": "Guardião",
+  "hp": 120,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Físico",
+      "nome": "Pancada de Raiz",
+      "cost": { "Verdejante": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Físico",
+      "nome": "Emaranhado",
+      "cost": { "Verdejante": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "1 inimigo não pode usar Habilidade por 1 turno; o Guardião ganha 15 de Defesa Destrutível.",
+      "fx": [
+        { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 } },
+        { "t": "shield", "v": 15, "escopo": "self" }
+      ]
+    }
+  ]
+}

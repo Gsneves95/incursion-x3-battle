@@ -1,0 +1,32 @@
+{
+  "key": "aparicao",
+  "nome": "Aparição Sussurrante",
+  "elem": "Aurora",
+  "classe": "Mágico",
+  "funcao": "Controlador",
+  "hp": 75,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Toque Espectral",
+      "cost": { "Aurora": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo.",
+      "fx": [ { "t": "dmg", "v": 10 } ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mental",
+      "nome": "Sussurro Silente",
+      "cost": { "Aurora": 2 },
+      "cd": 3,
+      "alvo": "inimigo",
+      "desc": "Silencia 1 inimigo por 1 turno (não pode usar nenhuma Habilidade nem Milagre).",
+      "fx": [
+        { "t": "apply", "eff": { "type": "selado", "dur": 1 } }
+      ]
+    }
+  ]
+}

@@ -86,7 +86,7 @@ function avancarOponente(st, nivel) {   // roda o turno da IA (determinística, 
 
 function rotulo(st, mv) {
   const u = st.lados.flatMap(l => l.units).find(x => x.uid === mv.uid);
-  const g = u && (E.GODS[u.key] || {}); const ab = g && g.ab && g.ab.find(x => x.slot === mv.slot);
+  const g = u && (PROV.catalogoProvacao()[u.key] || {}); const ab = g && g.ab && g.ab.find(x => x.slot === mv.slot);   // catálogo MERGED: o alvo pode ser uma criatura do bestiário, não só deus
   const nome = (ab && ab.nome) || mv.slot;
   const alvos = (mv.alvos || []).map(id => { const t = st.lados.flatMap(l => l.units).find(x => x.uid === id); return (t && t.key) || id; }).join('+');
   return `${u ? u.key : '?'} ${nome}${alvos ? ' → ' + alvos : ''}${mv.modo != null ? ` [modo ${mv.modo}]` : ''}`;
@@ -174,7 +174,7 @@ if (require.main === module) {
     if (carimbar) {
       // carimbo de versão (§148): hash do catálogo + O QUE foi verificado (veredito, nível de IA, caminho)
       prov.verificacao = {
-        hash: PROV.catalogoHash(prov, E.GODS), nivelIA: r.nivelIA, veredito: r.veredito,
+        hash: PROV.catalogoHash(prov), nivelIA: r.nivelIA, veredito: r.veredito,   // hash do catálogo MERGED (deuses∪bestiário) — o que o jogo roda
         lancesNesteCaminho: r.comprimento != null ? r.comprimento : null,   // NÃO o mínimo (§): teto solto
         nos: r.nos, ms: r.ms, caminho: r.sequencia || null,
       };

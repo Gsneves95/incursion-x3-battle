@@ -1,0 +1,36 @@
+{
+  "key": "elemental_chama",
+  "nome": "Elemental de Chama",
+  "elem": "Chama",
+  "classe": "Mágico",
+  "funcao": "Atacante",
+  "hp": 70,
+  "ab": [
+    {
+      "slot": "basico",
+      "classe": "Mágico",
+      "nome": "Labareda",
+      "cost": { "Chama": 1 },
+      "cd": 0,
+      "alvo": "inimigo",
+      "desc": "10 de dano a 1 inimigo e Queimadura (6 por turno, 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 10 },
+        { "t": "dot", "nome": "queimadura", "v": 6, "dur": 2 }
+      ]
+    },
+    {
+      "slot": "habilidade",
+      "classe": "Mágico",
+      "nome": "Explosão Ardente",
+      "cost": { "Chama": 2 },
+      "cd": 2,
+      "alvo": "2inimigos",
+      "desc": "10 de dano a 2 inimigos e Queimadura (6 por turno, 2 turnos).",
+      "fx": [
+        { "t": "dmg", "v": 10 },
+        { "t": "dot", "nome": "queimadura", "v": 6, "dur": 2 }
+      ]
+    }
+  ]
+}
