@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §151 — F2.3: o bestiário (12 criaturas PvE). Régua PRÓPRIA de tropa (teste que morde), HP do kit nos dois sentidos, e 11/11 destravadas.
+
+**As 12 se exprimem SEM mecanismo novo — varrido contra o motor de hoje, não contra a memória (§93).** Uma achou `curaPorAlvo` (fixo, por alvo atingido, curador = atacante) na via de dmg de qualquer slot; outra reusou `imunidade a:[controle]` (Ísis), `taunt`+`shield` (Cérberus), `alvoHp{aliado,min}` (Dagda), `reducao contra:{classe}` (Oni), `refleteDano`, `selado`, `lockSkill`, `seCond{alvoHp}` (Durga). Zero primitiva.
+
+**As 3 decisões do dono, registradas:**
+- **#1 Servo de Cinzas — SIMPLIFICADO a atacante puro de 12, sem a explosão-ao-cair** (§55/§87: o one-off não se justifica na tropa). **Divergência-COM-gatilho anotada:** se um DEUS futuro pedir morte→dano-no-aliado, a primitiva nasce com o consumidor certo e o Servo herda; até lá, não se inventa a primitiva para uma criatura.
+- **#9 Quimera — imunidade TOTAL a controle**, não "só alvo único". Registrado como **aproximação-para-cima, na mesma família do cleanse total da Nüwa/Ísis**: a peça exata (imune só a controle de alvo único) não existe e não vale um mecanismo; a aproximação mais forte é a honesta. Resto do kit conferido — não ficou forte demais (130 HP, 3×6 no básico, 15 em área).
+- **Tropa tem RÉGUA PRÓPRIA, não isenção.** "Tropa não é auditada" era o buraco; "básico de tropa até 20, habilidade até 25" é uma régua. Dano só (cura/escudo não auditados, espelha o auditor de deus). Milagre: tropa não tem.
+
+**O teto: 20/25, e por que NÃO 18/24 (colado nos máximos).** Os máximos reais são básico 18 (Ghoul condicional / Quimera 3×6) e habilidade 24 (Ceifador). O dono recusou a régua colada: **"régua que quebra com um ponto de balanceamento não é régua, é fotografia do estado atual"** — 18/24 reprovaria o primeiro +1 num Ghoul/Quimera/Ceifador. 20/25 dá 2 de folga e iguala o teto de habilidade do deus (uma habilidade de tropa nunca supera a de um deus).
+
+**A régua é TESTE QUE RODA, não comentário (exigência do dono).** Mora em `tests/bestiario.test.js`, no `npm test`, e **morde de verdade**: uma criatura inventada com 25 no básico é REPROVADA pelo mesmo auditor que aprova as 12 (prova negativa no teste). "Se não está na suíte, não existe" — régua declarada em comentário é o buraco de novo. (O schema do bestiário é validado na build, `build.js §3-bis`; a régua de balanceamento é da suíte.)
+
+**§115 ESTENDIDO (a pedido do dono):** eu havia marcado o lifesteal do Ghoul como "micro-decisão em aberto" (achava que só existia `dreno` = lifesteal total, sem gatilho `aoAtacar`). Era falso: `curaPorAlvo` já existia. **Alegação de "isto está EM ABERTO" precisa de verificação tanto quanto a de "isto EXISTE".** O §115 dizia "não verifique estrutura relendo a mesma estrutura"; o corolário é que um "está aberto" herdado de resumo é uma alegação sobre o motor, e alegação sobre o motor se confere no motor.
+
+**HP do kit atravessa TODA unidade — provado nos dois sentidos no mesmo commit (§134).** `novaUnidade` lê `g.hp || 120`. O default `|| 120` é o que segura o outro lado: os 100 deuses (nenhum declara `hp`) nascem 120, `fracoes.test` não se moveu; a criatura com `hp` nasce com o dela (65..180). Campo que atravessa exige os dois lados provados juntos, não o novo sozinho.
+
+**Integração: `catalogoProvacao()` = deuses ∪ bestiário.** `montarProvacao` passa o merged a `novoEstado` (inimigo-criatura nasce com o hp dele) e aceita **override de `maxHp`** (CHEFE = deus do roster + 200-300; `maxHp` antes do `hp`, senão o hp nasceria acima do teto). `catalogoHash` e o carimbo do solucionador passam a usar o merged — **o hash tem de ver o que o jogo roda** (§150): um bestiário fora do hash deixaria criatura rebalanceada passar em silêncio.
+
+**11 de 11 destravadas — nominalmente, e sem sobra (§46: varrer a família antes de concluir).** As 11 que dependiam do bestiário: **ares · bennu · boitata · bragi · durga · hercules · kraken · mulasemcabeca · perseu · tanuki · ymir**. Bennu (Ceifador·Ghoul·Servo) e Tanuki (Vidente·Silfo·Quimera) — as duas que o dono apontou — destravam com as decisões tomadas. **Cross-check rigoroso:** cada nome de inimigo dos 91 conferido contra os 100 deuses ∪ 12 criaturas → **0 nomes não reconhecidos** (nenhuma 13ª criatura escondida, nenhum vazamento). Os 12 são exatamente os citados; não sobra criatura nem sobra Provação. (A varredura por palavra pegava 14 — kagutsuchi/aokuang/chaac eram falso-positivo por "Chama" o ELEMENTO, não a criatura; §46-homonímia de novo.)
+
+---
+
 ## §150 — F2.2: a IA por níveis. A Provação pina no 'normal'; a trava é IDENTIDADE (build FALHA na divergência).
 
 **Correção de vocabulário (registrada a pedido do dono):** o dono disse "previsível"; a propriedade exata é **DETERMINÍSTICO**. Forte-e-determinístico preserva o carimbo; fraco-e-aleatório não. A palavra certa muda o invariante: não é "a IA tem de ser fácil de prever", é "a mesma posição decide o mesmo lance, sempre".

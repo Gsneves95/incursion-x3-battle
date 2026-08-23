@@ -2,7 +2,31 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.2: a IA por níveis (Provação pina no 'normal'; trava = IDENTIDADE)
+## Última sessão — F2.3: o bestiário (12 criaturas PvE; régua de tropa; 11/11 destravadas)
+**Data:** 2026-08-23
+**Tarefa:** F2.3 — as 12 criaturas de PvE (vêm ANTES dos lotes: 11 das 91 dependem delas). §151.
+**Resultado:** as 12 em `data/bestiario/*.json`, **forma de deus + campo `hp`**, **zero mecanismo novo**
+(varrido contra o motor, §93). **3 decisões do dono:** #1 Servo = atacante puro de 12 sem explosão
+(divergência-com-gatilho anotada: deus futuro morte→dano faz nascer a primitiva, o Servo herda); #9 Quimera =
+imunidade TOTAL a controle (aproximação-para-cima, família do cleanse da Nüwa/Ísis); tropa tem **régua PRÓPRIA**.
+**Teto confirmado: básico 20 / habilidade 25** (dano só; cura/escudo não auditados) — o dono recusou 18/24
+colado nos máximos: "régua que quebra com um ponto de balanceamento é fotografia, não régua". A régua é
+**TESTE QUE RODA** (`tests/bestiario.test.js`, no `npm test`) e **morde**: criatura de 25 no básico REPROVA
+(prova negativa). Achado §115-estendido: o lifesteal do Ghoul NÃO estava em aberto — `curaPorAlvo:6` já existia;
+alegação de "está em aberto" também exige verificação. **`novaUnidade` lê `g.hp || 120`** — dois sentidos
+provados no mesmo commit (§134): 100 deuses seguem 120 (fracoes.test intacto), criatura nasce com o dela (65..180).
+**Integração:** `catalogoProvacao()` = deuses ∪ bestiário; `montarProvacao` passa o merged + aceita override de
+`maxHp` (CHEFE = deus + 200-300, maxHp antes do hp); `catalogoHash` e o carimbo usam o merged (o hash vê o que o
+jogo roda). **11 de 11 destravadas, sem sobra:** ares · bennu · boitata · bragi · durga · hercules · kraken ·
+mulasemcabeca · perseu · tanuki · ymir; cross-check dos 91 → **0 nomes de inimigo não reconhecidos** (nenhuma 13ª
+criatura, nenhum vazamento). **21 suítes verdes.** **PRÓXIMO (dono):** construir as 91 estruturadas em lote
+(regra §149 do INDETERMINADO: parar e reportar, afrouxar×dica é decisão do dono) — as 11 do bestiário já podem
+entrar; **checador cross-file `provacoes.json`↔`roster_data.js` (§146)** quando as 91 forem geradas; **anotar com
+endereço o custo do Difícil na arena** (§150: 3.200 partidas ~100s→~330s se a Fase 3 rodar no Difícil); e, quando
+a UI de Ordália existir, **injetar `BESTIARIO` no bundle** (hoje `provacao.js` é Node-only, o bestiário não vai ao
+`.html`).
+
+## Sessão — F2.2: a IA por níveis (Provação pina no 'normal'; trava = IDENTIDADE) (anterior)
 **Data:** 2026-08-21
 **Tarefa:** F2.2 — IA por níveis; decisão embutida: qual nível a Provação usa. §150.
 **Resultado:** correção de vocabulário — "previsível" → **DETERMINÍSTICO**; e o argumento decisivo é a
