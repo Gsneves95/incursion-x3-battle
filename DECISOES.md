@@ -49,6 +49,13 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **A lição do boto (registrada): `comeca:1` não só tornou coerente — quase resolveu.** A distância caiu de 136 p/ 2 e o `acionavel` VIROU de `dica` (estagnado) p/ `orcamento` (progredindo) — prova de que o 136 era o setup incoerente, não puzzle difícil. dionisio, mesmo fix, seguiu em `dica`/167: mesma condição, times diferentes — o time do dionisio controla mas não fecha o dano. (O `acionavel` distinguiu os dois casos sem eu adivinhar.)
 
+**PRINCÍPIO DIAGNÓSTICO (dono) — o par `(acionavel, melhorH)` diz QUAL classe de problema é, ANTES de qualquer decisão.** O `acionavel` provou ser DIAGNÓSTICO, não rótulo. Três leituras, três correções DIFERENTES:
+- **melhorH ALTO + estagnado (`dica`) → o TIME não fecha** (falta dano) → correção = **design de time** (troca um enabler por atacante). Dica não resolve falta de dano.
+- **melhorH BAIXO + progredindo (`orcamento`) → só orçamento** → correção = **mais nós** (boto: melhorH 2, resolveu com 400k).
+- **melhorH MÉDIO + estagnado (`dica`) → o caminho existe e é difícil de achar** → correção = **dica** (poseidon: melhorH 37, semente de sequência).
+
+Antes disso a régua era só "afrouxar × dica" (§149), pobre demais — não separava "o time não fecha" de "difícil de achar". O par `(acionavel, melhorH)` faz essa triagem e vale nos outros cinco lotes: LER o par antes de escolher a correção.
+
 **REVISÃO DA EXPECTATIVA (dono): 1 decisão a cada ~2,5 Provações ⇒ 91 são ~12 sessões, não 6.** Melhor saber no lote 1. E os dois INDETERMINADO iniciais serem `dica` confirmou a F2.1 no 1º lote — **consequência de produto (o dono trata depois deste lote): se Provações exigem dica p/ serem achadas, o jogo precisa de um SISTEMA DE DICAS que não está no plano.**
 
 **Débito de motor registrado (saci, §106): o log NÃO distingue roubo de ganho de orbe.** Antes de construir o tag (`orbe`/`efeito` com marca de roubo), VARRER quantas das 91 precisam da distinção `orbesRoubados`/`buffsRoubados` — a informação nasce com TODOS os consumidores (§104/§146), não só o saci.

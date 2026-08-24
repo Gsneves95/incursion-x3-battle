@@ -3,7 +3,7 @@
   "titulo": "O Banquete",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "dionisio", "anubis", "iansa" ],
+  "aliados": [ "dionisio", "anubis", "zeus" ],
   "inimigos": [ "ra", "brahma", "itzamna" ],
   "montar": { "seed": 1, "comeca": 1 },
   "condicoes": [
