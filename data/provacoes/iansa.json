@@ -1,0 +1,13 @@
+{
+  "key": "iansa",
+  "titulo": "O Corisco",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [ "iansa", "zeus", "susanoo" ],
+  "inimigos": [ "brahma", "hera", "freyja" ],
+  "montar": { "seed": 1, "comeca": 0 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 12 },
+    { "predicado": "limparBuffsAntesDeAbate" }
+  ]
+}
