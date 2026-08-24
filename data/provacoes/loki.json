@@ -1,0 +1,31 @@
+{
+  "key": "loki",
+  "titulo": "Trama Completa",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "loki",
+    "shiva",
+    "kali"
+  ],
+  "inimigos": [
+    "brahma",
+    "hercules",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "maximoNumEvento",
+      "fonte": "buffsRoubados",
+      "limiar": 6
+    }
+  ]
+}

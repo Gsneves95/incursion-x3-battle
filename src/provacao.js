@@ -90,6 +90,16 @@ const PREDICADOS = {
     distancia: (st, c, ctx) => { try { return Math.max(0, c.limiar - acumuladoDe(st, c, ctx)); } catch { return 0; } },   // quanto falta p/ o limiar (heurística do best-first)
   },
 
+  maximoNumEvento: {   // §153/§156 (loki): PICO de roubo num ÚNICO evento (≠ acumulo, que soma tudo). "roubar ≥6 buffs de uma só vez."
+    // A Trama do Caos (realoca) loga um evento por FONTE; loki casta 1× por turno e é o único ladrão-de-buff da sua Provação,
+    // então o pico-por-ativação = pico-por-TURNO da soma das qtd de roubo-p/-si (ganhouLado 0). (Se um dia 2 ladrões agirem no
+    // mesmo turno, trocar o agrupamento por-turno por um marcador de ativação.)
+    modo: 'log', obrig: ['fonte', 'limiar'],
+    aval: (st, c, ctx) => maxNumEvento(st, c, ctx) >= c.limiar ? 'ok' : 'pendente',
+    chave: (st, c, ctx) => { try { return String(maxNumEvento(st, c, ctx)); } catch { return ''; } },
+    distancia: (st, c, ctx) => { try { return Math.max(0, c.limiar - maxNumEvento(st, c, ctx)); } catch { return 0; } },
+  },
+
   // ---- FINAL (só julgável no fim) ----
   hpNoFim: {   // no golpe final, o HP de `quem` (chave de unidade) satisfaz op v — só faz sentido no estado final
     modo: 'final', obrig: ['quem', 'op', 'v'],
@@ -106,6 +116,20 @@ const PREDICADOS = {
 // nunca silenciam. golpe-final-com-limiar (susanoo/yamato) NÃO está aqui — é outro predicado (§46).
 const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoBonus', 'contador', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
 function _somaLog(st, f) { let s = 0; for (const e of st.log) s += (f(e) || 0); return s; }
+
+// §156 (loki): PICO por evento. Agrupa por TURNO os eventos de roubo-p/-si da fonte e devolve o MAIOR total num turno.
+function maxNumEvento(st, c, ctx) {
+  const porTurno = {};
+  for (const e of st.log) {
+    let q = 0;
+    if (c.fonte === 'buffsRoubados') q = (e.tipo === 'efeito' && e.ganhouLado === 0) ? (e.qtd || 1) : 0;   // roubo-p/-si de buff (realoca/stripOne rouba)
+    else if (c.fonte === 'orbesRoubados') q = (e.tipo === 'orbe' && e.ganhouLado === 0 && e.valor > 0) ? e.valor : 0;
+    else throw new Error(`maximoNumEvento: fonte não suportada "${c.fonte}"`);
+    if (q) porTurno[e.turno] = (porTurno[e.turno] || 0) + q;
+  }
+  let mx = 0; for (const t in porTurno) if (porTurno[t] > mx) mx = porTurno[t];
+  return mx;
+}
 function acumuladoDe(st, c, ctx) {
   switch (c.fonte) {
     case 'danoRefletido': return _somaLog(st, e => e.tipo === 'dano' && e.kind === 'reflexo' && ctx.ladoDe(e.origem) === 0 ? e.valor : 0);

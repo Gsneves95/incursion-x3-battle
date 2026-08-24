@@ -151,6 +151,28 @@ console.log('== 9. limparBuffsAntesDeAbate (§156, iansã): limpar TODOS os buff
   console.log('  limpar-antes → ok · matar-antes-de-limpar → falha · nada ainda → pendente');
 }
 
+console.log('== 10. maximoNumEvento (§156, loki): PICO por turno, NÃO a soma cumulativa (a distinção saci×loki) ==');
+{
+  const mx = (log, fonte, limiar) => PROV.PREDICADOS.maximoNumEvento.aval({ log }, { fonte, limiar }, { ladoDe: () => 0 });
+  const acu = (log, fonte, limiar) => PROV.PREDICADOS.acumulo.aval({ lados:[{}, {}], log }, { fonte, limiar }, { ladoDe: () => 0 });
+  // dois turnos roubando 3 cada: cumulativo=6, PICO=3
+  const doisTurnos = [
+    { tipo: 'efeito', turno: 2, efeito: 'buff', ganhouLado: 0, qtd: 3 },
+    { tipo: 'efeito', turno: 5, efeito: 'buff', ganhouLado: 0, qtd: 3 },
+  ];
+  ok(mx(doisTurnos, 'buffsRoubados', 6) === 'pendente', 'pico ≠ soma: 3+3 em turnos distintos NÃO satisfaz pico 6');
+  ok(mx(doisTurnos, 'buffsRoubados', 3) === 'ok', 'pico 3 (um turno) satisfaz limiar 3');
+  ok(acu(doisTurnos, 'buffsRoubados', 6) === 'ok', 'acumulo (saci) SOMA os dois turnos → 6 ok — a MESMA log, leituras diferentes (§46)');
+  // um turno, 3 fontes de 2 (uma Trama que rouba de 3 inimigos): pico=6
+  const umTurno = [
+    { tipo: 'efeito', turno: 3, efeito: 'buff', ganhouLado: 0, qtd: 2 },
+    { tipo: 'efeito', turno: 3, efeito: 'buff', ganhouLado: 0, qtd: 2 },
+    { tipo: 'efeito', turno: 3, efeito: 'buff', ganhouLado: 0, qtd: 2 },
+  ];
+  ok(mx(umTurno, 'buffsRoubados', 6) === 'ok', 'uma Trama roubando 2+2+2 no MESMO turno = pico 6 → ok');
+  console.log('  pico-por-turno ≠ soma cumulativa · a mesma log serve os dois predicados (§46)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -1,0 +1,31 @@
+{
+  "key": "shutendoji",
+  "titulo": "O Banquete de Ōe",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "shutendoji",
+    "cerberus",
+    "shiva"
+  ],
+  "inimigos": [
+    "krishna",
+    "brahma",
+    "oxum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "orbesRoubados",
+      "limiar": 8
+    }
+  ]
+}
