@@ -6,6 +6,45 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §155 — VARREDURA POR CONCEITO das 91 (o número certo ANTES de sequenciar, dono): 26 formas-rider, não os sintomas da F2.0.
+
+**Li a cláusula que DEFINE a vitória em cada uma das 91 (flavor descartado, §154), atribuí UM rider primário, e conferi cobertura (91/91, soma bate).** O símbolo `*` = construída. As famílias, por tamanho:
+
+| n | forma-rider (predicado) | Provações |
+|---|---|---|
+| 8 | MORTE_EXECUCAO (só um abate específico/contagem resolve; vs revive/piso-1) | hades fenrir horus ammit izanami yanwong durga morrigan |
+| 8 | SEM_PERDER (vença sem perder aliado) | atena apolo* hera thor oni guanyu change oxala |
+| 8 | ACUMULO_CONTADOR (capstone com N stacks/combo) | hercules ra susanoo raijin kitsune yamatotakeru brahma itzamna |
+| 6 | HP_FIM (limiar de HP próprio/aliado no fim) | ares aquiles odin ymir vishnu mulasemcabeca |
+| 5 | MORTE_ESTADO (inimigo cai marcado por estado) | poseidon* jormungandr iara piranha ahpuch |
+| 5 | REVIVE_ALIADO (aliado cai e volta, vença) | demeter freyja osiris isis bennu |
+| 5 | ESTADO_CONTINUO (campo/estado mantido todo turno a partir de X) | orfeu amaterasu tsukuyomi huangdi dagda |
+| 5 | ESTADO_SIMULTANEO (os 3 no mesmo estado ao mesmo tempo) | medusa anubis aokuang kukulkan chaac |
+| 5 | PROTEGER_UNIDADE (uma unidade não pode sofrer dano / só ela pode) | cerberus bastet mnevis hanuman boitata |
+| 5 | ACUMULO_RECURSO (absorve/reflete/armazena/guarda/cura → limiar) | khnum inari xango oxum cernunnos |
+| 3 | NEGAR (negarAcaoInimigo milagre) — **LOTE 2, fechado** | dionisio* khonshu* boto* |
+| 3 | ACUMULO_ROUBO (orbe/buff PARA si → limiar) | hermes shutendoji saci* |
+| 3 | SEM_CONTROLE_ALIADO (nenhum aliado controlado/debuffado/morto-por-DoT) | perseu nefertem izanagi |
+| 3 | LUTA_TEMATICA (só vencer; o set nega o kit, sem rider medível) | baldur babi kagutsuchi |
+| 3 | PROIBIR_SLOT (não usar slot próprio) | bragi* shiva kali |
+| 3 | USAR_SLOT_N (usar slot próprio N vezes) | houyi exu lugh |
+| 2 | ABATE_PROPRIO_LADO (inimigos mortos pelo próprio lado) | afrodite curupira |
+| 2 | ALIADO_MORTO_FIM (um aliado específico morto/única viva no fim) | erinias mimir |
+| 2 | ESCOLHA_VARIADA (sem repetir a mesma escolha) | tanuki nuwa |
+| 1 | ABATE_POR_SLOT (golpe final por habilidade X em ≥2) | kraken |
+| 1 | MAXIMO_EVENTO (pico de um único evento) | loki |
+| 1 | SEM_REVIVE_INIMIGO (nenhum inimigo revivido) | hel |
+| 1 | SEM_PERDER_ORBE (nenhum orbe perdido a roubo) | heimdall |
+| 1 | SEM_ACIONAR_PASSIVA (não disparar a rede de sobrevivência) | sunwukong |
+| 1 | ABATE_COM_CONDICAO (todo abate sob um buff) | krishna |
+| 1 | REMOCAO_BUFF (remover buff do alvo — não roubar) | iansa |
+
+**Compostos assinalados pelo PRIMÁRIO; 2ºs riders anotados na íntegra em `scratchpad`/no relatório** (ex.: odin HP_FIM+usar3; hera SEM_PERDER+juramento-no-abate; yamato CONTADOR+remove-3-buff; itzamna CONTADOR+protege-HPmax). O owner sequencia; ao re-slotar, alguns compostos podem migrar de família.
+
+**AGRUPAMENTO NATURAL PROPOSTO (o owner decide as fronteiras):** a família ROUBO/REMOÇÃO é o **lote 3** (o consumidor do tag §153, e onde mora a dívida de motor): ACUMULO_ROUBO (hermes, shutendoji) + MAXIMO_EVENTO (loki) + SEM_PERDER_ORBE (heimdall) + REMOCAO_BUFF (iansa) + **fechar o saci** = ~5 novas. Dívida a construir aqui: `maximoNumEvento` (loki, pico-por-evento ≠ o cumulativo do saci), orbe-perdido-a-roubo (heimdall), buffs-removidos (iansa/yamato). Os demais ~78 caem em famílias grandes (MORTE, ACÚMULO-não-roubo, ESTADO, PRESERVAÇÃO-de-aliado) — cada uma dá mais de um lote; 4 lotes (3-6) não cobrem as 91, a taxa do §152 (~12 sessões) é o número honesto. **Construídas: 7** (apolo, bragi, poseidon | dionisio, boto, khonshu | saci-WIP). **Restam: 84** (83 + saci a fechar).
+
+---
+
 ## §154 — F2.4 (lote 2, NEGAÇÃO): khonshu fecha pelo RELÓGIO (não dica), o enemy-set-por-LEITURA como 1º passo, e o exu sai por FLAVOR≠RIDER.
 
 **LOTE 2 = forma `negarAcaoInimigo` (§152: a forma é o RIDER). Varredura por conceito: 4 Provações, não as ~"N" do sintoma.** dionisio e boto já fecharam no lote 1 (mesma forma, control-pesado, sem dica — §152). khonshu é o único BUILD novo do lote. exu SAI (ver abaixo). Lote 2 fechado: 3 construídas + carimbadas (dionisio, boto, khonshu), 1 realocada (exu→lote 6).
