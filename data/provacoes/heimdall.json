@@ -3,11 +3,65 @@
   "titulo": "A Vigília Não Dorme",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "heimdall", "thor", "zeus" ],
-  "inimigos": [ "exu", "hermes", "saci" ],
-  "montar": { "seed": 1, "comeca": 0 },
+  "aliados": [
+    "heimdall",
+    "thor",
+    "zeus"
+  ],
+  "inimigos": [
+    "exu",
+    "hermes",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 12 },
-    { "predicado": "semPerderOrbe" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "semPerderOrbe"
+    }
+  ],
+  "verificacao": {
+    "hash": "d02e1683",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 4722,
+    "ms": 1551,
+    "caminho": [
+      "heimdall Lâmina Vigilante → exu",
+      "thor Golpe de Mjölnir → exu",
+      "passar",
+      "thor Arremesso de Mjölnir → exu+hermes",
+      "heimdall Lâmina Vigilante → exu",
+      "passar",
+      "thor Tempestade de Asgard",
+      "heimdall Lâmina Vigilante → exu",
+      "passar",
+      "zeus Ira Celestial",
+      "heimdall Lâmina Vigilante → hermes",
+      "passar",
+      "thor Arremesso de Mjölnir → hermes+saci",
+      "zeus Cetro do Trovão → hermes",
+      "passar",
+      "thor Arremesso de Mjölnir → hermes+saci",
+      "zeus Cetro do Trovão → hermes",
+      "passar",
+      "thor Golpe de Mjölnir → saci",
+      "heimdall Lâmina Vigilante → saci",
+      "zeus Cetro do Trovão → saci",
+      "passar",
+      "heimdall Lâmina Vigilante → saci",
+      "thor Golpe de Mjölnir → saci",
+      "passar",
+      "heimdall Lâmina Vigilante → saci",
+      "thor Golpe de Mjölnir → saci"
+    ]
+  }
 }
