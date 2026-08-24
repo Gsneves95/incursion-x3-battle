@@ -1,0 +1,14 @@
+{
+  "key": "saci",
+  "titulo": "A Travessura",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [ "saci", "zeus", "hermes" ],
+  "inimigos": [ "horus", "houyi", "boitata" ],
+  "montar": { "seed": 1, "comeca": 0 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 9 },
+    { "predicado": "acumulo", "fonte": "orbesRoubados", "limiar": 5 },
+    { "predicado": "acumulo", "fonte": "buffsRoubados", "limiar": 3 }
+  ]
+}
