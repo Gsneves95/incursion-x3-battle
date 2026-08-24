@@ -3,12 +3,34 @@
   "titulo": "A Travessura",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "saci", "zeus", "susanoo" ],
-  "inimigos": [ "horus", "houyi", "brahma" ],
-  "montar": { "seed": 1, "comeca": 0 },
+  "aliados": [
+    "saci",
+    "zeus",
+    "susanoo"
+  ],
+  "inimigos": [
+    "horus",
+    "houyi",
+    "brahma"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 9 },
-    { "predicado": "acumulo", "fonte": "orbesRoubados", "limiar": 5 },
-    { "predicado": "acumulo", "fonte": "buffsRoubados", "limiar": 3 }
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "orbesRoubados",
+      "limiar": 5
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "buffsRoubados",
+      "limiar": 3
+    }
   ]
 }
