@@ -3,8 +3,8 @@
   "titulo": "A Travessura",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "saci", "zeus", "hermes" ],
-  "inimigos": [ "horus", "houyi", "boitata" ],
+  "aliados": [ "saci", "zeus", "susanoo" ],
+  "inimigos": [ "horus", "houyi", "brahma" ],
   "montar": { "seed": 1, "comeca": 0 },
   "condicoes": [
     { "predicado": "deadline", "turnos": 9 },
