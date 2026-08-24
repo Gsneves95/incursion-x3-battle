@@ -96,6 +96,10 @@ function acumuladoDe(st, c, ctx) {
     case 'curaAcumulada': return _somaLog(st, e => e.tipo === 'cura' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);
     case 'orbesGuardados': return Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
     case 'contador': { const u = st.lados[0].units.find(x => x.key === c.quem) || st.lados[0].units[0]; return (u && u.contadores[c.contador]) || 0; }
+    // §153 (tag de roubo): ganhouLado===0 = o JOGADOR levou p/ si (≠ remoção pura, ganhouLado null; ≠ roubo inimigo, 1).
+    // ROUBO-p/-si, cumulativo. buffsRoubados por-EVENTO (loki) é OUTRO predicado (maximoNumEvento), não esta soma.
+    case 'orbesRoubados': return _somaLog(st, e => e.tipo === 'orbe' && e.ganhouLado === 0 && e.valor > 0 ? e.valor : 0);
+    case 'buffsRoubados': return _somaLog(st, e => e.tipo === 'efeito' && e.ganhouLado === 0 ? (e.qtd || 1) : 0);
     default: throw new Error(`acumulo: fonte "${c.fonte}" registrada mas acumuladoDe() ainda não implementado — implementar ao construir a Provação que a usa`);
   }
 }

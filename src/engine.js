@@ -314,6 +314,12 @@ const VOCAB = {
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
+    // TAG DE ROUBO/REMOÇÃO (§153): AÇÃO + DIREÇÃO num evento orbe/efeito de transferência. `perdeuLado`=quem
+    // perdeu; `ganhouLado`=quem ganhou (null = REMOÇÃO pura, ninguém ganhou); `qtd`=quantos buffs (orbe usa `valor`).
+    // Os 4 consumidores caem de leitura sobre o log, sem rastreio novo (§106): orbesRoubados(ganhouLado===0) ·
+    // buffsRoubados(ganhouLado===0) · buffs-removidos(perdeuLado do inimigo) · orbe-perdido-a-roubo(perdeuLado===0
+    // & ganhouLado===1, ≠ gasto, que não carrega a tag).
+    'perdeuLado', 'ganhouLado', 'qtd',
     // RESERVADOS p/ sub-tokens de 0-kit (nome canônico decidido agora, complete-by-construction):
     'habilidadeCopiada',   // efeito:copiar — qual Habilidade foi copiada (Ísis, F1.3)
     'execucao',            // queda:execucao — a morte foi por execução (Yan Wong reage a isto)
@@ -1272,7 +1278,7 @@ function rodarNoAtor(st, dono, ator, payload) {
     if (f.t === 'dmg') { const feito = bater(st, dono, ator, f.v, 'puro', 'torpor', {}); if (f.dreno) curar(st, dono, feito, dono); }   // §135 (Shuten): dreno = "rouba HP" (lifesteal — o dano vira cura no dono). O contra do noAtor já não recursa (§F1.4)
     else if (f.t === 'dot') aplicarDot(st, ator, f.nome, f.v, f.dur, dono.uid);
     else if (f.t === 'apply') aplicar(st, ator, { ...f.eff, origem: dono.uid });
-    else if (f.t === 'roubaOrbe') { const li = st.lados[ator.lado]; let n = 0; for (let i = 0; i < (f.n || 1); i++) { const el = ELEMS.filter(x => li.orbs[x] > 0).sort((a, b) => li.orbs[b] - li.orbs[a])[0]; if (!el) break; li.orbs[el]--; n++; if (f.rouba) st.lados[dono.lado].orbs[el]++; } if (n) { log(st, { tipo: 'orbe', lado: ator.lado, valor: -n }); if (f.rouba) log(st, { tipo: 'orbe', lado: dono.lado, valor: n }); } }   // §135 (Shuten): roubaOrbe REATIVO no noAtor — "rouba 1 orbe dele" quando o ator age
+    else if (f.t === 'roubaOrbe') { const li = st.lados[ator.lado]; let n = 0; for (let i = 0; i < (f.n || 1); i++) { const el = ELEMS.filter(x => li.orbs[x] > 0).sort((a, b) => li.orbs[b] - li.orbs[a])[0]; if (!el) break; li.orbs[el]--; n++; if (f.rouba) st.lados[dono.lado].orbs[el]++; } if (n) { log(st, { tipo: 'orbe', lado: ator.lado, valor: -n, perdeuLado: ator.lado, ganhouLado: f.rouba ? dono.lado : null }); if (f.rouba) log(st, { tipo: 'orbe', lado: dono.lado, valor: n, perdeuLado: ator.lado, ganhouLado: dono.lado }); } }   // §135 (Shuten): roubaOrbe REATIVO no noAtor; §153 tag roubo/remoção — "rouba 1 orbe dele" quando o ator age
   }
 }
 
@@ -1770,9 +1776,9 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
       else if (e.t === 'stripDef') t.efeitos = t.efeitos.filter(x => !BUFFS_DEF.includes(x.type));
       else if (e.t === 'stripOne') {
         const i = t.efeitos.findIndex(x => BUFFS.includes(x.type));
-        if (i >= 0) { const rem = t.efeitos[i]; log(st, { tipo: 'efeito', alvo: t.key, efeito: rem.type, duracao: 0 }); t.efeitos.splice(i, 1); if (e.rouba) aplicar(st, u, { ...rem, origem: u.uid }); }   // §131 (Saci migrado): rouba=true → o buff removido vai p/ o lançador (roubo de 1 buff, ≠ realoca que move TODOS)
+        if (i >= 0) { const rem = t.efeitos[i]; log(st, { tipo: 'efeito', alvo: t.key, efeito: rem.type, duracao: 0, perdeuLado: t.lado, ganhouLado: e.rouba ? u.lado : null, qtd: 1 }); t.efeitos.splice(i, 1); if (e.rouba) aplicar(st, u, { ...rem, origem: u.uid }); }   // §131 (Saci migrado): rouba=true → o buff removido vai p/ o lançador (roubo de 1 buff, ≠ realoca que move TODOS); §153 tag
       }
-      else if (e.t === 'stripBuffs') { t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type)); t.shield = 0; }   // §136 (Yamato): remove TODOS os buffs (efeitos BUFFS + escudo); ≠ stripOne (um) e ≠ realoca (move)
+      else if (e.t === 'stripBuffs') { const antes = t.efeitos.length; t.efeitos = t.efeitos.filter(x => !BUFFS.includes(x.type)); const nrem = antes - t.efeitos.length; t.shield = 0; if (nrem) log(st, { tipo: 'efeito', alvo: t.key, efeito: 'buff', duracao: 0, perdeuLado: t.lado, ganhouLado: null, qtd: nrem }); }   // §136 (Yamato): remove TODOS os buffs (efeitos BUFFS + escudo); ≠ stripOne (um) e ≠ realoca (move). §153: loga a remoção (era junta-não-ligada — yamato/iansã não viam) com qtd; ganhouLado null = remoção pura
       else if (e.t === 'cleanse') { t.efeitos = t.efeitos.filter(x => !DEBUFFS.includes(x.type)); t.dots = []; }
       else if (e.t === 'shield') { t.shield += e.v; log(st, { tipo: 'escudo', alvo: t.key, valor: e.v }); }
       else if (e.t === 'restauraMax') {   // Itzamná: devolve o HP máximo perdido (Podridão) — SEM curar (hp fica)
@@ -1822,7 +1828,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
         for (const x of src.efeitos) { if (membro(x.type)) { coletados.push({ ...x }); tirou++; } else fica.push(x); }
         src.efeitos = fica;
         if (!ehBuff && src.dots.length) { for (const d of src.dots) coletados.push({ dot: true, ...d }); tirou += src.dots.length; src.dots = []; }   // "debuff" inclui DoT (como em statusCasou/alvoDebuff)
-        if (tirou) log(st, { tipo: 'efeito', alvo: src.key, efeito: e.categoria, duracao: 0 });
+        if (tirou) log(st, { tipo: 'efeito', alvo: src.key, efeito: e.categoria, duracao: 0, perdeuLado: src.lado, ganhouLado: (e.para === 'inimigos' ? 1 - u.lado : u.lado), qtd: tirou });   // §153 tag: realoca MOVE (ganhouLado = destino) — loki lê o pico por-evento (qtd)
       }
       for (const dst of dest) for (const c of coletados) {
         if (c.dot) aplicarDot(st, dst, c.nome, c.v, c.dur, u.uid, c.escala, !!c.naoRevive);
@@ -1904,7 +1910,7 @@ function aplicarFx(st, u, fx, a, alvos = [], escolhas = null) {
           li.orbs[el]--; n++;
           if (e.rouba) l.orbs[el]++;
         }
-        if (n) { log(st, { tipo: 'orbe', lado: 1 - u.lado, valor: -n }); if (e.rouba) log(st, { tipo: 'orbe', lado: u.lado, valor: n }); }
+        if (n) { log(st, { tipo: 'orbe', lado: 1 - u.lado, valor: -n, perdeuLado: 1 - u.lado, ganhouLado: e.rouba ? u.lado : null }); if (e.rouba) log(st, { tipo: 'orbe', lado: u.lado, valor: n, perdeuLado: 1 - u.lado, ganhouLado: u.lado }); }   // §153 tag roubo/remoção
       }
     }
   }
