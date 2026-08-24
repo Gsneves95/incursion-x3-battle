@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §156 — F2.4 LOTE 3 (ROUBO/REMOÇÃO): a TRADUÇÃO (§124) antes de escrever pegou 2 problemas estruturais (enemy-set-first) e mapeou 3 mecanismos de motor.
+
+**Lote confirmado pelo dono: hermes, shutendoji, loki, heimdall, iansã + fechar o saci. Cada mecanismo construído COM o consumidor na mesma leva (dono), não antes.** Traduzi os 5 ANTES de escrever qualquer um (§124), com o enemy-set-first por LEITURA em cada (§154). Resultado por membro:
+
+| deus | rider real (predicado) | enemy-set coerente? | motor a construir | risco |
+|---|---|---|---|---|
+| **heimdall** | deadline12 + **orbe-perdido-a-roubo = 0** (nenhum orbe perdido a roubo inimigo) | ✓ exu·hermes·saci **roubam orbe** (produzem a ameaça) | `semPerderOrbe` (perdeuLado 0 & ganhouLado 1) | baixo |
+| **loki** | **maximoNumEvento(buffsRoubados) ≥6** (pico de UM evento — Trama do Caos) | ✓ atena·hera·freyja aplicam buff todo turno (produzem) | `maximoNumEvento` (≠ o cumulativo do saci) | médio (anti-greedy: manter vivo p/ acumular 6, depois roubar 1×) |
+| **shutendoji** | deadline12 + **orbesRoubados ≥8** (via torpor) + **negarAcaoInimigo milagre ≤1** | ✓ krishna·brahma·oxum "baterias de orbe" (a verificar: SEGURAM orbe p/ roubar) | reusa orbesRoubados; +limiar-de-negação(≤1) | **ALTO — teto de findability (§153): orbe8 é o caso mais fundo da classe "roube N enquanto abate"** |
+| **hermes** | **economia: começa 0 orbe, SEM geração** (só gasta orbe roubado) + heimdall-por-básico | ✓ exu·oxum têm orbe; heimdall bloqueia roubo (cai 1º) — coerente | `semGeracaoOrbe`/`comecaOrbes:0` (flag de economia no montar) + talvez `abatePorSlot(alvo,básico)` | alto (mecânica de economia nova, pesada) |
+| **iansã** | **remover TODO buff dos 3 ANTES da 1ª queda** | **✗ INCOERENTE — o espelho do §153/§154:** susanoo e thor NÃO aplicam buff-efeito nenhum (combo=contador, reducao/bonusDano=gatilho de passiva, não efeito); só ogum, 1 dmgUp tardio (milagre). 2 de 3 nunca carregam buff. | `buffsRemovidos-antes-da-1ª-queda` | **BLOQUEADO — decisão de enemy-set do dono** |
+
+**Achado 1 (iansã) — enemy-set incoerente, o mesmo espelho que o Brahma resolveu no saci.** "Remover todo buff dos três antes de derrubar qualquer deus" contra ogum·susanoo·thor é quase-VAZIO: só ogum gera 1 buff (e tardio). Correção = trocar o set por deuses que se enchem de buff TODO TURNO (candidatos self-buff: atena, hera, freyja — mas essas são do loki; ou brahma·dmgUp, guanyu, brigid). **Decisão do dono (enemy-set vem antes do time, §154).** Recomendo um trio com 3 fontes de buff sustentado (ex.: brahma + hera + freyja), para "remover TODO buff" ser um alvo móvel real.
+
+**Achado 2 (shutendoji) — o teto de findability do §153 aplica-se, mais fundo (orbe8).** É a classe "roube N enquanto vence" com N=8 (o saci travou em 5). Antes de construir, o dono decide junto com o rework do saci: se a classe inteira aceita dica (uso legítimo — a linha existe, a heurística não acha) ou se os thresholds baixam. Não vou queimar orçamento provando o óbvio até a política da classe estar decidida.
+
+**Ordem de construção (do baixo-risco ao alto, cada um com teste que RODA §148):** (1) heimdall `semPerderOrbe` — o mais limpo; (2) loki `maximoNumEvento`; (3) iansã APÓS o dono trocar o set; (4) shutendoji + hermes APÓS a política da classe-ceiling. saci: rework do dono (recomendo (c) roubar ≥1 buff E ≥1 orbe — solver-friendly, mantém a identidade).
+
+---
+
 ## §155 — VARREDURA POR CONCEITO das 91 (o número certo ANTES de sequenciar, dono): 26 formas-rider, não os sintomas da F2.0.
 
 **Li a cláusula que DEFINE a vitória em cada uma das 91 (flavor descartado, §154), atribuí UM rider primário, e conferi cobertura (91/91, soma bate).** O símbolo `*` = construída. As famílias, por tamanho:

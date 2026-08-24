@@ -56,6 +56,11 @@ const PREDICADOS = {
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 1 && e.slot === c.slot) ? 'falha' : 'ok',
   },
+  semPerderOrbe: {   // §156 (heimdall): nenhum orbe do jogador perdido PARA o inimigo (roubo). Distingue roubo (ganhouLado===1) de
+    // remoção pura (ganhouLado===null) e de GASTO (paga custo — evento sem o tag perdeuLado/ganhouLado, §153). "para o inimigo" = roubo.
+    modo: 'log', obrig: [],
+    aval: (st, c, ctx) => st.log.some(e => e.tipo === 'orbe' && e.perdeuLado === 0 && e.ganhouLado === 1) ? 'falha' : 'ok',
+  },
   abatePeloProprioLado: {   // fogo amigo: `quantos` inimigos caem pela mão de um aliado deles (matador e alvo no mesmo lado)
     modo: 'log', obrig: ['quantos'],
     aval: (st, c, ctx) => {

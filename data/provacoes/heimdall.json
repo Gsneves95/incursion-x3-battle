@@ -1,0 +1,13 @@
+{
+  "key": "heimdall",
+  "titulo": "A Vigília Não Dorme",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [ "heimdall", "thor", "zeus" ],
+  "inimigos": [ "exu", "hermes", "saci" ],
+  "montar": { "seed": 1, "comeca": 0 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 12 },
+    { "predicado": "semPerderOrbe" }
+  ]
+}

@@ -126,6 +126,20 @@ console.log('== 7. TAG de roubo/remoção (§153): roubo-p/-si conta, remoção 
   console.log('  orbe: ganho conta, perda/gasto/roubo-inimigo não · buff: roubo-p/-si conta, remoção não');
 }
 
+console.log('== 8. semPerderOrbe (§156, heimdall): só o ROUBO inimigo (perdeuLado 0 & ganhouLado 1) viola ==');
+{
+  const sem = (log) => PROV.PREDICADOS.semPerderOrbe.aval({ log }, {}, { ladoDe: () => 0 });
+  // roubo INIMIGO do orbe do jogador → falha
+  ok(sem([{ tipo: 'orbe', lado: 0, valor: -1, perdeuLado: 0, ganhouLado: 1 }]) === 'falha', 'perder orbe PARA o inimigo (roubo) viola');
+  // GASTO (paga custo, sem tag) → ok (não é "para o inimigo")
+  ok(sem([{ tipo: 'orbe', lado: 0, valor: -3, para: 'Maré' }]) === 'ok', 'gastar orbe (custo, sem tag) NÃO viola — o §153 distingue gasto de roubo');
+  // REMOÇÃO pura do orbe do jogador (ganhouLado null) → ok (não foi PARA o inimigo)
+  ok(sem([{ tipo: 'orbe', lado: 0, valor: -1, perdeuLado: 0, ganhouLado: null }]) === 'ok', 'remoção pura (ninguém ganhou) NÃO viola — "para o inimigo" é roubo');
+  // eu roubando do inimigo (ganhouLado 0) → ok
+  ok(sem([{ tipo: 'orbe', lado: 0, valor: 2, perdeuLado: 1, ganhouLado: 0 }]) === 'ok', 'eu roubar do inimigo não é perder orbe');
+  console.log('  roubo-inimigo viola · gasto/remoção-pura/roubo-meu não — a distinção do tag §153 em ação');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
