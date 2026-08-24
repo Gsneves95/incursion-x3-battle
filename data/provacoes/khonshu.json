@@ -3,11 +3,68 @@
   "titulo": "A Passagem do Tempo",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "khonshu", "tsukuyomi", "iansa" ],
-  "inimigos": [ "huangdi", "itzamna", "ganesha" ],
-  "montar": { "seed": 1, "comeca": 1 },
+  "aliados": [
+    "khonshu",
+    "tsukuyomi",
+    "iansa"
+  ],
+  "inimigos": [
+    "huangdi",
+    "itzamna",
+    "ganesha"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 1
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 12 },
-    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "negarAcaoInimigo",
+      "slot": "milagre"
+    }
+  ],
+  "verificacao": {
+    "hash": "845c65c9",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 176746,
+    "ms": 178528,
+    "caminho": [
+      "iansa Ventania",
+      "passar",
+      "passar",
+      "iansa Espada de Vento → itzamna",
+      "passar",
+      "passar",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "tsukuyomi Anoitecer → itzamna",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "iansa Ventania",
+      "passar",
+      "tsukuyomi Lâmina Crescente → huangdi",
+      "iansa Espada de Vento → itzamna",
+      "passar",
+      "tsukuyomi Anoitecer → itzamna",
+      "iansa Espada de Vento → itzamna",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "tsukuyomi Lâmina Crescente → itzamna",
+      "passar",
+      "iansa Espada de Vento → huangdi",
+      "passar",
+      "iansa Espada de Vento → ganesha",
+      "passar",
+      "iansa Espada de Vento → ganesha",
+      "passar",
+      "iansa Guardiã dos Eguns"
+    ]
+  }
 }

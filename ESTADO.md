@@ -2,7 +2,33 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 1: as 6 Provações limite-de-turnos (6/6 carimbadas; saci segurado)
+## Última sessão — F2.4 lote 2 (NEGAÇÃO): khonshu fecha pelo relógio; saci ainda travado; exu realocado
+**Data:** 2026-08-24
+**Tarefa:** construir o khonshu e fechar o lote 2 (forma `negarAcaoInimigo`); resolver o saci; §153/§154.
+**Resultado:** **lote 2 = 4 Provações** (varredura por conceito, não sintoma): dionisio e boto já do lote 1
+(mesma forma), **khonshu** novo, **exu** realocado. **KHONSHU ✓ carimbado** (VENCÍVEL, 29 lances, SEM dica,
+hash 845c65c9): apliquei o método na ordem do dono — **(1) enemy-set por LEITURA** (huangdi·itzamna·ganesha, os 3
+têm slot `milagre` → o inimigo PODE fazer a ação negada, set coerente e denso de propósito); **(2) isolamento**
+(composto deadline12+negar travou em melhorH 18 `dica`, platô 250k→500k; mas negar+deadline **20** = VENCÍVEL 31
+lances → o time control-pesado DENEGA e MATA, a denegação é alcançável); **(3) tempo** — o gargalo é o RELÓGIO,
+não time/dica: deadline 13 INDETERMINADO, **deadline 14 VENCÍVEL sem dica**. Deadline 12→14 = afrouxar o RECURSO
+(turnos), DECLARADO e legítimo (§149) — a lição do poseidon (time já certo, só o clock apertado), não a do saci.
+Deadline é por-puzzle (§152): dionisio/boto em 12, khonshu em 14 (trio mais tanque). **SACI — ainda WIP sem
+carimbo, condição original (5 orbe + 3 buff):** o dono escolheu (b) buffsRoubados 3→2, mas NÃO fechou e a
+**isolação por-fonte desmentiu o meu diagnóstico** (erro meu, §153): só-buffsRoubados(3)=VENCÍVEL, só-orbesRoubados(5)=melhorH 3
+— o gargalo é o ORBE, não o buff; revertido a 3. orbesRoubados afrouxa LINEAR (5→melhorH3, 4→2, 3→1) mas nunca
+FECHA (tensão roubo×abate: susanoo/zeus matam antes do saci roubar 5). **Ao dono, gargalo agora CERTO (orbe):**
+(a) orbesRoubados 5→2, (b) 2º ladrão no time, (c) dica pace-and-steal, (d) rework. **EXU → lote 6:** a negação é
+FLAVOR (o set não é levado a usar a ação negada → trivialmente satisfeita), o rider real é uso-count
+(`usarSlotProprio`, Camada C). **Distinção registrada: cláusula pode ser FLAVOR ou RIDER; só a 2ª vira predicado.**
+**LIÇÃO (§153): `acionavel` NÃO é estável** — `orcamento` num orçamento pode virar `dica` num maior; conclusivo
+só após esgotar o orçamento. **Padrão novo (§153): composto travado ⇒ ISOLAR CADA FONTE, não o composto vs
+deadline.** Build verde (só saci sem carimbo, esperado). **PRÓXIMO (dono):** decidir o fix do saci; depois os
+lotes 3-6 (tamanhos reais por varredura de conceito abaixo). Dívida de motor mapeada p/ lote 3: loki
+(`maximoNumEvento`, pico-por-evento), heimdall (orbe-perdido-a-roubo), yamato/iansã (buffs-removidos); kraken
+`slotAbate` (barato) no lote da forma abate-por-slot.
+
+## Sessão — F2.4 lote 1: as 6 Provações limite-de-turnos (6/6 carimbadas; saci segurado) (anterior)
 **Data:** 2026-08-23
 **Tarefa:** F2.4 lote 1 — a forma "limite de turnos". Traduzir antes de escrever (§124), rodar o solucionador,
 carimbar, medir a taxa. §152.
