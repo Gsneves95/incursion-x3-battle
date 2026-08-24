@@ -398,6 +398,7 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
     seed, rngN: 0, log: [], fim: null,
     energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
+    marcos: { semBuffLado: [null, null], everBuffLado: [false, false] },   // §156 (iansã): MARCO — turno em que TODAS as unidades vivas de um lado ficaram sem buff (nem efeito-buff nem escudo), DEPOIS de o lado JÁ TER carregado buff (everBuff). O gate everBuff evita a trivialidade do estado inicial vazio (antes de o inimigo buffar). Latch (1ª vez), sobrevive ao clone. Lido por limparBuffsAntesDeAbate; a 1ª queda vem do log (que carrega `turno`).
     lados: [
       { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
       { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
@@ -1441,6 +1442,7 @@ function fimTurno(st) {
       : { tipo: 'fim', resultado: 'vitoria', lado: hp[0] > hp[1] ? 0 : 1, motivo: 'tempo' };
     return;
   }
+  atualizarMarcos(st);   // §156: rede de segurança — captura limpeza por EXPIRAÇÃO de buff no fim do turno (o strip já foi pego no agir)
   st.ativo = 1 - st.ativo;
   if (st.ativo === st.starter) st.turno++;   // conta rodadas a partir de quem abriu
   log(st, { tipo: 'turno', turno: st.turno, lado: st.ativo });
@@ -1545,6 +1547,21 @@ function alvosValidos(st, u, a, i = 0, jaEscolhidos = []) {
   return lista.filter(x => !jaEscolhidos.includes(x.uid));
 }
 
+// §156 (iansã): MARCO "lado sem buff" — na 1ª vez que TODAS as unidades vivas de um lado ficam sem buff
+// (nenhum efeito-BUFF e escudo 0), grava o turno. Latch (só a 1ª vez). Chamado após cada ação e no fim do turno,
+// para capturar o instante exato do strip (os inimigos re-buffam no turno deles). Barato; genérico (ambos os lados).
+function atualizarMarcos(st) {
+  if (!st.marcos) return;
+  for (let L = 0; L < 2; L++) {
+    const vivos = st.lados[L].units.filter(u => u.vivo);
+    if (!vivos.length) continue;
+    const temBuff = vivos.some(u => u.shield > 0 || u.efeitos.some(e => BUFFS.includes(e.type)));
+    if (temBuff) st.marcos.everBuffLado[L] = true;   // o lado JÁ carregou buff — a partir daqui "sem buff" é REMOÇÃO, não estado inicial vazio
+    if (st.marcos.semBuffLado[L] != null) continue;
+    if (st.marcos.everBuffLado[L] && !temBuff) st.marcos.semBuffLado[L] = st.turno;   // ficou TODO sem buff DEPOIS de ter tido
+  }
+}
+
 // ------------------------------------------------------------ EXECUÇÃO
 function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null) {
   if (st.fim) return { ok: false, erro: 'A partida terminou.' };
@@ -1626,6 +1643,7 @@ function agir(st, uid, slot, alvoUids = [], escolhas = null, modoEscolha = null)
   // Depois do aplicarFx (os bater desta habilidade já a leram), só no slot habilidade (básico/milagre não gastam
   // nem herdam — "a próxima habilidade" da prosa). Krishna, que ARMA a Ação num aliado, não a carrega: não se auto-consome.
   if (slot === 'habilidade' && ef(u, 'acaoPerfeita')) { u.efeitos = u.efeitos.filter(e => e.type !== 'acaoPerfeita'); log(st, { tipo: 'efeito', alvo: u.key, efeito: 'acaoPerfeita', duracao: 0 }); }
+  atualizarMarcos(st);   // §156: captura o instante em que um lado ficou sem buff (após esta ação — ex.: o strip da iansã)
   checarFim(st);
   return { ok: true };
 }

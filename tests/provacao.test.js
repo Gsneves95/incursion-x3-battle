@@ -140,6 +140,17 @@ console.log('== 8. semPerderOrbe (§156, heimdall): só o ROUBO inimigo (perdeuL
   console.log('  roubo-inimigo viola · gasto/remoção-pura/roubo-meu não — a distinção do tag §153 em ação');
 }
 
+console.log('== 9. limparBuffsAntesDeAbate (§156, iansã): limpar TODOS os buffs inimigos ANTES da 1ª queda ==');
+{
+  const av = (marcos, log) => PROV.PREDICADOS.limparBuffsAntesDeAbate.aval({ marcos, log }, {}, { ladoDe: () => 1 });
+  ok(av({ semBuffLado: [null, 3] }, []) === 'ok', 'limpou (t3) sem nenhuma queda → ok');
+  ok(av({ semBuffLado: [null, 3] }, [{ tipo: 'queda', alvo: 'x', turno: 5 }]) === 'ok', 'limpou (t3) ANTES da queda (t5) → ok');
+  ok(av({ semBuffLado: [null, 6] }, [{ tipo: 'queda', alvo: 'x', turno: 4 }]) === 'falha', 'caiu (t4) ANTES de limpar (t6) → falha (impossível)');
+  ok(av({ semBuffLado: [null, null] }, [{ tipo: 'queda', alvo: 'x', turno: 4 }]) === 'falha', 'caiu sem nunca limpar → falha');
+  ok(av({ semBuffLado: [null, null] }, []) === 'pendente', 'ainda não limpou, ninguém caiu → pendente (nunca falha cedo à toa)');
+  console.log('  limpar-antes → ok · matar-antes-de-limpar → falha · nada ainda → pendente');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

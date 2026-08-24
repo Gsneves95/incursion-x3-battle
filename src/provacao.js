@@ -61,6 +61,18 @@ const PREDICADOS = {
     modo: 'log', obrig: [],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'orbe' && e.perdeuLado === 0 && e.ganhouLado === 1) ? 'falha' : 'ok',
   },
+  limparBuffsAntesDeAbate: {   // §156 (iansã): TODO buff dos 3 inimigos removido ANTES da 1ª queda inimiga. O marco (motor) grava o
+    // turno em que o lado inimigo ficou TODO sem buff; a 1ª queda vem do log (carrega `turno`). Falha cedo se cair um inimigo antes.
+    modo: 'log', obrig: [],
+    aval: (st, c, ctx) => {
+      const limpou = (st.marcos && st.marcos.semBuffLado) ? st.marcos.semBuffLado[1] : null;   // turno em que os inimigos ficaram TODOS sem buff
+      let caiu = null;
+      for (const e of st.log) if (e.tipo === 'queda' && ctx.ladoDe(e.alvo) === 1) { caiu = e.turno; break; }   // 1ª queda inimiga
+      if (limpou != null && (caiu == null || limpou <= caiu)) return 'ok';   // limpou antes (ou sem) qualquer queda
+      if (caiu != null) return 'falha';   // caiu um inimigo antes de limpar todos → impossível
+      return 'pendente';
+    },
+  },
   abatePeloProprioLado: {   // fogo amigo: `quantos` inimigos caem pela mão de um aliado deles (matador e alvo no mesmo lado)
     modo: 'log', obrig: ['quantos'],
     aval: (st, c, ctx) => {

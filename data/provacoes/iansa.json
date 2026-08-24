@@ -3,11 +3,64 @@
   "titulo": "O Corisco",
   "nivel": "Rito",
   "dificuldade": 1,
-  "aliados": [ "iansa", "zeus", "susanoo" ],
-  "inimigos": [ "brahma", "hera", "freyja" ],
-  "montar": { "seed": 1, "comeca": 0 },
+  "aliados": [
+    "iansa",
+    "zeus",
+    "susanoo"
+  ],
+  "inimigos": [
+    "brahma",
+    "hera",
+    "freyja"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 12 },
-    { "predicado": "limparBuffsAntesDeAbate" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "limparBuffsAntesDeAbate"
+    }
+  ],
+  "verificacao": {
+    "hash": "774abea6",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 26,
+    "comDica": false,
+    "nos": 7474,
+    "ms": 4471,
+    "caminho": [
+      "zeus Cetro do Trovão → brahma",
+      "passar",
+      "zeus Julgamento do Trovão → brahma",
+      "susanoo Corte de Kusanagi → brahma",
+      "passar",
+      "zeus Cetro do Trovão → brahma",
+      "susanoo Corte de Kusanagi → brahma",
+      "iansa Espada de Vento → brahma",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "susanoo Corte de Kusanagi → freyja",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "zeus Cetro do Trovão → brahma",
+      "passar",
+      "susanoo Corte de Kusanagi → hera",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "zeus Cetro do Trovão → freyja",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "susanoo Corte de Kusanagi → hera"
+    ]
+  }
 }

@@ -20,17 +20,62 @@
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 12
+      "turnos": 14
     },
     {
       "predicado": "acumulo",
       "fonte": "orbesRoubados",
-      "limiar": 5
+      "limiar": 4
     },
     {
       "predicado": "acumulo",
       "fonte": "buffsRoubados",
       "limiar": 3
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "e3a47b58",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 130543,
+    "ms": 43302,
+    "caminho": [
+      "zeus Cetro do Trovão → horus",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "zeus Cetro do Trovão → horus",
+      "passar",
+      "susanoo Corte de Kusanagi → houyi",
+      "saci Cachimbo em Brasa → horus",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "susanoo Corte de Kusanagi → houyi",
+      "saci Redemoinho",
+      "passar",
+      "saci Cachimbo em Brasa → houyi",
+      "passar",
+      "saci Travessura Maior",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "saci Cachimbo em Brasa → brahma",
+      "susanoo Corte de Kusanagi → brahma",
+      "passar",
+      "saci Redemoinho",
+      "passar",
+      "saci Cachimbo em Brasa → brahma",
+      "passar",
+      "susanoo Corte de Kusanagi → brahma",
+      "saci Redemoinho",
+      "passar",
+      "saci Travessura Maior",
+      "susanoo Fúria do Tufão"
+    ]
+  }
 }
