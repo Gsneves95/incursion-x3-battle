@@ -1,0 +1,13 @@
+{
+  "key": "khonshu",
+  "titulo": "A Passagem do Tempo",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [ "khonshu", "tsukuyomi", "iansa" ],
+  "inimigos": [ "huangdi", "itzamna", "ganesha" ],
+  "montar": { "seed": 1, "comeca": 1 },
+  "condicoes": [
+    { "predicado": "deadline", "turnos": 12 },
+    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
+  ]
+}
