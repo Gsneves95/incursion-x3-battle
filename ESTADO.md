@@ -2,7 +2,7 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 1: as 6 Provações limite-de-turnos (5 fechadas; dionisio + saci ao dono)
+## Última sessão — F2.4 lote 1: as 6 Provações limite-de-turnos (6/6 carimbadas; saci segurado)
 **Data:** 2026-08-23
 **Tarefa:** F2.4 lote 1 — a forma "limite de turnos". Traduzir antes de escrever (§124), rodar o solucionador,
 carimbar, medir a taxa. §152.
@@ -13,20 +13,29 @@ outras formas (cada uma precisa de predicado próprio → vão pro lote da forma
 afrouxar):** apolo ✓, bragi ✓ (usa 3 criaturas do bestiário) — VENCÍVEL direto; **poseidon ✓** — VENCÍVEL com
 **DICA** (mecanismo novo: `prov.dica` = semente de sequência forçada no solucionador, `comDica` no carimbo);
 **boto ✓** — só o fix de `comeca:1` (a distância caiu 136→2, `acionavel` virou `dica`→`orcamento`, 400k nós);
-**dionisio** — `comeca:1` removeu o INVENCÍVEL (era estrutural: inimigo Milagrava no turno 1 com 3 de energia da
-abertura), mas segue **INDETERMINADO/dica** (melhorH=167) → decisão do dono (dica/time/afrouxar). **saci** —
-segurado (fontes `orbesRoubados`/`buffsRoubados` + tag de log §106 pedem varredura própria: quantas das 91
-precisam da distinção roubo≠ganho). **PRINCÍPIO travado (dono):** setup que torna a condição impossível antes da
+**dionisio ✓** — VENCÍVEL, 26 lances, SEM dica: o caminho foi TIME, não dica. `comeca:1` removeu o INVENCÍVEL
+estrutural; depois eu diagnostiquei errado 2× (li melhorH alto como déficit de dano; era déficit de CONTROLE — o
+melhorH numa negação mede HP restante, sempre parece dano); o dono acertou — troquei p/ time control-pesado
+(dionisio·tsukuyomi·iansã, espelhando o boto) e fechou ativamente. **saci** — segurado (fontes
+`orbesRoubados`/`buffsRoubados` + tag de log §106 pedem varredura própria: quantas das 91 precisam da distinção
+roubo≠ganho). **PRINCÍPIO travado (dono):** setup que torna a condição impossível antes da
 1ª ação do jogador é ERRO DE MONTAGEM, não dificuldade — corrigir é obrigatório (`comeca` muda se o puzzle é
-coerente; ≠ afrouxar). **Taxa 5/6: 2 diretas, 2 fix/dica, 1 pendente + 1 segurada ⇒ revisão da expectativa: ~12
-sessões p/ as 91, não 6.** Os INDETERMINADO iniciais foram todos `dica` (nunca `orcamento`) → confirma a F2.1;
-**consequência de produto (dono trata depois): o jogo vai precisar de um SISTEMA DE DICAS.** Ambiguidades
+coerente; ≠ afrouxar). **MÉTODO DIAGNÓSTICO consolidado (§152, o ganho durável do lote):** rode o ISOLAMENTO
+PRIMEIRO (a mesma montagem sem o rider) — é o único sinal que o rider não contamina; iso baixo + composto alto →
+findability (dica), iso alto → time, progredindo → orçamento, e a 4ª categoria ECONOMIA DE AÇÃO (o rider exige
+mais ação que o turno dá, revelada pelo delta do isolamento). Ordem de correção: isolamento → time → dica →
+afrouxar. Anti-sinergia registrada: numa negação, agredir CONVIDA a ação negada. Distinção: afrouxar o RECURSO
+que a condição consome (turno) é legítimo, a CONDIÇÃO disfarçada de setup não. **Taxa 6/6 fechadas ⇒ ~12 sessões
+p/ as 91.** **Pergunta aberta (anotada, não mexer): "precisa de dica" pode às vezes ser "time errado"** — o
+poseidon fechou com dica; talvez feche sem, com o time certo (revisitar). **Consequência de produto: sistema de
+dicas** (só se as dicas persistirem após o padrão do time). Ambiguidades
 decididas: perseu "petrificado"≡atordoado (§54, sinônimo de prosa); izanagi "morrer de DoT"→"cair CARREGANDO
 DoT" (§106); kraken "golpe final" precisa de `queda.slotAbate` — **é barato** (o `slot` já está no `bater`),
 entra quando o lote da forma "abate-por-slot" chegar. Desacoplamento: `solucionador.test`/`provacao.test` liam o
 `poseidon.json` de produção (agora difícil) — o fixture tunado (60 HP) mudou-se p/ DENTRO das suítes. **21 suítes
-verdes.** **PRÓXIMO (dono):** decidir dionisio (dica/time/afrouxar) e saci (varredura do tag de roubo); depois os
-lotes das formas-rider (o dono re-sequencia); as 9 Camada-C ainda esperam predicado próprio.
+verdes.** **PRÓXIMO (dono):** o saci (varredura do tag de roubo §106 — quantas das 91 precisam da distinção,
+antes de construir o tag); depois os lotes das formas-rider (o dono re-sequencia); as 9 Camada-C ainda esperam
+predicado próprio. Revisitar a pergunta "dica vs time" no poseidon quando houver mais casos.
 
 ## Sessão — F2.3: o bestiário (12 criaturas PvE; régua de tropa; 11/11 destravadas) (anterior)
 **Data:** 2026-08-23

@@ -3,11 +3,65 @@
   "titulo": "O Banquete",
   "nivel": "Provação",
   "dificuldade": 2,
-  "aliados": [ "dionisio", "anubis", "zeus" ],
-  "inimigos": [ "ra", "brahma", "itzamna" ],
-  "montar": { "seed": 1, "comeca": 1 },
+  "aliados": [
+    "dionisio",
+    "tsukuyomi",
+    "iansa"
+  ],
+  "inimigos": [
+    "ra",
+    "brahma",
+    "itzamna"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 1
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 12 },
-    { "predicado": "negarAcaoInimigo", "slot": "milagre" }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "negarAcaoInimigo",
+      "slot": "milagre"
+    }
+  ],
+  "verificacao": {
+    "hash": "1b7150cd",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 26,
+    "comDica": false,
+    "nos": 28069,
+    "ms": 25554,
+    "caminho": [
+      "tsukuyomi Julgamento da Lua",
+      "passar",
+      "passar",
+      "iansa Espada de Vento → brahma",
+      "tsukuyomi Anoitecer → brahma",
+      "dionisio Taça Derramada → brahma",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "dionisio Delírio → brahma",
+      "passar",
+      "iansa Espada de Vento → brahma",
+      "dionisio Taça Derramada → brahma",
+      "tsukuyomi Anoitecer → brahma",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "iansa Espada de Vento → itzamna",
+      "dionisio Taça Derramada → itzamna",
+      "passar",
+      "iansa Espada de Vento → itzamna",
+      "passar",
+      "iansa Guardiã dos Eguns",
+      "tsukuyomi Lâmina Crescente → itzamna",
+      "passar",
+      "iansa Espada de Vento → ra",
+      "passar",
+      "iansa Espada de Vento → ra"
+    ]
+  }
 }
