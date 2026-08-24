@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §153 — VARREDURA DO ROUBO (antes do saci): 2+2 consumidores, e o tag PRECISA distinguir roubo de remoção.
+
+**Hipótese a acompanhar (dono), não conclusão: nas 2 Provações difíceis do lote 1, a correção certa foi TIME (2 de 2).** dionisio (control-pesado) e poseidon (atacante) fecharam por composição, nenhuma por dica. Se o padrão se repetir nos próximos lotes, "dica" é recurso quase-nunca-usado — e o SISTEMA DE DICAS do produto talvez não precise existir. Acompanhar; decidir quando houver mais casos.
+
+**A varredura do CONCEITO (§143 — li a condição, não a palavra: "roube/drena/toma/tira", e separei obstáculo de objetivo).** Das 91, 17 tocam orbe/buff/roubo; a maioria é obstáculo ou outra fonte. As que o WIN exige como acúmulo de ROUBO:
+- **`orbesRoubados` (roubo de orbe PARA si, cumulativo) — 2 consumidores:** shutendoji (≥8 via Torpor, 12 turnos) · saci (≥5). ≥2 → construir é justificado (§87).
+- **`buffsRoubados` (roubo de buff PARA si) — 2 consumidores, MAS de leituras diferentes:** saci (≥3, CUMULATIVO) · loki (≥6 DE UMA SÓ VEZ — por-EVENTO, não soma). O tag conta; o predicado lê cumulativo (saci) ou pico-de-evento (loki). ≥2 → justificado, com dois leitores.
+
+**PONTO 3 (dono) — SIM, o tag TEM de distinguir ROUBO de REMOÇÃO, nos dois eixos.** A varredura achou consumidores de REMOÇÃO (tirar do alvo, não levar para si) que um tag ingênuo contaria errado como roubo:
+- **buffs REMOVIDOS (não roubados) — 2 consumidores:** yamatotakeru (Ceifa-Ervas remove ≥3 buffs do alvo) · iansã (remover TODO buff dos 3 antes da 1ª queda). `stripBuffs`/`stripOne` sem `rouba` — se `buffsRoubados` contasse toda remoção, essas inflariam o saci/loki. O tag precisa marcar `rouba:true` (foi para o lançador) ≠ remoção pura.
+- **orbe PERDIDO para roubo inimigo — 1 consumidor:** heimdall ("sem perder um orbe PARA o inimigo") — precisa distinguir orbe perdido por ROUBO inimigo de orbe GASTO (custo). Sem o tag, gasto e roubo se confundem no log (§106: a info existe no ato do roubo, não no evento hoje).
+
+**CONCLUSÃO (dois-ledgers §104): o tag nasce com a distinção COMPLETA, não um contador simples.** O evento de orbe/buff deve carregar (a) a AÇÃO — roubo-para-si × remoção-pura — e (b) a DIREÇÃO — quem roubou de quem. Assim UM design de tag serve os quatro: `orbesRoubados` (roubo-p/-si), `buffsRoubados` (roubo-p/-si, cumulativo E por-evento), buffs-removidos (remoção), orbe-perdido-a-roubo (direção inimigo→jogador). Construir o contador simples agora seria o erro do §104 (campo que nasce cego a metade dos consumidores). **Números na mão do dono para decidir "tag agora × saci espera": orbesRoubados 2 · buffsRoubados 2 (1 cumulativo + 1 por-evento) · +2 de remoção-de-buff · +1 de perda-de-orbe — todos servidos por um tag com ação+direção.** (Fontes vizinhas já cobertas, fora do escopo do tag: inari=`orbesGuardados` (feito), khnum=`danoAbsorvido` (feito), brahma=`danoBonus`.)
+
+---
+
 ## §152 — F2.4 (lote 1): a forma real é o RIDER, não o relógio (§46 no nível da FASE). Time é design. E o 1º INVENCÍVEL estrutural.
 
 **A CORREÇÃO, com a consequência (a pedido do dono).** Eu organizara os 6 lotes pelo que APARECE na condição; o discriminador certo é o que a DEFINE. O **deadline é pressão universal** (o anti-estol de quase toda Provação), não a essência. Traduzindo as 15 "limite de turnos" (§124, antes de escrever): só **6** têm o relógio como espinha com rider já suportado; nas outras **9** o rider É a forma (perseu=controle, heimdall=roubo-de-orbe, huangdi=recarga, nefertem=debuff-uptime, kali=cura-negada, izanagi=morte-por-DoT, kraken=abate-por-slot, exu=uso-contado, kukulkan=condicional-por-ação). É o **§46 no nível da fase**: agrupar por sintoma (o turno que aparece) esconde a forma (o rider). **Consequência:** a forma real de uma Provação é o rider; isso REORDENA os 6 lotes — o dono refaz o sequenciamento. Escopo do lote 1 travado: as **6** (Camadas A+B); as 9 vão para o lote da forma-rider de cada uma (construir predicado fora da varredura da sua forma seria construir a forma no lote errado).
