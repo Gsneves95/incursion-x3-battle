@@ -6,7 +6,7 @@
   "aliados": [
     "poseidon",
     "iara",
-    "sobek"
+    "piranha"
   ],
   "inimigos": [
     "kagutsuchi",
@@ -17,24 +17,6 @@
     "seed": 1,
     "comeca": 0
   },
-  "dica": [
-    {
-      "deus": "iara",
-      "slot": "basico",
-      "alvos": [
-        "kagutsuchi"
-      ]
-    },
-    "passar",
-    {
-      "deus": "poseidon",
-      "slot": "habilidade",
-      "alvos": [
-        "mulasemcabeca",
-        "hercules"
-      ]
-    }
-  ],
   "condicoes": [
     {
       "predicado": "deadline",
@@ -47,35 +29,33 @@
     }
   ],
   "verificacao": {
-    "hash": "a017f4b",
+    "hash": "36532d2a",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 21,
-    "comDica": true,
-    "nos": 90077,
-    "ms": 34094,
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 677,
+    "ms": 409,
     "caminho": [
-      "iara Canto Suave → kagutsuchi",
+      "poseidon Golpe do Tridente → kagutsuchi",
       "passar",
-      "poseidon Tridente Colossal → mulasemcabeca+hercules",
-      "sobek Mordida Brutal → kagutsuchi",
-      "passar",
-      "sobek Mordida Brutal → mulasemcabeca",
-      "iara Canto da Sedução → mulasemcabeca",
+      "poseidon Maremoto",
       "passar",
       "poseidon Tridente Colossal → kagutsuchi+mulasemcabeca",
-      "sobek Mordida Brutal → mulasemcabeca",
+      "piranha Mordidas → kagutsuchi",
       "passar",
-      "sobek Dilúvio",
+      "poseidon Golpe do Tridente → mulasemcabeca",
+      "piranha Frenesi Alimentar → mulasemcabeca",
       "passar",
-      "iara Canto Suave → kagutsuchi",
-      "poseidon Tridente Colossal → kagutsuchi+hercules",
+      "piranha Frenesi Alimentar → hercules",
+      "poseidon Golpe do Tridente → hercules",
       "passar",
-      "sobek Mordida Brutal → hercules",
+      "piranha Frenesi Alimentar → hercules",
       "iara Canto Suave → hercules",
       "passar",
       "iara Canto Suave → hercules",
-      "sobek Mordida Brutal → hercules"
+      "passar",
+      "iara Canto Suave → hercules"
     ]
   }
 }

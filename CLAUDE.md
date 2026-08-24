@@ -214,6 +214,15 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 
 ## Convenções
 
+- **O ALVO é um APLICATIVO de celular; o navegador é o AMBIENTE DE DESENVOLVIMENTO, não o alvo.**
+  O jogo abre no navegador (o `incursion.html` único) porque isso dá o ciclo rápido — mas ele é
+  desenhado para rodar como app no celular (paisagem). O que funciona no navegador de dev e NÃO
+  traduz para o app tem de ser vigiado; três coisas a não deixar derivar: **hover** (não existe em
+  toque — nada essencial pode depender de passar o mouse), **teclado** (o teclado virtual do celular
+  ocupa tela e sobe o layout — nada crítico pode assumir teclado físico), **rolagem** (a rolagem por
+  toque é diferente do scroll de mouse — o canvas fixo 926×428 escalado existe justamente para não
+  depender dela). Não muda o que está feito; é para não introduzir dependência de dev-browser daqui
+  em diante.
 - **Idioma:** todo código, comentário, commit e interface em **português do
   Brasil**. Nomes de variável em português (`alvo`, `armado`, `escolhidos`).
 - **Sem dependências de runtime.** O cliente é HTML+CSS+JS puro. `jsdom` é

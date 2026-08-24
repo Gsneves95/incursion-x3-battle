@@ -10,9 +10,10 @@ carimbar, medir a taxa. §152.
 (§46 no nível da fase) — das 15 "limite de turnos", só **6** têm o deadline como espinha; as 9 restantes são
 outras formas (cada uma precisa de predicado próprio → vão pro lote da forma delas). O dono aprovou o escopo (as
 6) e registrou: **time aliado é DESIGN** (parte da spec, nunca esteve na planilha). **Verdictos (HP padrão, sem
-afrouxar):** apolo ✓, bragi ✓ (usa 3 criaturas do bestiário) — VENCÍVEL direto; **poseidon ✓** — VENCÍVEL com
-**DICA** (mecanismo novo: `prov.dica` = semente de sequência forçada no solucionador, `comDica` no carimbo);
-**boto ✓** — só o fix de `comeca:1` (a distância caiu 136→2, `acionavel` virou `dica`→`orcamento`, 400k nós);
+afrouxar):** apolo ✓, bragi ✓ (usa 3 criaturas do bestiário) — VENCÍVEL direto; **poseidon ✓** — a princípio
+com **DICA** (mecanismo novo `prov.dica`, criado aqui), mas DEPOIS reaberto (ver abaixo) e fechado por TIME
+(troca sobek→piranha), SEM dica; **boto ✓** — só o fix de `comeca:1` (a distância caiu 136→2, `acionavel` virou
+`dica`→`orcamento`, 400k nós);
 **dionisio ✓** — VENCÍVEL, 26 lances, SEM dica: o caminho foi TIME, não dica. `comeca:1` removeu o INVENCÍVEL
 estrutural; depois eu diagnostiquei errado 2× (li melhorH alto como déficit de dano; era déficit de CONTROLE — o
 melhorH numa negação mede HP restante, sempre parece dano); o dono acertou — troquei p/ time control-pesado
@@ -26,9 +27,13 @@ findability (dica), iso alto → time, progredindo → orçamento, e a 4ª categ
 mais ação que o turno dá, revelada pelo delta do isolamento). Ordem de correção: isolamento → time → dica →
 afrouxar. Anti-sinergia registrada: numa negação, agredir CONVIDA a ação negada. Distinção: afrouxar o RECURSO
 que a condição consome (turno) é legítimo, a CONDIÇÃO disfarçada de setup não. **Taxa 6/6 fechadas ⇒ ~12 sessões
-p/ as 91.** **Pergunta aberta (anotada, não mexer): "precisa de dica" pode às vezes ser "time errado"** — o
-poseidon fechou com dica; talvez feche sem, com o time certo (revisitar). **Consequência de produto: sistema de
-dicas** (só se as dicas persistirem após o padrão do time). Ambiguidades
+p/ as 91.** **PERGUNTA RESPONDIDA: "precisa de dica" ERA "time errado" — a dica do poseidon era a correção
+fácil, a certa era o time.** Isolamento=composto=37 (delta 0 → rider Encharcado é grátis; o 37 é dano puro);
+troquei sobek→piranha (atacante Maré, bônus em Encharcado) → VENCÍVEL SEM dica, 19 lances, 677 nós. Removida a
+dica, re-carimbado. **NENHUMA das 6 usa dica** — dica é último recurso. **Regra do delta:** `composto−isolamento`
+= preço do rider; delta≈0 → time/dica, delta grande → o rider é o gargalo. Ordem validada 2×: **isolamento →
+TIME → dica → afrouxar.** **Consequência de produto (só se dicas voltarem a ser necessárias após o time):
+sistema de dicas** — por ora, adiada (o lote 1 não precisou de nenhuma). Ambiguidades
 decididas: perseu "petrificado"≡atordoado (§54, sinônimo de prosa); izanagi "morrer de DoT"→"cair CARREGANDO
 DoT" (§106); kraken "golpe final" precisa de `queda.slotAbate` — **é barato** (o `slot` já está no `bater`),
 entra quando o lote da forma "abate-por-slot" chegar. Desacoplamento: `solucionador.test`/`provacao.test` liam o
