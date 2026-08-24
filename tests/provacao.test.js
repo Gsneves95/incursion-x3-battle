@@ -104,6 +104,28 @@ console.log('== 6. `quando` é DERIVADO do modo (não declarado) ==');
   console.log('  deadline/morteEmEstado → cedo · hpNoFim → fim');
 }
 
+console.log('== 7. TAG de roubo/remoção (§153): roubo-p/-si conta, remoção e roubo-inimigo NÃO ==');
+{
+  const acu = (log, fonte, limiar) => { const st = { lados: [{}, {}], log }; return PROV.PREDICADOS.acumulo.aval(st, { fonte, limiar }, { ladoDe: () => 0 }); };
+  // orbe: só o GANHO do jogador (ganhouLado 0, valor>0) conta — não a perda, não o gasto, não o roubo inimigo
+  const orbeLog = [
+    { tipo: 'orbe', lado: 1, valor: -2, perdeuLado: 1, ganhouLado: 0 },   // inimigo perdeu p/ o jogador (roubo)
+    { tipo: 'orbe', lado: 0, valor: 2, perdeuLado: 1, ganhouLado: 0 },    // jogador GANHOU (conta: +2)
+    { tipo: 'orbe', lado: 0, valor: -3, para: 'Maré' },                   // GASTO (sem tag) — não conta
+    { tipo: 'orbe', lado: 0, valor: -1, perdeuLado: 0, ganhouLado: 1 },   // jogador perdeu p/ inimigo (roubo inimigo) — não conta como roubado-por-mim
+  ];
+  ok(acu(orbeLog, 'orbesRoubados', 2) === 'ok', 'orbesRoubados conta só o ganho do jogador (2), não perda/gasto');
+  ok(acu(orbeLog, 'orbesRoubados', 3) === 'pendente', 'não dobra a contagem nem soma gasto/roubo-inimigo');
+  // buff: roubo-p/-si (ganhouLado 0) conta; REMOÇÃO pura (ganhouLado null) NÃO — o erro que o §153 evita
+  const buffLog = [
+    { tipo: 'efeito', alvo: 'x', efeito: 'dmgUp', duracao: 0, perdeuLado: 1, ganhouLado: 0, qtd: 1 },   // roubou 1 p/ si
+    { tipo: 'efeito', alvo: 'y', efeito: 'buff', duracao: 0, perdeuLado: 1, ganhouLado: null, qtd: 3 },  // REMOÇÃO pura (yamato/iansã) — NÃO conta como roubado
+  ];
+  ok(acu(buffLog, 'buffsRoubados', 1) === 'ok', 'buffsRoubados conta o roubo-p/-si (1)');
+  ok(acu(buffLog, 'buffsRoubados', 2) === 'pendente', 'remoção pura (ganhouLado null) NÃO infla buffsRoubados — o bug invisível que o §153 evita');
+  console.log('  orbe: ganho conta, perda/gasto/roubo-inimigo não · buff: roubo-p/-si conta, remoção não');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
