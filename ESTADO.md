@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## Última sessão (cont.) — F2.4 lote 3 (ROUBO/REMOÇÃO) começou: traduzido (§124), 1 mecanismo + 1 Provação, 4 decisões abertas
+**Data:** 2026-08-24
+**Tarefa:** lote 3 confirmado pelo dono (hermes, shutendoji, loki, heimdall, iansã + fechar saci); cada motor COM seu
+consumidor. §156.
+**Resultado:** traduzi os 5 antes de escrever (§124) com enemy-set-first por leitura — **a tradução pagou, 2 achados
+estruturais + o teto de findability confirmado.** **CONSTRUÍDO:** `semPerderOrbe` (heimdall) com teste §8 que morde
+(roubo-inimigo viola; gasto/remoção-pura/roubo-meu não). **heimdall ✓ carimbado** (VENCÍVEL dl10, 27 lances, sem
+dica, 4722 nós) — mas o rider é **LIVRE (delta 0 mesmo com glass-cannon)**: a passiva bloqueia roubo e o solver o
+mantém vivo de graça; a espinha real é o relógio. **DECISÕES ABERTAS (o custo real do lote):** (1) **saci** rework —
+2 ladrões MEDIDOS não fecham (cap idêntico: orbe2✓/orbe3✗ com 1 ou 2 ladrões; teto de findability HP-greedy, não
+taxa); recomendo (c) roubar ≥1 buff E ≥1 orbe. (2) **iansã** enemy-set incoerente (susanoo/thor não geram buff —
+espelho §153); trocar o set (rec.: brahma+hera+freyja). (3) **shutendoji** (orbe8) no mesmo teto de findability, mais
+fundo — decidir a POLÍTICA da classe "roube N enquanto vence": aceitar dica (uso legítimo) ou baixar thresholds. (4)
+**heimdall** delta-0: aceitar como deadline+flavor, ou reworkar a passiva p/ o rider morder. **FALTAM TESTAR:** loki
+(`maximoNumEvento` — mecanismo a construir; set coerente) e hermes (economia 0-orbe — mecanismo pesado). **Padrão do
+lote (achado durável):** os riders de roubo/remoção são os mais difíceis de virar bom puzzle — ou batem no teto de
+findability (saci, shutendoji) ou saem livres/incoerentes (heimdall, iansã). **npm test verde; build verde** (só saci
+sem carimbo, esperado). **PRÓXIMO:** as 4 decisões do dono; depois construir loki + hermes + fechar iansã/saci/shutendoji.
+
 ## Última sessão — F2.4 lote 2 (NEGAÇÃO): khonshu fecha pelo relógio; saci ainda travado; exu realocado
 **Data:** 2026-08-24
 **Tarefa:** construir o khonshu e fechar o lote 2 (forma `negarAcaoInimigo`); resolver o saci; §153/§154.
