@@ -2,7 +2,9 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO): 4/6 fechadas; shutendoji e hermes travados em DECISÃO DE DESIGN; régua de sequenciamento
+## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO): 4/6 fechadas; shutendoji+hermes INVENCÍVEIS por incompatibilidade → rewrite do dono; régua §158
+**NOTA FINAL (atualiza o abaixo):** shutendoji e hermes NÃO fecham por medição, não por decisão pendente: **rider/montagem incompatível com "vença"** (medido em todos os eixos). shutendoji — roubo-por-torpor exige inimigo vivo+agindo, mas inimigo fraco-p/-colher é tanky-p/-não-morrer (enemy-set-first modo 3); trio fraco inari·oxum·mimir também não fecha. hermes — `semRenda` construído no motor (útil, testado); pool varrido: 4/6 INVENCÍVEL, 8/10 melhorH 224-230 — renda-zero não funda 3 abates (pool não é a alavanca). AMBOS = rewrite da CONDIÇÃO pelo dono (rec: hermes renda-pela-metade; shutendoji rider incompatível com abate). Meta-achado (§158): quando NENHUM eixo fecha, é o rider brigando com "vença" → limite superior do método (medir PROVA a incompatibilidade; a prova é o sinal de reescrever). **Custo final: 4/6 fechadas, 0 direto, 6/6 decisão, 3 nº derivado; 2 invencíveis-por-design.**
+
 **Data:** 2026-08-25
 **Tarefa:** fechar o lote 3 (roubo/remoção), cada mecanismo COM seu consumidor; trazer o custo com 3 colunas. §156-158.
 **Resultado:** **FECHADAS 4/6, todas SEM dica:** heimdall ✓ (dl10; rider livre por passiva-do-título, aceito §Dec.4);
