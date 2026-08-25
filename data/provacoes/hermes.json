@@ -3,11 +3,68 @@
   "titulo": "Roubo Perfeito",
   "nivel": "Ordália",
   "dificuldade": 3,
-  "aliados": [ "hermes", "zeus", "susanoo" ],
-  "inimigos": [ "heimdall", "exu", "oxum" ],
-  "montar": { "seed": 1, "comeca": 0, "rendaFracao": [0.5, 1] },
+  "aliados": [
+    "hermes",
+    "zeus",
+    "susanoo"
+  ],
+  "inimigos": [
+    "heimdall",
+    "mimir",
+    "tanuki"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 14 },
-    { "predicado": "tetoDeGasto", "limiar": 12 }
-  ]
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "tetoDeGasto",
+      "limiar": 24
+    }
+  ],
+  "verificacao": {
+    "hash": "daf06c05",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 39230,
+    "ms": 25500,
+    "caminho": [
+      "hermes Golpe Alado → heimdall",
+      "passar",
+      "zeus Julgamento do Trovão → heimdall",
+      "hermes Golpe Alado → heimdall",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "hermes Golpe Alado → tanuki",
+      "passar",
+      "susanoo Corte de Kusanagi → tanuki",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "hermes Golpe Alado → heimdall",
+      "passar",
+      "hermes Golpe Alado → tanuki",
+      "susanoo Corte de Kusanagi → tanuki",
+      "passar",
+      "hermes Golpe Alado → tanuki",
+      "passar",
+      "hermes Golpe Alado → mimir",
+      "passar",
+      "hermes Golpe Alado → mimir",
+      "passar",
+      "hermes Golpe Alado → mimir",
+      "passar",
+      "hermes Golpe Alado → mimir"
+    ]
+  }
 }

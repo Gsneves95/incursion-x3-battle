@@ -25,7 +25,7 @@
     {
       "predicado": "efeitoEmNInimigos",
       "efeito": "torpor",
-      "limiar": 3
+      "limiar": 2
     }
   ]
 }
