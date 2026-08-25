@@ -2,24 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão (cont.) — F2.4 lote 3 (ROUBO/REMOÇÃO) começou: traduzido (§124), 1 mecanismo + 1 Provação, 4 decisões abertas
-**Data:** 2026-08-24
-**Tarefa:** lote 3 confirmado pelo dono (hermes, shutendoji, loki, heimdall, iansã + fechar saci); cada motor COM seu
-consumidor. §156.
-**Resultado:** traduzi os 5 antes de escrever (§124) com enemy-set-first por leitura — **a tradução pagou, 2 achados
-estruturais + o teto de findability confirmado.** **CONSTRUÍDO:** `semPerderOrbe` (heimdall) com teste §8 que morde
-(roubo-inimigo viola; gasto/remoção-pura/roubo-meu não). **heimdall ✓ carimbado** (VENCÍVEL dl10, 27 lances, sem
-dica, 4722 nós) — mas o rider é **LIVRE (delta 0 mesmo com glass-cannon)**: a passiva bloqueia roubo e o solver o
-mantém vivo de graça; a espinha real é o relógio. **DECISÕES ABERTAS (o custo real do lote):** (1) **saci** rework —
-2 ladrões MEDIDOS não fecham (cap idêntico: orbe2✓/orbe3✗ com 1 ou 2 ladrões; teto de findability HP-greedy, não
-taxa); recomendo (c) roubar ≥1 buff E ≥1 orbe. (2) **iansã** enemy-set incoerente (susanoo/thor não geram buff —
-espelho §153); trocar o set (rec.: brahma+hera+freyja). (3) **shutendoji** (orbe8) no mesmo teto de findability, mais
-fundo — decidir a POLÍTICA da classe "roube N enquanto vence": aceitar dica (uso legítimo) ou baixar thresholds. (4)
-**heimdall** delta-0: aceitar como deadline+flavor, ou reworkar a passiva p/ o rider morder. **FALTAM TESTAR:** loki
-(`maximoNumEvento` — mecanismo a construir; set coerente) e hermes (economia 0-orbe — mecanismo pesado). **Padrão do
-lote (achado durável):** os riders de roubo/remoção são os mais difíceis de virar bom puzzle — ou batem no teto de
-findability (saci, shutendoji) ou saem livres/incoerentes (heimdall, iansã). **npm test verde; build verde** (só saci
-sem carimbo, esperado). **PRÓXIMO:** as 4 decisões do dono; depois construir loki + hermes + fechar iansã/saci/shutendoji.
+## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO): 4/6 fechadas; shutendoji e hermes travados em DECISÃO DE DESIGN; régua de sequenciamento
+**Data:** 2026-08-25
+**Tarefa:** fechar o lote 3 (roubo/remoção), cada mecanismo COM seu consumidor; trazer o custo com 3 colunas. §156-158.
+**Resultado:** **FECHADAS 4/6, todas SEM dica:** heimdall ✓ (dl10; rider livre por passiva-do-título, aceito §Dec.4);
+**saci ✓** (orbe 4 + dl 14, ambos DERIVADOS de medição — a categoria "afrouxamento derivado"; o teto era cadência×sobrevivência,
+não findability); **iansã ✓** (set trocado p/ brahma·hera·freyja; mecanismo `limparBuffsAntesDeAbate` com marco no motor +
+gate `everBuff`; delta-0 livre pela mão dela); **loki ✓** (`maximoNumEvento` 3 DERIVADO — teto real de efeito-buffs roubáveis;
+20 lances). **MECANISMOS CONSTRUÍDOS + TESTADOS:** `semPerderOrbe` (heimdall §8), `limparBuffsAntesDeAbate` (iansã §9, +latch
+`marcos.semBuffLado`/`everBuffLado` no motor), `maximoNumEvento` (loki §10, pico-por-turno ≠ soma), `negarAcaoInimigo.max`
+(backward-compat). **TRAVADAS EM DECISÃO DE DESIGN (2):** **shutendoji** — negar removido (dono §158, era cor); orbe→3 derivado;
+MAS orbe3-só não fecha: PAREDE DE SOBREVIVÊNCIA (krishna·brahma·oxum out-damage o time que os deixa agir p/ roubar; solver
+platô melhorH 117-165 em dl12-18). Decisão: trocar por bateria-de-orbe menos bursty. **hermes** — montagem "0 orbes+0 renda"
+DEADLOCKA (toda ação custa ≥1; não mata Heimdall p/ desbloquear roubo). Decisão: bootstrap (rec. pool inicial fixo sem refil)
++ montagem `semRenda` (motor a construir). **CUSTO DO LOTE (3 colunas): 0 fecham direto; 6/6 exigiram decisão; 3 têm número
+DERIVADO (saci orbe+dl, loki, shutendoji orbe).** **3 CORREÇÕES DE MEDIÇÃO minhas** (saci 3º-buff por-raciocínio, iansã
+everBuff-t1, loki escudo≠efeito) → contramedida do dono: VERIFICAR A UNIDADE DE MEDIDA antes do número virar decisão (§157).
+**RÉGUA DE SEQUENCIAMENTO (§158, o ganho durável — 1ª coisa que ESTIMA em vez de descobrir):** rider CAVALGA o abate (barato:
+MORTE_ESTADO, CONTADOR ~13) × EXIGE preservar/produzir o recurso (caro: roubo/remoção, ACUMULO_RECURSO, MORTE_EXECUÇÃO-vs-revive
+~19). **Estimativa revisada ~14-16 sessões, ALTERNANDO caro com barato.** Classe nova (§158): riders que COMPETEM pelo mesmo
+recurso (shutendoji negar×roubo — contradição, ≠ economia-de-ação; sinal: composto pior que qualquer isolamento). Heurística:
+número honesto dispensa dica (poseidon/khonshu/loki, 3x). **npm test verde; build verde** (só shutendoji sem carimbo, esperado).
+**PRÓXIMO:** 2 decisões do dono (shutendoji enemy-set menos bursty; hermes bootstrap) → fechar os 2 → custo final → o dono
+sequencia os lotes restantes com a régua §158. Dívida de motor do lote ENTREGUE (maximoNumEvento/orbe-perdido-a-roubo/buffs-removidos).
 
 ## Última sessão — F2.4 lote 2 (NEGAÇÃO): khonshu fecha pelo relógio; saci ainda travado; exu realocado
 **Data:** 2026-08-24
