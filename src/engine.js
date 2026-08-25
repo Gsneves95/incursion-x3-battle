@@ -380,6 +380,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     suspensos: null,     // §138 (Dagda M6): buffs SUSPENSOS (remove-e-guarda): { efeitos:[...], shield:N, restauraEm } — restaurados no fimTurno
     naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
     usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
+    jaRecebeu: {},       // §158 (shutendoji): efeito → turno da 1ª vez que LANDOU nesta unidade. Latch p/ "aplique X a cada inimigo" (efeitoEmTodosInimigos); sobrevive à morte (matar não limpa este campo)
     modo: 0, renasceu: false, lado,
     pendente: [],   // §117 (M1): payloads agendados (fx) p/ disparar no próximo iniciarTurno do dono. Lista (não campo único) — robusto se um dia dois caírem na mesma unidade; disparo em ordem de inserção, e a ordem ENTRE unidades cai da iteração por índice do iniciarTurno
   };
@@ -487,6 +488,7 @@ function aplicar(st, u, eff) {
   if (CONTROLES.includes(e.type) && imuneA(st, u, e.type)) {   // imunidade declarativa (controle) — Cuca: adormecido
     log(st, { tipo: 'imune', alvo: u.key, efeito: e.type }); return;
   }
+  if (u.jaRecebeu && u.jaRecebeu[e.type] == null) u.jaRecebeu[e.type] = st.turno;   // §158 (shutendoji): latch "já recebeu o efeito X" (turno da 1ª vez). SOBREVIVE à morte (≠ efeitos, que matar limpa) — "aplique Torpor a cada um" conta mesmo se o inimigo morre depois. Registrado só quando o efeito LANDA (após imunidades/evade).
   const ja = ef(u, e.type);
   if (ja) {
     // regra 6 — acúmulo por categoria

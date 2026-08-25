@@ -58,6 +58,14 @@ const PREDICADOS = {
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.filter(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 1 && e.slot === c.slot).length > (c.max || 0) ? 'falha' : 'ok',
   },
+  efeitoEmNInimigos: {   // §158 (shutendoji, rewrite): o efeito nomeado foi APLICADO a ≥`limiar` inimigos (latch `jaRecebeu`, sobrevive à morte).
+    // `limiar` opcional (default = TODOS os inimigos). CAVALGA o abate (aplicar não exige preservar) — o oposto do rider extrativo.
+    // `distancia` puxa o solver a aplicar nos que faltam. Número DERIVÁVEL (dono: "se o Saké não alcançar os 3, é o que alcançar").
+    modo: 'log', obrig: ['efeito'],
+    aval: (st, c) => { const alvo = c.limiar != null ? c.limiar : st.lados[1].units.length; return st.lados[1].units.filter(u => u.jaRecebeu && u.jaRecebeu[c.efeito] != null).length >= alvo ? 'ok' : 'pendente'; },
+    chave: (st, c) => String(st.lados[1].units.filter(u => u.jaRecebeu && u.jaRecebeu[c.efeito] != null).length),
+    distancia: (st, c) => { const alvo = c.limiar != null ? c.limiar : st.lados[1].units.length; return Math.max(0, alvo - st.lados[1].units.filter(u => u.jaRecebeu && u.jaRecebeu[c.efeito] != null).length); },
+  },
   semPerderOrbe: {   // §156 (heimdall): nenhum orbe do jogador perdido PARA o inimigo (roubo). Distingue roubo (ganhouLado===1) de
     // remoção pura (ganhouLado===null) e de GASTO (paga custo — evento sem o tag perdeuLado/ganhouLado, §153). "para o inimigo" = roubo.
     modo: 'log', obrig: [],

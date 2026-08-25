@@ -5,13 +5,13 @@
   "dificuldade": 2,
   "aliados": [
     "shutendoji",
-    "shiva",
-    "kali"
+    "zeus",
+    "susanoo"
   ],
   "inimigos": [
-    "inari",
+    "krishna",
     "oxum",
-    "mimir"
+    "inari"
   ],
   "montar": {
     "seed": 1,
@@ -23,8 +23,8 @@
       "turnos": 12
     },
     {
-      "predicado": "acumulo",
-      "fonte": "orbesRoubados",
+      "predicado": "efeitoEmNInimigos",
+      "efeito": "torpor",
       "limiar": 3
     }
   ]
