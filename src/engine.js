@@ -1348,12 +1348,15 @@ function iniciarTurno(st) {
   const negadosPorInimigo = controlesNegadosPorInimigo(st, st.ativo);   // §130 (Dionísio): controles que uma passiva negaOrbe do LADO INIMIGO barra na renda deste lado
   const geram = vivos.filter(u => !ef(u, 'adormecido') && !ef(u, 'submerso') && !ef(u, 'dominado') && !negadosPorInimigo.some(c => ef(u, c)));
   const tipos = [...new Set(vivos.map(u => u.elem))];
-  const nOrbs = st.aberturaFeita ? geram.length : 1;
+  // §158 (hermes): montagem `semRenda` — o lado não recebe renda de orbe (nem abertura). "Orçamento fixo sem refil":
+  // o pool inicial (m.orbs) é tudo que há; só o roubo estica. Marca a abertura como feita p/ não dar o 1 de abertura.
+  const semRenda = st.semRenda && st.semRenda[st.ativo];
+  const nOrbs = semRenda ? 0 : (st.aberturaFeita ? geram.length : 1);
   for (let i = 0; i < nOrbs; i++) {
     const t = sortearElemento(st, tipos);
     l.orbs[t]++;
   }
-  if (!st.aberturaFeita) { st.aberturaFeita = true; log(st, { tipo: 'abertura', lado: st.ativo, valor: 1 }); }
+  if (!st.aberturaFeita) { st.aberturaFeita = true; if (!semRenda) log(st, { tipo: 'abertura', lado: st.ativo, valor: 1 }); }
   if (geram.length < vivos.length) log(st, { tipo: 'controle', lado: st.ativo, valor: vivos.length - geram.length });
   // gatilhos de turno declarativos (F1.2 sessão 4): porTurno roda todo turno; abertura só no 1º (primeiro)
   for (const u of l.units) {
