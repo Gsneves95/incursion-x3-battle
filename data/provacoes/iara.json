@@ -30,7 +30,7 @@
     {
       "predicado": "abatePorExecucao",
       "quem": "inimigo",
-      "quantos": 2
+      "quantos": 1
     }
   ]
 }

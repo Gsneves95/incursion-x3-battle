@@ -5,7 +5,7 @@
   "dificuldade": 2,
   "aliados": [
     "jormungandr",
-    "susanoo",
+    "medusa",
     "kali"
   ],
   "inimigos": [
@@ -27,5 +27,35 @@
       "quem": "inimigo",
       "estado": "veneno"
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "11a4d8a7",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 26,
+    "ms": 72,
+    "caminho": [
+      "kali Golpe da Foice → zeus",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "medusa Olhar Petrificante → zeus",
+      "kali Golpe da Foice → zeus",
+      "passar",
+      "kali Sede de Sangue → zeus",
+      "medusa Presa Peçonhenta → zeus",
+      "passar",
+      "kali Sede de Sangue → raijin",
+      "medusa Presa Peçonhenta → raijin",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "kali Sede de Sangue → horus",
+      "passar",
+      "jormungandr Anel do Mundo",
+      "medusa Presa Peçonhenta → horus"
+    ]
+  }
 }
