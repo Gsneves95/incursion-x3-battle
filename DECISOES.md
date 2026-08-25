@@ -6,6 +6,18 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §159 — LOTE 3 FECHADO (6/6, ZERO dicas): a regra-legado do número derivado, e o SEQUENCIAMENTO dos lotes 4-8 (dono).
+
+**REGRA-LEGADO DO LOTE 3 (dono — "o legado do lote"): quando o número AMBICIOSO exige dica e o DERIVADO não, o derivado VENCE — mesmo quando o ambicioso é mais bonito.** Quatro casos a formaram (saci orbe 5→4, khonshu dl 12→14, loki maxEvento 6→3, shutendoji torpor 3→1) + hermes (inverteu a alavanca: meia-renda injogável → renda-cheia+teto). **A dica fica para quando a LINHA EXISTE e a heurística não a acha (§157) — NÃO para salvar um número de que se gostou.** O dono aplicou a regra CONTRA a própria vontade no shutendoji: "torpor em 1 de 3" ensina menos, mas ensina DE GRAÇA (provado), e derivado-sem-dica venceu 4×; sem exceção quando a lição custa. **Custo final do lote 3 (a família mais cara, como a régua §158 previu): 6/6 fechadas · 0 direto · 6/6 exigiram decisão · 4 números derivados · 2 rewrites · 0 dicas.**
+
+**SEQUENCIAMENTO DOS LOTES 4-8 (dono, pela régua §158 — alterna caro/barato):**
+- **Lote 4 — MORTE_EM_ESTADO (5).** BARATO: o estado cavalga o golpe que já mata (foi o poseidon, delta 0). poseidon já feito; faltam jormungandr, iara, piranha, ahpuch.
+- **Lote 5 — ACUMULO_RECURSO (5).** CARO: os 5 extraem do inimigo (khnum, cernunnos, oxum, xango, inari) — a próxima PAREDE EXTRATIVA prevista (§158 raiz).
+- **Lote 6 — ACUMULO_CONTADOR (8).** BARATO: combo/stacks acumulam atacando.
+- **Lote 7 — MORTE_EXECUÇÃO vs revive (8).** CARO: exige ORDEM (derrubar o revive-giver 1º) — puzzle de sequência.
+- **Lote 8 — SEM_PERDER_ALIADO (8) + PROTEGER_UNIDADE (5).** Preservação — suspeita do dono: parte em caro/barato pelo mesmo critério.
+**TESTE DA RÉGUA (dono): se o lote 4 (MORTE_EM_ESTADO) fechar com POUCAS decisões e NENHUM número derivado, a régua prevê custo de verdade → o dono passa a sequenciar por ela SEM medir.** O lote 4 é a validação da régua como instrumento de estimativa.
+
 ## §158 — RÉGUA DE SEQUENCIAMENTO (prevê o custo antes de medir) + a classe RIDERS-QUE-COMPETEM-PELO-RECURSO + heurística do número honesto.
 
 **RÉGUA DE SEQUENCIAMENTO (dono: "vale mais que as Provações do lote" — a 1ª coisa no projeto que ESTIMA em vez de descobrir).** Toda família grande se PARTE em cara × barata pelo mesmo critério: **o rider CAVALGA o abate (barato) × o rider EXIGE preservar/produzir o recurso (caro).**
