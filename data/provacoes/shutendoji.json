@@ -5,8 +5,8 @@
   "dificuldade": 2,
   "aliados": [
     "shutendoji",
-    "cerberus",
-    "shiva"
+    "shiva",
+    "kali"
   ],
   "inimigos": [
     "krishna",
@@ -25,7 +25,12 @@
     {
       "predicado": "acumulo",
       "fonte": "orbesRoubados",
-      "limiar": 8
+      "limiar": 3
+    },
+    {
+      "predicado": "negarAcaoInimigo",
+      "slot": "milagre",
+      "max": 1
     }
   ]
 }

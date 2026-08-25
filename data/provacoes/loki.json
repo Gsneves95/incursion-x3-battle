@@ -25,7 +25,38 @@
     {
       "predicado": "maximoNumEvento",
       "fonte": "buffsRoubados",
-      "limiar": 6
+      "limiar": 3
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "b0406636",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 20,
+    "comDica": false,
+    "nos": 98469,
+    "ms": 34559,
+    "caminho": [
+      "loki Adaga Traiçoeira → brahma",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "loki Trama do Caos",
+      "shiva Tandava",
+      "passar",
+      "shiva Tridente Trishula → brahma",
+      "passar",
+      "shiva Tandava",
+      "kali Golpe da Foice → ogum",
+      "passar",
+      "shiva Tridente Trishula → ogum",
+      "passar",
+      "kali Dança da Aniquilação",
+      "shiva Tridente Trishula → ogum",
+      "passar",
+      "kali Golpe da Foice → hercules",
+      "passar",
+      "kali Golpe da Foice → hercules"
+    ]
+  }
 }

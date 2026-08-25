@@ -52,9 +52,11 @@ const PREDICADOS = {
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 0 && e.slot === c.slot) ? 'falha' : 'ok',
   },
-  negarAcaoInimigo: {   // NENHUM inimigo usa o slot X (depende do que o OPONENTE faz — predicado distinto, não escopo)
+  negarAcaoInimigo: {   // NENHUM inimigo usa o slot X (depende do que o OPONENTE faz — predicado distinto, não escopo).
+    // `max` opcional (§156, shutendoji "se usar DOIS milagres, falha" = max 1): tolera até `max` usos, falha no (max+1)-ésimo.
+    // Default max 0 = comportamento original (qualquer uso falha) — dionisio/boto/khonshu seguem valendo sem tocar.
     modo: 'log', obrig: ['slot'],
-    aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 1 && e.slot === c.slot) ? 'falha' : 'ok',
+    aval: (st, c, ctx) => st.log.filter(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 1 && e.slot === c.slot).length > (c.max || 0) ? 'falha' : 'ok',
   },
   semPerderOrbe: {   // §156 (heimdall): nenhum orbe do jogador perdido PARA o inimigo (roubo). Distingue roubo (ganhouLado===1) de
     // remoção pura (ganhouLado===null) e de GASTO (paga custo — evento sem o tag perdeuLado/ganhouLado, §153). "para o inimigo" = roubo.
