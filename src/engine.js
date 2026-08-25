@@ -400,6 +400,7 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
     energia,                  // config de geração de energia (data/economia.json). null = fallback (ver sortearElemento)
     fase: null, faseDur: 0,   // estado global Dia/Noite
     marcos: { semBuffLado: [null, null], everBuffLado: [false, false] },   // §156 (iansã): MARCO — turno em que TODAS as unidades vivas de um lado ficaram sem buff (nem efeito-buff nem escudo), DEPOIS de o lado JÁ TER carregado buff (everBuff). O gate everBuff evita a trivialidade do estado inicial vazio (antes de o inimigo buffar). Latch (1ª vez), sobrevive ao clone. Lido por limparBuffsAntesDeAbate; a 1ª queda vem do log (que carrega `turno`).
+    orbeGasto: [0, 0],        // §158 (hermes rewrite): total de orbes GASTOS em custo por lado (específico + livre + conversão). NÃO conta roubo. Lido por tetoDeGasto.
     lados: [
       { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
       { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
@@ -1117,6 +1118,7 @@ function podePagar(l, cost) {
 function pagar(st, l, cost) {
   const esp = { ...cost }; const livre = esp.livre || 0; delete esp.livre;
   for (const k in esp) l.orbs[k] -= esp[k];
+  if (st.orbeGasto) st.orbeGasto[st.ativo] += Object.values(esp).reduce((a, b) => a + b, 0);   // §158: conta o custo ESPECÍFICO (o livre entra no logGastoLivre)
   l.dividaLivre = (l.dividaLivre || 0) + livre;
 }
 function pagarLivreGuloso(l, n) {   // rede de segurança: gasta do pool mais cheio
@@ -1133,6 +1135,7 @@ function pagarLivreGuloso(l, n) {   // rede de segurança: gasta do pool mais ch
 // agregado (`valor:-3`) mentiria por omissão sobre QUAIS orbes saíram (docs/eventos.md).
 function logGastoLivre(st, lado, gasto) {
   for (const k in gasto) if (gasto[k] > 0) log(st, { tipo: 'orbe', lado, valor: -gasto[k], para: k });
+  if (st.orbeGasto) st.orbeGasto[lado] += Object.values(gasto).reduce((a, b) => a + b, 0);   // §158: conta o custo LIVRE (ambos os caminhos passam aqui)
 }
 // escolha do jogador de quais orbes pagam a dívida livre do turno
 function alocarLivre(st, plano) {
@@ -1177,6 +1180,7 @@ function converter(st, para) {
     for (const k in gasto) l.orbs[k] += gasto[k];
     return { ok: false, erro: 'Conversão inválida.' };
   }
+  if (st.orbeGasto) st.orbeGasto[st.ativo] += pagos;   // §158: a conversão gasta orbes (bruto)
   l.orbs[para]++; l.converteu = true;
   log(st, { tipo: 'conversao', lado: st.ativo, valor: CONV_CUSTO, para });
   return { ok: true };
@@ -1353,7 +1357,8 @@ function iniciarTurno(st) {
   // §158 (hermes): montagem `semRenda` — o lado não recebe renda de orbe (nem abertura). "Orçamento fixo sem refil":
   // o pool inicial (m.orbs) é tudo que há; só o roubo estica. Marca a abertura como feita p/ não dar o 1 de abertura.
   const semRenda = st.semRenda && st.semRenda[st.ativo];
-  const nOrbs = semRenda ? 0 : (st.aberturaFeita ? geram.length : 1);
+  const frac = (st.rendaFracao && st.rendaFracao[st.ativo] != null) ? st.rendaFracao[st.ativo] : 1;   // §158 (hermes rewrite): renda pela metade — o time PODE agir, mas cada orbe conta; o roubo estica o orçamento
+  const nOrbs = semRenda ? 0 : (st.aberturaFeita ? Math.floor(geram.length * frac) : 1);
   for (let i = 0; i < nOrbs; i++) {
     const t = sortearElemento(st, tipos);
     l.orbs[t]++;

@@ -66,6 +66,15 @@ const PREDICADOS = {
     chave: (st, c) => String(st.lados[1].units.filter(u => u.jaRecebeu && u.jaRecebeu[c.efeito] != null).length),
     distancia: (st, c) => { const alvo = c.limiar != null ? c.limiar : st.lados[1].units.length; return Math.max(0, alvo - st.lados[1].units.filter(u => u.jaRecebeu && u.jaRecebeu[c.efeito] != null).length); },
   },
+  tetoDeGasto: {   // §158 (hermes rewrite): vença gastando no máximo `limiar` orbes de fonte PRÓPRIA. Roubado NÃO conta (estica o orçamento).
+    // FINAL: só julgado na vitória (o teto pode subir depois, quando se rouba — não falha cedo). gastoProprio = gasto − roubado.
+    modo: 'final', obrig: ['limiar'],
+    aval: (st, c) => {
+      const roubado = st.log.reduce((s, e) => s + (e.tipo === 'orbe' && e.ganhouLado === 0 && e.valor > 0 ? e.valor : 0), 0);
+      const gastoProprio = Math.max(0, (st.orbeGasto ? st.orbeGasto[0] : 0) - roubado);
+      return gastoProprio <= c.limiar ? 'ok' : 'falha';
+    },
+  },
   semPerderOrbe: {   // §156 (heimdall): nenhum orbe do jogador perdido PARA o inimigo (roubo). Distingue roubo (ganhouLado===1) de
     // remoção pura (ganhouLado===null) e de GASTO (paga custo — evento sem o tag perdeuLado/ganhouLado, §153). "para o inimigo" = roubo.
     modo: 'log', obrig: [],
@@ -199,6 +208,7 @@ function montarProvacao(prov) {
   const st = novoEstado(prov.aliados, prov.inimigos, m.seed || 1, m.comeca || 0, null, catalogoProvacao());
   if (m.orbs) for (const l of [0, 1]) if (m.orbs[l]) for (const el in m.orbs[l]) st.lados[l].orbs[el] = m.orbs[l][el];
   if (m.semRenda) st.semRenda = m.semRenda;   // §158 (hermes): [lado0, lado1] booleanos — lado sem renda de orbe (orçamento fixo)
+  if (m.rendaFracao) st.rendaFracao = m.rendaFracao;   // §158 (hermes rewrite): [lado0, lado1] frações — renda pela metade (0.5) etc.
   for (const u of (m.unidades || [])) {
     const un = st.lados[u.lado] && st.lados[u.lado].units[u.idx];
     if (!un) continue;

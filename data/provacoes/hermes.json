@@ -5,8 +5,9 @@
   "dificuldade": 3,
   "aliados": [ "hermes", "zeus", "susanoo" ],
   "inimigos": [ "heimdall", "exu", "oxum" ],
-  "montar": { "seed": 1, "comeca": 0, "semRenda": [true, false], "orbs": { "0": { "Tempestade": 8 } } },
+  "montar": { "seed": 1, "comeca": 0, "rendaFracao": [0.5, 1] },
   "condicoes": [
-    { "predicado": "deadline", "turnos": 14 }
+    { "predicado": "deadline", "turnos": 14 },
+    { "predicado": "tetoDeGasto", "limiar": 12 }
   ]
 }
