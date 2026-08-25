@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §161 — LOTE 4, as duas últimas (piranha, ahpuch): FONTE-ÚNICA SEM 2º APLICADOR NO ROSTER → o gargalo é a cláusula "TODOS caem carregando", não o número. Medição, não raciocínio.
+
+**O ACHADO.** piranha (sangramento) e ahpuch (podridão) são o MESMO caso — e é o §160 "fonte-única" levado ao limite: o estado tem **UM só aplicador no roster inteiro** (sangramento = só a Piranha; podridão = só o Ah Puch). O §160 dizia "dois aplicadores tornam barato"; aqui há ZERO segundos aplicadores possíveis, então a correção do §160 (pôr um 2º aplicador no time) **não existe como opção de montagem** — é a lacuna de roster que o §160 já anotava (irmã da lacuna `restauraMax`).
+
+**MEDIÇÃO (contra oni·aquiles·ogum para piranha; demeter·oni·ogum — curador PURO sem cleanse — para ahpuch; ambos ISO-VENCÍVEIS: a LUTA fecha, len 25 e 21):**
+
+| variação | veredito | leitura |
+|---|---|---|
+| piranha `morteEmEstado` (TODOS sangrando) | INDETERMINADO H=0 dica | o único sangrador (2 turnos, alvo-único) é focado e MORRE no ~t7; o time então mata o resto sem sangramento → derrota-de-maneira |
+| piranha "≥1 morre sangrando" (contagem) | **VENCÍVEL 27, SEM dica** | o básico da Piranha SEMPRE sangra → 1-carregando sai incidental ao jogo guloso |
+| piranha "≥2 morrem sangrando" | INDETERMINADO H=40 dica | 2 já exige sincronia de fonte-única |
+| ahpuch `morteComContador` TODOS, limiar 4/3/2/1 | INDETERMINADO H=15 dica (idêntico nos 4) | o gargalo NÃO é o limiar — é o "TODOS caírem podres"; o único podridão-aplicador (Ah Puch, 12 de dano) morre no ~t5 |
+| lever HP (afrouxar/apertar o inimigo) | 70=platô, 55=INVENCÍVEL | **não há ponto doce**: tanky demais → o aplicador é focado (platô); mole demais → o inimigo cai ANTES de ser afligido (INVENCÍVEL). O HP não abre o fonte-única. |
+
+**A REGRA (medida, não raciocinada).** Numa maneira-de-morte de FONTE-ÚNICA contra 3 inimigos, o custo NÃO está no número do estado (limiar/duração) — está no QUANTIFICADOR "TODOS". "Todos caem carregando" exige que o aplicador solitário sincronize 3 mortes-carregando E sobreviva ao foco; sem 2º aplicador isso só fecha com dica que roteiriza sobrevivência+sincronia (perde para o derivado, §158). **"AO MENOS 1 cai carregando" fecha sem dica** quando o aplicador tem o estado embutido no básico (piranha), porque sai incidental. Este é o §158 aplicado ao QUANTIFICADOR, não ao número: quando o "todos" exige dica e o "≥1" não, o ≥1 vence — mas trocar `morteEmEstado`/`morteComContador` de "todos" para "≥N" é REESCREVER a condição (predicado ganha um campo `quantos`), e isso é decisão do dono, não derivação minha (o dono reserva "eu reescrevo a condição").
+
+**PENDENTE DO DONO (as duas ficam SEM carimbo até isto):** (a) reescrever para "≥1 morre carregando" (piranha fecha medido, len 27; ahpuch idem por simetria, com `quantos` real no predicado para medir o limiar certo); OU (b) aceitar a dica-que-roteiriza (recusado por política §157/§158, mas é do dono); OU (c) adicionar um 2º aplicador de sangramento/podridão ao roster (decisão de conteúdo). **Experimento REVERTIDO:** cheguei a pôr `distancia`/`chave` de gradiente-de-maneira em `morteEmEstado`/`morteComContador` (espelhando `abatePorExecucao`); ele NÃO racha o fonte-única (o best-first ainda é atraído ao terminal maneira-incorreta de H≈0 antes de cometer cobrir-então-matar), então revertido — infra compartilhada não muda sem ganho e sem o dono. **LIÇÃO:** o eixo da régua §160 ("persistência/fonte-única") estava certo; o que faltava nomear é que fonte-única SEM 2º aplicador possível não tem correção de montagem — só de CONDIÇÃO (o quantificador) ou de ROSTER.
+
+**Régua do lote 4 (a 4ª coluna que o dono pediu — quantas a régua PREVIU certo):** a régua §158/§160 prevê o RIDER, não o enemy-set. Placar: poseidon (previu barato, fechou) ✓; jormungandr (régua deu o 1º FALSO no §160 — previu barato, exigiu 2º aplicador) ✗→corrigida; iara (idem jormungandr, fonte-única) ✗→corrigida; piranha e ahpuch (fonte-única SEM 2º aplicador — a régua corrigida do §160 PREVÊ o custo, mas a correção que ela indica não existe no roster) — previsão certa do custo, correção indisponível. **2/5 fecharam onde a régua previu direto; 3/5 exigiram a correção fonte-única, e nas 2 últimas essa correção não cabe no roster.**
+
+---
+
 ## §160 — LOTE 4 (MORTE_EM_ESTADO): "morrer de X" ≡ "morrer CARREGANDO X" (forma canônica), e o teste da régua §159.
 
 **REGRA CANÔNICA (dono) — "morrer DE X" e "morrer CARREGANDO X" são a MESMA condição no vocabulário deste jogo; CARREGANDO é a forma canônica.** A tradução do lote 4 pegou o §156 (flavor × rider) onde eu não esperava: a prosa de jormungandr/piranha diz "morrer de Veneno/Sangramento, NÃO de golpe direto" — que descreve COMO vencer (cor), não O QUE alcançar (rider). E tem consequência mecânica: **carregando é verificável no evento de QUEDA (`estados` já estão lá, §145); morto-POR exigiria a CAUSA da morte, que a queda não guarda.** Já decidido uma vez (izanagi: "use morreu CARREGANDO DoT, é o que o log carrega") — aceitar morto-por aqui daria DUAS leituras da mesma prosa em duas Provações. **Regra: "morrer de X" → predicado `morteEmEstado{X}` (carregando). Quem quiser morto-POR precisa de CAUSA-DA-MORTE no log — mecanismo novo, ZERO consumidores hoje, não se constrói especulativamente (§87).** Consequência p/ a régua §159: MORTE_EM_ESTADO é BARATO (o estado cavalga o abate) — MAS a medição desmentiu (o 1º FALSO da régua, ↓).

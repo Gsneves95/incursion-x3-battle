@@ -2,7 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO) FECHADO 6/6, TODAS SEM DICA; régua §158 pronta p/ sequenciar
+## Última sessão — F2.4 lote 4 (MORTE_EM_ESTADO): 3/5 FECHADAS sem dica; as 2 últimas travam em FONTE-ÚNICA-SEM-2º-APLICADOR (§161) — PENDENTE do dono
+**FECHADAS 3/5, sem dica:** poseidon ✓ (encharcado), jormungandr ✓ (veneno; 2º aplicador medusa — VENCÍVEL 19),
+iara ✓ (encharcado; 2º aplicador poseidon + execução→0 — VENCÍVEL 17). **As 2 últimas SEM carimbo (§161):** **piranha**
+(sangramento) e **ahpuch** (podridão) são o MESMO caso — estado de FONTE ÚNICA cujo único aplicador é o próprio rider
+e **não há 2º aplicador no roster** (a correção §160 não existe como montagem). Medido: a LUTA fecha (ISO len 25/21),
+mas "TODOS caem carregando" é platô/dica em todo orçamento, HP (70=platô, 55=INVENCÍVEL) e limiar (ahpuch idêntico em 4/3/2/1).
+O gargalo é o QUANTIFICADOR "todos", não o número: piranha "**≥1 morre sangrando**" fecha **VENCÍVEL 27 SEM dica** (o básico
+dela sempre sangra → incidental). **DECISÃO DO DONO (as 2 ficam sem carimbo até responder):** (a) reescrever a condição p/
+"≥1 morre carregando" (`morteEmEstado`/`morteComContador` ganham campo `quantos`) — piranha fecha medido; (b) aceitar dica
+que roteiriza (recusada por §157/§158); (c) pôr um 2º aplicador de sangramento/podridão no roster (conteúdo). ahpuch teve o
+enemy-set corrigido p/ **demeter·oni·ogum** (curador PURO sem cleanse — o demeter·nefertem·brigid anterior era INVENCÍVEL por
+cleanse duplo). Experimento de gradiente-de-maneira em `provacao.js` REVERTIDO (não racha fonte-única; infra não muda sem ganho).
+**Custo lote 4 (4 colunas):** 3/5 fecharam · 3 exigiram decisão (o 2º-aplicador de jormungandr/iara + o set do ahpuch) ·
+2 nº derivados (iara execução→0, piranha ≥1) · régua PREVIU o custo em ~4/5 (só o eixo fonte-única, corrigido no §160). **npm test verde.**
+
+## (histórico) lote 3 — F2.4 (ROUBO/REMOÇÃO) FECHADO 6/6, TODAS SEM DICA; régua §158 pronta p/ sequenciar
 **FECHAMENTO FINAL (6/6):** heimdall ✓, saci ✓ (orbe4+dl14 derivados), iansã ✓ (limparBuffsAntesDeAbate), loki ✓
 (maximoNumEvento 3 derivado), **shutendoji ✓** (rewrite: efeitoEmNInimigos torpor **limiar 1** derivado — 3→2→1 por medição,
 enemy-set krishna·oxum·exu; 27 lances), **hermes ✓** (rewrite: tetoDeGasto **24** + RENDA CHEIA — meia-renda era injogável,
