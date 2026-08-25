@@ -26,11 +26,6 @@
       "predicado": "acumulo",
       "fonte": "orbesRoubados",
       "limiar": 3
-    },
-    {
-      "predicado": "negarAcaoInimigo",
-      "slot": "milagre",
-      "max": 1
     }
   ]
 }
