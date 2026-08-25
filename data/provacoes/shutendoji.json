@@ -11,7 +11,7 @@
   "inimigos": [
     "krishna",
     "oxum",
-    "inari"
+    "exu"
   ],
   "montar": {
     "seed": 1,
@@ -25,7 +25,45 @@
     {
       "predicado": "efeitoEmNInimigos",
       "efeito": "torpor",
-      "limiar": 2
+      "limiar": 1
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "e21e0c76",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 298,
+    "ms": 390,
+    "caminho": [
+      "zeus Cetro do Trovão → krishna",
+      "shutendoji Saké Envenenado → oxum",
+      "passar",
+      "zeus Julgamento do Trovão → oxum",
+      "shutendoji Garra Ébria → krishna",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Julgamento do Trovão → oxum",
+      "susanoo Corte de Kusanagi → krishna",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "zeus Julgamento do Trovão → oxum",
+      "passar",
+      "susanoo Corte de Kusanagi → krishna",
+      "zeus Cetro do Trovão → oxum",
+      "passar",
+      "susanoo Corte de Kusanagi → exu",
+      "passar",
+      "susanoo Corte de Kusanagi → exu",
+      "passar",
+      "susanoo Corte de Kusanagi → exu",
+      "passar",
+      "susanoo Yamata no Orochi"
+    ]
+  }
 }

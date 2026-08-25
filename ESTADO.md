@@ -2,7 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO): 4/6 fechadas; shutendoji+hermes INVENCÍVEIS por incompatibilidade → rewrite do dono; régua §158
+## Última sessão — F2.4 lote 3 (ROUBO/REMOÇÃO) FECHADO 6/6, TODAS SEM DICA; régua §158 pronta p/ sequenciar
+**FECHAMENTO FINAL (6/6):** heimdall ✓, saci ✓ (orbe4+dl14 derivados), iansã ✓ (limparBuffsAntesDeAbate), loki ✓
+(maximoNumEvento 3 derivado), **shutendoji ✓** (rewrite: efeitoEmNInimigos torpor **limiar 1** derivado — 3→2→1 por medição,
+enemy-set krishna·oxum·exu; 27 lances), **hermes ✓** (rewrite: tetoDeGasto **24** + RENDA CHEIA — meia-renda era injogável,
+correção medida; enemy-set heimdall·mimir·tanuki, heimdall mantido; 29 lances). **NENHUMA usou dica.** Mecanismos no motor:
+semPerderOrbe, limparBuffsAntesDeAbate(+marcos), maximoNumEvento, negarAcaoInimigo.max, efeitoEmNInimigos(+jaRecebeu),
+semRenda, rendaFracao, tetoDeGasto(+orbeGasto). **Custo final 3 colunas: 0 direto · 6/6 exigiram decisão · 4 nº derivados
+(saci orbe+dl, loki, shutendoji torpor, hermes teto) · 2 rewrites (shutendoji, hermes).** **Achados duráveis §157-158:**
+critério de PARADA (nenhum eixo fecha → provar incompatibilidade → reescrever); riders EXTRATIVOS anti-vitória (prevê
+ACUMULO_RECURSO como próxima parede); classes montagem-que-impede-agir + riders-competindo-pelo-recurso; contramedida
+unidade-de-medida; **régua de sequenciamento (cavalga-abate barato × exige-recurso caro, ~14-16 sessões alternando);**
+meta-regra rewrite-custa-dois (rider+set, re-tunar o enemy-set em TODA mudança de rider). **PRÓXIMO:** o dono sequencia
+os lotes restantes com a régua §158 + a previsão de que ACUMULO_RECURSO (5) é a próxima parede extrativa (muda a ordem).
+Dívida de motor do roubo/remoção ENTREGUE. **npm test verde; build verde; 6/6 carimbadas.**
+
+## (histórico) lote 3 — 4/6 fechadas; shutendoji+hermes rewrites (superado pela NOTA acima)
 **NOTA FINAL v2 (o dono REESCREVEU os dois riders; as mecânicas entraram, mas o ENEMY-SET virou o novo muro):**
 shutendoji → rider `efeitoEmNInimigos` (torpor em N — CAVALGA o abate); hermes → `tetoDeGasto` + `rendaFracao` (meia-renda,
 teto de gasto onde roubado não conta). **Mecânicas construídas + testadas (npm verde):** efeitoEmNInimigos+latch jaRecebeu;
