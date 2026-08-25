@@ -44,6 +44,26 @@ const PREDICADOS = {
       return 'ok';
     },
   },
+  morteComContador: {   // §160 (ahpuch): "cada `quem` cai carregando ≥`limiar` de `contador`" (podridão). Contador vem no snapshot da queda (§160).
+    modo: 'log', obrig: ['quem', 'contador', 'limiar'],
+    aval: (st, c, ctx) => {
+      const lado = ladoDoQuem(c.quem);
+      for (const e of st.log) if (e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado) {
+        if (!(e.contadores && (e.contadores[c.contador] || 0) >= c.limiar)) return 'falha';   // caiu com < limiar → impossível
+      }
+      return 'ok';
+    },
+  },
+  abatePorExecucao: {   // §160 (iara): ≥`quantos` `quem` caíram por EXECUÇÃO (queda.execucao). Conta ao vivo; ok quando atinge.
+    modo: 'log', obrig: ['quem', 'quantos'],
+    aval: (st, c, ctx) => {
+      const lado = ladoDoQuem(c.quem);
+      const n = st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length;
+      return n >= c.quantos ? 'ok' : 'pendente';
+    },
+    chave: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
+    distancia: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return Math.max(0, c.quantos - st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
+  },
   semPerderAliado: {   // nenhum aliado cai (estrito: uma `queda` de aliado já falha; variante tolerante-a-revive fica p/ depois)
     modo: 'log', obrig: [],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === 0) ? 'falha' : 'ok',

@@ -6,6 +6,10 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §160 — LOTE 4 (MORTE_EM_ESTADO): "morrer de X" ≡ "morrer CARREGANDO X" (forma canônica), e o teste da régua §159.
+
+**REGRA CANÔNICA (dono) — "morrer DE X" e "morrer CARREGANDO X" são a MESMA condição no vocabulário deste jogo; CARREGANDO é a forma canônica.** A tradução do lote 4 pegou o §156 (flavor × rider) onde eu não esperava: a prosa de jormungandr/piranha diz "morrer de Veneno/Sangramento, NÃO de golpe direto" — que descreve COMO vencer (cor), não O QUE alcançar (rider). E tem consequência mecânica: **carregando é verificável no evento de QUEDA (`estados` já estão lá, §145); morto-POR exigiria a CAUSA da morte, que a queda não guarda.** Já decidido uma vez (izanagi: "use morreu CARREGANDO DoT, é o que o log carrega") — aceitar morto-por aqui daria DUAS leituras da mesma prosa em duas Provações. **Regra: "morrer de X" → predicado `morteEmEstado{X}` (carregando). Quem quiser morto-POR precisa de CAUSA-DA-MORTE no log — mecanismo novo, ZERO consumidores hoje, não se constrói especulativamente (§87).** Consequência p/ a régua §159: MORTE_EM_ESTADO é BARATO (o estado cavalga o abate) — confirmado pela leitura canônica.
+
 ## §159 — LOTE 3 FECHADO (6/6, ZERO dicas): a regra-legado do número derivado, e o SEQUENCIAMENTO dos lotes 4-8 (dono).
 
 **REGRA-LEGADO DO LOTE 3 (dono — "o legado do lote"): quando o número AMBICIOSO exige dica e o DERIVADO não, o derivado VENCE — mesmo quando o ambicioso é mais bonito.** Quatro casos a formaram (saci orbe 5→4, khonshu dl 12→14, loki maxEvento 6→3, shutendoji torpor 3→1) + hermes (inverteu a alavanca: meia-renda injogável → renda-cheia+teto). **A dica fica para quando a LINHA EXISTE e a heurística não a acha (§157) — NÃO para salvar um número de que se gostou.** O dono aplicou a regra CONTRA a própria vontade no shutendoji: "torpor em 1 de 3" ensina menos, mas ensina DE GRAÇA (provado), e derivado-sem-dica venceu 4×; sem exceção quando a lição custa. **Custo final do lote 3 (a família mais cara, como a régua §158 previu): 6/6 fechadas · 0 direto · 6/6 exigiram decisão · 4 números derivados · 2 rewrites · 0 dicas.**

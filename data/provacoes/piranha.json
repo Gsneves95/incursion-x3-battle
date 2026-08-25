@@ -1,0 +1,31 @@
+{
+  "key": "piranha",
+  "titulo": "Águas Vermelhas",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "piranha",
+    "susanoo",
+    "kali"
+  ],
+  "inimigos": [
+    "baldur",
+    "vishnu",
+    "oxala"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "morteEmEstado",
+      "quem": "inimigo",
+      "estado": "sangramento"
+    }
+  ]
+}

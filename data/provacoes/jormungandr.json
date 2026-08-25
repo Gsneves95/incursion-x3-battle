@@ -1,0 +1,31 @@
+{
+  "key": "jormungandr",
+  "titulo": "O Anel se Fecha",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "jormungandr",
+    "susanoo",
+    "kali"
+  ],
+  "inimigos": [
+    "zeus",
+    "raijin",
+    "horus"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "morteEmEstado",
+      "quem": "inimigo",
+      "estado": "veneno"
+    }
+  ]
+}

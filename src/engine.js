@@ -314,6 +314,8 @@ const VOCAB = {
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
+    'execucao',            // queda:execucao — o abate foi por EXECUÇÃO (F1.9; iara ≥2 via Afogamento, kraken slotAbate)
+    'contadores',          // queda:contadores — snapshot de contadores no morto ao cair (§160; ahpuch "cair com ≥4 podridão")
     // TAG DE ROUBO/REMOÇÃO (§153): AÇÃO + DIREÇÃO num evento orbe/efeito de transferência. `perdeuLado`=quem
     // perdeu; `ganhouLado`=quem ganhou (null = REMOÇÃO pura, ninguém ganhou); `qtd`=quantos buffs (orbe usa `valor`).
     // Os 4 consumidores caem de leitura sobre o log, sem rastreio novo (§106): orbesRoubados(ganhouLado===0) ·
@@ -1001,6 +1003,7 @@ function matar(st, atk, alvo, opts = {}) {
   // o `queda` NÃO carregava o estado-na-morte, então a condição "morrer Encharcado/Envenenado" não caía do log de
   // graça; levar o snapshot ao evento a torna um predicado sobre o log (sem o avaliador re-observar cada turno).
   const estadosNaQueda = [...alvo.efeitos.map(e => e.type), ...alvo.dots.map(d => d.nome)];
+  const contadoresNaQueda = { ...alvo.contadores };   // §160 (ahpuch): snapshot dos contadores ao cair (podridão etc.) — a queda os limpa (linha abaixo); levá-los ao evento torna "cair com ≥N de X" predicado sobre o log
   alvo.vivo = false; alvo.hp = 0; alvo.efeitos = []; alvo.dots = []; alvo.shield = 0; alvo.contadores = {};   // hp=0 tb na execução (matava com hp>0): mantém o invariante morto⟹hp=0 (exposto pelo 1º kit de execução, Fenrir)
   // `matador` (F2.0): quem desferiu o golpe letal, quando há um. O motor já conhece o atk aqui (o §118
   // abateNaoRevive é keyed por ele); levá-lo ao evento faz a condição "abate pelo próprio lado" (fogo amigo:
@@ -1009,6 +1012,7 @@ function matar(st, atk, alvo, opts = {}) {
   { const ev = opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key };
     if (atk && atk.key) ev.matador = atk.key;
     if (estadosNaQueda.length) ev.estados = estadosNaQueda;
+    if (Object.keys(contadoresNaQueda).length) ev.contadores = contadoresNaQueda;   // §160 (ahpuch): "cair com ≥N de podridão"
     log(st, ev); }
   // gatilho porExecucao (F1.9, Yan Wong §89) — morte por EXECUÇÃO de um inimigo: o lado OPOSTO ao morto reage (1 orbe).
   // Uniforme: qualquer execução (Livro, executaAbaixoDe), não só a do dono — leitura literal de "por execução".

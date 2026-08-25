@@ -1,0 +1,32 @@
+{
+  "key": "ahpuch",
+  "titulo": "A Podridão",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "ahpuch",
+    "susanoo",
+    "kali"
+  ],
+  "inimigos": [
+    "itzamna",
+    "nefertem",
+    "brigid"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "morteComContador",
+      "quem": "inimigo",
+      "contador": "podridao",
+      "limiar": 4
+    }
+  ]
+}

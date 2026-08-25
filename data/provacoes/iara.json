@@ -1,0 +1,36 @@
+{
+  "key": "iara",
+  "titulo": "O Canto",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "iara",
+    "susanoo",
+    "kali"
+  ],
+  "inimigos": [
+    "ogum",
+    "tyr",
+    "fenrir"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "morteEmEstado",
+      "quem": "inimigo",
+      "estado": "encharcado"
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 2
+    }
+  ]
+}
