@@ -5,8 +5,8 @@
   "dificuldade": 2,
   "aliados": [
     "iara",
-    "susanoo",
-    "kali"
+    "poseidon",
+    "susanoo"
   ],
   "inimigos": [
     "ogum",
@@ -26,11 +26,34 @@
       "predicado": "morteEmEstado",
       "quem": "inimigo",
       "estado": "encharcado"
-    },
-    {
-      "predicado": "abatePorExecucao",
-      "quem": "inimigo",
-      "quantos": 1
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "d5f12d59",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 17,
+    "comDica": false,
+    "nos": 25466,
+    "ms": 12208,
+    "caminho": [
+      "susanoo Corte de Kusanagi → ogum",
+      "passar",
+      "susanoo Corte de Kusanagi → fenrir",
+      "passar",
+      "susanoo Corte de Kusanagi → fenrir",
+      "passar",
+      "susanoo Corte de Kusanagi → ogum",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "poseidon Maremoto",
+      "passar",
+      "iara Afogamento",
+      "passar",
+      "poseidon Tridente Colossal → tyr",
+      "passar",
+      "iara Canto Suave → tyr"
+    ]
+  }
 }
