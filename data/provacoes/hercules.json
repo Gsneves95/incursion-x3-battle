@@ -1,0 +1,73 @@
+{
+  "key": "hercules",
+  "titulo": "Os Doze Trabalhos",
+  "nivel": "Rito",
+  "dificuldade": 2,
+  "aliados": [
+    "hercules",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "oni",
+    "aquiles",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "danoBonus",
+      "limiar": 16
+    }
+  ],
+  "verificacao": {
+    "hash": "79819338",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 31,
+    "comDica": false,
+    "nos": 8288,
+    "ms": 3234,
+    "caminho": [
+      "kali Golpe da Foice → oni",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "perseu Cabeça da Medusa → oni",
+      "passar",
+      "perseu Foice Adamantina → oni",
+      "passar",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Foice Adamantina → ogum",
+      "passar",
+      "kali Sede de Sangue → ogum",
+      "perseu Cabeça da Medusa → ogum",
+      "passar",
+      "perseu Foice Adamantina → ogum",
+      "passar",
+      "hercules Os Doze Trabalhos → aquiles",
+      "passar",
+      "kali Golpe da Foice → aquiles",
+      "perseu Foice Adamantina → aquiles",
+      "hercules Punho Hercúleo → aquiles",
+      "passar",
+      "kali Golpe da Foice → aquiles",
+      "hercules Os Doze Trabalhos → aquiles",
+      "passar",
+      "passar",
+      "hercules Os Doze Trabalhos → aquiles",
+      "passar",
+      "passar",
+      "hercules Os Doze Trabalhos → aquiles"
+    ]
+  }
+}

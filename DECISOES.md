@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §164 — LOTE 6 (ACUMULO_CONTADOR) medido: a régua acerta no geral, mas erra o próprio exemplo (combo); e a 4ª pergunta tem FALSO-POSITIVO.
+
+**MEDIÇÃO (leitores contadorLado/danoBonus prontos antes, §163):**
+
+| deus | contador/fonte | número | veredito | leitura |
+|---|---|---|---|---|
+| **ra** ✓ | discoSolar | 6 (teto) | VENCÍVEL 19 | AUTOMÁTICO (+1/turno passivo) — o Rá nem age; rider quase FREE (o outro extremo do Xangô) |
+| **hercules** ✓ | danoBonus | 16 | VENCÍVEL 31 | ACOPLADO limpo — o stack cavalga Os Doze Trabalhos (ataque de 20 que o guloso usa); 24 pede dica |
+| **kitsune** ✓ | cauda | 8 | VENCÍVEL 32 | SEMI-AUTOMÁTICO (passivo 1/2t + habilidade); cabe no dl18, não precisou derivar |
+| **brahma** ✓ | danoBonus | 24 (trivial até 40) | VENCÍVEL 21 | FALSO-POSITIVO da flag: Quatro Faces é buff, MAS buff BUFFA o dano → ajuda o abate → o guloso lança; quase free |
+| **itzamna** | danoBonus | fecha até 20 | VENCÍVEL 34 | **FALSO-POSITIVO FORTE da flag** — fecha apesar do "Xangô de novo"; composto (+protege-HPmax) pendente |
+| **susanoo / raijin / yamato** | combo (POOL) | — | **FALHA por-deus** | combo é 2/ataque; um só gerador é LENTO demais (fight acaba antes) OU é ofuscado por aliado forte → combo 0. Só o COMBO-SQUAD (os 3 juntos, 6/turno) fecha (combo 20 VENCÍVEL 37) |
+
+**ACHADO 1 — A 4ª PERGUNTA (ativo-opcional) TEM FALSO-POSITIVO, e o dono queria saber (melhor que confirmar a suspeita).** Eu flaguei brahma e itzamna como "Xangô de novo" (acumulam por um buff, ação separada). **Erraram: os dois FECHAM.** A distinção que faltava: um buff que AUMENTA O DANO acelera o abate → o guloso o lança de qualquer jeito (ACOPLADO), ao contrário do armazenar/refletir do Xangô/Cernunnos, que NÃO ajudam a vencer. **REFINO DA REGRA: a pergunta certa não é "a ação é separada do ataque?" e sim "a ação AJUDA A VENCER (mata/salva/acelera)?". Buff-de-dano ajuda; coleta-pura (store, reflexo-coletado) não.** O filtro passa de "ação-separada" para "ação-inútil-à-vitória".
+
+**ACHADO 2 — A RÉGUA ACERTA NO GERAL MAS ERRA O PRÓPRIO EXEMPLO (combo).** Ela previu "combo acumula atacando = barato". Os contadores NÃO-combo (disco, cauda, danoBonus) fecharam baratos (ra/hercules/kitsune/brahma/itzamna, 5/5, poucas decisões) — a régua acerta a família. MAS o combo — o exemplo-BANDEIRA dela — é o que FALHA por-deus: é um POOL de 2/ataque, e um só gerador não acumula rápido o bastante num fight vencível (fight curto→pouco combo; fight longo→gerador ofuscado ou não vence). **Combo precisa de MÚLTIPLOS geradores (o espelho invertido do fonte-única §160: lá um estado de fonte única era caro; aqui um POOL de fonte única é lento). Régua: certa na família, errada na bandeira.**
+
+**ACHADO 3 — contador AUTOMÁTICO é o outro extremo do Xangô (rider fino).** ra (disco +1/turno) e brahma (buff quase-free) acumulam SOZINHOS — o rider não constrange a jogada (o oposto do ativo-opcional, que nunca acontece). Eixo completo: ATIVO-OPCIONAL (nunca) — ACOPLADO (cavalga, o ponto doce) — AUTOMÁTICO (sempre, grátis). Os dois extremos dão Provação fraca.
+
+**FECHADAS 5 (individuais): ra 6, hercules 16, kitsune 8, brahma 24, itzamna ≤20** (itzamna só o primário; composto pendente). **PENDENTE DO DONO:** (1) o COMBO-SQUAD — susanoo/raijin/yamato viram UMA Provação-esquadrão (combo 20) ou riders distintos? (2) os COMPOSTOS — yamato (+remove-3-buff) e itzamna (+protege-HPmax) 2ºs riders; (3) ra/brahma são finos (automáticos) — aceitar como Rito fácil ou endurecer?
+
+---
+
 ## §163 — cernunnos e xango SAEM do lote estruturado (kit não sustenta rider); observação de balanceamento com endereço; lote 6 traduzido.
 
 **DECISÃO DO DONO — a 1ª vez que o método aponta para FORA dele: o kit não sustenta rider (não é montagem, número nem heurística).** cernunnos e xango saem do lote estruturado. **NÃO mudar os kits.** Os 100 estão fechados, auditados e balanceados; mexê-los p/ uma Provação caber é a INVERSÃO já recusada 3×: Torpor do Shutendoji (§157-158), roster de sangramento (§161), e agora aqui. **REGRA (3ª confirmação): a Provação se ajusta ao deus, NUNCA o contrário.** Dica também recusada, e a medição diz por quê: dica resolve FINDABILITY, mas aqui a linha de vitória não existe em NENHUMA montagem — não há o que roteirizar (≠ o platô §157, onde a linha existe e some).

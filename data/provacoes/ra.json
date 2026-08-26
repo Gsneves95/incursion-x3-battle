@@ -1,0 +1,63 @@
+{
+  "key": "ra",
+  "titulo": "Olho de Rá",
+  "nivel": "Rito",
+  "dificuldade": 2,
+  "aliados": [
+    "ra",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "oni",
+    "aquiles",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "contador",
+      "quem": "ra",
+      "contador": "discoSolar",
+      "limiar": 6
+    }
+  ],
+  "verificacao": {
+    "hash": "737f3912",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 1864,
+    "ms": 945,
+    "caminho": [
+      "perseu Lâmina Curva → oni",
+      "kali Golpe da Foice → oni",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "kali Sede de Sangue → oni",
+      "perseu Lâmina Curva → ogum",
+      "passar",
+      "kali Sede de Sangue → ogum",
+      "perseu Lâmina Curva → ogum",
+      "passar",
+      "kali Sede de Sangue → ogum",
+      "perseu Cabeça da Medusa → aquiles",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "kali Sede de Sangue → aquiles",
+      "passar"
+    ]
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "key": "kitsune",
+  "titulo": "As Nove Caudas",
+  "nivel": "Rito",
+  "dificuldade": 2,
+  "aliados": [
+    "kitsune",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "oni",
+    "aquiles",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 18
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "contador",
+      "quem": "kitsune",
+      "contador": "cauda",
+      "limiar": 8
+    }
+  ],
+  "verificacao": {
+    "hash": "81378a8a",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 32,
+    "comDica": false,
+    "nos": 69817,
+    "ms": 34948,
+    "caminho": [
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "perseu Cabeça da Medusa → ogum",
+      "passar",
+      "perseu Foice Adamantina → oni",
+      "passar",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "perseu Foice Adamantina → oni",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "passar",
+      "kitsune Nove Caudas → oni",
+      "kali Sede de Sangue → ogum",
+      "passar",
+      "kitsune Fogo-fátuo → ogum",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles",
+      "passar",
+      "passar",
+      "kitsune Nove Caudas → aquiles",
+      "passar",
+      "kitsune Fogo-fátuo → aquiles"
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "key": "brahma",
+  "titulo": "As Quatro Faces",
+  "nivel": "Rito",
+  "dificuldade": 2,
+  "aliados": [
+    "brahma",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "oni",
+    "aquiles",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "danoBonus",
+      "limiar": 24
+    }
+  ],
+  "verificacao": {
+    "hash": "d124c3c1",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 24,
+    "ms": 86,
+    "caminho": [
+      "kali Golpe da Foice → oni",
+      "brahma Cajado do Criador → ogum",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "perseu Cabeça da Medusa → oni",
+      "brahma Cajado do Criador → ogum",
+      "passar",
+      "perseu Foice Adamantina → oni",
+      "brahma Cajado do Criador → ogum",
+      "passar",
+      "brahma Cajado do Criador → ogum",
+      "perseu Lâmina Curva → oni",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Foice Adamantina → ogum",
+      "brahma Cajado do Criador → ogum",
+      "passar",
+      "kali Golpe da Foice → aquiles",
+      "perseu Cabeça da Medusa → aquiles",
+      "passar",
+      "kali Golpe da Foice → aquiles"
+    ]
+  }
+}
