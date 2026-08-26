@@ -204,7 +204,7 @@ const PREDICADOS = {
 // as 9 FONTES de acúmulo, da varredura dos 91 (§146/§147): nasce com todas registradas (§87). A implementação
 // de `acumuladoDe` cobre as de-log baratas hoje; as demais lançam ao serem USADAS (ao construir a Provação),
 // nunca silenciam. golpe-final-com-limiar (susanoo/yamato) NÃO está aqui — é outro predicado (§46).
-const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoDevolvido', 'danoBonus', 'contador', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
+const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoDevolvido', 'danoBonus', 'contador', 'contadorLado', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
 function _somaLog(st, f) { let s = 0; for (const e of st.log) s += (f(e) || 0); return s; }
 
 // §156 (loki): PICO por evento. Agrupa por TURNO os eventos de roubo-p/-si da fonte e devolve o MAIOR total num turno.
@@ -229,6 +229,8 @@ function acumuladoDe(st, c, ctx) {
     case 'curaAcumulada': return _somaLog(st, e => e.tipo === 'cura' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);
     case 'orbesGuardados': return Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
     case 'contador': { const u = st.lados[0].units.find(x => x.key === c.quem) || st.lados[0].units[0]; return (u && u.contadores[c.contador]) || 0; }
+    case 'contadorLado': return (st.lados[0].contadores || {})[c.contador] || 0;   // §163: POOL do lado (combo — susanoo/raijin/yamato geram atacando; ≠ contador por-unidade)
+    case 'danoBonus': return st.lados[0].units.reduce((s, u) => { const e = (u.efeitos || []).find(x => x.type === 'dmgUp'); return s + (e ? e.v : 0); }, 0);   // §163: soma do dmgUp (merge → um por unidade, .v acumula) do time — o +dano PERMANENTE (hercules/brahma) ou temporário-empilhável (itzamna dur2, peak)
     // §153 (tag de roubo): ganhouLado===0 = o JOGADOR levou p/ si (≠ remoção pura, ganhouLado null; ≠ roubo inimigo, 1).
     // ROUBO-p/-si, cumulativo. buffsRoubados por-EVENTO (loki) é OUTRO predicado (maximoNumEvento), não esta soma.
     case 'orbesRoubados': return _somaLog(st, e => e.tipo === 'orbe' && e.ganhouLado === 0 && e.valor > 0 ? e.valor : 0);

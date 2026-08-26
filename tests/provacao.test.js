@@ -270,6 +270,29 @@ console.log('== 13. REESCRITAS §162 (do que se COLETA p/ o que se ENTREGA): dan
   console.log('  entregar (devolução) e abater-pelo-slot (reflexo) — o rider cavalga o abate (§162)');
 }
 
+console.log('== 14. LEITORES do lote 6 (§163): contadorLado (combo=pool) e danoBonus (soma do dmgUp) ==');
+{
+  const prov = { key: 'x', aliados: ['susanoo', 'hercules', 'brahma'], inimigos: ['ares', 'thor', 'ogum'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : 1 };
+  const lido = (st, fonte, contador) => Number(PROV.PREDICADOS.acumulo.chave(st, { fonte, contador, limiar: 1 }, ctx));
+  // contadorLado: combo mora no POOL do lado, não no contador por-unidade
+  {
+    const st = PROV.montarProvacao(prov);
+    st.lados[0].contadores = st.lados[0].contadores || {}; st.lados[0].contadores.combo = 10;
+    st.lados[0].units[0].contadores.combo = 3;   // ruído por-unidade que o leitor NÃO deve somar
+    ok(lido(st, 'contadorLado', 'combo') === 10, `contadorLado lê o POOL (=${lido(st, 'contadorLado', 'combo')}, esperado 10)`);
+    ok(lido(st, 'contador', 'combo') === 3, `o 'contador' antigo lê POR-UNIDADE (=${lido(st, 'contador', 'combo')}) — são leitores distintos`);
+  }
+  // danoBonus: soma o dmgUp (merge → um por unidade, .v acumula — l.499 do motor) do time
+  {
+    const st = PROV.montarProvacao(prov);
+    st.lados[0].units[0].efeitos.push({ type: 'dmgUp', v: 7, dur: 99 });   // merge de 4+3 numa unidade
+    st.lados[0].units[1].efeitos.push({ type: 'dmgUp', v: 5, dur: 2 });    // +5 noutra
+    ok(lido(st, 'danoBonus') === 12, `danoBonus soma o dmgUp do time (=${lido(st, 'danoBonus')}, esperado 12)`);
+  }
+  console.log('  contadorLado (pool) ≠ contador (por-unidade) · danoBonus soma o dmgUp — leitores prontos antes das Provações (§134/§87)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
