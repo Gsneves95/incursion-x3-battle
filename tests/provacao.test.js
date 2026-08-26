@@ -241,6 +241,35 @@ console.log('== 12. LEITORES do lote 5 (§162): danoRefletido, danoArmazenado, d
   console.log('  os 3 leitores casam com o que o motor emite (junta ligada, §162) — nasce testado (§87)');
 }
 
+console.log('== 13. REESCRITAS §162 (do que se COLETA p/ o que se ENTREGA): danoDevolvido (Xangô) e abatePorSlot (Cernunnos) ==');
+{
+  const prov = { key: 'x', aliados: ['xango', 'cernunnos', 'oxum'], inimigos: ['ares', 'thor', 'ogum'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : new Set(prov.inimigos).has(k) ? 1 : undefined };
+  const lido = (st, fonte) => Number(PROV.PREDICADOS.acumulo.chave(st, { fonte, limiar: 1 }, ctx));
+  // danoDevolvido: o golpe com slot 'armazenado' (devolução da Balança) é marcado e somado
+  {
+    const st = PROV.montarProvacao(prov);
+    const xango = st.lados[0].units[0], ini = st.lados[1].units[0];
+    E.bater(st, xango, ini, 40, 'puro', 'armazenado', {});
+    const devEv = st.log.find(e => e.tipo === 'dano' && e.devolvido);
+    ok(devEv && devEv.valor > 0 && lido(st, 'danoDevolvido') === devEv.devolvido, `danoDevolvido casa com a devolução da Balança (=${lido(st, 'danoDevolvido')})`);
+  }
+  // abatePorSlot: um inimigo que cai por um golpe de slot 'reflexo' conta; slot errado NÃO conta
+  {
+    const st = PROV.montarProvacao(prov);
+    const refletor = st.lados[0].units[1], ini = st.lados[1].units[0];
+    ini.hp = 5;
+    E.bater(st, refletor, ini, 999, 'afetado', 'reflexo', { semContra: true, semIntercepta: true });
+    const qd = st.log.find(e => e.tipo === 'queda' && e.alvo === ini.key);
+    ok(qd && qd.slot === 'reflexo', 'a queda carrega o slot do golpe letal (reflexo)');
+    const av = (slot, q) => PROV.PREDICADOS.abatePorSlot.aval(st, { quem: 'inimigo', slot, quantos: q }, ctx);
+    ok(av('reflexo', 1) === 'ok', 'abatePorSlot{reflexo,1} = ok');
+    ok(av('reflexo', 2) === 'pendente', 'abatePorSlot{reflexo,2} = pendente (só 1 caiu por reflexo)');
+    ok(av('milagre', 1) === 'pendente', 'abatePorSlot{milagre,1} = pendente (o slot errado não conta)');
+  }
+  console.log('  entregar (devolução) e abater-pelo-slot (reflexo) — o rider cavalga o abate (§162)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

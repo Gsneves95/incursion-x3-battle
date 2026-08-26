@@ -312,7 +312,7 @@ const VOCAB = {
   camposEvento: [   // nomes de campo CANÔNICOS permitidos num evento (nada de sinônimo)
     'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
-    'reflexo', 'soak',     // §162: dano:reflexo (golpe de reflexo, p/ danoRefletido) · dano:soak (dano engolido por interceptação, p/ danoAbsorvido)
+    'reflexo', 'soak', 'devolvido',     // §162: dano:reflexo (golpe de reflexo, p/ danoRefletido) · dano:soak (dano engolido por interceptação, p/ danoAbsorvido) · dano:devolvido (dano devolvido pela Balança, p/ danoDevolvido)
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
     'execucao',            // queda:execucao — o abate foi por EXECUÇÃO (F1.9; iara ≥2 via Afogamento, kraken slotAbate)
@@ -908,6 +908,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
   if (slot === 'reflexo') evDano.reflexo = true;   // §162: marca o golpe de reflexo (o leitor danoRefletido soma estes; kind fica 'afetado' p/ o calcDano)
+  if (slot === 'armazenado') evDano.devolvido = v; // §162: dano DEVOLVIDO pela Balança (Xangô) → danoDevolvido (o que se ENTREGA, cavalga o abate)
   if (interceptado) evDano.soak = v;               // §162: dano que o protetor (Khnum) ENGOLIU no lugar do aliado → conta p/ danoAbsorvido
   log(st, evDano);
   // §111 (Krishna) — ESCRITOR do rastreio de dano causado: credita ao ATACANTE o dano LÍQUIDO em inimigo (v>0).
@@ -931,7 +932,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
     alvo.efeitos = alvo.efeitos.filter(e => e.type !== 'adormecido');
     log(st, { tipo: 'acordar', alvo: alvo.key });
   }
-  if (alvo.hp === 0) { matar(st, atk, alvo); return v; }
+  if (alvo.hp === 0) { matar(st, atk, alvo, { slot }); return v; }   // §162: leva o SLOT do golpe letal à queda → abatePorSlot (cernunnos: abate por 'reflexo')
   // PRIMITIVA contra-atacar — quem carrega 'contraAtaca' revida golpe de alvo único.
   const ca = ef(alvo, 'contraAtaca');
   if (ca && unico && !semContraEf && atk && atk.vivo && atk.lado !== alvo.lado && (!ca.contraClasse || classe === ca.contraClasse) && (!ca.protege || ca.protege === alvo.uid || ca.protege === 'time')) {   // contraClasse (F1.6, Atena): revida SÓ golpe da classe X. §111: semContraEf barra pela Ação Perfeita. §132: um contraAtaca DELEGADO (protege=outro) NÃO self-dispara no portador — só o revide-por-aliado abaixo o usa
@@ -1014,6 +1015,7 @@ function matar(st, atk, alvo, opts = {}) {
   // sem golpe (DoT sem atk, tempo).
   { const ev = opts.execucao ? { tipo: 'queda', alvo: alvo.key, execucao: true } : { tipo: 'queda', alvo: alvo.key };
     if (atk && atk.key) ev.matador = atk.key;
+    if (opts.slot) ev.slot = opts.slot;   // §162: slot do golpe letal (abatePorSlot — cernunnos conta abate por 'reflexo')
     if (estadosNaQueda.length) ev.estados = estadosNaQueda;
     if (Object.keys(contadoresNaQueda).length) ev.contadores = contadoresNaQueda;   // §160 (ahpuch): "cair com ≥N de podridão"
     log(st, ev); }

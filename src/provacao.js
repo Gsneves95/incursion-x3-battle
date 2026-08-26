@@ -97,6 +97,24 @@ const PREDICADOS = {
     chave: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
     distancia: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return Math.max(0, c.quantos - st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
   },
+  abatePorSlot: {   // §162 (cernunnos): ≥`quantos` `quem` caíram por um SLOT nomeado (queda.slot). Parametrizado (§46) — cernunnos: slot 'reflexo' (o reflexo é a ARMA, não a coleta). Mesmo padrão do abatePorExecucao.
+    modo: 'log', obrig: ['quem', 'slot', 'quantos'],
+    aval: (st, c, ctx) => {
+      const lado = ladoDoQuem(c.quem);
+      return st.log.filter(e => e.tipo === 'queda' && e.slot === c.slot && ctx.ladoDe(e.alvo) === lado).length >= c.quantos ? 'ok' : 'pendente';
+    },
+    chave: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && e.slot === c.slot && ctx.ladoDe(e.alvo) === lado).length); },
+    // gradiente de MANEIRA-DO-ABATE (§161): sem peso, o guloso abate direto (n fica 0, platô). Recompensa deixar inimigos VIVOS a
+    // baixo HP (candidatos a cair pelo slot) e pune abatê-los pelo slot ERRADO: um vivo custa min(hp, 1000); um morto-pelo-slot-certo, 0.
+    distancia: (st, c, ctx) => {
+      const lado = ladoDoQuem(c.quem);
+      const n = st.log.filter(e => e.tipo === 'queda' && e.slot === c.slot && ctx.ladoDe(e.alvo) === lado).length;
+      const falta = Math.max(0, c.quantos - n); if (!falta) return 0;
+      const vivos = st.lados[lado].units.filter(u => u.vivo).map(u => Math.min(u.hp || 0, 1000)).sort((a, b) => a - b);
+      let s = 0; for (let i = 0; i < falta; i++) s += (i < vivos.length ? vivos[i] : 100000);   // precisa de `falta` candidatos vivos a abater pelo slot; se faltam, beco sem saída
+      return s;
+    },
+  },
   semPerderAliado: {   // nenhum aliado cai (estrito: uma `queda` de aliado já falha; variante tolerante-a-revive fica p/ depois)
     modo: 'log', obrig: [],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === 0) ? 'falha' : 'ok',
@@ -186,7 +204,7 @@ const PREDICADOS = {
 // as 9 FONTES de acúmulo, da varredura dos 91 (§146/§147): nasce com todas registradas (§87). A implementação
 // de `acumuladoDe` cobre as de-log baratas hoje; as demais lançam ao serem USADAS (ao construir a Provação),
 // nunca silenciam. golpe-final-com-limiar (susanoo/yamato) NÃO está aqui — é outro predicado (§46).
-const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoBonus', 'contador', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
+const FONTES_ACUMULO = ['danoAbsorvido', 'danoRefletido', 'danoArmazenado', 'danoDevolvido', 'danoBonus', 'contador', 'buffsRoubados', 'orbesRoubados', 'orbesGuardados', 'curaAcumulada'];
 function _somaLog(st, f) { let s = 0; for (const e of st.log) s += (f(e) || 0); return s; }
 
 // §156 (loki): PICO por evento. Agrupa por TURNO os eventos de roubo-p/-si da fonte e devolve o MAIOR total num turno.
@@ -207,6 +225,7 @@ function acumuladoDe(st, c, ctx) {
     case 'danoRefletido': return _somaLog(st, e => e.tipo === 'dano' && e.reflexo && ctx.ladoDe(e.origem) === 0 ? e.valor : 0);   // §162: o golpe de reflexo é marcado `reflexo` (kind fica 'afetado'); origem = o aliado que revida
     case 'danoAbsorvido': return _somaLog(st, e => e.tipo === 'dano' && ctx.ladoDe(e.alvo) === 0 ? ((e.absorvido || 0) + (e.soak || 0)) : 0);   // §162: escudo absorvido (Def Destrutível) + dano engolido por interceptação (Khnum)
     case 'danoArmazenado': return _somaLog(st, e => e.tipo === 'armazenado' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);   // §162: dano guardado na vault (Xangô/armazenaDano), emitido no ato de guardar
+    case 'danoDevolvido': return _somaLog(st, e => e.tipo === 'dano' && e.devolvido && ctx.ladoDe(e.origem) === 0 ? e.devolvido : 0);   // §162: dano DEVOLVIDO pela Balança (o que se ENTREGA — cavalga o abate, ≠ o armazenado que se coleta)
     case 'curaAcumulada': return _somaLog(st, e => e.tipo === 'cura' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);
     case 'orbesGuardados': return Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
     case 'contador': { const u = st.lados[0].units.find(x => x.key === c.quem) || st.lados[0].units[0]; return (u && u.contadores[c.contador]) || 0; }
