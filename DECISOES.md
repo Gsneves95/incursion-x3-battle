@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §165 — O FILTRO REFINADO e o EIXO DE TRÊS PONTOS (dono): a régua da família ACUMULO, consolidada.
+
+**FILTRO REFINADO (o achado do lote 6): a pergunta é "a AÇÃO AJUDA A VENCER?", não "a ação é separada do ataque?".** O §162 flagava toda extração por ação-separada como ativo-opcional; o lote 6 mostrou o falso-positivo (brahma/itzamna fecham). A distinção certa: um buff-de-DANO acelera o abate → o guloso o lança de qualquer jeito (ACOPLADO); o armazenar (Xangô) e o refletir-coletado (Cernunnos) NÃO ajudam a vencer → pulados (ATIVO-OPCIONAL). O filtro passa de "ação-separada" para **"ação inútil à vitória"**.
+
+**EIXO DE TRÊS PONTOS (dono, melhor que o meu de dois): ATIVO-OPCIONAL — ACOPLADO — AUTOMÁTICO.**
+- **ATIVO-OPCIONAL (nunca acontece):** a ação não ajuda a vencer → guloso pula → acumulado 0 (Xangô store, Cernunnos reflexo-coletado). Provação impossível.
+- **ACOPLADO (o ponto doce):** a ação É a jogada de vitória (matar/curar-p/-sobreviver/buff-de-dano) → acumula cavalgando (roubo lote 3, cura oxum, hercules Doze Trabalhos, brahma/itzamna buff). Provação boa.
+- **AUTOMÁTICO (sempre, grátis):** o contador sobe sozinho, sem custo de jogada → rider FINO, ensina pouco (rá disco +1/turno; e retroativamente o KHNUM — o soak dispara sozinho — barato pelo mesmo motivo). Provação fraca por excesso, o oposto do ativo-opcional.
+**Os DOIS extremos dão Provação fraca; o meio (acoplado) é o alvo.** O automático fecha fácil mas ensina pouco — endurece-se pelo NÚMERO ou pelo relógio, nunca mudando o kit.
+
+**COMBO = ESPELHO INVERTIDO DO FONTE-ÚNICA (§160), elegante (dono):** um ESTADO de fonte única é CARO (sincronia — §160/§161); um POOL de fonte única é LENTO (2/ataque de um só gerador não acumula a tempo — §164). Mesma raiz (uma só fonte), sintomas opostos (caro × lento). Correção do pool: MÚLTIPLOS geradores (o combo-squad), que é o mecanismo (pool é de time por desenho), não contaminação.
+
+---
+
 ## §164 — LOTE 6 (ACUMULO_CONTADOR) medido: a régua acerta no geral, mas erra o próprio exemplo (combo); e a 4ª pergunta tem FALSO-POSITIVO.
 
 **MEDIÇÃO (leitores contadorLado/danoBonus prontos antes, §163):**

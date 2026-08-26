@@ -25,17 +25,17 @@
     {
       "predicado": "acumulo",
       "fonte": "danoBonus",
-      "limiar": 24
+      "limiar": 80
     }
   ],
   "verificacao": {
     "hash": "d124c3c1",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 21,
+    "lancesNesteCaminho": 33,
     "comDica": false,
-    "nos": 24,
-    "ms": 86,
+    "nos": 38242,
+    "ms": 15022,
     "caminho": [
       "kali Golpe da Foice → oni",
       "brahma Cajado do Criador → ogum",
@@ -55,9 +55,21 @@
       "brahma Cajado do Criador → ogum",
       "passar",
       "kali Golpe da Foice → aquiles",
-      "perseu Cabeça da Medusa → aquiles",
       "passar",
-      "kali Golpe da Foice → aquiles"
+      "kali Golpe da Foice → aquiles",
+      "passar",
+      "passar",
+      "brahma Sopro da Criação → brahma",
+      "passar",
+      "perseu Cabeça da Medusa → aquiles",
+      "brahma Sopro da Criação → brahma",
+      "passar",
+      "brahma Sopro da Criação → brahma",
+      "passar",
+      "brahma Sopro da Criação → perseu",
+      "passar",
+      "brahma Quatro Faces",
+      "kali Dança da Aniquilação"
     ]
   }
 }

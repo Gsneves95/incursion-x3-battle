@@ -1,0 +1,70 @@
+{
+  "key": "yamatotakeru",
+  "titulo": "Ceifa-Ervas",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "yamatotakeru",
+    "susanoo",
+    "perseu"
+  ],
+  "inimigos": [
+    "brahma",
+    "hera",
+    "freyja"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "limparBuffsAntesDeAbate"
+    }
+  ],
+  "verificacao": {
+    "hash": "93160508",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 30,
+    "comDica": false,
+    "nos": 17430,
+    "ms": 10327,
+    "caminho": [
+      "perseu Lâmina Curva → brahma",
+      "passar",
+      "perseu Cabeça da Medusa → brahma",
+      "passar",
+      "perseu Foice Adamantina → brahma",
+      "passar",
+      "perseu Lâmina Curva → brahma",
+      "passar",
+      "perseu Foice Adamantina → brahma",
+      "passar",
+      "perseu Cabeça da Medusa → brahma",
+      "passar",
+      "perseu Foice Adamantina → hera",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "perseu Lâmina Curva → hera",
+      "passar",
+      "perseu Foice Adamantina → hera",
+      "susanoo Corte de Kusanagi → freyja",
+      "passar",
+      "perseu Cabeça da Medusa → freyja",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "perseu Lâmina Curva → freyja",
+      "passar",
+      "perseu Foice Adamantina → freyja",
+      "passar",
+      "perseu Lâmina Curva → hera",
+      "passar",
+      "perseu Lâmina Curva → hera"
+    ]
+  }
+}

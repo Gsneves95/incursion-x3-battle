@@ -293,6 +293,21 @@ console.log('== 14. LEITORES do lote 6 (§163): contadorLado (combo=pool) e dano
   console.log('  contadorLado (pool) ≠ contador (por-unidade) · danoBonus soma o dmgUp — leitores prontos antes das Provações (§134/§87)');
 }
 
+console.log('== 15. protegeHpMax (§165, itzamna): nenhum aliado termina com maxHp perdido (Podridão restaurada) ==');
+{
+  const prov = { key: 'x', aliados: ['itzamna', 'kali', 'perseu'], inimigos: ['ares', 'thor', 'ogum'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : 1 };
+  const av = (st, lim) => PROV.PREDICADOS.protegeHpMax.aval(st, { limiar: lim || 0 }, ctx);
+  const st = PROV.montarProvacao(prov);
+  ok(av(st) === 'ok', 'sem perda de maxHp → ok');
+  st.lados[0].units[1].maxHpPerdido = 20;   // Podridão reduziu o maxHp de um aliado
+  ok(av(st) === 'falha', 'aliado com maxHp perdido → falha');
+  ok(av(st, 20) === 'ok', 'com teto 20, perda de 20 tolerada → ok');
+  st.lados[0].units[1].maxHpPerdido = 0;   // Itzamná restaurou (restauraMax)
+  ok(av(st) === 'ok', 'restaurado → ok de novo');
+  console.log('  o 2º rider do itzamná lê maxHpPerdido — exige a Aurora da Criação na hora certa (§165)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

@@ -1,0 +1,80 @@
+{
+  "key": "susanoo",
+  "titulo": "Esquadrão da Tempestade",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "susanoo",
+    "raijin",
+    "yamatotakeru"
+  ],
+  "inimigos": [
+    "oni",
+    "aquiles",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "contadorLado",
+      "contador": "combo",
+      "limiar": 20
+    }
+  ],
+  "verificacao": {
+    "hash": "61b45e1f",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 37,
+    "comDica": false,
+    "nos": 194757,
+    "ms": 67753,
+    "caminho": [
+      "susanoo Corte de Kusanagi → oni",
+      "passar",
+      "raijin Tempestade dos Tambores",
+      "passar",
+      "yamatotakeru Corte Ceifa-Ervas → oni",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "raijin Raio em Cadeia → ogum",
+      "susanoo Corte de Kusanagi → oni",
+      "passar",
+      "susanoo Corte de Kusanagi → ogum",
+      "raijin Tambor Trovejante → ogum",
+      "yamatotakeru Kusanagi → oni",
+      "passar",
+      "susanoo Corte de Kusanagi → ogum",
+      "yamatotakeru Kusanagi → ogum",
+      "raijin Tambor Trovejante → oni",
+      "passar",
+      "yamatotakeru Kusanagi → aquiles",
+      "susanoo Corte de Kusanagi → aquiles",
+      "raijin Tambor Trovejante → aquiles",
+      "passar",
+      "yamatotakeru Kusanagi → aquiles",
+      "susanoo Corte de Kusanagi → aquiles",
+      "raijin Tambor Trovejante → aquiles",
+      "passar",
+      "yamatotakeru Kusanagi → aquiles",
+      "raijin Tambor Trovejante → aquiles",
+      "passar",
+      "yamatotakeru Kusanagi → aquiles",
+      "raijin Tambor Trovejante → aquiles",
+      "passar",
+      "raijin Raio em Cadeia → aquiles",
+      "passar",
+      "passar",
+      "raijin Tempestade dos Tambores"
+    ]
+  }
+}

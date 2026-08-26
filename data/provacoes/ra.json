@@ -20,7 +20,7 @@
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 14
+      "turnos": 7
     },
     {
       "predicado": "acumulo",
@@ -36,8 +36,8 @@
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 19,
     "comDica": false,
-    "nos": 1864,
-    "ms": 945,
+    "nos": 47,
+    "ms": 87,
     "caminho": [
       "perseu Lâmina Curva → oni",
       "kali Golpe da Foice → oni",

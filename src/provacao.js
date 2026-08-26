@@ -199,6 +199,13 @@ const PREDICADOS = {
       return cmp(u.hp, c.op, c.v) ? 'ok' : 'falha';
     },
   },
+  protegeHpMax: {   // §165 (itzamna): nenhum aliado termina com HP MÁXIMO permanentemente perdido (Podridão inimiga RESTAURADA). modo final.
+    // `limiar` opcional (perda total tolerada, default 0). O 2º rider que ENDURECE o danoBonus automático: exige a Aurora da Criação (restauraMax) na hora certa.
+    modo: 'final', obrig: [],
+    aval: (st, c, ctx) => st.lados[0].units.reduce((s, u) => s + (u.maxHpPerdido || 0), 0) > (c.limiar || 0) ? 'falha' : 'ok',
+    chave: (st, c, ctx) => String(st.lados[0].units.reduce((s, u) => s + (u.maxHpPerdido || 0), 0)),
+    distancia: (st, c, ctx) => Math.max(0, st.lados[0].units.reduce((s, u) => s + (u.maxHpPerdido || 0), 0) - (c.limiar || 0)),   // guia p/ restaurar (Σ maxHpPerdido acima do teto)
+  },
 };
 
 // as 9 FONTES de acúmulo, da varredura dos 91 (§146/§147): nasce com todas registradas (§87). A implementação
