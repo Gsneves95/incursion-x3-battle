@@ -196,6 +196,51 @@ console.log('== 11. `quantos` (§161): forma-CONTAGEM "≥N caem carregando" ≠
   console.log('  contagem não falha na morte-sem · TODOS falha · o mesmo predicado, o quantificador muda a leitura (§161)');
 }
 
+console.log('== 12. LEITORES do lote 5 (§162): danoRefletido, danoArmazenado, danoAbsorvido (escudo+soak) — motor EMITE, acumuladoDe LÊ ==');
+{
+  const prov = { key: 'x', aliados: ['cernunnos', 'khnum', 'oxum'], inimigos: ['ares', 'thor', 'ogum'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : new Set(prov.inimigos).has(k) ? 1 : undefined };
+  const lido = (st, fonte) => Number(PROV.PREDICADOS.acumulo.chave(st, { fonte, limiar: 1 }, ctx));
+  // danoRefletido: um aliado com refleteDano é atingido → o revide é MARCADO (reflexo) e o leitor o soma (valor = dano que de fato voltou)
+  {
+    const st = PROV.montarProvacao(prov);
+    const ali = st.lados[0].units[2], ini = st.lados[1].units[0];
+    ali.efeitos.push({ type: 'refleteDano', v: 10, dur: 2 });
+    E.bater(st, ini, ali, 15, 'afetado', 'basico', { unico: true });
+    const refEv = st.log.find(e => e.tipo === 'dano' && e.reflexo);
+    ok(refEv && refEv.valor > 0 && lido(st, 'danoRefletido') === refEv.valor, `danoRefletido casa com o golpe marcado reflexo (=${lido(st, 'danoRefletido')})`);
+  }
+  // danoArmazenado: um aliado com armazenaDano sofre dano → a vault guarda e o evento `armazenado` é somado
+  {
+    const st = PROV.montarProvacao(prov);
+    const ali = st.lados[0].units[2], ini = st.lados[1].units[0];
+    ali.efeitos.push({ type: 'armazenaDano', acc: 0, dur: 2, max: 99, alvo: null });
+    E.bater(st, ini, ali, 20, 'afetado', 'basico', { unico: true });
+    const armEv = st.log.find(e => e.tipo === 'armazenado');
+    ok(armEv && armEv.valor > 0 && lido(st, 'danoArmazenado') === armEv.valor, `danoArmazenado casa com a vault (=${lido(st, 'danoArmazenado')})`);
+  }
+  // danoAbsorvido (escudo): Def Destrutível absorve → conta
+  {
+    const st = PROV.montarProvacao(prov);
+    const ali = st.lados[0].units[2], ini = st.lados[1].units[0];
+    ali.shield = 25;
+    E.bater(st, ini, ali, 10, 'afetado', 'basico', { unico: true });
+    ok(lido(st, 'danoAbsorvido') === 10, `danoAbsorvido lê o escudo (=${lido(st, 'danoAbsorvido')}, esperado 10)`);
+  }
+  // danoAbsorvido (soak): Khnum intercepta o golpe de alvo único → o dano engolido conta
+  {
+    const st = PROV.montarProvacao(prov);
+    const khnum = st.lados[0].units[1], protegido = st.lados[0].units[2], ini = st.lados[1].units[0];
+    khnum.efeitos.push({ type: 'intercepta', protege: 'time', contra: 'todos', dur: 2 });
+    const hpKhnumAntes = khnum.hp;
+    E.bater(st, ini, protegido, 12, 'afetado', 'basico', { unico: true });
+    const soakEv = st.log.find(e => e.tipo === 'dano' && e.soak);
+    ok(khnum.hp < hpKhnumAntes, 'Khnum engoliu o golpe (hp caiu) — a interceptação roteou p/ ele');
+    ok(soakEv && soakEv.alvo === khnum.key && lido(st, 'danoAbsorvido') === soakEv.soak, `danoAbsorvido lê o soak da interceptação (=${lido(st, 'danoAbsorvido')})`);
+  }
+  console.log('  os 3 leitores casam com o que o motor emite (junta ligada, §162) — nasce testado (§87)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

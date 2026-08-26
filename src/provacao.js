@@ -204,8 +204,9 @@ function maxNumEvento(st, c, ctx) {
 }
 function acumuladoDe(st, c, ctx) {
   switch (c.fonte) {
-    case 'danoRefletido': return _somaLog(st, e => e.tipo === 'dano' && e.kind === 'reflexo' && ctx.ladoDe(e.origem) === 0 ? e.valor : 0);
-    case 'danoAbsorvido': return _somaLog(st, e => e.tipo === 'dano' && ctx.ladoDe(e.alvo) === 0 ? (e.absorvido || 0) : 0);
+    case 'danoRefletido': return _somaLog(st, e => e.tipo === 'dano' && e.reflexo && ctx.ladoDe(e.origem) === 0 ? e.valor : 0);   // §162: o golpe de reflexo é marcado `reflexo` (kind fica 'afetado'); origem = o aliado que revida
+    case 'danoAbsorvido': return _somaLog(st, e => e.tipo === 'dano' && ctx.ladoDe(e.alvo) === 0 ? ((e.absorvido || 0) + (e.soak || 0)) : 0);   // §162: escudo absorvido (Def Destrutível) + dano engolido por interceptação (Khnum)
+    case 'danoArmazenado': return _somaLog(st, e => e.tipo === 'armazenado' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);   // §162: dano guardado na vault (Xangô/armazenaDano), emitido no ato de guardar
     case 'curaAcumulada': return _somaLog(st, e => e.tipo === 'cura' && ctx.ladoDe(e.alvo) === 0 ? e.valor : 0);
     case 'orbesGuardados': return Object.values(st.lados[0].orbs).reduce((a, b) => a + b, 0);
     case 'contador': { const u = st.lados[0].units.find(x => x.key === c.quem) || st.lados[0].units[0]; return (u && u.contadores[c.contador]) || 0; }

@@ -307,11 +307,12 @@ const VOCAB = {
   eventos: [
     'abertura', 'turno', 'acao', 'dano', 'cura', 'dot', 'efeito', 'orbe', 'conversao',
     'cd', 'bloqueio', 'imune', 'queda', 'revive', 'passiva', 'fase', 'fim',
-    'escudo', 'contador', 'acordar', 'controle',
+    'escudo', 'contador', 'acordar', 'controle', 'armazenado',
   ],
   camposEvento: [   // nomes de campo CANÔNICOS permitidos num evento (nada de sinônimo)
     'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
+    'reflexo', 'soak',     // §162: dano:reflexo (golpe de reflexo, p/ danoRefletido) · dano:soak (dano engolido por interceptação, p/ danoAbsorvido)
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
     'execucao',            // queda:execucao — o abate foi por EXECUÇÃO (F1.9; iara ≥2 via Afogamento, kraken slotAbate)
@@ -840,7 +841,7 @@ function calcDano(st, atk, alvo, base, kind, slot, golpe) {
 }
 
 function bater(st, atk, alvo, base, kind, slot, opts = {}) {
-  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false, semEvade = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84). semEvade (§130, Saci): o contra-ataque da evasão não re-dispara evasão
+  const { semVinculo = false, unico = false, semContra = false, semIntercepta = false, classe = null, ignoraPiso = false, semRedirect = false, ignoraInvuln = false, semEvade = false, interceptado = false } = opts;   // ignoraInvuln (F1.9, Shiva/Odin §91): o golpe fura Invulnerabilidade — override de DANO, flag de habilidade (§84). semEvade (§130, Saci): o contra-ataque da evasão não re-dispara evasão. interceptado (§162): golpe REDIRECIONADO a um protetor (Khnum) — o dano nele conta como ABSORVIDO p/ o aliado (danoAbsorvido)
   if (!alvo.vivo) return 0;
   const semContraEf = semContra || (slot === 'habilidade' && atk && !!ef(atk, 'acaoPerfeita'));   // §111 (Krishna): não-contra-atacável via BUFF transferido — SÓ na habilidade do portador. O reflexo/contra recursam com slot próprio, então não reentram aqui
   // `contra` (redução) lê o GOLPE que chega: slot + classe (da habilidade) + elem (do atacante) + alcance (unico/area)
@@ -869,7 +870,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
       const ie = ef(redir, 'intercepta');
       if (ie && ie.contra === 'unico') redir.efeitos = redir.efeitos.filter(e => e !== ie);
       log(st, { tipo: 'efeito', origem: redir.key, alvo: alvo.key, efeito: 'intercepta' });
-      return bater(st, atk, redir, base, kind, slot, { ...opts, semIntercepta: true });
+      return bater(st, atk, redir, base, kind, slot, { ...opts, semIntercepta: true, interceptado: true });
     }
   }
   // §130 (Saci, Gorro Vermelho): EVADE o 1º golpe ÚNICO por turno e revida. Lê o flag primeiroPorTurno (§88, ainda limpo
@@ -906,6 +907,8 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   if (unico) alvo.golpeUnicoNoTurno = true;   // F1.9 (Bastet §88): ESCRITOR do rastreio. SÓ golpe único (a AoE não consome a proteção); DEPOIS do calcDano (a reducao deste golpe já leu o flag ainda limpo). Quem intercepta/redireciona seta o flag do RECEPTOR (a recursão do bater), não do alvo original
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
   if (absorvido) evDano.absorvido = absorvido;
+  if (slot === 'reflexo') evDano.reflexo = true;   // §162: marca o golpe de reflexo (o leitor danoRefletido soma estes; kind fica 'afetado' p/ o calcDano)
+  if (interceptado) evDano.soak = v;               // §162: dano que o protetor (Khnum) ENGOLIU no lugar do aliado → conta p/ danoAbsorvido
   log(st, evDano);
   // §111 (Krishna) — ESCRITOR do rastreio de dano causado: credita ao ATACANTE o dano LÍQUIDO em inimigo (v>0).
   // Só dano cruzando o lado (dano em si/aliado não é "causar dano"). O reflexo/contra creditam quem revida —
@@ -914,7 +917,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   // PRIMITIVA dano armazenado — todo aliado do alvo com acumulador guarda o dano sofrido.
   for (const x of st.lados[alvo.lado].units) {
     const arm = ef(x, 'armazenaDano');
-    if (arm && x.vivo) arm.acc = (arm.acc || 0) + v;
+    if (arm && x.vivo && v > 0) { arm.acc = (arm.acc || 0) + v; log(st, { tipo: 'armazenado', alvo: x.key, valor: v }); }   // §162: emite o dano ARMAZENADO no ato (o leitor danoArmazenado soma estes) — a vault do Xangô guarda `v`
   }
   // PRIMITIVA thorns (§109, Mnevis): quem carrega refleteDano devolve v FIXO ao atacante. O golpe de reflexo usa slot
   // 'reflexo' e NÃO re-reflete (guarda contra loop entre dois portadores). Só se o dano de fato entrou (v > 0).
