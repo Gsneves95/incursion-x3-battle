@@ -1,0 +1,78 @@
+{
+  "key": "khnum",
+  "titulo": "Couraça de Barro",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "khnum",
+    "demeter",
+    "susanoo"
+  ],
+  "inimigos": [
+    "horus",
+    "fenrir",
+    "durga"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "danoAbsorvido",
+      "limiar": 60
+    }
+  ],
+  "verificacao": {
+    "hash": "be7bafd3",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 36,
+    "comDica": false,
+    "nos": 57410,
+    "ms": 22255,
+    "caminho": [
+      "susanoo Corte de Kusanagi → horus",
+      "demeter Foice de Ouro → horus",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "demeter Foice de Ouro → horus",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "demeter Foice de Ouro → horus",
+      "passar",
+      "susanoo Corte de Kusanagi → horus",
+      "demeter Foice de Ouro → horus",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "demeter Foice de Ouro → durga",
+      "passar",
+      "susanoo Corte de Kusanagi → durga",
+      "demeter Estação Eterna",
+      "passar",
+      "demeter Foice de Ouro → durga",
+      "khnum Couraça de Barro → khnum",
+      "passar",
+      "demeter Foice de Ouro → fenrir",
+      "khnum Sopro da Criação → susanoo",
+      "passar",
+      "passar",
+      "khnum Couraça de Barro → susanoo",
+      "passar",
+      "susanoo Yamata no Orochi"
+    ]
+  }
+}
