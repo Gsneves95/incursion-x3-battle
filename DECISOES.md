@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §163 — cernunnos e xango SAEM do lote estruturado (kit não sustenta rider); observação de balanceamento com endereço; lote 6 traduzido.
+
+**DECISÃO DO DONO — a 1ª vez que o método aponta para FORA dele: o kit não sustenta rider (não é montagem, número nem heurística).** cernunnos e xango saem do lote estruturado. **NÃO mudar os kits.** Os 100 estão fechados, auditados e balanceados; mexê-los p/ uma Provação caber é a INVERSÃO já recusada 3×: Torpor do Shutendoji (§157-158), roster de sangramento (§161), e agora aqui. **REGRA (3ª confirmação): a Provação se ajusta ao deus, NUNCA o contrário.** Dica também recusada, e a medição diz por quê: dica resolve FINDABILITY, mas aqui a linha de vitória não existe em NENHUMA montagem — não há o que roteirizar (≠ o platô §157, onde a linha existe e some).
+
+**OBSERVAÇÃO DE BALANCEAMENTO (com endereço, dono):** a Balança do Xangô (teto 50, atraso 2 turnos) e a Fúria do Cernunnos (reflexo fixo de 10) são fracas demais p/ serem a MELHOR jogada em qualquer situação medida. **Não é bug — é sinal de que os dois kits têm um SLOT que o jogo nunca vai querer usar.** ENDEREÇO: quando a arena rodar com a IA Difícil (F2.2, pendente), esses dois slots devem aparecer na lista de "nunca usados". Se aparecerem = confirmação INDEPENDENTE → decisão de balanceamento do dono na Fase 4+ (não agora). Registrado p/ o eu-futuro cruzar.
+
+**INFRA DO REFRAME FICA (3 leitores prontos esperando consumidor):** `abatePorSlot{quem,slot,quantos}` (§46, parametrizado), fonte `danoDevolvido`, e o `slot` do golpe letal na `queda`. **kraken já é candidato ao 1º consumidor** do abatePorSlot (abate por um slot nomeado).
+
+**LOTE 6 — ACUMULO_CONTADOR (8): hercules, ra, susanoo, raijin, kitsune, yamatotakeru, brahma, itzamna** (yamato e itzamna compostos). Traduzido com as 4 perguntas — a 4ª (ACOPLADO × ATIVO-OPCIONAL, §162) é a que decide.
+
+| deus | contador/fonte | acumula POR | Q4 (o eixo que decide) | Q1/Q2/Q3 |
+|---|---|---|---|---|
+| **susanoo** | combo (POOL do lado) | atacar (2/ataque, teto 20) | **ACOPLADO** — sobe atacando | cumul · combo é pool (2º gerador ajuda) · Tempestade |
+| **raijin** | combo (pool) | atingir (1/alvo) + milagre +4 | **ACOPLADO** | cumul · pool · Tempestade |
+| **yamatotakeru** | combo (pool; ele USA, aliados GERAM) | atacar | **ACOPLADO** (composto +remove-3-buff) | cumul · pool · Tempestade |
+| **ra** | discoSolar (por-unidade) | +1/TURNO passivo + básico +1 | **ACOPLADO/automático** (sobe sozinho) | cumul (teto 6) · fonte-única mas passiva · Aurora |
+| **hercules** | danoBonus (+4/uso) | usar Os Doze Trabalhos (ataque de 20 + stack) | **ACOPLADO** — o stack cavalga um ataque forte | cumul · fonte-única · Chama |
+| **kitsune** | cauda (por-unidade) | +1/2 TURNOS passivo + habilidade (que INTERCEPTA) | **SEMI-PASSIVO** (vigiar: lento, teto 9; a habilidade defende, não é overhead puro) | cumul · fonte-única passiva · Umbra |
+| **brahma** | danoBonus | milagre-USADO (+3, cavalga o milagre) **+ Quatro Faces (+4, BUFF PURO)** | **MISTO → FLAG** — se o limiar exigir spam de Quatro Faces (buff puro, não dano/defesa), vira Xangô | cumul · fonte-única · Verdejante |
+| **itzamna** | danoBonus | **Escrita Sagrada (+5, BUFF PURO, sem dano/defesa)** | **ATIVO-OPCIONAL → FLAG FORTE (o Xangô de novo)** — o único jeito de acumular é uma ação que não mata nem salva (composto +protege-HPmax) | cumul · fonte-única · Aurora |
+
+**RESPOSTA À 4ª PERGUNTA (dono, ANTES de medir):** 5 são ACOPLADOS (susanoo, raijin, yamato, ra, hercules) → a régua prevê barato, e o eixo concorda (o contador sobe atacando/automático). kitsune é SEMI-PASSIVO (cavalga o tempo + uma habilidade defensiva — barato mas LENTO; o risco é o número não caber no deadline, não o Xangô). **itzamna é o Xangô de novo (FLAG FORTE): a Escrita Sagrada é buff puro — acumular exige uma ação que não é a melhor jogada.** brahma é MISTO (FLAG): o +3-por-milagre cavalga (os milagres se lançam p/ vencer), mas o +4 do Quatro Faces é buff puro; fecha SE os milagres bastarem, trava SE o limiar exigir Quatro Faces-spam. **Aviso dado antes de medir, como pedido.** DÍVIDA DE MOTOR provável (a verificar ao construir): o leitor `acumulo{contador:'combo'}` lê POR-UNIDADE, mas combo é POOL DO LADO → falta um `contadorLado` (susanoo/raijin/yamato); e `danoBonus` não tem case em `acumuladoDe` → falta o leitor (hercules/brahma/itzamna). ra/kitsune (discoSolar/cauda por-unidade) o leitor 'contador' já cobre.
+
+---
+
 ## §162 — Dois registros do dono + TRADUÇÃO do LOTE 5 (ACUMULO_RECURSO) com as 4 perguntas na frente.
 
 **REGISTRO 1 — BOOTSTRAP DE ELEMENTO é um PAR (hermes §158 + ahpuch §161).** Duas vezes um rider travou porque o kit do deus-título é gateado por um elemento que a renda não garante (hermes: pool zero; ahpuch: Umbra que a renda aleatória não trazia), e **as duas vezes o conserto foi POOL INICIAL (`montar.orbs`), não afrouxar a condição.** É a forma canônica de destravar "montagem que impede agir" por escassez de recurso: dá-se o pool de abertura medido (hermes: fixo; ahpuch: Umbra 4) e mede-se o mínimo. Não é afrouxamento — o puzzle continua o mesmo, só a abertura é ancorada.
