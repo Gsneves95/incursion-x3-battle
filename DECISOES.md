@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §166 — Duas VERDADES DO JOGO + TRADUÇÃO do LOTE 7 (MORTE_EXECUÇÃO vs revive) com o eixo, e o RIDER DE ORDEM previsto.
+
+**VERDADE DO JOGO 1 (dono, do raijin) — DANO ESPALHADO É ATIVO-OPCIONAL SEMPRE QUE FOCAR MATA MAIS RÁPIDO.** Não é sobre a Provação do raijin; é sobre o JOGO: contra HPs separados, focar 15 num alvo remove uma ameaça mais rápido que espalhar 18/12/8 pelos três. Logo o guloso NUNCA espalha por opção, e um rider que conta alvos-atingidos-por-golpe trava. **Vale para TODO kit multi-alvo** (raijin, susanoo-Yamata, kali/zeus/shiva-AoE): o multi-hit só é a melhor jogada quando os alvos estão baixos o bastante para o AoE LIMPAR (aí vira acoplado), ou quando um aliado o faz por valor próprio (não-protagonista). Fora disso, é overhead.
+
+**VERDADE DO JOGO 2 (achado de motor, COM ENDEREÇO) — a REDUÇÃO do inimigo ZERA um elo da cadeia.** O `posicional:[18,12,8]` emite 3 eventos de dano, mas contra um redutor (aquiles, -12) o elo do meio vira `v:0`. O leitor `alvosAtingidos` conta só `v>0` → subconta os alvos. ENDEREÇO: qualquer Provação que use `alvosAtingidos` (ou qualquer contagem de alvos-atingidos) DEVE evitar redutores no set, OU o leitor precisa decidir se golpe-reduzido-a-0 conta como "atingido" (hoje NÃO conta). Registrado p/ o eu-futuro que reusar o `alvosAtingidos`.
+
+**RAIJIN — fica no combo-squad, SEM Provação solo (4ª vez que a regra decide: NÃO invento rider p/ caber).** Torpor Shutendoji, roster sangramento, cernunnos/xango, agora raijin. A geração de combo dele (por-golpe) é acoplada e serve o susanoo; o rider posicional solo é ativo-opcional (verdade 1).
+
+**LOTE 7 — MORTE_EXECUÇÃO vs revive (8): hades, fenrir, ammit, izanami, yanwong, morrigan (executam) + horus, durga (NÃO executam).** A hipótese do dono: execução DEVE ser ACOPLADA — executar mata, é literalmente a melhor jogada abaixo do limiar, e a execução FURA o revive (o motor: `matar{execucao}` fura vidaExtra/revive). Se valer, o lote é barato e a régua acerta DUAS seguidas.
+
+| deus | mecânica de execução | Q4 (o eixo) | Q1/Q3 |
+|---|---|---|---|
+| **hades** | Portões: elimina HP≤24 | **ACOPLADO** — executar mata e fura o revive | Umbra · execução própria |
+| **fenrir** | Fauces: elimina HP≤24 | **ACOPLADO** | Umbra |
+| **ammit** | Devorar: elimina Atordoado/Selado/HP≤30; passiva ANTI-REVIVE | **ACOPLADO+** (o abate dele já não revive) | Umbra |
+| **izanami** | Portal: elimina amaldiçoados HP≤30 | **ACOPLADO** (maldição cavalga o dano; passiva amaldiçoa sozinha) | Umbra |
+| **yanwong** | Livro: elimina em 3 turnos (timer); anti-revive | **ACOPLADO com atraso** (o timer pode ser lento; vigiar) | Umbra |
+| **morrigan** | Presságio: elimina se terminar turno HP≤24 | **ACOPLADO** (marca cavalga o dano) | Umbra |
+| **horus** | **NÃO executa** — Olho + 45 puro (abate específico) | **ORDEM?** sem execução, vs revive tem de matar o REVIVER 1º | Tempestade |
+| **durga** | **NÃO executa** — +dano vs debuff, 32/48 + stun | **ORDEM?** idem horus | Chama |
+
+**A 4ª PERGUNTA, RESPONDIDA ANTES DE MEDIR (dono):** os 6 executores são ACOPLADOS — executar é a melhor jogada abaixo do limiar E fura o revive, então a ORDEM não importa (executa todos, em qualquer sequência; o executado não volta). Previsão: baratos, a régua acerta a família de novo. **MAS horus e durga NÃO executam** — contra um set com reviver (demeter/freyja/isis/osiris revivem; sunwukong é IMUNE a execução, o counter), eles têm de matar o REVIVER ANTES dos outros, senão os mortos voltam. **Aí a AÇÃO é a melhor jogada (matar), mas a SEQUÊNCIA não é — o guloso mata o mais fraco, não o ressuscitador. É o RIDER DE ORDEM previsto pelo dono — o eixo novo, possivelmente a última categoria que falta.** Vigiar horus/durga na medição; se travarem por ordem, confirma o eixo. **PENDENTE:** o dono manda medir (hipótese execução-acoplada + vigiar a ordem em horus/durga).
+
+---
+
 ## §165 — O FILTRO REFINADO e o EIXO DE TRÊS PONTOS (dono): a régua da família ACUMULO, consolidada.
 
 **FILTRO REFINADO (o achado do lote 6): a pergunta é "a AÇÃO AJUDA A VENCER?", não "a ação é separada do ataque?".** O §162 flagava toda extração por ação-separada como ativo-opcional; o lote 6 mostrou o falso-positivo (brahma/itzamna fecham). A distinção certa: um buff-de-DANO acelera o abate → o guloso o lança de qualquer jeito (ACOPLADO); o armazenar (Xangô) e o refletir-coletado (Cernunnos) NÃO ajudam a vencer → pulados (ATIVO-OPCIONAL). O filtro passa de "ação-separada" para **"ação inútil à vitória"**.
