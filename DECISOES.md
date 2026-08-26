@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §162 — Dois registros do dono + TRADUÇÃO do LOTE 5 (ACUMULO_RECURSO) com as 4 perguntas na frente.
+
+**REGISTRO 1 — BOOTSTRAP DE ELEMENTO é um PAR (hermes §158 + ahpuch §161).** Duas vezes um rider travou porque o kit do deus-título é gateado por um elemento que a renda não garante (hermes: pool zero; ahpuch: Umbra que a renda aleatória não trazia), e **as duas vezes o conserto foi POOL INICIAL (`montar.orbs`), não afrouxar a condição.** É a forma canônica de destravar "montagem que impede agir" por escassez de recurso: dá-se o pool de abertura medido (hermes: fixo; ahpuch: Umbra 4) e mede-se o mínimo. Não é afrouxamento — o puzzle continua o mesmo, só a abertura é ancorada.
+
+**REGISTRO 2 — A RÉGUA (§158) SERVE PARA ORDENAR, NÃO PARA ESTIMAR CUSTO.** No lote 4 ela acertou 1/5. O dono aceita o que isso significa: ela prevê o RIDER, e os lotes são decididos por eixos que ela não vê — fonte-única (§160), recurso/quantificador (§161), elemento (§162). **Uso dela daqui em diante: sequenciar os lotes (barato-cavalga × caro-extrai), não prever o custo de cada Provação.** O custo vem da MEDIÇÃO, sempre.
+
+**TRADUÇÃO DO LOTE 5 — ACUMULO_RECURSO (khnum, cernunnos, oxum, xango, inari).** 4 extraem do INIMIGO (absorve/reflete/cura-do-dano/armazena) → predicado `acumulo{fonte, limiar}`, fonte-única POR DESENHO (o acumulador é o próprio título) e **enemy-set AGRESSIVO obrigatório** (o recurso vem do inimigo ATACANDO — inverso do Piranha). inari é a EXCEÇÃO: guarda o próprio orbe (self-source), não-extrativo, sem exigência de agressão — o "cavalga" barato do lote.
+
+| deus | fonte `acumulo` | mecânica | Q1 quantificador | Q2 fonte-única | Q3 elemento (renda) | Q4 agressão do set |
+|---|---|---|---|---|---|---|
+| **khnum** | `danoAbsorvido` | Couraça intercepta golpe ALVO-ÚNICO p/ um aliado | cumulativo (sem "todos") | sim, por desenho — sincronia com o ataque inimigo | Verdejante-gated (básico+hab custam V) → checar pool | **alvo-único agressivo** (AoE não é interceptado) |
+| **cernunnos** | `danoRefletido` | Fúria: 2 turnos, todo aliado atingido reflete 10 | cumulativo | sim, por desenho | Verdejante-gated → checar pool | **AoE/multi-hit agressivo** (mais aliados atingidos = mais reflexo) |
+| **oxum** | `curaAcumulada` | cura repetida (Águas cd1 20, Rio 20+regen) | cumulativo | cura só da Oxum? checar se conta o time | Maré, mas básico grátis + Águas devolve 1 Maré → baixo risco | **agressivo sustentado** (aliado precisa estar FERIDO p/ a cura contar) |
+| **xango** | `danoArmazenado` | Balança: 2 turnos armazena dano do time, devolve (máx 50/uso) | cumulativo (máx 50/uso → vários usos p/ limiar alto) | sim, por desenho | Chama-gated → checar pool | **burst agressivo na janela** (mais dano recebido = mais armazenado) |
+| **inari** | `orbesGuardados` | gera/guarda Verdejante próprio | cumulativo (guardar N) | **NÃO — self-source** | Verdejante mas GERA (Colheita +2, milagre +3) → self-suficiente | **N/A — não precisa do inimigo atacando** (só vencer a luta) |
+
+**A 4ª PERGUNTA, específica da família (dono):** o recurso extraído vem do INIMIGO ATACANDO — absorver/refletir/curar-do-dano/armazenar exigem que o inimigo BATA em você. Logo o enemy-set tem de ser AGRESSIVO, não tanque — o INVERSO da maioria dos lotes e o oposto exato do Piranha (que precisava do inimigo VIVO para sangrar; aqui precisa do inimigo BATENDO). Ler o SUSTAIN **e a AGRESSIVIDADE** dos sets antes de qualquer decisão (o que faltou no lote 4). Candidatos agressivos lidos do roster: **alvo-único puro** (horus 45, fenrir 38, ammit 35, durga 32, yamato 28); **AoE/multi** (shiva 45, lugh 38, zeus 25, kukulkan 25, raijin 22). Tensão da família: o set precisa BATER o suficiente p/ alimentar o recurso E o time-aliado precisa de SUSTAIN p/ não morrer sendo batido (aliados defensivos + inimigos agressivos = a montagem invertida). PENDENTE: o dono sequencia/decide; eu meço cada `(fonte, limiar, set agressivo, pool de elemento)` ao construir.
+
+**DÍVIDA DE MOTOR do lote 5 (o que `acumuladoDe` já lê × o que falta) — descoberta na tradução:** `curaAcumulada` (oxum, lê `tipo:'cura'` do lado 0 — só cura REAL, overheal não conta, alinha com "precisa do inimigo batendo") ✓ pronto; `orbesGuardados` (inari, soma os orbes ATUAIS do lado 0 — leitura de pico) ✓ pronto; `danoAbsorvido` (khnum, lê `e.absorvido` — hoje só o ESCUDO grava absorvido; a INTERCEPÇÃO da Couraça precisa rotear pelo escudo/absorvido p/ contar) ⚠ verificar; `danoRefletido` (cernunnos, lê `e.kind==='reflexo'` — MAS o motor emite o golpe de reflexo como `kind:'afetado', slot:'reflexo'`; o filtro NÃO casa, e a Fúria da Matilha é reflexo por-habilidade, não o buff `refleteDano`) ✗ corrigir; `danoArmazenado` (xango, `acumuladoDe` NÃO tem case → lança "não implementado"; o acumulador existe no motor em `ef(u,'armazenaDano').acc`, falta o leitor) ✗ construir. **Resumo: 2 prontos, 1 a verificar, 2 a construir — a dívida real do lote 5, a pagar ao construir cada Provação.**
+
+---
+
 ## §161 — LOTE 4, as duas últimas (piranha, ahpuch): FONTE-ÚNICA SEM 2º APLICADOR NO ROSTER → o gargalo é a cláusula "TODOS caem carregando", não o número. Medição, não raciocínio.
 
 **O ACHADO.** piranha (sangramento) e ahpuch (podridão) são o MESMO caso — e é o §160 "fonte-única" levado ao limite: o estado tem **UM só aplicador no roster inteiro** (sangramento = só a Piranha; podridão = só o Ah Puch). O §160 dizia "dois aplicadores tornam barato"; aqui há ZERO segundos aplicadores possíveis, então a correção do §160 (pôr um 2º aplicador no time) **não existe como opção de montagem** — é a lacuna de roster que o §160 já anotava (irmã da lacuna `restauraMax`).
