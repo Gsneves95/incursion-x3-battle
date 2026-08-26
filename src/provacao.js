@@ -216,6 +216,13 @@ function _somaLog(st, f) { let s = 0; for (const e of st.log) s += (f(e) || 0); 
 
 // §156 (loki): PICO por evento. Agrupa por TURNO os eventos de roubo-p/-si da fonte e devolve o MAIOR total num turno.
 function maxNumEvento(st, c, ctx) {
+  if (c.fonte === 'alvosAtingidos') {   // §165 (raijin): PICO de inimigos DISTINTOS atingidos por UMA unidade num turno (a largura da cadeia). Acoplado — bater 3 é melhor que bater 1.
+    const porUnTurno = {};   // turno|origem → Set de alvos inimigos distintos
+    for (const e of st.log) if (e.tipo === 'dano' && e.valor > 0 && ctx.ladoDe(e.origem) === 0 && ctx.ladoDe(e.alvo) === 1) {
+      const k = e.turno + '|' + e.origem; (porUnTurno[k] = porUnTurno[k] || new Set()).add(e.alvo);
+    }
+    let mx = 0; for (const k in porUnTurno) mx = Math.max(mx, porUnTurno[k].size); return mx;
+  }
   const porTurno = {};
   for (const e of st.log) {
     let q = 0;
