@@ -2,20 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 4 (MORTE_EM_ESTADO): 3/5 FECHADAS sem dica; as 2 últimas travam em FONTE-ÚNICA-SEM-2º-APLICADOR (§161) — PENDENTE do dono
-**FECHADAS 3/5, sem dica:** poseidon ✓ (encharcado), jormungandr ✓ (veneno; 2º aplicador medusa — VENCÍVEL 19),
-iara ✓ (encharcado; 2º aplicador poseidon + execução→0 — VENCÍVEL 17). **As 2 últimas SEM carimbo (§161):** **piranha**
-(sangramento) e **ahpuch** (podridão) são o MESMO caso — estado de FONTE ÚNICA cujo único aplicador é o próprio rider
-e **não há 2º aplicador no roster** (a correção §160 não existe como montagem). Medido: a LUTA fecha (ISO len 25/21),
-mas "TODOS caem carregando" é platô/dica em todo orçamento, HP (70=platô, 55=INVENCÍVEL) e limiar (ahpuch idêntico em 4/3/2/1).
-O gargalo é o QUANTIFICADOR "todos", não o número: piranha "**≥1 morre sangrando**" fecha **VENCÍVEL 27 SEM dica** (o básico
-dela sempre sangra → incidental). **DECISÃO DO DONO (as 2 ficam sem carimbo até responder):** (a) reescrever a condição p/
-"≥1 morre carregando" (`morteEmEstado`/`morteComContador` ganham campo `quantos`) — piranha fecha medido; (b) aceitar dica
-que roteiriza (recusada por §157/§158); (c) pôr um 2º aplicador de sangramento/podridão no roster (conteúdo). ahpuch teve o
-enemy-set corrigido p/ **demeter·oni·ogum** (curador PURO sem cleanse — o demeter·nefertem·brigid anterior era INVENCÍVEL por
-cleanse duplo). Experimento de gradiente-de-maneira em `provacao.js` REVERTIDO (não racha fonte-única; infra não muda sem ganho).
-**Custo lote 4 (4 colunas):** 3/5 fecharam · 3 exigiram decisão (o 2º-aplicador de jormungandr/iara + o set do ahpuch) ·
-2 nº derivados (iara execução→0, piranha ≥1) · régua PREVIU o custo em ~4/5 (só o eixo fonte-única, corrigido no §160). **npm test verde.**
+## Última sessão — F2.4 lote 4 (MORTE_EM_ESTADO) FECHADO 5/5, TODAS SEM DICA; §161: o QUANTIFICADOR pesa mais que o número + 3º eixo (rider gateado por elemento)
+**FECHAMENTO 5/5, sem dica:** poseidon ✓ (encharcado) · jormungandr ✓ (veneno; 2º aplicador medusa — 19) · iara ✓
+(encharcado; 2º aplicador poseidon + execução→0 — 17) · **piranha ✓** (`morteEmEstado{sangramento, quantos:1}`, oni·aquiles·ogum — 27) ·
+**ahpuch ✓** (`morteComContador{podridao, limiar:2, quantos:1}`, demeter·oni·ogum, **+ pool `montar.orbs Umbra:4`** — 19). **ACHADO §161:**
+piranha e ahpuch eram FONTE-ÚNICA sem 2º aplicador no roster (a correção §160 não cabe); o gargalo não era o número, era o
+QUANTIFICADOR "TODOS" (limiar 4/3/2/1 deram H idêntico; só "todos"×"≥1" mudou). **§158 num nível acima: a FORMA da condição pesa
+mais que o VALOR.** Dono: (a) predicado ganha `quantos` opcional (ausente="todos" canônico; presente="≥N caem carregando"); (b)
+dica RECUSADA; (c) 2º aplicador no roster RECUSADO (o conteúdo não se dobra à Provação — a lacuna de roster fica como OBSERVAÇÃO, não
+dívida: sangramento/podridão são fonte única e isso limita o que Provações podem exigir). **3º EIXO (ahpuch):** rider gateado por UM
+elemento (Umbra) + renda aleatória → não age cedo → precisa de bootstrap de pool (irmão do §158 hermes); Umbra:4 é o mínimo medido.
+`(q1,lim2)` é o teto do ahpuch (lim3 não fecha nem com Umbra 5-6: cada podridão tira 10 de maxHp). **MECÂNICA:** `quantos` +
+gradiente-contagem próprio (peso 1000 ≫ maxHp, sem cancelar HP-base — cancelar tirava o incentivo de matar/farmar Umbra e travava);
+forma "todos" segue sem gradiente (experimento revertido, dono confirmou); teste §11; regressão poseidon/iara/jormungandr 19/17/19 intacta.
+**Custo lote 4 (4 colunas):** **5/5 fecharam, 0 dicas** · fecharam direto: 1 (poseidon) · exigiram decisão: 4 · nº derivado: 4
+(iara exec→0, piranha q1, ahpuch q1+lim2, bootstrap Umbra4) · **régua previu direto: 1/5** (a régua prevê o rider; o lote foi
+dominado por fonte-única e recurso, que ela não vê). 1 rewrite de condição (a família ganhou `quantos`). **npm test + build verdes.**
+**PRÓXIMO (dono):** sequencia o lote 5 — ACUMULO_RECURSO (a parede extrativa prevista), agora com o quantificador na mão.
 
 ## (histórico) lote 3 — F2.4 (ROUBO/REMOÇÃO) FECHADO 6/6, TODAS SEM DICA; régua §158 pronta p/ sequenciar
 **FECHAMENTO FINAL (6/6):** heimdall ✓, saci ✓ (orbe4+dl14 derivados), iansã ✓ (limparBuffsAntesDeAbate), loki ✓

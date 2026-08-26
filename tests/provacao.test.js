@@ -173,6 +173,29 @@ console.log('== 10. maximoNumEvento (§156, loki): PICO por turno, NÃO a soma c
   console.log('  pico-por-turno ≠ soma cumulativa · a mesma log serve os dois predicados (§46)');
 }
 
+console.log('== 11. `quantos` (§161): forma-CONTAGEM "≥N caem carregando" ≠ forma-canônica "TODOS" ==');
+{
+  const ctx = { ladoDe: () => 1 };   // todas as quedas do log são do lado inimigo
+  const me = (log, c) => PROV.PREDICADOS.morteEmEstado.aval({ log, lados: [{ units: [] }, { units: [] }] }, { quem: 'inimigo', estado: 'sangramento', ...c }, ctx);
+  const mc = (log, c) => PROV.PREDICADOS.morteComContador.aval({ log, lados: [{ units: [] }, { units: [] }] }, { quem: 'inimigo', contador: 'podridao', limiar: 2, ...c }, ctx);
+  const comEstado = { tipo: 'queda', alvo: 'x', estados: ['sangramento'] };
+  const semEstado = { tipo: 'queda', alvo: 'y', estados: ['veneno'] };
+  // TODOS (sem quantos): uma queda SEM o estado → falha
+  ok(me([comEstado, semEstado], {}) === 'falha', 'TODOS: uma morte sem o estado falha');
+  ok(me([comEstado], {}) === 'ok', 'TODOS: todas com o estado → ok');
+  // CONTAGEM (quantos:1): morte SEM o estado NÃO falha; conta só as COM
+  ok(me([semEstado], { quantos: 1 }) === 'pendente', 'CONTAGEM: morte sem o estado não falha (fica pendente)');
+  ok(me([semEstado, comEstado], { quantos: 1 }) === 'ok', 'CONTAGEM: ≥1 carregando → ok mesmo com outra morte sem');
+  ok(me([comEstado], { quantos: 2 }) === 'pendente', 'CONTAGEM: 1<2 → pendente');
+  // morteComContador espelha
+  const pod2 = { tipo: 'queda', alvo: 'x', contadores: { podridao: 2 } };
+  const pod1 = { tipo: 'queda', alvo: 'y', contadores: { podridao: 1 } };
+  ok(mc([pod2, pod1], {}) === 'falha', 'TODOS: uma morte com <limiar falha');
+  ok(mc([pod1], { quantos: 1 }) === 'pendente', 'CONTAGEM: morte com <limiar não conta nem falha');
+  ok(mc([pod1, pod2], { quantos: 1 }) === 'ok', 'CONTAGEM: ≥1 com o limiar → ok');
+  console.log('  contagem não falha na morte-sem · TODOS falha · o mesmo predicado, o quantificador muda a leitura (§161)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

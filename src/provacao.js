@@ -34,24 +34,57 @@ const PREDICADOS = {
   },
 
   // ---- LOG (predicado sobre o stream de eventos) ----
-  morteEmEstado: {   // "cada `quem` tem de cair carregando `estado`" (poseidon: inimigo/encharcado)
+  morteEmEstado: {   // "cada `quem` tem de cair carregando `estado`" (poseidon: inimigo/encharcado). §161: `quantos` opcional → "≥quantos caem carregando".
     modo: 'log', obrig: ['quem', 'estado'],
     aval: (st, c, ctx) => {
       const lado = ladoDoQuem(c.quem);
-      for (const e of st.log) if (e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado) {
-        if (!(e.estados && e.estados.includes(c.estado))) return 'falha';   // caiu SEM o estado → impossível
+      const qNaQueda = e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.estados && e.estados.includes(c.estado);
+      if (c.quantos != null) {   // §161: forma-CONTAGEM — "≥quantos caem carregando". Morte SEM o estado não falha (só não conta); pendente até atingir.
+        return st.log.filter(qNaQueda).length >= c.quantos ? 'ok' : 'pendente';
+      }
+      for (const e of st.log) if (e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado) {   // forma canônica "TODOS": qualquer queda sem o estado → impossível
+        if (!(e.estados && e.estados.includes(c.estado))) return 'falha';
       }
       return 'ok';
     },
+    // §161: gradiente SÓ na forma-contagem (com ganho: sem ele o predicado-contagem contribui 0 e nunca acha). Forma "todos" fica sem gradiente (revertido, §161).
+    chave: (st, c, ctx) => { if (c.quantos == null) return ''; const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.estados && e.estados.includes(c.estado)).length); },
+    distancia: (st, c, ctx) => {
+      if (c.quantos == null) return 0;
+      const lado = ladoDoQuem(c.quem);
+      const n = st.log.filter(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.estados && e.estados.includes(c.estado)).length;
+      const falta = Math.max(0, c.quantos - n); if (!falta) return 0;
+      // custo de COBRIR os `falta` vivos mais baratos: 1000 se ainda sem o estado (>> maxHp, então cobrir vence baixar-HP e
+      // não trava num inimigo a 1 de HP), 0 se já carrega. NÃO cancela o HP-base: manter o incentivo de matar (progresso da
+      // luta / farm de recurso — ahpuch só tem Umbra confiável na passiva de abate; cancelar tirava esse incentivo e travava).
+      const vivos = st.lados[lado].units.filter(u => u.vivo);
+      const custos = vivos.map(u => (u.efeitos.some(e => e.type === c.estado) || u.dots.some(d => d.nome === c.estado)) ? 0 : 1000).sort((a, b) => a - b);
+      let s = 0; for (let i = 0; i < falta; i++) s += (i < custos.length ? custos[i] : 100000);   // vivos < falta = beco sem saída
+      return s;
+    },
   },
-  morteComContador: {   // §160 (ahpuch): "cada `quem` cai carregando ≥`limiar` de `contador`" (podridão). Contador vem no snapshot da queda (§160).
+  morteComContador: {   // §160 (ahpuch): "cada `quem` cai carregando ≥`limiar` de `contador`" (podridão). §161: `quantos` opcional → "≥quantos caem carregando".
     modo: 'log', obrig: ['quem', 'contador', 'limiar'],
     aval: (st, c, ctx) => {
       const lado = ladoDoQuem(c.quem);
+      const qNaQueda = e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.contadores && (e.contadores[c.contador] || 0) >= c.limiar;
+      if (c.quantos != null) return st.log.filter(qNaQueda).length >= c.quantos ? 'ok' : 'pendente';   // §161 forma-contagem
       for (const e of st.log) if (e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado) {
         if (!(e.contadores && (e.contadores[c.contador] || 0) >= c.limiar)) return 'falha';   // caiu com < limiar → impossível
       }
       return 'ok';
+    },
+    chave: (st, c, ctx) => { if (c.quantos == null) return ''; const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.contadores && (e.contadores[c.contador] || 0) >= c.limiar).length); },
+    distancia: (st, c, ctx) => {
+      if (c.quantos == null) return 0;
+      const lado = ladoDoQuem(c.quem);
+      const n = st.log.filter(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === lado && e.contadores && (e.contadores[c.contador] || 0) >= c.limiar).length;
+      const falta = Math.max(0, c.quantos - n); if (!falta) return 0;
+      // igual ao morteEmEstado: custo-de-empilhar (fração do déficit × 1000), SEM cancelar o HP-base (mantém o incentivo de matar/farmar).
+      const vivos = st.lados[lado].units.filter(u => u.vivo);
+      const custos = vivos.map(u => Math.max(0, c.limiar - (u.contadores[c.contador] || 0)) / c.limiar * 1000).sort((a, b) => a - b);
+      let s = 0; for (let i = 0; i < falta; i++) s += (i < custos.length ? custos[i] : 100000);
+      return s;
     },
   },
   abatePorExecucao: {   // §160 (iara): ≥`quantos` `quem` caíram por EXECUÇÃO (queda.execucao). Conta ao vivo; ok quando atinge.

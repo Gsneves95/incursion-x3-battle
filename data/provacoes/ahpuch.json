@@ -15,7 +15,12 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "orbs": {
+      "0": {
+        "Umbra": 4
+      }
+    }
   },
   "condicoes": [
     {
@@ -26,7 +31,38 @@
       "predicado": "morteComContador",
       "quem": "inimigo",
       "contador": "podridao",
-      "limiar": 4
+      "limiar": 2,
+      "quantos": 1
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "add80952",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 31,
+    "ms": 65,
+    "caminho": [
+      "ahpuch Toque da Podridão → demeter",
+      "kali Sede de Sangue → ogum",
+      "susanoo Corte de Kusanagi → demeter",
+      "passar",
+      "ahpuch Toque da Podridão → demeter",
+      "passar",
+      "susanoo Fúria do Tufão",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "kali Dança da Aniquilação",
+      "passar",
+      "susanoo Corte de Kusanagi → demeter",
+      "kali Golpe da Foice → oni",
+      "passar",
+      "kali Sede de Sangue → oni",
+      "passar",
+      "kali Golpe da Foice → ogum",
+      "passar",
+      "kali Golpe da Foice → ogum"
+    ]
+  }
 }

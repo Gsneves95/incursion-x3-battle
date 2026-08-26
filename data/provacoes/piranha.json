@@ -25,7 +25,46 @@
     {
       "predicado": "morteEmEstado",
       "quem": "inimigo",
-      "estado": "sangramento"
+      "estado": "sangramento",
+      "quantos": 1
     }
-  ]
+  ],
+  "verificacao": {
+    "hash": "8456b6f3",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 154654,
+    "ms": 27309,
+    "caminho": [
+      "susanoo Corte de Kusanagi → oni",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "kali Sede de Sangue → oni",
+      "passar",
+      "kali Sede de Sangue → oni",
+      "passar",
+      "kali Sede de Sangue → ogum",
+      "susanoo Corte de Kusanagi → ogum",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "kali Golpe da Foice → aquiles",
+      "passar",
+      "piranha Mordidas → ogum",
+      "susanoo Fúria do Tufão",
+      "kali Golpe da Foice → aquiles",
+      "passar",
+      "kali Golpe da Foice → aquiles",
+      "susanoo Corte de Kusanagi → aquiles",
+      "passar",
+      "susanoo Corte de Kusanagi → aquiles",
+      "passar",
+      "kali Golpe da Foice → aquiles",
+      "susanoo Corte de Kusanagi → aquiles",
+      "passar",
+      "susanoo Fúria do Tufão"
+    ]
+  }
 }
