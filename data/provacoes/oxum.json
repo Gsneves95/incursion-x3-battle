@@ -1,0 +1,82 @@
+{
+  "key": "oxum",
+  "titulo": "Rio de Ouro",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "oxum",
+    "susanoo",
+    "perseu"
+  ],
+  "inimigos": [
+    "shiva",
+    "lugh",
+    "zeus"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "curaAcumulada",
+      "limiar": 240
+    }
+  ],
+  "verificacao": {
+    "hash": "f7b0ce44",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 40,
+    "comDica": false,
+    "nos": 994,
+    "ms": 476,
+    "caminho": [
+      "susanoo Corte de Kusanagi → shiva",
+      "perseu Lâmina Curva → shiva",
+      "oxum Espelho Dourado → shiva",
+      "passar",
+      "perseu Cabeça da Medusa → shiva",
+      "oxum Espelho Dourado → shiva",
+      "passar",
+      "perseu Foice Adamantina → shiva",
+      "oxum Espelho Dourado → shiva",
+      "passar",
+      "perseu Lâmina Curva → lugh",
+      "oxum Espelho Dourado → shiva",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "susanoo Fúria do Tufão",
+      "perseu Foice Adamantina → lugh",
+      "passar",
+      "perseu Cabeça da Medusa → lugh",
+      "oxum Espelho Dourado → lugh",
+      "susanoo Corte de Kusanagi → lugh",
+      "passar",
+      "perseu Foice Adamantina → lugh",
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "perseu Lâmina Curva → zeus",
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "oxum Rio de Ouro",
+      "susanoo Yamata no Orochi",
+      "perseu Foice Adamantina → zeus",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "oxum Rio de Ouro",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "susanoo Corte de Kusanagi → zeus"
+    ]
+  }
+}

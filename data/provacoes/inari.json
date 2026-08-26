@@ -1,0 +1,85 @@
+{
+  "key": "inari",
+  "titulo": "As Mil Portas",
+  "nivel": "Rito",
+  "dificuldade": 2,
+  "aliados": [
+    "inari",
+    "oxum",
+    "perseu"
+  ],
+  "inimigos": [
+    "houyi",
+    "ra",
+    "mnevis"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "acumulo",
+      "fonte": "orbesGuardados",
+      "limiar": 22
+    }
+  ],
+  "verificacao": {
+    "hash": "b50f3d44",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 43,
+    "comDica": false,
+    "nos": 123047,
+    "ms": 38820,
+    "caminho": [
+      "perseu Lâmina Curva → houyi",
+      "inari Espiga Dourada → houyi",
+      "oxum Espelho Dourado → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → houyi",
+      "inari Espiga Dourada → houyi",
+      "oxum Espelho Dourado → houyi",
+      "passar",
+      "perseu Foice Adamantina → houyi",
+      "inari Espiga Dourada → houyi",
+      "oxum Espelho Dourado → ra",
+      "passar",
+      "perseu Lâmina Curva → ra",
+      "inari Espiga Dourada → ra",
+      "oxum Espelho Dourado → houyi",
+      "passar",
+      "perseu Foice Adamantina → ra",
+      "inari Espiga Dourada → ra",
+      "oxum Espelho Dourado → ra",
+      "passar",
+      "perseu Cabeça da Medusa → ra",
+      "oxum Espelho Dourado → ra",
+      "passar",
+      "oxum Espelho Dourado → ra",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Águas de Oxum → perseu",
+      "passar",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Rio de Ouro",
+      "passar",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Espelho Dourado → mnevis",
+      "passar",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Espelho Dourado → mnevis",
+      "passar",
+      "perseu Cabeça da Medusa → mnevis"
+    ]
+  }
+}
