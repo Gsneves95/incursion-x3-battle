@@ -1,0 +1,62 @@
+{
+  "key": "hera",
+  "titulo": "O Juramento",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "hera",
+    "ares",
+    "zeus"
+  ],
+  "inimigos": [
+    "zeus",
+    "houyi",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "buffNoAbate",
+      "buff": "vinculo"
+    }
+  ],
+  "verificacao": {
+    "hash": "8bace1a6",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 172843,
+    "ms": 36226,
+    "caminho": [
+      "ares Golpe Sanguinário → zeus",
+      "passar",
+      "ares Massacre → zeus",
+      "passar",
+      "ares Sede de Sangue → zeus",
+      "passar",
+      "ares Sede de Sangue → zeus",
+      "passar",
+      "ares Massacre → houyi",
+      "passar",
+      "ares Sede de Sangue → zeus",
+      "passar",
+      "passar",
+      "ares Massacre → houyi",
+      "hera Bênção Real → hera+zeus",
+      "passar",
+      "ares Massacre → saci",
+      "hera Juramento Nupcial → hera+ares",
+      "passar",
+      "zeus Cetro do Trovão → saci",
+      "ares Sede de Sangue → saci"
+    ]
+  }
+}
