@@ -6,6 +6,18 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §175 — VERIFICAÇÃO PARCIAL → ALEGAÇÃO ERRADA (junto do §115, mas pega antes do conserto); o UNIVERSO É 91; atena tapa o buraco do meu roster; e o REUSE-TEST das baratas.
+
+**RETRATAÇÃO DO "BUG" DO CALDEIRAO — junto do §115 (dono): verificação PARCIAL produz alegação errada.** Grepei `src/` + `kits.json` e conclui "marcador lido sem produtor". O produtor existe em `data/deuses/dagda.json:41` — a camada de FX EXECUTÁVEL, que eu não varri. Diferente do §115: **desta vez a alegação foi pega ANTES de virar conserto** (chequei ao ir "consertar"). **Regra: a fx executável mora em `data/deuses/`, NÃO em `kits.json` (texto de exibição) — ao caçar junta-não-ligada, varrer AS DUAS camadas + o engine.**
+
+**O UNIVERSO REAL É 91, não 100 (dono).** Os 9 INICIAIS — zeus, tyr, sobek, fujin, nezha, ganesha, cuca, ogum, brigid — **não levam Provação por design**: são o time inicial já desbloqueado, e Provação é ROTA DE AQUISIÇÃO (não há o que adquirir). Ensinados na campanha cap. 1. **Denominador de tradução: 91.**
+
+**atena CARIMBADA — o buraco do MEU roster (análogo aos 8 do dono).** atena é PRESERVAÇÃO ("sem perder aliado"), perdida na derivação do §169. atena·hermes·houyi vs fenrir·durga·kali, dl11, semPerderAliado (nós 18849); babá passa (o ESCUDO é load-bearing — set redutível, ≠ o anti-Égide do catálogo, que era babá-fail como o dano-puro do thor). **O ponto (dono): NENHUMA classificação é limpa — a minha vazou 1, a dele 8. O teste continua sendo a MEDIÇÃO, não o mapa.**
+
+**REUSE-TEST das baratas (dono) — os predicados existentes RODAM em forma nova SEM ajuste.** `abatePeloProprioLado` (afrodite/curupira) e `hpNoFim{quem:self}` (ares ≤30 deu H=7; aquiles ≥40) rodam e dão gradiente sensato de primeira; o que falta é CALIBRAÇÃO DE SET, não mudança de FORMA. **Confirma: o motor cobre mais forma do que a contagem de predicados sugere** (a maturidade não está no nº de predicados). PENDENTE: uptime Dia/Noite (amaterasu/tsukuyomi) — provável que precise de leitor de CAMPO (st.fase), não do buffContinuo-de-unidade; a testar (o 1º candidato a "reuso que não é bem reuso").
+
+**HIPÓTESE DO PRÓXIMO LOTE — REVIVE/SACRIFÍCIO é a PRESERVAÇÃO INVERTIDA (dono).** Preservação pede ninguém-cair; revive pede alguém-cair-e-voltar. Opostas no MESMO eixo → os discriminadores do lote 8 valem INVERTIDOS: **o set precisa MATAR de verdade, senão não há o que reviver** (o babá invertido: sem a ferramenta de revive, o aliado FICA caído). hel entra trazendo o "ninguém volta" (§167 parado → nasce com 9+ consumidores, §87 folgado). Traduzir com isso na frente.
+
 ## §174 — LOTE 8 ENCERRADO: dagda CARIMBADO (semPerderAliado, §87 evita o predicado-de-1-consumidor), boitatá SAI (8º), o NÚMERO com as 3 formas, e a RETRATAÇÃO do "bug" do caldeirao.
 
 **dagda CARIMBADO (11/12) — e a medição SIMPLIFICOU o rider (dono: "confirme o babá; meça antes de carimbar").** O babá do dagda PASSA: regen 12/turno é load-bearing (WITH VENCÍVEL nós 16093/59600; BABÁ [aquiles] INVENCÍVEL — sem o dagda um aliado cai). **E o rider não precisa ser "regen ativo ≥N turnos": `semPerderAliado` puro FECHA, e o regen É a ferramenta (como a −6 do thor).** Construir "regen ≥N turnos" seria um PREDICADO NOVO com UM consumidor (dagda) = §87 (o padrão do nuwa) — recusado quando o predicado existente serve. dagda·zeus·ares vs fenrir·ammit·horus, dl11 (nós 59600), montagem distinta. **A lição de sustain do dagda cabe no rider genérico; a ferramenta a distingue.**

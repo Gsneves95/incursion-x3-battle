@@ -1,0 +1,68 @@
+{
+  "key": "atena",
+  "titulo": "Nenhum Escudo Cai",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "atena",
+    "hermes",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "kali"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "d46041ec",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 18849,
+    "ms": 5463,
+    "caminho": [
+      "hermes Golpe Alado → fenrir",
+      "atena Lança de Prata → kali",
+      "passar",
+      "houyi Nove Flechas → kali",
+      "passar",
+      "houyi Abater o Sol → fenrir",
+      "passar",
+      "hermes Golpe Alado → fenrir",
+      "houyi Flecha Solar → fenrir",
+      "passar",
+      "hermes Golpe Alado → fenrir",
+      "houyi Flecha Solar → fenrir",
+      "atena Égide → atena",
+      "passar",
+      "hermes Golpe Alado → fenrir",
+      "passar",
+      "hermes Golpe Alado → durga",
+      "houyi Flecha Solar → durga",
+      "passar",
+      "houyi Nove Flechas → durga",
+      "atena Lança de Prata → fenrir",
+      "hermes Roubo Divino",
+      "passar",
+      "houyi Abater o Sol → durga",
+      "atena Égide → houyi",
+      "passar",
+      "hermes Golpe Alado → durga",
+      "atena Lança de Prata → durga"
+    ]
+  }
+}
