@@ -6,6 +6,19 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §170 — LOTE 8 negativos puros medidos: thor CARIMBADO (babá passa), oni SAI p/ ACUMULO_CONTADOR (babá falha), e a AMEAÇA na preservação é um ALVO, não um gradiente.
+
+**BABÁ TEST (§169) ESTREOU NAS DUAS DIREÇÕES — critério produzindo na primeira aplicação:**
+- **thor PASSA.** Trocar thor por aquiles/ares (remove a −6 a todos) vira o set fenrir·durga·ammit de VENCÍVEL (nós 38186) → **INVENCÍVEL** (nós 199/327): sem a ferramenta, o aliado morre. thor é protagonista da própria preservação. **CARIMBADO** (aliados thor·hermes·houyi, fenrir·durga·ammit, dl10, sem dica).
+  - **CORREÇÃO DE SET (prosa × mecânica, como §167):** o set do catálogo era Kagutsuchi·Jörmungandr·Ah Puch — **dano PURO/irredutível, que ANULA a −6 do thor** → INVENCÍVEL (babá-fail pela via oposta: ferramenta inútil). Trocado por burst REDUTÍVEL (fenrir·durga·ammit) p/ a −6 ser load-bearing. Eu (dono) escrevi "a proteção tem de vir de abate rápido" — que é preservar SEM a ferramenta do thor. A prosa negava o próprio rider.
+- **oni FALHA (9 configs).** INVENCÍVEL contra tudo que ameaça, trivial contra o que não ameaça, nunca um puzzle onde o Provocar salve. O taunt é single-target/2-turnos/recarga → cobre 1 ameaça, os outros 2 furam os frágeis. **Prosa do dono já admitia:** "o Provocar tem de ser usado como recurso de TEMPO, não de proteção" — invalidava o rider de preservação sem o dono notar.
+
+**oni SAI do lote 8 → vai para ACUMULO_CONTADOR (lote 6, dono, opção 2).** A passiva dele ("+1 dano por 4 de Combo") é ACOPLADA (o combo sobe atacando) → é o que a mecânica FAZ. Não se inventa rider de preservação (como não se inventou p/ o raijin).
+
+**AMEAÇA NA PRESERVAÇÃO É UM ALVO, NÃO UM GRADIENTE (dono) — registrar.** A calibração não é "mais agressivo = mais difícil". É trivial-**OU**-impossível com uma faixa FINA no meio: **fraco demais não ameaça** (trivial, nós 26); **puro/irredutível anula a ferramenta** (INVENCÍVEL); **só burst-redutível-no-ponto é puzzle** (nós 38186). Consequência: calibrar a ameaça de CADA uma das 14 individualmente por medição — a régua não vê alvo, só gradiente.
+
+**CONTAGEM — 6º deus a SAIR da família em que o dono o pôs (dono pede o registro, porque diz algo do mapa inicial):** cernunnos, xango (§163, lote 5 — kit não sustenta), raijin (§166, lote 6 — sem Provação solo, combo serve o susanoo), horus, durga (§167, lote 7 — não executam), **oni** (§170, lote 8 → 6). **A lição do dono:** o mapa inicial agrupou por **TEMA** (oni "protege", xango "armazena", horus "executor de precisão") — mas a família REAL é definida pelo que a **MECÂNICA FAZ quando alguém joga para ganhar**. Tema ≠ mecânica; a régua e os 4 discriminadores leem mecânica, e por isso corrigem o mapa.
+
 ## §169 — TESTE DO BABÁ (critério geral) + TRADUÇÃO do LOTE 8 (PRESERVAÇÃO): hipótese confirmada NA ESTRUTURA, roster 14, e o motor (1 reuso + 1 novo).
 
 **TESTE DO BABÁ (dono, critério NOVO e GERAL) — remover a ferramenta do título tem de fazer o rider QUEBRAR.** Se o rider fecha SEM a ferramenta do deus-título, ele acontece por ACIDENTE (é rider da montagem, não do deus). **Generaliza muito além da preservação: sempre que um rider é servido por uma FERRAMENTA, rodar sem a ferramenta tem de quebrá-lo.** É a formalização objetiva do que antes se via a olho: **era o kali-no-raijin (§166) e o susanoo-no-yamato — agora com TESTE, não olho.** Aplicação na medição: rodar a Provação com e SEM a ferramenta do título; fechar sem = acidente, reprovada. (Para a preservação, a forma concreta do teste: **remover a ferramenta do título tem de fazer o aliado MORRER.**)

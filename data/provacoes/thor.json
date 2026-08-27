@@ -1,0 +1,64 @@
+{
+  "key": "thor",
+  "titulo": "O Trovão de Asgard",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "thor",
+    "hermes",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "ammit"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "eb3d256e",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 24,
+    "comDica": false,
+    "nos": 38186,
+    "ms": 38543,
+    "caminho": [
+      "houyi Flecha Solar → fenrir",
+      "passar",
+      "houyi Nove Flechas → ammit",
+      "passar",
+      "houyi Abater o Sol → fenrir",
+      "passar",
+      "houyi Flecha Solar → ammit",
+      "passar",
+      "houyi Abater o Sol → ammit",
+      "passar",
+      "houyi Nove Flechas → ammit",
+      "passar",
+      "houyi Flecha Solar → fenrir",
+      "hermes Roubo Divino",
+      "passar",
+      "thor Tempestade de Asgard",
+      "houyi Abater o Sol → fenrir",
+      "passar",
+      "thor Arremesso de Mjölnir → fenrir+durga",
+      "houyi Flecha Solar → durga",
+      "passar",
+      "houyi Nove Flechas → durga",
+      "thor Arremesso de Mjölnir → durga",
+      "hermes Golpe Alado → durga"
+    ]
+  }
+}
