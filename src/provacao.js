@@ -176,6 +176,13 @@ const PREDICADOS = {
       return ativo ? 0 : 30;
     },
   },
+  estadoTurnos: {   // §178: ≥`limiar` TURNOS com o campo `campo` ativo (amaterasu:'Dia', tsukuyomi:'Noite'). Conta os turno-events carimbados (engine §178).
+    // RELAXA o uptime ESTRITO (estadoContinuo) — irrealizável neste motor (§174/§177/§178: economia+recargas não dão cobertura contínua). Mede ESFORÇO, não perfeição.
+    modo: 'log', obrig: ['campo', 'limiar'],
+    aval: (st, c) => new Set(st.log.filter(e => e.tipo === 'turno' && e.campo === c.campo).map(e => e.turno)).size >= c.limiar ? 'ok' : 'pendente',
+    chave: (st, c) => String(new Set(st.log.filter(e => e.tipo === 'turno' && e.campo === c.campo).map(e => e.turno)).size),
+    distancia: (st, c) => Math.max(0, c.limiar - new Set(st.log.filter(e => e.tipo === 'turno' && e.campo === c.campo).map(e => e.turno)).size) * 30,   // nudge p/ ATIVAR e MANTER o campo
+  },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 0 && e.slot === c.slot) ? 'falha' : 'ok',

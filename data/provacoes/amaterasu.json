@@ -1,0 +1,70 @@
+{
+  "key": "amaterasu",
+  "titulo": "O Sol Não Se Põe",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "amaterasu",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "shiva",
+    "durga",
+    "fenrir"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "estadoTurnos",
+      "campo": "Dia",
+      "limiar": 4
+    }
+  ],
+  "verificacao": {
+    "hash": "f9963331",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 7753,
+    "ms": 1410,
+    "caminho": [
+      "kali Golpe da Foice → shiva",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "kali Sede de Sangue → shiva",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "kali Sede de Sangue → durga",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "kali Sede de Sangue → durga",
+      "perseu Cabeça da Medusa → fenrir",
+      "passar",
+      "kali Sede de Sangue → fenrir",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "kali Golpe da Foice → fenrir",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "perseu Lâmina Curva → fenrir",
+      "amaterasu Amanhecer",
+      "passar",
+      "passar",
+      "amaterasu Amanhecer",
+      "passar",
+      "amaterasu Espelho Yata → durga"
+    ]
+  }
+}

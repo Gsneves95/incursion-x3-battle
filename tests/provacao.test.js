@@ -384,6 +384,17 @@ console.log('== 20. hpTetoSelf (§177, ares/mula/odin): HP nunca acima do teto d
   console.log('  é sobre a CURA (u.curadoAgora), não o HP natural — o "curar anula" que NÃO pune o HP inicial (§177)');
 }
 
+console.log('== 21. estadoTurnos (§178, uptime RELAXADO): ≥N turnos com o campo ativo — conta turno-events carimbados, NÃO uptime estrito ==');
+{
+  const av = (log, c) => PROV.PREDICADOS.estadoTurnos.aval({ log }, c, { ladoDe: () => 0 });
+  const T = (turno, campo) => ({ tipo: 'turno', turno, campo });
+  ok(av([T(1, 'Dia'), T(2, 'Dia'), T(3, null)], { campo: 'Dia', limiar: 2 }) === 'ok', '2 turnos de Dia ≥ 2 → ok');
+  ok(av([T(1, 'Dia'), T(2, null)], { campo: 'Dia', limiar: 2 }) === 'pendente', '1 turno de Dia < 2 → pendente');
+  ok(av([T(1, 'Dia'), T(1, 'Dia'), T(2, 'Dia')], { campo: 'Dia', limiar: 2 }) === 'ok', 'conta TURNOS distintos (2 events no turno 1 = 1 turno)');
+  ok(av([T(1, 'Noite')], { campo: 'Dia', limiar: 1 }) === 'pendente', 'Noite não conta p/ Dia');
+  console.log('  ≥N turnos-de-campo (distintos) — o relaxamento do uptime estrito irrealizável (§178)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

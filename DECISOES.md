@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §178 — UPTIME RELAXADO p/ ≥N TURNOS (estadoTurnos); a PROPRIEDADE "uptime estrito é inescrevível"; amaterasu+aquiles carimbadas; tsukuyomi/orfeu pendentes.
+
+**`estadoTurnos{campo, limiar}` (motor §178) — o uptime RELAXADO.** Conta TURNOS distintos com o campo ativo (turno-event ganha o carimbo `campo: st.fase`, engine l.1469). Mede ESFORÇO, não perfeição. Testado+navegável (§21, gradiente ×30).
+
+**PROPRIEDADE DO MOTOR (dono, 3ª prova) — "ATIVO TODO TURNO" (uptime estrito) NÃO É ESCREVÍVEL NESTE MOTOR.** A economia de orbe + as recargas não dão cobertura contínua: dagda (Caldeirão, §174), amaterasu/tsukuyomi/orfeu (campo, §177). **Regra: qualquer rider futuro de uptime nasce como "≥N turnos" (contagem), NUNCA "todo turno".** O `estadoContinuo` (estrito) fica no motor como o que NÃO fecha — documenta o teto.
+
+**CARIMBADAS:**
+- **amaterasu** — estadoTurnos Dia ≥4 (derivado: ≥4 fecha, ≥5 uma curto), vs shiva·durga·fenrir (nós 7753). Babá passa (sem amaterasu, Dia não se mantém — H=120).
+- **aquiles** — BANDA ACHADA (§170): piso ≥40 vs zeus·ares·saci (nós 17780, não-trivial — o piso é genuinamente ameaçado, ≠ o set gentil que segurava por acidente).
+
+**PENDENTES (a cauda que sobra):**
+- **tsukuyomi** — NÃO sustenta Noite nem por 2 turnos (H=60 em N=2; zero turnos-de-Noite). A Noite dele não se produz/mantém como o Dia da amaterasu — **assimetria Dia×Noite a investigar** (por que o mesmo predicado fecha p/ um campo e não p/ o outro?), ou rider diferente. Candidata a saída-por-ferramenta se o kit não sustentar.
+- **orfeu** — uptime de STATUS-DE-INIMIGO (adormecido); o turno-event carimba CAMPO, não status-inimigo → `estadoTurnos` não cobre. Precisa de carimbo de status-por-turno (motor) OU relaxamento próprio. PENDENTE.
+
 ## §177 — AS BARATAS: hpTetoSelf, curupira SAI (9ª, distinção nova), o "curar-anula" INERTE, e o UPTIME bate na MESMA parede do dagda.
 
 **`limparBuffsAntesDeAbate` — ARMADILHA LATENTE (dono, com endereço).** É um ALVO (pendente-até-atingir) SEM `distancia`; fechou só para a iansã (o greedy limpa buffs ao vencer). **Vai travar o 1º consumidor novo que precise do gradiente** — quando aparecer, dar `distancia` (déficit de buffs-inimigos a limpar antes da 1ª queda). Anotado, não mexido (§87: sem consumidor que trave, não se constrói).

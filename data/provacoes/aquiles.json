@@ -1,0 +1,72 @@
+{
+  "key": "aquiles",
+  "titulo": "O Calcanhar",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "aquiles",
+    "oxum",
+    "zeus"
+  ],
+  "inimigos": [
+    "zeus",
+    "ares",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "hpNoFim",
+      "quem": "aquiles",
+      "op": ">=",
+      "v": 40
+    }
+  ],
+  "verificacao": {
+    "hash": "7585689a",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 17780,
+    "ms": 4803,
+    "caminho": [
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "zeus Ira Celestial",
+      "oxum Águas de Oxum → aquiles",
+      "aquiles Estocada de Peleu → zeus",
+      "passar",
+      "zeus Julgamento do Trovão → zeus",
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "zeus Cetro do Trovão → zeus",
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "zeus Julgamento do Trovão → ares",
+      "oxum Espelho Dourado → zeus",
+      "passar",
+      "zeus Ira Celestial",
+      "oxum Espelho Dourado → ares",
+      "passar",
+      "oxum Rio de Ouro",
+      "aquiles Fúria de Aquiles → ares",
+      "passar",
+      "aquiles Estocada de Peleu → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "oxum Espelho Dourado → saci",
+      "aquiles Lança Implacável → saci",
+      "passar",
+      "passar",
+      "aquiles Fúria de Aquiles → saci"
+    ]
+  }
+}
