@@ -1,0 +1,69 @@
+{
+  "key": "change",
+  "titulo": "Saudade",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "change",
+    "houyi",
+    "ares"
+  ],
+  "inimigos": [
+    "horus",
+    "zeus",
+    "nezha"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "2d1f885d",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 11827,
+    "ms": 5631,
+    "caminho": [
+      "change Véu de Luar → horus",
+      "houyi Flecha Solar → horus",
+      "passar",
+      "ares Massacre → horus",
+      "change Véu de Luar → horus",
+      "passar",
+      "ares Sede de Sangue → horus",
+      "change Véu de Luar → horus",
+      "houyi Flecha Solar → zeus",
+      "passar",
+      "houyi Nove Flechas → zeus",
+      "change Véu de Luar → zeus",
+      "passar",
+      "ares Massacre → nezha",
+      "passar",
+      "ares Sede de Sangue → zeus",
+      "change Véu de Luar → zeus",
+      "houyi Flecha Solar → horus",
+      "passar",
+      "change Véu de Luar → nezha",
+      "passar",
+      "change Luz do Jade",
+      "passar",
+      "houyi Nove Flechas → nezha",
+      "passar",
+      "houyi Flecha Solar → nezha",
+      "change Elixir da Imortalidade → change",
+      "passar",
+      "ares Massacre → nezha"
+    ]
+  }
+}

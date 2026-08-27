@@ -1,0 +1,71 @@
+{
+  "key": "guanyu",
+  "titulo": "O Juramento do Pêssego",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "guanyu",
+    "hermes",
+    "saci"
+  ],
+  "inimigos": [
+    "horus",
+    "durga",
+    "lugh"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "fd88408d",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 31,
+    "comDica": false,
+    "nos": 15039,
+    "ms": 7763,
+    "caminho": [
+      "hermes Golpe Alado → horus",
+      "passar",
+      "hermes Golpe Alado → horus",
+      "saci Cachimbo em Brasa → horus",
+      "passar",
+      "hermes Golpe Alado → horus",
+      "saci Travessura Maior",
+      "passar",
+      "hermes Golpe Alado → lugh",
+      "passar",
+      "saci Cachimbo em Brasa → horus",
+      "passar",
+      "hermes Golpe Alado → horus",
+      "saci Cachimbo em Brasa → horus",
+      "passar",
+      "hermes Golpe Alado → durga",
+      "guanyu Lâmina do Dragão Verde → lugh",
+      "saci Cachimbo em Brasa → lugh",
+      "passar",
+      "hermes Golpe Alado → lugh",
+      "saci Travessura Maior",
+      "guanyu Juramento do Pêssego → guanyu",
+      "passar",
+      "hermes Roubo Divino",
+      "guanyu Investida do General",
+      "passar",
+      "guanyu Lâmina do Dragão Verde → durga",
+      "passar",
+      "hermes Golpe Alado → durga",
+      "guanyu Lâmina do Dragão Verde → durga",
+      "saci Cachimbo em Brasa → durga"
+    ]
+  }
+}
