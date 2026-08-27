@@ -1,0 +1,63 @@
+{
+  "key": "fenrir",
+  "titulo": "Fauces do Fim",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "fenrir",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "change",
+    "houyi",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "2130fb67",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 1913,
+    "ms": 722,
+    "caminho": [
+      "perseu Lâmina Curva → change",
+      "passar",
+      "perseu Cabeça da Medusa → change",
+      "fenrir Mordida → change",
+      "passar",
+      "perseu Foice Adamantina → houyi",
+      "passar",
+      "perseu Lâmina Curva → change",
+      "passar",
+      "fenrir Fauces do Fim → change",
+      "passar",
+      "passar",
+      "kali Dança da Aniquilação",
+      "passar",
+      "kali Golpe da Foice → houyi",
+      "passar",
+      "kali Golpe da Foice → kukulkan",
+      "passar",
+      "kali Golpe da Foice → kukulkan",
+      "passar",
+      "kali Golpe da Foice → kukulkan"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "key": "hades",
+  "titulo": "Portões do Submundo",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "hades",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "ares",
+    "houyi",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "dacb5415",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 57565,
+    "ms": 16399,
+    "caminho": [
+      "perseu Lâmina Curva → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "hades Toque Fúnebre → ares",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Lâmina Curva → kukulkan",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Cabeça da Medusa → kukulkan",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Foice Adamantina → houyi",
+      "passar",
+      "hades Portões do Submundo → kukulkan",
+      "kali Sede de Sangue → houyi",
+      "passar"
+    ]
+  }
+}

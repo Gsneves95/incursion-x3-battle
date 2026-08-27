@@ -1,0 +1,65 @@
+{
+  "key": "izanami",
+  "titulo": "Portal de Yomotsu",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "izanami",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "ares",
+    "thor",
+    "hel"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 2
+    }
+  ],
+  "verificacao": {
+    "hash": "2b4db89",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 23,
+    "comDica": false,
+    "nos": 78881,
+    "ms": 30198,
+    "caminho": [
+      "perseu Lâmina Curva → ares",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "passar",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "izanami Praga de Yomi",
+      "passar",
+      "perseu Lâmina Curva → thor",
+      "izanami Portal de Yomotsu",
+      "passar",
+      "passar",
+      "perseu Cabeça da Medusa → hel",
+      "passar"
+    ]
+  }
+}
