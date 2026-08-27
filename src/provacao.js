@@ -119,6 +119,27 @@ const PREDICADOS = {
     modo: 'log', obrig: [],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === 0) ? 'falha' : 'ok',
   },
+  protegeDe: {   // §172 (PROTEGER_UNIDADE, 5 consumidores): nenhum dano QUALIFICADO atinge o(s) protegido(s). Falha-DURANTE (o dano recebido
+    // não se desfaz — poda ao vivo, sem gradiente, como o semPerderAliado). ESCOPO: `quem` = unidade nomeada (mnevis→Rá, hanuman→Senhor);
+    // OU `exceto` = TODOS os aliados menos essa unidade (cerberus/bastet/boitatá — o protetor tanca por eles). FILTRO opcional:
+    // `tipoDano:'unico'` (bastet: só golpe de ALVO ÚNICO conta) · `dot:'<nome>'` (boitatá: só o DoT nomeado conta, ex. 'queimadura').
+    // Interceptação (mnevis/hanuman/bastet) REDIRECIONA o golpe: o evento de dano fica no PROTETOR, não no protegido → o protegido não gera evento → ok.
+    modo: 'log', obrig: [],
+    aval: (st, c, ctx) => {
+      const protegido = (alvo) => c.quem ? alvo === c.quem : (ctx.ladoDe(alvo) === 0 && alvo !== c.exceto);
+      const f = c.filtro || {};
+      const bateu = st.log.some(e => {
+        if (!(e.valor > 0)) return false;
+        const ehDano = e.tipo === 'dano', ehDot = e.tipo === 'dot';
+        if (!ehDano && !ehDot) return false;
+        if (!protegido(e.alvo)) return false;
+        if (f.tipoDano === 'unico') return ehDano && !!e.unico;   // só golpe de alvo único
+        if (f.dot) return ehDot && e.efeito === f.dot;            // só o DoT nomeado
+        return true;                                              // sem filtro: qualquer dano/DoT no protegido
+      });
+      return bateu ? 'falha' : 'ok';
+    },
+  },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 0 && e.slot === c.slot) ? 'falha' : 'ok',

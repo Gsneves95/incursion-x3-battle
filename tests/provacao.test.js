@@ -308,6 +308,30 @@ console.log('== 15. protegeHpMax (§165, itzamna): nenhum aliado termina com max
   console.log('  o 2º rider do itzamná lê maxHpPerdido — exige a Aurora da Criação na hora certa (§165)');
 }
 
+console.log('== 16. protegeDe (§172, PROTEGER_UNIDADE — 5 consumidores): escopo (quem × exceto) e filtro (tipoDano × dot), falha-DURANTE ==');
+{
+  // fixture SEM interceptor (mnevis/hanuman/bastet interceptariam e redirecionariam o golpe — isso é a proteção deles, testada nas Provações, não aqui)
+  const prov = { key: 'x', aliados: ['zeus', 'ra', 'oxum'], inimigos: ['thor', 'ogum', 'tyr'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : new Set(prov.inimigos).has(k) ? 1 : undefined };
+  const av = (st, c) => PROV.PREDICADOS.protegeDe.aval(st, c, ctx);
+  const novo = () => PROV.montarProvacao(prov);
+  const ini = st => st.lados[1].units[0];
+  const u = (st, key) => st.lados.flatMap(l => l.units).find(x => x.key === key);
+  // ESCOPO quem: dano na unidade nomeada falha; dano em outro aliado NÃO
+  { const st = novo(); E.bater(st, ini(st), u(st, 'ra'), 15, 'afetado', 'basico', { unico: true }); ok(av(st, { quem: 'ra' }) === 'falha', 'quem:ra — golpe em Rá → falha'); }
+  { const st = novo(); E.bater(st, ini(st), u(st, 'oxum'), 15, 'afetado', 'basico', { unico: true }); ok(av(st, { quem: 'ra' }) === 'ok', 'quem:ra — golpe em OUTRO aliado → ok (só Rá protegido)'); }
+  // ESCOPO exceto: dano em qualquer aliado ≠ protetor falha; dano NO protetor não
+  { const st = novo(); E.bater(st, ini(st), u(st, 'ra'), 15, 'afetado', 'basico', { unico: true }); ok(av(st, { exceto: 'zeus' }) === 'falha', 'exceto:zeus — golpe num aliado qualquer → falha'); }
+  { const st = novo(); E.bater(st, ini(st), u(st, 'zeus'), 15, 'afetado', 'basico', { unico: true }); ok(av(st, { exceto: 'zeus' }) === 'ok', 'exceto:zeus — golpe NO protetor → ok (ele tanca)'); }
+  // FILTRO tipoDano:'unico' — só golpe de alvo único conta; AoE (unico ausente) não
+  { const st = novo(); E.bater(st, ini(st), u(st, 'ra'), 15, 'afetado', 'basico', { unico: true }); ok(av(st, { exceto: 'zeus', filtro: { tipoDano: 'unico' } }) === 'falha', 'filtro único — golpe único → falha'); }
+  { const st = novo(); E.bater(st, ini(st), u(st, 'ra'), 15, 'afetado', 'milagre', {}); ok(av(st, { exceto: 'zeus', filtro: { tipoDano: 'unico' } }) === 'ok', 'filtro único — golpe de ÁREA (sem unico) → ok'); }
+  // FILTRO dot:'queimadura' — só o DoT nomeado conta (evento tipo:'dot', engine l.1343); outro DoT não
+  { const st = novo(); st.log.push({ tipo: 'dot', alvo: 'ra', efeito: 'queimadura', valor: 6 }); ok(av(st, { exceto: 'zeus', filtro: { dot: 'queimadura' } }) === 'falha', 'filtro queimadura — tique de Queimadura → falha'); }
+  { const st = novo(); st.log.push({ tipo: 'dot', alvo: 'ra', efeito: 'veneno', valor: 6 }); ok(av(st, { exceto: 'zeus', filtro: { dot: 'queimadura' } }) === 'ok', 'filtro queimadura — tique de OUTRO DoT (veneno) → ok'); }
+  console.log('  1 predicado, 5 consumidores: unidade-nomeada × aliados-exceto × filtro-tipo/elemento — falha ao 1º dano qualificado (§172)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

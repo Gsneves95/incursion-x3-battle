@@ -313,6 +313,7 @@ const VOCAB = {
     'tipo', 'turno', 'lado', 'origem', 'alvo', 'valor', 'kind', 'duracao', 'slot',
     'efeito', 'motivo', 'para', 'modo', 'opcoes', 'passiva', 'resultado', 'absorvido',
     'reflexo', 'soak', 'devolvido',     // §162: dano:reflexo (golpe de reflexo, p/ danoRefletido) · dano:soak (dano engolido por interceptação, p/ danoAbsorvido) · dano:devolvido (dano devolvido pela Balança, p/ danoDevolvido)
+    'unico',               // §172: dano:unico — o golpe foi de ALVO ÚNICO (p/ protegeDe filtro tipoDano:'unico', Bastet)
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
     'execucao',            // queda:execucao — o abate foi por EXECUÇÃO (F1.9; iara ≥2 via Afogamento, kraken slotAbate)
@@ -906,6 +907,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   alvo.hp = Math.max(pisoAtk ? 1 : 0, alvo.hp - v);
   if (unico) alvo.golpeUnicoNoTurno = true;   // F1.9 (Bastet §88): ESCRITOR do rastreio. SÓ golpe único (a AoE não consome a proteção); DEPOIS do calcDano (a reducao deste golpe já leu o flag ainda limpo). Quem intercepta/redireciona seta o flag do RECEPTOR (a recursão do bater), não do alvo original
   const evDano = { tipo: 'dano', origem: atk.key, alvo: alvo.key, valor: v, kind: kind || 'afetado' };
+  if (unico) evDano.unico = true;   // §172 (protegeDe/Bastet): marca o golpe de ALVO ÚNICO no evento de dano (o leitor filtra por tipoDano:'unico')
   if (absorvido) evDano.absorvido = absorvido;
   if (slot === 'reflexo') evDano.reflexo = true;   // §162: marca o golpe de reflexo (o leitor danoRefletido soma estes; kind fica 'afetado' p/ o calcDano)
   if (slot === 'armazenado') evDano.devolvido = v; // §162: dano DEVOLVIDO pela Balança (Xangô) → danoDevolvido (o que se ENTREGA, cavalga o abate)

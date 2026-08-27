@@ -70,14 +70,14 @@ console.log('== 5. carimbo de versão: hash estável, muda com o catálogo ==');
   console.log(`  hash ${h1} · muda com o kit · carimbo real (apolo) confere`);
 }
 
-console.log('== 6. acumulo{fonte,limiar}: nasce com as 9 fontes; fonte desconhecida é recusada ==');
+console.log('== 6. acumulo{fonte,limiar}: nasce com as 11 fontes; fonte desconhecida é recusada ==');
 {
-  ok(PROV.FONTES_ACUMULO.length === 9, `9 fontes registradas (${PROV.FONTES_ACUMULO.length})`);
+  ok(PROV.FONTES_ACUMULO.length === 11, `11 fontes registradas (${PROV.FONTES_ACUMULO.length})`);
   const bom = PROV.validarProvacao({ key: 'a', aliados: ['zeus'], inimigos: ['zeus'], condicoes: [{ predicado: 'acumulo', fonte: 'danoRefletido', limiar: 50 }] });
   ok(bom.length === 0, 'acumulo com fonte conhecida é válido');
   const ruim = PROV.validarProvacao({ key: 'b', aliados: ['zeus'], inimigos: ['zeus'], condicoes: [{ predicado: 'acumulo', fonte: 'inventada', limiar: 50 }] });
   ok(ruim.some(e => /fonte DESCONHECIDA/.test(e)), 'fonte inventada é recusada na validação');
-  console.log(`  9 fontes · fonte conhecida ok · fonte inventada recusada`);
+  console.log(`  11 fontes · fonte conhecida ok · fonte inventada recusada`);
 }
 
 console.log('');
