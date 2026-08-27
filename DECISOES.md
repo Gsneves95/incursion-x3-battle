@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §172 — LOTE 8 motor CONSTRUÍDO (protegeDe, buff-timing ×2, gradiente do hpNoFim) e a MEDIÇÃO dos consumidores: 5/12 carimbados, 7 travam por KIT (não por predicado).
+
+**MOTOR construído e testado (§16, §17; regressão completa verde), antes dos consumidores (§134/§87):**
+- **protegeDe{escopo, filtro?}** — falha-DURANTE. escopo = unidade nomeada | aliadosExceto:X; filtro = tipoDano:'unico' | dot:'<nome>'. Engine: evento de dano ganha `unico` (VOCAB.camposEvento); DoT já emite tipo:'dot' nomeado. Fix de arrasto: solucionador.test contava 9 FONTES_ACUMULO, eram 11 (§162/§163).
+- **buff-timing = DUAS sub-formas (confirma a previsão do dono).** `modo` é estático e timing-PONTUAL ≠ CONTÍNUO → não cabem num predicado só: **buffNoAbate{buff}** (final, hera/vinculo) e **buffContinuo{buff,desde}** (continuo/falha-durante, dagda/caldeirao). A família buff-timing tem, de fato, duas sub-formas — onde membros escondidos apareceriam.
+- **hpNoFim ganhou `distancia`** (déficit de HP). Era filtro-final sem gradiente → o solver travava em H=0 (relaxar o VALOR não resolvia; faltava o gradiente; `heuristica` soma distancia de TODO predicado, solucionador l.104). **aval INTACTO → nenhum veredito carimbado se move** (e não havia consumidor carimbado; vishnu seria o 1º).
+
+**CARIMBADOS (5/12): thor, change, guanyu, oxalá, hanuman.** hanuman é o 1º protegeDe carimbado (babá passa: sem a Devoção, o Senhor cai — INVENCÍVEL).
+
+**ACHADO 1 — a FORMA VIÁVEL de PROTEGER é "interceptação TOTAL de UM aliado nomeado".** hanuman (Devoção intercepta TODO dano ao Senhor) fecha e passa o babá. As outras travam pelo KIT, não pelo predicado:
+- **mnevis** — intercepta só o 1º golpe de alvo único/turno contra Rá → contra 3 inimigos, o 2º+ fura → INVENCÍVEL. **Tool PARCIAL.**
+- **bastet, cerberus** — protegem TODOS os aliados menos o protetor; um tool single-target (Vigília/Provocar) não cobre 3 atacantes → INVENCÍVEL nós 8. **Escopo AMPLO demais.**
+- É o teste do babá pela via do oni (§170): o predicado é bom, o KIT é insuficiente. protegeDe está certo; mnevis/bastet/cerberus é que não têm ferramenta que zere o dano em 3v3.
+
+**ACHADO 2 — AÇÃO POSITIVA + preservação vs burst é um APERTO.** hera (semPerder + Juramento-no-abate) e dagda (semPerder + Caldeirão-uptime) ficam INVENCÍVEL contra sets agressivos o bastante para a preservação não ser trivial — o buff-rider e o não-perder-aliado não cabem juntos SOB a ameaça. hera é a mais perto (H=11). O set que ameaça mata o buff; o set que deixa o buff trivializa a preservação.
+
+**ACHADO 3 — vishnu ("3 cheios") é LIMITADO-POR-CURA.** A cura de 25 não repõe 3 aliados ao máximo enquanto vence, mesmo vs set fraco (H=129). O gradiente tornou o alvo navegável (sem o falso H=0), mas revelou que "3 no HP cheio no abate" é genuinamente longe — o rider, não o número.
+
+**PENDENTE — 7 travados, o dono decide (relaxar rider / set mais gentil / sair como oni-nuwa; sem inventar rider):** mnevis, bastet, cerberus (kit não zera dano em 3v3), hera, dagda (aperto positivo×ameaça), vishnu (limitado-por-cura), boitatá (protegeDe queimadura funciona, calibração oscila INVENCÍVEL↔H=5).
+
 ## §171 — LOTE 8 grupo AÇÃO POSITIVA: change/guanyu/oxalá CARIMBADOS (babá passa), nuwa SAI (7ª), e dois achados de motor (vishnu sem gradiente, PROTEGER-5 num só predicado).
 
 **CARIMBADOS (ação positiva, babá passa, sets distintos — §168):**
