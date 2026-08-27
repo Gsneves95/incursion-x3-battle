@@ -6,6 +6,18 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §168 — VARIEDADE DE CENÁRIO É CRITÉRIO DE PRODUTO (dono), e a VARREDURA DE RE-HOSPEDAGEM achou um 4º discriminador: execução SELF-SUFICIENTE × SETUP-DEPENDENTE.
+
+**CRITÉRIO DE PRODUTO NOVO (dono) — duas Provações podem ser MECANICAMENTE distintas e LUDICAMENTE iguais.** 4 das 6 do lote 7 fechavam em ares·houyi·kukulkan com kali·perseu. Mecanicamente cada uma ensina outra ferramenta (rebaixa-e-executa / controle→devora / sincronia / inscrição) — mas para QUEM JOGA, mesa idêntica 4× é repetição, e ninguém percebe que a ferramenta mudou se o cenário não muda. **Variedade de cenário é requisito de PRODUTO, não de motor.** Registrado como critério permanente da tradução: ao fechar um lote, contar quantas Provações compartilham a mesma montagem (aliados+inimigos); >2 na mesma mesa é dívida de produto a resolver ANTES de fechar.
+
+**A ALAVANCA (dono) — trocar o esquadrão aliado; kali·perseu foi escolha padrão do dono, não exigência.** O Goldilocks era estreito para "executor-Umbra + kali·perseu"; com aliados diferentes, o trio inimigo que força a lição muda também.
+
+**VARREDURA (~31 configs) — RESULTADO: o executor se re-hospeda ou não conforme a execução seja SELF-SUFICIENTE ou SETUP-DEPENDENTE. É o 4º discriminador da família** (após régua, eixo ativo/acoplado/automático, e mecanismo-de-eliminação do §167), e correlaciona com o 3º:
+- **hades — SELF-SUFICIENTE, re-hospeda LIVRE.** Portões rebaixa-e-executa num só golpe; basta 2 aliados que alimentem Umbra + amaciem. Achado de primeira: **hades +anubis,zeus vs bastet,nezha,iansa** (dl14, VENCÍVEL nós 20778, caminho `hades Portões do Submundo → iansa` — protagonista provado). **RE-HOSPEDADO** (mesa distinta, tira o hades do aglomerado).
+- **ammit, morrigan, yanwong — SETUP-DEPENDENTES, PRESOS ao kit kali·perseu. 0 alternativas em ~20 configs.** A execução deles precisa de um ferramental rico que só kali·perseu entregam neste roster: **perseu** (amaciamento pesado single-target 25–28 + petrificar + trava-cura + economia Aurora que NÃO drena a Umbra do título) + **kali** (bateria de Umbra + AoE). Provas: feeder genérico (anubis/oni/hel/cerberus) → título FAMINTO, H=1 (0 execuções); clone-petrify (medusa) falha ATÉ na mesa original (calibração ammit +kali,medusa vs ares·houyi·kukulkan = H=1 — logo é o perseu específico, não "petrificar"); durga (dano pesado + atordoar) chega a H=2–17 mas nunca fecha, e PIORA com mais folga; manter perseu e trocar só a kali (→hel/oni) chega perto (H=11–14) mas não fecha. **Trocar qualquer metade do par degrada abaixo do limiar de fechamento.**
+
+**DECISÃO (dono, pré-condicionada): a repetição dos 3 é ACEITA como PROPRIEDADE DA FAMÍLIA, não preguiça de montagem — com o número (0/~20).** ammit·morrigan·yanwong ficam em ares·houyi·kukulkan (kali·perseu); hades sai (re-hospedado); izanami (ares·thor·hel) e fenrir (change·houyi·kukulkan) já eram mesas distintas. **Resultado do lote: 5 mesas distintas em 6 Provações, aglomerado máximo = 3** (era 4). O que fica preso é o setup-dependente; o self-suficiente sempre solta. **Guarda do dono confirmada:** aliados alternativos NÃO roubam protagonismo aqui porque só o deus-título produz `queda.execucao` (aliados não-eliminadores, filtrados pela lista do §167); caminho re-confirmado no hades.
+
 ## §167 — LOTE 7 MEDIDO: `abatePorExecucao` é IMUNE A REVIVE por construção (enredo oco), a forma do eixo é "NINGUÉM VOLTA", e a família executor se parte por MECANISMO DE ELIMINAÇÃO (3º discriminador).
 
 **ACHADO ESTRUTURAL (desmonta a premissa do lote) — `abatePorExecucao` NÃO TEM OPOSIÇÃO A REVIVE.** O predicado conta eventos `queda` cumulativos no log (`src/provacao.js:94`), **nunca decrementa**. Uma execução registrada conta para sempre, mesmo que o inimigo volte. Medido: `hades exe2` deu **H=1 idêntico com reviver (demeter) e sem (change)** — o reviver não toca no predicado. Logo "execute CONTRA um reviver" é **enredo oco no nível mecânico**: execução sempre conta → é sempre a jogada → ACOPLADO trivialmente, mas de graça (o reviver não é adversário do predicado). **De onde veio o erro (dono):** da PROSA do catálogo — "escrevi oposição TEMÁTICA onde o predicado não tem oposição MECÂNICA". Registro para a próxima tradução: a tensão de uma Provação tem de morar no PREDICADO, não na prosa; se o predicado não sente o vilão, o vilão é decoração.
@@ -25,14 +37,14 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 | deus | set | nº | dl | nós | lição forçada |
 |---|---|---|---|---|---|
-| hades | ares·houyi·kukulkan | q1 | 14 | 57565 | rebaixa-e-executa num golpe |
+| hades | bastet·nezha·iansa (aliados anubis·zeus) | q1 | 14 | 20778 | rebaixa-e-executa num golpe (re-hospedado, §168) |
 | fenrir | change·houyi·kukulkan | q1 | 15 | 1913 | trava-cura das Presas fixa o alvo na janela (healer é o forçador) |
 | izanami | ares·thor·hel | q2 | 14 | 78881 | Praga espalha maldição → Portal AoE elimina 2 ≤30 |
 | ammit | ares·houyi·kukulkan | q1 | 16 | 58474 | controle→execução (petrifica → Devora) |
 | morrigan | ares·houyi·kukulkan | q1 | 15 | 58202 | sincronia: deixar o alvo em (0,24] no fim do turno |
 | yanwong | ares·houyi·kukulkan | q1 | 10 | 40516 | inscrever + acelerar sob deadline apertado |
 
-Nos 8 caminhos o **deus-título LANDA a execução** (kali/perseu não têm eliminação → o contador só sobe pela mão do título → protagonismo estrutural, provado pelo caminho). Carimbados VENCÍVEL, sem dica. **CONSTRIÇÃO DE SET (anotada):** o "Goldilocks" p/ executor-Umbra + kali/perseu é estreito — 4 dos 6 (hades/ammit/morrigan/yanwong) convergem em ares·houyi·kukulkan (tanky demais impede, squishy demais trivializa; swaps testados quebram a lição). Mesma mesa, ferramenta diferente por deus — pedagogia legítima, mas se o dono quiser variedade visual, exige TROCAR os aliados (mudança do esquadrão do lote).
+Nos 8 caminhos o **deus-título LANDA a execução** (kali/perseu não têm eliminação → o contador só sobe pela mão do título → protagonismo estrutural, provado pelo caminho). Carimbados VENCÍVEL, sem dica. **CONSTRIÇÃO DE SET → RESOLVIDA no §168.** O "Goldilocks" p/ executor-Umbra + kali/perseu é estreito — 4 dos 6 convergiam em ares·houyi·kukulkan. A varredura de re-hospedagem (§168) soltou o hades (self-suficiente) para outra mesa e provou que os outros 3 (setup-dependentes) estão presos ao kit kali·perseu (0 alts em ~20 configs). Aglomerado caiu de 4 → 3; repetição dos 3 aceita como propriedade da família.
 
 **PLACAR DA RÉGUA — 3 fecharam direto, contra os 4 do lote 6.** O número derivou uma vez lote-wide (exe2 bate num piso de SUSTAIN, não num quantificador — H=1 nos dois braços — então cai para q1; izanami q2 pelo AoE). A régua **NÃO acerta duas seguidas**: a família executor é internamente partida pelo 3º discriminador (mecanismo de eliminação), que nem a régua nem o eixo enxergam. Diretos: hades, fenrir, izanami (3). Exigiram achar o SET-forçador (uma decisão cada, não um custo): ammit, morrigan, yanwong (3) — cada um um perfil-de-set diferente (controlável / HP-médio-sincronizável / deadline-apertado).
 

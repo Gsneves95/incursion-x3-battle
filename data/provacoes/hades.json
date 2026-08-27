@@ -5,13 +5,13 @@
   "dificuldade": 3,
   "aliados": [
     "hades",
-    "kali",
-    "perseu"
+    "anubis",
+    "zeus"
   ],
   "inimigos": [
-    "ares",
-    "houyi",
-    "kukulkan"
+    "bastet",
+    "nezha",
+    "iansa"
   ],
   "montar": {
     "seed": 1,
@@ -29,33 +29,42 @@
     }
   ],
   "verificacao": {
-    "hash": "dacb5415",
+    "hash": "addfb277",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 19,
+    "lancesNesteCaminho": 28,
     "comDica": false,
-    "nos": 57565,
-    "ms": 16399,
+    "nos": 20778,
+    "ms": 6355,
     "caminho": [
-      "perseu Lâmina Curva → houyi",
+      "zeus Cetro do Trovão → nezha",
       "passar",
-      "perseu Cabeça da Medusa → ares",
-      "hades Toque Fúnebre → ares",
+      "zeus Ira Celestial",
       "passar",
-      "perseu Foice Adamantina → ares",
+      "zeus Julgamento do Trovão → nezha",
       "passar",
-      "perseu Lâmina Curva → kukulkan",
+      "zeus Cetro do Trovão → nezha",
       "passar",
-      "perseu Foice Adamantina → ares",
+      "zeus Julgamento do Trovão → nezha",
       "passar",
-      "perseu Cabeça da Medusa → kukulkan",
+      "zeus Ira Celestial",
+      "hades Toque Fúnebre → iansa",
       "passar",
-      "kali Dança da Aniquilação",
-      "perseu Foice Adamantina → houyi",
+      "zeus Julgamento do Trovão → nezha",
+      "hades Toque Fúnebre → nezha",
       "passar",
-      "hades Portões do Submundo → kukulkan",
-      "kali Sede de Sangue → houyi",
-      "passar"
+      "hades Portões do Submundo → iansa",
+      "zeus Cetro do Trovão → iansa",
+      "anubis Toque do Embalsamador → iansa",
+      "passar",
+      "anubis Pesagem do Coração → bastet",
+      "zeus Cetro do Trovão → nezha",
+      "passar",
+      "zeus Ira Celestial",
+      "hades Toque Fúnebre → bastet",
+      "passar",
+      "passar",
+      "hades Portões do Submundo → bastet"
     ]
   }
 }
