@@ -6,6 +6,27 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §169 — TESTE DO BABÁ (critério geral) + TRADUÇÃO do LOTE 8 (PRESERVAÇÃO): hipótese confirmada NA ESTRUTURA, roster 14, e o motor (1 reuso + 1 novo).
+
+**TESTE DO BABÁ (dono, critério NOVO e GERAL) — remover a ferramenta do título tem de fazer o rider QUEBRAR.** Se o rider fecha SEM a ferramenta do deus-título, ele acontece por ACIDENTE (é rider da montagem, não do deus). **Generaliza muito além da preservação: sempre que um rider é servido por uma FERRAMENTA, rodar sem a ferramenta tem de quebrá-lo.** É a formalização objetiva do que antes se via a olho: **era o kali-no-raijin (§166) e o susanoo-no-yamato — agora com TESTE, não olho.** Aplicação na medição: rodar a Provação com e SEM a ferramenta do título; fechar sem = acidente, reprovada. (Para a preservação, a forma concreta do teste: **remover a ferramenta do título tem de fazer o aliado MORRER.**)
+
+**HIPÓTESE DA FAMÍLIA — CONFIRMADA NA ESTRUTURA (dono: melhor que por medição).** `semPerderAliado` é **falha-dura** (`src/provacao.js:120`: uma queda de aliado já perde). O guloso evita perder aliado por DOIS motivos somados (aliado vivo faz dano + queda = derrota instantânea) → o rider é quase grátis → **AUTOMÁTICO, o extremo do eixo (como o disco do rá).** Consequência: **a família inverte a pergunta.** Nos outros lotes: "o set PRODUZ o recurso?". Aqui: **"o set AMEAÇA o suficiente para que a jogada ingênua perca um aliado, e só a ferramenta do título salve?"** O custo mora no INIMIGO, não no rider. É o inverso do lote 5 com uma volta a mais: lá o inimigo bate e você LUCRA; aqui bate e você só NÃO-MORRE (defesa pura). Enemy-set-first vira enemy-set-*only*.
+
+**ROSTER (dono) — 14 = 8 + 5 + 1:**
+- **SEM_PERDER_ALIADO (8):** thor, oni (negativos puros); hera, nuwa, change, oxalá, dagda, guanyu (ação positiva — o subgrupo com dente).
+- **PROTEGER_UNIDADE (5):** mnevis, hanuman, bastet, cerberus, boitatá (proteger via interceptar/atrair/absorver).
+- **+ vishnu (14ª, dono):** "Preservar" — 3 aliados em HP cheio no golpe final; preservação POSITIVA no extremo. Entra, não substitui.
+- **FORA (dono):** perseu, nefertem, izanagi — preservação-de-ESTADO (nenhum aliado controlado/com-debuff/morto-de-DoT) = **outra família**, tratada junta depois (não diluir esta).
+- **EXCLUÍDOS (o OPOSTO — família revive/sacrifício, exigem alguém CAIR):** freyja, mimir, bennu, ymir, odin.
+
+**"NINGUÉM VOLTA" (§167) GANHA CONSUMIDOR: hel** ("nenhum inimigo revivido" + Marca da Morte em cada um no abate). hel SAI do lote 8. §87 satisfeito — o predicado nasce **DEPOIS deste lote** (dono: não quer mecanismo novo competindo com a calibração de ameaça de 14).
+
+**MOTOR do lote 8 — PROTEGER se parte em 2 sub-formas: 1 REUSO + 1 NOVO (confirmado, não dois novos):**
+- **(a) HP-cheio-no-fim** → REUSA **`hpNoFim`** (§194; `quem` = chave de unidade, `cmp(u.hp,op,v)`). Cobre **vishnu** (3× hpNoFim, ou um wrapper "todos aliados cheios no fim") e a sub-forma fraca. TOLERA dano-depois-curado (só vê o estado final).
+- **(b) 0-DANO-EM-TODA-A-PARTIDA numa unidade nomeada** (mnevis "qualquer dano ANULA", hanuman "sem sofrer um único ponto") → predicado NOVO: dano-recebido-acumulado da unidade nomeada = 0. `hpNoFim` NÃO cobre (não pega dano-depois-curado). Nasce testado, passo próprio, antes dos consumidores (§134+§87).
+
+**ORDEM DE MEDIÇÃO (dono):** começar pelos NEGATIVOS PUROS (thor, oni). Se triviais → prova a hipótese e a **agressividade do set vira o trabalho principal do lote**, não os riders.
+
 ## §168 — VARIEDADE DE CENÁRIO É CRITÉRIO DE PRODUTO (dono), e a VARREDURA DE RE-HOSPEDAGEM achou um 4º discriminador: execução SELF-SUFICIENTE × SETUP-DEPENDENTE.
 
 **CRITÉRIO DE PRODUTO NOVO (dono) — duas Provações podem ser MECANICAMENTE distintas e LUDICAMENTE iguais.** 4 das 6 do lote 7 fechavam em ares·houyi·kukulkan com kali·perseu. Mecanicamente cada uma ensina outra ferramenta (rebaixa-e-executa / controle→devora / sincronia / inscrição) — mas para QUEM JOGA, mesa idêntica 4× é repetição, e ninguém percebe que a ferramenta mudou se o cenário não muda. **Variedade de cenário é requisito de PRODUTO, não de motor.** Registrado como critério permanente da tradução: ao fechar um lote, contar quantas Provações compartilham a mesma montagem (aliados+inimigos); >2 na mesma mesa é dívida de produto a resolver ANTES de fechar.
