@@ -6,6 +6,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §173 — LOTE 8 (PRESERVAÇÃO) fechado 10/12: o PLACAR com a 5ª coluna (RELAXAR O RIDER), e o achado do lote — o catálogo foi escrito por TEMA.
+
+**CARIMBADAS (10/12):** thor, oxalá, change, guanyu, hanuman, mnevis, bastet, cerberus, vishnu, hera. **(oni, nuwa saíram antes → 12, não 14.)**
+
+**PLACAR — 4 colunas + a 5ª que o dono pediu (RELAXARAM O RIDER):**
+- **Fecharam SEM relaxar o rider (5):** thor, oxalá, change, guanyu, hanuman. (Só calibração de ameaça — o trabalho principal do lote — mas o rider como escrito valeu e o babá passou.)
+- **EXIGIRAM RELAXAR O RIDER (5, + 2 travadas prováveis = até 7):** mnevis, bastet, cerberus (0-DANO → 0-MORTE do protegido: "0 dano" é impossível em 3v3 fora da interceptação total); vishnu (3 cheios → 2 aliados, valor derivado ≥90); hera (removido o semPerderAliado, ficou só o buff-rider — os dois competiam).
+- **Número derivado:** vishnu (≥90). (Os 0-dano→0-morte são mudança de FORMA do rider, não derivação de número.)
+- **Régua previu certo:** previu o RIDER barato/automático (correto — falha-dura + aliado-vivo-faz-dano), mas é CEGA ao custo real, que inverteu para CALIBRAÇÃO DE AMEAÇA. Meio-acerto, como nos lotes anteriores.
+- **TRAVADAS (2, decisão do dono):** dagda e boitatá.
+
+**O ACHADO DO LOTE (dono) — a PRESERVAÇÃO foi escrita por TEMA, não por MECÂNICA, em ~5–7 dos 12.** É o 1º lote em que a prosa do catálogo passou da frente do motor em escala. As três formas de erro-de-tema, todas pegas pelo BABÁ ou pela medição:
+1. **"0 dano num aliado"** (mnevis/bastet/cerberus/boitatá) — impossível em 3v3 (3 atacantes furam qualquer cobertura parcial/ampla; só a interceptação TOTAL de hanuman zera). Relaxa p/ "0 MORTE".
+2. **"buff ativo TODO turno"** (dagda) — a economia/tiling do Caldeirão (dur 3, recarga 3, custo 2 Verdejante) não cobre todo turno; INVENCÍVEL até vs set trivial no dl16. Uptime estrito é irrealizável.
+3. **"3 aliados no HP cheio no abate exato"** (vishnu) — agulha limitada-por-cura; relaxa p/ 2 e valor derivado.
+
+**PROPRIEDADE DO 3v3 (dono, registrar):** com três atacantes, **cobertura PARCIAL (mnevis: 1 intercepção/turno) ou AMPLA (bastet/cerberus: proteger todos) nunca zera dano** — só a **interceptação TOTAL de UM aliado nomeado** (hanuman) entrega "0 dano". Por isso hanuman passou "0 dano" e os outros três só passam "0 morte". É estrutural do formato, não dos kits.
+
+**MOTOR — o GRADIENTE generaliza (§172): todo predicado de modo `final`/`continuo` precisa de `distancia` p/ ser navegável.** hpNoFim, buffNoAbate e buffContinuo travavam em H=0/H-alto sem gradiente (o solver não navega até um filtro-terminal). Todos ganharam `distancia` (aval intacto → vereditos não se movem; `heuristica` soma distancia de todo predicado, solucionador l.104). **buff-timing = 2 sub-formas confirmadas** (pontual/final × contínuo) — a família tem membros escondidos onde houver buff pontual e onde houver uptime. **BUG achado:** o marcador `caldeirao` é LIDO (engine l.906) mas nunca APLICADO — dagda usa `regen`; e mesmo assim o uptime é irrealizável (achado 2).
+
+**TRAVADAS — o dono decide (relaxar mais / rider diferente / sair como oni-nuwa; sem inventar):**
+- **dagda** — uptime do Caldeirão é irrealizável (economia/tiling); buffNoAbate{regen} (ativo-no-abate) fecha mas é trivial (nós 38) e é a lição errada. Opções: rider "regen ativo ≥N turnos" (contagem), ou "sem perder aliado" (genérico, perde a especificidade), ou sair.
+- **boitatá** — "0 queimadura" falha ao burn de turno-1 antes do setup; "0 morte" REPROVA no babá (aquiles preserva igual — a conversão-de-fogo não é load-bearing p/ manter vivo). É o oni do lote: o kit não sustenta o rider de preservação. Candidata a sair.
+
 ## §172 — LOTE 8 motor CONSTRUÍDO (protegeDe, buff-timing ×2, gradiente do hpNoFim) e a MEDIÇÃO dos consumidores: 5/12 carimbados, 7 travam por KIT (não por predicado).
 
 **MOTOR construído e testado (§16, §17; regressão completa verde), antes dos consumidores (§134/§87):**
