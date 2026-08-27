@@ -205,6 +205,9 @@ const PREDICADOS = {
       const n = st.log.filter(e => e.tipo === 'queda' && e.matador && ctx.ladoDe(e.alvo) === 1 && ctx.ladoDe(e.matador) === 1).length;
       return n >= c.quantos ? 'ok' : 'pendente';   // nunca 'falha': até o fim pode acontecer; o gate de base-vitória barra o 'pendente'
     },
+    // §175: GRADIENTE (era filtro sem distancia — construído no §106 como predicado de TESTE, nunca alvo do solver; afrodite/curupira travavam em H=0).
+    chave: (st, c, ctx) => String(st.log.filter(e => e.tipo === 'queda' && e.matador && ctx.ladoDe(e.alvo) === 1 && ctx.ladoDe(e.matador) === 1).length),
+    distancia: (st, c, ctx) => Math.max(0, c.quantos - st.log.filter(e => e.tipo === 'queda' && e.matador && ctx.ladoDe(e.alvo) === 1 && ctx.ladoDe(e.matador) === 1).length) * 1000,   // fração do déficit ×1000: recompensa DEIXAR inimigos vivos p/ o fogo-amigo (≠ abatê-los você)
   },
   acumulo: {   // §146/§147: uma QUANTIDADE (fonte) tem de atingir um limiar. Nasce com as 9 fontes da varredura
     // dos 91 (§87). Modo log: nunca falha cedo (sempre pode acumular); o gate de base-vitória barra o 'pendente'.

@@ -1,0 +1,74 @@
+{
+  "key": "afrodite",
+  "titulo": "Que Se Matem",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "afrodite",
+    "zeus",
+    "perseu"
+  ],
+  "inimigos": [
+    "shiva",
+    "lugh",
+    "horus"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "abatePeloProprioLado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "b9f7c532",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 33,
+    "comDica": false,
+    "nos": 15511,
+    "ms": 2559,
+    "caminho": [
+      "zeus Cetro do Trovão → shiva",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "zeus Julgamento do Trovão → lugh",
+      "perseu Lâmina Curva → horus",
+      "passar",
+      "zeus Cetro do Trovão → shiva",
+      "perseu Lâmina Curva → horus",
+      "passar",
+      "zeus Julgamento do Trovão → shiva",
+      "perseu Lâmina Curva → shiva",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → lugh",
+      "passar",
+      "perseu Cabeça da Medusa → lugh",
+      "zeus Julgamento do Trovão → horus",
+      "passar",
+      "perseu Lâmina Curva → horus",
+      "afrodite Sussurro Encantado → shiva",
+      "passar",
+      "perseu Foice Adamantina → horus",
+      "passar",
+      "afrodite Encanto → lugh+horus",
+      "passar",
+      "afrodite Sussurro Encantado → lugh",
+      "passar",
+      "afrodite Sussurro Encantado → lugh",
+      "passar",
+      "afrodite Sussurro Encantado → lugh"
+    ]
+  }
+}
