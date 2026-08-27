@@ -1,0 +1,77 @@
+{
+  "key": "ares",
+  "titulo": "Sangue por Sangue",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "ares",
+    "oxum",
+    "zeus"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "hpNoFim",
+      "quem": "ares",
+      "op": "<=",
+      "v": 30
+    },
+    {
+      "predicado": "hpTetoSelf",
+      "quem": "ares",
+      "teto": 60
+    }
+  ],
+  "verificacao": {
+    "hash": "e04c5630",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 559,
+    "ms": 269,
+    "caminho": [
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Julgamento do Trovão → thor",
+      "passar",
+      "passar",
+      "zeus Julgamento do Trovão → thor",
+      "passar",
+      "zeus Ira Celestial",
+      "oxum Espelho Dourado → thor",
+      "passar",
+      "zeus Julgamento do Trovão → thor",
+      "oxum Espelho Dourado → thor",
+      "passar",
+      "zeus Cetro do Trovão → thor",
+      "oxum Águas de Oxum → zeus",
+      "passar",
+      "oxum Águas de Oxum → zeus",
+      "passar",
+      "zeus Ira Celestial",
+      "oxum Rio de Ouro",
+      "passar",
+      "zeus Julgamento do Trovão → ogum",
+      "oxum Espelho Dourado → ogum",
+      "passar",
+      "zeus Cetro do Trovão → tyr",
+      "oxum Espelho Dourado → tyr",
+      "passar",
+      "oxum Espelho Dourado → tyr"
+    ]
+  }
+}

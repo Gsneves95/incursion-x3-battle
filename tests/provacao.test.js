@@ -373,6 +373,17 @@ console.log('== 19. estadoContinuo (§176, uptime de CAMPO/STATUS — 3 consumid
   console.log('  campo (st.fase) × statusInimigo (≥1 vivo) — NÃO é o buffContinuo (buff em unidade); 3 consumidores num predicado (§176)');
 }
 
+console.log('== 20. hpTetoSelf (§177, ares/mula/odin): HP nunca acima do teto desde-N ("curar anula") — espelho-teto contínuo, falha-DURANTE ==');
+{
+  const mk = (hp, curado) => ({ turno: 3, lados: [{ units: [{ key: 'ares', vivo: true, hp, curadoAgora: !!curado }] }, { units: [] }] });
+  const av = (s, c) => PROV.PREDICADOS.hpTetoSelf.aval(s, c, { ladoDe: () => 0 });
+  ok(av(mk(120, false), { quem: 'ares', teto: 60 }) === 'ok', 'HP cheio SEM cura (HP natural) → ok — não é sobre o nível, é sobre a cura');
+  ok(av(mk(70, true), { quem: 'ares', teto: 60 }) === 'falha', 'CURADO neste turno e acima do teto → falha ("curar acima de 60 anula")');
+  ok(av(mk(55, true), { quem: 'ares', teto: 60 }) === 'ok', 'curado mas ainda <=teto → ok');
+  ok(av(mk(90, false), { quem: 'ares', teto: 60 }) === 'ok', 'acima do teto mas SEM cura neste turno → ok (dano/base, não cura)');
+  console.log('  é sobre a CURA (u.curadoAgora), não o HP natural — o "curar anula" que NÃO pune o HP inicial (§177)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

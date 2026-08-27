@@ -270,6 +270,15 @@ const PREDICADOS = {
       return Math.abs(u.hp - c.v);                            // '=='
     },
   },
+  hpTetoSelf: {   // §177 (ares/mula/odin): "CURAR `quem` acima de `teto` anula". É sobre a CURA, não o HP natural — o deus nasce com HP cheio (não é cura) e isso não viola;
+    // só um TIQUE DE CURA que deixe `quem` acima do teto falha. Força o deus a FICAR baixo ("precisa apanhar") sem punir o HP inicial. falha-DURANTE (lê u.curadoAgora, §97).
+    modo: 'continuo', obrig: ['quem', 'teto'],
+    aval: (st, c) => {
+      const u = st.lados.flatMap(l => l.units).find(x => x.key === c.quem);
+      if (!u || !u.vivo) return 'ok';
+      return (u.curadoAgora && u.hp > c.teto) ? 'falha' : 'ok';   // foi CURADO neste turno E ficou acima do teto → anula
+    },
+  },
   protegeHpMax: {   // §165 (itzamna): nenhum aliado termina com HP MÁXIMO permanentemente perdido (Podridão inimiga RESTAURADA). modo final.
     // `limiar` opcional (perda total tolerada, default 0). O 2º rider que ENDURECE o danoBonus automático: exige a Aurora da Criação (restauraMax) na hora certa.
     modo: 'final', obrig: [],
