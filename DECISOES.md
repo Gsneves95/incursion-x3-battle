@@ -6,6 +6,21 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §176 — PREDICADO TESTADO ≠ PREDICADO NAVEGÁVEL (dono): a varredura de gradiente, o reuse-test FECHADO, e `estadoContinuo` (campo/status, 3 consumidores).
+
+**LIÇÃO (dono, a mais útil do retorno) — PREDICADO TESTADO ≠ PREDICADO NAVEGÁVEL.** Um predicado pode ter `aval` correto e cobertura de teste e AINDA travar o solver, se não tiver `distancia`: o teste prova a LEITURA, o gradiente prova a NAVEGAÇÃO. **Consequência: a CONTAGEM de predicados SUPERESTIMA a maturidade do motor** — um predicado de passo-de-teste (abatePeloProprioLado, §106) é uma armadilha esperando o 1º consumidor de Provação. **Regra: todo predicado nascido em teste precisa do gradiente ANTES de virar alvo de Provação.**
+
+**VARREDURA DE GRADIENTE (dono: "achar agora que no meio de um lote").** Predicados sem `distancia`:
+- **FALHA-DURANTE (constraint, NÃO precisa de gradiente — poda ao vivo):** deadline, semPerderAliado, protegeDe, proibirSlotProprio, negarAcaoInimigo, semPerderOrbe, tetoDeGasto. Corretos sem gradiente.
+- **ALVOS que TRAVAVAM (armadilhas):** **buffNoAbate, buffContinuo** — REGRESSÃO: o gradiente que eu adicionei no §172 foi PERDIDO (edit não-commitado, varrido por revert); a varredura do dono pegou. **Re-adicionado** (aval intacto; a hera reproduz VENCÍVEL de qualquer forma no set certo — o gradiente só acelera). **`limparBuffsAntesDeAbate`** — alvo sem gradiente que FECHOU p/ o único consumidor (iansã, o greedy limpa buffs ao vencer); armadilha latente p/ consumidor futuro — anotado, não mexido (não inventar gradiente sem consumidor que trave).
+
+**REUSE-TEST FECHADO (dono) — 1 limpo, 1 precisou de ajuste, 1 NÃO era reuso:**
+- **`hpNoFim{self}` — REUSO LIMPO** (ares/mula fecham). Já era navegável (ganhou gradiente no §172 p/ o vishnu).
+- **`abatePeloProprioLado` — PRECISOU DE AJUSTE** (o "testado ≠ navegável"): era filtro de teste, ganhou gradiente (§175), afrodite fecha.
+- **`buffContinuo` p/ a família de campo — NÃO ERA REUSO.** Dia/Noite é `st.fase` (campo global), não buff em unidade; orfeu é status-em-inimigo. **Predicado NOVO `estadoContinuo{desde, campo? , statusInimigo?}`** cobre os 3 (amaterasu:'Dia', tsukuyomi:'Noite', orfeu:'adormecido') num só — **§87 folgado**. Nasce testado+navegável (§19). Consumidores medidos: INVENCÍVEL de 1ª (calibração de `desde`/set, como todos), predicado correto.
+
+**CONCLUSÃO:** o motor cobre forma nova onde o predicado já é navegável (hpNoFim-self), exige o gradiente onde nasceu em teste (abatePeloProprioLado), e exige predicado novo onde a forma é genuinamente outra (campo ≠ buff). A maturidade é por-predicado, não global.
+
 ## §175 — VERIFICAÇÃO PARCIAL → ALEGAÇÃO ERRADA (junto do §115, mas pega antes do conserto); o UNIVERSO É 91; atena tapa o buraco do meu roster; e o REUSE-TEST das baratas.
 
 **RETRATAÇÃO DO "BUG" DO CALDEIRAO — junto do §115 (dono): verificação PARCIAL produz alegação errada.** Grepei `src/` + `kits.json` e conclui "marcador lido sem produtor". O produtor existe em `data/deuses/dagda.json:41` — a camada de FX EXECUTÁVEL, que eu não varri. Diferente do §115: **desta vez a alegação foi pega ANTES de virar conserto** (chequei ao ir "consertar"). **Regra: a fx executável mora em `data/deuses/`, NÃO em `kits.json` (texto de exibição) — ao caçar junta-não-ligada, varrer AS DUAS camadas + o engine.**

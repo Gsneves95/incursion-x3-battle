@@ -362,6 +362,17 @@ console.log('== 18. semPerderAliado ESCOPADO (§172): bare (todos) × {quem} × 
   console.log('  bare inalterado (thor et al) · quem/exceto espelham o protegeDe — 0-morte é o que o kit entrega em 3v3 (§172)');
 }
 
+console.log('== 19. estadoContinuo (§176, uptime de CAMPO/STATUS — 3 consumidores): campo (Dia/Noite) × statusInimigo, falha-DURANTE desde-N ==');
+{
+  const ec = (st, c) => PROV.PREDICADOS.estadoContinuo.aval(st, c, { ladoDe: () => 1 });
+  const base = () => ({ turno: 2, fase: null, lados: [{ units: [] }, { units: [{ key: 'e', vivo: true, efeitos: [], dots: [] }] }] });
+  // campo: antes de `desde` ok; a partir dele exige st.fase===campo
+  { const st = base(); st.turno = 1; ok(ec(st, { desde: 2, campo: 'Dia' }) === 'ok', 'campo: turno<desde → ok mesmo sem Dia'); st.turno = 2; ok(ec(st, { desde: 2, campo: 'Dia' }) === 'falha', 'campo: turno>=desde sem Dia → falha'); st.fase = 'Dia'; ok(ec(st, { desde: 2, campo: 'Dia' }) === 'ok', 'campo: turno>=desde com Dia → ok'); }
+  // statusInimigo: ≥1 inimigo vivo com o status
+  { const st = base(); st.turno = 3; ok(ec(st, { desde: 3, statusInimigo: 'adormecido' }) === 'falha', 'status: nenhum inimigo adormecido → falha'); st.lados[1].units[0].efeitos.push({ type: 'adormecido' }); ok(ec(st, { desde: 3, statusInimigo: 'adormecido' }) === 'ok', 'status: ≥1 inimigo adormecido → ok'); }
+  console.log('  campo (st.fase) × statusInimigo (≥1 vivo) — NÃO é o buffContinuo (buff em unidade); 3 consumidores num predicado (§176)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

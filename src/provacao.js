@@ -150,10 +150,31 @@ const PREDICADOS = {
   buffNoAbate: {   // hera: o buff `buff` (Juramento Nupcial = 'vinculo') está ativo em ALGUM aliado NO GOLPE FINAL. modo:'final' (só o estado terminal importa).
     modo: 'final', obrig: ['buff'],
     aval: (st, c) => st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 'ok' : 'falha',
+    // §176: GRADIENTE (testado ≠ navegável) — sem ele o filtro-final trava em H=0 (o solver vence sem lançar o buff). aval intacto.
+    distancia: (st, c) => st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 0 : 30,
   },
   buffContinuo: {   // dagda: o buff `buff` (Caldeirão = 'caldeirao') está ativo em ALGUM aliado TODO turno a partir de `desde`. modo:'continuo' (falha-DURANTE: um turno sem já perde).
     modo: 'continuo', obrig: ['buff', 'desde'],
     aval: (st, c) => st.turno < c.desde ? 'ok' : (st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 'ok' : 'falha'),
+    distancia: (st, c) => (st.turno < c.desde || st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff))) ? 0 : 30,   // §176: nudge p/ manter o buff a partir de `desde`
+  },
+  estadoContinuo: {   // §176 (uptime de CAMPO/STATUS — 3 consumidores): um estado GLOBAL vale TODO turno a partir de `desde`. NÃO é buffContinuo (esse lê buff em UNIDADE).
+    // `campo` = st.fase (amaterasu:'Dia', tsukuyomi:'Noite'); OU `statusInimigo` = ≥1 inimigo VIVO carrega o status (orfeu:'adormecido'). modo:'continuo' (falha-DURANTE).
+    modo: 'continuo', obrig: ['desde'],
+    aval: (st, c) => {
+      if (st.turno < c.desde) return 'ok';
+      const ativo = c.campo ? (st.fase === c.campo)
+        : c.statusInimigo ? st.lados[1].units.some(u => u.vivo && ((u.efeitos || []).some(e => e.type === c.statusInimigo) || (u.dots || []).some(d => d.nome === c.statusInimigo)))
+          : false;
+      return ativo ? 'ok' : 'falha';
+    },
+    distancia: (st, c) => {
+      if (st.turno < c.desde) return 0;
+      const ativo = c.campo ? (st.fase === c.campo)
+        : c.statusInimigo ? st.lados[1].units.some(u => u.vivo && ((u.efeitos || []).some(e => e.type === c.statusInimigo) || (u.dots || []).some(d => d.nome === c.statusInimigo)))
+          : false;
+      return ativo ? 0 : 30;
+    },
   },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
