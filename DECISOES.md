@@ -6,6 +6,21 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §174 — LOTE 8 ENCERRADO: dagda CARIMBADO (semPerderAliado, §87 evita o predicado-de-1-consumidor), boitatá SAI (8º), o NÚMERO com as 3 formas, e a RETRATAÇÃO do "bug" do caldeirao.
+
+**dagda CARIMBADO (11/12) — e a medição SIMPLIFICOU o rider (dono: "confirme o babá; meça antes de carimbar").** O babá do dagda PASSA: regen 12/turno é load-bearing (WITH VENCÍVEL nós 16093/59600; BABÁ [aquiles] INVENCÍVEL — sem o dagda um aliado cai). **E o rider não precisa ser "regen ativo ≥N turnos": `semPerderAliado` puro FECHA, e o regen É a ferramenta (como a −6 do thor).** Construir "regen ≥N turnos" seria um PREDICADO NOVO com UM consumidor (dagda) = §87 (o padrão do nuwa) — recusado quando o predicado existente serve. dagda·zeus·ares vs fenrir·ammit·horus, dl11 (nós 59600), montagem distinta. **A lição de sustain do dagda cabe no rider genérico; a ferramenta a distingue.**
+
+**boitatá SAI (8º deus a mudar de família).** 2ª reprovação de babá por ferramenta não-load-bearing (o oni foi a 1ª): "0 morte" REPROVA (aquiles preserva igual — a conversão-de-fogo não salva ninguém que fosse morrer), e "0 queimadura" falha ao burn de turno-1. O kit (atrair+converter fogo) não sustenta preservação em 3v3. **Não se inventa outro rider.**
+
+**A LISTA DOS 8 (dono: informação de balanceamento p/ a Fase 4) — deuses cuja família REAL ≠ a que a classificação inicial deu, todos por motivo ESTRUTURAL:** cernunnos, xango (kit não sustenta extração — §163), raijin (spread é ativo-opcional, sem solo — §166), horus, durga (não executam, viram controle/dano — §167), oni (Provocar é tempo, não proteção; combo→lote 6 — §170), nuwa (rastreio modal = §87 — §171), **boitatá** (conversão-de-fogo não é load-bearing — §174). **O padrão: a classificação inicial agrupou por TEMA; a família real é o que a MECÂNICA FAZ ao jogar para ganhar. 8 de ~93 traduzidos = a taxa de erro-por-tema do mapa inicial.**
+
+**O NÚMERO DO LOTE 8, com as 3 FORMAS DE ERRO-POR-TEMA (dono: "prevê onde os próximos lotes vão doer"):** dos 12, **5 exigiram RELAXAR o rider** (+ boitatá, que não relaxou — saiu). As três formas, todas pegas pelo BABÁ ou pela medição:
+1. **"0 DANO num aliado"** (mnevis/bastet/cerberus + boitatá tentado) — impossível em 3v3 fora da interceptação TOTAL (hanuman). → relaxa p/ "0 MORTE". **Propriedade do 3v3:** cobertura parcial (1/turno) ou ampla (todos) nunca zera dano; só a interceptação total de UM aliado nomeado.
+2. **"BUFF ativo TODO turno"** (dagda) — a economia/tiling não cobre; uptime estrito irrealizável. → o sustain cabe no `semPerderAliado`, o buff é a ferramenta.
+3. **"N ALIADOS no HP cheio no abate exato"** (vishnu) — agulha limitada-por-cura. → relaxa p/ menos aliados + valor derivado (2, ≥90).
+
+**RETRATAÇÃO (dono pediu o fix do "caldeirao lido-sem-produtor") — NÃO HÁ BUG.** O produtor EXISTE: `data/deuses/dagda.json:41` = `{t:'apply', eff:{type:'caldeirao',dur:3}, escopo:'time'}`. Meu grep de §173 varreu só `src/` + `kits.json` (texto de exibição) e perdeu a camada de fx `data/deuses/`. O leitor (engine l.906) tem produtor; é testado (passiva/primitivas). **Lição: a fx executável mora em `data/deuses/`, não em `kits.json` — varrer os dois ao caçar junta-não-ligada.** O uptime do dagda era economia/tiling, confirmado.
+
 ## §173 — LOTE 8 (PRESERVAÇÃO) fechado 10/12: o PLACAR com a 5ª coluna (RELAXAR O RIDER), e o achado do lote — o catálogo foi escrito por TEMA.
 
 **CARIMBADAS (10/12):** thor, oxalá, change, guanyu, hanuman, mnevis, bastet, cerberus, vishnu, hera. **(oni, nuwa saíram antes → 12, não 14.)**
@@ -24,7 +39,7 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **PROPRIEDADE DO 3v3 (dono, registrar):** com três atacantes, **cobertura PARCIAL (mnevis: 1 intercepção/turno) ou AMPLA (bastet/cerberus: proteger todos) nunca zera dano** — só a **interceptação TOTAL de UM aliado nomeado** (hanuman) entrega "0 dano". Por isso hanuman passou "0 dano" e os outros três só passam "0 morte". É estrutural do formato, não dos kits.
 
-**MOTOR — o GRADIENTE generaliza (§172): todo predicado de modo `final`/`continuo` precisa de `distancia` p/ ser navegável.** hpNoFim, buffNoAbate e buffContinuo travavam em H=0/H-alto sem gradiente (o solver não navega até um filtro-terminal). Todos ganharam `distancia` (aval intacto → vereditos não se movem; `heuristica` soma distancia de todo predicado, solucionador l.104). **buff-timing = 2 sub-formas confirmadas** (pontual/final × contínuo) — a família tem membros escondidos onde houver buff pontual e onde houver uptime. **BUG achado:** o marcador `caldeirao` é LIDO (engine l.906) mas nunca APLICADO — dagda usa `regen`; e mesmo assim o uptime é irrealizável (achado 2).
+**MOTOR — o GRADIENTE generaliza (§172): todo predicado de modo `final`/`continuo` precisa de `distancia` p/ ser navegável.** hpNoFim, buffNoAbate e buffContinuo travavam em H=0/H-alto sem gradiente (o solver não navega até um filtro-terminal). Todos ganharam `distancia` (aval intacto → vereditos não se movem; `heuristica` soma distancia de todo predicado, solucionador l.104). **buff-timing = 2 sub-formas confirmadas** (pontual/final × contínuo) — a família tem membros escondidos onde houver buff pontual e onde houver uptime. **~~BUG do `caldeirao`~~ — RETRATADO no §174: era ERRO MEU de varredura** (grepei só `src/` + `kits.json`; o produtor mora em `data/deuses/dagda.json:41`). NÃO há junta-não-ligada; o uptime do dagda é irrealizável por ECONOMIA/tiling, não por marcador ausente.
 
 **TRAVADAS — o dono decide (relaxar mais / rider diferente / sair como oni-nuwa; sem inventar):**
 - **dagda** — uptime do Caldeirão é irrealizável (economia/tiling); buffNoAbate{regen} (ativo-no-abate) fecha mas é trivial (nós 38) e é a lição errada. Opções: rider "regen ativo ≥N turnos" (contagem), ou "sem perder aliado" (genérico, perde a especificidade), ou sair.

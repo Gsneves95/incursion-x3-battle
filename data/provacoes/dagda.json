@@ -1,0 +1,70 @@
+{
+  "key": "dagda",
+  "titulo": "O Caldeirão",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "dagda",
+    "zeus",
+    "ares"
+  ],
+  "inimigos": [
+    "fenrir",
+    "ammit",
+    "horus"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "73c73ec5",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 30,
+    "comDica": false,
+    "nos": 59600,
+    "ms": 22081,
+    "caminho": [
+      "zeus Cetro do Trovão → fenrir",
+      "dagda Clava de Dois Fins → fenrir",
+      "passar",
+      "ares Golpe Sanguinário → fenrir",
+      "dagda Clava de Dois Fins → fenrir",
+      "passar",
+      "ares Massacre → fenrir",
+      "dagda Clava de Dois Fins → fenrir",
+      "passar",
+      "dagda Clava de Dois Fins → fenrir",
+      "ares Golpe Sanguinário → horus",
+      "zeus Cetro do Trovão → fenrir",
+      "passar",
+      "zeus Cetro do Trovão → horus",
+      "ares Golpe Sanguinário → horus",
+      "dagda Harpa Uaithne",
+      "passar",
+      "ares Massacre → horus",
+      "dagda Clava de Dois Fins → horus",
+      "zeus Cetro do Trovão → horus",
+      "passar",
+      "ares Sede de Sangue → ammit",
+      "zeus Ira Celestial",
+      "dagda Clava de Dois Fins → ammit",
+      "passar",
+      "ares Golpe Sanguinário → ammit",
+      "dagda Clava de Dois Fins → ammit",
+      "passar",
+      "ares Massacre → ammit",
+      "dagda Clava de Dois Fins → ammit"
+    ]
+  }
+}
