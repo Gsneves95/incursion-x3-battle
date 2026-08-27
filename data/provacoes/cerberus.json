@@ -1,0 +1,62 @@
+{
+  "key": "cerberus",
+  "titulo": "Ninguém Passa",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "cerberus",
+    "zeus",
+    "ares"
+  ],
+  "inimigos": [
+    "durga",
+    "ammit",
+    "shiva"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado",
+      "exceto": "cerberus"
+    }
+  ],
+  "verificacao": {
+    "hash": "223f95cf",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 56589,
+    "ms": 16680,
+    "caminho": [
+      "zeus Cetro do Trovão → durga",
+      "passar",
+      "ares Massacre → shiva",
+      "passar",
+      "ares Sede de Sangue → durga",
+      "passar",
+      "ares Sede de Sangue → shiva",
+      "passar",
+      "ares Massacre → shiva",
+      "passar",
+      "passar",
+      "passar",
+      "ares Massacre → durga",
+      "passar",
+      "ares Sede de Sangue → ammit",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Julgamento do Trovão → ammit",
+      "ares Golpe Sanguinário → ammit",
+      "passar",
+      "zeus Cetro do Trovão → ammit"
+    ]
+  }
+}

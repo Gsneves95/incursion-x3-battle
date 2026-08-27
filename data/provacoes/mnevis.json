@@ -1,0 +1,60 @@
+{
+  "key": "mnevis",
+  "titulo": "A Montaria do Sol",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "mnevis",
+    "ra",
+    "zeus"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "ammit"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "ra"
+    }
+  ],
+  "verificacao": {
+    "hash": "c89e3879",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 4981,
+    "ms": 2644,
+    "caminho": [
+      "zeus Cetro do Trovão → fenrir",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Julgamento do Trovão → durga",
+      "passar",
+      "zeus Cetro do Trovão → durga",
+      "passar",
+      "zeus Julgamento do Trovão → durga",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Cetro do Trovão → durga",
+      "passar",
+      "ra Olho de Rá",
+      "zeus Julgamento do Trovão → fenrir",
+      "passar",
+      "ra Raio Solar → ammit",
+      "zeus Cetro do Trovão → ammit"
+    ]
+  }
+}

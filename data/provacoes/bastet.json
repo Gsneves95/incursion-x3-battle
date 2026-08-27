@@ -1,0 +1,72 @@
+{
+  "key": "bastet",
+  "titulo": "Sete Vidas",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "bastet",
+    "zeus",
+    "ares"
+  ],
+  "inimigos": [
+    "horus",
+    "oxum",
+    "apolo"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "exceto": "bastet"
+    }
+  ],
+  "verificacao": {
+    "hash": "fdf83b19",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 31,
+    "comDica": false,
+    "nos": 39258,
+    "ms": 20532,
+    "caminho": [
+      "zeus Cetro do Trovão → oxum",
+      "passar",
+      "ares Golpe Sanguinário → horus",
+      "zeus Cetro do Trovão → horus",
+      "bastet Arranhão Rápido → horus",
+      "passar",
+      "ares Golpe Sanguinário → horus",
+      "zeus Cetro do Trovão → horus",
+      "passar",
+      "ares Massacre → horus",
+      "zeus Cetro do Trovão → horus",
+      "passar",
+      "ares Sede de Sangue → apolo",
+      "zeus Cetro do Trovão → oxum",
+      "passar",
+      "zeus Julgamento do Trovão → apolo",
+      "passar",
+      "ares Massacre → apolo",
+      "zeus Cetro do Trovão → oxum",
+      "bastet Arranhão Rápido → apolo",
+      "passar",
+      "ares Golpe Sanguinário → oxum",
+      "bastet Arranhão Rápido → oxum",
+      "passar",
+      "zeus Cetro do Trovão → oxum",
+      "bastet Arranhão Rápido → oxum",
+      "passar",
+      "zeus Julgamento do Trovão → oxum",
+      "bastet Arranhão Rápido → oxum",
+      "passar",
+      "ares Golpe Sanguinário → oxum"
+    ]
+  }
+}
