@@ -1,0 +1,64 @@
+{
+  "key": "hanuman",
+  "titulo": "Devoção a Rama",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "hanuman",
+    "sunwukong",
+    "zeus"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "ammit"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "protegeDe",
+      "quem": "sunwukong"
+    }
+  ],
+  "verificacao": {
+    "hash": "30048d9f",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 23,
+    "comDica": false,
+    "nos": 29540,
+    "ms": 11834,
+    "caminho": [
+      "sunwukong Bastão Ruyi Jingu → fenrir+durga",
+      "passar",
+      "sunwukong Fios de Cabelo → fenrir+durga+ammit",
+      "passar",
+      "sunwukong 72 Transformações",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → fenrir+durga",
+      "passar",
+      "sunwukong Fios de Cabelo → fenrir",
+      "passar",
+      "zeus Ira Celestial",
+      "sunwukong Bastão Ruyi Jingu → fenrir+durga",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → durga+ammit",
+      "zeus Cetro do Trovão → durga",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → durga+ammit",
+      "zeus Cetro do Trovão → durga",
+      "passar",
+      "sunwukong Fios de Cabelo → ammit",
+      "zeus Julgamento do Trovão → ammit",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → ammit"
+    ]
+  }
+}
