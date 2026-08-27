@@ -345,6 +345,23 @@ console.log('== 17. buff-timing (§172): DUAS sub-formas — buffNoAbate (final,
   console.log('  final (pontual, no abate) × contínuo (uptime desde-N) NÃO cabem num predicado só: modo é estático → duas sub-formas (§172)');
 }
 
+console.log('== 18. semPerderAliado ESCOPADO (§172): bare (todos) × {quem} × {exceto} — o "0 MORTE do protegido" ==');
+{
+  const ctx = { ladoDe: k => (k === 'a1' || k === 'a2' || k === 'prot') ? 0 : 1 };
+  const av = (log, c) => PROV.PREDICADOS.semPerderAliado.aval({ log }, c || {}, ctx);
+  const quedaA1 = { tipo: 'queda', alvo: 'a1' }, quedaProt = { tipo: 'queda', alvo: 'prot' }, quedaIni = { tipo: 'queda', alvo: 'e1' };
+  // bare: qualquer queda de aliado falha (inalterado)
+  ok(av([quedaA1]) === 'falha', 'bare: aliado cai → falha');
+  ok(av([quedaIni]) === 'ok', 'bare: inimigo cai → ok');
+  // quem: só a queda do nomeado falha
+  ok(av([quedaA1], { quem: 'prot' }) === 'ok', 'quem:prot — OUTRO aliado cai → ok (só o protegido importa)');
+  ok(av([quedaProt], { quem: 'prot' }) === 'falha', 'quem:prot — o protegido cai → falha');
+  // exceto: queda de qualquer aliado ≠ protetor falha; a do protetor não
+  ok(av([quedaA1], { exceto: 'prot' }) === 'falha', 'exceto:prot — aliado qualquer cai → falha');
+  ok(av([quedaProt], { exceto: 'prot' }) === 'ok', 'exceto:prot — o protetor cai → ok (ele se sacrifica)');
+  console.log('  bare inalterado (thor et al) · quem/exceto espelham o protegeDe — 0-morte é o que o kit entrega em 3v3 (§172)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

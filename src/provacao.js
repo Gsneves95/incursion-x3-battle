@@ -116,8 +116,14 @@ const PREDICADOS = {
     },
   },
   semPerderAliado: {   // nenhum aliado cai (estrito: uma `queda` de aliado já falha; variante tolerante-a-revive fica p/ depois)
+    // §172: ESCOPO opcional (espelha protegeDe) — {quem:X} só X não cai (mnevis→Rá); {exceto:X} nenhum aliado MENOS X cai (cerberus/bastet).
+    // Bare (sem escopo) = TODOS os aliados, comportamento inalterado (thor/change/guanyu/oxalá). É o "0 MORTE do protegido": o que o
+    // kit de cobertura-parcial/ampla de fato entrega em 3v3, onde "0 DANO" é impossível fora da interceptação total (§172).
     modo: 'log', obrig: [],
-    aval: (st, c, ctx) => st.log.some(e => e.tipo === 'queda' && ctx.ladoDe(e.alvo) === 0) ? 'falha' : 'ok',
+    aval: (st, c, ctx) => {
+      const protegido = alvo => c.quem ? alvo === c.quem : (ctx.ladoDe(alvo) === 0 && alvo !== c.exceto);
+      return st.log.some(e => e.tipo === 'queda' && protegido(e.alvo)) ? 'falha' : 'ok';
+    },
   },
   protegeDe: {   // §172 (PROTEGER_UNIDADE, 5 consumidores): nenhum dano QUALIFICADO atinge o(s) protegido(s). Falha-DURANTE (o dano recebido
     // não se desfaz — poda ao vivo, sem gradiente, como o semPerderAliado). ESCOPO: `quem` = unidade nomeada (mnevis→Rá, hanuman→Senhor);
