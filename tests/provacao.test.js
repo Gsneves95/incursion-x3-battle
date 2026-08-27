@@ -332,6 +332,19 @@ console.log('== 16. protegeDe (§172, PROTEGER_UNIDADE — 5 consumidores): esco
   console.log('  1 predicado, 5 consumidores: unidade-nomeada × aliados-exceto × filtro-tipo/elemento — falha ao 1º dano qualificado (§172)');
 }
 
+console.log('== 17. buff-timing (§172): DUAS sub-formas — buffNoAbate (final, hera/vinculo) × buffContinuo (contínuo desde-N, dagda/caldeirao) ==');
+{
+  const prov = { key: 'x', aliados: ['dagda', 'hera', 'oxum'], inimigos: ['ares', 'thor', 'ogum'], montar: { seed: 1, comeca: 0 } };
+  const ctx = { ladoDe: k => new Set(prov.aliados).has(k) ? 0 : 1 };
+  const noAbate = (st, buff) => PROV.PREDICADOS.buffNoAbate.aval(st, { buff }, ctx);
+  const cont = (st, buff, desde) => PROV.PREDICADOS.buffContinuo.aval(st, { buff, desde }, ctx);
+  // buffNoAbate (final): algum aliado com o buff → ok; nenhum → falha
+  { const st = PROV.montarProvacao(prov); ok(noAbate(st, 'vinculo') === 'falha', 'buffNoAbate: sem vinculo no time → falha'); st.lados[0].units[1].efeitos.push({ type: 'vinculo', dur: 2 }); ok(noAbate(st, 'vinculo') === 'ok', 'buffNoAbate: um aliado com vinculo → ok'); }
+  // buffContinuo (falha-DURANTE): antes de `desde` sempre ok; a partir de `desde`, exige o buff a cada turno
+  { const st = PROV.montarProvacao(prov); st.turno = 1; ok(cont(st, 'caldeirao', 3) === 'ok', 'buffContinuo: turno<desde → ok mesmo sem o buff'); st.turno = 3; ok(cont(st, 'caldeirao', 3) === 'falha', 'buffContinuo: turno>=desde sem o buff → falha'); st.lados[0].units[0].efeitos.push({ type: 'caldeirao', dur: 3 }); ok(cont(st, 'caldeirao', 3) === 'ok', 'buffContinuo: turno>=desde com o buff → ok'); }
+  console.log('  final (pontual, no abate) × contínuo (uptime desde-N) NÃO cabem num predicado só: modo é estático → duas sub-formas (§172)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

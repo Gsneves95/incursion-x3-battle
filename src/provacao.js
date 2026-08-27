@@ -140,6 +140,15 @@ const PREDICADOS = {
       return bateu ? 'falha' : 'ok';
     },
   },
+  // §172 buff-timing — DUAS sub-formas, porque o `modo` é ESTÁTICO e timing-PONTUAL ≠ timing-CONTÍNUO (previsto pelo dono):
+  buffNoAbate: {   // hera: o buff `buff` (Juramento Nupcial = 'vinculo') está ativo em ALGUM aliado NO GOLPE FINAL. modo:'final' (só o estado terminal importa).
+    modo: 'final', obrig: ['buff'],
+    aval: (st, c) => st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 'ok' : 'falha',
+  },
+  buffContinuo: {   // dagda: o buff `buff` (Caldeirão = 'caldeirao') está ativo em ALGUM aliado TODO turno a partir de `desde`. modo:'continuo' (falha-DURANTE: um turno sem já perde).
+    modo: 'continuo', obrig: ['buff', 'desde'],
+    aval: (st, c) => st.turno < c.desde ? 'ok' : (st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 'ok' : 'falha'),
+  },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 0 && e.slot === c.slot) ? 'falha' : 'ok',
@@ -218,6 +227,17 @@ const PREDICADOS = {
       const u = st.lados.flatMap(l => l.units).find(x => x.key === c.quem);
       if (!u) return 'falha';
       return cmp(u.hp, c.op, c.v) ? 'ok' : 'falha';
+    },
+    // §172 (vishnu): GRADIENTE (déficit de HP até o limiar). Sem ele, o filtro-final não dava sinal ao solver — o guloso vencia a
+    // luta e chegava ao terminal com aliados danificados, travando em H=0 (relaxar o VALOR não resolve; faltava o gradiente).
+    // NÃO muda o aval → nenhum veredito carimbado se move; só torna o alvo NAVEGÁVEL. `heuristica` soma distancia de TODO predicado (solucionador l.104).
+    distancia: (st, c, ctx) => {
+      const u = st.lados.flatMap(l => l.units).find(x => x.key === c.quem);
+      if (!u) return 100000;                       // morto/ausente = longe (recompensa mantê-lo VIVO e são)
+      if (cmp(u.hp, c.op, c.v)) return 0;
+      if (c.op === '>=' || c.op === '>') return c.v - u.hp;   // precisa GANHAR HP (cura)
+      if (c.op === '<=' || c.op === '<') return u.hp - c.v;   // precisa PERDER HP
+      return Math.abs(u.hp - c.v);                            // '=='
     },
   },
   protegeHpMax: {   // §165 (itzamna): nenhum aliado termina com HP MÁXIMO permanentemente perdido (Podridão inimiga RESTAURADA). modo final.
