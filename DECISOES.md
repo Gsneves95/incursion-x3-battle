@@ -14,16 +14,27 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 **FORMA DO EIXO RIDER DE ORDEM (dono) — "NINGUÉM VOLTA", não "o reviver cai primeiro".** Medição do wipe apertado (horus/durga, dl8): sem reviver fecha (nós 10922), com reviver não (H=31 dica) — a ordem É gargalo, mas só numa janela estreita (em dl10+ a folga paga o re-abate e some). **Mas a forma "reviver cai primeiro" está REPROVADA pelo próprio dado: horus e durga medem IDÊNTICO no wipe** (mesmo nós). Se dois deuses diferentes dão o mesmo número, o rider é da MONTAGEM, não do deus → deus-título substituível → não ensina o kit. **"Ninguém volta" é sobre a MARCA no morto — e aí o deus-título é quem a aplica → protagonismo garantido.** (Distinto de "reviver cai primeiro" = estado-vivo/wipe; são predicados diferentes, como o dono antecipou no §166.) Predicado NÃO construído — aguarda o consumidor real (§87).
 
-**PARTIÇÃO NOVA (dono) — a família "executor" se parte por MECANISMO DE ELIMINAÇÃO. É um 3º discriminador**, invisível à régua (barato-cavalga × caro-extrai) E ao eixo ativo-opcional/acoplado/automático — dentro do que parecia família homogênea:
-- **um-golpe (barato):** hades (40 dano + elimina ≤24) e fenrir (38 + ≤24) rebaixam-e-executam num só milagre → q1 direto.
-- **AoE-auto (quase-automático):** izanami cura-maldição na passiva + AoE elimina maldito ≤30 → q2 (elimina 2 de uma vez).
-- **setup-gated (caro):** ammit precisa do alvo já ≤30 ou Atordoado/Selado (um golpe extra antes do Devorar).
-- **timing-de-fim-de-turno (caro):** morrigan marca e o Presságio auto-elimina só se o alvo TERMINAR o turno ≤24 (sincronizar marca × HP).
-- **atrasado (caro):** yanwong inscreve e elimina em 3 turnos (a alavanca é o DEADLINE/paciência, não dano; Convocação acelera 1 turno).
+**PARTIÇÃO NOVA (dono) — a família "executor" se parte por MECANISMO DE ELIMINAÇÃO. É um 3º discriminador**, invisível à régua (barato-cavalga × caro-extrai) E ao eixo ativo-opcional/acoplado/automático — dentro do que parecia família homogênea. **CORREÇÃO (dono, pela medição): o discriminador NÃO é CUSTO — todos os 6 fecham q1.** É o TIPO DE SET que cada mecanismo EXIGE para a lição ser forçada (não acontecer por acidente = kali-no-raijin). Cada mecanismo é uma lição distinta e um perfil-de-set distinto:
+- **um-golpe:** hades (40 dano + elimina ≤24) e fenrir (38 + ≤24) rebaixam-e-executam num só milagre → q1. Fecham em quase qualquer set vencível.
+- **AoE-auto (quase-automático):** izanami cura-maldição na passiva + AoE elimina maldito ≤30 → q2. Exige VÁRIOS corpos amaldiçoáveis (elimina 2 de uma vez).
+- **controle→execução:** ammit — Devorar elimina Atordoado/Selado/≤30. Exige alvo CONTROLÁVEL (perseu petrifica → Devorar ignora HP) ou raspável a ≤30. Confirmado no caminho: `perseu Cabeça da Medusa → kukulkan` (12) → `ammit Devorar a Alma → kukulkan` (14).
+- **sincronia de fim-de-turno:** morrigan — o Presságio auto-elimina só se o alvo TERMINAR o turno ≤24. Exige alvo de HP-MÉDIO que dê para deixar em (0,24] no fim do turno SEM matar por acidente (squishy demais trivializa — nós 100; tanky demais impede — H). Confirmado: `perseu → kukulkan` (20) → `morrigan Presságio → kukulkan` (21, a marca é o matador).
+- **atraso/deadline:** yanwong — inscreve e elimina em 3 turnos. A alavanca é o DEADLINE apertado que paga a espera (dl10 é o MÍNIMO que fecha; mais folga vira acidente); Convocação acelera 1 turno. Confirmado: `yanwong Livro → houyi` (15) → `yanwong Convocação` (17).
 
-**LOTE 7 ENVIADO (3/8): hades, fenrir, izanami — execução ACOPLADA, reviver FORA do set** (decoração removida). Números DERIVADOS por medição: hades q1 (ares·houyi·kukulkan, dl14, nós 57565), fenrir q1 (change·houyi·kukulkan, dl15, nós 1913 — a healer torna a trava-cura das Presas o gancho distinto, diferenciando-o do hades), izanami q2 (ares·thor·hel, dl14, nós 78881). Nos 3 caminhos o **deus-título LANDA a execução** (kali/perseu não têm eliminação → o contador só sobe pela mão do título → protagonismo estrutural). Carimbados VENCÍVEL, sem dica.
+**LOTE 7 ENVIADO (8/8): hades, fenrir, izanami, ammit, morrigan, yanwong — execução ACOPLADA, reviver FORA do set** (decoração removida). Números DERIVADOS por medição; SETS que FORÇAM a lição (não por acidente):
 
-**PLACAR DA RÉGUA — 3 fecharam direto, contra os 4 do lote 6.** O número derivou uma vez lote-wide (exe2 bate num piso de SUSTAIN, não num quantificador — H=1 nos dois braços — então cai para exe1/q1; izanami q2 pelo AoE). A régua **NÃO acerta duas seguidas**: a família executor é internamente partida pelo 3º discriminador (mecanismo de eliminação), que nem a régua nem o eixo enxergam. Os 3 caros (ammit/morrigan/yanwong) FECHAM a q1 contra set squishy (nós ~58k–76k) — travavam antes só pelo SET (sustain do reviver mantinha os inimigos fora da janela), não pelo número. Aguardam decisão do dono, um a um, sobre a forma (cada um é um problema diferente: setup / sincronia / paciência).
+| deus | set | nº | dl | nós | lição forçada |
+|---|---|---|---|---|---|
+| hades | ares·houyi·kukulkan | q1 | 14 | 57565 | rebaixa-e-executa num golpe |
+| fenrir | change·houyi·kukulkan | q1 | 15 | 1913 | trava-cura das Presas fixa o alvo na janela (healer é o forçador) |
+| izanami | ares·thor·hel | q2 | 14 | 78881 | Praga espalha maldição → Portal AoE elimina 2 ≤30 |
+| ammit | ares·houyi·kukulkan | q1 | 16 | 58474 | controle→execução (petrifica → Devora) |
+| morrigan | ares·houyi·kukulkan | q1 | 15 | 58202 | sincronia: deixar o alvo em (0,24] no fim do turno |
+| yanwong | ares·houyi·kukulkan | q1 | 10 | 40516 | inscrever + acelerar sob deadline apertado |
+
+Nos 8 caminhos o **deus-título LANDA a execução** (kali/perseu não têm eliminação → o contador só sobe pela mão do título → protagonismo estrutural, provado pelo caminho). Carimbados VENCÍVEL, sem dica. **CONSTRIÇÃO DE SET (anotada):** o "Goldilocks" p/ executor-Umbra + kali/perseu é estreito — 4 dos 6 (hades/ammit/morrigan/yanwong) convergem em ares·houyi·kukulkan (tanky demais impede, squishy demais trivializa; swaps testados quebram a lição). Mesma mesa, ferramenta diferente por deus — pedagogia legítima, mas se o dono quiser variedade visual, exige TROCAR os aliados (mudança do esquadrão do lote).
+
+**PLACAR DA RÉGUA — 3 fecharam direto, contra os 4 do lote 6.** O número derivou uma vez lote-wide (exe2 bate num piso de SUSTAIN, não num quantificador — H=1 nos dois braços — então cai para q1; izanami q2 pelo AoE). A régua **NÃO acerta duas seguidas**: a família executor é internamente partida pelo 3º discriminador (mecanismo de eliminação), que nem a régua nem o eixo enxergam. Diretos: hades, fenrir, izanami (3). Exigiram achar o SET-forçador (uma decisão cada, não um custo): ammit, morrigan, yanwong (3) — cada um um perfil-de-set diferente (controlável / HP-médio-sincronizável / deadline-apertado).
 
 ## §166 — Duas VERDADES DO JOGO + TRADUÇÃO do LOTE 7 (MORTE_EXECUÇÃO vs revive) com o eixo, e o RIDER DE ORDEM previsto.
 

@@ -1,0 +1,63 @@
+{
+  "key": "yanwong",
+  "titulo": "Livro da Vida e Morte",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "yanwong",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "ares",
+    "houyi",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "81a1204c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 40516,
+    "ms": 14808,
+    "caminho": [
+      "perseu Lâmina Curva → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "kali Golpe da Foice → ares",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Lâmina Curva → kukulkan",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Cabeça da Medusa → kukulkan",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "yanwong Livro da Vida e Morte → houyi",
+      "passar",
+      "yanwong Convocação dos Yamas",
+      "passar",
+      "kali Golpe da Foice → kukulkan",
+      "passar",
+      "kali Golpe da Foice → kukulkan"
+    ]
+  }
+}

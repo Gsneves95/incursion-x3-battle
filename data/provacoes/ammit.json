@@ -1,0 +1,68 @@
+{
+  "key": "ammit",
+  "titulo": "Devorar a Alma",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "ammit",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "ares",
+    "houyi",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 16
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "6de99ce5",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 26,
+    "comDica": false,
+    "nos": 58474,
+    "ms": 16465,
+    "caminho": [
+      "perseu Lâmina Curva → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "ammit Mandíbula → ares",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Lâmina Curva → kukulkan",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Cabeça da Medusa → kukulkan",
+      "passar",
+      "ammit Devorar a Alma → kukulkan",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "ammit Faro do Pecado → houyi",
+      "perseu Lâmina Curva → ares",
+      "passar",
+      "perseu Foice Adamantina → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → houyi",
+      "passar",
+      "perseu Lâmina Curva → houyi",
+      "passar",
+      "perseu Foice Adamantina → houyi"
+    ]
+  }
+}

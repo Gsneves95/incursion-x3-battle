@@ -1,0 +1,64 @@
+{
+  "key": "morrigan",
+  "titulo": "Presságio de Morte",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "morrigan",
+    "kali",
+    "perseu"
+  ],
+  "inimigos": [
+    "ares",
+    "houyi",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "abatePorExecucao",
+      "quem": "inimigo",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "748be8f7",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 22,
+    "comDica": false,
+    "nos": 58202,
+    "ms": 17075,
+    "caminho": [
+      "perseu Lâmina Curva → houyi",
+      "passar",
+      "perseu Cabeça da Medusa → ares",
+      "kali Golpe da Foice → ares",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Lâmina Curva → kukulkan",
+      "passar",
+      "perseu Foice Adamantina → ares",
+      "passar",
+      "perseu Cabeça da Medusa → kukulkan",
+      "passar",
+      "kali Dança da Aniquilação",
+      "perseu Foice Adamantina → houyi",
+      "passar",
+      "morrigan As Três Irmãs",
+      "kali Sede de Sangue → houyi",
+      "passar",
+      "perseu Lâmina Curva → kukulkan",
+      "morrigan Presságio de Morte → kukulkan",
+      "passar"
+    ]
+  }
+}
