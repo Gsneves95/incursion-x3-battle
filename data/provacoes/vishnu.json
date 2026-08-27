@@ -1,0 +1,74 @@
+{
+  "key": "vishnu",
+  "titulo": "Preservar",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "vishnu",
+    "houyi",
+    "ares"
+  ],
+  "inimigos": [
+    "zeus",
+    "ares",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "hpNoFim",
+      "quem": "houyi",
+      "op": ">=",
+      "v": 90
+    },
+    {
+      "predicado": "hpNoFim",
+      "quem": "ares",
+      "op": ">=",
+      "v": 90
+    }
+  ],
+  "verificacao": {
+    "hash": "a21c67e5",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 25,
+    "comDica": false,
+    "nos": 37876,
+    "ms": 8926,
+    "caminho": [
+      "houyi Flecha Solar → zeus",
+      "passar",
+      "ares Massacre → zeus",
+      "passar",
+      "ares Sede de Sangue → zeus",
+      "houyi Flecha Solar → zeus",
+      "passar",
+      "houyi Nove Flechas → zeus",
+      "passar",
+      "ares Massacre → ares",
+      "passar",
+      "ares Golpe Sanguinário → ares",
+      "houyi Flecha Solar → ares",
+      "passar",
+      "houyi Abater o Sol → ares",
+      "ares Golpe Sanguinário → ares",
+      "passar",
+      "ares Massacre → saci",
+      "passar",
+      "vishnu Preservação Cósmica",
+      "passar",
+      "vishnu Encarnação",
+      "passar",
+      "vishnu Encarnação",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}
