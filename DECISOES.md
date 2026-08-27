@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §177 — AS BARATAS: hpTetoSelf, curupira SAI (9ª, distinção nova), o "curar-anula" INERTE, e o UPTIME bate na MESMA parede do dagda.
+
+**`limparBuffsAntesDeAbate` — ARMADILHA LATENTE (dono, com endereço).** É um ALVO (pendente-até-atingir) SEM `distancia`; fechou só para a iansã (o greedy limpa buffs ao vencer). **Vai travar o 1º consumidor novo que precise do gradiente** — quando aparecer, dar `distancia` (déficit de buffs-inimigos a limpar antes da 1ª queda). Anotado, não mexido (§87: sem consumidor que trave, não se constrói).
+
+**curupira SAI (9ª saída) — e a DISTINÇÃO nova (dono):** afrodite FECHA com a MESMA forma (abatePeloProprioLado) → o problema é a FERRAMENTA (o Pés Virados não gera fogo-amigo letal: H=1000, zero abates cruzados), não o rider. **Duas espécies de saída:**
+- **saída-por-RIDER-impossível** (nuwa: rastreio modal §87; o rider não tem forma viável) — não sugere rebalanceamento.
+- **saída-por-FERRAMENTA-fraca** (oni, boitatá, curupira: a forma FECHA para outro deus, mas o kit deste não a sustenta) — **é candidato a REBALANCEAMENTO de kit na Fase 4** (o rider é bom; o kit é que não entrega). Distinção registrada — informa a Fase 4 diferente.
+
+**hpTetoSelf CONSTRUÍDO (§20, 3 consumidores: ares/mula/odin) — mas o "curar-anula" é INERTE para o solver.** O predicado lê `u.curadoAgora` (é sobre a CURA, não o HP natural). ares/mula fecham (nós 559) **IGUAL com e sem ele** — o solver nunca faz cheese-heal, então a constrição da prosa não binda. **Achado: eu NÃO perdi esse rider ao derivar — ele não mudaria nada.** A trivialidade do ares/mula é do próprio rider ("terminar ≤30" é fácil); são Ritos d1 honestos (acoplado à passiva "apanhar p/ bater"), só não profundos. O predicado fica (fidelidade de prosa + odin ainda pode usá-lo com efeito).
+
+**AQUILES — banda estreita (§170 de novo):** piso ≥40 é trivial em set gentil (nós 139, piso segurado por ACIDENTE) e H=6 em set agressivo (quase, não fecha). Precisa do set que AMEAÇA o piso sem quebrá-lo — calibração pendente.
+
+**UPTIME (amaterasu/tsukuyomi/orfeu) BATE NA PAREDE DO DAGDA — "campo/status ativo TODO turno" é irrealizável.** INVENCÍVEL em todo `desde` (2→5) mesmo sem o auto-sabotador (houyi-aliado removia o Dia — corrigido, ainda INVENCÍVEL). É o mesmo achado 2 do §174: **uptime ESTRITO não é realizável** (o campo/status não se mantém todo turno por tiling/economia). O predicado `estadoContinuo` está certo e navegável; o RIDER é que pede o impossível. **Decisão do dono (como no dagda): relaxar p/ "ativo NO ABATE" (pontual, buffNoAbate-análogo de campo) ou "ativo ≥N turnos" (contagem), ou medir se algum kit sustenta o estrito.** Provável que a família inteira relaxe.
+
+**SWEEP DOS RIDERS PERDIDOS (dono, TODO — DEPOIS do REVIVE):** achei a atena por MECÂNICA e o "curar-anula" por MEDIÇÃO (esse acabou inerte). **Varrer as 45+ carimbadas contra a prosa ORIGINAL do catálogo — não p/ refazer, mas p/ saber se o nº de riders-perdidos-na-derivação é 2 ou 20.** Agendado pós-REVIVE.
+
 ## §176 — PREDICADO TESTADO ≠ PREDICADO NAVEGÁVEL (dono): a varredura de gradiente, o reuse-test FECHADO, e `estadoContinuo` (campo/status, 3 consumidores).
 
 **LIÇÃO (dono, a mais útil do retorno) — PREDICADO TESTADO ≠ PREDICADO NAVEGÁVEL.** Um predicado pode ter `aval` correto e cobertura de teste e AINDA travar o solver, se não tiver `distancia`: o teste prova a LEITURA, o gradiente prova a NAVEGAÇÃO. **Consequência: a CONTAGEM de predicados SUPERESTIMA a maturidade do motor** — um predicado de passo-de-teste (abatePeloProprioLado, §106) é uma armadilha esperando o 1º consumidor de Provação. **Regra: todo predicado nascido em teste precisa do gradiente ANTES de virar alvo de Provação.**
