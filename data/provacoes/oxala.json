@@ -1,0 +1,59 @@
+{
+  "key": "oxala",
+  "titulo": "O Mais Velho",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "oxala",
+    "hermes",
+    "houyi"
+  ],
+  "inimigos": [
+    "shiva",
+    "horus",
+    "lugh"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "eea5837b",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 19,
+    "comDica": false,
+    "nos": 11767,
+    "ms": 4378,
+    "caminho": [
+      "hermes Golpe Alado → shiva",
+      "oxala Opaxorô → shiva",
+      "passar",
+      "houyi Nove Flechas → lugh",
+      "hermes Golpe Alado → horus",
+      "oxala Opaxorô → horus",
+      "passar",
+      "houyi Abater o Sol → lugh",
+      "oxala Opaxorô → lugh",
+      "passar",
+      "hermes Golpe Alado → horus",
+      "houyi Flecha Solar → horus",
+      "oxala Opaxorô → horus",
+      "passar",
+      "houyi Abater o Sol → horus",
+      "hermes Golpe Alado → horus",
+      "oxala Opaxorô → horus",
+      "passar",
+      "houyi Nove Flechas → shiva"
+    ]
+  }
+}

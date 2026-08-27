@@ -6,6 +6,19 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §171 — LOTE 8 grupo AÇÃO POSITIVA: change/guanyu/oxalá CARIMBADOS (babá passa), nuwa SAI (7ª), e dois achados de motor (vishnu sem gradiente, PROTEGER-5 num só predicado).
+
+**CARIMBADOS (ação positiva, babá passa, sets distintos — §168):**
+- **change** — change·houyi·ares vs horus·zeus·nezha, dl11 (nós 11827). Babá: sem change H=66. O Elixir protege o Hou Yi (risco marcado, disconfirmado).
+- **guanyu** — guanyu·hermes·saci vs horus·durga·lugh, dl11 (nós 15039). Babá: sem guanyu INVENCÍVEL. **Achado do babá: durga·ammit·kukulkan foi REPROVADO** (aquiles preservava igual, nós 23381≈25126) — o critério pegou o acidente e forçou o set válido.
+- **oxalá** — oxala·hermes·houyi vs shiva·horus·lugh, dl13 (nós 11767). Babá: sem oxalá INVENCÍVEL. Set com JANELAS MÚLTIPLAS de perigo (aliados frágeis, burst sustentado) — o puzzle é QUANDO pacificar (Paz é 1 turno, recarga 2), como o dono pediu. Sets fracos trivializam, fortes viram INVENCÍVEL (o alvo do §170).
+
+**nuwa SAI do lote (7ª vez que um deus muda de família).** "Não repetir o par de Pedras" exige o motor rastrear a escolha modal — mecanismo complexo, **consumidor único = §87** (como cernunnos/xango/raijin/horus/durga/oni). E o rider é sobre VARIEDADE DE ESCOLHA, que a INTERFACE ensina melhor que uma Provação. Anotada como candidata a rider futuro se outro kit modal aparecer.
+
+**ACHADO DE MOTOR 1 — vishnu trava por FALTA DE GRADIENTE, não pelo número.** `hpNoFim` é modo:'final' e **não tem `distancia`** → o solver não navega até ele (só filtra no estado terminal). Resultado: vença-a-luta leva a aliados danificados no fim → o filtro reprova sem gradiente que puxe "mantenha curado". Medido: trava em H=0 com >=120 E com >=80 (relaxar o VALOR não resolve — o buraco é o gradiente). "Curados no turno do abate" não existe (seria 4º predicado). **Não é a mesma coisa que o semPerderAliado** (esse é falha-DURANTE: poda ao vivo, dispensa gradiente; o hpNoFim é filtro-no-fim). PENDENTE (dono decide): dar `distancia` ao hpNoFim (déficit de HP → alvo navegável; melhora o existente, serve vishnu e futuros, sem 4º predicado).
+
+**ACHADO DE MOTOR 2 — os 5 do PROTEGER colapsam num ÚNICO predicado parametrizado.** Em vez do "0-dano-nomeado" (2 consumidores) do §169, os 5 pedem o mesmo predicado com escopo/filtro: `protegeDe{escopo, filtro?}` — escopo = unidade nomeada (mnevis→Rá, hanuman→Senhor) OU aliadosExceto:X (cerberus→qualquer dano; bastet→dano de alvo ÚNICO; boitatá→dano de Chama); aval = qualquer dano qualificado num protegido → falha-DURANTE (poda ao vivo, sem gradiente, como semPerderAliado). **5 consumidores, 1 predicado — §87 folgado.** PENDENTE (dono confirma o desenho antes do build).
+
 ## §170 — LOTE 8 negativos puros medidos: thor CARIMBADO (babá passa), oni SAI p/ ACUMULO_CONTADOR (babá falha), e a AMEAÇA na preservação é um ALVO, não um gradiente.
 
 **BABÁ TEST (§169) ESTREOU NAS DUAS DIREÇÕES — critério produzindo na primeira aplicação:**
