@@ -13,6 +13,7 @@ const tap = el => { if (!el) { ok(false, 'elemento ausente'); return; } el.dispa
 const S = () => w.eval('st');
 const encher = () => { const l = S().lados[S().ativo]; w.eval('ELEMS').forEach(e => l.orbs[e] = 6); w.eval('render()'); };
 w.eval('vsCPU=false');   // a suíte dirige os dois lados por toque; testa hot-seat (a IA tem suíte própria)
+w.eval("ir('selecao');render()");   // F3.0: o app abre na HOME; esta suíte testa a seleção/batalha — navega até ela
 
 console.log('== 0. arte dos 100 deuses ==');
 {

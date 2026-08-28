@@ -96,10 +96,13 @@ function ligar(){
   if(c.motivo && !/inacess/.test(c.motivo)) console.warn('perfil corrompido ('+c.motivo+') — recriei com o grant inicial'); }
 configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
   rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
+registrar('home',      { render: renderHome });
+registrar('provacoes', { render: renderProvacoes });
+registrar('embreve',   { render: renderEmBreve });   // marcador de Campanha/Invocação/Coleção (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
-ir('selecao');
+ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
 ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)

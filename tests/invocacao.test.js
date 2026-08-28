@@ -25,6 +25,7 @@ console.log('== 1. fonte da verdade: 100 deuses, raridade só SS/S/A ==');
 
 console.log('== 2. a tela monta a partir do botão Invocar ==');
 {
+  w.eval("ir('selecao');render()");   // F3.0: o app abre na HOME; o botão Invocar mora na seleção
   tap($('#binvocar'));
   ok(!!$('#iv'), 'a tela de invocação deveria montar');
   ok($$('#iv-tabs .iv-tab').length === 3, '3 banners (Destaque/Padrão/Iniciante)');

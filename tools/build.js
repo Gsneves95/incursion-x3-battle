@@ -50,7 +50,7 @@ function smokeCarga(distAbs) {
   const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
   if (erros.length) { console.error('ERRO no smoke de carga (símbolo ausente ou ordem de concatenação):\n  ' + erros.join('\n  ')); process.exit(1); }
   const r = dom.window.eval("typeof rotaAtual === 'function' && rotaAtual()");
-  if (r !== 'selecao') { console.error('ERRO no smoke de carga: rota inicial deveria ser "selecao", veio ' + JSON.stringify(r)); process.exit(1); }
+  if (r !== 'home') { console.error('ERRO no smoke de carga: rota inicial deveria ser "home", veio ' + JSON.stringify(r)); process.exit(1); }
   dom.window.close();
 }
 
@@ -156,9 +156,22 @@ if (cadeia.divergencias.length) {
 const blocoVisao = [
   perfil, armaz, turno, rotas, enquadr,
   ler('src/ui/base.js'), ler('src/ui/narrar.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
-  ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'),
+  ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'), ler('src/ui/home.js'),
   visao,
 ].join('\n');
+
+// PROVACOES: array SLIM (só o que a lista da F3.0 mostra) a partir dos arquivos por-deus.
+// O NÍVEL vem daqui (o arquivo carimbado, corrigido pela medição), NUNCA do catálogo em
+// prosa data/provacoes.json (§185: o nível medido diverge do de design em 36/90). O flag
+// `generica` viaja para a lógica, mas a UI NÃO o exibe — o jogador não distingue rota de
+// kit-ensino. São 90 (um por deus carimbado), não 91 nem 63.
+const provacoes = (() => {
+  const dir = path.join(raiz, 'data', 'provacoes');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()
+    .map(f => JSON.parse(ler('data/provacoes/' + f)))
+    .map(p => ({ key: p.key, titulo: p.titulo, nivel: p.nivel, dificuldade: p.dificuldade, generica: !!p.generica }));
+})();
 
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
@@ -170,7 +183,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

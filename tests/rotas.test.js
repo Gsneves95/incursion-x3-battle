@@ -81,7 +81,7 @@ console.log('== integração jsdom: o relógio REAL (tick) zera ao sair da batal
   const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
   const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true });
   const w = dom.window;
-  ok(w.eval("rotaAtual()") === 'selecao', 'o app abre na seleção');
+  ok(w.eval("rotaAtual()") === 'home', 'o app abre na home (F3.0)');
   // entra na batalha pela API pública, sem depender de toques
   w.eval("st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); ir('batalha',{},{substituir:true}); render();");
   ok(w.eval('tick') !== null, 'na batalha o relógio está ativo (tick != null)');

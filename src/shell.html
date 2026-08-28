@@ -712,6 +712,86 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-raridade{font-family:'Cinzel',serif;font-weight:800}
 #iv .iv-nome{font-family:'Cinzel',serif;font-weight:600}
 @media (prefers-reduced-motion:reduce){#iv .iv-carta,#iv .iv-carta-halo,#iv .iv-carta-poca{animation:none;transition:none}}
+
+/* ===================== F3.0 — HOME (hub) e telas de lista ===================== */
+/* App de celular em PAISAGEM: a home NÃO rola (cabe nos 428 de altura), alvos de
+   toque grandes, e o estado do destino é dito por TEXTO (nada de hover). */
+.home{position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:18px 26px 22px;z-index:2;overflow:hidden}
+.home__cab{flex:0 0 auto;text-align:center;margin-bottom:16px}
+.home__marca{font-family:'Cinzel',serif;font-weight:900;font-size:34px;letter-spacing:.16em;
+  color:var(--gold-text);line-height:1;margin:0;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.home__sub{display:block;margin-top:5px;font-weight:600;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-mute)}
+.home__grade{flex:1 1 auto;display:flex;gap:14px;min-height:0}
+.htile{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;padding:14px 8px;cursor:pointer;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--gold-soft);border-radius:12px;color:var(--ink);
+  font-family:'Rajdhani',sans-serif;transition:transform .08s ease,border-color .12s ease}
+.htile:active{transform:translateY(1px) scale(.985);border-color:var(--gold-text)}
+.htile__ic{font-family:'Cinzel',serif;font-size:44px;line-height:1;color:var(--gold-text);opacity:.9}
+.htile__rot{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.08em;
+  text-align:center;color:var(--ink)}
+.htile__nota{font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-mute);text-align:center}
+.htile--destaque{border-color:var(--gold);box-shadow:0 0 0 1px rgba(216,178,90,.25),0 8px 22px rgba(0,0,0,.4)}
+.htile--destaque .htile__nota{color:var(--gold-text)}
+.htile--off{cursor:default;opacity:.5;background:rgba(16,13,32,.5);border-color:#2c2648}
+.htile--off .htile__ic{color:var(--ink-mute);opacity:.6}
+.htile--off .htile__rot{color:var(--ink-dim)}
+
+/* telas de lista (Provações) e marcador (Campanha/Invocação/Coleção) */
+.tela{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}
+.tela__cab{flex:0 0 auto;display:flex;align-items:center;gap:14px;
+  padding:14px 24px;border-bottom:1px solid rgba(216,178,90,.22);
+  background:linear-gradient(180deg,rgba(12,10,26,.85),rgba(12,10,26,0))}
+.tela__titulo{flex:1 1 auto;font-family:'Cinzel',serif;font-weight:900;font-size:22px;
+  letter-spacing:.12em;color:var(--gold-text);margin:0}
+.tela__cont{flex:0 0 auto;min-width:34px;text-align:center;font-family:'Cinzel',serif;
+  font-weight:700;font-size:15px;color:var(--ink-dim);border:1px solid var(--gold-soft);
+  border-radius:20px;padding:3px 12px}
+.tela__espaco{flex:0 0 34px}
+.tela__rol{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;padding:10px 24px 20px}
+/* marcador "em breve" */
+.tela__vazio{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:14px;color:var(--ink-mute)}
+.tela__vazioic{font-family:'Cinzel',serif;font-size:56px;color:var(--gold-soft);opacity:.7}
+.tela__vaziomsg{font-weight:600;font-size:15px;line-height:1.5;color:var(--ink-dim);max-width:420px}
+
+/* seções e linhas da lista de Provações */
+.psec__cab{display:flex;align-items:baseline;gap:10px;margin:12px 2px 6px}
+.psec__cab:first-child{margin-top:2px}
+.psec__cab h2{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-dim);margin:0}
+.psec__n{font-weight:700;font-size:12px;color:var(--ink-mute)}
+.psec__vazio{font-weight:600;font-size:13px;line-height:1.5;color:var(--ink-mute);padding:4px 2px 8px}
+.plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.prow{display:flex;align-items:center;gap:11px;padding:9px 12px;min-height:54px;
+  background:rgba(20,16,38,.62);border:1px solid #2c2648;border-radius:10px}
+.prow__p{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center}
+.prow__p .slot{width:34px;height:34px;border-radius:7px;overflow:hidden}
+.prow__el{flex:0 0 auto;width:4px;height:34px;border-radius:2px}
+.prow__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.prow__deus{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-weight:700;
+  font-size:14px;letter-spacing:.04em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow__tit{font-weight:600;font-size:11.5px;letter-spacing:.03em;color:var(--ink-mute);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow__selo{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--e-Verdejante);border:1px solid rgba(88,214,141,.5);
+  border-radius:10px;padding:1px 7px;flex:0 0 auto}
+.prow__meta{flex:0 0 auto;display:flex;align-items:center;gap:10px}
+.prow__niv{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 10px;border-radius:6px;white-space:nowrap;
+  color:var(--gold-text);border:1px solid var(--gold-soft);background:rgba(216,178,90,.08)}
+.prow__niv.niv--0{color:var(--e-Verdejante);border-color:rgba(88,214,141,.45);background:rgba(88,214,141,.08)}
+.prow__niv.niv--2{color:var(--e-Chama);border-color:rgba(255,92,138,.45);background:rgba(255,92,138,.08)}
+.prow__dif{display:inline-flex;gap:3px}
+.prow__dif i{width:7px;height:7px;transform:rotate(45deg);background:#3a3358;border-radius:1px}
+.prow__dif i.on{background:var(--gold-text)}
+.prow--feita{opacity:.72;border-style:dashed}
+.prow--feita .prow__deus{color:var(--ink-dim)}
 </style>
 </head>
 <body>

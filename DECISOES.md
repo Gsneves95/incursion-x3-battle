@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §197 — FASE 3, F3.0: a HOME (hub) e a navegação entre os 5 destinos + a LISTA DE PROVAÇÕES (90). Nível do CARIMBO, `generica` oculto, desbloqueado = CONCLUÍDA.
+
+**A HOME é o novo boot.** `ir('home')` no lugar de `ir('selecao')` (o smoke da build e o teste de rotas passam a exigir `home`). Cinco destinos, app de celular em paisagem: **a home NÃO rola** (cabe nos 428 de altura — provado por CDP: `scrollWidth==clientWidth` nos dois eixos), alvos de toque grandes, **nada de hover como afordância** — o estado do destino é dito por TEXTO no cartão (`Em breve` / `90 provações` / `Indisponível · Fase 5`).
+
+**Só a Provações FUNCIONA nesta fase (decisão de escopo do dono).** Campanha, Invocação e Coleção caem num MARCADOR único (`embreve`, parametrizado pelo título) — o destino existe (a home fica navegável nos cinco), mas a tela é honesta: "chega numa fase adiante". **PvP é cartão MORTO** (`<div>`, sem `data-dest`, não navega) — Fase 5. **Consequência a registrar:** a batalha-protótipo (`selecao`→`batalha`) e o gacha (`invocacao`) continuam no bundle e nos testes, mas **saíram do alcance da home** (nenhum ladrilho aponta pra eles). Não é regressão de código — é escopo: a F3.1 liga Campanha (ou a própria Provação) à batalha. As suítes `interface`/`invocacao` navegam explícito (`ir('selecao')`) antes de testar, já que não são mais o boot.
+
+**A LISTA MOSTRA 90 (não 91, não 63).** Global `PROVACOES` SLIM (`key, titulo, nivel, dificuldade, generica`) injetado na build a partir de `data/provacoes/*.json` — **um arquivo por deus carimbado.** Duas regras firmes do dono:
+- **NÍVEL vem do CARIMBO, nunca do catálogo em prosa** (`data/provacoes.json`, §185). Medido: **36 dos 90 divergem** entre o nível de prosa e o carimbado (ex.: aokuang/bennu/boitatá prosa "Rito" → carimbo "Provação"; brahma prosa "Provação" → carimbo "Rito"). A lista lê o arquivo por-deus (corrigido pela medição na F2), não o de prosa. O `provacao.js`/build já FALHA se a identidade de IA do carimbo divergir (§150); aqui a UI só honra a mesma fonte.
+- **O flag `generica` NÃO aparece pro jogador.** Viaja no global (a F4 precisa saber quais substituir), mas nenhuma linha o exibe — as 27 rotas parecem IDÊNTICAS às 63 de kit. Provado por CDP: `generica` não vaza no texto de nenhuma linha.
+
+**ESTADO DE DESBLOQUEIO (escolha de produto, dono aprovou "fica como CONCLUÍDA"):** Provação de deus que o jogador JÁ TEM (`perfil.deuses[key]`) **não some — vira CONCLUÍDA**, com selo "✓ conquistado", agrupada ABAIXO das DISPONÍVEIS. **Argumento:** sumir esconde conquista (o jogador perde o rastro do que venceu e a lista encolhe sem explicação); ficar como concluída tira da FILA-do-que-falta sem tirar da COLEÇÃO-do-que-fez. Perfil novo tem só os 9 iniciais (nenhum na lista de 90) → a seção CONCLUÍDAS nasce vazia e só aparece quando houver conquista. Sem `localStorage` novo: o perfil global já carrega no boot.
+
+**Ordenação:** por nível (Rito→Provação→Ordália) × dificuldade × nome — a lista lê do fácil ao duro. **CRITÉRIO DE PRONTO cumprido:** home navegável nos 5, lista de 90 com nível do carimbo, PvP indisponível, captura contra o dist recém-buildado. Suíte verde.
+
 ## §196 — FECHAMENTO DO ARCO: regra do CURADOR (time de suporte p/ genéricas) + VARREDURA DE ÓRFÃOS (6 espécies) — a disciplina segurou, nada novo latente.
 
 **REGRA DO CURADOR (dono) — a Provação GENÉRICA pede TIME DE SUPORTE, não 2 atacantes, porque o rider é MANTER O DEUS VIVO.** 7 dos 8 resistentes fecharam só ao trocar 1 atacante (houyi) por CURADOR (oxum): perseu·houyi (2 atacantes) não protegem o título squishy → o deus morre vs o set gentil em 15 turnos. **Regra p/ as 27 e p/ QUALQUER genérica futura:** título squishy → `[deus, atacante, curador]`; título robusto → `[deus, atacante, atacante]` basta. O template do `semPerderAliado{quem:título}` adapta o TIME à sobrevivência do protegido, não ao dano.
