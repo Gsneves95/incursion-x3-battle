@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §183 — 3ª ESPÉCIE DE SAÍDA (rider-mismatched, o odin); bennu carimbada Provação (≠ Rito do catálogo); e a VARREDURA DE NÍVEIS: 27/55 divergem → os níveis foram escritos por TEMA (como os riders).
+
+**A 3ª ESPÉCIE DE SAÍDA — saída-por-rider-MISMATCHED (o odin estabelece, §181).** Completa a taxonomia de saída (§177 tinha duas):
+1. **saída-por-RIDER-impossível** (nuwa) — o rider não tem forma viável em deus NENHUM. Não sugere nada. NÃO volta.
+2. **saída-por-FERRAMENTA-fraca** (oni, boitatá, curupira) — a forma FECHA para outro deus; o kit DESTE não a sustenta. Candidato a REBALANCEAMENTO de kit (Fase 4). Volta se o kit mudar.
+3. **saída-por-rider-MISMATCHED (NOVA, odin)** — deus ERRADO para o rider; nem rider impossível, nem ferramenta fraca. O rider é bom e TEM forma viável (em OUTRO deus). **A diferença que importa: o RIDER VOLTA com outro deus** (≠ as duas de cima). É uma saída do DEUS, não do rider. Sinal diagnóstico: o babá elemento-matched fecha igual (a ferramenta do título não é load-bearing) E o rider fecha limpo em outro deus.
+
+**bennu CARIMBADA — Provação d2 (catálogo dizia Rito d1).** Set thor·saci·tyr dl13, `reviveAliado{1}`, nós 73191 (sem dica). **Divergência de nível DERIVADA DA MEDIÇÃO (dono):** o set que mata bennu de forma confiável é mais duro que d1, e a lição "deixar-se morrer p/ voltar" não é de primeira Provação. Nível subiu 1 degrau (Rito d1 → Provação d2).
+
+**VARREDURA DE NÍVEIS (dono: "quantos níveis o catálogo errou? se >2-3, foram escritos por tema como os riders") — RESPOSTA: 27 de 55 (49%).** Quase METADE. **Confirmado: os níveis do catálogo são TEMÁTICOS, não medidos** — o 10º racho-por-tema desta fase (riders, montagens, e agora níveis). Padrão das divergências (não é ruído):
+- **subiu de tier** (Rito→Provação): bennu, change, guanyu, saci — "intros gentis" que viraram puzzles reais.
+- **subiu dentro do tier** (Prov d2→d3): ammit, bastet, cerberus, dagda, hera, morrigan, thor, yanwong — a medição achou mais duras.
+- **desceu** (super-estimadas): afrodite, izanami, loki, hades, vishnu (Ordália→Prov); brahma, hercules, kitsune, ra (Prov→Rito d2).
+- **salto grande:** oxum (Rito d1 → Ordália d3, +4 degraus); hel/itzamna/khnum/yamatotakeru (Prov→Ordália).
+**Decisão: o NÍVEL carimbado (medido) é a verdade; o catálogo é a prosa-de-origem.** A divergência não é erro a corrigir no catálogo — é o registro de que tema ≠ dificuldade real. (Contagem inclui as desta sessão; refazível pelo script no fim do §183.)
+
 ## §182 — TRADUÇÃO do lote AUTO-MORTE: a partição RACHA em 3 espécies; a pergunta do dono respondida (3 dos 4 têm saída).
 
 **A TENSÃO (dono), na frente:** o rider pede que o TÍTULO caia, a vitória pede matar os inimigos, e o solver PREFERE não morrer (controla os próprios bonecos, não os suicida). "Ativo-opcional invertido". Traduzi os 4 e medi onde deu — **a família "AUTO-MORTE" não é uma família; racha em 3:**

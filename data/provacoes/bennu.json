@@ -1,0 +1,78 @@
+{
+  "key": "bennu",
+  "titulo": "Das Cinzas",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "bennu",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "thor",
+    "saci",
+    "tyr"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "reviveAliado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "1a356012",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 37,
+    "comDica": false,
+    "nos": 73191,
+    "ms": 17773,
+    "caminho": [
+      "perseu Lâmina Curva → thor",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "perseu Lâmina Curva → thor",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "perseu Foice Adamantina → tyr",
+      "houyi Flecha Solar → tyr",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "perseu Lâmina Curva → tyr",
+      "bennu Bico Flamejante → thor",
+      "passar",
+      "houyi Nove Flechas → saci+tyr",
+      "bennu Bico Flamejante → tyr",
+      "passar",
+      "bennu Chama Purificadora",
+      "passar",
+      "bennu Bico Flamejante → saci",
+      "houyi Abater o Sol → saci",
+      "passar",
+      "bennu Bico Flamejante → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}
