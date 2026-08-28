@@ -6,6 +6,16 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §190 — A FASE 2 FECHA EM 80, NÃO 91 (teto real p/ o planejamento da Fase 3); ordem da cauda; e os critérios afinados p/ B e A.
+
+**A FASE 2 FECHA EM 80, NÃO 91 (dono) — o teto real é o alcançável, não o planejado.** 91 planejadas − 11 saídas = **80 Provações possíveis**. As 11 saídas são deuses SEM Provação (como os 9 iniciais), por decisão medida (rider-impossível / ferramenta-fraca / rider-mismatched / ativo-opcional). **Vale para o planejamento da Fase 3:** a lista de Provações da F3 tem no máximo 80 entradas + os 20 sem-Provação (9 iniciais + 11 saídas) que a F3 precisa tratar como "sem trial" (não como buraco a preencher).
+
+**ORDEM DA CAUDA (23):** C+E+D primeiro (14, zero motor esperado), depois B (5, com o filtro-protagonista), A por último (4 + predicado). Placar pedido: quantas direto, quantas com decisão, e se o §188 pegou alguém em B.
+
+**CRITÉRIO AFINADO PARA B (abate-por-golpe-específico) — TESTE DO §188 ANTES DO CARIMBO, não depois.** Abate-por-golpe é ONDE o ativo-opcional mora. **A ferramenta tem de ser ÚNICA E RÁPIDA** (o yamato passou por ser as duas). Se um dos 5 não fechar com a ferramenta-título como protagonista → é SAÍDA, descoberta na medição (preferível a um carimbo que ensina errado).
+
+**CRITÉRIO PARA A (estado-simultâneo-nos-3) — CONFIRMAR A FORMA ANTES DE CONSTRUIR.** "Os 3 num estado AO MESMO TEMPO" é snapshot MOMENTÂNEO. Já existem `estadoContinuo`/`estadoTurnos` que leem DURAÇÃO. Se um cobrir com parâmetro (ex.: limiar-de-contagem-simultânea) → REUSO; se não → é o 5º predicado da fase (4 consumidores = §87 folgado).
+
 ## §189 — DÍVIDA-PUBLICADA com ENDEREÇO (aceita até a F4); SLOT-MORTO vira lista de balanceamento; e a CONTAGEM da Fase 2: 57/91 carimbadas, 11 saídas, 23 na cauda (5 famílias).
 
 **DÍVIDA-DE-CONTEÚDO PUBLICADA — aceita até a Fase 4 (dono). Recusados: rebalance de kit (11ª vez — a regra não muda por dívida de conteúdo) E o mecanismo-mais-forte (gradiente que força ferramenta que a vitória não precisa = o solucionador MENTINDO sobre jogabilidade).** Endereço preciso das duas Provações que FUNCIONAM e ENSINAM MENOS:
