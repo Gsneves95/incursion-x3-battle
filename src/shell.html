@@ -837,6 +837,62 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .result__min{font-size:11px;color:var(--ink-mute);letter-spacing:.04em}
 .result__rec{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.08em;color:var(--e-Aurora)}
 .result__acoes{display:flex;gap:8px;justify-content:center;margin-top:12px}
+
+/* ===================== F3.2 — Invocação: odds visíveis, Essência ===================== */
+#iv .iv-odds{background:rgba(10,8,22,.55);border:1px solid rgba(233,200,119,.18);border-radius:10px;
+  padding:8px 11px;font-size:10.5px;letter-spacing:.02em;color:var(--iv-dim);text-align:center}
+#iv .iv-odds b{font-variant-numeric:tabular-nums;font-weight:700}
+#iv .iv-odds .iv-ssc{color:var(--iv-ss)} #iv .iv-odds .iv-sc{color:var(--iv-s)} #iv .iv-odds .iv-ac{color:var(--iv-a)}
+#iv .iv-cess b{color:#c9a6ff}
+#iv .iv-topo-ess{color:#c9a6ff;letter-spacing:.04em;font-weight:700}
+
+/* ===================== F3.2 — Coleção (por panteão) + detalhe do deus ===================== */
+.csec{margin:14px 2px 4px}
+.csec:first-child{margin-top:2px}
+.csec__cab{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.csec__cab h2{font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold-text);margin:0}
+.csec__n{font-weight:700;font-size:12px;color:var(--ink-mute)}
+.cgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+@media (max-width:820px){.cgrid{grid-template-columns:repeat(5,1fr)}}
+.ctile{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:8px 4px 6px;min-height:82px;cursor:pointer;border:1px solid #2c2648;border-radius:9px;
+  background:rgba(20,16,38,.55);color:var(--ink);font-family:'Rajdhani',sans-serif;transition:border-color .12s,transform .08s}
+.ctile:active{transform:translateY(1px) scale(.97);border-color:var(--gold-text)}
+.ctile__p{width:40px;height:40px;display:grid;place-items:center}
+.ctile__p .slot{width:40px;height:40px;border-radius:8px;overflow:hidden}
+.ctile__el{position:absolute;left:6px;top:6px;width:4px;height:16px;border-radius:2px}
+.ctile__rar{position:absolute;right:5px;top:5px;font-family:'Cinzel',serif;font-weight:700;font-size:8.5px;letter-spacing:.04em}
+.ctile__lock{position:absolute;right:5px;bottom:24px;font-size:12px;color:var(--ink-mute)}
+.ctile__n{font-weight:600;font-size:10px;text-align:center;line-height:1.1;color:var(--ink-dim);
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctile--falta{opacity:.5;background:rgba(14,11,26,.5)}
+.ctile--falta .ctile__n{color:var(--ink-mute)}
+.rar--SS{color:#e9c877} .rar--S{color:#b06cff} .rar--A{color:#56a8ef}
+.dcab__rar{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;
+  border:1px solid #2c2648;border-radius:10px;padding:3px 12px}
+
+.dhead{display:flex;gap:16px;align-items:center;padding:6px 2px 12px}
+.dhead__art{flex:0 0 auto;width:96px;height:96px;border:1px solid var(--gold-soft);border-radius:12px;overflow:hidden}
+.dhead__art .slot{width:96px;height:96px}
+.dhead__id{display:flex;flex-direction:column;gap:8px;min-width:0}
+.dhead__sub{font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+.dhead__estado{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.04em}
+.dhead__estado.tem{color:var(--e-Verdejante)} .dhead__estado.falta{color:var(--ink-mute)}
+.dprov{border:1px solid rgba(216,178,90,.28);border-radius:10px;padding:10px 12px;margin:0 0 12px;
+  background:linear-gradient(180deg,rgba(216,178,90,.06),transparent)}
+.dprov__rot{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.2em;color:var(--ink-mute)}
+.dprov__none{font-weight:600;font-size:12.5px;color:var(--ink-mute);margin:6px 0 0}
+.dprov__linha{display:flex;align-items:center;gap:10px;margin-top:6px}
+.dprov__niv{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 9px;border-radius:6px;color:var(--gold-text);border:1px solid var(--gold-soft)}
+.dprov__niv.niv--0{color:var(--e-Verdejante);border-color:rgba(88,214,141,.45)}
+.dprov__niv.niv--2{color:var(--e-Chama);border-color:rgba(255,92,138,.45)}
+.dprov__tit{flex:1 1 auto;font-family:'Cinzel',serif;font-weight:600;font-size:14px;color:var(--ink)}
+.dprov__pe{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+.dprov__feita{font-weight:700;font-size:12px;color:var(--e-Verdejante)}
+.dprov__aberta{font-weight:700;font-size:12px;color:var(--gold-text)}
+.dkit{display:flex;flex-direction:column;gap:7px}
 </style>
 </head>
 <body>

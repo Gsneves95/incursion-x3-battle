@@ -15,8 +15,8 @@ const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 const HOME_DESTINOS = [
   { chave: 'campanha',  rotulo: 'Campanha',  glifo: '⚔', rota: 'embreve',   nota: 'Em breve' },
   { chave: 'provacoes', rotulo: 'Provações', glifo: '◈', rota: 'provacoes', destaque: true },
-  { chave: 'invocacao', rotulo: 'Invocação', glifo: '✦', rota: 'embreve',   nota: 'Em breve' },
-  { chave: 'colecao',   rotulo: 'Coleção',   glifo: '▤', rota: 'embreve',   nota: 'Em breve' },
+  { chave: 'invocacao', rotulo: 'Invocação', glifo: '✦', rota: 'invocacao' },
+  { chave: 'colecao',   rotulo: 'Coleção',   glifo: '▤', rota: 'colecao' },
   { chave: 'pvp',       rotulo: 'PvP',       glifo: '★', rota: null,        nota: 'Indisponível · Fase 5' },
 ];
 
@@ -26,8 +26,11 @@ function totalProvacoes(){ return (typeof PROVACOES !== 'undefined') ? PROVACOES
 
 function tileHomeHTML(d){
   const indisponivel = !d.rota;
-  const nota = d.chave === 'provacoes'
-    ? `${totalProvacoes()} provações`
+  const donos = (typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : 0;
+  const totalDeuses = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
+  const nota = d.chave === 'provacoes' ? `${totalProvacoes()} provações`
+    : d.chave === 'colecao' ? `${donos}/${totalDeuses} deuses`
+    : d.chave === 'invocacao' ? 'invocar deuses'
     : (d.nota || '');
   const cls = ['htile'];
   if (d.destaque) cls.push('htile--destaque');
@@ -169,7 +172,8 @@ function renderProvacoes(){
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
-    b.onclick = () => iniciarProva(b.dataset.prova);
+    // concluída (deus já conquistado) → ver o deus na Coleção; disponível → jogar direto.
+    b.onclick = () => { const k = b.dataset.prova; if (temDeus(k)) { ir('deus', { key: k }); render(); } else iniciarProva(k); };
   });
   fit();
 }
@@ -318,7 +322,7 @@ function provaResultadoOverlay(){
     ${placar}
     <div class="result__acoes">
       <button class="b b--quiet b--md" id="pfvoltar">Voltar às Provações</button>
-      ${venceu ? '' : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
+      ${venceu ? '<button class="b b--primary b--md" id="pfver">Ver na coleção</button>' : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
     </div>
   </div></div></div>`;
 }
@@ -326,6 +330,7 @@ function ligarProvaFim(){
   const q = s => stage.querySelector(s);
   const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir('provacoes', {}, { substituir: true }); render(); };
   const t = q('#pftentar'); if (t) t.onclick = () => { iniciarProva(prova.key); };
+  const ver = q('#pfver'); if (ver) { const k = prova.key; ver.onclick = () => { sairProva(); ir('deus', { key: k }); render(); }; }
 }
 function sairProva(){ prova = null; provaFim = null; provaLances = 0; }
 
@@ -338,4 +343,128 @@ function iniciarProva(key){
   vsCPU = true;   // os inimigos da Provação são a CPU (o jogador controla o lado 0)
   ir('batalha', {}, { substituir: true });
   render();
+}
+
+// ===================================================================
+// F3.2 — COLEÇÃO (os 100 por PANTEÃO) + DETALHE do deus, e o elo Coleção↔Provação.
+// A Provação desbloqueia num lugar que agora EXISTE: a Coleção. O detalhe do deus mostra
+// kit, arte e o estado da Provação dele — e leva a jogá-la; a Provação vencida leva a ver
+// o deus. O agrupamento por panteão (10×10) já prepara o sistema de panteões do fim de jogo.
+// ===================================================================
+
+const PANTEOES = ['Grega', 'Nórdica', 'Egípcia', 'Japonesa', 'Chinesa', 'Hindu', 'Brasileira', 'Africana', 'Celta', 'Maia'];
+const CKIT = {}; if (typeof KITS !== 'undefined') KITS.forEach(k => CKIT[k.key] = k);
+const RAR_ROT = { SS: 'SS', S: 'S', A: 'A' };
+function raridadeDe(k){ return (typeof RARIDADE !== 'undefined' && RARIDADE[k]) || 'A'; }
+function temKitHome(k){ return typeof GODS !== 'undefined' && !!GODS[k]; }
+function provDe(k){ return (typeof PROVACOES !== 'undefined') ? PROVACOES.find(p => p.key === k) : null; }
+
+function tileColecaoHTML(k){
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  const tem = temDeus(k);
+  const cls = ['ctile']; cls.push(tem ? 'ctile--tem' : 'ctile--falta');
+  const rar = raridadeDe(k);
+  return `<button class="${cls.join(' ')}" data-deus="${k}" title="${H(g.nome)}">
+    <span class="ctile__p">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 20)}</span>
+    <span class="ctile__el" style="background:${COR(g.elem)}"></span>
+    <span class="ctile__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+    ${tem ? '' : '<span class="ctile__lock">⚿</span>'}
+    <span class="ctile__n">${H(g.nome)}</span>
+  </button>`;
+}
+
+function renderColecao(){
+  const porFaccao = {};
+  ROSTER.forEach(e => { (porFaccao[e.faccao] = porFaccao[e.faccao] || []).push(e.key); });
+  const donos = perfil && perfil.deuses ? Object.keys(perfil.deuses).length : 0;
+  const grupos = PANTEOES.filter(f => porFaccao[f]).map(f => {
+    const ks = porFaccao[f]; const tem = ks.filter(temDeus).length;
+    return `<div class="csec">
+      <div class="csec__cab"><h2>${H(f)}</h2><span class="csec__n">${tem}/${ks.length}</span></div>
+      <div class="cgrid">${ks.map(tileColecaoHTML).join('')}</div>
+    </div>`;
+  }).join('');
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
+      <h1 class="tela__titulo">Coleção</h1>
+      <span class="tela__cont">${donos}/${ROSTER.length}</span>
+    </header>
+    <div class="tela__rol">${grupos}</div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.ctile[data-deus]')].forEach(b => {
+    b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
+  });
+  fit();
+}
+
+/* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */
+function linhaKitHTML(rot, a){
+  if (!a) return '';
+  return `<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
+    <span class="krow__meta">${pipsDetalhe(custoParaCost(a.custo))}${a.recarga ? `<span class="krow__cd">recarga ${a.recarga}</span>` : ''}</span></div>
+    <div class="krow__t">${H(a.efeito)}</div></div>`;
+}
+function provacaoDetalheHTML(k){
+  const g = HRM[k] || {};
+  if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PROVAÇÃO</span><p class="dprov__none">Deus inicial — vem com você, sem Provação.</p></div>`;
+  const p = provDe(k);
+  if (!p) return `<div class="dprov"><span class="dprov__rot">PROVAÇÃO</span><p class="dprov__none">Sem Provação registrada.</p></div>`;
+  const rec = perfil && perfil.provacoes && perfil.provacoes[k];
+  const feita = temDeus(k);
+  const estado = rec
+    ? `<span class="dprov__feita">✓ Concluída em ${rec.lances} lance${rec.lances === 1 ? '' : 's'}${rec.minimo != null ? ` · mínimo ${rec.minimo}` : ''}</span>`
+    : feita ? `<span class="dprov__feita">✓ Deus na coleção</span>`
+      : `<span class="dprov__aberta">Disponível</span>`;
+  return `<div class="dprov">
+    <span class="dprov__rot">PROVAÇÃO</span>
+    <div class="dprov__linha">
+      <span class="dprov__niv niv--${nivelPeso(p.nivel)}">${H(p.nivel)}</span>
+      <span class="dprov__tit">${H(p.titulo)}</span>
+      ${pipsDif(p.dificuldade || 1)}
+    </div>
+    <div class="dprov__pe">${estado}
+      <button class="b b--primary b--sm" data-jogarprova="${k}">${rec || feita ? 'Jogar de novo' : 'Jogar Provação'}</button>
+    </div>
+  </div>`;
+}
+function renderDeusDetalhe(){
+  const k = (paramsAtuais() || {}).key;
+  const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
+  const kit = CKIT[k];
+  const tem = temDeus(k);
+  const rar = raridadeDe(k);
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+      <h1 class="tela__titulo">${H(g.nome)}</h1>
+      <span class="dcab__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+    </header>
+    <div class="tela__rol">
+      <div class="dhead">
+        <div class="dhead__art">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 40)}</div>
+        <div class="dhead__id">
+          <span class="dhead__sub">${H(g.faccao)} · ${H(ELAB[g.elem] || g.elem)} · ${H(g.classe)} · ${H(g.funcao)}</span>
+          <span class="dhead__estado ${tem ? 'tem' : 'falta'}">${tem ? '✓ Na coleção' : '⚿ Ainda não conquistado'}</span>
+        </div>
+      </div>
+      ${provacaoDetalheHTML(k)}
+      <div class="dkit">
+        ${kit ? `${linhaKitHTML('BÁS', kit.basico)}${linhaKitHTML('HAB', kit.habilidade)}${linhaKitHTML('MIL', kit.milagre)}
+          ${kit.passiva ? `<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kit.passiva.nome)}</b></div><div class="krow__t">${H(kit.passiva.efeito)}</div></div>` : ''}`
+          : '<div class="krow"><div class="krow__t">Kit em produção.</div></div>'}
+      </div>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const jb = stage.querySelector('[data-jogarprova]');
+  if (jb) jb.onclick = () => iniciarProva(jb.dataset.jogarprova);
+  fit();
 }

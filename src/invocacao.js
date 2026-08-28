@@ -92,7 +92,8 @@ const INV = (function () {
     const G = claro ? BRONZE : OURO, glifoFill = claro ? `url(#iv-bronze-${uid})` : `url(#iv-ouro-${uid})`;
     const corpoRar = 54 * 1.02 * (r.fator || 1);
     const topo = cfg.nova ? `<span class="iv-topo-novo">Novo</span>`
-      : (cfg.copias > 1 ? `<span class="iv-topo-copias">×${cfg.copias}</span>` : '');
+      : (cfg.essencia > 0 ? `<span class="iv-topo-ess">+${cfg.essencia} ✦</span>`
+        : (cfg.copias > 1 ? `<span class="iv-topo-copias">×${cfg.copias}</span>` : ''));
     const arte = cfg.arte
       ? `<image href="${cfg.arte}" x="20" y="30" width="160" height="340" preserveAspectRatio="xMidYMid slice"/>`
       : `<g transform="translate(100 260)"><circle r="52" fill="${el.d}" opacity=".5"/></g>`;
@@ -149,10 +150,10 @@ const INV = (function () {
   }
 
   // u = entrada do ROSTER (key/nome/elem/funcao). rarLetter = SS/S/A/B
-  function gcard(u, largura, nova, copias, atraso) {
+  function gcard(u, largura, nova, copias, atraso, essencia) {
     return criarCarta({
       nome: u.nome, raridade: RARIDADE[u.key] || 'A', classe: u.funcao, elemento: u.elem,
-      arte: IMG[u.key] || '', nova: !!nova, copias: copias || 1, largura, atraso: atraso || 0,
+      arte: IMG[u.key] || '', nova: !!nova, copias: copias || 1, largura, atraso: atraso || 0, essencia: essencia || 0,
     });
   }
   function gfit(root) {
@@ -176,6 +177,7 @@ const INV = (function () {
   // ZERO literal de taxa/pity/custo aqui.
   const P = { SS: ECONOMIA.invocacao.taxas.SS, S: ECONOMIA.invocacao.taxas.S };
   const PITY = ECONOMIA.invocacao.pity.duro;   // garantia dura (fonte: data/economia.json)
+  const ESS = ECONOMIA.invocacao.essenciaPorDuplicata || {};   // repetido→Essência A/S/SS (F3.2; ZERO literal aqui)
   let cur = 'destaque';
   // S.gemas é MIRROR do perfil (perfil.moedas.gema é a verdade). A carteira já NÃO nasce
   // do grantTeste — isso era a carteira FANTASMA (custo de invocação era ficção). Sincroniza
@@ -250,10 +252,16 @@ const INV = (function () {
     const { out, pity } = sortearLote(seed, bkey, pityEntrada, n);
     if (bkey !== 'iniciante') S.banners[bkey].pity = pity.pity;
     else S.banners.iniciante.used = true;
+    // dono ANTES do lote (a verdade é o perfil, não o mirror de sessão): decide NOVO × repetido.
+    // Repetido vira Essência; a contagem é SEQUENCIAL para a 2ª cópia do mesmo deus no MESMO lote já contar como dup.
+    const donoAntes = {};
+    if (typeof perfil !== 'undefined' && perfil && perfil.deuses) for (const k in perfil.deuses) donoAntes[k] = true;
     out.forEach(o => {
       S.stats[o.r]++; S.stats.total++;
       if (o.r === 'SS' && o.u.key === FEAT_SS) S.stats.fSS++;
-      o.novo = !S.owned[o.u.key];
+      o.novo = !donoAntes[o.u.key];
+      o.essencia = o.novo ? 0 : (ESS[o.r] || 0);   // repetido → Essência por ordem
+      donoAntes[o.u.key] = true;
       S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1;
     });
     // PERSISTE ANTES de revelar: recompensa se commita antes de aparecer, nunca
@@ -262,7 +270,7 @@ const INV = (function () {
     // histórico guarda a SEMENTE, o pity de entrada e o custo: tudo reproduzível/auditável.
     if (typeof perfil !== 'undefined' && perfil && typeof registrarInvocacao === 'function') {
       if (cost > 0 && typeof debitar === 'function') perfil = debitar(perfil, 'gema', cost);   // saldo já checado; nunca fica negativo
-      perfil = registrarInvocacao(perfil, { resultados: out.map(o => ({ key: o.u.key, raridade: o.r })), pity: pity.pity });
+      perfil = registrarInvocacao(perfil, { resultados: out.map(o => ({ key: o.u.key, raridade: o.r })), pity: pity.pity }, 0, ESS);
       if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'invocacao', banner: bkey, seed, pityEntrada: pityEntrada.pity, qtd: n, custo: cost, deuses: out.map(o => o.u.key) });
       const rs = (typeof salvar === 'function') ? salvar(perfil) : { ok: true };
       if (!rs.ok) flash('Invocado — mas não consegui salvar: ' + rs.erro);
@@ -280,7 +288,7 @@ const INV = (function () {
       ? Math.min(132, Math.floor(alt / 3.30))
       : Math.min(Math.floor((avail - 9 * 4) / 10), Math.floor(alt / 3.30));
     const cards = document.getElementById('iv-cards');
-    cards.innerHTML = out.map((o, i) => gcard(o.u, W, o.novo, S.owned[o.u.key], i * 70)).join('');
+    cards.innerHTML = out.map((o, i) => gcard(o.u, W, o.novo, S.owned[o.u.key], i * 70, o.essencia)).join('');
     const best = out.reduce((a, b) => order[b.r] > order[a.r] ? b : a);
     const btn = document.getElementById('iv-revagain');
     btn.style.display = cur === 'iniciante' ? 'none' : 'inline-block';
@@ -335,6 +343,8 @@ const INV = (function () {
     const FW = Math.max(52, Math.min(92, Math.floor(_h / 3.48)));
     const FW5 = Math.max(58, Math.min(102, Math.floor(_h / 3.22)));
     document.getElementById('iv-gemas').textContent = S.gemas.toLocaleString('pt-BR');
+    { const ess = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.essencia || 0) : 0;
+      const en = document.getElementById('iv-essencia'); if (en) en.textContent = ess.toLocaleString('pt-BR'); }
     // indicador de perfil CONTAMINADO por crédito de teste — discreto mas sempre presente
     const dev = document.getElementById('iv-devmark');
     if (dev) dev.style.display = (typeof perfil !== 'undefined' && perfil && perfil.dev) ? 'inline-flex' : 'none';
@@ -365,7 +375,7 @@ const INV = (function () {
     document.getElementById('iv-tally').innerHTML =
       `<span class="iv-tchip iv-tt">Total <b>${s.total}</b></span>` +
       ['SS', 'S', 'A'].map(r => `<span class="iv-tchip iv-t${r.toLowerCase()}">${r} <b>${s[r]}</b></span>`).join('') +
-      `<span class="iv-tchip iv-tt">Coleção <b>${Object.keys(S.owned).length}</b>/${ROSTER.length}</span>`;
+      `<span class="iv-tchip iv-tt">Coleção <b>${(typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : Object.keys(S.owned).length}</b>/${ROSTER.length}</span>`;
     gfit(scr);
   }
   function setBanner(k) { cur = k; closeReveal(); render(); }
@@ -377,12 +387,14 @@ const INV = (function () {
       <button class="iv-hbtn" onclick="voltarInvocacao()">‹ Voltar</button>
       <div class="iv-wallet">
         <span id="iv-devmark" class="iv-devmark" style="display:none" title="Perfil contaminado por crédito de teste (DEV) — sai antes do release">⚠ DEV</span>
+        <span class="iv-c iv-cess" title="Essência — vem de repetidos">✦ <b id="iv-essencia">0</b></span>
         <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+ DEV</button></span>
       </div>
     </div>
     <div class="iv-tabs" id="iv-tabs"></div>
     <div class="iv-banner" id="iv-banner"></div>
     <div class="iv-side">
+      <div class="iv-odds">Chances por invocação: <b class="iv-ssc">SS ${(P.SS * 100).toFixed(0)}%</b> · <b class="iv-sc">S ${(P.S * 100).toFixed(0)}%</b> · <b class="iv-ac">A ${(ECONOMIA.invocacao.taxas.A * 100).toFixed(0)}%</b> · garantia de SS em ${PITY} · repetido vira Essência</div>
       <div class="iv-pity" id="iv-pity"></div>
       <div class="iv-pullbtns">
         <div class="iv-tools">

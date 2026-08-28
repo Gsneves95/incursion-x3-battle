@@ -32,7 +32,7 @@ function apagarDados(){
 }
 
 /* ---------- navegação ---------- */
-function voltarInvocacao(){ if(!voltar())ir('selecao',{},{substituir:true}); render(); }
+function voltarInvocacao(){ if(!voltar())ir('home',{},{substituir:true}); render(); }
 
 // Ganchos de ciclo de vida das telas (usados pelos hooks de rota). A limpeza de
 // sobreposição mora AQUI, num lugar só; parar o relógio é do turno.js.
@@ -109,7 +109,9 @@ configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
   rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
 registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderProvacoes });
-registrar('embreve',   { render: renderEmBreve });   // marcador de Campanha/Invocação/Coleção (F3.0)
+registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
+registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
+registrar('embreve',   { render: renderEmBreve });   // marcador de Campanha (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });

@@ -92,12 +92,23 @@ function concluirProvacao(perfil, key, turnos, agora = 0) {
 // invocacao.js é dono do sorteio/taxas/pity e COMPÕE chamando isto, para os
 // invariantes do perfil serem impostos e testados num lugar só. `resultado` vem do
 // sorteio (puro): { resultados:[{key,raridade}], pity } — pity é o contador de saída.
-function registrarInvocacao(perfil, resultado, agora = 0) {
+// `essenciaPorRaridade` (F3.2): tabela {A,S,SS} vinda da borda (invocacao.js lê data/economia.json).
+// Com ela, REPETIDO VIRA ESSÊNCIA — invocar um deus já na coleção credita Essência em vez de empilhar
+// cópia, e a ÚNICA/PRIMEIRA cópia nunca é dissolvida (o `else` que adiciona só roda quando o deus falta).
+// Sem a tabela (testes puros antigos, migração), mantém o empilhar-cópia de antes — comportamento intacto.
+function registrarInvocacao(perfil, resultado, agora = 0, essenciaPorRaridade = null) {
   const p = _clone(perfil);
   const res = resultado.resultados || [];
   for (const r of res) {
-    if (p.deuses[r.key]) p.deuses[r.key].copias++;
-    else p.deuses[r.key] = { copias: 1, favorito: false, obtidoEm: agora };
+    if (p.deuses[r.key]) {
+      if (essenciaPorRaridade && essenciaPorRaridade[r.raridade] != null) {
+        p.moedas.essencia = (p.moedas.essencia || 0) + essenciaPorRaridade[r.raridade];   // dup → Essência; a cópia mantida não é tocada
+      } else {
+        p.deuses[r.key].copias++;
+      }
+    } else {
+      p.deuses[r.key] = { copias: 1, favorito: false, obtidoEm: agora };
+    }
   }
   p.invocacao.total += res.length;
   if (typeof resultado.pity === 'number') p.invocacao.desdeUltimoSS = resultado.pity;

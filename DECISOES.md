@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §199 — FASE 3, F3.2: INVOCAÇÃO e COLEÇÃO — o laço de AQUISIÇÃO fecha (o deus desbloqueado tem onde ser visto). + ACHADO: o roster NÃO é 10×10.
+
+**Por que aquisição antes de Campanha/semanal (dono):** a Provação (F3.1) desbloqueava num VÁCUO — o jogador ganhava um deus e não tinha onde olhá-lo. Fechar esse laço vale mais que abrir conteúdo novo. Invocação e Coleção passam de marcador (F3.0) a telas reais na home.
+
+**INVOCAÇÃO (o gacha da F0.4 já existia; a F3.2 fecha as exigências):**
+- **Taxas/pity de `data/economia.json`, zero literal** (já era): 3% SS · 17% S · 80% A, pity DURO em 60.
+- **ODDS VISÍVEIS ANTES da compra** (exigência de listagem das lojas): painel fixo na tela — "SS 3% · S 17% · A 80% · garantia de SS em 60 · repetido vira Essência" — não mais só no modal "Auditar 1000".
+- **REPETIDO VIRA ESSÊNCIA (15/40/120 por ordem A/S/SS):** valores em `data/economia.json` (`essenciaPorDuplicata`, fonte única). `registrarInvocacao` recebe a tabela e, no repetido, credita Essência EM VEZ de empilhar cópia — **a única/primeira cópia nunca é dissolvida** (o `else` que adiciona só roda quando o deus falta; a trava é por construção, não há dissolver-manual que possa zerar). A revelação marca cada repetido com "+N ✦"; a carteira mostra Essência. **Interpretação registrada:** auto-conversão no puxão, cópias não empilham — se o dono quiser empilhar + dissolver-manual com trava, é outra decisão.
+- **Pity visível** (já era): contador `X/60` com barra.
+
+**COLEÇÃO:**
+- **Os 100 por PANTEÃO**, com tem × falta (tile aceso × apagado+cadeado), raridade por selo (SS/S/A). O agrupamento prepara o sistema de panteões do fim de jogo sem custo agora.
+- **Detalhe do deus** (toque num tile): arte, kit completo (bás/hab/mil/passiva, lido de `KITS`), e o ESTADO da Provação dele.
+- **ELO Coleção↔Provação (o que o dono pediu):** do detalhe, "Jogar Provação" entra na Provação do deus; a Provação CONCLUÍDA (deus já conquistado) na lista leva ao DETALHE em vez de re-jogar direto; a vitória de Provação ganha "Ver na coleção". Os dois sentidos ligados.
+
+**★ ACHADO ESTRUTURAL (STOP-and-report): o roster NÃO é "dez mitologias de dez".** O dono descreveu 10×10; a medição do `ROSTER` dá **Grega 19 · Nórdica 13 · Egípcia 14 · Japonesa 14 · Chinesa 9 · Hindu 8 · Brasileira 8 · Africana 6 · Celta 5 · Maia 4 = 100.** O agrupamento por panteão vale e prepara o sistema de fim de jogo, mas a premissa "de dez" é FALSA — panteões de tamanho MUITO desigual (Grega quase 4× a Maia). **Decisão do dono pendente:** rebalancear o roster para 10×10 (mexe em 100 deuses e nos carimbos de Provação atrelados a facção), ou aceitar panteões desiguais e desenhar o sistema de panteões do fim de jogo em cima disso. A F3.2 exibe a contagem REAL por grupo (não finge 10), como o nível vem do carimbo (§197).
+
+**CRITÉRIO DE PRONTO cumprido:** invocar com pity+odds visíveis, repetido→Essência (teste puro confirma 15/40/120 e a cópia preservada; a revelação mostra "+N ✦"), Coleção por panteão navegável (10 grupos, 100 tiles), detalhe do deus, captura contra o dist. Testes `aquisicao` (parte pura + bundle real) e a suíte inteira verdes.
+
 ## §198 — FASE 3, F3.1: o LAÇO da Provação — lista → batalha → avaliação → desbloqueio. Condição VISÍVEL durante, TRÊS derrotas distintas, placar contra o mínimo do solucionador.
 
 **Por que a Provação veio ANTES da Campanha (dono):** a Provação é o único conteúdo PRONTO e VALIDADO — 90 montagens carimbadas, cada uma provada vencível. A Campanha não foi escrita. Ligar a Provação primeiro transforma o que a Fase 2 mediu em jogo jogável HOJE, e a Campanha entra depois com o caminho já testado.

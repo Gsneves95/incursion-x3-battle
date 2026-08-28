@@ -18,6 +18,10 @@
       "_desconto": "1350 = 10x150 - 10%. O codigo antigo cobrava 1500 (sem desconto)."
     },
     "taxas": { "SS": 0.03, "S": 0.17, "A": 0.80 },
+    "essenciaPorDuplicata": {
+      "A": 15, "S": 40, "SS": 120,
+      "_nota": "Repetido vira Essencia (F3.2): invocar um deus que ja esta na colecao credita Essencia por ordem A/S/SS, e NAO dissolve a copia unica (a 1a copia sempre fica). Fonte unica; o codigo LE daqui, sem literal em invocacao.js."
+    },
     "pity": {
       "duro": 60,
       "suave": null,
