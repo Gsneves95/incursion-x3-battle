@@ -159,10 +159,16 @@ const PREDICADOS = {
   },
   // §172 buff-timing — DUAS sub-formas, porque o `modo` é ESTÁTICO e timing-PONTUAL ≠ timing-CONTÍNUO (previsto pelo dono):
   buffNoAbate: {   // hera: o buff `buff` (Juramento Nupcial = 'vinculo') está ativo em ALGUM aliado NO GOLPE FINAL. modo:'final' (só o estado terminal importa).
+    // §187: `v` opcional (VALOR MÍNIMO do buff — hercules: dmgUp v≥20 = ≥5 usos de Os Doze Trabalhos, pois dmgUp FUNDE no motor l.502, +4/uso);
+    // `quem` opcional (aliado NOMEADO — hercules, p/ ser protagonista). Sem v/quem = comportamento hera (presença em qualquer aliado).
     modo: 'final', obrig: ['buff'],
-    aval: (st, c) => st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 'ok' : 'falha',
-    // §176: GRADIENTE (testado ≠ navegável) — sem ele o filtro-final trava em H=0 (o solver vence sem lançar o buff). aval intacto.
-    distancia: (st, c) => st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => e.type === c.buff)) ? 0 : 30,
+    aval: (st, c) => st.lados[0].units.some(u => u.vivo && (c.quem ? u.key === c.quem : true) && (u.efeitos || []).some(e => e.type === c.buff && (c.v == null || (e.v || 0) >= c.v))) ? 'ok' : 'falha',
+    // §176: GRADIENTE (testado ≠ navegável). §187: com `v`, gradua pelo DÉFICIT de valor (nudge p/ CRESCER o buff, não só ativá-lo); sem `v`, o flat 30 do hera.
+    distancia: (st, c) => {
+      const best = Math.max(0, ...st.lados[0].units.filter(u => u.vivo && (c.quem ? u.key === c.quem : true)).flatMap(u => (u.efeitos || []).filter(e => e.type === c.buff).map(e => e.v || 1)));
+      if (c.v == null) return best > 0 ? 0 : 30;
+      return best >= c.v ? 0 : (c.v - best) * 3;
+    },
   },
   buffContinuo: {   // dagda: o buff `buff` (Caldeirão = 'caldeirao') está ativo em ALGUM aliado TODO turno a partir de `desde`. modo:'continuo' (falha-DURANTE: um turno sem já perde).
     modo: 'continuo', obrig: ['buff', 'desde'],

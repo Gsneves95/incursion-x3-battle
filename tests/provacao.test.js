@@ -340,6 +340,16 @@ console.log('== 17. buff-timing (§172): DUAS sub-formas — buffNoAbate (final,
   const cont = (st, buff, desde) => PROV.PREDICADOS.buffContinuo.aval(st, { buff, desde }, ctx);
   // buffNoAbate (final): algum aliado com o buff → ok; nenhum → falha
   { const st = PROV.montarProvacao(prov); ok(noAbate(st, 'vinculo') === 'falha', 'buffNoAbate: sem vinculo no time → falha'); st.lados[0].units[1].efeitos.push({ type: 'vinculo', dur: 2 }); ok(noAbate(st, 'vinculo') === 'ok', 'buffNoAbate: um aliado com vinculo → ok'); }
+  // §187: buffNoAbate com `v` (valor mínimo) e `quem` (aliado nomeado) — hercules: dmgUp v>=20 no herói
+  { const st = PROV.montarProvacao(prov); const h = st.lados[0].units[0];
+    const av = (c) => PROV.PREDICADOS.buffNoAbate.aval(st, c); const di = (c) => PROV.PREDICADOS.buffNoAbate.distancia(st, c);
+    h.efeitos.push({ type: 'dmgUp', v: 12, dur: 99 });
+    ok(av({ buff: 'dmgUp', v: 20, quem: h.key }) === 'falha', 'buffNoAbate v: dmgUp 12 < 20 → falha');
+    ok(di({ buff: 'dmgUp', v: 20, quem: h.key }) === 24, 'buffNoAbate v: déficit 8 × 3 = 24 (gradua p/ crescer o buff)');
+    h.efeitos.find(e => e.type === 'dmgUp').v = 20;
+    ok(av({ buff: 'dmgUp', v: 20, quem: h.key }) === 'ok', 'buffNoAbate v: dmgUp 20 >= 20 → ok');
+    ok(av({ buff: 'dmgUp', v: 20, quem: st.lados[0].units[1].key }) === 'falha', 'buffNoAbate quem: o buff está no herói, não no aliado nomeado → falha');
+  }
   // buffContinuo (falha-DURANTE): antes de `desde` sempre ok; a partir de `desde`, exige o buff a cada turno
   { const st = PROV.montarProvacao(prov); st.turno = 1; ok(cont(st, 'caldeirao', 3) === 'ok', 'buffContinuo: turno<desde → ok mesmo sem o buff'); st.turno = 3; ok(cont(st, 'caldeirao', 3) === 'falha', 'buffContinuo: turno>=desde sem o buff → falha'); st.lados[0].units[0].efeitos.push({ type: 'caldeirao', dur: 3 }); ok(cont(st, 'caldeirao', 3) === 'ok', 'buffContinuo: turno>=desde com o buff → ok'); }
   console.log('  final (pontual, no abate) × contínuo (uptime desde-N) NÃO cabem num predicado só: modo é estático → duas sub-formas (§172)');
