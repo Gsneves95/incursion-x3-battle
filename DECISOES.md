@@ -6,6 +6,19 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §193 — OS 2 PREDICADOS NOVOS RENDERAM 1 CARIMBO (perseu) E 6 SAÍDAS: nefertem (strict) + família A inteira (simultaneidade é anti-solver dinâmica, trivial pré-estado). O teto cai.
+
+**perseu "O Espelho" (Provação d2) CARIMBADO — `semDebuffEmAliado{filtro:controle}`.** perseu·houyi·zeus vs medusa·izanami·durga dl10, nós 3579. Babá aquiles INVENCÍVEL. **Por que fecha:** o controle é PREVENÍVEL — o Espelho (imunidade+reflexo) impede o controle de ATERRISSAR, então "nenhum aliado controlado" é atingível. Load-bearing.
+
+**nefertem SAI — `semDebuffEmAliado` bare (qualquer debuff) é STRICT-uptime irrealizável (§178).** INVENCÍVEL mesmo vs 1 fonte de debuff (durga só). O debuff GERAL (vulneravel) ATERRISSA e o Perfume limpa DEPOIS (reativo) → existe entre aplicar-e-limpar → o boundary-check (continuo) falha. **A diferença do perseu: controle previne-se (não aterrissa); debuff-geral aterrissa-e-limpa (reativo) → strict é impossível.** nefertem precisaria de relaxamento (≤N turnos-com-debuff, 1 consumidor) → cai p/ singles. `semDebuffEmAliado` fica com 1 consumidor sólido (perseu).
+
+**FAMÍLIA A INTEIRA SAI — `estadoSimultaneo` é NAVEGÁVEL mas o RIDER não tem FORMA BOA. Espécie de saída NOVA.** O predicado está certo (testado §27; com inimigos PRÉ-estados no montar, kukulkan fecha VENCÍVEL nós 32 — a leitura funciona). Mas o rider "os N inimigos num estado AO MESMO TEMPO" não fecha:
+- **DINÂMICO (o título aplica): ANTI-SOLVER.** O solver mata um inimigo antes de alinhar os 3 (platô em best-2-de-3 p/ kukulkan). E é **gradiente-independente**: ×30, ×300, ×1000 — TODOS travam no mesmo best-2/3 (não é fraqueza de gradiente; é estrutural — manter 3 vivos-em-estado conflita maximamente com vencer, que exige matá-los).
+- **PRÉ-ESTADO (montar): TRIVIAL.** Satisfeito no turno 1 (nós 32), a lição "alinhar" some.
+Nenhuma forma serve. **aokuang, chaac, medusa, anubis, kukulkan = 5 SAÍDAS.** Espécie nova: **simultaneidade-de-estado-nos-N** — prima do ativo-opcional (§188), mas p/ um OBJETIVO positivo: a vitória não precisa do alinhamento (matar é melhor), então o solver o pula, e não há gradiente honesto que force (forçar seria o solver mentindo, §189). `estadoSimultaneo` fica no motor como o `estadoContinuo` (§178): documenta o que NÃO fecha.
+
+**O TETO CAI — a cauda é MAIS saída do que o tema sugeria (§191 confirmado no pior sentido).** Placar C+E+D: **6 carimbadas** (shiva, babi, kagutsuchi, baldur, izanagi, perseu) + **6 saídas medidas** (nefertem + família A ×5). Restam família B (5, filtro §188) e 5 singles (kali, sunwukong, tanuki, houyi, huangdi, exu — nefertem já saiu). **Revisão do teto:** 80 era otimista; com 6 saídas novas aqui e as prováveis de B/singles, o teto real caminha p/ **~68–72**, não 74. O número final sai ao medir B + singles. **A lição dupla:** (1) theme≠mechanic me pegou como estimador (§191); (2) a cauda-da-cauda é onde os riders anti-solver se concentram — quanto mais exótico o tema, mais provável que a mecânica seja opcional/lenta/simultânea = anti-solver.
+
 ## §191 — C+E+D: 5 carimbadas de reuso; e a CORREÇÃO — "zero motor" foi eu lendo por TEMA. A cauda real precisa de 2 predicados (cobrem 7) + 6 casos-de-1-consumidor/saída.
 
 **5 CARIMBADAS por REUSO puro (62/80 na Fase 2):**

@@ -222,7 +222,7 @@ const PREDICADOS = {
     distancia: (st, c) => {
       const total = c.req.reduce((s, r) => s + r.n, 0);
       let best = 0; for (const e of st.log) if (e.tipo === 'turno' && e.statusInimigo) { const cob = c.req.reduce((s, r) => s + Math.min(e.statusInimigo.filter(x => x === r.status).length, r.n), 0); if (cob > best) best = cob; }
-      return Math.max(0, total - best) * 30;
+      return Math.max(0, total - best) * 300;   // §192: ANTI-GREEDY forte (como reviveAliado ×1000) — "alinhar N inimigos vivos-em-estado" exige NÃO matá-los ainda; o ×30 fraco não vencia o impulso-de-vitória. É gradiente do OBJETIVO (o rider), não de ferramenta-que-a-vitória-não-precisa (§189).
     },
   },
   semDebuffEmAliado: {   // §192 (nefertem/perseu): NENHUM aliado carrega debuff. continuo (falha-DURANTE, como semPerderAliado/protegeDe — sem gradiente, poda ao vivo).

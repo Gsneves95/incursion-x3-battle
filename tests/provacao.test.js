@@ -483,7 +483,7 @@ console.log('== 27. estadoSimultaneo (§192, família A): ≥n inimigos num esta
   ok(av([T(3, ['encharcado', 'encharcado'])], [{ status: 'encharcado', n: 3 }]) === 'pendente', '2<3 → pendente');
   ok(av([T(3, ['encharcado', 'encharcado', 'encharcado', 'atordoado', 'atordoado', 'atordoado'])], [{ status: 'encharcado', n: 3 }, { status: 'atordoado', n: 3 }]) === 'ok', 'encharcado+atordoado nos 3 no MESMO turno → ok (aokuang/chaac)');
   ok(av([T(3, ['encharcado', 'encharcado', 'encharcado']), T(4, ['atordoado', 'atordoado', 'atordoado'])], [{ status: 'encharcado', n: 3 }, { status: 'atordoado', n: 3 }]) === 'pendente', 'estados em turnos DIFERENTES → pendente (tem de ser simultâneo)');
-  ok(dist([T(3, ['encharcado'])], [{ status: 'encharcado', n: 3 }]) === 60, 'distância: melhor cobertura 1 de 3 → déficit 2 × 30 = 60');
+  ok(dist([T(3, ['encharcado'])], [{ status: 'encharcado', n: 3 }]) === 600, 'distância: melhor cobertura 1 de 3 → déficit 2 × 300 = 600 (anti-greedy forte, §192)');
   console.log('  ≥n inimigos por estado NO MESMO turno-event; contar ocorrências (statusInimigo duplica por-inimigo, §186)');
 }
 
