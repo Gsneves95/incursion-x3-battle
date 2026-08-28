@@ -462,6 +462,18 @@ console.log('== 25. stripBuffsInimigo (§187, yamato): um golpe removeu ≥N buf
   console.log('  ≥N buffs num ÚNICO golpe (não soma entre golpes) — lê o evento de remoção que o motor já loga (§187)');
 }
 
+console.log('== 26. semDebuffEmAliado (§192, nefertem/perseu): nenhum aliado com debuff — bare (qualquer) × filtro (controle) ==');
+{
+  const mk = efeitos => ({ lados: [{ units: [{ key: 'a', vivo: true, efeitos }] }], turno: 3 });
+  const av = (efeitos, c) => PROV.PREDICADOS.semDebuffEmAliado.aval(mk(efeitos), c || {});
+  ok(av([]) === 'ok', 'sem debuff → ok');
+  ok(av([{ type: 'dmgDown' }]) === 'falha', 'bare: qualquer debuff (dmgDown) → falha');
+  ok(av([{ type: 'dmgUp' }]) === 'ok', 'bare: buff (dmgUp) NÃO é debuff → ok');
+  ok(av([{ type: 'atordoado' }], { filtro: ['atordoado', 'selado'] }) === 'falha', 'filtro controle: atordoado → falha');
+  ok(av([{ type: 'encharcado' }], { filtro: ['atordoado', 'selado'] }) === 'ok', 'filtro controle: encharcado FORA do filtro → ok (perseu só barra controle)');
+  console.log('  bare = DEBUFFS_TODOS (nefertem) · filtro = subconjunto (perseu: controle); continuo, falha-durante');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

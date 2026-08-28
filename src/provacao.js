@@ -20,6 +20,8 @@ const MODOS = { final: 'fim', log: 'cedo', continuo: 'cedo' };   // modo → `qu
 
 const ladoDoQuem = quem => (quem === 'aliado' || quem === 'aliados') ? 0 : 1;
 const cmp = (a, op, b) => op === '>=' ? a >= b : op === '<=' ? a <= b : op === '==' ? a === b : op === '>' ? a > b : op === '<' ? a < b : false;
+// §192: espelha DEBUFFS do motor (CONTROLES + extras, engine l.62/75) — p/ semDebuffEmAliado default "qualquer debuff". Duplicado por robustez (sem require de engine).
+const DEBUFFS_TODOS = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'selado', 'agarrar', 'pacificado', 'medo', 'dmgDown', 'vulneravel', 'encharcado', 'noHeal', 'livro', 'antiRevive', 'olho', 'pressagio', 'marcado', 'torpor', 'retaliacao'];
 
 // Registro FECHADO. Cada predicado declara { modo, obrig, aval }. aval(st, cfg, ctx) devolve:
 //   'ok'       — satisfeito; pode vencer
@@ -206,6 +208,14 @@ const PREDICADOS = {
     aval: (st, c) => new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size >= c.limiar ? 'ok' : 'pendente',
     chave: (st, c) => String(new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size),
     distancia: (st, c) => Math.max(0, c.limiar - new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size) * 30,   // nudge p/ APLICAR e MANTER o status
+  },
+  semDebuffEmAliado: {   // §192 (nefertem/perseu): NENHUM aliado carrega debuff. continuo (falha-DURANTE, como semPerderAliado/protegeDe — sem gradiente, poda ao vivo).
+    // `filtro` opcional (lista de tipos): nefertem = bare (qualquer debuff = DEBUFFS_TODOS); perseu = {filtro:['atordoado','selado']} (controle; petrificação = atordoado).
+    modo: 'continuo', obrig: [],
+    aval: (st, c) => {
+      const proibidos = c.filtro || DEBUFFS_TODOS;
+      return st.lados[0].units.some(u => u.vivo && (u.efeitos || []).some(e => proibidos.includes(e.type))) ? 'falha' : 'ok';
+    },
   },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
