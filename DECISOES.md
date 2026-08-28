@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §194 — FECHAMENTO DA FASE 2: 63 CARIMBADAS = TETO REAL 63 (não 91, não 80, não 74). A cauda foi 74% saída. Suíte verde.
+
+**A FASE 2 FECHA EM 63/63 — COMPLETA no alcançável.** 100 deuses − 9 iniciais = 91 planejadas. **28 SAÍDAS** (deus sem Provação viável, por decisão MEDIDA) → teto real = 91 − 28 = **63**. **63 carimbadas = 63 teto.** O número honesto derrubou o otimista três vezes (91→80→74→63): a cauda-da-cauda (23) rendeu só **6 carimbos e 17 saídas** (74% saída) — porque o que sobra por último é onde os riders anti-solver se concentram (theme≠mechanic, §191/§193).
+
+**AS 28 SAÍDAS POR ESPÉCIE (a taxonomia final):**
+- **rider-impossível (3):** nuwa (rastreio modal), tanuki (modal, idem), durga (Fim não executa >70 HP — número do catálogo contradiz a habilidade).
+- **ferramenta-fraca (7):** oni, boitatá, curupira, cernunnos, xango, tsukuyomi, erinias (a forma fecha p/ outro deus; o kit deste não sustenta).
+- **rider-mismatched (2):** odin, ymir (deus errado; o rider volta com outro).
+- **ativo-opcional (1):** raijin (dano espalhado; a vitória não precisa).
+- **simultaneidade-de-estado (5, NOVA §193):** aokuang, chaac, medusa, anubis, kukulkan (alinhar N vivos-em-estado briga com matá-los; anti-solver dinâmico, trivial pré-estado).
+- **§87 — predicado de 1 consumidor não construído (10):** nefertem (strict-uptime §178), kali (cura-externa-zero), sunwukong (não-disparar-rede-1HP), houyi (remover-Dia-N), huangdi (cooldown-uptime), exu (usos-de-slot), horus + kraken (ferramenta ÚNICA E RÁPIDA — passam o §188 — mas abatePorSlot não é ability-específico e o predicado que seria não tem 2º consumidor), krishna (Ação-Perfeita-por-abate), lugh (modal+contagem).
+
+**PREDICADOS: 31 no motor, 26 COM consumidor (84%), 5 SEM.** Os 5 órfãos: `abatePorSlot` (§46, nasceu em teste; horus/kraken seriam consumidores mas saíram), `soloSobrevivente` (erinias saiu), `buffContinuo` (dagda virou semPerderAliado), `estadoContinuo` (§176/§178 — documenta o uptime-estrito irrealizável), `estadoSimultaneo` (§193 — documenta a simultaneidade anti-solver). **Os 2 últimos são órfãos-DOCUMENTAÇÃO (o "o que NÃO fecha" tem valor); os 3 primeiros são consumidor-que-saiu.** 84% é boa proporção (§87 respeitado) — informação p/ a Fase 3: quase todo predicado do motor é usado.
+
+**DÍVIDA-DE-CONTEÚDO PUBLICADA (endereço F4):** hercules (ensina acumular, devia golpe-final-5-stacks) + shutendoji (ensina aplicar Torpor, devia roubar-via-Torpor) — 2 Provações que FUNCIONAM e ensinam MENOS. **SLOTS MORTOS (obs. de balanceamento p/ F4, "a IA Difícil confirma em nunca-usadas"):** hercules (grind), shutendoji (roubo reativo), xangô (Balança), cernunnos (reflexo) — ferramenta opcional/lenta = slot morto. **ÓRFÃOS DE MOTOR:** estadoContinuo, estadoSimultaneo (documentam o irrealizável), + abatePorSlot/soloSobrevivente/buffContinuo (consumidor saiu).
+
+**PARA A FASE 3:** a tela de Provações lista **63**, não 91. Os **37 sem-Provação** (9 iniciais + 28 saídas; 63+37=100) a F3 trata como "sem trial", não buraco a preencher. **E o nível exibido vem do CARIMBO (medido), nunca do catálogo** (§185: 27/56 divergiam; agora a regra é firme). Suíte completa VERDE (21 tests, exit 0).
+
 ## §193 — OS 2 PREDICADOS NOVOS RENDERAM 1 CARIMBO (perseu) E 6 SAÍDAS: nefertem (strict) + família A inteira (simultaneidade é anti-solver dinâmica, trivial pré-estado). O teto cai.
 
 **perseu "O Espelho" (Provação d2) CARIMBADO — `semDebuffEmAliado{filtro:controle}`.** perseu·houyi·zeus vs medusa·izanami·durga dl10, nós 3579. Babá aquiles INVENCÍVEL. **Por que fecha:** o controle é PREVENÍVEL — o Espelho (imunidade+reflexo) impede o controle de ATERRISSAR, então "nenhum aliado controlado" é atingível. Load-bearing.

@@ -2,7 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — F2.4 lote 7 TRADUZIDO (MORTE_EXECUÇÃO vs revive): execução acoplada prevista; horus/durga = RIDER DE ORDEM (eixo novo) a vigiar (§166). Lote 6 = 7/8.
+## Última sessão — **FASE 2 FECHADA: 63/63 CARIMBADAS (teto real 63, não 91).** REVIVE + AUTO-MORTE + baratas + 3 dívidas + cauda inteira (§181–194).
+
+**O NÚMERO FINAL: 63 carimbadas = teto 63.** 100 deuses − 9 iniciais = 91 planejadas; **28 SAÍDAS** medidas → teto = 63. O honesto derrubou o otimista 3× (91→80→74→63): a cauda-da-cauda (23) rendeu 6 carimbos + 17 saídas (74% saída — onde os riders anti-solver se concentram).
+
+**LOTES FECHADOS ESTA FASE (arco §181–194):**
+- **REVIVE (§179–181):** demeter, freyja, osiris, isis (`reviveAliado`, núcleo) + hel (`naoReviveInimigo` — 2 auto-revivedores forçam a Marca) + bennu (self-revive = REVIVE-família, `reviveAliado`). odin SAI (rider-mismatched).
+- **AUTO-MORTE (§182–184):** mimir carimbado (`tituloCaido` + dead-passive, babá H=86/129 nos 3 Guardiões). erinias/ymir SAEM (ferramenta-fraca/mismatched). Predicados `soloSobrevivente`/`tituloCaido` construídos.
+- **BARATAS (§186):** orfeu carimbado (`statusTurnos`, uptime-de-status relaxado). tsukuyomi SAI (assimetria Dia×Noite estrutural).
+- **3 DÍVIDAS REAIS (§187–188):** yamato PAGO (`stripBuffsInimigo` — golpe-final de strip, inimigo pré-buffado, babá limpo). hercules/shutendoji RESISTEM (rider fiel é ativo-opcional/lento) → dívida-de-conteúdo aceita até F4.
+- **CAUDA C+E+D+B+A+singles (§190–194):** carimbadas 6 (shiva, babi, kagutsuchi, baldur, izanagi, perseu). Saídas 17. Predicados `semDebuffEmAliado` (perseu), `estadoSimultaneo` (família A — órfão, sem forma jogável).
+
+**AS 28 SAÍDAS POR ESPÉCIE:** rider-impossível 3 (nuwa, tanuki, durga) · ferramenta-fraca 7 (oni, boitatá, curupira, cernunnos, xango, tsukuyomi, erinias) · rider-mismatched 2 (odin, ymir) · ativo-opcional 1 (raijin) · **simultaneidade-de-estado 5 (NOVA: aokuang, chaac, medusa, anubis, kukulkan)** · §87-1-consumidor 10 (nefertem, kali, sunwukong, houyi, huangdi, exu, horus, kraken, krishna, lugh).
+
+**PREDICADOS: 31 no motor, 26 com consumidor (84%).** Órfãos (5): abatePorSlot, soloSobrevivente, buffContinuo (consumidor saiu); estadoContinuo, estadoSimultaneo (documentam o irrealizável). Construídos nesta fase (arco): reviveAliado, naoReviveInimigo, tituloCaido, soloSobrevivente, stripBuffsInimigo, statusTurnos, semDebuffEmAliado, estadoSimultaneo + extensões (buffNoAbate{v,quem}, semPerderAliado{quem/exceto}, protegeDe, hpTetoSelf, estadoTurnos) e o carimbo de motor `statusInimigo`/`campo` no turno-event.
+
+**DÍVIDA COM ENDEREÇO (F4):** conteúdo — hercules (ensina acumular↔golpe-final), shutendoji (aplicar Torpor↔roubar-via-Torpor). Slots-mortos — hercules, shutendoji, xangô, cernunnos (ferramenta opcional/lenta; IA Difícil confirma em "nunca-usadas"). Órfãos-motor — estadoContinuo, estadoSimultaneo (+ abatePorSlot/soloSobrevivente/buffContinuo).
+
+**PARA A FASE 3:** a tela lista **63**, não 91. Os 37 sem-Provação (9 iniciais + 28 saídas) = "sem trial", não buraco. **Nível exibido vem do CARIMBO, nunca do catálogo** (§185: 27/56 divergiam). **npm test VERDE (21 suites, exit 0).**
+
+## (histórico) F2.4 lote 7 TRADUZIDO (MORTE_EXECUÇÃO vs revive): execução acoplada prevista; horus/durga = RIDER DE ORDEM (eixo novo) a vigiar (§166). Lote 6 = 7/8.
 **cernunnos/xango do lote 5 SAÍRAM (kit não sustenta rider, §163; obs. de balanceamento c/ endereço p/ IA Difícil F2.2).** **Lote 6 — leitores contadorLado/danoBonus prontos+testados antes (§163, teste §14).** **FECHADAS 5 individuais, sem dica:** ra ✓ (`discoSolar` 6 — AUTOMÁTICO, +1/turno, rider quase free) · hercules ✓ (`danoBonus` 16 — ACOPLADO limpo, cavalga Os Doze Trabalhos) · kitsune ✓ (`cauda` 8 — semi-automático, dl18) · brahma ✓ (`danoBonus` 24 — buff BUFFA dano→ajuda abate, quase free) · itzamna (`danoBonus` ≤20 — FECHA apesar da flag; composto +protege-HPmax pendente, NÃO carimbado). **combo (susanoo/raijin/yamato): FALHA por-deus** — pool de 2/ataque, um gerador é lento demais (fight curto→pouco combo; longo→gerador ofuscado/não vence); só o COMBO-SQUAD (os 3, 6/turno) fecha (combo 20). **ACHADO 1 (o que o dono queria): a 4ª pergunta tem FALSO-POSITIVO** — flaguei brahma/itzamna, os dois fecham; refino: a pergunta é "a ação AJUDA A VENCER?" (buff-de-dano ajuda=acoplado), não "é separada do ataque?". **ACHADO 2: a régua acerta a família (5 baratos) mas erra a própria BANDEIRA (combo falha por-deus — pool fonte-única é lento, espelho invertido do §160).** **ACHADO 3: contador AUTOMÁTICO (ra/brahma) é o outro extremo do Xangô — rider fino; eixo: ativo-opcional↔acoplado↔automático, os extremos dão Provação fraca.** **PLACAR DA RÉGUA:** previu "combo=barato"; acertou a família mas errou o exemplo → serve p/ ORDENAR, não p/ o caso combo. **PENDENTE do dono:** (1) combo-squad vira 1 Provação-esquadrão ou riders distintos? (2) compostos yamato(+remove-3-buff)/itzamna(+protege-HPmax) 2ºs riders; (3) ra/brahma finos — aceitar ou endurecer? **npm test/build verdes.**
 
 ## (histórico) lote 5 (ACUMULO_RECURSO): 3/5 FECHADAS sem dica; cernunnos/xango SEM PONTO DOCE (§162)
