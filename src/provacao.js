@@ -233,6 +233,14 @@ const PREDICADOS = {
     modo: 'log', obrig: [],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'orbe' && e.perdeuLado === 0 && e.ganhouLado === 1) ? 'falha' : 'ok',
   },
+  stripBuffsInimigo: {   // §187 (yamato): um GOLPE removeu ≥`quantos` buffs de um inimigo DE UMA VEZ (Corte Ceifa-Ervas: stripBuffs). GOLPE-FINAL (timing),
+    // não acumulação (volume) — o erro do §185. Lê o evento de remoção que o motor já loga (engine l.1823: tipo:'efeito', efeito:'buff',
+    // ganhouLado:null, qtd). Só mass-strip (yamato, iansã) produz qtd≥3 num evento → protagonista se o time não tiver o outro. Exige set que se auto-buffa.
+    modo: 'log', obrig: ['quantos'],
+    aval: (st, c, ctx) => st.log.some(e => e.tipo === 'efeito' && e.efeito === 'buff' && e.ganhouLado == null && ctx.ladoDe(e.alvo) === 1 && (e.qtd || 0) >= c.quantos) ? 'ok' : 'pendente',
+    chave: (st, c, ctx) => String(Math.max(0, ...st.log.filter(e => e.tipo === 'efeito' && e.efeito === 'buff' && e.ganhouLado == null && ctx.ladoDe(e.alvo) === 1).map(e => e.qtd || 0))),
+    distancia: (st, c, ctx) => { const best = Math.max(0, ...st.log.filter(e => e.tipo === 'efeito' && e.efeito === 'buff' && e.ganhouLado == null && ctx.ladoDe(e.alvo) === 1).map(e => e.qtd || 0)); return Math.max(0, c.quantos - best) * 30; },   // nudge p/ um strip MAIOR (não cancela o HP-base: manter o incentivo de vencer)
+  },
   limparBuffsAntesDeAbate: {   // §156 (iansã): TODO buff dos 3 inimigos removido ANTES da 1ª queda inimiga. O marco (motor) grava o
     // turno em que o lado inimigo ficou TODO sem buff; a 1ª queda vem do log (carrega `turno`). Falha cedo se cair um inimigo antes.
     modo: 'log', obrig: [],

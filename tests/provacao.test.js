@@ -438,6 +438,20 @@ console.log('== 24. statusTurnos (§186, orfeu): ≥N turnos com ≥1 inimigo ca
   console.log('  ≥N turnos-com-status (distintos) — o uptime-de-status relaxado (§186); statusInimigo carimbado no turno-event');
 }
 
+console.log('== 25. stripBuffsInimigo (§187, yamato): um golpe removeu ≥N buffs de um inimigo — GOLPE-FINAL, não acumulação ==');
+{
+  const ctx = { ladoDe: k => (k === 'i') ? 1 : 0 };
+  const sb = (log, q) => PROV.PREDICADOS.stripBuffsInimigo.aval({ log }, { quantos: q }, ctx);
+  const sbD = (log, q) => PROV.PREDICADOS.stripBuffsInimigo.distancia({ log }, { quantos: q }, ctx);
+  const strip = (alvo, qtd) => ({ tipo: 'efeito', efeito: 'buff', ganhouLado: null, alvo, qtd });
+  ok(sb([strip('i', 3)], 3) === 'ok', 'um strip de 3 num inimigo ≥3 → ok');
+  ok(sb([strip('i', 2)], 3) === 'pendente', 'strip de 2 < 3 → pendente (não acumula entre eventos: é POR GOLPE)');
+  ok(sb([strip('i', 2), strip('i', 2)], 3) === 'pendente', 'dois strips de 2 NÃO somam (golpe-final, não volume)');
+  ok(sb([strip('a', 3)], 3) === 'pendente', 'strip num ALIADO não conta (perdeuLado do inimigo)');
+  ok(sbD([strip('i', 1)], 3) === 60, 'distância: melhor strip 1, falta 2 → 60 (×30)');
+  console.log('  ≥N buffs num ÚNICO golpe (não soma entre golpes) — lê o evento de remoção que o motor já loga (§187)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);
