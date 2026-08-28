@@ -2,6 +2,27 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ FASE 2 — RESUMO DA FASE (encerramento). Formato: o que mudou de estrutura · ambiguidades · o que a Fase 3 precisa saber.
+
+**A FASE 2 traduziu e mediu o CATÁLOGO DE PROVAÇÕES dos 91 deuses não-iniciais. Encerra em 90/100 com Provação: 63 que ENSINAM KIT + 27 rota GENÉRICA; 10 sem (9 iniciais + oni).**
+
+**1. O QUE MUDOU DE ESTRUTURA:**
+- **O FORMATO da Provação amadureceu:** predicado {modo (final/log/continuo), aval (ok/pendente/falha), distancia (gradiente), chave}. `quando` DERIVADO do modo. Fecha POR MODO, não por forma (§144). ~30 predicados no motor, **26 com consumidor (84%)**.
+- **~15 predicados NOVOS neste arco:** reviveAliado, naoReviveInimigo, tituloCaido, soloSobrevivente, stripBuffsInimigo, estadoTurnos, statusTurnos, estadoContinuo, estadoSimultaneo, semDebuffEmAliado, hpTetoSelf, protegeHpMax + extensões (buffNoAbate{v,quem}, semPerderAliado{quem/exceto}, protegeDe{escopo/filtro}, buffContinuo). Carimbos de motor: turno-event ganha `campo`(§178)/`statusInimigo`(§186); evDano ganha `unico`(§172); revive/dead-passive(`mesmoMorto`§123).
+- **A TAXONOMIA DE SAÍDA (deus sem Provação viável) — 6 espécies:** rider-impossível · ferramenta-fraca · rider-mismatched · ativo-opcional · **simultaneidade-de-estado (nova §193)** · §87-1-consumidor. **O META-PADRÃO (§188):** rider fecha só se a ferramenta for PROTAGONISTA-ÚNICA E RÁPIDA; opcional o solver pula, lenta não espera — anti-solver.
+- **A PROVAÇÃO GENÉRICA (§195):** `deadline + semPerderAliado{quem}`, rota-de-aquisição sem ensinar kit, `generica:true`. Separa "Provação de kit" de "rota de produto".
+
+**2. AMBIGUIDADES QUE APARECERAM (e viraram decisão medida):**
+- **Nível: 27/56 divergiram do catálogo (§183/§185)** → dificuldade declarada NÃO é sinal; o nível exibido vem do CARIMBO. **theme≠mechanic pega quem ESCREVE o catálogo E quem ESTIMA a cauda (§191)** — a única defesa é ler o kit.
+- **Auditoria de riders-derivados (§185):** de 56, só 4 ensinavam OUTRA coisa; 3 dívida real (golpe-final virou acumulação), 1 aparente. **Dívida-de-conteúdo publicada: hercules, shutendoji** (funcionam, ensinam menos; endereço F4).
+- **Varredura de órfãos (§196, fim do arco):** LIMPA — 5 predicados-sem-consumidor (2 documentação, 3 consumidor-saiu), 1 armadilha-sem-gradiente já endereçada (limparBuffs §177), 0 junta-não-ligada. A disciplina §87/§176 segurou.
+
+**3. O QUE A FASE 3 PRECISA SABER:**
+- **A tela de Provações lista 90** (63 kit + 27 rota), não 91. Os 10 sem-Provação (9 iniciais + oni) = "sem trial", não buraco. **Nível SEMPRE do carimbo, nunca do catálogo.**
+- **O flag `generica:true`** marca as 27 substituíveis — o produto pode exibi-las diferente, e a Fase 4 troca por Provação-de-kit após rebalancear.
+- **Endereço p/ a Fase 4 (revisão de kit), em ordem:** (1) **oni** — resiste até à genérica, kit sustenta rider NENHUM (o mais fundo); (2) slots-mortos hercules/shutendoji/xangô/cernunnos (ferramenta opcional/lenta); (3) re-escrever hercules/shutendoji com golpe-final (predicado pronto).
+- **O motor de Provação é auditável e está auditado** (auditoria.test.js verde; 84% dos predicados com consumidor). Base sólida p/ a F3 construir maestria/panteões/composição/Provação-semanal por cima.
+
 ## Última sessão — **FASE 2 FECHADA: 90/100 com Provação (63 ensinam-kit + 27 rota genérica).** REVIVE + AUTO-MORTE + baratas + 3 dívidas + cauda + genéricas (§181–195).
 
 **PROVAÇÃO GENÉRICA (§195) — resolve a rota-de-aquisição dos 28 sem-Provação.** Forma `deadline{N} + semPerderAliado{quem:<deus>}` ("vença sem perder [deus]"), zero motor, babá falha por construção (troca protagonismo por rota), marcadas `"generica": true` (F4 substitui após rebalancear kit). **27 de 28 carimbadas** (N/nível derivados; 19 com perseu·houyi dl12, anubis dl15, 7 com CURADOR oxum dl14 — o curador protege o título squishy, que É o rider). **oni RESISTE mesmo na genérica → kit sustenta rider NENHUM (candidato nº1 a rework F4).** **Números: 63 ensinam-kit · 27 dão-a-rota · 1 (oni) sem-rota · 9 iniciais. 90 com Provação, 10 sem.**

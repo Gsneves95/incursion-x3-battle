@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §196 — FECHAMENTO DO ARCO: regra do CURADOR (time de suporte p/ genéricas) + VARREDURA DE ÓRFÃOS (6 espécies) — a disciplina segurou, nada novo latente.
+
+**REGRA DO CURADOR (dono) — a Provação GENÉRICA pede TIME DE SUPORTE, não 2 atacantes, porque o rider é MANTER O DEUS VIVO.** 7 dos 8 resistentes fecharam só ao trocar 1 atacante (houyi) por CURADOR (oxum): perseu·houyi (2 atacantes) não protegem o título squishy → o deus morre vs o set gentil em 15 turnos. **Regra p/ as 27 e p/ QUALQUER genérica futura:** título squishy → `[deus, atacante, curador]`; título robusto → `[deus, atacante, atacante]` basta. O template do `semPerderAliado{quem:título}` adapta o TIME à sobrevivência do protegido, não ao dano.
+
+**VARREDURA DE ÓRFÃOS (fim do arco, como o §113 no fim da Fase 1) — ~15 predicados novos + 90 arquivos, a mesma janela em que o §113 achou coisa. RESULTADO: LIMPO.**
+- **Espécie 1 — predicado SEM consumidor (5):** `estadoContinuo`, `estadoSimultaneo` (documentam o IRREALIZÁVEL — uptime-estrito §178, simultaneidade §193; valor = "o que NÃO fecha"); `abatePorSlot` (horus/kraken saíram), `soloSobrevivente` (erinias saiu), `buffContinuo` (dagda virou semPerderAliado) — **consumidor-que-saiu, não bug.**
+- **Espécie 2 — fonte-de-acúmulo sem implementação: 0** (as 11 FONTES_ACUMULO têm `case` em acumuladoDe).
+- **Espécie 3 — campo-de-evento sem leitor (junta-não-ligada): 0** (os 3 campos novos — statusInimigo §186, campo §178, unico §172 — são EMITIDOS e LIDOS por predicado).
+- **Espécie 4 — fx/gatilho/VOCAB órfão no MOTOR:** coberto por `auditoria.test.js` (VERDE) — a auditoria audita emite×lê no motor a cada build.
+- **Espécie 5 — predicado que valida mas ignora em runtime (§71):** `validarProvacao` recusa predicado/fonte/campo desconhecido na BUILD; o campo `generica` (novo, §195) passou build+catálogo+auditoria sem quebrar (é metadado, não condição).
+- **6ª ESPÉCIE (a que a Fase 2 criou, §176 — predicado SEM GRADIENTE = testado ≠ navegável): SÓ 1, e já endereçado.** `limparBuffsAntesDeAbate` retorna `pendente` sem `distancia` → trava o 1º consumidor que precise do gradiente (iansã fecha por acidente, o greedy limpa buffs ao vencer). **JÁ com endereço no §177 (armadilha latente). NENHUM NOVO** — os outros dois históricos (buffNoAbate/buffContinuo, regressão §176; abatePeloProprioLado §175) foram consertados na fase e hoje têm gradiente.
+
+**VEREDITO: a disciplina do §87/§176 segurou o arco inteiro.** A varredura, na janela em que a Fase 1 achou junta-não-ligada, veio LIMPA: os únicos "órfãos" são os 5 predicados-sem-consumidor (2 documentação, 3 consumidor-saiu) e a 1 armadilha já endereçada. Nenhum bug latente novo em ~15 predicados + 90 arquivos. **Para a Fase 3, isso é confiança: o motor de Provação é auditável e está auditado.**
+
 ## §195 — PROVAÇÃO GENÉRICA p/ os 28 sem-rota: 27 carimbadas, oni RESISTE MESMO ASSIM (kit sustenta rider NENHUM). Separação: 63 ensinam-kit × 27 dão-só-a-rota.
 
 **O PROBLEMA (dono) era de PRODUTO, não de motor:** deus de peso (odin, medusa) sem rota determinística enquanto Zeus/Hades têm parece ARBITRÁRIO ao jogador — que não sabe que o motivo é mecânico. **Solução: Provação GENÉRICA, forma `deadline{N} + semPerderAliado{quem:<deus>}` ("vença em N sem perder [deus]"), ZERO motor novo** (o `quem` existe desde §172; validou de primeira).
