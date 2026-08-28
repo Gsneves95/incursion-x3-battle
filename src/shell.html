@@ -792,6 +792,51 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .prow__dif i.on{background:var(--gold-text)}
 .prow--feita{opacity:.72;border-style:dashed}
 .prow--feita .prow__deus{color:var(--ink-dim)}
+.prowli{list-style:none}
+.prow{width:100%;text-align:left;cursor:pointer;font-family:inherit;transition:border-color .12s ease,transform .08s ease}
+.prow:active{transform:translateY(1px) scale(.995);border-color:var(--gold-text)}
+.prow__seta{font-family:'Cinzel',serif;font-weight:900;font-size:15px;color:var(--gold-soft);margin-left:2px}
+.prow--feita .prow__seta{color:var(--ink-mute)}
+
+/* ===================== F3.1 — HUD da Provação (condição visível DURANTE) ===================== */
+.phud{position:absolute;left:50%;top:52px;transform:translateX(-50%);z-index:3;
+  width:min(560px,86%);pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,8,22,.94),rgba(10,8,22,.72));
+  border:1px solid var(--gold-soft);border-radius:9px;padding:6px 12px 7px;
+  box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.phud__linha{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.phud__tit{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.08em;
+  color:var(--gold-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phud__prazo{font-weight:700;font-size:12px;letter-spacing:.04em;color:var(--ink-dim);white-space:nowrap}
+.phud__prazo b{color:var(--ink);font-size:13px}
+.phud__prazo.perigo{color:var(--e-Chama)}
+.phud__prazo.perigo b{color:var(--e-Chama)}
+.phud__chips{display:flex;flex-wrap:wrap;gap:5px 7px;margin-top:5px}
+.phud__chip{display:inline-flex;align-items:center;gap:4px;font-weight:600;font-size:10.5px;
+  letter-spacing:.02em;color:var(--ink-dim);border:1px solid #2c2648;border-radius:12px;
+  padding:2px 8px;background:rgba(16,13,32,.6)}
+.phud__chip i{font-style:normal;font-weight:800;font-size:10px;opacity:.9}
+.phud__chip b{color:var(--ink);font-weight:700;margin-left:1px}
+.phud__chip--cumprida{color:var(--e-Verdejante);border-color:rgba(88,214,141,.45)}
+.phud__chip--cumprida i{color:var(--e-Verdejante)}
+.phud__chip--quebrada{color:var(--e-Chama);border-color:rgba(255,92,138,.5);background:rgba(255,92,138,.08)}
+.phud__chip--quebrada i{color:var(--e-Chama)}
+
+/* resultado da Provação (três derrotas + vitória com placar) */
+.result--prova .result__selo{display:inline-block;font-family:'Cinzel',serif;font-weight:700;
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);
+  border:1px solid #2c2648;border-radius:12px;padding:2px 12px;margin-bottom:8px}
+.result--prova h1{font-family:'Cinzel',serif;font-weight:900;letter-spacing:.06em;margin:0}
+.result--venceu h1{color:var(--e-Verdejante)}
+.result--hp h1,.result--prazo h1,.result--cond h1{color:var(--e-Chama)}
+.result__prova{font-family:'Cinzel',serif;font-weight:600;font-size:14px;color:var(--gold-text);margin:6px 0 2px}
+.result__msg{font-weight:600;font-size:13px;line-height:1.4;color:var(--ink-dim);margin:0 0 4px}
+.result__placar{display:flex;flex-direction:column;align-items:center;gap:2px;margin:10px 0 4px;
+  font-weight:600;font-size:13px;color:var(--ink)}
+.result__placar b{color:var(--gold-text);font-size:16px}
+.result__min{font-size:11px;color:var(--ink-mute);letter-spacing:.04em}
+.result__rec{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.08em;color:var(--e-Aurora)}
+.result__acoes{display:flex;gap:8px;justify-content:center;margin-top:12px}
 </style>
 </head>
 <body>

@@ -64,6 +64,7 @@ const armaz  = semGuard(ler('src/armazenamento.js'));
 const turno  = semGuard(ler('src/turno.js'));
 const rotas  = semGuard(ler('src/rotas.js'));
 const enquadr= semGuard(ler('src/enquadramento.js'));
+const provac = semGuard(ler('src/provacao.js'));   // F3.1: o motor de Provação (montar/avaliar/PREDICADOS) passa a rodar no browser
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const ia     = semGuard(ler('src/ia.js'));
@@ -77,6 +78,12 @@ const casca  = ler('src/shell.html');
 const deuses = fs.readdirSync(path.join(raiz, 'data', 'deuses'))
   .filter(f => f.endsWith('.json')).sort()
   .map(f => JSON.parse(ler('data/deuses/' + f)));
+// as criaturas do bestiário viram DADO embutido (F3.1): as Ordálias têm inimigos que são
+// criaturas PvE, não deuses do roster. montarProvacao usa o catálogo MERGED (GODS ∪ BESTIARIO).
+const bestiarioDir = path.join(raiz, 'data', 'bestiario');
+const bestiarioDados = fs.existsSync(bestiarioDir)
+  ? fs.readdirSync(bestiarioDir).filter(f => f.endsWith('.json')).sort().map(f => JSON.parse(ler('data/bestiario/' + f)))
+  : [];
 function checarKits() {
   const { validarDeus, validarHabilidade } = require('./valida_kit.js');
   const E = require('../src/engine.js');
@@ -154,7 +161,7 @@ if (cadeia.divergencias.length) {
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [
-  perfil, armaz, turno, rotas, enquadr,
+  perfil, armaz, turno, rotas, enquadr, provac,
   ler('src/ui/base.js'), ler('src/ui/narrar.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
   ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'), ler('src/ui/home.js'),
   visao,
@@ -170,7 +177,18 @@ const provacoes = (() => {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()
     .map(f => JSON.parse(ler('data/provacoes/' + f)))
-    .map(p => ({ key: p.key, titulo: p.titulo, nivel: p.nivel, dificuldade: p.dificuldade, generica: !!p.generica }));
+    .map(p => {
+      // F3.1: além dos campos de exibição, o runtime precisa de aliados/inimigos/montar/condicoes
+      // p/ montar e avaliar a batalha. `minimo` = lances do MELHOR caminho do solucionador (lances = ações,
+      // não "passar"): é o placar embrionário — "concluída em N" contra o mínimo conhecido. O `caminho`
+      // completo (pesado) NÃO viaja: só o número.
+      const cam = (p.verificacao && Array.isArray(p.verificacao.caminho)) ? p.verificacao.caminho : null;
+      const minimo = cam ? cam.filter(l => !/^passar$/i.test(String(l).trim())).length : null;
+      return {
+        key: p.key, titulo: p.titulo, nivel: p.nivel, dificuldade: p.dificuldade, generica: !!p.generica,
+        aliados: p.aliados, inimigos: p.inimigos, montar: p.montar || {}, condicoes: p.condicoes || [], minimo,
+      };
+    });
 })();
 
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
@@ -180,6 +198,7 @@ const saida = casca
   // motor (o motor lê GODS só em runtime, mas a UI o lê no render; e é "dado consumido cedo").
   .replace('/*__ENGINE__*/',
     'const DEUSES=' + JSON.stringify(deuses) + ';\n' + catalogo + '\nconst GODS=montarCatalogo(DEUSES);\n'
+    + 'const BESTIARIO_DADOS=' + JSON.stringify(bestiarioDados) + ';\nconst BESTIARIO=montarCatalogo(BESTIARIO_DADOS);\n'
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.

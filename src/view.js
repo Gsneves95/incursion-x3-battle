@@ -10,6 +10,10 @@
 let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
 
+// F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
+// resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
+let prova=null, provaFim=null, provaLances=0;
+
 // Perfil do jogador (persistido; ver src/perfil.js + src/armazenamento.js). Carregado
 // no bootstrap; a F0.4b liga o pity do gacha a ele.
 let perfil=null;
@@ -45,15 +49,21 @@ function renderBatalha(){
   const l=st.lados[eu], o=st.lados[1-eu];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
+  // F3.1: numa Provação, avalia a condição ANTES de desenhar — o latch (uma vez só) decide
+  // vitória/derrota, congela o motor quando a condição quebra com a luta em curso, e desbloqueia
+  // o deus na vitória. Fica antes do cálculo do scrim para o overlay já refletir o fim.
+  if(prova) atualizarProva();
+
   // Sobreposição COM SCRIM aberta? (todas as overlays de batalha são .ov, com scrim;
   // o menu ⋯ NÃO tem scrim — não entra aqui.) Quando há, a base fica INERTE e o primário
   // da base rebaixa (consequência do inert), para valer INV 16: no máximo um primário
   // visível E acessível. A sobreposição é IRMÃ da #baselayer, então segue interativa.
-  const scrim = !!ov || !!st.fim;
+  const scrim = !!ov || !!st.fim || !!provaFim;
   stage.innerHTML = `<div id="baselayer"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}
+  ${prova?provaHUD():''}
   <div class="stagemark">INCURSION</div>
   <section class="team team--ally">${l.units.map(u=>`
     <article class="unit ${u.vivo&&!podeAgir(u)?'acted':''}">${retrato(u,false)}${habilidades(u)}
@@ -73,7 +83,7 @@ function renderBatalha(){
     </div>`}
   </footer>
   </div>
-  ${overlayHTML()}`;
+  ${(prova&&provaFim)?provaResultadoOverlay():overlayHTML()}`;
 
   hpAnt={}; todas().forEach(u=>hpAnt[u.uid]=u.hp);
   if(peek){const el=stage.querySelector(`[data-look="${peek}"]`); if(el)el.classList.add('peek'); peek=null;}
@@ -84,6 +94,7 @@ function renderBatalha(){
 // roda por último — se for a vez da CPU, ela joga sozinha.
 function ligar(){
   ligarCampo(); ligarTopo(); ligarPainel(); ligarSobrepor();
+  if(prova&&provaFim) ligarProvaFim();   // F3.1: os botões do fim de Provação (voltar/tentar) substituem o "Nova batalha"
   talvezIA();
 }
 

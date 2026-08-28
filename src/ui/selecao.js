@@ -274,6 +274,7 @@ function ligarSelecao(){
     vez=0;renderPick();};
   q('#bgo').onclick=()=>{
     if(!(pick[0].length===3&&pick[1].length===3))return;
+    prova=null;   // F3.1: batalha de seleção não é Provação — sem HUD nem laço de condição
     st=novoEstado(pick[0],pick[1],Math.floor(Math.random()*1e6),Math.floor(Math.random()*2),
       (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null);   // regra de geração de energia (economia.json)
     // batalha SUBSTITUI a seleção na pilha (não empilha): "voltar" não pode

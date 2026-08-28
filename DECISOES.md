@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §198 — FASE 3, F3.1: o LAÇO da Provação — lista → batalha → avaliação → desbloqueio. Condição VISÍVEL durante, TRÊS derrotas distintas, placar contra o mínimo do solucionador.
+
+**Por que a Provação veio ANTES da Campanha (dono):** a Provação é o único conteúdo PRONTO e VALIDADO — 90 montagens carimbadas, cada uma provada vencível. A Campanha não foi escrita. Ligar a Provação primeiro transforma o que a Fase 2 mediu em jogo jogável HOJE, e a Campanha entra depois com o caminho já testado.
+
+**O MOTOR DE PROVAÇÃO PASSA A RODAR NO BROWSER.** Até a F3.0 o `provacao.js` (montarProvacao/avaliarProvacao/PREDICADOS) só rodava na BUILD (validação). A F3.1 embute no bundle: `provacao.js` (semGuard) + o `BESTIARIO` (as Ordálias têm inimigos-criatura, não deuses — 3 das 90 usam vidente_corrompido/aparicao/golem_runico) + a Provação COMPLETA (aliados/inimigos/montar/condicoes), não só os campos de exibição. O `caminho` pesado do carimbo NÃO viaja — só o número derivado dele (`minimo`).
+
+**O LAÇO (o mesmo `avaliarProvacao` da build, agora a cada render):**
+- `iniciarProva(key)` monta `st` por `montarProvacao` (o estado à mão, não a tela de seleção), força vsCPU (o inimigo é a IA), entra em `batalha` por substituir.
+- `renderBatalha` chama `atualizarProva()` ANTES de desenhar: avalia, faz LATCH do resultado uma vez só, e desbloqueia o deus na vitória. O latch é seguro porque toda falha das condições usadas é MONOTÔNICA (deadline por turno, semPerderAliado/queda permanente, slots proibidos) — nenhuma volta de 'falha' para 'ok', então não há falso-positivo mid-turno.
+- **Congelar quando a condição quebra com a luta em curso:** deadline estourado ou aliado protegido caído deixam `st.fim` NULO (o motor não "perdeu"). O latch escreve um `st.fim` sintético (vitória do lado 1) — reusa as guardas que já existem (`tique`/`talvezIA` já checam `st.fim`), sem inventar um segundo freeze.
+
+**A CONDIÇÃO VISÍVEL DURANTE (dono: "não só antes"):** o HUD (barra no topo da batalha) mostra o PRAZO ao vivo (Turno X / N · faltam K, vermelho a ≤2) e um chip por condição extra com estado (✓ cumprida / • em andamento / ✕ quebrada) e progresso X/N nas de contagem. Um `descreverCondicao` traduz os 26 predicados usados nas 90 para texto imperativo ("Mantenha Durga de pé", "Execute 2 inimigos"), com fallback para o nome do predicado.
+
+**AS TRÊS DERROTAS LEGÍVEIS (dono):** o `motivo` do `avaliarProvacao` mapeia em três finais com título, cor e mensagem próprios — **HP** ("seus deuses tombaram", base perdida), **PRAZO** ("o limite passou", deadline), **CONDIÇÃO** ("faltou: <o quê>", qualquer outro predicado). A vitória traz o **placar embrionário**: "Concluída em N lances" contra o "melhor conhecido" (o `minimo` = ações não-"passar" do melhor caminho do solucionador — comparável ao contador de lances do jogador, que conta cada ação confirmada do lado 0). Empatar ou bater o mínimo marca "✦ no ritmo do ótimo". O perfil guarda o MELHOR (menos lances) em `perfil.provacoes[key]`.
+
+**DESBLOQUEIO:** vitória → `adicionarDeus` + `salvar`; a lista relê o perfil e a Provação vira CONCLUÍDA (§197). Falha da gravação vira linha de registro, não silêncio.
+
+**CONSEQUÊNCIA DE ESCOPO:** a batalha-protótipo de seleção (que a F3.0 tirou do alcance da home) segue existindo; a F3.1 NÃO a religou — Campanha continua marcador. O laço lista→batalha é o caminho jogável. **CRITÉRIO DE PRONTO cumprido:** Provação jogável de ponta a ponta (teste `provacao_loop` dirige o bundle real: entra pela lista, vence/perde pelos três caminhos, confere desbloqueio e persistência; as 90 montam e começam em andamento), condição visível, três derrotas distintas, captura contra o dist. Suíte verde.
+
 ## §197 — FASE 3, F3.0: a HOME (hub) e a navegação entre os 5 destinos + a LISTA DE PROVAÇÕES (90). Nível do CARIMBO, `generica` oculto, desbloqueado = CONCLUÍDA.
 
 **A HOME é o novo boot.** `ir('home')` no lugar de `ir('selecao')` (o smoke da build e o teste de rotas passam a exigir `home`). Cinco destinos, app de celular em paisagem: **a home NÃO rola** (cabe nos 428 de altura — provado por CDP: `scrollWidth==clientWidth` nos dois eixos), alvos de toque grandes, **nada de hover como afordância** — o estado do destino é dito por TEXTO no cartão (`Em breve` / `90 provações` / `Indisponível · Fase 5`).

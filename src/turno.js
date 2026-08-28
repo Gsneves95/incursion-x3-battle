@@ -141,6 +141,7 @@ function confirmar() {
   if (!a || !a.disponivel) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
   const r = agir(st, armado.uid, a.slot, [...escolhidos]);
   if (!r.ok) st.log.push({ turno: st.turno, msg: '✗ ' + r.erro });
+  else if (typeof prova !== 'undefined' && prova) provaLances++;   // F3.1: conta o lance do jogador (o placar) — só ação confirmada e válida
   armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar();
 }
 
