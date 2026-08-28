@@ -395,6 +395,19 @@ console.log('== 21. estadoTurnos (§178, uptime RELAXADO): ≥N turnos com o cam
   console.log('  ≥N turnos-de-campo (distintos) — o relaxamento do uptime estrito irrealizável (§178)');
 }
 
+console.log('== 22. reviveAliado + naoReviveInimigo (§179, núcleo REVIVE): contar revives do lado 0; barrar revive do lado 1 ==');
+{
+  const ctx = { ladoDe: k => (k === 'a') ? 0 : 1 };
+  const ra = (log, q) => PROV.PREDICADOS.reviveAliado.aval({ log }, { quantos: q }, ctx);
+  const nr = (log) => PROV.PREDICADOS.naoReviveInimigo.aval({ log }, {}, ctx);
+  ok(ra([{ tipo: 'revive', alvo: 'a' }], 1) === 'ok', 'reviveAliado: 1 revive de aliado ≥1 → ok');
+  ok(ra([{ tipo: 'revive', alvo: 'a' }], 2) === 'pendente', 'reviveAliado: 1<2 → pendente');
+  ok(ra([{ tipo: 'revive', alvo: 'e' }], 1) === 'pendente', 'reviveAliado: revive de INIMIGO não conta');
+  ok(nr([{ tipo: 'revive', alvo: 'e' }]) === 'falha', 'naoReviveInimigo: um revive inimigo → falha ("ninguém volta")');
+  ok(nr([{ tipo: 'revive', alvo: 'a' }]) === 'ok', 'naoReviveInimigo: revive de aliado não viola');
+  console.log('  reviveAliado conta lado 0 (anti-greedy ×1000) · naoReviveInimigo barra lado 1 (§167→§179, hel)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

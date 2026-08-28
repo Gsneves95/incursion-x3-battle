@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §179 — LOTE REVIVE ABERTO: tradução (5 sub-formas, AUTO-MORTE separada), motor (`reviveAliado`/`naoReviveInimigo`/montar.caido), e o núcleo VALIDADO com 2 achados.
+
+**TRADUÇÃO — a família é HETEROGÊNEA (como a preservação); PARTIÇÃO (dono):**
+- **NÚCLEO REVIVE-ALIADO (agora):** demeter, freyja, osiris (revive-1), isis (revive-todos). Predicado `reviveAliado{quantos}`.
+- **"NINGUÉM VOLTA" (agora):** hel — o §167 parado nasce como `naoReviveInimigo` (zero revive do lado 1, falha-durante; enforcement naoRevive/marcaMorte já existia).
+- **AUTO-SACRIFÍCIO-HP (agora):** odin — `hpTetoSelf` (§177) é o consumidor.
+- **AUTO-MORTE (LOTE PRÓPRIO, DEPOIS — dono):** bennu, mimir, ymir, erinias. O babá-invertido NÃO se aplica (o TÍTULO morre). Risco a ver: se o título morre, quem vence? o rider pede que ele caia, a vitória pede matar os inimigos, o solver prefere não morrer → **"ativo-opcional invertido", a família mais estranha da fase.** Tradução separada.
+
+**A JANELA INVERTIDA (dono) — letal p/ derrubar um, contido p/ não derrubar o revivedor.** Espelho do §170. MAS o design correto NÃO é a IA matar (o solver não força a IA): é **começar com aliados CAÍDOS** (montar.caido — catálogo demeter "começa com dois aliados já caídos"). Adicionado ao override do montar (§179).
+
+**MOTOR (testado §22, regressão verde):** `reviveAliado{quantos}` (conta `tipo:'revive'` lado 0, gradiente ×1000 pois reviver é anti-greedy); `naoReviveInimigo` (falha-durante); `montar.caido` (aliado nasce caído).
+
+**NÚCLEO VALIDADO — 2 achados p/ o dono:**
+1. **A JANELA TEM GRADIENTE, não é trivial-ou-impossível (≠ lote 8).** demeter [1 caído] + bootstrap Verdejante: H caiu 1172→86 (o termo ×1000 do revive SUMIU → o revive ACONTECEU); o resto (H=86) é só o WIN (time fraco não faz wipe em dl12). O revive é navegável; o trabalho restante é win-calibration + a ECONOMIA (revivedor precisa do próprio elemento — a parede do dagda de novo: sem Verdejante/Aurora, não paga o milagre de revive).
+2. **isis é MAIS DIFÍCIL, não mais fácil (inverte a contra-intuição do dono).** "revive todos/2" exige 2 pré-caídos → isis começa quase SOZINHA → INVENCÍVEL. O design pré-caído (montar) muda a dinâmica: o teto-2 do quantificador deixa o revivedor ISOLADO, o oposto de "set mais letal = mais fácil". O teto natural (2 aliados) protege o quantificador de morder POR CIMA, mas morde POR BAIXO (isola o revivedor).
+
+**PENDENTE:** carimbar o núcleo (calibrar set+time+bootstrap p/ revive E win fecharem — demeter perto, H=86); hel (naoReviveInimigo vs revivedores-inimigos); odin (hpTetoSelf). Depois o lote AUTO-MORTE (tradução separada).
+
 ## §178 — UPTIME RELAXADO p/ ≥N TURNOS (estadoTurnos); a PROPRIEDADE "uptime estrito é inescrevível"; amaterasu+aquiles carimbadas; tsukuyomi/orfeu pendentes.
 
 **`estadoTurnos{campo, limiar}` (motor §178) — o uptime RELAXADO.** Conta TURNOS distintos com o campo ativo (turno-event ganha o carimbo `campo: st.fase`, engine l.1469). Mede ESFORÇO, não perfeição. Testado+navegável (§21, gradiente ×30).

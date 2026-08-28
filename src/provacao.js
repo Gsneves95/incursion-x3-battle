@@ -97,6 +97,17 @@ const PREDICADOS = {
     chave: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return String(st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
     distancia: (st, c, ctx) => { const lado = ladoDoQuem(c.quem); return Math.max(0, c.quantos - st.log.filter(e => e.tipo === 'queda' && e.execucao && ctx.ladoDe(e.alvo) === lado).length); },
   },
+  reviveAliado: {   // §179 (núcleo REVIVE): ≥`quantos` aliados REVIVIDOS (evento tipo:'revive' no lado 0, motor l.993). O caído VOLTA — inverso do abate. Conta ao vivo.
+    modo: 'log', obrig: ['quantos'],
+    aval: (st, c, ctx) => st.log.filter(e => e.tipo === 'revive' && ctx.ladoDe(e.alvo) === 0).length >= c.quantos ? 'ok' : 'pendente',
+    chave: (st, c, ctx) => String(st.log.filter(e => e.tipo === 'revive' && ctx.ladoDe(e.alvo) === 0).length),
+    // ×1000: reviver é ANTI-GREEDY (exige DEIXAR um aliado cair p/ trazer de volta — o guloso evita cair). Domina o HP-base, como o abatePeloProprioLado.
+    distancia: (st, c, ctx) => Math.max(0, c.quantos - st.log.filter(e => e.tipo === 'revive' && ctx.ladoDe(e.alvo) === 0).length) * 1000,
+  },
+  naoReviveInimigo: {   // §167 (parado, hel) → §179 (consumidor real): NENHUM inimigo revivido ("ninguém volta"). falha-DURANTE. Enforcement (naoRevive/marcaMorte da Hel) já existe no motor.
+    modo: 'log', obrig: [],
+    aval: (st, c, ctx) => st.log.some(e => e.tipo === 'revive' && ctx.ladoDe(e.alvo) === 1) ? 'falha' : 'ok',
+  },
   abatePorSlot: {   // §162 (cernunnos): ≥`quantos` `quem` caíram por um SLOT nomeado (queda.slot). Parametrizado (§46) — cernunnos: slot 'reflexo' (o reflexo é a ARMA, não a coleta). Mesmo padrão do abatePorExecucao.
     modo: 'log', obrig: ['quem', 'slot', 'quantos'],
     aval: (st, c, ctx) => {
@@ -392,6 +403,7 @@ function montarProvacao(prov) {
     // é o mecanismo de chefe — não há kit de chefe separado; a Provação sobe o maxHp da unidade aqui (§ owner F2.3).
     if (u.maxHp != null) un.maxHp = u.maxHp;
     if (u.hp != null) un.hp = u.hp;
+    if (u.caido) { un.vivo = false; un.hp = 0; }   // §179 (núcleo REVIVE): aliado começa CAÍDO (demeter "começa com dois aliados já caídos") — o revive traz de volta, sem depender da IA inimiga matar
     if (u.shield != null) un.shield = u.shield;
     if (u.efeitos) un.efeitos.push(...u.efeitos);
     if (u.contadores) Object.assign(un.contadores, u.contadores);
