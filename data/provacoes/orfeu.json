@@ -1,0 +1,75 @@
+{
+  "key": "orfeu",
+  "titulo": "Canção do Submundo",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "orfeu",
+    "perseu",
+    "zeus"
+  ],
+  "inimigos": [
+    "fenrir",
+    "kali",
+    "babi"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "orbs": {
+      "0": {
+        "Umbra": 6
+      }
+    }
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "statusTurnos",
+      "status": "adormecido",
+      "limiar": 2
+    }
+  ],
+  "verificacao": {
+    "hash": "3ff838f2",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 43,
+    "ms": 141,
+    "caminho": [
+      "perseu Cabeça da Medusa → fenrir",
+      "orfeu Corda da Lira → fenrir",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → fenrir",
+      "orfeu Corda da Lira → kali",
+      "passar",
+      "zeus Julgamento do Trovão → fenrir",
+      "perseu Lâmina Curva → fenrir",
+      "orfeu Corda da Lira → fenrir",
+      "passar",
+      "zeus Cetro do Trovão → kali",
+      "perseu Lâmina Curva → kali",
+      "orfeu Canção Órfica → fenrir",
+      "passar",
+      "perseu Cabeça da Medusa → kali",
+      "zeus Julgamento do Trovão → kali",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → kali",
+      "passar",
+      "zeus Julgamento do Trovão → babi",
+      "perseu Lâmina Curva → babi",
+      "passar",
+      "zeus Cetro do Trovão → babi",
+      "perseu Lâmina Curva → babi",
+      "passar",
+      "perseu Cabeça da Medusa → babi"
+    ]
+  }
+}
