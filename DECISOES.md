@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §189 — DÍVIDA-PUBLICADA com ENDEREÇO (aceita até a F4); SLOT-MORTO vira lista de balanceamento; e a CONTAGEM da Fase 2: 57/91 carimbadas, 11 saídas, 23 na cauda (5 famílias).
+
+**DÍVIDA-DE-CONTEÚDO PUBLICADA — aceita até a Fase 4 (dono). Recusados: rebalance de kit (11ª vez — a regra não muda por dívida de conteúdo) E o mecanismo-mais-forte (gradiente que força ferramenta que a vitória não precisa = o solucionador MENTINDO sobre jogabilidade).** Endereço preciso das duas Provações que FUNCIONAM e ENSINAM MENOS:
+- **hercules** — ensina ACUMULAR (danoBonus≥16) quando devia ensinar o GOLPE-FINAL com 5 stacks de Os Doze Trabalhos.
+- **shutendoji** — ensina APLICAR Torpor (efeitoEmNInimigos≥1) quando devia ensinar ROUBAR-VIA-Torpor (≥8 orbes).
+Ambas ficam com o carimbo antigo (VENCÍVEL). **Endereço: revisão de kit na Fase 4, junto de Xangô e Cernunnos.**
+
+**SLOT-MORTO = OBSERVAÇÃO DE BALANCEAMENTO (dono) — ferramenta OPCIONAL ou LENTA é slot morto.** O meta-padrão do §188 PREVÊ onde a dívida mora, e a lista fecha em QUATRO: **hercules (grind), shutendoji (roubo reativo), xangô (Balança), cernunnos (reflexo).** Quatro é PADRÃO, não coincidência — todas são ferramentas que a vitória nunca exige (opcionais) ou que não acompanham a corrida-p/-vencer (lentas/reativas), então o guloso as pula. **Predição verificável: a arena com IA Difícil deve confirmá-las na lista de "nunca usadas".** (A semente foi o raijin, §166: "dano espalhado é ativo-opcional" — o 1º slot-morto visto; agora é família de 4, endereçada p/ a F4.)
+
+**CONTAGEM DA FASE 2 (dono quer o número na mão) — 91 planejadas (100 deuses − 9 iniciais sem Provação: brigid, cuca, fujin, ganesha, nezha, ogum, sobek, tyr, zeus).**
+- **CARIMBADAS: 57/91.**
+- **SAÍDAS: 11** (deus sem Provação viável — teto real = 91−11 = **80**; então 57/80 do alcançável): nuwa (rider-impossível), oni·boitatá·curupira·cernunnos·xango·tsukuyomi·erinias (ferramenta-fraca), odin·ymir (rider-mismatched), raijin (spread ativo-opcional).
+- **CAUDA: 23 restantes**, em 5 famílias:
+  - **A. ESTADO-SIMULTÂNEO-NOS-3 (4):** aokuang, chaac (Encharcado+atordoado nos 3 no mesmo turno), medusa (Petrificados os 3), anubis (4 Ataduras+Selado nos 3). **Precisa de predicado NOVO** ("os 3 num estado ao mesmo tempo" — snapshot momentâneo, ≠ morteEmEstado que é na queda).
+  - **B. ABATE-POR-GOLPE-ESPECÍFICO (5):** durga (Fim de Mahishasura acima de 70), horus (Mergulho+Olho), kraken (Fúria = golpe final de ≥2), krishna (todo abate sob Ação Perfeita), lugh (3 modalidades ≥3× + Dia no fim). **Risco do §188** (abatePorSlot/buffNoAbate podem ser opcionais) — medir protagonismo.
+  - **C. VITÓRIA-SOB-RESTRIÇÃO (7):** babi, baldur, kagutsuchi (vença contra imunidade — set-design), shiva (sem Terceiro Olho), sunwukong (sem a passiva-de-sobrevivência), kali (sem cura externa), tanuki (sem repetir Metamorfose). **Reusa proibirSlotProprio + set-design; riders leves (muitos Ritos d1).**
+  - **D. UPTIME/USO-CONTADO (3):** houyi (remover o Dia ≥3× + sem milagre), huangdi (nenhuma habilidade >1 turno em recarga), exu (Fechar Caminhos ≥6× + sem milagre inimigo). **Reusa acumulo/estadoTurnos/negarAcaoInimigo.**
+  - **E. PRESERVAÇÃO-FILTRADA (4):** izanagi (nenhum aliado morre de DoT), nefertem (nenhum aliado termina turno com debuff), perseu (nenhum aliado controlado), kukulkan (Voo acerta os 3 Encharcados). **Reusa semPerderAliado/protegeDe + fonte de estado.**
+**A cauda é curta em ESFORÇO-NOVO:** só a família A (4) pede predicado novo; B/C/D/E reusam o motor atual (com o teste-do-protagonista do §188 na frente, p/ pegar os ativos-opcionais antes de carimbar).
+
 ## §188 — AS 3 DÍVIDAS REAIS: yamato PAGA (1/3); hercules e shutendoji RESISTEM porque o rider fiel é ATIVO-OPCIONAL/LENTO que o solver pula. Nem toda dívida-de-conteúdo se paga na Fase 2.
 
 **yamato PAGO — o padrão golpe-final se paga QUANDO a ferramenta é PROTAGONISTA-ÚNICA.** `stripBuffsInimigo{3}` (§187, lê o log de strip que o motor já grava, l.1823) + inimigo PRÉ-BUFFADO no montar (efeitos dmgUp/regem/dmgReduction — espelha o pré-caído §179 e o bootstrap §180: a montagem monta o cenário que o rider precisa, já que a IA não se auto-buffa). Corte Ceifa-Ervas remove os 3 → VENCÍVEL nós 844; babá aquiles trava H=90 (só yamato/iansã fazem mass-strip → protagonista). **Por que ESTE fechou:** a ferramenta é (a) ÚNICA (2 deuses no jogo mass-strippam) e (b) um GOLPE DECISIVO (uma cast), não um grind.
