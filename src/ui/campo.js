@@ -17,7 +17,7 @@ function efeitosHTML(u){
 /* ---------- retrato ---------- */
 function retrato(u,inimigo){
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
-  const g=GODS[u.key];
+  const g=_catPartida()[u.key]||{};   // catálogo DA PARTIDA (deuses ∪ bestiário): criatura PvE não está em GODS
   const alvo=alvos.some(x=>x.uid===u.uid);
   const jaEscolhido=escolhidos.includes(u.uid);
   const cls=['portrait'];
@@ -31,7 +31,7 @@ function retrato(u,inimigo){
     <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''}>
       ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 30)}
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
-      <button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>
+      ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>`:''}
       <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
       <div class="portrait__x"></div>
     </div>
@@ -103,8 +103,8 @@ function habilidades(u){
   }).join('')+`</div>`;
 }
 function ficha(u){
-  const g=GODS[u.key],lin=[];
-  lin.push(`${g.passiva.nome}: ${g.passiva.desc}`);
+  const g=_catPartida()[u.key]||{},lin=[];
+  if(g.passiva)lin.push(`${g.passiva.nome}: ${g.passiva.desc}`);
   for(const e of u.efeitos){const s=SYM[e.type];if(s)lin.push(`${s[2]}${e.v?' '+e.v:''} (${e.dur>90?'permanente':e.dur+'t'})`);}
   for(const d of u.dots)lin.push(`${rotuloEfeito(d.nome)} ${d.v}/t (${d.dur}t)`);
   for(const k of['habilidade','milagre','defesa'])if(u.cd[k]>0)lin.push(`${k} em recarga ${u.cd[k]}t`);
@@ -112,7 +112,7 @@ function ficha(u){
   detalhe={nome:u.nome.toUpperCase(),chave:'god-'+u.key,glifo:ini(u.nome),cor:COR(u.elem),
     meta:`${u.hp}/${u.maxHp} \u00b7 ${ELAB[u.elem]}`,
     texto:lin.join('  \u00b7  '),
-    classes:`${u.classe} \u00b7 ${u.funcao} \u00b7 ${u.faccao||GODS[u.key].faccao}`.toUpperCase()};
+    classes:`${u.classe} \u00b7 ${u.funcao} \u00b7 ${u.faccao||g.faccao||'PvE'}`.toUpperCase()};
   armado=null;alvos=[];escolhidos=[];render();
 }
 
@@ -142,7 +142,8 @@ function ligarCampo(){
   stage.querySelectorAll('[data-ficha]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.ficha); if(u)ficha(u);});
   stage.querySelectorAll('[data-pas]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const u=todas().find(x=>x.uid===b.dataset.pas),g=GODS[u.key];
+    const u=todas().find(x=>x.uid===b.dataset.pas),g=_catPartida()[u.key]||{};
+    if(!g.passiva)return;
     detalhe={nome:g.passiva.nome.toUpperCase(),chave:'god-'+u.key,glifo:'P',cor:COR(u.elem),
       meta:u.nome.toUpperCase()+' · PASSIVA'+(g.passiva.inerte?' · INERTE':''),
       texto:g.passiva.desc,classes:'SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA'};

@@ -13,7 +13,7 @@ const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 // Os cinco caminhos da home. `rota` nula = cartão indisponível (PvP, Fase 5). Os três
 // "em breve" caem todos no mesmo marcador, parametrizado pelo título — nenhum motor novo.
 const HOME_DESTINOS = [
-  { chave: 'campanha',  rotulo: 'Campanha',  glifo: '⚔', rota: 'embreve',   nota: 'Em breve' },
+  { chave: 'campanha',  rotulo: 'Campanha',  glifo: '⚔', rota: 'campanha' },
   { chave: 'provacoes', rotulo: 'Provações', glifo: '◈', rota: 'provacoes', destaque: true },
   { chave: 'invocacao', rotulo: 'Invocação', glifo: '✦', rota: 'invocacao' },
   { chave: 'colecao',   rotulo: 'Coleção',   glifo: '▤', rota: 'colecao' },
@@ -28,9 +28,12 @@ function tileHomeHTML(d){
   const indisponivel = !d.rota;
   const donos = (typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : 0;
   const totalDeuses = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
+  const campFeitos = (typeof perfil !== 'undefined' && perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas)) ? perfil.campanha.concluidas.length : 0;
+  const campTotal = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.encontros) ? CAMPANHA.encontros.length : 0;
   const nota = d.chave === 'provacoes' ? `${totalProvacoes()} provações`
     : d.chave === 'colecao' ? `${donos}/${totalDeuses} deuses`
     : d.chave === 'invocacao' ? 'invocar deuses'
+    : d.chave === 'campanha' ? (campTotal ? `capítulo 1 · ${campFeitos}/${campTotal}` : 'aprenda as regras')
     : (d.nota || '');
   const cls = ['htile'];
   if (d.destaque) cls.push('htile--destaque');
@@ -338,6 +341,7 @@ function sairProva(){ prova = null; provaFim = null; provaLances = 0; }
 function iniciarProva(key){
   const p = (typeof PROVACOES !== 'undefined') ? PROVACOES.find(x => x.key === key) : null;
   if (!p) return;
+  campanha = null; campanhaFim = null;   // não é encontro de campanha
   prova = p; provaFim = null; provaLances = 0;
   st = montarProvacao(p);
   vsCPU = true;   // os inimigos da Provação são a CPU (o jogador controla o lado 0)
@@ -468,3 +472,215 @@ function renderDeusDetalhe(){
   if (jb) jb.onclick = () => iniciarProva(jb.dataset.jogarprova);
   fit();
 }
+
+// ===================================================================
+// F3.3 — CAMPANHA (Capítulo 1): a única tela que ensina as REGRAS.
+// As Provações ensinam os deuses; nada ensinava custo, recarga, a Defesa universal,
+// a ordem de resolução e a escolha de time. O capítulo é uma sequência de encontros
+// que reusa a MÁQUINA DE PROVAÇÃO (montar estado + time inimigo) SEM condição especial:
+// vencer = derrubar os inimigos. A progressão de ENSINO é o ponto, não a dificuldade.
+// A recompensa vem de data/economia.json; o chefe é deus do roster com HP inflado no montar.
+// ===================================================================
+
+let campTimePick = [];   // seleção do encontro "escolha de time"
+
+function campEncontros(){ return (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.encontros) ? CAMPANHA.encontros : []; }
+function encFeito(id){ return !!(perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas) && perfil.campanha.concluidas.includes(id)); }
+// estado de um encontro na trilha: 'feito' | 'aberto' (o 1º não-feito) | 'travado'.
+function encEstado(enc, i, encs){
+  if (encFeito(enc.id)) return 'feito';
+  const anteriorPendente = encs.slice(0, i).some(e => !encFeito(e.id));
+  return anteriorPendente ? 'travado' : 'aberto';
+}
+function recompensaDe(chave){
+  const r = (typeof ECONOMIA !== 'undefined' && ECONOMIA.campanha && ECONOMIA.campanha.recompensas) ? ECONOMIA.campanha.recompensas[chave] : null;
+  return r || null;
+}
+function recompensaTexto(r){
+  if (!r) return '';
+  const parts = [];
+  if (r.gema) parts.push(`${r.gema} 💎`);
+  if (r.essencia) parts.push(`${r.essencia} ✦`);
+  return parts.join(' · ');
+}
+
+function cardEncontroHTML(enc, estado){
+  const r = recompensaDe(enc.recompensa);
+  const bloq = estado === 'travado';
+  return `<button class="cenc cenc--${estado}" data-enc="${enc.id}" ${bloq ? 'disabled' : ''}>
+    <span class="cenc__ic">${enc.chefe ? '☠' : estado === 'feito' ? '✓' : bloq ? '⚿' : '▶'}</span>
+    <span class="cenc__id">
+      <span class="cenc__nome">${H(enc.nome)}${enc.chefe ? ' <span class="cenc__chefe">CHEFE</span>' : ''}</span>
+      <span class="cenc__ensina">Ensina: ${H(enc.ensina.titulo)}</span>
+    </span>
+    <span class="cenc__pe">
+      <span class="cenc__rec">${recompensaTexto(r)}</span>
+      <span class="cenc__estado">${estado === 'feito' ? 'concluído' : bloq ? 'travado' : 'jogar'}</span>
+    </span>
+  </button>`;
+}
+
+function renderCampanha(){
+  const encs = campEncontros();
+  const feitos = encs.filter(e => encFeito(e.id)).length;
+  const cap = (typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA : { nome: 'Campanha', subtitulo: '' };
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
+      <h1 class="tela__titulo">Campanha</h1>
+      <span class="tela__cont">${feitos}/${encs.length}</span>
+    </header>
+    <div class="tela__rol">
+      <div class="ccap"><h2>${H(cap.nome)}</h2><p>${H(cap.subtitulo || '')}</p></div>
+      <div class="clista">${encs.map((e, i) => cardEncontroHTML(e, encEstado(e, i, encs))).join('')}</div>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.cenc[data-enc]')].forEach(b => {
+    if (b.disabled) return;
+    b.onclick = () => iniciarEncontro(b.dataset.enc);
+  });
+  fit();
+}
+
+// entrada de um encontro: time fixo → briefing→batalha; time nulo → o jogador MONTA (ensina a escolha).
+function iniciarEncontro(id){
+  const enc = campEncontros().find(e => e.id === id);
+  if (!enc) return;
+  if (enc.aliados == null) { campTimePick = []; ir('montartime', { id }); render(); return; }
+  iniciarEncontroComTime(enc, enc.aliados);
+}
+function iniciarEncontroComTime(enc, time){
+  prova = null; provaFim = null;               // não é Provação
+  campanha = Object.assign({}, enc, { aliados: time });
+  campanhaFim = null;
+  st = montarProvacao(campanha);               // reusa a máquina: só usa aliados/inimigos/montar
+  vsCPU = true;
+  ir('batalha', {}, { substituir: true });
+  render();
+}
+
+/* ---------- montar time (o encontro "escolha de time") ---------- */
+function renderMontarTime(){
+  const id = (paramsAtuais() || {}).id;
+  const enc = campEncontros().find(e => e.id === id) || {};
+  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
+  const tile = k => {
+    const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    const on = campTimePick.includes(k);
+    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}">
+      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
+      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
+      ${on ? `<span class="ctile__mark">${campTimePick.indexOf(k) + 1}</span>` : ''}
+      <span class="ctile__n">${H(g.nome)}</span>
+    </button>`;
+  };
+  const pronto = campTimePick.length === 3;
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+      <h1 class="tela__titulo">Monte seu time</h1>
+      <span class="tela__cont">${campTimePick.length}/3</span>
+    </header>
+    <div class="tela__rol">
+      <div class="ccap"><h2>${H(enc.nome || '')}</h2><p>${H((enc.ensina && enc.ensina.dica) || '')}</p></div>
+      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
+    </div>
+    <div class="cmontarpe">
+      <button class="b b--primary b--lg" id="bcomecar" ${pronto ? '' : 'disabled'}>Começar${pronto ? '' : ` (${campTimePick.length}/3)`}</button>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('campanha', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
+    b.onclick = () => {
+      const k = b.dataset.pick, j = campTimePick.indexOf(k);
+      if (j >= 0) campTimePick.splice(j, 1); else if (campTimePick.length < 3) campTimePick.push(k);
+      render();
+    };
+  });
+  const bc = stage.querySelector('#bcomecar');
+  if (bc && pronto) bc.onclick = () => { const enc2 = campEncontros().find(e => e.id === id); iniciarEncontroComTime(enc2, campTimePick.slice()); };
+  fit();
+}
+
+/* ---------- HUD do encontro (a lição visível durante) ---------- */
+function campanhaHUD(){
+  if (!campanha) return '';
+  const en = campanha.ensina || {};
+  return `<div class="phud phud--camp" aria-hidden="true">
+    <div class="phud__linha">
+      <span class="phud__tit">${H(campanha.nome || '')}</span>
+      <span class="phud__prazo">Ensina: <b>${H(en.titulo || '')}</b></span>
+    </div>
+    ${en.dica ? `<div class="chud__dica">${H(en.dica)}</div>` : ''}
+  </div>`;
+}
+
+/* ---------- resultado do encontro: vitória com recompensa, derrota com repetir ---------- */
+function atualizarCampanha(){
+  if (!campanha || campanhaFim || !st.fim) return;
+  const venceu = st.fim.resultado === 'vitoria' && st.fim.lado === 0;
+  campanhaFim = { venceu, recompensa: null, jaFeito: false };
+  pararRelogio();
+  if (venceu) concluirEncontro(campanha);
+}
+function concluirEncontro(enc){
+  if (!perfil) return;
+  if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [] };
+  if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
+  const jaFeito = perfil.campanha.concluidas.includes(enc.id);
+  const r = recompensaDe(enc.recompensa) || {};
+  if (!jaFeito) {
+    if (r.gema) perfil = creditar(perfil, 'gema', r.gema);
+    if (r.essencia) perfil = creditar(perfil, 'essencia', r.essencia);
+    if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [] };
+    if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
+    perfil.campanha.concluidas.push(enc.id);
+    perfil.campanha.capitulo = Math.max(perfil.campanha.capitulo || 0, (typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA.capitulo : 1);
+    const res = salvar(perfil);
+    if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
+  }
+  campanhaFim.jaFeito = jaFeito;
+  campanhaFim.recompensa = jaFeito ? null : r;   // re-jogar não paga de novo
+}
+function proximoEncontro(id){
+  const encs = campEncontros(); const i = encs.findIndex(e => e.id === id);
+  return (i >= 0 && i + 1 < encs.length) ? encs[i + 1] : null;
+}
+function campanhaResultadoOverlay(){
+  if (!campanha || !campanhaFim) return '';
+  const f = campanhaFim, venceu = f.venceu;
+  const prox = venceu ? proximoEncontro(campanha.id) : null;
+  let placar = '';
+  if (venceu) {
+    placar = f.recompensa && recompensaTexto(f.recompensa)
+      ? `<div class="result__placar"><span>Recompensa</span><b>${H(recompensaTexto(f.recompensa))}</b></div>`
+      : (f.jaFeito ? '<p class="result__msg">Encontro já vencido — sem nova recompensa.</p>' : '');
+  }
+  return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${venceu ? 'venceu' : 'hp'}">
+    <span class="result__selo">${H((typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA.nome : 'Campanha')}</span>
+    <h1>${venceu ? 'ENCONTRO VENCIDO' : 'DERROTA'}</h1>
+    <p class="result__prova">${H(campanha.nome || '')}</p>
+    <p class="result__msg">${venceu ? H('Aprendido: ' + ((campanha.ensina || {}).titulo || '')) : 'Seus deuses tombaram — tente de novo.'}</p>
+    ${placar}
+    <div class="result__acoes">
+      <button class="b b--quiet b--md" id="cfvoltar">Voltar à campanha</button>
+      ${venceu
+        ? (prox ? '<button class="b b--primary b--md" id="cfprox">Próximo encontro</button>' : '')
+        : '<button class="b b--primary b--md" id="cftentar">Tentar de novo</button>'}
+    </div>
+  </div></div></div>`;
+}
+function ligarCampanhaFim(){
+  const q = s => stage.querySelector(s);
+  const v = q('#cfvoltar'); if (v) v.onclick = () => { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); };
+  const t = q('#cftentar'); if (t) t.onclick = () => { const e = campanha; iniciarEncontroComTime(e, e.aliados); };
+  const p = q('#cfprox'); if (p) { const prox = proximoEncontro(campanha.id); p.onclick = () => { sairCampanha(); iniciarEncontro(prox.id); }; }
+}
+function sairCampanha(){ campanha = null; campanhaFim = null; }

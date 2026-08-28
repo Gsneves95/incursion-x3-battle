@@ -191,6 +191,26 @@ const provacoes = (() => {
     });
 })();
 
+// CAMPANHA (F3.3): capítulo 1 embutido. VALIDA na build (falha alto, como os outros schemas): cada
+// aliado/inimigo tem de resolver no catálogo MERGED (deuses ∪ bestiário) — senão montarProvacao quebra no
+// jogador — e a CHAVE de recompensa tem de existir em economia.json. Predicado nenhum: a campanha reusa a
+// máquina de Provação SEM condição (vencer = derrubar os inimigos).
+const campanhaObj = (() => {
+  const arq = path.join(raiz, 'data', 'campanha.json');
+  if (!fs.existsSync(arq)) return null;
+  const c = JSON.parse(ler('data/campanha.json'));
+  const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
+  const recompensas = (JSON.parse(economia).campanha && JSON.parse(economia).campanha.recompensas) || {};
+  const erros = [];
+  for (const e of (c.encontros || [])) {
+    for (const k of (e.aliados || [])) if (!catalogoKeys.has(k)) erros.push(`${e.id}: aliado "${k}" fora do catálogo`);
+    for (const k of (e.inimigos || [])) if (!catalogoKeys.has(k)) erros.push(`${e.id}: inimigo "${k}" fora do catálogo`);
+    if (!recompensas[e.recompensa]) erros.push(`${e.id}: recompensa "${e.recompensa}" não existe em economia.campanha.recompensas`);
+  }
+  if (erros.length) { console.error('ERRO de schema de campanha:\n  ' + erros.join('\n  ')); process.exit(1); }
+  return c;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -202,7 +222,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

@@ -893,6 +893,37 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .dprov__feita{font-weight:700;font-size:12px;color:var(--e-Verdejante)}
 .dprov__aberta{font-weight:700;font-size:12px;color:var(--gold-text)}
 .dkit{display:flex;flex-direction:column;gap:7px}
+
+/* ===================== F3.3 — Campanha (trilha de encontros + HUD de lição) ===================== */
+.ccap{margin:4px 2px 12px}
+.ccap h2{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--gold-text);margin:0}
+.ccap p{font-weight:600;font-size:12.5px;line-height:1.4;color:var(--ink-dim);margin:4px 0 0}
+.clista{display:flex;flex-direction:column;gap:9px}
+.cenc{display:flex;align-items:center;gap:12px;padding:11px 14px;min-height:62px;cursor:pointer;width:100%;
+  text-align:left;font-family:'Rajdhani',sans-serif;color:var(--ink);
+  background:rgba(20,16,38,.6);border:1px solid #2c2648;border-radius:11px;transition:border-color .12s,transform .08s}
+.cenc:active:not(:disabled){transform:translateY(1px) scale(.995);border-color:var(--gold-text)}
+.cenc__ic{flex:0 0 auto;width:32px;height:32px;display:grid;place-items:center;font-family:'Cinzel',serif;
+  font-weight:900;font-size:16px;color:var(--gold-text);border:1px solid var(--gold-soft);border-radius:8px}
+.cenc__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.cenc__nome{font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.03em;color:var(--ink)}
+.cenc__chefe{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:.1em;color:var(--e-Chama);
+  border:1px solid rgba(255,92,138,.5);border-radius:8px;padding:1px 6px;margin-left:4px}
+.cenc__ensina{font-weight:600;font-size:11.5px;color:var(--ink-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cenc__pe{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.cenc__rec{font-weight:700;font-size:12px;color:var(--gold-text);font-variant-numeric:tabular-nums}
+.cenc__estado{font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute)}
+.cenc--feito{opacity:.7;border-style:dashed}
+.cenc--feito .cenc__ic{color:var(--e-Verdejante);border-color:rgba(88,214,141,.45)}
+.cenc--travado{opacity:.5;cursor:default;background:rgba(14,11,26,.5)}
+.cenc--travado .cenc__ic{color:var(--ink-mute);border-color:#262138}
+.cenc--aberto{border-color:var(--gold-soft)}
+.cmontarpe{flex:0 0 auto;display:flex;justify-content:center;padding:10px 24px 16px;border-top:1px solid rgba(216,178,90,.15)}
+.ctile--sel{border-color:var(--gold-text);box-shadow:0 0 0 1px rgba(255,217,122,.4)}
+.ctile__mark{position:absolute;left:5px;bottom:24px;width:16px;height:16px;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-weight:900;font-size:10px;color:#201604;background:var(--gold-text);border-radius:50%}
+.phud--camp{width:min(640px,92%)}
+.chud__dica{margin-top:5px;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-dim)}
 </style>
 </head>
 <body>

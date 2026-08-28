@@ -1,0 +1,87 @@
+{
+  "_fonte": "Campanha, Capítulo 1 (F3.3). O que ENSINA cada encontro é o ponto — a progressão de regras, não a dificuldade. Reusa a máquina de Provação (montar estado + time inimigo) SEM condição especial: vencer = derrubar os inimigos. A recompensa é uma CHAVE em data/economia.json (campanha.recompensas), nunca literal aqui. Chefe = deus do roster com kit intacto e HP inflado no montar.unidades (sem mecânica nova).",
+  "capitulo": 1,
+  "nome": "Capítulo 1 — Os Primeiros Passos",
+  "subtitulo": "As Provações ensinam os deuses; este capítulo ensina as regras.",
+  "encontros": [
+    {
+      "id": "c1e1",
+      "nome": "O Sopro Errante",
+      "ensina": {
+        "chave": "custo",
+        "titulo": "O custo da energia",
+        "dica": "Cada habilidade custa energia do elemento do deus. Você ganha 1 energia por unidade viva a cada turno. Toque numa habilidade para ver o custo — o gasto só acontece ao escolher o alvo ou confirmar."
+      },
+      "aliados": ["zeus", "ogum", "tyr"],
+      "inimigos": ["silfo", "ghoul"],
+      "montar": { "seed": 1, "comeca": 0 },
+      "recompensa": "encontro"
+    },
+    {
+      "id": "c1e2",
+      "nome": "Sentinela de Bronze",
+      "ensina": {
+        "chave": "recarga",
+        "titulo": "A recarga das habilidades",
+        "dica": "O Básico você repete todo turno, mas a Habilidade e o Milagre têm RECARGA: depois de usar, ficam alguns turnos indisponíveis. Contra um alvo resistente, escolha a hora de gastar o golpe forte."
+      },
+      "aliados": ["zeus", "ogum", "tyr"],
+      "inimigos": ["automato_bronze"],
+      "montar": { "seed": 2, "comeca": 0 },
+      "recompensa": "encontro"
+    },
+    {
+      "id": "c1e3",
+      "nome": "As Presas da Quimera",
+      "ensina": {
+        "chave": "defesa",
+        "titulo": "A Defesa universal",
+        "dica": "TODA unidade tem a Defesa: custa 1 energia livre, tem recarga 4, e deixa a unidade Invulnerável por 1 turno. Quando o inimigo vai bater forte, defenda ANTES — o dano novo não passa (mas dano contínuo já aplicado atravessa)."
+      },
+      "aliados": ["sobek", "brigid", "ganesha"],
+      "inimigos": ["quimera", "ghoul"],
+      "montar": { "seed": 3, "comeca": 0 },
+      "recompensa": "encontro"
+    },
+    {
+      "id": "c1e4",
+      "nome": "A Fonte Envenenada",
+      "ensina": {
+        "chave": "ordem",
+        "titulo": "A ordem de resolução",
+        "dica": "Suas 3 unidades agem uma de cada vez, na ordem que VOCÊ escolher — e o estado atualiza entre elas. Derrube o suporte que cura antes que ele aja, e a luta vira. A ordem é uma jogada."
+      },
+      "aliados": ["cuca", "fujin", "nezha"],
+      "inimigos": ["naiade", "servo_cinzas", "ghoul"],
+      "montar": { "seed": 4, "comeca": 0 },
+      "recompensa": "encontro"
+    },
+    {
+      "id": "c1e5",
+      "nome": "A Encruzilhada",
+      "ensina": {
+        "chave": "time",
+        "titulo": "A escolha do time",
+        "dica": "Agora o time é seu. Três funções se completam: quem bate, quem aguenta, quem controla. Monte os três contra o que vem pela frente — a composição decide a luta antes do primeiro golpe."
+      },
+      "aliados": null,
+      "inimigos": ["vidente_corrompido", "elemental_chama", "silfo"],
+      "montar": { "seed": 5, "comeca": 0 },
+      "recompensa": "encontro"
+    },
+    {
+      "id": "c1e6",
+      "nome": "O Guardião do Portão",
+      "chefe": true,
+      "ensina": {
+        "chave": "chefe",
+        "titulo": "O chefe — tudo junto",
+        "dica": "Cérberus tem o kit inteiro e vida de chefe. Nada de novo para aprender: custo, recarga, Defesa e ordem — tudo o que o capítulo mostrou, contra um alvo que aguenta. Escolha quando gastar e em que ordem."
+      },
+      "aliados": ["zeus", "ogum", "sobek"],
+      "inimigos": ["cerberus", "servo_cinzas", "servo_cinzas"],
+      "montar": { "seed": 6, "comeca": 0, "unidades": [{ "lado": 1, "idx": 0, "maxHp": 250, "hp": 250 }] },
+      "recompensa": "chefe"
+    }
+  ]
+}

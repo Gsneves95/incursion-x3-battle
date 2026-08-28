@@ -46,6 +46,13 @@
     "_nota": "Geracao de energia por turno. 'time' = so elementos do time (historico); 'uniforme' = entre os 6; 'ponderado' = com pesoTime sorteia entre os elementos do time, com pesoLivre entre os 6. PROVISORIO: o dono ajusta jogando. pesoTime subiu de 0.6 para 0.75 pelo dado do item 6 (0 basicos e 1 habilidade de 100 kits usam livre; so Milagre/Defesa aceitam, ambos cd 4 — estrangeira quase nunca e gasta direto, vira materia de conversao 3->1, e a conversao e 1 por turno). Ver DECISOES.md.",
     "_fallback_nota": "SEM este bloco (st.energia ausente), o motor usa 'time'/1.0 — contrato de compatibilidade, nao numero de balanceamento."
   },
+  "campanha": {
+    "_fonte": "Recompensas da campanha (F3.3). A campanha DATA (data/campanha.json) referencia estas CHAVES; os valores vivem aqui. PROVISORIO: numeros de ensino, o dono ajusta. So paga a PRIMEIRA vitoria de cada encontro (re-jogar nao paga).",
+    "recompensas": {
+      "encontro": { "gema": 120 },
+      "chefe": { "gema": 400, "essencia": 40 }
+    }
+  },
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },

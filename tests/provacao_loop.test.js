@@ -102,6 +102,13 @@ console.log('== 6. as 90 Provações montam e começam em andamento ==');
   console.log(`  ${r.n} Provações montam e avaliam em andamento no turno 1`);
 }
 
+console.log('== 7. batalha com inimigos do BESTIÁRIO renderiza (regressão: retrato lia GODS, não o catálogo da partida) ==');
+{
+  const { w, $$ } = entrar('bragi');   // bragi enfrenta vidente_corrompido/aparicao/golem_runico (criaturas PvE)
+  ok(w.eval("rotaAtual()") === 'batalha', 'a Provação de bestiário entra na batalha');
+  ok($$('.unit--enemy').length === 3, 'os 3 inimigos-criatura renderizam (sem quebrar em GODS[key] indefinido)');
+}
+
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) no laço de Provação`); process.exit(1); }
 console.log('>>> PROVAÇÃO-LAÇO OK');

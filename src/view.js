@@ -13,6 +13,9 @@ let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
 // F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
 // resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
 let prova=null, provaFim=null, provaLances=0;
+// F3.3 — estado do ENCONTRO de CAMPANHA ativo (null fora da campanha): o encontro em
+// curso e o resultado já decidido (uma vez só). Reusa a batalha, sem condição especial.
+let campanha=null, campanhaFim=null;
 
 // Perfil do jogador (persistido; ver src/perfil.js + src/armazenamento.js). Carregado
 // no bootstrap; a F0.4b liga o pity do gacha a ele.
@@ -52,18 +55,18 @@ function renderBatalha(){
   // F3.1: numa Provação, avalia a condição ANTES de desenhar — o latch (uma vez só) decide
   // vitória/derrota, congela o motor quando a condição quebra com a luta em curso, e desbloqueia
   // o deus na vitória. Fica antes do cálculo do scrim para o overlay já refletir o fim.
-  if(prova) atualizarProva();
+  if(prova) atualizarProva(); else if(campanha) atualizarCampanha();
 
   // Sobreposição COM SCRIM aberta? (todas as overlays de batalha são .ov, com scrim;
   // o menu ⋯ NÃO tem scrim — não entra aqui.) Quando há, a base fica INERTE e o primário
   // da base rebaixa (consequência do inert), para valer INV 16: no máximo um primário
   // visível E acessível. A sobreposição é IRMÃ da #baselayer, então segue interativa.
-  const scrim = !!ov || !!st.fim || !!provaFim;
+  const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim;
   stage.innerHTML = `<div id="baselayer"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}
-  ${prova?provaHUD():''}
+  ${prova?provaHUD():campanha?campanhaHUD():''}
   <div class="stagemark">INCURSION</div>
   <section class="team team--ally">${l.units.map(u=>`
     <article class="unit ${u.vivo&&!podeAgir(u)?'acted':''}">${retrato(u,false)}${habilidades(u)}
@@ -83,7 +86,7 @@ function renderBatalha(){
     </div>`}
   </footer>
   </div>
-  ${(prova&&provaFim)?provaResultadoOverlay():overlayHTML()}`;
+  ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():overlayHTML()}`;
 
   hpAnt={}; todas().forEach(u=>hpAnt[u.uid]=u.hp);
   if(peek){const el=stage.querySelector(`[data-look="${peek}"]`); if(el)el.classList.add('peek'); peek=null;}
@@ -95,6 +98,7 @@ function renderBatalha(){
 function ligar(){
   ligarCampo(); ligarTopo(); ligarPainel(); ligarSobrepor();
   if(prova&&provaFim) ligarProvaFim();   // F3.1: os botões do fim de Provação (voltar/tentar) substituem o "Nova batalha"
+  else if(campanha&&campanhaFim) ligarCampanhaFim();   // F3.3: os botões do fim de encontro
   talvezIA();
 }
 
@@ -111,7 +115,9 @@ registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderProvacoes });
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
-registrar('embreve',   { render: renderEmBreve });   // marcador de Campanha (F3.0)
+registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
+registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
+registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });

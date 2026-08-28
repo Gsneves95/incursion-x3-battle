@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §201 — FASE 3, F3.3: CAMPANHA (Capítulo 1) — a única tela que ensina as REGRAS. + ACHADO/CORREÇÃO: a batalha quebrava com inimigo de BESTIÁRIO (retrato lia GODS, não o catálogo da partida).
+
+**Por que campanha antes da Provação semanal (dono):** as Provações ensinam os DEUSES; nada ensinava as REGRAS — custo de energia, leitura de recarga, a Defesa universal, a ordem de resolução. Sem isso o jogador chega na 1ª Provação sem saber jogar (o buraco anotado quando o dono perguntou da interface). A campanha capítulo 1 é o tutorial.
+
+**O FORMATO — reusa a máquina de Provação SEM condição.** Cada encontro = time inimigo + recompensa; vencer = derrubar os inimigos (base-vitória, sem predicado). `montarProvacao` monta o estado (só usa aliados/inimigos/montar); a batalha roda igual, com um HUD que mostra a LIÇÃO em vez da condição. Zero motor novo. Os globais `campanha`/`campanhaFim` espelham `prova`/`provaFim` (mesma máquina de latch/overlay/freeze).
+
+**A PROGRESSÃO DE ENSINO (o ponto, não a dificuldade) — 6 encontros, cada um uma regra:**
+1. **c1e1 O Sopro Errante — CUSTO:** time fixo (zeus/ogum/tyr) vs silfo+ghoul (fracos). Aprende: habilidade custa energia do elemento; 1 energia/unidade viva por turno; tocar não gasta.
+2. **c1e2 Sentinela de Bronze — RECARGA:** vs automato_bronze (120, resistente) → força usar a Habilidade e ver que ela tem recarga.
+3. **c1e3 As Presas da Quimera — DEFESA:** vs quimera (bate forte) → aprende a Defesa universal (1 livre, recarga 4, Invulnerável 1 turno).
+4. **c1e4 A Fonte Envenenada — ORDEM:** vs naiade(cura)+2 → derrubar o suporte ANTES; a ordem das 3 ações é uma jogada.
+5. **c1e5 A Encruzilhada — ESCOLHA DE TIME:** o jogador MONTA (picker de 3 dos possuídos) vs comp mista. A composição decide antes do golpe.
+6. **c1e6 O Guardião do Portão — CHEFE:** cerberus com kit INTACTO + HP inflado a 250 (via `montar.unidades[].maxHp`, sem mecânica nova) + 2 lacaios. Tudo junto.
+
+**A RECOMPENSA SAI DE `data/economia.json`** (`campanha.recompensas`: encontro 120 💎, chefe 400 💎 + 40 ✦), nunca literal no código. Só a PRIMEIRA vitória paga (re-jogar não credita). A campanha DATA vive em `data/campanha.json` e referencia a CHAVE de recompensa; a build VALIDA (aliados/inimigos no catálogo, chave de recompensa existente — falha alto).
+
+**★ ACHADO/CORREÇÃO (a campanha surfou um bug LATENTE): a batalha quebrava com inimigo de BESTIÁRIO.** `ui/campo.js` (retrato/ficha/passiva) lia `GODS[u.key]` — e criatura PvE (silfo, ghoul, golem…) NÃO está em GODS, está em BESTIARIO. `GODS[key].passiva` → crash no render. **Nunca tinha aparecido** porque nenhuma batalha JOGADA usara bestiário: a única Provação de bestiário (bragi) nunca fora renderizada num teste, e a F3.1 só exercitou durga (inimigos-deuses). **Corrigido:** campo.js passa a ler o catálogo DA PARTIDA (`_catPartida()[u.key]`, deuses ∪ bestiário — o mesmo que narrar.js já usava), com guarda de passiva ausente. **Isto conserta a campanha E a Provação da bragi** (que teria quebrado ao ser jogada). Guarda de regressão no teste (bragi renderiza 3 inimigos-criatura sem erro).
+
+**CRITÉRIO DE PRONTO cumprido:** capítulo 1 jogável de ponta a ponta (teste `campanha` dirige o bundle: trilha travada/aberta, HUD da lição, vitória credita de economia uma vez, derrota repete, picker de time, chefe 250 HP), progressão de ensino declarada, recompensa lida do arquivo, captura contra o dist. Suíte verde.
+
+## §200 — CORREÇÃO DA ESPECIFICAÇÃO DE FIM DE JOGO: panteão é PROPORÇÃO, não contagem. Panteões desiguais ACEITOS (não rebalancear o roster). + o padrão do "escrever por tema" reaparece, agora sobre a estrutura do próprio roster.
+
+**A DECISÃO (dono): ACEITAR os panteões desiguais, corrigir o SISTEMA, não os dados.** A medição (§199) mostrou o roster em Grega 19 · Nórdica 13 · Egípcia 14 · Japonesa 14 · Chinesa 9 · Hindu 8 · Brasileira 8 · Africana 6 · Celta 5 · Maia 4. Rebalancear para 10×10 tocaria os 100 kits, os carimbos de Provação e os deuses que **LEEM facção** (o `faccaoConta` do Odin, a sinergia da Kitsune) — **caro para uma simetria cosmética.**
+
+**A CORREÇÃO É NO SISTEMA:** o marco de panteão do fim de jogo passa a ser **PROPORCIONAL, não absoluto.** "Complete um panteão" seria TRIVIAL na Maia (4) e BRUTAL na Grega (19); "domine METADE dos gregos" e "domine METADE dos maias" são metas COMPARÁVEIS com 19 e 4. Qualquer marco de panteão (maestria, missão, desafio) mede FRAÇÃO do panteão, nunca cabeças.
+
+**COROLÁRIO ANOTADO:** a Maia (4) será SEMPRE o primeiro panteão completado. Isso é BOM — marco de ENTRADA (a primeira vitória de coleção vem cedo e barata), não um defeito a corrigir.
+
+**O PADRÃO DE NOVO (dono, autocrítica): "dez mitologias de dez" foi escrito na especificação SEM CONTAR.** É o MESMO erro de "escrever por tema" que apareceu nas Provações (número temático sem medir) — desta vez sobre a ESTRUTURA DO PRÓPRIO ROSTER. O reflexo (a premissa parece redonda, então não se conta) não distingue kit de estrutura. Reforça a regra de sempre MEDIR antes de escrever um número na especificação — inclusive os números que descrevem o próprio jogo. A F3.2 já exibe a contagem REAL por grupo (não finge 10).
+
 ## §199 — FASE 3, F3.2: INVOCAÇÃO e COLEÇÃO — o laço de AQUISIÇÃO fecha (o deus desbloqueado tem onde ser visto). + ACHADO: o roster NÃO é 10×10.
 
 **Por que aquisição antes de Campanha/semanal (dono):** a Provação (F3.1) desbloqueava num VÁCUO — o jogador ganhava um deus e não tinha onde olhá-lo. Fechar esse laço vale mais que abrir conteúdo novo. Invocação e Coleção passam de marcador (F3.0) a telas reais na home.
