@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §191 — C+E+D: 5 carimbadas de reuso; e a CORREÇÃO — "zero motor" foi eu lendo por TEMA. A cauda real precisa de 2 predicados (cobrem 7) + 6 casos-de-1-consumidor/saída.
+
+**5 CARIMBADAS por REUSO puro (62/80 na Fase 2):**
+- **shiva** "O Terceiro Olho" (Ordália d3) — `proibirSlotProprio{milagre}` (prova que não precisa do ultimate). nós 3012.
+- **babi** "O Rugido" (Rito d1) — `proibirSlotProprio{habilidade}` (achar dano sem o controle). nós 879.
+- **kagutsuchi** "A Chama que Consome" (Provação d2) — `deadline` só (corre o auto-dano da passiva). nós 98540.
+- **baldur** "O Visco" (Rito d1) — `deadline` só. nós 36557.
+- **izanagi** "Misogi" (Provação d2) — `semPerderAliado` vs set de DoT; a limpeza (Misogi) é LOAD-BEARING (babá aquiles INVENCÍVEL). nós 774.
+Nota: os 3 de `proibirSlotProprio`/`deadline` são RITOS/self-restrição — o §169 (babá) NÃO se aplica (não há ferramenta-título a remover; a restrição é um auto-ban). izanagi É protagonista (babá limpo).
+
+**A CORREÇÃO — "C+E+D é zero-motor" (§189/§190) estava ERRADA, e o erro foi MEU: eu agrupei por TEMA, não por mecânica.** É o MESMO erro theme≠mechanic do mapa inicial do dono (§166), agora cometido por mim ao estimar a cauda. Lendo os KITS (não a prosa), o motor-real da cauda é:
+- **2 PREDICADOS NOVOS cobrem 7 deuses (§87 folgado):**
+  - `semDebuffEmAliado{filtro?}` (continuo — nenhum aliado termina turno com debuff): **nefertem** (qualquer debuff) + **perseu** (filtro controle: atordoado/selado; petrificação = atordoado). 2 consumidores.
+  - **predicado da família A** (snapshot "os N num estado AO MESMO TEMPO", ≠ estadoTurnos que é duração): **aokuang, chaac, medusa, anubis** + **kukulkan** (Voo acerta os 3 Encharcados = os 3 no estado num golpe). **5 consumidores** — o kukulkan (que eu pusera em E) na verdade é família A.
+- **5 da família B** (abate-por-golpe) — pendentes, com o filtro §188 (único E rápido) ANTES do carimbo.
+- **6 CASOS-DE-1-CONSUMIDOR / SAÍDA-RISK** (§87 aperta — não se constrói predicado de consumidor único sem necessidade): **houyi** (remover Dia ≥3×), **huangdi** (cooldown-uptime), **exu** (usos-de-slot ≥6), **kali** (cura-externa-zero), **sunwukong** (não-disparar-a-rede-de-1HP), **tanuki** (não-repetir-modal = nuwa-style, §87 → provável SAÍDA). Cada um pede um mecanismo próprio de 1 consumidor OU é saída — a decidir caso a caso na medição.
+
+**MAPA DA CAUDA (23) corrigido:** 5 carimbadas (reuso) · 7 por 2 predicados novos (semDebuffEmAliado→2, snapshot-A→5) · 5 família B (filtro §188) · 6 de-1-consumidor/saída. **A lição:** a cauda parecia curta em motor porque eu a li por tema; a mecânica diz que ela tem 2 predicados limpos + uma cauda-da-cauda de casos únicos que provavelmente rende mais saídas (o teto pode cair de 80).
+
 ## §190 — A FASE 2 FECHA EM 80, NÃO 91 (teto real p/ o planejamento da Fase 3); ordem da cauda; e os critérios afinados p/ B e A.
 
 **A FASE 2 FECHA EM 80, NÃO 91 (dono) — o teto real é o alcançável, não o planejado.** 91 planejadas − 11 saídas = **80 Provações possíveis**. As 11 saídas são deuses SEM Provação (como os 9 iniciais), por decisão medida (rider-impossível / ferramenta-fraca / rider-mismatched / ativo-opcional). **Vale para o planejamento da Fase 3:** a lista de Provações da F3 tem no máximo 80 entradas + os 20 sem-Provação (9 iniciais + 11 saídas) que a F3 precisa tratar como "sem trial" (não como buraco a preencher).
