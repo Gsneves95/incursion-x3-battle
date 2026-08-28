@@ -1,0 +1,67 @@
+{
+  "key": "izanagi",
+  "titulo": "Misogi",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "izanagi",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "jormungandr",
+    "kagutsuchi",
+    "piranha"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado"
+    }
+  ],
+  "verificacao": {
+    "hash": "f9e5ea4",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 774,
+    "ms": 589,
+    "caminho": [
+      "izanagi Lança Ame-no-Nuboko → jormungandr",
+      "perseu Lâmina Curva → jormungandr",
+      "passar",
+      "houyi Nove Flechas → jormungandr",
+      "izanagi Lança Ame-no-Nuboko → jormungandr",
+      "perseu Lâmina Curva → jormungandr",
+      "passar",
+      "perseu Cabeça da Medusa → kagutsuchi",
+      "houyi Flecha Solar → jormungandr",
+      "izanagi Lança Ame-no-Nuboko → kagutsuchi",
+      "passar",
+      "houyi Abater o Sol → kagutsuchi",
+      "izanagi Lança Ame-no-Nuboko → kagutsuchi",
+      "perseu Lâmina Curva → kagutsuchi",
+      "passar",
+      "perseu Foice Adamantina → piranha",
+      "houyi Flecha Solar → kagutsuchi",
+      "izanagi Lança Ame-no-Nuboko → piranha",
+      "passar",
+      "houyi Flecha Solar → piranha",
+      "perseu Lâmina Curva → piranha",
+      "passar",
+      "houyi Nove Flechas → jormungandr+kagutsuchi+piranha",
+      "perseu Cabeça da Medusa → piranha",
+      "izanagi Lança Ame-no-Nuboko → piranha",
+      "passar",
+      "izanagi Lança Ame-no-Nuboko → piranha"
+    ]
+  }
+}

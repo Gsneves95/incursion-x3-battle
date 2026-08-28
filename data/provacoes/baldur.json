@@ -1,0 +1,68 @@
+{
+  "key": "baldur",
+  "titulo": "O Visco",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "baldur",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    }
+  ],
+  "verificacao": {
+    "hash": "47ee17b4",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 31,
+    "comDica": false,
+    "nos": 36557,
+    "ms": 12876,
+    "caminho": [
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Nove Flechas → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "passar",
+      "houyi Abater o Sol → thor",
+      "baldur Golpe Radiante → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "baldur Luz Purificadora → houyi",
+      "passar",
+      "baldur Invulnerabilidade de Baldur → houyi",
+      "passar",
+      "baldur Golpe Radiante → thor",
+      "houyi Nove Flechas → ogum",
+      "passar",
+      "baldur Golpe Radiante → ogum"
+    ]
+  }
+}
