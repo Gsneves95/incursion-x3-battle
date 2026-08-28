@@ -1,0 +1,92 @@
+{
+  "key": "demeter",
+  "titulo": "A Colheita Retorna",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "demeter",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 2,
+        "caido": true
+      }
+    ],
+    "orbs": {
+      "0": {
+        "Verdejante": 4
+      }
+    }
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "reviveAliado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "89562312",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 39,
+    "comDica": false,
+    "nos": 3789,
+    "ms": 879,
+    "caminho": [
+      "demeter Estação Eterna",
+      "perseu Lâmina Curva → fenrir",
+      "passar",
+      "houyi Nove Flechas → fenrir",
+      "perseu Foice Adamantina → fenrir",
+      "passar",
+      "perseu Lâmina Curva → fenrir",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "perseu Cabeça da Medusa → durga",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "demeter Foice de Ouro → durga",
+      "passar",
+      "perseu Lâmina Curva → durga",
+      "demeter Foice de Ouro → durga",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "demeter Foice de Ouro → durga",
+      "passar",
+      "demeter Foice de Ouro → fenrir",
+      "passar",
+      "demeter Foice de Ouro → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "demeter Foice de Ouro → saci",
+      "passar",
+      "demeter Estação Eterna",
+      "passar",
+      "perseu Foice Adamantina → saci",
+      "houyi Flecha Solar → saci",
+      "demeter Foice de Ouro → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}

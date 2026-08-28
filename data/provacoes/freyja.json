@@ -1,0 +1,92 @@
+{
+  "key": "freyja",
+  "titulo": "O Salão dos Caídos",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "freyja",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 2,
+        "caido": true
+      }
+    ],
+    "orbs": {
+      "0": {
+        "Aurora": 4
+      }
+    }
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "reviveAliado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "77eb555e",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 39,
+    "comDica": false,
+    "nos": 24059,
+    "ms": 5151,
+    "caminho": [
+      "freyja Salão dos Caídos",
+      "perseu Foice Adamantina → fenrir",
+      "passar",
+      "houyi Nove Flechas → fenrir",
+      "perseu Lâmina Curva → fenrir",
+      "passar",
+      "perseu Foice Adamantina → fenrir",
+      "freyja Lâmina de Brísingamen → fenrir",
+      "passar",
+      "freyja Lâmina de Brísingamen → durga",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "perseu Cabeça da Medusa → durga",
+      "freyja Lâmina de Brísingamen → durga",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "freyja Bênção de Fólkvangr → freyja+perseu",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "freyja Lâmina de Brísingamen → durga",
+      "passar",
+      "freyja Bênção de Fólkvangr → freyja+perseu",
+      "perseu Lâmina Curva → fenrir",
+      "passar",
+      "freyja Lâmina de Brísingamen → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "freyja Bênção de Fólkvangr → freyja+perseu",
+      "passar",
+      "freyja Lâmina de Brísingamen → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "freyja Bênção de Fólkvangr → freyja+perseu",
+      "passar",
+      "freyja Lâmina de Brísingamen → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "freyja Lâmina de Brísingamen → saci",
+      "perseu Foice Adamantina → saci"
+    ]
+  }
+}

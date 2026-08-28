@@ -1,0 +1,74 @@
+{
+  "key": "hel",
+  "titulo": "O Portão de Helheim",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "hel",
+    "perseu",
+    "zeus"
+  ],
+  "inimigos": [
+    "bennu",
+    "nezha",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "naoReviveInimigo"
+    }
+  ],
+  "verificacao": {
+    "hash": "9b3eda92",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 113798,
+    "ms": 36183,
+    "caminho": [
+      "perseu Lâmina Curva → bennu",
+      "passar",
+      "perseu Cabeça da Medusa → bennu",
+      "zeus Cetro do Trovão → bennu",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → bennu",
+      "passar",
+      "zeus Cetro do Trovão → bennu",
+      "perseu Lâmina Curva → bennu",
+      "passar",
+      "perseu Foice Adamantina → nezha",
+      "zeus Julgamento do Trovão → nezha",
+      "passar",
+      "zeus Cetro do Trovão → bennu",
+      "perseu Lâmina Curva → nezha",
+      "passar",
+      "perseu Cabeça da Medusa → saci",
+      "zeus Julgamento do Trovão → saci",
+      "hel Toque Gélido → saci",
+      "passar",
+      "hel Domínio de Helheim → bennu",
+      "passar",
+      "hel Toque Gélido → nezha",
+      "passar",
+      "passar",
+      "hel Colheita Fúnebre",
+      "passar",
+      "hel Domínio de Helheim → nezha",
+      "passar",
+      "hel Toque Gélido → saci",
+      "zeus Julgamento do Trovão → saci",
+      "passar",
+      "zeus Ira Celestial"
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "key": "osiris",
+  "titulo": "O Tribunal",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "osiris",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 2,
+        "caido": true
+      }
+    ],
+    "orbs": {
+      "0": {
+        "Umbra": 4
+      }
+    }
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "reviveAliado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "75f90775",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 39,
+    "comDica": false,
+    "nos": 101444,
+    "ms": 18215,
+    "caminho": [
+      "osiris Tribunal do Duat",
+      "perseu Lâmina Curva → fenrir",
+      "passar",
+      "houyi Nove Flechas → fenrir",
+      "perseu Foice Adamantina → fenrir",
+      "passar",
+      "osiris Cajado e Mangual → fenrir",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "osiris Cajado e Mangual → fenrir",
+      "passar",
+      "osiris Cajado e Mangual → durga",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "osiris Cajado e Mangual → durga",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "osiris Cajado e Mangual → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "osiris Cajado e Mangual → saci",
+      "passar",
+      "osiris Cajado e Mangual → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Foice Adamantina → saci",
+      "osiris Cajado e Mangual → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "osiris Cajado e Mangual → saci",
+      "passar",
+      "osiris Trigo do Renascimento → osiris",
+      "passar",
+      "osiris Tribunal do Duat",
+      "passar",
+      "osiris Cajado e Mangual → saci",
+      "perseu Lâmina Curva → saci"
+    ]
+  }
+}

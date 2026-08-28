@@ -1,0 +1,89 @@
+{
+  "key": "isis",
+  "titulo": "O Nome Secreto",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "isis",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "fenrir",
+    "durga",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 2,
+        "caido": true
+      }
+    ],
+    "orbs": {
+      "0": {
+        "Aurora": 6
+      }
+    }
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "reviveAliado",
+      "quantos": 1
+    }
+  ],
+  "verificacao": {
+    "hash": "809b91b2",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 36,
+    "comDica": false,
+    "nos": 174781,
+    "ms": 40820,
+    "caminho": [
+      "isis Ressurreição de Osíris",
+      "perseu Cabeça da Medusa → fenrir",
+      "passar",
+      "houyi Nove Flechas → fenrir",
+      "isis Verbo Mágico → fenrir",
+      "perseu Lâmina Curva → fenrir",
+      "passar",
+      "houyi Abater o Sol → durga",
+      "isis Verbo Mágico → fenrir",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "isis Verbo Mágico → fenrir",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "isis Verbo Mágico → durga",
+      "passar",
+      "isis Verbo Mágico → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "isis Feitiço Roubado",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "perseu Foice Adamantina → durga",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "isis Feitiço Roubado",
+      "passar",
+      "isis Verbo Mágico → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "isis Feitiço Roubado",
+      "passar",
+      "isis Verbo Mágico → saci",
+      "perseu Foice Adamantina → saci"
+    ]
+  }
+}

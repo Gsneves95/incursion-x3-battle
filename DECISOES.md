@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §181 — NÚCLEO REVIVE CARIMBADO (4) + hel CARIMBADA (naoReviveInimigo load-bearing) + odin SAI (a AUTO-SACRIFÍCIO-HP não tinha protagonista).
+
+**NÚCLEO REVIVE — os 4 carimbados (VENCÍVEL, sem dica).** Montagem comum (aliados `[deus, perseu, houyi]`, inimigos `[fenrir, durga, saci]`, `montar.caido` no idx 2, dl14, `reviveAliado{1}`) + bootstrap-de-elemento (§180). A banda §170 por deus foi só o **volume do bootstrap** (quanto elemento garantir p/ o milagre de revive pagar dentro da renda sorteada):
+- **demeter** "A Colheita Retorna" (Provação d2) — Verdejante:4, nós 3789.
+- **freyja** "O Salão dos Caídos" (Provação d2) — Aurora:4, nós 24059.
+- **osiris** "O Tribunal" (Ordália d3) — Umbra:4, nós 101444.
+- **isis** "O Nome Secreto" (Ordália d3) — Aurora:6, nós 174781 (o mais caro, confirma o §180: "revive TODOS" com teto-2 isola o revivedor; precisou de MAIS bootstrap p/ pagar).
+Babá passa nos 4 (título sem-revive → o caído fica caído → `reviveAliado` INVENCÍVEL, H≈1000+). **§168 a vigiar:** os 4 dividem a mesma montagem (perseu·houyi vs fenrir·durga·saci) — um cluster-Goldilocks como o executor; candidato a diversificação de produto na varredura futura, não bloqueia o carimbo.
+
+**hel "O Portão de Helheim" (Ordália d3) CARIMBADA — `naoReviveInimigo` com CONSUMIDOR REAL e babá LOAD-BEARING.** hel·perseu·zeus vs **bennu·nezha·saci** dl14 = VENCÍVEL nós 113798 (sem dica). A ferramenta é **Domínio de Helheim** (Marca da Morte, `naoRevive`): o caminho a lança em bennu E em nezha, os dois auto-revivedores.
+- **DOIS auto-revivedores por design (não um).** Com UM, o solver faz cheese: mata o revivedor POR ÚLTIMO (sem turno p/ voltar antes do deadline) → `naoReviveInimigo` passa sem hel. Com DOIS não dá p/ matar os dois por último → o babá tem de PREVENIR um revive, e não tem a marca.
+- **Babá LIMPO por elemento (não por economia).** A 1ª medição (bennu·ares·thor) foi murcha (H=122 c/ hel × H=146 sem — os dois longe, set invencível). O erro-espelho do odin: um babá de elemento-DIFERENTE mede economia-de-orbe, não a ferramenta. Corrigido com **kali (Umbra, como hel)** = INDETERMINADO H=40 dica (trava) enquanto hel fecha. A marca é decisiva, isolada do elemento.
+
+**odin SAI — a sub-forma AUTO-SACRIFÍCIO-HP do §179 NÃO tinha protagonista (medição corrige a partição).** O rider designado (`hpNoFim<=40` + `hpTetoSelf` teto40) é sobrevivência-em-HP-baixo, que **NÃO é a ferramenta do odin** (a dele é EMPODERAR: Sabedoria do Enforcado gasta 15 HP → aliado zera recargas +10 dano). Duas medições, dois acidentes:
+- **vs thor·tyr·ogum:** o corpo simples (aquiles) FECHA também (dl12: odin 23769 × aquiles 86014; dl10: os dois travam) — `hpNoFim<=40` é atingido por QUALQUER corpo que apanha. Odin só é ~4× mais rápido (vantagem de velocidade, não porta de possibilidade).
+- **vs durga·ammit·shiva (parede de sustain):** odin "vence" nós 251 MAS **NUNCA AGE** — zeus+oxum carregam, odin idle vira dreno-de-HP passivo (cai a ≤40 no fogo inimigo). Babá **elemento-matched** (change/mimir, Umbra) fecha igual (nós 270 / 28) → a "quebra" do aquiles era **economia-de-orbe** (aquiles não-Umbra faminta o zeus), não a habilidade do odin. É o acidente kali-no-raijin.
+**Conclusão:** odin é **saída-por-rider-MISMATCHED** (espécie nova, ≠ as duas do §177): o rider é bom e tem forma viável (ares/mula são Ritos d1 honestos com ele), mas está acoplado ao deus ERRADO. **O `hpTetoSelf` NÃO some** — segue vivo em ares/mula (fidelidade de prosa) e como consumidor de qualquer título que VOLUNTARIAMENTE gaste HP e o babá isole. A forma protagonista do odin é EMPODERAMENTO/MARCA (Huginn e Muninn marca todos, +6 vs marcado) — precisa de um rider de janela-de-burst ou de morte-sob-marca, que **não existe no motor ainda**. Odin fica PENDENTE de rider próprio; não force o acidente.
+
+**PENDENTE:** AUTO-MORTE (bennu, mimir, ymir, erinias) — tradução separada com a tensão "ativo-opcional invertido" (o título CAI, a vitória pede matar inimigos, o solver prefere não morrer); dizer ao dono se algum tem saída. E odin volta quando houver rider de burst/marca.
+
 ## §180 — CORREÇÃO da hipótese invertida (o set AMEAÇA depois do revive, não MATA antes) + BOOTSTRAP-DE-ELEMENTO vira PROPRIEDADE DO FORMATO (4ª vez).
 
 **CORREÇÃO (dono) — a hipótese invertida "o set precisa MATAR" estava ERRADA para o REVIVE.** O ESTADO INICIAL entrega o morto (montar.caido, catálogo "começa com aliados caídos") — o revive não depende da IA matar. O que o set precisa é **AMEAÇAR o revivedor DEPOIS do revive** — é outra coisa, e **mais parecida com o lote 8 do que o dono previu** (ameaça, não letalidade-para-derrubar). A janela invertida do §179 fica corrigida: não é "mata um sem wipe"; é "sobrevive à ameaça enquanto revive + vence".
