@@ -6,6 +6,16 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §180 — CORREÇÃO da hipótese invertida (o set AMEAÇA depois do revive, não MATA antes) + BOOTSTRAP-DE-ELEMENTO vira PROPRIEDADE DO FORMATO (4ª vez).
+
+**CORREÇÃO (dono) — a hipótese invertida "o set precisa MATAR" estava ERRADA para o REVIVE.** O ESTADO INICIAL entrega o morto (montar.caido, catálogo "começa com aliados caídos") — o revive não depende da IA matar. O que o set precisa é **AMEAÇAR o revivedor DEPOIS do revive** — é outra coisa, e **mais parecida com o lote 8 do que o dono previu** (ameaça, não letalidade-para-derrubar). A janela invertida do §179 fica corrigida: não é "mata um sem wipe"; é "sobrevive à ameaça enquanto revive + vence".
+
+**isis — o palpite invertido pelo motivo OPOSTO (dono).** Não é mais fácil por set mais letal; é mais DIFÍCIL por começar SOZINHA (2 pré-caídos isolam o revivedor). **Correção de leitura (dono): medir isis com UM pré-caído** — o rider dela é "revive TODOS os caídos", e se só um caiu, todos = um. Fiel à prosa, resolve o isolamento. **Se fechar, é o QUANTIFICADOR SE RESOLVENDO PELA LEITURA (todos=1) em vez do número** — um jeito novo de o quantificador se dissolver.
+
+**BOOTSTRAP-DE-ELEMENTO = PROPRIEDADE DO FORMATO (dono, 4ª vez: hermes, ahpuch, agora os revivedores).** **Kit cujo MILAGRE é a ferramenta do rider precisa do elemento GARANTIDO no montar, porque a renda SORTEIA** (income aleatório não garante 2-do-elemento a tempo). Não é conserto pontual — é regra: **toda família futura cujo rider dependa de um milagre nasce sabendo que precisa de bootstrap do elemento do milagre.** (demeter:Verdejante, freyja/isis:Aurora, osiris:Umbra — todos 2-do-elemento+livres.)
+
+**NÚCLEO MEDIDO — a janela É um ALVO §170 (confirma a correção do dono: "mais parecido com o lote 8").** Os 4 revivem (babá passa sempre: atena-sem-revive dá H=1000–1296). Mas o VENCÍVEL é uma banda estreita entre dois extremos: **time FORTE (kali·perseu) + bootstrap = TRIVIAL** (nós 24–56 — revive de graça, wipe fácil); **time FRACO (hermes·houyi) = não faz o WIPE** (H=36 perto, H=263 longe). O não-trivial-vencível mora no meio (ameaça-o-revivedor-mas-ganhável), e é ESTREITO como o lote 8. **PENDENTE:** achar a banda por deus (calibração fina de time×set×bootstrap) e carimbar; a validação (revive navegável, babá passa, janela=alvo) está feita.
+
 ## §179 — LOTE REVIVE ABERTO: tradução (5 sub-formas, AUTO-MORTE separada), motor (`reviveAliado`/`naoReviveInimigo`/montar.caido), e o núcleo VALIDADO com 2 achados.
 
 **TRADUÇÃO — a família é HETEROGÊNEA (como a preservação); PARTIÇÃO (dono):**
