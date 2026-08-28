@@ -474,6 +474,19 @@ console.log('== 26. semDebuffEmAliado (§192, nefertem/perseu): nenhum aliado co
   console.log('  bare = DEBUFFS_TODOS (nefertem) · filtro = subconjunto (perseu: controle); continuo, falha-durante');
 }
 
+console.log('== 27. estadoSimultaneo (§192, família A): ≥n inimigos num estado NO MESMO turno — snapshot, lê statusInimigo (§186) ==');
+{
+  const av = (log, req) => PROV.PREDICADOS.estadoSimultaneo.aval({ log }, { req });
+  const dist = (log, req) => PROV.PREDICADOS.estadoSimultaneo.distancia({ log }, { req });
+  const T = (turno, si) => ({ tipo: 'turno', turno, statusInimigo: si });
+  ok(av([T(3, ['encharcado', 'encharcado', 'encharcado'])], [{ status: 'encharcado', n: 3 }]) === 'ok', '3 encharcado no mesmo turno → ok');
+  ok(av([T(3, ['encharcado', 'encharcado'])], [{ status: 'encharcado', n: 3 }]) === 'pendente', '2<3 → pendente');
+  ok(av([T(3, ['encharcado', 'encharcado', 'encharcado', 'atordoado', 'atordoado', 'atordoado'])], [{ status: 'encharcado', n: 3 }, { status: 'atordoado', n: 3 }]) === 'ok', 'encharcado+atordoado nos 3 no MESMO turno → ok (aokuang/chaac)');
+  ok(av([T(3, ['encharcado', 'encharcado', 'encharcado']), T(4, ['atordoado', 'atordoado', 'atordoado'])], [{ status: 'encharcado', n: 3 }, { status: 'atordoado', n: 3 }]) === 'pendente', 'estados em turnos DIFERENTES → pendente (tem de ser simultâneo)');
+  ok(dist([T(3, ['encharcado'])], [{ status: 'encharcado', n: 3 }]) === 60, 'distância: melhor cobertura 1 de 3 → déficit 2 × 30 = 60');
+  console.log('  ≥n inimigos por estado NO MESMO turno-event; contar ocorrências (statusInimigo duplica por-inimigo, §186)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

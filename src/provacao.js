@@ -209,6 +209,22 @@ const PREDICADOS = {
     chave: (st, c) => String(new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size),
     distancia: (st, c) => Math.max(0, c.limiar - new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size) * 30,   // nudge p/ APLICAR e MANTER o status
   },
+  estadoSimultaneo: {   // §192 (aokuang/chaac/medusa/kukulkan): num MESMO turno, ≥`n` inimigos carregam CADA estado de `req`. Snapshot momentâneo (≠ estadoTurnos/estadoContinuo, que são duração).
+    // Lê `statusInimigo` do turno-event (§186), que JÁ duplica por-inimigo (flatMap) → contar ocorrências de um status = nº de inimigos com ele. SEM motor novo.
+    // req = [{status, n}] — todos no MESMO evento (medusa: [{atordoado,3}]; aokuang/chaac: [{encharcado,3},{atordoado,3}]; kukulkan: [{encharcado,3}]).
+    modo: 'log', obrig: ['req'],
+    aval: (st, c) => st.log.some(e => e.tipo === 'turno' && e.statusInimigo && c.req.every(r => e.statusInimigo.filter(s => s === r.status).length >= r.n)) ? 'ok' : 'pendente',
+    chave: (st, c) => {
+      let best = -1; for (const e of st.log) if (e.tipo === 'turno' && e.statusInimigo) { const d = c.req.reduce((s, r) => s + Math.min(e.statusInimigo.filter(x => x === r.status).length, r.n), 0); if (d > best) best = d; }
+      return String(best);
+    },
+    // §176 gradiente: menor déficit-de-cobertura sobre os turno-events (nudge p/ aplicar os estados nos inimigos ao mesmo tempo). ×30.
+    distancia: (st, c) => {
+      const total = c.req.reduce((s, r) => s + r.n, 0);
+      let best = 0; for (const e of st.log) if (e.tipo === 'turno' && e.statusInimigo) { const cob = c.req.reduce((s, r) => s + Math.min(e.statusInimigo.filter(x => x === r.status).length, r.n), 0); if (cob > best) best = cob; }
+      return Math.max(0, total - best) * 30;
+    },
+  },
   semDebuffEmAliado: {   // §192 (nefertem/perseu): NENHUM aliado carrega debuff. continuo (falha-DURANTE, como semPerderAliado/protegeDe — sem gradiente, poda ao vivo).
     // `filtro` opcional (lista de tipos): nefertem = bare (qualquer debuff = DEBUFFS_TODOS); perseu = {filtro:['atordoado','selado']} (controle; petrificação = atordoado).
     modo: 'continuo', obrig: [],

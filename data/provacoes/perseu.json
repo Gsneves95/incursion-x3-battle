@@ -1,0 +1,71 @@
+{
+  "key": "perseu",
+  "titulo": "O Espelho",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "perseu",
+    "houyi",
+    "zeus"
+  ],
+  "inimigos": [
+    "medusa",
+    "izanami",
+    "durga"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 10
+    },
+    {
+      "predicado": "semDebuffEmAliado",
+      "filtro": [
+        "atordoado",
+        "selado"
+      ]
+    }
+  ],
+  "verificacao": {
+    "hash": "7aff9659",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 3579,
+    "ms": 1857,
+    "caminho": [
+      "houyi Flecha Solar → medusa",
+      "perseu Lâmina Curva → medusa",
+      "passar",
+      "zeus Julgamento do Trovão → izanami",
+      "houyi Flecha Solar → medusa",
+      "perseu Lâmina Curva → izanami",
+      "passar",
+      "zeus Ira Celestial",
+      "perseu Lâmina Curva → medusa",
+      "passar",
+      "zeus Julgamento do Trovão → medusa",
+      "perseu Lâmina Curva → medusa",
+      "passar",
+      "houyi Nove Flechas → izanami",
+      "perseu Lâmina Curva → izanami",
+      "zeus Cetro do Trovão → izanami",
+      "passar",
+      "houyi Abater o Sol → durga",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "houyi Flecha Solar → medusa",
+      "perseu Lâmina Curva → durga",
+      "passar",
+      "houyi Abater o Sol → durga",
+      "passar",
+      "passar",
+      "houyi Nove Flechas → durga"
+    ]
+  }
+}
