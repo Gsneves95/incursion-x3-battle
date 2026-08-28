@@ -1,0 +1,71 @@
+{
+  "key": "shiva",
+  "titulo": "O Terceiro Olho",
+  "nivel": "Ordália",
+  "dificuldade": 3,
+  "aliados": [
+    "shiva",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "proibirSlotProprio",
+      "slot": "milagre"
+    }
+  ],
+  "verificacao": {
+    "hash": "8767f8b8",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 30,
+    "comDica": false,
+    "nos": 3012,
+    "ms": 1462,
+    "caminho": [
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "perseu Foice Adamantina → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "houyi Flecha Solar → thor",
+      "passar",
+      "houyi Abater o Sol → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → ogum",
+      "passar",
+      "houyi Abater o Sol → ogum",
+      "perseu Foice Adamantina → ogum",
+      "passar",
+      "houyi Flecha Solar → ogum",
+      "passar",
+      "houyi Abater o Sol → ogum",
+      "passar",
+      "houyi Flecha Solar → tyr",
+      "passar",
+      "houyi Abater o Sol → tyr"
+    ]
+  }
+}

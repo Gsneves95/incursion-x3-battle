@@ -1,0 +1,74 @@
+{
+  "key": "babi",
+  "titulo": "O Rugido",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "babi",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "proibirSlotProprio",
+      "slot": "habilidade"
+    }
+  ],
+  "verificacao": {
+    "hash": "68fd143c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 33,
+    "comDica": false,
+    "nos": 879,
+    "ms": 533,
+    "caminho": [
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "houyi Flecha Solar → thor",
+      "passar",
+      "houyi Nove Flechas → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Flecha Solar → tyr",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "houyi Flecha Solar → ogum",
+      "passar",
+      "houyi Flecha Solar → ogum",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Flecha Solar → thor",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Nove Flechas → ogum",
+      "perseu Lâmina Curva → tyr",
+      "passar",
+      "perseu Cabeça da Medusa → tyr",
+      "houyi Flecha Solar → tyr",
+      "passar",
+      "houyi Flecha Solar → tyr",
+      "perseu Lâmina Curva → tyr",
+      "passar",
+      "perseu Lâmina Curva → tyr"
+    ]
+  }
+}

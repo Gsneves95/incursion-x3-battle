@@ -1,0 +1,60 @@
+{
+  "key": "kagutsuchi",
+  "titulo": "A Chama que Consome",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "kagutsuchi",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "ogum"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 11
+    }
+  ],
+  "verificacao": {
+    "hash": "164c625",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 23,
+    "comDica": false,
+    "nos": 98540,
+    "ms": 71270,
+    "caminho": [
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "passar",
+      "perseu Foice Adamantina → thor",
+      "passar",
+      "perseu Lâmina Curva → thor",
+      "passar",
+      "houyi Abater o Sol → thor",
+      "perseu Foice Adamantina → thor",
+      "passar",
+      "perseu Cabeça da Medusa → thor",
+      "houyi Flecha Solar → thor",
+      "passar",
+      "houyi Nove Flechas → ogum",
+      "perseu Lâmina Curva → ogum",
+      "passar",
+      "perseu Lâmina Curva → tyr",
+      "passar",
+      "houyi Abater o Sol → tyr",
+      "passar",
+      "passar",
+      "houyi Nove Flechas → tyr"
+    ]
+  }
+}
