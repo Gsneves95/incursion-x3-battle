@@ -304,6 +304,39 @@ const PREDICADOS = {
     chave: (st, c, ctx) => String(st.lados[0].units.reduce((s, u) => s + (u.maxHpPerdido || 0), 0)),
     distancia: (st, c, ctx) => Math.max(0, st.lados[0].units.reduce((s, u) => s + (u.maxHpPerdido || 0), 0) - (c.limiar || 0)),   // guia p/ restaurar (Σ maxHpPerdido acima do teto)
   },
+  soloSobrevivente: {   // §184 (erinias): VENCER com só o TÍTULO vivo — todos os OUTROS aliados caídos. INVERSO do semPerderAliado.
+    // O passivo dela (Fúria Vingativa: +8 por aliado morto, p/ sempre) faz a morte-de-aliado um POWER-UP → solver-ALINHADO (§182):
+    // o gradiente e o kit puxam no MESMO sentido (≠ mimir/ymir, onde o gradiente luta contra a auto-preservação sozinho).
+    modo: 'final', obrig: ['quem'],
+    aval: (st, c) => {
+      const titulo = st.lados[0].units.find(u => u.key === c.quem);
+      if (!titulo || !titulo.vivo) return 'falha';                                    // o título TEM de sobreviver
+      return st.lados[0].units.some(u => u.key !== c.quem && u.vivo) ? 'falha' : 'ok'; // qualquer outro aliado vivo no fim → falha
+    },
+    chave: (st, c) => String(st.lados[0].units.filter(u => u.key !== c.quem && u.vivo).length),
+    // §176 GRADIENTE: cada OUTRO aliado ainda vivo = ×1000 (anti-greedy — o solver PRESERVA aliados por padrão; aqui precisa deixá-los cair).
+    distancia: (st, c) => {
+      const titulo = st.lados[0].units.find(u => u.key === c.quem);
+      if (!titulo || !titulo.vivo) return 100000;                                     // título morto = beco (recompensa mantê-LO vivo)
+      return st.lados[0].units.filter(u => u.key !== c.quem && u.vivo).length * 1000;
+    },
+  },
+  tituloCaido: {   // §184 (mimir, ymir): o TÍTULO tem de estar MORTO no golpe final (AUTO-MORTE real). Espelho NEGATIVO do reviveAliado:
+    // sem gradiente que premie a morte, o solver protege o título e o rider é insatisfazível (a tensão do dono, §179). O ×1000 RECOMPENSA
+    // deixá-lo cair. "Não revivido" cai no naoRevivivel do próprio kit (mimir) — o aval só exige !vivo no estado final. Combina com hpNoFim
+    // (ymir: título caído + 2 aliados <30) e com o dead-passive do motor (mesmoMorto §123, aoCair self).
+    modo: 'final', obrig: ['quem'],
+    aval: (st, c) => {
+      const u = st.lados[0].units.find(x => x.key === c.quem);
+      return (u && !u.vivo) ? 'ok' : 'falha';   // vivo (ou ausente) no fim = rider não satisfeito
+    },
+    chave: (st, c) => { const u = st.lados[0].units.find(x => x.key === c.quem); return (u && u.vivo) ? '1' : '0'; },
+    distancia: (st, c) => {
+      const u = st.lados[0].units.find(x => x.key === c.quem);
+      if (!u) return 0;
+      return u.vivo ? 1000 : 0;   // vivo = longe (recompensa deixá-lo MORRER e ficar morto)
+    },
+  },
 };
 
 // as 9 FONTES de acúmulo, da varredura dos 91 (§146/§147): nasce com todas registradas (§87). A implementação

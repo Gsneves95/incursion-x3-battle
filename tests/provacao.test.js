@@ -408,6 +408,25 @@ console.log('== 22. reviveAliado + naoReviveInimigo (§179, núcleo REVIVE): con
   console.log('  reviveAliado conta lado 0 (anti-greedy ×1000) · naoReviveInimigo barra lado 1 (§167→§179, hel)');
 }
 
+console.log('== 23. soloSobrevivente + tituloCaido (§184, lote AUTO-MORTE): predicados INVERTIDOS (espelhos negativos) ==');
+{
+  const mk = units => ({ lados: [{ units }], turno: 5 });
+  const solo = (units, quem) => PROV.PREDICADOS.soloSobrevivente.aval(mk(units), { quem });
+  const soloD = (units, quem) => PROV.PREDICADOS.soloSobrevivente.distancia(mk(units), { quem });
+  ok(solo([{ key: 'erinias', vivo: true }, { key: 'a', vivo: false }, { key: 'b', vivo: false }], 'erinias') === 'ok', 'soloSobrevivente: só o título vivo → ok');
+  ok(solo([{ key: 'erinias', vivo: true }, { key: 'a', vivo: true }, { key: 'b', vivo: false }], 'erinias') === 'falha', 'soloSobrevivente: outro aliado vivo → falha');
+  ok(solo([{ key: 'erinias', vivo: false }, { key: 'a', vivo: false }], 'erinias') === 'falha', 'soloSobrevivente: título MORTO → falha (ele tem de sobreviver)');
+  ok(soloD([{ key: 'erinias', vivo: true }, { key: 'a', vivo: true }, { key: 'b', vivo: true }], 'erinias') === 2000, 'soloSobrevivente: 2 outros vivos → distância 2000 (×1000 anti-greedy)');
+  ok(soloD([{ key: 'erinias', vivo: false }], 'erinias') === 100000, 'soloSobrevivente: título morto → beco (100000)');
+  const tc = (units, quem) => PROV.PREDICADOS.tituloCaido.aval(mk(units), { quem });
+  const tcD = (units, quem) => PROV.PREDICADOS.tituloCaido.distancia(mk(units), { quem });
+  ok(tc([{ key: 'mimir', vivo: false }, { key: 'odin', vivo: true }], 'mimir') === 'ok', 'tituloCaido: título morto no fim → ok');
+  ok(tc([{ key: 'mimir', vivo: true }, { key: 'odin', vivo: true }], 'mimir') === 'falha', 'tituloCaido: título vivo no fim → falha');
+  ok(tcD([{ key: 'mimir', vivo: true }], 'mimir') === 1000, 'tituloCaido: vivo → distância 1000 (recompensa deixá-lo morrer)');
+  ok(tcD([{ key: 'mimir', vivo: false }], 'mimir') === 0, 'tituloCaido: morto → 0');
+  console.log('  soloSobrevivente = semPerderAliado invertido (erinias, solver-alinhado) · tituloCaido = espelho negativo do reviveAliado (mimir/ymir, auto-morte)');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

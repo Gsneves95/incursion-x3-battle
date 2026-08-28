@@ -1,0 +1,73 @@
+{
+  "key": "mimir",
+  "titulo": "A Cabeça Falante",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "requisito": "odin",
+  "aliados": [
+    "mimir",
+    "odin",
+    "zeus"
+  ],
+  "inimigos": [
+    "thor",
+    "tyr",
+    "heimdall"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "tituloCaido",
+      "quem": "mimir"
+    }
+  ],
+  "verificacao": {
+    "hash": "d1793a32",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 31,
+    "comDica": false,
+    "nos": 36,
+    "ms": 78,
+    "caminho": [
+      "odin Gungnir → thor",
+      "zeus Cetro do Trovão → thor",
+      "mimir Sussurro Ancestral → thor",
+      "passar",
+      "zeus Ira Celestial",
+      "passar",
+      "zeus Julgamento do Trovão → thor",
+      "mimir Sussurro Ancestral → thor",
+      "passar",
+      "zeus Cetro do Trovão → thor",
+      "mimir Sussurro Ancestral → thor",
+      "passar",
+      "zeus Julgamento do Trovão → thor",
+      "passar",
+      "zeus Ira Celestial",
+      "mimir Sussurro Ancestral → tyr",
+      "passar",
+      "zeus Julgamento do Trovão → tyr",
+      "odin Gungnir → tyr",
+      "mimir Sussurro Ancestral → tyr",
+      "passar",
+      "odin Gungnir → tyr",
+      "mimir Sussurro Ancestral → tyr",
+      "zeus Cetro do Trovão → heimdall",
+      "passar",
+      "passar",
+      "zeus Julgamento do Trovão → heimdall",
+      "odin Gungnir → heimdall",
+      "passar",
+      "zeus Ira Celestial",
+      "odin Gungnir → heimdall"
+    ]
+  }
+}
