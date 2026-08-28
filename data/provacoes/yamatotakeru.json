@@ -1,21 +1,46 @@
 {
   "key": "yamatotakeru",
-  "titulo": "Ceifa-Ervas",
+  "titulo": "Corte Ceifa-Ervas",
   "nivel": "Ordália",
   "dificuldade": 3,
   "aliados": [
     "yamatotakeru",
     "perseu",
-    "kali"
+    "houyi"
   ],
   "inimigos": [
-    "hera",
-    "freyja",
-    "apolo"
+    "thor",
+    "tyr",
+    "ogum"
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "orbs": {
+      "0": {
+        "Tempestade": 6
+      }
+    },
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "efeitos": [
+          {
+            "type": "dmgUp",
+            "dur": 9
+          },
+          {
+            "type": "regen",
+            "dur": 9
+          },
+          {
+            "type": "dmgReduction",
+            "dur": 9
+          }
+        ]
+      }
+    ]
   },
   "condicoes": [
     {
@@ -23,51 +48,36 @@
       "turnos": 14
     },
     {
-      "predicado": "limparBuffsAntesDeAbate"
+      "predicado": "stripBuffsInimigo",
+      "quantos": 3
     }
   ],
   "verificacao": {
-    "hash": "878843fe",
+    "hash": "858270be",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 33,
+    "lancesNesteCaminho": 17,
     "comDica": false,
-    "nos": 4649,
-    "ms": 2544,
+    "nos": 844,
+    "ms": 2252,
     "caminho": [
-      "perseu Lâmina Curva → hera",
       "passar",
-      "kali Dança da Aniquilação",
-      "perseu Lâmina Curva → hera",
+      "yamatotakeru Corte Ceifa-Ervas → thor",
+      "perseu Foice Adamantina → thor",
+      "houyi Nove Flechas → tyr",
       "passar",
-      "perseu Cabeça da Medusa → apolo",
-      "kali Golpe da Foice → apolo",
+      "houyi Abater o Sol → tyr",
+      "yamatotakeru Kusanagi → ogum",
+      "perseu Lâmina Curva → ogum",
       "passar",
-      "kali Sede de Sangue → freyja",
-      "perseu Lâmina Curva → freyja",
+      "perseu Cabeça da Medusa → ogum",
+      "houyi Flecha Solar → ogum",
+      "yamatotakeru Kusanagi → ogum",
       "passar",
-      "perseu Foice Adamantina → freyja",
-      "kali Sede de Sangue → freyja",
+      "perseu Foice Adamantina → ogum",
+      "yamatotakeru Kusanagi → tyr",
       "passar",
-      "perseu Lâmina Curva → freyja",
-      "passar",
-      "perseu Foice Adamantina → hera",
-      "yamatotakeru Kusanagi → apolo",
-      "kali Dança da Aniquilação",
-      "passar",
-      "kali Golpe da Foice → hera",
-      "yamatotakeru Kusanagi → hera",
-      "passar",
-      "yamatotakeru Kusanagi → hera",
-      "passar",
-      "kali Golpe da Foice → apolo",
-      "yamatotakeru Kusanagi → apolo",
-      "passar",
-      "kali Golpe da Foice → apolo",
-      "passar",
-      "kali Golpe da Foice → apolo",
-      "passar",
-      "kali Golpe da Foice → apolo"
+      "perseu Lâmina Curva → ogum"
     ]
   }
 }
