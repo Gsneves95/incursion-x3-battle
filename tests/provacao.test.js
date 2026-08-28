@@ -427,6 +427,17 @@ console.log('== 23. soloSobrevivente + tituloCaido (§184, lote AUTO-MORTE): pre
   console.log('  soloSobrevivente = semPerderAliado invertido (erinias, solver-alinhado) · tituloCaido = espelho negativo do reviveAliado (mimir/ymir, auto-morte)');
 }
 
+console.log('== 24. statusTurnos (§186, orfeu): ≥N turnos com ≥1 inimigo carregando o status — espelha estadoTurnos, lendo statusInimigo ==');
+{
+  const av = (log, c) => PROV.PREDICADOS.statusTurnos.aval({ log }, c);
+  const T = (turno, status) => ({ tipo: 'turno', turno, statusInimigo: status });
+  ok(av([T(3, ['adormecido']), T(4, ['adormecido']), T(5, [])], { status: 'adormecido', limiar: 2 }) === 'ok', '2 turnos com inimigo adormecido ≥ 2 → ok');
+  ok(av([T(3, ['adormecido']), T(4, [])], { status: 'adormecido', limiar: 2 }) === 'pendente', '1 turno < 2 → pendente');
+  ok(av([T(3, ['adormecido']), T(3, ['adormecido']), T(4, ['adormecido'])], { status: 'adormecido', limiar: 2 }) === 'ok', 'conta TURNOS distintos (2 events no turno 3 = 1 turno)');
+  ok(av([T(3, ['veneno'])], { status: 'adormecido', limiar: 1 }) === 'pendente', 'outro status não conta');
+  console.log('  ≥N turnos-com-status (distintos) — o uptime-de-status relaxado (§186); statusInimigo carimbado no turno-event');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PROVAÇÃO OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

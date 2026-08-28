@@ -194,6 +194,13 @@ const PREDICADOS = {
     chave: (st, c) => String(new Set(st.log.filter(e => e.tipo === 'turno' && e.campo === c.campo).map(e => e.turno)).size),
     distancia: (st, c) => Math.max(0, c.limiar - new Set(st.log.filter(e => e.tipo === 'turno' && e.campo === c.campo).map(e => e.turno)).size) * 30,   // nudge p/ ATIVAR e MANTER o campo
   },
+  statusTurnos: {   // §186 (orfeu): ≥`limiar` TURNOS com ≥1 inimigo carregando o status `status` (adormecido). Espelha estadoTurnos, lendo `statusInimigo` (engine §186).
+    // RELAXA o uptime-de-status ESTRITO (irrealizável, §178: economia+recargas não dão cobertura contínua). Mede ESFORÇO (≥N turnos com alguém dormindo), não perfeição.
+    modo: 'log', obrig: ['status', 'limiar'],
+    aval: (st, c) => new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size >= c.limiar ? 'ok' : 'pendente',
+    chave: (st, c) => String(new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size),
+    distancia: (st, c) => Math.max(0, c.limiar - new Set(st.log.filter(e => e.tipo === 'turno' && e.statusInimigo && e.statusInimigo.includes(c.status)).map(e => e.turno)).size) * 30,   // nudge p/ APLICAR e MANTER o status
+  },
   proibirSlotProprio: {   // você NUNCA usa o slot X (≠ negarAcaoInimigo: este é sobre o SEU lado, §144 instr. 4)
     modo: 'log', obrig: ['slot'],
     aval: (st, c, ctx) => st.log.some(e => e.tipo === 'acao' && ctx.ladoDe(e.origem) === 0 && e.slot === c.slot) ? 'falha' : 'ok',

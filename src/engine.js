@@ -315,6 +315,7 @@ const VOCAB = {
     'reflexo', 'soak', 'devolvido',     // §162: dano:reflexo (golpe de reflexo, p/ danoRefletido) · dano:soak (dano engolido por interceptação, p/ danoAbsorvido) · dano:devolvido (dano devolvido pela Balança, p/ danoDevolvido)
     'unico',               // §172: dano:unico — o golpe foi de ALVO ÚNICO (p/ protegeDe filtro tipoDano:'unico', Bastet)
     'campo',               // §178: turno:campo — st.fase (Dia/Noite) ATIVO no início deste turno (p/ estadoTurnos contar turnos-de-campo, amaterasu/tsukuyomi)
+    'statusInimigo',       // §186: turno:statusInimigo — tipos de debuff ativos em inimigos vivos neste turno (p/ statusTurnos contar turnos-com-status, orfeu)
     'matador',             // queda:matador — CHAVE de quem desferiu o golpe letal (F2.0; fogo amigo = matador e alvo no mesmo lado)
     'estados',             // queda:estados — status ativos no morto NO ATO da queda (F2.0; "morrer Encharcado/Envenenado")
     'execucao',            // queda:execucao — o abate foi por EXECUÇÃO (F1.9; iara ≥2 via Afogamento, kraken slotAbate)
@@ -1467,7 +1468,8 @@ function fimTurno(st) {
   atualizarMarcos(st);   // §156: rede de segurança — captura limpeza por EXPIRAÇÃO de buff no fim do turno (o strip já foi pego no agir)
   st.ativo = 1 - st.ativo;
   if (st.ativo === st.starter) st.turno++;   // conta rodadas a partir de quem abriu
-  log(st, st.fase ? { tipo: 'turno', turno: st.turno, lado: st.ativo, campo: st.fase } : { tipo: 'turno', turno: st.turno, lado: st.ativo });   // §178: carimba o campo (Dia/Noite) ativo p/ estadoTurnos contar
+  const _statusInim = st.lados[1].units.filter(u => u.vivo).flatMap(u => (u.efeitos || []).map(e => e.type));   // §186 (orfeu): status de inimigo ativo p/ statusTurnos contar (espelha o campo §178)
+  log(st, st.fase ? { tipo: 'turno', turno: st.turno, lado: st.ativo, campo: st.fase, statusInimigo: _statusInim } : { tipo: 'turno', turno: st.turno, lado: st.ativo, statusInimigo: _statusInim });   // §178 campo (Dia/Noite) + §186 statusInimigo
   iniciarTurno(st);
 }
 
