@@ -1,0 +1,70 @@
+{
+  "key": "boitata",
+  "titulo": "Guardiã dos Campos",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "generica": true,
+  "aliados": [
+    "boitata",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "boitata"
+    }
+  ],
+  "verificacao": {
+    "hash": "af950ce0",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 30722,
+    "ms": 18495,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "boitata Bote Flamejante → cuca",
+      "passar",
+      "houyi Nove Flechas → cuca",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "boitata Cobra de Fogo",
+      "passar",
+      "boitata Bote Flamejante → saci",
+      "perseu Cabeça da Medusa → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "boitata Bote Flamejante → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}

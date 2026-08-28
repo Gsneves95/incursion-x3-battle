@@ -1,0 +1,71 @@
+{
+  "key": "exu",
+  "titulo": "A Encruzilhada",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "generica": true,
+  "aliados": [
+    "exu",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "exu"
+    }
+  ],
+  "verificacao": {
+    "hash": "d1aa5398",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 9728,
+    "ms": 5508,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "exu Padê → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "houyi Flecha Solar → loki",
+      "exu Padê → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Foice Adamantina → loki",
+      "exu Padê → loki",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "perseu Lâmina Curva → cuca",
+      "exu Padê → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "houyi Flecha Solar → cuca",
+      "exu Encruzilhada",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → cuca",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → cuca",
+      "exu Abrir e Fechar Caminhos → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "exu Padê → saci",
+      "perseu Foice Adamantina → saci"
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "key": "krishna",
+  "titulo": "A Ação Perfeita",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "krishna",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "krishna"
+    }
+  ],
+  "verificacao": {
+    "hash": "da9c13d",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 27,
+    "ms": 104,
+    "caminho": [
+      "houyi Flecha Solar → loki",
+      "krishna Flauta Divina → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "krishna Flauta Divina → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "krishna Flauta Divina → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "krishna Flauta Divina → cuca",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Abater o Sol → cuca",
+      "perseu Cabeça da Medusa → cuca",
+      "krishna Flauta Divina → cuca",
+      "passar",
+      "houyi Nove Flechas → saci+cuca"
+    ]
+  }
+}

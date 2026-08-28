@@ -2,7 +2,9 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## Última sessão — **FASE 2 FECHADA: 63/63 CARIMBADAS (teto real 63, não 91).** REVIVE + AUTO-MORTE + baratas + 3 dívidas + cauda inteira (§181–194).
+## Última sessão — **FASE 2 FECHADA: 90/100 com Provação (63 ensinam-kit + 27 rota genérica).** REVIVE + AUTO-MORTE + baratas + 3 dívidas + cauda + genéricas (§181–195).
+
+**PROVAÇÃO GENÉRICA (§195) — resolve a rota-de-aquisição dos 28 sem-Provação.** Forma `deadline{N} + semPerderAliado{quem:<deus>}` ("vença sem perder [deus]"), zero motor, babá falha por construção (troca protagonismo por rota), marcadas `"generica": true` (F4 substitui após rebalancear kit). **27 de 28 carimbadas** (N/nível derivados; 19 com perseu·houyi dl12, anubis dl15, 7 com CURADOR oxum dl14 — o curador protege o título squishy, que É o rider). **oni RESISTE mesmo na genérica → kit sustenta rider NENHUM (candidato nº1 a rework F4).** **Números: 63 ensinam-kit · 27 dão-a-rota · 1 (oni) sem-rota · 9 iniciais. 90 com Provação, 10 sem.**
 
 **O NÚMERO FINAL: 63 carimbadas = teto 63.** 100 deuses − 9 iniciais = 91 planejadas; **28 SAÍDAS** medidas → teto = 63. O honesto derrubou o otimista 3× (91→80→74→63): a cauda-da-cauda (23) rendeu 6 carimbos + 17 saídas (74% saída — onde os riders anti-solver se concentram).
 

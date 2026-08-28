@@ -1,0 +1,76 @@
+{
+  "key": "cernunnos",
+  "titulo": "A Matilha",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "cernunnos",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "cernunnos"
+    }
+  ],
+  "verificacao": {
+    "hash": "b2cacde9",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 343,
+    "ms": 544,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "oxum Rio de Ouro",
+      "perseu Foice Adamantina → loki",
+      "cernunnos Chifres do Bosque → loki",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "oxum Águas de Oxum → cernunnos",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "cernunnos Caçada Selvagem",
+      "perseu Foice Adamantina → cuca",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "cernunnos Fúria da Matilha",
+      "perseu Lâmina Curva → saci",
+      "oxum Rio de Ouro",
+      "passar",
+      "cernunnos Chifres do Bosque → saci",
+      "perseu Lâmina Curva → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "cernunnos Chifres do Bosque → saci",
+      "oxum Espelho Dourado → saci"
+    ]
+  }
+}

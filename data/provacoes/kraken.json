@@ -1,0 +1,76 @@
+{
+  "key": "kraken",
+  "titulo": "O Abismo Reclama",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "generica": true,
+  "aliados": [
+    "kraken",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "kraken"
+    }
+  ],
+  "verificacao": {
+    "hash": "fa389de6",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 2294,
+    "ms": 1022,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "kraken Fúria do Abismo",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "kraken Agarre Abissal → saci+cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "kraken Investida de Tentáculo → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "kraken Agarre Abissal → saci+cuca",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "kraken Fúria do Abismo",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "kraken Agarre Abissal → saci",
+      "passar",
+      "passar",
+      "kraken Agarre Abissal → saci",
+      "passar",
+      "passar",
+      "kraken Fúria do Abismo"
+    ]
+  }
+}

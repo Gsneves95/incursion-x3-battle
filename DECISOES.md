@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §195 — PROVAÇÃO GENÉRICA p/ os 28 sem-rota: 27 carimbadas, oni RESISTE MESMO ASSIM (kit sustenta rider NENHUM). Separação: 63 ensinam-kit × 27 dão-só-a-rota.
+
+**O PROBLEMA (dono) era de PRODUTO, não de motor:** deus de peso (odin, medusa) sem rota determinística enquanto Zeus/Hades têm parece ARBITRÁRIO ao jogador — que não sabe que o motivo é mecânico. **Solução: Provação GENÉRICA, forma `deadline{N} + semPerderAliado{quem:<deus>}` ("vença em N sem perder [deus]"), ZERO motor novo** (o `quem` existe desde §172; validou de primeira).
+
+**O BABÁ FALHA POR CONSTRUÇÃO — e está no DESENHO.** A genérica ABRE MÃO do protagonismo em troca da rota: não há ferramenta-título load-bearing, e não se busca set que a torne. **O carimbo prova VENCÍVEL, que é o que a rota-de-aquisição precisa.** Marcadas com `"generica": true` no JSON → a Fase 4 sabe quais SUBSTITUIR depois do rebalanceamento de kit.
+
+**27 de 28 CARIMBADAS.** N e nível DERIVADOS da medição (nome temático do catálogo, nível por nós — não parecem de segunda classe):
+- **19 com [deus, perseu, houyi] dl12** (Ritos/Provações): nuwa, tanuki, boitatá, curupira, tsukuyomi, odin, ymir, raijin, aokuang, chaac, kukulkan, nefertem, kali, sunwukong, huangdi, exu, horus, krishna, lugh.
+- **anubis com [·, perseu, houyi] dl15** (Provação d3, nós 134191 — o mais duro).
+- **7 com [deus, perseu, OXUM] dl14** (curador): durga, cernunnos, xango, erinias, medusa, houyi, kraken. **ACHADO: o CURADOR foi a chave.** perseu·houyi (2 atacantes) NÃO protegem o título squishy → vs set gentil o deus morria em 15 turnos; trocar 1 atacante por curador (oxum) fechou 7 dos 8. **A forma genérica pede time de SUPORTE, não 2 atacantes** — o template adapta o time p/ manter o deus vivo, que É o rider.
+
+**oni RESISTE MESMO NA GENÉRICA (H=30 dica, com curador, dl14) — o sinal F4 mais forte.** Se o kit não sustenta nem "sobreviva N turnos", ele não sustenta rider NENHUM. **oni é o candidato nº1 a rework de kit na Fase 4** (mais forte que os 4 slots-mortos, que ao menos existem-mas-opcionais; o de oni é sobreviver-e-contribuir, que falha).
+
+**O NÚMERO SEPARADO (dono):**
+- **63 ENSINAM KIT** (Provações reais, protagonista load-bearing).
+- **27 DÃO SÓ A ROTA** (genéricas — o que a Fase 4 ataca: substituir por Provação-de-kit após rebalancear).
+- **1 (oni) SEM ROTA** — resiste até à genérica; kit sustenta rider nenhum.
+- **9 iniciais** — sem Provação por design.
+**Total com Provação: 90/100.** Sem: 10 (9 iniciais + oni). **A tela da Fase 3 lista 90** (63 kit + 27 rota), e o flag `generica` diz ao produto/F4 quais são as 27 substituíveis.
+
 ## §194 — FECHAMENTO DA FASE 2: 63 CARIMBADAS = TETO REAL 63 (não 91, não 80, não 74). A cauda foi 74% saída. Suíte verde.
 
 **A FASE 2 FECHA EM 63/63 — COMPLETA no alcançável.** 100 deuses − 9 iniciais = 91 planejadas. **28 SAÍDAS** (deus sem Provação viável, por decisão MEDIDA) → teto real = 91 − 28 = **63**. **63 carimbadas = 63 teto.** O número honesto derrubou o otimista três vezes (91→80→74→63): a cauda-da-cauda (23) rendeu só **6 carimbos e 17 saídas** (74% saída) — porque o que sobra por último é onde os riders anti-solver se concentram (theme≠mechanic, §191/§193).

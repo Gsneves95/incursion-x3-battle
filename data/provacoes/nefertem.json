@@ -1,0 +1,75 @@
+{
+  "key": "nefertem",
+  "titulo": "O Perfume",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "nefertem",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "nefertem"
+    }
+  ],
+  "verificacao": {
+    "hash": "b2389d6b",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 33,
+    "comDica": false,
+    "nos": 280,
+    "ms": 284,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "nefertem Pétala Cortante → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "nefertem Pétala Cortante → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "houyi Flecha Solar → loki",
+      "nefertem Pétala Cortante → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → cuca",
+      "nefertem Pétala Cortante → cuca",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "perseu Lâmina Curva → cuca",
+      "nefertem Pétala Cortante → cuca",
+      "passar",
+      "houyi Nove Flechas → cuca",
+      "perseu Lâmina Curva → cuca",
+      "nefertem Pétala Cortante → cuca",
+      "passar",
+      "perseu Cabeça da Medusa → saci",
+      "houyi Abater o Sol → saci",
+      "nefertem Perfume de Lótus → nefertem",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "nefertem Pétala Cortante → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Abater o Sol → saci"
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "key": "horus",
+  "titulo": "O Olho Vê",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "generica": true,
+  "aliados": [
+    "horus",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "horus"
+    }
+  ],
+  "verificacao": {
+    "hash": "aa2e24dc",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 69169,
+    "ms": 68929,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "horus Garras do Céu → cuca",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "horus Olho de Hórus → cuca",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "horus Garras do Céu → cuca",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "horus Mergulho do Falcão → saci"
+    ]
+  }
+}

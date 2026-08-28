@@ -1,0 +1,71 @@
+{
+  "key": "sunwukong",
+  "titulo": "Setenta e Duas",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "sunwukong",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "sunwukong"
+    }
+  ],
+  "verificacao": {
+    "hash": "ff7df72d",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 35,
+    "ms": 127,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → saci+cuca",
+      "houyi Flecha Solar → cuca",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → saci+cuca",
+      "houyi Flecha Solar → cuca",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → saci+cuca",
+      "houyi Flecha Solar → cuca",
+      "passar",
+      "sunwukong Fios de Cabelo → saci",
+      "passar",
+      "sunwukong Bastão Ruyi Jingu → loki"
+    ]
+  }
+}

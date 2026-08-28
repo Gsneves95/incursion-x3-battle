@@ -1,0 +1,70 @@
+{
+  "key": "anubis",
+  "titulo": "A Pesagem",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "generica": true,
+  "aliados": [
+    "anubis",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "anubis"
+    }
+  ],
+  "verificacao": {
+    "hash": "cfe219e1",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 134191,
+    "ms": 131465,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "passar",
+      "anubis Pesagem do Coração → cuca",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "anubis Sentença do Duat",
+      "passar",
+      "anubis Toque do Embalsamador → cuca",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "anubis Toque do Embalsamador → cuca"
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "key": "aokuang",
+  "titulo": "A Chuva Cai",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "generica": true,
+  "aliados": [
+    "aokuang",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "aokuang"
+    }
+  ],
+  "verificacao": {
+    "hash": "1bdc626e",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 33,
+    "comDica": false,
+    "nos": 40047,
+    "ms": 40495,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "perseu Lâmina Curva → cuca",
+      "aokuang Tempestade de Chuva",
+      "passar",
+      "aokuang Fúria do Dragão do Mar",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "aokuang Garra do Dragão → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "aokuang Garra do Dragão → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}

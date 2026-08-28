@@ -1,0 +1,72 @@
+{
+  "key": "kukulkan",
+  "titulo": "A Estrela da Manhã",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "generica": true,
+  "aliados": [
+    "kukulkan",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "kukulkan"
+    }
+  ],
+  "verificacao": {
+    "hash": "ce39f7f7",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 30,
+    "comDica": false,
+    "nos": 15910,
+    "ms": 6956,
+    "caminho": [
+      "kukulkan Presas do Vento → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "kukulkan Presas do Vento → loki",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "perseu Foice Adamantina → cuca",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "kukulkan Estrela da Manhã",
+      "passar",
+      "kukulkan Voo da Serpente",
+      "passar",
+      "perseu Cabeça da Medusa → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "kukulkan Presas do Vento → saci"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "key": "ymir",
+  "titulo": "Carne Primordial",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "ymir",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "ymir"
+    }
+  ],
+  "verificacao": {
+    "hash": "96c845af",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 35,
+    "comDica": false,
+    "nos": 463,
+    "ms": 661,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Flecha Solar → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Cabeça da Medusa → cuca",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "ymir Corpo do Mundo",
+      "passar",
+      "ymir Punho de Gelo → cuca",
+      "perseu Lâmina Curva → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → cuca",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "ymir Punho de Gelo → saci",
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "ymir Punho de Gelo → saci"
+    ]
+  }
+}

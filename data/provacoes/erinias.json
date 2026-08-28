@@ -1,0 +1,85 @@
+{
+  "key": "erinias",
+  "titulo": "Vingança Cobrada",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "generica": true,
+  "aliados": [
+    "erinias",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "erinias"
+    }
+  ],
+  "verificacao": {
+    "hash": "c53ca7e0",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 43,
+    "comDica": false,
+    "nos": 181,
+    "ms": 273,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Rio de Ouro",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "oxum Águas de Oxum → erinias",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "oxum Águas de Oxum → erinias",
+      "passar",
+      "erinias Chicote de Sangue → cuca",
+      "perseu Lâmina Curva → loki",
+      "oxum Águas de Oxum → erinias",
+      "passar",
+      "erinias Chicote de Sangue → cuca",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "erinias Julgamento das Fúrias → saci",
+      "oxum Águas de Oxum → erinias",
+      "passar",
+      "perseu Foice Adamantina → saci",
+      "oxum Rio de Ouro",
+      "erinias Chicote de Sangue → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "oxum Águas de Oxum → erinias",
+      "passar",
+      "oxum Espelho Dourado → saci",
+      "erinias Chicote de Sangue → saci"
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "key": "odin",
+  "titulo": "O Preço do Olho",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "generica": true,
+  "aliados": [
+    "odin",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "odin"
+    }
+  ],
+  "verificacao": {
+    "hash": "ac580f5c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 24,
+    "comDica": false,
+    "nos": 67222,
+    "ms": 70705,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "odin Gungnir → cuca",
+      "passar",
+      "odin Gungnir → cuca",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "odin Sabedoria do Enforcado → houyi",
+      "houyi Nove Flechas → saci+cuca"
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "key": "tsukuyomi",
+  "titulo": "A Lua Julga",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "generica": true,
+  "aliados": [
+    "tsukuyomi",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "tsukuyomi"
+    }
+  ],
+  "verificacao": {
+    "hash": "2aa3aba9",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 32,
+    "comDica": false,
+    "nos": 70707,
+    "ms": 68549,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "tsukuyomi Anoitecer → saci",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "houyi Flecha Solar → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "tsukuyomi Anoitecer → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}
