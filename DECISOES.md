@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §182 — TRADUÇÃO do lote AUTO-MORTE: a partição RACHA em 3 espécies; a pergunta do dono respondida (3 dos 4 têm saída).
+
+**A TENSÃO (dono), na frente:** o rider pede que o TÍTULO caia, a vitória pede matar os inimigos, e o solver PREFERE não morrer (controla os próprios bonecos, não os suicida). "Ativo-opcional invertido". Traduzi os 4 e medi onde deu — **a família "AUTO-MORTE" não é uma família; racha em 3:**
+
+**1. SELF-REVIVE (bennu) — NÃO é auto-morte; é a variante SELF-REVIVE da família REVIVE. PRONTO p/ carimbar.** A Imortal (`aoCair self → reviveProximoTurno hp60`) é um revive-lado-0 → **`reviveAliado{1}` (predicado EXISTENTE) já cobre.** E o achado forte: **o gradiente ×1000 do reviveAliado CONVERTE "tem de morrer" de anti-solver em PRÓ-solver** — o solver busca o estado revivido (−1000 no H), então escolhe linhas onde bennu toma o fogo letal inimigo e volta. A tensão do dono se DISSOLVE para o auto-revivedor. MEDIDO: bennu·perseu·houyi vs **thor·saci·tyr dl13 = VENCÍVEL nós 73191** (bennu morre no fogo, self-revive, o time limpa). Babá aquiles (sem self-revive) = INDETERMINADO **H=1057** (o ×1000 fica: nenhum revive-lado-0 possível) — babá INERENTEMENTE limpo (o self-revive é a única fonte). Config a um comando de carimbar; nível a decidir (catálogo pede Rito d1, mas o set que MATA bennu de forma confiável é mais Provação).
+
+**2. AUTO-MORTE-DO-TÍTULO real (mimir, ymir) — precisa de PREDICADO NOVO (espelho NEGATIVO do reviveAliado).** Aqui a tensão do dono MORDE: o título tem de estar MORTO no fim SEM gradiente que premie a morte → o solver protege o título → rider insatisfazível. **Precisa de um "não-auto-preservação" (gradiente que RECOMPENSA a morte-e-fica-morto do título)** — o predicado mais estranho até agora. Motor já suporta o dead-passive (mesmoMorto §123, `bonusDanoDeclarativo` l.707; `aoCair self` l.1038; reviveProximoTurno), então a MECÂNICA existe; falta o PREDICADO e o gradiente.
+- **mimir** "A Cabeça Falante" (Cabeça Falante: +6 ao time `mesmoMorto`, `naoRevivivel`): PLAUSÍVEL. O dead-buff é engine-real. Precisa "título-morto-no-fim + não-revivido" e Odin no time (requisito de catálogo).
+- **ymir** "Carne Primordial" (`aoCair self → heal 25 time`; rider: ymir cai + 2 aliados <30 + vence): DUVIDOSO. ymir é **GUARDIÃO (tank)** — o rider pede o tank morto PRIMEIRO, briga com o arquétipo (o tank é o ÚLTIMO a cair). Candidato **saída-por-rider-mismatched** (a mesma espécie do odin §181: rider bom, deus errado — "morre p/ curar" quer um corpo sacrificável, não uma muralha).
+
+**3. SOLO-SOBREVIVENTE (erinias) — MIS-AGRUPADO: não é o TÍTULO que cai, são os ALIADOS. E é solver-ALINHADO.** "Vença com Erínias como única sobrevivente; começa com 1 aliado caído." O passivo Fúria Vingativa (`aoCair aliado → self +8 dmg p/ sempre`) **faz a morte-de-aliado um POWER-UP** → o solver QUER sacrificar aliados (fica mais forte, vence antes). É a tensão do dono ao contrário: o instinto de preservar-aliado (§172) é que se inverte, e o kit RECOMPENSA a inversão. **O mais promissor.** Precisa de "só-o-título-sobrevive" (semPerderAliado INVERTIDO — 2 aliados mortos no fim + título vivo).
+
+**RESPOSTA À PERGUNTA DO DONO ("algum dos 4 tem saída?"): SIM, 3 de 4.**
+- **bennu — SIM, agora** (reviveAliado existente; medido VENCÍVEL; é REVIVE-família, recomendo puxar p/ o núcleo).
+- **erinias — SIM, muito provável** (solver-alinhado; precisa de 1 predicado invertido).
+- **mimir — PLAUSÍVEL** (precisa de 1 predicado de não-auto-preservação + Odin aliado; dead-passive já real).
+- **ymir — DUVIDOSO** (tank pedido p/ morrer primeiro; provável saída-por-rider-mismatched).
+Os dois predicados novos (não-auto-preservação-do-título; solo-sobrevivente) são espelhos negativos de predicados que já existem (reviveAliado; semPerderAliado) — construíveis, e nascem com gradiente (§176). **PENDENTE de decisão do dono:** carimbar bennu já (e onde — Rito ou Provação); construir os 2 predicados p/ mimir/erinias; e o veredito do ymir (aceitar a saída-mismatched ou procurar outro rider).
+
 ## §181 — NÚCLEO REVIVE CARIMBADO (4) + hel CARIMBADA (naoReviveInimigo load-bearing) + odin SAI (a AUTO-SACRIFÍCIO-HP não tinha protagonista).
 
 **NÚCLEO REVIVE — os 4 carimbados (VENCÍVEL, sem dica).** Montagem comum (aliados `[deus, perseu, houyi]`, inimigos `[fenrir, durga, saci]`, `montar.caido` no idx 2, dl14, `reviveAliado{1}`) + bootstrap-de-elemento (§180). A banda §170 por deus foi só o **volume do bootstrap** (quanto elemento garantir p/ o milagre de revive pagar dentro da renda sorteada):
