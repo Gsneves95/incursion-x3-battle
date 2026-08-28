@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §185 — IMPLICAÇÃO dos níveis (dificuldade declarada NÃO é sinal; medição é a única fonte — afeta a Fase 3); e a AUDITORIA de riders-perdidos: só 4/56 ensinam OUTRA coisa, e só 3 são dívida REAL.
+
+**IMPLICAÇÃO DOS NÍVEIS (§183, 27/56 divergem) — a DIFICULDADE DECLARADA no catálogo NÃO vale como sinal; a MEDIÇÃO é a única fonte.** Metade dos níveis não sobreviveu à medição → o número do catálogo é prosa-de-origem, não dado. **Afeta a FASE 3:** a lista de Provações vai EXIBIR nível — e o nível exibido tem de ser o CARIMBADO (medido), nunca o do catálogo. Regra: em qualquer superfície que mostre dificuldade, a fonte é `verificacao`/nível-carimbado, não `data/provacoes.json`.
+
+**AUDITORIA DE RIDERS-PERDIDOS (dono: "com 55 carimbadas vira auditoria, não curiosidade") — 56 carimbadas × prosa original. RESULTADO:**
+1. **IDÊNTICO (rider igual ao escrito): 22.** apolo, aquiles, ares, bennu, boto, bragi, change, dionisio, freyja, guanyu, hanuman, heimdall, hel, iansa, jormungandr, khnum, khonshu, mimir, mulasemcabeca, poseidon, ra, thor.
+2. **DERIVADO (mesmo rider, número diferente): 8.** brahma, hermes, inari, itzamna, kitsune, loki, oxum, saci. (Tuning de limiar — ex. oxum 120→240, loki 6→3, kitsune 9→8; a lição é a mesma.)
+3. **RELAXADO (rider mais fraco que o escrito): 22.** afrodite, ahpuch, amaterasu, ammit, atena, bastet, cerberus, demeter, fenrir, hades, hera, iara, isis, izanami, mnevis, morrigan, osiris, oxala, piranha, susanoo, vishnu, yanwong. **Três sub-padrões de relaxamento, todos JÁ registrados como decisões:** (a) `3→1/2` na contagem de execução/revive (ammit, fenrir, hades, morrigan, yanwong, izanami, demeter, osiris, isis — §167/§179: "forçar a lição num alvo basta"); (b) `0-dano → 0-morte` (bastet, cerberus, mnevis — §172: 0-dano é impossível em 3v3 fora de interceptação total); (c) `uptime-estrito → ≥N-turnos` / `HP-cheio → ≥90` / drop de cláusula-secundária (amaterasu §178, vishnu §172, atena/oxala/iara/hera drop de milagre-ban/execução-extra). **A lição sobrevive em todos; só a intensidade cai.**
+4. **DIFERENTE (rider ensina OUTRA coisa): 4 — o grupo que preocupava.** Nominalmente:
+   - **dagda** — prosa: "Caldeirão ativo TODO turno desde o t3"; carimbo: só `semPerderAliado` (a uptime-do-Caldeirão foi DROPADA). Ensina sobrevivência genérica, não gestão-do-Caldeirão. **DÍVIDA APARENTE, não real:** a cláusula dropada é uptime-ESTRITO, §178 `inescrevível` — não bindaria de jeito nenhum (como o "curar-anula" inerte, §177). Não é rider perdido; é rider impossível.
+   - **hercules** — prosa: "golpe final = Os Doze Trabalhos com ≥5 acúmulos + sem Milagre"; carimbo: `acumulo(danoBonus≥16)`. Ensina ACUMULAR bônus, não LANDAR o finalizador empoderado. **DÍVIDA REAL:** o golpe-final-com-limiar EXISTE (§46, susanoo/yamato) — dava p/ escrever fiel, não foi.
+   - **shutendoji** — prosa: "roube ≥8 orbes COM o Torpor"; carimbo: `efeitoEmNInimigos(torpor≥1)`. Ensina APLICAR o torpor, não ROUBAR-via-torpor. **DÍVIDA REAL:** `acumulo(orbesRoubados)` existe (saci usa) — dava p/ escrever fiel.
+   - **yamatotakeru** — prosa: "golpe final Ceifa-Ervas com 20 Combo + remover ≥3 buffs"; carimbo: `limparBuffsAntesDeAbate`. Ensina limpar-buffs-antes-do-1º-abate, não o golpe-final-com-combo. **DÍVIDA REAL** (o "susanoo-no-yamato" — a forma fecha por acidente com a ferramenta errada; §106).
+
+**VEREDITO DA AUDITORIA (o número que o dono temia — 2 ou 20?): é 3.** De 56, só **4** ensinam outra coisa, e **1 desses é dívida aparente** (dagda, rider inescrevível). **Dívida REAL = 3** (hercules, shutendoji, yamatotakeru) — todas com o mesmo formato: um rider de GOLPE-FINAL/ACUMULAÇÃO-ESPECÍFICA que virou um proxy mais fraco, e todas RE-ESCREVÍVEIS com predicado que já existe (§46 golpe-final, acumulo). **Confirma o palpite do dono** ("o curar-anula inerte sugere que parte do perdido não bindaria"): o medo de 20 era exagero; o real é 3, e é dívida CONSERTÁVEL (não perda estrutural). Os 22 relaxados não são perda — são a lição preservada com intensidade medida. **PENDENTE (Fase 4, não agora):** re-escrever os 3 reais com golpe-final/acumulo, se o dono quiser fidelidade total à prosa.
+
 ## §184 — DOIS PREDICADOS INVERTIDOS construídos+testados; lote AUTO-MORTE fechado na medição: 2 CARIMBAM (bennu, mimir), 2 SAEM (erinias, ymir) — por espécies DIFERENTES.
 
 **OS DOIS PREDICADOS INVERTIDOS (§23 verde) — espelhos NEGATIVOS de predicados que já existiam:**
