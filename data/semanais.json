@@ -1,0 +1,1464 @@
+{
+  "_fonte": "Gerado por tools/gerar_semanais.js (F3.4). Determinístico por índice de semana. Cada puzzle foi PROVADO VENCÍVEL pelo solucionador sem dica. Regenerar com: npm run gerar:semanais.",
+  "geradoEm": "2026-08-29",
+  "mediaTentativas": 1.13,
+  "maxTentativas": 4,
+  "puzzles": [
+    {
+      "key": "bragi",
+      "aliados": [
+        "bragi",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "ymir",
+        "guanyu",
+        "hera"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "bragi"
+        }
+      ],
+      "minimo": 26
+    },
+    {
+      "key": "loki",
+      "aliados": [
+        "loki",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "medusa",
+        "mnevis",
+        "change"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "loki"
+        }
+      ],
+      "minimo": 29
+    },
+    {
+      "key": "medusa",
+      "aliados": [
+        "medusa",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "hermes",
+        "kukulkan",
+        "anubis"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "medusa"
+        }
+      ],
+      "minimo": 14
+    },
+    {
+      "key": "fujin",
+      "aliados": [
+        "fujin",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "iansa",
+        "apolo",
+        "brigid"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "fujin"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "perseu",
+      "aliados": [
+        "perseu",
+        "oxum",
+        "demeter"
+      ],
+      "inimigos": [
+        "zeus",
+        "medusa",
+        "ogum"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "perseu"
+        }
+      ],
+      "minimo": 23
+    },
+    {
+      "key": "morrigan",
+      "aliados": [
+        "morrigan",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "hermes",
+        "yanwong",
+        "inari"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "morrigan"
+        }
+      ],
+      "minimo": 19
+    },
+    {
+      "key": "tanuki",
+      "aliados": [
+        "tanuki",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "heimdall",
+        "izanagi",
+        "horus"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "tanuki"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "afrodite",
+      "aliados": [
+        "afrodite",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "odin",
+        "brigid",
+        "lugh"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "afrodite"
+        }
+      ],
+      "minimo": 20
+    },
+    {
+      "key": "kali",
+      "aliados": [
+        "kali",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "tanuki",
+        "izanami",
+        "houyi"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "kali"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "aquiles",
+      "aliados": [
+        "aquiles",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "loki",
+        "dionisio",
+        "anubis"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "aquiles"
+        }
+      ],
+      "minimo": 24
+    },
+    {
+      "key": "ammit",
+      "aliados": [
+        "ammit",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "hel",
+        "odin",
+        "ahpuch"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ammit"
+        }
+      ],
+      "minimo": 14
+    },
+    {
+      "key": "raijin",
+      "aliados": [
+        "raijin",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "mimir",
+        "krishna",
+        "shiva"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "raijin"
+        }
+      ],
+      "minimo": 12
+    },
+    {
+      "key": "morrigan",
+      "aliados": [
+        "morrigan",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "isis",
+        "curupira",
+        "piranha"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "morrigan"
+        }
+      ],
+      "minimo": 19
+    },
+    {
+      "key": "sunwukong",
+      "aliados": [
+        "sunwukong",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "afrodite",
+        "shiva",
+        "iansa"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "sunwukong"
+        }
+      ],
+      "minimo": 24
+    },
+    {
+      "key": "krishna",
+      "aliados": [
+        "krishna",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "poseidon",
+        "sobek",
+        "exu"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "krishna"
+        }
+      ],
+      "minimo": 23
+    },
+    {
+      "key": "hanuman",
+      "aliados": [
+        "hanuman",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "ymir",
+        "tanuki",
+        "tsukuyomi"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "hanuman"
+        }
+      ],
+      "minimo": 20
+    },
+    {
+      "key": "kali",
+      "aliados": [
+        "kali",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "isis",
+        "change",
+        "iara"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "kali"
+        }
+      ],
+      "minimo": 16
+    },
+    {
+      "key": "horus",
+      "aliados": [
+        "horus",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "huangdi",
+        "nezha",
+        "tyr"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "horus"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "nefertem",
+      "aliados": [
+        "nefertem",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "amaterasu",
+        "ammit",
+        "ymir"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "nefertem"
+        }
+      ],
+      "minimo": 24
+    },
+    {
+      "key": "change",
+      "aliados": [
+        "change",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "yamatotakeru",
+        "ogum",
+        "curupira"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "change"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "guanyu",
+      "aliados": [
+        "guanyu",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "mimir",
+        "inari",
+        "anubis"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "guanyu"
+        }
+      ],
+      "minimo": 16
+    },
+    {
+      "key": "ra",
+      "aliados": [
+        "ra",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "shiva",
+        "hercules",
+        "hanuman"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ra"
+        }
+      ],
+      "minimo": 13
+    },
+    {
+      "key": "apolo",
+      "aliados": [
+        "apolo",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "shiva",
+        "kukulkan",
+        "khonshu"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "apolo"
+        }
+      ],
+      "minimo": 21
+    },
+    {
+      "key": "afrodite",
+      "aliados": [
+        "afrodite",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "yanwong",
+        "ganesha",
+        "izanagi"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "afrodite"
+        }
+      ],
+      "minimo": 21
+    },
+    {
+      "key": "lugh",
+      "aliados": [
+        "lugh",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "afrodite",
+        "boto",
+        "dionisio"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "lugh"
+        }
+      ],
+      "minimo": 19
+    },
+    {
+      "key": "mnevis",
+      "aliados": [
+        "mnevis",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "atena",
+        "brahma",
+        "tyr"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "mnevis"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "chaac",
+      "aliados": [
+        "chaac",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "xango",
+        "iansa",
+        "itzamna"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "chaac"
+        }
+      ],
+      "minimo": 16
+    },
+    {
+      "key": "houyi",
+      "aliados": [
+        "houyi",
+        "perseu",
+        "demeter"
+      ],
+      "inimigos": [
+        "itzamna",
+        "xango",
+        "hanuman"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "houyi"
+        }
+      ],
+      "minimo": 31
+    },
+    {
+      "key": "poseidon",
+      "aliados": [
+        "poseidon",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "shiva",
+        "heimdall",
+        "ogum"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "poseidon"
+        }
+      ],
+      "minimo": 17
+    },
+    {
+      "key": "ogum",
+      "aliados": [
+        "ogum",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "zeus",
+        "tanuki",
+        "ammit"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ogum"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "cerberus",
+      "aliados": [
+        "cerberus",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "baldur",
+        "heimdall",
+        "anubis"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "cerberus"
+        }
+      ],
+      "minimo": 25
+    },
+    {
+      "key": "saci",
+      "aliados": [
+        "saci",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "osiris",
+        "cuca",
+        "susanoo"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "saci"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "ammit",
+      "aliados": [
+        "ammit",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "kitsune",
+        "saci",
+        "cernunnos"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ammit"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "isis",
+      "aliados": [
+        "isis",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "fujin",
+        "freyja",
+        "aquiles"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "isis"
+        }
+      ],
+      "minimo": 28
+    },
+    {
+      "key": "houyi",
+      "aliados": [
+        "houyi",
+        "perseu",
+        "piranha"
+      ],
+      "inimigos": [
+        "durga",
+        "kitsune",
+        "ra"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "houyi"
+        }
+      ],
+      "minimo": 13
+    },
+    {
+      "key": "zeus",
+      "aliados": [
+        "zeus",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "raijin",
+        "ammit",
+        "ogum"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "zeus"
+        }
+      ],
+      "minimo": 16
+    },
+    {
+      "key": "kali",
+      "aliados": [
+        "kali",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "ahpuch",
+        "lugh",
+        "vishnu"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "kali"
+        }
+      ],
+      "minimo": 16
+    },
+    {
+      "key": "ammit",
+      "aliados": [
+        "ammit",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "medusa",
+        "houyi",
+        "durga"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ammit"
+        }
+      ],
+      "minimo": 23
+    },
+    {
+      "key": "isis",
+      "aliados": [
+        "isis",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "kraken",
+        "medusa",
+        "brahma"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "isis"
+        }
+      ],
+      "minimo": 25
+    },
+    {
+      "key": "ares",
+      "aliados": [
+        "ares",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "bragi",
+        "vishnu",
+        "thor"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "ares"
+        }
+      ],
+      "minimo": 21
+    },
+    {
+      "key": "izanagi",
+      "aliados": [
+        "izanagi",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "fujin",
+        "zeus",
+        "medusa"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "izanagi"
+        }
+      ],
+      "minimo": 30
+    },
+    {
+      "key": "oni",
+      "aliados": [
+        "oni",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "freyja",
+        "tanuki",
+        "exu"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "oni"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "change",
+      "aliados": [
+        "change",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "poseidon",
+        "amaterasu",
+        "yamatotakeru"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 14
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "change"
+        }
+      ],
+      "minimo": 19
+    },
+    {
+      "key": "mimir",
+      "aliados": [
+        "mimir",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "raijin",
+        "osiris",
+        "guanyu"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "mimir"
+        }
+      ],
+      "minimo": 17
+    },
+    {
+      "key": "hera",
+      "aliados": [
+        "hera",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "medusa",
+        "guanyu",
+        "izanagi"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "hera"
+        }
+      ],
+      "minimo": 38
+    },
+    {
+      "key": "raijin",
+      "aliados": [
+        "raijin",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "iansa",
+        "iara",
+        "nefertem"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "raijin"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "amaterasu",
+      "aliados": [
+        "amaterasu",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "morrigan",
+        "mnevis",
+        "fujin"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "amaterasu"
+        }
+      ],
+      "minimo": 27
+    },
+    {
+      "key": "houyi",
+      "aliados": [
+        "houyi",
+        "oxum",
+        "hercules"
+      ],
+      "inimigos": [
+        "dionisio",
+        "dagda",
+        "aquiles"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 16
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "houyi"
+        }
+      ],
+      "minimo": 18
+    },
+    {
+      "key": "fenrir",
+      "aliados": [
+        "fenrir",
+        "perseu",
+        "oxum"
+      ],
+      "inimigos": [
+        "sunwukong",
+        "tyr",
+        "kagutsuchi"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "fenrir"
+        }
+      ],
+      "minimo": 21
+    },
+    {
+      "key": "thor",
+      "aliados": [
+        "thor",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "ymir",
+        "demeter",
+        "brigid"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 12
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "thor"
+        }
+      ],
+      "minimo": 20
+    },
+    {
+      "key": "saci",
+      "aliados": [
+        "saci",
+        "oxum",
+        "houyi"
+      ],
+      "inimigos": [
+        "boitata",
+        "bastet",
+        "oni"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "saci"
+        }
+      ],
+      "minimo": 21
+    },
+    {
+      "key": "kali",
+      "aliados": [
+        "kali",
+        "perseu",
+        "houyi"
+      ],
+      "inimigos": [
+        "durga",
+        "khonshu",
+        "demeter"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
+          "turnos": 15
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "kali"
+        }
+      ],
+      "minimo": 16
+    }
+  ]
+}

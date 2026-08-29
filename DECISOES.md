@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §203 — FASE 3, F3.4: PROVAÇÃO SEMANAL — o motor de puzzles da Fase 2 como GERADOR perpétuo. Viável: 1.13 tentativas de sorteio em média.
+
+**O ativo mais subutilizado (dono): a Fase 2 não construiu 90 puzzles — construiu um MOTOR de puzzles.** A semanal o usa como gerador perpétuo: 52 Provações/ano, offline, sem servidor.
+
+**ARQUITETURA — gerador OFFLINE, runtime é LOOKUP determinístico.** O solucionador roda no motor PURO (Node), não no browser; então o pool é PRÉ-GERADO por `tools/gerar_semanais.js` e embutido (`data/semanais.json`, 52 puzzles). O runtime escolhe `pool[semanaISO % 52]` — **semente = número da semana ISO 8601**, então todo jogador na mesma semana recebe o MESMO puzzle, offline, determinístico. Perpétuo no sentido de nunca precisar de servidor e sempre mostrar um puzzle válido; renovar o ano é re-rodar o gerador (cicla após 52 semanas até o próximo build). `npm run gerar:semanais`.
+
+**GERAÇÃO + VALIDAÇÃO PELO MOTOR:** sorteia título / time de suporte / 3 inimigos / prazo, monta a condição, e RODA O SOLUCIONADOR. Só aceita `VENCÍVEL` **sem dica** — se der INDETERMINADO/INVENCÍVEL, re-sorteia. O jogador nunca vê um puzzle não provado. O `minimo` (lances do melhor caminho, sem "passar") viaja p/ o placar.
+
+**OS FILTROS DA FASE 2 REUSADOS (a taxonomia de 6 saídas existe p/ isto, §194) — exclusão no SORTEIO, não redescoberta:**
+- **rider = sobrevivência do título** (`deadline + semPerderAliado{título}`, a forma genérica §195 — gradiente por construção: o título vivo É a condição).
+- **time de SUPORTE com curador** (§196): pares tirados de perseu/oxum/houyi — a §195/§196 provou que atacante+curador mantém o título squishy vivo.
+- **estadoSimultaneo (§193) EXCLUÍDO por desenho** (nunca sorteado), e nada de rider sem gradiente (§176). O SOLUCIONADOR é o juiz final: o que mata o título ou estoura o prazo é rejeitado.
+
+**★ A MÉTRICA QUE O DONO PEDIU — quantas tentativas de sorteio até uma válida:** **média 1.13 · máx 4** (48 das 52 semanas fecharam na 1ª tentativa; distribuição {1:48, 2:2, 3:1, 4:1}). **O gerador é VIÁVEL** — nenhuma semana custa sessão. A exclusão (rider de sobrevivência + time-curador) é agressiva o bastante para que quase todo sorteio aleatório de título/inimigos seja vencível; o custo real é TEMPO DE SOLVE (~7s/puzzle, ~6min p/ as 52), pago UMA vez offline, não por tentativa.
+
+**PLACAR = lances contra o mínimo (a mesma comparação da F3.1).** A semanal reusa TODA a máquina de Provação (montar, HUD, laço de avaliação, overlay, desbloqueio): é um objeto-Provação `{semanal:true}` injetado por semana, entrando por um BANNER no topo da lista de Provações (não um 6º destino — a home fica nos 5). O placar grava sob `scoreKey='semanal:W##'` p/ **não colidir** com a Provação regular do mesmo deus.
+
+**CRITÉRIO DE PRONTO cumprido:** uma Provação nova por semana, gerada e validada pelo motor, determinística pela semente ISO, placar de lances, captura contra o dist. Teste `semanal` (determinismo, pool todo vencível, placar sob chave semanal). Suíte verde.
+
 ## §202 — A CLASSE do bug do bestiário: só a BUILD exercitava, nunca o RUNTIME da tela. Varredura feita (limpa após o conserto) + GUARDA PERMANENTE de render.
 
 **A CLASSE (dono):** a build valida SCHEMA e o solucionador prova VENCÍVEL — mas ambos rodam no **motor PURO**. A **tela** (render) e a **IA-na-UI** nunca eram exercitadas pelos mesmos dados. As 3 Provações de bestiário (bragi) **validavam, carimbavam e QUEBRARIAM ao jogar** — conteúdo publicado que passa em toda checagem e falha no jogador. O solucionador nunca renderizou um retrato; por isso o `GODS[key]` indefinido (§201) passou invisível.

@@ -924,6 +924,25 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-family:'Cinzel',serif;font-weight:900;font-size:10px;color:#201604;background:var(--gold-text);border-radius:50%}
 .phud--camp{width:min(640px,92%)}
 .chud__dica{margin-top:5px;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-dim)}
+
+/* ===================== F3.4 — banner da Provação da Semana (topo da lista) ===================== */
+.psem{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;
+  padding:12px 15px;margin:2px 0 14px;font-family:'Rajdhani',sans-serif;color:var(--ink);
+  background:linear-gradient(110deg,rgba(216,178,90,.16),rgba(20,16,38,.6) 60%);
+  border:1px solid var(--gold);border-radius:12px;box-shadow:0 0 0 1px rgba(216,178,90,.2),0 8px 22px rgba(0,0,0,.4);
+  transition:transform .08s,border-color .12s}
+.psem:active{transform:translateY(1px) scale(.995)}
+.psem__p{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center}
+.psem__p .slot{width:40px;height:40px;border-radius:8px;overflow:hidden}
+.psem__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.psem__rot{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.16em;color:var(--gold-text)}
+.psem__rot b{color:var(--ink)}
+.psem__tit{font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.02em;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psem__foe{font-weight:600;font-size:11.5px;color:var(--ink-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psem__pe{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.psem__rec{font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--gold-text)}
+.psem__go{font-family:'Cinzel',serif;font-weight:900;font-size:16px;color:var(--gold-text)}
 </style>
 </head>
 <body>

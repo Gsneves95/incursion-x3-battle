@@ -167,6 +167,7 @@ function renderProvacoes(){
       <span class="tela__cont">${todas.length}</span>
     </header>
     <div class="tela__rol" id="provrol">
+      ${bannerSemanalHTML()}
       ${secao('DISPONÍVEIS', disp, false)}
       ${feitas.length ? secao('CONCLUÍDAS', feitas, true) : ''}
     </div>
@@ -174,6 +175,8 @@ function renderProvacoes(){
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const bs = stage.querySelector('.psem[data-semanal]');
+  if (bs) bs.onclick = () => iniciarSemanal();
   [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
     // concluída (deus já conquistado) → ver o deus na Coleção; disponível → jogar direto.
     b.onclick = () => { const k = b.dataset.prova; if (temDeus(k)) { ir('deus', { key: k }); render(); } else iniciarProva(k); };
@@ -293,8 +296,10 @@ function aplicarDesbloqueioProva(p){
   provaFim.jaTinha = !!(perfil.deuses && perfil.deuses[p.key]);
   perfil = adicionarDeus(perfil, p.key, Date.now());
   if (!perfil.provacoes) perfil.provacoes = {};
-  const antes = perfil.provacoes[p.key];
-  if (!antes || provaLances < antes.lances) perfil.provacoes[p.key] = { lances: provaLances, minimo: p.minimo, em: Date.now() };
+  // o PLACAR grava sob scoreKey (a semanal usa 'semanal:W##' p/ não colidir com a Provação regular do mesmo deus).
+  const sk = p.scoreKey || p.key;
+  const antes = perfil.provacoes[sk];
+  if (!antes || provaLances < antes.lances) perfil.provacoes[sk] = { lances: provaLances, minimo: p.minimo, em: Date.now() };
   const res = salvar(perfil);
   if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
 }
@@ -684,3 +689,68 @@ function ligarCampanhaFim(){
   const p = q('#cfprox'); if (p) { const prox = proximoEncontro(campanha.id); p.onclick = () => { sairCampanha(); iniciarEncontro(prox.id); }; }
 }
 function sairCampanha(){ campanha = null; campanhaFim = null; }
+
+// ===================================================================
+// F3.4 — PROVAÇÃO SEMANAL: o motor de puzzles da Fase 2 como GERADOR perpétuo.
+// A semente é o número da SEMANA ISO — todo jogador recebe o mesmo puzzle, offline,
+// determinístico. O pool (data/semanais.json) foi PRÉ-GERADO e provado VENCÍVEL pelo
+// solucionador (tools/gerar_semanais.js), com os filtros da Fase 2 (rider de sobrevivência
+// + time-curador §196, sem simultaneidade §193). Reusa TODA a máquina de Provação (F3.1):
+// mesmo HUD, mesmo laço de avaliação, mesmo PLACAR de lances contra o mínimo do solucionador.
+// ===================================================================
+
+// número da semana ISO 8601 (semente do puzzle). Determinístico por data — sem servidor.
+function semanaISOAtual(d){
+  const t = new Date(d || Date.now());
+  const u = new Date(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()));
+  const dia = u.getUTCDay() || 7;               // segunda=1 … domingo=7
+  u.setUTCDate(u.getUTCDate() + 4 - dia);        // quinta desta semana
+  const inicioAno = new Date(Date.UTC(u.getUTCFullYear(), 0, 1));
+  return Math.ceil((((u - inicioAno) / 86400000) + 1) / 7);
+}
+function provaSemanalAtual(){
+  const pool = (typeof SEMANAIS !== 'undefined' && SEMANAIS && SEMANAIS.puzzles) ? SEMANAIS.puzzles : [];
+  if (!pool.length) return null;
+  const wk = semanaISOAtual();
+  const idx = ((wk % pool.length) + pool.length) % pool.length;   // cicla o pool pela semana (perpétuo, determinístico)
+  const raw = pool[idx];
+  const g = HRM[raw.key] || { nome: raw.key };
+  const dl = (raw.condicoes.find(c => c.predicado === 'deadline') || {}).turnos;
+  return Object.assign({}, raw, {
+    titulo: 'Desafio de ' + g.nome,
+    nivel: 'Semanal',
+    dificuldade: raw.minimo >= 22 ? 3 : raw.minimo >= 15 ? 2 : 1,
+    semanal: true, semanaISO: wk, deadline: dl,
+    scoreKey: 'semanal:W' + wk,
+  });
+}
+function iniciarSemanal(){
+  const p = provaSemanalAtual();
+  if (!p) return;
+  campanha = null; campanhaFim = null;
+  prova = p; provaFim = null; provaLances = 0;
+  st = montarProvacao(p);
+  vsCPU = true;
+  ir('batalha', {}, { substituir: true });
+  render();
+}
+// banner no topo da lista de Provações (a semanal é uma Provação em destaque, não um 6º destino).
+function bannerSemanalHTML(){
+  const p = provaSemanalAtual();
+  if (!p) return '';
+  const g = HRM[p.key] || { nome: p.key, elem: 'Umbra' };
+  const rec = (perfil && perfil.provacoes && perfil.provacoes[p.scoreKey]) || null;
+  const inimigos = (p.inimigos || []).map(k => (HRM[k] && HRM[k].nome) || k).join(' · ');
+  return `<button class="psem" data-semanal="1">
+    <span class="psem__p">${slot('god-' + p.key, ini(g.nome), COR(g.elem), 24)}</span>
+    <span class="psem__id">
+      <span class="psem__rot">PROVAÇÃO DA SEMANA <b>#${p.semanaISO}</b></span>
+      <span class="psem__tit">${H(p.titulo)} — mantenha ${H(g.nome)} de pé em ${p.deadline} turnos</span>
+      <span class="psem__foe">contra ${H(inimigos)}</span>
+    </span>
+    <span class="psem__pe">
+      <span class="psem__rec">${rec ? `recorde ${rec.lances} lance${rec.lances === 1 ? '' : 's'}` : 'não jogada'}</span>
+      <span class="psem__go">▷</span>
+    </span>
+  </button>`;
+}

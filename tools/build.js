@@ -211,6 +211,23 @@ const campanhaObj = (() => {
   return c;
 })();
 
+// SEMANAIS (F3.4): pool de Provações semanais PRÉ-GERADAS e provadas VENCÍVEL pelo solucionador
+// (tools/gerar_semanais.js). O runtime escolhe pela semana ISO — determinístico, offline, sem servidor.
+// Cada puzzle carrega aliados/inimigos/montar/condicoes/minimo (o que monta, avalia e pontua). Valida
+// que as chaves resolvem no catálogo (falha alto), como a campanha.
+const semanaisObj = (() => {
+  const arq = path.join(raiz, 'data', 'semanais.json');
+  if (!fs.existsSync(arq)) return null;
+  const s = JSON.parse(ler('data/semanais.json'));
+  const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
+  const erros = [];
+  (s.puzzles || []).forEach((p, i) => {
+    for (const k of [...(p.aliados || []), ...(p.inimigos || [])]) if (!catalogoKeys.has(k)) erros.push(`semana ${i}: chave "${k}" fora do catálogo`);
+  });
+  if (erros.length) { console.error('ERRO de schema semanal:\n  ' + erros.join('\n  ')); process.exit(1); }
+  return s;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -222,7 +239,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
