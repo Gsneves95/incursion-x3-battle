@@ -117,6 +117,8 @@ registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por pante�
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
 registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
+registrar('desafios',  { render: renderDesafios });     // F3.6: desafios de composição
+registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra
 registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });

@@ -1,0 +1,65 @@
+{
+  "_fonte": "Desafios de Composição (F3.6). O INVERSO da Provação: o jogador dá o TIME e o jogo testa se ele sabe montar. A REGRA de time é validada ANTES da partida (ao montar, não ao perder). O rider em jogo reusa predicados existentes. Recompensa LEVE de propósito (maestria + um pouco de Essência) — o valor é o quebra-cabeça, não o grind. Recompensa por CHAVE em economia.json (desafios.recompensas).",
+  "desafios": [
+    {
+      "id": "cx_elemento",
+      "nome": "Fúria de um Elemento",
+      "regra": "monoElemento",
+      "regraTexto": "Os três do MESMO elemento.",
+      "inimigos": ["saci", "loki", "cuca"],
+      "montar": { "seed": 1, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }],
+      "recompensa": "padrao"
+    },
+    {
+      "id": "cx_funcao",
+      "nome": "Uma Só Vocação",
+      "regra": "mesmaFuncao",
+      "regraTexto": "Os três da MESMA função.",
+      "inimigos": ["saci", "cuca", "boto"],
+      "montar": { "seed": 2, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }],
+      "recompensa": "padrao"
+    },
+    {
+      "id": "cx_trio",
+      "nome": "O Trio Equilibrado",
+      "regra": "funcoesDistintas",
+      "regraTexto": "Três funções DIFERENTES — quem bate, quem aguenta, quem controla.",
+      "inimigos": ["loki", "cuca", "saci"],
+      "montar": { "seed": 3, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }],
+      "recompensa": "padrao"
+    },
+    {
+      "id": "cx_panteao",
+      "nome": "Sangue de um Panteão",
+      "regra": "monoPanteao",
+      "regraTexto": "Os três do MESMO panteão.",
+      "inimigos": ["saci", "loki", "boto"],
+      "montar": { "seed": 4, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }],
+      "recompensa": "padrao"
+    },
+    {
+      "id": "cx_semmilagre",
+      "nome": "Sem os Milagres",
+      "regra": "livre",
+      "regraTexto": "Time livre — mas vença SEM lançar nenhum Milagre.",
+      "inimigos": ["saci", "loki", "cuca"],
+      "montar": { "seed": 5, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }, { "predicado": "proibirSlotProprio", "slot": "milagre" }],
+      "recompensa": "padrao"
+    },
+    {
+      "id": "cx_linha",
+      "nome": "A Linha Intacta",
+      "regra": "livre",
+      "regraTexto": "Time livre — mas não perca NENHUM aliado.",
+      "inimigos": ["saci", "cuca", "boto"],
+      "montar": { "seed": 6, "comeca": 0 },
+      "condicoes": [{ "predicado": "deadline", "turnos": 14 }, { "predicado": "semPerderAliado" }],
+      "recompensa": "padrao"
+    }
+  ]
+}

@@ -168,6 +168,7 @@ function renderProvacoes(){
     </header>
     <div class="tela__rol" id="provrol">
       ${bannerSemanalHTML()}
+      <button class="pdesafios" data-desafios="1"><span>⚔ Desafios de Composição</span><span class="pdesafios__go">›</span></button>
       ${secao('DISPONÍVEIS', disp, false)}
       ${feitas.length ? secao('CONCLUÍDAS', feitas, true) : ''}
     </div>
@@ -177,6 +178,8 @@ function renderProvacoes(){
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const bs = stage.querySelector('.psem[data-semanal]');
   if (bs) bs.onclick = () => iniciarSemanal();
+  const bd = stage.querySelector('.pdesafios[data-desafios]');
+  if (bd) bd.onclick = () => { ir('desafios'); render(); };
   [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
     // concluída (deus já conquistado) → ver o deus na Coleção; disponível → jogar direto.
     b.onclick = () => { const k = b.dataset.prova; if (temDeus(k)) { ir('deus', { key: k }); render(); } else iniciarProva(k); };
@@ -294,10 +297,21 @@ function atualizarProva(){
 function aplicarDesbloqueioProva(p){
   if (!perfil) return;
   creditarMaestria();   // F3.5: a vitória conta p/ a maestria dos deuses que jogaram (só contador, sem poder)
+  if (!perfil.provacoes) perfil.provacoes = {};
+  if (p.desafio) {
+    // DESAFIO (F3.6): sem desbloqueio de deus. Recompensa LEVE (Essência) só na 1ª vitória — o resto é maestria.
+    const jaFeito = !!perfil.provacoes[p.scoreKey];
+    if (!jaFeito && p.recompensaEss) perfil = creditar(perfil, 'essencia', p.recompensaEss);
+    perfil.provacoes[p.scoreKey] = { feito: true, em: Date.now() };
+    provaFim.jaFeito = jaFeito;
+    provaFim.recompensaEss = jaFeito ? 0 : (p.recompensaEss || 0);
+    const rd = salvar(perfil);
+    if (rd && !rd.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rd.erro });
+    return;
+  }
   provaFim.jaTinha = !!(perfil.deuses && perfil.deuses[p.key]);
   perfil = adicionarDeus(perfil, p.key, Date.now());
-  if (!perfil.provacoes) perfil.provacoes = {};
-  // o PLACAR grava sob scoreKey (a semanal usa 'semanal:W##' p/ não colidir com a Provação regular do mesmo deus).
+  // o PLACAR grava sob scoreKey (a semanal usa 'semanal:AAAAW##' p/ não colidir com a Provação regular do mesmo deus).
   const sk = p.scoreKey || p.key;
   const antes = perfil.provacoes[sk];
   if (!antes || provaLances < antes.lances) perfil.provacoes[sk] = { lances: provaLances, minimo: p.minimo, em: Date.now() };
@@ -314,31 +328,42 @@ function motivoHumano(motivo){
 }
 function provaResultadoOverlay(){
   if (!prova || !provaFim) return '';
-  const f = provaFim, venceu = f.resultado === 'vitoria', nome = nomeDoDeus(prova.key);
+  const f = provaFim, venceu = f.resultado === 'vitoria';
+  const ehDesafio = !!prova.desafio;
+  const nome = nomeDoDeus(prova.key);
   let titulo, msg, cls;
-  if (venceu) { titulo = 'PROVAÇÃO VENCIDA'; cls = 'venceu'; msg = f.jaTinha ? `${nome} já estava na sua coleção — resultado registrado.` : `${nome} entra na sua coleção.`; }
+  if (venceu && ehDesafio) {
+    titulo = 'DESAFIO VENCIDO'; cls = 'venceu';
+    msg = f.recompensaEss ? `Composição provada. +${f.recompensaEss} ✦ de Essência.` : 'Composição provada — Essência já recebida antes.';
+  } else if (venceu) { titulo = 'PROVAÇÃO VENCIDA'; cls = 'venceu'; msg = f.jaTinha ? `${nome} já estava na sua coleção — resultado registrado.` : `${nome} entra na sua coleção.`; }
   else if (f.categoria === 'hp') { titulo = 'DERROTA'; cls = 'hp'; msg = 'Seus deuses tombaram em campo.'; }
   else if (f.categoria === 'prazo') { titulo = 'PRAZO ESGOTADO'; cls = 'prazo'; msg = 'O limite de turnos passou antes da vitória.'; }
   else { titulo = 'CONDIÇÃO QUEBRADA'; cls = 'cond'; msg = motivoHumano(f.motivo); }
-  const placar = venceu && f.minimo != null
+  const placar = (venceu && !ehDesafio && f.minimo != null)
     ? `<div class="result__placar"><span>Concluída em <b>${f.lances}</b> lance${f.lances === 1 ? '' : 's'}</span><span class="result__min">melhor conhecido: ${f.minimo}</span>${f.lances <= f.minimo ? '<span class="result__rec">✦ no ritmo do ótimo</span>' : ''}</div>`
     : '';
+  const selo = ehDesafio ? 'Desafio de composição' : `${H(prova.nivel)} · dificuldade ${prova.dificuldade}`;
   return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${cls}">
-    <span class="result__selo">${H(prova.nivel)} · dificuldade ${prova.dificuldade}</span>
+    <span class="result__selo">${selo}</span>
     <h1>${titulo}</h1>
     <p class="result__prova">${H(prova.titulo)}</p>
     <p class="result__msg">${H(msg)}</p>
     ${placar}
     <div class="result__acoes">
-      <button class="b b--quiet b--md" id="pfvoltar">Voltar às Provações</button>
-      ${venceu ? '<button class="b b--primary b--md" id="pfver">Ver na coleção</button>' : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
+      <button class="b b--quiet b--md" id="pfvoltar">${ehDesafio ? 'Voltar aos desafios' : 'Voltar às Provações'}</button>
+      ${venceu
+        ? (ehDesafio ? '' : '<button class="b b--primary b--md" id="pfver">Ver na coleção</button>')
+        : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
     </div>
   </div></div></div>`;
 }
 function ligarProvaFim(){
   const q = s => stage.querySelector(s);
-  const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir('provacoes', {}, { substituir: true }); render(); };
-  const t = q('#pftentar'); if (t) t.onclick = () => { iniciarProva(prova.key); };
+  const ehDesafio = !!(prova && prova.desafio);
+  const destino = ehDesafio ? 'desafios' : 'provacoes';
+  const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir(destino, {}, { substituir: true }); render(); };
+  const dsfId = prova && prova.desafioId, pkey = prova && prova.key;
+  const t = q('#pftentar'); if (t) t.onclick = () => { if (ehDesafio) { desafioTimePick = []; sairProva(); ir('desafiomontar', { id: dsfId }); render(); } else iniciarProva(pkey); };
   const ver = q('#pfver'); if (ver) { const k = prova.key; ver.onclick = () => { sairProva(); ir('deus', { key: k }); render(); }; }
 }
 function sairProva(){ prova = null; provaFim = null; provaLances = 0; }
@@ -845,4 +870,137 @@ function pipMaestria(key){
   const nv = nivelMaestria(key);
   if (nv === 0) return '';
   return `<span class="ctile__m m--${nv}" title="${MAESTRIA_NOME[nv]}">${nv === 4 ? '★' : nv}</span>`;
+}
+
+// ===================================================================
+// F3.6 — DESAFIOS DE COMPOSIÇÃO: o INVERSO da Provação. O jogador dá o TIME e o jogo
+// testa se ele sabe montar. A REGRA de time é validada AO MONTAR (não ao perder) — o
+// mesmo princípio do "tocar nunca gasta": o erro é reversível antes de custar. O rider em
+// jogo reusa predicados; a recompensa é LEVE de propósito (maestria + um pouco de Essência)
+// — o valor é o quebra-cabeça, não o grind. Reusa a máquina de Provação (flag `desafio`).
+// ===================================================================
+
+let desafioTimePick = [];
+
+function desafios(){ return (typeof COMPOSICAO !== 'undefined' && COMPOSICAO && COMPOSICAO.desafios) ? COMPOSICAO.desafios : []; }
+function desafioFeito(id){ return !!(perfil && perfil.provacoes && perfil.provacoes['desafio:' + id]); }
+function recompensaDesafio(chave){
+  const r = (typeof ECONOMIA !== 'undefined' && ECONOMIA.desafios && ECONOMIA.desafios.recompensas) ? ECONOMIA.desafios.recompensas[chave] : null;
+  return r || {};
+}
+// VALIDAÇÃO DE TIME (o novo): devolve {ok, motivo}. `livre` = sem regra de composição (o rider é em jogo).
+function validarRegra(regraId, keys){
+  const gs = keys.map(k => HRM[k]).filter(Boolean);
+  if (keys.length < 3) return { ok: false, motivo: `Escolha ${3 - keys.length} deus(es)` };
+  const el = new Set(gs.map(g => g.elem)), fu = new Set(gs.map(g => g.funcao)), pa = new Set(gs.map(g => g.faccao));
+  switch (regraId) {
+    case 'monoElemento':    return el.size === 1 ? { ok: true } : { ok: false, motivo: 'Precisam ser do MESMO elemento' };
+    case 'mesmaFuncao':     return fu.size === 1 ? { ok: true } : { ok: false, motivo: 'Precisam ser da MESMA função' };
+    case 'monoPanteao':     return pa.size === 1 ? { ok: true } : { ok: false, motivo: 'Precisam ser do MESMO panteão' };
+    case 'funcoesDistintas':return fu.size === 3 ? { ok: true } : { ok: false, motivo: 'Precisam ser três funções DIFERENTES' };
+    default:                return { ok: true };   // 'livre'
+  }
+}
+
+function cardDesafioHTML(dsf){
+  const feito = desafioFeito(dsf.id);
+  const r = recompensaDesafio(dsf.recompensa);
+  const rid = dsf.regra === 'livre' ? 'Time livre' : 'Regra de time';
+  return `<button class="cenc cenc--${feito ? 'feito' : 'aberto'}" data-desafio="${dsf.id}">
+    <span class="cenc__ic">${feito ? '✓' : '◆'}</span>
+    <span class="cenc__id">
+      <span class="cenc__nome">${H(dsf.nome)}</span>
+      <span class="cenc__ensina">${H(dsf.regraTexto)}</span>
+    </span>
+    <span class="cenc__pe">
+      <span class="cenc__rec">${r.essencia ? `${r.essencia} ✦` : ''}${feito ? ' <span class="cenc__feitosel">✓</span>' : ''}</span>
+      <span class="cenc__estado">${feito ? 'vencido' : rid}</span>
+    </span>
+  </button>`;
+}
+function renderDesafios(){
+  const lista = desafios();
+  const feitos = lista.filter(d => desafioFeito(d.id)).length;
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Provações</button>
+      <h1 class="tela__titulo">Desafios de Composição</h1>
+      <span class="tela__cont">${feitos}/${lista.length}</span>
+    </header>
+    <div class="tela__rol">
+      <div class="ccap"><h2>Você monta o time; o jogo testa se sabe montá-lo.</h2><p>Cada desafio impõe uma regra de composição. A recompensa é leve — o valor é o quebra-cabeça.</p></div>
+      <div class="clista">${lista.map(cardDesafioHTML).join('')}</div>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('provacoes', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.cenc[data-desafio]')].forEach(b => {
+    b.onclick = () => { desafioTimePick = []; ir('desafiomontar', { id: b.dataset.desafio }); render(); };
+  });
+  fit();
+}
+
+// montador COM validação AO VIVO da regra: Começar fica travado E DIZ POR QUÊ até o time servir.
+function renderDesafioMontar(){
+  const id = (paramsAtuais() || {}).id;
+  const dsf = desafios().find(d => d.id === id) || {};
+  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
+  const val = validarRegra(dsf.regra, desafioTimePick);
+  const tile = k => {
+    const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    const on = desafioTimePick.includes(k);
+    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}" title="${H(g.nome)}">
+      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
+      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
+      ${on ? `<span class="ctile__mark">${desafioTimePick.indexOf(k) + 1}</span>` : ''}
+      <span class="ctile__n">${H(g.nome)}</span>
+    </button>`;
+  };
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+      <h1 class="tela__titulo">${H(dsf.nome || '')}</h1>
+      <span class="tela__cont">${desafioTimePick.length}/3</span>
+    </header>
+    <div class="tela__rol">
+      <div class="ccap"><h2>${H(dsf.regraTexto || '')}</h2></div>
+      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
+    </div>
+    <div class="cmontarpe">
+      <span class="cval ${val.ok ? 'ok' : 'nao'}">${val.ok ? '✓ time válido' : '✕ ' + H(val.motivo)}</span>
+      <button class="b b--primary b--lg" id="bcomecar" ${val.ok ? '' : 'disabled'}>Começar</button>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('desafios', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
+    b.onclick = () => {
+      const k = b.dataset.pick, j = desafioTimePick.indexOf(k);
+      if (j >= 0) desafioTimePick.splice(j, 1); else if (desafioTimePick.length < 3) desafioTimePick.push(k);
+      render();
+    };
+  });
+  const bc = stage.querySelector('#bcomecar');
+  if (bc && val.ok) bc.onclick = () => iniciarDesafio(dsf, desafioTimePick.slice());
+  fit();
+}
+
+function iniciarDesafio(dsf, time){
+  campanha = null; campanhaFim = null;
+  const cam = (dsf.condicoes.find(c => c.predicado === 'deadline') || {}).turnos;
+  prova = {
+    key: time[0], titulo: dsf.nome, nivel: 'Desafio', dificuldade: 2,
+    aliados: time, inimigos: dsf.inimigos, montar: dsf.montar || {}, condicoes: dsf.condicoes,
+    minimo: null, desafio: true, desafioId: dsf.id, regraTexto: dsf.regraTexto,
+    scoreKey: 'desafio:' + dsf.id, recompensaEss: (recompensaDesafio(dsf.recompensa).essencia || 0),
+  };
+  provaFim = null; provaLances = 0;
+  st = montarProvacao(prova);
+  vsCPU = true;
+  ir('batalha', {}, { substituir: true });
+  render();
 }

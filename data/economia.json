@@ -53,6 +53,12 @@
       "chefe": { "gema": 400, "essencia": 40 }
     }
   },
+  "desafios": {
+    "_fonte": "Recompensas dos Desafios de Composicao (F3.6). LEVE de proposito (dono): o valor e o quebra-cabeca de montagem, nao a recompensa — recompensa pesada viraria grind obrigatorio. So a 1a vitoria de cada desafio paga; a maestria (contador de vitorias) acumula sempre.",
+    "recompensas": {
+      "padrao": { "essencia": 20 }
+    }
+  },
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },

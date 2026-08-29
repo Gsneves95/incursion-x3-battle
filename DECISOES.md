@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §205 — FASE 3, F3.6: DESAFIOS DE COMPOSIÇÃO — o INVERSO da Provação. Validação de time AO MONTAR (não ao perder). + limiares de maestria = CALIBRAÇÃO PENDENTE.
+
+**O INVERSO da Provação (dono):** a Provação dá o time e testa a execução; o desafio deixa o jogador DAR o time e testa se ele sabe MONTAR. Os predicados já existem (o rider em jogo); **o novo é a VALIDAÇÃO DE TIME ANTES da partida.**
+
+**A VALIDAÇÃO AO MONTAR é o ponto (dono) — mesmo princípio do "tocar nunca gasta": o erro é reversível ANTES de custar.** O montador valida a regra AO VIVO: "Começar" fica TRAVADO **e diz por quê** ("✕ Precisam ser do MESMO elemento") até o time servir; vira "✓ time válido" e libera. O jogador sabe que o time não serve ENQUANTO monta, não descobre ao perder. `validarRegra(regraId, keys)` → {ok, motivo}. Regras: monoElemento, mesmaFuncao, funcoesDistintas, monoPanteao, e `livre` (sem regra de time — a restrição é o rider em jogo, ex. sem-Milagre = `proibirSlotProprio{milagre}`, linha-intacta = `semPerderAliado`).
+
+**RECOMPENSA LEVE DE PROPÓSITO (dono): maestria + um pouco de Essência (20, só a 1ª vitória) — o valor é o QUEBRA-CABEÇA, não o grind.** Sem gema, sem desbloqueio de deus (o desafio não é uma Provação — reusa a máquina com flag `desafio:true`, mas o `aplicarDesbloqueioProva` ramifica: sem `adicionarDeus`, sem placar de lances; só maestria + Essência-uma-vez). Recompensa pesada viraria grind obrigatório — evitado por decisão. Data em `data/composicao.json`, recompensa por chave em `economia.json`, validado na build.
+
+**ENTRADA:** um botão "⚔ Desafios de Composição" no topo da lista de Provações (junto do banner semanal) — a home fica nos 5 destinos; o hub de puzzles (Provações + Semanal + Desafios) mora junto.
+
+**★ CALIBRAÇÃO PENDENTE (dono): os limiares de maestria (Aprendiz 5 · Adepto 15 · Mestre 30) ficam.** São chute educado; o número certo só aparece com JOGADOR REAL. Ajustar DEPOIS do teste de usabilidade, não agora. Anotado como dívida de calibração — mesma classe do "medir antes de escrever o número", mas aqui o instrumento de medida é o teste de usabilidade, ainda a fazer.
+
+**CRITÉRIO DE PRONTO cumprido:** 6 desafios com regra de composição validada ao vivo, recompensa leve (maestria + Essência 1×), rider reusando predicados, captura contra o dist. Teste `composicao` (regras, validação-ao-montar trava e diz por quê, vitória dá maestria+Essência sem desbloquear, re-jogar não paga). Suíte verde. **Falta só o PORTÃO DA FASE 3** (npm test completo + ESTADO + números + a especificação do teste de usabilidade).
+
 ## §204 — FASE 3, F3.5: MAESTRIA (4 níveis/deus) e PANTEÕES por PROPORÇÃO. + semente semanal vira (ano, semana). RESTRIÇÃO: cosmético, nunca poder.
 
 **A RESTRIÇÃO QUE MANDA (dono): maestria dá TÍTULO/COSMÉTICO, NUNCA poder de combate.** Tudo é contador de perfil + exibição — nada toca `st`, kit, dano ou HP. Provado por teste: a montagem de combate de uma Provação é IDÊNTICA com maestria 0 e maestria máxima, e `montarProvacao` nem lê `perfil.maestria`. Se algum desenho esbarrasse nisso, era PARAR — não esbarrou.

@@ -228,6 +228,23 @@ const semanaisObj = (() => {
   return s;
 })();
 
+// DESAFIOS DE COMPOSIÇÃO (F3.6): o jogador dá o time (validado ANTES da partida por uma REGRA); o rider
+// reusa predicados. Valida na build: inimigos no catálogo + chave de recompensa existe.
+const composicaoObj = (() => {
+  const arq = path.join(raiz, 'data', 'composicao.json');
+  if (!fs.existsSync(arq)) return null;
+  const c = JSON.parse(ler('data/composicao.json'));
+  const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
+  const recompensas = (JSON.parse(economia).desafios && JSON.parse(economia).desafios.recompensas) || {};
+  const erros = [];
+  for (const dsf of (c.desafios || [])) {
+    for (const k of (dsf.inimigos || [])) if (!catalogoKeys.has(k)) erros.push(`${dsf.id}: inimigo "${k}" fora do catálogo`);
+    if (!recompensas[dsf.recompensa]) erros.push(`${dsf.id}: recompensa "${dsf.recompensa}" não existe em economia.desafios.recompensas`);
+  }
+  if (erros.length) { console.error('ERRO de schema de desafios:\n  ' + erros.join('\n  ')); process.exit(1); }
+  return c;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -239,7 +256,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
