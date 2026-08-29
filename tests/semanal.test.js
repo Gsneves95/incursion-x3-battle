@@ -36,9 +36,9 @@ console.log('== 2. DETERMINÍSTICO pela semana ISO: mesma semana → mesmo puzzl
   const a = w.eval('JSON.stringify((({key,aliados,inimigos,condicoes})=>({key,aliados,inimigos,condicoes}))(provaSemanalAtual()))');
   const b = w.eval('JSON.stringify((({key,aliados,inimigos,condicoes})=>({key,aliados,inimigos,condicoes}))(provaSemanalAtual()))');
   ok(a === b, 'duas leituras da mesma semana dão o mesmo puzzle');
-  // o índice é semana % tamanho-do-pool
-  const idxOk = w.eval('(function(){var wk=semanaISOAtual();var p=SEMANAIS.puzzles[((wk%SEMANAIS.puzzles.length)+SEMANAIS.puzzles.length)%SEMANAIS.puzzles.length];return p.key===provaSemanalAtual().key;})()');
-  ok(idxOk, 'o puzzle da semana é pool[semanaISO % tamanho]');
+  // o índice é (semana + ano*7) % tamanho-do-pool (semente ano+semana, §203/F3.5)
+  const idxOk = w.eval('(function(){var wk=semanaISOAtual(),ano=anoISOAtual(),n=SEMANAIS.puzzles.length;var p=SEMANAIS.puzzles[(((wk+ano*7)%n)+n)%n];return p.key===provaSemanalAtual().key;})()');
+  ok(idxOk, 'o puzzle da semana é pool[(semana + ano*7) % tamanho]');
 }
 
 console.log('== 3. todo puzzle do pool MONTA e começa em ANDAMENTO (o solver já provou vencível) ==');
@@ -69,7 +69,7 @@ console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (se
   w.eval("vsCPU=false; pararRelogio();");
   ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!(prova&&prova.semanal)'), 'tocar o banner entra na Provação semanal');
   const sk = w.eval('prova.scoreKey');
-  ok(/^semanal:W\d+$/.test(sk), `a chave de placar é semanal (${sk})`);
+  ok(/^semanal:\d+W\d+$/.test(sk), `a chave de placar é semanal com ano (${sk})`);
   const godKey = w.eval('prova.key');
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; provaLances=13; render();");
   ok(w.eval(`perfil.provacoes[${JSON.stringify(sk)}] && perfil.provacoes[${JSON.stringify(sk)}].lances===13`), 'o placar grava sob a chave semanal');

@@ -293,6 +293,7 @@ function atualizarProva(){
 }
 function aplicarDesbloqueioProva(p){
   if (!perfil) return;
+  creditarMaestria();   // F3.5: a vitória conta p/ a maestria dos deuses que jogaram (só contador, sem poder)
   provaFim.jaTinha = !!(perfil.deuses && perfil.deuses[p.key]);
   perfil = adicionarDeus(perfil, p.key, Date.now());
   if (!perfil.provacoes) perfil.provacoes = {};
@@ -377,7 +378,7 @@ function tileColecaoHTML(k){
     <span class="ctile__p">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 20)}</span>
     <span class="ctile__el" style="background:${COR(g.elem)}"></span>
     <span class="ctile__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
-    ${tem ? '' : '<span class="ctile__lock">⚿</span>'}
+    ${tem ? pipMaestria(k) : '<span class="ctile__lock">⚿</span>'}
     <span class="ctile__n">${H(g.nome)}</span>
   </button>`;
 }
@@ -388,11 +389,17 @@ function renderColecao(){
   const donos = perfil && perfil.deuses ? Object.keys(perfil.deuses).length : 0;
   const grupos = PANTEOES.filter(f => porFaccao[f]).map(f => {
     const ks = porFaccao[f]; const tem = ks.filter(temDeus).length;
+    // PANTEÃO por PROPORÇÃO (§200): dominados X/N, com o marco em METADE (comparável entre 19 e 4).
+    const d = dominadosPanteao(f);
+    const frac = d.total ? Math.round(d.dom / d.total * 100) : 0;
+    const meia = d.dom >= d.metade && d.metade > 0;
     return `<div class="csec">
-      <div class="csec__cab"><h2>${H(f)}</h2><span class="csec__n">${tem}/${ks.length}</span></div>
+      <div class="csec__cab"><h2>${H(f)}</h2><span class="csec__n">${tem}/${ks.length}</span>
+        <span class="csec__maes ${meia ? 'meia' : ''}" title="dominados (Mestre) — marco em metade">dominados ${d.dom}/${d.total}${meia ? ' · metade ✓' : ''}</span></div>
       <div class="cgrid">${ks.map(tileColecaoHTML).join('')}</div>
     </div>`;
   }).join('');
+  const dom = totalDominados(), inic = totalIniciados();
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="tela">
     <header class="tela__cab">
@@ -400,6 +407,7 @@ function renderColecao(){
       <h1 class="tela__titulo">Coleção</h1>
       <span class="tela__cont">${donos}/${ROSTER.length}</span>
     </header>
+    <div class="cmaescab">domina <b>${dom}</b>/${ROSTER.length} · iniciado em <b>${inic}</b></div>
     <div class="tela__rol">${grupos}</div>
   </div>
   </div>`;
@@ -462,6 +470,7 @@ function renderDeusDetalhe(){
           <span class="dhead__estado ${tem ? 'tem' : 'falta'}">${tem ? '✓ Na coleção' : '⚿ Ainda não conquistado'}</span>
         </div>
       </div>
+      ${maestriaDetalheHTML(k)}
       ${provacaoDetalheHTML(k)}
       <div class="dkit">
         ${kit ? `${linhaKitHTML('BÁS', kit.basico)}${linhaKitHTML('HAB', kit.habilidade)}${linhaKitHTML('MIL', kit.milagre)}
@@ -633,7 +642,7 @@ function atualizarCampanha(){
   const venceu = st.fim.resultado === 'vitoria' && st.fim.lado === 0;
   campanhaFim = { venceu, recompensa: null, jaFeito: false };
   pararRelogio();
-  if (venceu) concluirEncontro(campanha);
+  if (venceu) { creditarMaestria(); concluirEncontro(campanha); }   // F3.5: encontro vencido conta p/ maestria
 }
 function concluirEncontro(enc){
   if (!perfil) return;
@@ -699,20 +708,28 @@ function sairCampanha(){ campanha = null; campanhaFim = null; }
 // mesmo HUD, mesmo laço de avaliação, mesmo PLACAR de lances contra o mínimo do solucionador.
 // ===================================================================
 
-// número da semana ISO 8601 (semente do puzzle). Determinístico por data — sem servidor.
-function semanaISOAtual(d){
+// A "quinta desta semana" resolve semana E ano ISO 8601 de uma vez (a semana pertence ao ano da quinta).
+function quintaISO(d){
   const t = new Date(d || Date.now());
   const u = new Date(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()));
   const dia = u.getUTCDay() || 7;               // segunda=1 … domingo=7
   u.setUTCDate(u.getUTCDate() + 4 - dia);        // quinta desta semana
+  return u;
+}
+// número da semana ISO 8601 (semente do puzzle). Determinístico por data — sem servidor.
+function semanaISOAtual(d){
+  const u = quintaISO(d);
   const inicioAno = new Date(Date.UTC(u.getUTCFullYear(), 0, 1));
   return Math.ceil((((u - inicioAno) / 86400000) + 1) / 7);
 }
+function anoISOAtual(d){ return quintaISO(d).getUTCFullYear(); }
 function provaSemanalAtual(){
   const pool = (typeof SEMANAIS !== 'undefined' && SEMANAIS && SEMANAIS.puzzles) ? SEMANAIS.puzzles : [];
   if (!pool.length) return null;
-  const wk = semanaISOAtual();
-  const idx = ((wk % pool.length) + pool.length) % pool.length;   // cicla o pool pela semana (perpétuo, determinístico)
+  const wk = semanaISOAtual(), ano = anoISOAtual();
+  // SEMENTE = (ano, semana): o ano roda o alinhamento em ×7 (coprimo de 52) → 52 puzzles distintos por
+  // ano E a mesma semana do calendário NÃO repete o puzzle no ano seguinte (não repete em silêncio).
+  const idx = (((wk + ano * 7) % pool.length) + pool.length) % pool.length;
   const raw = pool[idx];
   const g = HRM[raw.key] || { nome: raw.key };
   const dl = (raw.condicoes.find(c => c.predicado === 'deadline') || {}).turnos;
@@ -720,8 +737,8 @@ function provaSemanalAtual(){
     titulo: 'Desafio de ' + g.nome,
     nivel: 'Semanal',
     dificuldade: raw.minimo >= 22 ? 3 : raw.minimo >= 15 ? 2 : 1,
-    semanal: true, semanaISO: wk, deadline: dl,
-    scoreKey: 'semanal:W' + wk,
+    semanal: true, semanaISO: wk, anoISO: ano, deadline: dl,
+    scoreKey: 'semanal:' + ano + 'W' + wk,   // ano no placar: a mesma semana de anos diferentes não colide
   });
 }
 function iniciarSemanal(){
@@ -753,4 +770,79 @@ function bannerSemanalHTML(){
       <span class="psem__go">▷</span>
     </span>
   </button>`;
+}
+
+// ===================================================================
+// F3.5 — MAESTRIA (4 níveis por deus) e PANTEÕES (por PROPORÇÃO, §200).
+// RESTRIÇÃO QUE MANDA (dono): maestria dá TÍTULO e COSMÉTICO, NUNCA poder de combate.
+// Tudo aqui é contador de perfil + exibição — nada toca `st`, kit, dano ou HP.
+// Iniciado = a Provação do deus (90 saem de graça); os outros três por VITÓRIAS
+// acumuladas, com a CONDIÇÃO DE KIT no Mestre (ter vencido usando o Milagre do deus —
+// a assinatura do kit, universal e sem autorar 100 feitos).
+// ===================================================================
+
+const MAESTRIA_LIMIAR = { aprendiz: 5, adepto: 15, mestre: 30 };
+const MAESTRIA_NOME = { 0: '—', 1: 'Iniciado', 2: 'Aprendiz', 3: 'Adepto', 4: 'Mestre' };
+function maestriaDe(key){ return (perfil && perfil.maestria && perfil.maestria[key]) || { vitorias: 0, milagre: false }; }
+function provacaoVencida(key){ return !!(perfil && perfil.provacoes && perfil.provacoes[key]); }
+function nivelMaestria(key){
+  const m = maestriaDe(key), v = m.vitorias || 0;
+  const iniciado = provacaoVencida(key) || v >= 1;   // 90 Iniciados vêm das 90 Provações; iniciais chegam por 1 vitória
+  if (v >= MAESTRIA_LIMIAR.mestre && m.milagre) return 4;
+  if (v >= MAESTRIA_LIMIAR.adepto) return 3;
+  if (v >= MAESTRIA_LIMIAR.aprendiz) return 2;
+  if (iniciado) return 1;
+  return 0;
+}
+// contadores AGREGADOS (a cauda longa que não acaba)
+function contarMaestria(pred){ return (typeof ROSTER !== 'undefined') ? ROSTER.filter(e => pred(e.key)).length : 0; }
+function totalDominados(){ return contarMaestria(k => nivelMaestria(k) === 4); }     // "domina X dos 100" = Mestres
+function totalIniciados(){ return contarMaestria(k => nivelMaestria(k) >= 1); }
+// PROPORÇÃO por panteão (§200): fração DOMINADA — comparável entre 19 gregos e 4 maias.
+function dominadosPanteao(faccao){
+  const ks = ROSTER.filter(e => e.faccao === faccao).map(e => e.key);
+  const dom = ks.filter(k => nivelMaestria(k) === 4).length;
+  return { dom, total: ks.length, metade: Math.ceil(ks.length / 2) };
+}
+
+// CREDITA a vitória à maestria dos deuses que jogaram (lado 0). SÓ contador — sem efeito de combate.
+// A CONDIÇÃO DE KIT (Mestre): venceu tendo lançado o Milagre do próprio deus nesta partida.
+function creditarMaestria(){
+  if (!perfil || !st) return;
+  if (!perfil.maestria) perfil.maestria = {};
+  const lancouMilagre = new Set(st.log.filter(e => e.tipo === 'acao' && e.slot === 'milagre').map(e => e.origem));
+  for (const u of st.lados[0].units) {
+    const k = u.key;
+    const m = perfil.maestria[k] || (perfil.maestria[k] = { vitorias: 0, milagre: false });
+    m.vitorias = (m.vitorias || 0) + 1;
+    if (lancouMilagre.has(u.uid)) m.milagre = true;
+  }
+}
+
+// bloco de maestria no detalhe do deus: os 4 níveis, o atual, progresso e a condição de kit.
+function maestriaDetalheHTML(key){
+  const m = maestriaDe(key), v = m.vitorias || 0, nv = nivelMaestria(key);
+  const trilha = [1, 2, 3, 4].map(n => {
+    const atingido = nv >= n;
+    return `<span class="mtier ${atingido ? 'on' : ''} ${nv === n ? 'cur' : ''}">${MAESTRIA_NOME[n]}</span>`;
+  }).join('<span class="mtier__sep">›</span>');
+  let prox = '';
+  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença a Provação (ou 1 batalha) para o Iniciado.';
+  else if (nv === 1) prox = `Aprendiz em ${Math.max(0, MAESTRIA_LIMIAR.aprendiz - v)} vitória(s).`;
+  else if (nv === 2) prox = `Adepto em ${Math.max(0, MAESTRIA_LIMIAR.adepto - v)} vitória(s).`;
+  else if (nv === 3) prox = `Mestre: ${Math.max(0, MAESTRIA_LIMIAR.mestre - v)} vitória(s)${m.milagre ? '' : ' + vencer usando o Milagre dele'}.`;
+  else prox = 'Mestre — nível máximo.';
+  return `<div class="dmaes">
+    <span class="dmaes__rot">MAESTRIA</span>
+    <div class="dmaes__trilha">${trilha}</div>
+    <div class="dmaes__pe">
+      <span class="dmaes__v">${v} vitória${v === 1 ? '' : 's'}${m.milagre ? ' · Milagre ✓' : ''}</span>
+      <span class="dmaes__prox">${H(prox)}</span>
+    </div>
+  </div>`;
+}
+function pipMaestria(key){
+  const nv = nivelMaestria(key);
+  if (nv === 0) return '';
+  return `<span class="ctile__m m--${nv}" title="${MAESTRIA_NOME[nv]}">${nv === 4 ? '★' : nv}</span>`;
 }

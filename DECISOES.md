@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §204 — FASE 3, F3.5: MAESTRIA (4 níveis/deus) e PANTEÕES por PROPORÇÃO. + semente semanal vira (ano, semana). RESTRIÇÃO: cosmético, nunca poder.
+
+**A RESTRIÇÃO QUE MANDA (dono): maestria dá TÍTULO/COSMÉTICO, NUNCA poder de combate.** Tudo é contador de perfil + exibição — nada toca `st`, kit, dano ou HP. Provado por teste: a montagem de combate de uma Provação é IDÊNTICA com maestria 0 e maestria máxima, e `montarProvacao` nem lê `perfil.maestria`. Se algum desenho esbarrasse nisso, era PARAR — não esbarrou.
+
+**OS 4 NÍVEIS:** **Iniciado** = a Provação do deus vencida (90 saem de graça — o sistema herda 90 níveis sem conteúdo novo; iniciais chegam por 1 vitória). **Aprendiz** (≥5 vitórias), **Adepto** (≥15), **Mestre** (≥30 vitórias **E a CONDIÇÃO DE KIT**). A condição de kit no Mestre é **ter vencido lançando o MILAGRE do próprio deus** — a assinatura do kit, UNIVERSAL (todo deus tem Milagre e pode lançá-lo) e SEM autorar 100 feitos, medida do log (`acao`/slot milagre por unidade do lado 0 numa vitória). `perfil.maestria[key] = {vitorias, milagre}`, creditado nas vitórias de Provação/semanal/campanha.
+
+**O AGREGADO é o que importa (dono): "domina X/100"** = nº de Mestres — a cauda longa que não acaba —, com "iniciado em Y" ao lado. Mora no topo da Coleção; cada ladrilho ganha um pip de nível; o detalhe do deus mostra a trilha dos 4 e o que falta.
+
+**PANTEÕES por PROPORÇÃO, não contagem (§200 aplicado):** cada panteão mostra "dominados X/N" com o marco em **METADE** — "metade dos 19 gregos" e "metade dos 4 maias" são metas COMPARÁVEIS. A Maia (4) é o primeiro marco (§200), como previsto.
+
+**SEMENTE SEMANAL vira (ANO, SEMANA) — a linha que o dono pediu junto (F3.4):** o índice era `semanaISO % 52` (ano 2 repetia a mesma semana em silêncio). Agora `(semana + ano×7) % 52` — ×7 é coprimo de 52, então cada ano é uma permutação completa dos 52 (52 distintos/ano) E a mesma semana do calendário NÃO cai no mesmo puzzle no ano seguinte. O placar semanal também ganha o ano na chave (`semanal:AAAAW##`), p/ recordes de anos diferentes não colidirem.
+
+**CRITÉRIO DE PRONTO cumprido:** 4 níveis por deus (Iniciado das 90 Provações, Mestre com condição de kit), agregado "domina X/100", panteões por proporção, nada de poder de combate (provado), + a semente (ano, semana). Teste `maestria` (níveis, crédito, agregado, proporção, a restrição, e a semente anual). Suíte verde. **Falta a F3.6 (desafios de composição) e o PORTÃO DA FASE 3** (teste de usabilidade: dar o celular a alguém que nunca viu e ficar calado — anotado, ainda a fazer).
+
 ## §203 — FASE 3, F3.4: PROVAÇÃO SEMANAL — o motor de puzzles da Fase 2 como GERADOR perpétuo. Viável: 1.13 tentativas de sorteio em média.
 
 **O ativo mais subutilizado (dono): a Fase 2 não construiu 90 puzzles — construiu um MOTOR de puzzles.** A semanal o usa como gerador perpétuo: 52 Provações/ano, offline, sem servidor.

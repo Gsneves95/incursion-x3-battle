@@ -25,6 +25,7 @@ function novoPerfil(agora = 0, grantGema = 0) {
     moedas: { gema: grantGema, essencia: 0 },
     provacoes: {},
     campanha: { capitulo: 0, fase: 0, concluidas: [] },
+    maestria: {},   // F3.5: por deus {vitorias, milagre} — só TÍTULO/COSMÉTICO, nunca poder de combate
     invocacao: { total: 0, desdeUltimoSS: 0 },   // pity; a F0.4b liga isto ao gacha
   };
 }
