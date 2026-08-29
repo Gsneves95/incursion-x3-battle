@@ -62,7 +62,7 @@ function renderBatalha(){
   // da base rebaixa (consequência do inert), para valer INV 16: no máximo um primário
   // visível E acessível. A sobreposição é IRMÃ da #baselayer, então segue interativa.
   const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim;
-  stage.innerHTML = `<div id="baselayer"${scrim?' inert':''}>
+  stage.innerHTML = `<div id="baselayer" class="${(prova||campanha)?'temhud':''}"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}

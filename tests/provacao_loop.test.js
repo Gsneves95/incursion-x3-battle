@@ -32,7 +32,7 @@ console.log('== 1. entrar na Provação pela lista: monta o estado e mostra o HU
   ok(w.eval('st.lados[0].units.map(u=>u.key).join(",")') === 'durga,perseu,oxum', 'o estado montou os aliados da Provação');
   ok(w.eval('st.lados[1].units.map(u=>u.key).join(",")') === 'saci,loki,cuca', 'o estado montou os inimigos da Provação');
   ok(!!$('.phud'), 'o HUD da condição deveria aparecer na batalha');
-  ok(/Turno/.test($('.phud').textContent) && /14/.test($('.phud').textContent), 'o HUD deveria mostrar o prazo (turno / 14)');
+  ok(/T\s*1/.test($('.phud').textContent) && /14/.test($('.phud').textContent), 'o HUD deveria mostrar o prazo (T1/14) na faixa');
   ok(/Mantenha Durga/.test($('.phud').textContent), 'o HUD deveria descrever a condição de manter o título de pé');
   console.log('  HUD: ' + $('.phud').textContent.replace(/\s+/g, ' ').trim());
 }

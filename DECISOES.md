@@ -6,6 +6,18 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §207 — 1º ACHADO DE USABILIDADE (jogando): o HUD da condição cobria o tabuleiro. Resolvido por LAYOUT (não botão de fechar), provado por MEDIÇÃO.
+
+**O ACHADO (dono, jogando — só aparece jogando):** o HUD da condição (Provação e Campanha) ficava aberto o tempo todo SOBRE o campo, cobrindo o 1º personagem — informação persistente ocupando espaço de AÇÃO, no lugar onde a mão vai. Medido: a caixa do HUD cruzava o 1º disco de habilidade (`phud∩skill0`).
+
+**NÃO por botão de fechar (dono, duas razões):** (1) fechar é gesto que o jogador repete toda partida — e ele fecha SEMPRE, então a informação some justo quando importa (faltando 2 turnos); (2) o invariante do projeto é que **estado é legível sem gesto** — esconder atrás de toque contradiz isso. O problema não é o HUD existir; é ele estar EM CIMA DO TABULEIRO.
+
+**RESOLVIDO POR LAYOUT:** o HUD vira UMA LINHA e sai do campo para a FAIXA SUPERIOR (área de estado, junto do turno/energia), numa faixa ENTRE a barra de topo e os times. O essencial: "T7/12 · faltam 5" + os chips da condição; o texto longo TRUNCA (a versão completa vive na linha da Provação / no cartão do encontro, onde já cabe). O modo `temhud` recompõe o layout SÓ quando há HUD (os times descem, o rodapé encolhe p/ os 3 caberem); a batalha normal fica intacta.
+
+**PROVADO POR MEDIÇÃO, não por olho (dono):** medido em coords reais — `phud ∩ discos = 0` e `phud ∩ retratos = 0` em Provação E Campanha, e o 3º aliado não clipa o rodapé. **GUARDA PERMANENTE** somada ao `render_sweep` (geométrica, lida da CSS declarada: o HUD termina em 86px, os times começam em 88px → como discos/retratos são filhos de `.team`, o HUD nunca os toca). Assim não volta.
+
+**O QUE ISTO CONFIRMA (o valor do teste de usabilidade, §206):** uma decisão de interface coerente por argumento (um HUD informativo, sempre visível) estava ERRADA no detalhe que só o dedo num aparelho revela — o HUD certo, no lugar errado. É exatamente a classe de erro que o teste de usabilidade existe para pegar, e a correção certa foi de LAYOUT + MEDIÇÃO, não de esconder.
+
 ## §206 — PORTÃO DA FASE 3: jogo jogável de ponta a ponta. npm test verde (28 suítes) + ESTADO resumido + a ESPECIFICAÇÃO do teste de usabilidade (o instrumento que falta).
 
 **A FASE 3 FECHA com o app jogável inteiro:** aprender (Campanha) → provar (90 Provações) → adquirir (Invocação/Coleção) → dominar (Maestria/Panteões) → um puzzle novo por semana (Semanal) → testar montagem (Desafios). PvP marcado indisponível (Fase 5).

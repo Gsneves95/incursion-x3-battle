@@ -16,6 +16,7 @@ let err = null;
 vc.on('jsdomError', e => { err = (e.detail && e.detail.message) || e.message; });
 const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'https://x/', virtualConsole: vc });
 const w = dom.window;
+const d = w.document;
 w.eval("vsCPU=false; ir('batalha',{},{substituir:true});");
 
 console.log('== 1. TODA Provação (90) renderiza a batalha — inclusive as de bestiário ==');
@@ -63,6 +64,33 @@ console.log('== 3. a IA MOVE criaturas de bestiário e a tela re-renderiza (o ou
   ok(moves > 0, 'a IA deveria conseguir mover ao menos uma criatura');
   ok(!err, `mover criatura + renderizar não deveria quebrar (erro: ${err})`);
   console.log(`  IA moveu ${moves} criaturas · render limpo`);
+}
+
+console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (discos/retratos), em Provação e Campanha ==');
+{
+  // Invariante de LAYOUT (mesma classe do render_sweep, agora geométrica): o HUD mora numa faixa que
+  // TERMINA antes de os times começarem. Como discos e retratos são FILHOS de .team, o HUD nunca os toca.
+  // Lido da geometria DECLARADA (top/height do CSS), estável e sem depender de layout real.
+  const num = v => parseFloat(v) || 0;
+  const gs = el => w.getComputedStyle(el);
+  const fundo = (setup, label) => {
+    w.eval(setup + ' render();');
+    const bl = d.querySelector('#baselayer');
+    ok(/\btemhud\b/.test(bl.className), `${label}: a batalha com HUD marca #baselayer.temhud`);
+    const phud = d.querySelector('.phud');
+    ok(!!phud, `${label}: o HUD existe`);
+    const hudBottom = num(gs(phud).top) + num(gs(phud).height);
+    for (const sel of ['.team--ally', '.team--enemy']) {
+      const teamTop = num(gs(d.querySelector(sel)).top);
+      ok(hudBottom <= teamTop, `${label}: HUD termina (${hudBottom}px) antes de ${sel} começar (${teamTop}px) — sem cruzar discos/retratos`);
+    }
+  };
+  fundo("prova=PROVACOES.find(x=>x.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'PROVAÇÃO');
+  fundo("prova=null;provaFim=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'CAMPANHA');
+  // batalha NORMAL (sem HUD) não marca temhud nem desloca o layout
+  w.eval("prova=null;campanha=null;st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0);ir('batalha',{},{substituir:true});pararRelogio();render();");
+  ok(!/\btemhud\b/.test(d.querySelector('#baselayer').className) && !d.querySelector('.phud'), 'batalha normal NÃO tem HUD nem desloca o layout');
+  console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
 try { dom.window.close(); } catch (e) {}

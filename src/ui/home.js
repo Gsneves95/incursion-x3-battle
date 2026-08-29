@@ -256,7 +256,10 @@ function estadoCondicao(c){
   return { estado, texto: d.texto, prog };
 }
 
-/* ---------- HUD: a condição VISÍVEL durante a partida ---------- */
+/* ---------- HUD: a condição VISÍVEL durante a partida ----------
+   UMA LINHA na FAIXA SUPERIOR (área de estado), FORA do tabuleiro: prazo + estado da
+   condição. O texto longo TRUNCA (os chips têm overflow); a versão completa vive na
+   tela de resultado/na linha da Provação, onde já cabe. Nunca sobre os discos/retratos. */
 function provaHUD(){
   if (!prova) return '';
   const dl = prova.condicoes.find(c => c.predicado === 'deadline');
@@ -270,11 +273,8 @@ function provaHUD(){
     return `<span class="phud__chip phud__chip--${cls}"><i>${marca}</i>${H(s.texto)}${s.prog ? ` <b>${H(s.prog)}</b>` : ''}</span>`;
   }).join('');
   return `<div class="phud" aria-hidden="true">
-    <div class="phud__linha">
-      <span class="phud__tit">${H(prova.titulo)}</span>
-      <span class="phud__prazo ${perigo ? 'perigo' : ''}">Turno <b>${st.turno}</b>${N != null ? ` / ${N}` : ''}${restam != null ? ` · ${restam === 1 ? 'último turno' : restam === 0 ? 'prazo esgotado' : 'faltam ' + restam}` : ''}</span>
-    </div>
-    ${extras ? `<div class="phud__chips">${extras}</div>` : ''}
+    <span class="phud__prazo ${perigo ? 'perigo' : ''}">T<b>${st.turno}</b>${N != null ? '/' + N : ''}${restam != null ? ` · ${restam === 1 ? 'último' : restam === 0 ? 'esgotado' : 'faltam ' + restam}` : ''}</span>
+    ${extras ? `<span class="phud__chips">${extras}</span>` : ''}
   </div>`;
 }
 
@@ -652,12 +652,12 @@ function renderMontarTime(){
 function campanhaHUD(){
   if (!campanha) return '';
   const en = campanha.ensina || {};
+  const dl = (campanha.condicoes || []).find(c => c.predicado === 'deadline');
+  const N = dl ? dl.turnos : null;
+  // UMA LINHA na faixa: turno + a LIÇÃO curta. A dica longa vive no cartão do encontro (onde já cabe).
   return `<div class="phud phud--camp" aria-hidden="true">
-    <div class="phud__linha">
-      <span class="phud__tit">${H(campanha.nome || '')}</span>
-      <span class="phud__prazo">Ensina: <b>${H(en.titulo || '')}</b></span>
-    </div>
-    ${en.dica ? `<div class="chud__dica">${H(en.dica)}</div>` : ''}
+    <span class="phud__prazo">T<b>${st.turno}</b>${N ? '/' + N : ''}</span>
+    <span class="phud__chips"><span class="phud__chip phud__chip--andamento"><i>◆</i>Ensina: ${H(en.titulo || '')}</span></span>
   </div>`;
 }
 
