@@ -6,6 +6,19 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §206 — PORTÃO DA FASE 3: jogo jogável de ponta a ponta. npm test verde (28 suítes) + ESTADO resumido + a ESPECIFICAÇÃO do teste de usabilidade (o instrumento que falta).
+
+**A FASE 3 FECHA com o app jogável inteiro:** aprender (Campanha) → provar (90 Provações) → adquirir (Invocação/Coleção) → dominar (Maestria/Panteões) → um puzzle novo por semana (Semanal) → testar montagem (Desafios). PvP marcado indisponível (Fase 5).
+
+**OS NÚMEROS (o dono pediu):** 12 rotas (9 novas telas) · 3 arquivos de conteúdo novos (campanha 6 encontros, semanais pool 52, composicao 6 desafios) · 7 suítes de teste novas (provacao_loop, aquisicao, campanha, render_sweep, semanal, maestria, composicao) · **`npm test` VERDE, 28 suítes, exit 0** · dist ~1.8 MB, um HTML sem servidor. O que cada peça entregou está no §197–§205 e no resumo de fase (ESTADO).
+
+**O QUE A FASE ENTREGOU DE PADRÃO (não só features):**
+- **A máquina de Provação virou o NÚCLEO reusado por tudo** — Provação, semanal, campanha, desafio montam pelo mesmo `montarProvacao` e avaliam pelo mesmo `avaliarProvacao`. Conteúdo novo = dado, não motor.
+- **A classe "build valida, tela nunca renderiza" (§202)** ficou travada por `render_sweep` — a lição de que schema-válido + solver-vencível ≠ jogável agora tem guarda.
+- **A restrição "maestria nunca é poder" (§204)** ficou travada por medição (montagem idêntica com maestria 0 e máxima).
+
+**★ O INSTRUMENTO QUE FALTA — o TESTE DE USABILIDADE (o dono: "o item que eu mais quero").** Especificação escrita em `docs/teste-usabilidade.md`: o método (celular na horizontal, perfil zerado, "é um jogo, joga", e ficar CALADO), o que observar (comportamento, não opinião), o que NÃO dizer (não explicar/corrigir/apontar/resgatar; devolver "o que você acha?"), e **as 13 decisões de interface EM RISCO** — cada uma tomada por argumento, com o sinal concreto de FALHA. As de maior risco: **#10 a Campanha é o tutorial mas o destaque visual está na Provações** (a porta de entrada certa não é a que atrai o 1º toque); **#4/#6 Defesa e a condição do HUD** (desistência se não descobertas); **#9 a home** (PvP morto, sem "onde começar"). **A premissa: todas as decisões de interface foram por ARGUMENTO — coerentes, nenhuma validada por alguém jogando sem explicação.** O teste responde quais sobrevivem ao contato; as que não, eram coerentes E erradas. **Este é o único aberto do portão** — depois dele, calibrar os limiares (§205) e abrir a Fase 4.
+
 ## §205 — FASE 3, F3.6: DESAFIOS DE COMPOSIÇÃO — o INVERSO da Provação. Validação de time AO MONTAR (não ao perder). + limiares de maestria = CALIBRAÇÃO PENDENTE.
 
 **O INVERSO da Provação (dono):** a Provação dá o time e testa a execução; o desafio deixa o jogador DAR o time e testa se ele sabe MONTAR. Os predicados já existem (o rider em jogo); **o novo é a VALIDAÇÃO DE TIME ANTES da partida.**

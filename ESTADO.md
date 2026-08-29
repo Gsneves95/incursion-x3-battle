@@ -2,6 +2,33 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ FASE 3 — RESUMO DA FASE (encerramento). Formato: o que mudou de estrutura · ambiguidades · o que a próxima fase precisa saber.
+
+**A FASE 3 transformou o MOTOR (Fase 1) + o CATÁLOGO DE PROVAÇÕES (Fase 2) num JOGO JOGÁVEL de ponta a ponta: aprender as regras → provar os deuses → invocar/colecionar → maestria/panteões → um puzzle novo por semana → desafios de composição. Aplicativo de celular em paisagem, um só HTML, sem servidor.** Falta só o PORTÃO (teste de usabilidade) e a Fase 4 (rebalanceamento de kit) / Fase 5 (PvP).
+
+**1. O QUE MUDOU DE ESTRUTURA:**
+- **A CASCA DO APP (§197, F3.0):** home (5 destinos) + roteador; 9 telas novas via `registrar()` (home, provacoes, colecao, deus, campanha, montartime, desafios, desafiomontar, embreve) somadas às 3 antigas (selecao, batalha, invocacao). A home é o boot (não mais `selecao`).
+- **O MOTOR DE PROVAÇÃO PASSA A RODAR NO BROWSER (§198, F3.1):** até aqui `provacao.js`/`BESTIARIO` só rodavam na BUILD (validação); agora embutidos. O LAÇO fecha: lista→montar→batalha→`avaliarProvacao` a cada render→desbloqueio. HUD da condição AO VIVO, 3 derrotas distintas (HP/prazo/condição), PLACAR de lances contra o mínimo do solucionador.
+- **AQUISIÇÃO (§199, F3.2):** Invocação (odds visíveis, pity, repetido→Essência 15/40/120) + Coleção dos 100 por panteão + detalhe do deus (kit+arte+Provação), com o elo Coleção↔Provação.
+- **CAMPANHA (§201, F3.3):** capítulo 1, 6 encontros que ensinam as REGRAS (custo/recarga/Defesa/ordem/escolha-de-time/chefe). Reusa a máquina de Provação SEM condição. Recompensa de `economia.json`. Chefe = deus com HP inflado no `montar`.
+- **GERADOR SEMANAL (§203, F3.4):** o motor de puzzles como gerador perpétuo. Pool de 52 PRÉ-GERADO (`tools/gerar_semanais.js`), provado VENCÍVEL pelo solver; runtime = lookup por `(semana+ano×7) % 52` (§204). **Taxa de sorteio 1.13 tentativas** (48/52 na 1ª) — viável.
+- **MAESTRIA + PANTEÕES (§204, F3.5):** 4 níveis/deus (Iniciado=Provação vencida, Aprendiz/Adepto por vitórias, Mestre + condição de kit=vencer com o Milagre). Agregado "domina X/100". Panteão por PROPORÇÃO (§200), nunca contagem. **Só cosmético — nunca poder de combate (travado por teste).**
+- **DESAFIOS DE COMPOSIÇÃO (§205, F3.6):** o inverso da Provação; validação de time AO MONTAR (o erro é reversível antes de custar). Recompensa LEVE (maestria + Essência 1×) de propósito.
+
+**2. AMBIGUIDADES QUE APARECERAM (e viraram decisão medida):**
+- **Estado de desbloqueio (§197):** Provação de deus que já se tem → fica CONCLUÍDA (não some) — some da fila, não da coleção.
+- **O ROSTER NÃO É 10×10 (§199/§200):** medido Grega 19 … Maia 4. Decisão do dono: ACEITAR desigual, NÃO rebalancear (tocaria 100 kits + carimbos + os deuses que leem facção). A CORREÇÃO é no sistema: panteão vira PROPORÇÃO ("metade dos gregos" ~ "metade dos maias"). A Maia (4) é o 1º marco. **Padrão do "escrever por tema sem contar" reapareceu — agora sobre a estrutura do próprio roster.**
+- **A CLASSE DO BUG DO BESTIÁRIO (§201/§202):** a build (schema + solver no motor PURO) validava, mas a TELA nunca renderizava; as 3 Provações de bestiário quebrariam ao jogar (`campo.js` lia `GODS`, criatura está em `BESTIARIO`). Consertado (lê o catálogo da partida) + **GUARDA PERMANENTE** (`render_sweep.test.js` renderiza toda Provação/encontro e move a IA). Lição: **schema-válido + solver-vencível ≠ jogável.**
+- **"Perpétuo" do semanal (§203/§204):** o pool cicla 52; a semente virou (ano, semana) p/ não repetir a mesma semana no ano 2. Renovar de verdade = re-rodar o gerador (`npm run gerar:semanais`).
+
+**3. O QUE A PRÓXIMA FASE PRECISA SABER:**
+- **PORTÃO DA FASE 3 PENDENTE: o TESTE DE USABILIDADE** — dar o celular a alguém que nunca viu e ficar calado. Todas as decisões de interface foram por ARGUMENTO, coerentes, mas NENHUMA validada por alguém jogando sem explicação. É a maior incerteza aberta.
+- **CALIBRAÇÃO PENDENTE (§205):** limiares de maestria (Aprendiz 5 · Adepto 15 · Mestre 30) e o prazo/recompensa dos desafios são chute educado — ajustar DEPOIS do teste de usabilidade, com jogador real.
+- **FASE 4 (rebalanceamento de kit), em ordem (herdado da F2):** (1) **oni** — resiste até à genérica; (2) slots-mortos hercules/shutendoji/xangô/cernunnos; (3) re-escrever hercules/shutendoji com golpe-final. A F4 pode SUBSTITUIR as 27 genéricas (`generica:true`) por Provações-de-kit após rebalancear.
+- **FASE 5: PvP** — cartão morto na home hoje, marcado "Indisponível · Fase 5".
+- **O conteúdo é FUNDAÇÃO, não fim:** 90 Provações + gerador semanal (perpétuo) + campanha (extensível a mais capítulos) + 6 desafios. A máquina de Provação é o núcleo reusado por TUDO (Provação, semanal, campanha, desafio).
+- **NÚMEROS DA FASE:** 12 rotas (9 novas) · 3 arquivos de conteúdo novos (campanha 6, semanais 52, composicao 6) · 7 suítes de teste novas · **28 suítes, `npm test` verde, exit 0** · dist ~1.8 MB, um HTML.
+
 ## ★ FASE 2 — RESUMO DA FASE (encerramento). Formato: o que mudou de estrutura · ambiguidades · o que a Fase 3 precisa saber.
 
 **A FASE 2 traduziu e mediu o CATÁLOGO DE PROVAÇÕES dos 91 deuses não-iniciais. Encerra em 90/100 com Provação: 63 que ENSINAM KIT + 27 rota GENÉRICA; 10 sem (9 iniciais + oni).**
