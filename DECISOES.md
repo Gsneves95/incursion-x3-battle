@@ -6,6 +6,17 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §202 — A CLASSE do bug do bestiário: só a BUILD exercitava, nunca o RUNTIME da tela. Varredura feita (limpa após o conserto) + GUARDA PERMANENTE de render.
+
+**A CLASSE (dono):** a build valida SCHEMA e o solucionador prova VENCÍVEL — mas ambos rodam no **motor PURO**. A **tela** (render) e a **IA-na-UI** nunca eram exercitadas pelos mesmos dados. As 3 Provações de bestiário (bragi) **validavam, carimbavam e QUEBRARIAM ao jogar** — conteúdo publicado que passa em toda checagem e falha no jogador. O solucionador nunca renderizou um retrato; por isso o `GODS[key]` indefinido (§201) passou invisível.
+
+**A VARREDURA (o que mais a build valida que a tela nunca renderizou?):**
+- **Batalha de TODA Provação (90):** renderizei as 90 no bundle. Após o conserto do §201, **0 quebras** — o bestiário era a única classe latente. As montagens especiais (aliado começa CAÍDO no cluster revive, HP inflado de chefe, escudo/efeito/contador inicial no `montar.unidades`) renderizam sem erro.
+- **IA movendo criatura:** o outro caminho de runtime que os testes nunca tocaram (todos congelavam a IA com `vsCPU=false`). A IA move as criaturas de bragi e a tela re-renderiza — **limpo** (`iaProximaAcao`/`agir`/`narrar` já liam o catálogo da partida via `kitDe`/`_catPartida`; só o `campo.js` lia o global).
+- **Bestiário em LISTA:** as criaturas NÃO aparecem em nenhuma lista navegável (a Coleção é dos 100 do ROSTER) — por design (não são colecionáveis). Só existem como inimigo de batalha, caminho agora coberto.
+
+**A GUARDA PERMANENTE (a resposta sistêmica, não o remendo):** `tests/render_sweep.test.js` RENDERIZA a batalha de toda Provação e todo encontro de campanha, e move a IA sobre criaturas — falha se qualquer um quebrar. Fecha a classe: "validado pela build mas nunca renderizado" deixa de poder reaparecer em silêncio. A lição geral: **schema-válido + solver-vencível ≠ jogável**; todo dado que a build aceita precisa de um caminho de teste que o RENDERIZE.
+
 ## §201 — FASE 3, F3.3: CAMPANHA (Capítulo 1) — a única tela que ensina as REGRAS. + ACHADO/CORREÇÃO: a batalha quebrava com inimigo de BESTIÁRIO (retrato lia GODS, não o catálogo da partida).
 
 **Por que campanha antes da Provação semanal (dono):** as Provações ensinam os DEUSES; nada ensinava as REGRAS — custo de energia, leitura de recarga, a Defesa universal, a ordem de resolução. Sem isso o jogador chega na 1ª Provação sem saber jogar (o buraco anotado quando o dono perguntou da interface). A campanha capítulo 1 é o tutorial.
