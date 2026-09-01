@@ -1,50 +1,78 @@
 // ui/home.js — a TELA INICIAL (hub) e a LISTA DE PROVAÇÕES (F3.0).
-// O jogo é APLICATIVO de celular em paisagem: a home NÃO rola (cabe inteira no
-// palco 428 de altura), alvos de toque grandes (≥76px), e nada de hover como
-// afordância — o estado do destino é dito por TEXTO no próprio cartão.
-//
-// Cinco destinos: Campanha, Provações, Invocação, Coleção, PvP. Nesta fase só a
-// Provações FUNCIONA (lista os 90); os outros três abrem um marcador "em breve" e o
-// PvP é INDISPONÍVEL (chega na Fase 5) — cartão morto, sem navegação.
+// O jogo é APLICATIVO de celular em paisagem. A home é um CARROSSEL HORIZONTAL de 7
+// banners ilustrados (arquivo em web/banners/, servido como os discos de web/skills/ —
+// nunca base64). A ARTE já traz título e subtítulo; o HTML NÃO repete texto — só
+// acrescenta o DADO VIVO, e só onde ele muda. Alvo de toque = o cartão inteiro
+// (202×314, muito acima dos 76px do invariante); nada de hover — o selecionado se
+// marca por CONTORNO. O risco do gesto (rolar ≠ abrir) mora no ligarHome: um limiar
+// de ~10px separa arrastar (rola) de tocar (abre).
 
 /* ---------- metadados de exibição (ROSTER tem os 100, inclusive sem kit) ---------- */
 const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 
-// Os cinco caminhos da home. `rota` nula = cartão indisponível (PvP, Fase 5). Os três
-// "em breve" caem todos no mesmo marcador, parametrizado pelo título — nenhum motor novo.
-const HOME_DESTINOS = [
-  { chave: 'campanha',  rotulo: 'Campanha',  glifo: '⚔', rota: 'campanha' },
-  { chave: 'provacoes', rotulo: 'Provações', glifo: '◈', rota: 'provacoes', destaque: true },
-  { chave: 'invocacao', rotulo: 'Invocação', glifo: '✦', rota: 'invocacao' },
-  { chave: 'colecao',   rotulo: 'Coleção',   glifo: '▤', rota: 'colecao' },
-  { chave: 'pvp',       rotulo: 'PvP',       glifo: '★', rota: null,        nota: 'Indisponível · Fase 5' },
+// Os 7 destinos, na ordem do carrossel. `arte` = arquivo em web/banners/<arte>.webp.
+// `rota` nula = cartão sem navegação (PvP, Fase 5). Loja cai no marcador "em breve";
+// Batalha CPU liga na seleção→batalha-protótipo que a F3.0 deixou fora da home.
+const HOME_BANNERS = [
+  { chave: 'campanha',    arte: 'campanha',    rotulo: 'Campanha',    rota: 'campanha' },
+  { chave: 'provacoes',   arte: 'provacoes',   rotulo: 'Provações',   rota: 'provacoes' },
+  { chave: 'invocacao',   arte: 'invocacao',   rotulo: 'Invocação',   rota: 'invocacao' },
+  { chave: 'colecao',     arte: 'colecao',     rotulo: 'Coleção',     rota: 'colecao' },
+  { chave: 'loja',        arte: 'loja',        rotulo: 'Loja',        rota: 'embreve', titulo: 'Loja' },
+  { chave: 'batalha-cpu', arte: 'batalha-cpu', rotulo: 'Batalha CPU', rota: 'selecao', params: { novo: true } },
+  { chave: 'pvp',         arte: 'batalha-pvp', rotulo: 'PvP',         rota: null },
 ];
+
+// numeral romano do capítulo (1→I); pequeno o bastante para o Capítulo 1 e além.
+function romanoCap(n){ return ['','I','II','III','IV','V','VI','VII','VIII','IX','X'][n] || ('' + n); }
 
 // nº de Provações que a lista mostra — 90 (não 91, não 63): o global PROVACOES é
 // injetado na build a partir de data/provacoes/*.json (um arquivo por deus carimbado).
 function totalProvacoes(){ return (typeof PROVACOES !== 'undefined') ? PROVACOES.length : 0; }
 
-function tileHomeHTML(d){
-  const indisponivel = !d.rota;
-  const donos = (typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : 0;
-  const totalDeuses = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
-  const campFeitos = (typeof perfil !== 'undefined' && perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas)) ? perfil.campanha.concluidas.length : 0;
-  const campTotal = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.encontros) ? CAMPANHA.encontros.length : 0;
-  const nota = d.chave === 'provacoes' ? `${totalProvacoes()} provações`
-    : d.chave === 'colecao' ? `${donos}/${totalDeuses} deuses`
-    : d.chave === 'invocacao' ? 'invocar deuses'
-    : d.chave === 'campanha' ? (campTotal ? `capítulo 1 · ${campFeitos}/${campTotal}` : 'aprenda as regras')
-    : (d.nota || '');
-  const cls = ['htile'];
-  if (d.destaque) cls.push('htile--destaque');
-  if (indisponivel) cls.push('htile--off');
-  // cartão indisponível é <div> (não navega, não foca); os demais são <button>.
-  const tag = indisponivel ? 'div' : 'button';
-  const attr = indisponivel ? '' : ` data-dest="${d.chave}"`;
+// O DADO VIVO por cima da arte — SÓ onde muda, e nunca sobre o título (que mora na
+// base da arte): os selos vão no TOPO; a faixa da Campanha ocupa o rodapé que a arte
+// deixou limpo de propósito. Loja e Batalha CPU não têm dado vivo; o PvP leva o selo
+// "Fase 5". Zero reescrita de título — a arte já diz o nome.
+function bannerVivoHTML(d){
+  if (d.chave === 'campanha'){
+    const cap = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.capitulo) || 1;
+    const reg = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.regiao) || '';
+    const total = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.encontros) ? CAMPANHA.encontros.length : 0;
+    const feitos = (perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas)) ? perfil.campanha.concluidas.length : 0;
+    const pct = total ? Math.round(feitos / total * 100) : 0;
+    return `<div class="bcard__faixa">
+      <div class="bcard__faixatop"><span>Capítulo ${H(romanoCap(cap))}${reg ? ' · ' + H(reg) : ''}</span><span class="bcard__prog">${feitos}/${total}</span></div>
+      <div class="bcard__barra"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }
+  const selo = t => `<span class="bcard__selo">${H(t)}</span>`;
+  if (d.chave === 'provacoes') return selo(`${totalProvacoes()}`);
+  if (d.chave === 'invocacao'){
+    const p = (perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0;
+    const duro = (typeof ECONOMIA !== 'undefined' && ECONOMIA.invocacao && ECONOMIA.invocacao.pity) ? ECONOMIA.invocacao.pity.duro : 0;
+    return duro ? selo(`${p}/${duro}`) : '';
+  }
+  if (d.chave === 'colecao'){
+    const donos = (perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : 0;
+    const total = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
+    return selo(`${donos}/${total}`);
+  }
+  if (d.chave === 'pvp') return selo('Fase 5');
+  return '';
+}
+
+function bannerCardHTML(d){
+  const off = !d.rota;
+  const tag = off ? 'div' : 'button';                 // sem rota = não navega, não foca
+  const attr = off ? '' : ` data-dest="${H(d.chave)}"`;
+  const cls = ['bcard']; if (off) cls.push('bcard--off'); if (d.chave === 'pvp') cls.push('bcard--pvp');
+  // <img> ARQUIVO (nunca base64) + fallback: se a arte não carregar, onerror remove o
+  // <img> e o rótulo-reserva reaparece (o :has do CSS o esconde só enquanto há arte).
   return `<${tag} class="${cls.join(' ')}"${attr}>
-    <span class="htile__ic">${d.glifo}</span>
-    <span class="htile__rot">${H(d.rotulo)}</span>
-    <span class="htile__nota">${H(nota)}</span>
+    <img class="bcard__art" src="banners/${H(d.arte)}.webp" alt="${H(d.rotulo)}" loading="lazy" onerror="this.remove()">
+    <span class="bcard__fallback">${H(d.rotulo)}</span>
+    ${bannerVivoHTML(d)}
   </${tag}>`;
 }
 
@@ -56,7 +84,7 @@ function renderHome(){
       <h1 class="home__marca">INCURSION</h1>
       <span class="home__sub">x3 Battle · investida tática 3 contra 3</span>
     </header>
-    <nav class="home__grade">${HOME_DESTINOS.map(tileHomeHTML).join('')}</nav>
+    <div class="hscroll"><nav class="htrack">${HOME_BANNERS.map(bannerCardHTML).join('')}</nav></div>
   </div>
   </div>`;
   ligarHome();
@@ -64,12 +92,22 @@ function renderHome(){
 }
 
 function ligarHome(){
-  [...stage.querySelectorAll('.htile[data-dest]')].forEach(b => {
+  // ROLAR ≠ ABRIR: o carrossel rola por arraste nativo (overflow-x). O perigo é o toque
+  // disparar o destino ao fim de uma rolagem. Guarda por LIMIAR: se o dedo andou mais que
+  // ~10px entre o pressionar e o soltar, foi rolagem — o clique seguinte não navega.
+  const sc = stage.querySelector('.hscroll');
+  let bx = 0, by = 0, arrastou = false;
+  if (sc){
+    sc.addEventListener('pointerdown', e => { bx = e.clientX; by = e.clientY; arrastou = false; });
+    sc.addEventListener('pointermove', e => { if (Math.abs(e.clientX - bx) > 10 || Math.abs(e.clientY - by) > 10) arrastou = true; });
+  }
+  [...stage.querySelectorAll('.bcard[data-dest]')].forEach(b => {
     b.onclick = () => {
-      const d = HOME_DESTINOS.find(x => x.chave === b.dataset.dest);
+      if (arrastou) return;                            // arrastou = rolagem, não abre
+      const d = HOME_BANNERS.find(x => x.chave === b.dataset.dest);
       if (!d || !d.rota) return;
-      if (d.rota === 'embreve') ir('embreve', { titulo: d.rotulo });
-      else ir(d.rota);
+      if (d.rota === 'embreve') ir('embreve', { titulo: d.titulo });
+      else ir(d.rota, d.params || {});
       render();
     };
   });

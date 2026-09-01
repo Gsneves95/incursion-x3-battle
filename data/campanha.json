@@ -1,6 +1,7 @@
 {
   "_fonte": "Campanha, Capítulo 1 (F3.3). O que ENSINA cada encontro é o ponto — a progressão de regras, não a dificuldade. Reusa a máquina de Provação (montar estado + time inimigo) SEM condição especial: vencer = derrubar os inimigos. A recompensa é uma CHAVE em data/economia.json (campanha.recompensas), nunca literal aqui. Chefe = deus do roster com kit intacto e HP inflado no montar.unidades (sem mecânica nova).",
   "capitulo": 1,
+  "regiao": "Grécia",
   "nome": "Capítulo 1 — Os Primeiros Passos",
   "subtitulo": "As Provações ensinam os deuses; este capítulo ensina as regras.",
   "encontros": [

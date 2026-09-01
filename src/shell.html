@@ -714,32 +714,54 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 @media (prefers-reduced-motion:reduce){#iv .iv-carta,#iv .iv-carta-halo,#iv .iv-carta-poca{animation:none;transition:none}}
 
 /* ===================== F3.0 — HOME (hub) e telas de lista ===================== */
-/* App de celular em PAISAGEM: a home NÃO rola (cabe nos 428 de altura), alvos de
-   toque grandes, e o estado do destino é dito por TEXTO (nada de hover). */
+/* HOME = CARROSSEL horizontal de 7 banners ilustrados. A arte traz título+subtítulo;
+   o HTML só acrescenta o DADO VIVO. Medidas no palco 926×428: cartão 202×314, gap 14,
+   margem 18 → 4 cartões visíveis + 58px do 5º ESPIANDO na borda direita (comunica "tem
+   mais" sem seta). A trilha NÃO centraliza e NÃO esconde o corte. 7×202+6×14 = 1498px. */
 .home{position:absolute;inset:0;display:flex;flex-direction:column;
-  padding:18px 26px 22px;z-index:2;overflow:hidden}
-.home__cab{flex:0 0 auto;text-align:center;margin-bottom:16px}
-.home__marca{font-family:'Cinzel',serif;font-weight:900;font-size:34px;letter-spacing:.16em;
+  padding:14px 0 16px;z-index:2;overflow:hidden}
+.home__cab{flex:0 0 auto;text-align:center;margin-bottom:12px;padding:0 26px}
+.home__marca{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.16em;
   color:var(--gold-text);line-height:1;margin:0;text-shadow:0 2px 14px rgba(0,0,0,.6)}
-.home__sub{display:block;margin-top:5px;font-weight:600;font-size:12px;letter-spacing:.14em;
+.home__sub{display:block;margin-top:4px;font-weight:600;font-size:11px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--ink-mute)}
-.home__grade{flex:1 1 auto;display:flex;gap:14px;min-height:0}
-.htile{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:10px;padding:14px 8px;cursor:pointer;
-  background:linear-gradient(180deg,var(--panel),var(--panel-2));
-  border:1px solid var(--gold-soft);border-radius:12px;color:var(--ink);
-  font-family:'Rajdhani',sans-serif;transition:transform .08s ease,border-color .12s ease}
-.htile:active{transform:translateY(1px) scale(.985);border-color:var(--gold-text)}
-.htile__ic{font-family:'Cinzel',serif;font-size:44px;line-height:1;color:var(--gold-text);opacity:.9}
-.htile__rot{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.08em;
-  text-align:center;color:var(--ink)}
-.htile__nota{font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink-mute);text-align:center}
-.htile--destaque{border-color:var(--gold);box-shadow:0 0 0 1px rgba(216,178,90,.25),0 8px 22px rgba(0,0,0,.4)}
-.htile--destaque .htile__nota{color:var(--gold-text)}
-.htile--off{cursor:default;opacity:.5;background:rgba(16,13,32,.5);border-color:#2c2648}
-.htile--off .htile__ic{color:var(--ink-mute);opacity:.6}
-.htile--off .htile__rot{color:var(--ink-dim)}
+.hscroll{flex:1 1 auto;min-height:0;display:flex;align-items:center;
+  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.htrack{display:flex;gap:14px;padding:0 18px;flex:0 0 auto;margin:0}
+.bcard{position:relative;flex:0 0 202px;width:202px;height:314px;padding:0;margin:0;
+  border:1px solid var(--gold-soft);border-radius:14px;overflow:hidden;cursor:pointer;
+  background:var(--panel-2);scroll-snap-align:start;
+  transition:transform .08s ease,border-color .12s ease,box-shadow .12s ease}
+.bcard:active{transform:translateY(1px) scale(.99)}
+.bcard:focus{outline:none}
+.bcard:focus-visible{border-color:var(--gold-text);   /* SELECIONADO = contorno, sem hover */
+  box-shadow:0 0 0 2px var(--gold-text),0 10px 26px rgba(0,0,0,.55)}
+.bcard__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bcard__fallback{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:26px;font-family:'Cinzel',serif;font-weight:800;font-size:19px;letter-spacing:.06em;
+  color:var(--gold-text);text-align:center;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2))}
+.bcard:has(.bcard__art) .bcard__fallback{display:none}   /* arte presente esconde o rótulo-reserva */
+/* selo de canto (Provações/Invocação/Coleção/PvP): TOPO — o título mora na base da arte */
+.bcard__selo{position:absolute;top:10px;right:10px;padding:3px 9px;border-radius:999px;
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.03em;
+  color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,var(--gold));
+  box-shadow:0 2px 8px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.25)}
+/* Campanha: faixa no rodapé (limpo na arte) — capítulo·região à esq., feitos/total à dir. + barra */
+.bcard__faixa{position:absolute;left:0;right:0;bottom:0;padding:8px 10px 9px;
+  background:linear-gradient(0deg,rgba(6,5,14,.94),rgba(6,5,14,.55) 72%,transparent);
+  font-family:'Rajdhani',sans-serif}
+.bcard__faixatop{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  font-weight:700;font-size:11.5px;letter-spacing:.02em;color:var(--ink);text-transform:uppercase}
+.bcard__prog{color:var(--gold-text);font-weight:800;white-space:nowrap}
+.bcard__barra{margin-top:5px;height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.14)}
+.bcard__barra>i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#37cfe6,var(--gold-text))}   /* ciano→ouro: as cores da arte */
+.bcard--off{cursor:default}
+.bcard--pvp .bcard__art{filter:grayscale(1) brightness(.58)}   /* PvP em cinza — Fase 5 */
+.bcard--pvp .bcard__selo{background:linear-gradient(180deg,#cfcadb,#8f8ba6);color:#15111d}
 
 /* telas de lista (Provações) e marcador (Campanha/Invocação/Coleção) */
 .tela{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}

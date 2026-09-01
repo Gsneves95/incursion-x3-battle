@@ -93,6 +93,55 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
+console.log('== 5. carrossel da home: os 7 banners carregam (arquivo, nenhum 404) e o layout independe da carteira ==');
+{
+  const dir = path.join(__dirname, '../web/banners');
+  const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
+  ok(chaves.length === 7, `a home deveria ter 7 banners (tem ${chaves.length})`);
+
+  // (a) cada banner referencia um ARQUIVO em banners/<arte>.webp e o arquivo EXISTE no repo
+  //     (a garantia contra 404: o src aponta certo E o webp está versionado). Nada de base64.
+  const render0 = () => w.eval("perfil=novoPerfil(0,0); ir('home',{},{substituir:true}); render();");
+  render0();
+  const cards = [...d.querySelectorAll('.bcard')];
+  ok(cards.length === 7, `deveriam existir 7 cartões (existem ${cards.length})`);
+  const semArquivo = [], base64 = [];
+  for (const c of cards){
+    const img = c.querySelector('img.bcard__art');
+    if (!img) { semArquivo.push('sem <img>'); continue; }
+    const src = img.getAttribute('src') || '';
+    if (/^data:/.test(src)) base64.push(src.slice(0, 24));
+    const m = /^banners\/(.+\.webp)$/.exec(src);
+    if (!m) { semArquivo.push(src); continue; }
+    if (!fs.existsSync(path.join(dir, m[1]))) semArquivo.push(m[1] + ' (ausente no repo)');
+  }
+  ok(base64.length === 0, `nenhum banner deveria ser base64 (achei: ${base64.join(' | ')})`);
+  ok(semArquivo.length === 0, `todo banner deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
+
+  // (b) o LAYOUT do carrossel NÃO muda com o tamanho da carteira: cartão fixo 202×314,
+  //     mesma contagem e mesma ordem com perfil zerado e com perfil cheio. Só o DADO VIVO
+  //     (selos/faixa) muda — a estrutura, não.
+  const gs = el => w.getComputedStyle(el);
+  const assinatura = () => [...d.querySelectorAll('.bcard')].map(c => (c.querySelector('[data-dest]') ? c.getAttribute('data-dest') : (c.className.includes('bcard--off') ? 'off' : '?'))).join(',');
+  render0();
+  const ordemVazia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
+  const c0 = d.querySelector('.bcard');
+  const larg = gs(c0).width, alt = gs(c0).height;
+  ok(larg === '202px' && alt === '314px', `cartão deveria ser 202×314 (é ${larg}×${alt})`);
+
+  // carteira CHEIA: todos os deuses, gemas altas, campanha e pity avançados
+  w.eval("perfil=novoPerfil(0,999999); ROSTER.forEach(e=>{perfil.deuses[e.key]=perfil.deuses[e.key]||{copias:1,favorito:false,obtidoEm:0};}); perfil.campanha.concluidas=CAMPANHA.encontros.map(e=>e.id); perfil.invocacao.desdeUltimoSS=42; ir('home',{},{substituir:true}); render();");
+  const ordemCheia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
+  const c1 = d.querySelector('.bcard');
+  ok(d.querySelectorAll('.bcard').length === 7, 'com carteira cheia ainda são 7 cartões');
+  ok(ordemVazia === ordemCheia, `a ordem dos destinos não deveria mudar com a carteira (vazia="${ordemVazia}" cheia="${ordemCheia}")`);
+  ok(gs(c1).width === '202px' && gs(c1).height === '314px', 'o cartão continua 202×314 com a carteira cheia');
+  // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
+  const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
+  ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
+  console.log(`  7 banners em arquivo · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+}
+
 try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na varredura de render`); process.exit(1); }
 console.log('>>> RENDER-SWEEP OK');

@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §208 — A HOME vira CARROSSEL de 7 banners ilustrados (arquivo, não base64). A arte carrega o título; o HTML só acrescenta o DADO VIVO. Rolar ≠ abrir por LIMIAR. Medido.
+
+**O QUE MUDOU:** a home era 5 retângulos vazios com texto (glifo + rótulo + nota). Virou um **carrossel horizontal de 7 banners** ilustrados — a hero da tela agora é a ARTE. Dois destinos novos entram: **Loja** (cai no marcador "em breve") e **Batalha CPU** (liga na seleção→batalha-protótipo que a F3.0 tinha tirado da home). Ordem: Campanha · Provações · Invocação · Coleção · Loja · Batalha CPU · PvP.
+
+**O PESO — arquivo, nunca base64 (invariante):** os 7 banners são servidos de `web/banners/<chave>.webp`, com o mesmo `<img>`+fallback dos discos de `web/skills/` (F1.7). Os PNGs originais somariam ~16 MB; embutir em base64 teria estourado o bundle. Já resolvido na origem: WebP a 648×1008, **572.442 bytes** os 7 juntos. O dist ficou em 1,71 MB (era 1,8). `onerror="this.remove()"` + rótulo-reserva com `:has(.bcard__art)` — arte ausente reaparece como texto, sem quebrar.
+
+**A ARTE JÁ DIZ O NOME — o HTML NÃO repete (dono):** título e subtítulo estão NA arte. O HTML só põe o **dado vivo, e só onde muda**: Campanha = faixa no rodapé limpo da arte ("Capítulo I · Grécia" à esq. — `regiao` lida de `data/campanha.json`, sem literal — "3/6" à dir. + barra de progresso ciano→ouro); Provações = selo com o total (90); Invocação = selo do pity (10/60, lido de `perfil.invocacao` + `ECONOMIA.invocacao.pity.duro`); Coleção = selo x/100. Loja e Batalha CPU sem selo; PvP em **cinza (grayscale+brightness)** com selo "Fase 5". Selos no TOPO (o título mora na base da arte) — nenhum cobre título.
+
+**AS DIMENSÕES, medidas no palco 926×428:** cartão 202×314, gap 14, margem 18 → **4 cartões visíveis + o 5º espiando** na borda (comunica "tem mais" sem seta nem ícone). A trilha NÃO centraliza e NÃO esconde o corte. Trilha = 7×202+6×14 = 1498px. Medido no dist: 7 cartões 202×314, gap 14, 4º cartão termina em 868px, 5º começa em 882px e espia; rolado ao fim, o último cartão fica inteiro (corte 0).
+
+**O GESTO — rolar não dispara o destino (o risco real):** arrastar navega a trilha (overflow-x nativo), tocar abre — o mesmo dedo. Guarda por **LIMIAR de 10px**: `pointerdown` marca a origem, `pointermove` marca "arrastou" se passou de 10px em x OU y, e o `click` seguinte só navega se NÃO arrastou. O invariante tocar-nunca-gasta segue valendo (errar é reversível), mas abrir a tela errada ao tentar rolar seria atrito grave — por isso o limiar. Alvo de toque = o cartão inteiro (202×314, muito acima dos 76px). Sem hover; o selecionado se marca por CONTORNO (`:focus-visible`).
+
+**GUARDA PERMANENTE (render_sweep, bloco 5):** os 7 banners apontam para arquivo (`banners/<x>.webp`), o arquivo existe no repo (prova contra 404), nenhum é base64; e o LAYOUT do carrossel NÃO muda com a carteira — cartão fixo 202×314 e mesma ordem com perfil zerado e cheio, enquanto só os selos leem o perfil. Captura contra o dist nas duas pontas (início e fim da trilha).
+
 ## §207 — 1º ACHADO DE USABILIDADE (jogando): o HUD da condição cobria o tabuleiro. Resolvido por LAYOUT (não botão de fechar), provado por MEDIÇÃO.
 
 **O ACHADO (dono, jogando — só aparece jogando):** o HUD da condição (Provação e Campanha) ficava aberto o tempo todo SOBRE o campo, cobrindo o 1º personagem — informação persistente ocupando espaço de AÇÃO, no lugar onde a mão vai. Medido: a caixa do HUD cruzava o 1º disco de habilidade (`phud∩skill0`).
