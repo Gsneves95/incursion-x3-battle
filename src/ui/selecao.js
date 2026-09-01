@@ -197,6 +197,7 @@ function renderPick(){
   <div class="stagemark">INCURSION</div>
   <div class="sel">
     <div class="selhead">
+      <button class="b b--quiet b--md" id="binicio">‹ Início</button>
       <span class="selbrand">INCURSION</span>
       <span class="selturn">${pronto?'<b>TIMES PRONTOS</b>':(modoPartida()==='hotseat'
         ? `JOGADOR <b>${vez+1}</b> escolhe · <b>${pick[vez].length}/3</b>`
@@ -266,6 +267,10 @@ function ligarSelecao(){
     if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
     renderPick();};
   q('#binvocar').onclick=()=>{ir('invocacao');render();};
+  // "‹ Início": a seleção era a raiz pré-F3.0 (nunca precisou de saída); o carrossel
+  // (§208) a religou pela home, então ela precisa voltar. Direto, sem confirmação —
+  // antes da batalha começar não há nada a perder (a partida ainda nem existe).
+  { const bi=q('#binicio'); if(bi)bi.onclick=()=>{ if(!voltar())ir('home',{},{substituir:true}); render(); }; }
   { const bc=q('#bcpu'); if(bc)bc.onclick=()=>{vsCPU=!vsCPU;renderPick();}; }
   q('#brand').onclick=()=>{
     const pool=ROSTER.map(e=>e.key).filter(jogavel);

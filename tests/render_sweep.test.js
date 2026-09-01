@@ -142,6 +142,54 @@ console.log('== 5. carrossel da home: os 7 banners carregam (arquivo, nenhum 404
   console.log(`  7 banners em arquivo · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
 }
 
+console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');
+{
+  // Mesma classe do render_sweep: percorre Object.keys(NAV.telas) e exige, para cada rota,
+  // uma saída ACIONÁVEL que leve à home. Uma rota NOVA sem cobertura aqui falha de propósito
+  // (força declarar a saída). A batalha sai pelo menu ⋯ → "Sair para o início" → confirmar.
+  const setups = {
+    provacoes:    "ir('provacoes')",
+    colecao:      "ir('colecao')",
+    deus:         "ir('deus',{key:'zeus'})",
+    campanha:     "ir('campanha')",
+    montartime:   "ir('montartime',{id:CAMPANHA.encontros[0].id})",
+    desafios:     "ir('desafios')",
+    desafiomontar:"ir('desafiomontar',{id:COMPOSICAO.desafios[0].id})",
+    embreve:      "ir('embreve',{titulo:'Loja'})",
+    selecao:      "ir('selecao',{novo:true})",
+    invocacao:    "ir('invocacao')",
+    batalha:      "st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0);prova=null;campanha=null;provaFim=null;campanhaFim=null;ir('batalha');pararRelogio()",
+  };
+  const rotas = w.eval('Object.keys(NAV.telas)');
+  const descoberto = [], semSaida = [], naoChegou = [];
+  for (const r of rotas) {
+    if (r === 'home') continue;                          // a home É o destino da saída — não precisa de saída
+    if (!setups[r]) { descoberto.push(r); continue; }    // rota registrada sem cobertura no guarda
+    w.eval(`resetRotas(); ir('home'); ${setups[r]}; render();`);
+    let vivo = true;
+    if (r === 'batalha') {
+      // saída da batalha em andamento: o menu ⋯ existe → abre → "Sair para o início" → confirma
+      if (!d.querySelector('#bmenu')) { semSaida.push('batalha:#bmenu'); vivo = false; }
+      else {
+        w.eval('menuAberto=true; render();');
+        for (const sel of ['#bsair', '#bsairok']) {
+          if (!d.querySelector(sel)) { semSaida.push('batalha:' + sel); vivo = false; break; }
+          w.eval(`document.querySelector('${sel}').click()`);
+        }
+      }
+    } else {
+      const sel = ['#binicio', '#bvoltar', '.iv-hbtn'].find(s => d.querySelector(s));
+      if (!sel) { semSaida.push(r); vivo = false; }
+      else w.eval(`document.querySelector('${sel}').click()`);
+    }
+    if (vivo && w.eval('rotaAtual()') !== 'home') naoChegou.push(r + '→' + w.eval('rotaAtual()'));
+  }
+  ok(descoberto.length === 0, `rota registrada sem cobertura no guarda (declare a saída): ${descoberto.join(' | ')}`);
+  ok(semSaida.length === 0, `rota SEM saída acionável para a home: ${semSaida.join(' | ')}`);
+  ok(naoChegou.length === 0, `a saída NÃO chegou à home: ${naoChegou.join(' | ')}`);
+  console.log(`  ${rotas.length} rotas varridas · todas com saída que chega à home (batalha via ⋯ → Sair → confirmar)`);
+}
+
 try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na varredura de render`); process.exit(1); }
 console.log('>>> RENDER-SWEEP OK');

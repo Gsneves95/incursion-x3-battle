@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §210 — TODA rota alcançável tem SAÍDA para a home. A seleção (Batalha CPU) era um beco; a batalha ganha saída COM CONFIRMAÇÃO. Guarda permanente que varre as rotas.
+
+**O ACHADO (dono, jogando):** entrar em Batalha CPU e ficar preso — a tela de seleção de time não tinha como voltar. **A causa:** a `selecao` era a RAIZ do app antes da F3.0; rota-raiz não precisa de saída, então nunca teve uma. A F3.0 tirou a `selecao` do alcance da home e o §208 a religou pelo carrossel — reintroduzindo a tela sem reintroduzir a saída.
+
+**A VARREDURA (antes de corrigir, as 12 rotas):** só DUAS não tinham saída limpa. `selecao` (beco total — o achado) e `batalha` (só saía por "Render-se", uma *derrota*, que ainda desembocava na `selecao`). As outras 10 tinham "‹ Início"/"‹ Voltar" corretos. O `voltar()` do roteador (F0.2) estava certo — o histórico das rotas novas do carrossel empilha bem; faltava a `selecao` DESENHAR um controle que o chamasse. Nenhuma rota entrou com pai errado.
+
+**A CORREÇÃO — a que a tela já usa, sem inventar controle (dono):** `selecao` ganha o mesmo "‹ Início" da Coleção/Campanha/Provações (mesma posição, mesmo estilo). DIRETO, sem confirmação — antes da batalha começar não há partida a perder.
+
+**A DECISÃO sobre voltar-em-batalha (dono pediu que eu declarasse):** SIM, a batalha em andamento deve ter saída — sair de uma partida contra a CPU não custa nada (não ranqueado, sem aposta). Mas COM CONFIRMAÇÃO, senão um toque errado descarta a partida. Implementado como item "Sair para o início" no menu ⋯ que já existe → overlay de confirmação ("Continuar jogando" / "Sair para o início") → vai pra home e zera o estado de sessão (prova/campanha e latches, pra não vazar HUD na próxima). É DISTINTO de "Render-se" (que registra uma *derrota* com resultado — faz sentido em Provação/Campanha); "Sair" só abandona.
+
+**GUARDA PERMANENTE (render_sweep, bloco 6) — mesma classe do §202/§207:** percorre `Object.keys(NAV.telas)` e, para cada rota, exige uma saída ACIONÁVEL que CHEGUE à home (a batalha via ⋯ → Sair → confirmar). Uma rota NOVA sem cobertura falha de propósito — "rota sem saída" não volta em silêncio. Provado que pega o bug: removida a detecção do "‹ Início", o guarda acusa `selecao` e falha.
+
+## §209 — O deploy do Pages publica TODO o `web/` (os banners não chegavam ao jogo publicado). Hand-pick asset-a-asset foi a armadilha.
+
+**O ACHADO (dono, abrindo o jogo publicado):** os banners do carrossel (§208) não apareciam — só no publicado, não no dist local. **A CAUSA:** o `pages.yml` montava o `site/` escolhendo asset a asset e copiava `web/skills` mas NUNCA `web/banners`; então `banners/*.webp` dava 404 no publicado. O `<img>` e o caminho relativo estavam certos e idênticos aos discos (`skills/…​` vs `banners/…​`, ambos relativos). Passou no teste local porque o `build.js` copia `web/` INTEIRO para `dist/` — o Pages não; ele deploia um `site/` separado, montado à mão.
+
+**A CORREÇÃO:** `cp -r web/. site/` — o publicado passa a levar todo o `web/` (skills, banners, manifest, ícones, e o que vier). Mata a classe do bug: asset novo em `web/` deploia sozinho, sem editar o passo. Antes era hand-pick, e o hand-pick esquece.
+
+**VERIFICADO NO PUBLICADO, não só no dist (dono):** o artefato do Pages cresceu de 6.314.105 B (§208, sem banners) para 6.887.752 B (§209) = +573.647 B ≈ os 572.442 B dos banners. Deploy verde para `https://gsneves95.github.io/incursion-x3-battle/`. (O proxy de saída deste ambiente bloqueia `github.io` e o blob de artefatos — a prova é nos bytes que o GitHub guardou, e o teste visual final é do dono.)
+
 ## §208 — A HOME vira CARROSSEL de 7 banners ilustrados (arquivo, não base64). A arte carrega o título; o HTML só acrescenta o DADO VIVO. Rolar ≠ abrir por LIMIAR. Medido.
 
 **O QUE MUDOU:** a home era 5 retângulos vazios com texto (glifo + rótulo + nota). Virou um **carrossel horizontal de 7 banners** ilustrados — a hero da tela agora é a ARTE. Dois destinos novos entram: **Loja** (cai no marcador "em breve") e **Batalha CPU** (liga na seleção→batalha-protótipo que a F3.0 tinha tirado da home). Ordem: Campanha · Provações · Invocação · Coleção · Loja · Batalha CPU · PvP.

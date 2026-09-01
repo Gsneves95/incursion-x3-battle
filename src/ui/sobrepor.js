@@ -94,6 +94,15 @@ function overlayHTML(){
         <button class="b b--quiet b--md" id="bclose">Voltar</button>
         <button class="b b--danger b--md" id="bsurrok">Confirmar rendição</button></div></div></div></div>`;
   }
+  if(ov==='sair'){
+    // sair ≠ render-se: não registra derrota, só ABANDONA e vai pra home. CONFIRMA porque
+    // um toque errado descartaria a partida em andamento (invariante: a batalha tem saída).
+    return `<div class="ov"><div class="ovbox"><div class="result">
+      <h1>SAIR DA PARTIDA?</h1><p>O PROGRESSO DESTA PARTIDA SERÁ DESCARTADO</p>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="b b--quiet b--md" id="bclose">Continuar jogando</button>
+        <button class="b b--primary b--md" id="bsairok">Sair para o início</button></div></div></div></div>`;
+  }
   if(ov==='apagar'){
     // confirmação NOMEADA: diz exatamente o que se perde, não um "Confirmar?" genérico.
     const nd=perfil?Object.keys(perfil.deuses).length:0, nt=perfil?perfil.times.length:0;
@@ -141,6 +150,12 @@ function ligarSobrepor(){
     st.fim={tipo:'fim',resultado:'vitoria',lado:1-st.ativo};
     st.log.push({turno:st.turno,msg:`${rotuloLado(st.ativo)} rendeu-se.`});
     ov=null;render();};
+  const bxo=q('#bsairok'); if(bxo)bxo.onclick=()=>{
+    // ABANDONA a partida e vai pra home: zera o estado de sessão da batalha (prova/campanha
+    // e seus latches) para não vazar um HUD numa próxima batalha. aoSair(batalha) para o
+    // relógio e limpa a sobreposição; a home não lê st.
+    prova=null;provaFim=null;campanha=null;campanhaFim=null;ov=null;menuAberto=false;
+    ir('home',{},{substituir:true});render();};
   const bn=q('#bnew'); if(bn)bn.onclick=()=>{
     // sai da batalha para a seleção pedindo um recomeço (aoEntrarSelecao zera a grade);
     // aoSair(batalha) para o relógio e limpa a sobreposição.

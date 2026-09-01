@@ -52,6 +52,7 @@ function topoHTML(){
   ${menuAberto?`<div class="menu" id="menu">
     <button class="b b--quiet b--md" id="bhelp">Como jogar</button>
     <button class="b b--quiet b--md" id="bfull">${estaTelaCheia()?'Sair da tela cheia':'Tela cheia'}</button>
+    <button class="b b--quiet b--md" id="bsair">Sair para o início</button>
     <button class="b b--danger b--md" id="bsurr">Render-se</button>
     <button class="b b--danger b--md" id="bapagar">Apagar dados</button>
   </div>`:''}`;
@@ -72,6 +73,7 @@ function ligarTopo(){
   const bm=q('#bmenu'); if(bm)bm.onclick=()=>{menuAberto=!menuAberto;render();};
   const bh=q('#bhelp'); if(bh)bh.onclick=()=>{ov='help';menuAberto=false;render();};
   const bf=q('#bfull'); if(bf)bf.onclick=()=>{alternarTelaCheia();menuAberto=false;render();};
+  const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};   // sair da partida p/ a home (com confirmação — a batalha tem saída, não é beco)
   const bs=q('#bsurr'); if(bs)bs.onclick=()=>{ov='surr';menuAberto=false;render();};
   const ba=q('#bapagar'); if(ba)ba.onclick=()=>{ov='apagar';menuAberto=false;render();};
   // fechar o menu ao tocar fora, sem acumular ouvintes a cada render
