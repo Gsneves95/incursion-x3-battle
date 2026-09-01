@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §211 — A ARTE do disco de habilidade NUNCA apaga. Estado vive na MOLDURA (anel/número/ícone), identidade na ARTE. Régua de saturação no teste.
+
+**O ACHADO (dono, medindo a captura):** o disco indisponível levava `grayscale(.75) brightness(.5)` (shell.html, `.skill.is-off .skill__disc`) — saturação medida caía a 3–5 (cinza puro). Pior: no começo da partida quase toda habilidade está indisponível por energia, então o jogador abria o jogo com ~9 de 12 discos em cinza escuro — justo quando precisa aprender a reconhecer o time. O grayscale não sinalizava indisponibilidade, APAGAVA a identidade do deus.
+
+**A CAUSA, exata:** três regras punham o ESTADO na ARTE — `.skill.is-off .skill__disc{filter:grayscale(.75) brightness(.5)}` (sem energia/espectador), e os overlays `.skill__cd`/`.skill__lock` com fundo escuro CHEIO (rgba .76/.66) sobre o disco inteiro (recarga/travada). Medido no dist (minha régua, "disponível" bate a do dono: 55 vs 57): sem energia sat **18**, em recarga brilho **17**, travada brilho **20**.
+
+**REGRA NOVA (dono):** tudo bem visível; a arte da habilidade NUNCA é apagada. Implementado como **estado na moldura, identidade na arte**:
+- **Disponibilidade → o ANEL**, não a arte. `--anel` (cor do elemento) viaja pro CSS; pronta = anel ACENDE (glow); indisponível = anel APAGADO (sem glow, aro escurecido). Zero filtro na arte.
+- **Recarga → número** dourado sobre vinheta RADIAL (escurece só o miolo pro contraste; o aro da arte fica em cor), não mais scrim cheio.
+- **Sem energia → as bolinhas de custo** já existentes (vermelhas = falta) + anel apagado. Nenhuma máscara sobre a arte.
+- **Travada (Selado/Silêncio) → ⊘ rosa**; **sem alvo → ∅ âmbar** (motivo ANTES fundido em `is-locked`, agora `is-notarget` distinto). Os quatro estados são distinguíveis SEM apagar a arte: número / bolinhas vermelhas / ⊘ / ∅.
+- `.unit.acted .skills{opacity:.3}` também apagava a arte de quem já agiu → agora opacity 1; o "já agiu" é dito pelo anel apagado + retrato esmaecido.
+
+**MEDIÇÃO antes→depois (dist, minha régua; sat=saturação, ≥30 é a regra):**
+
+| estado        | sat antes | sat depois | brilho antes→depois |
+|---------------|-----------|------------|---------------------|
+| disponível    | 55        | 55         | 41 → 41             |
+| sem energia   | **18**    | **55**     | 19 → 41             |
+| em recarga    | 55        | 55         | **17 → 31**         |
+| travada       | 56        | 55         | **20 → 32**         |
+| sem alvo      | —         | 55         | — → 33              |
+
+Menor saturação entre TODOS os estados: **18 → 55**.
+
+**GUARDA PERMANENTE (moldura.test.js, navegador REAL a DPR 2) — a régua da regra:** aplica cada classe de estado no mesmo disco de deus e cobra (a) saturação de pixel ≥ 30 E (b) filtro computado SEM grayscale e SEM brightness < 0.85. Não pode voltar em silêncio: provado que pega — re-inserido o grayscale, o guarda acusa "saturação 27 < 30" e o filtro proibido, e falha. (Fora de escopo, anotado: o retrato do morto (`.portrait.is-down`) segue em grayscale — é morte, não indisponibilidade; a régua é do DISCO de habilidade.)
+
 ## §210 — TODA rota alcançável tem SAÍDA para a home. A seleção (Batalha CPU) era um beco; a batalha ganha saída COM CONFIRMAÇÃO. Guarda permanente que varre as rotas.
 
 **O ACHADO (dono, jogando):** entrar em Batalha CPU e ficar preso — a tela de seleção de time não tinha como voltar. **A causa:** a `selecao` era a RAIZ do app antes da F3.0; rota-raiz não precisa de saída, então nunca teve uma. A F3.0 tirou a `selecao` do alcance da home e o §208 a religou pelo carrossel — reintroduzindo a tela sem reintroduzir a saída.

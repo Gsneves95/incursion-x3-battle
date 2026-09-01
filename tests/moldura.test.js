@@ -143,6 +143,69 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await ctx.close();
   }
 
+  // == discos de habilidade: a ARTE fica em COR e legível em TODO estado (sat >= piso) ==
+  // A régua da regra do dono "tudo visível": o estado vive na MOLDURA (anel/número/ícone),
+  // a identidade na ARTE. Mede a saturação real do pixel do disco em cada estado; nenhum
+  // pode desaturar a arte (o grayscale antigo do is-off levava a sat a ~18). Não pode voltar
+  // em silêncio: aplica cada CLASSE de estado no mesmo disco de deus e cobra o piso.
+  const PISO_SAT = 30;
+  console.log(`== discos: arte em cor em todo estado (saturação >= ${PISO_SAT}) ==`);
+  {
+    // DPR 2 (o real dos celulares): é onde o grayscale antigo levava a arte a ~18 de sat.
+    // Medir aqui dá margem limpa — arte em cor ~55, grayscale ~18, piso 30 separa os dois.
+    const dctx = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 926, height: 428 } });
+    const dpg = await dctx.newPage();
+    await dpg.goto('file://' + distAbs, { waitUntil: 'load' });
+    await dpg.evaluate(() => {
+      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
+      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
+      prova = null; campanha = null; provaFim = null; campanhaFim = null;
+      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
+    });
+    await dpg.waitForFunction(() => { const im = document.querySelector('.skill--habilidade .skill__disc .slot__art'); return im && im.complete && im.naturalWidth > 0; }, { timeout: 6000 }).catch(() => {});
+    const estados = [['disponível', []], ['sem energia', ['is-off']], ['em recarga', ['is-cooldown']], ['travada', ['is-locked']], ['sem alvo', ['is-notarget']]];
+    for (const [nome, classes] of estados) {
+      // filtro COMPUTADO do disco (e do <img> da arte): nenhum estado pode desaturar
+      // (grayscale) nem escurecer a arte (brightness < ~0.85). Determinístico — pega o
+      // grayscale antigo mesmo quando o pixel médio ainda parece alto.
+      await dpg.evaluate((cs) => {
+        const sk = document.querySelector('.skill--habilidade');
+        sk.classList.remove('is-off', 'is-cooldown', 'is-locked', 'is-notarget', 'is-ready');
+        if (cs.length === 0) sk.classList.add('is-ready'); else cs.forEach(c => sk.classList.add(c));
+        const cd = sk.querySelector('.skill__cd'); if (cd && cs.includes('is-cooldown')) cd.textContent = '2';
+      }, classes);
+      await dpg.waitForTimeout(200);   // deixa a transição de .14s assentar antes de ler filtro/pixel
+      const filt = await dpg.evaluate(() => {
+        const disc = document.querySelector('.skill--habilidade .skill__disc');
+        const art = disc.querySelector('.slot__art');
+        return [getComputedStyle(disc).filter, art ? getComputedStyle(art).filter : 'none'].join(' | ');
+      });
+      const cinza = /grayscale\(\s*(0?\.[1-9]|[1-9])/.test(filt);   // grayscale > 0
+      const escuro = (filt.match(/brightness\(\s*([0-9.]+)/g) || []).some(m => parseFloat(m.replace(/brightness\(\s*/, '')) < 0.85);
+      ok(!cinza, `disco "${nome}": tem grayscale na arte (filtro: ${filt})`);
+      ok(!escuro, `disco "${nome}": tem brightness < 0.85 na arte (filtro: ${filt})`);
+      const disc = await dpg.$('.skill--habilidade .skill__disc');
+      const buf = await disc.screenshot();
+      const sat = await dpg.evaluate(async (url) => {
+        const img = new Image(); img.src = url; await img.decode();
+        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+        const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
+        const d = cx.getImageData(0, 0, cv.width, cv.height).data;
+        const W = cv.width, Hh = cv.height, cxp = W / 2, cyp = Hh / 2, rad = Math.min(W, Hh) * 0.46;
+        let ss = 0, n = 0;
+        for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) {
+          const dx = x - cxp, dy = y - cyp; if (dx * dx + dy * dy > rad * rad) continue;
+          const i = (y * W + x) * 4, r = d[i] / 255, g = d[i + 1] / 255, bb = d[i + 2] / 255;
+          const mx = Math.max(r, g, bb), mn = Math.min(r, g, bb); ss += mx === 0 ? 0 : (mx - mn) / mx; n++;
+        }
+        return Math.round(ss / n * 100);
+      }, 'data:image/png;base64,' + buf.toString('base64'));
+      ok(sat >= PISO_SAT, `disco "${nome}": saturação ${sat} < piso ${PISO_SAT} — a arte apagou (grayscale/scrim?)`);
+      console.log(`  ${nome.padEnd(13)} sat ${sat}${sat < PISO_SAT ? '  XX < ' + PISO_SAT : ''}`);
+    }
+    await dctx.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

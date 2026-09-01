@@ -80,23 +80,29 @@ function habilidades(u){
     +acs.map(a=>{
     const cd=u.cd[a.slot]||0;
     const semOrbe=!a.disponivel&&cd===0&&a.motivo==='sem_energia';
-    const travada=!a.disponivel&&cd===0&&!semOrbe;
+    const semAlvo=!a.disponivel&&cd===0&&a.motivo==='sem_alvo';
+    const travada=!a.disponivel&&cd===0&&!semOrbe&&!semAlvo;   // Selado/Sil\u00eancio/1\u00d7-j\u00e1-usada
     const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
-    // modo espectador (F0.7): no turno do oponente meus discos ficam apagados e sem toque
+    // modo espectador (F0.7): no turno do oponente meus discos ficam SEM TOQUE e com o
+    // anel apagado \u2014 mas a ARTE continua em cor (regra do dono: nada de disco cinza).
     const clicavel=a.disponivel&&podeAgir(u)&&ehMeuTurno();
     const cls=['skill']; if(a.universal)cls.push('skill--uni');
+    if(clicavel)cls.push('is-ready');   // DISPONIBILIDADE = glow do anel (n\u00e3o filtro na arte)
     if(cd>0)cls.push('is-cooldown');
     if(travada)cls.push('is-locked');
+    if(semAlvo)cls.push('is-notarget');   // motivo distinto de travada (\u2298) \u2014 marca pr\u00f3pria (\u2205)
     if(semOrbe||!podeAgir(u)||!ehMeuTurno())cls.push('is-off');
     if(arm)cls.push('is-armed');
     cls.push('skill--'+a.slot);
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
+    // --anel viaja p/ o CSS acender o anel na cor do elemento (glow), sem tocar a arte
     return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" ${clicavel?'':'disabled'}>
-      <span class="skill__disc" style="border-color:${anel}">
+      <span class="skill__disc" style="border-color:${anel};--anel:${anel}">
         ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
         <span class="skill__mono" style="color:${anel}">${H(mono(a))}</span>
         <span class="skill__cd">${cd||''}</span>
         <span class="skill__lock">\u2298</span>
+        <span class="skill__na">\u2205</span>
       </span>
       ${pipsMini(a.cost, st.lados[u.lado].orbs)}
     </button>`;
