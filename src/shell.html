@@ -454,6 +454,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   color:#8d84ad;background:rgba(6,5,16,.8);border-radius:2px;padding:0 2px}
 .arrow{height:100px}
 
+/* F4: faixa declarativa do SANDBOX (o que a Batalha CPU É) — entre o cabeçalho e a grade */
+.seltag{flex:none;padding:5px 16px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11.5px;
+  letter-spacing:.02em;color:var(--ink-dim);background:rgba(216,178,90,.06);
+  border-top:1px solid rgba(216,178,90,.14);border-bottom:1px solid rgba(216,178,90,.14);
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seltag b{color:var(--gold-text);letter-spacing:.08em}
 .selfoot{flex:none;height:38px;display:flex;align-items:center;gap:10px;padding:0 14px;
   background:linear-gradient(0deg,rgba(9,8,20,.96),rgba(9,8,20,.6))}
 
@@ -803,6 +809,16 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   text-transform:uppercase;color:var(--ink-dim);margin:0}
 .psec__n{font-weight:700;font-size:12px;color:var(--ink-mute)}
 .psec__vazio{font-weight:600;font-size:13px;line-height:1.5;color:var(--ink-mute);padding:4px 2px 8px}
+/* F4: cabeçalho do acervo + nota + PÍLULAS DE FAIXA (dificuldade dos nós medidos) */
+.psec__cab--acervo{margin-top:16px;border-top:1px solid rgba(216,178,90,.16);padding-top:12px}
+.psec__nota{font-weight:600;font-size:11.5px;line-height:1.5;color:var(--ink-mute);margin:0 2px 8px}
+.prow__faixa,.dprov__faixa{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.faixa--facil{color:#58d68d;background:rgba(88,214,141,.10)}
+.faixa--medio{color:#e7bd74;background:rgba(231,189,116,.10)}
+.faixa--dificil{color:#ff9db4;background:rgba(255,157,180,.10)}
+.faixa--epico{color:#b98cff;background:rgba(185,140,255,.12)}
+.psec__faixa.faixa--facil,.psec__faixa.faixa--medio,.psec__faixa.faixa--dificil,.psec__faixa.faixa--epico{background:none;border:0;padding:0}
 .plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
 .prow{display:flex;align-items:center;gap:11px;padding:9px 12px;min-height:54px;
   background:rgba(20,16,38,.62);border:1px solid #2c2648;border-radius:10px}
@@ -867,6 +883,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .result--hp h1,.result--prazo h1,.result--cond h1{color:var(--e-Chama)}
 .result__prova{font-family:'Cinzel',serif;font-weight:600;font-size:14px;color:var(--gold-text);margin:6px 0 2px}
 .result__msg{font-weight:600;font-size:13px;line-height:1.4;color:var(--ink-dim);margin:0 0 4px}
+/* F4: linha de recompensa do sandbox no resultado da Batalha CPU */
+.result__sandbox{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.03em;
+  color:var(--gold-text);margin:2px 0 8px}
+.result__sandbox--teto{color:var(--ink-mute)}
 .result__placar{display:flex;flex-direction:column;align-items:center;gap:2px;margin:10px 0 4px;
   font-weight:600;font-size:13px;color:var(--ink)}
 .result__placar b{color:var(--gold-text);font-size:16px}

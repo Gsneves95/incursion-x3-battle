@@ -55,7 +55,7 @@ function renderBatalha(){
   // F3.1: numa Provação, avalia a condição ANTES de desenhar — o latch (uma vez só) decide
   // vitória/derrota, congela o motor quando a condição quebra com a luta em curso, e desbloqueia
   // o deus na vitória. Fica antes do cálculo do scrim para o overlay já refletir o fim.
-  if(prova) atualizarProva(); else if(campanha) atualizarCampanha();
+  if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else atualizarSandbox();   // F4: batalha plana vs CPU = sandbox (recompensa simbólica c/ teto diário)
 
   // Sobreposição COM SCRIM aberta? (todas as overlays de batalha são .ov, com scrim;
   // o menu ⋯ NÃO tem scrim — não entra aqui.) Quando há, a base fica INERTE e o primário

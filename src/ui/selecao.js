@@ -1,4 +1,8 @@
 // ui/selecao.js — grade de coleção, filtro combinável, montagem de time, kit.
+// F4: esta tela É o SANDBOX declarado (Batalha CPU). Recompensa/teto vêm de economia.json.
+const SB_ECON=(typeof ECONOMIA!=='undefined'&&ECONOMIA.sandbox)?ECONOMIA.sandbox:{};
+const SB_GEMA=(SB_ECON.recompensas&&SB_ECON.recompensas.vitoria&&SB_ECON.recompensas.vitoria.gema)||0;
+const SB_TETO=SB_ECON.tetoDia||0;
 const POR_PAG=30;
 const RMAP={}; ROSTER.forEach(e=>RMAP[e.key]=e);
 const KITMAP={}; if(typeof KITS!=='undefined')KITS.forEach(k=>KITMAP[k.key]=k);   // kit de design dos 100
@@ -205,6 +209,9 @@ function renderPick(){
       <div class="teams">${slotsTime(0)}${slotsTime(1)}</div>
       <button class="b ${painelAberto?'b--sec':'b--primary'} b--md" id="bgo" ${pronto?'':'disabled'}>Começar</button>
     </div>
+    <div class="seltag">${vsCPU
+      ? `<b>Sandbox</b> · treine formações sem risco de ranque · a vitória rende ${SB_GEMA} 💎 (teto ${SB_TETO}/dia; não avança ranque)`
+      : `<b>Hot-seat</b> · dois jogadores no mesmo aparelho · sem ranque`}</div>
     <div class="selbody">
       <button class="b b--quiet arrow" id="bprev" ${pagina===0?'disabled':''}>‹</button>
       <div class="grid">${fatia.length?fatia.map(tileHTML).join('')

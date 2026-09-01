@@ -59,6 +59,13 @@
       "padrao": { "essencia": 20 }
     }
   },
+  "sandbox": {
+    "_fonte": "Batalha CPU = SANDBOX declarado (F4, decisao do dono). Treino de formacoes sem risco de ranque. Recompensa SIMBOLICA por vitoria com TETO diario — sensivel, longe de sustentar: 5x20 = 100 Gema/dia contra 150 de uma invocacao avulsa. NAO avanca missao nem ranque; pode avancar maestria (cosmetica). O teto reseta por DATA no perfil (campo sandbox, migracao v3).",
+    "recompensas": {
+      "vitoria": { "gema": 20 }
+    },
+    "tetoDia": 5
+  },
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },

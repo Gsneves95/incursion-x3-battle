@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §212 — FASE 4: REPOSICIONAMENTO das Provações antes do PvP. Elas viram acervo de PERGAMINHOS; a tela vira "Desafios"; a Batalha CPU vira SANDBOX declarado. Coleção = só gacha até o PvP.
+
+**A MUDANÇA DE DESENHO (dono):** as Provações deixam de ser puzzles de AQUISIÇÃO e viram MISSÕES de longo prazo contadas só em PvP (modelo Naruto-Arena: "20 vitórias com Zeus libera X"). Como PvP é a próxima fase, as MISSÕES vêm DEPOIS dele — construí-las agora seria consumidor sem produtor (§95). Esta tarefa só REPOSICIONA o que já existe, para nada ficar incoerente no meio.
+
+**1. As 90 → ACERVO de PERGAMINHOS.** O dado (data/provacoes/) NÃO se apaga — os carimbos, os nós medidos e as montagens SÃO o acervo de desafios validados. Renomeado o conceito, preservado o dado. A FAIXA de dificuldade DERIVA dos nós que o solucionador já mediu (injetada no slim pelo build, não re-julgada à mão): **Fácil <5k · Médio 5k–50k · Difícil 50k–200k · Épico >200k**. Distribuição das 63: Fácil 20 · Médio 23 · Difícil 19 · Épico 1.
+
+**2. As 27 GENÉRICAS saem da lista jogável.** Existiam só p/ dar rota de aquisição aos 28 deuses sem puzzle viável — e missão não depende de o kit sustentar rider. O arquivo fica como HISTÓRICO (PROVACOES mantém as 90), mas a UI filtra `generica` → acervo de **63**. **O que isto resolve:** as 28 saídas (xango, cernunnos, oni, raijin, nuwa e cia.) DEIXAM de ser problema — não há mais requisito de que todo deus tenha puzzle viável de aquisição.
+
+**3. VENCER um Pergaminho NÃO libera deus** (decisão do dono, confirmada): a coleção anda só pela Invocação. Vencer credita MAESTRIA (cosmética) e grava o PLACAR de lances — como os Desafios de Composição. Removido o `adicionarDeus` do fim de Provação. A tela de Provações vira **"Desafios"**: a Provação da Semana (mantém a identidade), os Desafios de Composição, e o acervo de Pergaminhos (por faixa). O banner "Provações" do carrossel aponta para ela.
+
+**⚠ CONFLITO DE ARTE (a resolver pelo dono):** a arte do banner diz "PROVAÇÕES · LIBERE NOVOS DEUSES" — e o "libere novos deuses" agora é FALSO (pergaminho não libera). NÃO mexi na arte (é do dono, ele regera). O banner segue apontando para a tela certa; o texto na arte fica pendente.
+
+**4. Batalha CPU = SANDBOX declarado (dono).** Existe para treinar formações sem risco de ranque. Recompensa SIMBÓLICA: **20 Gema/vitória, teto 5/dia** (100/dia vs 150 de uma invocação — sensível, longe de sustentar). O texto da tela diz o que ela é. NÃO avança missão nem ranque; PODE avançar maestria (cosmética). Teto com **reset por DATA** no perfil (campo `sandbox`, **migração v2→v3** — que NÃO re-credita o grant, gated em v<2). Valores em economia.json (`sandbox`); zero literal no código.
+
+**5. CONSEQUÊNCIA DE CRONOGRAMA (registrada aqui e no ESTADO):** sem PvP, **a coleção só anda pelo gacha**. Isso é o desenho PvP-FIRST (a ladder do Naruto-Arena era o jogo), NÃO um buraco — mas muda o que "portão jogável" significa: o jogo é jogável de ponta a ponta (campanha ensina, pergaminhos/semanal/composição desafiam, sandbox treina, gacha coleciona), e a progressão de longo prazo (missões, ranque) chega com a Fase 5.
+
+**GUARDAS (suítes):** `perfil` — creditarSandbox (teto + reset por data, puro) + migração v2→v3 (adiciona sandbox sem re-creditar grant). `aquisicao` — 90 no dado / 63 jogáveis / faixa = derivada dos nós / genéricas fora da lista / vencer não adiciona deus mas grava placar+maestria / sandbox credita 20 com teto. `provacao_loop`/`semanal` — overlays atualizados (Pergaminho vencido; a semanal mantém "Provação Semanal").
+
 ## §211 — A ARTE do disco de habilidade NUNCA apaga. Estado vive na MOLDURA (anel/número/ícone), identidade na ARTE. Régua de saturação no teste.
 
 **O ACHADO (dono, medindo a captura):** o disco indisponível levava `grayscale(.75) brightness(.5)` (shell.html, `.skill.is-off .skill__disc`) — saturação medida caía a 3–5 (cinza puro). Pior: no começo da partida quase toda habilidade está indisponível por energia, então o jogador abria o jogo com ~9 de 12 discos em cinza escuro — justo quando precisa aprender a reconhecer o time. O grayscale não sinalizava indisponibilidade, APAGAVA a identidade do deus.

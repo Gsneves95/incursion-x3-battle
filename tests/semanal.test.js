@@ -74,7 +74,7 @@ console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (se
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; provaLances=13; render();");
   ok(w.eval(`perfil.provacoes[${JSON.stringify(sk)}] && perfil.provacoes[${JSON.stringify(sk)}].lances===13`), 'o placar grava sob a chave semanal');
   ok(w.eval(`!perfil.provacoes[${JSON.stringify(godKey)}] || perfil.provacoes[${JSON.stringify(godKey)}].lances!==13`), 'não colide com a Provação regular do mesmo deus');
-  ok(/PROVAÇÃO VENCIDA/.test($('.result--prova').textContent) && /Concluída em/.test($('.result--prova').textContent), 'overlay de vitória com o placar');
+  ok(/PROVAÇÃO SEMANAL VENCIDA/.test($('.result--prova').textContent) && /Vencido em/.test($('.result--prova').textContent), 'overlay de vitória com o placar (semanal mantém a identidade)');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

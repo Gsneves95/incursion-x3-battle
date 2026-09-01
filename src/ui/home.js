@@ -47,7 +47,7 @@ function bannerVivoHTML(d){
     </div>`;
   }
   const selo = t => `<span class="bcard__selo">${H(t)}</span>`;
-  if (d.chave === 'provacoes') return selo(`${totalProvacoes()}`);
+  if (d.chave === 'provacoes') return selo(`${acervoPergaminhos().length}`);   // acervo de pergaminhos (63), não as 90 do dado
   if (d.chave === 'invocacao'){
     const p = (perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0;
     const duro = (typeof ECONOMIA !== 'undefined' && ECONOMIA.invocacao && ECONOMIA.invocacao.pity) ? ECONOMIA.invocacao.pity.duro : 0;
@@ -129,7 +129,7 @@ function renderEmBreve(){
     </header>
     <div class="tela__vazio">
       <span class="tela__vazioic">◈</span>
-      <p class="tela__vaziomsg">${H(titulo)} chega numa fase adiante.<br>Por ora, a jornada é pelas Provações.</p>
+      <p class="tela__vaziomsg">${H(titulo)} chega numa fase adiante.<br>Por ora, a jornada é pelos Desafios.</p>
     </div>
   </div>
   </div>`;
@@ -138,12 +138,21 @@ function renderEmBreve(){
   fit();
 }
 
-/* ---------- lista de Provações ---------- */
-// NÍVEL vem do CARIMBO (o `nivel` do arquivo por-deus, corrigido pela medição na F2),
-// NUNCA do catálogo em prosa (§185: 36/90 divergiam). O flag `generica` NÃO aparece: o
-// jogador não deve sentir Provação de segunda classe — as 27 rotas parecem iguais às 63.
+/* ---------- acervo dos PERGAMINHOS (F4/§212) ----------
+// As 90 Provações migraram para o ACERVO de Pergaminhos: desafios de perícia validados pelo
+// solucionador (carimbo + nós medidos + montagem). As 27 GENÉRICAS ficam no dado (histórico)
+// mas SAEM do acervo jogável — existiam só p/ dar rota de aquisição aos 28 sem puzzle viável,
+// e aquisição virou gacha-only (§212). Vencer um Pergaminho NÃO libera deus (coleção = só
+// gacha) — credita maestria (cosmética) e grava o placar. A FAIXA de dificuldade DERIVA dos
+// nós que o solucionador já mediu (injetada no slim pelo build): Fácil/Médio/Difícil/Épico. */
 const NIVEL_ORDEM = { 'Rito': 0, 'Provação': 1, 'Ordália': 2 };
 function nivelPeso(n){ return (n in NIVEL_ORDEM) ? NIVEL_ORDEM[n] : 1; }
+const FAIXA_ORDEM = { 'Fácil': 0, 'Médio': 1, 'Difícil': 2, 'Épico': 3 };
+function faixaPeso(f){ return (f in FAIXA_ORDEM) ? FAIXA_ORDEM[f] : 1; }
+function faixaClasse(f){ return ({ 'Fácil': 'facil', 'Médio': 'medio', 'Difícil': 'dificil', 'Épico': 'epico' })[f] || 'medio'; }
+// o acervo JOGÁVEL = as 63 (genéricas fora); o dado PROVACOES mantém as 90 (histórico).
+function acervoPergaminhos(){ return ((typeof PROVACOES !== 'undefined') ? PROVACOES : []).filter(p => !p.generica); }
+function pergaminhoVencido(k){ return !!(perfil && perfil.provacoes && perfil.provacoes[k] && perfil.provacoes[k].lances != null); }
 
 // dono = o jogador JÁ TEM o deus. Provação de deus que já se tem fica como CONCLUÍDA
 // (decisão de produto: some da fila do que falta, mas não da lista — o jogador vê o
@@ -157,12 +166,13 @@ function pipsDif(n){
   return `<span class="prow__dif" title="dificuldade ${n}">${s}</span>`;
 }
 
-function linhaProvHTML(p, concluida){
+function linhaProvHTML(p){
   const g = HRM[p.key] || { nome: p.key, elem: 'Umbra', faccao: '' };
-  const cls = ['prow']; if (concluida) cls.push('prow--feita');
-  const rec = (concluida && perfil && perfil.provacoes && perfil.provacoes[p.key]) ? perfil.provacoes[p.key] : null;
-  const selo = concluida
-    ? `<span class="prow__selo">✓ conquistado${rec && rec.lances != null ? ` · ${rec.lances} lance${rec.lances === 1 ? '' : 's'}` : ''}</span>`
+  const rec = (perfil && perfil.provacoes && perfil.provacoes[p.key]) ? perfil.provacoes[p.key] : null;
+  const venc = !!(rec && rec.lances != null);
+  const cls = ['prow']; if (venc) cls.push('prow--feita');
+  const selo = venc
+    ? `<span class="prow__selo">✓ vencido · ${rec.lances} lance${rec.lances === 1 ? '' : 's'}</span>`
     : '';
   return `<li class="prowli"><button class="${cls.join(' ')}" data-prova="${p.key}">
     <span class="prow__p">${slot('god-' + p.key, ini(g.nome), COR(g.elem), 22)}</span>
@@ -172,43 +182,39 @@ function linhaProvHTML(p, concluida){
       <span class="prow__tit">${H(p.titulo || '')}${g.faccao ? ` · ${H(g.faccao)}` : ''}</span>
     </span>
     <span class="prow__meta">
-      <span class="prow__niv niv--${nivelPeso(p.nivel)}">${H(p.nivel || '')}</span>
-      ${pipsDif(p.dificuldade || 1)}
-      <span class="prow__seta">${concluida ? '↻' : '▷'}</span>
+      <span class="prow__faixa faixa--${faixaClasse(p.faixa)}">${H(p.faixa || '—')}</span>
+      <span class="prow__seta">${venc ? '↻' : '▷'}</span>
     </span>
   </button></li>`;
 }
 
-function ordenar(lista){
-  return lista.slice().sort((a, b) =>
-    nivelPeso(a.nivel) - nivelPeso(b.nivel) ||
-    (a.dificuldade || 1) - (b.dificuldade || 1) ||
-    ((HRM[a.key] && HRM[a.key].nome) || a.key).localeCompare((HRM[b.key] && HRM[b.key].nome) || b.key, 'pt'));
-}
-
+// A TELA "Desafios" (F4/§212): a Provação da Semana, os Desafios de Composição e o acervo de
+// PERGAMINHOS (63, genéricas fora), agrupado por FAIXA de dificuldade (dos nós medidos).
 function renderProvacoes(){
-  const todas = (typeof PROVACOES !== 'undefined') ? PROVACOES : [];
-  const disp = ordenar(todas.filter(p => !temDeus(p.key)));
-  const feitas = ordenar(todas.filter(p => temDeus(p.key)));
+  const acervo = acervoPergaminhos();
+  const porFaixa = ['Fácil', 'Médio', 'Difícil', 'Épico'].map(f => ({
+    f,
+    itens: acervo.filter(p => p.faixa === f)
+      .sort((a, b) => ((HRM[a.key] && HRM[a.key].nome) || a.key).localeCompare((HRM[b.key] && HRM[b.key].nome) || b.key, 'pt')),
+  })).filter(s => s.itens.length);
 
-  const secao = (rot, arr, feita) => `
-    <div class="psec__cab"><h2>${rot}</h2><span class="psec__n">${arr.length}</span></div>
-    ${arr.length
-      ? `<ul class="plist">${arr.map(p => linhaProvHTML(p, feita)).join('')}</ul>`
-      : `<p class="psec__vazio">${feita ? 'Nenhuma conquistada ainda — vença uma Provação para trazer o deus à sua coleção.' : 'Nenhuma disponível.'}</p>`}`;
+  const secaoFaixa = s => `
+    <div class="psec__cab"><h2 class="psec__faixa faixa--${faixaClasse(s.f)}">${s.f}</h2><span class="psec__n">${s.itens.length}</span></div>
+    <ul class="plist">${s.itens.map(linhaProvHTML).join('')}</ul>`;
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="tela">
     <header class="tela__cab">
       <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Provações</h1>
-      <span class="tela__cont">${todas.length}</span>
+      <h1 class="tela__titulo">Desafios</h1>
+      <span class="tela__cont">${acervo.length}</span>
     </header>
     <div class="tela__rol" id="provrol">
       ${bannerSemanalHTML()}
       <button class="pdesafios" data-desafios="1"><span>⚔ Desafios de Composição</span><span class="pdesafios__go">›</span></button>
-      ${secao('DISPONÍVEIS', disp, false)}
-      ${feitas.length ? secao('CONCLUÍDAS', feitas, true) : ''}
+      <div class="psec__cab psec__cab--acervo"><h2>PERGAMINHOS</h2><span class="psec__n">${acervo.length}</span></div>
+      <p class="psec__nota">Desafios de perícia validados. Vencer avança a maestria e grava o placar — a coleção vem pela Invocação.</p>
+      ${porFaixa.map(secaoFaixa).join('')}
     </div>
   </div>
   </div>`;
@@ -219,8 +225,8 @@ function renderProvacoes(){
   const bd = stage.querySelector('.pdesafios[data-desafios]');
   if (bd) bd.onclick = () => { ir('desafios'); render(); };
   [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
-    // concluída (deus já conquistado) → ver o deus na Coleção; disponível → jogar direto.
-    b.onclick = () => { const k = b.dataset.prova; if (temDeus(k)) { ir('deus', { key: k }); render(); } else iniciarProva(k); };
+    // pergaminho é desafio de perícia: sempre jogável (independe de ter o deus).
+    b.onclick = () => iniciarProva(b.dataset.prova);
   });
   fit();
 }
@@ -347,12 +353,13 @@ function aplicarDesbloqueioProva(p){
     if (rd && !rd.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rd.erro });
     return;
   }
-  provaFim.jaTinha = !!(perfil.deuses && perfil.deuses[p.key]);
-  perfil = adicionarDeus(perfil, p.key, Date.now());
-  // o PLACAR grava sob scoreKey (a semanal usa 'semanal:AAAAW##' p/ não colidir com a Provação regular do mesmo deus).
+  // PERGAMINHO (F4/§212): vencer NÃO libera deus — a coleção anda só pela Invocação. A maestria
+  // (creditada acima, cosmética) e o PLACAR de lances são a recompensa. Só grava se melhorou o
+  // recorde. scoreKey separa a semanal ('semanal:AAAAW##') da Provação regular do mesmo deus.
   const sk = p.scoreKey || p.key;
   const antes = perfil.provacoes[sk];
   if (!antes || provaLances < antes.lances) perfil.provacoes[sk] = { lances: provaLances, minimo: p.minimo, em: Date.now() };
+  provaFim.recorde = !antes || provaLances < antes.lances;
   const res = salvar(perfil);
   if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
 }
@@ -373,14 +380,19 @@ function provaResultadoOverlay(){
   if (venceu && ehDesafio) {
     titulo = 'DESAFIO VENCIDO'; cls = 'venceu';
     msg = f.recompensaEss ? `Composição provada. +${f.recompensaEss} ✦ de Essência.` : 'Composição provada — Essência já recebida antes.';
-  } else if (venceu) { titulo = 'PROVAÇÃO VENCIDA'; cls = 'venceu'; msg = f.jaTinha ? `${nome} já estava na sua coleção — resultado registrado.` : `${nome} entra na sua coleção.`; }
+  } else if (venceu) {
+    // PERGAMINHO (F4/§212): sem desbloqueio — perícia provada, maestria + placar. A semanal
+    // mantém a identidade "Provação da Semana" (o dono a listou assim).
+    titulo = prova.semanal ? 'PROVAÇÃO SEMANAL VENCIDA' : 'PERGAMINHO VENCIDO'; cls = 'venceu';
+    msg = f.recorde ? 'Perícia provada. Maestria avançada e novo recorde de placar.' : 'Perícia provada. Maestria avançada — placar mantido.';
+  }
   else if (f.categoria === 'hp') { titulo = 'DERROTA'; cls = 'hp'; msg = 'Seus deuses tombaram em campo.'; }
   else if (f.categoria === 'prazo') { titulo = 'PRAZO ESGOTADO'; cls = 'prazo'; msg = 'O limite de turnos passou antes da vitória.'; }
   else { titulo = 'CONDIÇÃO QUEBRADA'; cls = 'cond'; msg = motivoHumano(f.motivo); }
   const placar = (venceu && !ehDesafio && f.minimo != null)
-    ? `<div class="result__placar"><span>Concluída em <b>${f.lances}</b> lance${f.lances === 1 ? '' : 's'}</span><span class="result__min">melhor conhecido: ${f.minimo}</span>${f.lances <= f.minimo ? '<span class="result__rec">✦ no ritmo do ótimo</span>' : ''}</div>`
+    ? `<div class="result__placar"><span>Vencido em <b>${f.lances}</b> lance${f.lances === 1 ? '' : 's'}</span><span class="result__min">melhor conhecido: ${f.minimo}</span>${f.lances <= f.minimo ? '<span class="result__rec">✦ no ritmo do ótimo</span>' : ''}</div>`
     : '';
-  const selo = ehDesafio ? 'Desafio de composição' : `${H(prova.nivel)} · dificuldade ${prova.dificuldade}`;
+  const selo = ehDesafio ? 'Desafio de composição' : `Pergaminho · ${H(prova.faixa || prova.nivel)}`;
   return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${cls}">
     <span class="result__selo">${selo}</span>
     <h1>${titulo}</h1>
@@ -388,10 +400,8 @@ function provaResultadoOverlay(){
     <p class="result__msg">${H(msg)}</p>
     ${placar}
     <div class="result__acoes">
-      <button class="b b--quiet b--md" id="pfvoltar">${ehDesafio ? 'Voltar aos desafios' : 'Voltar às Provações'}</button>
-      ${venceu
-        ? (ehDesafio ? '' : '<button class="b b--primary b--md" id="pfver">Ver na coleção</button>')
-        : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
+      <button class="b b--quiet b--md" id="pfvoltar">${ehDesafio ? 'Voltar aos desafios' : 'Voltar aos Desafios'}</button>
+      ${venceu ? '' : '<button class="b b--primary b--md" id="pftentar">Tentar de novo</button>'}
     </div>
   </div></div></div>`;
 }
@@ -402,7 +412,6 @@ function ligarProvaFim(){
   const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir(destino, {}, { substituir: true }); render(); };
   const dsfId = prova && prova.desafioId, pkey = prova && prova.key;
   const t = q('#pftentar'); if (t) t.onclick = () => { if (ehDesafio) { desafioTimePick = []; sairProva(); ir('desafiomontar', { id: dsfId }); render(); } else iniciarProva(pkey); };
-  const ver = q('#pfver'); if (ver) { const k = prova.key; ver.onclick = () => { sairProva(); ir('deus', { key: k }); render(); }; }
 }
 function sairProva(){ prova = null; provaFim = null; provaLances = 0; }
 
@@ -491,24 +500,22 @@ function linhaKitHTML(rot, a){
 }
 function provacaoDetalheHTML(k){
   const g = HRM[k] || {};
-  if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PROVAÇÃO</span><p class="dprov__none">Deus inicial — vem com você, sem Provação.</p></div>`;
+  if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Deus inicial — vem com você, sem pergaminho.</p></div>`;
   const p = provDe(k);
-  if (!p) return `<div class="dprov"><span class="dprov__rot">PROVAÇÃO</span><p class="dprov__none">Sem Provação registrada.</p></div>`;
+  // genérica = fora do acervo jogável (§212): existe no dado como histórico, mas não se joga.
+  if (!p || p.generica) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Sem pergaminho no acervo para este deus.</p></div>`;
   const rec = perfil && perfil.provacoes && perfil.provacoes[k];
-  const feita = temDeus(k);
-  const estado = rec
-    ? `<span class="dprov__feita">✓ Concluída em ${rec.lances} lance${rec.lances === 1 ? '' : 's'}${rec.minimo != null ? ` · mínimo ${rec.minimo}` : ''}</span>`
-    : feita ? `<span class="dprov__feita">✓ Deus na coleção</span>`
-      : `<span class="dprov__aberta">Disponível</span>`;
+  const estado = rec && rec.lances != null
+    ? `<span class="dprov__feita">✓ Vencido em ${rec.lances} lance${rec.lances === 1 ? '' : 's'}${rec.minimo != null ? ` · mínimo ${rec.minimo}` : ''}</span>`
+    : `<span class="dprov__aberta">No acervo</span>`;
   return `<div class="dprov">
-    <span class="dprov__rot">PROVAÇÃO</span>
+    <span class="dprov__rot">PERGAMINHO</span>
     <div class="dprov__linha">
-      <span class="dprov__niv niv--${nivelPeso(p.nivel)}">${H(p.nivel)}</span>
+      <span class="dprov__faixa faixa--${faixaClasse(p.faixa)}">${H(p.faixa || '—')}</span>
       <span class="dprov__tit">${H(p.titulo)}</span>
-      ${pipsDif(p.dificuldade || 1)}
     </div>
     <div class="dprov__pe">${estado}
-      <button class="b b--primary b--sm" data-jogarprova="${k}">${rec || feita ? 'Jogar de novo' : 'Jogar Provação'}</button>
+      <button class="b b--primary b--sm" data-jogarprova="${k}">${rec && rec.lances != null ? 'Jogar de novo' : 'Jogar Pergaminho'}</button>
     </div>
   </div>`;
 }
@@ -707,6 +714,24 @@ function atualizarCampanha(){
   pararRelogio();
   if (venceu) { creditarMaestria(); concluirEncontro(campanha); }   // F3.5: encontro vencido conta p/ maestria
 }
+// F4 — SANDBOX (Batalha CPU): ao FIM de uma batalha PLANA (sem prova/campanha) contra a CPU,
+// se o humano (lado 0) venceu, credita a recompensa simbólica com TETO diário. Latch em st
+// (fresco a cada partida — sem global a resetar). Empate/derrota/hotseat: st._sandbox=null.
+// NÃO avança missão nem ranque (não existem ainda); pode avançar maestria (cosmética, §212).
+function atualizarSandbox(){
+  if (!st || !st.fim || st._sandbox !== undefined) return;   // uma vez por partida
+  if (!vsCPU || st.fim.resultado !== 'vitoria' || st.fim.lado !== 0) { st._sandbox = null; return; }
+  creditarMaestria();   // sandbox pode avançar maestria (cosmética) — decisão do dono
+  const econ = (typeof ECONOMIA !== 'undefined' && ECONOMIA.sandbox) ? ECONOMIA.sandbox : null;
+  const gemaV = (econ && econ.recompensas && econ.recompensas.vitoria) ? (econ.recompensas.vitoria.gema || 0) : 0;
+  const teto = econ ? (econ.tetoDia || 0) : 0;
+  const hoje = new Date().toISOString().slice(0, 10);   // borda impura: data local do dispositivo
+  const r = creditarSandbox(perfil, hoje, gemaV, teto);
+  perfil = r.perfil;
+  st._sandbox = { creditou: r.creditou, gema: r.gema, vitoriasHoje: r.vitoriasHoje, teto: r.teto };
+  const res = salvar(perfil);
+  if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
+}
 function concluirEncontro(enc){
   if (!perfil) return;
   if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [] };
@@ -890,7 +915,7 @@ function maestriaDetalheHTML(key){
     return `<span class="mtier ${atingido ? 'on' : ''} ${nv === n ? 'cur' : ''}">${MAESTRIA_NOME[n]}</span>`;
   }).join('<span class="mtier__sep">›</span>');
   let prox = '';
-  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença a Provação (ou 1 batalha) para o Iniciado.';
+  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença o Pergaminho (ou 1 batalha) para o Iniciado.';
   else if (nv === 1) prox = `Aprendiz em ${Math.max(0, MAESTRIA_LIMIAR.aprendiz - v)} vitória(s).`;
   else if (nv === 2) prox = `Adepto em ${Math.max(0, MAESTRIA_LIMIAR.adepto - v)} vitória(s).`;
   else if (nv === 3) prox = `Mestre: ${Math.max(0, MAESTRIA_LIMIAR.mestre - v)} vitória(s)${m.milagre ? '' : ' + vencer usando o Milagre dele'}.`;

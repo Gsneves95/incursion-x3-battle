@@ -60,8 +60,14 @@ function overlayHTML(){
   if(ov==='livre')return livreHTML();
   if(ov==='conv')return trocaHTML();
   if(st.fim){
+    // F4 — SANDBOX (Batalha CPU): a recompensa simbólica da vitória (com teto diário) aparece aqui.
+    const sb=st._sandbox;
+    const sbHTML = sb ? (sb.creditou
+      ? `<p class="result__sandbox">🛡 Sandbox · +${sb.gema} 💎 · ${sb.vitoriasHoje}/${sb.teto} hoje</p>`
+      : `<p class="result__sandbox result__sandbox--teto">🛡 Sandbox · teto diário atingido (${sb.vitoriasHoje}/${sb.teto}) — sem recompensa</p>`) : '';
     return `<div class="ov"><div class="ovbox"><div class="result">
       <h1>${H(narrar(st.fim))}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
+      ${sbHTML}
       <button class="b b--primary b--lg" id="bnew">Nova batalha</button></div></div></div>`;
   }
   if(ov==='log'){

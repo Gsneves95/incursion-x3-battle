@@ -235,6 +235,36 @@ console.log('== registrarInvocacao: coleção + total + pity, e sobrevive ao rel
   console.log('  invocação escreve coleção/total/pity via perfil.js e persiste');
 }
 
+console.log('== F4 SANDBOX (creditarSandbox): teto diário + reset por DATA, puro ==');
+{
+  const P = require('../src/perfil.js');
+  let p = P.novoPerfil(0, 0);
+  ok(p.sandbox && p.sandbox.dia === '' && p.sandbox.vitorias === 0, 'novoPerfil tem sandbox zerado');
+  // 5 vitórias no mesmo dia creditam 20 cada; a 6ª estoura o teto
+  let hoje = '2026-09-01', total = 0;
+  for (let i = 1; i <= 5; i++) { const r = P.creditarSandbox(p, hoje, 20, 5); p = r.perfil; ok(r.creditou && r.gema === 20 && r.vitoriasHoje === i, `vitória ${i} credita 20 (${i}/5)`); total += r.gema; }
+  ok(total === 100 && p.moedas.gema === 100, '5 vitórias = 100 Gema no dia');
+  const r6 = P.creditarSandbox(p, hoje, 20, 5);
+  ok(!r6.creditou && r6.gema === 0 && r6.perfil.moedas.gema === 100, 'a 6ª vitória do dia NÃO credita (teto 5)');
+  // vira o dia → reseta e credita de novo
+  const r7 = P.creditarSandbox(r6.perfil, '2026-09-02', 20, 5);
+  ok(r7.creditou && r7.gema === 20 && r7.perfil.sandbox.dia === '2026-09-02' && r7.perfil.sandbox.vitorias === 1, 'novo dia zera o contador e credita');
+  ok(p.moedas.gema === 100 && r6.perfil !== p, 'creditarSandbox é puro (não muta o argumento)');
+}
+
+console.log('== F4 migração v2 -> v3: adiciona sandbox SEM re-creditar o grant ==');
+{
+  const P = require('../src/perfil.js');
+  ok(P.VERSAO_PERFIL === 3, 'a versão do perfil é 3');
+  const v2 = P.novoPerfil(0, 1500); v2.versao = 2; delete v2.sandbox;   // perfil v2 já com grant, sem sandbox
+  const m = P.migrar(v2, 1500);
+  ok(m.versao === 3 && m.sandbox && m.sandbox.dia === '' && m.sandbox.vitorias === 0, 'v2 -> v3 backfilla sandbox vazio');
+  ok(m.moedas.gema === 1500, 'v2 -> v3 NÃO credita o grant de novo (gated em v<2)');
+  const v1 = P.novoPerfil(0, 0); v1.versao = 1; v1.moedas.gema = 0; delete v1.sandbox;
+  const m1 = P.migrar(v1, 1500);
+  ok(m1.versao === 3 && m1.moedas.gema === 1500 && m1.sandbox, 'v1 -> v3 credita o grant UMA vez e adiciona sandbox');
+}
+
 console.log('');
 console.log(f === 0 ? '>>> PERFIL OK' : `>>> ${f} FALHA(S)`);
 process.exit(f ? 1 : 0);

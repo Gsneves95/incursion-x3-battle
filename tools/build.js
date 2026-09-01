@@ -167,11 +167,14 @@ const blocoVisao = [
   visao,
 ].join('\n');
 
-// PROVACOES: array SLIM (só o que a lista da F3.0 mostra) a partir dos arquivos por-deus.
+// PROVACOES: array SLIM (o acervo dos PERGAMINHOS — F4) a partir dos arquivos por-deus.
 // O NÍVEL vem daqui (o arquivo carimbado, corrigido pela medição), NUNCA do catálogo em
 // prosa data/provacoes.json (§185: o nível medido diverge do de design em 36/90). O flag
-// `generica` viaja para a lógica, mas a UI NÃO o exibe — o jogador não distingue rota de
-// kit-ensino. São 90 (um por deus carimbado), não 91 nem 63.
+// `generica` viaja: as 27 genéricas ficam no dado (histórico) mas SAEM do acervo jogável na
+// UI (F4/§212). São 90 no dado (um por deus carimbado); 63 no acervo.
+// A FAIXA de dificuldade DERIVA dos nós que o solucionador JÁ mediu (verificacao.nos), não é
+// re-julgada à mão: Fácil <5k · Médio 5k–50k · Difícil 50k–200k · Épico >200k.
+const faixaDeNos = n => n == null ? null : n < 5000 ? 'Fácil' : n < 50000 ? 'Médio' : n < 200000 ? 'Difícil' : 'Épico';
 const provacoes = (() => {
   const dir = path.join(raiz, 'data', 'provacoes');
   if (!fs.existsSync(dir)) return [];
@@ -184,8 +187,10 @@ const provacoes = (() => {
       // completo (pesado) NÃO viaja: só o número.
       const cam = (p.verificacao && Array.isArray(p.verificacao.caminho)) ? p.verificacao.caminho : null;
       const minimo = cam ? cam.filter(l => !/^passar$/i.test(String(l).trim())).length : null;
+      const nos = (p.verificacao && typeof p.verificacao.nos === 'number') ? p.verificacao.nos : null;
       return {
         key: p.key, titulo: p.titulo, nivel: p.nivel, dificuldade: p.dificuldade, generica: !!p.generica,
+        nos, faixa: faixaDeNos(nos),
         aliados: p.aliados, inimigos: p.inimigos, montar: p.montar || {}, condicoes: p.condicoes || [], minimo,
       };
     });

@@ -4,7 +4,7 @@
 // parâmetro (`agora`), para as funções ficarem determinísticas/testáveis.
 // O HISTÓRICO NÃO mora no perfil (cresce e é reescrito a cada salvar) — vive em
 // chave própria, cuidada pelo armazenamento.js. Uma chave por DONO.
-const VERSAO_PERFIL = 2;   // v2: grant inicial (1500) passa a existir; migração backfilla v<2
+const VERSAO_PERFIL = 3;   // v2: grant inicial (1500); v3: campo `sandbox` (teto diário da Batalha CPU, F4)
 const INICIAIS = ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha']; // DECISOES §4
 const MAX_TIMES = 5;
 
@@ -27,7 +27,23 @@ function novoPerfil(agora = 0, grantGema = 0) {
     campanha: { capitulo: 0, fase: 0, concluidas: [] },
     maestria: {},   // F3.5: por deus {vitorias, milagre} — só TÍTULO/COSMÉTICO, nunca poder de combate
     invocacao: { total: 0, desdeUltimoSS: 0 },   // pity; a F0.4b liga isto ao gacha
+    sandbox: { dia: '', vitorias: 0 },   // F4: teto diário da Batalha CPU (sandbox), reset por DATA
   };
+}
+
+// F4 — SANDBOX (Batalha CPU): credita a recompensa simbólica de UMA vitória contra a
+// CPU, com TETO diário e reset por DATA. Puro (recebe perfil + hoje + valores, devolve
+// perfil novo). `hoje` = string de data (AAAA-MM-DD) — entra por parâmetro, sem Date aqui.
+// Estourou o teto do dia → não credita (creditou:false). Dia mudou → zera e credita.
+function creditarSandbox(perfil, hoje, gemaPorVitoria, teto) {
+  const p = _clone(perfil);
+  if (!p.sandbox || typeof p.sandbox !== 'object') p.sandbox = { dia: '', vitorias: 0 };
+  if (p.sandbox.dia !== hoje) p.sandbox = { dia: hoje, vitorias: 0 };   // reset diário por data
+  if (p.sandbox.vitorias >= teto) return { perfil: p, creditou: false, gema: 0, vitoriasHoje: p.sandbox.vitorias, teto };
+  p.sandbox.vitorias += 1;
+  p.moedas = Object.assign({ gema: 0, essencia: 0 }, p.moedas);
+  p.moedas.gema += gemaPorVitoria;
+  return { perfil: p, creditou: true, gema: gemaPorVitoria, vitoriasHoje: p.sandbox.vitorias, teto };
 }
 
 function adicionarDeus(perfil, key, agora = 0) {
@@ -128,8 +144,14 @@ function migrar(p, grantGema = 0) {
   const v = (typeof p.versao === 'number') ? p.versao : 0;
   if (v >= VERSAO_PERFIL) return p;            // já migrado: NADA a fazer (idempotente)
   const q = Object.assign({}, p);
-  q.moedas = Object.assign({ gema: 0, essencia: 0 }, p.moedas);
-  q.moedas.gema = (typeof q.moedas.gema === 'number' ? q.moedas.gema : 0) + grantGema;
+  // v<2 → v2: grant inicial retroativo (uma vez; só quem nasceu antes da carteira real).
+  // GATED em v<2: um perfil v2 subindo p/ v3 NÃO recebe o grant de novo.
+  if (v < 2) {
+    q.moedas = Object.assign({ gema: 0, essencia: 0 }, p.moedas);
+    q.moedas.gema = (typeof q.moedas.gema === 'number' ? q.moedas.gema : 0) + grantGema;
+  }
+  // v<3 → v3: campo `sandbox` (teto diário da Batalha CPU). Backfill VAZIO — sem crédito.
+  if (v < 3 && (!q.sandbox || typeof q.sandbox !== 'object')) q.sandbox = { dia: '', vitorias: 0 };
   q.versao = VERSAO_PERFIL;
   return q;
 }
@@ -172,5 +194,5 @@ function ehPerfilValido(p, rosterKeys) { return problemaDeForma(p, rosterKeys) =
 if (typeof module !== 'undefined') module.exports = {
   VERSAO_PERFIL, INICIAIS, MAX_TIMES,
   novoPerfil, adicionarDeus, marcarFavorito, salvarTime, removerTime,
-  creditar, debitar, creditarDev, concluirProvacao, registrarInvocacao, migrar, problemaDeForma, ehPerfilValido,
+  creditar, debitar, creditarDev, concluirProvacao, registrarInvocacao, creditarSandbox, migrar, problemaDeForma, ehPerfilValido,
 };

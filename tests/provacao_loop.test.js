@@ -19,15 +19,16 @@ function entrar(key) {
   w.eval("ir('provacoes'); render();");
   const linha = ctx.$(`.prow[data-prova="${key}"]`);
   if (linha) linha.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  else w.eval(`iniciarProva(${JSON.stringify(key)})`);   // genérica (durga): fora da lista, mas jogável direto — fixture de FLUXO
   w.eval("vsCPU=false; pararRelogio(); render();");   // congela: sem IA, sem relógio
   return ctx;
 }
-const KEY = 'durga';   // genérica: deadline 14 + semPerderAliado{durga}, aliados durga/perseu/oxum
+const KEY = 'durga';   // genérica: deadline 14 + semPerderAliado{durga}, aliados durga/perseu/oxum. Fixture de fluxo (não de lista).
 
-console.log('== 1. entrar na Provação pela lista: monta o estado e mostra o HUD ==');
+console.log('== 1. entrar na Provação: monta o estado e mostra o HUD ==');
 {
   const { w, $ } = entrar(KEY);
-  ok(w.eval("rotaAtual()") === 'batalha', 'tocar a linha entra na batalha');
+  ok(w.eval("rotaAtual()") === 'batalha', 'iniciar a Provação entra na batalha');
   ok(w.eval('!!prova && prova.key==="' + KEY + '"'), 'a Provação ativa deveria ser a tocada');
   ok(w.eval('st.lados[0].units.map(u=>u.key).join(",")') === 'durga,perseu,oxum', 'o estado montou os aliados da Provação');
   ok(w.eval('st.lados[1].units.map(u=>u.key).join(",")') === 'saci,loki,cuca', 'o estado montou os inimigos da Provação');
@@ -37,24 +38,22 @@ console.log('== 1. entrar na Provação pela lista: monta o estado e mostra o HU
   console.log('  HUD: ' + $('.phud').textContent.replace(/\s+/g, ' ').trim());
 }
 
-console.log('== 2. VITÓRIA: derrota os inimigos → desbloqueia o deus, mostra o placar ==');
+console.log('== 2. VITÓRIA: SEM desbloqueio de deus (§212) — maestria + placar, mostra o overlay ==');
 {
   const { w, $ } = entrar(KEY);
-  ok(!w.eval('!!(perfil.deuses && perfil.deuses.durga)'), 'o perfil novo NÃO deveria ter durga antes da vitória');
+  const antes = w.eval('Object.keys(perfil.deuses).length');
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; provaLances=11; render();");
   ok(w.eval('!!provaFim && provaFim.resultado==="vitoria"'), 'a Provação deveria latch em vitória');
-  ok(w.eval('!!(perfil.deuses && perfil.deuses.durga)'), 'a vitória deveria DESBLOQUEAR durga no perfil');
-  ok(w.eval('perfil.provacoes && perfil.provacoes.durga && perfil.provacoes.durga.lances===11'), 'o placar (lances) deveria ser gravado no perfil');
-  ok(w.eval('localStorage.getItem("incursion:perfil")').includes('durga'), 'o desbloqueio deveria persistir');
+  ok(w.eval('Object.keys(perfil.deuses).length') === antes, 'a vitória NÃO adiciona deus (coleção = só gacha, §212)');
+  ok(w.eval(`perfil.provacoes && perfil.provacoes.${KEY} && perfil.provacoes.${KEY}.lances===11`), 'o placar (lances) deveria ser gravado no perfil');
+  ok(w.eval(`!!(perfil.maestria && perfil.maestria.${KEY} && perfil.maestria.${KEY}.vitorias>=1)`), 'a maestria avança (cosmética)');
   const ov = $('.result--prova');
-  ok(!!ov && /PROVAÇÃO VENCIDA/.test(ov.textContent), 'o overlay de vitória deveria aparecer');
-  ok(/Concluída em/.test(ov.textContent) && /11/.test(ov.textContent), 'o placar deveria mostrar os lances');
+  ok(!!ov && /PERGAMINHO VENCIDO/.test(ov.textContent), 'o overlay de vitória deveria aparecer (Pergaminho)');
+  ok(/Vencido em/.test(ov.textContent) && /11/.test(ov.textContent), 'o placar deveria mostrar os lances');
   ok(/melhor conhecido/.test(ov.textContent), 'o placar deveria citar o mínimo do solucionador');
   $('#pfvoltar').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval("rotaAtual()") === 'provacoes', 'voltar leva à lista de Provações');
+  ok(w.eval("rotaAtual()") === 'provacoes', 'voltar leva à tela de Desafios');
   ok(w.eval('prova===null'), 'sair da Provação limpa o estado ativo');
-  const feita = $(`.prow[data-prova="${KEY}"]`);
-  ok(!!feita && /conquistado/.test(feita.textContent), 'a Provação vencida aparece como concluída');
 }
 
 console.log('== 3. DERROTA POR HP: seus deuses tombam ==');

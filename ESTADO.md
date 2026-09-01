@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ FASE 4 (em curso) — REPOSICIONAMENTO antes do PvP (§212). Formato: o que mudou · o que muda no "portão jogável" · o que a próxima fase precisa saber.
+
+**O DESENHO virou PvP-FIRST (modelo Naruto-Arena: a ladder é o jogo).** As Provações deixam de ser puzzles de AQUISIÇÃO e viram, no futuro, MISSÕES contadas em PvP ("20 vitórias com Zeus libera X"). As missões chegam DEPOIS do PvP (Fase 5) — construí-las agora seria consumidor sem produtor (§95). Esta fase só REPOSICIONA o que já existe.
+
+**1. O QUE MUDOU (§212):**
+- **As 90 Provações → acervo de PERGAMINHOS.** Dado preservado (data/provacoes/); conceito renomeado. FAIXA de dificuldade DERIVA dos nós medidos (Fácil <5k · Médio 5k–50k · Difícil 50k–200k · Épico >200k), injetada no slim pelo build. 63 no acervo · 27 genéricas fora (histórico no dado).
+- **A tela "Provações" virou "Desafios":** Provação da Semana + Desafios de Composição + acervo de Pergaminhos (por faixa). O banner do carrossel aponta para ela. **⚠ a ARTE do banner ainda diz "PROVAÇÕES · LIBERE NOVOS DEUSES" — pendente com o dono (ele regera).**
+- **Vencer um Pergaminho NÃO libera deus:** credita maestria (cosmética) + placar. Removido o `adicionarDeus`.
+- **Batalha CPU = SANDBOX declarado:** 20 Gema/vitória, teto 5/dia (reset por data no perfil; migração v2→v3). Texto na tela ("treine formações sem risco de ranque"). Não avança missão/ranque; pode avançar maestria. Valores em economia.json (`sandbox`).
+- **As 28 saídas (xango/cernunnos/oni/raijin/nuwa…) deixam de ser problema:** missão não exige que o kit sustente rider, então não há mais requisito de puzzle viável por deus.
+
+**2. O QUE MUDA NO "PORTÃO JOGÁVEL" (a consequência de cronograma):** **sem PvP, a COLEÇÃO só anda pelo GACHA.** Não é um buraco — é o desenho PvP-first. O jogo é jogável de ponta a ponta HOJE: campanha ensina · pergaminhos/semanal/composição desafiam · sandbox treina · gacha coleciona. A progressão de LONGO PRAZO (missões, ranque) é o que a Fase 5 (PvP) traz — e é lá que a coleção volta a ter uma segunda via.
+
+**3. O QUE A PRÓXIMA FASE PRECISA SABER:**
+- **PvP (Fase 5) é o PRODUTOR** das missões dos Pergaminhos e da segunda via da coleção. As Provações-como-missão (contador de vitórias por deus/condição) se constroem SOBRE o acervo de Pergaminhos que já existe.
+- **A ARTE do banner "Provações"** precisa de regeneração (o dono): novo texto que não prometa "libere novos deuses".
+- **Rebalanceamento de kit (a antiga Fase 4)** segue pendente e independente: oni primeiro. Não bloqueia o PvP; melhora o acervo.
+- **CALIBRAÇÃO e TESTE DE USABILIDADE** (herdados da F3) continuam abertos.
+
 ## ★ FASE 3 — RESUMO DA FASE (encerramento). Formato: o que mudou de estrutura · ambiguidades · o que a próxima fase precisa saber.
 
 **A FASE 3 transformou o MOTOR (Fase 1) + o CATÁLOGO DE PROVAÇÕES (Fase 2) num JOGO JOGÁVEL de ponta a ponta: aprender as regras → provar os deuses → invocar/colecionar → maestria/panteões → um puzzle novo por semana → desafios de composição. Aplicativo de celular em paisagem, um só HTML, sem servidor.** Falta só o PORTÃO (teste de usabilidade) e a Fase 4 (rebalanceamento de kit) / Fase 5 (PvP).
