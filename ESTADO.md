@@ -8,7 +8,8 @@
 
 **1. O QUE MUDOU (§212):**
 - **As 90 Provações → acervo de PERGAMINHOS.** Dado preservado (data/provacoes/); conceito renomeado. FAIXA de dificuldade DERIVA dos nós medidos (Fácil <5k · Médio 5k–50k · Difícil 50k–200k · Épico >200k), injetada no slim pelo build. 63 no acervo · 27 genéricas fora (histórico no dado).
-- **A tela "Provações" virou "Desafios":** Provação da Semana + Desafios de Composição + acervo de Pergaminhos (por faixa). O banner do carrossel aponta para ela. **⚠ a ARTE do banner ainda diz "PROVAÇÕES · LIBERE NOVOS DEUSES" — pendente com o dono (ele regera).**
+- **A tela de perícia é "Desafios":** Provação da Semana + Desafios de Composição + acervo de Pergaminhos (por faixa).
+- **ROTAS SEPARADAS (§213):** o carrossel foi a **8 destinos** — "Desafios" entra entre Provações e Invocação (placeholder até a arte chegar). **"Provações" → marcador de MISSÕES** (chegam no PvP/Fase 5); **"Desafios" → o hub**. A arte "PROVAÇÕES · LIBERE NOVOS DEUSES" NÃO é bug — descreve as MISSÕES (F6), está adiantada; o dono NÃO vai regerar. Rotas internas: `provacoes`=missões, `desafios`=hub, `composicao`=composição. Colisão `economia.json _pendencias.pergaminhos`→`bilhetes`.
 - **Vencer um Pergaminho NÃO libera deus:** credita maestria (cosmética) + placar. Removido o `adicionarDeus`.
 - **Batalha CPU = SANDBOX declarado:** 20 Gema/vitória, teto 5/dia (reset por data no perfil; migração v2→v3). Texto na tela ("treine formações sem risco de ranque"). Não avança missão/ranque; pode avançar maestria. Valores em economia.json (`sandbox`).
 - **As 28 saídas (xango/cernunnos/oni/raijin/nuwa…) deixam de ser problema:** missão não exige que o kit sustente rider, então não há mais requisito de puzzle viável por deus.

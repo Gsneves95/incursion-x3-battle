@@ -93,20 +93,22 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
-console.log('== 5. carrossel da home: os 7 banners carregam (arquivo, nenhum 404) e o layout independe da carteira ==');
+console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 1 placeholder) e o layout independe da carteira ==');
 {
   const dir = path.join(__dirname, '../web/banners');
   const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
-  ok(chaves.length === 7, `a home deveria ter 7 banners (tem ${chaves.length})`);
+  ok(chaves.length === 8, `a home deveria ter 8 destinos (tem ${chaves.length})`);   // §213: +Desafios
 
   // (a) cada banner referencia um ARQUIVO em banners/<arte>.webp e o arquivo EXISTE no repo
   //     (a garantia contra 404: o src aponta certo E o webp está versionado). Nada de base64.
   const render0 = () => w.eval("perfil=novoPerfil(0,0); ir('home',{},{substituir:true}); render();");
   render0();
   const cards = [...d.querySelectorAll('.bcard')];
-  ok(cards.length === 7, `deveriam existir 7 cartões (existem ${cards.length})`);
+  ok(cards.length === 8, `deveriam existir 8 cartões (existem ${cards.length})`);   // §213: +Desafios
   const semArquivo = [], base64 = [];
   for (const c of cards){
+    // §213: cartão-PLACEHOLDER (Desafios sem arte ainda) não tem <img> — é legítimo, tem o título de espera
+    if (c.querySelector('.bcard__ph')){ if (!c.querySelector('.bcard__ph-t')) semArquivo.push('placeholder sem título'); continue; }
     const img = c.querySelector('img.bcard__art');
     if (!img) { semArquivo.push('sem <img>'); continue; }
     const src = img.getAttribute('src') || '';
@@ -133,13 +135,13 @@ console.log('== 5. carrossel da home: os 7 banners carregam (arquivo, nenhum 404
   w.eval("perfil=novoPerfil(0,999999); ROSTER.forEach(e=>{perfil.deuses[e.key]=perfil.deuses[e.key]||{copias:1,favorito:false,obtidoEm:0};}); perfil.campanha.concluidas=CAMPANHA.encontros.map(e=>e.id); perfil.invocacao.desdeUltimoSS=42; ir('home',{},{substituir:true}); render();");
   const ordemCheia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
   const c1 = d.querySelector('.bcard');
-  ok(d.querySelectorAll('.bcard').length === 7, 'com carteira cheia ainda são 7 cartões');
+  ok(d.querySelectorAll('.bcard').length === 8, 'com carteira cheia ainda são 8 cartões');
   ok(ordemVazia === ordemCheia, `a ordem dos destinos não deveria mudar com a carteira (vazia="${ordemVazia}" cheia="${ordemCheia}")`);
   ok(gs(c1).width === '202px' && gs(c1).height === '314px', 'o cartão continua 202×314 com a carteira cheia');
   // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
   const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
   ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
-  console.log(`  7 banners em arquivo · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+  console.log(`  8 destinos (7 em arquivo + 1 placeholder) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
 }
 
 console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');
@@ -148,12 +150,13 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
   // uma saída ACIONÁVEL que leve à home. Uma rota NOVA sem cobertura aqui falha de propósito
   // (força declarar a saída). A batalha sai pelo menu ⋯ → "Sair para o início" → confirmar.
   const setups = {
-    provacoes:    "ir('provacoes')",
+    provacoes:    "ir('provacoes')",       // §213: marcador de missões
     colecao:      "ir('colecao')",
     deus:         "ir('deus',{key:'zeus'})",
     campanha:     "ir('campanha')",
     montartime:   "ir('montartime',{id:CAMPANHA.encontros[0].id})",
-    desafios:     "ir('desafios')",
+    desafios:     "ir('desafios')",        // §213: hub de Desafios (pergaminhos+semanal+composição)
+    composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)
     desafiomontar:"ir('desafiomontar',{id:COMPOSICAO.desafios[0].id})",
     embreve:      "ir('embreve',{titulo:'Loja'})",
     selecao:      "ir('selecao',{novo:true})",

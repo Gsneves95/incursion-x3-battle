@@ -6,6 +6,21 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §213 — SEPARA as rotas "Provações" (missões) e "Desafios" (perícia) já; carrossel a 8 destinos; colisão "pergaminhos" renomeada.
+
+**A CORREÇÃO DO §212 (dono):** o texto da arte do banner "PROVAÇÕES · LIBERE NOVOS DEUSES" NÃO está errado — está ADIANTADO: descreve as MISSÕES (que voltam no PvP/F6), não os Desafios. Não regerar. O que faltava era um banner PRÓPRIO para Desafios e a SEPARAÇÃO das duas rotas — para o banner que promete liberar deus apontar para a tela que vai liberar (missões), não para a que testa perícia (pergaminhos).
+
+**1. CARROSSEL a 8 destinos.** "Desafios" entra ENTRE Provações e Invocação. A trilha já rola (§208), então é só mais um cartão espiando — dimensões intactas (202×314, gap 14; trilha 7×202+6×14 → 8×202+7×14). Até a arte chegar, um cartão-PLACEHOLDER no padrão da série (fundo escuro + moldura + "EM BREVE" + título em ouro), SEM `<img>` (não pede arquivo que dá 404); quando a arte chegar, tira-se `placeholder:true` do destino.
+
+**2. ROTAS SEPARADAS agora, mesmo sem as missões existirem:**
+- **"Provações" → marcador de MISSÕES** (`renderMissoes`): tela honesta que diz que as missões ("20 vitórias com Zeus libera o próximo deus") chegam no PvP/Fase 5. NÃO aponta para os Desafios — o banner que promete liberar deus não pode desembocar na tela de perícia. Selo "Fase 5".
+- **"Desafios" → o hub** (o `renderProvacoes` do §212): pergaminhos por faixa + Provação da Semana + Desafios de Composição. Selo com o total do acervo (63).
+- **Renomeação de rotas interna** p/ a leitura não mentir: rota `provacoes`=missões, `desafios`=hub, `composicao`=lista de composição (era `desafios`). Todos os `ir()` e os testes atualizados.
+
+**3. COLISÃO renomeada.** `economia.json _pendencias.pergaminhos` (BILHETES de invocação) colidia com os PERGAMINHOS da F4 (desafios). Renomeado p/ `_pendencias.bilhetes` — dois conceitos com o mesmo nome vira bug de leitura mais tarde (o mesmo princípio do §95, aplicado a nome).
+
+**GUARDA (render_sweep + aquisicao):** o carrossel tem 8 cartões (7 arquivo + 1 placeholder, nenhum base64/404); "Provações" abre o marcador de missões (fala de PvP/Fase 5, sem listar pergaminhos); "Desafios" abre o hub com os 63; Desafios fica entre Provações e Invocação. As 13 rotas registradas seguem com saída para a home (bloco 6).
+
 ## §212 — FASE 4: REPOSICIONAMENTO das Provações antes do PvP. Elas viram acervo de PERGAMINHOS; a tela vira "Desafios"; a Batalha CPU vira SANDBOX declarado. Coleção = só gacha até o PvP.
 
 **A MUDANÇA DE DESENHO (dono):** as Provações deixam de ser puzzles de AQUISIÇÃO e viram MISSÕES de longo prazo contadas só em PvP (modelo Naruto-Arena: "20 vitórias com Zeus libera X"). Como PvP é a próxima fase, as MISSÕES vêm DEPOIS dele — construí-las agora seria consumidor sem produtor (§95). Esta tarefa só REPOSICIONA o que já existe, para nada ficar incoerente no meio.

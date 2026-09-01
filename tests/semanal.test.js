@@ -62,7 +62,7 @@ console.log('== 3. todo puzzle do pool MONTA e começa em ANDAMENTO (o solver j�
 console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (sem colidir) ==');
 {
   const { w, $ } = sessao();
-  w.eval("ir('provacoes'); render();");
+  w.eval("ir('desafios'); render();");
   const b = $('.psem[data-semanal]');
   ok(!!b && /PROVAÇÃO DA SEMANA/.test(b.textContent), 'o banner da semana aparece no topo da lista');
   b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));

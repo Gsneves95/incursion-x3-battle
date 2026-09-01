@@ -102,7 +102,7 @@ console.log('== 6. Pergaminho: vencido mostra placar e é rejogável; genérica 
   w.eval("ir('deus',{key:'durga'}); render();");
   ok(!$('[data-jogarprova]') && /acervo/i.test($('.dprov').textContent), 'deus de pergaminho genérico não é jogável (fora do acervo)');
   // um pergaminho VENCIDO (placar gravado, não posse) aparece marcado e, ao tocar, JOGA (não abre a coleção)
-  w.eval("perfil.provacoes.ra={lances:5,minimo:4,em:0}; ir('provacoes'); render();");
+  w.eval("perfil.provacoes.ra={lances:5,minimo:4,em:0}; ir('desafios'); render();");
   const feita = $('.prow--feita[data-prova="ra"]');
   ok(!!feita, 'o pergaminho vencido aparece marcado na lista');
   feita.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
@@ -121,7 +121,7 @@ console.log('== 7. ACERVO de Pergaminhos (F4/§212): 90 no dado, 63 jogáveis (g
   ok(errosFaixa.length === 0, `a faixa injetada bate a derivada dos nós (${errosFaixa.length} divergências)`);
   ok(w.eval("PROVACOES.filter(p=>!p.generica).every(p=>['Fácil','Médio','Difícil','Épico'].includes(p.faixa))"), 'todo pergaminho do acervo tem faixa válida');
   // a TELA vira "Desafios": título Desafios, seção PERGAMINHOS com 63, genéricas fora da lista
-  w.eval("ir('provacoes'); render();");
+  w.eval("ir('desafios'); render();");
   ok(/Desafios/.test($('.tela__titulo').textContent), 'a tela agora se chama "Desafios"');
   ok(/PERGAMINHOS/.test($('#provrol').textContent), 'a seção do acervo é "Pergaminhos"');
   ok($$('.prow[data-prova]').length === 63, `a lista mostra os 63 do acervo (mostrou ${$$('.prow[data-prova]').length})`);
@@ -159,6 +159,26 @@ console.log('== 9. SANDBOX (Batalha CPU): vitória plana vs CPU credita 20 Gema,
   const g1 = w.eval('perfil.moedas.gema');
   w.eval("st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); st.ativo=0; st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");
   ok(w.eval('st._sandbox===null') && w.eval('perfil.moedas.gema') === g1, 'derrota (CPU vence) não credita nada');
+}
+
+console.log('== 10. ROTAS separadas (§213): Provações = marcador de missões; Desafios = hub de pergaminhos ==');
+{
+  const { w, $, $$ } = sessao();
+  // o carrossel tem 8 destinos, com "Desafios" entre "Provações" e "Invocação"
+  const ordem = w.eval('HOME_BANNERS.map(d=>d.chave)');
+  ok(ordem.length === 8, `o carrossel tem 8 destinos (tem ${ordem.length})`);
+  ok(ordem.indexOf('desafios') === ordem.indexOf('provacoes') + 1 && ordem.indexOf('desafios') === ordem.indexOf('invocacao') - 1, 'Desafios fica entre Provações e Invocação');
+  // "Provações" → marcador de missões (honesto): fala de missões/PvP/Fase 5, SEM lista de pergaminhos
+  w.eval("ir('provacoes'); render();");
+  ok(/Provações/.test($('.tela__titulo').textContent) && /miss/i.test($('#baselayer').textContent) && /Fase 5/.test($('#baselayer').textContent), 'Provações abre o marcador de missões (PvP/Fase 5)');
+  ok($$('.prow[data-prova]').length === 0, 'o marcador de missões NÃO lista pergaminhos');
+  // "Desafios" → o hub, com os 63 pergaminhos
+  w.eval("ir('desafios'); render();");
+  ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.prow[data-prova]').length === 63, 'Desafios abre o hub com os 63 pergaminhos');
+  // o placeholder do banner Desafios existe (sem arte ainda) e tem título de espera
+  w.eval("ir('home',{},{substituir:true}); render();");
+  const ph = $('.bcard[data-dest="desafios"] .bcard__ph');
+  ok(!!ph && /Desafios/.test(ph.textContent), 'o banner Desafios usa placeholder com título até a arte chegar');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

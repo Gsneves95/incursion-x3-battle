@@ -16,7 +16,7 @@ function entrar(key) {
   abertos.push(dom);
   const w = dom.window, d = w.document;
   const ctx = { w, d, $: s => d.querySelector(s), $$: s => [...d.querySelectorAll(s)] };
-  w.eval("ir('provacoes'); render();");
+  w.eval("ir('desafios'); render();");   // §213: o hub de Desafios lista os pergaminhos
   const linha = ctx.$(`.prow[data-prova="${key}"]`);
   if (linha) linha.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   else w.eval(`iniciarProva(${JSON.stringify(key)})`);   // genérica (durga): fora da lista, mas jogável direto — fixture de FLUXO
@@ -52,7 +52,7 @@ console.log('== 2. VITÓRIA: SEM desbloqueio de deus (§212) — maestria + plac
   ok(/Vencido em/.test(ov.textContent) && /11/.test(ov.textContent), 'o placar deveria mostrar os lances');
   ok(/melhor conhecido/.test(ov.textContent), 'o placar deveria citar o mínimo do solucionador');
   $('#pfvoltar').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval("rotaAtual()") === 'provacoes', 'voltar leva à tela de Desafios');
+  ok(w.eval("rotaAtual()") === 'desafios', 'voltar leva à tela de Desafios');
   ok(w.eval('prova===null'), 'sair da Provação limpa o estado ativo');
 }
 

@@ -112,12 +112,13 @@ function ligar(){
 configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
   rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
 registrar('home',      { render: renderHome });
-registrar('provacoes', { render: renderProvacoes });
+registrar('provacoes', { render: renderMissoes });    // F4/§213: MISSÕES (marcador honesto; chegam no PvP)
+registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFIOS (pergaminhos + semanal + composição)
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
 registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
-registrar('desafios',  { render: renderDesafios });     // F3.6: desafios de composição
+registrar('composicao',{ render: renderDesafios });     // F3.6/§213: desafios de composição (sub-tela do hub)
 registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra
 registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });

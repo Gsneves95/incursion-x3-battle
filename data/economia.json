@@ -69,6 +69,6 @@
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },
-    "pergaminhos": "O codigo tem 'pergaminhos' (bilhetes de invocacao) fora do documento e sem decisao. Nao incluidos aqui — decidir se existem."
+    "bilhetes": "BILHETES de invocacao (antes chamados 'pergaminhos' — renomeado no §213 p/ nao colidir com os PERGAMINHOS da F4, que sao desafios comprados com Essencia). O codigo tem bilhetes fora do documento e sem decisao. Nao incluidos aqui — decidir se existem."
   }
 }

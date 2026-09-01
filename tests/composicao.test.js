@@ -45,7 +45,7 @@ console.log('== 3. o montador VALIDA AO VIVO: Começar travado E DIZ POR QUÊ at
   const { w, $, $$ } = sessao();
   // possui um leque de deuses p/ montar
   w.eval("ROSTER.slice(0,20).forEach(e=>{perfil.deuses[e.key]={copias:1,favorito:false,obtidoEm:0};});");
-  w.eval("ir('desafios'); render();");
+  w.eval("ir('composicao'); render();");
   const b = $('.cenc[data-desafio="cx_elemento"]');
   ok(!!b, 'o desafio mono-elemento aparece na lista');
   b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));

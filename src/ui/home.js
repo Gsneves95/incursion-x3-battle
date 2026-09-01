@@ -10,12 +10,15 @@
 /* ---------- metadados de exibição (ROSTER tem os 100, inclusive sem kit) ---------- */
 const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 
-// Os 7 destinos, na ordem do carrossel. `arte` = arquivo em web/banners/<arte>.webp.
-// `rota` nula = cartão sem navegação (PvP, Fase 5). Loja cai no marcador "em breve";
-// Batalha CPU liga na seleção→batalha-protótipo que a F3.0 deixou fora da home.
+// Os 8 destinos, na ordem do carrossel (§213). `arte` = arquivo em web/banners/<arte>.webp;
+// `placeholder:true` desenha um cartão de espera (fundo escuro + título em ouro, padrão da
+// série) até a arte chegar. `rota` nula = cartão sem navegação (PvP, Fase 5). Loja cai no
+// marcador "em breve"; Batalha CPU liga na seleção→sandbox. PROVAÇÕES aponta para o marcador
+// de MISSÕES (que chegam no PvP); DESAFIOS aponta para o hub de pergaminhos+semanal+composição.
 const HOME_BANNERS = [
   { chave: 'campanha',    arte: 'campanha',    rotulo: 'Campanha',    rota: 'campanha' },
   { chave: 'provacoes',   arte: 'provacoes',   rotulo: 'Provações',   rota: 'provacoes' },
+  { chave: 'desafios',    arte: 'desafios',    rotulo: 'Desafios',    rota: 'desafios', placeholder: true },
   { chave: 'invocacao',   arte: 'invocacao',   rotulo: 'Invocação',   rota: 'invocacao' },
   { chave: 'colecao',     arte: 'colecao',     rotulo: 'Coleção',     rota: 'colecao' },
   { chave: 'loja',        arte: 'loja',        rotulo: 'Loja',        rota: 'embreve', titulo: 'Loja' },
@@ -47,7 +50,8 @@ function bannerVivoHTML(d){
     </div>`;
   }
   const selo = t => `<span class="bcard__selo">${H(t)}</span>`;
-  if (d.chave === 'provacoes') return selo(`${acervoPergaminhos().length}`);   // acervo de pergaminhos (63), não as 90 do dado
+  if (d.chave === 'provacoes') return selo('Fase 5');   // Provações = MISSÕES, que chegam no PvP (§213)
+  if (d.chave === 'desafios') return selo(`${acervoPergaminhos().length}`);   // acervo de pergaminhos (63), não as 90 do dado
   if (d.chave === 'invocacao'){
     const p = (perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0;
     const duro = (typeof ECONOMIA !== 'undefined' && ECONOMIA.invocacao && ECONOMIA.invocacao.pity) ? ECONOMIA.invocacao.pity.duro : 0;
@@ -67,11 +71,17 @@ function bannerCardHTML(d){
   const tag = off ? 'div' : 'button';                 // sem rota = não navega, não foca
   const attr = off ? '' : ` data-dest="${H(d.chave)}"`;
   const cls = ['bcard']; if (off) cls.push('bcard--off'); if (d.chave === 'pvp') cls.push('bcard--pvp');
-  // <img> ARQUIVO (nunca base64) + fallback: se a arte não carregar, onerror remove o
-  // <img> e o rótulo-reserva reaparece (o :has do CSS o esconde só enquanto há arte).
+  // PLACEHOLDER (§213): destino sem arte ainda (Desafios) desenha um cartão de espera no padrão
+  // da série — fundo escuro + título em ouro — SEM pedir um arquivo que dá 404. Quando a arte
+  // chegar, tira-se `placeholder` do destino e volta a ser <img>.
+  const arte = d.placeholder
+    ? `<div class="bcard__ph"><span class="bcard__ph-orn">◈</span><span class="bcard__ph-sub">Em breve</span><span class="bcard__ph-t">${H(d.rotulo)}</span></div>`
+    // <img> ARQUIVO (nunca base64) + fallback: se a arte não carregar, onerror remove o <img>
+    // e o rótulo-reserva reaparece (o :has do CSS o esconde só enquanto há arte).
+    : `<img class="bcard__art" src="banners/${H(d.arte)}.webp" alt="${H(d.rotulo)}" loading="lazy" onerror="this.remove()">
+    <span class="bcard__fallback">${H(d.rotulo)}</span>`;
   return `<${tag} class="${cls.join(' ')}"${attr}>
-    <img class="bcard__art" src="banners/${H(d.arte)}.webp" alt="${H(d.rotulo)}" loading="lazy" onerror="this.remove()">
-    <span class="bcard__fallback">${H(d.rotulo)}</span>
+    ${arte}
     ${bannerVivoHTML(d)}
   </${tag}>`;
 }
@@ -130,6 +140,31 @@ function renderEmBreve(){
     <div class="tela__vazio">
       <span class="tela__vazioic">◈</span>
       <p class="tela__vaziomsg">${H(titulo)} chega numa fase adiante.<br>Por ora, a jornada é pelos Desafios.</p>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  fit();
+}
+
+/* ---------- marcador de MISSÕES (§213) — a rota "Provações" HOJE ----------
+// As Provações voltam como MISSÕES de longo prazo contadas em PvP; até a Fase 5 chegar, esta
+// tela é um marcador HONESTO — NÃO aponta para os Desafios (o banner que promete liberar deus
+// não pode desembocar na tela de perícia). Separar as rotas agora resolve a incoerência sem
+// esperar a F6. */
+function renderMissoes(){
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="stagemark">INCURSION</div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
+      <h1 class="tela__titulo">Provações</h1>
+      <span class="tela__espaco"></span>
+    </header>
+    <div class="tela__vazio">
+      <span class="tela__vazioic">◈</span>
+      <p class="tela__vaziomsg">As <b>Provações</b> voltam como <b>missões</b> de longo prazo — "20 vitórias com Zeus libera o próximo deus" — contadas no <b>PvP</b>.<br>Chegam com a <b>Fase 5</b>. Por ora, a perícia se prova nos <b>Desafios</b>.</p>
     </div>
   </div>
   </div>`;
@@ -223,7 +258,7 @@ function renderProvacoes(){
   const bs = stage.querySelector('.psem[data-semanal]');
   if (bs) bs.onclick = () => iniciarSemanal();
   const bd = stage.querySelector('.pdesafios[data-desafios]');
-  if (bd) bd.onclick = () => { ir('desafios'); render(); };
+  if (bd) bd.onclick = () => { ir('composicao'); render(); };
   [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
     // pergaminho é desafio de perícia: sempre jogável (independe de ter o deus).
     b.onclick = () => iniciarProva(b.dataset.prova);
@@ -408,7 +443,7 @@ function provaResultadoOverlay(){
 function ligarProvaFim(){
   const q = s => stage.querySelector(s);
   const ehDesafio = !!(prova && prova.desafio);
-  const destino = ehDesafio ? 'desafios' : 'provacoes';
+  const destino = ehDesafio ? 'composicao' : 'desafios';   // §213: pergaminho volta ao hub 'desafios'; composição à sua lista 'composicao'
   const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir(destino, {}, { substituir: true }); render(); };
   const dsfId = prova && prova.desafioId, pkey = prova && prova.key;
   const t = q('#pftentar'); if (t) t.onclick = () => { if (ehDesafio) { desafioTimePick = []; sairProva(); ir('desafiomontar', { id: dsfId }); render(); } else iniciarProva(pkey); };
@@ -998,7 +1033,7 @@ function renderDesafios(){
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('provacoes', {}, { substituir: true }); render(); };
+  if (v) v.onclick = () => { if (!voltar()) ir('desafios', {}, { substituir: true }); render(); };   // §213: volta ao hub
   [...stage.querySelectorAll('.cenc[data-desafio]')].forEach(b => {
     b.onclick = () => { desafioTimePick = []; ir('desafiomontar', { id: b.dataset.desafio }); render(); };
   });
@@ -1039,7 +1074,7 @@ function renderDesafioMontar(){
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('desafios', {}, { substituir: true }); render(); };
+  if (v) v.onclick = () => { if (!voltar()) ir('composicao', {}, { substituir: true }); render(); };   // §213: volta à lista de composição
   [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
     b.onclick = () => {
       const k = b.dataset.pick, j = desafioTimePick.indexOf(k);
