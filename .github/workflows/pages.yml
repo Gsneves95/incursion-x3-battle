@@ -30,10 +30,13 @@ jobs:
           node tools/build.js
           mkdir -p site
           cp dist/incursion.html site/index.html
-          # manifest + ícones como arquivos REAIS (PWA instalável; blob: não instala)
-          cp web/manifest.webmanifest web/icon-192.png web/icon-512.png site/
-          # artes de habilidade (F1.7): 401 arquivos REAIS servidos ao lado do index (não base64 — o bundle ficaria ~7MB)
-          cp -r web/skills site/skills
+          # TODOS os assets REAIS de web/ ao lado do index: manifest + ícones do modo app
+          # (PWA instalável; blob: não instala), artes de habilidade (web/skills, F1.7) e
+          # os banners da home (web/banners, §208). Recursivo DE PROPÓSITO: o hand-pick
+          # asset-a-asset foi o que deixou os banners fora do publicado (§209) enquanto o
+          # dist local — que copia web/ inteiro — os tinha. Um asset novo em web/ agora
+          # deploia sozinho, sem editar este passo.
+          cp -r web/. site/
       - uses: actions/configure-pages@v5
         with:
           enablement: true
