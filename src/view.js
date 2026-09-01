@@ -9,6 +9,8 @@
 // moram em turno.js; estado da seleção mora em ui/selecao.js).
 let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
+// §214 — painel de leitura (esquerda): recolhível (aba) e consulta de kit inimigo (toque longo).
+let painelRecolhido=false, peekKit=null;
 
 // F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
 // resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
@@ -46,39 +48,37 @@ function sairBatalha(){ pararRelogio(); limparSobreposicao(); }
 function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 
 function renderBatalha(){
-  // PERSPECTIVA fixa (F0.7): meu time (ladoExibido) SEMPRE à esquerda, com os discos;
-  // o oponente SEMPRE à direita, com a aba de consulta. Independe de quem está agindo.
+  // §214 — ZONAS por ergonomia (paisagem 2.16, polegar direito): LEITURA à esquerda (painel),
+  // TOQUE à direita (tiles/alvo/encerrar). PERSPECTIVA fixa (F0.7): eu = ladoExibido.
+  // Cada FILEIRA pareia um aliado (retrato + 4 tiles) com o inimigo da mesma posição (retrato).
   const eu=ladoExibido();
   const l=st.lados[eu], o=st.lados[1-eu];
   const prontas=l.units.filter(u=>podeAgir(u)).length;
 
   // F3.1: numa Provação, avalia a condição ANTES de desenhar — o latch (uma vez só) decide
-  // vitória/derrota, congela o motor quando a condição quebra com a luta em curso, e desbloqueia
-  // o deus na vitória. Fica antes do cálculo do scrim para o overlay já refletir o fim.
-  if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else atualizarSandbox();   // F4: batalha plana vs CPU = sandbox (recompensa simbólica c/ teto diário)
+  // vitória/derrota, congela o motor quando a condição quebra, e desbloqueia o deus na vitória.
+  if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else atualizarSandbox();
 
-  // Sobreposição COM SCRIM aberta? (todas as overlays de batalha são .ov, com scrim;
-  // o menu ⋯ NÃO tem scrim — não entra aqui.) Quando há, a base fica INERTE e o primário
-  // da base rebaixa (consequência do inert), para valer INV 16: no máximo um primário
-  // visível E acessível. A sobreposição é IRMÃ da #baselayer, então segue interativa.
   const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim;
-  stage.innerHTML = `<div id="baselayer" class="${(prova||campanha)?'temhud':''}"${scrim?' inert':''}>
+  const cls=[]; if(prova||campanha)cls.push('temhud'); if(painelRecolhido)cls.push('pnfold');
+  stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="field"><i></i><i></i><i></i><i></i></div>
   ${topoHTML()}
   ${prova?provaHUD():campanha?campanhaHUD():''}
-  <div class="stagemark">INCURSION</div>
-  <section class="team team--ally">${l.units.map(u=>`
-    <article class="unit ${u.vivo&&!podeAgir(u)?'acted':''}">${retrato(u,false)}${habilidades(u)}
-    </article>`).join('')}</section>
-  <section class="team team--enemy">${o.units.map(u=>`
-    <article class="unit--enemy">${foeAba(u)}${retrato(u,true)}</article>`).join('')}</section>
+  <div class="board">
+    ${painelHTML()}
+    <div class="rows">
+      <span class="teamlbl teamlbl--ally">Você</span>
+      <span class="teamlbl teamlbl--enemy">${H(rotuloLado(1-eu))}</span>
+      ${Array.from({length:Math.max(l.units.length,o.units.length,1)},(_,i)=>filaHTML(l.units[i], o.units[i])).join('')}
+    </div>
+  </div>
   <footer class="footer">
-    ${detalheHTML()}
+    <div class="acaoestado">${acaoRodapeHTML()}</div>
     ${ehMeuTurno()
-      ? `<button class="b ${scrim?'b--sec':'b--primary'} b--lg endturn" id="bend">
+      ? `<button class="b ${scrim?'b--sec':'b--primary'} b--md endturn" id="bend">
       <span class="endturn__l1">Encerrar turno</span>
-      <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' unidades a agir':' unidade a agir'):'todas agiram')}</span>
+      <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' a agir':' a agir'):'todas agiram')}</span>
     </button>`
       : `<div class="endturn endturn--wait" aria-live="polite">
       <span class="endturn__l1">Vez de ${H(rotuloLado(st.ativo))}</span>

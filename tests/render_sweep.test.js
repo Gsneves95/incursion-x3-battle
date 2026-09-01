@@ -68,9 +68,12 @@ console.log('== 3. a IA MOVE criaturas de bestiário e a tela re-renderiza (o ou
 
 console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (discos/retratos), em Provação e Campanha ==');
 {
-  // Invariante de LAYOUT (mesma classe do render_sweep, agora geométrica): o HUD mora numa faixa que
-  // TERMINA antes de os times começarem. Como discos e retratos são FILHOS de .team, o HUD nunca os toca.
-  // Lido da geometria DECLARADA (top/height do CSS), estável e sem depender de layout real.
+  // Invariante de LAYOUT (§207/§214): o HUD mora numa faixa PRÓPRIA (top 47, alt 19 → termina em 66)
+  // que ACABA antes de o board com HUD começar (top 68 — ver #baselayer.temhud .board no shell). Aqui
+  // lemos a faixa DECLARADA do .phud (regra de classe simples, que o jsdom resolve) e conferimos que ela
+  // fecha antes dos 68px. A prova GEOMÉTRICA em navegador real (phud.bottom ≤ topo das fileiras) mora em
+  // tests/moldura.test.js — o jsdom não aplica o override composto #baselayer.temhud .board.
+  const BOARD_HUD_TOP = 68;
   const num = v => parseFloat(v) || 0;
   const gs = el => w.getComputedStyle(el);
   const fundo = (setup, label) => {
@@ -80,10 +83,7 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
     const phud = d.querySelector('.phud');
     ok(!!phud, `${label}: o HUD existe`);
     const hudBottom = num(gs(phud).top) + num(gs(phud).height);
-    for (const sel of ['.team--ally', '.team--enemy']) {
-      const teamTop = num(gs(d.querySelector(sel)).top);
-      ok(hudBottom <= teamTop, `${label}: HUD termina (${hudBottom}px) antes de ${sel} começar (${teamTop}px) — sem cruzar discos/retratos`);
-    }
+    ok(hudBottom <= BOARD_HUD_TOP, `${label}: a faixa do HUD termina (${hudBottom}px) antes do board com HUD (top ${BOARD_HUD_TOP}px) — sem cruzar discos/retratos`);
   };
   fundo("prova=PROVACOES.find(x=>x.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'PROVAÇÃO');
   fundo("prova=null;provaFim=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'CAMPANHA');

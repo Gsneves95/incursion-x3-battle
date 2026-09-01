@@ -85,62 +85,78 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
     radial-gradient(38% 52% at 50% 46%,rgba(216,178,90,.05) 0%,transparent 72%),
     radial-gradient(120% 90% at 50% 40%,rgba(10,9,25,.10) 0%,rgba(6,5,16,.74) 100%)}
 /* palco central: onde a arte de cenário entra. Emblema tênue enquanto não há arte. */
-.stagemark{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:1;
-  font-family:'Cinzel',serif;font-weight:900;font-size:104px;letter-spacing:.1em;
-  color:#ffd97a;opacity:.035;pointer-events:none;user-select:none;white-space:nowrap}
+/* §214: watermark REMOVIDO do tabuleiro (competia com a leitura; o espaço virou o painel). */
 
 /* encaixe de arte */
 .slot{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   object-fit:cover;background:#14112a;overflow:hidden}
 .slot>img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
-/* arte de habilidade é pensada em formato redondo: enquadra no centro */
+/* tile de habilidade agora é RETÂNGULO (§214): a arte enquadra no centro, sem corte de círculo */
 .slot--round>img{object-position:center center}
 .slot__glyph{font-family:'Cinzel',serif;font-weight:900;line-height:1;text-align:center}
 
-/* ---------- TOPO ---------- */
-.topbar{position:absolute;top:0;left:0;right:0;height:62px;display:flex;align-items:center;
-  justify-content:space-between;padding:0 10px;z-index:3;
-  background:linear-gradient(180deg,rgba(9,8,20,.94) 0%,rgba(9,8,20,.62) 78%,rgba(9,8,20,0) 100%)}
-.player{display:flex;align-items:center;gap:8px}
-.player__avatar{width:38px;height:38px;border:1px solid var(--gold-soft);border-radius:4px;overflow:hidden}
-.player--enemy .player__avatar{border-color:#8a4a5c}
-.player__meta{display:flex;flex-direction:column;gap:1px}
-.player--enemy .player__meta{align-items:flex-end}
-.player__name{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--gold-text);line-height:1}
-.player--enemy .player__name{color:#ff8fae}
-.player__rank{font-size:11px;font-weight:600;letter-spacing:.08em;color:#b9aee0;line-height:1;white-space:nowrap}
-.player.dim{opacity:.42}
+/* ============ TELA DE BATALHA (§214) — zonas por ergonomia (paisagem 2.16) ============
+   topo 46 · corpo 336 · rodapé 46 (palco 926×428). Polegar direito domina em paisagem: o que
+   se TOCA vai à direita (tiles, alvo, encerrar), o que se LÊ vai à esquerda (painel).
+   ESQUERDA x0–262 painel · CENTRO-E x262–364 retratos aliados · CENTRO-D x364–780 tiles ·
+   DIREITA x780–926 retratos inimigos. Fileira: retrato 88 · 4 tiles 78 (gap 8) · retrato 88. */
 
-.turnbox{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:8px}
-.timer{position:relative;width:300px;height:14px;border:1px solid var(--gold-soft);border-radius:3px;background:#120f24;overflow:hidden}
-.timer__fill{position:absolute;inset:0;background:linear-gradient(180deg,#ffd97a,#d8853a);
-  transition:width .95s linear}
+/* ---------- TOPO enxuto (46): turno + energia + menu ---------- */
+.topbar{position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:center;
+  gap:12px;padding:0 12px;z-index:5;
+  background:linear-gradient(180deg,rgba(9,8,20,.96),rgba(9,8,20,.55) 80%,transparent)}
+.turnbox{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.timer{position:relative;width:210px;height:16px;border:1px solid var(--gold-soft);border-radius:3px;background:#120f24;overflow:hidden}
+.timer__fill{position:absolute;inset:0;background:linear-gradient(180deg,#ffd97a,#d8853a);transition:width .95s linear}
 .timer.low .timer__fill{background:linear-gradient(180deg,#ff9a9a,#c03030)}
 .timer__label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:10px;letter-spacing:.1em;word-spacing:.2em;color:#0a0912}
-/* barra de energia: material (régua+chanfro+bisel) SEM grão — é superfície pequena, e o
-   grão é só para as grandes (ver :44) / critério 8 mantém 1 textura permanente na batalha */
-.energy{display:flex;gap:9px;align-items:center;min-height:19px;padding:4px 11px;
-  --placa-fill:linear-gradient(180deg,rgba(30,24,54,.82),rgba(15,12,32,.92));
-  --placa-regua:rgba(74,62,108,.95)}
-.energy__pill{display:flex;align-items:center;gap:4px;padding:1px 2px;cursor:pointer;
-  border-radius:3px;transition:.12s;background:transparent;border:1px solid transparent}
+  font-weight:700;font-size:9.5px;letter-spacing:.08em;color:#0a0912}
+.energy{flex:1 1 auto;min-width:0;display:flex;gap:8px;align-items:center;overflow:hidden}
+.energy__pill{display:flex;align-items:center;gap:4px;padding:2px 4px;cursor:pointer;
+  border-radius:3px;transition:.12s;background:rgba(18,15,36,.5);border:1px solid transparent}
 .energy__pill.spend{border-color:var(--gold-text);background:rgba(255,217,122,.13)}
 .energy__pill.target{border-color:#7ff0a5;background:rgba(127,240,165,.16)}
 .energy__pill.zero{opacity:.34}
 .energy__dot{width:10px;height:10px;border-radius:2px;display:block}
 .energy__n{font-weight:700;font-size:13px;color:#fff;line-height:1}
 .energy__hint{font-size:9px;font-weight:700;letter-spacing:.1em;color:#5f5980;text-transform:uppercase}
+.tools{flex:0 0 auto;display:flex;gap:7px}
 
-/* ---------- TIMES ---------- */
-.team{position:absolute;top:64px;display:flex;flex-direction:column;z-index:2}
-.team--ally{left:12px;gap:8px}
-.team--enemy{right:12px;gap:8px;align-items:flex-end}
+/* ---------- CORPO (board): painel à esquerda + 3 fileiras ---------- */
+.board{position:absolute;top:46px;left:0;right:0;bottom:46px;display:flex;z-index:2}
+.rows{position:relative;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:0 6px}
+.brow{flex:1 1 0;min-height:0;display:flex;align-items:center}   /* 3 × 112px */
+.brow__ally{flex:0 0 102px;display:flex;justify-content:center;align-items:center}
+.brow__tiles{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.brow__enemy{flex:0 0 146px;display:flex;justify-content:center;align-items:center}
+/* rótulo de time: VOCÊ (ouro) sobre a coluna aliada, o inimigo (vermelho) sobre a dele */
+.teamlbl{position:absolute;top:1px;font-family:'Cinzel',serif;font-weight:800;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;padding:1px 8px;border-radius:0 0 5px 5px;z-index:2;
+  white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.teamlbl--ally{left:44px;color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,var(--gold))}
+.teamlbl--enemy{right:22px;color:#fff;background:linear-gradient(180deg,#c85a72,#8a2b3f)}
 
-.unit,.unit--enemy{display:flex;align-items:flex-start;gap:7px}
-.unit__portrait{display:flex;flex-direction:column;gap:2px;width:100px}
-.portrait{position:relative;width:100px;height:66px;border:1px solid #3a3358;border-radius:4px;
+/* ---------- PAINEL de leitura (esquerda, x0–262) ---------- */
+.panel{flex:0 0 262px;position:relative;display:flex;transition:flex-basis .16s ease}
+.panel__box{flex:1 1 auto;min-width:0;margin:2px 2px 2px 6px;display:flex;flex-direction:column;
+  background:rgba(14,11,30,.82);border:1px solid var(--gold-soft);border-radius:8px;overflow:hidden}
+.panel__tab{flex:0 0 20px;align-self:stretch;margin:2px 0;padding:0;cursor:pointer;
+  border:1px solid var(--gold-soft);border-radius:0 5px 5px 0;
+  background:linear-gradient(90deg,rgba(30,22,50,.85),rgba(30,22,50,.4));
+  color:var(--gold-text);font-size:13px;display:flex;align-items:center;justify-content:center}
+.panel__tab:active{background:rgba(58,44,10,.6)}
+/* RECOLHIDO: a aba É o painel colapsado (sempre visível, alvo grande); os tiles crescem 78→100 */
+#baselayer.pnfold .panel{flex-basis:26px}
+#baselayer.pnfold .panel__box{display:none}
+#baselayer.pnfold .brow__tiles .skill{width:100px;height:100px}
+#baselayer.pnfold .panel__tab{margin-left:4px;border-radius:5px}
+
+/* ---------- retrato (88 de largura; ally=ouro, enemy=vermelho) ---------- */
+.unit__portrait{display:flex;flex-direction:column;align-items:center;gap:2px;width:88px}
+.portrait{position:relative;width:88px;height:64px;border:1px solid #3a3358;border-radius:5px;
   overflow:hidden;background:#14112a;box-shadow:0 3px 9px rgba(0,0,0,.55);cursor:pointer}
+.up--ally .portrait{border-color:var(--gold-soft)}
+.up--enemy .portrait{border-color:#8a4a5c}
 .portrait.is-down{border-color:#5a4f7a;box-shadow:none;cursor:default}
 .portrait.is-down .slot{filter:grayscale(1) brightness(.55)}
 .portrait__x{display:none;position:absolute;inset:0;pointer-events:none}
@@ -154,7 +170,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:rgba(6,5,16,.86);border:1px solid var(--gold);color:var(--gold-text);
   font-family:'Cinzel',serif;font-weight:900;font-size:11px;line-height:16px;text-align:center;cursor:pointer}
 .portrait__pas.inert{border-color:#8a4a5c;color:#ff8fae}
-.unit.acted .portrait{opacity:.55}
+/* "?" discreto: sinaliza que SEGURAR o retrato inimigo abre o kit dele (§214 item 8) */
+.portrait__ask{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:3px;
+  background:rgba(6,5,16,.8);border:1px solid #8a4a5c;color:#ff9db4;
+  font-weight:800;font-size:11px;line-height:14px;text-align:center;pointer-events:none}
+.acted .portrait{opacity:.55}
+.portrait__nome{font-family:'Cinzel',serif;font-weight:700;font-size:10.5px;letter-spacing:.02em;
+  color:var(--ink);max-width:88px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+.up--enemy .portrait__nome{color:#ffb9c6}
 
 .portrait.is-picked{box-shadow:0 0 0 2px #7ff0a5,0 3px 9px rgba(0,0,0,.55)}
 .portrait.is-target{animation:tgt 1s ease-in-out infinite;cursor:crosshair}
@@ -163,21 +186,20 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .portrait.hit{animation:hit .32s ease}
 @keyframes hit{0%,100%{transform:translate(0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
 
-.hp{position:relative;height:14px;border:1px solid #0a0912;border-radius:2px;background:#3a1c22;overflow:hidden}
-.hp__fill{position:absolute;inset:0;background:linear-gradient(180deg,var(--hp-ok-1),var(--hp-ok-2));
-  transition:width .3s ease}
+.hp{position:relative;width:88px;height:13px;border:1px solid #0a0912;border-radius:2px;background:#3a1c22;overflow:hidden}
+.hp__fill{position:absolute;inset:0;background:linear-gradient(180deg,var(--hp-ok-1),var(--hp-ok-2));transition:width .3s ease}
 .hp--warn .hp__fill{background:linear-gradient(180deg,var(--hp-warn-1),var(--hp-warn-2))}
 .hp--empty{background:#2a2440}
 .hp__shield{position:absolute;top:0;right:0;height:100%;background:#9fd8ff;opacity:.62}
 .hp__label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:11px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.9)}
+  font-weight:700;font-size:10px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.9)}
 .hp--empty .hp__label{color:#cfc8ea}
 
-.effects{position:absolute;left:0;right:0;bottom:0;height:19px;display:flex;gap:2.5px;
+.effects{position:absolute;left:0;right:0;bottom:0;height:18px;display:flex;gap:2.5px;
   align-items:center;padding:0 3px;
   background:linear-gradient(0deg,rgba(6,5,16,.96) 0%,rgba(6,5,16,.72) 62%,transparent 100%)}
 .effects:empty{display:none}
-.effect{position:relative;width:15px;height:15px;border:0;border-radius:2px;
+.effect{position:relative;width:14px;height:14px;border:0;border-radius:2px;
   overflow:hidden;cursor:pointer;flex:none;background:#2a2440}
 .effect--buff{background:rgba(99,230,255,.22);box-shadow:inset 0 0 0 1px rgba(99,230,255,.5)}
 .effect--debuff{background:rgba(255,92,138,.22);box-shadow:inset 0 0 0 1px rgba(255,92,138,.5)}
@@ -191,22 +213,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   text-shadow:0 0 3px #000,0 0 2px #000,0 0 1px #000}
 .fxmore{font-weight:700;font-size:9px;color:var(--ink-dim);padding-left:1px}
 
-.skills{display:flex;gap:5px;padding:3px 6px;border-radius:44px;background:rgba(18,15,36,.5);
-  transition:opacity .18s}
-/* unidade que já agiu: a arte das habilidades NÃO apaga (regra do dono) — o "já agiu" é dito
-   pelo anel apagado (is-off perde o glow) + o retrato esmaecido, não por escurecer os discos. */
-.unit.acted .skills{opacity:1}
-/* O botão continua QUADRADO (76x76) para o dedo; só o disco é recortado,
-   então o alvo de toque não encolhe 21% junto com a arte. */
-.skill{position:relative;width:76px;height:76px;border:0;background:none;padding:0;cursor:pointer}
-.skill__disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#171334;
-  border-style:solid;border-width:1px;transition:.14s;
-  outline:1px solid rgba(6,5,16,.92)}   /* F1.7 (#5): contorno escuro POR FORA do anel — UNIFORME (não detecta arte),
-  some contra o painel escuro e só aparece na fronteira com arte clara, devolvendo contraste ao anel do elemento */
+/* ---------- TILE de habilidade: RETÂNGULO 78×78 (§214), mais arte que o círculo ---------- */
+.skill{position:relative;width:78px;height:78px;border:0;background:none;padding:0;cursor:pointer;flex:0 0 auto;transition:width .16s,height .16s}
+.skill__disc{position:absolute;inset:0;border-radius:10px;overflow:hidden;background:#171334;
+  border-style:solid;border-width:1px;transition:box-shadow .14s;
+  outline:1px solid rgba(6,5,16,.92)}
 .skill--uni .skill__disc{border-style:dashed}
-/* anel = ELEMENTO (identidade, constante); espessura marca o tier */
 .skill--habilidade .skill__disc{border-width:2px}
-/* o Milagre já tem halo dourado próprio (tier); o contorno vai FORA dele (outline-offset) p/ não o comer */
 .skill--milagre .skill__disc{border-width:2px;box-shadow:0 0 0 1px rgba(255,217,122,.4);outline-offset:1px}
 /* DISPONIBILIDADE vive no ANEL, NUNCA na arte (regra do dono: a arte da habilidade sempre
    em cor e legível). Pronta = anel do elemento ACENDE (glow na cor do elemento, via --anel);
@@ -228,77 +241,71 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* marcadores de ESTADO por cima da arte, mas SEM apagá-la: vinheta RADIAL escurece só o miolo
    (contraste p/ o número/ícone) e deixa o aro da arte em cor. Glifo distinto por motivo:
    número dourado = recarga · ⊘ rosa = travada (Selado/Silêncio) · ∅ âmbar = sem alvo. */
-.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:50%;
+/* overlays de estado sobre o tile RETÂNGULO (§214): vinheta escurece só o miolo, aro em cor */
+.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:10px;
   align-items:center;justify-content:center;pointer-events:none;
   text-shadow:0 1px 3px #000,0 0 6px #000,0 0 2px #000}
-.skill__cd{font-family:'Cinzel',serif;font-weight:900;font-size:28px;color:var(--gold-text);
-  background:radial-gradient(circle,rgba(6,5,16,.72) 20%,rgba(6,5,16,.30) 40%,transparent 60%)}
+.skill__cd{font-family:'Cinzel',serif;font-weight:900;font-size:30px;color:var(--gold-text);
+  background:radial-gradient(circle,rgba(6,5,16,.72) 22%,rgba(6,5,16,.30) 44%,transparent 66%)}
 .skill.is-cooldown .skill__cd{display:flex}
-.skill__lock{font-size:22px;color:#ff9db4;
-  background:radial-gradient(circle,rgba(6,5,16,.58) 24%,rgba(6,5,16,.22) 42%,transparent 60%)}
+.skill__lock{font-size:24px;color:#ff9db4;
+  background:radial-gradient(circle,rgba(6,5,16,.58) 26%,rgba(6,5,16,.22) 46%,transparent 66%)}
 .skill.is-locked .skill__lock{display:flex}
-.skill__na{font-size:21px;color:#e7bd74;
-  background:radial-gradient(circle,rgba(6,5,16,.52) 24%,rgba(6,5,16,.20) 42%,transparent 60%)}
+.skill__na{font-size:23px;color:#e7bd74;
+  background:radial-gradient(circle,rgba(6,5,16,.52) 26%,rgba(6,5,16,.20) 46%,transparent 66%)}
 .skill.is-notarget .skill__na{display:flex}
-/* custo vira SELO pendurado na borda inferior: não faz scrim sobre a arte
-   e ocupa o canto que o círculo deixa vazio */
-.skill__cost{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);
+/* custo = bolinhas penduradas na borda inferior do tile (não faz scrim sobre a arte) */
+.skill__cost{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);
   display:flex;gap:2px;align-items:center;padding:2px 4px;border-radius:8px;
   background:rgba(6,5,16,.92);box-shadow:0 0 0 1px rgba(58,49,88,.9);pointer-events:none;z-index:2}
 .skill__cost i{width:7px;height:7px;border:1px solid rgba(6,5,16,.9);display:block;border-radius:50%}
 .skill__cost i.free{background:transparent;border-color:#9a8fc0}
-.skill__cost i.miss{background:transparent!important;border-color:var(--danger);
-  box-shadow:0 0 4px rgba(255,59,59,.9)}
+.skill__cost i.miss{background:transparent!important;border-color:var(--danger);box-shadow:0 0 4px rgba(255,59,59,.9)}
 .skill__cost.gratis{padding:1px 5px}
 .skill__cost.gratis span{font-size:8px;font-weight:700;letter-spacing:.06em;color:var(--ink-mute)}
-.skill__tag{position:absolute;bottom:0;left:0;right:0;background:rgba(6,5,16,.78);
-  font-weight:700;font-size:8.5px;letter-spacing:.06em;text-align:center;color:var(--ink-dim);
-  text-transform:uppercase;pointer-events:none;line-height:12px}
-.skills--empty{width:281px;height:74px;border:1px dashed #2a2440;background:rgba(12,10,26,.35);
-  border-radius:5px;padding:0}
 
-/* fileira do inimigo: somente leitura — sem custo, sem rótulo, mais apagada */
-/* ===== ABA DE HABILIDADES DO INIMIGO =====
-   Fechada por padrão: só uma alça de 16px. O jogador abre a do personagem
-   que quiser consultar. Uma por vez. Abre para dentro do palco central,
-   em posição absoluta, então nada na tela se desloca. */
-.unit--enemy{position:relative}
-.foetab{flex:none;width:16px;align-self:stretch;margin:2px 0 16px;padding:0;cursor:pointer;
-  border:1px solid #4a3550;border-right:0;border-radius:3px 0 0 3px;
-  background:linear-gradient(90deg,rgba(30,18,38,.25),rgba(30,18,38,.7));
-  color:#8d7fa8;font-size:11px;line-height:1;transition:.15s;
-  display:flex;align-items:center;justify-content:center}
-.foetab:active{color:var(--gold-text);border-color:var(--gold-soft)}
-.foetab.open{background:linear-gradient(90deg,rgba(58,34,10,.4),rgba(58,34,10,.85));
-  border-color:var(--gold-soft);color:var(--gold-text)}
-.foetab__dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);
-  width:5px;height:5px;border-radius:50%;background:var(--hp-ok-1);
-  box-shadow:0 0 5px rgba(127,240,165,.9)}
+/* ---------- PAINEL de leitura: 4 estados + histórico (§214) ---------- */
+.panel__body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:8px 9px}
+.detail{display:flex;flex-direction:column;gap:6px;min-height:0;flex:1 1 auto}
+.detail__top{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.detail__icon{width:46px;height:46px;flex:0 0 auto;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
+.detail__icon--skill{border-width:1px}
+.detail__id{min-width:0;flex:1 1 auto}
+.detail__name{font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.02em;color:var(--ink);line-height:1.15}
+.detail__meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:3px}
+.detail__cd{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.05em;
+  color:var(--ink-mute);text-transform:uppercase}
+.detail__pips{display:flex;gap:2px;align-items:center}
+.detail__pips i{width:8px;height:8px;border-radius:50%;border:1px solid rgba(6,5,16,.9);display:block}
+.detail__pips i.free{border-color:#9a8fc0}
+.detail__text{flex:1 1 auto;min-height:0;overflow-y:auto;margin-top:2px;
+  font-weight:600;font-size:12px;line-height:1.45;color:var(--ink-dim)}   /* estoura → ROLAGEM interna */
+.detail__text b{color:var(--gold-text)}
+.detail__classes{flex:0 0 auto;font-weight:700;font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-mute);border-top:1px solid rgba(216,178,90,.14);padding-top:5px;line-height:1.4}
+.detail__log{font-weight:600;font-size:11.5px;line-height:1.5;color:var(--ink-dim)}
+.detail__log b{display:inline-block;min-width:15px;color:var(--gold-soft);font-weight:800}
+.detail--consulta .detail__name{color:#ffb9c6}
+.detail--consulta .detail__icon{border-color:#8a4a5c}
+/* KIT do inimigo (toque longo, item 8): lista das 4 habilidades + passiva, tocável p/ detalhe */
+.kit{display:flex;flex-direction:column;gap:5px;overflow-y:auto;min-height:0;flex:1 1 auto}
+.kit__row{display:flex;gap:7px;align-items:center;padding:4px 5px;border-radius:6px;cursor:pointer;
+  background:rgba(20,16,38,.6);border:1px solid #2c2648;text-align:left}
+.kit__row:active{border-color:var(--gold-soft)}
+.kit__disc{width:34px;height:34px;flex:0 0 auto;border-radius:7px;overflow:hidden;border:1px solid #5a4560}
+.kit__id{min-width:0;flex:1 1 auto}
+.kit__nome{font-weight:700;font-size:11.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kit__meta{font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--ink-mute);text-transform:uppercase}
+.kit__back{flex:0 0 auto;align-self:flex-start;margin-bottom:4px}
 
-.foepanel{position:absolute;right:100%;top:0;margin-right:4px;z-index:6;
-  display:flex;gap:5px;padding:5px 8px;border-radius:34px;
-  background:rgba(16,11,30,.96);border:1px solid var(--gold-soft);
-  box-shadow:0 6px 20px rgba(0,0,0,.75)}
-.foesk{position:relative;width:52px;height:52px;border:1px solid rgba(224,96,127,.5);
-  border-radius:50%;background:rgba(24,16,40,.9);cursor:pointer;padding:0;overflow:hidden}
-.foesk--uni{border-style:dashed}
-.foesk__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:'Cinzel',serif;font-weight:900;font-size:14px;opacity:.72}
-.foesk__cd{position:absolute;inset:0;border-radius:50%;background:rgba(6,5,16,.78);display:flex;
-  align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;
-  font-size:22px;color:#ff8fae}
-.foesk__cost{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);display:flex;gap:2px;
-  padding:1px 3px;border-radius:6px;background:rgba(6,5,16,.9)}
-.foesk__cost i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(6,5,16,.9);display:block}
-.foesk__cost i.free{background:transparent;border-color:#9a8fc0}
-.foesk.peek{border-color:var(--gold-text);box-shadow:0 0 8px rgba(255,217,122,.55)}
-.foepanel__lbl{writing-mode:vertical-rl;transform:rotate(180deg);align-self:center;
-  font-size:8px;font-weight:700;letter-spacing:.12em;color:#6e6690;text-transform:uppercase}
-
-/* ---------- RODAPÉ ---------- */
-.footer{position:absolute;bottom:0;left:0;right:0;height:94px;display:flex;align-items:stretch;gap:9px;
-  padding:8px 10px;z-index:3;
-  background:linear-gradient(0deg,rgba(9,8,20,.97) 0%,rgba(9,8,20,.82) 70%,rgba(9,8,20,0) 100%)}
+/* ---------- RODAPÉ (46): estado da ação à esquerda · ENCERRAR à direita ---------- */
+.footer{position:absolute;bottom:0;left:0;right:0;height:46px;display:flex;align-items:center;gap:10px;
+  padding:0 12px;z-index:3;
+  background:linear-gradient(0deg,rgba(9,8,20,.97) 0%,rgba(9,8,20,.7) 70%,transparent 100%)}
+.acaoestado{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
+.acao__txt{min-width:0;font-weight:600;font-size:12px;letter-spacing:.02em;color:var(--ink-dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acao__txt b{color:var(--gold-text);font-weight:700}
 /* ==================== SISTEMA DE BOTÕES ====================
    Placa inscrita, não pílula com gradiente. A letra faz o trabalho;
    o metal é só uma régua de 1px. Ouro preenchido existe UMA vez por tela.
@@ -349,42 +356,28 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:rgba(16,12,30,.98);border:1px solid var(--gold-soft);box-shadow:0 8px 26px rgba(0,0,0,.75)}
 .menu .b{justify-content:flex-start;width:100%}
 
-.detail{flex:1;min-width:0;display:flex;align-items:center;gap:14px;padding:10px 16px;
-  background:rgba(20,16,42,.72);border:1px solid #2c2648;border-radius:6px}
-.detail__icon{width:54px;height:54px;flex:none;border:1px solid #3a3358;border-radius:3px;overflow:hidden;background:#14112a}
-.detail__icon--skill{border-radius:50%}
-.detail__body{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
-.detail__head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.detail__name{font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.12em;color:var(--gold-text)}
+/* custo em bolinhas (pipsDetalhe) + palavras-chave coloridas — usados no painel de leitura */
 .cost{display:flex;align-items:center;gap:4px}
-.cost__pip{width:12px;height:12px;border:1px solid #0a0912}
+.cost__pip{width:9px;height:9px;border:1px solid #0a0912;border-radius:50%}
 .cost__pip--empty{background:#1a1730;border-color:#4a3f72}
-.cost__none{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-mute)}
-.detail__sep{width:1px;height:12px;background:#3a3158}
-.detail__cd{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-dim)}
-.detail__text{font-size:13px;font-weight:600;line-height:1.3;color:var(--ink);text-wrap:pretty;
-  max-height:36px;overflow:hidden}
-/* palavras-chave coloridas no painel (estilo Naruto-Arena) */
+.cost__none{font-size:9.5px;font-weight:700;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase}
 .kw{font-weight:700}
 .kw--ctrl{color:#c58bff}   /* controle/Mental */
 .kw--dot{color:#ff9a5c}    /* dano contínuo/Aflição */
 .kw--def{color:#5fc6ff}    /* proteção/defesa */
 .kw--neg{color:#77d67a}    /* "não pode ser..." / ignora / dano puro */
-.detail__classes{font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--ink-mute)}
-.detail__call{color:var(--gold-text);animation:blink 1.25s ease-in-out infinite}
 @keyframes blink{50%{opacity:.42}}
-.detail__log{font-size:12px;font-weight:600;line-height:1.34;color:var(--ink-dim);max-height:52px;overflow:hidden}
-.detail__log b{color:var(--ink-mute);font-weight:700;margin-right:5px}
-
-.endturn{flex:none;width:150px;flex-direction:column;gap:3px;height:auto;padding:9px 12px}
-.detail__act{flex:none;display:flex;flex-direction:column;gap:5px;width:112px;justify-content:center}
-.detail__act .b{width:100%}
+/* ENCERRAR TURNO no canto inferior DIREITO (rodapé 46) */
+.endturn{flex:0 0 auto;flex-direction:column;gap:1px;height:38px;padding:3px 16px;min-width:128px}
 .b--wait{color:var(--gold-text);border-color:rgba(216,178,90,.45);border-style:dashed;
-  animation:blink 1.25s ease-in-out infinite;flex-direction:column;gap:1px;
-  font-size:10px;line-height:1.1;height:auto;padding:6px 6px}
-.endturn__l1{font-family:'Cinzel',serif;font-weight:900;font-size:14px;letter-spacing:.1em;line-height:1;color:inherit}
-.endturn__hint{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.09em;
+  animation:blink 1.25s ease-in-out infinite;flex-direction:column;gap:0;
+  font-size:9.5px;line-height:1.1;height:38px;padding:3px 8px}
+.endturn__l1{font-family:'Cinzel',serif;font-weight:900;font-size:12.5px;letter-spacing:.07em;line-height:1;color:inherit}
+.endturn__hint{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.07em;
   text-transform:uppercase;line-height:1;color:inherit;opacity:.68}
+/* Confirmar/Cancelar da ação vivem no rodapé, à esquerda de ENCERRAR */
+.acao__act{flex:0 0 auto;display:flex;gap:6px}
+.acao__act .b{height:34px;padding:0 12px}
 
 /* ---------- SOBREPOSIÇÕES ---------- */
 .ov{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
@@ -862,10 +855,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* ===================== F3.1/§207 — HUD da condição: UMA LINHA na FAIXA SUPERIOR, fora do tabuleiro =====================
    O HUD mora numa faixa ENTRE a barra de topo (0–63) e os times (que descem p/ 88 em `temhud`), nunca sobre os
    discos/retratos. `temhud` recompõe o layout SÓ quando há HUD: times descem, o rodapé encolhe p/ caber os 3. */
-#baselayer.temhud .team{top:88px}
-#baselayer.temhud .field{top:84px;bottom:74px}
-#baselayer.temhud .footer{height:72px}
-.phud{position:absolute;left:8px;right:8px;top:65px;height:21px;z-index:3;pointer-events:none;
+/* §214: o board desce e encolhe quando há HUD, para o HUD morar numa faixa PRÓPRIA (top 47,
+   entre a barra de topo e as fileiras) — nunca sobre os tiles/retratos, e as fileiras nunca
+   cruzam o rodapé (board fica 68..382; rodapé 382..428). */
+#baselayer.temhud .board{top:68px;bottom:46px}
+.phud{position:absolute;left:8px;right:8px;top:47px;height:19px;z-index:4;pointer-events:none;
   display:flex;align-items:center;gap:10px;overflow:hidden;
   background:linear-gradient(180deg,rgba(10,8,22,.92),rgba(10,8,22,.72));
   border:1px solid var(--gold-soft);border-radius:7px;padding:0 11px}

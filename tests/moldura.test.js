@@ -31,7 +31,7 @@ const EPS = 0.6;
 // do palco: menorTextoDesign × escala × DPR. Renderizamos de verdade em DPR 2 e 3
 // (o real dos aparelhos de hoje) e cobramos o piso — CRAVADO, não mais reportado.
 const MENOR_TEXTO_DESIGN = 8; // menor texto do jogo no palco, px de design (shell.html
-                              // .skill__cost.gratis span / .foepanel__lbl). Spec: enquadramento.test.js
+                              // .skill__cost.gratis span / .effect__turns). Spec: enquadramento.test.js
 const PISO_FISICO = 11;       // px físicos mínimos para leitura confortável em celular
 const DPRS = [2, 3];          // DPR real dos aparelhos de hoje (não só 1)
 
@@ -101,6 +101,58 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       const cheioH = (r.R - r.L) >= larguraUtil - EPS, cheioV = (r.B - r.T) >= alturaUtil - EPS;
       ok(cheioH || cheioV, `${rot}: sobra tarja nos DOIS eixos (largura ${Math.round(r.R - r.L)}/${larguraUtil}, altura ${Math.round(r.B - r.T)}/${alturaUtil})`);
     }
+  }
+
+  // == geometria da batalha (§214): a última fileira NUNCA cruza o rodapé e o tile
+  // (mesmo RECOLHIDO, quando cresce de 78→~100px) NUNCA estoura a fileira. Medido em
+  // navegador REAL a 926×428 (o palco de referência), com rect real, aberto e recolhido. ==
+  console.log('== geometria (§214): fileira não cruza o rodapé; tile recolhido não estoura a fileira ==');
+  {
+    await page.setViewportSize({ width: 926, height: 428 });
+    await page.evaluate(() => {
+      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
+      ELEMS.forEach(e => st.lados[0].orbs[e] = 3);
+      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false; peekKit = null;
+      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
+    });
+    const geo = async () => page.evaluate(() => {
+      const rows = [...document.querySelectorAll('.brow')];
+      const last = rows[rows.length - 1].getBoundingClientRect();
+      const ft = document.querySelector('.footer').getBoundingClientRect();
+      const r0 = rows[0].getBoundingClientRect();
+      const tile = rows[0].querySelector('.brow__tiles .skill');
+      const tr = tile ? tile.getBoundingClientRect() : null;
+      return { lastB: last.bottom, ftT: ft.top, rowT: r0.top, rowB: r0.bottom,
+        tileT: tr ? tr.top : null, tileB: tr ? tr.bottom : null, tileW: tr ? tr.width : null };
+    });
+    const a = await geo();
+    ok(a.lastB <= a.ftT + EPS, `aberto: última fileira (${Math.round(a.lastB)}) cruza o rodapé (${Math.round(a.ftT)})`);
+    ok(a.tileB <= a.rowB + EPS && a.tileT >= a.rowT - EPS,
+      `aberto: tile estoura a fileira (tile ${Math.round(a.tileT)}..${Math.round(a.tileB)} vs fileira ${Math.round(a.rowT)}..${Math.round(a.rowB)})`);
+    // RECOLHIDO: os tiles crescem, mas não podem cruzar o rodapé nem estourar a fileira
+    await page.evaluate(() => { painelRecolhido = true; render(); });
+    const c = await geo();
+    ok(c.lastB <= c.ftT + EPS, `recolhido: última fileira (${Math.round(c.lastB)}) cruza o rodapé (${Math.round(c.ftT)})`);
+    ok(c.tileB <= c.rowB + EPS && c.tileT >= c.rowT - EPS,
+      `recolhido: tile estoura a fileira (tile ${Math.round(c.tileT)}..${Math.round(c.tileB)} vs fileira ${Math.round(c.rowT)}..${Math.round(c.rowB)})`);
+    ok(c.tileW > a.tileW, `recolhido: os tiles deveriam crescer (${Math.round(a.tileW)}→${Math.round(c.tileW)}px)`);
+    console.log(`  aberto: fila≤rodapé (${Math.round(a.lastB)}≤${Math.round(a.ftT)}) · recolhido: tile ${Math.round(a.tileW)}→${Math.round(c.tileW)}px, fila≤rodapé (${Math.round(c.lastB)}≤${Math.round(c.ftT)})`);
+
+    // §207/§214: numa Provação (com HUD), a faixa do HUD termina ANTES das fileiras — medido de verdade.
+    const hud = await page.evaluate(() => {
+      prova = PROVACOES.find(x => x.key === 'durga'); provaFim = null; campanha = null; painelRecolhido = false;
+      st = montarProvacao(prova); vsCPU = false; pararRelogio(); ir('batalha', {}, { substituir: true }); render();
+      const ph = document.querySelector('.phud').getBoundingClientRect();
+      const rows = [...document.querySelectorAll('.brow')];
+      const r0 = rows[0].getBoundingClientRect();
+      const last = rows[rows.length - 1].getBoundingClientRect();
+      const ft = document.querySelector('.footer').getBoundingClientRect();
+      return { phB: ph.bottom, rowT: r0.top, lastB: last.bottom, ftT: ft.top };
+    });
+    ok(hud.phB <= hud.rowT + EPS, `HUD: a faixa (${Math.round(hud.phB)}) cruza as fileiras (${Math.round(hud.rowT)})`);
+    ok(hud.lastB <= hud.ftT + EPS, `HUD: a última fileira (${Math.round(hud.lastB)}) cruza o rodapé (${Math.round(hud.ftT)})`);
+    console.log(`  com HUD: faixa≤fileiras (${Math.round(hud.phB)}≤${Math.round(hud.rowT)}), fila≤rodapé (${Math.round(hud.lastB)}≤${Math.round(hud.ftT)})`);
+    await page.evaluate(() => { prova = null; painelRecolhido = false; ir('home', {}, { substituir: true }); render(); });
   }
 
   console.log('== retrato: mostra "gire o aparelho", esconde o palco ==');

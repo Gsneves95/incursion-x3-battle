@@ -1,112 +1,91 @@
-// ui/campo.js — as 3 bandas: retrato, vida, efeitos, discos, aba do inimigo, ficha.
+// ui/campo.js — as bandas da fileira (§214): retrato (nome inteiro + vida + efeitos), os 4 tiles
+// de habilidade, a ficha da unidade, e a consulta do KIT inimigo por TOQUE LONGO no retrato.
 function efeitosHTML(u){
   const out=[];
   for(const e of u.efeitos){const s=SYM[e.type]; if(!s)continue;
     out.push(`<button class="effect effect--${s[1]}" data-ef="${u.uid}|${e.type}">
       <div class="slot" data-slot="effect-${e.type}"><span class="effect__g">${s[0]}</span></div>
-      <div class="effect__turns">${e.dur>90?'\u221e':e.dur}</div></button>`);}
+      <div class="effect__turns">${e.dur>90?'∞':e.dur}</div></button>`);}
   for(const d of u.dots)
     out.push(`<button class="effect effect--dot" data-dot="${u.uid}|${H(d.nome)}">
-      <div class="slot" data-slot="effect-dot"><span class="effect__g">\u2739</span></div>
+      <div class="slot" data-slot="effect-dot"><span class="effect__g">✹</span></div>
       <div class="effect__turns">${d.dur}</div></button>`);
   if(out.length>FX_MAX)
     return out.slice(0,FX_MAX-1).join('')+`<span class="fxmore" data-ficha="${u.uid}">+${out.length-FX_MAX+1}</span>`;
   return out.join('');
 }
 
-/* ---------- retrato ---------- */
+/* ---------- retrato (§214): 88 de largura, nome INTEIRO, aro ouro (aliado) x vermelho (inimigo) ---------- */
 function retrato(u,inimigo){
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
-  const g=_catPartida()[u.key]||{};   // catálogo DA PARTIDA (deuses ∪ bestiário): criatura PvE não está em GODS
+  const g=_catPartida()[u.key]||{};   // catalogo DA PARTIDA (deuses U bestiario): criatura PvE nao esta em GODS
   const alvo=alvos.some(x=>x.uid===u.uid);
   const jaEscolhido=escolhidos.includes(u.uid);
   const cls=['portrait'];
   if(!u.vivo)cls.push('is-down');
   if(alvo)cls.push('is-target');
   if(jaEscolhido)cls.push('is-picked');
-
   if(hpAnt[u.uid]!==undefined&&hpAnt[u.uid]>u.hp)cls.push('hit');
   const hpcls=['hp']; if(!u.vivo)hpcls.push('hp--empty'); else if(u.hp<=40)hpcls.push('hp--warn');
-  return `<div class="unit__portrait">
-    <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''}>
+  const upcls=['unit__portrait', inimigo?'up--enemy':'up--ally'];
+  if(u.vivo&&!inimigo&&!podeAgir(u))upcls.push('acted');   // "ja agiu" esmaece o retrato (nao a arte dos tiles)
+  return `<div class="${upcls.join(' ')}">
+    <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''} ${inimigo?'data-foe="1"':''}>
       ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 30)}
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
       ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>`:''}
+      ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
       <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
       <div class="portrait__x"></div>
     </div>
+    <div class="portrait__nome" title="${H(u.nome)}">${H(u.nome)}</div>
     <div class="${hpcls.join(' ')}">
       ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
       ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield/u.maxHp*100)}%"></div>`:''}
-      <div class="hp__label">${u.hp}${u.shield?' \u25e7'+u.shield:''}</div>
+      <div class="hp__label">${u.hp}${u.shield?' ◧'+u.shield:''}</div>
     </div></div>`;
 }
 
-/* ---------- fileira de habilidades ---------- */
-function foeAba(u){
+/* ---------- fileira (§214): aliado (retrato + 4 tiles) x inimigo (retrato) da mesma posicao ---------- */
+function filaHTML(a, e){
+  // times ASSIMÉTRICOS (campanha: 3×1, 3×2, 0×3): uma banda pode não ter unidade — desenha vazia,
+  // mantendo a coluna alinhada por posição sem quebrar em u.hp de unidade indefinida.
+  return `<div class="brow">
+    <div class="brow__ally">${a?retrato(a,false):''}</div>
+    <div class="brow__tiles">${a?tilesHTML(a):''}</div>
+    <div class="brow__enemy">${e?retrato(e,true):''}</div>
+  </div>`;
+}
+function tilesHTML(u){
   if(!u.vivo)return '';
-  // no turno do oponente a aba dele FECHA e não abre (é assistir à digitação alheia);
-  // no MEU turno ela é consultável — ler as habilidades dele é base da leitura do jogo.
-  const aberta=abaFoe===u.uid&&ehMeuTurno();
   const acs=acoesDe(st,u);
-  // dica de leitura: a Defesa dele em recarga significa janela de abate aberta
-  const defPronta=(u.cd.defesa||0)===0;
-  const painel=aberta?`<div class="foepanel">
-      <span class="foepanel__lbl">consulta</span>
-      ${acs.map(a=>{
-        const cd=u.cd[a.slot]||0;
-        return `<button class="foesk ${a.universal?'foesk--uni':''}" data-look="${u.uid}|${a.slot}"
-          style="border-color:${a.slot==='defesa'?'var(--ink-mute)':COR(u.elem)}">
-          ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
-          <div class="foesk__mono" style="color:${a.slot==='defesa'?'var(--ink-dim)':COR(u.elem)}">${H(mono(a))}</div>
-          <div class="foesk__cost">${foePips(a.cost)}</div>
-          ${cd?`<div class="foesk__cd">${cd}</div>`:''}
-        </button>`;}).join('')}
-    </div>`:'';
-  return painel+`<button class="foetab ${aberta?'open':''}" data-aba="${u.uid}"
-    title="${aberta?'fechar':'ver'} habilidades de ${H(u.nome)}">${aberta?'\u203a':'\u2039'}
-    ${!aberta&&!defPronta?'<span class="foetab__dot"></span>':''}</button>`;
-}
-function foePips(cost){
-  const out=[];
-  for(const k in cost){for(let i=0;i<cost[k];i++)
-    out.push(k==='livre'?'<i class="free"></i>':`<i style="background:${COR(k)}"></i>`);}
-  return out.join('');
-}
-function habilidades(u){
-  if(!u.vivo)return `<div class="skills skills--empty"></div>`;
-  const acs=acoesDe(st,u);
-  return `<div class="skills">`
-    +acs.map(a=>{
+  return acs.map(a=>{
     const cd=u.cd[a.slot]||0;
     const semOrbe=!a.disponivel&&cd===0&&a.motivo==='sem_energia';
     const semAlvo=!a.disponivel&&cd===0&&a.motivo==='sem_alvo';
-    const travada=!a.disponivel&&cd===0&&!semOrbe&&!semAlvo;   // Selado/Sil\u00eancio/1\u00d7-j\u00e1-usada
+    const travada=!a.disponivel&&cd===0&&!semOrbe&&!semAlvo;   // Selado/Silencio/1x-ja-usada
     const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
-    // modo espectador (F0.7): no turno do oponente meus discos ficam SEM TOQUE e com o
-    // anel apagado \u2014 mas a ARTE continua em cor (regra do dono: nada de disco cinza).
     const clicavel=a.disponivel&&podeAgir(u)&&ehMeuTurno();
     const cls=['skill']; if(a.universal)cls.push('skill--uni');
-    if(clicavel)cls.push('is-ready');   // DISPONIBILIDADE = glow do anel (n\u00e3o filtro na arte)
+    if(clicavel)cls.push('is-ready');   // DISPONIBILIDADE = glow do anel (nao filtro na arte, §211)
     if(cd>0)cls.push('is-cooldown');
     if(travada)cls.push('is-locked');
-    if(semAlvo)cls.push('is-notarget');   // motivo distinto de travada (\u2298) \u2014 marca pr\u00f3pria (\u2205)
+    if(semAlvo)cls.push('is-notarget');
     if(semOrbe||!podeAgir(u)||!ehMeuTurno())cls.push('is-off');
     if(arm)cls.push('is-armed');
     cls.push('skill--'+a.slot);
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
-    // --anel viaja p/ o CSS acender o anel na cor do elemento (glow), sem tocar a arte
     return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" ${clicavel?'':'disabled'}>
       <span class="skill__disc" style="border-color:${anel};--anel:${anel}">
         ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
         <span class="skill__mono" style="color:${anel}">${H(mono(a))}</span>
         <span class="skill__cd">${cd||''}</span>
-        <span class="skill__lock">\u2298</span>
-        <span class="skill__na">\u2205</span>
+        <span class="skill__lock">⊘</span>
+        <span class="skill__na">∅</span>
       </span>
       ${pipsMini(a.cost, st.lados[u.lado].orbs)}
     </button>`;
-  }).join('')+`</div>`;
+  }).join('');
 }
 function ficha(u){
   const g=_catPartida()[u.key]||{},lin=[];
@@ -116,51 +95,55 @@ function ficha(u){
   for(const k of['habilidade','milagre','defesa'])if(u.cd[k]>0)lin.push(`${k} em recarga ${u.cd[k]}t`);
   if(u.shield)lin.push(`escudo ${u.shield}`);
   detalhe={nome:u.nome.toUpperCase(),chave:'god-'+u.key,glifo:ini(u.nome),cor:COR(u.elem),
-    meta:`${u.hp}/${u.maxHp} \u00b7 ${ELAB[u.elem]}`,
-    texto:lin.join('  \u00b7  '),
-    classes:`${u.classe} \u00b7 ${u.funcao} \u00b7 ${u.faccao||g.faccao||'PvE'}`.toUpperCase()};
-  armado=null;alvos=[];escolhidos=[];render();
+    meta:`${u.hp}/${u.maxHp} · ${ELAB[u.elem]}`,
+    texto:lin.join('  ·  '),
+    classes:`${u.classe} · ${u.funcao} · ${u.faccao||g.faccao||'PvE'}`.toUpperCase()};
+  peekKit=null; armado=null;alvos=[];escolhidos=[];render();
 }
 
-/* ---------- eventos do campo (discos, aba/consulta do inimigo, retrato, passiva, efeitos) ---------- */
+/* ---------- eventos do campo (tiles, alvo, retrato, toque longo do inimigo, passiva, efeitos) ---------- */
 function ligarCampo(){
+  // TILES de habilidade (aliado): armar. Ao armar, some a consulta de kit.
   stage.querySelectorAll('.skill').forEach(b=>{if(b.disabled)return;
-    b.onclick=()=>{const[uid,slot]=b.dataset.sk.split('|');armar(uid,slot);};});
-  stage.querySelectorAll('[data-aba]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    if(!ehMeuTurno())return;   // a aba do oponente não abre no turno dele
-    abaFoe=abaFoe===b.dataset.aba?null:b.dataset.aba; render();});
-  stage.querySelectorAll('[data-look]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const[uid,slotk]=b.dataset.look.split('|');
-    const u=todas().find(x=>x.uid===uid);
-    const a=acoesDe(st,u).find(x=>x.slot===slotk); if(!a)return;
+    b.onclick=()=>{peekKit=null; const[uid,slot]=b.dataset.sk.split('|');armar(uid,slot);};});
+  // ALVO aliado (cura/buff): retrato aliado marcado como alvo — toque escolhe
+  stage.querySelectorAll('.portrait[data-target]:not([data-foe])').forEach(el=>el.onclick=()=>alvo(el.dataset.uid));
+  // retrato aliado comum: ficha da unidade
+  stage.querySelectorAll('.portrait:not([data-foe]):not([data-target])').forEach(el=>{
+    el.onclick=ev=>{ev.stopPropagation();const u=todas().find(x=>x.uid===el.dataset.uid); if(u)ficha(u);};});
+  // retrato INIMIGO: TOQUE LONGO abre o kit; toque curto = alvo (se for) ou ficha (§214 item 8)
+  stage.querySelectorAll('.portrait[data-foe]').forEach(el=>ligarFoe(el));
+  // aba de RECOLHER o painel (sempre visivel)
+  const tab=stage.querySelector('.panel__tab'); if(tab)tab.onclick=()=>{ painelRecolhido=!painelRecolhido; render(); };
+  // no KIT consultado: tocar uma habilidade abre o detalhe (estado 3 — habilidade inimiga)
+  stage.querySelectorAll('[data-kitab]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
+    const[uid,slotk]=b.dataset.kitab.split('|');
+    const u=todas().find(x=>x.uid===uid); const a=u&&acoesDe(st,u).find(x=>x.slot===slotk); if(!a)return;
     const cd=u.cd[slotk]||0;
-    peek=b.dataset.look;
     detalhe={nome:a.nome.toUpperCase(),chave:'skill-'+u.key+'-'+slotk,glifo:mono(a),cor:COR(u.elem),redondo:true,
       pips:pipsDetalhe(a.cost),
       meta:u.nome.toUpperCase()+' · '+(cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'),
-      texto:a.desc,classes:classesTxt(u,a)+' · INIMIGA — CONSULTA'};
-    armado=null;alvos=[];escolhidos=[];render();});
-  stage.querySelectorAll('[data-target]').forEach(el=>el.onclick=()=>alvo(el.dataset.uid));
-  stage.querySelectorAll('.portrait').forEach(el=>{
-    if(el.dataset.target)return;
-    el.onclick=ev=>{ev.stopPropagation();
-      const u=todas().find(x=>x.uid===el.dataset.uid); if(u)ficha(u);};});
-  stage.querySelectorAll('[data-ficha]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const u=todas().find(x=>x.uid===b.dataset.ficha); if(u)ficha(u);});
+      texto:a.desc,classes:classesTxt(u,a)+' · INIMIGA — CONSULTA', consulta:true, deKit:uid};
+    render();});
+  // voltar do detalhe (estado 3) para a LISTA do kit
+  const kb=stage.querySelector('[data-kitback]'); if(kb)kb.onclick=()=>{ detalhe=null; render(); };
+  // passiva (aliada ou inimiga): estado 4 do painel
   stage.querySelectorAll('[data-pas]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.pas),g=_catPartida()[u.key]||{};
     if(!g.passiva)return;
     detalhe={nome:g.passiva.nome.toUpperCase(),chave:'god-'+u.key,glifo:'P',cor:COR(u.elem),
       meta:u.nome.toUpperCase()+' · PASSIVA'+(g.passiva.inerte?' · INERTE':''),
-      texto:g.passiva.desc,classes:'SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA'};
-    armado=null;alvos=[];escolhidos=[];render();});
+      texto:g.passiva.desc,classes:'SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA', passiva:true};
+    peekKit=null; armado=null;alvos=[];escolhidos=[];render();});
+  stage.querySelectorAll('[data-ficha]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
+    const u=todas().find(x=>x.uid===b.dataset.ficha); if(u)ficha(u);});
   stage.querySelectorAll('[data-ef]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,tp]=b.dataset.ef.split('|');const u=todas().find(x=>x.uid===uid);
     const e=u.efeitos.find(x=>x.type===tp),s=SYM[tp];
     detalhe={nome:s[2].toUpperCase(),chave:'effect-'+tp,glifo:s[0],
       meta:u.nome.toUpperCase()+' · '+(e.dur>90?'PERMANENTE':e.dur+' TURNO(S)')+(e.v?' · VALOR '+e.v:''),
       texto:s[3],classes:'AS DURAÇÕES DESCONTAM NO FIM DO TURNO DE QUEM CARREGA O EFEITO'};
-    render();});
+    peekKit=null; render();});
   stage.querySelectorAll('[data-dot]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,nm]=b.dataset.dot.split('|');const u=todas().find(x=>x.uid===uid);
     const d=u.dots.find(x=>x.nome===nm);
@@ -168,9 +151,21 @@ function ligarCampo(){
       meta:u.nome.toUpperCase()+' · '+d.v+'/TURNO · '+d.dur+' TURNO(S)',
       texto:'Dano contínuo. Conta no início do turno de quem sofre, ANTES de ele agir — pode matar sem que a unidade jogue.',
       classes:'DANO PURO · IGNORA REDUÇÃO E ESCUDO · ATRAVESSA INVULNERABILIDADE'};
-    render();});
-  // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa. Só armo o
-  // ouvinte quando há resumo à mostra; captura antes do handler do alvo, que então
-  // redesenha já sem o resumo.
+    peekKit=null; render();});
+  // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa.
   if(resumoTurno) stage.addEventListener('pointerdown',()=>{ resumoTurno=null; },{once:true,capture:true});
+}
+// TOQUE LONGO no retrato inimigo: abre o kit dele no painel (item 8). Limiar de movimento
+// (10px) cancela o gesto se o dedo arrastar. Toque curto: alvo (se for) ou ficha da unidade.
+function ligarFoe(el){
+  const uid=el.dataset.uid; let timer=null, longo=false, x0=0, y0=0;
+  const abrir=()=>{ longo=true; peekKit=uid; detalhe=null; armado=null;alvos=[];escolhidos=[]; render(); };
+  el.addEventListener('pointerdown',e=>{ longo=false; x0=e.clientX; y0=e.clientY; clearTimeout(timer); timer=setTimeout(abrir,420); });
+  el.addEventListener('pointermove',e=>{ if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10) clearTimeout(timer); });
+  el.addEventListener('pointerup',()=>{ clearTimeout(timer);
+    if(longo){ longo=false; return; }                 // ja abriu o kit no hold
+    if(el.dataset.target){ alvo(uid); }                // arma em curso: escolhe alvo
+    else { const u=todas().find(x=>x.uid===uid); if(u)ficha(u); } });
+  el.addEventListener('pointercancel',()=>clearTimeout(timer));
+  el.addEventListener('pointerleave',()=>clearTimeout(timer));
 }

@@ -1,7 +1,6 @@
-// ui/topo.js — barra superior: jogadores, relógio (só desenho), energia, menu.
+// ui/topo.js — barra superior ENXUTA (§214): turno + relógio, energia (minhas orbes), e os
+// três botões de menu. Os rótulos de time (Você/oponente) moram sobre as COLUNAS, não aqui.
 function topoHTML(){
-  // a BARRA é o MEU painel de recurso (ladoExibido), em qualquer turno — no turno do
-  // oponente eu estou planejando o próximo. A energia DELE é contexto (mini-pips na placa).
   const l=st.lados[ladoExibido()];
   let plano=null;
   if(armado){const u=l.units.find(x=>x.uid===armado.uid);
@@ -16,37 +15,20 @@ function topoHTML(){
       <span class="energy__dot" style="background:${COR(e)}"></span><span class="energy__n">${n}</span></button>`;
   }).join('');
   const mm=Math.floor(relogio/60), ss=String(relogio%60).padStart(2,'0');
-  // perspectiva fixa: aliado = ladoExibido (eu), inimigo = o outro. O esmaecido
-  // marca quem NÃO está agindo agora (st.ativo). A energia do OPONENTE aparece aqui
-  // como CONTEXTO (mini-pips) — minha energia mora na barra do rodapé.
-  const jog=p=>{const side=p==='enemy'?1-ladoExibido():ladoExibido();
-    const nome=rotuloLado(side).toUpperCase();
-    return `<div class="player ${p==='enemy'?'player--enemy':''} ${side===st.ativo?'':'dim'}">
-      ${p==='enemy'?'':`<div class="player__avatar">${slot('player-1-avatar','I',null,14)}</div>`}
-      <div class="player__meta">
-        <div class="player__name">${nome}</div>
-        ${p==='enemy'?miniPips(st.lados[side]):''}
-      </div>
-      ${p==='enemy'?`<div class="player__avatar">${slot('player-2-avatar','K',null,14)}</div>`:''}
-    </div>`;};
   return `<header class="topbar">
-    ${jog('ally')}
     <div class="turnbox">
       <div class="timer ${relogio<=10?'low':''}">
         <div class="timer__fill" style="width:${Math.round(relogio/TURNO_SEG*100)}%"></div>
-        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} \u00b7 ${rotuloLado(st.ativo).toUpperCase()} \u00b7 ${mm}:${ss}</div>
-      </div>
-      <div class="energy">${pills}
-        <button class="b b--sec b--sm" id="btrocar" ${!ehMeuTurno()||l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
-          title="Trocar ${CONV_CUSTO} energias por 1 da sua escolha">\u21c4 Trocar</button>
+        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} · ${mm}:${ss}</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:9px">
-      ${jog('enemy')}
-      <div class="tools">
-        <button class="b b--quiet b--icon" id="blog" title="Registro">\u2261</button>
-        <button class="b b--quiet b--icon" id="bmenu" title="Mais">\u22ef</button>
-      </div>
+    <div class="energy">${pills}
+      <button class="b b--sec b--sm" id="btrocar" ${!ehMeuTurno()||l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
+        title="Trocar ${CONV_CUSTO} energias por 1 da sua escolha">⇄ Trocar</button>
+    </div>
+    <div class="tools">
+      <button class="b b--quiet b--icon" id="blog" title="Registro">≡</button>
+      <button class="b b--quiet b--icon" id="bmenu" title="Mais">⋯</button>
     </div>
   </header>
   ${menuAberto?`<div class="menu" id="menu">
@@ -66,14 +48,14 @@ function ligarTopo(){
     const l0=st.lados[st.ativo];
     if(l0.converteu||totalOrbs(l0)<CONV_CUSTO)return;
     ov='conv';convAlvo=b.dataset.conv;
-    armado=null;alvos=[];escolhidos=[];detalhe=null;menuAberto=false;render();});
+    armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render();});
   const bt=q('#btrocar'); if(bt&&!bt.disabled)bt.onclick=()=>{
-    ov='conv';convAlvo=null;armado=null;alvos=[];escolhidos=[];detalhe=null;menuAberto=false;render();};
+    ov='conv';convAlvo=null;armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render();};
   const bl=q('#blog'); if(bl)bl.onclick=()=>{ov=ov==='log'?null:'log';menuAberto=false;render();};
   const bm=q('#bmenu'); if(bm)bm.onclick=()=>{menuAberto=!menuAberto;render();};
   const bh=q('#bhelp'); if(bh)bh.onclick=()=>{ov='help';menuAberto=false;render();};
   const bf=q('#bfull'); if(bf)bf.onclick=()=>{alternarTelaCheia();menuAberto=false;render();};
-  const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};   // sair da partida p/ a home (com confirmação — a batalha tem saída, não é beco)
+  const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};   // sair da partida p/ a home (com confirmação)
   const bs=q('#bsurr'); if(bs)bs.onclick=()=>{ov='surr';menuAberto=false;render();};
   const ba=q('#bapagar'); if(ba)ba.onclick=()=>{ov='apagar';menuAberto=false;render();};
   // fechar o menu ao tocar fora, sem acumular ouvintes a cada render

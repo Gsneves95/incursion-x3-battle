@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §214 — FASE 4: a TELA DE BATALHA refeita com a lógica do Naruto-Arena adaptada à nossa proporção (2.16 larga): LEITURA à esquerda, TOQUE à direita. Painel de detalhe de 4 estados, recolhível; consulta de kit inimigo por toque longo.
+
+**O DESENHO (dono):** Naruto-Arena é 3×3 como o nosso, mas a proporção deles é 1.38 (quase quadrada) e a nossa é 2.16 (paisagem larga). O que **APLICA**: habilidade é RETÂNGULO (78×78, mostra mais arte que o círculo), o personagem é MAIOR que a habilidade, e existe um PAINEL de detalhe para LER o que a habilidade faz. O que **NÃO APLICA**: eles põem o painel embaixo — na nossa proporção larga, com o polegar direito dominando em paisagem, o que se TOCA vai à direita e o que se LÊ vai à esquerda. O painel vai para o LADO.
+
+**1. ZONAS por ergonomia (medidas a 926×428; topo 46 · board 46→380 · rodapé 380→426):**
+- **x0–262 PAINEL** (leitura) — à esquerda, longe do polegar.
+- **x262–370 retrato aliado + vida** · **x370–772 os 4 tiles** (toque) · **x772–918 retrato inimigo** (alvo).
+- **rodapé-esquerda** = estado da ação em texto ("Canto Suave armado · toque o inimigo"); **rodapé-direita** = ENCERRAR TURNO.
+- Fileira: retrato 88 · 4 tiles de 78 (gap 8) · retrato 88 · 3 fileiras de ~111px. Medido: ally x268–370, tiles x370–772 (tile 78×78), enemy x772–918, e **a última fileira fecha em 380 = topo do rodapé, sem cruzar**.
+
+**2. O PAINEL tem QUATRO estados** (o erro anterior foi desenhá-lo com um só): (1) nada armado → HISTÓRICO; (2) habilidade SUA → arte/nome/custo/recarga/o que faz; (3) habilidade INIMIGA (consulta) → mesmo card, marcado "CONSULTA"; (4) PASSIVA → sem custo/recarga. Prioridade: armado > detalhe tocado > kit consultado > resumo de turno > histórico.
+
+**3. TEXTO DO KIT — MEDIÇÃO (dono pediu decidir rolagem vs "ver mais"):** a maior descrição de ação do jogo é **Frenesi Sanguinário (Babi), 168 caracteres**. Medida no painel real (262px de largura, ~233px de altura útil): **cabe SEM rolar (233/233px, nada cortado)**. **Decisão: rolagem interna** (`.detail__text{overflow-y:auto}`) como rede de segurança — nenhum "ver mais" hoje porque nada estoura; a rolagem só engata se um kit futuro passar da altura. Preferi rolagem a corte porque "ver mais" esconde texto de regra que o jogador precisa ANTES de agir.
+
+**4. RECOLHÍVEL por uma ABA vertical fina** (`.panel__tab`, sempre visível, alvo grande) na borda esquerda. Recolhido, a aba É o painel (26px) e os **tiles crescem de 78 para 100px** (medido em navegador real; usa os 262px liberados). Tocar uma habilidade reabre o painel.
+- **DISTINÇÃO COM O §207 (dono pediu registrar):** o §207 RECUSOU botão de fechar no HUD porque o HUD carrega estado CRÍTICO da condição (Provação/Campanha) — esconder mataria a informação que decide a partida. O painel do §214 é CONSULTA (histórico/detalhe/kit): recolher DEVOLVE espaço de jogo sem esconder estado crítico. Casos diferentes, não exceção — HUD é obrigação de mostrar; painel é conveniência de leitura.
+
+**5. CONSULTA DO KIT INIMIGO por TOQUE LONGO (420ms) no retrato inimigo** → abre o kit dele no painel (4 habilidades + passiva, cada uma tocável para o detalhe estado 3). Movimento >10px cancela o gesto (rolar ≠ consultar). **SINALIZAÇÃO da descoberta (dono pediu dizer como):** um "**?**" no canto superior-esquerdo de todo retrato inimigo vivo (`.portrait__ask`, com `title="segure para ver o kit"`). Ler o oponente é a perícia central do jogo — precisa ser achável sem tutorial.
+
+**6. LIMPEZAS pedidas:** marca-d'água "INCURSION" FORA; NOMES inteiros no retrato (não abreviados); topo ENXUTO (turno+relógio, MINHAS orbes, ≡/⋯); rodapé diz o estado da ação à esquerda; **marcação de time** — "VOCÊ" (ouro) sobre a coluna aliada, NOME do oponente (vermelho) sobre a dele (molduras ouro × vermelha nos retratos).
+
+**7. TIMES ASSIMÉTRICOS:** a campanha tem encontros 3×1, 3×2 e até 0×3 (o jogador monta). Como a fileira PAREIA aliado[i] com inimigo[i], `filaHTML` desenha banda VAZIA quando falta a unidade, e o nº de fileiras é `max(aliados, inimigos)` — sem quebrar em `u.hp` de unidade indefinida.
+
+**CONSEQUÊNCIA a decidir (dono):** o placar de energia do OPONENTE (mini-pips `.nrgmini` da placa antiga) SAIU junto com as placas — o topo enxuto (item 11) só mostra as MINHAS orbes, e a marcação de time (item 13) é só o nome. Não reinventei espaço para a energia inimiga porque o §214 não pediu; mas é informação de jogo (dá pra prever o Milagre dele) e o dono pode querer de volta — fica registrado como reversível.
+
+**Arte:** as artes dos discos são MEDALHÕES circulares (do §211). O tile agora é retângulo (a moldura), mas a arte só preencherá os cantos quando as artes forem REENQUADRADAS — não regerei os ~400 assets. A moldura retangular é o que o §214 pediu; o preenchimento total dos cantos fica pendente da re-arte.
+
+**GUARDAS (suítes verdes):**
+- `interface` — reescrita para a nova estrutura (brow/painel/kit): 3 fileiras, 12 tiles só do lado aliado, "?" nos 3 inimigos, tile RETÂNGULO (disco 10px, não 50%), 4 estados do painel com texto real, kit por consulta (toque na hab. → detalhe estado 3 → volta ao kit), recolher (aba muda `#baselayer.pnfold`; px medido em moldura), rótulos VOCÊ/oponente, watermark fora.
+- `moldura` (navegador REAL, rect real a 926×428) — **a última fileira nunca cruza o rodapé** (aberto 381≤381, recolhido 381≤381) e **o tile recolhido não estoura a fileira** (cresce 78→100 sem passar da fileira); e a faixa do HUD (Provação) fecha antes das fileiras (67≤69). Saturação ≥30 em todo estado segue verde (55).
+- `perspectiva` — placas por modo migradas para `.teamlbl` (Você/CPU, Você/Jogador 2). `render_sweep` — §207 vira guarda estrutural (faixa do HUD ≤ 68) + a geometria real mora em `moldura`. `provacao_loop` — inimigos-criatura via `.brow__enemy .portrait[data-foe]`.
+
 ## §213 — SEPARA as rotas "Provações" (missões) e "Desafios" (perícia) já; carrossel a 8 destinos; colisão "pergaminhos" renomeada.
 
 **A CORREÇÃO DO §212 (dono):** o texto da arte do banner "PROVAÇÕES · LIBERE NOVOS DEUSES" NÃO está errado — está ADIANTADO: descreve as MISSÕES (que voltam no PvP/F6), não os Desafios. Não regerar. O que faltava era um banner PRÓPRIO para Desafios e a SEPARAÇÃO das duas rotas — para o banner que promete liberar deus apontar para a tela que vai liberar (missões), não para a que testa perícia (pergaminhos).

@@ -105,7 +105,7 @@ console.log('== 7. batalha com inimigos do BESTIÁRIO renderiza (regressão: ret
 {
   const { w, $$ } = entrar('bragi');   // bragi enfrenta vidente_corrompido/aparicao/golem_runico (criaturas PvE)
   ok(w.eval("rotaAtual()") === 'batalha', 'a Provação de bestiário entra na batalha');
-  ok($$('.unit--enemy').length === 3, 'os 3 inimigos-criatura renderizam (sem quebrar em GODS[key] indefinido)');
+  ok($$('.brow__enemy .portrait[data-foe]').length === 3, 'os 3 inimigos-criatura renderizam (sem quebrar em GODS[key] indefinido)');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

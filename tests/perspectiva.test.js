@@ -10,8 +10,8 @@ const w = dom.window;
 const $$ = s => Array.from(w.document.querySelectorAll(s));
 const $ = s => w.document.querySelector(s);
 const MEU = ['zeus', 'ogum', 'tyr'], OPO = ['sobek', 'brigid', 'ganesha'];
-// gods desenhados no time da esquerda (.team--ally)
-const aliados = () => $$('.team--ally [data-slot^="god-"]').map(e => e.dataset.slot.replace('god-', ''));
+// gods desenhados na COLUNA aliada (esquerda) — §214: cada fileira tem .brow__ally
+const aliados = () => $$('.brow__ally [data-slot^="god-"]').map(e => e.dataset.slot.replace('god-', ''));
 function batalha(comeca) {
   w.eval(`st=novoEstado(${JSON.stringify(MEU)},${JSON.stringify(OPO)},1,${comeca}); ir('batalha',{},{substituir:true}); render();`);
 }
@@ -32,12 +32,12 @@ console.log('== 8. perspectiva fixa: meu time à esquerda nos DOIS turnos (vs CP
 console.log('== 9. modo espectador no turno do oponente ==');
 {
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=1; render()");
-  ok($$('.team--ally .skill[data-sk]:not([disabled])').length === 0, 'nenhum disco meu clicável no turno dele');
+  ok($$('.brow__tiles .skill[data-sk]:not([disabled])').length === 0, 'nenhum disco meu clicável no turno dele');
   ok($$('.skill.is-armed').length === 0, 'nenhum disco armado');
-  ok($$('.foetab.open').length === 0, 'aba do oponente fechada');
+  ok(!$('.panel .kit'), 'nenhuma consulta de kit aberta por conta própria');
   ok($$('.portrait.is-target').length === 0, 'nenhum alvo pulsando');
   ok(!$('#bend') && !!$('.endturn--wait'), 'botão primário vira indicador de espera');
-  console.log('  discos apagados, aba fechada, sem alvo, primário = espera');
+  console.log('  discos apagados, sem consulta, sem alvo, primário = espera');
 }
 
 console.log('== 10. hot-seat: comportamento antigo (tela inverte) ==');
@@ -47,7 +47,7 @@ console.log('== 10. hot-seat: comportamento antigo (tela inverte) ==');
   w.eval("st.ativo=1; render()"); const a1 = aliados();
   ok(MEU.every(k => a0.includes(k)), 'ativo 0 → time 0 à esquerda');
   ok(OPO.every(k => a1.includes(k)), 'ativo 1 → time 1 à esquerda (inverteu)');
-  ok($$('.team--ally .skill[data-sk]:not([disabled])').length > 0, 'em hot-seat os discos do lado ativo são clicáveis (sem espectador)');
+  ok($$('.brow__tiles .skill[data-sk]:not([disabled])').length > 0, 'em hot-seat os discos do lado ativo são clicáveis (sem espectador)');
   console.log('  hot-seat inverte a tela e nunca entra em espectador');
 }
 
@@ -61,25 +61,25 @@ console.log('== 11. resumo do turno: aparece ao voltar, some ao 1º toque ==');
   console.log('  resumo mostrado e dispensado no toque');
 }
 
-console.log('== 12. rótulos por modo ==');
+console.log('== 12. rótulos de time por modo (§214: placas VOCÊ/oponente sobre as colunas) ==');
 {
-  // vs CPU: eu = VOCÊ, oponente = CPU; banner traduz o texto neutro do motor
+  // §214 item 13: "VOCÊ" (ouro) sobre a coluna aliada, NOME do oponente (vermelho) sobre a dele.
+  // vs CPU: aliada = Você, inimiga = CPU; o banner de fim traduz o lado neutro do motor.
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=0; render()");
-  const aliado = $('.player:not(.player--enemy) .player__name')?.textContent.trim();
-  const inimigo = $('.player--enemy .player__name')?.textContent.trim();
-  ok(aliado === 'VOCÊ', 'placa aliada = VOCÊ (veio ' + aliado + ')');
+  const aliado = $('.teamlbl--ally')?.textContent.trim();
+  const inimigo = $('.teamlbl--enemy')?.textContent.trim();
+  ok(aliado === 'Você', 'placa aliada = Você (veio ' + aliado + ')');
   ok(inimigo === 'CPU', 'placa inimiga = CPU (veio ' + inimigo + ')');
-  ok(!!$('.player--enemy .nrgmini'), 'energia do oponente aparece como mini-pips na placa dele');
   // st.fim é EVENTO estruturado (docs/eventos.md); o narrador resolve lado -> rótulo por modo.
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
   ok($('.result h1').textContent.trim() === 'CPU VENCE', 'banner traduz lado 1 → CPU (veio ' + $('.result h1').textContent.trim() + ')');
-  // hot-seat: numeração neutra
+  // hot-seat: a coluna aliada é sempre a do jogador da vez (VOCÊ); o oponente é numerado.
   w.eval("vsCPU=false"); batalha(0); w.eval("st.ativo=0; render()");
-  const a2 = $('.player:not(.player--enemy) .player__name')?.textContent.trim();
-  ok(a2 === 'JOGADOR 1', 'hot-seat mantém JOGADOR 1 (veio ' + a2 + ')');
+  ok($('.teamlbl--ally')?.textContent.trim() === 'Você', 'hot-seat: a coluna da vez é sempre VOCÊ');
+  ok($('.teamlbl--enemy')?.textContent.trim() === 'Jogador 2', 'hot-seat: o oponente é Jogador 2');
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
   ok($('.result h1').textContent.trim() === 'JOGADOR 2 VENCE', 'hot-seat: lado 1 → JOGADOR 2 (numeração neutra)');
-  console.log('  vs CPU: VOCÊ/CPU + banner traduzido · hot-seat: JOGADOR N');
+  console.log('  vs CPU: Você/CPU + banner traduzido · hot-seat: Você/Jogador 2');
 }
 
 w.close();
