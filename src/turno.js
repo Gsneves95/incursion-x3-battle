@@ -14,8 +14,19 @@ const cpuControla = lado => vsCPU && lado === IA_LADO;
 // dois humanos dividem a tela, então acompanha st.ativo (a tela inverte, como sempre);
 // contra a CPU é fixo no humano (o processo da CPU fica oculto no turno dela).
 // online (Fase 5) fixaria no lado da conexão. Um lugar só — ninguém decide isso por ifs.
-function modoPartida() { return vsCPU ? 'cpu' : 'hotseat'; }   // 'online' entra na Fase 5
-function ladoExibido() { return vsCPU ? (1 - IA_LADO) : st.ativo; }
+// F5.2 — MODO ONLINE (partida no SERVIDOR): o servidor valida cada ação, dirige a IA e é dono do
+// fim e do relógio. `MP` = a partida-cliente (src/partida_cliente.js); `_transOnline` = o transporte.
+// Enquanto MP existe, modoPartida()==='online' e os pontos de ação/relógio/IA desviam para o servidor.
+let MP = null, _transOnline = null, _onlineOcupado = false, _tokenOnline = null;
+function entrarModoOnline(mp, transporte, token) { MP = mp; _transOnline = transporte; _tokenOnline = token || null; st = MP.st; }
+function sairModoOnline() { MP = null; _transOnline = null; _onlineOcupado = false; _tokenOnline = null; }
+function ehOnline() { return !!MP; }
+function ocupadoOnline() { return _onlineOcupado; }   // uma ação por vez está em voo ao servidor?
+function fimOnline() { return MP ? MP.fim : null; }    // o fim declarado pelo SERVIDOR (ou null)
+function avisosOnline() { return MP ? (MP.avisos || []) : []; }   // divergências/recusas/tempo (canal do cliente)
+
+function modoPartida() { return MP ? 'online' : (vsCPU ? 'cpu' : 'hotseat'); }
+function ladoExibido() { return MP ? MP.humano : (vsCPU ? (1 - IA_LADO) : st.ativo); }
 function ehMeuTurno() { return st.ativo === ladoExibido(); }
 
 // resumo do turno do oponente (F0.7): quando o controle volta para mim, guardo as
@@ -37,8 +48,14 @@ function configurarTurno(deps) {
 // NÃO pausa por sobreposição — pausar seria explorável.
 function tique() {
   if (!_emBatalha() || st.fim) { return; }
+  // ONLINE (F5.2): o relógio é do SERVIDOR. O cliente só DESENHA o que sobra (do deadline autoritativo)
+  // e NÃO encerra o turno ao chegar a zero — quem faz isso é o push do servidor (auto-passa/abandono).
+  if (MP) { relogio = Math.max(0, Math.ceil((MP.restanteMs || 0) / 1000)); pintarRelogio(); return; }
   relogio--;
   if (relogio <= 0) { encerrarTurno(); return; }
+  pintarRelogio();
+}
+function pintarRelogio() {
   const t = stage.querySelector('.timer'); const f = stage.querySelector('.timer__fill');
   const lb = stage.querySelector('.timer__label');
   if (f) f.style.width = Math.round(relogio / TURNO_SEG * 100) + '%';
@@ -53,6 +70,9 @@ function iniciarRelogio() {
 function pararRelogio() { if (tick) { clearInterval(tick); tick = null; } }
 
 function encerrarTurno(forcar) {
+  // ONLINE (F5.2): encerrar é um PEDIDO ao servidor — ele roda a IA do oponente e devolve o resultado
+  // autoritativo (o cliente prevê e desenha na hora; o servidor confirma). Não roda fimTurno local.
+  if (MP) return encerrarOnline();
   if (!forcar && cpuControla(st.ativo)) return;   // o humano não encerra o turno da CPU
   // energia livre é escolhida no FIM do turno: se há dívida, abre a alocação primeiro
   const l = st.lados[st.ativo];
@@ -66,6 +86,7 @@ function encerrarTurno(forcar) {
 
 // ---- IA do oponente ----
 function talvezIA() {
+  if (MP) return;   // ONLINE: a IA do oponente roda no SERVIDOR (o encerrar já trouxe/desenhou a jogada dela)
   if (iaAtiva || !_emBatalha() || st.fim || !cpuControla(st.ativo)) return;
   iaAtiva = true; _marcaLog = st.log.length; resumoTurno = null;   // marca o início do turno dele p/ o resumo
   setTimeout(passoIA, 600);
@@ -139,10 +160,45 @@ function confirmar() {
   const u = st.lados[st.ativo].units.find(x => x.uid === armado.uid);
   const a = acoesDe(st, u).find(x => x.slot === armado.slot);
   if (!a || !a.disponivel) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
+  // ONLINE (F5.2): a ação vai ao SERVIDOR (otimista: aplica local e desenha; o servidor confirma).
+  if (MP) return confirmarOnline({ uid: armado.uid, slot: a.slot, alvos: [...escolhidos] });
   const r = agir(st, armado.uid, a.slot, [...escolhidos]);
   if (!r.ok) st.log.push({ turno: st.turno, msg: '✗ ' + r.erro });
   else if (typeof prova !== 'undefined' && prova) provaLances++;   // F3.1: conta o lance do jogador (o placar) — só ação confirmada e válida
   armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar();
 }
 
-if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno };
+// ---- pontes ONLINE (F5.2): confirmar/encerrar viram pedidos ao servidor; o cliente desenha ----
+// A ação é OTIMISTA: PARTIDA_CLI.jogar aplica em MP.st (=st) na hora e o chamador redesenha; o
+// servidor confirma e, se divergir, corrige (visível em MP.avisos). Uma ação por vez (trava _onlineOcupado).
+function confirmarOnline(op) {
+  armado = null; alvos = []; escolhidos = []; detalhe = null;
+  if (_onlineOcupado) return;   // uma ação por vez: espera a confirmação do servidor
+  _onlineOcupado = true;
+  PARTIDA_CLI.jogar(_transOnline, MP, op, { token: _tokenOnline }).then((r) => {
+    _onlineOcupado = false;
+    st = MP.st;                                   // o servidor pode ter corrigido o estado
+    if (r && r.ok && typeof prova !== 'undefined' && prova) provaLances++;
+    _redesenhar();
+  }).catch(() => { _onlineOcupado = false; _redesenhar(); });
+  _redesenhar();                                  // desenho OTIMISTA imediato (já aplicado em MP.st)
+}
+function encerrarOnline() {
+  if (_onlineOcupado) return;
+  _onlineOcupado = true;
+  armado = null; alvos = []; escolhidos = []; detalhe = null; ov = null; menuAberto = false;
+  PARTIDA_CLI.encerrar(_transOnline, MP, { token: _tokenOnline }).then(() => {
+    _onlineOcupado = false;
+    st = MP.st;                                   // já contém o turno do oponente (dirigido pelo servidor)
+    relogio = TURNO_SEG; _redesenhar();
+  }).catch(() => { _onlineOcupado = false; _redesenhar(); });
+  _redesenhar();
+}
+// PUSH do servidor (relógio estourou): absorve e redesenha. Chamado pela borda (view) via aoPush.
+function receberPushOnline(msg) {
+  if (!MP) return;
+  PARTIDA_CLI.aplicarPush(MP, msg);
+  st = MP.st; _redesenhar();
+}
+
+if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, confirmarOnline, encerrarOnline };

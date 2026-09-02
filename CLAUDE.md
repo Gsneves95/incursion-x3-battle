@@ -89,6 +89,20 @@ estados serializados, e a arena de auto-jogo consegue rodar milhares de partidas
 para achar combo quebrado antes de qualquer jogador. Se você acoplar regra a DOM,
 perde os quatro de uma vez.
 
+### O que precisa mudar sem passar pela revisão da loja vive no SERVIDOR, não no app (§222)
+
+Decorre do plano do nick (curadoria de palavra ofensiva em `data/` versionado,
+atualizável sem publicar app novo): **qualquer regra que possa precisar de correção
+urgente depois do lançamento mora no servidor, não embutida no cliente.** O app se
+atualiza pela loja (revisão de dias); o servidor, quando o dono quer (minutos). Uma
+lista de bloqueio, um teto de economia explorado, um kit rebalanceado às pressas, uma
+regra de abandono mal calibrada — se tem risco de precisar mudar sob pressão, publicar
+app novo é lento demais. Isso NÃO contradiz o invariante do "arquivo único" (o cliente
+segue um HTML só, offline): é sobre ONDE a fonte da regra vive quando há servidor — o
+cliente pode desenhá-la, mas não é o dono dela. O motor determinístico embutido é
+exceção deliberada (anti-cheat exige o mesmo código nos dois lados); o alvo aqui é
+POLÍTICA (curadoria, tetos, listas), não o motor.
+
 ---
 
 ## INVARIANTES — não quebre sem uma decisão explícita do dono do projeto

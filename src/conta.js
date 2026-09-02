@@ -106,9 +106,17 @@ function criarTransporteWS(url, opts = {}) {
     ws.onopen = () => {
       clearTimeout(prazo);
       const fila = [];
-      ws.onmessage = (ev) => { const cb = fila.shift(); if (cb) { try { cb(JSON.parse(ev.data)); } catch (e) { cb(null); } } };
+      let _onPush = null;
+      // uma mensagem com push:true é NÃO-solicitada (o relógio do servidor estourou, F5.2): vai para o
+      // handler de push, não casa com um pedido pendente. As demais são respostas em ordem (fila).
+      ws.onmessage = (ev) => {
+        let m = null; try { m = JSON.parse(ev.data); } catch (e) {}
+        if (m && m.push) { if (_onPush) _onPush(m); return; }
+        const cb = fila.shift(); if (cb) cb(m);
+      };
       resolve({
         pedir: (msg) => new Promise((res) => { fila.push(res); try { ws.send(JSON.stringify(msg)); } catch (e) { fila.pop(); res(null); } }),
+        aoPush: (cb) => { _onPush = cb; },
         fechar: () => { try { ws.close(); } catch (e) {} },
       });
     };

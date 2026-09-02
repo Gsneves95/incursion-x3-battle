@@ -240,6 +240,26 @@ async function excluirContaFluxo(){
   }
 }
 
+// F5.2 — INICIAR UMA PARTIDA NO SERVIDOR (o oponente é a IA rodando no servidor; testa o protocolo
+// inteiro sem depender do pareamento da F5.3). Reusa a tela de batalha: o `st` desenhado passa a ser
+// o da partida-cliente (MP.st); armar/confirmar/encerrar viram pedidos ao servidor (turno.js, modo
+// online); o servidor é dono do fim e do relógio. Exige conta (token) e servidor no ar.
+async function iniciarPartidaServidor(pergaminhoKey){
+  if(!contaTransporte){ console.warn('sem servidor: partida no servidor indisponível'); return { erro:'sem servidor' }; }
+  const token = (typeof lerToken==='function') ? lerToken() : null;
+  if(!token){ console.warn('sem conta: crie a conta antes'); return { erro:'sem conta' }; }
+  const mp = await PARTIDA_CLI.novaPartida(contaTransporte, pergaminhoKey, { token });
+  if(!mp || mp.erro){ console.warn('partida no servidor falhou: '+((mp&&mp.erro)||'?')); return mp||{erro:'falhou'}; }
+  prova=null; provaFim=null; provaLances=0; campanha=null; campanhaFim=null;   // não é Provação/Campanha local
+  vsCPU=true;                                   // perspectiva fixa no humano (o oponente é a IA do servidor)
+  st=mp.st;
+  entrarModoOnline(mp, contaTransporte, token);  // turno.js passa a rotear ação/relógio/IA para o servidor (com o token)
+  if(contaTransporte.aoPush) contaTransporte.aoPush(receberPushOnline);   // o servidor empurra o estouro do relógio
+  ir('batalha', {}, { substituir:true });
+  render();
+  return mp;
+}
+
 // BOOT da conta: handshake + token guardado. Sem servidor -> dormente (retorna cedo, app local).
 (async function bootConta(){
   try {
