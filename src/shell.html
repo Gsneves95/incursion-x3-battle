@@ -51,8 +51,9 @@
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#05040c;overflow:hidden}
 body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items:center;
-  -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;overscroll-behavior:none}
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;
+  -webkit-touch-callout:none;   /* §218: sem lupa/menu de seleção no WebView iOS — protege o toque longo do §214 */
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;overscroll-behavior:none}
 
 /* Contêiner fora do fluxo cobrindo a viewport; o palco é centrado pelo próprio
    transform (translate -50% + scale), então a caixa de layout de 926x428 não

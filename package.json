@@ -31,9 +31,14 @@
     "test:semanal": "node tools/build.js && node tests/semanal.test.js",
     "gerar:semanais": "node tools/gerar_semanais.js",
     "test:maestria": "node tools/build.js && node tests/maestria.test.js",
-    "test:composicao": "node tools/build.js && node tests/composicao.test.js"
+    "test:composicao": "node tools/build.js && node tests/composicao.test.js",
+    "cap:www": "node tools/cap-www.js",
+    "cap:sync": "node tools/build.js && node tools/cap-www.js && cap sync"
   },
   "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
     "jsdom": "^24.0.0",
     "playwright": "^1.62.1"
   }

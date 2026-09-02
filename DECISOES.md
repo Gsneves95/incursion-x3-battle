@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §218 — SPIKE de plataforma (Capacitor): projeto mínimo commitado, gap do iOS fechado por leitura, checklist medido. O run no aparelho é do dono (o ambiente não roda Android).
+
+**O QUE ERA:** antes da Fase 5, pôr o jogo dentro do invólucro nativo (Capacitor → App Store/Play Store) e num aparelho de verdade, para DESCOBRIR O QUE QUEBRA — o histórico provou duas vezes que ambiente diferente esconde bug (§209 banners que davam 404 no Pages; §210 tela sem saída). Não é entrega: sem compra, notificação nem conta.
+
+**O LIMITE DO AMBIENTE (medido, não presumido):** este contêiner **não roda Android** — sem `/dev/kvm` (o emulador não acelera), sem SDK/`adb`/`emulator`, sem tela/USB. Recusei simular os números de aparelho (seria o "por olho" que o projeto proíbe). O run de device é do dono; aqui ficou o que dá para medir/preparar SEM aparelho.
+
+**1. PROJETO CAPACITOR MÍNIMO, commitado.** `capacitor.config.json` (appId `com.incursion.x3battle`, webDir `www`, sem plugin), `tools/cap-www.js` (monta `www/` = `dist/incursion.html`→`index.html` + `web/*`, cross-platform, só `fs`), scripts `cap:www`/`cap:sync` no package.json, deps `@capacitor/{core,cli,android}`. Verificado aqui: `npx cap` lê a config, `cap:www` monta os 7,36 MB. `www/` e `android/` ficam no .gitignore (gerados na máquina do dono; não versiono 6,6 MB de asset duplicado nem código nativo preso à versão do SDK dele).
+
+**2. GAP DO iOS FECHADO POR LEITURA (achado do pre-flight, consertável sem device):** faltava `-webkit-touch-callout:none` no `body`. Sem ele, o TOQUE LONGO do §214 (consulta de kit) levanta a lupa/menu de seleção no WebView do iOS e quebra a mecânica central — justo no aparelho que o dono testa mais tarde. Uma linha; não esperei o device confirmar o óbvio. O resto do pre-flight já estava certo no código: `viewport-fit=cover`+`user-scalable=no`, leitura real de `env(safe-area-inset-*)`, zero `100vh`, `localStorage` em try/catch com fallback.
+
+**3. TAMANHO (medido, é o número da loja aproximado):** payload web = **7,36 MB cru / 6,63 MB comprimido** (`zip -9`, medido) — os webp (skills 4,78 + banners 0,55) não encolhem; o `index.html` cai a 54%. Sobre isso, a casca Capacitor/AndroidX (~2–4 MB debug), estimando **APK ~9–11 MB / AAB ~8–9 MB**. O exato sai do build real do dono. **NÃO instalei o SDK só para contar bytes** (o dono vetou o gasto de disco, e o número já está medido no que importa).
+
+**4. CHECKLIST MEDIDO (`CAPACITOR-SPIKE.md`):** cada pergunta do item 2 virou gesto exato + número + o que é falhar, escrito para quem nunca rodou um app em dev — toque 76px, toque longo 420ms (incl. a lupa do iOS), arrasto 10px do carrossel, escala/notch nas 4 bordas, IA no Difícil em segundos + rolagem da coleção, e persistência do perfil ao fechar/reabrir. Mais o passo do `chrome://inspect` para ver erro de JS no aparelho. Se nada quebrar, isso também é resposta: a Fase 5 começa sabendo que a base de plataforma está sólida.
+
 ## §217 — A FASE 4 NÃO FECHA EM DEFINITIVO: vira CANAL ABERTO de ajuste de interface/usabilidade (decisão do dono, forma de trabalho, não dívida).
 
 **A DECISÃO (dono):** a Fase 4 (interface/usabilidade) deixa de ser uma fase que se encerra e passa a ser um **canal permanentemente aberto**. Achado de jogo vira **tarefa pontual medida**, não espera abrir uma fase.

@@ -1,3 +1,8 @@
 node_modules/
 dist/
 *.log
+# Capacitor (spike): a pasta web montada e o projeto nativo são GERADOS na sua máquina.
+# www/ sai de "npm run cap:www"; android/ sai de "npx cap add android". Não versionamos
+# (6,6 MB de assets duplicados + código nativo específico da versão do seu SDK).
+www/
+android/

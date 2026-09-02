@@ -1,0 +1,8 @@
+{
+  "appId": "com.incursion.x3battle",
+  "appName": "INCURSION x3",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
