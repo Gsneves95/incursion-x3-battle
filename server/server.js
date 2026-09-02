@@ -11,6 +11,7 @@ const host = require('./motor-host.js');
 const contas = require('./contas.js');
 const partidaCtrl = require('./partida.js');
 const salas = require('./salas.js');
+const fila = require('./fila.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
@@ -92,6 +93,26 @@ wss.on('connection', (ws) => {
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
         return responder('perfilSalvo', { ok: true });
       }
+
+      // ---- F5.3: NICK + FILA de pareamento (PvP) ----
+      case 'definirNick': {
+        const r = contas.definirNick(msg.token, msg.nick);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('nick', { nick: r.nick });
+      }
+      case 'entrarFila': {
+        const r = fila.entrar(ws, msg.token, msg.time);   // valida nick + POSSE do time + não estar já em partida
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        if (r.estado === 'na_fila') return responder('naFila', {});
+        // PAREADO: marca os dois sockets (para o close desanexar) e entrega o estado inicial da partida.
+        for (const p of r.sala.participantes) if (p.ws) p.ws._contaSala = p.contaId;
+        salas.empurrarOutro(r.sala, ws._conta.id, { push: true, pareado: true });   // ao oponente: push
+        return responder('partida', Object.assign(salas.snapshotPara(r.sala, ws._conta.id), { pareado: true }));   // ao remetente: resposta
+      }
+      case 'sairFila': {
+        fila.sair(ws._conta.id);
+        return responder('saiuFila', {});
+      }
       case 'montar':
         if (!msg.pergaminho) return responder('erro', { erro: 'falta o pergaminho' });
         partida = host.montar(msg.pergaminho);
@@ -128,33 +149,40 @@ wss.on('connection', (ws) => {
         salas.anexar(ws._conta.id, ws);   // LEITURA PURA: anexa o socket, NÃO toca no estado/relógio/deadline
         ws._contaSala = ws._conta.id;
         // desdeLog marca o que o cliente perdeu na ausência (o painel §214 desenha o log; sem replay animado)
-        return responder('partida', salas.snapshot(sala, { retomada: true }));
+        return responder('partida', salas.snapshotPara(sala, ws._conta.id, { retomada: true }));
       }
-      case 'jogar': {   // uma ação do humano, validada contra o estado autoritativo
+      case 'jogar': {   // uma ação de um lado, validada. O servidor determina o LADO pela conta (nunca confia no cliente).
         const sala = salas.de(ws._conta.id);
         if (!sala) return responder('erro', { erro: 'sem partida' });
         salas.anexar(ws._conta.id, ws); ws._contaSala = ws._conta.id;
-        const r = partidaCtrl.agir(sala.P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now() });
+        const lado = salas.ladoDe(sala, ws._conta.id);
+        const r = partidaCtrl.agir(sala.P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });   // ação inválida = recusa clara, nunca "na dúvida"
-        if (sala.P.fim) salas.pararRelogio(ws._conta.id);
-        return responder('partida', salas.snapshot(sala));
+        if (sala.P.st.fim) salas.pararRelogio(ws._conta.id);
+        salas.empurrarOutro(sala, ws._conta.id, { push: true });   // PvP: o oponente vê a jogada (no PvE, no-op)
+        return responder('partida', salas.snapshotPara(sala, ws._conta.id));
       }
-      case 'encerrar': {   // fim do turno do humano: o servidor roda a IA e devolve o que ela fez
+      case 'encerrar': {   // fim do turno: PvE dirige a IA; PvP passa para o outro humano
         const sala = salas.de(ws._conta.id);
         if (!sala) return responder('erro', { erro: 'sem partida' });
         salas.anexar(ws._conta.id, ws); ws._contaSala = ws._conta.id;
-        const r = partidaCtrl.encerrarTurno(sala.P, { agora: Date.now() });
+        const lado = salas.ladoDe(sala, ws._conta.id);
+        const r = partidaCtrl.encerrarTurno(sala.P, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
-        salas.rearmar(ws._conta.id);   // rearma para o novo turno do humano (ou fica parado se acabou)
-        return responder('partida', salas.snapshot(sala, { cpuOps: r.cpuOps || [] }));
+        salas.rearmar(ws._conta.id);   // rearma o relógio para o novo lado ativo (ou fica parado se acabou)
+        salas.empurrarOutro(sala, ws._conta.id, { push: true, cpuOps: r.cpuOps || [] });   // PvP: agora é a vez do oponente
+        return responder('partida', salas.snapshotPara(sala, ws._conta.id, { cpuOps: r.cpuOps || [] }));
       }
       default:
         return responder('erro', { erro: 'tipo desconhecido: ' + msg.tipo });
     }
   });
-  // F5.4: a conexão caiu — só DESANEXA. O relógio SEGUE correndo no servidor (sua vez é sua vez,
-  // olhando ou não); a partida espera o retomar. Sem parar nada: é o que impede a queda de virar fuga.
-  ws.on('close', () => { if (ws._contaSala) salas.desanexar(ws._contaSala, ws); });
+  // F5.4: a conexão caiu — só DESANEXA da partida (o relógio SEGUE correndo; sua vez é sua vez, olhando
+  // ou não). E SAI DA FILA se estava esperando (§F5.3: fechar o app na espera te tira da fila).
+  ws.on('close', () => {
+    if (ws._contaSala) salas.desanexar(ws._contaSala, ws);
+    if (ws._conta) fila.sair(ws._conta.id);
+  });
 });
 
 if (require.main === module) {

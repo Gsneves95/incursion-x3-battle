@@ -1,80 +1,91 @@
-// server/salas.js — F5.4: a PARTIDA PERTENCE À CONTA, não à conexão. É a decisão central da fase.
-// No Android a WebView morre a cada troca de app — reconectar é o caminho NORMAL, não exceção. Uma
-// conexão nova com o MESMO token retoma a partida em curso; sem isto, cada troca de app é uma derrota.
+// server/salas.js — a PARTIDA PERTENCE À CONTA, não à conexão (§224). No PvP (F5.3) uma partida tem
+// DOIS participantes (uma conta por lado); no PvE, um. O registro mapeia CADA conta participante para
+// a MESMA sala, então a reconexão (conexão nova com o mesmo token) reencontra a partida de qualquer lado.
 //
-// O RELÓGIO NÃO PARA. A partida (e o seu relógio) vive no SERVIDOR, keyed pelo id da CONTA, e corre
-// independente de haver conexão. Desconectar no seu turno gasta o seu tempo; a regra de abandono (3
-// turnos ociosos, §223) é a regra de forfeit por queda. Não há janela de graça (relógio correndo é o
-// que impede sair do app para pensar).
-//
-// GUARDA (provada em tests/reconexao.test.js): reconectar NUNCA dá vantagem. A retomada é LEITURA PURA
-// — não avança turno, não zera relógio, não adianta recarga. O estado que volta é EXATAMENTE o que
-// seria se o jogador nunca tivesse saído (a evolução da partida não olha para a conexão: `estourarTempo`
-// só recebe a partida e o instante, nunca o socket).
+// O RELÓGIO corre no servidor, independente de conexão (§224). Ao estourar, aplica a regra (turno
+// passa; 3 ociosos = abandono daquele lado) e EMPURRA para TODOS os participantes conectados; quem
+// estiver caído recebe o estado atualizado ao retomar. Cada participante recebe o snapshot do SEU
+// ponto de vista (fim/lado dele) e o SEU `desdeLog` (o que perdeu na ausência).
 const partidaCtrl = require('./partida.js');
 const proto = require('./protocol.js');
 
-const _salas = new Map();   // contaId -> { P, contaId, timer, ws, ultimoLogVisto }
+const _porConta = new Map();   // contaId -> sala (compartilhada pelos participantes)
+const _todas = new Set();
 
-function de(contaId) { return _salas.get(contaId) || null; }
-function existe(contaId) { return _salas.has(contaId); }
+function de(contaId) { return _porConta.get(contaId) || null; }
+function existe(contaId) { return _porConta.has(contaId); }
+function ladoDe(sala, contaId) { return sala.participantes.findIndex(p => p.contaId === contaId); }
 
-// cria (ou SUBSTITUI) a partida da conta. Uma conta = uma partida ativa. Arma o relógio do servidor.
+function _registrar(sala) { _todas.add(sala); for (const p of sala.participantes) _porConta.set(p.contaId, sala); _armar(sala); return sala; }
+
+// PvE: uma conta, o oponente é a IA do servidor.
 function criar(contaId, pergaminho, opts = {}) {
-  encerrar(contaId);   // nova partida descarta a anterior da mesma conta
-  const P = partidaCtrl.criar(pergaminho, { agora: Date.now(), limiteMs: opts.limiteMs });
-  const sala = { P, contaId, timer: null, ws: opts.ws || null, ultimoLogVisto: 0 };
-  _salas.set(contaId, sala);
-  _armar(sala);
-  return sala;
+  encerrar(contaId);
+  const P = partidaCtrl.criar(pergaminho, { limiteMs: opts.limiteMs, agora: Date.now() });
+  return _registrar({ P, modo: 'pve', participantes: [{ contaId, ws: opts.ws || null, ultimoLogVisto: 0 }], timer: null });
+}
+// PvP: duas contas, uma por lado. a/b = { contaId, ws, time }. seed/comeca escolhidos pelo servidor (justo).
+function criarPvP(a, b, opts = {}) {
+  encerrar(a.contaId); encerrar(b.contaId);
+  const P = partidaCtrl.criarPvP(a.time, b.time, { seed: opts.seed, comeca: opts.comeca, limiteMs: opts.limiteMs, agora: Date.now() });
+  return _registrar({ P, modo: 'pvp', participantes: [
+    { contaId: a.contaId, ws: a.ws || null, ultimoLogVisto: 0 },
+    { contaId: b.contaId, ws: b.ws || null, ultimoLogVisto: 0 },
+  ], timer: null });
 }
 
-// anexa a conexão atual à sala da conta (na retomada). NÃO toca no estado nem no relógio: leitura pura.
-function anexar(contaId, ws) { const s = _salas.get(contaId); if (s) s.ws = ws; return s || null; }
-// a conexão caiu: SÓ desanexa (o relógio SEGUE correndo no servidor). Sem isto, o push tentaria um socket morto.
-function desanexar(contaId, ws) { const s = _salas.get(contaId); if (s && s.ws === ws) s.ws = null; }
+function _part(sala, contaId) { return sala.participantes.find(p => p.contaId === contaId); }
+function anexar(contaId, ws) { const s = _porConta.get(contaId); if (s) { const p = _part(s, contaId); if (p) p.ws = ws; } return s || null; }
+function desanexar(contaId, ws) { const s = _porConta.get(contaId); if (s) { const p = _part(s, contaId); if (p && p.ws === ws) p.ws = null; } }   // só desanexa; o relógio SEGUE
+function encerrar(contaId) { const s = _porConta.get(contaId); if (s) { if (s.timer) clearTimeout(s.timer); for (const p of s.participantes) _porConta.delete(p.contaId); _todas.delete(s); } }
 
-function encerrar(contaId) {
-  const s = _salas.get(contaId);
-  if (s) { if (s.timer) clearTimeout(s.timer); _salas.delete(contaId); }
-}
-
-// snapshot para o cliente, marcando ATÉ ONDE ele já viu o log (para a retomada dizer "o que mudou na
-// sua ausência" sem replay animado — o painel §214 desenha o log; `desdeLog` marca o trecho perdido).
-function snapshot(sala, extra) {
-  const snap = partidaCtrl.estado(sala.P, Date.now());
-  const desdeLog = sala.ultimoLogVisto;
-  sala.ultimoLogVisto = sala.P.st.log.length;   // o que enviamos agora passa a ser "visto"
+// snapshot para UM participante: o estado do PONTO DE VISTA do lado dele + `desdeLog` (o que perdeu).
+function snapshotPara(sala, contaId, extra) {
+  const lado = ladoDe(sala, contaId); const p = sala.participantes[lado] || sala.participantes[0];
+  const snap = partidaCtrl.estado(sala.P, Date.now(), lado < 0 ? 0 : lado);
+  const desdeLog = p.ultimoLogVisto;
+  p.ultimoLogVisto = sala.P.st.log.length;
   return Object.assign(snap, { desdeLog }, extra || {});
 }
+// snapshot "genérico" (participante 0) — usado onde só há um lado (PvE) ou para o próprio remetente.
+function snapshot(sala, extra) { return snapshotPara(sala, sala.participantes[0].contaId, extra); }
 
-// o RELÓGIO do servidor: corre independente de conexão. Ao estourar, aplica a regra (turno passa; 3
-// ociosos = abandono) e, SE houver socket vivo, empurra; senão, o novo estado espera o retomar.
+// EMPURRA o estado para todos os participantes conectados (cada um do seu ponto de vista).
+function empurrarTodos(sala, flags) {
+  for (const p of sala.participantes) {
+    if (!p.ws || p.ws.readyState !== 1) continue;
+    try { p.ws.send(JSON.stringify(proto.envelope('partida', Object.assign(snapshotPara(sala, p.contaId), flags || {})))); } catch (e) { /* socket morto: o estado fica guardado */ }
+  }
+}
+// empurra para o OUTRO participante (o oponente do remetente) — usado quando um lado joga e o outro precisa ver.
+function empurrarOutro(sala, contaIdRemetente, flags) {
+  for (const p of sala.participantes) {
+    if (p.contaId === contaIdRemetente) continue;
+    if (!p.ws || p.ws.readyState !== 1) continue;
+    try { p.ws.send(JSON.stringify(proto.envelope('partida', Object.assign(snapshotPara(sala, p.contaId), flags || {})))); } catch (e) {}
+  }
+}
+
+// o RELÓGIO do servidor: corre para o lado ATIVO, independente de conexão.
 function _armar(sala) {
   if (sala.timer) { clearTimeout(sala.timer); sala.timer = null; }
   const P = sala.P;
-  if (!P || P.fim || P.st.ativo !== P.humano) return;   // só corre no turno do humano
+  if (!P || P.st.fim) return;
   const ms = Math.max(0, P.deadline - Date.now());
   sala.timer = setTimeout(() => {
     sala.timer = null;
-    if (!P || P.fim) return;
-    const r = partidaCtrl.estourarTempo(P, { agora: Date.now() });   // MESMA regra, conectado ou não
-    _empurrar(sala, { autopassou: !!r.autopassou, abandono: !!r.abandono, cpuOps: r.cpuOps || [] });
-    _armar(sala);   // rearma se voltou ao humano e não acabou
+    if (!P || P.st.fim) return;
+    const r = partidaCtrl.estourarTempo(P, { agora: Date.now() });
+    empurrarTodos(sala, { push: true, autopassou: !!r.autopassou, abandono: !!r.abandono, cpuOps: r.cpuOps || [] });
+    _armar(sala);
   }, ms);
 }
-function _empurrar(sala, flags) {
-  if (!sala.ws || sala.ws.readyState !== 1) return;   // ninguém conectado: o estado espera o retorno
-  try { sala.ws.send(JSON.stringify(proto.envelope('partida', Object.assign(snapshot(sala), { push: true }, flags || {})))); }
-  catch (e) { /* socket morto entre a checagem e o send: o estado ainda está guardado na sala */ }
-}
+function rearmar(contaId) { const s = _porConta.get(contaId); if (s) _armar(s); }
+function pararRelogio(contaId) { const s = _porConta.get(contaId); if (s && s.timer) { clearTimeout(s.timer); s.timer = null; } }
 
-// rearma o relógio após uma jogada do dono da sala (jogar/encerrar mudaram o turno/deadline).
-function rearmar(contaId) { const s = _salas.get(contaId); if (s) _armar(s); }
-// para o relógio quando a partida acaba (mantém a sala para a retomada ver o resultado final).
-function pararRelogio(contaId) { const s = _salas.get(contaId); if (s && s.timer) { clearTimeout(s.timer); s.timer = null; } }
+function _limparTudo() { for (const s of [..._todas]) if (s.participantes[0]) encerrar(s.participantes[0].contaId); }
 
-// utilitário de teste/limpeza: encerra todas as salas (e seus timers).
-function _limparTudo() { for (const id of [..._salas.keys()]) encerrar(id); }
-
-module.exports = { de, existe, criar, anexar, desanexar, encerrar, snapshot, rearmar, pararRelogio, _limparTudo, _salas };
+module.exports = {
+  de, existe, ladoDe, criar, criarPvP, anexar, desanexar, encerrar,
+  snapshot, snapshotPara, empurrarTodos, empurrarOutro, rearmar, pararRelogio, _limparTudo, _porConta,
+};

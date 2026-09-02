@@ -41,7 +41,8 @@ function _tokenMsg(t) { return t ? { token: t } : {}; }
 function _absorver(MP, snap) {
   MP.st = snap.estado;
   MP.turnoDe = snap.turnoDe;
-  MP.humano = snap.humano;
+  MP.humano = snap.humano;      // "você é este lado" (PvP: 0 ou 1)
+  MP.modo = snap.modo || MP.modo || 'pve';
   MP.deadline = snap.deadline;
   MP.agora = snap.agora;
   MP.restanteMs = snap.restanteMs;
@@ -74,6 +75,31 @@ async function novaPartida(transporte, pergaminho, opts = {}) {
   if (!r || r.tipo !== 'partida') return { erro: (r && r.erro) || 'não foi possível iniciar a partida', codigo: r && r.codigo };
   return _absorver({ st: null, avisos: [] }, r);
 }
+
+// F5.3 — NICK: pedido na ENTRADA do PvP. O servidor valida (forma/unicidade/ofensa) e devolve o
+// nick guardado (forma de exibição) ou uma recusa com motivo.
+async function definirNick(transporte, opts = {}) {
+  const r = await transporte.pedir(_env('definirNick', Object.assign({ nick: opts.nick }, _tokenMsg(opts.token))));
+  if (r && r.tipo === 'nick') return { ok: true, nick: r.nick };
+  return { ok: false, codigo: (r && r.codigo) || 'falhou', erro: (r && r.erro) || 'não foi possível definir o nick' };
+}
+
+// F5.3 — FILA: entra para parear. O servidor valida a POSSE do time (recusa 'deus_nao_possuido' etc.).
+//  fase 'na_fila'  -> esperando (o pareamento chega depois por PUSH 'partida' com pareado:true)
+//  fase 'pareado'  -> pareou na hora (resultado.MP já é a partida)
+//  fase 'recusado' -> nick não definido / time inválido / já em partida
+async function entrarFila(transporte, opts = {}) {
+  const r = await transporte.pedir(_env('entrarFila', Object.assign({ time: opts.time }, _tokenMsg(opts.token))));
+  if (!r) return { fase: 'erro', erro: 'sem resposta' };
+  if (r.tipo === 'naFila') return { fase: 'na_fila' };
+  if (r.tipo === 'partida') { const MP = _absorver({ st: null, avisos: [] }, r); MP.pareado = true; return { fase: 'pareado', MP }; }
+  if (r.tipo === 'recusado') return { fase: 'recusado', codigo: r.codigo, erro: r.erro };
+  return { fase: 'erro', erro: r.erro };
+}
+async function sairFila(transporte, opts = {}) { await transporte.pedir(_env('sairFila', _tokenMsg(opts.token))); return { ok: true }; }
+
+// absorve um PUSH de pareamento (o jogador que esperava): vira uma partida-cliente desenhável.
+function absorverPareado(msg) { if (!msg || msg.tipo !== 'partida') return null; const MP = _absorver({ st: null, avisos: [] }, msg); MP.pareado = true; return MP; }
 
 // RETOMAR (F5.4): a conexão nova pergunta se a conta tem partida em curso. Se sim, recebe o ESTADO
 // INTEIRO (o servidor é a verdade — nada de reconstruir do lado do cliente) e volta à batalha. LEITURA
@@ -134,14 +160,17 @@ async function jogar(transporte, MP, op, opts = {}) {
 // servidor confirma. Diverge -> corrige e loga. É a demonstração mais forte da interface otimista.
 async function encerrar(transporte, MP, opts = {}) {
   const humano = MP.humano;
-  // previsão local: fimTurno(humano) -> laço da IA -> fimTurno(oponente) (espelha o servidor)
+  // previsão local: fimTurno(humano). No PvE, prevê também a jogada da IA (mesmo motor, determinístico);
+  // no PvP NÃO — não dá para prever o oponente humano, então só passo o turno e espero as jogadas dele por push.
   _fn('fimTurno')(MP.st);
-  let guarda = 0;
-  while (!MP.st.fim && MP.st.ativo !== humano && guarda++ < 200) {
-    const mv = _fn('iaProximaAcao')(MP.st, 'normal');
-    if (!mv) { _fn('fimTurno')(MP.st); break; }
-    const r = _fn('agir')(MP.st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
-    if (!r || !r.ok) { _fn('fimTurno')(MP.st); break; }
+  if (MP.modo !== 'pvp') {
+    let guarda = 0;
+    while (!MP.st.fim && MP.st.ativo !== humano && guarda++ < 200) {
+      const mv = _fn('iaProximaAcao')(MP.st, 'normal');
+      if (!mv) { _fn('fimTurno')(MP.st); break; }
+      const r = _fn('agir')(MP.st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
+      if (!r || !r.ok) { _fn('fimTurno')(MP.st); break; }
+    }
   }
   _garantirFimCli(MP.st);   // MESMA rede de segurança do servidor (server/partida.js) — mantém o hash em lockstep
   const hashLocal = hashEstadoCli(MP.st);
@@ -173,8 +202,9 @@ function aplicarPush(MP, msg) {
 
 // Handle de NAMESPACE para o resto do bundle (evita colisão de nomes genéricos como `jogar`/`encerrar`
 // no escopo único concatenado). No build isto vira um global; a view/turno chamam PARTIDA_CLI.jogar(...).
-const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush };
+const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush, definirNick, entrarFila, sairFila, absorverPareado };
 
 if (typeof module !== 'undefined') module.exports = {
   hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush,
+  definirNick, entrarFila, sairFila, absorverPareado,
 };

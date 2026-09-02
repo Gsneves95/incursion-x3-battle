@@ -61,7 +61,7 @@ function acoesDoHumano(st, lado) {
   // RELÓGIO do servidor: sem agir, o turno passa (auto-passa); 3 turnos perdidos consecutivos = abandono
   let Q = partidaCtrl.criar(prov, { agora: 0, limiteMs: 1000 });
   const e1 = partidaCtrl.estourarTempo(Q, { agora: 2000 });
-  ok(e1.autopassou && !e1.abandono && Q.turnosPerdidos === 1, 'tempo esgotado sem agir: o turno PASSA (não é morte instantânea)');
+  ok(e1.autopassou && !e1.abandono && Q.ociosos[0] === 1, 'tempo esgotado sem agir: o turno PASSA (não é morte instantânea)');
   const e2 = partidaCtrl.estourarTempo(Q, { agora: 4000 });
   const e3 = partidaCtrl.estourarTempo(Q, { agora: 6000 });
   ok(e3.abandono && Q.fim && Q.fim.motivo === 'abandono' && Q.fim.resultado === 'derrota', '3 turnos perdidos consecutivos: derrota por ABANDONO (declarada pelo servidor)');
@@ -69,7 +69,7 @@ function acoesDoHumano(st, lado) {
   let R = partidaCtrl.criar(prov, { agora: 0, limiteMs: 1000 });
   partidaCtrl.agir(R, acoesDoHumano(R.st, R.humano)[0], { agora: 100 });
   const eR = partidaCtrl.estourarTempo(R, { agora: 2000 });
-  ok(eR.autopassou && R.turnosPerdidos === 0, 'turno em que o humano agiu não conta como perdido (anti-idle é justo)');
+  ok(eR.autopassou && R.ociosos[0] === 0, 'turno em que o humano agiu não conta como perdido (anti-idle é justo)');
   console.log(`  controlador: ação validada · fim ${P.fim.resultado} pelo servidor · relógio auto-passa · abandono aos ${partidaCtrl.MAX_ABANDONO}`);
 
   // ===== (2) o CLIENTE: hash idêntico, otimista bate, divergência corrigida e visível, recusa desfeita =====

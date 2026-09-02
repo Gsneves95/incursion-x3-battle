@@ -26,6 +26,11 @@ const FAIXAS = ['menor', 'maior'];   // menor de 18 | 18 ou mais. Só a faixa, n
 const DIR = path.join(__dirname, 'dados');
 const ARQ = path.join(DIR, 'contas.json');
 
+// F5.3 — NICK: curadoria de palavra ofensiva versionada em data/ (§222: o que precisa mudar sem
+// revisão de loja vive no servidor). Some do cliente; atualiza sem publicar app novo.
+const BLOQUEIO = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'nick_bloqueio.json'), 'utf8')); } catch (e) { return { substrings: [], exatas: [] }; } })();
+const NICK_MIN = 3, NICK_MAX = 16;
+
 // ---- persistência simples em arquivo (dev, custo zero). Map em memória + write-through. ----
 // server/dados/ é gitignored: são dados de jogador, não código.
 let _contas = new Map();   // token -> conta
@@ -102,9 +107,77 @@ function excluir(token) {
   _carregar();
   if (!token || typeof token !== 'string') return { ok: false, codigo: 'sem_token', erro: 'falta o token da conta' };
   if (!_contas.has(token)) return { ok: false, codigo: 'token_invalido', erro: 'token não corresponde a nenhuma conta' };
+  const c = _contas.get(token);
+  if (c && c.nick && _idxNick) _idxNick.delete(normalizarNick(c.nick));   // libera o nick para outra conta
   _contas.delete(token);
   _persistir();
   return { ok: true, apagou: true };
+}
+
+// ============================================================
+// F5.3 — NICK. Pedido na ENTRADA do PvP (não na 1ª abertura — atrito só onde serve).
+// UNICIDADE por ÍNDICE sobre o nick NORMALIZADO, com reserva ATÔMICA no servidor (quem grava
+// primeiro leva; o segundo recebe recusa). Node é single-thread: definirNick roda inteiro sem
+// interrupção, então a reserva é atômica por construção. PALAVRA OFENSIVA: lista versionada +
+// desfaz leetspeak antes de comparar (0->o, 3->e, 1->i, 4->a, 5->s, 7->t, @->a, $->s).
+// ============================================================
+function _semAcento(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+// normalização de EXIBIÇÃO->CHAVE: minúsculas, sem acento, espaços das pontas fora, espaços internos colapsados.
+function normalizarNick(nick) { return _semAcento(String(nick || '').trim().toLowerCase()).replace(/\s+/g, ' '); }
+// desfaz leetspeak (para 'n4z1' cair em 'nazi'); só para a checagem de bloqueio, não para a unicidade.
+function _deLeet(s) { return s.replace(/0/g, 'o').replace(/3/g, 'e').replace(/1/g, 'i').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/@/g, 'a').replace(/\$/g, 's'); }
+function _ofensivo(norm) {
+  const alvo = _deLeet(norm).replace(/\s+/g, '');   // sem espaços: 's e u b o s t a' não escapa
+  if ((BLOQUEIO.exatas || []).some(w => alvo === _deLeet(normalizarNick(w)).replace(/\s+/g, ''))) return true;
+  return (BLOQUEIO.substrings || []).some(w => alvo.includes(_deLeet(normalizarNick(w)).replace(/\s+/g, '')));
+}
+// índice de unicidade: nickNormalizado -> id da conta. Construído sob demanda a partir do cadastro.
+let _idxNick = null;
+function _indice() {
+  if (_idxNick) return _idxNick;
+  _carregar();
+  _idxNick = new Map();
+  for (const c of _contas.values()) if (c.nick) _idxNick.set(normalizarNick(c.nick), c.id);
+  return _idxNick;
+}
+// nickDisponivel: forma válida + não ofensivo + não em uso (por OUTRA conta). excetoId = a própria conta.
+function nickDisponivel(nick, exetoId) {
+  const norm = normalizarNick(nick);
+  if (norm.length < NICK_MIN || norm.length > NICK_MAX) return { ok: false, codigo: 'nick_invalido', erro: `o nick tem de ter de ${NICK_MIN} a ${NICK_MAX} caracteres` };
+  if (!/^[a-z0-9 ]+$/.test(norm)) return { ok: false, codigo: 'nick_invalido', erro: 'o nick só pode ter letras, números e espaço' };
+  if (_ofensivo(norm)) return { ok: false, codigo: 'nick_ofensivo', erro: 'esse nick não é permitido' };
+  const dono = _indice().get(norm);
+  if (dono && dono !== exetoId) return { ok: false, codigo: 'nick_em_uso', erro: 'esse nick já está em uso — escolha outro' };
+  return { ok: true, norm };
+}
+// definirNick: reserva ATÔMICA. token -> { ok, nick } | { ok:false, codigo, erro }.
+function definirNick(token, nick) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const d = nickDisponivel(nick, c.id);
+  if (!d.ok) return d;
+  // libera o normalizado antigo da conta (se trocou de nick) e grava o novo
+  if (c.nick) _indice().delete(normalizarNick(c.nick));
+  c.nick = String(nick).trim().replace(/\s+/g, ' ');   // guarda a forma de EXIBIÇÃO (com acento/maiúsculas)
+  _indice().set(d.norm, c.id);
+  _persistir();
+  return { ok: true, nick: c.nick };
+}
+
+// ---- POSSE (F5.3): o servidor valida que a conta POSSUI um deus. É a 1ª vez que a posse importa de
+// verdade — o cliente NÃO pode ser confiado. Time com deus não possuído é RECUSA, não aviso.
+function possui(token, key) { _carregar(); const c = _contas.get(token); return !!(c && c.perfil && c.perfil.deuses && c.perfil.deuses[key]); }
+// valida um TIME de 3: existência, tamanho, sem repetição, e posse de cada um.
+function validarTime(token, time) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  if (!Array.isArray(time) || time.length !== 3) return { ok: false, codigo: 'time_invalido', erro: 'o time tem de ter exatamente 3 deuses' };
+  if (new Set(time).size !== 3) return { ok: false, codigo: 'time_invalido', erro: 'sem deuses repetidos no time' };
+  const faltam = time.filter(k => !possui(token, k));
+  if (faltam.length) return { ok: false, codigo: 'deus_nao_possuido', erro: `você não possui: ${faltam.join(', ')}` };
+  return { ok: true };
 }
 
 // ---- projeções: o que sai para o CLIENTE. O token NUNCA vaza numa consulta. ----
@@ -143,11 +216,14 @@ function planoDoNick() {
 // ---- utilitários de teste/manutenção ----
 function _clone(x) { return JSON.parse(JSON.stringify(x)); }
 function _total() { _carregar(); return _contas.size; }
-function _resetParaTeste() { _contas = new Map(); _carregado = true; try { fs.rmSync(ARQ, { force: true }); } catch (e) {} }
+function _resetParaTeste() { _contas = new Map(); _carregado = true; _idxNick = null; try { fs.rmSync(ARQ, { force: true }); } catch (e) {} }
 function _existeToken(token) { _carregar(); return _contas.has(token); }
+// atalho de teste: dá um deus à conta (a posse importa no PvP; os testes montam times possuídos).
+function _darDeus(token, key) { _carregar(); const c = _contas.get(token); if (c) { c.perfil.deuses[key] = c.perfil.deuses[key] || { copias: 1 }; } }
 
 module.exports = {
-  FAIXAS, GRANT_GEMA, ARQ,
+  FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, planoDoNick,
-  _total, _resetParaTeste, _existeToken,
+  normalizarNick, nickDisponivel, definirNick, possui, validarTime,
+  _total, _resetParaTeste, _existeToken, _darDeus,
 };

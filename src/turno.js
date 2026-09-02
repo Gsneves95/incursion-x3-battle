@@ -105,7 +105,8 @@ function passoIA() {
 
 // ---- ação: armar / escolher alvo / confirmar ----
 function armar(uid, slot) {
-  if (cpuControla(st.ativo)) return;   // sem input humano no turno da CPU
+  if (MP) { if (st.ativo !== MP.humano || _onlineOcupado) return; }   // ONLINE: só no MEU turno (PvP: eu sou MP.humano)
+  else if (cpuControla(st.ativo)) return;   // sem input humano no turno da CPU
   detalhe = null; menuAberto = false; resumoTurno = null;   // 1º toque some com o resumo
   if (armado && armado.uid === uid && armado.slot === slot) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
   const u = st.lados[st.ativo].units.find(x => x.uid === uid);
@@ -173,6 +174,7 @@ function confirmar() {
 // servidor confirma e, se divergir, corrige (visível em MP.avisos). Uma ação por vez (trava _onlineOcupado).
 function confirmarOnline(op) {
   armado = null; alvos = []; escolhidos = []; detalhe = null;
+  if (st.ativo !== MP.humano) return;   // não é o meu turno (PvP): não age
   if (_onlineOcupado) return;   // uma ação por vez: espera a confirmação do servidor
   _onlineOcupado = true;
   PARTIDA_CLI.jogar(_transOnline, MP, op, { token: _tokenOnline }).then((r) => {
@@ -184,7 +186,7 @@ function confirmarOnline(op) {
   _redesenhar();                                  // desenho OTIMISTA imediato (já aplicado em MP.st)
 }
 function encerrarOnline() {
-  if (_onlineOcupado) return;
+  if (st.ativo !== MP.humano || _onlineOcupado) return;   // só encerro o MEU turno (PvP)
   _onlineOcupado = true;
   armado = null; alvos = []; escolhidos = []; detalhe = null; ov = null; menuAberto = false;
   PARTIDA_CLI.encerrar(_transOnline, MP, { token: _tokenOnline }).then(() => {

@@ -254,10 +254,40 @@ async function iniciarPartidaServidor(pergaminhoKey){
   vsCPU=true;                                   // perspectiva fixa no humano (o oponente é a IA do servidor)
   st=mp.st;
   entrarModoOnline(mp, contaTransporte, token);  // turno.js passa a rotear ação/relógio/IA para o servidor (com o token)
-  if(contaTransporte.aoPush) contaTransporte.aoPush(receberPushOnline);   // o servidor empurra o estouro do relógio
+  if(contaTransporte.aoPush) contaTransporte.aoPush(aoPushGlobal);   // pushes: relógio, jogada do oponente (PvP), pareamento
   ir('batalha', {}, { substituir:true });
   render();
   return mp;
+}
+
+// DESPACHANTE de pushes do servidor: numa partida (ehOnline) -> desenha o que chegou (relógio/oponente);
+// FORA de partida -> só o pareamento do PvP (o jogador que esperava recebe a partida por push).
+function aoPushGlobal(msg){
+  if(typeof ehOnline==='function' && ehOnline()){ receberPushOnline(msg); return; }
+  if(msg && msg.tipo==='partida' && msg.pareado){ const mp=PARTIDA_CLI.absorverPareado(msg); if(mp) entrarPvPBatalha(mp); }
+}
+
+// F5.3 — entra na tela de batalha de uma partida PvP (pareada). vsCPU=false: o oponente é humano.
+function entrarPvPBatalha(mp){
+  prova=null; provaFim=null; provaLances=0; campanha=null; campanhaFim=null;
+  vsCPU=false; st=mp.st;
+  entrarModoOnline(mp, contaTransporte, lerToken());
+  ir('batalha', {}, { substituir:true });
+  render();
+}
+
+// F5.3 — INICIAR PvP: define o nick (na ENTRADA do PvP, não na 1ª abertura), entra na fila com o time
+// (o servidor valida a POSSE), e ao parear entra na batalha. Se ficar na fila, o pareamento chega por push.
+async function iniciarPvP(nick, time){
+  if(!contaTransporte) return { erro:'sem servidor' };
+  const token = (typeof lerToken==='function') ? lerToken() : null;
+  if(!token) return { erro:'sem conta' };
+  if(nick){ const rn=await PARTIDA_CLI.definirNick(contaTransporte,{token,nick}); if(!rn.ok) return { erro:rn.erro, codigo:rn.codigo }; }
+  if(contaTransporte.aoPush) contaTransporte.aoPush(aoPushGlobal);   // garante o despachante (recebe o pareamento por push)
+  const r=await PARTIDA_CLI.entrarFila(contaTransporte,{token,time});
+  if(r.fase==='pareado'){ entrarPvPBatalha(r.MP); return { fase:'pareado' }; }
+  if(r.fase==='recusado') return { erro:r.erro, codigo:r.codigo };
+  return r;   // na_fila: espera o push de pareamento
 }
 
 // F5.4 — RETOMAR a partida do servidor na reabertura/reconexão. No Android a WebView morre a cada
@@ -271,7 +301,7 @@ async function retomarPartidaServidor(token){
   prova=null; provaFim=null; provaLances=0; campanha=null; campanhaFim=null;
   vsCPU=true; st=mp.st;
   entrarModoOnline(mp, contaTransporte, token);
-  if(contaTransporte.aoPush) contaTransporte.aoPush(receberPushOnline);
+  if(contaTransporte.aoPush) contaTransporte.aoPush(aoPushGlobal);
   ir('batalha', {}, { substituir:true });
   render();
   return r;
@@ -286,6 +316,7 @@ async function retomarPartidaServidor(token){
     contaTransporte=trans;
     const r=await iniciarConta(trans,{});
     if(r.fase==='entrou'){ contaAtual=r.conta; montarBotaoConta();
+      if(trans.aoPush) trans.aoPush(aoPushGlobal);   // pronto para receber pareamento/relógio/oponente
       // F5.4: reconectou com token válido — havia partida em curso? Retoma antes de qualquer coisa.
       try { await retomarPartidaServidor(lerToken()); } catch(e){}
     }

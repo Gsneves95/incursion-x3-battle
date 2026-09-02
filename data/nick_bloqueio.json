@@ -1,0 +1,5 @@
+{
+  "_nota": "Curadoria de NICK OFENSIVO — do DONO, versionada em data/ (§222: o que precisa mudar sem revisão de loja vive no servidor). Expanda aqui; some do cliente. A checagem normaliza o nick (minúsculas, sem acento) E desfaz leetspeak (0->o, 3->e, 1->i, 4->a, 5->s, 7->t, @->a, $->s) ANTES de comparar, então 'n4z1' cai em 'nazi'. `substrings` bloqueia como parte do nick; `exatas` só o nick inteiro.",
+  "substrings": ["nazi", "hitler", "estupr", "seubosta", "puta", "viado", "arrombad"],
+  "exatas": ["adm", "admin", "moderador", "gm", "sistema", "incursion", "suporte"]
+}

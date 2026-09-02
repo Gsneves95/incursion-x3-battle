@@ -1,135 +1,141 @@
-// server/partida.js — F5.1/F5.2: a PARTIDA rodando no SERVIDOR. O servidor é o dono da partida:
-// valida cada ação contra o estado autoritativo, aplica, e devolve. O cliente NUNCA declara
-// resultado — vitória, derrota e fim de turno são daqui. O oponente (F5.2) é a IA rodando no
-// servidor: testa o protocolo inteiro sem depender do pareamento (F5.3).
-//
-// PURO O BASTANTE PARA TESTAR SEM WebSocket: o tempo entra por parametro (`agora`), a IA e o motor
-// vem do motor-host (o MESMO src/engine.js do cliente). O server.js so amarra isto ao socket e ao
-// relogio de verdade (setTimeout). Assim a regra de partida se prova em Node, sem rede nem relogio real.
+// server/partida.js — a PARTIDA rodando no SERVIDOR. O servidor é o dono: valida cada ação contra o
+// estado autoritativo, aplica, e devolve. O cliente NUNCA declara resultado.
+//   - PvE (F5.2): o oponente é a IA rodando no servidor. O `encerrar` do humano dirige a IA até a vez voltar.
+//   - PvP (F5.3): DOIS humanos. Nenhuma IA — o `encerrar` só passa o turno para o outro humano. Cada
+//     lado só age no SEU turno; a posse do time é validada antes (contas.validarTime), não aqui.
+// LADO-CÊNTRICO: tudo é por LADO (0/1). `ociosos`/`agiu` são por lado (o abandono é de cada jogador).
+// PURO O BASTANTE PARA TESTAR SEM WebSocket: o tempo entra por parâmetro (`agora`).
 const path = require('path');
 const host = require('./motor-host.js');
 const E = host.E, ia = host.ia;
 
-const LIMITE_MS = 60000;   // relogio do turno: 60s (o mesmo TURNO_SEG do cliente). Do servidor agora.
-const MAX_ABANDONO = 3;    // turnos consecutivos PERDIDOS (sem agir) = derrota por abandono (anti-idle do ranqueado).
+const LIMITE_MS = 60000;   // relógio do turno: 60s. Do servidor (§223).
+const MAX_ABANDONO = 3;    // turnos consecutivos ociosos (sem agir) = derrota por abandono (anti-idle).
 
-// resultado do ponto de vista do HUMANO (lado 0). st.fim.lado = lado VENCEDOR (view.js).
-function _resultadoHumano(st, humano) {
+// resultado do ponto de vista de UM lado. st.fim.lado = lado VENCEDOR (view.js).
+function _resultado(st, lado) {
   if (!st.fim) return null;
-  return { resultado: st.fim.lado === humano ? 'vitoria' : 'derrota', ladoVencedor: st.fim.lado, motivo: st.fim.motivo || null };
+  return { resultado: st.fim.lado === lado ? 'vitoria' : (st.fim.resultado === 'empate' ? 'empate' : 'derrota'), ladoVencedor: st.fim.lado, motivo: st.fim.motivo || null };
 }
-
-// REDE DE SEGURANÇA de fim: o motor declara vitória quando um lado é varrido, MAS só nos pontos em
-// que roda `checarFim` (dentro de agir/matar/início de turno). Um lado varrido por efeito de INÍCIO
-// de turno para o qual o controle VOLTA (fica ocioso, sem ação) pode não passar por esses pontos e a
-// partida travaria. O servidor é o dono do fim: aplico a MESMA regra do motor (todos !vivo e sem
-// renascer pendente = o outro lado venceu) para nunca deixar uma partida sem vencedor. Não sobrescreve
-// um fim já declarado (respeita motivo/tempo/execução).
+// REDE DE SEGURANÇA de fim (§223): lado varrido por efeito de início de turno para o qual o controle
+// volta pode não passar pelo `checarFim` do motor. O servidor aplica a MESMA regra para nunca travar.
 function _garantirFim(st) {
   if (st.fim) return;
   for (let i = 0; i < 2; i++) {
     if (st.lados[i].units.every(u => !u.vivo && !u.pendenteRenascer)) { st.fim = { tipo: 'fim', resultado: 'vitoria', lado: 1 - i }; return; }
   }
 }
+function _base(st, agora, limiteMs, modo) {
+  return {
+    st, modo, humano: 0, cpu: 1, limiteMs,
+    deadline: agora + limiteMs,     // relógio ABSOLUTO do servidor (§224: não zera na reconexão)
+    agiu: [false, false],           // por lado: agiu neste turno? (turno com ação não conta como ocioso)
+    ociosos: [0, 0],                // por lado: turnos consecutivos SEM agir (abandono)
+    fim: _resultado(st, 0),         // POV do lado 0 (o snapshot recomputa por destinatário)
+  };
+}
 
-// criar(pergaminho, {agora, limiteMs, humano}) -> P (a partida autoritativa).
+// PvE: nasce de um pergaminho carimbado; o lado 1 é a IA.
 function criar(pergaminho, opts = {}) {
   const agora = typeof opts.agora === 'number' ? opts.agora : Date.now();
   const limiteMs = typeof opts.limiteMs === 'number' ? opts.limiteMs : LIMITE_MS;
-  const humano = typeof opts.humano === 'number' ? opts.humano : 0;   // o humano e o lado 0; a IA e o outro
-  const st = host.montar(pergaminho);
-  const P = {
-    st, humano, cpu: 1 - humano, limiteMs,
-    deadline: agora + limiteMs,     // relogio ABSOLUTO do servidor (o cliente desenha o que sobra)
-    agiuNesteTurno: false,          // o humano agiu neste turno? (turno com acao nao conta como perdido)
-    turnosPerdidos: 0,              // turnos consecutivos SEM agir (para o abandono)
-    fim: _resultadoHumano(st, humano),
-  };
+  return _base(host.montar(pergaminho), agora, limiteMs, 'pve');
+}
+// PvP: nasce de DOIS times de 3. `comeca` = quem abre (a regra de iniciativa do motor sobrepõe, §121);
+// `seed` fixa o sorteio de energia. Ambos entram por quem cria (o servidor escolhe, justo — não o cliente).
+function criarPvP(time0, time1, opts = {}) {
+  const agora = typeof opts.agora === 'number' ? opts.agora : Date.now();
+  const limiteMs = typeof opts.limiteMs === 'number' ? opts.limiteMs : LIMITE_MS;
+  const seed = (typeof opts.seed === 'number') ? opts.seed : 1;
+  const comeca = (opts.comeca === 1) ? 1 : 0;
+  const st = host.montar({ aliados: time0, inimigos: time1, montar: { seed, comeca }, condicoes: [] });
+  const P = _base(st, agora, limiteMs, 'pvp');
+  P.abre = st.starter;   // quem o motor decidiu que abre (iniciativa OU o comeca sorteado)
   return P;
 }
 
-// snapshot do que sai para o cliente: estado autoritativo + hash + de quem e o turno + relogio + fim.
-function estado(P, agora) {
+// snapshot para UM destinatário (o lado que ele controla). O `fim` e o `humano` são do PONTO DE VISTA
+// dele; assim os dois jogadores de um PvP recebem o mesmo estado, cada um se vendo como o seu lado.
+function estado(P, agora, ladoRecipiente) {
   const now = typeof agora === 'number' ? agora : Date.now();
+  const lado = (ladoRecipiente === 1) ? 1 : 0;
   return {
     estado: JSON.parse(host.serializar(P.st)),
     hash: host.hashEstado(P.st),
-    turnoDe: P.st.ativo,            // de quem e a vez (o cliente so age se for o humano)
-    humano: P.humano,
-    deadline: P.deadline,           // instante-limite absoluto (ms do servidor)
-    agora: now,                     // 'agora' do servidor, para o cliente medir o offset do relogio
+    turnoDe: P.st.ativo,
+    humano: lado,                   // "você é este lado" (PvE: sempre 0)
+    modo: P.modo,
+    deadline: P.deadline,
+    agora: now,
     restanteMs: Math.max(0, P.deadline - now),
-    fim: P.fim,                     // null enquanto joga; {resultado,...} quando acabou. SO o servidor decide.
+    fim: _resultado(P.st, lado),    // vitória/derrota do ponto de vista DELE
   };
 }
 
-// AGIR: uma acao do HUMANO, validada contra o estado autoritativo. NAO encerra o turno (o humano
-// pode agir com varias unidades e so entao encerrar). Recusa clara; nunca aplica "na duvida".
-// op: {uid, slot, alvos, escolhas, modo}. Retorna {ok} | {ok:false, codigo, erro}.
+// AGIR: uma ação de um lado, validada. `lado` é de quem age (o servidor sabe pela conta; nunca confia
+// no cliente). Só age no SEU turno e com a SUA unidade. Transacional: recusa não corrompe o estado.
 function agir(P, op, opts = {}) {
-  if (P.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
-  if (P.st.ativo !== P.humano) return { ok: false, codigo: 'nao_e_seu_turno', erro: 'nao e a sua vez (o turno e do oponente)' };
-  const u = (P.st.lados[P.humano].units || []).find(x => x.uid === (op && op.uid));
+  const lado = (typeof opts.lado === 'number') ? opts.lado : P.humano;
+  if (P.st.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
+  if (P.st.ativo !== lado) return { ok: false, codigo: 'nao_e_seu_turno', erro: 'nao e a sua vez (o turno e do oponente)' };
+  const u = (P.st.lados[lado].units || []).find(x => x.uid === (op && op.uid));
   if (!u) return { ok: false, codigo: 'unidade_invalida', erro: 'unidade nao e sua ou nao existe' };
-  // TRANSACIONAL: uma acao recusada NUNCA pode corromper o estado autoritativo. Fotografo antes;
-  // se o motor recusar (mesmo apos tocar o estado), restauro. O servidor e a verdade — tem de ser limpo.
   const antes = host.serializar(P.st);
   const r = E.agir(P.st, op.uid, op.slot, op.alvos || [], op.escolhas || null, op.modo || null);
   if (!r || !r.ok) { P.st = JSON.parse(antes); return { ok: false, codigo: 'acao_invalida', erro: (r && r.erro) || 'acao invalida' }; }
-  P.agiuNesteTurno = true;
-  P.fim = _resultadoHumano(P.st, P.humano);   // agir pode encerrar a partida (execucao, ultimo abate)
-  return { ok: true, encerrou: !!P.fim };
+  P.agiu[lado] = true;
+  P.fim = _resultado(P.st, 0);
+  return { ok: true, encerrou: !!P.st.fim };
 }
 
-// ENCERRAR o turno do humano (voluntario): fecha o turno, roda a IA do oponente ate a vez voltar,
-// e rearma o relogio. Retorna as acoes da IA (para o cliente DESENHAR o que o oponente fez) + fim.
+// ENCERRAR o turno de um lado (voluntário). PvE: dirige a IA até a vez voltar. PvP: só passa o turno.
 function encerrarTurno(P, opts = {}) {
   const agora = typeof opts.agora === 'number' ? opts.agora : Date.now();
-  if (P.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
-  if (P.st.ativo !== P.humano) return { ok: false, codigo: 'nao_e_seu_turno', erro: 'nao e a sua vez' };
-  return _fecharEDirigir(P, agora, false);
+  const lado = (typeof opts.lado === 'number') ? opts.lado : P.humano;
+  if (P.st.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
+  if (P.st.ativo !== lado) return { ok: false, codigo: 'nao_e_seu_turno', erro: 'nao e a sua vez' };
+  return _passarTurno(P, agora);
 }
 
-// ESTOURAR o tempo (o relogio do servidor disparou; o humano nao encerrou). O turno PASSA
-// automaticamente (nao e morte instantanea — um turno perdido ja e penalidade tatica real). Turnos
-// consecutivos SEM nenhuma acao = abandono (derrota). Turno em que o humano agiu nao conta como perdido.
+// ESTOURAR o tempo (o relógio do servidor disparou no turno de st.ativo). O turno PASSA (não é morte);
+// turnos consecutivos SEM agir = abandono daquele lado (o OUTRO vence). Turno em que agiu não conta.
 function estourarTempo(P, opts = {}) {
   const agora = typeof opts.agora === 'number' ? opts.agora : Date.now();
-  if (P.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
-  if (P.st.ativo !== P.humano) return { ok: false, codigo: 'nao_e_seu_turno', erro: 'o relogio so corre no turno do humano' };
-  if (!P.agiuNesteTurno) {
-    P.turnosPerdidos += 1;
-    if (P.turnosPerdidos >= MAX_ABANDONO) {
-      // ABANDONO: o servidor declara a derrota (reusa a maquina de fim do motor). O cliente so desenha.
-      P.st.fim = { tipo: 'fim', resultado: 'vitoria', lado: P.cpu, motivo: 'abandono' };
-      P.fim = _resultadoHumano(P.st, P.humano);
-      return { ok: true, abandono: true, turnosPerdidos: P.turnosPerdidos, cpuOps: [], fim: P.fim };
+  if (P.st.fim) return { ok: false, codigo: 'partida_encerrada', erro: 'a partida ja acabou' };
+  const ativo = P.st.ativo;
+  if (!P.agiu[ativo]) {
+    P.ociosos[ativo] += 1;
+    if (P.ociosos[ativo] >= MAX_ABANDONO) {
+      P.st.fim = { tipo: 'fim', resultado: 'vitoria', lado: 1 - ativo, motivo: 'abandono' };
+      P.fim = _resultado(P.st, 0);
+      return { ok: true, abandono: true, ladoAbandonou: ativo, turnosPerdidos: P.ociosos[ativo], cpuOps: [], fim: P.fim };
     }
   }
-  const r = _fecharEDirigir(P, agora, true);
-  return Object.assign({ autopassou: true, turnosPerdidos: P.turnosPerdidos }, r);
+  const r = _passarTurno(P, agora);
+  return Object.assign({ autopassou: true, turnosPerdidos: P.ociosos[ativo] }, r);
 }
 
-// fecha o turno do humano e DIRIGE a IA do oponente ate a vez voltar (ou a partida acabar). Espelha
-// o cliente local (passoIA + encerrarTurno): fimTurno(humano) -> [laco da IA] -> fimTurno(oponente).
-function _fecharEDirigir(P, agora, foiTempo) {
+// passa o turno do lado ativo. PvE: fimTurno(humano) -> laço da IA -> fimTurno(IA) (a vez volta ao humano).
+// PvP: fimTurno só (a vez vai ao outro humano). Depois: rede de fim, rearma o relógio, zera o "agiu" do novo ativo.
+function _passarTurno(P, agora) {
   const st = P.st;
-  E.fimTurno(st);                       // encerra o turno do humano -> vez do oponente
   const cpuOps = [];
-  let guarda = 0;
-  while (!st.fim && st.ativo === P.cpu && guarda++ < 200) {
-    const mv = ia.iaProximaAcao(st, 'normal');
-    if (!mv) { E.fimTurno(st); break; }   // IA sem mais acao: encerra o turno dela -> volta ao humano
-    const r = E.agir(st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
-    if (r && r.ok) cpuOps.push({ uid: mv.uid, slot: mv.slot, alvos: mv.alvos || [] });
-    else { E.fimTurno(st); break; }       // salvaguarda: IA propos acao invalida (nao deveria) -> nao trava
+  E.fimTurno(st);   // encerra o turno de quem estava ativo
+  if (P.modo === 'pve') {
+    let guarda = 0;
+    while (!st.fim && st.ativo === P.cpu && guarda++ < 200) {
+      const mv = ia.iaProximaAcao(st, 'normal');
+      if (!mv) { E.fimTurno(st); break; }
+      const r = E.agir(st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
+      if (r && r.ok) cpuOps.push({ uid: mv.uid, slot: mv.slot, alvos: mv.alvos || [] });
+      else { E.fimTurno(st); break; }
+    }
   }
-  // novo turno do humano: rearma o relogio e zera o "agiu neste turno"
-  _garantirFim(st);   // rede de seguranca: lado varrido no fluxo acima que o motor nao carimbou
+  _garantirFim(st);
   P.deadline = agora + P.limiteMs;
-  P.agiuNesteTurno = false;
-  P.fim = _resultadoHumano(st, P.humano);
+  P.agiu[st.ativo] = false;   // o novo lado ativo começa "sem ter agido"
+  P.fim = _resultado(st, 0);
   return { ok: true, cpuOps, fim: P.fim };
 }
 
-module.exports = { LIMITE_MS, MAX_ABANDONO, criar, estado, agir, encerrarTurno, estourarTempo };
+module.exports = { LIMITE_MS, MAX_ABANDONO, criar, criarPvP, estado, agir, encerrarTurno, estourarTempo };

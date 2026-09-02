@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §225 — FASE 5 / F5.3: PAREAMENTO (dois humanos de verdade). Fila simples, nick com unicidade+bloqueio, posse do time validada, quem começa justo, e a GUARDA provada: dois clientes otimistas não divergem entre si (três hashes batem).
+
+**POR QUE AGORA (sobre a F5.4):** a camada de partida já sabe reconectar (§224). Somar o segundo jogador sobre ela é somar sobre uma base que sobrevive à queda — no Android, onde cada troca de app mata a WebView, um PvP que não reconectasse seria dois jogadores se perdendo a cada notificação.
+
+**1. A FILA (`server/fila.js`) — simples: no máximo um esperando.** Um jogador entra, espera, e o próximo que entra PAREIA. Os casos chatos, resolvidos:
+   - **Sai da fila (fecha o app na espera):** o `close` da conexão chama `fila.sair` → o esperando some. E antes de parear confiro que o esperando ainda está VIVO (`readyState`) e livre (não entrou noutra partida).
+   - **Dois entram "ao mesmo tempo":** Node é SINGLE-THREAD e `entrar()` não tem `await` no meio — roda inteiro antes de o próximo começar. A corrida não existe: o 1º enfileira, o 2º pareia. Atômico por construção, não por sorte.
+   - **Entra com partida em curso:** recusa `ja_em_partida` (`salas.existe`). Não pode estar em duas.
+
+**2. O NICK chega aqui, na ENTRADA do PvP (não na 1ª abertura — atrito só onde serve).** Executado como o plano registrado no §222: **unicidade** por índice sobre o nick NORMALIZADO (minúsculas, sem acento, espaços colapsados), com **reserva atômica no servidor** (quem grava primeiro leva; o segundo recebe `nick_em_uso`). **Palavra ofensiva** por lista **versionada em `data/nick_bloqueio.json`** (§222: o que muda sem revisão de loja vive no servidor) + **desfaz leetspeak** antes de comparar (`n4z1`→`nazi`). Recusa com motivo (`nick_invalido`/`nick_ofensivo`/`nick_em_uso`). Ao excluir a conta, o nick é liberado.
+
+**3. A MONTAGEM DEIXA DE SER PERGAMINHO — e a POSSE passa a importar de verdade.** No PvP cada jogador traz o SEU time de 3 (a partida nasce de dois times, não de uma montagem carimbada — `partidaCtrl.criarPvP`). O servidor VALIDA que a conta POSSUI os três (`contas.validarTime`: existência, 3 sem repetição, cada um em `perfil.deuses`). É a 1ª vez que a posse importa, e é onde o cliente **não pode ser confiado**: time com deus não possuído é **RECUSA (`deus_nao_possuido`), não aviso**.
+
+**4. QUEM COMEÇA — justo, e não a ordem da fila.** A regra de KIT do motor decide primeiro: **iniciativa** (Hermes/Exu) força o starter (§121) — é vantagem de kit, do design. Quando ela não decide (nenhum ou ambos os lados têm), vale um `comeca` de **MOEDA do servidor**: o bit do `seed` sorteado por `crypto.randomBytes`. Nem jogador controla o seed; **nunca** é a ordem da fila. Justo porque: iniciativa é uma escolha de time (com custo — quem abre gera menos energia no 1º turno, §1365), e o empate é uma moeda que ninguém vicia.
+
+**5. AINDA NÃO HÁ RANQUE (vem na F5.5).** A F5.3 pareia qualquer um com qualquer um. **O que o pareamento vai precisar quando o ranque existir (anotado):** a fila deixa de ser "um esperando" e vira uma fila COM CHAVE de faixa — parear por faixa PRÓXIMA (elo perto), com a janela de tolerância CRESCENDO com o tempo de espera (se ninguém perto aparece em X s, alarga a faixa aceitável), para não deixar ninguém esperando sozinho. O `criarPvP` já é neutro quanto a ranque; o que muda é o CRITÉRIO de quem casa com quem, não a partida.
+
+**A GUARDA (a prova central) — dois clientes otimistas NÃO divergem entre si.** A F5.2 provou cliente × servidor; aqui são DOIS clientes prevendo o mesmo estado. O modelo: o jogador ATIVO age otimista (aplica local, o servidor confirma); o INATIVO **não prevê o oponente** (não dá) — recebe as jogadas dele por PUSH e absorve o estado autoritativo. Então os dois convergem para o servidor, logo entre si. **Provado por medição:** uma partida PvP completa, e em CADA passo **hash(A) == hash(B) == hash(servidor)** (40 ações, todas idênticas). O `encerrar` do cliente vira modo-consciente: no PvP só passa o turno (não roda a IA); os avisos do cliente seguem fora do `st.log` hashado (§223) para a convergência não ser poluída. Cada lado vê o resultado do SEU ponto de vista (um venceu, o outro perdeu).
+
+**PROVA:** `tests/pareamento.test.js` — nick (unicidade+leetspeak), posse (recusa deus não possuído), quem começa (iniciativa força; senão moeda, não fila), fila (espera, sai ao fechar, recusa com partida em curso, recusa sem nick), e a GUARDA dos três hashes numa partida PvP completa por WebSocket. **35 suítes verdes.** Captura: os DOIS lados da mesma partida (cada um se vê como VOCÊ, HP espelhado, o log do oponente, "Vez de Oponente — aguarde" no lado que espera).
+
+**ESCOPO:** sem ranque, sem faixas, sem draft/banimento. Só a fila, o nick, a posse, quem começa e a partida PvP. A F5.5 traz o ranqueado.
+
 ## §224 — FASE 5 / F5.4: RECONEXÃO. A partida pertence à CONTA, não à conexão; o relógio não para; e reconectar NUNCA dá vantagem (provado por equivalência: ficar == cair-e-voltar).
 
 **POR QUE ANTES DO PAREAMENTO (decisão do dono):** no Android a WebView morre a cada troca de app — reconectar é o caminho NORMAL, não a exceção. Construir pareamento (F5.3) sobre uma camada que não sabe reconectar seria dois jogadores que se perdem a cada notificação. A camada de partida (F5.2) estava fresca; a reconexão entrou sobre ela antes de somar o segundo jogador.

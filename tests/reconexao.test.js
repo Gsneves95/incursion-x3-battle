@@ -25,11 +25,12 @@ const dorme = (ms) => new Promise(r => setTimeout(r, ms));
   // ===== (1) a partida vive na CONTA; a retomada é LEITURA PURA (não muda nada) =====
   console.log('== 1. a partida vive na conta · a conexão cai e ela segue · a retomada é leitura pura ==');
   salas._limparTudo();
-  const sala = salas.criar('conta-A', prov, { limiteMs: 60000, ws: fakeWs() });
-  const hAntes = hash(sala.P), deadAntes = sala.P.deadline, perdAntes = sala.P.turnosPerdidos, turnoAntes = sala.P.st.turno;
+  const wsA = fakeWs();
+  const sala = salas.criar('conta-A', prov, { limiteMs: 60000, ws: wsA });
+  const hAntes = hash(sala.P), deadAntes = sala.P.deadline, perdAntes = sala.P.ociosos[0], turnoAntes = sala.P.st.turno;
 
   // a conexão cai — a sala CONTINUA existindo (a partida é da conta, não do socket)
-  salas.desanexar('conta-A', sala.ws);
+  salas.desanexar('conta-A', wsA);
   ok(salas.existe('conta-A'), 'a conexão caiu, mas a partida da conta CONTINUA no servidor');
   ok(sala.P.deadline === deadAntes, 'cair NÃO mexe no relógio (deadline intacto)');
 
@@ -39,7 +40,7 @@ const dorme = (ms) => new Promise(r => setTimeout(r, ms));
   const snap = salas.snapshot(sala, { retomada: true });
   ok(hash(sala.P) === hAntes, 'retomar NÃO muda o estado (hash idêntico ao de antes)');
   ok(sala.P.deadline === deadAntes, 'retomar NÃO zera o relógio (deadline idêntico)');
-  ok(sala.P.turnosPerdidos === perdAntes && sala.P.st.turno === turnoAntes, 'retomar NÃO avança turno nem conta ausência como abandono');
+  ok(sala.P.ociosos[0] === perdAntes && sala.P.st.turno === turnoAntes, 'retomar NÃO avança turno nem conta ausência como abandono');
   ok(snap.estado && snap.hash === hAntes && snap.turnoDe === sala.P.st.ativo, 'a retomada devolve o ESTADO INTEIRO autoritativo + hash');
   console.log(`  partida na conta · cai e segue · retomar é leitura pura (hash ${hAntes} antes==depois, deadline intacto)`);
 
@@ -51,7 +52,7 @@ const dorme = (ms) => new Promise(r => setTimeout(r, ms));
   salas.desanexar('conta-B', salaB.ws);   // garante socket ausente
   const turnoInic = salaB.P.st.turno;
   await dorme(300);   // > 1 janela: um turno DEVE ter passado sozinho
-  ok(salaB.P.turnosPerdidos >= 1, 'o relógio correu SEM ninguém conectado (turno perdido na ausência)');
+  ok(salaB.P.ociosos[0] >= 1, 'o relógio correu SEM ninguém conectado (turno perdido na ausência)');
   await dorme(520);   // + 2 janelas: chega aos 3 ociosos
   ok(salaB.P.fim && salaB.P.fim.motivo === 'abandono' && salaB.P.fim.resultado === 'derrota', 'abandono por ociosidade DECLARADO pelo servidor, mesmo desconectado');
   salas.pararRelogio('conta-B');
@@ -69,17 +70,17 @@ const dorme = (ms) => new Promise(r => setTimeout(r, ms));
     partidaCtrl.estourarTempo(Pcai,  { agora: k * 1001 });   // "caiu": nenhuma diferença — o socket não entra na conta
   }
   ok(hash(Pfica) === hash(Pcai), 'cair-e-voltar produz o MESMO estado que ficar (hash idêntico) — zero vantagem');
-  ok(Pfica.turnosPerdidos === Pcai.turnosPerdidos && Pfica.deadline === Pcai.deadline, 'mesmo relógio e mesma contagem de abandono nos dois');
+  ok(Pfica.ociosos[0] === Pcai.ociosos[0] && Pfica.deadline === Pcai.deadline, 'mesmo relógio e mesma contagem de abandono nos dois');
 
   // e no REGISTRO real (timers de verdade): uma sala com socket, outra sem — após a MESMA janela, iguais
   salas._limparTudo();
-  const sConn = salas.criar('c-conn', prov, { limiteMs: 240, ws: fakeWs() });   // "ficou" (socket vivo)
-  const sDrop = salas.criar('c-drop', prov, { limiteMs: 240, ws: fakeWs() });
-  const wsConn = sConn.ws, wsDrop = sDrop.ws;
-  salas.desanexar('c-drop', sDrop.ws);                                          // "caiu" (socket ausente)
+  const wsConn = fakeWs(), wsDrop = fakeWs();
+  const sConn = salas.criar('c-conn', prov, { limiteMs: 240, ws: wsConn });   // "ficou" (socket vivo)
+  const sDrop = salas.criar('c-drop', prov, { limiteMs: 240, ws: wsDrop });
+  salas.desanexar('c-drop', wsDrop);                                          // "caiu" (socket ausente)
   await dorme(320);   // uma janela passa para as duas
   ok(hash(sConn.P) === hash(sDrop.P), 'no registro real: sala conectada e sala caída evoluem IDÊNTICAS');
-  ok(sConn.P.turnosPerdidos === 1 && sDrop.P.turnosPerdidos === 1, 'o turno perdido conta igual, conectado ou não');
+  ok(sConn.P.ociosos[0] === 1 && sDrop.P.ociosos[0] === 1, 'o turno perdido conta igual, conectado ou não');
   ok(wsConn.enviados.length >= 1 && wsDrop.enviados.length === 0, 'só a sala CONECTADA recebeu push; a caída guarda o estado para o retorno (mas evoluiu igual)');
   salas.pararRelogio('c-conn'); salas.pararRelogio('c-drop');
   console.log(`  ficar==cair (controlador e registro): hash idêntico, mesmo relógio, mesmo abandono · reconectar não adianta nada`);
