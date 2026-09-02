@@ -72,12 +72,19 @@ console.log('== 4. Coleção: os 100 por PANTEÃO, 10 grupos de 10, navegável =
   w.eval("ir('colecao'); render();");
   ok(!!$('.tela') && /Coleção/.test($('.tela__titulo').textContent), 'a tela de Coleção monta');
   ok($$('.csec').length === 10, `deveria haver 10 panteões (tem ${$$('.csec').length})`);
-  ok($$('.ctile[data-deus]').length === 100, `deveria listar os 100 deuses (tem ${$$('.ctile[data-deus]').length})`);
+  ok($$('.colx[data-deus]').length === 100, `deveria listar os 100 deuses (tem ${$$('.colx[data-deus]').length})`);
   const cabs = $$('.csec__cab h2').map(e => e.textContent);
   ok(cabs.join(',') === 'Grega,Nórdica,Egípcia,Japonesa,Chinesa,Hindu,Brasileira,Africana,Celta,Maia', 'os 10 panteões na ordem esperada');
   // NB: o roster NÃO é 10×10 (Grega 19 … Maia 4) — o agrupamento por panteão vale, a contagem por grupo é a real.
-  const soma = $$('.csec').reduce((s, sec) => s + sec.querySelectorAll('.ctile').length, 0);
+  const soma = $$('.csec').reduce((s, sec) => s + sec.querySelectorAll('.colx').length, 0);
   ok(soma === 100, `a soma dos grupos deveria cobrir os 100 (deu ${soma})`);
+  // §216: dois estados INEQUÍVOCOS — quem você tem (moldura dourada, arte em cor) x quem falta
+  // (AUSÊNCIA: cinza + cadeado; a régua do §211 não se aplica). Nada de selo cobrindo a ilustração.
+  ok($$('.colx--tem').length + $$('.colx--falta').length === 100, 'todo tile é ou "tem" (colx--tem) ou "falta" (colx--falta)');
+  ok($$('.colx--falta .colx__lock').length === $$('.colx--falta').length, 'quem falta mostra o cadeado (na faixa, não sobre a arte)');
+  ok($$('.colx--tem .colx__lock').length === 0, 'quem você tem não mostra cadeado');
+  ok($$('.colx__foot').length === 100 && $$('.colx__art .colx__lock, .colx__art .colx__n').length === 0,
+    'nome/cadeado moram na FAIXA (colx__foot), nunca sobre a arte (colx__art)');
 }
 
 console.log('== 5. detalhe do deus: kit + PERGAMINHO + elo p/ jogá-lo (F4/§212) ==');

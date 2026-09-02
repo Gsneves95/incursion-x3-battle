@@ -6,6 +6,43 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §217 — A FASE 4 NÃO FECHA EM DEFINITIVO: vira CANAL ABERTO de ajuste de interface/usabilidade (decisão do dono, forma de trabalho, não dívida).
+
+**A DECISÃO (dono):** a Fase 4 (interface/usabilidade) deixa de ser uma fase que se encerra e passa a ser um **canal permanentemente aberto**. Achado de jogo vira **tarefa pontual medida**, não espera abrir uma fase.
+
+**O MOTIVO, no histórico:** os três melhores consertos visuais do projeto **não vieram de planejamento — vieram do dono jogando**, e nenhum estava previsto:
+- **§207** — o HUD da condição estava SOBRE o tabuleiro (cobria discos/retratos); virou faixa própria fora dele.
+- **§211** — os discos de habilidade indisponíveis apagavam a ARTE (grayscale, sat ~18); a regra virou "estado na moldura, arte sempre em cor".
+- **§215** — a energia do OPONENTE tinha sumido no enxugamento do topo (§214); voltou, porque prever o Milagre dele é informação de jogo.
+
+**COMO REGISTRAR (a régua não muda):** cada achado é uma tarefa **medida** (números, não olho — §invariante do projeto), com decisão registrada aqui e o ESTADO atualizado. O que muda é só o gatilho: **não precisa de fase**. Duas rodadas já estão PREVISTAS e vão gerar tarefas assim:
+- **depois do PvP (Fase 5):** o jogo inteiro dá o que polir — perfil, ranque, pareamento, lista de missões (o §215 já reservou o lugar do perfil no topo pensando nisso).
+- **depois do TESTE DE USABILIDADE** (`docs/teste-usabilidade.md`, com as 13 decisões de interface em risco): o primeiro estranho jogando sem explicação é a maior incerteza aberta, e cada tropeço dele vira tarefa.
+
+**O que isto NÃO é:** não é dívida técnica acumulando nem fase inacabada. É o reconhecimento de que interface se acerta VENDO gente usar, e o projeto agora trata isso como fluxo normal, não exceção.
+
+## §216 — COLEÇÃO: a VITRINE ganha arte GRANDE e dois estados INEQUÍVOCOS (tem × falta). Medido: arte 40→114px, nada de selo sobre a ilustração.
+
+**O PROBLEMA MEDIDO (dono):** 100 ilustrações boas exibidas em miniatura — a arte do disco era **40×40px** num tile de 80px (metade desperdiçada). A Coleção é a **vitrine** do jogo (onde o jogador vê o que conquistou), e estava jogando a arte fora.
+
+**A LINGUAGEM HERDADA (Fase 4):** moldura dourada, cartografia ao fundo, versalete espaçado, título em ouro — o que o carrossel (§208) e a batalha (§214) fixaram. A Coleção agora fala a mesma língua.
+
+**1. ARTE MAIOR — medido antes de escolher.** Largura útil da rolagem = **876px** (924 − 24×2 de padding). Opções de coluna medidas: 5→169 · 6→139 · **7→118** · 8→103 · 10→80 (o de hoje). Escolhi **7 colunas**: a arte passa a **114×114px** (de 40 → **2,85× em lado, 8,1× em área**), full-bleed dentro da moldura, e ainda **lê como grade** (7 por linha). Tile 116×142.
+
+**2. AGRUPAMENTO por PANTEÃO mantido (§199) com a PROPORÇÃO da maestria (§200):** cada seção diz "dominados X/N" (não contagem absoluta) — comparável entre a Grega (19) e a Maia (4). Intocado.
+
+**3. DOIS ESTADOS INEQUÍVOCOS, com o contraste crescendo junto da arte:**
+- **TEM** → moldura **dourada** + arte em **cor** + nome aceso + pip de maestria.
+- **FALTA** → **AUSÊNCIA**, não indisponibilidade: arte em **cinza** (`grayscale(1) brightness(.6)` + scrim), borda **tracejada** apagada, cadeado ⚿. **A régua do §211 NÃO se aplica aqui** — lá o cinza escondia identidade de algo que você TEM e pode usar; aqui o deus é ausência, e cinza é legítimo, como o retrato do morto. O dono cravou a distinção.
+
+**4. NENHUM SELO COBRE A ARTE (medido):** nome, elemento, cadeado e pip moram numa **faixa ABAIXO** da ilustração (`colx__foot`), que começa exatamente onde a arte termina (medido: footTop = artBottom, sem overlap). A raridade é um fio fino no topo do tile, fora da arte.
+
+**Classe própria (`colx`), não mexe nos montadores.** `.ctile` continua nas grades de MONTAR TIME (campanha, composição) — pequenas e funcionais de propósito; a vitrine é outra coisa. Só a Coleção usa `.colx`.
+
+**MEDIÇÃO (dono pediu, tudo bate):** arte **114×114** · **7 colunas** · toque **116×142 ≥ 76** · grade **não estoura** (gridRight 899 ≤ 926; scrollWidth = clientWidth) · **selo não cobre arte** (faixa começa no fim da arte).
+
+**GUARDAS (`aquisicao`, `maestria`):** os 100 em `.colx[data-deus]` nos 10 panteões; todo tile é `--tem` ou `--falta`; quem falta tem cadeado (na faixa) e quem tem não; nome/cadeado vivem em `.colx__foot`, nunca em `.colx__art`; o pip de maestria lê `.colx__m`.
+
 ## §215 — TOPO: a energia do OPONENTE volta (informação de jogo) e o topo RESERVA o perfil dos dois jogadores (foto+nick+ranque) para o PvP (Fase 5). Mede: cabe em 46px.
 
 **O ACHADO (dono):** o §214 enxugou o topo e, sem querer, levou junto a **energia do oponente** — que saíra com as placas antigas. Não é decoração: ver que ele tem 3 de Tempestade é como o jogador prevê o Milagre. E o dono pediu, no mesmo movimento, **reservar espaço para o perfil dos dois jogadores** — porque no PvP (Fase 5) o topo mostra, de cada lado, FOTO+NICK+RANQUE (modelo Naruto-Arena), e enxugar agora sem esse lugar obrigaria a Fase 5 a refazer a faixa inteira (o preço já pago duas vezes: banners que não deployavam, tela sem saída).

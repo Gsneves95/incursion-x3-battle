@@ -85,7 +85,7 @@ console.log('== 5. o detalhe mostra a maestria; o ladrilho mostra o nível ==');
   ok(/Adepto/.test($('.dmaes').textContent), 'mostra o nível atual (Adepto)');
   ok(/Mestre/.test($('.dmaes').textContent) && /Milagre/.test($('.dmaes').textContent), 'diz o que falta p/ o Mestre (vitórias + Milagre)');
   w.eval("ir('colecao'); render();");
-  const pip = $('.ctile[data-deus="ares"] .ctile__m');
+  const pip = $('.colx[data-deus="ares"] .colx__m');
   ok(!!pip, 'o ladrilho do deus mostra o pip de maestria');
 }
 

@@ -476,17 +476,25 @@ function raridadeDe(k){ return (typeof RARIDADE !== 'undefined' && RARIDADE[k]) 
 function temKitHome(k){ return typeof GODS !== 'undefined' && !!GODS[k]; }
 function provDe(k){ return (typeof PROVACOES !== 'undefined') ? PROVACOES.find(p => p.key === k) : null; }
 
+// TILE da COLEÇÃO (§216): a vitrine — arte GRANDE (moldura dourada quem tem, cinza quem falta),
+// nome e selos numa faixa ABAIXO da arte (nada cobrindo a ilustração). Classe própria (.colx) para
+// não mexer nas grades de MONTAR TIME, que continuam pequenas e funcionais (.ctile).
 function tileColecaoHTML(k){
   const g = HRM[k] || { nome: k, elem: 'Umbra' };
   const tem = temDeus(k);
-  const cls = ['ctile']; cls.push(tem ? 'ctile--tem' : 'ctile--falta');
   const rar = raridadeDe(k);
-  return `<button class="${cls.join(' ')}" data-deus="${k}" title="${H(g.nome)}">
-    <span class="ctile__p">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 20)}</span>
-    <span class="ctile__el" style="background:${COR(g.elem)}"></span>
-    <span class="ctile__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
-    ${tem ? pipMaestria(k) : '<span class="ctile__lock">⚿</span>'}
-    <span class="ctile__n">${H(g.nome)}</span>
+  const nv = tem ? nivelMaestria(k) : 0;
+  const badge = tem
+    ? (nv > 0 ? `<span class="colx__m m--${nv}" title="${MAESTRIA_NOME[nv]}">${nv === 4 ? '★' : nv}</span>` : '')
+    : `<span class="colx__lock" title="ainda não conquistado">⚿</span>`;
+  return `<button class="colx ${tem ? 'colx--tem' : 'colx--falta'}" data-deus="${k}" title="${H(g.nome)}">
+    <span class="colx__rar rar--${rar}"></span>
+    <span class="colx__art">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 30)}</span>
+    <span class="colx__foot">
+      <span class="colx__el" style="background:${tem ? COR(g.elem) : '#4a4470'}"></span>
+      <span class="colx__n">${H(g.nome)}</span>
+      <span class="colx__badge">${badge}</span>
+    </span>
   </button>`;
 }
 
@@ -503,7 +511,7 @@ function renderColecao(){
     return `<div class="csec">
       <div class="csec__cab"><h2>${H(f)}</h2><span class="csec__n">${tem}/${ks.length}</span>
         <span class="csec__maes ${meia ? 'meia' : ''}" title="dominados (Mestre) — marco em metade">dominados ${d.dom}/${d.total}${meia ? ' · metade ✓' : ''}</span></div>
-      <div class="cgrid">${ks.map(tileColecaoHTML).join('')}</div>
+      <div class="colgrid">${ks.map(tileColecaoHTML).join('')}</div>
     </div>`;
   }).join('');
   const dom = totalDominados(), inic = totalIniciados();
@@ -520,7 +528,7 @@ function renderColecao(){
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  [...stage.querySelectorAll('.ctile[data-deus]')].forEach(b => {
+  [...stage.querySelectorAll('.colx[data-deus]')].forEach(b => {
     b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
   });
   fit();

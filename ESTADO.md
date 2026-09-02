@@ -2,7 +2,11 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ FASE 4 (em curso) — REPOSICIONAMENTO antes do PvP (§212). Formato: o que mudou · o que muda no "portão jogável" · o que a próxima fase precisa saber.
+## ★ FASE 4 — CANAL ABERTO de interface/usabilidade (§217) + REPOSICIONAMENTO antes do PvP (§212). Formato: o que mudou · o que muda no "portão jogável" · o que a próxima fase precisa saber.
+
+**A FASE 4 NÃO FECHA EM DEFINITIVO (§217, decisão do dono):** virou canal PERMANENTE de ajuste de interface/usabilidade. O motivo está no histórico — os três melhores consertos visuais (§207 HUD fora do tabuleiro, §211 arte nunca apaga, §215 energia do oponente) **vieram do dono jogando, nenhum planejado**. Achado de jogo vira **tarefa pontual medida** (a régua não muda: números, decisão em DECISOES, ESTADO atualizado), sem esperar abrir fase. Duas rodadas já previstas: **depois do PvP** (perfil/ranque/pareamento/missões) e **depois do teste de usabilidade** (`docs/teste-usabilidade.md`, 13 decisões em risco). Não é dívida nem fase inacabada — é reconhecer que interface se acerta VENDO gente usar.
+
+**0c. A COLEÇÃO virou VITRINE (§216):** a arte dos deuses cresceu de **40×40 → 114×114px** (7 colunas, medido: a rolagem tem 876px úteis; grade não estoura, toque 116×142). Agrupamento por panteão mantido (§199) com a proporção da maestria (§200: "dominados X/N"). **Dois estados inequívocos:** quem você TEM = moldura dourada + arte em cor; quem FALTA = ausência (cinza + tracejado + cadeado — a régua do §211 não vale aqui, deus ausente é como retrato de morto). Nome/selos moram numa faixa ABAIXO da arte — **nada cobre a ilustração**. Classe própria (`.colx`); os montadores de time seguem pequenos (`.ctile`).
 
 **O DESENHO virou PvP-FIRST (modelo Naruto-Arena: a ladder é o jogo).** As Provações deixam de ser puzzles de AQUISIÇÃO e viram, no futuro, MISSÕES contadas em PvP ("20 vitórias com Zeus libera X"). As missões chegam DEPOIS do PvP (Fase 5) — construí-las agora seria consumidor sem produtor (§95). Esta fase só REPOSICIONA o que já existe.
 
