@@ -562,41 +562,92 @@ function provacaoDetalheHTML(k){
     </div>
   </div>`;
 }
+// §220 — DETALHE do deus refeito (Mobile Legends invertido: arte à ESQUERDA porque o que se TOCA
+// (skills) vai à direita, coerente com o §214). deusSel = skill selecionada; abre na PASSIVA (ela
+// define o deus e é o que menos se pensaria em tocar). deusSelKey reseta a seleção ao trocar de deus.
+let deusSel = 'passiva', deusSelKey = null;
+
+// COMO CONSEGUIR (substitui a maestria quando NÃO se possui o deus): maestria zero não é informação;
+// a rota de aquisição é. Hoje a via real é a INVOCAÇÃO (gacha); a Loja (troca Essência por deus) e as
+// missões que liberam deus específico chegam com o PvP (Fase 5, §216). Honesto sobre o que já existe.
+function comoConseguirHTML(k, rar){
+  return `<div class="dcomo">
+    <span class="dcomo__rot">COMO CONSEGUIR</span>
+    <div class="dcomo__vias">
+      <div class="dcomo__via"><b>Invocação</b><span>na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
+      <div class="dcomo__via dcomo__via--f5"><b>Loja / Missão</b><span>troca por Essência e missões chegam no PvP (Fase 5)</span></div>
+    </div>
+  </div>`;
+}
+
+// as 4 skills que DEFINEM o deus na Coleção (a Defesa é universal e fica fora): cada uma tem arte.
+function deusSkills(kit){
+  return [
+    { slot: 'basico',     tipo: 'BÁSICO',     d: kit && kit.basico },
+    { slot: 'habilidade', tipo: 'HABILIDADE', d: kit && kit.habilidade },
+    { slot: 'milagre',    tipo: 'MILAGRE',    d: kit && kit.milagre },
+    { slot: 'passiva',    tipo: 'PASSIVA',    d: kit && kit.passiva },
+  ];
+}
+// chip de skill no kit (arte + nome + tipo, sem descrição — só isso de cara)
+function deusKitChipHTML(k, s, sel){
+  const nome = s.d ? s.d.nome : '—';
+  return `<button class="dsk ${s.slot === sel ? 'is-sel' : ''}" data-deussel="${s.slot}" ${s.d ? '' : 'disabled'} title="${H(nome)}">
+    <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
+    <span class="dsk__nome">${H(nome)}</span>
+    <span class="dsk__tipo">${s.tipo}</span>
+  </button>`;
+}
+// DETALHE da skill selecionada: nome, custo (bolinhas), recarga em turnos, e o texto completo.
+function deusDetalheHTML(k, kit, sel){
+  const s = deusSkills(kit).find(x => x.slot === sel) || deusSkills(kit).find(x => x.d);
+  if (!s || !s.d) return `<div class="ddet"><div class="ddet__txt">Kit em produção.</div></div>`;
+  const d = s.d, passiva = s.slot === 'passiva';
+  const pips = passiva ? '' : pipsDetalhe(custoParaCost(d.custo));
+  const meta = passiva ? 'PASSIVA · não gasta a ação'
+    : `${d.recarga ? 'recarga ' + d.recarga + ' turno' + (d.recarga === 1 ? '' : 's') : 'sem recarga'}`;
+  return `<div class="ddet">
+    <div class="ddet__cab"><b class="ddet__nome">${H(d.nome)}</b><span class="ddet__tipo">${s.tipo}</span></div>
+    <div class="ddet__meta">${pips}<span class="ddet__cd">${H(meta)}</span></div>
+    <div class="ddet__txt">${realce(d.efeito || '')}</div>
+  </div>`;
+}
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
   const kit = CKIT[k];
   const tem = temDeus(k);
   const rar = raridadeDe(k);
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-      <h1 class="tela__titulo">${H(g.nome)}</h1>
-      <span class="dcab__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
-    </header>
-    <div class="tela__rol">
-      <div class="dhead">
-        <div class="dhead__art">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 40)}</div>
-        <div class="dhead__id">
-          <span class="dhead__sub">${H(g.faccao)} · ${H(ELAB[g.elem] || g.elem)} · ${H(g.classe)} · ${H(g.funcao)}</span>
-          <span class="dhead__estado ${tem ? 'tem' : 'falta'}">${tem ? '✓ Na coleção' : '⚿ Ainda não conquistado'}</span>
-        </div>
+  if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
+  stage.innerHTML = `<div id="baselayer" class="deus ${tem ? '' : 'deus--falta'}">
+  <div class="stage__bg"></div><div class="stage__scrim"></div>
+  <header class="dtop">
+    <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+    <span class="dtop__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+  </header>
+  <div class="dbody">
+    <div class="dart">
+      ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
+      ${tem ? '' : '<span class="dart__tag">VOCÊ NÃO POSSUI</span>'}
+      <div class="dart__nome">${H(g.nome)}</div>
+    </div>
+    <div class="dcol">
+      <div class="dchips">
+        <span class="dchip">${H(g.faccao)}</span>
+        <span class="dchip dchip--el" style="--c:${COR(g.elem)}">${H(ELAB[g.elem] || g.elem)}</span>
+        <span class="dchip">${H(g.classe)}</span>
+        <span class="dchip">${H(g.funcao)}</span>
       </div>
-      ${maestriaDetalheHTML(k)}
-      ${provacaoDetalheHTML(k)}
-      <div class="dkit">
-        ${kit ? `${linhaKitHTML('BÁS', kit.basico)}${linhaKitHTML('HAB', kit.habilidade)}${linhaKitHTML('MIL', kit.milagre)}
-          ${kit.passiva ? `<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kit.passiva.nome)}</b></div><div class="krow__t">${H(kit.passiva.efeito)}</div></div>` : ''}`
-          : '<div class="krow"><div class="krow__t">Kit em produção.</div></div>'}
-      </div>
+      ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
+      <div class="dkit">${deusSkills(kit).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
+      ${deusDetalheHTML(k, kit, deusSel)}
     </div>
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  const jb = stage.querySelector('[data-jogarprova]');
-  if (jb) jb.onclick = () => iniciarProva(jb.dataset.jogarprova);
+  stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
+    b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
   fit();
 }
 

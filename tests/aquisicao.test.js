@@ -87,27 +87,43 @@ console.log('== 4. Coleção: os 100 por PANTEÃO, 10 grupos de 10, navegável =
     'nome/cadeado moram na FAIXA (colx__foot), nunca sobre a arte (colx__art)');
 }
 
-console.log('== 5. detalhe do deus: kit + PERGAMINHO + elo p/ jogá-lo (F4/§212) ==');
+console.log('== 5. detalhe do deus (§220): arte à esquerda + coluna; passiva pré-selecionada; possui x não-possui ==');
 {
   const { w, $, $$ } = sessao();
-  w.eval("ir('deus',{key:'ra'}); render();");   // ra: não-inicial, não-genérica → tem pergaminho no acervo
-  ok(($('.tela__titulo').textContent || '').trim().length > 0, 'o detalhe abre no deus pedido');
-  ok(!!$('.dkit') && $$('.dkit .krow').length >= 3, 'o kit completo aparece (bás/hab/mil)');
-  ok(!!$('.dprov') && /PERGAMINHO/.test($('.dprov').textContent), 'o estado do Pergaminho aparece (não mais "Provação")');
-  const jb = $('[data-jogarprova]');
-  ok(!!jb, 'há botão para jogar o Pergaminho a partir do detalhe');
-  jb.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.key==="ra"'), 'o botão do detalhe entra no Pergaminho do deus');
+  // POSSUINDO: garante o deus na coleção e abre o detalhe
+  w.eval("perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now()}; ir('deus',{key:'zeus'}); render();");
+  ok(($('.dart__nome').textContent || '').trim() === 'Zeus', 'o nome sobreposto na arte nomeia o deus');
+  ok(!$('.deus--falta') && !$('.dart__tag'), 'possuindo: sem tag de ausência');
+  ok($$('.dchips .dchip').length === 4, 'os 4 chips de identidade (facção/elemento/classe/função)');
+  ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como conseguir")');
+  // guarda permanente: as 4 skills sempre presentes e tocáveis
+  ok($$('.dkit .dsk').length === 4, `o kit tem as 4 skills (bás/hab/mil/pas), há ${$$('.dkit .dsk').length}`);
+  ok($$('.dkit .dsk:not([disabled])').length === 4, 'as 4 skills são tocáveis');
+  // decisão do dono: ao abrir, a PASSIVA já vem selecionada
+  ok(/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'a PASSIVA já vem selecionada ao abrir');
+  ok($('.ddet .ddet__txt').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
+  // tocar outra skill troca o detalhe
+  const outra = $$('.dsk[data-deussel]').find(b => !b.classList.contains('is-sel'));
+  outra.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(!/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'tocar outra skill muda a seleção');
+  ok(!!$('.ddet .cost, .ddet .ddet__cd'), 'a skill mostra custo/recarga no detalhe');
+
+  // NÃO POSSUINDO: tag + "como conseguir" no lugar da maestria, e o kit CONTINUA legível/tocável
+  w.eval("delete perfil.deuses.ahpuch; ir('deus',{key:'ahpuch'}); render();");
+  ok(!!$('.deus--falta') && !!$('.dart__tag') && /NÃO POSSUI/.test($('.dart__tag').textContent), 'não-possuindo: tag "VOCÊ NÃO POSSUI" na arte');
+  ok(!!$('.dcomo') && !$('.dmaes'), 'não-possuindo: "COMO CONSEGUIR" no lugar da maestria');
+  ok(/Invoca/.test($('.dcomo').textContent), 'o "como conseguir" cita a Invocação');
+  ok($$('.dkit .dsk:not([disabled])').length === 4, 'não-possuindo: as 4 skills continuam legíveis e tocáveis');
 }
 
 console.log('== 6. Pergaminho: vencido mostra placar e é rejogável; genérica fora do acervo; inicial sem pergaminho (F4/§212) ==');
 {
   const { w, $ } = sessao();
-  w.eval("ir('deus',{key:'zeus'}); render();");   // zeus é inicial
-  ok(/inicial/i.test($('.dprov').textContent), 'deus inicial mostra "sem pergaminho"');
-  // genérica (durga) está no DADO mas FORA do acervo jogável: o detalhe não oferece jogá-la
-  w.eval("ir('deus',{key:'durga'}); render();");
-  ok(!$('[data-jogarprova]') && /acervo/i.test($('.dprov').textContent), 'deus de pergaminho genérico não é jogável (fora do acervo)');
+  // §220: o detalhe do deus não carrega mais o Pergaminho — o jogar mora no HUB de Desafios (§213).
+  // O estado do acervo se lê lá: inicial (zeus) e genérica (durga) NÃO aparecem na lista jogável.
+  w.eval("ir('desafios'); render();");
+  ok(!$('.prow[data-prova="zeus"]'), 'deus inicial (zeus) não tem pergaminho no acervo');
+  ok(!$('.prow[data-prova="durga"]'), 'pergaminho genérico (durga) fica fora do acervo jogável');
   // um pergaminho VENCIDO (placar gravado, não posse) aparece marcado e, ao tocar, JOGA (não abre a coleção)
   w.eval("perfil.provacoes.ra={lances:5,minimo:4,em:0}; ir('desafios'); render();");
   const feita = $('.prow--feita[data-prova="ra"]');

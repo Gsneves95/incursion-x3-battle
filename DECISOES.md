@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §220 — DETALHE do deus na Coleção refeito: arte GRANDE dominando (Mobile Legends INVERTIDO — à esquerda, porque o que se toca vai à direita, §214). Dois estados (possui × ausência).
+
+**O PROBLEMA (dono, canal aberto §217):** o detalhe era parede de texto com as skills embaixo; a arte — o ativo mais forte do jogo — aparecia pequena. A referência é a tela de herói do Mobile Legends (arte domina, texto de apoio), mas INVERTIDA de lado: o que se TOCA (as skills) vai à direita (polegar), o que se LÊ vai à esquerda — então arte à ESQUERDA, coluna à DIREITA. Coerente com a batalha (§214) em vez de contradizê-la.
+
+**PROPORÇÃO CONFIRMADA POR MEDIÇÃO (o dono pediu antes de cravar):** as 100 artes de deus são **168×168 — exatamente quadradas** (medido decodificando o IMG embutido; ratio 1.00 nas 100). Então o quadrado 382 que o dono assumiu está certo: a arte preenche a coluna esquerda **sem corte**. **Ressalva medida:** a fonte é 168px; a 382px ela é ampliada ~2,27× (mais macia). Não corta (quadrado→quadrado), mas para arte crística grande a fonte teria de vir maior (mais peso no dist). Fica como observação.
+
+**O LAYOUT (medido a 926×428; topo 46 · corpo 382):**
+- **ESQUERDA x0–382** — arte quadrada preenchendo a altura; **nome sobreposto na base** sobre gradiente (não coberto por chip/tag — medido: o nome fica dentro da arte, longe da coluna).
+- **DIREITA x382–926** — a coluna: **chips de identidade** (facção · elemento EM COR · classe · função, do roster, não literais) · **maestria** (nível + trilha de 4, §204) · **kit** (as 4 skills: Básico/Habilidade/Milagre/Passiva, cada uma arte + nome + tipo, só isso de cara) · **detalhe** da selecionada (nome + custo em bolinhas + recarga + texto completo).
+
+**DECISÕES DO DONO acatadas:** (1) **a PASSIVA já vem selecionada ao abrir** — ela define o deus e é o que menos se pensaria em tocar. (2) No **NÃO-POSSUIR**, a maestria SAI (maestria zero não é informação) e o espaço vira **"COMO CONSEGUIR"** — a rota de aquisição: Invocação (a via real hoje) + Loja/Missão (Fase 5, §216). Arte em **grayscale**, tag **"VOCÊ NÃO POSSUI"** no canto, e o **KIT CONTINUA LEGÍVEL e tocável** (estudar o deus antes de tê-lo). Coerente com o §216: ausência é cinza, a régua do §211 (arte nunca apaga) NÃO se aplica — ela é para indisponibilidade temporária, não ausência.
+
+**MEDIÇÃO (tudo bate):** arte 382×380 (~quadrada, sem corte); o toque de cada skill é **93px ≥ 76**; a maior descrição de kit do jogo (Nuwa, 142 chars) **cai no detalhe sem rolar** (o detalhe é largo, ~518px); nenhum chip/tag cobre o nome.
+
+**O QUE SAIU (registrado):** o elo "Jogar Pergaminho" que morava no detalhe do deus foi **removido** — o layout do dono tem 4 zonas fixas e não o inclui, e jogar um pergaminho já mora no **hub de Desafios** (§213). O detalhe do deus vira tela de LEITURA (estudar o deus), não de ação.
+
+**GUARDAS:** `aquisicao` — os 4 chips; a MAESTRIA quando possui × "COMO CONSEGUIR" quando não; **as 4 skills sempre presentes e tocáveis** (nos dois estados); a PASSIVA pré-selecionada; a tag "VOCÊ NÃO POSSUI" + grayscale no ausente. `moldura` (navegador real) — arte ~quadrada, nome dentro da arte, skill ≥76, maior texto sem rolar. `maestria` — o detalhe do deus POSSUÍDO segue mostrando o bloco de maestria.
+
 ## §219 — CONSULTA DE KIT INIMIGO refeita: o kit PERSISTE (soltar o dedo não fecha) e vira GALERIA + DETALHE. Achado de aparelho (o dono jogando), consertado com medição.
 
 **O DEFEITO (dono, no aparelho — canal aberto §217):** o recurso existia e não servia, por dois defeitos somados. (1) EFÊMERO: soltar o dedo fechava o kit, justo quando ia começar a ler. (2) RASO: a lista mostrava foto pequena (34px) + nome — nome não diz o que a habilidade FAZ, que é o que se precisa ler no oponente.

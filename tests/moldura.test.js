@@ -155,6 +155,39 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await page.evaluate(() => { prova = null; painelRecolhido = false; ir('home', {}, { substituir: true }); render(); });
   }
 
+  // == §220: DETALHE do deus — arte quadrada (sem corte feio), nome não coberto, skill ≥76, texto sem rolar ==
+  console.log('== geometria (§220): detalhe do deus — arte, nome, toque das skills, texto ==');
+  {
+    await page.setViewportSize({ width: 926, height: 428 });
+    const g = await page.evaluate(() => {
+      // o deus de MAIOR descrição de kit, garantido na coleção, com essa skill selecionada
+      let best = { len: 0 };
+      for (const k in CKIT) for (const s of ['basico', 'habilidade', 'milagre', 'passiva']) {
+        const d = CKIT[k][s]; if (d && d.efeito && d.efeito.length > best.len) best = { len: d.efeito.length, k, s };
+      }
+      perfil.deuses[best.k] = perfil.deuses[best.k] || { obtidoEm: Date.now() };
+      ir('deus', { key: best.k }, { substituir: true }); render(); deusSel = best.s; render();
+      const R = el => el.getBoundingClientRect();
+      const art = R(document.querySelector('.dart')), nome = R(document.querySelector('.dart__nome'));
+      const kit = R(document.querySelector('.dkit'));
+      const sk = [...document.querySelectorAll('.dsk')].map(R);
+      const txt = document.querySelector('.ddet__txt');
+      return {
+        artW: art.width, artH: art.height, artB: art.bottom,
+        nomeTop: nome.top, kitTop: kit.top,            // o nome (na arte, esq) não pode ser coberto pelo kit (col, dir)
+        nomeDentroDaArte: nome.left >= art.left - 0.6 && nome.right <= art.right + 0.6,
+        skMin: Math.min(...sk.map(s => Math.min(s.width, s.height))),
+        txtScroll: txt.scrollHeight, txtClient: txt.clientHeight, len: best.len,
+      };
+    });
+    ok(Math.abs(g.artW - g.artH) <= 3, `a arte é ~quadrada (não corta feio): ${Math.round(g.artW)}x${Math.round(g.artH)}`);
+    ok(g.nomeDentroDaArte, 'o nome fica dentro da arte (à esquerda), longe da coluna de chips/tag');
+    ok(g.skMin >= 76, `o toque de cada skill é >=76px (menor lado ${Math.round(g.skMin)})`);
+    ok(g.txtScroll <= g.txtClient + 1, `a maior descrição (${g.len} chars) cai no detalhe sem rolar (${g.txtScroll}/${g.txtClient})`);
+    console.log(`  arte ${Math.round(g.artW)}x${Math.round(g.artH)} · skill toque ${Math.round(g.skMin)}px · maior texto ${g.len} chars sem rolar`);
+    await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
+  }
+
   console.log('== retrato: mostra "gire o aparelho", esconde o palco ==');
   for (const [w, h] of RETRATOS) {
     const vis = await (async () => {
