@@ -2,6 +2,14 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ FASE 5 (começou) — SERVIDOR, contas, PvP e ranqueado. Invariante: o SERVIDOR É AUTORITATIVO, o CLIENTE DESENHA.
+
+**F5.0 — a FUNDAÇÃO e a PROVA (§221), pronta:** servidor local mínimo em Node + `ws` (`server/`), roda por **`npm run serve`** (builda + sobe em http://localhost:8788). O motor da Fase 1 é **importado, não copiado** (`server/motor-host.js` faz `require('../src/engine.js')`). **A prova que vale:** o mesmo roteiro determinístico (montagem de Pergaminho) roda no motor do servidor e no motor embutido no cliente (dist em jsdom) e o estado é **IDÊNTICO por hash em CADA passo** — 44 passos, servidor==cliente em todos (guarda em `tests/servidor.test.js`). Protocolo **versionado** desde a 1ª mensagem (incompatível = recusa clara, nunca silenciosa). **Tamanho do estado medido:** ~3,9 KB o jogo + log → ~10–13 KB total; a reconexão da F5.4 reenvia o estado inteiro sem replay/delta. **Não há sincronização em tempo real** (motor determinístico, tudo público, ~0,2 msg/s).
+
+**ACOPLAMENTO RESIDUAL reportado (dívida da Fase 1):** o ENGINE importa limpo; `provacao.js`/`ia.js` leem o motor do escopo GLOBAL (hábito de concatenação do navegador) — contornado com `Object.assign(globalThis, E)`, o mesmo que a suíte já usa. Cleanup pontual para depois; não bloqueia.
+
+**Decisões de arquitetura registradas (§221) para as próximas sub-fases:** conta ANÔNIMA na 1ª abertura (perfil nasce no servidor → sem tela de login, sem migração, LGPD folgada) · faixa de IDADE (Lei 15.211) · EXCLUSÃO de conta desde o início (lojas) · RANQUE começa em ZERO (defesa contra perfil fabricado) · Batalha CPU continua LOCAL (§215, sandbox sem rede). **F5.2 vai confirmar no aparelho:** WebSocket em WebView (origem/certificado próprios) e o Android matando a WebView em segundo plano — o spike do §218 está pronto.
+
 ## ★ FASE 4 — CANAL ABERTO de interface/usabilidade (§217) + REPOSICIONAMENTO antes do PvP (§212). Formato: o que mudou · o que muda no "portão jogável" · o que a próxima fase precisa saber.
 
 **A FASE 4 NÃO FECHA EM DEFINITIVO (§217, decisão do dono):** virou canal PERMANENTE de ajuste de interface/usabilidade. O motivo está no histórico — os três melhores consertos visuais (§207 HUD fora do tabuleiro, §211 arte nunca apaga, §215 energia do oponente) **vieram do dono jogando, nenhum planejado**. Achado de jogo vira **tarefa pontual medida** (a régua não muda: números, decisão em DECISOES, ESTADO atualizado), sem esperar abrir fase. Duas rodadas já previstas: **depois do PvP** (perfil/ranque/pareamento/missões) e **depois do teste de usabilidade** (`docs/teste-usabilidade.md`, 13 decisões em risco). Não é dívida nem fase inacabada — é reconhecer que interface se acerta VENDO gente usar.

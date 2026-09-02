@@ -6,6 +6,35 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §221 — FASE 5 / F5.0: a FUNDAÇÃO. Servidor local autoritativo, o motor da Fase 1 IMPORTADO (não copiado), e a prova de estado idêntico por hash.
+
+**O INVARIANTE DA FASE (dono):** **o SERVIDOR É AUTORITATIVO; o CLIENTE DESENHA.** Hoje o motor roda no aparelho e o resultado é o que o aparelho diz — com ranque isso não pode continuar (qualquer um edita o localStorage e sobe ao topo). O trunfo da Fase 1 paga agora: o motor é função pura (sem DOM, sem `Math.random`, determinístico), então o MESMO `src/engine.js` roda no servidor sem reescrita. Consequência que simplifica a fase inteira: como é determinístico e todo valor é público, **não há sincronização em tempo real** (nada de 60Hz/interpolação/lag-comp); a taxa é ~0,2 msg/s.
+
+**DECISÃO DE CUSTO (dono):** servidor **LOCAL no desenvolvimento** (custo zero); hospedagem só no lançamento. Nada de escolher provedor, nada de deploy.
+
+**1. SERVIDOR LOCAL MÍNIMO** (`server/server.js`): Node puro + `ws` (não é framework — é só o WebSocket). Serve o dist (e os assets de `web/`, com guarda de path-traversal), abre um WebSocket, e roda o motor. Subir: **`npm run serve`** (builda o dist e sobe em `http://localhost:8788`).
+
+**2. MOTOR IMPORTADO, NÃO COPIADO** (`server/motor-host.js`): `require('../src/engine.js')` — uma fonte de verdade, a mesma que o build embute no cliente; a suíte já a testa.
+
+**ACOPLAMENTO RESIDUAL REPORTADO (dívida da Fase 1 que só aparece agora):** o **ENGINE importa LIMPO** (self-contained, `module.exports` certo). Mas `provacao.js` e `ia.js` (montagem + IA) leem as funções do motor do **escopo GLOBAL** — hábito de concatenação do navegador, onde tudo é global. Para importá-los no Node é preciso `Object.assign(globalThis, E)` ANTES — o **mesmo contorno que a suíte de testes já usa** (`Object.assign(global, E)`). Não é bug do motor (o motor, que é o que o dono destacou, está limpo); é um habito das camadas auxiliares. Não reescrevi o motor; expus-o. Fica como cleanup pontual para depois — o import funciona.
+
+**3. A PROVA DA F5.0 (é ela que vale):** o MESMO roteiro determinístico (gerado sobre uma montagem de Pergaminho — `afrodite`, caminho carimbado) roda no **motor do servidor** (require) e no **motor do cliente** (o engine EMBUTIDO no `dist`, carregado em jsdom). Comparo o estado **canônico (chaves ordenadas) em CADA passo**, não só no fim — divergência no meio que se cancela no fim é pior que a visível. Resultado: **44 passos, IDÊNTICO servidor==cliente em todos** (montagem `01921d23` → final `f0adb78e`). Guarda permanente em `tests/servidor.test.js`. Se divergir, é bug de fundação e a fase PARA.
+
+**4. TAMANHO DO ESTADO medido:** o **estado do jogo (sem log) é ~3,9 KB**; o **log** cresce ~80 B/entrada e domina — no fim de uma partida (~8–11 turnos, 87–115 entradas) o total é **~10–13 KB**. A estimativa do dono (5–9 KB) bate para o ESTADO; com o log inteiro sobe a ~11 KB. Conclusão: a reconexão da F5.4 **reenvia o estado inteiro sem replay nem delta** — ~11 KB é trivial a ~0,2 msg/s (e o log pode ser truncado se se quiser encostar nos 5–9 KB).
+
+**5. PROTOCOLO VERSIONADO desde a 1ª mensagem** (`server/protocol.js`): toda mensagem leva `v`. Motivo: o app atualiza pelas lojas e o servidor quando o dono quer → cliente velho fala com servidor novo, o bug mais chato de diagnosticar. Versão incompatível (ou sem versão) = **`recusado` com motivo claro** ("atualize o aplicativo"), **nunca falha silenciosa**. Provado por WebSocket real no teste.
+
+**DECISÕES DE ARQUITETURA (do dono, registradas para as próximas sub-fases):**
+- **(a) CONTA ANÔNIMA** na 1ª abertura, vinculável a Google/Apple depois. O jogador NUNCA vê login. Resolve quatro coisas de uma vez: zero atrito · LGPD folgada (nenhum dado pessoal por padrão) · troca de aparelho protegida · e **o problema de migração de perfil NUNCA existe** — o perfil já nasce no servidor.
+- **(b) FAIXA DE IDADE** na criação da conta. A Lei 15.211 proíbe aleatoriedade paga para menor de 18, então a conta precisa saber. Perguntar depois, a quem já joga, é pior.
+- **(c) EXCLUSÃO DE CONTA** desenhada desde o início — as lojas exigem; remendo na revisão é rejeição.
+- **(d) RANQUE SEMPRE COMEÇA EM ZERO** — é a única defesa contra perfil fabricado, e é o dado que não pode ser inventado.
+- **(e) A BATALHA CPU CONTINUA LOCAL (§215)** — é sandbox, roda no aparelho, e dá um caminho de teste sem rede (o que também atende a loja, que testa o app em modo avião).
+
+**O QUE A F5.2 VAI CONFIRMAR NO APARELHO (anotado):** WebSocket em WebView tem política PRÓPRIA de origem e certificado, e o Android MATA a WebView em segundo plano. O spike do §218 (`CAPACITOR-SPIKE.md`) está pronto no repo para isso.
+
+**ESCOPO:** nada de conta, pareamento, ranque, missão ou interface aqui. Só a fundação e a prova.
+
 ## §220 — DETALHE do deus na Coleção refeito: arte GRANDE dominando (Mobile Legends INVERTIDO — à esquerda, porque o que se toca vai à direita, §214). Dois estados (possui × ausência).
 
 **O PROBLEMA (dono, canal aberto §217):** o detalhe era parede de texto com as skills embaixo; a arte — o ativo mais forte do jogo — aparecia pequena. A referência é a tela de herói do Mobile Legends (arte domina, texto de apoio), mas INVERTIDA de lado: o que se TOCA (as skills) vai à direita (polegar), o que se LÊ vai à esquerda — então arte à ESQUERDA, coluna à DIREITA. Coerente com a batalha (§214) em vez de contradizê-la.
