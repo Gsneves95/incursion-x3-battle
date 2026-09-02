@@ -61,6 +61,7 @@ const catalogo = semGuard(ler('src/catalogo.js'));   // só montarCatalogo no br
 const roster = ler('src/roster_data.js');
 const perfil = semGuard(ler('src/perfil.js'));
 const armaz  = semGuard(ler('src/armazenamento.js'));
+const conta  = semGuard(ler('src/conta.js'));   // F5.1: a borda de conta (dormente sem servidor)
 const turno  = semGuard(ler('src/turno.js'));
 const rotas  = semGuard(ler('src/rotas.js'));
 const enquadr= semGuard(ler('src/enquadramento.js'));
@@ -161,7 +162,7 @@ if (cadeia.divergencias.length) {
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [
-  perfil, armaz, turno, rotas, enquadr, provac,
+  perfil, armaz, conta, turno, rotas, enquadr, provac,
   ler('src/ui/base.js'), ler('src/ui/narrar.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
   ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'), ler('src/ui/home.js'),
   visao,

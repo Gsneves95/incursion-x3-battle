@@ -80,13 +80,17 @@ const prov = require('../data/provacoes/afrodite.json');   // montagem de Pergam
   ok(recusa.tipo === 'recusado' && recusa.codigo === 'versao_incompativel', 'cliente de versão errada é RECUSADO pelo servidor');
   const ola = await pede({ v: proto.PROTOCOL_VERSION, tipo: 'ola' });
   ok(ola.tipo === 'ola' && ola.motor === 'autoritativo', 'handshake ok: o servidor se diz autoritativo');
-  const est0 = await pede({ v: proto.PROTOCOL_VERSION, tipo: 'montar', pergaminho: prov });
+  // F5.1: depois do handshake TODA mensagem de jogo leva token. Cria uma conta anônima e autentica.
+  const conta = await pede({ v: proto.PROTOCOL_VERSION, tipo: 'criarConta', faixaIdade: 'maior' });
+  ok(conta.tipo === 'conta' && conta.token, 'conta anônima criada para autenticar as mensagens de jogo');
+  const tk = conta.token;
+  const est0 = await pede({ v: proto.PROTOCOL_VERSION, tipo: 'montar', pergaminho: prov, token: tk });
   ok(est0.tipo === 'estado' && est0.hash === hInit, `a montagem no servidor bate o hash da referência (${est0.hash})`);
   // reproduz as primeiras ações VIA WEBSOCKET e confere que o hash autoritativo bate a referência passo a passo
   let passo = 1, batendo = true;
   for (const op of ops.slice(0, 12)) {
-    const msg = op.tipo === 'fim' ? { v: proto.PROTOCOL_VERSION, tipo: 'fim' }
-      : { v: proto.PROTOCOL_VERSION, tipo: 'agir', uid: op.uid, slot: op.slot, alvos: op.alvos, escolhas: op.escolhas, modo: op.modo };
+    const msg = op.tipo === 'fim' ? { v: proto.PROTOCOL_VERSION, tipo: 'fim', token: tk }
+      : { v: proto.PROTOCOL_VERSION, tipo: 'agir', uid: op.uid, slot: op.slot, alvos: op.alvos, escolhas: op.escolhas, modo: op.modo, token: tk };
     const r = await pede(msg);
     const ref = host.hashStr(host.canon(JSON.parse(srv[passo])));
     if (!(r.tipo === 'estado' && r.hash === ref)) { batendo = false; ok(false, `passo ${passo} via WS: ${r.hash || r.tipo} != referência ${ref}`); break; }

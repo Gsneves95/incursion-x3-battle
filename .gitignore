@@ -6,3 +6,5 @@ dist/
 # (6,6 MB de assets duplicados + código nativo específico da versão do seu SDK).
 www/
 android/
+# F5.1: cadastro de contas do servidor de dev (dados de jogador, não código).
+server/dados/

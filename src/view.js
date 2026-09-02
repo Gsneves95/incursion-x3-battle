@@ -109,6 +109,10 @@ function ligar(){
 // Carrega o perfil. Só avisa se o dado estava CORROMPIDO (perda real); ambiente sem
 // localStorage é começo normal — o alarme de gravação (salvar) cobre a impossibilidade
 // de persistir, que é o que de fato importa ao jogador.
+// F5.1: captura ANTES de iniciar() (que persiste o perfil) se JÁ havia perfil no disco. É o que
+// separa o perfil de DESENVOLVIMENTO do dono (progresso real, migra UMA vez) de uma instalação
+// NOVA (nasce no servidor, nunca migra). Depois de iniciar() a chave existe sempre — por isso agora.
+const _tinhaPerfilAntes = (typeof perfilPreexistente==='function') ? perfilPreexistente(CHAVE_PERFIL) : false;
 { const c=iniciar(); perfil=c.perfil;   // iniciar(): carrega + aplica/persiste grant inicial ou migração v2
   if(c.salvou && !c.salvou.ok) console.warn('perfil criado, mas a gravação falhou: '+c.salvou.erro);
   if(c.motivo && !/inacess/.test(c.motivo)) console.warn('perfil corrompido ('+c.motivo+') — recriei com o grant inicial'); }
@@ -131,3 +135,125 @@ ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
 ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)
+
+// ============================================================
+// F5.1 — A CONTA no cliente. O jogador NUNCA vê login. DORMENTE sem servidor: aberto por file://
+// ou com o servidor fora do ar, nada disto aparece e o app roda 100% local (as suítes caem aqui).
+// As sobreposições (portão de idade, painel de conta) são DOM PRÓPRIO, fora do #stage — não
+// passam pelo render() nem tocam nas telas. Só entram em cena quando há servidor.
+// ============================================================
+let contaAtual=null, contaTransporte=null;
+
+// portão de IDADE (age-gate). NÃO é login: a lei explicada + duas escolhas de FAIXA. Sem e-mail,
+// sem senha, sem data de nascimento. `aoEscolher(faixa)` recebe 'menor'|'maior'.
+function montarPortaoIdade(aoEscolher){
+  fecharPortaoIdade();
+  const o=document.createElement('div'); o.id='portao-idade';
+  o.setAttribute('style','position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(8,6,20,.92);padding:20px;font-family:inherit');
+  o.innerHTML=`<div style="max-width:520px;width:100%;background:#161230;border:1px solid #3a3170;border-radius:14px;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+    <div style="font-size:12px;letter-spacing:.14em;color:#b9a94a;font-weight:800">ANTES DE COMEÇAR</div>
+    <h2 style="margin:8px 0 12px;color:#efe9ff;font-size:22px">Qual a sua faixa de idade?</h2>
+    <p style="margin:0 0 18px;color:#c3bce6;font-size:13.5px;line-height:1.55">A lei brasileira (15.211) proibe <b>aleatoriedade paga</b> para menores de 18. Por isso perguntamos a sua <b>faixa</b> - nunca a sua data de nascimento. Nao ha login nem cadastro: sua conta ja foi criada, so falta isto.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button id="pi-maior" style="cursor:pointer;padding:15px;border-radius:10px;border:1px solid #4a3f88;background:#241d52;color:#efe9ff;font-size:16px;font-weight:700;font-family:inherit">Tenho 18 anos ou mais</button>
+      <button id="pi-menor" style="cursor:pointer;padding:15px;border-radius:10px;border:1px solid #4a3f88;background:#1c1740;color:#d8d2f5;font-size:16px;font-weight:700;font-family:inherit">Sou menor de 18</button>
+    </div>
+    <p style="margin:16px 0 0;color:#8b83b8;font-size:11.5px;line-height:1.5">Se voce responder aqui, sera pelo que informou. O jogo cumpre a lei ao perguntar e registrar a faixa.</p>
+  </div>`;
+  document.body.appendChild(o);
+  const esc=(f)=>{ const b=o.querySelector('#pi-maior'), m=o.querySelector('#pi-menor'); if(b)b.disabled=true; if(m)m.disabled=true; aoEscolher(f); };
+  o.querySelector('#pi-maior').onclick=()=>esc('maior');
+  o.querySelector('#pi-menor').onclick=()=>esc('menor');
+}
+function fecharPortaoIdade(){ const o=document.getElementById('portao-idade'); if(o)o.remove(); }
+
+// botao DISCRETO de conta (canto): so aparece logado. Abre o painel da conta (onde mora a exclusao).
+function montarBotaoConta(){
+  if(document.getElementById('conta-botao'))return;
+  const b=document.createElement('button'); b.id='conta-botao'; b.textContent='conta';
+  b.setAttribute('style','position:fixed;left:8px;bottom:8px;z-index:8000;padding:5px 11px;border-radius:8px;border:1px solid #3a3170;background:rgba(22,18,48,.85);color:#a99fe0;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.04em');
+  b.onclick=montarPainelConta;
+  document.body.appendChild(b);
+}
+function removerBotaoConta(){ const b=document.getElementById('conta-botao'); if(b)b.remove(); }
+
+// painel da CONTA: mostra o que ha (anonima, faixa, ranque zero) e o caminho de EXCLUSAO. A
+// exclusao apaga TUDO no servidor (nao e marcacao) e devolve o aparelho a primeira abertura.
+function montarPainelConta(){
+  const c=contaAtual||{};
+  const idc=(c.id||'').slice(0,8), faixa=c.faixaIdade==='menor'?'menor de 18':c.faixaIdade==='maior'?'18 ou mais':'-';
+  const rq=(c.ranque&&typeof c.ranque.pontos==='number')?c.ranque.pontos:0;
+  const o=document.createElement('div'); o.id='painel-conta';
+  o.setAttribute('style','position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(8,6,20,.92);padding:20px;font-family:inherit');
+  o.innerHTML=`<div style="max-width:520px;width:100%;background:#161230;border:1px solid #3a3170;border-radius:14px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="margin:0;color:#efe9ff;font-size:20px">Sua conta</h2>
+      <button id="pc-fechar" style="cursor:pointer;background:none;border:none;color:#a99fe0;font-size:13px;font-weight:700;font-family:inherit">Fechar</button>
+    </div>
+    <p style="margin:10px 0 14px;color:#c3bce6;font-size:13px;line-height:1.55">Conta <b>anonima</b> - sem login, sem e-mail, sem nome. A identidade vive num <b>token</b> guardado neste aparelho.</p>
+    <div style="background:#1c1740;border-radius:10px;padding:12px 14px;color:#d8d2f5;font-size:13px;line-height:1.7">
+      <div>id <b style="color:#efe9ff;font-family:monospace">${idc||'-'}</b></div>
+      <div>faixa de idade <b style="color:#efe9ff">${faixa}</b></div>
+      <div>ranque <b style="color:#efe9ff">${rq}</b> <span style="color:#8b83b8">(comeca em zero)</span></div>
+      <div>nick <span style="color:#8b83b8">reservado - chega no PvP</span></div>
+    </div>
+    <div id="pc-zonaexcluir" style="margin-top:18px;border-top:1px solid #2a2455;padding-top:16px">
+      <div style="font-size:12px;letter-spacing:.1em;color:#d06a6a;font-weight:800">EXCLUIR CONTA</div>
+      <p style="margin:8px 0 12px;color:#c3bce6;font-size:12.5px;line-height:1.55">Apaga <b>tudo</b> no servidor - id, token, faixa, ranque, colecao e progresso. <b>Nada</b> e preservado (conta anonima, sem obrigacao legal de reter). O aparelho volta a primeira abertura.</p>
+      <button id="pc-excluir" style="cursor:pointer;padding:11px 16px;border-radius:9px;border:1px solid #7a2e2e;background:#3a1616;color:#f4c9c9;font-size:14px;font-weight:700;font-family:inherit">Excluir minha conta</button>
+    </div>
+  </div>`;
+  document.body.appendChild(o);
+  o.querySelector('#pc-fechar').onclick=()=>o.remove();
+  o.onclick=(ev)=>{ if(ev.target===o)o.remove(); };
+  o.querySelector('#pc-excluir').onclick=()=>{
+    const z=o.querySelector('#pc-zonaexcluir');
+    z.innerHTML=`<div style="font-size:12px;letter-spacing:.1em;color:#d06a6a;font-weight:800">TEM CERTEZA?</div>
+      <p style="margin:8px 0 12px;color:#c3bce6;font-size:12.5px;line-height:1.55">Isto e definitivo. A conta e apagada de verdade no servidor.</p>
+      <div style="display:flex;gap:8px">
+        <button id="pc-cancelar" style="cursor:pointer;padding:11px 16px;border-radius:9px;border:1px solid #4a3f88;background:#241d52;color:#efe9ff;font-size:14px;font-weight:700;font-family:inherit">Cancelar</button>
+        <button id="pc-confirmar" style="cursor:pointer;padding:11px 16px;border-radius:9px;border:1px solid #7a2e2e;background:#5a1f1f;color:#ffd7d7;font-size:14px;font-weight:700;font-family:inherit">Sim, excluir</button>
+      </div>`;
+    z.querySelector('#pc-cancelar').onclick=()=>o.remove();
+    z.querySelector('#pc-confirmar').onclick=async()=>{
+      z.querySelector('#pc-confirmar').disabled=true;
+      await excluirContaFluxo();
+      o.remove();
+    };
+  };
+}
+
+// fluxo de EXCLUSAO: exclui no servidor + apaga o local + volta a primeira abertura (reabre o
+// portao de idade, ja que ha servidor e nao ha mais token). O perfil local tambem e apagado.
+async function excluirContaFluxo(){
+  try { if(contaTransporte) await excluir(contaTransporte); } catch(e){}
+  contaAtual=null;
+  apagarDados();          // zera o perfil local (mesma recriacao do "Apagar dados")
+  removerBotaoConta();
+  render();
+  // volta a primeira abertura: com servidor e sem token, pergunta a faixa de novo (nasce outra conta)
+  if(contaTransporte){
+    montarPortaoIdade(async(faixa)=>{
+      const rc=await criarConta(contaTransporte,{faixaIdade:faixa,tinhaPerfil:false,perfilLocal:null});
+      if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); render(); }
+    });
+  }
+}
+
+// BOOT da conta: handshake + token guardado. Sem servidor -> dormente (retorna cedo, app local).
+(async function bootConta(){
+  try {
+    if(typeof criarTransporteWS!=='function') return;
+    const trans=await criarTransporteWS();
+    if(!trans) return;                          // file:// ou servidor fora: modo local, sem conta
+    contaTransporte=trans;
+    const r=await iniciarConta(trans,{});
+    if(r.fase==='entrou'){ contaAtual=r.conta; montarBotaoConta(); }
+    else if(r.fase==='perguntarFaixa'){
+      montarPortaoIdade(async(faixa)=>{
+        const rc=await criarConta(trans,{faixaIdade:faixa,tinhaPerfil:_tinhaPerfilAntes,perfilLocal:perfil});
+        if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); render(); }
+      });
+    }
+  } catch(e){ /* qualquer falha na conta: o app segue local */ }
+})();

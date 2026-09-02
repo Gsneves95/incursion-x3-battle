@@ -8,6 +8,7 @@ const path = require('path');
 const { WebSocketServer } = require('ws');
 const proto = require('./protocol.js');
 const host = require('./motor-host.js');
+const contas = require('./contas.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
@@ -48,10 +49,43 @@ wss.on('connection', (ws) => {
     // 1ª coisa SEMPRE: a versão do protocolo. Incompatível = recusa clara, nunca silenciosa.
     const vc = proto.checarVersao(msg);
     if (!vc.ok) return responder('recusado', { codigo: vc.codigo, erro: vc.erro });
+    // 2ª: depois do handshake, TODA mensagem de jogo leva token. Sem token válido = recusa clara.
+    const tc = proto.checarToken(msg);
+    if (!tc.ok) return responder('recusado', { codigo: tc.codigo, erro: tc.erro });
+    if (proto.exigeToken(msg.tipo)) {
+      const conta = contas.porToken(msg.token);
+      if (!conta) return responder('recusado', { codigo: 'token_invalido', erro: 'token não corresponde a nenhuma conta — reabra o aplicativo' });
+      ws._conta = conta;   // autenticada nesta mensagem
+    }
 
     switch (msg.tipo) {
       case 'ola':
         return responder('ola', { servidor: 'incursion-f5', motor: 'autoritativo', versao: proto.PROTOCOL_VERSION });
+
+      // ---- F5.1: CONTAS. Anônima na criação, faixa obrigatória, token de volta, exclusão de verdade. ----
+      case 'criarConta': {
+        const r = contas.criar({ faixaIdade: msg.faixaIdade, perfil: msg.perfil || null });
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        // ÚNICA vez que o token viaja de volta: o aparelho o guarda para reabrir a mesma conta.
+        return responder('conta', { token: r.conta.token, conta: contas.paraDono(r.conta) });
+      }
+      case 'entrar': {
+        const r = contas.entrar(msg.token);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('conta', { conta: contas.paraDono(r.conta) });   // token NÃO reenviado (já está no aparelho)
+      }
+      case 'excluirConta': {
+        const r = contas.excluir(msg.token);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        ws._conta = null;
+        return responder('contaExcluida', { apagou: true });   // o aparelho apaga o token e volta à 1ª abertura
+      }
+      case 'salvarPerfil': {
+        if (!msg.perfil) return responder('erro', { erro: 'falta o perfil' });
+        const r = contas.salvarPerfil(msg.token, msg.perfil);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('perfilSalvo', { ok: true });
+      }
       case 'montar':
         if (!msg.pergaminho) return responder('erro', { erro: 'falta o pergaminho' });
         partida = host.montar(msg.pergaminho);

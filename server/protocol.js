@@ -17,4 +17,16 @@ function checarVersao(msg) {
   return { ok: true };
 }
 
-module.exports = { PROTOCOL_VERSION, envelope, checarVersao };
+// F5.1 — AUTENTICAÇÃO. Depois do handshake, TODA mensagem de jogo leva o token da conta.
+// Mensagem sem token válido é recusada com motivo claro (nunca silenciosa). Tipos que NÃO exigem
+// token: o handshake e a criação/entrada da conta (ainda não há token, ou o token é o corpo).
+const SEM_TOKEN = new Set(['ola', 'criarConta', 'entrar']);
+function exigeToken(tipo) { return !SEM_TOKEN.has(tipo); }
+// checa a PRESENÇA do token numa mensagem que o exige (a VALIDADE quem confere é o cadastro).
+function checarToken(msg) {
+  if (!exigeToken(msg.tipo)) return { ok: true };
+  if (!msg || typeof msg.token !== 'string' || !msg.token) return { ok: false, codigo: 'sem_token', erro: 'mensagem sem token de conta — autentique-se antes' };
+  return { ok: true };
+}
+
+module.exports = { PROTOCOL_VERSION, envelope, checarVersao, exigeToken, checarToken };
