@@ -34,7 +34,7 @@ console.log('== 9. modo espectador no turno do oponente ==');
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=1; render()");
   ok($$('.brow__tiles .skill[data-sk]:not([disabled])').length === 0, 'nenhum disco meu clicável no turno dele');
   ok($$('.skill.is-armed').length === 0, 'nenhum disco armado');
-  ok(!$('.panel .kit'), 'nenhuma consulta de kit aberta por conta própria');
+  ok(!$('.panel .kstrip'), 'nenhuma consulta de kit aberta por conta própria');
   ok($$('.portrait.is-target').length === 0, 'nenhum alvo pulsando');
   ok(!$('#bend') && !!$('.endturn--wait'), 'botão primário vira indicador de espera');
   console.log('  discos apagados, sem consulta, sem alvo, primário = espera');

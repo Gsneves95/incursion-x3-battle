@@ -46,26 +46,71 @@ function detalheHabilidadeArmada(){
     texto:a.desc, classes:classesTxt(u,a)});
 }
 
-// KIT do inimigo consultado: as 4 habilidades + passiva, cada uma tocável para o detalhe (estado 3).
+// custo do inimigo em pílulas pequenas (para o CHIP): só mostra o que a habilidade custa — sem
+// realce de "falta" (a energia é dele, não minha; aqui é leitura pura).
+function pipsKitMini(cost){
+  const out=[];
+  for(const k in cost){ if(k==='livre')continue;
+    for(let i=0;i<cost[k];i++)out.push(`<i class="kpip" style="background:${COR(k)}"></i>`);}
+  for(let i=0;i<(cost.livre||0);i++)out.push(`<i class="kpip kpip--free"></i>`);
+  return out.length?`<span class="kchip__pips">${out.join('')}</span>`:'';
+}
+
+// KIT do inimigo (§219): GALERIA + DETALHE no mesmo painel. Em cima, a TIRA com as 4 habilidades +
+// a passiva — arte reconhecível, custo e recarga VISÍVEIS sem tocar. Embaixo, a SELECIONADA por
+// inteiro: nome, custo, recarga e o TEXTO completo com espaço. Tocar um chip troca a seleção; o kit
+// PERSISTE (soltar o dedo não fecha) e o ✕ é o fechar deliberado.
 function kitHTML(uid){
   const u=todas().find(x=>x.uid===uid); if(!u) return historicoHTML();
   const g=_catPartida()[u.key]||{};
-  const rows=acoesDe(st,u).map(a=>{
+  const acoes=acoesDe(st,u);
+  const slots=acoes.map(a=>a.slot).concat(g.passiva?['passiva']:[]);
+  const sel = kitSel && slots.includes(kitSel) ? kitSel : slots[0];
+  const chips=acoes.map(a=>{
     const cd=u.cd[a.slot]||0;
-    return `<button class="kit__row" data-kitab="${u.uid}|${a.slot}">
-      <div class="kit__disc">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</div>
-      <div class="kit__id"><div class="kit__nome">${H(a.nome)}</div>
-        <div class="kit__meta">${H(a.slot.toUpperCase())}${cd?' · RECARGA '+cd:''}</div></div>
-    </button>`;}).join('');
-  const pas=g.passiva?`<button class="kit__row" data-pas="${u.uid}">
-      <div class="kit__disc" style="display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;color:${COR(u.elem)}">P</div>
-      <div class="kit__id"><div class="kit__nome">${H(g.passiva.nome)}</div><div class="kit__meta">PASSIVA</div></div>
-    </button>`:'';
-  return `<div class="detail detail--consulta">
-    <div class="detail__top"><div class="detail__id">
-      <div class="detail__name">${H(u.nome)}</div>
-      <div class="detail__meta"><span class="detail__cd">KIT — CONSULTA · toque p/ detalhe</span></div></div></div>
-    <div class="kit">${rows}${pas}</div>
+    return `<button class="kchip ${a.slot===sel?'is-sel':''}" data-kitsel="${uid}|${a.slot}" title="${H(a.nome)}">
+      <span class="kchip__art">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
+        ${cd?`<span class="kchip__cd">↻${cd}</span>`:''}</span>
+      ${pipsKitMini(a.cost)}</button>`;
+  }).join('');
+  const chipPas=g.passiva?`<button class="kchip kchip--pas ${sel==='passiva'?'is-sel':''}" data-kitsel="${uid}|passiva" title="${H(g.passiva.nome)}">
+      <span class="kchip__art kchip__art--pas" style="color:${COR(u.elem)}">P</span>
+      <span class="kchip__pips"><span class="kchip__paslbl">PAS</span></span></button>`:'';
+  // GALERIA + DETALHE: a SELECIONADA em cima com arte GRANDE (legível) + texto completo; a tira das
+  // 5 embaixo, para trocar de habilidade sem sair do kit (o kit persiste; o ✕ é o fechar).
+  return `<div class="detail detail--consulta kitwrap">
+    <div class="kit__head">
+      <div class="detail__name">${H(u.nome)} · KIT</div>
+      <button class="b b--quiet b--icon kit__x" data-kitclose="1" title="fechar o kit">✕</button>
+    </div>
+    ${kitDetalheHTML(u,g,sel)}
+    <div class="kstrip">${chips}${chipPas}</div>
+  </div>`;
+}
+// o corpo do kit: a habilidade SELECIONADA por inteiro — arte GRANDE (56px, reconhecível), custo,
+// recarga e o TEXTO completo com espaço. A passiva entra aqui também (sem custo/recarga).
+function kitDetalheHTML(u,g,sel){
+  if(sel==='passiva'&&g.passiva){
+    return `<div class="kitdet">
+      <div class="detail__top">
+        <div class="detail__icon detail__icon--skill kitdet__pas" style="border-color:${COR(u.elem)};color:${COR(u.elem)}">P</div>
+        <div class="detail__id"><div class="detail__name">${H(g.passiva.nome)}</div>
+          <div class="detail__meta"><span class="detail__cd">PASSIVA${g.passiva.inerte?' · INERTE':''}</span></div></div>
+      </div>
+      <div class="detail__text">${realce(g.passiva.desc||'')}</div>
+      <div class="detail__classes">SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA</div>
+    </div>`;
+  }
+  const a=acoesDe(st,u).find(x=>x.slot===sel); if(!a) return '';
+  const cd=u.cd[sel]||0;
+  return `<div class="kitdet">
+    <div class="detail__top">
+      <div class="detail__icon detail__icon--skill" style="border-color:${COR(u.elem)}">${slot('skill-'+u.key+'-'+sel,'',null,0,true)}</div>
+      <div class="detail__id"><div class="detail__name">${H(a.nome)}</div>
+        <div class="detail__meta">${pipsDetalhe(a.cost)}<span class="detail__cd">${cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'}</span></div></div>
+    </div>
+    <div class="detail__text">${realce(a.desc||'')}</div>
+    <div class="detail__classes">${H(classesTxt(u,a))} · INIMIGA</div>
   </div>`;
 }
 

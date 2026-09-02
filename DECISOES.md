@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §219 — CONSULTA DE KIT INIMIGO refeita: o kit PERSISTE (soltar o dedo não fecha) e vira GALERIA + DETALHE. Achado de aparelho (o dono jogando), consertado com medição.
+
+**O DEFEITO (dono, no aparelho — canal aberto §217):** o recurso existia e não servia, por dois defeitos somados. (1) EFÊMERO: soltar o dedo fechava o kit, justo quando ia começar a ler. (2) RASO: a lista mostrava foto pequena (34px) + nome — nome não diz o que a habilidade FAZ, que é o que se precisa ler no oponente.
+
+**A CAUSA da (1), confirmada por leitura (a hipótese do dono estava certa):** o toque longo abria o kit no timer de 420ms chamando `render()`, que RECONSTRÓI o DOM no meio do gesto. O retrato original é destacado; quando o dedo levanta, o `pointerup` cai no elemento NOVO, cujo closure tem `longo=false` — então NÃO reconhecia que o kit já abrira e caía na `ficha()`, que faz `peekKit=null`. Ou seja: o hold abria, o soltar fechava.
+
+**A CORREÇÃO da (1):** o estado do gesto saiu do closure e virou MÓDULO (`foeGesto`). Ele sobrevive ao `render()` que troca o DOM, então QUALQUER `pointerup` (no elemento velho ou no novo) vê `foeGesto.abriu` e NÃO faz o toque curto. O kit **fica**. **Fechar é DELIBERADO:** um ✕ no cabeçalho do painel (`data-kitclose`) volta ao histórico. Soltar o dedo nunca fecha; tocar um disco meu (armar) naturalmente substitui.
+
+**A CORREÇÃO da (2) — GALERIA + DETALHE (interface do kit refeita):**
+- **A TIRA** (topo): as 4 habilidades + a passiva, cada uma um chip com arte + **custo (pílulas) e recarga VISÍVEIS sem tocar** — como nos meus próprios discos. Passiva inclusa (some junto no desenho antigo).
+- **O DETALHE** (embaixo): a SELECIONADA por inteiro — arte GRANDE (56px, reconhecível, vs 34 da lista velha), custo, recarga e o **TEXTO completo** com realce. Tocar um chip troca a seleção sem sair do kit.
+
+**MEDIÇÃO (o dono pediu o número e a alternativa se não coubesse tudo):** o painel tem 262×336, mas o conteúdo útil (fora a aba de recolher + margens + padding) é **214×312**. E COUBE TUDO AO MESMO TEMPO: a tira das 5 (arte + custo + recarga) + a selecionada com arte 56px + o texto completo. Como o painel é LARGO (~198px de texto), até a **maior descrição do jogo — Frenesi Sanguinário, 168 caracteres — cabe SEM rolar** (medido 113/113). Nenhuma habilidade precisa rolar. Não precisou de alternativa: o ideal coube.
+
+**O MEU lado (o dono perguntou):** NÃO é efêmero. Tocar um disco meu ARMA a habilidade e mostra a descrição completa no painel, que FICA até confirmar/cancelar/agir. O problema era só a consulta do inimigo (o toque longo + render no meio do gesto).
+
+**GUARDAS (`interface`, `perspectiva`):** o gesto — pointerdown + abrir (420ms) + **pointerup NÃO fecha** (§219, o cerne); a tira tem 5 chips com custo; trocar de chip mantém o kit e muda a selecionada sem armar/alterar estado; a passiva inclusa sem custo; o ✕ fecha; a arte da selecionada ≥52px. `perspectiva` — nenhum kit abre por conta própria no turno do oponente.
+
 ## §218 — SPIKE de plataforma (Capacitor): projeto mínimo commitado, gap do iOS fechado por leitura, checklist medido. O run no aparelho é do dono (o ambiente não roda Android).
 
 **O QUE ERA:** antes da Fase 5, pôr o jogo dentro do invólucro nativo (Capacitor → App Store/Play Store) e num aparelho de verdade, para DESCOBRIR O QUE QUEBRA — o histórico provou duas vezes que ambiente diferente esconde bug (§209 banners que davam 404 no Pages; §210 tela sem saída). Não é entrega: sem compra, notificação nem conta.

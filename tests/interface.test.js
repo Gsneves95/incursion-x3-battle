@@ -245,29 +245,44 @@ console.log('== 4b. consulta do KIT inimigo (item 8: toque longo → painel; toq
   // marca de descoberta: "?" no canto do retrato inimigo vivo
   ok($$('.brow__enemy .portrait__ask').length === 3, 'os 3 inimigos vivos deveriam mostrar a marca "?" de consulta');
 
-  // o toque longo abre o kit no painel — na suíte, exercemos o mesmo estado (peekKit) que o gesto produz
-  w.eval(`peekKit="${foe0.uid}";detalhe=null;armado=null;render()`);
-  ok(!!$('.panel .kit'), 'o painel deveria abrir o KIT do inimigo');
-  ok($$('.kit__row').length >= 5, `o kit deveria listar 4 habilidades + passiva, há ${$$('.kit__row').length} linhas`);
-  ok(/KIT/.test($('.detail--consulta .detail__cd').textContent), 'o painel deveria marcar-se como CONSULTA de kit');
-  ok($('.detail__name').textContent.trim() === foe0.nome, 'o kit deveria nomear o inimigo consultado');
+  // §219 — o TOQUE LONGO abre o kit e ele FICA (soltar o dedo NÃO fecha). Exercemos o gesto:
+  // pointerdown, o timer de 420ms abre (simulado por abrirKit + foeGesto.abriu), e o pointerup NÃO fecha.
+  const fp = $('.portrait[data-foe]'); const uid = fp.dataset.uid;
+  fp.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
+  w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uid}")`);
+  ok(w.eval('peekKit') === uid, 'o toque longo abre o kit');
+  ok(!!$('.panel .kitwrap') && !!$('.kstrip'), 'o painel deveria abrir o KIT (galeria + detalhe)');
+  const fp2 = $(`.portrait[data-foe][data-uid="${uid}"]`);
+  fp2.dispatchEvent(new w.MouseEvent('pointerup', { bubbles: true, clientX: 0, clientY: 0 }));
+  ok(w.eval('peekKit') === uid && !!$('.kstrip'), '§219: soltar o dedo NÃO fecha o kit (persiste)');
 
-  // tocar uma habilidade do kit abre o detalhe (estado 3 — habilidade INIMIGA, consulta)
-  const linha = $$('.kit__row[data-kitab]')[0];
-  tap(linha);
+  // a TIRA: 4 habilidades + passiva, custo VISÍVEL sem tocar; e o cabeçalho + o fechar deliberado
+  ok($$('.kstrip .kchip').length === 5, `a tira deveria ter 4 habilidades + passiva, há ${$$('.kstrip .kchip').length}`);
+  ok($$('.kchip--pas').length === 1, 'a passiva está inclusa na tira');
+  ok($$('.kstrip .kchip__pips').length === 5, 'todo chip mostra o custo (pílulas) sem tocar');
+  ok(/KIT/.test($('.kitwrap .kit__head .detail__name').textContent), 'o cabeçalho nomeia o inimigo consultado');
+  ok(!!$('.kitwrap [data-kitclose]'), 'há um fechar deliberado (o botao ✕)');
+  // a SELECIONADA por inteiro: arte grande + recarga + texto completo
+  ok(parseFloat(w.getComputedStyle($('.kitdet .detail__icon')).width) >= 52, 'a arte da selecionada é grande (legível)');
+  ok($('.kitdet .detail__text').textContent.length > 8, 'a selecionada mostra o texto completo do que faz');
+  ok($$('.kitdet .detail__cd').some(e => /PRONTA/.test(e.textContent)), 'a selecionada mostra a recarga');
+
+  // tocar OUTRO chip troca a seleção, sem sair do kit nem armar/alterar estado
+  const nomeAntes = $('.kitdet .detail__name').textContent;
+  const outro = $$('.kstrip .kchip[data-kitsel]').find(b => !b.classList.contains('is-sel'));
+  tap(outro);
   ok($$('.skill.is-armed').length === 0, 'consultar não pode armar nada');
   ok(hpTodos() === antes, 'consultar não pode alterar o estado');
-  ok(/CONSULTA/.test($('.detail__classes').textContent), 'o detalhe deveria marcar-se como consulta');
-  ok($$('.detail__cd').some(e => /PRONTA/.test(e.textContent)), 'o detalhe deveria dizer a recarga');
+  ok(!!$('.kstrip') && $('.kitdet .detail__name').textContent !== nomeAntes, 'trocar de chip mantém o kit e muda a selecionada');
+  // a PASSIVA por inteiro (sem custo)
+  tap($('.kchip--pas'));
+  ok(/PASSIVA/.test($('.kitdet').textContent), 'a passiva mostra-se como PASSIVA');
+  ok(!$('.kitdet .cost .cost__pip'), 'a passiva não tem custo');
   console.log(`  "${$('.detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
 
-  // voltar do detalhe para a LISTA do kit
-  tap($('[data-kitback]'));
-  ok(!!$('.panel .kit'), 'o botão "kit" deveria voltar à lista do kit');
-
-  // some ao virar o turno
-  w.eval('peekKit=null;detalhe=null;render()');
-  ok(!$('.panel .kit'), 'a consulta some quando limpa');
+  // FECHAR é deliberado: o botao ✕ volta ao histórico (soltar o dedo nunca fecha)
+  tap($('.kitwrap [data-kitclose]'));
+  ok(!w.eval('peekKit') && !$('.kstrip'), 'o fechar deliberado dispensa o kit');
   console.log('  "?" nos 3 inimigos \u00b7 kit no painel \u00b7 toca hab. \u2192 detalhe \u00b7 volta ao kit');
 }
 

@@ -115,18 +115,12 @@ function ligarCampo(){
   stage.querySelectorAll('.portrait[data-foe]').forEach(el=>ligarFoe(el));
   // aba de RECOLHER o painel (sempre visivel)
   const tab=stage.querySelector('.panel__tab'); if(tab)tab.onclick=()=>{ painelRecolhido=!painelRecolhido; render(); };
-  // no KIT consultado: tocar uma habilidade abre o detalhe (estado 3 — habilidade inimiga)
-  stage.querySelectorAll('[data-kitab]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const[uid,slotk]=b.dataset.kitab.split('|');
-    const u=todas().find(x=>x.uid===uid); const a=u&&acoesDe(st,u).find(x=>x.slot===slotk); if(!a)return;
-    const cd=u.cd[slotk]||0;
-    detalhe={nome:a.nome.toUpperCase(),chave:'skill-'+u.key+'-'+slotk,glifo:mono(a),cor:COR(u.elem),redondo:true,
-      pips:pipsDetalhe(a.cost),
-      meta:u.nome.toUpperCase()+' · '+(cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'),
-      texto:a.desc,classes:classesTxt(u,a)+' · INIMIGA — CONSULTA', consulta:true, deKit:uid};
-    render();});
-  // voltar do detalhe (estado 3) para a LISTA do kit
-  const kb=stage.querySelector('[data-kitback]'); if(kb)kb.onclick=()=>{ detalhe=null; render(); };
+  // KIT consultado (§219): tocar um CHIP seleciona a habilidade — o detalhe (custo/recarga/texto)
+  // aparece embaixo, no MESMO painel, sem sair do kit. A seleção persiste no kitSel.
+  stage.querySelectorAll('[data-kitsel]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
+    const[,slotk]=b.dataset.kitsel.split('|'); kitSel=slotk; render();});
+  // fechar o kit é DELIBERADO (§219): o ✕ do painel volta ao histórico. Soltar o dedo nunca fecha.
+  const kx=stage.querySelector('[data-kitclose]'); if(kx)kx.onclick=ev=>{ev.stopPropagation(); peekKit=null;kitSel=null; render();};
   // passiva (aliada ou inimiga): estado 4 do painel
   stage.querySelectorAll('[data-pas]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.pas),g=_catPartida()[u.key]||{};
@@ -155,17 +149,34 @@ function ligarCampo(){
   // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa.
   if(resumoTurno) stage.addEventListener('pointerdown',()=>{ resumoTurno=null; },{once:true,capture:true});
 }
-// TOQUE LONGO no retrato inimigo: abre o kit dele no painel (item 8). Limiar de movimento
-// (10px) cancela o gesto se o dedo arrastar. Toque curto: alvo (se for) ou ficha da unidade.
+// abre o KIT do inimigo no painel e o mantém aberto (§219: soltar o dedo NÃO fecha).
+function abrirKit(uid){ peekKit=uid; kitSel=null; detalhe=null; armado=null;alvos=[];escolhidos=[]; render(); }
+
+// TOQUE LONGO no retrato inimigo: abre o kit e ele FICA (item 8 / §219). O estado do gesto vive
+// em MÓDULO (foeGesto), não no closure — porque abrir() chama render(), que troca o DOM no meio do
+// toque; o pointerup do dedo levantado cai no elemento NOVO, e antes disso lia longo=false e fechava
+// com a ficha. Agora qualquer pointerup (velho ou novo) vê foeGesto.abriu e NÃO faz o toque curto.
+// Limiar de movimento (10px) cancela se arrastar. Toque CURTO: alvo (se armando) ou ficha da unidade.
 function ligarFoe(el){
-  const uid=el.dataset.uid; let timer=null, longo=false, x0=0, y0=0;
-  const abrir=()=>{ longo=true; peekKit=uid; detalhe=null; armado=null;alvos=[];escolhidos=[]; render(); };
-  el.addEventListener('pointerdown',e=>{ longo=false; x0=e.clientX; y0=e.clientY; clearTimeout(timer); timer=setTimeout(abrir,420); });
-  el.addEventListener('pointermove',e=>{ if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10) clearTimeout(timer); });
-  el.addEventListener('pointerup',()=>{ clearTimeout(timer);
-    if(longo){ longo=false; return; }                 // ja abriu o kit no hold
-    if(el.dataset.target){ alvo(uid); }                // arma em curso: escolhe alvo
-    else { const u=todas().find(x=>x.uid===uid); if(u)ficha(u); } });
-  el.addEventListener('pointercancel',()=>clearTimeout(timer));
-  el.addEventListener('pointerleave',()=>clearTimeout(timer));
+  const uid=el.dataset.uid;
+  el.addEventListener('pointerdown',e=>{
+    foeGesto={uid, t:Date.now(), x:e.clientX, y:e.clientY, moved:false, abriu:false};
+    clearTimeout(foeTimer);
+    foeTimer=setTimeout(()=>{ if(foeGesto&&foeGesto.uid===uid&&!foeGesto.moved){ foeGesto.abriu=true; abrirKit(uid); } }, 420);
+  });
+  el.addEventListener('pointermove',e=>{
+    if(foeGesto&&(Math.abs(e.clientX-foeGesto.x)>10||Math.abs(e.clientY-foeGesto.y)>10)){ foeGesto.moved=true; clearTimeout(foeTimer); }
+  });
+  el.addEventListener('pointerup',()=>{
+    clearTimeout(foeTimer);
+    const g=foeGesto; foeGesto=null;
+    if(!g||g.uid!==uid) return;
+    if(g.abriu) return;                    // o toque longo já abriu o kit — soltar não fecha nada
+    if(g.moved) return;                    // arrastou — gesto cancelado
+    if(Date.now()-g.t>=420) return;        // segurou o bastante (o timer pode não ter disparado) — já é consulta
+    if(el.dataset.target){ alvo(uid); }    // toque curto com arma em curso: escolhe alvo
+    else { const u=todas().find(x=>x.uid===uid); if(u)ficha(u); }   // toque curto solto: ficha
+  });
+  el.addEventListener('pointercancel',()=>{ clearTimeout(foeTimer); foeGesto=null; });
+  el.addEventListener('pointerleave',()=>{ clearTimeout(foeTimer); });   // leave não zera foeGesto: o up decide
 }

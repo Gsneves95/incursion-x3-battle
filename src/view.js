@@ -10,7 +10,10 @@
 let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
     ov=null, detalhe=null, hpAnt={}, peek=null, abaFoe=null, convAlvo=null, menuAberto=false, livrePlano={};
 // §214 — painel de leitura (esquerda): recolhível (aba) e consulta de kit inimigo (toque longo).
-let painelRecolhido=false, peekKit=null;
+// §219 — o kit PERSISTE (não fecha ao soltar o dedo): kitSel = habilidade selecionada dentro do kit;
+// foeGesto/foeTimer rastreiam o gesto no retrato inimigo em nível de MÓDULO (sobrevivem ao render()
+// que troca o DOM no meio do toque — é o que consertava o fechamento no pointerup).
+let painelRecolhido=false, peekKit=null, kitSel=null, foeGesto=null, foeTimer=null;
 
 // F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
 // resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
