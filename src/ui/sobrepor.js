@@ -89,7 +89,7 @@ function overlayHTML(){
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">TOCAR NÃO GASTA</b> \u2014 o primeiro toque numa habilidade só mostra o que ela faz e a arma. O gasto só acontece quando você toca no alvo ou em CONFIRMAR. Pílula de custo com contorno vermelho é energia que você ainda não tem.</p>
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">DEFESA</b> \u2014 toda unidade tem. Custa 1 energia livre, recarga 4, e deixa a unidade Invulnerável por 1 turno. Gasta a ação. Dano contínuo já aplicado atravessa a Invulnerabilidade.</p>
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">EFEITOS</b> \u2014 a faixa na base de cada retrato mostra os buffs, debuffs e danos contínuos ativos naquela unidade, com o número de turnos restantes. Vale para os dois times. Toque em qualquer ícone para ler o que ele faz; toque no "P" para a passiva do deus e no retrato para a ficha completa.</p>
-      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">ESPIAR O INIMIGO</b> \u2014 cada unidade inimiga tem uma alça estreita ao lado do retrato. Toque para abrir as 4 habilidades dela e ver o que fazem e quantos turnos faltam de recarga. Abre uma por vez e fecha ao virar o turno. Um ponto verde na alça avisa que a Defesa daquela unidade está em recarga — ou seja, ela não pode ficar Invulnerável neste turno.</p>
+      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">ESPIAR O INIMIGO</b> \u2014 segure o retrato de uma unidade inimiga (toque longo) para abrir o KIT dela no painel à esquerda: as 4 habilidades e a passiva, cada uma tocável para ver o que faz e quantos turnos faltam de recarga. O "?" no canto do retrato lembra que dá para consultar. E as ORBES do oponente ficam no topo, do lado dele — é assim que você prevê se ele pode pagar um Milagre.</p>
       <p style="margin:0"><b style="color:var(--gold-text)">VITÓRIA</b> \u2014 derrube as 3 unidades inimigas. Se ninguém fechar até o turno 40, ganha quem tiver mais vida somada — a partir do turno 30 o relógio passa a mostrar "TURNO N/40" para avisar. Cada turno tem 60 segundos; se acabar, ele encerra sozinho.</p>
       </div></div></div>`;
   }
@@ -108,6 +108,18 @@ function overlayHTML(){
       <div style="display:flex;gap:8px;justify-content:center">
         <button class="b b--quiet b--md" id="bclose">Continuar jogando</button>
         <button class="b b--primary b--md" id="bsairok">Sair para o início</button></div></div></div></div>`;
+  }
+  if(ov==='perfil'){
+    // marcador HONESTO (§215): o perfil de verdade — foto, nick, ranque, deuses mais usados,
+    // placar de vitórias/derrotas — é do COMPETITIVO (online), que chega na Fase 5. Hoje não há
+    // conta nem ranque; a foto/nick da barra são placeholder. O espaço na barra é o que está reservado.
+    return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>PERFIL</h2>
+      <span class="sub">FASE 5 · COMPETITIVO ONLINE</span>
+      <span class="push"><button class="b b--quiet b--md" id="bclose">Fechar</button></span></div>
+      <div class="ovb" style="font-size:13px;font-weight:600;line-height:1.5">
+        <p style="margin:0 0 9px">No <b style="color:var(--gold-text)">competitivo online</b> (Fase 5), tocar numa foto abre o perfil daquele jogador: <b>foto</b> e <b>nick</b>, o <b>ranque</b>, os <b>deuses que ele mais usa</b> e o <b>placar de vitórias e derrotas</b>.</p>
+        <p style="margin:0">Ainda não existe conta, nick nem ranque — é o próximo grande passo. Por ora a barra só <b>reserva o lugar</b> deles, para o PvP não ter de refazer o topo inteiro.</p>
+      </div></div></div>`;
   }
   if(ov==='apagar'){
     // confirmação NOMEADA: diz exatamente o que se perde, não um "Confirmar?" genérico.

@@ -82,6 +82,21 @@ console.log('== 12. rótulos de time por modo (§214: placas VOCÊ/oponente sobr
   console.log('  vs CPU: Você/CPU + banner traduzido · hot-seat: Você/Jogador 2');
 }
 
+console.log('== 13. §215: a energia do OPONENTE aparece no topo (informação de jogo), do lado dele ==');
+{
+  w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=0");
+  // dá orbes aos dois lados e confere que os dois aparecem, cada um do seu lado
+  w.eval("ELEMS.forEach(e=>{st.lados[0].orbs[e]=2; st.lados[1].orbs[e]=2;}); render()");
+  ok($$('.energy--me .energy__pill').length >= 1, 'as minhas orbes aparecem à esquerda');
+  ok($$('.energy--foe .energy__pill').length >= 1, 'a energia do OPONENTE aparece à direita (§215)');
+  ok($$('.energy--foe .energy__pill--ro').length === $$('.energy--foe .energy__pill').length,
+    'as orbes do oponente são leitura (não convertíveis)');
+  ok($$('.energy--foe [data-conv]').length === 0, 'não dá para converter a energia do oponente');
+  // o perfil do oponente nomeia CPU no topo, do lado dele
+  ok(/CPU/.test($('.side--foe .prof__nick').textContent), 'o perfil direito nomeia o oponente (CPU)');
+  console.log('  energia do oponente visível (leitura) · perfil dele à direita');
+}
+
 w.close();
 console.log('');
 console.log(f === 0 ? '>>> PERSPECTIVA OK' : `>>> ${f} FALHA(S)`);

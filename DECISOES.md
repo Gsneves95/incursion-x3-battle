@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §215 — TOPO: a energia do OPONENTE volta (informação de jogo) e o topo RESERVA o perfil dos dois jogadores (foto+nick+ranque) para o PvP (Fase 5). Mede: cabe em 46px.
+
+**O ACHADO (dono):** o §214 enxugou o topo e, sem querer, levou junto a **energia do oponente** — que saíra com as placas antigas. Não é decoração: ver que ele tem 3 de Tempestade é como o jogador prevê o Milagre. E o dono pediu, no mesmo movimento, **reservar espaço para o perfil dos dois jogadores** — porque no PvP (Fase 5) o topo mostra, de cada lado, FOTO+NICK+RANQUE (modelo Naruto-Arena), e enxugar agora sem esse lugar obrigaria a Fase 5 a refazer a faixa inteira (o preço já pago duas vezes: banners que não deployavam, tela sem saída).
+
+**1. ENERGIA DO OPONENTE de volta, do lado dele.** O topo virou três zonas: **perfil-ESQUERDA (você) + minhas orbes + Trocar** · **relógio + menu (≡ ⋯)** · **orbes do oponente + perfil-DIREITA**. As orbes do oponente são **LEITURA** (`energy__pill--ro`, sem `data-conv`, sem realce de gasto) — só quanto ele tem; as minhas seguem interativas (conversão por toque). Mesmo filtro `mostrar` dos dois lados (elementos que o time cobre ∪ orbes>0).
+
+**2. PERFIL dos DOIS jogadores RESERVADO (Fase 5).** De cada lado: **foto** (silhueta placeholder, SVG inline), **nick** e **ranque** ("—" até existir conta). Esquerda = "VOCÊ" (fixo, casa a placa da coluna do §214); direita = nome do oponente (`rotuloLado(1-eu)` → CPU / Jogador 2). **Tocar a foto** (dos dois lados) abre um **marcador honesto** (`ov='perfil'`): explica que foto/nick/ranque/deuses-mais-usados/placar-V-D são do competitivo online (Fase 5) e que hoje só se reserva o lugar. Nada de conta/ranque existe ainda — o espaço é o entregável.
+
+**3. MEDIÇÃO — cabe em 46px (dono pediu medir):** renderizado a 926×428 no **pior caso** (os 6 elementos com orbe nos DOIS lados): topbar **46px de altura** (conteúdo 34px), zonas **me x[11,328] · centro x[336,589] · foe x[597,915]**, **sem sobreposição** entre elas e **sem rolagem horizontal** (scrollWidth 926 = clientWidth). **NÃO precisou tirar da área das fileiras** — o relógio encolheu (210→172px) e as pílulas ficaram compactas (dot 9, nº 12px), e sobrou folga. As fileiras seguem 46→380 intactas.
+
+**4. NÃO regerar as ~400 artes de habilidade (dono):** a moldura retangular do §214 já ganhou área; a arte preencher os cantos é ganho marginal para custo enorme. Fica como **observação, não dívida** (o §214 já registrava isso; aqui vira decisão fechada — não fazer).
+
+**Ajuste de verdade no COMO JOGAR:** o texto de ajuda ainda descrevia a "alça estreita" (o mecanismo de consulta que o §214 substituiu por toque longo). Corrigido para o gesto atual (segurar o retrato → kit no painel; "?" sinaliza) e para a leitura das orbes do oponente no topo.
+
+**GUARDAS (suítes):** `interface` — as minhas orbes (1–6, interativas) e as do oponente (≥1, `--ro`, sem `data-conv`) as duas visíveis; os dois perfis (foto SVG + nick) no topo, "VOCÊ" à esquerda; tocar a foto (dos dois lados) abre o marcador `perfil` (base inerte, ≤1 primário — entrou na varredura do INV 16). `perspectiva` — a energia do oponente aparece do lado dele, em leitura, e o perfil direito nomeia CPU. `moldura` — a geometria do topo/fileiras segue medida em navegador real (fileira ≤ rodapé).
+
 ## §214 — FASE 4: a TELA DE BATALHA refeita com a lógica do Naruto-Arena adaptada à nossa proporção (2.16 larga): LEITURA à esquerda, TOQUE à direita. Painel de detalhe de 4 estados, recolhível; consulta de kit inimigo por toque longo.
 
 **O DESENHO (dono):** Naruto-Arena é 3×3 como o nosso, mas a proporção deles é 1.38 (quase quadrada) e a nossa é 2.16 (paisagem larga). O que **APLICA**: habilidade é RETÂNGULO (78×78, mostra mais arte que o círculo), o personagem é MAIOR que a habilidade, e existe um PAINEL de detalhe para LER o que a habilidade faz. O que **NÃO APLICA**: eles põem o painel embaixo — na nossa proporção larga, com o polegar direito dominando em paisagem, o que se TOCA vai à direita e o que se LÊ vai à esquerda. O painel vai para o LADO.

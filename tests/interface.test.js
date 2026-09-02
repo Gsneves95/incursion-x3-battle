@@ -164,8 +164,9 @@ tap($('#bgo'));
 w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 
 console.log('== 2. estrutura da tela de batalha (§214: zonas por ergonomia) ==');
-const req = ['.stage__bg','.stage__scrim','.topbar','.timer','.timer__fill','.timer__label',
-  '.energy','.board','.panel','.panel__tab','.rows','.brow','.brow__ally','.brow__tiles','.brow__enemy',
+const req = ['.stage__bg','.stage__scrim','.topbar','.side--me','.side--foe','.prof','.prof__pic','.prof__nick',
+  '.timer','.timer__fill','.timer__label','.energy--me','.energy--foe',
+  '.board','.panel','.panel__tab','.rows','.brow','.brow__ally','.brow__tiles','.brow__enemy',
   '.footer','.acaoestado','.detail','.detail__icon','.detail__name','.detail__text','.detail__classes',
   '.detail__cd','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
 req.forEach(s => ok(!!$(s), `falta ${s}`));
@@ -180,8 +181,18 @@ ok($$('.portrait[data-foe] [data-sk]').length === 0, 'nada do lado inimigo pode 
 ok($$('.portrait__ask').length === 3, `todo inimigo vivo precisa da marca "?" de consulta (item 8), há ${$$('.portrait__ask').length}`);
 ok($$('.brow__enemy .portrait .effects').length === 3, 'a faixa de efeitos deve estar DENTRO do retrato inimigo');
 ok($$('.brow__ally .portrait .effects').length === 3, 'a faixa de efeitos aliada também vive no retrato');
-ok($$('.energy__pill').length >= 1 && $$('.energy__pill').length <= 6,
-  `energia deveria mostrar só os tipos relevantes (1 a 6), há ${$$('.energy__pill').length}`);
+// §215: MINHAS orbes (interativas) à esquerda, as do OPONENTE (leitura) à direita — as duas visíveis
+ok($$('.energy--me .energy__pill').length >= 1 && $$('.energy--me .energy__pill').length <= 6,
+  `minhas orbes: 1 a 6 tipos, há ${$$('.energy--me .energy__pill').length}`);
+ok($$('.energy--foe .energy__pill').length >= 1, `a energia do OPONENTE deveria estar visível (§215), há ${$$('.energy--foe .energy__pill').length}`);
+ok($$('.energy--foe .energy__pill--ro').length === $$('.energy--foe .energy__pill').length,
+  'as orbes do oponente são LEITURA (energy__pill--ro), não convertíveis');
+ok($$('.energy--foe [data-conv]').length === 0, 'não dá para converter a energia do oponente');
+// §215: perfil dos DOIS jogadores reservado no topo (foto + nick), com as orbes de cada lado
+ok(!!$('.side--me .prof') && !!$('.side--foe .prof'), 'os dois perfis (foto+nick) deveriam existir no topo');
+ok(/você/i.test($('.side--me .prof__nick').textContent), `perfil esquerdo = VOCÊ, diz "${$('.side--me .prof__nick').textContent}"`);
+ok($('.side--foe .prof__nick').textContent.trim().length > 0, 'perfil direito deveria nomear o oponente');
+ok(!!$('.side--me .prof__pic svg') && !!$('.side--foe .prof__pic svg'), 'cada perfil tem a foto (placeholder) tocável');
 ok($$('.portrait .portrait__x').length === 6, 'todo retrato precisa do X de derrota');
 // item 13: marcação de time — VOCÊ (ouro) sobre a coluna aliada, oponente (vermelho) sobre a dele
 ok(/você/i.test($('.teamlbl--ally').textContent), `rótulo aliado deveria dizer VOCÊ, diz "${$('.teamlbl--ally').textContent}"`);
@@ -310,9 +321,9 @@ console.log('== 4c2. contagem de objetos e ruído ==');
   const objetos = $$('.skill, .portrait, .hp, .effect, .energy__pill, .b, .endturn').length;
   ok(!$('.skill__el'), 'sem barra de elemento: o anel do disco faz esse papel');
   ok(objetos < 70, `objetos visuais deveriam ficar contidos, há ${objetos}`);
-  const pills = $$('.energy__pill').length;
-  ok(pills <= 6, `energia deveria mostrar só o que importa, há ${pills} pílulas`);
-  ok(!/\u03a3/.test($('.energy').textContent), 'o total \u03a3 era redundante e deveria ter saído');
+  const pills = $$('.energy--me .energy__pill').length;
+  ok(pills <= 6, `minhas orbes: só os tipos que importam, há ${pills} pílulas`);
+  ok(!/\u03a3/.test($('.energy--me').textContent), 'o total \u03a3 era redundante e deveria ter saído');
   ok(!$('.player__rank'), 'a linha "3 de pé \u00b7 N energia" duplicava o que a tela já mostra');
   ok(!/\/100|\/120/.test($('.hp__label').textContent), 'o "/max" era redundante no rótulo de vida');
   ok($$('.brow__ally .portrait .effects').length === 3, 'efeitos deveriam viver dentro do retrato, 1 faixa por unidade');
@@ -633,6 +644,22 @@ console.log('== 12c. painel recolhível (§214): aba recolhe, tiles crescem, aba
   console.log('  aba recolhe/reabre \u00b7 tile passa a casar a regra de crescimento ao recolher (px em moldura)');
 }
 
+console.log('== 12d. \u00a7215: tocar a FOTO do perfil abre o marcador honesto (Fase 5) ==');
+{
+  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;painelRecolhido=false;render()");
+  tap($('.side--me .prof'));
+  ok(w.eval("ov") === 'perfil', 'tocar a foto deveria abrir o marcador de perfil');
+  ok(/PERFIL/.test($('.ovh h2').textContent), 'o marcador deveria titular PERFIL');
+  ok(/Fase 5|competitivo/i.test($('.ovb').textContent), 'o marcador deveria ser HONESTO sobre a Fase 5');
+  tap($('#bclose'));
+  ok(!$('.ov'), 'Fechar deveria dispensar o marcador');
+  // a foto do OPONENTE tamb\u00e9m abre o mesmo marcador
+  tap($('.side--foe .prof'));
+  ok(w.eval("ov") === 'perfil', 'a foto do oponente tamb\u00e9m abre o marcador');
+  tap($('#bclose'));
+  console.log('  foto (dos dois lados) \u2192 marcador honesto de perfil (Fase 5)');
+}
+
 console.log('== 13. partida completa só por toques ==');
 {
   let seed = 12345;
@@ -699,7 +726,7 @@ console.log('== 15. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base 
   ok(baseInert() === false, 'menu (sem scrim): base NÃO fica inerte');
   ok(nprim() <= 1, `menu: no máximo 1 primário (tem ${nprim()})`);
   w.eval('menuAberto=false;render()');
-  for (const o of ['log', 'help', 'surr', 'apagar', 'conv', 'sair']) {
+  for (const o of ['log', 'help', 'surr', 'apagar', 'conv', 'sair', 'perfil']) {
     w.eval(`ov='${o}';render()`);
     ok(nprim() <= 1, `overlay ${o}: no máximo 1 primário no DOM inteiro (tem ${nprim()})`);
     ok(baseInert() === true, `overlay ${o}: camada de base inerte`);
