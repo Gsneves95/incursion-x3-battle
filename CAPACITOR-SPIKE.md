@@ -140,6 +140,27 @@ Duas medições:
 - **Bônus:** na 1ª vez que abriu, você recebeu o **grant inicial (9 deuses)**? Confirme que aconteceu
   **uma vez só** (reabrir não deve dar 9 de novo).
 
+### G) WebSocket + RECONEXÃO no WebView (Fase 5 — §224) — o que só o aparelho responde
+O protocolo de reconexão está provado em Node (`tests/reconexao.test.js`): a partida vive na conta, o
+relógio corre na ausência, e reconectar não dá vantagem. O que a máquina de mesa NÃO responde, e o
+seu aparelho sim:
+- **O gesto:** com o servidor no ar (rode-o na sua rede e aponte o app para ele), **entre numa
+  partida no servidor**, jogue um turno, e **mande o app para segundo plano** (troque de app, deixe
+  parado uns segundos) — no Android a WebView costuma ser **morta**, não só pausada. **Reabra.**
+  - **Sucesso:** o app **reconecta sozinho** e **volta à mesma partida**, no mesmo turno, com o painel
+    da esquerda (§214) contando o que o oponente fez enquanto você esteve fora. O relógio **não
+    zerou** (o tempo correu na sua ausência).
+  - **Falhar:** o app volta para a home (perdeu a partida), ou a partida reaparece com o **relógio
+    cheio** (reset — seria vantagem; o servidor não deveria permitir, mas confirme o que o cliente
+    desenha), ou o WebSocket **não reconecta** (fica "pensando"). Anote qual.
+- **`wss://` (produção):** em rede real o app fala `wss://` (TLS). O WebView tem **política própria de
+  origem e de certificado** — um certificado que o Chrome de mesa aceita pode ser recusado no WebView.
+  Só dá para confirmar contra o servidor hospedado (não existe ainda; é da F5.3+). Anote para lá.
+- **Ficar em segundo plano MUITO tempo:** deixe o app fora por mais de ~1 min no seu turno e reabra —
+  pela regra dos 3 turnos ociosos (§223), a partida pode ter sido **perdida por abandono**. Isso é
+  **correto** (o relógio é seu, olhando ou não); confirme que a derrota aparece explicada, não como um
+  bug silencioso.
+
 ---
 
 ## Tamanho do app (já medido aqui, sem precisar de aparelho)

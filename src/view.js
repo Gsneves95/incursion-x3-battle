@@ -260,6 +260,23 @@ async function iniciarPartidaServidor(pergaminhoKey){
   return mp;
 }
 
+// F5.4 — RETOMAR a partida do servidor na reabertura/reconexão. No Android a WebView morre a cada
+// troca de app: reconectar é o caminho NORMAL. Pergunta ao servidor se a conta tem partida em curso;
+// se sim, recebe o ESTADO INTEIRO e volta à batalha, sem replay animado (o log conta o que houve).
+async function retomarPartidaServidor(token){
+  if(!contaTransporte || !token) return { fase:'semPartida' };
+  const r = await PARTIDA_CLI.retomar(contaTransporte, { token });
+  if(!r || r.fase!=='retomada') return r||{ fase:'erro' };
+  const mp = r.MP;
+  prova=null; provaFim=null; provaLances=0; campanha=null; campanhaFim=null;
+  vsCPU=true; st=mp.st;
+  entrarModoOnline(mp, contaTransporte, token);
+  if(contaTransporte.aoPush) contaTransporte.aoPush(receberPushOnline);
+  ir('batalha', {}, { substituir:true });
+  render();
+  return r;
+}
+
 // BOOT da conta: handshake + token guardado. Sem servidor -> dormente (retorna cedo, app local).
 (async function bootConta(){
   try {
@@ -268,7 +285,10 @@ async function iniciarPartidaServidor(pergaminhoKey){
     if(!trans) return;                          // file:// ou servidor fora: modo local, sem conta
     contaTransporte=trans;
     const r=await iniciarConta(trans,{});
-    if(r.fase==='entrou'){ contaAtual=r.conta; montarBotaoConta(); }
+    if(r.fase==='entrou'){ contaAtual=r.conta; montarBotaoConta();
+      // F5.4: reconectou com token válido — havia partida em curso? Retoma antes de qualquer coisa.
+      try { await retomarPartidaServidor(lerToken()); } catch(e){}
+    }
     else if(r.fase==='perguntarFaixa'){
       montarPortaoIdade(async(faixa)=>{
         const rc=await criarConta(trans,{faixaIdade:faixa,tinhaPerfil:_tinhaPerfilAntes,perfilLocal:perfil});

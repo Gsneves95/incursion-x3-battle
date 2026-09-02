@@ -10,6 +10,7 @@ const proto = require('./protocol.js');
 const host = require('./motor-host.js');
 const contas = require('./contas.js');
 const partidaCtrl = require('./partida.js');
+const salas = require('./salas.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
@@ -38,34 +39,15 @@ function enviar(res, arquivo) {
 const server = http.createServer(servirEstatico);
 const wss = new WebSocketServer({ server });
 
-// Uma conexão = uma sessão de partida autoritativa.
+// Uma conexão fala por UMA conta, mas a PARTIDA não é da conexão — é da CONTA (F5.4, server/salas.js).
 //  - `partida` (F5.0): estado cru para o ARNÊS de determinismo (montar/agir/fim aplicam a op exata,
 //    sem dirigir a IA — é a prova de estado idêntico passo a passo, servidor==cliente).
-//  - `P` (F5.2): a PARTIDA de verdade — o servidor valida cada ação, dirige a IA do oponente, é dono
-//    do fim e do relógio (setTimeout). O cliente desenha o que volta e NUNCA declara resultado.
+//  - a PARTIDA de verdade (F5.2/F5.4) vive em `salas`, keyed pelo id da conta, e o relógio corre lá
+//    (independente de conexão). O cliente desenha o que volta e NUNCA declara resultado.
 wss.on('connection', (ws) => {
-  let partida = null;         // F5.0: arnês de determinismo
-  let P = null;               // F5.2: a partida autoritativa (server/partida.js)
-  let relogioTimer = null;    // F5.2: o relógio do turno é do SERVIDOR
+  let partida = null;         // F5.0: arnês de determinismo (per-conexão, sem estado de conta)
   const responder = (tipo, dados) => ws.send(JSON.stringify(proto.envelope(tipo, dados)));
   const snapshot = () => ({ estado: JSON.parse(host.serializar(partida)), hash: host.hashEstado(partida), bytes: host.tamanhoBytes(partida) });
-
-  // O RELÓGIO no servidor: arma um disparo no fim do turno do humano. Ao estourar, o servidor
-  // aplica a regra (turno passa; 3 turnos perdidos = abandono) e EMPURRA o novo estado (push:true).
-  function pararRelogio() { if (relogioTimer) { clearTimeout(relogioTimer); relogioTimer = null; } }
-  function armarRelogio() {
-    pararRelogio();
-    if (!P || P.fim || P.st.ativo !== P.humano) return;   // só corre no turno do humano
-    const ms = Math.max(0, P.deadline - Date.now());
-    relogioTimer = setTimeout(() => {
-      relogioTimer = null;
-      if (!P || P.fim) return;
-      const r = partidaCtrl.estourarTempo(P, { agora: Date.now() });
-      // empurra o estado autoritativo sem o cliente ter pedido — o relógio é do servidor
-      responder('partida', Object.assign(partidaCtrl.estado(P, Date.now()), { push: true, autopassou: !!r.autopassou, abandono: !!r.abandono, cpuOps: r.cpuOps || [] }));
-      armarRelogio();   // rearma se voltou ao humano e a partida não acabou
-    }, ms);
-  }
 
   ws.on('message', (raw) => {
     let msg;
@@ -123,7 +105,7 @@ wss.on('connection', (ws) => {
         return responder('estado', snapshot());   // o SERVIDOR devolve o estado autoritativo + hash; o cliente só desenha
       }
 
-      // ---- F5.2: a PARTIDA de verdade (servidor dirige a IA, é dono do fim e do relógio) ----
+      // ---- F5.2/F5.4: a PARTIDA de verdade — vive na CONTA (salas), o servidor dirige a IA/fim/relógio ----
       case 'novaPartida': {
         // o cliente manda a MONTAGEM (pergaminho) OU só a CHAVE — e o servidor carrega a montagem
         // AUTORITATIVA de data/provacoes (o cliente não injeta a montagem numa partida de verdade).
@@ -136,29 +118,43 @@ wss.on('connection', (ws) => {
         // limiteMs é opcional e CLAMPADO [200ms, 120s]: o cliente real não manda (usa o padrão 60s);
         // serve para afinar/testar o relógio sem confiar num valor de cliente.
         const lim = (typeof msg.limiteMs === 'number') ? Math.max(200, Math.min(120000, msg.limiteMs)) : undefined;
-        P = partidaCtrl.criar(perg, { agora: Date.now(), limiteMs: lim });
-        armarRelogio();
-        return responder('partida', partidaCtrl.estado(P, Date.now()));
+        const sala = salas.criar(ws._conta.id, perg, { limiteMs: lim, ws });   // keyed pela CONTA
+        ws._contaSala = ws._conta.id;   // para desanexar no close
+        return responder('partida', salas.snapshot(sala));
+      }
+      case 'retomar': {   // F5.4: reconexão — a conta tem partida em curso? Devolve o ESTADO INTEIRO.
+        const sala = salas.de(ws._conta.id);
+        if (!sala) return responder('semPartida', {});   // nada a retomar (o cliente segue normal)
+        salas.anexar(ws._conta.id, ws);   // LEITURA PURA: anexa o socket, NÃO toca no estado/relógio/deadline
+        ws._contaSala = ws._conta.id;
+        // desdeLog marca o que o cliente perdeu na ausência (o painel §214 desenha o log; sem replay animado)
+        return responder('partida', salas.snapshot(sala, { retomada: true }));
       }
       case 'jogar': {   // uma ação do humano, validada contra o estado autoritativo
-        if (!P) return responder('erro', { erro: 'sem partida' });
-        const r = partidaCtrl.agir(P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now() });
+        const sala = salas.de(ws._conta.id);
+        if (!sala) return responder('erro', { erro: 'sem partida' });
+        salas.anexar(ws._conta.id, ws); ws._contaSala = ws._conta.id;
+        const r = partidaCtrl.agir(sala.P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now() });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });   // ação inválida = recusa clara, nunca "na dúvida"
-        if (P.fim) pararRelogio();
-        return responder('partida', partidaCtrl.estado(P, Date.now()));
+        if (sala.P.fim) salas.pararRelogio(ws._conta.id);
+        return responder('partida', salas.snapshot(sala));
       }
       case 'encerrar': {   // fim do turno do humano: o servidor roda a IA e devolve o que ela fez
-        if (!P) return responder('erro', { erro: 'sem partida' });
-        const r = partidaCtrl.encerrarTurno(P, { agora: Date.now() });
+        const sala = salas.de(ws._conta.id);
+        if (!sala) return responder('erro', { erro: 'sem partida' });
+        salas.anexar(ws._conta.id, ws); ws._contaSala = ws._conta.id;
+        const r = partidaCtrl.encerrarTurno(sala.P, { agora: Date.now() });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
-        armarRelogio();   // rearma para o novo turno do humano (ou fica parado se acabou)
-        return responder('partida', Object.assign(partidaCtrl.estado(P, Date.now()), { cpuOps: r.cpuOps || [] }));
+        salas.rearmar(ws._conta.id);   // rearma para o novo turno do humano (ou fica parado se acabou)
+        return responder('partida', salas.snapshot(sala, { cpuOps: r.cpuOps || [] }));
       }
       default:
         return responder('erro', { erro: 'tipo desconhecido: ' + msg.tipo });
     }
   });
-  ws.on('close', pararRelogio);   // não deixa o relógio do servidor rodando para uma conexão morta
+  // F5.4: a conexão caiu — só DESANEXA. O relógio SEGUE correndo no servidor (sua vez é sua vez,
+  // olhando ou não); a partida espera o retomar. Sem parar nada: é o que impede a queda de virar fuga.
+  ws.on('close', () => { if (ws._contaSala) salas.desanexar(ws._contaSala, ws); });
 });
 
 if (require.main === module) {

@@ -75,6 +75,22 @@ async function novaPartida(transporte, pergaminho, opts = {}) {
   return _absorver({ st: null, avisos: [] }, r);
 }
 
+// RETOMAR (F5.4): a conexão nova pergunta se a conta tem partida em curso. Se sim, recebe o ESTADO
+// INTEIRO (o servidor é a verdade — nada de reconstruir do lado do cliente) e volta à batalha. LEITURA
+// PURA no servidor: não avança turno, não zera relógio. `desdeLog` marca o que mudou na ausência.
+async function retomar(transporte, opts = {}) {
+  const r = await transporte.pedir(_env('retomar', _tokenMsg(opts.token)));
+  if (!r) return { fase: 'erro', erro: 'sem resposta' };
+  if (r.tipo === 'semPartida') return { fase: 'semPartida' };
+  if (r.tipo !== 'partida') return { fase: 'erro', erro: r.erro, codigo: r.codigo };
+  const MP = _absorver({ st: null, avisos: [] }, r);
+  MP.retomada = true;
+  MP.desdeLog = (typeof r.desdeLog === 'number') ? r.desdeLog : 0;
+  const perdeu = MP.st && Array.isArray(MP.st.log) && MP.desdeLog < MP.st.log.length;
+  _aviso(MP, perdeu ? '↩ partida retomada — veja o que aconteceu enquanto você esteve fora' : '↩ partida retomada');
+  return { fase: 'retomada', MP };
+}
+
 // JOGAR uma ação: OTIMISTA (aplica local e já desenha) + confirmação do servidor.
 //  - servidor RECUSA  -> desfaz a ação otimista (volta ao estado de antes) e loga o motivo. VISÍVEL.
 //  - servidor CONFIRMA -> compara o hash local com o do servidor:
@@ -157,8 +173,8 @@ function aplicarPush(MP, msg) {
 
 // Handle de NAMESPACE para o resto do bundle (evita colisão de nomes genéricos como `jogar`/`encerrar`
 // no escopo único concatenado). No build isto vira um global; a view/turno chamam PARTIDA_CLI.jogar(...).
-const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, jogar, encerrar, aplicarPush };
+const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush };
 
 if (typeof module !== 'undefined') module.exports = {
-  hashEstadoCli, configurarPartida, novaPartida, jogar, encerrar, aplicarPush,
+  hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush,
 };

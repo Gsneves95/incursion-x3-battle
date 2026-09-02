@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §224 — FASE 5 / F5.4: RECONEXÃO. A partida pertence à CONTA, não à conexão; o relógio não para; e reconectar NUNCA dá vantagem (provado por equivalência: ficar == cair-e-voltar).
+
+**POR QUE ANTES DO PAREAMENTO (decisão do dono):** no Android a WebView morre a cada troca de app — reconectar é o caminho NORMAL, não a exceção. Construir pareamento (F5.3) sobre uma camada que não sabe reconectar seria dois jogadores que se perdem a cada notificação. A camada de partida (F5.2) estava fresca; a reconexão entrou sobre ela antes de somar o segundo jogador.
+
+**1. A PARTIDA VIVE NA CONTA (`server/salas.js`), não na conexão — a decisão central.** Antes, `P` (a partida) e o relógio moravam no fecho da conexão (fechou → sumiam). Agora um registro keyed pelo **id da conta** guarda a partida e o relógio; a conexão só se ANEXA. Uma conexão nova com o MESMO token (§222) resolve a mesma conta → a mesma partida. Sem isto, cada troca de app é uma derrota.
+
+**2. O ESTADO INTEIRO VOLTA na retomada** — os ~11 KB medidos na F5.0 (sem delta, sem replay). O servidor é a verdade; o cliente não reconstrói nada, recebe o estado e desenha. A F5.0 comprou essa simplicidade; a F5.4 a usa. `retomar` é uma mensagem nova: a conta tem partida em curso? Devolve o snapshot inteiro (`retomada:true`); senão, `semPartida` (o cliente segue normal).
+
+**3. O RELÓGIO NÃO PARA.** A partida e o seu relógio correm no servidor, independente de conexão (`salas` arma o `setTimeout`; ao cair, o `close` só DESANEXA — não para nada). Sua vez é sua vez, olhando ou não. **Sem janela de graça (decisão do dono):** o relógio correndo é o que impede sair do app para pensar; a regra dos 3 turnos ociosos (§223) já protege quem caiu de verdade — ela É a regra de forfeit por queda. Medido: com NINGUÉM conectado, o turno passa sozinho e, aos 3 ociosos, o servidor declara **derrota por abandono**.
+
+**4. O QUE ACONTECEU NA AUSÊNCIA — sem replay animado (o jogador já perdeu tempo), mas o log conta.** A retomada devolve o estado inteiro, cujo `log` já traz o que houve (o oponente jogou, o DoT tiquetaqueou, um aliado caiu). O **painel da esquerda (§214, "ÚLTIMOS EVENTOS")** desenha esse log — na captura da partida retomada ele mostra "Hórus → Zeus: 15 de dano · Shiva → Perseu: 12 de dano" etc. O servidor manda `desdeLog` (até onde o cliente já tinha visto) para marcar o trecho perdido; um aviso "↩ partida retomada" avisa o jogador de que o mundo mudou. Nada de reencenar; o registro basta.
+
+**5. A GUARDA — reconectar NUNCA dá vantagem. Provado, não afirmado.** Nem turno extra, nem relógio zerado, nem recarga adiantada. Num jogo com ranque, alguém vai procurar o exploit; a prova fecha a porta:
+   - **A retomada é LEITURA PURA:** `anexar`/`snapshot` não tocam no estado nem no `deadline`. Medido: hash e deadline IDÊNTICOS antes e depois de retomar.
+   - **O `deadline` é ABSOLUTO** (instante do servidor), fixado só na criação e nas transições de turno — a reconexão nunca o reescreve. Então o tempo restante só DIMINUI com a ausência (medido: `restanteMs` pós-retomada ≤ o de antes), nunca reseta.
+   - **EQUIVALÊNCIA (a prova central):** a evolução da partida NÃO olha para a conexão — `estourarTempo(P, {agora})` nunca recebe o socket. Duas partidas idênticas sob as MESMAS chamadas de relógio: quem "ficou" e quem "caiu e voltou" terminam **byte-a-byte iguais** (hash idêntico), no controlador puro E no registro real (uma sala com socket, outra sem, evoluem iguais após a mesma janela). Não existe caminho em que sair seja melhor que ficar. É a prova mais forte possível: cair-e-voltar é indistinguível de nunca ter saído.
+
+**O QUE MEDI AQUI (Node) × O QUE É DO SEU APARELHO:** verifiquei em Node — retomada com token, estado inteiro voltando, relógio tendo corrido na ausência, abandono por ociosidade disparando desconectado, e a equivalência ficar==cair. O comportamento REAL da WebView (timing da queda no Android, suspensão do WKWebView, política de origem/certificado do `wss://`) é do seu device — anotado no checklist do §218 (`CAPACITOR-SPIKE.md`); este ambiente não roda Android/iOS.
+
+**PROVA:** `tests/reconexao.test.js` — partida na conta (cai e segue), retomada leitura pura, relógio na ausência, abandono desconectado, equivalência ficar==cair (controlador + registro), reconexão WS de ponta a ponta (retoma o estado inteiro, relógio não zera, tempo só diminui, abandono na ausência visto na volta). **32 suítes verdes.** Captura: 2 turnos jogados → RECARGA da página (WebView morta) → a partida volta ao mesmo estado (turno 3, inimigo a 81), com o painel §214 contando o turno do oponente.
+
+**ESCOPO:** o oponente segue a IA do servidor; a F5.3 traz o PvP (dois humanos, pareamento) — agora sobre uma camada que sabe reconectar.
+
 ## §223 — FASE 5 / F5.2: o PROTOCOLO DE PARTIDA. O servidor roda a partida (valida ação a ação, dirige a IA, é dono do fim e do relógio); o cliente desenha, otimista, e se corrige pelo servidor — visível.
 
 **O INVARIANTE (§221) vira prática:** a F5.0 provou o motor idêntico nos dois lados (44 passos, hash igual). Agora o servidor é o dono da partida de verdade (`server/partida.js`), e o cliente (`src/partida_cliente.js` + o modo online de `src/turno.js`) só desenha.
