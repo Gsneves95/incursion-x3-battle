@@ -48,8 +48,68 @@ function entrar(ws, token, time) {
   return { ok: true, estado: 'na_fila' };
 }
 
-function sair(contaId) { if (_espera && _espera.contaId === contaId) { _espera = null; return true; } return false; }
+function sair(contaId) { let saiu = false; if (_espera && _espera.contaId === contaId) { _espera = null; saiu = true; } if (sairRanqueada(contaId)) saiu = true; return saiu; }
 function esperando() { return _espera ? _espera.contaId : null; }   // introspecção p/ teste
-function _limpar() { _espera = null; }
+function _limpar() { _espera = null; _filaR = []; if (_tickR) { clearInterval(_tickR); _tickR = null; } }
 
-module.exports = { entrar, sair, esperando, _limpar };
+// ============================================================
+// F5.5 — FILA RANQUEADA: CIENTE DE FAIXA. Pareia pontos PRÓXIMOS; a tolerância ABRE conforme a espera
+// cresce, para o jogador de faixa alta não ficar sozinho. Caso extremo (Semideus às 3h): a janela
+// cresce SEM TETO — em ~10s cobre a escala inteira e ele pareia com QUEM ESTIVER, em vez de esperar
+// para sempre. Vários podem esperar (não é fila de 1): um TICK casa quem já espera quando as janelas
+// crescem o bastante, mesmo sem nova entrada.
+// ============================================================
+let _filaR = [];      // [{ contaId, ws, time, pontos, entrouEm }]
+let _tickR = null;
+
+function _janela(esperaMs) { const f = contas.RANQ.fila || {}; return (f.janelaBase || 0) + (f.janelaPorSegundo || 0) * (esperaMs / 1000); }
+function _compat(a, b, agora) { const w = Math.max(_janela(agora - a.entrouEm), _janela(agora - b.entrouEm)); return Math.abs(a.pontos - b.pontos) <= w; }
+function _vivoLivre(e) { return e.ws && e.ws.readyState === 1 && !salas.existe(e.contaId); }
+function _removerR(contaId) { _filaR = _filaR.filter(e => e.contaId !== contaId); }
+function sairRanqueada(contaId) { const antes = _filaR.length; _removerR(contaId); return _filaR.length !== antes; }
+
+function _parearR(a, b) {
+  const seed = crypto.randomBytes(4).readUInt32BE(0);
+  return salas.criarPvP({ contaId: a.contaId, ws: a.ws, time: a.time }, { contaId: b.contaId, ws: b.ws, time: b.time }, { seed, comeca: seed & 1, ranqueado: true });
+}
+
+// entrarRanqueada(ws, token, time, agora) -> { ok, estado:'na_fila'|'pareado', sala?, oponente? } | recusa
+function entrarRanqueada(ws, token, time, agora) {
+  agora = typeof agora === 'number' ? agora : Date.now();
+  const conta = contas.porToken(token);
+  if (!conta) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  if (!conta.nick) return { ok: false, codigo: 'sem_nick', erro: 'defina um nick antes de entrar no ranqueado' };
+  if (salas.existe(conta.id)) return { ok: false, codigo: 'ja_em_partida', erro: 'você já está em uma partida' };
+  const vt = contas.validarTime(token, time); if (!vt.ok) return vt;
+  const pontos = contas.ranquePublico(conta).pontos;
+  const entry = { contaId: conta.id, ws, time, pontos, entrouEm: agora };
+  const ja = _filaR.findIndex(e => e.contaId === conta.id);
+  if (ja >= 0) { _filaR[ja] = entry; return { ok: true, estado: 'na_fila' }; }   // reentrada: atualiza (não duplica)
+  // casa com o MAIS PRÓXIMO compatível já esperando (janela do que espera há mais tempo)
+  let melhor = null, dMin = Infinity;
+  for (const e of _filaR) { if (!_vivoLivre(e)) continue; if (_compat(entry, e, agora)) { const d = Math.abs(entry.pontos - e.pontos); if (d < dMin) { dMin = d; melhor = e; } } }
+  if (melhor) { _removerR(melhor.contaId); return { ok: true, estado: 'pareado', sala: _parearR(melhor, entry), oponente: melhor }; }
+  _filaR.push(entry); _garantirTick();
+  return { ok: true, estado: 'na_fila' };
+}
+
+// TICK: casa quem já espera quando as janelas crescem o bastante (sem depender de nova entrada). É o
+// que garante que o Semideus solitário acaba pareado — a janela dele abre até cobrir alguém.
+function _garantirTick() { if (_tickR) return; _tickR = setInterval(() => _rodarTick(Date.now()), 1000); if (_tickR.unref) _tickR.unref(); }
+function _rodarTick(agora) {
+  _filaR = _filaR.filter(_vivoLivre);   // limpa mortos/já-em-partida
+  _filaR.sort((a, b) => a.entrouEm - b.entrouEm);   // quem espera há mais tempo primeiro (janela maior)
+  for (let i = 0; i < _filaR.length; i++) for (let j = i + 1; j < _filaR.length; j++) {
+    if (_compat(_filaR[i], _filaR[j], agora)) {
+      const a = _filaR[i], b = _filaR[j]; _removerR(a.contaId); _removerR(b.contaId);
+      const sala = _parearR(a, b);
+      salas.empurrarTodos(sala, { push: true, pareado: true, ranqueado: true });   // ambos por push (ninguém pediu agora)
+      return _rodarTick(agora);   // a lista mudou: recomeça
+    }
+  }
+  if (!_filaR.length && _tickR) { clearInterval(_tickR); _tickR = null; }
+}
+function _naFilaRanqueada() { return _filaR.map(e => e.contaId); }   // introspecção p/ teste
+function _rodarTickTeste(agora) { _rodarTick(agora); }
+
+module.exports = { entrar, sair, esperando, entrarRanqueada, sairRanqueada, _naFilaRanqueada, _rodarTickTeste, _janela, _limpar };

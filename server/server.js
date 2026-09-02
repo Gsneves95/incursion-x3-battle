@@ -109,6 +109,14 @@ wss.on('connection', (ws) => {
         salas.empurrarOutro(r.sala, ws._conta.id, { push: true, pareado: true });   // ao oponente: push
         return responder('partida', Object.assign(salas.snapshotPara(r.sala, ws._conta.id), { pareado: true }));   // ao remetente: resposta
       }
+      case 'entrarFilaRanqueada': {   // F5.5: fila CIENTE DE FAIXA (pareia pontos próximos; janela abre com a espera)
+        const r = fila.entrarRanqueada(ws, msg.token, msg.time, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        if (r.estado === 'na_fila') return responder('naFila', { ranqueado: true });
+        for (const p of r.sala.participantes) if (p.ws) p.ws._contaSala = p.contaId;
+        salas.empurrarOutro(r.sala, ws._conta.id, { push: true, pareado: true, ranqueado: true });
+        return responder('partida', Object.assign(salas.snapshotPara(r.sala, ws._conta.id), { pareado: true, ranqueado: true }));
+      }
       case 'sairFila': {
         fila.sair(ws._conta.id);
         return responder('saiuFila', {});
@@ -158,7 +166,7 @@ wss.on('connection', (ws) => {
         const lado = salas.ladoDe(sala, ws._conta.id);
         const r = partidaCtrl.agir(sala.P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });   // ação inválida = recusa clara, nunca "na dúvida"
-        if (sala.P.st.fim) salas.pararRelogio(ws._conta.id);
+        if (sala.P.st.fim) { salas.pararRelogio(ws._conta.id); salas.talvezPontuar(sala); }   // F5.5: ponto no fim (uma vez, pelo servidor)
         salas.empurrarOutro(sala, ws._conta.id, { push: true });   // PvP: o oponente vê a jogada (no PvE, no-op)
         return responder('partida', salas.snapshotPara(sala, ws._conta.id));
       }
@@ -169,6 +177,7 @@ wss.on('connection', (ws) => {
         const lado = salas.ladoDe(sala, ws._conta.id);
         const r = partidaCtrl.encerrarTurno(sala.P, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        if (sala.P.st.fim) salas.talvezPontuar(sala);   // F5.5: encerrar pode fechar a partida (último abate)
         salas.rearmar(ws._conta.id);   // rearma o relógio para o novo lado ativo (ou fica parado se acabou)
         salas.empurrarOutro(sala, ws._conta.id, { push: true, cpuOps: r.cpuOps || [] });   // PvP: agora é a vez do oponente
         return responder('partida', salas.snapshotPara(sala, ws._conta.id, { cpuOps: r.cpuOps || [] }));

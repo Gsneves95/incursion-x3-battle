@@ -89,6 +89,19 @@ estados serializados, e a arena de auto-jogo consegue rodar milhares de partidas
 para achar combo quebrado antes de qualquer jogador. Se você acoplar regra a DOM,
 perde os quatro de uma vez.
 
+### O padrão de sincronia do PvP: o ativo prevê, o inativo absorve, ambos convergem pelo servidor (§223/§225)
+
+Dois clientes otimistas na mesma partida NÃO podem divergir entre si. A regra que garante isso, e que
+todo código de partida online deve seguir: **o jogador ATIVO (de quem é o turno) prevê a própria ação
+(otimista, desenha na hora) e o servidor confirma; o jogador INATIVO NÃO prevê o oponente (não dá) —
+recebe as jogadas dele por PUSH e ABSORVE o estado autoritativo.** Os dois convergem para o servidor,
+logo entre si. Corolários que sustentam o padrão: (a) só o servidor escreve no `st.log` (que entra no
+hash) — anotação local do cliente (divergência/recusa/tempo/aviso) vive num canal SEPARADO (`MP.avisos`),
+senão poluiria o hash e a divergência se PROPAGARIA; (b) divergência (que não deveria existir) é
+CORRIGIDA pelo servidor e fica VISÍVEL, nunca silenciosa; (c) provado por medição — `hash(A) == hash(B)
+== hash(servidor)` em CADA passo (`tests/pareamento.test.js`). Isto é o mesmo rigor da equivalência da
+F5.4 (ficar==cair): onde trapacear/divergir poderia compensar, PROVA-se que não existe o caminho.
+
 ### O que precisa mudar sem passar pela revisão da loja vive no SERVIDOR, não no app (§222)
 
 Decorre do plano do nick (curadoria de palavra ofensiva em `data/` versionado,

@@ -6,6 +6,32 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §226 — FASE 5 / F5.5: RANQUEADO. Pontos e faixas do SERVIDOR, fila ciente de faixa com janela que abre, abandono custando ponto (exploit fechado), temporada com reinício suave, ratio exibido. E a GUARDA: nenhum caminho onde o cliente influencie ponto.
+
+**O DESENHO É DO DONO — e os números NÃO estavam no repositório.** Li o material da economia (`data/economia.json` + as 15 abas do xlsx): só havia a linha de roteiro ("Fila, elo, temporadas, recompensas"), NÃO a tabela (8 faixas Suplicante→Semideus, pontos por vitória/derrota, ratio exibido, reinício suave, recompensa cosmética). Então NÃO cravei número em código: montei tudo lendo de **`data/ranqueado.json`** (versionado, do dono — o padrão §222), semeado com valores que seguem os PRINCÍPIOS ditados e **marcado para o dono confirmar** contra o material dele. Corrigir qualquer número é editar um arquivo, sem mexer em código.
+
+**1. OS PONTOS SÃO DO SERVIDOR — o invariante da fase aplicado ao que mais importa.** O cliente NUNCA soma ponto nem declara faixa. A ÚNICA porta que muda pontos é `contas.aplicarResultadoRanqueado`, chamada só pelo servidor quando uma partida ranqueada ACABA (o servidor sabe quem venceu por `st.fim.lado`, não o cliente). A faixa é sempre `contas.faixaDe(pontos)` no servidor; o cliente recebe a faixa pronta e desenha.
+
+**2. A FILA CIENTE DE FAIXA (`server/fila.js`, ranqueada).** Pareia pontos PRÓXIMOS; a tolerância (em PONTOS) ABRE com a espera: **janela(t) = janelaBase + janelaPorSegundo · segundos** (semeado 120 + 60/s). Dois esperando casam quando `|Δpontos| ≤ janela do que espera há mais tempo`. Como não é fila de 1, um TICK (1 Hz) casa quem já espera quando as janelas crescem — sem depender de nova entrada.
+   - **O caso extremo (Semideus às 3h, sem ninguém por perto):** a janela cresce SEM TETO. Em ~10s ela cobre a escala inteira (700 pts ÷ 60/s ≈ 9,7s + a base), e ele **PAREIA com quem estiver** — mesmo um Suplicante — em vez de esperar para sempre. Medido: dois nas pontas opostas, os dois esperam no início (não força par ruim cedo), e o tick os une quando a janela cobre a distância. Resposta direta à sua pergunta: **a janela abre até achar alguém; ninguém espera para sempre.**
+
+**3. O ABANDONO CUSTA COMO DERROTA — e o exploit ("sair da partida perdida") está FECHADO.** A regra dos 3 turnos ociosos (§223) chega ao ranqueado como uma DERROTA do abandonador: aplica EXATAMENTE o delta de `derrota` (não um valor próprio menor). **Prova de dominância:** abandonar entrega a derrota COM CERTEZA; jogar até o fim entrega, no melhor caso, a VITÓRIA — e `delta(vitória) > delta(derrota)`. Logo abandonar é sempre pior-ou-igual a jogar: **não existe caminho onde sair ganhe ponto.** E como o relógio corre na ausência (§224), desconectar não foge da derrota — vira abandono, pontuado pelo servidor sem ninguém pedir.
+
+**4. A TEMPORADA — reinício SUAVE + recompensa COSMÉTICA.** `pontosNovos = round(pontosVelhos · compressão)` (semeado 0,5), com piso: **ninguém volta a zero** (quem tinha pontos guarda parte), e a **faixa ALTA DESCE MAIS** em pontos absolutos (800→400 perde 400; 100→50 perde 50). A recompensa de fim de temporada é o **COSMÉTICO da faixa de PICO** alcançada (guardado em `ranque.cosmeticos`) — **NUNCA Essência** (você já corrigiu isso: moeda vale zero para quem completou a coleção; status sobrevive). Medido: a gema NÃO muda no reinício; o cosmético é concedido.
+
+**5. O RATIO NO PERFIL — exibido, não classificador.** `ranque.vitorias`/`derrotas` (competitivo) entram na projeção pública com a fração. **Quem classifica é o PONTO/FAIXA;** o ratio é estatística ao lado, que o jogador quer ver. Nunca decide pareamento nem faixa.
+
+**A GUARDA — nenhum caminho onde o cliente influencie ponto. Provado como a equivalência da F5.4:**
+   - **Mensagem forjada:** não há mensagem que carregue ponto; um `jogar` com `pontos:999999`/`ranque:{...}` forjado é aceito como jogada e os campos são IGNORADOS (medido: pontos inalterados).
+   - **Desconexão:** desconectar não credita nada e não foge da derrota — o relógio (§224) fecha a partida como abandono = derrota do que caiu (medido: quem cai PERDE pontos, o outro GANHA).
+   - **Partida que não terminou:** enquanto `st.fim` é null, ZERO ponto aplicado (medido). E a aplicação é IDEMPOTENTE (`sala.pontuado`): pontuar de novo a mesma partida não faz nada.
+
+**O PADRÃO DE SINCRONIA DO PvP, registrado (§CLAUDE.md, a seu pedido):** o ativo prevê, o inativo absorve, ambos convergem pelo servidor (a prova dos três hashes, §225).
+
+**PROVA:** `tests/ranqueado.test.js` — pontos/faixas do servidor, abandono=derrota com prova de dominância, temporada suave + cosmético não-moeda, ratio exibido, fila por faixa (janela que abre, Semideus solitário pareado), e a GUARDA por WebSocket (forja ignorada, inacabada não credita, idempotência, desconexão=derrota). **36 suítes verdes.** Captura: a SUBIDA DE FAIXA (Suplicante → Devoto, +25) computada pelo servidor e desenhada pelo cliente.
+
+**ESCOPO:** sem pick/ban (é anterior no roteiro, mas não foi pedido), sem telemetria. Só pontos, faixas, fila por faixa, abandono, temporada e ratio. Os NÚMEROS aguardam a confirmação do dono contra o material da economia.
+
 ## §225 — FASE 5 / F5.3: PAREAMENTO (dois humanos de verdade). Fila simples, nick com unicidade+bloqueio, posse do time validada, quem começa justo, e a GUARDA provada: dois clientes otimistas não divergem entre si (três hashes batem).
 
 **POR QUE AGORA (sobre a F5.4):** a camada de partida já sabe reconectar (§224). Somar o segundo jogador sobre ela é somar sobre uma base que sobrevive à queda — no Android, onde cada troca de app mata a WebView, um PvP que não reconectasse seria dois jogadores se perdendo a cada notificação.

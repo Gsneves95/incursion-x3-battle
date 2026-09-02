@@ -1,0 +1,35 @@
+{
+  "_nota": "RANQUEADO (F5.5). CONFIRMAR contra o material da economia do dono — o repositório só tinha a linha de roteiro ('Fila, elo, temporadas, recompensas'), NÃO os números. Estes valores seguem os PRINCÍPIOS que o dono ditou (8 faixas Suplicante->Semideus; ponto por vitória e derrota; ratio é estatística exibida, nunca classificador; reinício suave onde faixa alta desce mais; recompensa de fim de temporada é COSMÉTICO da faixa, nunca Essência). Versionado em data/ (§222): muda sem publicar app novo. O código LÊ daqui; nenhum literal de ranque no código.",
+
+  "faixas": [
+    { "chave": "suplicante", "nome": "Suplicante", "min": 0 },
+    { "chave": "devoto",     "nome": "Devoto",     "min": 100 },
+    { "chave": "iniciado",   "nome": "Iniciado",   "min": 200 },
+    { "chave": "adepto",     "nome": "Adepto",     "min": 300 },
+    { "chave": "sacerdote",  "nome": "Sacerdote",  "min": 400 },
+    { "chave": "oraculo",    "nome": "Oráculo",    "min": 500 },
+    { "chave": "heroi",      "nome": "Herói",      "min": 600 },
+    { "chave": "semideus",   "nome": "Semideus",   "min": 700 }
+  ],
+
+  "pontos": {
+    "vitoria": 25,
+    "derrota": -18,
+    "_abandono": "o abandono NÃO tem valor próprio: é uma DERROTA (§223, 3 turnos ociosos). Aplica exatamente `derrota` — assim abandonar nunca custa menos que perder jogando, e perde a chance de virar o jogo.",
+    "piso": 0,
+    "_piso": "os pontos nunca descem abaixo do piso (uma derrota em Suplicante 0 não fica negativa)."
+  },
+
+  "fila": {
+    "janelaBase": 120,
+    "janelaPorSegundo": 60,
+    "_janela": "tolerância de pareamento em PONTOS: janela(t) = janelaBase + janelaPorSegundo * segundos_esperando. CRESCE sem teto — um Semideus sozinho às 3h vê a janela abrir até cobrir a escala inteira (~10s para cobrir 700), então PAREIA com quem estiver, em vez de esperar para sempre. Dois esperando casam quando |Δpontos| <= janela do que espera há mais tempo."
+  },
+
+  "temporada": {
+    "compressao": 0.5,
+    "_compressao": "REINÍCIO SUAVE: pontosNovos = round(pontosVelhos * compressao), com piso. Ninguém volta a zero (quem tinha pontos guarda metade); a FAIXA ALTA DESCE MAIS em pontos absolutos (Semideus 800->400 perde 400; Devoto 100->50 perde 50).",
+    "recompensa": "cosmetico",
+    "_recompensa": "a recompensa de fim de temporada é o COSMÉTICO da faixa de PICO alcançada na temporada — NUNCA Essência (moeda vale zero para quem completou a coleção; status sobrevive). Guardado em ranque.cosmeticos."
+  }
+}

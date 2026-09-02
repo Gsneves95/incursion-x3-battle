@@ -290,6 +290,43 @@ async function iniciarPvP(nick, time){
   return r;   // na_fila: espera o push de pareamento
 }
 
+// F5.5 — INICIAR RANQUEADO: como o PvP, mas na fila CIENTE DE FAIXA. A partida vale pontos; ao fim,
+// o servidor manda a mudança de faixa e o cliente desenha o banner (montarBannerRanque).
+async function iniciarRanqueado(nick, time){
+  if(!contaTransporte) return { erro:'sem servidor' };
+  const token=(typeof lerToken==='function')?lerToken():null;
+  if(!token) return { erro:'sem conta' };
+  if(nick){ const rn=await PARTIDA_CLI.definirNick(contaTransporte,{token,nick}); if(!rn.ok) return { erro:rn.erro, codigo:rn.codigo }; }
+  if(contaTransporte.aoPush) contaTransporte.aoPush(aoPushGlobal);
+  const r=await PARTIDA_CLI.entrarFilaRanqueada(contaTransporte,{token,time});
+  if(r.fase==='pareado'){ entrarPvPBatalha(r.MP); return { fase:'pareado' }; }
+  if(r.fase==='recusado') return { erro:r.erro, codigo:r.codigo };
+  return r;
+}
+
+// F5.5 — BANNER de mudança de faixa ao fim de uma partida ranqueada. O SERVIDOR computou (subiu/desceu,
+// pontos, faixa antes->depois); o cliente só DESENHA. DOM próprio, fora do #stage.
+function montarBannerRanque(res){
+  if(!res || document.getElementById('banner-ranque')) return;
+  const subiu=res.subiu, desceu=res.desceu, venceu=res.venceu;
+  const de=(res.faixaAntes&&res.faixaAntes.nome)||'', para=(res.faixa&&res.faixa.nome)||'';
+  const delta=res.pontos-res.pontosAntes;
+  const cor = subiu? '#b9a94a' : desceu? '#d06a6a' : '#a99fe0';
+  const titulo = subiu? 'SUBIU DE FAIXA' : desceu? 'CAIU DE FAIXA' : (venceu?'VITÓRIA RANQUEADA':'DERROTA RANQUEADA');
+  const o=document.createElement('div'); o.id='banner-ranque';
+  o.setAttribute('style','position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;background:rgba(8,6,20,.9);padding:20px;font-family:inherit');
+  o.innerHTML=`<div style="max-width:460px;width:100%;background:#161230;border:1px solid ${cor};border-radius:16px;padding:28px 26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+    <div style="font-size:12px;letter-spacing:.16em;color:${cor};font-weight:800">${titulo}</div>
+    <div style="margin:14px 0 6px;color:#efe9ff;font-size:30px;font-weight:800">${H(para)}</div>
+    ${(subiu||desceu)&&de&&de!==para?`<div style="color:#8b83b8;font-size:14px">${H(de)} → <b style="color:${cor}">${H(para)}</b></div>`:''}
+    <div style="margin:16px 0 4px;color:#efe9ff;font-size:22px;font-weight:800">${delta>=0?'+':''}${delta} <span style="font-size:13px;color:#8b83b8;font-weight:600">pontos</span></div>
+    <div style="color:#c3bce6;font-size:13px">${res.pontos} pts nesta temporada</div>
+    <button id="br-ok" style="margin-top:20px;cursor:pointer;padding:12px 28px;border-radius:10px;border:1px solid #4a3f88;background:#241d52;color:#efe9ff;font-size:15px;font-weight:700;font-family:inherit">Continuar</button>
+  </div>`;
+  document.body.appendChild(o);
+  o.querySelector('#br-ok').onclick=()=>{ o.remove(); sairModoOnline(); ir('home',{},{substituir:true}); render(); };
+}
+
 // F5.4 — RETOMAR a partida do servidor na reabertura/reconexão. No Android a WebView morre a cada
 // troca de app: reconectar é o caminho NORMAL. Pergunta ao servidor se a conta tem partida em curso;
 // se sim, recebe o ESTADO INTEIRO e volta à batalha, sem replay animado (o log conta o que houve).

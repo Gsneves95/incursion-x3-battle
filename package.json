@@ -5,7 +5,7 @@
   "description": "Combate tático por turnos 3v3 com 100 deuses de 10 mitologias. Protótipo.",
   "scripts": {
     "build": "node tools/build.js",
-    "test": "node tools/build.js && node tests/motor.test.js && node tests/catalogo.test.js && node tests/eventos.test.js && node tests/capacidades.test.js && node tests/primitivas.test.js && node tests/passiva.test.js && node tests/provacao.test.js && node tests/solucionador.test.js && node tests/bestiario.test.js && node tests/auditoria.test.js && node tests/fracoes.test.js && node tests/cadeia.test.js && node tests/perfil.test.js && node tests/ia.test.js && node tests/rotas.test.js && node tests/enquadramento.test.js && node tests/interface.test.js && node tests/invocacao.test.js && node tests/perspectiva.test.js && node tests/energia.test.js && node tests/moldura.test.js && node tests/provacao_loop.test.js && node tests/aquisicao.test.js && node tests/campanha.test.js && node tests/render_sweep.test.js && node tests/semanal.test.js && node tests/maestria.test.js && node tests/composicao.test.js && node tests/servidor.test.js && node tests/contas.test.js && node tests/partida.test.js && node tests/reconexao.test.js && node tests/pareamento.test.js",
+    "test": "node tools/build.js && node tests/motor.test.js && node tests/catalogo.test.js && node tests/eventos.test.js && node tests/capacidades.test.js && node tests/primitivas.test.js && node tests/passiva.test.js && node tests/provacao.test.js && node tests/solucionador.test.js && node tests/bestiario.test.js && node tests/auditoria.test.js && node tests/fracoes.test.js && node tests/cadeia.test.js && node tests/perfil.test.js && node tests/ia.test.js && node tests/rotas.test.js && node tests/enquadramento.test.js && node tests/interface.test.js && node tests/invocacao.test.js && node tests/perspectiva.test.js && node tests/energia.test.js && node tests/moldura.test.js && node tests/provacao_loop.test.js && node tests/aquisicao.test.js && node tests/campanha.test.js && node tests/render_sweep.test.js && node tests/semanal.test.js && node tests/maestria.test.js && node tests/composicao.test.js && node tests/servidor.test.js && node tests/contas.test.js && node tests/partida.test.js && node tests/reconexao.test.js && node tests/pareamento.test.js && node tests/ranqueado.test.js",
     "test:motor": "node tests/motor.test.js",
     "test:eventos": "node tools/build.js && node tests/eventos.test.js",
     "test:capacidades": "node tests/capacidades.test.js",
@@ -37,6 +37,7 @@
     "test:partida": "node tools/build.js && node tests/partida.test.js",
     "test:reconexao": "node tools/build.js && node tests/reconexao.test.js",
     "test:pareamento": "node tools/build.js && node tests/pareamento.test.js",
+    "test:ranqueado": "node tools/build.js && node tests/ranqueado.test.js",
     "serve": "node tools/build.js && node server/server.js",
     "cap:www": "node tools/cap-www.js",
     "cap:sync": "node tools/build.js && node tools/cap-www.js && cap sync"

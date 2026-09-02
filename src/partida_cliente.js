@@ -47,6 +47,7 @@ function _absorver(MP, snap) {
   MP.agora = snap.agora;
   MP.restanteMs = snap.restanteMs;
   MP.fim = snap.fim || null;   // SÓ o servidor decide o fim
+  if (snap.ranqueadoResultado) MP.ranqueadoResultado = snap.ranqueadoResultado;   // mudança de faixa/pontos (o servidor computou)
   return MP;
 }
 // AVISO do cliente (divergência corrigida, recusa, tempo esgotado): canal SEPARADO do st.log. O
@@ -98,6 +99,16 @@ async function entrarFila(transporte, opts = {}) {
 }
 async function sairFila(transporte, opts = {}) { await transporte.pedir(_env('sairFila', _tokenMsg(opts.token))); return { ok: true }; }
 
+// F5.5 — FILA RANQUEADA (ciente de faixa). Mesma forma da fila casual; a partida vale pontos.
+async function entrarFilaRanqueada(transporte, opts = {}) {
+  const r = await transporte.pedir(_env('entrarFilaRanqueada', Object.assign({ time: opts.time }, _tokenMsg(opts.token))));
+  if (!r) return { fase: 'erro', erro: 'sem resposta' };
+  if (r.tipo === 'naFila') return { fase: 'na_fila' };
+  if (r.tipo === 'partida') { const MP = _absorver({ st: null, avisos: [] }, r); MP.pareado = true; MP.ranqueado = true; return { fase: 'pareado', MP }; }
+  if (r.tipo === 'recusado') return { fase: 'recusado', codigo: r.codigo, erro: r.erro };
+  return { fase: 'erro', erro: r.erro };
+}
+
 // absorve um PUSH de pareamento (o jogador que esperava): vira uma partida-cliente desenhável.
 function absorverPareado(msg) { if (!msg || msg.tipo !== 'partida') return null; const MP = _absorver({ st: null, avisos: [] }, msg); MP.pareado = true; return MP; }
 
@@ -145,7 +156,7 @@ async function jogar(transporte, MP, op, opts = {}) {
 
   if (resp.hash === hashLocal) {
     // confirmou e bateu (o caso normal): mantém o desenho local, só atualiza relógio/turno/fim.
-    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null;
+    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado;
     return { ok: true, divergiu: false };
   }
   // DIVERGÊNCIA (não deveria acontecer): corrige pelo servidor e grita no log.
@@ -181,7 +192,7 @@ async function encerrar(transporte, MP, opts = {}) {
     return { ok: false, erro: (resp && resp.erro) || 'sem resposta do servidor' };
   }
   if (resp.hash === hashLocal) {
-    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null;
+    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado;
     return { ok: true, divergiu: false, cpuOps: resp.cpuOps || [] };
   }
   const antesHash = hashLocal;
@@ -202,9 +213,9 @@ function aplicarPush(MP, msg) {
 
 // Handle de NAMESPACE para o resto do bundle (evita colisão de nomes genéricos como `jogar`/`encerrar`
 // no escopo único concatenado). No build isto vira um global; a view/turno chamam PARTIDA_CLI.jogar(...).
-const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush, definirNick, entrarFila, sairFila, absorverPareado };
+const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush, definirNick, entrarFila, entrarFilaRanqueada, sairFila, absorverPareado };
 
 if (typeof module !== 'undefined') module.exports = {
   hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush,
-  definirNick, entrarFila, sairFila, absorverPareado,
+  definirNick, entrarFila, entrarFilaRanqueada, sairFila, absorverPareado,
 };

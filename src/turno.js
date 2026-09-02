@@ -179,7 +179,7 @@ function confirmarOnline(op) {
   _onlineOcupado = true;
   PARTIDA_CLI.jogar(_transOnline, MP, op, { token: _tokenOnline }).then((r) => {
     _onlineOcupado = false;
-    st = MP.st;                                   // o servidor pode ter corrigido o estado
+    st = MP.st; _bannerRanqueTalvez();            // o servidor pode ter corrigido o estado
     if (r && r.ok && typeof prova !== 'undefined' && prova) provaLances++;
     _redesenhar();
   }).catch(() => { _onlineOcupado = false; _redesenhar(); });
@@ -191,16 +191,22 @@ function encerrarOnline() {
   armado = null; alvos = []; escolhidos = []; detalhe = null; ov = null; menuAberto = false;
   PARTIDA_CLI.encerrar(_transOnline, MP, { token: _tokenOnline }).then(() => {
     _onlineOcupado = false;
-    st = MP.st;                                   // já contém o turno do oponente (dirigido pelo servidor)
+    st = MP.st; _bannerRanqueTalvez();            // já contém o turno do oponente (dirigido pelo servidor)
     relogio = TURNO_SEG; _redesenhar();
   }).catch(() => { _onlineOcupado = false; _redesenhar(); });
   _redesenhar();
 }
-// PUSH do servidor (relógio estourou): absorve e redesenha. Chamado pela borda (view) via aoPush.
+// PUSH do servidor (relógio estourou / jogada do oponente no PvP): absorve e redesenha.
 function receberPushOnline(msg) {
   if (!MP) return;
   PARTIDA_CLI.aplicarPush(MP, msg);
-  st = MP.st; _redesenhar();
+  st = MP.st; _bannerRanqueTalvez(); _redesenhar();
 }
+// F5.5: ao fim de uma partida RANQUEADA, mostra a mudança de faixa (o servidor computou; o cliente
+// só desenha). Uma vez só. `montarBannerRanque` é global da view (guardado por typeof).
+function _bannerRanqueTalvez() {
+  if (MP && MP.fim && MP.ranqueadoResultado && !MP._banner && typeof montarBannerRanque === 'function') { MP._banner = true; montarBannerRanque(MP.ranqueadoResultado); }
+}
+function resultadoRanqueOnline() { return MP ? (MP.ranqueadoResultado || null) : null; }
 
-if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, confirmarOnline, encerrarOnline };
+if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, resultadoRanqueOnline, confirmarOnline, encerrarOnline };

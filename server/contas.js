@@ -30,6 +30,8 @@ const ARQ = path.join(DIR, 'contas.json');
 // revisão de loja vive no servidor). Some do cliente; atualiza sem publicar app novo.
 const BLOQUEIO = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'nick_bloqueio.json'), 'utf8')); } catch (e) { return { substrings: [], exatas: [] }; } })();
 const NICK_MIN = 3, NICK_MAX = 16;
+// RANQUEADO (F5.5): tudo vem de data/ranqueado.json (versionado, do dono). Nenhum literal de ranque aqui.
+const RANQ = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'ranqueado.json'), 'utf8')); } catch (e) { return { faixas: [{ chave: 'suplicante', nome: 'Suplicante', min: 0 }], pontos: { vitoria: 0, derrota: 0, piso: 0 }, fila: { janelaBase: 0, janelaPorSegundo: 0 }, temporada: { compressao: 1 } }; } })();
 
 // ---- persistência simples em arquivo (dev, custo zero). Map em memória + write-through. ----
 // server/dados/ é gitignored: são dados de jogador, não código.
@@ -55,8 +57,69 @@ function _persistir() {
 function _novoId() { return crypto.randomBytes(16).toString('hex'); }        // id público, opaco
 function _novoToken() { return crypto.randomBytes(32).toString('base64url'); } // segredo do aparelho
 
-// RANQUE zero, sempre. Uma função só para deixar o invariante §221-d num lugar único.
-function _ranqueZero() { return { pontos: 0, nivel: 0, temporada: null }; }
+// RANQUE zero, sempre (§221-d). pontos = classificador (SÓ o servidor mexe). vitorias/derrotas = o
+// ratio EXIBIDO (estatística, nunca classifica). pico = maior pontuação da temporada (recompensa
+// cosmética). cosmeticos = faixas conquistadas em temporadas passadas (status, não moeda).
+function _ranqueZero() { return { pontos: 0, vitorias: 0, derrotas: 0, pico: 0, temporada: 1, cosmeticos: [] }; }
+
+// FAIXA a partir dos pontos — SÓ o servidor decide (o cliente nunca classifica). A faixa mais alta
+// cujo `min` <= pontos.
+function faixaDe(pontos) {
+  const p = Math.max(0, pontos | 0);
+  let f = RANQ.faixas[0];
+  for (const x of RANQ.faixas) if (p >= x.min) f = x;
+  return f;
+}
+// o ratio EXIBIDO: vitórias/derrotas + a fração. NÃO classifica (os pontos classificam); o jogador vê.
+function ratioDe(rq) {
+  const v = (rq && rq.vitorias) || 0, d = (rq && rq.derrotas) || 0, t = v + d;
+  return { vitorias: v, derrotas: d, total: t, fracao: t ? +(v / t).toFixed(3) : null };
+}
+function _contaPorId(id) { _carregar(); for (const c of _contas.values()) if (c.id === id) return c; return null; }
+function _garantirRanque(c) { if (!c.ranque || typeof c.ranque.pontos !== 'number' || !Array.isArray(c.ranque.cosmeticos)) c.ranque = _ranqueZero(); if (typeof c.ranque.vitorias !== 'number') c.ranque.vitorias = 0; if (typeof c.ranque.derrotas !== 'number') c.ranque.derrotas = 0; if (typeof c.ranque.pico !== 'number') c.ranque.pico = c.ranque.pontos || 0; }
+
+// APLICAR O RESULTADO DE UMA PARTIDA RANQUEADA — a ÚNICA porta que muda pontos, e ela é do SERVIDOR.
+// O cliente NUNCA chega aqui: não há mensagem que some ponto. vencedorId/perdedorId vêm da sala
+// (o servidor sabe quem venceu por st.fim.lado, não o cliente). motivo 'abandono' aplica a MESMA
+// derrota que perder jogando (§223) — abandonar nunca custa menos. Idempotência é do chamador (sala.pontuado).
+function aplicarResultadoRanqueado(vencedorId, perdedorId, motivo) {
+  _carregar();
+  const V = _contaPorId(vencedorId), D = _contaPorId(perdedorId);
+  if (!V || !D) return { ok: false, codigo: 'conta_ausente' };
+  _garantirRanque(V); _garantirRanque(D);
+  const piso = RANQ.pontos.piso || 0;
+  const antesV = V.ranque.pontos, antesD = D.ranque.pontos;
+  V.ranque.pontos = Math.max(piso, antesV + (RANQ.pontos.vitoria || 0));
+  D.ranque.pontos = Math.max(piso, antesD + (RANQ.pontos.derrota || 0));   // abandono = derrota (mesmo delta)
+  V.ranque.vitorias += 1; D.ranque.derrotas += 1;                          // ratio exibido
+  V.ranque.pico = Math.max(V.ranque.pico || 0, V.ranque.pontos);           // pico da temporada (cosmético)
+  D.ranque.pico = Math.max(D.ranque.pico || 0, D.ranque.pontos);
+  _persistir();
+  const proj = (c, antes) => ({ id: c.id, pontosAntes: antes, pontos: c.ranque.pontos, faixaAntes: faixaDe(antes), faixa: faixaDe(c.ranque.pontos), subiu: faixaDe(c.ranque.pontos).min > faixaDe(antes).min, desceu: faixaDe(c.ranque.pontos).min < faixaDe(antes).min });
+  return { ok: true, motivo: motivo || null, vencedor: proj(V, antesV), perdedor: proj(D, antesD) };
+}
+
+// REINÍCIO DE TEMPORADA — reinício SUAVE (ninguém a zero; faixa alta desce mais). Antes de reiniciar,
+// concede o COSMÉTICO da faixa de PICO da temporada (status, não moeda). Depois comprime os pontos.
+function reiniciarTemporada() {
+  _carregar();
+  const comp = RANQ.temporada.compressao, piso = RANQ.pontos.piso || 0;
+  let n = 0;
+  for (const c of _contas.values()) {
+    _garantirRanque(c);
+    const faixaPico = faixaDe(c.ranque.pico || c.ranque.pontos);
+    c.ranque.cosmeticos.push({ temporada: c.ranque.temporada, faixa: faixaPico.chave, nome: faixaPico.nome });
+    c.ranque.pontos = Math.max(piso, Math.round(c.ranque.pontos * comp));   // reinício suave
+    c.ranque.pico = c.ranque.pontos;
+    c.ranque.temporada = (c.ranque.temporada || 1) + 1;
+    n++;
+  }
+  _persistir();
+  return { ok: true, contas: n };
+}
+
+// projeção do RANQUE para o cliente DESENHAR (faixa + ratio já calculados pelo servidor).
+function ranquePublico(c) { _garantirRanque(c); return { pontos: c.ranque.pontos, faixa: faixaDe(c.ranque.pontos), temporada: c.ranque.temporada, ratio: ratioDe(c.ranque), cosmeticos: c.ranque.cosmeticos }; }
 
 // ---- CRIAR: a conta nasce no servidor. Anônima, com faixa, ranque zero, perfil novo OU migrado. ----
 // { faixaIdade, perfil? , agora? } -> { ok, conta } | { ok:false, codigo, erro }
@@ -185,10 +248,11 @@ function validarTime(token, time) {
 // aparelho; e reenviá-lo à toa é vazá-lo em log/rede). Inclui o perfil (ele precisa dele).
 function paraDono(c) {
   if (!c) return null;
-  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: c.ranque, perfil: c.perfil, criadaEm: c.criadaEm };
+  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), perfil: c.perfil, criadaEm: c.criadaEm };
 }
-// publica: o que OUTRO jogador poderá ver no PvP/ranqueado (F5.3+). Sem token, sem perfil, sem faixa.
-function publica(c) { if (!c) return null; return { id: c.id, nick: c.nick, ranque: c.ranque }; }
+// publica: o que OUTRO jogador poderá ver (perfil competitivo). Sem token, sem perfil, sem faixa etária.
+// Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
+function publica(c) { if (!c) return null; return { id: c.id, nick: c.nick, ranque: ranquePublico(c) }; }
 
 // ---- salvar o perfil de uma conta autenticada (o servidor é autoritativo sobre o perfil). ----
 function salvarPerfil(token, perfil) {
@@ -220,10 +284,13 @@ function _resetParaTeste() { _contas = new Map(); _carregado = true; _idxNick = 
 function _existeToken(token) { _carregar(); return _contas.has(token); }
 // atalho de teste: dá um deus à conta (a posse importa no PvP; os testes montam times possuídos).
 function _darDeus(token, key) { _carregar(); const c = _contas.get(token); if (c) { c.perfil.deuses[key] = c.perfil.deuses[key] || { copias: 1 }; } }
+// atalho de teste: crava pontos de ranque numa conta (por token) — para exercitar a fila por faixa.
+function _setPontos(token, n) { _carregar(); const c = _contas.get(token); if (c) { _garantirRanque(c); c.ranque.pontos = n; c.ranque.pico = Math.max(c.ranque.pico, n); } }
 
 module.exports = {
-  FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX,
+  FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, planoDoNick,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
-  _total, _resetParaTeste, _existeToken, _darDeus,
+  faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
+  _total, _resetParaTeste, _existeToken, _darDeus, _setPontos,
 };
