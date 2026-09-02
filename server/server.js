@@ -12,6 +12,7 @@ const contas = require('./contas.js');
 const partidaCtrl = require('./partida.js');
 const salas = require('./salas.js');
 const fila = require('./fila.js');
+const telemetria = require('./telemetria.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
@@ -164,9 +165,11 @@ wss.on('connection', (ws) => {
         if (!sala) return responder('erro', { erro: 'sem partida' });
         salas.anexar(ws._conta.id, ws); ws._contaSala = ws._conta.id;
         const lado = salas.ladoDe(sala, ws._conta.id);
+        const uAntes = (sala.P.st.lados[lado].units || []).find(x => x.uid === msg.uid);   // a unidade que age (antes de aplicar)
         const r = partidaCtrl.agir(sala.P, { uid: msg.uid, slot: msg.slot, alvos: msg.alvos, escolhas: msg.escolhas, modo: msg.modo }, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });   // ação inválida = recusa clara, nunca "na dúvida"
-        if (sala.P.st.fim) { salas.pararRelogio(ws._conta.id); salas.talvezPontuar(sala); }   // F5.5: ponto no fim (uma vez, pelo servidor)
+        if (sala.modo === 'pvp' && uAntes) telemetria.acao(uAntes.key, msg.slot);   // §22: uso de habilidade (agregado, sem jogador)
+        if (sala.P.st.fim) { salas.pararRelogio(ws._conta.id); salas.finalizarPartida(sala); }   // F5.5: ponto no fim (uma vez, pelo servidor)
         salas.empurrarOutro(sala, ws._conta.id, { push: true });   // PvP: o oponente vê a jogada (no PvE, no-op)
         return responder('partida', salas.snapshotPara(sala, ws._conta.id));
       }
@@ -177,7 +180,7 @@ wss.on('connection', (ws) => {
         const lado = salas.ladoDe(sala, ws._conta.id);
         const r = partidaCtrl.encerrarTurno(sala.P, { agora: Date.now(), lado });
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
-        if (sala.P.st.fim) salas.talvezPontuar(sala);   // F5.5: encerrar pode fechar a partida (último abate)
+        if (sala.P.st.fim) salas.finalizarPartida(sala);   // F5.5: encerrar pode fechar a partida (último abate)
         salas.rearmar(ws._conta.id);   // rearma o relógio para o novo lado ativo (ou fica parado se acabou)
         salas.empurrarOutro(sala, ws._conta.id, { push: true, cpuOps: r.cpuOps || [] });   // PvP: agora é a vez do oponente
         return responder('partida', salas.snapshotPara(sala, ws._conta.id, { cpuOps: r.cpuOps || [] }));

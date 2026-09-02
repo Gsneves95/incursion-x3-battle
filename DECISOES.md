@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §227 — FASE 5 / TELEMETRIA (§22). Contadores AGREGADOS — vitória/uso por deus, uso por slot (nunca-usadas), duração, abandono — SEM nada do jogador. E o elo com a Fase 4. PICK/BAN fica FORA DE ESCOPO por decisão.
+
+**"FAÇA ANTES DE LANÇAR, NÃO DEPOIS" — e a razão é específica deste projeto.** A arena determinística (3200 partidas, IA gulosa) mede o MOTOR, não o jogador. A Fase 4 já anotou 4 slots-mortos SUSPEITOS (§189) — Balança do Xangô, reflexo do Cernunnos, grind do Hércules, roubo do Shutendoji — que a arena com IA Difícil PREVIU em "nunca usadas". A telemetria de gente real é como isso sai de suspeita e vira dado.
+
+**1. O QUE MEDIR, e nada além** (`server/telemetria.js`): **taxa de vitória por deus** (desequilíbrio) · **taxa de uso por deus** (slot morto = deus que ninguém escolhe) · **uso por SLOT** (a lista de nunca-usadas que a Fase 4 quer) · **duração da partida em turnos** (o relógio/prazo está calibrado?) · **abandono** (a regra dos 3 turnos ociosos, §223, é justa na prática?).
+
+**2. O QUE NÃO MEDIR — decisão, LGPD POR DESENHO (§221).** NADA identifica o jogador — **nem a conta anônima entra na telemetria.** Sem id, sem token, sem localização, sem aparelho, sem comportamento fora da partida. Guardamos só o QUE aconteceu (deus, habilidade, turnos, abandono), NUNCA quem. A conta anônima é o teto do que se coleta (§221); a telemetria fica ABAIXO dele — não há o que ligar a uma pessoa. Provado: o snapshot só tem `{partidas, abandonos, turnosTotal, duracao, deuses, slots}`, nenhuma chave é id de conta.
+
+**3. AGREGADO, NÃO EVENTO — decisão.** Nada de fluxo de evento por ação; só CONTADORES que respondem as perguntas. Menos dado, mesma resposta, nada a vazar. Provado: cada campo é um número (contador), não uma lista de eventos com timestamp.
+
+**4. ONDE VIVE E COMO SE LÊ.** No SERVIDOR, agregado num arquivo (`server/dados/telemetria.json`, gitignored como o cadastro). **"Um número que ninguém consulta não existe":** `node tools/telemetria.js` (ou `npm run telemetria`) imprime o relatório legível — win rate ordenado, histograma de duração, taxa de abandono, e a **lista de NUNCA-USADAS** — sem escrever consulta. Uma seção destaca os 4 suspeitos da Fase 4 com o uso de cada habilidade e aponta a menos usada de cada (na amostra: Balança da Justiça, Fúria da Matilha, Os Doze Trabalhos, Saké Envenenado — exatamente os 4 nomeados no §189).
+
+**SÓ PvP.** A taxa de uso revela slot morto só quando o time é ESCOLHIDO pelo jogador — partida contra a IA (montagem fixa) poluiria o sinal e NÃO é registrada. O uso de habilidade (`acao`) é contado por agir bem-sucedido numa partida PvP; a composição/duração/abandono/vitória por `finalizarPartida` no fim (idempotente, uma vez).
+
+**O ELO COM A FASE 4 (registrado):** quando houver dado suficiente, a lista de nunca-usadas + os 4 suspeitos são a **SEGUNDA evidência** sobre a §189. Se a telemetria de gente real concordar com a arena (IA Difícil), o rebalanceamento dos 4 slots-mortos deixa de ser suspeita e vira **decisão informada** — a base pela qual a Fase 4 conserta kit por evidência, não por opinião.
+
+**PICK/BAN (roteiro §20) FICA FORA DE ESCOPO — por decisão do dono, não esquecimento.** Ele adiciona uma camada de decisão ANTES da partida; o dono quer ver o PvP básico funcionando com gente de verdade antes de complicar a entrada. Registrado aqui para não voltar como "faltou": é uma escolha, adiável, não uma lacuna.
+
+**PROVA:** `tests/telemetria.test.js` — mede o que a lista pede (vitória/uso/slot/duração/abandono), nada do jogador (só contadores, sem id), agregado não evento, o relatório lê (nunca-usadas inclusas), só PvP (PvE não registra), abandono contado. **37 suítes verdes.**
+
+**ESCOPO DA FASE 5:** fundação (§221) → contas (§222) → protocolo de partida (§223) → reconexão (§224) → pareamento (§225) → ranqueado (§226) → telemetria (§227). Pick/ban fora por decisão. Falta só hospedar (lançamento).
+
 ## §226 — FASE 5 / F5.5: RANQUEADO. Pontos e faixas do SERVIDOR, fila ciente de faixa com janela que abre, abandono custando ponto (exploit fechado), temporada com reinício suave, ratio exibido. E a GUARDA: nenhum caminho onde o cliente influencie ponto.
 
 **O DESENHO É DO DONO — e os números NÃO estavam no repositório.** Li o material da economia (`data/economia.json` + as 15 abas do xlsx): só havia a linha de roteiro ("Fila, elo, temporadas, recompensas"), NÃO a tabela (8 faixas Suplicante→Semideus, pontos por vitória/derrota, ratio exibido, reinício suave, recompensa cosmética). Então NÃO cravei número em código: montei tudo lendo de **`data/ranqueado.json`** (versionado, do dono — o padrão §222), semeado com valores que seguem os PRINCÍPIOS ditados e **marcado para o dono confirmar** contra o material dele. Corrigir qualquer número é editar um arquivo, sem mexer em código.

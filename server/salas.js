@@ -9,6 +9,7 @@
 const partidaCtrl = require('./partida.js');
 const proto = require('./protocol.js');
 const contas = require('./contas.js');
+const telemetria = require('./telemetria.js');
 
 const _porConta = new Map();   // contaId -> sala (compartilhada pelos participantes)
 const _todas = new Set();
@@ -30,24 +31,31 @@ function criar(contaId, pergaminho, opts = {}) {
 function criarPvP(a, b, opts = {}) {
   encerrar(a.contaId); encerrar(b.contaId);
   const P = partidaCtrl.criarPvP(a.time, b.time, { seed: opts.seed, comeca: opts.comeca, limiteMs: opts.limiteMs, agora: Date.now() });
-  return _registrar({ P, modo: 'pvp', ranqueado: !!opts.ranqueado, pontuado: false, resultado: null,
+  return _registrar({ P, modo: 'pvp', ranqueado: !!opts.ranqueado, pontuado: false, registrado: false, resultado: null,
+    time0: a.time.slice(), time1: b.time.slice(),   // os times ESCOLHIDOS (a telemetria mede a escolha do jogador)
     participantes: [
       { contaId: a.contaId, ws: a.ws || null, ultimoLogVisto: 0 },
       { contaId: b.contaId, ws: b.ws || null, ultimoLogVisto: 0 },
     ], timer: null });
 }
 
-// PONTUAR (F5.5): quando uma partida RANQUEADA acaba, o servidor aplica os pontos UMA vez. O vencedor
-// é o lado de st.fim.lado (o servidor sabe, não o cliente). Abandono (§223) chega aqui como derrota do
-// abandonador — sem caminho para o cliente influenciar. `pontuado` garante idempotência (chamado de
-// vários pontos: após jogar/encerrar e no estouro do relógio).
-function talvezPontuar(sala) {
-  if (!sala || !sala.ranqueado || sala.pontuado || !sala.P.st.fim) return null;
-  const venc = sala.P.st.fim.lado;
-  if (venc !== 0 && venc !== 1) { sala.pontuado = true; return null; }   // empate técnico: sem pontos (raro; turno 40)
+// FINALIZAR uma partida no fim (idempotente): TELEMETRIA (§22, toda partida PvP) + PONTOS (§226, só
+// ranqueado). Chamado de vários pontos (após jogar/encerrar e no estouro do relógio); os flags
+// `registrado`/`pontuado` garantem uma vez só. O vencedor é st.fim.lado (o servidor sabe, não o cliente).
+function finalizarPartida(sala) {
+  if (!sala || !sala.P.st.fim) return null;
+  const venc = (sala.P.st.fim.lado === 0 || sala.P.st.fim.lado === 1) ? sala.P.st.fim.lado : null;
+  // TELEMETRIA: toda partida PvP, uma vez. Agregado, SEM jogador (só os deuses/turnos/abandono).
+  if (sala.modo === 'pvp' && !sala.registrado) {
+    sala.registrado = true;
+    telemetria.partida({ time0: sala.time0, time1: sala.time1, vencedor: venc, turnos: sala.P.st.turno, abandono: sala.P.st.fim.motivo === 'abandono' });
+  }
+  // PONTOS: só ranqueado, uma vez. Abandono chega como derrota do abandonador — o cliente não influencia.
+  if (!sala.ranqueado || sala.pontuado) return sala.resultado;
+  sala.pontuado = true;
+  if (venc === null) return null;   // empate técnico (turno 40): sem pontos
   const idVenc = sala.participantes[venc].contaId, idPerd = sala.participantes[1 - venc].contaId;
   const r = contas.aplicarResultadoRanqueado(idVenc, idPerd, sala.P.st.fim.motivo || null);
-  sala.pontuado = true;
   sala.resultado = r && r.ok ? r : null;
   return sala.resultado;
 }
@@ -100,7 +108,7 @@ function _armar(sala) {
     sala.timer = null;
     if (!P || P.st.fim) return;
     const r = partidaCtrl.estourarTempo(P, { agora: Date.now() });
-    if (P.st.fim) talvezPontuar(sala);   // abandono/fim pelo relógio: pontua ANTES de empurrar (o push leva a mudança de ranque)
+    if (P.st.fim) finalizarPartida(sala);   // abandono/fim pelo relógio: pontua ANTES de empurrar (o push leva a mudança de ranque)
     empurrarTodos(sala, { push: true, autopassou: !!r.autopassou, abandono: !!r.abandono, cpuOps: r.cpuOps || [] });
     _armar(sala);
   }, ms);
@@ -111,6 +119,6 @@ function pararRelogio(contaId) { const s = _porConta.get(contaId); if (s && s.ti
 function _limparTudo() { for (const s of [..._todas]) if (s.participantes[0]) encerrar(s.participantes[0].contaId); }
 
 module.exports = {
-  de, existe, ladoDe, criar, criarPvP, anexar, desanexar, encerrar, talvezPontuar,
+  de, existe, ladoDe, criar, criarPvP, anexar, desanexar, encerrar, finalizarPartida,
   snapshot, snapshotPara, empurrarTodos, empurrarOutro, rearmar, pararRelogio, _limparTudo, _porConta,
 };

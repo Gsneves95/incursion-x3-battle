@@ -137,10 +137,11 @@ function opsDoLado(st, lado) { const o = []; for (const u of st.lados[lado].unit
   ok(pontosDe(idVenc) > (idVenc === A.c.id ? pAntes : pAntesB), 'o VENCEDOR ganhou pontos (creditados pelo servidor no fim)');
   ok(contas._contaPorId(idVenc).ranque.vitorias === 1 && contas._contaPorId(idPerd).ranque.derrotas === 1, 'o ratio (vitórias/derrotas) foi atualizado nos dois');
 
-  // GUARDA (idempotência): a partida já pontuou — não há como pontuar de novo.
+  // GUARDA (idempotência): a partida já pontuou — chamar de novo NÃO credita ponto de novo.
   const sala2 = salas.de(idVenc);
-  const rep = salas.talvezPontuar(sala2);
-  ok(rep === null, 'GUARDA: pontuar de novo a mesma partida NÃO faz nada (idempotente)');
+  const pVencAntes = pontosDe(idVenc), vitAntes = contas._contaPorId(idVenc).ranque.vitorias;
+  salas.finalizarPartida(sala2); salas.finalizarPartida(sala2);
+  ok(pontosDe(idVenc) === pVencAntes && contas._contaPorId(idVenc).ranque.vitorias === vitAntes, 'GUARDA: pontuar de novo a mesma partida NÃO credita ponto nem vitória de novo (idempotente)');
 
   // GUARDA (desconexão): quem CAI perde por abandono (§223) — desconectar não dá ponto nem evita a derrota.
   contas._resetParaTeste(); fila._limpar(); salas._limparTudo();
