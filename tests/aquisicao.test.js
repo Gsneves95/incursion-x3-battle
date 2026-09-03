@@ -184,17 +184,18 @@ console.log('== 9. SANDBOX (Batalha CPU): vitória plana vs CPU credita 20 Gema,
   ok(w.eval('st._sandbox===null') && w.eval('perfil.moedas.gema') === g1, 'derrota (CPU vence) não credita nada');
 }
 
-console.log('== 10. ROTAS separadas (§213): Provações = marcador de missões; Desafios = hub de pergaminhos ==');
+console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missões; Desafios = hub de pergaminhos ==');
 {
   const { w, $, $$ } = sessao();
   // o carrossel tem 8 destinos, com "Desafios" entre "Provações" e "Invocação"
   const ordem = w.eval('HOME_BANNERS.map(d=>d.chave)');
   ok(ordem.length === 8, `o carrossel tem 8 destinos (tem ${ordem.length})`);
   ok(ordem.indexOf('desafios') === ordem.indexOf('provacoes') + 1 && ordem.indexOf('desafios') === ordem.indexOf('invocacao') - 1, 'Desafios fica entre Provações e Invocação');
-  // "Provações" → marcador de missões (honesto): fala de missões/PvP/Fase 5, SEM lista de pergaminhos
+  // "Provações" → o MAPA DAS MISSÕES (§234). Sem servidor (a sessão é local), diz honestamente que as
+  // missões contam no PvP e NÃO lista pergaminhos.
   w.eval("ir('provacoes'); render();");
-  ok(/Provações/.test($('.tela__titulo').textContent) && /miss/i.test($('#baselayer').textContent) && /Fase 5/.test($('#baselayer').textContent), 'Provações abre o marcador de missões (PvP/Fase 5)');
-  ok($$('.prow[data-prova]').length === 0, 'o marcador de missões NÃO lista pergaminhos');
+  ok(/Miss/i.test($('.tela__titulo').textContent) && /miss/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre o mapa das Missões (conta no PvP)');
+  ok($$('.prow[data-prova]').length === 0, 'o mapa das Missões NÃO lista pergaminhos');
   // "Desafios" → o hub, com os 63 pergaminhos
   w.eval("ir('desafios'); render();");
   ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.prow[data-prova]').length === 63, 'Desafios abre o hub com os 63 pergaminhos');

@@ -113,6 +113,9 @@ function ligar(){
 // separa o perfil de DESENVOLVIMENTO do dono (progresso real, migra UMA vez) de uma instalação
 // NOVA (nasce no servidor, nunca migra). Depois de iniciar() a chave existe sempre — por isso agora.
 const _tinhaPerfilAntes = (typeof perfilPreexistente==='function') ? perfilPreexistente(CHAVE_PERFIL) : false;
+// F5/§234: a CONTA do servidor (null = offline/local). Declarada ANTES do primeiro render() abaixo,
+// porque o banner e a tela de Missões a leem; sem servidor fica null e a tela diz isso honestamente.
+let contaAtual=null, contaTransporte=null;
 { const c=iniciar(); perfil=c.perfil;   // iniciar(): carrega + aplica/persiste grant inicial ou migração v2
   if(c.salvou && !c.salvou.ok) console.warn('perfil criado, mas a gravação falhou: '+c.salvou.erro);
   if(c.motivo && !/inacess/.test(c.motivo)) console.warn('perfil corrompido ('+c.motivo+') — recriei com o grant inicial'); }
@@ -142,7 +145,21 @@ ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º 
 // As sobreposições (portão de idade, painel de conta) são DOM PRÓPRIO, fora do #stage — não
 // passam pelo render() nem tocam nas telas. Só entram em cena quando há servidor.
 // ============================================================
-let contaAtual=null, contaTransporte=null;
+// F6/§234 — RE-BUSCAR a conta do servidor (progresso de missão AO VIVO). Chamada ao abrir a tela de
+// Missões. THROTTLE (3s) + flag em voo impedem laço: render()->renderMissoes()->refrescarConta() volta
+// no-op enquanto acabou de buscar. O progresso é do SERVIDOR (§228); o cliente só o desenha.
+let _contaRefetchTs=0, _contaRefetchInflight=false;
+async function refrescarConta(){
+  if(!contaTransporte) return;
+  if(_contaRefetchInflight || (Date.now()-_contaRefetchTs)<3000) return;
+  _contaRefetchInflight=true;
+  try{
+    const t=(typeof lerToken==='function')?lerToken():null; if(!t) return;
+    const r=await contaTransporte.pedir(envelope('entrar',{token:t}));
+    if(r && r.tipo==='conta'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); render(); }
+  }catch(e){ /* mantém contaAtual */ }
+  finally{ _contaRefetchInflight=false; }
+}
 
 // portão de IDADE (age-gate). NÃO é login: a lei explicada + duas escolhas de FAIXA. Sem e-mail,
 // sem senha, sem data de nascimento. `aoEscolher(faixa)` recebe 'menor'|'maior'.

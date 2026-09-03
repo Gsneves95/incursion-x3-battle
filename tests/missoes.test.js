@@ -98,9 +98,11 @@ console.log('\n== 3. liberar um A (saci): companheiro inicial (cuca) + 15 vitór
   const A = novaConta(['cuca', 'zeus', 'ogum']);   // possui cuca (inicial)
   const B = novaConta(['nezha', 'tyr', 'sobek']);
   for (let i = 0; i < 15; i++) vitoria(A.id, B.id, ['cuca', 'zeus', 'ogum'], ['nezha', 'tyr', 'sobek'], 0);
-  const la = contas._garantirMissoes(contas._contaPorId(A.id));
+  const cA = contas._contaPorId(A.id);
+  const la = contas._garantirMissoes(cA);
   eq(la.vitoriasPanteaoPvP['Brasileira'], 15, '15 vitórias com o panteão Brasileira (cuca no time)');
-  ok(la.liberados['saci'], 'MISSÃO CUMPRIDA: saci LIBERADO (volume + companheiro, do servidor)');
+  ok(la.liberados['saci'], 'MISSÃO CUMPRIDA: saci liberado (volume + companheiro, do servidor)');
+  ok(cA.perfil.deuses['saci'] && cA.perfil.deuses['saci'].viaMissao, 'LIBERAR = CONCEDER: saci entrou em perfil.deuses (via missão)');
   ok(!la.liberados['iara'], 'iara (S, 20+3) ainda NÃO — o volume é maior');
 }
 
@@ -110,18 +112,17 @@ console.log('\n== 3. liberar um A (saci): companheiro inicial (cuca) + 15 vitór
 console.log('\n== 4. o caso Maia em cascata: itzamná (Egípcia+ra) → chaac/kukulkan → ahpuch (ponto-fixo) ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const c = novaConta(['sobek', 'zeus', 'ogum']);
+  const c = novaConta(['sobek', 'zeus', 'ogum', 'ra']);   // POSSUI ra (gacha) — companheiro do itzamná
   const led = contas._garantirMissoes(contas._contaPorId(c.id));
-  // semeia o ledger no limiar: ra já liberado; volume Egípcia e Maia atingidos; seguidas de ra/itzamná/chaac.
-  led.liberados['ra'] = true;
+  // semeia o ledger no limiar: volume Egípcia e Maia atingidos; seguidas de ra/itzamná/chaac.
   led.vitoriasPanteaoPvP['Egípcia'] = 40; led.vitoriasPanteaoPvP['Maia'] = 20;
   led.sequenciaPvP['ra'] = 5; led.sequenciaPvP['itzamna'] = 3; led.sequenciaPvP['chaac'] = 3;
   missoes._liberarCumpridas(contas._contaPorId(c.id));
-  const L = contas._garantirMissoes(contas._contaPorId(c.id));
-  ok(L.liberados['itzamna'], 'itzamná LIBERADO (Egípcia 40 + ra + 5 seguidas) — o cruzamento abre a mitologia Maia');
-  ok(L.liberados['chaac'], 'chaac LIBERADO na MESMA passagem (Maia 20 + itzamná recém-liberado + 3 seguidas)');
-  ok(L.liberados['kukulkan'], 'kukulkan LIBERADO (companheiro itzamná)');
-  ok(L.liberados['ahpuch'], 'ahpuch LIBERADO (companheiro chaac, também recém-liberado) — cascata por ponto-fixo');
+  const cc = contas._contaPorId(c.id), L = contas._garantirMissoes(cc);
+  ok(L.liberados['itzamna'] && cc.perfil.deuses['itzamna'], 'itzamná CONCEDIDO (Egípcia 40 + ra possuído + 5 seguidas) — o cruzamento abre a mitologia Maia');
+  ok(L.liberados['chaac'] && cc.perfil.deuses['chaac'], 'chaac CONCEDIDO na MESMA passagem (Maia 20 + itzamná recém-concedido + 3 seguidas)');
+  ok(cc.perfil.deuses['kukulkan'], 'kukulkan CONCEDIDO (companheiro itzamná)');
+  ok(cc.perfil.deuses['ahpuch'], 'ahpuch CONCEDIDO (companheiro chaac, também recém-concedido) — cascata por ponto-fixo');
 }
 
 // ---------------------------------------------------------------------------

@@ -73,6 +73,16 @@ const ia     = semGuard(ler('src/ia.js'));
 const raridades = ler('data/raridades.json').trim();
 const economia = ler('data/economia.json').trim();
 const kits   = ler('data/kits.json').trim();
+// MISSÕES (F6/§234): a árvore para a TELA — SLIM (sem a calibração/feasibilidade, que é de ferramenta).
+// O cliente desenha o mapa; o PROGRESSO vem do servidor (§228), nunca daqui.
+const missoesDoc = (() => {
+  try {
+    const d = JSON.parse(ler('data/missoes.json'));
+    const slim = {};
+    for (const k in d.missoes) { const m = d.missoes[k]; slim[k] = { nome: m.nome, raridade: m.raridade, panteao: m.panteao, companheiro: m.companheiro, motivo: m.motivo, vitoriasPanteao: m.vitoriasPanteao, seguidasCompanheiro: m.seguidasCompanheiro }; }
+    return { volumes: d.volumes, iniciais: d.iniciais, panteaoDe: d.panteaoDe, missoes: slim };
+  } catch (e) { return { volumes: {}, iniciais: [], panteaoDe: {}, missoes: {} }; }
+})();
 const casca  = ler('src/shell.html');
 
 // ---------- 3. schema de kit: um arquivo por deus em data/deuses/, validado na build ----------
@@ -263,7 +273,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

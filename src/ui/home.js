@@ -50,7 +50,12 @@ function bannerVivoHTML(d){
     </div>`;
   }
   const selo = t => `<span class="bcard__selo">${H(t)}</span>`;
-  if (d.chave === 'provacoes') return selo('Fase 5');   // Provações = MISSÕES, que chegam no PvP (§213)
+  if (d.chave === 'provacoes'){   // MISSÕES (§234): conquistados/total quando online; senão o total do mapa.
+    const total = (typeof MISSOES !== 'undefined' && MISSOES.missoes) ? Object.keys(MISSOES.missoes).length : 0;
+    if (!total) return selo('Missões');
+    const lib = (contaAtual && contaAtual.missoes && Array.isArray(contaAtual.missoes.liberados)) ? contaAtual.missoes.liberados.length : null;
+    return selo(lib != null ? `${lib}/${total}` : `${total}`);
+  }
   if (d.chave === 'desafios') return selo(`${acervoPergaminhos().length}`);   // acervo de pergaminhos (63), não as 90 do dado
   if (d.chave === 'invocacao'){
     const p = (perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0;
@@ -148,28 +153,141 @@ function renderEmBreve(){
   fit();
 }
 
-/* ---------- marcador de MISSÕES (§213) — a rota "Provações" HOJE ----------
-// As Provações voltam como MISSÕES de longo prazo contadas em PvP; até a Fase 5 chegar, esta
-// tela é um marcador HONESTO — NÃO aponta para os Desafios (o banner que promete liberar deus
-// não pode desembocar na tela de perícia). Separar as rotas agora resolve a incoerência sem
-// esperar a F6. */
+/* ================= MISSÕES (F6/§234) — a TELA: o MAPA DA COLEÇÃO ==================
+// Responde três perguntas: o que eu tenho, o que falta, e o que faço para conseguir. Quatro seções
+// nesta ordem: EM PROGRESSO (contador ao vivo) · DISPONÍVEIS (companheiro na mão, volume não) ·
+// TRAVADAS (falta o companheiro — MOSTRA qual + o motivo mitológico) · CONCLUÍDAS (histórico).
+// O PROGRESSO vem do SERVIDOR (§228): contaAtual.missoes + contaAtual.perfil.deuses. Sem servidor
+// não há progresso — a tela DIZ isso honestamente em vez de mostrar zero. */
+
+// adjetivo do panteão concordando com "vitórias" (feminino plural). Para "12/40 vitórias gregas".
+const PANT_ADJ = { 'Grega': 'gregas', 'Nórdica': 'nórdicas', 'Egípcia': 'egípcias', 'Japonesa': 'japonesas', 'Chinesa': 'chinesas', 'Hindu': 'hindus', 'Brasileira': 'brasileiras', 'Africana': 'africanas', 'Celta': 'celtas', 'Maia': 'maias' };
+function nomeM(k){ return (typeof MISSOES !== 'undefined' && MISSOES.missoes[k] && MISSOES.missoes[k].nome) || (HRM[k] && HRM[k].nome) || k; }
+function missoesDisponivel(){ return typeof MISSOES !== 'undefined' && MISSOES.missoes && Object.keys(MISSOES.missoes).length > 0; }
+
+// classifica cada missão numa das 4 seções, a partir do estado do SERVIDOR (owned + ledger).
+function classificarMissoes(){
+  const owned = (contaAtual && contaAtual.perfil && contaAtual.perfil.deuses) || {};
+  const led = (contaAtual && contaAtual.missoes) || {};
+  const vitPant = led.vitoriasPanteaoPvP || {}, seq = led.sequenciaPvP || {};
+  const ini = (MISSOES.iniciais || []);
+  const tem = k => ini.includes(k) || !!owned[k];
+  const sec = { progresso: [], disponivel: [], travada: [], concluida: [] };
+  for (const k of Object.keys(MISSOES.missoes)){
+    const m = MISSOES.missoes[k];
+    if (tem(k)){ sec.concluida.push(k); continue; }
+    const vol = vitPant[m.panteao] || 0, volN = m.vitoriasPanteao || 0;
+    const seg = m.companheiro ? (seq[m.companheiro] || 0) : 0, segN = m.seguidasCompanheiro || 0;
+    const compNaMao = m.companheiro ? tem(m.companheiro) : true;
+    if (!compNaMao){ sec.travada.push(k); continue; }
+    if (vol === 0 && seg === 0) sec.disponivel.push(k);
+    else sec.progresso.push(k);
+  }
+  const ord = arr => arr.sort((a,b)=> (raridadeDe(b)+'').localeCompare(raridadeDe(a)) || nomeM(a).localeCompare(nomeM(b)));
+  ord(sec.progresso); ord(sec.disponivel); ord(sec.travada); ord(sec.concluida);
+  return sec;
+}
+
+// os "requisitos ao vivo" de uma missão (o contador do servidor): "12/40 vitórias gregas · 2/5 seguidas com Cérbero".
+function reqAoVivoHTML(k){
+  const m = MISSOES.missoes[k];
+  const led = (contaAtual && contaAtual.missoes) || {};
+  const vol = (led.vitoriasPanteaoPvP || {})[m.panteao] || 0, volN = m.vitoriasPanteao || 0;
+  const adj = PANT_ADJ[m.panteao] || H(m.panteao);
+  let s = `<span class="mreq__v"><b>${Math.min(vol, volN)}</b>/${volN} vitórias ${adj}</span>`;
+  if (m.companheiro && m.seguidasCompanheiro){
+    const seg = (led.sequenciaPvP || {})[m.companheiro] || 0;
+    s += `<span class="mreq__s"><b>${Math.min(seg, m.seguidasCompanheiro)}</b>/${m.seguidasCompanheiro} seguidas com ${H(nomeM(m.companheiro))}</span>`;
+  }
+  return s;
+}
+
+// TILE de missão: retrato + versalete (linguagem da Fase 4). `estado` muda a cauda e a moldura.
+function tileMissaoHTML(k, estado){
+  const m = MISSOES.missoes[k];
+  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
+  const rar = raridadeDe(k);
+  const cor = estado === 'concluida' ? COR(g.elem) : (estado === 'travada' ? '#6a6390' : COR(g.elem));
+  let cauda;
+  if (estado === 'progresso') cauda = `<span class="mtile__req">${reqAoVivoHTML(k)}</span>`;
+  else if (estado === 'disponivel') cauda = `<span class="mtile__req"><span class="mreq__v"><b>0</b>/${m.vitoriasPanteao} vitórias ${PANT_ADJ[m.panteao] || H(m.panteao)}</span><span class="mreq__pronto">${m.companheiro ? H(nomeM(m.companheiro)) + ' na mão ✓' : 'pronto para começar'}</span></span>`;
+  else if (estado === 'travada') cauda = `<span class="mtile__trava"><span class="mtrava__falta">precisa de <b>${H(nomeM(m.companheiro))}</b></span><span class="mtrava__motivo">${H(m.motivo)}</span></span>`;
+  else cauda = `<span class="mtile__feito">✓ conquistado</span>`;
+  return `<button class="mtile mtile--${estado}" data-deus="${k}" title="${H(g.nome)}">
+    <span class="mtile__rar rar--${rar}"></span>
+    <span class="mtile__art">${slot('god-' + k, ini(g.nome), cor, 34)}</span>
+    <span class="mtile__body">
+      <span class="mtile__nome">${H(g.nome)}</span>
+      ${cauda}
+    </span>
+  </button>`;
+}
+
+function secaoMissaoHTML(rot, sub, chave, arr, estado){
+  const corpo = arr.length
+    ? `<div class="mgrid">${arr.map(k => tileMissaoHTML(k, estado)).join('')}</div>`
+    : `<p class="msec__vazio">${H(sub)}</p>`;
+  return `<section class="msec msec--${chave}">
+    <div class="msec__cab"><h2>${H(rot)}</h2><span class="msec__n">${arr.length}</span></div>
+    ${corpo}
+  </section>`;
+}
+
+// SEM SERVIDOR: o progresso vive no servidor (§228). Não mostra zero — diz a verdade e ainda deixa
+// LER as histórias (os 91 motivos foram escritos para serem lidos), como catálogo sem contador.
+function missoesOfflineHTML(){
+  const cat = Object.keys(MISSOES.missoes).sort((a,b)=> nomeM(a).localeCompare(nomeM(b))).map(k => {
+    const m = MISSOES.missoes[k];
+    const alvo = m.companheiro ? `precisa de <b>${H(nomeM(m.companheiro))}</b>` : `volume ${H(m.panteao)}`;
+    return `<button class="mcat" data-deus="${k}" title="${H(nomeM(k))}">
+      <span class="mcat__art">${slot('god-' + k, ini(nomeM(k)), '#6a6390', 26)}</span>
+      <span class="mcat__b"><span class="mcat__n">${H(nomeM(k))}</span><span class="mcat__f">${alvo}</span><span class="mcat__m">${H(m.motivo)}</span></span>
+    </button>`;
+  }).join('');
+  return `<div class="moff">
+    <span class="moff__ic">◈</span>
+    <p class="moff__msg">As missões contam no <b>PvP</b>. <b>Conecte</b> para ver seu progresso — o contador vive no servidor.</p>
+  </div>
+  <div class="msec__cab msec__cab--cat"><h2>As histórias</h2><span class="msec__n">${Object.keys(MISSOES.missoes).length}</span></div>
+  <div class="mcatgrid">${cat}</div>`;
+}
+
 function renderMissoes(){
+  const online = !!contaAtual;
+  let corpo;
+  if (!missoesDisponivel()){
+    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O mapa das missões chega com os dados.</p></div>`;
+  } else if (!online){
+    corpo = `<div class="tela__rol">${missoesOfflineHTML()}</div>`;
+  } else {
+    const s = classificarMissoes();
+    corpo = `<div class="tela__rol">
+      ${secaoMissaoHTML('Em progresso', 'Nenhuma começada — jogue PvP com um panteão e o companheiro na mão.', 'progresso', s.progresso, 'progresso')}
+      ${secaoMissaoHTML('Disponíveis', 'Nenhuma pronta — falta ter o companheiro de alguma.', 'disponivel', s.disponivel, 'disponivel')}
+      ${secaoMissaoHTML('Travadas', 'Nada travado — você tem o companheiro de todas as que faltam.', 'travada', s.travada, 'travada')}
+      ${secaoMissaoHTML('Conquistados', 'Nenhum deus conquistado por missão ainda.', 'concluida', s.concluida, 'concluida')}
+    </div>`;
+  }
+  const cont = online && missoesDisponivel() ? `<span class="tela__cont">${classificarMissoes().concluida.length}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
   <div class="tela">
     <header class="tela__cab">
       <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Provações</h1>
-      <span class="tela__espaco"></span>
+      <h1 class="tela__titulo">Missões</h1>
+      ${cont}
     </header>
-    <div class="tela__vazio">
-      <span class="tela__vazioic">◈</span>
-      <p class="tela__vaziomsg">As <b>Provações</b> voltam como <b>missões</b> de longo prazo — "20 vitórias com Zeus libera o próximo deus" — contadas no <b>PvP</b>.<br>Chegam com a <b>Fase 5</b>. Por ora, a perícia se prova nos <b>Desafios</b>.</p>
-    </div>
+    ${corpo}
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  // ELO com o detalhe do deus (§220): da missão vai-se ao deus.
+  [...stage.querySelectorAll('.mtile[data-deus], .mcat[data-deus]')].forEach(b => {
+    b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
+  });
+  // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
+  if (online && typeof refrescarConta === 'function') refrescarConta();
   fit();
 }
 
@@ -568,16 +686,27 @@ function provacaoDetalheHTML(k){
 let deusSel = 'passiva', deusSelKey = null;
 
 // COMO CONSEGUIR (substitui a maestria quando NÃO se possui o deus): maestria zero não é informação;
-// a rota de aquisição é. Hoje a via real é a INVOCAÇÃO (gacha); a Loja (troca Essência por deus) e as
-// missões que liberam deus específico chegam com o PvP (Fase 5, §216). Honesto sobre o que já existe.
+// a rota de aquisição é. Duas vias: INVOCAÇÃO (gacha) e MISSÃO (§234). O ELO com a tela de Missões
+// (§220): daqui dá para VER a missão do deus — o botão leva ao mapa, e lá o deus leva de volta aqui.
 function comoConseguirHTML(k, rar){
+  const m = (typeof MISSOES !== 'undefined' && MISSOES.missoes) ? MISSOES.missoes[k] : null;
+  const missaoVia = m
+    ? `<button class="dcomo__via dcomo__via--miss" data-vermissao="1"><b>Missão</b><span>${H(reqMissaoTexto(k))}</span><span class="dcomo__motivo">${H(m.motivo)}</span></button>`
+    : `<div class="dcomo__via"><b>Missão</b><span>este deus não tem missão (inicial)</span></div>`;
   return `<div class="dcomo">
     <span class="dcomo__rot">COMO CONSEGUIR</span>
     <div class="dcomo__vias">
       <div class="dcomo__via"><b>Invocação</b><span>na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
-      <div class="dcomo__via dcomo__via--f5"><b>Loja / Missão</b><span>troca por Essência e missões chegam no PvP (Fase 5)</span></div>
+      ${missaoVia}
     </div>
   </div>`;
+}
+// texto curto do requisito de missão (para o detalhe do deus): "40 vitórias gregas + 5 seguidas com Cérbero".
+function reqMissaoTexto(k){
+  const m = MISSOES.missoes[k]; if (!m) return '';
+  let s = `${m.vitoriasPanteao} vitórias ${PANT_ADJ[m.panteao] || m.panteao}`;
+  if (m.companheiro) s += m.seguidasCompanheiro ? ` + ${m.seguidasCompanheiro} seguidas com ${nomeM(m.companheiro)}` : ` · com ${nomeM(m.companheiro)}`;
+  return s;
 }
 
 // as 4 skills que DEFINEM o deus na Coleção (a Defesa é universal e fica fora): cada uma tem arte.
@@ -648,6 +777,9 @@ function renderDeusDetalhe(){
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
     b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
+  // ELO com a tela de Missões (§234): do detalhe do deus vai-se ao mapa das missões.
+  const vm = stage.querySelector('[data-vermissao]');
+  if (vm) vm.onclick = () => { ir('provacoes'); render(); };
   fit();
 }
 

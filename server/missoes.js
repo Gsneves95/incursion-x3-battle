@@ -80,9 +80,11 @@ function medir(st, time0, time1) {
 
 // -------- avaliar se a missão de um deus está CUMPRIDA, dado o ledger (§230: VOLUME + COMPANHEIRO,
 // tudo com deuses que o jogador JÁ TEM; nada de feito no gate, nada de portão de faixa) --------
+// ctx.possui(k) = o jogador TEM o deus k (inicial, gacha ou missão já cumprida). "JÁ TEM" (§230) é
+// POSSE (perfil.deuses), não só liberação — um Cérbero vindo da Invocação também abre o Hades.
 function missaoCumprida(m, led, ctx) {
-  // 1) COMPANHEIRO (temático) POSSUÍDO — só se chega ao Hades pelo Cérbero. Um inicial já é possuído.
-  if (m.companheiro && !(ctx.iniciais.includes(m.companheiro) || (led.liberados && led.liberados[m.companheiro]))) return false;
+  // 1) COMPANHEIRO (temático) POSSUÍDO — só se chega ao Hades pelo Cérbero.
+  if (m.companheiro && !ctx.possui(m.companheiro)) return false;
   // 2) VOLUME: vitórias PvP com o PANTEÃO EXIGIDO (conta uma vitória por panteão presente no time).
   if (((led.vitoriasPanteaoPvP || {})[m.panteao] || 0) < (m.vitoriasPanteao || 0)) return false;
   // 3) SEGUIDAS com o companheiro (só S/SS têm >0): sequência de vitórias com o companheiro no time.
@@ -136,18 +138,28 @@ function registrarPvP(sala) {
   return { vencedor: venc, projecoes };
 }
 
-// reavalia TODAS as missões da conta e marca liberadas as cumpridas (idempotente; progressão só cresce).
-// PONTO-FIXO: liberar um deus (que vira companheiro/provedor de panteão de outro) pode habilitar o
-// próximo na MESMA passagem — é o que faz o encadeamento Maia (itzamná → chaac/kukulkan → ahpuch) fechar.
-function _liberarCumpridas(c) {
+// reavalia TODAS as missões da conta, LIBERA (concede o deus) as cumpridas e marca o histórico.
+// LIBERAR = CONCEDER (§230: "a missão libera deus") — o deus entra em perfil.deuses; é o que o jogador
+// passa a TER e a poder escalar. PONTO-FIXO: conceder um deus (que vira companheiro de outro) pode
+// habilitar o próximo na MESMA passagem — é o que faz o encadeamento Maia (itzamná → chaac/kukulkan →
+// ahpuch) fechar. Idempotente: quem já possui (gacha/inicial/missão) é pulado; progressão só cresce.
+function _liberarCumpridas(c, agora) {
   const led = _garante(contas._garantirMissoes(c));
-  const ctx = { iniciais: DOC.iniciais };
+  if (!c.perfil) c.perfil = {};
+  const deuses = c.perfil.deuses = c.perfil.deuses || {};
+  const possui = (k) => DOC.iniciais.includes(k) || !!deuses[k];
+  const ctx = { iniciais: DOC.iniciais, possui };
+  const quando = typeof agora === 'number' ? agora : Date.now();
   let mudou = true;
   while (mudou) {
     mudou = false;
     for (const k of Object.keys(DOC.missoes)) {
-      if (led.liberados[k]) continue;
-      if (missaoCumprida(DOC.missoes[k], led, ctx)) { led.liberados[k] = true; mudou = true; }
+      if (deuses[k]) continue;   // já possuído (gacha/missão anterior): nada a conceder
+      if (missaoCumprida(DOC.missoes[k], led, ctx)) {
+        deuses[k] = { copias: 1, favorito: false, obtidoEm: quando, viaMissao: true };   // CONCEDE o deus
+        led.liberados[k] = true;                                                          // histórico da missão
+        mudou = true;
+      }
     }
   }
   return led;

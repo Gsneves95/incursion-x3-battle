@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §234 — FASE 6 / MISSÕES, a TELA: o mapa da coleção (o que tenho, o que falta, o que faço), com o contador AO VIVO do servidor, o motivo mitológico visível, e o deus concedido de verdade. Fecha a Fase 6.
+
+Sistema construído e invisível é DÍVIDA (§202/§209/§210: "validado num caminho, quebrado no outro"). O contador contava, a árvore validava, as 91 existiam — e nada aparecia. Esta tarefa fecha a Fase 6 tornando-a VISÍVEL.
+
+**1. A TELA é o MAPA DA COLEÇÃO, não uma lista de tarefas (`renderMissoes` em `src/ui/home.js`).** Quatro seções, nesta ordem: **EM PROGRESSO** (requisito parcial, com o contador AO VIVO — "Poseidon · 22/40 vitórias gregas · 0/5 seguidas com Zeus") · **DISPONÍVEIS** (o companheiro na mão, o volume não) · **TRAVADAS** (falta o companheiro — MOSTRA qual + o motivo mitológico) · **CONQUISTADOS** (histórico). A linguagem visual é a da Fase 4: moldura dourada, retrato, versalete.
+
+**2. AS TRAVADAS FICAM VISÍVEIS, e o MOTIVO aparece — decisão de produto.** Ver que falta o Cérbero para chegar ao Hades é MOTIVAÇÃO; esconder é vazio. Os 91 motivos foram escritos para serem LIDOS — se ficassem no JSON, o trabalho do dono seria desperdiçado. Cada travada carrega o motivo em itálico ("A irmã que se trancou na caverna fugindo dele"); é o que separa isto de uma lista de metas. **Guarda permanente:** teste que TODA travada tem motivo (0 sem).
+
+**3. O CONTADOR LÊ DO SERVIDOR (§228), e o deus é CONCEDIDO de verdade.** O progresso vem de `contaAtual` (projeção do servidor: `missoes` + `perfil.deuses`), nunca de número que o cliente invente. E fechei o elo que faltava: **LIBERAR = CONCEDER** — `server/missoes.js._liberarCumpridas` agora ADICIONA o deus a `perfil.deuses` (antes só marcava um flag), e o companheiro é exigido por POSSE (`perfil.deuses`, inclui gacha), não só por liberação — "JÁ TEM" (§230) é ter, por qualquer via. A cascata Maia continua fechando por ponto-fixo, agora concedendo.
+
+**4. O ELO com o detalhe do deus (§220), nos DOIS sentidos.** No detalhe do não-possuído, o bloco COMO CONSEGUIR mostra a via MISSÃO com o requisito + o motivo, e leva ao mapa; no mapa, cada missão leva ao detalhe do deus. Ida e volta.
+
+**5. SEM SERVIDOR, a verdade — não zero.** O contador vive no servidor (§228); offline não há progresso a mostrar. A tela DIZ ("As missões contam no PvP. Conecte para ver seu progresso") em vez de desenhar zero, e ainda deixa LER as 91 histórias como catálogo (sem contador).
+
+**Injeção de dado:** `data/missoes.json` entra na build SLIM (`const MISSOES`, sem a calibração de ferramenta) — o cliente desenha o mapa; o progresso é do servidor.
+
+**PROVA:** `tests/missoes_tela.test.js` (runtime em jsdom, §202) — as 4 seções na ordem, o contador ao vivo, o motivo em TODA travada (guarda), o toque ≥76px, o estado offline honesto, o elo nos dois sentidos. **19 asserções; 39 suítes verdes.** Captura contra o dist: EM PROGRESSO (contador ao vivo), TRAVADAS (cinza + "precisa de X" + motivo, incl. Itzamná→Rá), e o offline honesto.
+
 ## §233 — FASE 6 / MISSÕES: existem DUAS facções por deus, e medem coisas DIFERENTES. A divergência kraken/exu é LEGÍTIMA — não é bug, não "conserte".
 
 **A distinção (do dono, registrada porque é NOVA e vai voltar):**
