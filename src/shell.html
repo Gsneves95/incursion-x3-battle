@@ -1196,6 +1196,36 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* ELO no detalhe do deus (§220): a via MISSÃO é clicável e leva ao mapa; mostra o motivo. */
 .dcomo__via--miss{cursor:pointer;text-align:left;background:rgba(255,217,122,.05);border:1px solid var(--gold-soft);border-radius:8px;padding:5px 8px}
 .dcomo__motivo{font-style:italic;font-size:9.5px;line-height:1.3;color:var(--ink-mute);margin-top:2px}
+
+/* ===== PvP LOBBY (F5.3/§236): apelido + time de 3 + fila ===== */
+.pvpnick{margin:0 0 12px}
+.pvpnick label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute)}
+.pvpnick input{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--ink);background:#14112a;border:1px solid var(--gold-soft);border-radius:8px;padding:9px 12px;min-height:44px}
+.pvpnick--fixo{font-weight:600;font-size:13px;color:var(--ink-dim);letter-spacing:.02em}
+.pvpnick--fixo b{color:var(--gold-text);font-family:'Cinzel',serif;letter-spacing:.06em}
+.pvpsel__cab{display:flex;align-items:baseline;gap:10px;margin:14px 0 8px}
+.pvpsel__cab h2{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-text);margin:0}
+.pvpslots{display:flex;gap:10px}
+.pvps{flex:1 1 0;min-width:0;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;
+  border:1px solid var(--gold-soft);border-radius:10px;background:rgba(20,16,38,.55);color:var(--ink);padding:8px 4px}
+.pvps--vazio{border-style:dashed;border-color:#3a3358;color:#5f5980;cursor:default}
+.pvps--vazio span{font-family:'Cinzel',serif;font-size:28px;font-weight:900;opacity:.5}
+.pvps__art{width:48px;height:48px;border-radius:7px;overflow:hidden;background:#14112a}
+.pvps__art .slot{width:100%;height:100%}
+.pvps__n{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);text-align:center;line-height:1.05}
+.pvpbtns{display:flex;gap:10px;margin:14px 0 4px}
+.pvpbtns .b{flex:1 1 0;min-height:48px}
+.pvperro{font-weight:700;font-size:12.5px;color:#ff9a9a;margin:8px 0 0}
+.pvpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:2px}
+.pvpt{position:relative;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;
+  border:1px solid #2c2648;border-radius:10px;background:rgba(16,13,32,.5);color:var(--ink-dim);padding:8px 4px}
+.pvpt.is-sel{border-color:var(--gold);background:rgba(255,217,122,.08);color:var(--ink)}
+.pvpt__art{width:44px;height:44px;border-radius:6px;overflow:hidden;background:#14112a}
+.pvpt__art .slot{width:100%;height:100%}
+.pvpt__n{font-family:'Cinzel',serif;font-weight:700;font-size:10.5px;letter-spacing:.02em;text-transform:uppercase;text-align:center;line-height:1.05}
+.pvpt__ck{position:absolute;top:5px;right:6px;font-size:12px;font-weight:900;color:var(--gold-text)}
+.pvpfila__ic{animation:pvppulse 1.4s ease-in-out infinite}
+@keyframes pvppulse{0%,100%{opacity:.5}50%{opacity:1}}
 </style>
 </head>
 <body>

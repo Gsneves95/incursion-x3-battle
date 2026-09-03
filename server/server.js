@@ -197,10 +197,35 @@ wss.on('connection', (ws) => {
   });
 });
 
+// §236: os endereços IPv4 da REDE LOCAL desta máquina (para outros aparelhos na mesma Wi-Fi chegarem).
+// Filtra internas (127.x) e de link-local (169.254.x). Sem dependência: usa os.networkInterfaces().
+function enderecosLAN() {
+  const os = require('os');
+  const out = [];
+  const ifaces = os.networkInterfaces();
+  for (const nome of Object.keys(ifaces)) for (const i of (ifaces[nome] || [])) {
+    if (i.family === 'IPv4' && !i.internal && !/^169\.254\./.test(i.address)) out.push(i.address);
+  }
+  return out;
+}
+
 if (require.main === module) {
-  server.listen(PORT, () => {
-    console.log(`[incursion F5.0] servidor local em http://localhost:${PORT}  (WebSocket no mesmo endereço)`);
-    console.log(`  motor: autoritativo, importado de src/engine.js (não copiado) · protocolo v${proto.PROTOCOL_VERSION}`);
+  // HOST=0.0.0.0 (padrão) escuta em TODAS as interfaces → acessível na REDE LOCAL (necessário para
+  // testar em celulares, §236). Para travar só no próprio computador: HOST=127.0.0.1 npm run serve.
+  const HOST = process.env.HOST || '0.0.0.0';
+  server.listen(PORT, HOST, () => {
+    const lan = enderecosLAN();
+    console.log(`\n[incursion] servidor no ar · protocolo v${proto.PROTOCOL_VERSION} · motor autoritativo (src/engine.js)`);
+    console.log(`  neste computador:   http://localhost:${PORT}`);
+    if (lan.length) {
+      console.log(`\n  NOS CELULARES (mesma rede Wi-Fi), abra o navegador e digite:`);
+      for (const ip of lan) console.log(`      http://${ip}:${PORT}`);
+      console.log(`  (o WebSocket usa o MESMO endereço — o cliente acha o servidor sozinho.)`);
+    } else {
+      console.log(`  (nenhum endereço de rede local encontrado — o computador está conectado ao Wi-Fi?)`);
+    }
+    if (HOST !== '0.0.0.0') console.log(`  [HOST=${HOST}] escutando SÓ neste computador — outros aparelhos NÃO alcançam.`);
+    console.log('');
   });
 }
-module.exports = { server, wss, PORT };
+module.exports = { server, wss, PORT, enderecosLAN };

@@ -161,6 +161,7 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     embreve:      "ir('embreve',{titulo:'Loja'})",
     selecao:      "ir('selecao',{novo:true})",
     invocacao:    "ir('invocacao')",
+    pvp:          "ir('pvp')",              // §236: lobby do PvP (sai por ‹ Início)
     batalha:      "st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0);prova=null;campanha=null;provaFim=null;campanhaFim=null;ir('batalha');pararRelogio()",
   };
   const rotas = w.eval('Object.keys(NAV.telas)');

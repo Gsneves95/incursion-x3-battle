@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §236 — TESTE NA REDE LOCAL: o servidor acessível na Wi-Fi, o cliente achando-o sozinho, o LOBBY do PvP (a porta que faltava), e o roteiro à prova de erro. Sem escolher provedor, sem enfraquecer segurança.
+
+O dono quer testar TUDO no celular com gente de verdade — inclusive PvP. O Pages serve só o cliente; o servidor roda na máquina dele. Deixei pronto para o teste local, e achei (e fechei) a lacuna que estouraria na frente das pessoas.
+
+**1. O servidor já era acessível na rede — faltava DIZER o endereço.** `server.listen(PORT)` já escutava em todas as interfaces (default do Node). Tornei explícito (`HOST`, default `0.0.0.0`) e, o que importa, o boot agora **imprime os endereços IPv4 da LAN** (`os.networkInterfaces`, sem dependência) — "NOS CELULARES, abra http://192.168.x.x:8788". O dono não precisa saber achar IP; o servidor conta. (E o guia dá `ipconfig`/`ipconfig getifaddr en0` para Windows/Mac.)
+
+**2. O cliente acha o servidor SEM editar código — pela ORIGEM.** `criarTransporteWS()` já usava `location.host`: o WS vai para o MESMO endereço de onde a página veio. Como o próprio servidor serve o `dist` (uma porta só), abrir `http://192.168.x.x:8788` no celular entrega cliente E servidor da mesma origem, e o cliente conecta sozinho. Zero configuração, zero edição — à prova de erro do dono.
+
+**3. A LACUNA REAL, fechada: o LOBBY do PvP (§236).** `iniciarPvP`/`iniciarRanqueado` existiam e eram testados por WS (§225/§226), mas **NENHUM botão os chamava** — o cartão "PvP" era `rota:null` (morto). Um sistema construído e invisível, o padrão §202/§209/§210 de novo — e este estouraria NA FRENTE das pessoas. Construí o lobby (`renderPvP`): apelido (uma vez), time de 3 POSSUÍDOS, "Entrar na fila"/"Ranqueado", estado "Na fila…", e o pareamento chega por push → batalha (fluxo que já existia). Sem servidor, o lobby DIZ como chegar a ele (o endereço da máquina, mesma rede) — o mesmo padrão honesto da tela de missões (§234).
+
+**4. O roteiro (`TESTE-LAN.md`), escrito para quem nunca subiu servidor.** Subir (`npm run serve`) · achar o endereço (o servidor imprime; e o comando à mão nos dois SOs) · o que digitar em cada celular · como parear dois na fila · o rodízio com TRÊS pessoas · e a checklist de "funcionou" (conectou, pareou, jogada de um aparece no outro, fim do servidor, faixa mexe, missão conta, reconexão retoma). Os casos chatos explicados: sai da Wi-Fi (4G) → offline, volta e recarrega; IP muda ao reiniciar o roteador → reler o endereço; firewall/rede-de-convidados → o conserto de cada um.
+
+**5. O LIMITE, declarado antes de chamar as pessoas (§5 do pedido).** Só dentro da casa (a internet é o lançamento); o computador tem de ficar acordado; é o jogo no NAVEGADOR, não o app instalado (a WebView em 2º plano é o spike Capacitor, à parte); sem `https` (normal na LAN); servidor de teste, não de produção; contas ficam no disco da máquina.
+
+**AS DUAS PROIBIÇÕES, respeitadas.** NÃO escolhi provedor de hospedagem (é do lançamento, §221) — o teste é local. NÃO enfraqueci segurança para facilitar: a única coisa "aberta" é o servidor escutar na LAN (`0.0.0.0`), que é exatamente o que o teste precisa e se fecha ao parar o servidor; o guia DIZ isso e diz que publicar exige `https`+endurecimento próprios, e dá `HOST=127.0.0.1` para travar só na máquina. A autenticação por token e o handshake de protocolo seguem intactos — nada de auth foi afrouxado.
+
+**PROVA:** `tests/pvp_tela.test.js` (jsdom) — o cartão PvP clicável, o estado sem-servidor com o endereço, apelido + 3 possuídos, botões travados sem os 3 e livres com eles, "Na fila…", toque ≥76px; **41 suítes verdes**. O boot do servidor imprime o endereço da LAN (verificado).
+
 ## §235 — FASE 6 / MISSÕES: POSSE conta (o gacha vale) para o companheiro, e LIBERAR CONCEDE de verdade. Duas confirmações do dono sobre o que a Fase 6 fechou.
 
 Registro de duas decisões que o §234 já codificou, com o PORQUÊ — a primeira é do dono, a segunda ele atribuiu a mim.

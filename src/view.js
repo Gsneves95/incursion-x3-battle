@@ -134,6 +134,7 @@ registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
+registrar('pvp',       { render: renderPvP,        aoEntrar: ()=>{ if(typeof pvpReset==='function') pvpReset(); } });  // F5.3/§236: o lobby do PvP (apelido + time + fila)
 ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)

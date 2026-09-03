@@ -23,7 +23,7 @@ const HOME_BANNERS = [
   { chave: 'colecao',     arte: 'colecao',     rotulo: 'Coleção',     rota: 'colecao' },
   { chave: 'loja',        arte: 'loja',        rotulo: 'Loja',        rota: 'embreve', titulo: 'Loja' },
   { chave: 'batalha-cpu', arte: 'batalha-cpu', rotulo: 'Batalha CPU', rota: 'selecao', params: { novo: true } },
-  { chave: 'pvp',         arte: 'batalha-pvp', rotulo: 'PvP',         rota: null },
+  { chave: 'pvp',         arte: 'batalha-pvp', rotulo: 'PvP',         rota: 'pvp' },
 ];
 
 // numeral romano do capítulo (1→I); pequeno o bastante para o Capítulo 1 e além.
@@ -67,7 +67,7 @@ function bannerVivoHTML(d){
     const total = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
     return selo(`${donos}/${total}`);
   }
-  if (d.chave === 'pvp') return selo('Fase 5');
+  if (d.chave === 'pvp') return '';   // §236: PvP está vivo (precisa do servidor; o lobby explica)
   return '';
 }
 
@@ -288,6 +288,105 @@ function renderMissoes(){
   });
   // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
   if (online && typeof refrescarConta === 'function') refrescarConta();
+  fit();
+}
+
+/* ================= PvP — o LOBBY (F5.3/§236): apelido + time de 3 + entrar na fila ==================
+// O PvP precisa do SERVIDOR (a partida é dele, §223). Sem transporte (aberto por file:// ou sem conexão),
+// a tela DIZ como chegar ao servidor — abrir pelo endereço da máquina, na mesma rede. Com servidor: o
+// jogador põe o apelido (uma vez), monta 3 deuses que POSSUI (o servidor valida a posse), e entra na
+// fila (amistoso ou ranqueado). O pareamento chega por PUSH e a batalha começa (view.js/aoPushGlobal). */
+let pvpTime = [], pvpEstado = 'idle', pvpMsg = '';   // idle | fila
+function pvpReset(){ pvpTime = []; pvpEstado = 'idle'; pvpMsg = ''; }
+function pvpJogavel(k){ return temDeus(k) && typeof GODS !== 'undefined' && !!GODS[k]; }
+function pvpToggle(k){ const i = pvpTime.indexOf(k); if (i >= 0) pvpTime.splice(i, 1); else if (pvpTime.length < 3) pvpTime.push(k); }
+
+async function pvpEntrar(ranqueado){
+  if (pvpEstado === 'fila') return;
+  const temNick = !!(contaAtual && contaAtual.nick);
+  const nickEl = stage.querySelector('#pvpnick');
+  const nick = temNick ? contaAtual.nick : (nickEl ? nickEl.value.trim() : '');
+  if (!temNick && (!nick || nick.length < 3)) { pvpMsg = 'Escolha um apelido (ao menos 3 letras).'; render(); return; }
+  if (pvpTime.length !== 3) { pvpMsg = 'Escolha 3 deuses para o seu time.'; render(); return; }
+  pvpEstado = 'fila'; pvpMsg = ''; render();
+  const fn = ranqueado ? (typeof iniciarRanqueado === 'function' ? iniciarRanqueado : null) : (typeof iniciarPvP === 'function' ? iniciarPvP : null);
+  if (!fn) { pvpEstado = 'idle'; pvpMsg = 'PvP indisponível.'; render(); return; }
+  const r = await fn(temNick ? null : nick, pvpTime.slice());
+  if (r && r.erro) { pvpEstado = 'idle'; pvpMsg = r.erro; render(); return; }
+  if (!temNick && nick && contaAtual) contaAtual.nick = nick;   // o servidor confirmou o nick em definirNick
+  if (r && r.fase === 'pareado') return;   // entrarPvPBatalha já navegou para a batalha
+  // na_fila: fica aguardando o PUSH de pareamento (aoPushGlobal → entrarPvPBatalha)
+}
+
+function pvpSlotHTML(i){
+  const k = pvpTime[i];
+  if (!k) return `<div class="pvps pvps--vazio"><span>${i + 1}</span></div>`;
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  return `<button class="pvps" data-pvptira="${k}" title="${H(g.nome)}">
+    <span class="pvps__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 30)}</span>
+    <span class="pvps__n">${H(g.nome)}</span></button>`;
+}
+function pvpTileHTML(k){
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  const sel = pvpTime.includes(k);
+  return `<button class="pvpt ${sel ? 'is-sel' : ''}" data-pvpsel="${k}" title="${H(g.nome)}">
+    <span class="pvpt__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 26)}</span>
+    <span class="pvpt__n">${H(g.nome)}</span>${sel ? '<span class="pvpt__ck">✓</span>' : ''}</button>`;
+}
+
+function renderPvP(){
+  const online = !!(typeof contaTransporte !== 'undefined' && contaTransporte);
+  let corpo;
+  if (!online){
+    corpo = `<div class="tela__rol"><div class="moff">
+      <span class="moff__ic">◈</span>
+      <div><p class="moff__msg"><b>O PvP precisa do servidor.</b> Abra o jogo pelo <b>endereço da máquina</b> que roda o servidor — algo como <b>http://192.168.x.x:8788</b> — no navegador do celular, na <b>mesma rede Wi-Fi</b>.</p>
+      <p class="moff__msg" style="margin-top:6px">Quem roda o servidor vê o endereço exato ao ligá-lo.</p></div>
+    </div></div>`;
+  } else if (!contaAtual){
+    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">Conta ainda não criada — reabra o aplicativo.</p></div>`;
+  } else if (pvpEstado === 'fila'){
+    corpo = `<div class="tela__vazio"><span class="tela__vazioic pvpfila__ic">◈</span>
+      <p class="tela__vaziomsg"><b>Na fila…</b> aguardando um oponente entrar.<br>Deixe esta tela aberta; a batalha começa sozinha ao parear.</p>
+      <button class="b b--quiet b--md" id="pvpcancelar">Sair da fila</button></div>`;
+  } else {
+    const jogaveis = ROSTER.map(e => e.key).filter(pvpJogavel).sort((a, b) => nomeM(a).localeCompare(nomeM(b)));
+    const temNick = !!contaAtual.nick;
+    const nickBloco = temNick
+      ? `<div class="pvpnick pvpnick--fixo">apelido <b>${H(contaAtual.nick)}</b></div>`
+      : `<div class="pvpnick"><label>Seu apelido<input id="pvpnick" maxlength="16" placeholder="3 a 16 letras" autocomplete="off"></label></div>`;
+    const pronto = pvpTime.length === 3;
+    corpo = `<div class="tela__rol">
+      ${nickBloco}
+      <div class="pvpsel__cab"><h2>Seu time</h2><span class="msec__n">${pvpTime.length}/3</span></div>
+      <div class="pvpslots">${[0, 1, 2].map(pvpSlotHTML).join('')}</div>
+      ${pvpMsg ? `<p class="pvperro">${H(pvpMsg)}</p>` : ''}
+      <div class="pvpbtns">
+        <button class="b b--primary b--md" id="pvpamistoso" ${pronto ? '' : 'disabled'}>Entrar na fila</button>
+        <button class="b b--sec b--md" id="pvpranqueado" ${pronto ? '' : 'disabled'}>Ranqueado</button>
+      </div>
+      <div class="pvpsel__cab"><h2>Seus deuses</h2><span class="msec__n">${jogaveis.length}</span></div>
+      <div class="pvpgrid">${jogaveis.map(pvpTileHTML).join('')}</div>
+    </div>`;
+  }
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="stagemark">INCURSION</div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
+      <h1 class="tela__titulo">PvP</h1>
+      <span class="tela__espaco"></span>
+    </header>
+    ${corpo}
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  stage.querySelectorAll('[data-pvpsel]').forEach(b => b.onclick = () => { pvpToggle(b.dataset.pvpsel); pvpMsg = ''; render(); });
+  stage.querySelectorAll('[data-pvptira]').forEach(b => b.onclick = () => { pvpToggle(b.dataset.pvptira); render(); });
+  const ba = stage.querySelector('#pvpamistoso'); if (ba) ba.onclick = () => pvpEntrar(false);
+  const br = stage.querySelector('#pvpranqueado'); if (br) br.onclick = () => pvpEntrar(true);
+  const bc = stage.querySelector('#pvpcancelar'); if (bc) bc.onclick = () => { pvpReset(); ir('home', {}, { substituir: true }); render(); };
   fit();
 }
 
