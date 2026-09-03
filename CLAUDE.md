@@ -135,6 +135,14 @@ cão do Hades), escrito à mão pelo dono em `data/missoes_requisitos.json` — 
 mecânica NÃO descobre isso. O leitor de "feito por habilidade" (`missoes.medir`) segue
 vivo, mas para MAESTRIA/futuro, fora do gate de liberação.
 
+**POSSE satisfaz o companheiro — o gacha vale (§235).** "JÁ TEM" é ter (`perfil.deuses`),
+por qualquer via (inicial, gacha ou missão), não ter MERECIDO via missão — as duas trilhas
+existem para se cruzar (§212). Mas a sorte ENCURTA, não PULA: o gacha resolve TER o
+companheiro; o VOLUME (66–92 partidas, §231) e as SEGUIDAS continuam inteiros, lidos do
+servidor (§228). Ter abre a porta; atravessá-la ainda custa as partidas. E **LIBERAR =
+CONCEDER**: a missão cumprida ADICIONA o deus a `perfil.deuses` — selo sem deus é sistema
+invisível (§202), o vazio que a Fase 6 fechou; não o reintroduza.
+
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 
 - **`faccao`** (roster, `data/deuses/*.json`) = **MECÂNICA**: o que os kits contam (a passiva

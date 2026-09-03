@@ -6,6 +6,19 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §235 — FASE 6 / MISSÕES: POSSE conta (o gacha vale) para o companheiro, e LIBERAR CONCEDE de verdade. Duas confirmações do dono sobre o que a Fase 6 fechou.
+
+Registro de duas decisões que o §234 já codificou, com o PORQUÊ — a primeira é do dono, a segunda ele atribuiu a mim.
+
+**1. POSSE satisfaz o companheiro — inclusive o vindo do gacha (do dono, confirmando o §234).** O companheiro é exigido por TER (`perfil.deuses`), não por ter sido MERECIDO via missão. Três razões:
+   - **A missão pede JOGAR com o Cérbero, não tê-lo merecido.** As 5 seguidas exigem a mesma habilidade, venha o Cérbero de onde vier.
+   - **O inverso não se explica:** ter o Cérbero na coleção, jogar com ele, ganhar as 5 seguidas, e a missão dizer que não conta soa arbitrário.
+   - **O gacha é rota paralela POR DESENHO** (§212): as duas trilhas existem para se CRUZAR — pegar alguns ao acaso e usar quem se tem para conquistar quem falta. Separá-las faria a coleção ter dois caminhos que se ignoram.
+
+   **O que isso EQUILIBRA (a guarda, do dono): sorte no gacha ENCURTA o caminho, não PULA.** O volume de 66–92 partidas (§231) continua INTEIRO — o gacha resolve **TER** o companheiro, nunca **JOGAR** com ele. A sorte economiza AQUISIÇÃO; não substitui HABILIDADE. É por isso que o gate lê `vitoriasPanteaoPvP` + `sequenciaPvP` do servidor (§228) e não a mera posse: ter o companheiro abre a porta, mas atravessá-la ainda custa as partidas.
+
+**2. LIBERAR = CONCEDER foi decisão minha, e o dono a mantém — porque selo sem deus é o padrão que a tela acabou de consertar.** Eu troquei `_liberarCumpridas` para ADICIONAR o deus a `perfil.deuses` (não só marcar um flag). Sem isso a Fase 6 ficaria pela metade DE NOVO: "conquistado" sem o deus na coleção é exatamente o SISTEMA INVISÍVEL (§202/§209/§210) que a tela das missões corrigiu. Uma missão que não entrega o deus é um contador que não vira nada — o mesmo vazio, uma camada acima. Registrado como iniciativa minha, a pedido do dono.
+
 ## §234 — FASE 6 / MISSÕES, a TELA: o mapa da coleção (o que tenho, o que falta, o que faço), com o contador AO VIVO do servidor, o motivo mitológico visível, e o deus concedido de verdade. Fecha a Fase 6.
 
 Sistema construído e invisível é DÍVIDA (§202/§209/§210: "validado num caminho, quebrado no outro"). O contador contava, a árvore validava, as 91 existiam — e nada aparecia. Esta tarefa fecha a Fase 6 tornando-a VISÍVEL.
