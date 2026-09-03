@@ -124,10 +124,16 @@ contra a CPU (§215) — é cosmética, sandbox, vive LOCAL no perfil. A **MISS�
 **SERVIDOR é o dono** do contador (o cliente não pode forjar o que destrava conteúdo,
 pelo mesmo motivo dos pontos de ranque, §226). Números diferentes ⟹ contadores
 diferentes: não funda os dois. O contador de missão nasce vazio na conta (ao lado do
-ranque), só muda em `salas.finalizarPartida` no fim de uma partida PvP, e lê o feito do
-`st.log` autoritativo — nunca de uma mensagem do cliente. (O dono antes dissera "o
-contador de missão é o mesmo da maestria"; a Fase 5, ao criar o PvP, PRODUZIU a
-correção — daí dois contadores, não um.)
+ranque) e só muda em `salas.finalizarPartida` no fim de uma partida PvP — nunca de uma
+mensagem do cliente. (O dono antes dissera "o contador de missão é o mesmo da maestria";
+a Fase 5, ao criar o PvP, PRODUZIU a correção — daí dois contadores, não um.)
+
+O REQUISITO de desbloqueio é **VOLUME por panteão + COMPANHEIRO temático** (§230), sempre
+com deuses que o jogador JÁ TEM — nunca com o deus a liberar (para liberar o Zeus não dá
+para jogar com o Zeus). O vínculo entre a missão e o alvo é **mitológico** (o Cérbero é o
+cão do Hades), escrito à mão pelo dono em `data/missoes_requisitos.json` — derivação de
+mecânica NÃO descobre isso. O leitor de "feito por habilidade" (`missoes.medir`) segue
+vivo, mas para MAESTRIA/futuro, fora do gate de liberação.
 
 ---
 

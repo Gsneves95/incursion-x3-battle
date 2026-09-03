@@ -1,0 +1,548 @@
+[
+ {
+  "deus": "cerberus",
+  "panteao": "Grega",
+  "companheiro": null,
+  "motivo": "O cão do portão é achado antes do senhor do Submundo."
+ },
+ {
+  "deus": "medusa",
+  "panteao": "Grega",
+  "companheiro": null,
+  "motivo": "A górgona guarda a ilha; enfrenta-se antes de qualquer herói."
+ },
+ {
+  "deus": "hera",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Esposa e rainha ao lado dele no trono do Olimpo."
+ },
+ {
+  "deus": "atena",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Nasceu da cabeça de Zeus, armada e adulta."
+ },
+ {
+  "deus": "ares",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Filho de Zeus e Hera, o furor da guerra."
+ },
+ {
+  "deus": "apolo",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Filho de Zeus, o sol e a lira."
+ },
+ {
+  "deus": "hermes",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Filho de Zeus e seu mensageiro entre os mundos."
+ },
+ {
+  "deus": "demeter",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Irmã de Zeus, senhora da colheita."
+ },
+ {
+  "deus": "dionisio",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Filho de Zeus, nascido duas vezes."
+ },
+ {
+  "deus": "afrodite",
+  "panteao": "Grega",
+  "companheiro": "ares",
+  "motivo": "Amantes — a beleza e a guerra atadas."
+ },
+ {
+  "deus": "perseu",
+  "panteao": "Grega",
+  "companheiro": "atena",
+  "motivo": "Foi Atena quem lhe deu o escudo espelhado."
+ },
+ {
+  "deus": "orfeu",
+  "panteao": "Grega",
+  "companheiro": "apolo",
+  "motivo": "Apolo lhe deu a lira que amansa o Submundo."
+ },
+ {
+  "deus": "erinias",
+  "panteao": "Grega",
+  "companheiro": "cerberus",
+  "motivo": "As Fúrias e o cão dividem o mesmo portão."
+ },
+ {
+  "deus": "hercules",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Filho de Zeus, provado nos doze trabalhos."
+ },
+ {
+  "deus": "aquiles",
+  "panteao": "Grega",
+  "companheiro": "hera",
+  "motivo": "A guerra de Troia foi a vingança dela."
+ },
+ {
+  "deus": "hades",
+  "panteao": "Grega",
+  "companheiro": "cerberus",
+  "motivo": "Só se chega ao senhor do Submundo pelo cão que o guarda."
+ },
+ {
+  "deus": "poseidon",
+  "panteao": "Grega",
+  "companheiro": "zeus",
+  "motivo": "Irmãos que dividiram o mundo: o céu e o mar."
+ },
+ {
+  "deus": "kraken",
+  "panteao": "Grega",
+  "companheiro": "poseidon",
+  "motivo": "A fera que o senhor dos mares solta contra as frotas."
+ },
+ {
+  "deus": "heimdall",
+  "panteao": "Nórdica",
+  "companheiro": null,
+  "motivo": "O sentinela vê o viajante chegar antes de todos."
+ },
+ {
+  "deus": "bragi",
+  "panteao": "Nórdica",
+  "companheiro": null,
+  "motivo": "O poeta canta nos salões antes de a guerra vir."
+ },
+ {
+  "deus": "thor",
+  "panteao": "Nórdica",
+  "companheiro": "tyr",
+  "motivo": "Dois deuses de guerra; Tyr deu a mão, Thor dá o martelo."
+ },
+ {
+  "deus": "loki",
+  "panteao": "Nórdica",
+  "companheiro": "thor",
+  "motivo": "Companheiro de estrada de Thor em toda viagem."
+ },
+ {
+  "deus": "freyja",
+  "panteao": "Nórdica",
+  "companheiro": "tyr",
+  "motivo": "A senhora do Fólkvangr recolhe metade dos caídos em batalha."
+ },
+ {
+  "deus": "baldur",
+  "panteao": "Nórdica",
+  "companheiro": "freyja",
+  "motivo": "A luz de Ásgard chorada por toda deusa."
+ },
+ {
+  "deus": "mimir",
+  "panteao": "Nórdica",
+  "companheiro": "heimdall",
+  "motivo": "A cabeça no poço e o olho do sentinela: os dois vigias."
+ },
+ {
+  "deus": "hel",
+  "panteao": "Nórdica",
+  "companheiro": "loki",
+  "motivo": "Filha de Loki, senhora dos mortos."
+ },
+ {
+  "deus": "fenrir",
+  "panteao": "Nórdica",
+  "companheiro": "tyr",
+  "motivo": "Foi a mão de Tyr que o lobo arrancou."
+ },
+ {
+  "deus": "jormungandr",
+  "panteao": "Nórdica",
+  "companheiro": "thor",
+  "motivo": "A serpente que Thor pescou e que o mata no Ragnarök."
+ },
+ {
+  "deus": "ymir",
+  "panteao": "Nórdica",
+  "companheiro": "tyr",
+  "motivo": "Do gigante primevo se fez o mundo que os deuses herdaram."
+ },
+ {
+  "deus": "odin",
+  "panteao": "Nórdica",
+  "companheiro": "mimir",
+  "motivo": "Deu o olho no poço de Mímir pela sabedoria."
+ },
+ {
+  "deus": "bastet",
+  "panteao": "Egípcia",
+  "companheiro": null,
+  "motivo": "A gata guarda a casa antes de o templo existir."
+ },
+ {
+  "deus": "babi",
+  "panteao": "Egípcia",
+  "companheiro": null,
+  "motivo": "O babuíno vigia as margens do Nilo."
+ },
+ {
+  "deus": "anubis",
+  "panteao": "Egípcia",
+  "companheiro": "sobek",
+  "motivo": "Os dois pesam o que o rio devolve."
+ },
+ {
+  "deus": "ammit",
+  "panteao": "Egípcia",
+  "companheiro": "anubis",
+  "motivo": "Devora o coração que Anúbis reprova na balança."
+ },
+ {
+  "deus": "osiris",
+  "panteao": "Egípcia",
+  "companheiro": "anubis",
+  "motivo": "Anúbis é seu filho e o guia dos seus mortos."
+ },
+ {
+  "deus": "isis",
+  "panteao": "Egípcia",
+  "companheiro": "osiris",
+  "motivo": "Remontou o corpo do marido pedaço por pedaço."
+ },
+ {
+  "deus": "horus",
+  "panteao": "Egípcia",
+  "companheiro": "isis",
+  "motivo": "Filho de Ísis e Osíris, vingador do pai."
+ },
+ {
+  "deus": "ra",
+  "panteao": "Egípcia",
+  "companheiro": "horus",
+  "motivo": "O falcão do sol e o sol se confundem no mesmo céu."
+ },
+ {
+  "deus": "mnevis",
+  "panteao": "Egípcia",
+  "companheiro": "ra",
+  "motivo": "O touro sagrado carrega o disco solar de Rá."
+ },
+ {
+  "deus": "khnum",
+  "panteao": "Egípcia",
+  "companheiro": "isis",
+  "motivo": "Modela no torno os corpos que Ísis cura."
+ },
+ {
+  "deus": "khonshu",
+  "panteao": "Egípcia",
+  "companheiro": "ra",
+  "motivo": "A lua que atravessa o céu quando o sol se deita."
+ },
+ {
+  "deus": "bennu",
+  "panteao": "Egípcia",
+  "companheiro": "ra",
+  "motivo": "A garça que renasce no fogo do sol."
+ },
+ {
+  "deus": "nefertem",
+  "panteao": "Egípcia",
+  "companheiro": "ra",
+  "motivo": "O lótus que abre ao amanhecer, primeiro perfume do sol."
+ },
+ {
+  "deus": "raijin",
+  "panteao": "Japonesa",
+  "companheiro": "fujin",
+  "motivo": "Trovão e vento: os dois sopram juntos na tempestade."
+ },
+ {
+  "deus": "kitsune",
+  "panteao": "Japonesa",
+  "companheiro": null,
+  "motivo": "A raposa anda pelos campos antes de qualquer santuário."
+ },
+ {
+  "deus": "tanuki",
+  "panteao": "Japonesa",
+  "companheiro": "kitsune",
+  "motivo": "Os dois trapaceiros de pelo que trocam de forma."
+ },
+ {
+  "deus": "inari",
+  "panteao": "Japonesa",
+  "companheiro": "kitsune",
+  "motivo": "A raposa é a mensageira de Inari nos arrozais."
+ },
+ {
+  "deus": "susanoo",
+  "panteao": "Japonesa",
+  "companheiro": "fujin",
+  "motivo": "O deus da tempestade governa o vento que Fujin carrega."
+ },
+ {
+  "deus": "amaterasu",
+  "panteao": "Japonesa",
+  "companheiro": "susanoo",
+  "motivo": "A irmã que se trancou na caverna fugindo dele."
+ },
+ {
+  "deus": "tsukuyomi",
+  "panteao": "Japonesa",
+  "companheiro": "amaterasu",
+  "motivo": "O irmão-lua que ela expulsou do céu diurno."
+ },
+ {
+  "deus": "izanagi",
+  "panteao": "Japonesa",
+  "companheiro": "amaterasu",
+  "motivo": "Pai de Amaterasu, nascida quando ele lavou o olho."
+ },
+ {
+  "deus": "izanami",
+  "panteao": "Japonesa",
+  "companheiro": "izanagi",
+  "motivo": "Marido e mulher que fizeram as ilhas e se separaram na morte."
+ },
+ {
+  "deus": "kagutsuchi",
+  "panteao": "Japonesa",
+  "companheiro": "izanami",
+  "motivo": "O fogo que matou a mãe ao nascer."
+ },
+ {
+  "deus": "oni",
+  "panteao": "Japonesa",
+  "companheiro": "raijin",
+  "motivo": "Os demônios do trovão que batem nos tambores."
+ },
+ {
+  "deus": "shutendoji",
+  "panteao": "Japonesa",
+  "companheiro": "oni",
+  "motivo": "O rei dos oni no monte Ōe."
+ },
+ {
+  "deus": "yamatotakeru",
+  "panteao": "Japonesa",
+  "companheiro": "susanoo",
+  "motivo": "Empunha a espada que Susanoo tirou da serpente."
+ },
+ {
+  "deus": "aokuang",
+  "panteao": "Chinesa",
+  "companheiro": "nezha",
+  "motivo": "Nezha matou o filho do Rei Dragão e o enfrentou no mar."
+ },
+ {
+  "deus": "houyi",
+  "panteao": "Chinesa",
+  "companheiro": null,
+  "motivo": "O arqueiro derrubou nove sóis antes de haver corte celeste."
+ },
+ {
+  "deus": "change",
+  "panteao": "Chinesa",
+  "companheiro": "houyi",
+  "motivo": "Bebeu o elixir do marido e subiu à lua."
+ },
+ {
+  "deus": "sunwukong",
+  "panteao": "Chinesa",
+  "companheiro": "aokuang",
+  "motivo": "Tomou o bastão no palácio do Rei Dragão."
+ },
+ {
+  "deus": "guanyu",
+  "panteao": "Chinesa",
+  "companheiro": "nezha",
+  "motivo": "Dois generais de lança que a China divinizou."
+ },
+ {
+  "deus": "nuwa",
+  "panteao": "Chinesa",
+  "companheiro": "houyi",
+  "motivo": "Remendou o céu que os sóis rasgaram."
+ },
+ {
+  "deus": "yanwong",
+  "panteao": "Chinesa",
+  "companheiro": "nuwa",
+  "motivo": "Julga os mortos do mundo que Nüwa moldou."
+ },
+ {
+  "deus": "huangdi",
+  "panteao": "Chinesa",
+  "companheiro": "guanyu",
+  "motivo": "O Imperador Amarelo comanda os generais do céu."
+ },
+ {
+  "deus": "shiva",
+  "panteao": "Hindu",
+  "companheiro": "ganesha",
+  "motivo": "Pai de Ganesha — foi ele que lhe deu a cabeça de elefante."
+ },
+ {
+  "deus": "durga",
+  "panteao": "Hindu",
+  "companheiro": "shiva",
+  "motivo": "A guerreira nasce da fúria reunida dos deuses de Shiva."
+ },
+ {
+  "deus": "kali",
+  "panteao": "Hindu",
+  "companheiro": "durga",
+  "motivo": "Saiu da testa de Durga em plena batalha."
+ },
+ {
+  "deus": "vishnu",
+  "panteao": "Hindu",
+  "companheiro": "ganesha",
+  "motivo": "O preservador ao lado do removedor de obstáculos."
+ },
+ {
+  "deus": "krishna",
+  "panteao": "Hindu",
+  "companheiro": "vishnu",
+  "motivo": "Oitavo avatar de Vishnu, o auriga de Arjuna."
+ },
+ {
+  "deus": "hanuman",
+  "panteao": "Hindu",
+  "companheiro": "krishna",
+  "motivo": "Serve o avatar de Vishnu com devoção absoluta."
+ },
+ {
+  "deus": "brahma",
+  "panteao": "Hindu",
+  "companheiro": "vishnu",
+  "motivo": "Criador e preservador, dois da Trimúrti."
+ },
+ {
+  "deus": "saci",
+  "panteao": "Brasileira",
+  "companheiro": "cuca",
+  "motivo": "Os dois assombram a mesma mata do folclore."
+ },
+ {
+  "deus": "curupira",
+  "panteao": "Brasileira",
+  "companheiro": "saci",
+  "motivo": "Guardiões da mata com o mesmo gosto por confundir."
+ },
+ {
+  "deus": "boitata",
+  "panteao": "Brasileira",
+  "companheiro": "curupira",
+  "motivo": "A cobra de fogo e o guardião protegem o mesmo mato."
+ },
+ {
+  "deus": "iara",
+  "panteao": "Brasileira",
+  "companheiro": "cuca",
+  "motivo": "Duas senhoras da água que levam quem se aproxima."
+ },
+ {
+  "deus": "boto",
+  "panteao": "Brasileira",
+  "companheiro": "iara",
+  "motivo": "Os dois encantam nas águas do rio."
+ },
+ {
+  "deus": "piranha",
+  "panteao": "Brasileira",
+  "companheiro": "boto",
+  "motivo": "O mesmo rio, o dente e o encanto."
+ },
+ {
+  "deus": "mulasemcabeca",
+  "panteao": "Brasileira",
+  "companheiro": "saci",
+  "motivo": "Assombração de estrada como o redemoinho."
+ },
+ {
+  "deus": "xango",
+  "panteao": "Africana",
+  "companheiro": "ogum",
+  "motivo": "Irmãos de guerra: o ferro e o trovão."
+ },
+ {
+  "deus": "iansa",
+  "panteao": "Africana",
+  "companheiro": "xango",
+  "motivo": "Esposa de Xangô, o vento que abre caminho ao raio."
+ },
+ {
+  "deus": "exu",
+  "panteao": "Africana",
+  "companheiro": "ogum",
+  "motivo": "Abre os caminhos que o ferro de Ogum trilha."
+ },
+ {
+  "deus": "oxum",
+  "panteao": "Africana",
+  "companheiro": "iansa",
+  "motivo": "Águas doces e ventos: as duas senhoras do rio."
+ },
+ {
+  "deus": "oxala",
+  "panteao": "Africana",
+  "companheiro": "exu",
+  "motivo": "Nada se pede a Oxalá sem passar por Exu primeiro."
+ },
+ {
+  "deus": "dagda",
+  "panteao": "Celta",
+  "companheiro": "brigid",
+  "motivo": "Pai de Brigid, o dono do caldeirão que não esvazia."
+ },
+ {
+  "deus": "lugh",
+  "panteao": "Celta",
+  "companheiro": "dagda",
+  "motivo": "Neto do Dagda, mestre de todo ofício."
+ },
+ {
+  "deus": "morrigan",
+  "panteao": "Celta",
+  "companheiro": "dagda",
+  "motivo": "Encontrou o Dagda no vau antes da batalha."
+ },
+ {
+  "deus": "cernunnos",
+  "panteao": "Celta",
+  "companheiro": "morrigan",
+  "motivo": "O senhor da mata e a corva da guerra dividem a floresta."
+ },
+ {
+  "deus": "itzamna",
+  "panteao": "Egípcia",
+  "companheiro": "ra",
+  "motivo": "Dois deuses-sol criadores: para alcançar o céu maia, domine outro sol."
+ },
+ {
+  "deus": "chaac",
+  "panteao": "Maia",
+  "companheiro": "itzamna",
+  "motivo": "A chuva serve o céu que Itzamná sustenta."
+ },
+ {
+  "deus": "ahpuch",
+  "panteao": "Maia",
+  "companheiro": "chaac",
+  "motivo": "A seca e a morte vêm quando a chuva falha."
+ },
+ {
+  "deus": "kukulkan",
+  "panteao": "Maia",
+  "companheiro": "itzamna",
+  "motivo": "A serpente emplumada desce do céu de Itzamná."
+ }
+]

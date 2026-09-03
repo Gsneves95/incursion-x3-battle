@@ -1,22 +1,25 @@
 'use strict';
-// FASE 6 / §229 — O CONTADOR DA MISSÃO, no SERVIDOR (ao lado do ranque). Conta SÓ PvP (§228). Aplicado
-// UMA vez no fim da partida PvP, lido do st.log AUTORITATIVO — o cliente NÃO manda progresso.
+// FASE 6 / §230-§231 — O CONTADOR DA MISSÃO, no SERVIDOR (ao lado do ranque). Conta SÓ PvP (§228).
+// Aplicado UMA vez no fim da partida PvP, lido do st.log AUTORITATIVO — o cliente NÃO manda progresso.
 //
-// O LEDGER (por conta, em contas): vitoriasPvP[deus], sequenciaPvP[deus] (reset na derrota), paresPvP
-// [par] (cadeias), feitos[deus] (o acumulador-assinatura), liberados[deus] (a missão cumprida).
+// O REQUISITO (§230, correção do dono): VOLUME por PANTEÃO + SEGUIDAS com o COMPANHEIRO temático — tudo
+// com deuses que o jogador JÁ TEM (nunca com o deus a liberar). O contador de vitórias por panteão e a
+// sequência por companheiro resolvem o desbloqueio; o feito-por-habilidade saiu do caminho crítico.
 //
-// O FEITO é lido do log como a Fase 2 lê (§Fase 2): as fontes que o motor JÁ emite (dano/cura/dot/
-// contador/orbe/queda/revive/efeito). Aqui contam ENTRE partidas, não dentro. Atribuição por VARREDURA
-// do log seguindo o LADO ATIVO (turno.lado) e o ATOR (acao.origem/slot): o proativo (dano/cura/…) vai
-// ao lado ativo; o reativo (reflexo/intercepta/absorve) ao lado que DEFENDE. Resolve o espelho (mesma
-// key nos dois times): a key não basta, o lado-ativo-no-momento decide.
+// O LEDGER (por conta, em contas): vitoriasPanteaoPvP[panteão] (o volume — conta a vitória por CADA
+// panteão presente no time vencedor), sequenciaPvP[deus] (reset na derrota — para as "seguidas com o
+// companheiro"), vitoriasPvP[deus] e feitos[deus] (MAESTRIA/futuro, §230, fora do gate), liberados[deus].
+//
+// O FEITO (medir) segue lido do log como a Fase 2 lê — mas agora serve à MAESTRIA, não ao desbloqueio.
+// Atribuição por VARREDURA do log pelo LADO ATIVO (turno.lado) + ATOR (acao.origem/slot): o proativo vai
+// ao lado ativo, o reativo (reflexo/intercepta/absorve) ao lado que DEFENDE — resolve o espelho.
 
 const fs = require('fs');
 const path = require('path');
 const FAM = require('../src/missoes_familias.js');
 const contas = require('./contas.js');
 
-const DOC = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'missoes.json'), 'utf8')); } catch (e) { return { versao: 0, gate: {}, iniciais: [], missoes: {} }; } })();
+const DOC = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'missoes.json'), 'utf8')); } catch (e) { return { versao: 0, iniciais: [], panteaoDe: {}, missoes: {} }; } })();
 const GODS = FAM._carregarDeuses();
 
 // tipos de efeito que TIRAM O TURNO (controle) e fx que ARRANCAM vantagem (remove-buff) — espelham o
@@ -75,37 +78,15 @@ function medir(st, time0, time1) {
   return acc;
 }
 
-// -------- avaliar se a missão de um deus está CUMPRIDA, dado o ledger + a faixa da conta --------
-function _faixaOrdemChave(chave, RANQ) { const fx = (RANQ && RANQ.faixas) || []; return fx.findIndex(f => f.chave === chave); }
-// portão: a faixa da conta tem de estar em ordem >= a faixa-chave do portão (lida de data/ranqueado.json).
-function _passaPortao(m, faixaChaveConta, RANQ) {
-  if (!m.gate) return true;
-  const need = _faixaOrdemChave(m.gate, RANQ), have = _faixaOrdemChave(faixaChaveConta, RANQ);
-  return have >= 0 && need >= 0 && have >= need;
-}
-
+// -------- avaliar se a missão de um deus está CUMPRIDA, dado o ledger (§230: VOLUME + COMPANHEIRO,
+// tudo com deuses que o jogador JÁ TEM; nada de feito no gate, nada de portão de faixa) --------
 function missaoCumprida(m, led, ctx) {
-  // 1) prereq: todos os prereqs liberados (ou iniciais). Odin: 2+ Nórdicos POSSUÍDOS.
-  const temDeus = (k) => ctx.iniciais.includes(k) || (led.liberados && led.liberados[k]);
-  if (m.especial && m.especial.nordicos) {
-    if ((ctx.nordicosPossuidos || 0) < m.especial.nordicos) return false;
-  } else {
-    for (const p of (m.prereq || [])) if (!temDeus(p)) return false;
-  }
-  // 2) vitórias com um dos prereqs (ou, p/ S/SS sem prereq-deus, com o próprio caminho): usamos as
-  //    vitórias acumuladas com QUALQUER prereq. Cadeia por par: paresPvP[par].
-  const alvoVit = m.vitorias || 0;
-  let vit = 0;
-  if (m.chain && m.especial && m.especial.nordicos) vit = Math.max(0, ...Object.keys(led.vitoriasPvP || {}).filter(k => GODS[k] && GODS[k].faccao === 'Nórdica').map(k => led.vitoriasPvP[k] || 0));
-  else if (m.prereq && m.prereq.length) vit = Math.max(0, ...m.prereq.map(p => (led.vitoriasPvP || {})[p] || 0));
-  else vit = Math.max(0, ...Object.values(led.vitoriasPvP || {}));
-  if (vit < alvoVit) return false;
-  // 3) seguidas (SS): sequência com um prereq
-  if (m.seguidas) { const seq = m.prereq && m.prereq.length ? Math.max(0, ...m.prereq.map(p => (led.sequenciaPvP || {})[p] || 0)) : Math.max(0, ...Object.values(led.sequenciaPvP || {})); if (seq < m.seguidas) return false; }
-  // 4) portão de faixa
-  if (!_passaPortao(m, ctx.faixaChave, ctx.RANQ)) return false;
-  // 5) o FEITO: o acumulador da assinatura do deus atingiu o alvo
-  const fe = m.feito; if (fe && fe.alvo != null) { if (((led.feitos || {})[m.key] || 0) < fe.alvo) return false; }
+  // 1) COMPANHEIRO (temático) POSSUÍDO — só se chega ao Hades pelo Cérbero. Um inicial já é possuído.
+  if (m.companheiro && !(ctx.iniciais.includes(m.companheiro) || (led.liberados && led.liberados[m.companheiro]))) return false;
+  // 2) VOLUME: vitórias PvP com o PANTEÃO EXIGIDO (conta uma vitória por panteão presente no time).
+  if (((led.vitoriasPanteaoPvP || {})[m.panteao] || 0) < (m.vitoriasPanteao || 0)) return false;
+  // 3) SEGUIDAS com o companheiro (só S/SS têm >0): sequência de vitórias com o companheiro no time.
+  if (m.seguidasCompanheiro && m.companheiro) { if (((led.sequenciaPvP || {})[m.companheiro] || 0) < m.seguidasCompanheiro) return false; }
   return true;
 }
 
@@ -115,19 +96,21 @@ function missaoCumprida(m, led, ctx) {
 // nem por mensagem, nem por desconexão (abandono = derrota, o log fecha), nem por partida inacabada
 // (sem st.fim, nem entra aqui). --------
 function _garante(led) {
+  led.vitoriasPanteaoPvP = led.vitoriasPanteaoPvP || {};
   led.vitoriasPvP = led.vitoriasPvP || {}; led.sequenciaPvP = led.sequenciaPvP || {};
   led.paresPvP = led.paresPvP || {}; led.feitos = led.feitos || {}; led.liberados = led.liberados || {};
   return led;
 }
 function _parKey(a, b) { return [a, b].sort().join('+'); }
+// o panteão de MEMBRESIA de uma key (facção real normalizada) — do doc gerado, com fallback local.
+function _panteaoDe(k) { return (DOC.panteaoDe && DOC.panteaoDe[k]) || (GODS[k] && (GODS[k].faccao === 'Olímpica' ? 'Grega' : GODS[k].faccao)) || null; }
 
 function registrarPvP(sala) {
   const st = sala && sala.P && sala.P.st;
   if (!st || !st.fim) return null;                       // inacabada: nada
   const venc = (st.fim.lado === 0 || st.fim.lado === 1) ? st.fim.lado : null;
   const time = [sala.time0.slice(), sala.time1.slice()];
-  const feitosPorLado = medir(st, sala.time0, sala.time1);
-  const RANQ = contas.RANQ;
+  const feitosPorLado = medir(st, sala.time0, sala.time1);   // MAESTRIA (§230), fora do gate
 
   const ids = [sala.participantes[0].contaId, sala.participantes[1].contaId];
   const projecoes = [];
@@ -135,32 +118,32 @@ function registrarPvP(sala) {
     const c = contas._contaPorId(ids[L]); if (!c) { projecoes.push(null); continue; }
     const led = _garante(contas._garantirMissoes(c));
     const meu = time[L], venceu = (venc === L), perdeu = (venc === (1 - L));
-    // 1) vitórias / sequência (reset na derrota) por deus fielded
+    // 1) VOLUME: em VITÓRIA, conta uma vitória por CADA panteão presente no time (o requisito é
+    //    "vitórias com o panteão"). vitórias/sequência por deus também (sequência = "seguidas").
     for (const k of meu) {
       if (venceu) { led.vitoriasPvP[k] = (led.vitoriasPvP[k] || 0) + 1; led.sequenciaPvP[k] = (led.sequenciaPvP[k] || 0) + 1; }
       else if (perdeu) { led.sequenciaPvP[k] = 0; }        // empate técnico não zera nem soma
     }
-    // 2) pares (cadeias) — só em vitória
+    if (venceu) { const pants = new Set(meu.map(_panteaoDe).filter(Boolean)); for (const p of pants) led.vitoriasPanteaoPvP[p] = (led.vitoriasPanteaoPvP[p] || 0) + 1; }
+    // 2) pares (registro histórico; não é mais o gate — §230) e feitos (MAESTRIA): acumulam sempre.
     if (venceu) for (let i = 0; i < meu.length; i++) for (let j = i + 1; j < meu.length; j++) { const pk = _parKey(meu[i], meu[j]); led.paresPvP[pk] = (led.paresPvP[pk] || 0) + 1; }
-    // 3) feitos: acumula a métrica-assinatura de CADA deus fielded (vitória OU derrota — o feito é
-    //    esforço, não resultado). feito[k] soma o total do LADO na métrica da assinatura de k.
     for (const k of meu) { const fam = FAM.assinatura(GODS[k]); const v = (feitosPorLado[L] || {})[fam.metrica] || 0; if (v) led.feitos[k] = (led.feitos[k] || 0) + v; }
-    projecoes.push({ id: c.id, venceu, feitos: feitosPorLado[L] || {} });
+    projecoes.push({ id: c.id, venceu });
   }
-  // 4) liberar as missões cumpridas (progressão) — reavaliação completa, idempotente
-  for (let L = 0; L < 2; L++) { const c = contas._contaPorId(ids[L]); if (c) _liberarCumpridas(c, RANQ); }
+  // 3) liberar as missões cumpridas (progressão) — reavaliação por ponto-fixo, idempotente
+  for (let L = 0; L < 2; L++) { const c = contas._contaPorId(ids[L]); if (c) _liberarCumpridas(c); }
   contas._salvar();
   return { vencedor: venc, projecoes };
 }
 
 // reavalia TODAS as missões da conta e marca liberadas as cumpridas (idempotente; progressão só cresce).
-function _liberarCumpridas(c, RANQ) {
+// PONTO-FIXO: liberar um deus (que vira companheiro/provedor de panteão de outro) pode habilitar o
+// próximo na MESMA passagem — é o que faz o encadeamento Maia (itzamná → chaac/kukulkan → ahpuch) fechar.
+function _liberarCumpridas(c) {
   const led = _garante(contas._garantirMissoes(c));
-  const faixa = contas.faixaDe(c.ranque ? c.ranque.pontos : 0);
-  const nordicosPossuidos = Object.keys((c.perfil && c.perfil.deuses) || {}).filter(k => GODS[k] && GODS[k].faccao === 'Nórdica').length;
-  const ctx = { iniciais: DOC.iniciais, faixaChave: faixa.chave, RANQ, nordicosPossuidos };
+  const ctx = { iniciais: DOC.iniciais };
   let mudou = true;
-  while (mudou) {   // ponto-fixo: liberar um deus pode habilitar o prereq de outro na mesma partida
+  while (mudou) {
     mudou = false;
     for (const k of Object.keys(DOC.missoes)) {
       if (led.liberados[k]) continue;
@@ -170,4 +153,4 @@ function _liberarCumpridas(c, RANQ) {
   return led;
 }
 
-module.exports = { DOC, medir, missaoCumprida, registrarPvP, _liberarCumpridas, _passaPortao, GODS };
+module.exports = { DOC, medir, missaoCumprida, registrarPvP, _liberarCumpridas, GODS };

@@ -6,6 +6,44 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §231 — FASE 6 / MISSÕES reconstruídas sobre os requisitos do dono: a árvore por volume+companheiro revalidada por varredura CONTRA OS DADOS (sem ciclo, 91 alcançáveis, Maia confirmado), os volumes calibrados na arena.
+
+Detalhe do §230. O que o código faz agora:
+
+**1. A FONTE é o arquivo do dono (`data/missoes_requisitos.json`, versionado).** As 91, cada uma com panteão exigido + companheiro + motivo. O gerador (`tools/gerar_missoes.js`) NÃO deriva o vínculo (isso é mitologia, §230); só CASA cada uma com a raridade real (o volume) e emite `data/missoes.json`.
+
+**2. MEMBRESIA × EXIGÊNCIA (a distinção que faz o cruzamento funcionar).** Quem PROVÊ o volume de um panteão = a **facção real** do deus (normalizada: Olímpica é Grega). O panteão EXIGIDO por uma missão vem do arquivo e **pode ser cruzado**. Achei 3 cruzamentos: `itzamna` (facção Maia, exige **Egípcia**+ra) — por NECESSIDADE estrutural (Maia não tem inicial); `kraken` (Nórdica, exige Grega) e `exu` (Brasileira, exige Africana) — temáticos, que resolvem sozinhos porque o companheiro (poseidon/ogum) já é do panteão exigido. Só o itzamná é estrutural.
+
+**3. A VARREDURA (§202) contra os dados do repositório — confirmei a validação Python do dono.** (a) DFS de cor nas arestas companheiro→deus: **sem ciclo**. (b) Ponto-fixo dos 9 iniciais: um deus libera quando o companheiro (se houver) é possuído E o panteão exigido tem um PROVEDOR possuído (facção real = o panteão) — **os 91 alcançáveis**. (c) **O CASO MAIA fecha**: sem o cruzamento itzamná→Egípcia, os 4 Maias seriam inalcançáveis (medido: a varredura acusa `INALCANÇÁVEIS` se eu tiro o cruzamento); com ele, itzamná abre, e chaac/kukulkan (companheiro itzamná) e ahpuch (companheiro chaac) descem — a cascata roda no ponto-fixo do servidor numa passagem só.
+
+**4. OS VOLUMES da raridade real, calibrados por FEASIBILIDADE (`tools/calibrar_missoes.js`).** Não há número a inventar (SS 40+5 · S 20+3 · A 15 vêm da raridade); o que se mede é se são ALCANÇÁVEIS. IA-gulosa × gulosa, 4800 partidas: **todo panteão ganha 43–60%** (equilibrado por construção), então o volume implica **A ≈ 25–35 partidas · S ≈ 33–46 · SS ≈ 66–92** — grinding real de topo, **nenhum absurdo**. Desvios (Japonesa mais fraca 43%, Africana mais forte 60%) são sinal leve de balanceamento — o elo com a Fase 4.
+
+**5. O CONTADOR (`server/missoes.js` + `server/contas.js`).** O ledger ganhou `vitoriasPanteaoPvP[panteão]` (o volume: no fim de um PvP vencido, conta +1 por CADA panteão presente no time vencedor) e usa `sequenciaPvP[companheiro]` (as "seguidas", reset na derrota). `missaoCumprida` = companheiro possuído (inicial ou já-liberado) + volume do panteão + seguidas (S/SS). **SEM feito no gate, SEM portão de faixa** (§230). `vitoriasPvP`/`paresPvP`/`feitos` e o leitor `medir` SEGUEM vivos, mas para MAESTRIA/futuro — fora do desbloqueio.
+
+**A GUARDA, de novo (§226/§230):** o cliente não forja — perfil forjado com `missoes:{}` ignorado (o contador vive na conta, não no perfil), partida inacabada não credita, abandono = derrota (sequência reseta, sem volume), idempotente (flag `registrado`), SÓ PvP (PvE credita zero).
+
+**PROVA:** `tests/missoes.test.js` — 38 asserções: varredura (sem ciclo, 91 alcançáveis, Maia), volume por panteão, uma liberação A (saci: cuca+15 Brasileira), a **cascata Maia** (itzamná→chaac/kukulkan→ahpuch num ponto-fixo), SÓ-PvP, a GUARDA, e o leitor de feitos vivo para maestria. **38 suítes verdes.**
+
+## §230 — FASE 6 / MISSÕES, a CORREÇÃO do dono (que a minha pergunta expôs): o feito NÃO se mede no deus a liberar. O requisito é VOLUME + COMPANHEIRO com deuses que o jogador JÁ TEM, e o vínculo é TEMÁTICO, não mecânico.
+
+**A pergunta que fechou a sessão anterior estava certa.** Eu perguntei se o feito de desbloqueio não deveria ser medido no PREREQ (não no alvo), porque **para liberar o Zeus não dá para jogar com o Zeus**. O dono confirmou e corrigiu o desenho:
+
+- **O requisito é sempre com deuses que o jogador JÁ POSSUI.** Nunca com o deus que se quer liberar.
+- **O vínculo com o alvo é TEMÁTICO, não mecânico.** Nenhuma regra descobre que o Cérbero é o cão do Hades, que Tyr perdeu a mão para Fenrir, que Chang'e bebeu o elixir do marido Hou Yi. Isso é MITOLOGIA — o dono escreveu as 91 à mão (`data/missoes_requisitos.json`), cada uma com o motivo. Derivação não faz essa parte; o §229 tentou derivar o vínculo da mecânica e estava no caminho errado para o DESBLOQUEIO.
+
+**A ESTRUTURA de cada requisito (do arquivo do dono):** panteão exigido + companheiro temático (opcional) + o motivo mitológico. **83 das 91 têm companheiro; 8 são só volume** — os portões de entrada de cada mitologia (cerberus/medusa Grega, heimdall/bragi Nórdica, bastet/babi Egípcia, kitsune Japonesa, houyi Chinesa; cada um tem um INICIAL do seu panteão para prover o volume).
+
+**OS VOLUMES vêm da raridade REAL (não de número inventado):**
+- **SS** → 40 vitórias com o panteão + **5 seguidas** com o companheiro.
+- **S** → 20 vitórias com o panteão + **3 seguidas** com o companheiro.
+- **A** → 15 vitórias com o panteão (+ companheiro onde houver, sem "seguidas").
+
+**O ACHADO ESTRUTURAL (do dono, confirmado por mim contra os dados):** o panteão **MAIA não tem deus inicial** — dos 9 iniciais, nenhum é Maia. Então nenhum Maia pode exigir companheiro Maia para ENTRAR (não haveria como prover o volume). Resolvido com **panteão cruzado**: `itzamna` exige panteão **Egípcia** + companheiro `ra` ("dois deuses-sol criadores"; Egípcia tem o inicial Sobek), e os outros 3 Maias (chaac/kukulkan via itzamna, ahpuch via chaac) DESCEM dele — uma vez itzamná liberado, o jogador POSSUI um Maia e o volume Maia passa a existir. **Confirmei: sem esse cruzamento, os 4 Maias seriam inalcançáveis.** Achei ainda mais 2 cruzamentos temáticos no arquivo (`kraken` Nórdica→Grega, `exu` Brasileira→Africana), que resolvem sozinhos porque o companheiro (poseidon/ogum) já é do panteão exigido — o `itzamna` é o único cruzamento por NECESSIDADE ESTRUTURAL.
+
+**O QUE SAI DO CAMINHO CRÍTICO:** o "feito por habilidade nomeada" do §229 **NÃO é mais necessário para o desbloqueio** — o requisito virou volume + companheiro, que o **contador de vitórias por deus/panteão e a sequência por companheiro já resolvem**. O leitor de feitos (`missoes.medir`) **NÃO foi jogado fora**: serve à maestria e a missões futuras; só saiu do gate de liberação. O portão de FAIXA do §229 também saiu (o dono não o incluiu nas regras novas; o volume é o grão).
+
+Detalhe em §231 (a árvore reconstruída, a validação por varredura contra os dados, a calibração).
+
 ## §229 — FASE 6 / MISSÕES: as 91 derivadas da assinatura de cada kit, as 8 cadeias à mão, a árvore validada por varredura (sem ciclo, todos alcançáveis), os alvos calibrados na arena, e a prova de que o cliente não forja.
 
 O §228 registrou a CORREÇÃO e desenhou o contador. Aqui vem o resto, com o código medido.
