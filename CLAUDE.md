@@ -135,6 +135,21 @@ cão do Hades), escrito à mão pelo dono em `data/missoes_requisitos.json` — 
 mecânica NÃO descobre isso. O leitor de "feito por habilidade" (`missoes.medir`) segue
 vivo, mas para MAESTRIA/futuro, fora do gate de liberação.
 
+### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
+
+- **`faccao`** (roster, `data/deuses/*.json`) = **MECÂNICA**: o que os kits contam (a passiva
+  do Odin conta Nórdicos, sinergias, imunidades). Mexer nela MUDA KIT.
+- **`panteao`** (missão, `data/missoes_requisitos.json`) = **TEMÁTICA**: de que mitologia o
+  deus é, para a Provação.
+
+Coincidem em 89 dos 91. **Divergem de propósito em dois: `kraken`** (faccao Nórdica — o
+monstro nórdico que o Odin conta; panteao Grega — Poseidon o solta) e **`exu`** (faccao
+Brasileira; panteao Africana — orixá). **NÃO é bug. NÃO "alinhe".** Trocar `kraken.faccao`
+para casar com a missão o tira da conta de Nórdicos do Odin — rebalanceamento disfarçado de
+conserto de dado; a Provação se ajusta ao deus, nunca o contrário. (O `itzamná` é caso à
+parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PONTE de volume,
+§231, não uma divergência.)
+
 ---
 
 ## INVARIANTES — não quebre sem uma decisão explícita do dono do projeto

@@ -6,6 +6,35 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §233 — FASE 6 / MISSÕES: existem DUAS facções por deus, e medem coisas DIFERENTES. A divergência kraken/exu é LEGÍTIMA — não é bug, não "conserte".
+
+**A distinção (do dono, registrada porque é NOVA e vai voltar):**
+- **`faccao` (roster, `data/deuses/*.json`) = MECÂNICA.** É o que os KITS contam: a passiva do Odin conta Nórdicos (`faccaoConta`, engine §91), sinergias, imunidades. Mexer nela MUDA KIT.
+- **`panteao` (missão, `data/missoes_requisitos.json`) = TEMÁTICA.** É de que mitologia o deus é, para a Provação escolher com que panteão o jogador prova o volume.
+
+**Coincidem em 89 dos 91. Divergem em DOIS, e a divergência é de propósito:**
+- **kraken** — `faccao` **Nórdica** (o Kraken é o monstro nórdico; a passiva do Odin o conta), `panteao` **Grega** (a missão o trata como grego porque é **Poseidon** quem o solta). 
+- **exu** — `faccao` **Brasileira** (a mecânica), `panteao` **Africana** (o tema: orixá, companheiro Ogum).
+
+**Por que ficam como estão (a régua, pela 12ª vez): a Provação se ajusta ao deus, nunca o contrário.** Trocar a `faccao` do kraken para "consertar" a divergência o tiraria da conta de Nórdicos do Odin — **rebalanceamento disfarçado de conserto de dado**. E o exu fica junto mesmo sem efeito de jogo: abrir exceção para o dado "inócuo" PERDE o critério. O `missoes_requisitos.json` do dono JÁ ESTAVA CERTO (kraken=Grega, exu=Africana); a "correção" que se cogitou foi retirada — não havia erro no arquivo, só a leitura de uma divergência legítima como se fosse typo.
+
+**NÃO É BUG. NÃO CONSERTE.** Se daqui a seis meses alguém vir `kraken.faccao === 'Nórdica'` mas a missão exigir Grega e quiser "alinhar", está prestes a mudar o kit do Odin. As duas facções medem coisas diferentes; a divergência é o desenho.
+
+**Nota sobre o itzamná (caso distinto, não confundir):** o itzamná é TEMATICAMENTE Maia (facção Maia = panteão Maia, COINCIDEM). O que a missão dele exige — panteão **Egípcia** — não é a facção temática dele, é a PONTE de volume (§231): Maia não tem inicial, então o volume de entrada se prova com Egípcia. É um terceiro conceito (panteão-de-volume-exigido), estrutural, não uma divergência facção↔tema.
+
+## §232 — FASE 6 / MISSÕES: o PORTÃO DE FAIXA fica FORA, e a razão é a MEDIÇÃO (mudança de posição do dono, não só a decisão).
+
+**A posição mudou, e o motivo é a própria calibração (§231).** O dono queria o portão de faixa para que SS exigisse PROVA contra jogador, não só volume. A calibração mostrou que o VOLUME já faz isso, então o portão vira trava dupla para o mesmo fim.
+
+**Por que o volume já prova habilidade (o que a medição revelou):** SS pede **66–92 partidas de PvP** (feasibilidade, §231) **mais 5 SEGUIDAS com o companheiro**. Cinco vitórias seguidas contra gente real **É** o teste de habilidade — quem não sabe jogar não emplaca cinco. O portão de faixa mediria a MESMA competência uma segunda vez.
+
+**Por que o portão seria pior que redundante — seria injusto:**
+- **Trava dupla arbitrária:** fazer 80 partidas, ganhar as 5 seguidas, e ainda ficar preso por faixa é punir duas vezes o mesmo esforço.
+- **Tranca permanente para o colecionador:** quem perde mais do que ganha **nunca chega a Oráculo** por mais que jogue — o volume ele alcança (é cumulativo), a faixa não (é classificatória). O portão trancaria os SS **para sempre** para quem joga por COLEÇÃO em vez de por COMPETIÇÃO.
+- **O jogo tem DOIS ranques de propósito** (§226 ranqueado × missões): são competências diferentes. Amarrar a progressão de coleção (missão) à classificação competitiva (faixa) funde o que foi separado por desenho.
+
+**Decisão:** o desbloqueio de missão é **volume + companheiro**, ponto — sem portão de faixa. A "prova contra jogador" que o dono queria mora nas 5/3 SEGUIDAS com o companheiro, medida e suficiente. (O código do §230/§231 já não tinha o portão; aqui fica o MOTIVO da mudança de posição, a pedido.)
+
 ## §231 — FASE 6 / MISSÕES reconstruídas sobre os requisitos do dono: a árvore por volume+companheiro revalidada por varredura CONTRA OS DADOS (sem ciclo, 91 alcançáveis, Maia confirmado), os volumes calibrados na arena.
 
 Detalhe do §230. O que o código faz agora:
