@@ -1,0 +1,15 @@
+# Render Blueprint — publica o SERVIDOR do Incursion (§237). Plano GRATUITO, para testar com amigos.
+# O Render lê este arquivo ao conectar o repositório e configura tudo sozinho:
+#   - build: instala as dependências (npm install)
+#   - start: monta o dist e sobe o servidor (npm start = build + node server/server.js)
+#   - PORT vem do Render (o servidor lê process.env.PORT); HOST fica 0.0.0.0 (padrão) → acessível
+#   - health check em "/" (o servidor responde o jogo ali) → o Render sabe que subiu
+# O plano gratuito DORME após ~15 min sem uso; a primeira visita depois disso espera ~30s e reativa.
+services:
+  - type: web
+    name: incursion-servidor
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /

@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §237 — PUBLICAR O SERVIDOR (Render, gratuito): pronto para deploy (PORT do ambiente, npm start, render.yaml), WSS verificado por teste (a classe §209/§236), o que se perde declarado, e o limite do teste. Servidor primeiro; o APK depois aponta para ele.
+
+O dono escolheu **Render, plano gratuito** (publica do GitHub, sem cartão, suporta WebSocket; dorme após 15 min e acorda em ~30s — aceitável para amigos). Vercel/Netlify descartados por ele (serverless, sem conexão persistente). Eu NÃO escolhi provedor — a escolha é dele; eu preparo o que ele pediu.
+
+**1. O que mudei para o Render subir o projeto, e por quê:**
+   - **`PORT` do ambiente — já estava** (`Number(process.env.PORT) || 8788`, desde F5.0). O Render injeta a porta; o servidor a lê. Nada a mudar.
+   - **`HOST` 0.0.0.0 — já estava** (§236). O Render exige escutar em todas as interfaces; o padrão já é esse.
+   - **`npm start` (NOVO):** `node tools/build.js && node server/server.js`. O Render, no fluxo manual, roda `npm start` por padrão — então `start` MONTA o dist e sobe, e funciona mesmo se o dono não configurar o Build Command. (O `dist/` é gerado, não versionado; por isso o start constrói.)
+   - **`render.yaml` (NOVO):** blueprint que o Render lê ao conectar o repo — `buildCommand: npm install`, `startCommand: npm start`, `plan: free`, `healthCheckPath: /` (o servidor responde o jogo em `/`, então é um health check válido). Torna a publicação declarativa: o dono clica, não digita comando.
+   - **`engines.node >=18`:** fixa uma versão de Node compatível no Render.
+   - **Nada no motor, nada de segurança afrouxada.** Token + handshake de protocolo intactos.
+
+**2. WSS VERIFICADO — a classe de bug §209/§236 (funciona local, quebra publicado), fechada por teste.** O Render serve HTTPS, então o WebSocket TEM de ser WSS. O cliente (`criarTransporteWS`, desde F5.1) já deriva o protocolo da ORIGEM: `loc.protocol === 'https:' ? 'wss://' : 'ws://') + loc.host`. Não estava fixo em `ws://`. **Provei em vez de confiar:** `tests/wss.test.js` carrega o dist numa origem `http://` e numa `https://`, planta um WebSocket-espião e confirma `ws://` local e **`wss://` em produção**, sempre no host da página. Como o servidor serve o cliente E o WS na mesma origem, abrir `https://…onrender.com` resolve o WSS sozinho — o dono não configura nada.
+
+**3. O QUE SE PERDE (declarado para o dono avisar os amigos).** Disco temporário no gratuito: **cada novo deploy** (e possivelmente o dormir/acordar) apaga o que o servidor guardou — contas, apelido, ranque/temporada, **progresso de missão (vitórias por panteão, sequências, deuses conquistados)**, telemetria. NÃO se perde: o jogo e os 9 iniciais (nascem com a conta; o conteúdo vem no cliente). Dá para testar tudo DENTRO de uma rodada; o progresso não sobrevive a republicar. **Para persistir de verdade** (lançamento, não agora): um banco gerenciado (Postgres do Render, ou disco pago) + reescrever a camada de contas (hoje `server/dados/contas.json` em disco) para gravar nele.
+
+**4. O ROTEIRO (`PUBLICAR-RENDER.md`), à prova de erro de quem nunca publicou.** Explica o que é variável de ambiente; conta que PORT/HTTPS/WSS/config já estão prontos; os cliques (New+ → Blueprint, ou Web Service manual com os comandos exatos); **escolher o branch `claude/naruto-arena-mobile-game-2sk7rg`** (é onde o trabalho está); esperar o deploy virar **Live**; achar o endereço `…onrender.com`; testar sozinho (duas abas pareando) antes de chamar; a checklist de "funcionou"; e o que fazer se falhar.
+
+**5. O LIMITE.** Dorme/acorda (~30s na 1ª visita — dica: o dono abre primeiro, depois chama); servidor pequeno (poucos amigos, não carga); progresso zera a cada deploy; é o jogo no NAVEGADOR (o APK é a PRÓXIMA etapa, apontando para este endereço — não feito agora, a pedido).
+
+**PROVA:** `tests/wss.test.js` (4 asserções, ws/wss por origem); **42 suítes verdes**. `render.yaml` + `npm start` + `engines` no repo. APK NÃO feito (a pedido): só o servidor, para o dono publicar e confirmar o PvP público antes.
+
 ## §236 — TESTE NA REDE LOCAL: o servidor acessível na Wi-Fi, o cliente achando-o sozinho, o LOBBY do PvP (a porta que faltava), e o roteiro à prova de erro. Sem escolher provedor, sem enfraquecer segurança.
 
 O dono quer testar TUDO no celular com gente de verdade — inclusive PvP. O Pages serve só o cliente; o servidor roda na máquina dele. Deixei pronto para o teste local, e achei (e fechei) a lacuna que estouraria na frente das pessoas.
