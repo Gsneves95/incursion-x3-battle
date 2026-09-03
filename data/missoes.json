@@ -1,0 +1,2146 @@
+{
+ "versao": 1,
+ "nota": "Gerado por tools/gerar_missoes.js a partir de data/deuses + data/raridades. Alvos dos feitos calibrados por tools/calibrar_missoes.js. Portões lidos de data/ranqueado.json por CHAVE.",
+ "gate": {
+  "S": "iniciado",
+  "SS": "oraculo"
+ },
+ "iniciais": [
+  "zeus",
+  "ogum",
+  "tyr",
+  "sobek",
+  "brigid",
+  "ganesha",
+  "cuca",
+  "fujin",
+  "nezha"
+ ],
+ "missoes": {
+  "afrodite": {
+   "key": "afrodite",
+   "nome": "Afrodite",
+   "raridade": "S",
+   "camada": null,
+   "familia": "controle",
+   "prereq": [
+    "ahpuch"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Paixão Fatal",
+    "slot": "milagre",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 4.11
+   }
+  },
+  "ahpuch": {
+   "key": "ahpuch",
+   "nome": "Ah Puch",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "anti-revive",
+   "prereq": [
+    "chaac"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "revivesNegados",
+    "habilidade": "Senhor da Morte",
+    "slot": "passiva",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.02,
+    "slotMorto": true
+   }
+  },
+  "amaterasu": {
+   "key": "amaterasu",
+   "nome": "Amaterasu",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "campo",
+   "prereq": [
+    "izanami"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "turnosCampo",
+    "habilidade": "Amanhecer",
+    "slot": "habilidade",
+    "alvo": 5,
+    "calibrado": true,
+    "perMatch": 1.01
+   }
+  },
+  "ammit": {
+   "key": "ammit",
+   "nome": "Ammit",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "execucao",
+   "prereq": [
+    "babi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Devorar a Alma",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.1
+   }
+  },
+  "anubis": {
+   "key": "anubis",
+   "nome": "Anúbis",
+   "raridade": "S",
+   "camada": null,
+   "familia": "anti-revive",
+   "prereq": [
+    "ammit"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "revivesNegados",
+    "habilidade": "Pesador de Almas",
+    "slot": "passiva",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.01,
+    "slotMorto": true
+   }
+  },
+  "aokuang": {
+   "key": "aokuang",
+   "nome": "Ao Kuang",
+   "raridade": "S",
+   "camada": null,
+   "familia": "controle",
+   "prereq": [
+    "guanyu"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Fúria do Dragão do Mar",
+    "slot": "milagre",
+    "alvo": 10,
+    "calibrado": true,
+    "perMatch": 2.04
+   }
+  },
+  "apolo": {
+   "key": "apolo",
+   "nome": "Apolo",
+   "raridade": "S",
+   "camada": null,
+   "familia": "cura",
+   "prereq": [
+    "ammit"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Alvorada Radiante",
+    "slot": "milagre",
+    "alvo": 775,
+    "calibrado": true,
+    "perMatch": 157.36
+   }
+  },
+  "aquiles": {
+   "key": "aquiles",
+   "nome": "Aquiles",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dano",
+   "prereq": [
+    "zeus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Fúria de Aquiles",
+    "slot": "milagre",
+    "alvo": 1950,
+    "calibrado": true,
+    "perMatch": 385.66
+   }
+  },
+  "ares": {
+   "key": "ares",
+   "nome": "Ares",
+   "raridade": "S",
+   "camada": null,
+   "familia": "cura",
+   "prereq": [
+    "cerberus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Golpe Sanguinário",
+    "slot": "basico",
+    "alvo": 300,
+    "calibrado": true,
+    "perMatch": 61.48
+   }
+  },
+  "atena": {
+   "key": "atena",
+   "nome": "Atena",
+   "raridade": "S",
+   "camada": null,
+   "familia": "reflexo",
+   "prereq": [
+    "dionisio"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Égide",
+    "slot": "habilidade",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0,
+    "slotMorto": true
+   }
+  },
+  "babi": {
+   "key": "babi",
+   "nome": "Babi",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "sobek"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Rugido Aterrorizante",
+    "slot": "habilidade",
+    "alvo": 4,
+    "calibrado": true,
+    "perMatch": 0.87
+   }
+  },
+  "baldur": {
+   "key": "baldur",
+   "nome": "Baldur",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "tyr"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Luz Purificadora",
+    "slot": "habilidade",
+    "alvo": 575,
+    "calibrado": true,
+    "perMatch": 117.16
+   }
+  },
+  "bastet": {
+   "key": "bastet",
+   "nome": "Bastet",
+   "raridade": "S",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "khnum"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Sete Vidas",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.11
+   }
+  },
+  "bennu": {
+   "key": "bennu",
+   "nome": "Bennu",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "sobek"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Renascer das Cinzas",
+    "slot": "milagre",
+    "alvo": 950,
+    "calibrado": true,
+    "perMatch": 191
+   }
+  },
+  "boitata": {
+   "key": "boitata",
+   "nome": "Boitatá",
+   "raridade": "S",
+   "camada": null,
+   "familia": "area",
+   "prereq": [
+    "curupira"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoArea",
+    "habilidade": "Cobra de Fogo",
+    "slot": "milagre",
+    "alvo": 625,
+    "calibrado": true,
+    "perMatch": 126
+   }
+  },
+  "boto": {
+   "key": "boto",
+   "nome": "Boto",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "cuca"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Festa de São João",
+    "slot": "milagre",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 4.28
+   }
+  },
+  "bragi": {
+   "key": "bragi",
+   "nome": "Bragi",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dano",
+   "prereq": [
+    "tyr"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Verso Cortante",
+    "slot": "basico",
+    "alvo": 1700,
+    "calibrado": true,
+    "perMatch": 339.55
+   }
+  },
+  "brahma": {
+   "key": "brahma",
+   "nome": "Brahma",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "cura",
+   "prereq": [
+    "durga"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Sopro da Criação",
+    "slot": "milagre",
+    "alvo": 275,
+    "calibrado": true,
+    "perMatch": 52.92
+   }
+  },
+  "cerberus": {
+   "key": "cerberus",
+   "nome": "Cérberus",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "anti-revive",
+   "prereq": [
+    "aquiles"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "revivesNegados",
+    "habilidade": "Corrente do Submundo",
+    "slot": "passiva",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.01,
+    "slotMorto": true
+   }
+  },
+  "cernunnos": {
+   "key": "cernunnos",
+   "nome": "Cernunnos",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "reflexo",
+   "prereq": [
+    "aquiles"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Fúria da Matilha",
+    "slot": "habilidade",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0.07,
+    "slotMorto": true
+   }
+  },
+  "chaac": {
+   "key": "chaac",
+   "nome": "Chaac",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "brigid"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Tempestade de Raios",
+    "slot": "milagre",
+    "alvo": 10,
+    "calibrado": true,
+    "perMatch": 2.18
+   }
+  },
+  "change": {
+   "key": "change",
+   "nome": "Chang'e",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "houyi"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Luz do Jade",
+    "slot": "milagre",
+    "alvo": 875,
+    "calibrado": true,
+    "perMatch": 172.99
+   }
+  },
+  "curupira": {
+   "key": "curupira",
+   "nome": "Curupira",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "intercepta",
+   "prereq": [
+    "boto"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "interceptacoes",
+    "habilidade": "Pés Virados",
+    "slot": "habilidade",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.03,
+    "slotMorto": true
+   }
+  },
+  "dagda": {
+   "key": "dagda",
+   "nome": "Dagda",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "remove-buff",
+   "prereq": [
+    "lugh"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "buffsRemovidos",
+    "habilidade": "Harpa Uaithne",
+    "slot": "milagre",
+    "alvo": 5,
+    "calibrado": true,
+    "perMatch": 1.03
+   }
+  },
+  "demeter": {
+   "key": "demeter",
+   "nome": "Deméter",
+   "raridade": "S",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "medusa"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Estação Eterna",
+    "slot": "milagre",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.56
+   }
+  },
+  "dionisio": {
+   "key": "dionisio",
+   "nome": "Dionísio",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "erinias"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Delírio",
+    "slot": "habilidade",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.02,
+    "slotMorto": true
+   }
+  },
+  "durga": {
+   "key": "durga",
+   "nome": "Durga",
+   "raridade": "S",
+   "camada": null,
+   "familia": "controle",
+   "prereq": [
+    "hanuman"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Fim de Mahishasura",
+    "slot": "milagre",
+    "alvo": 15,
+    "calibrado": true,
+    "perMatch": 3.02
+   }
+  },
+  "erinias": {
+   "key": "erinias",
+   "nome": "Erínias",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dano",
+   "prereq": [
+    "zeus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Julgamento das Fúrias",
+    "slot": "milagre",
+    "alvo": 1550,
+    "calibrado": true,
+    "perMatch": 312.46
+   }
+  },
+  "exu": {
+   "key": "exu",
+   "nome": "Exu",
+   "raridade": "S",
+   "camada": null,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "saci"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Encruzilhada",
+    "slot": "milagre",
+    "alvo": 5,
+    "calibrado": true,
+    "perMatch": 0.9
+   }
+  },
+  "fenrir": {
+   "key": "fenrir",
+   "nome": "Fenrir",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "execucao",
+   "prereq": [
+    "baldur"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Fauces do Fim",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.2
+   }
+  },
+  "freyja": {
+   "key": "freyja",
+   "nome": "Freyja",
+   "raridade": "S",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "fenrir"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Salão dos Caídos",
+    "slot": "milagre",
+    "alvo": 2,
+    "calibrado": true,
+    "perMatch": 0.44
+   }
+  },
+  "guanyu": {
+   "key": "guanyu",
+   "nome": "Guan Yu",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "reflexo",
+   "prereq": [
+    "change"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Juramento do Pêssego",
+    "slot": "habilidade",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0,
+    "slotMorto": true
+   }
+  },
+  "hades": {
+   "key": "hades",
+   "nome": "Hades",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "ares"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Portões do Submundo",
+    "slot": "milagre",
+    "alvo": 4,
+    "calibrado": true,
+    "perMatch": 0.86
+   }
+  },
+  "hanuman": {
+   "key": "hanuman",
+   "nome": "Hanuman",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "intercepta",
+   "prereq": [
+    "sunwukong"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "interceptacoes",
+    "habilidade": "Devoção a Rama",
+    "slot": "habilidade",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.05,
+    "slotMorto": true
+   }
+  },
+  "heimdall": {
+   "key": "heimdall",
+   "nome": "Heimdall",
+   "raridade": "S",
+   "camada": null,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "mimir"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Sentinela",
+    "slot": "passiva",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.11,
+    "slotMorto": true
+   }
+  },
+  "hel": {
+   "key": "hel",
+   "nome": "Hel",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dot",
+   "prereq": [
+    "tyr"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDot",
+    "habilidade": "Domínio de Helheim",
+    "slot": "habilidade",
+    "alvo": 65,
+    "calibrado": true,
+    "perMatch": 13.12
+   }
+  },
+  "hera": {
+   "key": "hera",
+   "nome": "Hera",
+   "raridade": "S",
+   "camada": null,
+   "familia": "cura",
+   "prereq": [
+    "perseu"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Rainha Ciumenta",
+    "slot": "passiva",
+    "alvo": 275,
+    "calibrado": true,
+    "perMatch": 57.36
+   }
+  },
+  "hercules": {
+   "key": "hercules",
+   "nome": "Hércules",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dano",
+   "prereq": [
+    "zeus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Força Sobre-humana",
+    "slot": "milagre",
+    "alvo": 1700,
+    "calibrado": true,
+    "perMatch": 344.35
+   }
+  },
+  "hermes": {
+   "key": "hermes",
+   "nome": "Hermes",
+   "raridade": "S",
+   "camada": null,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "cerberus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Roubo Divino",
+    "slot": "milagre",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.03,
+    "slotMorto": true
+   }
+  },
+  "horus": {
+   "key": "horus",
+   "nome": "Hórus",
+   "raridade": "S",
+   "camada": null,
+   "familia": "dano",
+   "prereq": [
+    "khonshu"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Mergulho do Falcão",
+    "slot": "milagre",
+    "alvo": 1700,
+    "calibrado": true,
+    "perMatch": 336.14
+   }
+  },
+  "houyi": {
+   "key": "houyi",
+   "nome": "Hou Yi",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "campo",
+   "prereq": [
+    "babi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "turnosCampo",
+    "habilidade": "Abater o Sol",
+    "slot": "habilidade",
+    "alvo": 2,
+    "calibrado": true,
+    "perMatch": 0.03,
+    "slotMorto": true
+   }
+  },
+  "huangdi": {
+   "key": "huangdi",
+   "nome": "Huang Di",
+   "raridade": "S",
+   "camada": null,
+   "familia": "dano",
+   "prereq": [
+    "houyi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Espada Xuanyuan",
+    "slot": "basico",
+    "alvo": 1850,
+    "calibrado": true,
+    "perMatch": 365.81
+   }
+  },
+  "iansa": {
+   "key": "iansa",
+   "nome": "Iansã",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "anti-revive",
+   "prereq": [
+    "oxum"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "revivesNegados",
+    "habilidade": "Corisco",
+    "slot": "passiva",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.01,
+    "slotMorto": true
+   }
+  },
+  "iara": {
+   "key": "iara",
+   "nome": "Iara",
+   "raridade": "S",
+   "camada": null,
+   "familia": "execucao",
+   "prereq": [
+    "curupira"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Afogamento",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.17
+   }
+  },
+  "inari": {
+   "key": "inari",
+   "nome": "Inari",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "kitsune"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Bênção das Mil Portas",
+    "slot": "milagre",
+    "alvo": 625,
+    "calibrado": true,
+    "perMatch": 126.88
+   }
+  },
+  "isis": {
+   "key": "isis",
+   "nome": "Ísis",
+   "raridade": "S",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "osiris"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Ressurreição de Osíris",
+    "slot": "milagre",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.57
+   }
+  },
+  "itzamna": {
+   "key": "itzamna",
+   "nome": "Itzamná",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "kukulkan"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Aurora da Criação",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.06,
+    "slotMorto": true
+   }
+  },
+  "izanagi": {
+   "key": "izanagi",
+   "nome": "Izanagi",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "absorve",
+   "prereq": [
+    "raijin"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoAbsorvido",
+    "habilidade": "Criação das Ilhas",
+    "slot": "milagre",
+    "alvo": 175,
+    "calibrado": true,
+    "perMatch": 36.63
+   }
+  },
+  "izanami": {
+   "key": "izanami",
+   "nome": "Izanami",
+   "raridade": "S",
+   "camada": null,
+   "familia": "execucao",
+   "prereq": [
+    "kitsune"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Portal de Yomotsu",
+    "slot": "milagre",
+    "alvo": 2,
+    "calibrado": true,
+    "perMatch": 0.33
+   }
+  },
+  "jormungandr": {
+   "key": "jormungandr",
+   "nome": "Jörmungandr",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dot",
+   "prereq": [
+    "tyr"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDot",
+    "habilidade": "Anel do Mundo",
+    "slot": "habilidade",
+    "alvo": 400,
+    "calibrado": true,
+    "perMatch": 78.63
+   }
+  },
+  "kagutsuchi": {
+   "key": "kagutsuchi",
+   "nome": "Kagutsuchi",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dot",
+   "prereq": [
+    "fujin"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDot",
+    "habilidade": "Nascimento em Chamas",
+    "slot": "milagre",
+    "alvo": 650,
+    "calibrado": true,
+    "perMatch": 127.53
+   }
+  },
+  "kali": {
+   "key": "kali",
+   "nome": "Kali",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "area",
+   "prereq": [
+    "ganesha"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoArea",
+    "habilidade": "Dança da Aniquilação",
+    "slot": "milagre",
+    "alvo": 650,
+    "calibrado": true,
+    "perMatch": 129
+   }
+  },
+  "khnum": {
+   "key": "khnum",
+   "nome": "Khnum",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "intercepta",
+   "prereq": [
+    "bennu"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "interceptacoes",
+    "habilidade": "Couraça de Barro",
+    "slot": "habilidade",
+    "alvo": 15,
+    "calibrado": true,
+    "perMatch": 2.69
+   }
+  },
+  "khonshu": {
+   "key": "khonshu",
+   "nome": "Khonshu",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "reflexo",
+   "prereq": [
+    "nefertem"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Guardião dos Viajantes",
+    "slot": "passiva",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0.03,
+    "slotMorto": true
+   }
+  },
+  "kitsune": {
+   "key": "kitsune",
+   "nome": "Kitsune",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "intercepta",
+   "prereq": [
+    "kagutsuchi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "interceptacoes",
+    "habilidade": "Ilusão da Raposa",
+    "slot": "habilidade",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.09,
+    "slotMorto": true
+   }
+  },
+  "kraken": {
+   "key": "kraken",
+   "nome": "Kraken",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "tyr"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Agarre Abissal",
+    "slot": "habilidade",
+    "alvo": 9,
+    "calibrado": true,
+    "perMatch": 1.79
+   }
+  },
+  "krishna": {
+   "key": "krishna",
+   "nome": "Krishna",
+   "raridade": "S",
+   "camada": null,
+   "familia": "dano",
+   "prereq": [
+    "hanuman"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Flauta Divina",
+    "slot": "basico",
+    "alvo": 1800,
+    "calibrado": true,
+    "perMatch": 364.69
+   }
+  },
+  "kukulkan": {
+   "key": "kukulkan",
+   "nome": "Kukulkán",
+   "raridade": "S",
+   "camada": null,
+   "familia": "area",
+   "prereq": [
+    "ahpuch"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoArea",
+    "habilidade": "Estrela da Manhã",
+    "slot": "milagre",
+    "alvo": 600,
+    "calibrado": true,
+    "perMatch": 120.35
+   }
+  },
+  "loki": {
+   "key": "loki",
+   "nome": "Loki",
+   "raridade": "S",
+   "camada": null,
+   "familia": "intercepta",
+   "prereq": [
+    "ymir"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "interceptacoes",
+    "habilidade": "Ilusão",
+    "slot": "habilidade",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.08,
+    "slotMorto": true
+   }
+  },
+  "lugh": {
+   "key": "lugh",
+   "nome": "Lugh",
+   "raridade": "S",
+   "camada": null,
+   "familia": "execucao",
+   "prereq": [
+    "cernunnos"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Funda de Balor",
+    "slot": "milagre",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.12
+   }
+  },
+  "medusa": {
+   "key": "medusa",
+   "nome": "Medusa",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "contador",
+   "prereq": [
+    "hercules"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "contadoresGanhos",
+    "habilidade": "Face da Górgona",
+    "slot": "milagre",
+    "alvo": 10,
+    "calibrado": true,
+    "perMatch": 2.25
+   }
+  },
+  "mimir": {
+   "key": "mimir",
+   "nome": "Mimir",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "bragi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Conselho do Poço",
+    "slot": "habilidade",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.06,
+    "slotMorto": true
+   }
+  },
+  "mnevis": {
+   "key": "mnevis",
+   "nome": "Mnevis",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "reflexo",
+   "prereq": [
+    "ra"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Fúria do Touro de Rá",
+    "slot": "milagre",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0.67,
+    "slotMorto": true
+   }
+  },
+  "morrigan": {
+   "key": "morrigan",
+   "nome": "Morrigan",
+   "raridade": "S",
+   "camada": null,
+   "familia": "controle",
+   "prereq": [
+    "cernunnos"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "As Três Irmãs",
+    "slot": "milagre",
+    "alvo": 10,
+    "calibrado": true,
+    "perMatch": 2.44
+   }
+  },
+  "mulasemcabeca": {
+   "key": "mulasemcabeca",
+   "nome": "Mula sem Cabeça",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "cuca"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Relincho Infernal",
+    "slot": "milagre",
+    "alvo": 8,
+    "calibrado": true,
+    "perMatch": 1.63
+   }
+  },
+  "nefertem": {
+   "key": "nefertem",
+   "nome": "Nefertem",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "sobek"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Desabrochar da Aurora",
+    "slot": "milagre",
+    "alvo": 1050,
+    "calibrado": true,
+    "perMatch": 213.8
+   }
+  },
+  "nuwa": {
+   "key": "nuwa",
+   "nome": "Nüwa",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "absorve",
+   "prereq": [
+    "aokuang"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoAbsorvido",
+    "habilidade": "Remendar o Céu",
+    "slot": "milagre",
+    "alvo": 175,
+    "calibrado": true,
+    "perMatch": 33.78
+   }
+  },
+  "odin": {
+   "key": "odin",
+   "nome": "Odin",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "dano",
+   "prereq": [],
+   "chain": true,
+   "especial": {
+    "nordicos": 2
+   },
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Gungnir",
+    "slot": "basico",
+    "alvo": 1650,
+    "calibrado": true,
+    "perMatch": 327.9
+   }
+  },
+  "oni": {
+   "key": "oni",
+   "nome": "Oni",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "fujin"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Investida Brutal",
+    "slot": "habilidade",
+    "alvo": 10,
+    "calibrado": true,
+    "perMatch": 2.03
+   }
+  },
+  "orfeu": {
+   "key": "orfeu",
+   "nome": "Orfeu",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "controle",
+   "prereq": [
+    "zeus"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Canção Órfica",
+    "slot": "habilidade",
+    "alvo": 9,
+    "calibrado": true,
+    "perMatch": 1.73
+   }
+  },
+  "osiris": {
+   "key": "osiris",
+   "nome": "Osíris",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "revive",
+   "prereq": [
+    "anubis"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "revives",
+    "habilidade": "Tribunal do Duat",
+    "slot": "milagre",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.51
+   }
+  },
+  "oxala": {
+   "key": "oxala",
+   "nome": "Oxalá",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "absorve",
+   "prereq": [
+    "xango"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoAbsorvido",
+    "habilidade": "Manto Branco",
+    "slot": "milagre",
+    "alvo": 150,
+    "calibrado": true,
+    "perMatch": 29.18
+   }
+  },
+  "oxum": {
+   "key": "oxum",
+   "nome": "Oxum",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "cura",
+   "prereq": [
+    "ogum"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "curaFeita",
+    "habilidade": "Rio de Ouro",
+    "slot": "milagre",
+    "alvo": 825,
+    "calibrado": true,
+    "perMatch": 166.78
+   }
+  },
+  "perseu": {
+   "key": "perseu",
+   "nome": "Perseu",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "reflexo",
+   "prereq": [
+    "medusa"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Espelho de Bronze",
+    "slot": "passiva",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0,
+    "slotMorto": true
+   }
+  },
+  "piranha": {
+   "key": "piranha",
+   "nome": "Piranha",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dot",
+   "prereq": [
+    "cuca"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDot",
+    "habilidade": "Mordidas",
+    "slot": "basico",
+    "alvo": 150,
+    "calibrado": true,
+    "perMatch": 31.74
+   }
+  },
+  "poseidon": {
+   "key": "poseidon",
+   "nome": "Poseidon",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "area",
+   "prereq": [
+    "atena"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoArea",
+    "habilidade": "Maremoto",
+    "slot": "milagre",
+    "alvo": 800,
+    "calibrado": true,
+    "perMatch": 157.51
+   }
+  },
+  "ra": {
+   "key": "ra",
+   "nome": "Rá",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "contador",
+   "prereq": [
+    "bastet"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "contadoresGanhos",
+    "habilidade": "Aurora Divina",
+    "slot": "habilidade",
+    "alvo": 55,
+    "calibrado": true,
+    "perMatch": 10.75
+   }
+  },
+  "raijin": {
+   "key": "raijin",
+   "nome": "Raijin",
+   "raridade": "S",
+   "camada": null,
+   "familia": "reflexo",
+   "prereq": [
+    "fujin"
+   ],
+   "chain": true,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoRefletido",
+    "habilidade": "Ritmo do Trovão",
+    "slot": "passiva",
+    "alvo": 20,
+    "calibrado": true,
+    "perMatch": 0,
+    "slotMorto": true
+   }
+  },
+  "saci": {
+   "key": "saci",
+   "nome": "Saci",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "mulasemcabeca"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Travessura Maior",
+    "slot": "milagre",
+    "alvo": 5,
+    "calibrado": true,
+    "perMatch": 0.99
+   }
+  },
+  "shiva": {
+   "key": "shiva",
+   "nome": "Shiva",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "area",
+   "prereq": [
+    "krishna"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "danoArea",
+    "habilidade": "Tandava",
+    "slot": "habilidade",
+    "alvo": 550,
+    "calibrado": true,
+    "perMatch": 111.34
+   }
+  },
+  "shutendoji": {
+   "key": "shutendoji",
+   "nome": "Shuten Dōji",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "roubo-de-orbe",
+   "prereq": [
+    "kagutsuchi"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "orbesRoubados",
+    "habilidade": "Banquete de Ōe",
+    "slot": "milagre",
+    "alvo": 3,
+    "calibrado": true,
+    "perMatch": 0.08,
+    "slotMorto": true
+   }
+  },
+  "sunwukong": {
+   "key": "sunwukong",
+   "nome": "Sun Wukong",
+   "raridade": "S",
+   "camada": null,
+   "familia": "dano",
+   "prereq": [
+    "yanwong"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Fios de Cabelo",
+    "slot": "habilidade",
+    "alvo": 1900,
+    "calibrado": true,
+    "perMatch": 376.61
+   }
+  },
+  "susanoo": {
+   "key": "susanoo",
+   "nome": "Susanoo",
+   "raridade": "S",
+   "camada": null,
+   "familia": "remove-buff",
+   "prereq": [
+    "shutendoji"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "buffsRemovidos",
+    "habilidade": "Corte de Kusanagi",
+    "slot": "basico",
+    "alvo": 15,
+    "calibrado": true,
+    "perMatch": 3.39
+   }
+  },
+  "tanuki": {
+   "key": "tanuki",
+   "nome": "Tanuki",
+   "raridade": "A",
+   "camada": 1,
+   "familia": "dano",
+   "prereq": [
+    "fujin"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 10,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoDireto",
+    "habilidade": "Pancada da Barriga",
+    "slot": "basico",
+    "alvo": 1650,
+    "calibrado": true,
+    "perMatch": 333.36
+   }
+  },
+  "thor": {
+   "key": "thor",
+   "nome": "Thor",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "controle",
+   "prereq": [
+    "freyja"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "controlesAplicados",
+    "habilidade": "Tempestade de Asgard",
+    "slot": "milagre",
+    "alvo": 15,
+    "calibrado": true,
+    "perMatch": 2.96
+   }
+  },
+  "tsukuyomi": {
+   "key": "tsukuyomi",
+   "nome": "Tsukuyomi",
+   "raridade": "S",
+   "camada": null,
+   "familia": "campo",
+   "prereq": [
+    "yamatotakeru"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "turnosCampo",
+    "habilidade": "Anoitecer",
+    "slot": "habilidade",
+    "alvo": 2,
+    "calibrado": true,
+    "perMatch": 0.18,
+    "slotMorto": true
+   }
+  },
+  "vishnu": {
+   "key": "vishnu",
+   "nome": "Vishnu",
+   "raridade": "SS",
+   "camada": null,
+   "familia": "remove-buff",
+   "prereq": [
+    "durga"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 20,
+   "seguidas": 5,
+   "gate": "oraculo",
+   "feito": {
+    "metrica": "buffsRemovidos",
+    "habilidade": "Chakra Sudarshana",
+    "slot": "basico",
+    "alvo": 30,
+    "calibrado": true,
+    "perMatch": 5.83
+   }
+  },
+  "xango": {
+   "key": "xango",
+   "nome": "Xangô",
+   "raridade": "S",
+   "camada": null,
+   "familia": "absorve",
+   "prereq": [
+    "iansa"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": "iniciado",
+   "feito": {
+    "metrica": "danoAbsorvido",
+    "habilidade": "Balança da Justiça",
+    "slot": "habilidade",
+    "alvo": 40,
+    "calibrado": true,
+    "perMatch": 5.53,
+    "slotMorto": true
+   }
+  },
+  "yamatotakeru": {
+   "key": "yamatotakeru",
+   "nome": "Yamato Takeru",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "remove-buff",
+   "prereq": [
+    "oni"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "buffsRemovidos",
+    "habilidade": "Corte Ceifa-Ervas",
+    "slot": "milagre",
+    "alvo": 8,
+    "calibrado": true,
+    "perMatch": 1.67
+   }
+  },
+  "yanwong": {
+   "key": "yanwong",
+   "nome": "Yan Wong",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "execucao",
+   "prereq": [
+    "change"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "execucoes",
+    "habilidade": "Juiz dos Mortos",
+    "slot": "passiva",
+    "alvo": 1,
+    "calibrado": true,
+    "perMatch": 0.01,
+    "slotMorto": true
+   }
+  },
+  "ymir": {
+   "key": "ymir",
+   "nome": "Ymir",
+   "raridade": "A",
+   "camada": 2,
+   "familia": "absorve",
+   "prereq": [
+    "hel"
+   ],
+   "chain": false,
+   "especial": null,
+   "vitorias": 15,
+   "seguidas": 0,
+   "gate": null,
+   "feito": {
+    "metrica": "danoAbsorvido",
+    "habilidade": "Corpo do Mundo",
+    "slot": "milagre",
+    "alvo": 100,
+    "calibrado": true,
+    "perMatch": 20.68
+   }
+  }
+ },
+ "calibracao": {
+  "rodadas": 300,
+  "partidas": 4800,
+  "kPartidas": 5,
+  "quando": "2026-09-03",
+  "slotsMortos": 25
+ }
+}

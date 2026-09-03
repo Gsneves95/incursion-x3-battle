@@ -10,6 +10,7 @@ const partidaCtrl = require('./partida.js');
 const proto = require('./protocol.js');
 const contas = require('./contas.js');
 const telemetria = require('./telemetria.js');
+const missoes = require('./missoes.js');
 
 const _porConta = new Map();   // contaId -> sala (compartilhada pelos participantes)
 const _todas = new Set();
@@ -49,6 +50,9 @@ function finalizarPartida(sala) {
   if (sala.modo === 'pvp' && !sala.registrado) {
     sala.registrado = true;
     telemetria.partida({ time0: sala.time0, time1: sala.time1, vencedor: venc, turnos: sala.P.st.turno, abandono: sala.P.st.fim.motivo === 'abandono' });
+    // MISSÕES (§228): contador de progressão, SÓ PvP, lido do st autoritativo. A ÚNICA porta — o
+    // cliente não manda progresso. Idempotente pelo mesmo flag `registrado` (uma vez por partida).
+    missoes.registrarPvP(sala);
   }
   // PONTOS: só ranqueado, uma vez. Abandono chega como derrota do abandonador — o cliente não influencia.
   if (!sala.ranqueado || sala.pontuado) return sala.resultado;

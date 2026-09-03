@@ -6,6 +6,53 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §229 — FASE 6 / MISSÕES: as 91 derivadas da assinatura de cada kit, as 8 cadeias à mão, a árvore validada por varredura (sem ciclo, todos alcançáveis), os alvos calibrados na arena, e a prova de que o cliente não forja.
+
+O §228 registrou a CORREÇÃO e desenhou o contador. Aqui vem o resto, com o código medido.
+
+**1. O CLASSIFICADOR (`src/missoes_familias.js`) — a assinatura DERIVADA do dado, não do tema.** Varre `data/deuses/*.json` (fx.t, apply.eff.type, campos `executaAbaixoDe`/`roubaOrbe`/`intercepta`/`contador`, gatilhos da passiva) e dá a cada kit UMA das **15 famílias** por PRIORIDADE (a mais rara/distintiva vence; `dano` é o piso): roubo-de-orbe, execução, anti-revive, revive, intercepta, campo, remove-buff, reflexo, absorve, contador, controle, dot, cura, área, dano. E a **habilidade NOMEADA** que a encarna (o milagre > habilidade > básico; passiva quando a assinatura é passiva). Uma só fonte de verdade — gerador, calibrador e servidor leem daqui. Exemplo do dono confirmado: **Apolo → cura / "Alvorada Radiante"**; a família e a habilidade saem do JSON, não de um rótulo. Distribuição das 15: dano 12, controle 16, cura 10, roubo-de-orbe 8, reflexo 7, revive 6, execução 6, remove-buff 6, absorve 5, intercepta 5, área 5, dot 5, anti-revive 4, campo 3, contador 2.
+
+**2. A ÁRVORE (`tools/gerar_missoes.js` → `data/missoes.json`) — DAG por construção, com a raridade real.** Os 91 não-iniciais (A 46 · S 30 · SS 15) recebem: a família+habilidade (o FEITO), o(s) prereq(s), as vitórias/seguidas e o portão. Os A partem em **camada 1** (23, famílias de fundação: dano/cura/dot/controle/área) e **camada 2** (23, o resto). Regras do dono: A1 → 10 vit com um dos 9 INICIAIS + o feito; A2 → 15 vit com um da camada 1 + o feito; S → 15 + o feito · portão **Iniciado**; SS → 20 + **5 seguidas** · portão **Oráculo**. Os portões leem a faixa por **CHAVE** de `data/ranqueado.json` (§226), não literal — robusto a reordenar as faixas. O **prereq default só aponta p/ rank ESTRITAMENTE menor** (iniciais<A1<A2<S<SS) → nunca fecha ciclo.
+
+**3. AS 8 CADEIAS À MÃO (sobrescrevem o prereq default).** X→Y = "Y destrava X"; em 5 das 7 a passiva de X NOMEIA Y: **perseu→medusa · isis→osiris · mnevis→ra · raijin→fujin (inicial, "de graça") · inari→kitsune · change→houyi · hanuman→sunwukong**. E **odin exige 2+ Nórdicos no time** (especial, ligado ao Nórdico-raiz Tyr para a alcançabilidade). Um laço pode cruzar ranks (isis S ← osiris SS); o gerador EXCLUI do pool default quem já depende de k por cadeia, então nem o laço nem o round-robin fecham ciclo.
+
+**4. A VALIDAÇÃO POR VARREDURA (§202), não por leitura.** `validar()` faz DFS de cor (detecta ciclo) e BFS dos 9 iniciais (alcançabilidade) sobre as arestas prereq→alvo. **PROVADO:** 91 missões, **ZERO ciclo**, **os 91 alcançáveis a partir dos 9 iniciais**. Roda no gerador (falha alto) e no teste.
+
+**5. OS ALVOS DOS FEITOS CALIBRADOS NA ARENA (`tools/calibrar_missoes.js`), não chutados.** Roda IA-gulosa × gulosa (o proxy da `tools/arena.js`) e MEDE, com o **mesmo leitor do servidor** (`missoes.medir`), quanto cada deus produz da sua métrica-assinatura por partida; o alvo = o rendimento de ~5 partidas sólidas, arredondado. **O ELO COM A FASE 4 (§189):** 25 dos 91 medem ~0 porque a **IA gulosa NÃO exercita os kits REATIVOS/passivos** (reflexo, anti-revive, intercepta, roubo-de-orbe, campo, e alguns de execução/revive/absorve) — os mesmos "slots mortos" do §189. Esses recebem alvo-PISO e ficam **MARCADOS (`slotMorto`)**: a calibração de F6 CONFIRMA, por medição independente, o diagnóstico de F4. O número real (o dono revisa) sai de `data/missoes.json`; recalibrar é rerodar, sem tocar código.
+
+**6. O CONTADOR NO SERVIDOR (`server/missoes.js` + `server/contas.js`), aplicado no fim da partida PvP (`salas.finalizarPartida`), lido do `st.log` AUTORITATIVO.** O ledger na conta, ao lado do ranque: `vitoriasPvP[deus]`, `sequenciaPvP[deus]` (reset na derrota), `paresPvP[par]` (cadeias), `feitos[deus]` (o acumulador-assinatura), `liberados[deus]`. `medir(st, time0, time1)` VARRE o log seguindo o **lado ATIVO** (turno.lado) e o ATOR (acao.origem/slot): o proativo (dano/cura/orbe/contador) vai ao lado ativo, o reativo (reflexo/intercepta/absorve) ao lado que DEFENDE — o que **resolve o espelho** (mesma key nos dois times: a key não basta, o lado-ativo-no-momento decide; provado no teste). Reusa as fontes que o motor JÁ emite (§Fase 2): aqui contam ENTRE partidas. `controle`/`remove-buff`/`campo` (que o motor não loga na aplicação, §186) são lidos por INTENÇÃO da `acao` + o kit — determinístico, então calibração e progresso batem.
+
+**A GUARDA — o cliente não forja progresso de missão (provado como o ponto no §226):**
+   - **Mensagem forjada:** o contador de missão NÃO está no perfil do cliente; vive na conta (servidor). Um `salvarPerfil` com `missoes:{liberados:{...}}` forjado é IGNORADO (medido: nada liberado).
+   - **Partida inacabada:** enquanto `st.fim` é null, `registrarPvP` retorna null e credita ZERO (medido).
+   - **Desconexão = abandono = derrota:** quem abandona tem a sequência RESETADA e NÃO ganha vitória (medido) — dominado por jogar, como o ponto de ranque (§226/§224).
+   - **Idempotência:** a ÚNICA porta é `registrarPvP`, chamada por `finalizarPartida` sob o flag `registrado` — 3× finalizar = 1 vitória, feito creditado UMA vez (medido).
+   - **Só PvP:** `finalizarPartida` só chama `registrarPvP` se `modo==='pvp'` — uma partida PvE credita ZERO missão (a maestria, cosmética/local §215, é que conta CPU).
+
+**O FEITO É "DO PRÓPRIO DEUS" — a resolução da posse.** O feito que destrava X é a assinatura de X (honra "o feito do próprio deus" + "a habilidade NOMEADA" + o exemplo Apolo≠Orfeu). `feitos[X]` só acumula quando X está no time em PvP; a posse vem da aquisição (o gacha da invocação, ou a própria liberação). A árvore é a estrutura de MAESTRIA/alcançabilidade sobre os deuses possuídos; a prova de alcançabilidade é do GRAFO (arestas prereq), independente do meio de aquisição.
+
+**PROVA:** `tests/missoes.test.js` — árvore validada (sem ciclo, 91 alcançáveis, raridade real, 8 cadeias, habilidade nomeada, portão por chave), `medir` do log com atribuição por lado + espelho, contador (vitória/sequência-reset/pares/feito), SÓ-PvP, uma LIBERAÇÃO completa, a GUARDA (forja/inacabada/abandono/idempotência), e realismo (partida de motor real → feitos mensuráveis). **76 asserções; 38 suítes verdes.**
+
+**NADA DE TELA (a pedido):** nenhuma UI. Só o contador (servidor), a árvore (`data/missoes.json`), o classificador, o calibrador e a prova.
+
+## §228 — FASE 6 / MISSÕES: o contador da missão NÃO é o da maestria (correção do dono, que a Fase 5 produziu). Números diferentes → contadores diferentes; e a missão libera deus (progressão) → o SERVIDOR é o dono, como os pontos (§226).
+
+**A CORREÇÃO, do dono, registrada porque a Fase 5 a produziu.** Antes da Fase 5 o dono instruiu: *"o contador de missão é o mesmo da maestria, não crie um segundo."* Estava certo ENTÃO — só havia CPU, todo jogo era sandbox. Agora não:
+- **A MAESTRIA conta TODA vitória, inclusive contra a CPU** (§215) — sandbox local, cosmética. Segue LOCAL e intacta.
+- **A MISSÃO conta SÓ PvP** — gente de verdade. O PvP existe agora (§223–§226), então a missão nasce com PRODUTOR (§95 satisfeito), e nasce PvP.
+
+São NÚMEROS diferentes (toda-vitória ≠ só-PvP) → logo CONTADORES diferentes. E a missão **libera deus** — isso é PROGRESSÃO, não cosmético — então o **SERVIDOR é o dono do contador de missão**, pelo mesmíssimo motivo dos pontos de ranque (§226): o cliente não pode forjar o que destrava conteúdo. Criar o segundo contador não é ignorar a instrução do dono — é obedecer à sua CORREÇÃO.
+
+**O contador de missão, no servidor, ao lado do ranque (`contas`, aplicado no fim da partida PvP em `salas.finalizarPartida`, como os pontos):**
+- `vitoriasPvP[godKey]` — vitórias PvP com o deus no time.
+- `sequenciaPvP[godKey]` — vitórias PvP seguidas com o deus; **reset na derrota** (para o portão SS "5 seguidas").
+- `paresPvP[parKey]` — vitórias PvP com um PAR de deuses no mesmo time (para as cadeias que exigem dois).
+- `feitos[godKey]` — acumuladores do FEITO-assinatura de cada deus, que leem os eventos que o motor JÁ emite (`queda.slotAbate`, `statusInimigo`, as 11 fontes de acúmulo — §Fase 2), lidos do `st.log` AUTORITATIVO no servidor. A Fase 2 construiu esses leitores para avaliar DENTRO de uma partida; aqui eles contam ENTRE partidas. Nenhum leitor novo no motor.
+
+O resto da Fase 6 (as 91 missões derivadas dos dados, as 8 cadeias, a árvore com raridade real, a validação por varredura, a calibração dos alvos, a prova de não-forja) vem em §229, quando o código existir e for medido.
+
+---
+
 ## §227 — FASE 5 / TELEMETRIA (§22). Contadores AGREGADOS — vitória/uso por deus, uso por slot (nunca-usadas), duração, abandono — SEM nada do jogador. E o elo com a Fase 4. PICK/BAN fica FORA DE ESCOPO por decisão.
 
 **"FAÇA ANTES DE LANÇAR, NÃO DEPOIS" — e a razão é específica deste projeto.** A arena determinística (3200 partidas, IA gulosa) mede o MOTOR, não o jogador. A Fase 4 já anotou 4 slots-mortos SUSPEITOS (§189) — Balança do Xangô, reflexo do Cernunnos, grind do Hércules, roubo do Shutendoji — que a arena com IA Difícil PREVIU em "nunca usadas". A telemetria de gente real é como isso sai de suspeita e vira dado.

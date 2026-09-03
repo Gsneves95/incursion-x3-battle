@@ -62,6 +62,17 @@ function _novoToken() { return crypto.randomBytes(32).toString('base64url'); } /
 // cosmética). cosmeticos = faixas conquistadas em temporadas passadas (status, não moeda).
 function _ranqueZero() { return { pontos: 0, vitorias: 0, derrotas: 0, pico: 0, temporada: 1, cosmeticos: [] }; }
 
+// MISSÕES (F6/§228): o contador de PROGRESSÃO, ao lado do ranque e SEPARADO da maestria (§215, local/
+// cosmética). Só o servidor mexe (missão libera deus). Conta SÓ PvP. Nasce vazio.
+function _missoesZero() { return { vitoriasPvP: {}, sequenciaPvP: {}, paresPvP: {}, feitos: {}, liberados: {} }; }
+function _garantirMissoes(c) {
+  if (!c.missoes || typeof c.missoes !== 'object') c.missoes = _missoesZero();
+  for (const k of ['vitoriasPvP', 'sequenciaPvP', 'paresPvP', 'feitos', 'liberados']) if (!c.missoes[k] || typeof c.missoes[k] !== 'object') c.missoes[k] = {};
+  return c.missoes;
+}
+// projeção p/ o cliente DESENHAR (o servidor é autoritativo): o ledger + os deuses liberados. Sem token.
+function missoesPublicas(c) { const m = _garantirMissoes(c); return { vitoriasPvP: m.vitoriasPvP, sequenciaPvP: m.sequenciaPvP, feitos: m.feitos, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]) }; }
+
 // FAIXA a partir dos pontos — SÓ o servidor decide (o cliente nunca classifica). A faixa mais alta
 // cujo `min` <= pontos.
 function faixaDe(pontos) {
@@ -138,6 +149,7 @@ function criar({ faixaIdade, perfil, agora } = {}) {
     faixaIdade,                 // 'menor' | 'maior' — nunca a data
     nick: null,                 // reservado: vem só no PvP (F5.3). Ver planoDoNick().
     ranque: _ranqueZero(),      // §221-d: sempre zero, inclusive no perfil migrado
+    missoes: _missoesZero(),    // F6/§228: contador de missão (progressão), só o servidor mexe, só PvP
     perfil: perfilConta,
     criadaEm: quando,
   };
@@ -248,7 +260,7 @@ function validarTime(token, time) {
 // aparelho; e reenviá-lo à toa é vazá-lo em log/rede). Inclui o perfil (ele precisa dele).
 function paraDono(c) {
   if (!c) return null;
-  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), perfil: c.perfil, criadaEm: c.criadaEm };
+  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), perfil: c.perfil, criadaEm: c.criadaEm };
 }
 // publica: o que OUTRO jogador poderá ver (perfil competitivo). Sem token, sem perfil, sem faixa etária.
 // Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
@@ -292,5 +304,6 @@ module.exports = {
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, planoDoNick,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
+  _garantirMissoes, missoesPublicas, _salvar: _persistir,
   _total, _resetParaTeste, _existeToken, _darDeus, _setPontos,
 };

@@ -116,6 +116,19 @@ cliente pode desenhá-la, mas não é o dono dela. O motor determinístico embut
 exceção deliberada (anti-cheat exige o mesmo código nos dois lados); o alvo aqui é
 POLÍTICA (curadoria, tetos, listas), não o motor.
 
+### Maestria e missão são contadores DIFERENTES: cosmético local × progressão no servidor (§228)
+
+Parecem o mesmo número e não são. A **MAESTRIA** conta TODA vitória, inclusive
+contra a CPU (§215) — é cosmética, sandbox, vive LOCAL no perfil. A **MISSÃO** conta
+**SÓ PvP** (gente de verdade) e **LIBERA deus** — isso é PROGRESSÃO, então o
+**SERVIDOR é o dono** do contador (o cliente não pode forjar o que destrava conteúdo,
+pelo mesmo motivo dos pontos de ranque, §226). Números diferentes ⟹ contadores
+diferentes: não funda os dois. O contador de missão nasce vazio na conta (ao lado do
+ranque), só muda em `salas.finalizarPartida` no fim de uma partida PvP, e lê o feito do
+`st.log` autoritativo — nunca de uma mensagem do cliente. (O dono antes dissera "o
+contador de missão é o mesmo da maestria"; a Fase 5, ao criar o PvP, PRODUZIU a
+correção — daí dois contadores, não um.)
+
 ---
 
 ## INVARIANTES — não quebre sem uma decisão explícita do dono do projeto
