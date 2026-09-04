@@ -225,6 +225,34 @@ console.log('== 7. §238: os três estados + tocar-para-ler + histórico agrupad
   console.log('  três estados + tocar-para-ler + histórico agrupado, em sandbox/Provação/Campanha (PvP usa a mesma tela)');
 }
 
+console.log('== 8. §239: moldura une retrato+habilidades; ênfase por turno (turno-eu/eles), nos QUATRO modos ==');
+{
+  const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
+  // MOLDURA (item 5): o retrato E os 4 tiles vivem DENTRO de .brow__unit (a placa que os une); o inimigo
+  // fica FORA dela (irmão), à direita. Geometria (colar, sobrepor, ~710) é medida em moldura.test.js;
+  // aqui garanto a ESTRUTURA que a moldura precisa, e a classe de turno, nos modos que usam a batalha.
+  const modos = {
+    sandbox: "prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=false;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);",
+    'Provação': "prova=PROVACOES.find(p=>p.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);",
+    Campanha: "prova=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);",
+  };
+  for (const [nome, pre] of Object.entries(modos)) {
+    w.eval(`${pre}st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()`);
+    const unit = $('.brow .brow__unit');
+    ok(!!unit, `${nome}: a moldura .brow__unit existe`);
+    ok(!!unit && !!unit.querySelector('.brow__ally .portrait') && !!unit.querySelector('.brow__tiles'),
+      `${nome}: a moldura contém o retrato E as habilidades (une os dois)`);
+    ok(!!unit && unit.parentElement.querySelector(':scope > .brow__enemy'),
+      `${nome}: o inimigo fica FORA da moldura (irmão de .brow__unit, à direita)`);
+    ok($('#baselayer').classList.contains('turno-eu'), `${nome}: na minha vez o baselayer marca turno-eu`);
+  }
+  // ênfase inverte com o turno (a POSIÇÃO não — provado em moldura.test.js): vs CPU no turno dele
+  w.eval("prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=true;IA_LADO=1;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);st.ativo=1;ir('batalha',{},{substituir:true});pararRelogio();render()");
+  ok($('#baselayer').classList.contains('turno-eles'), 'no turno do oponente o baselayer marca turno-eles (ênfase inverte)');
+  ok($$('.brow__tiles .skill.nv-recuo').length === 12, 'e as minhas habilidades recuam (a luz vai para o lado dele)');
+  console.log('  moldura une retrato+habilidades (inimigo fora) em sandbox/Provação/Campanha · turno-eu ⇄ turno-eles');
+}
+
 try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na varredura de render`); process.exit(1); }
 console.log('>>> RENDER-SWEEP OK');

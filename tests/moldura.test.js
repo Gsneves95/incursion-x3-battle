@@ -155,6 +155,72 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await page.evaluate(() => { prova = null; painelRecolhido = false; ir('home', {}, { substituir: true }); render(); });
   }
 
+  // == §239: MOLDURA (item 5) + ênfase que NÃO move (item 4). A placa (.brow__unit) passa por baixo do
+  // retrato E das 4 habilidades, unindo-os; o retrato SOBREPÕE a borda de cima da placa (fica por cima).
+  // As habilidades COLAM no retrato (esquerda), com respiro largo antes do inimigo (não centralizadas).
+  // GUARDA PERMANENTE: a POSIÇÃO das habilidades é IDÊNTICA na minha vez e na do oponente. ==
+  console.log('== geometria (§239): moldura sob o retrato + habilidades coladas + posição imóvel entre turnos ==');
+  {
+    await page.setViewportSize({ width: 926, height: 428 });
+    // limpa a safe-area injetada pela matriz (senão o padding lateral desloca as posições absolutas)
+    await page.evaluate(() => { const s = document.getElementById('safeinject'); if (s) s.remove(); dispatchEvent(new Event('resize')); });
+    const medirFila = () => page.evaluate(() => {
+      const R = el => el.getBoundingClientRect();
+      const brow = document.querySelector('.brow');
+      const unit = brow.querySelector('.brow__unit');
+      const ur = R(unit);
+      const cs = getComputedStyle(unit, '::before');
+      const insetT = parseFloat(cs.top) || 0, insetB = parseFloat(cs.bottom) || 0;
+      const por = R(brow.querySelector('.brow__ally .portrait'));
+      const tiles = [...brow.querySelectorAll('.brow__tiles .skill')].map(R);
+      const enemy = R(brow.querySelector('.brow__enemy .portrait'));
+      const rows = document.querySelector('.rows').getBoundingClientRect();
+      return {
+        unitL: ur.left, unitR: ur.right, plateT: ur.top + insetT, plateB: ur.bottom - insetB,
+        porL: por.left, porR: por.right, porT: por.top, porB: por.bottom,
+        t0L: tiles[0].left, tLastR: tiles[tiles.length - 1].right, nTiles: tiles.length,
+        enemyL: enemy.left, enemyR: enemy.right, rowsR: rows.right,
+      };
+    });
+    const posBattle = (ativo) => page.evaluate((ativo) => {
+      vsCPU = true; IA_LADO = 1; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = ativo;
+      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
+      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false; peekKit = null;
+      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
+    }, ativo);
+
+    await posBattle(0);                 // minha vez (eu = lado 0, CPU = lado 1)
+    const meu = await medirFila();
+    const gap = meu.t0L - meu.porR;      // vão entre o retrato e o 1º tile (colados = pequeno)
+    const respiro = meu.enemyL - meu.tLastR;   // vão até o inimigo (grande, à direita)
+    // moldura passa por baixo do retrato E das habilidades (une os dois)
+    ok(meu.unitL <= meu.porL + EPS, `moldura começa antes do retrato (unit ${Math.round(meu.unitL)} <= retrato ${Math.round(meu.porL)})`);
+    ok(meu.unitR >= meu.tLastR - EPS, `moldura passa atrás da última habilidade (unit ${Math.round(meu.unitR)} >= tile ${Math.round(meu.tLastR)})`);
+    // o retrato SOBREPÕE a borda de cima da placa — fica POR CIMA dela
+    ok(meu.porT < meu.plateT - EPS, `o retrato sobrepõe a borda de cima da placa (retrato ${Math.round(meu.porT)} acima de ${Math.round(meu.plateT)})`);
+    // habilidades COLADAS ao retrato (esquerda), NÃO centralizadas: respiro >> gap
+    ok(gap >= 0 && gap <= 24, `as habilidades colam no retrato (vão ${Math.round(gap)}px <= 24)`);
+    ok(respiro > gap + 30, `há respiro largo antes do inimigo, não centralizado (respiro ${Math.round(respiro)} >> vão ${Math.round(gap)})`);
+    ok(meu.tLastR <= 730, `as 4 habilidades terminam por volta de ~710 (terminaram em ${Math.round(meu.tLastR)} <= 730)`);
+    ok(meu.enemyL > meu.tLastR + 30, `o inimigo continua à direita, sem colidir (inimigo ${Math.round(meu.enemyL)} > tiles ${Math.round(meu.tLastR)})`);
+    console.log(`  moldura ${Math.round(meu.unitL)}..${Math.round(meu.unitR)} sob retrato ${Math.round(meu.porL)}..${Math.round(meu.porR)} + tiles →${Math.round(meu.tLastR)} · retrato pop ${Math.round(meu.plateT - meu.porT)}px acima da placa · vão ${Math.round(gap)} « respiro ${Math.round(respiro)}`);
+
+    await posBattle(1);                 // vez do oponente — a ÊNFASE muda, a POSIÇÃO não
+    const dele = await medirFila();
+    const imovel = ['porL', 'porR', 'porT', 'porB', 't0L', 'tLastR', 'unitL', 'unitR', 'enemyL', 'enemyR']
+      .every(k => Math.abs(meu[k] - dele[k]) < EPS);
+    ok(imovel, `GUARDA PERMANENTE: nada se move entre turnos (minha vez vs vez dele: ` +
+      ['porL', 't0L', 'tLastR', 'enemyL'].map(k => `${k} ${Math.round(meu[k])}/${Math.round(dele[k])}`).join(', ') + ')');
+    // e a ênfase INVERTE: o baselayer marca de quem é a vez (a luz segue a classe, não o layout)
+    const classes = await page.evaluate(() => document.getElementById('baselayer').className);
+    ok(/turno-eles/.test(classes), `no turno do oponente o baselayer marca turno-eles (veio "${classes}")`);
+    await posBattle(0);
+    const c0 = await page.evaluate(() => document.getElementById('baselayer').className);
+    ok(/turno-eu/.test(c0), `na minha vez o baselayer marca turno-eu (veio "${c0}")`);
+    console.log(`  posição imóvel entre turnos (item 4) · ênfase por classe: turno-eu ⇄ turno-eles`);
+    await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
+  }
+
   // == §220: DETALHE do deus — arte quadrada (sem corte feio), nome não coberto, skill ≥76, texto sem rolar ==
   console.log('== geometria (§220): detalhe do deus — arte, nome, toque das skills, texto ==');
   {

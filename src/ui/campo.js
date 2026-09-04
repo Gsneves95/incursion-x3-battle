@@ -50,9 +50,15 @@ function retrato(u,inimigo){
 function filaHTML(a, e){
   // times ASSIMÉTRICOS (campanha: 3×1, 3×2, 0×3): uma banda pode não ter unidade — desenha vazia,
   // mantendo a coluna alinhada por posição sem quebrar em u.hp de unidade indefinida.
+  // §239: aliado + habilidades vivem numa MOLDURA (.brow__unit) — uma placa que passa por baixo do
+  // retrato e se estende atrás dos 4 tiles, unindo-os ("este deus e o que ele pode fazer"). As
+  // habilidades COLAM no retrato (esquerda, sem centralizar). O inimigo fica FORA da moldura, à direita
+  // (§214 o pôs lá para o polegar). A posição não muda com o turno — só a ênfase (item 4).
   return `<div class="brow">
-    <div class="brow__ally">${a?retrato(a,false):''}</div>
-    <div class="brow__tiles">${a?tilesHTML(a):''}</div>
+    <div class="brow__unit">
+      <div class="brow__ally">${a?retrato(a,false):''}</div>
+      <div class="brow__tiles">${a?tilesHTML(a):''}</div>
+    </div>
     <div class="brow__enemy">${e?retrato(e,true):''}</div>
   </div>`;
 }

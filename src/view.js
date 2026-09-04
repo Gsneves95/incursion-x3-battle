@@ -64,6 +64,9 @@ function renderBatalha(){
 
   const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim;
   const cls=[]; if(prova||campanha)cls.push('temhud'); if(painelRecolhido)cls.push('pnfold');
+  // §239 item 4: a ênfase inverte com o turno SEM mover nada — o lado ativo acende. Em hot-seat a tela
+  // gira e o jogador da vez é sempre "eu" (turno-eu); vs CPU/PvP, o turno dele acende o lado dele.
+  cls.push(ehMeuTurno()?'turno-eu':'turno-eles');
   stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   ${topoHTML()}

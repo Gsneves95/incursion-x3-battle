@@ -145,10 +145,35 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* ---------- CORPO (board): painel à esquerda + 3 fileiras ---------- */
 .board{position:absolute;top:46px;left:0;right:0;bottom:86px;display:flex;z-index:2}
 .rows{position:relative;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:0 6px}
-.brow{flex:1 1 0;min-height:0;display:flex;align-items:center}   /* 3 × 112px */
+.brow{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:space-between;position:relative}   /* 3 × 112px */
+/* §239 item 5: a MOLDURA (.brow__unit) — placa emoldurada que UNE o retrato e as 4 habilidades. Ela
+   hugs o conteúdo (retrato + tiles), colada à esquerda; o inimigo fica fora, à direita. A placa é o
+   ::before, INSET no vertical, então mais baixa que o retrato — o retrato (mais alto) SOBREPÕE a borda
+   dela por cima. Profundidade: sombra projetada + borda + anel interno (borda dupla) + leve gradiente. */
+.brow__unit{position:relative;display:flex;align-items:center;flex:0 1 auto;min-width:0;padding:0 12px 0 9px}
+.brow__unit::before{content:"";position:absolute;left:0;right:0;top:9px;bottom:9px;z-index:0;border-radius:13px;
+  background:linear-gradient(180deg,rgba(41,33,68,.62),rgba(15,11,30,.68));
+  border:1px solid var(--gold-soft);
+  box-shadow:0 5px 14px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,217,122,.10),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:border-color .18s,box-shadow .18s}
+.brow__unit>*{position:relative;z-index:1}
 .brow__ally{flex:0 0 102px;display:flex;justify-content:center;align-items:center}
-.brow__tiles{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.brow__tiles{flex:0 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:8px}
 .brow__enemy{flex:0 0 146px;display:flex;justify-content:center;align-items:center}
+/* §239 item 4: a ênfase segue a LUZ, não o movimento. Lado ativo = moldura acesa (ouro); no turno do
+   oponente a moldura apaga e o retrato DELE acende — nada se move. */
+.turno-eu .brow__unit::before{border-color:var(--gold);
+  box-shadow:0 5px 14px rgba(0,0,0,.5),0 0 15px rgba(255,217,122,.20),inset 0 0 0 1px rgba(255,217,122,.20),inset 0 1px 0 rgba(255,255,255,.06)}
+.turno-eles .brow__unit::before{border-color:#40395c;
+  box-shadow:0 4px 11px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04)}
+.turno-eles .up--enemy .portrait{border-color:#ff6b86;
+  box-shadow:0 0 0 1px rgba(255,107,134,.5),0 0 16px rgba(255,74,104,.55),0 3px 9px rgba(0,0,0,.55)}
+/* sinal INEQUÍVOCO de vez (não só texto): a placa do lado ativo pulsa */
+.turno-eu .teamlbl--ally{animation:vezpulse 1.5s ease-in-out infinite}
+.turno-eles .teamlbl--enemy{animation:vezpulse 1.5s ease-in-out infinite}
+@keyframes vezpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,217,122,0)}50%{box-shadow:0 0 11px 2px rgba(255,190,90,.85)}}
+.turno-eles .teamlbl--enemy{animation-name:vezpulseFoe}
+@keyframes vezpulseFoe{0%,100%{box-shadow:0 0 0 0 rgba(255,107,134,0)}50%{box-shadow:0 0 12px 2px rgba(255,90,120,.9)}}
 /* rótulo de time: VOCÊ (ouro) sobre a coluna aliada, o inimigo (vermelho) sobre a dele */
 .teamlbl{position:absolute;top:1px;font-family:'Cinzel',serif;font-weight:800;font-size:10px;
   letter-spacing:.14em;text-transform:uppercase;padding:1px 8px;border-radius:0 0 5px 5px;z-index:2;
