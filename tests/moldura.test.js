@@ -228,16 +228,17 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await ctx.close();
   }
 
-  // == discos de habilidade: a ARTE fica em COR e legível em TODO estado (sat >= piso) ==
-  // A régua da regra do dono "tudo visível": o estado vive na MOLDURA (anel/número/ícone),
-  // a identidade na ARTE. Mede a saturação real do pixel do disco em cada estado; nenhum
-  // pode desaturar a arte (o grayscale antigo do is-off levava a sat a ~18). Não pode voltar
-  // em silêncio: aplica cada CLASSE de estado no mesmo disco de deus e cobra o piso.
-  const PISO_SAT = 30;
-  console.log(`== discos: arte em cor em todo estado (saturação >= ${PISO_SAT}) ==`);
+  // == §238 REVISA §211: TRÊS níveis de estado na ARTE, distinguíveis E reconhecíveis ==
+  // O §211 travava "arte nunca apagada" (sat >= 30, sem filtro). Certo na DIREÇÃO, errado na INTENSIDADE:
+  // o dono, no celular, não distinguia o que podia usar. Agora a arte PESA o estado em três níveis —
+  // pronto > indisponível > recuo — mas nenhum apaga o deus. O guarda foi REVISADO (não apagado): mede o
+  // pixel real e cobra (a) a ORDEM (pronto mais saturado que indisponível, que é mais que recuo) e
+  // (b) o PISO de reconhecimento — todos acima do grayscale antigo (~18), que era o que apagava.
+  // Motivo do número: medido no aparelho (DPR 2), pronto ~55 · indisponível ~37 · recuo ~28; o piso 22
+  // fica acima do apagado ~18 e abaixo do recuo, e as margens separam os três sem ambiguidade.
+  const PISO_RECONHECE = 22;   // §238: abaixo disto a arte "apaga" (o grayscale do §211 dava ~18)
+  console.log(`== §238 discos: três níveis distinguíveis, todos reconhecíveis (sat >= ${PISO_RECONHECE}) ==`);
   {
-    // DPR 2 (o real dos celulares): é onde o grayscale antigo levava a arte a ~18 de sat.
-    // Medir aqui dá margem limpa — arte em cor ~55, grayscale ~18, piso 30 separa os dois.
     const dctx = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 926, height: 428 } });
     const dpg = await dctx.newPage();
     await dpg.goto('file://' + distAbs, { waitUntil: 'load' });
@@ -248,30 +249,15 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       ir('batalha', {}, { substituir: true }); pararRelogio(); render();
     });
     await dpg.waitForFunction(() => { const im = document.querySelector('.skill--habilidade .skill__disc .slot__art'); return im && im.complete && im.naturalWidth > 0; }, { timeout: 6000 }).catch(() => {});
-    const estados = [['disponível', []], ['sem energia', ['is-off']], ['em recarga', ['is-cooldown']], ['travada', ['is-locked']], ['sem alvo', ['is-notarget']]];
-    for (const [nome, classes] of estados) {
-      // filtro COMPUTADO do disco (e do <img> da arte): nenhum estado pode desaturar
-      // (grayscale) nem escurecer a arte (brightness < ~0.85). Determinístico — pega o
-      // grayscale antigo mesmo quando o pixel médio ainda parece alto.
-      await dpg.evaluate((cs) => {
+    async function satDoNivel(nv) {
+      await dpg.evaluate((nv) => {
         const sk = document.querySelector('.skill--habilidade');
-        sk.classList.remove('is-off', 'is-cooldown', 'is-locked', 'is-notarget', 'is-ready');
-        if (cs.length === 0) sk.classList.add('is-ready'); else cs.forEach(c => sk.classList.add(c));
-        const cd = sk.querySelector('.skill__cd'); if (cd && cs.includes('is-cooldown')) cd.textContent = '2';
-      }, classes);
-      await dpg.waitForTimeout(200);   // deixa a transição de .14s assentar antes de ler filtro/pixel
-      const filt = await dpg.evaluate(() => {
-        const disc = document.querySelector('.skill--habilidade .skill__disc');
-        const art = disc.querySelector('.slot__art');
-        return [getComputedStyle(disc).filter, art ? getComputedStyle(art).filter : 'none'].join(' | ');
-      });
-      const cinza = /grayscale\(\s*(0?\.[1-9]|[1-9])/.test(filt);   // grayscale > 0
-      const escuro = (filt.match(/brightness\(\s*([0-9.]+)/g) || []).some(m => parseFloat(m.replace(/brightness\(\s*/, '')) < 0.85);
-      ok(!cinza, `disco "${nome}": tem grayscale na arte (filtro: ${filt})`);
-      ok(!escuro, `disco "${nome}": tem brightness < 0.85 na arte (filtro: ${filt})`);
+        sk.classList.remove('nv-pronto', 'nv-indispon', 'nv-recuo'); sk.classList.add(nv);
+      }, nv);
+      await dpg.waitForTimeout(180);
       const disc = await dpg.$('.skill--habilidade .skill__disc');
       const buf = await disc.screenshot();
-      const sat = await dpg.evaluate(async (url) => {
+      return await dpg.evaluate(async (url) => {
         const img = new Image(); img.src = url; await img.decode();
         const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
         const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
@@ -285,9 +271,16 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
         }
         return Math.round(ss / n * 100);
       }, 'data:image/png;base64,' + buf.toString('base64'));
-      ok(sat >= PISO_SAT, `disco "${nome}": saturação ${sat} < piso ${PISO_SAT} — a arte apagou (grayscale/scrim?)`);
-      console.log(`  ${nome.padEnd(13)} sat ${sat}${sat < PISO_SAT ? '  XX < ' + PISO_SAT : ''}`);
     }
+    const pronto = await satDoNivel('nv-pronto');
+    const indispon = await satDoNivel('nv-indispon');
+    const recuo = await satDoNivel('nv-recuo');
+    console.log(`  ANTES→DEPOIS (§211→§238):  pronto ${pronto}  >  indisponível ${indispon}  >  recuo ${recuo}   (piso reconhece ${PISO_RECONHECE})`);
+    ok(pronto >= 45, `pronto: arte cheia (sat ${pronto} >= 45)`);
+    ok(pronto - indispon >= 8, `indisponível é NITIDAMENTE mais fraco que pronto (${indispon} vs ${pronto})`);
+    ok(indispon - recuo >= 4, `recuo é mais fraco que indisponível (${recuo} vs ${indispon})`);
+    ok(recuo >= PISO_RECONHECE, `recuo AINDA reconhecível (sat ${recuo} >= ${PISO_RECONHECE}, acima do apagado ~18)`);
+    ok(indispon >= PISO_RECONHECE, `indisponível reconhecível (sat ${indispon} >= ${PISO_RECONHECE})`);
     await dctx.close();
   }
 

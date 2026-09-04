@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §238 — FASE 4 / BATALHA, onda FUNCIONAL (§217): o jogador precisa LER o jogo. Três estados na arte (revisa §211), a descrição no rodapé e a lateral só histórico (revisa §214), e TODA habilidade tocável para ler. Nos quatro modos (a mesma tela).
+
+Achados do dono jogando no celular. Vale para TODAS as telas de batalha — Provação, Campanha, Batalha CPU e PvP usam a MESMA `renderBatalha`; consertar num modo só criaria inconsistência. Esta é a onda FUNCIONAL (não consigo LER o jogo); a visual vem depois.
+
+**1. O ESTADO PESA MAIS — e isto REVISA o §211 (o dono mudou de posição, com o motivo).** O §211 mandou "a arte nunca é apagada" (o grayscale total levava a saturação a ~18, e o jogador abria com 9 de 12 discos ilegíveis). Certo na DIREÇÃO, errado na INTENSIDADE: no celular o dono não distinguia o que podia usar. Agora TRÊS níveis na arte (filtro só na `.slot`, os overlays de número/ícone ficam crisp), **medidos no aparelho (DPR 2), com a tabela ANTES→DEPOIS:**
+
+| estado | filtro | saturação | o que é |
+|---|---|---|---|
+| **pronto** | nenhum | **55** | arte cheia + anel aceso (dá para agir) |
+| **indisponível** | `saturate(.62) brightness(.8)` | **37** | a unidade pode agir, esta habilidade não (recarga/energia/travada/sem alvo) — esmaecida mas RECONHECÍVEL |
+| **recuo** | `saturate(.45) brightness(.62)` | **28** | a unidade INTEIRA já agiu / não é a vez — o nível mais fraco, ainda reconhecível |
+
+O **guarda do §211 foi REVISADO, não apagado** (`tests/moldura.test.js`): antes travava "sat ≥ 30, sem filtro"; agora cobra a **ORDEM** (pronto > indisponível > recuo, com margens) e o **PISO de reconhecimento** (todos ≥ 22, acima do apagado ~18 do grayscale antigo). Calibrado pelo OLHO no aparelho e medido pelo pixel — se alguém empurrar o recuo para o cinza puro, o teste pega. (Motivo do 22: fica acima do apagado ~18 e abaixo do recuo ~28.)
+
+**2. A DESCRIÇÃO VAI PARA O RODAPÉ; a LATERAL vira só HISTÓRICO — revisa o §214.** Separação de responsabilidade: o **rodapé** (transitório, `acaoRodapeHTML` → `.leitura`) mostra o que a habilidade faz + custo + recarga ao tocá-la; a **lateral** (persistente, `.panel`) mostra só o histórico. O rodapé tem **altura FIXA (86px)** — descrição quando há foco, dica quando não — para **NÃO pular de tamanho** a cada toque. **Medido:** com o rodapé em 86px, sobram ~98px por fileira (não-HUD) e a fileira NÃO cruza o rodapé; **o retrato NÃO precisou encolher** (só o tile do painel-recolhido caiu de 100→92px). O **histórico legível**: agrupado POR TURNO (o mais recente no topo), cronológico dentro do turno, e a AUTORIA distinta por COR + ALINHAMENTO (você à esquerda/ouro · o outro lado à direita/rosa). Vale nos 4 modos — a autoria é "você × o OUTRO LADO", que na Provação e na Campanha é a IA, não um jogador. (O KIT inimigo do §219, leitura profunda deliberada, e o resumo do turno seguem tomando a lateral temporariamente e voltam ao histórico pelo ✕ — a exceção deliberada ao "só histórico".)
+
+**3. TODA HABILIDADE É TOCÁVEL PARA LER (§201: aprender importa mais na Campanha).** Antes só a usável respondia ao toque — buraco funcional: não dava para aprender o que ainda não se pode usar. Agora o tile NUNCA é `disabled`: `data-arma=1` arma; `data-arma=0` só LÊ (descrição + custo + recarga + POR QUÊ está indisponível: falta energia, em recarga, travada, ou não é a vez), no rodapé, e **não arma, não gasta, não escolhe alvo** — tocar para ler nunca custa (invariante do projeto).
+
+**QUATRO MODOS VERIFICADOS (§202).** `tests/render_sweep.test.js` estendido: os três níveis, o tocar-para-ler (com motivo, sem armar) e o histórico agrupado com autoria são exercitados em sandbox, Provação e Campanha (o PvP usa a mesma `renderBatalha`). `tests/perspectiva.test.js` atualizado (no turno do oponente os discos ficam legíveis mas nenhum ARMA). `tests/interface.test.js` migrado (a leitura agora vive no rodapé `.leitura`).
+
+**PROVA:** 42 suítes verdes. Captura contra o dist: os três estados (pronto/indisponível/recuo) e uma indisponível TOCADA (a descrição + "⊘ Em recarga — pronta em 2 turnos" no rodapé, sem armar). **Onda VISUAL fica para a próxima** (a pedido).
+
 ## §237 — PUBLICAR O SERVIDOR (Render, gratuito): pronto para deploy (PORT do ambiente, npm start, render.yaml), WSS verificado por teste (a classe §209/§236), o que se perde declarado, e o limite do teste. Servidor primeiro; o APK depois aponta para ele.
 
 O dono escolheu **Render, plano gratuito** (publica do GitHub, sem cartão, suporta WebSocket; dorme após 15 min e acorda em ~30s — aceitável para amigos). Vercel/Netlify descartados por ele (serverless, sem conexão persistente). Eu NÃO escolhi provedor — a escolha é dele; eu preparo o que ele pediu.

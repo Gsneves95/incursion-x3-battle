@@ -10,12 +10,13 @@ function painelHTML(){
   </aside>`;
 }
 
+// §238 (item 2): a LATERAL é PERSISTENTE e mostra SÓ o histórico. A leitura de habilidade (o que faz,
+// custo, recarga) foi para o RODAPÉ (acaoRodapeHTML). O KIT inimigo (toque longo, §219) e o resumo do
+// turno do oponente são leituras DELIBERADAS/transitórias que tomam a lateral e voltam ao histórico.
 function painelConteudoHTML(){
-  if(armado) return detalheHabilidadeArmada();     // estado 2: habilidade SUA (arte/nome/custo/recarga/o que faz)
-  if(detalhe) return detalheCard(detalhe);          // estados 3 (inimiga) / 4 (passiva) / efeito / ficha
-  if(peekKit!=null) return kitHTML(peekKit);        // KIT do inimigo (toque longo)
+  if(peekKit!=null) return kitHTML(peekKit);        // KIT do inimigo (toque longo) — leitura profunda deliberada (✕ fecha)
   if(resumoTurno&&resumoTurno.length) return resumoHTML();
-  return historicoHTML();                           // estado 1: só o histórico
+  return historicoHTML();                           // padrão persistente: o histórico
 }
 
 // card genérico de detalhe (estados 2/3/4 e ficha/efeito): ícone + nome + custo/recarga + texto + classes.
@@ -114,14 +115,33 @@ function kitDetalheHTML(u,g,sel){
   </div>`;
 }
 
+// §238 (item 2): o HISTÓRICO LEGÍVEL — agrupado POR TURNO (o mais recente no topo), cronológico dentro
+// do turno, e a AUTORIA visualmente distinta (você × o OUTRO LADO — vale nos 4 modos: na Provação e na
+// Campanha o "outro lado" é a IA, não um jogador). Autoria pela varredura do log: o lado ATIVO (turno.lado)
+// no momento; reativos (reflexo/intercepta/contra-ataque) pertencem ao lado que DEFENDE.
 function historicoHTML(){
-  const ult=st.log.slice(-6).reverse();
-  return `<div class="detail">
+  const eu=ladoExibido();
+  let ativo=0; const marc=[];
+  for(const r of st.log){
+    if(r.tipo==='turno'){ if(r.lado===0||r.lado===1) ativo=r.lado; continue; }
+    if(r.tipo==='abertura') continue;
+    const txt=narrar(r); if(!txt) continue;
+    const reativo = r.reflexo || r.efeito==='intercepta' || r.efeito==='contraAtaca' || r.efeito==='refleteDano';
+    marc.push({ turno:r.turno, lado: reativo ? 1-ativo : ativo, txt });
+  }
+  const porTurno=new Map();
+  for(const m of marc){ if(!porTurno.has(m.turno)) porTurno.set(m.turno,[]); porTurno.get(m.turno).push(m); }
+  const turnos=[...porTurno.keys()].sort((a,b)=>b-a);   // mais recente no topo
+  const blocos=turnos.map(t=>{
+    const linhas=porTurno.get(t).map(m=>`<div class="hist__l hist__l--${m.lado===eu?'eu':'eles'}">${H(m.txt)}</div>`).join('');
+    return `<div class="hist__turno"><div class="hist__cab">Turno ${t}</div>${linhas}</div>`;
+  }).join('') || `<div class="hist__vazio">A batalha ainda não tem eventos.</div>`;
+  return `<div class="detail hist">
     <div class="detail__top"><div class="detail__icon">${slot('detail','☷','var(--ink-mute)',20)}</div>
-      <div class="detail__id"><div class="detail__name">ÚLTIMOS EVENTOS</div>
+      <div class="detail__id"><div class="detail__name">HISTÓRICO</div>
         <div class="detail__meta"><span class="detail__cd">TURNO ${st.turno}</span></div></div></div>
-    <div class="detail__text detail__log">${ult.map(r=>`<b>${r.turno}</b>${H(narrar(r))}`).join('<br>')||'—'}</div>
-    <div class="detail__classes">Toque uma habilidade p/ ver o que faz · segure um inimigo p/ ler o kit dele</div>
+    <div class="hist__rol">${blocos}</div>
+    <div class="detail__classes"><span class="hist__leg hist__leg--eu">você</span> · <span class="hist__leg hist__leg--eles">${H(rotuloLado(1-eu))}</span></div>
   </div>`;
 }
 function resumoHTML(){
@@ -136,36 +156,54 @@ function resumoHTML(){
   </div>`;
 }
 
-// RODAPÉ (esquerda): o estado da AÇÃO. Confirmar/Cancelar vivem aqui (à esquerda do ENCERRAR).
+// RODAPÉ (§238 item 2) — a LEITURA transitória: o que a habilidade faz, custo e recarga aparecem AQUI
+// (não mais na lateral). ALTURA FIXA (`.leitura`) para NÃO pular: descrição quando há habilidade em foco
+// (armada OU tocada-para-ler), dica de ação quando não há. Confirmar/Cancelar vivem aqui, à esquerda do ENCERRAR.
+function leituraCardHTML(d, statusHTML, acoesHTML){
+  return `<div class="leitura">
+    <div class="leitura__icon ${d.redondo?'is-skill':''}"${d.cor?` style="border-color:${d.cor}"`:''}>${slot(d.chave||'detail',d.glifo||'',d.cor,18,d.redondo)}</div>
+    <div class="leitura__corpo">
+      <div class="leitura__cab"><b class="leitura__nome">${H(d.nome)}</b>${d.pips||''}${d.meta?`<span class="leitura__cd">${H(d.meta)}</span>`:''}</div>
+      <div class="leitura__txt">${realce(d.texto||'')}</div>
+      ${statusHTML||''}
+      ${d.motivo?`<div class="leitura__motivo">⊘ ${H(d.motivo)}</div>`:''}
+    </div>
+    ${acoesHTML?`<div class="acao__act">${acoesHTML}</div>`:''}
+  </div>`;
+}
 function acaoRodapeHTML(){
   if(armado){
     const u=st.lados[st.ativo].units.find(x=>x.uid===armado.uid);
     const a=u&&acoesDe(st,u).find(x=>x.slot===armado.slot);
-    const nome=a?H(a.nome):'Habilidade';
-    const falta=faltamAlvos();
-    let txt;
-    if(armado.distribui) txt = escolhidos.length
-      ? `<b>${nome}</b> armado · ${escolhidos.length} alvo${escolhidos.length>1?'s':''} · reparte`
-      : `<b>${nome}</b> armado · toque os inimigos a repartir`;
-    else if(falta>0){ const passo=armado.passos[escolhidos.length];
-      const quem=passo==='aliado'?'o aliado':'o inimigo';
-      txt = armado.passos.length>1
-        ? `<b>${nome}</b> armado · toque ${quem} ${escolhidos.length+1}/${armado.passos.length}`
-        : `<b>${nome}</b> armado · toque ${quem}`; }
-    else txt=`<b>${nome}</b> pronto · confirme`;
-    const podeConf = armado.distribui ? escolhidos.length>0 : falta<=0;
-    return `<span class="acao__txt">${txt}</span>
-      <span class="acao__act">
-        ${podeConf?`<button class="b b--ok b--sm" id="bconf">Confirmar</button>`:''}
-        <button class="b b--quiet b--sm" id="bcanc">Cancelar</button>
-      </span>`;
+    if(a){
+      const nome=H(a.nome);
+      const falta=faltamAlvos();
+      let txt;
+      if(armado.distribui) txt = escolhidos.length
+        ? `${escolhidos.length} alvo${escolhidos.length>1?'s':''} · reparte`
+        : `toque os inimigos a repartir`;
+      else if(falta>0){ const passo=armado.passos[escolhidos.length];
+        const quem=passo==='aliado'?'o aliado':'o inimigo';
+        txt = armado.passos.length>1 ? `toque ${quem} ${escolhidos.length+1}/${armado.passos.length}` : `toque ${quem}`; }
+      else txt=`pronto · confirme`;
+      const podeConf = armado.distribui ? escolhidos.length>0 : falta<=0;
+      const modo=a.alterna?(u.modo===0?' — ANEL':' — MANTO'):'';
+      const acoes=`${podeConf?`<button class="b b--ok b--sm" id="bconf">Confirmar</button>`:''}<button class="b b--quiet b--sm" id="bcanc">Cancelar</button>`;
+      return leituraCardHTML(
+        { nome:a.nome.toUpperCase()+modo, chave:'skill-'+u.key+'-'+a.slot, glifo:mono(a), redondo:true,
+          cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem), pips:pipsDetalhe(a.cost), meta:(a.cd?'RECARGA '+a.cd:'SEM RECARGA'), texto:a.desc },
+        `<div class="leitura__status">▸ ${txt}</div>`, acoes);
+    }
   }
+  if(detalhe) return leituraCardHTML(detalhe, '', '');   // §238: qualquer LEITURA (habilidade tocada, efeito, passiva, ficha)
   const l=st.lados[st.ativo];
+  let dica;
   if(ehMeuTurno()){
-    if((l.dividaLivre||0)>0) return `<span class="acao__txt">Ao encerrar, escolha <b>${l.dividaLivre}</b> energia livre</span>`;
-    return `<span class="acao__txt">Toque uma habilidade para agir · segure um inimigo para ler o kit</span>`;
-  }
-  return `<span class="acao__txt">Vez de ${H(rotuloLado(st.ativo))} — aguarde</span>`;
+    dica=(l.dividaLivre||0)>0
+      ? `Ao encerrar, escolha <b>${l.dividaLivre}</b> energia livre`
+      : `Toque uma habilidade para <b>agir</b> · toque uma indisponível para <b>ler</b> · segure um inimigo para o kit`;
+  } else dica=`Vez de ${H(rotuloLado(st.ativo))} — aguarde`;
+  return `<div class="leitura leitura--dica"><span class="acao__txt">${dica}</span></div>`;
 }
 
 /* ---------- eventos do painel/rodapé (ação primária) ---------- */

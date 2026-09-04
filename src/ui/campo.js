@@ -59,23 +59,30 @@ function filaHTML(a, e){
 function tilesHTML(u){
   if(!u.vivo)return '';
   const acs=acoesDe(st,u);
+  const ativa=podeAgir(u)&&ehMeuTurno();   // a UNIDADE ainda pode agir neste turno?
   return acs.map(a=>{
     const cd=u.cd[a.slot]||0;
     const semOrbe=!a.disponivel&&cd===0&&a.motivo==='sem_energia';
     const semAlvo=!a.disponivel&&cd===0&&a.motivo==='sem_alvo';
     const travada=!a.disponivel&&cd===0&&!semOrbe&&!semAlvo;   // Selado/Silencio/1x-ja-usada
     const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
-    const clicavel=a.disponivel&&podeAgir(u)&&ehMeuTurno();
-    const cls=['skill']; if(a.universal)cls.push('skill--uni');
-    if(clicavel)cls.push('is-ready');   // DISPONIBILIDADE = glow do anel (nao filtro na arte, §211)
+    const clicavel=a.disponivel&&ativa;
+    // §238: TRÊS NÍVEIS de leitura na ARTE (revisa §211). pronto = arte cheia + anel aceso;
+    // indisponível = arte esmaecida mas RECONHECÍVEL (a unidade pode agir, esta habilidade não);
+    // recuo = a unidade INTEIRA já agiu / não é a vez — o nível mais fraco.
+    const nivel = clicavel ? 'pronto' : (ativa ? 'indispon' : 'recuo');
+    const cls=['skill','nv-'+nivel]; if(a.universal)cls.push('skill--uni');
+    if(clicavel)cls.push('is-ready');   // anel aceso só quando dá para agir
     if(cd>0)cls.push('is-cooldown');
     if(travada)cls.push('is-locked');
     if(semAlvo)cls.push('is-notarget');
-    if(semOrbe||!podeAgir(u)||!ehMeuTurno())cls.push('is-off');
+    if(!clicavel)cls.push('is-off');    // mono/aro apagados (a arte é esmaecida pelo nv-*)
     if(arm)cls.push('is-armed');
     cls.push('skill--'+a.slot);
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
-    return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" ${clicavel?'':'disabled'}>
+    // TODA habilidade é TOCÁVEL PARA LER (§238): nunca `disabled`. data-arma=1 arma; 0 só lê (mostra o
+    // que faz + POR QUE está indisponível, no rodapé). Ler nunca custa nada (invariante do projeto).
+    return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}">
       <span class="skill__disc" style="border-color:${anel};--anel:${anel}">
         ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
         <span class="skill__mono" style="color:${anel}">${H(mono(a))}</span>
@@ -86,6 +93,17 @@ function tilesHTML(u){
       ${pipsMini(a.cost, st.lados[u.lado].orbs)}
     </button>`;
   }).join('');
+}
+// §238: por que uma habilidade está indisponível — texto curto para o rodapé de leitura.
+function motivoIndisponivel(u,a){
+  const cd=u.cd[a.slot]||0;
+  if(cd>0) return 'Em recarga — pronta em '+cd+' turno'+(cd===1?'':'s');
+  if(!podeAgir(u)) return 'Esta unidade já agiu neste turno';
+  if(!ehMeuTurno()) return 'Não é a sua vez';
+  if(a.disponivel) return '';
+  if(a.motivo==='sem_energia') return 'Falta energia para o custo';
+  if(a.motivo==='sem_alvo') return 'Sem alvo válido agora';
+  return 'Travada (Selado / Silêncio, ou uso único já gasto)';
 }
 function ficha(u){
   const g=_catPartida()[u.key]||{},lin=[];
@@ -103,9 +121,11 @@ function ficha(u){
 
 /* ---------- eventos do campo (tiles, alvo, retrato, toque longo do inimigo, passiva, efeitos) ---------- */
 function ligarCampo(){
-  // TILES de habilidade (aliado): armar. Ao armar, some a consulta de kit.
-  stage.querySelectorAll('.skill').forEach(b=>{if(b.disabled)return;
-    b.onclick=()=>{peekKit=null; const[uid,slot]=b.dataset.sk.split('|');armar(uid,slot);};});
+  // TILES de habilidade (aliado): data-arma=1 ARMA; 0 só LÊ (§238 item 3 — tocar para ler nunca custa).
+  stage.querySelectorAll('.skill').forEach(b=>{
+    b.onclick=()=>{ const[uid,slot]=b.dataset.sk.split('|');
+      if(b.dataset.arma==='1'){ peekKit=null; armar(uid,slot); }
+      else lerHabilidade(uid,slot); };});
   // ALVO aliado (cura/buff): retrato aliado marcado como alvo — toque escolhe
   stage.querySelectorAll('.portrait[data-target]:not([data-foe])').forEach(el=>el.onclick=()=>alvo(el.dataset.uid));
   // retrato aliado comum: ficha da unidade
@@ -148,6 +168,18 @@ function ligarCampo(){
     peekKit=null; render();});
   // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa.
   if(resumoTurno) stage.addEventListener('pointerdown',()=>{ resumoTurno=null; },{once:true,capture:true});
+}
+// §238 (item 3) — LER uma habilidade SUA sem armar: o rodapé mostra o que ela faz, custo, recarga e,
+// se estiver indisponível, POR QUÊ. Ler é sempre grátis; não arma, não gasta, não escolhe alvo.
+function lerHabilidade(uid,slot){
+  const u=todas().find(x=>x.uid===uid); if(!u)return;
+  const a=acoesDe(st,u).find(x=>x.slot===slot); if(!a)return;
+  detalhe={nome:a.nome.toUpperCase(),chave:'skill-'+u.key+'-'+a.slot,glifo:mono(a),
+    cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),redondo:true,
+    pips:pipsDetalhe(a.cost), meta:(a.cd?'RECARGA '+a.cd:'SEM RECARGA'),
+    texto:a.desc, classes:classesTxt(u,a),
+    motivo: a.disponivel ? '' : motivoIndisponivel(u,a)};
+  peekKit=null; armado=null; alvos=[]; escolhidos=[]; render();
 }
 // abre o KIT do inimigo no painel e o mantém aberto (§219: soltar o dedo NÃO fecha).
 function abrirKit(uid){ peekKit=uid; kitSel=null; detalhe=null; armado=null;alvos=[];escolhidos=[]; render(); }

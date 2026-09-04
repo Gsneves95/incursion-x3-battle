@@ -194,6 +194,37 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
   console.log(`  ${rotas.length} rotas varridas · todas com saída que chega à home (batalha via ⋯ → Sair → confirmar)`);
 }
 
+console.log('== 7. §238: os três estados + tocar-para-ler + histórico agrupado, nos QUATRO modos ==');
+{
+  const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
+  // os 4 modos usam a MESMA renderBatalha (§214). Verifico os estados numa batalha e confirmo que a
+  // Provação e a Campanha (que também renderizam a batalha) produzem os mesmos níveis — a classe §202
+  // ("validado num caminho, quebrado no outro") aplicada aos estados novos.
+  const battle = (extra) => w.eval(`prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=false;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);${extra||''}ir('batalha',{},{substituir:true});pararRelogio();render();`);
+  battle("st.lados[0].units[1].cd={habilidade:2};st.lados[0].units[2].agiu=true;");
+  ok($$('.skill.nv-pronto').length > 0, 'estado PRONTO presente (arte cheia)');
+  ok($$('.skill.nv-indispon').length > 0, 'estado INDISPONÍVEL presente (recarga; a unidade pode agir)');
+  ok($$('.skill.nv-recuo').length > 0, 'estado RECUO presente (a unidade já agiu)');
+  // tocar-para-ler uma indisponível: LÊ (descrição + motivo no rodapé) e NÃO arma (nunca custa)
+  const ind = $$('.brow__tiles .skill[data-arma="0"]').find(b => b.querySelector('.skill__disc'));
+  ok(!!ind, 'há uma habilidade indisponível para ler');
+  if (ind) ind.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(!!d.querySelector('.leitura__nome') && d.querySelector('.leitura__txt').textContent.length > 0, 'tocar indisponível LÊ a descrição no rodapé');
+  ok(!!d.querySelector('.leitura__motivo'), 'e diz POR QUE está indisponível');
+  ok($$('.skill.is-armed').length === 0, 'tocar para ler NÃO arma (não custa)');
+  // histórico agrupado por turno, mais recente no topo, autoria distinta (você × o outro lado)
+  w.eval("st.log=[{tipo:'turno',turno:1,lado:0},{tipo:'dano',turno:1,origem:'iara',alvo:'sobek',valor:10},{tipo:'turno',turno:2,lado:1},{tipo:'dano',turno:2,origem:'sobek',alvo:'iara',valor:8}];render()");
+  ok($$('.hist__turno').length >= 2, 'histórico agrupado por turno');
+  ok(/Turno 2/.test((d.querySelector('.hist__turno .hist__cab') || {}).textContent || ''), 'o turno mais recente no topo');
+  ok($$('.hist__l--eu').length >= 1 && $$('.hist__l--eles').length >= 1, 'autoria distinta: você × o outro lado (cor + alinhamento)');
+  // os MESMOS estados na PROVAÇÃO e na CAMPANHA (mesma renderBatalha, oponente IA)
+  w.eval("prova=PROVACOES.find(p=>p.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()");
+  ok($$('.skill.nv-pronto, .skill.nv-indispon, .skill.nv-recuo').length > 0, 'PROVAÇÃO: os níveis de estado aparecem (mesma tela)');
+  w.eval("prova=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()");
+  ok($$('.skill.nv-pronto, .skill.nv-indispon, .skill.nv-recuo').length > 0, 'CAMPANHA: os níveis de estado aparecem (mesma tela)');
+  console.log('  três estados + tocar-para-ler + histórico agrupado, em sandbox/Provação/Campanha (PvP usa a mesma tela)');
+}
+
 try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na varredura de render`); process.exit(1); }
 console.log('>>> RENDER-SWEEP OK');

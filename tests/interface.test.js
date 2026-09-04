@@ -167,8 +167,8 @@ console.log('== 2. estrutura da tela de batalha (§214: zonas por ergonomia) =='
 const req = ['.stage__bg','.stage__scrim','.topbar','.side--me','.side--foe','.prof','.prof__pic','.prof__nick',
   '.timer','.timer__fill','.timer__label','.energy--me','.energy--foe',
   '.board','.panel','.panel__tab','.rows','.brow','.brow__ally','.brow__tiles','.brow__enemy',
-  '.footer','.acaoestado','.detail','.detail__icon','.detail__name','.detail__text','.detail__classes',
-  '.detail__cd','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
+  '.footer','.acaoestado','.detail','.detail__icon','.detail__name','.detail__classes','.detail__cd',
+  '.hist__rol','.acao__txt','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
 req.forEach(s => ok(!!$(s), `falta ${s}`));
 ok(!$('.stagemark'), 'a marca-d\u2019água INCURSION deveria ter saído (item 9)');
 ok($$('.brow').length === 3, `3 fileiras, há ${$$('.brow').length}`);
@@ -214,7 +214,7 @@ console.log('== 4. tocar habilidade → detalhe no painel + arma + alvos ==');
 encher();
 // procura uma habilidade COM custo que peça alvo inimigo
 let bas = null;
-for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => !x.disabled && x.querySelector('.skill__cost i'))) {
+for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => x.dataset.arma==='1' && x.querySelector('.skill__cost i'))) {
   const key = b.dataset.sk;
   tap(b);
   if ($$('.portrait[data-foe].is-target').length > 0) { bas = $$('.skill').find(x => x.dataset.sk === key); break; }
@@ -222,17 +222,17 @@ for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => !x.disabled && x.
 }
 ok(!!bas, 'deveria haver uma habilidade com custo que peça alvo');
 ok($$('.skill.is-armed').length === 1, 'habilidade deveria ficar armada');
-ok(!!$('.detail__name').textContent.trim(), 'detalhe deveria mostrar o nome');
-ok($('.detail__text').textContent.length > 6, 'detalhe deveria mostrar a descrição');
-ok(!!$('.cost'), 'detalhe deveria mostrar as pílulas de custo');
-ok($$('.detail__cd').some(e => /RECARGA/.test(e.textContent)), 'detalhe deveria mostrar recarga/sem recarga');
-ok(!$('.detail .cost__none'), 'habilidade com custo não deveria dizer SEM CUSTO');
+ok(!!$('.leitura__nome').textContent.trim(), 'o rodapé deveria mostrar o nome da habilidade');
+ok($('.leitura__txt').textContent.length > 6, 'o rodapé deveria mostrar a descrição');
+ok(!!$('.leitura .cost'), 'o rodapé deveria mostrar as pílulas de custo');
+ok($$('.leitura__cd').some(e => /RECARGA/.test(e.textContent)), 'o rodapé deveria mostrar recarga/sem recarga');
+ok(!$('.leitura .cost__none'), 'habilidade com custo não deveria dizer SEM CUSTO');
 ok($$('.portrait[data-foe].is-target').length > 0, 'inimigos deveriam pulsar como alvo');
 // §214: o AVISO de escolher alvo vive no rodapé (à esquerda), em .acao__txt
-ok(!!$('.acaoestado .acao__txt'), 'deveria haver o aviso de escolher alvo no rodapé');
-ok(/toque|alvo/i.test($('.acao__txt').textContent), `aviso inesperado: "${$('.acao__txt').textContent}"`);
+ok(!!$('.acaoestado .leitura__status'), 'deveria haver o aviso de escolher alvo no rodapé');
+ok(/toque|alvo/i.test($('.leitura__status').textContent), `aviso inesperado: "${$('.leitura__status').textContent}"`);
 ok(!$('#bconf'), 'CONFIRMAR não deve aparecer quando a habilidade precisa de alvo');
-console.log(`  "${$('.detail__name').textContent}" \u00b7 ${$$('.portrait[data-foe].is-target').length} alvos`);
+console.log(`  "${$('.leitura__nome').textContent}" \u00b7 ${$$('.portrait[data-foe].is-target').length} alvos`);
 
 console.log('== 4b. consulta do KIT inimigo (item 8: toque longo → painel; toque na hab. → detalhe) ==');
 {
@@ -278,7 +278,7 @@ console.log('== 4b. consulta do KIT inimigo (item 8: toque longo → painel; toq
   tap($('.kchip--pas'));
   ok(/PASSIVA/.test($('.kitdet').textContent), 'a passiva mostra-se como PASSIVA');
   ok(!$('.kitdet .cost .cost__pip'), 'a passiva não tem custo');
-  console.log(`  "${$('.detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
+  console.log(`  "${$('.kitdet .detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
 
   // FECHAR é deliberado: o botao ✕ volta ao histórico (soltar o dedo nunca fecha)
   tap($('.kitwrap [data-kitclose]'));
@@ -360,7 +360,7 @@ console.log('== 4d. pílula vermelha marca a energia que falta ==');
 console.log('== 5. energia a gastar acende no topo ==');
 encher();
 let armavel = null;
-for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => !x.disabled && x.querySelector('.skill__cost i'))) {
+for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => x.dataset.arma==='1' && x.querySelector('.skill__cost i'))) {
   const key = b.dataset.sk;
   tap(b);
   if ($$('.portrait[data-foe].is-target').length > 0) { armavel = key; break; }
@@ -383,7 +383,7 @@ console.log(`  ${w.eval('narrar(st.log[st.log.length-1])')}`);
 
 console.log('== 7. ação sem alvo exige o botão CONFIRMAR (no rodapé) ==');
 encher();
-const def = $$('.brow__tiles .skill[data-sk]').find(b => !b.disabled && b.dataset.sk.endsWith('|defesa'));
+const def = $$('.brow__tiles .skill[data-sk]').find(b => b.dataset.arma==='1' && b.dataset.sk.endsWith('|defesa'));
 ok(!!def, 'Defesa deveria estar disponível');
 const hpA = S().lados[S().ativo].units.map(u => u.hp).join(',');
 tap(def);
@@ -408,8 +408,8 @@ console.log('== 8. recarga sobre o ícone ==');
 
 console.log('== 9. passiva e efeitos são tocáveis ==');
 tap($('.portrait__pas'));
-ok($$('.detail__cd').some(e => /PASSIVA|INERTE/.test(e.textContent)), 'detalhe deveria identificar a passiva');
-console.log(`  passiva: "${$('.detail__name').textContent}"`);
+ok($$('.leitura__cd').some(e => /PASSIVA|INERTE/.test(e.textContent)), 'detalhe deveria identificar a passiva');
+console.log(`  passiva: "${$('.leitura__nome').textContent}"`);
 {
   const u = S().lados[S().ativo].units[0];
   u.efeitos.push({ type: 'dmgUp', v: 8, dur: 2 });
@@ -419,15 +419,15 @@ console.log(`  passiva: "${$('.detail__name').textContent}"`);
   tap($('[data-ef]'));
   ok($$('.detail__cd').some(e => /TURNO|PERMANENTE/.test(e.textContent)), 'detalhe do efeito deveria mostrar duração');
   tap($('[data-dot]'));
-  ok(/QUEIMADURA/.test($('.detail__name').textContent), 'detalhe do dano contínuo');
+  ok(/QUEIMADURA/.test($('.leitura__nome').textContent), 'detalhe do dano contínuo');
   console.log(`  ${$$('.effect').length} ícones, todos abrem explicação`);
 }
 
 console.log('== 10. retrato abre a ficha da unidade ==');
 tap($$('.brow__ally .portrait')[1]);
-ok($('.detail__name').textContent.length > 1, 'ficha deveria abrir no painel');
-ok($$('.detail__cd').some(e => /\d+\/120/.test(e.textContent)), 'ficha deveria mostrar vida');
-console.log(`  ficha: "${$('.detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
+ok($('.leitura__nome').textContent.length > 1, 'ficha deveria abrir no rodapé');
+ok($$('.leitura__cd').some(e => /\d+\/120/.test(e.textContent)), 'ficha deveria mostrar vida');
+console.log(`  ficha: "${$('.leitura__nome').textContent}" \u2014 ${$('.leitura__cd').textContent}`);
 
 console.log('== 11. troca de energia em popup ==');
 {
@@ -531,14 +531,14 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   // --- Thor: 2 inimigos, valores diferentes ---
   const thor = l.units.find(u => u.nome === 'Thor');
   tap($$('.skill').find(b => b.dataset.sk === thor.uid + '|habilidade'));
-  ok(!!$('.acao__txt'), 'deveria pedir alvo no rodapé');
-  ok(/1\/2/.test($('.acao__txt').textContent), `deveria indicar Alvo 1/2, diz "${$('.acao__txt').textContent}"`);
+  ok(!!$('.leitura__status') || !!$('.acao__txt'), 'deveria pedir alvo no rodapé');
+  ok(/1\/2/.test($('.leitura__status').textContent), `deveria indicar Alvo 1/2, diz "${$('.leitura__status').textContent}"`);
   const alvosT = $$('.portrait[data-foe].is-target');
   ok(alvosT.length === 3, `3 inimigos disponíveis, há ${alvosT.length}`);
   const uid1 = alvosT[0].dataset.uid, uid2 = alvosT[1].dataset.uid;
   tapFoe(alvosT[0]);
   ok($$('.portrait.is-picked').length === 1, 'o 1º alvo deveria ficar marcado');
-  ok(/2\/2/.test($('.acao__txt').textContent), 'deveria avançar para Alvo 2/2');
+  ok(/2\/2/.test($('.leitura__status').textContent), 'deveria avançar para Alvo 2/2');
   ok(!$$('.portrait[data-foe].is-target').some(e => e.dataset.uid === uid1), 'o já escolhido não deveria seguir selecionável');
   tapFoe($$('.portrait[data-foe].is-target').find(e => e.dataset.uid === uid2));
   const o = S().lados[1 - S().ativo].units;
@@ -549,7 +549,7 @@ console.log('== 11b. seleção de 2 alvos na interface ==');
   // --- Hera: 2 aliados ---
   const hera = S().lados[S().ativo].units.find(u => u.nome === 'Hera');
   tap($$('.skill').find(b => b.dataset.sk === hera.uid + '|habilidade'));
-  ok(/aliado/i.test($('.acao__txt').textContent), 'deveria pedir aliado, não inimigo');
+  ok(/aliado/i.test($('.leitura__status').textContent), 'deveria pedir aliado, não inimigo');
   const aliados = $$('.portrait.is-target:not([data-foe])');
   ok(aliados.length === 3, `3 aliados selecionáveis, há ${aliados.length}`);
   ok($$('.portrait[data-foe].is-target').length === 0, 'nenhum inimigo deveria estar selecionável');
@@ -577,7 +577,7 @@ console.log('== 11c. multi-golpe distribuído (§92): seleção múltipla, toggl
   armaBabi();
   ok(alvos().length === 3, `distribui: os 3 inimigos vivos deveriam ser alvos (${alvos().length})`);
   ok(!$('#bconf'), 'distribui sem alvo: CONFIRMAR ainda não aparece');
-  ok(!!$('.acao__txt') && /toque/i.test($('.acao__txt').textContent), 'deveria pedir para tocar os alvos');
+  ok(!!$('.leitura__status') && /toque|reparte/i.test($('.leitura__status').textContent), 'deveria pedir para tocar os alvos');
   const u1 = alvos()[0].dataset.uid, u2 = alvos()[1].dataset.uid;
   tapFoe(alvoUid(u1));
   ok($$('.portrait.is-picked').length === 1, 'o 1º alvo tocado deveria ficar marcado');
@@ -681,7 +681,7 @@ console.log('== 13. partida completa só por toques ==');
   const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   let cliques = 0, g = 0;
   while (!S().fim && g++ < 500) {
-    const livres = $$('.brow__tiles .skill[data-sk]').filter(b => !b.disabled);
+    const livres = $$('.brow__tiles .skill[data-sk]').filter(b => b.dataset.arma==='1');
     if (!livres.length) { tap($('#bend')); continue; }
     tap(livres[Math.floor(rnd() * livres.length)]); cliques++;
     let t = $$('.portrait.is-target');

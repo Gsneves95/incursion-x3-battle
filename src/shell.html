@@ -143,7 +143,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 
 
 /* ---------- CORPO (board): painel à esquerda + 3 fileiras ---------- */
-.board{position:absolute;top:46px;left:0;right:0;bottom:46px;display:flex;z-index:2}
+.board{position:absolute;top:46px;left:0;right:0;bottom:86px;display:flex;z-index:2}
 .rows{position:relative;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:0 6px}
 .brow{flex:1 1 0;min-height:0;display:flex;align-items:center}   /* 3 × 112px */
 .brow__ally{flex:0 0 102px;display:flex;justify-content:center;align-items:center}
@@ -168,7 +168,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* RECOLHIDO: a aba É o painel colapsado (sempre visível, alvo grande); os tiles crescem 78→100 */
 #baselayer.pnfold .panel{flex-basis:26px}
 #baselayer.pnfold .panel__box{display:none}
-#baselayer.pnfold .brow__tiles .skill{width:100px;height:100px}
+#baselayer.pnfold .brow__tiles .skill{width:92px;height:92px}
 #baselayer.pnfold .panel__tab{margin-left:4px;border-radius:5px}
 
 /* ---------- retrato (88 de largura; ally=ouro, enemy=vermelho) ---------- */
@@ -241,10 +241,15 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .skill--uni .skill__disc{border-style:dashed}
 .skill--habilidade .skill__disc{border-width:2px}
 .skill--milagre .skill__disc{border-width:2px;box-shadow:0 0 0 1px rgba(255,217,122,.4);outline-offset:1px}
-/* DISPONIBILIDADE vive no ANEL, NUNCA na arte (regra do dono: a arte da habilidade sempre
-   em cor e legível). Pronta = anel do elemento ACENDE (glow na cor do elemento, via --anel);
-   indisponível = anel APAGADO (sem glow, aro levemente escurecido). A arte não recebe filtro
-   em estado nenhum — nada de grayscale, nada de brightness abaixo do natural. */
+/* §238 REVISA §211: a arte agora PESA o estado, em TRÊS níveis, mas SEMPRE reconhecível (o §211 errou
+   na INTENSIDADE, não na direção — o grayscale total levava a saturação a ~18 e apagava o deus). O anel
+   também sinaliza. Filtro só na ARTE (`.slot`); os overlays de número/ícone ficam crisp por cima.
+   pronto = arte cheia + anel aceso · indisponível (a unidade pode agir, esta habilidade não) = esmaecida
+   mas identificável · recuo (a unidade já agiu / não é a vez) = o nível mais fraco. Os limiares de
+   saturação são cobrados em tests/moldura.test.js (§238), separando os três estados sem apagar a arte. */
+.skill.nv-indispon .skill__disc .slot{filter:saturate(.62) brightness(.8)}   /* §238 medido: sat ~37 */
+.skill.nv-recuo .skill__disc .slot{filter:saturate(.45) brightness(.62)}     /* §238 medido: sat ~28 (fraco mas reconhecível) */
+.skill.nv-recuo{opacity:.92}
 .skill.is-ready .skill__disc{box-shadow:0 0 8px -1px var(--anel,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}
 .skill:not(.is-ready) .skill__disc{box-shadow:inset 0 0 0 2px rgba(8,6,20,.5)}
 .skill.is-cooldown{cursor:default}
@@ -332,13 +337,42 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .kitdet__pas{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:26px}
 
 /* ---------- RODAPÉ (46): estado da ação à esquerda · ENCERRAR à direita ---------- */
-.footer{position:absolute;bottom:0;left:0;right:0;height:46px;display:flex;align-items:center;gap:10px;
-  padding:0 12px;z-index:3;
-  background:linear-gradient(0deg,rgba(9,8,20,.97) 0%,rgba(9,8,20,.7) 70%,transparent 100%)}
-.acaoestado{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px}
-.acao__txt{min-width:0;font-weight:600;font-size:12px;letter-spacing:.02em;color:var(--ink-dim);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* §238: RODAPÉ de LEITURA de altura FIXA (86px) — descrição quando há habilidade em foco, dica quando não.
+   Não pula de tamanho (o `.leitura` sempre ocupa a mesma faixa). */
+.footer{position:absolute;bottom:0;left:0;right:0;height:86px;display:flex;align-items:stretch;gap:10px;
+  padding:6px 12px;z-index:3;
+  background:linear-gradient(0deg,rgba(9,8,20,.98) 0%,rgba(9,8,20,.9) 78%,transparent 100%)}
+.acaoestado{flex:1 1 auto;min-width:0;display:flex;align-items:stretch}
+.acao__txt{min-width:0;font-weight:600;font-size:12.5px;letter-spacing:.02em;color:var(--ink-dim);line-height:1.4}
 .acao__txt b{color:var(--gold-text);font-weight:700}
+/* a LEITURA no rodapé: ícone + corpo (nome/custo/recarga + o que faz + status/motivo). Altura fixa. */
+.leitura{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:10px}
+.leitura--dica{align-items:center}
+.leitura__icon{flex:0 0 auto;width:52px;height:52px;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
+.leitura__icon.is-skill{border-radius:9px}
+.leitura__icon .slot{width:100%;height:100%}
+.leitura__corpo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.leitura__cab{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.leitura__nome{font-family:'Cinzel',serif;font-weight:700;font-size:13.5px;letter-spacing:.02em;color:var(--ink);line-height:1.1}
+.leitura__cd{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:.05em;color:var(--ink-mute);text-transform:uppercase}
+.leitura__txt{font-weight:600;font-size:11.5px;line-height:1.35;color:var(--ink-dim);max-height:44px;overflow-y:auto}
+.leitura__txt b{color:var(--gold-text)}
+.leitura__status{font-weight:700;font-size:11px;letter-spacing:.02em;color:var(--gold-text)}
+.leitura__motivo{font-weight:700;font-size:11px;letter-spacing:.01em;color:#ff9db4}
+.leitura .detail__pips{display:inline-flex;gap:2px}
+.leitura .detail__pips i{width:8px;height:8px;border-radius:50%;border:1px solid rgba(6,5,16,.9);display:block}
+.leitura .detail__pips i.free{border-color:#9a8fc0}
+/* §238: HISTÓRICO na lateral — agrupado por turno (recente no topo), autoria por COR + ALINHAMENTO. */
+.hist{min-height:0}
+.hist__rol{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.hist__turno{display:flex;flex-direction:column;gap:3px}
+.hist__cab{font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);border-bottom:1px solid #2c2648;padding-bottom:2px}
+.hist__l{font-weight:600;font-size:11px;line-height:1.35;padding:3px 7px;border-radius:6px;max-width:92%}
+.hist__l--eu{align-self:flex-start;color:#e9e2ff;background:rgba(255,217,122,.08);border-left:2px solid var(--gold-soft)}
+.hist__l--eles{align-self:flex-end;text-align:right;color:#f0c9d2;background:rgba(255,92,138,.08);border-right:2px solid #8a4a5c}
+.hist__vazio{font-weight:600;font-size:11.5px;color:var(--ink-mute);font-style:italic}
+.hist__leg{font-weight:800}
+.hist__leg--eu{color:var(--gold-text)} .hist__leg--eles{color:#ff9db4}
 /* ==================== SISTEMA DE BOTÕES ====================
    Placa inscrita, não pílula com gradiente. A letra faz o trabalho;
    o metal é só uma régua de 1px. Ouro preenchido existe UMA vez por tela.
@@ -891,7 +925,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* §214: o board desce e encolhe quando há HUD, para o HUD morar numa faixa PRÓPRIA (top 47,
    entre a barra de topo e as fileiras) — nunca sobre os tiles/retratos, e as fileiras nunca
    cruzam o rodapé (board fica 68..382; rodapé 382..428). */
-#baselayer.temhud .board{top:68px;bottom:46px}
+#baselayer.temhud .board{top:68px;bottom:86px}
 .phud{position:absolute;left:8px;right:8px;top:47px;height:19px;z-index:4;pointer-events:none;
   display:flex;align-items:center;gap:10px;overflow:hidden;
   background:linear-gradient(180deg,rgba(10,8,22,.92),rgba(10,8,22,.72));

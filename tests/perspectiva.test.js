@@ -32,12 +32,15 @@ console.log('== 8. perspectiva fixa: meu time à esquerda nos DOIS turnos (vs CP
 console.log('== 9. modo espectador no turno do oponente ==');
 {
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=1; render()");
-  ok($$('.brow__tiles .skill[data-sk]:not([disabled])').length === 0, 'nenhum disco meu clicável no turno dele');
+  // §238: os discos ficam TOCÁVEIS para LER (nunca custa), mas nenhum ARMA no turno dele (data-arma=0),
+  // e todos entram em RECUO (a unidade não é a vez).
+  ok($$('.brow__tiles .skill[data-arma="1"]').length === 0, 'nenhum disco meu ARMA no turno dele');
+  ok($$('.brow__tiles .skill.nv-recuo').length === 12, 'todos os meus discos ficam em recuo no turno dele');
   ok($$('.skill.is-armed').length === 0, 'nenhum disco armado');
   ok(!$('.panel .kstrip'), 'nenhuma consulta de kit aberta por conta própria');
   ok($$('.portrait.is-target').length === 0, 'nenhum alvo pulsando');
   ok(!$('#bend') && !!$('.endturn--wait'), 'botão primário vira indicador de espera');
-  console.log('  discos apagados, sem consulta, sem alvo, primário = espera');
+  console.log('  discos em recuo (legíveis), nenhum arma, sem alvo, primário = espera');
 }
 
 console.log('== 10. hot-seat: comportamento antigo (tela inverte) ==');
@@ -47,7 +50,7 @@ console.log('== 10. hot-seat: comportamento antigo (tela inverte) ==');
   w.eval("st.ativo=1; render()"); const a1 = aliados();
   ok(MEU.every(k => a0.includes(k)), 'ativo 0 → time 0 à esquerda');
   ok(OPO.every(k => a1.includes(k)), 'ativo 1 → time 1 à esquerda (inverteu)');
-  ok($$('.brow__tiles .skill[data-sk]:not([disabled])').length > 0, 'em hot-seat os discos do lado ativo são clicáveis (sem espectador)');
+  ok($$('.brow__tiles .skill[data-arma="1"]').length > 0, 'em hot-seat os discos do lado ativo ARMAM (sem espectador)');
   console.log('  hot-seat inverte a tela e nunca entra em espectador');
 }
 
