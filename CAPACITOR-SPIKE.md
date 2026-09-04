@@ -1,5 +1,13 @@
 # Spike de plataforma — INCURSION x3 num celular de verdade (Capacitor)
 
+> **⚠️ SUPERADO pelo §240.** Este spike descreve o modelo **EMBUTIDO** (o app carrega o jogo de dentro
+> dele). A decisão do dono para o APK de teste é o modelo **SERVIDOR-APONTADO** — o roteiro atual está em
+> **[`PUBLICAR-APK.md`](PUBLICAR-APK.md)** (com uma tabela do que muda em relação a este spike). Guarde
+> este arquivo como registro do spike e do **checklist de aparelho** (toque/notch/desempenho/reconexão),
+> que continua valendo; para GERAR o APK, siga o `PUBLICAR-APK.md`. O modelo embutido volta a valer quando
+> for para a **loja** (offline), no fim.
+
+
 **O que é isto:** o mínimo para rodar o jogo (que hoje só roda no navegador) **dentro do invólucro
 nativo** que vai para a App Store / Play Store, num aparelho de verdade. O objetivo NÃO é entregar —
 é **descobrir o que quebra** no WebView do celular, que não é o Chrome de mesa.

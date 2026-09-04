@@ -142,6 +142,46 @@ ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
 ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)
+ligarPlataformaNativa();// §240: dentro do APK (Capacitor) — botão VOLTAR do Android + esconder o splash
+
+// ============================================================
+// §240 — PLATAFORMA NATIVA (o APK Capacitor, modelo servidor-apontado). Só faz efeito DENTRO do app:
+// no navegador `window.Capacitor` não existe e tudo aqui é no-op. O jogo é servido pelo Render e roda
+// na WebView com a PONTE do Capacitor injetada nessa origem (por causa do `server.url`), então o
+// PRÓPRIO código do jogo fala com os plugins nativos — nada de editar o projeto Android à mão.
+function _plataformaApp(){ return (typeof window!=='undefined') && window.Capacitor && window.Capacitor.Plugins; }
+function ligarPlataformaNativa(){
+  const P = _plataformaApp(); if(!P) return;   // navegador comum: sem plataforma nativa
+  // 1) O SPLASH nativo cobre a tela ENQUANTO o servidor dorme acorda (~30s no Render grátis) — em vez de
+  //    um branco de "app quebrado". Assim que a UI do jogo aparece, escondemos (o caso comum some em ~2-3s;
+  //    o teto de 30s no config é a rede de segurança se o servidor estiver fora).
+  if(P.SplashScreen && P.SplashScreen.hide){ try{ P.SplashScreen.hide(); }catch(e){} }
+  // 2) O botão VOLTAR do Android = o que o "‹ Início" faz. NUNCA fecha o app no meio de uma partida
+  //    (o router é uma pilha JS, sem history do navegador — sem isto o Android fecharia o app de cara).
+  if(P.App && P.App.addListener && !window.__incBackLigado){
+    window.__incBackLigado=true;
+    P.App.addListener('backButton', ()=>{ voltarNativo(); });
+  }
+}
+function voltarNativo(){
+  // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
+  const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
+    || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);
+  if(temSobre){
+    if(typeof menuAberto!=='undefined')menuAberto=false;
+    if(typeof ov!=='undefined')ov=null;
+    if(typeof peekKit!=='undefined')peekKit=null;
+    if(typeof detalhe!=='undefined')detalhe=null;
+    render(); return;
+  }
+  const r = (typeof rotaAtual==='function') ? rotaAtual() : null;
+  // b) NA BATALHA: abre o confirmar-sair (o MESMO caminho do ⋯ → Sair). Não abandona direto, não fecha o app.
+  if(r==='batalha'){ if(typeof ov!=='undefined')ov='sair'; render(); return; }
+  // c) qualquer sub-tela: faz o que o "‹ Início" faz (desempilha; se não dá, vai pra home)
+  if(r && r!=='home'){ if(!voltar()) ir('home',{},{substituir:true}); render(); return; }
+  // d) JÁ NA HOME (a raiz): aí sim o padrão do Android — sai do app
+  try{ window.Capacitor.Plugins.App.exitApp(); }catch(e){}
+}
 
 // ============================================================
 // F5.1 — A CONTA no cliente. O jogador NUNCA vê login. DORMENTE sem servidor: aberto por file://

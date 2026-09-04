@@ -1,8 +1,21 @@
 {
-  "appId": "com.incursion.x3battle",
-  "appName": "INCURSION x3",
+  "appId": "com.gsneves.incursionx3battle",
+  "appName": "INCURSION",
   "webDir": "www",
   "server": {
-    "androidScheme": "https"
+    "url": "https://incursion-servidor.onrender.com",
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "backgroundColor": "#0a0812",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 30000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0a0812",
+      "showSpinner": true,
+      "androidSpinnerStyle": "large",
+      "spinnerColor": "#e7bd74"
+    }
   }
 }

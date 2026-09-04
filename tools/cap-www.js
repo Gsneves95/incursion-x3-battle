@@ -1,48 +1,58 @@
 // tools/cap-www.js — monta a PASTA WEB (www/) que o Capacitor empacota no app nativo.
-// O jogo é UM html (dist/incursion.html) + os assets em web/ (skills, banners, ícones,
-// manifest). O Capacitor precisa de UMA pasta com index.html na raiz e os assets ao lado,
-// então aqui a gente copia:
-//   dist/incursion.html  -> www/index.html     (o WebView abre index.html por padrão)
-//   web/*                -> www/*              (skills/, banners/, ícones, manifest)
+//
+// MODELO SERVIDOR-APONTADO (§240, decisão do dono): o APK NÃO embute o jogo. O jogo é servido pelo
+// Render e o app carrega de lá (o `server.url` no capacitor.config.json). Assim, publicar o servidor
+// já atualiza o app — "instala uma vez, ajusta cem vezes". (A versão que embute o jogo e roda offline
+// é a de LOJA, no fim; não é agora.)
+//
+// Por isso www/ é MÍNIMO: o Capacitor exige um `webDir` com um index.html, mas ele NÃO é a tela que
+// abre (o `server.url` tem prioridade). Este index é só uma REDE DE SEGURANÇA — uma tela escura de
+// "carregando", no lugar de um branco, caso o app algum dia caia no arquivo local. Sem jogo, sem os
+// ~6,6 MB de assets: o APK fica pequeno.
+//
 // É determinístico: apaga www/ e remonta do zero. Roda em Mac/Windows/Linux (só usa fs).
 const fs = require('fs');
 const path = require('path');
 
 const raiz = path.join(__dirname, '..');
-const dist = path.join(raiz, 'dist', 'incursion.html');
-const web = path.join(raiz, 'web');
 const www = path.join(raiz, 'www');
+const cfg = path.join(raiz, 'capacitor.config.json');
 
-if (!fs.existsSync(dist)) {
-  console.error('ERRO: dist/incursion.html não existe. Rode "npm run build" antes (ele gera o dist).');
-  process.exit(1);
-}
-if (!fs.existsSync(web)) {
-  console.error('ERRO: a pasta web/ (skills, banners, ícones) não foi encontrada.');
-  process.exit(1);
-}
+// o endereço do servidor vem do capacitor.config.json (LUGAR ÚNICO). O fallback local só o mostra
+// como texto e oferece "tentar de novo" — não tem como forçar o WebView nativo a re-navegar sozinho.
+let servidor = '(o endereço do servidor)';
+try { servidor = (JSON.parse(fs.readFileSync(cfg, 'utf8')).server || {}).url || servidor; } catch (e) {}
 
 // remonta do zero para não deixar lixo de uma versão anterior
 fs.rmSync(www, { recursive: true, force: true });
 fs.mkdirSync(www, { recursive: true });
 
-// 1) o app: incursion.html vira index.html (o nome que o WebView carrega sozinho)
-fs.copyFileSync(dist, path.join(www, 'index.html'));
+// index.html mínimo, autocontido (sem refs externas): tela escura de carregando = "não é app quebrado".
+const fallback = `<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>INCURSION</title>
+<style>
+  html,body{height:100%;margin:0;background:#0a0812;color:#e7bd74;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif;-webkit-touch-callout:none}
+  .wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+  .spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(231,189,116,.25);border-top-color:#e7bd74;animation:g 1s linear infinite}
+  @keyframes g{to{transform:rotate(360deg)}}
+  h1{font-family:'Cinzel',serif;font-size:20px;letter-spacing:.14em;margin:0;color:#ffe9ad}
+  p{font-size:13px;color:#8b83b8;max-width:320px;line-height:1.5;margin:0}
+  a{color:#e7bd74}
+</style></head>
+<body><div class="wrap">
+  <div class="spin"></div>
+  <h1>INCURSION</h1>
+  <p>Conectando ao servidor. Se ele estava dormindo, a primeira vez leva ~30&nbsp;segundos.</p>
+  <p style="font-size:11px;color:#5a5480">Servidor: ${servidor}</p>
+</div></body></html>`;
 
-// 2) os assets: tudo de web/ ao lado do index (os caminhos no html são relativos: skills/x.webp)
-for (const nome of fs.readdirSync(web)) {
-  fs.cpSync(path.join(web, nome), path.join(www, nome), { recursive: true });
-}
+fs.writeFileSync(path.join(www, 'index.html'), fallback);
 
-// relatório com o tamanho real do que vai para o app
-function bytes(p) {
-  let t = 0;
-  for (const e of fs.readdirSync(p, { withFileTypes: true })) {
-    const f = path.join(p, e.name);
-    t += e.isDirectory() ? bytes(f) : fs.statSync(f).size;
-  }
-  return t;
-}
-const total = bytes(www);
-console.log(`www/ montado: index.html + ${fs.readdirSync(web).length} itens de web/`);
-console.log(`payload web = ${total} bytes (${(total / 1048576).toFixed(2)} MB) — é o que o Capacitor empacota`);
+const bytes = Buffer.byteLength(fallback);
+console.log(`www/ montado (modelo SERVIDOR-APONTADO): só index.html de segurança (${bytes} bytes).`);
+console.log(`o app carrega o JOGO de: ${servidor}  (server.url no capacitor.config.json)`);
+console.log('nada de jogo/assets embutidos — publicar o servidor atualiza o app.');
