@@ -165,39 +165,49 @@ const PANT_ADJ = { 'Grega': 'gregas', 'Nórdica': 'nórdicas', 'Egípcia': 'egí
 function nomeM(k){ return (typeof MISSOES !== 'undefined' && MISSOES.missoes[k] && MISSOES.missoes[k].nome) || (HRM[k] && HRM[k].nome) || k; }
 function missoesDisponivel(){ return typeof MISSOES !== 'undefined' && MISSOES.missoes && Object.keys(MISSOES.missoes).length > 0; }
 
-// classifica cada missão numa das 4 seções, a partir do estado do SERVIDOR (owned + ledger).
-function classificarMissoes(){
-  const owned = (contaAtual && contaAtual.perfil && contaAtual.perfil.deuses) || {};
-  const led = (contaAtual && contaAtual.missoes) || {};
-  const vitPant = led.vitoriasPanteaoPvP || {}, seq = led.sequenciaPvP || {};
-  const ini = (MISSOES.iniciais || []);
-  const tem = k => ini.includes(k) || !!owned[k];
-  const sec = { progresso: [], disponivel: [], travada: [], concluida: [] };
-  for (const k of Object.keys(MISSOES.missoes)){
-    const m = MISSOES.missoes[k];
-    if (tem(k)){ sec.concluida.push(k); continue; }
-    const vol = vitPant[m.panteao] || 0, volN = m.vitoriasPanteao || 0;
-    const seg = m.companheiro ? (seq[m.companheiro] || 0) : 0, segN = m.seguidasCompanheiro || 0;
-    const compNaMao = m.companheiro ? tem(m.companheiro) : true;
-    if (!compNaMao){ sec.travada.push(k); continue; }
-    if (vol === 0 && seg === 0) sec.disponivel.push(k);
-    else sec.progresso.push(k);
-  }
-  const ord = arr => arr.sort((a,b)=> (raridadeDe(b)+'').localeCompare(raridadeDe(a)) || nomeM(a).localeCompare(nomeM(b)));
-  ord(sec.progresso); ord(sec.disponivel); ord(sec.travada); ord(sec.concluida);
-  return sec;
+// §241 — a FAIXA atual do jogador (do servidor; o cliente NUNCA classifica ranque). Índice na escala.
+function _temDeus(k){ const owned = (contaAtual && contaAtual.perfil && contaAtual.perfil.deuses) || {}; return (MISSOES.iniciais || []).includes(k) || !!owned[k]; }
+function faixaAtualIdx(){
+  const faixas = MISSOES.faixas || [];
+  const ch = contaAtual && contaAtual.ranque && contaAtual.ranque.faixa && contaAtual.ranque.faixa.chave;
+  const i = faixas.findIndex(f => f.chave === ch);
+  return i >= 0 ? i : 0;
 }
+// PROGRESSO desde o desbloqueio (§241): volume e sequência descontam a BASE gravada no servidor.
+function _progVol(k){
+  const m = MISSOES.missoes[k], led = (contaAtual && contaAtual.missoes) || {};
+  const base = ((led.desbloqueio || {})[k] || {}).volBase || 0;
+  const cur = (led.vitoriasPanteaoPvP || {})[m.panteao] || 0;
+  return { v: Math.max(0, cur - base), n: m.vitoriasPanteao || 0 };
+}
+function _progSeq(k){
+  const m = MISSOES.missoes[k], led = (contaAtual && contaAtual.missoes) || {};
+  const alvo = m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao });
+  const cur = alvo.tipo === 'companheiro' ? ((led.sequenciaPvP || {})[alvo.chave] || 0) : ((led.sequenciaPanteaoPvP || {})[alvo.chave] || 0);
+  const base = ((led.desbloqueio || {})[k] || {}).seqBase || 0;
+  const eff = (cur < base) ? cur : (cur - base);
+  return { s: Math.max(0, eff), n: m.seguidas || 0, tipo: alvo.tipo, alvoNome: alvo.tipo === 'companheiro' ? nomeM(alvo.chave) : alvo.chave };
+}
+// ESTADO funcional de uma missão dentro de uma faixa (aberta ou não pelo ranque).
+function estadoMissao(k, faixaAberta){
+  if (_temDeus(k)) return 'concluida';
+  if (!faixaAberta) return 'ranque';                          // §241: travada pelo PORTÃO DE RANQUE
+  const m = MISSOES.missoes[k];
+  if (m.companheiro && !_temDeus(m.companheiro)) return 'travada';   // falta o companheiro (cadeia)
+  const pv = _progVol(k), ps = _progSeq(k);
+  return (pv.v === 0 && ps.s === 0) ? 'disponivel' : 'progresso';
+}
+function contarConquistados(){ return Object.keys(MISSOES.missoes).filter(_temDeus).length; }
 
-// os "requisitos ao vivo" de uma missão (o contador do servidor): "12/40 vitórias gregas · 2/5 seguidas com Cérbero".
+// os "requisitos ao vivo" (o contador do servidor, DESDE o desbloqueio): "12/40 vitórias gregas · 2/3 seguidas com Cérbero".
 function reqAoVivoHTML(k){
   const m = MISSOES.missoes[k];
-  const led = (contaAtual && contaAtual.missoes) || {};
-  const vol = (led.vitoriasPanteaoPvP || {})[m.panteao] || 0, volN = m.vitoriasPanteao || 0;
+  const pv = _progVol(k), ps = _progSeq(k);
   const adj = PANT_ADJ[m.panteao] || H(m.panteao);
-  let s = `<span class="mreq__v"><b>${Math.min(vol, volN)}</b>/${volN} vitórias ${adj}</span>`;
-  if (m.companheiro && m.seguidasCompanheiro){
-    const seg = (led.sequenciaPvP || {})[m.companheiro] || 0;
-    s += `<span class="mreq__s"><b>${Math.min(seg, m.seguidasCompanheiro)}</b>/${m.seguidasCompanheiro} seguidas com ${H(nomeM(m.companheiro))}</span>`;
+  let s = `<span class="mreq__v"><b>${Math.min(pv.v, pv.n)}</b>/${pv.n} vitórias ${adj}</span>`;
+  if (ps.n){
+    const alvo = ps.tipo === 'companheiro' ? ('com ' + H(ps.alvoNome)) : (adj);
+    s += `<span class="mreq__s"><b>${Math.min(ps.s, ps.n)}</b>/${ps.n} seguidas ${alvo}</span>`;
   }
   return s;
 }
@@ -207,11 +217,12 @@ function tileMissaoHTML(k, estado){
   const m = MISSOES.missoes[k];
   const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
   const rar = raridadeDe(k);
-  const cor = estado === 'concluida' ? COR(g.elem) : (estado === 'travada' ? '#6a6390' : COR(g.elem));
+  const cor = (estado === 'travada' || estado === 'ranque') ? '#6a6390' : COR(g.elem);
   let cauda;
   if (estado === 'progresso') cauda = `<span class="mtile__req">${reqAoVivoHTML(k)}</span>`;
   else if (estado === 'disponivel') cauda = `<span class="mtile__req"><span class="mreq__v"><b>0</b>/${m.vitoriasPanteao} vitórias ${PANT_ADJ[m.panteao] || H(m.panteao)}</span><span class="mreq__pronto">${m.companheiro ? H(nomeM(m.companheiro)) + ' na mão ✓' : 'pronto para começar'}</span></span>`;
   else if (estado === 'travada') cauda = `<span class="mtile__trava"><span class="mtrava__falta">precisa de <b>${H(nomeM(m.companheiro))}</b></span><span class="mtrava__motivo">${H(m.motivo)}</span></span>`;
+  else if (estado === 'ranque') cauda = `<span class="mtile__trava"><span class="mtrava__falta">abre em <b>${H(m.faixaNome)}</b></span><span class="mtrava__motivo">${H(m.motivo)}</span></span>`;
   else cauda = `<span class="mtile__feito">✓ conquistado</span>`;
   return `<button class="mtile mtile--${estado}" data-deus="${k}" title="${H(g.nome)}">
     <span class="mtile__rar rar--${rar}"></span>
@@ -223,14 +234,32 @@ function tileMissaoHTML(k, estado){
   </button>`;
 }
 
-function secaoMissaoHTML(rot, sub, chave, arr, estado){
-  const corpo = arr.length
-    ? `<div class="mgrid">${arr.map(k => tileMissaoHTML(k, estado)).join('')}</div>`
-    : `<p class="msec__vazio">${H(sub)}</p>`;
-  return `<section class="msec msec--${chave}">
-    <div class="msec__cab"><h2>${H(rot)}</h2><span class="msec__n">${arr.length}</span></div>
-    ${corpo}
-  </section>`;
+// §241 item 5 — AGRUPA POR FAIXA: uma seção por faixa, com quantas ela libera e o status de ranque
+// ("aberta N/N" ou "falta subir X faixas"). Ver o que espera nas faixas de cima faz querer subir.
+function faixasMissaoHTML(){
+  const faixas = MISSOES.faixas || [];
+  const atual = faixaAtualIdx();
+  const porFaixa = faixas.map(() => []);
+  for (const k of Object.keys(MISSOES.missoes)){ const fi = MISSOES.missoes[k].faixaIndice; if (fi >= 0 && fi < porFaixa.length) porFaixa[fi].push(k); }
+  const ord = arr => arr.sort((a,b)=> (raridadeDe(b)+'').localeCompare(raridadeDe(a)) || nomeM(a).localeCompare(nomeM(b)));
+  return faixas.map((f, fi) => {
+    const arr = ord(porFaixa[fi]);
+    const aberta = fi <= atual;
+    const feitos = arr.filter(_temDeus).length;
+    const faltam = fi - atual;
+    const status = aberta
+      ? `<span class="mfx__ok">${feitos}/${arr.length} conquistados</span>`
+      : `<span class="mfx__lock">falta subir ${faltam} faixa${faltam > 1 ? 's' : ''}</span>`;
+    const tiles = arr.map(k => tileMissaoHTML(k, estadoMissao(k, aberta))).join('');
+    return `<section class="msec msec--faixa ${aberta ? 'mfx--aberta' : 'mfx--lock'}">
+      <div class="msec__cab mfx__cab">
+        <h2>${H(f.nome)}</h2>
+        <span class="mfx__n">${arr.length} Provaç${arr.length === 1 ? 'ão' : 'ões'}</span>
+        ${status}
+      </div>
+      <div class="mgrid">${tiles}</div>
+    </section>`;
+  }).join('');
 }
 
 // SEM SERVIDOR: o progresso vive no servidor (§228). Não mostra zero — diz a verdade e ainda deixa
@@ -260,15 +289,13 @@ function renderMissoes(){
   } else if (!online){
     corpo = `<div class="tela__rol">${missoesOfflineHTML()}</div>`;
   } else {
-    const s = classificarMissoes();
-    corpo = `<div class="tela__rol">
-      ${secaoMissaoHTML('Em progresso', 'Nenhuma começada — jogue PvP com um panteão e o companheiro na mão.', 'progresso', s.progresso, 'progresso')}
-      ${secaoMissaoHTML('Disponíveis', 'Nenhuma pronta — falta ter o companheiro de alguma.', 'disponivel', s.disponivel, 'disponivel')}
-      ${secaoMissaoHTML('Travadas', 'Nada travado — você tem o companheiro de todas as que faltam.', 'travada', s.travada, 'travada')}
-      ${secaoMissaoHTML('Conquistados', 'Nenhum deus conquistado por missão ainda.', 'concluida', s.concluida, 'concluida')}
-    </div>`;
+    // §241 item 5: o mapa da coleção AGRUPADO POR FAIXA (o ranque revela). Cada faixa diz quantas libera
+    // e o status ("aberta N/N" ou "falta subir X faixas"); os tiles trazem o estado funcional (§234).
+    const atual = (MISSOES.faixas || [])[faixaAtualIdx()];
+    const cabRanque = atual ? `<p class="mfx__voce">Você está em <b>${H(atual.nome)}</b> — suba de ranque no PvP para revelar as faixas de cima.</p>` : '';
+    corpo = `<div class="tela__rol">${cabRanque}${faixasMissaoHTML()}</div>`;
   }
-  const cont = online && missoesDisponivel() ? `<span class="tela__cont">${classificarMissoes().concluida.length}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
+  const cont = online && missoesDisponivel() ? `<span class="tela__cont">${contarConquistados()}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
   <div class="tela">
@@ -803,8 +830,14 @@ function comoConseguirHTML(k, rar){
 // texto curto do requisito de missão (para o detalhe do deus): "40 vitórias gregas + 5 seguidas com Cérbero".
 function reqMissaoTexto(k){
   const m = MISSOES.missoes[k]; if (!m) return '';
-  let s = `${m.vitoriasPanteao} vitórias ${PANT_ADJ[m.panteao] || m.panteao}`;
-  if (m.companheiro) s += m.seguidasCompanheiro ? ` + ${m.seguidasCompanheiro} seguidas com ${nomeM(m.companheiro)}` : ` · com ${nomeM(m.companheiro)}`;
+  const adj = PANT_ADJ[m.panteao] || m.panteao;
+  let s = `${m.vitoriasPanteao} vitórias ${adj}`;
+  // §241: sequência (companheiro OU panteão) + o portão de ranque, tudo desde o desbloqueio.
+  const seg = m.seguidas || m.seguidasCompanheiro || 0;
+  const alvo = m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao });
+  if (seg) s += ` + ${seg} seguidas ${alvo.tipo === 'companheiro' ? 'com ' + nomeM(alvo.chave) : adj}`;
+  else if (m.companheiro) s += ` · com ${nomeM(m.companheiro)}`;
+  if (m.faixaNome && (m.faixaMin || 0) > 0) s += ` · abre em ${m.faixaNome}`;
   return s;
 }
 

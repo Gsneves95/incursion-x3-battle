@@ -82,14 +82,43 @@ function medir(st, time0, time1) {
 // tudo com deuses que o jogador JÁ TEM; nada de feito no gate, nada de portão de faixa) --------
 // ctx.possui(k) = o jogador TEM o deus k (inicial, gacha ou missão já cumprida). "JÁ TEM" (§230) é
 // POSSE (perfil.deuses), não só liberação — um Cérbero vindo da Invocação também abre o Hades.
-function missaoCumprida(m, led, ctx) {
-  // 1) COMPANHEIRO (temático) POSSUÍDO — só se chega ao Hades pelo Cérbero.
-  if (m.companheiro && !ctx.possui(m.companheiro)) return false;
-  // 2) VOLUME: vitórias PvP com o PANTEÃO EXIGIDO (conta uma vitória por panteão presente no time).
-  if (((led.vitoriasPanteaoPvP || {})[m.panteao] || 0) < (m.vitoriasPanteao || 0)) return false;
-  // 3) SEGUIDAS com o companheiro (só S/SS têm >0): sequência de vitórias com o companheiro no time.
-  if (m.seguidasCompanheiro && m.companheiro) { if (((led.sequenciaPvP || {})[m.companheiro] || 0) < m.seguidasCompanheiro) return false; }
+// §241 — as TRÊS TRAVAS: (1) RANQUE revela: a conta precisa ter atingido a faixaMin da missão. (2) CADEIA
+// ordena: o companheiro temático possuído. (3) SEQUÊNCIA prova habilidade. E o CONTADOR COMEÇA NO
+// DESBLOQUEIO (item 4): volume e sequência contam a PARTIR da base guardada em led.desbloqueio[deus] —
+// vitórias anteriores ao desbloqueio NÃO contam. ctx.pontos = c.ranque.pontos (o servidor classifica).
+function _desbloqueada(m, led, ctx) {
+  if (m.companheiro && !ctx.possui(m.companheiro)) return false;          // cadeia
+  if ((ctx.pontos || 0) < (m.faixaMin || 0)) return false;               // ranque
   return true;
+}
+function missaoCumprida(m, led, ctx) {
+  if (!_desbloqueada(m, led, ctx)) return false;
+  const base = (led.desbloqueio || {})[m.deus] || { volBase: 0, seqBase: 0 };
+  // 2) VOLUME (desde o desbloqueio): vitórias com o PANTEÃO exigido, menos o que já havia ao desbloquear.
+  const vol = ((led.vitoriasPanteaoPvP || {})[m.panteao] || 0) - (base.volBase || 0);
+  if (vol < (m.vitoriasPanteao || 0)) return false;
+  // 3) SEQUÊNCIA (desde o desbloqueio): toda missão tem >=1; alvo = companheiro OU panteão (§241).
+  const req = _seguidasReq(m);
+  if (req > 0) {
+    const cur = _seqAtual(m, led);
+    const seqBase = (cur < (base.seqBase || 0)) ? 0 : (base.seqBase || 0);   // reset após o desbloqueio conta do zero
+    if ((cur - seqBase) < req) return false;
+  }
+  return true;
+}
+// §241 — grava a BASE do contador quando a missão DESTRAVA (companheiro + ranque), e normaliza a base da
+// sequência se houve derrota (reset) depois do desbloqueio. Idempotente: só grava a base uma vez.
+function _reavaliarDesbloqueios(led, ctx, quando) {
+  for (const k of Object.keys(DOC.missoes)) {
+    const m = DOC.missoes[k];
+    if (!_desbloqueada(m, led, ctx)) continue;
+    if (!led.desbloqueio[k]) {
+      led.desbloqueio[k] = { em: quando, volBase: (led.vitoriasPanteaoPvP[m.panteao] || 0), seqBase: _seqAtual(m, led) };
+    } else {
+      const cur = _seqAtual(m, led);
+      if (cur < (led.desbloqueio[k].seqBase || 0)) led.desbloqueio[k].seqBase = 0;   // um reset zera a base: a nova sequência conta inteira
+    }
+  }
 }
 
 // -------- REGISTRAR o fim de UMA partida PvP no ledger das duas contas (a ÚNICA porta que mexe no
@@ -100,9 +129,15 @@ function missaoCumprida(m, led, ctx) {
 function _garante(led) {
   led.vitoriasPanteaoPvP = led.vitoriasPanteaoPvP || {};
   led.vitoriasPvP = led.vitoriasPvP || {}; led.sequenciaPvP = led.sequenciaPvP || {};
+  led.sequenciaPanteaoPvP = led.sequenciaPanteaoPvP || {};   // §241: sequência por PANTEÃO (missões sem companheiro)
+  led.desbloqueio = led.desbloqueio || {};                   // §241: {deus:{em,volBase,seqBase}} — contador desde o desbloqueio
   led.paresPvP = led.paresPvP || {}; led.feitos = led.feitos || {}; led.liberados = led.liberados || {};
   return led;
 }
+// §241 — o ALVO da sequência de uma missão: o companheiro, ou (sem companheiro, as 8 portas) o PANTEÃO.
+function _alvoSeq(m) { return m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao }); }
+function _seqAtual(m, led) { const a = _alvoSeq(m); return (a.tipo === 'companheiro' ? (led.sequenciaPvP[a.chave] || 0) : (led.sequenciaPanteaoPvP[a.chave] || 0)); }
+function _seguidasReq(m) { return (typeof m.seguidas === 'number') ? m.seguidas : (m.seguidasCompanheiro || 0); }
 function _parKey(a, b) { return [a, b].sort().join('+'); }
 // o panteão de MEMBRESIA de uma key (facção real normalizada) — do doc gerado, com fallback local.
 function _panteaoDe(k) { return (DOC.panteaoDe && DOC.panteaoDe[k]) || (GODS[k] && (GODS[k].faccao === 'Olímpica' ? 'Grega' : GODS[k].faccao)) || null; }
@@ -119,14 +154,27 @@ function registrarPvP(sala) {
   for (let L = 0; L < 2; L++) {
     const c = contas._contaPorId(ids[L]); if (!c) { projecoes.push(null); continue; }
     const led = _garante(contas._garantirMissoes(c));
+    // §241: grava as bases de desbloqueio ANTES de creditar esta partida — assim uma missão já destravada
+    // (companheiro possuído + ranque atingido, ex.: as imediatas na Suplicante) conta ESTA vitória, e a base
+    // fica no estado PRÉ-partida (o ranque desta partida só é aplicado DEPOIS, em salas.finalizarPartida).
+    {
+      const deuses = (c.perfil && c.perfil.deuses) || {};
+      const ctxPre = { iniciais: DOC.iniciais, possui: k => DOC.iniciais.includes(k) || !!deuses[k], pontos: (c.ranque && c.ranque.pontos) || 0 };
+      _reavaliarDesbloqueios(led, ctxPre, Date.now());
+    }
     const meu = time[L], venceu = (venc === L), perdeu = (venc === (1 - L));
     // 1) VOLUME: em VITÓRIA, conta uma vitória por CADA panteão presente no time (o requisito é
     //    "vitórias com o panteão"). vitórias/sequência por deus também (sequência = "seguidas").
+    const pantsMeu = new Set(meu.map(_panteaoDe).filter(Boolean));
     for (const k of meu) {
       if (venceu) { led.vitoriasPvP[k] = (led.vitoriasPvP[k] || 0) + 1; led.sequenciaPvP[k] = (led.sequenciaPvP[k] || 0) + 1; }
       else if (perdeu) { led.sequenciaPvP[k] = 0; }        // empate técnico não zera nem soma
     }
-    if (venceu) { const pants = new Set(meu.map(_panteaoDe).filter(Boolean)); for (const p of pants) led.vitoriasPanteaoPvP[p] = (led.vitoriasPanteaoPvP[p] || 0) + 1; }
+    if (venceu) {
+      for (const p of pantsMeu) { led.vitoriasPanteaoPvP[p] = (led.vitoriasPanteaoPvP[p] || 0) + 1; led.sequenciaPanteaoPvP[p] = (led.sequenciaPanteaoPvP[p] || 0) + 1; }
+    } else if (perdeu) {
+      for (const p of pantsMeu) led.sequenciaPanteaoPvP[p] = 0;   // §241: derrota zera a sequência do panteão
+    }
     // 2) pares (registro histórico; não é mais o gate — §230) e feitos (MAESTRIA): acumulam sempre.
     if (venceu) for (let i = 0; i < meu.length; i++) for (let j = i + 1; j < meu.length; j++) { const pk = _parKey(meu[i], meu[j]); led.paresPvP[pk] = (led.paresPvP[pk] || 0) + 1; }
     for (const k of meu) { const fam = FAM.assinatura(GODS[k]); const v = (feitosPorLado[L] || {})[fam.metrica] || 0; if (v) led.feitos[k] = (led.feitos[k] || 0) + v; }
@@ -148,8 +196,11 @@ function _liberarCumpridas(c, agora) {
   if (!c.perfil) c.perfil = {};
   const deuses = c.perfil.deuses = c.perfil.deuses || {};
   const possui = (k) => DOC.iniciais.includes(k) || !!deuses[k];
-  const ctx = { iniciais: DOC.iniciais, possui };
+  const pontos = (c.ranque && typeof c.ranque.pontos === 'number') ? c.ranque.pontos : 0;   // §241: RANQUE revela
+  const ctx = { iniciais: DOC.iniciais, possui, pontos };
   const quando = typeof agora === 'number' ? agora : Date.now();
+  // §241: grava as bases de desbloqueio (o contador começa aqui) ANTES de avaliar conclusão.
+  _reavaliarDesbloqueios(led, ctx, quando);
   let mudou = true;
   while (mudou) {
     mudou = false;
@@ -159,10 +210,11 @@ function _liberarCumpridas(c, agora) {
         deuses[k] = { copias: 1, favorito: false, obtidoEm: quando, viaMissao: true };   // CONCEDE o deus
         led.liberados[k] = true;                                                          // histórico da missão
         mudou = true;
+        _reavaliarDesbloqueios(led, ctx, quando);   // conceder um deus pode DESTRAVAR o próximo (base = agora)
       }
     }
   }
   return led;
 }
 
-module.exports = { DOC, medir, missaoCumprida, registrarPvP, _liberarCumpridas, GODS };
+module.exports = { DOC, medir, missaoCumprida, registrarPvP, _liberarCumpridas, _reavaliarDesbloqueios, _garante, GODS };

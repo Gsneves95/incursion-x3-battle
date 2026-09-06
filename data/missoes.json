@@ -1,6 +1,6 @@
 {
- "versao": 2,
- "nota": "Gerado por tools/gerar_missoes.js a partir de data/missoes_requisitos.json (vínculo temático, do dono) + data/raridades. Requisito = VOLUME por panteão + SEGUIDAS com o companheiro (§230). Membresia (quem provê um panteão) = facção real; panteão EXIGIDO vem do arquivo (pode ser cruzado).",
+ "versao": 3,
+ "nota": "Gerado por tools/gerar_missoes.js (§241): VOLUME por panteão (raridade) + SEQUÊNCIA pela FAIXA (rampa 3->6, teto 6) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json, distribuição mais generosa embaixo). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.",
  "volumes": {
   "A": {
    "panteao": 15,
@@ -15,6 +15,108 @@
    "seguidas": 5
   }
  },
+ "faixas": [
+  {
+   "chave": "suplicante",
+   "nome": "Suplicante",
+   "min": 0
+  },
+  {
+   "chave": "devoto",
+   "nome": "Devoto",
+   "min": 100
+  },
+  {
+   "chave": "iniciado",
+   "nome": "Iniciado",
+   "min": 200
+  },
+  {
+   "chave": "adepto",
+   "nome": "Adepto",
+   "min": 300
+  },
+  {
+   "chave": "sacerdote",
+   "nome": "Sacerdote",
+   "min": 400
+  },
+  {
+   "chave": "oraculo",
+   "nome": "Oráculo",
+   "min": 500
+  },
+  {
+   "chave": "heroi",
+   "nome": "Herói",
+   "min": 600
+  },
+  {
+   "chave": "semideus",
+   "nome": "Semideus",
+   "min": 700
+  }
+ ],
+ "distribuicao": [
+  {
+   "chave": "suplicante",
+   "nome": "Suplicante",
+   "min": 0,
+   "quantas": 18
+  },
+  {
+   "chave": "devoto",
+   "nome": "Devoto",
+   "min": 100,
+   "quantas": 15
+  },
+  {
+   "chave": "iniciado",
+   "nome": "Iniciado",
+   "min": 200,
+   "quantas": 13
+  },
+  {
+   "chave": "adepto",
+   "nome": "Adepto",
+   "min": 300,
+   "quantas": 12
+  },
+  {
+   "chave": "sacerdote",
+   "nome": "Sacerdote",
+   "min": 400,
+   "quantas": 11
+  },
+  {
+   "chave": "oraculo",
+   "nome": "Oráculo",
+   "min": 500,
+   "quantas": 9
+  },
+  {
+   "chave": "heroi",
+   "nome": "Herói",
+   "min": 600,
+   "quantas": 7
+  },
+  {
+   "chave": "semideus",
+   "nome": "Semideus",
+   "min": 700,
+   "quantas": 6
+  }
+ ],
+ "seguidasPorTier": [
+  2,
+  2,
+  3,
+  3,
+  3,
+  3,
+  4,
+  4
+ ],
  "iniciais": [
   "zeus",
   "ogum",
@@ -136,7 +238,17 @@
    "panteao": "Grega",
    "companheiro": null,
    "motivo": "O cão do portão é achado antes do senhor do Submundo.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Grega"
+   },
    "seguidasCompanheiro": 0,
    "familia": "anti-revive",
    "feito": {
@@ -152,7 +264,17 @@
    "panteao": "Grega",
    "companheiro": null,
    "motivo": "A górgona guarda a ilha; enfrenta-se antes de qualquer herói.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Grega"
+   },
    "seguidasCompanheiro": 0,
    "familia": "contador",
    "feito": {
@@ -168,8 +290,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Esposa e rainha ao lado dele no trono do Olimpo.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -184,8 +316,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Nasceu da cabeça de Zeus, armada e adulta.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -200,8 +342,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Filho de Zeus e Hera, o furor da guerra.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -216,8 +368,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Filho de Zeus, o sol e a lira.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -232,8 +394,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Filho de Zeus e seu mensageiro entre os mundos.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -248,8 +420,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Irmã de Zeus, senhora da colheita.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -264,8 +446,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Filho de Zeus, nascido duas vezes.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -280,7 +472,17 @@
    "panteao": "Grega",
    "companheiro": "ares",
    "motivo": "Amantes — a beleza e a guerra atadas.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ares"
+   },
    "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
@@ -296,8 +498,18 @@
    "panteao": "Grega",
    "companheiro": "atena",
    "motivo": "Foi Atena quem lhe deu o escudo espelhado.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "atena"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -312,8 +524,18 @@
    "panteao": "Grega",
    "companheiro": "apolo",
    "motivo": "Apolo lhe deu a lira que amansa o Submundo.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "apolo"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -328,8 +550,18 @@
    "panteao": "Grega",
    "companheiro": "cerberus",
    "motivo": "As Fúrias e o cão dividem o mesmo portão.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "cerberus"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -344,8 +576,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Filho de Zeus, provado nos doze trabalhos.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -360,8 +602,18 @@
    "panteao": "Grega",
    "companheiro": "hera",
    "motivo": "A guerra de Troia foi a vingança dela.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "hera"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -376,8 +628,18 @@
    "panteao": "Grega",
    "companheiro": "cerberus",
    "motivo": "Só se chega ao senhor do Submundo pelo cão que o guarda.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "cerberus"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -392,8 +654,18 @@
    "panteao": "Grega",
    "companheiro": "zeus",
    "motivo": "Irmãos que dividiram o mundo: o céu e o mar.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "zeus"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -408,8 +680,18 @@
    "panteao": "Grega",
    "companheiro": "poseidon",
    "motivo": "A fera que o senhor dos mares solta contra as frotas.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "poseidon"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -424,7 +706,17 @@
    "panteao": "Nórdica",
    "companheiro": null,
    "motivo": "O sentinela vê o viajante chegar antes de todos.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Nórdica"
+   },
    "seguidasCompanheiro": 0,
    "familia": "roubo-de-orbe",
    "feito": {
@@ -440,7 +732,17 @@
    "panteao": "Nórdica",
    "companheiro": null,
    "motivo": "O poeta canta nos salões antes de a guerra vir.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Nórdica"
+   },
    "seguidasCompanheiro": 0,
    "familia": "dano",
    "feito": {
@@ -456,8 +758,18 @@
    "panteao": "Nórdica",
    "companheiro": "tyr",
    "motivo": "Dois deuses de guerra; Tyr deu a mão, Thor dá o martelo.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "tyr"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -472,7 +784,17 @@
    "panteao": "Nórdica",
    "companheiro": "thor",
    "motivo": "Companheiro de estrada de Thor em toda viagem.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "thor"
+   },
    "seguidasCompanheiro": 3,
    "familia": "intercepta",
    "feito": {
@@ -488,8 +810,18 @@
    "panteao": "Nórdica",
    "companheiro": "tyr",
    "motivo": "A senhora do Fólkvangr recolhe metade dos caídos em batalha.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "tyr"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -504,8 +836,18 @@
    "panteao": "Nórdica",
    "companheiro": "freyja",
    "motivo": "A luz de Ásgard chorada por toda deusa.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "freyja"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -520,8 +862,18 @@
    "panteao": "Nórdica",
    "companheiro": "heimdall",
    "motivo": "A cabeça no poço e o olho do sentinela: os dois vigias.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "heimdall"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -536,8 +888,18 @@
    "panteao": "Nórdica",
    "companheiro": "loki",
    "motivo": "Filha de Loki, senhora dos mortos.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "loki"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -552,8 +914,18 @@
    "panteao": "Nórdica",
    "companheiro": "tyr",
    "motivo": "Foi a mão de Tyr que o lobo arrancou.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "tyr"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -568,8 +940,18 @@
    "panteao": "Nórdica",
    "companheiro": "thor",
    "motivo": "A serpente que Thor pescou e que o mata no Ragnarök.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "thor"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -584,8 +966,18 @@
    "panteao": "Nórdica",
    "companheiro": "tyr",
    "motivo": "Do gigante primevo se fez o mundo que os deuses herdaram.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "tyr"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -600,8 +992,18 @@
    "panteao": "Nórdica",
    "companheiro": "mimir",
    "motivo": "Deu o olho no poço de Mímir pela sabedoria.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "mimir"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -616,7 +1018,17 @@
    "panteao": "Egípcia",
    "companheiro": null,
    "motivo": "A gata guarda a casa antes de o templo existir.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Egípcia"
+   },
    "seguidasCompanheiro": 0,
    "familia": "revive",
    "feito": {
@@ -632,7 +1044,17 @@
    "panteao": "Egípcia",
    "companheiro": null,
    "motivo": "O babuíno vigia as margens do Nilo.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Egípcia"
+   },
    "seguidasCompanheiro": 0,
    "familia": "controle",
    "feito": {
@@ -648,8 +1070,18 @@
    "panteao": "Egípcia",
    "companheiro": "sobek",
    "motivo": "Os dois pesam o que o rio devolve.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "sobek"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -664,8 +1096,18 @@
    "panteao": "Egípcia",
    "companheiro": "anubis",
    "motivo": "Devora o coração que Anúbis reprova na balança.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "anubis"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -680,8 +1122,18 @@
    "panteao": "Egípcia",
    "companheiro": "anubis",
    "motivo": "Anúbis é seu filho e o guia dos seus mortos.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "anubis"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -696,7 +1148,17 @@
    "panteao": "Egípcia",
    "companheiro": "osiris",
    "motivo": "Remontou o corpo do marido pedaço por pedaço.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "osiris"
+   },
    "seguidasCompanheiro": 3,
    "familia": "revive",
    "feito": {
@@ -712,8 +1174,18 @@
    "panteao": "Egípcia",
    "companheiro": "isis",
    "motivo": "Filho de Ísis e Osíris, vingador do pai.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 4,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "isis"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -728,8 +1200,18 @@
    "panteao": "Egípcia",
    "companheiro": "horus",
    "motivo": "O falcão do sol e o sol se confundem no mesmo céu.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 5,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "horus"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "contador",
    "feito": {
     "metrica": "contadoresGanhos",
@@ -744,8 +1226,18 @@
    "panteao": "Egípcia",
    "companheiro": "ra",
    "motivo": "O touro sagrado carrega o disco solar de Rá.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 6,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ra"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -760,8 +1252,18 @@
    "panteao": "Egípcia",
    "companheiro": "isis",
    "motivo": "Modela no torno os corpos que Ísis cura.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 4,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "isis"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -776,8 +1278,18 @@
    "panteao": "Egípcia",
    "companheiro": "ra",
    "motivo": "A lua que atravessa o céu quando o sol se deita.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 6,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ra"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -792,8 +1304,18 @@
    "panteao": "Egípcia",
    "companheiro": "ra",
    "motivo": "A garça que renasce no fogo do sol.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 6,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ra"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -808,8 +1330,18 @@
    "panteao": "Egípcia",
    "companheiro": "ra",
    "motivo": "O lótus que abre ao amanhecer, primeiro perfume do sol.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 6,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ra"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -824,8 +1356,18 @@
    "panteao": "Japonesa",
    "companheiro": "fujin",
    "motivo": "Trovão e vento: os dois sopram juntos na tempestade.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "fujin"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -840,7 +1382,17 @@
    "panteao": "Japonesa",
    "companheiro": null,
    "motivo": "A raposa anda pelos campos antes de qualquer santuário.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Japonesa"
+   },
    "seguidasCompanheiro": 0,
    "familia": "intercepta",
    "feito": {
@@ -856,8 +1408,18 @@
    "panteao": "Japonesa",
    "companheiro": "kitsune",
    "motivo": "Os dois trapaceiros de pelo que trocam de forma.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "kitsune"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -872,8 +1434,18 @@
    "panteao": "Japonesa",
    "companheiro": "kitsune",
    "motivo": "A raposa é a mensageira de Inari nos arrozais.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "kitsune"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -888,8 +1460,18 @@
    "panteao": "Japonesa",
    "companheiro": "fujin",
    "motivo": "O deus da tempestade governa o vento que Fujin carrega.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "fujin"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -904,8 +1486,18 @@
    "panteao": "Japonesa",
    "companheiro": "susanoo",
    "motivo": "A irmã que se trancou na caverna fugindo dele.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "susanoo"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "campo",
    "feito": {
     "metrica": "turnosCampo",
@@ -920,7 +1512,17 @@
    "panteao": "Japonesa",
    "companheiro": "amaterasu",
    "motivo": "O irmão-lua que ela expulsou do céu diurno.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "amaterasu"
+   },
    "seguidasCompanheiro": 3,
    "familia": "campo",
    "feito": {
@@ -936,8 +1538,18 @@
    "panteao": "Japonesa",
    "companheiro": "amaterasu",
    "motivo": "Pai de Amaterasu, nascida quando ele lavou o olho.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "amaterasu"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -952,8 +1564,18 @@
    "panteao": "Japonesa",
    "companheiro": "izanagi",
    "motivo": "Marido e mulher que fizeram as ilhas e se separaram na morte.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 4,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "izanagi"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -968,8 +1590,18 @@
    "panteao": "Japonesa",
    "companheiro": "izanami",
    "motivo": "O fogo que matou a mãe ao nascer.",
+   "faixa": "heroi",
+   "faixaNome": "Herói",
+   "faixaIndice": 6,
+   "faixaMin": 600,
+   "profundidade": 5,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "izanami"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -984,8 +1616,18 @@
    "panteao": "Japonesa",
    "companheiro": "raijin",
    "motivo": "Os demônios do trovão que batem nos tambores.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "raijin"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1000,8 +1642,18 @@
    "panteao": "Japonesa",
    "companheiro": "oni",
    "motivo": "O rei dos oni no monte Ōe.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "oni"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -1016,8 +1668,18 @@
    "panteao": "Japonesa",
    "companheiro": "susanoo",
    "motivo": "Empunha a espada que Susanoo tirou da serpente.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "susanoo"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -1032,8 +1694,18 @@
    "panteao": "Chinesa",
    "companheiro": "nezha",
    "motivo": "Nezha matou o filho do Rei Dragão e o enfrentou no mar.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "nezha"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1048,7 +1720,17 @@
    "panteao": "Chinesa",
    "companheiro": null,
    "motivo": "O arqueiro derrubou nove sóis antes de haver corte celeste.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "panteao",
+    "chave": "Chinesa"
+   },
    "seguidasCompanheiro": 0,
    "familia": "campo",
    "feito": {
@@ -1064,8 +1746,18 @@
    "panteao": "Chinesa",
    "companheiro": "houyi",
    "motivo": "Bebeu o elixir do marido e subiu à lua.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "houyi"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1080,7 +1772,17 @@
    "panteao": "Chinesa",
    "companheiro": "aokuang",
    "motivo": "Tomou o bastão no palácio do Rei Dragão.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "aokuang"
+   },
    "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
@@ -1096,8 +1798,18 @@
    "panteao": "Chinesa",
    "companheiro": "nezha",
    "motivo": "Dois generais de lança que a China divinizou.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "nezha"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1112,8 +1824,18 @@
    "panteao": "Chinesa",
    "companheiro": "houyi",
    "motivo": "Remendou o céu que os sóis rasgaram.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "houyi"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1128,8 +1850,18 @@
    "panteao": "Chinesa",
    "companheiro": "nuwa",
    "motivo": "Julga os mortos do mundo que Nüwa moldou.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "nuwa"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -1144,7 +1876,17 @@
    "panteao": "Chinesa",
    "companheiro": "guanyu",
    "motivo": "O Imperador Amarelo comanda os generais do céu.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "guanyu"
+   },
    "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
@@ -1160,8 +1902,18 @@
    "panteao": "Hindu",
    "companheiro": "ganesha",
    "motivo": "Pai de Ganesha — foi ele que lhe deu a cabeça de elefante.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ganesha"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -1176,7 +1928,17 @@
    "panteao": "Hindu",
    "companheiro": "shiva",
    "motivo": "A guerreira nasce da fúria reunida dos deuses de Shiva.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "shiva"
+   },
    "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
@@ -1192,8 +1954,18 @@
    "panteao": "Hindu",
    "companheiro": "durga",
    "motivo": "Saiu da testa de Durga em plena batalha.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "durga"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -1208,8 +1980,18 @@
    "panteao": "Hindu",
    "companheiro": "ganesha",
    "motivo": "O preservador ao lado do removedor de obstáculos.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ganesha"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -1224,7 +2006,17 @@
    "panteao": "Hindu",
    "companheiro": "vishnu",
    "motivo": "Oitavo avatar de Vishnu, o auriga de Arjuna.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "vishnu"
+   },
    "seguidasCompanheiro": 3,
    "familia": "dano",
    "feito": {
@@ -1240,8 +2032,18 @@
    "panteao": "Hindu",
    "companheiro": "krishna",
    "motivo": "Serve o avatar de Vishnu com devoção absoluta.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "krishna"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -1256,8 +2058,18 @@
    "panteao": "Hindu",
    "companheiro": "vishnu",
    "motivo": "Criador e preservador, dois da Trimúrti.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "vishnu"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1272,8 +2084,18 @@
    "panteao": "Brasileira",
    "companheiro": "cuca",
    "motivo": "Os dois assombram a mesma mata do folclore.",
+   "faixa": "suplicante",
+   "faixaNome": "Suplicante",
+   "faixaIndice": 0,
+   "faixaMin": 0,
+   "profundidade": 1,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "cuca"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -1288,8 +2110,18 @@
    "panteao": "Brasileira",
    "companheiro": "saci",
    "motivo": "Guardiões da mata com o mesmo gosto por confundir.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "saci"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -1304,7 +2136,17 @@
    "panteao": "Brasileira",
    "companheiro": "curupira",
    "motivo": "A cobra de fogo e o guardião protegem o mesmo mato.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "curupira"
+   },
    "seguidasCompanheiro": 3,
    "familia": "area",
    "feito": {
@@ -1320,8 +2162,18 @@
    "panteao": "Brasileira",
    "companheiro": "cuca",
    "motivo": "Duas senhoras da água que levam quem se aproxima.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "cuca"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -1336,8 +2188,18 @@
    "panteao": "Brasileira",
    "companheiro": "iara",
    "motivo": "Os dois encantam nas águas do rio.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "iara"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1352,8 +2214,18 @@
    "panteao": "Brasileira",
    "companheiro": "boto",
    "motivo": "O mesmo rio, o dente e o encanto.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "boto"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -1368,8 +2240,18 @@
    "panteao": "Brasileira",
    "companheiro": "saci",
    "motivo": "Assombração de estrada como o redemoinho.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "saci"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1384,8 +2266,18 @@
    "panteao": "Africana",
    "companheiro": "ogum",
    "motivo": "Irmãos de guerra: o ferro e o trovão.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ogum"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1400,8 +2292,18 @@
    "panteao": "Africana",
    "companheiro": "xango",
    "motivo": "Esposa de Xangô, o vento que abre caminho ao raio.",
+   "faixa": "iniciado",
+   "faixaNome": "Iniciado",
+   "faixaIndice": 2,
+   "faixaMin": 200,
+   "profundidade": 2,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "xango"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -1416,8 +2318,18 @@
    "panteao": "Africana",
    "companheiro": "ogum",
    "motivo": "Abre os caminhos que o ferro de Ogum trilha.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ogum"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -1432,8 +2344,18 @@
    "panteao": "Africana",
    "companheiro": "iansa",
    "motivo": "Águas doces e ventos: as duas senhoras do rio.",
+   "faixa": "oraculo",
+   "faixaNome": "Oráculo",
+   "faixaIndice": 5,
+   "faixaMin": 500,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "iansa"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1448,8 +2370,18 @@
    "panteao": "Africana",
    "companheiro": "exu",
    "motivo": "Nada se pede a Oxalá sem passar por Exu primeiro.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 2,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "exu"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1464,8 +2396,18 @@
    "panteao": "Celta",
    "companheiro": "brigid",
    "motivo": "Pai de Brigid, o dono do caldeirão que não esvazia.",
+   "faixa": "devoto",
+   "faixaNome": "Devoto",
+   "faixaIndice": 1,
+   "faixaMin": 100,
+   "profundidade": 1,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 2,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "brigid"
+   },
+   "seguidasCompanheiro": 2,
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -1480,7 +2422,17 @@
    "panteao": "Celta",
    "companheiro": "dagda",
    "motivo": "Neto do Dagda, mestre de todo ofício.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "dagda"
+   },
    "seguidasCompanheiro": 3,
    "familia": "execucao",
    "feito": {
@@ -1496,7 +2448,17 @@
    "panteao": "Celta",
    "companheiro": "dagda",
    "motivo": "Encontrou o Dagda no vau antes da batalha.",
+   "faixa": "adepto",
+   "faixaNome": "Adepto",
+   "faixaIndice": 3,
+   "faixaMin": 300,
+   "profundidade": 2,
    "vitoriasPanteao": 20,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "dagda"
+   },
    "seguidasCompanheiro": 3,
    "familia": "controle",
    "feito": {
@@ -1512,8 +2474,18 @@
    "panteao": "Celta",
    "companheiro": "morrigan",
    "motivo": "O senhor da mata e a corva da guerra dividem a floresta.",
+   "faixa": "sacerdote",
+   "faixaNome": "Sacerdote",
+   "faixaIndice": 4,
+   "faixaMin": 400,
+   "profundidade": 3,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 3,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "morrigan"
+   },
+   "seguidasCompanheiro": 3,
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1528,8 +2500,18 @@
    "panteao": "Egípcia",
    "companheiro": "ra",
    "motivo": "Dois deuses-sol criadores: para alcançar o céu maia, domine outro sol.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 6,
    "vitoriasPanteao": 40,
-   "seguidasCompanheiro": 5,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "ra"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -1544,8 +2526,18 @@
    "panteao": "Maia",
    "companheiro": "itzamna",
    "motivo": "A chuva serve o céu que Itzamná sustenta.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 7,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "itzamna"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1560,8 +2552,18 @@
    "panteao": "Maia",
    "companheiro": "chaac",
    "motivo": "A seca e a morte vêm quando a chuva falha.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 8,
    "vitoriasPanteao": 15,
-   "seguidasCompanheiro": 0,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "chaac"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -1576,8 +2578,18 @@
    "panteao": "Maia",
    "companheiro": "itzamna",
    "motivo": "A serpente emplumada desce do céu de Itzamná.",
+   "faixa": "semideus",
+   "faixaNome": "Semideus",
+   "faixaIndice": 7,
+   "faixaMin": 700,
+   "profundidade": 7,
    "vitoriasPanteao": 20,
-   "seguidasCompanheiro": 3,
+   "seguidas": 4,
+   "seguidasAlvo": {
+    "tipo": "companheiro",
+    "chave": "itzamna"
+   },
+   "seguidasCompanheiro": 4,
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -1585,98 +2597,5 @@
     "slot": "milagre"
    }
   }
- },
- "calibracao": {
-  "rodadas": 300,
-  "partidas": 4800,
-  "quando": "2026-09-03",
-  "volumes": {
-   "A": 15,
-   "S": 20,
-   "SS": 40
-  },
-  "feasibilidade": [
-   {
-    "panteao": "Africana",
-    "jogos": 1387,
-    "winRate": 0.603,
-    "matchesA": 25,
-    "matchesS": 33,
-    "matchesSS": 66
-   },
-   {
-    "panteao": "Brasileira",
-    "jogos": 2390,
-    "winRate": 0.497,
-    "matchesA": 30,
-    "matchesS": 40,
-    "matchesSS": 80
-   },
-   {
-    "panteao": "Celta",
-    "jogos": 1373,
-    "winRate": 0.513,
-    "matchesA": 29,
-    "matchesS": 39,
-    "matchesSS": 78
-   },
-   {
-    "panteao": "Chinesa",
-    "jogos": 2380,
-    "winRate": 0.529,
-    "matchesA": 28,
-    "matchesS": 38,
-    "matchesSS": 76
-   },
-   {
-    "panteao": "Egípcia",
-    "jogos": 3518,
-    "winRate": 0.495,
-    "matchesA": 30,
-    "matchesS": 40,
-    "matchesSS": 81
-   },
-   {
-    "panteao": "Grega",
-    "jogos": 4339,
-    "winRate": 0.494,
-    "matchesA": 30,
-    "matchesS": 40,
-    "matchesSS": 81
-   },
-   {
-    "panteao": "Hindu",
-    "jogos": 2146,
-    "winRate": 0.547,
-    "matchesA": 27,
-    "matchesS": 37,
-    "matchesSS": 73
-   },
-   {
-    "panteao": "Japonesa",
-    "jogos": 3501,
-    "winRate": 0.434,
-    "matchesA": 35,
-    "matchesS": 46,
-    "matchesSS": 92
-   },
-   {
-    "panteao": "Maia",
-    "jogos": 1117,
-    "winRate": 0.468,
-    "matchesA": 32,
-    "matchesS": 43,
-    "matchesSS": 85
-   },
-   {
-    "panteao": "Nórdica",
-    "jogos": 3509,
-    "winRate": 0.518,
-    "matchesA": 29,
-    "matchesS": 39,
-    "matchesSS": 77
-   }
-  ],
-  "absurdos": []
  }
 }

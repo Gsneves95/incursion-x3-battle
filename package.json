@@ -36,6 +36,7 @@
     "test:wss": "node tools/build.js && node tests/wss.test.js",
     "gerar:missoes": "node tools/gerar_missoes.js",
     "calibrar:missoes": "node tools/calibrar_missoes.js",
+    "custo:missoes": "node tools/custo_missoes.js",
     "test:maestria": "node tools/build.js && node tests/maestria.test.js",
     "test:composicao": "node tools/build.js && node tests/composicao.test.js",
     "test:servidor": "node tools/build.js && node tests/servidor.test.js",

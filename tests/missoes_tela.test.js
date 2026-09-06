@@ -32,34 +32,40 @@ ok(/conecte/i.test(txt($('.moff__msg'))) && /pvp/i.test(txt($('.moff__msg'))), '
 ok($$('.mtile--progresso, .mtile--disponivel, .mtile--concluida').length === 0, 'offline NÃO desenha seções de progresso (nada de zero forjado)');
 ok($$('.mcat').length === 91 && txt($('.mcat__m')).length > 0, 'as 91 histórias (motivos) ficam legíveis mesmo offline');
 
-// ---- 2. ONLINE: as QUATRO seções, na ordem ----
-console.log('\n== 2. online: as quatro seções na ordem ==');
+// ---- 2. §241 — ONLINE: AGRUPADO POR FAIXA (as 8, na ordem), com o status de ranque ----
+console.log('\n== 2. online: agrupado por FAIXA (§241), 8 seções na ordem, com status ==');
 err = null;
-// saci CONQUISTADO; Brasileira 5 (iara em progresso, companheiro cuca inicial); Africana 0 (exu disponível);
-// hades TRAVADO (companheiro cerberus não possuído). Progresso e posse vêm do SERVIDOR (contaAtual).
-w.eval("contaAtual={ perfil:{deuses:{saci:{copias:1}}}, missoes:{ vitoriasPanteaoPvP:{Brasileira:5}, sequenciaPvP:{}, liberados:['saci'] } }; ir('provacoes',{},{substituir:true}); render();");
+// jogador em ORÁCULO (idx 5): faixas até lá ABERTAS, Herói/Semideus ainda travadas pelo ranque.
+// saci CONQUISTADO (Suplicante); iara EM PROGRESSO (Brasileira 5/20, companheiro cuca inicial);
+// hades TRAVADO por companheiro (cerberus não possuído, faixa Sacerdote aberta); ra travado por RANQUE (Herói).
+w.eval("contaAtual={ perfil:{deuses:{saci:{copias:1}}}, ranque:{faixa:{chave:'oraculo',nome:'Oráculo',min:500}}, missoes:{ vitoriasPanteaoPvP:{Brasileira:5}, sequenciaPvP:{}, sequenciaPanteaoPvP:{}, desbloqueio:{}, liberados:['saci'] } }; ir('provacoes',{},{substituir:true}); render();");
 ok(!err, 'a tela renderiza online sem quebrar');
-const secs = $$('.msec__cab h2').map(h => txt(h));
-ok(secs.length === 4 && /progresso/i.test(secs[0]) && /dispon/i.test(secs[1]) && /travad/i.test(secs[2]) && /conquist/i.test(secs[3]),
-  'quatro seções na ordem: Em progresso · Disponíveis · Travadas · Conquistados (' + secs.join(' | ') + ')');
+const fx = $$('.msec--faixa .mfx__cab h2').map(h => txt(h));
+ok(fx.length === 8 && /suplicante/i.test(fx[0]) && /semideus/i.test(fx[7]),
+  'as 8 faixas na ordem Suplicante → Semideus (' + fx.join(' | ') + ')');
+ok($$('.msec--faixa .mfx__n').some(n => /Provaç/i.test(txt(n))), 'cada faixa mostra QUANTAS libera ("N Provações")');
+ok($$('.mfx__lock').some(l => /falta subir/i.test(txt(l))), 'as faixas de cima mostram "falta subir N faixas" (§241)');
+ok(/oráculo/i.test(txt($('.mfx__voce'))), 'a tela diz em que faixa você está');
 
-// ---- 3. o CONTADOR AO VIVO na seção Em progresso ----
-console.log('\n== 3. o contador ao vivo (do servidor) ==');
+// ---- 3. o CONTADOR AO VIVO (desde o desbloqueio) numa missão em progresso ----
+console.log('\n== 3. o contador ao vivo (do servidor, desde o desbloqueio) ==');
 ok($$('.mtile--progresso').length >= 1, 'há missão em progresso');
 const prog = txt($('.mtile--progresso .mtile__req'));
 ok(/\d+\/\d+\s*vitórias/i.test(prog), 'a missão em progresso mostra o contador ao vivo "X/Y vitórias …" (' + prog + ')');
-ok(/\d+\/\d+\s*seguidas com/i.test(prog), 'e as "seguidas com o companheiro" quando a missão as pede');
+ok(/\d+\/\d+\s*seguidas/i.test(prog), 'e as "seguidas" (com o companheiro ou o panteão) quando a missão as pede');
 
-// ---- 4. TRAVADAS: mostram QUAL companheiro falta + o motivo mitológico (guarda permanente) ----
-console.log('\n== 4. travadas: falta QUAL + o motivo mitológico (guarda) ==');
-ok($$('.mtile--travada').length >= 1, 'há missões travadas (falta o companheiro)');
-ok(/precisa de/i.test(txt($('.mtile--travada .mtrava__falta'))), 'a travada diz QUAL companheiro falta ("precisa de …")');
-const semMotivo = $$('.mtile--travada').filter(t => !txt(t.querySelector('.mtrava__motivo')));
-ok(semMotivo.length === 0, 'GUARDA: TODA travada carrega o motivo mitológico (0 sem motivo)');
+// ---- 4. TRAVADAS por companheiro E por RANQUE: cada uma diz o que falta + o motivo (guarda) ----
+console.log('\n== 4. travadas: por companheiro (QUAL) e por ranque (qual faixa), com motivo ==');
+ok($$('.mtile--travada').length >= 1, 'há missões travadas por companheiro');
+ok(/precisa de/i.test(txt($('.mtile--travada .mtrava__falta'))), 'a travada por companheiro diz QUAL falta ("precisa de …")');
+ok($$('.mtile--ranque').length >= 1, 'há missões travadas pelo RANQUE (faixa acima da atual)');
+ok(/abre em/i.test(txt($('.mtile--ranque .mtrava__falta'))), 'a travada por ranque diz em QUAL faixa abre ("abre em …")');
+const semMotivo = $$('.mtile--travada, .mtile--ranque').filter(t => !txt(t.querySelector('.mtrava__motivo')));
+ok(semMotivo.length === 0, 'GUARDA: TODA travada (companheiro ou ranque) carrega o motivo mitológico (0 sem motivo)');
 
 // ---- 5. CONQUISTADOS + toque ≥76px ----
 console.log('\n== 5. conquistados + alvo de toque ≥76px ==');
-ok($$('.mtile--concluida').length === 1 && /saci/i.test(txt($('.mtile--concluida .mtile__nome'))), 'o deus conquistado (saci) aparece em Conquistados');
+ok($$('.mtile--concluida').length === 1 && /saci/i.test(txt($('.mtile--concluida .mtile__nome'))), 'o deus conquistado (saci) aparece como conquistado');
 ok(parseFloat(w.getComputedStyle($('.mtile')).minHeight) >= 76, 'o tile de missão tem alvo de toque ≥76px (tem ' + w.getComputedStyle($('.mtile')).minHeight + ')');
 
 // ---- 6. ELO com o detalhe do deus, nos DOIS sentidos ----

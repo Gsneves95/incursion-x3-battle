@@ -66,14 +66,24 @@ function _ranqueZero() { return { pontos: 0, vitorias: 0, derrotas: 0, pico: 0, 
 // cosmética). Só o servidor mexe (missão libera deus). Conta SÓ PvP. Nasce vazio.
 // §230: o requisito é VOLUME por panteão + SEGUIDAS com o companheiro. vitoriasPanteaoPvP e sequenciaPvP
 // são o gate; vitoriasPvP/paresPvP/feitos seguem para maestria/futuro (fora do desbloqueio).
-function _missoesZero() { return { vitoriasPanteaoPvP: {}, vitoriasPvP: {}, sequenciaPvP: {}, paresPvP: {}, feitos: {}, liberados: {} }; }
+// §241: sequenciaPanteaoPvP (sequência com o PANTEÃO, para as 8 missões-porta sem companheiro) e
+// desbloqueio (por deus: {em, volBase, seqBase}) — o CONTADOR COMEÇA NO DESBLOQUEIO (companheiro possuído
+// + ranque atingido); vitórias anteriores NÃO contam retroativamente.
+function _missoesZero() { return { vitoriasPanteaoPvP: {}, vitoriasPvP: {}, sequenciaPvP: {}, sequenciaPanteaoPvP: {}, paresPvP: {}, feitos: {}, liberados: {}, desbloqueio: {} }; }
 function _garantirMissoes(c) {
   if (!c.missoes || typeof c.missoes !== 'object') c.missoes = _missoesZero();
-  for (const k of ['vitoriasPanteaoPvP', 'vitoriasPvP', 'sequenciaPvP', 'paresPvP', 'feitos', 'liberados']) if (!c.missoes[k] || typeof c.missoes[k] !== 'object') c.missoes[k] = {};
+  for (const k of ['vitoriasPanteaoPvP', 'vitoriasPvP', 'sequenciaPvP', 'sequenciaPanteaoPvP', 'paresPvP', 'feitos', 'liberados', 'desbloqueio']) if (!c.missoes[k] || typeof c.missoes[k] !== 'object') c.missoes[k] = {};
   return c.missoes;
 }
-// projeção p/ o cliente DESENHAR (o servidor é autoritativo): o ledger + os deuses liberados. Sem token.
-function missoesPublicas(c) { const m = _garantirMissoes(c); return { vitoriasPanteaoPvP: m.vitoriasPanteaoPvP, sequenciaPvP: m.sequenciaPvP, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]) }; }
+// projeção p/ o cliente DESENHAR (o servidor é autoritativo): o ledger + os deuses liberados + as bases de
+// desbloqueio (a tela precisa mostrar o progresso DESDE o desbloqueio) + o ranque (a tela agrupa por faixa).
+function missoesPublicas(c) {
+  const m = _garantirMissoes(c);
+  return {
+    vitoriasPanteaoPvP: m.vitoriasPanteaoPvP, sequenciaPvP: m.sequenciaPvP, sequenciaPanteaoPvP: m.sequenciaPanteaoPvP,
+    desbloqueio: m.desbloqueio, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]),
+  };
+}
 
 // FAIXA a partir dos pontos — SÓ o servidor decide (o cliente nunca classifica). A faixa mais alta
 // cujo `min` <= pontos.
