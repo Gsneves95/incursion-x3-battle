@@ -164,16 +164,19 @@ function ligarPlataformaNativa(){
     window.__incBackLigado=true;
     P.App.addListener('backButton', ()=>{ voltarNativo(); });
   }
-  // 3) §243 — MODO IMERSIVO: a barra de status some (plugin StatusBar, overlay para o palco subir por baixo
-  //    do recorte); a barra de NAVEGAÇÃO some pela API de Fullscreen (o WebChromeClient do Capacitor entra
-  //    em imersivo STICKY — as duas voltam com um deslizar da borda). O WebView LARGA o fullscreen/overlay
-  //    ao voltar do segundo plano, então reafirmamos no 'resume' e no visibilitychange. fit() reenquadra
-  //    (o env(safe-area-inset-*) encolhe quando as barras somem — a F0.6b relê e preenche o espaço).
+  // 3) §243/§244 — MODO IMERSIVO: a barra de status some (plugin StatusBar) e a de NAVEGAÇÃO some pelo
+  //    MainActivity nativo (§244: hide(systemBars) + imersivo sticky — a de tela cheia não bastava em
+  //    paisagem, a barra migrava para a lateral e comia uma faixa). As duas voltam ao deslizar da borda.
+  //    Ao voltar do 2º plano o Android readmite as barras: o nativo reafirma a de navegação
+  //    (onWindowFocusChanged) e aqui reafirmamos a de status; o hide REDIMENSIONA a WebView, então
+  //    reenquadramos algumas vezes (o env(safe-area-inset-*) encolhe — a F0.6b relê e PREENCHE a faixa).
   imersivo();
   if(P.App && P.App.addListener && !window.__incImersivoLigado){
     window.__incImersivoLigado=true;
-    P.App.addListener('resume', ()=>{ imersivo(); setTimeout(fit,120); });
-    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ imersivo(); setTimeout(fit,120); } });
+    const aoVoltar = ()=>{ imersivo(); setTimeout(fit,120); setTimeout(fit,450); };  // o hide nativo chega atrasado
+    P.App.addListener('resume', aoVoltar);
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) aoVoltar(); });
+    addEventListener('focus', aoVoltar);   // o foco volta junto com o onWindowFocusChanged nativo (reafirma a nav bar)
   }
 }
 // §243 — aplica o modo imersivo (idempotente): esconde a barra de status pelo plugin e pede tela cheia

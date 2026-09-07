@@ -66,12 +66,16 @@ npx cap add android
 #    arte nova — ver a seção 5). SÓ NA PRIMEIRA VEZ, ou quando trocar o ícone.
 npm run cap:assets
 
-# 5. copia a config (o server.url, o splash) e os plugins para o projeto Android.
-npx cap sync android
+# 5. copia a config (server.url, splash, barra de status), os plugins E o MainActivity IMERSIVO (§244)
+#    para o projeto Android. USE `npm run cap:sync` (não `npx cap sync`) — é ele que reaplica o imersivo.
+npm run cap:sync
 
 # 6. abre o projeto no Android Studio.
 npx cap open android
 ```
+
+> **⚠️ SEMPRE `npm run cap:sync`, nunca só `npx cap sync`.** O `npm run cap:sync` roda o `cap:native`, que
+> reaplica o MainActivity imersivo (§244). Se você rodar só `npx cap sync`, a barra de navegação volta.
 
 **No Android Studio (que abriu no passo 6):**
 
@@ -195,71 +199,47 @@ console do WebView, onde um erro que só acontece no celular aparece):
 
 ---
 
-## 8. Modo IMERSIVO — tela cheia de verdade (§243)
+## 8. Modo IMERSIVO — tela cheia de verdade (§243/§244)
 
-O jogo é paisagem e apertado; as barras do Android roubavam altura. O app agora entra em **modo imersivo**:
-a **barra de status** (em cima) e a **barra de navegação** (embaixo) **somem**, e **voltam com um deslizar
-da borda** quando você precisar. Isso está **no código** — nada a configurar:
+O jogo é paisagem e apertado; as barras do Android roubavam altura. O app entra em **modo imersivo**: a
+**barra de status** (topo) e a **barra de navegação** (que em paisagem migra para a **lateral** e comia uma
+faixa) **somem**, e **voltam ao deslizar da borda** quando você precisar. Está **tudo no código** — nada a
+configurar, nada de editar Java à mão:
 
-- A **barra de status** some pelo plugin `@capacitor/status-bar` (o `npx cap sync` já o instala; o jogo a
-  esconde sozinho ao abrir e **reafirma ao voltar do segundo plano** — o Android costuma readmiti-la aí).
-- A **barra de navegação** some pela **tela cheia** (a mesma que o jogo já pedia no 1º toque): no WebView do
-  Capacitor ela entra em **imersivo sticky**, então a barra volta ao **deslizar da borda de baixo** e some
-  de novo sozinha.
-- O **ganho de altura:** ~**24dp** (status) + ~**48dp** (navegação de 3 botões) = ~**72dp** de altura
-  recuperada — num celular comum em paisagem, uns **+18% a +21% de espaço vertical** (a barra de navegação
-  por GESTOS recupera menos, ~24dp). Como o palco escala para caber, esse espaço vira jogo **maior**, não
-  tarja preta. **Para medir o número exato no SEU aparelho:** com o `chrome://inspect` aberto, leia
-  `innerHeight` antes e depois de o imersivo pegar (ou toque 3× no rodapé para o painel de diagnóstico).
+- A **barra de status** some pelo plugin `@capacitor/status-bar` (o jogo a esconde ao abrir e **reafirma ao
+  voltar do segundo plano**).
+- A **barra de navegação** some pelo **MainActivity imersivo (§244)** — o modo imersivo oficial do Android
+  (`hide(systemBars)` + `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE`). A tela cheia sozinha **não bastava** em
+  paisagem (a barra migrava para a lateral); o nativo resolve, com `setDecorFitsSystemWindows(false)` para a
+  WebView desenhar de borda a borda (sem a faixa branca onde a barra estava). Ele **reafirma ao voltar o
+  foco** (`onWindowFocusChanged`), então a barra não volta na 1ª troca de app.
+- **Ganho de altura:** ~**24dp** (status) + ~**48dp** (navegação de 3 botões) = ~**72dp** — uns **+18% a
+  +21%** de espaço em paisagem (navegação por GESTOS recupera ~24dp). Como o palco escala para caber, vira
+  jogo **maior**, não tarja preta. **Medir o exato no SEU aparelho:** `chrome://inspect` → `innerHeight`
+  antes/depois, ou 3 toques no carimbo de build para o painel de diagnóstico.
 
-**O botão VOLTAR continua funcionando com a barra escondida.** O evento de voltar do Android é do sistema —
-dispara pelo **gesto** (deslizar da borda) ou pelo botão (quando a barra reaparece), independente de a barra
-estar visível. O tratamento do §240 segue igual: sobreposição fecha → batalha confirma sair → sub-tela vai à
-home → só na home sai do app. (Confirme no aparelho: no meio de uma partida, o gesto de voltar **abre o
-"Sair da partida?"**, não fecha o app.)
+> ### ⚠️ LETRA GRANDE: o MainActivity imersivo SOBREVIVE ao `npx cap add android`
+>
+> Você rodou `cap add` duas vezes hoje e perdeu edições nativas — isso **não acontece mais**. O MainActivity
+> imersivo é **versionado** em `native/MainActivity.java` (no repositório), e o **`npm run cap:sync` o
+> reaplica** toda vez (o passo `cap:native`). Então:
+> - o `npx cap add android` regenera um MainActivity vanilla, **mas** o `npm run cap:sync` seguinte
+>   **restaura o imersivo** automaticamente;
+> - você **nunca edita Java à mão** e **nunca perde** o ajuste;
+> - a única regra: depois de qualquer `cap add`, rode **`npm run cap:sync`** (não `npx cap sync` sozinho).
+>
+> Para mudar o imersivo no futuro, edite `native/MainActivity.java` e rode `npm run cap:sync`.
 
-**O enquadramento (o notch) continua certo.** Com as barras escondidas, as margens seguras
-(`env(safe-area-inset-*)`) encolhem; o jogo **relê e reenquadra** (no boot, ao entrar em tela cheia e ao
-voltar do segundo plano), então o palco **preenche** o espaço novo sem cortar nada e sem sobrar borda preta.
-Num aparelho **com recorte/notch**, confira as quatro bordas: nada cortado, nada de tarja irregular.
+**O botão VOLTAR continua funcionando com a barra escondida** — agora pelo **gesto** de deslizar da borda. O
+evento de voltar do Android é do sistema e dispara pelo gesto (ou pelo botão, quando a barra reaparece),
+independente de a barra estar visível. O tratamento do §240 segue igual: sobreposição fecha → batalha
+confirma sair → sub-tela vai à home → só na home sai do app. **Confirme no aparelho:** no meio de uma
+partida, o gesto de voltar **abre o "Sair da partida?"**, não fecha o app.
 
-### Se a barra de NAVEGAÇÃO ainda aparecer no seu aparelho
-
-Alguns aparelhos/versões não escondem a barra de navegação só pela tela cheia. Se for o seu caso, há um
-ajuste nativo **de uma vez** (persiste nas próximas builds; só refaz se você recriar a pasta `android/`).
-No Android Studio, abra `android/app/src/main/java/.../MainActivity.java` e deixe assim:
-
-```java
-package com.gsneves.incursionx3battle;
-
-import android.os.Bundle;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
-import com.getcapacitor.BridgeActivity;
-
-public class MainActivity extends BridgeActivity {
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    imersivo();
-  }
-  @Override
-  public void onWindowFocusChanged(boolean hasFocus) {
-    super.onWindowFocusChanged(hasFocus);
-    if (hasFocus) imersivo();   // reafirma quando o app volta ao foco
-  }
-  private void imersivo() {
-    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-    WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-    c.hide(WindowInsetsCompat.Type.systemBars());
-    c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-  }
-}
-```
-
-(É o modo imersivo oficial do Android — `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE` é o "volta ao deslizar".
-Troque o `package` da 1ª linha se o seu for diferente — é o `appId` do `capacitor.config.json`.)
+**O enquadramento (o notch) continua certo, sem faixa sobrando.** Com as barras escondidas, as margens
+seguras (`env(safe-area-inset-*)`) encolhem; o jogo **relê e reenquadra** (no boot, na tela cheia, no resume
+e no foco), então o palco **preenche** o espaço recuperado (inclusive a lateral onde estava a barra) sem
+cortar nada. Num aparelho **com recorte/notch**, confira as quatro bordas: nada cortado, nada de tarja.
 
 ---
 

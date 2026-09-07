@@ -6,6 +6,23 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §244 — A barra de NAVEGAÇÃO no APK: o fallback nativo do §243 aplicado, mas VERSIONADO e auto-reaplicado (sobrevive ao `cap add`). No aparelho real a tela cheia não bastou — em paisagem a barra migra para a lateral e come uma faixa.
+
+O §243 acertou a barra de status (plugin) mas a de navegação continuou visível no aparelho do dono — exatamente o caso previsto na seção 8 (a API de Fullscreen não esconde a nav bar nesse aparelho; em paisagem ela vai para a **lateral esquerda** e come uma faixa branca). Apliquei o fallback nativo — **e resolvi o problema que o dono levantou: como fazer o `MainActivity.java` sobreviver ao `npx cap add android`** (ele já rodara `cap add` duas vezes e perdia edições).
+
+**A DECISÃO-CHAVE: o MainActivity é VERSIONADO, não hand-edit.** `native/MainActivity.java` (no repositório) é a fonte da verdade; `tools/cap-native.js` o copia para `android/app/src/main/java/<appId>/MainActivity.java` **dentro do `npm run cap:sync`** (novo passo `cap:native`). Então: o `cap add` regenera um MainActivity vanilla, mas o `cap:sync` seguinte **reaplica** o imersivo — sobrevive ao `cap add`, o dono nunca edita Java à mão, nunca perde. O `package` é reescrito a partir do `appId` do `capacitor.config.json` (recalibra sozinho se o appId mudar). É a única peça nativa; fica em `native/` (versionado), coerente com "o `android/` é gerado/descartável" do §240.
+
+**O que o MainActivity faz (o imersivo oficial do Android):** `setDecorFitsSystemWindows(false)` (a WebView desenha de borda a borda — **mata a faixa branca** onde a barra estava) + `hide(systemBars())` (status + navegação) + `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE` (voltam ao **deslizar da borda**) + `onWindowFocusChanged` reaplica ao voltar o foco.
+
+**Os três pontos que o dono pediu ao aplicar:**
+1. **A faixa branca / enquadramento:** o `setDecorFitsSystemWindows(false)` faz a WebView ocupar a área da barra; o `hide` a redimensiona; o jogo **reenquadra** (`fit()`) no resize/visualViewport (F0.6b) e reforçamos com refit atrasado (120/450ms) no resume/foco (o hide nativo chega atrasado). O `env(safe-area-inset-*)` encolhe e o palco preenche a lateral — sem faixa, sem cortar o notch.
+2. **Botão VOLTAR (§240) com a barra escondida:** o evento `backButton` é do SISTEMA — dispara pelo **gesto** de deslizar da borda mesmo sem a barra visível. Tratamento intacto (sobreposição→fecha · batalha→confirmar-sair · sub-tela→home · home→sai). Sem mudança.
+3. **Reafirmação no resume das DUAS barras:** a de status pelo JS (§243, resume/visibilitychange/**focus** novo); a de navegação pelo **`onWindowFocusChanged`** nativo — senão voltaria na 1ª troca de app.
+
+**Sobrevive ao `cap add`? SIM — e está no runbook em letra grande** (`PUBLICAR-APK.md` seção 8): a regra "sempre `npm run cap:sync`, nunca só `npx cap sync`" (o `cap:sync` roda o `cap:native`), e a seção 2 passo 5 trocado para `npm run cap:sync`.
+
+**PROVA:** `native/MainActivity.java` + `tools/cap-native.js` (deriva o path do appId, reescreve o package, gracioso sem `android/`); `package.json` (`cap:native` + dentro do `cap:sync`); `src/view.js` (refit no resume/foco). `tests/cap_native.test.js` (12 asserções: escreve no path certo, package acompanha o appId, **reaplica após um cap add vanilla**, gracioso sem android/). **Suíte verde.** APK/medição do ganho: do dono (sem aparelho aqui).
+
 ## §243 — MODO IMERSIVO no APK (as duas barras somem, voltam ao deslizar) + a regra do que exige reinstalar vs o que atualiza pelo servidor. Achados do dono no celular de verdade.
 
 **1. Modo imersivo.** No aparelho, a barra de status (topo) e a de navegação (base) comiam altura de um jogo em paisagem já apertado. Solução, TODA em código (nada de configurar no aparelho), consistente com o §240 (o jogo, servido pelo Render, dirige os plugins pela ponte):
