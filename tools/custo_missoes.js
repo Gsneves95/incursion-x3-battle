@@ -70,30 +70,34 @@ function umaTrial(rng, opts) {
   const volRest = k => M[k].vitoriasPanteao - Math.max(0, (pantWins[M[k].panteao] || 0) - est[k].volBase);
   const seqCur = k => alvoTipo(k) === 'companheiro' ? (streak[alvoChave(k)] || 0) : (pantStreak[alvoChave(k)] || 0);
   const seqRest = k => seguidasDe(k) - Math.max(0, seqCur(k) - est[k].seqBase);
+  // §242 — SLOTS = quantos PANTEÕES o time cobre por partida (o volume conta por panteão do time):
+  //   1 = "1 slot ativo" (time de um panteão só — o volume NÃO se divide; a conta conservadora do dono);
+  //   3 = time misto (3 panteões por partida — o ótimo; encurta ~40%). O time é sempre de 3 deuses; o que
+  //   muda é quantos panteões DISTINTOS ele cobre. A sequência é anchorada igual nos dois (a derrota quebra
+  //   qualquer streak, então incluir o companheiro é de graça).
+  const SLOTS = opts.slots || 3;
   let travas = 0;
   while (!feito() && jogos < 300000) {
-    // ESTRATÉGIA REALISTA: um jogador esperto farma 3 PANTEÕES por partida (time misto → o volume conta para
-    // os três) e, quando uma missão já tem o volume e falta só a SEQUÊNCIA, ancora o companheiro dela no time
-    // (uma derrota já quebra qualquer sequência, então misturar os outros 2 slots é de graça). Assim as
-    // sequências avançam em paralelo com o volume dos outros panteões — o ótimo do jogador.
     const inc = KEYS.filter(k => est[k].unlocked && !est[k].done);
     if (!inc.length) { const P = maisPromissor(); jogarUm(escolherTimePorPanteao(P)); travas++; if (travas > 200000) break; continue; }
-    // ancoras de SEQUÊNCIA: missões cujo volume já está perto e falta a sequência → fixar o alvo no time
+    // âncoras de SEQUÊNCIA (volume perto, falta a sequência) — no máximo SLOTS
     const ancoras = [];
     for (const k of inc) if (volRest(k) <= 0 && seqRest(k) > 0) {
       const g = alvoTipo(k) === 'companheiro' ? alvoChave(k) : (godsDoPanteao(alvoChave(k), possui)[0]);
-      if (g && possui.has(g) && !ancoras.includes(g)) ancoras.push(g);
+      if (g && possui.has(g) && !ancoras.includes(g) && ancoras.length < SLOTS) ancoras.push(g);
     }
-    // monta time: até 2 âncoras + preenche com deuses de panteões de MAIOR volume pendente (panteões distintos)
     const time = [];
     for (const g of ancoras) { if (time.length >= 3) break; time.push(g); }
+    // panteões-FOCO: os de maior volume pendente, até SLOTS distintos (contando os das âncoras)
     const pendPorPant = {}; for (const k of inc) pendPorPant[M[k].panteao] = (pendPorPant[M[k].panteao] || 0) + Math.max(0, volRest(k));
     const pantsOrd = Object.keys(pendPorPant).sort((a, b) => pendPorPant[b] - pendPorPant[a]);
-    const jaPants = new Set(time.map(g => PANTE[g]));
-    for (const P of pantsOrd) {
-      if (time.length >= 3) break; if (jaPants.has(P)) continue;
-      const g = godsDoPanteao(P, possui).find(x => !time.includes(x)); if (g) { time.push(g); jaPants.add(P); }
-    }
+    const foco = new Set(time.map(g => PANTE[g]));
+    for (const P of pantsOrd) { if (foco.size >= SLOTS) break; foco.add(P); }
+    // preenche os 3 slots em RODÍZIO pelos panteões-foco: 1 deus por panteão por passada. Com SLOTS=3 dá
+    // 3 panteões distintos (o time misto); com SLOTS=1 esvazia o único panteão (3 deuses dele).
+    const focoArr = [...foco];
+    let add = true;
+    while (time.length < 3 && add) { add = false; for (const P of focoArr) { if (time.length >= 3) break; const g = godsDoPanteao(P, possui).find(x => !time.includes(x)); if (g) { time.push(g); add = true; } } }
     if (time.length < 3) for (const g of possui) { if (time.length >= 3) break; if (!time.includes(g)) time.push(g); }
     jogarUm(time);
   }
@@ -144,21 +148,18 @@ function rodar(opts) {
 const hrs = (g, min) => (g * min / 60).toFixed(0);
 const meses = (g, min) => (g * min / 60 / 30).toFixed(1);
 
+// §242 — os dois cenários que o dono pediu: 1 slot ativo (conservador) e 3 slots (time misto, o ótimo).
+// A rampa de sequência e os volumes vêm do DADO gerado (missoes.json) — o corte do §242 já está lá.
 const base = { fromUnlock: true, allSeq: true, rankGate: true };
 const CENAS = [
-  ['§241 literal — rampa 3/4/5/6 (teto 6)', { ...base }],
-  ['rampa mais suave 2/3/3/4 (teto 4)', { ...base, seqRamp: [2, 2, 3, 3, 3, 3, 4, 4] }],
-  ['rampa 2/2/3/3 (teto 3)', { ...base, seqRamp: [2, 2, 2, 2, 3, 3, 3, 3] }],
-  ['rampa 2 fixa (sequência simbólica)', { ...base, seqRamp: [2, 2, 2, 2, 2, 2, 2, 2] }],
-  ['literal, mas jogador HÁBIL p=0.6', { ...base, pWin: 0.6 }],
-  ['rampa 2/3/3/4 + p=0.6', { ...base, seqRamp: [2, 2, 3, 3, 3, 3, 4, 4], pWin: 0.6 }],
+  ['1 slot ativo (time de um panteão só)', { ...base, slots: 1 }],
+  ['3 slots (time misto — o ótimo)', { ...base, slots: 3 }],
 ];
-console.log(`SIMULAÇÃO §241 — ${TRIALS} trials. Mediana de partidas p/ completar as 91, e meses a 1h/dia (6/8 min).`);
-console.log('ALVO: 2-3 meses = caçada · >12 meses = abandono (palavras do dono).\n');
-console.log('cenário'.padEnd(42), 'p', 'mediana', ' 6min', ' 8min', ' meses(6/8)');
+console.log(`SIMULAÇÃO §242 — ${TRIALS} trials, p(vitória)=${pWin}. Volumes cortados (A ${M.cerberus ? M.cerberus.vitoriasPanteao : '?'}/S/SS) já no dado.`);
+console.log('Mediana de partidas p/ completar as 91, horas e meses a 1h/dia (6/8 min).\n');
+console.log('cenário'.padEnd(40), 'mediana', ' 6min', ' 8min', ' meses(6/8)');
 for (const [nome, opts] of CENAS) {
-  const p = opts.pWin || pWin;
-  const r = rodar({ ...opts, __p: p });
-  console.log(nome.padEnd(42), p.toFixed(2), String(r.mediana).padStart(7), (hrs(r.mediana, 6) + 'h').padStart(6), (hrs(r.mediana, 8) + 'h').padStart(6),
+  const r = rodar(opts);
+  console.log(nome.padEnd(40), String(r.mediana).padStart(7), (hrs(r.mediana, 6) + 'h').padStart(6), (hrs(r.mediana, 8) + 'h').padStart(6),
     ('  ' + meses(r.mediana, 6) + '/' + meses(r.mediana, 8)).padStart(11));
 }

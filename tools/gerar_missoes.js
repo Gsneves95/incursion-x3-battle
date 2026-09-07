@@ -76,11 +76,20 @@ function atribuirFaixas(depth) {
 // arquivo e pode ser cruzado: itzamná EXIGE Egípcia, mas É Maia).
 function panteaoDe(godKey) { const f = GODS[godKey].faccao; return f === 'Olímpica' ? 'Grega' : f; }
 
-// VOLUME por raridade (os números do dono, da raridade real).
+// VOLUME por raridade (a raridade real, §230), a REFERÊNCIA antes do corte.
+const VOL_BASE = { A: 15, S: 20, SS: 40 };
+// §242 — O FATOR DE VOLUME (o PARÂMETRO; mora AQUI, muda-se UMA linha e roda `npm run gerar:missoes`).
+// O volume é o FREIO DE TEMPO (a sequência é o de habilidade, §241, e NÃO muda). Com 1 slot ativo o volume
+// deixa de se dividir entre várias Provações — um requisito de 12 fazia sentido contando para cinco missões,
+// sozinho vira parede. Cortar para 40% devolve a proporção que o modelo paralelo tinha. PISO 4 (o corte não
+// trivializa os A). Recalibrar depois = trocar FATOR_VOLUME e regerar; nenhum dos 91 registros é editado à mão.
+const FATOR_VOLUME = 0.55;
+const PISO_VOLUME = 4;
 function volume(rar) {
-  if (rar === 'SS') return { panteao: 40, seguidas: 5 };
-  if (rar === 'S') return { panteao: 20, seguidas: 3 };
-  return { panteao: 15, seguidas: 0 };   // A
+  const base = (VOL_BASE[rar] != null) ? VOL_BASE[rar] : VOL_BASE.A;
+  const panteao = Math.max(PISO_VOLUME, Math.round(base * FATOR_VOLUME));   // §242: cortado + piso
+  const seguidas = rar === 'SS' ? 5 : (rar === 'S' ? 3 : 0);                // legado (§241 usa SEGUIDAS_POR_TIER)
+  return { panteao, seguidas, base };
 }
 
 function gerar() {
@@ -120,7 +129,8 @@ function gerar() {
     quantas: Object.values(missoes).filter(m => m.faixaIndice === fi).length }));
   return {
     versao: 3,
-    nota: 'Gerado por tools/gerar_missoes.js (§241): VOLUME por panteão (raridade) + SEQUÊNCIA pela FAIXA (rampa 3->6, teto 6) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json, distribuição mais generosa embaixo). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.',
+    nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.',
+    volumeFator: FATOR_VOLUME, volumePiso: PISO_VOLUME,
     volumes: { A: volume('A'), S: volume('S'), SS: volume('SS') },
     faixas: FAIXAS, distribuicao: porFaixa, seguidasPorTier: SEGUIDAS_POR_TIER,
     iniciais: INICIAIS.slice(),
@@ -210,6 +220,7 @@ if (require.main === module) {
   const prof = Math.max(...keys.map(k => M[k].profundidade));
   const seq = {}; for (const k of keys) seq[M[k].seguidas] = (seq[M[k].seguidas] || 0) + 1;
   console.log(`OK — 91 missões (A ${cnt.A} · S ${cnt.S} · SS ${cnt.SS}); ${comComp} com companheiro, ${91 - comComp} só volume.`);
+  console.log(`Volume §242: fator ${FATOR_VOLUME} (piso ${PISO_VOLUME}) → A ${VOL_BASE.A}→${volume('A').panteao} · S ${VOL_BASE.S}→${volume('S').panteao} · SS ${VOL_BASE.SS}→${volume('SS').panteao} vitórias.`);
   console.log(`Varredura §202: sem ciclo · ${v.alcancados}/91 alcançáveis · rampa em ordem · caso Maia ${v.maiaCross ? 'OK' : 'FALHOU'}.`);
   console.log(`Distribuição por faixa (${doc.distribuicao.map(f => f.nome + ' ' + f.quantas).join(' · ')}) = ${doc.distribuicao.reduce((s, f) => s + f.quantas, 0)}`);
   console.log(`Cadeias (companheiro NÃO-inicial): ${cadeias} · gated (ranque>Suplicante OU cadeia): ${gated} · imediatas: ${imediatas} · profundidade: ${prof} ondas`);

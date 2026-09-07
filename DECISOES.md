@@ -6,6 +6,18 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §242 — CORTAR O VOLUME das Provações: o volume é o FREIO DE TEMPO (a sequência é o de habilidade e não muda). Fator no gerador como PARÂMETRO; e a MEDIÇÃO corrigiu a estimativa do dono (o corte rende mais curto do que a conta aditiva previa — sobreposição dentro do panteão).
+
+O dono mediu a curva: o volume atual dava ~15,3 meses (1 slot). O corte é **só no volume** — a sequência é o freio de habilidade e já está na rampa certa (§241). **Motivo do corte:** com 1 slot ativo o volume deixa de se dividir entre várias Provações (um requisito de 12 fazia sentido contando para cinco missões ao mesmo tempo; sozinho vira parede). Cortar devolve a proporção que o modelo paralelo tinha.
+
+**O PARÂMETRO (onde mora, para recalibrar sem tocar em 91 arquivos):** `tools/gerar_missoes.js`, `const FATOR_VOLUME` (+ `PISO_VOLUME = 4`). O volume por missão = `max(piso, round(raridade × fator))`. Recalibrar = trocar a linha e `npm run gerar:missoes`. O fator viaja no doc gerado (`volumeFator`), e o teste lê o volume do doc (não hardcoded) para sobreviver a recalibragens.
+
+**A MEDIÇÃO moveu o número (a régua §202: eu trago o dado, a conta do dono é estimativa).** O dono pediu 40% e estimou 1-slot ~7,6 meses / 3-slot ~4,5. A minha simulação (`tools/custo_missoes.js`, agora com o modo **SLOTS** — 1 panteão por partida vs time misto de 3) deu, a 40%: **1-slot ~4,4-5,9 meses · 3-slot ~2,3-3,1** — **~40% ABAIXO da estimativa, no sentido bom.** A causa (que a conta aditiva não pega): **sobreposição dentro do panteão** — uma vitória grega avança o volume de TODAS as missões gregas desbloqueadas, e uma sequência com Zeus satisfaz TODAS as que pedem Zeus. Avisei antes de seguir (o dono pediu). **Decisão do dono, vendo o dado: corte mais leve, FATOR 0,55** (não 0,40) — para a caçada ficar mais perto da estimativa dele.
+
+**O NÚMERO FINAL (fator 0,55):** volumes A 15→8 · S 20→11 · SS 40→22 (piso 4 não morde). Simulação p=0,5, rampa 2/3/4, contador desde o desbloqueio: **1 slot ~1.525 partidas ≈ 5,1-6,8 meses · 3 slots ~792 ≈ 2,6-3,5 meses.** O jogo realista (3 slots) fica na caçada; o casual (1 slot) num tail mais longo, perto da estimativa do dono. As três travas do §241 intactas; só o freio de tempo afrouxou.
+
+**PROVA:** `tools/gerar_missoes.js` (FATOR_VOLUME parâmetro + doc expõe `volumeFator/volumePiso`), `tools/custo_missoes.js` (modo SLOTS, dois cenários), `data/missoes.json` regenerado. `tests/missoes.test.js` lê o volume do doc (factor-agnostic) e cobra que o corte foi aplicado (SS < 40, ≥ piso). **Suíte verde.**
+
 ## §241 — AS TRÊS ALAVANCAS JUNTAS: o desbloqueio vira caçada longa. Portão de RANQUE (reverte o §232), CADEIA que ordena, SEQUÊNCIA que prova — correlacionadas por faixa. E a MEDIÇÃO que moveu o número: a rampa literal dava 6-8 meses (abandono), suavizada para ~3-4 meses.
 
 **O diagnóstico (do dono, medido antes de escrever):** o gacha completo custa 1.382 invocações (anos); as missões custavam ~173 vitórias. O caminho da missão estava rápido demais, e a causa foi o escopo largo que dei à variedade (uma vitória com Zeus avança `zeus`+`Grega`+`Tempestade`+`Mágico`+`Atacante` — uma partida vale por cinco). A correção: **três travas ANDAM JUNTAS — ranque REVELA · cadeia ORDENA · sequência PROVA HABILIDADE.**

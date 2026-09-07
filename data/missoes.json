@@ -1,18 +1,23 @@
 {
  "versao": 3,
- "nota": "Gerado por tools/gerar_missoes.js (§241): VOLUME por panteão (raridade) + SEQUÊNCIA pela FAIXA (rampa 3->6, teto 6) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json, distribuição mais generosa embaixo). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.",
+ "nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.",
+ "volumeFator": 0.55,
+ "volumePiso": 4,
  "volumes": {
   "A": {
-   "panteao": 15,
-   "seguidas": 0
+   "panteao": 8,
+   "seguidas": 0,
+   "base": 15
   },
   "S": {
-   "panteao": 20,
-   "seguidas": 3
+   "panteao": 11,
+   "seguidas": 3,
+   "base": 20
   },
   "SS": {
-   "panteao": 40,
-   "seguidas": 5
+   "panteao": 22,
+   "seguidas": 5,
+   "base": 40
   }
  },
  "faixas": [
@@ -243,7 +248,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -269,7 +274,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -295,7 +300,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -321,7 +326,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -347,7 +352,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -373,7 +378,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -399,7 +404,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -425,7 +430,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -451,7 +456,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -477,7 +482,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -503,7 +508,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -529,7 +534,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -555,7 +560,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -581,7 +586,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -607,7 +612,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -633,7 +638,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -659,7 +664,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -685,7 +690,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -711,7 +716,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -737,7 +742,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -763,7 +768,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -789,7 +794,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -815,7 +820,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -841,7 +846,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -867,7 +872,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -893,7 +898,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -919,7 +924,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -945,7 +950,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -971,7 +976,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -997,7 +1002,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1023,7 +1028,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -1049,7 +1054,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -1075,7 +1080,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1101,7 +1106,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1127,7 +1132,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1153,7 +1158,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1179,7 +1184,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 4,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1205,7 +1210,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 5,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1231,7 +1236,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 6,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1257,7 +1262,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 4,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1283,7 +1288,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 6,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1309,7 +1314,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 6,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1335,7 +1340,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 6,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1361,7 +1366,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1387,7 +1392,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -1413,7 +1418,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1439,7 +1444,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1465,7 +1470,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1491,7 +1496,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1517,7 +1522,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1543,7 +1548,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1569,7 +1574,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 4,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1595,7 +1600,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 5,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1621,7 +1626,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1647,7 +1652,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1673,7 +1678,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1699,7 +1704,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1725,7 +1730,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -1751,7 +1756,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1777,7 +1782,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1803,7 +1808,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1829,7 +1834,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1855,7 +1860,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1881,7 +1886,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1907,7 +1912,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1933,7 +1938,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1959,7 +1964,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1985,7 +1990,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2011,7 +2016,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2037,7 +2042,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2063,7 +2068,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2089,7 +2094,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2115,7 +2120,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2141,7 +2146,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2167,7 +2172,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2193,7 +2198,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2219,7 +2224,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2245,7 +2250,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2271,7 +2276,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2297,7 +2302,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2323,7 +2328,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2349,7 +2354,7 @@
    "faixaIndice": 5,
    "faixaMin": 500,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2375,7 +2380,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 2,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2401,7 +2406,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2427,7 +2432,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2453,7 +2458,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2479,7 +2484,7 @@
    "faixaIndice": 4,
    "faixaMin": 400,
    "profundidade": 3,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2505,7 +2510,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 6,
-   "vitoriasPanteao": 40,
+   "vitoriasPanteao": 22,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2531,7 +2536,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 7,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2557,7 +2562,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 8,
-   "vitoriasPanteao": 15,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2583,7 +2588,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 7,
-   "vitoriasPanteao": 20,
+   "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",

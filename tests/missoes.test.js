@@ -73,11 +73,15 @@ console.log('\n== 1. a árvore: sem ciclo · alcançáveis · rampa em ordem · 
   eq(foraArquivo, 0, 'as 91 batem com o arquivo do dono (panteão + companheiro)');
   eq(semMotivo, 0, 'cada missão carrega o motivo mitológico (do dono)');
 
-  // VOLUME por raridade (inalterado) + a nova sequência pela faixa + o portão de ranque.
+  // §242 — o VOLUME é o FREIO DE TEMPO: cortado por FATOR_VOLUME (piso), lido do doc (não hardcoded, para
+  // recalibrar sem tocar no teste). A sequência (freio de habilidade) NÃO muda (§241).
+  ok(doc.volumeFator > 0 && doc.volumeFator < 1, `o volume tem FATOR (${doc.volumeFator}) — parâmetro no gerador (§242)`);
   const it = doc.missoes.itzamna;
-  ok(it.raridade === 'SS' && it.vitoriasPanteao === 40 && it.faixa === 'semideus' && it.seguidas === 4, 'itzamná: SS, 40 de volume, faixa Semideus, sequência 4 (topo da rampa)');
+  ok(it.raridade === 'SS' && it.vitoriasPanteao === doc.volumes.SS.panteao && it.vitoriasPanteao < 40 && it.faixa === 'semideus' && it.seguidas === 4,
+    `itzamná: SS, volume cortado ${it.vitoriasPanteao} (<40), Semideus, sequência 4 (topo da rampa)`);
   const cerb = doc.missoes.cerberus;
-  ok(cerb.vitoriasPanteao === 15 && !cerb.companheiro && cerb.seguidasAlvo.tipo === 'panteao' && cerb.seguidas >= 1, 'cerberus: A só-volume (porta Grega), sequência COM O PANTEÃO (sem companheiro)');
+  ok(cerb.vitoriasPanteao === doc.volumes.A.panteao && cerb.vitoriasPanteao >= (doc.volumePiso || 4) && !cerb.companheiro && cerb.seguidasAlvo.tipo === 'panteao' && cerb.seguidas >= 1,
+    `cerberus: A só-volume ${cerb.vitoriasPanteao} (≥ piso, porta Grega), sequência COM O PANTEÃO`);
   const hades = doc.missoes.hades;
   ok(hades.companheiro === 'cerberus' && hades.faixaMin > 0, 'Hades exige o companheiro cerberus e tem portão de ranque (>0)');
 
