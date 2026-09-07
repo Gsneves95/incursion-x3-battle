@@ -51,8 +51,8 @@ Nada mais. O resto é copiar e colar.
 Abra o Terminal **na pasta `incursion-x3-battle`** e rode, em ordem:
 
 ```bash
-# 1. instala as dependências (o jogo + o Capacitor + os plugins de app/splash). Só na 1ª vez, ou quando
-#    o package.json mudar.
+# 1. instala as dependências (o jogo + o Capacitor + os plugins de app/splash/barra-de-status). Só na 1ª
+#    vez, ou quando o package.json mudar.
 npm install
 
 # 2. monta a pasta web mínima que o app empacota (o JOGO vem do servidor; aqui vai só uma tela de
@@ -192,6 +192,112 @@ console do WebView, onde um erro que só acontece no celular aparece):
   **embutir** o jogo (o modelo antigo do spike) e falar com o servidor só para o PvP. É uma troca de
   `capacitor.config.json` (tirar o `server.url`, voltar o `cap:www` a empacotar o jogo) — decisão de quando
   for para a loja.
+
+---
+
+## 8. Modo IMERSIVO — tela cheia de verdade (§243)
+
+O jogo é paisagem e apertado; as barras do Android roubavam altura. O app agora entra em **modo imersivo**:
+a **barra de status** (em cima) e a **barra de navegação** (embaixo) **somem**, e **voltam com um deslizar
+da borda** quando você precisar. Isso está **no código** — nada a configurar:
+
+- A **barra de status** some pelo plugin `@capacitor/status-bar` (o `npx cap sync` já o instala; o jogo a
+  esconde sozinho ao abrir e **reafirma ao voltar do segundo plano** — o Android costuma readmiti-la aí).
+- A **barra de navegação** some pela **tela cheia** (a mesma que o jogo já pedia no 1º toque): no WebView do
+  Capacitor ela entra em **imersivo sticky**, então a barra volta ao **deslizar da borda de baixo** e some
+  de novo sozinha.
+- O **ganho de altura:** ~**24dp** (status) + ~**48dp** (navegação de 3 botões) = ~**72dp** de altura
+  recuperada — num celular comum em paisagem, uns **+18% a +21% de espaço vertical** (a barra de navegação
+  por GESTOS recupera menos, ~24dp). Como o palco escala para caber, esse espaço vira jogo **maior**, não
+  tarja preta. **Para medir o número exato no SEU aparelho:** com o `chrome://inspect` aberto, leia
+  `innerHeight` antes e depois de o imersivo pegar (ou toque 3× no rodapé para o painel de diagnóstico).
+
+**O botão VOLTAR continua funcionando com a barra escondida.** O evento de voltar do Android é do sistema —
+dispara pelo **gesto** (deslizar da borda) ou pelo botão (quando a barra reaparece), independente de a barra
+estar visível. O tratamento do §240 segue igual: sobreposição fecha → batalha confirma sair → sub-tela vai à
+home → só na home sai do app. (Confirme no aparelho: no meio de uma partida, o gesto de voltar **abre o
+"Sair da partida?"**, não fecha o app.)
+
+**O enquadramento (o notch) continua certo.** Com as barras escondidas, as margens seguras
+(`env(safe-area-inset-*)`) encolhem; o jogo **relê e reenquadra** (no boot, ao entrar em tela cheia e ao
+voltar do segundo plano), então o palco **preenche** o espaço novo sem cortar nada e sem sobrar borda preta.
+Num aparelho **com recorte/notch**, confira as quatro bordas: nada cortado, nada de tarja irregular.
+
+### Se a barra de NAVEGAÇÃO ainda aparecer no seu aparelho
+
+Alguns aparelhos/versões não escondem a barra de navegação só pela tela cheia. Se for o seu caso, há um
+ajuste nativo **de uma vez** (persiste nas próximas builds; só refaz se você recriar a pasta `android/`).
+No Android Studio, abra `android/app/src/main/java/.../MainActivity.java` e deixe assim:
+
+```java
+package com.gsneves.incursionx3battle;
+
+import android.os.Bundle;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    imersivo();
+  }
+  @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (hasFocus) imersivo();   // reafirma quando o app volta ao foco
+  }
+  private void imersivo() {
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+    WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+    c.hide(WindowInsetsCompat.Type.systemBars());
+    c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+  }
+}
+```
+
+(É o modo imersivo oficial do Android — `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE` é o "volta ao deslizar".
+Troque o `package` da 1ª linha se o seu for diferente — é o `appId` do `capacitor.config.json`.)
+
+---
+
+## 9. Quando REINSTALAR o APK e quando o app se atualiza SOZINHO (§243)
+
+A regra de ouro que você entendeu está certa: **mudança no JOGO atualiza pelo Render; mudança no APP NATIVO
+exige reinstalar.** As listas, para você não ter que perguntar:
+
+**Atualiza SOZINHO (só publicar no Render e reabrir o app — SEM reinstalar):**
+- Qualquer coisa do **jogo**: HTML, JavaScript, CSS, telas, layout, o modo imersivo em código, o botão voltar.
+- **Dados** do jogo: kits dos deuses, missões/volumes/ranque, campanha, provações, textos, balanceamento.
+- O **motor** e o **servidor** (regras de combate, pareamento, missões, ranqueado) — rodam no Render.
+- Ou seja: **quase tudo.** É o motivo do modelo servidor-apontado.
+
+**Exige GERAR O APK DE NOVO e reinstalar (mexe no app nativo):**
+- O **endereço do servidor** (`server.url` no `capacitor.config.json`).
+- O **nome** do app (`appName`) ou o **appId/package** (este NÃO se muda depois da loja).
+- O **ícone** ou o **splash** (a tela de carregando).
+- **Adicionar/remover/atualizar um plugin** nativo (splash, barra de status, app, etc.) ou uma **permissão**.
+- O ajuste nativo do `MainActivity.java` (seção 8), se você o fizer.
+- Subir a **versão do Android/SDK** ou do Capacitor.
+- Trocar para o **modo embutido/offline** (o da loja, no fim).
+
+Para reinstalar depois de uma dessas: `npm run cap:sync` (ou `cap:assets` se foi o ícone) → **▶ Run** no
+Android Studio (ou gere o `.apk` de novo e reinstale pelo arquivo).
+
+### O cache da WebView — publiquei e o app mostra a versão velha, e agora?
+
+Raro no nosso caso (o WebView do Capacitor carrega o `server.url` a cada abertura e o servidor manda o HTML
+na hora, sem cache agressivo do documento), mas se acontecer:
+
+1. **Feche o app dos recentes** (deslize para fora) e reabra — resolve na quase totalidade dos casos, porque
+   força o WebView a rebuscar a página do servidor.
+2. Se ainda assim ficar velho, **force parar** o app (Configurações → Apps → INCURSION → Forçar parada) e
+   reabra; ou **limpe o cache** do app ali mesmo (Armazenamento → Limpar cache — NÃO "Limpar dados", que
+   apaga o login guardado).
+3. **Não precisa de nada no código** para o caso normal. Só a versão da LOJA (embutida, no fim) precisaria de
+   uma estratégia de cache — o modelo servidor-apontado de hoje não.
 
 ---
 

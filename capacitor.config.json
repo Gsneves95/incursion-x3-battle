@@ -16,6 +16,11 @@
       "showSpinner": true,
       "androidSpinnerStyle": "large",
       "spinnerColor": "#e7bd74"
+    },
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK",
+      "backgroundColor": "#00000000"
     }
   }
 }

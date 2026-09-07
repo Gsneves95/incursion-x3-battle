@@ -158,10 +158,33 @@ function ligarPlataformaNativa(){
   if(P.SplashScreen && P.SplashScreen.hide){ try{ P.SplashScreen.hide(); }catch(e){} }
   // 2) O botão VOLTAR do Android = o que o "‹ Início" faz. NUNCA fecha o app no meio de uma partida
   //    (o router é uma pilha JS, sem history do navegador — sem isto o Android fecharia o app de cara).
+  //    O evento backButton é do SISTEMA — dispara pelo gesto/botão MESMO com a barra escondida (§243),
+  //    então o tratamento do §240 segue valendo em modo imersivo, sem mudança.
   if(P.App && P.App.addListener && !window.__incBackLigado){
     window.__incBackLigado=true;
     P.App.addListener('backButton', ()=>{ voltarNativo(); });
   }
+  // 3) §243 — MODO IMERSIVO: a barra de status some (plugin StatusBar, overlay para o palco subir por baixo
+  //    do recorte); a barra de NAVEGAÇÃO some pela API de Fullscreen (o WebChromeClient do Capacitor entra
+  //    em imersivo STICKY — as duas voltam com um deslizar da borda). O WebView LARGA o fullscreen/overlay
+  //    ao voltar do segundo plano, então reafirmamos no 'resume' e no visibilitychange. fit() reenquadra
+  //    (o env(safe-area-inset-*) encolhe quando as barras somem — a F0.6b relê e preenche o espaço).
+  imersivo();
+  if(P.App && P.App.addListener && !window.__incImersivoLigado){
+    window.__incImersivoLigado=true;
+    P.App.addListener('resume', ()=>{ imersivo(); setTimeout(fit,120); });
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ imersivo(); setTimeout(fit,120); } });
+  }
+}
+// §243 — aplica o modo imersivo (idempotente): esconde a barra de status pelo plugin e pede tela cheia
+// (que no WebView do Capacitor esconde a barra de navegação em imersivo sticky). No navegador comum é no-op.
+function imersivo(){
+  const P = _plataformaApp(); if(!P) return;
+  try{ if(P.StatusBar){ if(P.StatusBar.setOverlaysWebView) P.StatusBar.setOverlaysWebView({overlay:true}); if(P.StatusBar.hide) P.StatusBar.hide(); } }catch(e){}
+  // a tela cheia precisa de gesto na 1ª vez (ligarModoApp cuida disso no 1º toque); aqui reafirmamos se já
+  // houve gesto (no resume o WebView costuma readmitir sem novo toque). Falha silenciosa = segue normal.
+  try{ if(typeof estaTelaCheia==='function' && !estaTelaCheia() && typeof pedirTelaCheia==='function') pedirTelaCheia().catch(()=>{}); }catch(e){}
+  setTimeout(fit, 60);
 }
 function voltarNativo(){
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)

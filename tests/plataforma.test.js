@@ -10,14 +10,19 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'
 let f = 0; const ok = (c, m) => { if (!c) { console.log('  FALHA: ' + m); f++; } };
 
 // ---- Capacitor FALSO: captura o callback do backButton e conta as chamadas nativas ----
-const nativo = { splashHid: false, backCb: null, exited: 0 };
+const nativo = { splashHid: false, backCb: null, resumeCb: null, exited: 0, statusHide: 0, overlay: 0 };
 const fakeCapacitor = {
   isNativePlatform: () => true,
   Plugins: {
     SplashScreen: { hide: () => { nativo.splashHid = true; return Promise.resolve(); } },
     App: {
-      addListener: (ev, cb) => { if (ev === 'backButton') nativo.backCb = cb; return { remove() {} }; },
+      addListener: (ev, cb) => { if (ev === 'backButton') nativo.backCb = cb; if (ev === 'resume') nativo.resumeCb = cb; return { remove() {} }; },
       exitApp: () => { nativo.exited++; return Promise.resolve(); },
+    },
+    // §243 — barra de status (modo imersivo)
+    StatusBar: {
+      hide: () => { nativo.statusHide++; return Promise.resolve(); },
+      setOverlaysWebView: () => { nativo.overlay++; return Promise.resolve(); },
     },
   },
 };
@@ -34,6 +39,16 @@ ok(nativo.splashHid, 'o splash nativo é escondido quando a UI aparece (não fic
 ok(typeof nativo.backCb === 'function', 'um ouvinte de backButton foi registrado (senão o Android fecharia o app)');
 ok(w.__incBackLigado === true, 'a plataforma nativa ligou (flag anti-registro-duplo)');
 console.log('  splash escondido · backButton registrado');
+
+console.log('== §243: MODO IMERSIVO — a barra de status some e reafirma no resume ==');
+ok(nativo.statusHide >= 1 && nativo.overlay >= 1, 'no boot: a barra de status é escondida com overlay (o palco sobe por baixo)');
+ok(typeof nativo.resumeCb === 'function', 'um ouvinte de "resume" foi registrado (o WebView larga o imersivo ao voltar do 2º plano)');
+{
+  const antes = nativo.statusHide;
+  nativo.resumeCb();   // simula voltar do segundo plano
+  ok(nativo.statusHide > antes, 'ao voltar do 2º plano (resume), o imersivo é REAFIRMADO (barra de status some de novo)');
+}
+console.log('  barra de status escondida no boot e reafirmada no resume · back segue independente da barra');
 
 console.log('== §240: o botão VOLTAR faz o que o "‹ Início" faz, e não fecha o app no meio do jogo ==');
 {
