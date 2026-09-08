@@ -18,7 +18,7 @@ const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 const HOME_BANNERS = [
   { chave: 'campanha',    arte: 'campanha',    rotulo: 'Campanha',    rota: 'campanha' },
   { chave: 'provacoes',   arte: 'provacoes',   rotulo: 'Provações',   rota: 'provacoes' },
-  { chave: 'desafios',    arte: 'desafios',    rotulo: 'Desafios',    rota: 'desafios', placeholder: true },
+  { chave: 'desafios',    arte: 'desafios',    rotulo: 'Desafios',    rota: 'desafios' },
   { chave: 'invocacao',   arte: 'invocacao',   rotulo: 'Invocação',   rota: 'invocacao' },
   { chave: 'colecao',     arte: 'colecao',     rotulo: 'Coleção',     rota: 'colecao' },
   { chave: 'loja',        arte: 'loja',        rotulo: 'Loja',        rota: 'embreve', titulo: 'Loja' },

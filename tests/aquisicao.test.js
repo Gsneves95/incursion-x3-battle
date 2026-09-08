@@ -194,10 +194,12 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   // "Desafios" → o hub dos DESAFIOS POR DEUS (§245): uma linha por deus possuído
   w.eval("ir('desafios'); render();");
   ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (uma linha por deus possuído)');
-  // o placeholder do banner Desafios existe (sem arte ainda) e tem título de espera
+  // §246: a arte do banner Desafios chegou — o placeholder do §213 SAIU; agora é <img> de arquivo
   w.eval("ir('home',{},{substituir:true}); render();");
-  const ph = $('.bcard[data-dest="desafios"] .bcard__ph');
-  ok(!!ph && /Desafios/.test(ph.textContent), 'o banner Desafios usa placeholder com título até a arte chegar');
+  const cd = $('.bcard[data-dest="desafios"]');
+  ok(!!cd && !cd.querySelector('.bcard__ph'), 'o banner Desafios não é mais placeholder (§246: a arte chegou)');
+  const img = cd && cd.querySelector('img.bcard__art');
+  ok(!!img && img.getAttribute('src') === 'banners/desafios.webp', 'o banner Desafios aponta para banners/desafios.webp (arquivo versionado)');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

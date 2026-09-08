@@ -6,6 +6,16 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §246 — A ARTE do banner de Desafios chegou: entra em `web/banners/desafios.webp`, o placeholder do §213 sai, o carrossel fica com os 8 cartões com arte de verdade.
+
+O §213 deixou `placeholder: true` no destino Desafios **de propósito**, esperando esta arte — um cartão de espera (fundo escuro + título em ouro, no padrão da série) que nunca pede um arquivo 404. A arte chegou (648×1008, subtítulo "RECOMPENSAS · RANK DOS DEUSES", que casa com o que o Desafio virou no §245 — maestria, moldura, rank dos deuses), então: **arquivo versionado + o placeholder vira `<img>` (uma linha), como o §213 prometeu.**
+
+**A ORDEM importou (decisão do dono, à prova do container):** subir a arte e **empurrar ANTES de qualquer conferência**. A fonte já evaporou duas vezes neste projeto enquanto se verificava (§218, o spike embutido) — o container é efêmero, então o `git push` é o que sobrevive. Fiz em dois commits: (1) só o `desafios.webp` — commit + push imediatos; (2) o resto (tirar o placeholder, migrar o teste, docs) depois, com a conferência.
+
+**De onde veio o arquivo (o achado da sessão):** o anexo do dono **não chegou ao disco do container** (nem em `/mnt/attach` nem em pasta de upload). A arte estava embutida como **base64 (webp) no transcrito da sessão** — extraí de lá (`data` do bloco `image/webp`, decodificado). Resultado: RIFF/WebP VP8 válido, **648×1008 exatos** (proporção 1,556, idêntica aos 7). O byte-count veio **99.280 (~97 KB)**, ~6 KB acima dos ~91 KB que o dono mediu no original — o embutir do transcrito re-encodou levemente (por isso a soma dos 8 deu **~672 KB**, não os ~664 KB da conta do dono). **Dimensão e arte batem exatos; o peso, não** — se o dono quiser o original 91 KB byte-a-byte, precisa reenviar de um jeito que caia no disco; funcionalmente (arte certa, tamanho invisível ao jogador) está pronto.
+
+**A GUARDA do teste migrada (§213 → §246):** o `render_sweep` seção 5 checava "7 em arquivo + 1 placeholder" — agora checa **os 8 em arquivo, 0 placeholder** (um placeholder aqui vira regressão = arte perdida, acusa em vez de tolerar) + asserção explícita de que `web/banners/desafios.webp` existe versionado. `HOME_BANNERS` (`src/ui/home.js`): tirado o `placeholder: true` do destino Desafios. `build.js` copia `web/banners/` → `dist/banners/` (o `desafios.webp` chega ao dist sozinho). **Suíte verde.** Captura do carrossel contra o dist (o cartão Desafios com a arte, entre Provações e Invocação, no mesmo quadro dourado 202×314).
+
 ## §245 — OS DESAFIOS ao desenho do dono: o SEMANAL passa a dar GEMA (e vira "Desafio da Semana"), e os PERGAMINHOS viram DESAFIOS POR DEUS comprados com Essência que dão MAESTRIA (a moldura sai no Mestre). Cobertura levada a 100%.
 
 Separação que fecha os três sistemas: **Provação LIBERA** (missão PvP, §241, intocada) · **Desafio DOMINA** (puzzle pago, dá maestria). Os dois disputam o tempo do jogador de propósito.

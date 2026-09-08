@@ -93,7 +93,7 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
-console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 1 placeholder) e o layout independe da carteira ==');
+console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; os 8 em arquivo) e o layout independe da carteira ==');
 {
   const dir = path.join(__dirname, '../web/banners');
   const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
@@ -105,20 +105,26 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   render0();
   const cards = [...d.querySelectorAll('.bcard')];
   ok(cards.length === 8, `deveriam existir 8 cartões (existem ${cards.length})`);   // §213: +Desafios
-  const semArquivo = [], base64 = [];
+  const semArquivo = [], base64 = [], placeholders = [];
+  let comArquivo = 0;
   for (const c of cards){
-    // §213: cartão-PLACEHOLDER (Desafios sem arte ainda) não tem <img> — é legítimo, tem o título de espera
-    if (c.querySelector('.bcard__ph')){ if (!c.querySelector('.bcard__ph-t')) semArquivo.push('placeholder sem título'); continue; }
+    // §246: a arte de Desafios chegou — o placeholder do §213 SAIU. Agora os 8 destinos são <img> de
+    // arquivo; um placeholder aqui seria regressão (arte perdida), então acusa em vez de tolerar.
+    if (c.querySelector('.bcard__ph')){ placeholders.push(c.getAttribute('data-dest') || '?'); continue; }
     const img = c.querySelector('img.bcard__art');
     if (!img) { semArquivo.push('sem <img>'); continue; }
     const src = img.getAttribute('src') || '';
     if (/^data:/.test(src)) base64.push(src.slice(0, 24));
     const m = /^banners\/(.+\.webp)$/.exec(src);
     if (!m) { semArquivo.push(src); continue; }
-    if (!fs.existsSync(path.join(dir, m[1]))) semArquivo.push(m[1] + ' (ausente no repo)');
+    if (!fs.existsSync(path.join(dir, m[1]))) { semArquivo.push(m[1] + ' (ausente no repo)'); continue; }
+    comArquivo++;
   }
   ok(base64.length === 0, `nenhum banner deveria ser base64 (achei: ${base64.join(' | ')})`);
+  ok(placeholders.length === 0, `nenhum destino deveria ser placeholder — a arte chegou p/ todos (§246); placeholders: ${placeholders.join(' | ')}`);
   ok(semArquivo.length === 0, `todo banner deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
+  ok(comArquivo === 8, `os 8 destinos deveriam ter arte em ARQUIVO (tem ${comArquivo}) — inclui banners/desafios.webp (§246)`);
+  ok(fs.existsSync(path.join(dir, 'desafios.webp')), 'o banner de Desafios existe versionado (web/banners/desafios.webp, §246)');
 
   // (b) o LAYOUT do carrossel NÃO muda com o tamanho da carteira: cartão fixo 202×314,
   //     mesma contagem e mesma ordem com perfil zerado e com perfil cheio. Só o DADO VIVO
@@ -141,7 +147,7 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
   const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
   ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
-  console.log(`  8 destinos (7 em arquivo + 1 placeholder) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+  console.log(`  8 destinos (os 8 em arquivo, 0 placeholder — §246) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
 }
 
 console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');
