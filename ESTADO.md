@@ -2,7 +2,9 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ ARTE do banner de Desafios (§246 + §247 revisão), pronta — o carrossel da home tem os 8 cartões com arte de verdade, o placeholder do §213 saiu.
+## ★ ARTE dos banners da home (§246/§247 Desafios · §248 PvP), pronta — os 8 cartões com arte de verdade, sem deus repetido em destaque (uma ambiguidade reportada).
+
+**§248 — PvP trocado (Fenrir × Kukulkán) + varredura de repetição.** O Hércules estava em Desafios (§247) E em PvP — repetido no mesmo carrossel (o dono achou jogando). Nova arte de PvP: **Fenrir × Kukulkán**, sem repetição. Só troca `web/banners/batalha-pvp.webp` (subir+empurrar antes de conferir, §218; base64 do transcrito). 648×1008; ~90 KB (re-encode soma ~6 KB, o dono dispensou correção). **A VARREDURA (deus em destaque):** campanha=Odin · provações=Atena+2 · desafios=Hércules · invocação=só símbolos · coleção=Sun Wukong (+colagem do acervo) · loja=Tanuki · batalha CPU=ancião com corvo tocando lira + deusa alada egípcia · PvP=Fenrir×Kukulkán. **Nenhum título repetido; UMA ambiguidade:** o ancião-com-corvo da CPU pode ler como Odin (que é o destaque de campanha) — se não for o Odin, tirar/trocar o corvo resolve; deixei a decisão com o dono. **Suíte verde.** Captura do carrossel contra o dist.
 
 **§247 — banner revisado: subtítulo ACIMA do título.** O dono reenviou a arte com "RECOMPENSAS · RANK DOS DEUSES" **acima** de DESAFIOS (divisor de diamante embaixo) — o **padrão da série** (Provações/Invocação têm o subtítulo acima). Substituí `web/banners/desafios.webp` (subir+empurrar antes de conferir, §218; extraído do base64 do transcrito, o anexo não cai no disco). 648×1008 exatos; ~97 KB (o re-encode do transcrito deixa ~6 KB acima dos ~91 KB do original; 8 somam ~672 KB). Placeholder e guarda já vinham do §246 — só o arquivo trocou. Suíte verde. Nova captura do carrossel.
 
