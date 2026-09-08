@@ -1134,14 +1134,15 @@ function metaComb(k){
 function timeDoAto(ato){ return slotsDoAto(ato).map((s, i) => (campSwap[i] || s.deus)); }
 function timeProntoAto(ato){ return timeDoAto(ato).filter(Boolean).length === 3; }
 
+// §253: retrato de aliado. travado=cadeado (a cena, sem troca); emprestado=⇄ (abre o seletor).
 function cslotHTML(s, i){
   const key = campSwap[i] || s.deus;
   if (!key) return `<button class="cslot cslot--vazio" data-empr="${i}"><span class="cslot__p">+</span><span class="cslot__nome">escolher</span></button>`;
   const m = metaComb(key);
-  if (s.travado) return `<div class="cslot cslot--trav"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__lock">⚿</span><span class="cslot__nome">${H(m.nome)}</span></div>`;
-  return `<button class="cslot cslot--empr" data-empr="${i}"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__swap">⇄</span><span class="cslot__nome">${H(m.nome)}</span></button>`;
+  if (s.travado) return `<div class="cslot cslot--trav"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__badge cslot__lock">⚿</span><span class="cslot__nome">${H(m.nome)}</span></div>`;
+  return `<button class="cslot cslot--empr" data-empr="${i}"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__badge cslot__swap">⇄</span><span class="cslot__nome">${H(m.nome)}</span></button>`;
 }
-function cinimHTML(k){ const m = metaComb(k); return `<div class="cslot cslot--inim"><span class="cslot__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__nome">${H(m.nome)}</span></div>`; }
+function cinimHTML(k){ const m = metaComb(k); return `<div class="cinim"><span class="cinim__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cinim__nome">${H(m.nome)}</span></div>`; }
 
 function renderCampanha(){
   const caps = CAMPS();
@@ -1168,76 +1169,94 @@ function renderCampanha(){
   const temPrev = campCapIdx > 0 && capDesbloqueado(campCapIdx - 1);
   const temNext = campCapIdx < caps.length - 1 && capDesbloqueado(campCapIdx + 1);
 
-  // painel ESQUERDO (arte + numeral + nome + texto). §213: só emite <img> se o ARQUIVO existe (a build
-  // anotou `_arteOk`); senão desenha o placeholder — NUNCA um <img> que dá 404.
+  // ESQUERDA — arte (§213: <img> só se o arquivo existe; senão placeholder, nunca 404), dois véus, legenda.
   const arteInner = ato._arteOk
     ? `<img class="camp__arteimg" src="${arteFile}" alt="" loading="lazy" onerror="this.remove()">`
     : `<div class="camp__artefallback"><span class="camp__phorn">◈</span></div>`;
   const esquerda = `<div class="camp__arte">${arteInner}
-    <div class="camp__artegrad"></div>
+    <div class="camp__veu1"></div><div class="camp__veu2"></div>
     <div class="camp__legenda">
       <span class="camp__num">${H(numAtoLabel)}</span>
       <h2 class="camp__nome">${H(ato.nome)}</h2>
+      <span class="camp__filete"></span>
       <p class="camp__texto">${H(ato.texto || '')}</p>
     </div>
   </div>`;
 
-  // painel DIREITO
-  let direita;
+  // DIREITA — painel de briefing (batalha) ou história
+  let brief;
   if (ehBatalha) {
     const slots = slotsDoAto(ato);
     const en = ato.ensina;
     const r = recompensaDe(ato.recompensa);
     const jaFeito = atoFeito(ato.id);
-    const mec = en ? `<div class="camp__mec"><div class="camp__pantit">${ICO('mec')} Mecânica desbloqueada</div>
-      <div class="camp__mecrow"><span class="camp__mecico">⚡</span><div><b class="camp__mectit">${H(en.titulo)}</b><span class="camp__mecdica">${H(en.dica)}</span></div></div></div>` : '';
-    const rec = `<div class="camp__rec"><div class="camp__pantit">${ICO('rec')} Recompensas${jaFeito ? ' <span class="camp__coletada">✓ coletada</span>' : ''}</div>
+    const nInim = (ato.inimigos || []).length;
+    const mec = en ? `<div class="camp__mec">
+        <span class="camp__mecico">⚡</span>
+        <div class="camp__mectxt"><div class="camp__mectoprow"><b class="camp__mectit">${H(en.titulo)}</b><span class="camp__mecselo">Nova mecânica</span></div><span class="camp__mecdica">${H(en.dica)}</span></div>
+      </div>` : '';
+    const ladrilho = (v, un, feita) => `<span class="crec ${feita ? 'crec--feita' : ''}"><b class="crec__v">${v}</b><span class="crec__u">${un}</span></span>`;
+    const rec = `<div class="camp__rec">
+      <div class="camp__reccab"><span class="camp__lbl camp__lbl--rec">Recompensas</span>${jaFeito ? '<span class="camp__coletada">✓ coletada</span>' : ''}</div>
       <div class="camp__recchips">
-        ${r && r.gema ? `<span class="crec ${jaFeito ? 'crec--feita' : ''}"><b>${r.gema}</b> gemas</span>` : ''}
-        ${r && r.essencia ? `<span class="crec ${jaFeito ? 'crec--feita' : ''}"><b>${r.essencia}</b> essência</span>` : ''}
+        ${r && r.gema ? ladrilho(r.gema, 'GEMAS', jaFeito) : ''}
+        ${r && r.essencia ? ladrilho(r.essencia, 'ESSÊNCIA', jaFeito) : ''}
       </div></div>`;
     const pronto = timeProntoAto(ato);
-    direita = `<div class="camp__dir">
-      <div class="camp__duo">
-        <div class="camp__pan"><div class="camp__pantit">${ICO('voce')} Você jogará com</div><div class="camp__slots">${slots.map((s, i) => cslotHTML(s, i)).join('')}</div></div>
-        <div class="camp__pan camp__pan--inim"><div class="camp__pantit">${ICO('inim')} Enfrentará</div><div class="camp__slots">${(ato.inimigos || []).map(cinimHTML).join('')}</div></div>
+    brief = `<div class="camp__brief">
+      <div class="camp__elencos">
+        <div class="camp__col">
+          <span class="camp__lbl camp__lbl--voce">Você jogará com</span>
+          <div class="camp__slots">${slots.map((s, i) => cslotHTML(s, i)).join('')}</div>
+        </div>
+        <div class="camp__col">
+          <span class="camp__lbl camp__lbl--inim">Enfrentará <span class="camp__form">${nInim} VS 3</span></span>
+          <div class="camp__inims">${(ato.inimigos || []).map(cinimHTML).join('')}</div>
+        </div>
       </div>
+      <div class="camp__divisor"></div>
       ${mec}${rec}
-      <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}>${pronto ? '▶ Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
+      <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? 'Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
     </div>`;
   } else {
-    direita = `<div class="camp__dir camp__dir--hist">
+    brief = `<div class="camp__brief camp__brief--hist">
       <div class="camp__historn">✦</div>
-      <p class="camp__histnota">Um trecho da história. Nenhuma luta aqui.</p>
-      <button class="camp__cta" id="campcta">Continuar ▶</button>
+      <p class="camp__histnota">Um trecho da história.</p>
+      <button class="camp__cta" id="campcta"><span class="camp__ctaseta"></span>Continuar</button>
     </div>`;
   }
 
-  // RODAPÉ — a linha do tempo (navegação)
-  const linha = atos.map((a, i) => {
+  // RODAPÉ — trilha: linha-guia com progresso + nós (vencido/atual/travado), navegação.
+  const totalNos = atos.length;
+  const fillPct = totalNos > 1 ? ((campAtoIdx) / (totalNos - 1)) * 82 : 0;
+  const nos = atos.map((a, i) => {
     const est = atoEstado(campCapIdx, i);
     const atual = i === campAtoIdx;
-    const nm = (a.nome.length > 22 ? a.nome.slice(0, 20) + '…' : a.nome);
-    const ic = est === 'feito' ? '✓' : est === 'travado' ? '⚿' : (i + 1);
+    const ic = est === 'feito' ? '✓' : (i + 1);
     return `<button class="cnode cnode--${est} ${atual ? 'cnode--atual' : ''}" data-ato="${i}" ${est === 'travado' ? 'disabled' : ''}>
-      <span class="cnode__d"><span class="cnode__num">${ic}</span></span><span class="cnode__nome">${H(nm)}</span></button>`;
-  }).join('<span class="cnode__sep"></span>');
+      <span class="cnode__d">${est === 'travado' ? '<span class="cnode__lock">⚿</span>' : `<span class="cnode__num">${ic}</span>`}</span>
+      <span class="cnode__nome">${H(a.nome)}</span></button>`;
+  }).join('');
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="camp ${ehBatalha ? '' : 'camp--historia'}">
+    ${esquerda}
     <header class="camp__cab">
-      <div class="camp__cabL"><button class="b b--quiet b--md" id="bvoltar">‹ Início</button><span class="camp__logo">Campanha</span></div>
-      <div class="camp__capbox">
-        <div class="camp__capL">
-          ${temPrev ? '<button class="camp__capnav" id="capprev">‹</button>' : '<span class="camp__capnav camp__capnav--off">‹</span>'}
-          <div class="camp__capid"><span class="camp__capeye">${H(eyebrow)}</span><span class="camp__captit">${H(capTit)}</span><span class="camp__capep">“${H(cap.epigrafe || '')}”</span></div>
-          ${temNext ? '<button class="camp__capnav" id="capnext">›</button>' : '<span class="camp__capnav camp__capnav--off">›</span>'}
-        </div>
-        <span class="camp__prog">${String(feitosCap).padStart(2, '0')} / ${String(atos.length).padStart(2, '0')}</span>
-      </div>
+      <button class="camp__inicio" id="bvoltar"><span class="camp__chev"></span>Início</button>
+      <span class="camp__filetev"></span>
+      <h1 class="camp__logo">Campanha</h1>
     </header>
-    <div class="camp__corpo">${esquerda}${direita}</div>
-    <div class="camp__pe">${linha}</div>
+    <div class="camp__capbox"><div class="camp__capinner">
+      ${temPrev ? '<button class="camp__capnav" id="capprev">‹</button>' : ''}
+      <div class="camp__capid"><span class="camp__capeye">${H(eyebrow)}</span><span class="camp__captit">${H(capTit)}</span><span class="camp__capep">“${H(cap.epigrafe || '')}”</span></div>
+      <span class="camp__prog"><b>${String(feitosCap).padStart(2, '0')}</b><span class="camp__progt">/ ${String(totalNos).padStart(2, '0')}</span></span>
+      ${temNext ? '<button class="camp__capnav" id="capnext">›</button>' : ''}
+    </div></div>
+    ${brief}
+    <div class="camp__pe">
+      <div class="camp__guia"><span class="camp__guiafill" style="width:${fillPct.toFixed(1)}%"></span></div>
+      <div class="camp__nos">${nos}</div>
+    </div>
   </div>
   ${campPicker != null ? campPickerHTML() : ''}
   </div>`;
@@ -1255,7 +1274,6 @@ function renderCampanha(){
 }
 
 function numeroRomano(n){ return ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n); }
-function ICO(){ return '<i class="camp__ico">◆</i>'; }
 
 // seletor de troca do slot emprestado: os deuses que o jogador TEM (com kit). Sem saída morta (§210):
 // se não tem nenhum, a mensagem explica e ele joga com o emprestado default.
