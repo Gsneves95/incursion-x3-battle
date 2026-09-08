@@ -1096,30 +1096,214 @@ function cardEncontroHTML(enc, estado){
   </button>`;
 }
 
+// ===================================================================
+// §252 — CAMPANHA NARRATIVA (O Trono do Uno). A lista SAIU: cada capítulo é uma
+// história FASEADA em atos. O ato tem TIPO: `batalha` abre a luta; `historia` é
+// arte+texto+Continuar. Capítulo = ARQUIVO (data/campanha/ → CAMPANHAS), para que
+// capítulo novo seja dado e não código. Palco 951×428, orçamento 48/316/64.
+// ===================================================================
+let campCapIdx = null, campAtoIdx = null;   // capítulo/ato em foco
+let campSwap = {}, campVistaAto = null;       // trocas do slot emprestado (por índice), reset ao trocar de ato
+let campPicker = null;                        // slot idx cujo seletor de troca está aberto (null = fechado)
+
+function CAMPS(){ return (typeof CAMPANHAS !== 'undefined' && CAMPANHAS && CAMPANHAS.capitulos) ? CAMPANHAS.capitulos : []; }
+function atoFeito(id){ return !!(perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas) && perfil.campanha.concluidas.includes(id)); }
+function capCompleto(cap){ return (cap.atos || []).every(a => atoFeito(a.id)); }
+function capDesbloqueado(capIdx){ const caps = CAMPS(); if (capIdx <= 0) return true; return capCompleto(caps[capIdx - 1]); }
+// estado de um ato na trilha: 'feito' | 'aberto' (jogável agora ou revisitável) | 'travado'.
+function atoEstado(capIdx, i){
+  const atos = CAMPS()[capIdx].atos || [];
+  if (atoFeito(atos[i].id)) return 'feito';
+  if (!capDesbloqueado(capIdx)) return 'travado';
+  return (i === 0 || atoFeito(atos[i - 1].id)) ? 'aberto' : 'travado';
+}
+function capAtualIdx(){ const caps = CAMPS(); for (let c = 0; c < caps.length; c++) if (!capCompleto(caps[c])) return c; return Math.max(0, caps.length - 1); }
+function atoAtualIdx(capIdx){ const atos = CAMPS()[capIdx].atos || []; for (let i = 0; i < atos.length; i++) if (!atoFeito(atos[i].id)) return i; return Math.max(0, atos.length - 1); }
+// aliados de um ato → 3 slots {deus,travado}. null = 3 emprestados vazios (o jogador monta, Prólogo VI);
+// [string] = time fixo do Prólogo (tudo travado); [{deus,travado}] = Cap 1 (cena + emprestado).
+function slotsDoAto(ato){
+  if (ato.aliados == null) return [0, 1, 2].map(() => ({ deus: null, travado: false }));
+  return ato.aliados.map(a => typeof a === 'string' ? { deus: a, travado: true } : { deus: a.deus, travado: !!a.travado });
+}
+function metaComb(k){
+  const g = HRM[k]; if (g) return { nome: g.nome, elem: g.elem };
+  const b = (typeof BESTIARIO_DADOS !== 'undefined' ? BESTIARIO_DADOS : []).find(x => x.key === k);
+  if (b) return { nome: b.nome, elem: b.elemento };
+  return { nome: k, elem: 'Umbra' };
+}
+function timeDoAto(ato){ return slotsDoAto(ato).map((s, i) => (campSwap[i] || s.deus)); }
+function timeProntoAto(ato){ return timeDoAto(ato).filter(Boolean).length === 3; }
+
+function cslotHTML(s, i){
+  const key = campSwap[i] || s.deus;
+  if (!key) return `<button class="cslot cslot--vazio" data-empr="${i}"><span class="cslot__p">+</span><span class="cslot__nome">escolher</span></button>`;
+  const m = metaComb(key);
+  if (s.travado) return `<div class="cslot cslot--trav"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__lock">⚿</span><span class="cslot__nome">${H(m.nome)}</span></div>`;
+  return `<button class="cslot cslot--empr" data-empr="${i}"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__swap">⇄</span><span class="cslot__nome">${H(m.nome)}</span></button>`;
+}
+function cinimHTML(k){ const m = metaComb(k); return `<div class="cslot cslot--inim"><span class="cslot__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__nome">${H(m.nome)}</span></div>`; }
+
 function renderCampanha(){
-  const encs = campEncontros();
-  const feitos = encs.filter(e => encFeito(e.id)).length;
-  const cap = (typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA : { nome: 'Campanha', subtitulo: '' };
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Campanha</h1>
-      <span class="tela__cont">${feitos}/${encs.length}</span>
-    </header>
-    <div class="tela__rol">
-      <div class="ccap"><h2>${H(cap.nome)}</h2><p>${H(cap.subtitulo || '')}</p></div>
-      <div class="clista">${encs.map((e, i) => cardEncontroHTML(e, encEstado(e, i, encs))).join('')}</div>
+  const caps = CAMPS();
+  if (!caps.length) {   // sem dado da campanha nova — mensagem honesta, com saída (§210)
+    stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div><div class="tela"><header class="tela__cab"><button class="b b--quiet b--md" id="bvoltar">‹ Início</button><h1 class="tela__titulo">Campanha</h1></header><div class="tela__rol"><p class="result__msg">A campanha ainda não foi carregada.</p></div></div></div>`;
+    const v0 = stage.querySelector('#bvoltar'); if (v0) v0.onclick = () => { ir('home', {}, { substituir: true }); render(); };
+    fit(); return;
+  }
+  if (campCapIdx == null || campCapIdx >= caps.length) campCapIdx = capAtualIdx();
+  const cap = caps[campCapIdx];
+  const atos = cap.atos || [];
+  if (campAtoIdx == null || campAtoIdx >= atos.length) campAtoIdx = atoAtualIdx(campCapIdx);
+  const ato = atos[campAtoIdx];
+  if (campVistaAto !== ato.id) { campSwap = {}; campVistaAto = ato.id; }   // troca de ato zera os empréstimos
+
+  const feitosCap = atos.filter(a => atoFeito(a.id)).length;
+  const ehBatalha = ato.tipo === 'batalha';
+  const eyebrow = cap.numero === 0 ? 'PRÓLOGO' : 'CAPÍTULO ' + numeroRomano(cap.numero);
+  const capTit = (cap.nome.split('—')[1] || cap.nome).trim();
+  const numAtoLabel = (cap.numero === 0 ? 'TRECHO ' : 'ATO ') + ato.numeral;
+  const arteFile = 'banners/campanha/' + H(ato.arte) + '.webp';
+
+  // navegação de capítulo: só para capítulos desbloqueados
+  const temPrev = campCapIdx > 0 && capDesbloqueado(campCapIdx - 1);
+  const temNext = campCapIdx < caps.length - 1 && capDesbloqueado(campCapIdx + 1);
+
+  // painel ESQUERDO (arte + numeral + nome + texto). §213: só emite <img> se o ARQUIVO existe (a build
+  // anotou `_arteOk`); senão desenha o placeholder — NUNCA um <img> que dá 404.
+  const arteInner = ato._arteOk
+    ? `<img class="camp__arteimg" src="${arteFile}" alt="" loading="lazy" onerror="this.remove()">`
+    : `<div class="camp__artefallback"><span class="camp__phorn">◈</span></div>`;
+  const esquerda = `<div class="camp__arte">${arteInner}
+    <div class="camp__artegrad"></div>
+    <div class="camp__legenda">
+      <span class="camp__num">${H(numAtoLabel)}</span>
+      <h2 class="camp__nome">${H(ato.nome)}</h2>
+      <p class="camp__texto">${H(ato.texto || '')}</p>
     </div>
-  </div>
   </div>`;
+
+  // painel DIREITO
+  let direita;
+  if (ehBatalha) {
+    const slots = slotsDoAto(ato);
+    const en = ato.ensina;
+    const r = recompensaDe(ato.recompensa);
+    const jaFeito = atoFeito(ato.id);
+    const mec = en ? `<div class="camp__mec"><div class="camp__pantit">${ICO('mec')} Mecânica desbloqueada</div>
+      <div class="camp__mecrow"><span class="camp__mecico">⚡</span><div><b class="camp__mectit">${H(en.titulo)}</b><span class="camp__mecdica">${H(en.dica)}</span></div></div></div>` : '';
+    const rec = `<div class="camp__rec"><div class="camp__pantit">${ICO('rec')} Recompensas${jaFeito ? ' <span class="camp__coletada">✓ coletada</span>' : ''}</div>
+      <div class="camp__recchips">
+        ${r && r.gema ? `<span class="crec ${jaFeito ? 'crec--feita' : ''}"><b>${r.gema}</b> gemas</span>` : ''}
+        ${r && r.essencia ? `<span class="crec ${jaFeito ? 'crec--feita' : ''}"><b>${r.essencia}</b> essência</span>` : ''}
+      </div></div>`;
+    const pronto = timeProntoAto(ato);
+    direita = `<div class="camp__dir">
+      <div class="camp__duo">
+        <div class="camp__pan"><div class="camp__pantit">${ICO('voce')} Você jogará com</div><div class="camp__slots">${slots.map((s, i) => cslotHTML(s, i)).join('')}</div></div>
+        <div class="camp__pan camp__pan--inim"><div class="camp__pantit">${ICO('inim')} Enfrentará</div><div class="camp__slots">${(ato.inimigos || []).map(cinimHTML).join('')}</div></div>
+      </div>
+      ${mec}${rec}
+      <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}>${pronto ? '▶ Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
+    </div>`;
+  } else {
+    direita = `<div class="camp__dir camp__dir--hist">
+      <div class="camp__historn">✦</div>
+      <p class="camp__histnota">Um trecho da história. Nenhuma luta aqui.</p>
+      <button class="camp__cta" id="campcta">Continuar ▶</button>
+    </div>`;
+  }
+
+  // RODAPÉ — a linha do tempo (navegação)
+  const linha = atos.map((a, i) => {
+    const est = atoEstado(campCapIdx, i);
+    const atual = i === campAtoIdx;
+    const nm = (a.nome.length > 22 ? a.nome.slice(0, 20) + '…' : a.nome);
+    const ic = est === 'feito' ? '✓' : est === 'travado' ? '⚿' : (i + 1);
+    return `<button class="cnode cnode--${est} ${atual ? 'cnode--atual' : ''}" data-ato="${i}" ${est === 'travado' ? 'disabled' : ''}>
+      <span class="cnode__d"><span class="cnode__num">${ic}</span></span><span class="cnode__nome">${H(nm)}</span></button>`;
+  }).join('<span class="cnode__sep"></span>');
+
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="camp ${ehBatalha ? '' : 'camp--historia'}">
+    <header class="camp__cab">
+      <div class="camp__cabL"><button class="b b--quiet b--md" id="bvoltar">‹ Início</button><span class="camp__logo">Campanha</span></div>
+      <div class="camp__capbox">
+        <div class="camp__capL">
+          ${temPrev ? '<button class="camp__capnav" id="capprev">‹</button>' : '<span class="camp__capnav camp__capnav--off">‹</span>'}
+          <div class="camp__capid"><span class="camp__capeye">${H(eyebrow)}</span><span class="camp__captit">${H(capTit)}</span><span class="camp__capep">“${H(cap.epigrafe || '')}”</span></div>
+          ${temNext ? '<button class="camp__capnav" id="capnext">›</button>' : '<span class="camp__capnav camp__capnav--off">›</span>'}
+        </div>
+        <span class="camp__prog">${String(feitosCap).padStart(2, '0')} / ${String(atos.length).padStart(2, '0')}</span>
+      </div>
+    </header>
+    <div class="camp__corpo">${esquerda}${direita}</div>
+    <div class="camp__pe">${linha}</div>
+  </div>
+  ${campPicker != null ? campPickerHTML() : ''}
+  </div>`;
+
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  [...stage.querySelectorAll('.cenc[data-enc]')].forEach(b => {
-    if (b.disabled) return;
-    b.onclick = () => iniciarEncontro(b.dataset.enc);
-  });
+  const bp = stage.querySelector('#capprev'); if (bp) bp.onclick = () => { campCapIdx--; campAtoIdx = atoAtualIdx(campCapIdx); campSwap = {}; campVistaAto = null; render(); };
+  const bn = stage.querySelector('#capnext'); if (bn) bn.onclick = () => { campCapIdx++; campAtoIdx = atoAtualIdx(campCapIdx); campSwap = {}; campVistaAto = null; render(); };
+  [...stage.querySelectorAll('.cnode[data-ato]')].forEach(b => { if (b.disabled) return; b.onclick = () => { campAtoIdx = +b.dataset.ato; render(); }; });
+  [...stage.querySelectorAll('.cslot[data-empr]')].forEach(b => { b.onclick = () => { campPicker = +b.dataset.empr; render(); }; });
+  const cta = stage.querySelector('#campcta');
+  if (cta && !cta.disabled) cta.onclick = () => { if (ehBatalha) iniciarAto(cap, ato); else avancarHistoria(); };
+  ligarCampPicker();
   fit();
+}
+
+function numeroRomano(n){ return ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n); }
+function ICO(){ return '<i class="camp__ico">◆</i>'; }
+
+// seletor de troca do slot emprestado: os deuses que o jogador TEM (com kit). Sem saída morta (§210):
+// se não tem nenhum, a mensagem explica e ele joga com o emprestado default.
+function campPickerHTML(){
+  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
+  const grid = jogaveis.length
+    ? jogaveis.map(k => { const g = HRM[k]; return `<button class="ctile ctile--tem" data-troca="${k}"><span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span><span class="ctile__el" style="background:${COR(g.elem)}"></span><span class="ctile__n">${H(g.nome)}</span></button>`; }).join('')
+    : `<p class="result__msg">Você ainda não tem deuses seus — jogará com o emprestado.</p>`;
+  return `<div class="ov" id="campickerov"><div class="ovbox"><div class="ov__cab"><h2>Trocar o deus emprestado</h2><button class="b b--quiet b--md" id="pickx">Fechar</button></div>
+    <div class="cgrid cgrid--pick">${grid}</div></div></div>`;
+}
+function ligarCampPicker(){
+  const ov = stage.querySelector('#campickerov'); if (!ov) return;
+  const x = stage.querySelector('#pickx'); if (x) x.onclick = () => { campPicker = null; render(); };
+  [...stage.querySelectorAll('.ctile[data-troca]')].forEach(b => { b.onclick = () => { campSwap[campPicker] = b.dataset.troca; campPicker = null; render(); }; });
+}
+
+// entrada de uma batalha: monta o time (travado + emprestado resolvido) e reusa a máquina de Provação.
+function iniciarAto(cap, ato){
+  const time = timeDoAto(ato).filter(Boolean);
+  if (time.length !== 3) return;
+  prova = null; provaFim = null;
+  campanha = Object.assign({}, ato, { aliados: time, _capNome: cap.nome, _capIdx: campCapIdx });
+  campanhaFim = null;
+  st = montarProvacao(campanha);
+  vsCPU = true;
+  ir('batalha', {}, { substituir: true });
+  render();
+}
+// ato de história: não abre luta, não paga — só marca e avança (§252: historia não paga).
+function avancarHistoria(){
+  const cap = CAMPS()[campCapIdx], ato = cap.atos[campAtoIdx];
+  if (!atoFeito(ato.id)) {
+    if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [] };
+    if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
+    perfil.campanha.concluidas.push(ato.id);
+    const res = salvar(perfil); if (res && !res.ok) {/* silencioso: história não tem estado crítico */}
+  }
+  const prox = proximoAtoRef(campCapIdx, campAtoIdx);
+  if (prox) { campCapIdx = prox.cap; campAtoIdx = prox.ato; campSwap = {}; campVistaAto = null; }
+  render();
+}
+// referência do próximo ato (dentro do capítulo, ou o 1º do próximo capítulo).
+function proximoAtoRef(capIdx, atoIdx){
+  const caps = CAMPS(); const atos = caps[capIdx].atos || [];
+  if (atoIdx + 1 < atos.length) return { cap: capIdx, ato: atoIdx + 1 };
+  if (capIdx + 1 < caps.length) return { cap: capIdx + 1, ato: 0 };
+  return null;
 }
 
 // entrada de um encontro: time fixo → briefing→batalha; time nulo → o jogador MONTA (ensina a escolha).
@@ -1192,9 +1376,10 @@ function campanhaHUD(){
   const dl = (campanha.condicoes || []).find(c => c.predicado === 'deadline');
   const N = dl ? dl.turnos : null;
   // UMA LINHA na faixa: turno + a LIÇÃO curta. A dica longa vive no cartão do encontro (onde já cabe).
+  // §252: batalhas do Cap 1 não têm `ensina` (as regras foram no Prólogo) — sem chip de lição, só o turno.
   return `<div class="phud phud--camp" aria-hidden="true">
     <span class="phud__prazo">T<b>${st.turno}</b>${N ? '/' + N : ''}</span>
-    <span class="phud__chips"><span class="phud__chip phud__chip--andamento"><i>◆</i>Ensina: ${H(en.titulo || '')}</span></span>
+    ${en.titulo ? `<span class="phud__chips"><span class="phud__chip phud__chip--andamento"><i>◆</i>Ensina: ${H(en.titulo)}</span></span>` : ''}
   </div>`;
 }
 
@@ -1243,30 +1428,35 @@ function concluirEncontro(enc){
   campanhaFim.jaFeito = jaFeito;
   campanhaFim.recompensa = jaFeito ? null : r;   // re-jogar não paga de novo
 }
-function proximoEncontro(id){
-  const encs = campEncontros(); const i = encs.findIndex(e => e.id === id);
-  return (i >= 0 && i + 1 < encs.length) ? encs[i + 1] : null;
+// próximo ATO depois de vencer a batalha atual (dentro do capítulo ou o 1º do próximo).
+function proximoAtoDepois(){
+  if (!campanha || campanha._capIdx == null) return null;
+  const capIdx = campanha._capIdx;
+  const atos = CAMPS()[capIdx] ? CAMPS()[capIdx].atos : [];
+  const i = atos.findIndex(a => a.id === campanha.id);
+  return i < 0 ? null : proximoAtoRef(capIdx, i);
 }
 function campanhaResultadoOverlay(){
   if (!campanha || !campanhaFim) return '';
   const f = campanhaFim, venceu = f.venceu;
-  const prox = venceu ? proximoEncontro(campanha.id) : null;
+  const prox = venceu ? proximoAtoDepois() : null;
   let placar = '';
   if (venceu) {
     placar = f.recompensa && recompensaTexto(f.recompensa)
       ? `<div class="result__placar"><span>Recompensa</span><b>${H(recompensaTexto(f.recompensa))}</b></div>`
-      : (f.jaFeito ? '<p class="result__msg">Encontro já vencido — sem nova recompensa.</p>' : '');
+      : (f.jaFeito ? '<p class="result__msg">Ato já vencido — sem nova recompensa.</p>' : '');
   }
+  const ens = (campanha.ensina || {}).titulo;
   return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${venceu ? 'venceu' : 'hp'}">
-    <span class="result__selo">${H((typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA.nome : 'Campanha')}</span>
-    <h1>${venceu ? 'ENCONTRO VENCIDO' : 'DERROTA'}</h1>
+    <span class="result__selo">${H(campanha._capNome || 'Campanha')}</span>
+    <h1>${venceu ? 'ATO CONCLUÍDO' : 'DERROTA'}</h1>
     <p class="result__prova">${H(campanha.nome || '')}</p>
-    <p class="result__msg">${venceu ? H('Aprendido: ' + ((campanha.ensina || {}).titulo || '')) : 'Seus deuses tombaram — tente de novo.'}</p>
+    <p class="result__msg">${venceu ? (ens ? H('Aprendido: ' + ens) : 'A história avança.') : 'Seus deuses tombaram — o ato fica; repita quando quiser.'}</p>
     ${placar}
     <div class="result__acoes">
       <button class="b b--quiet b--md" id="cfvoltar">Voltar à campanha</button>
       ${venceu
-        ? (prox ? '<button class="b b--primary b--md" id="cfprox">Próximo encontro</button>' : '')
+        ? (prox ? '<button class="b b--primary b--md" id="cfprox">Próximo ato</button>' : '')
         : '<button class="b b--primary b--md" id="cftentar">Tentar de novo</button>'}
     </div>
   </div></div></div>`;
@@ -1274,8 +1464,8 @@ function campanhaResultadoOverlay(){
 function ligarCampanhaFim(){
   const q = s => stage.querySelector(s);
   const v = q('#cfvoltar'); if (v) v.onclick = () => { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); };
-  const t = q('#cftentar'); if (t) t.onclick = () => { const e = campanha; iniciarEncontroComTime(e, e.aliados); };
-  const p = q('#cfprox'); if (p) { const prox = proximoEncontro(campanha.id); p.onclick = () => { sairCampanha(); iniciarEncontro(prox.id); }; }
+  const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarProvacao(campanha); ir('batalha', {}, { substituir: true }); render(); };
+  const p = q('#cfprox'); if (p) { const prox = proximoAtoDepois(); p.onclick = () => { sairCampanha(); if (prox) { campCapIdx = prox.cap; campAtoIdx = prox.ato; campSwap = {}; campVistaAto = null; } ir('campanha', {}, { substituir: true }); render(); }; }
 }
 function sairCampanha(){ campanha = null; campanhaFim = null; }
 

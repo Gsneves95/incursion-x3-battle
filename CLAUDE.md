@@ -250,6 +250,30 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     layout fluido sem discutir: o dimensionamento fixo é o que garante que a
     composição não quebre entre aparelhos.
 
+### Campanha narrativa (§252)
+19. **A campanha é HISTÓRIA FASEADA (O Trono do Uno), não uma lista.** A tela
+    do ATO (esquerda: arte+numeral+nome+texto que NÃO rola; direita: você/
+    enfrentará + mecânica + recompensas + CTA; rodapé: linha do tempo que
+    navega; cabeçalho: capítulo+epígrafe+progresso+troca de capítulo).
+20. **O ato tem TIPO:** `batalha` abre a luta; `historia` é arte+texto+Continuar,
+    **não abre batalha e NÃO paga recompensa** (senão o jogador pula o texto).
+21. **Capítulo = ARQUIVO, nunca código.** Conteúdo vive em `data/campanha/`
+    (`indice.json` + um `NN-*.json` por capítulo) → `CAMPANHAS` na build. Capítulo
+    novo é uma linha no índice + um arquivo; o motor não muda. Fonte de conteúdo:
+    `docs/campanha-prologo-cap1.md`.
+22. **Recompensa de campanha só existe em `economia.json`:** `encontro`
+    (gemas) e `chefe` (gemas+essência). **Não invente moedas, EXP nem arte
+    exclusiva** — não são sistemas. Só a 1ª vitória paga.
+23. **O Prólogo é o balanço MEDIDO de hoje, intacto.** Os atos II–VII copiam
+    `data/campanha.json` (aliados/inimigos/seed/comeca/recompensa/ensina); o ato
+    VI mantém `aliados:null`. Formações 3×1/3×2/3×3. **3×3 obrigatório só do
+    Capítulo 1 em diante** (o Prólogo é isento). Guarda em `campanha.test.js`.
+24. **Aliado `travado` = a cena (o ato fornece o deus); `emprestado` = trocável**
+    por um deus que o jogador tem (default joga se ele não tem nenhum, §210).
+    A seed é independente dos aliados — trocar o emprestado não move o balanço.
+25. **Arte de ato ausente usa o placeholder do §213, NUNCA um `<img>` 404.** A
+    build anota `_arteOk` por arquivo presente em `web/banners/campanha/`.
+
 ---
 
 ## NÃO FAÇA

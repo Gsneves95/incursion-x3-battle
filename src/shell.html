@@ -1141,6 +1141,115 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .ctile__mark{position:absolute;left:5px;bottom:24px;width:16px;height:16px;display:grid;place-items:center;
   font-family:'Cinzel',serif;font-weight:900;font-size:10px;color:#201604;background:var(--gold-text);border-radius:50%}
 
+/* ===================== §252 — CAMPANHA NARRATIVA (a tela do ato) ===================== */
+/* Palco 951×428, orçamento 48/316/64. Esquerda: arte do ato + numeral + nome + texto.
+   Direita: painéis (você/enfrentará · mecânica · recompensas · CTA). Rodapé: linha do tempo. */
+.camp{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;font-family:'Rajdhani',sans-serif;color:var(--ink)}
+.camp__cab{flex:0 0 48px;display:flex;align-items:center;gap:10px;padding:0 14px}
+.camp__cabL{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.camp__logo{font-family:'Cinzel',serif;font-weight:900;font-size:21px;letter-spacing:.16em;color:var(--gold-text)}
+.camp__capbox{flex:1 1 auto;min-width:0;height:38px;display:flex;align-items:center;justify-content:flex-end;gap:16px;
+  margin-left:16px;padding:0 12px 0 44px;position:relative;
+  background:linear-gradient(100deg,rgba(24,19,50,.85),rgba(12,10,26,.92));
+  clip-path:polygon(38px 0,100% 0,100% 100%,0 100%);border-bottom:1px solid var(--gold-soft)}
+.camp__capL{display:flex;align-items:center;gap:8px;min-width:0}
+.camp__capnav{background:none;border:0;color:var(--gold-text);font-size:20px;cursor:pointer;padding:0 4px;font-family:'Cinzel',serif;line-height:1}
+.camp__capnav--off{opacity:.22;cursor:default}
+.camp__capid{display:flex;flex-direction:column;align-items:flex-end;line-height:1.12;text-align:right;min-width:0}
+.camp__capeye{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.24em;color:var(--gold)}
+.camp__captit{font-family:'Cinzel',serif;font-weight:900;font-size:16px;letter-spacing:.03em;color:var(--gold-text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+.camp__capep{font-size:10.5px;font-style:italic;color:var(--ink-mute);max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camp__prog{font-family:'Cinzel',serif;font-weight:900;font-size:18px;letter-spacing:.06em;color:var(--gold-text);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.camp__corpo{flex:1 1 auto;min-height:0;display:flex;gap:12px;padding:6px 14px 8px}
+/* --- esquerda: arte --- */
+.camp__arte{flex:0 0 47%;position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--gold-soft);background:#0c0a1c}
+.camp--historia .camp__arte{flex:0 0 63%}
+.camp__arteimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camp__artefallback{position:absolute;inset:0;display:grid;place-items:center;
+  background:radial-gradient(120% 90% at 50% 28%,rgba(42,34,78,.6),rgba(8,6,18,.96))}
+.camp__phorn{font-size:42px;color:var(--gold-soft);opacity:.5}
+.camp__artegrad{position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,5,16,.97) 6%,rgba(6,5,16,.72) 34%,transparent 62%)}
+.camp__legenda{position:absolute;left:0;right:0;bottom:0;padding:12px 16px}
+.camp__num{font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.2em;color:var(--gold)}
+.camp__nome{font-family:'Cinzel',serif;font-weight:900;font-size:25px;letter-spacing:.02em;color:var(--gold-text);margin:2px 0 6px;line-height:1.05}
+.camp__texto{font-weight:500;font-size:12px;line-height:1.42;color:var(--ink);margin:0}
+.camp--historia .camp__texto{font-size:12.5px;line-height:1.5}
+/* --- direita: painéis --- */
+.camp__dir{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:7px}
+.camp__duo{display:flex;gap:8px}
+.camp__pan{flex:1 1 0;min-width:0;background:linear-gradient(180deg,rgba(22,18,42,.72),rgba(12,10,26,.72));
+  border:1px solid var(--gold-soft);border-radius:9px;padding:6px 8px}
+.camp__pan--inim{border-color:rgba(224,96,127,.42)}
+.camp__pantit{display:flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.camp__pan--inim .camp__pantit{color:var(--enemy)}
+.camp__ico{color:var(--gold-soft);font-style:normal;font-size:8px}
+.camp__slots{display:flex;gap:6px}
+.cslot{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:stretch;
+  border:1px solid var(--gold-soft);border-radius:8px;overflow:hidden;background:#0f0c20;padding:0;color:var(--ink)}
+.camp__pan--inim .cslot{border-color:rgba(224,96,127,.4)}
+.cslot__p{width:100%;aspect-ratio:1/1;display:grid;place-items:center}
+.cslot__p .slot{width:100%;height:100%;border-radius:0}
+.cslot__nome{width:100%;font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.01em;text-align:center;
+  color:var(--ink);background:rgba(6,5,16,.85);padding:2px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  border-top:1px solid rgba(216,178,90,.25)}
+.cslot--trav{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,217,122,.22)}
+.cslot__lock{position:absolute;top:3px;right:3px;font-size:10px;color:var(--gold-text);background:rgba(6,5,16,.82);border-radius:5px;padding:0 3px;line-height:1.5}
+.cslot--empr{cursor:pointer}
+.cslot__swap{position:absolute;top:3px;right:3px;font-size:10px;color:#0f0c20;background:var(--gold-text);border-radius:5px;padding:0 3px;line-height:1.6;font-weight:900}
+.cslot--empr:active{transform:translateY(1px) scale(.98)}
+.cslot--vazio{cursor:pointer;align-items:center;justify-content:center;min-height:70px;border-style:dashed;gap:2px}
+.cslot--vazio .cslot__p{aspect-ratio:auto;font-family:'Cinzel',serif;font-weight:900;font-size:22px;color:var(--gold-soft)}
+.cslot--vazio .cslot__nome{background:none;border:0;color:var(--gold-soft)}
+.camp__mec{background:rgba(16,13,32,.6);border:1px solid rgba(216,178,90,.3);border-radius:8px;padding:6px 9px}
+.camp__mecrow{display:flex;align-items:flex-start;gap:8px}
+.camp__mecico{flex:0 0 auto;width:24px;height:24px;display:grid;place-items:center;font-size:13px;color:var(--gold-text);
+  background:rgba(255,217,122,.12);border:1px solid var(--gold-soft);border-radius:6px}
+.camp__mectit{display:block;font-family:'Cinzel',serif;font-weight:700;font-size:12px;color:var(--gold-text)}
+.camp__mecdica{display:block;font-weight:500;font-size:10px;line-height:1.32;color:var(--ink-dim);max-height:40px;overflow:hidden}
+.camp__rec{background:rgba(16,13,32,.5);border:1px solid #2c2648;border-radius:8px;padding:6px 9px}
+.camp__coletada{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:.06em;color:var(--e-Verdejante)}
+.camp__recchips{display:flex;gap:8px;margin-top:5px}
+.crec{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;color:var(--gold-text);
+  background:rgba(255,217,122,.1);border:1px solid var(--gold-soft);border-radius:16px;padding:3px 11px}
+.crec b{font-weight:800;color:#fff}
+.crec--feita{opacity:.5}
+.camp__cta{margin-top:auto;flex:0 0 auto;height:40px;border:none;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:900;font-size:15px;letter-spacing:.09em;color:#241803;
+  background:linear-gradient(180deg,#ffe6a3,var(--gold));
+  clip-path:polygon(11px 0,100% 0,calc(100% - 11px) 100%,0 100%);
+  box-shadow:0 4px 14px rgba(216,178,90,.35),inset 0 0 0 1px rgba(255,255,255,.28)}
+.camp__cta:active{transform:translateY(1px)}
+.camp__cta:disabled{background:linear-gradient(180deg,#48415e,#312c46);color:var(--ink-mute);cursor:default;box-shadow:none}
+.camp__dir--hist{align-items:center;justify-content:center;text-align:center;gap:14px}
+.camp__historn{font-size:34px;color:var(--gold-soft)}
+.camp__histnota{font-size:12px;color:var(--ink-mute);max-width:210px;margin:0}
+.camp--historia .camp__dir--hist .camp__cta{margin-top:0;width:78%}
+/* --- rodapé: linha do tempo (navegação) --- */
+.camp__pe{flex:0 0 64px;display:flex;align-items:center;padding:0 16px;
+  border-top:1px solid rgba(216,178,90,.18);background:linear-gradient(180deg,transparent,rgba(8,6,18,.55))}
+.cnode{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;background:none;border:0;padding:0 2px;max-width:130px}
+.cnode__sep{flex:1 1 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(216,178,90,.32),transparent);margin:0 3px;align-self:flex-start;margin-top:16px}
+.cnode__d{width:30px;height:30px;transform:rotate(45deg);display:grid;place-items:center;
+  border:1px solid var(--gold-soft);border-radius:6px;background:rgba(16,13,32,.85)}
+.cnode__num{transform:rotate(-45deg);font-family:'Cinzel',serif;font-weight:900;font-size:13px;color:var(--ink-dim)}
+.cnode__nome{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-mute);white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.cnode--feito .cnode__d{border-color:var(--e-Verdejante);background:rgba(88,214,141,.14)}
+.cnode--feito .cnode__num{color:var(--e-Verdejante)}
+.cnode--atual .cnode__d{border-color:var(--gold-text);box-shadow:0 0 0 2px rgba(255,217,122,.28),0 0 14px rgba(255,217,122,.38);
+  background:linear-gradient(180deg,#3a2f10,#1a1428)}
+.cnode--atual .cnode__num,.cnode--atual .cnode__nome{color:var(--gold-text)}
+.cnode--travado{cursor:default}
+.cnode--travado .cnode__d{opacity:.5}
+.cnode--travado .cnode__num{color:var(--ink-mute)}
+/* seletor de troca do emprestado (reusa .ov/.ovbox/.ctile) */
+.ov__cab{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.ov__cab h2{margin:0;font-family:'Cinzel',serif;font-weight:900;font-size:15px;letter-spacing:.1em;color:var(--gold-text)}
+.ov__cab .push,.ov__cab .b{margin-left:auto}
+.cgrid.cgrid--pick{grid-template-columns:repeat(8,1fr);gap:7px;max-height:260px;overflow-y:auto;overscroll-behavior:contain}
+
 /* ===================== F3.4 — banner da Provação da Semana (topo da lista) ===================== */
 .psem{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;
   padding:12px 15px;margin:2px 0 14px;font-family:'Rajdhani',sans-serif;color:var(--ink);

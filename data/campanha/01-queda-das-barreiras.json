@@ -1,0 +1,158 @@
+{
+ "_fonte": "Capítulo 1 da campanha narrativa (O Trono do Uno, Livro I). Fonte: docs/campanha-prologo-cap1.md (commit 91d9e7f). Quatro batalhas 3×3 (elenco exato do documento) + dois atos `historia` (não pagam). Aliados: `travado`=a cena (o ato fornece o deus), `travado:false`=emprestado (o jogador troca por um deus que tenha; o default joga se ele não tem nenhum). Seeds ESCOLHIDAS por mim (não estão no plano) e registradas em `montar._seedNota`: cada uma é vencível sob jogo razoável (medido). Emprestados default onde o doc não nomeou: Ato I → ogum; Ato III → ogum, ganesha (o doc nomeia Ares/Hades nos atos IV e VI).",
+ "numero": 1,
+ "id": "queda-das-barreiras",
+ "nome": "Capítulo 1 — A Queda das Barreiras",
+ "epigrafe": "A dispersão não foi aleatória. Foi o início de uma nova prova: apenas quem soubesse se adaptar e influenciar seria digno de tentar alcançar o trono perdido.",
+ "arte": "cap1-fundo",
+ "atos": [
+  {
+   "id": "cap1-i",
+   "numeral": "I",
+   "nome": "Fragmentos fora de lugar",
+   "tipo": "batalha",
+   "texto": "No coração verde da Amazônia, dois deuses nórdicos abriram os olhos lado a lado: Thor e Loki, ordem e caos, lançados juntos por um jogo que nenhum dos dois entendia ainda. A floresta reconheceu a divindade deles sem saber a quem pertencia, e os encantados vieram olhar de perto — o Curupira e a Iara entre eles. Loki já enxergava a chance de remodelar seu papel. Thor empunhou o Mjölnir como âncora da própria identidade. E o Curupira não pergunta o nome de quem pisa no chão dele.",
+   "arte": "cap1-01-fragmentos-fora-de-lugar",
+   "aliados": [
+    {
+     "deus": "thor",
+     "travado": true
+    },
+    {
+     "deus": "loki",
+     "travado": true
+    },
+    {
+     "deus": "ogum",
+     "travado": false
+    }
+   ],
+   "inimigos": [
+    "curupira",
+    "iara",
+    "guardiao_bosque"
+   ],
+   "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "_seedNota": "seed 1 · winRate greedy 100% (TRIVIAL, ato de abertura)"
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "cap1-ii",
+   "numeral": "II",
+   "nome": "O Conselho Temporário",
+   "tipo": "historia",
+   "arte": "cap1-02-conselho-temporario",
+   "texto": "Odin despertou entre os escombros de um templo maia suspenso, distorcido pelas forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a fé é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo; Hécate, que aparecia em vários pontos ao mesmo tempo e parecia gostar do caos; e Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. “O Trono não desaparecerá por si só”, disse Odin. “Será conquistado por quem dominar os domínios.” As palavras eram sábias. Em torno da mesa improvisada, mais de um par de olhos brilhava com uma intenção diferente da que a boca declarava."
+  },
+  {
+   "id": "cap1-iii",
+   "numeral": "III",
+   "nome": "Alianças, conflitos e oportunidades",
+   "tipo": "batalha",
+   "texto": "Amaterasu e Rá despertaram no mesmo céu, e nenhum dos dois sabia dividir a luz. O embate rasgou parte do templo solar flutuante e deixou para trás uma zona instável, onde o dia e a noite se alternam a cada minuto. Longe dali, Kukulkán via a própria fé renascer entre os povos amazônicos, que o confundiram com um espírito protetor da floresta — e disso nasceu um fluxo inesperado de adoração. A fé, afinal, não exigia nomes exatos. Exigia apenas presença.",
+   "arte": "cap1-03-aliancas-conflitos-oportunidades",
+   "aliados": [
+    {
+     "deus": "amaterasu",
+     "travado": true
+    },
+    {
+     "deus": "ogum",
+     "travado": false
+    },
+    {
+     "deus": "ganesha",
+     "travado": false
+    }
+   ],
+   "inimigos": [
+    "ra",
+    "bennu",
+    "elemental_chama"
+   ],
+   "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "_seedNota": "seed 1 · winRate greedy 43% (justa) · emprestados default ogum+ganesha (brigid trivializaria)"
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "cap1-iv",
+   "numeral": "IV",
+   "nome": "O trovão sobre o Duat",
+   "tipo": "batalha",
+   "texto": "Zeus despertou entre areias negras, pirâmides celestiais e barcas solares cruzando o céu, e não procurou entender: para ele aquilo era ultraje. Khnum tentou falar em nome da harmonia dos planos, e uma rajada de raios secou o leito do Nilo por um instante. Bennu voou em círculos para barrar o avanço, e nem sua renascença resistiu à negação do próprio ciclo. Bastet o enfrentou com agilidade e luz solar, e mereceu um instante de respeito — apenas o suficiente para o trovão rachar o chão e a fenda arrastá-la para longe, através do véu. Depois, no Duat, caiu o silêncio. Nenhum deus egípcio ousou mais emergir.",
+   "arte": "cap1-04-trovao-sobre-o-duat",
+   "aliados": [
+    {
+     "deus": "zeus",
+     "travado": true
+    },
+    {
+     "deus": "ares",
+     "travado": false
+    },
+    {
+     "deus": "hades",
+     "travado": false
+    }
+   ],
+   "inimigos": [
+    "khnum",
+    "bennu",
+    "bastet"
+   ],
+   "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "_seedNota": "seed 1 · winRate greedy 90% (fácil)"
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "cap1-v",
+   "numeral": "V",
+   "nome": "O que Nezha viu",
+   "tipo": "historia",
+   "arte": "cap1-05-o-que-nezha-viu",
+   "texto": "Oculto entre as bordas das realidades que se entrelaçavam, um jovem deus assistiu ao massacre inteiro sem ser visto. E, para sua vergonha, o que Nezha sentiu primeiro não foi horror. Foi fascínio: havia algo terrível e magnífico na forma como Zeus varria tudo à frente, sem hesitação, com a certeza absoluta de quem nunca precisou pedir licença ao mundo. Por um instante o jovem imaginou-se assim. Depois o instante passou, e a vergonha veio no lugar dele — junto com o entendimento de que aquela fúria tinha um propósito frio. Zeus não estava atrás dos Domínios. Estava caçando rivais. Nezha ergueu a lança flamejante e partiu em silêncio, à procura de deuses mais racionais."
+  },
+  {
+   "id": "cap1-vi",
+   "numeral": "VI",
+   "nome": "O caminho do trovão",
+   "tipo": "batalha",
+   "texto": "Zeus atravessou o véu com um rugido, esperando glória: templos dourados, o cantar das musas, o respeito dos seus. Encontrou ruínas. Os pilares do Olimpo jaziam partidos em chamas púrpuras, os jardins carbonizados, e entre os escombros dois corpos conhecidos — Hermes com o cajado partido, Orfeu com as cordas da lira cortadas como veias expostas. “Quem ousou?”, bradou ele. Das sombras vieram Hel, metade aurora e metade cadáver gélido, e Fenrir, com as presas ainda manchadas. “Você chegou tarde, pai dos raios. Seu trono não está mais aqui.”",
+   "arte": "cap1-06-caminho-do-trovao",
+   "aliados": [
+    {
+     "deus": "zeus",
+     "travado": true
+    },
+    {
+     "deus": "ares",
+     "travado": false
+    },
+    {
+     "deus": "hades",
+     "travado": false
+    }
+   ],
+   "inimigos": [
+    "fenrir",
+    "hel",
+    "ceifador"
+   ],
+   "montar": {
+    "seed": 2,
+    "comeca": 0,
+    "_seedNota": "seed 2 · winRate greedy 29,5% (difícil — clímax do capítulo)"
+   },
+   "recompensa": "encontro"
+  }
+ ]
+}

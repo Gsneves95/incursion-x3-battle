@@ -1,0 +1,17 @@
+{
+ "_fonte": "Índice dos capítulos da campanha (ordem). Capítulo novo = arquivo novo em data/campanha/ + uma linha aqui; nunca código novo. `numero` ordena; `arquivo` é lido pela build.",
+ "capitulos": [
+  {
+   "numero": 0,
+   "id": "prologo",
+   "arquivo": "00-prologo.json",
+   "nome": "Prólogo — Antes da Unidade"
+  },
+  {
+   "numero": 1,
+   "id": "queda-das-barreiras",
+   "arquivo": "01-queda-das-barreiras.json",
+   "nome": "Capítulo 1 — A Queda das Barreiras"
+  }
+ ]
+}

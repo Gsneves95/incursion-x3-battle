@@ -1,0 +1,187 @@
+{
+ "_fonte": "Prólogo da campanha narrativa (O Trono do Uno, Livro I). Fonte de conteúdo: docs/campanha-prologo-cap1.md (commit 91d9e7f). Os atos II–VII são os SEIS encontros de data/campanha.json de hoje, COPIADOS VERBATIM (aliados, inimigos, montar.seed, comeca, recompensa, ensina) — só entram nome, texto e arte. O ato I é `historia` (não paga). O ato VI mantém aliados:null (o time é do jogador). Formações do Prólogo: 3×1, 3×2 e 3×3 (medidas; o 3×3 obrigatório vale do Cap 1).",
+ "numero": 0,
+ "id": "prologo",
+ "nome": "Prólogo — Antes da Unidade",
+ "epigrafe": "Antes da unidade, havia o multiverso da fé. Antes da fé, havia o Silêncio.",
+ "arte": "prologo-fundo",
+ "atos": [
+  {
+   "id": "pro-i",
+   "numeral": "I",
+   "nome": "A Era dos Planos",
+   "tipo": "historia",
+   "arte": "prologo-01-era-dos-planos",
+   "texto": "Antes da escrita, dos templos e dos cânticos, o multiverso da fé já existia: cada povo que olhou o céu procurando sentido construiu um plano, tijolo por tijolo, com reza e sacrifício. Olimpo, Asgard, Kailasa, Duat, Yomi, Xibalba — incontáveis reinos coexistindo como estrelas, e nenhum deus cruzava o domínio do outro. Era um mundo partido, e era estável."
+  },
+  {
+   "id": "pro-ii",
+   "numeral": "II",
+   "nome": "A Incursão",
+   "tipo": "batalha",
+   "texto": "O Silêncio não veio de fora dos planos. Veio de dentro — de uma rachadura nas orações, da dúvida sem resposta, da indiferença crescente dos mortais. Numa noite sem lua as estrelas se apagaram, e o véu se rompeu como pano rasgado por dentro. O trono de Odin chocou-se com o salão de Zeus, o Nilo transbordou sobre as pirâmides de Xibalba. Não houve guerra nem diplomacia. Apenas a fusão.",
+   "arte": "prologo-02-incursao",
+   "ensina": {
+    "chave": "custo",
+    "titulo": "O custo da energia",
+    "dica": "Cada habilidade custa energia do elemento do deus. Você ganha 1 energia por unidade viva a cada turno. Toque numa habilidade para ver o custo — o gasto só acontece ao escolher o alvo ou confirmar."
+   },
+   "aliados": [
+    "zeus",
+    "ogum",
+    "tyr"
+   ],
+   "inimigos": [
+    "silfo",
+    "ghoul"
+   ],
+   "montar": {
+    "seed": 1,
+    "comeca": 0
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "pro-iii",
+   "numeral": "III",
+   "nome": "A Criação do Eixo",
+   "tipo": "batalha",
+   "texto": "No epicentro do colapso surgiu um plano que nenhum deus criou, forjado a partir de todos: o Eixo Sagrado, ora templo, ora campo de batalha, feito de ruínas flutuantes e altares sobrepostos. Ali a gravidade obedece à fé e a matéria responde ao símbolo. No centro ergue-se o Trono do Uno, intacto e magnífico. E quem se aproxima descobre, cedo ou tarde, que o Trono não se toma.",
+   "arte": "prologo-03-criacao-do-eixo",
+   "ensina": {
+    "chave": "recarga",
+    "titulo": "A recarga das habilidades",
+    "dica": "O Básico você repete todo turno, mas a Habilidade e o Milagre têm RECARGA: depois de usar, ficam alguns turnos indisponíveis. Contra um alvo resistente, escolha a hora de gastar o golpe forte."
+   },
+   "aliados": [
+    "zeus",
+    "ogum",
+    "tyr"
+   ],
+   "inimigos": [
+    "automato_bronze"
+   ],
+   "montar": {
+    "seed": 2,
+    "comeca": 0
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "pro-iv",
+   "numeral": "IV",
+   "nome": "A Profecia do Uno",
+   "tipo": "batalha",
+   "texto": "Zeus foi o primeiro a avançar. Deu três passos e a realidade o quebrou: o chão desapareceu e ele foi atirado ao limbo entre os planos. Odin tentou com rituais, Rá com luz, Shiva permaneceu imóvel, Loki tentou pela dissimulação, e nenhum avançou um único passo. Foi então que a mensagem se acendeu sobre o assento, mudando de idioma conforme os olhos que a liam: apenas um poderá sentar-se. Aquele que chegar por conquista será rejeitado.",
+   "arte": "prologo-04-profecia-do-uno",
+   "ensina": {
+    "chave": "defesa",
+    "titulo": "A Defesa universal",
+    "dica": "TODA unidade tem a Defesa: custa 1 energia livre, tem recarga 4, e deixa a unidade Invulnerável por 1 turno. Quando o inimigo vai bater forte, defenda ANTES — o dano novo não passa (mas dano contínuo já aplicado atravessa)."
+   },
+   "aliados": [
+    "sobek",
+    "brigid",
+    "ganesha"
+   ],
+   "inimigos": [
+    "quimera",
+    "ghoul"
+   ],
+   "montar": {
+    "seed": 3,
+    "comeca": 0
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "pro-v",
+   "numeral": "V",
+   "nome": "O Início do Conflito",
+   "tipo": "batalha",
+   "texto": "A Profecia não uniu os deuses. Expôs. Cada um a leu com os próprios olhos, e quase todos leram o mesmo desejo: tornar-se o único. Zeus declarou primeiro, e raios caíram sobre o plano sagrado, rachando partes da realidade recém-formada. Odin preferiu a estratégia — os corvos, as visões, os campeões. Rá recuou, enfraquecido. Amaterasu ergueu uma cúpula de luz e se isolou. E Shiva apenas observou, embora o chão tremesse a cada passo seu.",
+   "arte": "prologo-05-inicio-do-conflito",
+   "ensina": {
+    "chave": "ordem",
+    "titulo": "A ordem de resolução",
+    "dica": "Suas 3 unidades agem uma de cada vez, na ordem que VOCÊ escolher — e o estado atualiza entre elas. Derrube o suporte que cura antes que ele aja, e a luta vira. A ordem é uma jogada."
+   },
+   "aliados": [
+    "cuca",
+    "fujin",
+    "nezha"
+   ],
+   "inimigos": [
+    "naiade",
+    "servo_cinzas",
+    "ghoul"
+   ],
+   "montar": {
+    "seed": 4,
+    "comeca": 0
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "pro-vi",
+   "numeral": "VI",
+   "nome": "A Ruptura entre Céu e Terra",
+   "tipo": "batalha",
+   "texto": "Com os deuses desequilibrados, as barreiras entre os mundos cederam. O Sinai ardeu em fogo etéreo por sete dias; em Delfos, uma nova Pítia profetizou o fim das fés e morreu com olhos de serpente. E nas rachaduras da realidade os ecos adormecidos renasceram: Aquiles emergiu do Estige, Sun Wukong desceu das nuvens do caos com um sorriso travesso, e Hércules recusou-se a servir cegamente, lutando contra três campeões só para provar que os mortais também deveriam ter voz. Os deuses já não podiam avançar sozinhos sem serem rejeitados. Passaram a reunir quem lutasse por eles.",
+   "arte": "prologo-06-ruptura-ceu-e-terra",
+   "ensina": {
+    "chave": "time",
+    "titulo": "A escolha do time",
+    "dica": "Agora o time é seu. Três funções se completam: quem bate, quem aguenta, quem controla. Monte os três contra o que vem pela frente — a composição decide a luta antes do primeiro golpe."
+   },
+   "aliados": null,
+   "inimigos": [
+    "vidente_corrompido",
+    "elemental_chama",
+    "silfo"
+   ],
+   "montar": {
+    "seed": 5,
+    "comeca": 0
+   },
+   "recompensa": "encontro"
+  },
+  {
+   "id": "pro-vii",
+   "numeral": "VII",
+   "nome": "O Ciclo dos Expulsos",
+   "tipo": "batalha",
+   "texto": "Todos os que tentaram tocar o coração do Eixo foram lançados às bordas fragmentadas do plano. O caminho de volta deixou de ser direto: tornou-se um labirinto onde espaço, tempo e fé se entrelaçam, e atravessá-lo exige dominar os Domínios do Uno — cada um alimentado pela fé de um povo, cada um uma chave viva. Mas nenhuma borda se abre sem guardião. E o que espera neste portão não pesa almas nem julga intenções. Apenas morde.",
+   "arte": "prologo-07-ciclo-dos-expulsos",
+   "ensina": {
+    "chave": "chefe",
+    "titulo": "O chefe — tudo junto",
+    "dica": "Cérberus tem o kit inteiro e vida de chefe. Nada de novo para aprender: custo, recarga, Defesa e ordem — tudo o que o capítulo mostrou, contra um alvo que aguenta. Escolha quando gastar e em que ordem."
+   },
+   "aliados": [
+    "zeus",
+    "ogum",
+    "sobek"
+   ],
+   "inimigos": [
+    "cerberus",
+    "servo_cinzas",
+    "servo_cinzas"
+   ],
+   "montar": {
+    "seed": 6,
+    "comeca": 0,
+    "unidades": [
+     {
+      "lado": 1,
+      "idx": 0,
+      "maxHp": 250,
+      "hp": 250
+     }
+    ]
+   },
+   "recompensa": "chefe",
+   "chefe": true
+  }
+ ]
+}

@@ -230,6 +230,51 @@ const campanhaObj = (() => {
   return c;
 })();
 
+// CAMPANHA NARRATIVA (§252): capítulo = ARQUIVO (data/campanha/), para que capítulo novo seja dado e não
+// código. O índice ordena; cada capítulo tem atos com TIPO (`batalha`|`historia`). Valida na build (falha
+// alto): batalha → aliados/inimigos no catálogo MERGED e recompensa existe; historia → NÃO tem recompensa.
+// Aliados de batalha vêm em 3 formas: null (o jogador monta), [string] (time fixo do Prólogo) ou
+// [{deus,travado}] (Cap 1: travado=cena, !travado=emprestado). CAMPANHA (acima) fica até a tela nova
+// renderizar no dist (§202) — dado que a build valida e a tela nunca mostra é dívida silenciosa.
+const campanhasObj = (() => {
+  const dir = path.join(raiz, 'data', 'campanha');
+  const idxArq = path.join(dir, 'indice.json');
+  if (!fs.existsSync(idxArq)) return null;
+  const indice = JSON.parse(ler('data/campanha/indice.json'));
+  const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
+  const recompensas = (JSON.parse(economia).campanha && JSON.parse(economia).campanha.recompensas) || {};
+  const erros = [];
+  const capitulos = [];
+  const dirArte = path.join(raiz, 'web', 'banners', 'campanha');
+  for (const linha of (indice.capitulos || [])) {
+    const cap = JSON.parse(ler('data/campanha/' + linha.arquivo));
+    for (const a of (cap.atos || [])) {
+      // §213: a arte que AINDA não existe vira placeholder (nunca um <img> que dá 404). A build sabe
+      // quais arquivos existem em web/banners/campanha/ e anota — o cliente não pode checar disco.
+      a._arteOk = !!(a.arte && fs.existsSync(path.join(dirArte, a.arte + '.webp')));
+      if (a.tipo === 'batalha') {
+        const chavesAliados = a.aliados == null ? [] : a.aliados.map(x => typeof x === 'string' ? x : x.deus);
+        for (const k of chavesAliados) if (k && !catalogoKeys.has(k)) erros.push(`${linha.id}/${a.id}: aliado "${k}" fora do catálogo`);
+        for (const k of (a.inimigos || [])) if (!catalogoKeys.has(k)) erros.push(`${linha.id}/${a.id}: inimigo "${k}" fora do catálogo`);
+        if (!recompensas[a.recompensa]) erros.push(`${linha.id}/${a.id}: recompensa "${a.recompensa}" não existe em economia.campanha.recompensas`);
+        // Cap 1 em diante: 3×3 obrigatório; o Prólogo (numero 0) é isento (§252).
+        if (cap.numero >= 1) {
+          const n = a.aliados == null ? 0 : a.aliados.length;
+          if (n !== 3) erros.push(`${linha.id}/${a.id}: batalha do Cap ${cap.numero} precisa de 3 aliados (tem ${n})`);
+          if ((a.inimigos || []).length !== 3) erros.push(`${linha.id}/${a.id}: batalha do Cap ${cap.numero} precisa de 3 inimigos (tem ${(a.inimigos || []).length})`);
+        }
+      } else if (a.tipo === 'historia') {
+        if (a.recompensa) erros.push(`${linha.id}/${a.id}: ato "historia" NÃO pode ter recompensa`);
+      } else {
+        erros.push(`${linha.id}/${a.id}: tipo "${a.tipo}" inválido (batalha|historia)`);
+      }
+    }
+    capitulos.push(cap);
+  }
+  if (erros.length) { console.error('ERRO de schema de campanha (capítulos §252):\n  ' + erros.join('\n  ')); process.exit(1); }
+  return { indice, capitulos };
+})();
+
 // SEMANAIS (F3.4): pool de Provações semanais PRÉ-GERADAS e provadas VENCÍVEL pelo solucionador
 // (tools/gerar_semanais.js). O runtime escolhe pela semana ISO — determinístico, offline, sem servidor.
 // Cada puzzle carrega aliados/inimigos/montar/condicoes/minimo (o que monta, avalia e pontua). Valida
@@ -275,7 +320,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
