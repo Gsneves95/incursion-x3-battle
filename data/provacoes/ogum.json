@@ -1,0 +1,75 @@
+{
+  "key": "ogum",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "ogum",
+    "oxum",
+    "houyi"
+  ],
+  "inimigos": [
+    "poseidon",
+    "nefertem",
+    "saci"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "ogum"
+    }
+  ],
+  "verificacao": {
+    "hash": "2be0667c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 743,
+    "ms": 591,
+    "caminho": [
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Nove Flechas → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Abater o Sol → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Flecha Solar → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Abater o Sol → poseidon",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Abater o Sol → poseidon",
+      "ogum Facão de Ferro → nefertem",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "ogum Forja de Guerra → poseidon",
+      "oxum Águas de Oxum → ogum",
+      "passar",
+      "ogum Abrir Caminho à Força → poseidon",
+      "houyi Flecha Solar → poseidon",
+      "oxum Águas de Oxum → ogum",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "ogum Facão de Ferro → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "oxum Espelho Dourado → saci",
+      "ogum Facão de Ferro → saci"
+    ]
+  }
+}

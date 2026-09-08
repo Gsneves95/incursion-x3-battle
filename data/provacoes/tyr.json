@@ -1,0 +1,74 @@
+{
+  "key": "tyr",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "tyr",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "exu",
+    "saci",
+    "babi"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "tyr"
+    }
+  ],
+  "verificacao": {
+    "hash": "363bb24c",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 33,
+    "comDica": false,
+    "nos": 439,
+    "ms": 272,
+    "caminho": [
+      "perseu Cabeça da Medusa → exu",
+      "tyr Espada de Uma Mão → exu",
+      "passar",
+      "houyi Nove Flechas → exu",
+      "tyr Espada de Uma Mão → exu",
+      "perseu Lâmina Curva → exu",
+      "passar",
+      "houyi Abater o Sol → babi",
+      "tyr Espada de Uma Mão → babi",
+      "perseu Lâmina Curva → babi",
+      "passar",
+      "tyr Espada de Uma Mão → babi",
+      "perseu Lâmina Curva → babi",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "perseu Cabeça da Medusa → babi",
+      "houyi Flecha Solar → babi",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "tyr Duelo de Honra → babi",
+      "perseu Lâmina Curva → exu",
+      "passar",
+      "tyr Duelo de Honra → babi",
+      "perseu Lâmina Curva → babi",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Abater o Sol → saci",
+      "tyr Duelo de Honra → saci",
+      "passar",
+      "perseu Cabeça da Medusa → saci",
+      "tyr Espada de Uma Mão → saci",
+      "passar",
+      "houyi Nove Flechas → saci"
+    ]
+  }
+}

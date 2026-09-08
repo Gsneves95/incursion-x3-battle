@@ -1052,6 +1052,39 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-family:'Rajdhani',sans-serif;font-weight:800;font-size:10px;color:#1a1530}
 .colx__m.m--1{background:#8d84ad} .colx__m.m--2{background:#7fb0e0}
 .colx__m.m--3{background:#b06cff;color:#fff} .colx__m.m--4{background:var(--gold-text)}
+/* §245 — a MOLDURA do MESTRE: variação de borda (cosmético, sem arte nova) — anel duplo dourado + brilho +
+   cantos ornamentados. Marca o DOMÍNIO (nível 4), distinta da moldura "dourada = você tem". */
+.colx--mestre{border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold-text),0 0 0 3px rgba(255,217,122,.30),0 0 15px rgba(255,190,90,.42),0 3px 12px rgba(0,0,0,.4)}
+.colx--mestre .colx__art::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  border:2px solid rgba(255,224,150,.6);box-shadow:inset 0 0 0 1px rgba(255,245,210,.28)}
+.colx--mestre .colx__art::after{content:"";position:absolute;inset:3px;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(var(--gold-text),var(--gold-text)) left top/11px 2px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) left top/2px 11px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) right top/11px 2px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) right top/2px 11px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) left bottom/11px 2px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) left bottom/2px 11px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) right bottom/11px 2px no-repeat,
+    linear-gradient(var(--gold-text),var(--gold-text)) right bottom/2px 11px no-repeat}
+/* §245 — DESAFIOS POR DEUS: linhas por deus com a ação (comprar/jogar/desistir/recarga) */
+.dsflist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.dsf{display:flex;align-items:center;gap:9px;min-height:52px;padding:6px 10px;border:1px solid #2c2648;border-radius:11px;
+  background:rgba(20,16,38,.5)}
+.dsf--m4{border-color:var(--gold-soft);box-shadow:0 0 0 1px rgba(255,217,122,.16)}
+.dsf__p{flex:0 0 40px;width:40px;height:40px;border-radius:8px;overflow:hidden;background:#14112a;display:grid;place-items:center}
+.dsf__p .slot{width:40px;height:40px}
+.dsf__el{flex:0 0 8px;width:8px;height:8px;border-radius:2px}
+.dsf__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dsf__n{font-weight:700;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dsf__maes{font-weight:600;font-size:11px;color:var(--ink-mute)}
+.dsf__maes.m--4{color:var(--gold-text)}
+.dsf__pe{flex:0 0 auto;display:flex;align-items:center}
+.dsf__acts,.dsf__conf{display:flex;align-items:center;gap:6px}
+.dsf__conf{font-size:11px;font-weight:700;color:#ff9db4}
+.dsf__recarga{font-weight:700;font-size:12px;color:#8b83b8;letter-spacing:.02em}
+.dsf__mestre{font-weight:800;font-size:12px;letter-spacing:.04em;color:var(--gold-text)}
 .rar--SS{color:#e9c877} .rar--S{color:#b06cff} .rar--A{color:#56a8ef}
 .dcab__rar{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;
   border:1px solid #2c2648;border-radius:10px;padding:3px 12px}

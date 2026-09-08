@@ -1,0 +1,85 @@
+{
+  "key": "oni",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "oni",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "orfeu",
+    "ammit",
+    "susanoo"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 16
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "oni"
+    }
+  ],
+  "verificacao": {
+    "hash": "e258234b",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 44,
+    "comDica": false,
+    "nos": 168,
+    "ms": 173,
+    "caminho": [
+      "perseu Lâmina Curva → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "perseu Cabeça da Medusa → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "perseu Lâmina Curva → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "perseu Lâmina Curva → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "perseu Foice Adamantina → ammit",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "perseu Cabeça da Medusa → ammit",
+      "oxum Espelho Dourado → ammit",
+      "passar",
+      "perseu Foice Adamantina → ammit",
+      "oni Kanabō → ammit",
+      "oxum Rio de Ouro",
+      "passar",
+      "oni Fúria Demoníaca → susanoo",
+      "oxum Espelho Dourado → ammit",
+      "passar",
+      "oni Investida Brutal → susanoo",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "oni Kanabō → susanoo",
+      "oxum Águas de Oxum → oni",
+      "passar",
+      "oni Investida Brutal → susanoo",
+      "oxum Águas de Oxum → oni",
+      "passar",
+      "oni Fúria Demoníaca → susanoo",
+      "oxum Espelho Dourado → susanoo",
+      "passar",
+      "oni Kanabō → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "oni Kanabō → orfeu",
+      "oxum Espelho Dourado → orfeu",
+      "passar",
+      "oni Kanabō → orfeu"
+    ]
+  }
+}

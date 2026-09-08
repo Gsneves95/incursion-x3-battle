@@ -82,7 +82,7 @@ console.log('== 5. DERROTA POR CONDIÇÃO: o título protegido caiu ==');
   ok(/Durga/.test($('.result--prova').textContent), 'o overlay deveria nomear o que faltou (manter Durga de pé)');
 }
 
-console.log('== 6. as 90 Provações montam e começam em andamento ==');
+console.log('== 6. as 100 Provações montam (§245: cobertura completa) e começam em andamento ==');
 {
   const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'https://x/' });
   abertos.push(dom);
@@ -96,7 +96,7 @@ console.log('== 6. as 90 Provações montam e começam em andamento ==');
     }
     return {n:PROVACOES.length, erros};
   })()`);
-  ok(r.n === 90, `deveria haver 90 Provações jogáveis (tem ${r.n})`);
+  ok(r.n === 100, `deveria haver 100 Provações jogáveis (tem ${r.n})`);
   ok(r.erros.length === 0, `todas deveriam montar e começar em andamento (falhas: ${r.erros.slice(0, 8).join(', ')})`);
   console.log(`  ${r.n} Provações montam e avaliam em andamento no turno 1`);
 }

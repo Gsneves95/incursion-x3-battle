@@ -1,0 +1,62 @@
+{
+  "key": "brigid",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "brigid",
+    "oxum",
+    "houyi"
+  ],
+  "inimigos": [
+    "change",
+    "bastet",
+    "susanoo"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "brigid"
+    }
+  ],
+  "verificacao": {
+    "hash": "2a2cf212",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 21,
+    "comDica": false,
+    "nos": 360,
+    "ms": 352,
+    "caminho": [
+      "brigid Fagulha da Forja → change",
+      "oxum Espelho Dourado → change",
+      "passar",
+      "brigid Fagulha da Forja → change",
+      "oxum Espelho Dourado → change",
+      "passar",
+      "brigid Fagulha da Forja → change",
+      "oxum Espelho Dourado → change",
+      "passar",
+      "brigid Fagulha da Forja → change",
+      "oxum Espelho Dourado → change",
+      "passar",
+      "brigid Fagulha da Forja → susanoo",
+      "oxum Espelho Dourado → susanoo",
+      "passar",
+      "oxum Rio de Ouro",
+      "brigid Fagulha da Forja → susanoo",
+      "passar",
+      "houyi Nove Flechas → change+bastet+susanoo",
+      "brigid Fagulha da Forja → bastet",
+      "oxum Espelho Dourado → bastet"
+    ]
+  }
+}

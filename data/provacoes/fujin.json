@@ -1,0 +1,69 @@
+{
+  "key": "fujin",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "fujin",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "loki",
+    "aokuang",
+    "yanwong"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "fujin"
+    }
+  ],
+  "verificacao": {
+    "hash": "d0f5a697",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 28,
+    "comDica": false,
+    "nos": 21258,
+    "ms": 8820,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → aokuang",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → aokuang",
+      "passar",
+      "perseu Foice Adamantina → aokuang",
+      "houyi Flecha Solar → aokuang",
+      "passar",
+      "houyi Flecha Solar → aokuang",
+      "perseu Lâmina Curva → aokuang",
+      "passar",
+      "fujin Vendaval",
+      "houyi Abater o Sol → yanwong",
+      "perseu Lâmina Curva → yanwong",
+      "passar",
+      "perseu Cabeça da Medusa → yanwong",
+      "houyi Flecha Solar → yanwong",
+      "passar",
+      "fujin Rajada → yanwong",
+      "perseu Lâmina Curva → yanwong",
+      "passar",
+      "fujin Rajada → yanwong"
+    ]
+  }
+}

@@ -116,40 +116,35 @@ console.log('== 5. detalhe do deus (§220): arte à esquerda + coluna; passiva p
   ok($$('.dkit .dsk:not([disabled])').length === 4, 'não-possuindo: as 4 skills continuam legíveis e tocáveis');
 }
 
-console.log('== 6. Pergaminho: vencido mostra placar e é rejogável; genérica fora do acervo; inicial sem pergaminho (F4/§212) ==');
+console.log('== 6. §245 — DESAFIO POR DEUS: comprar com Essência inicia a batalha marcada como paga; só de deus que você TEM ==');
 {
   const { w, $ } = sessao();
-  // §220: o detalhe do deus não carrega mais o Pergaminho — o jogar mora no HUB de Desafios (§213).
-  // O estado do acervo se lê lá: inicial (zeus) e genérica (durga) NÃO aparecem na lista jogável.
-  w.eval("ir('desafios'); render();");
-  ok(!$('.prow[data-prova="zeus"]'), 'deus inicial (zeus) não tem pergaminho no acervo');
-  ok(!$('.prow[data-prova="durga"]'), 'pergaminho genérico (durga) fica fora do acervo jogável');
-  // um pergaminho VENCIDO (placar gravado, não posse) aparece marcado e, ao tocar, JOGA (não abre a coleção)
-  w.eval("perfil.provacoes.ra={lances:5,minimo:4,em:0}; ir('desafios'); render();");
-  const feita = $('.prow--feita[data-prova="ra"]');
-  ok(!!feita, 'o pergaminho vencido aparece marcado na lista');
-  feita.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.key==="ra"'), 'tocar um pergaminho joga-o (não abre a coleção)');
+  w.eval("perfil.moedas.essencia=100; ir('desafios'); render();");
+  // o hub lista os deuses que você TEM (os 9 iniciais); zeus (inicial, possuído) aparece comprável.
+  ok(!!$('[data-comprar="zeus"]'), 'um deus possuído (zeus) tem desafio comprável no hub');
+  ok(!w.eval("!!(perfil.deuses['durga'])") && !$('[data-comprar="durga"]') && !$('[data-jogar="durga"]'), 'um deus NÃO possuído (durga) não aparece (só de deus que você tem)');
+  // COMPRAR paga Essência e entra na batalha marcada como desafio POR DEUS (pago).
+  const essAntes = w.eval('perfil.moedas.essencia'), custo = w.eval('ECONOMIA.pergaminhos.custoEssencia');
+  $('[data-comprar="zeus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval('perfil.moedas.essencia') === essAntes - custo, `comprar debita a Essência (${custo})`);
+  ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.desafioDeus==="zeus"'), 'comprar inicia a batalha do desafio POR DEUS (pago)');
 }
 
-console.log('== 7. ACERVO de Pergaminhos (F4/§212): 90 no dado, 63 jogáveis (genéricas fora), faixa dos nós ==');
+console.log('== 7. §245 — cobertura 100%: os 100 têm pergaminho, nenhum genérico; o hub lista os deuses possuídos ==');
 {
   const { w, $, $$ } = sessao();
-  ok(w.eval('PROVACOES.length') === 90, 'o dado mantém as 90 (histórico)');
-  ok(w.eval('PROVACOES.filter(p=>p.generica).length') === 27, '27 são genéricas');
-  ok(w.eval('PROVACOES.filter(p=>!p.generica).length') === 63, '63 no acervo jogável');
+  ok(w.eval('PROVACOES.length') === 100, 'os 100 deuses têm pergaminho no dado (§245: gerados/promovidos)');
+  ok(w.eval('PROVACOES.filter(p=>p.generica).length') === 0, 'nenhum genérico (os 27 promovidos ao acervo)');
+  ok(w.eval('PROVACOES.filter(p=>!p.generica).length') === 100, '100 no acervo jogável (cobertura completa)');
   // a FAIXA deriva dos nós medidos: Fácil <5k · Médio 5k–50k · Difícil 50k–200k · Épico >200k
   const fx = n => n == null ? null : n < 5000 ? 'Fácil' : n < 50000 ? 'Médio' : n < 200000 ? 'Difícil' : 'Épico';
   const errosFaixa = w.eval('PROVACOES').filter(p => p.faixa !== fx(p.nos));
   ok(errosFaixa.length === 0, `a faixa injetada bate a derivada dos nós (${errosFaixa.length} divergências)`);
-  ok(w.eval("PROVACOES.filter(p=>!p.generica).every(p=>['Fácil','Médio','Difícil','Épico'].includes(p.faixa))"), 'todo pergaminho do acervo tem faixa válida');
-  // a TELA vira "Desafios": título Desafios, seção PERGAMINHOS com 63, genéricas fora da lista
+  // a TELA "Desafios": título Desafios, seção DESAFIOS POR DEUS, uma linha por deus POSSUÍDO
   w.eval("ir('desafios'); render();");
-  ok(/Desafios/.test($('.tela__titulo').textContent), 'a tela agora se chama "Desafios"');
-  ok(/PERGAMINHOS/.test($('#provrol').textContent), 'a seção do acervo é "Pergaminhos"');
-  ok($$('.prow[data-prova]').length === 63, `a lista mostra os 63 do acervo (mostrou ${$$('.prow[data-prova]').length})`);
-  const gen = new Set(w.eval('PROVACOES.filter(p=>p.generica).map(p=>p.key)'));
-  ok($$('.prow[data-prova]').every(b => !gen.has(b.dataset.prova)), 'nenhuma genérica aparece na lista jogável');
+  ok(/Desafios/.test($('.tela__titulo').textContent), 'a tela se chama "Desafios"');
+  ok(/DESAFIOS POR DEUS/.test($('#provrol').textContent), 'a seção é "Desafios por deus"');
+  ok($$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), `uma linha por deus possuído (${$$('.dsf').length})`);
 }
 
 console.log('== 8. Pergaminho vencido NÃO libera deus (coleção = só gacha, §212) ==');
@@ -196,9 +191,9 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   w.eval("ir('provacoes'); render();");
   ok(/Miss/i.test($('.tela__titulo').textContent) && /miss/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre o mapa das Missões (conta no PvP)');
   ok($$('.prow[data-prova]').length === 0, 'o mapa das Missões NÃO lista pergaminhos');
-  // "Desafios" → o hub, com os 63 pergaminhos
+  // "Desafios" → o hub dos DESAFIOS POR DEUS (§245): uma linha por deus possuído
   w.eval("ir('desafios'); render();");
-  ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.prow[data-prova]').length === 63, 'Desafios abre o hub com os 63 pergaminhos');
+  ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (uma linha por deus possuído)');
   // o placeholder do banner Desafios existe (sem arte ainda) e tem título de espera
   w.eval("ir('home',{},{substituir:true}); render();");
   const ph = $('.bcard[data-dest="desafios"] .bcard__ph');

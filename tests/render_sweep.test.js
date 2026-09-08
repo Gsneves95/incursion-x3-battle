@@ -19,7 +19,7 @@ const w = dom.window;
 const d = w.document;
 w.eval("vsCPU=false; ir('batalha',{},{substituir:true});");
 
-console.log('== 1. TODA Provação (90) renderiza a batalha — inclusive as de bestiário ==');
+console.log('== 1. TODA Provação (100, §245: acervo completo) renderiza a batalha — inclusive as de bestiário ==');
 {
   const keys = w.eval('PROVACOES.map(p=>p.key)');
   const quebradas = [];
@@ -29,7 +29,7 @@ console.log('== 1. TODA Provação (90) renderiza a batalha — inclusive as de 
     catch (e) { err = e.message; }
     if (err) quebradas.push(k + ': ' + err);
   }
-  ok(keys.length === 90, `deveria varrer as 90 (varreu ${keys.length})`);
+  ok(keys.length === 100, `deveria varrer as 100 (varreu ${keys.length})`);
   ok(quebradas.length === 0, `toda Provação deveria RENDERIZAR sem quebrar (quebraram: ${quebradas.slice(0, 6).join(' | ')})`);
   console.log(`  ${keys.length} batalhas de Provação renderizadas · ${quebradas.length} quebras`);
 }

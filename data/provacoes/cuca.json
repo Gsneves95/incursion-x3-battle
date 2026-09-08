@@ -1,0 +1,67 @@
+{
+  "key": "cuca",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "cuca",
+    "oxum",
+    "houyi"
+  ],
+  "inimigos": [
+    "kali",
+    "ammit",
+    "freyja"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "cuca"
+    }
+  ],
+  "verificacao": {
+    "hash": "dd4269a1",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 26,
+    "comDica": false,
+    "nos": 767,
+    "ms": 803,
+    "caminho": [
+      "oxum Espelho Dourado → kali",
+      "passar",
+      "houyi Nove Flechas → kali",
+      "oxum Espelho Dourado → ammit",
+      "passar",
+      "houyi Abater o Sol → freyja",
+      "cuca Garra de Jacaré → freyja",
+      "oxum Espelho Dourado → ammit",
+      "passar",
+      "oxum Rio de Ouro",
+      "houyi Flecha Solar → ammit",
+      "cuca Garra de Jacaré → ammit",
+      "passar",
+      "houyi Abater o Sol → freyja",
+      "oxum Espelho Dourado → kali",
+      "passar",
+      "houyi Flecha Solar → kali",
+      "cuca Garra de Jacaré → kali",
+      "oxum Espelho Dourado → freyja",
+      "passar",
+      "houyi Nove Flechas → ammit",
+      "cuca Garra de Jacaré → kali",
+      "oxum Águas de Oxum → cuca",
+      "passar",
+      "cuca O Papão → ammit",
+      "oxum Espelho Dourado → ammit"
+    ]
+  }
+}

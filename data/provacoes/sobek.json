@@ -1,0 +1,73 @@
+{
+  "key": "sobek",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "sobek",
+    "oxum",
+    "houyi"
+  ],
+  "inimigos": [
+    "nefertem",
+    "orfeu",
+    "iansa"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 13
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "sobek"
+    }
+  ],
+  "verificacao": {
+    "hash": "9621de92",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 32,
+    "comDica": false,
+    "nos": 1301,
+    "ms": 921,
+    "caminho": [
+      "houyi Flecha Solar → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "passar",
+      "passar",
+      "houyi Nove Flechas → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Abater o Sol → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Flecha Solar → nefertem",
+      "oxum Espelho Dourado → nefertem",
+      "passar",
+      "houyi Abater o Sol → iansa",
+      "sobek Mordida Brutal → nefertem",
+      "passar",
+      "houyi Nove Flechas → iansa",
+      "sobek Arrasto do Nilo → nefertem",
+      "passar",
+      "sobek Dilúvio",
+      "houyi Flecha Solar → nefertem",
+      "passar",
+      "houyi Flecha Solar → orfeu",
+      "passar",
+      "sobek Arrasto do Nilo → orfeu",
+      "passar",
+      "houyi Nove Flechas → orfeu",
+      "sobek Mordida Brutal → orfeu",
+      "passar",
+      "houyi Abater o Sol → orfeu",
+      "sobek Mordida Brutal → orfeu"
+    ]
+  }
+}

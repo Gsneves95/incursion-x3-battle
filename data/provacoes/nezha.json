@@ -1,0 +1,79 @@
+{
+  "key": "nezha",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "nezha",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "shutendoji",
+    "exu",
+    "mnevis"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 16
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "nezha"
+    }
+  ],
+  "verificacao": {
+    "hash": "657fc7be",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 38,
+    "comDica": false,
+    "nos": 211,
+    "ms": 395,
+    "caminho": [
+      "perseu Cabeça da Medusa → shutendoji",
+      "oxum Espelho Dourado → shutendoji",
+      "passar",
+      "nezha Lança de Ponta Flamejante → shutendoji",
+      "perseu Lâmina Curva → shutendoji",
+      "oxum Espelho Dourado → exu",
+      "passar",
+      "perseu Lâmina Curva → exu",
+      "oxum Águas de Oxum → nezha",
+      "passar",
+      "perseu Foice Adamantina → shutendoji",
+      "oxum Rio de Ouro",
+      "passar",
+      "perseu Lâmina Curva → shutendoji",
+      "oxum Águas de Oxum → nezha",
+      "nezha Lança de Ponta Flamejante → shutendoji",
+      "passar",
+      "nezha Rodas de Vento e Fogo → exu+mnevis",
+      "perseu Lâmina Curva → exu",
+      "oxum Águas de Oxum → nezha",
+      "passar",
+      "perseu Foice Adamantina → exu",
+      "oxum Espelho Dourado → exu",
+      "passar",
+      "perseu Cabeça da Medusa → mnevis",
+      "nezha Lança de Ponta Flamejante → mnevis",
+      "oxum Espelho Dourado → mnevis",
+      "passar",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Espelho Dourado → mnevis",
+      "passar",
+      "perseu Foice Adamantina → mnevis",
+      "nezha Lança de Ponta Flamejante → mnevis",
+      "oxum Águas de Oxum → nezha",
+      "passar",
+      "nezha Lança de Ponta Flamejante → mnevis",
+      "perseu Lâmina Curva → mnevis",
+      "oxum Espelho Dourado → mnevis"
+    ]
+  }
+}

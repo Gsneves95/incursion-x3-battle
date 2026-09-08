@@ -467,33 +467,54 @@ function linhaProvHTML(p){
   </button></li>`;
 }
 
-// A TELA "Desafios" (F4/§212): a Provação da Semana, os Desafios de Composição e o acervo de
-// PERGAMINHOS (63, genéricas fora), agrupado por FAIXA de dificuldade (dos nós medidos).
+// §245 — a TELA "Desafios": o DESAFIO DA SEMANA (dá Gema), os Desafios de Composição, e os DESAFIOS POR
+// DEUS (comprados com Essência → maestria; a moldura sai no Mestre). Só de deus que você TEM.
+let desafioDesistindo = null;   // deus com a desistência em confirmação (inline, sem modal)
+// UMA linha de desafio por deus, com a ação conforme o estado (comprar / jogar+desistir / recarga / mestre).
+function desafioRowHTML(k){
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  const nv = nivelMaestria(k), v = maestriaDe(k).vitorias || 0, alvo = MAESTRIA_LIMIAR.mestre;
+  const e = desafioEstado(k), cfg = DESAFIO_CFG();
+  let acao;
+  if (nv === 4) acao = `<span class="dsf__mestre" title="dominado — a moldura saiu">★ Mestre</span>`;
+  else if (desafioDesistindo === k) acao = `<span class="dsf__conf">desistir?<button class="b b--danger b--sm" data-desiste-ok="${k}">Sim</button><button class="b b--quiet b--sm" data-desiste-no="1">Não</button></span>`;
+  else if (e.estado === 'ativo') acao = `<span class="dsf__acts"><button class="b b--primary b--sm" data-jogar="${k}">Jogar</button><button class="b b--quiet b--sm" data-desistir="${k}">Desistir</button></span>`;
+  else if (e.estado === 'recarga') acao = `<span class="dsf__recarga" title="recarga após cumprir/desistir (8h)">↻ ${fmtRecarga(e.restaMs)}</span>`;
+  else { const pc = podeComprarDesafio(k); acao = `<button class="b b--sec b--sm" data-comprar="${k}" ${pc.ok ? '' : 'disabled'} title="${pc.ok ? 'pilote ' + H(g.nome) + ' até vencer' : H(pc.motivo)}">Comprar ${cfg.custoEssencia} ✦</button>`; }
+  return `<li class="dsfli"><div class="dsf dsf--m${nv}">
+    <span class="dsf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span>
+    <span class="dsf__el" style="background:${COR(g.elem)}"></span>
+    <span class="dsf__id">
+      <span class="dsf__n">${H(g.nome)}</span>
+      <span class="dsf__maes m--${nv}">${MAESTRIA_NOME[nv]} · <b>${Math.min(v, alvo)}</b>/${alvo} p/ Mestre</span>
+    </span>
+    <span class="dsf__pe">${acao}</span>
+  </div></li>`;
+}
 function renderProvacoes(){
-  const acervo = acervoPergaminhos();
-  const porFaixa = ['Fácil', 'Médio', 'Difícil', 'Épico'].map(f => ({
-    f,
-    itens: acervo.filter(p => p.faixa === f)
-      .sort((a, b) => ((HRM[a.key] && HRM[a.key].nome) || a.key).localeCompare((HRM[b.key] && HRM[b.key].nome) || b.key, 'pt')),
-  })).filter(s => s.itens.length);
-
-  const secaoFaixa = s => `
-    <div class="psec__cab"><h2 class="psec__faixa faixa--${faixaClasse(s.f)}">${s.f}</h2><span class="psec__n">${s.itens.length}</span></div>
-    <ul class="plist">${s.itens.map(linhaProvHTML).join('')}</ul>`;
+  const meus = (perfil && perfil.deuses) ? Object.keys(perfil.deuses) : [];
+  const cfg = DESAFIO_CFG();
+  // ordem: em andamento/recarga primeiro, depois compráveis (mais perto do Mestre à frente), Mestres no fim.
+  const rank = k => { const nv = nivelMaestria(k); if (nv === 4) return 4; const e = desafioEstado(k); return e.estado === 'ativo' ? 0 : e.estado === 'recarga' ? 1 : 2; };
+  const ord = meus.slice().sort((a, b) => rank(a) - rank(b)
+    || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0)
+    || ((HRM[a] && HRM[a].nome) || a).localeCompare((HRM[b] && HRM[b].nome) || b, 'pt'));
+  const mestres = meus.filter(k => nivelMaestria(k) === 4).length;
+  const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="tela">
     <header class="tela__cab">
       <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
       <h1 class="tela__titulo">Desafios</h1>
-      <span class="tela__cont">${acervo.length}</span>
+      <span class="tela__cont">${mestres}/${meus.length} ★</span>
     </header>
     <div class="tela__rol" id="provrol">
       ${bannerSemanalHTML()}
       <button class="pdesafios" data-desafios="1"><span>⚔ Desafios de Composição</span><span class="pdesafios__go">›</span></button>
-      <div class="psec__cab psec__cab--acervo"><h2>PERGAMINHOS</h2><span class="psec__n">${acervo.length}</span></div>
-      <p class="psec__nota">Desafios de perícia validados. Vencer avança a maestria e grava o placar — a coleção vem pela Invocação.</p>
-      ${porFaixa.map(secaoFaixa).join('')}
+      <div class="psec__cab psec__cab--acervo"><h2>DESAFIOS POR DEUS</h2><span class="psec__n">${cfg.custoEssencia} ✦ · você tem ${ess}</span></div>
+      <p class="psec__nota">Escolha um deus que você tem, compre com Essência e pilote-o até vencer: cada desafio dá <b>${cfg.maestriaPorVitoria}</b> de maestria (a <b>moldura</b> sai no Mestre). Um por deus por vez; quantos deuses quiser ao mesmo tempo. Perdeu? Repete de graça. Recarga de ${cfg.recargaHoras}h ao cumprir ou desistir.</p>
+      <ul class="dsflist">${ord.map(desafioRowHTML).join('')}</ul>
     </div>
   </div>
   </div>`;
@@ -503,10 +524,12 @@ function renderProvacoes(){
   if (bs) bs.onclick = () => iniciarSemanal();
   const bd = stage.querySelector('.pdesafios[data-desafios]');
   if (bd) bd.onclick = () => { ir('composicao'); render(); };
-  [...stage.querySelectorAll('.prow[data-prova]')].forEach(b => {
-    // pergaminho é desafio de perícia: sempre jogável (independe de ter o deus).
-    b.onclick = () => iniciarProva(b.dataset.prova);
-  });
+  // COMPRAR → paga e já entra na batalha (perdeu, volta e o "Jogar" repete de graça).
+  [...stage.querySelectorAll('[data-comprar]')].forEach(b => b.onclick = () => { const k = b.dataset.comprar; const r = comprarDesafio(k); if (r.ok) iniciarDesafioDeus(k); else render(); });
+  [...stage.querySelectorAll('[data-jogar]')].forEach(b => b.onclick = () => iniciarDesafioDeus(b.dataset.jogar));
+  [...stage.querySelectorAll('[data-desistir]')].forEach(b => b.onclick = () => { desafioDesistindo = b.dataset.desistir; render(); });
+  [...stage.querySelectorAll('[data-desiste-ok]')].forEach(b => b.onclick = () => { desistirDesafio(b.dataset.desisteOk); desafioDesistindo = null; render(); });
+  [...stage.querySelectorAll('[data-desiste-no]')].forEach(b => b.onclick = () => { desafioDesistindo = null; render(); });
   fit();
 }
 
@@ -619,10 +642,20 @@ function atualizarProva(){
 }
 function aplicarDesbloqueioProva(p){
   if (!perfil) return;
+  // §245 — DESAFIO POR DEUS (pago): +maestria ao DEUS-TÍTULO (+milagre), recarga começa; sem moeda, NÃO
+  // avança Provação nem placar. NÃO usa o creditarMaestria genérico (que daria +1 aos deuses de suporte):
+  // o desafio é do título, e é o que faz a conta "10 desafios → moldura" fechar no deus escolhido.
+  if (p.desafioDeus) {
+    cumprirDesafioDeus(p.desafioDeus);
+    provaFim.desafioDeus = p.desafioDeus;
+    provaFim.maestriaGanha = DESAFIO_CFG().maestriaPorVitoria;
+    provaFim.virouMestre = nivelMaestria(p.desafioDeus) === 4;
+    return;
+  }
   creditarMaestria();   // F3.5: a vitória conta p/ a maestria dos deuses que jogaram (só contador, sem poder)
   if (!perfil.provacoes) perfil.provacoes = {};
   if (p.desafio) {
-    // DESAFIO (F3.6): sem desbloqueio de deus. Recompensa LEVE (Essência) só na 1ª vitória — o resto é maestria.
+    // DESAFIO DE COMPOSIÇÃO (F3.6): sem desbloqueio de deus. Recompensa LEVE (Essência) só na 1ª vitória.
     const jaFeito = !!perfil.provacoes[p.scoreKey];
     if (!jaFeito && p.recompensaEss) perfil = creditar(perfil, 'essencia', p.recompensaEss);
     perfil.provacoes[p.scoreKey] = { feito: true, em: Date.now() };
@@ -632,9 +665,23 @@ function aplicarDesbloqueioProva(p){
     if (rd && !rd.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rd.erro });
     return;
   }
-  // PERGAMINHO (F4/§212): vencer NÃO libera deus — a coleção anda só pela Invocação. A maestria
-  // (creditada acima, cosmética) e o PLACAR de lances são a recompensa. Só grava se melhorou o
-  // recorde. scoreKey separa a semanal ('semanal:AAAAW##') da Provação regular do mesmo deus.
+  if (p.semanal) {
+    // §245 — DESAFIO DA SEMANA: dá GEMA (recurso de invocação; ajuda a colecionar) na 1ª vitória da semana,
+    // + maestria (acima) + placar. Grátis, expira por semana (o scoreKey traz ano+semana).
+    const jaFeito = !!perfil.provacoes[p.scoreKey];
+    const gema = ((typeof ECONOMIA !== 'undefined' && ECONOMIA.semanal && ECONOMIA.semanal.recompensa && ECONOMIA.semanal.recompensa.gema)) || 0;
+    if (!jaFeito && gema) perfil = creditar(perfil, 'gema', gema);
+    provaFim.recompensaGema = jaFeito ? 0 : gema;
+    const antesS = perfil.provacoes[p.scoreKey];
+    const recorde = !antesS || antesS.lances == null || provaLances < antesS.lances;
+    if (recorde) perfil.provacoes[p.scoreKey] = { lances: provaLances, minimo: p.minimo, em: Date.now(), feito: true };
+    provaFim.recorde = recorde;
+    const rs = salvar(perfil);
+    if (rs && !rs.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rs.erro });
+    return;
+  }
+  // PERGAMINHO legado (jogo direto sem compra) — maestria + placar. O hub agora só entra pago; isto sobra
+  // como rede para qualquer caminho antigo.
   const sk = p.scoreKey || p.key;
   const antes = perfil.provacoes[sk];
   if (!antes || provaLances < antes.lances) perfil.provacoes[sk] = { lances: provaLances, minimo: p.minimo, em: Date.now() };
@@ -653,25 +700,32 @@ function motivoHumano(motivo){
 function provaResultadoOverlay(){
   if (!prova || !provaFim) return '';
   const f = provaFim, venceu = f.resultado === 'vitoria';
-  const ehDesafio = !!prova.desafio;
+  const ehDesafio = !!prova.desafio;       // composição (F3.6)
+  const ehPago = !!prova.desafioDeus;      // §245: desafio POR DEUS (pago → maestria)
   const nome = nomeDoDeus(prova.key);
   let titulo, msg, cls;
-  if (venceu && ehDesafio) {
+  if (venceu && ehPago) {
+    titulo = 'DESAFIO CUMPRIDO'; cls = 'venceu';
+    msg = `+${f.maestriaGanha} de maestria de ${nome}.` + (f.virouMestre ? ' ★ MESTRE — a moldura saiu!' : '');
+  } else if (venceu && ehDesafio) {
     titulo = 'DESAFIO VENCIDO'; cls = 'venceu';
     msg = f.recompensaEss ? `Composição provada. +${f.recompensaEss} ✦ de Essência.` : 'Composição provada — Essência já recebida antes.';
+  } else if (venceu && prova.semanal) {
+    titulo = 'DESAFIO DA SEMANA VENCIDO'; cls = 'venceu';
+    msg = f.recompensaGema ? `+${f.recompensaGema} de Gema. Maestria avançada.` : 'A Gema desta semana já veio. Maestria avançada.';
   } else if (venceu) {
-    // PERGAMINHO (F4/§212): sem desbloqueio — perícia provada, maestria + placar. A semanal
-    // mantém a identidade "Provação da Semana" (o dono a listou assim).
-    titulo = prova.semanal ? 'PROVAÇÃO SEMANAL VENCIDA' : 'PERGAMINHO VENCIDO'; cls = 'venceu';
-    msg = f.recorde ? 'Perícia provada. Maestria avançada e novo recorde de placar.' : 'Perícia provada. Maestria avançada — placar mantido.';
+    titulo = 'PERGAMINHO VENCIDO'; cls = 'venceu';
+    msg = f.recorde ? 'Perícia provada. Maestria avançada e novo recorde.' : 'Perícia provada. Maestria avançada.';
   }
   else if (f.categoria === 'hp') { titulo = 'DERROTA'; cls = 'hp'; msg = 'Seus deuses tombaram em campo.'; }
   else if (f.categoria === 'prazo') { titulo = 'PRAZO ESGOTADO'; cls = 'prazo'; msg = 'O limite de turnos passou antes da vitória.'; }
   else { titulo = 'CONDIÇÃO QUEBRADA'; cls = 'cond'; msg = motivoHumano(f.motivo); }
-  const placar = (venceu && !ehDesafio && f.minimo != null)
+  // §245: o desafio pago perdido "fica até vencer" — o rodapé lembra que repetir é de graça.
+  if (!venceu && ehPago) msg += ' O desafio fica — repetir é de graça.';
+  const placar = (venceu && !ehDesafio && !ehPago && f.minimo != null)
     ? `<div class="result__placar"><span>Vencido em <b>${f.lances}</b> lance${f.lances === 1 ? '' : 's'}</span><span class="result__min">melhor conhecido: ${f.minimo}</span>${f.lances <= f.minimo ? '<span class="result__rec">✦ no ritmo do ótimo</span>' : ''}</div>`
     : '';
-  const selo = ehDesafio ? 'Desafio de composição' : `Pergaminho · ${H(prova.faixa || prova.nivel)}`;
+  const selo = ehPago ? `Desafio · ${H(nome)}` : ehDesafio ? 'Desafio de composição' : prova.semanal ? 'Desafio da Semana' : `Pergaminho · ${H(prova.faixa || prova.nivel)}`;
   return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${cls}">
     <span class="result__selo">${selo}</span>
     <h1>${titulo}</h1>
@@ -687,10 +741,17 @@ function provaResultadoOverlay(){
 function ligarProvaFim(){
   const q = s => stage.querySelector(s);
   const ehDesafio = !!(prova && prova.desafio);
-  const destino = ehDesafio ? 'composicao' : 'desafios';   // §213: pergaminho volta ao hub 'desafios'; composição à sua lista 'composicao'
+  const ehPago = !!(prova && prova.desafioDeus);
+  const destino = ehDesafio ? 'composicao' : 'desafios';   // pago/semanal/pergaminho voltam ao hub 'desafios'
+  // §245: voltar de um desafio pago PERDIDO NÃO desiste — o desafio fica ATIVO (repetir é de graça).
   const v = q('#pfvoltar'); if (v) v.onclick = () => { sairProva(); ir(destino, {}, { substituir: true }); render(); };
-  const dsfId = prova && prova.desafioId, pkey = prova && prova.key;
-  const t = q('#pftentar'); if (t) t.onclick = () => { if (ehDesafio) { desafioTimePick = []; sairProva(); ir('desafiomontar', { id: dsfId }); render(); } else iniciarProva(pkey); };
+  const dsfId = prova && prova.desafioId, pkey = prova && prova.key, pagoK = prova && prova.desafioDeus, ehSemanal = !!(prova && prova.semanal);
+  const t = q('#pftentar'); if (t) t.onclick = () => {
+    if (ehDesafio) { desafioTimePick = []; sairProva(); ir('desafiomontar', { id: dsfId }); render(); }
+    else if (ehPago) iniciarDesafioDeus(pagoK);        // repete de graça (fica ativo)
+    else if (ehSemanal) iniciarSemanal();
+    else iniciarProva(pkey);
+  };
 }
 function sairProva(){ prova = null; provaFim = null; provaLances = 0; }
 
@@ -704,6 +765,77 @@ function iniciarProva(key){
   vsCPU = true;   // os inimigos da Provação são a CPU (o jogador controla o lado 0)
   ir('batalha', {}, { substituir: true });
   render();
+}
+
+// ===================================================================
+// §245 — DESAFIOS POR DEUS: os pergaminhos viram desafios COMPRADOS com Essência que dão MAESTRIA do deus
+// (a MOLDURA sai no Mestre, §204 limiar 30 — sistema que já existe). AS 9 REGRAS, cada uma com o motivo:
+//  1. UM por deus por vez (não estoca).  2. VÁRIOS deuses ao mesmo tempo, sem teto (pagou; a Essência limita).
+//  3. NÃO expira (comprou, é dele).  4. Perdeu a batalha? Repete de graça (fica ATIVO até vencer).
+//  5. Pode DESISTIR (sem reembolso, recarga começa).  6. Recarga começa ao CUMPRIR ou DESISTIR, nunca na compra.
+//  7. Recarga de 8h (3/dia por deus).  8. SÓ de deus que você TEM.  9. NÃO avança a Provação (é puzzle, não PvP).
+// ===================================================================
+function DESAFIO_CFG(){ return (typeof ECONOMIA !== 'undefined' && ECONOMIA.pergaminhos) || { custoEssencia: 30, maestriaPorVitoria: 3, recargaHoras: 8 }; }
+function _desafios(){ if (perfil && !perfil.desafios) perfil.desafios = {}; return (perfil && perfil.desafios) || {}; }
+function provacaoDe(k){ return acervoPergaminhos().find(p => p.key === k) || null; }
+function desafioEstado(k){
+  const d = _desafios()[k], agora = Date.now();
+  if (!d) return { estado: 'disponivel' };
+  if (d.ativo) return { estado: 'ativo' };
+  if (d.recargaAte && d.recargaAte > agora) return { estado: 'recarga', restaMs: d.recargaAte - agora };
+  return { estado: 'disponivel' };
+}
+function podeComprarDesafio(k){
+  if (!temDeus(k)) return { ok: false, motivo: 'você não tem este deus' };            // REGRA 8
+  if (nivelMaestria(k) === 4) return { ok: false, motivo: 'já é Mestre' };             // nada a ganhar (a moldura já saiu)
+  if (!provacaoDe(k)) return { ok: false, motivo: 'desafio a caminho' };               // cobertura (não deve ocorrer: 100%)
+  const e = desafioEstado(k);
+  if (e.estado === 'ativo') return { ok: false, motivo: 'já em andamento' };           // REGRA 1
+  if (e.estado === 'recarga') return { ok: false, motivo: 'em recarga' };              // REGRA 6/7
+  const custo = DESAFIO_CFG().custoEssencia;
+  if ((perfil.moedas.essencia || 0) < custo) return { ok: false, motivo: 'Essência insuficiente' };
+  return { ok: true, custo };
+}
+function comprarDesafio(k){
+  const p = podeComprarDesafio(k); if (!p.ok) return p;
+  perfil = debitar(perfil, 'essencia', p.custo);   // paga (clone com a Essência descontada)
+  if (!perfil.desafios) perfil.desafios = {};
+  perfil.desafios[k] = { ativo: true, recargaAte: 0 };   // vira ATIVO — recarga NÃO começa na compra (REGRA 6)
+  salvar(perfil);
+  return { ok: true };
+}
+function desistirDesafio(k){
+  const d = _desafios()[k]; if (!d || !d.ativo) return;
+  const rec = DESAFIO_CFG().recargaHoras * 3600 * 1000;
+  perfil.desafios[k] = { ativo: false, recargaAte: Date.now() + rec };   // REGRA 5: sem reembolso, recarga começa
+  salvar(perfil);
+}
+// vitória num desafio por deus: +maestria ao DEUS-TÍTULO (+milagre), recarga começa. Sem moeda (já pagou).
+function cumprirDesafioDeus(k){
+  if (!perfil.maestria) perfil.maestria = {};
+  const m = perfil.maestria[k] || (perfil.maestria[k] = { vitorias: 0, milagre: false });
+  m.vitorias = (m.vitorias || 0) + DESAFIO_CFG().maestriaPorVitoria;   // +3 (10 desafios → 30 = Mestre)
+  m.milagre = true;   // o desafio desenhado (pilotar o deus até vencer) É a prova de kit do Mestre
+  if (!perfil.desafios) perfil.desafios = {};
+  const rec = DESAFIO_CFG().recargaHoras * 3600 * 1000;
+  perfil.desafios[k] = { ativo: false, recargaAte: Date.now() + rec };   // REGRA 6: recarga começa ao cumprir
+  salvar(perfil);
+}
+// inicia a batalha do desafio por deus (o pergaminho do deus), marcada como paga (§245).
+function iniciarDesafioDeus(k){
+  const p = provacaoDe(k); if (!p) return;
+  campanha = null; campanhaFim = null;
+  prova = Object.assign({}, p, { desafioDeus: k });   // flag: desafio POR DEUS pago (dá maestria, não avança nada)
+  provaFim = null; provaLances = 0;
+  st = montarProvacao(prova);
+  vsCPU = true;
+  ir('batalha', {}, { substituir: true });
+  render();
+}
+function fmtRecarga(ms){
+  const min = Math.max(0, Math.round(ms / 60000));
+  if (min >= 60) { const h = Math.floor(min / 60), m = min % 60; return h + 'h' + (m ? ' ' + m + 'm' : ''); }
+  return min + 'm';
 }
 
 // ===================================================================
@@ -731,7 +863,9 @@ function tileColecaoHTML(k){
   const badge = tem
     ? (nv > 0 ? `<span class="colx__m m--${nv}" title="${MAESTRIA_NOME[nv]}">${nv === 4 ? '★' : nv}</span>` : '')
     : `<span class="colx__lock" title="ainda não conquistado">⚿</span>`;
-  return `<button class="colx ${tem ? 'colx--tem' : 'colx--falta'}" data-deus="${k}" title="${H(g.nome)}">
+  // §245: a MOLDURA do MESTRE — uma borda ornamentada (cosmético, variação de borda) que marca o domínio.
+  const mestre = tem && nv === 4 ? ' colx--mestre' : '';
+  return `<button class="colx ${tem ? 'colx--tem' : 'colx--falta'}${mestre}" data-deus="${k}" title="${H(g.nome)}${nv === 4 ? ' · Mestre' : ''}">
     <span class="colx__rar rar--${rar}"></span>
     <span class="colx__art">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 30)}</span>
     <span class="colx__foot">
@@ -1202,17 +1336,18 @@ function bannerSemanalHTML(){
   const p = provaSemanalAtual();
   if (!p) return '';
   const g = HRM[p.key] || { nome: p.key, elem: 'Umbra' };
-  const rec = (perfil && perfil.provacoes && perfil.provacoes[p.scoreKey]) || null;
+  const feito = !!(perfil && perfil.provacoes && perfil.provacoes[p.scoreKey]);
   const inimigos = (p.inimigos || []).map(k => (HRM[k] && HRM[k].nome) || k).join(' · ');
+  const gema = ((typeof ECONOMIA !== 'undefined' && ECONOMIA.semanal && ECONOMIA.semanal.recompensa && ECONOMIA.semanal.recompensa.gema)) || 0;
   return `<button class="psem" data-semanal="1">
     <span class="psem__p">${slot('god-' + p.key, ini(g.nome), COR(g.elem), 24)}</span>
     <span class="psem__id">
-      <span class="psem__rot">PROVAÇÃO DA SEMANA <b>#${p.semanaISO}</b></span>
+      <span class="psem__rot">DESAFIO DA SEMANA <b>#${p.semanaISO}</b></span>
       <span class="psem__tit">${H(p.titulo)} — mantenha ${H(g.nome)} de pé em ${p.deadline} turnos</span>
       <span class="psem__foe">contra ${H(inimigos)}</span>
     </span>
     <span class="psem__pe">
-      <span class="psem__rec">${rec ? `recorde ${rec.lances} lance${rec.lances === 1 ? '' : 's'}` : 'não jogada'}</span>
+      <span class="psem__rec">${feito ? '✓ Gema recebida' : (gema ? `${gema} de Gema` : 'grátis')}</span>
       <span class="psem__go">▷</span>
     </span>
   </button>`;

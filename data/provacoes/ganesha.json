@@ -1,0 +1,68 @@
+{
+  "key": "ganesha",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "ganesha",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "freyja",
+    "izanami",
+    "dionisio"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "ganesha"
+    }
+  ],
+  "verificacao": {
+    "hash": "4b644e1b",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 27,
+    "comDica": false,
+    "nos": 44,
+    "ms": 86,
+    "caminho": [
+      "perseu Cabeça da Medusa → freyja",
+      "ganesha Presa Quebrada → freyja",
+      "passar",
+      "houyi Flecha Solar → freyja",
+      "perseu Lâmina Curva → freyja",
+      "ganesha Presa Quebrada → freyja",
+      "passar",
+      "houyi Nove Flechas → freyja+izanami+dionisio",
+      "perseu Foice Adamantina → izanami",
+      "ganesha Presa Quebrada → freyja",
+      "passar",
+      "houyi Flecha Solar → izanami",
+      "perseu Lâmina Curva → freyja",
+      "ganesha Presa Quebrada → izanami",
+      "passar",
+      "perseu Cabeça da Medusa → izanami",
+      "houyi Abater o Sol → izanami",
+      "ganesha Presa Quebrada → dionisio",
+      "passar",
+      "perseu Foice Adamantina → dionisio",
+      "ganesha Presa Quebrada → dionisio",
+      "passar",
+      "houyi Nove Flechas → dionisio",
+      "perseu Lâmina Curva → dionisio",
+      "ganesha Presa Quebrada → izanami",
+      "passar",
+      "ganesha Presa Quebrada → dionisio"
+    ]
+  }
+}

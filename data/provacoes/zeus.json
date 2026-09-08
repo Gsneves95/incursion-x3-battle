@@ -1,0 +1,61 @@
+{
+  "key": "zeus",
+  "titulo": "Prova de Domínio",
+  "nivel": "Provação",
+  "dificuldade": 1,
+  "aliados": [
+    "zeus",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "mnevis",
+    "iara",
+    "kukulkan"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
+  },
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 15
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "zeus"
+    }
+  ],
+  "verificacao": {
+    "hash": "c7bfd339",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 20,
+    "comDica": false,
+    "nos": 254,
+    "ms": 346,
+    "caminho": [
+      "perseu Lâmina Curva → mnevis",
+      "passar",
+      "perseu Cabeça da Medusa → mnevis",
+      "zeus Cetro do Trovão → mnevis",
+      "passar",
+      "houyi Nove Flechas → iara",
+      "perseu Lâmina Curva → iara",
+      "passar",
+      "houyi Abater o Sol → mnevis",
+      "perseu Lâmina Curva → mnevis",
+      "passar",
+      "zeus Cetro do Trovão → kukulkan",
+      "houyi Flecha Solar → kukulkan",
+      "perseu Lâmina Curva → mnevis",
+      "passar",
+      "perseu Cabeça da Medusa → kukulkan",
+      "houyi Abater o Sol → kukulkan",
+      "passar",
+      "houyi Nove Flechas → kukulkan",
+      "perseu Lâmina Curva → mnevis"
+    ]
+  }
+}

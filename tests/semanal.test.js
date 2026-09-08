@@ -64,7 +64,7 @@ console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (se
   const { w, $ } = sessao();
   w.eval("ir('desafios'); render();");
   const b = $('.psem[data-semanal]');
-  ok(!!b && /PROVAÇÃO DA SEMANA/.test(b.textContent), 'o banner da semana aparece no topo da lista');
+  ok(!!b && /DESAFIO DA SEMANA/.test(b.textContent), 'o banner da semana aparece no topo da lista');
   b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   w.eval("vsCPU=false; pararRelogio();");
   ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!(prova&&prova.semanal)'), 'tocar o banner entra na Provação semanal');
@@ -74,7 +74,7 @@ console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (se
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; provaLances=13; render();");
   ok(w.eval(`perfil.provacoes[${JSON.stringify(sk)}] && perfil.provacoes[${JSON.stringify(sk)}].lances===13`), 'o placar grava sob a chave semanal');
   ok(w.eval(`!perfil.provacoes[${JSON.stringify(godKey)}] || perfil.provacoes[${JSON.stringify(godKey)}].lances!==13`), 'não colide com a Provação regular do mesmo deus');
-  ok(/PROVAÇÃO SEMANAL VENCIDA/.test($('.result--prova').textContent) && /Vencido em/.test($('.result--prova').textContent), 'overlay de vitória com o placar (semanal mantém a identidade)');
+  ok(/DESAFIO DA SEMANA VENCIDO/.test($('.result--prova').textContent) && /Vencido em/.test($('.result--prova').textContent), 'overlay de vitória com o placar (semanal mantém a identidade)');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}
