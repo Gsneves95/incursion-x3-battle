@@ -6,6 +6,10 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §247 — O banner de Desafios REVISADO: o subtítulo passa a ficar ACIMA do título (padrão da série), substituindo a arte do §246.
+
+A arte do §246 trazia "DESAFIOS" no topo e o subtítulo embaixo; a versão revisada do dono inverte — **"RECOMPENSAS · RANK DOS DEUSES" acima, o título DESAFIOS embaixo, com o divisor de diamante** — que é o **padrão da série** (Provações tem "LIBERE NOVOS DEUSES" acima; Invocação, "O CHAMADO DOS PANTEÕES" acima). No carrossel o cartão agora **harmoniza** com os vizinhos: a linha de subtítulos alinha na mesma altura. Mesma decisão de ordem do §246 (subir + empurrar ANTES de conferir — o container é efêmero, §218) e mesma origem (base64 webp do transcrito, o anexo não cai no disco). 648×1008 exatos; peso **99.146 B (~97 KB)**, de novo ~6 KB acima dos ~91 KB do original pelo re-encode do transcrito (soma dos 8 ~672 KB, não os ~650 KB da conta do dono). Só troca o arquivo `web/banners/desafios.webp` — o placeholder já saíra no §246 e o guarda do `render_sweep` (8 em arquivo, 0 placeholder) já vale, então nada mais muda no código. **Suíte verde.** Captura do carrossel contra o dist (o subtítulo acima, alinhado com Provações/Invocação).
+
 ## §246 — A ARTE do banner de Desafios chegou: entra em `web/banners/desafios.webp`, o placeholder do §213 sai, o carrossel fica com os 8 cartões com arte de verdade.
 
 O §213 deixou `placeholder: true` no destino Desafios **de propósito**, esperando esta arte — um cartão de espera (fundo escuro + título em ouro, no padrão da série) que nunca pede um arquivo 404. A arte chegou (648×1008, subtítulo "RECOMPENSAS · RANK DOS DEUSES", que casa com o que o Desafio virou no §245 — maestria, moldura, rank dos deuses), então: **arquivo versionado + o placeholder vira `<img>` (uma linha), como o §213 prometeu.**

@@ -2,7 +2,9 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ ARTE do banner de Desafios (§246), pronta — o carrossel da home tem os 8 cartões com arte de verdade, o placeholder do §213 saiu.
+## ★ ARTE do banner de Desafios (§246 + §247 revisão), pronta — o carrossel da home tem os 8 cartões com arte de verdade, o placeholder do §213 saiu.
+
+**§247 — banner revisado: subtítulo ACIMA do título.** O dono reenviou a arte com "RECOMPENSAS · RANK DOS DEUSES" **acima** de DESAFIOS (divisor de diamante embaixo) — o **padrão da série** (Provações/Invocação têm o subtítulo acima). Substituí `web/banners/desafios.webp` (subir+empurrar antes de conferir, §218; extraído do base64 do transcrito, o anexo não cai no disco). 648×1008 exatos; ~97 KB (o re-encode do transcrito deixa ~6 KB acima dos ~91 KB do original; 8 somam ~672 KB). Placeholder e guarda já vinham do §246 — só o arquivo trocou. Suíte verde. Nova captura do carrossel.
 
 **§246 — a arte chegou (648×1008, "RECOMPENSAS · RANK DOS DEUSES", casa com o §245).** Entrou em `web/banners/desafios.webp`; tirei o `placeholder: true` do destino Desafios em `HOME_BANNERS` (`src/ui/home.js`) — a linha que o §213 deixou reservada. **Ordem à prova do container** (decisão do dono): subi a arte e empurrei **antes** de conferir (a fonte já evaporou 2× neste projeto, §218 — o push é o que sobrevive), em dois commits: (1) só o webp, push imediato; (2) placeholder+teste+docs. **De onde veio:** o anexo não caiu no disco do container — a arte estava **base64 (webp) no transcrito**; extraí de lá. Válido, **648×1008 exatos**; peso **99.280 B (~97 KB)**, ~6 KB acima dos ~91 KB do original (o transcrito re-encodou), então os 8 somam **~672 KB** (não os ~664 KB da conta do dono). Dimensão/arte batem; peso não — se quiser o original byte-a-byte, reenviar de um jeito que caia no disco. **Teste migrado:** `render_sweep` seção 5 passou de "7 em arquivo + 1 placeholder" para **os 8 em arquivo, 0 placeholder** + asserção de que `desafios.webp` existe versionado. `build.js` leva `web/banners/`→`dist/banners/` sozinho. **Suíte verde.** Captura do carrossel contra o dist.
 
