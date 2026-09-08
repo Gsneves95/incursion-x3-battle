@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §250 — O cinza "Fase 5" do cartão PvP saiu: `bcard--pvp` removido inteiro. Marcador que sobreviveu ao estado que o justificava.
+
+**O achado do dono:** o marcador "Fase 5" do PvP saiu pela metade. O selo já não era emitido (`src/ui/home.js`: `if (d.chave === 'pvp') return ''` desde o §236), mas o **cinza continuava** (`src/shell.html`: `.bcard--pvp .bcard__art{filter:grayscale(1) brightness(.58)}`), e a 2ª regra (`.bcard--pvp .bcard__selo`) virara **código morto** (o selo não existe mais).
+
+**A INTENÇÃO (confirmada pelo dono):** o cinza existia SÓ porque o PvP não tinha funcionalidade. **Hoje tem** — lobby (§236), pareamento (§225), ranqueado (§226), servidor publicado (§237). **O marcador sobreviveu ao estado que o justificava.**
+
+**Por que dói (não é cosmético):** num desenho **PvP-first** (§212) o PvP seria o ÚNICO cartão em cinza do carrossel — e **cinza é a linguagem de "não tem / travado"** que o jogo usa na Coleção (§216, deus não possuído) e nas Missões (§234, deus não liberado). Lê como **indisponível na 1ª tela** — justo a que o teste de usabilidade (§206) vê primeiro. Um convite ao modo carro-chefe pintado como bloqueado.
+
+**A DECISÃO:** tirar a classe `bcard--pvp` **inteira** — do `bannerCardHTML` (`src/ui/home.js`) e as **duas** regras do `src/shell.html` (o cinza + o selo morto). Gancho vazio é **etiqueta-sem-enforce**; não serve para mais nada. (O `if (d.chave === 'pvp') return ''` que suprime o selo x/100 do PvP fica — o PvP não tem contador de coleção; isso é outra coisa, não um marcador de indisponível.)
+
+**A GUARDA PERMANENTE (`render_sweep` seção 5, §250):** um cartão com **rota viva** (`.bcard[data-dest]`) não pode carregar **marcador de indisponível** — nem a classe (`bcard--off`/`bcard--pvp`) nem o **cinza** (grayscale/saturate(0) no filtro computado da arte). Provei que ENFORCE: reintroduzindo `bcard--pvp` + a regra, as três asserções quebram (`pvp:bcard--pvp`, `pvp:grayscale(1)…`, e a específica do PvP) — o jsdom resolve o filtro, então o guarda pega tanto a classe quanto o cinza sob QUALQUER classe futura.
+
+**A FAMÍLIA §202/§209/§210** (sistema construído num caminho, marcado como morto/invisível no outro — a dívida que some da vista): aqui o PvP foi **construído** (§236/§225/§226/§237) mas **continuava pintado de morto** no carrossel. Mesmo cheiro do §234 (missões construídas e sem tela), do §209/§210. O conserto é sempre ligar o que existe ao que o jogador vê. **Verificado NO DIST** (não na build): captura do carrossel inteiro, os 8 cartões em cor, o Fenrir × Kukulkán agora colorido no carrossel (não só no arquivo solto). **Suíte verde.**
+
 ## §248 — Banner de Batalha PvP trocado (Fenrir vs Kukulkán) para tirar o Hércules repetido + VARREDURA de deus repetido entre os 8 cartões.
 
 O Hércules ficou na arte de Desafios (§247) e estava também na de PvP — **deus repetido em dois cartões do mesmo carrossel**, achado do dono jogando (eu não tinha notado). A nova arte de PvP é **Fenrir contra Kukulkán** (lobo nórdico × serpente emplumada maia), sem repetição. Mesma ordem do §246/§247 (subir + empurrar ANTES de conferir, §218; extraído do base64 do transcrito) — só troca `web/banners/batalha-pvp.webp`, nenhum código muda. 648×1008; ~90 KB (o re-encode do transcrito soma ~6 KB sobre os ~84 KB do original — o dono avisou que não corrige, 6 KB em 680 não importam). **Suíte verde.**

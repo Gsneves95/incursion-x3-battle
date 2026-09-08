@@ -126,6 +126,27 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   ok(comArquivo === 8, `os 8 destinos deveriam ter arte em ARQUIVO (tem ${comArquivo}) — inclui banners/desafios.webp (§246)`);
   ok(fs.existsSync(path.join(dir, 'desafios.webp')), 'o banner de Desafios existe versionado (web/banners/desafios.webp, §246)');
 
+  // (a2) GUARDA §250: um cartão com ROTA VIVA não pode carregar marcador de INDISPONÍVEL —
+  //      nem a classe (`bcard--off`, `bcard--pvp`) nem o cinza (grayscale no filtro da arte).
+  //      Motivo: o cinza é a linguagem de "travado/não tem" (Coleção §216, Missões §234); num
+  //      destino jogável ele mente logo na 1ª tela (usabilidade §206). O PvP (§236/§225/§226/§237)
+  //      é o caso que motivou a regra. Marcador morto = etiqueta-sem-enforce: aqui ela passa a doer.
+  const MARC_INDISPON = ['bcard--off', 'bcard--pvp'];
+  const vivosComMarcador = [], vivosCinza = [];
+  for (const c of [...d.querySelectorAll('.bcard[data-dest]')]) {   // [data-dest] = tem rota (off é <div> sem data-dest)
+    const dest = c.getAttribute('data-dest');
+    const marc = MARC_INDISPON.filter(k => c.classList.contains(k));
+    if (marc.length) vivosComMarcador.push(`${dest}:${marc.join('+')}`);
+    const art = c.querySelector('.bcard__art');
+    const filtro = art ? (w.getComputedStyle(art).filter || '') : '';
+    if (/grayscale|saturate\(0/.test(filtro)) vivosCinza.push(`${dest}:${filtro}`);
+  }
+  ok(vivosComMarcador.length === 0, `cartão com rota viva NÃO pode ter marcador de indisponível (§250): ${vivosComMarcador.join(' | ')}`);
+  ok(vivosCinza.length === 0, `cartão com rota viva NÃO pode ter a arte em cinza/grayscale (§250): ${vivosCinza.join(' | ')}`);
+  // e o PvP, especificamente (o achado do dono): tem rota, e agora NÃO é mais cinza
+  const pvp = d.querySelector('.bcard[data-dest="pvp"]');
+  ok(!!pvp && !pvp.classList.contains('bcard--pvp'), 'o cartão PvP não carrega mais a classe bcard--pvp (§250: o cinza "Fase 5" saiu)');
+
   // (b) o LAYOUT do carrossel NÃO muda com o tamanho da carteira: cartão fixo 202×314,
   //     mesma contagem e mesma ordem com perfil zerado e com perfil cheio. Só o DADO VIVO
   //     (selos/faixa) muda — a estrutura, não.

@@ -874,8 +874,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .bcard__barra>i{display:block;height:100%;border-radius:999px;
   background:linear-gradient(90deg,#37cfe6,var(--gold-text))}   /* ciano→ouro: as cores da arte */
 .bcard--off{cursor:default}
-.bcard--pvp .bcard__art{filter:grayscale(1) brightness(.58)}   /* PvP em cinza — Fase 5 */
-.bcard--pvp .bcard__selo{background:linear-gradient(180deg,#cfcadb,#8f8ba6);color:#15111d}
+/* §250: `.bcard--pvp` (o cinza "Fase 5" + o selo cinza) removido — o PvP tem funcionalidade
+   (lobby §236 · pareamento §225 · ranqueado §226 · servidor §237). O cinza é a linguagem de
+   "travado/não tem" (Coleção §216, Missões §234); num cartão com rota viva ele lê como
+   indisponível logo na 1ª tela (usabilidade §206). O guarda do render_sweep trava a volta. */
 
 /* telas de lista (Provações) e marcador (Campanha/Invocação/Coleção) */
 .tela{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}

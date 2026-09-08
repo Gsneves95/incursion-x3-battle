@@ -75,7 +75,7 @@ function bannerCardHTML(d){
   const off = !d.rota;
   const tag = off ? 'div' : 'button';                 // sem rota = não navega, não foca
   const attr = off ? '' : ` data-dest="${H(d.chave)}"`;
-  const cls = ['bcard']; if (off) cls.push('bcard--off'); if (d.chave === 'pvp') cls.push('bcard--pvp');
+  const cls = ['bcard']; if (off) cls.push('bcard--off');   // §250: `bcard--pvp` (o cinza "Fase 5") saiu — o PvP tem funcionalidade (lobby §236, pareamento §225, ranqueado §226, servidor §237); marcador de indisponível num cartão com rota viva lê como travado
   // PLACEHOLDER (§213): destino sem arte ainda (Desafios) desenha um cartão de espera no padrão
   // da série — fundo escuro + título em ouro — SEM pedir um arquivo que dá 404. Quando a arte
   // chegar, tira-se `placeholder` do destino e volta a ser <img>.
