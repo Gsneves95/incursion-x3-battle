@@ -6,6 +6,22 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §254 — O BESTIÁRIO ganha ARTE: os 12 inimigos-criatura saem do monograma. Entra por ARQUIVO (não embutida), pela mesma razão das 401 habilidades.
+
+O `slot()` (`src/ui/base.js`) resolvia retrato só por `IMG[chave]`, o mapa dos DEUSES. Chave de bestiário não existe lá, então todo bicho caía no monograma de 2 letras ("SI", "GH", "GU") — na campanha, nas 91 Provações, nos Desafios e em toda batalha de CPU. Não era bug: era um canal de arte que nunca existiu para o bestiário. O dono entregou os 12 webp prontos (384×384), nomeados pela chave.
+
+**A DECISÃO — arquivo, não embutido.** A arte entra em `web/bestiario/<chave>.webp`, **não** em base64 no bundle — a MESMA razão das 401 artes de habilidade que o comentário do `base.js` já registra: embutir levaria o pacote de ~1,4MB a ~7MB. A build anota quais arquivos existem (`BESTIARIO_ARTE`, injetado; o cliente não pode checar disco), e o **monograma segue como reserva** onde o arquivo falta (§213 — nunca um `<img>` que dá 404).
+
+**1. Chaves conferidas ANTES de copiar.** Dez batiam (`automato_bronze, ceifador, elemental_chama, ghoul, guardiao_bosque, naiade, quimera, servo_cinzas, silfo, vidente_corrompido`). Os dois palpites, contra `data/bestiario/`: `golem_runico` **bate** (mantido); `aparicao_sussurrante` **NÃO** — a chave real é `aparicao`, então **renomeei o arquivo para `aparicao.webp`**. Tabela final (arquivo → chave): 11 iguais + `aparicao_sussurrante.webp → aparicao.webp`. Os 12 casam 1:1 com `data/bestiario/`.
+
+**2. Cérbero (Prólogo VII, o chefe do tutorial) NÃO está no lote — e não precisa.** `cerberus` está no ROSTER (é um dos 100 deuses), então já tem retrato EMBUTIDO pelo caminho dos deuses (`IMG['cerberus']`); renderiza com arte, não com monograma. Não ficou sem arte, não precisa de geração.
+
+**3. Ligação.** `slot()` ganhou um ramo: para `god-<chave>` cuja chave NÃO é um deus (`IMG` não tem) mas a build confirmou o arquivo (`BESTIARIO_ARTE[chave]`), emite `<img class="slot__art" src="bestiario/<chave>.webp" onerror="this.remove()">` + o monograma-reserva (escondido por `.slot:has(.slot__art) .slot__glyph{opacity:0}`, reaparece se o `onerror` remover o img). O caminho dos DEUSES (retrato embutido) e o das HABILIDADES (arquivo em `web/skills/`) **não foram tocados**.
+
+**4. GUARDA (`campanha.test.js`, babá):** bicho com arquivo (`guardiao_bosque`) renderiza `<img>` de `bestiario/<chave>.webp`; bicho sem arquivo (chave que a build não anotou) fica no monograma e **NÃO emite `<img>`** (nada de 404); o retrato de deus segue embutido. Provado que morde (neutralizar o ramo derruba a asserção).
+
+**5. NÚMEROS.** O bundle `dist/incursion.html` fica em **1,93 MB** — a arte NÃO infla o HTML (o ramo + o mapa `BESTIARIO_ARTE` somam ~0,2 KB); os 12 arquivos entram como **assets separados, 290.916 B ≈ 284 KB** (o dono estimou 216 KB; não converti nem redimensionei nada — cópia byte-a-byte a 384×384, a diferença é de medição). Cópia da build para `dist/bestiario/` (12 arquivos). **Verificado NO DIST** (viewport do dono 800×360, DPR3): (a) Cap 1 I — Guardião do Bosque saiu do "GU" e virou arte; (b) Prólogo II — Silfo e Ghoul com arte; (c) batalha vs CPU — os retratos do inimigo (Silfo/Ghoul) acenderam. **Suíte inteira verde.**
+
 ## §253 — A tela de Campanha ganha o VISUAL do mockup aprovado pelo dono: troca de pele (não de motor), com a escala convertida de 1170×540 para o palco 951×428, e o conteúdo continuando a vir do dado.
 
 O §252 entregou a FUNÇÃO da tela do ato; o §253 troca a PELE por um mockup do Claude Design aprovado pelo dono. O mockup não veio como código aproveitável (dependia de `support.js`, `image-slot.js`, `<x-dc>`, `<sc-for>`, `<sc-if>`, `{{ }}`, `data-dc-script` e um `fit()` próprio — runtime que o jogo não tem). O dono **extraiu todos os valores** (geometria, cores, degradês, clip-path, sombras, fontes, espaçamentos) e os passou já convertidos; salvei-os em `docs/spec-visual-campanha.md` (referência do repositório). Portei só os valores para `renderCampanha` (`src/ui/home.js`) e o CSS (`src/shell.html`); nenhum runtime novo, nenhuma dependência nova, nenhuma fonte nova (Jost → Rajdhani, a fonte de corpo do jogo; Cinzel já era comum).

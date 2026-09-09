@@ -174,6 +174,22 @@ console.log('== 9. os aliados null (Prólogo VI): 3 slots vazios, CTA travada at
   ok($('#campcta').disabled, 'a CTA fica travada sem os 3');
 }
 
+console.log('== GUARDA 6 (§254): arte de bestiário — arquivo presente vira <img>, ausente fica no monograma (nunca 404) ==');
+{
+  const { w } = sessao();
+  // bicho COM arquivo (guardiao_bosque) → <img class="slot__art" src="bestiario/<chave>.webp">, sem 404
+  const comArte = w.eval("slot('god-guardiao_bosque','GU','#fff',20)");
+  ok(/<img[^>]*class="slot__art"[^>]*src="bestiario\/guardiao_bosque\.webp"/.test(comArte), 'bicho com arquivo emite <img> de bestiario/<chave>.webp');   // BABÁ
+  ok(w.eval("!!BESTIARIO_ARTE.guardiao_bosque"), 'a build anotou guardiao_bosque como presente');
+  // bicho SEM arquivo (chave que a build NÃO anotou) → monograma, NUNCA <img> (§213)
+  const semArte = w.eval("slot('god-inexistente_zzz','ZZ','#fff',20)");
+  ok(!/<img/.test(semArte), 'bicho sem arquivo NÃO emite <img> (nada de 404, §213)');   // BABÁ
+  ok(/slot__glyph/.test(semArte) && /ZZ/.test(semArte), 'e mostra o monograma-reserva');   // BABÁ
+  // o caminho dos DEUSES não muda (retrato embutido, não vira arquivo de bestiário)
+  const deus = w.eval("slot('god-zeus','ZE','#fff',20)");
+  ok(/<img/.test(deus) && !/bestiario\//.test(deus), 'o retrato de DEUS segue embutido (não pega o caminho do bestiário)');
+}
+
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na campanha`); process.exit(1); }
 console.log('>>> CAMPANHA OK');

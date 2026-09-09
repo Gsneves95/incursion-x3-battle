@@ -199,10 +199,16 @@ function slot(chave,glifo,cor,tam,redondo){
   // monograma-irmão reaparece (o :has do CSS o esconde só enquanto a arte está presente).
   const ehSkill=/^skill-/.test(chave);
   const arq=ehSkill?(/-defesa$/.test(chave)?'skill-defesa':chave):null;
+  // §254: arte de BESTIÁRIO por ARQUIVO (web/bestiario/<chave>.webp), pela MESMA razão das habilidades.
+  // Só emite <img> quando a build confirmou o arquivo (BESTIARIO_ARTE) — nunca um <img> 404 (§213); o
+  // monograma segue como reserva (o `:has` do CSS o esconde só enquanto a arte está presente).
+  const bestKey=(m&&!arteGod&&typeof BESTIARIO_ARTE!=='undefined'&&BESTIARIO_ARTE[m[1]])?m[1]:null;
+  const glifoHtml=glifo?`<span class="slot__glyph" style="font-size:${tam||16}px;color:${cor||'var(--ink-dim)'}">${H(glifo)}</span>`:'';
   let inner='';
   if(arteGod)inner=`<img src="${arteGod}" alt="">`;
+  else if(bestKey)inner=`<img class="slot__art" src="bestiario/${H(bestKey)}.webp" alt="" loading="lazy" onerror="this.remove()">`+glifoHtml;
   else if(ehSkill)inner=`<img class="slot__art" src="skills/${H(arq)}.webp" alt="" loading="lazy" onerror="this.remove()">`;
-  else if(glifo)inner=`<span class="slot__glyph" style="font-size:${tam||16}px;color:${cor||'var(--ink-dim)'}">${H(glifo)}</span>`;
+  else inner=glifoHtml;
   return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+inner+`</div>`;
 }
 const ini = n => n.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2).toUpperCase();

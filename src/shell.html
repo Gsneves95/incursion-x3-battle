@@ -95,6 +95,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* tile de habilidade agora é RETÂNGULO (§214): a arte enquadra no centro, sem corte de círculo */
 .slot--round>img{object-position:center center}
 .slot__glyph{font-family:'Cinzel',serif;font-weight:900;line-height:1;text-align:center}
+/* §254: arte de bestiário presente -> esconde o monograma-reserva; se o onerror remover o <img>, ele volta */
+.slot:has(.slot__art) .slot__glyph{opacity:0}
 
 /* ============ TELA DE BATALHA (§214) — zonas por ergonomia (paisagem 2.16) ============
    topo 46 · corpo 336 · rodapé 46 (palco 926×428). Polegar direito domina em paisagem: o que

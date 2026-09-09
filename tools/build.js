@@ -309,6 +309,16 @@ const composicaoObj = (() => {
   return c;
 })();
 
+// §254: ARTE do BESTIÁRIO por ARQUIVO (web/bestiario/<chave>.webp), NÃO embutida — a mesma razão das
+// 401 artes de habilidade (base.js): embutir infla o pacote (1,4MB → ~7MB). A build anota quais arquivos
+// existem (o cliente não pode checar disco); o monograma segue como reserva onde o arquivo falta (§213).
+const bestiarioArte = (() => {
+  const dir = path.join(raiz, 'web', 'bestiario');
+  const mapa = {};
+  for (const b of bestiarioDados) if (b.key && fs.existsSync(path.join(dir, b.key + '.webp'))) mapa[b.key] = 1;
+  return mapa;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -317,6 +327,7 @@ const saida = casca
   .replace('/*__ENGINE__*/',
     'const DEUSES=' + JSON.stringify(deuses) + ';\n' + catalogo + '\nconst GODS=montarCatalogo(DEUSES);\n'
     + 'const BESTIARIO_DADOS=' + JSON.stringify(bestiarioDados) + ';\nconst BESTIARIO=montarCatalogo(BESTIARIO_DADOS);\n'
+    + 'const BESTIARIO_ARTE=' + JSON.stringify(bestiarioArte) + ';\n'
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
