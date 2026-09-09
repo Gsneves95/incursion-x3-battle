@@ -335,23 +335,28 @@ console.log('== 4c. hierarquia visual e legibilidade ==');
     `as 4 habilidades da unidade ${i+1} deveriam ter monogramas distintos: ${g.join('/')}`));
   ok(!$('.skill__name'), 'a parede de texto no ladrilho deveria ter saído');
   ok(!$('.skill__tag'), 'o rótulo redundante de slot deveria ter saído');
-  // o personagem (retrato) é MAIOR que a habilidade (item da adaptação Naruto-Arena)
+  // §257: a FICHA cresceu para o CÍRCULO de 90 (MEDIDO como o maior que cabe com o painel aberto sem
+  // apertar o inimigo). A 90 ela fica maior que o retrato de 88px de largura — a hierarquia "retrato >
+  // habilidade" do §214 (Naruto-Arena) foi SUBSTITUÍDA de propósito por esta decisão do dono. Guarda o
+  // que segue de pé: o retrato NÃO encolheu (88×64 intacto) e a ficha CRESCEU ao tamanho circular do §257.
   const pW = parseFloat(w.getComputedStyle($('.brow__ally .portrait')).width);
   const sW = parseFloat(w.getComputedStyle($('.brow__tiles .skill')).width);
-  ok(pW > sW, `o retrato (${pW}px) deveria ser MAIOR que a habilidade (${sW}px)`);
-  console.log(`  monogramas ${nomes.slice(0,4).join('/')} \u00b7 retrato ${pW}px > ladrilho ${sW}px`);
+  ok(pW >= 88, `o retrato deveria seguir 88px (não encolheu): veio ${pW}`);
+  ok(sW >= 88, `a ficha deveria ter crescido ao círculo do §257 (${sW}px >= 88)`);
+  console.log(`  monogramas ${nomes.slice(0,4).join('/')} \u00b7 retrato ${pW}px \u00b7 ficha circular ${sW}px`);
 }
 
-console.log('== 4b2. tile de habilidade é RETÂNGULO (§214), não círculo ==');
+console.log('== 4b2. FICHA de habilidade é CÍRCULO (§257): o medalhão é redondo, então a moldura também ==');
 {
   const cs = s => w.getComputedStyle($(s));
-  // o alvo de toque nunca cai abaixo de 76px (regra do dono)
-  ok(parseFloat(cs('.skill').width) >= 76, `botão deveria ter 76px+ de lado, tem ${cs('.skill').width}`);
+  // §257 GUARDA (alvo de toque): nunca cai abaixo do mínimo do invariante (76px). A ficha cresceu a 92.
+  ok(parseFloat(cs('.skill').width) >= 76, `o alvo de toque deveria ter 76px+ (invariante), tem ${cs('.skill').width}`);
   ok(cs('.skill').borderWidth === '0px', 'a borda saiu do botão e foi para o disco');
-  // o disco é um RETÂNGULO de cantos arredondados (10px), mostra mais arte que o círculo
-  ok(cs('.skill__disc').borderRadius === '10px', `o disco deveria ser retângulo (10px), veio ${cs('.skill__disc').borderRadius}`);
-  ok(cs('.skill__cd').borderRadius === '10px', 'a máscara de recarga deveria acompanhar o retângulo');
-  ok(cs('.skill__lock').borderRadius === '10px', 'a máscara de trava também');
+  // §257 GUARDA (sem canto quadrado): o disco e TODAS as máscaras de estado são CIRCULARES (50%).
+  ok(cs('.skill__disc').borderRadius === '50%', `o disco deveria ser CIRCULAR (50%), veio ${cs('.skill__disc').borderRadius}`);
+  ok(cs('.skill__cd').borderRadius === '50%', 'a máscara de recarga deveria ser circular (sem canto quadrado)');
+  ok(cs('.skill__lock').borderRadius === '50%', 'a máscara de trava deveria ser circular');
+  ok(cs('.skill__na').borderRadius === '50%', 'a máscara de sem-alvo deveria ser circular');
 
   // anel = elemento; espessura = tier
   const um = $$('.brow__ally')[0].closest('.brow').querySelectorAll('.brow__tiles .skill');
@@ -363,11 +368,44 @@ console.log('== 4b2. tile de habilidade é RETÂNGULO (§214), não círculo =='
   ok([...um].every(b => /border-color/.test(b.querySelector('.skill__disc').getAttribute('style'))),
     'o anel deveria receber a cor do elemento');
 
-  // custo = selo de pílulas na base
+  // §257 GUARDA (custo/GRÁTIS visíveis, sem esconder o medalhão): o selo de custo assenta no ARCO
+  // INFERIOR (bottom pequeno e positivo), então não cobre o miolo do medalhão nem some sob a fileira.
   const semCusto = $$('.brow__tiles .skill').filter(b => !b.querySelector('.skill__cost i'));
   ok(semCusto.length === 0 || semCusto.every(b => b.querySelector('.skill__cost.gratis')),
     'habilidade sem custo deveria exibir o selo GRÁTIS');
-  console.log(`  toque ${cs('.skill').width} \u00b7 disco retângulo 10px \u00b7 anel ${larg.join('/')} por tier`);
+  const cbot = parseFloat(cs('.skill__cost').bottom);
+  ok(cbot >= 0 && cbot <= 14, `o selo de custo assenta no arco inferior (bottom ${cbot}px, 0..14 — nem flutua no miolo nem some)`);
+  console.log(`  toque ${cs('.skill').width} \u00b7 disco CIRCULAR 50% \u00b7 anel ${larg.join('/')} por tier \u00b7 custo bottom ${cbot}px`);
+}
+
+console.log('== 4b3b. GUARDAS §257: sem canto quadrado em NENHUM estado + o disco do rodapé é circular ==');
+{
+  const cs = s => w.getComputedStyle($(s));
+  // GUARDA: em CADA estado (recarga, travada, armada) o disco segue circular — nenhum canto quadrado.
+  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;render()');
+  w.eval(`(function(){ const l=st.lados[st.ativo];
+    l.units[0].cd['habilidade']=3;
+    l.units[1].efeitos=(l.units[1].efeitos||[]).concat([{type:'selado',dur:2}]);
+    render(); })()`);
+  ok(!!$('.skill.is-cooldown') && cs('.skill.is-cooldown .skill__disc').borderRadius === '50%',
+    'estado recarga: o disco segue circular');
+  ok(!!$('.skill.is-locked') && cs('.skill.is-locked .skill__disc').borderRadius === '50%',
+    'estado travada: o disco segue circular');
+  const arma = $$('.brow__tiles .skill[data-sk]').find(x => x.dataset.arma === '1');
+  if (arma) { tap(arma);
+    ok(!$('.skill.is-armed') || cs('.skill.is-armed .skill__disc').borderRadius === '50%',
+      'estado armada: o disco segue circular'); }
+  w.eval('armado=null;alvos=[];escolhidos=[];render()');
+
+  // GUARDA (§257 item 6): o disco do KIT no RODAPÉ usa o MESMO tratamento circular das fichas.
+  const foe0 = S().lados[1 - S().ativo].units[0];
+  w.eval(`abrirKit("${foe0.uid}")`);
+  ok(cs('.footer .leitura__icon.is-skill').borderRadius === '50%',
+    'o disco da selecionada no rodapé (leitura__icon.is-skill) é circular');
+  ok(!!$('.footer .leitura__kstrip .kchip__art') && cs('.footer .leitura__kstrip .kchip__art').borderRadius === '50%',
+    'os chips do kit no rodapé (kchip__art) são circulares');
+  w.eval('peekKit=null;kitSel=null;render()');
+  console.log('  recarga/travada/armada circulares · kit do rodapé circular (item 6)');
 }
 
 console.log('== 4c2. contagem de objetos e ruído ==');

@@ -192,10 +192,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:linear-gradient(90deg,rgba(30,22,50,.85),rgba(30,22,50,.4));
   color:var(--gold-text);font-size:13px;display:flex;align-items:center;justify-content:center}
 .panel__tab:active{background:rgba(58,44,10,.6)}
-/* RECOLHIDO: a aba É o painel colapsado (sempre visível, alvo grande); os tiles crescem 78→100 */
+/* RECOLHIDO: a aba É o painel colapsado (sempre visível, alvo grande). §257: a base da ficha já é 92;
+   com o painel fechado sobra folga horizontal, mas a vertical (~98px) é o teto — os tiles vão a 96. */
 #baselayer.pnfold .panel{flex-basis:26px}
 #baselayer.pnfold .panel__box{display:none}
-#baselayer.pnfold .brow__tiles .skill{width:92px;height:92px}
+#baselayer.pnfold .brow__tiles .skill{width:96px;height:96px}
 #baselayer.pnfold .panel__tab{margin-left:4px;border-radius:5px}
 
 /* ---------- retrato (88 de largura; ally=ouro, enemy=vermelho) ---------- */
@@ -260,14 +261,18 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   text-shadow:0 0 3px #000,0 0 2px #000,0 0 1px #000}
 .fxmore{font-weight:700;font-size:9px;color:var(--ink-dim);padding-left:1px}
 
-/* ---------- TILE de habilidade: RETÂNGULO 78×78 (§214), mais arte que o círculo ---------- */
-.skill{position:relative;width:78px;height:78px;border:0;background:none;padding:0;cursor:pointer;flex:0 0 auto;transition:width .16s,height .16s}
-.skill__disc{position:absolute;inset:0;border-radius:10px;overflow:hidden;background:#171334;
-  border-style:solid;border-width:1px;transition:box-shadow .14s;
-  outline:1px solid rgba(6,5,16,.92)}
+/* ---------- FICHA de habilidade: CÍRCULO 90 (§257) — o medalhão da arte é circular, então a moldura
+   também. Cresceu de 78→90 — MEDIDO como o maior diâmetro que cabe na fileira com o painel ABERTO sem
+   apertar o inimigo: a 90, as 4 fichas terminam em ~764 (palco 926) e sobram ~46px de respiro até o
+   retrato inimigo (a 92 sobrariam só 30, abaixo do padrão do §239); a faixa vertical (~98px) deixa ~4px
+   de folga. O medalhão NÃO ganha zoom (scale 1.0, centro): 31% das 401 artes já preenchem a borda e
+   qualquer ampliação as corta — ver §257. ---------- */
+.skill{position:relative;width:90px;height:90px;border:0;background:none;padding:0;cursor:pointer;flex:0 0 auto;transition:width .16s,height .16s}
+.skill__disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#171334;
+  border-style:solid;border-width:1px;transition:box-shadow .14s}
 .skill--uni .skill__disc{border-style:dashed}
 .skill--habilidade .skill__disc{border-width:2px}
-.skill--milagre .skill__disc{border-width:2px;box-shadow:0 0 0 1px rgba(255,217,122,.4);outline-offset:1px}
+.skill--milagre .skill__disc{border-width:2px;box-shadow:0 0 0 1px rgba(255,217,122,.4)}
 /* §238 REVISA §211: a arte agora PESA o estado, em TRÊS níveis, mas SEMPRE reconhecível (o §211 errou
    na INTENSIDADE, não na direção — o grayscale total levava a saturação a ~18 e apagava o deus). O anel
    também sinaliza. Filtro só na ARTE (`.slot`); os overlays de número/ícone ficam crisp por cima.
@@ -294,7 +299,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    (contraste p/ o número/ícone) e deixa o aro da arte em cor. Glifo distinto por motivo:
    número dourado = recarga · ⊘ rosa = travada (Selado/Silêncio) · ∅ âmbar = sem alvo. */
 /* overlays de estado sobre o tile RETÂNGULO (§214): vinheta escurece só o miolo, aro em cor */
-.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:10px;
+.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:50%;
   align-items:center;justify-content:center;pointer-events:none;
   text-shadow:0 1px 3px #000,0 0 6px #000,0 0 2px #000}
 .skill__cd{font-family:'Cinzel',serif;font-weight:900;font-size:30px;color:var(--gold-text);
@@ -306,10 +311,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .skill__na{font-size:23px;color:#e7bd74;
   background:radial-gradient(circle,rgba(6,5,16,.52) 26%,rgba(6,5,16,.20) 46%,transparent 66%)}
 .skill.is-notarget .skill__na{display:flex}
-/* custo = bolinhas penduradas na borda inferior do tile (não faz scrim sobre a arte) */
-.skill__cost{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);
-  display:flex;gap:2px;align-items:center;padding:2px 4px;border-radius:8px;
-  background:rgba(6,5,16,.92);box-shadow:0 0 0 1px rgba(58,49,88,.9);pointer-events:none;z-index:2}
+/* §257: custo = cápsula de bolinhas assente na ARCO INFERIOR do círculo (não mais pendurada na base
+   reta). Fica DENTRO da pegada de 92px (não colide com a fileira de baixo) e cobre só o aro de baixo,
+   não o miolo do medalhão. Fundo opaco + anel = claramente ligada à ficha e legível sobre qualquer arte. */
+.skill__cost{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);
+  display:flex;gap:2px;align-items:center;padding:2px 5px;border-radius:9px;
+  background:rgba(6,5,16,.94);box-shadow:0 0 0 1px rgba(58,49,88,.95);pointer-events:none;z-index:2}
 .skill__cost i{width:7px;height:7px;border:1px solid rgba(6,5,16,.9);display:block;border-radius:50%}
 .skill__cost i.free{background:transparent;border-color:#9a8fc0}
 .skill__cost i.miss{background:transparent!important;border-color:var(--danger);box-shadow:0 0 4px rgba(255,59,59,.9)}
@@ -348,11 +355,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .kchip{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:2px 1px 3px;border:1px solid transparent;border-radius:8px;background:rgba(18,15,36,.4);cursor:pointer}
 .kchip.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.1);box-shadow:0 0 0 1px rgba(255,217,122,.25)}
-.kchip__art{position:relative;width:100%;aspect-ratio:1;border-radius:7px;overflow:hidden;border:1px solid #5a4560}
+.kchip__art{position:relative;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid #5a4560}   /* §257: chip do kit = disco circular, igual à ficha */
 .kchip__art .slot{width:100%;height:100%}
 .kchip__art--pas{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:19px;background:#14112a}
-.kchip__cd{position:absolute;top:1px;right:1px;font-family:'Cinzel',serif;font-weight:800;font-size:8.5px;
-  color:var(--gold-text);background:rgba(6,5,16,.82);border-radius:4px;padding:0 2px;line-height:1.35}
+/* §257: no disco circular a recarga fica no TOPO-CENTRO (o canto direito cai fora do círculo) */
+.kchip__cd{position:absolute;top:0;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-weight:800;font-size:8.5px;
+  color:var(--gold-text);background:rgba(6,5,16,.82);border-radius:0 0 5px 5px;padding:0 3px;line-height:1.3}
 .kchip__pips{display:flex;gap:2px;justify-content:center;align-items:center;min-height:7px}
 .kpip{width:6px;height:6px;border-radius:50%;display:block;border:1px solid rgba(6,5,16,.9)}
 .kpip--free{background:#9a8fc0}
@@ -376,7 +384,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .leitura{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:10px}
 .leitura--dica{align-items:center}
 .leitura__icon{flex:0 0 auto;width:52px;height:52px;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
-.leitura__icon.is-skill{border-radius:9px}
+.leitura__icon.is-skill{border-radius:50%}   /* §257: leitura de habilidade/kit no rodapé = mesmo disco circular das fichas */
 .leitura__icon .slot{width:100%;height:100%}
 .leitura__corpo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}
 .leitura__cab{display:flex;align-items:center;gap:8px;flex-wrap:wrap}

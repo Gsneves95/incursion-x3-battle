@@ -103,8 +103,8 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     }
   }
 
-  // == geometria da batalha (§214): a última fileira NUNCA cruza o rodapé e o tile
-  // (mesmo RECOLHIDO, quando cresce de 78→~100px) NUNCA estoura a fileira. Medido em
+  // == geometria da batalha (§214/§257): a última fileira NUNCA cruza o rodapé e a ficha
+  // (círculo 90 aberto; cresce a 96 RECOLHIDO) NUNCA estoura a fileira. Medido em
   // navegador REAL a 926×428 (o palco de referência), com rect real, aberto e recolhido. ==
   console.log('== geometria (§214): fileira não cruza o rodapé; tile recolhido não estoura a fileira ==');
   {
@@ -201,7 +201,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     // habilidades COLADAS ao retrato (esquerda), NÃO centralizadas: respiro >> gap
     ok(gap >= 0 && gap <= 24, `as habilidades colam no retrato (vão ${Math.round(gap)}px <= 24)`);
     ok(respiro > gap + 30, `há respiro largo antes do inimigo, não centralizado (respiro ${Math.round(respiro)} >> vão ${Math.round(gap)})`);
-    ok(meu.tLastR <= 730, `as 4 habilidades terminam por volta de ~710 (terminaram em ${Math.round(meu.tLastR)} <= 730)`);
+    ok(meu.tLastR <= 770, `§257: as 4 fichas (círculo 90) terminam por volta de ~764, com respiro até o inimigo (terminaram em ${Math.round(meu.tLastR)} <= 770)`);
     ok(meu.enemyL > meu.tLastR + 30, `o inimigo continua à direita, sem colidir (inimigo ${Math.round(meu.enemyL)} > tiles ${Math.round(meu.tLastR)})`);
     console.log(`  moldura ${Math.round(meu.unitL)}..${Math.round(meu.unitR)} sob retrato ${Math.round(meu.porL)}..${Math.round(meu.porR)} + tiles →${Math.round(meu.tLastR)} · retrato pop ${Math.round(meu.plateT - meu.porT)}px acima da placa · vão ${Math.round(gap)} « respiro ${Math.round(respiro)}`);
 
