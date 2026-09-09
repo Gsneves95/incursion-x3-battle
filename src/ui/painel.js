@@ -1,7 +1,8 @@
-// ui/painel.js — o PAINEL de leitura à esquerda (§214) e o estado da ação no rodapé.
-// O painel tem 4 estados de conteúdo (+ histórico) e RECOLHE por uma aba na borda esquerda.
-// Prioridade: ação armada (habilidade SUA) > detalhe tocado (inimiga / passiva / efeito / ficha)
-// > kit inimigo consultado (toque longo) > resumo do turno do oponente > histórico.
+// ui/painel.js — a LATERAL do histórico (§256) e a LEITURA no rodapé.
+// §256: a leitura tem UM endereço, o RODAPÉ. A lateral esquerda guarda SÓ o histórico (SEMPRE) e
+// RECOLHE por uma aba na borda. A prioridade da leitura vive toda no rodapé (`acaoRodapeHTML`):
+// ação armada (habilidade SUA) > kit do inimigo (toque longo §214) > resumo do turno do oponente >
+// detalhe tocado (inimiga / passiva / efeito / ficha) > dica.
 
 function painelHTML(){
   return `<aside class="panel">
@@ -10,13 +11,12 @@ function painelHTML(){
   </aside>`;
 }
 
-// §238 (item 2): a LATERAL é PERSISTENTE e mostra SÓ o histórico. A leitura de habilidade (o que faz,
-// custo, recarga) foi para o RODAPÉ (acaoRodapeHTML). O KIT inimigo (toque longo, §219) e o resumo do
-// turno do oponente são leituras DELIBERADAS/transitórias que tomam a lateral e voltam ao histórico.
+// §256: a LATERAL é SÓ o histórico, SEMPRE — nunca troca de conteúdo. Toda leitura (habilidade, efeito,
+// KIT do inimigo, resumo do turno) mora num endereço ÚNICO: o rodapé (acaoRodapeHTML). O painel não vira
+// sobreposição: o processo do oponente é oculto na resolução (F0.7), e o LOG é o único canal de "por que
+// perdi 45 de vida" — informação que precisa de um toque para aparecer é informação que some.
 function painelConteudoHTML(){
-  if(peekKit!=null) return kitHTML(peekKit);        // KIT do inimigo (toque longo) — leitura profunda deliberada (✕ fecha)
-  if(resumoTurno&&resumoTurno.length) return resumoHTML();
-  return historicoHTML();                           // padrão persistente: o histórico
+  return historicoHTML();
 }
 
 // card genérico de detalhe (estados 2/3/4 e ficha/efeito): ícone + nome + custo/recarga + texto + classes.
@@ -57,64 +57,6 @@ function pipsKitMini(cost){
   return out.length?`<span class="kchip__pips">${out.join('')}</span>`:'';
 }
 
-// KIT do inimigo (§219): GALERIA + DETALHE no mesmo painel. Em cima, a TIRA com as 4 habilidades +
-// a passiva — arte reconhecível, custo e recarga VISÍVEIS sem tocar. Embaixo, a SELECIONADA por
-// inteiro: nome, custo, recarga e o TEXTO completo com espaço. Tocar um chip troca a seleção; o kit
-// PERSISTE (soltar o dedo não fecha) e o ✕ é o fechar deliberado.
-function kitHTML(uid){
-  const u=todas().find(x=>x.uid===uid); if(!u) return historicoHTML();
-  const g=_catPartida()[u.key]||{};
-  const acoes=acoesDe(st,u);
-  const slots=acoes.map(a=>a.slot).concat(g.passiva?['passiva']:[]);
-  const sel = kitSel && slots.includes(kitSel) ? kitSel : slots[0];
-  const chips=acoes.map(a=>{
-    const cd=u.cd[a.slot]||0;
-    return `<button class="kchip ${a.slot===sel?'is-sel':''}" data-kitsel="${uid}|${a.slot}" title="${H(a.nome)}">
-      <span class="kchip__art">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
-        ${cd?`<span class="kchip__cd">↻${cd}</span>`:''}</span>
-      ${pipsKitMini(a.cost)}</button>`;
-  }).join('');
-  const chipPas=g.passiva?`<button class="kchip kchip--pas ${sel==='passiva'?'is-sel':''}" data-kitsel="${uid}|passiva" title="${H(g.passiva.nome)}">
-      <span class="kchip__art kchip__art--pas" style="color:${COR(u.elem)}">P</span>
-      <span class="kchip__pips"><span class="kchip__paslbl">PAS</span></span></button>`:'';
-  // GALERIA + DETALHE: a SELECIONADA em cima com arte GRANDE (legível) + texto completo; a tira das
-  // 5 embaixo, para trocar de habilidade sem sair do kit (o kit persiste; o ✕ é o fechar).
-  return `<div class="detail detail--consulta kitwrap">
-    <div class="kit__head">
-      <div class="detail__name">${H(u.nome)} · KIT</div>
-      <button class="b b--quiet b--icon kit__x" data-kitclose="1" title="fechar o kit">✕</button>
-    </div>
-    ${kitDetalheHTML(u,g,sel)}
-    <div class="kstrip">${chips}${chipPas}</div>
-  </div>`;
-}
-// o corpo do kit: a habilidade SELECIONADA por inteiro — arte GRANDE (56px, reconhecível), custo,
-// recarga e o TEXTO completo com espaço. A passiva entra aqui também (sem custo/recarga).
-function kitDetalheHTML(u,g,sel){
-  if(sel==='passiva'&&g.passiva){
-    return `<div class="kitdet">
-      <div class="detail__top">
-        <div class="detail__icon detail__icon--skill kitdet__pas" style="border-color:${COR(u.elem)};color:${COR(u.elem)}">P</div>
-        <div class="detail__id"><div class="detail__name">${H(g.passiva.nome)}</div>
-          <div class="detail__meta"><span class="detail__cd">PASSIVA${g.passiva.inerte?' · INERTE':''}</span></div></div>
-      </div>
-      <div class="detail__text">${realce(g.passiva.desc||'')}</div>
-      <div class="detail__classes">SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA</div>
-    </div>`;
-  }
-  const a=acoesDe(st,u).find(x=>x.slot===sel); if(!a) return '';
-  const cd=u.cd[sel]||0;
-  return `<div class="kitdet">
-    <div class="detail__top">
-      <div class="detail__icon detail__icon--skill" style="border-color:${COR(u.elem)}">${slot('skill-'+u.key+'-'+sel,'',null,0,true)}</div>
-      <div class="detail__id"><div class="detail__name">${H(a.nome)}</div>
-        <div class="detail__meta">${pipsDetalhe(a.cost)}<span class="detail__cd">${cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'}</span></div></div>
-    </div>
-    <div class="detail__text">${realce(a.desc||'')}</div>
-    <div class="detail__classes">${H(classesTxt(u,a))} · INIMIGA</div>
-  </div>`;
-}
-
 // §238 (item 2): o HISTÓRICO LEGÍVEL — agrupado POR TURNO (o mais recente no topo), cronológico dentro
 // do turno, e a AUTORIA visualmente distinta (você × o OUTRO LADO — vale nos 4 modos: na Provação e na
 // Campanha o "outro lado" é a IA, não um jogador). Autoria pela varredura do log: o lado ATIVO (turno.lado)
@@ -142,17 +84,6 @@ function historicoHTML(){
         <div class="detail__meta"><span class="detail__cd">TURNO ${st.turno}</span></div></div></div>
     <div class="hist__rol">${blocos}</div>
     <div class="detail__classes"><span class="hist__leg hist__leg--eu">você</span> · <span class="hist__leg hist__leg--eles">${H(rotuloLado(1-eu))}</span></div>
-  </div>`;
-}
-function resumoHTML(){
-  const linhas=resumoTurno.filter(r=>r.tipo!=='turno'&&r.tipo!=='abertura').slice(-5).map(r=>narrar(r));
-  const quem=rotuloLado(1-ladoExibido()).toUpperCase();
-  return `<div class="detail detail--resumo">
-    <div class="detail__top"><div class="detail__icon">${slot('detail','↺','var(--gold-soft)',20)}</div>
-      <div class="detail__id"><div class="detail__name">RESUMO · ${H(quem)}</div>
-        <div class="detail__meta"><span class="detail__cd">TURNO ${st.turno}</span></div></div></div>
-    <div class="detail__text detail__log">${linhas.map(m=>H(m)).join('<br>')||'sem ações'}</div>
-    <div class="detail__classes">TOQUE EM QUALQUER COISA PARA DISPENSAR</div>
   </div>`;
 }
 
@@ -195,6 +126,8 @@ function acaoRodapeHTML(){
         `<div class="leitura__status">▸ ${txt}</div>`, acoes);
     }
   }
+  if(peekKit!=null){ const k=kitRodapeHTML(peekKit); if(k) return k; }   // §256: KIT do inimigo no RODAPÉ (toque longo) — persiste até outra leitura
+  if(resumoTurno&&resumoTurno.length) return resumoRodapeHTML();          // §256: resumo do turno do oponente também desce
   if(detalhe) return leituraCardHTML(detalhe, '', '');   // §238: qualquer LEITURA (habilidade tocada, efeito, passiva, ficha)
   const l=st.lados[st.ativo];
   let dica;
@@ -204,6 +137,52 @@ function acaoRodapeHTML(){
       : `Toque uma habilidade para <b>agir</b> · toque uma indisponível para <b>ler</b> · segure um inimigo para o kit`;
   } else dica=`Vez de ${H(rotuloLado(st.ativo))} — aguarde`;
   return `<div class="leitura leitura--dica"><span class="acao__txt">${dica}</span></div>`;
+}
+
+// §256: o KIT do inimigo no RODAPÉ. Mesma matéria do §219 (arte da selecionada + custo + recarga + texto
+// completo + a tira de chips para trocar de habilidade), mas no endereço ÚNICO da leitura. Reusa o card
+// `.leitura` (a descrição já rola em `.leitura__txt`, max-height 44 — não estoura os 86px do rodapé) e os
+// `.kchip` do §219. PERSISTE: fica até outra leitura tomar o lugar (o ✕ é o fechar deliberado). O "qual
+// dos três inimigos" é o que foi tocado longo (peekKit = uid); segurar outro troca; tocar um chip troca a
+// habilidade dentro daquele inimigo.
+function kitRodapeHTML(uid){
+  const u=todas().find(x=>x.uid===uid); if(!u) return null;
+  const g=_catPartida()[u.key]||{};
+  const acoes=acoesDe(st,u);
+  const slots=acoes.map(a=>a.slot).concat(g.passiva?['passiva']:[]);
+  const sel = kitSel && slots.includes(kitSel) ? kitSel : slots[0];
+  const chips=acoes.map(a=>{
+    const cd=u.cd[a.slot]||0;
+    return `<button class="kchip ${a.slot===sel?'is-sel':''}" data-kitsel="${uid}|${a.slot}" title="${H(a.nome)}">
+      <span class="kchip__art">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}${cd?`<span class="kchip__cd">↻${cd}</span>`:''}</span>
+      ${pipsKitMini(a.cost)}</button>`;
+  }).join('');
+  const chipPas=g.passiva?`<button class="kchip kchip--pas ${sel==='passiva'?'is-sel':''}" data-kitsel="${uid}|passiva" title="${H(g.passiva.nome)}">
+      <span class="kchip__art kchip__art--pas" style="color:${COR(u.elem)}">P</span>
+      <span class="kchip__pips"><span class="kchip__paslbl">PAS</span></span></button>`:'';
+  // o CARD da selecionada (habilidade ou passiva), no mesmo formato de leitura
+  let d;
+  if(sel==='passiva'&&g.passiva){
+    d={nome:(u.nome+' · '+g.passiva.nome).toUpperCase(),chave:'god-'+u.key,glifo:'P',cor:COR(u.elem),
+       meta:'PASSIVA'+(g.passiva.inerte?' · INERTE':''),texto:g.passiva.desc};
+  }else{
+    const a=acoes.find(x=>x.slot===sel)||acoes[0]; const cd=u.cd[a.slot]||0;
+    d={nome:(u.nome+' · '+a.nome).toUpperCase(),chave:'skill-'+u.key+'-'+a.slot,glifo:mono(a),redondo:true,
+       cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),pips:pipsDetalhe(a.cost),
+       meta:(cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'),texto:a.desc};
+  }
+  const strip=`<div class="leitura__kstrip">${chips}${chipPas}</div>
+    <button class="b b--quiet b--icon kit__x" data-kitclose="1" title="fechar o kit">✕</button>`;
+  return leituraCardHTML(Object.assign({consulta:true},d), '<div class="leitura__status leitura__status--kit">KIT INIMIGO · segure outro para trocar</div>', strip);
+}
+// §256: o resumo do turno do oponente, no rodapé (era painel). Card de leitura com as últimas ações.
+function resumoRodapeHTML(){
+  const linhas=resumoTurno.filter(r=>r.tipo!=='turno'&&r.tipo!=='abertura').slice(-5).map(r=>narrar(r)).filter(Boolean);
+  const quem=rotuloLado(1-ladoExibido()).toUpperCase();
+  return leituraCardHTML(
+    {nome:'RESUMO · '+quem,chave:'detail',glifo:'↺',cor:'var(--gold-soft)',meta:'TURNO '+st.turno,
+     texto:linhas.join('  ·  ')||'sem ações'},
+    '<div class="leitura__status">toque em qualquer coisa para dispensar</div>','');
 }
 
 /* ---------- eventos do painel/rodapé (ação primária) ---------- */

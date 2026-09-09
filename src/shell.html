@@ -470,8 +470,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .endturn__hint{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:8.5px;letter-spacing:.07em;
   text-transform:uppercase;line-height:1;color:inherit;opacity:.68}
 /* Confirmar/Cancelar da ação vivem no rodapé, à esquerda de ENCERRAR */
-.acao__act{flex:0 0 auto;display:flex;gap:6px}
+.acao__act{flex:0 0 auto;display:flex;gap:6px;align-items:center}
 .acao__act .b{height:34px;padding:0 12px}
+/* §256: a tira de chips do KIT no rodapé — reusa os .kchip do §219, mas fixos e compactos no strip
+   horizontal (não altera o visual dos chips, só o encaixe no rodapé). */
+.leitura__kstrip{display:flex;gap:4px;flex:0 0 auto;align-items:center}
+.leitura__kstrip .kchip{width:42px;flex:0 0 auto;padding:0}
+.leitura__status--kit{color:#ff9db4}
 
 /* ---------- SOBREPOSIÇÕES ---------- */
 .ov{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;

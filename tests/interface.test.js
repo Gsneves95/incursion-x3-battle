@@ -234,7 +234,7 @@ ok(/toque|alvo/i.test($('.leitura__status').textContent), `aviso inesperado: "${
 ok(!$('#bconf'), 'CONFIRMAR não deve aparecer quando a habilidade precisa de alvo');
 console.log(`  "${$('.leitura__nome').textContent}" \u00b7 ${$$('.portrait[data-foe].is-target').length} alvos`);
 
-console.log('== 4b. consulta do KIT inimigo (item 8: toque longo → painel; toque na hab. → detalhe) ==');
+console.log('== 4b. consulta do KIT inimigo (§256: toque longo → RODAPÉ; a lateral fica no histórico) ==');
 {
   const hpTodos = () => w.eval('st').lados.flatMap(l=>l.units).map(u=>u.hp).join(',');
   // limpa o armado do teste anterior
@@ -251,39 +251,78 @@ console.log('== 4b. consulta do KIT inimigo (item 8: toque longo → painel; toq
   fp.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
   w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uid}")`);
   ok(w.eval('peekKit') === uid, 'o toque longo abre o kit');
-  ok(!!$('.panel .kitwrap') && !!$('.kstrip'), 'o painel deveria abrir o KIT (galeria + detalhe)');
+  // §256: a leitura tem UM endereço — o RODAPÉ. O kit abre lá, NÃO no painel; a lateral segue no histórico.
+  ok(!!$('.footer .leitura__kstrip') && !$('.panel .kstrip'), 'o KIT abre no RODAPÉ (galeria + selecionada), não no painel');
+  ok(!!$('.panel .hist') && !$('.panel .kitwrap'), 'a lateral fica no HISTÓRICO enquanto o kit está aberto');
   const fp2 = $(`.portrait[data-foe][data-uid="${uid}"]`);
   fp2.dispatchEvent(new w.MouseEvent('pointerup', { bubbles: true, clientX: 0, clientY: 0 }));
-  ok(w.eval('peekKit') === uid && !!$('.kstrip'), '§219: soltar o dedo NÃO fecha o kit (persiste)');
+  ok(w.eval('peekKit') === uid && !!$('.footer .leitura__kstrip'), '§219: soltar o dedo NÃO fecha o kit (persiste)');
 
   // a TIRA: 4 habilidades + passiva, custo VISÍVEL sem tocar; e o cabeçalho + o fechar deliberado
-  ok($$('.kstrip .kchip').length === 5, `a tira deveria ter 4 habilidades + passiva, há ${$$('.kstrip .kchip').length}`);
-  ok($$('.kchip--pas').length === 1, 'a passiva está inclusa na tira');
-  ok($$('.kstrip .kchip__pips').length === 5, 'todo chip mostra o custo (pílulas) sem tocar');
-  ok(/KIT/.test($('.kitwrap .kit__head .detail__name').textContent), 'o cabeçalho nomeia o inimigo consultado');
-  ok(!!$('.kitwrap [data-kitclose]'), 'há um fechar deliberado (o botao ✕)');
-  // a SELECIONADA por inteiro: arte grande + recarga + texto completo
-  ok(parseFloat(w.getComputedStyle($('.kitdet .detail__icon')).width) >= 52, 'a arte da selecionada é grande (legível)');
-  ok($('.kitdet .detail__text').textContent.length > 8, 'a selecionada mostra o texto completo do que faz');
-  ok($$('.kitdet .detail__cd').some(e => /PRONTA/.test(e.textContent)), 'a selecionada mostra a recarga');
+  ok($$('.footer .leitura__kstrip .kchip').length === 5, `a tira deveria ter 4 habilidades + passiva, há ${$$('.footer .leitura__kstrip .kchip').length}`);
+  ok($$('.footer .kchip--pas').length === 1, 'a passiva está inclusa na tira');
+  ok($$('.footer .leitura__kstrip .kchip__pips').length === 5, 'todo chip mostra o custo (pílulas) sem tocar');
+  ok(/KIT/.test($('.footer .leitura__status--kit').textContent), 'o rodapé sinaliza que é o KIT do inimigo');
+  ok($('.footer .leitura__nome').textContent.includes(foe0.nome.toUpperCase()), 'o cabeçalho nomeia o inimigo consultado');
+  ok(!!$('.footer [data-kitclose]'), 'há um fechar deliberado (o botao ✕)');
+  // a SELECIONADA por inteiro: arte grande + recarga + texto completo — no ícone da leitura do rodapé
+  ok(parseFloat(w.getComputedStyle($('.footer .leitura__icon')).width) >= 52, 'a arte da selecionada é grande (legível)');
+  ok($('.footer .leitura__txt').textContent.length > 8, 'a selecionada mostra o texto completo do que faz');
+  ok(/PRONTA/.test($('.footer .leitura__cd').textContent), 'a selecionada mostra a recarga');
 
   // tocar OUTRO chip troca a seleção, sem sair do kit nem armar/alterar estado
-  const nomeAntes = $('.kitdet .detail__name').textContent;
-  const outro = $$('.kstrip .kchip[data-kitsel]').find(b => !b.classList.contains('is-sel'));
+  const nomeAntes = $('.footer .leitura__nome').textContent;
+  const outro = $$('.footer .leitura__kstrip .kchip[data-kitsel]').find(b => !b.classList.contains('is-sel'));
   tap(outro);
   ok($$('.skill.is-armed').length === 0, 'consultar não pode armar nada');
   ok(hpTodos() === antes, 'consultar não pode alterar o estado');
-  ok(!!$('.kstrip') && $('.kitdet .detail__name').textContent !== nomeAntes, 'trocar de chip mantém o kit e muda a selecionada');
+  ok(!!$('.footer .leitura__kstrip') && $('.footer .leitura__nome').textContent !== nomeAntes, 'trocar de chip mantém o kit e muda a selecionada');
   // a PASSIVA por inteiro (sem custo)
-  tap($('.kchip--pas'));
-  ok(/PASSIVA/.test($('.kitdet').textContent), 'a passiva mostra-se como PASSIVA');
-  ok(!$('.kitdet .cost .cost__pip'), 'a passiva não tem custo');
-  console.log(`  "${$('.kitdet .detail__name').textContent}" \u2014 ${$('.detail__cd').textContent}`);
+  tap($('.footer .kchip--pas'));
+  ok(/PASSIVA/.test($('.footer .leitura').textContent), 'a passiva mostra-se como PASSIVA');
+  ok(!$('.footer .leitura__cab .cost__pip'), 'a passiva não tem custo');
+  console.log(`  "${$('.footer .leitura__nome').textContent}" \u2014 ${$('.footer .leitura__cd').textContent}`);
 
   // FECHAR é deliberado: o botao ✕ volta ao histórico (soltar o dedo nunca fecha)
-  tap($('.kitwrap [data-kitclose]'));
-  ok(!w.eval('peekKit') && !$('.kstrip'), 'o fechar deliberado dispensa o kit');
-  console.log('  "?" nos 3 inimigos \u00b7 kit no painel \u00b7 toca hab. \u2192 detalhe \u00b7 volta ao kit');
+  tap($('.footer [data-kitclose]'));
+  ok(!w.eval('peekKit') && !$('.footer .leitura__kstrip'), 'o fechar deliberado dispensa o kit');
+  console.log('  "?" nos 3 inimigos \u00b7 kit no RODAP\u00c9 \u00b7 troca de chip \u00b7 lateral no hist\u00f3rico \u00b7 fecha');
+}
+
+console.log('== 4b3. GUARDAS \u00a7256: a leitura tem UM endere\u00e7o (o rodap\u00e9); o painel \u00e9 sempre o hist\u00f3rico ==');
+{
+  // bab\u00e1: se qualquer leitura voltar a morar no painel, ou o kit voltar a ser ef\u00eamero, estas quebram.
+  const nomePainel = () => { const e=$('.panel .detail__name'); return e?e.textContent:''; };
+  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;resumoTurno=null;render()');
+
+  // GUARDA A \u2014 a leitura tocada (habilidade/efeito/ficha) aparece no RODAP\u00c9, nunca no painel
+  w.eval("detalhe={nome:'LEITURA_TESTE',texto:'descri\u00e7\u00e3o de teste completa',chave:'detail'}; render()");
+  ok($('.footer .leitura__nome').textContent === 'LEITURA_TESTE', 'A: a leitura tocada vive no rodap\u00e9');
+  ok(nomePainel() === 'HIST\u00d3RICO', 'A: a leitura N\u00c3O invade o painel \u2014 o painel segue no hist\u00f3rico');
+  w.eval('detalhe=null; render()');
+
+  // GUARDA B \u2014 o painel \u00e9 SEMPRE o hist\u00f3rico, em todos os estados (ocioso, kit aberto, resumo pendente)
+  ok(nomePainel() === 'HIST\u00d3RICO', 'B: ocioso \u2014 painel \u00e9 hist\u00f3rico');
+  const uidG = $('.portrait[data-foe]').dataset.uid;
+  w.eval(`abrirKit("${uidG}")`);
+  ok(nomePainel() === 'HIST\u00d3RICO', 'B: com o kit aberto \u2014 painel ainda \u00e9 hist\u00f3rico (o kit est\u00e1 no rodap\u00e9)');
+  ok(!!$('.footer .leitura__kstrip'), 'B: e o kit est\u00e1 mesmo no rodap\u00e9');
+
+  // GUARDA C \u2014 anti-ef\u00eamero: com o RESUMO do oponente pendente, o kit aberto N\u00c3O \u00e9 despejado
+  w.eval("resumoTurno=[{turno:1,msg:'o oponente agiu'}]; render()");
+  ok(w.eval('peekKit') === uidG && !!$('.footer .leitura__kstrip'),
+    'C: o kit permanece no rodap\u00e9 mesmo com resumo do oponente pendente (n\u00e3o \u00e9 mais ef\u00eamero)');
+  ok(nomePainel() === 'HIST\u00d3RICO', 'C: e o painel segue no hist\u00f3rico');
+  w.eval('resumoTurno=null; peekKit=null; kitSel=null; render()');
+
+  // GUARDA D \u2014 o gesto \u00a7214 (toque longo) tem NOVO destino: o rodap\u00e9 (o atalho sobrevive)
+  const fpg = $('.portrait[data-foe]'); const uidD = fpg.dataset.uid;
+  fpg.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
+  w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uidD}")`);
+  ok(!!$('.footer .leitura__kstrip') && !$('.panel .kstrip'),
+    'D: \u00a7214 o toque longo abre o kit no RODAP\u00c9 (novo destino), nunca no painel');
+  w.eval('peekKit=null; kitSel=null; detalhe=null; render()');
+  console.log('  A leitura vive no rodap\u00e9 \u00b7 o painel \u00e9 sempre o hist\u00f3rico \u00b7 o kit persiste \u00b7 \u00a7214 sobrevive');
 }
 
 console.log('== 4c. hierarquia visual e legibilidade ==');

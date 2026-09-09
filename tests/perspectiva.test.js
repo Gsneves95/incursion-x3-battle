@@ -58,9 +58,10 @@ console.log('== 11. resumo do turno: aparece ao voltar, some ao 1º toque ==');
 {
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=0");
   w.eval("resumoTurno=[{turno:1,msg:'Sobek ataca Zeus: 12 de dano'}]; render()");
-  ok(!!$('.detail--resumo'), 'o resumo aparece ao voltar para o meu turno');
+  // §256: o resumo do turno desceu para o RODAPÉ (endereço único da leitura), não mais no painel
+  ok(!!$('.footer .leitura__nome') && /RESUMO/.test($('.footer .leitura__nome').textContent), 'o resumo aparece no rodapé ao voltar para o meu turno');
   w.eval("stage.dispatchEvent(new Event('pointerdown')); render();");
-  ok(!$('.detail--resumo'), 'o resumo some após o 1º toque');
+  ok(!($('.footer .leitura__nome') && /RESUMO/.test($('.footer .leitura__nome').textContent)), 'o resumo some após o 1º toque');
   console.log('  resumo mostrado e dispensado no toque');
 }
 
