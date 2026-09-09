@@ -350,6 +350,69 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await dctx.close();
   }
 
+  // == §258: retrato > ficha (§214 restaurada, crescendo o retrato) · aliado=inimigo · vida OPACA
+  // sobre a arte (legibilidade não muda) · faixa de efeitos cabe com os 6 do pior caso ==
+  console.log('== §258 retrato: hierarquia restaurada + simetria + vida opaca sobre a arte + efeitos cabem ==');
+  {
+    const rctx = await browser.newContext({ deviceScaleFactor: 3, viewport: { width: 926, height: 428 } });
+    const rpg = await rctx.newPage();
+    await rpg.goto('file://' + distAbs, { waitUntil: 'load' });
+    await rpg.evaluate(() => {
+      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
+      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
+      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false;
+      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
+    });
+    // GUARDA hierarquia (§214): retrato MAIOR que a ficha nas duas dimensões; e aliado = inimigo (simetria)
+    const dim = await rpg.evaluate(() => {
+      const R = el => { const r = el.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; };
+      return { por: R(document.querySelector('.brow__ally .portrait')), sk: R(document.querySelector('.brow__tiles .skill')), foe: R(document.querySelector('.brow__enemy .portrait')) };
+    });
+    ok(dim.por.w > dim.sk.w && dim.por.h > dim.sk.h, `§214: retrato ${dim.por.w}×${dim.por.h} > ficha ${dim.sk.w}×${dim.sk.h} nas duas dimensões`);
+    ok(dim.por.w === dim.foe.w && dim.por.h === dim.foe.h, `simetria: retrato aliado = inimigo (${dim.por.w}×${dim.por.h} vs ${dim.foe.w}×${dim.foe.h})`);
+
+    // GUARDA vida OPACA: força a arte do retrato a BRANCO (pior caso) e prova que a barra não deixa a arte
+    // vazar — o rótulo lê contra o preenchimento, não contra a arte, então a legibilidade não piora (§258).
+    await rpg.evaluate(() => {
+      document.querySelectorAll('.up--ally .portrait .slot').forEach(e => e.style.background = '#fff');
+      document.querySelectorAll('.up--ally .portrait .slot img').forEach(e => e.style.filter = 'brightness(4)');
+    });
+    await rpg.waitForTimeout(150);
+    const hpEl = await rpg.$('.up--ally .hp');
+    const hbuf = await hpEl.screenshot();
+    const hp = await rpg.evaluate(async (url) => {
+      const img = new Image(); img.src = url; await img.decode();
+      const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+      const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
+      const d = cx.getImageData(0, 0, cv.width, cv.height).data; const W = cv.width, H = cv.height;
+      const L = (r, g, b) => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+      let maxL = 0, cornerMax = 0;   // canto = base esquerda, longe do texto central
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4; const l = L(d[i], d[i + 1], d[i + 2]);
+        if (l > maxL) maxL = l;
+        if (x < W * 0.18 && y > H * 0.5 && l > cornerMax) cornerMax = l; }
+      return { maxL: +maxL.toFixed(3), cornerL: +cornerMax.toFixed(3) };
+    }, 'data:image/png;base64,' + hbuf.toString('base64'));
+    ok(hp.cornerL < 0.5, `vida OPACA: com a arte BRANCA por trás, o canto da barra segue escuro (L ${hp.cornerL} < 0.5) — a arte não vaza`);
+    ok(hp.maxL > 0.85, `o rótulo de vida tem texto claro visível sobre a barra (L ${hp.maxL} > 0.85)`);
+    console.log(`  vida: canto L ${hp.cornerL} (arte branca não vaza) · texto L ${hp.maxL} · contraste do rótulo contra o preenchimento (não a arte)`);
+
+    // GUARDA efeitos: 6 no pior caso (FX_MAX=5 + "+N") cabem DENTRO do retrato
+    const fx = await rpg.evaluate(() => {
+      const u = st.lados[0].units[0]; u.efeitos = [];
+      u.dots = ['Queimadura', 'Veneno', 'Sangria', 'Corrosão', 'Praga', 'Gangrena'].map(n => ({ nome: n, dur: 2, dano: 5 }));
+      render();
+      const por = document.querySelector('.up--ally .portrait').getBoundingClientRect();
+      const eff = document.querySelector('.up--ally .effects').getBoundingClientRect();
+      const chips = document.querySelectorAll('.up--ally .effects .effect, .up--ally .effects .fxmore').length;
+      const temMais = !!document.querySelector('.up--ally .effects .fxmore');
+      return { dentro: eff.left >= por.left - 1 && eff.right <= por.right + 1 && eff.top >= por.top - 1 && eff.bottom <= por.bottom + 1, chips, temMais, FXMAX: (typeof FX_MAX !== 'undefined' ? FX_MAX : 5) };
+    });
+    ok(fx.dentro, 'a faixa de efeitos cabe DENTRO do retrato (não estoura)');
+    ok(fx.chips <= fx.FXMAX && fx.temMais, `6 efeitos: a faixa mostra FX_MAX com o "+N" (${fx.chips} chips <= ${fx.FXMAX}, com +N)`);
+    console.log(`  efeitos: ${fx.chips} chips (cap FX_MAX ${fx.FXMAX} + "+N") dentro do retrato`);
+    await rctx.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

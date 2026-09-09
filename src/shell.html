@@ -199,9 +199,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #baselayer.pnfold .brow__tiles .skill{width:96px;height:96px}
 #baselayer.pnfold .panel__tab{margin-left:4px;border-radius:5px}
 
-/* ---------- retrato (88 de largura; ally=ouro, enemy=vermelho) ---------- */
-.unit__portrait{display:flex;flex-direction:column;align-items:center;gap:2px;width:88px}
-.portrait{position:relative;width:88px;height:64px;border:1px solid #3a3358;border-radius:5px;
+/* ---------- retrato (§258): 94×94, MAIOR que a ficha de 90 nas DUAS dimensões (restaura a hierarquia
+   "retrato > habilidade" do §214). O nome e a barra de vida SOBREPÕEM a arte (base escurecida), como a
+   faixa de efeitos já fazia — assim o retrato inteiro cabe na banda de 98px sem empilhar abaixo. A vida
+   segue OPACA (a arte não vaza por trás dela), então a legibilidade do rótulo não muda (§258). Ally e
+   inimigo usam o MESMO .portrait → mesmo tamanho (simetria). ---------- */
+.unit__portrait{display:flex;flex-direction:column;align-items:center;width:94px}
+.portrait{position:relative;width:94px;height:94px;border:1px solid #3a3358;border-radius:6px;
   overflow:hidden;background:#14112a;box-shadow:0 3px 9px rgba(0,0,0,.55);cursor:pointer}
 .up--ally .portrait{border-color:var(--gold-soft)}
 .up--enemy .portrait{border-color:#8a4a5c}
@@ -223,9 +227,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:rgba(6,5,16,.8);border:1px solid #8a4a5c;color:#ff9db4;
   font-weight:800;font-size:11px;line-height:14px;text-align:center;pointer-events:none}
 .acted .portrait{opacity:.55}
-.portrait__nome{font-family:'Cinzel',serif;font-weight:700;font-size:10.5px;letter-spacing:.02em;
-  color:var(--ink);max-width:88px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
-.up--enemy .portrait__nome{color:#ffb9c6}
+/* §258: o NOME sobrepõe a arte LOGO ACIMA da barra de vida (o topo fica livre para o rótulo de time
+   "VOCÊ/CPU" do §215). Véu escuro para contraste. */
+.portrait__nome{position:absolute;left:0;right:0;bottom:14px;z-index:2;padding:3px 5px 3px;
+  font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.02em;
+  color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.05;
+  text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.85);
+  background:linear-gradient(0deg,rgba(6,5,16,.96) 0%,rgba(6,5,16,.72) 60%,transparent 100%)}
+.up--enemy .portrait__nome{color:#ffc2cd}
 
 .portrait.is-picked{box-shadow:0 0 0 2px #7ff0a5,0 3px 9px rgba(0,0,0,.55)}
 .portrait.is-target{animation:tgt 1s ease-in-out infinite;cursor:crosshair}
@@ -234,7 +243,9 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .portrait.hit{animation:hit .32s ease}
 @keyframes hit{0%,100%{transform:translate(0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
 
-.hp{position:relative;width:88px;height:13px;border:1px solid #0a0912;border-radius:2px;background:#3a1c22;overflow:hidden}
+/* §258: a barra de vida SOBREPÕE a base da arte (era empilhada abaixo). OPACA (bg + fill cobrem a arte),
+   então o rótulo lê contra o preenchimento, não contra a arte — a legibilidade não muda. */
+.hp{position:absolute;left:0;right:0;bottom:0;z-index:3;height:14px;border:0;border-top:1px solid rgba(6,5,16,.9);border-radius:0 0 5px 5px;background:#3a1c22;overflow:hidden}
 .hp__fill{position:absolute;inset:0;background:linear-gradient(180deg,var(--hp-ok-1),var(--hp-ok-2));transition:width .3s ease}
 .hp--warn .hp__fill{background:linear-gradient(180deg,var(--hp-warn-1),var(--hp-warn-2))}
 .hp--empty{background:#2a2440}
@@ -243,9 +254,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-weight:700;font-size:10px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.9)}
 .hp--empty .hp__label{color:#cfc8ea}
 
-.effects{position:absolute;left:0;right:0;bottom:0;height:18px;display:flex;gap:2.5px;
-  align-items:center;padding:0 3px;
-  background:linear-gradient(0deg,rgba(6,5,16,.96) 0%,rgba(6,5,16,.72) 62%,transparent 100%)}
+/* §258: a faixa de efeitos fica ACIMA do nome+vida (bottom:32), no terço inferior da arte */
+.effects{position:absolute;left:0;right:0;bottom:32px;height:18px;display:flex;gap:2.5px;
+  align-items:center;padding:0 3px;z-index:2;
+  background:linear-gradient(0deg,rgba(6,5,16,.92) 0%,rgba(6,5,16,.66) 62%,transparent 100%)}
 .effects:empty{display:none}
 .effect{position:relative;width:14px;height:14px;border:0;border-radius:2px;
   overflow:hidden;cursor:pointer;flex:none;background:#2a2440}

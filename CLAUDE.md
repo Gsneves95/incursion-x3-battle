@@ -323,8 +323,11 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 - **Chaves de arte:** todo encaixe é `<div class="slot" data-slot="CHAVE">`.
   Chaves: `god-<key>`, `skill-<key>-<slot>`, `effect-<tipo>`, `player-<n>-avatar`.
   Trocar por `<img class="slot">` quando a arte existir.
-- **Arte de habilidade é redonda** (`object-position:center`); retrato de deus é
-  enquadrado no alto (`center 18%`) porque as ilustrações são de corpo inteiro.
+- **A FICHA de habilidade é um CÍRCULO** (§257: moldura `border-radius:50%`, **90px**; o medalhão da
+  arte é redondo — sem zoom, scale 1.0/centro, pois 31% das 401 artes já preenchem a borda). O RETRATO
+  (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
+  vida SOBREPOSTOS à arte; a barra de vida é OPACA (a arte não vaza) e a arte é enquadrada no alto
+  (`center 18%`) porque as ilustrações são de corpo inteiro.
 - **Instante e aleatório entram por PARÂMETRO, nunca de dentro.** Funções de estado
   (motor, `perfil.js`, sorteio) recebem tempo (`agora`) e semente (`seed`) como
   argumento; jamais chamam `Date.now()` ou `Math.random()` internamente. É o que as

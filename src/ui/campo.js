@@ -29,20 +29,22 @@ function retrato(u,inimigo){
   const hpcls=['hp']; if(!u.vivo)hpcls.push('hp--empty'); else if(u.hp<=40)hpcls.push('hp--warn');
   const upcls=['unit__portrait', inimigo?'up--enemy':'up--ally'];
   if(u.vivo&&!inimigo&&!podeAgir(u))upcls.push('acted');   // "ja agiu" esmaece o retrato (nao a arte dos tiles)
+  // §258: nome e barra de vida SOBREPÕEM a arte (dentro de .portrait), não mais empilhados abaixo —
+  // assim o retrato cresceu para 94×94 (maior que a ficha) cabendo na banda de 98px.
   return `<div class="${upcls.join(' ')}">
     <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''} ${inimigo?'data-foe="1"':''}>
       ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 30)}
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
       ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>`:''}
       ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
+      <div class="portrait__nome" title="${H(u.nome)}">${H(u.nome)}</div>
       <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
+      <div class="${hpcls.join(' ')}">
+        ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
+        ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield/u.maxHp*100)}%"></div>`:''}
+        <div class="hp__label">${u.hp}${u.shield?' ◧'+u.shield:''}</div>
+      </div>
       <div class="portrait__x"></div>
-    </div>
-    <div class="portrait__nome" title="${H(u.nome)}">${H(u.nome)}</div>
-    <div class="${hpcls.join(' ')}">
-      ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
-      ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield/u.maxHp*100)}%"></div>`:''}
-      <div class="hp__label">${u.hp}${u.shield?' ◧'+u.shield:''}</div>
     </div></div>`;
 }
 

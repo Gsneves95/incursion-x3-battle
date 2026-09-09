@@ -335,15 +335,18 @@ console.log('== 4c. hierarquia visual e legibilidade ==');
     `as 4 habilidades da unidade ${i+1} deveriam ter monogramas distintos: ${g.join('/')}`));
   ok(!$('.skill__name'), 'a parede de texto no ladrilho deveria ter saído');
   ok(!$('.skill__tag'), 'o rótulo redundante de slot deveria ter saído');
-  // §257: a FICHA cresceu para o CÍRCULO de 90 (MEDIDO como o maior que cabe com o painel aberto sem
-  // apertar o inimigo). A 90 ela fica maior que o retrato de 88px de largura — a hierarquia "retrato >
-  // habilidade" do §214 (Naruto-Arena) foi SUBSTITUÍDA de propósito por esta decisão do dono. Guarda o
-  // que segue de pé: o retrato NÃO encolheu (88×64 intacto) e a ficha CRESCEU ao tamanho circular do §257.
-  const pW = parseFloat(w.getComputedStyle($('.brow__ally .portrait')).width);
-  const sW = parseFloat(w.getComputedStyle($('.brow__tiles .skill')).width);
-  ok(pW >= 88, `o retrato deveria seguir 88px (não encolheu): veio ${pW}`);
-  ok(sW >= 88, `a ficha deveria ter crescido ao círculo do §257 (${sW}px >= 88)`);
-  console.log(`  monogramas ${nomes.slice(0,4).join('/')} \u00b7 retrato ${pW}px \u00b7 ficha circular ${sW}px`);
+  // §258: a hierarquia "retrato > habilidade" do §214 (Naruto-Arena) RESTAURADA — crescendo o RETRATO
+  // (94×94), não encolhendo a ficha (que fica em 90, §257). O retrato é MAIOR que a ficha nas DUAS
+  // dimensões. E a SIMETRIA: retrato aliado e inimigo têm o mesmo tamanho (mesmo .portrait).
+  const pcs = w.getComputedStyle($('.brow__ally .portrait'));
+  const scs = w.getComputedStyle($('.brow__tiles .skill'));
+  const pW = parseFloat(pcs.width), pH = parseFloat(pcs.height);
+  const sW = parseFloat(scs.width), sH = parseFloat(scs.height);
+  ok(pW > sW && pH > sH, `§214 restaurada: o retrato (${pW}×${pH}) é MAIOR que a ficha (${sW}×${sH}) nas duas dimensões`);
+  const ecs = w.getComputedStyle($('.brow__enemy .portrait'));
+  ok(parseFloat(ecs.width) === pW && parseFloat(ecs.height) === pH,
+    `retrato aliado e inimigo do mesmo tamanho (aliado ${pW}×${pH} vs inimigo ${parseFloat(ecs.width)}×${parseFloat(ecs.height)})`);
+  console.log(`  \u00a7214 hierarquia: retrato ${pW}\u00d7${pH} > ficha ${sW}\u00d7${sH} \u00b7 aliado = inimigo`);
 }
 
 console.log('== 4b2. FICHA de habilidade é CÍRCULO (§257): o medalhão é redondo, então a moldura também ==');
