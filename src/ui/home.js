@@ -1472,18 +1472,33 @@ function campanhaResultadoOverlay(){
     <p class="result__msg">${venceu ? (ens ? H('Aprendido: ' + ens) : 'A história avança.') : 'Seus deuses tombaram — o ato fica; repita quando quiser.'}</p>
     ${placar}
     <div class="result__acoes">
-      <button class="b b--quiet b--md" id="cfvoltar">Voltar à campanha</button>
       ${venceu
-        ? (prox ? '<button class="b b--primary b--md" id="cfprox">Próximo ato</button>' : '')
-        : '<button class="b b--primary b--md" id="cftentar">Tentar de novo</button>'}
+        ? `<button class="b b--quiet b--md" id="cfvoltar">Voltar à campanha</button>${prox ? '<button class="b b--primary b--md" id="cfprox">Próximo ato</button>' : ''}`
+        : `<button class="b b--quiet b--md" id="cfvoltarato">Voltar ao ato</button><button class="b b--primary b--md" id="cftentar">Tentar de novo</button>`}
     </div>
   </div></div></div>`;
 }
 function ligarCampanhaFim(){
   const q = s => stage.querySelector(s);
   const v = q('#cfvoltar'); if (v) v.onclick = () => { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); };
+  // §255: "Tentar de novo" remonta a MESMA semente e o MESMO time (campanha.aliados já traz a troca do
+  // jogador). Semente estável de propósito — o ato é um quebra-cabeça que se aprende, não se rola de novo.
   const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarProvacao(campanha); ir('batalha', {}, { substituir: true }); render(); };
+  // §255: "Voltar ao ato" — volta à tela do ato PERDIDO como ato ATUAL, SEM resetar campSwap/campVistaAto,
+  // então o time que o jogador montou sobrevive e segue trocável (a promessa do §252 vale na derrota).
+  const vt = q('#cfvoltarato'); if (vt) vt.onclick = () => voltarAoAto();
   const p = q('#cfprox'); if (p) { const prox = proximoAtoDepois(); p.onclick = () => { sairCampanha(); if (prox) { campCapIdx = prox.cap; campAtoIdx = prox.ato; campSwap = {}; campVistaAto = null; } ir('campanha', {}, { substituir: true }); render(); }; }
+}
+// §255: volta da sobreposição de fim de ato para a TELA DO ATO, com o ato como ATUAL e a troca do
+// jogador preservada (não mexe em campSwap/campVistaAto). Usado pelo botão "Voltar ao ato" E pelo
+// VOLTAR do Android (§240) — a sobreposição fecha para o ato, nunca fecha o app no meio da campanha.
+function voltarAoAto(){
+  if (!campanha) { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); return; }
+  const ci = campanha._capIdx, id = campanha.id;
+  const ai = (CAMPS()[ci] ? CAMPS()[ci].atos : []).findIndex(a => a.id === id);
+  sairCampanha();
+  if (ci != null && ai >= 0) { campCapIdx = ci; campAtoIdx = ai; }   // NÃO mexe em campSwap nem campVistaAto → a troca persiste
+  ir('campanha', {}, { substituir: true }); render();
 }
 function sairCampanha(){ campanha = null; campanhaFim = null; }
 

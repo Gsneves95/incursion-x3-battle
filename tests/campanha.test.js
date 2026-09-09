@@ -174,6 +174,39 @@ console.log('== 9. os aliados null (Prólogo VI): 3 slots vazios, CTA travada at
   ok($('#campcta').disabled, 'a CTA fica travada sem os 3');
 }
 
+console.log('== GUARDAS §255 (o caminho da derrota): volta ao ato · troca sobrevive · Tentar de novo remonta a MESMA semente ==');
+{
+  const { w, $ } = sessao();
+  const pro = ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii'];
+  const concl = pro.concat(['cap1-i', 'cap1-ii', 'cap1-iii', 'cap1-iv', 'cap1-v']);
+  // abre o Cap 1 VI (batalha, emprestados Ares/Hades), troca o slot 1 por um deus do jogador, entra e PERDE
+  w.eval(`perfil.campanha={capitulo:0,fase:0,concluidas:${JSON.stringify(concl)}}; campCapIdx=1; campAtoIdx=5; campSwap={}; campVistaAto=null; campPicker=null; ir('campanha',{},{substituir:true}); render();`);
+  w.eval("campSwap={1:'nezha'}; render();");
+  const seedAto = w.eval('CAMPS()[1].atos[5].montar.seed');
+  w.eval("document.querySelector('#campcta').click(); vsCPU=false; pararRelogio();");
+  ok(w.eval("campanha.aliados.join(',')") === 'zeus,nezha,hades', 'o time montado leva a troca do jogador (zeus,nezha,hades)');
+  w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");   // DERROTA (inimigo vence)
+  // GUARDA A (§210): existe SEMPRE caminho de volta à tela do ato
+  ok(!!$('#cfvoltarato'), 'a derrota oferece "Voltar ao ato" (caminho de volta, §210)');   // BABÁ
+  ok(!!$('#cftentar'), 'a derrota oferece "Tentar de novo"');
+  $('#cfvoltarato').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval("rotaAtual()") === 'campanha', '"Voltar ao ato" leva à tela do ato');
+  ok(w.eval('CAMPS()[campCapIdx].atos[campAtoIdx].id') === 'cap1-vi', 'o ato ATUAL é o ato perdido (não a home nem o começo do capítulo)');
+  // GUARDA B: o time montado sobrevive à volta
+  ok(w.eval("campSwap[1]") === 'nezha', 'a troca do jogador sobrevive à volta (campSwap intacto)');   // BABÁ
+  ok(w.eval("timeDoAto(CAMPS()[1].atos[5]).join(',')") === 'zeus,nezha,hades', 'a tela do ato mostra o time montado, não o emprestado padrão');   // BABÁ
+  ok(/Nezha/i.test($('.camp__brief').textContent), 'o retrato do slot emprestado mostra o deus trocado');
+  // GUARDA C: "Tentar de novo" remonta com a MESMA semente
+  w.eval("document.querySelector('#campcta').click(); vsCPU=false; pararRelogio();");
+  w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");
+  w.eval("document.querySelector('#cftentar').click(); vsCPU=false; pararRelogio();");
+  ok(w.eval("rotaAtual()") === 'batalha', '"Tentar de novo" reentra na batalha');
+  ok(w.eval('st.seed') === seedAto, `"Tentar de novo" remonta com a MESMA semente (${seedAto}) — se alguém aleatorizar, quebra`);   // BABÁ
+  ok(w.eval("campanha.aliados.join(',')") === 'zeus,nezha,hades', 'e com o MESMO time (a troca segue valendo)');
+  // a VITÓRIA não mudou: derrota não concluiu nem pagou (o ato segue não-feito)
+  ok(w.eval('!perfil.campanha.concluidas.includes("cap1-vi")'), 'a derrota não conclui o ato (vitória intacta)');
+}
+
 console.log('== GUARDA 6 (§254): arte de bestiário — arquivo presente vira <img>, ausente fica no monograma (nunca 404) ==');
 {
   const { w } = sessao();

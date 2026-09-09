@@ -200,6 +200,10 @@ function voltarNativo(){
     if(typeof detalhe!=='undefined')detalhe=null;
     render(); return;
   }
+  // §255: a sobreposição de FIM DE ATO da campanha (vitória/derrota) fecha para a TELA DO ATO — não abre
+  // o confirmar-sair da batalha por cima, e nunca fecha o app no meio da campanha. Na derrota, preserva a
+  // troca do jogador (voltarAoAto). É a "sobreposição fecha primeiro" também para esta camada.
+  if(typeof campanha!=='undefined'&&campanha&&typeof campanhaFim!=='undefined'&&campanhaFim&&typeof voltarAoAto==='function'){ voltarAoAto(); return; }
   const r = (typeof rotaAtual==='function') ? rotaAtual() : null;
   // b) NA BATALHA: abre o confirmar-sair (o MESMO caminho do ⋯ → Sair). Não abandona direto, não fecha o app.
   if(r==='batalha'){ if(typeof ov!=='undefined')ov='sair'; render(); return; }
