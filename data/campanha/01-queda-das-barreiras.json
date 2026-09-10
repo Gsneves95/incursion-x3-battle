@@ -35,7 +35,7 @@
    "montar": {
     "seed": 1,
     "comeca": 0,
-    "_seedNota": "seed 1 · winRate greedy 100% (TRIVIAL, ato de abertura)"
+    "_seedNota": "seed 1 · winRate guloso 99.6% (trivial, ato de abertura) · guloso×guloso, jogador abre (comeca 0), N=2000 sementes 1..N · repro: node tools/medir_campanha.js 1 2000 · §268 corrigiu o \"100%\" antigo · PISO: taxa de IA GULOSA dos dois lados — o humano joga melhor, então a dificuldade real é MENOR que a taxa (não leia a taxa como 'quase impossível')."
    },
    "recompensa": "encontro"
   },
@@ -112,7 +112,7 @@
    "montar": {
     "seed": 1,
     "comeca": 0,
-    "_seedNota": "seed 1 · winRate greedy 43% (justa) · emprestados default ogum+ganesha (brigid trivializaria)"
+    "_seedNota": "seed 1 · winRate guloso 59.2% (justa) · emprestados default ogum+ganesha (brigid trivializaria) · guloso×guloso, jogador abre (comeca 0), N=2000 sementes 1..N · repro: node tools/medir_campanha.js 1 2000 · §268 corrigiu 43% (não reproduzia) · PISO: taxa de IA GULOSA dos dois lados — o humano joga melhor, então a dificuldade real é MENOR que a taxa (não leia a taxa como 'quase impossível')."
    },
    "recompensa": "encontro"
   },
@@ -145,7 +145,7 @@
    "montar": {
     "seed": 1,
     "comeca": 0,
-    "_seedNota": "seed 1 · winRate greedy 90% (fácil)"
+    "_seedNota": "seed 1 · winRate guloso 88.2% (fácil) · guloso×guloso, jogador abre (comeca 0), N=2000 sementes 1..N · repro: node tools/medir_campanha.js 1 2000 · §268 corrigiu o \"90%\" antigo · PISO: taxa de IA GULOSA dos dois lados — o humano joga melhor, então a dificuldade real é MENOR que a taxa (não leia a taxa como 'quase impossível')."
    },
    "recompensa": "encontro"
   },
@@ -210,7 +210,7 @@
    "montar": {
     "seed": 2,
     "comeca": 0,
-    "_seedNota": "seed 2 · winRate greedy 29,5% (difícil — clímax do capítulo)"
+    "_seedNota": "seed 2 · winRate guloso 36.1% (difícil — clímax do capítulo) · guloso×guloso, jogador abre (comeca 0), N=2000 sementes 1..N · repro: node tools/medir_campanha.js 1 2000 · §268 corrigiu 29,5% (não reproduzia; foi este número, planejado como base da FASE 1, que motivou a remedição) · PISO: taxa de IA GULOSA dos dois lados — o humano joga melhor, então a dificuldade real é MENOR que a taxa (não leia a taxa como 'quase impossível')."
    },
    "recompensa": "encontro"
   }

@@ -58,4 +58,14 @@ function errosEscolha(pre, a, ctx){
   return erros;
 }
 
-module.exports = { VERBOS_ESCOLHA, errosEscolha };
+// §268 (correção) — a checagem do ato de `historia` também mora aqui (antes era inline na build), para
+// ficar TESTÁVEL sem um ato de história real: hoje o jogo tem 0 atos `historia` (os 3 viraram `escolha`),
+// mas o tipo é DELIBERADAMENTE mantido — volta no Cap 2 com uma cena de narração pura. Regra: história
+// não paga recompensa (senão o jogador pula o texto).
+function errosHistoria(pre, a){
+  const erros = [];
+  if (a.recompensa) erros.push(`${pre}: ato "historia" NÃO pode ter recompensa`);
+  return erros;
+}
+
+module.exports = { VERBOS_ESCOLHA, errosEscolha, errosHistoria };

@@ -1,5 +1,5 @@
 {
- "_fonte": "Prólogo da campanha narrativa (O Trono do Uno, Livro I). Fonte de conteúdo: docs/campanha-prologo-cap1.md (commit 91d9e7f). Os atos II–VII são os SEIS encontros de data/campanha.json de hoje, COPIADOS VERBATIM (aliados, inimigos, montar.seed, comeca, recompensa, ensina) — só entram nome, texto e arte. O ato I virou `escolha` (§268): identidade, sem resposta certa, consequência `emprestado` no ato VI (o plano escolhido decide o deus emprestado do primeiro slot). O ato VI mantém aliados:null (o time é do jogador; a escolha só semeia o default do 1º slot, trocável). Formações do Prólogo: 3×1, 3×2 e 3×3 (medidas; o 3×3 obrigatório vale do Cap 1).",
+ "_fonte": "Prólogo da campanha narrativa (O Trono do Uno, Livro I). Fonte de conteúdo: docs/campanha-prologo-cap1.md (commit 91d9e7f). Os atos II–VII são os SEIS encontros de data/campanha.json de hoje, COPIADOS VERBATIM (aliados, inimigos, montar.seed, comeca, recompensa, ensina) — só entram nome, texto e arte. O ato I virou `escolha` (§268): identidade, sem resposta certa, consequência `emprestado` no ato VI (o plano escolhido decide o deus emprestado do primeiro slot). O ato VI mantém aliados:null (o time é do jogador; a escolha só semeia o default do 1º slot, trocável). CRITÉRIO do deus emprestado (§268 correção): cada plano empresta um deus que NÃO está entre os 9 fixos do novoPerfil (zeus/ogum/tyr/sobek/brigid/ganesha/cuca/fujin/nezha) — emprestar quem o jogador já tem garantido não é anzol. O pacote de 10 invocações inicial impede garantia ABSOLUTA de não-posse, então 'fora dos 9 fixos' é a linha acionável. Mapa: Olimpo→poseidon, Asgard→thor, Duat→osiris, Xibalba→kukulkan (zeus e sobek saíram por serem fixos). ECO NARRATIVO não planejado (vale guardar): quem escolhe o Duat recebe Osíris, o Rei dos Mortos, e quatro atos depois vê Zeus devastar o Duat no ato IV do Cap 1 ('nenhum deus egípcio ousou mais emergir') — a escolha ganha consequência narrativa sem código. Formações do Prólogo: 3×1, 3×2 e 3×3 (medidas; o 3×3 obrigatório vale do Cap 1).",
  "numero": 0,
  "id": "prologo",
  "nome": "Prólogo — Antes da Unidade",
@@ -38,15 +38,15 @@
    ],
    "alvo": "pro-vi",
    "efeito": {
-    "olimpo": { "emprestado": "zeus" },
+    "olimpo": { "emprestado": "poseidon" },
     "asgard": { "emprestado": "thor" },
-    "duat": { "emprestado": "sobek" },
+    "duat": { "emprestado": "osiris" },
     "xibalba": { "emprestado": "kukulkan" }
    },
    "revelacao": {
-    "olimpo": "Do Olimpo desceu Zeus, o raio em pessoa, para lutar ao seu lado.",
+    "olimpo": "Do Olimpo desceu Poseidon, senhor dos mares, para lutar ao seu lado.",
     "asgard": "De Asgard veio Thor, o martelo erguido, atendendo à sua fé.",
-    "duat": "Do Duat emergiu Sobek, as águas do Nilo em sua guarda.",
+    "duat": "Do Duat emergiu Osíris, senhor dos mortos, em sua guarda.",
     "xibalba": "De Xibalba subiu Kukulkán, a serpente emplumada, seguindo o seu chamado."
    }
   },

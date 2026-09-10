@@ -311,7 +311,13 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     build recusa (`tools/valida_campanha.js`, chamada pela build E pelo teste). A
     consequência NUNCA edita o dado da batalha (aliados/inimigos/seed) — ela é aplicada
     em runtime a partir de `perfil.campanha.escolhas`. Se a escolha ramificasse o
-    TEXTO, 130 atos virariam 300 — por isso a história segue linear.
+    TEXTO, 130 atos virariam 300 — por isso a história segue linear. **Critério do
+    `emprestado` num ato de IDENTIDADE (sem `certa`):** o deus está FORA dos 9 fixos do
+    `novoPerfil` (emprestar quem o jogador já tem garantido não é anzol); atos COM `certa`
+    são exceção quando o empréstimo é recompensa narrativa (Cap 1 V empresta Nezha, inicial,
+    de propósito). **`orbes` e `historia` são consumidor-sem-produtor DELIBERADO** (§268):
+    `orbes` é a válvula medida da FASE 1, `historia` volta no Cap 2 — ficam guardados por
+    teste sintético; NÃO os remova "arrumando a casa" (o motivo está no DECISOES §268).
 21. **Capítulo = ARQUIVO, nunca código.** Conteúdo vive em `data/campanha/`
     (`indice.json` + um `NN-*.json` por capítulo) → `CAMPANHAS` na build. Capítulo
     novo é uma linha no índice + um arquivo; o motor não muda. Fonte de conteúdo:

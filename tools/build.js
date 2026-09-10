@@ -250,7 +250,7 @@ const campanhasObj = (() => {
   // de consequência é FECHADO em três verbos. A validação mora em tools/valida_campanha.js (a build e o
   // teste chamam a MESMA função). Coletamos primeiro TODOS os atos (id → ato) para resolver `alvo`
   // mesmo entre capítulos.
-  const { errosEscolha } = require('./valida_campanha');
+  const { errosEscolha, errosHistoria } = require('./valida_campanha');
   const atosPorId = {};
   for (const linha of (indice.capitulos || [])) {
     const cap0 = JSON.parse(ler('data/campanha/' + linha.arquivo));
@@ -274,7 +274,7 @@ const campanhasObj = (() => {
           if ((a.inimigos || []).length !== 3) erros.push(`${linha.id}/${a.id}: batalha do Cap ${cap.numero} precisa de 3 inimigos (tem ${(a.inimigos || []).length})`);
         }
       } else if (a.tipo === 'historia') {
-        if (a.recompensa) erros.push(`${linha.id}/${a.id}: ato "historia" NÃO pode ter recompensa`);
+        for (const e of errosHistoria(`${linha.id}/${a.id}`, a)) erros.push(e);
       } else if (a.tipo === 'escolha') {
         // §268: escolha NÃO abre luta nem paga; é leitura fora do combate. A validação (pergunta+opções,
         // `certa` opcional, `alvo` existe e é batalha, vocabulário de consequência FECHADO) mora no módulo.

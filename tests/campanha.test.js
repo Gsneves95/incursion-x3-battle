@@ -262,6 +262,20 @@ console.log('== §268 A: a build RECUSA consequência fora do vocabulário fecha
   const ctx2 = { catalogoKeys: ctx.catalogoKeys, atosPorId: { alvo1: { id: 'alvo1', tipo: 'escolha' } } };
   const e4 = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: {}, errada: {} } }), ctx2);
   ok(e4.some(m => /não é uma batalha/.test(m)), `o alvo tem de ser batalha (${e4.join('|') || 'nenhum erro!'})`);   // BABÁ
+  // 5) o verbo `orbes` (no vocabulário, mas sem PRODUTOR real hoje — a válvula medida da FASE 1) é validável
+  //    SEM ato real: número passa, não-número recusa. Guarda sintética para que 'sem uso' não vire 'sem guarda'.
+  const eOrbOk = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: { orbes: -1 }, errada: {} } }), ctx);
+  ok(!eOrbOk.some(m => /orbes/.test(m)), `orbes com número é aceito (${eOrbOk.join('|')})`);   // BABÁ
+  const eOrbBad = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: { orbes: 'muito' }, errada: {} } }), ctx);
+  ok(eOrbBad.some(m => /orbes precisa ser número/.test(m)), `orbes não-número é recusado (${eOrbBad.join('|') || 'nenhum erro!'})`);   // BABÁ
+}
+
+console.log('== §268 A-bis: o tipo `historia` (0 instância hoje, volta no Cap 2) é validável SEM ato real ==');
+{
+  const { errosHistoria } = require('../tools/valida_campanha');
+  ok(errosHistoria('h', { tipo: 'historia' }).length === 0, 'história sem recompensa passa');   // BABÁ
+  const eh = errosHistoria('h', { tipo: 'historia', recompensa: 'encontro' });
+  ok(eh.some(m => /NÃO pode ter recompensa/.test(m)), `história com recompensa é recusada (${eh.join('|') || 'nenhum erro!'})`);   // BABÁ
 }
 
 console.log('== §268 B: escolha sem `certa` não tem efeito.errada; `errada` nunca muda o balanço (não bloqueia) ==');
@@ -274,6 +288,15 @@ console.log('== §268 B: escolha sem `certa` não tem efeito.errada; `errada` nu
     // FASE 1: errar CUSTA, nunca BLOQUEIA — a consequência `errada` não altera o balanço medido
     // (nada de `orbes` no ramo errado; hoje é {}). Se alguém puser orbes na errada, isto quebra.
     if (a.certa != null) ok(!((a.efeito && a.efeito.errada) || {}).orbes, `${a.id}: a leitura errada não tira orbes (não bloqueia o ato-alvo)`);   // BABÁ
+    // §268 correção: no ato de IDENTIDADE (sem `certa` — o mapa plano→deus), todo deus `emprestado` está
+    // FORA dos 9 fixos do novoPerfil — emprestar quem o jogador já tem garantido não é anzol (o pacote de 10
+    // impede garantia absoluta; 'fora dos 9' é a linha acionável). Os atos COM `certa` são exceção deliberada:
+    // ali o empréstimo é recompensa NARRATIVA da fonte (Cap 1 V empresta Nezha — o protagonista dos 22
+    // capítulos aliando-se a você — mesmo Nezha sendo inicial; a intenção é a história, não expandir acervo).
+    if (a.certa == null) for (const res of Object.keys(a.efeito || {})) {
+      const g = (a.efeito[res] || {}).emprestado;
+      if (g) ok(!w.eval(`INICIAIS.includes(${JSON.stringify(g)})`), `${a.id}/${res}: emprestado de identidade "${g}" não pode ser um dos 9 fixos do novoPerfil`);   // BABÁ
+    }
   }
 }
 
@@ -282,11 +305,13 @@ console.log('== §268 C: a CONSEQUÊNCIA cai no ato-alvo conforme a escolha grav
   const { w, $, $$ } = sessao();
   const proAll = ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii'];
   const cap1ate5 = proAll.concat(['cap1-i', 'cap1-ii', 'cap1-iii', 'cap1-iv', 'cap1-v']);
-  // Prólogo I (olimpo) → empréstimo Zeus semeia o 1º slot do Prólogo VI; a revelação aparece lá
+  // Prólogo I (olimpo) → empréstimo Poseidon semeia o 1º slot do Prólogo VI; a revelação aparece lá.
+  // §268 correção: o deus emprestado NÃO pode ser um dos 9 fixos do novoPerfil (zeus/sobek eram; saíram).
   abrir(w, 0, 5, ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v'], { 'pro-i': 'olimpo' });
-  ok(w.eval('slotsDoAto(CAMPS()[0].atos[5])[0].deus') === 'zeus', 'Prólogo I=olimpo ⇒ empréstimo Zeus no 1º slot do Prólogo VI');   // BABÁ
+  ok(w.eval('slotsDoAto(CAMPS()[0].atos[5])[0].deus') === 'poseidon', 'Prólogo I=olimpo ⇒ empréstimo Poseidon no 1º slot do Prólogo VI');   // BABÁ
+  ok(!w.eval(`INICIAIS.includes(slotsDoAto(CAMPS()[0].atos[5])[0].deus)`), 'o deus emprestado não está entre os 9 fixos do novoPerfil (não emprestar quem já se tem)');   // BABÁ
   ok($$('.cslot--vazio').length === 2, 'os outros 2 slots do Prólogo VI seguem do jogador (empréstimo só semeia 1)');
-  ok(!!$('.camp__revel') && /Zeus/.test($('.camp__revel').textContent), 'a revelação do empréstimo aparece no ato-alvo');   // BABÁ
+  ok(!!$('.camp__revel') && /Poseidon/.test($('.camp__revel').textContent), 'a revelação do empréstimo aparece no ato-alvo');   // BABÁ
   // Conselho CERTA (ah puch) → kit de Hel revelado no Cap 1 VI + revelação certa
   abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'ahpuch' });
   ok(!!$('.camp__kitchip'), 'Conselho certo (Ah Puch) ⇒ chip do kit revelado no Cap 1 VI');   // BABÁ
