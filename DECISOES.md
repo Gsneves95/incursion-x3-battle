@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §264 — O RANQUEADO ANUNCIA O RESULTADO no fim da partida. Motivo: o `ranqueadoResultado` era produtor sem consumidor visível — o laço de recompensa do modo carro-chefe sem o instante de pagamento (o inverso do §95).
+
+**CORREÇÃO DE FATO (§262 estava errado):** o §262 disse "nenhum elemento renderiza (grep vazio em `src/ui/`)". O grep foi ESCOPADO ERRADO — só varreu `src/ui/`. O consumidor EXISTE: `montarBannerRanque` em `src/view.js` (banner de fim de ranque), acionado por `_bannerRanqueTalvez()` (`turno.js`) nos TRÊS caminhos de fim de partida online: minha jogada encerra (`confirmarOnline`), o oponente/relógio encerra (`receberPushOnline`), e `encerrarOnline`. Então o banner já existia e já estava ligado. O que faltava era acabamento — e é o que este § fez.
+
+**O QUE O `ranqueadoResultado` TRAZ (medido no servidor, `salas.js` + `contas.aplicarResultadoRanqueado`):** `{ venceu:bool, motivo:string|null, id, pontosAntes:int, pontos:int, faixaAntes:{min,nome}, faixa:{min,nome}, subiu:bool, desceu:bool }`. Tem tudo para o anúncio: **delta** = `pontos-pontosAntes` (com sinal), **total** = `pontos`, **faixa atual** = `faixa.nome` (nome real, das 8 de `data/ranqueado.json`), **mudança de faixa** = `subiu`/`desceu` + `faixaAntes.nome`→`faixa.nome`. O servidor computa; o cliente NUNCA classifica ranque (§241).
+
+**O QUE FOI CONSERTADO:** (1) **Cinzel** — o banner usava fonte de sistema (`inherit`), destoava do jogo (Cinzel em INCURSION/CAMPANHA atrás dele); título e nome de faixa passam a Cinzel, a identidade do jogo. (2) **Voltar do Android** — `voltarNativo` fechava `ov`/menu/kit/campanhaFim mas NÃO o banner; com o banner aberto, o back abria o confirmar-sair da batalha por baixo (viola §210/§240: a camada mais alta fecha primeiro). Agora `voltarNativo` fecha o banner ANTES de tudo, pelo mesmo caminho do botão Continuar (some → sai do modo online → home). (3) Prioridade de leitura mantida: delta com sinal em destaque, depois total+faixa, e a MUDANÇA de faixa com tratamento próprio (título "SUBIU/CAIU DE FAIXA", linha de→para, moldura dourada na subida / vermelha na queda / neutra no resto).
+
+**MEDIDO (fontes reais, rede bloqueada, design 780):** os quatro estados (vitória, derrota, subiu, caiu para "Suplicante" — a faixa mais longa, 10 chars) — NENHUM corta. Capturado também no DIST com o servidor local de pé, disparando pelo consumidor REAL (`_bannerRanqueTalvez`): vitória, derrota e mudança de faixa aparecem corretas.
+
+**NÃO INVENTADO:** o banner usa só o que o dado traz. Não há campo que falte para o anúncio ficar completo.
+
+**GUARDA (babá, `pvp_tela.test.js` §264):** partida ranqueada terminada SEMPRE anuncia (banner aparece); o delta aparece COM SINAL (+18); a faixa aparece com NOME REAL (Herói), nunca "—"; a mudança mostra de→para; o voltar do Android fecha o banner primeiro; partida AMISTOSA (sem `ranqueadoResultado`) NÃO anuncia nada. Suíte inteira verde.
+
 ## §263 — O CARIMBO DA PROVAÇÃO SÓ VÊ COMBATE. Motivo: no §262 o `curto` (rótulo, não combate) invalidou o carimbo do Bragi e forçou re-carimbo; com 20 capítulos e mais rótulos por vir, toda adição cosmética forçaria re-carimbo, e cada re-carimbo é uma chance de alterar em silêncio um balanço já medido.
 
 **O QUE O HASH COBRIA (antes):** `catalogoHash(prov)` fazia djb2 sobre, para cada combatente (aliados ∪ inimigos, ordenados) da Provação, o **JSON INTEIRO** da entrada do catálogo — `k + ':' + JSON.stringify(gods[k])`. Inteiro = todo campo, inclusive os de tela (`nome`, e desde o §262 `curto`). Por isso o `curto` mudou o hash.

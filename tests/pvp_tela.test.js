@@ -56,5 +56,23 @@ w.eval("pvpEstado='idle'; render();");
 ok(parseFloat(w.getComputedStyle($('.pvpt')).minHeight) >= 76, 'o tile de deus tem toque ≥76px (' + w.getComputedStyle($('.pvpt')).minHeight + ')');
 ok(parseFloat(w.getComputedStyle($('.pvps')).minHeight) >= 76, 'o slot de time tem toque ≥76px (' + w.getComputedStyle($('.pvps')).minHeight + ')');
 
+// ---- 5. §264: o fim de partida RANQUEADA anuncia o resultado; amistosa não; o voltar do Android fecha o banner ----
+console.log('\n== 5. §264 banner de ranque: ranqueado anuncia (delta com sinal, faixa real), amistoso não, back fecha ==');
+const resRank = { venceu: true, motivo: 'vitoria', id: 'me', pontosAntes: 1188, pontos: 1206, faixaAntes: { min: 1000, nome: 'Oráculo' }, faixa: { min: 1200, nome: 'Herói' }, subiu: true, desceu: false };
+// (a) ranqueado terminado SEMPRE anuncia, com delta COM SINAL e faixa por NOME REAL
+w.eval("(function(){var e=document.getElementById('banner-ranque');if(e)e.remove();})(); MP={ fim:{resultado:'vitoria',lado:0}, ranqueadoResultado:" + JSON.stringify(resRank) + ", _banner:false }; _bannerRanqueTalvez();");
+const banner = $('#banner-ranque');
+ok(!!banner, 'partida ranqueada terminada SEMPRE anuncia o resultado (o banner aparece)');
+ok(banner && /\+18/.test(txt(banner)), 'o DELTA aparece com SINAL (+18)');
+ok(banner && /Herói/.test(txt(banner)) && !/—/.test(txt(banner)), 'a FAIXA aparece com NOME REAL (Herói), nunca "—"');
+ok(banner && /Oráculo/.test(txt(banner)), 'a mudança de faixa mostra de→para (Oráculo → Herói)');
+// (b) o voltar do Android (voltarNativo) fecha o banner ANTES de qualquer outra coisa (§210/§240)
+w.eval("voltarNativo();");
+ok(!$('#banner-ranque'), 'o voltar do Android fecha o banner PRIMEIRO (§210/§240)');
+// (c) partida AMISTOSA (sem ranqueadoResultado) NÃO anuncia nada — o anúncio é do RANQUEADO
+w.eval("(function(){var e=document.getElementById('banner-ranque');if(e)e.remove();})(); MP={ fim:{resultado:'vitoria',lado:0}, ranqueadoResultado:null, _banner:false }; _bannerRanqueTalvez();");
+ok(!$('#banner-ranque'), 'partida AMISTOSA (sem resultado ranqueado) NÃO anuncia nada');
+w.eval("MP=null;");
+
 console.log(`\n== LOBBY DO PvP: ${passes} ok, ${falhas} falhas ==`);
 if (falhas) process.exit(1);

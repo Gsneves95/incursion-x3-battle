@@ -190,6 +190,11 @@ function imersivo(){
   setTimeout(fit, 60);
 }
 function voltarNativo(){
+  // §264 (§210/§240): o BANNER de ranque é a camada mais alta — o voltar do Android fecha ele ANTES de
+  // qualquer coisa (senão abriria o confirmar-sair da batalha por baixo). Fecha pelo MESMO caminho do
+  // botão Continuar: some, sai do modo online, volta pra home.
+  const banner = (typeof document!=='undefined') && document.getElementById('banner-ranque');
+  if(banner){ banner.remove(); if(typeof sairModoOnline==='function')sairModoOnline(); ir('home',{},{substituir:true}); render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);
@@ -407,9 +412,9 @@ function montarBannerRanque(res){
   const o=document.createElement('div'); o.id='banner-ranque';
   o.setAttribute('style','position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;background:rgba(8,6,20,.9);padding:20px;font-family:inherit');
   o.innerHTML=`<div style="max-width:460px;width:100%;background:#161230;border:1px solid ${cor};border-radius:16px;padding:28px 26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6)">
-    <div style="font-size:12px;letter-spacing:.16em;color:${cor};font-weight:800">${titulo}</div>
-    <div style="margin:14px 0 6px;color:#efe9ff;font-size:30px;font-weight:800">${H(para)}</div>
-    ${(subiu||desceu)&&de&&de!==para?`<div style="color:#8b83b8;font-size:14px">${H(de)} → <b style="color:${cor}">${H(para)}</b></div>`:''}
+    <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:.18em;color:${cor};font-weight:700">${titulo}</div>
+    <div style="font-family:'Cinzel',serif;margin:14px 0 6px;color:#efe9ff;font-size:28px;font-weight:800;line-height:1.2">${H(para)}</div>
+    ${(subiu||desceu)&&de&&de!==para?`<div style="font-family:'Cinzel',serif;color:#8b83b8;font-size:13px;letter-spacing:.04em">${H(de)} → <b style="color:${cor}">${H(para)}</b></div>`:''}
     <div style="margin:16px 0 4px;color:#efe9ff;font-size:22px;font-weight:800">${delta>=0?'+':''}${delta} <span style="font-size:13px;color:#8b83b8;font-weight:600">pontos</span></div>
     <div style="color:#c3bce6;font-size:13px">${res.pontos} pts nesta temporada</div>
     <button id="br-ok" style="margin-top:20px;cursor:pointer;padding:12px 28px;border-radius:10px;border:1px solid #4a3f88;background:#241d52;color:#efe9ff;font-size:15px;font-weight:700;font-family:inherit">Continuar</button>
