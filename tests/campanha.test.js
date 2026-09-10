@@ -347,6 +347,44 @@ console.log('== §268 D: a trilha distingue os TRÊS tipos de nó (batalha|histo
   ok($$('.cnode').length === 7, 'os 7 nós do Prólogo continuam cabendo na trilha (§259)');   // BABÁ
 }
 
+console.log('== §269 A: nenhuma opção sem retrato quando há deus; nenhuma chave de deus inexistente (a Hécate era isso) ==');
+{
+  const { w } = sessao();
+  const atos = JSON.parse(w.eval(`JSON.stringify(CAMPS().flatMap(c=>c.atos).filter(a=>a.tipo==='escolha').map(a=>({id:a.id,opcoes:a.opcoes})))`));
+  for (const a of atos) {
+    // (1) toda chave `deus` numa opção resolve a um deus REAL (a Hécate era nome sem chave — proibido)
+    for (const o of a.opcoes) if (o.deus) ok(w.eval(`typeof GODS!=='undefined' && !!GODS[${JSON.stringify(o.deus)}]`), `${a.id}/${o.id}: deus "${o.deus}" existe no acervo`);   // BABÁ
+    // (2) HOMOGENEIDADE: as opções são todas COM retrato ou todas SEM — mista deixa a sem-rosto virar
+    //     dica involuntária num ato de leitura (o defeito exato da Hécate no Conselho).
+    const comRetrato = a.opcoes.filter(o => o.deus).length;
+    ok(comRetrato === 0 || comRetrato === a.opcoes.length, `${a.id}: opções homogêneas em retrato (${comRetrato}/${a.opcoes.length}) — sem rosto órfão`);   // BABÁ
+  }
+  // (3) o Conselho é um ato de "quem?" — as 4 opções têm rosto (a Hécate sem retrato saiu; entrou o Exu)
+  const conselho = atos.find(a => a.id === 'cap1-ii');
+  ok(conselho && conselho.opcoes.every(o => o.deus), 'as 4 opções do Conselho têm retrato (Exu incluído)');   // BABÁ
+  ok(conselho && conselho.opcoes.some(o => o.id === 'exu' && o.deus === 'exu') && !conselho.opcoes.some(o => o.id === 'hecate'), 'a Hécate saiu, o Exu entrou com chave');   // BABÁ
+}
+
+console.log('== §269 B: o prêmio do Nezha paga em INFORMAÇÃO (kit do Fenrir), não só no empréstimo vazio ==');
+{
+  const { w, $, $$ } = sessao();
+  const proAll = ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii'];
+  const cap1ate5 = proAll.concat(['cap1-i', 'cap1-ii', 'cap1-iii', 'cap1-iv', 'cap1-v']);
+  // dois verbos no mesmo efeito.certa: empréstimo Nezha (narrativa) + kitRevelado Fenrir (mecânica)
+  abrir(w, 1, 5, cap1ate5, { 'cap1-v': 'rivais' });
+  ok(w.eval(`JSON.stringify(kitReveladoDaConsequencia('cap1-vi'))`).includes('fenrir'), 'Nezha certo ⇒ kit do Fenrir revelado no ato VI');   // BABÁ
+  ok(w.eval('timeDoAto(CAMPS()[1].atos[5]).join(",")') === 'zeus,nezha,hades', 'e o empréstimo do Nezha continua (a linha de revelação segue verdadeira)');
+  ok(!!$('.camp__kitchip'), 'o chip do kit aparece com o Nezha certo');
+  // as DUAS leituras certas ⇒ dois kits (Hel do Conselho + Fenrir do Nezha): entra no clímax conhecendo os dois
+  abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'ahpuch', 'cap1-v': 'rivais' });
+  const kits = JSON.parse(w.eval(`JSON.stringify(kitReveladoDaConsequencia('cap1-vi'))`));
+  ok(kits.includes('hel') && kits.includes('fenrir'), `Conselho+Nezha certos ⇒ kits de Hel E Fenrir (veio ${kits.join(',')})`);   // BABÁ
+  ok($$('.camp__kitchip').length === 2, 'dois chips de kit no ato VI (Hel e Fenrir)');   // BABÁ
+  // nenhuma leitura ⇒ nenhum kit (entra às cegas — o que Zeus faz na história)
+  abrir(w, 1, 5, cap1ate5, {});
+  ok($$('.camp__kitchip').length === 0, 'sem leitura certa, nenhum kit revelado (entra no pacto às cegas)');   // BABÁ
+}
+
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}
 if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) na campanha`); process.exit(1); }
 console.log('>>> CAMPANHA OK');

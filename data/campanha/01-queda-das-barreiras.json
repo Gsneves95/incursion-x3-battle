@@ -1,5 +1,5 @@
 {
- "_fonte": "Capítulo 1 da campanha narrativa (O Trono do Uno, Livro I). Fonte: docs/campanha-prologo-cap1.md (commit 91d9e7f). Quatro batalhas 3×3 (elenco exato do documento) + dois atos `escolha` (§268: II Conselho e V Nezha; não pagam, não abrem luta). O Conselho (certa=Ah Puch) revela o kit de Hel no ato VI; o Nezha (certa=rivais) empresta Nezha no ato VI. Errar não pune (só perde o bônus). A consequência troca o default do 1º slot emprestado / mostra o kit — nunca muda aliados/inimigos/seed da batalha. Aliados: `travado`=a cena (o ato fornece o deus), `travado:false`=emprestado (o jogador troca por um deus que tenha; o default joga se ele não tem nenhum). Seeds ESCOLHIDAS por mim (não estão no plano) e registradas em `montar._seedNota`: cada uma é vencível sob jogo razoável (medido). Emprestados default onde o doc não nomeou: Ato I → ogum; Ato III → ogum, ganesha (o doc nomeia Ares/Hades nos atos IV e VI).",
+ "_fonte": "Capítulo 1 da campanha narrativa (O Trono do Uno, Livro I). Fonte: docs/campanha-prologo-cap1.md (commit 91d9e7f). Quatro batalhas 3×3 (elenco exato do documento) + dois atos `escolha` (§268: II Conselho e V Nezha; não pagam, não abrem luta). O Conselho (certa=Ah Puch) revela o kit de Hel no ato VI; o Nezha (certa=rivais) empresta Nezha E revela o kit do Fenrir no ato VI (a testemunha paga no que VIU, não na espada — o empréstimo do Nezha, inicial, seria mecanicamente nulo sozinho). Duas leituras certas = entrar no clímax conhecendo Hel e Fenrir; nenhuma = enfrentar o pacto às cegas (o que Zeus faz na história). A opção Hécate saiu (sem kit/arte no jogo) e virou EXU (chave `exu`, com retrato) — as 4 opções do Conselho têm rosto; a certa segue Ah Puch. Errar não pune (só perde o bônus). A consequência troca o default do 1º slot emprestado / mostra o kit — nunca muda aliados/inimigos/seed da batalha. Aliados: `travado`=a cena (o ato fornece o deus), `travado:false`=emprestado (o jogador troca por um deus que tenha; o default joga se ele não tem nenhum). Seeds ESCOLHIDAS por mim (não estão no plano) e registradas em `montar._seedNota`: cada uma é vencível sob jogo razoável (medido). Emprestados default onde o doc não nomeou: Ato I → ogum; Ato III → ogum, ganesha (o doc nomeia Ares/Hades nos atos IV e VI).",
  "numero": 1,
  "id": "queda-das-barreiras",
  "nome": "Capítulo 1 — A Queda das Barreiras",
@@ -45,7 +45,7 @@
    "nome": "O Conselho Temporário",
    "tipo": "escolha",
    "arte": "cap1-02-conselho-temporario",
-   "texto": "Odin despertou entre os escombros de um templo maia suspenso, distorcido pelas forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a fé é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo; Hécate, que aparecia em vários pontos ao mesmo tempo e parecia gostar do caos; e Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. “O Trono não desaparecerá por si só”, disse Odin. “Será conquistado por quem dominar os domínios.” As palavras eram sábias. Em torno da mesa improvisada, mais de um par de olhos brilhava com uma intenção diferente da que a boca declarava.",
+   "texto": "Odin despertou entre os escombros de um templo maia suspenso, distorcido pelas forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a fé é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo; Exu, que se multiplicava à mesa — um em cada encruzilhada, uma vela em cada mão — e ria como quem já conhece o fim; e Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. “O Trono não desaparecerá por si só”, disse Odin. “Será conquistado por quem dominar os domínios.” As palavras eram sábias. Em torno da mesa improvisada, mais de um par de olhos brilhava com uma intenção diferente da que a boca declarava.",
    "pergunta": "Quem, nesta mesa, não veio pelo que disse?",
    "opcoes": [
     {
@@ -61,9 +61,10 @@
      "pista": "a espada zunindo de impaciência, ainda tonto com a fusão dos mundos"
     },
     {
-     "id": "hecate",
-     "rotulo": "Hécate",
-     "pista": "ocupa três cadeiras ao mesmo tempo e sorri como quem já sabe o fim"
+     "id": "exu",
+     "rotulo": "Exu",
+     "deus": "exu",
+     "pista": "Ocupa três cadeiras ao mesmo tempo, uma vela em cada, e ri como quem já conhece o fim."
     },
     {
      "id": "ahpuch",
@@ -174,7 +175,7 @@
    "certa": "rivais",
    "alvo": "cap1-vi",
    "efeito": {
-    "certa": { "emprestado": "nezha" },
+    "certa": { "emprestado": "nezha", "kitRevelado": "fenrir" },
     "errada": {}
    },
    "revelacao": {

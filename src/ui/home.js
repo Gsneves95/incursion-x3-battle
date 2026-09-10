@@ -1261,21 +1261,25 @@ function renderCampanha(){
     const revs = revelacoesNoAto(ato.id);
     const revBloco = revs.length ? `<div class="camp__revel">${revs.map(t => `<p class="camp__revell">“${H(t)}”</p>`).join('')}</div>` : '';
     const kitRevBloco = kitReveladoDaConsequencia(ato.id).map(kitRevChipHTML).join('');
+    // §269: com DUAS leituras certas (2 revelações + 2 kits) o conteúdo passa dos 290px — o miolo ROLA
+    // e a CTA fica ANCORADA embaixo (nunca sai de vista). Sem consequência, nada rola: idêntico ao de antes.
     brief = `<div class="camp__brief">
-      ${revBloco}
-      <div class="camp__elencos">
-        <div class="camp__col">
-          <span class="camp__lbl camp__lbl--voce">Você jogará com</span>
-          <div class="camp__slots">${slots.map((s, i) => cslotHTML(s, i)).join('')}</div>
+      <div class="camp__briefrol">
+        ${revBloco}
+        <div class="camp__elencos">
+          <div class="camp__col">
+            <span class="camp__lbl camp__lbl--voce">Você jogará com</span>
+            <div class="camp__slots">${slots.map((s, i) => cslotHTML(s, i)).join('')}</div>
+          </div>
+          <div class="camp__col">
+            <span class="camp__lbl camp__lbl--inim">Enfrentará <span class="camp__form">${nInim} VS 3</span></span>
+            <div class="camp__inims">${(ato.inimigos || []).map(cinimHTML).join('')}</div>
+          </div>
         </div>
-        <div class="camp__col">
-          <span class="camp__lbl camp__lbl--inim">Enfrentará <span class="camp__form">${nInim} VS 3</span></span>
-          <div class="camp__inims">${(ato.inimigos || []).map(cinimHTML).join('')}</div>
-        </div>
+        ${kitRevBloco}
+        <div class="camp__divisor"></div>
+        ${mec}${rec}
       </div>
-      ${kitRevBloco}
-      <div class="camp__divisor"></div>
-      ${mec}${rec}
       <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? 'Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
     </div>`;
   } else if (ehEscolha) {

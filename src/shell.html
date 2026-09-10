@@ -1257,6 +1257,9 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .camp__lbl--inim{color:#9C8DBE;display:flex;align-items:baseline;gap:6px}
 .camp__lbl--rec{color:#B9A574}
 .camp__form{font-family:'Cinzel',serif;font-weight:600;font-size:7px;letter-spacing:.16em;color:#6B6288}
+/* §269: o miolo do briefing rola quando há duas consequências (2 revelações + 2 kits passam de 290px);
+   a CTA fica FORA do rol, ancorada embaixo. Sem consequência não há transbordo e nada rola. */
+.camp__briefrol{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:9px;overflow-y:auto;overscroll-behavior:contain}
 .camp__elencos{display:flex;gap:19px}
 .camp__col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:7px}
 .camp__slots,.camp__inims{display:flex;gap:6px}

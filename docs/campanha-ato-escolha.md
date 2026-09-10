@@ -90,17 +90,23 @@ O enigma central, e a cena já o continha.
 |---|---|
 | **Anúbis** | imóvel diante da balança, os olhos pousados nas ambições alheias |
 | **Susanoo** | a espada zunindo de impaciência, ainda tonto com a fusão dos mundos |
-| **Hécate** | ocupa três cadeiras ao mesmo tempo e sorri como quem já sabe o fim |
+| **Exu** | ocupa três cadeiras ao mesmo tempo, uma vela em cada, e ri como quem já conhece o fim |
 | **Ah Puch** | magro, silencioso, com intenções que nem Odin consegue ler |
 
 **A certa é Ah Puch.** O livro cumpre: é ele quem escapa do mosteiro sem uma
 palavra e vende o segredo do plano de restauração — não por servir a Zeus, mas
 para lucrar.
 
-E repare no desenho do engano: a **Hécate** é a suspeita óbvia porque é a
-barulhenta. O **Anúbis** é o mais honesto da mesa — o próprio Odin diz que ele
+E repare no desenho do engano: o **Exu** é o suspeito óbvio porque é o
+barulhento. O **Anúbis** é o mais honesto da mesa — o próprio Odin diz que ele
 toca o cerne. O silencioso é a resposta. É a mesma lição que o projeto aprendeu
 doze vezes: ler o kit, não o rótulo.
+
+(Nota §269: a Hécate era a quarta opção no plano original, mas não existe no jogo —
+sem kit e sem arte. Foi trocada pelo **Exu** (Abre-caminhos, com kit e retrato), que
+cumpre as três funções da cena: a encruzilhada, a multiplicidade e o riso de quem já
+sabe o fim. Assim as quatro opções do Conselho têm rosto — num ato de leitura, opção
+sem retrato é dica involuntária.)
 
 **Consequência**, no ato VI do Capítulo 1 (O caminho do trovão, contra Hel e
 Fenrir):
@@ -137,7 +143,13 @@ mesmo que você."*
 **Consequência**, no ato VI do Capítulo 1:
 
 - **Certa** — `emprestado`: o Nezha entra no seu time, porque ele partiu à
-  procura de deuses mais racionais e encontrou você.
+  procura de deuses mais racionais e encontrou você. **(§269)** E `kitRevelado`
+  do **Fenrir**: o Nezha é a TESTEMUNHA — passou o ato V escondido, olhando; o que
+  uma testemunha dá é o que ela viu, não a espada dela. Sem isto o prêmio era vazio
+  (o Nezha é um dos 9 fixos, e o slot emprestado já é trocável por qualquer deus que
+  o jogador tenha — dar-lhe o Nezha é dar o que ele já podia escolher). O desenho que
+  fecha: Conselho certo mostra a Hel, Nezha certo mostra o Fenrir — duas leituras e o
+  jogador entra no clímax conhecendo os dois; nenhuma e enfrenta o pacto às cegas.
 - **Errada** — o emprestado padrão. Sem penalidade extra: um ato já carrega a
   consequência do Conselho, e duas punições no mesmo ato empilham desvantagem
   sem medição.

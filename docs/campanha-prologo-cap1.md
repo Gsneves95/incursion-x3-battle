@@ -174,7 +174,8 @@ forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a 
 é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num
 mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por
 presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo;
-Hécate, que aparecia em vários pontos ao mesmo tempo e parecia gostar do caos; e
+Exu, que se multiplicava à mesa — um em cada encruzilhada, uma vela em cada mão —
+e ria como quem já conhece o fim; e
 Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. "O Trono não
 desaparecerá por si só", disse Odin. "Será conquistado por quem dominar os
 domínios." As palavras eram sábias. Em torno da mesa improvisada, mais de um par
@@ -242,7 +243,9 @@ metade aurora e metade cadáver gélido, e Fenrir, com as presas ainda manchadas
 ## O que este capítulo deixa pendente de propósito
 
 O pacto entre Zeus, Hel e Fenrir se fecha no fim do ato VI e **não vira ato**: é o
-gancho do Capítulo 2. A Hécate aparece no ato II e não está entre os 100 kits —
-como o ato é de história, ela precisa de retrato, não de kit. E o Nezha, que é o
+gancho do Capítulo 2. O quarto lugar à mesa do Conselho é do **Exu** (Abre-caminhos,
+kit e retrato prontos) — ele substituiu a Hécate, que não existe no jogo (sem kit e
+sem arte), e cumpre a mesma função de cena: a encruzilhada, a multiplicidade e o riso
+de quem já sabe o fim. E o Nezha, que é o
 protagonista dos vinte e dois capítulos, aparece aqui só como testemunha. É o
 desenho certo: o jogador conhece o vilão antes do herói.
