@@ -54,6 +54,31 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   const page = await (await browser.newContext()).newPage();
   await page.goto('file://' + distAbs, { waitUntil: 'load' });
 
+  // == §261 PORTÃO DAS FONTES REAIS: antes de QUALQUER medição visual, prova que Cinzel/Rajdhani
+  // LOCAIS estão ativas — não o fallback. O sandbox nunca alcançou o Google (§260), então por
+  // §238..§259 TODA medição de encaixe rodou contra o serif/sans, mais estreito, e aprovou uma
+  // tipografia que o jogo nunca teve. Se as fontes reais não carregarem, a suíte QUEBRA ALTO aqui
+  // em vez de medir errado em silêncio. Babá: troque a fonte por serif e este portão cai. ==
+  await page.setViewportSize({ width: 800, height: 360 });
+  const fonteGate = await page.evaluate(async () => {
+    try { await document.fonts.ready; } catch (e) {}
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d');
+    const s = 'Alianças, conflitos e oportunidades';
+    const wC = (cx.font = '900 26px Cinzel', Math.round(cx.measureText(s).width));
+    const wS = (cx.font = '900 26px serif', Math.round(cx.measureText(s).width));
+    return { cinzel: document.fonts.check('900 26px Cinzel'), raj: document.fonts.check('700 12px Rajdhani'), wC, wS };
+  });
+  const fontesReais = fonteGate.cinzel && fonteGate.raj && fonteGate.wC > 500 && fonteGate.wC !== fonteGate.wS;
+  ok(fontesReais, `§261: as FONTES REAIS (Cinzel/Rajdhani locais) têm de estar ativas antes de medir (Cinzel ${fonteGate.wC}px, serif ${fonteGate.wS}px, check ${fonteGate.cinzel}/${fonteGate.raj})`);
+  if (!fontesReais) {
+    console.error('\n!! PORTÃO DAS FONTES FALHOU: o ambiente está medindo no FALLBACK, não em Cinzel/Rajdhani.');
+    console.error('   Toda asserção visual abaixo seria FALSA. Abortando alto (§261).');
+    console.log('\n>>> ' + falhas + ' FALHA(S)');
+    await browser.close();
+    process.exit(1);
+  }
+  console.log(`== §261 portão OK: Cinzel ${fonteGate.wC}px ≠ serif ${fonteGate.wS}px — fontes reais ativas ==`);
+
   async function medir(w, h, safe) {
     await page.setViewportSize({ width: w, height: h });
     await page.evaluate((s) => {

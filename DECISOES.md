@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §261 — VARREDURA DE ENCAIXE DE TEXTO com as fontes REAIS (medição, NADA consertado). O motivo: o ambiente de captura divergia do aparelho na FONTE de todo rótulo de toda tela — invalidou as medições de encaixe de §238, §239, §248, §250, §252, §253, §254, §255, §256, §257, §259.
+
+**MÉTODO.** Rede BLOQUEADA (prova que é a fonte LOCAL renderizando), viewport do dono (800×360, DPR3), Cinzel/Rajdhani reais confirmados antes de medir (portão: Cinzel 537px ≠ serif 387px). Varredura automática por elemento com TEXTO direto: CORTA (overflow oculto/ellipsis), ESTOURA (nowrap visível), FORA-PALCO (fora dos 428, descontada a rolagem intencional), medido em px de layout. Piores casos reais: nome de deus mais longo **Mula sem Cabeça (15)**, habilidade de efeito mais longa **Nüwa "Pedras das Cinco Cores" (142)**, unidade com **6 efeitos**, escudo, recarga.
+
+**O QUE CORTA — de verdade (conteúdo perdido, com a Cinzel real, mais larga):**
+
+| Tela | Elemento | O que acontece | Número |
+|---|---|---|---|
+| Batalha | nome sob o retrato (`.portrait__nome`, Cinzel, caixa ~92px) | **ellipsis** — os INIMIGOS "Golem Rúnico"/"Ceifador Errante" cortam SEMPRE; deus longo "Mula sem Cabeça" corta | 99>92 · 121>92 · 115>92 |
+| Tela do ato | nome de inimigo no briefing (`.cinim__nome`, caixa 64px) | **ellipsis** em quase todo bestiário de nome ≥64px | Náiade da Correnteza 84>64 · Vidente Corrompido 81>64 · Guardião do Bosque 81>64 · Elemental de Chama 80>64 · Ceifador Errante 74>64 · Servo de Cinzas 70>64 · Ghoul Faminto 69>64 |
+| Tela do ato | 3º cartão de inimigo (`.cinim`) | passa da borda direita do painel ENFRENTARÁ (visual) | — |
+| Tela do ato | dica da mecânica (`.camp__mecdica`, Rajdhani) | **clamp vertical** corta o texto (mostra "…") — a Rajdhani real, mais larga, quebra em mais linhas | 37>25 |
+| Coleção | nome no ladrilho (`.colx__n`, caixa 74px) | **ellipsis** no deus longo "Mula sem Cabeça" | 86>74 |
+
+**BORDA / menor (sinalizado pela métrica, mas contido ou por desenho):**
+
+| Tela | Elemento | O que acontece | Número |
+|---|---|---|---|
+| Batalha | apelido (`.prof__nick`, Cinzel 11px) | CORTA-V ~2px (a Cinzel real é mais alta que a caixa) — "Você"/"CPU" | 13>11 |
+| Tela do ato | rótulo da trilha (`.cnode__nome`) | nomes longos em 2 linhas; roçam a borda do box | 30>20 |
+| Tela do ato | epígrafe do capítulo (`.camp__capep`) | ellipsis — é teaser POR DESENHO | 557>270 |
+| Batalha/Desafios | botões Confirmar/Cancelar/"Comprar 30 ✦"/ícones ⇄≡⋯ | `scrollWidth>clientWidth` por **letter-spacing final** e por símbolos no fallback (⇄≡⋯✦ fora do unicode-range) — **visualmente contidos** | 111>102 · 129>120 · 41>32 |
+
+**O QUE CABE (medido, sem problema, boa notícia):** recarga "3" (Cinzel 30px, 86=86) · vida "120 ◧25" com escudo (92=92) · **a habilidade de 142 caracteres da Nüwa** no rodapé (2 linhas, 31<44 do teto, sem rolar) · nome da habilidade "PEDRAS DAS CINCO CORES" (198=198) · "3 VS 3" · ENCERRAR TURNO + "3 A AGIR" (175=175) · os 6 efeitos (FX_MAX 5 + "+N", dentro do retrato) · **home, Provações, Invocação — nada estourou.**
+
+**NÃO MEDIDO (limitação honesta):** o **lobby de PvP** e o **Ranqueado** exigem o SERVIDOR — no sandbox offline a tela mostra "O PvP precisa do servidor", então o campo de apelido (maxlength 16), o time montado, os botões Amistoso/Ranqueado e o banner de ranque **ficaram sem medir**. O apelido é `<input>` nativo (rola sozinho), mas o apelido EXIBIDO na fila/lobby a 16 caracteres continua não verificado — pendência.
+
+**LEITURA (não consertei nada, é decisão do dono):** os CORTES clássicos (nome de inimigo no retrato e no briefing, deus longo na Coleção) são de **ellipsis por desenho** — a pergunta é se ellipsis é aceitável aí ou se o dado (nome) encurta / a caixa cresce. O clamp da `.camp__mecdica` PERDE explicação de regra na tela que ENSINA — o mais funcional. O apelido cortado 2px e os botões são cosméticos. Vários são de TEXTO (encurtar o dado), não de CSS — por isso a lista inteira antes da ordem dos consertos.
+
+**GUARDA (babá, `moldura.test.js` §261): PORTÃO DAS FONTES REAIS.** Antes de QUALQUER medição visual da suíte, mede uma string conhecida em Cinzel × serif; se vier a métrica do fallback (Cinzel 387 == serif 387, ou `fonts.check` falso), **ABORTA ALTO** (process.exit) em vez de medir errado em silêncio. Provado: trocando as famílias por serif/sans no dist, o portão cai com "PORTÃO DAS FONTES FALHOU". Isso impede a repetição do erro que invalidou onze decisões. **Suíte inteira verde.**
+
 ## §260 — FONTES LOCAIS: o jogo publicado deixa de depender do Google Fonts. INVARIANTE NOVO: o jogo publicado NÃO faz requisição a domínio externo.
 
 **O PROBLEMA (família do §202: validado num caminho, quebrado no outro).** `src/shell.html` trazia Cinzel e Rajdhani de `fonts.googleapis.com` com `display=swap`. Logo: (1) todo número de layout (o nome do ato em 398px, a legenda a partir de 51px, os rótulos de 6,3px) só era verdadeiro DEPOIS que a fonte chegava da rede; (2) `swap` faz TODA abertura desenhar primeiro no fallback; (3) o APK carrega o jogo do Render, mas o Render não serve as fontes — vinham de um terceiro; sem `fonts.gstatic.com`, o jogo abre com tipografia e medidas erradas; (4) é a 1ª tela do teste de usabilidade (§206), em celulares e redes alheias.
