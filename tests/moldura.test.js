@@ -624,6 +624,22 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length };
     });
     ok(!p4.estoura, `§266: o talo com 6 efeitos NÃO estoura (colapsou p/ ${p4.n} slots)`);
+
+    // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
+    console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');
+    const p5 = await gp.evaluate(() => {
+      st = montarProvacao({ aliados: ['zeus', 'tyr', 'ares'], inimigos: ['sobek', 'ghoul', 'silfo'], montar: { seed: 3, comeca: 0 } });
+      prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
+      armado = null; alvos = []; escolhidos = []; ir('batalha', {}, { substituir: true });
+      const u = st.lados[0].units[0];
+      armar(u.uid, 'basico'); render();
+      const onBasico = document.querySelector('.up--enemy .portrait__pas').classList.contains('pas--on');
+      armado = null; alvos = []; armar(u.uid, 'habilidade'); render();
+      const onHab = document.querySelector('.up--enemy .portrait__pas').classList.contains('pas--on');
+      return { onBasico, onHab };
+    });
+    ok(p5.onBasico, '§267: sobek (contra=básico) ACENDE quando o atacante arma um BÁSICO (casa)');
+    ok(!p5.onHab, '§267: sobek NÃO acende quando o atacante arma uma HABILIDADE (não casa — o indicador não engana)');
     await g.close();
   }
 

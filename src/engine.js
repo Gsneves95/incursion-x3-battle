@@ -2009,7 +2009,7 @@ function escalaContagem(st, u, t, spec) {
 //   recebidas = auras de TIME de ALIADOS que caem sobre `u` (com a fonte) — a legibilidade "de onde vem o +5".
 // Regras de "ativo": incondicional/estado (campo/self) → em repouso; SÓ-ALVO (quando:alvo*) e danoIrredutivel
 // → só quando `u` está armada e ALGUM alvo candidato casa (decisão do dono §266: acende ao mirar o alvo que casa).
-function _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, armadoDono) {
+function _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, armadoDono, golpe) {
   if (!dono.vivo && !f.mesmoMorto) return null;
   if (f.estado && !estadoOK(f.estado, dono, st)) return null;
   if (f.gatilho === 'bonusDano') {
@@ -2022,7 +2022,13 @@ function _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, armadoDono) {
     if (!armadoDono || !ctxAtk) return null;
     return condOK(q, ctxAtk, ctxAlvo || ctxAtk, st) ? { gat: 'bonusDano', v: f.v + escalaContagem(st, dono, ctxAlvo || dono, f), alvo: true } : null;
   }
-  if (f.gatilho === 'reducao') { const v = f.v + escalaContagem(st, dono, dono, f); return v > 0 ? { gat: 'reducao', v } : null; }   // redução PERMANENTE (o `contra` só estreita quais golpes; a redução está de pé)
+  if (f.gatilho === 'reducao') {
+    // §267 (simetria da §266): a redução com `contra` só acende quando o golpe MIRADO casa o filtro
+    // (slot/classe/elem/alcance) — senão o P engana, indicando que reduz ESTE golpe quando não reduz.
+    // Sem `contra` = redução permanente (reduz qualquer golpe) → de pé, como a aura ofensiva incondicional.
+    if (f.contra && !(golpe && contraCasou(f.contra, golpe))) return null;
+    const v = f.v + escalaContagem(st, dono, dono, f); return v > 0 ? { gat: 'reducao', v } : null;
+  }
   if (f.gatilho === 'vulnerabilidade') { if (f.deFuncao && (!armadoDono || !ctxAtk || (kitDe(st, ctxAtk) || {}).funcao !== f.deFuncao)) return null; return { gat: 'vulnerabilidade', v: f.v }; }
   if (f.gatilho === 'danoIrredutivel') { if (!armadoDono || !ctxAlvo) return null; const def = ctxAlvo.shield > 0 || !!ef(ctxAlvo, 'dmgReduction') || reducaoDeclarativa(st, ctxAlvo, { slot: 'basico', elem: ctxAtk && ctxAtk.elem }) > 0; return def ? { gat: 'danoIrredutivel', fura: f.ignora } : null; }
   if (f.gatilho === 'amplificaDot') { const has = st.lados.some(l => l.units.some(x => x.vivo && x.dots.some(d => d.nome === f.nome))); return has ? { gat: 'amplificaDot', v: f.v, nome: f.nome } : null; }
@@ -2032,14 +2038,17 @@ function infoPassiva(st, u, armado) {
   const out = { propria: [], recebidas: [] };
   const alvos = armado && armado.alvos ? armado.alvos.map(id => todasUnidades(st).find(x => x.uid === id)).filter(Boolean) : [];
   const armadoUnidade = armado && armado.uid ? todasUnidades(st).find(x => x.uid === armado.uid) : null;
+  // §267: o golpe MIRADO que vai cair sobre u (só se u é um dos alvos do armado) — para a redução com
+  // `contra` acender só quando este golpe casa o filtro (simetria com o lado ofensivo SÓ-ALVO).
+  const golpeSobreU = (armado && armado.golpe && armado.alvos && armado.alvos.includes(u.uid)) ? armado.golpe : null;
   // 1) a passiva da PRÓPRIA u
   const gU = kitDe(st, u); const pU = gU && gU.passiva;
   if (pU && Array.isArray(pU.fx)) for (const f of pU.fx) {
     const uArmada = !!armadoUnidade && armadoUnidade.uid === u.uid;
     // ctxAlvo: se u está armada, o 1º alvo candidato que ATIVA o fx (para SÓ-ALVO acender no alvo certo)
     let achou = null;
-    if (uArmada && alvos.length) for (const t of alvos) { const r = _fxAtivo(st, u, f, u, t, uArmada); if (r) { achou = r; break; } }
-    if (!achou) achou = _fxAtivo(st, u, f, u, uArmada ? alvos[0] : null, uArmada);
+    if (uArmada && alvos.length) for (const t of alvos) { const r = _fxAtivo(st, u, f, u, t, uArmada, golpeSobreU); if (r) { achou = r; break; } }
+    if (!achou) achou = _fxAtivo(st, u, f, u, uArmada ? alvos[0] : null, uArmada, golpeSobreU);
     if (achou) out.propria.push(achou);
   }
   // 2) AURAS de TIME de ALIADOS que caem sobre u (bonusDano/reducao escopo:time) — a fonte importa (§266)
@@ -2054,7 +2063,7 @@ function infoPassiva(st, u, armado) {
       const uArmada = !!armadoUnidade && armadoUnidade.uid === u.uid;
       const ctxAlvo = f.gatilho === 'bonusDano' ? (uArmada ? alvos[0] : null) : u;
       const ctxAtk = f.gatilho === 'bonusDano' ? u : null;
-      const r = _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, uArmada);
+      const r = _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, uArmada, golpeSobreU);   // §267: se um dia uma aura de redução tiver `contra`, também gateia pelo golpe que cai sobre u
       if (r) out.recebidas.push({ ...r, fonte: dono.key, fonteNome: dono.nome });
     }
   }

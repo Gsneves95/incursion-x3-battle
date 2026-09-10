@@ -285,7 +285,9 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     (modo largo, ≤3 efeitos), e o "P" ACENDE (`pas--on`) quando a passiva está agindo — nunca
     "sempre ativa" genérico. A verdade do "agindo" vem de `infoPassiva` (motor), que reusa os
     gates da conta de dano; o P nunca acende uma mentira. NÃO recalcule o texto do kit (número
-    efetivo por alvo é OUTRA decisão, não aprovada).
+    efetivo por alvo é OUTRA decisão, não aprovada). SIMETRIA (§267): o indicador não pode acender
+    sem estar agindo NAQUELE golpe — as condicionais do ATACANTE (bonusDano SÓ-ALVO) e as do
+    DEFENSOR (redução com `contra`) acendem só quando o golpe MIRADO casa; incondicionais ficam de pé.
 
 ### Campanha narrativa (§252)
 19. **A campanha é HISTÓRIA FASEADA (O Trono do Uno), não uma lista.** A tela

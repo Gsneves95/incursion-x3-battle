@@ -128,6 +128,23 @@ console.log('== §266 infoPassiva: passiva agindo vs parada, e a aura legível a
   ok(E.infoPassiva(st3,al).recebidas.some(x=>x.gat==='reducao'&&x.fonte==='amaterasu'),'Amaterasu: no Dia a redução age e é legível no aliado');
   console.log('  Brígida aura legível no afetado · Ogum acende ao mirar · Amaterasu acende no Dia');
 }
+// §267 — simetria da defesa: a redução com `contra` só acende quando o golpe MIRADO casa o filtro (senão engana).
+console.log('== §267 redução com `contra`: acende SÓ quando o golpe mirado casa (simetria do §266) ==');
+{
+  const st=E.novoEstado(['zeus'],['sobek','poseidon','afrodite'],3);
+  const atk=st.lados[0].units[0]; const [sobek,pos,afro]=st.lados[1].units;
+  const reduzOn=(u,g)=>E.infoPassiva(st,u,g?{uid:atk.uid,alvos:[u.uid],golpe:g}:null).propria.some(x=>x.gat==='reducao');
+  // sobek: contra={slot:'basico'}
+  ok(!reduzOn(sobek,null),'sobek (contra=básico): PARADO em repouso — não engana sem golpe mirado');
+  ok(reduzOn(sobek,{slot:'basico',classe:'Físico',elem:'Tempestade',unico:true}),'sobek ACENDE com golpe BÁSICO mirado (casa o contra)');
+  ok(!reduzOn(sobek,{slot:'habilidade',classe:'Mágico',elem:'Tempestade',unico:true}),'sobek NÃO acende com HABILIDADE mirada (não casa — o indicador não engana)');
+  // afrodite: contra={alcance:'unico'}
+  ok(reduzOn(afro,{slot:'basico',classe:'Físico',elem:'x',unico:true}),'afrodite (contra=único) ACENDE com golpe ÚNICO');
+  ok(!reduzOn(afro,{slot:'habilidade',classe:'Mágico',elem:'x',unico:false}),'afrodite NÃO acende com golpe de ÁREA');
+  // poseidon: SEM contra — redução permanente, de pé mesmo em repouso
+  ok(reduzOn(pos,null),'poseidon (sem contra): redução PERMANENTE acende em repouso (de pé, como a aura incondicional)');
+  console.log('  contra-redução gateada pelo golpe · redução permanente de pé');
+}
 
 console.log('');
 console.log(f===0?'>>> NOVAS CAPACIDADES OK':`>>> ${f} FALHA(S)`);

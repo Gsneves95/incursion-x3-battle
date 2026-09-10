@@ -7,7 +7,12 @@
 function _armadoCtx(){
   if(typeof armado==='undefined' || !armado) return null;
   const al=(typeof alvos!=='undefined'&&alvos)?alvos.map(x=>x.uid):[];
-  return { uid:armado.uid, alvos:al };
+  // §267: descreve o GOLPE mirado (slot/classe/elem/alcance) — a redução do defensor com `contra` só
+  // acende quando ESTE golpe casa o filtro. classe/elem vêm da ação armada; unico = mira de alvo único.
+  let golpe=null;
+  try{ const u=todas().find(x=>x.uid===armado.uid); const a=u&&acoesDe(st,u).find(x=>x.slot===armado.slot);
+    if(a) golpe={slot:a.slot, classe:a.classe, elem:u.elem, unico:al.length===1}; }catch(e){}
+  return { uid:armado.uid, alvos:al, golpe };
 }
 function infoPassivaUI(u){
   if(typeof st==='undefined'||!st||typeof infoPassiva!=='function') return { propria:[], recebidas:[] };
