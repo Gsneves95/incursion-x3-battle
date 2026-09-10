@@ -113,6 +113,24 @@ console.log('== GUARDA 5: nenhuma arte de ato pede arquivo inexistente (§213: p
   ok(vazamento.length === 0, `arte ausente sempre vira placeholder, nunca <img> (vazam: ${vazamento.join(', ')})`);   // BABÁ
 }
 
+console.log('== GUARDA 5b (§259): os 13 atos do Prólogo + Cap 1 têm ARTE PRESENTE — <img>, não placeholder ==');
+{
+  const { w, $ } = sessao();
+  const dirArte = path.join(__dirname, '../web/banners/campanha');
+  const atos = flat(w).filter(a => a.cap <= 1);   // Prólogo (0) + Capítulo 1 (1) = os 13 que ganharam arte no §259
+  ok(atos.length === 13, `Prólogo + Cap 1 deveriam ter 13 atos, há ${atos.length}`);
+  const semArte = [];
+  for (const a of atos) {
+    abrir(w, a.ci, a.ai, atos.slice(0, atos.findIndex(x => x.id === a.id)).map(x => x.id));
+    const arte = w.eval(`(CAMPS()[${a.ci}].atos[${a.ai}].arte||'')`);
+    const arteOk = w.eval(`!!CAMPS()[${a.ci}].atos[${a.ai}]._arteOk`);          // a build acendeu?
+    const noDisco = !!(arte && fs.existsSync(path.join(dirArte, arte + '.webp'))); // arquivo presente? (BABÁ: renomeie e cai)
+    const temImg = !!$('.camp__arteimg');                                        // a tela emite <img>?
+    if (!(arteOk && noDisco && temImg)) semArte.push(`${a.id} (arte=${arte} _arteOk=${arteOk} disco=${noDisco} img=${temImg})`);
+  }
+  ok(semArte.length === 0, `os 13 atos saíram do placeholder e emitem <img> com o arquivo no disco (faltam: ${semArte.join(', ')})`);   // BABÁ: renomeie um webp e quebra
+}
+
 console.log('== 6. BATALHA: a CTA monta o time (travado + emprestado) e entra na luta ==');
 {
   const { w } = sessao();
