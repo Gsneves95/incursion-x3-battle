@@ -28,12 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f98019a3",
+    "hash": "789efe7",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 18,
+    "comDica": false,
     "nos": 83,
-    "ms": 70,
+    "ms": 67,
     "caminho": [
       "passar",
       "houyi Nove Flechas → aparicao",

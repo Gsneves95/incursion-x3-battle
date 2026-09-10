@@ -1,6 +1,7 @@
 {
   "key": "ghoul",
   "nome": "Ghoul Faminto",
+  "curto": "Ghoul",
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",

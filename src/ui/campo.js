@@ -37,7 +37,7 @@ function retrato(u,inimigo){
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
       ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>`:''}
       ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
-      <div class="portrait__nome" title="${H(u.nome)}">${H(u.nome)}</div>
+      <div class="portrait__nome" title="${H(u.nome)}">${H(metaComb(u.key).curto)}</div>
       <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
       <div class="${hpcls.join(' ')}">
         ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}

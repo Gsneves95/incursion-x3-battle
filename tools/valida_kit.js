@@ -23,7 +23,7 @@ const V = E.VOCAB;
   if (inter.length) throw new Error(`VOCAB inválido: CONDICOES ∩ ESTADO_COND = [${inter.join(', ')}] — condicional.se ficaria ambíguo (§87). Renomeie uma das chaves.`);
 }
 
-const CHAVES_DEUS = new Set(['key', 'nome', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab', 'hp']);   // F2.3: `hp` opcional — ausente = 120 (os 100 deuses); presente = HP do kit (bestiário fora da faixa, chefe)
+const CHAVES_DEUS = new Set(['key', 'nome', 'curto', 'faccao', 'elem', 'classe', 'funcao', 'inicial', 'passiva', 'provacao', 'ab', 'hp']);   // F2.3: `hp` opcional — ausente = 120 (os 100 deuses); presente = HP do kit (bestiário fora da faixa, chefe). §262: `curto` opcional — nome de 1 palavra (só bestiário) p/ as caixas apertadas (briefing/retrato); ausente = usa `nome`
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
 const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'cdSe', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c. cdSe (§101): recarga condicional
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não

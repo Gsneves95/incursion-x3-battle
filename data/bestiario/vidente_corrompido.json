@@ -1,6 +1,7 @@
 {
   "key": "vidente_corrompido",
   "nome": "Vidente Corrompido",
+  "curto": "Vidente",
   "elem": "Tempestade",
   "classe": "Mágico",
   "funcao": "Controlador",

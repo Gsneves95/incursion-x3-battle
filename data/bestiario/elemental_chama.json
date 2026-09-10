@@ -1,6 +1,7 @@
 {
   "key": "elemental_chama",
   "nome": "Elemental de Chama",
+  "curto": "Elemental",
   "elem": "Chama",
   "classe": "Mágico",
   "funcao": "Atacante",

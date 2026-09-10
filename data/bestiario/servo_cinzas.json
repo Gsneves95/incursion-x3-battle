@@ -1,6 +1,7 @@
 {
   "key": "servo_cinzas",
   "nome": "Servo de Cinzas",
+  "curto": "Servo",
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",

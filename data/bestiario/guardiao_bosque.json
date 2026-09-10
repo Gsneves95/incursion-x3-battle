@@ -1,6 +1,7 @@
 {
   "key": "guardiao_bosque",
   "nome": "Guardião do Bosque",
+  "curto": "Guardião",
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Guardião",

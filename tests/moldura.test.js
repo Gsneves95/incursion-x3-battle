@@ -500,6 +500,84 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await nctx.close();
   }
 
+  // == §262 GUARDAS BABÁ (fontes REAIS, sem rede, largura de design MÍNIMA 780 = pior caso de encaixe) ==
+  // C1: dica-mecânica INTEIRA nos 6 atos-aula (o line-clamp não elide). C2: o 3º card de inimigo fica
+  // DENTRO do painel (era falso-positivo do §261: medição por clientWidth). C3: os 12 nomes CURTOS do
+  // bestiário cabem nas duas caixas apertadas (briefing e retrato). C4: o apelido de 16ch não corta na
+  // vertical (Cinzel alta + line-height). Roda contra o servidor de fontes local (woff2), rede bloqueada.
+  {
+    const g = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 780, height: 428 } });
+    await g.route('**/*', r => { if (/^https?:\/\//i.test(r.request().url())) return r.abort(); return r.continue(); });
+    const gp = await g.newPage();
+    await gp.goto('file://' + distAbs, { waitUntil: 'load' });
+    for (let i = 0; i < 30; i++) { const on = await gp.evaluate(async () => { try { await document.fonts.load('900 26px Cinzel'); await document.fonts.ready; } catch (e) {} return document.fonts.check('900 26px Cinzel'); }); if (on) break; await gp.waitForTimeout(200); }
+
+    // -- C1: 6 dicas-aula inteiras (Prólogo cap 0, atos 1..6) --
+    console.log('== §262 C1: dica-mecânica inteira nos 6 atos-aula (design 780) ==');
+    for (let ai = 1; ai <= 6; ai++) {
+      const r = await gp.evaluate((ai) => {
+        campCapIdx = 0; campAtoIdx = ai; campSwap = {}; campVistaAto = null; ir('campanha', {}, { substituir: true }); render();
+        const d = document.querySelector('.camp__mecdica'), brief = document.querySelector('.camp__brief'), cta = document.querySelector('.camp__cta');
+        const br = brief.getBoundingClientRect(), cr = cta.getBoundingClientRect();
+        return { id: CAMPS()[0].atos[ai].id, dicaCorta: d.scrollHeight > d.clientHeight + 0.5, briefEstoura: brief.scrollHeight > brief.clientHeight + 0.5, ctaDentro: cr.bottom <= br.bottom + 0.5 };
+      }, ai);
+      ok(!r.dicaCorta, `§262 C1: ${r.id} — a dica corta (line-clamp elidiu)`);
+      ok(!r.briefEstoura, `§262 C1: ${r.id} — o painel do briefing estoura`);
+      ok(r.ctaDentro, `§262 C1: ${r.id} — o botão CONTINUAR saiu do painel`);
+    }
+
+    // -- C2: o último card de inimigo (3 inimigos) fica dentro do content-box do painel (sonda, não clientWidth) --
+    console.log('== §262 C2: 3º card de inimigo dentro do painel ==');
+    const c2 = await gp.evaluate(() => {
+      campCapIdx = 0; campAtoIdx = 4; campSwap = {}; campVistaAto = null; ir('campanha', {}, { substituir: true }); render();
+      const brief = document.querySelector('.camp__brief'), cs = getComputedStyle(brief);
+      const probe = document.createElement('div'); probe.style.cssText = 'width:100%;height:1px'; brief.insertBefore(probe, brief.firstChild);
+      const contentR = probe.getBoundingClientRect().right; brief.removeChild(probe);
+      const cards = [...document.querySelectorAll('.camp__inims .cinim')];
+      const esc = ultimaEscala || 1;
+      return { n: cards.length, folgaDir: +((contentR - cards[cards.length - 1].getBoundingClientRect().right) / esc).toFixed(2) };
+    });
+    ok(c2.n === 3 && c2.folgaDir >= -0.5, `§262 C2: o 3º card estoura o painel (folga à direita ${c2.folgaDir}px, esperado >= -0.5)`);
+
+    // -- C3: os 12 nomes CURTOS do bestiário cabem nas duas caixas apertadas; e o render usa `curto` --
+    console.log('== §262 C3: nomes curtos do bestiário nas caixas apertadas ==');
+    const c3 = await gp.evaluate(() => {
+      // caixa briefing (cinim__nome) — mede a largura interna real num ato de 3 inimigos
+      campCapIdx = 0; campAtoIdx = 4; render();
+      const cinim = document.querySelector('.camp__inims .cinim__nome'); const cCin = getComputedStyle(cinim);
+      const boxCin = cinim.clientWidth, fontCin = cCin.fontWeight + ' ' + cCin.fontSize + ' ' + cCin.fontFamily.split(',')[0].replace(/['"]/g, '');
+      // caixa batalha (portrait__nome) — monta uma provação com criaturas do bestiário
+      st = montarProvacao({ aliados: ['zeus', 'nuwa', 'mulasemcabeca'], inimigos: ['naiade', 'servo_cinzas', 'ghoul'], montar: { seed: 3, comeca: 0 } });
+      prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
+      const port = document.querySelector('.up--enemy .portrait__nome'); const cPor = getComputedStyle(port);
+      const boxPor = port.clientWidth, fontPor = cPor.fontWeight + ' ' + cPor.fontSize + ' ' + cPor.fontFamily.split(',')[0].replace(/['"]/g, ''), lsPor = cPor.letterSpacing;
+      // todos os 12 curtos, do DATA
+      const curtos = BESTIARIO_DADOS.map(b => ({ key: b.key, curto: b.curto || b.nome, temCurto: !!b.curto }));
+      const cv = document.createElement('canvas'), cx = cv.getContext('2d');
+      const larg = (t, f, ls) => { cx.font = f; try { cx.letterSpacing = ls || 'normal'; } catch (e) {} return cx.measureText(t).width; };
+      const cortaCin = curtos.filter(c => larg(c.curto, fontCin, 'normal') > boxCin).map(c => c.key);
+      const cortaPor = curtos.filter(c => larg(c.curto, fontPor, lsPor) > boxPor).map(c => c.key);
+      const semCurto = curtos.filter(c => !c.temCurto).map(c => c.key);
+      // o render de fato usa o curto? (o retrato do inimigo mostra 1 palavra)
+      const renderCurto = /^\S+$/.test(port.textContent.trim());
+      return { total: curtos.length, boxCin, boxPor, cortaCin, cortaPor, semCurto, renderCurto, exemploPort: port.textContent.trim() };
+    });
+    ok(c3.total === 12 && c3.semCurto.length === 0, `§262 C3: bestiário sem campo 'curto' em: ${c3.semCurto.join(', ')}`);
+    ok(c3.cortaCin.length === 0, `§262 C3: nome curto corta no BRIEFING (${c3.boxCin}px): ${c3.cortaCin.join(', ')}`);
+    ok(c3.cortaPor.length === 0, `§262 C3: nome curto corta no RETRATO (${c3.boxPor}px): ${c3.cortaPor.join(', ')}`);
+    ok(c3.renderCurto, `§262 C3: o retrato de inimigo deveria mostrar o nome CURTO de 1 palavra (veio "${c3.exemploPort}")`);
+
+    // -- C4: apelido de 16ch não corta na vertical (a barra de identidade, Cinzel alta) --
+    console.log('== §262 C4: apelido sem corte vertical ==');
+    const c4 = await gp.evaluate(() => {
+      const e = document.querySelector('.prof__nick'); if (!e) return { ausente: true };
+      e.textContent = 'ÁÇÃOJOGADORÍSSÍM'; // 16ch, maiúsculas altas + acentos
+      return { cortaV: e.scrollHeight > e.clientHeight + 0.5, ch: e.clientHeight, sh: e.scrollHeight };
+    });
+    ok(!c4.ausente && !c4.cortaV, `§262 C4: o apelido de 16ch corta na vertical (ch ${c4 && c4.ch}, sh ${c4 && c4.sh})`);
+    await g.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

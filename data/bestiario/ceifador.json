@@ -1,6 +1,7 @@
 {
   "key": "ceifador",
   "nome": "Ceifador Errante",
+  "curto": "Ceifador",
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",

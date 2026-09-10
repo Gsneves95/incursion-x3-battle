@@ -1,6 +1,7 @@
 {
   "key": "automato_bronze",
   "nome": "Autômato de Bronze",
+  "curto": "Autômato",
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Guardião",

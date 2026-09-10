@@ -135,7 +135,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .prof__pic svg{width:21px;height:21px}
 .prof__id{display:flex;flex-direction:column;gap:2px;line-height:1;min-width:0}
 .prof--foe .prof__id{align-items:flex-end}
-.prof__nick{font-family:'Cinzel',serif;font-weight:800;font-size:11px;letter-spacing:.07em;
+/* §262 C4: line-height 1→1.3. A Cinzel (maiúsculas altas + acentos Á/Ã/Ç) precisa de
+   ~13px de caixa; com line-height:1 (=11px) o overflow:hidden do ellipsis cortava ~2px
+   em cima/embaixo. A barra (46px) tem folga de sobra p/ a linha crescer. */
+.prof__nick{font-family:'Cinzel',serif;font-weight:800;font-size:11px;line-height:1.3;letter-spacing:.07em;
   text-transform:uppercase;color:var(--gold-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:82px}
 .prof--foe .prof__nick{color:#ff8fae}
 .prof__rank{font-size:8px;font-weight:700;letter-spacing:.14em;color:#7c74a4;text-transform:uppercase}
@@ -1271,12 +1274,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .camp__mectoprow{display:flex;align-items:baseline;gap:8px}
 .camp__mectit{font-family:'Cinzel',serif;font-weight:700;font-size:11px;color:#F2E6C4}
 .camp__mecselo{font-family:'Cinzel',serif;font-weight:600;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:#6F9FC0;white-space:nowrap}
-.camp__mecdica{font-size:9.5px;line-height:1.3;color:#8FA0BC;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* §262: a dica da mecânica (a tela que ENSINA) precisava de até 3 linhas — clampava em 2 e comia REGRA.
+   Os 12px da 3ª linha vêm do chip de recompensa (.crec 36→24, sobredimensionado); o painel segue em 290. */
+.camp__mecdica{font-size:9.5px;line-height:1.3;color:#8FA0BC;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .camp__rec{display:flex;flex-direction:column;gap:6px}
 .camp__reccab{display:flex;align-items:center;gap:8px}
 .camp__coletada{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:8px;letter-spacing:.06em;color:var(--e-Verdejante)}
 .camp__recchips{display:flex;gap:6px}
-.crec{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 8px;border-radius:3px;background:rgba(255,255,255,.045);align-self:flex-start}
+.crec{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:3px;background:rgba(255,255,255,.045);align-self:flex-start}   /* §262: 36→24 p/ ceder 12px à 3ª linha da dica */
 .crec__v{font-size:11px;font-weight:600;color:#F2F4F8}
 .crec__u{font-size:6.3px;font-weight:500;letter-spacing:.16em;color:#7E8FA8}
 .crec--feita{opacity:.5}

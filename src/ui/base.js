@@ -43,6 +43,16 @@ const NOMES_CONTADOR = {
   combo: 'Combo', podridao: 'Podridão', maldicao: 'Maldição de Yomi',
 };
 function nomeContador(k) { return NOMES_CONTADOR[k] || k; }
+// meta de combatente (deus OU criatura do bestiário) por chave — nome/curto/elemento.
+// Vive aqui (base) porque o briefing (home.js) e o campo de batalha (campo.js) usam:
+// ui→ui é proibido, então o compartilhado sobe. §262: `curto` = nome de 1 palavra
+// (só bestiário) para as caixas apertadas; sem ele, cai no nome inteiro.
+function metaComb(k){
+  const g = HRM[k]; if (g) return { nome: g.nome, curto: g.nome, elem: g.elem };
+  const b = (typeof BESTIARIO_DADOS !== 'undefined' ? BESTIARIO_DADOS : []).find(x => x.key === k);
+  if (b) return { nome: b.nome, curto: b.curto || b.nome, elem: b.elemento };
+  return { nome: k, curto: k, elem: 'Umbra' };
+}
 // tipos de evento que marcam MARCO no registro (recebem realce): virada de turno,
 // queda, renascimento. Substitui o regex que casava as strings prontas (caiu/Turno/…).
 const LOG_MARCO = new Set(['turno', 'queda', 'revive', 'passiva', 'fim']);

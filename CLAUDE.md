@@ -338,6 +338,12 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
   vida SOBREPOSTOS à arte; a barra de vida é OPACA (a arte não vaza) e a arte é enquadrada no alto
   (`center 18%`) porque as ilustrações são de corpo inteiro.
+- **Nas duas caixas APERTADAS, a criatura do bestiário mostra o `curto`, não o nome inteiro** (§262:
+  `curto` no DADO — `data/bestiario/*.json` — usado SÓ no `.cinim__nome` do briefing e no `.portrait__nome`
+  da batalha; o nome inteiro fica no `title` e em todo o resto). A Cinzel real (mais larga) cortava 7 de
+  12 nomes; o conserto é encurtar o DADO (o substantivo, epíteto fora), não a fonte nem a caixa. Deuses
+  ficam de fora (só "Mula sem Cabeça" corta, 1 em 100 — ellipsis aceitável). `metaComb` (base.js) resolve
+  nome/curto por chave para os dois lados.
 - **Instante e aleatório entram por PARÂMETRO, nunca de dentro.** Funções de estado
   (motor, `perfil.js`, sorteio) recebem tempo (`agora`) e semente (`seed`) como
   argumento; jamais chamam `Date.now()` ou `Math.random()` internamente. É o que as

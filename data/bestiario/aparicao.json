@@ -1,6 +1,7 @@
 {
   "key": "aparicao",
   "nome": "Aparição Sussurrante",
+  "curto": "Aparição",
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Controlador",

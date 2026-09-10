@@ -1125,12 +1125,6 @@ function slotsDoAto(ato){
   if (ato.aliados == null) return [0, 1, 2].map(() => ({ deus: null, travado: false }));
   return ato.aliados.map(a => typeof a === 'string' ? { deus: a, travado: true } : { deus: a.deus, travado: !!a.travado });
 }
-function metaComb(k){
-  const g = HRM[k]; if (g) return { nome: g.nome, elem: g.elem };
-  const b = (typeof BESTIARIO_DADOS !== 'undefined' ? BESTIARIO_DADOS : []).find(x => x.key === k);
-  if (b) return { nome: b.nome, elem: b.elemento };
-  return { nome: k, elem: 'Umbra' };
-}
 function timeDoAto(ato){ return slotsDoAto(ato).map((s, i) => (campSwap[i] || s.deus)); }
 function timeProntoAto(ato){ return timeDoAto(ato).filter(Boolean).length === 3; }
 
@@ -1142,7 +1136,8 @@ function cslotHTML(s, i){
   if (s.travado) return `<div class="cslot cslot--trav"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__badge cslot__lock">⚿</span><span class="cslot__nome">${H(m.nome)}</span></div>`;
   return `<button class="cslot cslot--empr" data-empr="${i}"><span class="cslot__p">${slot('god-' + key, ini(m.nome), COR(m.elem), 20)}</span><span class="cslot__badge cslot__swap">⇄</span><span class="cslot__nome">${H(m.nome)}</span></button>`;
 }
-function cinimHTML(k){ const m = metaComb(k); return `<div class="cinim"><span class="cinim__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cinim__nome">${H(m.nome)}</span></div>`; }
+// §262: a caixa cinim__nome (~51px) corta 7 de 12 nomes completos → mostra o `curto` (título = nome inteiro no hover).
+function cinimHTML(k){ const m = metaComb(k); return `<div class="cinim" title="${H(m.nome)}"><span class="cinim__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cinim__nome">${H(m.curto)}</span></div>`; }
 
 function renderCampanha(){
   const caps = CAMPS();
