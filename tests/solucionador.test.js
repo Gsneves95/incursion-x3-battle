@@ -70,6 +70,46 @@ console.log('== 5. carimbo de versão: hash estável, muda com o catálogo ==');
   console.log(`  hash ${h1} · muda com o kit · carimbo real (apolo) confere`);
 }
 
+console.log('== 5b. §263 o carimbo só vê COMBATE: cosmético não invalida, combate invalida ==');
+{
+  // deus real com kit rico (opções, passiva, fx com contador) para exercitar os quatro níveis
+  const base = E.GODS.poseidon;
+  const prov = { aliados: ['poseidon'], inimigos: ['zeus'] };
+  const h0 = PROV.catalogoHash(prov, E.GODS);
+  const comGods = alt => Object.assign({}, E.GODS, { poseidon: alt });
+  const clone = o => JSON.parse(JSON.stringify(o));
+
+  // (A) COSMÉTICO — NÃO invalida: nome/curto do deus, nome/desc da habilidade, nome da opção, nome/desc da passiva
+  const cosmetico = clone(base);
+  cosmetico.nome = 'Poseidon, o Rei dos Mares';   // rótulo de topo
+  cosmetico.curto = 'Netuno';                       // rótulo de topo (§262)
+  if (cosmetico.ab && cosmetico.ab[0]) { cosmetico.ab[0].nome = 'OUTRO NOME'; cosmetico.ab[0].desc = 'descrição reescrita, mais longa, sem tocar número.'; }
+  const opAb = (cosmetico.ab || []).find(a => Array.isArray(a.opcoes) && a.opcoes.length);
+  if (opAb) opAb.opcoes[0].nome = 'rótulo trocado';
+  if (cosmetico.passiva) { cosmetico.passiva.nome = 'X'; cosmetico.passiva.desc = 'Y'; }
+  ok(PROV.catalogoHash(prov, comGods(cosmetico)) === h0,
+    'COSMÉTICO (nome/curto/desc do deus, habilidade, opção, passiva) NÃO invalida o carimbo');
+
+  // (B) COMBATE — invalida: um custo, uma recarga, um número de dano
+  const custo = clone(base); const abCusto = custo.ab.find(a => a.cost && Object.keys(a.cost).length);
+  const elemC = Object.keys(abCusto.cost)[0]; abCusto.cost[elemC] += 1;
+  ok(PROV.catalogoHash(prov, comGods(custo)) !== h0, 'mudar um CUSTO invalida o carimbo');
+
+  const cd = clone(base); const abCd = cd.ab.find(a => 'cd' in a); abCd.cd = (abCd.cd || 0) + 1;
+  ok(PROV.catalogoHash(prov, comGods(cd)) !== h0, 'mudar uma RECARGA (cd) invalida o carimbo');
+
+  const dano = clone(base);
+  outer: for (const a of dano.ab) for (const fxx of (a.fx || [])) if (typeof fxx.v === 'number') { fxx.v += 5; break outer; }
+  ok(PROV.catalogoHash(prov, comGods(dano)) !== h0, 'mudar um número de DANO (fx.v) invalida o carimbo');
+
+  // (C) NUANCE: `nome` DENTRO de um fx é CHAVE de contador/dot (combate), não rótulo — TEM de invalidar
+  const fxNome = clone(base); let mexeu = false;
+  outer2: for (const a of fxNome.ab) for (const fxx of (a.fx || [])) if (typeof fxx.nome === 'string') { fxx.nome = fxx.nome + '_x'; mexeu = true; break outer2; }
+  if (!mexeu) { const g = clone(E.GODS.medusa); g.ab[0].fx = [{ t: 'contador', nome: 'PedraX', v: 1 }]; ok(PROV.catalogoHash({ aliados: ['medusa'], inimigos: ['zeus'] }, Object.assign({}, E.GODS, { medusa: g })) !== PROV.catalogoHash({ aliados: ['medusa'], inimigos: ['zeus'] }, E.GODS), 'fx.nome (chave de contador/dot) é COMBATE — invalida'); }
+  else ok(PROV.catalogoHash(prov, comGods(fxNome)) !== h0, 'fx.nome (chave de contador/dot) é COMBATE — invalida, não é rótulo');
+  console.log('  cosmético estável · custo/cd/dano/fx.nome invalidam');
+}
+
 console.log('== 6. acumulo{fonte,limiar}: nasce com as 11 fontes; fonte desconhecida é recusada ==');
 {
   ok(PROV.FONTES_ACUMULO.length === 11, `11 fontes registradas (${PROV.FONTES_ACUMULO.length})`);

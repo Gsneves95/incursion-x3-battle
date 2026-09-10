@@ -168,6 +168,21 @@ conserto de dado; a Provação se ajusta ao deus, nunca o contrário. (O `itzamn
 parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PONTE de volume,
 §231, não uma divergência.)
 
+### O carimbo da Provação só vê COMBATE (§263)
+
+- **`catalogoHash(prov)` hasheia `projecaoCombate(g)`, não o JSON inteiro do combatente.** O
+  carimbo garante o BALANÇO que o oponente enfrenta — então cobre só o que o motor lê. Um rótulo
+  de tela (`nome`, `curto`, `desc`) não muda combate e **não** invalida o carimbo (antes do §263,
+  invalidava — o `curto` do §262 forçou re-carimbo do Bragi).
+- **A deny-list é POR NÍVEL, não por nome-de-chave.** Fora do hash: `nome`+`curto` do deus,
+  `nome`+`desc` da habilidade, `nome` da opção (escolhida por índice), `nome`+`desc` da passiva.
+  DENTRO do hash: tudo o mais — e atenção, **`fx.nome` é CHAVE de contador/dot (combate), fica**.
+- **Erra para o lado de RE-CARIMBAR.** Campo novo, ou ambíguo (`inicial`, `provacao`), entra no
+  hash; só um rótulo comprovadamente de tela sai. Um novo campo de combate nunca passa em silêncio.
+- Mudar o escopo do hash invalida TODOS os carimbos de uma vez → é **decisão do dono**. A migração
+  segura é o REFRESCO DE HASH (`tools/recarimbar_hash.js`): recalcula só `verificacao.hash`, sem
+  re-resolver (o combate não mudou, o veredito medido segue válido).
+
 ---
 
 ## INVARIANTES — não quebre sem uma decisão explícita do dono do projeto

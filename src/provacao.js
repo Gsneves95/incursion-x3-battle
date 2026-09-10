@@ -444,9 +444,36 @@ function catalogoProvacao() {
 }
 
 function _djb2(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
+
+// -------- projeção de COMBATE (o carimbo só vê o que o motor lê) --------
+// O carimbo garante o BALANÇO (o que o oponente enfrenta); um rótulo de tela — nome, curto,
+// desc — não muda combate, e antes forçava re-carimbo a cada adição cosmética (o `curto` do
+// §262 invalidou a Provação do Bragi). Aqui o hash passa a cobrir só os campos de COMBATE.
+// CRITÉRIO: um campo é EXCLUÍDO apenas se for rótulo de APRESENTAÇÃO NAQUELE nível que o motor
+// nunca lê. A deny-list é POR NÍVEL, não por nome-de-chave — porque `nome` DENTRO de um fx é a
+// CHAVE de contador/dot que o motor lê (getContador(u, e.nome)): combate, fica. Tudo o mais
+// permanece no hash — ERRA PARA O LADO DE RE-CARIMBAR: campo novo, ou ambíguo (inicial, provacao),
+// entra no hash; só um rótulo comprovadamente de tela sai. Assim um novo campo de combate nunca
+// passa em silêncio; no pior caso re-carimba-se um cosmético que poderia ter ficado de fora.
+const TELA_TOPO = ['nome', 'curto'];        // deus/criatura: rótulos exibidos (§262)
+const TELA_AB   = ['nome', 'desc'];         // habilidade: nome e descrição são de tela (busca por `slot`, §..)
+const TELA_OPC  = ['nome'];                 // opção: escolhida por ÍNDICE (escolhas:[i]) — nome é rótulo
+const TELA_PASS = ['nome', 'desc'];         // passiva: idem
+function _semTela(obj, chaves) { const o = {}; for (const k in obj) if (!chaves.includes(k)) o[k] = obj[k]; return o; }
+function projecaoCombate(g) {
+  if (!g || typeof g !== 'object') return g;
+  const proj = _semTela(g, TELA_TOPO);
+  if (Array.isArray(g.ab)) proj.ab = g.ab.map(a => {
+    const pa = _semTela(a, TELA_AB);
+    if (Array.isArray(a.opcoes)) pa.opcoes = a.opcoes.map(o => _semTela(o, TELA_OPC));   // fx da opção fica INTEIRO
+    return pa;                                                                            // fx da habilidade fica INTEIRO (fx.nome = chave de mecânica)
+  });
+  if (g.passiva) proj.passiva = _semTela(g.passiva, TELA_PASS);                           // fx da passiva fica INTEIRO
+  return proj;
+}
 function catalogoHash(prov, gods = catalogoProvacao()) {
   const keys = [...new Set([...(prov.aliados || []), ...(prov.inimigos || [])])].sort();
-  return _djb2(keys.map(k => k + ':' + JSON.stringify(gods[k] || null)).join('|'));
+  return _djb2(keys.map(k => k + ':' + JSON.stringify(projecaoCombate(gods[k]) || null)).join('|'));
 }
 
 // -------- validação de FORMA (chamada na BUILD; falha alto, não em runtime) --------
@@ -521,5 +548,5 @@ function avaliarProvacao(st, prov) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { PREDICADOS, MODOS, FONTES_ACUMULO, validarProvacao, montarProvacao, avaliarProvacao, catalogoHash, catalogoProvacao };
+  module.exports = { PREDICADOS, MODOS, FONTES_ACUMULO, validarProvacao, montarProvacao, avaliarProvacao, catalogoHash, catalogoProvacao, projecaoCombate };
 }
