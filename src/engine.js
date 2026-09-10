@@ -2000,6 +2000,67 @@ function escalaContagem(st, u, t, spec) {
   if (spec.porInimigoHp) add += spec.porInimigoHp.v * st.lados[1 - u.lado].units.filter(x => x.vivo && x.hp < spec.porInimigoHp.abaixo).length;   // §135 (Kali hab): "+N por inimigo abaixo de X de HP" — conta inimigos vivos sob o limiar
   return add;
 }
+// §266 — A PASSIVA ESTÁ AGINDO AGORA? A tese do jogo é informação completa; o motor aplica modificadores
+// (bonusDano/reducao/danoIrredutivel/vulnerabilidade) que a tela não anunciava. Esta função diz, para uma
+// unidade `u` e um contexto de mira opcional `armado` ({uid, alvos:[uid…]}), QUAIS modificadores da passiva
+// dela estão contribuindo AGORA — reusando os MESMOS gates da conta de dano (estadoOK/condOK/escalaContagem),
+// para o P nunca acender uma mentira. Devolve { propria:[…], recebidas:[…] }:
+//   propria   = modificadores da passiva de `u` ativos agora (aura que ela emite inclusa).
+//   recebidas = auras de TIME de ALIADOS que caem sobre `u` (com a fonte) — a legibilidade "de onde vem o +5".
+// Regras de "ativo": incondicional/estado (campo/self) → em repouso; SÓ-ALVO (quando:alvo*) e danoIrredutivel
+// → só quando `u` está armada e ALGUM alvo candidato casa (decisão do dono §266: acende ao mirar o alvo que casa).
+function _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, armadoDono) {
+  if (!dono.vivo && !f.mesmoMorto) return null;
+  if (f.estado && !estadoOK(f.estado, dono, st)) return null;
+  if (f.gatilho === 'bonusDano') {
+    const q = f.quando;
+    if (!q) { const v = f.v + escalaContagem(st, dono, ctxAlvo || dono, f); return v > 0 ? { gat: 'bonusDano', v } : null; }
+    const chaves = Object.keys(q);
+    const alvoDep = chaves.some(k => k.startsWith('alvo'));
+    if (alvoDep) { if (!armadoDono || !ctxAlvo) return null; return condOK(q, ctxAtk, ctxAlvo, st) ? { gat: 'bonusDano', v: f.v + escalaContagem(st, dono, ctxAlvo, f), alvo: true } : null; }
+    // atacante* / outras: precisa do atacante — só quando armado
+    if (!armadoDono || !ctxAtk) return null;
+    return condOK(q, ctxAtk, ctxAlvo || ctxAtk, st) ? { gat: 'bonusDano', v: f.v + escalaContagem(st, dono, ctxAlvo || dono, f), alvo: true } : null;
+  }
+  if (f.gatilho === 'reducao') { const v = f.v + escalaContagem(st, dono, dono, f); return v > 0 ? { gat: 'reducao', v } : null; }   // redução PERMANENTE (o `contra` só estreita quais golpes; a redução está de pé)
+  if (f.gatilho === 'vulnerabilidade') { if (f.deFuncao && (!armadoDono || !ctxAtk || (kitDe(st, ctxAtk) || {}).funcao !== f.deFuncao)) return null; return { gat: 'vulnerabilidade', v: f.v }; }
+  if (f.gatilho === 'danoIrredutivel') { if (!armadoDono || !ctxAlvo) return null; const def = ctxAlvo.shield > 0 || !!ef(ctxAlvo, 'dmgReduction') || reducaoDeclarativa(st, ctxAlvo, { slot: 'basico', elem: ctxAtk && ctxAtk.elem }) > 0; return def ? { gat: 'danoIrredutivel', fura: f.ignora } : null; }
+  if (f.gatilho === 'amplificaDot') { const has = st.lados.some(l => l.units.some(x => x.vivo && x.dots.some(d => d.nome === f.nome))); return has ? { gat: 'amplificaDot', v: f.v, nome: f.nome } : null; }
+  return null;
+}
+function infoPassiva(st, u, armado) {
+  const out = { propria: [], recebidas: [] };
+  const alvos = armado && armado.alvos ? armado.alvos.map(id => todasUnidades(st).find(x => x.uid === id)).filter(Boolean) : [];
+  const armadoUnidade = armado && armado.uid ? todasUnidades(st).find(x => x.uid === armado.uid) : null;
+  // 1) a passiva da PRÓPRIA u
+  const gU = kitDe(st, u); const pU = gU && gU.passiva;
+  if (pU && Array.isArray(pU.fx)) for (const f of pU.fx) {
+    const uArmada = !!armadoUnidade && armadoUnidade.uid === u.uid;
+    // ctxAlvo: se u está armada, o 1º alvo candidato que ATIVA o fx (para SÓ-ALVO acender no alvo certo)
+    let achou = null;
+    if (uArmada && alvos.length) for (const t of alvos) { const r = _fxAtivo(st, u, f, u, t, uArmada); if (r) { achou = r; break; } }
+    if (!achou) achou = _fxAtivo(st, u, f, u, uArmada ? alvos[0] : null, uArmada);
+    if (achou) out.propria.push(achou);
+  }
+  // 2) AURAS de TIME de ALIADOS que caem sobre u (bonusDano/reducao escopo:time) — a fonte importa (§266)
+  for (const dono of st.lados[u.lado].units) {
+    if (dono.uid === u.uid) continue;
+    const g = kitDe(st, dono); const p = g && g.passiva;
+    if (!p || !Array.isArray(p.fx)) continue;
+    for (const f of p.fx) {
+      if ((f.escopo || 'self') !== 'time') continue;
+      if (f.gatilho !== 'bonusDano' && f.gatilho !== 'reducao') continue;
+      // a aura beneficia u quando: bonusDano → u ataca (avalia com u como atacante); reducao → u é protegida.
+      const uArmada = !!armadoUnidade && armadoUnidade.uid === u.uid;
+      const ctxAlvo = f.gatilho === 'bonusDano' ? (uArmada ? alvos[0] : null) : u;
+      const ctxAtk = f.gatilho === 'bonusDano' ? u : null;
+      const r = _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, uArmada);
+      if (r) out.recebidas.push({ ...r, fonte: dono.key, fonteNome: dono.nome });
+    }
+  }
+  return out;
+}
+function todasUnidades(st) { return [...st.lados[0].units, ...st.lados[1].units]; }
 function danoBase(st, u, t, e, l) {
   let base = e.v;
   if (e.seEncharcado && ef(t, 'encharcado')) base = e.seEncharcado;
@@ -2075,5 +2136,6 @@ if (typeof module !== 'undefined') {
     // primitivas (para os testes exercitarem em isolamento, antes dos kits)
     aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, espalharContador, definirFase, caidos, reviver,
     bonusDanoDeclarativo,   // passiva declarativa (F1.2) — testada em isolamento
+    infoPassiva,            // §266 — a passiva está AGINDO agora? (para acender o P e ler o valor/fonte)
   };
 }

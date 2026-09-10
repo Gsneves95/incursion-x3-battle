@@ -19,6 +19,7 @@ const SYM = {
   silenceClass:['\u2298','debuff','Classe travada','As habilidades da classe indicada ficam indisponíveis. Básico e Defesa continuam liberados.'],
   lockSkill:['\u229f','debuff','Habilidade travada','A entrada indicada fica indisponível. Não é silêncio — as outras seguem liberadas.'],
   dmgDown:['\u25bc','debuff','Dano reduzido','Reduz o dano que esta unidade CAUSA. Soma com outros do mesmo tipo.'],
+  vulneravel:['\u2295','debuff','Vulner\u00e1vel','Recebe +N de dano de cada golpe (o N aparece no chip), somado ANTES da redu\u00e7\u00e3o e do escudo. Some ao ser limpo.'],   // \u00a7266: antes SEM s\u00edmbolo \u2014 o debuff "+N de dano recebido" era invis\u00edvel na tela
   encharcado:['\u224b','debuff','Encharcado','Recebe +5 de dano de Maré e Tempestade, e serve de gatilho: vários kits têm bônus contra Encharcados.'],
   noHeal:['\u2296','debuff','Sem cura','Bloqueia cura e regeneração.'],
   dmgUp:['\u25b2','buff','Dano aumentado','Aumenta o dano que esta unidade CAUSA. Soma com outros do mesmo tipo.'],

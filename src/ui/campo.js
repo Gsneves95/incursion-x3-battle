@@ -1,18 +1,50 @@
 // ui/campo.js — as bandas da fileira (§214): retrato (nome inteiro + vida + efeitos), os 4 tiles
 // de habilidade, a ficha da unidade, e a consulta do KIT inimigo por TOQUE LONGO no retrato.
+
+// §266 — a passiva SE ANUNCIA quando age. O motor (infoPassiva) diz o que está modificando AGORA; a UI
+// só acende o "P" e mostra o valor/fonte. `armado`/`alvos` são globais da sessão (view.js): quando o
+// jogador arma um golpe, passamos o alvo candidato p/ as passivas SÓ-ALVO acenderem no alvo que casa (§266).
+function _armadoCtx(){
+  if(typeof armado==='undefined' || !armado) return null;
+  const al=(typeof alvos!=='undefined'&&alvos)?alvos.map(x=>x.uid):[];
+  return { uid:armado.uid, alvos:al };
+}
+function infoPassivaUI(u){
+  if(typeof st==='undefined'||!st||typeof infoPassiva!=='function') return { propria:[], recebidas:[] };
+  try{ return infoPassiva(st, u, _armadoCtx()); }catch(e){ return { propria:[], recebidas:[] }; }
+}
+function passivaAcesa(u){ const i=infoPassivaUI(u); return i.propria.length>0 || i.recebidas.length>0; }
+// rótulo legível de um item ativo da passiva (com o VALOR — a tese: explicar o número sem tocar)
+function rotuloPassivaItem(it){
+  if(it.gat==='bonusDano') return '+'+it.v+' de dano'+(it.alvo?' (neste alvo)':'');
+  if(it.gat==='reducao') return '−'+it.v+' de dano recebido';
+  if(it.gat==='vulnerabilidade') return '+'+it.v+' de dano recebido';
+  if(it.gat==='danoIrredutivel') return 'fura '+(it.fura||[]).map(x=>x==='reducao'?'redução':'escudo').join(' e ');
+  if(it.gat==='amplificaDot') return '+'+it.v+' por tique de '+(it.nome||'dano contínuo');
+  return '';
+}
+// §266 — a MAGNITUDE numérica de um efeito (o número que muda o dano). null = efeito sem número (atordoado…).
+// adormecido é +8 FIXO (regra do motor, não um campo `v`); o dono pediu esse explicitamente.
+function magEfeito(e){
+  if(e.type==='dmgUp'||e.type==='vulneravel'||e.type==='regen') return e.v!=null?('+'+e.v):null;
+  if(e.type==='dmgDown'||e.type==='dmgReduction') return e.v!=null?('−'+e.v):null;
+  if(e.type==='adormecido') return '+8';
+  return null;
+}
 function efeitosHTML(u){
-  const out=[];
-  for(const e of u.efeitos){const s=SYM[e.type]; if(!s)continue;
-    out.push(`<button class="effect effect--${s[1]}" data-ef="${u.uid}|${e.type}">
-      <div class="slot" data-slot="effect-${e.type}"><span class="effect__g">${s[0]}</span></div>
-      <div class="effect__turns">${e.dur>90?'∞':e.dur}</div></button>`);}
-  for(const d of u.dots)
-    out.push(`<button class="effect effect--dot" data-dot="${u.uid}|${H(d.nome)}">
-      <div class="slot" data-slot="effect-dot"><span class="effect__g">✹</span></div>
-      <div class="effect__turns">${d.dur}</div></button>`);
-  if(out.length>FX_MAX)
-    return out.slice(0,FX_MAX-1).join('')+`<span class="fxmore" data-ficha="${u.uid}">+${out.length-FX_MAX+1}</span>`;
-  return out.join('');
+  const itens=[];
+  for(const e of u.efeitos){const s=SYM[e.type]; if(!s)continue; itens.push({s,mag:magEfeito(e),dur:e.dur>90?'∞':e.dur,key:e.type});}
+  for(const d of u.dots) itens.push({s:['✹','dot',H(d.nome)],mag:null,dur:d.dur,key:d.nome,dot:true});
+  // ADAPTATIVO (§266): com ≤3 efeitos os chips crescem e mostram o NÚMERO; com 4+ colapsam pro chip de 14px
+  // + turnos (o número volta pro toque) — assim o pior caso de 6 continua cabendo no talo de 92px.
+  const largo = itens.length<=3;
+  const chip=(it)=>{
+    const attr = it.dot?`data-dot="${u.uid}|${it.s[2]}"`:`data-ef="${u.uid}|${it.key}"`;
+    if(largo && it.mag) return `<button class="effect effect--${it.s[1]} effect--mag" ${attr}><span class="effect__g">${it.s[0]}</span><span class="effect__v">${it.mag}</span><span class="effect__turns effect__turns--in">${it.dur}</span></button>`;
+    return `<button class="effect effect--${it.s[1]}" ${attr}><div class="slot" data-slot="effect-${it.dot?'dot':it.key}"><span class="effect__g">${it.s[0]}</span></div><div class="effect__turns">${it.dur}</div></button>`;
+  };
+  if(itens.length>FX_MAX) return itens.slice(0,FX_MAX-1).map(chip).join('')+`<span class="fxmore" data-ficha="${u.uid}">+${itens.length-FX_MAX+1}</span>`;
+  return itens.map(chip).join('');
 }
 
 /* ---------- retrato (§214): 88 de largura, nome INTEIRO, aro ouro (aliado) x vermelho (inimigo) ---------- */
@@ -35,7 +67,7 @@ function retrato(u,inimigo){
     <div class="${cls.join(' ')}" data-uid="${u.uid}" ${alvo?'data-target="1"':''} ${inimigo?'data-foe="1"':''}>
       ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 30)}
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
-      ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''}" data-pas="${u.uid}">P</button>`:''}
+      ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''} ${passivaAcesa(u)?'pas--on':''}" data-pas="${u.uid}">P</button>`:''}
       ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
       <div class="portrait__nome" title="${H(u.nome)}">${H(metaComb(u.key).curto)}</div>
       <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
@@ -153,9 +185,15 @@ function ligarCampo(){
   stage.querySelectorAll('[data-pas]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.pas),g=_catPartida()[u.key]||{};
     if(!g.passiva)return;
+    // §266: LÊ o que a passiva está fazendo AGORA (antes de limpar o armado abaixo) — com o VALOR e a FONTE.
+    const info=infoPassivaUI(u);
+    const linhas=[];
+    for(const it of info.propria) linhas.push(rotuloPassivaItem(it));
+    for(const it of info.recebidas) linhas.push(rotuloPassivaItem(it)+' — de '+H(it.fonteNome));
+    const agora = linhas.length ? ('AGINDO AGORA: '+linhas.join(' · ')) : 'PARADA AGORA (a condição não vale no momento)';
     detalhe={nome:g.passiva.nome.toUpperCase(),chave:'god-'+u.key,glifo:'P',cor:COR(u.elem),
       meta:u.nome.toUpperCase()+' · PASSIVA'+(g.passiva.inerte?' · INERTE':''),
-      texto:g.passiva.desc,classes:'SEMPRE ATIVA · NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA', passiva:true};
+      texto:agora+'\n'+g.passiva.desc,classes:'NÃO GASTA A AÇÃO · NÃO PODE SER SILENCIADA', passiva:true};
     peekKit=null; armado=null;alvos=[];escolhidos=[];render();});
   stage.querySelectorAll('[data-ficha]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.ficha); if(u)ficha(u);});

@@ -578,6 +578,55 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await g.close();
   }
 
+  // == §266 INFORMAÇÃO DOS MODIFICADORES: o P acende quando age, o chip mostra a magnitude, o talo cabe ==
+  {
+    const g = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 820, height: 428 } });
+    await g.route('**/*', r => { if (/^https?:\/\//i.test(r.request().url())) return r.abort(); return r.continue(); });
+    const gp = await g.newPage();
+    await gp.goto('file://' + distAbs, { waitUntil: 'load' });
+    for (let i = 0; i < 30; i++) { const on = await gp.evaluate(async () => { try { await document.fonts.load('900 26px Cinzel'); await document.fonts.ready; } catch (e) {} return document.fonts.check('900 26px Cinzel'); }); if (on) break; await gp.waitForTimeout(200); }
+
+    // GUARDA 1 — a passiva AGINDO (Brígida aura no time) acende o P dos AFETADOS; a INATIVA fica apagada.
+    console.log('== §266: P acende quando a passiva age (aura legível a partir do afetado) ==');
+    const p1 = await gp.evaluate(() => {
+      st = montarProvacao({ aliados: ['brigid', 'apolo', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
+      prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; escolhidos = []; painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
+      const ally = [...document.querySelectorAll('.up--ally .portrait__pas')].map(b => b.classList.contains('pas--on'));
+      const foe = [...document.querySelectorAll('.up--enemy .portrait__pas')].map(b => b.classList.contains('pas--on'));
+      return { ally, foe };
+    });
+    ok(p1.ally.length === 3 && p1.ally.every(Boolean), `§266: sob a aura da Brígida os 3 P aliados ACENDEM (${JSON.stringify(p1.ally)})`);
+    ok(p1.foe.every(x => !x), `§266: o P do inimigo (aura não o alcança) fica APAGADO — agindo é distinguível de parado (${JSON.stringify(p1.foe)})`);
+
+    // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte.
+    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.up--ally [data-pas]')]; if (ps[1]) ps[1].click();
+      const t = document.querySelector('.leitura__txt') || document.querySelector('.leitura'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
+    ok(/\+5/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +5 e a FONTE (Brígida): "${p2.slice(0, 60)}"`);
+
+    // GUARDA 3 — todo chip de modificador NUMÉRICO mostra o número (modo largo, ≤3 efeitos): adormecido +8, vulneravel +v.
+    console.log('== §266: chip numérico mostra a magnitude (adormecido +8, vulnerável +v) ==');
+    const p3 = await gp.evaluate(() => {
+      st = montarProvacao({ aliados: ['zeus', 'nuwa', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
+      prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; painelRecolhido = false;
+      st.lados[1].units[0].efeitos = [{ type: 'adormecido', dur: 2 }, { type: 'vulneravel', v: 8, dur: 2 }]; ir('batalha', {}, { substituir: true }); render();
+      const band = [...document.querySelectorAll('.up--enemy .effects')].find(x => x.children.length);
+      const vs = [...band.querySelectorAll('.effect__v')].map(e => e.textContent.trim());
+      return { nChips: band.children.length, valores: vs };
+    });
+    ok(p3.valores.includes('+8'), `§266: o chip do ADORMECIDO mostra +8 sem toque (chips numéricos: ${JSON.stringify(p3.valores)})`);
+    ok(p3.valores.filter(v => /^[+−]\d/.test(v)).length >= 2, `§266: os chips numéricos (adormecido, vulnerável) mostram o número (${JSON.stringify(p3.valores)})`);
+
+    // GUARDA 4 — no pior caso de 6 efeitos o talo NÃO estoura (colapsa p/ chip compacto + "+N").
+    const p4 = await gp.evaluate(() => {
+      const u = st.lados[1].units[1];
+      u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]; render();
+      const band = [...document.querySelectorAll('.up--enemy .effects')].filter(x => x.children.length)[1];
+      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length };
+    });
+    ok(!p4.estoura, `§266: o talo com 6 efeitos NÃO estoura (colapsou p/ ${p4.n} slots)`);
+    await g.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

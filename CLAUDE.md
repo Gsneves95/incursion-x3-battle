@@ -278,6 +278,14 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
 18. **O canvas é fixo em 926x428 e escalado por `transform`.** Não troque por
     layout fluido sem discutir: o dimensionamento fixo é o que garante que a
     composição não quebre entre aparelhos.
+18-bis. **Um modificador que altera número é legível na tela SEM TOQUE (§266).** A tese do
+    jogo é informação completa — nenhum atributo oculto. Se um efeito ou passiva muda o dano
+    (o +8 do adormecido, o +5 da aura da Brígida, o +10 do Ogum vs defendido, a fase Dia/Noite),
+    a tela tem de deixar isso visível sem exigir um toque de leitura: o chip mostra a magnitude
+    (modo largo, ≤3 efeitos), e o "P" ACENDE (`pas--on`) quando a passiva está agindo — nunca
+    "sempre ativa" genérico. A verdade do "agindo" vem de `infoPassiva` (motor), que reusa os
+    gates da conta de dano; o P nunca acende uma mentira. NÃO recalcule o texto do kit (número
+    efetivo por alvo é OUTRA decisão, não aprovada).
 
 ### Campanha narrativa (§252)
 19. **A campanha é HISTÓRIA FASEADA (O Trono do Uno), não uma lista.** A tela

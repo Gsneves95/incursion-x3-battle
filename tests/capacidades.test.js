@@ -104,6 +104,31 @@ console.log('== Thor: redução de 6 para o time todo ==');
   console.log('  Thor vivo: 9 \u00b7 Thor caído: 15');
 }
 
+// §266 — infoPassiva: a passiva SE ANUNCIA quando age (a base do "P acende" e da leitura com valor/fonte).
+console.log('== §266 infoPassiva: passiva agindo vs parada, e a aura legível a partir do AFETADO ==');
+{
+  // aura INCONDICIONAL (Brígida +5 no time): a dona age; os 2 aliados RECEBEM, com a FONTE
+  const st=E.novoEstado(['brigid','apolo','tyr'],['zeus','zeus','zeus'],3);
+  const [b,ap]=st.lados[0].units;
+  const iB=E.infoPassiva(st,b), iAp=E.infoPassiva(st,ap);
+  ok(iB.propria.some(x=>x.gat==='bonusDano'&&x.v===5),'Brígida: a própria aura +5 aparece como AGINDO');
+  ok(iAp.recebidas.some(x=>x.v===5&&x.fonte==='brigid'),'o aliado AFETADO lê o +5 e a FONTE (Brígida) — a aura é legível a partir de quem recebe');
+  // SÓ-ALVO (Ogum +10 vs defendido): PARADA em repouso, AGE ao mirar um alvo que casa
+  const st2=E.novoEstado(['ogum','tyr','zeus'],['zeus','zeus','zeus'],3);
+  const og=st2.lados[0].units[0], alvo=st2.lados[1].units[0];
+  ok(E.infoPassiva(st2,og).propria.length===0,'Ogum PARADO em repouso (a condição alvoDefesa não vale sem alvo)');
+  alvo.efeitos.push({type:'dmgReduction',v:10,dur:9});
+  const iOg=E.infoPassiva(st2,og,{uid:og.uid,alvos:[alvo.uid]});
+  ok(iOg.propria.some(x=>x.gat==='bonusDano'&&x.v===10),'Ogum AGE ao mirar o alvo defendido (+10 explica o 25)');
+  // CAMPO/SELF (Amaterasu redução no time, gated por Dia): parada sem fase, age no Dia
+  const st3=E.novoEstado(['amaterasu','tyr','zeus'],['zeus','zeus','zeus'],3);
+  const al=st3.lados[0].units[1];
+  ok(E.infoPassiva(st3,al).recebidas.length===0,'Amaterasu: sem fase, a redução não age');
+  st3.fase='Dia';
+  ok(E.infoPassiva(st3,al).recebidas.some(x=>x.gat==='reducao'&&x.fonte==='amaterasu'),'Amaterasu: no Dia a redução age e é legível no aliado');
+  console.log('  Brígida aura legível no afetado · Ogum acende ao mirar · Amaterasu acende no Dia');
+}
+
 console.log('');
 console.log(f===0?'>>> NOVAS CAPACIDADES OK':`>>> ${f} FALHA(S)`);
 process.exit(f?1:0);
