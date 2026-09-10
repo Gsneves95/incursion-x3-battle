@@ -18,8 +18,8 @@ function sessao() {
 }
 // lista plana dos atos, em ordem (cap, ato, id, tipo)
 function flat(w) { return JSON.parse(w.eval(`JSON.stringify(CAMPS().flatMap((c,ci)=>c.atos.map((a,ai)=>({ci,ai,id:a.id,tipo:a.tipo,cap:c.numero}))))`)); }
-function abrir(w, capIdx, atoIdx, concluidas) {
-  w.eval(`perfil.campanha={capitulo:0,fase:0,concluidas:${JSON.stringify(concluidas || [])}}; campCapIdx=${capIdx}; campAtoIdx=${atoIdx}; campSwap={}; campVistaAto=null; ir('campanha',{},{substituir:true}); render();`);
+function abrir(w, capIdx, atoIdx, concluidas, escolhas) {
+  w.eval(`perfil.campanha={capitulo:0,fase:0,concluidas:${JSON.stringify(concluidas || [])},escolhas:${JSON.stringify(escolhas || {})}}; campCapIdx=${capIdx}; campAtoIdx=${atoIdx}; campSwap={}; campEscolhaSel=null; campKitRev=null; campVistaAto=null; ir('campanha',{},{substituir:true}); render();`);
 }
 
 console.log('== 1. os dados: 2 capítulos, 7 atos no Prólogo, 6 no Cap 1; tipos declarados ==');
@@ -30,7 +30,7 @@ console.log('== 1. os dados: 2 capítulos, 7 atos no Prólogo, 6 no Cap 1; tipos
   ok(caps[0].num === 0 && caps[0].n === 7, `Prólogo com 7 atos (veio ${caps[0] && caps[0].n})`);
   ok(caps[1].num === 1 && caps[1].n === 6, `Cap 1 com 6 atos (veio ${caps[1] && caps[1].n})`);
   const tipos = flat(w).map(a => a.tipo);
-  ok(tipos.every(t => t === 'batalha' || t === 'historia'), 'todo ato tem tipo batalha|historia');
+  ok(tipos.every(t => t === 'batalha' || t === 'historia' || t === 'escolha'), 'todo ato tem tipo batalha|historia|escolha');
 }
 
 console.log('== GUARDA 1 (§210): todo ato é alcançável pela linha do tempo ==');
@@ -51,21 +51,23 @@ console.log('== GUARDA 1 (§210): todo ato é alcançável pela linha do tempo =
   ok($$('.cnode').length === 7, `a linha do tempo do Prólogo mostra os 7 nós (tem ${$$('.cnode').length})`);   // BABÁ
 }
 
-console.log('== GUARDA 2: ato `historia` não tem recompensa e não abre batalha ==');
+console.log('== GUARDA 2: ato de não-batalha (escolha) não tem recompensa e não abre batalha ==');
 {
   const { w } = sessao();
-  const hist = flat(w).filter(a => a.tipo === 'historia');
-  ok(hist.length >= 2, `há atos de história (${hist.length})`);
-  const comRec = JSON.parse(w.eval(`JSON.stringify(CAMPS().flatMap(c=>c.atos).filter(a=>a.tipo==='historia'&&a.recompensa!=null).map(a=>a.id))`));
-  ok(comRec.length === 0, `nenhum ato historia tem recompensa (violam: ${comRec.join(',')})`);   // BABÁ
-  // CONTINUAR de um ato de história NÃO abre batalha e NÃO paga
-  const h = hist[0];
+  // §268: os antigos atos de `historia` viraram `escolha` — nenhum abre luta nem paga.
+  const naoBatalha = flat(w).filter(a => a.tipo !== 'batalha');
+  ok(naoBatalha.length >= 2, `há atos que não são batalha (${naoBatalha.length})`);
+  const comRec = JSON.parse(w.eval(`JSON.stringify(CAMPS().flatMap(c=>c.atos).filter(a=>a.tipo!=='batalha'&&a.recompensa!=null).map(a=>a.id))`));
+  ok(comRec.length === 0, `nenhum ato de não-batalha tem recompensa (violam: ${comRec.join(',')})`);   // BABÁ
+  // CONFIRMAR uma escolha NÃO abre batalha e NÃO paga
+  const h = naoBatalha[0];
   abrir(w, h.ci, h.ai, flat(w).slice(0, flat(w).findIndex(a => a.id === h.id)).map(a => a.id));
   const gemaAntes = w.eval('perfil.moedas.gema');
+  if (h.tipo === 'escolha') w.eval("document.querySelector('.copc[data-opc]').click();");   // seleciona 1ª opção
   w.eval("document.querySelector('#campcta').click();");
-  ok(w.eval("rotaAtual()") === 'campanha', 'CONTINUAR de história NÃO vai para a batalha');   // BABÁ
-  ok(w.eval('perfil.moedas.gema') === gemaAntes, 'CONTINUAR de história NÃO paga');   // BABÁ
-  ok(w.eval(`perfil.campanha.concluidas.includes(${JSON.stringify(h.id)})`), 'a história fica marcada como vista');
+  ok(w.eval("rotaAtual()") === 'campanha', 'CONFIRMAR uma escolha NÃO vai para a batalha');   // BABÁ
+  ok(w.eval('perfil.moedas.gema') === gemaAntes, 'CONFIRMAR uma escolha NÃO paga');   // BABÁ
+  ok(w.eval(`perfil.campanha.concluidas.includes(${JSON.stringify(h.id)})`), 'a escolha fica marcada como vista');
 }
 
 console.log('== GUARDA 3: batalha do Cap 1+ tem 3 aliados e 3 inimigos; o Prólogo é ISENTO ==');
@@ -239,6 +241,85 @@ console.log('== GUARDA 6 (§254): arte de bestiário — arquivo presente vira <
   // o caminho dos DEUSES não muda (retrato embutido, não vira arquivo de bestiário)
   const deus = w.eval("slot('god-zeus','ZE','#fff',20)");
   ok(/<img/.test(deus) && !/bestiario\//.test(deus), 'o retrato de DEUS segue embutido (não pega o caminho do bestiário)');
+}
+
+console.log('== §268 A: a build RECUSA consequência fora do vocabulário fechado e efeito.errada sem certa ==');
+{
+  // babá REAL da rejeição da build: chama a MESMA função que a build usa, com dado inválido.
+  const { errosEscolha } = require('../tools/valida_campanha');
+  const ctx = { catalogoKeys: new Set(['hel', 'nezha']), atosPorId: { alvo1: { id: 'alvo1', tipo: 'batalha', inimigos: ['hel'] } } };
+  const base = { pergunta: 'q?', opcoes: [{ id: 'a', rotulo: 'A' }, { id: 'b', rotulo: 'B' }], alvo: 'alvo1' };
+  // 1) verbo fora do vocabulário (acrescentar inimigo) → recusa
+  const e1 = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: { inimigo: 'hel' }, errada: {} } }), ctx);
+  ok(e1.some(m => /vocabulário fechado/.test(m)), `consequência fora dos 3 verbos é recusada (${e1.join('|') || 'nenhum erro!'})`);   // BABÁ
+  // 2) sem certa, mas com efeito.errada → recusa (não há leitura errada)
+  const e2 = errosEscolha('x', Object.assign({}, base, { efeito: { errada: {}, a: {}, b: {} } }), ctx);
+  ok(e2.some(m => /pode ter efeito\.errada/i.test(m)), `escolha sem certa recusa efeito.errada (${e2.join('|') || 'nenhum erro!'})`);   // BABÁ
+  // 3) kitRevelado de quem não é inimigo do alvo → recusa
+  const e3 = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: { kitRevelado: 'nezha' }, errada: {} } }), ctx);
+  ok(e3.some(m => /kitRevelado .* não é inimigo/.test(m)), `kitRevelado precisa ser inimigo do alvo (${e3.join('|') || 'nenhum erro!'})`);   // BABÁ
+  // 4) alvo que não é batalha → recusa
+  const ctx2 = { catalogoKeys: ctx.catalogoKeys, atosPorId: { alvo1: { id: 'alvo1', tipo: 'escolha' } } };
+  const e4 = errosEscolha('x', Object.assign({}, base, { certa: 'a', efeito: { certa: {}, errada: {} } }), ctx2);
+  ok(e4.some(m => /não é uma batalha/.test(m)), `o alvo tem de ser batalha (${e4.join('|') || 'nenhum erro!'})`);   // BABÁ
+}
+
+console.log('== §268 B: escolha sem `certa` não tem efeito.errada; `errada` nunca muda o balanço (não bloqueia) ==');
+{
+  const { w } = sessao();
+  const escolhas = JSON.parse(w.eval(`JSON.stringify(CAMPS().flatMap(c=>c.atos).filter(a=>a.tipo==='escolha').map(a=>({id:a.id,certa:a.certa||null,efeito:a.efeito,rev:a.revelacao})))`));
+  ok(escolhas.length === 3, `há 3 atos de escolha no jogo (tem ${escolhas.length})`);
+  for (const a of escolhas) {
+    if (a.certa == null) ok(!('errada' in (a.efeito || {})), `${a.id}: sem certa ⇒ sem efeito.errada`);   // BABÁ
+    // FASE 1: errar CUSTA, nunca BLOQUEIA — a consequência `errada` não altera o balanço medido
+    // (nada de `orbes` no ramo errado; hoje é {}). Se alguém puser orbes na errada, isto quebra.
+    if (a.certa != null) ok(!((a.efeito && a.efeito.errada) || {}).orbes, `${a.id}: a leitura errada não tira orbes (não bloqueia o ato-alvo)`);   // BABÁ
+  }
+}
+
+console.log('== §268 C: a CONSEQUÊNCIA cai no ato-alvo conforme a escolha gravada (empréstimo, kit, revelação) ==');
+{
+  const { w, $, $$ } = sessao();
+  const proAll = ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii'];
+  const cap1ate5 = proAll.concat(['cap1-i', 'cap1-ii', 'cap1-iii', 'cap1-iv', 'cap1-v']);
+  // Prólogo I (olimpo) → empréstimo Zeus semeia o 1º slot do Prólogo VI; a revelação aparece lá
+  abrir(w, 0, 5, ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v'], { 'pro-i': 'olimpo' });
+  ok(w.eval('slotsDoAto(CAMPS()[0].atos[5])[0].deus') === 'zeus', 'Prólogo I=olimpo ⇒ empréstimo Zeus no 1º slot do Prólogo VI');   // BABÁ
+  ok($$('.cslot--vazio').length === 2, 'os outros 2 slots do Prólogo VI seguem do jogador (empréstimo só semeia 1)');
+  ok(!!$('.camp__revel') && /Zeus/.test($('.camp__revel').textContent), 'a revelação do empréstimo aparece no ato-alvo');   // BABÁ
+  // Conselho CERTA (ah puch) → kit de Hel revelado no Cap 1 VI + revelação certa
+  abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'ahpuch' });
+  ok(!!$('.camp__kitchip'), 'Conselho certo (Ah Puch) ⇒ chip do kit revelado no Cap 1 VI');   // BABÁ
+  ok(/segredo ficou/.test($('.camp__revel').textContent), 'a revelação certa do Conselho aparece');
+  w.eval("document.querySelector('[data-kitrev]').click();");
+  ok(!!$('#campkitrevov') && $$('.camp__kitrevlist .krow').length === 4, 'o overlay mostra o kit inteiro de Hel (4 skills)');   // BABÁ
+  // Conselho ERRADA → SEM kit (consequência de erro é a PERDA do bônus, nunca desvantagem medida)
+  abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'susanoo' });
+  ok(!$('.camp__kitchip'), 'Conselho errado ⇒ NENHUM kit revelado (erro custa o bônus, não bloqueia)');   // BABÁ
+  ok(/sem uma palavra/.test($('.camp__revel').textContent), 'a revelação errada do Conselho aparece');
+  // Nezha CERTA (rivais) → empréstimo Nezha no slot emprestado do Cap 1 VI
+  abrir(w, 1, 5, cap1ate5, { 'cap1-v': 'rivais' });
+  ok(w.eval('timeDoAto(CAMPS()[1].atos[5]).join(",")') === 'zeus,nezha,hades', 'Nezha certo ⇒ empréstimo Nezha (zeus,nezha,hades)');   // BABÁ
+  // NADA gravado ⇒ nenhuma consequência (o balanço medido do Cap 1 VI fica intacto)
+  abrir(w, 1, 5, cap1ate5, {});
+  ok(w.eval('timeDoAto(CAMPS()[1].atos[5]).join(",")') === 'zeus,ares,hades', 'sem escolha gravada, o time do Cap 1 VI é o default medido');   // BABÁ
+  ok(!$('.camp__kitchip') && !$('.camp__revel'), 'sem escolha, nem kit nem revelação (a consequência se revela quando acontece)');
+}
+
+console.log('== §268 D: a trilha distingue os TRÊS tipos de nó (batalha|historia|escolha), sem rótulo escrito ==');
+{
+  const { w, $$ } = sessao();
+  abrir(w, 1, 0, ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii']);
+  const tipos = $$('.cnode').map(n => n.getAttribute('data-tipo'));
+  ok(tipos.join(',') === 'batalha,escolha,batalha,batalha,escolha,batalha', `os nós do Cap 1 carregam o tipo (veio ${tipos.join(',')})`);   // BABÁ
+  // cada tipo tem a SUA classe de forma no nó (o sinal é a forma, não texto)
+  ok($$('.cnode--t-batalha').length === 4 && $$('.cnode--t-escolha').length === 2, 'batalha e escolha têm classes de forma distintas na trilha');   // BABÁ
+  ok(!/cnode__nome[^>]*>[^<]*(BATALHA|ESCOLHA|HISTÓRIA)/i.test(w.eval('document.querySelector(".camp__nos").innerHTML')), 'o tipo NÃO vira rótulo escrito (o nó é a forma)');
+  // e o Prólogo tem o tipo escolha no 1º nó (a identidade) + 6 batalhas
+  abrir(w, 0, 0, []);
+  const pt = $$('.cnode').map(n => n.getAttribute('data-tipo'));
+  ok(pt[0] === 'escolha' && pt.slice(1).every(t => t === 'batalha'), `Prólogo: 1 escolha (identidade) + 6 batalhas (veio ${pt.join(',')})`);   // BABÁ
+  ok($$('.cnode').length === 7, 'os 7 nós do Prólogo continuam cabendo na trilha (§259)');   // BABÁ
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

@@ -1313,6 +1313,38 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .camp__historn{font-size:34px;color:var(--gold-soft)}
 .camp__histnota{margin:0;font-size:11px;color:#78899F}
 .camp__brief--hist .camp__cta{margin-top:0;width:70%}
+/* §268 — TELA DA ESCOLHA (reusa o painel do ato): pergunta + opções (pista que não corta) + Confirmar. */
+.camp__brief--escolha{gap:10px}
+.camp__perg{font-family:'Cinzel',serif;font-weight:700;font-size:13px;line-height:1.28;letter-spacing:.02em;color:#F0DC9A}
+.camp__opcoes{flex:1 1 auto;display:flex;flex-direction:column;gap:6px;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.copc{display:flex;align-items:center;gap:9px;text-align:left;padding:6px 8px;border:0;border-radius:4px;cursor:pointer;color:var(--ink);
+  background:rgba(12,10,32,.6);box-shadow:inset 0 0 0 1px rgba(150,170,200,.22)}
+.copc:active{transform:translateY(1px)}
+.copc__disco{flex:0 0 auto;width:30px;height:30px;border-radius:3px;overflow:hidden;display:grid;place-items:center;background:#0f0c20}
+.copc__disco .slot{width:100%;height:100%;border-radius:0}
+.copc__mono{font-family:'Cinzel',serif;font-weight:900;font-size:13px;color:var(--gold-soft)}
+.copc__corpo{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;gap:1px}
+.copc__rot{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:#EFE3C6}
+.copc__pista{font-size:9px;line-height:1.25;color:#8FA0BC}   /* §268: a pista NÃO clampa — evidência não pode cortar (§261) */
+.copc__mark{flex:0 0 auto;font-size:12px;color:#5D6B84}
+.copc--sel{box-shadow:inset 0 0 0 1.5px #E8C765,0 0 16px rgba(212,175,55,.22);background:rgba(46,36,12,.5)}
+.copc--sel .copc__mark{color:#F0DC9A}
+.copc--trava{opacity:.4;cursor:default}
+.copc--trava.copc--sel{opacity:1}   /* a opção confirmada fica acesa; as outras esmaecem (sem volta) */
+/* §268 — revelação da consequência no ato-alvo: a linha que o jogador liga ao efeito sozinho. */
+.camp__revel{display:flex;flex-direction:column;gap:3px;padding:7px 9px;border-radius:4px;background:rgba(46,36,12,.34);box-shadow:inset 0 0 0 1px rgba(212,175,55,.3)}
+.camp__revell{margin:0;font-family:'Cinzel',serif;font-weight:500;font-size:10px;line-height:1.32;color:#E5CE94}
+/* §268 — chip do kit revelado (abre o overlay com as 4 skills; não cabe inline sem cortar, §262). */
+.camp__kitchip{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:5px 8px;border:0;border-radius:4px;cursor:pointer;color:var(--ink);
+  background:rgba(18,12,40,.7);box-shadow:inset 0 0 0 1px rgba(150,110,220,.5)}
+.camp__kitchip:active{transform:translateY(1px)}
+.camp__kitchipp{flex:0 0 auto;width:24px;height:24px;border-radius:3px;overflow:hidden;display:grid;place-items:center}
+.camp__kitchipp .slot{width:100%;height:100%;border-radius:0}
+.camp__kitchiptxt{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;line-height:1.2}
+.camp__kitchiptxt b{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#C8B4F0}
+.camp__kitchiptxt span{font-size:9px;color:#9C8DBE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camp__kitchipseta{flex:0 0 auto;font-size:14px;color:#8878B0}
+.camp__kitrevlist{display:flex;flex-direction:column;gap:7px;overflow-y:auto;overscroll-behavior:contain}
 /* --- RODAPÉ: trilha (navegação) --- */
 .camp__pe{position:absolute;left:0;right:0;bottom:0;height:73px;z-index:3;
   background:linear-gradient(180deg,rgba(8,13,30,.85) 0%,#070B1C 44%,#050813 100%);box-shadow:inset 0 1px 0 rgba(212,175,55,.28)}
@@ -1332,6 +1364,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .cnode--atual .cnode__num{font-weight:700;font-size:12px;color:#FFF9E6}
 .cnode--atual .cnode__nome{font-weight:600;letter-spacing:.12em;color:#F0DC9A}
 .cnode--travado{cursor:default}
+/* §268 — TRÊS formas de nó (sem rótulo; a FORMA é o sinal): batalha = losango cheio (o default) ·
+   história = círculo/anel (a página) · escolha = losango com um eixo diagonal (a encruzilhada).
+   O sinal fica em `transform`/`::after`, que os estados feito/atual (fundo, tamanho) não tocam — então
+   sobrevive a vencido e atual. data-tipo no botão deixa o teste medir a distinção. */
+.cnode--t-historia .cnode__d{transform:rotate(0deg);border-radius:50%}
+.cnode--t-historia .cnode__num,.cnode--t-historia .cnode__lock{transform:none}
+.cnode--t-escolha .cnode__d::after{content:'';position:absolute;left:-1px;right:-1px;top:50%;height:1.5px;margin-top:-.75px;background:#7FD4FF;box-shadow:0 0 5px rgba(120,200,255,.75)}
 /* seletor de troca do emprestado (reusa .ov/.ovbox/.ctile) */
 .ov__cab{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .ov__cab h2{margin:0;font-family:'Cinzel',serif;font-weight:900;font-size:15px;letter-spacing:.1em;color:var(--gold-text)}

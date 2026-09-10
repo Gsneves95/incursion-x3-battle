@@ -1105,6 +1105,8 @@ function cardEncontroHTML(enc, estado){
 let campCapIdx = null, campAtoIdx = null;   // capítulo/ato em foco
 let campSwap = {}, campVistaAto = null;       // trocas do slot emprestado (por índice), reset ao trocar de ato
 let campPicker = null;                        // slot idx cujo seletor de troca está aberto (null = fechado)
+let campEscolhaSel = null;                    // §268: opção selecionada num ato de escolha (antes de confirmar)
+let campKitRev = null;                        // §268: chave do inimigo cujo kit revelado está aberto (overlay)
 
 function CAMPS(){ return (typeof CAMPANHAS !== 'undefined' && CAMPANHAS && CAMPANHAS.capitulos) ? CAMPANHAS.capitulos : []; }
 function atoFeito(id){ return !!(perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas) && perfil.campanha.concluidas.includes(id)); }
@@ -1122,10 +1124,34 @@ function atoAtualIdx(capIdx){ const atos = CAMPS()[capIdx].atos || []; for (let 
 // aliados de um ato → 3 slots {deus,travado}. null = 3 emprestados vazios (o jogador monta, Prólogo VI);
 // [string] = time fixo do Prólogo (tudo travado); [{deus,travado}] = Cap 1 (cena + emprestado).
 function slotsDoAto(ato){
-  if (ato.aliados == null) return [0, 1, 2].map(() => ({ deus: null, travado: false }));
-  return ato.aliados.map(a => typeof a === 'string' ? { deus: a, travado: true } : { deus: a.deus, travado: !!a.travado });
+  let slots;
+  if (ato.aliados == null) slots = [0, 1, 2].map(() => ({ deus: null, travado: false }));
+  else slots = ato.aliados.map(a => typeof a === 'string' ? { deus: a, travado: true } : { deus: a.deus, travado: !!a.travado });
+  // §268: consequência `emprestado` de um ato de escolha SEMEIA o default do 1º slot emprestado
+  // (não trava — o jogador ainda troca; campSwap vence). Os aliados no DADO ficam intactos.
+  const empr = emprestadoDaConsequencia(ato.id);
+  if (empr) { const i = slots.findIndex(s => !s.travado); if (i >= 0) slots[i] = { deus: empr, travado: false, consequente: true }; }
+  return slots;
 }
 function timeDoAto(ato){ return slotsDoAto(ato).map((s, i) => (campSwap[i] || s.deus)); }
+// §268 — a CONSEQUÊNCIA no ato-alvo: varre os atos de escolha que apontam para `atoId` e, se o jogador
+// já escolheu, resolve o resultado (certa|errada, ou o id da opção quando não há resposta certa) e
+// devolve {efeito, revelacao}. Vocabulário fechado: emprestado|orbes|kitRevelado (a build recusa o resto).
+function consequenciasNoAto(atoId){
+  const esc = (perfil && perfil.campanha && perfil.campanha.escolhas) || {};
+  const out = [];
+  for (const cap of CAMPS()) for (const a of (cap.atos || [])) {
+    if (a.tipo !== 'escolha' || a.alvo !== atoId) continue;
+    const escolhido = esc[a.id]; if (escolhido == null) continue;
+    const res = (a.certa != null) ? (escolhido === a.certa ? 'certa' : 'errada') : escolhido;
+    out.push({ origem: a.id, res, efeito: (a.efeito && a.efeito[res]) || {}, revelacao: (a.revelacao && a.revelacao[res]) || null });
+  }
+  return out;
+}
+function emprestadoDaConsequencia(atoId){ for (const c of consequenciasNoAto(atoId)) if (c.efeito.emprestado) return c.efeito.emprestado; return null; }
+function kitReveladoDaConsequencia(atoId){ const ks = []; for (const c of consequenciasNoAto(atoId)) if (c.efeito.kitRevelado) ks.push(c.efeito.kitRevelado); return ks; }
+function revelacoesNoAto(atoId){ return consequenciasNoAto(atoId).map(c => c.revelacao).filter(Boolean); }
+function escolhaFeita(atoId){ const esc = (perfil && perfil.campanha && perfil.campanha.escolhas) || {}; return esc[atoId]; }
 function timeProntoAto(ato){ return timeDoAto(ato).filter(Boolean).length === 3; }
 
 // §253: retrato de aliado. travado=cadeado (a cena, sem troca); emprestado=⇄ (abre o seletor).
@@ -1139,6 +1165,37 @@ function cslotHTML(s, i){
 // §262: a caixa cinim__nome (~51px) corta 7 de 12 nomes completos → mostra o `curto` (título = nome inteiro no hover).
 function cinimHTML(k){ const m = metaComb(k); return `<div class="cinim" title="${H(m.nome)}"><span class="cinim__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cinim__nome">${H(m.curto)}</span></div>`; }
 
+// §268 — opção de um ato de escolha: disco de retrato quando a opção é personagem (`deus`), rótulo e PISTA.
+// A pista é a evidência que o texto já deu; NÃO pode cortar (medida com fontes reais, §261). Estados:
+// selecionada (antes de confirmar), escolhida (o ato já foi jogado — trava, sem volta), disponível.
+function copcaoHTML(o, sel, feito){
+  const escolhido = feito;                      // id da opção que o jogador confirmou (ou undefined)
+  const marcada = escolhido != null ? o.id === escolhido : o.id === sel;
+  const disco = o.deus
+    ? slot('god-' + o.deus, ini(metaComb(o.deus).nome), COR(metaComb(o.deus).elem), 20)
+    : `<span class="copc__mono">${H(ini(o.rotulo))}</span>`;
+  const cls = ['copc', marcada ? 'copc--sel' : '', escolhido != null ? 'copc--trava' : ''].filter(Boolean).join(' ');
+  return `<button class="${cls}" data-opc="${H(o.id)}" ${escolhido != null ? 'disabled' : ''}>
+    <span class="copc__disco">${disco}</span>
+    <span class="copc__corpo"><span class="copc__rot">${H(o.rotulo)}</span>${o.pista ? `<span class="copc__pista">${H(o.pista)}</span>` : ''}</span>
+    <span class="copc__mark">${marcada ? '●' : '○'}</span>
+  </button>`;
+}
+// §268 — kit revelado de um inimigo (consequência `kitRevelado`): um CHIP no briefing que abre o kit
+// inteiro num overlay. O painel do ato tem altura fixa (290px, §262) — o kit não cabe inline sem
+// cortar; o overlay mostra as 4 skills sem limite e o chip deixa claro que a leitura foi recompensada.
+function kitRevChipHTML(k){ const m = metaComb(k);
+  return `<button class="camp__kitchip" data-kitrev="${H(k)}"><span class="camp__kitchipp">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span>
+    <span class="camp__kitchiptxt"><b>Kit revelado</b><span>${H(m.nome)} — ver as 4 habilidades</span></span><span class="camp__kitchipseta">›</span></button>`;
+}
+function campKitRevHTML(k){
+  const kit = (typeof CKIT !== 'undefined' && CKIT[k]) || null; const m = metaComb(k);
+  const rots = { basico: 'Básico', habilidade: 'Habilidade', milagre: 'Milagre', passiva: 'Passiva' };
+  const linhas = deusSkills(kit).filter(s => s.d).map(s => linhaKitHTML(rots[s.slot] || s.tipo, s.d)).join('');
+  return `<div class="ov" id="campkitrevov"><div class="ovbox"><div class="ov__cab"><h2>Kit revelado — ${H(m.nome)}</h2><button class="b b--quiet b--md" id="kitrevx">Fechar</button></div>
+    <div class="camp__kitrevlist">${linhas}</div></div></div>`;
+}
+
 function renderCampanha(){
   const caps = CAMPS();
   if (!caps.length) {   // sem dado da campanha nova — mensagem honesta, com saída (§210)
@@ -1151,10 +1208,11 @@ function renderCampanha(){
   const atos = cap.atos || [];
   if (campAtoIdx == null || campAtoIdx >= atos.length) campAtoIdx = atoAtualIdx(campCapIdx);
   const ato = atos[campAtoIdx];
-  if (campVistaAto !== ato.id) { campSwap = {}; campVistaAto = ato.id; }   // troca de ato zera os empréstimos
+  if (campVistaAto !== ato.id) { campSwap = {}; campEscolhaSel = null; campVistaAto = ato.id; }   // troca de ato zera empréstimos e seleção
 
   const feitosCap = atos.filter(a => atoFeito(a.id)).length;
   const ehBatalha = ato.tipo === 'batalha';
+  const ehEscolha = ato.tipo === 'escolha';
   const eyebrow = cap.numero === 0 ? 'PRÓLOGO' : 'CAPÍTULO ' + numeroRomano(cap.numero);
   const capTit = (cap.nome.split('—')[1] || cap.nome).trim();
   const numAtoLabel = (cap.numero === 0 ? 'TRECHO ' : 'ATO ') + ato.numeral;
@@ -1198,7 +1256,13 @@ function renderCampanha(){
         ${r && r.essencia ? ladrilho(r.essencia, 'ESSÊNCIA', jaFeito) : ''}
       </div></div>`;
     const pronto = timeProntoAto(ato);
+    // §268: a CONSEQUÊNCIA de escolhas anteriores cai AQUI — a linha de revelação (o jogador liga a
+    // linha ao efeito sozinho) e o kit revelado do inimigo. O empréstimo já entrou no slot (slotsDoAto).
+    const revs = revelacoesNoAto(ato.id);
+    const revBloco = revs.length ? `<div class="camp__revel">${revs.map(t => `<p class="camp__revell">“${H(t)}”</p>`).join('')}</div>` : '';
+    const kitRevBloco = kitReveladoDaConsequencia(ato.id).map(kitRevChipHTML).join('');
     brief = `<div class="camp__brief">
+      ${revBloco}
       <div class="camp__elencos">
         <div class="camp__col">
           <span class="camp__lbl camp__lbl--voce">Você jogará com</span>
@@ -1209,10 +1273,24 @@ function renderCampanha(){
           <div class="camp__inims">${(ato.inimigos || []).map(cinimHTML).join('')}</div>
         </div>
       </div>
+      ${kitRevBloco}
       <div class="camp__divisor"></div>
       ${mec}${rec}
       <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? 'Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
     </div>`;
+  } else if (ehEscolha) {
+    // §268 — TELA DA ESCOLHA: pergunta + opções (retrato quando é personagem + pista que não corta).
+    // Escolher seleciona; CONFIRMAR grava e avança — sem volta. O resultado NÃO se revela aqui (cai no alvo).
+    const escolhido = escolhaFeita(ato.id);            // já jogado? mostra a opção travada
+    const feito = atoFeito(ato.id);
+    const podeConfirmar = escolhido != null || campEscolhaSel != null;
+    const ctaLabel = escolhido != null ? 'Continuar' : 'Confirmar escolha';
+    brief = `<div class="camp__brief camp__brief--escolha">
+      <div class="camp__perg">${H(ato.pergunta)}</div>
+      <div class="camp__opcoes">${(ato.opcoes || []).map(o => copcaoHTML(o, campEscolhaSel, escolhido)).join('')}</div>
+      <button class="camp__cta" id="campcta" ${podeConfirmar ? '' : 'disabled'}><span class="camp__ctaseta"></span>${ctaLabel}</button>
+    </div>`;
+    void feito;
   } else {
     brief = `<div class="camp__brief camp__brief--hist">
       <div class="camp__historn">✦</div>
@@ -1228,13 +1306,17 @@ function renderCampanha(){
     const est = atoEstado(campCapIdx, i);
     const atual = i === campAtoIdx;
     const ic = est === 'feito' ? '✓' : (i + 1);
-    return `<button class="cnode cnode--${est} ${atual ? 'cnode--atual' : ''}" data-ato="${i}" ${est === 'travado' ? 'disabled' : ''}>
+    // §268: o losango do nó distingue os TRÊS tipos de ato — batalha (losango cheio, o default),
+    // história (anel vazado) e escolha (bifurcação ‹). Sem rótulo escrito (o nó é pequeno); o SINAL
+    // é a forma. `cnode--t-<tipo>` carrega a classe e um data-attr para o teste medir.
+    const tipo = a.tipo || 'batalha';
+    return `<button class="cnode cnode--${est} cnode--t-${tipo} ${atual ? 'cnode--atual' : ''}" data-ato="${i}" data-tipo="${tipo}" ${est === 'travado' ? 'disabled' : ''}>
       <span class="cnode__d">${est === 'travado' ? '<span class="cnode__lock">⚿</span>' : `<span class="cnode__num">${ic}</span>`}</span>
       <span class="cnode__nome">${H(a.nome)}</span></button>`;
   }).join('');
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="camp ${ehBatalha ? '' : 'camp--historia'}">
+  <div class="camp ${ehBatalha ? '' : ehEscolha ? 'camp--escolha' : 'camp--historia'}">
     ${esquerda}
     <header class="camp__cab">
       <button class="camp__inicio" id="bvoltar"><span class="camp__chev"></span>Início</button>
@@ -1254,6 +1336,7 @@ function renderCampanha(){
     </div>
   </div>
   ${campPicker != null ? campPickerHTML() : ''}
+  ${campKitRev != null ? campKitRevHTML(campKitRev) : ''}
   </div>`;
 
   const v = stage.querySelector('#bvoltar');
@@ -1262,8 +1345,15 @@ function renderCampanha(){
   const bn = stage.querySelector('#capnext'); if (bn) bn.onclick = () => { campCapIdx++; campAtoIdx = atoAtualIdx(campCapIdx); campSwap = {}; campVistaAto = null; render(); };
   [...stage.querySelectorAll('.cnode[data-ato]')].forEach(b => { if (b.disabled) return; b.onclick = () => { campAtoIdx = +b.dataset.ato; render(); }; });
   [...stage.querySelectorAll('.cslot[data-empr]')].forEach(b => { b.onclick = () => { campPicker = +b.dataset.empr; render(); }; });
+  [...stage.querySelectorAll('.copc[data-opc]')].forEach(b => { b.onclick = () => { campEscolhaSel = b.dataset.opc; render(); }; });   // §268: seleciona (não confirma)
+  [...stage.querySelectorAll('[data-kitrev]')].forEach(b => { b.onclick = () => { campKitRev = b.dataset.kitrev; render(); }; });     // §268: abre o kit revelado
+  const kx = stage.querySelector('#kitrevx'); if (kx) kx.onclick = () => { campKitRev = null; render(); };
   const cta = stage.querySelector('#campcta');
-  if (cta && !cta.disabled) cta.onclick = () => { if (ehBatalha) iniciarAto(cap, ato); else avancarHistoria(); };
+  if (cta && !cta.disabled) cta.onclick = () => {
+    if (ehBatalha) iniciarAto(cap, ato);
+    else if (ehEscolha) avancarEscolha(cap, ato);
+    else avancarHistoria();
+  };
   ligarCampPicker();
   fit();
 }
@@ -1307,6 +1397,22 @@ function avancarHistoria(){
     perfil.campanha.concluidas.push(ato.id);
     const res = salvar(perfil); if (res && !res.ok) {/* silencioso: história não tem estado crítico */}
   }
+  const prox = proximoAtoRef(campCapIdx, campAtoIdx);
+  if (prox) { campCapIdx = prox.cap; campAtoIdx = prox.ato; campSwap = {}; campVistaAto = null; }
+  render();
+}
+// §268 — ato de ESCOLHA: grava a opção (se ainda não gravada), marca visto e avança. NÃO abre luta,
+// NÃO paga. A opção confirmada é definitiva (sem volta); revisitar o ato mostra a escolha travada.
+function avancarEscolha(cap, ato){
+  if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [], escolhas: {} };
+  if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
+  if (!perfil.campanha.escolhas || typeof perfil.campanha.escolhas !== 'object') perfil.campanha.escolhas = {};
+  if (perfil.campanha.escolhas[ato.id] == null && campEscolhaSel != null) perfil.campanha.escolhas[ato.id] = campEscolhaSel;
+  if (!atoFeito(ato.id) && perfil.campanha.escolhas[ato.id] != null) {
+    perfil.campanha.concluidas.push(ato.id);
+    const res = salvar(perfil); if (res && !res.ok) {/* silencioso: escolha grava em concluidas/escolhas, sem estado crítico */}
+  }
+  campEscolhaSel = null;
   const prox = proximoAtoRef(campCapIdx, campAtoIdx);
   if (prox) { campCapIdx = prox.cap; campAtoIdx = prox.ato; campSwap = {}; campVistaAto = null; }
   render();

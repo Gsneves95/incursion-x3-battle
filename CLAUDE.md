@@ -294,8 +294,24 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     do ATO (esquerda: arte+numeral+nome+texto que NÃO rola; direita: você/
     enfrentará + mecânica + recompensas + CTA; rodapé: linha do tempo que
     navega; cabeçalho: capítulo+epígrafe+progresso+troca de capítulo).
-20. **O ato tem TIPO:** `batalha` abre a luta; `historia` é arte+texto+Continuar,
-    **não abre batalha e NÃO paga recompensa** (senão o jogador pula o texto).
+20. **O ato tem TIPO:** `batalha` abre a luta; `historia` é arte+texto+Continuar;
+    `escolha` (§268) é leitura fora do combate. `historia`/`escolha` **não abrem
+    batalha e NÃO pagam recompensa** (senão o jogador pula o texto). Na trilha os
+    três se distinguem pela FORMA do nó, sem rótulo escrito: batalha=losango cheio,
+    história=círculo, escolha=losango com eixo ciano (o sinal fica em transform/::after,
+    sobrevive a feito/atual).
+20-bis. **O ato de `escolha` (§268) muda a MECÂNICA, nunca a narrativa.** É a
+    competência central (ler o oponente) fora do combate: tem resposta `certa` (do
+    livro, quando há — o ato de identidade não tem), e a consequência **se revela
+    quando cobra** (no `alvo`, nunca na escolha). **Errar custa, nunca bloqueia** —
+    nenhuma consequência de erro altera o balanço MEDIDO do ato-alvo. O vocabulário
+    de consequência é FECHADO em três: **`emprestado`** (deus no 1º slot emprestado,
+    trocável), **`orbes`** (medir), **`kitRevelado`** (kit do inimigo num overlay);
+    **acrescentar/remover inimigo é PROIBIDO** (mudaria o balanço sem remedição) e a
+    build recusa (`tools/valida_campanha.js`, chamada pela build E pelo teste). A
+    consequência NUNCA edita o dado da batalha (aliados/inimigos/seed) — ela é aplicada
+    em runtime a partir de `perfil.campanha.escolhas`. Se a escolha ramificasse o
+    TEXTO, 130 atos virariam 300 — por isso a história segue linear.
 21. **Capítulo = ARQUIVO, nunca código.** Conteúdo vive em `data/campanha/`
     (`indice.json` + um `NN-*.json` por capítulo) → `CAMPANHAS` na build. Capítulo
     novo é uma linha no índice + um arquivo; o motor não muda. Fonte de conteúdo:

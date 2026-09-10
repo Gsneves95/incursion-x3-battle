@@ -1,5 +1,5 @@
 {
- "_fonte": "Prólogo da campanha narrativa (O Trono do Uno, Livro I). Fonte de conteúdo: docs/campanha-prologo-cap1.md (commit 91d9e7f). Os atos II–VII são os SEIS encontros de data/campanha.json de hoje, COPIADOS VERBATIM (aliados, inimigos, montar.seed, comeca, recompensa, ensina) — só entram nome, texto e arte. O ato I é `historia` (não paga). O ato VI mantém aliados:null (o time é do jogador). Formações do Prólogo: 3×1, 3×2 e 3×3 (medidas; o 3×3 obrigatório vale do Cap 1).",
+ "_fonte": "Prólogo da campanha narrativa (O Trono do Uno, Livro I). Fonte de conteúdo: docs/campanha-prologo-cap1.md (commit 91d9e7f). Os atos II–VII são os SEIS encontros de data/campanha.json de hoje, COPIADOS VERBATIM (aliados, inimigos, montar.seed, comeca, recompensa, ensina) — só entram nome, texto e arte. O ato I virou `escolha` (§268): identidade, sem resposta certa, consequência `emprestado` no ato VI (o plano escolhido decide o deus emprestado do primeiro slot). O ato VI mantém aliados:null (o time é do jogador; a escolha só semeia o default do 1º slot, trocável). Formações do Prólogo: 3×1, 3×2 e 3×3 (medidas; o 3×3 obrigatório vale do Cap 1).",
  "numero": 0,
  "id": "prologo",
  "nome": "Prólogo — Antes da Unidade",
@@ -10,9 +10,45 @@
    "id": "pro-i",
    "numeral": "I",
    "nome": "A Era dos Planos",
-   "tipo": "historia",
+   "tipo": "escolha",
    "arte": "prologo-01-era-dos-planos",
-   "texto": "Antes da escrita, dos templos e dos cânticos, o multiverso da fé já existia: cada povo que olhou o céu procurando sentido construiu um plano, tijolo por tijolo, com reza e sacrifício. Olimpo, Asgard, Kailasa, Duat, Yomi, Xibalba — incontáveis reinos coexistindo como estrelas, e nenhum deus cruzava o domínio do outro. Era um mundo partido, e era estável."
+   "texto": "Antes da escrita, dos templos e dos cânticos, o multiverso da fé já existia: cada povo que olhou o céu procurando sentido construiu um plano, tijolo por tijolo, com reza e sacrifício. Olimpo, Asgard, Kailasa, Duat, Yomi, Xibalba — incontáveis reinos coexistindo como estrelas, e nenhum deus cruzava o domínio do outro. Era um mundo partido, e era estável.",
+   "pergunta": "De qual plano a sua fé vem?",
+   "opcoes": [
+    {
+     "id": "olimpo",
+     "rotulo": "Olimpo",
+     "pista": "Os que governam do alto, entre colunas de mármore e a lei do mais forte."
+    },
+    {
+     "id": "asgard",
+     "rotulo": "Asgard",
+     "pista": "Os salões de guerra onde toda glória já conhece o próprio fim."
+    },
+    {
+     "id": "duat",
+     "rotulo": "Duat",
+     "pista": "O rio, a balança e a longa travessia depois da morte."
+    },
+    {
+     "id": "xibalba",
+     "rotulo": "Xibalba",
+     "pista": "As cavernas sagradas e os senhores que reinam no escuro."
+    }
+   ],
+   "alvo": "pro-vi",
+   "efeito": {
+    "olimpo": { "emprestado": "zeus" },
+    "asgard": { "emprestado": "thor" },
+    "duat": { "emprestado": "sobek" },
+    "xibalba": { "emprestado": "kukulkan" }
+   },
+   "revelacao": {
+    "olimpo": "Do Olimpo desceu Zeus, o raio em pessoa, para lutar ao seu lado.",
+    "asgard": "De Asgard veio Thor, o martelo erguido, atendendo à sua fé.",
+    "duat": "Do Duat emergiu Sobek, as águas do Nilo em sua guarda.",
+    "xibalba": "De Xibalba subiu Kukulkán, a serpente emplumada, seguindo o seu chamado."
+   }
   },
   {
    "id": "pro-ii",

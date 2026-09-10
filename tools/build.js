@@ -246,6 +246,16 @@ const campanhasObj = (() => {
   const erros = [];
   const capitulos = [];
   const dirArte = path.join(raiz, 'web', 'banners', 'campanha');
+  // §268: o ato de `escolha` aponta um `alvo` (o ato-alvo onde a consequência cai) e o vocabulário
+  // de consequência é FECHADO em três verbos. A validação mora em tools/valida_campanha.js (a build e o
+  // teste chamam a MESMA função). Coletamos primeiro TODOS os atos (id → ato) para resolver `alvo`
+  // mesmo entre capítulos.
+  const { errosEscolha } = require('./valida_campanha');
+  const atosPorId = {};
+  for (const linha of (indice.capitulos || [])) {
+    const cap0 = JSON.parse(ler('data/campanha/' + linha.arquivo));
+    for (const a of (cap0.atos || [])) atosPorId[a.id] = a;
+  }
   for (const linha of (indice.capitulos || [])) {
     const cap = JSON.parse(ler('data/campanha/' + linha.arquivo));
     for (const a of (cap.atos || [])) {
@@ -265,8 +275,12 @@ const campanhasObj = (() => {
         }
       } else if (a.tipo === 'historia') {
         if (a.recompensa) erros.push(`${linha.id}/${a.id}: ato "historia" NÃO pode ter recompensa`);
+      } else if (a.tipo === 'escolha') {
+        // §268: escolha NÃO abre luta nem paga; é leitura fora do combate. A validação (pergunta+opções,
+        // `certa` opcional, `alvo` existe e é batalha, vocabulário de consequência FECHADO) mora no módulo.
+        for (const e of errosEscolha(`${linha.id}/${a.id}`, a, { catalogoKeys, atosPorId })) erros.push(e);
       } else {
-        erros.push(`${linha.id}/${a.id}: tipo "${a.tipo}" inválido (batalha|historia)`);
+        erros.push(`${linha.id}/${a.id}: tipo "${a.tipo}" inválido (batalha|historia|escolha)`);
       }
     }
     capitulos.push(cap);

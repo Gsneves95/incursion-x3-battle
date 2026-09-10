@@ -1,5 +1,5 @@
 {
- "_fonte": "Capítulo 1 da campanha narrativa (O Trono do Uno, Livro I). Fonte: docs/campanha-prologo-cap1.md (commit 91d9e7f). Quatro batalhas 3×3 (elenco exato do documento) + dois atos `historia` (não pagam). Aliados: `travado`=a cena (o ato fornece o deus), `travado:false`=emprestado (o jogador troca por um deus que tenha; o default joga se ele não tem nenhum). Seeds ESCOLHIDAS por mim (não estão no plano) e registradas em `montar._seedNota`: cada uma é vencível sob jogo razoável (medido). Emprestados default onde o doc não nomeou: Ato I → ogum; Ato III → ogum, ganesha (o doc nomeia Ares/Hades nos atos IV e VI).",
+ "_fonte": "Capítulo 1 da campanha narrativa (O Trono do Uno, Livro I). Fonte: docs/campanha-prologo-cap1.md (commit 91d9e7f). Quatro batalhas 3×3 (elenco exato do documento) + dois atos `escolha` (§268: II Conselho e V Nezha; não pagam, não abrem luta). O Conselho (certa=Ah Puch) revela o kit de Hel no ato VI; o Nezha (certa=rivais) empresta Nezha no ato VI. Errar não pune (só perde o bônus). A consequência troca o default do 1º slot emprestado / mostra o kit — nunca muda aliados/inimigos/seed da batalha. Aliados: `travado`=a cena (o ato fornece o deus), `travado:false`=emprestado (o jogador troca por um deus que tenha; o default joga se ele não tem nenhum). Seeds ESCOLHIDAS por mim (não estão no plano) e registradas em `montar._seedNota`: cada uma é vencível sob jogo razoável (medido). Emprestados default onde o doc não nomeou: Ato I → ogum; Ato III → ogum, ganesha (o doc nomeia Ares/Hades nos atos IV e VI).",
  "numero": 1,
  "id": "queda-das-barreiras",
  "nome": "Capítulo 1 — A Queda das Barreiras",
@@ -43,9 +43,45 @@
    "id": "cap1-ii",
    "numeral": "II",
    "nome": "O Conselho Temporário",
-   "tipo": "historia",
+   "tipo": "escolha",
    "arte": "cap1-02-conselho-temporario",
-   "texto": "Odin despertou entre os escombros de um templo maia suspenso, distorcido pelas forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a fé é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo; Hécate, que aparecia em vários pontos ao mesmo tempo e parecia gostar do caos; e Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. “O Trono não desaparecerá por si só”, disse Odin. “Será conquistado por quem dominar os domínios.” As palavras eram sábias. Em torno da mesa improvisada, mais de um par de olhos brilhava com uma intenção diferente da que a boca declarava."
+   "texto": "Odin despertou entre os escombros de um templo maia suspenso, distorcido pelas forças do tempo, e sua visão entendeu depressa o que havia acontecido: onde a fé é forte, o domínio floresce. Huginn e Muninn foram buscar quem restava, e num mosteiro tibetano isolado entre nuvens vermelhas sentaram-se Anúbis, guiado por presságios do Duat; Susanoo, ainda tentando entender a fusão do próprio mundo; Hécate, que aparecia em vários pontos ao mesmo tempo e parecia gostar do caos; e Ah Puch, silencioso, com intenções que ninguém ali conseguia ler. “O Trono não desaparecerá por si só”, disse Odin. “Será conquistado por quem dominar os domínios.” As palavras eram sábias. Em torno da mesa improvisada, mais de um par de olhos brilhava com uma intenção diferente da que a boca declarava.",
+   "pergunta": "Quem, nesta mesa, não veio pelo que disse?",
+   "opcoes": [
+    {
+     "id": "anubis",
+     "rotulo": "Anúbis",
+     "deus": "anubis",
+     "pista": "imóvel diante da balança, os olhos pousados nas ambições alheias"
+    },
+    {
+     "id": "susanoo",
+     "rotulo": "Susanoo",
+     "deus": "susanoo",
+     "pista": "a espada zunindo de impaciência, ainda tonto com a fusão dos mundos"
+    },
+    {
+     "id": "hecate",
+     "rotulo": "Hécate",
+     "pista": "ocupa três cadeiras ao mesmo tempo e sorri como quem já sabe o fim"
+    },
+    {
+     "id": "ahpuch",
+     "rotulo": "Ah Puch",
+     "deus": "ahpuch",
+     "pista": "magro, silencioso, com intenções que nem Odin consegue ler"
+    }
+   ],
+   "certa": "ahpuch",
+   "alvo": "cap1-vi",
+   "efeito": {
+    "certa": { "kitRevelado": "hel" },
+    "errada": {}
+   },
+   "revelacao": {
+    "certa": "Você desconfiou do silêncio, e o segredo ficou.",
+    "errada": "Você olhou para quem ria. Ah Puch saiu do mosteiro sem uma palavra."
+   }
   },
   {
    "id": "cap1-iii",
@@ -117,9 +153,33 @@
    "id": "cap1-v",
    "numeral": "V",
    "nome": "O que Nezha viu",
-   "tipo": "historia",
+   "tipo": "escolha",
    "arte": "cap1-05-o-que-nezha-viu",
-   "texto": "Oculto entre as bordas das realidades que se entrelaçavam, um jovem deus assistiu ao massacre inteiro sem ser visto. E, para sua vergonha, o que Nezha sentiu primeiro não foi horror. Foi fascínio: havia algo terrível e magnífico na forma como Zeus varria tudo à frente, sem hesitação, com a certeza absoluta de quem nunca precisou pedir licença ao mundo. Por um instante o jovem imaginou-se assim. Depois o instante passou, e a vergonha veio no lugar dele — junto com o entendimento de que aquela fúria tinha um propósito frio. Zeus não estava atrás dos Domínios. Estava caçando rivais. Nezha ergueu a lança flamejante e partiu em silêncio, à procura de deuses mais racionais."
+   "texto": "Oculto entre as bordas das realidades que se entrelaçavam, um jovem deus assistiu ao massacre inteiro sem ser visto. E, para sua vergonha, o que Nezha sentiu primeiro não foi horror. Foi fascínio: havia algo terrível e magnífico na forma como Zeus varria tudo à frente, sem hesitação, com a certeza absoluta de quem nunca precisou pedir licença ao mundo. Por um instante o jovem imaginou-se assim. Depois o instante passou, e a vergonha veio no lugar dele — junto com o entendimento de que aquela fúria tinha um propósito frio. Zeus não estava atrás dos Domínios. Estava caçando rivais. Nezha ergueu a lança flamejante e partiu em silêncio, à procura de deuses mais racionais.",
+   "pergunta": "O que o trovão está caçando?",
+   "opcoes": [
+    {
+     "id": "dominios",
+     "rotulo": "Os Domínios"
+    },
+    {
+     "id": "rivais",
+     "rotulo": "Rivais"
+    },
+    {
+     "id": "vinganca",
+     "rotulo": "Vingança"
+    }
+   ],
+   "certa": "rivais",
+   "alvo": "cap1-vi",
+   "efeito": {
+    "certa": { "emprestado": "nezha" },
+    "errada": {}
+   },
+   "revelacao": {
+    "certa": "Nezha viu o mesmo que você."
+   }
   },
   {
    "id": "cap1-vi",

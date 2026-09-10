@@ -24,7 +24,7 @@ function novoPerfil(agora = 0, grantGema = 0) {
     times: [],
     moedas: { gema: grantGema, essencia: 0 },
     provacoes: {},
-    campanha: { capitulo: 0, fase: 0, concluidas: [] },
+    campanha: { capitulo: 0, fase: 0, concluidas: [], escolhas: {} },   // §268: escolhas[atoId]=opcaoId (ato de escolha)
     maestria: {},   // F3.5: por deus {vitorias, milagre} — só TÍTULO/COSMÉTICO, nunca poder de combate
     desafios: {},   // §245: por deus {ativo, recargaAte} — desafio POR DEUS comprado com Essência (dá maestria)
     invocacao: { total: 0, desdeUltimoSS: 0 },   // pity; a F0.4b liga isto ao gacha
