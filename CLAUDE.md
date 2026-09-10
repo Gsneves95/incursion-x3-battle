@@ -39,6 +39,16 @@ CDP `getInstallabilityErrors`). Os assets moram em `web/`; o `build.js` os copia
 `dist/` e o `pages.yml` para o `site/`. Forçar o manifest para dentro do `.html` custava
 mais (PWA que não instala) do que o invariante valia.
 
+**O jogo publicado NÃO faz requisição a domínio externo (§260).** Nenhum `<link>`, `src`,
+`fetch` ou `@font-face` pode apontar para um terceiro (nem Google Fonts, nem CDN). As
+FONTES (Cinzel, Rajdhani) são servidas do próprio jogo (`web/fonts/*.woff2` → `dist/fonts/`,
+`@font-face` local, `font-display:block`), como as artes. Por quê: o app é servido do Render,
+que não serve terceiros; numa rede que não alcança o terceiro (o teste de usabilidade §206),
+o layout inteiro — que é medido CONTRA a fonte — abriria no fallback com métrica errada. Isso
+é cobrado por `moldura.test.js` (§260, babá): 0 `googleapis`/`gstatic`, 0 `<link>` externo, e
+SEM REDE a tipografia resolve em Cinzel/Rajdhani (não no serif). O `http://www.w3.org/2000/svg`
+é namespace de SVG (não busca); IPs `192.168.x.x` em texto de ajuda não são requisição.
+
 ---
 
 ## Arquitetura, e por que ela é assim

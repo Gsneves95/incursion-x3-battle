@@ -413,6 +413,68 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await rctx.close();
   }
 
+  // == §260: FONTES LOCAIS — o jogo publicado NÃO faz requisição a domínio externo; a tipografia é
+  // verdadeira SEM REDE (Cinzel/Rajdhani locais, não o fallback serif). ==
+  console.log('== §260 fontes locais: zero requisição externa + Cinzel/Rajdhani resolvem sem rede ==');
+  {
+    const html = fs.readFileSync(distAbs, 'utf8');
+    // GUARDA 1: nenhum domínio externo de fonte/terceiro no HTML publicado (babá: re-adicione o link do Google e cai)
+    ok(!/fonts\.googleapis\.com|fonts\.gstatic\.com|googleapis|gstatic/i.test(html), 'nenhuma referência a Google Fonts no dist');
+    const linksExternos = (html.match(/<link[^>]+href=["']https?:\/\/[^"']+/gi) || []);
+    ok(linksExternos.length === 0, `nenhum <link> a domínio externo (achei: ${linksExternos.slice(0,2).join(' ')})`);
+    // GUARDA 2: as fontes locais existem no dist e o @font-face aponta para elas (babá: apague um woff2 e cai)
+    const distFontes = path.join(path.dirname(distAbs), 'fonts');
+    const woff2 = fs.existsSync(distFontes) ? fs.readdirSync(distFontes).filter(f => f.endsWith('.woff2')) : [];
+    ok(woff2.length === 8, `os 8 woff2 locais no dist/fonts (há ${woff2.length})`);
+    ok(/@font-face\{[^}]*font-family:\s*["']Cinzel["'][^}]*url\(fonts\/cinzel-latin\.woff2\)/i.test(html.replace(/\s+/g,' ')) ||
+       /url\(fonts\/cinzel-latin\.woff2\)/.test(html), 'o @font-face aponta para fonts/cinzel-latin.woff2 local');
+    ok(/url\(fonts\/rajdhani-700-latin\.woff2\)/.test(html), 'o @font-face aponta para as Rajdhani locais');
+
+    // GUARDA 3: SEM REDE, as famílias resolvem em Cinzel/Rajdhani (não no fallback). Bloqueia todo http(s).
+    const nctx = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 800, height: 360 } });
+    let httpHits = 0;
+    await nctx.route('**/*', r => { if (/^https?:\/\//i.test(r.request().url())) { httpHits++; return r.abort(); } return r.continue(); });
+    const npg = await nctx.newPage();
+    await npg.goto('file://' + distAbs, { waitUntil: 'load' });
+    await npg.evaluate(() => { ir('campanha', {}, { substituir: true }); render(); });
+    await npg.waitForTimeout(1000);
+    const f = await npg.evaluate(async () => {
+      try { await document.fonts.ready; } catch (e) {}
+      const cv = document.createElement('canvas'), cx = cv.getContext('2d');
+      const s = 'Alianças, conflitos e oportunidades';
+      const wC = (cx.font = '900 26px Cinzel', Math.round(cx.measureText(s).width));
+      const wS = (cx.font = '900 26px serif', Math.round(cx.measureText(s).width));
+      return { cinzel: document.fonts.check('900 26px Cinzel'), raj: document.fonts.check('700 12px Rajdhani'), wC, wS };
+    });
+    ok(httpHits === 0, `SEM REDE: zero requisições http(s) na carga (tentou ${httpHits})`);
+    ok(f.cinzel && f.raj, 'Cinzel e Rajdhani resolvem sem rede (fonts.check)');
+    ok(f.wC !== f.wS && f.wC > 500, `a arte é DE FATO Cinzel, não o fallback serif (Cinzel ${f.wC}px ≠ serif ${f.wS}px)`);   // babá: se cair no serif, wC==wS
+    console.log(`  0 req http · Cinzel ${f.wC}px (serif seria ${f.wS}px) · 8 woff2 locais · nenhum link externo`);
+
+    // §260 layout SEM REDE (contra a Cinzel REAL, não o fallback): nenhum nome de ato CORTA (§259: corte=defeito),
+    // a legenda começa abaixo do cabeçalho de 51px e o texto da história cabe. (2 nomes longos QUEBRAM em 2 linhas
+    // e isso é aceito pelo §259 desde que caibam — o que estas asserções garantem.)
+    const capsN = await npg.evaluate(() => CAMPS().map(c => c.atos.length));
+    const problemas = [];
+    for (let ci = 0; ci < capsN.length; ci++) for (let ai = 0; ai < capsN[ci]; ai++) {
+      const r = await npg.evaluate(({ ci, ai }) => {
+        campCapIdx = ci; campAtoIdx = ai; render();
+        const esc = ultimaEscala || 1, R = el => el.getBoundingClientRect();
+        const nome = document.querySelector('.camp__nome'), leg = document.querySelector('.camp__legenda'),
+          arte = document.querySelector('.camp__arte'), txt = document.querySelector('.camp__texto');
+        const nr = R(nome), lr = R(leg), ar = R(arte), tr = R(txt);
+        return { id: nome.textContent, corta: nome.scrollWidth > nome.clientWidth + 1,
+          legTop: Math.round((lr.top - ar.top) / esc), txtCabe: tr.bottom <= ar.bottom + 1 };
+      }, { ci, ai });
+      if (r.corta) problemas.push(`${r.id} (corta na horizontal)`);
+      if (r.legTop < 51) problemas.push(`${r.id} (legenda cruza o cabeçalho: ${r.legTop}<51)`);
+      if (!r.txtCabe) problemas.push(`${r.id} (texto da história estoura)`);
+    }
+    ok(problemas.length === 0, `os 13 nomes: nenhum corta, legenda abaixo de 51px, texto cabe (problemas: ${problemas.join('; ')})`);
+    console.log(`  layout sem rede: 13 nomes sem corte, legenda>51, texto cabe (2 longos em 2 linhas, cabem)`);
+    await nctx.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);
