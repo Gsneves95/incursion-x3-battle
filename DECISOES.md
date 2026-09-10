@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §265 — O HASH DO CARIMBO É ESTÁVEL: determinístico e independente da ORDEM das chaves. Motivo: o §263 mudou o escopo do hash mas não provou a estabilidade; sem ela, reordenar chaves num arquivo deixaria os 100 carimbos velhos sozinhos no próximo rebuild.
+
+**O DEFEITO (que o dono previu):** o `catalogoHash` do §263 serializava com `JSON.stringify`, que respeita a ORDEM DE INSERÇÃO das chaves. Medido: trocar `elem`↔`classe` (duas chaves de combate, mesmo conteúdo) num kit MUDAVA o hash (472ca811 → b34dcc91). Reordenar chaves é edição cosmética (não muda combate) — mas invalidava o carimbo. Determinismo (mesmo kit 2× = mesmo hash) já valia; a INDEPENDÊNCIA DE ORDEM não.
+
+**CONSERTO:** serialização CANÔNICA (`_canon`) — chaves de objeto em ordem ALFABÉTICA, recursiva; **arrays PRESERVAM a ordem** (ab[]/fx[]/opcoes: a ordem é semântica — o fx aplica em sequência, a opção é escolhida por índice). O hash passa a rodar sobre `_canon(projecaoCombate(g))`. Agora: determinístico E independente da ordem das chaves em topo e em profundidade (dentro de um fx). Provado: trocar elem↔classe ou reverter as chaves de um fx → MESMO hash.
+
+**ESTABILIDADE PROVADA (o que faltou no §263):** o refresco (`recarimbar_hash.js --aplicar`) rodado 2× e 3× seguidas — a 2ª e a 3ª não mudam arquivo nenhum (idempotente). Os dados em disco têm ordem de chave fixa → mesmo hash a cada rebuild; os 100 carimbos não ficam velhos sozinhos.
+
+**MIGRAÇÃO:** a canonicalização mudou os valores de hash (bc212f91 ≠ o insertion-order do §263) → refresquei os 100 mais uma vez (mesmo mecanismo aprovado no §263: só o campo `hash`, sem re-resolver). Build 0 velhos.
+
+**GUARDA (babá, `solucionador.test.js` §265, seção 5c):** (D1) o mesmo kit hasheado 2× dá o mesmo hash; (D2) trocar a ordem de duas chaves de TOPO não altera o hash; (D3) reordenar as chaves DENTRO de um fx não altera (canônico em profundidade). Tirar qualquer asserção quebra o teste. Suíte inteira verde.
+
+**MAPEAMENTO (item 2, sem conserto): `docs/mapa-view.md`.** O `src/view.js` é o orquestrador que liga o jogo ao APARELHO e desenha 4 sobreposições de DOM PRÓPRIO fora do `#stage` (portão de idade, botão/painel de conta, banner de ranque) — que NÃO são rotas, então a varredura do §261 (que andou pelas rotas) não as alcançou. É o ponto cego. Achado: 2 telas de fato não medidas (portão de idade, painel de conta) e as MESMAS 2 sem o voltar do Android fechando-as (§210/§240), lacuna igual à que o §264 fechou no banner. Segundo arquivo fora de `src/ui/` que desenha tela: `src/invocacao.js` — mas é ROTA (desenha no `#stage`), foi varrida no §261; ponto cego menor (só as camadas transientes de reveal/auditoria/toast). São dois buracos de tamanhos diferentes, um real (`view.js`) e um quase-coberto (`invocacao.js`). **Nada consertado — a tabela é o entregável.**
+
 ## §264 — O RANQUEADO ANUNCIA O RESULTADO no fim da partida. Motivo: o `ranqueadoResultado` era produtor sem consumidor visível — o laço de recompensa do modo carro-chefe sem o instante de pagamento (o inverso do §95).
 
 **CORREÇÃO DE FATO (§262 estava errado):** o §262 disse "nenhum elemento renderiza (grep vazio em `src/ui/`)". O grep foi ESCOPADO ERRADO — só varreu `src/ui/`. O consumidor EXISTE: `montarBannerRanque` em `src/view.js` (banner de fim de ranque), acionado por `_bannerRanqueTalvez()` (`turno.js`) nos TRÊS caminhos de fim de partida online: minha jogada encerra (`confirmarOnline`), o oponente/relógio encerra (`receberPushOnline`), e `encerrarOnline`. Então o banner já existia e já estava ligado. O que faltava era acabamento — e é o que este § fez.

@@ -445,6 +445,17 @@ function catalogoProvacao() {
 
 function _djb2(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(16); }
 
+// serialização CANÔNICA (§265): chaves de objeto em ordem ALFABÉTICA. O hash NÃO pode depender
+// da ordem em que as chaves aparecem no arquivo — reordenar chaves é edição cosmética, não muda
+// combate; sem isto, trocar duas chaves de um kit deixava os 100 carimbos velhos sozinhos. Arrays
+// PRESERVAM a ordem (ab[]/fx[]/opcoes: a ordem é semântica — o fx aplica em sequência, a opção é
+// escolhida por índice). Determinístico: a mesma entrada dá sempre a mesma string.
+function _canon(v) {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(_canon).join(',') + ']';
+  return '{' + Object.keys(v).sort().map(k => JSON.stringify(k) + ':' + _canon(v[k])).join(',') + '}';
+}
+
 // -------- projeção de COMBATE (o carimbo só vê o que o motor lê) --------
 // O carimbo garante o BALANÇO (o que o oponente enfrenta); um rótulo de tela — nome, curto,
 // desc — não muda combate, e antes forçava re-carimbo a cada adição cosmética (o `curto` do
@@ -473,7 +484,7 @@ function projecaoCombate(g) {
 }
 function catalogoHash(prov, gods = catalogoProvacao()) {
   const keys = [...new Set([...(prov.aliados || []), ...(prov.inimigos || [])])].sort();
-  return _djb2(keys.map(k => k + ':' + JSON.stringify(projecaoCombate(gods[k]) || null)).join('|'));
+  return _djb2(keys.map(k => k + ':' + _canon(projecaoCombate(gods[k]) || null)).join('|'));
 }
 
 // -------- validação de FORMA (chamada na BUILD; falha alto, não em runtime) --------

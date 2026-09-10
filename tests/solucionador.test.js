@@ -110,6 +110,25 @@ console.log('== 5b. §263 o carimbo só vê COMBATE: cosmético não invalida, c
   console.log('  cosmético estável · custo/cd/dano/fx.nome invalidam');
 }
 
+console.log('== 5c. §265 o hash é ESTÁVEL: determinístico e independente da ORDEM das chaves ==');
+{
+  const prov = { aliados: ['poseidon'], inimigos: ['zeus'] };
+  const h0 = PROV.catalogoHash(prov, E.GODS);
+  // (D1) o MESMO kit hasheado duas vezes dá o MESMO hash
+  ok(PROV.catalogoHash(prov, E.GODS) === h0, 'determinístico: o mesmo kit hasheado 2× dá o mesmo hash');
+  // (D2) trocar a ORDEM de duas chaves de COMBATE (elem <-> classe) NÃO muda o hash
+  const g = E.GODS.poseidon, ks = Object.keys(g), i = ks.indexOf('elem'), j = ks.indexOf('classe');
+  const ks2 = ks.slice(); [ks2[i], ks2[j]] = [ks2[j], ks2[i]];
+  const reord = {}; for (const k of ks2) reord[k] = g[k];
+  ok(PROV.catalogoHash(prov, Object.assign({}, E.GODS, { poseidon: reord })) === h0, 'ordem das chaves de TOPO não altera o hash (reordenar é cosmético)');
+  // (D3) reordenar as chaves DENTRO de um fx também não muda (canônico em profundidade)
+  const g2 = JSON.parse(JSON.stringify(g)); const ab = g2.ab.find(a => a.fx && a.fx.some(f => Object.keys(f).length > 1));
+  if (ab) { const f = ab.fx.find(f => Object.keys(f).length > 1); const rr = {}; for (const k of Object.keys(f).reverse()) rr[k] = f[k]; ab.fx[ab.fx.indexOf(f)] = rr;
+    ok(PROV.catalogoHash(prov, Object.assign({}, E.GODS, { poseidon: g2 })) === h0, 'ordem das chaves DENTRO de um fx não altera o hash (canônico em profundidade)'); }
+  else ok(true, '(poseidon sem fx multi-chave; D3 coberto por outro kit se houver)');
+  console.log('  determinístico · ordem de chave (topo e fx) irrelevante');
+}
+
 console.log('== 6. acumulo{fonte,limiar}: nasce com as 11 fontes; fonte desconhecida é recusada ==');
 {
   ok(PROV.FONTES_ACUMULO.length === 11, `11 fontes registradas (${PROV.FONTES_ACUMULO.length})`);

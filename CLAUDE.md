@@ -182,6 +182,10 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
 - Mudar o escopo do hash invalida TODOS os carimbos de uma vez → é **decisão do dono**. A migração
   segura é o REFRESCO DE HASH (`tools/recarimbar_hash.js`): recalcula só `verificacao.hash`, sem
   re-resolver (o combate não mudou, o veredito medido segue válido).
+- **O hash é CANÔNICO (§265): serializa com chaves em ordem alfabética (`_canon`), então a ORDEM das
+  chaves num arquivo não muda o hash** — reordenar chaves é cosmético. Arrays preservam a ordem
+  (ab/fx/opcoes são semânticos). É determinístico e idempotente: o refresco rodado 2× não muda nada.
+  Se um dia trocar chaves de um kit deixar carimbos velhos, o `_canon` quebrou.
 
 ---
 
