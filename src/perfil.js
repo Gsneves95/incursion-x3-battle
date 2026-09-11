@@ -4,7 +4,7 @@
 // parâmetro (`agora`), para as funções ficarem determinísticas/testáveis.
 // O HISTÓRICO NÃO mora no perfil (cresce e é reescrito a cada salvar) — vive em
 // chave própria, cuidada pelo armazenamento.js. Uma chave por DONO.
-const VERSAO_PERFIL = 4;   // v2: grant inicial (1500); v3: campo `sandbox` (teto diário da Batalha CPU, F4); v4: campo `dominios` (§273 — a CORRIDA em andamento, run-scoped)
+const VERSAO_PERFIL = 5;   // v2: grant inicial (1500); v3: campo `sandbox` (teto diário da Batalha CPU, F4); v4: campo `dominios` (§273 — a CORRIDA em andamento, run-scoped); v5: `dominios` vira POR-DOMÍNIO (§274 — 5 Domínios independentes: {porDominio:{<cultura>:{run,recorde}}})
 const INICIAIS = ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha']; // DECISOES §4
 const MAX_TIMES = 5;
 
@@ -29,18 +29,21 @@ function novoPerfil(agora = 0, grantGema = 0) {
     desafios: {},   // §245: por deus {ativo, recargaAte} — desafio POR DEUS comprado com Essência (dá maestria)
     invocacao: { total: 0, desdeUltimoSS: 0 },   // pity; a F0.4b liga isto ao gacha
     sandbox: { dia: '', vitorias: 0 },   // F4: teto diário da Batalha CPU (sandbox), reset por DATA
-    dominios: { run: null },   // §273: a CORRIDA de Domínios em andamento — RUN-SCOPED (zera com a corrida). NÃO é progressão permanente (invariante 3): a vida/bônus/rede vivem só aqui e somem em run=null; nada disso toca deuses/kit/HP-base.
+    dominios: { porDominio: {} },   // §274: um Domínio POR CULTURA, INDEPENDENTE — { porDominio: { <cultura>: { run:{...}|null, recorde:N } } }. RUN-SCOPED (a run zera com a corrida); `recorde` = nível mais fundo já alcançado naquele Domínio (progresso pessoal local, não placar). NÃO fere o invariante 3: nada toca deuses/kit/HP-base; correr no Olimpo não mexe em Asgard.
   };
 }
 
-// §273 — DOMÍNIOS: guarda (ou zera) a corrida em andamento. Puro: recebe perfil + a run
-// (objeto da corrida, montado por src/dominios.js) ou null para ENCERRAR (o "reset por
-// fronteira", como o sandbox). É a única porta de escrita da corrida; a borda (view/home)
-// muta a run e chama isto + salvar(). Clona a run para não vazar referência ao estado vivo.
-function definirRunDominios(perfil, run) {
+// §274 — DOMÍNIOS: guarda (ou zera) a corrida de UM Domínio (por cultura, independente). Puro:
+// recebe perfil + a chave de cultura (minúscula) + a run (objeto de src/dominios.js) ou null
+// para ENCERRAR. Atualiza o RECORDE (nível mais fundo já alcançado — nunca regride) e clona a run
+// para não vazar referência. É a única porta de escrita; a borda (home) muta a run e chama isto + salvar().
+function definirRunDominio(perfil, cultura, run) {
   const p = _clone(perfil);
-  if (!p.dominios || typeof p.dominios !== 'object') p.dominios = { run: null };
-  p.dominios.run = run ? JSON.parse(JSON.stringify(run)) : null;
+  if (!p.dominios || typeof p.dominios !== 'object' || !p.dominios.porDominio) p.dominios = { porDominio: {} };
+  const c = String(cultura).toLowerCase();
+  const antes = p.dominios.porDominio[c] || { run: null, recorde: 0 };
+  const prof = run && typeof run.profundidade === 'number' ? run.profundidade : 0;
+  p.dominios.porDominio[c] = { run: run ? JSON.parse(JSON.stringify(run)) : null, recorde: Math.max(antes.recorde || 0, prof) };
   return p;
 }
 
@@ -167,6 +170,13 @@ function migrar(p, grantGema = 0) {
   if (v < 3 && (!q.sandbox || typeof q.sandbox !== 'object')) q.sandbox = { dia: '', vitorias: 0 };
   // v<4 → v4: campo `dominios` (§273). Backfill VAZIO (run: null) — corrida nenhuma em curso.
   if (v < 4 && (!q.dominios || typeof q.dominios !== 'object')) q.dominios = { run: null };
+  // v<5 → v5 (§274): `dominios` vira POR-DOMÍNIO. A run única do v4 (só existia Grega) migra para
+  // porDominio.grega, preservando o recorde. Sem run: porDominio vazio.
+  if (v < 5) {
+    const old = (q.dominios && 'run' in q.dominios) ? q.dominios.run : null;
+    q.dominios = { porDominio: {} };
+    if (old && old.cultura) q.dominios.porDominio[String(old.cultura).toLowerCase()] = { run: old, recorde: old.profundidade || 0 };
+  }
   q.versao = VERSAO_PERFIL;
   return q;
 }
@@ -202,15 +212,19 @@ function problemaDeForma(p, rosterKeys) {
     const dv = p.dev;
     if (!dv || typeof dv !== 'object' || typeof dv.creditosTeste !== 'number' || dv.creditosTeste < 0) return 'dev inválido';
   }
-  // §273: `dominios` é OPCIONAL (backfill v4). Se presente, tem de ser objeto com `run`
-  // (null quando não há corrida, ou objeto de corrida com nivel/vida numéricos). Corrupção
-  // aqui cai para novoPerfil como qualquer outra — a corrida em andamento é sacrificável.
+  // §274: `dominios` é OPCIONAL (backfill v5). Se presente, tem de ser { porDominio: {} }; cada
+  // entrada é { run: null|corrida, recorde: número }, corrida com nivel/vida/bonus. Corrupção aqui
+  // cai para novoPerfil como qualquer outra — o progresso de Domínio é sacrificável (local, run-scoped).
   if ('dominios' in p) {
     const dm = p.dominios;
-    if (!dm || typeof dm !== 'object' || !('run' in dm)) return 'dominios inválido';
-    if (dm.run !== null) {
-      const r = dm.run;
-      if (typeof r !== 'object' || typeof r.nivel !== 'number' || !Array.isArray(r.vida) || typeof r.bonus !== 'number') return 'dominios.run inválido';
+    if (!dm || typeof dm !== 'object' || !dm.porDominio || typeof dm.porDominio !== 'object') return 'dominios inválido';
+    for (const c of Object.keys(dm.porDominio)) {
+      const e = dm.porDominio[c];
+      if (!e || typeof e !== 'object' || typeof e.recorde !== 'number') return 'dominios.porDominio inválido em ' + c;
+      if (e.run !== null && e.run !== undefined) {
+        const r = e.run;
+        if (typeof r !== 'object' || typeof r.nivel !== 'number' || !Array.isArray(r.vida) || typeof r.bonus !== 'number') return 'dominios.run inválido em ' + c;
+      }
     }
   }
   return null;
@@ -220,5 +234,5 @@ function ehPerfilValido(p, rosterKeys) { return problemaDeForma(p, rosterKeys) =
 if (typeof module !== 'undefined') module.exports = {
   VERSAO_PERFIL, INICIAIS, MAX_TIMES,
   novoPerfil, adicionarDeus, marcarFavorito, salvarTime, removerTime,
-  creditar, debitar, creditarDev, concluirProvacao, registrarInvocacao, creditarSandbox, definirRunDominios, migrar, problemaDeForma, ehPerfilValido,
+  creditar, debitar, creditarDev, concluirProvacao, registrarInvocacao, creditarSandbox, definirRunDominio, migrar, problemaDeForma, ehPerfilValido,
 };

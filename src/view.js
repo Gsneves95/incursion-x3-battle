@@ -135,7 +135,8 @@ registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFI
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
 registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
-registrar('dominios',  { render: renderDominios });   // §273: o HUB/entrada do Domínio (a corrida) — Fatia 1
+registrar('dominios',  { render: renderDominios });    // §274: a TELA DE SELEÇÃO dos cinco Domínios
+registrar('dominio',   { render: renderDominioHub });  // §274: o HUB/entrada de UM Domínio (params.cultura)
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
 registrar('composicao',{ render: renderDesafios });     // F3.6/§213: desafios de composição (sub-tela do hub)
 registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra

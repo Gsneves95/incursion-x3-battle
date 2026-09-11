@@ -1,11 +1,11 @@
 {
- "_fonte": "GERADO por tools/gerar_dominios.js (§273/§274). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; 12 seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de 10. Reproduzir: node tools/gerar_dominios.js Grega",
- "cultura": "Grega",
- "nome": "Domínio do Olimpo",
+ "_fonte": "GERADO por tools/gerar_dominios.js (§273/§274). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; 12 seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de 10. Reproduzir: node tools/gerar_dominios.js Japonesa",
+ "cultura": "Japonesa",
+ "nome": "Domínio de Takamagahara",
  "trio": [
-  "zeus",
-  "poseidon",
-  "atena"
+  "amaterasu",
+  "susanoo",
+  "tsukuyomi"
  ],
  "faixa": 10,
  "rampaDano": [
@@ -27,9 +27,9 @@
    "n": 1,
    "chefe": false,
    "inimigos": [
-    "boto",
-    "odin",
-    "ymir"
+    "heimdall",
+    "hera",
+    "boto"
    ],
    "danoMult": 1,
    "dificuldade": 0
@@ -38,164 +38,164 @@
    "n": 2,
    "chefe": false,
    "inimigos": [
-    "anubis",
-    "fujin",
-    "huangdi"
+    "kitsune",
+    "morrigan",
+    "dionisio"
    ],
    "danoMult": 1,
-   "dificuldade": 0
+   "dificuldade": 0.08333333333333337
   },
   {
    "n": 3,
    "chefe": false,
    "inimigos": [
-    "anubis",
-    "ymir",
-    "hermes"
+    "ogum",
+    "izanami",
+    "fujin"
    ],
    "danoMult": 1,
-   "dificuldade": 0
+   "dificuldade": 0.08333333333333337
   },
   {
    "n": 4,
    "chefe": false,
    "inimigos": [
-    "kitsune",
-    "mnevis",
-    "hermes"
+    "bastet",
+    "cerberus",
+    "yanwong"
    ],
    "danoMult": 1,
-   "dificuldade": 0
+   "dificuldade": 0.08333333333333337
   },
   {
    "n": 5,
    "chefe": false,
    "inimigos": [
-    "lugh",
-    "cuca",
-    "khonshu"
+    "ganesha",
+    "osiris",
+    "atena"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.16666666666666663
   },
   {
    "n": 6,
    "chefe": false,
    "inimigos": [
-    "boitata",
-    "ganesha",
-    "fujin"
+    "tyr",
+    "loki",
+    "hera"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.16666666666666663
   },
   {
    "n": 7,
    "chefe": false,
    "inimigos": [
     "heimdall",
-    "ganesha",
-    "fujin"
+    "atena",
+    "khonshu"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.16666666666666663
   },
   {
    "n": 8,
    "chefe": false,
    "inimigos": [
-    "saci",
-    "xango",
-    "fujin"
+    "anubis",
+    "iansa",
+    "khonshu"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.16666666666666663
   },
   {
    "n": 9,
    "chefe": false,
    "inimigos": [
-    "cuca",
-    "boto",
-    "tyr"
+    "kitsune",
+    "fujin",
+    "afrodite"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.16666666666666663
   },
   {
    "n": 10,
    "chefe": true,
-   "cultura": "Brasileira",
+   "cultura": "Egípcia",
    "inimigos": [
-    "boitata",
-    "boto",
-    "cuca"
+    "ammit",
+    "anubis",
+    "babi"
    ],
    "danoMult": 1,
-   "dificuldade": 0.08333333333333337
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 11,
    "chefe": false,
    "inimigos": [
-    "aokuang",
-    "hermes",
-    "isis"
+    "dionisio",
+    "fujin",
+    "yanwong"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.16666666666666663
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 12,
    "chefe": false,
    "inimigos": [
-    "piranha",
-    "boitata",
-    "kitsune"
+    "erinias",
+    "hera",
+    "bastet"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.25
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 13,
    "chefe": false,
    "inimigos": [
-    "iansa",
-    "chaac",
-    "dionisio"
+    "izanami",
+    "cerberus",
+    "yanwong"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.33333333333333337
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 14,
    "chefe": false,
    "inimigos": [
-    "boitata",
-    "kitsune",
-    "fenrir"
+    "medusa",
+    "fujin",
+    "cuca"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.41666666666666663
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 15,
    "chefe": false,
    "inimigos": [
-    "change",
-    "dionisio",
-    "ammit"
+    "hercules",
+    "erinias",
+    "cerberus"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.41666666666666663
+   "dificuldade": 0.5833333333333333
   },
   {
    "n": 16,
    "chefe": false,
    "inimigos": [
-    "mnevis",
-    "cernunnos",
-    "afrodite"
+    "dionisio",
+    "atena",
+    "izanami"
    ],
    "danoMult": 1.05,
    "dificuldade": 0.5833333333333333
@@ -204,145 +204,145 @@
    "n": 17,
    "chefe": false,
    "inimigos": [
-    "perseu",
-    "ammit",
-    "susanoo"
+    "hera",
+    "hermes",
+    "izanami"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.5833333333333333
+   "dificuldade": 0.75
   },
   {
    "n": 18,
    "chefe": false,
    "inimigos": [
-    "boto",
     "cuca",
-    "hanuman"
+    "bastet",
+    "atena"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.5833333333333333
+   "dificuldade": 0.75
   },
   {
    "n": 19,
    "chefe": false,
    "inimigos": [
-    "saci",
-    "heimdall",
-    "ahpuch"
+    "raijin",
+    "hera",
+    "cerberus"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.5833333333333333
+   "dificuldade": 0.75
   },
   {
    "n": 20,
    "chefe": true,
-   "cultura": "Maia",
+   "cultura": "Africana",
    "inimigos": [
-    "ahpuch",
-    "chaac",
-    "itzamna"
+    "exu",
+    "iansa",
+    "ogum"
    ],
    "danoMult": 1.05,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 21,
    "chefe": false,
    "inimigos": [
-    "horus",
-    "dionisio",
-    "hercules"
+    "boitata",
+    "cerberus",
+    "chaac"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 22,
    "chefe": false,
    "inimigos": [
-    "apolo",
-    "ymir",
-    "ammit"
+    "yamatotakeru",
+    "odin",
+    "dionisio"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 23,
    "chefe": false,
    "inimigos": [
-    "susanoo",
-    "houyi",
-    "cuca"
+    "khonshu",
+    "dagda",
+    "anubis"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 24,
    "chefe": false,
    "inimigos": [
-    "perseu",
-    "boitata",
-    "horus"
+    "babi",
+    "ammit",
+    "dionisio"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 25,
    "chefe": false,
    "inimigos": [
-    "khonshu",
-    "dagda",
-    "ammit"
+    "khnum",
+    "erinias",
+    "odin"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 26,
    "chefe": false,
    "inimigos": [
-    "yamatotakeru",
-    "hermes",
-    "hercules"
+    "babi",
+    "bastet",
+    "boto"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.75
+   "dificuldade": 1
   },
   {
    "n": 27,
    "chefe": false,
    "inimigos": [
-    "iara",
-    "raijin",
-    "fenrir"
+    "cuca",
+    "ymir",
+    "khonshu"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.8333333333333334
+   "dificuldade": 1
   },
   {
    "n": 28,
    "chefe": false,
    "inimigos": [
-    "kali",
-    "hades",
-    "hermes"
+    "odin",
+    "yamatotakeru",
+    "boitata"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.8333333333333334
+   "dificuldade": 1
   },
   {
    "n": 29,
    "chefe": false,
    "inimigos": [
-    "mnevis",
-    "hermes",
-    "khnum"
+    "boto",
+    "iara",
+    "cernunnos"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.8333333333333334
+   "dificuldade": 1
   },
   {
    "n": 30,
@@ -354,106 +354,106 @@
     "guanyu"
    ],
    "danoMult": 1.1,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 31,
    "chefe": false,
    "inimigos": [
-    "loki",
-    "xango",
-    "nezha"
+    "izanami",
+    "ymir",
+    "cuca"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 32,
    "chefe": false,
    "inimigos": [
-    "yamatotakeru",
-    "hercules",
-    "susanoo"
+    "boto",
+    "heimdall",
+    "baldur"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 33,
    "chefe": false,
    "inimigos": [
-    "dionisio",
-    "ares",
-    "izanami"
+    "ahpuch",
+    "odin",
+    "cerberus"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 34,
    "chefe": false,
    "inimigos": [
-    "bragi",
-    "sunwukong",
-    "huangdi"
+    "horus",
+    "chaac",
+    "atena"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 35,
    "chefe": false,
    "inimigos": [
-    "krishna",
-    "cuca",
-    "horus"
+    "aokuang",
+    "durga",
+    "fujin"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 36,
    "chefe": false,
    "inimigos": [
-    "inari",
-    "heimdall",
-    "durga"
+    "izanami",
+    "boto",
+    "babi"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 37,
    "chefe": false,
    "inimigos": [
-    "lugh",
-    "izanami",
-    "houyi"
+    "inari",
+    "erinias",
+    "yanwong"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 38,
    "chefe": false,
    "inimigos": [
-    "izanami",
-    "bastet",
-    "mulasemcabeca"
+    "ganesha",
+    "erinias",
+    "change"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 39,
    "chefe": false,
    "inimigos": [
-    "fenrir",
+    "yamatotakeru",
     "huangdi",
-    "horus"
+    "fujin"
    ],
    "danoMult": 1.15,
-   "dificuldade": 0.9166666666666666
+   "dificuldade": 1
   },
   {
    "n": 40,
@@ -469,8 +469,8 @@
   }
  ],
  "pisoIAGuloso": {
-  "med": 1,
-  "min": 1,
+  "med": 0.8,
+  "min": 0,
   "p50": 1,
   "max": 1,
   "corridas": 30,

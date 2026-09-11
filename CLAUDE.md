@@ -354,20 +354,30 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
 25. **Arte de ato ausente usa o placeholder do §213, NUNCA um `<img>` 404.** A
     build anota `_arteOk` por arquivo presente em `web/banners/campanha/`.
 
-### Domínios — a corrida run-scoped (§273)
+### Domínios — a corrida run-scoped (§273/§274)
 26. **DOMÍNIOS é roguelike RUN-SCOPED, e por isso NÃO fere o invariante 3.** Três
     deuses fixos descem uma escada de batalhas 3×3; a vida CARREGA com cura parcial, a
     cada 10 um chefe, e o prêmio do chefe (cura/reviver/bônus de dano) ACUMULA na
-    corrida. Todo esse poder vive em `perfil.dominios.run` e ZERA com a corrida
-    (`run:null`) — **nunca** toca `deuses`/kit/HP-base. Poder que evapora não é
-    progressão permanente; poder que persiste ou se compra, sim (§ invariante 3). Não
-    grave nada da corrida fora do blob `run`.
+    corrida. O progresso é POR DOMÍNIO e independente: `perfil.dominios.porDominio[<cultura>] =
+    { run:{...}|null, recorde:N }` (§274). A run ZERA com a corrida (`run:null`); o `recorde`
+    (nível mais fundo) é progresso PESSOAL LOCAL que persiste, mas **nunca** toca
+    `deuses`/kit/HP-base — poder que evapora não é progressão, e um recorde local não é
+    poder de combate. Correr no Olimpo não mexe em Asgard. Porta de escrita única
+    `definirRunDominio(perfil,cultura,run)`. **Placar é comparativo → servidor** (não cabe
+    no perfil local); a fronteira é: progresso pessoal = local, comparação entre jogadores =
+    servidor durável (§274 mediu: o disco do Render grátis é efêmero, §237).
 27. **A ESCADA é DADO, nunca código.** `data/dominios/<cultura>.json`, GERADA e MEDIDA
     por `tools/gerar_dominios.js` (a régua é o exp 4 da fase 1: 1 − vitória gulosa a vida
     cheia). O SORTEIO está PROIBIDO no runtime (a fase 1 provou que é loteria — 6% de
     derrota a vida cheia); a dificuldade sobe por DANO do inimigo em faixa de 10 (não por
     vida, que só alonga), e a escada é MONOTÔNICA na dificuldade medida (a build valida,
-    `domValidarLadder`). Domínio novo = arquivo novo.
+    `domValidarLadder`). Domínio novo = arquivo novo (`--todas` gera os cinco). **O trio de
+    cada cultura** (§274) segue três critérios, nesta ordem: JOGÁVEL (sustain+dano+controle),
+    AUTOSSUFICIENTE (nenhum dos três depende de um deus fora do trio — o Fujin do §271 é o
+    contra-exemplo), ICÔNICO. Método e régua IDÊNTICOS entre os Domínios — se um trio fica fora
+    da curva (piso muito alto/baixo), troca-se o TRIO, nunca os parâmetros por-cultura. O banner
+    de home é o placeholder do §213 até a ILUSTRAÇÃO definitiva `web/banners/dominios.webp` (a
+    build não valida banner de home; um `<img>` ausente dá 404 → placeholder é o certo).
 28. **Regras da corrida (medidas, não afrouxe):** o "1× por partida" que RESSUSCITA
     (revive/vidaExtra/auto-renascimento) vira **1× por CORRIDA** — flag
     `reviveGastoCorrida` no motor, **default false: fora de Domínios NADA muda**; o resto

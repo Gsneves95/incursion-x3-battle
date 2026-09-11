@@ -20,19 +20,21 @@ const D = require(path.join(__dirname, '..', 'src', 'dominios.js'));
 const GODS = E.GODS, KEYS = Object.keys(GODS);
 const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CULT[f] || []).push(k); }
 
-// ---- configuração da escada (Fatia 1: UM Domínio) ----
-const CFG = {
-  cultura: 'Grega',
-  nome: 'Domínio do Olimpo',
-  trio: ['zeus', 'poseidon', 'atena'],   // três fixos, iguais para todos — sem montagem de time
-  niveis: 40, faixa: 10,                  // 4 faixas, 4 chefes
-  rampaDano: [1.00, 1.05, 1.10, 1.15],    // dano do inimigo por faixa (rampa SUAVE)
-  curaPorNivel: 25,
-  candidatos: 220, ruaN: 12,              // pool de trios comuns; seeds por medição
-  capComum: 0.45,                         // §273 (exp 4): trio com dificuldade base > isto é HARD-COUNTER — SAI do pool (o sorteio livre é loteria; a escada bane o counter). Comuns são "justos".
-  difTopo: 0.45,                          // alvo de dificuldade do comum mais fundo (o resto da dureza vem do DANO da faixa + os chefes)
-  tolMonotonia: 0.06,                     // ruído aceito da régua (a escada é monotônica dentro disto)
+// ---- configuração das escadas: UM bloco por Domínio (Fatia 1 = Grega; Fatia 2 = +4 culturas) ----
+// O trio de cada cultura foi escolhido por: JOGÁVEL (sustain+dano+controle), AUTOSSUFICIENTE
+// (nenhum dos três depende de um deus fora do trio — o Fujin do §271 é o contra-exemplo) e
+// ICÔNICO (os três rostos da cultura). Método e régua IDÊNTICOS entre as cinco (§274).
+const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 25, candidatos: 220, ruaN: 12, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.06 };
+const CFGS = {
+  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], ...COMUM },
+  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], ...COMUM },
+  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], ...COMUM },
+  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], ...COMUM },
+  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], ...COMUM },
 };
+// seleção: `node tools/gerar_dominios.js [Cultura|--todas]` (default: Grega)
+const _sel = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
+const CFG = CFGS[_sel] || CFGS.Grega;
 
 function mulberry32(a){ return function(){ a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
 const med = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
@@ -53,7 +55,7 @@ function dificuldade(trio, inimigos, danoMult, N) {
 function pick3(rng, pool, exclude) { const p = pool.filter(k => !exclude.includes(k)); const o = []; while (o.length < 3 && p.length) o.push(p.splice(Math.floor(rng() * p.length), 1)[0]); return o; }
 
 // ---- 1. pool de trios COMUNS "justos" (hard-counter SAI), ranqueado por dificuldade base ----
-function poolComuns() {
+function poolComuns(CFG) {
   const rng = mulberry32(20260911), vistos = new Set(), pool = [];
   let tentativas = 0;
   while (pool.length < CFG.candidatos && tentativas++ < CFG.candidatos * 6) {
@@ -67,18 +69,18 @@ function poolComuns() {
   return pool;
 }
 // ---- 2. trios de CHEFE: um por cultura (os 3 primeiros da cultura = espelho sinérgico) ----
-function poolChefes() {
+function poolChefes(CFG) {
   const cults = Object.keys(CULT).filter(c => c !== CFG.cultura && CULT[c].length >= 3);
   return cults.map(c => ({ cultura: c, inimigos: CULT[c].slice(0, 3), base: dificuldade(CFG.trio, CULT[c].slice(0, 3), 1.0, CFG.ruaN) }))
     .sort((a, b) => a.base - b.base);
 }
 
 // ---- 3. montagem em RAMPA: dificuldade medida no danoMult de cada nível, monotônica ----
-function montarEscada() {
+function montarEscada(CFG) {
   process.stderr.write('medindo pool de comuns…\n');
-  const comuns = poolComuns();
+  const comuns = poolComuns(CFG);
   process.stderr.write('medindo chefes…\n');
-  const chefes = poolChefes();
+  const chefes = poolChefes(CFG);
   const niveis = []; let prev = -Infinity, usados = new Set();
   const faixaDe = n => Math.floor((n - 1) / CFG.faixa);
   const nChefes = Math.floor(CFG.niveis / CFG.faixa);
@@ -135,37 +137,41 @@ function medirPiso(ladder, N) {
   return { min: depths[0], max: depths[depths.length - 1], med: med(depths), p50: depths[Math.floor(depths.length / 2)], depths };
 }
 
-// ---- gerar + escrever ----
-const niveis = montarEscada();
-const ladder = {
-  _fonte: 'GERADO por tools/gerar_dominios.js (§273). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: '
-    + 'dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; '
-    + CFG.ruaN + ' seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. '
-    + 'Reproduzir: node tools/gerar_dominios.js',
-  cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio,
-  faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
-  tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS,
-  tolMonotonia: CFG.tolMonotonia,
-  regua: { metodo: '1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa', seeds: CFG.ruaN },
-  niveis,
-};
-// PISO da IA gulosa gravado JUNTO (o número que o dono compara com a mão dele)
-process.stderr.write('medindo piso da IA gulosa…\n');
-const pisoRec = medirPiso(ladder, 30);
-ladder.pisoIAGuloso = { med: +pisoRec.med.toFixed(1), min: pisoRec.min, p50: pisoRec.p50, max: pisoRec.max, corridas: 30, politicaPremio: 'reviver caído senão curar' };
+// ---- gerar + escrever UM Domínio ----
+function gerar(CFG) {
+  const niveis = montarEscada(CFG);
+  const ladder = {
+    _fonte: 'GERADO por tools/gerar_dominios.js (§273/§274). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: '
+      + 'dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; '
+      + CFG.ruaN + ' seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. '
+      + 'Reproduzir: node tools/gerar_dominios.js ' + CFG.cultura,
+    cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio,
+    faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
+    tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS,
+    tolMonotonia: CFG.tolMonotonia,
+    regua: { metodo: '1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa', seeds: CFG.ruaN },
+    niveis,
+  };
+  process.stderr.write(`[${CFG.cultura}] medindo piso da IA gulosa…\n`);
+  const pisoRec = medirPiso(ladder, 30);
+  ladder.pisoIAGuloso = { med: +pisoRec.med.toFixed(1), min: pisoRec.min, p50: pisoRec.p50, max: pisoRec.max, corridas: 30, politicaPremio: 'reviver caído senão curar' };
 
-const dir = path.join(__dirname, '..', 'data', 'dominios');
-fs.mkdirSync(dir, { recursive: true });
-const arq = path.join(dir, CFG.cultura.toLowerCase() + '.json');
-fs.writeFileSync(arq, JSON.stringify(ladder, null, 1) + '\n');
+  const dir = path.join(__dirname, '..', 'data', 'dominios');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, CFG.cultura.toLowerCase() + '.json'), JSON.stringify(ladder, null, 1) + '\n');
 
-// ---- relatório ----
-console.log(`\n### ESCADA — ${CFG.nome} (${CFG.cultura}) · trio ${CFG.trio.join('/')}`);
-console.log(`arquivo: data/dominios/${CFG.cultura.toLowerCase()}.json · ${niveis.length} níveis · rampa de dano por faixa ${CFG.rampaDano.map(x=>'+'+Math.round((x-1)*100)+'%').join(' ')}`);
-console.log('nv  dano   dif   tipo');
-for (const lv of niveis) console.log(`${String(lv.n).padStart(2)}  ${lv.danoMult.toFixed(2)}  ${lv.dificuldade.toFixed(2)}  ${lv.chefe ? 'CHEFE ' + lv.cultura + ' (' + lv.inimigos.join('/') + ')' : lv.inimigos.join('/')}`);
-console.log(`\nforma da rampa: dificuldade do nível 1 = ${niveis[0].dificuldade.toFixed(2)} → nível ${niveis.length} = ${niveis[niveis.length-1].dificuldade.toFixed(2)} (monotônica, tol ${CFG.tolMonotonia})`);
+  console.log(`\n### ESCADA — ${CFG.nome} (${CFG.cultura}) · trio ${CFG.trio.join('/')}`);
+  console.log(`arquivo: data/dominios/${CFG.cultura.toLowerCase()}.json · ${niveis.length} níveis · rampa de dano por faixa ${CFG.rampaDano.map(x=>'+'+Math.round((x-1)*100)+'%').join(' ')}`);
+  console.log('nv  dano   dif   tipo');
+  for (const lv of niveis) console.log(`${String(lv.n).padStart(2)}  ${lv.danoMult.toFixed(2)}  ${lv.dificuldade.toFixed(2)}  ${lv.chefe ? 'CHEFE ' + lv.cultura + ' (' + lv.inimigos.join('/') + ')' : lv.inimigos.join('/')}`);
+  console.log(`forma da rampa: ${niveis[0].dificuldade.toFixed(2)} → ${niveis[niveis.length-1].dificuldade.toFixed(2)} (monotônica, tol ${CFG.tolMonotonia})`);
+  console.log(`PISO DA IA GULOSA (30 corridas): med ${pisoRec.med.toFixed(1)} · min ${pisoRec.min} · p50 ${pisoRec.p50} · max ${pisoRec.max}`);
+  return { cultura: CFG.cultura, trio: CFG.trio, piso: pisoRec, dif1: niveis[0].dificuldade, difN: niveis[niveis.length-1].dificuldade };
+}
 
-console.log(`\n### PISO DA IA GULOSA nesta escada (30 corridas, política de prêmio: reviver caído senão curar)`);
-console.log(`profundidade  med ${pisoRec.med.toFixed(1)}  ·  min ${pisoRec.min}  ·  p50 ${pisoRec.p50}  ·  max ${pisoRec.max}`);
-console.log(`→ é o PISO contra o qual o dono compara a mão dele (a IA gulosa sacrifica um deus já no nível 1; a mão humana não).`);
+const alvo = process.argv.includes('--todas') ? Object.values(CFGS) : [CFG];
+const resumo = alvo.map(gerar);
+if (resumo.length > 1) {
+  console.log(`\n### RESUMO — piso da gulosa por Domínio (a curva entre eles)`);
+  for (const r of resumo) console.log(`  ${r.cultura.padEnd(9)} ${r.trio.join('/').padEnd(28)} piso med ${r.piso.med.toFixed(1)} (min ${r.piso.min}, max ${r.piso.max})  ·  rampa ${r.dif1.toFixed(2)}→${r.difN.toFixed(2)}`);
+}

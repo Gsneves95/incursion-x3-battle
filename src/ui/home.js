@@ -17,7 +17,7 @@ const HRM = {}; ROSTER.forEach(e => HRM[e.key] = e);
 // de MISSÕES (que chegam no PvP); DESAFIOS aponta para o hub de pergaminhos+semanal+composição.
 const HOME_BANNERS = [
   { chave: 'campanha',    arte: 'campanha',    rotulo: 'Campanha',    rota: 'campanha' },
-  { chave: 'dominios',    arte: 'dominios',    rotulo: 'Domínios',    rota: 'dominios' },   // §273: a corrida (Fatia 1)
+  { chave: 'dominios',    arte: 'dominios',    rotulo: 'Domínios',    rota: 'dominios', placeholder: true },   // §274: placeholder do §213 até a ILUSTRAÇÃO definitiva (web/banners/dominios.webp) — o cartão programático saltava ao lado das 8 artes
   { chave: 'provacoes',   arte: 'provacoes',   rotulo: 'Provações',   rota: 'provacoes' },
   { chave: 'desafios',    arte: 'desafios',    rotulo: 'Desafios',    rota: 'desafios' },
   { chave: 'invocacao',   arte: 'invocacao',   rotulo: 'Invocação',   rota: 'invocacao' },
@@ -1906,53 +1906,93 @@ function iniciarDesafio(dsf, time){
 }
 
 // ===================================================================
-// §273 — DOMÍNIOS: a CORRIDA jogável (Fatia 1: UM Domínio, o do Olimpo).
-// Sequência de batalhas 3v3 contra uma ESCADA medida (data/dominios/*.json).
-// Vida CARREGA com cura parcial; chefe a cada 10; vencido o chefe, um PRÊMIO
-// (cura/reviver/bônus). Reusa a batalha (renderBatalha); a LÓGICA mora em
-// src/dominios.js; a corrida PERSISTE run-scoped em perfil.dominios.run (§273),
-// e ZERA com a corrida (não fere o invariante 3 — sem progressão permanente).
-// SEM placar, servidor, rotação ou recompensa: só a corrida (Fatia 1).
+// §273/§274 — DOMÍNIOS: a CORRIDA jogável. Fatia 2: CINCO Domínios (um por
+// cultura) + a TELA DE SELEÇÃO. Cada Domínio é uma ESCADA medida
+// (data/dominios/<cultura>.json); a corrida (vida carrega, chefe a cada 10,
+// prêmio) e o PROGRESSO (recorde = nível mais fundo) são POR DOMÍNIO e
+// INDEPENDENTES (perfil.dominios.porDominio[<cultura>]). Correr no Olimpo não
+// mexe em Asgard. Run-scoped → não fere o invariante 3. SEM placar/servidor/
+// rotação/recompensa: só a corrida (o placar tem portão de medição no §274).
+// A LÓGICA mora em src/dominios.js; a batalha reusa renderBatalha.
 // ===================================================================
 function dominioLadders(){ return (typeof DOMINIOS !== 'undefined' && DOMINIOS) ? Object.values(DOMINIOS) : []; }
-function dominioPadrao(){ const l = dominioLadders(); return l.length ? l[0] : null; }   // Fatia 1: um só
-function dominioRun(){ return (perfil && perfil.dominios && perfil.dominios.run) ? perfil.dominios.run : null; }
+function dominioPorCultura(c){ return (typeof DOMINIOS !== 'undefined' && DOMINIOS) ? DOMINIOS[String(c).toLowerCase()] : null; }
+function dominioProg(c){ const pd = perfil && perfil.dominios && perfil.dominios.porDominio; return (pd && pd[String(c).toLowerCase()]) || { run: null, recorde: 0 }; }
+function dominioRun(c){ return dominioProg(c).run || null; }
+function dominioRecorde(c){ return dominioProg(c).recorde || 0; }
 function domNomeDeus(k){ return (HRM[k] && HRM[k].nome) || (typeof GODS !== 'undefined' && GODS[k] && GODS[k].nome) || k; }
-function salvarRunDominio(run){ perfil = definirRunDominios(perfil, run); const r = salvar(perfil); if (r && !r.ok && st) st.log.push({ turno: st.turno, msg: '⚠ corrida salva falhou: ' + r.erro }); return r; }
+function salvarRunDominio(cultura, run){ perfil = definirRunDominio(perfil, cultura, run); const r = salvar(perfil); if (r && !r.ok && st) st.log.push({ turno: st.turno, msg: '⚠ corrida salva falhou: ' + r.erro }); return r; }
 
-// retrato pequeno de um deus do trio, com a vida atual (ou CAÍDO)
+// retrato pequeno de um deus do trio, com a vida atual (ou CAÍDO). vida null = só o retrato.
 function dominioFichaHTML(k, vida){
   const nome = domNomeDeus(k), morto = vida && !vida.vivo;
-  const hp = vida ? Math.max(0, Math.round(vida.hp)) : 120, maxHp = (typeof GODS !== 'undefined' && GODS[k] && GODS[k].hp) || 120;
+  const hp = vida ? Math.max(0, Math.round(vida.hp)) : 0, maxHp = (typeof GODS !== 'undefined' && GODS[k] && GODS[k].hp) || 120;
   return `<div class="domficha${morto ? ' domficha--morto' : ''}">
     ${slot('god-' + k, ini(nome), '#b9a94a', 22, true)}
     <span class="domficha__nome">${H(nome)}</span>
-    <span class="domficha__hp">${morto ? 'caído' : hp + '/' + maxHp}</span>
+    ${vida ? `<span class="domficha__hp">${morto ? 'caído' : hp + '/' + maxHp}</span>` : ''}
   </div>`;
 }
 
-/* ---------- HUB / ENTRADA do Domínio (rota 'dominios') ---------- */
+/* ---------- TELA DE SELEÇÃO (rota 'dominios'): os cinco Domínios ---------- */
 function renderDominios(){
-  const lad = dominioPadrao();
+  const lads = dominioLadders();
+  const cards = lads.map(lad => {
+    const c = String(lad.cultura).toLowerCase(), total = lad.niveis.length;
+    const run = dominioRun(c), rec = dominioRecorde(c);
+    const emCorrida = run && run.status === 'ativo';
+    // faixa de progresso: corrida em andamento (retomável) > recorde > não iniciado
+    let badge, cls;
+    if (emCorrida) { badge = 'Em corrida · nível ' + run.nivel + '/' + total; cls = 'domcard__prog--ativo'; }
+    else if (rec > 0) { badge = 'Recorde · nível ' + rec + '/' + total; cls = 'domcard__prog--rec'; }
+    else { badge = 'Não iniciado'; cls = 'domcard__prog--novo'; }
+    const trioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
+    return `<button class="domcard" data-cultura="${H(c)}">
+      <div class="domcard__cab"><span class="domcard__cult">${H(lad.cultura)}</span><span class="domcard__nome">${H(lad.nome)}</span></div>
+      <div class="domtrio">${trioHTML}</div>
+      <div class="domcard__prog ${cls}">${emCorrida ? '<i>▸</i>' : ''}${H(badge)}</div>
+    </button>`;
+  }).join('');
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+    <div class="tela">
+      <header class="tela__cab">
+        <button class="b b--quiet b--md" id="binicio">‹ Início</button>
+        <h1 class="tela__titulo">Domínios</h1>
+        <span class="tela__espaco"></span>
+      </header>
+      <div class="tela__rol domsel">
+        <p class="domhub__sub">Escolha um Domínio · três deuses fixos, iguais para todos · o progresso é seu e por Domínio</p>
+        <div class="domsel__grade">${cards || '<p class="domsec__msg">Nenhum Domínio carregado.</p>'}</div>
+      </div>
+    </div></div>`;
+  const q = s => stage.querySelector(s);
+  const b = q('#binicio'); if (b) b.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  [...stage.querySelectorAll('.domcard')].forEach(btn => { btn.onclick = () => { ir('dominio', { cultura: btn.getAttribute('data-cultura') }); render(); }; });
+  fit();
+}
+
+/* ---------- HUB / ENTRADA de UM Domínio (rota 'dominio', params.cultura) ---------- */
+function renderDominioHub(){
+  const cultura = ((paramsAtuais() || {}).cultura) || (dominio && dominio.cultura);
+  const lad = dominioPorCultura(cultura);
   if (!lad){
-    stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div><div class="tela"><header class="tela__cab"><button class="b b--quiet b--md" id="binicio">‹ Início</button><h1 class="tela__titulo">Domínios</h1><span class="tela__espaco"></span></header><div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O Domínio ainda não foi carregado.</p></div></div></div>`;
-    const b = stage.querySelector('#binicio'); if (b) b.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+    stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div><div class="tela"><header class="tela__cab"><button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button><h1 class="tela__titulo">Domínio</h1><span class="tela__espaco"></span></header><div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">Este Domínio não foi carregado.</p></div></div></div>`;
+    const b = stage.querySelector('#bvoltar'); if (b) b.onclick = () => { if (!voltar()) ir('dominios', {}, { substituir: true }); render(); };
     fit(); return;
   }
-  const run = dominioRun();
-  const total = lad.niveis.length;
-  const trioHTML = lad.trio.map((k, i) => dominioFichaHTML(k, run && run.vida ? run.vida[i] : null)).join('');
+  const c = String(lad.cultura).toLowerCase();
+  const run = dominioRun(c), rec = dominioRecorde(c), total = lad.niveis.length;
+  const trioHTML = lad.trio.map((k, i) => dominioFichaHTML(k, run && run.vida ? run.vida[i] : { hp: (GODS[lad.trio[i]] && GODS[lad.trio[i]].hp) || 120, vivo: true })).join('');
 
   let corpo = '';
   if (run && run.status === 'ativo' && run.aguardandoPremio){
-    // PRÊMIO do chefe: cartões só com o que FAZ algo (§252 — opção vazia some)
     const opc = domPremiosDisponiveis(run);
-    const caido = run.vida.findIndex(c => !c.vivo);
+    const caido = run.vida.findIndex(x => !x.vivo);
     const bonusPct = Math.round((run.bonus || 0) * 100), tetoPct = Math.round(lad.tetoBonusDano * 100);
     const cartao = (tipo, tit, sub) => `<button class="b b--md dompremio" data-premio="${tipo}"><span class="dompremio__t">${H(tit)}</span><span class="dompremio__s">${H(sub)}</span></button>`;
     const cards = [];
     if (opc.includes('cura')) cards.push(cartao('cura', 'Cura total', 'Todos os vivos voltam à vida cheia'));
-    if (opc.includes('reviver')) cards.push(cartao('reviver', 'Reviver', 'Traz ' + domNomeDeus(lad.trio[caido]) + ' de volta com ' + Math.min((typeof GODS!=='undefined'&&GODS[lad.trio[caido]]&&GODS[lad.trio[caido]].hp)||120, DOM_HP_REVIVER) + ' de vida'));
+    if (opc.includes('reviver')) cards.push(cartao('reviver', 'Reviver', 'Traz ' + domNomeDeus(lad.trio[caido]) + ' de volta com ' + Math.min((GODS[lad.trio[caido]] && GODS[lad.trio[caido]].hp) || 120, DOM_HP_REVIVER) + ' de vida'));
     if (opc.includes('bonus')) cards.push(cartao('bonus', 'Bônus de dano', '+' + Math.round(DOM_PASSO_BONUS * 100) + '% (agora +' + bonusPct + '%, teto +' + tetoPct + '%)'));
     corpo = `<div class="domsec"><div class="domsec__sel">CHEFE VENCIDO — nível ${run.profundidade}</div>
       <p class="domsec__msg">Escolha a recompensa da corrida antes de descer.</p>
@@ -1961,14 +2001,14 @@ function renderDominios(){
     const bonusPct = Math.round((run.bonus || 0) * 100);
     corpo = `<div class="domsec">
       <div class="domsec__linha"><span>Nível atual</span><b>${run.nivel} / ${total}</b></div>
-      <div class="domsec__linha"><span>Mais fundo</span><b>${run.profundidade}</b></div>
+      <div class="domsec__linha"><span>Mais fundo (recorde)</span><b>${Math.max(rec, run.profundidade)}</b></div>
       <div class="domsec__linha"><span>Bônus de dano</span><b>+${bonusPct}%</b></div>
       <div class="domtrio">${trioHTML}</div>
       <button class="b b--primary b--lg" id="ddescer">Descer ao nível ${run.nivel} ›</button>
     </div>`;
   } else if (run && run.status === 'morto'){
     corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--morto">CORRIDA ENCERRADA</div>
-      <p class="domsec__msg">Seus deuses tombaram no <b>nível ${run.profundidade}</b>. A corrida zera — a vida, o bônus e a rede voltam do começo.</p>
+      <p class="domsec__msg">Seus deuses tombaram no <b>nível ${run.profundidade}</b> (recorde ${rec}). A corrida zera — a vida, o bônus e a rede voltam do começo.</p>
       <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
   } else if (run && run.status === 'completo'){
     corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--venceu">DOMÍNIO CONQUISTADO</div>
@@ -1976,6 +2016,7 @@ function renderDominios(){
       <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
   } else {
     corpo = `<div class="domsec">
+      ${rec > 0 ? `<div class="domsec__linha"><span>Seu recorde</span><b>nível ${rec} / ${total}</b></div>` : ''}
       <p class="domsec__msg">Três deuses definidos, iguais para todos. Desça a escada: cada nível é uma batalha 3×3, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. Sem montar time — só a mão.</p>
       <div class="domtrio">${trioHTML}</div>
       <button class="b b--primary b--lg" id="dentrar">Entrar no Domínio</button></div>`;
@@ -1984,7 +2025,7 @@ function renderDominios(){
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
     <div class="tela">
       <header class="tela__cab">
-        <button class="b b--quiet b--md" id="binicio">‹ Início</button>
+        <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
         <h1 class="tela__titulo">${H(lad.nome)}</h1>
         <span class="tela__espaco"></span>
       </header>
@@ -1995,28 +2036,26 @@ function renderDominios(){
     </div></div>`;
 
   const q = s => stage.querySelector(s);
-  const b = q('#binicio'); if (b) b.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  const en = q('#dentrar'); if (en) en.onclick = () => iniciarCorridaDominio();
-  const nv = q('#dnova'); if (nv) nv.onclick = () => iniciarCorridaDominio();
-  const de = q('#ddescer'); if (de) de.onclick = () => descerDominio();
-  [...stage.querySelectorAll('.dompremio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(btn.getAttribute('data-premio')); });
+  const b = q('#bvoltar'); if (b) b.onclick = () => { if (!voltar()) ir('dominios', {}, { substituir: true }); render(); };
+  const en = q('#dentrar'); if (en) en.onclick = () => iniciarCorridaDominio(c);
+  const nv = q('#dnova'); if (nv) nv.onclick = () => iniciarCorridaDominio(c);
+  const de = q('#ddescer'); if (de) de.onclick = () => descerDominio(c);
+  [...stage.querySelectorAll('.dompremio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(c, btn.getAttribute('data-premio')); });
   fit();
 }
 
-/* ---------- lançar a batalha de um nível ---------- */
-function iniciarCorridaDominio(){
-  const lad = dominioPadrao(); if (!lad) return;
+/* ---------- lançar a batalha de um nível (por cultura) ---------- */
+function iniciarCorridaDominio(cultura){
+  const lad = dominioPorCultura(cultura); if (!lad) return;
   const run = domNovaCorrida(lad);
-  salvarRunDominio(run);
-  dominio = { ladder: lad };
-  iniciarNivelDominio();
+  salvarRunDominio(cultura, run);
+  iniciarNivelDominio(cultura);
 }
-function descerDominio(){ dominio = { ladder: dominioPadrao() }; iniciarNivelDominio(); }
-function iniciarNivelDominio(){
-  const lad = (dominio && dominio.ladder) || dominioPadrao();
-  const run = dominioRun();
-  if (!lad || !run || run.status !== 'ativo' || run.aguardandoPremio){ sairDominio(); ir('dominios', {}, { substituir: true }); render(); return; }
-  dominio = { ladder: lad };
+function descerDominio(cultura){ iniciarNivelDominio(cultura); }
+function iniciarNivelDominio(cultura){
+  const c = String(cultura).toLowerCase(), lad = dominioPorCultura(c), run = dominioRun(c);
+  if (!lad || !run || run.status !== 'ativo' || run.aguardandoPremio){ sairDominio(); ir('dominio', { cultura: c }, { substituir: true }); render(); return; }
+  dominio = { ladder: lad, cultura: c };
   dominioFim = null;
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
@@ -2024,18 +2063,18 @@ function iniciarNivelDominio(){
   ir('batalha', {}, { substituir: true });
   render();
 }
-function escolherPremioDominio(tipo){
-  const lad = dominioPadrao(), run = dominioRun();
-  if (!run || !run.aguardandoPremio) return;
+function escolherPremioDominio(cultura, tipo){
+  const c = String(cultura).toLowerCase(), lad = dominioPorCultura(c), run = dominioRun(c);
+  if (!lad || !run || !run.aguardandoPremio) return;
   domAplicarPremio(run, lad, tipo);
-  salvarRunDominio(run);
+  salvarRunDominio(c, run);
   render();   // o hub re-renderiza: agora mostra "Descer ao nível N+1"
 }
 
 /* ---------- HUD do nível (faixa durante a batalha) ---------- */
 function dominioHUD(){
   if (!dominio) return '';
-  const run = dominioRun(); if (!run) return '';
+  const run = dominioRun(dominio.cultura); if (!run) return '';
   const lad = dominio.ladder, chefe = domEhChefe(run.nivel);
   const bonusPct = Math.round((run.bonus || 0) * 100);
   return `<div class="phud phud--dom" aria-hidden="true">
@@ -2050,18 +2089,19 @@ function dominioHUD(){
 /* ---------- reconciliador: fim de nível ---------- */
 function atualizarDominio(){
   if (!dominio || dominioFim || !st.fim) return;
-  const run = dominioRun(); if (!run){ dominioFim = { venceu: false, nivel: 0, profundidade: 0 }; pararRelogio(); return; }
+  const c = dominio.cultura, run = dominioRun(c);
+  if (!run){ dominioFim = { venceu: false, nivel: 0, profundidade: 0 }; pararRelogio(); return; }
   const nivelJogado = run.nivel;
   const r = domResolverBatalha(run, dominio.ladder, st);   // muta a corrida (carrega vida, marca rede gasta, avança ou aguarda prêmio)
   dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, nivel: nivelJogado, profundidade: run.profundidade };
   pararRelogio();
-  salvarRunDominio(run);
+  salvarRunDominio(c, run);   // PERSISTE por-domínio: nunca se perde ao sair da tela
 }
 
 /* ---------- sobreposição de resultado ---------- */
 function dominioResultadoOverlay(){
   if (!dominio || !dominioFim) return '';
-  const f = dominioFim, lad = dominio.ladder, run = dominioRun();
+  const f = dominioFim, lad = dominio.ladder, run = dominioRun(dominio.cultura);
   const vidaHTML = run ? `<div class="domtrio domtrio--result">${lad.trio.map((k, i) => dominioFichaHTML(k, run.vida[i])).join('')}</div>` : '';
   let selo, titulo, msg, acoes;
   if (f.completou){
@@ -2089,7 +2129,7 @@ function ligarDominioFim(){
   const q = s => stage.querySelector(s);
   const hub = q('#dfhub'); if (hub) hub.onclick = () => sairParaHubDominio();
   const pr = q('#dfpremio'); if (pr) pr.onclick = () => sairParaHubDominio();   // vai ao hub para escolher o prêmio (§240: a escolha vive no hub, com saída)
-  const px = q('#dfprox'); if (px) px.onclick = () => iniciarNivelDominio();
+  const px = q('#dfprox'); if (px) px.onclick = () => iniciarNivelDominio(dominio.cultura);
 }
 function sairDominio(){ dominio = null; dominioFim = null; }
-function sairParaHubDominio(){ sairDominio(); ir('dominios', {}, { substituir: true }); render(); }
+function sairParaHubDominio(){ const c = dominio && dominio.cultura; sairDominio(); ir('dominio', { cultura: c }, { substituir: true }); render(); }

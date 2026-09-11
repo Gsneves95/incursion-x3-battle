@@ -93,11 +93,11 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
-console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; os 9 em arquivo) e o layout independe da carteira ==');
+console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 8 em arquivo + Domínios placeholder) e o layout independe da carteira ==');
 {
   const dir = path.join(__dirname, '../web/banners');
   const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
-  ok(chaves.length === 9, `a home deveria ter 9 destinos (tem ${chaves.length})`);   // §213: +Desafios
+  ok(chaves.length === 9, `a home deveria ter 9 destinos (tem ${chaves.length})`);   // §213/§246 (+Desafios), §274 (+Domínios placeholder)
 
   // (a) cada banner referencia um ARQUIVO em banners/<arte>.webp e o arquivo EXISTE no repo
   //     (a garantia contra 404: o src aponta certo E o webp está versionado). Nada de base64.
@@ -108,8 +108,9 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   const semArquivo = [], base64 = [], placeholders = [];
   let comArquivo = 0;
   for (const c of cards){
-    // §246: a arte de Desafios chegou — o placeholder do §213 SAIU. Agora os 8 destinos são <img> de
-    // arquivo; um placeholder aqui seria regressão (arte perdida), então acusa em vez de tolerar.
+    // §274: DOMÍNIOS é placeholder do §213 (aguarda a ILUSTRAÇÃO definitiva; um cartão programático
+    // saltava ao lado das 8 artes). Os OUTROS 8 são <img> de arquivo — placeholder neles é regressão.
+    // O placeholder NÃO emite <img>, então não há 404 (a garantia que o dono pediu).
     if (c.querySelector('.bcard__ph')){ placeholders.push(c.getAttribute('data-dest') || '?'); continue; }
     const img = c.querySelector('img.bcard__art');
     if (!img) { semArquivo.push('sem <img>'); continue; }
@@ -121,10 +122,10 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
     comArquivo++;
   }
   ok(base64.length === 0, `nenhum banner deveria ser base64 (achei: ${base64.join(' | ')})`);
-  ok(placeholders.length === 0, `nenhum destino deveria ser placeholder — a arte chegou p/ todos (§246); placeholders: ${placeholders.join(' | ')}`);
-  ok(semArquivo.length === 0, `todo banner deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
-  ok(comArquivo === 9, `os 9 destinos deveriam ter arte em ARQUIVO (tem ${comArquivo}) — inclui banners/desafios.webp (§246)`);
-  ok(fs.existsSync(path.join(dir, 'desafios.webp')), 'o banner de Desafios existe versionado (web/banners/desafios.webp, §246)');
+  ok(placeholders.length === 1 && placeholders[0] === 'dominios', `só Domínios deveria ser placeholder (§274); placeholders: ${placeholders.join(' | ') || 'nenhum'}`);
+  ok(semArquivo.length === 0, `todo banner com arte deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
+  ok(comArquivo === 8, `os 8 destinos com arte deveriam ter arquivo (tem ${comArquivo}); Domínios é placeholder (§274)`);
+  ok(!fs.existsSync(path.join(dir, 'dominios.webp')), 'o banner programático de Domínios foi REMOVIDO (§274: aguarda a ilustração definitiva web/banners/dominios.webp)');
 
   // (a2) GUARDA §250: um cartão com ROTA VIVA não pode carregar marcador de INDISPONÍVEL —
   //      nem a classe (`bcard--off`, `bcard--pvp`) nem o cinza (grayscale no filtro da arte).
@@ -168,7 +169,7 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
   const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
   ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
-  console.log(`  9 destinos (os 9 em arquivo, 0 placeholder — §246) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+  console.log(`  9 destinos (8 em arquivo + Domínios placeholder §274) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
 }
 
 console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');
@@ -181,7 +182,8 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     colecao:      "ir('colecao')",
     deus:         "ir('deus',{key:'zeus'})",
     campanha:     "ir('campanha')",
-    dominios:     "ir('dominios')",        // §273: HUB/entrada do Domínio (a corrida) — sai por ‹ Início
+    dominios:     "ir('dominios')",        // §274: tela de SELEÇÃO dos Domínios — sai por ‹ Início
+    dominio:      "ir('dominio',{cultura:'grega'})",   // §274: HUB de um Domínio — sai por ‹ Voltar
     montartime:   "ir('montartime',{id:CAMPANHA.encontros[0].id})",
     desafios:     "ir('desafios')",        // §213: hub de Desafios (pergaminhos+semanal+composição)
     composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)
