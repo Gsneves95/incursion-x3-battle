@@ -561,7 +561,7 @@
   "num": 19,
   "key": "kraken",
   "nome": "Kraken",
-  "faccao": "Grega",
+  "faccao": "Nórdica",
   "elemento": "Maré",
   "tipo": "Físico",
   "funcao": "Guardião",
@@ -1639,7 +1639,7 @@
   },
   "passiva": {
    "nome": "Companheiro de Raijin",
-   "efeito": "Com Raijin no time, ambos geram +1 de Combo por ação."
+   "efeito": "Com Raijin no time, ambos geram 1 de Combo a cada alvo atingido."
   }
  },
  {

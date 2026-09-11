@@ -8,8 +8,10 @@
   "inicial": true,
   "passiva": {
     "nome": "Companheiro de Raijin",
-    "desc": "INERTE neste protótipo — só funciona com Raijin no time, que não é inicial.",
-    "inerte": true
+    "desc": "Com Raijin no time, ambos geram 1 de Combo a cada alvo atingido.",
+    "fx": [
+      { "gatilho": "geraContadorPorGolpe", "contador": "combo", "v": 1, "max": 20, "estado": { "aliadoPresente": "raijin" } }
+    ]
   },
   "ab": [
     {

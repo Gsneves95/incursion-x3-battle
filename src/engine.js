@@ -146,7 +146,7 @@ const GATILHOS_PASSIVA = {
   negaOrbe:        { campos: ['a'], obrig: ['a'] },   // §130 (Dionísio): enquanto o dono vive, INIMIGOS carregando os controles em `a` não geram orbe (estende a exclusão de renda, que já barra adormecido/submerso/dominado, p/ selado). Cross-side, lido no iniciarTurno do lado inimigo
   evadeContra:     { campos: ['v'], obrig: ['v'] },   // §130 (Saci): o PRIMEIRO golpe único por turno contra o dono FALHA (nulificado) e revida v ao atacante. Lido no bater (usa o flag primeiroPorTurno do §88). v = o contra-ataque
   evadeControle:   { campos: [], obrig: [] },   // §131 (Loki): a PRIMEIRA tentativa de controle por turno contra o dono FALHA. Irmão do evadeContra mas no eixo CONTROLE (lido em aplicar, flag controleNoTurno). Sem payload
-  geraContadorPorGolpe: { campos: ['contador', 'v', 'max'], obrig: ['contador'] },   // §135 (Raijin): cada alvo ATINGIDO pelo dono gera v no pool do lado (por-GOLPE, gancho no bater). ≠ contador pool:'lado' num fx (que é por-ATAQUE)
+  geraContadorPorGolpe: { campos: ['contador', 'v', 'max', 'estado'], obrig: ['contador'] },   // §135 (Raijin): cada alvo ATINGIDO pelo dono gera v no pool do lado (por-GOLPE, gancho no bater). ≠ contador pool:'lado' num fx (que é por-ATAQUE). §271: `estado` opcional gateia (Fujin: só com Raijin no time)
   guardaControle:  { campos: ['a'], obrig: ['a'] },   // §136 (Khonshu, M9): 1× por partida, quando um aliado (ou o dono) SERIA afetado por um controle em `a`, o dono ANULA o efeito e gasta a carga. Lido em aplicar; carga no flag guardaControleUsado (bespoke, como o renasceu da Nezha)
 };
 // `quem` (o SUJEITO da morte, relativo ao reator) — UM gatilho `aoCair` com eixo de sujeito, não vários:
@@ -980,7 +980,9 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
   // (por-GOLPE, ≠ por-ATAQUE do Susanoo §126 — a fratura da preposição §126). Só golpe inimigo real.
   if (atk && atk.lado !== alvo.lado) {
     const ga = kitDe(st, atk), pa = ga && ga.passiva;
-    if (pa && Array.isArray(pa.fx)) for (const fp of pa.fx) if (fp.gatilho === 'geraContadorPorGolpe') addContadorLado(st, atk.lado, fp.contador, fp.v || 1, fp.max != null ? fp.max : null, atk);
+    // §271: `estado` CONDICIONA o gancho (composto AND, mesmo estadoOK do resto do motor — §266: uma só
+    // conta). AUSENTE = incondicional (Raijin intacto). Presente = só quando casa (Fujin: com Raijin no time).
+    if (pa && Array.isArray(pa.fx)) for (const fp of pa.fx) if (fp.gatilho === 'geraContadorPorGolpe' && (!fp.estado || estadoOK(fp.estado, atk, st))) addContadorLado(st, atk.lado, fp.contador, fp.v || 1, fp.max != null ? fp.max : null, atk);
   }
   return v;
 }
@@ -2032,6 +2034,9 @@ function _fxAtivo(st, dono, f, ctxAtk, ctxAlvo, armadoDono, golpe) {
   if (f.gatilho === 'vulnerabilidade') { if (f.deFuncao && (!armadoDono || !ctxAtk || (kitDe(st, ctxAtk) || {}).funcao !== f.deFuncao)) return null; return { gat: 'vulnerabilidade', v: f.v }; }
   if (f.gatilho === 'danoIrredutivel') { if (!armadoDono || !ctxAlvo) return null; const def = ctxAlvo.shield > 0 || !!ef(ctxAlvo, 'dmgReduction') || reducaoDeclarativa(st, ctxAlvo, { slot: 'basico', elem: ctxAtk && ctxAtk.elem }) > 0; return def ? { gat: 'danoIrredutivel', fura: f.ignora } : null; }
   if (f.gatilho === 'amplificaDot') { const has = st.lados.some(l => l.units.some(x => x.vivo && x.dots.some(d => d.nome === f.nome))); return has ? { gat: 'amplificaDot', v: f.v, nome: f.nome } : null; }
+  // §271: gerador de contador por golpe (Raijin sempre; Fujin só com Raijin no time — o `estado` no topo
+  // já gateia com o MESMO estadoOK). Torna a passiva LEGÍVEL (P acende quando vai gerar).
+  if (f.gatilho === 'geraContadorPorGolpe') return { gat: 'geraContadorPorGolpe', contador: f.contador, v: f.v };
   return null;
 }
 function infoPassiva(st, u, armado) {

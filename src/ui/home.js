@@ -846,7 +846,19 @@ function fmtRecarga(ms){
 // ===================================================================
 
 const PANTEOES = ['Grega', 'Nórdica', 'Egípcia', 'Japonesa', 'Chinesa', 'Hindu', 'Brasileira', 'Africana', 'Celta', 'Maia'];
-const CKIT = {}; if (typeof KITS !== 'undefined') KITS.forEach(k => CKIT[k.key] = k);
+// §271: a Coleção lê o TEXTO de efeito do data/deuses (o `.desc`, a fonte do MOTOR) — fonte única, a deriva
+// de texto acaba na origem. O kits.json fornece só a ESTRUTURA (nome/custo/recarga, travados pela cadeia);
+// o `.efeito` mostrado é sobrescrito pelo `.desc` de GODS. (metaComb/roster seguem separados — §271 nota.)
+const CKIT = {};
+if (typeof KITS !== 'undefined') KITS.forEach(k => {
+  const g = (typeof GODS !== 'undefined') ? GODS[k.key] : null;
+  if (!g) { CKIT[k.key] = k; return; }
+  const c = Object.assign({}, k);
+  const abS = {}; (g.ab || []).forEach(a => abS[a.slot] = a);
+  for (const slot of ['basico', 'habilidade', 'milagre']) if (c[slot] && abS[slot]) c[slot] = Object.assign({}, c[slot], { efeito: abS[slot].desc });
+  if (c.passiva && g.passiva) c.passiva = Object.assign({}, c.passiva, { efeito: g.passiva.desc });
+  CKIT[k.key] = c;
+});
 const RAR_ROT = { SS: 'SS', S: 'S', A: 'A' };
 function raridadeDe(k){ return (typeof RARIDADE !== 'undefined' && RARIDADE[k]) || 'A'; }
 function temKitHome(k){ return typeof GODS !== 'undefined' && !!GODS[k]; }
@@ -1010,6 +1022,9 @@ function deusDetalheHTML(k, kit, sel){
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
+  // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR) — o que o jogador lê é o que o motor
+  // usa. O roster (HRM) segue para nome/retrato; faccao/elem/classe/funcao vêm de GODS quando existe.
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
   const kit = CKIT[k];
   const tem = temDeus(k);
   const rar = raridadeDe(k);
@@ -1028,10 +1043,10 @@ function renderDeusDetalhe(){
     </div>
     <div class="dcol">
       <div class="dchips">
-        <span class="dchip">${H(g.faccao)}</span>
-        <span class="dchip dchip--el" style="--c:${COR(g.elem)}">${H(ELAB[g.elem] || g.elem)}</span>
-        <span class="dchip">${H(g.classe)}</span>
-        <span class="dchip">${H(g.funcao)}</span>
+        <span class="dchip">${H(gm.faccao)}</span>
+        <span class="dchip dchip--el" style="--c:${COR(gm.elem)}">${H(ELAB[gm.elem] || gm.elem)}</span>
+        <span class="dchip">${H(gm.classe)}</span>
+        <span class="dchip">${H(gm.funcao)}</span>
       </div>
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
       <div class="dkit">${deusSkills(kit).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>

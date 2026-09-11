@@ -168,6 +168,20 @@ conserto de dado; a Provação se ajusta ao deus, nunca o contrário. (O `itzamn
 parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PONTE de volume,
 §231, não uma divergência.)
 
+### Uma fonte para o que o jogador LÊ: o `data/deuses` (§271)
+
+- **A tela (batalha E Coleção) lê o `.desc` e os metadados de `data/deuses` — o MESMO arquivo que o
+  motor executa.** O que se lê é o que se sofre. `kits.json` NÃO é mais fonte de texto de tela; é o
+  **lado esquerdo da cadeia** — a prosa de desenho (intenção humana) que a build confere contra a
+  máquina. `roster_data.js`/ROSTER segue só para nome/retrato; não é fonte de faccao/funcao da ficha.
+- **O `checar_cadeia` (falha-alto na build) confere `kits.json` ↔ `data/deuses` em SEIS eixos:** nome,
+  custo, recarga, dano, cura, **e (§271) metadados (faccao/elem/classe/funcao) + orbe + escudo + combo +
+  duração** (esta com a convenção do agendado: fx = texto OU texto+1). **DE FORA, de propósito:** o eixo
+  **`buff`** (magnitude em ≥5 tipos de efeito, texto ambíguo) e o **~5% não-conferível** (dano
+  multi/condicional, fx dinâmico, duração multi-status). **NÃO presuma que o guarda cobre tudo** — buff e
+  o não-conferível são reportados, nunca travados. Mexeu um valor de fx? mude o texto no `.desc` também,
+  ou a build quebra (babá por eixo em `cadeia.test.js`).
+
 ### O carimbo da Provação só vê COMBATE (§263)
 
 - **`catalogoHash(prov)` hasheia `projecaoCombate(g)`, não o JSON inteiro do combatente.** O

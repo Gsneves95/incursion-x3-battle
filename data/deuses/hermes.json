@@ -4,7 +4,7 @@
   "faccao": "Grega",
   "elem": "Tempestade",
   "classe": "Físico",
-  "funcao": "Suporte",
+  "funcao": "Manipulador",
   "passiva": {
     "nome": "Mensageiro dos Deuses",
     "desc": "Hermes age primeiro no turno 1; ataques de alvo único contra ele causam 5 menos de dano.",

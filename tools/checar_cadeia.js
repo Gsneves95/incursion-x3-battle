@@ -54,6 +54,43 @@ const curasFx = fx => (fx || []).flatMap(e => e.t === 'heal' ? [e.v]
   : e.curaPorAlvo ? [e.curaPorAlvo]   // §127 (Hel): "cura N por alvo atingido" — o N é a cura da habilidade (rider no dmg)
   : (e.t === 'condicional' ? curasFx([...(e.entao || []), ...(e.senao || [])]) : []));
 
+// ---------- §270: EIXOS DE VALOR além de dano/cura (o achado da auditoria: só 2 dos 6 eram conferidos) ----------
+// Extração recursiva por eixo. Regra de bucketing (como o dano): confere ESTRITO só quando os dois lados têm
+// EXATAMENTE UM valor; qualquer outra forma (multi-status, contagem que não casa, vazio de um lado) vira
+// NÃO-CONFERÍVEL (reportado, nunca engolido, nunca falha-alto) — assim nenhum eixo MENTE.
+//
+// QUATRO eixos entram: `orbe`, `escudo`/Defesa, `combo` (geração) ESTRITOS; `duração` estrita COM UMA
+// CONVENÇÃO codificada (§271, medido: dos 55 descasamentos, 1 é a convenção, 54 são ambiguidade de texto,
+// ZERO defeito real). A convenção do AGENDADO: efeito agendado conta a vez da aplicação, então um status
+// aplicado junto de um `agendar` aceita fx = texto OU texto+1 (Kukulkán: texto "por 1 turno", fx dur:2).
+// Multi-status (um "por N turnos" cobrindo vários) e assimétrico (dur em fx sem número no texto, ou vice-
+// versa) viram NÃO-CONFERÍVEL — nunca falha-alto, nunca mente.
+//
+// UM eixo fica DE FORA de propósito, porque NÃO é extraível de forma confiável (§270/§271, medido):
+//   • `buff` (magnitude +/− de dano): mora em ≥5 tipos de efeito (bonusDano/reducao/vulnerabilidade/
+//     dmgUp/dmgDown/dmgReduction) e o texto "+N de dano" não distingue buff-próprio de debuff-no-inimigo
+//     de redução (ex.: Aquiles passiva = 12 de redução + 10 de vulnerabilidade num só texto). SEM guarda.
+// Preferência do dono: guarda em N eixos com o resto DE FORA e declarado > guarda em todos com um mentindo.
+function _walkFx(fx, fn) { for (const e of (fx || [])) { if (!e || typeof e !== 'object') continue; fn(e);
+  for (const k of ['entao', 'senao', 'agenda', 'faz']) if (Array.isArray(e[k])) _walkFx(e[k], fn); } }
+const sortN = a => a.slice().sort((x, y) => x - y);
+// duração de status: prosa "por N turno(s)"; fx = `dur` finito (<90 = não-permanente) em apply.eff/dot/…
+const dursProsa = ef => sortN([...String(ef).matchAll(/por (\d+)\s+turno/g)].map(m => +m[1]));
+const dursFx = fx => { const o = []; _walkFx(fx, e => { if (typeof e.dur === 'number' && e.dur < 90) o.push(e.dur);
+  if (e.t === 'apply' && e.eff && typeof e.eff.dur === 'number' && e.eff.dur < 90) o.push(e.eff.dur); }); return sortN(o); };
+const temAgendar = fx => (fx || []).some(e => e && (e.t === 'agendar' || Array.isArray(e.agenda)));
+// orbe: prosa "N orbe(s)"; fx = orbGain/roubaOrbe .n
+const orbesProsa = ef => sortN([...String(ef).matchAll(/(\d+)\s+orbe/g)].map(m => +m[1]));
+const orbesFx = fx => { const o = []; _walkFx(fx, e => { if ((e.t === 'orbGain' || e.t === 'roubaOrbe') && typeof e.n === 'number') o.push(e.n); }); return sortN(o); };
+// escudo/Defesa: prosa "N de Defesa" | "escudo N"; fx = shield.v / vidaExtra.hp
+const escudoProsa = ef => sortN([...String(ef).matchAll(/(\d+)\s+de\s+Defesa/g)].map(m => +m[1]).concat([...String(ef).matchAll(/escudo\s+(\d+)/gi)].map(m => +m[1])));
+const escudoFx = fx => { const o = []; _walkFx(fx, e => { if (e.t === 'shield' && typeof e.v === 'number') o.push(e.v); if (e.t === 'vidaExtra' && typeof e.hp === 'number') o.push(e.hp); }); return sortN(o); };
+// Combo (GERAÇÃO só): prosa "Gera N de Combo"; fx = contador nome:combo .v. Consumo ("+N por ponto de Combo") é
+// porContadorLado — NÃO é geração; a regex exige "Gera" para não casar o consumo.
+const comboProsa = ef => sortN([...String(ef).matchAll(/[Gg]era\s+(\d+)\s+de\s+Combo/g)].map(m => +m[1]));
+const comboFx = fx => { const o = []; _walkFx(fx, e => { if (e.t === 'contador' && e.nome === 'combo' && typeof e.v === 'number') o.push(e.v); }); return sortN(o); };
+const EIXOS = [['orbe', orbesProsa, orbesFx], ['escudo', escudoProsa, escudoFx], ['combo', comboProsa, comboFx]];
+
 // COMPARA prosa↔máquina. Puro (recebe os dados), para o teste exercitar com entradas sintéticas.
 function conferir(prosaByKey, deusesArray) {
   const R = { match: 0, diverge: 0, naoConf: 0 };
@@ -66,6 +103,10 @@ function conferir(prosaByKey, deusesArray) {
   for (const g of deusesArray) {
     const p = prosaByKey[g.key];
     if (!p) { divergencias.push(`${g.key} não existe em kits.json`); continue; }
+    // §270: METADADOS — o motor lê faccao/elem/classe/funcao; era o buraco por onde o Exu (e afrodite/apolo/
+    // kraken/hermes) passaram. Nome de campo difere entre os catálogos: elem↔elemento, classe↔tipo.
+    for (const [campo, dv, kv] of [['faccao', g.faccao, p.faccao], ['elem', g.elem, p.elemento], ['classe', g.classe, p.tipo], ['funcao', g.funcao, p.funcao]])
+      reg(g.key, '·', campo, String(dv) === String(kv) ? 'match' : 'diverge', `motor "${dv}" ≠ prosa "${kv}"`);
     for (const slot of SLOTS) {
       const ab = (g.ab || []).find(a => a.slot === slot), ps = p[slot];
       if (!ab || !ps) continue;
@@ -86,6 +127,24 @@ function conferir(prosaByKey, deusesArray) {
       if (hP.length === 0 && hM.length === 0) { /* nada */ }
       else if (fxDinamico) reg(g.key, slot, 'cura', 'naoConf', 'fx dinâmico (alterna/opcoes): valor mora no motor');
       else reg(g.key, slot, 'cura', mesmoArr(hP, hM) ? 'match' : 'diverge', `motor ${JSON.stringify(hM)} ≠ prosa ${JSON.stringify(hP)}`);
+      // §270/§271: os EIXOS DE VALOR (orbe/escudo/combo). Estrito só quando os dois lados têm UM valor;
+      // multi/assimétrico vira naoConf (não falha-alto) — nenhum eixo mente. fx dinâmico também é naoConf.
+      for (const [nome, pf, mf] of EIXOS) {
+        const vP = pf(ps.efeito), vM = mf(ab.fx);
+        if (vP.length === 0 && vM.length === 0) continue;
+        if (fxDinamico) reg(g.key, slot, nome, 'naoConf', 'fx dinâmico');
+        else if (vP.length === 1 && vM.length === 1) reg(g.key, slot, nome, vP[0] === vM[0] ? 'match' : 'diverge', `motor ${JSON.stringify(vM)} ≠ prosa ${JSON.stringify(vP)}`);
+        else reg(g.key, slot, nome, 'naoConf', `multi/assimétrico: prosa=${JSON.stringify(vP)} motor=${JSON.stringify(vM)}`);
+      }
+      // §271: DURAÇÃO, com a CONVENÇÃO do agendado (fx = texto OU texto+1 quando há `agendar`).
+      const durP = dursProsa(ps.efeito), durM = dursFx(ab.fx);
+      if (durP.length || durM.length) {
+        if (fxDinamico) reg(g.key, slot, 'duração', 'naoConf', 'fx dinâmico');
+        else if (durP.length === 1 && durM.length === 1) {
+          const ag = temAgendar(ab.fx), bate = durM[0] === durP[0] || (ag && durM[0] === durP[0] + 1);
+          reg(g.key, slot, 'duração', bate ? 'match' : 'diverge', `motor ${JSON.stringify(durM)} ≠ prosa ${JSON.stringify(durP)}${ag ? ' (agendado: aceita +1)' : ''}`);
+        } else reg(g.key, slot, 'duração', 'naoConf', `multi-status/assimétrico: prosa=${JSON.stringify(durP)} motor=${JSON.stringify(durM)}`);
+      }
     }
   }
   const total = R.match + R.diverge + R.naoConf;

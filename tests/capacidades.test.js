@@ -146,6 +146,32 @@ console.log('== §267 redução com `contra`: acende SÓ quando o golpe mirado c
   console.log('  contra-redução gateada pelo golpe · redução permanente de pé');
 }
 
+console.log('== §271 geraContadorPorGolpe gateado por `estado`: Raijin intacto, Fujin condicional ==');
+{
+  const comboApos=(time,quemBate)=>{
+    const st=E.novoEstado(time,['tyr','sobek','cuca'],5,0);
+    const u=st.lados[0].units.find(x=>x.key===quemBate); const alvo=st.lados[1].units[0];
+    E.ELEMS.forEach(e=>st.lados[0].orbs[e]=5);
+    E.agir(st,u.uid,'basico',[alvo.uid]);
+    return E.getContadorLado(st,0,'combo');
+  };
+  ok(comboApos(['raijin','zeus','ogum'],'raijin')===1,'Raijin sem estado gera Combo por golpe (incondicional, intacto)');   // BABÁ
+  ok(comboApos(['fujin','zeus','ogum'],'fujin')===0,'Fujin sem Raijin no time NÃO gera Combo (estado não casa)');   // BABÁ
+  ok(comboApos(['fujin','raijin','zeus'],'fujin')===1,'Fujin com Raijin no time gera Combo (estado casa)');   // BABÁ
+  // gate genérico: é vocabulário, não código de deus
+  E.GODS.tgc={key:'tgc',nome:'TGC',faccao:'T',elem:'Chama',classe:'Físico',funcao:'Atacante',
+    passiva:{nome:'p',desc:'d',fx:[{gatilho:'geraContadorPorGolpe',contador:'combo',v:1,max:20,estado:{aliadoPresente:'zeus'}}]},
+    ab:[{slot:'basico',classe:'Físico',nome:'b',cost:{},cd:0,alvo:'inimigo',fx:[{t:'dmg',v:10}]}]};
+  ok(comboApos(['tgc','zeus','ogum'],'tgc')===1,'gate genérico: com o aliado exigido, gera');   // BABÁ
+  ok(comboApos(['tgc','tyr','ogum'],'tgc')===0,'gate genérico: sem o aliado exigido, NÃO gera');   // BABÁ
+  delete E.GODS.tgc;
+  // §266: a passiva do Fujin é LEGÍVEL — o P acende só com Raijin em campo
+  const pOn=time=>{const st=E.novoEstado(time,['tyr','sobek','cuca'],5,0); const fj=st.lados[0].units.find(x=>x.key==='fujin'); return E.infoPassiva(st,fj).propria.some(x=>x.gat==='geraContadorPorGolpe');};
+  ok(pOn(['fujin','raijin','zeus']),'Fujin: P acende com Raijin no time (legível, não só funcional)');   // BABÁ
+  ok(!pOn(['fujin','zeus','ogum']),'Fujin: P NÃO acende sem Raijin (o indicador não engana)');   // BABÁ
+  console.log('  Raijin intacto · Fujin gera/legível só com Raijin · gate é vocabulário (data, não motor)');
+}
+
 console.log('');
 console.log(f===0?'>>> NOVAS CAPACIDADES OK':`>>> ${f} FALHA(S)`);
 process.exit(f?1:0);
