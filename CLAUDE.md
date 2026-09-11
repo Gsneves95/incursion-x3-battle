@@ -182,6 +182,11 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
   o não-conferível são reportados, nunca travados. Mexeu um valor de fx? mude o texto no `.desc` também,
   ou a build quebra (babá por eixo em `cadeia.test.js`).
 
+- **A cadeia cobre 2 dos 4 catálogos (§271, NÃO presuma cobertura total).** Ela confere `kits.json` ↔
+  `data/deuses`. **NÃO confere `roster_data.js`** (4º catálogo — seletor, maestria por facção, composição)
+  **nem o texto de telas que não a Coleção.** Deriva do roster hoje: 1 campo (`kraken.faccao` "Grega" no
+  roster, "Nórdica" no motor) — vivo no seletor/maestria/composição. "Cadeia conferida" ≠ "tudo conferido".
+
 ### O carimbo da Provação só vê COMBATE (§263)
 
 - **`catalogoHash(prov)` hasheia `projecaoCombate(g)`, não o JSON inteiro do combatente.** O
