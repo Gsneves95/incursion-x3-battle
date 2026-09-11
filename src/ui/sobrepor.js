@@ -172,7 +172,7 @@ function ligarSobrepor(){
     // ABANDONA a partida e vai pra home: zera o estado de sessão da batalha (prova/campanha
     // e seus latches) para não vazar um HUD numa próxima batalha. aoSair(batalha) para o
     // relógio e limpa a sobreposição; a home não lê st.
-    prova=null;provaFim=null;campanha=null;campanhaFim=null;ov=null;menuAberto=false;
+    prova=null;provaFim=null;campanha=null;campanhaFim=null;dominio=null;dominioFim=null;ov=null;menuAberto=false;   // §273: zera também o latch de Domínios (a corrida persiste no perfil; só o estado de batalha some)
     ir('home',{},{substituir:true});render();};
   const bn=q('#bnew'); if(bn)bn.onclick=()=>{
     // sai da batalha para a seleção pedindo um recomeço (aoEntrarSelecao zera a grade);

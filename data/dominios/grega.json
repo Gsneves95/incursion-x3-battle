@@ -1,0 +1,479 @@
+{
+ "_fonte": "GERADO por tools/gerar_dominios.js (§273). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; 12 seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de 10. Reproduzir: node tools/gerar_dominios.js",
+ "cultura": "Grega",
+ "nome": "Domínio do Olimpo",
+ "trio": [
+  "zeus",
+  "poseidon",
+  "atena"
+ ],
+ "faixa": 10,
+ "rampaDano": [
+  1,
+  1.05,
+  1.1,
+  1.15
+ ],
+ "curaPorNivel": 25,
+ "tetoBonusDano": 0.5,
+ "passoBonusDano": 0.1,
+ "tolMonotonia": 0.06,
+ "regua": {
+  "metodo": "1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa",
+  "seeds": 12
+ },
+ "niveis": [
+  {
+   "n": 1,
+   "chefe": false,
+   "inimigos": [
+    "boto",
+    "odin",
+    "ymir"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0
+  },
+  {
+   "n": 2,
+   "chefe": false,
+   "inimigos": [
+    "anubis",
+    "fujin",
+    "huangdi"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0
+  },
+  {
+   "n": 3,
+   "chefe": false,
+   "inimigos": [
+    "anubis",
+    "ymir",
+    "hermes"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0
+  },
+  {
+   "n": 4,
+   "chefe": false,
+   "inimigos": [
+    "kitsune",
+    "mnevis",
+    "hermes"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0
+  },
+  {
+   "n": 5,
+   "chefe": false,
+   "inimigos": [
+    "lugh",
+    "cuca",
+    "khonshu"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 6,
+   "chefe": false,
+   "inimigos": [
+    "boitata",
+    "ganesha",
+    "fujin"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 7,
+   "chefe": false,
+   "inimigos": [
+    "heimdall",
+    "ganesha",
+    "fujin"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 8,
+   "chefe": false,
+   "inimigos": [
+    "saci",
+    "xango",
+    "fujin"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 9,
+   "chefe": false,
+   "inimigos": [
+    "cuca",
+    "boto",
+    "tyr"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 10,
+   "chefe": true,
+   "cultura": "Brasileira",
+   "inimigos": [
+    "boitata",
+    "boto",
+    "cuca"
+   ],
+   "danoMult": 1,
+   "dificuldade": 0.08333333333333337
+  },
+  {
+   "n": 11,
+   "chefe": false,
+   "inimigos": [
+    "aokuang",
+    "hermes",
+    "isis"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.16666666666666663
+  },
+  {
+   "n": 12,
+   "chefe": false,
+   "inimigos": [
+    "piranha",
+    "boitata",
+    "kitsune"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.25
+  },
+  {
+   "n": 13,
+   "chefe": false,
+   "inimigos": [
+    "iansa",
+    "chaac",
+    "dionisio"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.33333333333333337
+  },
+  {
+   "n": 14,
+   "chefe": false,
+   "inimigos": [
+    "boitata",
+    "kitsune",
+    "fenrir"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.41666666666666663
+  },
+  {
+   "n": 15,
+   "chefe": false,
+   "inimigos": [
+    "change",
+    "dionisio",
+    "ammit"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.41666666666666663
+  },
+  {
+   "n": 16,
+   "chefe": false,
+   "inimigos": [
+    "mnevis",
+    "cernunnos",
+    "afrodite"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.5833333333333333
+  },
+  {
+   "n": 17,
+   "chefe": false,
+   "inimigos": [
+    "perseu",
+    "ammit",
+    "susanoo"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.5833333333333333
+  },
+  {
+   "n": 18,
+   "chefe": false,
+   "inimigos": [
+    "boto",
+    "cuca",
+    "hanuman"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.5833333333333333
+  },
+  {
+   "n": 19,
+   "chefe": false,
+   "inimigos": [
+    "saci",
+    "heimdall",
+    "ahpuch"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.5833333333333333
+  },
+  {
+   "n": 20,
+   "chefe": true,
+   "cultura": "Maia",
+   "inimigos": [
+    "ahpuch",
+    "chaac",
+    "itzamna"
+   ],
+   "danoMult": 1.05,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 21,
+   "chefe": false,
+   "inimigos": [
+    "horus",
+    "dionisio",
+    "hercules"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 22,
+   "chefe": false,
+   "inimigos": [
+    "apolo",
+    "ymir",
+    "ammit"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 23,
+   "chefe": false,
+   "inimigos": [
+    "susanoo",
+    "houyi",
+    "cuca"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 24,
+   "chefe": false,
+   "inimigos": [
+    "perseu",
+    "boitata",
+    "horus"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 25,
+   "chefe": false,
+   "inimigos": [
+    "khonshu",
+    "dagda",
+    "ammit"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 26,
+   "chefe": false,
+   "inimigos": [
+    "yamatotakeru",
+    "hermes",
+    "hercules"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.75
+  },
+  {
+   "n": 27,
+   "chefe": false,
+   "inimigos": [
+    "iara",
+    "raijin",
+    "fenrir"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.8333333333333334
+  },
+  {
+   "n": 28,
+   "chefe": false,
+   "inimigos": [
+    "kali",
+    "hades",
+    "hermes"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.8333333333333334
+  },
+  {
+   "n": 29,
+   "chefe": false,
+   "inimigos": [
+    "mnevis",
+    "hermes",
+    "khnum"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.8333333333333334
+  },
+  {
+   "n": 30,
+   "chefe": true,
+   "cultura": "Chinesa",
+   "inimigos": [
+    "aokuang",
+    "change",
+    "guanyu"
+   ],
+   "danoMult": 1.1,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 31,
+   "chefe": false,
+   "inimigos": [
+    "loki",
+    "xango",
+    "nezha"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 32,
+   "chefe": false,
+   "inimigos": [
+    "yamatotakeru",
+    "hercules",
+    "susanoo"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 33,
+   "chefe": false,
+   "inimigos": [
+    "dionisio",
+    "ares",
+    "izanami"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 34,
+   "chefe": false,
+   "inimigos": [
+    "bragi",
+    "sunwukong",
+    "huangdi"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 35,
+   "chefe": false,
+   "inimigos": [
+    "krishna",
+    "cuca",
+    "horus"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 36,
+   "chefe": false,
+   "inimigos": [
+    "inari",
+    "heimdall",
+    "durga"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 37,
+   "chefe": false,
+   "inimigos": [
+    "lugh",
+    "izanami",
+    "houyi"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 38,
+   "chefe": false,
+   "inimigos": [
+    "izanami",
+    "bastet",
+    "mulasemcabeca"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 39,
+   "chefe": false,
+   "inimigos": [
+    "fenrir",
+    "huangdi",
+    "horus"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 0.9166666666666666
+  },
+  {
+   "n": 40,
+   "chefe": true,
+   "cultura": "Hindu",
+   "inimigos": [
+    "brahma",
+    "durga",
+    "ganesha"
+   ],
+   "danoMult": 1.15,
+   "dificuldade": 1
+  }
+ ],
+ "pisoIAGuloso": {
+  "med": 1,
+  "min": 1,
+  "p50": 1,
+  "max": 1,
+  "corridas": 30,
+  "politicaPremio": "reviver caído senão curar"
+ }
+}

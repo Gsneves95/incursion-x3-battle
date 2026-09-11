@@ -182,9 +182,10 @@ console.log('== 9. SANDBOX (Batalha CPU): vitória plana vs CPU credita 20 Gema,
 console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missões; Desafios = hub de pergaminhos ==');
 {
   const { w, $, $$ } = sessao();
-  // o carrossel tem 8 destinos, com "Desafios" entre "Provações" e "Invocação"
+  // o carrossel tem 9 destinos (§273: +Domínios entre Campanha e Provações), com "Desafios" entre "Provações" e "Invocação"
   const ordem = w.eval('HOME_BANNERS.map(d=>d.chave)');
-  ok(ordem.length === 8, `o carrossel tem 8 destinos (tem ${ordem.length})`);
+  ok(ordem.length === 9, `o carrossel tem 9 destinos (tem ${ordem.length})`);
+  ok(ordem.indexOf('dominios') === ordem.indexOf('campanha') + 1, 'Domínios fica logo após a Campanha (§273)');
   ok(ordem.indexOf('desafios') === ordem.indexOf('provacoes') + 1 && ordem.indexOf('desafios') === ordem.indexOf('invocacao') - 1, 'Desafios fica entre Provações e Invocação');
   // "Provações" → o MAPA DAS MISSÕES (§234). Sem servidor (a sessão é local), diz honestamente que as
   // missões contam no PvP e NÃO lista pergaminhos.

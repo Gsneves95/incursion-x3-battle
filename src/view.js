@@ -21,6 +21,10 @@ let prova=null, provaFim=null, provaLances=0;
 // F3.3 — estado do ENCONTRO de CAMPANHA ativo (null fora da campanha): o encontro em
 // curso e o resultado já decidido (uma vez só). Reusa a batalha, sem condição especial.
 let campanha=null, campanhaFim=null;
+// §273 — estado da CORRIDA de DOMÍNIOS ativa (null fora do modo): `dominio` = { ladder }
+// (a escada em jogo), `dominioFim` = o resultado do nível já decidido (uma vez só). A corrida
+// em si (nivel/vida/bônus/rede) PERSISTE run-scoped em perfil.dominios.run — aqui só a batalha.
+let dominio=null, dominioFim=null;
 
 // Perfil do jogador (persistido; ver src/perfil.js + src/armazenamento.js). Carregado
 // no bootstrap; a F0.4b liga o pity do gacha a ele.
@@ -60,17 +64,17 @@ function renderBatalha(){
 
   // F3.1: numa Provação, avalia a condição ANTES de desenhar — o latch (uma vez só) decide
   // vitória/derrota, congela o motor quando a condição quebra, e desbloqueia o deus na vitória.
-  if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else atualizarSandbox();
+  if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else if(dominio) atualizarDominio(); else atualizarSandbox();
 
-  const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim;
-  const cls=[]; if(prova||campanha)cls.push('temhud'); if(painelRecolhido)cls.push('pnfold');
+  const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim || !!dominioFim;
+  const cls=[]; if(prova||campanha||dominio)cls.push('temhud'); if(painelRecolhido)cls.push('pnfold');
   // §239 item 4: a ênfase inverte com o turno SEM mover nada — o lado ativo acende. Em hot-seat a tela
   // gira e o jogador da vez é sempre "eu" (turno-eu); vs CPU/PvP, o turno dele acende o lado dele.
   cls.push(ehMeuTurno()?'turno-eu':'turno-eles');
   stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   ${topoHTML()}
-  ${prova?provaHUD():campanha?campanhaHUD():''}
+  ${prova?provaHUD():campanha?campanhaHUD():dominio?dominioHUD():''}
   <div class="board">
     ${painelHTML()}
     <div class="rows">
@@ -92,7 +96,7 @@ function renderBatalha(){
     </div>`}
   </footer>
   </div>
-  ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():overlayHTML()}`;
+  ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():(dominio&&dominioFim)?dominioResultadoOverlay():overlayHTML()}`;
 
   hpAnt={}; todas().forEach(u=>hpAnt[u.uid]=u.hp);
   if(peek){const el=stage.querySelector(`[data-look="${peek}"]`); if(el)el.classList.add('peek'); peek=null;}
@@ -105,6 +109,7 @@ function ligar(){
   ligarCampo(); ligarTopo(); ligarPainel(); ligarSobrepor();
   if(prova&&provaFim) ligarProvaFim();   // F3.1: os botões do fim de Provação (voltar/tentar) substituem o "Nova batalha"
   else if(campanha&&campanhaFim) ligarCampanhaFim();   // F3.3: os botões do fim de encontro
+  else if(dominio&&dominioFim) ligarDominioFim();   // §273: os botões do fim de nível (próximo/prêmio/hub)
   talvezIA();
 }
 
@@ -130,6 +135,7 @@ registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFI
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
 registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
+registrar('dominios',  { render: renderDominios });   // §273: o HUB/entrada do Domínio (a corrida) — Fatia 1
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
 registrar('composicao',{ render: renderDesafios });     // F3.6/§213: desafios de composição (sub-tela do hub)
 registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra
@@ -209,6 +215,10 @@ function voltarNativo(){
   // o confirmar-sair da batalha por cima, e nunca fecha o app no meio da campanha. Na derrota, preserva a
   // troca do jogador (voltarAoAto). É a "sobreposição fecha primeiro" também para esta camada.
   if(typeof campanha!=='undefined'&&campanha&&typeof campanhaFim!=='undefined'&&campanhaFim&&typeof voltarAoAto==='function'){ voltarAoAto(); return; }
+  // §273/§240: a sobreposição de FIM DE NÍVEL do Domínio (e a escolha de prêmio que vem por ela)
+  // fecha para o HUB do Domínio ANTES de qualquer coisa — nunca abre o confirmar-sair da batalha
+  // por baixo nem fecha o app. A corrida PERSISTE (aguardandoPremio/avançada/morta) → o hub retoma.
+  if(typeof dominio!=='undefined'&&dominio&&typeof dominioFim!=='undefined'&&dominioFim&&typeof sairParaHubDominio==='function'){ sairParaHubDominio(); return; }
   const r = (typeof rotaAtual==='function') ? rotaAtual() : null;
   // b) NA BATALHA: abre o confirmar-sair (o MESMO caminho do ⋯ → Sair). Não abandona direto, não fecha o app.
   if(r==='batalha'){ if(typeof ov!=='undefined')ov='sair'; render(); return; }

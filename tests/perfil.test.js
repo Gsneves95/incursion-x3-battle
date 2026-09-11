@@ -255,14 +255,36 @@ console.log('== F4 SANDBOX (creditarSandbox): teto diário + reset por DATA, pur
 console.log('== F4 migração v2 -> v3: adiciona sandbox SEM re-creditar o grant ==');
 {
   const P = require('../src/perfil.js');
-  ok(P.VERSAO_PERFIL === 3, 'a versão do perfil é 3');
-  const v2 = P.novoPerfil(0, 1500); v2.versao = 2; delete v2.sandbox;   // perfil v2 já com grant, sem sandbox
+  ok(P.VERSAO_PERFIL === 4, 'a versão do perfil é 4');
+  const v2 = P.novoPerfil(0, 1500); v2.versao = 2; delete v2.sandbox; delete v2.dominios;   // perfil v2 já com grant, sem sandbox/dominios
   const m = P.migrar(v2, 1500);
-  ok(m.versao === 3 && m.sandbox && m.sandbox.dia === '' && m.sandbox.vitorias === 0, 'v2 -> v3 backfilla sandbox vazio');
-  ok(m.moedas.gema === 1500, 'v2 -> v3 NÃO credita o grant de novo (gated em v<2)');
-  const v1 = P.novoPerfil(0, 0); v1.versao = 1; v1.moedas.gema = 0; delete v1.sandbox;
+  ok(m.versao === 4 && m.sandbox && m.sandbox.dia === '' && m.sandbox.vitorias === 0, 'v2 -> v4 backfilla sandbox vazio');
+  ok(m.moedas.gema === 1500, 'v2 -> v4 NÃO credita o grant de novo (gated em v<2)');
+  const v1 = P.novoPerfil(0, 0); v1.versao = 1; v1.moedas.gema = 0; delete v1.sandbox; delete v1.dominios;
   const m1 = P.migrar(v1, 1500);
-  ok(m1.versao === 3 && m1.moedas.gema === 1500 && m1.sandbox, 'v1 -> v3 credita o grant UMA vez e adiciona sandbox');
+  ok(m1.versao === 4 && m1.moedas.gema === 1500 && m1.sandbox, 'v1 -> v4 credita o grant UMA vez e adiciona sandbox');
+}
+
+console.log('== §273 migração v3 -> v4: adiciona `dominios` vazio (run: null), sem tocar nada mais ==');
+{
+  const P = require('../src/perfil.js');
+  const v3 = P.novoPerfil(0, 1500); v3.versao = 3; delete v3.dominios;   // perfil v3 (com sandbox), sem dominios
+  const m = P.migrar(v3, 1500);
+  ok(m.versao === 4 && m.dominios && m.dominios.run === null, 'v3 -> v4 backfilla dominios {run:null}');
+  ok(m.moedas.gema === 1500 && m.sandbox, 'v3 -> v4 não re-credita nem perde sandbox');
+  // novoPerfil já nasce com dominios
+  const novo = P.novoPerfil(0, 0);
+  ok(novo.dominios && novo.dominios.run === null, 'novoPerfil nasce com dominios {run:null}');
+  // definirRunDominios: guarda uma corrida e depois ENCERRA (run=null) — puro
+  const comRun = P.definirRunDominios(novo, { cultura: 'Grega', nivel: 3, vida: [{ hp: 90, vivo: true }], bonus: 0.2, reviveGasto: [], profundidade: 2, status: 'ativo', aguardandoPremio: false });
+  ok(comRun.dominios.run && comRun.dominios.run.nivel === 3 && comRun.dominios.run.bonus === 0.2, 'definirRunDominios guarda a corrida');
+  ok(novo.dominios.run === null, 'definirRunDominios é puro (não muta o argumento)');
+  ok(P.ehPerfilValido(comRun, null), 'perfil com corrida em andamento é válido');
+  const zerado = P.definirRunDominios(comRun, null);
+  ok(zerado.dominios.run === null, 'definirRunDominios(null) ENCERRA a corrida (zera — invariante 3)');
+  // corrupção de dominios.run cai na validação
+  const mau = P.novoPerfil(0, 0); mau.dominios.run = { nivel: 'x' };
+  ok(!P.ehPerfilValido(mau, null), 'dominios.run malformado é rejeitado na forma');
 }
 
 console.log('');

@@ -354,6 +354,29 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
 25. **Arte de ato ausente usa o placeholder do §213, NUNCA um `<img>` 404.** A
     build anota `_arteOk` por arquivo presente em `web/banners/campanha/`.
 
+### Domínios — a corrida run-scoped (§273)
+26. **DOMÍNIOS é roguelike RUN-SCOPED, e por isso NÃO fere o invariante 3.** Três
+    deuses fixos descem uma escada de batalhas 3×3; a vida CARREGA com cura parcial, a
+    cada 10 um chefe, e o prêmio do chefe (cura/reviver/bônus de dano) ACUMULA na
+    corrida. Todo esse poder vive em `perfil.dominios.run` e ZERA com a corrida
+    (`run:null`) — **nunca** toca `deuses`/kit/HP-base. Poder que evapora não é
+    progressão permanente; poder que persiste ou se compra, sim (§ invariante 3). Não
+    grave nada da corrida fora do blob `run`.
+27. **A ESCADA é DADO, nunca código.** `data/dominios/<cultura>.json`, GERADA e MEDIDA
+    por `tools/gerar_dominios.js` (a régua é o exp 4 da fase 1: 1 − vitória gulosa a vida
+    cheia). O SORTEIO está PROIBIDO no runtime (a fase 1 provou que é loteria — 6% de
+    derrota a vida cheia); a dificuldade sobe por DANO do inimigo em faixa de 10 (não por
+    vida, que só alonga), e a escada é MONOTÔNICA na dificuldade medida (a build valida,
+    `domValidarLadder`). Domínio novo = arquivo novo.
+28. **Regras da corrida (medidas, não afrouxe):** o "1× por partida" que RESSUSCITA
+    (revive/vidaExtra/auto-renascimento) vira **1× por CORRIDA** — flag
+    `reviveGastoCorrida` no motor, **default false: fora de Domínios NADA muda**; o resto
+    do "1× por partida" (picos) fica por nível. **Carregam vida+bônus; NÃO carregam
+    recarga/efeito/contador** (cada nível é um `novoEstado` fresco). O bônus de dano tem
+    TETO +50% (acima vira passeio — exp 5); no teto a opção BÔNUS some, como o REVIVER sem
+    caído (§252: opção que não faz nada é armadilha). A régua NÃO calibra este modo (piso
+    da IA gulosa = 1) — o dono calibra jogando; cura/rampa/profundidade são knobs de dado.
+
 ---
 
 ## NÃO FAÇA

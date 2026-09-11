@@ -93,18 +93,18 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
-console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; os 8 em arquivo) e o layout independe da carteira ==');
+console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; os 9 em arquivo) e o layout independe da carteira ==');
 {
   const dir = path.join(__dirname, '../web/banners');
   const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
-  ok(chaves.length === 8, `a home deveria ter 8 destinos (tem ${chaves.length})`);   // §213: +Desafios
+  ok(chaves.length === 9, `a home deveria ter 9 destinos (tem ${chaves.length})`);   // §213: +Desafios
 
   // (a) cada banner referencia um ARQUIVO em banners/<arte>.webp e o arquivo EXISTE no repo
   //     (a garantia contra 404: o src aponta certo E o webp está versionado). Nada de base64.
   const render0 = () => w.eval("perfil=novoPerfil(0,0); ir('home',{},{substituir:true}); render();");
   render0();
   const cards = [...d.querySelectorAll('.bcard')];
-  ok(cards.length === 8, `deveriam existir 8 cartões (existem ${cards.length})`);   // §213: +Desafios
+  ok(cards.length === 9, `deveriam existir 9 cartões (existem ${cards.length})`);   // §213: +Desafios
   const semArquivo = [], base64 = [], placeholders = [];
   let comArquivo = 0;
   for (const c of cards){
@@ -123,7 +123,7 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   ok(base64.length === 0, `nenhum banner deveria ser base64 (achei: ${base64.join(' | ')})`);
   ok(placeholders.length === 0, `nenhum destino deveria ser placeholder — a arte chegou p/ todos (§246); placeholders: ${placeholders.join(' | ')}`);
   ok(semArquivo.length === 0, `todo banner deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
-  ok(comArquivo === 8, `os 8 destinos deveriam ter arte em ARQUIVO (tem ${comArquivo}) — inclui banners/desafios.webp (§246)`);
+  ok(comArquivo === 9, `os 9 destinos deveriam ter arte em ARQUIVO (tem ${comArquivo}) — inclui banners/desafios.webp (§246)`);
   ok(fs.existsSync(path.join(dir, 'desafios.webp')), 'o banner de Desafios existe versionado (web/banners/desafios.webp, §246)');
 
   // (a2) GUARDA §250: um cartão com ROTA VIVA não pode carregar marcador de INDISPONÍVEL —
@@ -162,13 +162,13 @@ console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 
   w.eval("perfil=novoPerfil(0,999999); ROSTER.forEach(e=>{perfil.deuses[e.key]=perfil.deuses[e.key]||{copias:1,favorito:false,obtidoEm:0};}); perfil.campanha.concluidas=CAMPANHA.encontros.map(e=>e.id); perfil.invocacao.desdeUltimoSS=42; ir('home',{},{substituir:true}); render();");
   const ordemCheia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
   const c1 = d.querySelector('.bcard');
-  ok(d.querySelectorAll('.bcard').length === 8, 'com carteira cheia ainda são 8 cartões');
+  ok(d.querySelectorAll('.bcard').length === 9, 'com carteira cheia ainda são 9 cartões');
   ok(ordemVazia === ordemCheia, `a ordem dos destinos não deveria mudar com a carteira (vazia="${ordemVazia}" cheia="${ordemCheia}")`);
   ok(gs(c1).width === '202px' && gs(c1).height === '314px', 'o cartão continua 202×314 com a carteira cheia');
   // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
   const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
   ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
-  console.log(`  8 destinos (os 8 em arquivo, 0 placeholder — §246) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+  console.log(`  9 destinos (os 9 em arquivo, 0 placeholder — §246) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
 }
 
 console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');
@@ -181,6 +181,7 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     colecao:      "ir('colecao')",
     deus:         "ir('deus',{key:'zeus'})",
     campanha:     "ir('campanha')",
+    dominios:     "ir('dominios')",        // §273: HUB/entrada do Domínio (a corrida) — sai por ‹ Início
     montartime:   "ir('montartime',{id:CAMPANHA.encontros[0].id})",
     desafios:     "ir('desafios')",        // §213: hub de Desafios (pergaminhos+semanal+composição)
     composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)

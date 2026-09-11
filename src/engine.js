@@ -385,6 +385,7 @@ function novaUnidade(key, idx, lado, catalogo) {
     vidaExtra: null,     // Vida Extra pendente: { hp } — revive no ato ao cair
     suspensos: null,     // §138 (Dagda M6): buffs SUSPENSOS (remove-e-guarda): { efeitos:[...], shield:N, restauraEm } — restaurados no fimTurno
     naoRevive: false,    // marcado ao morrer sob Atadura/Podridão/Livro
+    reviveGastoCorrida: false,   // DOMÍNIOS (§273): a rede de ressurreição deste deus JÁ foi usada nesta CORRIDA — passa a valer "1× por corrida" no lugar de "1× por partida" (revive/vidaExtra/reviveProximoTurno). DEFAULT false: fora de Domínios NADA muda (a camada de corrida marca as unidades por deus; os três revive-sites o respeitam). Rede que se remonta a cada nível não é rede.
     usos: {},            // habilidades "1× por partida" já gastas: { milagre: true }
     jaRecebeu: {},       // §158 (shutendoji): efeito → turno da 1ª vez que LANDOU nesta unidade. Latch p/ "aplique X a cada inimigo" (efeitoEmTodosInimigos); sobrevive à morte (matar não limpa este campo)
     modo: 0, renasceu: false, lado,
@@ -990,7 +991,7 @@ function bater(st, atk, alvo, base, kind, slot, opts = {}) {
 function matar(st, atk, alvo, opts = {}) {
   // PRIMITIVA Vida Extra — revive no ato, antes de a morte se concretizar. EXECUÇÃO fura vidaExtra
   // (execução ELIMINA, não é golpe letal; o Sun Wukong precisa de imunidade DEDICADA — §47).
-  if (!opts.execucao && alvo.vidaExtra) {
+  if (!opts.execucao && alvo.vidaExtra && !alvo.reviveGastoCorrida) {   // reviveGastoCorrida (DOMÍNIOS §273): a rede já foi gasta nesta corrida — não ressuscita de novo (default false → intocado fora de Domínios)
     const hp = alvo.vidaExtra.hp; alvo.vidaExtra = null;
     alvo.hp = hp; alvo.shield = 0;
     log(st, { tipo: 'revive', alvo: alvo.key, valor: hp });
@@ -1255,7 +1256,7 @@ function rodarFaz(st, u, faz, tagKey) {
       log(st, f.para ? { tipo: 'orbe', lado: u.lado, valor: f.n, para: f.para } : { tipo: 'orbe', lado: u.lado, valor: f.n });
     }
     else if (f.t === 'reviveProximoTurno') {   // Nezha: retorna no turno seguinte, 1× por partida. Só p/ quem caiu.
-      if (!u.vivo && !u.renasceu) {
+      if (!u.vivo && !u.renasceu && !u.reviveGastoCorrida) {   // reviveGastoCorrida (DOMÍNIOS §273): auto-renascimento também é 1×-por-corrida
         if (u.naoRevive) log(st, { tipo: 'bloqueio', alvo: u.key, motivo: 'nao_revive' });   // antirevive fura o auto-renascimento tb, não só o revive-por-aliado
         else { u.renasceu = true; u.pendenteRenascer = true; u.reviveHp = f.hp; log(st, { tipo: 'passiva', origem: u.key, valor: f.hp }); }
       }
@@ -2096,7 +2097,7 @@ function reviveBloqueadoPorAura(st, u) {
 // PRIMITIVA revive — traz um aliado caído de volta, salvo se ficou marcado como irrevivível
 function reviver(st, alvo, e) {
   if (alvo.vivo) return;
-  if (alvo.naoRevive || reviveBloqueadoPorAura(st, alvo)) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'nao_revive' }); return; }
+  if (alvo.naoRevive || alvo.reviveGastoCorrida || reviveBloqueadoPorAura(st, alvo)) { log(st, { tipo: 'bloqueio', alvo: alvo.key, motivo: 'nao_revive' }); return; }   // reviveGastoCorrida (DOMÍNIOS §273): quem já voltou uma vez na corrida não é revivido de novo (default false fora de Domínios)
   alvo.vivo = true; alvo.hp = Math.min(alvo.maxHp, e.hp); alvo.agiu = true;
   alvo.efeitos = []; alvo.dots = []; alvo.shield = 0;
   for (const k in alvo.cd) alvo.cd[k] = 0;

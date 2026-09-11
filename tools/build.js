@@ -67,6 +67,7 @@ const turno  = semGuard(ler('src/turno.js'));
 const rotas  = semGuard(ler('src/rotas.js'));
 const enquadr= semGuard(ler('src/enquadramento.js'));
 const provac = semGuard(ler('src/provacao.js'));   // F3.1: o motor de Provação (montar/avaliar/PREDICADOS) passa a rodar no browser
+const dominios = semGuard(ler('src/dominios.js'));   // §273: o motor de DOMÍNIOS (a CORRIDA: montar nível/resolver/prêmios/escada) roda no browser
 const visao  = ler('src/view.js');
 const invoc  = ler('src/invocacao.js');
 const ia     = semGuard(ler('src/ia.js'));
@@ -175,7 +176,7 @@ if (cadeia.divergencias.length) {
 // Camadas, em ordem de dependência (cada uma só usa as anteriores):
 // engine -> perfil -> armazenamento -> turno -> rotas -> ui/base -> ui/narrar -> ui/* -> view.
 const blocoVisao = [
-  perfil, armaz, conta, partidaCli, turno, rotas, enquadr, provac,
+  perfil, armaz, conta, partidaCli, turno, rotas, enquadr, provac, dominios,
   ler('src/ui/base.js'), ler('src/ui/narrar.js'), ler('src/ui/topo.js'), ler('src/ui/campo.js'),
   ler('src/ui/painel.js'), ler('src/ui/sobrepor.js'), ler('src/ui/selecao.js'), ler('src/ui/home.js'),
   visao,
@@ -333,6 +334,26 @@ const bestiarioArte = (() => {
   return mapa;
 })();
 
+// DOMÍNIOS (§273): a ESCADA de cada Domínio é DADO (data/dominios/<cultura>.json), GERADA e MEDIDA
+// fora do jogo (tools/gerar_dominios.js). Valida na build (falha alto, como os outros schemas): trio de
+// 3 no catálogo, cada nível com 3 inimigos no catálogo (e fora do trio), CHEFE em múltiplo de 10, teto de
+// bônus ≤ +50%, e a escada MONOTÔNICA na dificuldade medida (tolerância no próprio dado). A validação mora
+// em src/dominios.js (domValidarLadder) — a build e o teste chamam a MESMA função. Fatia 1 = 1 arquivo.
+const dominiosObj = (() => {
+  const dir = path.join(raiz, 'data', 'dominios');
+  if (!fs.existsSync(dir)) return null;
+  const { domValidarLadder } = require('../src/dominios.js');
+  const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
+  const mapa = {}; const erros = [];
+  for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
+    const lad = JSON.parse(ler('data/dominios/' + f));
+    erros.push(...domValidarLadder(lad, catalogoKeys));
+    mapa[(lad.cultura || f.replace(/\.json$/, '')).toLowerCase()] = lad;
+  }
+  if (erros.length) { console.error('ERRO de schema de Domínios (§273):\n  ' + erros.join('\n  ')); process.exit(1); }
+  return mapa;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -345,7 +366,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
