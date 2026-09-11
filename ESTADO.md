@@ -1472,7 +1472,10 @@ sessão de reconciliação ou ao encostar em cada área.
 - [ ] Nome dos elementos: Solar/Lunar/Vazio (design) ou os da planilha
       (Tempestade/Umbra/Maré/Aurora/Chama/Verdejante). ~60 habilidades a retraduzir.
 - [ ] Ordem A/S/SS atribuída aos 100 deuses (loja da fase 3 precifica por ela).
-- [ ] Passiva do Fujin (inerte sem Raijin no time).
+- [x] Passiva do Fujin (inerte sem Raijin no time) — RESOLVIDA no TEXTO e na MECÂNICA (§271): o
+      `fx:null` virou `geraContadorPorGolpe` gateado por `estado:{aliadoPresente:'raijin'}`. PENDENTE só
+      o DESENHO — depende do Raijin, que não é inicial, então segue morta para quem acaba de instalar:
+      revisão de kit da Fase 4 (ver a lista de SLOTS MORTOS no topo do ESTADO).
 - [ ] Pick/ban (bloqueia PvP inteiro).
 - [x] INV 16 sob sobreposição: RESOLVIDO (F0.5b) — base `inert` sob scrim; primário
       rebaixa como consequência; invariante reescrito "no máximo um visível E acessível".

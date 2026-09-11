@@ -6,6 +6,12 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §272 — ALINHAR o Kraken no roster (o motor manda) + reconciliar um checkbox órfão.
+
+**1. `kraken.faccao` no `roster_data.js`: Grega → Nórdica** (decisão do dono). O motor manda porque é ele que conta — a `faccaoConta` do Odin já contava o Kraken como nórdico. A deriva não era cosmética onde vivia: na tela de SELEÇÃO o Kraken estava arquivado como Grego, então quem filtrava por Nórdica para montar sinergia com o Odin **não achava uma peça que funciona**. Confirmado nos quatro consumidores — filtro e subtítulo da seleção, maestria por facção, diversidade de composição, rótulo de batalha: todos veem **Nórdica**. Agora roster ↔ data/deuses = **0 divergência** nos 100 (mas o roster segue FORA da cadeia — §271: só kits.json↔data/deuses é conferido; se derivar de novo, ninguém trava).
+
+**2. Checkbox órfão reconciliado (a espécie do §250 ao contrário: o documento diz aberto, o código diz feito).** `ESTADO.md` "[ ] Passiva do Fujin (inerte sem Raijin)" estava resolvido pelo §271 — fechado, apontando para lá: RESOLVIDO texto+mecânica, PENDENTE o desenho (Fase 4). **Varredura dos 7 checkboxes abertos do ESTADO:** só esse fora resolvido por decisão recente. Os outros 6 seguem genuinamente abertos (nome dos elementos, ordem A/S/SS, Pick/ban DEFERIDO, ordem da Fase 1, 50/50 da invocação NÃO DESENHADA, reconciliação da economia) — **nenhum fechado sem certeza.**
+
 ## §271 — DOIS CATÁLOGOS QUE DISCORDAVAM: reconciliação, guarda de sincronia maior, e a Coleção passa a ler do motor. (A auditoria — §270 no corpo — nasceu do Exu: `data/deuses` dizia "Brasileira", `kits.json` dizia "Africana", e `faccao` é lida pelo motor.)
 
 **O MAPA (quem lê o quê).** `data/deuses/*.json` é a MÁQUINA — a build monta o global `GODS`, o MOTOR lê dele, e a tela de BATALHA mostra o `.desc` dele. `kits.json` é a PROSA de desenho (§26): a Coleção mostrava o `.efeito` dele, e o `checar_cadeia` confere kits.json↔data/deuses. Achado extra: **`roster_data.js` (ROSTER→HRM) é um QUARTO catálogo de metadado** — os chips da ficha liam dele (e ele tinha a PRÓPRIA deriva: Kraken "Grega" ali, "Nórdica" no motor).
