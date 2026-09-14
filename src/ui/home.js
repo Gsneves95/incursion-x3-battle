@@ -1917,9 +1917,13 @@ function iniciarDesafio(dsf, time){
 // ===================================================================
 function dominioLadders(){ return (typeof DOMINIOS !== 'undefined' && DOMINIOS) ? Object.values(DOMINIOS) : []; }
 function dominioPorCultura(c){ return (typeof DOMINIOS !== 'undefined' && DOMINIOS) ? DOMINIOS[String(c).toLowerCase()] : null; }
-function dominioProg(c){ const pd = perfil && perfil.dominios && perfil.dominios.porDominio; return (pd && pd[String(c).toLowerCase()]) || { run: null, recorde: 0 }; }
+function dominioProg(c){ const pd = perfil && perfil.dominios && perfil.dominios.porDominio; return (pd && pd[String(c).toLowerCase()]) || { run: null, melhorSempre: 0, semanas: {} }; }
 function dominioRun(c){ return dominioProg(c).run || null; }
-function dominioRecorde(c){ return dominioProg(c).recorde || 0; }
+function dominioMelhor(c){ return dominioProg(c).melhorSempre || 0; }           // §275: melhor de sempre (não zera)
+function recSemanaDominio(c, chave){ return (dominioProg(c).semanas || {})[chave] || 0; }   // recorde de UMA semana
+// §275: a semana de HOJE para esta escada (índice da escada + chave desta e da anterior). Do RELÓGIO do aparelho.
+function semanaInfo(lad){ const d = new Date(); return { idx: domIndiceSemana(lad, d), chave: domSemanaChave(d), chaveAnt: domChaveSemanaAnterior(d) }; }
+function domTotalNiveis(lad){ const s = (lad.semanas && lad.semanas[0]) ? lad.semanas[0].niveis : lad.niveis; return (s || []).length; }
 function domNomeDeus(k){ return (HRM[k] && HRM[k].nome) || (typeof GODS !== 'undefined' && GODS[k] && GODS[k].nome) || k; }
 function salvarRunDominio(cultura, run){ perfil = definirRunDominio(perfil, cultura, run); const r = salvar(perfil); if (r && !r.ok && st) st.log.push({ turno: st.turno, msg: '⚠ corrida salva falhou: ' + r.erro }); return r; }
 
@@ -1938,19 +1942,25 @@ function dominioFichaHTML(k, vida){
 function renderDominios(){
   const lads = dominioLadders();
   const cards = lads.map(lad => {
-    const c = String(lad.cultura).toLowerCase(), total = lad.niveis.length;
-    const run = dominioRun(c), rec = dominioRecorde(c);
+    const c = String(lad.cultura).toLowerCase(), total = domTotalNiveis(lad);
+    const run = dominioRun(c), sem = semanaInfo(lad);
+    const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt), melhor = dominioMelhor(c);
     const emCorrida = run && run.status === 'ativo';
-    // faixa de progresso: corrida em andamento (retomável) > recorde > não iniciado
-    let badge, cls;
-    if (emCorrida) { badge = 'Em corrida · nível ' + run.nivel + '/' + total; cls = 'domcard__prog--ativo'; }
-    else if (rec > 0) { badge = 'Recorde · nível ' + rec + '/' + total; cls = 'domcard__prog--rec'; }
-    else { badge = 'Não iniciado'; cls = 'domcard__prog--novo'; }
+    const batido = recAnt > 0 && recSem > recAnt;   // já superou a marca da semana passada
     const trioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
+    // faixa de progresso: corrida em andamento (retomável) em destaque; sempre a linha da SEMANA + a MARCA
+    const badge = emCorrida
+      ? `<div class="domcard__prog domcard__prog--ativo"><i>▸</i>Em corrida · nível ${run.nivel}/${total}</div>`
+      : (recSem > 0
+        ? `<div class="domcard__prog domcard__prog--rec">Semana · nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
+        : `<div class="domcard__prog domcard__prog--novo">Semana · sem marca ainda</div>`);
+    const anterior = recAnt > 0 ? `Anterior a bater: <b>nível ${recAnt}</b>` : `Primeira semana — sem marca anterior`;
     return `<button class="domcard" data-cultura="${H(c)}">
       <div class="domcard__cab"><span class="domcard__cult">${H(lad.cultura)}</span><span class="domcard__nome">${H(lad.nome)}</span></div>
       <div class="domtrio">${trioHTML}</div>
-      <div class="domcard__prog ${cls}">${emCorrida ? '<i>▸</i>' : ''}${H(badge)}</div>
+      ${badge}
+      <div class="domcard__marca">${anterior}</div>
+      <div class="domcard__melhor">Melhor de sempre: <b>${melhor > 0 ? 'nível ' + melhor : '—'}</b></div>
     </button>`;
   }).join('');
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
@@ -1981,8 +1991,13 @@ function renderDominioHub(){
     fit(); return;
   }
   const c = String(lad.cultura).toLowerCase();
-  const run = dominioRun(c), rec = dominioRecorde(c), total = lad.niveis.length;
+  const run = dominioRun(c), sem = semanaInfo(lad), total = domTotalNiveis(lad);
+  const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt), melhor = dominioMelhor(c);
   const trioHTML = lad.trio.map((k, i) => dominioFichaHTML(k, run && run.vida ? run.vida[i] : { hp: (GODS[lad.trio[i]] && GODS[lad.trio[i]].hp) || 120, vivo: true })).join('');
+  // bloco de recordes (semana · anterior a bater · melhor de sempre) — comum a vários estados
+  const recordesHTML = `<div class="domsec__linha"><span>Recorde desta semana</span><b>${recSem > 0 ? 'nível ' + recSem : '—'}</b></div>
+      <div class="domsec__linha"><span>Recorde anterior (a bater)</span><b>${recAnt > 0 ? 'nível ' + recAnt : '— 1ª semana'}</b></div>
+      <div class="domsec__linha"><span>Melhor de sempre</span><b>${melhor > 0 ? 'nível ' + melhor : '—'}</b></div>`;
 
   let corpo = '';
   if (run && run.status === 'ativo' && run.aguardandoPremio){
@@ -2001,23 +2016,25 @@ function renderDominioHub(){
     const bonusPct = Math.round((run.bonus || 0) * 100);
     corpo = `<div class="domsec">
       <div class="domsec__linha"><span>Nível atual</span><b>${run.nivel} / ${total}</b></div>
-      <div class="domsec__linha"><span>Mais fundo (recorde)</span><b>${Math.max(rec, run.profundidade)}</b></div>
+      ${recordesHTML}
       <div class="domsec__linha"><span>Bônus de dano</span><b>+${bonusPct}%</b></div>
       <div class="domtrio">${trioHTML}</div>
       <button class="b b--primary b--lg" id="ddescer">Descer ao nível ${run.nivel} ›</button>
     </div>`;
   } else if (run && run.status === 'morto'){
     corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--morto">CORRIDA ENCERRADA</div>
-      <p class="domsec__msg">Seus deuses tombaram no <b>nível ${run.profundidade}</b> (recorde ${rec}). A corrida zera — a vida, o bônus e a rede voltam do começo.</p>
+      <p class="domsec__msg">Seus deuses tombaram no <b>nível ${run.profundidade}</b>. A corrida zera — a vida, o bônus e a rede voltam do começo. O recorde fica.</p>
+      ${recordesHTML}
       <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
   } else if (run && run.status === 'completo'){
     corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--venceu">DOMÍNIO CONQUISTADO</div>
-      <p class="domsec__msg">Você desceu os ${total} níveis do ${H(lad.nome)}. Uma nova corrida recomeça do topo.</p>
+      <p class="domsec__msg">Você desceu os ${total} níveis do ${H(lad.nome)} desta semana. Uma nova corrida recomeça do topo.</p>
+      ${recordesHTML}
       <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
   } else {
     corpo = `<div class="domsec">
-      ${rec > 0 ? `<div class="domsec__linha"><span>Seu recorde</span><b>nível ${rec} / ${total}</b></div>` : ''}
-      <p class="domsec__msg">Três deuses definidos, iguais para todos. Desça a escada: cada nível é uma batalha 3×3, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. Sem montar time — só a mão.</p>
+      ${recordesHTML}
+      <p class="domsec__msg">Três deuses definidos, iguais para todos. Desça a <b>escada da semana</b>: cada nível é uma batalha 3×3, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. Bata o seu recorde da semana passada. Sem montar time — só a mão.</p>
       <div class="domtrio">${trioHTML}</div>
       <button class="b b--primary b--lg" id="dentrar">Entrar no Domínio</button></div>`;
   }
@@ -2044,22 +2061,25 @@ function renderDominioHub(){
   fit();
 }
 
-/* ---------- lançar a batalha de um nível (por cultura) ---------- */
+/* ---------- lançar a batalha de um nível (por cultura, na ESCADA DA SEMANA) ---------- */
 function iniciarCorridaDominio(cultura){
   const lad = dominioPorCultura(cultura); if (!lad) return;
-  const run = domNovaCorrida(lad);
-  salvarRunDominio(cultura, run);
-  iniciarNivelDominio(cultura);
+  const c = String(cultura).toLowerCase(), sem = semanaInfo(lad);
+  // a corrida carrega A SUA semana (índice + chave) e a MARCA a bater (recorde da semana anterior)
+  const run = domNovaCorrida(lad, sem.idx, sem.chave, recSemanaDominio(c, sem.chaveAnt));
+  salvarRunDominio(c, run);
+  iniciarNivelDominio(c);
 }
 function descerDominio(cultura){ iniciarNivelDominio(cultura); }
 function iniciarNivelDominio(cultura){
   const c = String(cultura).toLowerCase(), lad = dominioPorCultura(c), run = dominioRun(c);
   if (!lad || !run || run.status !== 'ativo' || run.aguardandoPremio){ sairDominio(); ir('dominio', { cultura: c }, { substituir: true }); render(); return; }
-  dominio = { ladder: lad, cultura: c };
+  const escada = domEscadaSemana(lad, run.semanaIdx || 0);   // a corrida roda NA SUA escada semanal (virada de semana é invisível)
+  dominio = { ladder: lad, cultura: c, escada };
   dominioFim = null;
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
-  st = domMontarBatalha(run, lad, { seed: (run.nivel * 7919) >>> 0 || 1 });
+  st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1 });
   ir('batalha', {}, { substituir: true });
   render();
 }
@@ -2075,12 +2095,14 @@ function escolherPremioDominio(cultura, tipo){
 function dominioHUD(){
   if (!dominio) return '';
   const run = dominioRun(dominio.cultura); if (!run) return '';
-  const lad = dominio.ladder, chefe = domEhChefe(run.nivel);
+  const total = (dominio.escada && dominio.escada.niveis.length) || domTotalNiveis(dominio.ladder), chefe = domEhChefe(run.nivel);
   const bonusPct = Math.round((run.bonus || 0) * 100);
+  const marca = run.marcaAnterior || 0;
   return `<div class="phud phud--dom" aria-hidden="true">
     <span class="phud__prazo">T<b>${st.turno}</b></span>
     <span class="phud__chips">
-      <span class="phud__chip ${chefe ? 'phud__chip--falha' : 'phud__chip--andamento'}"><i>${chefe ? '☠' : '◆'}</i>${chefe ? 'CHEFE' : 'Nível'} ${run.nivel}/${lad.niveis.length}</span>
+      <span class="phud__chip ${chefe ? 'phud__chip--falha' : 'phud__chip--andamento'}"><i>${chefe ? '☠' : '◆'}</i>${chefe ? 'CHEFE' : 'Nível'} ${run.nivel}/${total}</span>
+      ${marca ? `<span class="phud__chip ${run.superou ? 'phud__chip--ok' : ''}"><i>▲</i>marca ${marca}</span>` : ''}
       ${bonusPct ? `<span class="phud__chip phud__chip--ok"><i>⚔</i>+${bonusPct}%</span>` : ''}
     </span>
   </div>`;
@@ -2092,23 +2114,24 @@ function atualizarDominio(){
   const c = dominio.cultura, run = dominioRun(c);
   if (!run){ dominioFim = { venceu: false, nivel: 0, profundidade: 0 }; pararRelogio(); return; }
   const nivelJogado = run.nivel;
-  const r = domResolverBatalha(run, dominio.ladder, st);   // muta a corrida (carrega vida, marca rede gasta, avança ou aguarda prêmio)
-  dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, nivel: nivelJogado, profundidade: run.profundidade };
+  const r = domResolverBatalha(run, dominio.escada, st);   // muta a corrida (carrega vida, marca rede gasta, avança/aguarda prêmio, detecta superação)
+  dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, superou: !!r.superou, nivel: nivelJogado, profundidade: run.profundidade, marca: run.marcaAnterior || 0 };
   pararRelogio();
-  salvarRunDominio(c, run);   // PERSISTE por-domínio: nunca se perde ao sair da tela
+  salvarRunDominio(c, run);   // PERSISTE por-domínio: recorde da semana + melhor de sempre, a cada nível — nunca se perde ao sair da tela
 }
 
 /* ---------- sobreposição de resultado ---------- */
 function dominioResultadoOverlay(){
   if (!dominio || !dominioFim) return '';
   const f = dominioFim, lad = dominio.ladder, run = dominioRun(dominio.cultura);
+  const total = (dominio.escada && dominio.escada.niveis.length) || domTotalNiveis(lad);
   const vidaHTML = run ? `<div class="domtrio domtrio--result">${lad.trio.map((k, i) => dominioFichaHTML(k, run.vida[i])).join('')}</div>` : '';
-  let selo, titulo, msg, acoes;
+  let selo, titulo, msg, acoes, cls = f.venceu ? 'venceu' : 'hp';
   if (f.completou){
-    selo = H(lad.nome); titulo = 'DOMÍNIO CONQUISTADO'; msg = 'Você desceu os ' + lad.niveis.length + ' níveis. A corrida se encerra no topo.';
+    selo = H(lad.nome); titulo = 'DOMÍNIO CONQUISTADO'; msg = 'Você desceu os ' + total + ' níveis da semana. A corrida se encerra no topo.';
     acoes = '<button class="b b--primary b--md" id="dfhub">Voltar ao Domínio</button>';
   } else if (!f.venceu){
-    selo = 'Nível ' + f.nivel; titulo = 'DERROTA'; msg = 'A corrida termina no nível ' + f.profundidade + '. Ela zera — recomece quando quiser.';
+    selo = 'Nível ' + f.nivel; titulo = 'DERROTA'; msg = 'A corrida termina no nível ' + f.profundidade + '. O recorde fica; recomece quando quiser.';
     acoes = '<button class="b b--primary b--md" id="dfhub">Voltar ao Domínio</button>';
   } else if (f.chefe){   // chefe vencido com prêmio a escolher
     selo = 'Chefe · nível ' + f.nivel; titulo = 'CHEFE VENCIDO'; msg = 'Reivindique a recompensa da corrida antes de descer.';
@@ -2117,7 +2140,15 @@ function dominioResultadoOverlay(){
     selo = 'Nível ' + f.nivel; titulo = 'NÍVEL VENCIDO'; msg = 'A vida carrega para o próximo nível (cura parcial aplicada).';
     acoes = '<button class="b b--primary b--md" id="dfprox">Próximo nível ›</button>';
   }
-  return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${f.venceu ? 'venceu' : 'hp'}">
+  // §275: o INSTANTE da superação — bateu a marca da semana passada AGORA (o único momento comemorável).
+  // Reusa a linguagem do banner de ranque (caixa dourada centrada). Substitui o selo/título do nível.
+  if (f.superou){
+    cls = 'superou';
+    selo = '▲ MARCA SUPERADA';
+    titulo = 'RECORDE ANTERIOR SUPERADO';
+    msg = 'Nível ' + f.profundidade + ' — você passou a marca da semana passada (nível ' + f.marca + '). Continue: cada nível a mais é recorde novo.';
+  }
+  return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${cls}">
     <span class="result__selo">${selo}</span>
     <h1>${titulo}</h1>
     <p class="result__msg">${msg}</p>

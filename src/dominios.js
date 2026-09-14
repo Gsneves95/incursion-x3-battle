@@ -65,12 +65,47 @@ function domCatalogoNivel(base, trioKeys, bonus, inimigos, danoMult) {
   return cat;
 }
 
+// ---- CICLO SEMANAL (§275): a semana SEM servidor, robusta a relógio errado ----
+// A semana é a ISO-8601 do RELÓGIO DO APARELHO (como as Provações semanais). A CHAVE é
+// "AAAA-Www"; o ÍNDICE absoluto (ano*53+semana) incrementa +1 a cada semana ISO (inclusive na
+// virada de ano) e serve para escolher a escada (semanas[indice % N]). Relógio errado/viagem de
+// fuso só MUDA a chave/índice — NUNCA apaga dado, porque os recordes vivem num MAPA por chave
+// (perfil, §275) e o melhor-de-sempre só cresce; e a corrida em andamento carrega a SUA semana e
+// termina na SUA escada, então a virada é invisível para ela. Pior caso: jogar o mapa de outra
+// semana. Puro, sem Date interno — a data entra por parâmetro (a borda passa new Date()).
+function _domQuintaISO(d) {   // a quinta-feira desta semana resolve semana E ano ISO de uma vez
+  const u = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dia = u.getUTCDay() || 7;
+  u.setUTCDate(u.getUTCDate() + 4 - dia);
+  return u;
+}
+function domSemanaISO(d) { const u = _domQuintaISO(d); const ini = new Date(Date.UTC(u.getUTCFullYear(), 0, 1)); return Math.ceil((((u - ini) / 86400000) + 1) / 7); }
+function domAnoISO(d) { return _domQuintaISO(d).getUTCFullYear(); }
+function domSemanaChave(d) { d = d || new Date(); return domAnoISO(d) + '-W' + String(domSemanaISO(d)).padStart(2, '0'); }
+function domSemanaAbsoluta(d) { d = d || new Date(); return domAnoISO(d) * 53 + domSemanaISO(d); }   // +1 por semana ISO (monotônico, inclusive na virada de ano)
+function domIndiceSemana(ladder, d) { const n = (ladder.semanas || []).length || 1; return ((domSemanaAbsoluta(d) % n) + n) % n; }
+function domChaveSemanaAnterior(d) { d = d || new Date(); return domSemanaChave(new Date(d.getTime() - 7 * 86400000)); }
+
+// vista PLANA de UMA semana da escada (o que as funções de corrida consomem: .niveis + trio/cura/teto).
+function domEscadaSemana(ladder, weekIndex) {
+  const sem = (ladder.semanas || [])[weekIndex] || (ladder.semanas || [])[0] || { niveis: ladder.niveis || [] };
+  return { cultura: ladder.cultura, trio: ladder.trio, curaPorNivel: ladder.curaPorNivel, tetoBonusDano: ladder.tetoBonusDano, faixa: ladder.faixa, niveis: sem.niveis };
+}
+
 // ---- a CORRIDA (estado run-scoped; zera com a corrida — não fere o invariante 3) ----
-function domNovaCorrida(ladder) {
+// weekIndex/weekChave/marcaAnterior são do CICLO SEMANAL (§275): a corrida carrega a SUA semana
+// (termina na sua escada mesmo se a semana virar) e a MARCA a bater (recorde da semana anterior,
+// capturada no início — a superação dela é o instante comemorável). Opcionais: fora do ciclo (gerador
+// medindo piso) a corrida roda na semana 0 sem marca.
+function domNovaCorrida(ladder, weekIndex, weekChave, marcaAnterior) {
   const gods = _domGods();
   const trio = ladder.trio;
   return {
     cultura: ladder.cultura,
+    semanaIdx: weekIndex || 0,          // índice da escada semanal desta corrida
+    semana: weekChave || '',            // chave "AAAA-Www" — a corrida pertence a esta semana
+    marcaAnterior: marcaAnterior || 0,  // recorde da semana anterior (a marca a bater)
+    superou: false,                     // já anunciou a superação da marca nesta corrida?
     nivel: 1,
     vida: trio.map(k => ({ hp: _domHpBase(gods, k), vivo: true })),   // [{hp,vivo}] por SLOT do trio
     bonus: 0,                 // bônus de dano acumulado (0..DOM_TETO_BONUS)
@@ -120,10 +155,13 @@ function domResolverBatalha(run, ladder, st) {
   for (const k of domRevivesNaBatalha(st, trio)) if (!run.reviveGasto.includes(k)) run.reviveGasto.push(k);
   run.vida = domVidaFinal(st);
   run.profundidade = run.nivel;
+  // §275: superou a MARCA (recorde da semana anterior) AGORA? (só há marca a bater se marcaAnterior>0)
+  const superou = !run.superou && (run.marcaAnterior || 0) > 0 && run.profundidade > run.marcaAnterior;
+  if (superou) run.superou = true;
   // chefe vencido COM próximo nível → escolhe prêmio (portão). Chefe FINAL → não há prêmio a gastar: completa.
-  if (chefe && run.nivel < (ladder.niveis || []).length) { run.aguardandoPremio = true; return { venceu: true, chefe: true, morreu: false, completou: false }; }
+  if (chefe && run.nivel < (ladder.niveis || []).length) { run.aguardandoPremio = true; return { venceu: true, chefe: true, morreu: false, completou: false, superou }; }
   const completou = domAvancar(run, ladder);
-  return { venceu: true, chefe, morreu: false, completou };
+  return { venceu: true, chefe, morreu: false, completou, superou };
 }
 
 // avança um nível: cura parcial nos vivos (menos ao ENTRAR no 1º, que não existe aqui —
@@ -160,6 +198,22 @@ function domAplicarPremio(run, ladder, tipo, alvo) {
 }
 
 // ---- validação de FORMA da escada (chamada na BUILD; falha alto, não em runtime) ----
+function _domValidarNiveis(rot, niveis, trio, catalogoKeys, tol, erros) {
+  if (!Array.isArray(niveis) || !niveis.length) { erros.push(`${rot}: sem niveis`); return; }
+  let anterior = -Infinity;
+  niveis.forEach((lv, idx) => {
+    const n = idx + 1;
+    if (lv.n !== n) erros.push(`${rot}/n${n}: campo n=${lv.n} fora de ordem`);
+    if (!Array.isArray(lv.inimigos) || lv.inimigos.length !== 3) erros.push(`${rot}/n${n}: precisa de 3 inimigos (tem ${lv.inimigos ? lv.inimigos.length : 0})`);
+    for (const k of (lv.inimigos || [])) {
+      if (!catalogoKeys.has(k)) erros.push(`${rot}/n${n}: inimigo "${k}" fora do catálogo`);
+      if ((trio || []).includes(k)) erros.push(`${rot}/n${n}: inimigo "${k}" é do próprio trio`);
+    }
+    if (domEhChefe(n) !== !!lv.chefe) erros.push(`${rot}/n${n}: chefe=${!!lv.chefe} mas nível ${domEhChefe(n) ? 'é' : 'não é'} múltiplo de ${DOM_FAIXA}`);
+    if (typeof lv.dificuldade !== 'number') erros.push(`${rot}/n${n}: dificuldade medida ausente`);
+    else { if (lv.dificuldade < anterior - tol) erros.push(`${rot}/n${n}: dificuldade ${lv.dificuldade.toFixed(2)} CAI abaixo do anterior ${anterior.toFixed(2)} (tol ${tol}) — a escada tem de ser monotônica`); anterior = Math.max(anterior, lv.dificuldade); }
+  });
+}
 function domValidarLadder(ladder, catalogoKeys) {
   const erros = [];
   const nome = (ladder && ladder.cultura) || '(sem cultura)';
@@ -167,21 +221,14 @@ function domValidarLadder(ladder, catalogoKeys) {
   if (!Array.isArray(ladder.trio) || ladder.trio.length !== 3) erros.push(`${nome}: trio precisa de 3 deuses (tem ${ladder.trio ? ladder.trio.length : 0})`);
   for (const k of (ladder.trio || [])) if (!catalogoKeys.has(k)) erros.push(`${nome}: trio "${k}" fora do catálogo`);
   if (!(ladder.tetoBonusDano <= DOM_TETO_BONUS + 1e-9)) erros.push(`${nome}: tetoBonusDano ${ladder.tetoBonusDano} passa do teto ${DOM_TETO_BONUS}`);
-  if (!Array.isArray(ladder.niveis) || !ladder.niveis.length) { erros.push(`${nome}: sem niveis`); return erros; }
-  let anterior = -Infinity;
   const tol = (typeof ladder.tolMonotonia === 'number') ? ladder.tolMonotonia : 0.06;   // tolerância de ruído da régua (medida)
-  ladder.niveis.forEach((lv, idx) => {
-    const n = idx + 1;
-    if (lv.n !== n) erros.push(`${nome}/n${n}: campo n=${lv.n} fora de ordem`);
-    if (!Array.isArray(lv.inimigos) || lv.inimigos.length !== 3) erros.push(`${nome}/n${n}: precisa de 3 inimigos (tem ${lv.inimigos ? lv.inimigos.length : 0})`);
-    for (const k of (lv.inimigos || [])) {
-      if (!catalogoKeys.has(k)) erros.push(`${nome}/n${n}: inimigo "${k}" fora do catálogo`);
-      if ((ladder.trio || []).includes(k)) erros.push(`${nome}/n${n}: inimigo "${k}" é do próprio trio`);
-    }
-    if (domEhChefe(n) !== !!lv.chefe) erros.push(`${nome}/n${n}: chefe=${!!lv.chefe} mas nível ${domEhChefe(n) ? 'é' : 'não é'} múltiplo de ${DOM_FAIXA}`);
-    if (typeof lv.dificuldade !== 'number') erros.push(`${nome}/n${n}: dificuldade medida ausente`);
-    else { if (lv.dificuldade < anterior - tol) erros.push(`${nome}/n${n}: dificuldade ${lv.dificuldade.toFixed(2)} CAI abaixo do nível anterior ${anterior.toFixed(2)} (tol ${tol}) — a escada tem de ser monotônica`); anterior = Math.max(anterior, lv.dificuldade); }
-  });
+  // §275: CICLO SEMANAL — uma escada por semana em `semanas[]`; cada semana é monotônica.
+  if (Array.isArray(ladder.semanas)) {
+    if (!ladder.semanas.length) erros.push(`${nome}: semanas vazio`);
+    ladder.semanas.forEach((s, w) => _domValidarNiveis(`${nome}/s${w + 1}`, s && s.niveis, ladder.trio, catalogoKeys, tol, erros));
+  } else {
+    _domValidarNiveis(nome, ladder.niveis, ladder.trio, catalogoKeys, tol, erros);   // compat: escada de semana única (fatia 1/2)
+  }
   return erros;
 }
 
@@ -189,6 +236,7 @@ if (typeof module !== 'undefined') {
   module.exports = {
     DOM_TETO_BONUS, DOM_PASSO_BONUS, DOM_FAIXA, DOM_HP_REVIVER,
     domEhChefe, domEscalarFx, domEscalarKit, domCatalogoNivel,
+    domSemanaChave, domSemanaAbsoluta, domIndiceSemana, domChaveSemanaAnterior, domEscadaSemana,
     domNovaCorrida, domDefNivel, domMontarBatalha, domVidaFinal, domRevivesNaBatalha,
     domResolverBatalha, domAvancar, domCurarParcial,
     domPremiosDisponiveis, domAplicarPremio, domValidarLadder,

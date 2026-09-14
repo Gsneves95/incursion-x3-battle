@@ -4,7 +4,7 @@
 // parâmetro (`agora`), para as funções ficarem determinísticas/testáveis.
 // O HISTÓRICO NÃO mora no perfil (cresce e é reescrito a cada salvar) — vive em
 // chave própria, cuidada pelo armazenamento.js. Uma chave por DONO.
-const VERSAO_PERFIL = 5;   // v2: grant inicial (1500); v3: campo `sandbox` (teto diário da Batalha CPU, F4); v4: campo `dominios` (§273 — a CORRIDA em andamento, run-scoped); v5: `dominios` vira POR-DOMÍNIO (§274 — 5 Domínios independentes: {porDominio:{<cultura>:{run,recorde}}})
+const VERSAO_PERFIL = 6;   // v2: grant inicial (1500); v3: `sandbox` (F4); v4: `dominios` run-scoped (§273); v5: `dominios` por-domínio (§274); v6: recorde por-domínio vira SEMANAL — {run, melhorSempre, semanas:{<AAAA-Www>:prof}} (§275, ciclo semanal + melhor de sempre)
 const INICIAIS = ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha']; // DECISOES §4
 const MAX_TIMES = 5;
 
@@ -33,17 +33,31 @@ function novoPerfil(agora = 0, grantGema = 0) {
   };
 }
 
-// §274 — DOMÍNIOS: guarda (ou zera) a corrida de UM Domínio (por cultura, independente). Puro:
-// recebe perfil + a chave de cultura (minúscula) + a run (objeto de src/dominios.js) ou null
-// para ENCERRAR. Atualiza o RECORDE (nível mais fundo já alcançado — nunca regride) e clona a run
-// para não vazar referência. É a única porta de escrita; a borda (home) muta a run e chama isto + salvar().
+// §274/§275 — DOMÍNIOS: guarda (ou zera) a corrida de UM Domínio (por cultura, independente) E
+// registra o recorde. Puro: recebe perfil + chave de cultura (minúscula) + a run (objeto de
+// src/dominios.js) ou null para ENCERRAR. Atualiza dois recordes a partir de run.profundidade:
+//   - `melhorSempre`: o mais fundo de todos os tempos — NUNCA regride, NUNCA zera.
+//   - `semanas[run.semana]`: o mais fundo DAQUELA semana (mapa por chave "AAAA-Www").
+// CLOCK-ROBUSTO (§275): grava sempre por MAX numa CHAVE — relógio errado/viagem de fuso só muda a
+// chave gravada, nunca apaga (não há "virada" destrutiva; a virada é só o mapa passar a ler outra
+// chave). O mapa é limitado às ~12 semanas mais recentes (descarta a MAIS VELHA, nunca a atual/anterior).
+// É a única porta de escrita; a borda (home) muta a run e chama isto + salvar().
 function definirRunDominio(perfil, cultura, run) {
   const p = _clone(perfil);
   if (!p.dominios || typeof p.dominios !== 'object' || !p.dominios.porDominio) p.dominios = { porDominio: {} };
   const c = String(cultura).toLowerCase();
-  const antes = p.dominios.porDominio[c] || { run: null, recorde: 0 };
+  const antes = p.dominios.porDominio[c] || {};
+  const semanas = (antes.semanas && typeof antes.semanas === 'object') ? { ...antes.semanas } : {};
   const prof = run && typeof run.profundidade === 'number' ? run.profundidade : 0;
-  p.dominios.porDominio[c] = { run: run ? JSON.parse(JSON.stringify(run)) : null, recorde: Math.max(antes.recorde || 0, prof) };
+  if (run && run.semana) semanas[run.semana] = Math.max(semanas[run.semana] || 0, prof);   // recorde DA SEMANA (por chave), por MAX
+  // limita a ~12 semanas: descarta as chaves mais VELHAS (ordem lexicográfica de "AAAA-Www" = cronológica)
+  const chaves = Object.keys(semanas).sort();
+  while (chaves.length > 12) delete semanas[chaves.shift()];
+  p.dominios.porDominio[c] = {
+    run: run ? JSON.parse(JSON.stringify(run)) : null,
+    melhorSempre: Math.max(antes.melhorSempre || 0, prof),   // MELHOR DE SEMPRE — nunca regride
+    semanas,
+  };
   return p;
 }
 
@@ -177,6 +191,14 @@ function migrar(p, grantGema = 0) {
     q.dominios = { porDominio: {} };
     if (old && old.cultura) q.dominios.porDominio[String(old.cultura).toLowerCase()] = { run: old, recorde: old.profundidade || 0 };
   }
+  // v<6 → v6 (§275): o `recorde` por-domínio vira `melhorSempre` (não zera) + `semanas` (recorde
+  // semanal por chave, vazio). NÃO perde o recorde acumulado. Clona por-domínio para não mutar.
+  if (v < 6) {
+    const pd = (q.dominios && q.dominios.porDominio) || {};
+    const novo = {};
+    for (const c of Object.keys(pd)) { const e = pd[c] || {}; novo[c] = { run: e.run || null, melhorSempre: e.melhorSempre || e.recorde || 0, semanas: (e.semanas && typeof e.semanas === 'object') ? e.semanas : {} }; }
+    q.dominios = { porDominio: novo };
+  }
   q.versao = VERSAO_PERFIL;
   return q;
 }
@@ -212,15 +234,16 @@ function problemaDeForma(p, rosterKeys) {
     const dv = p.dev;
     if (!dv || typeof dv !== 'object' || typeof dv.creditosTeste !== 'number' || dv.creditosTeste < 0) return 'dev inválido';
   }
-  // §274: `dominios` é OPCIONAL (backfill v5). Se presente, tem de ser { porDominio: {} }; cada
-  // entrada é { run: null|corrida, recorde: número }, corrida com nivel/vida/bonus. Corrupção aqui
-  // cai para novoPerfil como qualquer outra — o progresso de Domínio é sacrificável (local, run-scoped).
+  // §274/§275: `dominios` é OPCIONAL (backfill v6). Se presente: { porDominio: {} }; cada entrada é
+  // { run: null|corrida, melhorSempre: número, semanas: {<chave>: número} }. Corrupção aqui cai para
+  // novoPerfil como qualquer outra — o progresso de Domínio é sacrificável (local, run-scoped/semanal).
   if ('dominios' in p) {
     const dm = p.dominios;
     if (!dm || typeof dm !== 'object' || !dm.porDominio || typeof dm.porDominio !== 'object') return 'dominios inválido';
     for (const c of Object.keys(dm.porDominio)) {
       const e = dm.porDominio[c];
-      if (!e || typeof e !== 'object' || typeof e.recorde !== 'number') return 'dominios.porDominio inválido em ' + c;
+      if (!e || typeof e !== 'object' || typeof e.melhorSempre !== 'number' || !e.semanas || typeof e.semanas !== 'object') return 'dominios.porDominio inválido em ' + c;
+      for (const wk of Object.keys(e.semanas)) if (typeof e.semanas[wk] !== 'number') return 'dominios.semanas inválido em ' + c;
       if (e.run !== null && e.run !== undefined) {
         const r = e.run;
         if (typeof r !== 'object' || typeof r.nivel !== 'number' || !Array.isArray(r.vida) || typeof r.bonus !== 'number') return 'dominios.run inválido em ' + c;

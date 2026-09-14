@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §275 — Fatia 3: placar PESSOAL + ciclo semanal (tudo no perfil local).
+
+**§275 — a decisão de fundo:** a Fatia 2 provou que nada sobrevive a um deploy no Render grátis; o dono não vai contratar store durável agora, então o placar é PESSOAL (competir com o próprio recorde da semana passada), inteiro no `localStorage` — não passa pelo servidor, não se perde no deploy.
+
+**Ciclo semanal, SEM servidor, robusto a relógio errado.** A semana é a ISO-8601 do relógio do aparelho (chave `AAAA-Www`; índice `ano*53+semana` → `semanas[idx mod N]`). Os recordes são um MAPA por chave no perfil (`porDominio[c].semanas={<chave>:prof}`), gravado por MAX, + `melhorSempre` que só cresce. **Não há evento destrutivo de "virada"** — virar a semana é só ler outra chave. Relógio adiantado abre chave nova, atrasado lê a velha por MAX: **nada some** (testado adiantado E atrasado). "Recorde anterior" = `semanas[semana−1]` (a marca a bater; com escada fixa bater o próprio recorde é decorar o mapa, com escada nova é terreno novo). **Corrida em andamento na virada não se perde:** carrega a SUA semana (`run.semana/semanaIdx`) e termina na SUA escada; a virada é invisível para ela.
+
+**Tela.** Cartão de seleção mostra recorde desta semana + recorde anterior + ▲ (batido) + melhor de sempre (não zera, peso a longo prazo). Superar a marca anterior dispara um INSTANTE dourado ("RECORDE ANTERIOR SUPERADO", linguagem do banner de ranque, uma vez por corrida — §264: progressão sem instante é laço sem fecho).
+
+**Escadas de N semanas.** `gerar_dominios.js --todas --semanas=N` — mesmo método/régua, só a seleção varia por semana, **trio fixo (sem rotação)**. Pool medido 1× por cultura e reusado. **N=8 × 5 culturas em 930s (~15,5 min).** Cada semana monotônica (build valida loopando `semanas`). Arquivo por cultura com `semanas:[{niveis,pisoIAGuloso}]` (bundle 2,02→2,17 MB). Perfil **v5→v6** (recorde vira `{melhorSempre, semanas:{}}`).
+
+**DEPENDE DE STORE DURÁVEL QUE HOJE NÃO EXISTE (registro explícito):** o placar COMPARATIVO e o RANQUEADO são do servidor, e o servidor não persiste (deploy apaga tudo, §237/§274). Opções medidas na Fatia 2: Postgres gerenciado / disco pago (a camada de contas isola em `_carregar`/`_persistir`) / KV externo. Fronteira: pessoal=local (Fatia 3), comparação entre jogadores=servidor durável. Enquanto a decisão de custo não voltar, o modo fica no pessoal.
+
+**Fatia 3 NÃO tem:** comparação entre jogadores, servidor, recompensa, rotação de trio. **Babás** `dominios.test.js`+`perfil.test.js` (virada preserva melhor de sempre e arquiva o semanal; corrida não se perde na virada; recorde anterior + superação; 5×8 escadas monotônicas; relógio adiantado/atrasado não apaga). Suíte+build verdes; 3 capturas em `docs/capturas-275/`. **Arquivos:** `tools/gerar_dominios.js`, `data/dominios/*.json` (semanas[]), `src/dominios.js`, `src/perfil.js` (v6), `src/ui/home.js`, `src/shell.html`, `tests/{dominios,perfil}.test.js`.
+
+**PRÓXIMAS FATIAS (anotadas):** as outras 5 culturas; o PLACAR comparativo/ranqueado (precisa do store durável acima); calibração pelo dono (cura/rampa/nº de semanas — knobs de dado).
+
 ## ★ DOMÍNIOS §274 — Fatia 2: CINCO Domínios + tela de seleção (progresso por Domínio, independente).
 
 **§274 — cinco escadas + a seleção.** As cinco maiores culturas, um arquivo cada (`data/dominios/<cultura>.json`, `node tools/gerar_dominios.js --todas`, mesmo método/régua do §273). Trios por jogável+autossuficiente+icônico, MEDIDOS antes de aplicar — piso da gulosa (30 corridas): **Olimpo** (Grega zeus/poseidon/atena) 1,0 · **Asgard** (Nórdica odin/thor/loki) 1,0 · **Duat** (Egípcia ra/isis/osiris) 1,8 · **Takamagahara** (Japonesa amaterasu/susanoo/tsukuyomi) 0,8 · **Céus** (Chinesa sunwukong/**nezha**/nuwa) 1,2. **Outlier corrigido antes de aplicar:** a 1ª Chinesa (sunwukong/**guanyu**/nuwa) deu piso 3,7 e rampa só até 0,58 (trio redondo demais, fora da curva); como o método é idêntico entre as cinco, a correção foi o TRIO (guanyu→nezha, pico de vidro), remedido piso 1,2 rampa→0,75 — de volta à curva. Piso baixo em todos é esperado (a régua não calibra este modo; o valor é a COMPARABILIDADE, §273).

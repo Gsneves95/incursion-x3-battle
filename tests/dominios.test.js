@@ -10,7 +10,8 @@ const E = require(path.join(__dirname, '..', 'src', 'engine.js'));
 Object.assign(global, E);
 const D = require(path.join(__dirname, '..', 'src', 'dominios.js'));
 const fs = require('fs');
-const ladder = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+const ladderFile = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+const ladder = D.domEscadaSemana(ladderFile, 0);   // §275: vista PLANA da semana 0 (as funções de corrida consomem .niveis)
 const GODS = E.GODS;
 
 let f = 0; const ok = (c, m) => { if (!c) { f++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
@@ -94,7 +95,7 @@ console.log('== 4) o bônus de dano NÃO passa de +50% por acúmulo ==');
   ok(run.bonus <= D.DOM_TETO_BONUS, `bonus (${run.bonus}) nunca acima do teto ${D.DOM_TETO_BONUS}`);
 }
 
-console.log('== 5) as CINCO escadas são monotônicas na dificuldade medida (como a grega) ==');
+console.log('== 5) as CINCO culturas × TODAS as semanas são monotônicas na dificuldade medida ==');
 {
   const keys = new Set(Object.keys(GODS));
   const dir = path.join(__dirname, '..', 'data', 'dominios');
@@ -102,12 +103,15 @@ console.log('== 5) as CINCO escadas são monotônicas na dificuldade medida (com
   ok(arqs.length === 5, 'cinco arquivos de escada publicados (tem ' + arqs.length + ': ' + arqs.join(',') + ')');
   for (const f of arqs) {
     const lad = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-    const erros = D.domValidarLadder(lad, keys);
-    ok(erros.length === 0, `${lad.cultura}: domValidarLadder aprova (${erros[0] || 'ok'})`);
-    let prev = -Infinity, mono = true;
-    for (const lv of lad.niveis) { if (lv.dificuldade < prev - (lad.tolMonotonia || 0.06)) mono = false; prev = Math.max(prev, lv.dificuldade); }
-    ok(mono && lad.niveis.length === 40 && lad.trio.length === 3, `${lad.cultura}: 40 níveis, trio de 3, monotônica (${lad.niveis[0].dificuldade}→${lad.niveis[lad.niveis.length-1].dificuldade})`);
+    const erros = D.domValidarLadder(lad, keys);   // (loopa as semanas: 3 inimigos, chefe/10, monotonia por semana)
+    ok(erros.length === 0, `${lad.cultura}: domValidarLadder aprova as ${(lad.semanas||[]).length} semanas (${erros[0] || 'ok'})`);
+    let todasMono = true;
+    for (const s of (lad.semanas || [])) { let prev = -Infinity; for (const lv of s.niveis) { if (lv.dificuldade < prev - (lad.tolMonotonia || 0.06)) todasMono = false; prev = Math.max(prev, lv.dificuldade); } if (s.niveis.length !== 40) todasMono = false; }
+    ok(todasMono && lad.trio.length === 3 && (lad.semanas || []).length >= 1, `${lad.cultura}: trio de 3, ${(lad.semanas||[]).length} semanas todas de 40 níveis e monotônicas`);
   }
+  // trio ESTÁVEL entre semanas (rotação de trio NÃO entra nesta fatia) — o trio é do topo, um só
+  const g = JSON.parse(fs.readFileSync(path.join(dir, 'grega.json'), 'utf8'));
+  ok(g.trio.join('/') === 'zeus/poseidon/atena' && !g.semanas.some(s => s.trio), 'trio é do topo (mesmo em todas as semanas) — sem rotação de trio (§275)');
 }
 
 console.log('== 6) TELA DE SELEÇÃO: os cinco aparecem, cada um abre o seu; progresso independente; retomável ==');
@@ -186,6 +190,40 @@ console.log('== 8) nenhum banner de home renderiza <img> que dá 404 — Domíni
   const dcard = d.querySelector('.bcard[data-dest="dominios"]');
   ok(!!dcard && !!dcard.querySelector('.bcard__ph') && !dcard.querySelector('img'), 'o cartão de Domínios é PLACEHOLDER (§213): sem <img>, logo sem 404');
   ok(!fs.existsSync(path.join(__dirname, '..', 'web', 'banners', 'dominios.webp')), 'o banner programático foi removido (aguarda a ilustração definitiva)');
+  w.close();
+}
+
+console.log('== 9) RECORDE ANTERIOR aparece e a SUPERAÇÃO é anunciada (o instante) ==');
+{
+  const jsdom = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
+  const vc = new jsdom.VirtualConsole(); const errs = []; vc.on('jsdomError', e => errs.push(e.message));
+  const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
+  const w = dom.window, d = w.document;
+  const c0 = w.eval('Object.keys(DOMINIOS)[0]');
+  const prev = w.eval('domChaveSemanaAnterior()');
+  // semeia o recorde da SEMANA ANTERIOR = 2 (a marca a bater)
+  w.eval(`perfil=novoPerfil(0,0); perfil.dominios.porDominio["${c0}"]={run:null,melhorSempre:2,semanas:{"${prev}":2}};`);
+  // o hub mostra o recorde anterior a bater
+  w.eval(`ir("dominio",{cultura:"${c0}"},{substituir:true}); render();`);
+  ok(/Recorde anterior/.test(d.querySelector('.domhub').textContent) && /2/.test(d.querySelector('.domhub').textContent), 'o hub mostra o RECORDE ANTERIOR a bater (nível 2)');
+  // inicia a corrida — a marca a bater viaja na run
+  w.eval(`document.querySelector('#dentrar').click();`);
+  ok(w.eval(`perfil.dominios.porDominio["${c0}"].run.marcaAnterior`) === 2, 'a corrida carrega a marca a bater (2)');
+  // vence nível 1 (prof 1, não supera), depois 2 (prof 2, empata, não supera), depois 3 (prof 3 > 2 → SUPERA)
+  const vencerNivel = () => w.eval('st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0}); st.fim={tipo:"fim",resultado:"vitoria",lado:0}; render();');
+  const tituloOv = () => (d.querySelector('.result h1') || {}).textContent || '';
+  vencerNivel();  // nível 1 → prof 1
+  ok(!d.querySelector('.result--superou') && !/SUPERAD/.test(tituloOv()), 'nível 1 (prof 1 ≤ marca 2): ainda NÃO superou');
+  w.eval('document.querySelector("#dfprox").click();'); vencerNivel();  // nível 2 → prof 2
+  ok(!d.querySelector('.result--superou') && !/SUPERAD/.test(tituloOv()), 'nível 2 (prof 2 = marca 2): ainda NÃO superou');
+  w.eval('document.querySelector("#dfprox").click();'); vencerNivel();  // nível 3 → prof 3 > 2
+  ok(w.eval('dominioFim.superou') === true && /SUPERADO/.test(tituloOv()) && !!d.querySelector('.result--superou'), 'nível 3 (prof 3 > marca 2): SUPERAÇÃO anunciada (instante dourado, linguagem do banner de ranque)');
+  ok(w.eval(`perfil.dominios.porDominio["${c0}"].run.superou`) === true, 'a superação é marcada na run (anuncia UMA vez)');
+  // segue para o nível 4: NÃO re-anuncia (já superou)
+  w.eval('document.querySelector("#dfprox").click();'); vencerNivel();
+  ok(w.eval('dominioFim.superou') === false, 'nível 4: a superação NÃO re-dispara (uma vez por corrida)');
+  ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }
 

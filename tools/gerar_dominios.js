@@ -75,24 +75,28 @@ function poolChefes(CFG) {
     .sort((a, b) => a.base - b.base);
 }
 
-// ---- 3. montagem em RAMPA: dificuldade medida no danoMult de cada nível, monotônica ----
-function montarEscada(CFG) {
-  process.stderr.write('medindo pool de comuns…\n');
-  const comuns = poolComuns(CFG);
-  process.stderr.write('medindo chefes…\n');
-  const chefes = poolChefes(CFG);
+// ---- 3. montagem em RAMPA de UMA semana: dificuldade medida no danoMult, monotônica ----
+// Recebe os pools JÁ medidos (comuns/chefes) — medi-los é o caro, e é UMA vez por cultura;
+// a semana varia só a SELEÇÃO (wrng), com o MESMO método e a MESMA régua. Trio fixo (sem rotação).
+function montarEscadaSemana(CFG, comuns, chefes, wrng) {
   const niveis = []; let prev = -Infinity, usados = new Set();
   const faixaDe = n => Math.floor((n - 1) / CFG.faixa);
   const nChefes = Math.floor(CFG.niveis / CFG.faixa);
   const nComuns = CFG.niveis - nChefes;
-  // os chefes em degraus de dureza crescente (o mais fundo é o mais duro), do pool de chefes ranqueado
+  // CHEFE por faixa: rank crescente, com uma janela ±1 sorteada pela semana (varia o chefe, mantém a dureza)
   const chefePorFaixa = [];
-  for (let b = 0; b < nChefes; b++) chefePorFaixa.push(chefes[Math.min(chefes.length - 1, Math.floor(chefes.length * (b + 1) / (nChefes + 1)))]);
-  // candidato JUSTO não usado com dificuldade-base mais perto de um ALVO (espalha o comum na faixa justa)
+  for (let b = 0; b < nChefes; b++) {
+    const alvo = Math.floor(chefes.length * (b + 1) / (nChefes + 1));
+    const jan = [alvo - 1, alvo, alvo + 1].map(i => Math.min(chefes.length - 1, Math.max(0, i)));
+    chefePorFaixa.push(chefes[jan[Math.floor(wrng() * jan.length)]]);
+  }
+  // comum JUSTO: entre os K mais próximos do ALVO (não-usados), a semana escolhe qual (variedade sem perder a rampa)
   const escolherPertoDe = alvo => {
-    let melhor = null, dd = Infinity;
-    for (const c of comuns) { if (usados.has([...c.inimigos].sort().join('|'))) continue; const d = Math.abs(c.base - alvo); if (d < dd) { dd = d; melhor = c; } }
-    return melhor;
+    const cs = comuns.filter(c => !usados.has([...c.inimigos].sort().join('|')));
+    if (!cs.length) return comuns[0];
+    cs.sort((a, b) => Math.abs(a.base - alvo) - Math.abs(b.base - alvo));
+    const K = Math.min(4, cs.length);
+    return cs[Math.floor(wrng() * K)];
   };
   let iComum = 0;
   for (let n = 1; n <= CFG.niveis; n++) {
@@ -104,9 +108,8 @@ function montarEscada(CFG) {
       prev = Math.max(prev, dif);
       continue;
     }
-    // comum: ALVO base sobe linear 0 → difTopo ao longo dos comuns; o DANO da faixa soma por cima
     const alvoBase = CFG.difTopo * (iComum / Math.max(1, nComuns - 1)); iComum++;
-    const cand = escolherPertoDe(alvoBase) || comuns[0];
+    const cand = escolherPertoDe(alvoBase);
     usados.add([...cand.inimigos].sort().join('|'));
     const dif = dificuldade(CFG.trio, cand.inimigos, dano, CFG.ruaN);
     const difFinal = Math.max(dif, prev);   // sela a monotonia (o dado gravado nunca cai)
@@ -137,41 +140,53 @@ function medirPiso(ladder, N) {
   return { min: depths[0], max: depths[depths.length - 1], med: med(depths), p50: depths[Math.floor(depths.length / 2)], depths };
 }
 
-// ---- gerar + escrever UM Domínio ----
+// nº de SEMANAS a gerar (o ciclo semanal §275). CLI: --semanas=N (default 8).
+const SEMANAS = (() => { const a = process.argv.find(x => x.startsWith('--semanas=')); return a ? Math.max(1, parseInt(a.split('=')[1], 10) || 8) : 8; })();
+
+// ---- gerar + escrever UM Domínio (N SEMANAS; mede o pool UMA vez, varia só a seleção) ----
 function gerar(CFG) {
-  const niveis = montarEscada(CFG);
+  const t0 = Date.now();
+  process.stderr.write(`[${CFG.cultura}] medindo pool de comuns (uma vez)…\n`);
+  const comuns = poolComuns(CFG);   // CARO: medido UMA vez por cultura, reusado nas N semanas
+  const chefes = poolChefes(CFG);
+  const semanas = [];
+  for (let w = 0; w < SEMANAS; w++) {
+    const wrng = mulberry32((0x53454d ^ (w + 1) * 2654435761 ^ [...CFG.cultura].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 0)) >>> 0);
+    const niveis = montarEscadaSemana(CFG, comuns, chefes, wrng);
+    const flat = { trio: CFG.trio, curaPorNivel: CFG.curaPorNivel, tetoBonusDano: D.DOM_TETO_BONUS, faixa: CFG.faixa, niveis };
+    const piso = medirPiso(flat, 30);
+    semanas.push({ niveis, pisoIAGuloso: { med: +piso.med.toFixed(1), min: piso.min, p50: piso.p50, max: piso.max, corridas: 30, politicaPremio: 'reviver caído senão curar' } });
+    process.stderr.write(`[${CFG.cultura}] semana ${w + 1}/${SEMANAS}: rampa ${niveis[0].dificuldade.toFixed(2)}→${niveis[niveis.length-1].dificuldade.toFixed(2)} piso ${piso.med.toFixed(1)}\n`);
+  }
   const ladder = {
-    _fonte: 'GERADO por tools/gerar_dominios.js (§273/§274). NÃO editar à mão. A escada é uma RAMPA de dificuldade MEDIDA: '
-      + 'dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; '
-      + CFG.ruaN + ' seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. '
-      + 'Reproduzir: node tools/gerar_dominios.js ' + CFG.cultura,
+    _fonte: 'GERADO por tools/gerar_dominios.js (§273/§274/§275). NÃO editar à mão. CICLO SEMANAL: uma escada por semana '
+      + '(mesmo método e régua; só a SELEÇÃO varia por semana; trio FIXO, sem rotação). dificuldade[n] = 1 − (vitórias do trio '
+      + 'GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; ' + CFG.ruaN + ' seeds). O sorteio SAIU '
+      + '(loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. Reproduzir: node tools/gerar_dominios.js --todas --semanas=' + SEMANAS,
     cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio,
     faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
     tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS,
     tolMonotonia: CFG.tolMonotonia,
     regua: { metodo: '1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa', seeds: CFG.ruaN },
-    niveis,
+    semanas,
   };
-  process.stderr.write(`[${CFG.cultura}] medindo piso da IA gulosa…\n`);
-  const pisoRec = medirPiso(ladder, 30);
-  ladder.pisoIAGuloso = { med: +pisoRec.med.toFixed(1), min: pisoRec.min, p50: pisoRec.p50, max: pisoRec.max, corridas: 30, politicaPremio: 'reviver caído senão curar' };
-
   const dir = path.join(__dirname, '..', 'data', 'dominios');
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, CFG.cultura.toLowerCase() + '.json'), JSON.stringify(ladder, null, 1) + '\n');
+  fs.writeFileSync(path.join(dir, CFG.cultura.toLowerCase() + '.json'), JSON.stringify(ladder) + '\n');   // sem indent: N×40 níveis infla demais o dado do bundle
 
-  console.log(`\n### ESCADA — ${CFG.nome} (${CFG.cultura}) · trio ${CFG.trio.join('/')}`);
-  console.log(`arquivo: data/dominios/${CFG.cultura.toLowerCase()}.json · ${niveis.length} níveis · rampa de dano por faixa ${CFG.rampaDano.map(x=>'+'+Math.round((x-1)*100)+'%').join(' ')}`);
-  console.log('nv  dano   dif   tipo');
-  for (const lv of niveis) console.log(`${String(lv.n).padStart(2)}  ${lv.danoMult.toFixed(2)}  ${lv.dificuldade.toFixed(2)}  ${lv.chefe ? 'CHEFE ' + lv.cultura + ' (' + lv.inimigos.join('/') + ')' : lv.inimigos.join('/')}`);
-  console.log(`forma da rampa: ${niveis[0].dificuldade.toFixed(2)} → ${niveis[niveis.length-1].dificuldade.toFixed(2)} (monotônica, tol ${CFG.tolMonotonia})`);
-  console.log(`PISO DA IA GULOSA (30 corridas): med ${pisoRec.med.toFixed(1)} · min ${pisoRec.min} · p50 ${pisoRec.p50} · max ${pisoRec.max}`);
-  return { cultura: CFG.cultura, trio: CFG.trio, piso: pisoRec, dif1: niveis[0].dificuldade, difN: niveis[niveis.length-1].dificuldade };
+  const seg = ((Date.now() - t0) / 1000).toFixed(0);
+  const pisos = semanas.map(s => s.pisoIAGuloso.med);
+  console.log(`\n### ${CFG.nome} (${CFG.cultura}) · trio ${CFG.trio.join('/')} · ${SEMANAS} semanas · ${seg}s`);
+  console.log(`  arquivo data/dominios/${CFG.cultura.toLowerCase()}.json · piso/semana ${pisos.map(p=>p.toFixed(1)).join(' ')} · rampa/semana ${semanas.map(s=>s.niveis[s.niveis.length-1].dificuldade.toFixed(2)).join(' ')}`);
+  return { cultura: CFG.cultura, trio: CFG.trio, semanas, seg: +seg };
 }
 
 const alvo = process.argv.includes('--todas') ? Object.values(CFGS) : [CFG];
+const T0 = Date.now();
 const resumo = alvo.map(gerar);
-if (resumo.length > 1) {
-  console.log(`\n### RESUMO — piso da gulosa por Domínio (a curva entre eles)`);
-  for (const r of resumo) console.log(`  ${r.cultura.padEnd(9)} ${r.trio.join('/').padEnd(28)} piso med ${r.piso.med.toFixed(1)} (min ${r.piso.min}, max ${r.piso.max})  ·  rampa ${r.dif1.toFixed(2)}→${r.difN.toFixed(2)}`);
+const segTotal = ((Date.now() - T0) / 1000).toFixed(0);
+console.log(`\n### RESUMO — ${SEMANAS} semanas × ${resumo.length} cultura(s) em ${segTotal}s (custo da esteira)`);
+for (const r of resumo) {
+  const pisos = r.semanas.map(s => s.pisoIAGuloso.med);
+  console.log(`  ${r.cultura.padEnd(9)} ${r.trio.join('/').padEnd(28)} piso med/semana ${(pisos.reduce((a,b)=>a+b,0)/pisos.length).toFixed(1)} (${Math.min(...pisos).toFixed(1)}–${Math.max(...pisos).toFixed(1)}) · ${r.seg}s`);
 }

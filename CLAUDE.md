@@ -386,6 +386,20 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     TETO +50% (acima vira passeio — exp 5); no teto a opção BÔNUS some, como o REVIVER sem
     caído (§252: opção que não faz nada é armadilha). A régua NÃO calibra este modo (piso
     da IA gulosa = 1) — o dono calibra jogando; cura/rampa/profundidade são knobs de dado.
+29. **Ciclo semanal + placar PESSOAL, tudo local (§275).** Cada Domínio tem uma escada POR
+    SEMANA (`data/dominios/<cultura>.json` → `semanas:[{niveis,pisoIAGuloso}]`; `--semanas=N`;
+    trio FIXO entre semanas, sem rotação). A semana é a **ISO-8601 do relógio do aparelho**
+    (`domSemanaChave`/`domIndiceSemana`, sem servidor). Os recordes NÃO são um par atual/anterior
+    que uma "virada" sobrescreve — são um **MAPA por chave** (`perfil.dominios.porDominio[c].semanas
+    = {"AAAA-Www":prof}`, gravado por MAX) + `melhorSempre` que só cresce. **Relógio errado/viagem
+    de fuso nunca apaga progresso** porque nada é destruído numa virada (virar = ler outra chave);
+    grave sempre por MAX numa chave, NUNCA faça um "reset de virada". A corrida carrega a SUA semana
+    (`run.semana/semanaIdx`) e termina na SUA escada — a virada é invisível para a corrida em curso
+    (perder a corrida na virada é inaceitável). Superar a marca da semana anterior dispara UM
+    instante (linguagem do banner de ranque, §264). **O placar COMPARATIVO e o RANQUEADO NÃO cabem
+    aqui** — são do servidor, que hoje não persiste (disco efêmero do Render grátis, §237/§274);
+    dependem de store durável (Postgres/disco pago/KV) que o dono ainda não contratou. Fronteira:
+    progresso pessoal = local; comparação entre jogadores = servidor durável.
 
 ---
 

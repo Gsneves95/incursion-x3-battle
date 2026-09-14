@@ -255,46 +255,55 @@ console.log('== F4 SANDBOX (creditarSandbox): teto diário + reset por DATA, pur
 console.log('== F4 migração v2 -> v3: adiciona sandbox SEM re-creditar o grant ==');
 {
   const P = require('../src/perfil.js');
-  ok(P.VERSAO_PERFIL === 5, 'a versão do perfil é 5');
+  ok(P.VERSAO_PERFIL === 6, 'a versão do perfil é 6');
   const v2 = P.novoPerfil(0, 1500); v2.versao = 2; delete v2.sandbox; delete v2.dominios;   // perfil v2 já com grant, sem sandbox/dominios
   const m = P.migrar(v2, 1500);
-  ok(m.versao === 5 && m.sandbox && m.sandbox.dia === '' && m.sandbox.vitorias === 0, 'v2 -> v5 backfilla sandbox vazio');
-  ok(m.moedas.gema === 1500, 'v2 -> v5 NÃO credita o grant de novo (gated em v<2)');
+  ok(m.versao === 6 && m.sandbox && m.sandbox.dia === '' && m.sandbox.vitorias === 0, 'v2 -> v6 backfilla sandbox vazio');
+  ok(m.moedas.gema === 1500, 'v2 -> v6 NÃO credita o grant de novo (gated em v<2)');
   const v1 = P.novoPerfil(0, 0); v1.versao = 1; v1.moedas.gema = 0; delete v1.sandbox; delete v1.dominios;
   const m1 = P.migrar(v1, 1500);
-  ok(m1.versao === 5 && m1.moedas.gema === 1500 && m1.sandbox, 'v1 -> v5 credita o grant UMA vez e adiciona sandbox');
+  ok(m1.versao === 6 && m1.moedas.gema === 1500 && m1.sandbox, 'v1 -> v6 credita o grant UMA vez e adiciona sandbox');
 }
 
-console.log('== §274 migração dominios v4 (run único) -> v5 (por Domínio, independente) ==');
+console.log('== §274/§275 migração dominios: v4 (run único) -> v5 (por Domínio) -> v6 (recorde SEMANAL + melhor de sempre) ==');
 {
   const P = require('../src/perfil.js');
-  // v3 -> v5: adiciona dominios porDominio vazio, sem tocar sandbox/grant
+  // v3 -> v6: adiciona dominios porDominio vazio, sem tocar sandbox/grant
   const v3 = P.novoPerfil(0, 1500); v3.versao = 3; delete v3.dominios;
   const m3 = P.migrar(v3, 1500);
-  ok(m3.versao === 5 && m3.dominios && m3.dominios.porDominio && Object.keys(m3.dominios.porDominio).length === 0, 'v3 -> v5 backfilla dominios {porDominio:{}}');
-  ok(m3.moedas.gema === 1500 && m3.sandbox, 'v3 -> v5 não re-credita nem perde sandbox');
-  // v4 (run único Grega) -> v5: a run migra para porDominio.grega preservando o recorde
+  ok(m3.versao === 6 && m3.dominios && m3.dominios.porDominio && Object.keys(m3.dominios.porDominio).length === 0, 'v3 -> v6 backfilla dominios {porDominio:{}}');
+  // v4 (run único Grega) -> v6: run vai p/ porDominio.grega; o recorde antigo vira melhorSempre
   const v4 = P.novoPerfil(0, 0); v4.versao = 4;
   v4.dominios = { run: { cultura: 'Grega', nivel: 7, vida: [{ hp: 90, vivo: true }], bonus: 0.2, profundidade: 6, status: 'ativo', aguardandoPremio: false } };
   const m4 = P.migrar(v4, 0);
-  ok(m4.versao === 5 && m4.dominios.porDominio.grega && m4.dominios.porDominio.grega.run.nivel === 7, 'v4 -> v5 move a run única para porDominio.grega');
-  ok(m4.dominios.porDominio.grega.recorde === 6, 'v4 -> v5 preserva o recorde (profundidade)');
-  // novoPerfil nasce por-domínio
+  ok(m4.versao === 6 && m4.dominios.porDominio.grega && m4.dominios.porDominio.grega.run.nivel === 7, 'v4 -> v6 move a run única para porDominio.grega');
+  ok(m4.dominios.porDominio.grega.melhorSempre === 6 && typeof m4.dominios.porDominio.grega.semanas === 'object', 'v4 -> v6 o recorde antigo vira melhorSempre; semanas nasce vazio');
+  // v5 (recorde) -> v6 (melhorSempre): não perde o recorde acumulado
+  const v5 = P.novoPerfil(0, 0); v5.versao = 5; v5.dominios = { porDominio: { grega: { run: null, recorde: 11 } } };
+  const m5 = P.migrar(v5, 0);
+  ok(m5.versao === 6 && m5.dominios.porDominio.grega.melhorSempre === 11 && m5.dominios.porDominio.grega.semanas && Object.keys(m5.dominios.porDominio.grega.semanas).length === 0, 'v5 -> v6: recorde 11 vira melhorSempre 11, semanas vazio');
+  // definirRunDominio: recorde SEMANAL por chave + melhor de sempre, independente, puro
   const novo = P.novoPerfil(0, 0);
-  ok(novo.dominios && novo.dominios.porDominio && Object.keys(novo.dominios.porDominio).length === 0, 'novoPerfil nasce com dominios {porDominio:{}}');
-  // definirRunDominio: guarda por cultura, atualiza recorde, independente entre Domínios, puro
-  const run1 = { cultura: 'Grega', nivel: 3, vida: [{ hp: 90, vivo: true }], bonus: 0.1, reviveGasto: [], profundidade: 2, status: 'ativo', aguardandoPremio: false };
-  const a = P.definirRunDominio(novo, 'grega', run1);
-  ok(a.dominios.porDominio.grega.run.nivel === 3 && a.dominios.porDominio.grega.recorde === 2, 'definirRunDominio guarda a run + recorde da Grega');
+  const runA = { cultura: 'Grega', semana: '2026-W37', nivel: 4, vida: [{ hp: 9, vivo: true }], bonus: 0, reviveGasto: [], profundidade: 3, status: 'ativo', aguardandoPremio: false };
+  const a = P.definirRunDominio(novo, 'grega', runA);
+  ok(a.dominios.porDominio.grega.semanas['2026-W37'] === 3 && a.dominios.porDominio.grega.melhorSempre === 3, 'grava recorde da SEMANA (por chave) + melhor de sempre');
   ok(Object.keys(novo.dominios.porDominio).length === 0, 'definirRunDominio é puro (não muta o argumento)');
-  const b = P.definirRunDominio(a, 'nordica', { cultura: 'Nórdica', nivel: 5, vida: [{ hp: 40, vivo: true }], bonus: 0, reviveGasto: [], profundidade: 4, status: 'ativo', aguardandoPremio: false });
-  ok(b.dominios.porDominio.grega.run.nivel === 3 && b.dominios.porDominio.nordica.run.nivel === 5, 'INDEPENDENTE: correr Asgard não mexe no Olimpo');
-  // encerrar a Grega (run=null) mantém o recorde (progresso não regride)
-  const c = P.definirRunDominio(b, 'grega', null);
-  ok(c.dominios.porDominio.grega.run === null && c.dominios.porDominio.grega.recorde === 2, 'run=null ENCERRA a corrida MAS o recorde fica (nunca regride)');
-  ok(P.ehPerfilValido(c, null), 'perfil por-domínio é válido');
+  const b = P.definirRunDominio(a, 'nordica', { cultura: 'Nórdica', semana: '2026-W37', nivel: 6, vida: [], bonus: 0, reviveGasto: [], profundidade: 5, status: 'ativo', aguardandoPremio: false });
+  ok(b.dominios.porDominio.grega.semanas['2026-W37'] === 3 && b.dominios.porDominio.nordica.semanas['2026-W37'] === 5, 'INDEPENDENTE: correr Asgard não mexe no Olimpo');
+  // §275 VIRADA DE SEMANA: nova chave ARQUIVA a semana passada (não apaga) e melhorSempre segue
+  const c1 = P.definirRunDominio(b, 'grega', { cultura: 'Grega', semana: '2026-W38', nivel: 2, vida: [], bonus: 0, reviveGasto: [], profundidade: 1, status: 'ativo', aguardandoPremio: false });
+  ok(c1.dominios.porDominio.grega.semanas['2026-W37'] === 3 && c1.dominios.porDominio.grega.semanas['2026-W38'] === 1, 'virada de semana PRESERVA a semana passada e abre a nova (recorde semanal arquivado)');
+  ok(c1.dominios.porDominio.grega.melhorSempre === 3, 'melhorSempre NÃO regride na virada (3 > 1)');
+  // §275 RELÓGIO ALTERADO: voltar para a semana passada (chave velha) NÃO apaga nada (grava por MAX)
+  const c2 = P.definirRunDominio(c1, 'grega', { cultura: 'Grega', semana: '2026-W37', nivel: 3, vida: [], bonus: 0, reviveGasto: [], profundidade: 2, status: 'ativo', aguardandoPremio: false });
+  ok(c2.dominios.porDominio.grega.semanas['2026-W37'] === 3 && c2.dominios.porDominio.grega.semanas['2026-W38'] === 1, 'relógio ATRASADO (volta à W37 com prof menor): grava por MAX, NADA some (W37 fica 3, W38 fica 1)');
+  ok(c2.dominios.porDominio.grega.melhorSempre === 3, 'relógio atrasado não apaga o melhor de sempre');
+  // §275 RELÓGIO ADIANTADO: pular para uma semana futura só ABRE uma chave nova, não apaga as antigas
+  const c3 = P.definirRunDominio(c2, 'grega', { cultura: 'Grega', semana: '2026-W52', nivel: 1, vida: [], bonus: 0, reviveGasto: [], profundidade: 0, status: 'morto', aguardandoPremio: false });
+  ok(c3.dominios.porDominio.grega.semanas['2026-W37'] === 3 && c3.dominios.porDominio.grega.melhorSempre === 3, 'relógio ADIANTADO (pula p/ W52): as semanas antigas e o melhor de sempre ficam intactos');
+  ok(P.ehPerfilValido(c3, null), 'perfil semanal é válido');
   // corrupção cai na validação
-  const mau = P.novoPerfil(0, 0); mau.dominios.porDominio.grega = { run: { nivel: 'x' }, recorde: 0 };
+  const mau = P.novoPerfil(0, 0); mau.dominios.porDominio.grega = { run: { nivel: 'x' }, melhorSempre: 0, semanas: {} };
   ok(!P.ehPerfilValido(mau, null), 'dominios.run malformado é rejeitado na forma');
 }
 
