@@ -1925,6 +1925,10 @@ function recSemanaDominio(c, chave){ return (dominioProg(c).semanas || {})[chave
 function semanaInfo(lad){ const d = new Date(); return { idx: domIndiceSemana(lad, d), chave: domSemanaChave(d), chaveAnt: domChaveSemanaAnterior(d) }; }
 function domTotalNiveis(lad){ const s = (lad.semanas && lad.semanas[0]) ? lad.semanas[0].niveis : lad.niveis; return (s || []).length; }
 function domNomeDeus(k){ return (HRM[k] && HRM[k].nome) || (typeof GODS !== 'undefined' && GODS[k] && GODS[k].nome) || k; }
+// §277-ajustes: nome CURTO do deus no cartão (só quando o dado o traz — "Sun Wukong"→"Wukong"). Nomes
+// sem forma curta graciosa ficam inteiros e cortam com reticência (a caixa é ~46px no piso 780). Só o
+// CARTÃO usa isto; frases (ex.: prêmio Reviver) seguem com o nome inteiro.
+function domNomeDeusCartao(lad, k){ return (lad && lad.curtos && lad.curtos[k]) || domNomeDeus(k); }
 function salvarRunDominio(cultura, run){ perfil = definirRunDominio(perfil, cultura, run); const r = salvar(perfil); if (r && !r.ok && st) st.log.push({ turno: st.turno, msg: '⚠ corrida salva falhou: ' + r.erro }); return r; }
 
 // retrato pequeno de um deus do trio, com a vida atual (ou CAÍDO). vida null = só o retrato.
@@ -1966,7 +1970,7 @@ function dominioPosterHTML(lad){
       ? `<div class="domcard__prog domcard__prog--rec">Semana · nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
       : `<div class="domcard__prog domcard__prog--novo">Semana · sem marca</div>`);
   const anterior = `<span class="dcard__ant">${recAnt > 0 ? 'anterior a bater · nível ' + recAnt : '1ª semana — sem marca'}</span>`;
-  const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeus(k))}</i></span>`).join('');
+  const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeusCartao(lad, k))}</i></span>`).join('');
   const emb = temArteDom('emblema-' + c)
     ? `<img src="banners/dominios/emblema-${c}.webp" alt="">`
     : `<span class="dcard__embmono">${H(embMonoDom(c, lad.cultura))}</span>`;

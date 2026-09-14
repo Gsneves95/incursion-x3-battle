@@ -8,6 +8,9 @@
     "nuwa"
   ],
   "frase": "A revolta, a lança e a mão que remendou o céu.",
+  "curtos": {
+    "sunwukong": "Wukong"
+  },
   "faixa": 10,
   "rampaDano": [
     1,

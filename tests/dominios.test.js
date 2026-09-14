@@ -315,6 +315,15 @@ console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema
   ok(!!aj && /SEM COMPARA[ÇC][ÃA]O COM OUTROS JOGADORES|SEM RECOMPENSA/.test(aj.textContent.toUpperCase()), 'a ajuda é honesta: placar só seu, sem recompensa');
   // o nome do Domínio sai em DUAS linhas (dois <span> dentro de .dcard__nome)
   ok([...d.querySelectorAll('.dcard__nome')].every(n => n.querySelectorAll('span').length === 2), 'o nome do Domínio vem em duas linhas (dois <span>)');
+  // §277-ajustes: nome CURTO da trinca no cartão — Sun Wukong sai "Wukong" (do campo `curtos` do dado, §262)
+  const chinesa = d.querySelector('.dcard[data-cultura="chinesa"]');
+  ok(!!chinesa && /Wukong/.test(chinesa.textContent) && !/Sun Wukong/.test(chinesa.textContent),
+    'o cartão chinês mostra "Wukong" (curto do dado), não "Sun Wukong"');
+  // e a fonte disso é o DADO (a escada carrega `curtos`), não código
+  ok(w.eval('!!(DOMINIOS.chinesa && DOMINIOS.chinesa.curtos && DOMINIOS.chinesa.curtos.sunwukong==="Wukong")'),
+    'o nome curto vem do dado (DOMINIOS.chinesa.curtos.sunwukong)');
+  // Amaterasu/Tsukuyomi FICAM inteiros no dado (sem forma curta graciosa — cortam com reticência, §277-ajustes)
+  ok(w.eval('Object.keys(DOMINIOS.japonesa.curtos||{}).length===0'), 'a trinca japonesa fica inteira (curtos vazio) — reticência, não nome errado');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }

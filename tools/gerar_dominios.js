@@ -26,12 +26,20 @@ const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CU
 // ICÔNICO (os três rostos da cultura). Método e régua IDÊNTICOS entre as cinco (§274).
 const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 25, candidatos: 220, ruaN: 12, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.06 };
 // `frase` (§276): a linha em itálico do cartão de escolha — dado, não código; um campo por cultura.
+// `curtos` (§277-ajustes): nome CURTO por deus no cartão de escolha, quando o nome inteiro corta.
+//   TETO MEDIDO (vale para TODAS as culturas futuras): no piso de 780 o cartão tem 138px e a fileira
+//   dos três deuses já ocupa 142 → o teto por nome é ~46px em Cinzel 600 8px. Nome de deus mais longo
+//   que ~46px CORTA (reticência), e a saída NÃO é a fonte nem a caixa (ambas arrombam o cartão): é o
+//   nome curto AQUI, no dado (precedente `curto` do §262). Só se encurta quando existe forma que NÃO
+//   perca a identidade — "Sun Wukong"→"Wukong" é como ele é chamado; nomes de uma palavra sem forma
+//   curta graciosa (Amaterasu, Tsukuyomi) FICAM inteiros e cortam com reticência (sinal > economia).
+//   Ao ADICIONAR uma cultura nova: meça o trio; nome > ~46px ganha `curtos` aqui, não fonte/caixa.
 const CFGS = {
-  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'O raio, o tridente e a lança que pensa.', ...COMUM },
-  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], frase: 'O corvo, o martelo e a mentira.', ...COMUM },
-  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], frase: 'A barca, a magia e o rei que volta.', ...COMUM },
-  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], frase: 'O sol, a tempestade e a lua.', ...COMUM },
-  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], frase: 'A revolta, a lança e a mão que remendou o céu.', ...COMUM },
+  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'O raio, o tridente e a lança que pensa.', curtos: {}, ...COMUM },
+  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], frase: 'O corvo, o martelo e a mentira.', curtos: {}, ...COMUM },
+  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], frase: 'A barca, a magia e o rei que volta.', curtos: {}, ...COMUM },
+  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], frase: 'O sol, a tempestade e a lua.', curtos: {}, ...COMUM },   // Amaterasu/Tsukuyomi (52px) ficam inteiros com reticência (§277-ajustes)
+  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], frase: 'A revolta, a lança e a mão que remendou o céu.', curtos: { sunwukong: 'Wukong' }, ...COMUM },
 };
 // seleção: `node tools/gerar_dominios.js [Cultura|--todas]` (default: Grega)
 const _sel = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
@@ -164,7 +172,7 @@ function gerar(CFG) {
       + '(mesmo método e régua; só a SELEÇÃO varia por semana; trio FIXO, sem rotação). dificuldade[n] = 1 − (vitórias do trio '
       + 'GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; ' + CFG.ruaN + ' seeds). O sorteio SAIU '
       + '(loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. Reproduzir: node tools/gerar_dominios.js --todas --semanas=' + SEMANAS,
-    cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio, frase: CFG.frase,
+    cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio, frase: CFG.frase, curtos: CFG.curtos || {},
     faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
     tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS,
     tolMonotonia: CFG.tolMonotonia,
