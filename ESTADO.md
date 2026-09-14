@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §278 — O CARTÃO ajustado à referência do dono: proporção de pôster, véu em arco, retrato arredondado.
+
+**§278 — só o cartão muda; conteúdo e regras seguem.** As duas imagens de referência (Chinesa/Egípcia) **NÃO são arte de cartão** — trazem texto/retratos/botão no pixel; são referência de PROPORÇÃO e LINGUAGEM. A arte de cartão é só a CENA de fundo; o resto é CSS+dado (usar as imagens como asset congelaria fonte/idioma/progresso — não fazer).
+
+**Proporção (a mudança principal):** medi as duas → **0,435** (o §277 era 0,558, largo demais). Altura travada 308 → **largura 134**, FIXA dos 780 aos 1200 (`max-width:134`+`flex:1`); a FOLGA vai para as LATERAIS (`justify-center`), cartões separados com ar (a referência). Medido: 5×134 + vãos 12 + margens 20 = 758 ≤ 780 (margem lateral efetiva sobe p/ 31); a 951/1200 o cartão fica 134 e o ar cresce. Folga → laterais; vão fixo 12; largura fixa 134.
+
+**Véu em ARCO** (não linha reta): abóbada escura por-cultura recortada por **máscara SVG** (path quadrático, pica ~44% no centro, desce ~54% nas bordas) — a cor é o degradê (vars), a curva é a máscara. **Retrato** quadrado de **canto arredondado + moldura fina** (trocou o chanfro diagonal do §277). **Cor por cultura FICA** (5 distintas, guarda). Emblema-disco igual.
+
+**Medição no piso 780 (Cinzel real, rede bloqueada), largura 134, caixa deus ~44,7:** nome (2 linhas; japonês 3, sem corte), frase (2 linhas, Céus cabe), progresso e 3 nomes de deus — **NADA passou a cortar** além do que o §277 já tinha (Poseidon 1px; Amaterasu/Tsukuyomi ~6px inteiros com reticência — decisão do dono; Wukong cabe). **Observação (não é corte):** a pílula de progresso quebra em 2 linhas nas frases longas ("…nível 38/40 ▲", "Em corrida · nível 14/40") a 134 — sem perda de texto; a critério do dono encurtar/reduzir.
+
+**Não muda:** as 4 recusas (sem ranking/recompensa/EM BREVE; Takamagahara), progresso no cartão, ciclo semanal, "Wukong" no dado, reticência Amaterasu/Tsukuyomi. **Babás** `dominios.test.js` §11 (cartão 134; véu = máscara SVG; retrato arredondado sem clip-path). Suíte+build verdes; 4 capturas em `docs/capturas-277/`. **Arquivos:** `src/shell.html`, `tests/dominios.test.js`. **Aberto p/ o dono:** a pílula de progresso em 2 linhas (aceitar/encurtar); gerar as 11 artes.
+
 ## ★ DOMÍNIOS §277 — A TELA DE ESCOLHA, 2ª leva: o mockup RICO do dono (chanfros, paleta por cultura, ouro por gradiente). Substitui o visual do §276.
 
 **§277 — o que mudou sobre o §276:** a mesma tela (rota `dominios`), agora na linguagem cheia do mockup. Cabeçalho: "Domínios" em Cinzel 900 dourado (gradiente por `background-clip:text`) + "?" de ajuda + linha-guia `.24em`; seta de voltar girada 45°. Cartões-pôster: **chanfro nos 4 cantos**, **moldura+brilho por cultura**, **emblema-anel** dourado meio-para-fora, **nome dourado em 2 linhas**, frase itálica peso 300, **retratos com canto chanfrado**, **botão ENTRAR em bisel** (escuro+borda dourada). Rodapé de **dois painéis chanfrados**. Motor, ciclo semanal, recordes por chave, corrida retomável e invariante #3 seguem intactos.

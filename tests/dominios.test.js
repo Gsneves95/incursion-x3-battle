@@ -324,6 +324,13 @@ console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema
     'o nome curto vem do dado (DOMINIOS.chinesa.curtos.sunwukong)');
   // Amaterasu/Tsukuyomi FICAM inteiros no dado (sem forma curta graciosa — cortam com reticência, §277-ajustes)
   ok(w.eval('Object.keys(DOMINIOS.japonesa.curtos||{}).length===0'), 'a trinca japonesa fica inteira (curtos vazio) — reticência, não nome errado');
+  // §278 — PROPORÇÃO do pôster: cartão 134 de largura (0,435 = referência do dono), não 172
+  ok(/\.dcard\{[^}]*max-width:134px/.test(html), 'o cartão tem 134px de largura (proporção 0,435 da referência §278)');
+  // §278 — o VÉU é um ARCO (máscara SVG em abóbada), não um degradê linear reto
+  ok(/\.dcard__scrim\{[^}]*mask:url\(['"]?data:image\/svg\+xml/.test(html.replace(/\s+/g, ' ')), 'o véu é um ARCO (máscara SVG), não linha reta (§278)');
+  // §278 — retrato de canto ARREDONDADO com moldura fina (sem o chanfro diagonal do §277)
+  ok(/\.dcard__deus \.slot\{[^}]*border-radius:6px/.test(html) && !/\.dcard__deus \.slot\{[^}]*clip-path/.test(html),
+    'o retrato é quadrado de canto arredondado + moldura fina (não chanfro diagonal) — §278');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }

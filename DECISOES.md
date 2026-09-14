@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §278 — O CARTÃO, ajuste fino à referência do dono (proporção de pôster, véu em arco, retrato arredondado). Só o cartão muda; conteúdo e regras seguem.
+
+**As duas imagens de referência NÃO SÃO arte de cartão.** Elas trazem texto, retratos e botão embutidos no pixel — são referência de PROPORÇÃO e LINGUAGEM. A arte de cartão é só a CENA de fundo (templos, pirâmides); todo o resto segue sendo CSS + dado. Usar as imagens como asset congelaria o texto (perderia fonte, idioma e progresso dinâmico) — registrado para não se repetir.
+
+**PROPORÇÃO (a mudança principal).** Medi as duas: 0,439 e 0,430, média **0,435**. O cartão do §277 era 0,558 (172×308) — largo demais, sem ar de pôster. Com a altura travada em 308, a largura nova é **134** (134/308 = 0,435). **Largura FIXA em 134 dos 780 aos 1200** (`max-width:134` + `flex:1` → alcança o teto sempre e não estica além); a FOLGA vai para as LATERAIS (o `justify-center` do `.dsel__cards`), deixando os cartões separados e com ar — como a referência. **Medido, cabe na faixa toda:** no piso 780, 5×134 + vãos 12 + margens 20 = 758 ≤ 780 (o cartão fica 134, a margem lateral efetiva sobe de 21 para 31); a 951/1200 o cartão continua 134 e o ar cresce nas bordas. A folga foi para as LATERAIS, nunca para o vão entre cartões (fixo em 12) nem para a largura do cartão (fixa em 134).
+
+**VÉU em ARCO (não linha reta).** As duas imagens mostram uma ABÓBADA escura que sobe no centro e desce nas laterais, e é sobre ela que o texto assenta. Reproduzida com um degradê escuro POR-CULTURA (a cor vem das vars) RECORTADO por uma **máscara SVG em forma de abóbada** (`-webkit-mask`/`mask`, path quadrático `M0 54 Q50 34 100 54 …` → pica ~44% no centro, desce a ~54% nas bordas). A cor é o degradê; a curva é a máscara (alfa) — o arco é forma, não gradiente linear (recusado o `linear-gradient` reto do §277).
+
+**RETRATO arredondado.** Nas imagens o retrato é quadrado de **canto arredondado com moldura fina dourada** — troquei o chanfro diagonal do §277 por `border-radius:6px` + `box-shadow inset 0 0 0 1.5px` (segui a imagem, não o §277). Bandas internas conferidas contra os percentuais medidos (arte ~52%, texto ~52-70%, retratos ~72-84%, botão ~88-95%).
+
+**COR por cultura FICA** (o dono gostou): as cinco paletas do §277 seguem, confirmadas DISTINTAS após o reajuste (guarda: `--tag` das cinco distintas). Emblema-disco meio-para-fora igual (monograma placeholder até a arte).
+
+**MEDIÇÃO no piso 780 (Cinzel real, rede bloqueada), largura nova 134, caixa de deus ~44,7 (=134/3):** nome do Domínio (2 linhas; japonês em 3, sem corte), frase (2 linhas, a dos Céus cabe), linha de progresso e os três nomes de deus — **NADA passou a cortar que já não cortasse no §277**: seguem só Poseidon (1px), Amaterasu e Tsukuyomi (~6px, inteiros com reticência por decisão do dono no §277-ajustes); Wukong (40) cabe. **Observação (não é corte, não consertei):** a PÍLULA de progresso, nas frases mais longas ("Semana · nível 38/40 ▲", "▸ Em corrida · nível 14/40"), passou a QUEBRAR em 2 linhas a 134 (cabia em 1 a 138) — sem perda de texto; a critério do dono encurtar o rótulo ou reduzir a pílula.
+
+**O QUE NÃO MUDA:** as quatro recusas (sem ranking, sem recompensa, sem EM BREVE, Takamagahara), o progresso no cartão, o ciclo semanal, o "Wukong" do dado e a reticência em Amaterasu/Tsukuyomi.
+
+**BABÁS** `tests/dominios.test.js` §11: cartão 134 (proporção 0,435); véu é máscara SVG (arco), não linha reta; retrato arredondado (sem `clip-path`). Suíte + build verdes; **4 capturas** em `docs/capturas-277/` (a tela e um cartão em recorte, para bater de olho com a referência). **Arquivos:** `src/shell.html` (proporção, véu-arco, retrato), `tests/dominios.test.js`, `ESTADO.md`.
+
 ## §277-ajustes — TRÊS acertos do §277, RESOLVIDOS (o §277 fecha aqui).
 
 **1. NOMES DOS DEUSES — medido; só o "Wukong" encurtado no dado; os outros ficam inteiros.**

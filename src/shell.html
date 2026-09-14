@@ -1100,7 +1100,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* OS CARTÕES */
 .dsel__cards{position:relative;z-index:2;flex:1 1 auto;display:flex;justify-content:center;align-items:stretch;
   gap:12px;padding:22px 20px 0}   /* padding-top 22: espaço para o emblema meio-para-fora */
-.dcard{position:relative;flex:1 1 0;max-width:172px;min-width:0;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
+/* §278 — PROPORÇÃO do pôster ancorada na referência do dono (0,435 = média das duas imagens): com a
+   altura travada em 308, a largura é 134 (era 172/0,558, largo demais). Largura FIXA em 134 dos 780 aos
+   1200 (max-width=largura-alvo, flex:1 alcança sempre o teto); a FOLGA vai para as LATERAIS (o justify-
+   center do .dsel__cards), deixando os cartões separados e com ar — como a referência. 5×134 + vãos 12 +
+   margens 20 = 758, cabe no piso 780; a 951/1200 sobra ar nas bordas. */
+.dcard{position:relative;flex:1 1 0;max-width:134px;min-width:0;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
 /* chanfro nos QUATRO cantos (13px, proporcionado ao cartão menor que o mockup); moldura+brilho por cultura */
 .dcard__poster{position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bodyA),var(--bodyB));
   box-shadow:inset 0 0 0 2px var(--frame),inset 0 0 44px var(--glow);transition:transform .12s,filter .12s;
@@ -1109,7 +1114,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .dcard__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .dcard__ph{position:absolute;inset:0;background:radial-gradient(90% 55% at 50% 20%,var(--glow),transparent 70%)}
 .dcard__artveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,18,.2) 0%,rgba(6,9,18,0) 34%,var(--artFade) 100%)}
-.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 46%,var(--veilBottom) 100%)}
+/* §278 — o VÉU é um ARCO (abóbada), não uma linha reta: sobe no centro e desce nas laterais, e o texto
+   assenta sobre ele (as duas imagens mostram a mesma curva). Um degradê escuro por-cultura RECORTADO por
+   uma máscara SVG em forma de abóbada (o topo é uma quadrática que pica ~44% no centro e desce a ~54% nas
+   bordas). A cor vem do degradê (var), a curva vem da máscara (alfa) — o arco é a forma, não um gradiente. */
+.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 30%,var(--veilBottom) 56%);
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 54 Q50 34 100 54 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%;
+  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 54 Q50 34 100 54 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%}
 .dcard__corpo{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;
   gap:4px;padding:8px 9px 11px;text-align:center}
 .dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.3em}
@@ -1118,10 +1129,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .dcard__frase{font-style:italic;font-weight:300;font-size:9.5px;line-height:1.25;color:#BDC9DA;text-wrap:balance;min-height:22px}
 .dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin:1px 0}
 .dcard__ant{font-size:9px;color:var(--ink-mute)}
-.dcard__deuses{display:flex;justify-content:center;gap:5px}
+.dcard__deuses{display:flex;justify-content:center;gap:3px}
 .dcard__deus{display:flex;flex-direction:column;align-items:center;gap:1px;width:44px}
-.dcard__deus .slot{width:30px;height:30px;background:#0B1226;box-shadow:inset 0 0 0 2px var(--gold);
-  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
+/* §278 — retrato como nas imagens: quadrado de CANTO ARREDONDADO com moldura fina dourada (não o chanfro
+   diagonal do §277). */
+.dcard__deus .slot{width:30px;height:30px;background:#0B1226;border-radius:6px;box-shadow:inset 0 0 0 1.5px var(--gold)}
 .dcard__deus i{font-family:'Cinzel',serif;font-weight:600;font-style:normal;font-size:8px;letter-spacing:.06em;color:#D8E0EC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44px}
 .dcard__entrar{margin-top:3px;width:100%;padding:5px 14px;font-family:'Cinzel',serif;font-weight:700;font-size:11px;
   letter-spacing:.2em;color:#F5E9CA;background:linear-gradient(180deg,rgba(38,29,12,.9),rgba(18,14,6,.9));
