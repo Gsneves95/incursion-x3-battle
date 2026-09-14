@@ -643,6 +643,48 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await g.close();
   }
 
+  // == §278 DOMÍNIOS: a PÍLULA de progresso NUNCA quebra em 2 linhas, nos QUATRO estados, no piso 780. ==
+  // Foi o defeito que o §278 introduziu (cartão de 172→134) e é do tipo que volta sozinho na próxima
+  // mudança de largura. Semeamos os quatro estados no PIOR caso (nível 40/40) e medimos a altura real de
+  // cada pílula contra a de UMA linha (auto-calibrada pela mais curta) — fontes reais, rede bloqueada.
+  console.log('== §278: nenhuma pílula de progresso quebra em 2 linhas (4 estados, nível 40/40, piso 780) ==');
+  {
+    const g = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 780, height: 428 } });
+    await g.route('**/*', r => { if (/^https?:\/\//i.test(r.request().url())) return r.abort(); return r.continue(); });
+    const gp = await g.newPage();
+    await gp.goto('file://' + distAbs, { waitUntil: 'load' });
+    for (let i = 0; i < 30; i++) { const on = await gp.evaluate(async () => { try { await document.fonts.load('700 10px Cinzel'); await document.fonts.ready; } catch (e) {} return document.fonts.check('900 26px Cinzel'); }); if (on) break; await gp.waitForTimeout(200); }
+    // semeia os 4 estados no pior caso (40/40) nas cinco culturas
+    await gp.evaluate(() => {
+      const cur = domSemanaChave(), ant = domChaveSemanaAnterior();
+      const V = [120, 120, 120], run = e => Object.assign({ nivel: 1, vida: V, bonus: 0 }, e);
+      const cs = Object.keys(DOMINIOS);
+      let p = novoPerfil(0, 0);
+      // ativo 40/40 · rec batido 40/40 (▲) · rec não-batido 40/40 · e dois "Não iniciado"
+      p = definirRunDominio(p, cs[0], run({ status: 'ativo', nivel: 40, profundidade: 39, semana: cur }));
+      p = definirRunDominio(p, cs[1], run({ status: 'concluida', nivel: 38, profundidade: 38, semana: ant }));
+      p = definirRunDominio(p, cs[1], run({ status: 'concluida', nivel: 40, profundidade: 40, semana: cur }));
+      p = definirRunDominio(p, cs[2], run({ status: 'concluida', nivel: 40, profundidade: 40, semana: cur }));
+      perfil = p;
+      ir('dominios', {}, { substituir: true }); render();
+    });
+    const prog = await gp.evaluate(() => {
+      const els = [...document.querySelectorAll('.domcard__prog')];
+      const hs = els.map(e => e.offsetHeight);
+      const textos = els.map(e => e.textContent.replace(/\s+/g, ' ').trim());
+      const uma = Math.min(...hs);   // a pílula mais curta é 1 linha (auto-calibra)
+      return { hs, textos, uma };
+    });
+    const quebrou = prog.hs.filter(h => h > prog.uma + 3).length;
+    ok(quebrou === 0, `§278: ${quebrou} pílula(s) quebram em 2 linhas a 780 (alturas ${JSON.stringify(prog.hs)}, textos ${JSON.stringify(prog.textos)})`);
+    // e confirma que os quatro estados de fato apareceram (senão o guarda não provou nada)
+    const estados = prog.textos.join(' | ');
+    ok(/Em corrida 40\/40/.test(estados) && /Nível 40\/40 ▲/.test(estados) && /Nível 40\/40(?! ▲)/.test(estados) && /Não iniciado/.test(estados),
+      `§278: os quatro estados apareceram no piso (recorde/batido/corrida/não-iniciado) — veio: ${estados}`);
+    console.log(`  pílulas a 780: 1 linha=${prog.uma}px · alturas ${JSON.stringify(prog.hs)} · estados: ${estados}`);
+    await g.close();
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> MOLDURA OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

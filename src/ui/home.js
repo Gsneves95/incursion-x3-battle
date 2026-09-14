@@ -1964,11 +1964,14 @@ function dominioPosterHTML(lad){
   const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt);
   const emCorrida = run && run.status === 'ativo';
   const batido = recAnt > 0 && recSem > recAnt;
+  // §278-ajustes: rótulo CURTO (mede ≤118px no piso 780, uma linha) — "Semana ·" e "· nível" eram andaime;
+  // ficam o número e o SINAL de estado (ícone+cor+palavra de estado). "Não iniciado" convida (termo da
+  // referência do dono), no lugar de "sem marca" que soava a boletim. Guarda babá: nenhuma pílula quebra.
   const prog = emCorrida
-    ? `<div class="domcard__prog domcard__prog--ativo"><i>▸</i>Em corrida · nível ${run.nivel}/${total}</div>`
+    ? `<div class="domcard__prog domcard__prog--ativo"><i>▸</i>Em corrida ${run.nivel}/${total}</div>`
     : (recSem > 0
-      ? `<div class="domcard__prog domcard__prog--rec">Semana · nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
-      : `<div class="domcard__prog domcard__prog--novo">Semana · sem marca</div>`);
+      ? `<div class="domcard__prog domcard__prog--rec">Nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
+      : `<div class="domcard__prog domcard__prog--novo">Não iniciado</div>`);
   const anterior = `<span class="dcard__ant">${recAnt > 0 ? 'anterior a bater · nível ' + recAnt : '1ª semana — sem marca'}</span>`;
   const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeusCartao(lad, k))}</i></span>`).join('');
   const emb = temArteDom('emblema-' + c)

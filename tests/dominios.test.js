@@ -275,7 +275,7 @@ console.log('== 10) §276 A TELA DE ESCOLHA (pôster): sem recompensa/placar com
   const c0 = w.eval('Object.keys(DOMINIOS)[0]'); const cur = w.eval('domSemanaChave()');
   w.eval(`perfil=novoPerfil(0,0); perfil.dominios.porDominio["${c0}"]={run:null,melhorSempre:7,semanas:{"${cur}":7}}; ir("dominios",{},{substituir:true}); render();`);
   const prog = w.eval(`(document.querySelector('.dcard[data-cultura="${c0}"] .domcard__prog')||{}).textContent||''`);
-  ok(/7/.test(prog) && /Semana/.test(prog), 'o cartão traz o PROGRESSO da semana (nível 7) de volta ao cartão (correção 3) — "' + prog.trim() + '"');
+  ok(/7\/40/.test(prog) && /Nível/.test(prog), 'o cartão traz o PROGRESSO da semana (nível 7/40) de volta ao cartão (correção 3; rótulo curto §278) — "' + prog.trim() + '"');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }
