@@ -400,6 +400,16 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     aqui** — são do servidor, que hoje não persiste (disco efêmero do Render grátis, §237/§274);
     dependem de store durável (Postgres/disco pago/KV) que o dono ainda não contratou. Fronteira:
     progresso pessoal = local; comparação entre jogadores = servidor durável.
+    **RECORDE LOCAL NÃO É PROVA (§275-bis):** o relógio é do aparelho e é forjável (adiantar abre
+    semanas e recordes à vontade) — inofensivo hoje (ninguém compara), mas o histórico local
+    (`porDominio[c].semanas`/`melhorSempre`) **NUNCA pode ser subido ao servidor como pontuação**. O
+    placar do servidor, quando existir, **começa do zero e é o SERVIDOR quem conta a profundidade**
+    (a corrida ranqueada roda sob o relógio/autoridade do servidor, como o ranqueado já faz — §226).
+    O horizonte é uma JANELA fixa (N≈8): como um recorde passado é um NÚMERO (não uma escada
+    rejogável), NÃO se guarda escada velha — regerar N≈8 mantém o bundle plano; gerar 52 semanas com
+    o mesmo método leva ~45 min (esteira anual/trimestral). Servir escadas como arquivo só compensa
+    se um N grande simultâneo for desejado, e esbarra em `fetch()` de JSON bloqueado em `file://`
+    (≠ `<img>` das artes) — a semana corrente teria de ficar embutida como fallback offline (§275-bis).
 
 ---
 

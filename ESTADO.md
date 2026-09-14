@@ -16,7 +16,9 @@
 
 **Fatia 3 NÃO tem:** comparação entre jogadores, servidor, recompensa, rotação de trio. **Babás** `dominios.test.js`+`perfil.test.js` (virada preserva melhor de sempre e arquiva o semanal; corrida não se perde na virada; recorde anterior + superação; 5×8 escadas monotônicas; relógio adiantado/atrasado não apaga). Suíte+build verdes; 3 capturas em `docs/capturas-275/`. **Arquivos:** `tools/gerar_dominios.js`, `data/dominios/*.json` (semanas[]), `src/dominios.js`, `src/perfil.js` (v6), `src/ui/home.js`, `src/shell.html`, `tests/{dominios,perfil}.test.js`.
 
-**PRÓXIMAS FATIAS (anotadas):** as outras 5 culturas; o PLACAR comparativo/ranqueado (precisa do store durável acima); calibração pelo dono (cura/rampa/nº de semanas — knobs de dado).
+**TRÊS REGISTROS §275-bis (documentação + análise reportada):** (1) **recorde local NÃO é prova** — o relógio é do aparelho e forjável; o histórico local nunca vira entrada de placar comparativo; o placar do servidor, quando existir, começa do ZERO e é o servidor quem conta a profundidade (§226). (2) **PRAZO do horizonte:** com N=8, a semana 9 rejoga a escada 1 (chave nova, terreno conhecido = 2 meses) — **por volta da semana 8, gerar mais.** Custo medido: o POOL (caro) é 1× por cultura; o marginal é ~8 s/cultura/semana → **52 semanas ≈ ~45 min** (esteira ANUAL/trimestral, não mensal). (3) **escadas embutidas × arquivo:** o bundle NÃO cresce com o tempo se N for janela fixa (recorde passado é um NÚMERO, não escada rejogável — regerar N≈8 mantém ~2,17 MB plano); servir como arquivo só compensa se quiser N grande simultâneo, e esbarra em `fetch()` de JSON bloqueado em `file://` (≠ `<img>` das artes) → semana corrente teria de ficar embutida como fallback. **Não fazer agora.**
+
+**PRÓXIMAS FATIAS (anotadas):** gerar mais semanas ~semana 8 (esteira ~45 min/ano); as outras 5 culturas; o PLACAR comparativo/ranqueado (precisa do store durável acima, e começa do zero no servidor); calibração pelo dono (cura/rampa/nº de semanas — knobs de dado).
 
 ## ★ DOMÍNIOS §274 — Fatia 2: CINCO Domínios + tela de seleção (progresso por Domínio, independente).
 
