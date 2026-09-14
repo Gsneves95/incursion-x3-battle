@@ -27,11 +27,11 @@ const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CU
 const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 25, candidatos: 220, ruaN: 12, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.06 };
 // `frase` (§276): a linha em itálico do cartão de escolha — dado, não código; um campo por cultura.
 const CFGS = {
-  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'Glória, força e a vontade dos deuses.', ...COMUM },
-  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], frase: 'Batalha, destino e o crepúsculo dos deuses.', ...COMUM },
-  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], frase: 'Vida, morte e o eterno equilíbrio.', ...COMUM },
-  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], frase: 'O sol, a tempestade e a lua velam o alto céu.', ...COMUM },
-  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], frase: 'Disciplina, revolta e o poder sem limites.', ...COMUM },
+  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'O raio, o tridente e a lança que pensa.', ...COMUM },
+  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], frase: 'O corvo, o martelo e a mentira.', ...COMUM },
+  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], frase: 'A barca, a magia e o rei que volta.', ...COMUM },
+  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], frase: 'O sol, a tempestade e a lua.', ...COMUM },
+  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], frase: 'A revolta, a lança e a mão que remendou o céu.', ...COMUM },
 };
 // seleção: `node tools/gerar_dominios.js [Cultura|--todas]` (default: Grega)
 const _sel = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;

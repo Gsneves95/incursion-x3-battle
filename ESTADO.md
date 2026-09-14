@@ -2,6 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §277 — A TELA DE ESCOLHA, 2ª leva: o mockup RICO do dono (chanfros, paleta por cultura, ouro por gradiente). Substitui o visual do §276.
+
+**§277 — o que mudou sobre o §276:** a mesma tela (rota `dominios`), agora na linguagem cheia do mockup. Cabeçalho: "Domínios" em Cinzel 900 dourado (gradiente por `background-clip:text`) + "?" de ajuda + linha-guia `.24em`; seta de voltar girada 45°. Cartões-pôster: **chanfro nos 4 cantos**, **moldura+brilho por cultura**, **emblema-anel** dourado meio-para-fora, **nome dourado em 2 linhas**, frase itálica peso 300, **retratos com canto chanfrado**, **botão ENTRAR em bisel** (escuro+borda dourada). Rodapé de **dois painéis chanfrados**. Motor, ciclo semanal, recordes por chave, corrida retomável e invariante #3 seguem intactos.
+
+**NÃO escalei o mockup uniformemente** (a advertência do dono procede): mockup 1536×1024 (1,5) × palco 951×428 (2,22). Mantive a LINGUAGEM e as proporções INTERNAS do cartão nas bandas do §276 (cab 48 · cartões 308 · rodapé 56); o tipo escala por LEGIBILIDADE (piso §257/§261): nome 15 · frase 9,5 · cultura 9 · deus 8.
+
+**As 4 mentiras do mockup, recusadas (versão rica):** (1) sem RANKING/TOP 10/recompensa/baú — botão do topo = **SEU HISTÓRICO**, painel dir. do rodapé = **A MARCA A BATER**, painel esq. = melhor desempenho + atalho **VER HISTÓRICO**; (2) sem EM BREVE; (3) progresso no cartão; (4) **TAKAMAGAHARA** + trio certo. **Frases novas do DADO** (subst. as do §276): Olimpo "O raio, o tridente e a lança que pensa." · Asgard "O corvo, o martelo e a mentira." · Duat "A barca, a magia e o rei que volta." · Takamagahara "O sol, a tempestade e a lua." · Céus "A revolta, a lança e a mão que remendou o céu."
+
+**PALETA por cultura** em `.dcard--<c>` (10 custom props). Grega/Egípcia/Chinesa/Japonesa do mockup; **Nórdica DERIVADA em azul-gelo** (`--tag:#BFE3F2`, mais fria/clara que a Grega — distinta). As 5 `--tag` distintas (guarda). **Confirmar com o dono:** o `emblemBg` da Japonesa (ele aproximou o final; ficou `#4A1030→#160610`).
+
+**EMBLEMA-MONOGRAMA — medição pendente do §276, RESOLVIDA e reportada.** Os glifos ΟΛ ☥ ⛩ 天 ᛟ estão TODOS FORA do subset da Cinzel (§260 = latino + latino estendido) → tofu no Android. Troquei pelas iniciais latinas (cobertas): **OL · AS · DU · TK · CE**. As letras são escolha do dono (trivial de mudar). Placeholders até `emblema-<c>.webp`.
+
+**DOIS CORTES medidos a 780 (Cinzel real, rede bloqueada) — reportados, NÃO consertados (§257/§261, a escolha é do dono):** (a) **nome do deus corta em 4/15** — Sun Wukong (60), Amaterasu (51), Tsukuyomi (51), Poseidon (45) numa caixa de 44px → reticências; (b) **linha-guia do cabeçalho corta 1px só no piso 780** ("…SEJA LENDÁRIO"), cabe a 951/1200. **Sem corte:** nome do Domínio (japonês em 3 linhas, sem corte), frase (a dos Céus, a mais longa, cabe), linha de progresso.
+
+**Arte/fundo:** portão §213 (build varre `web/banners/dominios/` → `DOMINIOS_ARTE`, nunca 404); nada existe → tudo placeholder, a tela legível sem arte (guarda+captura). Fundo opcional. **O dono gera depois:** `dominio-{grega,egipcia,japonesa,nordica,chinesa}.webp`, `emblema-{...}.webp`, `dominios-fundo.webp`.
+
+**Babás** `dominios.test.js` §10 (13, do §276) + §11 (§277: `.dcard--<c>`, `--tag` distintas, monograma latino/sem tofu, rodapé 2 painéis + VER HISTÓRICO, "?" honesto, nome em 2 spans). Suíte+build verdes; **4 capturas** em `docs/capturas-277/`. **Arquivos:** `tools/gerar_dominios.js`, `data/dominios/*.json`, `src/ui/home.js`, `src/shell.html`, `tests/dominios.test.js`.
+
+**DECISÕES ABERTAS PARA O DONO (§277):** (1) o corte dos 4 nomes de deus — fonte menor / caixa maior / apelido curto no dado / duas linhas? (2) a linha-guia no piso 780 — encurtar / reduzir? (3) as letras dos monogramas (OL/AS/DU/TK/CE)? (4) o `emblemBg` da Japonesa. (5) gerar as 11 artes.
+
 ## ★ DOMÍNIOS §276 — A TELA DE ESCOLHA em cartões-PÔSTER (reskin de um mockup do dono). Troca de PELE + conteúdo; o motor/ciclo do §275 NÃO muda.
 
 **§276 — o que mudou:** só a rota `dominios` (a seleção dos cinco). Cinco cartões-pôster: arte de tela cheia (placeholder por ora), emblema circular meio-para-fora no topo, cultura em versalete, nome em Cinzel dourado, frase em itálico (do DADO), três retratos, botão ENTRAR. Banda de topo (título + botão SEU HISTÓRICO à direita) e barra de baixo (A MARCA A BATER). A rota individual, o ciclo semanal, os recordes por chave, a corrida retomável e o invariante #3 seguem intactos.

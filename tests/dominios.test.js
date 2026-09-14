@@ -280,6 +280,45 @@ console.log('== 10) §276 A TELA DE ESCOLHA (pôster): sem recompensa/placar com
   w.close();
 }
 
+console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema-monograma em LATINO (sem tofu) · rodapé de dois painéis ==');
+{
+  const jsdom = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
+  const vc = new jsdom.VirtualConsole(); const errs = []; vc.on('jsdomError', e => errs.push(e.message));
+  const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
+  const w = dom.window, d = w.document;
+  w.eval('perfil=novoPerfil(0,0); ir("dominios",{},{substituir:true}); render();');
+  // cada cartão tem a classe de paleta da sua cultura
+  const cults = w.eval('Object.keys(DOMINIOS)');
+  let todosClasse = true;
+  for (const c of cults) { if (!d.querySelector(`.dcard--${c}[data-cultura="${c}"]`)) todosClasse = false; }
+  ok(todosClasse, 'cada cartão carrega a classe de paleta .dcard--<cultura>');
+  // as CINCO paletas têm --tag DISTINTO (nenhuma duas iguais) — lido das regras CSS do bundle
+  const tags = cults.map(c => { const m = new RegExp(`\\.dcard--${c}\\{[^}]*--tag:\\s*([^;]+);`).exec(html); return m ? m[1].trim() : null; });
+  ok(tags.every(Boolean), 'toda cultura tem uma regra .dcard--<c> com --tag no CSS');
+  ok(new Set(tags).size === cults.length, 'as cinco paletas têm --tag DISTINTO (' + tags.join(' · ') + ')');
+  // o emblema-monograma é SÓ LATINO (basic + extended, ≤ U+024F) — cobertura da Cinzel subsetada (§260), sem tofu no Android
+  const monos = [...d.querySelectorAll('.dcard__embmono')].map(e => e.textContent);
+  ok(monos.length === cults.length, 'cada cartão sem arte mostra um monograma de emblema');
+  const foraLatino = monos.filter(s => [...s].some(ch => ch.codePointAt(0) > 0x24F));
+  ok(foraLatino.length === 0, 'todo monograma está no LATINO coberto pela Cinzel (sem glifo tofu) — monos: ' + monos.join(','));
+  // o rodapé é de DOIS painéis, e o da esquerda tem o atalho VER HISTÓRICO
+  ok(d.querySelectorAll('.dsel__pain').length === 2, 'o rodapé tem dois painéis (esq: melhor desempenho · dir: a marca a bater)');
+  ok(!!d.querySelector('#dhistver'), 'o painel esquerdo tem o atalho VER HISTÓRICO');
+  d.querySelector('#dhistver').click();
+  ok(!!d.querySelector('#dhistov'), 'VER HISTÓRICO abre o mesmo overlay de histórico');
+  (d.querySelector('#dhistov') || {}).remove && d.querySelector('#dhistov').remove();
+  // o "?" do cabeçalho abre a ajuda HONESTA (sem placar comparativo/recompensa)
+  ok(!!d.querySelector('#dajuda'), 'o cabeçalho tem o "?" de ajuda');
+  d.querySelector('#dajuda').click();
+  const aj = d.querySelector('#dajudaov');
+  ok(!!aj && /SEM COMPARA[ÇC][ÃA]O COM OUTROS JOGADORES|SEM RECOMPENSA/.test(aj.textContent.toUpperCase()), 'a ajuda é honesta: placar só seu, sem recompensa');
+  // o nome do Domínio sai em DUAS linhas (dois <span> dentro de .dcard__nome)
+  ok([...d.querySelectorAll('.dcard__nome')].every(n => n.querySelectorAll('span').length === 2), 'o nome do Domínio vem em duas linhas (dois <span>)');
+  ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
+  w.close();
+}
+
 console.log('');
 console.log(f === 0 ? '>>> DOMINIOS OK' : `>>> ${f} FALHA(S)`);
 if (f) process.exit(1);

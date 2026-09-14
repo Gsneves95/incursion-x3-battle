@@ -1,1 +1,3676 @@
-{"_fonte":"GERADO por tools/gerar_dominios.js (§273/§274/§275). NÃO editar à mão. CICLO SEMANAL: uma escada por semana (mesmo método e régua; só a SELEÇÃO varia por semana; trio FIXO, sem rotação). dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; 12 seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de 10. Reproduzir: node tools/gerar_dominios.js --todas --semanas=8","cultura":"Japonesa","nome":"Domínio de Takamagahara","trio":["amaterasu","susanoo","tsukuyomi"],"frase":"O sol, a tempestade e a lua velam o alto céu.","faixa":10,"rampaDano":[1,1.05,1.1,1.15],"curaPorNivel":25,"tetoBonusDano":0.5,"passoBonusDano":0.1,"tolMonotonia":0.06,"regua":{"metodo":"1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa","seeds":12},"semanas":[{"niveis":[{"n":1,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":2,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":4,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Brasileira","inimigos":["boitata","boto","cuca"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":11,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1.05,"dificuldade":0.16666666666666663},{"n":12,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.16666666666666663},{"n":13,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":14,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":15,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.75},{"n":16,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.75},{"n":17,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.75},{"n":18,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.75},{"n":19,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.05,"dificuldade":0.75},{"n":20,"chefe":true,"cultura":"Africana","inimigos":["exu","iansa","ogum"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Grega","inimigos":["afrodite","apolo","aquiles"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["babi","ahpuch","khonshu"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["dagda","boto","ymir"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["hera","ahpuch","izanami"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Celta","inimigos":["brigid","cernunnos","dagda"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":1,"min":0,"p50":1,"max":2,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0},{"n":2,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Egípcia","inimigos":["ammit","anubis","babi"],"danoMult":1,"dificuldade":0.5833333333333333},{"n":11,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":12,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":13,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":14,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.75},{"n":15,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.75},{"n":16,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1.05,"dificuldade":0.75},{"n":17,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.05,"dificuldade":0.75},{"n":18,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.75},{"n":19,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.75},{"n":20,"chefe":true,"cultura":"Grega","inimigos":["afrodite","apolo","aquiles"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Nórdica","inimigos":["baldur","bragi","fenrir"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["babi","ahpuch","khonshu"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["dagda","boto","ymir"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Celta","inimigos":["brigid","cernunnos","dagda"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":0.8,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":2,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":4,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Maia","inimigos":["ahpuch","chaac","itzamna"],"danoMult":1,"dificuldade":0.8333333333333334},{"n":11,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":12,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":13,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":14,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":15,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":16,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":17,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":18,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":19,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":20,"chefe":true,"cultura":"Africana","inimigos":["exu","iansa","ogum"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Chinesa","inimigos":["aokuang","change","guanyu"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["cuca","ahpuch","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["hera","ahpuch","izanami"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Hindu","inimigos":["brahma","durga","ganesha"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":1,"min":0,"p50":1,"max":2,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0},{"n":2,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":3,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Maia","inimigos":["ahpuch","chaac","itzamna"],"danoMult":1,"dificuldade":0.8333333333333334},{"n":11,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":12,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":13,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":14,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":15,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":16,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":17,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":18,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":19,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":20,"chefe":true,"cultura":"Africana","inimigos":["exu","iansa","ogum"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Nórdica","inimigos":["baldur","bragi","fenrir"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["hera","ahpuch","izanami"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Celta","inimigos":["brigid","cernunnos","dagda"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":0.8,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0},{"n":2,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Brasileira","inimigos":["boitata","boto","cuca"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":11,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":12,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":13,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":14,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":15,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":16,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.41666666666666663},{"n":17,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.05,"dificuldade":0.5},{"n":18,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.5},{"n":19,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.5},{"n":20,"chefe":true,"cultura":"Grega","inimigos":["afrodite","apolo","aquiles"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Grega","inimigos":["afrodite","apolo","aquiles"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["babi","ahpuch","khonshu"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["dagda","boto","ymir"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Celta","inimigos":["brigid","cernunnos","dagda"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":0.8,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":2,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Maia","inimigos":["ahpuch","chaac","itzamna"],"danoMult":1,"dificuldade":0.8333333333333334},{"n":11,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":12,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":13,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":14,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":15,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":16,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":17,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":18,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":19,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":20,"chefe":true,"cultura":"Africana","inimigos":["exu","iansa","ogum"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Nórdica","inimigos":["baldur","bragi","fenrir"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["yamatotakeru","huangdi","fujin"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["hera","ahpuch","izanami"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Hindu","inimigos":["brahma","durga","ganesha"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":1,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":2,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Maia","inimigos":["ahpuch","chaac","itzamna"],"danoMult":1,"dificuldade":0.8333333333333334},{"n":11,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":12,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":13,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":14,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":15,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":16,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":17,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":18,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":19,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.05,"dificuldade":0.8333333333333334},{"n":20,"chefe":true,"cultura":"Maia","inimigos":["ahpuch","chaac","itzamna"],"danoMult":1.05,"dificuldade":0.9166666666666666},{"n":21,"chefe":false,"inimigos":["babi","ammit","dionisio"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":22,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":23,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":24,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":25,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":26,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":27,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":28,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":29,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":0.9166666666666666},{"n":30,"chefe":true,"cultura":"Chinesa","inimigos":["aokuang","change","guanyu"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["inari","erinias","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["babi","ahpuch","khonshu"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["hera","ahpuch","izanami"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Celta","inimigos":["brigid","cernunnos","dagda"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":0.7,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}},{"niveis":[{"n":1,"chefe":false,"inimigos":["heimdall","hera","boto"],"danoMult":1,"dificuldade":0},{"n":2,"chefe":false,"inimigos":["bastet","cerberus","yanwong"],"danoMult":1,"dificuldade":0.08333333333333337},{"n":3,"chefe":false,"inimigos":["ganesha","osiris","atena"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":4,"chefe":false,"inimigos":["heimdall","atena","khonshu"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":5,"chefe":false,"inimigos":["kitsune","morrigan","dionisio"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":6,"chefe":false,"inimigos":["kitsune","fujin","afrodite"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":7,"chefe":false,"inimigos":["ogum","izanami","fujin"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":8,"chefe":false,"inimigos":["erinias","hera","bastet"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":9,"chefe":false,"inimigos":["tyr","loki","hera"],"danoMult":1,"dificuldade":0.16666666666666663},{"n":10,"chefe":true,"cultura":"Egípcia","inimigos":["ammit","anubis","babi"],"danoMult":1,"dificuldade":0.5833333333333333},{"n":11,"chefe":false,"inimigos":["medusa","fujin","cuca"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":12,"chefe":false,"inimigos":["dionisio","fujin","yanwong"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":13,"chefe":false,"inimigos":["hercules","erinias","cerberus"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":14,"chefe":false,"inimigos":["izanami","cerberus","yanwong"],"danoMult":1.05,"dificuldade":0.5833333333333333},{"n":15,"chefe":false,"inimigos":["hera","hermes","izanami"],"danoMult":1.05,"dificuldade":0.75},{"n":16,"chefe":false,"inimigos":["cuca","bastet","atena"],"danoMult":1.05,"dificuldade":0.75},{"n":17,"chefe":false,"inimigos":["dionisio","atena","izanami"],"danoMult":1.05,"dificuldade":0.75},{"n":18,"chefe":false,"inimigos":["raijin","hera","cerberus"],"danoMult":1.05,"dificuldade":0.75},{"n":19,"chefe":false,"inimigos":["anubis","iansa","khonshu"],"danoMult":1.05,"dificuldade":0.75},{"n":20,"chefe":true,"cultura":"Grega","inimigos":["afrodite","apolo","aquiles"],"danoMult":1.05,"dificuldade":1},{"n":21,"chefe":false,"inimigos":["yamatotakeru","odin","dionisio"],"danoMult":1.1,"dificuldade":1},{"n":22,"chefe":false,"inimigos":["khonshu","dagda","anubis"],"danoMult":1.1,"dificuldade":1},{"n":23,"chefe":false,"inimigos":["babi","bastet","boto"],"danoMult":1.1,"dificuldade":1},{"n":24,"chefe":false,"inimigos":["cuca","ymir","khonshu"],"danoMult":1.1,"dificuldade":1},{"n":25,"chefe":false,"inimigos":["boitata","cerberus","chaac"],"danoMult":1.1,"dificuldade":1},{"n":26,"chefe":false,"inimigos":["odin","yamatotakeru","boitata"],"danoMult":1.1,"dificuldade":1},{"n":27,"chefe":false,"inimigos":["khnum","erinias","odin"],"danoMult":1.1,"dificuldade":1},{"n":28,"chefe":false,"inimigos":["izanami","ymir","cuca"],"danoMult":1.1,"dificuldade":1},{"n":29,"chefe":false,"inimigos":["boto","heimdall","baldur"],"danoMult":1.1,"dificuldade":1},{"n":30,"chefe":true,"cultura":"Chinesa","inimigos":["aokuang","change","guanyu"],"danoMult":1.1,"dificuldade":1},{"n":31,"chefe":false,"inimigos":["horus","chaac","atena"],"danoMult":1.15,"dificuldade":1},{"n":32,"chefe":false,"inimigos":["ahpuch","odin","cerberus"],"danoMult":1.15,"dificuldade":1},{"n":33,"chefe":false,"inimigos":["boto","iara","cernunnos"],"danoMult":1.15,"dificuldade":1},{"n":34,"chefe":false,"inimigos":["izanami","boto","babi"],"danoMult":1.15,"dificuldade":1},{"n":35,"chefe":false,"inimigos":["aokuang","durga","fujin"],"danoMult":1.15,"dificuldade":1},{"n":36,"chefe":false,"inimigos":["babi","ahpuch","khonshu"],"danoMult":1.15,"dificuldade":1},{"n":37,"chefe":false,"inimigos":["ganesha","erinias","change"],"danoMult":1.15,"dificuldade":1},{"n":38,"chefe":false,"inimigos":["dagda","boto","ymir"],"danoMult":1.15,"dificuldade":1},{"n":39,"chefe":false,"inimigos":["cuca","ahpuch","yanwong"],"danoMult":1.15,"dificuldade":1},{"n":40,"chefe":true,"cultura":"Hindu","inimigos":["brahma","durga","ganesha"],"danoMult":1.15,"dificuldade":1}],"pisoIAGuloso":{"med":0.8,"min":0,"p50":1,"max":1,"corridas":30,"politicaPremio":"reviver caído senão curar"}}]}
+{
+  "_fonte": "GERADO por tools/gerar_dominios.js (§273/§274/§275). NÃO editar à mão. CICLO SEMANAL: uma escada por semana (mesmo método e régua; só a SELEÇÃO varia por semana; trio FIXO, sem rotação). dificuldade[n] = 1 − (vitórias do trio GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; 12 seeds). O sorteio SAIU (loteria); a dificuldade sobe por DANO do inimigo em faixa de 10. Reproduzir: node tools/gerar_dominios.js --todas --semanas=8",
+  "cultura": "Japonesa",
+  "nome": "Domínio de Takamagahara",
+  "trio": [
+    "amaterasu",
+    "susanoo",
+    "tsukuyomi"
+  ],
+  "frase": "O sol, a tempestade e a lua.",
+  "faixa": 10,
+  "rampaDano": [
+    1,
+    1.05,
+    1.1,
+    1.15
+  ],
+  "curaPorNivel": 25,
+  "tetoBonusDano": 0.5,
+  "passoBonusDano": 0.1,
+  "tolMonotonia": 0.06,
+  "regua": {
+    "metodo": "1 − vitória gulosa (vida cheia) vs trio inimigo, no danoMult da faixa",
+    "seeds": 12
+  },
+  "semanas": [
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Brasileira",
+          "inimigos": [
+            "boitata",
+            "boto",
+            "cuca"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Africana",
+          "inimigos": [
+            "exu",
+            "iansa",
+            "ogum"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Grega",
+          "inimigos": [
+            "afrodite",
+            "apolo",
+            "aquiles"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ahpuch",
+            "khonshu"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "dagda",
+            "boto",
+            "ymir"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "ahpuch",
+            "izanami"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Celta",
+          "inimigos": [
+            "brigid",
+            "cernunnos",
+            "dagda"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 1,
+        "min": 0,
+        "p50": 1,
+        "max": 2,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Egípcia",
+          "inimigos": [
+            "ammit",
+            "anubis",
+            "babi"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Grega",
+          "inimigos": [
+            "afrodite",
+            "apolo",
+            "aquiles"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Nórdica",
+          "inimigos": [
+            "baldur",
+            "bragi",
+            "fenrir"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ahpuch",
+            "khonshu"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "dagda",
+            "boto",
+            "ymir"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Celta",
+          "inimigos": [
+            "brigid",
+            "cernunnos",
+            "dagda"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 0.8,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Maia",
+          "inimigos": [
+            "ahpuch",
+            "chaac",
+            "itzamna"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Africana",
+          "inimigos": [
+            "exu",
+            "iansa",
+            "ogum"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Chinesa",
+          "inimigos": [
+            "aokuang",
+            "change",
+            "guanyu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ahpuch",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "ahpuch",
+            "izanami"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Hindu",
+          "inimigos": [
+            "brahma",
+            "durga",
+            "ganesha"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 1,
+        "min": 0,
+        "p50": 1,
+        "max": 2,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Maia",
+          "inimigos": [
+            "ahpuch",
+            "chaac",
+            "itzamna"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Africana",
+          "inimigos": [
+            "exu",
+            "iansa",
+            "ogum"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Nórdica",
+          "inimigos": [
+            "baldur",
+            "bragi",
+            "fenrir"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "ahpuch",
+            "izanami"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Celta",
+          "inimigos": [
+            "brigid",
+            "cernunnos",
+            "dagda"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 0.8,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Brasileira",
+          "inimigos": [
+            "boitata",
+            "boto",
+            "cuca"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.41666666666666663
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Grega",
+          "inimigos": [
+            "afrodite",
+            "apolo",
+            "aquiles"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Grega",
+          "inimigos": [
+            "afrodite",
+            "apolo",
+            "aquiles"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ahpuch",
+            "khonshu"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "dagda",
+            "boto",
+            "ymir"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Celta",
+          "inimigos": [
+            "brigid",
+            "cernunnos",
+            "dagda"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 0.8,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Maia",
+          "inimigos": [
+            "ahpuch",
+            "chaac",
+            "itzamna"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Africana",
+          "inimigos": [
+            "exu",
+            "iansa",
+            "ogum"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Nórdica",
+          "inimigos": [
+            "baldur",
+            "bragi",
+            "fenrir"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "huangdi",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "ahpuch",
+            "izanami"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Hindu",
+          "inimigos": [
+            "brahma",
+            "durga",
+            "ganesha"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 1,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Maia",
+          "inimigos": [
+            "ahpuch",
+            "chaac",
+            "itzamna"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.8333333333333334
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Maia",
+          "inimigos": [
+            "ahpuch",
+            "chaac",
+            "itzamna"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ammit",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 0.9166666666666666
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Chinesa",
+          "inimigos": [
+            "aokuang",
+            "change",
+            "guanyu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "inari",
+            "erinias",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ahpuch",
+            "khonshu"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "ahpuch",
+            "izanami"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Celta",
+          "inimigos": [
+            "brigid",
+            "cernunnos",
+            "dagda"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 0.7,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    },
+    {
+      "niveis": [
+        {
+          "n": 1,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "hera",
+            "boto"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0
+        },
+        {
+          "n": 2,
+          "chefe": false,
+          "inimigos": [
+            "bastet",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.08333333333333337
+        },
+        {
+          "n": 3,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "osiris",
+            "atena"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 4,
+          "chefe": false,
+          "inimigos": [
+            "heimdall",
+            "atena",
+            "khonshu"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 5,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "morrigan",
+            "dionisio"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 6,
+          "chefe": false,
+          "inimigos": [
+            "kitsune",
+            "fujin",
+            "afrodite"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 7,
+          "chefe": false,
+          "inimigos": [
+            "ogum",
+            "izanami",
+            "fujin"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 8,
+          "chefe": false,
+          "inimigos": [
+            "erinias",
+            "hera",
+            "bastet"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 9,
+          "chefe": false,
+          "inimigos": [
+            "tyr",
+            "loki",
+            "hera"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.16666666666666663
+        },
+        {
+          "n": 10,
+          "chefe": true,
+          "cultura": "Egípcia",
+          "inimigos": [
+            "ammit",
+            "anubis",
+            "babi"
+          ],
+          "danoMult": 1,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 11,
+          "chefe": false,
+          "inimigos": [
+            "medusa",
+            "fujin",
+            "cuca"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 12,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "fujin",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 13,
+          "chefe": false,
+          "inimigos": [
+            "hercules",
+            "erinias",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 14,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "cerberus",
+            "yanwong"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.5833333333333333
+        },
+        {
+          "n": 15,
+          "chefe": false,
+          "inimigos": [
+            "hera",
+            "hermes",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 16,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "bastet",
+            "atena"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 17,
+          "chefe": false,
+          "inimigos": [
+            "dionisio",
+            "atena",
+            "izanami"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 18,
+          "chefe": false,
+          "inimigos": [
+            "raijin",
+            "hera",
+            "cerberus"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 19,
+          "chefe": false,
+          "inimigos": [
+            "anubis",
+            "iansa",
+            "khonshu"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 0.75
+        },
+        {
+          "n": 20,
+          "chefe": true,
+          "cultura": "Grega",
+          "inimigos": [
+            "afrodite",
+            "apolo",
+            "aquiles"
+          ],
+          "danoMult": 1.05,
+          "dificuldade": 1
+        },
+        {
+          "n": 21,
+          "chefe": false,
+          "inimigos": [
+            "yamatotakeru",
+            "odin",
+            "dionisio"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 22,
+          "chefe": false,
+          "inimigos": [
+            "khonshu",
+            "dagda",
+            "anubis"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 23,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "bastet",
+            "boto"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 24,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ymir",
+            "khonshu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 25,
+          "chefe": false,
+          "inimigos": [
+            "boitata",
+            "cerberus",
+            "chaac"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 26,
+          "chefe": false,
+          "inimigos": [
+            "odin",
+            "yamatotakeru",
+            "boitata"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 27,
+          "chefe": false,
+          "inimigos": [
+            "khnum",
+            "erinias",
+            "odin"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 28,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "ymir",
+            "cuca"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 29,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "heimdall",
+            "baldur"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 30,
+          "chefe": true,
+          "cultura": "Chinesa",
+          "inimigos": [
+            "aokuang",
+            "change",
+            "guanyu"
+          ],
+          "danoMult": 1.1,
+          "dificuldade": 1
+        },
+        {
+          "n": 31,
+          "chefe": false,
+          "inimigos": [
+            "horus",
+            "chaac",
+            "atena"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 32,
+          "chefe": false,
+          "inimigos": [
+            "ahpuch",
+            "odin",
+            "cerberus"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 33,
+          "chefe": false,
+          "inimigos": [
+            "boto",
+            "iara",
+            "cernunnos"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 34,
+          "chefe": false,
+          "inimigos": [
+            "izanami",
+            "boto",
+            "babi"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 35,
+          "chefe": false,
+          "inimigos": [
+            "aokuang",
+            "durga",
+            "fujin"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 36,
+          "chefe": false,
+          "inimigos": [
+            "babi",
+            "ahpuch",
+            "khonshu"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 37,
+          "chefe": false,
+          "inimigos": [
+            "ganesha",
+            "erinias",
+            "change"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 38,
+          "chefe": false,
+          "inimigos": [
+            "dagda",
+            "boto",
+            "ymir"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 39,
+          "chefe": false,
+          "inimigos": [
+            "cuca",
+            "ahpuch",
+            "yanwong"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        },
+        {
+          "n": 40,
+          "chefe": true,
+          "cultura": "Hindu",
+          "inimigos": [
+            "brahma",
+            "durga",
+            "ganesha"
+          ],
+          "danoMult": 1.15,
+          "dificuldade": 1
+        }
+      ],
+      "pisoIAGuloso": {
+        "med": 0.8,
+        "min": 0,
+        "p50": 1,
+        "max": 1,
+        "corridas": 30,
+        "politicaPremio": "reviver caído senão curar"
+      }
+    }
+  ]
+}
