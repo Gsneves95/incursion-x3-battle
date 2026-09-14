@@ -20,7 +20,9 @@
 
 **Babás** `dominios.test.js` §10 (13, do §276) + §11 (§277: `.dcard--<c>`, `--tag` distintas, monograma latino/sem tofu, rodapé 2 painéis + VER HISTÓRICO, "?" honesto, nome em 2 spans). Suíte+build verdes; **4 capturas** em `docs/capturas-277/`. **Arquivos:** `tools/gerar_dominios.js`, `data/dominios/*.json`, `src/ui/home.js`, `src/shell.html`, `tests/dominios.test.js`.
 
-**DECISÕES ABERTAS PARA O DONO (§277):** (1) o corte dos 4 nomes de deus — fonte menor / caixa maior / apelido curto no dado / duas linhas? (2) a linha-guia no piso 780 — encurtar / reduzir? (3) as letras dos monogramas (OL/AS/DU/TK/CE)? (4) o `emblemBg` da Japonesa. (5) gerar as 11 artes.
+**AJUSTES §277 (3 acertos, ver DECISOES §277-ajustes):** (2) linha-guia encurtada p/ "…ALCANCE O TOPO" (tirei "SEJA LENDÁRIO") — **cabe a 780 (543/543), APLICADO**. (3) paletas aprovadas; Nórdica azul-gelo **REGISTRADA** em `.dcard--nórdica` (comentário "não re-derivar"); monogramas OL·AS·DU·TK·CE ficam. (1) nomes de deus: **1a (crescer caixa) inviável** (fileira já 142px num cartão de 138; teto ~46px/nome); **1b medido, PROPOSTO, NÃO aplicado** (portão do dono) — só **Sun Wukong→"Wukong" (40px)** tem forma curta limpa; Poseidon (46) fica no fio; **Amaterasu/Tsukuyomi (52) sem forma curta graciosa** → decisão do dono (aceitar reticência ~6px a 780/951, ou abreviação). Fonte NÃO reduzida. §263 confirmado: `curto` não entra no carimbo.
+
+**DECISÕES AINDA ABERTAS PARA O DONO:** (1) Amaterasu/Tsukuyomi — aceitar a reticência de ~6px ou uma abreviação? (aplicar o `curto` no dado depois da resposta; "Wukong" está pronto para entrar junto); (2) o `emblemBg` da Japonesa (`#4A1030→#160610`, aproximado); (3) gerar as 11 artes (`web/banners/dominios/`).
 
 ## ★ DOMÍNIOS §276 — A TELA DE ESCOLHA em cartões-PÔSTER (reskin de um mockup do dono). Troca de PELE + conteúdo; o motor/ciclo do §275 NÃO muda.
 

@@ -2003,7 +2003,7 @@ function renderDominios(){
       <button class="dsel__voltar" id="binicio" aria-label="Voltar"><i class="dsel__seta"></i></button>
       <div class="dsel__tit">
         <div class="dsel__titlinha"><h1 class="dsel__titulo">Domínios</h1><button class="dsel__ajuda" id="dajuda" aria-label="Como funciona">?</button></div>
-        <span class="dsel__sub">ESCOLHA UM DOMÍNIO · ENFRENTE BATALHAS · ALCANCE O TOPO · SEJA LENDÁRIO</span>
+        <span class="dsel__sub">ESCOLHA UM DOMÍNIO · ENFRENTE BATALHAS · ALCANCE O TOPO</span>
       </div>
       <button class="dsel__hist" id="dhist"><span class="dsel__hist-t">Seu histórico</span><span class="dsel__hist-s">seus recordes por Domínio</span></button>
     </header>
