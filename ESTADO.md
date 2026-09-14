@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §276 — A TELA DE ESCOLHA em cartões-PÔSTER (reskin de um mockup do dono). Troca de PELE + conteúdo; o motor/ciclo do §275 NÃO muda.
+
+**§276 — o que mudou:** só a rota `dominios` (a seleção dos cinco). Cinco cartões-pôster: arte de tela cheia (placeholder por ora), emblema circular meio-para-fora no topo, cultura em versalete, nome em Cinzel dourado, frase em itálico (do DADO), três retratos, botão ENTRAR. Banda de topo (título + botão SEU HISTÓRICO à direita) e barra de baixo (A MARCA A BATER). A rota individual, o ciclo semanal, os recordes por chave, a corrida retomável e o invariante #3 seguem intactos.
+
+**O mockup MENTIA em 4 pontos — recusados (motivo = §274/§275):** (1) **sem RANKING/TOP 10/recompensa/baú** — placar comparativo não existe nem pode hoje (nada sobrevive ao deploy, dono não contrata store durável); no lugar, mesmo peso: **SEU HISTÓRICO** (recordes semanais locais por Domínio, "sem comparação com outros jogadores") no canto, e **A MARCA A BATER** (o próprio recorde: melhor de sempre + recorde da semana passada) na barra. (2) **sem cartão EM BREVE/bloqueado** — os cinco jogáveis desde o §274. (3) **progresso volta ao cartão** (recorde da semana + anterior + ▲ batido, entre frase e botão — o §275 já tinha). (4) **japonês = TAKAMAGAHARA** (a imagem dizia "Yomi"; vale o DADO), trinca Amaterasu/Susanoo/Tsukuyomi.
+
+**Geometria do dono (palco 428):** cab 48 · cartões 308 · rodapé 56, respiro 8 **só entre bandas** (soma exata 428; sem padding vertical externo — corrigi a 1ª tentativa que comeu 16px). Largura FLUIDA (design 780..1200): cartões flexionam a 5 colunas — 172px a 951, ~138 a 780, ~201 a 1200; margem 20, gap 12; emblema ~44 meio-para-fora. **Texto medido (Cinzel real, rede bloqueada, 780):** "Domínio de Takamagahara" (o mais longo) **quebra em 2 linhas e NÃO corta** em nenhuma largura — nada para o dono decidir.
+
+**Arte por ARQUIVO (portão do §213):** build varre `web/banners/dominios/` → `DOMINIOS_ARTE`; runtime só emite `<img>` do arquivo que existe → **nunca 404**. Nada de arte existe ainda → tudo placeholder (cada cartão acende sozinho quando o `.webp` aparecer). **Fundo OPCIONAL:** sem `dominios-fundo.webp`, o gradiente radial do jogo assume e a tela não fica feia. Emblema sem arte = monograma (ΟΛ/☥/⛩/天/ᛟ). **O DONO GERA depois:** `dominio-{grega,egípcia,japonesa,nordica,chinesa}.webp`, `emblema-{...}.webp`, `dominios-fundo.webp` em `web/banners/dominios/`.
+
+**FRASES para o dono ler/vetar (estão no DADO):** Olimpo *"Glória, força e a vontade dos deuses."* · Asgard *"Batalha, destino e o crepúsculo dos deuses."* · Duat *"Vida, morte e o eterno equilíbrio."* · Takamagahara *"O sol, a tempestade e a lua velam o alto céu."* · Céus *"Disciplina, revolta e o poder sem limites."*
+
+**Babás** `dominios.test.js` §10 (13 asserções: 5 pôsteres abrem; sem recompensa/placar comparativo; SEU HISTÓRICO diz que é local; A MARCA A BATER; sem EM BREVE; TAKAMAGAHARA+trinca; sem arte → 0 `<img>` de arte, sem 404; sem fundo → 0 `<img>` de fundo; progresso no cartão). Suíte+build verdes; **4 capturas** em `docs/capturas-276/`. **Arquivos:** `tools/build.js`, `tools/gerar_dominios.js`, `data/dominios/*.json` (campo `frase`), `src/ui/home.js`, `src/shell.html`, `tests/dominios.test.js`.
+
+**PRÓXIMO no visual dos Domínios:** o dono gera as 11 artes (5 fundos-de-cartão + 5 emblemas + 1 fundo-de-tela) em `web/banners/dominios/`; cada arquivo acende sozinho no próximo build, sem tocar código.
+
 ## ★ DOMÍNIOS §275 — Fatia 3: placar PESSOAL + ciclo semanal (tudo no perfil local).
 
 **§275 — a decisão de fundo:** a Fatia 2 provou que nada sobrevive a um deploy no Render grátis; o dono não vai contratar store durável agora, então o placar é PESSOAL (competir com o próprio recorde da semana passada), inteiro no `localStorage` — não passa pelo servidor, não se perde no deploy.

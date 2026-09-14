@@ -25,12 +25,13 @@ const CULT = {}; for (const k of KEYS) { const f = GODS[k].faccao; (CULT[f] = CU
 // (nenhum dos três depende de um deus fora do trio — o Fujin do §271 é o contra-exemplo) e
 // ICÔNICO (os três rostos da cultura). Método e régua IDÊNTICOS entre as cinco (§274).
 const COMUM = { niveis: 40, faixa: 10, rampaDano: [1.00, 1.05, 1.10, 1.15], curaPorNivel: 25, candidatos: 220, ruaN: 12, capComum: 0.45, difTopo: 0.45, tolMonotonia: 0.06 };
+// `frase` (§276): a linha em itálico do cartão de escolha — dado, não código; um campo por cultura.
 const CFGS = {
-  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], ...COMUM },
-  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], ...COMUM },
-  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], ...COMUM },
-  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], ...COMUM },
-  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], ...COMUM },
+  Grega:    { cultura: 'Grega',    nome: 'Domínio do Olimpo',   trio: ['zeus', 'poseidon', 'atena'], frase: 'Glória, força e a vontade dos deuses.', ...COMUM },
+  Nórdica:  { cultura: 'Nórdica',  nome: 'Domínio de Asgard',   trio: ['odin', 'thor', 'loki'], frase: 'Batalha, destino e o crepúsculo dos deuses.', ...COMUM },
+  Egípcia:  { cultura: 'Egípcia',  nome: 'Domínio de Duat',     trio: ['ra', 'isis', 'osiris'], frase: 'Vida, morte e o eterno equilíbrio.', ...COMUM },
+  Japonesa: { cultura: 'Japonesa', nome: 'Domínio de Takamagahara', trio: ['amaterasu', 'susanoo', 'tsukuyomi'], frase: 'O sol, a tempestade e a lua velam o alto céu.', ...COMUM },
+  Chinesa:  { cultura: 'Chinesa',  nome: 'Domínio dos Céus',    trio: ['sunwukong', 'nezha', 'nuwa'], frase: 'Disciplina, revolta e o poder sem limites.', ...COMUM },
 };
 // seleção: `node tools/gerar_dominios.js [Cultura|--todas]` (default: Grega)
 const _sel = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
@@ -163,7 +164,7 @@ function gerar(CFG) {
       + '(mesmo método e régua; só a SELEÇÃO varia por semana; trio FIXO, sem rotação). dificuldade[n] = 1 − (vitórias do trio '
       + 'GULOSO do jogador, vida cheia, contra os inimigos do nível, no danoMult da faixa; ' + CFG.ruaN + ' seeds). O sorteio SAIU '
       + '(loteria); a dificuldade sobe por DANO do inimigo em faixa de ' + CFG.faixa + '. Reproduzir: node tools/gerar_dominios.js --todas --semanas=' + SEMANAS,
-    cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio,
+    cultura: CFG.cultura, nome: CFG.nome, trio: CFG.trio, frase: CFG.frase,
     faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
     tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS,
     tolMonotonia: CFG.tolMonotonia,

@@ -227,6 +227,59 @@ console.log('== 9) RECORDE ANTERIOR aparece e a SUPERAÇÃO é anunciada (o inst
   w.close();
 }
 
+console.log('== 10) §276 A TELA DE ESCOLHA (pôster): sem recompensa/placar comparativo · SEU HISTÓRICO · A MARCA A BATER · sem 404 de arte · sem fundo obrigatório ==');
+{
+  const jsdom = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
+  const vc = new jsdom.VirtualConsole(); const errs = []; vc.on('jsdomError', e => errs.push(e.message));
+  const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
+  const w = dom.window, d = w.document;
+  w.eval('perfil=novoPerfil(0,0); ir("dominios",{},{substituir:true}); render();');
+  const sel = d.querySelector('.dsel');
+  ok(!!sel, 'a tela de escolha renderiza (.dsel)');
+  // (correção 1) NADA de placar comparativo/recompensa: sem RANKING, TOP 10, recompensa, prêmio-por-ranque, baú
+  const txt = sel.textContent.toUpperCase();
+  ok(!/RANKING|TOP 10|TOP10|RECOMPENSA|PRÊMIO|PREMIO|BAÚ|BAU/.test(txt),
+    'NENHUM cartão/banda promete recompensa ou placar comparativo (mentira 1 do mockup rejeitada)');
+  // no lugar do "ranking semanal": SEU HISTÓRICO (canto sup. dir.) abre os recordes semanais locais
+  ok(!!d.querySelector('#dhist') && /SEU HIST[ÓO]RICO/.test(txt), 'o botão do canto é SEU HISTÓRICO (recordes por Domínio)');
+  d.querySelector('#dhist').click();
+  const ov = d.querySelector('#dhistov');
+  ok(!!ov && /SEM COMPARA[ÇC][ÃA]O COM OUTROS JOGADORES/.test(ov.textContent.toUpperCase()),
+    'SEU HISTÓRICO diz, em voz alta, que é local e SEM comparação com outros jogadores');
+  ov.remove();
+  // no lugar da "barra de recompensas": A MARCA A BATER (o próprio recorde, nunca placar entre jogadores)
+  ok(/A MARCA A BATER|COMECE A MARCAR/.test(txt), 'a barra de baixo é A MARCA A BATER (o próprio recorde), não recompensa');
+  // (correção 2) NENHUM cartão "EM BREVE"/bloqueado: os cinco abrem
+  ok(!/EM BREVE|BLOQUEAD/.test(txt), 'nenhum cartão diz EM BREVE / bloqueado (mentira 2: todos jogáveis desde o §274)');
+  ok([...d.querySelectorAll('.dcard')].length === 5, 'os CINCO pôsteres aparecem');
+  // (correção 4) o Domínio japonês é TAKAMAGAHARA (do dado), com a trinca Amaterasu/Susanoo/Tsukuyomi — nunca "Yomi"
+  const jap = [...d.querySelectorAll('.dcard[data-cultura="japonesa"]')][0];
+  ok(!!jap && /TAKAMAGAHARA/.test(jap.textContent.toUpperCase()) && !/YOMI(?!\w)/.test(jap.textContent.toUpperCase().replace('TSUKUYOMI','')),
+    'o Domínio japonês é TAKAMAGAHARA (a arte dizia "Yomi" — mentira 4 rejeitada, vale o dado)');
+  ok(/AMATERASU/.test(jap.textContent.toUpperCase()) && /SUSANOO/.test(jap.textContent.toUpperCase()) && /TSUKUYOMI/.test(jap.textContent.toUpperCase()),
+    'a trinca japonesa é Amaterasu/Susanoo/Tsukuyomi (do dado)');
+  // ARTE POR ARQUIVO: sem os .webp de Domínio, nenhum cartão emite <img> de arte (placeholder, nunca 404)
+  const temArte = w.eval('typeof DOMINIOS_ARTE!=="undefined" && DOMINIOS_ARTE && Object.keys(DOMINIOS_ARTE).some(k=>/^dominio-/.test(k))');
+  if (!temArte) {
+    ok([...d.querySelectorAll('.dcard__art')].length === 0 && [...d.querySelectorAll('.dcard')].every(c => !!c.querySelector('.dcard__ph')),
+      'sem arte de Domínio: cada cartão usa placeholder (.dcard__ph), NENHUM <img> de arte → sem 404 (§213)');
+  } else {
+    ok(true, 'há arte de Domínio no build — o portão de arquivo decide por cartão (medido à parte)');
+  }
+  // FUNDO OPCIONAL: sem dominios-fundo.webp, a tela NÃO emite <img.dsel__fundo> (usa o gradiente do jogo)
+  const temFundo = w.eval('typeof DOMINIOS_ARTE!=="undefined" && DOMINIOS_ARTE && !!DOMINIOS_ARTE["dominios-fundo"]');
+  if (!temFundo) ok(!d.querySelector('.dsel__fundo'), 'sem fundo: a tela não emite <img> de fundo (o gradiente radial do jogo assume) — funciona sem a arte');
+  else ok(true, 'há arte de fundo no build');
+  // (correção 3) PROGRESSO volta ao cartão: com recorde da semana, o cartão mostra o nível (entre a frase e o botão)
+  const c0 = w.eval('Object.keys(DOMINIOS)[0]'); const cur = w.eval('domSemanaChave()');
+  w.eval(`perfil=novoPerfil(0,0); perfil.dominios.porDominio["${c0}"]={run:null,melhorSempre:7,semanas:{"${cur}":7}}; ir("dominios",{},{substituir:true}); render();`);
+  const prog = w.eval(`(document.querySelector('.dcard[data-cultura="${c0}"] .domcard__prog')||{}).textContent||''`);
+  ok(/7/.test(prog) && /Semana/.test(prog), 'o cartão traz o PROGRESSO da semana (nível 7) de volta ao cartão (correção 3) — "' + prog.trim() + '"');
+  ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
+  w.close();
+}
+
 console.log('');
 console.log(f === 0 ? '>>> DOMINIOS OK' : `>>> ${f} FALHA(S)`);
 if (f) process.exit(1);

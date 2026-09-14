@@ -334,6 +334,17 @@ const bestiarioArte = (() => {
   return mapa;
 })();
 
+// §276: ARTE da tela de escolha de DOMÍNIOS por ARQUIVO em web/banners/dominios/ (pôster por cultura,
+// emblema por cultura, e um fundo opcional). A build anota quais existem (o cliente não pode checar
+// disco); a tela só emite <img> para os presentes — ausência vira o placeholder do §213, NUNCA um 404.
+// Nomes esperados: dominio-<cultura>, emblema-<cultura>, dominios-fundo.
+const dominiosArte = (() => {
+  const dir = path.join(raiz, 'web', 'banners', 'dominios');
+  const mapa = {};
+  if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) { const m = /^(.+)\.webp$/.exec(f); if (m) mapa[m[1]] = 1; }
+  return mapa;
+})();
+
 // DOMÍNIOS (§273): a ESCADA de cada Domínio é DADO (data/dominios/<cultura>.json), GERADA e MEDIDA
 // fora do jogo (tools/gerar_dominios.js). Valida na build (falha alto, como os outros schemas): trio de
 // 3 no catálogo, cada nível com 3 inimigos no catálogo (e fora do trio), CHEFE em múltiplo de 10, teto de
@@ -366,7 +377,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

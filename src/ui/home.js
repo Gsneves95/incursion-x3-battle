@@ -1939,46 +1939,114 @@ function dominioFichaHTML(k, vida){
 }
 
 /* ---------- TELA DE SELEÇÃO (rota 'dominios'): os cinco Domínios ---------- */
+function temArteDom(nome){ return typeof DOMINIOS_ARTE !== 'undefined' && DOMINIOS_ARTE && !!DOMINIOS_ARTE[nome]; }
+const DOM_EMB_MONO = { grega: 'ΟΛ', egípcia: '☥', duat: '☥', chinesa: '天', japonesa: '⛩', nórdica: 'ᛟ' };
+function embMonoDom(c, cultura){ return DOM_EMB_MONO[c] || (cultura || c).slice(0, 2).toUpperCase(); }
+
+// §276 — cartão-PÔSTER de um Domínio na tela de escolha. Arte por ARQUIVO (só emite <img> se a build
+// achou o arquivo — ausência = placeholder do §213, nunca 404). Mantém class `domcard`+`data-cultura`
+// +`domcard__prog` (os guardas leem isso). Progresso (§275) volta ENTRE a frase e o botão (correção 3).
+function dominioPosterHTML(lad){
+  const c = String(lad.cultura).toLowerCase(), total = domTotalNiveis(lad);
+  const run = dominioRun(c), sem = semanaInfo(lad);
+  const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt);
+  const emCorrida = run && run.status === 'ativo';
+  const batido = recAnt > 0 && recSem > recAnt;
+  const prog = emCorrida
+    ? `<div class="domcard__prog domcard__prog--ativo"><i>▸</i>Em corrida · nível ${run.nivel}/${total}</div>`
+    : (recSem > 0
+      ? `<div class="domcard__prog domcard__prog--rec">Semana · nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
+      : `<div class="domcard__prog domcard__prog--novo">Semana · sem marca</div>`);
+  const anterior = `<span class="dcard__ant">${recAnt > 0 ? 'anterior a bater · nível ' + recAnt : '1ª semana — sem marca'}</span>`;
+  const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeus(k))}</i></span>`).join('');
+  const emb = temArteDom('emblema-' + c)
+    ? `<img src="banners/dominios/emblema-${c}.webp" alt="">`
+    : `<span class="dcard__embmono">${H(embMonoDom(c, lad.cultura))}</span>`;
+  const arte = temArteDom('dominio-' + c) ? `<img class="dcard__art" src="banners/dominios/dominio-${c}.webp" alt="">` : '<div class="dcard__ph"></div>';
+  return `<button class="domcard dcard" data-cultura="${H(c)}">
+    <div class="dcard__poster">
+      ${arte}
+      <div class="dcard__scrim"></div>
+      <div class="dcard__corpo">
+        <span class="dcard__cult">${H(lad.cultura)}</span>
+        <span class="dcard__nome">${H(lad.nome)}</span>
+        <span class="dcard__frase">${H(lad.frase || '')}</span>
+        <div class="dcard__prog2">${prog}${anterior}</div>
+        <span class="dcard__deuses">${trio}</span>
+        <span class="dcard__entrar">ENTRAR ›</span>
+      </div>
+    </div>
+    <span class="dcard__emblema">${emb}</span>
+  </button>`;
+}
+
+/* ---------- TELA DE ESCOLHA (rota 'dominios'): cinco pôsteres (§276) ---------- */
 function renderDominios(){
   const lads = dominioLadders();
-  const cards = lads.map(lad => {
-    const c = String(lad.cultura).toLowerCase(), total = domTotalNiveis(lad);
-    const run = dominioRun(c), sem = semanaInfo(lad);
-    const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt), melhor = dominioMelhor(c);
-    const emCorrida = run && run.status === 'ativo';
-    const batido = recAnt > 0 && recSem > recAnt;   // já superou a marca da semana passada
-    const trioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
-    // faixa de progresso: corrida em andamento (retomável) em destaque; sempre a linha da SEMANA + a MARCA
-    const badge = emCorrida
-      ? `<div class="domcard__prog domcard__prog--ativo"><i>▸</i>Em corrida · nível ${run.nivel}/${total}</div>`
-      : (recSem > 0
-        ? `<div class="domcard__prog domcard__prog--rec">Semana · nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
-        : `<div class="domcard__prog domcard__prog--novo">Semana · sem marca ainda</div>`);
-    const anterior = recAnt > 0 ? `Anterior a bater: <b>nível ${recAnt}</b>` : `Primeira semana — sem marca anterior`;
-    return `<button class="domcard" data-cultura="${H(c)}">
-      <div class="domcard__cab"><span class="domcard__cult">${H(lad.cultura)}</span><span class="domcard__nome">${H(lad.nome)}</span></div>
-      <div class="domtrio">${trioHTML}</div>
-      ${badge}
-      <div class="domcard__marca">${anterior}</div>
-      <div class="domcard__melhor">Melhor de sempre: <b>${melhor > 0 ? 'nível ' + melhor : '—'}</b></div>
-    </button>`;
-  }).join('');
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-    <div class="tela">
-      <header class="tela__cab">
-        <button class="b b--quiet b--md" id="binicio">‹ Início</button>
-        <h1 class="tela__titulo">Domínios</h1>
-        <span class="tela__espaco"></span>
-      </header>
-      <div class="tela__rol domsel">
-        <p class="domhub__sub">Escolha um Domínio · três deuses fixos, iguais para todos · o progresso é seu e por Domínio</p>
-        <div class="domsel__grade">${cards || '<p class="domsec__msg">Nenhum Domínio carregado.</p>'}</div>
-      </div>
-    </div></div>`;
+  const cards = lads.map(dominioPosterHTML).join('');
+  const temFundo = temArteDom('dominios-fundo');
+  stage.innerHTML = `<div id="baselayer" class="dsel">
+    <div class="stage__bg"></div>
+    ${temFundo ? '<img class="dsel__fundo" src="banners/dominios/dominios-fundo.webp" alt="">' : ''}
+    <div class="dsel__scrim"></div>
+    <header class="dsel__cab">
+      <button class="dsel__voltar" id="binicio" aria-label="Voltar">‹</button>
+      <div class="dsel__tit"><h1 class="dsel__titulo">Domínios</h1><span class="dsel__sub">Escolha um Domínio · enfrente batalhas · alcance o topo</span></div>
+      <button class="dsel__hist" id="dhist"><span class="dsel__hist-t">Seu histórico</span><span class="dsel__hist-s">seus recordes por Domínio</span></button>
+    </header>
+    <div class="dsel__cards">${cards || '<p class="domsec__msg">Nenhum Domínio carregado.</p>'}</div>
+    ${dominioMarcaBaterHTML()}
+  </div>`;
   const q = s => stage.querySelector(s);
   const b = q('#binicio'); if (b) b.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const h = q('#dhist'); if (h) h.onclick = () => abrirHistoricoDominios();
   [...stage.querySelectorAll('.domcard')].forEach(btn => { btn.onclick = () => { ir('dominio', { cultura: btn.getAttribute('data-cultura') }); render(); }; });
   fit();
+}
+
+// §276 — a barra de baixo: A MARCA A BATER. O Domínio de melhor desempenho (maior melhor-de-sempre),
+// a marca a bater desta semana (recorde da semana passada dele) e o melhor de sempre. SEM recompensa,
+// SEM placar comparativo (§274/§275): é o próprio jogador contra o próprio recorde.
+function dominioMarcaBaterHTML(){
+  const lads = dominioLadders();
+  let melhorLad = null, melhorVal = -1;
+  for (const lad of lads){ const m = dominioMelhor(String(lad.cultura).toLowerCase()); if (m > melhorVal){ melhorVal = m; melhorLad = lad; } }
+  if (!melhorLad || melhorVal <= 0){
+    return `<div class="dsel__marca dsel__marca--vazia"><span class="dsel__marca-ic">◈</span><span>Escolha um Domínio e comece a marcar — a cada semana, uma escada nova para bater a sua marca.</span></div>`;
+  }
+  const c = String(melhorLad.cultura).toLowerCase(), sem = semanaInfo(melhorLad);
+  const recAnt = recSemanaDominio(c, sem.chaveAnt);
+  return `<div class="dsel__marca">
+    <div class="dsel__marca-bloco"><span class="dsel__marca-rot">Seu melhor desempenho</span><span class="dsel__marca-val">${H(melhorLad.nome.replace(/^Domínio d[eoa]s? /i, ''))} · melhor de sempre <b>nível ${melhorVal}</b></span></div>
+    <div class="dsel__marca-bloco dsel__marca-bloco--dir"><span class="dsel__marca-rot">A marca a bater esta semana</span><span class="dsel__marca-val">${recAnt > 0 ? '<b>nível ' + recAnt + '</b> (recorde da semana passada)' : '<b>1ª semana</b> — ainda sem marca anterior'}</span></div>
+  </div>`;
+}
+
+// §276 — SEU HISTÓRICO: os recordes semanais por Domínio que o perfil já guarda (nada comparativo).
+// Overlay simples dentro do palco, com saída clara (Fechar / clicar fora) — §210.
+function abrirHistoricoDominios(){
+  const velho = stage.querySelector('#dhistov'); if (velho) velho.remove();
+  const lads = dominioLadders();
+  const linhas = lads.map(lad => {
+    const c = String(lad.cultura).toLowerCase(), melhor = dominioMelhor(c), semanas = (dominioProg(c).semanas) || {};
+    const chaves = Object.keys(semanas).sort().reverse();
+    const cells = chaves.length
+      ? chaves.map(k => `<span class="dhist__wk"><i>${H(k)}</i> nível ${semanas[k]}</span>`).join('')
+      : '<span class="dhist__vazio">sem corrida ainda</span>';
+    return `<div class="dhist__linha">
+      <div class="dhist__cab"><b>${H(lad.nome)}</b><span>melhor de sempre: ${melhor > 0 ? 'nível ' + melhor : '—'}</span></div>
+      <div class="dhist__semanas">${cells}</div>
+    </div>`;
+  }).join('');
+  const ov = document.createElement('div'); ov.id = 'dhistov'; ov.className = 'ov';
+  ov.innerHTML = `<div class="ovbox dhist">
+    <div class="dhist__topo"><h2>Seu histórico</h2><button class="b b--quiet b--md" id="dhistx">Fechar</button></div>
+    <p class="dhist__nota">Recordes semanais por Domínio, guardados só neste aparelho. Sem comparação com outros jogadores.</p>
+    <div class="dhist__lista">${linhas}</div>
+  </div>`;
+  stage.querySelector('#baselayer').appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  const x = ov.querySelector('#dhistx'); if (x) x.onclick = () => ov.remove();
 }
 
 /* ---------- HUB / ENTRADA de UM Domínio (rota 'dominio', params.cultura) ---------- */
