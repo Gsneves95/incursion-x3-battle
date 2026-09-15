@@ -1134,7 +1134,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    cenas). O nome (dourado, primário) ganha uma AURA escura difusa — não um contorno duro — p/ ler sobre a
    cena; a cultura mantém um contorno leve (é 9px e é o topo do bloco, estruturalmente sobre a arte — o §281
    tentou tirar, mas sem escurecer a cena ela lava; ver DECISOES). Legibilidade pelo TEXTO, não subindo o véu. */
-.dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.28em;text-shadow:0 0 2px #04060e,0 1px 2px #04060e,0 0 6px rgba(4,6,14,.9)}
+/* §281-ajuste2: cultura 9→11px com letter-spacing .28em→.08em — MESMA largura ocupada (medido: a mais larga,
+   Japonesa, 69px em ambos; nenhuma cresce), mas letra grande o bastante para o CONTORNO trabalhar (contorno
+   em 9px empasta antes de virar letra). Continua SECUNDÁRIO — o nome tem 13 e manda. */
+.dcard__cult{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.08em;text-shadow:0 0 2px #04060e,0 1px 2px #04060e,0 0 6px rgba(4,6,14,.9)}
 .dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:13px;line-height:1.02;margin-top:1px;
   background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(2,4,10,.95)) drop-shadow(0 0 6px rgba(2,4,10,.7))}
 .dcard__frase{font-style:italic;font-weight:300;font-size:8px;line-height:1.22;color:#AEB9CC;text-wrap:balance;min-height:19px;margin-top:7px;text-shadow:0 1px 2px rgba(4,6,14,.85)}

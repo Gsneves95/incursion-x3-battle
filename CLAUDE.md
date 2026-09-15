@@ -460,6 +460,7 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 - **Chaves de arte:** todo encaixe é `<div class="slot" data-slot="CHAVE">`.
   Chaves: `god-<key>`, `skill-<key>-<slot>`, `effect-<tipo>`, `player-<n>-avatar`.
   Trocar por `<img class="slot">` quando a arte existir.
+- **Contraste CRU (texto vs fundo) mede texto PLANO; onde há CONTORNO/AURA/SOMBRA é um PISO pessimista, não o veredito (§281).** O número cru não enxerga o par texto+efeito, que é o que o olho lê. Um contraste cru baixo dispara a INVESTIGAÇÃO; o veredito é a CAPTURA sobre o pior caso real (todas as artes/fundos), ou uma medida do par texto+efeito. Ex.: a cultura do cartão de Domínio dava 1,16 cru (texto claro + contorno sobre arte) e é legível na captura — quase se "consertou" o que não estava quebrado.
 - **NOME DE ARQUIVO de asset em `web/` é ASCII PURO — sem acento, nunca (§279).** Bestiário/campanha já
   seguem (`automato_bronze`, `guardiao_bosque`, `cap1-04-trovao-sobre-o-duat`). Quando a CHAVE tem acento
   (as culturas `Egípcia`, `Nórdica`; à frente talvez a Céltica), a chave fica acentuada no DADO e a tradução
