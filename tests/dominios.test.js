@@ -329,8 +329,8 @@ console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema
   // §278 — o VÉU é um ARCO (máscara SVG em abóbada), não um degradê linear reto
   ok(/\.dcard__scrim\{[^}]*mask:url\(['"]?data:image\/svg\+xml/.test(html.replace(/\s+/g, ' ')), 'o véu é um ARCO (máscara SVG), não linha reta (§278)');
   // §278 — retrato de canto ARREDONDADO com moldura fina (sem o chanfro diagonal do §277)
-  ok(/\.dcard__deus \.slot\{[^}]*border-radius:6px/.test(html) && !/\.dcard__deus \.slot\{[^}]*clip-path/.test(html),
-    'o retrato é quadrado de canto arredondado + moldura fina (não chanfro diagonal) — §278');
+  ok(/\.dcard__deus \.slot\{[^}]*border-radius:[45]px/.test(html) && !/\.dcard__deus \.slot\{[^}]*clip-path/.test(html),
+    'o retrato é quadrado de canto arredondado + moldura fina (não chanfro diagonal) — §278/§281');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
 }

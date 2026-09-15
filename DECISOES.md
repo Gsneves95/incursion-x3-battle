@@ -6,6 +6,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §281 — ACABAMENTO do cartão de Domínio (revisão de desenho gráfico sobre a arte real). Só tela; nada de motor/dado.
+
+Diagnóstico do dono: sete blocos de texto empilhados em 134×308, nenhum domina, e a arte só no terço superior. Sete acertos (mediu-se tudo no dist, viewport real, fontes reais, rede bloqueada, no piso 780; ANTES/DEPOIS em `docs/capturas-281/`).
+
+**1) HIERARQUIA em 3 níveis (aplicada; escala medida).** PRIMÁRIO nome **15→13** (único grande). SECUNDÁRIO cultura **9** + pílula **10→9**. TERCIÁRIO (sussurro) frase **9,5→8** + nomes de deus **8** — recuam por tamanho E por peso/cor (frase itálica 300 cinza; deus cinza). A frase caiu mais que proporcional (−16% vs nome −13%). **Piso do projeto = 8px** (§257/§260): o terciário para em 8, não abaixo; a diferença secundário↔terciário é reforçada por peso/cor, não só por 1px.
+
+**2) UMA linha de progresso (aplicada).** A pílula já carrega número+estado; a 2ª linha só sobrevive quando diz o que a pílula NÃO diz — o **recorde anterior a bater** (único caso). "1ª semana — sem marca" era redundante com "Não iniciado"/com a pílula: saiu.
+
+**3) A ARTE VOLTOU (aplicada; número medido).** Com o texto menor, o arco DESCEU: pico **44%→47%**, bordas **54%→58%** (máscara `M0 55 Q50 39`) → a cena aparece em ~metade do cartão. Limite: descer mantendo o texto DE CIMA (frase e tudo abaixo, ≥52%) sobre a parte escura. A 50% de pico a arte crescia mais, mas jogava o NOME (topo ~41%) sobre a arte clara e ele lavava (Olimpo/Asgard/Duat) — 47% é o ponto onde a arte cresce sem matar o primário.
+
+**4) O CONTORNO DA CULTURA — TENTEI TIRAR, não coube; mantido (com o motivo).** A cultura é o topo do bloco (~36%), estruturalmente ACIMA do pico do arco → sempre sobre a arte. Sem escurecer a cena, um rótulo de 9px em cor-pastel lava nas cenas claras (Grega/Nórdica). Como o dono proíbe subir o véu (item 7) e "contorno em 8px é ruído" só se aplica quando há alternativa, mantive um contorno LEVE (mais fino que o do §280) e registro o porquê: a posição não resolve (é o topo), então resolve o efeito.
+
+**5) ESPAÇAMENTO POR PROXIMIDADE (aplicado).** 4 grupos, não 7 linhas: cultura+nome COLADOS (1px); respiro antes da frase (7); respiro antes do progresso (7); retratos+botão juntos na base (8/4). Gaps por margem, não `gap` uniforme.
+
+**6) MOLDURA DOS RETRATOS como a batalha/Coleção (aplicada).** A batalha usa `.portrait` 1px + raio 6 em 94px (raio ~6%); a Coleção, raios pequenos. Troquei o do cartão de **raio 6 → 4** e **borda 1,5px cheia → 1px `gold-soft`** (mais fina/suave) — deixa de parecer ícone de app.
+
+**7) ACESSIBILIDADE — MEDIDA, reportada, NÃO "consertada subindo o véu".** Contraste do texto vs o FUNDO atrás (p90 mais claro), pior caso das cinco artes — número CRU (não inclui a aura/contorno do texto, que é o que de fato levanta a leitura; é um piso conservador):
+- **frase 9,4–9,8:1 · deus 12,4–12,8:1** (sobre a parte escura) — muito acima de WCAG AA.
+- **nome (ouro) 1,84 (chinesa) – 3,41:1** e **cultura 1,16 (grega) – 5,43:1** — sobre a ARTE, abaixo de WCAG cru. São os DOIS blocos do topo, que ficam sobre a cena por posição (como o mockup os coloca, altos). A leitura vem do TRATAMENTO do texto — aura dourada difusa no nome, contorno na cultura — que a captura confirma, e que o número cru não mede. Elevar o número cru exigiria subir o véu (proibido — come a arte) ou uma placa sólida atrás do nome (mudança de desenho). **Fica a decisão do dono:** aceitar a leitura-por-aura (como está, e como o §280 já fazia com o nome) ou pedir a placa.
+
+**EMBLEMA — confirmado que acende sozinho.** O cartão deriva o arquivo por `domArteArquivo('emblema', cultura)` (§279, ASCII); a build varre `web/banners/dominios/` e o runtime emite `<img>` quando `emblema-{grega,egipcia,japonesa,nordica,chinesa}.webp` aparecer — sem tocar em nada. Até lá, monograma latino OL·AS·DU·TK·CE. Fundo idem (ausente → gradiente do jogo).
+
+**NÃO muda:** as 4 recusas, ciclo semanal, "Wukong", proporção 0,435, paleta por cultura. **Babás:** `dominios.test.js` §11 (retrato raio 4/5, sem clip-path) atualizada; §10/§13 e `moldura.test.js` (pílula 1 linha) verdes. Suíte+build verdes; capturas ANTES/DEPOIS em `docs/capturas-281/`. **Arquivos:** `src/ui/home.js` (uma linha de progresso), `src/shell.html` (escala, espaçamento, arco, retrato, aura/contorno), `tests/dominios.test.js`, `ESTADO.md`.
+
 ## §280 — As CINCO artes de Domínio INSTALADAS (fecha o §279) + a cultura ganha contorno para ler sobre a arte.
 
 **Como as artes chegaram.** O anexo do ZIP falhou TRÊS vezes — o contêiner era recriado no meio (SO v24→v33), e o upload não sobrevivia. O dono commitou os cinco `.webp` direto no branch pelo site do GitHub; um `git pull` os trouxe. Lição registrada: quando o anexo não sobrevive à recriação do contêiner, o canal robusto é commitar no branch.

@@ -2,6 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §281 — ACABAMENTO gráfico do cartão sobre a arte real (hierarquia, respiro, arte de volta). Só tela.
+
+Sete acertos de desenho (medidos no dist, fontes reais, rede bloqueada, 780; ANTES/DEPOIS em `docs/capturas-281/`):
+1. **Hierarquia em 3 níveis:** nome 15→**13** (primário), cultura 9 + pílula 10→**9** (secundário), frase 9,5→**8** + deus 8 (terciário/sussurro). Piso 8px (§257/§260) — terciário para em 8; diferença reforçada por peso/cor.
+2. **Uma linha de progresso:** a 2ª só quando diz o que a pílula não diz (recorde anterior a bater); "1ª semana — sem marca" saiu (redundante).
+3. **Arte de volta:** arco desceu, pico **44→47%**, bordas 54→58% → cena em ~metade do cartão. Limite medido: 47% é onde a arte cresce sem jogar o NOME sobre a arte clara (a 50% ele lavava em Olimpo/Asgard/Duat).
+4. **Contorno da cultura:** tentei tirar, não coube — a cultura é o topo do bloco (~36%), sempre sobre a arte; mantido LEVE, com o porquê (posição não resolve; sem subir o véu).
+5. **Espaçamento por proximidade:** 4 grupos (cultura+nome colados · frase · progresso · retratos+botão), gaps por margem.
+6. **Moldura de retrato como batalha/Coleção:** raio 6→**4**, borda 1,5px cheia→**1px gold-soft** (não ícone de app).
+7. **Acessibilidade medida (não consertada subindo o véu):** frase 9,4–9,8:1 e deus 12,4–12,8:1 (sobre o escuro, ótimo); **nome 1,84–3,41:1 e cultura 1,16–5,43:1** (sobre a ARTE, número CRU sem a aura/contorno) — abaixo de WCAG cru; a leitura vem do tratamento do texto (aura dourada no nome, contorno na cultura), que a captura confirma. **Decisão aberta ao dono:** aceitar leitura-por-aura (como está / como o §280) ou uma placa sólida atrás do nome.
+
+**Emblema confirmado:** acende sozinho quando `emblema-{...}.webp` chegar (deriva por `domArteArquivo` ASCII §279); até lá, monograma latino. Fundo idem. **Não muda:** as 4 recusas, ciclo semanal, "Wukong", proporção 0,435, paleta. **Babás** `dominios.test.js` §11 (retrato raio 4/5) + §10/§13 + `moldura.test.js` verdes. Suíte+build verdes. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/dominios.test.js`.
+
 ## ★ DOMÍNIOS §280 — as CINCO artes de cartão INSTALADAS (fecha o §279) + cultura com contorno para ler sobre a arte.
 
 **Como chegaram:** o anexo falhou 3× (contêiner recriado no meio, v24→v33); o dono commitou os 5 `.webp` direto no branch pelo GitHub, `git pull` trouxe. **Canal robusto quando o anexo não sobrevive: commitar no branch.**

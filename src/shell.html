@@ -1118,26 +1118,34 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    assenta sobre ele (as duas imagens mostram a mesma curva). Um degradê escuro por-cultura RECORTADO por
    uma máscara SVG em forma de abóbada (o topo é uma quadrática que pica ~44% no centro e desce a ~54% nas
    bordas). A cor vem do degradê (var), a curva vem da máscara (alfa) — o arco é a forma, não um gradiente. */
-.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 30%,var(--veilBottom) 56%);
-  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 54 Q50 34 100 54 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%;
-  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 54 Q50 34 100 54 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%}
+/* §281 — com o texto menor, o arco DESCE (devolve a arte): pico ~50% (era 44%), bordas ~58% (era 54%) →
+   a cena aparece em ~metade do cartão, não um terço. A frase e tudo abaixo seguem sobre a parte escura;
+   só a cultura e o nome (topo do bloco) ficam sobre a arte — o nome tem sombra dourada, a cultura contorno. */
+.dcard__scrim{position:absolute;inset:0;background:linear-gradient(180deg,var(--veilTop) 32%,var(--veilBottom) 54%);
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 55 Q50 39 100 55 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%;
+  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 55 Q50 39 100 55 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%}
+/* §281 — ESPAÇAMENTO POR PROXIMIDADE (4 grupos, não 7 linhas): cultura+nome COLADOS (um bloco); respiro
+   antes da frase; respiro antes do progresso; retratos+botão juntos na base. Gaps por margem, não uniforme. */
 .dcard__corpo{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;
-  gap:4px;padding:8px 9px 11px;text-align:center}
-/* §279: a cultura fica no ALTO do corpo, acima do pico do véu, então cai sobre a ARTE (clara em Chinesa/
-   Egípcia/Grega/Nórdica) — a sombra garante a leitura sobre a cena, não sobre o gradiente (mesmo princípio
-   da vida OPACA do §258). A frase (mais baixa, quase sobre o véu) leva uma sombra leve por seguro. */
-.dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.3em;text-shadow:0 0 2px #04060e,0 0 2px #04060e,0 1px 2px #04060e,0 0 7px rgba(4,6,14,.95)}
-.dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:15px;line-height:1.02;
-  background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
-.dcard__frase{font-style:italic;font-weight:300;font-size:9.5px;line-height:1.25;color:#BDC9DA;text-wrap:balance;min-height:22px;text-shadow:0 1px 3px rgba(4,6,14,.9)}
-.dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin:1px 0}
-.dcard__ant{font-size:9px;color:var(--ink-mute)}
-.dcard__deuses{display:flex;justify-content:center;gap:3px}
+  gap:0;padding:8px 9px 10px;text-align:center}
+/* §281 — HIERARQUIA em 3 níveis. PRIMÁRIO: nome (13, único grande). SECUNDÁRIO: cultura + pílula (9).
+   TERCIÁRIO (sussurro): frase (8, itálico 300 cinza) + nomes de deus (8) — recuam por tamanho E peso/cor. */
+/* §281 — cultura e nome ficam no TOPO do bloco, acima do pico do arco, logo sobre a ARTE (clara em várias
+   cenas). O nome (dourado, primário) ganha uma AURA escura difusa — não um contorno duro — p/ ler sobre a
+   cena; a cultura mantém um contorno leve (é 9px e é o topo do bloco, estruturalmente sobre a arte — o §281
+   tentou tirar, mas sem escurecer a cena ela lava; ver DECISOES). Legibilidade pelo TEXTO, não subindo o véu. */
+.dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.28em;text-shadow:0 0 2px #04060e,0 1px 2px #04060e,0 0 6px rgba(4,6,14,.9)}
+.dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:13px;line-height:1.02;margin-top:1px;
+  background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(2,4,10,.95)) drop-shadow(0 0 6px rgba(2,4,10,.7))}
+.dcard__frase{font-style:italic;font-weight:300;font-size:8px;line-height:1.22;color:#AEB9CC;text-wrap:balance;min-height:19px;margin-top:7px;text-shadow:0 1px 2px rgba(4,6,14,.85)}
+.dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:7px}
+.dcard__ant{font-size:8px;color:var(--ink-mute)}
+.dcard__deuses{display:flex;justify-content:center;gap:3px;margin-top:8px}
 .dcard__deus{display:flex;flex-direction:column;align-items:center;gap:1px;width:44px}
-/* §278 — retrato como nas imagens: quadrado de CANTO ARREDONDADO com moldura fina dourada (não o chanfro
-   diagonal do §277). */
-.dcard__deus .slot{width:30px;height:30px;background:#0B1226;border-radius:6px;box-shadow:inset 0 0 0 1.5px var(--gold)}
-.dcard__deus i{font-family:'Cinzel',serif;font-weight:600;font-style:normal;font-size:8px;letter-spacing:.06em;color:#D8E0EC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44px}
+/* §281 — moldura de retrato como a BATALHA/Coleção (.portrait: 1px, radius 6 em 94px): borda FINA e raio
+   PEQUENO, não ícone de app. No slot de 30px → 1px + radius 4 (proporcional ao raio da batalha). */
+.dcard__deus .slot{width:30px;height:30px;background:#0B1226;border-radius:4px;box-shadow:inset 0 0 0 1px var(--gold-soft)}
+.dcard__deus i{font-family:'Cinzel',serif;font-weight:600;font-style:normal;font-size:8px;letter-spacing:.04em;color:#C7D0DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44px}
 .dcard__entrar{margin-top:3px;width:100%;padding:5px 14px;font-family:'Cinzel',serif;font-weight:700;font-size:11px;
   letter-spacing:.2em;color:#F5E9CA;background:linear-gradient(180deg,rgba(38,29,12,.9),rgba(18,14,6,.9));
   box-shadow:inset 0 0 0 1.5px rgba(232,199,101,.85);display:flex;align-items:center;justify-content:center;gap:6px;
@@ -1161,8 +1169,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    pelo caminho certo (claro contra profundo). Valores REGISTRADOS aqui, com os outros quatro — não re-derivar. */
 .dcard--nórdica{--tag:#BFE3F2;--frame:rgba(150,205,230,.7);--glow:rgba(90,165,205,.2);--bodyA:rgba(10,20,32,.92);--bodyB:rgba(6,12,20,.96);--artFade:rgba(8,18,30,.9);--veilTop:rgba(8,18,30,0);--veilBottom:rgba(6,13,22,.94);--embA:#1C3A4E;--embB:#08161E}
 /* progresso (§275) — mantém as classes que os guardas leem */
-.domcard__prog{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;
-  border-radius:11px;padding:2px 9px;border:1px solid #2c2648;color:var(--ink-dim);background:rgba(6,8,16,.35)}
+.domcard__prog{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  border-radius:11px;padding:2px 9px;border:1px solid #2c2648;color:var(--ink-dim);background:rgba(6,8,16,.45)}
 .domcard__prog i{font-style:normal}
 .domcard__prog--ativo{color:var(--gold-text);border-color:rgba(216,178,90,.6);background:rgba(216,178,90,.14)}
 .domcard__prog--rec{color:var(--e-Verdejante);border-color:rgba(88,214,141,.4)}

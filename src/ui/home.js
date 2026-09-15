@@ -1980,7 +1980,10 @@ function dominioPosterHTML(lad){
     : (recSem > 0
       ? `<div class="domcard__prog domcard__prog--rec">Nível ${recSem}/${total}${batido ? ' <i class="domcard__sup">▲</i>' : ''}</div>`
       : `<div class="domcard__prog domcard__prog--novo">Não iniciado</div>`);
-  const anterior = `<span class="dcard__ant">${recAnt > 0 ? 'anterior a bater · nível ' + recAnt : '1ª semana — sem marca'}</span>`;
+  // §281: UMA linha de progresso. A pílula já carrega o número/estado; a 2ª linha só existe quando diz algo
+  // que a pílula NÃO diz — o recorde ANTERIOR a bater (único caso que se justifica). "1ª semana — sem marca"
+  // era redundante com "Não iniciado"/com a própria pílula: sai.
+  const anterior = recAnt > 0 ? `<span class="dcard__ant">anterior a bater · nível ${recAnt}</span>` : '';
   const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeusCartao(lad, k))}</i></span>`).join('');
   const embArq = domArteArquivo('emblema', lad.cultura), artArq = domArteArquivo('dominio', lad.cultura);   // §279: ASCII
   const emb = temArteDom(embArq)
