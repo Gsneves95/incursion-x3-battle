@@ -2,6 +2,20 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §280 — as CINCO artes de cartão INSTALADAS (fecha o §279) + cultura com contorno para ler sobre a arte.
+
+**Como chegaram:** o anexo falhou 3× (contêiner recriado no meio, v24→v33); o dono commitou os 5 `.webp` direto no branch pelo GitHub, `git pull` trouxe. **Canal robusto quando o anexo não sobrevive: commitar no branch.**
+
+**As 5:** `web/banners/dominios/dominio-{grega,egipcia,japonesa,nordica,chinesa}.webp`, **448×1030**, ASCII (§279), não convertidas/redimensionadas. **Tabela cultura→arquivo→aceso: as 5 acesas**, com Egípcia→`dominio-egipcia` e Nórdica→`dominio-nordica` (a tradução acento→ASCII do §279 funcionando com arquivo real).
+
+**Peso — nada embutido:** assets SEPARADOS (copiados p/ `dist/banners/dominios/`); o `incursion.html` cresceu **98 bytes** (só as 5 chaves de `DOMINIOS_ARTE`), 2.310.455→2.310.553; os 432 KB não estão no HTML.
+
+**Correção que só a arte real revelou (§258):** a cultura em versalete fica acima do pico do véu, sobre a arte clara (Chinesa/Egípcia/Grega/Nórdica), e lavava. Consertei com CONTORNO (text-shadow multicamadas) na cultura + sombra leve na frase — sem mexer no véu nem esconder a arte. As 5 culturas legíveis sobre a cena; o arco assenta sobre a arte.
+
+**Guardas:** `dominios.test.js` §13 (lado CHEIO: 5 com arte registrada + `<img>` emitido + `.webp` no disco ASCII; babá: renomeie e quebra); §278 (ausência→placeholder, sem 404) segue; `assets.test.js` (ASCII, §279) verde contra os uploads reais. Suíte+build verdes; 4 capturas em `docs/capturas-277/`.
+
+**Emblemas e fundo seguem ausentes de propósito** (monograma latino OL·AS·DU·TK·CE; tela ok sem fundo). O modo DOMÍNIOS está **visualmente completo** — só faltam, se o dono quiser: os 5 emblemas + 1 fundo (acendem sozinhos no próximo build). **Arquivos:** `web/banners/dominios/*.webp` (via dono), `src/shell.html`, `tests/dominios.test.js`.
+
 ## ★ DOMÍNIOS §279 — regra ASCII de nome de asset + build/runtime traduz a chave acentuada. INSTALAÇÃO das 5 artes PENDENTE (anexo não chegou).
 
 **Regra do dono:** nome de arquivo de asset em `web/` é **ASCII puro, sem acento**. A chave da cultura fica acentuada no DADO (`Egípcia`,`Nórdica`); a tradução p/ o arquivo tira o acento. Por quê ASCII e não só NFC: (1) faz a classe do bug (NFC×NFD do macOS) deixar de existir; (2) nome acentuado servido por HTTP passa por URL-encoding que varia entre navegador/WebView Android/Render.

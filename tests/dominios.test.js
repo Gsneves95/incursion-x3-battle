@@ -358,6 +358,34 @@ console.log('== 12) §279 NOME DE ARQUIVO de arte é ASCII: a chave acentuada do
   w.close();
 }
 
+console.log('== 13) §280 LADO CHEIO: os cinco Domínios têm ARTE PRESENTE (o §278 guardava a ausência; agora a presença) ==');
+{
+  const jsdom = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
+  const vc = new jsdom.VirtualConsole(); const errs = []; vc.on('jsdomError', e => errs.push(e.message));
+  const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
+  const w = dom.window, d = w.document;
+  w.eval('perfil=novoPerfil(0,0); ir("dominios",{},{substituir:true}); render();');
+  const cults = w.eval('Object.keys(DOMINIOS)');
+  // cada Domínio tem o arquivo de arte REGISTRADO na build (babá: renomeie/remova um .webp e a build não o
+  // acha → DOMINIOS_ARTE perde a chave → esta guarda quebra) e o cartão EMITE <img>, não placeholder.
+  let faltando = [], semImg = [];
+  for (const c of cults) {
+    const chave = w.eval(`domArteArquivo("dominio", DOMINIOS["${c}"].cultura)`);
+    if (!w.eval(`temArteDom(${JSON.stringify(chave)})`)) faltando.push(c + '→' + chave);
+    const card = d.querySelector(`.dcard[data-cultura="${c}"]`);
+    if (!card || !card.querySelector('.dcard__art') || card.querySelector('.dcard__ph')) semImg.push(c);
+  }
+  ok(faltando.length === 0, 'os CINCO Domínios têm arte registrada na build (falta: ' + faltando.join(', ') + ')');
+  ok(semImg.length === 0, 'os CINCO cartões emitem <img> de arte, nenhum placeholder (sem <img>: ' + semImg.join(', ') + ')');
+  // e a arte também existe COMO ARQUIVO no repo, com o nome ASCII (dupla-babá: o disco e a build de acordo)
+  const dir = path.join(__dirname, '..', 'web', 'banners', 'dominios');
+  const noDisco = cults.every(c => fs.existsSync(path.join(dir, 'dominio-' + w.eval(`semAcento(String(DOMINIOS["${c}"].cultura).toLowerCase())`) + '.webp')));
+  ok(noDisco, 'os cinco dominio-<ascii>.webp existem em web/banners/dominios/');
+  ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
+  w.close();
+}
+
 console.log('');
 console.log(f === 0 ? '>>> DOMINIOS OK' : `>>> ${f} FALHA(S)`);
 if (f) process.exit(1);

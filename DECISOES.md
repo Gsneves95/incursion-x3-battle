@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §280 — As CINCO artes de Domínio INSTALADAS (fecha o §279) + a cultura ganha contorno para ler sobre a arte.
+
+**Como as artes chegaram.** O anexo do ZIP falhou TRÊS vezes — o contêiner era recriado no meio (SO v24→v33), e o upload não sobrevivia. O dono commitou os cinco `.webp` direto no branch pelo site do GitHub; um `git pull` os trouxe. Lição registrada: quando o anexo não sobrevive à recriação do contêiner, o canal robusto é commitar no branch.
+
+**As cinco.** `web/banners/dominios/dominio-{grega,egipcia,japonesa,nordica,chinesa}.webp`, todas **448×1030** (proporção 0,435 do cartão, §278), nomes ASCII (§279). Não converti, não redimensionei, não renomeei. **Tabela real cultura→arquivo→aceso** (chave acentuada do dado → arquivo ASCII → `<img>` emitido), com Egípcia e Nórdica — os casos que a tradução do §279 tinha de resolver — acesos:
+
+| cultura (chave) | arquivo | `<img>` | aceso |
+|---|---|---|---|
+| grega | `dominio-grega.webp` | `banners/dominios/dominio-grega.webp` | ✓ |
+| egípcia | `dominio-egipcia.webp` | `banners/dominios/dominio-egipcia.webp` | ✓ (acento→ASCII) |
+| japonesa | `dominio-japonesa.webp` | `banners/dominios/dominio-japonesa.webp` | ✓ |
+| nórdica | `dominio-nordica.webp` | `banners/dominios/dominio-nordica.webp` | ✓ (acento→ASCII) |
+| chinesa | `dominio-chinesa.webp` | `banners/dominios/dominio-chinesa.webp` | ✓ |
+
+**PESO — nada embutido no HTML.** As cinco entraram como ASSETS SEPARADOS (copiadas para `dist/banners/dominios/`, carregadas quando a tela abre). O `incursion.html` cresceu **98 bytes** (só as 5 chaves do `DOMINIOS_ARTE`), de 2.310.455 → 2.310.553; os 432 KB das artes NÃO estão no HTML. (O único `data:image/webp` do HTML é a miniatura de retrato de deus, pré-existente ao §280.)
+
+**CORREÇÃO que só a arte REAL revelou (legibilidade sobre a arte, §258).** A cultura em versalete fica no ALTO do corpo, ACIMA do pico do véu, então cai sobre a ARTE — clara em Chinesa/Egípcia/Grega/Nórdica — e lavava. O nome dourado já lia (drop-shadow forte). Consertei com CONTORNO na cultura (`text-shadow` em várias camadas escuras, efeito outline) + uma sombra leve na frase, **sem mexer no véu nem esconder a arte** — mesmo princípio da "vida OPACA sobre a arte" do §258 (a leitura não se paga apagando a cena). Recusei subir o véu (comeria a cena que o dono quer ver). Verificado no dist, viewport real, fontes reais, rede bloqueada: as cinco culturas legíveis sobre a arte, e o arco do véu assentando sobre a cena.
+
+**GUARDAS.** `dominios.test.js` §13 (lado CHEIO, que faltava): os cinco têm arte REGISTRADA na build e o cartão emite `<img>` (não placeholder), e os cinco `.webp` existem no disco com nome ASCII — babá: renomeie/remova um arquivo e a build perde a chave e o teste quebra. A guarda da AUSÊNCIA (§278, "arte ausente não vira 404") segue válida (é o outro lado). A guarda de ASCII (§279, `assets.test.js`) exercitada AGORA contra os cinco uploads reais: verde. Suíte + build verdes; **4 capturas** em `docs/capturas-277/` (a tela com as cinco artes, o cartão ampliado, a tela sem arte, o histórico).
+
+**Emblemas e fundo seguem AUSENTES de propósito:** emblemas no monograma latino (OL·AS·DU·TK·CE), tela correta sem o fundo (gradiente do jogo). **Não muda:** as 4 recusas, progresso no cartão, ciclo semanal, "Wukong", reticência Amaterasu/Tsukuyomi. **Arquivos:** `web/banners/dominios/*.webp` (5, via dono), `src/shell.html` (contorno da cultura/frase), `tests/dominios.test.js` (§13), `ESTADO.md`.
+
 ## §279 — NOME DE ARQUIVO de asset é ASCII PURO (regra do projeto) + a build/runtime traduz a chave acentuada. A INSTALAÇÃO das 5 artes de Domínio ficou PENDENTE (o anexo não chegou ao contêiner).
 
 **A regra (decisão do dono).** Nenhum nome de arquivo de asset em `web/` leva acento — ASCII puro, sem exceção. A CHAVE da cultura continua acentuada no DADO (`Egípcia`, `Nórdica`); a tradução para o nome de arquivo tira o acento. **Motivo, em três camadas:** (1) é a convenção que o projeto já tem (os 12 do bestiário — `automato_bronze`, `guardiao_bosque`, `aparicao`; os 13 da campanha — `cap1-04-trovao-sobre-o-duat` — todos ASCII); (2) normalizar NFC resolveria só o caso do macOS, mas conviveria com a CLASSE do defeito — nome sem acento faz a classe DEIXAR de existir (não há forma decomposta de uma letra que não tem acento); (3) há uma camada que a normalização não pega: servido por HTTP, um nome acentuado passa por URL-encoding que varia entre navegador, WebView do Android e o Render. **Quem se adapta é o código, não os arquivos.**

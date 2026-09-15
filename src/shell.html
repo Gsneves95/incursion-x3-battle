@@ -1123,10 +1123,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 54 Q50 34 100 54 L100 100 L0 100 Z" fill="%23000"/></svg>') no-repeat center/100% 100%}
 .dcard__corpo{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;
   gap:4px;padding:8px 9px 11px;text-align:center}
-.dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.3em}
+/* §279: a cultura fica no ALTO do corpo, acima do pico do véu, então cai sobre a ARTE (clara em Chinesa/
+   Egípcia/Grega/Nórdica) — a sombra garante a leitura sobre a cena, não sobre o gradiente (mesmo princípio
+   da vida OPACA do §258). A frase (mais baixa, quase sobre o véu) leva uma sombra leve por seguro. */
+.dcard__cult{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--tag);font-weight:700;padding-left:.3em;text-shadow:0 0 2px #04060e,0 0 2px #04060e,0 1px 2px #04060e,0 0 7px rgba(4,6,14,.95)}
 .dcard__nome{display:flex;flex-direction:column;font-family:'Cinzel',serif;font-weight:700;font-size:15px;line-height:1.02;
   background:var(--ouro-grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
-.dcard__frase{font-style:italic;font-weight:300;font-size:9.5px;line-height:1.25;color:#BDC9DA;text-wrap:balance;min-height:22px}
+.dcard__frase{font-style:italic;font-weight:300;font-size:9.5px;line-height:1.25;color:#BDC9DA;text-wrap:balance;min-height:22px;text-shadow:0 1px 3px rgba(4,6,14,.9)}
 .dcard__prog2{display:flex;flex-direction:column;align-items:center;gap:2px;margin:1px 0}
 .dcard__ant{font-size:9px;color:var(--ink-mute)}
 .dcard__deuses{display:flex;justify-content:center;gap:3px}
