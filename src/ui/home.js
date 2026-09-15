@@ -1944,6 +1944,14 @@ function dominioFichaHTML(k, vida){
 
 /* ---------- TELA DE ESCOLHA (rota 'dominios'): os cinco Domínios ---------- */
 function temArteDom(nome){ return typeof DOMINIOS_ARTE !== 'undefined' && DOMINIOS_ARTE && !!DOMINIOS_ARTE[nome]; }
+// §279 — NOME DE ARQUIVO de asset é ASCII PURO (decisão do dono; convenção do projeto — bestiário/campanha
+// já são ASCII). A CHAVE da cultura continua acentuada no DADO (`Egípcia`, `Nórdica`); a tradução p/ o nome
+// de arquivo tira o acento. Função reutilizável (as 5 próximas culturas vêm depois; a Céltica pode ter
+// acento): tira diacríticos por NFD. Motivo de ser ASCII e não só normalizar: (1) nome sem acento faz a
+// classe do bug DEIXAR de existir (não há forma decomposta de letra sem acento); (2) servido por HTTP, um
+// nome acentuado ainda passa por URL-encoding que varia entre navegador, WebView do Android e o Render.
+function semAcento(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function domArteArquivo(prefixo, cultura){ return prefixo + '-' + semAcento(String(cultura).toLowerCase()); }
 // §277 — MONOGRAMA de emblema em LATINO (duas maiúsculas). Motivo medido: o §260 subsetou a Cinzel em
 // LATINO + LATINO ESTENDIDO; os glifos "bonitos" (ΟΛ ☥ ⛩ 天 ᛟ) do §276 estão FORA do subset → caem na
 // fonte do sistema e viram quadradinho no Android. Duas maiúsculas latinas (iniciais do Domínio) estão
@@ -1974,10 +1982,11 @@ function dominioPosterHTML(lad){
       : `<div class="domcard__prog domcard__prog--novo">Não iniciado</div>`);
   const anterior = `<span class="dcard__ant">${recAnt > 0 ? 'anterior a bater · nível ' + recAnt : '1ª semana — sem marca'}</span>`;
   const trio = lad.trio.map(k => `<span class="dcard__deus">${slot('god-' + k, ini(domNomeDeus(k)), '#b9a94a', 15, true)}<i>${H(domNomeDeusCartao(lad, k))}</i></span>`).join('');
-  const emb = temArteDom('emblema-' + c)
-    ? `<img src="banners/dominios/emblema-${c}.webp" alt="">`
+  const embArq = domArteArquivo('emblema', lad.cultura), artArq = domArteArquivo('dominio', lad.cultura);   // §279: ASCII
+  const emb = temArteDom(embArq)
+    ? `<img src="banners/dominios/${embArq}.webp" alt="">`
     : `<span class="dcard__embmono">${H(embMonoDom(c, lad.cultura))}</span>`;
-  const arte = temArteDom('dominio-' + c) ? `<img class="dcard__art" src="banners/dominios/dominio-${c}.webp" alt="">` : '<div class="dcard__ph"></div>';
+  const arte = temArteDom(artArq) ? `<img class="dcard__art" src="banners/dominios/${artArq}.webp" alt="">` : '<div class="dcard__ph"></div>';
   const [nome1, nome2] = domNomeDuasLinhas(lad.nome);
   return `<button class="domcard dcard dcard--${H(c)}" data-cultura="${H(c)}">
     <div class="dcard__poster">

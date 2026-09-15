@@ -335,6 +335,29 @@ console.log('== 11) §277 RESKIN pôster: paleta distinta por cultura · emblema
   w.close();
 }
 
+console.log('== 12) §279 NOME DE ARQUIVO de arte é ASCII: a chave acentuada do dado traduz para o arquivo sem acento ==');
+{
+  const jsdom = require('jsdom');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
+  const vc = new jsdom.VirtualConsole(); const errs = []; vc.on('jsdomError', e => errs.push(e.message));
+  const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, virtualConsole: vc });
+  const w = dom.window;
+  w.eval('perfil=novoPerfil(0,0);');
+  // a função é REUTILIZÁVEL (não tabela de 5): tira diacríticos por NFD
+  ok(w.eval('semAcento("Egípcia")') === 'Egipcia', 'semAcento tira o acento (Egípcia→Egipcia)');
+  ok(w.eval('semAcento("Nórdica")') === 'Nordica', 'semAcento tira o acento (Nórdica→Nordica)');
+  ok(w.eval('semAcento("Céltica")') === 'Celtica', 'semAcento serve para culturas futuras (Céltica→Celtica)');
+  // a tradução CHAVE(acentuada)→ARQUIVO(ASCII) que o cartão usa
+  ok(w.eval('domArteArquivo("dominio","Egípcia")') === 'dominio-egipcia', 'a arte da Egípcia é dominio-egipcia (ASCII)');
+  ok(w.eval('domArteArquivo("dominio","Nórdica")') === 'dominio-nordica', 'a arte da Nórdica é dominio-nordica (ASCII)');
+  ok(w.eval('domArteArquivo("emblema","Nórdica")') === 'emblema-nordica', 'o emblema também é ASCII (emblema-nordica)');
+  // e o resultado é ASCII PURO (sem nenhum codepoint > 127) para as CINCO culturas do dado
+  const todasAscii = w.eval('Object.keys(DOMINIOS).every(c => { const a = domArteArquivo("dominio", c); return [...a].every(ch => ch.codePointAt(0) < 128); })');
+  ok(todasAscii, 'os cinco nomes de arquivo de arte são ASCII puro (nenhum acento vaza para o disco/URL)');
+  ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
+  w.close();
+}
+
 console.log('');
 console.log(f === 0 ? '>>> DOMINIOS OK' : `>>> ${f} FALHA(S)`);
 if (f) process.exit(1);

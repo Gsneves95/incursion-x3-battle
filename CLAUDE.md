@@ -460,6 +460,14 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
 - **Chaves de arte:** todo encaixe é `<div class="slot" data-slot="CHAVE">`.
   Chaves: `god-<key>`, `skill-<key>-<slot>`, `effect-<tipo>`, `player-<n>-avatar`.
   Trocar por `<img class="slot">` quando a arte existir.
+- **NOME DE ARQUIVO de asset em `web/` é ASCII PURO — sem acento, nunca (§279).** Bestiário/campanha já
+  seguem (`automato_bronze`, `guardiao_bosque`, `cap1-04-trovao-sobre-o-duat`). Quando a CHAVE tem acento
+  (as culturas `Egípcia`, `Nórdica`; à frente talvez a Céltica), a chave fica acentuada no DADO e a tradução
+  para o arquivo TIRA o acento — via a função reutilizável `semAcento` (NFD + descarta diacríticos), não uma
+  tabela. Por quê ASCII e não só normalizar NFC: (1) nome sem acento faz a classe do bug — as duas formas
+  Unicode (NFC composta × NFD decomposta do macOS) que parecem iguais e não casam — DEIXAR de existir; (2)
+  servido por HTTP, um nome acentuado ainda passa por URL-encoding que varia entre navegador, WebView do
+  Android e o Render. Guarda: `tests/assets.test.js` varre `web/` e quebra se qualquer nome tiver codepoint > 127.
 - **A FICHA de habilidade é um CÍRCULO** (§257: moldura `border-radius:50%`, **90px**; o medalhão da
   arte é redondo — sem zoom, scale 1.0/centro, pois 31% das 401 artes já preenchem a borda). O RETRATO
   (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e

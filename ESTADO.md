@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ DOMÍNIOS §279 — regra ASCII de nome de asset + build/runtime traduz a chave acentuada. INSTALAÇÃO das 5 artes PENDENTE (anexo não chegou).
+
+**Regra do dono:** nome de arquivo de asset em `web/` é **ASCII puro, sem acento**. A chave da cultura fica acentuada no DADO (`Egípcia`,`Nórdica`); a tradução p/ o arquivo tira o acento. Por quê ASCII e não só NFC: (1) faz a classe do bug (NFC×NFD do macOS) deixar de existir; (2) nome acentuado servido por HTTP passa por URL-encoding que varia entre navegador/WebView Android/Render.
+
+**Feito (verde):** função REUTILIZÁVEL `semAcento`+`domArteArquivo` em `home.js` (não tabela — as 5 próximas culturas vêm depois; Céltica pode ter acento); o cartão deriva arte/emblema por ASCII (`Egípcia`→`dominio-egipcia`, `Nórdica`→`dominio-nordica`). Guarda de PROJETO nova `tests/assets.test.js` (varre `web/`, quebra se nome com codepoint>127). Guarda de mapeamento `dominios.test.js` §12. **Pipeline provado ponta-a-ponta com fixtures 1×1 descartáveis** (criados/build/conferidos/apagados — não se commita arte falsa): DOMINIOS_ARTE registrou os 5 ASCII e o runtime emitiu `<img>` dos 5 (as 2 acentuadas resolvidas p/ ASCII), sem placeholder, sem 404.
+
+**PENDENTE — o anexo não chegou a este contêiner (2 tentativas, contêiner recriado no intervalo).** Falta, e é drop-in trivial quando os bytes chegarem (nomes já casam, acende no próximo build): copiar os 5 `dominio-{grega,egipcia,japonesa,nordica,chinesa}.webp` (448×1030, 422 KB) p/ `web/banners/dominios/`; a tabela real cultura→arquivo→aceso; a captura com a arte real; o peso do dist; e a guarda do "lado cheio" (5 com arte PRESENTE, babá que quebra ao renomear — não entrou porque deixaria a suíte vermelha sem os arquivos).
+
+**Não muda:** as 4 recusas, progresso no cartão, ciclo semanal, "Wukong", reticência Amaterasu/Tsukuyomi; emblemas no monograma latino, tela ok sem fundo. **Arquivos:** `src/ui/home.js`, `tests/assets.test.js`, `tests/dominios.test.js`, `package.json`, `CLAUDE.md`. **Como destravar:** reenviar o ZIP (ou commitar os 5 webp direto no branch) — aí faço o restante do §279 numa passada.
+
 ## ★ DOMÍNIOS §278 — O CARTÃO ajustado à referência do dono: proporção de pôster, véu em arco, retrato arredondado.
 
 **§278 — só o cartão muda; conteúdo e regras seguem.** As duas imagens de referência (Chinesa/Egípcia) **NÃO são arte de cartão** — trazem texto/retratos/botão no pixel; são referência de PROPORÇÃO e LINGUAGEM. A arte de cartão é só a CENA de fundo; o resto é CSS+dado (usar as imagens como asset congelaria fonte/idioma/progresso — não fazer).
