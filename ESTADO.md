@@ -15,6 +15,8 @@ Sete acertos de desenho (medidos no dist, fontes reais, rede bloqueada, 780; ANT
 
 **Emblema confirmado:** acende sozinho quando `emblema-{...}.webp` chegar (deriva por `domArteArquivo` ASCII §279); até lá, monograma latino. Fundo idem. **Não muda:** as 4 recusas, ciclo semanal, "Wukong", proporção 0,435, paleta. **Babás** `dominios.test.js` §11 (retrato raio 4/5) + §10/§13 + `moldura.test.js` verdes. Suíte+build verdes. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/dominios.test.js`.
 
+**§281-ajuste (a cultura 1,16) — medido, NÃO cabe; contorno mantido; volta pro dono.** 3ª via (descer o bloco até a cultura no escuro) medida a 780: cultura no topo a 36%, arco escuro só a 47% (opaco ~54%); descer 30,5px estoura o botão ~20px p/ fora (folga é 10px). Contraste cru antes×depois: **nome 1,84→9,47** (ganha, mas só se o botão sair); **cultura 1,16→1,91** (não resolve — a borda de cima do arco é semitransparente, a arte vaza). Dentro dos congelamentos (hierarquia/agrupamento/retrato/arco 47%/botão dentro) a cultura não entra no escuro → contorno FICA (regra do dono: "tire se o número permitir" — não permitiu). Evidência: `docs/capturas-281/hipotese-descida-botao-fora.png`. Decisão aberta ao dono: aceitar o contorno / tirar a 2ª linha / abrir um congelamento / placa. (Só docs; nenhum código mudou neste passo.)
+
 ## ★ DOMÍNIOS §280 — as CINCO artes de cartão INSTALADAS (fecha o §279) + cultura com contorno para ler sobre a arte.
 
 **Como chegaram:** o anexo falhou 3× (contêiner recriado no meio, v24→v33); o dono commitou os 5 `.webp` direto no branch pelo GitHub, `git pull` trouxe. **Canal robusto quando o anexo não sobrevive: commitar no branch.**

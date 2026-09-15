@@ -30,6 +30,16 @@ Diagnóstico do dono: sete blocos de texto empilhados em 134×308, nenhum domina
 
 **NÃO muda:** as 4 recusas, ciclo semanal, "Wukong", proporção 0,435, paleta por cultura. **Babás:** `dominios.test.js` §11 (retrato raio 4/5, sem clip-path) atualizada; §10/§13 e `moldura.test.js` (pílula 1 linha) verdes. Suíte+build verdes; capturas ANTES/DEPOIS em `docs/capturas-281/`. **Arquivos:** `src/ui/home.js` (uma linha de progresso), `src/shell.html` (escala, espaçamento, arco, retrato, aura/contorno), `tests/dominios.test.js`, `ESTADO.md`.
 
+### §281-ajuste — a CULTURA no escuro (o 1,16): medido, NÃO cabe sem estourar o botão. Contorno MANTIDO. Decisão do dono.
+
+O dono pediu a 3ª via do mockup: descer o BLOCO inteiro até a cultura cair DENTRO do escuro do arco, e então tirar o contorno. **Medi (780) e não cabe:**
+- O bloco é 189px num cartão de 284px, ancorado embaixo pelo botão; a cultura (topo) está a **36%** e o arco só fica escuro no pico a **47%** (e OPACO mesmo só a **~54%**). A cultura precisa descer **30,5px** p/ tocar o pico (ou **50,4px** p/ o opaco).
+- Folga abaixo do botão: **10px**. Logo, descer a cultura ao pico empurra o botão **~20px para FORA** do cartão (ao opaco, ~40px). Capturado em `docs/capturas-281/hipotese-descida-botao-fora.png` — o nome fica lindo no escuro, mas o ENTRAR some da base.
+- **Contraste cru, antes × depois (pior caso das 5):**
+  - **nome (ouro):** antes **1,84** → descido ao pico **9,47** ✓ (o nome, mais baixo, alcança o escuro — grande ganho, MAS só existe se o botão sair).
+  - **cultura:** antes **1,16** → descida ao pico **1,91** ✗ — continua ruim. Motivo: a cultura é a linha mais ALTA; na BORDA de cima do arco o véu é semitransparente (a arte vaza), então ela só ficaria escura de verdade a ~54% (+50px → botão 40px fora). Descer não resolve a cultura dentro das restrições.
+- **Conclusão:** dentro do que ficou congelado (hierarquia, agrupamento, retrato, arco a 47%, botão dentro do cartão), a cultura não entra no escuro. Como o número NÃO permitiu, **o contorno FICA** (o dono manda: "tire se o número permitir"). Não apliquei descida (o botão sairia — a regra do dono era PARAR e reportar). **A conta agora é do dono:** (a) aceitar o contorno na cultura (robusto o bastante, como está); (b) tirar a 2ª linha "anterior a bater" também (libera ~11px, ainda insuficiente); (c) abrir mão de um congelamento (encolher um respiro/di­minuir algo) p/ ganhar os ~30px; (d) placa sólida atrás da cultura. Nenhuma cabe sem tocar algo que ele congelou — por isso volta pra ele. (Só docs neste passo; nenhum código mudou.)
+
 ## §280 — As CINCO artes de Domínio INSTALADAS (fecha o §279) + a cultura ganha contorno para ler sobre a arte.
 
 **Como as artes chegaram.** O anexo do ZIP falhou TRÊS vezes — o contêiner era recriado no meio (SO v24→v33), e o upload não sobrevivia. O dono commitou os cinco `.webp` direto no branch pelo site do GitHub; um `git pull` os trouxe. Lição registrada: quando o anexo não sobrevive à recriação do contêiner, o canal robusto é commitar no branch.
