@@ -1406,9 +1406,19 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2p__tag--cult{border-color:var(--gold-soft);color:var(--gold-text)}
 .col2p__posse{flex:0 0 auto;display:inline-block;margin:8px 0 2px;font-weight:800;font-size:10.5px;letter-spacing:.04em}
 .col2p__posse--tem{color:var(--e-Verdejante)} .col2p__posse--nao{color:var(--ink-mute)}
-.col2p__kit{flex:1 1 auto;min-height:0;overflow-y:auto;margin-top:6px;padding-right:3px;
+/* §282-item2: o kit rola. O WRAP segura a névoa+chevron; o KIT rola dentro com folga inferior para a última
+   linha de efeito subir ACIMA da névoa. A névoa some ao chegar ao fim (JS troca `hidden`). */
+.col2p__kitwrap{position:relative;flex:1 1 auto;min-height:0;margin-top:6px;display:flex}
+.col2p__kit{flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;padding-right:3px;padding-bottom:16px;
   display:flex;flex-direction:column;gap:7px;scrollbar-width:thin}
 .col2p__kit::-webkit-scrollbar{width:5px} .col2p__kit::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+/* display GATEADO em :not([hidden]) — senão `display:grid` do autor vence a regra UA `[hidden]{display:none}`
+   (esta shell não tem reset de [hidden]) e a névoa nunca sumiria ao chegar ao fim. */
+.col2p__fade{position:absolute;left:0;right:5px;bottom:0;height:26px;pointer-events:none;place-items:end center;
+  background:linear-gradient(180deg,rgba(18,15,34,0),rgba(18,15,34,.86) 70%,rgba(18,15,34,.96));border-radius:0 0 8px 8px}
+.col2p__fade:not([hidden]){display:grid}
+.col2p__fade i{font-style:normal;font-size:13px;line-height:1;color:var(--gold-text);opacity:.9;animation:col2bob 1.4s ease-in-out infinite}
+@keyframes col2bob{0%,100%{transform:translateY(-1px)}50%{transform:translateY(2px)}}
 .col2k__row{border:1px solid #2c2648;border-radius:9px;padding:6px 8px;background:rgba(20,16,38,.5)}
 .col2k__row--vazio{display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute)}
 .col2k__top{display:flex;align-items:baseline;gap:7px}

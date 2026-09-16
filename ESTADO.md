@@ -12,7 +12,9 @@ Rota `colecao` (rotulada "Personagens"). Substitui a vitrine por-panteão do §2
 
 **Relocado (registrado):** moldura de MESTRE (recompensa §245) reskinada no cartão como `col2c--mestre` (continua saindo); pip de nível de maestria por cartão **retirado** (vive no detalhe do deus `.dmaes` e em DESAFIOS `dsf__maes` — era duplicação). Não-possuído reusa §216 (dourado × apagado): `col2c--falta` / `col2p--falta`.
 
-**Babás:** `tests/colecao_tela.test.js` (37 asserções: sem nível/atributo/barra; /100 não /300; só SS/S/A; cada filtro reduz; painel 4 linhas com custo+recarga; possuído×falta; sem 404). Migradas `aquisicao`/`desafios`/`maestria` para a grade nova. **4 capturas** em `docs/capturas-282/`. Suíte + build verdes. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/colecao_tela.test.js` (novo), `tests/{aquisicao,desafios,maestria}.test.js`, `package.json`. Ver DECISOES §282.
+**§282-item2 — a rolagem do painel FICA** (referência consultada ≠ narrativa §253; efeito cortado é pior que rolado num leitor-de-kit). Garantido e medido (Chromium): névoa+chevron "⌄" avisa que há mais abaixo e **some ao chegar ao fim**; o VER DETALHES é irmão em fluxo (não sobrepõe) e o kit tem folga inferior → última linha de efeito (bottom 355) fica acima do botão (top 386). Pega corrigida: `display:grid` do autor vencia `[hidden]` UA → gateado em `:not([hidden])`.
+
+**Babás:** `tests/colecao_tela.test.js` (39 asserções: sem nível/atributo/barra; /100 não /300; só SS/S/A; cada filtro reduz; painel 4 linhas com custo+recarga; possuído×falta; sem 404; névoa-aviso + botão-em-fluxo). Migradas `aquisicao`/`desafios`/`maestria` para a grade nova. **6 capturas** em `docs/capturas-282/` (+ kit topo/fim). Suíte + build verdes. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/colecao_tela.test.js` (novo), `tests/{aquisicao,desafios,maestria}.test.js`, `package.json`. Ver DECISOES §282.
 
 ## ★ DOMÍNIOS §281 — ACABAMENTO gráfico do cartão sobre a arte real (hierarquia, respiro, arte de volta). Só tela.
 

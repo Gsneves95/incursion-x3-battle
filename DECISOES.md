@@ -35,6 +35,12 @@ O dono trouxe um mockup (imagem + HTML de referência) para refazer a tela de Pe
 
 **Arquivos:** `src/ui/home.js` (máquina da Coleção: estado, filtros, cartão, painel-leitor, monograma, moldura Mestre no cartão), `src/shell.html` (bloco CSS `.col2*`), `tests/colecao_tela.test.js` (novo), `tests/{aquisicao,desafios,maestria}.test.js` (migradas), `package.json`, `ESTADO.md`.
 
+### §282-item2 — a ROLAGEM do painel FICA (referência consultada ≠ narrativa). Duas garantias, medidas.
+
+O dono recusou o kit compacto com "…": num LEITOR-DE-KIT o efeito **cortado é pior que o rolado**, porque o número que o jogador foi buscar pode estar na parte escondida. O §253 proíbe rolagem em TEXTO NARRATIVO; isto é **referência consultada**, outra coisa — a rolagem fica. As duas garantias pedidas, com número real (Chromium, 951×428, Zeus, kit 320px em 155px de janela):
+1. **Percebe-se que há mais abaixo:** névoa (gradiente) + chevron "⌄" pulsante no rodapé do kit, que **some ao chegar ao fim** (`col2p__fade`, JS troca `hidden` no `scroll`). No topo aparece; no fim, `fadeHiddenFim:true`. Pega: `display:grid` do autor vencia a regra UA `[hidden]{display:none}` (esta shell não tem reset de `[hidden]`) → a névoa nunca sumia; corrigido gateando `display` em `.col2p__fade:not([hidden])`.
+2. **O botão fixo não tapa a última linha:** o VER DETALHES é **irmão em fluxo DEPOIS** do kit (não `position:absolute` sobre ele), e o kit tem folga inferior (`padding-bottom:16px`). Medido no fim: última linha de efeito bottom **355** < topo do botão **386** e < fundo do kit **378** → visível e não tapada. Babá: `col2p__fade` presente + botão depois do kit no fluxo (colecao_tela.test.js, 39 asserções).
+
 ---
 
 ## §281 — ACABAMENTO do cartão de Domínio (revisão de desenho gráfico sobre a arte real). Só tela; nada de motor/dado.

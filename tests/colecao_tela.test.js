@@ -107,6 +107,13 @@ console.log('\n== 5. painel = kit completo (custo + recarga nas 3 ações + pass
   ok(painel.querySelectorAll('.col2p__ident .col2p__tag').length === 4, 'identidade: 4 tags (facção, elemento, classe, função)');
   ok(!/arqu[eé]tipo/i.test(painel.innerHTML), 'nenhum "arquétipo" (o campo não existe em data/deuses — não se inventa)');
   ok(!!painel.querySelector('.col2p__ver'), 'o botão VER DETALHES leva ao ecrã cheio do deus');
+  // §282-item2: o kit rola; a névoa+chevron avisa que há mais abaixo, e o botão é IRMÃO EM FLUXO depois do
+  // kit (nunca position:absolute sobre ele) — então não tapa a última linha. (o toggle da névoa e o "não
+  // tapa" com números reais vivem na verificação Chromium; aqui a ESTRUTURA que os garante.)
+  const kitwrap = painel.querySelector('.col2p__kitwrap');
+  ok(!!kitwrap && !!kitwrap.querySelector('.col2p__kit') && !!kitwrap.querySelector('.col2p__fade'), 'o kit rolável tem a névoa-aviso (col2p__fade) no rodapé');
+  const filhos = [...painel.querySelector('.col2p').children];
+  ok(filhos.indexOf(kitwrap) < filhos.indexOf(painel.querySelector('.col2p__ver')), 'o botão vem DEPOIS do kit no fluxo (irmão, não sobreposto)');
 }
 
 // ---- 6. POSSUÍDO × NÃO-POSSUÍDO inequívocos (a linguagem do §216: dourado × apagado). ----

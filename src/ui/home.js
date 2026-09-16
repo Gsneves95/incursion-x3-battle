@@ -957,11 +957,14 @@ function colPainelHTML(k){
       <span class="col2p__tag">${H(g.funcao || '')}</span>
     </div>
     ${posse}
-    <div class="col2p__kit">
-      ${colKitLinhaHTML('BÁSICO', ab.basico)}
-      ${colKitLinhaHTML('HABILIDADE', ab.habilidade)}
-      ${colKitLinhaHTML('MILAGRE', ab.milagre)}
-      ${colKitLinhaHTML('PASSIVA', g.passiva, true)}
+    <div class="col2p__kitwrap">
+      <div class="col2p__kit">
+        ${colKitLinhaHTML('BÁSICO', ab.basico)}
+        ${colKitLinhaHTML('HABILIDADE', ab.habilidade)}
+        ${colKitLinhaHTML('MILAGRE', ab.milagre)}
+        ${colKitLinhaHTML('PASSIVA', g.passiva, true)}
+      </div>
+      <div class="col2p__fade" hidden aria-hidden="true"><i>⌄</i></div>
     </div>
     <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
   </div>`;
@@ -1031,6 +1034,15 @@ function colSelecionar(k){
 }
 function colLigarPainel(){
   const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => { ir('deus', { key: ver.dataset.verdeus }); render(); };
+  // §282-item2: o kit ROLA (referência consultada, não narrativa — §253 não se aplica). Duas garantias:
+  // (1) a névoa+chevron no rodapé AVISA que há mais abaixo, e some ao chegar ao fim; (2) o kit tem folga
+  // inferior (padding) para a ÚLTIMA linha de efeito subir acima da névoa — e o botão fixo é irmão em
+  // fluxo (não sobrepõe), então nunca tapa o efeito.
+  const kit = stage.querySelector('.col2p__kit'), fade = stage.querySelector('.col2p__fade');
+  if (kit && fade) {
+    const upd = () => { fade.hidden = !(kit.scrollHeight - kit.clientHeight - kit.scrollTop > 2); };
+    kit.onscroll = upd; upd();
+  }
 }
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */
