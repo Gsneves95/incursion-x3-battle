@@ -2,11 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ CADEIA §286 — o guarda passa a conferir o TEXTO QUE O JOGADOR LÊ (`deuses.desc`), não um arquivo invisível. Só guarda/teste.
+
+A cadeia extraía os NÚMEROS da prosa do **kits.json** e comparava ao `fx`; o jogador lê **`deuses.desc`** desde §271/§284-ajuste2. O guarda protegia um arquivo, não a tela. **Feito:** (1) a extração migrou p/ ler **`ab.desc` ↔ `ab.fx`** (os dois do data/deuses); (2) uma função só (`conferirNumeros`) serve ação E passiva → a **passiva ganhou os números** (não só o nome §285); (3) a ESTRUTURA (nome/custo/recarga/facção/elem/classe/função/arquétipo/passiva-nome) segue conferida kits.json↔data/deuses. Cadeia 1792→**2021 conf**, naoConf 4.9%.
+
+**Medição antes de aplicar (pedido do dono):** **0 divergências reais desc↔fx** nos 100 — a tela NÃO mente sobre o dano. A única que apareceu (`shutendoji.passiva` cura condicional 6/10) é convenção, não mentira: cura multi/condicional agora vira `naoConf` como o dano já fazia (§92/§118).
+
+**ACHADO — corrige o §285:** os "40+17 display-morto" **NÃO estão mortos.** `src/ui/selecao.js` (`painelKitHTML`, painel que abre ao tocar um deus na seleção, `KITMAP`=kits.json) **exibe `kit.efeito`** — 2ª tela de dano, sem guarda. Dos 57 pares que diferem em redação, 3 tropeçam no extrator (babi/houyi/nezha) mas são **artefato de parser** (mesmo número, o regex exige "de dano"). Nenhuma tela mostra número diferente hoje, mas nada obriga. **Aberto (decisão de tela do dono):** single-source o `selecao.js` p/ ler `deuses.desc` (como o home.js §284-ajuste2) — reescreve 57 painéis p/ a redação canônica (mesmos números) e mata o `kits.efeito` como exibição. Não fiz sozinho (muda texto exibido de 57 ações).
+
+**Latente fechado:** **god `nome`** entrou na cadeia (0 derivam, mas duplicado/sem guarda). §263 OK: `nome ∈ TELA_TOPO` → strippado da projeção, hash lê data/deuses → 0 re-carimbo. **Babá (pedido do dono):** muda um número no `desc` sem tocar no `fx` → build QUEBRA (teste em `cadeia.test.js`; dentes do §270 remontados p/ o par desc↔fx).
+
+**LIÇÃO (registrada):** *guarda escrito a partir do que quebrou cobre o passado, não o presente.* O §270 nasceu de deriva de facção → nasceu conferindo o kits.json (o que quebrou), não o `deuses.desc` (o que o jogador lê) — pago em 4 cortes (§282/§285/§286 + selecao aberto). **Guarda novo se escreve a partir do que EXISTE.** E o §285 chamou `kits.efeito` de morto por CRENÇA, não por `grep` — bastou abrir o selecao.js. Ver DECISOES §286.
+
+**Arquivos:** `tools/checar_cadeia.js`, `tests/cadeia.test.js`. Suíte (46) + build verdes.
+
 ## ★ CADEIA §285 — o guarda confere o NOME da passiva; CKIT apagado; e o mapa do buraco inteiro. Só dado/guarda/tela.
 
 Três itens do dono. (1) Os nomes de passiva do **data/deuses ficam** (§271; Exu prova que não é cosmético). (2) **CKIT APAGADO** (const+laço em home.js) — produtor sem consumidor depois do §284-ajuste2; a estrutura segue guardada pela cadeia. (3) **`checar_cadeia` confere o NOME da passiva** (falha-alto). Portão §263 confirmado ANTES: o nome da passiva cai FORA da projeção de combate (`TELA_PASS` o strippa) e o hash lê data/deuses (não o kits.json reconciliado) → `recarimbar_hash` dry-run **0/100**, nenhuma Provação re-carimba. Aplicado: 7 nomes reconciliados no kits.json (adotando data/deuses); cadeia 1692→**1792 conf**; babá provada.
 
-**O BURACO INTEIRO da cadeia (medido, p/ ver de uma vez):** ✅ faccao/elem/classe/funcao (§270), arquetipo (§282), passiva-nome (§285); ❌ **god nome** (0 derivado hoje, latente), **passiva efeito** (17 derivados, display-morto; e os NÚMEROS da passiva não são conferidos vs fx), **habilidade efeito-string** (40 derivados, display-morto — a cadeia confere só os números). **Raiz (§271):** a cadeia extrai números da prosa do **kits.json** e compara ao fx, mas o jogador lê **deuses.desc**, que a cadeia NUNCA confere — os números do texto EXIBIDO não estão guardados contra o fx. **Aberto (recomendação):** mover a extração da cadeia p/ ler `deuses.desc` + conferir passiva — fecha os furos de efeito de uma vez. Ver DECISOES §285.
+**O BURACO INTEIRO da cadeia (medido, p/ ver de uma vez):** ✅ faccao/elem/classe/funcao (§270), arquetipo (§282), passiva-nome (§285); ❌ **god nome** (0 derivado hoje, latente) → ✅ **FECHADO §286**; **passiva efeito**/**habilidade efeito-string** — os NÚMEROS do texto exibido não eram conferidos vs fx → ✅ **FECHADO §286** (extração migrada p/ `deuses.desc` + passiva). **Raiz (§271):** a cadeia extraía números da prosa do **kits.json**, mas o jogador lê **deuses.desc** — resolvido no §286. ⚠️ **Correção do §286:** o rótulo "display-morto" dos 40+17 estava ERRADO — `src/ui/selecao.js` exibe `kits.efeito` (2ª tela); ver §286 (aberto: single-source do selecao). Ver DECISOES §285/§286.
 
 **Arquivos:** `data/kits.json`, `tools/checar_cadeia.js`, `src/ui/home.js`, `tests/cadeia.test.js`. Suíte + build verdes.
 

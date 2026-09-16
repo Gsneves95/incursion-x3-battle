@@ -6,6 +6,60 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §286 — a cadeia passa a conferir o TEXTO QUE O JOGADOR LÊ (deuses.desc), não um arquivo que ninguém vê.
+
+O item que vale mais que os três do §285 somados. A cadeia extraía os NÚMEROS da prosa do **kits.json** e os
+comparava ao `fx`; mas o que o jogador lê nas telas de kit desde o §271/§284-ajuste2 é o **`deuses.desc`**. O
+guarda protegia um arquivo, não a tela — a tela podia mentir amanhã sem quebrar nada.
+
+**Feito.** (1) A extração de números migrou para ler **`ab.desc`** (o exibido) ↔ **`ab.fx`** (o motor), os dois
+do MESMO arquivo (data/deuses). (2) Uma função só — `conferirNumeros(reg,key,slot,desc,fx,dinâmico)` — serve
+ação E passiva, então a **passiva ganhou os números** (dano/cura/orbe/escudo/combo/duração), não só o nome
+(§285). A ESTRUTURA (nome do deus/ação, custo, recarga, facção/elemento/classe/função, arquétipo, nome da
+passiva) segue conferida kits.json↔data/deuses — é o balanço, guardado à parte. Cadeia 1792 → **2021 conf**.
+
+**MEDIÇÃO ANTES de aplicar (o dono: "se a troca revelar divergência real desc↔fx, PARE e me dê a lista — seria
+a tela mentindo sobre o dano").** Resultado: **0 divergências reais.** O `deuses.desc` bate o `fx` nos 100 deuses.
+A tela NÃO mente. Uma só apareceu na medição — `shutendoji.passiva`: desc "cura 6 (10 se abaixo de 60)", fx com
+as duas curas condicionais. Não é mentira (os dois valores estão no desc E no fx); é cura CONDICIONAL/multi, que
+o eixo **dano** já joga em `naoConf` desde §92/§118 e o eixo **cura** não jogava (nenhuma AÇÃO o expunha antes —
+só a passiva). Corrigido: cura multi/condicional (2+ valores) vira `naoConf`, como o dano. naoConf: 4.9% (< 20%).
+
+**ACHADO que corrige o §285 — os "40+17 display-morto" NÃO estão mortos.** O §285 chamou o `kits.efeito` de
+display-morto ("a tela mostra deuses.desc"). **Falso, medido no código:** `src/ui/selecao.js` — o painel de kit
+que abre ao **tocar qualquer deus na seleção** (`painelKitHTML`, vivo, `KITMAP` = kits.json) — exibe
+`kit.basico.efeito`/`habilidade`/`milagre`/`passiva.efeito`. É uma **SEGUNDA tela de dano, e sem guarda.** Dos
+**57** pares kits.efeito↔deuses.desc que diferem em REDAÇÃO, **3** tropeçam no extrator de números
+(babi.milagre, houyi.milagre, nezha.habilidade) — mas os **3 são artefato de parser**, não mentira: o número é o
+MESMO nos dois textos (ex.: "4 golpes de 10 distribuídos" × "4 golpes de 10 de dano" — o regex exige "de dano" e
+só pega um lado). **Hoje nenhuma tela mostra número diferente da outra.** Mas nada obriga isso. **Recomendação
+(aberto, aguardando o dono):** single-source o `selecao.js` para ler `deuses.desc` como o `home.js` já faz
+(§284-ajuste2) — reescreve o texto de 57 painéis para a redação canônica (mesmos números, verificado) e mata o
+`kits.efeito` como fonte de exibição de vez. NÃO fiz sozinho: é mudar texto exibido de 57 ações, decisão de tela
+do dono. Os **números** do custo/recarga do selecao seguem guardados (kits.json↔fx); só o TEXTO do efeito é o furo.
+
+**Fecho do buraco latente:** o **`nome` do deus** entrou na cadeia (0 derivam hoje, mas duplicado e sem guarda —
+mesma classe do arquetipo/§282 e passiva-nome/§285). Portão do §263 confirmado: `nome ∈ TELA_TOPO` →
+`projecaoCombate` o strippa, e o hash lê data/deuses → guardá-lo **não re-carimba nenhuma Provação**.
+
+**Babá (o pedido do dono):** mude um número no `desc` sem tocar no `fx` → a build QUEBRA. Antes disso passava.
+Teste sintético em `cadeia.test.js`: `desc "25 de dano"` com `fx dmg:15` → `[dano] diverge`. Os dentes do §270
+(EIXOS + metadados) foram remontados para o novo par: o texto dos números agora mora no `ab.desc` do lado-motor.
+
+**A LIÇÃO (o dono pediu para registrar).** *Um guarda escrito a partir dos campos que acabaram de quebrar cobre o
+passado, não o presente.* O §270 nasceu de uma divergência de facção e por isso nasceu com a **lista errada** —
+conferia o kits.json (o que tinha divergido) e não o deuses.desc (o que o jogador lê) — e a gente pagou isso em
+quatro cortes (§282 arquétipo, §285 nome-de-passiva, §286 números-do-desc, e o selecao ainda aberto). **Guarda
+novo se escreve a partir do que EXISTE, não do que quebrou.** E o §286 provou a lição sobre si mesmo: o §285
+declarou "kits.efeito é display-morto" **por crença**, não por leitura do código — bastou abrir o `selecao.js`
+para ver que é exibido. Antes de chamar um campo de morto, `grep` no que o lê.
+
+**Arquivos:** `tools/checar_cadeia.js` (números ← desc; conferirNumeros ação+passiva; cura multi→naoConf; god-nome;
+cabeçalho e comentário do SLOTS atualizados), `tests/cadeia.test.js` (par desc↔fx, babá, dentes remontados). Suíte
+(46 arquivos) + build verdes.
+
+---
+
 ## §285 — o guarda passa a conferir o NOME da PASSIVA; CKIT apagado; e o MAPA do buraco inteiro da cadeia.
 
 Três itens do dono. (1) Os nomes de passiva do **data/deuses ficam** (fonte que o motor executa, §271; o que a

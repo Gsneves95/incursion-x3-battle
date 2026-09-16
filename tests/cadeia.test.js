@@ -13,16 +13,22 @@ ok(C.pctNaoConf <= 20, `não-conferível ${C.pctNaoConf.toFixed(1)}% acima do te
 console.log(`  ${C.total} conferências · match ${C.R.match} · não-conferível ${C.R.naoConf} (${C.pctNaoConf.toFixed(1)}%)`);
 
 console.log('== o checador tem DENTES: divergência sintética é apontada ==');
-// prosa dizendo 15 de dano, cd 2, custo "2 Chama"; máquina com 99 (dano), cd 3, custo errado
-const prosa = { x: { basico: { nome: 'Golpe', custo: '2 Chama', recarga: 2, efeito: '15 de dano a 1 inimigo.' } } };
-const maqDivergente = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', cd: 3, cost: { Chama: 1 }, fx: [{ t: 'dmg', v: 99 }] }] }];
+// §286: o NÚMERO agora sai do `desc` do PRÓPRIO maq (o texto que o jogador lê) ↔ o `fx` (o motor). O
+// nome/custo/recarga seguem contra a prosa do kits.json (a ESTRUTURA). Aqui o desc diz 15 mas o motor faz 99 —
+// a tela mentiria sobre o dano, e a cadeia aponta. Recarga/custo divergem contra a prosa como antes.
+const prosa = { x: { basico: { nome: 'Golpe', custo: '2 Chama', recarga: 2 } } };
+const maqDivergente = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', desc: '15 de dano a 1 inimigo.', cd: 3, cost: { Chama: 1 }, fx: [{ t: 'dmg', v: 99 }] }] }];
 const r = C.conferir(prosa, maqDivergente);
-ok(r.divergencias.some(d => /\[dano\]/.test(d)), 'deveria apontar dano 99≠15');
+ok(r.divergencias.some(d => /\[dano\]/.test(d)), 'deveria apontar dano: desc 15 ≠ fx 99');
 ok(r.divergencias.some(d => /\[recarga\]/.test(d)), 'deveria apontar recarga 3≠2');
 ok(r.divergencias.some(d => /\[custo\]/.test(d)), 'deveria apontar custo {Chama:1}≠{chama:2}');
-// e um par idêntico NÃO gera divergência
-const maqOk = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', cd: 2, cost: { Chama: 2 }, fx: [{ t: 'dmg', v: 15 }] }] }];
+// e um par idêntico (desc↔fx e estrutura↔prosa) NÃO gera divergência
+const maqOk = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', desc: '15 de dano a 1 inimigo.', cd: 2, cost: { Chama: 2 }, fx: [{ t: 'dmg', v: 15 }] }] }];
 ok(C.conferir(prosa, maqOk).divergencias.length === 0, 'par idêntico não deveria divergir');
+// §286 BABÁ (o pedido do dono): mude UM número no desc sem tocar no fx → a build QUEBRA. O desc é o que o
+// jogador lê; se ele passar a dizer 25 enquanto o motor segue em 15, isso é a tela mentindo — e falha-alto.
+const maqDescMentiu = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', desc: '25 de dano a 1 inimigo.', cd: 2, cost: { Chama: 2 }, fx: [{ t: 'dmg', v: 15 }] }] }];
+ok(C.conferir(prosa, maqDescMentiu).divergencias.some(d => /\[dano\]/.test(d)), 'babá: desc virou 25 mas fx é 15 → [dano] diverge (a build quebra)');
 // §285: DENTES no NOME da PASSIVA (o buraco que deixou 7 derivarem) — muda o nome num lado e o checador aponta
 const prosaP = { y: { passiva: { nome: 'Soberano', efeito: 'x' } } };
 const maqPdiverge = [{ key: 'y', passiva: { nome: 'Regente', desc: 'x' } }];
@@ -32,12 +38,14 @@ console.log(`  divergência sintética: ${r.divergencias.length} apontadas; par 
 
 console.log('== §270: DENTES nos METADADOS e nos EIXOS NOVOS (orbe/escudo/combo) — mexa o fx, a build quebra ==');
 {
-  // base: prosa e máquina IDÊNTICAS em metadados e nos 3 eixos → 0 divergência
+  // base: metadados batem prosa↔motor; e o DESC do motor bate o próprio fx nos 3 eixos + duração → 0 divergência.
+  // §286: o texto dos eixos mora no `desc` do maq (o exibido), não mais na prosa — é ali que a extração lê.
   const prosaBase = () => ({ y: {
     faccao: 'Grega', elemento: 'Chama', tipo: 'Físico', funcao: 'Atacante',
-    basico: { nome: 'A', custo: '—', recarga: 0, efeito: 'Ganha 2 orbes; 15 de Defesa; Gera 3 de Combo; atordoa por 2 turnos.' } } });
+    basico: { nome: 'A', custo: '—', recarga: 0 } } });
   const maqBase = () => [{ key: 'y', faccao: 'Grega', elem: 'Chama', classe: 'Físico', funcao: 'Atacante',
     ab: [{ slot: 'basico', nome: 'A', cd: 0, cost: {},
+      desc: 'Ganha 2 orbes; 15 de Defesa; Gera 3 de Combo; atordoa por 2 turnos.',
       fx: [{ t: 'orbGain', n: 2 }, { t: 'shield', v: 15 }, { t: 'contador', nome: 'combo', v: 3 }, { t: 'apply', eff: { type: 'atordoado', dur: 2 } }] }] }];
   ok(C.conferir(prosaBase(), maqBase()).divergencias.length === 0, 'base idêntica: 0 divergência');
   // METADADOS: cada campo, mexido no motor sem mexer na prosa, quebra alto
@@ -57,9 +65,9 @@ console.log('== §270: DENTES nos METADADOS e nos EIXOS NOVOS (orbe/escudo/combo
   ok(C.conferir(prosaBase(), mDur).divergencias.some(d => /\[duração\]/.test(d)), 'duração: fx 5 ≠ texto 2 deveria divergir');
   // §271: a CONVENÇÃO do agendado — texto "por 1 turno" + fx dur:2 + `agendar` NÃO diverge (aceita +1)
   const prosaAg = { z: { faccao: 'Grega', elemento: 'Chama', tipo: 'Físico', funcao: 'Atacante',
-    basico: { nome: 'B', custo: '—', recarga: 0, efeito: 'Fica Inalvejável por 1 turno; no turno seguinte causa 25 de dano.' } } };
+    basico: { nome: 'B', custo: '—', recarga: 0 } } };
   const maqAg = [{ key: 'z', faccao: 'Grega', elem: 'Chama', classe: 'Físico', funcao: 'Atacante',
-    ab: [{ slot: 'basico', nome: 'B', cd: 0, cost: {}, fx: [{ t: 'apply', eff: { type: 'inalvejavel', dur: 2 } }, { t: 'agendar', agenda: [{ t: 'dmg', v: 25 }] }] }] }];
+    ab: [{ slot: 'basico', nome: 'B', cd: 0, cost: {}, desc: 'Fica Inalvejável por 1 turno; no turno seguinte causa 25 de dano.', fx: [{ t: 'apply', eff: { type: 'inalvejavel', dur: 2 } }, { t: 'agendar', agenda: [{ t: 'dmg', v: 25 }] }] }] }];
   ok(!C.conferir(prosaAg, maqAg).divergencias.some(d => /\[duração\]/.test(d)), 'agendado: dur 2 com texto "1 turno" NÃO diverge (convenção +1)');
   // e SEM agendar, o mesmo dur:2 vs "1 turno" DIVERGE (a convenção não vale sem agendado)
   const maqSemAg = JSON.parse(JSON.stringify(maqAg)); maqSemAg[0].ab[0].fx = [{ t: 'apply', eff: { type: 'inalvejavel', dur: 2 } }];
