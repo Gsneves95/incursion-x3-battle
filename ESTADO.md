@@ -2,6 +2,12 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MANUTENÇÃO §283 — varredura do ESTADO.md (fechar resolvido, corrigir FALSO) + babá anti-deriva. Sem motor.
+
+O ESTADO.md dizia pendente o que o código/dado já resolvia (deriva por *append sem sweep*). Varri o documento inteiro contra o CÓDIGO e o DADO. **FECHEI 6 resolvidas** (com ponteiro): elementos (6 nomes da planilha, §200), ordem A/S/SS (`data/raridades.json` 16/31/53), ordem da Fase 1 (engine quebrado, 100 deuses), 50/50 (removido, §20), economia (`economia.json` reconciliado), Fujin (já fechado §271). **REESCREVI 4 FALSAS:** pick/ban NÃO "bloqueia o PvP" (o PvP está no ar — pareamento/ranqueado/reconexao testados; pick/ban é pré-req do aluguel na Fase 5); a afirmação de que economia.json faltava saiu (existe); pity por banner NÃO é "V3" (o v3 virou `sandbox`, perfil em v6 — hoje é pity ÚNICO interino); Coleção↔perfil vira PARCIAL (Coleção/home leem `temDeus`; `selecao.js:21` ainda porta por `inicial`+`tudoLiberado`). **NÃO toquei** os 4 não-verificados (arte 320px, menu ⋯ global, recusa de tela-cheia, auditoria dos 12 invariantes) — fechar no escuro é pior que aberto.
+
+**ANTÍDOTO estrutural (a causa é append-sem-sweep, disciplina já falhou):** babá `tests/estado_pendencias.test.js` LÊ o ESTADO.md e QUEBRA se uma decisão `[ ]` citar item que o dado resolveu (raridades soma 100 ⇒ sem "A/S/SS" pendente; `cinquentaCinquenta===false` ⇒ sem 50/50; economia.json existe ⇒ sem afirmar que falta). Provado que morde. Pendência com dado por trás vira `_pendencia` no arquivo (`economia.json._pendencias.pityPorBanner`). **Regra nova no CLAUDE.md:** decisão que resolve pendência FECHA-A no ESTADO.md no MESMO commit. **Arquivos:** `ESTADO.md`, `data/economia.json`, `tests/estado_pendencias.test.js` (novo), `package.json`, `CLAUDE.md`, `DECISOES.md §283`.
+
 ## ★ COLEÇÃO §282 — a TELA DE PERSONAGENS refeita (reskin do mockup): PAINEL-LEITOR-DE-KIT + GRADE filtrável. Só tela.
 
 Rota `colecao` (rotulada "Personagens"). Substitui a vitrine por-panteão do §216. **Topo:** voltar · título Cinzel dourado · 3 contadores (essência ◈ / gema ◆ / **possuídos ⬡ N/100**). **Esquerda — painel 233×373 (leitor-de-kit):** retrato + selo de raridade, nome, 4 tags (facção/elemento/classe/função — **sem arquétipo**, campo inexistente), posse (Possuído · N cópias / Não possuído), o **kit COMPLETO** (BÁSICO/HABILIDADE/MILAGRE/PASSIVA, cada um nome+custo(bolinhas)+recarga+efeito, lido de **GODS/data/deuses**, nunca kits.json; rola), botão VER DETALHES → ecrã cheio `deus`. **Direita:** busca por nome · seletores CLASSE + FUNÇÃO (dois eixos reais, não um) + STATUS + RARIDADE + ORDENAR (Mais recentes por `obtidoEm` / Nome) · abas de cultura (Todas + 10) · grade `auto-fill` de cartões 105×140 (chanfro octogonal, raridade em HEXÁGONO, cultura em ESCUDO com monograma latino, retrato §213, nome+cultura na faixa).
@@ -1603,19 +1609,16 @@ sessão de reconciliação ou ao encostar em cada área.
   nativo de voltar não fizer **nada**, o jogador de Android estranha (é expectativa
   forte na plataforma). O correto durante a batalha é **abrir o menu ou a confirmação
   de rendição**, não silêncio. Vira tarefa na F4.
-- **DIVERGÊNCIA DE ECONOMIA — invocação contra a planilha ANTES da conversão NA.**
-  Detalhada em `docs/inventario.md §10`, com os números dos dois lados. Em resumo:
-  pity duro **80** (código) × **60** (doc); nomenclatura `p5`/`p4`/`5★`/`B` (original)
-  × ordem **A/S/SS** (NA); taxas SS 1,5% / S 8,5%; custo 150 / 1500 (10× sem desconto);
-  banners com taxa diferente (destaque rate-up + 50/50, padrao, iniciante).
-  **`data/economia.json` NÃO existe → pendência BLOQUEANTE da Fase 3** (loja precifica
-  por ordem; simulador lê o arquivo). Não corrigir agora; reconciliar antes da Fase 3.
-  Classe de achado que a F0.1 não pegou (cobriu regras, não números de economia).
-- **Invocação × perfil — parcialmente ligada (F0.4b).** Feito: sorteio puro com semente
-  + pity/coleção/total gravados no perfil + seed no histórico. Pendente: **carteira**
-  (gemas) → `perfil.moedas` (F0.4c); **coleção da seleção** ainda usa `inicial`/
-  `tudoLiberado`, não `perfil.deuses` (rewire futuro); pity **por-banner** e `gf`
-  (50/50) persistidos — hoje um contador único, interim (ver Divergência de economia).
+- **~~DIVERGÊNCIA DE ECONOMIA~~ — RECONCILIADA (§283).** Era divergência planilha×código antes de
+  existir a fonte única. Hoje `data/economia.json` **existe** e é a fonte: pity duro 60, taxas 3/17/80,
+  avulso 150 / pacote 1350 (−10%), ordem A/S/SS, tier B removido. A afirmação antiga de que o arquivo
+  faltava e bloqueava a Fase 3 saiu por ser falsa. Os itens de economia realmente abertos moram em `economia.json._pendencias`.
+- **Invocação × perfil — PARCIALMENTE ligada (medido §283).** LIGADO: sorteio com semente; carteira
+  real (`perfil.moedas`, debita gema); posse real onde importa — a **Coleção (§216/§282) e a home leem
+  `perfil.deuses`/`temDeus`**. AINDA NO MODELO ANTIGO: o **montador de time `src/ui/selecao.js`** porta
+  por `RMAP[k].inicial` + a flag dev `tudoLiberado` (linha 21), não `perfil.deuses`. ABERTO de verdade:
+  **pity POR BANNER** — o perfil (v6) guarda um `invocacao.desdeUltimoSS` ÚNICO; `invocacao.js:190` diz
+  "INTERIM: contador único"; só o pity do banner destaque sobrevive ao reload. O `gf`/50-50 saiu (removido, §20).
 - ~~**Quebrar o `engine.js`:**~~ **FEITO (F1.0a)** — kits → `data/deuses/*.json`, catálogo em
   `src/catalogo.js`, schema em `tools/valida_kit.js`, registro por chave. `DEFESA` fica no
   motor (regra). Motor sem dado de deus. Critério `<500 linhas` **retirado pelo dono** (era
@@ -1626,43 +1629,47 @@ sessão de reconciliação ou ao encostar em cada área.
   GODS` (marcou `mulberry32` como 203 linhas — é 1). Usar com cuidado na F0.3.
 
 ## Decisões pendentes do dono do projeto
-- [ ] Nome dos elementos: Solar/Lunar/Vazio (design) ou os da planilha
-      (Tempestade/Umbra/Maré/Aurora/Chama/Verdejante). ~60 habilidades a retraduzir.
-- [ ] Ordem A/S/SS atribuída aos 100 deuses (loja da fase 3 precifica por ela).
+- [x] Nome dos elementos — **RESOLVIDA (§283):** venceram os SEIS da planilha
+      (Aurora/Chama/Maré/Tempestade/Umbra/Verdejante), em uso em `data/deuses` e `shell.html`
+      (`--e-*`) desde §200. "Solar/Lunar/Vazio" nunca foram adotados (os hits "Disco Solar"/
+      "Flecha Solar" são texto de habilidade, não elemento).
+- [x] Ordem A/S/SS atribuída aos 100 — **RESOLVIDA (§283):** `data/raridades.json` (16 SS · 31 S ·
+      53 A), lida por `invocacao.js`/`selecao.js`/`home.js`; `economia.json.invocacao.ordem=[A,S,SS]`,
+      sem 5★/4★/3★, tier B removido.
 - [x] Passiva do Fujin (inerte sem Raijin no time) — RESOLVIDA no TEXTO e na MECÂNICA (§271): o
       `fx:null` virou `geraContadorPorGolpe` gateado por `estado:{aliadoPresente:'raijin'}`. PENDENTE só
       o DESENHO — depende do Raijin, que não é inicial, então segue morta para quem acaba de instalar:
       revisão de kit da Fase 4 (ver a lista de SLOTS MORTOS no topo do ESTADO).
-- [ ] Pick/ban (bloqueia PvP inteiro).
+- [ ] Pick/ban — **FEATURE ABERTA, não bloqueante (corrigido §283).** NÃO existe em código
+      (`src/`/`data/`/`tests/`/`server/` limpos). Mas NÃO "bloqueia o PvP": o PvP está no ar —
+      pareamento, ranqueado e reconexão, todos testados (`pareamento`/`ranqueado`/`reconexao`/
+      `pvp_tela`.test.js, suíte verde). É pré-requisito do **aluguel no Ranqueado (Fase 5)**
+      (`economia.json._pendencias.aluguelRanqueado`), não de nada que já existe.
 - [x] INV 16 sob sobreposição: RESOLVIDO (F0.5b) — base `inert` sob scrim; primário
       rebaixa como consequência; invariante reescrito "no máximo um visível E acessível".
-- [ ] Ordem da Fase 1: confirmar "quebrar engine.js → provar 11 primitivas → lotes".
-- [ ] **50/50 da invocação (garantia de destaque) — MECÂNICA NÃO DESENHADA.** O `gf`
-      (após perder o SS para fora do destaque, o próximo SS é garantido featured) foi
-      **implementado sem estar em documento nenhum** — não foi decidido nem recusado.
-      Não é número divergente; é decisão de design tomada por outra pessoa. Definir:
-      (a) garantia **por banner ou global**? (b) **persiste** entre sessões? (c) é
-      **visível** ao jogador (contador/aviso)? (d) o que acontece com ela **ao trocar
-      de banner**? Só existe no destaque hoje. Decidir na reconciliação de economia.
-- [ ] Economia (reconciliação antes da Fase 3): pity 60×80, taxas 3/17 × 1,5/8,5,
-      pacote 1350×1500 (desconto), ordem A/S/SS × 5★, tier B vazio. Insumo:
-      `docs/economia-divergencias.md` (a preparar). Decisão do dono → aí gero
-      `data/economia.json`, nunca o contrário.
+- [x] Ordem da Fase 1 — **RESOLVIDA (§283):** aconteceu e fechou. engine.js quebrado
+      (`data/deuses/*.json`, `catalogo.js`, `valida_kit.js`), **100 deuses em disco**,
+      `primitivas.test.js` prova as primitivas. Pergunta de planejamento respondida pelo trabalho pronto.
+- [x] Garantia de destaque na invocação — **RESOLVIDA (§283, decisão §20): REMOVIDA.**
+      `economia.json.invocacao.cinquentaCinquenta=false` ("REMOVIDO por decisão do dono"); não há
+      `gf`/`garantiaFeat` em `invocacao.js`. O destaque só escolhe QUAL SS sai (não quanto), e o
+      pity 60 entrega o destacado. (Antes vivia como mecânica-fantasma implementada sem documento.)
+- [x] Economia — **RESOLVIDA (§283):** `data/economia.json` existe e está reconciliado — pity
+      duro **60**, taxas **SS 3% / S 17% / A 80%**, avulso **150** / pacote **1350** (−10%; o 1500
+      sem desconto é código antigo), ordem A/S/SS, tier B removido, essência-por-duplicata. Lido por
+      `invocacao.js`. Os itens de economia que sobram (rotação grátis, aluguel ranqueado, bilhetes)
+      vivem em `economia.json._pendencias`, não aqui.
 
-## Migração de perfil — V2 FEITA (grant); pity por banner vira V3
-**V2 (F0.4c, FEITO):** `VERSAO_PERFIL = 2`. `migrar(p, grant)` backfilla o grant inicial
-(1500) em todo perfil `v<2` — trabalho REAL, não mais andaime. Idempotente pela versão.
-Foi a primeira carga de verdade da migração.
+## Migração de perfil — histórico + o que segue aberto (pity por banner)
+**CORRIGIDO §283:** o texto antigo dizia "V2 grant; pity por banner vira V3". O `VERSAO_PERFIL`
+está em **6** e o **v3 foi usado para o `sandbox`** (não para pity), depois v4/v5/v6 para os Domínios
+(§273/§274/§275). O número de versão "V3 = pity por banner" está queimado — não confunda a próxima carga
+de migração com ele.
 
-**V3 (PRÓXIMA carga da migração — antes era chamada de "V2"):** o modelo tem
-`invocacao: {total, desdeUltimoSS}` — **um** pity. O jogo quer pity **por banner**
-independente. Alvo:
-```
-invocacao: { total, banners: { destaque:{desdeUltimoSS}, padrao:{desdeUltimoSS} } }
-```
-A `migrar()` v2→v3 converte `desdeUltimoSS` no pity do banner principal. **Encolheu:**
-com o 50/50 removido, some o `garantiaFeat` — só pity por banner. **Custo do interim
-atual:** só o pity do **banner principal** sobrevive ao reload; secundários se perdem.
-Fazer quando o gacha ganhar banners de verdade (ligado à fila F0.4b — ligar o pity de
-verdade). Ao subir para v3, `migrar` ganha o ramo `v===2 → v3` (o gate atual `v>=2 return`
-passa a `v>=VERSAO_PERFIL return`, que já é o que está escrito — só somar o passo).
+**Grant inicial (v2, FEITO):** `migrar` backfilla 1500 em `v<2`. Idempotente pela versão. Segue de pé.
+
+**PITY POR BANNER — ABERTO (nunca feito).** O perfil ainda tem `invocacao: {total, desdeUltimoSS}` — **um**
+pity só; `invocacao.js:190` diz "INTERIM: contador único"; ao reload, só o pity do banner destaque sobrevive.
+Alvo quando o gacha ganhar banners de verdade: `invocacao: { total, banners: { destaque:{desdeUltimoSS}, padrao:{desdeUltimoSS} } }`,
+com um passo de migração na próxima versão livre (a `migrar` já tem o gate `v>=VERSAO_PERFIL return` — só somar o ramo).
+O `garantiaFeat`/50-50 NÃO entra (removido, §20). Rastreado em `economia.json._pendencias.pityPorBanner`.

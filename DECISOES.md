@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §283 — VARREDURA do ESTADO.md: fechar o resolvido, corrigir o FALSO, e um babá contra a deriva. Sem tocar motor.
+
+O dono apontou a deriva: o ESTADO.md dizia pendente o que o código/dado já resolvia, e planejou duas vezes sobre número errado nesta sessão (a passiva do Fujin marcada aberta depois do §271 a resolver; a ordem A/S/SS listada indecisa com `data/raridades.json` pronto). Varri o documento inteiro (não só as caixas), conferi cada afirmação contra o CÓDIGO e o DADO, e classifiquei em RESOLVIDA / PARCIAL / ABERTA.
+
+**Camada 1 — FECHEI as seis resolvidas, cada uma com ponteiro:**
+- **Elementos:** venceram os SEIS da planilha (Aurora/Chama/Maré/Tempestade/Umbra/Verdejante), em `data/deuses` e `shell.html` desde §200. "Solar/Lunar/Vazio" (design) nunca adotados — os hits "Disco Solar"/"Flecha Solar" são texto de habilidade.
+- **Ordem A/S/SS:** `data/raridades.json` (16/31/53), lida por invocacao/selecao/home; `economia.json.invocacao.ordem=[A,S,SS]`, tier B removido.
+- **Ordem da Fase 1:** engine.js quebrado (`data/deuses/*`, `catalogo.js`, `valida_kit.js`), 100 deuses em disco, `primitivas.test.js` — aconteceu e fechou.
+- **50/50:** `economia.json.invocacao.cinquentaCinquenta=false` ("REMOVIDO por decisão do dono", §20); sem `gf`/`garantiaFeat` em invocacao.js.
+- **Economia:** `data/economia.json` existe e reconciliado (pity 60, taxas 3/17/80, avulso 150 / pacote 1350 −10%, A/S/SS, tier B removido).
+- **Fujin:** já estava [x] no doc (§271 mecânico; só o DESENHO pende, depende do Raijin não-inicial).
+
+**Camada 2 (a mais importante) — REESCREVI o FALSO.** Item desatualizado engana; item FALSO manda a próxima sessão para o lado errado.
+- **Pick/ban dizia "bloqueia o PvP inteiro" — FALSO.** O PvP está no ar (pareamento/ranqueado/reconexao/pvp_tela testados, suíte verde). NÃO existe em código, mas é pré-requisito do **aluguel no Ranqueado (Fase 5)**, não bloqueante de nada que existe. Reescrito.
+- **"economia.json NÃO existe → BLOQUEANTE" — FALSO, saiu.** O arquivo existe e é a fonte.
+- **Pity por banner amarrado a "V3" — FALSO.** O `VERSAO_PERFIL` está em **6** e o v3 foi usado pro `sandbox`, não pro pity. Descrito o estado real: pity ÚNICO interino (`invocacao.desdeUltimoSS`; `invocacao.js:190` "contador único"); pity por banner nunca feito.
+- **Coleção lendo `perfil.deuses` — vira PARCIAL, com o detalhe medido:** Coleção (§216/§282) e home leem posse real (`temDeus`); o montador `src/ui/selecao.js:21` ainda porta por `RMAP[k].inicial` + flag dev `tudoLiberado`.
+- **NÃO toquei os quatro não-verificados** (arte 320px, menu ⋯ global, recusa de tela-cheia, auditoria dos 12 invariantes) — item fechado no escuro é pior que aberto.
+
+**Camada 3 — o ANTÍDOTO (camada 2 da proposta, não a 1).** Riscar à mão deriva de novo — é a mesma prosa arrumada. Onde a pendência tem DADO por trás, encodei-a como `_pendencia` (modelo do `economia.json._pendencias`: acrescentei `pityPorBanner`) e escrevi o babá `tests/estado_pendencias.test.js`: **lê o ESTADO.md e QUEBRA se uma decisão marcada `[ ]` citar item que o dado já resolveu** — raridades.json soma 100 ⇒ "A/S/SS" não pode constar `[ ]`; `cinquentaCinquenta===false` ⇒ 50/50 não pode; economia.json existe ⇒ nada de "não existe"/"bloqueante". Provado: reintroduzir a linha falsa quebra; remover, verde. Pick/ban e o ELO A da planilha NÃO têm arquivo de dado → **sem guarda** (não se inventa).
+
+**Camada 4 — a regra que faltava, no CLAUDE.md (Convenções):** *decisão que resolve uma pendência FECHA-A no ESTADO.md no MESMO commit* — porque a causa raiz é append-sem-sweep, e a regra tem de estar onde a próxima sessão lê antes de commitar.
+
+**Arquivos:** `ESTADO.md` (6 fechadas + 4 reescritas), `data/economia.json` (`_pendencias.pityPorBanner`), `tests/estado_pendencias.test.js` (novo), `package.json`, `CLAUDE.md`. Suíte + build verdes. **Sem motor, sem dado de combate** — só documento, um marcador de pendência e um guarda.
+
+---
+
 ## §282 — COLEÇÃO refeita: a TELA DE PERSONAGENS (reskin do mockup do dono). Só tela; nada de motor/dado.
 
 O dono trouxe um mockup (imagem + HTML de referência) para refazer a tela de Personagens: painel de detalhe à esquerda + grade filtrável à direita, com busca e filtros. **Extraí a geometria do mockup e recusei três MENTIRAS que o mockup traz mas que este jogo não sustenta** — o mockup é um molde genérico, o mesmo que sempre mente sobre nível/atributos.

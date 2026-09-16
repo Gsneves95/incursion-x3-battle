@@ -79,6 +79,7 @@
   "_pendencias": {
     "rotacaoGratuita": { "quando": "Fase 3 (com a colecao)", "valor_documentado": "8 deuses/semana" },
     "aluguelRanqueado": { "quando": "Fase 5 (depende de pick/ban)", "valor_documentado": "1 slot" },
+    "pityPorBanner": { "quando": "quando o gacha ganhar banners de verdade", "estado": "INTERIM: o perfil (v6) guarda um pity unico (invocacao.desdeUltimoSS); invocacao.js:190 diz 'contador unico'; so o banner destaque sobrevive ao reload. Alvo: invocacao.banners.<b>.desdeUltimoSS. O v3 foi usado pro sandbox, nao pro pity — o numero de versao esta queimado (§283). Ver ESTADO 'Migracao de perfil'." },
     "bilhetes": "BILHETES de invocacao (antes chamados 'pergaminhos' — renomeado no §213 p/ nao colidir com os PERGAMINHOS da F4, que sao desafios comprados com Essencia). O codigo tem bilhetes fora do documento e sem decisao. Nao incluidos aqui — decidir se existem."
   }
 }

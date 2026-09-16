@@ -469,6 +469,15 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   Unicode (NFC composta × NFD decomposta do macOS) que parecem iguais e não casam — DEIXAR de existir; (2)
   servido por HTTP, um nome acentuado ainda passa por URL-encoding que varia entre navegador, WebView do
   Android e o Render. Guarda: `tests/assets.test.js` varre `web/` e quebra se qualquer nome tiver codepoint > 127.
+- **DECISÃO QUE RESOLVE UMA PENDÊNCIA FECHA-A NO `ESTADO.md` NO MESMO COMMIT (§283).** A causa raiz da
+  deriva é *append sem sweep*: a resolução vira um bloco ★ novo no topo e a linha pendente lá embaixo (nas
+  seções "Decisões pendentes do dono", "Descobertas que ainda não viraram tarefa", "Migração de perfil")
+  fica intacta, e a próxima sessão acredita nela — já mandou planejamento para o lado errado duas vezes
+  (Fujin pós-§271; A/S/SS "indecisa" com `data/raridades.json` pronto). Então: ao resolver, **risque a
+  linha antiga** (`[ ]`→`[x]` com ponteiro para o que resolveu, ou `~~texto~~`) NO MESMO commit — não só
+  acrescente o bloco novo. Onde a pendência mapeia um arquivo de dado, encode-a como `_pendencia` LÁ (modelo
+  do `data/economia.json._pendencias`) e deixe o babá afirmar o inverso: `tests/estado_pendencias.test.js`
+  quebra se o ESTADO.md marcar PENDENTE (`[ ]`) um item que o dado (raridades/economia) já resolveu.
 - **A FICHA de habilidade é um CÍRCULO** (§257: moldura `border-radius:50%`, **90px**; o medalhão da
   arte é redondo — sem zoom, scale 1.0/centro, pois 31% das 401 artes já preenchem a borda). O RETRATO
   (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
