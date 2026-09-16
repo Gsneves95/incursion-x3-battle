@@ -49,6 +49,21 @@ o fundo desfocado fica → **sem piscar**. O retrato pequeno embutido cobre a ca
 **Arquivos:** `src/ui/home.js` (colOverlayCardHTML/colVerNavEstado/colVerIr/colVerMontar/colVerAtualizarNav),
 `src/shell.html` (`.col2ov__nav`), `tests/colecao_tela.test.js`. Suíte (46) + build verdes.
 
+### §291-ajuste — seta a 30px, cartão encolhido para 879.
+
+O dono escolheu **30px** (não 27, não 44). O porquê dele: 27 funciona como faixa alta, mas fica abaixo de TODOS os
+controles primários, e a seta aqui é o jeito de navegar a ficha, não algo secundário; **30 a põe no patamar do
+`col2__voltar` da Coleção** (o controle mais próximo em função) e custa só 18px de cartão (2%, imperceptível). Os
+44 foram recusados: custam 42px (~5% do cartão que o dono dimensionou do mockup), e 44 é piso de app genérico que
+este projeto nunca adotou — **seguir o que o jogo já faz vale mais que um número de fora**.
+
+Aplicado: cartão `width: min(879px, calc(100% - 48px))` → **877×394** no palco 951, **calha 37px/lado**; seta 30px
+a 3px da borda (`.col2ov__nav width:30; left/right:3`). **MEDIDO depois:** o **split interno se manteve — retrato
+38,0% / conteúdo 61,9%** (§288 38/62, é por flex, não muda com a largura); e **NADA passou a cortar** com os 18px
+a menos: nome do deus **0/100**, **nomes de habilidade em 2 linhas (§288-ajuste) 0/100** (nenhum estourou p/ 3
+linhas — os que estavam no limite, hel incluso, seguem em 2), efeito **0/100**. Capturas de `docs/capturas-291/`
+refeitas com a seta de 30px.
+
 ---
 
 ## §290 — os 100 retratos grandes chegaram: fecha o §289.

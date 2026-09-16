@@ -1469,7 +1469,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    em vez de casar a proporção 1.8:1 da referência (que desperdiçaria metade da largura). */
 .col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:12px;
   background:rgba(6,5,14,.6);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
-.col2ov__card{position:relative;display:flex;width:min(920px,97%);height:min(408px,calc(100% - 8px));
+/* §291-ajuste: cartão 897→879 (−18px, −2%) p/ abrir a calha das setas a 36px/lado (seta de 30px + 3px de folga
+   — o patamar do col2__voltar). calc(100% - 48px): 100% = content-box do #col2ov (palco − 24 de padding); −48
+   reserva 24 de cada lado → com o padding, 36/lado. O split interno (retrato 38%/conteúdo 62%) é por flex, não muda. */
+.col2ov__card{position:relative;display:flex;width:min(879px,calc(100% - 48px));height:min(408px,calc(100% - 8px));
   overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
   background:linear-gradient(180deg,rgba(28,23,52,.98),rgba(12,10,26,.99));box-shadow:0 0 0 1px rgba(255,217,122,.12),0 18px 50px rgba(0,0,0,.6)}
 .col2ov--falta{border-color:#39335a;border-style:dashed}
@@ -1542,9 +1545,9 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* §291: setas de navegação — POR FORA do cartão, sobre o fundo desfocado. O `left:0`/`right:0` ancora na borda do
    palco (padding-box do #col2ov), então a seta ocupa a calha de ~27px entre a borda do palco e o cartão (897 em
    951). É estreita (o dono decide se encolhe o cartão p/ um alvo maior — ver DECISOES §291); alta p/ compensar. */
-.col2ov__nav{position:absolute;top:50%;transform:translateY(-50%);width:27px;height:140px;z-index:41;
+.col2ov__nav{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:140px;z-index:41;
   display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:none;padding:0;color:var(--gold-text)}
-.col2ov__nav--prev{left:0} .col2ov__nav--next{right:0}
+.col2ov__nav--prev{left:3px} .col2ov__nav--next{right:3px}
 .col2ov__nav:disabled{opacity:.22;cursor:default}
 .col2ov__navseta{display:block;width:13px;height:13px;border-top:2px solid currentColor;border-right:2px solid currentColor}
 .col2ov__nav--prev .col2ov__navseta{transform:rotate(-135deg);margin-left:5px}
