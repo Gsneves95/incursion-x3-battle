@@ -865,64 +865,172 @@ function raridadeDe(k){ return (typeof RARIDADE !== 'undefined' && RARIDADE[k]) 
 function temKitHome(k){ return typeof GODS !== 'undefined' && !!GODS[k]; }
 function provDe(k){ return (typeof PROVACOES !== 'undefined') ? PROVACOES.find(p => p.key === k) : null; }
 
-// TILE da COLEÇÃO (§216): a vitrine — arte GRANDE (moldura dourada quem tem, cinza quem falta),
-// nome e selos numa faixa ABAIXO da arte (nada cobrindo a ilustração). Classe própria (.colx) para
-// não mexer nas grades de MONTAR TIME, que continuam pequenas e funcionais (.ctile).
-function tileColecaoHTML(k){
-  const g = HRM[k] || { nome: k, elem: 'Umbra' };
-  const tem = temDeus(k);
-  const rar = raridadeDe(k);
-  const nv = tem ? nivelMaestria(k) : 0;
-  const badge = tem
-    ? (nv > 0 ? `<span class="colx__m m--${nv}" title="${MAESTRIA_NOME[nv]}">${nv === 4 ? '★' : nv}</span>` : '')
-    : `<span class="colx__lock" title="ainda não conquistado">⚿</span>`;
-  // §245: a MOLDURA do MESTRE — uma borda ornamentada (cosmético, variação de borda) que marca o domínio.
-  const mestre = tem && nv === 4 ? ' colx--mestre' : '';
-  return `<button class="colx ${tem ? 'colx--tem' : 'colx--falta'}${mestre}" data-deus="${k}" title="${H(g.nome)}${nv === 4 ? ' · Mestre' : ''}">
-    <span class="colx__rar rar--${rar}"></span>
-    <span class="colx__art">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 30)}</span>
-    <span class="colx__foot">
-      <span class="colx__el" style="background:${tem ? COR(g.elem) : '#4a4470'}"></span>
-      <span class="colx__n">${H(g.nome)}</span>
-      <span class="colx__badge">${badge}</span>
-    </span>
+// ===================================================================
+// §282 — COLEÇÃO refeita (mockup do dono): PAINEL-LEITOR-DE-KIT à esquerda + GRADE filtrável à direita.
+// Lê IDENTIDADE e KIT de data/deuses (via GODS, a fonte do motor — §280), nunca de kits.json. O painel
+// substitui o "Nv/atributos" do mockup (proibidos pelo invariante #3) pelo que a Coleção existe para
+// ensinar: o kit COMPLETO (básico/habilidade/milagre/passiva, cada um com nome/custo/recarga/efeito).
+// ===================================================================
+const COL_CLASSES = ['Mágico', 'Físico', 'Híbrido'];                                    // campo `classe` (3)
+const COL_FUNCOES = ['Atacante', 'Suporte', 'Controlador', 'Guardião', 'Manipulador']; // campo `funcao` (5)
+// dois eixos que o mockup colapsou em "Classe": CLASSE (tipo de combate) e FUNÇÃO (papel). Apresentados
+// como DOIS seletores distintos e rotulados — não poluem porque cada um é curto e diz o que filtra.
+let colSel = null;   // deus selecionado no painel
+let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
+
+function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
+function colNome(k){ return (HRM[k] && HRM[k].nome) || colG(k).nome || k; }
+function colObtido(k){ return (perfil && perfil.deuses && perfil.deuses[k] && perfil.deuses[k].obtidoEm) || 0; }
+function colCopias(k){ return (perfil && perfil.deuses && perfil.deuses[k] && perfil.deuses[k].copias) || 0; }
+
+// os 100, filtrados+ordenados pelos filtros ativos. Cada filtro REDUZ de verdade (guarda babá).
+function colecaoFiltrada(){
+  let ks = ROSTER.map(e => e.key);
+  const f = colF, q = f.busca.trim().toLowerCase();
+  if (q) ks = ks.filter(k => colNome(k).toLowerCase().includes(q));
+  if (f.cultura) ks = ks.filter(k => (colG(k).faccao) === f.cultura);
+  if (f.classe) ks = ks.filter(k => (colG(k).classe) === f.classe);
+  if (f.funcao) ks = ks.filter(k => (colG(k).funcao) === f.funcao);
+  if (f.status) ks = ks.filter(k => f.status === 'tem' ? temDeus(k) : !temDeus(k));
+  if (f.raridade) ks = ks.filter(k => raridadeDe(k) === f.raridade);
+  if (f.ordem === 'nome') ks.sort((a, b) => colNome(a).localeCompare(colNome(b)));
+  else ks.sort((a, b) => (colObtido(b) - colObtido(a)) || colNome(a).localeCompare(colNome(b)));   // Mais recentes (obtidoEm)
+  return ks;
+}
+
+// ÍCONE DE CULTURA no escudo: MONOGRAMA de 2 letras (brasão). Símbolo exótico (Ω/ᚱ/☥/⛩/天) NÃO é coberto
+// por Rajdhani (Latino+Devanagari) → cai no fallback do sistema e vira tofu no WebView (a lição do §277/§260);
+// e num escudo de 20px a 10px a letra lê melhor que o símbolo. Monograma é a disciplina segura e uniforme.
+const COL_CULT_MON = { 'Grega': 'GR', 'Nórdica': 'NÓ', 'Egípcia': 'EG', 'Japonesa': 'JP', 'Chinesa': 'CH', 'Hindu': 'HI', 'Brasileira': 'BR', 'Africana': 'AF', 'Celta': 'CE', 'Maia': 'MA' };
+function colCultMon(f){ return COL_CULT_MON[f] || String(f || '').slice(0, 2).toUpperCase(); }
+
+// CARTÃO da grade: canto chanfrado, faixa de raridade em HEXÁGONO, escudo de cultura, arte de retrato por
+// arquivo — §213, nunca 404 —, nome + cultura embaixo. Possuído × não-possuído pelo tratamento do §216
+// (dourado × apagado). Selecionado ganha realce.
+function colCardHTML(k){
+  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), sel = k === colSel;
+  // §245: a MOLDURA do MESTRE (nível 4 de maestria) é uma recompensa cosmética prometida ("a moldura sai no
+  // Mestre") — a Coleção é sua vitrine, então o reskin do §282 a carrega para o novo cartão (col2c--mestre).
+  const mestre = tem && typeof nivelMaestria === 'function' && nivelMaestria(k) === 4;
+  return `<button class="col2c ${tem ? 'col2c--tem' : 'col2c--falta'}${mestre ? ' col2c--mestre' : ''}${sel ? ' is-sel' : ''}" data-deus="${H(k)}" title="${H(colNome(k))} · ${H(g.faccao || '')}">
+    <span class="col2c__rar col2c__rar--${rar}">${rar}</span>
+    <span class="col2c__cult" title="${H(g.faccao || '')}">${H(colCultMon(g.faccao))}</span>
+    <span class="col2c__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 26)}</span>
+    <span class="col2c__foot"><span class="col2c__n">${H(colNome(k))}</span><span class="col2c__f">${H(g.faccao || '')}</span></span>
   </button>`;
 }
 
-function renderColecao(){
-  const porFaccao = {};
-  ROSTER.forEach(e => { (porFaccao[e.faccao] = porFaccao[e.faccao] || []).push(e.key); });
-  const donos = perfil && perfil.deuses ? Object.keys(perfil.deuses).length : 0;
-  const grupos = PANTEOES.filter(f => porFaccao[f]).map(f => {
-    const ks = porFaccao[f]; const tem = ks.filter(temDeus).length;
-    // PANTEÃO por PROPORÇÃO (§200): dominados X/N, com o marco em METADE (comparável entre 19 e 4).
-    const d = dominadosPanteao(f);
-    const frac = d.total ? Math.round(d.dom / d.total * 100) : 0;
-    const meia = d.dom >= d.metade && d.metade > 0;
-    return `<div class="csec">
-      <div class="csec__cab"><h2>${H(f)}</h2><span class="csec__n">${tem}/${ks.length}</span>
-        <span class="csec__maes ${meia ? 'meia' : ''}" title="dominados (Mestre) — marco em metade">dominados ${d.dom}/${d.total}${meia ? ' · metade ✓' : ''}</span></div>
-      <div class="colgrid">${ks.map(tileColecaoHTML).join('')}</div>
-    </div>`;
-  }).join('');
-  const dom = totalDominados(), inic = totalIniciados();
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Coleção</h1>
-      <span class="tela__cont">${donos}/${ROSTER.length}</span>
-    </header>
-    <div class="cmaescab">domina <b>${dom}</b>/${ROSTER.length} · iniciado em <b>${inic}</b></div>
-    <div class="tela__rol">${grupos}</div>
-  </div>
+// UMA linha do kit no painel: rótulo, nome, custo (bolinhas), recarga, e o EFEITO (o texto mais longo da tela).
+function colKitLinhaHTML(rot, a, passiva){
+  if (!a) return `<div class="col2k__row col2k__row--vazio"><span class="col2k__rot">${rot}</span><span class="col2k__nv">—</span></div>`;
+  const meta = passiva
+    ? '<span class="col2k__cd">passiva · não gasta a ação</span>'
+    : `${pipsDetalhe(a.cost || {})}<span class="col2k__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span>`;
+  return `<div class="col2k__row">
+    <div class="col2k__top"><span class="col2k__rot">${rot}</span><b class="col2k__nome">${H(a.nome || '—')}</b></div>
+    <div class="col2k__meta">${meta}</div>
+    <div class="col2k__ef">${realce((passiva ? a.desc : a.desc) || '')}</div>
   </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  [...stage.querySelectorAll('.colx[data-deus]')].forEach(b => {
-    b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
-  });
+}
+
+// PAINEL-LEITOR: identidade que JÁ EXISTE no dado (retrato, nome, facção, elemento, classe, função) +
+// posse (cópias / não-possuído) + o kit COMPLETO. Sem nível/atributo/barra (invariante #3). Sem arquétipo
+// (o campo NÃO existe em data/deuses — 0/100; omitido, não inventado). VER DETALHES leva ao ecrã cheio do
+// deus (pergaminho + como conseguir), que o painel não traz.
+function colPainelHTML(k){
+  if (!k) return `<div class="col2p col2p--vazio"><span class="col2p__dica">Toque num personagem para ler o kit.</span></div>`;
+  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), ab = {};
+  (g.ab || []).forEach(a => ab[a.slot] = a);
+  const posse = tem
+    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
+    : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
+  return `<div class="col2p ${tem ? '' : 'col2p--falta'}">
+    <div class="col2p__cab">
+      <span class="col2p__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 44)}</span>
+      <span class="col2p__rar col2p__rar--${rar}">${rar}</span>
+    </div>
+    <h2 class="col2p__nome">${H(colNome(k))}</h2>
+    <div class="col2p__ident">
+      <span class="col2p__tag col2p__tag--cult">${H(g.faccao || '')}</span>
+      <span class="col2p__tag" style="border-color:${COR(g.elem)};color:${COR(g.elem)}">${H(g.elem || '')}</span>
+      <span class="col2p__tag">${H(g.classe || '')}</span>
+      <span class="col2p__tag">${H(g.funcao || '')}</span>
+    </div>
+    ${posse}
+    <div class="col2p__kit">
+      ${colKitLinhaHTML('BÁSICO', ab.basico)}
+      ${colKitLinhaHTML('HABILIDADE', ab.habilidade)}
+      ${colKitLinhaHTML('MILAGRE', ab.milagre)}
+      ${colKitLinhaHTML('PASSIVA', g.passiva, true)}
+    </div>
+    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
+  </div>`;
+}
+
+function colSelectHTML(id, rot, opcoes, val){
+  const ops = ['<option value="">' + rot + ': todas</option>'].concat(opcoes.map(o => `<option value="${H(o.v)}"${o.v === val ? ' selected' : ''}>${H(o.t)}</option>`));
+  return `<label class="col2__sel"><span class="col2__selrot">${rot}</span><select data-filtro="${id}">${ops.join('')}</select></label>`;
+}
+
+function renderColecao(){
+  if (!colSel) { const donoP = ROSTER.map(e => e.key).filter(temDeus); colSel = (donoP[0]) || ROSTER[0].key; }
+  const donos = ROSTER.map(e => e.key).filter(temDeus).length;
+  const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
+  const gema = (perfil && perfil.moedas && perfil.moedas.gema) || 0;
+  const tabs = [''].concat(PANTEOES).map(f =>
+    `<button class="col2__tab${colF.cultura === f ? ' is-on' : ''}" data-cultura="${H(f)}">${f ? H(f) : 'Todas'}</button>`).join('');
+  const barra = colSelectHTML('classe', 'Classe', COL_CLASSES.map(v => ({ v, t: v })), colF.classe)
+    + colSelectHTML('funcao', 'Função', COL_FUNCOES.map(v => ({ v, t: v })), colF.funcao)
+    + colSelectHTML('status', 'Status', [{ v: 'tem', t: 'Possuídos' }, { v: 'nao', t: 'Não possuídos' }], colF.status)
+    + colSelectHTML('raridade', 'Raridade', [{ v: 'SS', t: 'SS' }, { v: 'S', t: 'S' }, { v: 'A', t: 'A' }], colF.raridade)
+    + `<label class="col2__sel col2__sel--ord"><span class="col2__selrot">Ordenar</span><select data-filtro="ordem"><option value="recentes"${colF.ordem === 'recentes' ? ' selected' : ''}>Mais recentes</option><option value="nome"${colF.ordem === 'nome' ? ' selected' : ''}>Nome (A–Z)</option></select></label>`;
+  stage.innerHTML = `<div id="baselayer" class="col2">
+    <header class="col2__topo">
+      <button class="col2__voltar" id="bvoltar" aria-label="Voltar"><i class="dsel__seta"></i></button>
+      <div class="col2__tit"><h1 class="col2__titulo">Personagens</h1><span class="col2__sub">COLECIONE · LEIA O KIT · MONTE A LENDA</span></div>
+      <div class="col2__moedas">
+        <span class="col2__moeda"><i class="col2__mic col2__mic--ess">◈</i><b>${ess.toLocaleString('pt-BR')}</b></span>
+        <span class="col2__moeda"><i class="col2__mic col2__mic--gem">◆</i><b>${gema.toLocaleString('pt-BR')}</b></span>
+        <span class="col2__moeda col2__moeda--pos"><i class="col2__mic col2__mic--pos">⬡</i><b>${donos}<span>/${ROSTER.length}</span></b></span>
+      </div>
+    </header>
+    <div class="col2__corpo">
+      <aside class="col2__painel" id="col2painel">${colPainelHTML(colSel)}</aside>
+      <section class="col2__dir">
+        <div class="col2__barra">
+          <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar personagens…" value="${H(colF.busca)}" autocomplete="off"></label>
+          ${barra}
+        </div>
+        <div class="col2__tabs">${tabs}</div>
+        <div class="col2__grade" id="col2grade"></div>
+      </section>
+    </div>
+  </div>`;
+  const q = s => stage.querySelector(s);
+  const v = q('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const busca = q('#col2busca'); if (busca) busca.oninput = () => { colF.busca = busca.value; colAtualizarGrade(); };
+  [...stage.querySelectorAll('select[data-filtro]')].forEach(s => s.onchange = () => { colF[s.dataset.filtro] = s.value; colAtualizarGrade(); });
+  [...stage.querySelectorAll('.col2__tab')].forEach(t => t.onclick = () => { colF.cultura = t.dataset.cultura; [...stage.querySelectorAll('.col2__tab')].forEach(x => x.classList.toggle('is-on', x === t)); colAtualizarGrade(); });
+  colAtualizarGrade();
+  colLigarPainel();
   fit();
+}
+// re-preenche SÓ a grade + contador (sem tocar na barra → a busca não perde o foco).
+function colAtualizarGrade(){
+  const grade = stage.querySelector('#col2grade'); if (!grade) return;
+  const ks = colecaoFiltrada();
+  grade.innerHTML = ks.length ? ks.map(colCardHTML).join('') : '<p class="col2__vazio">Nenhum personagem com esses filtros.</p>';
+  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => colSelecionar(b.dataset.deus));
+}
+// troca só o painel (e o realce do cartão) — sem re-render da tela toda.
+function colSelecionar(k){
+  colSel = k;
+  const painel = stage.querySelector('#col2painel'); if (painel) painel.innerHTML = colPainelHTML(k);
+  [...stage.querySelectorAll('.col2c')].forEach(c => c.classList.toggle('is-sel', c.dataset.deus === k));
+  colLigarPainel();
+}
+function colLigarPainel(){
+  const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => { ir('deus', { key: ver.dataset.verdeus }); render(); };
 }
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */

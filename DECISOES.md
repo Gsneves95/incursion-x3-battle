@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §282 — COLEÇÃO refeita: a TELA DE PERSONAGENS (reskin do mockup do dono). Só tela; nada de motor/dado.
+
+O dono trouxe um mockup (imagem + HTML de referência) para refazer a tela de Personagens: painel de detalhe à esquerda + grade filtrável à direita, com busca e filtros. **Extraí a geometria do mockup e recusei três MENTIRAS que o mockup traz mas que este jogo não sustenta** — o mockup é um molde genérico, o mesmo que sempre mente sobre nível/atributos.
+
+**GEOMETRIA (fator 0,594; mockup 1560×720 → palco).** Painel de detalhe 392×628 → **233×373** (batido no dist: 233×373). Cartão 177×236 → **105×140**. Grade `repeat(auto-fill, 105px)` — **flui** com a largura de design (780–1200), não trava em 6 colunas. **Medido no dist (fontes reais, rede bloqueada):** **6 colunas a 951** (o valor do mockup), **4 a 780** (o piso — reflui sozinha), **8 a 1200**. O auto-fill é a decisão: o mockup mostra 6, mas a 780 seis não cabem (630px de cartões + painel 233 + barra não entram em 780), então em vez de espremer, reflui.
+
+**AS TRÊS MENTIRAS DO MOCKUP (recusadas, cada uma registrada):**
+1. **"Nv. 40/40" + barra de progresso + atributos (ataque/vida/defesa/velocidade).** NÃO EXISTEM (invariante #3: sem nível/estrela/equipamento; todo deus tem 120 de vida). Esse painel inteiro virou o **LEITOR-DE-KIT** — a razão de a Coleção existir: ensinar o kit COMPLETO (básico/habilidade/milagre/passiva, cada um com nome/custo/recarga/efeito). O mockup punha uma ficha de RPG onde o jogo tem um kit fixo.
+2. **Contador "195/300".** São **100** deuses, não 300. O 3º contador do topo é **possuídos/100** (essência ◈ e gema ◆ existem; o terceiro é o acervo).
+3. **Banda de raridade "B".** Só existem **três** bandas — **SS 16 · S 31 · A 53** (`data/raridades.json`); nenhum deus é B. O selo de raridade e o filtro só oferecem SS/S/A.
+
+**FILTROS sobre DADO REAL.** Busca por nome; **CULTURA** = 10 facções reais, como ABAS (linha 2). O mockup colapsou o eixo de tipo em um só "Classe", mas o dado tem **DOIS** eixos independentes: **CLASSE** (`classe`: Mágico 57 · Físico 33 · Híbrido 10 — *tipo de combate*) e **FUNÇÃO** (`funcao`: Atacante 29 · Suporte 27 · Controlador 17 · Guardião 17 · Manipulador 10 — *papel*). Decisão: **dois seletores distintos e rotulados**, não um só — cada um é curto e diz o que filtra, sem poluir. Mais STATUS (possuído/não) e RARIDADE (SS/S/A) como seletores. **Ordenar "Mais recentes"** usa a data de aquisição — **medi: o perfil guarda `obtidoEm`** (`perfil.deuses[k].obtidoEm`), então o eixo é real (desempate por nome); alternativa "Nome (A–Z)".
+
+**KIT lido de GODS (data/deuses), nunca de kits.json.** GODS é a fonte do motor (§280). O painel mostra a identidade que JÁ EXISTE no dado (retrato, nome, facção, elemento, classe, função) + posse (possuído · N cópias / não possuído) + as 4 linhas do kit. **`arquétipo` NÃO existe em data/deuses (0/100) — omitido, não inventado.** VER DETALHES **fica** e leva ao ecrã cheio do deus (`ir('deus')`, com pergaminho + como conseguir), que o painel resumido não traz.
+
+**ÍCONE DE CULTURA = MONOGRAMA latino de 2 letras** (GR/NÓ/EG/JP/CH/HI/BR/AF/CE/MA) dentro do escudo. Recusado o símbolo exótico (Ω/ᚱ/☥/⛩/天): Rajdhani cobre Latino+Devanagari; Grego/Rúnico/CJK/emoji caem no fallback do sistema e viram **tofu** no WebView (a lição do §277/§260). Num escudo de 20px a 10px, a letra ainda lê melhor que o símbolo. Monograma é a disciplina segura e uniforme (brasão).
+
+**MEDIÇÃO de corte (fontes reais, rede bloqueada, 780 e 951).** Os TRÊS pedidos do dono estão **limpos, zero corte**: nome do deus no cartão, nome da cultura, e o texto de EFEITO das 4 habilidades (o EFEITO quebra linha — o painel rola; não há transbordo horizontal). **Achado extra:** 4 NOMES de habilidade passavam de 1 linha a 233 ("Só Dorme de Sete em Sete Anos" +20px, "Carruagem que Aponta o Sul", "Invulnerabilidade de Baldur", "Abrir e Fechar Caminhos"). Como o painel é LEITOR-de-kit, esconder o nome com reticências negaria sua razão de existir → o nome da habilidade **quebra linha** (não é um dos três campos que o dono reservou p/ decidir; aqueles estão limpos). Depois disso: **0 corte em tudo.**
+
+**RELOCAÇÃO de duas coisas do §216/§245 (registrada, não silenciosa).** A vitrine antiga agrupava por panteão (10 seções) e o cartão carregava dois enfeites. No reskin:
+- **Moldura de MESTRE (nível 4)** — recompensa cosmética PROMETIDA ("a moldura sai no Mestre", §245). A Coleção é sua vitrine, então foi **reskinada** no novo cartão como `col2c--mestre` (anel duplo dourado + brilho, sobre o chanfro). Continua saindo.
+- **Pip de NÍVEL de maestria por cartão** — era uma duplicação. O nível de maestria vive nativamente no **detalhe do deus** (`.dmaes`) e na tela de **DESAFIOS** (`dsf__maes`), ambos intactos. **Retirado da grade** (o spec do dono para o cartão — raridade/cultura/chanfro/retrato/nome — não o inclui). Nenhuma informação se perdeu; só saiu de onde era redundante.
+
+**Não-possuído** reutiliza o tratamento do §216 (dourado × apagado): cartão `col2c--falta` (dessaturado + anel cinza) e painel `col2p--falta` (borda tracejada, retrato dessaturado, "Não possuído"). Não se inventou outro. **Arte** por arquivo (§213): `<img>` só quando `IMG[k]` existe; senão monograma — nunca 404.
+
+**Babás (`tests/colecao_tela.test.js`, 37 asserções):** sem nível/atributo/barra no painel; contador /100 (nunca /300); só SS/S/A (nenhum B), distribuição 16/31/53; cada filtro (busca/cultura/classe/função/status/raridade) REDUZ a grade de verdade + a grade desenhada casa o filtro; painel = 4 linhas do kit com custo (bolinhas) + recarga nas 3 ações + passiva; identidade de 4 tags, sem "arquétipo"; possuído × não-possuído inequívocos; nenhum `<img>` 404. Migradas: `aquisicao` (grade+abas no lugar das 10 seções), `desafios` (moldura Mestre → `col2c--mestre`), `maestria` (nível no detalhe). **4 capturas** em `docs/capturas-282/` (tela cheia · possuído+kit · não-possuído · grade filtrada Grega+SS = 3 cartões). Suíte + build verdes.
+
+**Arquivos:** `src/ui/home.js` (máquina da Coleção: estado, filtros, cartão, painel-leitor, monograma, moldura Mestre no cartão), `src/shell.html` (bloco CSS `.col2*`), `tests/colecao_tela.test.js` (novo), `tests/{aquisicao,desafios,maestria}.test.js` (migradas), `package.json`, `ESTADO.md`.
+
+---
+
 ## §281 — ACABAMENTO do cartão de Domínio (revisão de desenho gráfico sobre a arte real). Só tela; nada de motor/dado.
 
 Diagnóstico do dono: sete blocos de texto empilhados em 134×308, nenhum domina, e a arte só no terço superior. Sete acertos (mediu-se tudo no dist, viewport real, fontes reais, rede bloqueada, no piso 780; ANTES/DEPOIS em `docs/capturas-281/`).

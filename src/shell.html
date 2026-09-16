@@ -1357,6 +1357,141 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .dprov__feita{font-weight:700;font-size:12px;color:var(--e-Verdejante)}
 .dprov__aberta{font-weight:700;font-size:12px;color:var(--gold-text)}
 
+/* ===================== §282 — COLEÇÃO refeita: PAINEL-LEITOR-DE-KIT + GRADE filtrável =====================
+   Mockup 1560×720 → palco (fator .594). GEOMETRIA já convertida pelo dono: painel de detalhe 392×628 → 233×373;
+   cartão 177×236 → 105×140; grade repeat(6,105) cabe a ~951. Aqui a largura é FLUIDA (780..1200) → a grade usa
+   auto-fill de 105px e REFLUI sozinha (menos colunas no piso 780 — medido, não fixado). Altura fixa 428:
+   topo 44 + corpo 384. As TRÊS MENTIRAS do mockup (Nv/atributos/barra; contador /300; banda "B") não têm CSS —
+   não existem: o painel é leitor-de-kit, o contador é possuídos/100, a raridade só tem SS/S/A. */
+.col2{position:absolute;inset:0;font-family:'Rajdhani',sans-serif;color:var(--ink);display:flex;flex-direction:column;
+  background:radial-gradient(120% 90% at 30% -10%,rgba(52,40,92,.5),transparent 60%),linear-gradient(180deg,#120e24,#0a0817)}
+.col2__topo{flex:0 0 44px;display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:linear-gradient(180deg,rgba(14,11,26,.92),rgba(10,8,20,.86));border-bottom:1px solid rgba(216,178,90,.22)}
+.col2__voltar{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--gold-text)}
+.col2__voltar:active{transform:translateY(1px) scale(.96)}
+.col2__tit{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;line-height:1.02}
+.col2__titulo{font-family:'Cinzel',serif;font-weight:900;font-size:17px;letter-spacing:.06em;color:var(--gold-text);margin:0}
+.col2__sub{font-weight:700;font-size:8.5px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase}
+.col2__moedas{flex:0 0 auto;display:flex;align-items:center;gap:9px}
+.col2__moeda{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:9px;
+  background:rgba(30,24,54,.6);border:1px solid #342c54;font-weight:800;font-size:12px}
+.col2__mic{font-style:normal;font-size:12px;line-height:1}
+.col2__mic--ess{color:#7fb0e0} .col2__mic--gem{color:#b06cff} .col2__mic--pos{color:var(--gold-text)}
+.col2__moeda--pos b span{font-weight:700;font-size:10px;color:var(--ink-mute)}
+.col2__corpo{flex:1 1 auto;min-height:0;display:flex;gap:12px;padding:11px 14px}
+
+/* PAINEL-LEITOR (esquerda) 233×373 — identidade que já existe no dado + posse + kit COMPLETO. Sem Nv/barra. */
+.col2__painel{flex:0 0 233px;width:233px;height:373px;align-self:flex-start}
+.col2p{display:flex;flex-direction:column;height:100%;padding:12px 12px 11px;overflow:hidden;
+  border:1px solid var(--gold-soft);border-radius:12px;background:linear-gradient(180deg,rgba(26,21,48,.92),rgba(12,10,26,.94));
+  box-shadow:0 0 0 1px rgba(255,217,122,.10),0 6px 20px rgba(0,0,0,.4)}
+.col2p--falta{border-color:#39335a;border-style:dashed;background:rgba(11,9,20,.78)}
+.col2p--vazio{align-items:center;justify-content:center;text-align:center}
+.col2p__dica{font-weight:600;font-size:12px;color:var(--ink-mute);max-width:160px;line-height:1.4}
+.col2p__cab{flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;position:relative}
+.col2p__art{width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--gold-soft)}
+.col2p__art .slot{width:64px;height:64px}
+.col2p--falta .col2p__art{border-color:#39335a}
+.col2p--falta .col2p__art .slot{filter:grayscale(1) brightness(.62)}
+.col2p__rar{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.04em;
+  padding:2px 9px;border-radius:8px;border:1px solid currentColor}
+.col2p__rar--SS{color:#e9c877} .col2p__rar--S{color:#b06cff} .col2p__rar--A{color:#56a8ef}
+.col2p__nome{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.01em;color:var(--ink);
+  margin:8px 0 0;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.col2p--falta .col2p__nome{color:var(--ink-dim)}
+.col2p__ident{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 0}
+.col2p__tag{font-weight:700;font-size:9.5px;letter-spacing:.03em;padding:2px 7px;border-radius:7px;
+  border:1px solid #3a3360;color:var(--ink-dim);white-space:nowrap}
+.col2p__tag--cult{border-color:var(--gold-soft);color:var(--gold-text)}
+.col2p__posse{flex:0 0 auto;display:inline-block;margin:8px 0 2px;font-weight:800;font-size:10.5px;letter-spacing:.04em}
+.col2p__posse--tem{color:var(--e-Verdejante)} .col2p__posse--nao{color:var(--ink-mute)}
+.col2p__kit{flex:1 1 auto;min-height:0;overflow-y:auto;margin-top:6px;padding-right:3px;
+  display:flex;flex-direction:column;gap:7px;scrollbar-width:thin}
+.col2p__kit::-webkit-scrollbar{width:5px} .col2p__kit::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2k__row{border:1px solid #2c2648;border-radius:9px;padding:6px 8px;background:rgba(20,16,38,.5)}
+.col2k__row--vazio{display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute)}
+.col2k__top{display:flex;align-items:baseline;gap:7px}
+.col2k__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--gold-text);flex:0 0 auto}
+/* nome da habilidade PODE quebrar linha: o painel é LEITOR-DE-KIT — esconder o nome com reticências negaria
+   sua razão de existir. Quatro nomes passavam de 1 linha a 233 (§282: "Só Dorme de Sete em Sete Anos" etc.). */
+.col2k__nome{font-weight:700;font-size:12px;color:var(--ink);line-height:1.12}
+.col2k__meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:4px 0 3px}
+.col2k__cd{font-weight:700;font-size:9.5px;letter-spacing:.02em;color:#8b83b8}
+.col2k__ef{font-weight:500;font-size:10.5px;line-height:1.32;color:var(--ink-dim)}
+.col2p__ver{flex:0 0 auto;margin-top:8px;width:100%;padding:7px 0;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.06em;color:#1a1530;
+  background:var(--ouro-grad);border:none;border-radius:9px}
+.col2p__ver:active{transform:translateY(1px)}
+
+/* DIREITA: barra de filtros (busca + seletores) · abas de cultura · grade rolável */
+.col2__dir{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px}
+.col2__barra{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.col2__busca{flex:1 1 150px;min-width:130px;display:flex;align-items:center;gap:6px;padding:0 9px;height:30px;
+  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:9px}
+.col2__busca i{font-style:normal;font-size:14px;color:var(--ink-mute)}
+.col2__busca input{flex:1 1 auto;min-width:0;background:none;border:none;outline:none;color:var(--ink);
+  font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12.5px}
+.col2__busca input::placeholder{color:var(--ink-mute)}
+.col2__sel{position:relative;display:flex;flex-direction:column;justify-content:center}
+.col2__selrot{position:absolute;top:-6px;left:8px;font-weight:800;font-size:7px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-mute);background:var(--bg);padding:0 3px;pointer-events:none}
+.col2__sel select{appearance:none;-webkit-appearance:none;height:30px;padding:0 22px 0 9px;cursor:pointer;
+  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:9px;color:var(--ink);
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-mute) 50%),linear-gradient(135deg,var(--ink-mute) 50%,transparent 50%);
+  background-position:calc(100% - 13px) 13px,calc(100% - 8px) 13px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.col2__tabs{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:5px}
+.col2__tab{cursor:pointer;padding:3px 10px;border-radius:20px;font-weight:700;font-size:11px;letter-spacing:.02em;
+  background:rgba(20,16,38,.6);border:1px solid #2c2648;color:var(--ink-dim)}
+.col2__tab:active{transform:translateY(1px) scale(.98)}
+.col2__tab.is-on{background:var(--ouro-grad);border-color:var(--gold);color:#1a1530}
+.col2__grade{flex:1 1 auto;min-height:0;overflow-y:auto;padding:2px 4px 4px 2px;
+  display:grid;grid-template-columns:repeat(auto-fill,105px);grid-auto-rows:140px;gap:8px;justify-content:start;
+  align-content:start;scrollbar-width:thin}
+.col2__grade::-webkit-scrollbar{width:6px} .col2__grade::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2__vazio{grid-column:1/-1;padding:24px 8px;text-align:center;font-weight:600;font-size:13px;color:var(--ink-mute)}
+
+/* CARTÃO 105×140 — canto chanfrado (octógono), faixa de raridade em HEXÁGONO, escudo de cultura, retrato, rodapé.
+   Possuído × não-possuído pelo tratamento do §216 (dourado × apagado). Selecionado ganha anel. */
+.col2c{position:relative;width:105px;height:140px;padding:0;cursor:pointer;overflow:hidden;color:var(--ink);
+  font-family:'Rajdhani',sans-serif;background:#14112a;border:0;
+  clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);
+  transition:transform .08s}
+.col2c:active{transform:translateY(1px) scale(.98)}
+.col2c::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+  clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);
+  box-shadow:inset 0 0 0 1.5px #2c2648}
+.col2c--tem::after{box-shadow:inset 0 0 0 1.5px var(--gold-soft)}
+/* §245 — MESTRE (nível 4): anel duplo dourado + brilho, reskin da moldura do §216/§245 no cartão chanfrado. */
+.col2c--mestre::after{box-shadow:inset 0 0 0 2px var(--gold-text),inset 0 0 0 3.5px rgba(255,217,122,.35),0 0 12px rgba(255,190,90,.34)}
+.col2c.is-sel::after{box-shadow:inset 0 0 0 2px var(--gold-text),inset 0 0 0 4px rgba(255,217,122,.25)}
+.col2c--mestre.is-sel::after{box-shadow:inset 0 0 0 2.5px #fff2cf,inset 0 0 0 4.5px rgba(255,217,122,.4),0 0 14px rgba(255,190,90,.42)}
+.col2c__art{position:absolute;inset:0;z-index:0}
+.col2c__art .slot{width:100%;height:100%}
+.col2c__art .slot>img{border-radius:0}
+.col2c--falta .col2c__art .slot{filter:grayscale(1) brightness(.6)}
+.col2c--falta{background:rgba(11,9,20,.7)}
+.col2c--falta::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(8,6,18,.42)}
+.col2c__rar{position:absolute;top:5px;right:5px;z-index:2;width:20px;height:22px;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:0;color:#1a1530;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.col2c__rar--SS{background:#e9c877} .col2c__rar--S{background:#c79bff;color:#241038} .col2c__rar--A{background:#7cc0f5;color:#0e2338}
+.col2c--falta .col2c__rar{opacity:.55}
+.col2c__cult{position:absolute;top:4px;left:4px;z-index:2;width:20px;height:22px;display:grid;place-items:center;
+  font-weight:800;font-size:10px;line-height:1;color:var(--gold-text);background:rgba(12,10,24,.82);
+  clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%)}
+.col2c--falta .col2c__cult{color:var(--ink-mute)}
+.col2c__foot{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:0;
+  padding:11px 8px 7px;text-align:left;
+  background:linear-gradient(180deg,rgba(8,6,18,0),rgba(8,6,18,.72) 42%,rgba(8,6,18,.92))}
+.col2c__n{font-weight:700;font-size:11.5px;letter-spacing:.01em;color:#fff;line-height:1.05;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  filter:drop-shadow(0 1px 2px rgba(2,4,10,.95))}
+.col2c--falta .col2c__n{color:var(--ink-dim)}
+.col2c__f{font-weight:600;font-size:8.5px;letter-spacing:.04em;color:rgba(226,220,247,.72);text-transform:uppercase;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* ===================== F3.3 — Campanha (trilha de encontros + HUD de lição) ===================== */
 .ccap{margin:4px 2px 12px}
 .ccap h2{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--gold-text);margin:0}

@@ -84,9 +84,12 @@ console.log('== 5. o detalhe mostra a maestria; o ladrilho mostra o nível ==');
   ok(!!$('.dmaes') && /MAESTRIA/.test($('.dmaes').textContent), 'o detalhe traz o bloco de maestria');
   ok(/Adepto/.test($('.dmaes').textContent), 'mostra o nível atual (Adepto)');
   ok(/Mestre/.test($('.dmaes').textContent) && /Milagre/.test($('.dmaes').textContent), 'diz o que falta p/ o Mestre (vitórias + Milagre)');
+  // §282: a Coleção foi refeita (grade filtrável + painel-leitor). O pip de NÍVEL de maestria por cartão foi
+  // retirado da grade — o nível de maestria vive no DETALHE do deus (asserido acima, .dmaes) e na tela de
+  // DESAFIOS. A grade mostra o cartão do possuído; a moldura de MESTRE (nível 4) permanece no cartão.
   w.eval("ir('colecao'); render();");
-  const pip = $('.colx[data-deus="ares"] .colx__m');
-  ok(!!pip, 'o ladrilho do deus mostra o pip de maestria');
+  const card = $('.col2c[data-deus="ares"]');
+  ok(!!card && card.classList.contains('col2c--tem'), 'o cartão do deus possuído aparece na grade (o nível de maestria mora no detalhe do deus, §282)');
 }
 
 console.log('== 6. SEMANAL: semente (ano, semana) — ano diferente NÃO repete a mesma semana ==');

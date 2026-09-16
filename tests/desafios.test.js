@@ -87,8 +87,10 @@ console.log('\n== a MOLDURA sai no MESTRE (10 desafios = 30 maestria + milagre) 
   ok(w.eval("perfil.maestria.zeus.vitorias") === 30, '10 desafios = 30 de maestria');
   ok(w.eval("nivelMaestria('zeus')") === 4, 'zeus vira MESTRE (nível 4)');
   w.eval("ir('colecao'); render();");
-  const tile = $('.colx[data-deus="zeus"]');
-  ok(!!tile && tile.classList.contains('colx--mestre'), 'a MOLDURA do Mestre aparece no tile da coleção (colx--mestre)');
+  // §282: a Coleção foi refeita (grade filtrável). A MOLDURA do Mestre — recompensa prometida — foi reskinada
+  // no novo cartão como col2c--mestre.
+  const tile = $('.col2c[data-deus="zeus"]');
+  ok(!!tile && tile.classList.contains('col2c--mestre'), 'a MOLDURA do Mestre aparece no cartão da coleção (col2c--mestre)');
 }
 
 console.log('\n== o DESAFIO DA SEMANA foi renomeado e dá Gema ==');

@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §282 — a TELA DE PERSONAGENS refeita (reskin do mockup): PAINEL-LEITOR-DE-KIT + GRADE filtrável. Só tela.
+
+Rota `colecao` (rotulada "Personagens"). Substitui a vitrine por-panteão do §216. **Topo:** voltar · título Cinzel dourado · 3 contadores (essência ◈ / gema ◆ / **possuídos ⬡ N/100**). **Esquerda — painel 233×373 (leitor-de-kit):** retrato + selo de raridade, nome, 4 tags (facção/elemento/classe/função — **sem arquétipo**, campo inexistente), posse (Possuído · N cópias / Não possuído), o **kit COMPLETO** (BÁSICO/HABILIDADE/MILAGRE/PASSIVA, cada um nome+custo(bolinhas)+recarga+efeito, lido de **GODS/data/deuses**, nunca kits.json; rola), botão VER DETALHES → ecrã cheio `deus`. **Direita:** busca por nome · seletores CLASSE + FUNÇÃO (dois eixos reais, não um) + STATUS + RARIDADE + ORDENAR (Mais recentes por `obtidoEm` / Nome) · abas de cultura (Todas + 10) · grade `auto-fill` de cartões 105×140 (chanfro octogonal, raridade em HEXÁGONO, cultura em ESCUDO com monograma latino, retrato §213, nome+cultura na faixa).
+
+**As TRÊS mentiras do mockup, recusadas:** (1) "Nv. 40/40" + barra + atributos → NÃO existem (inv. #3; todo deus 120 vida) → o painel virou leitor-de-kit; (2) "195/300" → **possuídos/100** (são 100 deuses); (3) banda "B" → só **SS 16 · S 31 · A 53**, nenhum B.
+
+**Medido (dist, fontes reais, rede bloqueada):** colunas **6 a 951 · 4 a 780 · 8 a 1200** (grade reflui, não espreme). Corte: nome-do-cartão, cultura e EFEITO das 4 habilidades **limpos (0)**; só 4 NOMES de habilidade passavam de 1 linha a 233 → nome de habilidade **quebra linha** (é leitor-de-kit) → 0 corte. Monograma de cultura latino (GR/NÓ/EG/JP/CH/HI/BR/AF/CE/MA): símbolo exótico vira tofu no WebView (§277/§260).
+
+**Relocado (registrado):** moldura de MESTRE (recompensa §245) reskinada no cartão como `col2c--mestre` (continua saindo); pip de nível de maestria por cartão **retirado** (vive no detalhe do deus `.dmaes` e em DESAFIOS `dsf__maes` — era duplicação). Não-possuído reusa §216 (dourado × apagado): `col2c--falta` / `col2p--falta`.
+
+**Babás:** `tests/colecao_tela.test.js` (37 asserções: sem nível/atributo/barra; /100 não /300; só SS/S/A; cada filtro reduz; painel 4 linhas com custo+recarga; possuído×falta; sem 404). Migradas `aquisicao`/`desafios`/`maestria` para a grade nova. **4 capturas** em `docs/capturas-282/`. Suíte + build verdes. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/colecao_tela.test.js` (novo), `tests/{aquisicao,desafios,maestria}.test.js`, `package.json`. Ver DECISOES §282.
+
 ## ★ DOMÍNIOS §281 — ACABAMENTO gráfico do cartão sobre a arte real (hierarquia, respiro, arte de volta). Só tela.
 
 Sete acertos de desenho (medidos no dist, fontes reais, rede bloqueada, 780; ANTES/DEPOIS em `docs/capturas-281/`):
