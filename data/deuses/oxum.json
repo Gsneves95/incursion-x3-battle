@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Curandeira/Axé",
   "passiva": {
     "nome": "Doçura e Ouro",
     "desc": "Aliados curados por Oxum causam +5 de dano no turno seguinte.",

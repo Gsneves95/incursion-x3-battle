@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Sniper anti-Sol",
   "passiva": {
     "nome": "Olho de Águia",
     "desc": "Hou Yi ignora Inalvejável; causa +8 de dano contra inimigos com qualquer buff.",

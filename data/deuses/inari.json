@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Bateria de orbes",
   "passiva": {
     "nome": "Mensageiros Kitsune",
     "desc": "A cada 3 turnos o time ganha 1 orbe de Verdejante; se a Kitsune está no time, ela começa com 1 Cauda.",

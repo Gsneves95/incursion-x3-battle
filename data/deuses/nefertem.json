@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Curandeiro/purificador",
   "passiva": {
     "nome": "Fragrância Serena",
     "desc": "Curas feitas por aliados Egípcios curam +5.",

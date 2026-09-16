@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser protetor",
   "passiva": {
     "nome": "Protetor de Midgard",
     "desc": "Todos os aliados recebem 6 de redução de dano.",

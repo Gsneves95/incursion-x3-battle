@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Tanque-provocador",
   "passiva": {
     "nome": "Corrente do Submundo",
     "desc": "Enquanto Cérberus vive, inimigos não podem ser revividos.",

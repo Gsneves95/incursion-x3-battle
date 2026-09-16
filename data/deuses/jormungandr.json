@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "DPS de veneno em área",
   "passiva": {
     "nome": "Serpente do Mundo",
     "desc": "Imune a controle; +8 de dano contra unidades Tempestade.",

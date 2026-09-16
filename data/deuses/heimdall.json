@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Protetor/vigília",
   "passiva": {
     "nome": "Sentinela",
     "desc": "O inimigo não pode roubar nem remover orbes do time.",

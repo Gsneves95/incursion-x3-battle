@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Executor",
   "passiva": {
     "nome": "Fome Insaciável",
     "desc": "Fenrir causa +8 de dano por inimigo derrotado; imune a Provocar e a Agarrar.",

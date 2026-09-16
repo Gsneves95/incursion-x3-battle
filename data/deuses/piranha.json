@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Cardume voraz",
   "passiva": {
     "nome": "Sangue na Água",
     "desc": "O Sangramento causa +4 quando o alvo age; +8 de dano contra alvos abaixo de 60 de HP.",

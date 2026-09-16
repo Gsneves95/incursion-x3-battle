@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Guardião",
+  "arquetipo": "Protetor quase-invulnerável",
   "passiva": {
     "nome": "Bênção de Frigga",
     "desc": "Baldur recebe 15 de redução de dano, exceto de habilidades Verdejantes (o visco).",

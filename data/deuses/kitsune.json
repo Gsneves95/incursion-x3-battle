@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Ilusionista",
   "passiva": {
     "nome": "Yokai Ancestral",
     "desc": "Kitsune ganha 1 Cauda a cada 2 turnos (máx. 9); a cada 3 Caudas, recebe 5 de redução de dano.",

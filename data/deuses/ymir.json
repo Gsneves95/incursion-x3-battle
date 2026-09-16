@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Tanque de gelo",
   "passiva": {
     "nome": "Carne Primordial",
     "desc": "Ao ser derrotado, Ymir cura 25 no time.",

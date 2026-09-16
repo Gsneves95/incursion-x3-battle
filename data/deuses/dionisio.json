@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Debuffer/confusão",
   "passiva": {
     "nome": "Êxtase",
     "desc": "Inimigos Silenciados, Dominados ou Adormecidos não geram orbes.",

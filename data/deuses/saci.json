@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Físico",
   "funcao": "Manipulador",
+  "arquetipo": "Trapaceiro de esquiva",
   "passiva": {
     "nome": "Gorro Vermelho",
     "desc": "O primeiro ataque de alvo único contra Saci em cada turno falha; quando falha, Saci contra-ataca por 10.",

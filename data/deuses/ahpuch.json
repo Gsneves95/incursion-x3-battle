@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Decomposição",
   "passiva": {
     "nome": "Senhor da Morte",
     "desc": "Quando um inimigo é derrotado, Ah Puch cura 15 e ganha 1 orbe; quem tem Podridão não pode ser revivido.",

@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Híbrido",
   "funcao": "Atacante",
+  "arquetipo": "Finalizador de Combo",
   "passiva": {
     "nome": "Exílio Divino",
     "desc": "Cada ataque de Susanoo gera 2 de Combo do time (teto 20); +6 de dano por aliado a menos que o inimigo.",

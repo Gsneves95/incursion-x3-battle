@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Negação de iniciativa",
   "inicial": true,
   "passiva": {
     "nome": "Companheiro de Raijin",

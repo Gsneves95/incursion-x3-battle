@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Removedor de obstáculos",
   "inicial": true,
   "passiva": {
     "nome": "Senhor dos Começos",

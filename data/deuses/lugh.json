@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Híbrido",
   "funcao": "Atacante",
+  "arquetipo": "DPS flexível",
   "passiva": {
     "nome": "Luz do Sol",
     "desc": "Durante o DIA, Lugh causa +10 de dano e Samildánach fica sem recarga.",

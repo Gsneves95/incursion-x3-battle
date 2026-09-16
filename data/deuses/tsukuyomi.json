@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Controle de Noite",
   "passiva": {
     "nome": "Vingança do Banquete",
     "desc": "Tsukuyomi causa +10 de dano contra inimigos que foram curados no turno anterior.",

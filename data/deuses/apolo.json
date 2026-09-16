@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "DPS à distância / cura",
   "passiva": {
     "nome": "Presságio",
     "desc": "Apolo causa +6 de dano contra inimigos com HP cheio.",

@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Trapaceiro (escolha)",
   "passiva": {
     "nome": "Fortuna",
     "desc": "No início da partida, Tanuki ganha 1 orbe extra do seu elemento.",

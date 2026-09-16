@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Suporte pós-morte",
   "passiva": {
     "nome": "Cabeça Falante",
     "desc": "Mesmo derrotado, Mimir concede +6 de dano ao time — mas não pode ser revivido.",

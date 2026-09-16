@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Tanque com dreno",
   "passiva": {
     "nome": "Regeneração Demoníaca",
     "desc": "Shuten cura 6 por turno (10 se estiver abaixo de 60 de HP).",

@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Híbrido",
   "funcao": "Suporte",
+  "arquetipo": "Buffer/revive",
   "passiva": {
     "nome": "Seiðr",
     "desc": "Aliados curados por Freyja causam +5 de dano no turno seguinte.",

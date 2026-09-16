@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Híbrido",
   "funcao": "Suporte",
+  "arquetipo": "Estrategista",
   "passiva": {
     "nome": "Rei de Asgard",
     "desc": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra; o time causa +6 de dano contra marcados.",

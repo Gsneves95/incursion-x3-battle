@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Buffer/criadora",
   "passiva": {
     "nome": "Mãe da Humanidade",
     "desc": "Quando um aliado cai, os demais causam +10 de dano pelo resto da partida.",

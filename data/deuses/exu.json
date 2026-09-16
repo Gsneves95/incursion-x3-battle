@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Abre-caminhos",
   "passiva": {
     "nome": "Senhor das Encruzilhadas",
     "desc": "Exu age primeiro em todos os turnos.",

@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Contagem de morte",
   "passiva": {
     "nome": "Juiz dos Mortos",
     "desc": "Quem morre sob o Livro não pode ser revivido; Yan Wong ganha 1 orbe por execução.",

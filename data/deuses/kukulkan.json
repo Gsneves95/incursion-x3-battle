@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Híbrido",
   "funcao": "Atacante",
+  "arquetipo": "DPS aéreo",
   "passiva": {
     "nome": "Deus-Rei",
     "desc": "+8 de dano contra Encharcados; o time ganha 1 orbe extra no turno 1.",

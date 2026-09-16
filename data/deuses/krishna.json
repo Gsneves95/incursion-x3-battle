@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Estrategista",
   "passiva": {
     "nome": "Auriga de Arjuna",
     "desc": "O aliado que causou mais dano no turno anterior causa +5 de dano.",

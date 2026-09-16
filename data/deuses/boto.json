@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Sedutor evasivo",
   "passiva": {
     "nome": "Some ao Amanhecer",
     "desc": "A cada 3 turnos, Boto fica Inalvejável por 1 turno; durante a NOITE, a Dominação dura +1 turno.",

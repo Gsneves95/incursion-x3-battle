@@ -950,6 +950,7 @@ function colPainelHTML(k){
       <span class="col2p__rar col2p__rar--${rar}">${rar}</span>
     </div>
     <h2 class="col2p__nome">${H(colNome(k))}</h2>
+    ${g.arquetipo ? `<p class="col2p__arq">${H(g.arquetipo)}</p>` : ''}
     <div class="col2p__ident">
       <span class="col2p__tag col2p__tag--cult">${H(g.faccao || '')}</span>
       <span class="col2p__tag" style="border-color:${COR(g.elem)};color:${COR(g.elem)}">${H(g.elem || '')}</span>

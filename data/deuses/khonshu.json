@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Manipulador do tempo",
   "passiva": {
     "nome": "Guardião dos Viajantes",
     "desc": "1× por partida, quando um aliado seria atordoado, Khonshu anula o efeito.",

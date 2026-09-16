@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Híbrido",
   "funcao": "Controlador",
+  "arquetipo": "Vento/anti-buff",
   "passiva": {
     "nome": "Corisco",
     "desc": "Quando um inimigo é derrotado, Iansã ganha 1 orbe e causa +8 de dano pelo resto da partida.",

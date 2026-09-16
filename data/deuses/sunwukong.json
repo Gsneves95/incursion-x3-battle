@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "DPS multi-golpe",
   "passiva": {
     "nome": "Corpo Imortal",
     "desc": "Não pode ser eliminado por execução; 1× por partida sobrevive a um golpe letal com 1 de HP.",

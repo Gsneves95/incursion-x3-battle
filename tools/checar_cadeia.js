@@ -105,7 +105,10 @@ function conferir(prosaByKey, deusesArray) {
     if (!p) { divergencias.push(`${g.key} não existe em kits.json`); continue; }
     // §270: METADADOS — o motor lê faccao/elem/classe/funcao; era o buraco por onde o Exu (e afrodite/apolo/
     // kraken/hermes) passaram. Nome de campo difere entre os catálogos: elem↔elemento, classe↔tipo.
-    for (const [campo, dv, kv] of [['faccao', g.faccao, p.faccao], ['elem', g.elem, p.elemento], ['classe', g.classe, p.tipo], ['funcao', g.funcao, p.funcao]])
+    // §282: `arquetipo` — legenda de tela (o motor NÃO lê), mas DUPLICADA nos dois catálogos → pode derivar.
+    // Entra na cadeia como os outros metadados: muda um lado e a build QUEBRA. (Fica FORA do carimbo de
+    // Provação — projecaoCombate o exclui via TELA_TOPO — então guardá-lo aqui não re-carimba nada.)
+    for (const [campo, dv, kv] of [['faccao', g.faccao, p.faccao], ['elem', g.elem, p.elemento], ['classe', g.classe, p.tipo], ['funcao', g.funcao, p.funcao], ['arquetipo', g.arquetipo, p.arquetipo]])
       reg(g.key, '·', campo, String(dv) === String(kv) ? 'match' : 'diverge', `motor "${dv}" ≠ prosa "${kv}"`);
     for (const slot of SLOTS) {
       const ab = (g.ab || []).find(a => a.slot === slot), ps = p[slot];

@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser aquático",
   "inicial": true,
   "passiva": {
     "nome": "Pele de Couraça",

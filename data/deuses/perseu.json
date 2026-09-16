@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "DPS anti-controle",
   "passiva": {
     "nome": "Espelho de Bronze",
     "desc": "Perseu é imune a Atordoar e Petrificar; quem tentar atordoá-lo fica atordoado por 1 turno.",

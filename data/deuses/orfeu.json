@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Suporte/controle suave",
   "passiva": {
     "nome": "Melodia Hipnótica",
     "desc": "Inimigos Adormecidos recebem +8 de dano e não geram orbes.",

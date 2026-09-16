@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Protetora ágil",
   "passiva": {
     "nome": "Reflexos Felinos",
     "desc": "O primeiro ataque de alvo único contra Bastet em cada turno causa 8 menos de dano.",

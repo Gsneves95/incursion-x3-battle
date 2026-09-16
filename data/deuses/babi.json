@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Frenético/medo",
   "passiva": {
     "nome": "Devorador de Entranhas",
     "desc": "Babi causa +10 de dano contra inimigos com Medo.",

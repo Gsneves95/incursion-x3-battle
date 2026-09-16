@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Híbrido",
   "funcao": "Atacante",
+  "arquetipo": "DPS de arsenal",
   "inicial": true,
   "passiva": {
     "nome": "Renascido do Lótus",

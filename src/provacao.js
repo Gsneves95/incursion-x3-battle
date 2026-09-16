@@ -466,7 +466,7 @@ function _canon(v) {
 // permanece no hash — ERRA PARA O LADO DE RE-CARIMBAR: campo novo, ou ambíguo (inicial, provacao),
 // entra no hash; só um rótulo comprovadamente de tela sai. Assim um novo campo de combate nunca
 // passa em silêncio; no pior caso re-carimba-se um cosmético que poderia ter ficado de fora.
-const TELA_TOPO = ['nome', 'curto'];        // deus/criatura: rótulos exibidos (§262)
+const TELA_TOPO = ['nome', 'curto', 'arquetipo'];   // deus/criatura: rótulos exibidos (§262; arquetipo §282 — legenda de tela, o motor NUNCA o lê)
 const TELA_AB   = ['nome', 'desc'];         // habilidade: nome e descrição são de tela (busca por `slot`, §..)
 const TELA_OPC  = ['nome'];                 // opção: escolhida por ÍNDICE (escolhas:[i]) — nome é rótulo
 const TELA_PASS = ['nome', 'desc'];         // passiva: idem

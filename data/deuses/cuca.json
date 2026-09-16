@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Bruxa do sono",
   "inicial": true,
   "passiva": {
     "nome": "Só Dorme de Sete em Sete Anos",

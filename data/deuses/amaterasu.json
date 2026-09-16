@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Suporte de Dia",
   "passiva": {
     "nome": "Soberana Celestial",
     "desc": "Durante o DIA, o time recebe 6 de redução de dano.",

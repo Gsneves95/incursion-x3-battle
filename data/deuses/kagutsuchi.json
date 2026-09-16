@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "DoT de fogo",
   "passiva": {
     "nome": "Chama que Consome",
     "desc": "Todas as Queimaduras no campo causam +4 de dano; Kagutsuchi perde 3 de HP por turno.",

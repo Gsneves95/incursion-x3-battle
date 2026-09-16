@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "Nuker de carga",
   "inicial": false,
   "passiva": {
     "nome": "Barca do Sol",

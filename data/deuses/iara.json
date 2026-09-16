@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Sereia (puxa/silencia)",
   "passiva": {
     "nome": "Beleza Fatal",
     "desc": "Ataques de alvo único contra Iara causam 5 menos de dano; +8 de dano contra Encharcados.",

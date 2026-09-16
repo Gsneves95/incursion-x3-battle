@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Guardião/protetor",
   "passiva": {
     "nome": "Modelador",
     "desc": "Quando um aliado cai, o time cura 12.",

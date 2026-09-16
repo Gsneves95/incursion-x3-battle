@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "DPS anti-chefe",
   "passiva": {
     "nome": "Montaria Leonina",
     "desc": "Imune a Medo; +8 de dano contra inimigos com qualquer debuff.",

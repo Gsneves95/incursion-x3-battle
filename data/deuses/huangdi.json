@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Híbrido",
   "funcao": "Suporte",
+  "arquetipo": "Comandante",
   "passiva": {
     "nome": "Soberano Civilizador",
     "desc": "No início de cada turno, a recarga mais longa do time é reduzida em 1.",

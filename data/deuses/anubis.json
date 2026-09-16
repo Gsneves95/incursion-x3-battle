@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Julgamento/selo",
   "passiva": {
     "nome": "Pesador de Almas",
     "desc": "Inimigos com Atadura não podem ser revividos e recebem +2 de dano por Atadura.",

@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Curandeira",
   "passiva": {
     "nome": "Ciclo das Estações",
     "desc": "No início de cada turno, o aliado mais ferido cura 6.",

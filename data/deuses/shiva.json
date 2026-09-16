@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "Destruição pura",
   "passiva": {
     "nome": "Ascese Cósmica",
     "desc": "Quando qualquer aliado usa um Milagre, Shiva ganha 1 orbe de Umbra.",

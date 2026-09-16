@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Habilitador de água",
   "passiva": {
     "nome": "Senhor da Chuva",
     "desc": "+5 de dano por inimigo Encharcado; imune a Provocar.",

@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Executor sombrio",
   "passiva": {
     "nome": "Ceifador de Almas",
     "desc": "Quando qualquer inimigo é derrotado, Hades cura 15 e o time ganha 1 orbe de Umbra.",

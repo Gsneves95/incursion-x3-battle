@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Manipulador",
+  "arquetipo": "Trapaceiro",
   "passiva": {
     "nome": "Metamorfo",
     "desc": "A primeira tentativa de controle contra Loki em cada turno falha.",

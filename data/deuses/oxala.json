@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Pacificador/protetor",
   "passiva": {
     "nome": "O Mais Velho",
     "desc": "O time recebe 5 de redução de dano e começa a partida com 1 orbe de Aurora extra.",

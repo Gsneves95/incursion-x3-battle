@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Híbrido",
   "funcao": "Atacante",
+  "arquetipo": "Retribuição",
   "passiva": {
     "nome": "Coroa de Xangô",
     "desc": "Quando um aliado é atingido, Xangô acumula +3 de dano no próximo ataque (até +15).",

@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Preservador",
   "passiva": {
     "nome": "Serpente Ananta",
     "desc": "O time recebe 5 de redução de dano.",

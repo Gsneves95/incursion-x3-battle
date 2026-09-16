@@ -103,9 +103,11 @@ console.log('\n== 5. painel = kit completo (custo + recarga nas 3 ações + pass
   ok(acoes.every(r => r.querySelector('.cost')), 'as 3 ações mostram o CUSTO (bolinhas de pipsDetalhe)');
   ok(acoes.every(r => /recarga|sem recarga/.test(txt(r.querySelector('.col2k__cd')))), 'as 3 ações mostram a RECARGA');
   ok(/passiva/i.test(txt(painel.querySelector('.col2k__row:last-child'))), 'a 4ª linha é a PASSIVA (não gasta ação)');
-  // e a identidade que EXISTE no dado (facção/elemento/classe/função) — SEM arquétipo (campo inexistente)
+  // identidade: 4 tags (facção/elemento/classe/função) + o ARQUÉTIPO como legenda sob o nome (§282(b/c):
+  // agora existe em data/deuses, espelhado do kits.json e guardado pelo checar_cadeia).
   ok(painel.querySelectorAll('.col2p__ident .col2p__tag').length === 4, 'identidade: 4 tags (facção, elemento, classe, função)');
-  ok(!/arqu[eé]tipo/i.test(painel.innerHTML), 'nenhum "arquétipo" (o campo não existe em data/deuses — não se inventa)');
+  const arqEl = painel.querySelector('.col2p__arq');
+  ok(!!arqEl && txt(arqEl) === (w.eval(`(GODS[${JSON.stringify(k)}]||{}).arquetipo`) || ''), 'o ARQUÉTIPO aparece como subtítulo, batendo o dado (' + txt(arqEl) + ')');
   ok(!!painel.querySelector('.col2p__ver'), 'o botão VER DETALHES leva ao ecrã cheio do deus');
   // §282-item2: o kit rola; a névoa+chevron avisa que há mais abaixo, e o botão é IRMÃO EM FLUXO depois do
   // kit (nunca position:absolute sobre ele) — então não tapa a última linha. (o toggle da névoa e o "não

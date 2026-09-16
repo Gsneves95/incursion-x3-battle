@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Curandeira fênix",
   "passiva": {
     "nome": "Imortal",
     "desc": "1x por partida, Bennu retorna no turno seguinte com 60 de HP após ser derrotado.",

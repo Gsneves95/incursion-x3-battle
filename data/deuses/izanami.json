@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Contágio/morte",
   "passiva": {
     "nome": "Mil por Dia",
     "desc": "No início de cada turno, o inimigo de maior HP ganha 1 Maldição de Yomi.",

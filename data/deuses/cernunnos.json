@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Guardião da natureza",
   "passiva": {
     "nome": "Ciclo da Vida",
     "desc": "Regenerações no time curam +4; quando um aliado é atingido, Cernunnos cura 8.",

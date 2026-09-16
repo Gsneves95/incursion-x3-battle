@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Controlador",
+  "arquetipo": "Misdireção/guarda",
   "passiva": {
     "nome": "Protetor dos Bichos",
     "desc": "Os aliados recebem 5 de redução de dano; Curupira causa +10 de dano contra unidades Chama.",

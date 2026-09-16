@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Caça-tanque",
   "inicial": true,
   "passiva": {
     "nome": "Senhor do Ferro",

@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Tanque colossal",
   "passiva": {
     "nome": "Massa Colossal",
     "desc": "Kraken recebe 10 de redução de dano; imune a Provocar e a Agarrar.",

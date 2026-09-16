@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser leal",
   "passiva": {
     "nome": "Inabalável",
     "desc": "Com 3 aliados vivos, o time é imune a Medo; o time recebe 5 de redução de dano.",

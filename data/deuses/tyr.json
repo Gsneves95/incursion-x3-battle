@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser/duelo",
   "inicial": true,
   "passiva": {
     "nome": "O Maneta",

@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Buffer/escudo",
   "passiva": {
     "nome": "Sabedoria Tática",
     "desc": "O time começa a partida com 1 orbe de Aurora extra; o time causa +5 de dano contra inimigos sob controle.",

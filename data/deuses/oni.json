@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser da frente",
   "passiva": {
     "nome": "Casca Demoníaca",
     "desc": "Oni recebe 10 de redução de dano de habilidades Mágicas; +1 de dano por 4 de Combo.",

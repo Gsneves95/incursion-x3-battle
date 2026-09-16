@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Chama dupla",
   "inicial": true,
   "passiva": {
     "nome": "Ferreira Divina",

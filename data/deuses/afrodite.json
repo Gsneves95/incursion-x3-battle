@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Charmer",
   "passiva": {
     "nome": "Beleza Irresistível",
     "desc": "Ataques de alvo único contra Afrodite causam 5 menos de dano.",

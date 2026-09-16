@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Recarga/criação",
   "passiva": {
     "nome": "Pai dos Deuses",
     "desc": "O time começa com 12 de Defesa Destrutível; cada Milagre aliado usado dá +3 de dano permanente ao time.",

@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Punidor de debuffs",
   "passiva": {
     "nome": "Fúria Vingativa",
     "desc": "Quando um aliado é derrotado, Erínias causa +8 de dano pelo resto da partida.",

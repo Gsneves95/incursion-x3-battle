@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "Nuker de área",
   "inicial": true,
   "passiva": {
     "nome": "Soberano",

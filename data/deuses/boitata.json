@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Mágico",
   "funcao": "Guardião",
+  "arquetipo": "Anti-esquiva",
   "passiva": {
     "nome": "Guardiã dos Campos",
     "desc": "Imune a Queimadura e cura 10 sempre que uma habilidade de Chama a atinge; o time ignora Inalvejável.",

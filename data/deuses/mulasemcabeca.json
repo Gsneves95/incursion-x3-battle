@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Investida imparável",
   "passiva": {
     "nome": "Maldição de Quinta-feira",
     "desc": "+1 de dano por cada 5 de HP perdido; imune a Queimadura.",

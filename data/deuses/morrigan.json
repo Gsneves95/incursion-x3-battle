@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Profetisa da morte",
   "passiva": {
     "nome": "Forma de Corvo",
     "desc": "Quando um inimigo é derrotado, Morrigan cura 15 e ganha 1 orbe de Umbra.",

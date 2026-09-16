@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Sábio (recarga/cura)",
   "passiva": {
     "nome": "Guardião do Dia",
     "desc": "Curas no time curam +5; durante o DIA, o time ganha 1 orbe extra por turno.",

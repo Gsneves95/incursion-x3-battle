@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Bruiser com roubo de vida",
   "passiva": {
     "nome": "Fúria Marcial",
     "desc": "Ares causa +1 de dano por cada 10 de HP perdido; ao abater um inimigo, sua recarga volta.",

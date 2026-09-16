@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Curandeira lunar",
   "passiva": {
     "nome": "Saudade de Hou Yi",
     "desc": "Com Hou Yi no time, Chang'e causa +8 de dano e o Elixir passa a ter recarga 2.",

@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Finalizador furtivo",
   "passiva": {
     "nome": "Espírito de Kusanagi",
     "desc": "+1 de dano por 3 de Combo; imune a controle com 15 ou mais de Combo.",

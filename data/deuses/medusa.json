@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "CC de petrificação",
   "passiva": {
     "nome": "Cabelos de Serpente",
     "desc": "Quem atinge Medusa com habilidade Física recebe Veneno (8/turno por 2 turnos).",

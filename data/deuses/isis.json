@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Maga (revive/cópia)",
   "passiva": {
     "nome": "Nome Secreto",
     "desc": "Ísis é imune a controle.",

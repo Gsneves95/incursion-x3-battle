@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "DPS single (glass cannon)",
   "passiva": {
     "nome": "Calcanhar de Aquiles",
     "desc": "Aquiles recebe 12 de redução de dano, mas sofre +10 de dano de Manipuladores.",

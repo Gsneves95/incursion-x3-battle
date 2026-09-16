@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Guarda-costas",
   "passiva": {
     "nome": "Filho do Vento",
     "desc": "Imune a Queimadura; com Sun Wukong no time, Hanuman causa +8 de dano.",

@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Executor de precisão",
   "passiva": {
     "nome": "Herdeiro do Trono",
     "desc": "+8 de dano contra inimigos marcados ou com o Olho.",

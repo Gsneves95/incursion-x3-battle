@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "Raio em cadeia",
   "passiva": {
     "nome": "Ritmo do Trovão",
     "desc": "Cada alvo atingido por Raijin gera 1 de Combo.",

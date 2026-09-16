@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Híbrido",
   "funcao": "Suporte",
+  "arquetipo": "Sustentador",
   "passiva": {
     "nome": "Pai dos Deuses",
     "desc": "Curas no time curam +5; com o Caldeirão ativo, aliados não caem abaixo de 1 de HP no turno em que forem curados.",

@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Buffer",
   "passiva": {
     "nome": "Eloquência",
     "desc": "Quando um aliado usa um Milagre, o time causa +5 de dano naquele turno.",

@@ -5,6 +5,7 @@
   "elem": "Chama",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Bruiser resistente",
   "passiva": {
     "nome": "Coragem Mortal",
     "desc": "1× por partida, Hércules sobrevive a um golpe letal com 1 de HP.",

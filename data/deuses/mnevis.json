@@ -5,6 +5,7 @@
   "elem": "Aurora",
   "classe": "Físico",
   "funcao": "Guardião",
+  "arquetipo": "Tanque solar",
   "passiva": {
     "nome": "Montaria do Sol",
     "desc": "Com Rá no time, Mnevis intercepta o primeiro ataque de alvo único contra Rá em cada turno.",

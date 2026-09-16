@@ -5,6 +5,7 @@
   "elem": "Verdejante",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Purificador/criador",
   "passiva": {
     "nome": "Fuga de Yomi",
     "desc": "O time é imune a Maldição de Yomi e a qualquer efeito que se espalhe.",

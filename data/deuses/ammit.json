@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Executora por status",
   "passiva": {
     "nome": "Sentença Final",
     "desc": "Quem Ammit derrota não pode ser revivido de forma alguma.",

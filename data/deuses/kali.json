@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Físico",
   "funcao": "Atacante",
+  "arquetipo": "Berserker",
   "passiva": {
     "nome": "Guirlanda de Caveiras",
     "desc": "Por inimigo derrotado, Kali causa +10 de dano e cura 15.",

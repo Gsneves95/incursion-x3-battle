@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "DPS em área",
   "passiva": {
     "nome": "Regente das Marés",
     "desc": "Poseidon causa +5 de dano contra alvos Encharcados; aliados Maré recebem 5 de redução de dano.",

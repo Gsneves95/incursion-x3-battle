@@ -5,6 +5,7 @@
   "elem": "Tempestade",
   "classe": "Mágico",
   "funcao": "Suporte",
+  "arquetipo": "Buffer/protetora",
   "passiva": {
     "nome": "Rainha Ciumenta",
     "desc": "Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível.",

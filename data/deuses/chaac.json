@@ -5,6 +5,7 @@
   "elem": "Maré",
   "classe": "Mágico",
   "funcao": "Atacante",
+  "arquetipo": "Chuva (habilitador)",
   "passiva": {
     "nome": "Senhor das Colheitas",
     "desc": "+8 de dano contra Encharcados; regenerações no time curam +4.",

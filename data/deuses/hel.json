@@ -5,6 +5,7 @@
   "elem": "Umbra",
   "classe": "Mágico",
   "funcao": "Controlador",
+  "arquetipo": "Necromante/CC",
   "passiva": {
     "nome": "Metade Viva, Metade Morta",
     "desc": "Em turnos pares, Hel recebe 10 de redução de dano; em turnos ímpares, suas curas curam +8.",
