@@ -202,6 +202,9 @@ function voltarNativo(){
   // botão Continuar: some, sai do modo online, volta pra home.
   const banner = (typeof document!=='undefined') && document.getElementById('banner-ranque');
   if(banner){ banner.remove(); if(typeof sairModoOnline==='function')sairModoOnline(); ir('home',{},{substituir:true}); render(); return; }
+  // §284/§240: a SOBREPOSIÇÃO de kit da Coleção fecha ANTES de sair da tela — cirurgicamente (colFecharVer
+  // remove o nó e des-inerta a base), preservando seleção e rolagem da grade. Só depois vem o voltar genérico.
+  if(typeof colVer!=='undefined'&&colVer&&typeof colFecharVer==='function'){ colFecharVer(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

@@ -6,6 +6,59 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §284 — COLEÇÃO remodelada (4 mudanças do dono depois de ver a tela real). Só tela; nada de motor/dado.
+
+**O MODELO DE MAESTRIA, reportado ANTES de desenhar a barra (§245/F3.5, cosmético — NUNCA combate):** cinco
+postos por deus. **Iniciado(1)** = venceu a Provação do deus (as 90 saem de graça) OU tem ≥1 vitória;
+**Aprendiz(2)** = **≥5** vitórias; **Adepto(3)** = **≥15**; **Mestre(4)** = **≥30 E** já venceu usando o
+**Milagre** do deus (`m.milagre`, a assinatura do kit). O que faz subir: `perfil.maestria[key].vitorias`
+(vitórias com o deus; um desafio pago §245 dá +3). Limiares em `MAESTRIA_LIMIAR = {aprendiz:5, adepto:15,
+mestre:30}`; nomes em `MAESTRIA_NOME`. A barra do painel é a progressão de VITÓRIAS dentro do segmento atual
+até o próximo limiar (0→5→15→30) — **nada de nível ou escala inventados**; no Adepto→Mestre a barra vai a
+30 e a nota diz que falta o Milagre; no Mestre é topo (a moldura). Não-possuído não progride (posto —).
+
+**1) Painel começa em REPOUSO (§284).** `colSel` começa **null** — o jogador não fez seleção nenhuma. Em
+repouso o painel não é vazio: mostra o progresso (**possuídos/100**), a quebra por raridade (possuídos/total
+em cada banda: SS n/16 · S n/31 · A n/53, com barra) e o convite. **A grade NÃO cresce** quando o painel está
+vazio (o espaço fica reservado — a coluna do painel é fixa 233px): se crescesse, tocar num deus mudaria a
+grade de 6 p/ 8 colunas e os cartões saltariam. **Medido:** 6 colunas com painel vazio E com deus (não
+reflui). FECHAR: o × no painel (ou tocar o cartão já-selecionado) volta ao repouso.
+
+**2) Painel = identidade + posse + MAESTRIA; SEM kit.** Retrato, nome, arquétipo, cultura/elemento/classe/
+função; posse (possuído·N cópias / não possuído); e a MAESTRIA (posto + barra acima). O kit saiu do painel
+(vai para a sobreposição, item 3). **A maestria volta para o painel e fica SÓ ali:** o §282 tinha tirado o
+pip da grade por duplicação, e o §282-b tinha posto a moldura de Mestre no cartão (`col2c--mestre`) — o §284
+**remove `col2c--mestre` da grade** e consolida a maestria no painel. Confirmado por babá: nenhum `col2m`/
+`col2c--mestre` na grade; a maestria só no `#col2painel`. (A "moldura no Mestre" do §245 manifesta-se agora
+como o posto ★ Mestre destacado no painel, `col2m--mestre`.)
+
+**3) VER DETALHES abre a tela grande com o KIT COMPLETO** — básico/habilidade/milagre/passiva, com custo,
+recarga e efeito (o leitor-de-kit que saiu do painel). Reusa `colKitLinhaHTML` (as mesmas 4 linhas do §282).
+
+**4) A tela grande vira SOBREPOSIÇÃO, não rota.** Painel sobreposto à Coleção, **fundo desfocado**
+(`backdrop-filter:blur`), **tocar no fundo fecha** (volta à grade onde estava, **mesmo deus selecionado, mesma
+rolagem**). É DOM irmão do `#baselayer`, **inserido/removido cirurgicamente** (`colAbrirVer`/`colFecharVer`) —
+NÃO re-renderiza a grade, então a rolagem sobrevive (medido: scrollTop 80 preservado). O `#baselayer` fica
+`inert` enquanto aberta (INV 16/§210). O **voltar do Android fecha a sobreposição ANTES de sair** (§240):
+`voltarNativo` checa `colVer` e chama `colFecharVer` cirúrgico. **Sem rota órfã (§210):** a rota `'deus'`
+CONTINUA — a tela de **Missões** ainda a abre (`home.js`, elo com o detalhe do deus); só a Coleção deixou de
+usá-la. Medido: `ir('deus')` tem dois chamadores (missões + coleção); a coleção migrou p/ sobreposição, o de
+missões fica — a rota não fica órfã.
+
+**Supersede do §282:** o kit-leitor-no-painel e a rolagem-com-névoa (§282-item2) saem do painel (o kit foi
+p/ a sobreposição); a moldura de Mestre no cartão (§282-b) sai da grade. O arquétipo (§282-b/c) fica, agora
+no painel E no cabeçalho da sobreposição.
+
+**Babás (`tests/colecao_tela.test.js`, 45 asserções):** abre em repouso (colSel null, sem nome no painel);
+tocar seleciona, × fecha; painel sem kit, com maestria (Adepto·22/30 do modelo real); maestria só no painel;
+sobreposição com as 4 habilidades + base inerte + colVer; tocar no fundo fecha e preserva seleção+rolagem;
+voltar do Android fecha antes de sair; grade não reflui. **Verificação Chromium (§284, viewport/fontes reais,
+rede bloqueada):** 18 checagens verdes + 4 capturas (`docs/capturas-284/`: repouso · painel · sobreposição ·
+fechada). Migradas `desafios`/`maestria`. **Arquivos:** `src/ui/home.js`, `src/view.js` (voltarNativo),
+`src/shell.html`, `tests/colecao_tela.test.js`, `tests/desafios.test.js`.
+
+---
+
 ## §283 — VARREDURA do ESTADO.md: fechar o resolvido, corrigir o FALSO, e um babá contra a deriva. Sem tocar motor.
 
 O dono apontou a deriva: o ESTADO.md dizia pendente o que o código/dado já resolvia, e planejou duas vezes sobre número errado nesta sessão (a passiva do Fujin marcada aberta depois do §271 a resolver; a ordem A/S/SS listada indecisa com `data/raridades.json` pronto). Varri o documento inteiro (não só as caixas), conferi cada afirmação contra o CÓDIGO e o DADO, e classifiquei em RESOLVIDA / PARCIAL / ABERTA.

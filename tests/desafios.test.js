@@ -86,11 +86,12 @@ console.log('\n== a MOLDURA sai no MESTRE (10 desafios = 30 maestria + milagre) 
   w.eval("for(let i=0;i<10;i++){ perfil.desafios.zeus={ativo:true,recargaAte:0}; cumprirDesafioDeus('zeus'); }");
   ok(w.eval("perfil.maestria.zeus.vitorias") === 30, '10 desafios = 30 de maestria');
   ok(w.eval("nivelMaestria('zeus')") === 4, 'zeus vira MESTRE (nível 4)');
-  w.eval("ir('colecao'); render();");
-  // §282: a Coleção foi refeita (grade filtrável). A MOLDURA do Mestre — recompensa prometida — foi reskinada
-  // no novo cartão como col2c--mestre.
-  const tile = $('.col2c[data-deus="zeus"]');
-  ok(!!tile && tile.classList.contains('col2c--mestre'), 'a MOLDURA do Mestre aparece no cartão da coleção (col2c--mestre)');
+  // §284: a maestria mora SÓ no PAINEL (saiu da grade). O Mestre aparece ao selecionar o deus — o painel
+  // mostra o posto ★ Mestre (col2m--mestre), a manifestação atual da "moldura no Mestre" prometida no §245.
+  w.eval("ir('colecao'); render(); colSelecionar('zeus');");
+  const mae = $('#col2painel .col2m');
+  ok(!!mae && mae.classList.contains('col2m--mestre') && /Mestre/.test(mae.textContent), 'ao selecionar, o painel mostra ★ Mestre (col2m--mestre)');
+  ok(!$('.col2c--mestre'), 'a moldura de Mestre não fica mais na grade (maestria só no painel, §284)');
 }
 
 console.log('\n== o DESAFIO DA SEMANA foi renomeado e dá Gema ==');

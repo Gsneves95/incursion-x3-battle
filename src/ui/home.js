@@ -875,7 +875,8 @@ const COL_CLASSES = ['Mágico', 'Físico', 'Híbrido'];                         
 const COL_FUNCOES = ['Atacante', 'Suporte', 'Controlador', 'Guardião', 'Manipulador']; // campo `funcao` (5)
 // dois eixos que o mockup colapsou em "Classe": CLASSE (tipo de combate) e FUNÇÃO (papel). Apresentados
 // como DOIS seletores distintos e rotulados — não poluem porque cada um é curto e diz o que filtra.
-let colSel = null;   // deus selecionado no painel
+let colSel = null;   // deus selecionado no painel (null = repouso; §284: começa nulo, o jogador não escolheu)
+let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada) — lido pelo voltar do Android (§240)
 let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
@@ -909,10 +910,10 @@ function colCultMon(f){ return COL_CULT_MON[f] || String(f || '').slice(0, 2).to
 // (dourado × apagado). Selecionado ganha realce.
 function colCardHTML(k){
   const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), sel = k === colSel;
-  // §245: a MOLDURA do MESTRE (nível 4 de maestria) é uma recompensa cosmética prometida ("a moldura sai no
-  // Mestre") — a Coleção é sua vitrine, então o reskin do §282 a carrega para o novo cartão (col2c--mestre).
-  const mestre = tem && typeof nivelMaestria === 'function' && nivelMaestria(k) === 4;
-  return `<button class="col2c ${tem ? 'col2c--tem' : 'col2c--falta'}${mestre ? ' col2c--mestre' : ''}${sel ? ' is-sel' : ''}" data-deus="${H(k)}" title="${H(colNome(k))} · ${H(g.faccao || '')}">
+  // §284: o cartão NÃO carrega indicador de maestria (nem a moldura de Mestre). A maestria mora SÓ no painel
+  // (o §282 tirou o pip da grade por duplicação; o §284 traz o posto+barra ao painel e ali fica). O cartão é
+  // só raridade + cultura + retrato + nome/cultura + estado possuído/falta.
+  return `<button class="col2c ${tem ? 'col2c--tem' : 'col2c--falta'}${sel ? ' is-sel' : ''}" data-deus="${H(k)}" title="${H(colNome(k))} · ${H(g.faccao || '')}">
     <span class="col2c__rar col2c__rar--${rar}">${rar}</span>
     <span class="col2c__cult" title="${H(g.faccao || '')}">${H(colCultMon(g.faccao))}</span>
     <span class="col2c__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 26)}</span>
@@ -920,7 +921,7 @@ function colCardHTML(k){
   </button>`;
 }
 
-// UMA linha do kit no painel: rótulo, nome, custo (bolinhas), recarga, e o EFEITO (o texto mais longo da tela).
+// UMA linha do kit (agora só na SOBREPOSIÇÃO — o painel não traz kit): rótulo, nome, custo, recarga, EFEITO.
 function colKitLinhaHTML(rot, a, passiva){
   if (!a) return `<div class="col2k__row col2k__row--vazio"><span class="col2k__rot">${rot}</span><span class="col2k__nv">—</span></div>`;
   const meta = passiva
@@ -929,22 +930,62 @@ function colKitLinhaHTML(rot, a, passiva){
   return `<div class="col2k__row">
     <div class="col2k__top"><span class="col2k__rot">${rot}</span><b class="col2k__nome">${H(a.nome || '—')}</b></div>
     <div class="col2k__meta">${meta}</div>
-    <div class="col2k__ef">${realce((passiva ? a.desc : a.desc) || '')}</div>
+    <div class="col2k__ef">${realce(a.desc || '')}</div>
   </div>`;
 }
 
-// PAINEL-LEITOR: identidade que JÁ EXISTE no dado (retrato, nome, facção, elemento, classe, função) +
-// posse (cópias / não-possuído) + o kit COMPLETO. Sem nível/atributo/barra (invariante #3). Sem arquétipo
-// (o campo NÃO existe em data/deuses — 0/100; omitido, não inventado). VER DETALHES leva ao ecrã cheio do
-// deus (pergaminho + como conseguir), que o painel não traz.
+// §284 — MAESTRIA no painel, do MODELO REAL (§245, cosmético, nunca combate). Postos: Iniciado(1) → Aprendiz(2,
+// ≥5 vit) → Adepto(3, ≥15) → Mestre(4, ≥30 E venceu com o Milagre). A barra é a progressão de VITÓRIAS até o
+// próximo limiar — nada inventado (limiares 5/15/30 são MAESTRIA_LIMIAR). Não-possuído não progride (posto —).
+function colMaestria(k){
+  const nv = nivelMaestria(k), m = maestriaDe(k), v = m.vitorias || 0;
+  if (nv === 4) return { nv, topo: true, posto: MAESTRIA_NOME[4] };
+  const BASE = { 0: 0, 1: 0, 2: 5, 3: 15 }, PROX = { 0: 1, 1: 5, 2: 15, 3: 30 };
+  const base = BASE[nv], prox = PROX[nv];
+  return { nv, posto: MAESTRIA_NOME[nv], v, prox, frac: Math.max(0, Math.min(1, (v - base) / (prox - base))),
+    proxNome: MAESTRIA_NOME[nv + 1], faltaMilagre: nv === 3 && !m.milagre };
+}
+function colMaestriaHTML(k){
+  const tem = temDeus(k), M = colMaestria(k);
+  if (!tem) return `<div class="col2m col2m--falta"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">—</b></div>
+    <p class="col2m__nota">Possua e jogue com este deus para ganhar postos.</p></div>`;
+  if (M.topo) return `<div class="col2m col2m--mestre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">★ Mestre</b></div>
+    <div class="col2m__bar col2m__bar--cheia"><i style="width:100%"></i></div>
+    <p class="col2m__nota">Posto máximo — a moldura de Mestre saiu (§245).</p></div>`;
+  const nota = M.faltaMilagre ? '<p class="col2m__nota">Falta vencer usando o <b>Milagre</b> para virar Mestre.</p>' : '';
+  return `<div class="col2m m--${M.nv}">
+    <div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b><span class="col2m__prox">${M.v}/${M.prox} p/ ${H(M.proxNome)}</span></div>
+    <div class="col2m__bar"><i style="width:${Math.round(M.frac * 100)}%"></i></div>
+    ${nota}
+  </div>`;
+}
+
+// PAINEL em REPOUSO (nenhum deus escolhido): não um vazio — o progresso da coleção, a quebra por raridade
+// (possuídos/total em cada banda), e o convite. O ESPAÇO fica reservado (a grade não cresce — §284).
+function colRepousoHTML(){
+  const ks = ROSTER.map(e => e.key), donos = ks.filter(temDeus).length;
+  const porRar = { SS: { t: 0, n: 0 }, S: { t: 0, n: 0 }, A: { t: 0, n: 0 } };
+  ks.forEach(k => { const r = raridadeDe(k); if (porRar[r]) { porRar[r].t++; if (temDeus(k)) porRar[r].n++; } });
+  const linha = r => `<div class="col2r__rar"><span class="col2r__rlabel col2p__rar--${r}">${r}</span>
+    <span class="col2r__rnum"><b>${porRar[r].n}</b>/${porRar[r].t}</span>
+    <div class="col2r__rbar"><i style="width:${porRar[r].t ? Math.round(porRar[r].n / porRar[r].t * 100) : 0}%"></i></div></div>`;
+  return `<div class="col2p col2p--repouso">
+    <div class="col2r__prog"><span class="col2r__big">${donos}<span>/${ROSTER.length}</span></span><span class="col2r__leg">personagens na coleção</span></div>
+    <div class="col2r__rars">${linha('SS')}${linha('S')}${linha('A')}</div>
+    <div class="col2r__dica"><i>⬡</i> Toque num personagem para ver a maestria e abrir o kit.</div>
+  </div>`;
+}
+
+// PAINEL com um deus: identidade (retrato, nome, arquétipo, cultura/elemento/classe/função) + posse (cópias) +
+// MAESTRIA. SEM kit (o kit foi para a sobreposição, §284). Fecha pelo × (volta ao repouso) ou tocando o cartão.
 function colPainelHTML(k){
-  if (!k) return `<div class="col2p col2p--vazio"><span class="col2p__dica">Toque num personagem para ler o kit.</span></div>`;
-  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), ab = {};
-  (g.ab || []).forEach(a => ab[a.slot] = a);
+  if (!k) return colRepousoHTML();
+  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
   const posse = tem
     ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
     : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
   return `<div class="col2p ${tem ? '' : 'col2p--falta'}">
+    <button class="col2p__fechar" id="col2fechar" aria-label="Fechar painel">×</button>
     <div class="col2p__cab">
       <span class="col2p__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 44)}</span>
       <span class="col2p__rar col2p__rar--${rar}">${rar}</span>
@@ -958,17 +999,61 @@ function colPainelHTML(k){
       <span class="col2p__tag">${H(g.funcao || '')}</span>
     </div>
     ${posse}
-    <div class="col2p__kitwrap">
-      <div class="col2p__kit">
+    ${colMaestriaHTML(k)}
+    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
+  </div>`;
+}
+
+// SOBREPOSIÇÃO (§284): o kit COMPLETO sobre a Coleção, fundo desfocado, tocar no fundo fecha. Não é rota —
+// é DOM irmão do #baselayer, inserido/removido cirurgicamente (a grade não re-renderiza → rolagem preservada).
+function colOverlayHTML(k){
+  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), ab = {};
+  (g.ab || []).forEach(a => ab[a.slot] = a);
+  const posse = tem
+    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
+    : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
+  return `<div class="col2ov" id="col2ov">
+    <div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
+      <button class="col2ov__x" id="col2ovx" aria-label="Fechar">×</button>
+      <div class="col2ov__head">
+        <span class="col2ov__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 52)}</span>
+        <div class="col2ov__id">
+          <div class="col2ov__toprow"><h2 class="col2ov__nome">${H(colNome(k))}</h2><span class="col2p__rar col2p__rar--${rar}">${rar}</span></div>
+          ${g.arquetipo ? `<p class="col2ov__arq">${H(g.arquetipo)}</p>` : ''}
+          <div class="col2p__ident">
+            <span class="col2p__tag col2p__tag--cult">${H(g.faccao || '')}</span>
+            <span class="col2p__tag" style="border-color:${COR(g.elem)};color:${COR(g.elem)}">${H(g.elem || '')}</span>
+            <span class="col2p__tag">${H(g.classe || '')}</span>
+            <span class="col2p__tag">${H(g.funcao || '')}</span>
+          </div>
+          ${posse}
+        </div>
+      </div>
+      <div class="col2ov__kit">
         ${colKitLinhaHTML('BÁSICO', ab.basico)}
         ${colKitLinhaHTML('HABILIDADE', ab.habilidade)}
         ${colKitLinhaHTML('MILAGRE', ab.milagre)}
         ${colKitLinhaHTML('PASSIVA', g.passiva, true)}
       </div>
-      <div class="col2p__fade" hidden aria-hidden="true"><i>⌄</i></div>
     </div>
-    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
   </div>`;
+}
+// abre/fecha a sobreposição por DOM (sem render → preserva seleção e rolagem da grade). O #baselayer fica
+// INERTE enquanto ela está aberta (INV 16 / §210). `colVer` guarda o estado para o voltar do Android (§240).
+function colAbrirVer(k){
+  if (!k) return;
+  colVer = k;
+  const base = stage.querySelector('#baselayer'); if (base) base.setAttribute('inert', '');
+  const velho = stage.querySelector('#col2ov'); if (velho) velho.remove();
+  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayHTML(k);
+  const ov = wrap.firstElementChild; stage.appendChild(ov);
+  ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha
+  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
+}
+function colFecharVer(){
+  colVer = null;
+  const ov = stage.querySelector('#col2ov'); if (ov) ov.remove();
+  const base = stage.querySelector('#baselayer'); if (base) base.removeAttribute('inert');
 }
 
 function colSelectHTML(id, rot, opcoes, val){
@@ -977,7 +1062,9 @@ function colSelectHTML(id, rot, opcoes, val){
 }
 
 function renderColecao(){
-  if (!colSel) { const donoP = ROSTER.map(e => e.key).filter(temDeus); colSel = (donoP[0]) || ROSTER[0].key; }
+  // §284: entra em REPOUSO — nenhum deus selecionado, nenhuma sobreposição. (renderColecao só roda na ENTRADA;
+  // a interação usa colSelecionar/colAtualizarGrade/colAbrirVer, cirúrgicos, que não passam por aqui.)
+  colSel = null; colVer = null;
   const donos = ROSTER.map(e => e.key).filter(temDeus).length;
   const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
   const gema = (perfil && perfil.moedas && perfil.moedas.gema) || 0;
@@ -1024,26 +1111,20 @@ function colAtualizarGrade(){
   const grade = stage.querySelector('#col2grade'); if (!grade) return;
   const ks = colecaoFiltrada();
   grade.innerHTML = ks.length ? ks.map(colCardHTML).join('') : '<p class="col2__vazio">Nenhum personagem com esses filtros.</p>';
-  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => colSelecionar(b.dataset.deus));
+  // tocar num cartão SELECIONA; tocar no já-selecionado DESSELECIONA (volta ao repouso). Sem re-render da grade.
+  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => colSelecionar(b.dataset.deus === colSel ? null : b.dataset.deus));
 }
-// troca só o painel (e o realce do cartão) — sem re-render da tela toda.
+// troca só o painel (e o realce do cartão) — sem re-render da tela toda. k=null → repouso.
 function colSelecionar(k){
   colSel = k;
   const painel = stage.querySelector('#col2painel'); if (painel) painel.innerHTML = colPainelHTML(k);
-  [...stage.querySelectorAll('.col2c')].forEach(c => c.classList.toggle('is-sel', c.dataset.deus === k));
+  [...stage.querySelectorAll('.col2c')].forEach(c => c.classList.toggle('is-sel', !!k && c.dataset.deus === k));
   colLigarPainel();
 }
 function colLigarPainel(){
-  const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => { ir('deus', { key: ver.dataset.verdeus }); render(); };
-  // §282-item2: o kit ROLA (referência consultada, não narrativa — §253 não se aplica). Duas garantias:
-  // (1) a névoa+chevron no rodapé AVISA que há mais abaixo, e some ao chegar ao fim; (2) o kit tem folga
-  // inferior (padding) para a ÚLTIMA linha de efeito subir acima da névoa — e o botão fixo é irmão em
-  // fluxo (não sobrepõe), então nunca tapa o efeito.
-  const kit = stage.querySelector('.col2p__kit'), fade = stage.querySelector('.col2p__fade');
-  if (kit && fade) {
-    const upd = () => { fade.hidden = !(kit.scrollHeight - kit.clientHeight - kit.scrollTop > 2); };
-    kit.onscroll = upd; upd();
-  }
+  // §284: VER DETALHES abre a SOBREPOSIÇÃO do kit (não a rota 'deus'); o × fecha o painel (volta ao repouso).
+  const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
+  const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
 }
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */

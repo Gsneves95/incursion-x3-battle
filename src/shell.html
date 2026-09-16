@@ -1383,13 +1383,44 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 
 /* PAINEL-LEITOR (esquerda) 233×373 — identidade que já existe no dado + posse + kit COMPLETO. Sem Nv/barra. */
 .col2__painel{flex:0 0 233px;width:233px;height:373px;align-self:flex-start}
-.col2p{display:flex;flex-direction:column;height:100%;padding:12px 12px 11px;overflow:hidden;
+.col2p{position:relative;display:flex;flex-direction:column;height:100%;padding:12px 12px 11px;overflow:hidden;
   border:1px solid var(--gold-soft);border-radius:12px;background:linear-gradient(180deg,rgba(26,21,48,.92),rgba(12,10,26,.94));
   box-shadow:0 0 0 1px rgba(255,217,122,.10),0 6px 20px rgba(0,0,0,.4)}
 .col2p--falta{border-color:#39335a;border-style:dashed;background:rgba(11,9,20,.78)}
-.col2p--vazio{align-items:center;justify-content:center;text-align:center}
-.col2p__dica{font-weight:600;font-size:12px;color:var(--ink-mute);max-width:160px;line-height:1.4}
-.col2p__cab{flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;position:relative}
+/* §284 — × fecha o painel e volta ao REPOUSO */
+.col2p__fechar{position:absolute;top:8px;right:9px;width:22px;height:22px;z-index:3;cursor:pointer;
+  background:rgba(30,24,54,.6);border:1px solid #342c54;border-radius:7px;color:var(--ink-mute);font-size:14px;line-height:1;display:grid;place-items:center}
+.col2p__fechar:active{transform:translateY(1px)}
+/* PAINEL em REPOUSO (§284): progresso + quebra por raridade + convite — não um vazio. */
+.col2p--repouso{justify-content:flex-start}
+.col2r__prog{display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0 2px}
+.col2r__big{font-family:'Cinzel',serif;font-weight:900;font-size:34px;line-height:1;color:var(--gold-text)}
+.col2r__big span{font-size:18px;color:var(--ink-mute);font-weight:700}
+.col2r__leg{margin-top:5px;font-weight:700;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute)}
+.col2r__rars{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+.col2r__rar{display:flex;align-items:center;gap:8px}
+.col2r__rlabel{flex:0 0 28px;text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:11px;padding:1px 0;border-radius:6px;border:1px solid currentColor}
+.col2r__rnum{flex:0 0 44px;font-weight:800;font-size:12px;color:var(--ink-dim)}
+.col2r__rnum b{color:var(--gold-text)}
+.col2r__rbar{flex:1 1 auto;height:6px;border-radius:3px;background:rgba(10,8,20,.7);overflow:hidden;box-shadow:inset 0 0 0 1px #2c2648}
+.col2r__rbar>i{display:block;height:100%;background:var(--ouro-grad);border-radius:3px}
+.col2r__dica{margin-top:auto;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-mute);text-align:center;padding-top:14px}
+.col2r__dica i{font-style:normal;color:var(--gold-text)}
+/* MAESTRIA no painel (§284) — posto + barra até o próximo (modelo real §245) */
+.col2m{flex:0 0 auto;margin-top:10px;border:1px solid #2c2648;border-radius:10px;padding:8px 10px;background:rgba(20,16,38,.5)}
+.col2m--mestre{border-color:var(--gold-soft);background:linear-gradient(180deg,rgba(216,178,90,.12),rgba(20,16,38,.5));
+  box-shadow:0 0 0 1px rgba(255,217,122,.16),0 0 12px rgba(255,190,90,.20)}
+.col2m--falta{border-style:dashed;border-color:#39335a}
+.col2m__cab{display:flex;align-items:baseline;gap:8px}
+.col2m__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--ink-mute);flex:0 0 auto}
+.col2m__posto{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:var(--gold-text)}
+.col2m--falta .col2m__posto{color:var(--ink-mute)}
+.col2m__prox{margin-left:auto;font-weight:700;font-size:10px;color:var(--ink-dim);white-space:nowrap}
+.col2m__bar{height:7px;margin:7px 0 0;border-radius:4px;background:rgba(10,8,20,.7);overflow:hidden;box-shadow:inset 0 0 0 1px #2c2648}
+.col2m__bar>i{display:block;height:100%;border-radius:4px;background:var(--ouro-grad)}
+.col2m__nota{margin:6px 0 0;font-weight:600;font-size:9.5px;line-height:1.3;color:var(--ink-mute)}
+.col2m__nota b{color:var(--gold-text)}
+.col2p__cab{flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;position:relative;padding-right:24px}
 .col2p__art{width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--gold-soft)}
 .col2p__art .slot{width:64px;height:64px}
 .col2p--falta .col2p__art{border-color:#39335a}
@@ -1411,19 +1442,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2p__tag--cult{border-color:var(--gold-soft);color:var(--gold-text)}
 .col2p__posse{flex:0 0 auto;display:inline-block;margin:8px 0 2px;font-weight:800;font-size:10.5px;letter-spacing:.04em}
 .col2p__posse--tem{color:var(--e-Verdejante)} .col2p__posse--nao{color:var(--ink-mute)}
-/* §282-item2: o kit rola. O WRAP segura a névoa+chevron; o KIT rola dentro com folga inferior para a última
-   linha de efeito subir ACIMA da névoa. A névoa some ao chegar ao fim (JS troca `hidden`). */
-.col2p__kitwrap{position:relative;flex:1 1 auto;min-height:0;margin-top:6px;display:flex}
-.col2p__kit{flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;padding-right:3px;padding-bottom:16px;
-  display:flex;flex-direction:column;gap:7px;scrollbar-width:thin}
-.col2p__kit::-webkit-scrollbar{width:5px} .col2p__kit::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
-/* display GATEADO em :not([hidden]) — senão `display:grid` do autor vence a regra UA `[hidden]{display:none}`
-   (esta shell não tem reset de [hidden]) e a névoa nunca sumiria ao chegar ao fim. */
-.col2p__fade{position:absolute;left:0;right:5px;bottom:0;height:26px;pointer-events:none;place-items:end center;
-  background:linear-gradient(180deg,rgba(18,15,34,0),rgba(18,15,34,.86) 70%,rgba(18,15,34,.96));border-radius:0 0 8px 8px}
-.col2p__fade:not([hidden]){display:grid}
-.col2p__fade i{font-style:normal;font-size:13px;line-height:1;color:var(--gold-text);opacity:.9;animation:col2bob 1.4s ease-in-out infinite}
-@keyframes col2bob{0%,100%{transform:translateY(-1px)}50%{transform:translateY(2px)}}
+/* linhas do kit (§284: só na SOBREPOSIÇÃO agora — o painel não traz kit) */
 .col2k__row{border:1px solid #2c2648;border-radius:9px;padding:6px 8px;background:rgba(20,16,38,.5)}
 .col2k__row--vazio{display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute)}
 .col2k__top{display:flex;align-items:baseline;gap:7px}
@@ -1434,10 +1453,35 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2k__meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:4px 0 3px}
 .col2k__cd{font-weight:700;font-size:9.5px;letter-spacing:.02em;color:#8b83b8}
 .col2k__ef{font-weight:500;font-size:10.5px;line-height:1.32;color:var(--ink-dim)}
-.col2p__ver{flex:0 0 auto;margin-top:8px;width:100%;padding:7px 0;cursor:pointer;
+.col2p__ver{flex:0 0 auto;margin-top:auto;width:100%;padding:7px 0;cursor:pointer;
   font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.06em;color:#1a1530;
   background:var(--ouro-grad);border:none;border-radius:9px}
 .col2p__ver:active{transform:translateY(1px)}
+
+/* §284 — SOBREPOSIÇÃO do kit: fundo desfocado sobre a Coleção, tocar no fundo fecha (o card intercepta o toque).
+   Cobre o #stage (inset:0 no ancestral com transform). O kit rola dentro do card; o resto é fixo. */
+.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:14px;
+  background:rgba(6,5,14,.6);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
+.col2ov__card{position:relative;width:min(560px,92%);max-height:calc(100% - 8px);display:flex;flex-direction:column;
+  padding:15px 16px 14px;overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
+  background:linear-gradient(180deg,rgba(28,23,52,.98),rgba(12,10,26,.99));box-shadow:0 0 0 1px rgba(255,217,122,.12),0 18px 50px rgba(0,0,0,.6)}
+.col2ov--falta{border-color:#39335a;border-style:dashed}
+.col2ov__x{position:absolute;top:9px;right:11px;z-index:2;width:26px;height:26px;cursor:pointer;display:grid;place-items:center;
+  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:16px;line-height:1}
+.col2ov__x:active{transform:translateY(1px)}
+.col2ov__head{flex:0 0 auto;display:flex;gap:12px;align-items:flex-start;padding-right:32px}
+.col2ov__art{flex:0 0 auto;width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--gold-soft)}
+.col2ov__art .slot{width:72px;height:72px}
+.col2ov--falta .col2ov__art{border-color:#39335a} .col2ov--falta .col2ov__art .slot{filter:grayscale(1) brightness(.62)}
+.col2ov__id{flex:1 1 auto;min-width:0}
+.col2ov__toprow{display:flex;align-items:baseline;gap:8px}
+.col2ov__nome{font-family:'Cinzel',serif;font-weight:700;font-size:19px;color:var(--ink);margin:0;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.col2ov__arq{margin:2px 0 0;font-weight:600;font-style:italic;font-size:12px;color:var(--gold-text);opacity:.85}
+.col2ov__id .col2p__ident{margin-top:6px}
+.col2ov__id .col2p__posse{margin:8px 0 0}
+.col2ov__kit{flex:1 1 auto;min-height:0;overflow-y:auto;margin-top:12px;padding-top:12px;display:flex;flex-direction:column;gap:8px;
+  border-top:1px solid rgba(216,178,90,.2);scrollbar-width:thin}
+.col2ov__kit::-webkit-scrollbar{width:6px} .col2ov__kit::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
 
 /* DIREITA: barra de filtros (busca + seletores) · abas de cultura · grade rolável */
 .col2__dir{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px}
@@ -1478,10 +1522,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   clip-path:polygon(11px 0,calc(100% - 11px) 0,100% 11px,100% calc(100% - 11px),calc(100% - 11px) 100%,11px 100%,0 calc(100% - 11px),0 11px);
   box-shadow:inset 0 0 0 1.5px #2c2648}
 .col2c--tem::after{box-shadow:inset 0 0 0 1.5px var(--gold-soft)}
-/* §245 — MESTRE (nível 4): anel duplo dourado + brilho, reskin da moldura do §216/§245 no cartão chanfrado. */
-.col2c--mestre::after{box-shadow:inset 0 0 0 2px var(--gold-text),inset 0 0 0 3.5px rgba(255,217,122,.35),0 0 12px rgba(255,190,90,.34)}
+/* §284: a moldura de Mestre saiu da GRADE (maestria só no painel). */
 .col2c.is-sel::after{box-shadow:inset 0 0 0 2px var(--gold-text),inset 0 0 0 4px rgba(255,217,122,.25)}
-.col2c--mestre.is-sel::after{box-shadow:inset 0 0 0 2.5px #fff2cf,inset 0 0 0 4.5px rgba(255,217,122,.4),0 0 14px rgba(255,190,90,.42)}
 .col2c__art{position:absolute;inset:0;z-index:0}
 .col2c__art .slot{width:100%;height:100%}
 .col2c__art .slot>img{border-radius:0}
