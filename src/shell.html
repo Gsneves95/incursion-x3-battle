@@ -1496,7 +1496,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__x{position:absolute;top:11px;right:12px;z-index:2;width:28px;height:28px;cursor:pointer;display:grid;place-items:center;
   background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:17px;line-height:1}
 .col2ov__x:active{transform:translateY(1px)}
-.col2ov__rar{position:absolute;top:13px;right:48px;z-index:2}
+/* §292: o selo de raridade sai de perto do × e vai p/ o CANTO SUPERIOR ESQUERDO do retrato, SOBRE a arte, como
+   marca do deus. Mantém a linguagem do §282 (SS/S/A + cores). Legibilidade sobre 100 artes (claras e escuras):
+   placa escura semiopaca (lê a cor sobre arte clara) + brilho e sombra na cor da raridade (§281: onde há brilho e
+   contorno o contraste cru é piso pessimista, não veredito — a placa+aura garantem a leitura). */
+.col2ov__rarart{position:absolute;top:11px;left:11px;z-index:2;font-size:14px;padding:3px 12px;
+  background:rgba(10,8,22,.72);box-shadow:0 0 13px -2px currentColor, 0 2px 7px rgba(0,0,0,.55);
+  text-shadow:0 1px 3px rgba(0,0,0,.85);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 .col2ov__nome{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.03em;color:var(--gold-text);
   margin:2px 82px 0 0;line-height:1.02;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .col2ov__arq{margin:3px 0 0;font-weight:600;font-style:italic;font-size:14px;color:var(--ink-dim)}

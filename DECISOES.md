@@ -6,6 +6,65 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §292 — dois achados do dono jogando: o texto de efeito CORTA (a medição não pegou) e o selo de raridade muda de lugar.
+
+### 1) POR QUE A MEDIÇÃO NÃO PEGOU (importa mais que o conserto)
+
+O §291-ajuste disse "efeito: 0/400, nenhum nem rola". Errado. **Dois furos na medição, ambos reais:**
+- **Largura folgada:** medi a **951** (card 877). O aparelho do dono roda no **piso 780**, onde o card é **706** —
+  a coluna de conteúdo é ~100px mais estreita, o texto quebra em mais linhas e transborda. Medido agora nas duas:
+  **186/400 cortam a 780 · só 6/400 a 951.** Era a 1ª suspeita do dono.
+- **Escopo:** o scan do §291 abria só o slot DEFAULT (básico, 100 textos), nunca habilidade/milagre/passiva — onde
+  moram os textos longos. Os 6 que transbordam a 951 são TODOS não-básico → o scan básico-only não os via nem na
+  largura folgada. (A 2ª suspeita — horizontal × vertical — NÃO era: o check era vertical `scrollHeight>clientHeight`.)
+
+**Varredura das outras medições recentes da Coleção feitas só na largura folgada (a mesma cegueira):**
+- §288-medição, cortes de nome de habilidade (38/100) — a 951; a 780 cortam mais.
+- §288-ajuste "2 linhas resolve tudo, 0 cortado" — a 951; a **780, 1/100 estoura p/ 3 linhas** (medido agora).
+- §289/§290 (ampliação do retrato) e §291 (geometria da seta) — lidas a 951, mas **seguras**: a 951 a caixa do
+  retrato é a MAIOR (pior caso, conservador) e a calha da seta escala com o palco (`calc(100% - 48px)` → ~36px nas
+  duas). **Lição registrada abaixo.**
+
+### 2) O TEXTO DE EFEITO — medido, ANTES de mexer (o dono decide de onde tirar)
+
+A 780: **186/400 cortam/rolam. 181 precisam de 1 linha (≤14px), 5 de 2 linhas (15–27px), 0 de 3+.** O **pior**
+(`babi.milagre`) precisa de **53px** de texto numa caixa de **26px** → **falta 27px** p/ caber inteiro (sem
+rolagem). A coluna de conteúdo (392px úteis a 780) hoje: nome 23 · epíteto 18 · tags 22 · posse 15 · divisor 15
+(+21 de margem) · **chips 114** · **caixa de detalhe 96**.
+
+**De onde tirar os ~27px — OPÇÕES COM CUSTO (o dono escolhe; não escolhi sozinho):**
+| opção | libera | custo |
+|---|---|---|
+| A. nomes de habilidade → 1 linha c/ reticência (reverter o §288-ajuste) | ~13px | traz de volta ~39 reticências a 780 (a decisão que o dono quer reconsiderar) |
+| B. apertar margens do divisor HABILIDADES (21→11) | ~10px | rótulo mais colado |
+| C. apertar respiro acima da caixa (det mt+padTop 22→12) | ~10px | menos ar |
+| D. arte do chip 54→46 | ~8px | ícones menores |
+| E. apertar posse/tags/epíteto/padding | ~10px | ritmo vertical mais denso |
+Combos p/ os 27 (cabe TODOS os 400): **B+C+E ≈ 30px** (mantém nomes 2 linhas E arte — só respiro; minha
+recomendação); ou **A+C ≈ 23** / **A+B+C** (reverte nomes + aperta). **PENDENTE: o dono decide qual.** O babá
+"0/400 corta a 780" entra junto com o conserto.
+
+### 3) O SELO DE RARIDADE sai de perto do × → canto sup-esq do retrato (FEITO)
+
+Marca do deus, sobre a arte, com brilho — não detalhe de interface. **Mantém a linguagem do §282** (SS/S/A + cores
+atuais: SS ouro, S roxo, A azul); muda só posição e destaque. `col2ov__rarart`: placa escura semiopaca (lê a cor
+sobre arte clara) + brilho e sombra na cor da raridade. **Legibilidade medida sobre a arte real** (§281: contraste
+cru é piso pessimista onde há placa/aura — o veredito é a captura): amostrei a luminância do canto sup-esq dos 100
+→ mais claro **inari (L=201)**, mais escuro **hades (L=20)**; capturei o selo sobre os dois — lê nítido nos dois
+extremos (`docs/capturas-292/selo-fundo-claro-inari` · `selo-fundo-escuro-hades`).
+
+### LIÇÃO (registrada): medir no PISO, não na folga; medir os 400, não o default.
+
+A Coleção escala por largura (piso 780, teto 1200). Medir SÓ a 951 mede o caso mais folgado e deixa o defeito do
+780 passar — foi o que aconteceu no §291. E medir só o slot default esconde os outros três. **Toda medição de
+encaixe da Coleção roda no piso 780 E na folga 951, e percorre os 400 slots, não os 100 defaults.**
+
+**Arquivos (parte 2 + diagnóstico):** `src/ui/home.js` (selo no retrato), `src/shell.html` (`.col2ov__rarart`),
+`tests/colecao_tela.test.js` (§7f babá do selo). Capturas em `docs/capturas-292/`. Parte 1 (texto) medida e
+proposta — **aguardando decisão do dono**. Suíte (46) + build verdes.
+
+---
+
 ## §291 — setas de navegação na sobreposição de detalhe: passa de deus sem fechar.
 
 Pedido do dono: com a ficha aberta, ir ao kit do próximo deus sem fechar e selecionar de novo. Duas setas, uma

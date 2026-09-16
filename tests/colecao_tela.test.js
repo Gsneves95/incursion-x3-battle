@@ -246,6 +246,18 @@ console.log('\n== 7e. §291: setas de navegação (lista filtrada, slot permanec
   w.eval("colF.cultura=''; ir('colecao',{},{substituir:true}); render();");
 }
 
+// ---- 7f. §292: o selo de raridade sai de perto do × e vai p/ o retrato (canto sup-esq), mantendo o vocabulário §282. ----
+console.log('\n== 7f. §292: selo de raridade sobre o retrato, não ao lado do × ==');
+{
+  w.eval("colAbrirVer('zeus');");
+  const selo = $('#col2ov .col2ov__retrato .col2p__rar');
+  ok(!!selo, 'o selo de raridade fica SOBRE o retrato (dentro de .col2ov__retrato)');
+  ok(!$('#col2ov .col2ov__conteudo .col2p__rar'), 'o selo NÃO fica mais ao lado do × (fora do conteúdo)');
+  ok(selo && /col2p__rar--(SS|S|A)/.test(selo.className), 'mantém a linguagem de raridade do §282 (SS/S/A)');
+  ok(selo && selo.classList.contains('col2ov__rarart'), 'usa a classe de posição/brilho nova (col2ov__rarart)');
+  w.eval("colFecharVer();");
+}
+
 // ---- 8. possuído × não-possuído inequívocos (§216) ----
 console.log('\n== 8. possuído × não-possuído ==');
 {

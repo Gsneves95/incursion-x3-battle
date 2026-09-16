@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §292 — texto de efeito CORTA no piso 780 (medição não pegou) + selo de raridade sobre o retrato. Parte 1 ABERTA.
+
+Dois achados do dono jogando. **(1) Por que a medição não pegou (importa mais que o conserto):** o §291 mediu a **951** (card 877) e **só o slot default (básico)**; o aparelho roda no **piso 780** (card **706**, coluna ~100px mais estreita) e o texto longo mora em habilidade/milagre/passiva. Medido nas duas: **186/400 cortam a 780 · 6/400 a 951**. O check era vertical (não era o eixo). **Varredura:** §288-medição (nomes 38/100) e §288-ajuste ("0 cortado"→**1/100 a 780**) também foram só a 951; §289/§290/§291-geometria são seguras (951 é o pior caso do retrato; a calha da seta escala com o palco).
+
+**Parte 1 — texto (medido, ABERTO, o dono decide de onde tirar):** a 780, **181 precisam +1 linha (≤14px), 5 de +2 (15–27px), 0 de +3**; o pior `babi.milagre` precisa **+27px** (53 num box de 26). Coluna 392px: chips **114**, caixa detalhe **96**. Opções p/ liberar ~27: A. nomes→1 linha c/ reticência (reverter §288-ajuste, ~13px, traz ~39 reticências) · B. margens do divisor (~10) · C. respiro acima da caixa (~10) · D. arte do chip 54→46 (~8) · E. posse/tags/epíteto/padding (~10). Combos: **B+C+E≈30** (mantém 2 linhas+arte, minha recomendação) · A+C · A+B+C. **PENDENTE decisão do dono** (esp. reverter os nomes de 2 linhas). O babá "0/400 corta a 780" entra com o conserto.
+
+**Parte 2 — selo de raridade (FEITO):** saiu de perto do × → **canto sup-esq do retrato, sobre a arte, com brilho** (marca do deus). Mantém o §282 (SS/S/A + cores). `col2ov__rarart`: placa escura semiopaca + aura na cor da raridade. Legibilidade medida (§281: cru é piso pessimista; veredito é a captura): luminância do canto dos 100 → claro **inari L=201**, escuro **hades L=20**; capturado nos dois, lê nítido. Babá `colecao_tela §7f`.
+
+**LIÇÃO:** medir encaixe da Coleção **no piso 780 E na folga 951, e percorrer os 400 slots**, não só o default — medir só a 951/default deixou o defeito passar (§291). Ver DECISOES §292. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/colecao_tela.test.js`, `docs/capturas-292/`. Suíte (46)+build verdes.
+
 ## ★ COLEÇÃO §291 — setas de navegação na sobreposição de detalhe: passa de deus sem fechar. Só tela/teste.
 
 Com a ficha aberta, ir ao próximo deus sem fechar e reselecionar. Duas setas, uma de cada lado, POR FORA do cartão (sobre o fundo desfocado). **Geometria (medida, pedida antes):** cartão 897 no palco 951 → **~27px de calha/lado** (12 são padding). Piso tocável do projeto: **sem 44px documentado; controles primários 28–34px** (col2ov__x 28, col2__voltar 30, b--md/dsel__voltar 34). **27<34** → não comportava a seta confortável. **§291-ajuste (dono decidiu):** seta **30px** (patamar do `col2__voltar`, o controle mais próximo em função), **cartão 897→879** (`min(879px,calc(100% - 48px))`, −18px/−2%). Recusados os 44 (−42px/~5%, piso de app genérico que o projeto não adota). Medido depois: **split interno mantido (retrato 38,0%/conteúdo 61,9%)** e **0/100 cortes** — nome, nomes de habilidade em 2 linhas (§288-ajuste, hel incluso) e efeito, todos intactos com os 18px a menos. Card medido **877×394, calha 37/lado**, seta 30px a 3px da borda.

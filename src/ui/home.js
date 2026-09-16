@@ -1048,10 +1048,10 @@ function colOverlayCardHTML(k){
       <div class="col2ov__retrato">
         ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
         ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="col2ov__retratog" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
+        <span class="col2p__rar col2p__rar--${rar} col2ov__rarart">${rar}</span>
         ${tem ? '' : '<span class="col2ov__falta">Você não possui</span>'}
       </div>
       <div class="col2ov__conteudo">
-        <span class="col2p__rar col2p__rar--${rar} col2ov__rar">${rar}</span>
         <button class="col2ov__x" id="col2ovx" aria-label="Fechar">×</button>
         <h2 class="col2ov__nome">${H(colNome(k))}</h2>
         ${g.arquetipo ? `<p class="col2ov__arq">${H(g.arquetipo)}</p>` : ''}
