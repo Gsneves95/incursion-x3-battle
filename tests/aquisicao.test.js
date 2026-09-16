@@ -96,12 +96,12 @@ console.log('== 5. detalhe do deus (§220): arte à esquerda + coluna; passiva p
   ok($$('.dkit .dsk:not([disabled])').length === 4, 'as 4 skills são tocáveis');
   // decisão do dono: ao abrir, a PASSIVA já vem selecionada
   ok(/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'a PASSIVA já vem selecionada ao abrir');
-  ok($('.ddet .ddet__txt').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
+  ok($('.ddet .col2k__ef').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
   // tocar outra skill troca o detalhe
   const outra = $$('.dsk[data-deussel]').find(b => !b.classList.contains('is-sel'));
   outra.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(!/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'tocar outra skill muda a seleção');
-  ok(!!$('.ddet .cost, .ddet .ddet__cd'), 'a skill mostra custo/recarga no detalhe');
+  ok(!!$('.ddet .cost, .ddet .col2k__cd'), 'a skill mostra custo/recarga no detalhe');
 
   // NÃO POSSUINDO: tag + "como conseguir" no lugar da maestria, e o kit CONTINUA legível/tocável
   w.eval("delete perfil.deuses.ahpuch; ir('deus',{key:'ahpuch'}); render();");

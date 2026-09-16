@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §284-ajuste2 — UM renderizador de linha de kit, uma fonte (data/deuses). Fecha a pendência do §284-ajuste.
+
+O dono escolheu a variação que propus: **um renderizador de linha, chamado pelas telas, cada uma com a própria
+casca.** Achei mais do que os dois caminhos reportados — eram **TRÊS**: a sobreposição da Coleção, o detalhe da
+rota `'deus'` (Missões) e a **revelação de kit da CAMPANHA** (`campKitRevHTML`). Todos agora chamam **um só**
+renderizador — `kitLinhaHTML(rot, a, passiva)` — lendo `a` de **data/deuses** (`g.ab`/`g.passiva`). A arte de
+skill e o seletor de chips da rota FICAM (é a casca dela). Retirados `deusDetalheHTML` e `linhaKitHTML`;
+`deusSkills` passou a ler `g.ab`. **O CKIT saiu inteiro do caminho do TEXTO** — o §280/§271 fecha: o texto de
+kit tem UMA fonte no jogo inteiro.
+
+**O que o refactor SURFOU (medido, importante).** Antes, a rota e a campanha liam o **nome da passiva do
+kits.json** (o CKIT sobrescrevia o `.efeito` com o `.desc` do data/deuses, mas NÃO o `.nome`), enquanto a
+sobreposição já lia o de data/deuses. Os dois divergiam em **7 passivas** — e o `checar_cadeia` **não confere
+passiva** (linha 14: "passiva é só prosa"), então derivaram sem guarda:
+
+| deus | kits.json (o que a rota mostrava) | data/deuses (o que a sobreposição mostrava, e agora todas) |
+|---|---|---|
+| hermes | Mensageiro | Mensageiro dos Deuses |
+| erinias | Vingança | Fúria Vingativa |
+| jormungandr | Colossal | Serpente do Mundo |
+| oni | Pele Grossa | Casca Demoníaca |
+| yamatotakeru | Espada dos Céus | Espírito de Kusanagi |
+| aokuang | Guardião do Tesouro | Senhor da Chuva |
+| exu | O Primeiro a Ser Servido | Senhor das Encruzilhadas |
+
+**Medição de paridade (100 deuses × 4 slots):** a ÚNICA diferença antes×depois é essas 7 NOMES de passiva na
+rota/campanha; nome/custo/recarga das 3 ações + o EFEITO de tudo (incl. passiva) são **byte-idênticos**. A
+sobreposição **não mudou nada** (já lia data/deuses). Então isto NÃO é regressão: é a rota/campanha corrigindo
+para a fonte de verdade do §271 (data/deuses), passando a mostrar o que a sobreposição já mostrava. **Texto da
+rota com fontes reais (o renderizador é outro):** a maior descrição (168 chars) cai no detalhe **sem rolar**
+(medido, 926×428) — nada passou a cortar.
+
+**CKIT — agora dado MORTO no texto.** Só sobra a definição (`const CKIT` + o laço da build). Não serve mais a
+NADA no caminho do texto (grep: só a própria definição). **Não apaguei — reporto antes**, como pedido: se o
+dono confirmar, removo o `const CKIT`+laço num próximo passo; a estrutura (nome/custo/recarga) segue guardada
+pela cadeia direto no kits.json↔data/deuses. **Recomendação à parte:** o `checar_cadeia` deveria conferir o
+**nome da passiva** (o buraco que deixou os 7 derivarem) — mas isso exige reconciliar kits.json (dado), fora do
+"só tela" deste corte; registro como pendência.
+
+**Babá:** `colecao_tela.test.js` §7c — a sobreposição e a rota mostram a **MESMA linha** para o mesmo deus
+(zeus/exu/hermes/thor, exu incluído de propósito). Mude `kitLinhaHTML` e as três telas mudam juntas; se só uma
+mudasse, a duplicação teria voltado. Migradas `campanha`/`moldura`/`aquisicao` (liam `.krow`/`.ddet__txt`/CKIT).
+**Arquivos:** `src/ui/home.js`, `src/shell.html` (`.ddet` rola), `tests/{colecao_tela,campanha,moldura,aquisicao}.test.js`.
+
 ## §284-ajuste — a barra que chegava a 100% sem entregar (Milagre) + o kit em DOIS renderizadores (reportado).
 
 **BARRA vs MILAGRE (consertado).** O Mestre exige 30 vitórias **E** ter vencido com o Milagre. Então a barra

@@ -136,6 +136,33 @@ console.log('\n== 7. sobreposição: 4 habilidades, fundo fecha, back fecha, sel
   ok(w.eval("document.querySelector('#col2grade').scrollTop") === 80, 'a grade não é re-renderizada ao fechar → rolagem preservada (scrollTop 80)');
 }
 
+// ---- 7c. §284-ajuste2: a SOBREPOSIÇÃO e a ROTA 'deus' mostram a MESMA linha de kit p/ o mesmo deus (um renderizador). ----
+console.log('\n== 7c. sobreposição × rota: MESMA linha de kit (um renderizador, uma fonte) ==');
+{
+  // inclui exu (nome de passiva que DIVERGIA: kits.json "O Primeiro a Ser Servido" × data/deuses "Senhor das
+  // Encruzilhadas") — agora as duas telas leem data/deuses, então têm de bater. Se só uma mudar, a duplicação voltou.
+  const norm = s => (s || '').replace(/\s+/g, ' ').trim();
+  const alvos = ['zeus', 'exu', 'hermes', 'thor'];
+  let iguais = true, detalhe = '';
+  for (const k of alvos) {
+    // sobreposição: as 4 linhas
+    w.eval(`perfil.deuses[${JSON.stringify(k)}]=perfil.deuses[${JSON.stringify(k)}]||{obtidoEm:Date.now()}; ir('colecao',{},{substituir:true}); render(); colAbrirVer(${JSON.stringify(k)});`);
+    const ov = [...d.querySelectorAll('#col2ov .col2k__row')].map(r => norm(r.textContent));
+    w.eval("colFecharVer();");
+    // rota: seleciona cada slot e lê a linha do detalhe
+    const rota = [];
+    for (const slot of ['basico', 'habilidade', 'milagre', 'passiva']) {
+      w.eval(`ir('deus',{key:${JSON.stringify(k)}},{substituir:true}); render(); deusSel=${JSON.stringify(slot)}; render();`);
+      const r = d.querySelector('.ddet .col2k__row'); if (r) rota.push(norm(r.textContent));
+    }
+    // compara conjunto (ordem: sobreposição básico/hab/milagre/passiva == rota na mesma ordem)
+    const a = ov.join(' | '), b = rota.join(' | ');
+    if (a !== b) { iguais = false; detalhe = k + ': overlay["' + a + '"] ≠ rota["' + b + '"]'; break; }
+  }
+  ok(iguais, 'sobreposição e rota mostram a MESMA linha p/ cada slot (zeus/exu/hermes/thor)' + (iguais ? '' : ' — ' + detalhe));
+  w.eval("ir('colecao',{},{substituir:true}); render();");
+}
+
 // ---- 8. possuído × não-possuído inequívocos (§216) ----
 console.log('\n== 8. possuído × não-possuído ==');
 {

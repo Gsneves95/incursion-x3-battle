@@ -317,7 +317,7 @@ console.log('== §268 C: a CONSEQUÊNCIA cai no ato-alvo conforme a escolha grav
   ok(!!$('.camp__kitchip'), 'Conselho certo (Ah Puch) ⇒ chip do kit revelado no Cap 1 VI');   // BABÁ
   ok(/segredo ficou/.test($('.camp__revel').textContent), 'a revelação certa do Conselho aparece');
   w.eval("document.querySelector('[data-kitrev]').click();");
-  ok(!!$('#campkitrevov') && $$('.camp__kitrevlist .krow').length === 4, 'o overlay mostra o kit inteiro de Hel (4 skills)');   // BABÁ
+  ok(!!$('#campkitrevov') && $$('.camp__kitrevlist .col2k__row').length === 4, 'o overlay mostra o kit inteiro de Hel (4 skills)');   // BABÁ (§284-ajuste2: renderizador único)
   // Conselho ERRADA → SEM kit (consequência de erro é a PERDA do bônus, nunca desvantagem medida)
   abrir(w, 1, 5, cap1ate5, { 'cap1-ii': 'susanoo' });
   ok(!$('.camp__kitchip'), 'Conselho errado ⇒ NENHUM kit revelado (erro custa o bônus, não bloqueia)');   // BABÁ

@@ -251,10 +251,11 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   {
     await page.setViewportSize({ width: 926, height: 428 });
     const g = await page.evaluate(() => {
-      // o deus de MAIOR descrição de kit, garantido na coleção, com essa skill selecionada
+      // §284-ajuste2: a maior descrição vem de data/deuses (GODS), a MESMA fonte que a tela agora lê.
       let best = { len: 0 };
-      for (const k in CKIT) for (const s of ['basico', 'habilidade', 'milagre', 'passiva']) {
-        const d = CKIT[k][s]; if (d && d.efeito && d.efeito.length > best.len) best = { len: d.efeito.length, k, s };
+      for (const k in GODS) { const gg = GODS[k];
+        (gg.ab || []).forEach(a => { if (a.desc && a.desc.length > best.len) best = { len: a.desc.length, k, s: a.slot }; });
+        if (gg.passiva && gg.passiva.desc && gg.passiva.desc.length > best.len) best = { len: gg.passiva.desc.length, k, s: 'passiva' };
       }
       perfil.deuses[best.k] = perfil.deuses[best.k] || { obtidoEm: Date.now() };
       ir('deus', { key: best.k }, { substituir: true }); render(); deusSel = best.s; render();
@@ -262,7 +263,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       const art = R(document.querySelector('.dart')), nome = R(document.querySelector('.dart__nome'));
       const kit = R(document.querySelector('.dkit'));
       const sk = [...document.querySelectorAll('.dsk')].map(R);
-      const txt = document.querySelector('.ddet__txt');
+      const txt = document.querySelector('.ddet');   // §284-ajuste2: a casca .ddet é o contêiner de rolagem do detalhe
       return {
         artW: art.width, artH: art.height, artB: art.bottom,
         nomeTop: nome.top, kitTop: kit.top,            // o nome (na arte, esq) não pode ser coberto pelo kit (col, dir)

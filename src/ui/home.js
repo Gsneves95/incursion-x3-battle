@@ -921,8 +921,11 @@ function colCardHTML(k){
   </button>`;
 }
 
-// UMA linha do kit (agora só na SOBREPOSIÇÃO — o painel não traz kit): rótulo, nome, custo, recarga, EFEITO.
-function colKitLinhaHTML(rot, a, passiva){
+// §284-ajuste2 — O RENDERIZADOR ÚNICO de linha de kit, do jogo inteiro. Lê UMA fonte: um item de `g.ab`
+// (data/deuses) ou `g.passiva`, com {nome, cost, cd, desc}. Chamado pela SOBREPOSIÇÃO da Coleção, pelo
+// detalhe da ROTA 'deus' (Missões) e pela revelação de kit da CAMPANHA — cada tela mantém a própria casca,
+// mas a LINHA é esta. Mude aqui e as três mudam juntas (senão a duplicação — que já virou 4 catálogos — volta).
+function kitLinhaHTML(rot, a, passiva){
   if (!a) return `<div class="col2k__row col2k__row--vazio"><span class="col2k__rot">${rot}</span><span class="col2k__nv">—</span></div>`;
   const meta = passiva
     ? '<span class="col2k__cd">passiva · não gasta a ação</span>'
@@ -1035,10 +1038,10 @@ function colOverlayHTML(k){
         </div>
       </div>
       <div class="col2ov__kit">
-        ${colKitLinhaHTML('BÁSICO', ab.basico)}
-        ${colKitLinhaHTML('HABILIDADE', ab.habilidade)}
-        ${colKitLinhaHTML('MILAGRE', ab.milagre)}
-        ${colKitLinhaHTML('PASSIVA', g.passiva, true)}
+        ${kitLinhaHTML('BÁSICO', ab.basico)}
+        ${kitLinhaHTML('HABILIDADE', ab.habilidade)}
+        ${kitLinhaHTML('MILAGRE', ab.milagre)}
+        ${kitLinhaHTML('PASSIVA', g.passiva, true)}
       </div>
     </div>
   </div>`;
@@ -1133,12 +1136,8 @@ function colLigarPainel(){
 }
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */
-function linhaKitHTML(rot, a){
-  if (!a) return '';
-  return `<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
-    <span class="krow__meta">${pipsDetalhe(custoParaCost(a.custo))}${a.recarga ? `<span class="krow__cd">recarga ${a.recarga}</span>` : ''}</span></div>
-    <div class="krow__t">${H(a.efeito)}</div></div>`;
-}
+// (§284-ajuste2: linhaKitHTML/deusDetalheHTML foram substituídos pelo renderizador único kitLinhaHTML, que lê
+// data/deuses; deusSkills passou a ler g.ab. O CKIT saiu do caminho do TEXTO — segue definido só como dado morto.)
 function provacaoDetalheHTML(k){
   const g = HRM[k] || {};
   if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Deus inicial — vem com você, sem pergaminho.</p></div>`;
@@ -1196,44 +1195,38 @@ function reqMissaoTexto(k){
 }
 
 // as 4 skills que DEFINEM o deus na Coleção (a Defesa é universal e fica fora): cada uma tem arte.
-function deusSkills(kit){
+// §284-ajuste2: lê de data/deuses (g.ab / g.passiva) — a MESMA fonte da sobreposição. `a` é o item cru.
+function deusSkills(g){
+  const ab = {}; (g && g.ab || []).forEach(x => ab[x.slot] = x);
   return [
-    { slot: 'basico',     tipo: 'BÁSICO',     d: kit && kit.basico },
-    { slot: 'habilidade', tipo: 'HABILIDADE', d: kit && kit.habilidade },
-    { slot: 'milagre',    tipo: 'MILAGRE',    d: kit && kit.milagre },
-    { slot: 'passiva',    tipo: 'PASSIVA',    d: kit && kit.passiva },
+    { slot: 'basico',     tipo: 'BÁSICO',     a: ab.basico },
+    { slot: 'habilidade', tipo: 'HABILIDADE', a: ab.habilidade },
+    { slot: 'milagre',    tipo: 'MILAGRE',    a: ab.milagre },
+    { slot: 'passiva',    tipo: 'PASSIVA',    a: g && g.passiva },
   ];
 }
-// chip de skill no kit (arte + nome + tipo, sem descrição — só isso de cara)
+// chip de skill no kit (arte + nome + tipo, sem descrição — só isso de cara). A ARTE de skill e o SELETOR de
+// chips são a casca da rota (não é duplicação); ficam.
 function deusKitChipHTML(k, s, sel){
-  const nome = s.d ? s.d.nome : '—';
-  return `<button class="dsk ${s.slot === sel ? 'is-sel' : ''}" data-deussel="${s.slot}" ${s.d ? '' : 'disabled'} title="${H(nome)}">
+  const nome = s.a ? s.a.nome : '—';
+  return `<button class="dsk ${s.slot === sel ? 'is-sel' : ''}" data-deussel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(nome)}">
     <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
     <span class="dsk__nome">${H(nome)}</span>
     <span class="dsk__tipo">${s.tipo}</span>
   </button>`;
 }
-// DETALHE da skill selecionada: nome, custo (bolinhas), recarga em turnos, e o texto completo.
-function deusDetalheHTML(k, kit, sel){
-  const s = deusSkills(kit).find(x => x.slot === sel) || deusSkills(kit).find(x => x.d);
-  if (!s || !s.d) return `<div class="ddet"><div class="ddet__txt">Kit em produção.</div></div>`;
-  const d = s.d, passiva = s.slot === 'passiva';
-  const pips = passiva ? '' : pipsDetalhe(custoParaCost(d.custo));
-  const meta = passiva ? 'PASSIVA · não gasta a ação'
-    : `${d.recarga ? 'recarga ' + d.recarga + ' turno' + (d.recarga === 1 ? '' : 's') : 'sem recarga'}`;
-  return `<div class="ddet">
-    <div class="ddet__cab"><b class="ddet__nome">${H(d.nome)}</b><span class="ddet__tipo">${s.tipo}</span></div>
-    <div class="ddet__meta">${pips}<span class="ddet__cd">${H(meta)}</span></div>
-    <div class="ddet__txt">${realce(d.efeito || '')}</div>
-  </div>`;
+// DETALHE da skill selecionada — pelo RENDERIZADOR ÚNICO (kitLinhaHTML, data/deuses). A casca `.ddet` é da rota.
+function deusDetalheHTML(g, sel){
+  const s = deusSkills(g).find(x => x.slot === sel) || deusSkills(g).find(x => x.a);
+  if (!s || !s.a) return `<div class="ddet"><div class="col2k__row col2k__row--vazio">Kit em produção.</div></div>`;
+  return `<div class="ddet">${kitLinhaHTML(s.tipo, s.a, s.slot === 'passiva')}</div>`;
 }
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
   // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR) — o que o jogador lê é o que o motor
   // usa. O roster (HRM) segue para nome/retrato; faccao/elem/classe/funcao vêm de GODS quando existe.
-  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
-  const kit = CKIT[k];
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // §284-ajuste2: o kit lê daqui (data/deuses), não do CKIT
   const tem = temDeus(k);
   const rar = raridadeDe(k);
   if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
@@ -1257,8 +1250,8 @@ function renderDeusDetalhe(){
         <span class="dchip">${H(gm.funcao)}</span>
       </div>
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
-      <div class="dkit">${deusSkills(kit).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
-      ${deusDetalheHTML(k, kit, deusSel)}
+      <div class="dkit">${deusSkills(gm).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
+      ${deusDetalheHTML(gm, deusSel)}
     </div>
   </div>
   </div>`;
@@ -1412,9 +1405,10 @@ function kitRevChipHTML(k){ const m = metaComb(k);
     <span class="camp__kitchiptxt"><b>Kit revelado</b><span>${H(m.nome)} — ver as 4 habilidades</span></span><span class="camp__kitchipseta">›</span></button>`;
 }
 function campKitRevHTML(k){
-  const kit = (typeof CKIT !== 'undefined' && CKIT[k]) || null; const m = metaComb(k);
+  // §284-ajuste2: pela MESMA linha (kitLinhaHTML) e MESMA fonte (data/deuses via GODS) da sobreposição e da rota.
+  const g = (typeof GODS !== 'undefined' && GODS[k]) || null; const m = metaComb(k);
   const rots = { basico: 'Básico', habilidade: 'Habilidade', milagre: 'Milagre', passiva: 'Passiva' };
-  const linhas = deusSkills(kit).filter(s => s.d).map(s => linhaKitHTML(rots[s.slot] || s.tipo, s.d)).join('');
+  const linhas = deusSkills(g).filter(s => s.a).map(s => kitLinhaHTML(rots[s.slot] || s.tipo, s.a, s.slot === 'passiva')).join('');
   return `<div class="ov" id="campkitrevov"><div class="ovbox"><div class="ov__cab"><h2>Kit revelado — ${H(m.nome)}</h2><button class="b b--quiet b--md" id="kitrevx">Fechar</button></div>
     <div class="camp__kitrevlist">${linhas}</div></div></div>`;
 }
