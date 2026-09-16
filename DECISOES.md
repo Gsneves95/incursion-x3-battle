@@ -48,9 +48,25 @@ desfocado visível) **preservando o split interno do mockup** (retrato **38%** /
 - **arquetipo: 0 corta** — o mais longo, baldur "Protetor quase-invulnerável" (27 chars), cabe em 1 linha.
 - **texto de efeito: 0/100 cortam** — envolve e rola (`overflow-y:auto`); nem precisou rolar no palco cheio.
 - **nomes de habilidade na fileira: 38/100 deuses têm ≥1 nome com reticências no chip** (o chip tem ~130px; o
-  pior é hel +27px, heimdall +15px, odin +14px, hermes +13px). **Reportado, NÃO consertado** (instrução do dono).
-  Recomendação p/ o dono decidir: nome em 2 linhas no chip, ou fonte menor — mas o rótulo do slot + o ícone já
-  desambiguam, e o nome completo está na caixa de detalhe ao tocar.
+  pior é hel +27px, heimdall +15px, odin +14px, hermes +13px). Reportado; o dono escolheu **duas linhas** →
+  resolvido no **§288-ajuste** (abaixo).
+
+### §288-ajuste — os 38 nomes cortados viram DUAS LINHAS (reservadas sempre), não reticência.
+
+O dono: "no §277 aceitei reticência porque o cartão estava no teto físico (a fileira dos três já ocupava 142 de
+138); aqui há folga — a caixa de detalhe rola e o card tem 394px. E 38 de 100 é um terço do elenco." Duas linhas
+**reservadas sempre** (`min-height:2×1.15em` + `-webkit-line-clamp:2`), NÃO sob demanda — a fileira é elemento
+fixo, e pulo ao trocar de deus é pior que espaço vazio.
+
+**MEDIDO antes de aplicar (Chromium, fontes reais, palco 951×428):**
+- a **fileira cresce +13px** (101→114px);
+- isso **tira 13px da caixa de detalhe** (102→89px);
+- **nenhum deus passa a rolar** o texto de efeito (0/100 rolavam antes, 0/100 rolam depois — os 13px não empurram
+  ninguém p/ a rolagem);
+- **0/100 nomes ainda cortam** — duas linhas resolvem TODOS. A Hel ("Metade Viva, Metade Morta", que pedia +27px)
+  cabe em 2 linhas (113=113, sem reticência), confirmado.
+
+Não precisei parar: duas linhas fecham os 38 sem custo p/ o texto de efeito. Captura `d-nomes-2linhas-hel.png`.
 
 **Desvio consciente do mockup:** o selo de raridade. A referência tem um pentágono roxo; usei o selo de raridade
 que o jogo JÁ tem (§282, hexágono/`col2p__rar--<rar>`) p/ não criar um segundo vocabulário de raridade. Estrutura
