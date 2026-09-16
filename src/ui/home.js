@@ -940,10 +940,14 @@ function colKitLinhaHTML(rot, a, passiva){
 function colMaestria(k){
   const nv = nivelMaestria(k), m = maestriaDe(k), v = m.vitorias || 0;
   if (nv === 4) return { nv, topo: true, posto: MAESTRIA_NOME[4] };
+  // §284-ajuste: VITÓRIAS já cumpridas (≥30) e só falta o Milagre → não há progressão NUMÉRICA a mostrar (a
+  // barra chegaria a 100% sem entregar o posto). A barra SAI e o REQUISITO vira manchete. `nivelMaestria`
+  // mantém 3 (Adepto) até o Milagre — o Mestre exige as duas coisas.
+  if (nv === 3 && v >= MAESTRIA_LIMIAR.mestre && !m.milagre) return { nv, posto: MAESTRIA_NOME[3], soMilagre: true };
   const BASE = { 0: 0, 1: 0, 2: 5, 3: 15 }, PROX = { 0: 1, 1: 5, 2: 15, 3: 30 };
   const base = BASE[nv], prox = PROX[nv];
   return { nv, posto: MAESTRIA_NOME[nv], v, prox, frac: Math.max(0, Math.min(1, (v - base) / (prox - base))),
-    proxNome: MAESTRIA_NOME[nv + 1], faltaMilagre: nv === 3 && !m.milagre };
+    proxNome: MAESTRIA_NOME[nv + 1] };
 }
 function colMaestriaHTML(k){
   const tem = temDeus(k), M = colMaestria(k);
@@ -952,11 +956,12 @@ function colMaestriaHTML(k){
   if (M.topo) return `<div class="col2m col2m--mestre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">★ Mestre</b></div>
     <div class="col2m__bar col2m__bar--cheia"><i style="width:100%"></i></div>
     <p class="col2m__nota">Posto máximo — a moldura de Mestre saiu (§245).</p></div>`;
-  const nota = M.faltaMilagre ? '<p class="col2m__nota">Falta vencer usando o <b>Milagre</b> para virar Mestre.</p>' : '';
+  // vitórias cumpridas, só falta o Milagre: SEM barra — o requisito é a manchete (barra cheia perderia p/ a nota).
+  if (M.soMilagre) return `<div class="col2m col2m--milagre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b></div>
+    <p class="col2m__req">Vitórias cumpridas. Falta vencer usando o <b>Milagre</b> para virar Mestre.</p></div>`;
   return `<div class="col2m m--${M.nv}">
     <div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b><span class="col2m__prox">${M.v}/${M.prox} p/ ${H(M.proxNome)}</span></div>
     <div class="col2m__bar"><i style="width:${Math.round(M.frac * 100)}%"></i></div>
-    ${nota}
   </div>`;
 }
 

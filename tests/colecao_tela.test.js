@@ -102,6 +102,18 @@ console.log('\n== 6. maestria só no painel (nada na grade) ==');
   ok(!$('.col2c--mestre'), 'a moldura de Mestre não existe mais na grade');
 }
 
+// ---- 6b. §284-ajuste: vitórias ≥30 mas sem Milagre → NÃO mostra barra cheia; mostra o REQUISITO. ----
+console.log('\n== 6b. vitórias cumpridas, só falta o Milagre: sem barra, requisito é a manchete ==');
+{
+  w.eval("perfil.maestria=perfil.maestria||{}; perfil.maestria.zeus={vitorias:34,milagre:false}; colSelecionar('zeus');");
+  const m = $('#col2painel .col2m');
+  ok(w.eval("nivelMaestria('zeus')") === 3, 'com 34 vitórias e sem Milagre, o posto ainda é Adepto (nv3)');
+  ok(!!m && m.classList.contains('col2m--milagre'), 'o painel entra no estado só-falta-Milagre (col2m--milagre)');
+  ok(!m.querySelector('.col2m__bar'), 'NÃO há barra (nem cheia) competindo com o texto');
+  ok(/Milagre/.test(txt(m.querySelector('.col2m__req'))), 'o REQUISITO é a manchete');
+  w.eval("perfil.maestria.zeus={vitorias:22,milagre:false};");   // restaura p/ as seções seguintes
+}
+
 // ---- 7. §284: VER DETALHES abre a SOBREPOSIÇÃO (kit completo); fundo fecha; Android-back fecha; seleção preservada. ----
 console.log('\n== 7. sobreposição: 4 habilidades, fundo fecha, back fecha, seleção preservada ==');
 {

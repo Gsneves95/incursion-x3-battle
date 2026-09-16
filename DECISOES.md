@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §284-ajuste — a barra que chegava a 100% sem entregar (Milagre) + o kit em DOIS renderizadores (reportado).
+
+**BARRA vs MILAGRE (consertado).** O Mestre exige 30 vitórias **E** ter vencido com o Milagre. Então a barra
+ficava cheia (30/30) e o posto não subia — barra cheia + nota ao lado, e o olho lê a barra primeiro. Agora,
+quando as vitórias estão cumpridas (≥30) e só falta o Milagre, a **barra SAI** e o requisito vira a manchete:
+"Vitórias cumpridas. Falta vencer usando o Milagre para virar Mestre." (`col2m--milagre`, sem `.col2m__bar`).
+Medido no perfil de teste: **2 deuses** nesse estado (zeus 34, poseidon 30, ambos sem Milagre) — captura
+`docs/capturas-284/e-milagre.png`. Babá: com vitórias ≥30 e sem Milagre, o painel NÃO tem barra e mostra o
+requisito (`colecao_tela.test.js` §6b).
+
+**DOIS RENDERIZADORES DE KIT — reportado, decisão do dono (NÃO mexido).** A sobreposição da Coleção e a rota
+`'deus'` (que as Missões abrem) renderizam o kit por caminhos DIFERENTES:
+- **Sobreposição** (`colOverlayHTML`→`colKitLinhaHTML`): LISTA das 4, lê **100% de data/deuses** (`g.ab[].cost/cd/desc`).
+- **Rota `'deus'`** (`renderDeusDetalhe`→`deusKitChipHTML`+`deusDetalheHTML`): SELETOR de chips (toca a skill→detalhe,
+  **com arte de skill**), lê `CKIT` = **estrutura do kits.json** (nome/custo/recarga) + **texto do data/deuses** (`.desc`).
+
+Hoje **não divergem** porque o guarda da cadeia (§271, `checar_cadeia`) força kits.json↔data/deuses a baterem em
+nome/custo/recarga, e ambos usam o `.desc` do data/deuses para o texto. Mas são **duas implementações**: um conserto
+numa não chega à outra — é a mesma classe do kits.json×data/deuses que virou QUATRO catálogos. **Opções (com custo,
+p/ o dono escolher):**
+- **(A) mesmo renderizador.** Ambos chamam um só, lendo uma só fonte (data/deuses). Custo MÉDIO: as apresentações
+  DIFEREM (lista × seletor-de-chips-com-arte) — unificar escolhe UMA para os dois: ou a rota vira lista (perde os
+  chips + a arte de skill), ou a sobreposição ganha chips+arte. Retira o papel de TEXTO do CKIT (a estrutura segue
+  guardada pela cadeia).
+- **(B) Missões abrirem a sobreposição.** Custo ALTO: a rota `'deus'` é uma tela CHEIA (pergaminho + jogar a
+  Provação + "como conseguir" + maestria), não só o kit; a sobreposição é kit+identidade. Para (B) sem regressão, a
+  sobreposição teria de CRESCER para a tela cheia (portar pergaminho/jogar/como-conseguir) — na prática, refazer a
+  tela como sobreposição. Só trocar `ir('deus')` por `colAbrirVer` nas Missões perderia o pergaminho/jogar.
+- **Minha leitura:** o que de fato duplica é a LINHA DE KIT. A opção mais barata e correta é uma variação de (A):
+  **um renderizador de linha de kit, uma fonte (data/deuses), chamado pelos dois** — mantendo a casca de cada tela
+  (o seletor-de-chips da rota alimentado pela mesma leitura `g.ab`, retirando o CKIT do texto). Não escolho: **aberto,
+  aguardando decisão do dono.**
+
 ## §284 — COLEÇÃO remodelada (4 mudanças do dono depois de ver a tela real). Só tela; nada de motor/dado.
 
 **O MODELO DE MAESTRIA, reportado ANTES de desenhar a barra (§245/F3.5, cosmético — NUNCA combate):** cinco
