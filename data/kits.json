@@ -336,7 +336,7 @@
    "efeito": "Rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
   },
   "passiva": {
-   "nome": "Mensageiro",
+   "nome": "Mensageiro dos Deuses",
    "efeito": "Hermes age primeiro no turno 1; ataques de alvo único contra ele causam 5 menos de dano."
   }
  },
@@ -553,7 +553,7 @@
    "efeito": "25 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
   },
   "passiva": {
-   "nome": "Vingança",
+   "nome": "Fúria Vingativa",
    "efeito": "Quando um aliado é derrotado, Erínias causa +8 de dano pelo resto da partida."
   }
  },
@@ -987,7 +987,7 @@
    "efeito": "16 de dano a todos os inimigos, +8 por inimigo envenenado."
   },
   "passiva": {
-   "nome": "Colossal",
+   "nome": "Serpente do Mundo",
    "efeito": "Imune a controle; +8 de dano contra unidades Tempestade."
   }
  },
@@ -1793,7 +1793,7 @@
    "efeito": "38 de dano a 1 inimigo; aumenta em 2 turnos todas as recargas dele."
   },
   "passiva": {
-   "nome": "Pele Grossa",
+   "nome": "Casca Demoníaca",
    "efeito": "Oni recebe 10 de redução de dano de habilidades Mágicas; +1 de dano por 4 de Combo."
   }
  },
@@ -1855,7 +1855,7 @@
    "efeito": "28 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
   },
   "passiva": {
-   "nome": "Espada dos Céus",
+   "nome": "Espírito de Kusanagi",
    "efeito": "+1 de dano por 3 de Combo; imune a controle com 15 ou mais de Combo."
   }
  },
@@ -1979,7 +1979,7 @@
    "efeito": "20 de dano a todos os inimigos; atordoa os Encharcados por 1 turno."
   },
   "passiva": {
-   "nome": "Guardião do Tesouro",
+   "nome": "Senhor da Chuva",
    "efeito": "+5 de dano por inimigo Encharcado; imune a Provocar."
   }
  },
@@ -2661,7 +2661,7 @@
    "efeito": "Rouba 2 orbes do inimigo, remove 1 buff de cada inimigo e trava o Milagre deles por 1 turno."
   },
   "passiva": {
-   "nome": "O Primeiro a Ser Servido",
+   "nome": "Senhor das Encruzilhadas",
    "efeito": "Exu age primeiro em todos os turnos."
   }
  },

@@ -6,6 +6,35 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §285 — o guarda passa a conferir o NOME da PASSIVA; CKIT apagado; e o MAPA do buraco inteiro da cadeia.
+
+Três itens do dono. (1) Os nomes de passiva do **data/deuses ficam** (fonte que o motor executa, §271; o que a
+sobreposição já mostrava). Exu prova que não era cosmético: "O Primeiro a Ser Servido" (preceito) × "Senhor das
+Encruzilhadas" (domínio) — conceitos diferentes. (2) **CKIT APAGADO** (`const`+laço em `home.js`): produtor sem
+consumidor depois do §284-ajuste2 (§95 ao contrário). A ESTRUTURA (nome/custo/recarga) segue guardada pela cadeia
+direto no kits.json↔data/deuses. (3) **o `checar_cadeia` passa a conferir o NOME da passiva**, com falha-alto.
+
+**Portão do §263 confirmado ANTES (como no §282):** o nome da passiva cai **FORA** da projeção de combate do
+carimbo — `projecaoCombate` o strippa via `TELA_PASS = ['nome','desc']` (só o `fx` da passiva entra no hash); e o
+`catalogoHash` lê **data/deuses**, nunca o kits.json que se reconcilia. **Duplamente fora.** Medido:
+`recarimbar_hash` dry-run **mudariam 0 / 100** — nenhuma das 91 Provações re-carimba.
+
+**Aplicado:** os **7** nomes reconciliados no kits.json adotando o data/deuses (hermes/erinias/jormungandr/oni/
+yamatotakeru/aokuang/exu); `checar_cadeia` compara `g.passiva.nome ↔ p.passiva.nome` (cadeia 1692→**1792 conf**).
+Babá provada: muda um nome de passiva → `ERRO de cadeia ... passiva [nome]`, build quebra (restaurado); teste em
+`cadeia.test.js`.
+
+**O BURACO INTEIRO — o que a cadeia (ELO B) AINDA não confere entre kits.json e data/deuses** (medido nos 100,
+para ver de uma vez, não de três em três). Legenda: ✅ conferido · ❌ furo.
+- **god `nome`** ❌ — duplicado (kits.nome ↔ deuses.nome), sem guarda. **Hoje 0 derivado** (limpo), mas latente — mesma classe de arquetipo/passiva-nome.
+- **god `faccao`/`elem`/`classe`/`funcao`** ✅ (§270) · **`arquetipo`** ✅ (§282) · **passiva `nome`** ✅ (§285, este).
+- **passiva `efeito`** ❌ — o texto da passiva (kits.efeito ↔ deuses.desc). **17 derivados hoje** (display-morto: a tela mostra `deuses.desc`). E os **números** da passiva (dano/cura/orbe…) NÃO são conferidos contra o `fx` dela (a passiva está fora de `SLOTS`) — buraco maior que só o nome.
+- **habilidade `efeito` (string)** ❌ — o texto das 3 ações (kits.efeito ↔ deuses.desc) NÃO é comparado como string; a cadeia extrai só os NÚMEROS da prosa do kits.json e os compara ao `fx`. **40 derivados de redação hoje** (display-morto).
+- **A raiz do furo do efeito (§271):** a cadeia extrai números da prosa do **kits.json** e compara ao `fx`; mas o que o jogador LÊ desde o §271/§284-ajuste2 é o **`deuses.desc`**, que a cadeia **nunca** confere. Então os números do TEXTO EXIBIDO (deuses.desc) não estão guardados contra o `fx` — só os do kits.json (não exibido) estão. **Recomendação:** mover a extração de números da cadeia para ler `deuses.desc` (o exibido) em vez de `kits.efeito`, e conferir passiva também — fecha os furos de efeito de uma vez. Fora do escopo "só nome de passiva" deste corte; **aberto, aguardando decisão do dono.**
+- **`num`** (kits-only, §283) e **`inicial`/ability `classe`/`alvo`/`fx`** (deuses-only) NÃO são cross-catalog — não podem derivar entre catálogos.
+
+**Arquivos:** `data/kits.json` (7 nomes), `tools/checar_cadeia.js` (+passiva nome), `src/ui/home.js` (CKIT apagado), `tests/cadeia.test.js` (dentes na passiva). Suíte+build verdes.
+
 ## §284-ajuste2 — UM renderizador de linha de kit, uma fonte (data/deuses). Fecha a pendência do §284-ajuste.
 
 O dono escolheu a variação que propus: **um renderizador de linha, chamado pelas telas, cada uma com a própria

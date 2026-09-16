@@ -847,19 +847,10 @@ function fmtRecarga(ms){
 // ===================================================================
 
 const PANTEOES = ['Grega', 'Nórdica', 'Egípcia', 'Japonesa', 'Chinesa', 'Hindu', 'Brasileira', 'Africana', 'Celta', 'Maia'];
-// §271: a Coleção lê o TEXTO de efeito do data/deuses (o `.desc`, a fonte do MOTOR) — fonte única, a deriva
-// de texto acaba na origem. O kits.json fornece só a ESTRUTURA (nome/custo/recarga, travados pela cadeia);
-// o `.efeito` mostrado é sobrescrito pelo `.desc` de GODS. (metaComb/roster seguem separados — §271 nota.)
-const CKIT = {};
-if (typeof KITS !== 'undefined') KITS.forEach(k => {
-  const g = (typeof GODS !== 'undefined') ? GODS[k.key] : null;
-  if (!g) { CKIT[k.key] = k; return; }
-  const c = Object.assign({}, k);
-  const abS = {}; (g.ab || []).forEach(a => abS[a.slot] = a);
-  for (const slot of ['basico', 'habilidade', 'milagre']) if (c[slot] && abS[slot]) c[slot] = Object.assign({}, c[slot], { efeito: abS[slot].desc });
-  if (c.passiva && g.passiva) c.passiva = Object.assign({}, c.passiva, { efeito: g.passiva.desc });
-  CKIT[k.key] = c;
-});
+// §285: o CKIT foi APAGADO. Ele era o híbrido kits.json+data/deuses que alimentava o TEXTO das telas de kit; o
+// §284-ajuste2 fez as três telas (sobreposição/rota/campanha) lerem data/deuses direto (via GODS), e o CKIT
+// ficou produtor sem consumidor (§95 ao contrário). A ESTRUTURA (nome/custo/recarga) segue guardada pela CADEIA
+// direto no kits.json↔data/deuses (checar_cadeia); nada aqui precisava intermediar.
 const RAR_ROT = { SS: 'SS', S: 'S', A: 'A' };
 function raridadeDe(k){ return (typeof RARIDADE !== 'undefined' && RARIDADE[k]) || 'A'; }
 function temKitHome(k){ return typeof GODS !== 'undefined' && !!GODS[k]; }
@@ -1137,7 +1128,7 @@ function colLigarPainel(){
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */
 // (§284-ajuste2: linhaKitHTML/deusDetalheHTML foram substituídos pelo renderizador único kitLinhaHTML, que lê
-// data/deuses; deusSkills passou a ler g.ab. O CKIT saiu do caminho do TEXTO — segue definido só como dado morto.)
+// data/deuses; deusSkills passou a ler g.ab. §285: o CKIT foi APAGADO — a fonte é data/deuses direto.)
 function provacaoDetalheHTML(k){
   const g = HRM[k] || {};
   if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Deus inicial — vem com você, sem pergaminho.</p></div>`;

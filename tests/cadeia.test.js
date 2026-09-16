@@ -23,6 +23,11 @@ ok(r.divergencias.some(d => /\[custo\]/.test(d)), 'deveria apontar custo {Chama:
 // e um par idêntico NÃO gera divergência
 const maqOk = [{ key: 'x', ab: [{ slot: 'basico', nome: 'Golpe', cd: 2, cost: { Chama: 2 }, fx: [{ t: 'dmg', v: 15 }] }] }];
 ok(C.conferir(prosa, maqOk).divergencias.length === 0, 'par idêntico não deveria divergir');
+// §285: DENTES no NOME da PASSIVA (o buraco que deixou 7 derivarem) — muda o nome num lado e o checador aponta
+const prosaP = { y: { passiva: { nome: 'Soberano', efeito: 'x' } } };
+const maqPdiverge = [{ key: 'y', passiva: { nome: 'Regente', desc: 'x' } }];
+ok(C.conferir(prosaP, maqPdiverge).divergencias.some(d => /passiva \[nome\]/.test(d)), 'aponta divergência de NOME de passiva');
+ok(C.conferir(prosaP, [{ key: 'y', passiva: { nome: 'Soberano', desc: 'x' } }]).divergencias.length === 0, 'nome de passiva idêntico não diverge');
 console.log(`  divergência sintética: ${r.divergencias.length} apontadas; par idêntico: 0`);
 
 console.log('== §270: DENTES nos METADADOS e nos EIXOS NOVOS (orbe/escudo/combo) — mexa o fx, a build quebra ==');

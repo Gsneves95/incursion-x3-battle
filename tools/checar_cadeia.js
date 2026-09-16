@@ -11,7 +11,7 @@ const fs = require('fs'), path = require('path');
 const raiz = path.join(__dirname, '..');
 const ler = p => fs.readFileSync(path.join(raiz, p), 'utf8');
 
-const SLOTS = ['basico', 'habilidade', 'milagre'];   // defesa é universal (motor); passiva é só prosa
+const SLOTS = ['basico', 'habilidade', 'milagre'];   // defesa é universal (motor); a passiva tem o NOME conferido à parte (§285), não os números
 
 // "2 Chama + 1 livre" / "—" / "" -> { chama:2, livre:1 }  (chaves minúsculas dos dois lados)
 function parseCusto(str) {
@@ -110,6 +110,12 @@ function conferir(prosaByKey, deusesArray) {
     // Provação — projecaoCombate o exclui via TELA_TOPO — então guardá-lo aqui não re-carimba nada.)
     for (const [campo, dv, kv] of [['faccao', g.faccao, p.faccao], ['elem', g.elem, p.elemento], ['classe', g.classe, p.tipo], ['funcao', g.funcao, p.funcao], ['arquetipo', g.arquetipo, p.arquetipo]])
       reg(g.key, '·', campo, String(dv) === String(kv) ? 'match' : 'diverge', `motor "${dv}" ≠ prosa "${kv}"`);
+    // §285: o NOME da PASSIVA — o jogador o lê no botão P (§266). DUPLICADO nos dois catálogos e SEM guarda até
+    // aqui (por isso 7 derivaram sem ninguém ver — mesmo buraco do arquetipo/§282, mesma função). Entra na cadeia:
+    // muda um lado e a build QUEBRA. FORA do carimbo (projecaoCombate strippa passiva.nome via TELA_PASS; e o hash
+    // lê data/deuses, nunca o kits.json que se reconcilia) → guardá-lo aqui não re-carimba nenhuma Provação.
+    if (g.passiva && p.passiva)
+      reg(g.key, 'passiva', 'nome', String(g.passiva.nome || '') === String(p.passiva.nome || '') ? 'match' : 'diverge', `motor "${g.passiva.nome}" ≠ prosa "${p.passiva.nome}"`);
     for (const slot of SLOTS) {
       const ab = (g.ab || []).find(a => a.slot === slot), ps = p[slot];
       if (!ab || !ps) continue;
