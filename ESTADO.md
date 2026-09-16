@@ -2,13 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ SELEÇÃO §287 — single-source do painel de kit: uma redação por habilidade no jogo inteiro. Fecha a pergunta de abertura. Só tela/teste.
+
+O achado do §286: `src/ui/selecao.js` (painel ao tocar um deus na seleção de time) exibia o `kit.efeito` do kits.json — 2ª redação, a dois toques da Coleção, p/ a mesma habilidade. **Feito:** `painelKitHTML` passa a ler **`GODS[k]`** (data/deuses) — `a.nome/cost/cd/desc` e `passiva.desc`, a MESMA fonte da Coleção (home.js) e do motor; o `KITMAP` (kits.json) foi **apagado** do selecao.js. **NÃO reusei o `kitLinhaHTML`** (§284-ajuste2): ele solda as classes `col2k__` do home — reusá-lo importaria a casca do home; compartilho a FONTE, não o markup, e a casca `krow` da seleção fica dela (o §284 ensinou: duplica a LINHA, não a tela).
+
+**grep, não crença:** depois da troca, `grep '\.efeito' src/` só acha `u.efeitos` (efeitos ativos em combate) e `c/e.efeito` (tipo no log) — **nenhuma tela lê o kits.efeito.** (O `const KITS=` injetado no bundle ficou sem leitor em runtime → vestigial; a cadeia lê o kits.json do disco. Remover a injeção é follow-up barato, como o CKIT.)
+
+**Medição — 0 dano muda (pedido do dono, a lista antes):** dos 400 pares, 57 diferem em redação, 23 mexem no conjunto de inteiros — **nenhum valor de dano muda.** 18 são fraseado (contagem de alvo "a 1 inimigo"→"o alvo", duração, relativo→absoluto). **5 são cláusula VERDADEIRA que o painel escondia** (odin +6 marcados, susanoo "Gera 2 Combo" ×2, change "recarga 2 c/ Hou Yi", boto "NOITE +1 turno") — o kits.efeito estava INCOMPLETO; a troca REVELA efeito real (bate o motor, §286), não inventa. Melhora, não regressão.
+
+**Fontes reais (Chromium, Rajdhani 11px, sonda 320px = largura do painel a 390, 400 descrições):** overflow horizontal **0px** (nada corta de lado); linha mais alta = babi.milagre (3 linhas, 45px); maior crescimento = ares.passiva (1→2 linhas, +15px). `.krow__t` sem clamp + `.kbox__b` `overflow-y:auto` → o texto canônico reflui e o painel rola (§282). **Nada corta.**
+
+**Babá (`interface.test.js`):** com tyr (kits "12 de dano a 1 inimigo." × deuses "Grátis. 12 de dano."): o painel mostra o deuses.desc (não o kits); a Coleção mostra a MESMA linha; muda-se a FONTE (`GODS[tyr].ab.desc`) e as DUAS telas mudam juntas.
+
+**RESPOSTA À PERGUNTA DE ABERTURA ("o básico deu mais que 15"):** TODA tela que mostra número de dano — batalha (motor), Coleção, seleção, botão-P — lê a MESMA fonte (`deuses.desc`), e essa fonte é conferida contra o motor pela cadeia (§286, falha-alto). Deixou de depender de medição pontual: se um número exibido divergir do motor, a **build quebra**. É a diferença entre auditoria e guarda. Ver DECISOES §287.
+
+**Arquivos:** `src/ui/selecao.js`, `tests/interface.test.js`. Suíte (46) + build verdes.
+
 ## ★ CADEIA §286 — o guarda passa a conferir o TEXTO QUE O JOGADOR LÊ (`deuses.desc`), não um arquivo invisível. Só guarda/teste.
 
 A cadeia extraía os NÚMEROS da prosa do **kits.json** e comparava ao `fx`; o jogador lê **`deuses.desc`** desde §271/§284-ajuste2. O guarda protegia um arquivo, não a tela. **Feito:** (1) a extração migrou p/ ler **`ab.desc` ↔ `ab.fx`** (os dois do data/deuses); (2) uma função só (`conferirNumeros`) serve ação E passiva → a **passiva ganhou os números** (não só o nome §285); (3) a ESTRUTURA (nome/custo/recarga/facção/elem/classe/função/arquétipo/passiva-nome) segue conferida kits.json↔data/deuses. Cadeia 1792→**2021 conf**, naoConf 4.9%.
 
 **Medição antes de aplicar (pedido do dono):** **0 divergências reais desc↔fx** nos 100 — a tela NÃO mente sobre o dano. A única que apareceu (`shutendoji.passiva` cura condicional 6/10) é convenção, não mentira: cura multi/condicional agora vira `naoConf` como o dano já fazia (§92/§118).
 
-**ACHADO — corrige o §285:** os "40+17 display-morto" **NÃO estão mortos.** `src/ui/selecao.js` (`painelKitHTML`, painel que abre ao tocar um deus na seleção, `KITMAP`=kits.json) **exibe `kit.efeito`** — 2ª tela de dano, sem guarda. Dos 57 pares que diferem em redação, 3 tropeçam no extrator (babi/houyi/nezha) mas são **artefato de parser** (mesmo número, o regex exige "de dano"). Nenhuma tela mostra número diferente hoje, mas nada obriga. **Aberto (decisão de tela do dono):** single-source o `selecao.js` p/ ler `deuses.desc` (como o home.js §284-ajuste2) — reescreve 57 painéis p/ a redação canônica (mesmos números) e mata o `kits.efeito` como exibição. Não fiz sozinho (muda texto exibido de 57 ações).
+**ACHADO — corrige o §285:** os "40+17 display-morto" **NÃO estão mortos.** `src/ui/selecao.js` (`painelKitHTML`, painel que abre ao tocar um deus na seleção, `KITMAP`=kits.json) **exibe `kit.efeito`** — 2ª tela de dano, sem guarda. Dos 57 pares que diferem em redação, 3 tropeçam no extrator (babi/houyi/nezha) mas são **artefato de parser** (mesmo número, o regex exige "de dano"). Nenhuma tela mostra número diferente hoje, mas nada obriga. → ✅ **FECHADO §287** (selecao.js passou a ler `deuses.desc`; KITMAP apagado; medido: 0 dano muda; babá em interface.test.js).
 
 **Latente fechado:** **god `nome`** entrou na cadeia (0 derivam, mas duplicado/sem guarda). §263 OK: `nome ∈ TELA_TOPO` → strippado da projeção, hash lê data/deuses → 0 re-carimbo. **Babá (pedido do dono):** muda um número no `desc` sem tocar no `fx` → build QUEBRA (teste em `cadeia.test.js`; dentes do §270 remontados p/ o par desc↔fx).
 

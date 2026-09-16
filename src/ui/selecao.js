@@ -5,7 +5,6 @@ const SB_GEMA=(SB_ECON.recompensas&&SB_ECON.recompensas.vitoria&&SB_ECON.recompe
 const SB_TETO=SB_ECON.tetoDia||0;
 const POR_PAG=30;
 const RMAP={}; ROSTER.forEach(e=>RMAP[e.key]=e);
-const KITMAP={}; if(typeof KITS!=='undefined')KITS.forEach(k=>KITMAP[k.key]=k);   // kit de design dos 100
 const temKit=k=>!!GODS[k];
 let pagina=0, filtro=0, tocado=null, vez=0, tudoLiberado=false;   // abre em LIBERADOS
 let focoPk=null;   // deus com o painel de kit aberto na seleção
@@ -95,13 +94,20 @@ function painelFiltroHTML(){
 }
 
 /* ---- painel do kit (1 toque em qualquer deus, inclusive bloqueado) ---- */
+// §287: LÊ data/deuses (`GODS[k]`), a MESMA fonte da Coleção (home.js) e do motor — não mais o `kit.efeito`
+// do kits.json. Uma redação por habilidade no jogo inteiro. A CASCA é desta tela (classes `krow`): não reuso o
+// `kitLinhaHTML` do §284-ajuste2 porque ele solda as classes `col2k__` do home — reusá-lo importaria a casca do
+// home p/ cá, a inversão que o §284 alertou ("o que duplica é a LINHA, não a tela"). Então compartilho a FONTE
+// (os campos de data/deuses: nome/cost/cd/desc), não o markup; a babá (`pvp_tela`) trava que as duas telas
+// mostram a MESMA linha p/ o mesmo deus. custo/recarga saem do `a.cost`/`a.cd` (objeto do motor), não do texto.
 function painelKitHTML(){
   if(!focoPk)return '';
-  const k=focoPk, g=RMAP[k], kit=KITMAP[k], liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
+  const k=focoPk, g=RMAP[k], kd=(typeof GODS!=='undefined'&&GODS[k])||null, liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
+  const ab={}; if(kd)(kd.ab||[]).forEach(a=>ab[a.slot]=a);
   const rar=(typeof RARIDADE!=='undefined'&&RARIDADE[k])||'';
   const linha=(rot,a)=>a?`<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
-      <span class="krow__meta">${pipsDetalhe(custoParaCost(a.custo))}${a.recarga?`<span class="krow__cd">recarga ${a.recarga}</span>`:''}</span></div>
-      <div class="krow__t">${H(a.efeito)}</div></div>`:'';
+      <span class="krow__meta">${pipsDetalhe(a.cost||{})}${a.cd?`<span class="krow__cd">recarga ${a.cd}</span>`:''}</span></div>
+      <div class="krow__t">${H(a.desc)}</div></div>`:'';
   let acao;
   if(dono!==null) acao=`<button class="b b--danger b--md" id="kitdel">Remover (J${dono+1})</button>`;
   else if(!liv) acao=`<button class="b b--quiet b--md" disabled>Bloqueado</button>`;
@@ -115,8 +121,8 @@ function painelKitHTML(){
         <span class="kbox__sub">${H(g.faccao)} · ${H(ELAB[g.elem])} · ${H(g.classe)} · ${H(g.funcao)}</span></div>
       <span class="push">${acao}<button class="b b--quiet b--md" id="kitclose">Fechar</button></span></div>
     <div class="kbox__b">
-      ${kit?`${linha('BÁS',kit.basico)}${linha('HAB',kit.habilidade)}${linha('MIL',kit.milagre)}
-        ${kit.passiva?`<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kit.passiva.nome)}</b></div><div class="krow__t">${H(kit.passiva.efeito)}</div></div>`:''}`
+      ${kd?`${linha('BÁS',ab.basico)}${linha('HAB',ab.habilidade)}${linha('MIL',ab.milagre)}
+        ${kd.passiva?`<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kd.passiva.nome)}</b></div><div class="krow__t">${H(kd.passiva.desc)}</div></div>`:''}`
       :`<div class="krow"><div class="krow__t">Kit em produção.</div></div>`}
       ${!liv?`<div class="kbox__lock">⚿ Bloqueado — desbloqueie pela Provação ou por invocação. O kit é leitura pública mesmo assim.</div>`:''}
     </div></div></div>`;

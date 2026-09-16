@@ -83,6 +83,31 @@ console.log('== 1. seleção: grade de coleção ==');
   ok(w.eval('pick[0]').length === 0, 'abrir o kit de um bloqueado não adiciona');
   tap($('#kitclose')); ok(!$('#kpanel'), 'Fechar deveria fechar o painel');
 
+  // §287 — o painel da SELEÇÃO lê data/deuses (a MESMA fonte da Coleção), NÃO mais o kits.efeito.
+  // tyr é inicial e diverge entre as fontes: kits.efeito "12 de dano a 1 inimigo." × deuses.desc "Grátis. 12 de dano."
+  {
+    const alvo = 'tyr';
+    w.eval(`previewPk("${alvo}");renderPick()`);
+    const descBas = w.eval(`(GODS['${alvo}'].ab.find(a=>a.slot==='basico')||{}).desc`);
+    const linhas = $$('#kpanel .krow__t').map(e => e.textContent.trim());
+    ok(linhas.includes(descBas), 'seleção: o básico mostra o deuses.desc (lê data/deuses)');
+    ok(/Grátis/.test($('#kpanel').textContent) && !/a 1 inimigo/.test($('#kpanel').textContent),
+      'seleção: mostra a redação do data/deuses, NÃO a do kits.efeito');
+    // a MESMA linha que a Coleção — colOverlayHTML (home.js) lê o mesmo GODS[k].ab[].desc
+    const ov = new w.DOMParser().parseFromString(w.eval(`colOverlayHTML("${alvo}")`), 'text/html');
+    const efsCol = [...ov.querySelectorAll('.col2k__ef')].map(e => e.textContent.trim());
+    ok(efsCol.includes(descBas), 'Coleção e Seleção mostram a MESMA linha para o mesmo deus');
+    // babá: muda a FONTE (data/deuses) e as DUAS telas mudam juntas
+    const orig = descBas;
+    w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc='SENTINELA287 zzz'`);
+    w.eval(`previewPk("${alvo}");renderPick()`);
+    const selMudou = /SENTINELA287/.test($('#kpanel').textContent);
+    const colMudou = /SENTINELA287/.test(w.eval(`colOverlayHTML("${alvo}")`));
+    ok(selMudou && colMudou, 'uma fonte, duas telas: mudar o deuses.desc muda Seleção E Coleção juntas');
+    w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc=${JSON.stringify(orig)}`);
+    tap($('#kitclose'));
+  }
+
   // volta ao filtro de liberados para montar time
   tap($('#bfiltro')); tap($$('[data-fe]')[0]); tap($('#ffechar'));
   ok(/liberados/i.test($('#bfiltro').textContent), 'deveria voltar ao estado Liberados');

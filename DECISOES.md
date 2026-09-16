@@ -6,6 +6,61 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §287 — single-source do painel da SELEÇÃO: uma redação por habilidade no jogo inteiro. Fecha a pergunta de abertura.
+
+O achado do §286: `src/ui/selecao.js` (o painel que abre ao tocar um deus na seleção de time) exibia o
+`kit.efeito` do kits.json — uma SEGUNDA redação, a dois toques da Coleção, para a MESMA habilidade. Não era
+custo reescrever: era o conserto.
+
+**Feito.** O `painelKitHTML` passa a ler **`GODS[k]`** (data/deuses) — `a.nome`/`a.cost`/`a.cd`/`a.desc` das
+ações e `passiva.desc` — a MESMA fonte da Coleção (`home.js`) e do motor. O `KITMAP` (kits.json) foi **apagado**
+do selecao.js (produtor sem consumidor, §285/§95).
+
+**kitLinhaHTML: NÃO reusei — reportado.** O renderizador único do §284-ajuste2 solda as classes `col2k__` (a
+casca do home). Reusá-lo importaria a casca do home para o painel da seleção — a inversão que o §284 alertou ("o
+que duplica é a LINHA, não a tela"). Então compartilho a **FONTE** (os campos de data/deuses), não o markup; a
+casca `krow` da seleção fica dela. A babá trava que as duas telas mostram a mesma linha — é isso que impede a
+volta da deriva, não um renderizador comum.
+
+**grep, não crença (foi assim que o §285 errou).** Depois da troca, `grep -rn '\.efeito' src/`: sobram só
+`u.efeitos` (array de efeitos ativos da unidade em combate) e `c.efeito`/`e.efeito` (TIPO de efeito no log/
+consequência) — **nenhuma leitura da prosa de kit**. **Nenhuma tela lê o `kits.efeito`.** (O `const KITS=` que o
+build injeta no bundle ficou sem leitor em runtime → vestigial; a cadeia lê o `data/kits.json` do disco, não o
+global. Remover a injeção é follow-up barato, como o CKIT foi de §284-ajuste2→§285.)
+
+**MEDIÇÃO antes de aplicar (o dono: "nenhum NÚMERO muda; número diferente é regressão e eu quero a lista antes").**
+Comparei TODO inteiro dos 400 pares kits.efeito↔deuses.desc: **0 valor de dano muda.** 57 diferem em redação; 23
+mexem no conjunto de inteiros, e os 23 se explicam sem regressão:
+- **18 são fraseado:** contagem de alvo ("a 1 inimigo" → "o alvo"/omitido), duração ("+8" → "+8 por 2 turnos"),
+  relativo→absoluto (houyi: "+3 contra Aurora" → "8 contra Aurora" — mesmo 5+3=8), ou clarificador removido
+  (apolo: "HP cheio (100)" → "HP cheio"). Nenhuma magnitude de dano muda.
+- **5 são cláusula VERDADEIRA que o painel escondia** — o kits.efeito estava INCOMPLETO: `odin.passiva` (+6 vs
+  marcados), `susanoo.basico`/`.habilidade` ("Gera 2 de Combo"), `change.habilidade` ("com Hou Yi, recarga 2"),
+  `boto.habilidade` ("na NOITE, +1 turno"). Cada uma bate o motor (§286: deuses.desc↔fx = 0). Ou seja: a troca
+  não inventa número — **revela** efeito real que a tela de seleção sonegava. É melhora, não regressão.
+
+**MEDIÇÃO com FONTES REAIS (Chromium, Rajdhani 11px/1.35, caixa-sonda na largura real do painel a 390 ≈ 320px,
+400 descrições):** **overflow horizontal 0px** (nada corta de lado — tudo quebra linha); linha mais alta depois =
+`babi.milagre` (3 linhas, 45px); maior crescimento antes→depois = `ares.passiva` (1→2 linhas, +15px). O
+`.krow__t` não tem clamp/ellipsis/altura-fixa e o `.kbox__b` é `overflow-y:auto` → o texto canônico (mais longo)
+**reflui e o painel rola** (mesma decisão do §282, o painel-leitor). **Nada corta.**
+
+**Babá (`tests/interface.test.js`):** com `tyr` (kits.efeito "12 de dano a 1 inimigo." × deuses.desc "Grátis. 12
+de dano."): (1) o painel mostra o deuses.desc e NÃO a redação do kits; (2) a Coleção (`colOverlayHTML`) mostra a
+MESMA linha; (3) muda-se a FONTE (`GODS[tyr].ab.desc`) e as DUAS telas mudam juntas. Uma fonte, duas telas.
+
+**A RESPOSTA À PERGUNTA QUE ABRIU A SESSÃO — "o básico deu mais que 15".** Com este corte, **TODA tela que mostra
+número de dano** — batalha (motor), Coleção (deuses.desc), seleção de time (deuses.desc), botão-P da passiva
+(deuses.desc) — lê a MESMA fonte, e essa fonte é **conferida contra o motor** pela cadeia (§286: deuses.desc↔fx =
+0, falha-alto). A pergunta deixou de depender de medição pontual: se qualquer número exibido divergir do motor, a
+**build quebra**. Não é "medi e batia" — é "não pode passar sem bater". Essa é a diferença entre uma auditoria e
+um guarda (a lição do §286).
+
+**Arquivos:** `src/ui/selecao.js` (lê data/deuses; KITMAP apagado), `tests/interface.test.js` (babá §287). Suíte
+(46) + build verdes.
+
+---
+
 ## §286 — a cadeia passa a conferir o TEXTO QUE O JOGADOR LÊ (deuses.desc), não um arquivo que ninguém vê.
 
 O item que vale mais que os três do §285 somados. A cadeia extraía os NÚMEROS da prosa do **kits.json** e os
