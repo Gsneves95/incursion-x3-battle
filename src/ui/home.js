@@ -868,6 +868,7 @@ const COL_FUNCOES = ['Atacante', 'Suporte', 'Controlador', 'Guardião', 'Manipul
 // como DOIS seletores distintos e rotulados — não poluem porque cada um é curto e diz o que filtra.
 let colSel = null;   // deus selecionado no painel (null = repouso; §284: começa nulo, o jogador não escolheu)
 let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada) — lido pelo voltar do Android (§240)
+let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobreposição (abre no BÁSICO — decisão do dono)
 let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
@@ -1005,34 +1006,64 @@ function colPainelHTML(k){
 
 // SOBREPOSIÇÃO (§284): o kit COMPLETO sobre a Coleção, fundo desfocado, tocar no fundo fecha. Não é rota —
 // é DOM irmão do #baselayer, inserido/removido cirurgicamente (a grade não re-renderiza → rolagem preservada).
+// §288 — a SOBREPOSIÇÃO refeita do mockup: retrato à esquerda (sangra), e à direita nome+epíteto+tags+posse,
+// divisor HABILIDADES, e um SELETOR de 4 ícones + a CAIXA de detalhe do slot escolhido (abre no BÁSICO). O texto
+// vem de data/deuses (§286/§287): `g.ab[].{nome,cost,cd,desc}` e `g.passiva.{nome,desc}` — nunca kits.json.
+function colVerChipHTML(k, s, sel){
+  const nome = s.a ? s.a.nome : '—';
+  return `<button class="col2ov__sk ${s.slot === sel ? 'is-sel' : ''}" data-versel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(nome)}">
+    <span class="col2ov__skrot">${s.tipo}</span>
+    <span class="col2ov__skart">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
+    <span class="col2ov__sknome">${H(nome)}</span>
+  </button>`;
+}
+function colVerDetalheHTML(k, g, sel){
+  const sks = deusSkills(g);
+  const s = sks.find(x => x.slot === sel && x.a) || sks.find(x => x.a);
+  if (!s || !s.a) return `<div class="col2ov__detvazio">Kit em produção.</div>`;
+  const a = s.a;
+  // custo/recarga com o vocabulário QUE JÁ EXISTE: `pipsDetalhe` diz SEM CUSTO; a linha do kit diz "sem recarga"
+  // (§288: seguir o que existe, não inventar). A passiva não gasta a ação → sem chip de custo/recarga.
+  const meta = s.slot === 'passiva'
+    ? `<span class="col2ov__chip col2ov__chip--pas">passiva · não gasta a ação</span>`
+    : `<span class="col2ov__chip">${pipsDetalhe(a.cost || {})}</span><span class="col2ov__chip col2ov__chip--cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span>`;
+  return `<span class="col2ov__detart">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
+    <div class="col2ov__detbody">
+      <div class="col2ov__detcab"><b class="col2ov__detnome">${H(a.nome)}</b><span class="col2ov__dettipo">${s.tipo}</span>${meta}</div>
+      <div class="col2ov__deftxt">${realce(a.desc || '')}</div>
+    </div>`;
+}
 function colOverlayHTML(k){
-  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k), ab = {};
-  (g.ab || []).forEach(a => ab[a.slot] = a);
+  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
+  const sks = deusSkills(g);
   const posse = tem
-    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
-    : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
+    ? `<span class="col2ov__posse col2ov__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
+    : `<span class="col2ov__posse col2ov__posse--nao">Não possuído</span>`;
+  // §288: a CITAÇÃO é conteúdo do dono (uma frase por deus em `g.frase`, data/deuses), NÃO inventada. Reservada
+  // como o painel de mecânica do §252: sem frase, o espaço SOME (nada renderiza). Hoje nenhum deus tem `frase`.
+  const cite = g.frase ? `<p class="col2ov__cite">“${H(g.frase)}”</p>` : '';
   return `<div class="col2ov" id="col2ov">
     <div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
-      <button class="col2ov__x" id="col2ovx" aria-label="Fechar">×</button>
-      <div class="col2ov__head">
-        <span class="col2ov__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 52)}</span>
-        <div class="col2ov__id">
-          <div class="col2ov__toprow"><h2 class="col2ov__nome">${H(colNome(k))}</h2><span class="col2p__rar col2p__rar--${rar}">${rar}</span></div>
-          ${g.arquetipo ? `<p class="col2ov__arq">${H(g.arquetipo)}</p>` : ''}
-          <div class="col2p__ident">
-            <span class="col2p__tag col2p__tag--cult">${H(g.faccao || '')}</span>
-            <span class="col2p__tag" style="border-color:${COR(g.elem)};color:${COR(g.elem)}">${H(g.elem || '')}</span>
-            <span class="col2p__tag">${H(g.classe || '')}</span>
-            <span class="col2p__tag">${H(g.funcao || '')}</span>
-          </div>
-          ${posse}
-        </div>
+      <div class="col2ov__retrato">
+        ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
+        ${tem ? '' : '<span class="col2ov__falta">Você não possui</span>'}
       </div>
-      <div class="col2ov__kit">
-        ${kitLinhaHTML('BÁSICO', ab.basico)}
-        ${kitLinhaHTML('HABILIDADE', ab.habilidade)}
-        ${kitLinhaHTML('MILAGRE', ab.milagre)}
-        ${kitLinhaHTML('PASSIVA', g.passiva, true)}
+      <div class="col2ov__conteudo">
+        <span class="col2p__rar col2p__rar--${rar} col2ov__rar">${rar}</span>
+        <button class="col2ov__x" id="col2ovx" aria-label="Fechar">×</button>
+        <h2 class="col2ov__nome">${H(colNome(k))}</h2>
+        ${g.arquetipo ? `<p class="col2ov__arq">${H(g.arquetipo)}</p>` : ''}
+        <div class="col2ov__ident">
+          <span class="col2ov__tag">${H(g.faccao || '')}</span>
+          <span class="col2ov__tag col2ov__tag--el" style="--c:${COR(g.elem)}">${H(g.elem || '')}</span>
+          <span class="col2ov__tag">${H(g.classe || '')}</span>
+          <span class="col2ov__tag">${H(g.funcao || '')}</span>
+        </div>
+        ${posse}
+        <div class="col2ov__div"><span>HABILIDADES</span></div>
+        <div class="col2ov__sks">${sks.map(s => colVerChipHTML(k, s, colVerSel)).join('')}</div>
+        <div class="col2ov__det" id="col2ovdet">${colVerDetalheHTML(k, g, colVerSel)}</div>
+        ${cite}
       </div>
     </div>
   </div>`;
@@ -1041,13 +1072,24 @@ function colOverlayHTML(k){
 // INERTE enquanto ela está aberta (INV 16 / §210). `colVer` guarda o estado para o voltar do Android (§240).
 function colAbrirVer(k){
   if (!k) return;
-  colVer = k;
+  colVer = k; colVerSel = 'basico';   // §288: a caixa abre sempre no BÁSICO
   const base = stage.querySelector('#baselayer'); if (base) base.setAttribute('inert', '');
   const velho = stage.querySelector('#col2ov'); if (velho) velho.remove();
   const wrap = document.createElement('div'); wrap.innerHTML = colOverlayHTML(k);
   const ov = wrap.firstElementChild; stage.appendChild(ov);
   ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha
   const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
+  colVerLigarChips(ov, k);   // §288: os 4 ícones trocam a caixa de baixo (cirúrgico — não re-renderiza a grade)
+}
+// §288: tocar num ícone troca SÓ a caixa de detalhe (e o realce do chip). Sem render → preserva grade/rolagem.
+function colVerLigarChips(ov, k){
+  const g = colG(k);
+  [...ov.querySelectorAll('.col2ov__sk[data-versel]')].forEach(b => b.onclick = () => {
+    if (b.disabled) return;
+    colVerSel = b.dataset.versel;
+    [...ov.querySelectorAll('.col2ov__sk')].forEach(c => c.classList.toggle('is-sel', c === b));
+    const det = ov.querySelector('#col2ovdet'); if (det) det.innerHTML = colVerDetalheHTML(k, g, colVerSel);
+  });
 }
 function colFecharVer(){
   colVer = null;

@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §288 — a SOBREPOSIÇÃO de detalhe refeita do mockup: seletor de 4 ícones + caixa de detalhe. Só tela/teste.
+
+Mockup aprovado. Retrato à esquerda (sangra), à direita nome+epíteto(=`arquetipo` §282)+4 tags+posse, divisor HABILIDADES, **fileira de 4 ícones** (básico/habilidade/milagre/passiva) + a **caixa de detalhe** do slot; tocar num ícone troca a caixa (abre no **BÁSICO**). Antes empilhava as 4 linhas. Troca cirúrgica (só a caixa+realce do chip) → grade não re-renderiza, rolagem/seleção preservadas (§284).
+
+**Fonte data/deuses sempre** (§286/§287): `g.ab[].{nome,cost,cd,desc}` + `g.passiva.{nome,desc}`, nunca kits.json; `realce()` dá o dourado. **Reuso:** compartilho `deusSkills(g)` (dados) com a rota 'deus'; casca própria do overlay (`col2ov__sk/__det`) porque a ordem do chip difere (rótulo ACIMA, nome ABAIXO) — §287: compartilhar fonte, não casca. **Só o ELEMENTO colorido** nas tags (`--c`=cor do elemento), os outros 3 neutros.
+
+**Vocabulário custo/recarga: o que JÁ EXISTE** — `pipsDetalhe` diz "SEM CUSTO" (maiúsc.), a linha de kit diz "sem recarga" (minúsc.); tirei o `text-transform` do chip p/ o case vir da string. Igual à referência. Nada inventado. **Arte dos ícones: 400/400 existem** (`web/skills/skill-<deus>-<slot>.webp`) → arte real, não placeholder; `slot()` tem `onerror` (sem 404). **Citação:** campo NÃO existe (varri os 100). Reservei `g.frase` (conteúdo do dono) e renderizo condicional — sem frase o espaço SOME (§252); hoje nunca aparece. NÃO inventei. **Maestria FORA** (§284).
+
+**Geometria (medida):** ref ~1.8:1, palco 951×428 (~2.22:1); altura é o gargalo → preenchi a largura (margem fina) preservando o split interno (retrato **38%**/conteúdo **62%**), não casei a proporção (desperdiçaria metade). Card **897×394**. **Fontes reais (Chromium, rede bloqueada; corte invariante à escala → vale no piso 780):** nome **0/100** corta; arquetipo mais longo (baldur "Protetor quase-invulnerável") cabe; efeito **0/100** (envolve+rola); **nomes de habilidade no chip: 38/100 deuses têm ≥1 com reticências** (pior hel +27px) — **reportado, NÃO consertado** (rótulo+ícone desambiguam; nome completo na caixa ao tocar). **Desvio consciente:** selo de raridade segue o do jogo (§282), não o pentágono roxo do mockup (não criar 2º vocabulário).
+
+**Babás (`colecao_tela.test.js` §7/§7c):** 4 ícones; abre no básico; tocar troca a caixa; lê data/deuses (muda fonte→muda caixa); citação some sem frase / aparece com `g.frase`; toda arte tem `onerror` (sem 404); sem maestria. **Capturas** `docs/capturas-288/` (básico, passiva, não-possuído). Ver DECISOES §288. **Arquivos:** `src/ui/home.js`, `src/shell.html`, `tests/colecao_tela.test.js`, `tests/interface.test.js`. Suíte (46)+build verdes.
+
 ## ★ SELEÇÃO §287 — single-source do painel de kit: uma redação por habilidade no jogo inteiro. Fecha a pergunta de abertura. Só tela/teste.
 
 O achado do §286: `src/ui/selecao.js` (painel ao tocar um deus na seleção de time) exibia o `kit.efeito` do kits.json — 2ª redação, a dois toques da Coleção, p/ a mesma habilidade. **Feito:** `painelKitHTML` passa a ler **`GODS[k]`** (data/deuses) — `a.nome/cost/cd/desc` e `passiva.desc`, a MESMA fonte da Coleção (home.js) e do motor; o `KITMAP` (kits.json) foi **apagado** do selecao.js. **NÃO reusei o `kitLinhaHTML`** (§284-ajuste2): ele solda as classes `col2k__` do home — reusá-lo importaria a casca do home; compartilho a FONTE, não o markup, e a casca `krow` da seleção fica dela (o §284 ensinou: duplica a LINHA, não a tela).

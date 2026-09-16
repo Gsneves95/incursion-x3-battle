@@ -93,10 +93,10 @@ console.log('== 1. seleção: grade de coleção ==');
     ok(linhas.includes(descBas), 'seleção: o básico mostra o deuses.desc (lê data/deuses)');
     ok(/Grátis/.test($('#kpanel').textContent) && !/a 1 inimigo/.test($('#kpanel').textContent),
       'seleção: mostra a redação do data/deuses, NÃO a do kits.efeito');
-    // a MESMA linha que a Coleção — colOverlayHTML (home.js) lê o mesmo GODS[k].ab[].desc
-    const ov = new w.DOMParser().parseFromString(w.eval(`colOverlayHTML("${alvo}")`), 'text/html');
-    const efsCol = [...ov.querySelectorAll('.col2k__ef')].map(e => e.textContent.trim());
-    ok(efsCol.includes(descBas), 'Coleção e Seleção mostram a MESMA linha para o mesmo deus');
+    // a MESMA linha que a Coleção — a sobreposição (home.js, §288) abre no básico e lê o mesmo GODS[k].ab[].desc
+    const ov = new w.DOMParser().parseFromString(w.eval(`colVerSel='basico'; colOverlayHTML("${alvo}")`), 'text/html');
+    const efCol = ((ov.querySelector('.col2ov__deftxt') || {}).textContent || '').trim();
+    ok(efCol === descBas, 'Coleção e Seleção mostram a MESMA linha para o mesmo deus');
     // babá: muda a FONTE (data/deuses) e as DUAS telas mudam juntas
     const orig = descBas;
     w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc='SENTINELA287 zzz'`);

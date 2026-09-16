@@ -1462,30 +1462,74 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:var(--ouro-grad);border:none;border-radius:9px}
 .col2p__ver:active{transform:translateY(1px)}
 
-/* §284 — SOBREPOSIÇÃO do kit: fundo desfocado sobre a Coleção, tocar no fundo fecha (o card intercepta o toque).
-   Cobre o #stage (inset:0 no ancestral com transform). O kit rola dentro do card; o resto é fixo. */
-.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:14px;
+/* §288 — SOBREPOSIÇÃO refeita (mockup): card LANDSCAPE, retrato à esquerda (sangra até a moldura), conteúdo à
+   direita com nome+epíteto+tags+posse, divisor HABILIDADES, seletor de 4 ícones + caixa de detalhe do slot.
+   Fundo desfocado; tocar no fundo fecha (o card intercepta). Geometria: palco 951×428, a altura é o gargalo →
+   o card preenche a largura (margem fina) preservando o split interno do mockup (retrato ~38% / conteúdo ~62%),
+   em vez de casar a proporção 1.8:1 da referência (que desperdiçaria metade da largura). */
+.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:12px;
   background:rgba(6,5,14,.6);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
-.col2ov__card{position:relative;width:min(560px,92%);max-height:calc(100% - 8px);display:flex;flex-direction:column;
-  padding:15px 16px 14px;overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
+.col2ov__card{position:relative;display:flex;width:min(920px,97%);height:min(408px,calc(100% - 8px));
+  overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
   background:linear-gradient(180deg,rgba(28,23,52,.98),rgba(12,10,26,.99));box-shadow:0 0 0 1px rgba(255,217,122,.12),0 18px 50px rgba(0,0,0,.6)}
 .col2ov--falta{border-color:#39335a;border-style:dashed}
-.col2ov__x{position:absolute;top:9px;right:11px;z-index:2;width:26px;height:26px;cursor:pointer;display:grid;place-items:center;
-  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:16px;line-height:1}
+/* retrato à esquerda, sangrando; véu à direita p/ o texto respirar sobre a arte */
+.col2ov__retrato{flex:0 0 38%;position:relative;overflow:hidden;background:#0b0a18}
+.col2ov__retrato .slot,.col2ov__retrato .slot img{width:100%;height:100%}
+.col2ov__retrato .slot img{object-fit:cover;object-position:top center}
+.col2ov__retrato .slot__glyph{position:absolute;inset:0;display:grid;place-items:center}
+.col2ov__retrato::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 60%,rgba(12,10,26,.92) 100%)}
+.col2ov--falta .col2ov__retrato .slot{filter:grayscale(1) brightness(.6)}
+.col2ov__falta{position:absolute;left:10px;bottom:10px;z-index:1;font-family:'Cinzel',serif;font-weight:700;
+  font-size:10px;letter-spacing:.08em;color:#cbb98a;background:rgba(8,6,20,.82);border:1px solid #39335a;border-radius:7px;padding:3px 8px}
+/* conteúdo à direita */
+.col2ov__conteudo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:16px 18px 14px;position:relative}
+.col2ov__x{position:absolute;top:11px;right:12px;z-index:2;width:28px;height:28px;cursor:pointer;display:grid;place-items:center;
+  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:17px;line-height:1}
 .col2ov__x:active{transform:translateY(1px)}
-.col2ov__head{flex:0 0 auto;display:flex;gap:12px;align-items:flex-start;padding-right:32px}
-.col2ov__art{flex:0 0 auto;width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--gold-soft)}
-.col2ov__art .slot{width:72px;height:72px}
-.col2ov--falta .col2ov__art{border-color:#39335a} .col2ov--falta .col2ov__art .slot{filter:grayscale(1) brightness(.62)}
-.col2ov__id{flex:1 1 auto;min-width:0}
-.col2ov__toprow{display:flex;align-items:baseline;gap:8px}
-.col2ov__nome{font-family:'Cinzel',serif;font-weight:700;font-size:19px;color:var(--ink);margin:0;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.col2ov__arq{margin:2px 0 0;font-weight:600;font-style:italic;font-size:12px;color:var(--gold-text);opacity:.85}
-.col2ov__id .col2p__ident{margin-top:6px}
-.col2ov__id .col2p__posse{margin:8px 0 0}
-.col2ov__kit{flex:1 1 auto;min-height:0;overflow-y:auto;margin-top:12px;padding-top:12px;display:flex;flex-direction:column;gap:8px;
-  border-top:1px solid rgba(216,178,90,.2);scrollbar-width:thin}
-.col2ov__kit::-webkit-scrollbar{width:6px} .col2ov__kit::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2ov__rar{position:absolute;top:13px;right:48px;z-index:2}
+.col2ov__nome{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.03em;color:var(--gold-text);
+  margin:2px 82px 0 0;line-height:1.02;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.col2ov__arq{margin:3px 0 0;font-weight:600;font-style:italic;font-size:14px;color:var(--ink-dim)}
+.col2ov__ident{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
+.col2ov__tag{font-weight:700;font-size:11px;letter-spacing:.02em;padding:3px 11px;border-radius:8px;
+  border:1px solid #4a4368;color:var(--ink-dim);background:rgba(20,16,40,.5)}
+.col2ov__tag--el{border-color:var(--c);color:var(--c)}
+.col2ov__posse{display:inline-block;margin:10px 0 0;font-weight:800;font-size:12px;letter-spacing:.03em}
+.col2ov__posse--tem{color:var(--e-Verdejante)} .col2ov__posse--nao{color:var(--ink-mute)}
+.col2ov__div{display:flex;align-items:center;gap:10px;margin:12px 0 9px}
+.col2ov__div::before,.col2ov__div::after{content:'';height:1px;flex:1 1 auto;background:linear-gradient(90deg,transparent,rgba(216,178,90,.45),transparent)}
+.col2ov__div span{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.16em;color:var(--gold-text)}
+.col2ov__sks{flex:0 0 auto;display:flex;gap:9px}
+.col2ov__sk{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;
+  padding:7px 4px;border:1px solid transparent;border-radius:11px;background:transparent}
+.col2ov__sk.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.09);box-shadow:0 0 0 1px rgba(255,217,122,.25),0 0 14px rgba(255,200,90,.15)}
+.col2ov__sk:disabled{opacity:.4;cursor:default}
+.col2ov__skrot{font-family:'Cinzel',serif;font-weight:700;font-size:8.5px;letter-spacing:.1em;color:var(--gold-text)}
+.col2ov__skart{width:54px;height:54px;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid #5a4560}
+.col2ov__sk.is-sel .col2ov__skart{border-color:var(--gold-soft)}
+.col2ov__skart .slot{width:54px;height:54px}
+.col2ov__sknome{font-weight:700;font-size:11px;color:var(--ink-dim);text-align:center;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(216,178,90,.2)}
+.col2ov__detart{flex:0 0 auto;width:66px;height:66px;border-radius:11px;overflow:hidden;border:1px solid var(--gold-soft)}
+.col2ov__detart .slot{width:66px;height:66px}
+.col2ov__detbody{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px}
+.col2ov__detcab{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.col2ov__detnome{font-family:'Cinzel',serif;font-weight:700;font-size:17px;color:var(--ink)}
+.col2ov__dettipo{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.1em;color:var(--gold-soft)}
+/* §288: SEM text-transform — as strings vêm com o CASE que JÁ EXISTE ("SEM CUSTO" do pipsDetalhe em maiúsculas,
+   "sem recarga" da linha de kit em minúsculas), exatamente como a referência escreve. Não criar vocabulário. */
+.col2ov__chip{display:inline-flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.05em;
+  color:var(--ink-dim);background:rgba(20,16,40,.7);border:1px solid #4a4368;border-radius:7px;padding:3px 9px}
+.col2ov__chip .cost{gap:3px} .col2ov__chip .cost__none{font-size:9.5px;color:var(--ink-dim)}
+.col2ov__chip--cd{color:var(--gold-text)}
+.col2ov__chip--pas{color:#b6a8dc;letter-spacing:.02em}
+.col2ov__deftxt{flex:1 1 auto;min-height:0;overflow-y:auto;font-weight:500;font-size:12.5px;line-height:1.42;color:var(--ink-dim);scrollbar-width:thin}
+.col2ov__deftxt::-webkit-scrollbar{width:6px} .col2ov__deftxt::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2ov__detvazio{color:var(--ink-mute);font-size:12px;padding:8px 0}
+.col2ov__cite{flex:0 0 auto;margin:10px 0 0;font-style:italic;font-weight:500;font-size:12px;color:var(--ink-mute);
+  text-align:center;border-top:1px solid rgba(216,178,90,.14);padding-top:8px}
 
 /* DIREITA: barra de filtros (busca + seletores) · abas de cultura · grade rolável */
 .col2__dir{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px}

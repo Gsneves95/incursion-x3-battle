@@ -6,6 +6,68 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §288 — a SOBREPOSIÇÃO de detalhe da Coleção refeita do mockup: seletor de 4 ícones + caixa de detalhe.
+
+Mockup aprovado pelo dono. Retrato à esquerda (sangra), à direita nome+epíteto+tags+posse, divisor HABILIDADES,
+uma fileira de **4 ícones** (básico/habilidade/milagre/passiva) e a **caixa de detalhe** do slot escolhido. A
+interação nova: tocar num ícone troca a caixa (abre no **BÁSICO**). Antes a sobreposição empilhava as 4 linhas.
+
+**Fonte: data/deuses, sempre** (§286/§287) — `g.ab[].{nome,cost,cd,desc}` e `g.passiva.{nome,desc}`, nunca
+kits.json. A caixa usa `realce()` (o mesmo do jogo — "Queimadura" sai em dourado, como no mockup).
+
+**Reuso reportado:** compartilho a FUNÇÃO DE DADOS `deusSkills(g)` (quais slots, lidos de data/deuses) com a rota
+'deus'; **não** reusei o markup `.dsk`/`.ddet` da rota porque a ordem difere — o mockup quer **rótulo ACIMA do
+ícone e nome ABAIXO**, o `.dsk` tem nome-depois-tipo. Casca própria do overlay (`col2ov__sk`/`col2ov__det`),
+como o §287 ensinou (compartilhar a fonte, não a casca). Troca cirúrgica (só a caixa + o realce do chip) → a
+grade não re-renderiza, rolagem/seleção preservadas (§284).
+
+**Vocabulário de custo/recarga: o QUE JÁ EXISTE** (o dono: "siga o que existe"). `pipsDetalhe` já emite
+**"SEM CUSTO"** (maiúsculas) p/ custo zero; a linha de kit já emite **"sem recarga"** (minúsculas) p/ recarga
+zero — exatamente o que a referência escreve. Tirei o `text-transform` do chip p/ o case vir da string, não do
+CSS. Nada inventado.
+
+**Arte dos 4 ícones — MEDIDO: 400/400 existem** (`web/skills/skill-<deus>-<slot>.webp`, 100 × 4 slots + 1
+`skill-defesa`). A fileira é arte REAL em todo deus, não placeholder — a preocupação do dono ("se a maioria não
+tiver") não se aplica. E `slot()` emite `onerror="this.remove()"` → arte ausente se remove, nunca vira `<img>`
+404 (§213).
+
+**A citação do rodapé NÃO EXISTE como campo** (varri os 100: sem lema/epígrafe). Reservei `g.frase` (data/deuses,
+conteúdo do DONO) e a renderizo condicional — sem frase, o espaço SOME (nada renderiza), como o painel de
+mecânica do §252. Hoje nenhum deus tem `frase` → a citação nunca aparece. NÃO inventei nenhuma.
+
+**Maestria fica FORA** (§284: o painel lateral é "quem é e quanto joguei"; a sobreposição é "o que ele faz").
+
+**Geometria (medida, não escalada no olho — o erro que o mockup dos Domínios quase custou):** a referência é
+~**1.8:1**; o palco é **951×428 (~2.22:1)**, mais largo. A ALTURA (428) é o gargalo. Casar a proporção 1.8:1
+daria um card de ~712px e desperdiçaria metade da largura. Escolhi **preencher a largura** (margem fina, fundo
+desfocado visível) **preservando o split interno do mockup** (retrato **38%** / conteúdo **62%**). Card medido:
+**897×394** no palco 951×428.
+
+**MEDIÇÃO com fontes reais (Chromium, rede bloqueada; o corte é invariante à escala, então vale no piso 780):**
+- **nome do deus: 0/100 cortam** (30px Cinzel, todos cabem).
+- **arquetipo: 0 corta** — o mais longo, baldur "Protetor quase-invulnerável" (27 chars), cabe em 1 linha.
+- **texto de efeito: 0/100 cortam** — envolve e rola (`overflow-y:auto`); nem precisou rolar no palco cheio.
+- **nomes de habilidade na fileira: 38/100 deuses têm ≥1 nome com reticências no chip** (o chip tem ~130px; o
+  pior é hel +27px, heimdall +15px, odin +14px, hermes +13px). **Reportado, NÃO consertado** (instrução do dono).
+  Recomendação p/ o dono decidir: nome em 2 linhas no chip, ou fonte menor — mas o rótulo do slot + o ícone já
+  desambiguam, e o nome completo está na caixa de detalhe ao tocar.
+
+**Desvio consciente do mockup:** o selo de raridade. A referência tem um pentágono roxo; usei o selo de raridade
+que o jogo JÁ tem (§282, hexágono/`col2p__rar--<rar>`) p/ não criar um segundo vocabulário de raridade. Estrutura
+e conteúdo fiéis; o selo segue a linguagem visual do jogo.
+
+**Babás (`tests/colecao_tela.test.js`, §7/§7c):** os 4 ícones aparecem; abre no básico; tocar troca a caixa (o
+realce segue); a caixa lê data/deuses (mudo `GODS.zeus.ab.desc` → a caixa muda); a citação some sem frase e
+aparece com `g.frase`; toda arte de skill tem `onerror` (sem 404); a sobreposição não mostra maestria.
+
+**Capturas** (dist, palco real, fontes reais, rede bloqueada) em `docs/capturas-288/`: básico aberto, passiva
+aberta (a troca do ícone funciona) e um deus não-possuído (retrato dessaturado + "Você não possui" + borda
+tracejada). **Arquivos:** `src/ui/home.js` (colOverlayHTML + colVerChipHTML/colVerDetalheHTML/colVerLigarChips),
+`src/shell.html` (CSS `.col2ov*`), `tests/colecao_tela.test.js`, `tests/interface.test.js` (a babá §287 lê a nova
+caixa). Suíte (46) + build verdes.
+
+---
+
 ## §287 — single-source do painel da SELEÇÃO: uma redação por habilidade no jogo inteiro. Fecha a pergunta de abertura.
 
 O achado do §286: `src/ui/selecao.js` (o painel que abre ao tocar um deus na seleção de time) exibia o

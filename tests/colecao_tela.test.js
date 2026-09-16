@@ -114,14 +114,27 @@ console.log('\n== 6b. vitórias cumpridas, só falta o Milagre: sem barra, requi
   w.eval("perfil.maestria.zeus={vitorias:22,milagre:false};");   // restaura p/ as seções seguintes
 }
 
-// ---- 7. §284: VER DETALHES abre a SOBREPOSIÇÃO (kit completo); fundo fecha; Android-back fecha; seleção preservada. ----
-console.log('\n== 7. sobreposição: 4 habilidades, fundo fecha, back fecha, seleção preservada ==');
+// ---- 7. §288: VER DETALHES abre a SOBREPOSIÇÃO seletor+detalhe (4 ícones, abre no básico, o ícone troca a
+//         caixa); fundo fecha; Android-back fecha; rolagem preservada; sem maestria; sem <img> 404. ----
+console.log('\n== 7. sobreposição §288: 4 ícones + caixa (abre no básico), o ícone troca a caixa ==');
 {
+  const norm = s => (s || '').replace(/\s+/g, ' ').trim();
   w.eval("colSelecionar('zeus'); document.querySelector('.col2p__ver').click()");
   const ov = $('#col2ov');
   ok(!!ov, 'VER DETALHES abre a sobreposição');
-  ok(ov.querySelectorAll('.col2k__row').length === 4, 'a sobreposição mostra as QUATRO habilidades');
-  ok(!ov.querySelector('.col2m'), 'a sobreposição NÃO repete a maestria');
+  ok(ov.querySelectorAll('.col2ov__sk').length === 4, 'a sobreposição mostra os QUATRO ícones (básico/habilidade/milagre/passiva)');
+  ok($('.col2ov__sk.is-sel') && $('.col2ov__sk.is-sel').dataset.versel === 'basico', 'abre no BÁSICO (o ícone básico é o selecionado)');
+  const nomeBasico = w.eval("(GODS.zeus.ab.find(a=>a.slot==='basico')||{}).nome");
+  ok(norm($('#col2ovdet .col2ov__detnome').textContent) === norm(nomeBasico), 'a caixa abre com o detalhe do básico');
+  // tocar no ícone da HABILIDADE troca a caixa de baixo
+  ov.querySelector('.col2ov__sk[data-versel="habilidade"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const nomeHab = w.eval("(GODS.zeus.ab.find(a=>a.slot==='habilidade')||{}).nome");
+  ok(norm($('#col2ovdet .col2ov__detnome').textContent) === norm(nomeHab), 'tocar no ícone da Habilidade troca a caixa p/ a Habilidade');
+  ok($('.col2ov__sk.is-sel').dataset.versel === 'habilidade', 'o realce dourado segue o ícone tocado');
+  // maestria NÃO entra na sobreposição (§284: o painel é "quem é"; a sobreposição é "o que faz")
+  ok(!ov.querySelector('.col2m') && !/MAESTRIA|Iniciado|Aprendiz|Adepto|\bMestre\b/.test(ov.textContent), 'a sobreposição NÃO mostra maestria');
+  // nenhuma arte ausente vira <img> 404: toda arte de skill carrega onerror que se remove (§213)
+  ok([...ov.querySelectorAll('.col2ov__skart img, .col2ov__detart img')].every(i => i.hasAttribute('onerror')), 'toda arte de skill tem onerror (arte ausente se remove, nunca 404)');
   ok($('#baselayer').hasAttribute('inert'), 'o #baselayer fica inerte (INV 16 / §210)');
   ok(w.eval('colVer') === 'zeus', 'colVer registra a sobreposição (p/ o voltar do Android)');
   // tocar no FUNDO fecha (clique no próprio #col2ov)
@@ -136,31 +149,36 @@ console.log('\n== 7. sobreposição: 4 habilidades, fundo fecha, back fecha, sel
   ok(w.eval("document.querySelector('#col2grade').scrollTop") === 80, 'a grade não é re-renderizada ao fechar → rolagem preservada (scrollTop 80)');
 }
 
-// ---- 7c. §284-ajuste2: a SOBREPOSIÇÃO e a ROTA 'deus' mostram a MESMA linha de kit p/ o mesmo deus (um renderizador). ----
-console.log('\n== 7c. sobreposição × rota: MESMA linha de kit (um renderizador, uma fonte) ==');
+// ---- 7c. §288: a caixa de detalhe lê data/deuses (mude a fonte e a tela muda); citação reservada some sem frase. ----
+console.log('\n== 7c. §288: caixa lê data/deuses (fonte única); citação some sem frase ==');
 {
-  // inclui exu (nome de passiva que DIVERGIA: kits.json "O Primeiro a Ser Servido" × data/deuses "Senhor das
-  // Encruzilhadas") — agora as duas telas leem data/deuses, então têm de bater. Se só uma mudar, a duplicação voltou.
   const norm = s => (s || '').replace(/\s+/g, ' ').trim();
-  const alvos = ['zeus', 'exu', 'hermes', 'thor'];
+  // inclui exu (passiva que DIVERGIA no kits.json) — a caixa lê data/deuses, então cada slot bate a fonte
   let iguais = true, detalhe = '';
-  for (const k of alvos) {
-    // sobreposição: as 4 linhas
+  for (const k of ['zeus', 'exu', 'hermes', 'thor']) {
     w.eval(`perfil.deuses[${JSON.stringify(k)}]=perfil.deuses[${JSON.stringify(k)}]||{obtidoEm:Date.now()}; ir('colecao',{},{substituir:true}); render(); colAbrirVer(${JSON.stringify(k)});`);
-    const ov = [...d.querySelectorAll('#col2ov .col2k__row')].map(r => norm(r.textContent));
-    w.eval("colFecharVer();");
-    // rota: seleciona cada slot e lê a linha do detalhe
-    const rota = [];
     for (const slot of ['basico', 'habilidade', 'milagre', 'passiva']) {
-      w.eval(`ir('deus',{key:${JSON.stringify(k)}},{substituir:true}); render(); deusSel=${JSON.stringify(slot)}; render();`);
-      const r = d.querySelector('.ddet .col2k__row'); if (r) rota.push(norm(r.textContent));
+      const chip = d.querySelector(`#col2ov .col2ov__sk[data-versel="${slot}"]`);
+      if (chip) chip.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+      const tela = norm(d.querySelector('#col2ovdet .col2ov__deftxt').textContent);
+      const fonte = norm(w.eval(`(function(){const g=GODS[${JSON.stringify(k)}]; return ${JSON.stringify(slot)}==='passiva'?g.passiva.desc:(g.ab.find(a=>a.slot===${JSON.stringify(slot)})||{}).desc;})()`));
+      if (tela !== fonte) { iguais = false; detalhe = k + '.' + slot + ': tela["' + tela + '"] ≠ data/deuses["' + fonte + '"]'; break; }
     }
-    // compara conjunto (ordem: sobreposição básico/hab/milagre/passiva == rota na mesma ordem)
-    const a = ov.join(' | '), b = rota.join(' | ');
-    if (a !== b) { iguais = false; detalhe = k + ': overlay["' + a + '"] ≠ rota["' + b + '"]'; break; }
+    w.eval("colFecharVer();");
+    if (!iguais) break;
   }
-  ok(iguais, 'sobreposição e rota mostram a MESMA linha p/ cada slot (zeus/exu/hermes/thor)' + (iguais ? '' : ' — ' + detalhe));
-  w.eval("ir('colecao',{},{substituir:true}); render();");
+  ok(iguais, 'a caixa de detalhe mostra o desc de data/deuses p/ cada slot' + (iguais ? '' : ' — ' + detalhe));
+  // mude a FONTE (data/deuses) e a caixa muda — prova a fonte única
+  const orig = w.eval("(GODS.zeus.ab.find(a=>a.slot==='basico')).desc");
+  w.eval("GODS.zeus.ab.find(a=>a.slot==='basico').desc='SENTINELA288 zzz'; colAbrirVer('zeus');");
+  ok(/SENTINELA288/.test($('#col2ovdet').textContent), 'mudar o data/deuses muda a caixa de detalhe (fonte única)');
+  w.eval(`GODS.zeus.ab.find(a=>a.slot==='basico').desc=${JSON.stringify(orig)}; colFecharVer();`);
+  // CITAÇÃO reservada (§252): sem frase (nenhum deus tem `frase` hoje) o espaço some; com frase, aparece
+  w.eval("colAbrirVer('zeus');");
+  ok(!$('#col2ov .col2ov__cite'), 'sem frase, a citação NÃO aparece (espaço reservado, some — como o painel de mecânica do §252)');
+  w.eval("colFecharVer(); GODS.zeus.frase='Do fogo que aquece.'; colAbrirVer('zeus');");
+  ok(!!$('#col2ov .col2ov__cite') && /Do fogo que aquece/.test($('#col2ov .col2ov__cite').textContent), 'com frase (conteúdo do dono em data/deuses), a citação aparece');
+  w.eval("delete GODS.zeus.frase; colFecharVer(); ir('colecao',{},{substituir:true}); render();");
 }
 
 // ---- 8. possuído × não-possuído inequívocos (§216) ----
