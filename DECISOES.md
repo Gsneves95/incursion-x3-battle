@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §289 — retrato GRANDE na sobreposição de detalhe: arquivo sob demanda, pequeno como reserva.
+
+A medição do §288-medição provou: a arte embutida é **168×168** e a sobreposição a exibe num retrato de
+**340×392 de design** — **2,33× no design, ~6-8× no físico**, a maior ampliação do jogo (as outras 5 telas usam
+caixa ≤140 e REDUZEM). O próprio `enquadramento.js` já avisava: `TETO_ESCALA = 1,25 // acima disto a arte-fonte
+(168px) borra` — a sobreposição passou por cima do aviso.
+
+**Conserto no padrão que o projeto já usa 3×** (bestiário §254, campanha §259, Domínios §280): **arquivo separado,
+sob demanda**.
+- Os 100 retratos grandes vão para **`web/retratos/<chave>.webp` (512×590, ~80 KB, ~7,8 MB no total)**. O dono os
+  commita pelo site do GitHub; o código está pronto ANTES — a build varre a pasta e anota `RETRATO_ARTE` (espelho
+  do `BESTIARIO_ARTE`), e a sobreposição só pede o arquivo quando a chave está no manifesto → **sem `<img>` 404**.
+  Hoje a pasta só tem o `README` (a spec); `RETRATO_ARTE={}` → tudo cai no pequeno. Ao commitar os `.webp`, acendem
+  sozinhos no próximo build.
+- **SÓ a sobreposição** usa o grande. Grade, painel lateral, batalha e seleção seguem no `IMG` de 168 embutido —
+  lá a caixa é ≤140 e a arte pequena sobra.
+- **O pacote NÃO cresce:** o grande é `<img loading="lazy">`, nunca base64. Medido: `incursion.html` **2.357.220 →
+  2.357.924 bytes (+704 B**, o manifesto vazio + CSS/JS; a arte nunca entra no bundle).
+
+**Transição sem tremida:** o retrato pequeno embutido (`slot('god-…')`) e o grande (`<img class="col2ov__retratog">`)
+ocupam a MESMA caixa, ambos `object-fit:cover` com a MESMA `object-position:top center`. O pequeno abre a ficha
+cheia na hora; o grande pinta por cima ao carregar (lazy). Ausente/404 → `onerror="this.remove()"` e o pequeno
+permanece (§213). Sem reflow (o grande é `position:absolute;inset:0` → não mexe no layout).
+
+**Ampliação NOVA (medida):** caixa 340×392, fonte 512×590 (proporção 0,868 ≈ a da caixa 0,867 → recorte
+desprezível). `cover` → escala **0,66× no design (REDUZ)** — sai do regime de upscale de vez; fisicamente
+**~1,5-2×** (de ~6-8×), a mesma faixa da grade, que é nítida. Em px de design, a fonte agora EXCEDE a caixa: é o
+regime nítido.
+
+**Babás (`tests/colecao_tela.test.js §7d`):** com o manifesto cheio, a sobreposição emite `retratos/<k>.webp` (lazy,
+onerror, nunca base64) e o pequeno segue na caixa; sem o manifesto, NÃO emite (sem 404) e o pequeno permanece; a
+grade, o painel e a seleção NÃO pedem `retratos/` (seguem no IMG embutido).
+
+**Capturas** (`docs/capturas-289/`): `antes-168-embutido.png` (estado atual) e `depois-512-arquivo.png`. A "depois"
+usa uma **arte-teste sintética 512×590** (grade fina + texto) — eu NÃO tenho a arte real (o dono a commita); ela
+prova que o pipeline acende e que a caixa renderiza uma fonte do tamanho certo **nítida** (a grade fina sai sem
+borrão). Nota honesta: no retrato pintado (macio) a perda por upscale aparece mais no detalhe fino (olhos,
+filigrana) e no aparelho físico do que num screenshot estático — a evidência dura é a ampliação (2,33×→0,66×).
+
+**Arquivos:** `tools/build.js` (manifesto `RETRATO_ARTE`), `src/ui/home.js` (camada do retrato grande),
+`src/shell.html` (`.col2ov__retratog`), `web/retratos/README.md` (spec), `tests/colecao_tela.test.js`. Suíte (46) +
+build verdes.
+
+---
+
 ## §288 — a SOBREPOSIÇÃO de detalhe da Coleção refeita do mockup: seletor de 4 ícones + caixa de detalhe.
 
 Mockup aprovado pelo dono. Retrato à esquerda (sangra), à direita nome+epíteto+tags+posse, divisor HABILIDADES,

@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §289 — retrato GRANDE na sobreposição de detalhe: arquivo sob demanda, pequeno como reserva. Só tela/build/teste.
+
+O §288-medição provou: arte embutida 168×168, caixa da sobreposição 340×392 → **2,33× no design, ~6-8× no físico** (maior ampliação do jogo; as outras 5 telas usam caixa ≤140 e REDUZEM). O `enquadramento.js` já avisava (`TETO_ESCALA=1,25` "acima disto a arte-fonte 168px borra").
+
+**Conserto no padrão §254/§259/§280 (arquivo sob demanda):** os 100 retratos grandes vão para **`web/retratos/<chave>.webp` (512×590, ~80 KB, ~7,8 MB)**. Código pronto ANTES: a build varre a pasta e anota **`RETRATO_ARTE`** (espelho do `BESTIARIO_ARTE`); a sobreposição só pede `retratos/<k>.webp` quando a chave está no manifesto → **sem `<img>` 404**. Hoje a pasta só tem o README (spec); `RETRATO_ARTE={}` → tudo no pequeno; ao commitar os `.webp` (pelo site do GitHub), acendem no próximo build. **SÓ a sobreposição** usa o grande; grade/painel/batalha/seleção seguem no IMG de 168 embutido (lá a caixa é ≤140).
+
+**Pacote não cresce:** grande é `<img loading="lazy">`, nunca base64. Medido: `incursion.html` 2.357.220 → **2.357.924 B (+704 B**, manifesto vazio + CSS/JS; a arte nunca entra no bundle). **Transição sem tremida:** pequeno e grande na MESMA caixa (`object-fit:cover`, mesma `object-position`); o pequeno abre a ficha cheia, o grande pinta por cima ao carregar; ausente/404 → `onerror` remove e o pequeno fica (§213); o grande é `position:absolute` → sem reflow.
+
+**Ampliação NOVA (medida):** caixa 340×392, fonte 512×590 (proporção 0,868 ≈ caixa 0,867 → recorte desprezível) → `cover` **0,66× no design (REDUZ)**, físico **~1,5-2×** (de ~6-8×), a faixa da grade (nítida). Em design a fonte agora EXCEDE a caixa: regime nítido.
+
+**Babás (`colecao_tela.test.js §7d`):** manifesto cheio → sobreposição emite `retratos/<k>.webp` (lazy, onerror, nunca base64) + pequeno na caixa; sem manifesto → não emite (sem 404), pequeno fica; grade/painel/seleção NÃO pedem `retratos/`. **Capturas** `docs/capturas-289/` (antes-168 · depois-512, esta com arte-teste sintética — não tenho a real; prova o pipeline + nitidez; a evidência dura é a ampliação 2,33×→0,66×). Ver DECISOES §289. **Arquivos:** `tools/build.js`, `src/ui/home.js`, `src/shell.html`, `web/retratos/README.md`, `tests/colecao_tela.test.js`. Suíte (46)+build verdes.
+
 ## ★ COLEÇÃO §288 — a SOBREPOSIÇÃO de detalhe refeita do mockup: seletor de 4 ícones + caixa de detalhe. Só tela/teste.
 
 Mockup aprovado. Retrato à esquerda (sangra), à direita nome+epíteto(=`arquetipo` §282)+4 tags+posse, divisor HABILIDADES, **fileira de 4 ícones** (básico/habilidade/milagre/passiva) + a **caixa de detalhe** do slot; tocar num ícone troca a caixa (abre no **BÁSICO**). Antes empilhava as 4 linhas. Troca cirúrgica (só a caixa+realce do chip) → grade não re-renderiza, rolagem/seleção preservadas (§284).

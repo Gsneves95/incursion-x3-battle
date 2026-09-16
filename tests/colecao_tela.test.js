@@ -181,6 +181,34 @@ console.log('\n== 7c. §288: caixa lê data/deuses (fonte única); citação som
   w.eval("delete GODS.zeus.frase; colFecharVer(); ir('colecao',{},{substituir:true}); render();");
 }
 
+// ---- 7d. §289: retrato GRANDE por arquivo (web/retratos/<k>.webp) SÓ na sobreposição; pequeno como reserva; sem 404. ----
+console.log('\n== 7d. §289: retrato grande sob demanda (só a sobreposição), pequeno como reserva, sem 404 ==');
+{
+  // COM arquivo no manifesto → a sobreposição pede retratos/<k>.webp (lazy, onerror), e o pequeno segue embaixo
+  w.eval("RETRATO_ARTE.zeus=1; colAbrirVer('zeus');");
+  const g = $('#col2ov .col2ov__retratog');
+  ok(!!g, 'a sobreposição emite o retrato GRANDE quando o manifesto tem o deus');
+  ok(g && /retratos\/zeus\.webp$/.test(g.getAttribute('src')), 'o src é retratos/zeus.webp (arquivo, não base64)');
+  ok(g && g.getAttribute('loading') === 'lazy', 'o retrato grande é lazy (não pesa o carregamento)');
+  ok(g && g.hasAttribute('onerror'), 'o retrato grande tem onerror (ausente/404 se remove — §213)');
+  ok(g && !/^data:/.test(g.getAttribute('src')), 'o retrato grande NUNCA é base64 (o pacote não engorda)');
+  ok(!!$('#col2ov .col2ov__retrato .slot'), 'o retrato PEQUENO embutido segue na mesma caixa (reserva enquanto o grande carrega)');
+  w.eval("colFecharVer();");
+  // SEM arquivo no manifesto → nenhum <img> retratos/ (sem requisição, sem 404); o pequeno permanece
+  w.eval("delete RETRATO_ARTE.zeus; colAbrirVer('zeus');");
+  ok(!$('#col2ov .col2ov__retratog'), 'sem arquivo no manifesto, a sobreposição NÃO pede retratos/ (sem 404)');
+  ok(!!$('#col2ov .col2ov__retrato .slot'), 'e o retrato pequeno embutido continua (ficha nunca abre vazia)');
+  w.eval("colFecharVer();");
+  // as OUTRAS telas continuam no IMG embutido — nenhuma pede retratos/ (mesmo com o manifesto cheio)
+  w.eval("RETRATO_ARTE.zeus=1; ir('colecao',{},{substituir:true}); render(); colSelecionar('zeus');");
+  const grade = $('#col2grade'), painel = $('#col2painel');
+  ok(grade && !/retratos\//.test(grade.innerHTML), 'a GRADE da Coleção não pede retratos/ (segue no IMG embutido)');
+  ok(painel && !/retratos\//.test(painel.innerHTML), 'o PAINEL lateral não pede retratos/ (segue no IMG embutido)');
+  w.eval("ir('selecao',{},{substituir:true}); render(); previewPk('zeus'); renderPick();");
+  ok(!/retratos\//.test($('#baselayer').innerHTML), 'a SELEÇÃO de time (grade + painel de kit) não pede retratos/');
+  w.eval("delete RETRATO_ARTE.zeus; ir('colecao',{},{substituir:true}); render();");
+}
+
 // ---- 8. possuído × não-possuído inequívocos (§216) ----
 console.log('\n== 8. possuído × não-possuído ==');
 {

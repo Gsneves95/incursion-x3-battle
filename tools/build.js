@@ -333,6 +333,16 @@ const bestiarioArte = (() => {
   for (const b of bestiarioDados) if (b.key && fs.existsSync(path.join(dir, b.key + '.webp'))) mapa[b.key] = 1;
   return mapa;
 })();
+// §289: RETRATO GRANDE por ARQUIVO (web/retratos/<chave>.webp, 512×590) — SÓ a sobreposição de detalhe da
+// Coleção o usa (§288: a caixa é 340×392; a arte embutida de 168 ampliava ~2,3× no design e ~6-8× no físico).
+// Mesma razão do bestiário/§254: não embutir (7,8MB inflaria o pacote); a build anota quais arquivos existem, e
+// o retrato pequeno embutido (IMG) segue como reserva enquanto o grande carrega e onde o arquivo falta (§213).
+const retratoArte = (() => {
+  const dir = path.join(raiz, 'web', 'retratos');
+  const mapa = {};
+  for (const d of deuses) if (d.key && fs.existsSync(path.join(dir, d.key + '.webp'))) mapa[d.key] = 1;
+  return mapa;
+})();
 
 // §276: ARTE da tela de escolha de DOMÍNIOS por ARQUIVO em web/banners/dominios/ (pôster por cultura,
 // emblema por cultura, e um fundo opcional). A build anota quais existem (o cliente não pode checar
@@ -374,6 +384,7 @@ const saida = casca
     'const DEUSES=' + JSON.stringify(deuses) + ';\n' + catalogo + '\nconst GODS=montarCatalogo(DEUSES);\n'
     + 'const BESTIARIO_DADOS=' + JSON.stringify(bestiarioDados) + ';\nconst BESTIARIO=montarCatalogo(BESTIARIO_DADOS);\n'
     + 'const BESTIARIO_ARTE=' + JSON.stringify(bestiarioArte) + ';\n'
+    + 'const RETRATO_ARTE=' + JSON.stringify(retratoArte) + ';\n'
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.

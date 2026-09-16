@@ -1046,6 +1046,7 @@ function colOverlayHTML(k){
     <div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
       <div class="col2ov__retrato">
         ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
+        ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="col2ov__retratog" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
         ${tem ? '' : '<span class="col2ov__falta">Você não possui</span>'}
       </div>
       <div class="col2ov__conteudo">

@@ -1478,6 +1478,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__retrato .slot,.col2ov__retrato .slot img{width:100%;height:100%}
 .col2ov__retrato .slot img{object-fit:cover;object-position:top center}
 .col2ov__retrato .slot__glyph{position:absolute;inset:0;display:grid;place-items:center}
+/* §289: o retrato GRANDE (web/retratos/<k>.webp, 512×590) cobre o pequeno embutido na MESMA caixa (object-fit
+   cover, mesma object-position) → sem tremida de layout: o pequeno abre a ficha cheia e nítida, o grande pinta
+   por cima ao chegar. Ausente/404 → onerror o remove e o pequeno permanece (§213). */
+.col2ov__retratog{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+.col2ov--falta .col2ov__retratog{filter:grayscale(1) brightness(.6)}
 .col2ov__retrato::after{content:'';position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(90deg,transparent 60%,rgba(12,10,26,.92) 100%)}
 .col2ov--falta .col2ov__retrato .slot{filter:grayscale(1) brightness(.6)}
