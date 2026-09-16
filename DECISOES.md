@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §291 — setas de navegação na sobreposição de detalhe: passa de deus sem fechar.
+
+Pedido do dono: com a ficha aberta, ir ao kit do próximo deus sem fechar e selecionar de novo. Duas setas, uma
+de cada lado, POR FORA do cartão (sobre o fundo desfocado).
+
+**MEDIÇÃO da calha (pedida antes, porque muda o desenho):** o cartão tem **897** num palco de **951** → sobram
+**~27px de design por lado** (12 deles são o padding do fundo). **Piso de alvo tocável:** o projeto NÃO tem um
+44px documentado; os controles primários vão de **28 a 34px** (`col2ov__x` fechar = 28, `col2__voltar` = 30,
+`b--md`/`dsel__voltar` = 34). **27 < 34** → a calha NÃO comporta a seta no tamanho confortável do projeto.
+**NÃO encolhi o cartão** (foi dimensionado no §288 a partir do mockup). Servi a seta na calha atual como **faixa
+alta** (27px de largura × 140px de altura — a altura é livre, compensa a largura estreita). Se o dono quiser um
+alvo maior, o cartão precisa encolher — **ele decide**:
+- seta 34px + 2px de folga cada lado (38/lado) → cartão **875** (−22px, −2,5%)
+- seta 30px + 3px (36/lado) → cartão **879** (−18px)
+- alvo confortável 44px + 4px (48/lado) → cartão **855** (−42px, −4,7%)
+
+**Comportamento (implementado):**
+- **Ordem = a da GRADE como está** (filtro/busca/ordenação): `colVerIr` anda em `colecaoFiltrada()`, nunca no
+  elenco inteiro. Filtro de 3 → anda nos 3.
+- **O SLOT permanece** ao trocar de deus (`colVerSel` sobrevive) — é o que faz a ficha virar ferramenta de
+  comparação. Cai no básico só se o próximo não tiver o slot; **medido: os 100 têm os 4 slots, então esse caso
+  NÃO existe hoje** (o fallback está no código por segurança).
+- **A SELEÇÃO do painel acompanha** (`colSelecionar` a cada passo) e a **grade rola** até o deus atual
+  (`scrollIntoView`) → ao fechar, o jogador fica no ÚLTIMO deus visto, visível (§284).
+- **Extremos:** a seta **desabilita, apagada** (opacity .22), **sem dar a volta** — dar a volta esconderia o
+  tamanho da lista (com 3 deuses o jogador giraria sem saber que já viu todos).
+- **§240 mantido:** o voltar do Android fecha a sobreposição antes de sair (`colVer` segue setado na navegação).
+
+**Troca de retrato sob navegação rápida (o caso do §289):** `colVerIr` troca **só o cartão** (`.col2ov__card`),
+o fundo desfocado fica → **sem piscar**. O retrato pequeno embutido cobre a caixa na hora enquanto o grande
+(§289, arquivo sob demanda) ainda não chegou — **sem branco, sem tremida** (mesma caixa 340×392; o grande é
+`position:absolute`, não reflui).
+
+**Babás (`tests/colecao_tela.test.js §7e`):** as setas andam na lista FILTRADA (não nos 100); o slot permanece
+(abre no milagre → o próximo abre no milagre); nos extremos a seta desabilita e não dá a volta; fechar deixa
+`colSel` no último deus visto, com o cartão na grade; o voltar do Android fecha a sobreposição.
+
+**Capturas** (`docs/capturas-291/`): `a-duas-setas` (deus do meio, as duas ativas), `b-extremo-anterior-apagada`
+(primeiro deus, a seta anterior apagada), `c-filtrada-celta` (filtro Celta = 5 deuses, anda só neles).
+
+**Arquivos:** `src/ui/home.js` (colOverlayCardHTML/colVerNavEstado/colVerIr/colVerMontar/colVerAtualizarNav),
+`src/shell.html` (`.col2ov__nav`), `tests/colecao_tela.test.js`. Suíte (46) + build verdes.
+
+---
+
 ## §290 — os 100 retratos grandes chegaram: fecha o §289.
 
 O dono commitou os 100 `.webp` (512×590) em `web/retratos/` pelo site do GitHub. `git pull`, e o §289 fecha —

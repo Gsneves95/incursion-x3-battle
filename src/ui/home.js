@@ -1033,7 +1033,9 @@ function colVerDetalheHTML(k, g, sel){
       <div class="col2ov__deftxt">${realce(a.desc || '')}</div>
     </div>`;
 }
-function colOverlayHTML(k){
+// §291: o CARTÃO (retrato + conteúdo) — separado do fundo p/ a navegação trocar SÓ o cartão (sem repintar o
+// fundo desfocado → sem piscar). As setas de navegação vivem no fundo, POR FORA do cartão (colOverlayHTML).
+function colOverlayCardHTML(k){
   const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
   const sks = deusSkills(g);
   const posse = tem
@@ -1042,8 +1044,7 @@ function colOverlayHTML(k){
   // §288: a CITAÇÃO é conteúdo do dono (uma frase por deus em `g.frase`, data/deuses), NÃO inventada. Reservada
   // como o painel de mecânica do §252: sem frase, o espaço SOME (nada renderiza). Hoje nenhum deus tem `frase`.
   const cite = g.frase ? `<p class="col2ov__cite">“${H(g.frase)}”</p>` : '';
-  return `<div class="col2ov" id="col2ov">
-    <div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
+  return `<div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
       <div class="col2ov__retrato">
         ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
         ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="col2ov__retratog" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
@@ -1066,7 +1067,20 @@ function colOverlayHTML(k){
         <div class="col2ov__det" id="col2ovdet">${colVerDetalheHTML(k, g, colVerSel)}</div>
         ${cite}
       </div>
-    </div>
+    </div>`;
+}
+// §291: posição na LISTA FILTRADA (a mesma da grade: filtro/busca/ordem) — as setas andam SÓ nela, nunca nos 100.
+function colVerNavEstado(){
+  const lista = colecaoFiltrada(), idx = lista.indexOf(colVer);
+  return { lista, idx, temPrev: idx > 0, temNext: idx >= 0 && idx < lista.length - 1 };
+}
+function colOverlayHTML(k){
+  const e = colVerNavEstado();   // colVer já é `k` quando isto é chamado (colAbrirVer/colVerIr o setam antes)
+  // as setas ficam POR FORA do cartão, sobre o fundo desfocado; nos extremos desabilitam (apagadas, sem dar a volta)
+  return `<div class="col2ov" id="col2ov">
+    <button class="col2ov__nav col2ov__nav--prev" id="col2ovprev" aria-label="Deus anterior" ${e.temPrev ? '' : 'disabled'}><i class="col2ov__navseta"></i></button>
+    ${colOverlayCardHTML(k)}
+    <button class="col2ov__nav col2ov__nav--next" id="col2ovnext" aria-label="Próximo deus" ${e.temNext ? '' : 'disabled'}><i class="col2ov__navseta"></i></button>
   </div>`;
 }
 // abre/fecha a sobreposição por DOM (sem render → preserva seleção e rolagem da grade). O #baselayer fica
@@ -1074,13 +1088,17 @@ function colOverlayHTML(k){
 function colAbrirVer(k){
   if (!k) return;
   colVer = k; colVerSel = 'basico';   // §288: a caixa abre sempre no BÁSICO
+  colVerMontar();
+}
+function colVerMontar(){
   const base = stage.querySelector('#baselayer'); if (base) base.setAttribute('inert', '');
   const velho = stage.querySelector('#col2ov'); if (velho) velho.remove();
-  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayHTML(k);
+  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayHTML(colVer);
   const ov = wrap.firstElementChild; stage.appendChild(ov);
-  ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha
+  ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha (setas têm target próprio)
   const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarChips(ov, k);   // §288: os 4 ícones trocam a caixa de baixo (cirúrgico — não re-renderiza a grade)
+  colVerLigarChips(ov, colVer);
+  colVerLigarNav(ov);
 }
 // §288: tocar num ícone troca SÓ a caixa de detalhe (e o realce do chip). Sem render → preserva grade/rolagem.
 function colVerLigarChips(ov, k){
@@ -1091,6 +1109,37 @@ function colVerLigarChips(ov, k){
     [...ov.querySelectorAll('.col2ov__sk')].forEach(c => c.classList.toggle('is-sel', c === b));
     const det = ov.querySelector('#col2ovdet'); if (det) det.innerHTML = colVerDetalheHTML(k, g, colVerSel);
   });
+}
+// §291: as setas navegam a lista filtrada; o SLOT permanece (fica ferramenta de comparação).
+function colVerLigarNav(ov){
+  const p = ov.querySelector('#col2ovprev'), n = ov.querySelector('#col2ovnext');
+  if (p) p.onclick = () => { if (!p.disabled) colVerIr(-1); };
+  if (n) n.onclick = () => { if (!n.disabled) colVerIr(1); };
+}
+function colVerIr(delta){
+  const e = colVerNavEstado(); if (e.idx < 0) return;
+  const alvo = e.lista[e.idx + delta]; if (!alvo) return;   // extremos: nada (a seta já está desabilitada)
+  // o SLOT permanece; cai no básico só se o próximo não tiver aquele slot (hoje não ocorre — os 100 têm os 4)
+  if (!deusSkills(colG(alvo)).some(s => s.slot === colVerSel && s.a)) colVerSel = 'basico';
+  colVer = alvo;
+  const ov = stage.querySelector('#col2ov'); if (!ov) return;
+  // troca SÓ o cartão (o fundo desfocado fica) → sem piscar; o retrato pequeno embutido cobre enquanto o grande
+  // (§289, arquivo sob demanda) ainda não chegou, sem branco nem tremida (mesma caixa 340×392).
+  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayCardHTML(alvo);
+  ov.querySelector('.col2ov__card').replaceWith(wrap.firstElementChild);
+  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
+  colVerLigarChips(ov, alvo);
+  colVerAtualizarNav(ov);
+  // a SELEÇÃO do painel acompanha (§284: fechar preserva seleção) e a grade rola até o deus atual ficar visível
+  colSelecionar(alvo);
+  const cg = stage.querySelector('.col2c[data-deus="' + alvo + '"]');
+  if (cg && cg.scrollIntoView) cg.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+function colVerAtualizarNav(ov){
+  const e = colVerNavEstado();
+  const p = ov.querySelector('#col2ovprev'), n = ov.querySelector('#col2ovnext');
+  if (p) p.disabled = !e.temPrev;
+  if (n) n.disabled = !e.temNext;
 }
 function colFecharVer(){
   colVer = null;

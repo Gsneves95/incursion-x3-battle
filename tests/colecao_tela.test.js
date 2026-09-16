@@ -209,6 +209,43 @@ console.log('\n== 7d. §289: retrato grande sob demanda (só a sobreposição), 
   w.eval("delete RETRATO_ARTE.zeus; ir('colecao',{},{substituir:true}); render();");
 }
 
+// ---- 7e. §291: setas navegam a lista FILTRADA; o slot permanece; extremos desabilitam; fecha no último visto. ----
+console.log('\n== 7e. §291: setas de navegação (lista filtrada, slot permanece, extremos, fecha no último) ==');
+{
+  const norm = s => (s || '').replace(/\s+/g, ' ').trim();
+  const clk = el => el.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  // filtra por cultura → subconjunto (NÃO os 100)
+  w.eval("ir('colecao',{},{substituir:true}); render(); colF.busca='';colF.classe='';colF.funcao='';colF.status='';colF.raridade='';colF.cultura='Grega'; colAtualizarGrade();");
+  const L = JSON.parse(w.eval('JSON.stringify(colecaoFiltrada())'));
+  ok(L.length >= 3 && L.length < 100, `filtro rende subconjunto p/ navegar (${L.length}, <100)`);
+  // abre o PRIMEIRO da lista filtrada
+  w.eval(`colAbrirVer(${JSON.stringify(L[0])});`);
+  ok(w.eval('colVer') === L[0], 'abre no primeiro filtrado');
+  ok($('#col2ovprev') && $('#col2ovprev').disabled, 'no início: seta ANTERIOR desabilitada (sem dar a volta)');
+  ok($('#col2ovnext') && !$('#col2ovnext').disabled, 'seta PRÓXIMO ativa');
+  // seleciona o MILAGRE e navega → o slot permanece
+  clk($('#col2ov .col2ov__sk[data-versel="milagre"]'));
+  clk($('#col2ovnext'));
+  ok(w.eval('colVer') === L[1], 'PRÓXIMO anda p/ o 2º da lista FILTRADA (não o roster inteiro)');
+  ok(w.eval('colVerSel') === 'milagre', 'o slot MILAGRE permanece ao trocar de deus');
+  ok($('.col2ov__sk.is-sel').dataset.versel === 'milagre' && norm($('#col2ovdet .col2ov__dettipo').textContent) === 'MILAGRE', 'a caixa abre no MILAGRE do novo deus');
+  // vai até o fim: PRÓXIMO desabilita no último; nunca sai do filtrado
+  let guarda = 0; while ($('#col2ovnext') && !$('#col2ovnext').disabled && guarda++ < 200) { const antes = w.eval('colVer'); clk($('#col2ovnext')); if (w.eval('colVer') === antes) break; }
+  ok(w.eval('colVer') === L[L.length - 1], 'PRÓXIMO chega ao ÚLTIMO da lista filtrada');
+  ok($('#col2ovnext').disabled, 'no fim: seta PRÓXIMO desabilita (sem dar a volta)');
+  ok(L.includes(w.eval('colVer')), 'o deus atual está no conjunto FILTRADO (nunca navegou p/ fora)');
+  // FECHAR deixa o jogador no ÚLTIMO deus visto (não no que abriu), visível na grade
+  const ultimo = w.eval('colVer');
+  w.eval('colFecharVer();');
+  ok(!$('#col2ov'), 'a sobreposição fechou');
+  ok(w.eval('colSel') === ultimo, 'ao fechar, a seleção do painel é o ÚLTIMO deus visto');
+  ok(!!$(`.col2c[data-deus="${ultimo}"]`), 'o cartão do último deus existe na grade (visível ao fechar)');
+  // §240: o voltar do Android fecha a sobreposição antes de sair
+  w.eval(`colAbrirVer(${JSON.stringify(L[0])}); voltarNativo();`);
+  ok(!$('#col2ov') && w.eval("rotaAtual()") === 'colecao', 'o voltar do Android fecha a sobreposição (mantém §240)');
+  w.eval("colF.cultura=''; ir('colecao',{},{substituir:true}); render();");
+}
+
 // ---- 8. possuído × não-possuído inequívocos (§216) ----
 console.log('\n== 8. possuído × não-possuído ==');
 {
