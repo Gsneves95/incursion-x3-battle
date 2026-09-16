@@ -2,6 +2,10 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §290 — os 100 retratos grandes chegaram; §289 fechado. Só assets/teste.
+
+O dono commitou os 100 `.webp` (512×590) em `web/retratos/` pelo GitHub. `git pull` e fecha o §289 (sem converter/redimensionar/renomear). **(1)** `RETRATO_ARTE` foi de `{}` a **100 chaves**; conferido: 100 chaves ↔ 100 arquivos, **0 sem arquivo / 0 órfão**, todos 512×590, 7,84 MB (61–108 KB, mediana 80). **(2) Ampliação real (dist, 951×428, natural 512×590):** caixa 340×392 → **design 2,33×→0,66× (REDUZ), físico ~5,9×→~1,7×** — caiu de ~6-8× p/ perto de 1×, a fonte agora excede a caixa (regime nítido). **(3) Pacote não cresceu:** `incursion.html` 2.357.924→**2.359.024 B (+1.100 B**, só as chaves do manifesto; os 7,84 MB NÃO entram no HTML — 100 `.webp` copiados p/ `dist/retratos/`, lazy). **(4)** Capturas reais em `docs/capturas-290/` (zeus centrada · thor larga · apolo fundo claro); transição sem tremida (caixa 340×392 idêntica com pequeno e grande; o grande é `position:absolute`). **(5) Guarda do lado cheio** (`tests/assets.test.js §290`): toda chave tem `web/retratos/<k>.webp` (100/100), 0 órfão; babá provada (renomear → 2 falhas). Ver DECISOES §290. **Arquivos:** `web/retratos/*.webp`, `tests/assets.test.js`, `docs/capturas-290/`. Suíte (46)+build verdes.
+
 ## ★ COLEÇÃO §289 — retrato GRANDE na sobreposição de detalhe: arquivo sob demanda, pequeno como reserva. Só tela/build/teste.
 
 O §288-medição provou: arte embutida 168×168, caixa da sobreposição 340×392 → **2,33× no design, ~6-8× no físico** (maior ampliação do jogo; as outras 5 telas usam caixa ≤140 e REDUZEM). O `enquadramento.js` já avisava (`TETO_ESCALA=1,25` "acima disto a arte-fonte 168px borra").

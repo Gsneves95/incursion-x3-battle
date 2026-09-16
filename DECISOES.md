@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §290 — os 100 retratos grandes chegaram: fecha o §289.
+
+O dono commitou os 100 `.webp` (512×590) em `web/retratos/` pelo site do GitHub. `git pull`, e o §289 fecha —
+sem converter, redimensionar nem renomear nada.
+
+**1) A build acende os 100.** `RETRATO_ARTE` saiu de `{}` para **100 chaves**. Confirmado dos dois lados: 100
+chaves de deus ↔ 100 arquivos, **0 chave sem arquivo, 0 arquivo sem chave**. Todos exatamente **512×590**; 7,84 MB
+no total (61–108 KB, mediana 80). Os nomes já batiam (o dono conferiu antes de subir); confirmado aqui.
+
+**2) Ampliação nova, com a arte real (medida no dist, palco 951×428, fonte natural confirmada 512×590):** caixa
+340×392 · **design 2,33× → 0,66× (agora REDUZ)** · **físico ~5,9× → ~1,7×** (aparelho comum, escala 0,9 DPR 2,81).
+Caiu de ~6-8× para perto de 1× — a fonte agora excede a caixa, o regime nítido. (A tabela do §288-medição tinha os
+outros lugares em ≤0,83×; a sobreposição era a única acima de 1× e agora entrou na faixa deles.)
+
+**3) O pacote NÃO cresceu.** `incursion.html` **2.357.924 → 2.359.024 bytes = +1.100 B** — só as 100 chaves do
+manifesto (`"zeus":1,…`). Os **7,84 MB NÃO entraram no HTML**: são 100 `.webp` copiados para `dist/retratos/`,
+buscados sob demanda (`<img loading="lazy">`).
+
+**4) Verificado no dist (fontes reais, rede bloqueada) — comparação de verdade:** `docs/capturas-290/`
+`real-centrada-zeus.png` (figura centrada, fundo escuro), `real-larga-thor.png` (figura larga) e
+`real-fundo-claro-apolo.png` (fundo claro/dourado). Transição confirmada: caixa **340×392 idêntica** com o pequeno
+e com o grande → o pequeno abre a ficha cheia e o grande assenta por cima **sem tremida de layout** (o grande é
+`position:absolute`, não reflui).
+
+**5) Guarda do lado cheio (`tests/assets.test.js §290`):** TODA chave de deus tem `web/retratos/<chave>.webp` (100/
+100) e nenhum `.webp` órfão. Babá provada: renomear um arquivo → 2 falhas (chave sem arquivo + órfão), restaurado.
+É o espelho do manifesto: se um arquivo sumir/for renomeado, a sobreposição cairia no pequeno — o teste quebra antes.
+
+**Arquivos:** `web/retratos/*.webp` (100, do dono), `tests/assets.test.js` (guarda de cobertura), `docs/capturas-290/`.
+Suíte (46) + build verdes.
+
+---
+
 ## §289 — retrato GRANDE na sobreposição de detalhe: arquivo sob demanda, pequeno como reserva.
 
 A medição do §288-medição provou: a arte embutida é **168×168** e a sobreposição a exibe num retrato de
