@@ -48,6 +48,31 @@ os parceiros; solista mostra a linha; **0/100 nomes/mecânicas cortam**; **"Ver 
 injeta `SINERGIA` com guarda de integridade (toda ficha/parceiro é deus real; todo par tem curto+motivo). Kit novo no
 futuro roda o tool, a tela só lê.
 
+### §294-ajuste — o TÍTULO da sobreposição cortava no topo (pré-§288), agora que a lista de sinergia o põe em evidência
+
+O `.col2ov__nome` (Cinzel 900, 30px) tinha `line-height:1.02` + `overflow:hidden`: a capitular alta do Cinzel
+estourava a caixa por CIMA e o `overflow:hidden` a cortava (~4px). O `scrollHeight` NÃO pega isso (só mede corte por
+BAIXO) — o §294 mediu com a **tinta real (Range.getBoundingClientRect)**, que é o único jeito de ver corte no topo.
+Como na sobreposição a caixa é LARGA (mediu-se: **0/100 nomes colidem com o × a 780 nem a 951** — nenhum precisa de
+reticência ali, ao contrário do painel), o conserto é `overflow:hidden`→**`overflow:visible`** no título: some o corte
+sem crescer a caixa, sem empurrar a barra de modos nem a caixa de detalhe (§292 segue **0/400 · caixa 117 > chips 106**).
+Guarda babá (`colecao_sinergia.test.js`): a tinta do título fica dentro do cartão e antes do × nos 100. (Tentei antes
+subir o `line-height` compensando o padding — funcionava na métrica mas a captura ainda cortava, porque o Range
+subestima a tinta do Cinzel; a captura é o veredito, §281.)
+
+### ★ ACHADO DE DESENHO — a ANTI-SINERGIA é conteúdo DELIBERADO, não efeito colateral (não "limpar" os pares negativos)
+
+Ninguém pediu, e é o resultado mais valioso do §294: o mapa diz **com quem NÃO levar**. A ficha do Ah Puch (Umbra)
+mostra, lado a lado, **Tsukuyomi — Noite: +8 aos seus Umbra** (sinergia) e **⚠ Amaterasu — Dia: −5 nos seus Umbra**
+(anti-sinergia). O FASE_MOD (§96) é simétrico: a Dia que ajuda o Aurora PUNE o Umbra. Quase nenhum jogo diz ao jogador
+quais combinações o ENFRAQUECEM — e isto encaixa exato na tese do projeto de que **todo valor é público** (o §286: a
+ficha não esconde a conta). Por isso a família `fase-anti` existe no dado e a tela a mostra (com ⚠, prioridade 8: sai
+do topo do painel mas aparece quando é o que o deus tem, e sempre na lista completa). **Registro para o futuro:** os
+pares negativos NÃO são ruído a ser filtrado — são informação de montagem de time tão legítima quanto os positivos.
+Nenhuma sessão futura deve "limpar" a `fase-anti` (nem outros antis que venham) achando que são efeito colateral do
+gerador. Se um dia houver anti-sinergia por outra mecânica (um debuff de elemento, um contador que atrapalha), ela
+entra pela mesma porta.
+
 ---
 
 ## §293 — MAPA DE SINERGIA entre os 100 deuses, DERIVADO DO FX (medição + proposta; a tela é decisão do dono).

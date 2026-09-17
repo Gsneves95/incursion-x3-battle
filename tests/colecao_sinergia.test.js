@@ -107,6 +107,23 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
     ok(abre.linhas === abre.total, `a lista completa devia ter os ${abre.total} parceiros do odin, tem ${abre.linhas}`);
     await page.evaluate(() => { const x = document.querySelector('#col2ovx'); if (x) x.click(); });
 
+    // (§294-ajuste) o TÍTULO da sobreposição não corta no topo (o Cinzel 900 estourava a caixa; overflow:visible) e
+    // não colide com o × — nos 100. A métrica é a TINTA (Range), não scrollHeight (que só pega corte embaixo).
+    const titulo = await page.evaluate(() => {
+      const bad = [];
+      for (const e of ROSTER) {
+        colAbrirVer(e.key);
+        const nome = document.querySelector('.col2ov__nome'), card = document.querySelector('.col2ov__card'), x = document.querySelector('#col2ovx');
+        const rg = document.createRange(); rg.selectNodeContents(nome); const ink = rg.getBoundingClientRect();
+        const cr = card.getBoundingClientRect(), lim = x ? x.getBoundingClientRect().left : cr.right;
+        if (ink.top < cr.top + 0.5) bad.push(e.key + ' topo cortado ' + Math.round(cr.top - ink.top));
+        if (ink.right > lim - 1) bad.push(e.key + ' colide com o × ' + Math.round(ink.right - lim));
+        colFecharVer();
+      }
+      return bad;
+    });
+    ok(titulo.length === 0, `${titulo.length}/100 títulos cortam/colidem na sobreposição` + (titulo.length ? ' → ' + titulo.slice(0, 6).join(' · ') : ''));
+
     // (5)(6) NENHUM nome/mecânica corta no painel E o botão "Ver detalhes" fica alcançável (§210), nos 100 deuses
     const varredura = await page.evaluate(() => {
       const bad = []; let piorVer = 0, piorVerK = '';

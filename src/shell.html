@@ -1521,7 +1521,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__falta{position:absolute;left:10px;bottom:10px;z-index:1;font-family:'Cinzel',serif;font-weight:700;
   font-size:10px;letter-spacing:.08em;color:#cbb98a;background:rgba(8,6,20,.82);border:1px solid #39335a;border-radius:7px;padding:3px 8px}
 /* conteúdo à direita */
-.col2ov__conteudo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:16px 18px 14px;position:relative}
+.col2ov__conteudo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:16px 18px 14px;position:relative}   /* §294-ajuste: padding-top 16→11 compensa o line-height do nome (o bloco abaixo não desce; a caixa de detalhe §292 fica igual) */
 .col2ov__x{position:absolute;top:11px;right:12px;z-index:2;width:28px;height:28px;cursor:pointer;display:grid;place-items:center;
   background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:17px;line-height:1}
 .col2ov__x:active{transform:translateY(1px)}
@@ -1533,7 +1533,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   background:rgba(10,8,22,.72);box-shadow:0 0 13px -2px currentColor, 0 2px 7px rgba(0,0,0,.55);
   text-shadow:0 1px 3px rgba(0,0,0,.85);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 .col2ov__nome{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.03em;color:var(--gold-text);
-  margin:2px 82px 0 0;line-height:1.02;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  margin:2px 82px 0 0;line-height:1.05;white-space:nowrap;overflow:visible}   /* §294-ajuste: era overflow:hidden e a capitular do Cinzel 900 estourava a caixa por cima (corte ~4px que o scrollHeight não pega). Aqui a caixa é larga (0/100 colidem com o ×, medido) → overflow:visible some o corte sem crescer nada nem empurrar a caixa de detalhe (§292) */
 .col2ov__arq{margin:3px 0 0;font-weight:600;font-style:italic;font-size:14px;color:var(--ink-dim)}
 .col2ov__ident{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
 .col2ov__tag{font-weight:700;font-size:11px;letter-spacing:.02em;padding:3px 11px;border-radius:8px;
