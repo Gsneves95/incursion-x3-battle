@@ -6,6 +6,75 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §293 — MAPA DE SINERGIA entre os 100 deuses, DERIVADO DO FX (medição + proposta; a tela é decisão do dono).
+
+Pedido: mapear a sinergia entre os deuses **saindo do fx, nunca da prosa nem do tema** (a lição theme≠mechanic).
+Não construir a tela — reportar o mapa e a **distribuição**, e o dono decide o que a ficha mostra. **Entregue como
+DADO** (`data/sinergia.json`) com um **tool** que regenera (`tools/gerar_sinergia.js`), como o `gerar_dominios` — kit
+novo no futuro roda o tool, não edita à mão. Cada aresta carrega o **motivo em uma linha, derivado da regra**, e é
+**direcional** onde a mecânica é (Rá dá aos Aurora; um Aurora não dá nada ao Rá).
+
+### As 7 famílias, CONFIRMADAS no fx (com as correções do dono)
+
+1. **LAÇO NOMEADO** — o fx cita outro deus por chave. Os 4 do dono confirmam-se (change↔houyi, fujin↔raijin,
+   hanuman↔sunwukong, inari↔kitsune) **+ um 5º que o dono não listou: mnevis↔ra** (a passiva de Mnevis só age com
+   Rá no time — `aliadoPresente:"ra"`). **10 arestas** (5 pares mútuos). É a sinergia mais forte e mais certa.
+2. **FASE** — **2 setters, não 3.** Amaterasu cria **Dia** (`fase v:Dia`), Tsukuyomi cria **Noite** (`fase v:Noite`);
+   o FASE_MOD (§96) dá **+8** ao atacante do elemento favorecido e **−5** ao oposto. **Correção: Hou Yi NÃO é setter** —
+   o fx dele é `{fase, remove:"Dia"}`: ele **apaga** o Dia (desfaz o Amaterasu), não cria fase nem favorece elemento.
+   É um contra-Amaterasu, não um doador de +8. Fica **fora** da família (reportado como mecânica à parte). Aurora→setter
+   de Dia = **fase** (+8); Umbra→setter de Dia = **fase-anti** (−5), e espelhado p/ a Noite. **46 fase + 48 fase-anti.**
+3. **CONTADOR** — o dono lembrou "3 gera, 3 consome". O fx diz **outra coisa**: dos 9 contadores, **só `combo` é de
+   POOL do lado** (`pool:"lado"`) — os outros 8 (cauda, atadura, disco, maldição, Coroa, Pedra, clava, podridão) são
+   `alvo:self`: **o mesmo deus enche e gasta** → sinergia com o próprio deus, **não cruza** ninguém. Logo os únicos
+   pares produtor→consumidor CRUZANDO deuses são no `combo`: **geram raijin e susanoo (+4 cada), consome yamatotakeru**
+   (**2 gera, 1 consome**, não 3+3). **4 arestas.**
+4. **FACÇÃO** — só **Odin** tem `faccaoConta` (passiva conta Nórdica ≥2). Os 13 Nórdicos listam o Odin; o Odin lista os
+   13. **26 arestas.** Nenhuma outra passiva conta facção.
+5. **ELEMENTO** — só **Rá** tem aura por elemento do atacante (`atacanteElem:"Aurora"` → +5). Os 20 Aurora listam o Rá;
+   o Rá não ganha de um Aurora qualquer (direcional). **20 arestas.** (A leitura `alvoElem` é anti-INIMIGO, não aura de
+   time — não entra.)
+6. **PREPARADOR→EXECUTOR** — direcional. Quem aplica um **amplificador** (vulnerável/adormecido/medo…) prepara p/
+   (a) o **executor explícito** — só **Atena** tem `bonusDano` vs `alvoDebuff:"controle"` (casa com adormecido/medo:
+   Atena→cuca/orfeu/tsukuyomi/babi/morrigan/mulasemcabeca) — e (b) os **maiores golpes únicos** (piso 34; o amplificador
+   rende mais num golpe grande). **68 arestas.** (A Atena tem golpe único 12 → o proxy de golpe grande NÃO a pegava;
+   por isso o tool casa também a categoria `controle` — senão o ÚNICO executor explícito do elenco ficava de fora.)
+7. **AURA INCONDICIONAL** — passiva que dá dano ao **time inteiro sem condição**: **Brigid +5, Mímir +6.** Cada aliado
+   lista o doador. **198 arestas (2 doadores × 99).**
+
+### O CORTE de linha de base — o que ele elimina além da cura
+
+Regra do dono: "efeito que MEIO ELENCO tem é linha de base, não sinergia". Medindo a prevalência no fx, o corte tira,
+**além dos ~45 que curam** (34 `heal` + regen/bonusCura/selfHp): **`dmg` (100/100 — todo mundo bate)**, **`apply` de
+status genérico (79)**, **`bonusDano`/`dmgUp` INCONDICIONAL (34+26)** — "dou dano a mais" só vira sinergia quando é
+CONDICIONADO (por elemento/fase/debuff/facção: as famílias 2/5/6), **`orbGain` (20)**, **`reducao` de dano (18)**,
+**`imunidade` (16)**, **`aoCair` (14)**, **`cleanse` (14)**. Sobrevivem só as mecânicas RARAS que nomeiam um parceiro
+ou compartilham um recurso — exatamente as 7 famílias.
+
+### A DISTRIBUIÇÃO — e o problema que ela revela (é decisão do dono)
+
+**420 arestas. Parceiros por deus: mín 1 (brigid) · mediana 4 · máx 16 (odin) · média 4,1. Ninguém com 0, ninguém com
+40** — o medo do dono ("um com 40, outro com 0") **não se materializou**… **por causa da família 7.** A aura é a **cura
+de novo, do avesso:** só 2 deuses TÊM a aura, mas **98 a RECEBEM** — Brigid e Mímir aparecem em 98 fichas cada.
+**36 dos 100 deuses têm como ÚNICO parceiro {brigid, mímir}** (o cluster de 35 em "2 parceiros" + a própria Brigid em 1).
+**Sem a família aura, esses 36 caem a 0 parceiros.** Ou seja: a família que o dono pediu (#7) é a que enche um terço do
+elenco com os mesmos 2 nomes — o mesmo padrão "aparece em quase toda ficha" que o corte da cura removeu.
+
+**Proposta (o dono decide; NÃO construí a tela):** manter a aura no DADO (é sinergia real), mas a ficha tratá-la como
+**faixa global** ("Brigid e Mímir reforçam todo o time"), não como 98 arestas par-a-par — assim o mapa PAR-A-PAR fica
+com a distribuição real (36 em 0, mediana 2, máx 15) e a aura não afoga um terço das fichas. Alternativas: (A) mostrar
+como par mesmo — 36 fichas listam só os 2; (B) cortar a aura como linha de base — 36 fichas ficam sem sinergia nenhuma.
+O `familia:"aura"` já vem etiquetado no dado p/ a ficha poder separar. **Reportado; aguardo a decisão da tela.**
+
+### Forma do dado e regenerabilidade
+
+`tools/gerar_sinergia.js` lê **só o fx** (`g.ab[].fx` + `g.passiva.fx`, com `walk` nos ramos faz/entao/senao/agenda),
+extrai papéis por deus, gera as arestas direcionais por família com **motivo em português derivado da regra**, aplica
+o corte (sem família de cura) e escreve `data/sinergia.json` (dado derivado, não editar à mão). Imprime a distribuição.
+Não entra na build (o dono decide a tela); `build.js` lê subpastas nomeadas, não varre `data/` — intacto.
+
+---
+
 ## §292 — dois achados do dono jogando: o texto de efeito CORTA (a medição não pegou) e o selo de raridade muda de lugar.
 
 ### 1) POR QUE A MEDIÇÃO NÃO PEGOU (importa mais que o conserto)

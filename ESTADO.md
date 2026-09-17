@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ SINERGIA §293 — MAPA entre os 100 deuses, DERIVADO DO FX (medição + proposta; a TELA é decisão do dono, NÃO construída).
+
+Mapear a sinergia **saindo do fx, nunca da prosa nem do tema**. Entregue como **DADO** (`data/sinergia.json`) + **tool** que regenera (`tools/gerar_sinergia.js`), como o `gerar_dominios` — kit novo roda o tool, não edita à mão. Cada aresta é **direcional** e leva o **motivo em uma linha derivado da regra**.
+
+**As 7 famílias, confirmadas no fx (com as correções do dono):** (1) **LAÇO** — os 4 do dono + um **5º não listado: mnevis↔ra** (`aliadoPresente:"ra"`); 10 arestas. (2) **FASE** — **2 setters, não 3:** Amaterasu (Dia) e Tsukuyomi (Noite); **Hou Yi NÃO é setter** — seu fx é `{fase, remove:"Dia"}`, ele APAGA o Dia (contra-Amaterasu), não cria fase nem +8 → fora da família; 46 fase (+8) + 48 fase-anti (−5). (3) **CONTADOR** — não "3 gera/3 consome": dos 9 contadores só `combo` é `pool:"lado"`; os outros 8 são `alvo:self` (mesmo deus enche e gasta, não cruza) → único cruzamento é **raijin+susanoo geram → yamatotakeru consome** (2 gera, 1 consome); 4 arestas. (4) **FACÇÃO** — só **Odin** (`faccaoConta` Nórdica ≥2); 26 arestas. (5) **ELEMENTO** — só **Rá** (`atacanteElem:Aurora` +5); 20 Aurora listam o Rá, direcional; 20 arestas. (6) **PREPARADOR→EXECUTOR** — aplica amplificador → executor explícito (só **Atena**, `bonusDano` vs `controle`; o proxy de golpe grande ≥34 não a pegava, golpe 12 → o tool casa a categoria `controle`) + maiores golpes únicos; 68 arestas. (7) **AURA INCONDICIONAL** — **Brigid +5, Mímir +6** ao time; 198 arestas.
+
+**O corte de linha de base elimina, além dos ~45 que curam:** `dmg` (100), `apply` genérico (79), `bonusDano`/`dmgUp` **incondicional** (34+26 — só vira sinergia CONDICIONADO), `orbGain` (20), `reducao` (18), `imunidade` (16), `aoCair` (14), `cleanse` (14). Sobram só as mecânicas raras que nomeiam parceiro ou compartilham recurso.
+
+**★ DISTRIBUIÇÃO — e o problema que ela revela (decisão do dono, pendente):** 420 arestas; parceiros/deus **mín 1 · mediana 4 · máx 16 (odin) · média 4,1; ninguém em 0, ninguém em 40** — o medo do dono não bateu, **mas por causa da aura.** A aura é a **cura ao avesso:** 2 deuses TÊM, **98 RECEBEM** → Brigid e Mímir em 98 fichas cada; **36 dos 100 têm como ÚNICO parceiro {brigid, mímir}** (sem a aura, esses 36 caem a **0**). A família #7 que o dono pediu é a que enche 1/3 do elenco com os mesmos 2 nomes. **Proposta (não decidi):** aura fica no dado (é real) mas a ficha a mostra como **faixa global**, não 98 pares → o mapa par-a-par volta à distribuição real (36 em 0, mediana 2, máx 15). `familia:"aura"` já vem etiquetado p/ a ficha separar. **Aguardo o dono decidir a tela.**
+
+**Arquivos:** `tools/gerar_sinergia.js` (novo), `data/sinergia.json` (novo, derivado). Não entra na build (build lê subpastas nomeadas, não varre `data/`). Ver DECISOES §293. Suíte (47)+build verdes. **NÃO construí a tela.**
+
 ## ★ COLEÇÃO §292 — texto de efeito CORTA no piso 780 (medição não pegou) → consertado; selo de raridade sobre o retrato.
 
 Dois achados do dono jogando. **(1) Por que a medição não pegou (importa mais que o conserto):** o §291 mediu a **951** (card 877) e **só o slot default (básico)**; o aparelho roda no **piso 780** (card **706**, coluna ~100px mais estreita) e o texto longo mora em habilidade/milagre/passiva. Medido nas duas: **186/400 cortam a 780 · 6/400 a 951**. O check era vertical (não era o eixo). **Varredura:** §288-medição (nomes 38/100) e §288-ajuste ("0 cortado"→**1/100 a 780**) também foram só a 951; §289/§290/§291-geometria são seguras (951 é o pior caso do retrato; a calha da seta escala com o palco).
