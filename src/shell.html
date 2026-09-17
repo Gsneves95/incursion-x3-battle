@@ -1512,7 +1512,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__tag--el{border-color:var(--c);color:var(--c)}
 .col2ov__posse{display:inline-block;margin:10px 0 0;font-weight:800;font-size:12px;letter-spacing:.03em}
 .col2ov__posse--tem{color:var(--e-Verdejante)} .col2ov__posse--nao{color:var(--ink-mute)}
-.col2ov__div{display:flex;align-items:center;gap:10px;margin:12px 0 9px}
+.col2ov__div{display:flex;align-items:center;gap:10px;margin:2px 0 2px}   /* §292-conserto B: 21→4 p/ a caixa de efeito (folga no pior caso) */
 .col2ov__div::before,.col2ov__div::after{content:'';height:1px;flex:1 1 auto;background:linear-gradient(90deg,transparent,rgba(216,178,90,.45),transparent)}
 .col2ov__div span{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.16em;color:var(--gold-text)}
 .col2ov__sks{flex:0 0 auto;display:flex;gap:9px}
@@ -1521,15 +1521,15 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__sk.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.09);box-shadow:0 0 0 1px rgba(255,217,122,.25),0 0 14px rgba(255,200,90,.15)}
 .col2ov__sk:disabled{opacity:.4;cursor:default}
 .col2ov__skrot{font-family:'Cinzel',serif;font-weight:700;font-size:8.5px;letter-spacing:.1em;color:var(--gold-text)}
-.col2ov__skart{width:54px;height:54px;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid #5a4560}
+.col2ov__skart{width:46px;height:46px;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid #5a4560}   /* §292-conserto D: 54→46 — o seletor era MAIOR que o que seleciona (chips 114 > caixa 96); encolher corrige a desproporção e abre ~8px */
 .col2ov__sk.is-sel .col2ov__skart{border-color:var(--gold-soft)}
-.col2ov__skart .slot{width:54px;height:54px}
+.col2ov__skart .slot{width:46px;height:46px}
 /* §288-ajuste: DUAS linhas RESERVADAS sempre (min-height fixo), não sob demanda — a fileira é elemento fixo, e
    pulo ao trocar de deus é pior que espaço vazio. O card tem 394px e a caixa rola, então há folga p/ a linha
    crescer (≠ §277, que estava no teto físico do cartão e por isso aceitou reticência). */
 .col2ov__sknome{font-weight:700;font-size:11px;color:var(--ink-dim);text-align:center;line-height:1.15;max-width:100%;
   min-height:calc(2 * 1.15em);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:11px;padding-top:11px;border-top:1px solid rgba(216,178,90,.2)}
+.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:2px;padding-top:5px;border-top:1px solid rgba(216,178,90,.2)}   /* §292-conserto C: respiro 22→7 p/ a caixa de efeito (folga no pior caso) */
 .col2ov__detart{flex:0 0 auto;width:66px;height:66px;border-radius:11px;overflow:hidden;border:1px solid var(--gold-soft)}
 .col2ov__detart .slot{width:66px;height:66px}
 .col2ov__detbody{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px}

@@ -41,8 +41,27 @@ rolagem). A coluna de conteúdo (392px úteis a 780) hoje: nome 23 · epíteto 1
 | D. arte do chip 54→46 | ~8px | ícones menores |
 | E. apertar posse/tags/epíteto/padding | ~10px | ritmo vertical mais denso |
 Combos p/ os 27 (cabe TODOS os 400): **B+C+E ≈ 30px** (mantém nomes 2 linhas E arte — só respiro; minha
-recomendação); ou **A+C ≈ 23** / **A+B+C** (reverte nomes + aperta). **PENDENTE: o dono decide qual.** O babá
-"0/400 corta a 780" entra junto com o conserto.
+recomendação); ou **A+C ≈ 23** / **A+B+C** (reverte nomes + aperta).
+
+**CONSERTO (o dono escolheu B+C+D):** divisor HABILIDADES 21→4, respiro acima da caixa 22→7, arte do chip 54→46.
+- **Recusou A** (manter nomes em 2 linhas): assimetria decisiva — o EFEITO cortado não tem outro lugar onde ser
+  lido (é o que o jogador foi buscar); o NOME cortado reaparece inteiro na caixa ao tocar o chip. **Trunca-se o
+  recuperável, nunca o irrecuperável.**
+- **Recusou E** (posse/tags/epíteto/padding): são o AGRUPAMENTO POR PROXIMIDADE do §281 — os quatro grupos que
+  fazem o cartão ler em blocos, não em lista. Apertá-los desfaria o que aquele corte consertou.
+- **D tem motivo próprio:** a fileira de chips ocupava 114 e a caixa 96 — **o seletor era MAIOR que o que ele
+  seleciona** (o diagnóstico do dono: "texto muito na parte de baixo"). Encolher a arte do chip corrige a
+  desproporção, não só abre 8px. A 46 a arte lê bem (verificado na captura — não ficou feia).
+
+**MEDIDO depois (real, com probe de conteúdo — `scrollHeight` clampa e esconde a folga positiva):** a 780 (piso),
+o PIOR (`babi.milagre`, 53px de texto) cabe inteiro numa caixa de **59px → folga +6px** (sobrando, não "só
+coube"); a 951, **+35px**. **0/400 cortam/rolam a 780 E a 951.** A caixa de detalhe virou **123px > 106px** da
+fileira de chips → **maior que o seletor** nas duas larguras. Arte do chip a 46px lê bem (captura
+`docs/capturas-292/conserto-babimilagre-780`).
+
+**Babá (`tests/colecao_encaixe.test.js`, Chromium):** 0/400 textos cortam/rolam **NO PISO 780 E na folga 951**,
+percorrendo os QUATRO slots — fecha as duas falhas do §291 (largura folgada + só o default). Também trava a
+proporção (caixa > seletor).
 
 ### 3) O SELO DE RARIDADE sai de perto do × → canto sup-esq do retrato (FEITO)
 
@@ -59,9 +78,10 @@ A Coleção escala por largura (piso 780, teto 1200). Medir SÓ a 951 mede o cas
 780 passar — foi o que aconteceu no §291. E medir só o slot default esconde os outros três. **Toda medição de
 encaixe da Coleção roda no piso 780 E na folga 951, e percorre os 400 slots, não os 100 defaults.**
 
-**Arquivos (parte 2 + diagnóstico):** `src/ui/home.js` (selo no retrato), `src/shell.html` (`.col2ov__rarart`),
-`tests/colecao_tela.test.js` (§7f babá do selo). Capturas em `docs/capturas-292/`. Parte 1 (texto) medida e
-proposta — **aguardando decisão do dono**. Suíte (46) + build verdes.
+**Arquivos:** `src/ui/home.js` (selo no retrato), `src/shell.html` (`.col2ov__rarart`; conserto B/C/D: `.col2ov__div`
+margem, `.col2ov__det` respiro, `.col2ov__skart` 46), `tests/colecao_tela.test.js` (§7f babá do selo),
+`tests/colecao_encaixe.test.js` (novo, babá do encaixe a 780+951), `package.json`. Capturas em `docs/capturas-292/`.
+Suíte (47) + build verdes.
 
 ---
 
