@@ -1407,7 +1407,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2r__dica{margin-top:auto;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-mute);text-align:center;padding-top:14px}
 .col2r__dica i{font-style:normal;color:var(--gold-text)}
 /* MAESTRIA no painel (§284) — posto + barra até o próximo (modelo real §245) */
-.col2m{flex:0 0 auto;margin-top:10px;border:1px solid #2c2648;border-radius:10px;padding:8px 10px;background:rgba(20,16,38,.5)}
+.col2m{flex:0 0 auto;margin-top:7px;border:1px solid #2c2648;border-radius:10px;padding:8px 10px;background:rgba(20,16,38,.5)}   /* §294: 10→7, abre folga p/ a seção SINERGIA no painel (medido: pior deus fecha no piso 428) */
 .col2m--mestre{border-color:var(--gold-soft);background:linear-gradient(180deg,rgba(216,178,90,.12),rgba(20,16,38,.5));
   box-shadow:0 0 0 1px rgba(255,217,122,.16),0 0 12px rgba(255,190,90,.20)}
 /* §284-ajuste: vitórias cumpridas, só falta o Milagre — SEM barra, o requisito é a manchete (não perde p/ barra cheia) */
@@ -1432,12 +1432,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2p__rar{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.04em;
   padding:2px 9px;border-radius:8px;border:1px solid currentColor}
 .col2p__rar--SS{color:#e9c877} .col2p__rar--S{color:#b06cff} .col2p__rar--A{color:#56a8ef}
-.col2p__nome{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.01em;color:var(--ink);
+.col2p__nome{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.01em;color:var(--ink);
   margin:8px 0 0;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .col2p--falta .col2p__nome{color:var(--ink-dim)}
 /* §282(c) — ARQUÉTIPO: legenda de tela sob o nome (orienta a leitura das 4 habilidades). Uma linha,
    caption: itálico dourado-suave. Se o mais longo dos 99 cortar, é reticência (medido; escolha do dono). */
-.col2p__arq{margin:2px 0 0;font-weight:600;font-style:italic;font-size:11px;letter-spacing:.01em;color:var(--gold-text);opacity:.82;
+.col2p__arq{flex:0 0 auto;margin:2px 0 0;font-weight:600;font-style:italic;font-size:11px;letter-spacing:.01em;color:var(--gold-text);opacity:.82;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .col2p--falta .col2p__arq{color:var(--ink-mute);opacity:1}
 .col2p__ident{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 0}
@@ -1461,6 +1461,35 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.06em;color:#1a1530;
   background:var(--ouro-grad);border:none;border-radius:9px}
 .col2p__ver:active{transform:translateY(1px)}
+
+/* §294 — SINERGIA no painel lateral: cabeçalho + até 3 parceiros (retrato 30 + nome/mecânica em 2 linhas — a
+   mecânica curta cabe em 167px sem cortar, medido nas duas larguras), "+N ›" abre a lista completa como MODO da
+   sobreposição, a FAIXA GLOBAL (aura+suporte) numa linha, o solista diz a verdade. Compacto p/ caber no vão medido
+   entre a maestria e o "Ver detalhes" (§294: 3 parceiros + cabeçalho + faixa fecham no piso 428). */
+.col2s{flex:0 0 auto;margin-top:3px}
+.col2s__cab{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.col2s__cab::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,rgba(216,178,90,.4),transparent)}
+.col2s__rot{font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.09em;color:var(--gold-soft)}
+.col2s__lista{display:flex;flex-direction:column;gap:3px}
+.col2s__par{display:flex;align-items:center;gap:7px;min-width:0;border-left:2px solid #3a3360;padding-left:6px}
+.col2s__par--laço{border-left-color:#e9c877}
+.col2s__par--combo{border-left-color:#b06cff}
+.col2s__par--facção{border-left-color:#56a8ef}
+.col2s__par--preparador{border-left-color:#e08a4a}
+.col2s__par--elemento,.col2s__par--fase{border-left-color:#5ec2a0}
+.col2s__par--anti{border-left-color:#c0566a}
+.col2s__art{flex:0 0 26px;width:26px;height:26px;border-radius:50%;overflow:hidden;display:block}
+.col2s__art svg,.col2s__art img{width:100%;height:100%;object-fit:cover;display:block}
+.col2s__txt{min-width:0;display:flex;flex-direction:column}
+.col2s__nome{font-weight:700;font-size:11px;line-height:1.12;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col2s__mec{font-weight:500;font-size:9.5px;line-height:1.15;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col2s__mais{margin-top:2px;width:100%;padding:2px 0;cursor:pointer;font-weight:700;font-size:9.5px;letter-spacing:.03em;
+  color:var(--gold-soft);background:rgba(216,178,90,.08);border:1px solid rgba(216,178,90,.3);border-radius:7px}
+.col2s__mais:active{transform:translateY(1px)}
+.col2s__sup,.col2s__solo{font-size:10.5px;line-height:1.3;color:var(--ink-dim);margin:3px 0 0}
+.col2s__solo{font-style:italic;color:var(--ink-mute)}
+.col2s__faixa{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:9.5px;line-height:1.22;color:#8ec9a6}
+.col2s__faixa i{font-style:normal;opacity:.85}
 
 /* §288 — SOBREPOSIÇÃO refeita (mockup): card LANDSCAPE, retrato à esquerda (sangra até a moldura), conteúdo à
    direita com nome+epíteto+tags+posse, divisor HABILIDADES, seletor de 4 ícones + caixa de detalhe do slot.
@@ -1548,6 +1577,31 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__detvazio{color:var(--ink-mute);font-size:12px;padding:8px 0}
 .col2ov__cite{flex:0 0 auto;margin:10px 0 0;font-style:italic;font-weight:500;font-size:12px;color:var(--ink-mute);
   text-align:center;border-top:1px solid rgba(216,178,90,.14);padding-top:8px}
+/* §294 — MODOS da sobreposição: KIT (seletor+detalhe §288) | SINERGIA (lista completa, motivo INTEIRO, aqui há
+   largura). O corpo é a área flexível: em KIT a caixa de detalhe rola; em SINERGIA a lista rola. */
+.col2ov__modos{flex:0 0 auto;display:flex;gap:6px;margin:2px 0 2px}
+.col2ov__modo{flex:1;padding:2px 0;cursor:pointer;font-family:'Cinzel',serif;font-weight:700;font-size:10px;
+  letter-spacing:.06em;color:var(--ink-mute);background:rgba(20,16,38,.5);border:1px solid #2c2648;border-radius:8px}
+.col2ov__modo.is-on{color:#1a1530;background:var(--ouro-grad);border-color:transparent}
+.col2ov__corpo{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.col2ov__sinfaixa{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:4px 0 7px;font-size:11px;line-height:1.3;color:#8ec9a6}
+.col2ov__sinfaixa i{font-style:normal;opacity:.85}
+.col2ov__sinlista{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin}
+.col2ov__sinlista::-webkit-scrollbar{width:6px} .col2ov__sinlista::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2ov__sinpar{display:flex;gap:10px;align-items:flex-start;border-left:3px solid #3a3360;padding-left:9px}
+.col2ov__sinpar--laço{border-left-color:#e9c877}
+.col2ov__sinpar--combo{border-left-color:#b06cff}
+.col2ov__sinpar--facção{border-left-color:#56a8ef}
+.col2ov__sinpar--preparador{border-left-color:#e08a4a}
+.col2ov__sinpar--elemento,.col2ov__sinpar--fase{border-left-color:#5ec2a0}
+.col2ov__sinpar--anti{border-left-color:#c0566a}
+.col2ov__sinart{flex:0 0 40px;width:40px;height:40px;border-radius:50%;overflow:hidden;display:block}
+.col2ov__sinart svg,.col2ov__sinart img{width:100%;height:100%;object-fit:cover;display:block}
+.col2ov__sintxt{min-width:0;flex:1 1 auto}
+.col2ov__sinnome{font-weight:700;font-size:12.5px;color:var(--ink)}
+.col2ov__sinfam{margin-left:7px;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute)}
+.col2ov__sinmot{font-weight:500;font-size:11px;line-height:1.32;color:var(--ink-dim);margin:2px 0 0}
+.col2ov__sinsolo{flex:0 0 auto;font-style:italic;font-size:12px;color:var(--ink-mute)}
 /* §291: setas de navegação — POR FORA do cartão, sobre o fundo desfocado. O `left:0`/`right:0` ancora na borda do
    palco (padding-box do #col2ov), então a seta ocupa a calha de ~27px entre a borda do palco e o cartão (897 em
    951). É estreita (o dono decide se encolhe o cartão p/ um alvo maior — ver DECISOES §291); alta p/ compensar. */

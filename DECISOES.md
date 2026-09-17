@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §294 — a SINERGIA vira TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.
+
+O §293 mediu e o dono decidiu. Aqui se construiu, com os números mandando em cada escolha.
+
+**O que o dono aprovou e virou regra:** painel lateral com parceiros par-a-par em ordem de prioridade (laço > combo >
+facção > preparador > elemento/fase; **o laço vem 1º porque é o único que MUDA COMPORTAMENTO** — a recarga, o Combo —,
+o resto soma número); o "+N ›" abre a lista completa como **MODO da sobreposição que já existe** (não uma 4ª
+superfície); a aura+suporte viram **faixa global** (uma linha, não par); o solista diz **"Sem sinergia específica —
+funciona sozinho"** (verdade > parceria inventada); e a anti-sinergia (fase-anti) fica fora do topo (prioridade 8,
+só na lista completa).
+
+**O MOTIVO é o produto — e o número que o dono pediu:** medi os 222 motivos na largura real da linha do painel
+(**167px após o retrato**), fontes reais, **nas duas larguras e em todos os pares**. O motivo INTEIRO (mediana 66
+chars, máx 86) não cabe em uma linha — nem a forma "Nome — mecânica" (13/42 cortavam, os nomes longos: Yamato Takeru,
+Tsukuyomi). **Solução que a própria guarda do dono exige ("motivo em uma linha" + "nenhum corta"):** o gerador emite
+DOIS textos por par — `curto` (SÓ a mecânica, sem repetir o nome, ≤153px → **0/222 cortam** a 780 E a 951) e `motivo`
+(a frase inteira). O painel mostra **nome (linha 1) + mecânica curta (linha 2)**; a sobreposição mostra o motivo
+inteiro (ali há largura). Assim nome E motivo ficam inteiros, nada trunca.
+
+**2 parceiros no painel, não 3 (o número medido).** Manter nome+motivo inteiros exige 2 linhas por parceiro. Medido no
+Chromium (piso 780): **3 linhas de 2 linhas + "+N" + a identidade mais alta (hades) estouram o piso 428 em 31px; 2
+cabem com folga.** É exatamente o critério que o dono deu: *"prefiro 2 parceiros com motivo inteiro a 3 com motivo
+cortado."* Três só caberia com uma linha só (que trunca os nomes longos — recusado). O 3º+ parceiro vai para o "+N ›".
+Com mediana 2, a maioria mostra os parceiros todos; os hubs (odin 15, +N "+13 mais") abrem a lista cheia a um toque.
+
+**Onde a faixa cabe (o dono perguntou):** medido — com parceiro no painel, a faixa (aura) NÃO cabe junto (a identidade
+mais alta já estoura). Então a faixa aparece no painel **só para quem tem 0 parceiro** (solista/suporte, onde sobra
+espaço e ela preenche o que seria vazio — ficou boa no Zeus); quem tem parceiro vê a faixa na **sobreposição** (o modo
+SINERGIA sempre a mostra no topo, e o "+N" a abre). Nunca compete com os 2 parceiros, nunca corta.
+
+**Encaixe fino (medido, piso 428):** o painel é fixo 233×373. A seção fecha no pior deus (hades) em **426/428** (2px de
+folga) com: linhas apertadas (retrato 26, nome 11px, mecânica 9.5px, gaps 3–4), `.col2p__nome`/`.col2p__arq` travados
+em `flex:0 0 auto` (senão o flex os COMPRIMIA para caber o botão — o "ODIN" saía espremido), e a margem da maestria
+10→7 (§284, abre folga p/ a seção). **Guarda babá `colecao_sinergia.test.js` (Chromium, 780 E 951):** máx 2 parceiros
++ cabeçalho; ordem de prioridade (laço antes de anti, no mnevis); "+N" abre a lista completa no modo SINERGIA com TODOS
+os parceiros; solista mostra a linha; **0/100 nomes/mecânicas cortam**; **"Ver detalhes" alcançável (§210) nos 100**.
+
+**Dado e regenerabilidade:** `tools/gerar_sinergia.js` passou a emitir, por par, `curto`+`motivo`, e por deus a `ficha`
+(parceiros ordenados por prioridade, `suporte`, `solista`) + `auraDoadores` — tudo derivado do fx. `tools/build.js`
+injeta `SINERGIA` com guarda de integridade (toda ficha/parceiro é deus real; todo par tem curto+motivo). Kit novo no
+futuro roda o tool, a tela só lê.
+
+---
+
 ## §293 — MAPA DE SINERGIA entre os 100 deuses, DERIVADO DO FX (medição + proposta; a tela é decisão do dono).
 
 Pedido: mapear a sinergia entre os deuses **saindo do fx, nunca da prosa nem do tema** (a lição theme≠mechanic).

@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ SINERGIA §294 — a TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.
+
+O §293 mediu e o dono decidiu; aqui construiu-se. **Painel lateral (sob a maestria):** cabeçalho SINERGIA + até **2 parceiros** par-a-par (retrato 26 + **nome** em cima + **mecânica curta** embaixo), em **ordem de prioridade** (laço > combo > facção > preparador > elemento/fase; o laço 1º porque MUDA COMPORTAMENTO, o resto soma número); **"+N ›"** para o resto; o **solista** diz "Sem sinergia específica — funciona sozinho". **Sobreposição (§288):** ganhou **dois modos — KIT | SINERGIA**; o modo SINERGIA lista TODOS os parceiros com o **motivo INTEIRO** + a **faixa global** no topo; o "+N ›" do painel abre direto nele (não é 4ª superfície — decisão do dono).
+
+**★ O MOTIVO É O PRODUTO — o número medido (a pergunta do dono):** os 222 motivos na largura real do painel (**167px após o retrato**), fontes reais, **780 E 951, todos os pares**. O motivo inteiro (mediana 66, máx 86 chars) não cabe em 1 linha; nem "Nome — mecânica" (13/42 cortavam — nomes longos). **Saída que a guarda do dono exige:** o gerador emite `curto` (SÓ a mecânica, sem o nome → **0/222 cortam**) e `motivo` (inteiro). Painel = nome + curto (2 linhas); sobreposição = motivo inteiro. **2 parceiros, não 3:** medido — 3 linhas de 2 linhas + "+N" + a identidade mais alta estouram o piso 428 em **31px**; 2 cabem. É o critério do dono ("prefiro 2 com motivo inteiro a 3 com motivo cortado"). 3 só com 1 linha (que trunca) — recusado. Mediana 2 → a maioria mostra tudo; odin (15) mostra 2 + "+13 mais".
+
+**★ Onde a faixa cabe (o dono perguntou):** com parceiro, a faixa NÃO cabe (a identidade mais alta estoura). Então **faixa no painel só p/ 0 parceiro** (solista/suporte — sobra espaço, ficou boa no Zeus); quem tem parceiro vê a faixa **na sobreposição** (topo do modo SINERGIA). Nunca compete com os 2, nunca corta.
+
+**Encaixe (medido, piso 428):** painel fixo 233×373; fecha no pior deus (**hades 426/428**, 2px folga) com linhas apertadas (retrato 26/nome 11/mec 9.5/gaps 3–4), **`.col2p__nome`/`__arq` travados `flex:0 0 auto`** (senão o flex os comprimia — "ODIN" saía espremido), maestria `margin-top` 10→7. **Guarda `tests/colecao_sinergia.test.js` (Chromium 780 E 951):** máx 2 + cabeçalho · prioridade (laço antes de anti no mnevis) · "+N" abre a lista completa no modo SINERGIA (15/15 do odin) · solista com a linha · **0/100 cortam** · **"Ver detalhes" alcançável (§210) nos 100**. Dado: 222 pares, aura=faixa (Mímir+6/Brigid+5), 37 suportes, 22 solistas.
+
+**Arquivos:** `tools/gerar_sinergia.js` (curto+motivo+fichas+auraDoadores+suporte), `data/sinergia.json`, `tools/build.js` (injeta+valida SINERGIA), `src/ui/home.js` (painel + modo da sobreposição), `src/shell.html` (CSS col2s/modos/sinlista + travas), `tests/colecao_sinergia.test.js`, `package.json`, `docs/capturas-294/`. Ver DECISOES §294. Suíte + build verdes.
+
 ## ★ SINERGIA §293 — MAPA entre os 100 deuses, DERIVADO DO FX (medição + proposta; a TELA é decisão do dono, NÃO construída).
 
 Mapear a sinergia **saindo do fx, nunca da prosa nem do tema**. Entregue como **DADO** (`data/sinergia.json`) + **tool** que regenera (`tools/gerar_sinergia.js`), como o `gerar_dominios` — kit novo roda o tool, não edita à mão. Cada aresta é **direcional** e leva o **motivo em uma linha derivado da regra**.

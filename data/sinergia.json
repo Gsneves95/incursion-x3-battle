@@ -8,10 +8,30 @@
   "combo": "contador de pool do lado: gera↔consome",
   "facção": "passiva faccaoConta (Odin: Nórdica)",
   "elemento": "aura por elemento do atacante (Rá: Aurora)",
-  "preparador": "aplica debuff amplificador → executor",
-  "aura": "aura de dano ao time inteiro, incondicional"
+  "preparador": "aplica debuff amplificador → executor"
  },
- "totalPares": 420,
+ "prioridade": {
+  "laço": 1,
+  "combo": 2,
+  "facção": 3,
+  "preparador": 4,
+  "elemento": 5,
+  "fase": 5,
+  "fase-anti": 8
+ },
+ "auraDoadores": [
+  {
+   "deus": "mimir",
+   "nome": "Mimir",
+   "v": 6
+  },
+  {
+   "deus": "brigid",
+   "nome": "Brigid",
+   "v": 5
+  }
+ ],
+ "totalPares": 222,
  "porFamilia": {
   "laço": 10,
   "fase": 46,
@@ -19,2931 +39,4528 @@
   "combo": 4,
   "facção": 26,
   "elemento": 20,
-  "preparador": 68,
-  "aura": 198
+  "preparador": 68
  },
  "distribuicao": [
   {
    "deus": "odin",
-   "parceiros": 16
+   "parceiros": 15
   },
   {
    "deus": "fenrir",
-   "parceiros": 11
+   "parceiros": 10
   },
   {
    "deus": "lugh",
-   "parceiros": 11
+   "parceiros": 10
   },
   {
    "deus": "ammit",
-   "parceiros": 10
+   "parceiros": 9
   },
   {
    "deus": "atena",
-   "parceiros": 10
+   "parceiros": 9
   },
   {
    "deus": "hades",
-   "parceiros": 10
+   "parceiros": 9
   },
   {
    "deus": "shiva",
-   "parceiros": 10
+   "parceiros": 9
   },
   {
    "deus": "hercules",
-   "parceiros": 9
+   "parceiros": 7
   },
   {
    "deus": "ogum",
-   "parceiros": 9
+   "parceiros": 7
   },
   {
    "deus": "oni",
-   "parceiros": 9
+   "parceiros": 7
   },
   {
    "deus": "horus",
-   "parceiros": 8
+   "parceiros": 6
   },
   {
    "deus": "baldur",
-   "parceiros": 6
+   "parceiros": 4
   },
   {
    "deus": "bragi",
-   "parceiros": 6
+   "parceiros": 4
   },
   {
    "deus": "freyja",
-   "parceiros": 6
+   "parceiros": 4
   },
   {
    "deus": "heimdall",
-   "parceiros": 6
-  },
-  {
-   "deus": "tyr",
-   "parceiros": 6
-  },
-  {
-   "deus": "afrodite",
-   "parceiros": 5
-  },
-  {
-   "deus": "apolo",
-   "parceiros": 5
-  },
-  {
-   "deus": "bastet",
-   "parceiros": 5
-  },
-  {
-   "deus": "change",
-   "parceiros": 5
-  },
-  {
-   "deus": "hel",
-   "parceiros": 5
-  },
-  {
-   "deus": "huangdi",
-   "parceiros": 5
-  },
-  {
-   "deus": "isis",
-   "parceiros": 5
-  },
-  {
-   "deus": "itzamna",
-   "parceiros": 5
-  },
-  {
-   "deus": "kitsune",
-   "parceiros": 5
-  },
-  {
-   "deus": "krishna",
-   "parceiros": 5
-  },
-  {
-   "deus": "loki",
-   "parceiros": 5
+   "parceiros": 4
   },
   {
    "deus": "mnevis",
-   "parceiros": 5
-  },
-  {
-   "deus": "nuwa",
-   "parceiros": 5
-  },
-  {
-   "deus": "oxala",
-   "parceiros": 5
-  },
-  {
-   "deus": "perseu",
-   "parceiros": 5
-  },
-  {
-   "deus": "ra",
-   "parceiros": 5
-  },
-  {
-   "deus": "vishnu",
-   "parceiros": 5
-  },
-  {
-   "deus": "ahpuch",
    "parceiros": 4
   },
   {
-   "deus": "amaterasu",
+   "deus": "tyr",
    "parceiros": 4
   },
   {
-   "deus": "anubis",
-   "parceiros": 4
+   "deus": "afrodite",
+   "parceiros": 3
   },
   {
-   "deus": "babi",
-   "parceiros": 4
+   "deus": "apolo",
+   "parceiros": 3
   },
   {
-   "deus": "cerberus",
-   "parceiros": 4
+   "deus": "bastet",
+   "parceiros": 3
   },
   {
-   "deus": "cuca",
-   "parceiros": 4
+   "deus": "change",
+   "parceiros": 3
   },
   {
-   "deus": "erinias",
-   "parceiros": 4
+   "deus": "hel",
+   "parceiros": 3
   },
   {
-   "deus": "exu",
-   "parceiros": 4
+   "deus": "huangdi",
+   "parceiros": 3
   },
   {
-   "deus": "izanami",
-   "parceiros": 4
+   "deus": "isis",
+   "parceiros": 3
   },
   {
-   "deus": "kali",
-   "parceiros": 4
+   "deus": "itzamna",
+   "parceiros": 3
   },
   {
-   "deus": "khonshu",
-   "parceiros": 4
+   "deus": "kitsune",
+   "parceiros": 3
   },
   {
-   "deus": "medusa",
-   "parceiros": 4
+   "deus": "krishna",
+   "parceiros": 3
+  },
+  {
+   "deus": "loki",
+   "parceiros": 3
   },
   {
    "deus": "mimir",
-   "parceiros": 4
+   "parceiros": 3
+  },
+  {
+   "deus": "nuwa",
+   "parceiros": 3
+  },
+  {
+   "deus": "oxala",
+   "parceiros": 3
+  },
+  {
+   "deus": "perseu",
+   "parceiros": 3
+  },
+  {
+   "deus": "ra",
+   "parceiros": 3
+  },
+  {
+   "deus": "vishnu",
+   "parceiros": 3
+  },
+  {
+   "deus": "ahpuch",
+   "parceiros": 2
+  },
+  {
+   "deus": "amaterasu",
+   "parceiros": 2
+  },
+  {
+   "deus": "anubis",
+   "parceiros": 2
+  },
+  {
+   "deus": "babi",
+   "parceiros": 2
+  },
+  {
+   "deus": "cerberus",
+   "parceiros": 2
+  },
+  {
+   "deus": "cuca",
+   "parceiros": 2
+  },
+  {
+   "deus": "erinias",
+   "parceiros": 2
+  },
+  {
+   "deus": "exu",
+   "parceiros": 2
+  },
+  {
+   "deus": "izanami",
+   "parceiros": 2
+  },
+  {
+   "deus": "kali",
+   "parceiros": 2
+  },
+  {
+   "deus": "khonshu",
+   "parceiros": 2
+  },
+  {
+   "deus": "medusa",
+   "parceiros": 2
   },
   {
    "deus": "morrigan",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "orfeu",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "osiris",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "raijin",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "shutendoji",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "yamatotakeru",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "yanwong",
-   "parceiros": 4
+   "parceiros": 2
   },
   {
    "deus": "fujin",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "hanuman",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "houyi",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "inari",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "jormungandr",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "kraken",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "sunwukong",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "susanoo",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "thor",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "tsukuyomi",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "ymir",
-   "parceiros": 3
+   "parceiros": 1
   },
   {
    "deus": "aokuang",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "aquiles",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "ares",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "bennu",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "boitata",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "boto",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "brahma",
-   "parceiros": 2
-  },
-  {
-   "deus": "cernunnos",
-   "parceiros": 2
-  },
-  {
-   "deus": "chaac",
-   "parceiros": 2
-  },
-  {
-   "deus": "curupira",
-   "parceiros": 2
-  },
-  {
-   "deus": "dagda",
-   "parceiros": 2
-  },
-  {
-   "deus": "demeter",
-   "parceiros": 2
-  },
-  {
-   "deus": "dionisio",
-   "parceiros": 2
-  },
-  {
-   "deus": "durga",
-   "parceiros": 2
-  },
-  {
-   "deus": "ganesha",
-   "parceiros": 2
-  },
-  {
-   "deus": "guanyu",
-   "parceiros": 2
-  },
-  {
-   "deus": "hera",
-   "parceiros": 2
-  },
-  {
-   "deus": "hermes",
-   "parceiros": 2
-  },
-  {
-   "deus": "iansa",
-   "parceiros": 2
-  },
-  {
-   "deus": "iara",
-   "parceiros": 2
-  },
-  {
-   "deus": "izanagi",
-   "parceiros": 2
-  },
-  {
-   "deus": "kagutsuchi",
-   "parceiros": 2
-  },
-  {
-   "deus": "khnum",
-   "parceiros": 2
-  },
-  {
-   "deus": "kukulkan",
-   "parceiros": 2
-  },
-  {
-   "deus": "mulasemcabeca",
-   "parceiros": 2
-  },
-  {
-   "deus": "nefertem",
-   "parceiros": 2
-  },
-  {
-   "deus": "nezha",
-   "parceiros": 2
-  },
-  {
-   "deus": "oxum",
-   "parceiros": 2
-  },
-  {
-   "deus": "piranha",
-   "parceiros": 2
-  },
-  {
-   "deus": "poseidon",
-   "parceiros": 2
-  },
-  {
-   "deus": "saci",
-   "parceiros": 2
-  },
-  {
-   "deus": "sobek",
-   "parceiros": 2
-  },
-  {
-   "deus": "tanuki",
-   "parceiros": 2
-  },
-  {
-   "deus": "xango",
-   "parceiros": 2
-  },
-  {
-   "deus": "zeus",
-   "parceiros": 2
+   "parceiros": 0
   },
   {
    "deus": "brigid",
-   "parceiros": 1
+   "parceiros": 0
+  },
+  {
+   "deus": "cernunnos",
+   "parceiros": 0
+  },
+  {
+   "deus": "chaac",
+   "parceiros": 0
+  },
+  {
+   "deus": "curupira",
+   "parceiros": 0
+  },
+  {
+   "deus": "dagda",
+   "parceiros": 0
+  },
+  {
+   "deus": "demeter",
+   "parceiros": 0
+  },
+  {
+   "deus": "dionisio",
+   "parceiros": 0
+  },
+  {
+   "deus": "durga",
+   "parceiros": 0
+  },
+  {
+   "deus": "ganesha",
+   "parceiros": 0
+  },
+  {
+   "deus": "guanyu",
+   "parceiros": 0
+  },
+  {
+   "deus": "hera",
+   "parceiros": 0
+  },
+  {
+   "deus": "hermes",
+   "parceiros": 0
+  },
+  {
+   "deus": "iansa",
+   "parceiros": 0
+  },
+  {
+   "deus": "iara",
+   "parceiros": 0
+  },
+  {
+   "deus": "izanagi",
+   "parceiros": 0
+  },
+  {
+   "deus": "kagutsuchi",
+   "parceiros": 0
+  },
+  {
+   "deus": "khnum",
+   "parceiros": 0
+  },
+  {
+   "deus": "kukulkan",
+   "parceiros": 0
+  },
+  {
+   "deus": "mulasemcabeca",
+   "parceiros": 0
+  },
+  {
+   "deus": "nefertem",
+   "parceiros": 0
+  },
+  {
+   "deus": "nezha",
+   "parceiros": 0
+  },
+  {
+   "deus": "oxum",
+   "parceiros": 0
+  },
+  {
+   "deus": "piranha",
+   "parceiros": 0
+  },
+  {
+   "deus": "poseidon",
+   "parceiros": 0
+  },
+  {
+   "deus": "saci",
+   "parceiros": 0
+  },
+  {
+   "deus": "sobek",
+   "parceiros": 0
+  },
+  {
+   "deus": "tanuki",
+   "parceiros": 0
+  },
+  {
+   "deus": "xango",
+   "parceiros": 0
+  },
+  {
+   "deus": "zeus",
+   "parceiros": 0
   }
  ],
+ "fichas": {
+  "afrodite": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "ahpuch": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "amaterasu": {
+   "parceiros": [
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "ammit": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "anubis": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "aokuang": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "apolo": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "aquiles": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "ares": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "atena": {
+   "parceiros": [
+    {
+     "para": "babi",
+     "nome": "Babi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo medo",
+     "motivo": "Babi aplica medo; o seu dano cresce contra alvo com medo."
+    },
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca aplica adormecido; o seu dano cresce contra alvo com adormecido."
+    },
+    {
+     "para": "morrigan",
+     "nome": "Morrigan",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo medo",
+     "motivo": "Morrigan aplica medo; o seu dano cresce contra alvo com medo."
+    },
+    {
+     "para": "mulasemcabeca",
+     "nome": "Mula sem Cabeça",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo medo",
+     "motivo": "Mula sem Cabeça aplica medo; o seu dano cresce contra alvo com medo."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu aplica adormecido; o seu dano cresce contra alvo com adormecido."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi aplica adormecido; o seu dano cresce contra alvo com adormecido."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "babi": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "baldur": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "bastet": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "intercepta pelos aliados",
+   "solista": false
+  },
+  "bennu": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "boitata": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "boto": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "bragi": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "brahma": {
+   "parceiros": [],
+   "suporte": "escuda o time",
+   "solista": false
+  },
+  "brigid": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "cerberus": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "protege a frente",
+   "solista": false
+  },
+  "cernunnos": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "chaac": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "change": {
+   "parceiros": [
+    {
+     "para": "houyi",
+     "nome": "Hou Yi",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "destrava a sua passiva",
+     "motivo": "A passiva de Chang'e só age com Hou Yi no time (laço nomeado no fx)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "cuca": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "curupira": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "dagda": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "demeter": {
+   "parceiros": [],
+   "suporte": "revive aliados",
+   "solista": false
+  },
+  "dionisio": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "durga": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "erinias": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "exu": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "fenrir": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "freyja": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "revive aliados",
+   "solista": false
+  },
+  "fujin": {
+   "parceiros": [
+    {
+     "para": "raijin",
+     "nome": "Raijin",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "destrava a sua passiva",
+     "motivo": "A passiva de Fujin só age com Raijin no time (laço nomeado no fx)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "ganesha": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "guanyu": {
+   "parceiros": [],
+   "suporte": "reduz o dano do time",
+   "solista": false
+  },
+  "hades": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "hanuman": {
+   "parceiros": [
+    {
+     "para": "sunwukong",
+     "nome": "Sun Wukong",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "destrava a sua passiva",
+     "motivo": "A passiva de Hanuman só age com Sun Wukong no time (laço nomeado no fx)."
+    }
+   ],
+   "suporte": "intercepta pelos aliados",
+   "solista": false
+  },
+  "heimdall": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "escuda o time",
+   "solista": false
+  },
+  "hel": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "hera": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "hercules": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "hermes": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "horus": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "houyi": {
+   "parceiros": [
+    {
+     "para": "change",
+     "nome": "Chang'e",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "a passiva dele ativa com você",
+     "motivo": "Chang'e tem um efeito que se ativa com você no time (laço nomeado)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "huangdi": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "iansa": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "iara": {
+   "parceiros": [],
+   "suporte": "protege a frente",
+   "solista": false
+  },
+  "inari": {
+   "parceiros": [
+    {
+     "para": "kitsune",
+     "nome": "Kitsune",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "+1 de cauda p/ ele",
+     "motivo": "Com Kitsune no time, gera +1 de cauda para ele."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "isis": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "revive aliados",
+   "solista": false
+  },
+  "itzamna": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "izanagi": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "izanami": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "jormungandr": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "kagutsuchi": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "kali": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "khnum": {
+   "parceiros": [],
+   "suporte": "intercepta pelos aliados",
+   "solista": false
+  },
+  "khonshu": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "kitsune": {
+   "parceiros": [
+    {
+     "para": "inari",
+     "nome": "Inari",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "enche a sua cauda",
+     "motivo": "Inari alimenta o seu contador cauda quando estão juntos."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "intercepta pelos aliados",
+   "solista": false
+  },
+  "kraken": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "krishna": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "kukulkan": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "loki": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "lugh": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "medusa": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "mimir": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "mnevis": {
+   "parceiros": [
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "destrava a sua passiva",
+     "motivo": "A passiva de Mnevis só age com Rá no time (laço nomeado no fx)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "protege a frente",
+   "solista": false
+  },
+  "morrigan": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "mulasemcabeca": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "nefertem": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "nezha": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "nuwa": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "escuda o time",
+   "solista": false
+  },
+  "odin": {
+   "parceiros": [
+    {
+     "para": "baldur",
+     "nome": "Baldur",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Baldur é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "bragi",
+     "nome": "Bragi",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Bragi é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "fenrir",
+     "nome": "Fenrir",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Fenrir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "freyja",
+     "nome": "Freyja",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Freyja é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "heimdall",
+     "nome": "Heimdall",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Heimdall é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "hel",
+     "nome": "Hel",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Hel é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "jormungandr",
+     "nome": "Jörmungandr",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Jörmungandr é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "kraken",
+     "nome": "Kraken",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Kraken é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "loki",
+     "nome": "Loki",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Loki é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "mimir",
+     "nome": "Mimir",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Mimir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "thor",
+     "nome": "Thor",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Thor é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "tyr",
+     "nome": "Tyr",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Tyr é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "ymir",
+     "nome": "Ymir",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "Nórdica: conta p/ você",
+     "motivo": "Ymir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "ogum": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "oni": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+    }
+   ],
+   "suporte": "protege a frente",
+   "solista": false
+  },
+  "orfeu": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "osiris": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": "revive aliados",
+   "solista": false
+  },
+  "oxala": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "escuda o time",
+   "solista": false
+  },
+  "oxum": {
+   "parceiros": [],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "perseu": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "piranha": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "poseidon": {
+   "parceiros": [],
+   "suporte": "reduz o dano do time",
+   "solista": false
+  },
+  "ra": {
+   "parceiros": [
+    {
+     "para": "mnevis",
+     "nome": "Mnevis",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "a passiva dele ativa com você",
+     "motivo": "Mnevis tem um efeito que se ativa com você no time (laço nomeado)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "raijin": {
+   "parceiros": [
+    {
+     "para": "fujin",
+     "nome": "Fujin",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "a passiva dele ativa com você",
+     "motivo": "Fujin tem um efeito que se ativa com você no time (laço nomeado)."
+    },
+    {
+     "para": "yamatotakeru",
+     "nome": "Yamato Takeru",
+     "familia": "combo",
+     "prioridade": 2,
+     "curto": "gasta o Combo que você faz",
+     "motivo": "Yamato Takeru consome o Combo do lado que Raijin gera (senão fica parado)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "saci": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "shiva": {
+   "parceiros": [
+    {
+     "para": "cuca",
+     "nome": "Cuca",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "durga",
+     "nome": "Durga",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "erinias",
+     "nome": "Erínias",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "horus",
+     "nome": "Hórus",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "orfeu",
+     "nome": "Orfeu",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo adormecido",
+     "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "yanwong",
+     "nome": "Yan Wong",
+     "familia": "preparador",
+     "prioridade": 4,
+     "curto": "deixa o alvo vulneravel",
+     "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "shutendoji": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "sobek": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "sunwukong": {
+   "parceiros": [
+    {
+     "para": "hanuman",
+     "nome": "Hanuman",
+     "familia": "laço",
+     "prioridade": 1,
+     "curto": "a passiva dele ativa com você",
+     "motivo": "Hanuman tem um efeito que se ativa com você no time (laço nomeado)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "susanoo": {
+   "parceiros": [
+    {
+     "para": "yamatotakeru",
+     "nome": "Yamato Takeru",
+     "familia": "combo",
+     "prioridade": 2,
+     "curto": "gasta o Combo que você faz",
+     "motivo": "Yamato Takeru consome o Combo do lado que Susanoo gera (senão fica parado)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "tanuki": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "thor": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    }
+   ],
+   "suporte": "reduz o dano do time",
+   "solista": false
+  },
+  "tsukuyomi": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "tyr": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "protege a frente",
+   "solista": false
+  },
+  "vishnu": {
+   "parceiros": [
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Dia: +8 aos seus Aurora",
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+    },
+    {
+     "para": "ra",
+     "nome": "Rá",
+     "familia": "elemento",
+     "prioridade": 5,
+     "curto": "+5 aos seus Aurora",
+     "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+    },
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Noite: −5 nos seus Aurora",
+     "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+    }
+   ],
+   "suporte": "cura o time",
+   "solista": false
+  },
+  "xango": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  },
+  "yamatotakeru": {
+   "parceiros": [
+    {
+     "para": "raijin",
+     "nome": "Raijin",
+     "familia": "combo",
+     "prioridade": 2,
+     "curto": "enche o Combo que você gasta",
+     "motivo": "Raijin enche o Combo do lado (+4) que Yamato Takeru consome."
+    },
+    {
+     "para": "susanoo",
+     "nome": "Susanoo",
+     "familia": "combo",
+     "prioridade": 2,
+     "curto": "enche o Combo que você gasta",
+     "motivo": "Susanoo enche o Combo do lado (+4) que Yamato Takeru consome."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "yanwong": {
+   "parceiros": [
+    {
+     "para": "tsukuyomi",
+     "nome": "Tsukuyomi",
+     "familia": "fase",
+     "prioridade": 5,
+     "curto": "Noite: +8 aos seus Umbra",
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+    },
+    {
+     "para": "amaterasu",
+     "nome": "Amaterasu",
+     "familia": "fase-anti",
+     "prioridade": 8,
+     "curto": "⚠ Dia: −5 nos seus Umbra",
+     "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+    }
+   ],
+   "suporte": null,
+   "solista": false
+  },
+  "ymir": {
+   "parceiros": [
+    {
+     "para": "odin",
+     "nome": "Odin",
+     "familia": "facção",
+     "prioridade": 3,
+     "curto": "você conta Nórdica p/ ele",
+     "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+    }
+   ],
+   "suporte": "escuda o time",
+   "solista": false
+  },
+  "zeus": {
+   "parceiros": [],
+   "suporte": null,
+   "solista": true
+  }
+ },
  "pares": [
   {
    "de": "afrodite",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "afrodite",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "afrodite",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "afrodite",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "afrodite",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "ahpuch",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ahpuch",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "ahpuch",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "ahpuch",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "amaterasu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "amaterasu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "amaterasu",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "amaterasu",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "ammit",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ammit",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ammit",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "ammit",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "ammit",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ammit",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 35.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
-   "de": "anubis",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "ammit",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
-   "de": "anubis",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "ammit",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "anubis",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "anubis",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "aokuang",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "aokuang",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "apolo",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "apolo",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "apolo",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "apolo",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "apolo",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "aquiles",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "aquiles",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ares",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ares",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "atena",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "atena",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "atena",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "atena",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
-  },
-  {
-   "de": "atena",
-   "para": "tsukuyomi",
-   "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "atena",
    "para": "babi",
    "familia": "preparador",
-   "motivo": "Babi aplica medo; o seu dano cresce contra alvo com medo."
+   "motivo": "Babi aplica medo; o seu dano cresce contra alvo com medo.",
+   "curto": "deixa o alvo medo",
+   "prioridade": 4
   },
   {
    "de": "atena",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca aplica adormecido; o seu dano cresce contra alvo com adormecido."
+   "motivo": "Cuca aplica adormecido; o seu dano cresce contra alvo com adormecido.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "atena",
    "para": "morrigan",
    "familia": "preparador",
-   "motivo": "Morrigan aplica medo; o seu dano cresce contra alvo com medo."
+   "motivo": "Morrigan aplica medo; o seu dano cresce contra alvo com medo.",
+   "curto": "deixa o alvo medo",
+   "prioridade": 4
   },
   {
    "de": "atena",
    "para": "mulasemcabeca",
    "familia": "preparador",
-   "motivo": "Mula sem Cabeça aplica medo; o seu dano cresce contra alvo com medo."
+   "motivo": "Mula sem Cabeça aplica medo; o seu dano cresce contra alvo com medo.",
+   "curto": "deixa o alvo medo",
+   "prioridade": 4
   },
   {
    "de": "atena",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu aplica adormecido; o seu dano cresce contra alvo com adormecido."
+   "motivo": "Orfeu aplica adormecido; o seu dano cresce contra alvo com adormecido.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "atena",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi aplica adormecido; o seu dano cresce contra alvo com adormecido."
+   "motivo": "Tsukuyomi aplica adormecido; o seu dano cresce contra alvo com adormecido.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
-   "de": "babi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "atena",
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
-   "de": "babi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "atena",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "atena",
+   "para": "tsukuyomi",
+   "familia": "fase-anti",
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "babi",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "babi",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "baldur",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "baldur",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "baldur",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "baldur",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "baldur",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "baldur",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "baldur",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "bastet",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bastet",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bastet",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "bastet",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "bastet",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "bastet",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "bennu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bennu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "boitata",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "boitata",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "boto",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "boto",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bragi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bragi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "bragi",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "bragi",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "bragi",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "bragi",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "bragi",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "brahma",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "brahma",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "brigid",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "cerberus",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "cerberus",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "cerberus",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "cerberus",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "cernunnos",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "cernunnos",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "chaac",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "chaac",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "change",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "change",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "change",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "change",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "change",
    "para": "houyi",
    "familia": "laço",
-   "motivo": "A passiva de Chang'e só age com Hou Yi no time (laço nomeado no fx)."
+   "motivo": "A passiva de Chang'e só age com Hou Yi no time (laço nomeado no fx).",
+   "curto": "destrava a sua passiva",
+   "prioridade": 1
   },
   {
-   "de": "cuca",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "change",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
-   "de": "cuca",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "change",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "cuca",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "cuca",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "curupira",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "curupira",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "dagda",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "dagda",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "demeter",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "demeter",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "dionisio",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "dionisio",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "durga",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "durga",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "erinias",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "erinias",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "erinias",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "erinias",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "exu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "exu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "exu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "exu",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "fenrir",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "fenrir",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "fenrir",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "fenrir",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "fenrir",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "fenrir",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "fenrir",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
+  },
+  {
+   "de": "fenrir",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
+  },
+  {
+   "de": "fenrir",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "freyja",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "para": "odin",
+   "familia": "facção",
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "freyja",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "freyja",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "freyja",
-   "para": "odin",
-   "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "freyja",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "freyja",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "fujin",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "fujin",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "fujin",
    "para": "raijin",
    "familia": "laço",
-   "motivo": "A passiva de Fujin só age com Raijin no time (laço nomeado no fx)."
-  },
-  {
-   "de": "ganesha",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ganesha",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "guanyu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "guanyu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hades",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hades",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hades",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "hades",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "A passiva de Fujin só age com Raijin no time (laço nomeado no fx).",
+   "curto": "destrava a sua passiva",
+   "prioridade": 1
   },
   {
    "de": "hades",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hades",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
-   "de": "hanuman",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "hades",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
-   "de": "hanuman",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "hades",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "hanuman",
    "para": "sunwukong",
    "familia": "laço",
-   "motivo": "A passiva de Hanuman só age com Sun Wukong no time (laço nomeado no fx)."
+   "motivo": "A passiva de Hanuman só age com Sun Wukong no time (laço nomeado no fx).",
+   "curto": "destrava a sua passiva",
+   "prioridade": 1
   },
   {
    "de": "heimdall",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "para": "odin",
+   "familia": "facção",
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "heimdall",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "heimdall",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "heimdall",
-   "para": "odin",
-   "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "heimdall",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "heimdall",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "hel",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hel",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "hel",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "hel",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "hel",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "hera",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hera",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hercules",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hercules",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "hercules",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "hercules",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40."
-  },
-  {
-   "de": "hermes",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "hermes",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "horus",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "horus",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 40.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "horus",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
-  },
-  {
-   "de": "houyi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "houyi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "houyi",
    "para": "change",
    "familia": "laço",
-   "motivo": "Chang'e tem um efeito que se ativa com você no time (laço nomeado)."
-  },
-  {
-   "de": "huangdi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "huangdi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "huangdi",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "Chang'e tem um efeito que se ativa com você no time (laço nomeado).",
+   "curto": "a passiva dele ativa com você",
+   "prioridade": 1
   },
   {
    "de": "huangdi",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "huangdi",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "huangdi",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "iansa",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "iansa",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "iara",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "iara",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "inari",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "inari",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "inari",
    "para": "kitsune",
    "familia": "laço",
-   "motivo": "Com Kitsune no time, gera +1 de cauda para ele."
+   "motivo": "Com Kitsune no time, gera +1 de cauda para ele.",
+   "curto": "+1 de cauda p/ ele",
+   "prioridade": 1
   },
   {
    "de": "isis",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "isis",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "isis",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "isis",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "isis",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "itzamna",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "itzamna",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "itzamna",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "itzamna",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "itzamna",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "izanagi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "izanagi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "izanami",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "izanami",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "izanami",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "izanami",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "jormungandr",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "jormungandr",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "jormungandr",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "kagutsuchi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kagutsuchi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kali",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kali",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "kali",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "kali",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "khnum",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "khnum",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "khonshu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "khonshu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "khonshu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "khonshu",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "kitsune",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kitsune",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kitsune",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "kitsune",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "kitsune",
    "para": "inari",
    "familia": "laço",
-   "motivo": "Inari alimenta o seu contador cauda quando estão juntos."
+   "motivo": "Inari alimenta o seu contador cauda quando estão juntos.",
+   "curto": "enche a sua cauda",
+   "prioridade": 1
   },
   {
-   "de": "kraken",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "kitsune",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
-   "de": "kraken",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "kitsune",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "kraken",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "krishna",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "krishna",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "krishna",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "krishna",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "krishna",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "krishna",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "kukulkan",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "kukulkan",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "loki",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "loki",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "loki",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "loki",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "loki",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "lugh",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "lugh",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "lugh",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "lugh",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
-  },
-  {
-   "de": "lugh",
-   "para": "tsukuyomi",
-   "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "lugh",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "lugh",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
-   "de": "medusa",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "lugh",
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
-   "de": "medusa",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "lugh",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "lugh",
+   "para": "tsukuyomi",
+   "familia": "fase-anti",
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "medusa",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "medusa",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "mimir",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "mimir",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "mimir",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "mimir",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "mnevis",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "mnevis",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "mnevis",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "mnevis",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
-  },
-  {
-   "de": "mnevis",
-   "para": "tsukuyomi",
-   "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "mnevis",
    "para": "ra",
    "familia": "laço",
-   "motivo": "A passiva de Mnevis só age com Rá no time (laço nomeado no fx)."
+   "motivo": "A passiva de Mnevis só age com Rá no time (laço nomeado no fx).",
+   "curto": "destrava a sua passiva",
+   "prioridade": 1
   },
   {
-   "de": "morrigan",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "mnevis",
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
-   "de": "morrigan",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "mnevis",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "mnevis",
+   "para": "tsukuyomi",
+   "familia": "fase-anti",
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "morrigan",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "morrigan",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "mulasemcabeca",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "mulasemcabeca",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "nefertem",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "nefertem",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "nezha",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "nezha",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "nuwa",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "nuwa",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "nuwa",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "nuwa",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "nuwa",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "odin",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "odin",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "odin",
    "para": "baldur",
    "familia": "facção",
-   "motivo": "Baldur é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Baldur é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "bragi",
    "familia": "facção",
-   "motivo": "Bragi é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Bragi é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "fenrir",
    "familia": "facção",
-   "motivo": "Fenrir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Fenrir é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "freyja",
    "familia": "facção",
-   "motivo": "Freyja é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Freyja é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "heimdall",
    "familia": "facção",
-   "motivo": "Heimdall é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Heimdall é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "hel",
    "familia": "facção",
-   "motivo": "Hel é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Hel é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "jormungandr",
    "familia": "facção",
-   "motivo": "Jörmungandr é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Jörmungandr é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "kraken",
    "familia": "facção",
-   "motivo": "Kraken é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Kraken é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "loki",
    "familia": "facção",
-   "motivo": "Loki é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Loki é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "mimir",
    "familia": "facção",
-   "motivo": "Mimir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Mimir é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "thor",
    "familia": "facção",
-   "motivo": "Thor é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Thor é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "tyr",
    "familia": "facção",
-   "motivo": "Tyr é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Tyr é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "ymir",
    "familia": "facção",
-   "motivo": "Ymir é Nórdica: conta para a passiva de Odin (precisa de 2)."
+   "motivo": "Ymir é Nórdica: conta para a passiva de Odin (precisa de 2).",
+   "curto": "Nórdica: conta p/ você",
+   "prioridade": 3
   },
   {
    "de": "odin",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "odin",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "ogum",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ogum",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "ogum",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "ogum",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
-  },
-  {
-   "de": "oni",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "oni",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "oni",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38."
-  },
-  {
-   "de": "orfeu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "orfeu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 38.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "orfeu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "orfeu",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "osiris",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "osiris",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "osiris",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "osiris",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "oxala",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "oxala",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "oxala",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "oxala",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "oxala",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "oxum",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "oxum",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "perseu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "perseu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "perseu",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "perseu",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "perseu",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "piranha",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "piranha",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "poseidon",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "poseidon",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ra",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ra",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ra",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
-  },
-  {
-   "de": "ra",
-   "para": "tsukuyomi",
-   "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "ra",
    "para": "mnevis",
    "familia": "laço",
-   "motivo": "Mnevis tem um efeito que se ativa com você no time (laço nomeado)."
+   "motivo": "Mnevis tem um efeito que se ativa com você no time (laço nomeado).",
+   "curto": "a passiva dele ativa com você",
+   "prioridade": 1
   },
   {
-   "de": "raijin",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "ra",
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
-   "de": "raijin",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "raijin",
-   "para": "yamatotakeru",
-   "familia": "combo",
-   "motivo": "Yamato Takeru consome o Combo do lado que Raijin gera (senão fica parado)."
+   "de": "ra",
+   "para": "tsukuyomi",
+   "familia": "fase-anti",
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "raijin",
    "para": "fujin",
    "familia": "laço",
-   "motivo": "Fujin tem um efeito que se ativa com você no time (laço nomeado)."
+   "motivo": "Fujin tem um efeito que se ativa com você no time (laço nomeado).",
+   "curto": "a passiva dele ativa com você",
+   "prioridade": 1
   },
   {
-   "de": "saci",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "saci",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "shiva",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "shiva",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "shiva",
-   "para": "tsukuyomi",
-   "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
-  },
-  {
-   "de": "shiva",
-   "para": "amaterasu",
-   "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
+   "de": "raijin",
+   "para": "yamatotakeru",
+   "familia": "combo",
+   "motivo": "Yamato Takeru consome o Combo do lado que Raijin gera (senão fica parado).",
+   "curto": "gasta o Combo que você faz",
+   "prioridade": 2
   },
   {
    "de": "shiva",
    "para": "cuca",
    "familia": "preparador",
-   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Cuca deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "durga",
    "familia": "preparador",
-   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Durga deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "erinias",
    "familia": "preparador",
-   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Erínias deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "horus",
    "familia": "preparador",
-   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Hórus deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "orfeu",
    "familia": "preparador",
-   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Orfeu deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "tsukuyomi",
    "familia": "preparador",
-   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Tsukuyomi deixa o alvo adormecido (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo adormecido",
+   "prioridade": 4
   },
   {
    "de": "shiva",
    "para": "yanwong",
    "familia": "preparador",
-   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45."
+   "motivo": "Yan Wong deixa o alvo vulneravel (recebe mais dano) — e você tem o golpe único de 45.",
+   "curto": "deixa o alvo vulneravel",
+   "prioridade": 4
   },
   {
-   "de": "shutendoji",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
+   "de": "shiva",
+   "para": "tsukuyomi",
+   "familia": "fase",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
-   "de": "shutendoji",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "de": "shiva",
+   "para": "amaterasu",
+   "familia": "fase-anti",
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "shutendoji",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "shutendoji",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "sobek",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "sobek",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "sunwukong",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "sunwukong",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "sunwukong",
    "para": "hanuman",
    "familia": "laço",
-   "motivo": "Hanuman tem um efeito que se ativa com você no time (laço nomeado)."
-  },
-  {
-   "de": "susanoo",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "susanoo",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Hanuman tem um efeito que se ativa com você no time (laço nomeado).",
+   "curto": "a passiva dele ativa com você",
+   "prioridade": 1
   },
   {
    "de": "susanoo",
    "para": "yamatotakeru",
    "familia": "combo",
-   "motivo": "Yamato Takeru consome o Combo do lado que Susanoo gera (senão fica parado)."
-  },
-  {
-   "de": "tanuki",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "tanuki",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "thor",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "thor",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Yamato Takeru consome o Combo do lado que Susanoo gera (senão fica parado).",
+   "curto": "gasta o Combo que você faz",
+   "prioridade": 2
   },
   {
    "de": "thor",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "tsukuyomi",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "tsukuyomi",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "tsukuyomi",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "tyr",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "tyr",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "tyr",
-   "para": "ra",
-   "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "tyr",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   },
   {
    "de": "tyr",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
+  },
+  {
+   "de": "tyr",
+   "para": "ra",
+   "familia": "elemento",
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "tyr",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "vishnu",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "vishnu",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "para": "amaterasu",
+   "familia": "fase",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "curto": "Dia: +8 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "vishnu",
    "para": "ra",
    "familia": "elemento",
-   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora."
-  },
-  {
-   "de": "vishnu",
-   "para": "amaterasu",
-   "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+   "motivo": "Rá dá +5 aos ataques Aurora — e você é Aurora.",
+   "curto": "+5 aos seus Aurora",
+   "prioridade": 5
   },
   {
    "de": "vishnu",
    "para": "tsukuyomi",
    "familia": "fase-anti",
-   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia)."
-  },
-  {
-   "de": "xango",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "xango",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "yamatotakeru",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "yamatotakeru",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Tsukuyomi cria a Noite: −5 aos seus ataques Aurora (anti-sinergia).",
+   "curto": "⚠ Noite: −5 nos seus Aurora",
+   "prioridade": 8
   },
   {
    "de": "yamatotakeru",
    "para": "raijin",
    "familia": "combo",
-   "motivo": "Raijin enche o Combo do lado (+4) que Yamato Takeru consome."
+   "motivo": "Raijin enche o Combo do lado (+4) que Yamato Takeru consome.",
+   "curto": "enche o Combo que você gasta",
+   "prioridade": 2
   },
   {
    "de": "yamatotakeru",
    "para": "susanoo",
    "familia": "combo",
-   "motivo": "Susanoo enche o Combo do lado (+4) que Yamato Takeru consome."
-  },
-  {
-   "de": "yanwong",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "yanwong",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Susanoo enche o Combo do lado (+4) que Yamato Takeru consome.",
+   "curto": "enche o Combo que você gasta",
+   "prioridade": 2
   },
   {
    "de": "yanwong",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "curto": "Noite: +8 aos seus Umbra",
+   "prioridade": 5
   },
   {
    "de": "yanwong",
    "para": "amaterasu",
    "familia": "fase-anti",
-   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia)."
-  },
-  {
-   "de": "ymir",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "ymir",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "⚠ Amaterasu cria a Dia: −5 aos seus ataques Umbra (anti-sinergia).",
+   "curto": "⚠ Dia: −5 nos seus Umbra",
+   "prioridade": 8
   },
   {
    "de": "ymir",
    "para": "odin",
    "familia": "facção",
-   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica)."
-  },
-  {
-   "de": "zeus",
-   "para": "brigid",
-   "familia": "aura",
-   "motivo": "Brigid dá +5 de dano ao time inteiro (aura incondicional)."
-  },
-  {
-   "de": "zeus",
-   "para": "mimir",
-   "familia": "aura",
-   "motivo": "Mimir dá +6 de dano ao time inteiro (aura incondicional)."
+   "motivo": "Você é Nórdica: ativa a passiva de Odin (min 2 Nórdica).",
+   "curto": "você conta Nórdica p/ ele",
+   "prioridade": 3
   }
  ]
 }

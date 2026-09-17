@@ -869,6 +869,7 @@ const COL_FUNCOES = ['Atacante', 'Suporte', 'Controlador', 'Guardião', 'Manipul
 let colSel = null;   // deus selecionado no painel (null = repouso; §284: começa nulo, o jogador não escolheu)
 let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada) — lido pelo voltar do Android (§240)
 let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobreposição (abre no BÁSICO — decisão do dono)
+let colVerModo = 'kit';     // §294: modo da sobreposição — 'kit' (seletor+detalhe) ou 'sinergia' (lista completa)
 let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
@@ -976,6 +977,56 @@ function colRepousoHTML(){
   </div>`;
 }
 
+// ---------- SINERGIA (§294) — DERIVADA do fx (data/sinergia.json → SINERGIA), nunca da prosa. O painel mostra os
+// 3 primeiros parceiros (prioridade: laço muda comportamento, o resto soma número) em 2 linhas (nome + mecânica
+// curta que CABE em 167px, medido); o "+N ›" abre a lista inteira como MODO da sobreposição; o solista diz a verdade
+// ("funciona sozinho"); a FAIXA GLOBAL (aura + suporte) é uma linha, não par. ----------
+const SIN = (typeof SINERGIA !== 'undefined' && SINERGIA) ? SINERGIA : { fichas: {}, auraDoadores: [] };
+function sinFicha(k){ return (SIN.fichas && SIN.fichas[k]) || null; }
+function sinElem(k){ const g = colG(k); return g ? g.elem : null; }
+// texto da faixa de aura na ficha de k (exclui o próprio; concorda o verbo): "Brigid e Mímir reforçam o time"
+function sinAuraTexto(k){
+  const ds = (SIN.auraDoadores || []).filter(d => d.deus !== k);
+  if (!ds.length) return '';
+  const nomes = ds.map(d => d.nome);
+  const lista = nomes.length > 1 ? nomes.slice(0, -1).join(', ') + ' e ' + nomes[nomes.length - 1] : nomes[0];
+  return lista + (nomes.length > 1 ? ' reforçam' : ' reforça') + ' o time';
+}
+// uma linha de parceiro no PAINEL: retrato 30 + nome (linha 1) + mecânica curta (linha 2)
+function sinLinhaPainel(p){
+  return `<div class="col2s__par col2s__par--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
+    <span class="col2s__art">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 30)}</span>
+    <span class="col2s__txt"><b class="col2s__nome">${H(p.nome)}</b><span class="col2s__mec">${H(p.curto)}</span></span>
+  </div>`;
+}
+// a SEÇÃO no painel lateral: cabeçalho + até 3 parceiros (ou suporte, ou solista) + "+N ›" + faixa
+function colSinergiaPainelHTML(k){
+  const f = sinFicha(k); if (!f) return '';
+  const aura = sinAuraTexto(k);
+  // 2 parceiros no painel, não 3 (medido §294): manter NOME e MOTIVO inteiros exige 2 linhas por parceiro (a mecânica
+  // curta cabe em 167px sem cortar, mas o nome pede a sua linha); 3 linhas de 2 linhas + "+N" + identidade estouram o
+  // piso 428 em 31px. O dono já decidira o critério: "prefiro 2 parceiros com motivo inteiro a 3 com motivo cortado".
+  const TETO = 2;
+  let corpo, mais = '';
+  if (f.parceiros.length) {
+    corpo = f.parceiros.slice(0, TETO).map(sinLinhaPainel).join('');
+    if (f.parceiros.length > TETO) mais = `<button class="col2s__mais" data-sinmais="${H(k)}">+${f.parceiros.length - TETO} mais ›</button>`;
+  } else if (f.suporte) {
+    corpo = `<p class="col2s__sup">Reforça o time — ${H(f.suporte)}.</p>`;
+  } else {
+    corpo = `<p class="col2s__solo">Sem sinergia específica — funciona sozinho.</p>`;
+  }
+  // FAIXA (aura) no painel só quando NÃO há parceiro par-a-par (solista/suporte) — ali sobra espaço e ela preenche o
+  // que seria mais vazio. Quem tem parceiro prioriza a lista específica; a faixa global fica a um toque, na
+  // sobreposição (o modo SINERGIA sempre a mostra). Medido §294: com parceiro + faixa, a identidade mais alta estoura.
+  const faixa = (aura && f.parceiros.length === 0) ? `<p class="col2s__faixa"><i>⬡</i>${H(aura)}</p>` : '';
+  return `<div class="col2s">
+    <div class="col2s__cab"><span class="col2s__rot">SINERGIA</span></div>
+    <div class="col2s__lista">${corpo}</div>
+    ${mais}${faixa}
+  </div>`;
+}
+
 // PAINEL com um deus: identidade (retrato, nome, arquétipo, cultura/elemento/classe/função) + posse (cópias) +
 // MAESTRIA. SEM kit (o kit foi para a sobreposição, §284). Fecha pelo × (volta ao repouso) ou tocando o cartão.
 function colPainelHTML(k){
@@ -1000,6 +1051,7 @@ function colPainelHTML(k){
     </div>
     ${posse}
     ${colMaestriaHTML(k)}
+    ${colSinergiaPainelHTML(k)}
     <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
   </div>`;
 }
@@ -1062,12 +1114,42 @@ function colOverlayCardHTML(k){
           <span class="col2ov__tag">${H(g.funcao || '')}</span>
         </div>
         ${posse}
-        <div class="col2ov__div"><span>HABILIDADES</span></div>
-        <div class="col2ov__sks">${sks.map(s => colVerChipHTML(k, s, colVerSel)).join('')}</div>
-        <div class="col2ov__det" id="col2ovdet">${colVerDetalheHTML(k, g, colVerSel)}</div>
+        <div class="col2ov__modos">
+          <button class="col2ov__modo${colVerModo === 'sinergia' ? '' : ' is-on'}" data-modo="kit">KIT</button>
+          <button class="col2ov__modo${colVerModo === 'sinergia' ? ' is-on' : ''}" data-modo="sinergia">SINERGIA</button>
+        </div>
+        <div class="col2ov__corpo" id="col2ovcorpo">${colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g)}</div>
         ${cite}
       </div>
     </div>`;
+}
+// §294: o corpo da sobreposição tem DOIS modos. KIT = o seletor de habilidades + a caixa de detalhe (§288). SINERGIA
+// = a lista COMPLETA de parceiros (todos, em ordem de prioridade), cada um com o motivo INTEIRO (aqui há largura),
+// mais a faixa global. O painel lateral mostra 3; o "+N ›" abre isto.
+function colVerKitHTML(k, g){
+  const sks = deusSkills(g);
+  // §294: o divisor "HABILIDADES" saiu — a barra de modos KIT|SINERGIA acima já rotula o modo (e devolve à caixa de
+  // detalhe o espaço que o §292 conquistou; a barra SUBSTITUI o divisor, não soma).
+  return `<div class="col2ov__sks">${sks.map(s => colVerChipHTML(k, s, colVerSel)).join('')}</div>
+    <div class="col2ov__det" id="col2ovdet">${colVerDetalheHTML(k, g, colVerSel)}</div>`;
+}
+function colVerSinergiaHTML(k, g){
+  const f = sinFicha(k), aura = sinAuraTexto(k);
+  const supSelf = f && f.suporte ? `você ${f.suporte}` : '';
+  const faixaTxt = [aura, supSelf].filter(Boolean).join(' · ');
+  const faixa = faixaTxt ? `<p class="col2ov__sinfaixa"><i>⬡</i>${H(faixaTxt)}</p>` : '';
+  let corpo;
+  if (f && f.parceiros.length) {
+    corpo = f.parceiros.map(p => `<div class="col2ov__sinpar col2ov__sinpar--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
+      <span class="col2ov__sinart">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 40)}</span>
+      <div class="col2ov__sintxt"><b class="col2ov__sinnome">${H(p.nome)}</b><span class="col2ov__sinfam">${H(p.familia)}</span><p class="col2ov__sinmot">${H(p.motivo)}</p></div>
+    </div>`).join('');
+  } else if (!f || f.solista) {
+    corpo = `<p class="col2ov__sinsolo">Sem sinergia específica — funciona sozinho.</p>`;
+  } else {
+    corpo = '';   // sem parceiros mas com suporte: a faixa já diz tudo
+  }
+  return `${faixa}<div class="col2ov__sinlista">${corpo}</div>`;
 }
 // §291: posição na LISTA FILTRADA (a mesma da grade: filtro/busca/ordem) — as setas andam SÓ nela, nunca nos 100.
 function colVerNavEstado(){
@@ -1085,9 +1167,10 @@ function colOverlayHTML(k){
 }
 // abre/fecha a sobreposição por DOM (sem render → preserva seleção e rolagem da grade). O #baselayer fica
 // INERTE enquanto ela está aberta (INV 16 / §210). `colVer` guarda o estado para o voltar do Android (§240).
-function colAbrirVer(k){
+function colAbrirVer(k, modo){
   if (!k) return;
   colVer = k; colVerSel = 'basico';   // §288: a caixa abre sempre no BÁSICO
+  colVerModo = (modo === 'sinergia') ? 'sinergia' : 'kit';   // §294: o "+N ›" abre direto na SINERGIA
   colVerMontar();
 }
 function colVerMontar(){
@@ -1097,8 +1180,21 @@ function colVerMontar(){
   const ov = wrap.firstElementChild; stage.appendChild(ov);
   ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha (setas têm target próprio)
   const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarChips(ov, colVer);
+  colVerLigarCorpo(ov, colVer);
   colVerLigarNav(ov);
+}
+// §294: o corpo tem dois modos; liga o que estiver ativo (chips no KIT) + o alternador KIT/SINERGIA.
+function colVerLigarCorpo(ov, k){
+  const g = colG(k);
+  colVerLigarChips(ov, k);
+  [...ov.querySelectorAll('.col2ov__modo[data-modo]')].forEach(b => b.onclick = () => {
+    if (colVerModo === b.dataset.modo) return;
+    colVerModo = b.dataset.modo;
+    [...ov.querySelectorAll('.col2ov__modo')].forEach(c => c.classList.toggle('is-on', c === b));
+    const corpo = ov.querySelector('#col2ovcorpo');
+    if (corpo) { corpo.innerHTML = colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g); }
+    colVerLigarChips(ov, k);   // re-fia os chips quando volta ao KIT
+  });
 }
 // §288: tocar num ícone troca SÓ a caixa de detalhe (e o realce do chip). Sem render → preserva grade/rolagem.
 function colVerLigarChips(ov, k){
@@ -1128,7 +1224,7 @@ function colVerIr(delta){
   const wrap = document.createElement('div'); wrap.innerHTML = colOverlayCardHTML(alvo);
   ov.querySelector('.col2ov__card').replaceWith(wrap.firstElementChild);
   const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarChips(ov, alvo);
+  colVerLigarCorpo(ov, alvo);   // §294: re-fia o corpo (chips + alternador de modo); o MODO permanece na navegação
   colVerAtualizarNav(ov);
   // a SELEÇÃO do painel acompanha (§284: fechar preserva seleção) e a grade rola até o deus atual ficar visível
   colSelecionar(alvo);
@@ -1215,6 +1311,7 @@ function colSelecionar(k){
 function colLigarPainel(){
   // §284: VER DETALHES abre a SOBREPOSIÇÃO do kit (não a rota 'deus'); o × fecha o painel (volta ao repouso).
   const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
+  const mais = stage.querySelector('.col2s__mais'); if (mais) mais.onclick = () => colAbrirVer(mais.dataset.sinmais, 'sinergia');   // §294: "+N ›" abre a lista completa
   const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
 }
 

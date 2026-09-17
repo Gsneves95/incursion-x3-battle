@@ -375,6 +375,27 @@ const dominiosObj = (() => {
   return mapa;
 })();
 
+// SINERGIA (§294): o MAPA de sinergia é DADO derivado do fx (tools/gerar_sinergia.js), como os Domínios. A tela
+// (painel lateral + modo da sobreposição) só LÊ. Guarda de integridade na build (falha alto): toda ficha e todo
+// parceiro é um deus real, todo par tem `curto` (o que o painel mostra) e `motivo` (o que a sobreposição mostra).
+const sinergiaObj = (() => {
+  const arq = path.join(raiz, 'data', 'sinergia.json');
+  if (!fs.existsSync(arq)) return null;
+  const S = JSON.parse(ler('data/sinergia.json'));
+  const keys = new Set(deuses.map(d => d.key));
+  const erros = [];
+  for (const k of Object.keys(S.fichas || {})) {
+    if (!keys.has(k)) erros.push('ficha de deus inexistente: ' + k);
+    for (const p of S.fichas[k].parceiros) {
+      if (!keys.has(p.para)) erros.push(k + ' → parceiro inexistente: ' + p.para);
+      if (!p.curto || !p.motivo) erros.push(k + ' → ' + p.para + ': curto/motivo vazio');
+    }
+  }
+  for (const d of (S.auraDoadores || [])) if (!keys.has(d.deus)) erros.push('doador de aura inexistente: ' + d.deus);
+  if (erros.length) { console.error('ERRO de schema de Sinergia (§294):\n  ' + erros.join('\n  ')); process.exit(1); }
+  return S;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -388,7 +409,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
