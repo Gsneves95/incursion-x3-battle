@@ -112,6 +112,28 @@ tanuki, xango, zeus) → "sem sinergia específica — funciona sozinho" (são b
 par-a-par fica honesta, os 14 ganham "reforça/protege o time" (nem vazio nem diluído), e os 22 ganham a linha do dono
 "funciona sozinho" — ninguém com parceiro inventado, ninguém com ficha enganosamente vazia.
 
+**APROVADO (dono):** a faixa global cobre **aura E suporte-de-time**; os **22 solistas** ficam com "sem sinergia
+específica — funciona sozinho" (a verdade vale mais que parceria inventada). O achado estrutural da roda de elementos
+foi p/ a **Fase 4** (ESTADO, SLOTS MORTOS #6) — não se conserta agora.
+
+### §293 (cont.) — MEDIÇÃO DE LAYOUT pré-tela: onde cabe a lista de parceiros (Chromium, piso 780)
+
+O espaço é o problema: a sobreposição fechou a +6px de folga (§292), não há onde enfiar uma lista sem reabrir aquela
+briga. Medido no Chromium a 780 (o painel lateral é FIXO 233×373 — idêntico a 780 e 951, não escala com a largura):
+
+| destino | espaço | quantos parceiros | custo |
+|---|---|---|---|
+| **PAINEL LATERAL (§284)** — identidade/posse/maestria | vão de **~112px** entre a maestria (base ~276) e o botão "Ver detalhes" (fixado embaixo, 388–417) | **4** linhas (retrato 28 + motivo 1 linha, pitch ~32): 4→botão em 427 ok, **5→corta 33px**; com cabeçalho "SINERGIA" → **3 + título** | zero (usa o vão que já existe); é o mais perto de identidade — o favorito do dono |
+| **SOBREPOSIÇÃO (§292)** — kit | cartão 394px no palco 428 (17px de margem, não cresce); interior a **+6px** | 0 sem deslocar | reabre a briga do §292: sai kit (seletor+detalhe) ou entra rolagem/3ª aba |
+| **3ª SUPERFÍCIE** — overlay "Sinergias ›" da ficha (espelha o `colAbrirVer` do kit) | ilimitado (rola) | todos (odin 15 inteiro) | 1 toque a mais + superfície nova p/ construir/manter |
+
+**Distribuição par-a-par (SEM aura, já que virou faixa) × a capacidade de 4:** **89 dos 100 cabem em ≤4** (mediana 2);
+**11 estouram** — odin 15, fenrir/lugh 9, ammit/atena/hades/shiva 8, hercules/ogum/oni 7, horus 6 (os hubs de facção,
+o Odin à frente). **Como o par se apresenta:** retrato pequeno (28px) + motivo em 1 linha com reticência; **4 é o teto
+do painel.** Critério de corte p/ os 11 (a decidir pelo dono): mostrar top-N por **prioridade de família** (laço >
+combo > facção > preparador > elemento/fase) e um "**+N ›**" que abre a 3ª superfície com a lista inteira. **Reportado;
+o dono decide destino + corte — não construí.**
+
 **LIÇÃO §293 (a mais afiada): a prosa erra nos DOIS sentidos.** Ela deu **3 falsos positivos** (Ísis/Osíris,
 Perseu/Medusa, Mnevis/Rá lidos como nome mitológico) **e 1 falso NEGATIVO** — o Mnevis↔Rá era laço REAL no fx
 (`aliadoPresente:"ra"`), descartado por parecer citação de mito. O falso negativo é o pior: **some sem deixar rastro**
