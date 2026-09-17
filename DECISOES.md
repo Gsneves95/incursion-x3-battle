@@ -73,6 +73,52 @@ extrai papéis por deus, gera as arestas direcionais por família com **motivo e
 o corte (sem família de cura) e escreve `data/sinergia.json` (dado derivado, não editar à mão). Imprime a distribuição.
 Não entra na build (o dono decide a tela); `build.js` lê subpastas nomeadas, não varre `data/` — intacto.
 
+### §293 (cont.) — a aura VIRA FAIXA GLOBAL (aprovado), e as 2 famílias candidatas p/ salvar os 36 foram MEDIDAS e recusadas
+
+**AURA = faixa global (dono aprovou):** a ficha diz "Brigid e Mímir reforçam todo o time" num lugar fixo; a lista de
+parceiros é só PAR-A-PAR. A aura é verdade sobre a Brígida, não sobre a relação dela com o Hades — como par, dilui;
+como faixa, informa. `familia:"aura"` fica etiquetado. Isso deixa **36 deuses com zero PARCEIRO par-a-par** → antes de
+desenhar, mediu-se se falta família.
+
+**(a) FASE_MOD como par de mesmo-elemento — NÃO é família.** Dois Aurora no mesmo time ganham o +8 da MESMA Dia — mas
+o +8 vem do SETTER (Amaterasu), não do colega Aurora. Um não dá nada ao outro; cada um ganha do Amaterasu sozinho
+(já é a família 2). Medido: **rescata 0 dos 36** — os 36 são TODOS de elemento neutro (Verdejante/Chama/Maré/
+Tempestade), o FASE_MOD só toca Aurora/Umbra, e **todo Aurora/Umbra já tem parceiro**. E é 48/100 (quase metade):
+linha de base disfarçada, como o dono desconfiou. Listar seria dobrar a família 2 e pôr um "parceiro" meia-lista em
+toda ficha Aurora/Umbra.
+
+**(b) CUSTO (caro ↔ gera orbe) — NÃO é família.** O custo é ACHATADO: kit inteiro mediana 6 (mín 4, máx 7); a
+habilidade mais cara custa 3 (mediana 3, máx 4 — só shiva/isis). **A maior demanda de UM elemento numa habilidade é
+2, em 95/100 deuses** (5 têm 1, zero têm 3+). Não existe "deus caro" p/ uma fonte de orbe destravar — a maior conta
+de um elemento no jogo é 2 orbes. Pelo teste do próprio dono ("se o custo é parecido em todo mundo, não é"), é
+parecido → fora.
+
+**(c) QUEM são os 36 — o buraco tem causa estrutural.** São exatamente os **4 elementos neutros** (Verdejante 12,
+Chama 10, Maré 8, Tempestade 6); **nenhum é Aurora/Umbra.** Causa: **só Aurora e Umbra têm sinergia de elemento** — o
+sistema Dia/Noite (Amaterasu/Tsukuyomi) e a aura do Rá todos gateiam em Aurora/Umbra. Os outros 4 elementos não têm
+setter nem aura-de-elemento → zero sinergia de elemento por construção. Metade da roda de elementos é ligada, metade
+é órfã. Por facção, agrupam-se nos panteões soltos sem um hub tipo Odin (Grega 8, Brasileira 7).
+
+**A resposta de verdade a "falta família?": há uma SUPER-FAMÍLIA de suporte-ao-time, mas é a MESMA forma da aura —
+global, não par.** Varri protetor/suporte (taunt, intercepta, escudo→time, redução→time, cura→time, revive→aliado).
+Existe, mas **nenhuma nomeia um parceiro**: uma curandeira cura o time todo, não tem laço especial com o Hades vs o
+Zeus. Fazer disso par afogaria a ficha de novo (o erro da aura). Dos 36: **14 são suportes-de-time** (bennu, boto,
+brahma, brigid, chaac, curupira, demeter, guanyu, iara, izanagi, khnum, nefertem, oxum, poseidon) → mesma faixa global
+da aura ("reforça/protege/cura o time"); **22 são solistas puros** (aokuang, aquiles, ares, boitata, cernunnos, dagda,
+dionisio, durga, ganesha, hera, hermes, iansa, kagutsuchi, kukulkan, mulasemcabeca, nezha, piranha, saci, sobek,
+tanuki, xango, zeus) → "sem sinergia específica — funciona sozinho" (são batedores egoístas, é honesto).
+
+**Proposta (o dono decide a tela):** estender a faixa global aprovada da aura p/ cobrir suporte-ao-time. Assim a lista
+par-a-par fica honesta, os 14 ganham "reforça/protege o time" (nem vazio nem diluído), e os 22 ganham a linha do dono
+"funciona sozinho" — ninguém com parceiro inventado, ninguém com ficha enganosamente vazia.
+
+**LIÇÃO §293 (a mais afiada): a prosa erra nos DOIS sentidos.** Ela deu **3 falsos positivos** (Ísis/Osíris,
+Perseu/Medusa, Mnevis/Rá lidos como nome mitológico) **e 1 falso NEGATIVO** — o Mnevis↔Rá era laço REAL no fx
+(`aliadoPresente:"ra"`), descartado por parecer citação de mito. O falso negativo é o pior: **some sem deixar rastro**
+(a busca-por-texto deleta um laço real e ninguém vê o furo). Por isso o mapa sai do fx nos dois sentidos: fx p/
+CONFIRMAR o que a prosa afirma (mata os 3 FPs) e fx p/ ACHAR o que a prosa omite (pega o 1 FN). Busca de texto sozinha
+teria embarcado um mapa ao mesmo tempo errado e incompleto.
+
 ---
 
 ## §292 — dois achados do dono jogando: o texto de efeito CORTA (a medição não pegou) e o selo de raridade muda de lugar.
