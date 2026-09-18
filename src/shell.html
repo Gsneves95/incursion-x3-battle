@@ -162,24 +162,30 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .tools{flex:0 0 auto;display:flex;gap:6px}
 
 
-/* ---------- CORPO (board): painel à esquerda + 3 fileiras ---------- */
-.board{position:absolute;top:46px;left:0;right:0;bottom:86px;display:flex;z-index:2}
+/* ---------- CORPO (board): 3 fileiras (§299: o painel lateral SAIU — o histórico mora no ≡ do topo) ---------- */
+/* §299: rodapé enxuto (76) — a citação/leitura ocupa a banda; a altura veio de encolher o rodapé de 86→76
+   (a FICHA fica em 90 por decisão do dono, o retrato > ficha do §258 é preservado a 92>90), para a FAIXA
+   de efeitos caber ACIMA das fichas sem cortar. Ver DECISOES §299. */
+.board{position:absolute;top:46px;left:0;right:0;bottom:74px;display:flex;z-index:2}
 .rows{position:relative;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:0 6px}
-.brow{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:space-between;position:relative}   /* 3 × 112px */
+.brow{flex:1 1 0;min-height:0;display:flex;align-items:flex-end;justify-content:space-between;position:relative}
 /* §239 item 5: a MOLDURA (.brow__unit) — placa emoldurada que UNE o retrato e as 4 habilidades. Ela
    hugs o conteúdo (retrato + tiles), colada à esquerda; o inimigo fica fora, à direita. A placa é o
    ::before, INSET no vertical, então mais baixa que o retrato — o retrato (mais alto) SOBREPÕE a borda
    dela por cima. Profundidade: sombra projetada + borda + anel interno (borda dupla) + leve gradiente. */
-.brow__unit{position:relative;display:flex;align-items:center;flex:0 1 auto;min-width:0;padding:0 12px 0 9px}
+.brow__unit{position:relative;display:flex;align-items:flex-end;flex:0 1 auto;min-width:0;padding:0 12px 0 9px}
 .brow__unit::before{content:"";position:absolute;left:0;right:0;top:9px;bottom:9px;z-index:0;border-radius:13px;
   background:linear-gradient(180deg,rgba(41,33,68,.62),rgba(15,11,30,.68));
   border:1px solid var(--gold-soft);
   box-shadow:0 5px 14px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,217,122,.10),inset 0 1px 0 rgba(255,255,255,.05);
   transition:border-color .18s,box-shadow .18s}
 .brow__unit>*{position:relative;z-index:1}
-.brow__ally{flex:0 0 102px;display:flex;justify-content:center;align-items:center}
-.brow__tiles{flex:0 1 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:8px}
-.brow__enemy{flex:0 0 146px;display:flex;justify-content:center;align-items:center}
+.brow__ally{flex:0 0 100px;display:flex;justify-content:center;align-items:flex-end}
+/* §299: coluna do aliado = FAIXA de efeitos (reservada) ACIMA das 4 fichas */
+.brow__tilecol{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:flex-end}
+.brow__tiles{flex:0 0 auto;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:8px}
+/* §299: coluna do inimigo = FAIXA de efeitos (reservada) ACIMA do retrato */
+.brow__enemy{flex:0 0 146px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
 /* §239 item 4: a ênfase segue a LUZ, não o movimento. Lado ativo = moldura acesa (ouro); no turno do
    oponente a moldura apaga e o retrato DELE acende — nada se move. */
 .turno-eu .brow__unit::before{border-color:var(--gold);
@@ -201,29 +207,16 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .teamlbl--ally{left:44px;color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,var(--gold))}
 .teamlbl--enemy{right:22px;color:#fff;background:linear-gradient(180deg,#c85a72,#8a2b3f)}
 
-/* ---------- PAINEL de leitura (esquerda, x0–262) ---------- */
-.panel{flex:0 0 262px;position:relative;display:flex;transition:flex-basis .16s ease}
-.panel__box{flex:1 1 auto;min-width:0;margin:2px 2px 2px 6px;display:flex;flex-direction:column;
-  background:rgba(14,11,30,.82);border:1px solid var(--gold-soft);border-radius:8px;overflow:hidden}
-.panel__tab{flex:0 0 20px;align-self:stretch;margin:2px 0;padding:0;cursor:pointer;
-  border:1px solid var(--gold-soft);border-radius:0 5px 5px 0;
-  background:linear-gradient(90deg,rgba(30,22,50,.85),rgba(30,22,50,.4));
-  color:var(--gold-text);font-size:13px;display:flex;align-items:center;justify-content:center}
-.panel__tab:active{background:rgba(58,44,10,.6)}
-/* RECOLHIDO: a aba É o painel colapsado (sempre visível, alvo grande). §257: a base da ficha já é 92;
-   com o painel fechado sobra folga horizontal, mas a vertical (~98px) é o teto — os tiles vão a 96. */
-#baselayer.pnfold .panel{flex-basis:26px}
-#baselayer.pnfold .panel__box{display:none}
-#baselayer.pnfold .brow__tiles .skill{width:96px;height:96px}
-#baselayer.pnfold .panel__tab{margin-left:4px;border-radius:5px}
+/* §299: o PAINEL lateral (histórico) SAIU — o histórico segue no ≡ REGISTRO do topo (sobrepor.js), o único
+   canal do "por que perdi 45 de vida". A leitura (§256) já morava no rodapé; a citação é o repouso dele. */
 
-/* ---------- retrato (§258): 94×94, MAIOR que a ficha de 90 nas DUAS dimensões (restaura a hierarquia
+/* ---------- retrato (§258→§299): 92×92, MAIOR que a ficha de 90 (hierarquia retrato>ficha preservada). O nome
    "retrato > habilidade" do §214). O nome e a barra de vida SOBREPÕEM a arte (base escurecida), como a
    faixa de efeitos já fazia — assim o retrato inteiro cabe na banda de 98px sem empilhar abaixo. A vida
    segue OPACA (a arte não vaza por trás dela), então a legibilidade do rótulo não muda (§258). Ally e
    inimigo usam o MESMO .portrait → mesmo tamanho (simetria). ---------- */
-.unit__portrait{display:flex;flex-direction:column;align-items:center;width:94px}
-.portrait{position:relative;width:94px;height:94px;border:1px solid #3a3358;border-radius:6px;
+.unit__portrait{display:flex;flex-direction:column;align-items:center;width:92px}
+.portrait{position:relative;width:92px;height:92px;border:1px solid #3a3358;border-radius:6px;
   overflow:hidden;background:#14112a;box-shadow:0 3px 9px rgba(0,0,0,.55);cursor:pointer}
 .up--ally .portrait{border-color:var(--gold-soft)}
 .up--enemy .portrait{border-color:#8a4a5c}
@@ -277,33 +270,36 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-weight:700;font-size:10px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.9)}
 .hp--empty .hp__label{color:#cfc8ea}
 
-/* §258: a faixa de efeitos fica ACIMA do nome+vida (bottom:32), no terço inferior da arte */
-.effects{position:absolute;left:0;right:0;bottom:32px;height:18px;display:flex;gap:2.5px;
-  align-items:center;padding:0 3px;z-index:2;
-  background:linear-gradient(0deg,rgba(6,5,16,.92) 0%,rgba(6,5,16,.66) 62%,transparent 100%)}
-.effects:empty{display:none}
-.effect{position:relative;width:14px;height:14px;border:0;border-radius:2px;
-  overflow:hidden;cursor:pointer;flex:none;background:#2a2440}
+/* §299: a FAIXA de efeitos — banda ACIMA das fichas (aliado) e do retrato (inimigo), fora do retrato.
+   A linha tem altura FIXA (flex 1 1 0) e o conteúdo é ancorado embaixo (justify-flex-end), então a faixa
+   entra e sai no ESPAÇO ACIMA sem empurrar a ficha — sem pulo, sem reservar banda vazia visível. TODO chip
+   mostra a magnitude (sem colapso, sem "+N": o §266 cumprido). A altura da faixa é o teto vertical do palco
+   (retrato 92 > ficha 90, §258; rodapé 76): ~10px. */
+.fxstrip{height:9px;display:flex;gap:3px;align-items:stretch;padding:0 1px;overflow:visible;margin-bottom:1px}
+.fxstrip:empty{display:none}
+.fxstrip--ally{justify-content:flex-start}
+.fxstrip--enemy{justify-content:center}
+.effect{position:relative;height:100%;min-width:14px;border:0;border-radius:2px;
+  overflow:hidden;cursor:pointer;flex:0 0 auto;background:#2a2440;display:inline-flex;align-items:center;justify-content:center}
+.effect .slot{width:100%;height:100%}
 .effect--buff{background:rgba(99,230,255,.22);box-shadow:inset 0 0 0 1px rgba(99,230,255,.5)}
 .effect--debuff{background:rgba(255,92,138,.22);box-shadow:inset 0 0 0 1px rgba(255,92,138,.5)}
 .effect--dot{background:rgba(255,138,74,.22);box-shadow:inset 0 0 0 1px rgba(255,138,74,.5)}
-.effect__g{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;color:var(--ink)}
+.effect__g{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;line-height:1;color:var(--ink)}
 .effect--buff .effect__g{color:#63e6ff}
 .effect--debuff .effect__g{color:#ff8fae}
 .effect--dot .effect__g{color:#ffab7a}
-/* §266: chip LARGO (≤3 efeitos) mostra a MAGNITUDE (o +8 do adormecido, o +v do vulnerável…) — glifo +
-   número inline, turnos como sufixo dim. Com 4+ efeitos o chip volta a 14px (número no toque), então o
-   pior caso de 6 continua cabendo no talo de 92px. */
-.effect--mag{width:auto;min-width:14px;padding:0 3px;display:inline-flex;align-items:center;justify-content:center;gap:2px;overflow:visible}
+/* §299: chip de MAGNITUDE — glifo + número + turnos inline, SEMPRE (nunca mais colapsa). A banda folgada
+   (largura dos tiles, 235px) comporta 7 destes; o pior real medido é 4. */
+.effect--mag{width:auto;min-width:16px;padding:0 3px;gap:2px;overflow:visible}
 .effect__v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9.5px;line-height:1;color:var(--ink)}
 .effect--buff .effect__v{color:#63e6ff}
 .effect--debuff .effect__v{color:#ff8fae}
 .effect--dot .effect__v{color:#ffab7a}
-.effect__turns--in{position:static;background:none;min-width:0;padding:0;margin-left:1px;color:var(--ink-dim);font-size:7.5px;line-height:1}
-.effect__turns{position:absolute;right:0;bottom:-2px;min-width:6px;
-  font-weight:700;font-size:8.5px;line-height:9px;color:#fff;text-align:center;
+.effect__turns--in{position:static;background:none;min-width:0;padding:0;margin-left:1px;color:var(--ink-dim);font-size:8px;line-height:1}
+.effect__turns{position:absolute;right:0;bottom:-1px;min-width:6px;
+  font-weight:700;font-size:8px;line-height:9px;color:#fff;text-align:center;
   text-shadow:0 0 3px #000,0 0 2px #000,0 0 1px #000}
-.fxmore{font-weight:700;font-size:9px;color:var(--ink-dim);padding-left:1px}
 
 /* ---------- FICHA de habilidade: CÍRCULO 90 (§257) — o medalhão da arte é circular, então a moldura
    também. Cresceu de 78→90 — MEDIDO como o maior diâmetro que cabe na fileira com o painel ABERTO sem
@@ -418,8 +414,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* ---------- RODAPÉ (46): estado da ação à esquerda · ENCERRAR à direita ---------- */
 /* §238: RODAPÉ de LEITURA de altura FIXA (86px) — descrição quando há habilidade em foco, dica quando não.
    Não pula de tamanho (o `.leitura` sempre ocupa a mesma faixa). */
-.footer{position:absolute;bottom:0;left:0;right:0;height:86px;display:flex;align-items:stretch;gap:10px;
-  padding:6px 12px;z-index:3;
+.footer{position:absolute;bottom:0;left:0;right:0;height:74px;display:flex;align-items:stretch;gap:10px;
+  padding:4px 12px;z-index:3;
   background:linear-gradient(0deg,rgba(9,8,20,.98) 0%,rgba(9,8,20,.9) 78%,transparent 100%)}
 .acaoestado{flex:1 1 auto;min-width:0;display:flex;align-items:stretch}
 .acao__txt{min-width:0;font-weight:600;font-size:12.5px;letter-spacing:.02em;color:var(--ink-dim);line-height:1.4}
@@ -427,7 +423,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* a LEITURA no rodapé: ícone + corpo (nome/custo/recarga + o que faz + status/motivo). Altura fixa. */
 .leitura{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:10px}
 .leitura--dica{align-items:center}
-.leitura__icon{flex:0 0 auto;width:52px;height:52px;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
+/* §299: a CITAÇÃO — o REPOUSO do rodapé (dado, BATALHA_TXT.citacao). Centrada, serifada, discreta em ouro:
+   descanso, não instrução. A leitura (toque em habilidade/inimigo) a substitui na mesma banda. */
+.leitura--cite{align-items:center;justify-content:center}
+.acao__cite{font-family:'Cinzel',serif;font-weight:500;font-style:italic;font-size:13px;letter-spacing:.04em;
+  color:var(--gold-soft);text-align:center;opacity:.92;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.leitura__icon{flex:0 0 auto;width:46px;height:46px;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
 .leitura__icon.is-skill{border-radius:50%}   /* §257: leitura de habilidade/kit no rodapé = mesmo disco circular das fichas */
 .leitura__icon .slot{width:100%;height:100%}
 .leitura__corpo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}

@@ -191,9 +191,8 @@ w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 console.log('== 2. estrutura da tela de batalha (§214: zonas por ergonomia) ==');
 const req = ['.stage__bg','.stage__scrim','.topbar','.side--me','.side--foe','.prof','.prof__pic','.prof__nick',
   '.timer','.timer__fill','.timer__label','.energy--me','.energy--foe',
-  '.board','.panel','.panel__tab','.rows','.brow','.brow__ally','.brow__tiles','.brow__enemy',
-  '.footer','.acaoestado','.detail','.detail__icon','.detail__name','.detail__classes','.detail__cd',
-  '.hist__rol','.acao__txt','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
+  '.board','.rows','.brow','.brow__ally','.brow__tilecol','.brow__tiles','.brow__enemy',
+  '.footer','.acaoestado','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
 req.forEach(s => ok(!!$(s), `falta ${s}`));
 ok(!$('.stagemark'), 'a marca-d\u2019água INCURSION deveria ter saído (item 9)');
 ok($$('.brow').length === 3, `3 fileiras, há ${$$('.brow').length}`);
@@ -204,8 +203,11 @@ ok($$('.skill').length === 12, `só o time aliado tem ladrilhos, há ${$$('.skil
 ok(!$('.foetab') && !$('.foepanel') && !$('.foesk'), 'a exibição/abas permanentes das habilidades inimigas saíram (§214)');
 ok($$('.portrait[data-foe] [data-sk]').length === 0, 'nada do lado inimigo pode ser armável');
 ok($$('.portrait__ask').length === 3, `todo inimigo vivo precisa da marca "?" de consulta (item 8), há ${$$('.portrait__ask').length}`);
-ok($$('.brow__enemy .portrait .effects').length === 3, 'a faixa de efeitos deve estar DENTRO do retrato inimigo');
-ok($$('.brow__ally .portrait .effects').length === 3, 'a faixa de efeitos aliada também vive no retrato');
+// §299: a faixa de efeitos SUBIU — fora do retrato, ACIMA das fichas (aliado) e do retrato (inimigo)
+ok($$('.brow__enemy .portrait .effects').length === 0, '§299: a faixa NÃO vive mais dentro do retrato inimigo');
+ok($$('.portrait .effects').length === 0, '§299: nenhuma faixa de efeitos dentro de retrato algum');
+ok($$('.brow .fxstrip--ally').length === 3, '§299: cada fileira tem a faixa do aliado ACIMA das fichas');
+ok($$('.brow .fxstrip--enemy').length === 3, '§299: cada fileira tem a faixa do inimigo ACIMA do retrato');
 // §215: MINHAS orbes (interativas) à esquerda, as do OPONENTE (leitura) à direita — as duas visíveis
 ok($$('.energy--me .energy__pill').length >= 1 && $$('.energy--me .energy__pill').length <= 6,
   `minhas orbes: 1 a 6 tipos, há ${$$('.energy--me .energy__pill').length}`);
@@ -276,9 +278,8 @@ console.log('== 4b. consulta do KIT inimigo (§256: toque longo → RODAPÉ; a l
   fp.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
   w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uid}")`);
   ok(w.eval('peekKit') === uid, 'o toque longo abre o kit');
-  // §256: a leitura tem UM endereço — o RODAPÉ. O kit abre lá, NÃO no painel; a lateral segue no histórico.
-  ok(!!$('.footer .leitura__kstrip') && !$('.panel .kstrip'), 'o KIT abre no RODAPÉ (galeria + selecionada), não no painel');
-  ok(!!$('.panel .hist') && !$('.panel .kitwrap'), 'a lateral fica no HISTÓRICO enquanto o kit está aberto');
+  // §256/§299: a leitura tem UM endereço — o RODAPÉ. O kit abre lá; o painel lateral SAIU (§299), o histórico é o ≡.
+  ok(!!$('.footer .leitura__kstrip') && !$('.panel'), 'o KIT abre no RODAPÉ (galeria + selecionada); não há mais painel lateral (§299)');
   const fp2 = $(`.portrait[data-foe][data-uid="${uid}"]`);
   fp2.dispatchEvent(new w.MouseEvent('pointerup', { bubbles: true, clientX: 0, clientY: 0 }));
   ok(w.eval('peekKit') === uid && !!$('.footer .leitura__kstrip'), '§219: soltar o dedo NÃO fecha o kit (persiste)');
@@ -291,7 +292,7 @@ console.log('== 4b. consulta do KIT inimigo (§256: toque longo → RODAPÉ; a l
   ok($('.footer .leitura__nome').textContent.includes(foe0.nome.toUpperCase()), 'o cabeçalho nomeia o inimigo consultado');
   ok(!!$('.footer [data-kitclose]'), 'há um fechar deliberado (o botao ✕)');
   // a SELECIONADA por inteiro: arte grande + recarga + texto completo — no ícone da leitura do rodapé
-  ok(parseFloat(w.getComputedStyle($('.footer .leitura__icon')).width) >= 52, 'a arte da selecionada é grande (legível)');
+  ok(parseFloat(w.getComputedStyle($('.footer .leitura__icon')).width) >= 46, 'a arte da selecionada é grande (legível)');
   ok($('.footer .leitura__txt').textContent.length > 8, 'a selecionada mostra o texto completo do que faz');
   ok(/PRONTA/.test($('.footer .leitura__cd').textContent), 'a selecionada mostra a recarga');
 
@@ -314,40 +315,44 @@ console.log('== 4b. consulta do KIT inimigo (§256: toque longo → RODAPÉ; a l
   console.log('  "?" nos 3 inimigos \u00b7 kit no RODAP\u00c9 \u00b7 troca de chip \u00b7 lateral no hist\u00f3rico \u00b7 fecha');
 }
 
-console.log('== 4b3. GUARDAS \u00a7256: a leitura tem UM endere\u00e7o (o rodap\u00e9); o painel \u00e9 sempre o hist\u00f3rico ==');
+console.log('== 4b3. GUARDAS \u00a7256/\u00a7299: a leitura tem UM endere\u00e7o (o rodap\u00e9); o painel lateral SAIU; a cita\u00e7\u00e3o \u00e9 o repouso ==');
 {
-  // bab\u00e1: se qualquer leitura voltar a morar no painel, ou o kit voltar a ser ef\u00eamero, estas quebram.
-  const nomePainel = () => { const e=$('.panel .detail__name'); return e?e.textContent:''; };
+  // bab\u00e1: se qualquer leitura voltar a morar num painel lateral, ou o kit voltar a ser ef\u00eamero, ou a cita\u00e7\u00e3o
+  // sumir do repouso, estas quebram. \u00a7299: n\u00e3o h\u00e1 mais painel lateral; o hist\u00f3rico \u00e9 o \u2261 REGISTRO.
   w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;resumoTurno=null;render()');
+  ok(!$('.panel'), '\u00a7299: n\u00e3o existe mais painel lateral na tela de batalha');
 
-  // GUARDA A \u2014 a leitura tocada (habilidade/efeito/ficha) aparece no RODAP\u00c9, nunca no painel
+  // GUARDA REPOUSO \u2014 no descanso, o rodap\u00e9 mostra a CITA\u00c7\u00c3O (dado), n\u00e3o uma dica solta
+  ok(!!$('.footer .acao__cite'), 'REPOUSO: o rodap\u00e9 exibe a cita\u00e7\u00e3o quando nada est\u00e1 em foco');
+  ok(($('.footer .acao__cite').textContent||'').length > 8, 'REPOUSO: a cita\u00e7\u00e3o tem texto (vem do dado BATALHA_TXT)');
+
+  // GUARDA A \u2014 a leitura tocada (habilidade/efeito/ficha) aparece no RODAP\u00c9; a cita\u00e7\u00e3o cede o lugar
   w.eval("detalhe={nome:'LEITURA_TESTE',texto:'descri\u00e7\u00e3o de teste completa',chave:'detail'}; render()");
   ok($('.footer .leitura__nome').textContent === 'LEITURA_TESTE', 'A: a leitura tocada vive no rodap\u00e9');
-  ok(nomePainel() === 'HIST\u00d3RICO', 'A: a leitura N\u00c3O invade o painel \u2014 o painel segue no hist\u00f3rico');
+  ok(!$('.footer .acao__cite'), 'A: a leitura substitui a cita\u00e7\u00e3o na mesma banda');
   w.eval('detalhe=null; render()');
+  ok(!!$('.footer .acao__cite'), 'A: dispensada a leitura, a cita\u00e7\u00e3o volta ao repouso');
 
-  // GUARDA B \u2014 o painel \u00e9 SEMPRE o hist\u00f3rico, em todos os estados (ocioso, kit aberto, resumo pendente)
-  ok(nomePainel() === 'HIST\u00d3RICO', 'B: ocioso \u2014 painel \u00e9 hist\u00f3rico');
+  // GUARDA B \u2014 o kit do inimigo abre no RODAP\u00c9 (toque em inimigo), n\u00e3o num painel
   const uidG = $('.portrait[data-foe]').dataset.uid;
   w.eval(`abrirKit("${uidG}")`);
-  ok(nomePainel() === 'HIST\u00d3RICO', 'B: com o kit aberto \u2014 painel ainda \u00e9 hist\u00f3rico (o kit est\u00e1 no rodap\u00e9)');
-  ok(!!$('.footer .leitura__kstrip'), 'B: e o kit est\u00e1 mesmo no rodap\u00e9');
+  ok(!!$('.footer .leitura__kstrip') && !$('.panel'), 'B: o kit do inimigo abre no rodap\u00e9; sem painel lateral');
+  ok(!$('.footer .acao__cite'), 'B: o kit substitui a cita\u00e7\u00e3o');
 
   // GUARDA C \u2014 anti-ef\u00eamero: com o RESUMO do oponente pendente, o kit aberto N\u00c3O \u00e9 despejado
   w.eval("resumoTurno=[{turno:1,msg:'o oponente agiu'}]; render()");
   ok(w.eval('peekKit') === uidG && !!$('.footer .leitura__kstrip'),
     'C: o kit permanece no rodap\u00e9 mesmo com resumo do oponente pendente (n\u00e3o \u00e9 mais ef\u00eamero)');
-  ok(nomePainel() === 'HIST\u00d3RICO', 'C: e o painel segue no hist\u00f3rico');
   w.eval('resumoTurno=null; peekKit=null; kitSel=null; render()');
 
-  // GUARDA D \u2014 o gesto \u00a7214 (toque longo) tem NOVO destino: o rodap\u00e9 (o atalho sobrevive)
+  // GUARDA D \u2014 o gesto \u00a7214 (toque longo) tem destino no rodap\u00e9 (o atalho sobrevive), nunca num painel
   const fpg = $('.portrait[data-foe]'); const uidD = fpg.dataset.uid;
   fpg.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
   w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uidD}")`);
-  ok(!!$('.footer .leitura__kstrip') && !$('.panel .kstrip'),
-    'D: \u00a7214 o toque longo abre o kit no RODAP\u00c9 (novo destino), nunca no painel');
+  ok(!!$('.footer .leitura__kstrip') && !$('.panel'),
+    'D: \u00a7214 o toque longo abre o kit no RODAP\u00c9, e n\u00e3o h\u00e1 painel');
   w.eval('peekKit=null; kitSel=null; detalhe=null; render()');
-  console.log('  A leitura vive no rodap\u00e9 \u00b7 o painel \u00e9 sempre o hist\u00f3rico \u00b7 o kit persiste \u00b7 \u00a7214 sobrevive');
+  console.log('  A leitura vive no rodap\u00e9 \u00b7 a cita\u00e7\u00e3o \u00e9 o repouso \u00b7 sem painel lateral \u00b7 o kit persiste \u00b7 \u00a7214 sobrevive');
 }
 
 console.log('== 4c. hierarquia visual e legibilidade ==');
@@ -446,7 +451,7 @@ console.log('== 4c2. contagem de objetos e ruído ==');
   ok(!/\u03a3/.test($('.energy--me').textContent), 'o total \u03a3 era redundante e deveria ter saído');
   ok(!$('.player__rank'), 'a linha "3 de pé \u00b7 N energia" duplicava o que a tela já mostra');
   ok(!/\/100|\/120/.test($('.hp__label').textContent), 'o "/max" era redundante no rótulo de vida');
-  ok($$('.brow__ally .portrait .effects').length === 3, 'efeitos deveriam viver dentro do retrato, 1 faixa por unidade');
+  ok($$('.brow .fxstrip--ally').length === 3, '§299: 1 faixa de efeitos por aliado, ACIMA das fichas');
   console.log(`  ${objetos} objetos em repouso \u00b7 ${pills} pílulas`);
 }
 
@@ -522,7 +527,7 @@ console.log(`  passiva: "${$('.leitura__nome').textContent}"`);
   w.eval('render()');
   ok($$('.effect').length >= 2, 'ícones de efeito deveriam aparecer');
   tap($('[data-ef]'));
-  ok($$('.detail__cd').some(e => /TURNO|PERMANENTE/.test(e.textContent)), 'detalhe do efeito deveria mostrar duração');
+  ok($$('.leitura__cd').some(e => /TURNO|PERMANENTE|∞/.test(e.textContent)), 'detalhe do efeito deveria mostrar duração (no rodapé)');
   tap($('[data-dot]'));
   ok(/QUEIMADURA/.test($('.leitura__nome').textContent), 'detalhe do dano contínuo');
   console.log(`  ${$$('.effect').length} ícones, todos abrem explicação`);
@@ -607,7 +612,7 @@ console.log('== 12. sistema de botões, menu e relógio ==');
   ok(!$('#menu'), 'tocar de novo deveria fechar o menu');
 
   // registro pelo ícone
-  tap($('#blog')); ok(!!$('#logscroll'), 'registro deveria abrir'); ok($$('.log__row').length > 0, 'registro com linhas');
+  tap($('#blog')); ok(!!$('#logscroll'), 'registro deveria abrir'); ok(!!$('.hist__rol') && ($$('.hist__l').length > 0 || !!$('.hist__vazio')), '§299: registro é o histórico agrupado (§238) no ≡');
   tap($('#bclose')); ok(!$('#logscroll'), 'registro deveria fechar');
 
   // rendição atrás de duas confirmações
@@ -744,24 +749,16 @@ console.log('== 12b. COMO JOGAR e render-se fora do rodapé ==');
   console.log('  ajuda e render-se dentro do menu de utilidades');
 }
 
-console.log('== 12c. painel recolhível (§214): aba recolhe, tiles crescem, aba reabre ==');
+console.log('== 12c. §299: o painel lateral SAIU — sem aba de recolher; o histórico é o ≡ REGISTRO ==');
 {
-  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;painelRecolhido=false;render()");
-  ok(!!$('.panel__tab'), 'a aba de recolher deveria estar sempre visível');
-  ok(!!$('.panel__box'), 'aberto: o corpo do painel deveria existir');
-  // jsdom não faz layout (getComputedStyle não cascateia o override de largura); aqui
-  // provamos a ESTRUTURA — que a regra de crescimento MIRA o tile só quando recolhido.
-  // O crescimento em PX (78 p/ ~100) é medido em navegador real em tests/moldura.test.js.
-  ok(!$('.brow__tiles .skill').matches('#baselayer.pnfold .brow__tiles .skill'),
-    'aberto: o tile ainda não deveria casar a regra de crescimento');
-  tap($('.panel__tab'));
-  ok(!!$('#baselayer.pnfold'), 'recolhido: o board deveria marcar-se pnfold');
-  ok(!$('.panel__box'), 'recolhido: o corpo do painel some, sobra só a aba');
-  ok($('.brow__tiles .skill').matches('#baselayer.pnfold .brow__tiles .skill'),
-    'recolhido: o tile deveria casar a regra que o faz crescer (78 p/ 100px)');
-  tap($('.panel__tab'));
-  ok(!$('#baselayer.pnfold') && !!$('.panel__box'), 'a aba deveria reabrir o painel');
-  console.log('  aba recolhe/reabre \u00b7 tile passa a casar a regra de crescimento ao recolher (px em moldura)');
+  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;render()");
+  ok(!$('.panel') && !$('.panel__tab'), '§299: não há mais painel lateral nem aba de recolher');
+  ok(!$('#baselayer.pnfold'), '§299: o estado pnfold (recolhido) não existe mais');
+  // o histórico segue acessível: o ≡ REGISTRO abre a sobreposição de log (o único canal do "por que perdi vida")
+  tap($('#blog'));
+  ok(w.eval("ov") === 'log' && !!$('#logscroll'), '§299: o ≡ abre o REGISTRO (histórico) em sobreposição');
+  w.eval('ov=null;render()');
+  console.log('  sem painel/aba · o histórico vive no ≡ REGISTRO (sobreposição)');
 }
 
 console.log('== 12d. \u00a7215: tocar a FOTO do perfil abre o marcador honesto (Fase 5) ==');

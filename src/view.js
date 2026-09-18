@@ -80,7 +80,6 @@ function renderBatalha(){
   ${topoHTML()}
   ${prova?provaHUD():campanha?campanhaHUD():dominio?dominioHUD():''}
   <div class="board">
-    ${painelHTML()}
     <div class="rows">
       <span class="teamlbl teamlbl--ally">Você</span>
       <span class="teamlbl teamlbl--enemy">${H(rotuloLado(1-eu))}</span>

@@ -154,14 +154,9 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(a.lastB <= a.ftT + EPS, `aberto: última fileira (${Math.round(a.lastB)}) cruza o rodapé (${Math.round(a.ftT)})`);
     ok(a.tileB <= a.rowB + EPS && a.tileT >= a.rowT - EPS,
       `aberto: tile estoura a fileira (tile ${Math.round(a.tileT)}..${Math.round(a.tileB)} vs fileira ${Math.round(a.rowT)}..${Math.round(a.rowB)})`);
-    // RECOLHIDO: os tiles crescem, mas não podem cruzar o rodapé nem estourar a fileira
-    await page.evaluate(() => { painelRecolhido = true; render(); });
-    const c = await geo();
-    ok(c.lastB <= c.ftT + EPS, `recolhido: última fileira (${Math.round(c.lastB)}) cruza o rodapé (${Math.round(c.ftT)})`);
-    ok(c.tileB <= c.rowB + EPS && c.tileT >= c.rowT - EPS,
-      `recolhido: tile estoura a fileira (tile ${Math.round(c.tileT)}..${Math.round(c.tileB)} vs fileira ${Math.round(c.rowT)}..${Math.round(c.rowB)})`);
-    ok(c.tileW > a.tileW, `recolhido: os tiles deveriam crescer (${Math.round(a.tileW)}→${Math.round(c.tileW)}px)`);
-    console.log(`  aberto: fila≤rodapé (${Math.round(a.lastB)}≤${Math.round(a.ftT)}) · recolhido: tile ${Math.round(a.tileW)}→${Math.round(c.tileW)}px, fila≤rodapé (${Math.round(c.lastB)}≤${Math.round(c.ftT)})`);
+    // §299: o painel lateral SAIU — não há mais recolher/crescer tiles. A geometria (fileira ≤ rodapé,
+    // ficha dentro da fileira) segue valendo com a faixa de efeitos acima das fichas.
+    console.log(`  fila≤rodapé (${Math.round(a.lastB)}≤${Math.round(a.ftT)}) · ficha ${Math.round(a.tileW)}px dentro da fileira`);
 
     // §207/§214: numa Provação (com HUD), a faixa do HUD termina ANTES das fileiras — medido de verdade.
     const hud = await page.evaluate(() => {
@@ -422,20 +417,30 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(hp.maxL > 0.85, `o rótulo de vida tem texto claro visível sobre a barra (L ${hp.maxL} > 0.85)`);
     console.log(`  vida: canto L ${hp.cornerL} (arte branca não vaza) · texto L ${hp.maxL} · contraste do rótulo contra o preenchimento (não a arte)`);
 
-    // GUARDA efeitos: 6 no pior caso (FX_MAX=5 + "+N") cabem DENTRO do retrato
+    // §299 GUARDA efeitos: a faixa SUBIU para ACIMA das fichas (fora do retrato); no pior caso de 6 efeitos
+    // TODO chip mostra a magnitude — SEM colapso e SEM "+N" — e a faixa não estoura a fileira (banda folgada).
     const fx = await rpg.evaluate(() => {
-      const u = st.lados[0].units[0]; u.efeitos = [];
-      u.dots = ['Queimadura', 'Veneno', 'Sangria', 'Corrosão', 'Praga', 'Gangrena'].map(n => ({ nome: n, dur: 2, dano: 5 }));
+      const board = document.querySelector('.board').getBoundingClientRect();
+      const u = st.lados[0].units[0];
+      u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'dmgDown', v: 4, dur: 2 }];
+      u.dots = [{ nome: 'Queimadura', dur: 2, dano: 5 }];   // 6 no total
       render();
-      const por = document.querySelector('.up--ally .portrait').getBoundingClientRect();
-      const eff = document.querySelector('.up--ally .effects').getBoundingClientRect();
-      const chips = document.querySelectorAll('.up--ally .effects .effect, .up--ally .effects .fxmore').length;
-      const temMais = !!document.querySelector('.up--ally .effects .fxmore');
-      return { dentro: eff.left >= por.left - 1 && eff.right <= por.right + 1 && eff.top >= por.top - 1 && eff.bottom <= por.bottom + 1, chips, temMais, FXMAX: (typeof FX_MAX !== 'undefined' ? FX_MAX : 5) };
+      const strip = document.querySelector('.brow .fxstrip--ally');
+      const tiles = strip.parentElement.querySelector('.brow__tiles').getBoundingClientRect();
+      const sr = strip.getBoundingClientRect();
+      const chips = strip.querySelectorAll('.effect').length;
+      const mags = strip.querySelectorAll('.effect--mag .effect__v').length;
+      const temMais = !!strip.querySelector('.fxmore');
+      // acima das fichas + dentro do board (não corta)
+      const acima = sr.bottom <= tiles.top + 1;
+      const dentro = sr.top >= board.top - 1 && sr.bottom <= board.bottom + 1;
+      return { acima, dentro, chips, mags, temMais };
     });
-    ok(fx.dentro, 'a faixa de efeitos cabe DENTRO do retrato (não estoura)');
-    ok(fx.chips <= fx.FXMAX && fx.temMais, `6 efeitos: a faixa mostra FX_MAX com o "+N" (${fx.chips} chips <= ${fx.FXMAX}, com +N)`);
-    console.log(`  efeitos: ${fx.chips} chips (cap FX_MAX ${fx.FXMAX} + "+N") dentro do retrato`);
+    ok(fx.acima, '§299: a faixa de efeitos fica ACIMA das fichas (não dentro do retrato)');
+    ok(fx.dentro, '§299: com 6 efeitos a faixa NÃO corta (dentro do board)');
+    ok(fx.chips === 6 && !fx.temMais, `§299: 6 efeitos → 6 chips, sem "+N" (chips ${fx.chips}, +N ${fx.temMais})`);
+    ok(fx.mags >= 5, `§299: os chips numéricos mostram a magnitude sempre (mag ${fx.mags} de 6)`);
+    console.log(`  efeitos: ${fx.chips} chips acima das fichas, ${fx.mags} com magnitude, sem "+N", sem corte`);
     await rctx.close();
   }
 
@@ -610,21 +615,23 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       st = montarProvacao({ aliados: ['zeus', 'nuwa', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; painelRecolhido = false;
       st.lados[1].units[0].efeitos = [{ type: 'adormecido', dur: 2 }, { type: 'vulneravel', v: 8, dur: 2 }]; ir('batalha', {}, { substituir: true }); render();
-      const band = [...document.querySelectorAll('.up--enemy .effects')].find(x => x.children.length);
+      const band = [...document.querySelectorAll('.brow__enemy .fxstrip--enemy')].find(x => x.children.length);
       const vs = [...band.querySelectorAll('.effect__v')].map(e => e.textContent.trim());
       return { nChips: band.children.length, valores: vs };
     });
     ok(p3.valores.includes('+8'), `§266: o chip do ADORMECIDO mostra +8 sem toque (chips numéricos: ${JSON.stringify(p3.valores)})`);
     ok(p3.valores.filter(v => /^[+−]\d/.test(v)).length >= 2, `§266: os chips numéricos (adormecido, vulnerável) mostram o número (${JSON.stringify(p3.valores)})`);
 
-    // GUARDA 4 — no pior caso de 6 efeitos o talo NÃO estoura (colapsa p/ chip compacto + "+N").
+    // GUARDA 4 (§299) — no pior caso de 6 efeitos a faixa (banda folgada, acima das fichas) NÃO estoura
+    // e NÃO colapsa: os 6 chips aparecem, todos com magnitude, sem "+N" (o compromisso do §266 acabou).
     const p4 = await gp.evaluate(() => {
       const u = st.lados[1].units[1];
       u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]; render();
-      const band = [...document.querySelectorAll('.up--enemy .effects')].filter(x => x.children.length)[1];
-      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length };
+      const band = [...document.querySelectorAll('.brow__enemy .fxstrip--enemy')].filter(x => x.children.length)[1];
+      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length, temMais: !!band.querySelector('.fxmore') };
     });
-    ok(!p4.estoura, `§266: o talo com 6 efeitos NÃO estoura (colapsou p/ ${p4.n} slots)`);
+    ok(!p4.estoura, `§299: a faixa com 6 efeitos NÃO estoura na horizontal (${p4.n} chips)`);
+    ok(p4.n === 6 && !p4.temMais, `§299: os 6 efeitos aparecem sem colapso e sem "+N" (${p4.n} chips, +N ${p4.temMais})`);
 
     // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
     console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');

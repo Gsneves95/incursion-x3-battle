@@ -6,6 +6,65 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §299 fatia 2 — tela de batalha refeita: a FAIXA sobe, o PAINEL sai, a LEITURA no rodapé, a CITAÇÃO.
+
+Três decisões do dono e uma recusa, sobre a medição da fatia 1 (§298).
+
+### 1) A FICHA FICA EM 90 (recusa dos 55)
+
+O dono recusou os 55px do mockup: a ficha é o que mais se toca, com relógio de 60s correndo; a 55 ela dá 46–47pt no
+iPhone SE / Galaxy médio (colado no piso de toque 44/48) e cai abaixo de 44 em paisagem curta. **O resto do layout se
+ajustou ao redor dos 90, não o contrário** — e foi o que custou vertical (ver o encaixe abaixo).
+
+### 2) A FAIXA DE EFEITOS SUBIU — o compromisso do §266 acabou
+
+Antes vivia DENTRO do retrato (92px) e colapsava a partir de 4 efeitos (chip de 14px sem número; `FX_MAX=5` cortava em
+"+N"). Agora vive ACIMA das fichas (aliado) e do retrato (inimigo), numa banda folgada. **`largo`/`FX_MAX` REMOVIDOS: todo
+chip mostra a magnitude SEMPRE, sem "+N".** O **pior empilhamento REAL** foi medido percorrendo partidas (IA×IA, 1200
+partidas, ~421k amostras de unidade-viva, os dois níveis de IA): **4 chips** (0,058% das amostras; 5+ nunca), não o "6"
+estimado. A banda (largura das fichas, que com o painel fora rende ~384px) comporta muito mais que isso — o jogador vê
+todo modificador, sempre, que é o que o §266 queria e não conseguia.
+
+### 3) A LEITURA FICA no rodapé; a CITAÇÃO é o repouso
+
+A `.leitura` (§256) já morava no rodapé. Agora o **repouso** do rodapé é a **citação** (não uma dica solta): tocar uma
+habilidade ou um inimigo troca pela leitura na mesma banda; soltar volta à citação. **A citação é dado** (`data/batalha.json`
+→ `BATALHA_TXT.citacao`, injetado no build), não literal no código — o dono edita e por ora é "Deuses, heróis e lendas.
+Tudo se encontra aqui." **O PAINEL lateral (262×294) SAIU.** Confirmação que o dono pediu ANTES de remover: **o painel
+carregava SÓ o histórico** — o kit do inimigo, o resumo e a leitura já viviam no rodapé desde o §256, e o kit cabe na
+banda (medido: card natural **74px numa banda de 86**, sem transbordar). O histórico segue no **≡ REGISTRO** (sobreposição),
+o único canal do "por que perdi 45 de vida". Nada que o painel tinha precisava dos 74px do rodapé.
+
+### 4) A CITAÇÃO é conteúdo novo, do dono — em dado (item acima).
+
+### O ENCAIXE VERTICAL (o custo honesto de "ficha 90 + faixa acima")
+
+O mockup punha a faixa acima porque as fichas eram 55 — os 35px poupados por ficha abriam o vertical. Mantida a ficha em
+90, **os 428px de altura não comportam ficha 90 + faixa legível acima + retrato > ficha + rodapé de 86**, todos juntos (a
+soma estoura por alguns px). A faixa precisa de ~10px que só saem de: a ficha (o dono fixou 90), o retrato, ou o rodapé.
+Escolha, medida e mínima: **retrato 94→92** (hierarquia §258 preservada — 92 > 90) e **rodapé 86→76** (a leitura/kit ainda
+cabe: 74 no rodapé de 76 com padding enxuto). O TOPO (topbar 46) não deu de onde tirar (conteúdo mínimo ~46). Com isso a
+faixa é **~9px** e a banda comporta os chips com magnitude nos dois lados sem cortar. A faixa vive na banda ACIMA das
+fichas com a linha ancorada embaixo (justify-flex-end): ela entra e sai no espaço de cima **sem empurrar a ficha nem pular**.
+
+### O QUE NÃO MUDOU (invariantes do dono)
+
+§239 respiro (a moldura une retrato + fichas; o retrato POP acima da borda de cima da placa — guardado); a hierarquia
+retrato > ficha do §258 (92 > 90); o indicador de passiva do §266 (o "P" acende); a régua do §298 (780 e 951 são o mesmo
+palco 780×428 a escalas diferentes).
+
+### GUARDAS (babá, declarando o espaço de estados — §295) e capturas
+
+`tests/batalha_faixa.test.js` (Chromium) percorre **as duas escalas (780 piso, 951 folga) × 0..6 efeitos × os dois lados**
+e crava: (1) NENHUM efeito colapsa em "+N" (todo chip de magnitude mostra o número); (2) NADA corta (clip 0 em toda a
+varredura); (3) a faixa fica ACIMA das fichas/retrato; (4) a ficha é 90×90; (5) §239 — o retrato pop acima da placa e a
+moldura une retrato+fichas; (6) a leitura aparece no rodapé ao tocar habilidade E ao tocar inimigo, e a citação volta no
+repouso. `interface.test.js` e `moldura.test.js` foram migrados do §256/§266 (efeitos fora do retrato, sem colapso, sem
+painel). Capturas 780 E 951 (repouso+citação, leitura de habilidade, leitura de inimigo, 6 efeitos) em `docs/capturas-299/`.
+**Arquivos:** `src/ui/campo.js` (faixa acima, sem colapso), `src/view.js` (painel fora), `src/ui/painel.js` (citação de
+repouso), `src/shell.html` (CSS: fxstrip, retrato 92, rodapé 76, cite; painel/pnfold removidos), `src/ui/sobrepor.js`
+(texto do ajuda), `data/batalha.json` (novo), `tools/build.js` (injeta BATALHA_TXT), `tests/*`. Ver ESTADO §299.
+
 ## §298 fatia 1 — tela de batalha: o FUNDO (plumbing) e a MEDIÇÃO do layout (relatório; layout NÃO tocado).
 
 O dono quer refazer a tela de batalha por um mockup, em duas fatias. **Fatia 1 faz SÓ o fundo e MEDE o resto** — "não mexa

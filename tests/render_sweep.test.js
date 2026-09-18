@@ -242,9 +242,10 @@ console.log('== 7. §238: os três estados + tocar-para-ler + histórico agrupad
   ok(!!d.querySelector('.leitura__nome') && d.querySelector('.leitura__txt').textContent.length > 0, 'tocar indisponível LÊ a descrição no rodapé');
   ok(!!d.querySelector('.leitura__motivo'), 'e diz POR QUE está indisponível');
   ok($$('.skill.is-armed').length === 0, 'tocar para ler NÃO arma (não custa)');
-  // histórico agrupado por turno, mais recente no topo, autoria distinta (você × o outro lado)
-  w.eval("st.log=[{tipo:'turno',turno:1,lado:0},{tipo:'dano',turno:1,origem:'iara',alvo:'sobek',valor:10},{tipo:'turno',turno:2,lado:1},{tipo:'dano',turno:2,origem:'sobek',alvo:'iara',valor:8}];render()");
-  ok($$('.hist__turno').length >= 2, 'histórico agrupado por turno');
+  // §299: o histórico agrupado (§238) mudou de casa — o painel lateral saiu, agora vive no ≡ REGISTRO.
+  // Continua agrupado por turno, mais recente no topo, autoria distinta (você × o outro lado).
+  w.eval("st.log=[{tipo:'turno',turno:1,lado:0},{tipo:'dano',turno:1,origem:'iara',alvo:'sobek',valor:10},{tipo:'turno',turno:2,lado:1},{tipo:'dano',turno:2,origem:'sobek',alvo:'iara',valor:8}];ov='log';render()");
+  ok($$('.hist__turno').length >= 2, 'histórico agrupado por turno (no ≡ REGISTRO)');
   ok(/Turno 2/.test((d.querySelector('.hist__turno .hist__cab') || {}).textContent || ''), 'o turno mais recente no topo');
   ok($$('.hist__l--eu').length >= 1 && $$('.hist__l--eles').length >= 1, 'autoria distinta: você × o outro lado (cor + alinhamento)');
   // os MESMOS estados na PROVAÇÃO e na CAMPANHA (mesma renderBatalha, oponente IA)

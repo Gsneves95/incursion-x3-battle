@@ -57,35 +57,6 @@ function pipsKitMini(cost){
   return out.length?`<span class="kchip__pips">${out.join('')}</span>`:'';
 }
 
-// §238 (item 2): o HISTÓRICO LEGÍVEL — agrupado POR TURNO (o mais recente no topo), cronológico dentro
-// do turno, e a AUTORIA visualmente distinta (você × o OUTRO LADO — vale nos 4 modos: na Provação e na
-// Campanha o "outro lado" é a IA, não um jogador). Autoria pela varredura do log: o lado ATIVO (turno.lado)
-// no momento; reativos (reflexo/intercepta/contra-ataque) pertencem ao lado que DEFENDE.
-function historicoHTML(){
-  const eu=ladoExibido();
-  let ativo=0; const marc=[];
-  for(const r of st.log){
-    if(r.tipo==='turno'){ if(r.lado===0||r.lado===1) ativo=r.lado; continue; }
-    if(r.tipo==='abertura') continue;
-    const txt=narrar(r); if(!txt) continue;
-    const reativo = r.reflexo || r.efeito==='intercepta' || r.efeito==='contraAtaca' || r.efeito==='refleteDano';
-    marc.push({ turno:r.turno, lado: reativo ? 1-ativo : ativo, txt });
-  }
-  const porTurno=new Map();
-  for(const m of marc){ if(!porTurno.has(m.turno)) porTurno.set(m.turno,[]); porTurno.get(m.turno).push(m); }
-  const turnos=[...porTurno.keys()].sort((a,b)=>b-a);   // mais recente no topo
-  const blocos=turnos.map(t=>{
-    const linhas=porTurno.get(t).map(m=>`<div class="hist__l hist__l--${m.lado===eu?'eu':'eles'}">${H(m.txt)}</div>`).join('');
-    return `<div class="hist__turno"><div class="hist__cab">Turno ${t}</div>${linhas}</div>`;
-  }).join('') || `<div class="hist__vazio">A batalha ainda não tem eventos.</div>`;
-  return `<div class="detail hist">
-    <div class="detail__top"><div class="detail__icon">${slot('detail','☷','var(--ink-mute)',20)}</div>
-      <div class="detail__id"><div class="detail__name">HISTÓRICO</div>
-        <div class="detail__meta"><span class="detail__cd">TURNO ${st.turno}</span></div></div></div>
-    <div class="hist__rol">${blocos}</div>
-    <div class="detail__classes"><span class="hist__leg hist__leg--eu">você</span> · <span class="hist__leg hist__leg--eles">${H(rotuloLado(1-eu))}</span></div>
-  </div>`;
-}
 
 // RODAPÉ (§238 item 2) — a LEITURA transitória: o que a habilidade faz, custo e recarga aparecem AQUI
 // (não mais na lateral). ALTURA FIXA (`.leitura`) para NÃO pular: descrição quando há habilidade em foco
@@ -130,13 +101,15 @@ function acaoRodapeHTML(){
   if(resumoTurno&&resumoTurno.length) return resumoRodapeHTML();          // §256: resumo do turno do oponente também desce
   if(detalhe) return leituraCardHTML(detalhe, '', '');   // §238: qualquer LEITURA (habilidade tocada, efeito, passiva, ficha)
   const l=st.lados[st.ativo];
-  let dica;
-  if(ehMeuTurno()){
-    dica=(l.dividaLivre||0)>0
-      ? `Ao encerrar, escolha <b>${l.dividaLivre}</b> energia livre`
-      : `Toque uma habilidade para <b>agir</b> · toque uma indisponível para <b>ler</b> · segure um inimigo para o kit`;
-  } else dica=`Vez de ${H(rotuloLado(st.ativo))} — aguarde`;
-  return `<div class="leitura leitura--dica"><span class="acao__txt">${dica}</span></div>`;
+  // §299: o REPOUSO do rodapé é a CITAÇÃO (dado, não literal) — "o descanso de um espaço que trabalha".
+  // Só o que é AÇÃO pendente a substitui em repouso: a dívida de energia livre (ao encerrar) e a espera do
+  // turno do oponente. Tocar uma habilidade/inimigo troca pela leitura (ramos acima); soltar volta à citação.
+  if(ehMeuTurno() && (l.dividaLivre||0)>0)
+    return `<div class="leitura leitura--dica"><span class="acao__txt">Ao encerrar, escolha <b>${l.dividaLivre}</b> energia livre</span></div>`;
+  if(!ehMeuTurno())
+    return `<div class="leitura leitura--dica"><span class="acao__txt">Vez de ${H(rotuloLado(st.ativo))} — aguarde</span></div>`;
+  const cite=(typeof BATALHA_TXT!=='undefined'&&BATALHA_TXT&&BATALHA_TXT.citacao)?BATALHA_TXT.citacao:'';
+  return `<div class="leitura leitura--cite"><span class="acao__cite">${H(cite)}</span></div>`;
 }
 
 // §256: o KIT do inimigo no RODAPÉ. Mesma matéria do §219 (arte da selecionada + custo + recarga + texto

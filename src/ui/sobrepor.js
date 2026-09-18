@@ -71,12 +71,12 @@ function overlayHTML(){
       <button class="b b--primary b--lg" id="bnew">Nova batalha</button></div></div></div>`;
   }
   if(ov==='log'){
+    // §299: o painel lateral saiu; o histórico (agrupado por turno, autoria distinta — §238) mora aqui, no
+    // ≡ REGISTRO. Reusa historicoHTML() para não perder o agrupamento que o painel tinha.
     return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>REGISTRO</h2>
       <span class="sub">${st.log.length} EVENTOS</span>
       <span class="push"><button class="b b--quiet b--md" id="bclose">Fechar</button></span></div>
-      <div class="ovb" id="logscroll">${st.log.slice(-200).map(r=>
-        `<div class="log__row ${LOG_MARCO.has(r.tipo)?'hi':''}"><b>${r.turno}</b><span>${H(narrar(r))}</span></div>`
-      ).join('')}</div></div></div>`;
+      <div class="ovb" id="logscroll">${historicoHTML()}</div></div></div>`;
   }
   if(ov==='help'){
     return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>COMO JOGAR</h2>
@@ -88,8 +88,8 @@ function overlayHTML(){
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">CONVERSÃO</b> \u2014 toque numa pílula de energia para converter ${CONV_CUSTO} quaisquer em 1 do tipo escolhido, uma vez por turno, sem gastar a ação. A taxa é ruim de propósito: é saída de emergência para sorteio azarado, não engrenagem do turno.</p>
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">TOCAR NÃO GASTA</b> \u2014 o primeiro toque numa habilidade só mostra o que ela faz e a arma. O gasto só acontece quando você toca no alvo ou em CONFIRMAR. Pílula de custo com contorno vermelho é energia que você ainda não tem.</p>
       <p style="margin:0 0 9px"><b style="color:var(--gold-text)">DEFESA</b> \u2014 toda unidade tem. Custa 1 energia livre, recarga 4, e deixa a unidade Invulnerável por 1 turno. Gasta a ação. Dano contínuo já aplicado atravessa a Invulnerabilidade.</p>
-      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">EFEITOS</b> \u2014 a faixa na base de cada retrato mostra os buffs, debuffs e danos contínuos ativos naquela unidade, com o número de turnos restantes. Vale para os dois times. Toque em qualquer ícone para ler o que ele faz; toque no "P" para a passiva do deus e no retrato para a ficha completa.</p>
-      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">ESPIAR O INIMIGO</b> \u2014 segure o retrato de uma unidade inimiga (toque longo) para abrir o KIT dela no painel à esquerda: as 4 habilidades e a passiva, cada uma tocável para ver o que faz e quantos turnos faltam de recarga. O "?" no canto do retrato lembra que dá para consultar. E as ORBES do oponente ficam no topo, do lado dele — é assim que você prevê se ele pode pagar um Milagre.</p>
+      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">EFEITOS</b> \u2014 a faixa ACIMA das fichas (e acima do retrato inimigo) mostra os buffs, debuffs e danos contínuos ativos naquela unidade, com a magnitude e o número de turnos restantes. Vale para os dois times. Toque em qualquer ícone para ler o que ele faz; toque no "P" para a passiva do deus e no retrato para a ficha completa.</p>
+      <p style="margin:0 0 9px"><b style="color:var(--gold-text)">ESPIAR O INIMIGO</b> \u2014 segure o retrato de uma unidade inimiga (toque longo) para abrir o KIT dela no RODAPÉ: as 4 habilidades e a passiva, cada uma tocável para ver o que faz e quantos turnos faltam de recarga. O "?" no canto do retrato lembra que dá para consultar. E as ORBES do oponente ficam no topo, do lado dele — é assim que você prevê se ele pode pagar um Milagre.</p>
       <p style="margin:0"><b style="color:var(--gold-text)">VITÓRIA</b> \u2014 derrube as 3 unidades inimigas. Se ninguém fechar até o turno 40, ganha quem tiver mais vida somada — a partir do turno 30 o relógio passa a mostrar "TURNO N/40" para avisar. Cada turno tem 60 segundos; se acabar, ele encerra sozinho.</p>
       </div></div></div>`;
   }

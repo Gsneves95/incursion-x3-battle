@@ -82,6 +82,38 @@ function rotuloLado(lado){
 // (F1.0b) O remendo `traduzirRotulos` morreu: o motor não emite mais texto de interface,
 // emite EVENTOS estruturados (docs/eventos.md) e `narrar()` (ui/narrar.js) traduz na hora
 // de exibir — resolvendo `lado` por `rotuloLado`, sem regex por cima de string pronta.
+// §299: o HISTÓRICO (agrupado por turno, autoria distinta — §238) subiu para a FUNDAÇÃO (base.js): o painel
+// lateral saiu e o histórico passou a ser chamado pelo ≡ REGISTRO (sobrepor.js). ui->ui é proibido, base é livre.
+// §238 (item 2): o HISTÓRICO LEGÍVEL — agrupado POR TURNO (o mais recente no topo), cronológico dentro
+// do turno, e a AUTORIA visualmente distinta (você × o OUTRO LADO — vale nos 4 modos: na Provação e na
+// Campanha o "outro lado" é a IA, não um jogador). Autoria pela varredura do log: o lado ATIVO (turno.lado)
+// no momento; reativos (reflexo/intercepta/contra-ataque) pertencem ao lado que DEFENDE.
+function historicoHTML(){
+  const eu=ladoExibido();
+  let ativo=0; const marc=[];
+  for(const r of st.log){
+    if(r.tipo==='turno'){ if(r.lado===0||r.lado===1) ativo=r.lado; continue; }
+    if(r.tipo==='abertura') continue;
+    const txt=narrar(r); if(!txt) continue;
+    const reativo = r.reflexo || r.efeito==='intercepta' || r.efeito==='contraAtaca' || r.efeito==='refleteDano';
+    marc.push({ turno:r.turno, lado: reativo ? 1-ativo : ativo, txt });
+  }
+  const porTurno=new Map();
+  for(const m of marc){ if(!porTurno.has(m.turno)) porTurno.set(m.turno,[]); porTurno.get(m.turno).push(m); }
+  const turnos=[...porTurno.keys()].sort((a,b)=>b-a);   // mais recente no topo
+  const blocos=turnos.map(t=>{
+    const linhas=porTurno.get(t).map(m=>`<div class="hist__l hist__l--${m.lado===eu?'eu':'eles'}">${H(m.txt)}</div>`).join('');
+    return `<div class="hist__turno"><div class="hist__cab">Turno ${t}</div>${linhas}</div>`;
+  }).join('') || `<div class="hist__vazio">A batalha ainda não tem eventos.</div>`;
+  return `<div class="detail hist">
+    <div class="detail__top"><div class="detail__icon">${slot('detail','☷','var(--ink-mute)',20)}</div>
+      <div class="detail__id"><div class="detail__name">HISTÓRICO</div>
+        <div class="detail__meta"><span class="detail__cd">TURNO ${st.turno}</span></div></div></div>
+    <div class="hist__rol">${blocos}</div>
+    <div class="detail__classes"><span class="hist__leg hist__leg--eu">você</span> · <span class="hist__leg hist__leg--eles">${H(rotuloLado(1-eu))}</span></div>
+  </div>`;
+}
+
 // mini-pips da energia de um lado (contexto no topo): um pip por orbe, colorido por
 // elemento — deixa "ele paga um Milagre?" legível sem somar número nenhum.
 function miniPips(l){

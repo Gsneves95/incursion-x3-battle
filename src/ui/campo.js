@@ -40,15 +40,15 @@ function efeitosHTML(u){
   const itens=[];
   for(const e of u.efeitos){const s=SYM[e.type]; if(!s)continue; itens.push({s,mag:magEfeito(e),dur:e.dur>90?'∞':e.dur,key:e.type});}
   for(const d of u.dots) itens.push({s:['✹','dot',H(d.nome)],mag:null,dur:d.dur,key:d.nome,dot:true});
-  // ADAPTATIVO (§266): com ≤3 efeitos os chips crescem e mostram o NÚMERO; com 4+ colapsam pro chip de 14px
-  // + turnos (o número volta pro toque) — assim o pior caso de 6 continua cabendo no talo de 92px.
-  const largo = itens.length<=3;
+  // §299: a FAIXA subiu para ACIMA das fichas (banda folgada, largura dos tiles) — o compromisso do §266
+  // (colapsar o chip em ≥4 e cortar em "+N" quando passava de FX_MAX) ACABOU. TODO chip mostra a magnitude
+  // SEMPRE, sem teto e sem "+N": o pior empilhamento REAL medido (IA×IA, 1200 partidas) é 4 chips, e a banda
+  // de 235px comporta 7 com magnitude. O jogador vê todo modificador, sempre — a tese do §266, agora cumprida.
   const chip=(it)=>{
     const attr = it.dot?`data-dot="${u.uid}|${it.s[2]}"`:`data-ef="${u.uid}|${it.key}"`;
-    if(largo && it.mag) return `<button class="effect effect--${it.s[1]} effect--mag" ${attr}><span class="effect__g">${it.s[0]}</span><span class="effect__v">${it.mag}</span><span class="effect__turns effect__turns--in">${it.dur}</span></button>`;
+    if(it.mag) return `<button class="effect effect--${it.s[1]} effect--mag" ${attr}><span class="effect__g">${it.s[0]}</span><span class="effect__v">${it.mag}</span><span class="effect__turns effect__turns--in">${it.dur}</span></button>`;
     return `<button class="effect effect--${it.s[1]}" ${attr}><div class="slot" data-slot="effect-${it.dot?'dot':it.key}"><span class="effect__g">${it.s[0]}</span></div><div class="effect__turns">${it.dur}</div></button>`;
   };
-  if(itens.length>FX_MAX) return itens.slice(0,FX_MAX-1).map(chip).join('')+`<span class="fxmore" data-ficha="${u.uid}">+${itens.length-FX_MAX+1}</span>`;
   return itens.map(chip).join('');
 }
 
@@ -75,7 +75,6 @@ function retrato(u,inimigo){
       ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''} ${passivaAcesa(u)?'pas--on':''}" data-pas="${u.uid}">P</button>`:''}
       ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
       <div class="portrait__nome" title="${H(u.nome)}">${H(metaComb(u.key).curto)}</div>
-      <div class="effects">${u.vivo?efeitosHTML(u):''}</div>
       <div class="${hpcls.join(' ')}">
         ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
         ${u.shield?`<div class="hp__shield" style="width:${Math.min(100,u.shield/u.maxHp*100)}%"></div>`:''}
@@ -93,12 +92,21 @@ function filaHTML(a, e){
   // retrato e se estende atrás dos 4 tiles, unindo-os ("este deus e o que ele pode fazer"). As
   // habilidades COLAM no retrato (esquerda, sem centralizar). O inimigo fica FORA da moldura, à direita
   // (§214 o pôs lá para o polegar). A posição não muda com o turno — só a ênfase (item 4).
+  // §299: a FAIXA de efeitos subiu — ACIMA das fichas (aliado) e ACIMA do retrato (inimigo), fora do
+  // retrato (§258 volta a ser só a arte). A linha tem altura fixa e o conteúdo é ancorado embaixo, então a
+  // faixa ocupa o espaço ACIMA sem empurrar a ficha nem mudar a moldura (§239) — sem pulo.
   return `<div class="brow">
     <div class="brow__unit">
       <div class="brow__ally">${a?retrato(a,false):''}</div>
-      <div class="brow__tiles">${a?tilesHTML(a):''}</div>
+      <div class="brow__tilecol">
+        <div class="fxstrip fxstrip--ally">${a&&a.vivo?efeitosHTML(a):''}</div>
+        <div class="brow__tiles">${a?tilesHTML(a):''}</div>
+      </div>
     </div>
-    <div class="brow__enemy">${e?retrato(e,true):''}</div>
+    <div class="brow__enemy">
+      <div class="fxstrip fxstrip--enemy">${e&&e.vivo?efeitosHTML(e):''}</div>
+      ${e?retrato(e,true):''}
+    </div>
   </div>`;
 }
 function tilesHTML(u){
@@ -178,8 +186,7 @@ function ligarCampo(){
     el.onclick=ev=>{ev.stopPropagation();const u=todas().find(x=>x.uid===el.dataset.uid); if(u)ficha(u);};});
   // retrato INIMIGO: TOQUE LONGO abre o kit; toque curto = alvo (se for) ou ficha (§214 item 8)
   stage.querySelectorAll('.portrait[data-foe]').forEach(el=>ligarFoe(el));
-  // aba de RECOLHER o painel (sempre visivel)
-  const tab=stage.querySelector('.panel__tab'); if(tab)tab.onclick=()=>{ painelRecolhido=!painelRecolhido; render(); };
+  // §299: o painel lateral saiu — não há mais aba de recolher. O histórico é o ≡ REGISTRO do topo.
   // KIT consultado (§219): tocar um CHIP seleciona a habilidade — o detalhe (custo/recarga/texto)
   // aparece embaixo, no MESMO painel, sem sair do kit. A seleção persiste no kitSel.
   stage.querySelectorAll('[data-kitsel]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
