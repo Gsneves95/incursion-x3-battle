@@ -1419,6 +1419,7 @@ function renderDeusDetalhe(){
   <div class="dbody">
     <div class="dart">
       ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
+      ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dart__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
       ${tem ? '' : '<span class="dart__tag">VOCÊ NÃO POSSUI</span>'}
       <div class="dart__nome">${H(g.nome)}</div>
     </div>

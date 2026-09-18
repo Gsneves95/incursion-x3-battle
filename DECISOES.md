@@ -6,6 +6,53 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §297 — a rota 'deus' ficou com o retrato PEQUENO (buraco de escopo do §289).
+
+O dono viu, a partir das Provações, a ficha cheia do deus com o retrato sem qualidade. O §289 levantou uma tabela de
+onde o retrato aparece e trocou o embutido (168) pelo arquivo grande (retratos/<k>.webp, 512×590) só na sobreposição
+da Coleção — mas a **rota 'deus'** (ficha cheia, alcançada por Missões/Provações/Desafios/Domínios/campanha) NÃO estava
+na tabela e ficou com o embutido de 168 esticado na caixa **382×380 = 2,27× de upscale = borrão**. É o mesmo defeito
+que o §289 consertou, num lugar que a tabela dele não enxergou.
+
+### VARREDURA (por busca no código, não por memória) — TODO lugar que renderiza retrato de deus
+
+O retrato sai de `slot('god-'+k, …)` → `<img src="${IMG[k]}">`, e `IMG[k]` é o EMBUTIDO base64 **168×168**. Amplia (borra)
+toda caixa com lado > 168; abaixo disso, reduz (o embutido sobra). Medido no dist (design px):
+
+| local | caixa | fonte hoje | fator | ação |
+|---|---|---|---|---|
+| Sobreposição Coleção (`.col2ov__retrato`) | 333×392 | **grande** + embutido reserva | 2,33× | grande ✓ (§289) |
+| **Rota 'deus' (`.dart`)** | **382×380** | **embutido 168 só** | **2,27×** | **BURACO → grande (§297)** |
+| Batalha — unidade ativa (§258) | 94 | embutido | 0,56× | reduz ✓ |
+| Coleção grade `.col2c__art` · painel `.col2p__art` (44) · sinergia `.col2s__art` | 26–44 | embutido | ≤0,26× | reduz ✓ |
+| Seleção (pick/kbox/ghost) · Missões (tile/cat) · PvP (lobby/time) · Provações (row/desafio) · Campanha (empréstimo/kit/troca) · Domínios (trio) · ranque/composição | 13–34 | embutido | ≤0,20× | reduz ✓ |
+
+**Só DUAS caixas ampliam (as fichas cheias): a sobreposição (já no grande) e a rota 'deus' (o buraco).** Todo o resto
+reduz — buscar o arquivo grande ali seria tráfego à toa. A tabela do §289 dizia 6 linhas; as que AMPLIAM são 2.
+
+### CONSERTO (padrão §289) e o pacote
+
+`.dart` ganhou o `<img class="dart__g" src="retratos/<k>.webp" loading="lazy" onerror="this.remove()">` cobrindo o slot
+(object-fit cover, z-index 1; nome/tag ficam acima, z-index 2). O embutido 168 fica de **reserva instantânea** (sem
+branco no carregamento); ausente o arquivo, o `onerror` o remove e o embutido reaparece — sem 404. **O pacote não
+cresce:** o grande é `<img>` lazy de um ARQUIVO (retratos/odin.webp = 70 KB, já em dist/retratos desde o §290), nunca
+base64 (§289). Confirmado: embutido 168×168 → agora 512×590 na mesma caixa (de 2,27× de upscale para downscale nítido).
+
+### GUARDAS (`tests/retrato_grande.test.js`, Chromium 780 E 951)
+
+- **toda caixa que amplia usa o grande:** varre `.slot[data-slot^="god-"]` nas telas alcançáveis; se o lado do slot
+  passa do TETO (168), exige um `img[src^="retratos/"]` cobrindo — hoje pega a sobreposição (2,33×) e a rota 'deus'
+  (2,27×), as duas com o arquivo.
+- **ausente cai no pequeno, sem 404:** o grande é `loading=lazy` + `onerror=this.remove()` e há o embutido de reserva
+  (asserção no mesmo teste).
+- **anti-regressão (o buraco voltar):** a MESMA varredura quebra se surgir um retrato acima do teto sem o arquivo
+  grande, em qualquer tela varrida (colecao grade/painel/sobrep, rota deus, seleção, domínios, desafios, pvp).
+  **Limite honesto declarado no teste:** a BATALHA precisa de partida viva e não é varrida aqui — o retrato de combate
+  é 94px (§258) < teto, então reduz; se um dia crescer, entra na varredura. Não inventei guarda que fingisse cobrir a
+  batalha. **§289 (pacote não cresce):** um segundo teste afirma que nenhum retrato grande é base64.
+
+---
+
 ## §295 — o painel da Coleção CORTAVA para deus NÃO POSSUÍDO, e a guarda do §294 disse que não (buraco de escopo).
 
 O dono capturou a Afrodite (não possuída) com o "Ver detalhes" cortado embaixo. A guarda do §294 passava. Isto importa
