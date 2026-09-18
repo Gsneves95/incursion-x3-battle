@@ -6,6 +6,76 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §298 fatia 1 — tela de batalha: o FUNDO (plumbing) e a MEDIÇÃO do layout (relatório; layout NÃO tocado).
+
+O dono quer refazer a tela de batalha por um mockup, em duas fatias. **Fatia 1 faz SÓ o fundo e MEDE o resto** — "não mexa
+no layout; eu decido a fatia 2 com os números". O dono gera a arte 1536×864; eu preparo o código antes e reporto a medição.
+
+### O FUNDO (pronto, no padrão §254/§280)
+
+Nome proposto: **`web/banners/batalha-fundo.webp`** (1536×864) — distinto dos dois cards do hub `batalha-cpu.webp`/
+`batalha-pvp.webp` (que são as ENTRADAS PvE/PvP do hub, não o fundo). Plumbing: o build emite o manifesto `BATALHA_ARTE`
+(1 se o arquivo existe em disco, senão 0); `renderBatalha` põe `style="--art-bg:url(banners/batalha-fundo.webp)"` no
+`#baselayer` só quando `BATALHA_ARTE`; o `.stage__bg` (shell.html) já lê `var(--art-bg)` e a sobrepõe aos gradientes
+(cover), com o `.stage__scrim` de véu escuro por cima (legibilidade). Ausente o arquivo → `BATALHA_ARTE=0` → sem a var →
+o gradiente-placeholder de hoje (sem 404, sem branco). **Pacote NÃO cresce:** a arte é `<img>`/background de ARQUIVO
+externo, copiado para `dist/banners` pelo build (cpSync) e referenciado por url — **nunca base64**; o HTML do dist ganha
+~500 bytes de CÓDIGO, 0 byte de imagem. Confirmado: nenhum webp entrou nesta fatia (`BATALHA_ARTE=0`), dist em 2,34 MB.
+Contraste (lição §281): o número cru é piso pessimista onde há tratamento (o scrim é o tratamento); o veredicto é a
+captura — a medir na fatia 2 quando a arte existir.
+
+### A MEDIÇÃO (design px; a régua é o enquadramento real, não o "951×428" solto)
+
+**Reenquadramento que muda a conta:** o palco de design é **780×428** — altura FIXA 428, largura FLUIDA (piso 780, teto
+1200; `src/enquadramento.js`). Nos dois pontos que o dono citou o layout é o MESMO canvas de 780×428; só muda a **escala**
+física (design × escala = px do aparelho): escala **1,0** no piso estreito (780 físico) e **~1,22** na folga larga (951
+físico). Logo "780" e "951" não são dois layouts — são o mesmo, a escalas diferentes. Medido no dist com Chromium.
+
+**a) A FICHA (disco `.skill`/`.skill__disc`).** Hoje **90×90 design px**. Toque físico = 90 × escala: iPhone SE (667×375,
+escala 0,855) **77pt**; Galaxy S médio (800×360, 0,841) **76pt**; piso 780 (1,0) **90pt**. Levando a **55 design px** (o
+número do mockup, lido como design px — hoje 90 → 55): SE **47pt**, Galaxy **46pt**, piso **55pt**, tablet **69pt**.
+**Custo do 55:** (i) toque — 46–47pt nos telefones comuns, colado no piso de acessibilidade (Apple 44 / Material 48);
+em paisagem MUITO baixa (altura útil <420pt, escala <0,80) o disco **cai abaixo de 44pt** (350pt→45, 320pt→41) — o 90 de
+hoje nunca chega lá (77 no SE). (ii) arte do disco — o medalhão da habilidade renderiza a 55px vs 90px = **0,61×** (perde
+~40% linear de detalhe); o mono/cd/lock por cima são vetor e seguem legíveis, mas encolhem junto (as marcas de estado
+ficam menores). **Veredicto:** 55 é viável no piso e acima, arriscado só na paisagem curtíssima; a decisão é do dono.
+
+**b) A FAIXA DE EFEITOS.** Hoje `.effects` vive DENTRO do `.portrait` (94×94): **92px de largura × 18px de altura**, colada
+em `bottom:32px` sobre o retrato. Chips 14×14 (os de magnitude crescem p/ ~26–28 com o "+N"). Adaptativo §266: ≤3 efeitos
+→ chips crescem COM número; 4+ → colapsam p/ 14px (o número volta pro toque); `FX_MAX=5` → 6+ mostram 4 chips + "+N".
+Larguras de conteúdo medidas: 1ef 28 · 2ef 55 · **3ef 83 (teto, cabe nos 92)** · 4ef 56 · 5ef 70 · 6+ (4+more) 67 — nunca
+transborda os 92px. **O colapso a 4+ EXISTE porque 92px não seguram 4 chips de magnitude** (4×28=112>92). Movida ACIMA das
+fichas (mockup), a faixa ganha uma banda mais larga: se abranger a largura dos tiles (**235 design px** hoje; ~244 com
+disco 55) segura **7 chips COM número** (30,5px de passo) ou ~13 chips simples; se abranger a moldura inteira (`.brow__unit`
+**358px**) segura **11 chips de magnitude**. **A posição nova SEGURA a magnitude sem cortar** para qualquer contagem
+realista — o pior empilhamento visto no §266 é ~6 simultâneos (≈186px), que cabem nos 235 COM número, sem "+N", sem
+colapso. O colapso só voltaria além de ~7 efeitos — e aí o `FX_MAX` já cortaria independentemente da posição. (Subir o
+`FX_MAX` dada a largura nova é decisão de fatia 2.)
+
+**c) A LEITURA DO §256.** Hoje tem DUAS casas: (1) `.panel` (histórico lateral, à esquerda) — **262×294 design px**,
+recolhível a 26px pela aba; (2) `.leitura` no `.footer`/`.acaoestado` — **567×74 design px** (kit do inimigo, resumo do
+turno, leitura de habilidade + botões de ação). O mockup **não tem painel lateral** e o rodapé dele é **citação + Encerrar**
+→ as duas casas somem. Onde caberia, com números: a `.leitura` do rodapé JÁ é sob demanda (`acaoRodapeHTML` troca:
+estado-de-repouso ↔ leitura; é o comportamento §256-c "o kit persiste um turno"). A citação do mockup e a leitura disputam
+a MESMA banda de 86px do rodapé. Encaixe mais limpo: **a citação é o estado de repouso; tocar habilidade/inimigo troca pela
+leitura de 74px (cabe nos 86px, zero espaço novo), soltar volta pra citação.** Alternativa: uma gaveta recolhível (como o
+painel de hoje, 262×294) sobreposta à esquerda, fechada por padrão. As duas são decisão do dono — os números dizem que a
+troca-no-rodapé não pede área nova. A leitura **não pode simplesmente sumir** (é o §256).
+
+**d) O QUE O MOCKUP TEM E O JOGO NÃO.** (1) **"Deuses, heróis e lendas"** (citação de rodapé) → **conteúdo NOVO** (linha de
+sabor); o rodapé de hoje é funcional (leitura/estado-de-ação), não citação. (2) **"3 AÇÕES DISPONÍVEIS"** → o estado JÁ
+existe E já é exibido, só diferente: `prontas = l.units.filter(podeAgir).length` sai hoje como a dica do Encerrar ("N a
+agir" / "todas agiram", view.js:63,95). O mockup PROMOVE esse mesmo número a um leitor autônomo — **sem lógica nova**, é
+realocar/reestilizar um valor que já existe. Ou seja, o jogo conta ações. (Bônus: o HUD de topo do mockup mapeia no
+`.topbar` de hoje, ~46px — pílulas de energia dos dois lados, botão converter, timer "TURNO N · mm:ss", registro/menu.)
+
+### Ressalva
+
+O mockup ("anexo") **não chegou na entrada deste turno**. Os números específicos do mockup (55px do disco, faixa acima das
+fichas, rodapé-citação) vêm da descrição TEXTUAL do dono, confirmados contra a medição AO VIVO da tela atual; se o mockup
+real divergir, os números medidos da tela de hoje valem do mesmo jeito. **Layout não foi tocado** — só o fundo (plumbing) e
+a medição. **Arquivos:** `src/view.js` (`--art-bg`), `tools/build.js` (`BATALHA_ARTE`). Suíte + build verdes.
+
 ## §297 — a rota 'deus' ficou com o retrato PEQUENO (buraco de escopo do §289).
 
 O dono viu, a partir das Provações, a ficha cheia do deus com o retrato sem qualidade. O §289 levantou uma tabela de

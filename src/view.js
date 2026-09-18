@@ -71,7 +71,11 @@ function renderBatalha(){
   // §239 item 4: a ênfase inverte com o turno SEM mover nada — o lado ativo acende. Em hot-seat a tela
   // gira e o jogador da vez é sempre "eu" (turno-eu); vs CPU/PvP, o turno dele acende o lado dele.
   cls.push(ehMeuTurno()?'turno-eu':'turno-eles');
-  stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}>
+  // §298: o FUNDO de batalha (web/banners/batalha-fundo.webp) entra por --art-bg no #baselayer; o .stage__bg o
+  // herda e o sobrepõe aos gradientes (cover), com o .stage__scrim de véu por cima. Ausente o arquivo (BATALHA_ARTE
+  // 0), fica só o gradiente do §214 — placeholder, nunca 404. Lazy (só pinta na batalha), nunca base64.
+  const artBg = (typeof BATALHA_ARTE !== 'undefined' && BATALHA_ARTE) ? ' style="--art-bg:url(banners/batalha-fundo.webp)"' : '';
+  stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}${artBg}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   ${topoHTML()}
   ${prova?provaHUD():campanha?campanhaHUD():dominio?dominioHUD():''}
