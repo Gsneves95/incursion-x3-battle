@@ -10,7 +10,20 @@ O dono capturou a Afrodite (não possuída) com o "Ver detalhes" cortado. **Por 
 
 **Boa prática, medida:** tags quebram em 2 linhas em **49/100** (custaria ~18px caber em uma) — **não apliquei** (o painel já fecha; apertar a tag de elemento piora a leitura). Retrato grande §289 no painel: sem espaço (cab 64px em 233px de largura) — fica na sobreposição. A maestria era o único conteúdo de um só estado que gastava espaço no outro.
 
-**Guardas (fecham o buraco):** `colecao_sinergia` e `colecao_encaixe` varrem **possuído E não-possuído** (o não-possuído zera `perfil.deuses`, os 9 iniciais inclusive), nas duas larguras: "Ver detalhes" alcançável nos 100 nos dois estados; nada corta/rola; **maestria só no possuído** (nova asserção). Capturas dos 4 casos em `docs/capturas-295/`. **Arquivos:** `src/ui/home.js` (maestria condicional), `tests/colecao_sinergia.test.js`, `tests/colecao_encaixe.test.js`, `docs/capturas-295/`. Ver DECISOES §295. Suíte + build verdes.
+**Guardas (fecham o buraco):** `colecao_sinergia` e `colecao_encaixe` varrem **possuído E não-possuído** (o não-possuído zera `perfil.deuses`, os 9 iniciais inclusive), nas duas larguras: "Ver detalhes" alcançável nos 100 nos dois estados; nada corta/rola; **maestria só no possuído** (nova asserção). Capturas dos 4 casos em `docs/capturas-295/`.
+
+**FICA EM 2 PARCEIROS nos dois estados (dono confirmou o porquê):** o painel NÃO pode mudar de altura conforme a posse — com as setas do §291 o jogador navega entre possuídos e não-possuídos, e a lista saltaria de tamanho a cada passo. Consistência vence o espaço extra (o não-possuído comportaria 3, medido, mas não aplica).
+
+**PADRÃO gravado no CLAUDE.md (Convenções): guarda de encaixe declara o espaço de estados e o percorre INTEIRO.** 3ª vez em poucos dias que uma guarda mede uma fatia e passa (§291 largura+slot · §292 scrollHeight só pega corte-embaixo · §295 só possuído). Guarda que mede uma fatia dá falsa segurança, pior que não ter.
+
+**★ DIMENSÕES de estado que as guardas da Coleção AINDA NÃO percorrem (levantado com a régua, §295 — NÃO consertado, listado):**
+1. **Maestria por posto** (só possuído): Iniciado/Aprendiz/Adepto/soMilagre/★Mestre — as guardas semeiam `copias:1` sem vitórias → só o posto base. **Medido: 51px constante em todos os postos → não é risco vivo hoje**; a dimensão não é declarada nem varrida (um posto que ganhe uma linha no futuro passaria batido).
+2. **Cópias 1 × N** (só possuído): "· 1 cópia" × "· N cópias" — semeado só `copias:1`. Uma linha, largura variável; risco baixo, não varrido.
+3. **Frase/citação** (`g.frase` → `col2ov__cite` na sobreposição): **0/100 têm hoje** → o bloco nunca renderiza cheio. Latente: no dia que um deus ganhar frase, a sobreposição cresce e nenhuma guarda vê.
+4. **Filtro/busca ativos:** mudam a GRADE e o conjunto das setas (§291), **não a altura** do painel/sobreposição (cada um renderiza um deus só) → não é dimensão de encaixe; a navegação sob filtro é coberta em `colecao_tela §7e`. Considerada e descartada como dimensão de altura.
+5. **Corrida em andamento (Provação/Domínios run):** o painel/sobreposição da Coleção **não lê** estado de corrida hoje (saiu no §284) → não é dimensão. Se um selo "em Provação" voltar ao painel, vira uma — reavaliar então.
+
+**Arquivos:** `src/ui/home.js` (maestria condicional), `tests/colecao_sinergia.test.js`, `tests/colecao_encaixe.test.js`, `CLAUDE.md` (convenção), `docs/capturas-295/`. Ver DECISOES §295. Suíte + build verdes.
 
 ## ★ SINERGIA §294 — a TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.
 

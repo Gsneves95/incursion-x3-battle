@@ -478,6 +478,20 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   acrescente o bloco novo. Onde a pendência mapeia um arquivo de dado, encode-a como `_pendencia` LÁ (modelo
   do `data/economia.json._pendencias`) e deixe o babá afirmar o inverso: `tests/estado_pendencias.test.js`
   quebra se o ESTADO.md marcar PENDENTE (`[ ]`) um item que o dado (raridades/economia) já resolveu.
+- **GUARDA DE ENCAIXE DECLARA O ESPAÇO DE ESTADOS QUE PERCORRE, E PERCORRE ELE TODO (§295).** Três vezes em
+  poucos dias a guarda mediu uma FATIA do espaço de estados e passou, com o código certo para o caso testado e
+  errado para o não testado: **§291** mediu só a largura folgada (951) e só o slot básico — cortava a 780 nos
+  outros slots; **§292** usou `scrollHeight`, que só responde "transbordou por BAIXO" (não "cortou em CIMA" nem
+  "sobrou quanto") — por isso o corte do título do Cinzel passou (§294-ajuste, medido com a TINTA via `Range`);
+  **§295** semeou tudo possuído e nunca viu o não-possuído, que corta. **Regra:** uma guarda de encaixe nomeia,
+  no topo, o espaço de estados que varre — **as duas larguras (780 piso E 951 folga), os quatro slots
+  (básico/habilidade/milagre/passiva), os dois estados de posse (possuído E não-possuído, zerando
+  `perfil.deuses` para o segundo), e o que mais o layout ler** — e varre ele INTEIRO, os 100 deuses. A métrica
+  tem de casar o defeito temido: corte no topo se mede com a tinta (`Range.getBoundingClientRect`), não com
+  `scrollHeight`; "sobrou quanto" se mede posição real, não overflow. **Guarda que mede uma fatia dá falsa
+  segurança — pior que não ter guarda**, porque some o incentivo de olhar. Ao criar/editar uma guarda de
+  Coleção, some à lista as dimensões que o layout novo passar a ler (maestria por posto, corrida em andamento,
+  frase/citação) e percorra-as.
 - **A FICHA de habilidade é um CÍRCULO** (§257: moldura `border-radius:50%`, **90px**; o medalhão da
   arte é redondo — sem zoom, scale 1.0/centro, pois 31% das 401 artes já preenchem a borda). O RETRATO
   (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
