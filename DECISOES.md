@@ -10,6 +10,23 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 Três decisões do dono e uma recusa, sobre a medição da fatia 1 (§298).
 
+### ★ CORREÇÃO de número (do dono) — o pior empilhamento é 4, não 6
+
+O dono registrou, para corrigir um número que ELE introduziu e que circulou por dois cortes: **o pior empilhamento de
+efeitos numa unidade é 4, não 6.** Medido em **1200 partidas IA×IA, ~421 mil amostras de unidade-viva, nos dois níveis de
+IA**: 4 chips aparecem em **0,058%** das amostras e **5+ NUNCA** aconteceram. O "6" que o dono usou no §292 e no prompt do
+§299 era **estimativa herdada, não medição**. **Consequência prática:** a faixa nova não cabe por aperto — cabe com folga
+larga (comporta 7 chips com magnitude; o real é 4). **Lição (o dono):** número estimado que circula entre cortes vira
+número aceito — o 6 passou por DUAS decisões de layout (§292 e §299) antes de alguém medi-lo. Fica registrado para não ser
+reposto como se fosse esquecimento.
+
+### ★ A DICA "toque uma habilidade para agir" fica FORA (decisão do dono, não esquecimento)
+
+Ao pôr a citação no repouso do rodapé, a dica instrucional saiu. **É deliberado, não omissão:** uma linha permanente que
+ensina o primeiro minuto ocupa espaço PARA SEMPRE, e a campanha já ensina isso nos primeiros atos. Se um teste de
+usabilidade mostrar alguém travando, devolvemos a dica **com evidência** — não por precaução. Registrado aqui para ninguém
+a repor achando que foi esquecimento.
+
 ### 1) A FICHA FICA EM 90 (recusa dos 55)
 
 O dono recusou os 55px do mockup: a ficha é o que mais se toca, com relógio de 60s correndo; a 55 ela dá 46–47pt no
