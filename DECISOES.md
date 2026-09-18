@@ -54,6 +54,32 @@ espaço livre, o não-possuído comportaria **3 parceiros** (medido: afrodite n�
 nada corta/rola; **a maestria só aparece no possuído** (nova asserção). Capturas dos 4 casos (possuído/não × sinergia/
 solista, 780 e 951) em `docs/capturas-295/`.
 
+### §295 (cont.) — as duas dimensões afiadas cobertas ANTES de morderem: FRASE (medida) e MAESTRIA por posto (achou um corte)
+
+O dono apontou: das cinco dimensões listadas, a **frase** e a **maestria por posto** eram a assinatura do problema — a
+guarda percorre o que EXISTE NO DADO, não o que o CÓDIGO desenha. Cobri as duas antes de o dado existir.
+
+**FRASE (`g.frase` → `col2ov__cite`) — orçamento medido: ~0.** O campo foi reservado no §288 p/ o dono escrever as 100;
+hoje 0/100 têm, então o bloco nunca renderizava cheio. Semeei uma frase sintética e medi no piso 780: **71 chars (cite
+24px, 2 linhas) → 186/400 efeitos CORTAM; mesmo 15 chars (1 linha) → os mesmos 186.** A caixa de efeito do §292 tem só
+~6px de folga e a cite come 24 → **a frase não tem casa na sobreposição atual** (compete com a caixa de efeito). O
+número que o dono pediu ANTES de escrever: **hoje cabe 0** — a frase precisa de um lar fora da caixa do §292 (o modo
+SINERGIA rola e tem espaço; ou a caixa de efeito cede e rola nos ~6% mais longos). Guarda (`colecao_encaixe`): proíbe
+`g.frase` no dado enquanto não houver orçamento (**quebra no dia que a 1ª frase entrar**, forçando a decisão de onde
+mora) e imprime o orçamento medido no log.
+
+**MAESTRIA por posto — a cobertura de verdade achou um CORTE, e corrigiu uma medição minha errada.** O §295 afirmara
+"51px constante em todos os postos → sem risco". **Estava errado: a medição semeava `perfil.deuses[k].vitorias`, mas a
+maestria mora em `perfil.maestria[k]` (§228)** → media sempre o posto base, nunca os outros (o exato buraco que estávamos
+fechando, cometido na medição do próprio buraco). Semeando `perfil.maestria` de verdade, o **★ Mestre CORTAVA** (botão
+434, −6px, no odin 2+"+13 mais"): o nota do Mestre tinha 2 linhas **e vazava "(§245)" para a UI** (referência interna no
+texto do jogador — bug à parte). Conserto: nota de 1 linha "Posto máximo — moldura liberada", sem o §245. Guarda
+(`colecao_sinergia`) percorre os **6 ramos** (base/Iniciado/Aprendiz/Adepto/soMilagre/★Mestre) com vitórias de verdade
+em `perfil.maestria` → todos ≤428 (pior soMilagre 426). Dimensão declarada e percorrida.
+
+As outras três (cópias 1×N, filtro/busca, corrida) ficam como classificadas no §295 — a de filtro é a mais certa (não é
+dimensão de encaixe: o painel desenha um deus por vez).
+
 ---
 
 ## §294 — a SINERGIA vira TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.

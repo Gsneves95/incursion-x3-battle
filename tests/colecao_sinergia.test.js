@@ -160,6 +160,27 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
       console.log(`  @${W} [${rot}]: cortes ${v.bad.length}/100 · pior botão ${v.piorVer} (${v.piorVerK}) · maestria-errada ${v.maestriaErrada}`);
     }
     console.log(`  @${W}: mnevis ${r.mnevis.n}p · odin ${r.odin.n}+"${r.odin.maisTxt}" · zeus solista · lista completa ${abre.linhas}/${abre.total}`);
+
+    // (§295-cont) MAESTRIA por POSTO é dimensão de estado do painel possuído (Iniciado→★Mestre). As outras varreduras
+    // semeiam copias:1 sem vitórias → só o posto base. Aqui a dimensão é DECLARADA e percorrida: o odin (pior painel
+    // possuído, 2 parceiros + "+13 mais") é semeado em cada posto, com vitórias de verdade, e o "Ver detalhes" tem de
+    // caber. (Medido §295: a caixa de maestria é 51px constante — mas cobrir é o ponto, não confiar na sorte de altura.)
+    const postos = await page.evaluate(() => {
+      const casos = [['base', 0, false], ['Iniciado', 1, false], ['Aprendiz', 5, false], ['Adepto', 15, false], ['soMilagre', 30, false], ['Mestre', 30, true]];
+      const out = [];
+      for (const [nome, vit, mil] of casos) {
+        perfil.deuses = {}; perfil.deuses.odin = { obtidoEm: Date.now(), copias: 1 };
+        perfil.maestria = { odin: { vitorias: vit, milagre: mil } };   // a maestria mora em perfil.maestria[k], não em deuses[k] (§228)
+        ir('colecao', {}, { substituir: true }); render(); colSelecionar('odin');
+        const posto = (document.querySelector('.col2p .col2m__posto') || {}).textContent || '(sem)';
+        const ver = document.querySelector('.col2p__ver');
+        out.push({ nome, posto, verBot: ver ? Math.round(ver.getBoundingClientRect().bottom) : 0 });
+      }
+      return out;
+    });
+    const postosMal = postos.filter(p => p.verBot > 428);
+    ok(postosMal.length === 0, `[maestria] "Ver detalhes" corta em algum posto: ` + postosMal.map(p => `${p.nome} ${p.verBot}`).join(', '));
+    console.log(`  @${W} [maestria postos]: ` + postos.map(p => `${p.nome}(${p.posto.trim()})=${p.verBot}`).join(' · '));
   }
 
   await browser.close();

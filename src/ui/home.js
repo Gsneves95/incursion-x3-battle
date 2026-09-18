@@ -951,7 +951,7 @@ function colMaestriaHTML(k){
     <p class="col2m__nota">Possua e jogue com este deus para ganhar postos.</p></div>`;
   if (M.topo) return `<div class="col2m col2m--mestre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">★ Mestre</b></div>
     <div class="col2m__bar col2m__bar--cheia"><i style="width:100%"></i></div>
-    <p class="col2m__nota">Posto máximo — a moldura de Mestre saiu (§245).</p></div>`;
+    <p class="col2m__nota">Posto máximo — moldura liberada.</p></div>`;
   // vitórias cumpridas, só falta o Milagre: SEM barra — o requisito é a manchete (barra cheia perderia p/ a nota).
   if (M.soMilagre) return `<div class="col2m col2m--milagre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b></div>
     <p class="col2m__req">Vitórias cumpridas. Falta vencer usando o <b>Milagre</b> para virar Mestre.</p></div>`;

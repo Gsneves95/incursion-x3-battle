@@ -66,6 +66,37 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
     }
   }
 
+  // (§295-cont) A FRASE (g.frase → col2ov__cite) é a dimensão que vai MORDER: o campo foi reservado no §288 p/ o dono
+  // escrever as 100; hoje 0/100 têm, então o bloco nunca renderiza cheio e nenhuma guarda o via — a assinatura exata do
+  // problema (a guarda percorre o que EXISTE NO DADO, não o que o CÓDIGO desenha). Aqui a dimensão é coberta ANTES da
+  // frase existir: (A) guarda de dado — enquanto a sobreposição não tiver ORÇAMENTO p/ a cite, nenhum deus pode ter
+  // frase (o dia que a 1ª entrar, ISTO quebra e força a decisão de onde a frase mora); (B) medição — semeia uma frase
+  // sintética de ~70 chars e imprime QUANTO corta, p/ o dono saber o orçamento antes de escrever.
+  await page.setViewportSize({ width: 780, height: 428 });
+  const frase = await page.evaluate(() => {
+    ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
+    // (A) nenhum deus tem frase HOJE (a sobreposição não tem orçamento p/ a cite — medido §295)
+    const comFrase = ROSTER.filter(e => GODS[e.key] && GODS[e.key].frase).map(e => e.key);
+    // (B) mede o orçamento: semeia 70 chars em todos e conta os efeitos que passam a cortar (piso 780, o pior)
+    const F = 'Aquele que caminha entre os mundos e nunca teme a morte alheia ou a sua';
+    ROSTER.forEach(e => { if (GODS[e.key]) GODS[e.key].frase = F; });
+    ir('colecao', {}, { substituir: true }); render();
+    let corta = 0, citeH = 0;
+    for (const e of ROSTER) {
+      colAbrirVer(e.key);
+      const cite = document.querySelector('.col2ov__cite'); if (cite && !citeH) citeH = Math.round(cite.getBoundingClientRect().height);
+      for (const slot of ['basico', 'habilidade', 'milagre', 'passiva']) {
+        const chip = document.querySelector('#col2ov .col2ov__sk[data-versel="' + slot + '"]'); if (chip) chip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        const dt = document.querySelector('#col2ovdet .col2ov__deftxt'); if (dt && dt.scrollHeight > dt.clientHeight + 1) corta++;
+      }
+      colFecharVer();
+    }
+    ROSTER.forEach(e => { if (GODS[e.key]) delete GODS[e.key].frase; });   // limpa o synthetic
+    return { comFrase, citeH, corta, fraseLen: F.length };
+  });
+  ok(frase.comFrase.length === 0, `§295: ${frase.comFrase.length} deuses já têm g.frase (${frase.comFrase.slice(0, 5).join(',')}) — a sobreposição NÃO tem orçamento p/ a cite (medido: uma frase corta a caixa de efeito). Dê uma casa à frase (fora da caixa de efeito do §292) ANTES de escrevê-las, senão cortam.`);
+  console.log(`  §295 FRASE — orçamento medido: uma frase de ${frase.fraseLen} chars (cite ${frase.citeH}px) faria ${frase.corta}/400 efeitos CORTAREM a 780. Orçamento atual da cite na sobreposição: ~0 (a caixa de efeito do §292 tem só ~6px de folga). Nenhum deus tem frase hoje: ${frase.comFrase.length === 0 ? 'ok' : 'JÁ QUEBROU'}.`);
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> COLEÇÃO-ENCAIXE OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);
