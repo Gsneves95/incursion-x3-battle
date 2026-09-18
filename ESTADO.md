@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ COLEÇÃO §295 — o painel CORTAVA para deus NÃO POSSUÍDO, e a guarda do §294 disse que não (buraco de escopo).
+
+O dono capturou a Afrodite (não possuída) com o "Ver detalhes" cortado. **Por que a guarda passou (importa mais que o conserto):** a `colecao_sinergia.test.js` (§294) **semeava TODOS como possuídos** — só mediu um estado. O não-possuído corta porque a caixa de maestria "falta" (~70px, 2 linhas explicando) é mais alta que a barra do possuído e empurra o botão. Medido: **7/91 não-possuídos cortavam** (pior 442, −14px). É a MESMA cegueira do §291 (medir só o slot básico / só a largura folgada). **Varredura das guardas da Coleção:** `colecao_sinergia` (§294) e `colecao_encaixe` (§292) semeavam tudo possuído — as duas com o buraco; `colecao_tela` (§288) mistura na grade mas força posse ao abrir a sobreposição. Medido: a **sobreposição não depende de posse** (o selo "Você não possui" fica no retrato, não na caixa de detalhe) → §292 dava 400/400 nos dois estados (buraco sem defeito latente); o painel (§294) era o defeito real.
+
+**Conserto (§252 — o que não se aplica, some):** deus não possuído **não tem maestria** → a caixa inteira SAI (`${tem ? colMaestriaHTML(k) : ''}`), não encolhe (a linha "Não possuído" já diz o que a caixa "falta" repetia). Libera ~70px; o pior não-possuído cai **442→417** (resolve sozinho, com folga). **Reportado, NÃO aplicado:** com o espaço livre o não-possuído comportaria **3 parceiros** (afrodite não-possuída com a 3ª linha fecha em 417) — mantive **2** nos dois estados por consistência; o dono decide.
+
+**Boa prática, medida:** tags quebram em 2 linhas em **49/100** (custaria ~18px caber em uma) — **não apliquei** (o painel já fecha; apertar a tag de elemento piora a leitura). Retrato grande §289 no painel: sem espaço (cab 64px em 233px de largura) — fica na sobreposição. A maestria era o único conteúdo de um só estado que gastava espaço no outro.
+
+**Guardas (fecham o buraco):** `colecao_sinergia` e `colecao_encaixe` varrem **possuído E não-possuído** (o não-possuído zera `perfil.deuses`, os 9 iniciais inclusive), nas duas larguras: "Ver detalhes" alcançável nos 100 nos dois estados; nada corta/rola; **maestria só no possuído** (nova asserção). Capturas dos 4 casos em `docs/capturas-295/`. **Arquivos:** `src/ui/home.js` (maestria condicional), `tests/colecao_sinergia.test.js`, `tests/colecao_encaixe.test.js`, `docs/capturas-295/`. Ver DECISOES §295. Suíte + build verdes.
+
 ## ★ SINERGIA §294 — a TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.
 
 O §293 mediu e o dono decidiu; aqui construiu-se. **Painel lateral (sob a maestria):** cabeçalho SINERGIA + até **2 parceiros** par-a-par (retrato 26 + **nome** em cima + **mecânica curta** embaixo), em **ordem de prioridade** (laço > combo > facção > preparador > elemento/fase; o laço 1º porque MUDA COMPORTAMENTO, o resto soma número); **"+N ›"** para o resto; o **solista** diz "Sem sinergia específica — funciona sozinho". **Sobreposição (§288):** ganhou **dois modos — KIT | SINERGIA**; o modo SINERGIA lista TODOS os parceiros com o **motivo INTEIRO** + a **faixa global** no topo; o "+N ›" do painel abre direto nele (não é 4ª superfície — decisão do dono).

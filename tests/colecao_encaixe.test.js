@@ -28,10 +28,13 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
   const page = await (await browser.newContext()).newPage();
   await page.goto('file://' + distAbs, { waitUntil: 'load' });
 
-  // percorre os 400 slots e devolve os que CORTAM ou ROLAM (scrollHeight > clientHeight) + a proporção
-  async function medir() {
-    return await page.evaluate(() => {
-      ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
+  // percorre os 400 slots e devolve os que CORTAM ou ROLAM (scrollHeight > clientHeight) + a proporção.
+  // §295: mede NOS DOIS ESTADOS DE POSSE — o §292 media só possuído (semeava tudo) e não via o não-possuído (mesma
+  // cegueira de escopo do §291). O não-possuído põe o selo "Você não possui" e a classe col2ov--falta na sobreposição.
+  async function medir(possuir) {
+    return await page.evaluate((poss) => {
+      if (poss) ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
+      else perfil.deuses = {};
       ir('colecao', {}, { substituir: true }); render();
       const bad = []; let chipsH = 0, boxH = 0;
       for (const e of ROSTER) {
@@ -47,17 +50,20 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
         colFecharVer();
       }
       return { bad, chipsH, boxH, larg: (typeof ultimaLarguraDesign !== 'undefined' ? ultimaLarguraDesign : innerWidth) };
-    });
+    }, possuir);
   }
 
-  console.log('== §292: nenhum dos 400 textos de efeito corta/rola — a 780 (piso) E a 951 (folga) ==');
+  console.log('== §292: nenhum dos 400 textos de efeito corta/rola — a 780 (piso) E a 951 (folga), possuído E não ==');
   for (const W of [780, 951]) {
     await page.setViewportSize({ width: W, height: 428 });
-    const r = await medir();
-    ok(r.bad.length === 0, `design ${r.larg}: ${r.bad.length}/400 textos cortam/rolam` + (r.bad.length ? ' → ' + r.bad.slice(0, 8).join(' · ') : ''));
-    // §292 parte D: a caixa de detalhe tem de ser MAIOR que o seletor (o seletor não pode dominar o que seleciona)
-    ok(r.boxH > r.chipsH, `design ${r.larg}: a caixa de detalhe (${r.boxH}) deve ser maior que a fileira de chips (${r.chipsH})`);
-    console.log(`  design ${r.larg}: ${400 - r.bad.length}/400 inteiros · caixa ${r.boxH} > chips ${r.chipsH}`);
+    for (const poss of [true, false]) {
+      const r = await medir(poss);
+      const rot = poss ? 'possuído' : 'NÃO possuído';
+      ok(r.bad.length === 0, `design ${r.larg} [${rot}]: ${r.bad.length}/400 textos cortam/rolam` + (r.bad.length ? ' → ' + r.bad.slice(0, 8).join(' · ') : ''));
+      // §292 parte D: a caixa de detalhe tem de ser MAIOR que o seletor (o seletor não pode dominar o que seleciona)
+      ok(r.boxH > r.chipsH, `design ${r.larg} [${rot}]: a caixa de detalhe (${r.boxH}) deve ser maior que a fileira de chips (${r.chipsH})`);
+      console.log(`  design ${r.larg} [${rot}]: ${400 - r.bad.length}/400 inteiros · caixa ${r.boxH} > chips ${r.chipsH}`);
+    }
   }
 
   await browser.close();

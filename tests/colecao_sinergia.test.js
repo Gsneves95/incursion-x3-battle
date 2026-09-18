@@ -124,25 +124,42 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
     });
     ok(titulo.length === 0, `${titulo.length}/100 títulos cortam/colidem na sobreposição` + (titulo.length ? ' → ' + titulo.slice(0, 6).join(' · ') : ''));
 
-    // (5)(6) NENHUM nome/mecânica corta no painel E o botão "Ver detalhes" fica alcançável (§210), nos 100 deuses
-    const varredura = await page.evaluate(() => {
-      const bad = []; let piorVer = 0, piorVerK = '';
-      for (const e of ROSTER) {
-        colSelecionar(e.key);
-        for (const sel of ['.col2s__nome', '.col2s__mec']) {
-          for (const el of document.querySelectorAll('.col2p ' + sel)) {
-            if (el.scrollWidth > el.clientWidth + 1) bad.push(e.key + ' ' + sel + ' +' + (el.scrollWidth - el.clientWidth));
+    // (5)(6) NENHUM nome/mecânica corta no painel, o "Ver detalhes" fica alcançável (§210) e a maestria só aparece no
+    // POSSUÍDO — nos 100 deuses E NOS DOIS ESTADOS DE POSSE. O §294 original mediu só possuído (semeava tudo) e por
+    // isso não pegou o corte do não-possuído (a caixa de maestria "falta" empurrava o botão): a MESMA falha de escopo
+    // do §291 (medir só um estado). Aqui varre possuído E não-possuído (§295).
+    async function varrer(possuir) {
+      return await page.evaluate((poss) => {
+        if (poss) ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
+        else perfil.deuses = {};   // ninguém possuído (nem os 9 iniciais) — o estado que o §294 nunca mediu
+        ir('colecao', {}, { substituir: true }); render();
+        const bad = []; let piorVer = 0, piorVerK = ''; let maestriaErrada = 0;
+        for (const e of ROSTER) {
+          colSelecionar(e.key);
+          for (const sel of ['.col2s__nome', '.col2s__mec']) {
+            for (const el of document.querySelectorAll('.col2p ' + sel)) {
+              if (el.scrollWidth > el.clientWidth + 1) bad.push(e.key + ' ' + sel + ' +' + (el.scrollWidth - el.clientWidth));
+            }
           }
+          const ver = document.querySelector('.col2p__ver');
+          const vb = ver ? Math.round(ver.getBoundingClientRect().bottom) : 0;
+          if (vb > piorVer) { piorVer = vb; piorVerK = e.key; }
+          // §252: maestria só no possuído (não-possuído não tem posto — a caixa inteira sai, não encolhe)
+          const temMaestria = !!document.querySelector('.col2p .col2m');
+          if (temMaestria !== poss) maestriaErrada++;
         }
-        const ver = document.querySelector('.col2p__ver');
-        const vb = ver ? Math.round(ver.getBoundingClientRect().bottom) : 0;
-        if (vb > piorVer) { piorVer = vb; piorVerK = e.key; }
-      }
-      return { bad, piorVer, piorVerK };
-    });
-    ok(varredura.bad.length === 0, `${varredura.bad.length} nomes/mecânicas cortam no painel` + (varredura.bad.length ? ' → ' + varredura.bad.slice(0, 6).join(' · ') : ''));
-    ok(varredura.piorVer <= 428, `"Ver detalhes" saiu da tela no pior deus (${varredura.piorVerK}: base ${varredura.piorVer} > 428)`);
-    console.log(`  @${W}: mnevis ${r.mnevis.n}p · odin ${r.odin.n}+"${r.odin.maisTxt}" · zeus solista · lista completa ${abre.linhas}/${abre.total} · cortes ${varredura.bad.length}/100 · pior botão ${varredura.piorVer} (${varredura.piorVerK})`);
+        return { bad, piorVer, piorVerK, maestriaErrada };
+      }, possuir);
+    }
+    for (const poss of [true, false]) {
+      const v = await varrer(poss);
+      const rot = poss ? 'possuído' : 'NÃO possuído';
+      ok(v.bad.length === 0, `[${rot}] ${v.bad.length} nomes/mecânicas cortam no painel` + (v.bad.length ? ' → ' + v.bad.slice(0, 6).join(' · ') : ''));
+      ok(v.piorVer <= 428, `[${rot}] "Ver detalhes" saiu da tela no pior deus (${v.piorVerK}: base ${v.piorVer} > 428)`);
+      ok(v.maestriaErrada === 0, `[${rot}] maestria no estado errado em ${v.maestriaErrada} deuses (§252: só aparece no possuído)`);
+      console.log(`  @${W} [${rot}]: cortes ${v.bad.length}/100 · pior botão ${v.piorVer} (${v.piorVerK}) · maestria-errada ${v.maestriaErrada}`);
+    }
+    console.log(`  @${W}: mnevis ${r.mnevis.n}p · odin ${r.odin.n}+"${r.odin.maisTxt}" · zeus solista · lista completa ${abre.linhas}/${abre.total}`);
   }
 
   await browser.close();

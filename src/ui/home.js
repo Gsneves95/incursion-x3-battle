@@ -1050,7 +1050,7 @@ function colPainelHTML(k){
       <span class="col2p__tag">${H(g.funcao || '')}</span>
     </div>
     ${posse}
-    ${colMaestriaHTML(k)}
+    ${tem ? colMaestriaHTML(k) : ''}
     ${colSinergiaPainelHTML(k)}
     <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
   </div>`;

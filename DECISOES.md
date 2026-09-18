@@ -6,6 +6,56 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §295 — o painel da Coleção CORTAVA para deus NÃO POSSUÍDO, e a guarda do §294 disse que não (buraco de escopo).
+
+O dono capturou a Afrodite (não possuída) com o "Ver detalhes" cortado embaixo. A guarda do §294 passava. Isto importa
+mais que o conserto — é a MESMA falha do §291 (medir só um estado).
+
+### 1) POR QUE A GUARDA PASSOU (a lição)
+
+A guarda do §294 (`colecao_sinergia.test.js`) **semeava TODOS os deuses como possuídos** (`perfil.deuses[k]={copias:1}`)
+antes de medir. Só testou o estado POSSUÍDO. O não-possuído nunca foi medido — e é ele que corta, porque a **caixa de
+maestria "falta"** (borda + título + 2 linhas explicando o que é maestria, ~70px) é mais alta que a barra de maestria
+do possuído, e empurra o "Ver detalhes" para fora. Medido agora: **7 dos 91 não-possuídos cortavam** (pior 442, −14px);
+o possuído nunca cortou. Exatamente o §291 de novo (lá foi medir só o slot básico e só a largura folgada; aqui, só um
+estado de posse).
+
+**Varredura das outras guardas da Coleção pelo mesmo critério (o tamanho do buraco):**
+- `colecao_sinergia.test.js` (§294) — semeava tudo possuído. **Buraco. Corrigido** (varre os dois estados).
+- `colecao_encaixe.test.js` (§292) — semeava tudo possuído. **Tinha o buraco**, mas medido agora: a sobreposição NÃO
+  depende de posse (o selo "Você não possui" fica na área do retrato, não na caixa de detalhe) → 400/400 nos dois
+  estados. Buraco fechado por precaução (varre os dois), sem defeito latente.
+- `colecao_tela.test.js` (§288) — semeia MISTO (`i%2===0`) na grade, então testa os dois; mas ao abrir a sobreposição
+  força posse (`||{obtidoEm}`). Sem defeito de layout ali (a sobreposição é posse-independente, provado acima).
+
+### 2) O CONSERTO É DE CONTEÚDO (§252), não de espremer
+
+Deus não possuído **não tem maestria** — a caixa inteira SAI (`${tem ? colMaestriaHTML(k) : ''}`), não encolhe. A linha
+"Não possuído" já diz o que a caixa "falta" repetia; explicar o que é maestria é AJUDA, não conteúdo de ficha. Medido:
+libera ~70px, o pior não-possuído cai de **442 → 417** (resolve sozinho, com folga). **Reportado, NÃO aplicado:** com o
+espaço livre, o não-possuído comportaria **3 parceiros** (medido: afrodite não-possuída com a 3ª linha ainda fecha em
+417). Mantive **2** nos dois estados por consistência — o dono decide se o não-possuído mostra 3.
+
+### 3) Boa prática, medida (aplicado só o que valia)
+
+- **Tags em 2 linhas:** **49 dos 100** quebram (Grega/Aurora/Mágico/Controlador = 40px; os outros 51 cabem em 18px).
+  Custaria ~18px caber em uma (fonte/gap menor). **NÃO apliquei:** o painel agora fecha nos dois estados (possuído 426,
+  não-possuído 417) — a quebra não corta mais nada, e apertar a fonte da tag colorida de elemento piora a leitura.
+- **Retrato pequeno (44) × retrato grande §289:** custo de trocar (reportado, não feito): o painel não tem espaço
+  horizontal nem vertical p/ um retrato maior no `col2p__cab` (233px de largura, cab de 64px); ampliar exigiria
+  refazer o cabeçalho. O retrato grande fica onde há largura — a sobreposição (§289).
+- **Outro conteúdo de um só estado:** só a maestria. A cor do retrato muda (cinza no não-possuído) mas é 0px; a posse é
+  uma linha nos dois estados. A maestria era o único que gastava espaço num estado onde não se aplica.
+
+### GUARDAS (fecham o buraco de escopo)
+
+`colecao_sinergia.test.js` e `colecao_encaixe.test.js` agora varrem **possuído E não-possuído** (o não-possuído zera
+`perfil.deuses`, inclusive os 9 iniciais): "Ver detalhes" alcançável nos 100 nos dois estados e nas duas larguras;
+nada corta/rola; **a maestria só aparece no possuído** (nova asserção). Capturas dos 4 casos (possuído/não × sinergia/
+solista, 780 e 951) em `docs/capturas-295/`.
+
+---
+
 ## §294 — a SINERGIA vira TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.
 
 O §293 mediu e o dono decidiu. Aqui se construiu, com os números mandando em cada escolha.
