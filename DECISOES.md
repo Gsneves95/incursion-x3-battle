@@ -80,6 +80,33 @@ em `perfil.maestria` → todos ≤428 (pior soMilagre 426). Dimensão declarada 
 As outras três (cópias 1×N, filtro/busca, corrida) ficam como classificadas no §295 — a de filtro é a mais certa (não é
 dimensão de encaixe: o painel desenha um deus por vez).
 
+### §295 (cont.) — VARREDURA de referência interna vazando p/ a interface (o "(§245)" é a mesma família do "INERTE neste protótipo" do §286)
+
+Duas vezes o § de bastidor vazou p/ o texto do jogador — "(§245)" no nota do ★ Mestre (§296) e "(§96)" no motivo da
+sinergia. Duas é padrão. Varri TODO o texto exibido — dado e código — atrás de `§<dígito>`, marcador de protótipo,
+nome de fase, TODO, "por enquanto".
+
+**Achados (o § legítimo vive em 2 lugares que o jogador não lê — comentário de código e campo interno `_`-prefixado):**
+- **REAL, exibido:** só **`data/sinergia.json` `motivo` da fase — "(§96)"** (mostrado na lista da sobreposição, modo
+  SINERGIA). Corrigido no gerador (`tools/gerar_sinergia.js`): o motivo perdeu o "(§96)" (e o legend `familias.fase`
+  também). Regenerado: 0 § no arquivo.
+- **Interno, NÃO exibido (confirmado lendo quem a UI renderiza):** `data/dominios/*.json._fonte` (§273/§274/§275) e
+  `regua.metodo` (sem §); `data/campanha/*.json._seedNota` (§268); `data/economia.json._pendencias.*` (§283/§213);
+  `data/missoes.json` **`nota`** (§241/§242) — este era o único interno SEM o prefixo `_`, então **renomeei p/ `_nota`**
+  (gerador + dado) p/ a convenção §283 valer universal. Deuses limpos (o §286 já varrera). Marcadores protótipo/FASE/
+  TODO: nenhum em texto exibido (o "TODO" que aparecia era falso-positivo — `-i` casando "tod**os**Inimigos").
+- **CÓDIGO:** todo `§<dígito>` em `src/` está em COMENTÁRIO (`//` ou `/* */`) — nada em string renderizada (o §245 já
+  saíra no §296).
+
+**GUARDA (`tests/texto_interno.test.js`) — nenhum texto exibido contém `§<dígito>`, com o custo declarado:** varre
+(1) DADO — todo valor-string de `data/**/*.json` cuja chave, em qualquer nível, NÃO começa com `_`; (2) CÓDIGO —
+`src/**/*.js` + `src/shell.html` DEPOIS de tirar comentários (`/* */` e `//`), pegando o que sobra (string literal /
+HTML que pode virar innerHTML). **Prova que morde:** pega o "(§245)" antigo (string) e ignora `// §294` e `/* §294 */`
+(comentários) — testado. **Não é DOM-walk** (mais fiel, mas lento e teria de navegar toda tela com dado representativo);
+é a fonte do texto, onde se escreve — barato, determinístico, roda sem navegador. **Custo:** a convenção "`_` = interno"
+tem de valer (por isso o `missoes.nota`→`_nota`); um campo interno novo sem `_` daria falso-positivo — que é exatamente
+o lembrete certo (marque-o `_` ou ele conta como exibido).
+
 ---
 
 ## §294 — a SINERGIA vira TELA: painel lateral (2 parceiros + faixa) + modo SINERGIA da sobreposição, tudo derivado do fx.

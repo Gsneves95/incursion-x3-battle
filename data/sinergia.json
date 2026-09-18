@@ -1,9 +1,9 @@
 {
- "gerado": "2026-09-17",
+ "gerado": "2026-09-18",
  "fonte": "data/deuses/*.json (fx) — DERIVADO, não editar à mão; rode tools/gerar_sinergia.js",
  "familias": {
   "laço": "fx cita outro deus (aliadoPresente/sinergiaAliado)",
-  "fase": "setter de Dia/Noite + FASE_MOD por elemento (§96)",
+  "fase": "setter de Dia/Noite + FASE_MOD por elemento",
   "fase-anti": "anti-sinergia: a fase pune o elemento oposto",
   "combo": "contador de pool do lado: gera↔consome",
   "facção": "passiva faccaoConta (Odin: Nórdica)",
@@ -452,7 +452,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -482,7 +482,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -582,7 +582,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -604,7 +604,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -631,7 +631,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -719,7 +719,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -749,7 +749,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -779,7 +779,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -809,7 +809,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -862,7 +862,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -902,7 +902,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -942,7 +942,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -964,7 +964,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1011,7 +1011,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1033,7 +1033,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1119,7 +1119,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1149,7 +1149,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1259,7 +1259,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1303,7 +1303,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1341,7 +1341,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1503,7 +1503,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1557,7 +1557,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1587,7 +1587,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1622,7 +1622,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1663,7 +1663,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1690,7 +1690,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1720,7 +1720,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1756,7 +1756,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1799,7 +1799,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1877,7 +1877,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1907,7 +1907,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1937,7 +1937,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -1967,7 +1967,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -1997,7 +1997,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2034,7 +2034,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -2168,7 +2168,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2314,7 +2314,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2336,7 +2336,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2358,7 +2358,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -2393,7 +2393,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -2441,7 +2441,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "tsukuyomi",
@@ -2546,7 +2546,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2568,7 +2568,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2664,7 +2664,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -2694,7 +2694,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Dia: +8 aos seus Aurora",
-     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96)."
+     "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora."
     },
     {
      "para": "ra",
@@ -2751,7 +2751,7 @@
      "familia": "fase",
      "prioridade": 5,
      "curto": "Noite: +8 aos seus Umbra",
-     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96)."
+     "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra."
     },
     {
      "para": "amaterasu",
@@ -2790,7 +2790,7 @@
    "de": "afrodite",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -2814,7 +2814,7 @@
    "de": "ahpuch",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -2902,7 +2902,7 @@
    "de": "ammit",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -2918,7 +2918,7 @@
    "de": "anubis",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -2934,7 +2934,7 @@
    "de": "apolo",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3006,7 +3006,7 @@
    "de": "atena",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3030,7 +3030,7 @@
    "de": "babi",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3054,7 +3054,7 @@
    "de": "baldur",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3078,7 +3078,7 @@
    "de": "bastet",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3110,7 +3110,7 @@
    "de": "bragi",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3134,7 +3134,7 @@
    "de": "cerberus",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3158,7 +3158,7 @@
    "de": "change",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3174,7 +3174,7 @@
    "de": "cuca",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3190,7 +3190,7 @@
    "de": "erinias",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3206,7 +3206,7 @@
    "de": "exu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3286,7 +3286,7 @@
    "de": "fenrir",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3310,7 +3310,7 @@
    "de": "freyja",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3398,7 +3398,7 @@
    "de": "hades",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3430,7 +3430,7 @@
    "de": "heimdall",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3462,7 +3462,7 @@
    "de": "hel",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3590,7 +3590,7 @@
    "de": "huangdi",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3622,7 +3622,7 @@
    "de": "isis",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3646,7 +3646,7 @@
    "de": "itzamna",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3670,7 +3670,7 @@
    "de": "izanami",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3694,7 +3694,7 @@
    "de": "kali",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3710,7 +3710,7 @@
    "de": "khonshu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3734,7 +3734,7 @@
    "de": "kitsune",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3758,7 +3758,7 @@
    "de": "krishna",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3790,7 +3790,7 @@
    "de": "loki",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3862,7 +3862,7 @@
    "de": "lugh",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3886,7 +3886,7 @@
    "de": "medusa",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3910,7 +3910,7 @@
    "de": "mimir",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3934,7 +3934,7 @@
    "de": "mnevis",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -3958,7 +3958,7 @@
    "de": "morrigan",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -3974,7 +3974,7 @@
    "de": "nuwa",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4102,7 +4102,7 @@
    "de": "odin",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -4230,7 +4230,7 @@
    "de": "orfeu",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -4246,7 +4246,7 @@
    "de": "osiris",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -4262,7 +4262,7 @@
    "de": "oxala",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4286,7 +4286,7 @@
    "de": "perseu",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4318,7 +4318,7 @@
    "de": "ra",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4406,7 +4406,7 @@
    "de": "shiva",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -4422,7 +4422,7 @@
    "de": "shutendoji",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },
@@ -4478,7 +4478,7 @@
    "de": "tyr",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4502,7 +4502,7 @@
    "de": "vishnu",
    "para": "amaterasu",
    "familia": "fase",
-   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora (§96).",
+   "motivo": "Amaterasu cria a Dia: +8 aos seus ataques Aurora.",
    "curto": "Dia: +8 aos seus Aurora",
    "prioridade": 5
   },
@@ -4542,7 +4542,7 @@
    "de": "yanwong",
    "para": "tsukuyomi",
    "familia": "fase",
-   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra (§96).",
+   "motivo": "Tsukuyomi cria a Noite: +8 aos seus ataques Umbra.",
    "curto": "Noite: +8 aos seus Umbra",
    "prioridade": 5
   },

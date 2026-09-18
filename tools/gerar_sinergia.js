@@ -71,7 +71,7 @@ for (const s of KEYS) {
   const ruim = sf.fase === 'Dia' ? 'Umbra' : 'Aurora';
   for (const a of KEYS) {
     if (a === s) continue;
-    if (el(a) === bom) add(a, s, 'fase', `${nm(s)} cria a ${sf.fase}: +8 aos seus ataques ${bom} (§96).`, `${sf.fase}: +8 aos seus ${bom}`);
+    if (el(a) === bom) add(a, s, 'fase', `${nm(s)} cria a ${sf.fase}: +8 aos seus ataques ${bom}.`, `${sf.fase}: +8 aos seus ${bom}`);
     if (el(a) === ruim) add(a, s, 'fase-anti', `⚠ ${nm(s)} cria a ${sf.fase}: −5 aos seus ataques ${ruim} (anti-sinergia).`, `⚠ ${sf.fase}: −5 nos seus ${ruim}`);
   }
 }
@@ -160,7 +160,7 @@ const famCount = {}; for (const e of limpos) famCount[e.familia] = (famCount[e.f
 const saida = {
   gerado: new Date().toISOString().slice(0, 10),
   fonte: 'data/deuses/*.json (fx) — DERIVADO, não editar à mão; rode tools/gerar_sinergia.js',
-  familias: { laço: 'fx cita outro deus (aliadoPresente/sinergiaAliado)', fase: 'setter de Dia/Noite + FASE_MOD por elemento (§96)', 'fase-anti': 'anti-sinergia: a fase pune o elemento oposto', combo: 'contador de pool do lado: gera↔consome', facção: 'passiva faccaoConta (Odin: Nórdica)', elemento: 'aura por elemento do atacante (Rá: Aurora)', preparador: 'aplica debuff amplificador → executor' },
+  familias: { laço: 'fx cita outro deus (aliadoPresente/sinergiaAliado)', fase: 'setter de Dia/Noite + FASE_MOD por elemento', 'fase-anti': 'anti-sinergia: a fase pune o elemento oposto', combo: 'contador de pool do lado: gera↔consome', facção: 'passiva faccaoConta (Odin: Nórdica)', elemento: 'aura por elemento do atacante (Rá: Aurora)', preparador: 'aplica debuff amplificador → executor' },
   prioridade: PRIOR,
   auraDoadores,   // faixa global: "<nomes> reforçam o time" (§294)
   totalPares: limpos.length,
