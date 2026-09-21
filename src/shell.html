@@ -308,7 +308,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    de folga. O medalhão NÃO ganha zoom (scale 1.0, centro): 31% das 401 artes já preenchem a borda e
    qualquer ampliação as corta — ver §257. ---------- */
 .skill{position:relative;width:90px;height:90px;border:0;background:none;padding:0;cursor:pointer;flex:0 0 auto;transition:width .16s,height .16s}
-.skill__disc{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#171334;
+/* §300: o disco deixa de ser CÍRCULO e vira QUADRADO ARREDONDADO (raio 6 = o do .portrait, o vizinho na
+   fileira — coerência local, não gosto). A arte é quadrada (object-fit cover); o recorte circular jogava
+   fora ~1707px² (21,5% do quadrado) — agora a arte preenche o quadrado (+26,8% de área visível). Nada se
+   apoiava no círculo: os orbes são cápsula a 5px da base, os estados são inset/radial/box-shadow que
+   seguem a forma. A ficha SEGUE 90×90 (footprint inalterado) e o respiro do §239 não muda. */
+.skill__disc{position:absolute;inset:0;border-radius:6px;overflow:hidden;background:#171334;
   border-style:solid;border-width:1px;transition:box-shadow .14s}
 .skill--uni .skill__disc{border-style:dashed}
 .skill--habilidade .skill__disc{border-width:2px}
@@ -339,7 +344,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    (contraste p/ o número/ícone) e deixa o aro da arte em cor. Glifo distinto por motivo:
    número dourado = recarga · ⊘ rosa = travada (Selado/Silêncio) · ∅ âmbar = sem alvo. */
 /* overlays de estado sobre o tile RETÂNGULO (§214): vinheta escurece só o miolo, aro em cor */
-.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:50%;
+.skill__cd,.skill__lock,.skill__na{display:none;position:absolute;inset:0;border-radius:6px;
   align-items:center;justify-content:center;pointer-events:none;
   text-shadow:0 1px 3px #000,0 0 6px #000,0 0 2px #000}
 .skill__cd{font-family:'Cinzel',serif;font-weight:900;font-size:30px;color:var(--gold-text);
@@ -395,7 +400,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .kchip{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:2px 1px 3px;border:1px solid transparent;border-radius:8px;background:rgba(18,15,36,.4);cursor:pointer}
 .kchip.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.1);box-shadow:0 0 0 1px rgba(255,217,122,.25)}
-.kchip__art{position:relative;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid #5a4560}   /* §257: chip do kit = disco circular, igual à ficha */
+.kchip__art{position:relative;width:100%;aspect-ratio:1;border-radius:6px;overflow:hidden;border:1px solid #5a4560}   /* §300: chip do kit = quadrado arredondado, igual à ficha (era circular, §257) */
 .kchip__art .slot{width:100%;height:100%}
 .kchip__art--pas{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:19px;background:#14112a}
 /* §257: no disco circular a recarga fica no TOPO-CENTRO (o canto direito cai fora do círculo) */
@@ -429,7 +434,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .acao__cite{font-family:'Cinzel',serif;font-weight:500;font-style:italic;font-size:13px;letter-spacing:.04em;
   color:var(--gold-soft);text-align:center;opacity:.92;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .leitura__icon{flex:0 0 auto;width:46px;height:46px;border-radius:8px;overflow:hidden;border:1px solid #3a3358;background:#14112a}
-.leitura__icon.is-skill{border-radius:50%}   /* §257: leitura de habilidade/kit no rodapé = mesmo disco circular das fichas */
+.leitura__icon.is-skill{border-radius:6px}   /* §300: leitura de habilidade/kit no rodapé = quadrado arredondado, igual à ficha (era circular, §257) */
 .leitura__icon .slot{width:100%;height:100%}
 .leitura__corpo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}
 .leitura__cab{display:flex;align-items:center;gap:8px;flex-wrap:wrap}

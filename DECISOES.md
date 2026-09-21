@@ -6,6 +6,68 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §300 — o disco da ficha DEIXA de ser círculo: quadrado arredondado (raio 6), a arte preenche o quadrado.
+
+O dono reparou que a ficha mostrava a arte só no círculo inscrito, jogando fora os cantos — o mesmo diagnóstico que o
+levou a refazer as artes preenchendo o quadrado. O recorte circular descartava ~27% da área que ele gera. Muda o §257
+(que tornou o disco circular), então foi medido e reportado ANTES.
+
+### O que se apoiava na forma circular (nada, de fato)
+
+Tudo mora no `.skill__disc` (o antigo círculo, `overflow:hidden` recortando a arte). **Nenhum indicador precisa do
+círculo:** os **orbes de custo** (`.skill__cost`) são uma cápsula a 5px da base (não desenho sobre o arco — assenta igual
+na borda de baixo do quadrado); as **máscaras de estado** (`.skill__cd` recarga, `.skill__lock` ⊘, `.skill__na` ∅) são
+`inset:0` com **vinheta radial** centrada (funciona em qualquer forma); o **anel do elemento**, o **is-ready**, o **halo
+is-armed**, o **is-cooldown/locked/notarget**, o **aro de milagre**, o **tracejado uni** e o **filtro de estado** são
+borda/box-shadow/filter no disco, que **seguem o `border-radius` automaticamente**. Nada foi reposicionado — só a forma.
+
+### Quantas molduras (a pergunta do dono)
+
+**Uma só desenhada por ficha: o disco** (com sua borda = o anel). O botão `.skill` é invisível (`border:0`). O "quadrado"
+que o dono via eram os **quatro cantos da caixa 90×90 do disco, fora do círculo, deixando ver a placa do §239 por trás**.
+Não havia moldura separada: **o círculo VIRA o quadrado arredondado**; os cantos deixam de mostrar a placa e passam a
+mostrar arte. **Nenhuma moldura "some".** A placa do §239 (moldura compartilhada de retrato + fichas) fica intacta — e,
+confirmado na captura, **segue lendo como moldura compartilhada** (o aro dourado/verde ainda une retrato e as 4 fichas por
+fileira; os vãos entre fichas continuam mostrando a placa). O **anel** muda de identidade — aro de círculo lia como disco,
+aro de quadrado arredondado lê como **cartão** — e, confirmado no olho, **unifica com o retrato ao lado** (mesma linguagem).
+
+### A ficha continua 90, o respiro do §239 não muda
+
+Medido no dist, as duas escalas: o disco é `inset:0` no botão de 90px → mudar de círculo para quadrado **não move o
+footprint**. Ficha **90×90**; as 4 fichas terminam em x=500; o inimigo em 654 → **respiro 154px, inalterado**. Mudança
+puramente visual dentro dos 90×90.
+
+### Ganho de área (medido)
+
+Círculo Ø90 = **6.362 px²** (78,5% do quadrado). Quadrado arredondado **r6 = 8.069 px² → +26,8% de arte visível**; cantos
+recuperados = **1.707 px²** (os 21,5% que o recorte descartava). No tamanho real: 90×90 no piso, ~110×110 na folga. **Raio
+6 = o do `.portrait`** (o vizinho na mesma fileira) — coerência local, não gosto; a família do jogo vai de 4 (kit §288) a 8
+(ícone de detalhe).
+
+### Os TRÊS lugares juntos (coerência do §257)
+
+O §257 criou o "mesmo disco" em três: a ficha (`.skill__disc`), o chip do kit no rodapé (`.kchip__art`) e o ícone da
+leitura no rodapé (`.leitura__icon.is-skill`). Os três foram para **raio 6** juntos — o guarda do §257 exigia "o kit usa o
+MESMO tratamento das fichas", então mantê-los divergentes quebraria a coerência.
+
+### O teste que originou a mudança
+
+O dono commitou 4 artes novas do Zeus preenchendo o quadrado. **Confirmado após aplicar: as quatro aparecem inteiras** —
+básico/habilidade/milagre na ficha de batalha (agora quadrada, arte até os cantos) e a passiva na ficha do deus
+(`.dsk__art`, que já era quadrada, raio 9). **Consequência esperada, não defeito:** os deuses cuja arte ainda é medalhão
+circular (a maioria — o §257 media que só 31% preenchem a borda) mostram os cantos escuros do próprio medalhão até serem
+refeitos. O contêiner agora HONRA a arte que preenche o quadrado (Zeus prova); o refit por deus é o trabalho contínuo do
+dono, e esta mudança é o que o torna visível e necessário.
+
+### Guardas (babá, §295) e capturas
+
+`interface.test.js` (4b2/4b3b) migrado do §257: o disco e todas as máscaras são **raio 6** (não 50%) em TODO estado
+(recarga/travada/armada), e o kit do rodapé idem. `batalha_faixa.test.js` ganhou o §300: **nas duas escalas** — disco raio
+6 + overflow hidden, máscaras raio 6, a arte (slot__art) preenche o interior do disco, ficha 90, nada corta, orbes na base
+(bottom 0..14). Capturas antes/depois (10 estados a 780) + board + as 4 artes do Zeus em `docs/capturas-300/`.
+**Arquivos:** `src/shell.html` (raio 6 nos três lugares), `tests/interface.test.js`, `tests/batalha_faixa.test.js`,
+`docs/capturas-300/`. Ver ESTADO §300.
+
 ## §299 fatia 2 — tela de batalha refeita: a FAIXA sobe, o PAINEL sai, a LEITURA no rodapé, a CITAÇÃO.
 
 Três decisões do dono e uma recusa, sobre a medição da fatia 1 (§298).

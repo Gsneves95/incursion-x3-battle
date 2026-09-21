@@ -131,6 +131,39 @@ const ESCALAS = [{ nome: 'piso 780', w: 780, h: 640 }, { nome: 'folga 951', w: 9
     ok(leituras.voltaCite, `${E.nome}: dispensado o foco, a citação VOLTA ao repouso`);
     ok(leituras.semPainel, `${E.nome}: não há painel lateral (§299)`);
 
+    // §300: o disco da ficha é QUADRADO ARREDONDADO (raio 6), a arte PREENCHE o quadrado (sem recorte
+    // circular), a ficha segue 90×90 e nada corta — nas duas escalas.
+    await entrar(0); await page.waitForTimeout(40);
+    await page.waitForFunction(() => { const im = document.querySelector('.brow__tiles .skill .slot__art'); return im && im.complete && im.naturalWidth > 0; }, { timeout: 6000 }).catch(() => {});
+    const forma = await page.evaluate(() => {
+      const R = el => el.getBoundingClientRect();
+      const disc = document.querySelector('.brow__tiles .skill .skill__disc');
+      const cs = getComputedStyle(disc);
+      const cd = document.querySelector('.skill__cd'), lock = document.querySelector('.skill__lock'), na = document.querySelector('.skill__na');
+      // a arte (slot__art) cobre o disco inteiro → object-fit cover num quadrado: sem faixa/canto vazio
+      // a arte (slot__art) preenche o INTERIOR do disco (object-fit cover); a caixa da img = disco menos a
+      // borda (1–2px) → tolerância 5px. (Se os PIXELS da arte chegam ao canto é trabalho de arte por deus —
+      // aqui garantimos que o CONTÊINER quadrado mostra a arte que o preenche, sem recorte circular.)
+      const art = document.querySelector('.brow__tiles .skill .slot__art');
+      const dr = R(disc), ar = art ? R(art) : null;
+      const cobre = ar ? (Math.abs(ar.width - dr.width) <= 5 && Math.abs(ar.height - dr.height) <= 5) : false;
+      const board = R(document.querySelector('.board'));
+      let clip = 0; document.querySelectorAll('.brow__tiles .skill, .brow__tiles .skill__cost').forEach(el => { const r = R(el); if (r.bottom > board.bottom + 0.5) clip = Math.max(clip, r.bottom - board.bottom); if (r.top < board.top - 0.5) clip = Math.max(clip, board.top - r.top); });
+      const cost = document.querySelector('.brow__tiles .skill__cost');
+      const cbot = cost ? (R(document.querySelector('.brow__tiles .skill')).bottom - R(cost).bottom) / (ultimaEscala || 1) : null;
+      return { radius: cs.borderRadius, overflow: cs.overflow, cobre, hasArt: !!art,
+        cdR: getComputedStyle(cd).borderRadius, lockR: getComputedStyle(lock).borderRadius, naR: getComputedStyle(na).borderRadius,
+        skillW: Math.round(R(document.querySelector('.brow__tiles .skill')).width / (ultimaEscala || 1)),
+        clip: +clip.toFixed(1), cbot: cbot == null ? null : +cbot.toFixed(1) };
+    });
+    ok(forma.radius === '6px', `${E.nome} §300: o disco é quadrado arredondado (raio 6, veio ${forma.radius})`);
+    ok(forma.overflow === 'hidden', `${E.nome} §300: o disco recorta a arte ao quadrado (overflow hidden)`);
+    ok(forma.cdR === '6px' && forma.lockR === '6px' && forma.naR === '6px', `${E.nome} §300: as máscaras de estado acompanham o raio 6 (cd ${forma.cdR}/lock ${forma.lockR}/na ${forma.naR})`);
+    ok(!forma.hasArt || forma.cobre, `${E.nome} §300: a arte PREENCHE o quadrado inteiro (slot__art cobre o disco, sem canto vazio)`);
+    ok(forma.skillW === 90, `${E.nome} §300: a ficha segue 90 (veio ${forma.skillW})`);
+    ok(forma.clip === 0, `${E.nome} §300: nada corta com o disco quadrado (clip ${forma.clip})`);
+    ok(forma.cbot != null && forma.cbot >= 0 && forma.cbot <= 14, `${E.nome} §300: os orbes de custo continuam na base (bottom ${forma.cbot}px, 0..14)`);
+
     await ctx.close();
   }
 

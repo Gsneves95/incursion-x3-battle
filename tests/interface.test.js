@@ -379,17 +379,17 @@ console.log('== 4c. hierarquia visual e legibilidade ==');
   console.log(`  \u00a7214 hierarquia: retrato ${pW}\u00d7${pH} > ficha ${sW}\u00d7${sH} \u00b7 aliado = inimigo`);
 }
 
-console.log('== 4b2. FICHA de habilidade é CÍRCULO (§257): o medalhão é redondo, então a moldura também ==');
+console.log('== 4b2. FICHA de habilidade é QUADRADO ARREDONDADO (§300, raio 6 = o do retrato): a arte preenche o quadrado ==');
 {
   const cs = s => w.getComputedStyle($(s));
   // §257 GUARDA (alvo de toque): nunca cai abaixo do mínimo do invariante (76px). A ficha cresceu a 92.
   ok(parseFloat(cs('.skill').width) >= 76, `o alvo de toque deveria ter 76px+ (invariante), tem ${cs('.skill').width}`);
   ok(cs('.skill').borderWidth === '0px', 'a borda saiu do botão e foi para o disco');
-  // §257 GUARDA (sem canto quadrado): o disco e TODAS as máscaras de estado são CIRCULARES (50%).
-  ok(cs('.skill__disc').borderRadius === '50%', `o disco deveria ser CIRCULAR (50%), veio ${cs('.skill__disc').borderRadius}`);
-  ok(cs('.skill__cd').borderRadius === '50%', 'a máscara de recarga deveria ser circular (sem canto quadrado)');
-  ok(cs('.skill__lock').borderRadius === '50%', 'a máscara de trava deveria ser circular');
-  ok(cs('.skill__na').borderRadius === '50%', 'a máscara de sem-alvo deveria ser circular');
+  // §300 GUARDA: o disco e TODAS as máscaras de estado são QUADRADO ARREDONDADO (raio 6) — a arte preenche o quadrado.
+  ok(cs('.skill__disc').borderRadius === '6px', `o disco deveria ser QUADRADO ARREDONDADO (6px), veio ${cs('.skill__disc').borderRadius}`);
+  ok(cs('.skill__cd').borderRadius === '6px', 'a máscara de recarga deveria acompanhar o raio 6');
+  ok(cs('.skill__lock').borderRadius === '6px', 'a máscara de trava deveria acompanhar o raio 6');
+  ok(cs('.skill__na').borderRadius === '6px', 'a máscara de sem-alvo deveria acompanhar o raio 6');
 
   // anel = elemento; espessura = tier
   const um = $$('.brow__ally')[0].closest('.brow').querySelectorAll('.brow__tiles .skill');
@@ -408,37 +408,37 @@ console.log('== 4b2. FICHA de habilidade é CÍRCULO (§257): o medalhão é red
     'habilidade sem custo deveria exibir o selo GRÁTIS');
   const cbot = parseFloat(cs('.skill__cost').bottom);
   ok(cbot >= 0 && cbot <= 14, `o selo de custo assenta no arco inferior (bottom ${cbot}px, 0..14 — nem flutua no miolo nem some)`);
-  console.log(`  toque ${cs('.skill').width} \u00b7 disco CIRCULAR 50% \u00b7 anel ${larg.join('/')} por tier \u00b7 custo bottom ${cbot}px`);
+  console.log(`  toque ${cs('.skill').width} \u00b7 disco QUADRADO r6 \u00b7 anel ${larg.join('/')} por tier \u00b7 custo bottom ${cbot}px`);
 }
 
-console.log('== 4b3b. GUARDAS §257: sem canto quadrado em NENHUM estado + o disco do rodapé é circular ==');
+console.log('== 4b3b. GUARDAS §300: raio 6 em TODOS os estados + o disco do rodapé (kit) idem ==');
 {
   const cs = s => w.getComputedStyle($(s));
-  // GUARDA: em CADA estado (recarga, travada, armada) o disco segue circular — nenhum canto quadrado.
+  // §300 GUARDA: em CADA estado (recarga, travada, armada) o disco segue no raio 6 (nem volta a círculo, nem canto vivo).
   w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;render()');
   w.eval(`(function(){ const l=st.lados[st.ativo];
     l.units[0].cd['habilidade']=3;
     l.units[1].efeitos=(l.units[1].efeitos||[]).concat([{type:'selado',dur:2}]);
     render(); })()`);
-  ok(!!$('.skill.is-cooldown') && cs('.skill.is-cooldown .skill__disc').borderRadius === '50%',
-    'estado recarga: o disco segue circular');
-  ok(!!$('.skill.is-locked') && cs('.skill.is-locked .skill__disc').borderRadius === '50%',
-    'estado travada: o disco segue circular');
+  ok(!!$('.skill.is-cooldown') && cs('.skill.is-cooldown .skill__disc').borderRadius === '6px',
+    'estado recarga: o disco segue no raio 6');
+  ok(!!$('.skill.is-locked') && cs('.skill.is-locked .skill__disc').borderRadius === '6px',
+    'estado travada: o disco segue no raio 6');
   const arma = $$('.brow__tiles .skill[data-sk]').find(x => x.dataset.arma === '1');
   if (arma) { tap(arma);
-    ok(!$('.skill.is-armed') || cs('.skill.is-armed .skill__disc').borderRadius === '50%',
-      'estado armada: o disco segue circular'); }
+    ok(!$('.skill.is-armed') || cs('.skill.is-armed .skill__disc').borderRadius === '6px',
+      'estado armada: o disco segue no raio 6'); }
   w.eval('armado=null;alvos=[];escolhidos=[];render()');
 
-  // GUARDA (§257 item 6): o disco do KIT no RODAPÉ usa o MESMO tratamento circular das fichas.
+  // §300 GUARDA (§257 item 6 migrado): o KIT no RODAPÉ usa o MESMO tratamento (raio 6) das fichas.
   const foe0 = S().lados[1 - S().ativo].units[0];
   w.eval(`abrirKit("${foe0.uid}")`);
-  ok(cs('.footer .leitura__icon.is-skill').borderRadius === '50%',
-    'o disco da selecionada no rodapé (leitura__icon.is-skill) é circular');
-  ok(!!$('.footer .leitura__kstrip .kchip__art') && cs('.footer .leitura__kstrip .kchip__art').borderRadius === '50%',
-    'os chips do kit no rodapé (kchip__art) são circulares');
+  ok(cs('.footer .leitura__icon.is-skill').borderRadius === '6px',
+    'a selecionada no rodapé (leitura__icon.is-skill) usa o raio 6');
+  ok(!!$('.footer .leitura__kstrip .kchip__art') && cs('.footer .leitura__kstrip .kchip__art').borderRadius === '6px',
+    'os chips do kit no rodapé (kchip__art) usam o raio 6');
   w.eval('peekKit=null;kitSel=null;render()');
-  console.log('  recarga/travada/armada circulares · kit do rodapé circular (item 6)');
+  console.log('  recarga/travada/armada no raio 6 · kit do rodapé idem (item 6 migrado)');
 }
 
 console.log('== 4c2. contagem de objetos e ruído ==');
