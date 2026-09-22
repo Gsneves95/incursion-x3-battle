@@ -492,9 +492,18 @@ delas é boa ideia, leia `DECISOES.md` antes de propor.
   segurança — pior que não ter guarda**, porque some o incentivo de olhar. Ao criar/editar uma guarda de
   Coleção, some à lista as dimensões que o layout novo passar a ler (maestria por posto, corrida em andamento,
   frase/citação) e percorra-as.
-- **A FICHA de habilidade é um CÍRCULO** (§257: moldura `border-radius:50%`, **90px**; o medalhão da
-  arte é redondo — sem zoom, scale 1.0/centro, pois 31% das 401 artes já preenchem a borda). O RETRATO
-  (**94×94**, §258) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
+- **AO REUSAR UM NÚMERO DE OUTRA DECISÃO, CONFIRA O QUE ELE MEDE, NÃO SÓ SE FOI MEDIDO (§300b).** Três espécies de
+  número-ruim circularam numa semana: (1) estimativa que vira aceita (o "6" do empilhamento §299 — pega com "foi
+  medido?"); (2) medição não reproduzível (o "29,5%" da campanha — pega com "reproduz?"); (3) **medição legítima
+  reaproveitada fora do escopo** — o "31%" do §257 media DIÂMETRO do medalhão a 100% e foi reusado no §300 como
+  PREENCHIMENTO-DE-CANTO (real por canto: 49,3%). A 3ª é a mais perigosa: sobrevive a "foi medido?" (foi) e a
+  "reproduz?" (reproduz) — só não mediu o que a NOVA pergunta precisa. Exemplo que fixa: "diâmetro a 100%" (31%) ≠
+  "cantos preenchidos" (49,3%), mesma arte, duas perguntas, erro de 18 pontos.
+- **A FICHA de habilidade é um QUADRADO ARREDONDADO** (§300: `.skill__disc` `border-radius:6px` = o do `.portrait`,
+  **90px**; a arte PREENCHE o quadrado — era círculo no §257, mas o recorte circular jogava fora ~27% da arte; o
+  mesmo raio 6 vale no chip do kit `.kchip__art` e na leitura `.leitura__icon.is-skill`). Metade das artes ainda são
+  medalhão circular sobre fundo escuro e mostram cantos escuros até o refit (`docs/artes-skills-medicao.md`). O
+  RETRATO (**92×92**, §258→§300) é MAIOR que a ficha nas DUAS dimensões (hierarquia §214, Naruto-Arena), com nome e
   vida SOBREPOSTOS à arte; a barra de vida é OPACA (a arte não vaza) e a arte é enquadrada no alto
   (`center 18%`) porque as ilustrações são de corpo inteiro.
 - **Nas duas caixas APERTADAS, a criatura do bestiário mostra o `curto`, não o nome inteiro** (§262:

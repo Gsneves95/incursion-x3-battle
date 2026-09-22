@@ -63,9 +63,22 @@ contínuo do dono, e esta mudança é o que o torna visível e necessário.
 canto (canto escuro E chapado, `tools/medir_artes.js`): **49,3% preenchem, 50,7% são medalhão (203/400)** — é
 **metade**, não "a maioria". De onde veio o 31: o §257 mediu, sim, mas outra coisa — o **diâmetro** do medalhão
 chegando a 100% (31% das artes), não o preenchimento dos CANTOS. Reusei o 31% de diâmetro no §300 como se fosse
-preenchimento-de-canto; são grandezas diferentes. **É o terceiro número que circulou entre cortes como se fosse
-medido nesta semana** (o 29,5% da campanha, o 6 do empilhamento §299, e agora este). A régua agora tem ferramenta
-(`tools/medir_artes.js`) e listas (`docs/artes-medalhao.csv`, `docs/artes-distincao.csv`, `docs/artes-skills-medicao.md`).
+preenchimento-de-canto; são grandezas diferentes. A régua agora tem ferramenta (`tools/medir_artes.js`) e listas
+(`docs/artes-medalhao.csv`, `docs/artes-distincao.csv`, `docs/artes-skills-medicao.md`).
+
+**★ TRÊS ESPÉCIES de número-ruim que circulou como medido nesta semana — vale separá-las, porque a defesa contra
+cada uma é diferente:**
+1. **Estimativa que vira aceita** — o "6" do pior empilhamento (§299): nunca foi medido, virou premissa por repetição.
+   Pega com: "isso foi medido?".
+2. **Medição não reproduzível** — o "29,5%" da campanha: alguém mediu uma vez, sem ferramenta que refaça. Pega com:
+   "dá para reproduzir?".
+3. **Medição legítima reaproveitada FORA DO ESCOPO dela** — o "31%" das artes: foi medido de verdade (diâmetro do
+   medalhão, §257), e reusado no §300 como preenchimento-de-canto — número real de UMA pergunta, usado como resposta
+   de OUTRA. **É a mais perigosa: sobrevive à pergunta que pega as outras duas** ("foi medido?" — foi; "reproduz?" —
+   reproduz). Só não mediu o que a NOVA pergunta precisa.
+**REGRA (a 3ª exige uma pergunta a mais):** ao reusar um número de outra decisão, confira O QUE ele mede, não só se
+foi medido. **Exemplo que fixa a regra:** "diâmetro do medalhão a 100%" (31%) ≠ "cantos preenchidos" (49,3%) — a
+mesma arte, duas perguntas, dois números; usar um pelo outro erra por 18 pontos.
 
 **★ O LIMITE DA MÉTRICA DE DISTINÇÃO (M2) — o achado mais útil, para ninguém tratar o CSV como veredito.** A métrica
 ΔRGB (assinatura 12×12 RGB) mede **imagem repetida, não ASSUNTO repetido**. O Zeus habilidade×milagre dá **ΔRGB 44
