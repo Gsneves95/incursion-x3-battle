@@ -55,9 +55,24 @@ MESMO tratamento das fichas", então mantê-los divergentes quebraria a coerênc
 O dono commitou 4 artes novas do Zeus preenchendo o quadrado. **Confirmado após aplicar: as quatro aparecem inteiras** —
 básico/habilidade/milagre na ficha de batalha (agora quadrada, arte até os cantos) e a passiva na ficha do deus
 (`.dsk__art`, que já era quadrada, raio 9). **Consequência esperada, não defeito:** os deuses cuja arte ainda é medalhão
-circular (a maioria — o §257 media que só 31% preenchem a borda) mostram os cantos escuros do próprio medalhão até serem
-refeitos. O contêiner agora HONRA a arte que preenche o quadrado (Zeus prova); o refit por deus é o trabalho contínuo do
-dono, e esta mudança é o que o torna visível e necessário.
+circular ~~(a maioria — o §257 media que só 31% preenchem a borda)~~ mostram os cantos escuros do próprio medalhão até
+serem refeitos. O contêiner agora HONRA a arte que preenche o quadrado (Zeus prova); o refit por deus é o trabalho
+contínuo do dono, e esta mudança é o que o torna visível e necessário.
+
+**★ CORREÇÃO (§300b, §283 anti-deriva) — o "31% preenchem" está riscado acima.** O número real, MEDIDO por
+canto (canto escuro E chapado, `tools/medir_artes.js`): **49,3% preenchem, 50,7% são medalhão (203/400)** — é
+**metade**, não "a maioria". De onde veio o 31: o §257 mediu, sim, mas outra coisa — o **diâmetro** do medalhão
+chegando a 100% (31% das artes), não o preenchimento dos CANTOS. Reusei o 31% de diâmetro no §300 como se fosse
+preenchimento-de-canto; são grandezas diferentes. **É o terceiro número que circulou entre cortes como se fosse
+medido nesta semana** (o 29,5% da campanha, o 6 do empilhamento §299, e agora este). A régua agora tem ferramenta
+(`tools/medir_artes.js`) e listas (`docs/artes-medalhao.csv`, `docs/artes-distincao.csv`, `docs/artes-skills-medicao.md`).
+
+**★ O LIMITE DA MÉTRICA DE DISTINÇÃO (M2) — o achado mais útil, para ninguém tratar o CSV como veredito.** A métrica
+ΔRGB (assinatura 12×12 RGB) mede **imagem repetida, não ASSUNTO repetido**. O Zeus habilidade×milagre dá **ΔRGB 44
+("distintas")** e mesmo assim CONFUNDE, porque as duas são "raio em nuvem escura" — mesmo motivo, execução diferente.
+O CSV é **PISO, não teto**: pega quase-duplicatas (15 deuses com par ΔRGB<10, corr 0,9+ = quase a mesma imagem), NÃO
+pega mesmo-assunto. Conclusão para o brief das ~200: exigir um **objeto/silhueta próprio por habilidade** — cor/pixel
+distinto NÃO basta (o Zeus prova). Ver `docs/artes-skills-medicao.md`.
 
 ### Guardas (babá, §295) e capturas
 
