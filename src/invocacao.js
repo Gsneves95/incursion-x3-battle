@@ -168,29 +168,34 @@ const INV = (function () {
   }
 
   // -------------------------------------------------- gacha
+  // §302 — UMA invocação, sem abas (decisão do dono). O "destaque" NÃO é um modo separado: é a única
+  // invocação, com um deus em evidência (rate-up de DEUS — muda QUAL SS sai, nunca custo/taxa/pity, §20).
+  // O antigo "Portal Eterno" (padrão) SAIU: era a mesma invocação sem o deus em evidência (mesma taxa 3%,
+  // mesmo custo, mesmo pity) — redundante, estritamente dominado pelo destaque. A "Bênção do Iniciante"
+  // continua, mas como OFERTA ÚNICA (grátis, uma vez) na mesma tela, não como aba/modo paralelo.
   const BANNERS = {
-    destaque: { nome: 'Destaque · Panteão em Ascensão', desc: () => `Rate-up: todo SS deste banner é ${byKey[FEAT_SS].nome}. A taxa de SS é a mesma dos outros banners — o destaque escolhe QUAL SS sai, não QUANTO.`, feat: true },
-    padrao:   { nome: 'Portal Eterno', desc: () => 'Pool completo, todos disponíveis. Sem rate-up.', feat: false },
+    destaque: { nome: 'Panteão em Ascensão', desc: () => `Todo SS desta invocação é ${byKey[FEAT_SS].nome} — o destaque escolhe QUAL SS sai, não QUANTO. Custo e taxa de SS iguais para todos.`, feat: true },
     iniciante:{ nome: 'Bênção do Iniciante', desc: () => 'Uma vez: 10 invocações com SS garantido. Gratuito.', feat: false, once: true },
   };
+  const PRINCIPAL = 'destaque';   // a única invocação paga; o "destaque" é ela, com o deus em evidência
   // Economia: fonte única em data/economia.json, embutida como ECONOMIA no build.
   // ZERO literal de taxa/pity/custo aqui.
   const P = { SS: ECONOMIA.invocacao.taxas.SS, S: ECONOMIA.invocacao.taxas.S };
   const PITY = ECONOMIA.invocacao.pity.duro;   // garantia dura (fonte: data/economia.json)
   const ESS = ECONOMIA.invocacao.essenciaPorDuplicata || {};   // repetido→Essência A/S/SS (F3.2; ZERO literal aqui)
-  let cur = 'destaque';
   // S.gemas é MIRROR do perfil (perfil.moedas.gema é a verdade). A carteira já NÃO nasce
   // do grantTeste — isso era a carteira FANTASMA (custo de invocação era ficção). Sincroniza
   // em montar() e após cada mutação. Sem perfil (preview isolado), fica em 0 e não invoca pago.
-  let S = { gemas: 0,
-    banners: { destaque: { pity: 0 }, padrao: { pity: 0 }, iniciante: { used: false } },
+  // §302: UM contador de pity (S.pity, espelho de perfil.invocacao.desdeUltimoSS) — não há mais um
+  // pity por banner (o "padrao" saiu; o iniciante não usa pity). Só sobrou a marca de "grátis já usado".
+  let S = { gemas: 0, pity: 0, iniciante: { used: false },
     owned: {}, stats: { SS: 0, S: 0, A: 0, total: 0, fSS: 0 } };
   // Sincroniza a tela com o perfil REAL (saldo + pity). Chamada em montar(): no load o
   // perfil ainda é null (o boot carrega depois), então ler aqui, na abertura da tela, é
   // o momento certo. INTERIM: o pity é um contador único (desdeUltimoSS) no banner principal.
   function sincronizarCarteira() {
     S.gemas = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
-    if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.banners.destaque.pity = perfil.invocacao.desdeUltimoSS || 0;
+    if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.pity = perfil.invocacao.desdeUltimoSS || 0;
   }
 
   // Aleatório: durante um lote, roda por SEMENTE (mulberry32 do motor), para o
@@ -233,11 +238,17 @@ const INV = (function () {
     return { out, pity: st };
   }
 
-  function pull(n) {
+  // §302: pull() é sempre a invocação PAGA (a única, com o deus em evidência). O sorteio grátis do
+  // iniciante tem porta própria — claimIniciante() — para não reintroduzir "modo" na tela.
+  function pull(n) { executar(PRINCIPAL, n); }
+  function claimIniciante() {
+    if (S.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
+    executar('iniciante', ECONOMIA.invocacao.banners.iniciante.qtd);
+  }
+  function executar(bkey, n) {
     let cost = 0;
-    if (cur === 'iniciante') {
-      if (S.banners.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
-      n = ECONOMIA.invocacao.banners.iniciante.qtd;
+    if (bkey === 'iniciante') {
+      if (S.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
     } else {
       cost = n === 10 ? ECONOMIA.invocacao.custo.pacote10 : ECONOMIA.invocacao.custo.avulso;
       // SALDO INSUFICIENTE BLOQUEIA ANTES DE QUALQUER MUDANÇA DE ESTADO: sem sorteio, sem
@@ -246,12 +257,13 @@ const INV = (function () {
       const saldo = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
       if (!(typeof perfil !== 'undefined' && perfil) || saldo < cost) { flash('Gemas insuficientes — use o + (DEV) para recarregar.'); return; }
     }
-    const bkey = cur;
-    const pityEntrada = bkey === 'iniciante' ? { pity: 0 } : { pity: S.banners[bkey].pity };
+    // UM pity só: o iniciante entra com o pity corrente (a garantia dele repõe um SS, que zera o
+    // contador único — coerente com "um contador"). O pago entra com o pity espelhado do perfil.
+    const pityEntrada = { pity: S.pity };
     const seed = (Math.floor(Math.random() * 4294967296)) >>> 0;   // borda: semente do cliente
     const { out, pity } = sortearLote(seed, bkey, pityEntrada, n);
-    if (bkey !== 'iniciante') S.banners[bkey].pity = pity.pity;
-    else S.banners.iniciante.used = true;
+    S.pity = pity.pity;
+    if (bkey === 'iniciante') S.iniciante.used = true;
     // dono ANTES do lote (a verdade é o perfil, não o mirror de sessão): decide NOVO × repetido.
     // Repetido vira Essência; a contagem é SEQUENCIAL para a 2ª cópia do mesmo deus no MESMO lote já contar como dup.
     const donoAntes = {};
@@ -277,10 +289,10 @@ const INV = (function () {
       S.gemas = perfil.moedas.gema;   // mirror segue a verdade
     }
     S._lastN = n;
-    showReveal(out); render();
+    showReveal(out, bkey === 'iniciante'); render();
   }
 
-  function showReveal(out) {
+  function showReveal(out, gratis) {
     const order = { SS: 3, S: 2, A: 1 };
     const scr = document.getElementById('iv');
     const avail = (scr.clientWidth || 926) - 28, alt = (scr.clientHeight || 428) - 92;
@@ -291,7 +303,7 @@ const INV = (function () {
     cards.innerHTML = out.map((o, i) => gcard(o.u, W, o.novo, S.owned[o.u.key], i * 70, o.essencia)).join('');
     const best = out.reduce((a, b) => order[b.r] > order[a.r] ? b : a);
     const btn = document.getElementById('iv-revagain');
-    btn.style.display = cur === 'iniciante' ? 'none' : 'inline-block';
+    btn.style.display = gratis ? 'none' : 'inline-block';
     btn.textContent = `Invocar mais ×${out.length}`;
     document.querySelector('#iv-reveal .iv-tip').innerHTML = best.r === 'SS'
       ? `✦ <b>SS ${best.u.nome}</b>! ✦ — toque fora para voltar` : 'toque fora para voltar';
@@ -303,14 +315,14 @@ const INV = (function () {
 
   function openAudit() {
     const N = 1000, st = { pity: 0 }, t = { SS: 0, S: 0, A: 0 }; let fss = 0;
-    for (let i = 0; i < N; i++) { const o = doRoll(cur, st); t[o.r]++; if (o.r === 'SS' && o.u.key === FEAT_SS) fss++; }
+    for (let i = 0; i < N; i++) { const o = doRoll(PRINCIPAL, st); t[o.r]++; if (o.r === 'SS' && o.u.key === FEAT_SS) fss++; }
     const pct = v => (v * 100).toFixed(0) + '%';
     const exp = { SS: pct(P.SS) + ' + pity', S: pct(P.S) + ' + pity', A: 'restante' };
     const rows = ['SS', 'S', 'A'].map(r => `<tr><td class="iv-${r.toLowerCase()}c">${r}</td><td>${t[r]}</td><td>${(t[r] / N * 100).toFixed(1)}%</td><td style="color:var(--iv-dim)">${exp[r]}</td></tr>`).join('');
     document.getElementById('iv-auditBox').innerHTML = `<h3>Auditoria de 1.000 invocações</h3>
-      <p>Banner: ${BANNERS[cur].nome} · não gasta moedas nem afeta seus contadores</p>
+      <p>${BANNERS[PRINCIPAL].nome} · não gasta moedas nem afeta seus contadores</p>
       <table><tr><th>Ordem</th><th>Qtd</th><th>Observado</th><th>Esperado</th></tr>${rows}
-      ${BANNERS[cur].feat ? `<tr><td>↳ SS em destaque (${byKey[FEAT_SS].nome})</td><td>${fss}</td><td>${t.SS ? (fss / t.SS * 100).toFixed(0) : 0}% dos SS</td><td style="color:var(--iv-dim)">100% (destaque)</td></tr>` : ''}</table>
+      <tr><td>↳ SS em destaque (${byKey[FEAT_SS].nome})</td><td>${fss}</td><td>${t.SS ? (fss / t.SS * 100).toFixed(0) : 0}% dos SS</td><td style="color:var(--iv-dim)">100% (destaque)</td></tr></table>
       <p style="margin-top:12px">O SS observado fica acima de ${pct(P.SS)} porque o <b style="color:var(--iv-gold)">pity</b> (garantia dura em ${PITY}) eleva a taxa efetiva. É o esperado.</p>
       <button class="iv-close" onclick="document.getElementById('iv-audit').classList.remove('iv-show')">Fechar</button>`;
     document.getElementById('iv-audit').classList.add('iv-show');
@@ -348,29 +360,20 @@ const INV = (function () {
     // indicador de perfil CONTAMINADO por crédito de teste — discreto mas sempre presente
     const dev = document.getElementById('iv-devmark');
     if (dev) dev.style.display = (typeof perfil !== 'undefined' && perfil && perfil.dev) ? 'inline-flex' : 'none';
-    document.getElementById('iv-tabs').innerHTML = Object.keys(BANNERS).map(k =>
-      `<div class="iv-tab ${k === cur ? 'iv-on' : ''}" onclick="INV.setBanner('${k}')">${k === 'destaque' ? 'Destaque' : k === 'padrao' ? 'Padrão' : 'Iniciante'}</div>`).join('');
-    const b = BANNERS[cur];
-    let feat = '';
-    if (b.feat) {
-      feat = `<div class="iv-feat">
-        ${gcard(byKey[FEAT_S[0]], FW, false, 1, 60)}
-        <div class="iv-featwrap">${gcard(byKey[FEAT_SS], FW5, false, 1, 0)}<span class="iv-rateup">RATE-UP</span></div>
-        ${gcard(byKey[FEAT_S[1]], FW, false, 1, 120)}</div>`;
-    } else if (cur === 'iniciante') {
-      feat = `<div class="iv-feat"><div class="iv-featc"><div class="iv-orb iv-big">🎁</div><div class="iv-fn">SS garantido</div><div class="iv-fr">uma vez</div></div></div>`;
-    }
+    // §302: UMA invocação, sem abas. Sempre o banner principal (destaque), com o deus em evidência.
+    const b = BANNERS[PRINCIPAL];
+    const feat = `<div class="iv-feat">
+      ${gcard(byKey[FEAT_S[0]], FW, false, 1, 60)}
+      <div class="iv-featwrap">${gcard(byKey[FEAT_SS], FW5, false, 1, 0)}<span class="iv-rateup">RATE-UP</span></div>
+      ${gcard(byKey[FEAT_S[1]], FW, false, 1, 120)}</div>`;
     document.getElementById('iv-banner').innerHTML = `<div class="iv-bt">${b.nome}</div><div class="iv-bd">${b.desc()}</div>${feat}`;
-    const st = S.banners[cur] || { pity: 0 };
-    if (cur === 'iniciante') {
-      document.getElementById('iv-pity').innerHTML = `<div class="iv-fifty">${S.banners.iniciante.used ? '<b class="iv-n">Já utilizada</b>' : '<b class="iv-g">Disponível</b> — 10× com SS garantido, grátis'}</div>`;
-    } else {
-      document.getElementById('iv-pity').innerHTML = `
-        <div class="iv-row"><span>SS garantido</span><b>${st.pity}/${PITY}</b></div><div class="iv-pbar iv-pity"><span style="width:${st.pity / PITY * 100}%"></span></div>
-        ${b.feat ? `<div class="iv-fifty">No destaque, todo SS é <b class="iv-g">${byKey[FEAT_SS].nome}</b></div>` : ''}`;
-    }
-    document.querySelectorAll('#iv .iv-pb,#iv .iv-tool').forEach(el => el.classList.remove('iv-off'));
-    if (cur === 'iniciante') document.querySelector('#iv .iv-pb.iv-x1').classList.add('iv-off');
+    // UM contador de pity (S.pity), a oferta ÚNICA do iniciante inline (sem aba/modo).
+    const oferta = S.iniciante.used ? '' :
+      `<button class="iv-oferta" onclick="INV.claimIniciante()"><b>Bênção do Iniciante</b> — 10× grátis, SS garantido</button>`;
+    document.getElementById('iv-pity').innerHTML = `
+      <div class="iv-row"><span>SS garantido</span><b>${S.pity}/${PITY}</b></div><div class="iv-pbar iv-pity"><span style="width:${S.pity / PITY * 100}%"></span></div>
+      <div class="iv-fifty">Todo SS é <b class="iv-g">${byKey[FEAT_SS].nome}</b></div>
+      ${oferta}`;
     const s = S.stats;
     document.getElementById('iv-tally').innerHTML =
       `<span class="iv-tchip iv-tt">Total <b>${s.total}</b></span>` +
@@ -378,7 +381,6 @@ const INV = (function () {
       `<span class="iv-tchip iv-tt">Coleção <b>${(typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : Object.keys(S.owned).length}</b>/${ROSTER.length}</span>`;
     gfit(scr);
   }
-  function setBanner(k) { cur = k; closeReveal(); render(); }
 
   const SKELETON = `
   <div id="iv">
@@ -391,7 +393,6 @@ const INV = (function () {
         <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+ DEV</button></span>
       </div>
     </div>
-    <div class="iv-tabs" id="iv-tabs"></div>
     <div class="iv-banner" id="iv-banner"></div>
     <div class="iv-side">
       <div class="iv-odds">Chances por invocação: <b class="iv-ssc">SS ${(P.SS * 100).toFixed(0)}%</b> · <b class="iv-sc">S ${(P.S * 100).toFixed(0)}%</b> · <b class="iv-ac">A ${(ECONOMIA.invocacao.taxas.A * 100).toFixed(0)}%</b> · garantia de SS em ${PITY} · repetido vira Essência</div>
@@ -415,5 +416,5 @@ const INV = (function () {
 
   function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = SKELETON; render(); }
 
-  return { render, pull, setBanner, openAudit, topup, closeReveal, rollAgain, montar, sortearLote };
+  return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar, sortearLote };
 })();

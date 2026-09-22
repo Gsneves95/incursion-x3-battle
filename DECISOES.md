@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §302 — INVOCAÇÃO: uma tela só (sem abas) + medição do pity antes de mexer nele.
+
+**Item 1 — UMA invocação, sem abas (FEITO).** O banner com deus em destaque NÃO é um modo separado: é a mesma
+invocação, com um deus em evidência (rate-up de DEUS — muda QUAL SS sai, nunca custo/taxa/pity, §20). **Confirmação por
+medição:** o DADO já pressupõe estado único — `perfil.invocacao` é `{total, desdeUltimoSS}` (UM contador), `perfil.moedas.gema`
+(UMA moeda), um histórico único; `economia.json._pendencias.pityPorBanner` registra que pity-por-banner é FUTURO não
+construído. O que existia de "banner paralelo" era só no **mirror de sessão** do código (`S.banners.destaque/padrao`, com
+o `padrao.pity` fantasma — nunca persistido). **Unifiquei:** removidas as abas (`#iv-tabs`, `setBanner`); o "Portal Eterno"
+(padrão) SAIU (mesma taxa 3%, mesmo custo, mesmo pity — redundante, dominado pelo destaque); a "Bênção do Iniciante" virou
+**oferta única inline** (`INV.claimIniciante`), não aba. O mirror agora é UM pity (`S.pity`, espelho de `desdeUltimoSS`).
+**Pity ao trocar o destaque — o que o código faz e a recomendação:** o pity é UM contador único, agnóstico de qual deus é o
+destaque; ele **CONTINUA** ao trocar o destaque (não zera). Recomendo manter assim: zerar na troca seria um reset que o
+jogador não causou nem vê, contra o §20. (Hoje o destaque nem rotaciona em runtime — `FEAT_SS` é fixo no load.)
+
+**Item 2 — pity 60→100: NÃO aplicado, medido (relatório em `docs/invocacao-economia.md`).** O dono acha 60 fácil; ninguém
+invocou, então é a conta contra a intuição. **a) Gema/semana:** só a Semanal (150) e o Sandbox (≤700/sem, "simbólico") são
+torneiras recorrentes de gema — Domínios/Provações/Missões/Desafios não pagam gema; a Campanha dá 1.000 só na 1ª vez. →
+**150/sem (casual) a 850/sem (ativo)**, + 2.500 uma vez (grant+campanha). **b)** 60 pulls = 8.100 gema, 100 = 13.500 (+67%):
+**54 semanas (casual) / 9,5 (ativo)** para 60; **90 / 16** para 100. **c) Cauda sem pity, 3%:** `0,97^99` = **4,90%** passam 99
+sem nenhum SS — **confirmo os ~5%**; o pity-60 já pega isso cedo (`0,97^59`=16,6% chegam à garantia). Subir p/ 100 **triplica
+a cauda**. **d)** "não pegar o Zeus em 99, na 100 vem" tem duas leituras (pity de QUALQUER SS × só do DESTACADO), mas **hoje
+coincidem** (§20: todo SS do destaque é o destacado — não há SS não-destacado a distinguir); só reabre se o pool ganhar SS
+não-destacado. **Recomendação:** não subir agora — a economia de gema é fina; alongar a jornada é trabalho de RENDA (rotação
+gratuita pendente), não de teto de pity, que pune o azarado sem tocar no mediano. Reavaliar com dado real de invocação.
+
+**Arquivos:** `src/invocacao.js` (unificação), `src/shell.html` (abas fora, oferta inline), `tests/invocacao.test.js` (guarda
+§302), `docs/invocacao-economia.md` (medição). Ver ESTADO §302. Suíte + build verdes.
+
+---
+
 ## §301 — os SELOS de raridade: a arte vira MOLDURA, a letra fica POR CIMA (composição, não troca). Terreno + medição.
 
 **O plano do dono:** ele fez três artes ornadas (SS/S/A) e quer que **o ornamento entre como FUNDO do selo e a letra

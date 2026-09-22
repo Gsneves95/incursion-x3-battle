@@ -28,11 +28,16 @@ console.log('== 2. a tela monta a partir do botão Invocar ==');
   w.eval("ir('selecao');render()");   // F3.0: o app abre na HOME; o botão Invocar mora na seleção
   tap($('#binvocar'));
   ok(!!$('#iv'), 'a tela de invocação deveria montar');
-  ok($$('#iv-tabs .iv-tab').length === 3, '3 banners (Destaque/Padrão/Iniciante)');
+  // §302: UMA invocação, sem abas. Não existe mais #iv-tabs; o deus em destaque é a própria invocação.
+  ok(!$('#iv-tabs'), 'não há mais abas de banner (uma invocação só)');
+  ok(w.eval('typeof INV.setBanner') === 'undefined', 'setBanner saiu (não há modo/banner a trocar)');
+  ok(w.eval('typeof INV.claimIniciante') === 'function', 'claimIniciante é a porta única da oferta grátis');
+  ok($$('#iv .iv-feat .iv-carta').length >= 1, 'o deus em destaque renderiza na única invocação');
+  ok(!!$('.iv-oferta'), 'a Bênção do Iniciante aparece como OFERTA única inline (não aba)');
   ok(/\/60/.test($('#iv-pity').textContent), 'o pity de SS (/60) deveria aparecer');
   ok(/Coleção/.test($('#iv-tally').textContent), 'o contador de coleção deveria aparecer');
   ok(!!$('#iv .iv-carta'), 'as cartas do destaque deveriam renderizar');
-  console.log(`  montou · 3 banners · pity 60 · destaque com ${$$('#iv .iv-feat .iv-carta').length} cartas`);
+  console.log(`  montou · sem abas · pity 60 · destaque com ${$$('#iv .iv-feat .iv-carta').length} cartas · oferta iniciante inline`);
 }
 
 console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
@@ -52,14 +57,14 @@ console.log('== 4. pity DURO, determinístico por semente (exercita a garantia d
 {
   // `ss>=1` em 60 pulls passava ~84% por SORTE (SS natural antes da garantia), sem
   // nunca exercitar o pity. Como INV.sortearLote é pura e semeada, testamos direto.
-  // Sementes achadas por busca sobre o build (200k seeds, banner 'padrao', pity 0):
+  // Sementes achadas por busca sobre o build (banner único 'destaque', pity 0):
   //   seed 5  -> as 59 primeiras SEM SS; a 60ª é forçada pela garantia.
   //   seed 1  -> SS natural no meio (o contador tem de zerar ali e contar dali).
-  const A = w.eval("(function(){var r=INV.sortearLote(5,'padrao',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
+  const A = w.eval("(function(){var r=INV.sortearLote(5,'destaque',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
   ok(A.rs.slice(0, 59).every(x => x !== 'SS'), 'seed 5: nenhum SS nas 59 primeiras (garantia ainda não disparou)');
   ok(A.rs[59] === 'SS', 'seed 5: a 60ª é SS — o pity DURO disparou exatamente na garantia');
   ok(A.pity === 0, 'o contador zera após o SS');
-  const B = w.eval("(function(){var r=INV.sortearLote(1,'padrao',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
+  const B = w.eval("(function(){var r=INV.sortearLote(1,'destaque',{pity:0},60);return {rs:r.out.map(o=>o.r),pity:r.pity.pity};})()");
   const ultimoSS = B.rs.lastIndexOf('SS');
   ok(ultimoSS >= 1 && ultimoSS < 59, 'seed 1: houve SS NATURAL antes da garantia');
   ok(B.pity === 59 - ultimoSS, `após SS natural o contador zera e conta dali (pity=${B.pity}, esperado ${59 - ultimoSS})`);
@@ -106,6 +111,31 @@ console.log('== 7. crédito DEV credita o perfil, MARCA (perfil.dev) e mostra o 
   const h = w.eval('JSON.parse(localStorage.getItem("incursion:historico")||"[]")');
   ok(h.some(e => e.tipo === 'dev-credito'), 'histórico tem entrada de tipo próprio "dev-credito" (nunca confundível com jogo)');
   console.log('  DEV credita + marca perfil + acende indicador + loga dev-credito');
+}
+
+console.log('== 8. §302 UMA invocação: um pity, uma moeda, um histórico; iniciante é oferta única ==');
+{
+  // (a) o DADO pressupõe estado único, não banners paralelos: perfil.invocacao é {total, desdeUltimoSS},
+  //     sem um mapa de pity por banner. Se alguém reintroduzir pity-por-banner no perfil, isto quebra.
+  const chaves = w.eval('JSON.stringify(Object.keys(perfil.invocacao).sort())');
+  ok(chaves === '["desdeUltimoSS","total"]', `perfil.invocacao é UM contador único (chaves ${chaves})`);
+  ok(w.eval('typeof perfil.moedas.gema') === 'number', 'UMA moeda de invocação (perfil.moedas.gema)');
+  ok(w.eval('Array.isArray(JSON.parse(localStorage.getItem("incursion:historico")||"[]"))'), 'UM histórico (log único)');
+  // (b) os banners paralelos saíram: nada de trocar de banner (setBanner) nem abas; sobrou UMA invocação
+  //     com o deus em evidência (a feat renderiza). BANNERS é privado do INV — a prova é a superfície.
+  ok(w.eval('typeof INV.setBanner') === 'undefined' && !$('#iv-tabs'), 'sem troca de banner: setBanner e abas fora');
+  ok($$('#iv .iv-feat .iv-carta').length >= 1, 'sobrou a invocação única, com o deus em evidência');
+  // (c) a oferta do iniciante é UMA vez e alimenta o MESMO contador (a garantia repõe um SS → pity baixo).
+  w.eval('perfil=creditarDev(perfil,"gema",0,0)');   // garante perfil presente (já está)
+  const usadaAntes = w.eval('(function(){var b=document.querySelector(".iv-oferta");return !!b;})()');
+  ok(usadaAntes, 'a oferta aparece enquanto não usada');
+  w.eval('INV.claimIniciante()');
+  const temSS = w.eval('perfil.deuses && Object.values(perfil.deuses).length>0');
+  ok(temSS, 'a Bênção do Iniciante entregou deuses (10× com SS garantido)');
+  ok(w.eval('typeof perfil.invocacao.desdeUltimoSS') === 'number', 'o iniciante escreveu o MESMO contador de pity único');
+  w.eval('INV.closeReveal(); render()');
+  ok(!w.eval('(function(){return !!document.querySelector(".iv-oferta");})()'), 'usada uma vez, a oferta some (não vira aba nem repete)');
+  console.log('  um pity/uma moeda/um histórico · sem "padrao" · iniciante é oferta única no mesmo contador');
 }
 
 console.log('');

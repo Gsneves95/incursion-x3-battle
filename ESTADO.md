@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ INVOCAÇÃO §302 — uma tela só (sem abas) + medição do pity (60→100 NÃO aplicado).
+
+**Item 1 (FEITO): unifiquei a invocação numa tela só.** As abas saíram (`#iv-tabs`, `setBanner`). O "Portal Eterno" (padrão)
+SAIU — era a mesma invocação sem o deus em evidência (mesma taxa 3%, mesmo custo, mesmo pity), redundante. A "Bênção do
+Iniciante" virou **oferta única inline** (`INV.claimIniciante`), não aba. **Confirmação medida:** o DADO já era estado único —
+`perfil.invocacao={total,desdeUltimoSS}` (UM pity), `perfil.moedas.gema` (UMA moeda), um histórico; o "banner paralelo" só
+existia no mirror de sessão (`S.banners.padrao.pity` fantasma, nunca persistido). Agora o mirror é UM pity (`S.pity`). **Pity ao
+trocar o destaque: CONTINUA** (contador único, agnóstico do deus) — recomendo manter (zerar seria reset invisível, contra §20;
+e hoje `FEAT_SS` nem rotaciona em runtime).
+
+**Item 2 (MEDIDO, volta pro dono — `docs/invocacao-economia.md`; pity NÃO tocado, segue 60):**
+- **a) Gema/semana:** só Semanal (150) e Sandbox (≤700/sem, "simbólico") são torneiras recorrentes; Domínios/Provações/Missões/
+  Desafios **não pagam gema**; Campanha = 1.000 só na 1ª vez. → **150/sem casual, 850/sem ativo**, +2.500 uma vez.
+- **b)** 60 pulls=8.100, 100=13.500 (+67%): **54 sem casual / 9,5 ativo** p/ 60; **90 / 16** p/ 100.
+- **c)** `0,97^99`=**4,90%** passam 99 sem SS (confirma os ~5% do dono); pity-60 pega cedo (16,6% chegam nele); 100 triplica a cauda.
+- **d)** "Zeus na 100" tem 2 leituras (qualquer SS × só destacado), mas **hoje coincidem** (§20: todo SS do destaque É o
+  destacado); só reabre com SS não-destacado no pool. **Recomendo não subir agora** — economia fina; alongar é trabalho de RENDA
+  (rotação gratuita pendente), não de teto de pity.
+
+**GUARDA:** `tests/invocacao.test.js` seção 8 (§302): sem abas/`setBanner`, um pity/uma moeda/um histórico, sem "padrao",
+iniciante é oferta única no mesmo contador. **Arquivos:** `src/invocacao.js`, `src/shell.html`, `tests/invocacao.test.js`,
+`docs/invocacao-economia.md`. Ver DECISOES §302. Suíte + build verdes.
+
 ## ★ SELOS §301 — a arte vira MOLDURA, a letra fica POR CIMA (composição). Terreno + medição (arte chega depois).
 
 O dono fez 3 artes ornadas (SS/S/A) e quer o **ornamento como FUNDO** do selo com a **letra em TEXTO por cima** — legível

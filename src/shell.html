@@ -808,10 +808,8 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-c b{color:var(--iv-gold);font-variant-numeric:tabular-nums}
 #iv .iv-plus{cursor:pointer;color:var(--iv-gold);border:1px solid var(--iv-gold-d);border-radius:9px;height:18px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;letter-spacing:.04em;line-height:1;background:none;font-family:inherit}
 #iv .iv-devmark{display:none;align-items:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:.08em;color:#1a1204;background:var(--iv-gold);border-radius:6px;padding:2px 6px;margin-right:8px}
-#iv .iv-tabs{position:absolute;top:44px;left:50%;transform:translateX(-50%);z-index:25;display:flex;gap:6px}
-#iv .iv-tab{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.04em;color:var(--iv-dim);cursor:pointer;padding:5px 16px;border:1px solid rgba(233,200,119,.2);border-radius:16px;background:rgba(12,10,26,.5)}
-#iv .iv-tab.iv-on{color:var(--iv-void);background:var(--iv-gold);border-color:var(--iv-gold)}
-#iv .iv-banner{position:absolute;top:80px;left:14px;right:290px;bottom:14px;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+/* §302: as abas saíram (uma invocação só). O banner e o painel lateral sobem para o espaço que elas ocupavam. */
+#iv .iv-banner{position:absolute;top:52px;left:14px;right:290px;bottom:14px;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 #iv .iv-bt{font-family:'Cinzel',serif;font-weight:900;font-size:22px;letter-spacing:.05em;color:var(--iv-gold);text-shadow:0 0 22px rgba(233,200,119,.35)}
 #iv .iv-bd{color:var(--iv-dim);font-size:11.5px;font-style:italic;margin-top:3px;max-width:400px}
 #iv .iv-feat{display:flex;gap:14px;align-items:flex-end;margin-top:16px}
@@ -821,7 +819,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-orb.iv-big{width:96px;height:96px;font-size:44px;border:3px solid var(--iv-ss);box-shadow:0 0 26px rgba(233,200,119,.5)}
 #iv .iv-fn{font-family:'Cinzel',serif;font-size:10px;color:var(--iv-bone)} #iv .iv-fr{font-size:9px;color:var(--iv-gold)}
 #iv .iv-rateup{position:absolute;top:-8px;right:-8px;background:var(--iv-gold);color:var(--iv-void);font-family:'Cinzel',serif;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;transform:rotate(6deg)}
-#iv .iv-side{position:absolute;top:80px;right:14px;width:262px;bottom:14px;z-index:20;display:flex;flex-direction:column;gap:8px}
+#iv .iv-side{position:absolute;top:52px;right:14px;width:262px;bottom:14px;z-index:20;display:flex;flex-direction:column;gap:8px}
+#iv .iv-oferta{display:block;width:100%;margin-top:9px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.02em;cursor:pointer;color:var(--iv-bone);background:linear-gradient(180deg,rgba(58,48,32,.9),rgba(30,24,16,.9));border:1px solid var(--iv-gold-d);border-radius:9px;padding:8px 10px;text-align:center}
+#iv .iv-oferta b{color:var(--iv-gold)}
+#iv .iv-oferta:hover{border-color:var(--iv-gold)}
 #iv .iv-pity{background:rgba(10,8,22,.55);border:1px solid rgba(233,200,119,.18);border-radius:10px;padding:9px 11px}
 #iv .iv-row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--iv-dim);margin-bottom:5px}
 #iv .iv-row b{color:var(--iv-bone);font-variant-numeric:tabular-nums}
