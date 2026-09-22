@@ -66,7 +66,8 @@ console.log('\n== ESTADO B (CSS): o ornamento é FUNDO e a letra ganha contorno 
   if (blocoComp) {
     ok(/text-shadow:[^;]*#0/i.test(blocoComp[0]), 'a letra composta ganha CONTORNO escuro (text-shadow) — não some no gold-on-gold');
     ok(/color:#f6edda/i.test(blocoComp[0]), 'a letra composta é clara (lê sobre realce E sombra do ornamento)');
-    ok(/background-size:cover/i.test(blocoComp[0]), 'o ornamento cobre a caixa do selo (moldura)');
+    ok(/background-size:contain/i.test(blocoComp[0]), 'o brasão 512² aparece INTEIRO e centrado (contain, não cover — a caixa não é quadrada)');
+    ok(/background-color:transparent/i.test(blocoComp[0]), 'o fora-do-brasão é transparente (o recorte do preto vê o cartão)');
   }
   // os frameless/minúsculos ficam FORA do ornamento (medição §301): a barra 3px das Missões e a rota-deus
   ok(!/\.selo-arte[^\n]*\.mtile__rar[^\n]*url\(selos/.test(shell), 'a barra de 3px das Missões NÃO recebe ornamento (não cabe)');

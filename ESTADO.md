@@ -23,7 +23,10 @@ em qualquer tamanho, ornamento inteiro só no grande. Recusa: "perder leitura po
 ausente → `0` → boot não acende `.selo-arte` → **selo de hoje, sem 404**. CSS gated (`shell.html`) põe o ornamento como
 `background-image` dos selos emoldurados (grade/resumo/painel/sobreposição) via `url(selos/...)` — **externo, nunca base64**;
 3 arquivos reusados em 100 cartões, `incursion.html` **não cresce** (previsto ~30–75KB nos 3 webp). Nenhum webp entrou ainda
-(`SELOS_ARTE=0`, dist 2,34 MB). **PENDENTE do dono:** os 3 `web/selos/seal-{ss,s,a}.webp`; e se prefere placa escura ao contorno.
+(`SELOS_ARTE=0`, dist 2,34 MB). **BRIEF do dono recebido:** brasão 512×512, miolo liso p/ a letra, preto recortado p/
+transparência (SS ouro+rubi, S prata+ametista, A bronze+safira). Encaixe usa **`background-size:contain`** (as caixas não são
+quadradas) → brasão inteiro e centrado, miolo no centro (onde a letra desenha), fora transparente sobre o cartão. **PENDENTE do
+dono:** os 3 `web/selos/seal-{ss,s,a}.webp`; e se prefere placa escura ao contorno.
 
 **GUARDA (§295):** `tests/selos.test.js` percorre com/sem ornamento (letra sempre TEXTO, nunca `<img>`; classe-raiz só com
 `SELOS_ARTE=1`; nenhuma regra de selo em `data:`; frameless fora). **Arquivos:** `tools/build.js`, `src/view.js`, `src/shell.html`,

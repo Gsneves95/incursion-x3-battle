@@ -77,5 +77,11 @@ nomeou (**placa escura por trás da letra**) é uma troca de uma linha; é só p
   ausente qualquer um → `0` → o boot não acende `.selo-arte` → **selo de hoje, sem 404**.
 - **Externo, nunca base64:** o CSS aponta `url(selos/seal-*.webp)`; o navegador baixa **3 arquivos** e reusa nos 100
   cartões. O `incursion.html` **não cresce** (só ~1KB de CSS/JS, 0 de imagem). Peso previsto dos 3 webp: ~30–75KB no total.
+- **Formato da arte (brief do dono):** brasão **512×512**, silhueta forte para 30px, **miolo liso e uniforme no centro**
+  (a letra entra ali), borda mais clara que o miolo, **preto chapado ao redor recortado para transparência**. O CSS usa
+  **`background-size:contain`** (não `cover`): as caixas do selo **não são quadradas** (20×22 a 35×27), então `contain`
+  mostra o brasão **inteiro e centrado**, o miolo cai no centro da caixa (onde a letra é desenhada) e o recorte de fora do
+  brasão fica transparente sobre o cartão. Como o **miolo é mais escuro que a borda**, a letra clara ganha contraste natural
+  no centro — o contorno cobre o resto. Alternativa, se quiser o brasão colado à borda da caixa: caixas quadradas + `cover`.
 - **Guarda:** `tests/selos.test.js` percorre o espaço de estados (§295): com/sem ornamento, letra sempre TEXTO (nunca
   trocada por `<img>`), classe-raiz só com `SELOS_ARTE=1`, nenhuma regra de selo em `data:`, os frameless fora.

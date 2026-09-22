@@ -1679,12 +1679,16 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    o navegador baixa 3 e reusa em 100 cartões — NUNCA base64, o incursion.html não cresce.
    Só os selos EMOLDURADOS recebem o ornamento (grade, resumo, painel, sobreposição). Ficam de fora, por medição
    (§301): a barra de 3px das Missões (sem letra, sem caixa), a letra da rota-deus (~10px, sem moldura) e o kbox
-   da seleção (sem classe de raridade) — e o reveal da invocação, que JÁ é um selo ornado em SVG (a referência). */
+   da seleção (sem classe de raridade) — e o reveal da invocação, que JÁ é um selo ornado em SVG (a referência).
+   O brasão do dono chega 512×512, brasão OPACO (moldura + miolo liso) sobre PRETO recortado p/ transparência.
+   Por isso `contain` (não cover): as caixas do selo não são quadradas (20×22 a 35×27) e o brasão precisa aparecer
+   INTEIRO e centrado — o miolo liso cai no centro da caixa, onde a letra é desenhada. `background-color:transparent`
+   deixa o recorte de fora do brasão ver o cartão (o brasão flutua); a letra vai sobre o MIOLO (mais escuro que a borda). */
 .selo-arte .col2c__rar--SS,.selo-arte .col2p__rar--SS{--seal:url(selos/seal-ss.webp)}
 .selo-arte .col2c__rar--S,.selo-arte .col2p__rar--S{--seal:url(selos/seal-s.webp)}
 .selo-arte .col2c__rar--A,.selo-arte .col2p__rar--A{--seal:url(selos/seal-a.webp)}
 .selo-arte .col2c__rar,.selo-arte .col2r__rlabel,.selo-arte .col2p__rar{
-  background-color:transparent;background-image:var(--seal,none);background-size:cover;
+  background-color:transparent;background-image:var(--seal,none);background-size:contain;
   background-position:center;background-repeat:no-repeat;clip-path:none;border-color:transparent;
   /* contorno escuro: no pequeno o ornamento é um borrão dourado e a letra dourada/roxa/azul de hoje SOME
      (gold-on-gold medido em 1,00:1 sem tratamento — §301). Letra clara + contorno lê sobre o realce E a sombra

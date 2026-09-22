@@ -37,6 +37,14 @@ classe-raiz `.selo-arte` → **selo de hoje, sem 404**. O CSS gated (`src/shell.
 dos selos EMOLDURADOS (grade, resumo, painel, sobreposição) via `url(selos/seal-*.webp)` — **externo, nunca base64**: o
 navegador baixa 3 arquivos e reusa nos 100 cartões, o `incursion.html` **não cresce** (peso previsto dos 3 webp: ~30–75KB).
 
+**O BRIEF da arte (do dono) e o encaixe.** Brasão **512×512**, silhueta forte p/ 30px, no máx. 3 elementos (moldura, miolo,
+1 adorno), **miolo liso e uniforme** (a letra entra ali), borda mais clara que o miolo, **preto ao redor recortado p/
+transparência**. Três variações, MESMA forma: SS ouro+rubi, S prata+ametista, A bronze+safira. **Encaixe:** como as caixas do
+selo **não são quadradas** (20×22 a 35×27), o CSS usa **`background-size:contain`** (não `cover`) — o brasão aparece INTEIRO e
+centrado, o miolo cai no centro da caixa (onde a letra é desenhada), o recorte de fora fica transparente sobre o cartão. Como o
+**miolo é mais escuro que a borda**, a letra clara já ganha contraste no centro (o contorno cobre o resto). O brief casa com a
+medição (silhueta a 30px = o ornamento é sempre borrão no pequeno; a letra carrega a leitura).
+
 **GUARDA (§295, espaço de estados).** `tests/selos.test.js` percorre: **sem** ornamento (`SELOS_ARTE=0`, o de hoje — sem
 classe-raiz, letra TEXTO em todo selo, nunca trocada por `<img>`) e **com** ornamento (`=1` — classe-raiz acesa, letra segue
 texto por cima, fundo é CSS); nenhuma regra de selo usa `data:`; os frameless (barra 3px, rota-deus) ficam fora. Babá: apague
