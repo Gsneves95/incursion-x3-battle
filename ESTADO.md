@@ -2,6 +2,33 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ SELOS §301 — a arte vira MOLDURA, a letra fica POR CIMA (composição). Terreno + medição (arte chega depois).
+
+O dono fez 3 artes ornadas (SS/S/A) e quer o **ornamento como FUNDO** do selo com a **letra em TEXTO por cima** — legível
+em qualquer tamanho, ornamento inteiro só no grande. Recusa: "perder leitura por estética é o inverso do que este jogo faz."
+
+**MEDIÇÃO (commitada: `tools/med_selos.js`, `docs/selos-raridade.csv` + `.md`).** Sete lugares mostram SS/S/A + o reveal.
+- **a) Legibilidade:** a letra COLORIDA de hoje sobre um ornamento dourado cai a **1,03–2,4:1** (gold-on-gold **some**; pior
+  caso A azul vs meio-tom = **1,03:1**). Letra só-escura falha na sombra (1,94). **Tratamento (o LEVE que o dono nomeou): letra
+  clara `#f6edda` + contorno `#0a0812`** — contorno 14,41 no claro, corpo 7,77 no escuro (um componente sempre >4,5:1).
+  **Só no caminho `.selo-arte`; o selo de hoje não muda.** Placa escura = alternativa de uma linha, a pedido.
+- **b) Onde não cabe:** Missões = **barra 3px** sem letra; rota-deus = letra de **9,6px** sem moldura — ambos fora, ficam
+  como hoje. Achado que corrige a régua: **nenhum selo pequeno chega a 40px no menor lado** (o maior, sobreposição, 42px só de
+  largura na folga; o resto 16–34). Pela régua do dono ("40 lê"), o ornamento é **sempre um borrão dourado no pequeno** — o que
+  **confirma** o plano (letra carrega a leitura, ornamento é textura), não o nega.
+- **c) Reveal:** letra **29,1px design / 35,3px físico** = **28,9% da largura do card** (confirma os ~27,5% do dono). Corrige
+  "é o único ≥40": ele **também fica <40** (~36 no teto). É o maior e só arranha o "40 lê". Seu ornamento já é SVG (a REFERÊNCIA).
+
+**TERRENO (padrão §289/§298).** `build.js` emite `SELOS_ARTE=1` só se os **três** `web/selos/seal-{ss,s,a}.webp` existem;
+ausente → `0` → boot não acende `.selo-arte` → **selo de hoje, sem 404**. CSS gated (`shell.html`) põe o ornamento como
+`background-image` dos selos emoldurados (grade/resumo/painel/sobreposição) via `url(selos/...)` — **externo, nunca base64**;
+3 arquivos reusados em 100 cartões, `incursion.html` **não cresce** (previsto ~30–75KB nos 3 webp). Nenhum webp entrou ainda
+(`SELOS_ARTE=0`, dist 2,34 MB). **PENDENTE do dono:** os 3 `web/selos/seal-{ss,s,a}.webp`; e se prefere placa escura ao contorno.
+
+**GUARDA (§295):** `tests/selos.test.js` percorre com/sem ornamento (letra sempre TEXTO, nunca `<img>`; classe-raiz só com
+`SELOS_ARTE=1`; nenhuma regra de selo em `data:`; frameless fora). **Arquivos:** `tools/build.js`, `src/view.js`, `src/shell.html`,
+`tools/med_selos.js`, `docs/selos-raridade.{csv,md}`, `tests/selos.test.js`. Ver DECISOES §301. Suíte + build verdes.
+
 ## ★ FICHA §300 — o disco deixa de ser círculo: QUADRADO ARREDONDADO (raio 6), a arte preenche o quadrado.
 
 O recorte circular jogava fora ~27% da arte (o dono refez artes preenchendo o quadrado e o jogo cortava). **Disco `border-radius:50%`→`6px`** (= o do `.portrait`, vizinho na fileira), `overflow:hidden` mantido. **Nada se apoiava no círculo:** orbes de custo são cápsula a 5px da base (não desenho no arco), máscaras (cd/lock/na) são inset+vinheta radial, e anel/is-ready/is-armed/milagre/uni/filtro são borda/box-shadow/filter que seguem o raio. **Uma só moldura desenhada por ficha (o disco):** o "quadrado" que o dono via eram os cantos da caixa 90×90 fora do círculo, deixando ver a placa do §239 — o círculo VIRA o quadrado, nada some. Confirmado na captura: a placa do §239 **segue lendo como moldura compartilhada** (aro une retrato+fichas) e o **anel unifica com o retrato** (lê como cartão). **Ficha continua 90×90, respiro §239 = 154px inalterado** (disco é inset:0; a forma não move o footprint). **Ganho medido: círculo 6.362px² → quad. r6 8.069px² = +26,8%** (1.707px² de cantos recuperados). **Três lugares juntos (coerência §257):** `.skill__disc`, `.kchip__art` (kit no rodapé), `.leitura__icon.is-skill` (leitura no rodapé). **Teste de origem confirmado:** as 4 artes novas do Zeus aparecem inteiras (básico/habilidade/milagre na ficha quadrada; passiva na `.dsk__art` que já era quadrada r9). **Consequência esperada, não defeito:** deuses com arte-medalhão mostram cantos escuros até o refit — o contêiner agora honra a arte que preenche o quadrado (Zeus prova).

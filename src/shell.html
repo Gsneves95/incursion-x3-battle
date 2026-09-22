@@ -1673,6 +1673,24 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .col2c__rar--SS{background:#e9c877} .col2c__rar--S{background:#c79bff;color:#241038} .col2c__rar--A{background:#7cc0f5;color:#0e2338}
 .col2c--falta .col2c__rar{opacity:.55}
+/* §301 — SELOS DE RARIDADE, composição (arte de FUNDO, letra POR CIMA). Tudo aqui só acende sob a classe-raiz
+   `.selo-arte`, que o boot (view.js) só coloca quando os TRÊS webp existem (SELOS_ARTE=1). Ausente → nada disto
+   vale e cada selo fica EXATAMENTE como hoje, sem 404. Os arquivos são externos (selos/, copiados pela build),
+   o navegador baixa 3 e reusa em 100 cartões — NUNCA base64, o incursion.html não cresce.
+   Só os selos EMOLDURADOS recebem o ornamento (grade, resumo, painel, sobreposição). Ficam de fora, por medição
+   (§301): a barra de 3px das Missões (sem letra, sem caixa), a letra da rota-deus (~10px, sem moldura) e o kbox
+   da seleção (sem classe de raridade) — e o reveal da invocação, que JÁ é um selo ornado em SVG (a referência). */
+.selo-arte .col2c__rar--SS,.selo-arte .col2p__rar--SS{--seal:url(selos/seal-ss.webp)}
+.selo-arte .col2c__rar--S,.selo-arte .col2p__rar--S{--seal:url(selos/seal-s.webp)}
+.selo-arte .col2c__rar--A,.selo-arte .col2p__rar--A{--seal:url(selos/seal-a.webp)}
+.selo-arte .col2c__rar,.selo-arte .col2r__rlabel,.selo-arte .col2p__rar{
+  background-color:transparent;background-image:var(--seal,none);background-size:cover;
+  background-position:center;background-repeat:no-repeat;clip-path:none;border-color:transparent;
+  /* contorno escuro: no pequeno o ornamento é um borrão dourado e a letra dourada/roxa/azul de hoje SOME
+     (gold-on-gold medido em 1,00:1 sem tratamento — §301). Letra clara + contorno lê sobre o realce E a sombra
+     do ornamento, em qualquer tamanho. É o tratamento LEVE; a placa escura por trás é a alternativa (trocável). */
+  color:#f6edda;
+  text-shadow:0 0 2px #0a0812,1px 1px 1px #0a0812,-1px 1px 1px #0a0812,1px -1px 1px #0a0812,-1px -1px 1px #0a0812}
 .col2c__cult{position:absolute;top:4px;left:4px;z-index:2;width:20px;height:22px;display:grid;place-items:center;
   font-weight:800;font-size:10px;line-height:1;color:var(--gold-text);background:rgba(12,10,24,.82);
   clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%)}

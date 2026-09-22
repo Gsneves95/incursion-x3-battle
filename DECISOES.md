@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §301 — os SELOS de raridade: a arte vira MOLDURA, a letra fica POR CIMA (composição, não troca). Terreno + medição.
+
+**O plano do dono:** ele fez três artes ornadas (SS/S/A) e quer que **o ornamento entre como FUNDO do selo e a letra
+continue desenhada em TEXTO por cima** — legível em qualquer tamanho, ornamento inteiro só no grande. Recusa explícita:
+"perder leitura por estética é o inverso do que este jogo faz." Esta é a fatia de **terreno + medição**; a arte chega depois.
+
+**A MEDIÇÃO (ferramenta + lista commitadas — `tools/med_selos.js`, `docs/selos-raridade.csv`, `docs/selos-raridade.md`).**
+Sete lugares mostram SS/S/A, mais o reveal. Caixa em px de design (palco 780×428) e físico (× `ultimaEscala`), a 780 e 951:
+
+- **a) Legibilidade da letra sobre o ornamento (o número que o dono pediu).** A letra COLORIDA de hoje sobre um
+  ornamento dourado cai a **1,03–2,4:1** — o "gold-on-gold" **some** (pior caso: A azul vs meio-tom dourado = **1,03:1**,
+  invisível). Uma letra só-escura resolve o claro (12,75) mas morre na sombra (1,94). **Tratamento escolhido, o LEVE que o
+  dono nomeou: letra clara `#f6edda` + contorno escuro `#0a0812`** — o par cobre os dois regimes (contorno 14,41 no claro,
+  corpo 7,77 no escuro; em todo pixel do ornamento um componente passa de 4,5:1). **Aplicado SÓ no caminho de composição
+  (`.selo-arte`); o selo de hoje não muda.** Alternativa nomeada (placa escura atrás da letra): troca de uma linha, a pedido.
+- **b) Onde o ornamento NÃO cabe.** **Missões** = barra de **3px**, sem letra (fora). **Rota-deus** = letra de **9,6px** de
+  largura, sem moldura (fora — fica a letra colorida). E o achado que corrige a régua: **nenhum selo pequeno alcança 40px no
+  menor lado, em escala nenhuma** (o maior, a sobreposição, chega a 42px só de LARGURA na folga; o resto fica 16–34). Pela
+  régua do próprio dono ("40 lê, 64 ótimo"), **o ornamento será sempre um borrão dourado no pequeno** — o que **confirma** o
+  plano (a letra carrega a leitura; o ornamento é textura), não o nega.
+- **c) O reveal, medido de verdade.** Letra do reveal = **29,1px design / 35,3px físico (folga)** = **28,9% da largura do
+  card** — confirma os ~27,5% que o dono estimou. Mas corrige a premissa "é o único ≥40": **ele também fica abaixo de 40**
+  (~36 no teto de escala). É o maior selo e ainda assim só arranha o "40 lê". O seu ornamento já existe **em SVG** (chapa +
+  losango + letra, `src/invocacao.js`) — é a REFERÊNCIA; o webp não vai nele.
+
+**O TERRENO (padrão §289/§298, plumbing sem tocar o visual de hoje).** `tools/build.js` emite `SELOS_ARTE=1` só se os
+**três** `web/selos/seal-{ss,s,a}.webp` existem; ausente qualquer um → `0` → o boot (`src/view.js`) **não** acende a
+classe-raiz `.selo-arte` → **selo de hoje, sem 404**. O CSS gated (`src/shell.html`) põe o ornamento como `background-image`
+dos selos EMOLDURADOS (grade, resumo, painel, sobreposição) via `url(selos/seal-*.webp)` — **externo, nunca base64**: o
+navegador baixa 3 arquivos e reusa nos 100 cartões, o `incursion.html` **não cresce** (peso previsto dos 3 webp: ~30–75KB).
+
+**GUARDA (§295, espaço de estados).** `tests/selos.test.js` percorre: **sem** ornamento (`SELOS_ARTE=0`, o de hoje — sem
+classe-raiz, letra TEXTO em todo selo, nunca trocada por `<img>`) e **com** ornamento (`=1` — classe-raiz acesa, letra segue
+texto por cima, fundo é CSS); nenhuma regra de selo usa `data:`; os frameless (barra 3px, rota-deus) ficam fora. Babá: apague
+o prefixo `.selo-arte` de uma regra (vaza para hoje) e cai; troque `url()` por `data:` (incha o HTML) e cai; tire o contorno e cai.
+
+**Arquivos:** `tools/build.js` (manifesto `SELOS_ARTE`), `src/view.js` (classe-raiz no boot), `src/shell.html` (CSS gated),
+`tools/med_selos.js` + `docs/selos-raridade.{csv,md}` (medição), `tests/selos.test.js`. Ver ESTADO §301.
+
+---
+
 ## §300 — o disco da ficha DEIXA de ser círculo: quadrado arredondado (raio 6), a arte preenche o quadrado.
 
 O dono reparou que a ficha mostrava a arte só no círculo inscrito, jogando fora os cantos — o mesmo diagnóstico que o

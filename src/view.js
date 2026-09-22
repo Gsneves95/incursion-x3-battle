@@ -148,6 +148,12 @@ registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, a
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
 registrar('pvp',       { render: renderPvP,        aoEntrar: ()=>{ if(typeof pvpReset==='function') pvpReset(); } });  // F5.3/§236: o lobby do PvP (apelido + time + fila)
+// §301: se os TRÊS ornamentos de selo existem (SELOS_ARTE=1), acende a classe-raiz `selo-arte` UMA vez,
+// no boot — ela abre o caminho de COMPOSIÇÃO no CSS (ornamento de fundo + contorno na letra) para os selos
+// emoldurados. Ausente (SELOS_ARTE=0), a classe nunca entra e cada selo fica exatamente como hoje, sem 404.
+if(typeof SELOS_ARTE!=='undefined' && SELOS_ARTE && typeof document!=='undefined' && document.documentElement){
+  document.documentElement.classList.add('selo-arte');
+}
 ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
