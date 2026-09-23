@@ -29,6 +29,14 @@ coluna). (2) **a FRASE fica liberada, mas por DESTAQUE** (`INVOCACAO.destaque.fr
 citação **saiu da sobreposição da Coleção** (sem orçamento — medido; a Coleção não mostra frase nem com `frase` no dado);
 só a invocação a comporta. Regra: **frase é conteúdo do destaque, não do elenco.** `destaque.frase` fica VAZIO (o dono escreve).
 
+**§304c (2 consertos, tela real):** (1) **a figura ENCOSTA na coluna** — estava na borda direita com ~325px de vazio no meio
+(texto até x227, figura em x552); agora left:31% (x~242), ~15px do texto, lê como pôster. Crescer é limitado: tetos topo y40
+(topbar) + base y269 (pity) prendem a figura em ~262×227 com o recorte vertical do §289. (2) **borda dura FUNDIDA** — o retrato
+é retângulo OPACO; máscara de degradê nas 4 bordas (forte embaixo 30% e laterais 20%, suave no topo 8%), caixa travada em
+aspect-ratio 512/590 + cover p/ a máscara casar com a arte. Antes/depois em `docs/capturas-304/fusao-*.png` (o veredito é a
+captura, §281). (3) **Recorte confirmado: o §289 (512×590 vertical) ATRAPALHA** na caixa baixa-e-larga — recomendo uma arte de
+banner própria (quadrada/mais larga); **não troquei** (arte é do dono).
+
 **GUARDA:** `tests/invocacao.test.js` seção 12 (preço do dado sem literal; frase do destaque some/aparece; SEM epíteto; sem
 "Pai dos Deuses"; fundo/arte do dado + placeholder sem 404; pity do perfil, teto do economia); `colecao_tela`/`colecao_encaixe`
 (§292→§304b: a Coleção não renderiza cite nem com frase); `aquisicao` (odds na auditoria). Capturas 780/951 em `docs/capturas-304/`.

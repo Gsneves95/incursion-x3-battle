@@ -231,6 +231,18 @@ console.log('== 12. §304 tela pelo mockup: preço do DADO, frase some, fundo/ar
   console.log('  preço do dado · frase some/aparece · arquétipo do dado · fundo/arte do dado+placeholder · pity do perfil/teto do economia');
 }
 
+console.log('== 13. §304c: a figura ENCOSTA na coluna e a borda dura fica FUNDIDA (não volta o retângulo colado) ==');
+{
+  // babá de fonte (o jsdom não pinta máscara): a .iv-arte tem de manter a FUSÃO (máscara de degradê) e o encaixe de
+  // pôster (proporção travada + adjacente à coluna). Se uma sessão futura tirar a máscara, o retângulo colado volta.
+  const shell = fs.readFileSync(require('path').join(__dirname, '../src/shell.html'), 'utf8');
+  const bloco = (shell.match(/#iv \.iv-arte\{[^}]*\}/) || [''])[0];
+  ok(/mask-image:linear-gradient/.test(bloco) && /mask-composite:intersect/.test(bloco), '§304c: a .iv-arte funde as bordas (máscara de degradê nas 4 bordas) — o retângulo não volta');
+  ok(/aspect-ratio:512\/590/.test(bloco), '§304c: a caixa é travada na proporção do retrato (a máscara casa com a borda real da arte)');
+  ok(/left:31%/.test(bloco) && !/right:0/.test(bloco), '§304c: a figura encosta na coluna (não mais colada na borda direita)');
+  console.log('  figura adjacente à coluna (left:31%) + bordas fundidas (máscara 4 bordas, proporção travada)');
+}
+
 console.log('');
 console.log(falhas === 0 ? '>>> INVOCAÇÃO OK' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);

@@ -63,6 +63,25 @@ caem em placeholder sem 404; o pity mostrado é o do perfil e o teto é o do eco
    a frase nem com `frase` no dado**. A tela de invocação é a única com espaço (~200–220 chars, §304). **Regra registrada:
    frase é conteúdo do DESTAQUE, não do elenco.** (Deixei `destaque.frase` VAZIO — o dono escreve a do Zeus quando quiser.)
 
+**§304c — DOIS CONSERTOS achados pelo dono na tela real.**
+1. **A figura ENCOSTA na coluna (um pôster, não duas ilhas).** Media: o texto da coluna vai até **x=227**; a figura estava
+   ancorada na borda direita, com a borda esquerda em **x≈552** — **~325px de fundo vazio no meio**. Trouxe a figura para
+   **left:31% (x≈242)** — a ~15px do texto (encosta, lê como um bloco). **Pode andar até ~x=240** antes de tocar o texto
+   (limite esquerdo = a frase, a mais larga). **Crescer:** os tetos são **topo y=40** (a topbar) e **base y=269** (a barra de
+   pity) → com o recorte VERTICAL do §289 a figura fica **limitada pela altura em ~262×227** — já perto do máximo; não sobe
+   mais (topo+pity a prendem). **O único lever para "maior como no mockup" é o recorte (item 3), não a posição.**
+2. **A BORDA DURA da imagem — FUNDIR, não emoldurar.** Medido: o retrato é um **retângulo OPACO** (transparência 0% — a borda
+   dura é o próprio retângulo colado). Sem moldura (pioraria): **máscara de degradê nas 4 bordas** — forte embaixo (**30%** da
+   caixa) e nas laterais (**20%**), suave no topo (**8%**, a cabeça fica nítida). Para a máscara casar com a borda REAL da arte,
+   travei a caixa na proporção do retrato (**aspect-ratio 512/590 + cover**) — sem isso o `contain` deixava tarja transparente e
+   a máscara desvaneceria o vazio, não a arte. **O veredito é a captura (§281):** antes/depois lado a lado em
+   `docs/capturas-304/fusao-{780,951}.png` — o retângulo some e o Zeus emerge do fundo.
+3. **CONFIRMAÇÃO do recorte (não troquei — reporte).** O retrato usado é o de detalhe do §289 (**512×590, recorte VERTICAL**,
+   alto e estreito). Aqui a caixa é **baixa e larga** (o palco tem 428 de altura). Resultado: o recorte **ATRAPALHA** — a figura
+   fica limitada pela altura e renderiza pequena (~227 de largura), não enche a caixa nem cresce. **Uma arte PRÓPRIA de banner
+   (quadrada ou mais larga, a original do dono) encaixaria bem melhor:** encheria a caixa horizontalmente e deixaria a figura
+   crescer até os tetos (topo/esquerda). **Recomendo uma arte de banner; não troquei — arte nova é trabalho do dono.**
+
 **Arquivos:** `data/invocacao.json` (novo; `frase` opcional no destaque), `web/banners/invocacao/olimpo.webp` (novo),
 `tools/build.js` (INVOCACAO + INVOC_FUNDO + `frase`), `src/invocacao.js` (tela refeita; epíteto fora; frase do destaque),
 `src/ui/home.js` (cite fora da sobreposição), `src/shell.html` (CSS da tela; `.col2ov__cite` removido),

@@ -807,7 +807,17 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   linear-gradient(90deg,rgba(5,4,12,.9) 0%,rgba(5,4,12,.62) 32%,rgba(5,4,12,0) 62%),
   linear-gradient(0deg,rgba(5,4,12,.92) 0%,rgba(5,4,12,.35) 20%,rgba(5,4,12,0) 42%)}
 /* §304: ARTE do deus em destaque (retrato §289), à direita, altura cheia. Ausente (.iv-arte--ph) → silhueta discreta. */
-#iv .iv-arte{position:absolute;top:38px;right:0;bottom:126px;width:52%;z-index:2;background-position:right bottom;background-size:contain;background-repeat:no-repeat}
+/* §304c: a figura ENCOSTA na coluna (pôster, um bloco só) — não mais colada na borda direita. Caixa travada na
+   proporção do retrato (512/590) p/ cover mostrar a figura INTEIRA e a máscara casar com a borda real da arte. */
+#iv .iv-arte{position:absolute;left:31%;top:40px;height:262px;aspect-ratio:512/590;z-index:2;
+  background-position:center;background-size:cover;background-repeat:no-repeat;
+  /* §304c: FUNDIR a borda dura do retrato (retângulo opaco) no fundo — máscara com degradê nas 4 bordas, FORTE
+     embaixo e nas laterais, SUAVE no topo (a cabeça fica nítida; o corte reto do corpo/fundo é o que incomoda).
+     A caixa está travada na proporção da arte, então a máscara casa com a borda real. intersect = as 4 se somam. */
+  -webkit-mask-image:linear-gradient(to top,transparent 0,#000 30%),linear-gradient(to right,transparent 0,#000 20%),linear-gradient(to left,transparent 0,#000 20%),linear-gradient(to bottom,transparent 0,#000 8%);
+  -webkit-mask-composite:source-in,source-in,source-in;
+  mask-image:linear-gradient(to top,transparent 0,#000 30%),linear-gradient(to right,transparent 0,#000 20%),linear-gradient(to left,transparent 0,#000 20%),linear-gradient(to bottom,transparent 0,#000 8%);
+  mask-composite:intersect}
 #iv .iv-arte--ph{background-image:radial-gradient(45% 55% at 60% 45%,rgba(120,110,170,.18),transparent 70%)}
 /* ---- §304 topbar: ‹ + título à esquerda; duas moedas + DEV à direita (mockup) ---- */
 #iv .iv-topbar{position:absolute;top:0;left:0;right:0;height:40px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:7px 14px}
