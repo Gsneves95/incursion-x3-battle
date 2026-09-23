@@ -6,6 +6,49 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §307 — o MAPA DE FOLGA das telas (a medição enxerga o que já existe): TRANSBORDO ≠ FOLGA.
+
+Nasceu do achado do §306 (uma tela nova cortou uma antiga a 0 de folga). Varri as guardas de encaixe e medi, por tela,
+a MENOR folga do pior caso — não com `scrollHeight` (que só diz "estourou?") mas com o **tamanho NATURAL** (clone solto).
+Lista completa e justificativa dos pisos em **`docs/folga-telas.md`**. **Nenhum texto e nenhuma decisão de reticência
+foram tocados — isto é só sobre a medição enxergar.**
+
+**A DISTINÇÃO, com todas as letras (a lição que o §292 ensinou e o §304b repetiu):** uma guarda de **TRANSBORDO**
+(`scrollHeight`/`scrollWidth`/`clip`) é **cega DUAS vezes** — (1) ao que sobra, porque `scrollHeight` trava no
+`clientHeight` quando cabe, então `clientHeight − scrollHeight` é SEMPRE ≤ 0 (não existe folga positiva por essa conta);
+(2) ao que já foi cortado, porque **reticência e `line-clamp` têm `overflow:hidden` — o texto some sem transbordar**.
+Só medir o tamanho NATURAL (clonar solto, `height/width:auto`, sem `max-height`/`line-clamp`) responde as duas:
+`folga = disponível − natural`.
+
+**O MAPA (pior caso, piso 780, px de design), da menor folga para a maior:**
+1. **Domínios** — "Amaterasu" **−33px** (reticência corta em silêncio) — não tinha guarda.
+2. **Campanha** — nó "A Incursão" **−10px** (`line-clamp` corta ~1 linha em silêncio) — não tinha guarda.
+3. **Batalha** — faixa **+1px** vertical (fixa nas bordas, design) / **+7px** horizontal (nowrap, não era medido).
+4. **Invocação** — arte→barra de pity **+1px** (a máscara §304c dissolve; a folga real ali é o CONTRASTE, §304e).
+5. **Coleção grade** — "Mula sem Cabeça" **+5px** (reticência, na iminência) — não tinha guarda.
+6. **Coleção sobreposição** — babi.milagre **+20px** (era −18 antes do §306) — guarda de transbordo.
+7. **Mapa** — Campanha↔Provações **+37px** — já positiva (§306).
+
+**DOIS CORTES SILENCIOSOS descobertos:** "Amaterasu" (−33px nos Domínios) e "A Incursão" (−10px no nó). A reticência e
+o clamp são decisões tomadas (§277) e FICAM; o §307 só passa a MEDIR quanto some e a quebrar se piorar.
+
+**CONVERTIDAS de transbordo para FOLGA POSITIVA (medem px, quebram abaixo de um piso):**
+- **Coleção sobreposição (`colecao_encaixe`)** — piso **8px**. Pior hoje +20; 8 ≈ meia linha, avisa antes do corte
+  (o §306 comeu ~18px de uma vez; com piso 8 uma repetição quebra com +2 ainda inteiro). Também corrigi a medição do
+  §304b (imprimia "~0px" pela conta errada; a folga real é ~+20 e mesmo assim não comporta a cite de 2–3 linhas ≈50px).
+- **Batalha faixa (`batalha_faixa`)** — a faixa é vertically edge-pinned (0 por design → o `clip` de transbordo fica),
+  mas a linha NOWRAP cresce na HORIZONTAL e isso NÃO era medido: adicionei a folga horizontal, piso **4px** (pior +7 a 6ef).
+
+**GUARDA NOVA para os três que não tinham (`folga.test.js`):** teto de CORTE tolerado (mede o que some, não proíbe o
+corte) — Domínios **45px** (hoje 33), Campanha **18px** (hoje 10), Coleção grade **12px** (hoje 0). Quebra se piorar.
+
+**Pisos/tetos — a regra:** passam hoje com margem, ficam acima do ruído de fonte (±1–2px) e quebram ANTES de virar
+defeito visível. Detalhe por tela em `docs/folga-telas.md`.
+
+**Invocação e Mapa** já têm guarda positiva (contraste §304e; espaçamento §306) — nada a converter.
+
+---
+
 ## §306 — a HOME É o MAPA (construído): caixa travada, ícones em % da arte, 5 contadores vivos, 2 "em breve".
 
 Os assets chegaram (o dono commitou `web/banners/mapa.webp` 1524×856 e os 9 ícones `web/mapa/<chave>.webp` 192², com alpha).

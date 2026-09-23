@@ -32,6 +32,11 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
 const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
 // as duas ESCALAS: 780×640 → escala 1.0 (piso) · 951×640 → escala ~1.22 (folga), mesmo design 780×428
 const ESCALAS = [{ nome: 'piso 780', w: 780, h: 640 }, { nome: 'folga 951', w: 951, h: 640 }];
+// §307 — a faixa é VERTICALMENTE fixada nas bordas do board (banda cheia: 0 de folga por design → o `clip` segue
+// sendo guarda de transbordo, é o que cabe). Mas a linha de chips é NOWRAP e cresce na HORIZONTAL com mais efeitos,
+// e isso NÃO era medido (o scan de clip só via topo/base). §307 mede a FOLGA horizontal (borda de chip → borda do
+// board) e quebra abaixo do piso — a folga POSITIVA que o transbordo vertical não enxerga. Hoje: +7px a 6 efeitos.
+const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto de stress; o real §266 é 4)
 
 (async () => {
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
@@ -70,25 +75,33 @@ const ESCALAS = [{ nome: 'piso 780', w: 780, h: 640 }, { nome: 'folga 951', w: 9
         const fe = b.querySelector('.fxstrip--enemy'), po = b.querySelector('.brow__enemy .portrait');
         if (fe && po && fe.children.length) acimaFoe = acimaFoe && (R(fe).bottom <= R(po).top + 1);
       });
+      // §307 FOLGA horizontal: menor distância da linha de chips às bordas L/R do board (positiva = sobra).
+      let folgaH = 1e9;
+      document.querySelectorAll('.fxstrip').forEach(fx => { const cs = [...fx.querySelectorAll('.effect,.fxmore')]; if (!cs.length) return;
+        const rs = cs.map(R); const left = Math.min(...rs.map(r => r.left)), right = Math.max(...rs.map(r => r.right));
+        folgaH = Math.min(folgaH, (board.right - right) / e, (left - board.left) / e); });
+      folgaH = folgaH === 1e9 ? null : +folgaH.toFixed(1);
       const chips = document.querySelectorAll('.fxstrip .effect').length;
       const fxmore = document.querySelectorAll('.fxmore').length;
       // chips numéricos: quantos deveriam ter magnitude vs quantos têm .effect__v
       const magChips = document.querySelectorAll('.fxstrip .effect--mag').length;
       const magVals = document.querySelectorAll('.fxstrip .effect--mag .effect__v').length;
       const skill = R(document.querySelector('.skill'));
-      return { clip: +clip.toFixed(2), acimaAlly, acimaFoe, chips, fxmore, magChips, magVals,
+      return { clip: +clip.toFixed(2), acimaAlly, acimaFoe, chips, fxmore, magChips, magVals, folgaH,
         skillW: Math.round(skill.width / e), skillH: Math.round(skill.height / e) };
     });
 
     for (let nef = 0; nef <= 6; nef++) {
       await entrar(nef); await page.waitForTimeout(60);
       const m = await medir();
-      ok(m.clip === 0, `${E.nome} ${nef}ef: NADA corta (clip ${m.clip}px)`);
+      ok(m.clip === 0, `${E.nome} ${nef}ef: NADA corta na vertical (clip ${m.clip}px)`);
+      if (nef > 0) ok(m.folgaH != null && m.folgaH >= PISO_FAIXA_H, `${E.nome} ${nef}ef: §307 folga HORIZONTAL da faixa ${m.folgaH}px deve ser ≥ ${PISO_FAIXA_H}px (chips → borda do board)`);
       ok(m.fxmore === 0, `${E.nome} ${nef}ef: nenhum "+N" (colapso removido; fxmore ${m.fxmore})`);
       ok(m.acimaAlly && m.acimaFoe, `${E.nome} ${nef}ef: a faixa fica ACIMA das fichas/retrato (ally ${m.acimaAlly}, foe ${m.acimaFoe})`);
       ok(m.magChips === m.magVals && m.magVals >= 0, `${E.nome} ${nef}ef: todo chip de magnitude MOSTRA o número (${m.magVals}/${m.magChips})`);
       if (nef > 0) ok(m.chips >= 6, `${E.nome} ${nef}ef: os efeitos aparecem (chips ${m.chips}, ${nef}/unidade × 6 vivos)`);
       ok(m.skillW === 90 && m.skillH === 90, `${E.nome} ${nef}ef: a FICHA continua 90×90 (veio ${m.skillW}×${m.skillH})`);
+      if (nef === 6) console.log(`  ${E.nome}: §307 no pior empilhamento (6ef) a folga HORIZONTAL da faixa é ${m.folgaH}px (piso ${PISO_FAIXA_H}); vertical fixada nas bordas (clip ${m.clip})`);
     }
 
     // §239 RESPIRO: a moldura une retrato+fichas e o retrato POP acima da borda de cima da placa (repouso)

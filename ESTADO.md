@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ FOLGA §307 — o mapa de folga das telas (a medição enxerga o que já existe): TRANSBORDO ≠ FOLGA.
+
+Do achado do §306: varri as guardas de encaixe e medi a MENOR folga do pior caso por tela — com **tamanho NATURAL**
+(clone solto), não `scrollHeight`. **A distinção registrada:** guarda de TRANSBORDO é cega DUAS vezes — ao que sobra
+(`clientHeight−scrollHeight` é sempre ≤0) e ao que já foi cortado (reticência/clamp têm `overflow:hidden`, somem sem
+transbordar). Só o tamanho natural responde as duas. **Mapa (menor→maior folga, piso 780, px design):** Domínios
+"Amaterasu" **−33** · Campanha "A Incursão" **−10** · Batalha faixa **+1** vert / **+7** horiz · Invocação arte→barra
+**+1** · Coleção grade "Mula sem Cabeça" **+5** · Coleção sobreposição babi **+20** · Mapa **+37**. **Dois cortes
+silenciosos descobertos** (Amaterasu −33, A Incursão −10) — reticência/clamp ficam (§277), só passam a ser MEDIDOS.
+**Convertidas p/ folga positiva:** Coleção sobreposição (`colecao_encaixe`, piso **8px**; + corrigi a medição §304b que
+usava clientHeight−scrollHeight) e Batalha faixa (`batalha_faixa`, folga HORIZONTAL, piso **4px**; a vertical é fixa nas
+bordas por design → `clip` fica). **Guarda nova** (`folga.test.js`): teto de corte Domínios **45** · Campanha **18** ·
+grade **12** (mede o que some, quebra se piorar). Invocação (contraste §304e) e Mapa (§306) já eram positivas. Nenhum
+texto/decisão de reticência tocado. Detalhe e justificativa dos pisos em **`docs/folga-telas.md`**. **Arquivos:**
+`tests/colecao_encaixe.test.js`, `tests/batalha_faixa.test.js`, `tests/folga.test.js` (novo), `package.json`,
+`DECISOES.md`, `docs/folga-telas.md`. Ver DECISOES §307. Suíte + build verdes.
+
 ## ★ MAPA §306 — a HOME É o MAPA (CONSTRUÍDO): caixa travada, ícones em % da arte, 5 contadores, 2 "em breve".
 
 Os assets chegaram e o mapa do §305/§305b está no ar. **O carrossel saiu** (vira fallback: sem `MAPA_ARTE`, `renderHome` cai no
