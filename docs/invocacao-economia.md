@@ -69,3 +69,10 @@ escolha (d) reabre e muda a cauda de (c) — decidir então, com número.
 16–90. O pity de 60 já protege a cauda dos 5% cedo (16,6% chegam nele). Se o alvo é alongar a jornada, o lugar é a
 **renda** (construir a rotação gratuita pendente), não o teto do pity — subir o teto pune o azarado sem tocar no
 jogador mediano. Reavaliar quando houver dado de invocação real e a renda recorrente estiver completa.
+
+## Decisão (dono, §302)
+
+**O pity FICA em 60 — recomendação aceita inteira.** Dois achados registrados em DECISOES/ESTADO §302: (1) a torneira de
+gema está quase fechada e o **treino contra a máquina é a maior fonte de gema** (700/sem vs 150) — achado de desenho, não
+se conserta; (2) a sensação de "fácil demais" provavelmente é a **rotação gratuita** que nunca foi construída, não o pity —
+o pity só volta à mesa depois de a rotação existir e de haver dado real de invocação.

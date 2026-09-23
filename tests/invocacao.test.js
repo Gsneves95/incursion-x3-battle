@@ -138,6 +138,22 @@ console.log('== 8. §302 UMA invocação: um pity, uma moeda, um histórico; ini
   console.log('  um pity/uma moeda/um histórico · sem "padrao" · iniciante é oferta única no mesmo contador');
 }
 
+console.log('== 9. §302 TRAVA: o pity CONTINUA quando o destaque troca — nunca zera (contra §20) ==');
+{
+  // Decisão do dono (§302): o pity é UM contador único, agnóstico de qual deus está em evidência. Trocar o
+  // destaque (ou re-entrar na tela) NÃO pode zerá-lo — seria um reset que o jogador não causou nem vê. Uma
+  // "troca de destaque" é, na prática, um re-render/re-montar da tela lendo o MESMO perfil.invocacao.desdeUltimoSS.
+  // Babá: se uma sessão futura "consertar" achando que cada banner tem contador próprio (zerar ao montar, ou
+  // ler um pity keyed por deus), o pity remontado deixa de bater com o do perfil e este teste QUEBRA.
+  w.eval('perfil.invocacao.desdeUltimoSS = 37; if(typeof salvar==="function") salvar(perfil);');
+  w.eval('INV.montar()');   // re-monta a tela (equivale a re-entrar com outro destaque)
+  ok(/37\/60/.test($('#iv-pity').textContent), `o pity remontado continua 37/60 (veio "${($('#iv-pity').textContent||'').trim().replace(/\s+/g,' ')}") — não zerou`);
+  ok(w.eval('perfil.invocacao.desdeUltimoSS') === 37, 'o contador do perfil segue 37 após remontar (a tela lê, não reseta)');
+  // e não há contador de pity keyed por deus/banner no perfil — só o único desdeUltimoSS
+  ok(w.eval('JSON.stringify(Object.keys(perfil.invocacao).sort())') === '["desdeUltimoSS","total"]', 'segue UM só contador (nenhum pity por deus/banner brotou)');
+  console.log('  pity continua ao remontar/trocar destaque (37/60), lido do contador único — nunca reseta');
+}
+
 console.log('');
 console.log(falhas === 0 ? '>>> INVOCAÇÃO OK' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);

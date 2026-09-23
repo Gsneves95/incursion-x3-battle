@@ -31,8 +31,28 @@ coincidem** (§20: todo SS do destaque é o destacado — não há SS não-desta
 não-destacado. **Recomendação:** não subir agora — a economia de gema é fina; alongar a jornada é trabalho de RENDA (rotação
 gratuita pendente), não de teto de pity, que pune o azarado sem tocar no mediano. Reavaliar com dado real de invocação.
 
+**DECISÃO (dono): o pity FICA em 60.** A medição inverteu a premissa — 60 não é fácil, é CARO (54 semanas p/ o casual, 9,5
+p/ o ativo no teto do treino): não é jornada curta a alongar, é jornada de um ano. E subir p/ 100 puniria só quem teve azar
+(quem já tem SS não sente; os 4,9% que passam 99 sem nenhum são exatamente quem precisa da rede). Recomendação aceita inteira.
+
+**DOIS ACHADOS registrados (valem mais que a decisão):**
+- **(1) A torneira de gema está quase fechada.** Só o Desafio da Semana (150) e o Treino/Sandbox (20/vitória, teto 5/dia)
+  pagam gema de forma recorrente. Campanha paga 1.000 UMA vez. Domínios, Provações, Missões e Desafios **não pagam gema
+  nenhuma — pagam Essência.** E o mais eloquente: **o TREINO CONTRA A MÁQUINA é a maior fonte de gema do jogo** (700/semana
+  contra 150 de todo o resto). O modo que existe para testar formação virou a economia. **Achado de DESENHO — não consertar:**
+  é decisão de economia com medição, do dono. Fica registrado para não ser "corrigido" por engano.
+- **(2) A causa da sensação de "fácil demais" provavelmente NÃO é o pity — é a ROTAÇÃO GRATUITA** (8 deuses emprestados/semana),
+  que está em `economia.json._pendencias.rotacaoGratuita` e nunca foi construída. Ela é o que deixaria o jogador CONHECER o
+  elenco sem invocar; sem ela, invocar é o único caminho e cada gema pesa demais. **Vínculo registrado: o pity só volta à mesa
+  depois de a rotação existir E de haver dado real de invocação.**
+
+**INVARIANTE TRAVADO (§20): o pity CONTINUA quando o destaque troca — NUNCA zera.** É um contador único, agnóstico de qual deus
+está em evidência; zerar na troca seria um reset que o jogador não causou nem vê. Guarda em `tests/invocacao.test.js` seção 9:
+remontar a tela (equivale a trocar o destaque) lendo `perfil.invocacao.desdeUltimoSS` mantém o pity (37/60), não o reseta, e
+nenhum contador keyed por deus/banner brota. Nenhuma sessão futura deve "consertar" isso achando que cada banner tem pity próprio.
+
 **Arquivos:** `src/invocacao.js` (unificação), `src/shell.html` (abas fora, oferta inline), `tests/invocacao.test.js` (guarda
-§302), `docs/invocacao-economia.md` (medição). Ver ESTADO §302. Suíte + build verdes.
+§302 seções 8–9), `docs/invocacao-economia.md` (medição). Ver ESTADO §302. Suíte + build verdes.
 
 ---
 

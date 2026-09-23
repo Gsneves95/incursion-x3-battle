@@ -21,9 +21,24 @@ e hoje `FEAT_SS` nem rotaciona em runtime).
   destacado); só reabre com SS não-destacado no pool. **Recomendo não subir agora** — economia fina; alongar é trabalho de RENDA
   (rotação gratuita pendente), não de teto de pity.
 
-**GUARDA:** `tests/invocacao.test.js` seção 8 (§302): sem abas/`setBanner`, um pity/uma moeda/um histórico, sem "padrao",
-iniciante é oferta única no mesmo contador. **Arquivos:** `src/invocacao.js`, `src/shell.html`, `tests/invocacao.test.js`,
-`docs/invocacao-economia.md`. Ver DECISOES §302. Suíte + build verdes.
+**DECISÃO (dono): o pity FICA em 60** (não sobe). A medição inverteu a premissa: 60 é CARO (54 sem casual / 9,5 ativo), não
+fácil; subir p/ 100 puniria só o azarado (os 4,9% que passam 99 sem SS são quem precisa da rede). Recomendação aceita inteira.
+
+**DOIS ACHADOS registrados (valem mais que a decisão):**
+- **(1) A torneira de gema está quase fechada** e **o TREINO CONTRA A MÁQUINA é a maior fonte de gema** (700/sem vs 150 de todo
+  o resto). Só Semanal (150) e Sandbox (≤700) recorrem; Domínios/Provações/Missões/Desafios pagam Essência, não gema; Campanha
+  1.000 só na 1ª vez. **Achado de DESENHO — não consertar** (decisão de economia com medição, do dono).
+- **(2) A sensação de "fácil demais" provavelmente NÃO é o pity — é a ROTAÇÃO GRATUITA** (8 deuses/semana) em `_pendencias`,
+  nunca construída. Sem ela, invocar é o único caminho e cada gema pesa demais. **Vínculo: o pity só volta à mesa depois de a
+  rotação existir E de haver dado real de invocação.**
+
+**INVARIANTE TRAVADO (§20):** o pity **CONTINUA quando o destaque troca — nunca zera** (contador único, agnóstico do deus;
+zerar seria reset invisível). Guarda `tests/invocacao.test.js` seção 9: remontar a tela mantém 37/60, não reseta, e nenhum
+pity por deus/banner brota. Nenhuma sessão futura deve "consertar" para pity-por-banner.
+
+**GUARDA:** `tests/invocacao.test.js` seções 8–9 (§302): sem abas/`setBanner`, um pity/uma moeda/um histórico, sem "padrao",
+iniciante é oferta única no mesmo contador, pity continua ao remontar. **Arquivos:** `src/invocacao.js`, `src/shell.html`,
+`tests/invocacao.test.js`, `docs/invocacao-economia.md`. Ver DECISOES §302. Suíte + build verdes.
 
 ## ★ SELOS §301 — a arte vira MOLDURA, a letra fica POR CIMA (composição). Terreno + medição (arte chega depois).
 
