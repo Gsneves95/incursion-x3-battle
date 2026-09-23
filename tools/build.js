@@ -436,6 +436,15 @@ const invocFundo = (() => {
   if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) { const m = /^(.+)\.webp$/.exec(f); if (m) mapa[m[1]] = 1; }
   return mapa;
 })();
+// §304d: ARTE do deus em destaque por ARQUIVO derivado da CHAVE — web/invocacao/<deus>.webp (recortado da original do
+// dono para ESTA caixa, baixa e larga ~1,15). Sem campo novo (como retratos/skills). A build ANOTA quais existem; a tela
+// usa o banner se houver, senão o RETRATO §289, senão placeholder — NUNCA 404, NUNCA base64, o incursion.html não cresce.
+const invocArte = (() => {
+  const dir = path.join(raiz, 'web', 'invocacao');
+  const mapa = {};
+  if (fs.existsSync(dir)) for (const d of deuses) if (d.key && fs.existsSync(path.join(dir, d.key + '.webp'))) mapa[d.key] = 1;
+  return mapa;
+})();
 
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
@@ -450,7 +459,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

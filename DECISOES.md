@@ -82,8 +82,24 @@ caem em placeholder sem 404; o pity mostrado é o do perfil e o teto é o do eco
    (quadrada ou mais larga, a original do dono) encaixaria bem melhor:** encheria a caixa horizontalmente e deixaria a figura
    crescer até os tetos (topo/esquerda). **Recomendo uma arte de banner; não troquei — arte nova é trabalho do dono.**
 
+**§304d — a ARTE DE BANNER do destaque chegou (resposta ao item 3 do §304c).** O dono commitou `web/invocacao/zeus.webp`
+(700×608, ~1,15, recortada da original p/ ESTA caixa: Zeus da cabeça ao cinturão, capa, raios, colunas). 
+1. **Fonte em CASCATA, nome derivado da chave (sem campo novo, como retratos/skills):** a arte do destaque vem de
+   `web/invocacao/<deus>.webp` (manifesto `INVOC_ARTE` na build) → senão o **retrato §289** (reserva) → senão placeholder.
+   **Nunca 404, nunca base64** (arquivo externo copiado p/ dist; o `incursion.html` não cresce — dist 2,35 MB). Banner novo troca
+   deus/fundo/arte sem tocar código.
+2. **A figura CRESCEU.** Antes (retrato vertical) ~**227×262**, presa pela altura e cortada no meio. Agora (proporção certa,
+   `.iv-arte--banner` → aspect-ratio 700/608 + cover) **302×262** (**+33% de largura**), Zeus inteiro cabeça-ao-cinturão. Posição
+   final: `left:31%` (x=242), **encoste de ~15px** na coluna (texto até x=227) — segue bom com a figura maior. Tetos: topo y=41
+   (topbar), base y=269 (pity) — a figura vai de 41 a 303 (o rodapé entra ~34px na faixa da pity, mas é cinturão/pedra já
+   desvanecido pela máscara). É o máximo útil: subir mais bate na topbar, descer mais na pity.
+3. **A MÁSCARA de fusão (§304c) segue fundindo.** A caixa é travada na proporção da arte (700/608), então a máscara casa com a
+   borda real; o rodapé (30%) agora dissolve **cinturão + pedra** (antes era corte de corpo) — fundido, sem linha dura. O
+   veredito é a captura (§281): antes(retrato)/depois(banner) em `docs/capturas-304/banner-{780,951}.png`.
+
 **Arquivos:** `data/invocacao.json` (novo; `frase` opcional no destaque), `web/banners/invocacao/olimpo.webp` (novo),
-`tools/build.js` (INVOCACAO + INVOC_FUNDO + `frase`), `src/invocacao.js` (tela refeita; epíteto fora; frase do destaque),
+`web/invocacao/zeus.webp` (novo, §304d),
+`tools/build.js` (INVOCACAO + INVOC_FUNDO + INVOC_ARTE + `frase`), `src/invocacao.js` (tela refeita; epíteto fora; frase do destaque; arte em cascata),
 `src/ui/home.js` (cite fora da sobreposição), `src/shell.html` (CSS da tela; `.col2ov__cite` removido),
 `tests/invocacao.test.js` (seção 12), `tests/colecao_tela.test.js` + `tests/colecao_encaixe.test.js` (§292→§304b),
 `tests/aquisicao.test.js` (odds na auditoria), `docs/capturas-304/`. Ver ESTADO §304. Suíte + build verdes.

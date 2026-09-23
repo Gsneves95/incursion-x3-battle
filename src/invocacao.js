@@ -366,11 +366,13 @@ const INV = (function () {
     const tem = nome && (typeof INVOC_FUNDO !== 'undefined') && INVOC_FUNDO[nome];
     return tem ? 'banners/invocacao/' + nome + '.webp' : '';
   }
-  // §304: ARTE do deus em destaque = o RETRATO §289 (web/retratos/<deus>.webp), recomendado (vertical 512×590, o Zeus do
-  // jogo). Presente no manifesto RETRATO_ARTE → externo; ausente → '' (silhueta placeholder CSS, sem 404).
-  function arteDestaqueURL() {
-    const tem = (typeof RETRATO_ARTE !== 'undefined') && RETRATO_ARTE[FEAT_SS];
-    return tem ? 'retratos/' + FEAT_SS + '.webp' : '';
+  // §304d: ARTE do deus em destaque, em cascata (nome derivado da CHAVE, sem campo novo): 1) a arte de BANNER
+  // web/invocacao/<deus>.webp (recortada p/ ESTA caixa, ~1,15) se existir; 2) senão o RETRATO §289 (reserva); 3) senão
+  // '' → silhueta placeholder CSS. NUNCA 404, NUNCA base64. Devolve {url, banner} (banner decide a proporção da caixa).
+  function arteDestaque() {
+    if ((typeof INVOC_ARTE !== 'undefined') && INVOC_ARTE[FEAT_SS]) return { url: 'invocacao/' + FEAT_SS + '.webp', banner: true };
+    if ((typeof RETRATO_ARTE !== 'undefined') && RETRATO_ARTE[FEAT_SS]) return { url: 'retratos/' + FEAT_SS + '.webp', banner: false };
+    return { url: '', banner: false };
   }
   // §304: o SELO grande é a ARTE do §303 (seal-<rar>.webp) — o destaque é SS. Ausente → medalhão-letra CSS, sem 404.
   function seloHeroHTML() {
@@ -392,8 +394,12 @@ const INV = (function () {
     // §304: FUNDO e ARTE do destaque vêm do DADO (com placeholder). O deus em destaque é INVOCACAO.destaque.deus (§20).
     const fu = fundoURL(); const fundoEl = document.getElementById('iv-fundo');
     if (fundoEl) { fundoEl.style.backgroundImage = fu ? `url(${fu})` : ''; fundoEl.classList.toggle('iv-fundo--ph', !fu); }
-    const ar = arteDestaqueURL(); const arteEl = document.getElementById('iv-arte');
-    if (arteEl) { arteEl.style.backgroundImage = ar ? `url(${ar})` : ''; arteEl.classList.toggle('iv-arte--ph', !ar); }
+    const ar = arteDestaque(); const arteEl = document.getElementById('iv-arte');
+    if (arteEl) {
+      arteEl.style.backgroundImage = ar.url ? `url(${ar.url})` : '';
+      arteEl.classList.toggle('iv-arte--ph', !ar.url);
+      arteEl.classList.toggle('iv-arte--banner', ar.banner);   // §304d: proporção larga (700/608) p/ a arte de banner; sem = retrato (512/590)
+    }
 
     // COLUNA HERÓI (esquerda): RATE-UP, nome (Cinzel), selo grande (§303), frase (SOME se não houver), VER DETALHES.
     // §304b: o EPÍTETO (arquetipo) SAIU desta tela — é legenda MECÂNICA (boa na Coleção, ruim numa tela de cerimônia).

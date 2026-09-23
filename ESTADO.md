@@ -29,6 +29,12 @@ coluna). (2) **a FRASE fica liberada, mas por DESTAQUE** (`INVOCACAO.destaque.fr
 citação **saiu da sobreposição da Coleção** (sem orçamento — medido; a Coleção não mostra frase nem com `frase` no dado);
 só a invocação a comporta. Regra: **frase é conteúdo do destaque, não do elenco.** `destaque.frase` fica VAZIO (o dono escreve).
 
+**§304d — arte de banner do destaque chegou** (`web/invocacao/zeus.webp`, 700×608 ~1,15). Fonte em CASCATA por chave (sem
+campo novo): `web/invocacao/<deus>.webp` → retrato §289 (reserva) → placeholder; manifesto `INVOC_ARTE`, nunca 404/base64. A
+figura cresceu de ~227×262 (retrato vertical, cortado) p/ **302×262** (+33% largura, Zeus cabeça-ao-cinturão), `.iv-arte--banner`
+alarga a caixa (aspect 700/608 + cover). Posição `left:31%` (encoste ~15px na coluna), tetos topo y41 / pity y269 — no máximo útil.
+A máscara §304c segue fundindo (rodapé dissolve cinturão+pedra). Antes/depois em `docs/capturas-304/banner-*.png`.
+
 **§304c (2 consertos, tela real):** (1) **a figura ENCOSTA na coluna** — estava na borda direita com ~325px de vazio no meio
 (texto até x227, figura em x552); agora left:31% (x~242), ~15px do texto, lê como pôster. Crescer é limitado: tetos topo y40
 (topbar) + base y269 (pity) prendem a figura em ~262×227 com o recorte vertical do §289. (2) **borda dura FUNDIDA** — o retrato

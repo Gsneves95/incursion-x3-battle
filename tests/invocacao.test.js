@@ -220,10 +220,14 @@ console.log('== 12. §304 tela pelo mockup: preço do DADO, frase some, fundo/ar
   ok(w.eval('!!(INVOC_FUNDO && INVOC_FUNDO[INVOCACAO.destaque.fundo])') ? /banners\/invocacao\//.test(fundoBg) : $('#iv-fundo').classList.contains('iv-fundo--ph'),
     'o fundo vem do dado (arquivo externo presente) OU cai no placeholder sem 404');
   ok(w.eval('typeof INVOCACAO!=="undefined" && !!INVOCACAO.destaque.deus'), 'o deus em destaque é DADO (INVOCACAO.destaque.deus)');
-  // arte do destaque = retrato §289 do deus, externo; ausente → placeholder
+  // §304d: arte do destaque em CASCATA (nome derivado da chave, sem campo novo): banner web/invocacao/<deus>.webp →
+  // retrato §289 (reserva) → placeholder. Nunca 404, nunca base64.
   const arteBg = $('#iv-arte').style.backgroundImage;
-  ok(w.eval('!!(RETRATO_ARTE && RETRATO_ARTE[INVOCACAO.destaque.deus])') ? /retratos\//.test(arteBg) : $('#iv-arte').classList.contains('iv-arte--ph'),
-    'a arte do destaque vem do retrato §289 (externo) OU cai no placeholder sem 404');
+  const temBanner = w.eval('!!(INVOC_ARTE && INVOC_ARTE[INVOCACAO.destaque.deus])');
+  const temRetrato = w.eval('!!(RETRATO_ARTE && RETRATO_ARTE[INVOCACAO.destaque.deus])');
+  ok(temBanner ? /invocacao\//.test(arteBg) : (temRetrato ? /retratos\//.test(arteBg) : $('#iv-arte').classList.contains('iv-arte--ph')),
+    '§304d: arte do destaque em cascata — banner → retrato §289 → placeholder (sem 404)');
+  ok(!temBanner || $('#iv-arte').classList.contains('iv-arte--banner'), '§304d: com arte de banner, a caixa alarga (proporção da arte, não do retrato)');
   // (5) o pity MOSTRADO é o do perfil; o TETO é o do economia
   w.eval('perfil.invocacao.desdeUltimoSS=13; INV.montar();');
   const teto = String(w.eval('ECONOMIA.invocacao.pity.duro'));
