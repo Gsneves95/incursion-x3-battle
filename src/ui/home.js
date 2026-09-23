@@ -1093,9 +1093,9 @@ function colOverlayCardHTML(k){
   const posse = tem
     ? `<span class="col2ov__posse col2ov__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
     : `<span class="col2ov__posse col2ov__posse--nao">Não possuído</span>`;
-  // §288: a CITAÇÃO é conteúdo do dono (uma frase por deus em `g.frase`, data/deuses), NÃO inventada. Reservada
-  // como o painel de mecânica do §252: sem frase, o espaço SOME (nada renderiza). Hoje nenhum deus tem `frase`.
-  const cite = g.frase ? `<p class="col2ov__cite">“${H(g.frase)}”</p>` : '';
+  // §304b (§283 supera o §288): a CITAÇÃO NÃO mora mais na sobreposição da Coleção. A frase virou conteúdo do
+  // DESTAQUE (data/invocacao.json → só a tela de invocação), porque a sobreposição NÃO tem orçamento para ela
+  // (§292: uma cite corta a caixa de efeito). Aqui a linha não existe — nem com `frase` no dado, a Coleção a mostra.
   return `<div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
       <div class="col2ov__retrato">
         ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
@@ -1119,7 +1119,6 @@ function colOverlayCardHTML(k){
           <button class="col2ov__modo${colVerModo === 'sinergia' ? ' is-on' : ''}" data-modo="sinergia">SINERGIA</button>
         </div>
         <div class="col2ov__corpo" id="col2ovcorpo">${colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g)}</div>
-        ${cite}
       </div>
     </div>`;
 }

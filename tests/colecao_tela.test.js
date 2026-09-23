@@ -173,11 +173,12 @@ console.log('\n== 7c. §288: caixa lê data/deuses (fonte única); citação som
   w.eval("GODS.zeus.ab.find(a=>a.slot==='basico').desc='SENTINELA288 zzz'; colAbrirVer('zeus');");
   ok(/SENTINELA288/.test($('#col2ovdet').textContent), 'mudar o data/deuses muda a caixa de detalhe (fonte única)');
   w.eval(`GODS.zeus.ab.find(a=>a.slot==='basico').desc=${JSON.stringify(orig)}; colFecharVer();`);
-  // CITAÇÃO reservada (§252): sem frase (nenhum deus tem `frase` hoje) o espaço some; com frase, aparece
+  // §304b (§283 supera o §288): a CITAÇÃO saiu da sobreposição da Coleção — a frase virou conteúdo do DESTAQUE
+  // (só a tela de invocação a mostra; a sobreposição não tem orçamento, §292). Nem com `frase` no dado a Coleção a exibe.
   w.eval("colAbrirVer('zeus');");
-  ok(!$('#col2ov .col2ov__cite'), 'sem frase, a citação NÃO aparece (espaço reservado, some — como o painel de mecânica do §252)');
+  ok(!$('#col2ov .col2ov__cite'), 'a sobreposição da Coleção NÃO tem citação (frase é do destaque, não do elenco)');
   w.eval("colFecharVer(); GODS.zeus.frase='Do fogo que aquece.'; colAbrirVer('zeus');");
-  ok(!!$('#col2ov .col2ov__cite') && /Do fogo que aquece/.test($('#col2ov .col2ov__cite').textContent), 'com frase (conteúdo do dono em data/deuses), a citação aparece');
+  ok(!$('#col2ov .col2ov__cite'), 'mesmo com frase no dado, a Coleção NÃO renderiza citação (sem orçamento — §292/§304b)');
   w.eval("delete GODS.zeus.frase; colFecharVer(); ir('colecao',{},{substituir:true}); render();");
 }
 

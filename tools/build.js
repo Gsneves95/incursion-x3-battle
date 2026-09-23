@@ -421,7 +421,11 @@ const invocacaoObj = (() => {
   const rar = (JSON.parse(raridades) || {})[d.deus] || null;
   if (rar !== 'SS') { console.error('ERRO §304: destaque.deus "' + d.deus + '" tem raridade ' + rar + ', mas o destaque só destaca SS (§20)'); process.exit(1); }
   if (typeof d.fundo !== 'string' || !d.fundo) { console.error('ERRO §304: destaque.fundo deve ser um basename (string)'); process.exit(1); }
-  return { destaque: { deus: d.deus, fundo: d.fundo } };
+  // §304b: `frase` (opcional) é conteúdo do DESTAQUE, não do elenco — a citação de quem entra em destaque, uma por vez.
+  if (d.frase != null && typeof d.frase !== 'string') { console.error('ERRO §304: destaque.frase, se presente, deve ser string'); process.exit(1); }
+  const out = { destaque: { deus: d.deus, fundo: d.fundo } };
+  if (d.frase) out.destaque.frase = d.frase;
+  return out;
 })();
 // §304 (padrão §276/§298): FUNDOS de invocação por ARQUIVO em web/banners/invocacao/<nome>.webp (trocável por
 // mitologia/deus). A build ANOTA quais existem; a tela só usa o presente, ausente → gradiente placeholder, NUNCA

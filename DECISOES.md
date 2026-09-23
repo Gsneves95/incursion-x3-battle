@@ -49,9 +49,25 @@ do "?" da barra (mesma auditoria de taxas). O contador de sessão (tally) e a li
 frase SOME quando ausente e aparece quando há; arquétipo é o do dado (nada de "Pai dos Deuses"); fundo e arte vêm do dado e
 caem em placeholder sem 404; o pity mostrado é o do perfil e o teto é o do economia. Capturas 780 e 951 em `docs/capturas-304/`.
 
-**Arquivos:** `data/invocacao.json` (novo), `web/banners/invocacao/olimpo.webp` (novo), `tools/build.js` (INVOCACAO + INVOC_FUNDO),
-`src/invocacao.js` (tela refeita), `src/shell.html` (CSS da tela), `tests/invocacao.test.js`, `docs/capturas-304/`. Ver ESTADO
-§304. Suíte + build verdes.
+**§304b — DUAS DECISÕES que encolhem escopo (dono).**
+1. **O EPÍTETO SAI da tela de invocação.** "Nuker de área" é legenda MECÂNICA — boa na Coleção (comparar kits), ruim sob o
+   nome numa tela de cerimônia. Não inventei epíteto nem pedi 100: **tirei a linha** (`.iv-hero__arq` fora do herói). O nome
+   grande + o selo já dizem o que a tela precisa; se um dia houver um campo de epíteto PRÓPRIO, ele volta. **Liberado na coluna:
+   ~26px de design** (a linha 13px ≈ 18px + o gap de 8px). Não desce a figura sozinho: o limite da figura é a **barra de pity**
+   (`bottom:126`), não a coluna herói; descer mais é o trade-off da barra (decisão à parte). A coluna re-centra com mais ar.
+2. **A FRASE fica LIBERADA, mas por DESTAQUE, não pelos 100.** `frase` vira **conteúdo do banner** (`data/invocacao.json` →
+   `INVOCACAO.destaque.frase`), NÃO campo do elenco (§283 **supera o §288**, que a reservava por-deus na sobreposição). Escreve-se
+   a frase de **quem entra em destaque, uma por vez, quando o banner rodar**; ausente → a linha SOME (nunca inventada). **Guarda
+   §292 ajustado:** a citação **saiu da sobreposição da Coleção** (`col2ov__cite` removido do render e do CSS) — medido: a
+   sobreposição continua **sem orçamento** (a caixa de efeito tem ~0 de folga; uma cite cortaria), então a Coleção **não mostra
+   a frase nem com `frase` no dado**. A tela de invocação é a única com espaço (~200–220 chars, §304). **Regra registrada:
+   frase é conteúdo do DESTAQUE, não do elenco.** (Deixei `destaque.frase` VAZIO — o dono escreve a do Zeus quando quiser.)
+
+**Arquivos:** `data/invocacao.json` (novo; `frase` opcional no destaque), `web/banners/invocacao/olimpo.webp` (novo),
+`tools/build.js` (INVOCACAO + INVOC_FUNDO + `frase`), `src/invocacao.js` (tela refeita; epíteto fora; frase do destaque),
+`src/ui/home.js` (cite fora da sobreposição), `src/shell.html` (CSS da tela; `.col2ov__cite` removido),
+`tests/invocacao.test.js` (seção 12), `tests/colecao_tela.test.js` + `tests/colecao_encaixe.test.js` (§292→§304b),
+`tests/aquisicao.test.js` (odds na auditoria), `docs/capturas-304/`. Ver ESTADO §304. Suíte + build verdes.
 
 ---
 

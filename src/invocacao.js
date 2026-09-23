@@ -395,17 +395,17 @@ const INV = (function () {
     const ar = arteDestaqueURL(); const arteEl = document.getElementById('iv-arte');
     if (arteEl) { arteEl.style.backgroundImage = ar ? `url(${ar})` : ''; arteEl.classList.toggle('iv-arte--ph', !ar); }
 
-    // COLUNA HERÓI (esquerda): RATE-UP, nome (Cinzel), arquetipo, selo grande (§303), frase (SOME se não houver — §252/§292),
-    // VER DETALHES → auditoria/taxas. arquetipo e frase vêm do catálogo (GODS), não do código.
-    const gInfo = (typeof GODS !== 'undefined' && GODS[FEAT_SS]) || {};
-    const nome = (byKey[FEAT_SS] && byKey[FEAT_SS].nome) || gInfo.nome || FEAT_SS;
-    const arq = gInfo.arquetipo ? `<div class="iv-hero__arq">${esc(gInfo.arquetipo)}</div>` : '';
-    // §292: `frase` é reservada e VAZIA nos 100; sem frase, a linha SOME (nada renderiza) — nunca inventada.
-    const cite = gInfo.frase ? `<p class="iv-hero__cite">“${esc(gInfo.frase)}”</p>` : '';
+    // COLUNA HERÓI (esquerda): RATE-UP, nome (Cinzel), selo grande (§303), frase (SOME se não houver), VER DETALHES.
+    // §304b: o EPÍTETO (arquetipo) SAIU desta tela — é legenda MECÂNICA (boa na Coleção, ruim numa tela de cerimônia).
+    // O nome grande + o selo já dizem o que a tela precisa. Se um dia houver um campo de epíteto PRÓPRIO, ele volta.
+    const nome = (byKey[FEAT_SS] && byKey[FEAT_SS].nome) || (typeof GODS !== 'undefined' && GODS[FEAT_SS] && GODS[FEAT_SS].nome) || FEAT_SS;
+    // §304b: a FRASE é conteúdo do DESTAQUE (data/invocacao.json → INVOCACAO.destaque.frase), NÃO do elenco (§283 supera o
+    // §288: a frase deixa de ser campo por-deus). Escreve-se a de quem ENTRA em destaque, uma por vez. Sem frase, SOME (§252).
+    const fr = (typeof INVOCACAO !== 'undefined' && INVOCACAO.destaque && INVOCACAO.destaque.frase) || '';
+    const cite = fr ? `<p class="iv-hero__cite">“${esc(fr)}”</p>` : '';
     document.getElementById('iv-hero').innerHTML = `
       <span class="iv-hero__tag">RATE-UP</span>
       <h1 class="iv-hero__nome">${esc(nome)}</h1>
-      ${arq}
       ${seloHeroHTML()}
       ${cite}
       <button class="iv-hero__det" onclick="INV.openAudit()"><span class="iv-hero__lupa">⌕</span> Ver detalhes</button>`;

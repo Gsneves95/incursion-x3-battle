@@ -22,10 +22,18 @@ vem do dado (validado na build: existe e é SS), pool como fallback. Assets: `we
 **§302 intacto:** uma invocação, pity que não zera ao trocar destaque, iniciante como oferta única. "Auditar 1000" mora atrás
 do "Ver detalhes" e do "?". Tally e odds inline saíram da tela principal (a auditoria cobre) — reversível.
 
-**GUARDA:** `tests/invocacao.test.js` seção 12 (preço do dado sem literal; frase some/aparece; arquétipo do dado; fundo/arte do
-dado + placeholder sem 404; pity do perfil, teto do economia). Capturas 780/951 em `docs/capturas-304/`. **Arquivos:**
-`data/invocacao.json`, `web/banners/invocacao/olimpo.webp`, `tools/build.js`, `src/invocacao.js`, `src/shell.html`,
-`tests/invocacao.test.js`, `docs/capturas-304/`. Ver DECISOES §304. Suíte + build verdes.
+**§304b (encolhe escopo):** (1) **o EPÍTETO saiu** da tela de invocação — "Nuker de área" é legenda mecânica, ruim na
+cerimônia; o nome + selo bastam (libera ~26px na coluna; a figura não desce sozinha — o limite dela é a barra de pity, não a
+coluna). (2) **a FRASE fica liberada, mas por DESTAQUE** (`INVOCACAO.destaque.frase`, `data/invocacao.json`), NÃO pelos 100
+(§283 supera o §288): escreve-se a de quem entra em destaque, uma por vez; ausente → some. **Guarda §292 ajustado:** a
+citação **saiu da sobreposição da Coleção** (sem orçamento — medido; a Coleção não mostra frase nem com `frase` no dado);
+só a invocação a comporta. Regra: **frase é conteúdo do destaque, não do elenco.** `destaque.frase` fica VAZIO (o dono escreve).
+
+**GUARDA:** `tests/invocacao.test.js` seção 12 (preço do dado sem literal; frase do destaque some/aparece; SEM epíteto; sem
+"Pai dos Deuses"; fundo/arte do dado + placeholder sem 404; pity do perfil, teto do economia); `colecao_tela`/`colecao_encaixe`
+(§292→§304b: a Coleção não renderiza cite nem com frase); `aquisicao` (odds na auditoria). Capturas 780/951 em `docs/capturas-304/`.
+**Arquivos:** `data/invocacao.json`, `web/banners/invocacao/olimpo.webp`, `tools/build.js`, `src/invocacao.js`, `src/ui/home.js`,
+`src/shell.html`, `tests/invocacao.test.js` + `colecao_tela`/`colecao_encaixe`/`aquisicao`, `docs/capturas-304/`. Ver DECISOES §304. Suíte + build verdes.
 
 ## ★ SELOS §303 — a arte é de MOMENTO, não de LISTA: vai SÓ para a REVELAÇÃO, não para os selos pequenos.
 

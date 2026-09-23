@@ -34,7 +34,7 @@ console.log('== 2. a tela monta a partir do botão Invocar ==');
   ok(w.eval('typeof INV.claimIniciante') === 'function', 'claimIniciante é a porta única da oferta grátis');
   // §304: layout do mockup — o deus em destaque é nome (Cinzel) + arquétipo + selo grande; cartas só na revelação.
   ok(!!$('.iv-hero__nome') && $('.iv-hero__nome').textContent.trim().length > 0, 'o NOME do deus em destaque renderiza (coluna herói)');
-  ok(!!$('.iv-hero__arq'), 'o ARQUÉTIPO do deus renderiza (epíteto do jogo, não "Pai dos Deuses")');
+  ok(!$('.iv-hero__arq'), '§304b: o EPÍTETO (arquétipo) NÃO aparece na tela de cerimônia — o nome + selo bastam');
   ok(!!$('.iv-hero__selo'), 'o SELO grande (§303) renderiza no herói');
   ok(!!$('.iv-oferta'), 'a Bênção do Iniciante aparece como OFERTA única inline (não aba)');
   ok(/\/60/.test($('#iv-pity').textContent), 'o pity de SS (/60) deveria aparecer');
@@ -205,15 +205,16 @@ console.log('== 12. §304 tela pelo mockup: preço do DADO, frase some, fundo/ar
     'os botões leem o custo de ECONOMIA.invocacao.custo (dado), não de um literal');
   ok(!/custo\s*[:=]\s*\d/.test(fonteInv) && !/cost\s*=\s*(150|1350)\b/.test(fonteInv), 'nenhum custo numérico escrito à mão em invocacao.js');
   ok(/10% OFF/.test($('.iv-pb.iv-x10').textContent), 'o selo 10% OFF fica no ×10 (o pacote de dez), não no ×1');
-  // (2) a FRASE some quando não existe (§292: reservada e vazia nos 100) e aparece quando há — nunca inventada.
-  ok(!$('.iv-hero__cite'), 'sem frase no dado, a linha de citação SOME (nada renderiza)');
-  ok(!w.eval('!!(GODS.zeus && GODS.zeus.frase)'), 'o dado NÃO tem frase preenchida (guarda §292 respeitada)');
-  w.eval("GODS[INVOCACAO.destaque.deus].frase='teste'; INV.render();");
-  ok(!!$('.iv-hero__cite'), 'com frase presente, a linha aparece (a tela É casa para a frase)');
-  w.eval("GODS[INVOCACAO.destaque.deus].frase=undefined; INV.render();");
+  // (2) §304b: a FRASE é conteúdo do DESTAQUE (INVOCACAO.destaque.frase), não do elenco. Some quando não há, aparece
+  //     quando o dono escreve a de quem entra em destaque — nunca inventada.
+  ok(!$('.iv-hero__cite'), 'sem frase no destaque, a linha de citação SOME (nada renderiza)');
+  ok(!w.eval('!!(INVOCACAO.destaque && INVOCACAO.destaque.frase)'), 'o destaque NÃO tem frase preenchida (não inventada)');
+  w.eval("INVOCACAO.destaque.frase='O céu obedece.'; INV.render();");
+  ok(!!$('.iv-hero__cite') && /O céu obedece/.test($('.iv-hero__cite').textContent), 'com frase no destaque, a linha aparece (a tela É a casa da frase)');
+  w.eval("INVOCACAO.destaque.frase=undefined; INV.render();");
   ok(!$('.iv-hero__cite'), 'removida a frase, a linha some de novo');
-  // (3) o ARQUÉTIPO é o do dado (GODS), não "Pai dos Deuses"
-  ok($('.iv-hero__arq').textContent.trim() === w.eval('GODS[INVOCACAO.destaque.deus].arquetipo'), 'o epíteto é o arquétipo do dado');
+  // (3) §304b: nada de epíteto/arquétipo nem de "Pai dos Deuses" nesta tela
+  ok(!$('.iv-hero__arq'), 'sem linha de epíteto/arquétipo na tela de invocação (§304b)');
   ok(!/pai dos deuses/i.test($('#iv').textContent), 'nada de "Pai dos Deuses" (rótulo da referência que não existe no jogo)');
   // (4) FUNDO e ARTE vêm do DADO, com placeholder sem 404: presente → url externo; a config é do banner (INVOCACAO)
   const fundoBg = $('#iv-fundo').style.backgroundImage;
