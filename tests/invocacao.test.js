@@ -48,9 +48,12 @@ console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
   const htmlCartas = $('#iv-cards').innerHTML;
   ok(!htmlCartas.includes('★'), 'nenhuma estrela (★) deveria aparecer na carta');
   ok($$('#iv-cards [class*="star"], #iv-cards [class*="estrela"]').length === 0, 'nenhum elemento de estrela');
-  ok($$('#iv-cards .iv-raridade').length >= 10, 'cada carta mostra a letra de raridade');
+  // §303: com os 3 webp presentes (SELOS_ARTE=1 no dist), a raridade na revelação vira ARTE (emblema),
+  // não a letra SVG — cada carta mostra 1 selo-imagem e ZERO letra .iv-raridade (sem letra dupla).
+  ok($$('#iv-cards image[href*="selos/seal-"]').length === 10, 'cada carta mostra o selo cerimonial (arte), 10 imagens');
+  ok($$('#iv-cards .iv-raridade').length === 0, 'nenhuma letra SVG de raridade (o emblema já traz a letra — sem dupla)');
   ok(/Total <b>10<\/b>/.test($('#iv-tally').innerHTML) || /Total\s*10/.test($('#iv-tally').textContent), 'o total deveria ir a 10');
-  console.log(`  10 cartas · zero estrelas · raridade por letra · total 10`);
+  console.log(`  10 cartas · zero estrelas · selo cerimonial por arte · total 10`);
 }
 
 console.log('== 4. pity DURO, determinístico por semente (exercita a garantia de verdade) ==');
@@ -152,6 +155,37 @@ console.log('== 9. §302 TRAVA: o pity CONTINUA quando o destaque troca — nunc
   // e não há contador de pity keyed por deus/banner no perfil — só o único desdeUltimoSS
   ok(w.eval('JSON.stringify(Object.keys(perfil.invocacao).sort())') === '["desdeUltimoSS","total"]', 'segue UM só contador (nenhum pity por deus/banner brotou)');
   console.log('  pity continua ao remontar/trocar destaque (37/60), lido do contador único — nunca reseta');
+}
+
+console.log('== 10. §303 destino: a arte SÓ na revelação; selos pequenos como hoje; fallback e pacote ==');
+{
+  // (c) os SELOS PEQUENOS ficam como hoje MESMO com os 3 arquivos presentes: a classe-raiz .selo-arte NÃO entra,
+  //     e o selo da grade mostra a LETRA (texto), sem imagem de selo. Babá: se alguém religar a composição pequena,
+  //     a classe volta ou aparece uma seal-image na grade — e isto quebra.
+  ok(!d.documentElement.classList.contains('selo-arte'), 'a classe-raiz .selo-arte NÃO existe (composição pequena removida)');
+  w.eval("Object.keys(GODS).forEach(k=>{perfil.deuses[k]=perfil.deuses[k]||{obtidoEm:Date.now(),copias:1}}); ir('colecao',{},{substituir:true}); if(typeof colSel!=='undefined')colSel=null; render();");
+  const selos = $$('.col2c__rar');
+  ok(selos.length > 0 && selos.every(s => /^(SS|S|A)$/.test(s.textContent.trim())), 'o selo da grade segue LETRA (texto), com os 3 arquivos presentes');
+  ok($$('.col2c__rar image, .col2c__rar [style*="selos/"]').length === 0, 'nenhuma arte de selo entrou na grade');
+  // (d) pacote: os 3 selos são EXTERNOS (href selos/…), nunca base64. Prova na FONTE (o dist é uma linha só):
+  //     nenhuma linha da invocacao.js que fala de selo carrega um data: URI, e a revelação usa href externo.
+  const fonteInv = fs.readFileSync(require('path').join(__dirname, '../src/invocacao.js'), 'utf8');
+  const linhasSelo = fonteInv.split('\n').filter(l => /seal-|selos\//.test(l));
+  ok(linhasSelo.length > 0 && linhasSelo.every(l => !/data:/i.test(l)), 'os selos são referência externa, nunca data:/base64 (pacote não incha)');
+  ok(/href="selos\/seal-/.test(html), 'a revelação referencia selos/seal-*.webp como arquivo externo');
+  console.log('  arte só na revelação · grade letra-só com arquivos presentes · selos externos, sem base64');
+}
+
+console.log('== 11. §303 fallback: sem os 3 arquivos, a revelação cai no selo-letra SVG (sem 404) ==');
+{
+  const { JSDOM } = require('jsdom');
+  const html0 = html.replace(/const SELOS_ARTE=[01]/, 'const SELOS_ARTE=0');
+  const dom0 = new JSDOM(html0, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'https://x/' });
+  const w0 = dom0.window, d0 = w0.document;
+  w0.eval("ir('invocacao');INV.montar();INV.topup();INV.topup();INV.pull(1)");
+  ok(d0.querySelectorAll('#iv-cards image[href*="selos/seal-"]').length === 0, 'sem arquivos: NENHUMA imagem de selo (sem 404)');
+  ok(d0.querySelectorAll('#iv-cards .iv-raridade').length >= 1, 'sem arquivos: a revelação usa o selo-letra SVG de hoje');
+  console.log('  SELOS_ARTE=0 → revelação usa o SVG-letra, nenhuma imagem requisitada');
 }
 
 console.log('');

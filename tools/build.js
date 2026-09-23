@@ -403,10 +403,11 @@ const sinergiaObj = (() => {
 // nunca um 404 (mesmo padrão do §254/§280). Fatia 1 de 2: só o fundo; o layout do mockup vem depois.
 const batalhaArte = fs.existsSync(path.join(raiz, 'web', 'banners', 'batalha-fundo.webp')) ? 1 : 0;
 
-// §301: SELOS de raridade — o ornamento do dono entra como FUNDO do selo e a LETRA fica POR CIMA (composição,
-// não troca: a letra lê em qualquer tamanho, o ornamento aparece inteiro só no grande). Três arquivos externos
-// web/selos/seal-{ss,s,a}.webp (o navegador baixa 3, reusa em 100 cartões), NUNCA base64. A build ANOTA se os
-// TRÊS existem; ausente qualquer um → SELOS_ARTE=0 → cai no selo-letra de hoje, sem 404 (padrão §298/§289).
+// §301/§303: SELOS de raridade — três arquivos externos web/selos/seal-{ss,s,a}.webp (256×256, com alpha), NUNCA
+// base64. A build ANOTA se os TRÊS existem (SELOS_ARTE=1). §303 mudou o DESTINO: a arte NÃO acende nos selos
+// pequenos (medição: a <40px vira confete, a letra lê melhor) — vai SÓ para a REVELAÇÃO da invocação, que é grande
+// e cerimonial. invocacao.js lê SELOS_ARTE e usa o webp no reveal; ausente qualquer um → SELOS_ARTE=0 → o reveal
+// cai no selo SVG de hoje, sem 404 (padrão §298/§289). Os selos pequenos NUNCA usam a arte, com ou sem arquivo.
 const selosArte = ['ss', 's', 'a'].every(r => fs.existsSync(path.join(raiz, 'web', 'selos', 'seal-' + r + '.webp'))) ? 1 : 0;
 
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';

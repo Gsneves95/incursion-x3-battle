@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §303 — SELOS de raridade: o DESTINO mudou. A arte vai SÓ para a REVELAÇÃO, não para os selos pequenos.
+
+**A mudança de destino, com o motivo MEDIDO.** O §301 preparou o terreno para o ornamento do dono entrar nos selos
+EMOLDURADOS (grade/resumo/painel/sobreposição), acendendo quando os 3 webp existissem. Os 3 chegaram
+(`web/selos/seal-{ss,s,a}.webp`, 256×256 com alpha, ~117KB). Antes de ligar, o dono simulou as artes reais nas caixas
+medidas: **na grade (20×22) a arte vira confete dourado e a LETRA DE HOJE LÊ MELHOR; na sobreposição (35×27) começa a
+ganhar mas ainda perde em leitura.** Isso confirma a medição do §301 (nenhum selo in-page passa de 40px; 17–35 no
+aparelho). **Decisão do dono: a arte NÃO vai para os selos pequenos.** Vai só para onde o selo é grande e cerimonial —
+a **REVELAÇÃO da invocação**. O raciocínio, para o registro: **selo ornamentado é linguagem de MOMENTO, não de LISTA**
+— cem selos cerimoniais numa grade competem entre si e com a arte dos deuses; um selo grande na revelação é o que faz
+o SS parecer um SS. **A arte foi recusada nos selos pequenos por LEITURA, não por gosto** — nenhuma sessão futura deve
+"completar a troca" achando que ficou pela metade.
+
+**Item 1 — o gatilho (o risco resolvido primeiro).** Achei o §301 pronto para acender: com os 3 arquivos,
+`SELOS_ARTE=1`, o boot punha a classe-raiz `.selo-arte` e o CSS acendia o ornamento nos selos pequenos. **Corrigido:**
+removi a classe-raiz (`src/view.js`) e o bloco CSS de composição pequena (`src/shell.html`) — **não ficam dormentes**.
+O gatilho agora é o DESTINO: só a revelação lê `SELOS_ARTE`. Os selos pequenos ficam letra-só, com ou sem arquivo.
+
+**Item 2 — a revelação usa a arte (medição do tamanho).** O selo SVG de hoje (chapa + letra) media ~29px de design
+(a letra: 24×37px@780, 28×46px@951). A zona da chapa comporta um quadrado de **até ~158u = 80px@780 / 97px@951** sem
+brigar com o retrato e o nome; **mantendo o glifo de função** (que fica logo abaixo), o máximo é **~104u = 53px@780 /
+65px@951**. Vale crescer: o emblema é o momento. **Apliquei 104u (glifo mantido)** — já ~1,4× a letra de hoje e agora
+um brasão inteiro, não uma letra. Crescer além disso pede mover o glifo de função — número dado, a decisão do tamanho
+final é do dono.
+
+**Item 3 — a letra do SVG SAI.** As artes já trazem a letra desenhada dentro; a letra SVG (`.iv-raridade`, dois `<text>`)
+foi removida no caminho da arte — **sem letra dupla**. Nada mais dependia dela (só o CSS `#iv .iv-raridade` de fonte, e o
+teste, migrado). No fallback (arte ausente) a letra SVG volta intacta.
+
+**Item 4 — ausente cai no SVG de hoje, sem 404; pacote não cresce.** `SELOS_ARTE=0` (falta algum) → a revelação usa o
+selo-letra SVG, nenhuma imagem requisitada. Os 3 webp são EXTERNOS (`href="selos/seal-*.webp"`, copiados p/ dist), NUNCA
+base64: o `incursion.html` **encolheu** (2,35→2,34 MB, saiu o CSS de composição pequena); os 117KB de arte são 3 arquivos
+externos reusados.
+
+**GUARDA (§295, espaço de estados):** `tests/invocacao.test.js` seções 10–11 (revelação usa arte com os arquivos / SVG
+sem eles; sem letra dupla; **os selos pequenos ficam letra-só MESMO com os 3 presentes**; externo, não base64) e
+`tests/selos.test.js` reescrito (§301→§303: a composição pequena foi REMOVIDA, não dorme; a arte de selo só existe na
+revelação; grade letra-só com arquivos presentes). Capturas SS/S/A a 780 e 951 em `docs/capturas-303/`.
+
+**Arquivos:** `src/view.js` (classe-raiz fora), `src/shell.html` (CSS pequeno fora), `tools/build.js` (comentário do novo
+destino), `src/invocacao.js` (revelação usa arte, letra SVG sai), `tests/invocacao.test.js`, `tests/selos.test.js`,
+`docs/capturas-303/`. **Nota §283:** o §301 (composição nos selos pequenos) foi SUPERADO por este — a arte só na revelação.
+Ver ESTADO §303. Suíte + build verdes.
+
+---
+
 ## §302 — INVOCAÇÃO: uma tela só (sem abas) + medição do pity antes de mexer nele.
 
 **Item 1 — UMA invocação, sem abas (FEITO).** O banner com deus em destaque NÃO é um modo separado: é a mesma
@@ -57,6 +103,10 @@ nenhum contador keyed por deus/banner brota. Nenhuma sessão futura deve "conser
 ---
 
 ## §301 — os SELOS de raridade: a arte vira MOLDURA, a letra fica POR CIMA (composição, não troca). Terreno + medição.
+
+> **SUPERADO pelo §303 (§283):** a composição nos selos PEQUENOS foi removida. Com as artes reais nas caixas medidas,
+> ~~a arte entra como fundo dos selos emoldurados~~ a 17–35px vira confete e a letra lê melhor — o dono levou a arte SÓ
+> para a REVELAÇÃO da invocação. A MEDIÇÃO abaixo (onde/quanto/legibilidade) continua válida e é o que sustentou a decisão.
 
 **O plano do dono:** ele fez três artes ornadas (SS/S/A) e quer que **o ornamento entre como FUNDO do selo e a letra
 continue desenhada em TEXTO por cima** — legível em qualquer tamanho, ornamento inteiro só no grande. Recusa explícita:

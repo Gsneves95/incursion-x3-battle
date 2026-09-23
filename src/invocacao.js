@@ -91,6 +91,11 @@ const INV = (function () {
     const claro = r.chapaClara, temBrilho = r.h0 > 0;
     const G = claro ? BRONZE : OURO, glifoFill = claro ? `url(#iv-bronze-${uid})` : `url(#iv-ouro-${uid})`;
     const corpoRar = 54 * 1.02 * (r.fator || 1);
+    // §303: SÓ na REVELAÇÃO o selo de raridade vira ARTE (o webp cerimonial do dono). Gatilho = DESTINO + arquivo:
+    // SELOS_ARTE (os 3 existem) E raridade SS/S/A. Ausente qualquer um → cai no selo-letra SVG de hoje, sem 404.
+    // O emblema (256², a letra JÁ desenhada dentro) substitui a LETRA na chapa; a chapa fica como a placa/mont.
+    const rarKey = String(cfg.raridade || '').toLowerCase();
+    const seloArte = (typeof SELOS_ARTE !== 'undefined' && SELOS_ARTE) && (rarKey === 'ss' || rarKey === 's' || rarKey === 'a');
     const topo = cfg.nova ? `<span class="iv-topo-novo">Novo</span>`
       : (cfg.essencia > 0 ? `<span class="iv-topo-ess">+${cfg.essencia} ✦</span>`
         : (cfg.copias > 1 ? `<span class="iv-topo-copias">×${cfg.copias}</span>` : ''));
@@ -142,8 +147,14 @@ const INV = (function () {
         <path d="${CHAPA}" fill="url(#iv-chapa-${uid})"/>
         <path d="${CHAPA}" fill="none" stroke="url(#iv-metal-${uid})" stroke-width="2.6"/>
         <path d="${FILETE}" fill="none" stroke="${claro ? r.mB : r.mA}" stroke-width=".7" opacity=".4"/>
-        <text class="iv-raridade" x="100" y="524" text-anchor="middle" style="font-size:${corpoRar}px" fill="${r.mB}" opacity=".55" filter="url(#iv-brilhof-${uid})">${r.rotulo}</text>
-        <text class="iv-raridade" x="100" y="524" text-anchor="middle" style="font-size:${corpoRar}px" fill="url(#iv-metalv-${uid})" stroke="${r.mC}" stroke-width="1" paint-order="stroke">${r.rotulo}</text>
+        ${seloArte
+        ? /* §303: o emblema cerimonial (104×104 design ~53px@780/65px@951) na placa, no lugar da letra. A letra
+             do SVG SAI (o webp já a traz desenhada — sem letra dupla). Máx sem brigar com o glifo abaixo ~104u;
+             sem o glifo, a placa comporta ~158u (~80/97px) — número no docs/registro, a decisão do tamanho é do dono. */
+          `<image href="selos/seal-${rarKey}.webp" x="48" y="450" width="104" height="104" preserveAspectRatio="xMidYMid meet"/>`
+        : /* fallback (arte ausente): o selo-letra SVG de hoje, intacto, sem 404 */
+          `<text class="iv-raridade" x="100" y="524" text-anchor="middle" style="font-size:${corpoRar}px" fill="${r.mB}" opacity=".55" filter="url(#iv-brilhof-${uid})">${r.rotulo}</text>
+        <text class="iv-raridade" x="100" y="524" text-anchor="middle" style="font-size:${corpoRar}px" fill="url(#iv-metalv-${uid})" stroke="${r.mC}" stroke-width="1" paint-order="stroke">${r.rotulo}</text>`}
         <g transform="translate(100 566)" filter="url(#iv-sombra-${uid})"><path d="${cl.p}" fill="${glifoFill}" stroke="${G.borda}" stroke-width="1.1"/></g>
       </svg>
     </div>`;

@@ -148,12 +148,11 @@ registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, a
 registrar('batalha',   { render: renderBatalha,     aoEntrar: iniciarRelogio,  aoSair: sairBatalha });
 registrar('invocacao', { render: ()=>INV.montar(),                             aoSair: limparSobreposicao });
 registrar('pvp',       { render: renderPvP,        aoEntrar: ()=>{ if(typeof pvpReset==='function') pvpReset(); } });  // F5.3/§236: o lobby do PvP (apelido + time + fila)
-// §301: se os TRÊS ornamentos de selo existem (SELOS_ARTE=1), acende a classe-raiz `selo-arte` UMA vez,
-// no boot — ela abre o caminho de COMPOSIÇÃO no CSS (ornamento de fundo + contorno na letra) para os selos
-// emoldurados. Ausente (SELOS_ARTE=0), a classe nunca entra e cada selo fica exatamente como hoje, sem 404.
-if(typeof SELOS_ARTE!=='undefined' && SELOS_ARTE && typeof document!=='undefined' && document.documentElement){
-  document.documentElement.classList.add('selo-arte');
-}
+// §303: a arte dos selos NÃO acende nos selos pequenos (grade/resumo/painel/sobreposição/seleção/rota-deus).
+// A medição do dono provou que a 17–35px a arte vira confete e a LETRA DE HOJE LÊ MELHOR — recusada por LEITURA,
+// não por gosto. Por isso a classe-raiz `.selo-arte` do §301 FOI REMOVIDA (não fica dormente, para nenhuma sessão
+// futura "completar" a troca). O que liga a arte é o DESTINO — só a REVELAÇÃO da invocação, que é cerimonial e
+// grande (ver invocacao.js: lê SELOS_ARTE e usa o webp no reveal, com o SVG como fallback). Ver DECISOES §303.
 ir('home');
 render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)

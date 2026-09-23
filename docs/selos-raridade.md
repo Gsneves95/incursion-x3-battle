@@ -1,5 +1,9 @@
 # §301 — SELOS DE RARIDADE: medição dos lugares, do tamanho e da legibilidade
 
+> **§303 SUPEROU o destino.** Esta medição continua válida e foi o que decidiu: como nenhum selo in-page passa de
+> 40px, a arte foi para a REVELAÇÃO da invocação, NÃO para os selos pequenos (a <40px vira confete e a letra lê
+> melhor). A composição nos selos pequenos foi removida. Ver DECISOES/ESTADO §303 e `docs/capturas-303/`.
+
 Companheiro de `docs/selos-raridade.csv` (gerado por `tools/med_selos.js`, que roda o dist real num Chromium
 headless e lê a caixa de cada selo). É a medição que decide **onde o ornamento do dono cabe** e **onde a letra
 precisa de tratamento** — commitada para ninguém refazer. Reproduzir: `NODE_PATH=./node_modules node tools/med_selos.js`.

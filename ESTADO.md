@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ SELOS §303 — a arte é de MOMENTO, não de LISTA: vai SÓ para a REVELAÇÃO, não para os selos pequenos.
+
+Os 3 webp do dono chegaram (`web/selos/seal-{ss,s,a}.webp`, 256×256 alpha, ~117KB). **O destino mudou (decisão do dono):**
+simulando as artes reais nas caixas medidas, na grade (20×22) a arte vira confete e a **letra de hoje lê melhor**; na
+sobreposição (35×27) ainda perde em leitura. Confirma o §301 (nenhum selo in-page passa de 40px). **Selo ornamentado é
+linguagem de MOMENTO, não de LISTA** — a arte foi recusada nos selos pequenos por **LEITURA, não por gosto**; vai só para a
+REVELAÇÃO (grande, cerimonial).
+
+- **Item 1 (risco resolvido 1º):** o §301 acenderia a arte nos selos pequenos com os arquivos presentes (`SELOS_ARTE=1` →
+  classe-raiz `.selo-arte` → CSS). **Removi a classe-raiz (`view.js`) e o CSS de composição pequena (`shell.html`) — não
+  ficam dormentes.** Gatilho agora é o DESTINO: só a revelação lê `SELOS_ARTE`.
+- **Item 2 (revelação usa a arte):** o emblema (256², letra desenhada dentro) entra na chapa no lugar da letra. Medição:
+  máx sem brigar com retrato/nome ~**80px@780 / 97px@951**; mantendo o glifo de função, ~**53/65px**. Apliquei **104u
+  (53/65px)** — decisão do tamanho final é do dono (crescer além pede mover o glifo).
+- **Item 3:** a letra SVG (`.iv-raridade`) SAI no caminho da arte — **sem letra dupla**; volta intacta no fallback.
+- **Item 4:** ausente → SVG de hoje, sem 404; externo, nunca base64 — o `incursion.html` **encolheu** (2,35→2,34 MB).
+
+**GUARDA:** `tests/invocacao.test.js` seções 10–11 + `tests/selos.test.js` reescrito (composição pequena removida, não
+dorme; arte só na revelação; grade letra-só com os 3 presentes). Capturas SS/S/A a 780 e 951 em `docs/capturas-303/`.
+**Arquivos:** `src/view.js`, `src/shell.html`, `tools/build.js`, `src/invocacao.js`, `tests/invocacao.test.js`,
+`tests/selos.test.js`, `docs/capturas-303/`. Ver DECISOES §303. Suíte + build verdes.
+
 ## ★ INVOCAÇÃO §302 — uma tela só (sem abas) + medição do pity (60→100 NÃO aplicado).
 
 **Item 1 (FEITO): unifiquei a invocação numa tela só.** As abas saíram (`#iv-tabs`, `setBanner`). O "Portal Eterno" (padrão)
@@ -41,6 +63,9 @@ iniciante é oferta única no mesmo contador, pity continua ao remontar. **Arqui
 `tests/invocacao.test.js`, `docs/invocacao-economia.md`. Ver DECISOES §302. Suíte + build verdes.
 
 ## ★ SELOS §301 — a arte vira MOLDURA, a letra fica POR CIMA (composição). Terreno + medição (arte chega depois).
+
+> **SUPERADO pelo §303:** a composição nos selos pequenos foi removida (a arte vai só para a revelação). A medição
+> abaixo continua válida e é o que sustentou a mudança de destino.
 
 O dono fez 3 artes ornadas (SS/S/A) e quer o **ornamento como FUNDO** do selo com a **letra em TEXTO por cima** — legível
 em qualquer tamanho, ornamento inteiro só no grande. Recusa: "perder leitura por estética é o inverso do que este jogo faz."
