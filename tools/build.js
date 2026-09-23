@@ -410,6 +410,29 @@ const batalhaArte = fs.existsSync(path.join(raiz, 'web', 'banners', 'batalha-fun
 // cai no selo SVG de hoje, sem 404 (padrão §298/§289). Os selos pequenos NUNCA usam a arte, com ou sem arquivo.
 const selosArte = ['ss', 's', 'a'].every(r => fs.existsSync(path.join(raiz, 'web', 'selos', 'seal-' + r + '.webp'))) ? 1 : 0;
 
+// §304: config de EXIBIÇÃO do banner de invocação (data/invocacao.json). O FUNDO e o DEUS em destaque são
+// TROCÁVEIS por mitologia/deus — DADO, não caminho fixo. Valida alto (como os outros schemas): o deus existe
+// no catálogo E é SS (o destaque só destaca SS, §20); o fundo é string. O motor/economia NÃO leem daqui.
+const invocacaoObj = (() => {
+  const doc = JSON.parse(fs.readFileSync(path.join(raiz, 'data', 'invocacao.json'), 'utf8'));
+  const d = doc.destaque || {};
+  const g = deuses.find(x => x.key === d.deus);
+  if (!g) { console.error('ERRO §304: data/invocacao.json destaque.deus "' + d.deus + '" não existe no catálogo'); process.exit(1); }
+  const rar = (JSON.parse(raridades) || {})[d.deus] || null;
+  if (rar !== 'SS') { console.error('ERRO §304: destaque.deus "' + d.deus + '" tem raridade ' + rar + ', mas o destaque só destaca SS (§20)'); process.exit(1); }
+  if (typeof d.fundo !== 'string' || !d.fundo) { console.error('ERRO §304: destaque.fundo deve ser um basename (string)'); process.exit(1); }
+  return { destaque: { deus: d.deus, fundo: d.fundo } };
+})();
+// §304 (padrão §276/§298): FUNDOS de invocação por ARQUIVO em web/banners/invocacao/<nome>.webp (trocável por
+// mitologia/deus). A build ANOTA quais existem; a tela só usa o presente, ausente → gradiente placeholder, NUNCA
+// 404, NUNCA base64 (arquivo externo, o bundle não cresce). A arte do deus em destaque é o retrato §289 (RETRATO_ARTE).
+const invocFundo = (() => {
+  const dir = path.join(raiz, 'web', 'banners', 'invocacao');
+  const mapa = {};
+  if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) { const m = /^(.+)\.webp$/.exec(f); if (m) mapa[m[1]] = 1; }
+  return mapa;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -423,7 +446,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

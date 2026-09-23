@@ -1,0 +1,9 @@
+{
+  "_fonte": "§304 — config de EXIBIÇÃO do banner de invocação (decisao do dono). O fundo e o deus em destaque sao TROCAVEIS por mitologia/deus; por isso sao DADO, nao caminho fixo no codigo. O motor/economia nao le daqui — so a tela. Custo/taxa/pity vivem em economia.json.",
+  "destaque": {
+    "deus": "zeus",
+    "fundo": "olimpo",
+    "_deus_nota": "chave do deus em evidencia (rate-up de DEUS, §20): decide QUAL SS sai e a arte/arquetipo/retrato mostrados. Tem de ser um deus SS do catalogo.",
+    "_fundo_nota": "basename do fundo em web/banners/invocacao/<fundo>.webp (arquivo externo, manifesto INVOC_FUNDO na build; ausente -> gradiente placeholder, sem 404). A arte do deus em destaque e o retrato §289 (web/retratos/<deus>.webp)."
+  }
+}

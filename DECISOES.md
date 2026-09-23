@@ -6,6 +6,55 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §304 — TELA DE INVOCAÇÃO refeita pelo mockup aprovado (fundo e deus em destaque viram DADO).
+
+**GEOMETRIA (o encaixe não-uniforme, lição do mockup dos Domínios).** O mockup é 1672×940 (proporção **1,78**); o palco é
+780×428 de design (piso 1,82; folga 951×428 = 2,22). O mockup é mais ALTO — escalar uniforme cortaria ou espremeria. Não
+escalei: **redesenhei para o palco 780×428**, traduzindo o mockup. O que o mockup tem de vertical que não cabe, e de onde
+tirei: (1) a **citação** ocupa uma faixa generosa no mockup — como o campo `frase` está vazio nos 100 (§292), a linha SOME e
+esse vertical é **reclamado** (o maior ganho); (2) os **gaps** da coluna esquerda comprimidos (8px vs. o respiro do mockup);
+(3) a **figura termina acima da barra de pity** (`bottom:126`) em vez de descer até o chão refletido — o piso-espelho do
+mockup (decorativo) sai; (4) pity + botões dividem a **faixa inferior** (~156px: oferta + barra + dois botões) em vez do
+espalhamento do mockup. Medido com fontes reais, rede bloqueada, nas duas escalas: nome "ZEUS" 40px (116×40 design / 142×49
+@951), arquétipo 13px (128×18), barra de pity 300px, botões ×1/×10 340×64 cada (414×78 @951) — todos cabem.
+
+**O QUE A REFERÊNCIA MENTE (corrigido, não reproduzido):**
+1. **"×5 — 1.350":** no dado 1.350 é o pacote de DEZ (avulso 150, pacote10 1350, −10%). Usei **×1 (150) e ×10 (1.350)**, que
+   é o que existe; o selo **"10% OFF"** fica no ×10. Preço vem de `ECONOMIA.invocacao.custo`, nunca literal no código.
+2. **"PAI DOS DEUSES" não existe:** usei o **`arquetipo`** do jogo (Zeus = "Nuker de área"). *Nota para o dono:* ele lê como
+   legenda MECÂNICA, não título heroico — se preferir outra coisa sob o nome, é sua decisão (o dado é a fonte).
+3. **A CITAÇÃO:** o campo `frase` é reservado e VAZIO nos 100 (§292); **não inventei nenhuma** — a linha SOME quando não há
+   (§252). **MEDIÇÃO (a tela comporta?):** sim — a coluna herói tem espaço para uma citação curta: **~300px de largura de
+   design, ~56 caracteres por linha (68 @951), ~4 linhas ≈ 200–220 caracteres** antes de apertar o selo/botões. **Esta tela
+   pode ser a CASA que faltava para liberar o campo `frase`** — decisão do dono (o guarda §292 só cai quando ele liberar).
+
+**O QUE A REFERÊNCIA ACERTA (seguido):** fundo de tela inteira; RATE-UP + nome Cinzel grande dourado + arquétipo + **selo de
+raridade grande** (a arte do §303, `seal-ss.webp`); barra "SS GARANTIDO x/60" com "?" (o 60 é o pity do §302); dois botões
+com preço em gema; duas moedas no topo.
+
+**FUNDO e ARTE do destaque = DADO (trocáveis por mitologia/deus, padrão §298/§280).** Novo `data/invocacao.json`:
+`destaque:{ deus, fundo }` (o motor/economia não leem). **Campo `fundo`** → arquivo externo `web/banners/invocacao/<fundo>.webp`
+(manifesto de build `INVOC_FUNDO`; ausente → gradiente placeholder, sem 404, nunca base64 — o `incursion.html` não cresce).
+**Campo `deus`** decide o destaque (§20): qual SS sai, o nome/arquétipo, e a **arte do destaque = o RETRATO §289**
+(`web/retratos/<deus>.webp`, RETRATO_ARTE) — **recomendado** (vertical 512×590, o Zeus do jogo, já existe) sobre uma arte de
+banner própria (não precisa de asset novo). Caixa da arte no palco: à direita, ~52% da largura, do topo à faixa de pity.
+`FEAT_SS` agora vem de `INVOCACAO.destaque.deus` (validado na build: existe e é SS), com o pool como fallback.
+
+**NÃO MEXEU no §302:** uma invocação só, sem abas; o pity é um contador único que **não zera** ao trocar o destaque; a
+"Bênção do Iniciante" segue como **oferta única** inline. O "Auditar 1000" do §302 mora agora atrás do **"Ver detalhes"** e
+do "?" da barra (mesma auditoria de taxas). O contador de sessão (tally) e a linha de odds inline saíram da tela principal
+(a auditoria as cobre) — reversível se o dono quiser de volta.
+
+**GUARDA (§295, espaço de estados):** `tests/invocacao.test.js` seção 12: preço na tela = o do dado (e sem literal no código);
+frase SOME quando ausente e aparece quando há; arquétipo é o do dado (nada de "Pai dos Deuses"); fundo e arte vêm do dado e
+caem em placeholder sem 404; o pity mostrado é o do perfil e o teto é o do economia. Capturas 780 e 951 em `docs/capturas-304/`.
+
+**Arquivos:** `data/invocacao.json` (novo), `web/banners/invocacao/olimpo.webp` (novo), `tools/build.js` (INVOCACAO + INVOC_FUNDO),
+`src/invocacao.js` (tela refeita), `src/shell.html` (CSS da tela), `tests/invocacao.test.js`, `docs/capturas-304/`. Ver ESTADO
+§304. Suíte + build verdes.
+
+---
+
 ## §303 — SELOS de raridade: o DESTINO mudou. A arte vai SÓ para a REVELAÇÃO, não para os selos pequenos.
 
 **A mudança de destino, com o motivo MEDIDO.** O §301 preparou o terreno para o ornamento do dono entrar nos selos

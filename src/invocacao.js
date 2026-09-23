@@ -328,7 +328,7 @@ const INV = (function () {
     const N = 1000, st = { pity: 0 }, t = { SS: 0, S: 0, A: 0 }; let fss = 0;
     for (let i = 0; i < N; i++) { const o = doRoll(PRINCIPAL, st); t[o.r]++; if (o.r === 'SS' && o.u.key === FEAT_SS) fss++; }
     const pct = v => (v * 100).toFixed(0) + '%';
-    const exp = { SS: pct(P.SS) + ' + pity', S: pct(P.S) + ' + pity', A: 'restante' };
+    const exp = { SS: pct(P.SS) + ' + pity', S: pct(P.S) + ' + pity', A: pct(ECONOMIA.invocacao.taxas.A) };
     const rows = ['SS', 'S', 'A'].map(r => `<tr><td class="iv-${r.toLowerCase()}c">${r}</td><td>${t[r]}</td><td>${(t[r] / N * 100).toFixed(1)}%</td><td style="color:var(--iv-dim)">${exp[r]}</td></tr>`).join('');
     document.getElementById('iv-auditBox').innerHTML = `<h3>Auditoria de 1.000 invocações</h3>
       <p>${BANNERS[PRINCIPAL].nome} · não gasta moedas nem afeta seus contadores</p>
@@ -360,63 +360,91 @@ const INV = (function () {
     t.textContent = msg; t.style.opacity = '1'; clearTimeout(flashT); flashT = setTimeout(() => t.style.opacity = '0', 1600);
   }
 
+  // §304: FUNDO trocável (dado). Presente no manifesto INVOC_FUNDO → arquivo externo; ausente → '' (gradiente CSS, sem 404).
+  function fundoURL() {
+    const nome = (typeof INVOCACAO !== 'undefined' && INVOCACAO.destaque && INVOCACAO.destaque.fundo) || '';
+    const tem = nome && (typeof INVOC_FUNDO !== 'undefined') && INVOC_FUNDO[nome];
+    return tem ? 'banners/invocacao/' + nome + '.webp' : '';
+  }
+  // §304: ARTE do deus em destaque = o RETRATO §289 (web/retratos/<deus>.webp), recomendado (vertical 512×590, o Zeus do
+  // jogo). Presente no manifesto RETRATO_ARTE → externo; ausente → '' (silhueta placeholder CSS, sem 404).
+  function arteDestaqueURL() {
+    const tem = (typeof RETRATO_ARTE !== 'undefined') && RETRATO_ARTE[FEAT_SS];
+    return tem ? 'retratos/' + FEAT_SS + '.webp' : '';
+  }
+  // §304: o SELO grande é a ARTE do §303 (seal-<rar>.webp) — o destaque é SS. Ausente → medalhão-letra CSS, sem 404.
+  function seloHeroHTML() {
+    const temArte = (typeof SELOS_ARTE !== 'undefined' && SELOS_ARTE);
+    return temArte
+      ? `<img class="iv-hero__selo" src="selos/seal-ss.webp" alt="SS">`
+      : `<span class="iv-hero__selo iv-hero__selo--letra">SS</span>`;
+  }
+
   function render() {
     const scr = document.getElementById('iv'); if (!scr) return;
-    const _h = (scr.clientHeight || 428) - 152;
-    const FW = Math.max(52, Math.min(92, Math.floor(_h / 3.48)));
-    const FW5 = Math.max(58, Math.min(102, Math.floor(_h / 3.22)));
+    // carteira (duas moedas) + marca DEV
     document.getElementById('iv-gemas').textContent = S.gemas.toLocaleString('pt-BR');
     { const ess = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.essencia || 0) : 0;
       const en = document.getElementById('iv-essencia'); if (en) en.textContent = ess.toLocaleString('pt-BR'); }
-    // indicador de perfil CONTAMINADO por crédito de teste — discreto mas sempre presente
     const dev = document.getElementById('iv-devmark');
     if (dev) dev.style.display = (typeof perfil !== 'undefined' && perfil && perfil.dev) ? 'inline-flex' : 'none';
-    // §302: UMA invocação, sem abas. Sempre o banner principal (destaque), com o deus em evidência.
-    const b = BANNERS[PRINCIPAL];
-    const feat = `<div class="iv-feat">
-      ${gcard(byKey[FEAT_S[0]], FW, false, 1, 60)}
-      <div class="iv-featwrap">${gcard(byKey[FEAT_SS], FW5, false, 1, 0)}<span class="iv-rateup">RATE-UP</span></div>
-      ${gcard(byKey[FEAT_S[1]], FW, false, 1, 120)}</div>`;
-    document.getElementById('iv-banner').innerHTML = `<div class="iv-bt">${b.nome}</div><div class="iv-bd">${b.desc()}</div>${feat}`;
-    // UM contador de pity (S.pity), a oferta ÚNICA do iniciante inline (sem aba/modo).
+
+    // §304: FUNDO e ARTE do destaque vêm do DADO (com placeholder). O deus em destaque é INVOCACAO.destaque.deus (§20).
+    const fu = fundoURL(); const fundoEl = document.getElementById('iv-fundo');
+    if (fundoEl) { fundoEl.style.backgroundImage = fu ? `url(${fu})` : ''; fundoEl.classList.toggle('iv-fundo--ph', !fu); }
+    const ar = arteDestaqueURL(); const arteEl = document.getElementById('iv-arte');
+    if (arteEl) { arteEl.style.backgroundImage = ar ? `url(${ar})` : ''; arteEl.classList.toggle('iv-arte--ph', !ar); }
+
+    // COLUNA HERÓI (esquerda): RATE-UP, nome (Cinzel), arquetipo, selo grande (§303), frase (SOME se não houver — §252/§292),
+    // VER DETALHES → auditoria/taxas. arquetipo e frase vêm do catálogo (GODS), não do código.
+    const gInfo = (typeof GODS !== 'undefined' && GODS[FEAT_SS]) || {};
+    const nome = (byKey[FEAT_SS] && byKey[FEAT_SS].nome) || gInfo.nome || FEAT_SS;
+    const arq = gInfo.arquetipo ? `<div class="iv-hero__arq">${esc(gInfo.arquetipo)}</div>` : '';
+    // §292: `frase` é reservada e VAZIA nos 100; sem frase, a linha SOME (nada renderiza) — nunca inventada.
+    const cite = gInfo.frase ? `<p class="iv-hero__cite">“${esc(gInfo.frase)}”</p>` : '';
+    document.getElementById('iv-hero').innerHTML = `
+      <span class="iv-hero__tag">RATE-UP</span>
+      <h1 class="iv-hero__nome">${esc(nome)}</h1>
+      ${arq}
+      ${seloHeroHTML()}
+      ${cite}
+      <button class="iv-hero__det" onclick="INV.openAudit()"><span class="iv-hero__lupa">⌕</span> Ver detalhes</button>`;
+
+    // PITY (um contador, do perfil; teto do economia) + oferta ÚNICA do iniciante (§302).
     const oferta = S.iniciante.used ? '' :
       `<button class="iv-oferta" onclick="INV.claimIniciante()"><b>Bênção do Iniciante</b> — 10× grátis, SS garantido</button>`;
     document.getElementById('iv-pity').innerHTML = `
-      <div class="iv-row"><span>SS garantido</span><b>${S.pity}/${PITY}</b></div><div class="iv-pbar iv-pity"><span style="width:${S.pity / PITY * 100}%"></span></div>
-      <div class="iv-fifty">Todo SS é <b class="iv-g">${byKey[FEAT_SS].nome}</b></div>
-      ${oferta}`;
-    const s = S.stats;
-    document.getElementById('iv-tally').innerHTML =
-      `<span class="iv-tchip iv-tt">Total <b>${s.total}</b></span>` +
-      ['SS', 'S', 'A'].map(r => `<span class="iv-tchip iv-t${r.toLowerCase()}">${r} <b>${s[r]}</b></span>`).join('') +
-      `<span class="iv-tchip iv-tt">Coleção <b>${(typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : Object.keys(S.owned).length}</b>/${ROSTER.length}</span>`;
-    gfit(scr);
+      ${oferta}
+      <div class="iv-pity__row"><span class="iv-pity__lbl">SS garantido</span>
+        <div class="iv-pbar iv-pity__bar"><span style="width:${Math.min(100, S.pity / PITY * 100)}%"></span></div>
+        <b class="iv-pity__num">${S.pity}/${PITY}</b>
+        <button class="iv-pity__q" onclick="INV.openAudit()" title="Como funciona a garantia">?</button></div>`;
   }
 
   const SKELETON = `
   <div id="iv">
-    <div class="iv-stars"></div>
+    <div class="iv-fundo" id="iv-fundo"></div>
+    <div class="iv-scrim"></div>
+    <div class="iv-arte" id="iv-arte"></div>
     <div class="iv-topbar">
-      <button class="iv-hbtn" onclick="voltarInvocacao()">‹ Voltar</button>
+      <div class="iv-tleft">
+        <button class="iv-hbtn" onclick="voltarInvocacao()" aria-label="Voltar">‹</button>
+        <span class="iv-title">Invocação</span>
+      </div>
       <div class="iv-wallet">
         <span id="iv-devmark" class="iv-devmark" style="display:none" title="Perfil contaminado por crédito de teste (DEV) — sai antes do release">⚠ DEV</span>
         <span class="iv-c iv-cess" title="Essência — vem de repetidos">✦ <b id="iv-essencia">0</b></span>
-        <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+ DEV</button></span>
+        <span class="iv-c">💎 <b id="iv-gemas">0</b> <button class="iv-plus" onclick="INV.topup()" title="Crédito de TESTE (DEV): contamina o perfil">+</button></span>
       </div>
     </div>
-    <div class="iv-banner" id="iv-banner"></div>
-    <div class="iv-side">
-      <div class="iv-odds">Chances por invocação: <b class="iv-ssc">SS ${(P.SS * 100).toFixed(0)}%</b> · <b class="iv-sc">S ${(P.S * 100).toFixed(0)}%</b> · <b class="iv-ac">A ${(ECONOMIA.invocacao.taxas.A * 100).toFixed(0)}%</b> · garantia de SS em ${PITY} · repetido vira Essência</div>
+    <div class="iv-hero" id="iv-hero"></div>
+    <div class="iv-base">
       <div class="iv-pity" id="iv-pity"></div>
       <div class="iv-pullbtns">
-        <div class="iv-tools">
-          <button class="iv-tool" onclick="INV.openAudit()">Auditar 1000</button>
-        </div>
-        <button class="iv-pb iv-x1" onclick="INV.pull(1)">Invocar ×1<span class="iv-cost">${ECONOMIA.invocacao.custo.avulso} 💎</span></button>
-        <button class="iv-pb iv-x10" onclick="INV.pull(10)">Invocar ×10<span class="iv-cost">${ECONOMIA.invocacao.custo.pacote10.toLocaleString('pt-BR')} 💎</span></button>
+        <button class="iv-pb iv-x1" onclick="INV.pull(1)"><span class="iv-pb__t">Invocação ×1</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.avulso}</span></button>
+        <button class="iv-pb iv-x10" onclick="INV.pull(10)"><span class="iv-off">10% OFF</span><span class="iv-pb__t">Invocação ×10</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.pacote10.toLocaleString('pt-BR')}</span></button>
       </div>
     </div>
-    <div class="iv-tally" id="iv-tally"></div>
     <div class="iv-reveal" id="iv-reveal" onclick="INV.closeReveal()">
       <div class="iv-grid" id="iv-cards"></div>
       <div class="iv-revfoot" onclick="event.stopPropagation()"><button class="iv-revbtn" id="iv-revagain" onclick="INV.rollAgain()">Invocar mais</button></div>

@@ -2,6 +2,31 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ INVOCAÇÃO §304 — tela refeita pelo mockup aprovado; fundo e deus em destaque viram DADO.
+
+Refação da tela de invocação pelo mockup do dono (1672×940, 1,78) para o palco 780×428. **Encaixe não-uniforme (lição
+Domínios):** redesenhei p/ o palco; o vertical que não cabe saiu da citação (campo `frase` vazio → linha SOME, reclamada), de
+gaps comprimidos, da figura terminando acima da barra de pity (o piso-espelho decorativo sai), e da faixa inferior compacta.
+
+**Corrigido do que a referência mente:** ×5→**×1 (150) e ×10 (1.350, "10% OFF")** (preço do `ECONOMIA`, nunca literal);
+**"Pai dos Deuses"→ `arquetipo`** (Zeus = "Nuker de área"; *lê como legenda mecânica — decisão do dono se troca*); **citação
+não inventada** — `frase` vazio nos 100 (§292), a linha some. **Medição:** a coluna herói comporta uma citação de **~300px,
+~56 chars/linha (68 @951), ~4 linhas ≈ 200–220 caracteres** — **esta tela pode ser a CASA para liberar o campo `frase`**
+(decisão do dono; o guarda §292 só cai quando ele liberar).
+
+**Fundo e arte do destaque = DADO** (trocáveis, padrão §298/§280): `data/invocacao.json` `destaque:{deus,fundo}`. `fundo` →
+`web/banners/invocacao/<fundo>.webp` (manifesto `INVOC_FUNDO`; ausente → gradiente, sem 404, nunca base64). `deus` decide o
+destaque (§20) + a arte = **retrato §289** (`web/retratos/<deus>.webp`, recomendado sobre arte de banner própria). `FEAT_SS`
+vem do dado (validado na build: existe e é SS), pool como fallback. Assets: `web/banners/invocacao/olimpo.webp` entrou; dist 2,35 MB.
+
+**§302 intacto:** uma invocação, pity que não zera ao trocar destaque, iniciante como oferta única. "Auditar 1000" mora atrás
+do "Ver detalhes" e do "?". Tally e odds inline saíram da tela principal (a auditoria cobre) — reversível.
+
+**GUARDA:** `tests/invocacao.test.js` seção 12 (preço do dado sem literal; frase some/aparece; arquétipo do dado; fundo/arte do
+dado + placeholder sem 404; pity do perfil, teto do economia). Capturas 780/951 em `docs/capturas-304/`. **Arquivos:**
+`data/invocacao.json`, `web/banners/invocacao/olimpo.webp`, `tools/build.js`, `src/invocacao.js`, `src/shell.html`,
+`tests/invocacao.test.js`, `docs/capturas-304/`. Ver DECISOES §304. Suíte + build verdes.
+
 ## ★ SELOS §303 — a arte é de MOMENTO, não de LISTA: vai SÓ para a REVELAÇÃO, não para os selos pequenos.
 
 Os 3 webp do dono chegaram (`web/selos/seal-{ss,s,a}.webp`, 256×256 alpha, ~117KB). **O destino mudou (decisão do dono):**

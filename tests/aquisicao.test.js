@@ -40,12 +40,16 @@ function sessao() {
 console.log('== 2. Invocação: odds VISÍVEIS antes da compra + pity + carteira com Essência ==');
 {
   const { w, $ } = sessao();
-  w.eval("ir('invocacao'); render();");
+  w.eval("ir('invocacao'); INV.montar();");
   ok(!!$('#iv'), 'a tela de invocação monta a partir da home');
-  const odds = $('.iv-odds');
-  ok(!!odds && /SS 3%/.test(odds.textContent) && /S 17%/.test(odds.textContent) && /A 80%/.test(odds.textContent), 'as odds 3/17/80 aparecem antes de invocar');
-  ok(/garantia de SS em 60/.test(odds.textContent), 'a garantia dura (pity 60) é anunciada');
-  ok(!!$('#iv-pity') && /\/60/.test($('#iv-pity').textContent), 'o contador de pity é visível');
+  // §304: as odds saíram da tela principal (mockup) e moram atrás do "Ver detalhes"/"?" (mesma auditoria de taxas).
+  // Continuam DISPONÍVEIS antes da compra, a um toque — abrimos e conferimos os 3/17/80 + a garantia de 60.
+  w.eval('INV.openAudit()');
+  const box = $('#iv-auditBox');
+  ok(!!box && /3%/.test(box.textContent) && /17%/.test(box.textContent) && /80%/.test(box.textContent), 'as odds 3/17/80 aparecem na auditoria (Ver detalhes), antes de invocar');
+  ok(/60/.test(box.textContent), 'a garantia dura (pity 60) é anunciada na auditoria');
+  w.eval("document.getElementById('iv-audit').classList.remove('iv-show')");
+  ok(!!$('#iv-pity') && /\/60/.test($('#iv-pity').textContent), 'o contador de pity é visível na tela');
   ok(!!$('#iv-essencia'), 'a carteira mostra Essência');
 }
 

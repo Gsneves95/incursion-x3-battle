@@ -32,12 +32,14 @@ console.log('== 2. a tela monta a partir do botão Invocar ==');
   ok(!$('#iv-tabs'), 'não há mais abas de banner (uma invocação só)');
   ok(w.eval('typeof INV.setBanner') === 'undefined', 'setBanner saiu (não há modo/banner a trocar)');
   ok(w.eval('typeof INV.claimIniciante') === 'function', 'claimIniciante é a porta única da oferta grátis');
-  ok($$('#iv .iv-feat .iv-carta').length >= 1, 'o deus em destaque renderiza na única invocação');
+  // §304: layout do mockup — o deus em destaque é nome (Cinzel) + arquétipo + selo grande; cartas só na revelação.
+  ok(!!$('.iv-hero__nome') && $('.iv-hero__nome').textContent.trim().length > 0, 'o NOME do deus em destaque renderiza (coluna herói)');
+  ok(!!$('.iv-hero__arq'), 'o ARQUÉTIPO do deus renderiza (epíteto do jogo, não "Pai dos Deuses")');
+  ok(!!$('.iv-hero__selo'), 'o SELO grande (§303) renderiza no herói');
   ok(!!$('.iv-oferta'), 'a Bênção do Iniciante aparece como OFERTA única inline (não aba)');
   ok(/\/60/.test($('#iv-pity').textContent), 'o pity de SS (/60) deveria aparecer');
-  ok(/Coleção/.test($('#iv-tally').textContent), 'o contador de coleção deveria aparecer');
-  ok(!!$('#iv .iv-carta'), 'as cartas do destaque deveriam renderizar');
-  console.log(`  montou · sem abas · pity 60 · destaque com ${$$('#iv .iv-feat .iv-carta').length} cartas · oferta iniciante inline`);
+  ok(!!$('.iv-pb.iv-x1') && !!$('.iv-pb.iv-x10'), 'os dois botões de invocar (×1 e ×10)');
+  console.log(`  montou · sem abas · herói ${$('.iv-hero__nome').textContent.trim()} · pity /60 · dois botões · oferta inline`);
 }
 
 console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
@@ -52,7 +54,6 @@ console.log('== 3. invocação x10 revela 10 cartas, SEM estrelas ==');
   // não a letra SVG — cada carta mostra 1 selo-imagem e ZERO letra .iv-raridade (sem letra dupla).
   ok($$('#iv-cards image[href*="selos/seal-"]').length === 10, 'cada carta mostra o selo cerimonial (arte), 10 imagens');
   ok($$('#iv-cards .iv-raridade').length === 0, 'nenhuma letra SVG de raridade (o emblema já traz a letra — sem dupla)');
-  ok(/Total <b>10<\/b>/.test($('#iv-tally').innerHTML) || /Total\s*10/.test($('#iv-tally').textContent), 'o total deveria ir a 10');
   console.log(`  10 cartas · zero estrelas · selo cerimonial por arte · total 10`);
 }
 
@@ -127,7 +128,7 @@ console.log('== 8. §302 UMA invocação: um pity, uma moeda, um histórico; ini
   // (b) os banners paralelos saíram: nada de trocar de banner (setBanner) nem abas; sobrou UMA invocação
   //     com o deus em evidência (a feat renderiza). BANNERS é privado do INV — a prova é a superfície.
   ok(w.eval('typeof INV.setBanner') === 'undefined' && !$('#iv-tabs'), 'sem troca de banner: setBanner e abas fora');
-  ok($$('#iv .iv-feat .iv-carta').length >= 1, 'sobrou a invocação única, com o deus em evidência');
+  ok(!!$('.iv-hero__nome'), 'sobrou a invocação única, com o deus em evidência (coluna herói)');
   // (c) a oferta do iniciante é UMA vez e alimenta o MESMO contador (a garantia repõe um SS → pity baixo).
   w.eval('perfil=creditarDev(perfil,"gema",0,0)');   // garante perfil presente (já está)
   const usadaAntes = w.eval('(function(){var b=document.querySelector(".iv-oferta");return !!b;})()');
@@ -186,6 +187,48 @@ console.log('== 11. §303 fallback: sem os 3 arquivos, a revelação cai no selo
   ok(d0.querySelectorAll('#iv-cards image[href*="selos/seal-"]').length === 0, 'sem arquivos: NENHUMA imagem de selo (sem 404)');
   ok(d0.querySelectorAll('#iv-cards .iv-raridade').length >= 1, 'sem arquivos: a revelação usa o selo-letra SVG de hoje');
   console.log('  SELOS_ARTE=0 → revelação usa o SVG-letra, nenhuma imagem requisitada');
+}
+
+console.log('== 12. §304 tela pelo mockup: preço do DADO, frase some, fundo/arte do dado, pity do perfil ==');
+{
+  // re-monta a invocação limpa para ler o estado do banner
+  w.eval("ir('invocacao',{},{substituir:true}); INV.montar();");
+  // (1) PREÇO vem do DADO (economia.json), nunca escrito no código: o botão mostra o valor de ECONOMIA,
+  //     e invocacao.js não tem literal de preço. Babá: troque o custo no economia e o botão muda; hard-code e cai.
+  const c1 = String(w.eval('ECONOMIA.invocacao.custo.avulso'));
+  const c10 = w.eval('ECONOMIA.invocacao.custo.pacote10').toLocaleString('pt-BR');
+  ok($('.iv-pb.iv-x1').textContent.includes(c1), `×1 mostra o custo do dado (${c1})`);
+  ok($('.iv-pb.iv-x10').textContent.includes(c10), `×10 mostra o custo do dado (${c10})`);
+  const fonteInv = fs.readFileSync(require('path').join(__dirname, '../src/invocacao.js'), 'utf8');
+  // o preço vem de ECONOMIA.invocacao.custo (dado), tanto no botão quanto na cobrança do pull — nunca um literal.
+  ok(/ECONOMIA\.invocacao\.custo\.avulso/.test(fonteInv) && /ECONOMIA\.invocacao\.custo\.pacote10/.test(fonteInv),
+    'os botões leem o custo de ECONOMIA.invocacao.custo (dado), não de um literal');
+  ok(!/custo\s*[:=]\s*\d/.test(fonteInv) && !/cost\s*=\s*(150|1350)\b/.test(fonteInv), 'nenhum custo numérico escrito à mão em invocacao.js');
+  ok(/10% OFF/.test($('.iv-pb.iv-x10').textContent), 'o selo 10% OFF fica no ×10 (o pacote de dez), não no ×1');
+  // (2) a FRASE some quando não existe (§292: reservada e vazia nos 100) e aparece quando há — nunca inventada.
+  ok(!$('.iv-hero__cite'), 'sem frase no dado, a linha de citação SOME (nada renderiza)');
+  ok(!w.eval('!!(GODS.zeus && GODS.zeus.frase)'), 'o dado NÃO tem frase preenchida (guarda §292 respeitada)');
+  w.eval("GODS[INVOCACAO.destaque.deus].frase='teste'; INV.render();");
+  ok(!!$('.iv-hero__cite'), 'com frase presente, a linha aparece (a tela É casa para a frase)');
+  w.eval("GODS[INVOCACAO.destaque.deus].frase=undefined; INV.render();");
+  ok(!$('.iv-hero__cite'), 'removida a frase, a linha some de novo');
+  // (3) o ARQUÉTIPO é o do dado (GODS), não "Pai dos Deuses"
+  ok($('.iv-hero__arq').textContent.trim() === w.eval('GODS[INVOCACAO.destaque.deus].arquetipo'), 'o epíteto é o arquétipo do dado');
+  ok(!/pai dos deuses/i.test($('#iv').textContent), 'nada de "Pai dos Deuses" (rótulo da referência que não existe no jogo)');
+  // (4) FUNDO e ARTE vêm do DADO, com placeholder sem 404: presente → url externo; a config é do banner (INVOCACAO)
+  const fundoBg = $('#iv-fundo').style.backgroundImage;
+  ok(w.eval('!!(INVOC_FUNDO && INVOC_FUNDO[INVOCACAO.destaque.fundo])') ? /banners\/invocacao\//.test(fundoBg) : $('#iv-fundo').classList.contains('iv-fundo--ph'),
+    'o fundo vem do dado (arquivo externo presente) OU cai no placeholder sem 404');
+  ok(w.eval('typeof INVOCACAO!=="undefined" && !!INVOCACAO.destaque.deus'), 'o deus em destaque é DADO (INVOCACAO.destaque.deus)');
+  // arte do destaque = retrato §289 do deus, externo; ausente → placeholder
+  const arteBg = $('#iv-arte').style.backgroundImage;
+  ok(w.eval('!!(RETRATO_ARTE && RETRATO_ARTE[INVOCACAO.destaque.deus])') ? /retratos\//.test(arteBg) : $('#iv-arte').classList.contains('iv-arte--ph'),
+    'a arte do destaque vem do retrato §289 (externo) OU cai no placeholder sem 404');
+  // (5) o pity MOSTRADO é o do perfil; o TETO é o do economia
+  w.eval('perfil.invocacao.desdeUltimoSS=13; INV.montar();');
+  const teto = String(w.eval('ECONOMIA.invocacao.pity.duro'));
+  ok(new RegExp('13\\/' + teto).test($('#iv-pity').textContent), `o pity mostrado é o do perfil (13) sobre o teto do economia (${teto})`);
+  console.log('  preço do dado · frase some/aparece · arquétipo do dado · fundo/arte do dado+placeholder · pity do perfil/teto do economia');
 }
 
 console.log('');
