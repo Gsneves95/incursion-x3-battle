@@ -205,14 +205,13 @@ console.log('== 12. §304 tela pelo mockup: preço do DADO, frase some, fundo/ar
     'os botões leem o custo de ECONOMIA.invocacao.custo (dado), não de um literal');
   ok(!/custo\s*[:=]\s*\d/.test(fonteInv) && !/cost\s*=\s*(150|1350)\b/.test(fonteInv), 'nenhum custo numérico escrito à mão em invocacao.js');
   ok(/10% OFF/.test($('.iv-pb.iv-x10').textContent), 'o selo 10% OFF fica no ×10 (o pacote de dez), não no ×1');
-  // (2) §304b: a FRASE é conteúdo do DESTAQUE (INVOCACAO.destaque.frase), não do elenco. Some quando não há, aparece
-  //     quando o dono escreve a de quem entra em destaque — nunca inventada.
+  // (2) §304b: a FRASE é conteúdo do DESTAQUE (INVOCACAO.destaque.frase), não do elenco. Testa o MECANISMO some/aparece,
+  //     independente do valor atual do dado (o dono pode ter escrito a do destaque da vez): força vazio, depois cheio.
+  w.eval("INVOCACAO.destaque._frase=INVOCACAO.destaque.frase; INVOCACAO.destaque.frase=undefined; INV.render();");
   ok(!$('.iv-hero__cite'), 'sem frase no destaque, a linha de citação SOME (nada renderiza)');
-  ok(!w.eval('!!(INVOCACAO.destaque && INVOCACAO.destaque.frase)'), 'o destaque NÃO tem frase preenchida (não inventada)');
   w.eval("INVOCACAO.destaque.frase='O céu obedece.'; INV.render();");
   ok(!!$('.iv-hero__cite') && /O céu obedece/.test($('.iv-hero__cite').textContent), 'com frase no destaque, a linha aparece (a tela É a casa da frase)');
-  w.eval("INVOCACAO.destaque.frase=undefined; INV.render();");
-  ok(!$('.iv-hero__cite'), 'removida a frase, a linha some de novo');
+  w.eval("INVOCACAO.destaque.frase=INVOCACAO.destaque._frase; delete INVOCACAO.destaque._frase; INV.render();");
   // (3) §304b: nada de epíteto/arquétipo nem de "Pai dos Deuses" nesta tela
   ok(!$('.iv-hero__arq'), 'sem linha de epíteto/arquétipo na tela de invocação (§304b)');
   ok(!/pai dos deuses/i.test($('#iv').textContent), 'nada de "Pai dos Deuses" (rótulo da referência que não existe no jogo)');

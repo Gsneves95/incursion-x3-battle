@@ -3,6 +3,7 @@
   "destaque": {
     "deus": "zeus",
     "fundo": "olimpo",
+    "frase": "Declarou primeiro. Perguntou depois.",
     "_deus_nota": "chave do deus em evidencia (rate-up de DEUS, §20): decide QUAL SS sai e a arte/retrato mostrados. Tem de ser um deus SS do catalogo.",
     "_fundo_nota": "basename do fundo em web/banners/invocacao/<fundo>.webp (arquivo externo, manifesto INVOC_FUNDO na build; ausente -> gradiente placeholder, sem 404). A arte do deus em destaque e o retrato §289 (web/retratos/<deus>.webp).",
     "_frase_nota": "§304b: CITACAO do destaque (opcional, campo `frase`). Conteudo do DESTAQUE, nao do elenco: escreve-se a de quem ENTRA em destaque, uma por vez. Ausente -> a linha SOME (nunca inventada). So a tela de invocacao tem espaco (~200-220 chars, §304); a sobreposicao da Colecao NAO comporta (§292)."
