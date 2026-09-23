@@ -446,6 +446,41 @@ const invocArte = (() => {
   return mapa;
 })();
 
+// §306: a HOME vira MAPA estático (o carrossel sai). Dois manifestos + o dado das POSIÇÕES.
+//  · MAPA_ARTE (0/1): web/banners/mapa.webp existe? Ausente → o carrossel de hoje segue (fallback, sem 404).
+//  · MAPA_ICONES ({chave:1}): quais ícones web/mapa/<chave>.webp existem. Ausente um → a ilha cai no rótulo, nunca 404, nunca base64.
+//  · MAPA (data/mapa.json): posições das ilhas em % da arte + rota/contador/emBreve. Valida ALTO (como os outros schemas):
+//    9 ilhas, x/y numéricos em [0,100], rótulo/rota presentes; e AVISA (não falha) se um ícone declarado não tem arquivo.
+const mapaArte = fs.existsSync(path.join(raiz, 'web', 'banners', 'mapa.webp')) ? 1 : 0;
+const mapaIcones = (() => {
+  const dir = path.join(raiz, 'web', 'mapa');
+  const mapa = {};
+  if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) { const m = /^(.+)\.webp$/.exec(f); if (m) mapa[m[1]] = 1; }
+  return mapa;
+})();
+const mapaObj = (() => {
+  const arq = path.join(raiz, 'data', 'mapa.json');
+  if (!fs.existsSync(arq)) return null;
+  const doc = JSON.parse(ler('data/mapa.json'));
+  const ilhas = Array.isArray(doc.ilhas) ? doc.ilhas : [];
+  const erros = [], semArte = [];
+  const vistas = new Set();
+  for (const i of ilhas) {
+    if (!i.chave || vistas.has(i.chave)) erros.push(`ilha com chave ausente/duplicada: "${i.chave}"`);
+    vistas.add(i.chave);
+    if (!i.rotulo) erros.push(`${i.chave}: rótulo ausente`);
+    if (!i.rota) erros.push(`${i.chave}: rota ausente`);
+    for (const eixo of ['x', 'y']) {
+      const v = i[eixo];
+      if (typeof v !== 'number' || v < 0 || v > 100) erros.push(`${i.chave}: ${eixo}=${v} deve ser número em [0,100] (% da arte)`);
+    }
+    if (!mapaIcones[i.chave]) semArte.push(i.chave);
+  }
+  if (erros.length) { console.error('ERRO de schema do MAPA (§306):\n  ' + erros.join('\n  ')); process.exit(1); }
+  if (semArte.length) console.warn(`⚠️  §306: ${semArte.length} ilha(s) sem ícone em web/mapa/<chave>.webp (cai no rótulo-reserva, sem 404): ${semArte.join(', ')}`);
+  return doc;
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -459,7 +494,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

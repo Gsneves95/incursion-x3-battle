@@ -117,3 +117,39 @@ linguagem do placeholder do carrossel (◈ "Em breve"), sem 404.
 **Próximo passo:** o dono manda o fundo + os 9 ícones + a referência montada (para eu ler as posições das ilhas e confirmar o
 espaçamento). Aí construo o mapa com os ícones em % da arte, os 5 contadores (Campanha na forma cheia enquanto couber) e os 2
 "em breve", e capturo a 780 e 1200 para o veredito.
+
+## 7) §306 — CONSTRUÍDO (assets chegaram; espaçamento medido; capturas no dist)
+
+Os assets vieram (`web/banners/mapa.webp` 1524×856; 9 ícones `web/mapa/<chave>.webp` 192², com alpha, inclusive `treino.webp`).
+O mapa substituiu o carrossel. **Posições das ilhas** medidas na **referência montada (1672×941)**, em % da arte (centro do ícone),
+gravadas em `data/mapa.json` (o dono ajusta sem tocar código):
+
+| ilha | x % | y % | x em design (×762) | contador |
+|---|---|---|---|---|
+| Campanha | 17,0 | 28,0 | 129 | Capítulo+região+barra |
+| Provações | 33,0 | 30,0 | 251 | nº |
+| Desafios | 67,0 | 27,0 | 511 | nº |
+| Invocação | 87,5 | 35,0 | 667 | pity |
+| Coleção | 11,0 | 53,0 | 84 | nº |
+| Domínios | 49,5 | 47,0 | 377 | **em breve** |
+| Treino | 70,0 | 56,0 | 533 | — |
+| Loja | 24,0 | 77,0 | 183 | **em breve** |
+| PvP | 79,0 | 83,0 | 602 | — |
+
+**O RISCO (a pergunta do dono): distância entre ilhas na MESMA faixa horizontal.** Convertidas para a caixa de design (762 de
+largura), os pares que dividem faixa vertical (Δy < 60px de design):
+
+- **Campanha↔Provações = 122px** ← o mais próximo de todos
+- Provações↔(Desafios/Invocação): 260px+ (longe)
+- Desafios↔Invocação = 155px
+- Coleção↔Domínios = 293px · Domínios↔Treino = 156px
+- Loja↔PvP = 419px
+
+**Veredito: o par mais próximo (Campanha↔Provações) fica a ~122px — acima do piso de ~85px.** Os rótulos NÃO colidem; **nenhuma
+ilha precisou ser reposicionada.** (Desafios e Treino quase se empilham na horizontal — Δx ~17px — mas ficam a ~124px na vertical,
+faixas distintas: os rótulos não competem.) A guarda `tests/mapa.test.js` §6 recalcula esse mínimo e quebra se um ajuste futuro
+colar duas ilhas < 85px.
+
+**Gutter medido no dist** (viewport altura 428 → escala 1 → largura de design = largura física): **11px/lado a 780** (quase
+full-bleed), **96px a 951**, **221px a 1200** — confere com a tabela do §305 (o gutter escuro só aparece nas telas largas).
+Capturas em `docs/capturas-306/mapa-{780,951,1200}.png`.

@@ -1,0 +1,14 @@
+{
+  "_nota": "§306 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone; a caixa é 762×428 (proporção 1,78 travada, §305). `contador` liga o dado vivo (§305b: 5 contadores); `emBreve` desenha o estado indisponível (ícone ~50% + tag apagada, nunca abre — §306); `rota`/`params` navegam quando NÃO é emBreve. Medido na referência montada (1672×941): o par mais próximo na horizontal é Campanha↔Provações a ~123px de design (>85 — os rótulos não colidem).",
+  "ilhas": [
+    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 17.0, "y": 28.0, "contador": "campanha" },
+    { "chave": "provacoes", "rotulo": "Provações", "rota": "provacoes", "x": 33.0, "y": 30.0, "contador": "provacoes" },
+    { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 67.0, "y": 27.0, "contador": "desafios" },
+    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 87.5, "y": 35.0, "contador": "invocacao" },
+    { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 11.0, "y": 53.0, "contador": "colecao" },
+    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 49.5, "y": 47.0, "emBreve": true },
+    { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 70.0, "y": 56.0, "params": { "novo": true } },
+    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 24.0, "y": 77.0, "emBreve": true, "titulo": "Loja" },
+    { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 79.0, "y": 83.0 }
+  ]
+}

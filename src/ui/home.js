@@ -92,7 +92,164 @@ function bannerCardHTML(d){
   </${tag}>`;
 }
 
+// §306 — A HOME É UM MAPA ESTÁTICO (o carrossel saiu). renderHome despacha: com a arte do
+// mapa (MAPA_ARTE) e o dado de posições (MAPA), desenha o mapa; SEM a arte, cai no carrossel
+// de hoje (fallback honesto, sem 404, sem pacote crescido). O carrossel fica INTEIRO abaixo.
 function renderHome(){
+  if (typeof MAPA !== 'undefined' && MAPA && MAPA.ilhas && typeof MAPA_ARTE !== 'undefined' && MAPA_ARTE) renderHomeMapa();
+  else renderHomeCarrossel();
+}
+
+/* ================= §306 — O MAPA ================= */
+// CAIXA DE PROPORÇÃO TRAVADA (§305): a arte mantém 762×428 (1,78) centrada; o resto da largura
+// (o gutter) fica com o FUNDO ESCURO do jogo (stage__bg, opção a). Os ícones ancoram em % DA
+// ARTE (data/mapa.json) — nunca saem das ilhas, em nenhuma largura (780..1200).
+
+// medidor de largura de texto REAL (fontes locais §260), para o corte da Campanha se aplicar
+// sozinho quando a região estourar. Usa um <span> oculto (offsetWidth) — NÃO canvas: em jsdom o
+// canvas emite "not implemented" (quebra o smoke) e o offsetWidth simplesmente devolve 0 → null →
+// mantém a forma cheia. Num navegador real dá a largura em px de design (mesma métrica do §305b).
+function _larguraTexto(txt, font){
+  try {
+    let el = _larguraTexto._el;
+    if (!el || !el.isConnected){
+      el = _larguraTexto._el = document.createElement('span');
+      el.style.cssText = 'position:absolute;left:-9999px;top:-9999px;white-space:nowrap;visibility:hidden;pointer-events:none';
+      (document.body || document.documentElement).appendChild(el);
+    }
+    el.style.font = font;
+    el.textContent = txt;
+    const w = el.offsetWidth || (el.getBoundingClientRect && el.getBoundingClientRect().width) || 0;
+    return (w && w > 0) ? w : null;
+  } catch (e) { return null; }
+}
+
+// perfil no lugar do NÍVEL (§305: não existe nível de conta). Apelido + faixa de RANQUE; sem
+// barra de nível, sem envelope, sem sino. Online: nick + faixa do servidor. Offline: só o apelido local.
+function mapaPerfilHTML(){
+  const online = !!(typeof contaAtual !== 'undefined' && contaAtual && contaAtual.nick);
+  const nome = online ? contaAtual.nick : 'Jogador';
+  const faixa = (online && contaAtual.ranque && contaAtual.ranque.faixa && contaAtual.ranque.faixa.nome) ? contaAtual.ranque.faixa.nome : '';
+  return `<button class="mperfil" data-prof="me" title="Perfil do jogador">
+    <span class="mperfil__pic">${typeof AVATAR_SVG !== 'undefined' ? AVATAR_SVG : ''}</span>
+    <span class="mperfil__id"><b class="mperfil__nick">${H(nome)}</b>${faixa ? `<span class="mperfil__faixa">${H(faixa)}</span>` : ''}</span>
+  </button>`;
+}
+
+// moeda no formato que o jogo já usa (§305: toLocaleString('pt-BR'), sem "K"). Gema (💎) + Essência (◈).
+function mapaMoedasHTML(){
+  const m = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? perfil.moedas : {};
+  const fmt = n => Number(n || 0).toLocaleString('pt-BR');
+  return `<div class="mmoedas">
+    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--gema">💎</span><b>${fmt(m.gema)}</b></span>
+    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--ess">◈</span><b>${fmt(m.essencia)}</b></span>
+  </div>`;
+}
+
+// CAMPANHA — o único contador longo (§305b): "Capítulo I · Grécia" (71px) na forma cheia enquanto
+// a região couber; corta SOZINHO se estourar ~80px ("Cap. I · reg" → "Cap. I"). Retorna também a barra.
+function mapaCampanhaDado(){
+  const cap = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.capitulo) || 1;
+  const reg = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.regiao) || '';
+  const total = (typeof CAMPANHA !== 'undefined' && CAMPANHA && CAMPANHA.encontros) ? CAMPANHA.encontros.length : 0;
+  const feitos = (typeof perfil !== 'undefined' && perfil && perfil.campanha && Array.isArray(perfil.campanha.concluidas)) ? perfil.campanha.concluidas.length : 0;
+  const pct = total ? Math.round(feitos / total * 100) : 0;
+  const rom = romanoCap(cap);
+  const cheia = `Capítulo ${rom}${reg ? ' · ' + reg : ''}`;
+  const media = `Cap. ${rom}${reg ? ' · ' + reg : ''}`;
+  const curta = `Cap. ${rom}`;
+  const CAP = 80, font = "600 10px 'Rajdhani',sans-serif";
+  let texto = cheia;
+  const w = _larguraTexto(cheia, font);
+  if (w != null && w > CAP) texto = ((_larguraTexto(media, font) || 0) > CAP) ? curta : media;
+  return { texto, pct, prog: `${feitos}/${total}` };
+}
+
+// o DADO VIVO de uma ilha — os MESMOS números do carrossel de hoje (§305b: 5 contadores),
+// lidos do estado, nunca escritos no código. Retorna o HTML do contador (ou '' quando a ilha não tem).
+function mapaContadorHTML(chave){
+  if (chave === 'campanha'){
+    const c = mapaCampanhaDado();
+    return `<span class="ilha__cont ilha__cont--camp"><span class="ilha__camptxt">${H(c.texto)}</span><span class="ilha__campnum">${H(c.prog)}</span></span>
+      <span class="ilha__barra"><i style="width:${c.pct}%"></i></span>`;
+  }
+  const num = t => `<span class="ilha__cont">${H(t)}</span>`;
+  if (chave === 'provacoes'){
+    const total = (typeof MISSOES !== 'undefined' && MISSOES.missoes) ? Object.keys(MISSOES.missoes).length : 0;
+    if (!total) return '';
+    const lib = (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.missoes && Array.isArray(contaAtual.missoes.liberados)) ? contaAtual.missoes.liberados.length : null;
+    return num(lib != null ? `${lib}/${total}` : `${total}`);
+  }
+  if (chave === 'desafios') return num(`${acervoPergaminhos().length}`);
+  if (chave === 'invocacao'){
+    const p = (typeof perfil !== 'undefined' && perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0;
+    const duro = (typeof ECONOMIA !== 'undefined' && ECONOMIA.invocacao && ECONOMIA.invocacao.pity) ? ECONOMIA.invocacao.pity.duro : 0;
+    return duro ? num(`${p}/${duro}`) : '';
+  }
+  if (chave === 'colecao'){
+    const donos = (typeof perfil !== 'undefined' && perfil && perfil.deuses) ? Object.keys(perfil.deuses).length : 0;
+    const total = (typeof ROSTER !== 'undefined') ? ROSTER.length : 100;
+    return num(`${donos}/${total}`);
+  }
+  return '';
+}
+
+// UMA ilha: ícone (arquivo web/mapa/<chave>.webp; ausente → rótulo-reserva, sem 404) + nome + contador.
+// emBreve (§306: Domínios, Loja): ícone a ~50% + tag "em breve" apagada, NUNCA vermelho, NÃO navega.
+function ilhaHTML(i){
+  const temIcone = (typeof MAPA_ICONES !== 'undefined' && MAPA_ICONES && MAPA_ICONES[i.chave]);
+  const off = !!i.emBreve;
+  const tag = off ? 'div' : 'button';
+  const attr = off ? '' : ` data-dest="${H(i.chave)}"`;
+  const cls = ['ilha']; if (off) cls.push('ilha--breve'); if (!temIcone) cls.push('ilha--semarte');
+  const icone = temIcone
+    ? `<img class="ilha__ic" src="mapa/${H(i.chave)}.webp" alt="${H(i.rotulo)}" loading="lazy" onerror="this.remove();this.closest('.ilha').classList.add('ilha--semarte')">`
+    : '';
+  const rodape = off
+    ? `<span class="ilha__breveTag">· em breve</span>`
+    : mapaContadorHTML(i.chave);
+  return `<${tag} class="${cls.join(' ')}"${attr} style="left:${i.x}%;top:${i.y}%">
+    ${icone}<span class="ilha__reserva">◈</span>
+    <span class="ilha__nome">${H(i.rotulo)}</span>
+    ${rodape}
+  </${tag}>`;
+}
+
+function renderHomeMapa(){
+  const ilhas = MAPA.ilhas.map(ilhaHTML).join('');
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="mapa">
+    <header class="mapa__topo">
+      ${mapaPerfilHTML()}
+      ${mapaMoedasHTML()}
+    </header>
+    <div class="mapa__caixa">
+      <img class="mapa__art" src="banners/mapa.webp" alt="Mapa de INCURSION" onerror="this.remove()">
+      <div class="mapa__scrim" aria-hidden="true"></div>
+      ${ilhas}
+    </div>
+  </div>
+  </div>`;
+  ligarHomeMapa();
+  fit();
+}
+
+function ligarHomeMapa(){
+  // O mapa NÃO rola (lugares fixos): toque simples abre. Domínios e Loja (em breve) são <div>
+  // sem data-dest — não focam, não navegam. Cada ilha viva abre a SUA rota (§306: 9 destinos).
+  [...stage.querySelectorAll('.ilha[data-dest]')].forEach(b => {
+    b.onclick = () => {
+      const i = MAPA.ilhas.find(x => x.chave === b.dataset.dest);
+      if (!i || i.emBreve || !i.rota) return;
+      if (i.rota === 'embreve') ir('embreve', { titulo: i.titulo || i.rotulo });
+      else ir(i.rota, i.params || {});
+      render();
+    };
+  });
+}
+
+/* ================= o CARROSSEL (fallback §306: só quando a arte do mapa falta) ================= */
+function renderHomeCarrossel(){
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
   <div class="home">
@@ -103,11 +260,11 @@ function renderHome(){
     <div class="hscroll"><nav class="htrack">${HOME_BANNERS.map(bannerCardHTML).join('')}</nav></div>
   </div>
   </div>`;
-  ligarHome();
+  ligarHomeCarrossel();
   fit();
 }
 
-function ligarHome(){
+function ligarHomeCarrossel(){
   // ROLAR ≠ ABRIR: o carrossel rola por arraste nativo (overflow-x). O perigo é o toque
   // disparar o destino ao fim de uma rolagem. Guarda por LIMIAR: se o dedo andou mais que
   // ~10px entre o pressionar e o soltar, foi rolagem — o clique seguinte não navega.

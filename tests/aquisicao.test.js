@@ -194,12 +194,12 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   // "Desafios" → o hub dos DESAFIOS POR DEUS (§245): uma linha por deus possuído
   w.eval("ir('desafios'); render();");
   ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (uma linha por deus possuído)');
-  // §246: a arte do banner Desafios chegou — o placeholder do §213 SAIU; agora é <img> de arquivo
+  // §306: a home é MAPA — a ilha Desafios tem seu ícone (arquivo) e NAVEGA (não é "em breve").
   w.eval("ir('home',{},{substituir:true}); render();");
-  const cd = $('.bcard[data-dest="desafios"]');
-  ok(!!cd && !cd.querySelector('.bcard__ph'), 'o banner Desafios não é mais placeholder (§246: a arte chegou)');
-  const img = cd && cd.querySelector('img.bcard__art');
-  ok(!!img && img.getAttribute('src') === 'banners/desafios.webp', 'o banner Desafios aponta para banners/desafios.webp (arquivo versionado)');
+  const cd = $('.ilha[data-dest="desafios"]');
+  ok(!!cd && !cd.classList.contains('ilha--breve'), 'a ilha Desafios navega (não é "em breve", §306)');
+  const img = cd && cd.querySelector('img.ilha__ic');
+  ok(!!img && img.getAttribute('src') === 'mapa/desafios.webp', 'a ilha Desafios aponta para mapa/desafios.webp (ícone versionado)');
 }
 
 for (const dom of abertos) try { dom.window.close(); } catch (e) {}

@@ -2,17 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ MAPA §305 — tela inicial vira mapa estático (MEDIÇÃO + proposta; nada construído, aguarda dono + assets).
+## ★ MAPA §306 — a HOME É o MAPA (CONSTRUÍDO): caixa travada, ícones em % da arte, 5 contadores, 2 "em breve".
 
-O carrossel dá lugar a um mapa com 9 destinos fixos. Medição/proposta em `docs/mapa-inicial.md`; assets (fundo + 9 ícones) ainda
-não vieram. **Geometria (decide tudo):** palco altura fixa 428, largura fluida 780..1200; fundo 1,78 → preenchendo a altura dá
-762px de largura. Preencher a largura corta as ilhas (fatal). **Proposta: caixa de proporção travada** (762×428 centrado, ícones em
-% da arte — nunca saem das ilhas); gutter 9px/lado no piso, até 219px/lado no teto (tratamento a decidir: fundo escuro ou extensão
-borrada). **Ícones** ~61–76px design (>35). **Referência mente:** sem nível de conta (usar apelido + faixa de ranque), sem
-correio/sino, moeda em pt-BR sem "K". **Carrossel hoje (manter):** 5 contadores (Campanha+barra, Provações, Desafios, Invocação
-pity, Coleção) + 2 "em breve" (Domínios, Loja); cada ilha reserva lugar p/ contador. **Assets propostos:** `web/banners/mapa.webp`
-(MAPA_ARTE) + `web/mapa/<chave>.webp` (MAPA_ICONES) + posições das ilhas como dado. **PENDENTE do dono:** confirmar geometria +
-tratamento do gutter + mandar fundo/ícones/referência. Ver DECISOES §305.
+Os assets chegaram e o mapa do §305/§305b está no ar. **O carrossel saiu** (vira fallback: sem `MAPA_ARTE`, `renderHome` cai no
+carrossel de hoje, sem 404, o pacote não cresce). **Caixa de proporção TRAVADA** — `.mapa__caixa` (`aspect-ratio:1524/856`,
+`height:100%`) → 762×428 de design centrada; **gutter = `stage__bg` escuro** (opção a). Medido no dist: gutter 11px/lado a 780, 96px a
+951, 221px a 1200. **Ícones ancorados em % da arte** (`data/mapa.json`: `x/y`, `rotulo`, `rota`/`params`, `contador`, `emBreve`) —
+nunca saem das ilhas (62px design ≈ 8,1%). **Espaçamento medido na referência (1672×941):** par mais próximo Campanha↔Provações
+~122px de design (> piso 85 — não colidem); nenhum ajuste de posição foi preciso. **9º modo = TREINO** (uma palavra), rota
+`selecao{novo:true}`. **5 contadores vivos** (mesmo dado): Campanha "Capítulo I · Grécia" + `feitos/total` + barra (corta sozinha se a
+região passar de ~80px), Provações/Desafios/Invocação(pity)/Coleção como número — todos lidos do estado. **2 "em breve"** (Domínios,
+Loja): `<div>` inerte + ícone a 50% + tag dourada apagada, nunca vermelho; consequência: a home não linka `dominios`/`embreve`
+(un-gate = tirar `emBreve` do JSON). **Referência mente (aplicado):** apelido + faixa (online) / só apelido (offline), sem barra de
+nível/envelope/sino; moeda pt-BR (💎 2.450 / ◈ 12.360), sem "K". **§240/§210 ok** (mapa é a home, não empilha; saídas para home
+intactas). **Manifestos:** `MAPA_ARTE`, `MAPA_ICONES`, `MAPA` (build valida 9 ilhas + x/y em [0,100] + rótulo/rota; avisa ícone sem
+arquivo). **Guardas** `tests/mapa.test.js` (§295) + `render_sweep` §5 reescrito + `pvp_tela`/`aquisicao`/`dominios` atualizados.
+**Achado:** o footprint de Cinzel do mapa (9 nomes no boot) mexia na rasterização de fonte e cortava o pior caso da Coleção
+(`babi.milagre` a 780, que o §292 deixou a 0 de folga); conserto = crescer a caixa da sobreposição (117→134 no piso), sem apertar
+fonte/texto — folga devolvida a todos. Capturas 780/951/1200 + overlay em `docs/capturas-306/`. **Arquivos:** `data/mapa.json`, `tools/build.js`, `src/ui/home.js`, `src/shell.html`,
+`tests/mapa.test.js` (+ render_sweep/pvp_tela/aquisicao/dominios), `package.json`, `docs/mapa-inicial.md`, `docs/capturas-306/`.
+Ver DECISOES §306. Suíte + build verdes.
 
 ## ★ INVOCAÇÃO §304 — tela refeita pelo mockup aprovado; fundo e deus em destaque viram DADO.
 

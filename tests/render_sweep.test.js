@@ -93,83 +93,79 @@ console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (disc
   console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
 }
 
-console.log('== 5. carrossel da home: os banners carregam (arquivo, nenhum 404; 8 em arquivo + Domínios placeholder) e o layout independe da carteira ==');
+console.log('== 5. MAPA da home (§306): os 9 ícones carregam (arquivo, nenhum 404), 2 "em breve" não abrem, e o layout independe da carteira ==');
 {
-  const dir = path.join(__dirname, '../web/banners');
-  const chaves = w.eval('HOME_BANNERS.map(d=>d.arte)');
-  ok(chaves.length === 9, `a home deveria ter 9 destinos (tem ${chaves.length})`);   // §213/§246 (+Desafios), §274 (+Domínios placeholder)
+  const dirIc = path.join(__dirname, '../web/mapa');
+  ok(w.eval('MAPA_ARTE') === 1, 'a arte do mapa (web/banners/mapa.webp) deveria estar versionada → MAPA_ARTE=1');
+  ok(fs.existsSync(path.join(__dirname, '../web/banners/mapa.webp')), 'web/banners/mapa.webp existe no repo (contra 404)');
 
-  // (a) cada banner referencia um ARQUIVO em banners/<arte>.webp e o arquivo EXISTE no repo
-  //     (a garantia contra 404: o src aponta certo E o webp está versionado). Nada de base64.
   const render0 = () => w.eval("perfil=novoPerfil(0,0); ir('home',{},{substituir:true}); render();");
   render0();
-  const cards = [...d.querySelectorAll('.bcard')];
-  ok(cards.length === 9, `deveriam existir 9 cartões (existem ${cards.length})`);   // §213: +Desafios
-  const semArquivo = [], base64 = [], placeholders = [];
-  let comArquivo = 0;
-  for (const c of cards){
-    // §274: DOMÍNIOS é placeholder do §213 (aguarda a ILUSTRAÇÃO definitiva; um cartão programático
-    // saltava ao lado das 8 artes). Os OUTROS 8 são <img> de arquivo — placeholder neles é regressão.
-    // O placeholder NÃO emite <img>, então não há 404 (a garantia que o dono pediu).
-    if (c.querySelector('.bcard__ph')){ placeholders.push(c.getAttribute('data-dest') || '?'); continue; }
-    const img = c.querySelector('img.bcard__art');
-    if (!img) { semArquivo.push('sem <img>'); continue; }
-    const src = img.getAttribute('src') || '';
+  ok(!!d.querySelector('.mapa'), 'com MAPA_ARTE=1, render() desenha o MAPA (não o carrossel)');
+  ok(!d.querySelector('.hscroll'), 'o carrossel (.hscroll) NÃO aparece no mapa (§306: o carrossel saiu)');
+  const ilhas = [...d.querySelectorAll('.ilha')];
+  ok(ilhas.length === 9, `o mapa deveria ter 9 ilhas (tem ${ilhas.length})`);   // §306: 9 destinos
+
+  // (a) o FUNDO e cada ÍCONE referenciam ARQUIVO existente no repo (contra 404); nada de base64.
+  const artSrc = d.querySelector('.mapa__art').getAttribute('src') || '';
+  ok(artSrc === 'banners/mapa.webp', `a arte do mapa deveria apontar banners/mapa.webp (é "${artSrc}")`);
+  const semArquivo = [], base64 = [];
+  let comIcone = 0;
+  for (const im of [...d.querySelectorAll('img.ilha__ic')]){
+    const src = im.getAttribute('src') || '';
     if (/^data:/.test(src)) base64.push(src.slice(0, 24));
-    const m = /^banners\/(.+\.webp)$/.exec(src);
-    if (!m) { semArquivo.push(src); continue; }
-    if (!fs.existsSync(path.join(dir, m[1]))) { semArquivo.push(m[1] + ' (ausente no repo)'); continue; }
-    comArquivo++;
+    const m = /^mapa\/(.+\.webp)$/.exec(src);
+    if (!m) { semArquivo.push(src || 'sem src'); continue; }
+    if (!fs.existsSync(path.join(dirIc, m[1]))) { semArquivo.push(m[1] + ' (ausente no repo)'); continue; }
+    comIcone++;
   }
-  ok(base64.length === 0, `nenhum banner deveria ser base64 (achei: ${base64.join(' | ')})`);
-  ok(placeholders.length === 1 && placeholders[0] === 'dominios', `só Domínios deveria ser placeholder (§274); placeholders: ${placeholders.join(' | ') || 'nenhum'}`);
-  ok(semArquivo.length === 0, `todo banner com arte deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
-  ok(comArquivo === 8, `os 8 destinos com arte deveriam ter arquivo (tem ${comArquivo}); Domínios é placeholder (§274)`);
-  ok(!fs.existsSync(path.join(dir, 'dominios.webp')), 'o banner programático de Domínios foi REMOVIDO (§274: aguarda a ilustração definitiva web/banners/dominios.webp)');
+  ok(base64.length === 0, `nenhum ícone deveria ser base64 (achei: ${base64.join(' | ')})`);
+  ok(semArquivo.length === 0, `todo ícone deveria apontar p/ um arquivo existente (falhas: ${semArquivo.join(' | ')})`);
+  ok(comIcone === 9, `os 9 ícones deveriam ter arquivo em web/mapa/ (tem ${comIcone})`);
 
-  // (a2) GUARDA §250: um cartão com ROTA VIVA não pode carregar marcador de INDISPONÍVEL —
-  //      nem a classe (`bcard--off`, `bcard--pvp`) nem o cinza (grayscale no filtro da arte).
-  //      Motivo: o cinza é a linguagem de "travado/não tem" (Coleção §216, Missões §234); num
-  //      destino jogável ele mente logo na 1ª tela (usabilidade §206). O PvP (§236/§225/§226/§237)
-  //      é o caso que motivou a regra. Marcador morto = etiqueta-sem-enforce: aqui ela passa a doer.
-  const MARC_INDISPON = ['bcard--off', 'bcard--pvp'];
-  const vivosComMarcador = [], vivosCinza = [];
-  for (const c of [...d.querySelectorAll('.bcard[data-dest]')]) {   // [data-dest] = tem rota (off é <div> sem data-dest)
-    const dest = c.getAttribute('data-dest');
-    const marc = MARC_INDISPON.filter(k => c.classList.contains(k));
-    if (marc.length) vivosComMarcador.push(`${dest}:${marc.join('+')}`);
-    const art = c.querySelector('.bcard__art');
-    const filtro = art ? (w.getComputedStyle(art).filter || '') : '';
-    if (/grayscale|saturate\(0/.test(filtro)) vivosCinza.push(`${dest}:${filtro}`);
-  }
-  ok(vivosComMarcador.length === 0, `cartão com rota viva NÃO pode ter marcador de indisponível (§250): ${vivosComMarcador.join(' | ')}`);
-  ok(vivosCinza.length === 0, `cartão com rota viva NÃO pode ter a arte em cinza/grayscale (§250): ${vivosCinza.join(' | ')}`);
-  // e o PvP, especificamente (o achado do dono): tem rota, e agora NÃO é mais cinza
-  const pvp = d.querySelector('.bcard[data-dest="pvp"]');
-  ok(!!pvp && !pvp.classList.contains('bcard--pvp'), 'o cartão PvP não carrega mais a classe bcard--pvp (§250: o cinza "Fase 5" saiu)');
+  // (b) os DOIS "em breve" (Domínios, Loja, §306) NÃO abrem (são <div> sem data-dest), têm a tag
+  //     "em breve" e NÃO usam vermelho/erro. Os outros 7 navegam.
+  const breve = [...d.querySelectorAll('.ilha--breve')];
+  const breveChaves = breve.map(x => x.querySelector('.ilha__nome').textContent).sort().join(',');
+  ok(breveChaves === 'Domínios,Loja', `só Domínios e Loja deveriam ser "em breve" (achei: ${breveChaves})`);
+  ok(breve.every(x => x.tagName === 'DIV' && !x.hasAttribute('data-dest')), 'as ilhas "em breve" são <div> sem data-dest (não focam, não navegam)');
+  ok(breve.every(x => !!x.querySelector('.ilha__breveTag')), 'cada "em breve" mostra a tag · em breve');
+  const vermelho = breve.filter(x => { const c = w.getComputedStyle(x.querySelector('.ilha__breveTag')).color || ''; return /rgb\(2\d\d,\s*[0-5]?\d,/.test(c) || /red|crimson/i.test(c); });
+  ok(vermelho.length === 0, 'a tag "em breve" NUNCA é vermelha (§306: indisponível, não defeito)');
+  const navegaveis = [...d.querySelectorAll('.ilha[data-dest]')].map(x => x.dataset.dest).sort().join(',');
+  ok(navegaveis === 'campanha,colecao,desafios,invocacao,provacoes,pvp,treino', `os 7 destinos vivos deveriam navegar (achei: ${navegaveis})`);
 
-  // (b) o LAYOUT do carrossel NÃO muda com o tamanho da carteira: cartão fixo 202×314,
-  //     mesma contagem e mesma ordem com perfil zerado e com perfil cheio. Só o DADO VIVO
-  //     (selos/faixa) muda — a estrutura, não.
-  const gs = el => w.getComputedStyle(el);
-  const assinatura = () => [...d.querySelectorAll('.bcard')].map(c => (c.querySelector('[data-dest]') ? c.getAttribute('data-dest') : (c.className.includes('bcard--off') ? 'off' : '?'))).join(',');
-  render0();
-  const ordemVazia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
-  const c0 = d.querySelector('.bcard');
-  const larg = gs(c0).width, alt = gs(c0).height;
-  ok(larg === '202px' && alt === '314px', `cartão deveria ser 202×314 (é ${larg}×${alt})`);
-
+  // (c) o LAYOUT do mapa NÃO muda com o tamanho da carteira: mesmas 9 ilhas, mesmas posições
+  //     (left/top em % da arte). Só o DADO VIVO (contadores) muda — a estrutura, não.
+  const posicoes = () => [...d.querySelectorAll('.ilha')].map(x => `${x.dataset.dest||x.querySelector('.ilha__nome').textContent}@${x.style.left},${x.style.top}`).join('|');
+  const posVazia = posicoes();
   // carteira CHEIA: todos os deuses, gemas altas, campanha e pity avançados
   w.eval("perfil=novoPerfil(0,999999); ROSTER.forEach(e=>{perfil.deuses[e.key]=perfil.deuses[e.key]||{copias:1,favorito:false,obtidoEm:0};}); perfil.campanha.concluidas=CAMPANHA.encontros.map(e=>e.id); perfil.invocacao.desdeUltimoSS=42; ir('home',{},{substituir:true}); render();");
-  const ordemCheia = [...d.querySelectorAll('.bcard[data-dest]')].map(c => c.dataset.dest).join(',');
-  const c1 = d.querySelector('.bcard');
-  ok(d.querySelectorAll('.bcard').length === 9, 'com carteira cheia ainda são 9 cartões');
-  ok(ordemVazia === ordemCheia, `a ordem dos destinos não deveria mudar com a carteira (vazia="${ordemVazia}" cheia="${ordemCheia}")`);
-  ok(gs(c1).width === '202px' && gs(c1).height === '314px', 'o cartão continua 202×314 com a carteira cheia');
-  // o DADO VIVO, esse sim, reflete a carteira (prova que os selos leem o perfil)
-  const seloCol = [...d.querySelectorAll('.bcard[data-dest="colecao"] .bcard__selo')][0];
-  ok(seloCol && /\/100$/.test(seloCol.textContent), `o selo da Coleção deveria mostrar x/100 (achei "${seloCol ? seloCol.textContent : 'nada'}")`);
-  console.log(`  9 destinos (8 em arquivo + Domínios placeholder §274) · 0 base64 · cartão 202×314 estável (carteira vazia↔cheia) · selos leem o perfil`);
+  ok(d.querySelectorAll('.ilha').length === 9, 'com carteira cheia ainda são 9 ilhas');
+  ok(posVazia === posicoes(), 'as posições das ilhas não mudam com a carteira (âncoras em % da arte, §306)');
+  // o DADO VIVO, esse sim, reflete a carteira (prova que os contadores leem o perfil)
+  const contCol = d.querySelector('.ilha[data-dest="colecao"] .ilha__cont');
+  ok(contCol && /\/100$/.test(contCol.textContent), `o contador da Coleção deveria mostrar x/100 (achei "${contCol ? contCol.textContent : 'nada'}")`);
+  console.log(`  9 ilhas (9 ícones em arquivo) · 0 base64 · 2 "em breve" inertes · posições estáveis (carteira vazia↔cheia) · contadores leem o perfil`);
+
+  // (d) FALLBACK §306: sem a arte do mapa, a home cai no CARROSSEL de hoje (sem 404, pacote não cresce).
+  //     Como MAPA_ART é const, exercemos a FUNÇÃO de fallback direto (o galho que renderHome escolhe quando falta a arte).
+  const dirB = path.join(__dirname, '../web/banners');
+  w.eval("perfil=novoPerfil(0,0); ir('home',{},{substituir:true}); renderHomeCarrossel();");
+  const cards = [...d.querySelectorAll('.bcard')];
+  ok(cards.length === 9, `o fallback (carrossel) deveria ter 9 cartões (tem ${cards.length})`);
+  const fbBase64 = [], fbSemArq = []; let fbPh = 0;
+  for (const c of cards){
+    if (c.querySelector('.bcard__ph')){ fbPh++; continue; }
+    const img = c.querySelector('img.bcard__art'); const src = img ? (img.getAttribute('src') || '') : '';
+    if (/^data:/.test(src)) fbBase64.push(src.slice(0,24));
+    const m = /^banners\/(.+\.webp)$/.exec(src);
+    if (!m || !fs.existsSync(path.join(dirB, m[1]))) fbSemArq.push(src || 'sem <img>');
+  }
+  ok(fbBase64.length === 0, `o fallback não usa base64 (achei: ${fbBase64.join(' | ')})`);
+  ok(fbSemArq.length === 0, `todo banner do fallback aponta p/ arquivo existente (falhas: ${fbSemArq.join(' | ')})`);
+  ok(fbPh === 1, `no fallback só Domínios é placeholder (§274) — achei ${fbPh}`);
+  console.log('  fallback do carrossel intacto: 9 cartões, 0 base64, Domínios placeholder, sem 404');
 }
 
 console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem saída não volta em silêncio) ==');

@@ -17,9 +17,9 @@ const txt = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
 
 console.log('== FASE 5.3/§236 — LOBBY DO PvP ==');
 
-// ---- o carrossel abre o PvP (antes o cartão era morto: rota null) ----
+// ---- a home abre o PvP (§306: a ilha do mapa; antes o cartão do carrossel era morto: rota null) ----
 w.eval("ir('home',{},{substituir:true}); render();");
-ok($$('.bcard[data-dest="pvp"]').length === 1, 'o cartão PvP no início é clicável (não mais morto)');
+ok($$('.ilha[data-dest="pvp"]').length === 1, 'a ilha PvP no início é clicável (não mais morta)');
 
 // ---- 1. SEM SERVIDOR: diz como chegar ao servidor (o endereço da máquina, mesma rede) ----
 console.log('\n== 1. sem servidor: como chegar ao servidor (endereço + mesma rede) ==');

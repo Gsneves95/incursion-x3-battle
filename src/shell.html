@@ -965,6 +965,62 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    "travado/não tem" (Coleção §216, Missões §234); num cartão com rota viva ele lê como
    indisponível logo na 1ª tela (usabilidade §206). O guarda do render_sweep trava a volta. */
 
+/* §306 — a HOME vira MAPA estático (o carrossel acima fica de FALLBACK, sem a arte do mapa).
+   CAIXA DE PROPORÇÃO TRAVADA (1,78), centrada; o gutter mostra o stage__bg escuro (§305b, opção a).
+   Os ícones ancoram em % DA ARTE (left/top da .ilha) — nunca saem das ilhas em 780..1200. */
+.mapa{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mapa__caixa{position:relative;height:100%;aspect-ratio:1524/856;max-width:100%;flex:0 0 auto}   /* a altura (428 de design) manda; a largura vira 762 — a arte nunca corta as ilhas */
+.mapa__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.mapa__scrim{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 82% at 50% 42%,transparent 56%,rgba(6,5,16,.34) 100%)}
+/* topo: apelido+faixa à esq., moedas à dir. (§305: sem envelope, sem sino, sem barra de nível) */
+.mapa__topo{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:10px;padding:10px 14px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(6,5,16,.66),rgba(6,5,16,0))}
+.mperfil{pointer-events:auto;display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;margin:0;
+  border:1px solid var(--gold-soft);border-radius:999px;background:rgba(12,10,26,.72);cursor:pointer}
+.mperfil__pic{width:30px;height:30px;flex:0 0 auto;border-radius:50%;border:1px solid var(--gold-soft);overflow:hidden;display:block}
+.mperfil__pic svg,.mperfil__pic img{width:100%;height:100%;display:block}
+.mperfil__id{display:flex;flex-direction:column;line-height:1.12;min-width:0;text-align:left}
+.mperfil__nick{font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:var(--gold-text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.mperfil__faixa{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-dim)}
+.mmoedas{pointer-events:auto;display:flex;gap:8px;align-items:center}
+.mmoeda{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;
+  border:1px solid var(--gold-soft);background:rgba(12,10,26,.72);
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--ink)}
+.mmoeda b{color:var(--gold-text);font-weight:800}
+.mmoeda__ic{font-size:12px;line-height:1}
+.mmoeda__ic--ess{color:#7fe3d6}
+/* uma ILHA: ícone + nome + contador, ancorada no CENTRO (translate) sobre o ponto da arte. */
+.ilha{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;
+  align-items:center;gap:1px;width:100px;margin:0;padding:0;border:0;background:none;cursor:pointer;
+  font:inherit;text-align:center;color:var(--ink);z-index:3}
+.ilha:focus{outline:none}
+.ilha:focus-visible .ilha__ic{filter:drop-shadow(0 0 0 var(--gold-text)) drop-shadow(0 3px 8px rgba(0,0,0,.7));outline:2px solid var(--gold-text);outline-offset:2px;border-radius:8px}
+.ilha:active{transform:translate(-50%,-50%) scale(.96)}
+.ilha__ic{width:62px;height:62px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7))}
+.ilha__reserva{display:none;width:62px;height:62px;align-items:center;justify-content:center;
+  font-size:26px;color:var(--gold-text);opacity:.6;
+  border:1px solid rgba(216,178,90,.4);border-radius:50%;background:rgba(12,10,26,.8)}
+.ilha--semarte .ilha__reserva{display:flex}
+.ilha--semarte .ilha__ic{display:none}
+.ilha__nome{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.03em;
+  color:#fff;text-shadow:0 1px 3px #000,0 2px 8px rgba(0,0,0,.9);margin-top:2px;white-space:nowrap}
+.ilha__cont{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:10px;letter-spacing:.02em;
+  color:var(--gold-text);text-shadow:0 1px 2px #000,0 1px 5px rgba(0,0,0,.9);white-space:nowrap}
+.ilha__cont--camp{display:flex;gap:5px;align-items:baseline;justify-content:center}
+.ilha__campnum{color:#fff;font-weight:700}
+.ilha__barra{margin-top:2px;width:74px;height:3px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.22)}
+.ilha__barra>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#37cfe6,var(--gold-text))}
+/* EM BREVE (§306: Domínios, Loja) — ícone apagado + tag dourada apagada, NUNCA vermelho; não abre. */
+.ilha--breve{cursor:default}
+.ilha--breve .ilha__ic{opacity:.5;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7)) grayscale(.25)}
+.ilha--breve .ilha__nome{color:var(--ink-dim);text-shadow:0 1px 3px #000}
+.ilha__breveTag{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold-soft);text-shadow:0 1px 3px #000}
+
 /* telas de lista (Provações) e marcador (Campanha/Invocação/Coleção) */
 .tela{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}
 .tela__cab{flex:0 0 auto;display:flex;align-items:center;gap:14px;
@@ -1523,12 +1579,16 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    Fundo desfocado; tocar no fundo fecha (o card intercepta). Geometria: palco 951×428, a altura é o gargalo →
    o card preenche a largura (margem fina) preservando o split interno do mockup (retrato ~38% / conteúdo ~62%),
    em vez de casar a proporção 1.8:1 da referência (que desperdiçaria metade da largura). */
-.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:12px;
+.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:6px;
   background:rgba(6,5,14,.6);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
 /* §291-ajuste: cartão 897→879 (−18px, −2%) p/ abrir a calha das setas a 36px/lado (seta de 30px + 3px de folga
    — o patamar do col2__voltar). calc(100% - 48px): 100% = content-box do #col2ov (palco − 24 de padding); −48
    reserva 24 de cada lado → com o padding, 36/lado. O split interno (retrato 38%/conteúdo 62%) é por flex, não muda. */
-.col2ov__card{position:relative;display:flex;width:min(879px,calc(100% - 48px));height:min(408px,calc(100% - 8px));
+/* §306: a caixa cresceu (padding do overlay 12→6, altura 408→420 / respiro 8→4) — o footprint de Cinzel do
+   MAPA da home tocava a renderização de fonte da Coleção e empurrava o pior caso (babi.milagre a 780) 1 linha
+   para fora da caixa de efeito, que estava a 0 de folga (§292). Crescer a caixa devolve folga a TODOS os deuses
+   (a caixa de efeito subiu de 117 p/ 134 no piso), sem apertar fonte nem texto. Guarda §292 (colecao_encaixe). */
+.col2ov__card{position:relative;display:flex;width:min(879px,calc(100% - 48px));height:min(420px,calc(100% - 4px));
   overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
   background:linear-gradient(180deg,rgba(28,23,52,.98),rgba(12,10,26,.99));box-shadow:0 0 0 1px rgba(255,217,122,.12),0 18px 50px rgba(0,0,0,.6)}
 .col2ov--falta{border-color:#39335a;border-style:dashed}
@@ -1585,10 +1645,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    crescer (≠ §277, que estava no teto físico do cartão e por isso aceitou reticência). */
 .col2ov__sknome{font-weight:700;font-size:11px;color:var(--ink-dim);text-align:center;line-height:1.15;max-width:100%;
   min-height:calc(2 * 1.15em);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:2px;padding-top:5px;border-top:1px solid rgba(216,178,90,.2)}   /* §292-conserto C: respiro 22→7 p/ a caixa de efeito (folga no pior caso) */
+.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:1px;padding-top:4px;border-top:1px solid rgba(216,178,90,.2)}   /* §292-conserto C: respiro 22→7 p/ a caixa de efeito (folga no pior caso) */
 .col2ov__detart{flex:0 0 auto;width:66px;height:66px;border-radius:11px;overflow:hidden;border:1px solid var(--gold-soft)}
 .col2ov__detart .slot{width:66px;height:66px}
-.col2ov__detbody{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px}
+.col2ov__detbody{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;gap:4px}
 .col2ov__detcab{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .col2ov__detnome{font-family:'Cinzel',serif;font-weight:700;font-size:17px;color:var(--ink)}
 .col2ov__dettipo{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.1em;color:var(--gold-soft)}

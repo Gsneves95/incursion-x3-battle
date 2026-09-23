@@ -6,6 +6,62 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §306 — a HOME É o MAPA (construído): caixa travada, ícones em % da arte, 5 contadores vivos, 2 "em breve".
+
+Os assets chegaram (o dono commitou `web/banners/mapa.webp` 1524×856 e os 9 ícones `web/mapa/<chave>.webp` 192², com alpha).
+Construí o mapa do §305/§305b. **O carrossel SAIU** — vira fallback: sem a arte (`MAPA_ARTE=0`), `renderHome` cai no carrossel de
+hoje (sem 404, o pacote não cresce). Capturas em `docs/capturas-306/` (780/951/1200).
+
+**CAIXA DE PROPORÇÃO TRAVADA (aprovada).** A arte é `.mapa__caixa` com `aspect-ratio:1524/856` e `height:100%` → sempre 762×428 de
+design, centrada; o **gutter fica com o `stage__bg` escuro** (opção a). Medido no dist: gutter **11px** cada lado a 780 (quase
+full-bleed), **96px** a 951, **221px** a 1200 — bate com a tabela do §305. Os ícones ancoram em **% da arte** (`left/top` da `.ilha`,
+de `data/mapa.json`) — por construção **nunca saem das ilhas** em nenhuma largura (a caixa não corta a arte). Ícone = 62px de design
+(~8,1% da largura), dentro da faixa 8–10% do §305.
+
+**POSIÇÕES COMO DADO.** `data/mapa.json` traz `x/y` (% da arte, centro do ícone), `rotulo`, `rota`/`params`, `contador`, `emBreve`
+por chave — o dono ajusta sem tocar código. Manifestos de build: `MAPA_ARTE` (0/1), `MAPA_ICONES` ({chave:1}, ausente → rótulo-reserva,
+sem 404), `MAPA` (o dado). O build valida (9 ilhas, x/y em [0,100], rótulo/rota presentes) e avisa se um ícone declarado não tem arquivo.
+
+**O RISCO MEDIDO — espaçamento das ilhas.** Medi a referência montada (1672×941) e converti para a caixa de design (762×428). O par
+mais próximo na MESMA faixa horizontal é **Campanha↔Provações a ~122px** de design — **acima do piso de ~85px**, então os rótulos NÃO
+colidem. Nenhum outro par na mesma faixa fica abaixo de 85px. **Não precisei reposicionar nada.** (Guarda babá trava se um ajuste
+futuro colar duas ilhas < 85px.)
+
+**O 9º modo = TREINO** (uma palavra, §305b: "Arena/Treino" = 102px estoura; Treino = 51px cabe). Rota `selecao` com `novo:true`.
+
+**5 CONTADORES VIVOS (mesmo dado de hoje).** Campanha = "Capítulo I · Grécia" + `feitos/total` + barra; Provações, Desafios,
+Invocação (pity), Coleção como número. Todos lidos do estado (perfil/CAMPANHA/MISSOES/acervo), nunca escritos. **A Campanha corta
+SOZINHA** se a região estourar ~80px (mede o texto real via `<span>` oculto; jsdom devolve 0 → mantém a forma cheia): "Capítulo I ·
+reg" → "Cap. I · reg" → "Cap. I". Hoje "Grécia" (6 letras) → forma cheia (~71px, dentro do teto).
+
+**2 "EM BREVE" (Domínios, Loja).** `<div>` sem `data-dest` (não focam, não navegam) + ícone a ~50% + tag "· em breve" dourada
+apagada — **NUNCA vermelho**. Consequência honesta a registrar: a home deixa de LINKAR o `dominios` (a feature §273-277 existe e sai
+por outra rota; não é órfã de saída — o guarda §6 do render_sweep confirma a volta) e o `embreve` (Loja). Un-gate futuro = tirar
+`emBreve` do `data/mapa.json`, sem tocar código.
+
+**A REFERÊNCIA MENTE (aplicado, §305):** perfil = **apelido + faixa de ranque** (online), só o apelido offline ("Jogador") — **sem
+barra de nível, sem envelope, sem sino**. Moeda em **`toLocaleString('pt-BR')`** (💎 2.450 / ◈ 12.360), sem "K".
+
+**§240/§210:** o mapa não empilha (é a home); o voltar do Android segue coerente (as telas saem por ‹ Início → home, guarda §6
+intacto). Nenhuma rota registrada ficou sem saída para a home.
+
+**Guardas (`tests/mapa.test.js`, §295):** 9 destinos e cada um abre o seu modo (Treino=selecao{novo}); 5 contadores mostram dado real
+(mudam com o perfil); 2 "em breve" inertes e nunca vermelhos; ícones ancorados em % dentro da arte; par mais próximo ≥85px; fallback
+do carrossel sem 404/base64; sem nível/envelope/sino e moeda pt-BR. `render_sweep` §5 reescrito para o mapa; `pvp_tela`/`aquisicao`/
+`dominios` atualizados para o DOM do mapa.
+
+**★ ACHADO (acoplamento de fonte entre telas) — e o conserto honesto.** A guarda §292 (`colecao_encaixe`) quebrou: o pior caso
+`babi.milagre` a 780 passou a cortar +18px. A causa não era a Coleção — era o MAPA: renderizar 9 nomes de ilha em Cinzel no boot
+mexe no estado de rasterização de fonte do Chromium e faz os chips Cinzel da sobreposição da Coleção renderizarem um fio mais largos,
+quebrando o cabeçalho do detalhe em +1 linha, que roubava a linha exata que a caixa de efeito de `babi` tinha (o §292 a deixou a **0
+de folga**). Bisecção provou: o efeito é determinístico por bytes de CSS, some ao reverter o mapa, e NÃO é timing (persiste com
+`document.fonts.ready`). **Conserto (não enfraquecer a guarda, não mexer no texto do deus):** crescer a caixa da sobreposição
+(`padding` do overlay 12→6, altura 408→420, respiro 8→4) — devolve folga a TODOS os deuses (caixa de efeito 117→**134** no piso),
+sem apertar fonte nem texto. **Lição:** num app de arquivo único, uma tela nova com fontes pode empurrar OUTRA tela que estava no
+limite; guarda a 0 de folga é um campo minado — o conserto certo é devolver folga, não calibrar a guarda para o novo pixel.
+
+---
+
 ## §305 — TELA INICIAL vira MAPA estático (medição + proposta; RESOLVER a geometria antes de desenhar).
 
 O carrossel da home dá lugar a um mapa com 9 destinos em lugares fixos. **Nada construído ainda** (o dono pediu para resolver a
