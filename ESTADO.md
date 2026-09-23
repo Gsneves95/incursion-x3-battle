@@ -35,6 +35,12 @@ figura cresceu de ~227×262 (retrato vertical, cortado) p/ **302×262** (+33% la
 alarga a caixa (aspect 700/608 + cover). Posição `left:31%` (encoste ~15px na coluna), tetos topo y41 / pity y269 — no máximo útil.
 A máscara §304c segue fundindo (rodapé dissolve cinturão+pedra). Antes/depois em `docs/capturas-304/banner-*.png`.
 
+**§304e — guarda de LEITURA da barra de pity (não da distância).** Os 34px em que a figura entra na barra (§304d) são
+tolerados porque a máscara dissolve o rodapé — mas outro deus pode ter rosto/mão ali. Regra: a figura pode sobrepor, mas
+não pode COBRIR a leitura ("SS GARANTIDO", número, "?"). `tests/invocacao_contraste.test.js` (Chromium, 780/951) mede o
+contraste do texto sobre o fundo COMPOSTO (chip + arte) e exige ≥ 4,5 — hoje mede rótulo 16, número 9,2, "?" 8,9. Quando
+um banner novo deixar a barra ilegível, o teste quebra antes do jogador ver. Protege a leitura, não os 34px.
+
 **§304c (2 consertos, tela real):** (1) **a figura ENCOSTA na coluna** — estava na borda direita com ~325px de vazio no meio
 (texto até x227, figura em x552); agora left:31% (x~242), ~15px do texto, lê como pôster. Crescer é limitado: tetos topo y40
 (topbar) + base y269 (pity) prendem a figura em ~262×227 com o recorte vertical do §289. (2) **borda dura FUNDIDA** — o retrato

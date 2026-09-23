@@ -97,8 +97,18 @@ caem em placeholder sem 404; o pity mostrado é o do perfil e o teto é o do eco
    borda real; o rodapé (30%) agora dissolve **cinturão + pedra** (antes era corte de corpo) — fundido, sem linha dura. O
    veredito é a captura (§281): antes(retrato)/depois(banner) em `docs/capturas-304/banner-{780,951}.png`.
 
+**§304e — a guarda protege a LEITURA da barra de pity, não a distância.** O dono aprovou a posição/tamanho e a cascata. Uma
+ressalva sobre os **34px** em que a figura entra na faixa da barra (§304d): **tolerado porque a máscara dissolve** o rodapé — mas
+isso vale para ESTA arte. Outro deus, com outro recorte, pode ter **rosto ou mão** onde o Zeus tem pedra, e a arte por cima
+deixaria a barra ilegível. **Regra registrada: a figura pode SObrepor a barra, mas não pode COBRIR a leitura** — "SS GARANTIDO",
+o número e o "?" têm de continuar legíveis com a arte por cima. A guarda mede o **contraste sobre o fundo COMPOSTO** (chip + arte
+desvanecida), não a distância. **Medido hoje (sobre o Zeus):** rótulo **16,0:1**, número **9,2:1**, "?" **8,9:1** (piso AA 4,5).
+**Babá (`tests/invocacao_contraste.test.js`, Chromium, 780 e 951):** esconde o texto, fotografa a caixa de cada rótulo, pega o
+pixel mais claro do fundo composto e exige contraste ≥ 4,5. **Quando um banner novo bater na barra e a deixar ilegível, o teste
+quebra antes de o jogador ver** — protege a leitura, não os 34px.
+
 **Arquivos:** `data/invocacao.json` (novo; `frase` opcional no destaque), `web/banners/invocacao/olimpo.webp` (novo),
-`web/invocacao/zeus.webp` (novo, §304d),
+`web/invocacao/zeus.webp` (novo, §304d), `tests/invocacao_contraste.test.js` (novo, §304e) + `package.json`,
 `tools/build.js` (INVOCACAO + INVOC_FUNDO + INVOC_ARTE + `frase`), `src/invocacao.js` (tela refeita; epíteto fora; frase do destaque; arte em cascata),
 `src/ui/home.js` (cite fora da sobreposição), `src/shell.html` (CSS da tela; `.col2ov__cite` removido),
 `tests/invocacao.test.js` (seção 12), `tests/colecao_tela.test.js` + `tests/colecao_encaixe.test.js` (§292→§304b),
