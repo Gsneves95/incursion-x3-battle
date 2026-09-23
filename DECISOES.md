@@ -50,6 +50,19 @@ destino), `src/invocacao.js` (revelação usa arte, letra SVG sai), `tests/invoc
 `docs/capturas-303/`. **Nota §283:** o §301 (composição nos selos pequenos) foi SUPERADO por este — a arte só na revelação.
 Ver ESTADO §303. Suíte + build verdes.
 
+**LIÇÃO — terreno adormecido que acende por presença de arquivo.** O §301 preparou o terreno para acender SOZINHO assim
+que os 3 arquivos existissem. Quando eles chegaram, o destino já tinha mudado — e o terreno teria posto o ornamento na
+grade da Coleção, **exatamente o que a medição recusou**. O acender-sozinho é ótimo enquanto o destino é o mesmo; vira
+**armadilha quando o destino muda entre o terreno e a arte**. **A regra (vale para as próximas artes): terreno que acende
+por PRESENÇA DE ARQUIVO tem de ser revisto quando a decisão de destino mudar — e a revisão é REMOVER, não deixar dormente.
+Terreno dormente que acende sozinho é o defeito, não a rede.** (Por isso o §303 removeu a classe-raiz e o CSS pequeno em
+vez de apenas trocar o gatilho: o que não pode acender sozinho não deve existir esperando.)
+
+**DECISÃO da placa (registro).** A **chapa fica como o ASSENTO do emblema** — sem ela o brasão flutuaria solto no cartão.
+O **glifo de função fica abaixo** do emblema. Por isso o teto prático são 104u: **crescer além exigiria mover o glifo, e
+trocar informação (a função) por ornamento é o INVERSO do que esta sequência decidiu** (a arte é de momento; a leitura não
+se sacrifica por estética — §301/§303). Ir além dos 104u é decisão do dono, e só valeria realocando o glifo, não removendo-o.
+
 ---
 
 ## §302 — INVOCAÇÃO: uma tela só (sem abas) + medição do pity antes de mexer nele.

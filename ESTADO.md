@@ -24,6 +24,12 @@ dorme; arte só na revelação; grade letra-só com os 3 presentes). Capturas SS
 **Arquivos:** `src/view.js`, `src/shell.html`, `tools/build.js`, `src/invocacao.js`, `tests/invocacao.test.js`,
 `tests/selos.test.js`, `docs/capturas-303/`. Ver DECISOES §303. Suíte + build verdes.
 
+**LIÇÃO (vale p/ as próximas artes):** terreno que acende por PRESENÇA DE ARQUIVO vira armadilha quando o destino muda
+entre o terreno e a arte — o §301 teria posto o ornamento na grade, o que a medição recusou. Regra: quando a decisão de
+destino mudar, o terreno é REVISTO, e a revisão é REMOVER, não deixar dormente. Terreno dormente que acende sozinho é o
+defeito, não a rede. **Placa:** a chapa fica como assento do emblema (sem ela o brasão flutuaria) e o glifo de função
+fica abaixo; crescer além de 104u exigiria mover o glifo — trocar informação por ornamento é o inverso desta sequência.
+
 ## ★ INVOCAÇÃO §302 — uma tela só (sem abas) + medição do pity (60→100 NÃO aplicado).
 
 **Item 1 (FEITO): unifiquei a invocação numa tela só.** As abas saíram (`#iv-tabs`, `setBanner`). O "Portal Eterno" (padrão)
