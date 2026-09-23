@@ -90,10 +90,15 @@ console.log('== §306 MAPA — 3) os 2 "em breve" não abrem e não parecem defe
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');
 {
   home();
-  // a CAIXA trava a proporção (aspect-ratio) → a arte é 762×428 em qualquer largura; as ilhas usam left/top em %.
+  // §308: a CAIXA trava em px EXPLÍCITO (762×428), não em aspect-ratio. O §306 usava aspect-ratio+max-width+flex e o
+  // Chromium honrava — mas a WebView do Galaxy S24 NÃO, e a caixa ia edge-to-edge (cover cortava ~15% da altura). px
+  // explícito não negocia com o motor. Esta guarda (jsdom) crava o VALOR DECLARADO — a propriedade engine-proof — que
+  // é o que realmente protege; a varredura de largura no fim (Chromium) é higiene e NÃO enxerga o motor (ver nota lá).
   const caixa = $('.mapa__caixa');
   const cs = w.getComputedStyle(caixa);
-  ok(/1524\s*\/\s*856|1\.7/.test(cs.aspectRatio || '') || /1524\s*\/\s*856/.test(html), 'a caixa do mapa trava a proporção (aspect-ratio) — a arte não corta as ilhas');
+  ok(cs.width === '762px' && cs.height === '428px', `§308: a caixa trava em px explícito 762×428 (é ${cs.width}×${cs.height})`);
+  ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
+  ok(Math.abs(762 / 428 - 1524 / 856) < 1e-6, '762×428 é a razão EXATA da arte (1524×856) — cover preenche sem cortar');
   const foraDaArte = [];
   for (const il of $$('.ilha')){
     const x = parseFloat(il.style.left), y = parseFloat(il.style.top);
@@ -166,6 +171,42 @@ console.log('== §306 MAPA — 7) a referência MENTE (§305): sem nível/envelo
   console.log(`  sem nível/envelope/sino · apelido="${$('.mperfil__nick').textContent}" · moedas ${moedas.join(' / ')} (pt-BR)`);
 }
 
-if (falhas){ console.log(`\n>>> ${falhas} FALHA(S) em §306 MAPA`); process.exit(1); }
-console.log('>>> §306 MAPA OK');
-process.exit(0);
+if (falhas){ console.log(`\n>>> ${falhas} FALHA(S) em §306/§308 MAPA (jsdom)`); process.exit(1); }
+console.log('>>> §306/§308 MAPA (jsdom) OK');
+
+// ================= §308 — VARREDURA DE FAIXA (Chromium), 780..1200 de 10 em 10 =================
+// A caixa trava em 1,78 com gutter em TODA a largura, não em 3 pontos (a convenção de escopo do §295).
+//
+// ⚠ NOTA QUE QUEM LÊ O TESTE PRECISA SABER — o que esta varredura NÃO vê:
+// Isto roda no Chromium do Playwright. O bug do Galaxy S24 (o mapa cortando edge-to-edge) era do MOTOR da WebView, que
+// não honrava o aspect-ratio+max-width+flex do §306 — e o Chromium travava em TODA a faixa MESMO com aquele CSS frágil.
+// Portanto esta varredura NÃO teria pego o bug do aparelho, e NÃO o pega hoje: MEDIR NO CHROMIUM NÃO É MEDIR NO
+// APARELHO (§308). Ela é HIGIENE contra regressões de LARGURA. A proteção real contra o motor é a trava em px
+// EXPLÍCITO (762×428), cravada na guarda jsdom acima — é a única que independe do engine.
+(async () => {
+  let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } };
+  const { chromium } = require('playwright');
+  const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
+  function acharChromium() {
+    try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(d => /^chromium-\d+$/.test(d)).sort().pop();
+      if (dir) { const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } } catch (e) {}
+    return undefined;
+  }
+  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
+  const page = await (await browser.newContext({ viewport: { width: 900, height: 428 }, deviceScaleFactor: 2 })).newPage();
+  await page.goto('file://' + distAbs, { waitUntil: 'load' });
+  await page.evaluate(() => { perfil = novoPerfil(0, 0); ir('home', {}, { substituir: true }); render(); });
+  const semLock = [];
+  for (let D = 780; D <= 1200; D += 10) {
+    await page.setViewportSize({ width: D, height: 428 }); await page.waitForTimeout(12);
+    const r = await page.evaluate(() => { const R = el => el.getBoundingClientRect(); const c = R(document.querySelector('.mapa__caixa')), m = R(document.querySelector('.mapa'));
+      return { ratio: +(c.width / c.height).toFixed(4), gutter: Math.round((m.width - c.width) / 2) }; });
+    if (Math.abs(r.ratio - 1.7804) > 0.005 || r.gutter < 0) semLock.push(`${D}(r${r.ratio} gut${r.gutter})`);
+  }
+  ok2(semLock.length === 0, `§308: a caixa trava em 1,78 com gutter em TODA a faixa 780..1200 (sem lock em: ${semLock.join(' ') || '—'})`);
+  console.log(`  §308 varredura 780..1200/10: ${semLock.length ? ('SEM LOCK em ' + semLock.join(' ')) : 'trava em TODAS (Chromium) — não cobre o motor da WebView, ver nota no teste'}`);
+  await browser.close();
+  if (cf) { console.log(`\n>>> ${cf} FALHA(S) em §308 MAPA (Chromium)`); process.exit(1); }
+  console.log('>>> §306/§308 MAPA OK');
+  process.exit(0);
+})();

@@ -75,7 +75,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    transborda mais. A tarja (letterbox) é o vazio do jogo, com o palco marcado
    por uma borda sutil de bronze — limite intencional da área jogável. */
 #viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
-.stage{position:absolute;left:50%;top:50%;width:var(--stage-w);height:var(--stage-h);overflow:hidden;
+/* §308: o palco é CENTRADO no RETÂNGULO SEGURO, não na viewport inteira. areaUtil() já descontou os insets no
+   TAMANHO (larguraUtil 780→751 no S24); faltava a POSIÇÃO — com inset assimétrico (câmera L29, R0) o centro na
+   viewport joga 14,5px sob o recorte à esquerda. O deslocamento (env-left − env-right)/2 empurra o centro para o
+   centro do retângulo seguro; custo de largura ~0 (o tamanho já estava reservado). Insets zero → offset zero. */
+.stage{position:absolute;
+  left:calc(50% + (env(safe-area-inset-left) - env(safe-area-inset-right)) / 2);
+  top:calc(50% + (env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 2);
+  width:var(--stage-w);height:var(--stage-h);overflow:hidden;
   background:var(--bg);border:1px solid #2a2440;border-radius:10px;transform-origin:center;
   box-shadow:0 0 0 1px rgba(216,178,90,.12),0 12px 48px rgba(0,0,0,.6)}
 /* camada de base: envolve o conteúdo da tela (não as sobreposições, que são irmãs).
@@ -969,7 +976,12 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    CAIXA DE PROPORÇÃO TRAVADA (1,78), centrada; o gutter mostra o stage__bg escuro (§305b, opção a).
    Os ícones ancoram em % DA ARTE (left/top da .ilha) — nunca saem das ilhas em 780..1200. */
 .mapa{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.mapa__caixa{position:relative;height:100%;aspect-ratio:1524/856;max-width:100%;flex:0 0 auto}   /* a altura (428 de design) manda; a largura vira 762 — a arte nunca corta as ilhas */
+/* §308: TRAVA EXPLÍCITA em px de design (engine-proof). O palco é design-px de altura FIXA 428, então a caixa é um
+   762×428 CONHECIDO (762 = 428 × 1524/856, idêntico à arte). Antes dependia de aspect-ratio + max-width + flex
+   conversarem — o Chromium honrava (trava em toda a faixa 780..1200), mas a WebView do Galaxy S24 NÃO, e a caixa ia
+   edge-to-edge (cover cortava ~15% da altura, §308). px explícito não negocia com o motor: 762×428 em qualquer engine.
+   A arte (object-fit:cover) preenche exato porque a razão bate (cover==contain aqui); os ícones ancoram em % de 762×428. */
+.mapa__caixa{position:relative;width:762px;height:428px;flex:0 0 auto}
 .mapa__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mapa__scrim{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 82% at 50% 42%,transparent 56%,rgba(6,5,16,.34) 100%)}

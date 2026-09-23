@@ -2,6 +2,27 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ S24 §308 — o mapa cortava no Galaxy S24: safe-area de posição + trava em px explícito. Lição: Chromium ≠ aparelho.
+
+O diag (`?diag`) do S24 fechou duas causas, nenhuma da arte (arquivo 1524×856 = 1,78037, exato). **(1) Safe-area de
+POSIÇÃO:** `areaUtil()` já descontava o inset no tamanho (780→751), mas `.stage` centrava na viewport inteira; com a
+câmera em `L29` e centro na viewport, 14,5px do palco ficavam sob o recorte. Conserto: centrar no retângulo seguro
+(`left:calc(50% + (env-left−env-right)/2)`, idem top) — **custo de largura ~0** (o dono estimou 751→737 e corrigiu-se:
+o desconto já fora feito, seria duplo; é só deslocar o centro). **(2) Trava da caixa falhava no MOTOR do S24:** o §306
+usava `aspect-ratio+max-width+flex`; o Chromium honra e trava em TODA a faixa 780..1200 (varri de 10 em 10), mas a
+WebView do S24 não — a caixa ia edge-to-edge (2,086 vs 1,780 → cover cortava ~15% da altura). Conserto engine-proof: o
+palco é design-px de altura FIXA 428, então a caixa é um **762×428 conhecido** — troquei por **px EXPLÍCITO** (sem
+aspect-ratio/max-width/flex). Mantive cover (razão exata → cover==contain; ícones ancoram em % de 762×428). **Guarda**
+(`mapa.test.js`): jsdom crava a trava em px explícito (a propriedade engine-proof) + Chromium varre 780..1200 — COM a
+nota, dentro do teste, de que a varredura roda no Chromium e **não cobre o motor da WebView** (o Chromium travava mesmo
+com o CSS frágil). **★ Lição nova (Chromium ≠ aparelho):** mesma família do §292 (scrollHeight cego ao corte) e §307
+(transbordo cego à folga), pior porque não dá para medir aqui — só contornar com código que não dependa do motor.
+**★ Resultado negativo registrado:** varri a faixa 780..1200 (de 10 em 10) em TODAS as telas de encaixe — **nenhuma
+largura quebra no Chromium** (telas de texto são monotônicas, pior em 780, que o §307 já mede; o mapa trava em tudo).
+Capturas 780/951/1200 do conserto em `docs/capturas-308/`. **Arquivos:** `src/shell.html` (posição do palco + caixa em
+px), `tests/mapa.test.js` (trava px + varredura + nota), `docs/capturas-308/`, `DECISOES.md`. Ver DECISOES §308.
+Suíte + build verdes.
+
 ## ★ FOLGA §307 — o mapa de folga das telas (a medição enxerga o que já existe): TRANSBORDO ≠ FOLGA.
 
 Do achado do §306: varri as guardas de encaixe e medi a MENOR folga do pior caso por tela — com **tamanho NATURAL**

@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §308 — o mapa cortava no Galaxy S24: safe-area de POSIÇÃO + trava em px explícito. E a lição: Chromium ≠ aparelho.
+
+O dono viu o mapa cortando nas bordas no S24. O painel de diagnóstico (`?diag`) do aparelho fechou o caso — duas causas
+independentes, nenhuma da arte (o arquivo é exatamente 1524×856 = 1,78037, idêntico à caixa).
+
+**CAUSA 1 — a câmera come a esquerda (safe-area de POSIÇÃO).** Diag: `safe px L29`, palco em `rect L15`. O `areaUtil()`
+já descontava os insets no TAMANHO (larguraUtil 780→751), mas `.stage` era `left:50%;translate(-50%)` — centrado na
+viewport INTEIRA. Com inset assimétrico (L29, R0), centrar joga 14,5px do palco sob o recorte à esquerda. **Conserto:**
+centrar no RETÂNGULO SEGURO — `left:calc(50% + (env-left − env-right)/2)` (idem top). **Custo de largura: ~0** (o
+tamanho já estava reservado; é só deslocar o centro ~14,5px).
+  **★ CORREÇÃO QUE O DONO REGISTROU EM SI MESMO:** ele estimou que o palco cairia de 751 para ~737. Estava errado, e
+  disse isso: o desconto já fora feito no tamanho (780→751); descontar de novo seria DUPLO. É deslocamento de centro,
+  custo ~0. (Fica registrado a pedido dele — a medição corrigiu a estimativa.)
+
+**CAUSA 2 — a trava da caixa falhava no MOTOR do S24.** O §306 travava a caixa com `aspect-ratio:1524/856` + `height:100%`
++ `max-width:100%` + `flex`. **O Chromium honra isso e trava em TODA a faixa 780..1200 (inclusive 893, a largura do
+aparelho) — varri de 10 em 10 e confirmei.** Mas a WebView do S24 NÃO honrava: a caixa ia edge-to-edge (893×428 = 2,086
+vs 1,780 da arte → `cover` cortava ~15% da altura, ~7,3% topo e base). **Não reproduz no Chromium headless** (removi
+`aspect-ratio` para simular: a caixa colapsa a 0 de largura, não vai edge-to-edge — o gatilho exato é do motor).
+  **Conserto (engine-proof):** o palco é design-px de ALTURA FIXA 428, então a caixa é um **762×428 CONHECIDO**
+  (762 = 428×1524/856, idêntico à arte). Troquei `aspect-ratio+max-width+flex` por **px EXPLÍCITO** — não negocia com
+  motor nenhum. Mantive `object-fit:cover`: com a caixa na razão EXATA da arte, cover == contain (preenche sem cortar),
+  e os ícones ancoram em % de 762×428 (precisam que a arte preencha a caixa; `contain` só ajudaria se a razão
+  divergisse, e aí LETTERBOX faria os ícones saírem das ilhas — a segurança vem do px explícito, não do cover/contain).
+
+**GUARDA (higiene, COM a nota do que ela não vê).** `mapa.test.js`: (a) jsdom crava a trava em px EXPLÍCITO (762×428,
+sem aspect-ratio) — a propriedade engine-proof, a que realmente protege; (b) Chromium varre 780..1200 de 10 em 10
+confirmando 1,78 + gutter. A nota está DENTRO do teste: esta varredura roda no Chromium, e o bug era do MOTOR — o
+Chromium travava mesmo com o CSS frágil, então a varredura **não teria pego** o bug do aparelho e não o pega. Higiene
+contra regressão de largura; a proteção real é a trava em px.
+
+**★ LIÇÃO NOVA — MEDIR NO CHROMIUM NÃO É MEDIR NO APARELHO.** Mesma família do §292 (scrollHeight cego ao corte) e do
+§307 (transbordo cego à folga), com uma diferença que a torna PIOR: aquelas a gente conserta melhorando a métrica
+(medir o tamanho natural). Esta **não dá para medir aqui** — o motor da WebView diverge do Chromium e nenhuma guarda
+headless pega. Só se CONTORNA: escrever código que não dependa do motor (px explícito em vez de negociação de layout).
+A convenção nova: para o que renderiza no aparelho, prefira construções que **não dependam do engine honrar CSS
+sofisticado** (aspect-ratio/max-width/flex conversando); trave em px conhecido quando o valor é conhecido.
+
+**★ RESULTADO NEGATIVO REGISTRADO (para a próxima sessão não refazer).** Varri a FAIXA inteira 780..1200 de 10 em 10 em
+TODAS as telas com guarda de encaixe (Coleção grade/painel/sobreposição, batalha, invocação, Domínios, campanha, mapa).
+**Nenhuma largura quebra no Chromium.** As telas de TEXTO são monotônicas na largura — pior no piso 780 (que as guardas
+do §307 já medem) e melhoram ao alargar; o mapa trava em toda a faixa. Ou seja: o "medir pontos vs faixa" NÃO era o
+problema aqui (os pontos cobriam o pior); o problema era o MOTOR. Capturas do conserto em `docs/capturas-308/`.
+
+---
+
 ## §307 — o MAPA DE FOLGA das telas (a medição enxerga o que já existe): TRANSBORDO ≠ FOLGA.
 
 Nasceu do achado do §306 (uma tela nova cortou uma antiga a 0 de folga). Varri as guardas de encaixe e medi, por tela,
