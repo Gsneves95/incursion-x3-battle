@@ -87,6 +87,33 @@ senão o dado vivo do carrossel se perde na troca.
   arena, pvp`). Manifesto `MAPA_ICONES` (mapa de presentes); ausente um → o destino cai no rótulo/placeholder, nunca 404, nunca base64.
 - **Posições das ilhas:** campo de dado (percentuais x/y por chave), para o dono ajustar sem tocar código, como os fundos do §304.
 
-**Próximo passo:** o dono confirma (1) a caixa travada + tratamento do gutter, e manda o fundo + os 9 ícones + a referência montada
-(para eu ler as posições das ilhas). Aí construo o mapa com os ícones ancorados em % da arte, os 5 contadores e os 2 "em breve",
-e capturo a 780 e 1200 para o veredito.
+## 6) §305b — MEDIÇÃO dos contadores nas ilhas (aprovada a caixa travada; gutter = fundo escuro (a))
+
+Larguras REAIS com as fontes do jogo (Cinzel/Rajdhani locais, §260), em px de DESIGN, na caixa 762×428.
+
+**Nomes das ilhas (Cinzel 700, 13px):** Invocação **80**, Provações 77, Campanha 75, Domínios 70, Coleção 64, Desafios 63,
+Treino 51, Arena 45, Loja 32, PvP 26. Todos ≤ 80px. **Exceção: "Arena/Treino" = 102px** — o 9º modo deve ser UMA palavra
+(**Arena** 45 ou **Treino** 51), nunca a forma com barra.
+
+**Contadores (Rajdhani 600, 10px):** os quatro curtos são minúsculos — Provações `12/91` **21**, Desafios `100` **14**,
+Invocação `2/60` **19**, Coleção `36/100` **28**. Cabem sob qualquer nome. **O único longo é a Campanha:**
+`Capítulo I · Grécia` = **71px** (+ a barra de progresso). Isso ≈ o nome mais largo (Invocação 80), então **não estoura o
+rodapé natural da ilha** — a barra fica na linha abaixo (~5px).
+
+**Leitura (a decisão é do dono):** pelo TEXTO, **tudo cabe** — o bloco de rótulo de cada ilha é limitado por ~80px (nome ou
+contador, o que for maior), e a Campanha (71) não passa disso. O que decide o encaixe real é o **espaçamento das ilhas** na
+referência (que ainda não tenho): se duas ilhas ficarem a menos de ~85px uma da outra na horizontal, os rótulos colidem. **Confirmo
+na montagem.**
+
+**Campanha — caveat do dado:** os 71px valem para a região "Grécia" (6 letras). Uma região longa (ex.: "Escandinávia", 12) empurra
+para ~100px. Formas curtas prontas, por ordem de corte: **`Cap. I · <reg>`** (55px) → **`Cap. I`** (23px) + barra → **só a barra +
+`0/6`** (14px). Minha leitura: manter a forma cheia enquanto a região for curta (~≤7 letras); trocar por `Cap. I · <reg>` quando
+uma região passar de ~85px. Os quatro contadores curtos nunca precisam de corte.
+
+**Os dois "em breve" (Domínios, Loja) — indisponível sem parecer defeito:** ícone a **~50% de opacidade** + uma tag pequena
+**"· em breve"** (38px @10px, dourado apagado) sob o nome — NUNCA vermelho/erro. Cabe sob Domínios (70) e Loja (32). É a mesma
+linguagem do placeholder do carrossel (◈ "Em breve"), sem 404.
+
+**Próximo passo:** o dono manda o fundo + os 9 ícones + a referência montada (para eu ler as posições das ilhas e confirmar o
+espaçamento). Aí construo o mapa com os ícones em % da arte, os 5 contadores (Campanha na forma cheia enquanto couber) e os 2
+"em breve", e capturo a 780 e 1200 para o veredito.
