@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §305 — TELA INICIAL vira MAPA estático (medição + proposta; RESOLVER a geometria antes de desenhar).
+
+O carrossel da home dá lugar a um mapa com 9 destinos em lugares fixos. **Nada construído ainda** (o dono pediu para resolver a
+geometria e reportar antes; assets — fundo + 9 ícones — não estão no repo). Medição completa em **`docs/mapa-inicial.md`**.
+
+**GEOMETRIA (a decisão que decide tudo).** Régua real (`enquadramento.js`): altura de design FIXA 428, largura FLUIDA 780..1200
+(proporção do palco 1,82 a 2,80). Fundo do mapa 1,78. Preencher a **altura** → arte de **762px** de largura; preencher a **largura**
+→ corta 37% da altura e as ilhas de cima/baixo somem (ícones sairiam das ilhas — FATAL). **Proposta (inclinação do dono): caixa de
+proporção TRAVADA** — mapa 762×428 centrado, ícones ancorados **em % da arte** (nunca saem das ilhas). **Gutter por largura:** 9px
+cada lado no piso (780), até **219px cada lado** no teto (1200). Tratamento do gutter a decidir: (a) fundo escuro do jogo; (b)
+extensão borrada das bordas. Alternativas (preencher largura; arte mais larga) descartadas — só a caixa travada mantém os ícones
+nas ilhas em toda a faixa fluida. **Decisão do dono: confirmar a caixa travada + o tratamento do gutter.**
+
+**ÍCONES:** 9 (1254², recorte p/ alpha pelo dono). Na caixa 762×428, a ~8–10% da largura da arte → **~61–76px design (52–76px
+físicos)**, bem acima do piso de 35px. Confirmo o número exato ao posicionar nas ilhas (preciso da referência + arquivos); se algum
+<35px, reporto antes.
+
+**A REFERÊNCIA MENTE (não reproduzir):** (1) "Gustavo — Nv. 42" + barra → **não há nível de conta**; usar **apelido +
+faixa de ranque** (8 faixas), sem barra de nível. (2) envelope + sino → **saem** (não há correio/notificação). (3) "2.450K" → o jogo
+usa **`toLocaleString('pt-BR')`** (ex.: "2.450"), **sem "K"**.
+
+**O QUE O CARROSSEL FAZ HOJE (o mapa precisa manter) — auditado:** 5 contadores (Campanha: cap+`feitos/total`+barra; Provações
+`lib/total`; Desafios `63`; Invocação `pity/60`; Coleção `donos/100`) e 2 estados "em breve" (Domínios até a arte §274; Loja até a
+feature). **Sem badge "novo" nem cartão bloqueado ativos hoje** (`bcard--off` existe mas ninguém usa). **Cada ilha precisa reservar
+lugar para um contador/badge**, senão o dado vivo se perde na troca.
+
+**ASSETS propostos (nome derivado da chave, sem campo novo):** fundo `web/banners/mapa.webp` (manifesto `MAPA_ARTE`); 9 ícones
+`web/mapa/<chave>.webp` (manifesto `MAPA_ICONES`); posições das ilhas como DADO (% x/y por chave). Ausente → carrossel/rótulo de
+hoje, sem 404, nunca base64.
+
+**Próximo passo:** dono confirma a geometria + manda os assets + a referência montada (p/ ler as posições das ilhas); então
+construo (ícones em % da arte, 5 contadores, 2 "em breve") e capturo a 780 e 1200. Ver ESTADO §305.
+
+---
+
 ## §304 — TELA DE INVOCAÇÃO refeita pelo mockup aprovado (fundo e deus em destaque viram DADO).
 
 **GEOMETRIA (o encaixe não-uniforme, lição do mockup dos Domínios).** O mockup é 1672×940 (proporção **1,78**); o palco é

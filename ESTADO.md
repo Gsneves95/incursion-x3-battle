@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §305 — tela inicial vira mapa estático (MEDIÇÃO + proposta; nada construído, aguarda dono + assets).
+
+O carrossel dá lugar a um mapa com 9 destinos fixos. Medição/proposta em `docs/mapa-inicial.md`; assets (fundo + 9 ícones) ainda
+não vieram. **Geometria (decide tudo):** palco altura fixa 428, largura fluida 780..1200; fundo 1,78 → preenchendo a altura dá
+762px de largura. Preencher a largura corta as ilhas (fatal). **Proposta: caixa de proporção travada** (762×428 centrado, ícones em
+% da arte — nunca saem das ilhas); gutter 9px/lado no piso, até 219px/lado no teto (tratamento a decidir: fundo escuro ou extensão
+borrada). **Ícones** ~61–76px design (>35). **Referência mente:** sem nível de conta (usar apelido + faixa de ranque), sem
+correio/sino, moeda em pt-BR sem "K". **Carrossel hoje (manter):** 5 contadores (Campanha+barra, Provações, Desafios, Invocação
+pity, Coleção) + 2 "em breve" (Domínios, Loja); cada ilha reserva lugar p/ contador. **Assets propostos:** `web/banners/mapa.webp`
+(MAPA_ARTE) + `web/mapa/<chave>.webp` (MAPA_ICONES) + posições das ilhas como dado. **PENDENTE do dono:** confirmar geometria +
+tratamento do gutter + mandar fundo/ícones/referência. Ver DECISOES §305.
+
 ## ★ INVOCAÇÃO §304 — tela refeita pelo mockup aprovado; fundo e deus em destaque viram DADO.
 
 Refação da tela de invocação pelo mockup do dono (1672×940, 1,78) para o palco 780×428. **Encaixe não-uniforme (lição
