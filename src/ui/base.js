@@ -161,6 +161,24 @@ if (window.visualViewport) {
    ?diag na URL ou por 3 toques no carimbo de build (canto inferior esquerdo). */
 function envPx(lado){ const p=document.getElementById('safeprobe'); if(!p)return 0;
   return Math.round(parseFloat(getComputedStyle(p)['padding'+lado])||0); }
+// §308c — leitura do DOM REAL do mapa (temporário): duas medições headless disseram "travou" e o aparelho disse o
+// contrário. Estas linhas leem o que o MOTOR do aparelho de fato renderizou, para responder UMA pergunta: a caixa tem
+// 762 e a arte estica DENTRO dela, ou a caixa tem 893? Defeitos diferentes, consertos diferentes. Sai quando fechar o §308.
+function diagMapa(){
+  const cx = document.querySelector('.mapa__caixa');
+  if (!cx) return [['mapa', '(abra o MAPA na tela inicial p/ medir)']];
+  const mp = document.querySelector('.mapa'), ar = document.querySelector('.mapa__art');
+  const cr = cx.getBoundingClientRect(), ccs = getComputedStyle(cx);
+  const razao = cr.height ? (cr.width/cr.height).toFixed(3) : '?';
+  const out = [['mapa', 'caixa '+Math.round(cr.width)+'×'+Math.round(cr.height)+'  razão '+razao]];
+  if (ar){ const arr = ar.getBoundingClientRect(), acs = getComputedStyle(ar);
+    out.push(['arte', 'natural '+ar.naturalWidth+'×'+ar.naturalHeight+'  render '+Math.round(arr.width)+'×'+Math.round(arr.height)+'  fit '+acs.objectFit]); }
+  out.push(['pos', (ccs.position)+' da caixa · pai '+(mp?getComputedStyle(mp).display:'?')+' do .mapa']);
+  // se o computed não bate com o declarado (762×428), o motor está ignorando ou sobrescrevendo a regra
+  const ok762 = ccs.width === '762px' && ccs.height === '428px';
+  out.push(['css', 'computed '+ccs.width+'×'+ccs.height+(ok762 ? '  (762×428 aplicado)' : '  ⚠ NÃO bate com 762×428 declarado')]);
+  return out;
+}
 function diagInfo(){
   const vv = window.visualViewport, de = document.documentElement;
   return [
@@ -175,6 +193,7 @@ function diagInfo(){
                     ((r.left<-0.5||r.top<-0.5||r.right>innerWidth+0.5||r.bottom>innerHeight+0.5)?'  ⚠ EXTRAPOLA':'  ok'); })()],
     ['rola?',   'W '+de.scrollWidth+' vs '+de.clientWidth+' → '+(de.scrollWidth>de.clientWidth)+
                 ' · H '+de.scrollHeight+' vs '+de.clientHeight+' → '+(de.scrollHeight>de.clientHeight)],
+    ...diagMapa(),
   ];
 }
 function renderDiag(){ const el=document.getElementById('diag'); if(!el||!el.classList.contains('on'))return;
