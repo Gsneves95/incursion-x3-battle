@@ -110,8 +110,8 @@ console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem 
   ok(zF < zC, `§309: a extensão fica ATRÁS da caixa nítida (z-index fundo ${zF} < caixa ${zC})`);
   // §310: com a arte PREENCHENDO (caixa 1028 centrada, overflow corta), todo ÍCONE (62px) fica INTEIRO no quadro em
   //  780/893/1075/1200 — inclusive no PISO (780, corte 24%: janela visível 12,1%..87,9%). Cálculo analítico (o mesmo do
-  //  motor: caixa 1028 centrada em cada largura, meia-âncora do ícone 31px).
-  const ART_W = 2400, ART_H = 999, CX = 428 * ART_W / ART_H, MEIA = 31;
+  //  motor: caixa 1028 centrada em cada largura, meia-âncora do ícone 24px = 48/2 §311).
+  const ART_W = 2400, ART_H = 999, CX = 428 * ART_W / ART_H, MEIA = 24;   // §311: ícone 62→48 → meia-âncora 31→24
   const larguras = [780, 893, 1075, 1200];
   const ilhas310 = $$('.ilha').map(il => ({ c: il.dataset.dest || il.querySelector('.ilha__nome').textContent, x: parseFloat(il.style.left) }));
   const foraQuadro = [];
@@ -122,10 +122,15 @@ console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem 
       if (cxStage - MEIA < 0 || cxStage + MEIA > S) foraQuadro.push(`${it.c}@${it.x}% (${S}px)`);
     }
   }
-  ok(foraQuadro.length === 0, `§310: todo ícone (62px) fica INTEIRO no quadro em 780/893/1075/1200 (fora: ${foraQuadro.join(' | ')})`);
+  ok(foraQuadro.length === 0, `§310/§311: todo ícone (48px) fica INTEIRO no quadro em 780/893/1075/1200 (fora: ${foraQuadro.join(' | ')})`);
   // as posições são % (não px): garante independência de largura
   ok($$('.ilha').every(il => /%$/.test(il.style.left) && /%$/.test(il.style.top)), 'as ilhas ancoram em % (independe da largura do palco)');
-  console.log(`  arte preenche o palco (caixa 1028×428) · 9 ícones inteiros no quadro em ${larguras.join('/')}`);
+  // §311: ÍCONE 62→48px de design. A 48 dá ~40 físicos no S24 (escala ~0,84), acima do piso de toque do projeto (28–34,
+  // §301); e o alvo de toque real é a .ilha inteira (100px), não só o glifo. A guarda crava que o glifo não encolheu
+  // abaixo do alvo (44–52px) — quebra se alguém voltar a 62 (tapa a ilha) ou encolher demais (perde o toque).
+  const icW = parseFloat(w.getComputedStyle($('.ilha__ic')).width);
+  ok(icW >= 44 && icW <= 52, `§311: o ícone mede ~48px de design (é ${icW}px) — ~40 físicos no S24, acima do piso de toque 28–34`);
+  console.log(`  arte preenche o palco (caixa 1028×428) · ícone 48px · 9 ícones inteiros no quadro em ${larguras.join('/')}`);
 }
 
 console.log('== §306 MAPA — 5) arte ausente → carrossel de hoje (fallback), sem 404 nem base64 ==');
@@ -212,7 +217,7 @@ console.log('>>> §306/§310 MAPA (jsdom) OK');
   const page = await (await browser.newContext({ viewport: { width: 900, height: 428 }, deviceScaleFactor: 2 })).newPage();
   await page.goto('file://' + distAbs, { waitUntil: 'load' });
   await page.evaluate(() => { perfil = novoPerfil(0, 0); ir('home', {}, { substituir: true }); render(); });
-  const semFill = [], iconeFora = [];
+  const semFill = [], iconeFora = [], colide = [];
   for (let D = 780; D <= 1200; D += 10) {
     await page.setViewportSize({ width: D, height: 428 }); await page.waitForTimeout(12);
     const r = await page.evaluate(() => {
@@ -220,22 +225,29 @@ console.log('>>> §306/§310 MAPA (jsdom) OK');
       const c = R(document.querySelector('.mapa__caixa')), m = R(document.querySelector('.mapa'));
       // cada ícone: fora do quadro se ultrapassar as bordas da .mapa (que tem overflow:hidden — é o quadro real)
       const fora = [];
+      // §311: dois alvos de toque colados fazem o dedo errar — nenhum ÍCONE pode encostar no painel JOGADOR nem nas moedas
+      const inter = (a, b) => !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
+      const perfil = document.querySelector('.mperfil'), moedas = document.querySelector('.mmoedas');
+      const rp = perfil && R(perfil), rmo = moedas && R(moedas);
+      const bate = [];
       for (const ic of document.querySelectorAll('.ilha .ilha__ic')) {
         const b = R(ic);
-        if (b.left < m.left - 0.5 || b.right > m.right + 0.5) {
-          const nome = (ic.closest('.ilha').dataset.dest) || 'ilha';
-          fora.push(nome);
-        }
+        if (b.left < m.left - 0.5 || b.right > m.right + 0.5) fora.push((ic.closest('.ilha').dataset.dest) || 'ilha');
+        const nome = (ic.closest('.ilha').dataset.dest) || 'ilha';
+        if (rp && inter(b, rp)) bate.push(nome + '↔JOGADOR');
+        if (rmo && inter(b, rmo)) bate.push(nome + '↔moedas');
       }
       // fill vertical = a caixa COBRE a altura do quadro (.mapa), sem faixa em cima/baixo (pode transbordar ~1px pela borda do palco)
-      return { ratio: +(c.width / c.height).toFixed(4), fillV: c.height >= m.height - 0.5, fora };
+      return { ratio: +(c.width / c.height).toFixed(4), fillV: c.height >= m.height - 0.5, fora, bate };
     });
     if (Math.abs(r.ratio - 2.4024) > 0.01 || !r.fillV) semFill.push(`${D}(r${r.ratio} fillV${r.fillV})`);
     if (r.fora.length) iconeFora.push(`${D}:${[...new Set(r.fora)].join(',')}`);
+    if (r.bate.length) colide.push(`${D}:${[...new Set(r.bate)].join(',')}`);
   }
   ok2(semFill.length === 0, `§310: a arte PREENCHE (razão 2,40 + fill vertical) em TODA a faixa 780..1200 (falhou em: ${semFill.join(' ') || '—'})`);
   ok2(iconeFora.length === 0, `§310: todo ícone fica INTEIRO no quadro em TODA a faixa 780..1200 (ícone fora em: ${iconeFora.join(' ') || '—'})`);
-  console.log(`  §310 varredura 780..1200/10: ${(semFill.length || iconeFora.length) ? ('FALHAS ' + [...semFill, ...iconeFora].join(' ')) : 'arte preenche + 9 ícones inteiros em TODAS (Chromium) — não cobre o motor da WebView, ver nota'}`);
+  ok2(colide.length === 0, `§311: nenhum ícone colide com o painel JOGADOR nem com as moedas em 780..1200 (colisão em: ${colide.join(' ') || '—'})`);
+  console.log(`  §310/§311 varredura 780..1200/10: ${(semFill.length || iconeFora.length || colide.length) ? ('FALHAS ' + [...semFill, ...iconeFora, ...colide].join(' ')) : 'arte preenche + 9 ícones inteiros + sem colisão com JOGADOR/moedas em TODAS (Chromium) — não cobre o motor da WebView, ver nota'}`);
   await browser.close();
   if (cf) { console.log(`\n>>> ${cf} FALHA(S) em §310 MAPA (Chromium)`); process.exit(1); }
   console.log('>>> §306/§310 MAPA OK');

@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §311 — ACABAMENTO: ícone 62→48px, campanha longe do JOGADOR, fundo escuro atrás dos rótulos (contraste ≥4,5).
+
+Aprovada a arte larga (§310), o acabamento. **(1) Ícone 62→48px:** a 62 tapava a ilha; 48 dá ~40 físicos no S24 (escala
+~0,84), acima do piso de toque 28–34 (§301); o alvo real é a `.ilha` (100px), não o glifo; as 9 silhuetas seguem
+distintas. **(2) As três da esquerda desceram** (campanha 18→26, colecao 49,5→54, loja 71→74) p/ a campanha sair de
+debaixo do painel JOGADOR — o ÍCONE renderiza ~18px ACIMA da âncora da `.ilha`, então 23 ainda colava (vão 3px); a 26 o
+vão é **16px**. Cada ícone continua SOBRE a sua ilha (marcador + captura). **(3) Fundo escuro atrás de cada ilha**
+(`.ilha::before`, radial que desvanece até transparente — sem borda dura): "DOMÍNIOS" sumia no clarão do portal e "· em
+breve" da Loja no telhado; os outros liam por sorte. MEDIDO WCAG do nome+contador dos 9 (método §304e: esconde texto,
+fotografa a caixa, pixel mais claro — piso pessimista; §281 a captura é o veredito), 4 larguras: ANTES quase tudo <4,5;
+DEPOIS pior 6,5 (campanha.contador), os outros 8–19, todos ≥4,5 em 780/893/1075/1200. A medição OBRIGOU recolorir o "em
+breve" (§306 dimava p/ escuro, que sumiria no fundo escuro): texto ficou CLARO (nome `#cfc7e6`, tag `#f0cd82`), e o sinal
+de indisponível passou ao ícone apagado+dessaturado + a palavra "em breve" (guarda §306 "não vermelho" segue). **Guardas
+(§295):** `mapa.test.js` crava ícone 48px, 9 ícones inteiros no quadro, e nenhum colide com JOGADOR/moedas (rect real
+Chromium 780..1200); `mapa_contraste.test.js` (novo) crava os 9 nomes+contadores ≥4,5 nas 4 larguras. Capturas em
+`docs/capturas-311/`. **Arquivos:** `data/mapa.json` (3 y novos), `src/shell.html` (ícone 48 + `.ilha::before` + recolor
+em-breve), `tests/mapa.test.js` (§311 colisão+tamanho), `tests/mapa_contraste.test.js` (novo), `package.json` (wire).
+Ver DECISOES §311. Suíte + build verdes.
+
 ## ★ MAPA §310 — ARTE LARGA (2,40) substitui a extensão: o mapa PREENCHE o palco. Caixa destrava; extensão vira reserva.
 
 O dono ainda via a EMENDA do §309b e gerou a solução de verdade: **arte mais larga**. `banners/mapa.webp` foi de

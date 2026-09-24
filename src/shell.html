@@ -1018,12 +1018,24 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .ilha{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;
   align-items:center;gap:1px;width:100px;margin:0;padding:0;border:0;background:none;cursor:pointer;
   font:inherit;text-align:center;color:var(--ink);z-index:3}
+/* §311: FUNDO ESCURO atrás de cada ilha, com as bordas DESVANECENDO até transparente (radial, nada de caixa com borda
+   dura — pedido do dono desde o §309). Serve o contraste: "DOMÍNIOS" sumia no clarão do portal e "· em breve" da Loja no
+   telhado; os outros liam por sorte (caíram sobre partes escuras). O radial baixa o brilho do fundo COMPOSTO sob o texto
+   até o piso 4,5 (§304e/§281: a medição do pixel mais claro é pessimista; a captura é o veredito). Fica ATRÁS do ícone e
+   do texto (z-index:-1 no contexto da própria ilha, que está a z-index:3 sobre a arte). Centrado no bloco de texto
+   (embaixo do ícone), onde a leitura mora. */
+.ilha::before{content:"";position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);
+  width:140px;height:92px;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 58% 58% at 50% 50%,rgba(5,4,14,.95) 0%,rgba(5,4,14,.93) 68%,rgba(5,4,14,0) 93%)}
 .ilha:focus{outline:none}
 .ilha:focus-visible .ilha__ic{filter:drop-shadow(0 0 0 var(--gold-text)) drop-shadow(0 3px 8px rgba(0,0,0,.7));outline:2px solid var(--gold-text);outline-offset:2px;border-radius:8px}
 .ilha:active{transform:translate(-50%,-50%) scale(.96)}
-.ilha__ic{width:62px;height:62px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7))}
-.ilha__reserva{display:none;width:62px;height:62px;align-items:center;justify-content:center;
-  font-size:26px;color:var(--gold-text);opacity:.6;
+/* §311: ícone 62→48px. A 48 de design dá ~40 físicos no S24 (bem acima do piso de toque 28–34, §301) e PARA DE TAPAR a
+   ilha que ele marca — a arte larga (§310) existe para ser vista. O alvo de toque real é a .ilha inteira (100px), não só
+   o glifo. */
+.ilha__ic{width:48px;height:48px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7))}
+.ilha__reserva{display:none;width:48px;height:48px;align-items:center;justify-content:center;
+  font-size:22px;color:var(--gold-text);opacity:.6;
   border:1px solid rgba(216,178,90,.4);border-radius:50%;background:rgba(12,10,26,.8)}
 .ilha--semarte .ilha__reserva{display:flex}
 .ilha--semarte .ilha__ic{display:none}
@@ -1035,12 +1047,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .ilha__campnum{color:#fff;font-weight:700}
 .ilha__barra{margin-top:2px;width:74px;height:3px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.22)}
 .ilha__barra>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#37cfe6,var(--gold-text))}
-/* EM BREVE (§306: Domínios, Loja) — ícone apagado + tag dourada apagada, NUNCA vermelho; não abre. */
+/* EM BREVE (§306: Domínios, Loja) — NÃO abre e não parece defeito (nunca vermelho). §311: com o fundo escuro atrás, o
+   sinal de "indisponível" passa a viver no ÍCONE apagado+dessaturado e na palavra "em breve"; o texto FICA CLARO (o dim
+   roxo/dourado-escuro do §306 lia bem sobre arte clara mas SUMIRIA sobre o fundo escuro — a leitura é o piso). */
 .ilha--breve{cursor:default}
 .ilha--breve .ilha__ic{opacity:.5;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7)) grayscale(.25)}
-.ilha--breve .ilha__nome{color:var(--ink-dim);text-shadow:0 1px 3px #000}
+.ilha--breve .ilha__nome{color:#cfc7e6;text-shadow:0 1px 3px #000,0 2px 8px rgba(0,0,0,.9)}
 .ilha__breveTag{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--gold-soft);text-shadow:0 1px 3px #000}
+  text-transform:uppercase;color:#f0cd82;text-shadow:0 1px 3px #000,0 1px 5px rgba(0,0,0,.9)}
 
 /* telas de lista (Provações) e marcador (Campanha/Invocação/Coleção) */
 .tela{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}

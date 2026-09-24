@@ -6,6 +6,46 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §311 — ACABAMENTO do mapa: ícone menor, campanha longe do JOGADOR, e o FUNDO ESCURO atrás dos rótulos (pendente do §309).
+
+Aprovada a arte larga (§310), três acabamentos + o fundo atrás dos ícones que o dono pediu desde o §309 e ficou esperando
+a arte definitiva.
+
+**1) ÍCONE 62 → 48px de design.** A 62 o ícone TAPAVA a ilha que marca (e a arte larga existe para ser vista). MEDIDO: 48
+de design dá **~40 físicos** no S24 (escala ~0,84), bem acima do piso de toque do projeto (28–34, §301). O alvo de toque
+REAL é a `.ilha` inteira (100px), não o glifo. As 9 silhuetas continuam distintas a 48 (a silhueta é o que as diferencia,
+§305) — verificado na captura.
+
+**2) AS TRÊS DA ESQUERDA DESCERAM** para a campanha sair de debaixo do painel JOGADOR (dois alvos de toque colados é o que
+mais faz o dedo errar). campanha 18→**26** (o ÍCONE renderiza ~18px ACIMA da âncora da `.ilha`, então 23 ainda colava — a
+23 o vão era 3px; a 26 são **16px**), colecao 49,5→**54**, loja 71→**74**. Cada ícone continua SOBRE a sua ilha (marcador
+desenhado sobre a arte + captura). Vão novo campanha↔JOGADOR: **16px** (antes coladas).
+
+**3) FUNDO ESCURO atrás de cada ilha** (`.ilha::before`, radial que desvanece até transparente — nada de caixa com borda
+dura). Serve o contraste: "DOMÍNIOS" sumia no clarão do portal, "· em breve" da Loja no telhado; os outros sete liam por
+SORTE (caíram sobre partes escuras — a medição crua os pegava < 4,5 mesmo assim, por causa de reflexos/cachoeiras). MEDIDO
+o contraste WCAG do NOME e do CONTADOR dos NOVE contra a arte real (método §304e: esconde o texto, fotografa a caixa, pega
+o pixel mais claro — piso PESSIMISTA, ignora a própria sombra do texto; §281: a captura é o veredito), nas 4 larguras:
+- **ANTES (sem fundo):** quase tudo < 4,5 (nomes brancos 1,0–2,5; Domínios 2,47; contadores dourados 1,0–3,8) — só a tag
+  gold-soft escura lia sobre arte clara (4,6–4,9).
+- **DEPOIS:** **pior de todos 6,5** (campanha.contador, o mais largo e agora sobre a cachoeira clara); os outros 8–19.
+  Todos ≥ 4,5 nas 4 larguras (780/893/1075/1200).
+- **Calibração:** o radial cobre o BLOCO DE TEXTO (o nome largo estoura um platô estreito — o conserto foi ALARGAR o platô,
+  não só escurecer o centro). Deixei margem sobre o piso (6,5) porque campanha oscila muito (a borda do contador cai
+  justo na transição do radial). Opacidade forte mas com borda desvanecendo → dark backing suave, não caixa.
+
+**A recoloração que a medição OBRIGOU:** o estado "em breve" (§306) dimava o texto para roxo/dourado-ESCURO — lia bem
+sobre arte clara, mas sobre o fundo ESCURO SUMIRIA (texto escuro sobre fundo escuro). Como o piso é a leitura, o texto
+"em breve" FICOU CLARO (nome `#cfc7e6`, tag `#f0cd82`); o sinal de "indisponível" passou a viver no ÍCONE apagado+
+dessaturado e na palavra "em breve", não mais na cor escura. (A guarda §306 "não vermelho" segue valendo.)
+
+**Guardas (§295, espaço de estados):** `mapa.test.js` — jsdom crava ícone 48px + 9 ícones inteiros no quadro (780..1200);
+Chromium mede rect real e crava (a) arte preenche, (b) 9 ícones inteiros, (c) **nenhum ícone colide com JOGADOR nem
+moedas**. `mapa_contraste.test.js` (novo) — os 9 nomes + contadores ≥ 4,5 sobre a arte nas 4 larguras. Capturas
+780/893/1075/1200 em `docs/capturas-311/`.
+
+---
+
 ## §310 — ARTE LARGA (2,40) substitui a extensão: o mapa PREENCHE o palco. A caixa destrava; a extensão vira reserva.
 
 O dono, ainda vendo a EMENDA entre o mapa nítido e a extensão desfocada (§309b não convenceu), gerou uma **arte mais
