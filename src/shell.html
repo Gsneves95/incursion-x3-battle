@@ -1026,7 +1026,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    (embaixo do ícone), onde a leitura mora. */
 .ilha::before{content:"";position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);
   width:140px;height:92px;z-index:-1;pointer-events:none;
-  background:radial-gradient(ellipse 58% 58% at 50% 50%,rgba(5,4,14,.85) 0%,rgba(5,4,14,.82) 68%,rgba(5,4,14,0) 93%)}
+  background:radial-gradient(ellipse 58% 58% at 50% 50%,rgba(5,4,14,.64) 0%,rgba(5,4,14,.6) 68%,rgba(5,4,14,0) 93%)}
+/* §311c: o fundo padrão é LEVE (a sombra do texto carrega — medido: 8 das 9 ilhas caem sobre arte escura e sobram muito
+   contraste). Só as ilhas marcadas `fundoForte` no dado (sobre arte CLARA — hoje só a Campanha, sobre a cachoeira) mantêm
+   o fundo FIRME, onde o pixel claro estoura o piso 4,5. Assim o alívio da tela toda não fica refém do pior caso único. */
+.ilha--fundoforte::before{background:radial-gradient(ellipse 58% 58% at 50% 50%,rgba(5,4,14,.86) 0%,rgba(5,4,14,.83) 68%,rgba(5,4,14,0) 93%)}
 .ilha:focus{outline:none}
 .ilha:focus-visible .ilha__ic{filter:drop-shadow(0 0 0 var(--gold-text)) drop-shadow(0 3px 8px rgba(0,0,0,.7));outline:2px solid var(--gold-text);outline-offset:2px;border-radius:8px}
 .ilha:active{transform:translate(-50%,-50%) scale(.96)}

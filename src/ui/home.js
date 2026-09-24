@@ -203,6 +203,9 @@ function ilhaHTML(i){
   const tag = off ? 'div' : 'button';
   const attr = off ? '' : ` data-dest="${H(i.chave)}"`;
   const cls = ['ilha']; if (off) cls.push('ilha--breve'); if (!temIcone) cls.push('ilha--semarte');
+  // §311c: fundo escuro atrás do rótulo é LEVE por padrão (a sombra do texto carrega); as ilhas sobre arte CLARA
+  // (data: `fundoForte`) mantêm o fundo firme, onde o pixel claro estoura o piso 4,5. É dado, art-coupled (rever se a arte mudar).
+  if (i.fundoForte) cls.push('ilha--fundoforte');
   const icone = temIcone
     ? `<img class="ilha__ic" src="mapa/${H(i.chave)}.webp" alt="${H(i.rotulo)}" loading="lazy" onerror="this.remove();this.closest('.ilha').classList.add('ilha--semarte')">`
     : '';

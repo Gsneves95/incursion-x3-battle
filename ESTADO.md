@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §311c — FUNDO POR RÓTULO: valor único é refém do pior. Firme onde a arte é clara, leve onde é escura. Sombra ≠ piso.
+
+O dono quis mais transparência. Medido (guarda-método §304e): a **Campanha (4,82, sobre a cachoeira) era o ÚNICO no
+limite; os outros oito tinham 8,4–13,6** — fundo atrás deles em ~0,02–0,03 de brilho, escuro demais p/ o piso 4,5. **★
+Lição: um valor ÚNICO p/ N rótulos é limitado pelo PIOR** — o uniforme .85 segurava os 8 folgados quando precisavam de
+~.64. **Conserto: fundo POR RÓTULO** — campo `fundoForte` no `data/mapa.json` + classe `.ilha--fundoforte` + 1 linha no
+`home.js`. Padrão LEVE (radial .64); só as marcadas FIRMES (.86). As 5 sobre arte ESCURA (Provações, Coleção, Treino, PvP,
+Desafios) descem p/ .64 (a arte aparece); as 4 sobre arte CLARA (Campanha=cachoeira, Invocação=templo, Domínios=portal,
+Loja=telhado) firmes. Pior novo **4,99**; leves ~5,0–5,6; todas ≥4,5 nas 4 larguras. Custo: um campo no dado. **★
+ACOPLAMENTO (p/ a próxima troca de arte):** `fundoForte` = "esta ilha está sobre arte CLARA" → acoplado à ARTE, não à
+ilha; se a arte mudar (§310), rever as marcas JUNTO com as posições (a nota do `data/mapa.json` e o §310 apontam p/ cá).
+**★ Sombra ≠ piso:** tentei reforçar a sombra primeiro (pedido do dono); medido, ela NÃO muda o número da guarda (a
+medição esconde o texto+sombra, §304e) — melhora a PERCEPÇÃO, não o contraste medido. Foi o per-rótulo (fundo) que liberou
+a transparência; parei a sombra no §311b (mais engrossaria a letra até ficar feia — limite estético). Guardas
+`mapa_contraste`/`mapa.test` verdes (pior 4,99). Capturas `docs/capturas-311/` (per-rótulo). **Arquivos:** `data/mapa.json`
+(4 marcas + nota), `src/ui/home.js` (classe), `src/shell.html` (base leve + `.ilha--fundoforte`). Ver DECISOES §311c.
+
 ## ★ MAPA §311b — o halo ficou escuro demais: a SOMBRA carrega, o radial só complementa. Lição: oposto útil do §309b.
 
 O fundo do §311 (radial .95/.93, pior 6,51) tapava arte demais. Testei duas a 893 (captura = veredito, §281): (a) radial
@@ -9,7 +26,8 @@ O fundo do §311 (radial .95/.93, pior 6,51) tapava arte demais. Testei duas a 8
 a letra) → pior cru **4,82**. **Dono escolheu (b).** **Mecanismo (vale p/ próximas telas):** a sombra escurece só ATRÁS DA
 LETRA; o radial escurece um CÍRCULO inteiro — p/ a mesma leitura, (b) tapa MENOS arte. E a sombra ACOMPANHA o texto (cresce
 com ele); o radial é FIXO e a borda do texto cai na transição — foi o que fez o contador da Campanha oscilar. **Regra:**
-escurecer o FUNDO custa arte tapada; atrás da LETRA custa nada → a sombra vem primeiro, o fundo só complementa. A guarda
+escurecer o FUNDO custa arte tapada; atrás da LETRA custa nada → a sombra vem primeiro, o fundo só complementa (★§311c
+corrigiu esta regra: a sombra melhora a PERCEPÇÃO, não o PISO — p/ passar uma guarda de contraste só o fundo conta). A guarda
 mede com o texto escondido (não vê a sombra, §304e), então a sombra não muda o número cru (4,82, definido pelo radial) mas
 segura a leitura percebida — por isso o radial pôde clarear. **★ Lição (oposto útil do §309b):** lá o dono pediu "não
 competir" SEM alvo e eu apliquei .42 (sumiu, erro por excesso); aqui pediu o MÍNIMO COM piso declarado (4,5) e achei 4,82

@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §311c — FUNDO POR RÓTULO: um valor único é refém do pior. Firme onde a arte é clara, leve onde é escura. E a sombra ≠ piso.
+
+O dono quis mais transparência ainda. Medi o contraste de cada um dos 9 (guarda-método §304e): **a Campanha (4,82, sobre a
+cachoeira clara) era o ÚNICO no limite; os outros oito tinham 8,4–13,6** — o fundo composto atrás deles estava em ~0,02–0,03
+de brilho, muito mais escuro do que o piso 4,5 pede.
+
+**★ A LIÇÃO — um valor ÚNICO para N rótulos é limitado pelo PIOR deles.** O fundo uniforme em .85 (§311b) segurava os oito
+folgados em .85 quando eles precisavam de ~.64 — a Campanha sozinha ditava a escuridão de todos. **Conserto: fundo POR
+RÓTULO.** Campo novo no dado (`fundoForte` em `data/mapa.json`) + classe `.ilha--fundoforte` (CSS) + uma linha no
+`home.js`. O padrão passou a ser LEVE (radial .64); só as ilhas marcadas ficam FIRMES (.86). Resultado: as 5 ilhas sobre
+arte ESCURA (Provações, Coleção, Treino, PvP, Desafios) descem p/ .64 — a arte aparece por baixo; as 4 sobre arte CLARA
+(Campanha=cachoeira, Invocação=templo dourado, Domínios=portal, Loja=telhado aceso) seguem firmes, onde o pixel claro
+estoura o piso. Pior contraste novo **4,99** (Campanha, a firme); as leves em ~5,0–5,6; todas ≥4,5 nas 4 larguras. **O
+custo é um campo no dado** — alívio onde sobra, firmeza onde falta.
+
+**★ O ACOPLAMENTO À ARTE (escrito p/ a próxima troca de arte ler):** `fundoForte` significa "esta ilha está sobre arte
+CLARA". Logo é **acoplado à ARTE do mapa**, não à ilha. Se a arte do mapa mudar (como no §310), as marcas `fundoForte`
+precisam ser **revistas junto com as posições** — a nota do `data/mapa.json` diz isso, e o §310 aponta p/ cá. Uma ilha
+que mudou de cima de nuvem escura p/ um clarão passa a precisar da marca; o contrário, a perder.
+
+**★ A SOMBRA ≠ O PISO (a regra do §311b, corrigida acima):** tentei primeiro reforçar a sombra (pedido do dono). Medido: a
+sombra **NÃO muda o número da guarda** — a medição esconde o texto e a sombra vai junto (§304e), o piso é definido só pelo
+fundo. A sombra melhora a leitura PERCEBIDA (a captura), não o contraste MEDIDO. Foi o per-rótulo (fundo), não mais
+sombra, que liberou a transparência. E parei a sombra no ponto do §311b: engrossar mais começaria a deixar a letra
+"contornada demais" (o limite é estético, não de contraste).
+
+**Guardas:** `mapa_contraste.test.js` (os 9 ≥4,5 nas 4 larguras) segue verde — agora pior 4,99. `mapa.test.js`
+(colisão/quadro/tamanho) idem. Capturas atualizadas em `docs/capturas-311/` (per-rótulo). **Arquivos:** `data/mapa.json`
+(4 marcas `fundoForte` + nota), `src/ui/home.js` (classe), `src/shell.html` (base leve + `.ilha--fundoforte`).
+
+---
+
 ## §311b — o halo do mapa ficou ESCURO DEMAIS: a SOMBRA carrega, o radial só complementa. E a lição (o oposto útil do §309b).
 
 O fundo do §311 (radial .95/.93, pior contraste 6,51) tapava arte demais — o dono acabara de gerar a arte larga (§310) e
@@ -19,6 +51,11 @@ escurece um CÍRCULO inteiro. Para a MESMA leitura, (b) tapa MENOS arte. E a som
 crescer, a sombra cresce junto; o radial é de tamanho FIXO e a borda do texto cai na transição — foi o que fez o contador
 da Campanha oscilar durante todo este corte (§311/§311b). **Regra:** escurecer o FUNDO custa arte tapada; escurecer atrás
 da LETRA custa NADA. **Onde der, a sombra vem primeiro; o fundo só complementa** o que a sombra não segura.
+> ★ CORREÇÃO (§311c, o dono): esta regra estava MEIO ERRADA. A sombra melhora a **PERCEPÇÃO**, NÃO o **PISO**. A guarda de
+> contraste esconde o texto p/ medir o fundo (§304e) — e a sombra vai escondida junto —, então o número medido é definido
+> **SÓ pelo fundo**. A sombra faz um fundo claro LER bem; ela **não eleva o contraste medido**. Para passar uma guarda de
+> contraste, **só o fundo conta**. (Sem esta distinção, a próxima sessão tenta passar a guarda ENGROSSANDO a sombra — não
+> passa, e ainda engrossa até a letra ficar feia tentando.) Ver §311c.
 
 **Por que o número cru de (b) é baixo (4,82) e ainda assim lê:** a guarda mede o fundo com o TEXTO ESCONDIDO — não enxerga
 a sombra (§304e/§281). Então a sombra reforçada NÃO muda o número cru (definido só pelo radial), mas segura a leitura
@@ -105,6 +142,10 @@ lugar). Quanto cada uma andou (Δ em pontos de %): campanha −1,5/−10 · prov
 −5,5/−11** · colecao +4,5/−3,5 · dominios +0,5/+8 · **treino −7,5/−5** · loja −2/−6 · **pvp −1/−12**. Os maiores saltos
 (treino, invocacao, pvp, campanha) são porque a arte ESPALHOU tudo na horizontal e subiu o enquadramento; conferi um a um
 que o ícone caiu na ilha CERTA (arena, templo-vórtice, vulcão, templo branco) — não em nuvem.
+> ★ AO TROCAR A ARTE DO MAPA (para quem vier depois): além das POSIÇÕES aqui, revise as marcas `fundoForte` no
+> `data/mapa.json` (§311c) — elas dizem "esta ilha está sobre arte CLARA" e são acopladas À ARTE. Uma ilha que passou de
+> arte escura p/ um clarão precisa ganhar a marca (senão o texto some); a que fez o contrário, perder (senão o fundo tapa
+> arte à toa). Meça com `tests/mapa_contraste.test.js`.
 
 **4) A EXTENSÃO desfocada (§309b) CONTINUA, rebaixada a RESERVA.** Acima de 2,40 (1075, 1200) ela preenche a faixa lateral
 que sobra; nas larguras em que a arte enche (≤2,40: 780, 893) ela fica INTEIRA atrás da caixa nítida — não aparece. A

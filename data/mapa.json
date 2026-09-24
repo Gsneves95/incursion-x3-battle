@@ -1,14 +1,14 @@
 {
-  "_nota": "§310 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone. A ARTE MUDOU (§310): agora 2400×999 (proporção 2,40), mais larga; ANTES 1524×856 (1,78). A caixa DEIXOU de ser travada em 1,78 — a arte PREENCHE o palco (cover): a caixa tem a ALTURA do palco (428) e a largura natural da arte (1028px), centrada; abaixo de 2,40 de proporção de palco ela transborda e o overflow corta as laterais, acima de 2,40 sobra faixa lateral que a EXTENSÃO desfocada (§309b) preenche. Recalculei as 9 posições lendo a arte nova (verificado ícone-sobre-ilha). NO PISO (780) o corte é 24% da largura (janela visível 12,1%..87,9%): as duas ilhas de ponta à esquerda (campanha, colecao) ficam em 15,5% — ainda sobre o templo/biblioteca — para o ícone (62px) sobreviver ao piso; TODAS as 9 ficam inteiras em 780/893/1075/1200 (893 = a largura do app do dono, onde tudo cabe com folga). `contador` liga o dado vivo (§305b); `emBreve` desenha o indisponível; `rota`/`params` navegam. §311: as três da esquerda desceram (campanha 18→23 p/ sair de debaixo do painel JOGADOR; colecao 49,5→54; loja 71→74) — cada uma ainda SOBRE a sua ilha (verificado). Ícone 62→48px e fundo escuro atrás (contraste) são CSS, não dado.",
+  "_nota": "§310/§311 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone. Arte 2400×999 (2,40); a caixa preenche o palco (§310). No PISO (780) o corte é 24% (janela 12,1..87,9%): campanha e colecao ficam em 15,5% p/ sobreviver. §311: as três da esquerda desceram (campanha 18→26 p/ sair de debaixo do JOGADOR; colecao 49,5→54; loja 71→74), cada uma ainda sobre a sua ilha; ícone 48px. `contador` liga o dado vivo (§305b); `emBreve` desenha o indisponível; `rota`/`params` navegam. §311c — `fundoForte`: o fundo escuro atrás do rótulo é LEVE por padrão (a sombra do texto carrega); só as ilhas sobre arte CLARA marcam `fundoForte` e mantêm o fundo firme (campanha=cachoeira, invocacao=templo dourado, dominios=portal, loja=telhado aceso). É art-coupled: rever se a arte mudar.",
   "ilhas": [
-    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 15.5, "y": 26.0, "contador": "campanha" },
+    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 15.5, "y": 26.0, "contador": "campanha",  "fundoForte": true },
     { "chave": "provacoes", "rotulo": "Provações", "rota": "provacoes", "x": 29.0, "y": 22.0, "contador": "provacoes" },
     { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 66.5, "y": 28.0, "contador": "desafios" },
-    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 82.0, "y": 24.0, "contador": "invocacao" },
+    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 82.0, "y": 24.0, "contador": "invocacao", "fundoForte": true },
     { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 15.5, "y": 54.0, "contador": "colecao" },
-    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "emBreve": true },
+    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "emBreve": true, "fundoForte": true },
     { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 62.5, "y": 51.0, "params": { "novo": true } },
-    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 22.0, "y": 74.0, "emBreve": true, "titulo": "Loja" },
+    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 22.0, "y": 74.0, "emBreve": true, "titulo": "Loja", "fundoForte": true },
     { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 78.0, "y": 71.0 }
   ]
 }
