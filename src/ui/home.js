@@ -219,6 +219,7 @@ function renderHomeMapa(){
   const ilhas = MAPA.ilhas.map(ilhaHTML).join('');
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="mapa">
+    <img class="mapa__fundo" src="banners/mapa.webp" alt="" aria-hidden="true" onerror="this.remove()">
     <header class="mapa__topo">
       ${mapaPerfilHTML()}
       ${mapaMoedasHTML()}

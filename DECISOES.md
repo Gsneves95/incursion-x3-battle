@@ -6,6 +6,43 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §309 — a FAIXA PRETA do mapa: o sintoma era outro. Gutter vira EXTENSÃO da arte. E a lição: confirmar o sintoma.
+
+**★ EU DIAGNOSTIQUEI DUAS VEZES CONTRA A DESCRIÇÃO DO DONO SEM CONFIRMAR O QUE ELE VIA.** O dono nunca teve corte — o
+painel `?diag` no aparelho provou que a trava do §308b pega (razão 1,780, `pos absolute`, `css 762×428 aplicado`). O que
+o incomoda são as **FAIXAS PRETAS** nas laterais: a tela "não parece cheia". Eu li "cortando as laterais" como RECORTE e
+fui atrás de crop duas vezes (§308, §308b). **"Cortando as laterais" e "faixa preta na lateral" descrevem a MESMA imagem
+e pedem consertos OPOSTOS** (recorte → fazer a arte preencher; faixa → preencher o gutter). A lição: **antes de medir,
+confirmar o SINTOMA** — o que a pessoa de fato vê — não a minha interpretação da palavra dela.
+
+**A ARITMÉTICA (por que a faixa é inevitável com arte fixa):** o palco vai de 1,82 (piso 780) a 2,80 (teto 1200) de
+proporção; a arte tem 1,78. Para PREENCHER em todas as larguras a arte precisaria de 2,80 — e aí no piso 35% da largura
+seria cortada, levando as ilhas das pontas junto. **Mapa de destinos FIXOS não sobrevive a largura variável: ou corta
+ilha, ou sobra faixa.** A caixa travada (§306) escolheu "sobra faixa" (correto); faltava tratar a faixa.
+
+**O CONSERTO — a faixa vira EXTENSÃO da própria arte** (padrão letterbox-blur de app de vídeo): uma cópia do mapa
+(`.mapa__fundo`, mesmo `banners/mapa.webp`) cobre o palco inteiro com `object-fit:cover`, **desfocada e escurecida**, sob
+a caixa nítida. O olho lê como continuação da cena; a tela não parece "não-preenchida". Sem arte nova, sem tocar nas
+âncoras das ilhas.
+
+**MEDIÇÕES (reportadas ao dono):**
+- **Desfoque/escurecimento:** `blur(30px) brightness(.42) saturate(.9)` + `scale(1.08)` (o scale esconde a borda
+  transparente que o blur puxa). A captura é o veredito (§281): a extensão lê como FUNDO e não compete com o mapa nítido.
+  Uma vinheta suave (`box-shadow` na caixa) separa o nítido da extensão. Verificado a **780, 893, 1075 e 1200** (893 = a
+  largura do app no aparelho, 1075 = a do navegador do dono; gutter 8/65/156/218 de cada lado).
+- **Contraste das ilhas de borda:** INALTERADO. Medido no dist (893): Coleção, Invocação e PvP são todas `dentroCaixa`
+  (sobre a arte NÍTIDA, x da caixa 66→828); a extensão desfocada vive só no gutter, **não atrás de nenhuma ilha**. Os
+  números crus baixos (1,03–1,38) são pré-existentes — os nomes brancos leem pela SOMBRA (halo escuro), como já liam
+  antes do §309; o §309 não mexe nisso.
+- **Custo:** ZERO de arte. `banners/mapa.webp` é o MESMO arquivo referenciado duas vezes → uma busca, já em cache; sem
+  base64; o `incursion.html` cresce só o `<img>` + o CSS (< 1 KB). "Peso zero" confirmado.
+
+**Guarda (`mapa.test.js`, §309):** a extensão usa o mesmo arquivo externo (peso zero), não é base64, é decorativa
+(`aria-hidden`) e fica ATRÁS da caixa nítida (z-index). **§308c removido:** as linhas de DOM do mapa no `?diag` eram
+temporárias — cumpriram o papel (provaram no aparelho que a trava pega) e saíram.
+
+---
+
 ## §308 — o mapa cortava no Galaxy S24: safe-area de POSIÇÃO + trava em px explícito. E a lição: Chromium ≠ aparelho.
 
 O dono viu o mapa cortando nas bordas no S24. O painel de diagnóstico (`?diag`) do aparelho fechou o caso — duas causas

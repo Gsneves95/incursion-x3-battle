@@ -976,13 +976,20 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    CAIXA DE PROPORÇÃO TRAVADA (1,78), centrada; o gutter mostra o stage__bg escuro (§305b, opção a).
    Os ícones ancoram em % DA ARTE (left/top da .ilha) — nunca saem das ilhas em 780..1200. */
 .mapa{position:absolute;inset:0;z-index:2;overflow:hidden}
+/* §309: o gutter deixa de ser preto e vira EXTENSÃO da própria arte — uma cópia do mapa cobrindo o palco inteiro,
+   DESFOCADA e ESCURECIDA, sob a caixa nítida (padrão letterbox-blur de app de vídeo). O olho lê como continuação da
+   cena; a tela não parece "não-preenchida". Mesmo arquivo (banners/mapa.webp) já em cache → PESO ZERO de rede; o
+   incursion.html cresce só o <img>. scale(1.08) esconde a borda transparente que o blur puxa; a caixa nítida fica por
+   cima (z-index maior). filter blur 30 + brilho .42 medidos no dist (§281): a extensão lê como fundo e não compete. */
+.mapa__fundo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;pointer-events:none;
+  transform:scale(1.08);filter:blur(30px) brightness(.42) saturate(.9)}
 /* §308b: TRAVA em px explícito E FORA DO FLUXO (absolute). O §308 pôs width:762px num FLEX-ITEM — o Chromium honrava
    (762 em toda a faixa), mas a WebView do Galaxy S24 ESTICAVA o flex-item para a largura do palco (893) mesmo com
    flex:0 0 auto, e a arte (cover) cortava ~15% da altura. Um filho ABSOLUTO não é flex-item: nenhum pai (flex ou não)
    consegue esticá-lo. A caixa é um 762×428 CONHECIDO (762 = 428 × 1524/856, idêntico à arte), centrada por
    left/top:50% + translate — sem negociação de layout com motor nenhum. A arte (cover) preenche exato porque a razão
    bate (cover==contain aqui); os ícones ancoram em % de 762×428. */
-.mapa__caixa{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:762px;height:428px}
+.mapa__caixa{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:762px;height:428px;z-index:1;box-shadow:0 0 0 1px rgba(6,5,16,.5),0 0 40px 8px rgba(6,5,16,.55)}
 .mapa__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mapa__scrim{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 82% at 50% 42%,transparent 56%,rgba(6,5,16,.34) 100%)}

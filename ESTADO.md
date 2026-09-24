@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §309 — a "faixa preta" do mapa: o sintoma era outro. Gutter vira EXTENSÃO da arte. Lição: confirmar o sintoma.
+
+O dono nunca teve corte — o `?diag` no aparelho provou que a trava do §308b pega. O que o incomodava era a **faixa preta**
+no gutter (a tela "não parece cheia"). **Eu diagnostiquei corte DUAS vezes (§308/§308b) contra a descrição dele sem
+confirmar o que via:** "cortando as laterais" e "faixa preta na lateral" são a MESMA imagem e pedem consertos OPOSTOS.
+Aritmética: palco 1,82→2,80, arte 1,78 — mapa de destinos fixos ou corta ilha ou sobra faixa; a caixa travada (§306)
+escolheu sobrar faixa, faltava tratá-la. **Conserto (letterbox-blur de app de vídeo):** `.mapa__fundo` = cópia do mesmo
+`banners/mapa.webp` cobrindo o palco, `object-fit:cover`, `blur(30px) brightness(.42) saturate(.9)` + `scale(1.08)`, sob
+a caixa nítida (vinheta `box-shadow` separa). **Medições:** contraste das ilhas de borda INALTERADO (Coleção/Invocação/PvP
+são `dentroCaixa`, sobre a arte nítida; a extensão só vive no gutter); custo ZERO (mesmo arquivo em cache, sem base64, o
+HTML cresce < 1 KB). Verificado a 780/893/1075/1200 (893 app, 1075 navegador do dono). Guarda `mapa.test.js` §309:
+extensão = mesmo arquivo, não-base64, aria-hidden, atrás da caixa. §308c (linhas de DOM no `?diag`) removido — cumpriu o
+papel. **★ Lição:** antes de MEDIR, confirmar o SINTOMA (o que a pessoa vê), não a minha interpretação da palavra dela.
+Capturas 780/893/1075/1200 em `docs/capturas-309/`. **Arquivos:** `src/ui/home.js` (`.mapa__fundo`), `src/shell.html`
+(CSS da extensão + vinheta), `src/ui/base.js` (§308c removido), `tests/mapa.test.js` (§309), `docs/capturas-309/`. Ver
+DECISOES §309. Suíte + build verdes.
+
 ## ★ S24 §308 — o mapa cortava no Galaxy S24: safe-area de posição + trava em px explícito. Lição: Chromium ≠ aparelho.
 
 O diag (`?diag`) do S24 fechou duas causas, nenhuma da arte (arquivo 1524×856 = 1,78037, exato). **(1) Safe-area de

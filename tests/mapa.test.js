@@ -102,6 +102,14 @@ console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem 
   ok(cs.position === 'absolute', `§308b: a caixa fica FORA DO FLUXO (position:absolute) — flex-item o S24 estica; absoluto não (veio "${cs.position}")`);
   ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
   ok(Math.abs(762 / 428 - 1524 / 856) < 1e-6, '762×428 é a razão EXATA da arte (1524×856) — cover preenche sem cortar');
+  // §309: o gutter é EXTENSÃO da arte (cópia desfocada/escurecida sob a caixa), não faixa preta. Mesmo arquivo já em
+  // cache → PESO ZERO (sem 404, sem base64); decorativa (aria-hidden); atrás da caixa (z-index menor).
+  const fundo = $('.mapa__fundo');
+  ok(!!fundo && fundo.getAttribute('src') === 'banners/mapa.webp', '§309: a extensão do gutter usa o MESMO arquivo (banners/mapa.webp) — peso zero');
+  ok(!!fundo && !/^data:/.test(fundo.getAttribute('src') || ''), '§309: a extensão NÃO é base64 (arquivo externo em cache)');
+  ok(!!fundo && (fundo.getAttribute('aria-hidden') === 'true'), '§309: a extensão é decorativa (aria-hidden) — não entra na leitura');
+  const zF = parseInt(w.getComputedStyle(fundo).zIndex) || 0, zC = parseInt(cs.zIndex) || 0;
+  ok(zF < zC, `§309: a extensão fica ATRÁS da caixa nítida (z-index fundo ${zF} < caixa ${zC})`);
   const foraDaArte = [];
   for (const il of $$('.ilha')){
     const x = parseFloat(il.style.left), y = parseFloat(il.style.top);
