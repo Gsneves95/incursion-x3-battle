@@ -25,11 +25,16 @@ tamanho já estava reservado; é só deslocar o centro ~14,5px).
 aparelho) — varri de 10 em 10 e confirmei.** Mas a WebView do S24 NÃO honrava: a caixa ia edge-to-edge (893×428 = 2,086
 vs 1,780 da arte → `cover` cortava ~15% da altura, ~7,3% topo e base). **Não reproduz no Chromium headless** (removi
 `aspect-ratio` para simular: a caixa colapsa a 0 de largura, não vai edge-to-edge — o gatilho exato é do motor).
-  **Conserto (engine-proof):** o palco é design-px de ALTURA FIXA 428, então a caixa é um **762×428 CONHECIDO**
-  (762 = 428×1524/856, idêntico à arte). Troquei `aspect-ratio+max-width+flex` por **px EXPLÍCITO** — não negocia com
-  motor nenhum. Mantive `object-fit:cover`: com a caixa na razão EXATA da arte, cover == contain (preenche sem cortar),
-  e os ícones ancoram em % de 762×428 (precisam que a arte preencha a caixa; `contain` só ajudaria se a razão
-  divergisse, e aí LETTERBOX faria os ícones saírem das ilhas — a segurança vem do px explícito, não do cover/contain).
+  **Conserto §308 (primeira tentativa, INSUFICIENTE):** troquei `aspect-ratio+max-width+flex` por `width:762px` explícito.
+  O Chromium travava em 762 em toda a faixa — mas no S24 a caixa CONTINUOU edge-to-edge. O dono mediu a captura: arte na
+  razão 2,087 (a do palco), gutter 59 à esquerda (o recorte, prova de que a POSIÇÃO do §308 pegou) e ZERO à direita.
+  **Conserto §308b (o que realmente segura):** o `width:762px` estava num **FLEX-ITEM** (`.mapa` era `display:flex`), e a
+  WebView do S24 ESTICAVA o flex-item para a largura do palco (893) mesmo com `flex:0 0 auto` — o Chromium honrava, o
+  motor do aparelho não (a suspeita (a) do dono, confirmada). **A caixa saiu do FLUXO:** `position:absolute` + `left/top:50%`
+  + `translate(-50%,-50%)`, 762×428. **Um filho absoluto NÃO é flex-item — nenhum pai (flex ou não) consegue esticá-lo,
+  em qualquer motor.** É a trava engine-proof de verdade: px conhecido, fora do fluxo, sem negociação de layout. Mantive
+  `object-fit:cover` (razão exata → cover==contain; ícones ancoram em % de 762×428). **Lição concreta:** px explícito só
+  é engine-proof se o elemento não estiver sujeito a esticamento — num flex-item o motor ainda decide; fora do fluxo, não.
 
 **GUARDA (higiene, COM a nota do que ela não vê).** `mapa.test.js`: (a) jsdom crava a trava em px EXPLÍCITO (762×428,
 sem aspect-ratio) — a propriedade engine-proof, a que realmente protege; (b) Chromium varre 780..1200 de 10 em 10

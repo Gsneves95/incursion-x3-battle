@@ -975,13 +975,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 /* §306 — a HOME vira MAPA estático (o carrossel acima fica de FALLBACK, sem a arte do mapa).
    CAIXA DE PROPORÇÃO TRAVADA (1,78), centrada; o gutter mostra o stage__bg escuro (§305b, opção a).
    Os ícones ancoram em % DA ARTE (left/top da .ilha) — nunca saem das ilhas em 780..1200. */
-.mapa{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden}
-/* §308: TRAVA EXPLÍCITA em px de design (engine-proof). O palco é design-px de altura FIXA 428, então a caixa é um
-   762×428 CONHECIDO (762 = 428 × 1524/856, idêntico à arte). Antes dependia de aspect-ratio + max-width + flex
-   conversarem — o Chromium honrava (trava em toda a faixa 780..1200), mas a WebView do Galaxy S24 NÃO, e a caixa ia
-   edge-to-edge (cover cortava ~15% da altura, §308). px explícito não negocia com o motor: 762×428 em qualquer engine.
-   A arte (object-fit:cover) preenche exato porque a razão bate (cover==contain aqui); os ícones ancoram em % de 762×428. */
-.mapa__caixa{position:relative;width:762px;height:428px;flex:0 0 auto}
+.mapa{position:absolute;inset:0;z-index:2;overflow:hidden}
+/* §308b: TRAVA em px explícito E FORA DO FLUXO (absolute). O §308 pôs width:762px num FLEX-ITEM — o Chromium honrava
+   (762 em toda a faixa), mas a WebView do Galaxy S24 ESTICAVA o flex-item para a largura do palco (893) mesmo com
+   flex:0 0 auto, e a arte (cover) cortava ~15% da altura. Um filho ABSOLUTO não é flex-item: nenhum pai (flex ou não)
+   consegue esticá-lo. A caixa é um 762×428 CONHECIDO (762 = 428 × 1524/856, idêntico à arte), centrada por
+   left/top:50% + translate — sem negociação de layout com motor nenhum. A arte (cover) preenche exato porque a razão
+   bate (cover==contain aqui); os ícones ancoram em % de 762×428. */
+.mapa__caixa{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:762px;height:428px}
 .mapa__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mapa__scrim{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 82% at 50% 42%,transparent 56%,rgba(6,5,16,.34) 100%)}

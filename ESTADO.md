@@ -10,9 +10,11 @@ câmera em `L29` e centro na viewport, 14,5px do palco ficavam sob o recorte. Co
 (`left:calc(50% + (env-left−env-right)/2)`, idem top) — **custo de largura ~0** (o dono estimou 751→737 e corrigiu-se:
 o desconto já fora feito, seria duplo; é só deslocar o centro). **(2) Trava da caixa falhava no MOTOR do S24:** o §306
 usava `aspect-ratio+max-width+flex`; o Chromium honra e trava em TODA a faixa 780..1200 (varri de 10 em 10), mas a
-WebView do S24 não — a caixa ia edge-to-edge (2,086 vs 1,780 → cover cortava ~15% da altura). Conserto engine-proof: o
-palco é design-px de altura FIXA 428, então a caixa é um **762×428 conhecido** — troquei por **px EXPLÍCITO** (sem
-aspect-ratio/max-width/flex). Mantive cover (razão exata → cover==contain; ícones ancoram em % de 762×428). **Guarda**
+WebView do S24 não — a caixa ia edge-to-edge (2,086 vs 1,780 → cover cortava ~15% da altura). **§308b (o dono remediu):**
+`width:762px` num FLEX-ITEM ainda esticava no S24 (o Chromium honrava, o motor não); a caixa SAIU DO FLUXO —
+`position:absolute` + `left/top:50%` + `translate(-50%,-50%)`, 762×428. Um filho absoluto não é flex-item: nenhum pai o
+estica, em qualquer motor. px conhecido + fora do fluxo = engine-proof de verdade. Mantive cover (razão exata; ícones em
+% de 762×428). **Guarda**
 (`mapa.test.js`): jsdom crava a trava em px explícito (a propriedade engine-proof) + Chromium varre 780..1200 — COM a
 nota, dentro do teste, de que a varredura roda no Chromium e **não cobre o motor da WebView** (o Chromium travava mesmo
 com o CSS frágil). **★ Lição nova (Chromium ≠ aparelho):** mesma família do §292 (scrollHeight cego ao corte) e §307

@@ -90,13 +90,16 @@ console.log('== §306 MAPA — 3) os 2 "em breve" não abrem e não parecem defe
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');
 {
   home();
-  // §308: a CAIXA trava em px EXPLÍCITO (762×428), não em aspect-ratio. O §306 usava aspect-ratio+max-width+flex e o
-  // Chromium honrava — mas a WebView do Galaxy S24 NÃO, e a caixa ia edge-to-edge (cover cortava ~15% da altura). px
-  // explícito não negocia com o motor. Esta guarda (jsdom) crava o VALOR DECLARADO — a propriedade engine-proof — que
-  // é o que realmente protege; a varredura de largura no fim (Chromium) é higiene e NÃO enxerga o motor (ver nota lá).
+  // §308/§308b: a CAIXA trava em px EXPLÍCITO (762×428) E FORA DO FLUXO (position:absolute). Duas voltas:
+  //  §306 travava com aspect-ratio+max-width+flex — o Chromium honrava, a WebView do S24 NÃO (ia edge-to-edge).
+  //  §308 pôs width:762px, mas num FLEX-ITEM — o Chromium honrava, o S24 ESTICAVA o flex-item p/ a largura do palco.
+  //  §308b tira a caixa do fluxo (absolute): um filho absoluto NÃO é flex-item, nenhum pai consegue esticá-lo — em
+  //  QUALQUER motor. Esta guarda (jsdom) crava as três propriedades engine-proof (px, sem aspect-ratio, fora do fluxo);
+  //  a varredura Chromium no fim é só higiene de largura e NÃO enxerga o motor da WebView (ver a nota lá).
   const caixa = $('.mapa__caixa');
   const cs = w.getComputedStyle(caixa);
   ok(cs.width === '762px' && cs.height === '428px', `§308: a caixa trava em px explícito 762×428 (é ${cs.width}×${cs.height})`);
+  ok(cs.position === 'absolute', `§308b: a caixa fica FORA DO FLUXO (position:absolute) — flex-item o S24 estica; absoluto não (veio "${cs.position}")`);
   ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
   ok(Math.abs(762 / 428 - 1524 / 856) < 1e-6, '762×428 é a razão EXATA da arte (1524×856) — cover preenche sem cortar');
   const foraDaArte = [];
