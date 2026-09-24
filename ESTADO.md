@@ -2,6 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §309b — a extensão do §309 ficou ESCURA DEMAIS: calibrar o brilho (60–80% do mapa). Lição: a sequência de 4 cortes.
+
+A extensão do §309 (`brightness(.42)`) sumia: o dono mediu no S24 brilho ~27 contra 60–70 do mapa — menos da metade, o
+olho lia banda preta. Alvo dele: extensão entre **60% e 80%** do brilho do mapa. **Medi a razão extensão÷mapa (a captura
+é o veredito):** antes `blur(30) brightness(.42)` → 0,38; depois **`blur(20px) brightness(.75) saturate(.95)`** → **893:
+0,62** (largura real do app no S24), **1075: 0,71** (navegador do dono) — ambas em 60–80%, capturas enviadas e APROVADAS.
+**Três ajustes, juntos:** (1) brightness `.42`→`.75` — "não competir" não é "sumir"; a extensão lê como a mesma cena fora
+de foco, e isso pede 60–80%, não 40%. (2) blur `30`→`20` — o 30 apagava o CONTRASTE LOCAL junto com o detalhe (cinza
+chapado); o 20 mantém a variação claro/escuro, que é o que o olho reconhece como continuação. (3) **vinheta REMOVIDA** —
+o `box-shadow` escurecia EXATAMENTE a emenda e recriava a borda preta que o conserto existia para matar (medido com/sem:
+sem é contínuo). **★ Lição da sequência (§308→§308b→§309→§309b, quatro cortes):** o dono disse "cortando as laterais"; li
+CORTE e mandei medir recorte duas vezes; o sintoma era FAIXA PRETA — mesma imagem, descrição oposta, conserto oposto.
+Depois pedi-me "não competir" e apliquei `.42`, que resolveu a INSTRUÇÃO e não o PROBLEMA. **Duas metades:** (a) antes de
+medir, confirmar O QUE A PESSOA VÊ, não interpretar a palavra; (b) direção qualitativa ("não competir") precisa de ALVO
+MEDÍVEL (60–80%), senão a obediência literal acerta a instrução e erra o objetivo. Guardas do §309 (`mapa.test.js`) seguem
+valendo — §309b só muda a intensidade do filtro e tira a vinheta. Capturas 893/1075 em `docs/capturas-309/`. **Arquivos:**
+`src/shell.html` (filtro `.mapa__fundo` + vinheta removida), `docs/capturas-309/`. Ver DECISOES §309b. Suíte + build verdes.
+
 ## ★ MAPA §309 — a "faixa preta" do mapa: o sintoma era outro. Gutter vira EXTENSÃO da arte. Lição: confirmar o sintoma.
 
 O dono nunca teve corte — o `?diag` no aparelho provou que a trava do §308b pega. O que o incomodava era a **faixa preta**

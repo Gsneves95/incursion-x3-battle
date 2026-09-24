@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §309b — a extensão do §309 ficou ESCURA DEMAIS: calibrar o brilho. E a lição da sequência inteira (quatro cortes).
+
+A extensão do §309 funcionava mas o dono mediu no S24: brilho ~27 nas laterais contra 60–70 do mapa nítido — **menos da
+metade**, o olho lia banda preta, não continuação. O alvo dele: **a extensão entre 60% e 80% do brilho do mapa.**
+
+**A MEDIÇÃO (razão extensão ÷ mapa nítido, reportada ao dono; a captura é o veredito):**
+- **Antes (§309):** `blur(30px) brightness(.42)` → gutter 31, mapa 83, **razão 0,38**. Batia com os ~27 do aparelho.
+- **Depois (§309b):** `blur(20px) brightness(.75) saturate(.95)` → **893: razão 0,62** (a largura real do app no S24);
+  **1075: razão 0,71** (a do navegador do dono). Ambas dentro de 60–80%. Capturas 893/1075 enviadas e APROVADAS.
+
+**OS TRÊS AJUSTES — eles se explicam juntos:**
+- **brightness `.42` → `.75`:** o `.42` fez a extensão DESAPARECER. "Não competir" não é "sumir" — a extensão precisa
+  ler como a MESMA cena fora de foco, e isso pede 60–80% do brilho do mapa, não 40%. O `.42` obedeceu a instrução
+  ("não competir") e não resolveu o problema (a tela parecer cheia).
+- **blur `30px` → `20px`:** o `30` apagava o CONTRASTE LOCAL junto com o detalhe, e a extensão virava cinza chapado.
+  O `20` mantém a variação claro/escuro da cena — é essa variação que faz o olho RECONHECER a continuação, não só o
+  brilho médio.
+- **vinheta REMOVIDA:** o `box-shadow` do §309 escurecia EXATAMENTE a emenda e recriava a borda preta que o conserto
+  existia para eliminar. Medido com e sem: sem vinheta a transição extensão→mapa é contínua; com, reaparece o anel
+  escuro no encaixe. A vinheta separava o nítido da extensão, mas ao custo de re-escurecer a junção — troca ruim.
+
+**★ A LIÇÃO DA SEQUÊNCIA INTEIRA (§308 → §308b → §309 → §309b — custou QUATRO cortes):** o dono disse "cortando as
+laterais". Eu li **corte de imagem** e mandei medir recorte DUAS vezes (§308, §308b). O sintoma real era **faixa preta**
+— a mesma imagem, a descrição oposta, o conserto oposto. Depois, ao consertar, pedi-me "não competir com o mapa" e
+apliquei `.42`, que resolveu a INSTRUÇÃO e não o PROBLEMA. **As duas metades:**
+1. **Antes de medir, confirmar O QUE A PESSOA VÊ**, não interpretar a palavra dela. ("Cortando" e "faixa preta" leem a
+   mesma tela e pedem consertos opostos — só a confirmação do sintoma desfaz o empate.)
+2. **Ao dar uma direção QUALITATIVA ("não competir"), dar também o ALVO MEDÍVEL** (60–80% do brilho), senão a obediência
+   literal acerta a instrução e erra o objetivo — foi exatamente o `.42`.
+
+**Guarda:** as asserções do §309 (`mapa.test.js`) seguem valendo (mesmo arquivo, não-base64, aria-hidden, atrás da
+caixa). §309b muda só a intensidade do filtro e remove a vinheta — nada que uma guarda de estrutura trave.
+
+---
+
 ## §309 — a FAIXA PRETA do mapa: o sintoma era outro. Gutter vira EXTENSÃO da arte. E a lição: confirmar o sintoma.
 
 **★ EU DIAGNOSTIQUEI DUAS VEZES CONTRA A DESCRIÇÃO DO DONO SEM CONFIRMAR O QUE ELE VIA.** O dono nunca teve corte — o
