@@ -972,26 +972,25 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
    "travado/não tem" (Coleção §216, Missões §234); num cartão com rota viva ele lê como
    indisponível logo na 1ª tela (usabilidade §206). O guarda do render_sweep trava a volta. */
 
-/* §306 — a HOME vira MAPA estático (o carrossel acima fica de FALLBACK, sem a arte do mapa).
-   CAIXA DE PROPORÇÃO TRAVADA (1,78), centrada; o gutter mostra o stage__bg escuro (§305b, opção a).
-   Os ícones ancoram em % DA ARTE (left/top da .ilha) — nunca saem das ilhas em 780..1200. */
+/* §306/§310 — a HOME vira MAPA estático (o carrossel acima fica de FALLBACK, sem a arte do mapa).
+   §310: a arte nova (2400×999, 2,40) PREENCHE o palco; os ícones ancoram em % DA ARTE (left/top da .ilha).
+   O overflow:hidden é o que CORTA as laterais quando o palco é mais estreito que a arte (piso 780 → -24%). */
 .mapa{position:absolute;inset:0;z-index:2;overflow:hidden}
-/* §309/§309b: o gutter vira EXTENSÃO da própria arte — cópia do mapa cobrindo o palco, DESFOCADA, sob a caixa nítida
-   (letterbox-blur de app de vídeo). Mesmo arquivo (banners/mapa.webp) em cache → PESO ZERO; o incursion.html cresce só
-   o <img>. scale(1.08) esconde a borda transparente que o blur puxa. §309b (o brilho .42 do §309 sumiu, virou tarja):
-   MEDIDO no dist a razão de brilho extensão÷mapa — brightness .75 + blur 20 dão ~0,71 (a mira do dono: 60–80%, perto o
-   bastante p/ ler como a mesma cena, longe o bastante p/ o mapa ser o assunto). Blur 30→20 preserva o contraste local.
-   A VINHETA (box-shadow na caixa) SAIU: escurecia justo a emenda, onde a continuidade tem de ser suave — a diferença de
-   NITIDEZ já separa o mapa da extensão (captura é o veredito, §281). */
+/* §309b/§310: a EXTENSÃO desfocada — cópia do mapa cobrindo o palco, DESFOCADA, sob a caixa nítida (letterbox-blur de
+   app de vídeo). §310 REBAIXOU seu papel: a arte larga (2,40) PREENCHE o palco no aparelho do dono (893) e no piso (780),
+   e a extensão só aparece ACIMA de 2,40 (o navegador do dono a 1075, o teto a 1200), onde sobra faixa lateral. Nas
+   larguras em que a arte preenche, a extensão fica INTEIRAMENTE atrás da caixa nítida — não aparece. Mesmo arquivo
+   (banners/mapa.webp) em cache → PESO ZERO; scale(1.08) esconde a borda transparente que o blur puxa. Brilho .75 + blur 20
+   (§309b) leem como a mesma cena fora de foco (razão de brilho ~0,71 contra o mapa, a mira do dono: 60–80%). */
 .mapa__fundo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;pointer-events:none;
   transform:scale(1.08);filter:blur(20px) brightness(.75) saturate(.95)}
-/* §308b: TRAVA em px explícito E FORA DO FLUXO (absolute). O §308 pôs width:762px num FLEX-ITEM — o Chromium honrava
-   (762 em toda a faixa), mas a WebView do Galaxy S24 ESTICAVA o flex-item para a largura do palco (893) mesmo com
-   flex:0 0 auto, e a arte (cover) cortava ~15% da altura. Um filho ABSOLUTO não é flex-item: nenhum pai (flex ou não)
-   consegue esticá-lo. A caixa é um 762×428 CONHECIDO (762 = 428 × 1524/856, idêntico à arte), centrada por
-   left/top:50% + translate — sem negociação de layout com motor nenhum. A arte (cover) preenche exato porque a razão
-   bate (cover==contain aqui); os ícones ancoram em % de 762×428. */
-.mapa__caixa{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:762px;height:428px;z-index:1}
+/* §310: a caixa DEIXA de ser travada em 1,78 (aquela trava existia para a arte antiga 1524×856). A arte nova (2400×999,
+   2,40) deve PREENCHER o palco. A caixa passa a ter a ALTURA do palco (428) e a LARGURA natural da arte a essa altura
+   (428 × 2400/999 ≈ 1028px), centrada; o overflow:hidden da .mapa corta o excedente lateral quando o palco é mais estreito
+   (piso 780 → corta 24% da largura; 893 → 13%). Mantém a lição do §308b: px EXPLÍCITO (1028×428) e FORA DO FLUXO
+   (absolute) — nenhum motor negocia; um filho absoluto não é flex-item, o Galaxy S24 não estica. A razão 1028/428 (2,4019)
+   casa a arte (2,4024) a menos de 0,03% → o cover não corta nada perceptível. Os ícones ancoram em % de 1028×428. */
+.mapa__caixa{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1028px;height:428px;z-index:1}
 .mapa__art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mapa__scrim{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 82% at 50% 42%,transparent 56%,rgba(6,5,16,.34) 100%)}

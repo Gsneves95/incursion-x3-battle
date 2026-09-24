@@ -100,10 +100,11 @@ function renderHome(){
   else renderHomeCarrossel();
 }
 
-/* ================= §306 — O MAPA ================= */
-// CAIXA DE PROPORÇÃO TRAVADA (§305): a arte mantém 762×428 (1,78) centrada; o resto da largura
-// (o gutter) fica com o FUNDO ESCURO do jogo (stage__bg, opção a). Os ícones ancoram em % DA
-// ARTE (data/mapa.json) — nunca saem das ilhas, em nenhuma largura (780..1200).
+/* ================= §306/§310 — O MAPA ================= */
+// §310: a arte nova (2400×999, 2,40) PREENCHE o palco (cover) — a caixa tem a altura do palco (428) e a
+// largura natural da arte (~1028px), centrada; o overflow corta as laterais quando o palco é mais estreito
+// (piso 780 → -24%). ANTES (§306) a caixa era travada em 1,78 (762×428) e o gutter mostrava o fundo escuro.
+// Os ícones ancoram em % DA ARTE (data/mapa.json); as posições foram recalculadas p/ a arte nova (§310).
 
 // medidor de largura de texto REAL (fontes locais §260), para o corte da Campanha se aplicar
 // sozinho quando a região estourar. Usa um <span> oculto (offsetWidth) — NÃO canvas: em jsdom o

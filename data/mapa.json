@@ -1,14 +1,14 @@
 {
-  "_nota": "§306 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone; a caixa é 762×428 (proporção 1,78 travada, §305). `contador` liga o dado vivo (§305b: 5 contadores); `emBreve` desenha o estado indisponível (ícone ~50% + tag apagada, nunca abre — §306); `rota`/`params` navegam quando NÃO é emBreve. Medido na referência montada (1672×941): o par mais próximo na horizontal é Campanha↔Provações a ~123px de design (>85 — os rótulos não colidem).",
+  "_nota": "§310 — POSIÇÕES das ilhas do mapa inicial, como DADO (o dono ajusta sem tocar código). x/y são PERCENTUAIS DA ARTE (0-100), do CENTRO do ícone. A ARTE MUDOU (§310): agora 2400×999 (proporção 2,40), mais larga; ANTES 1524×856 (1,78). A caixa DEIXOU de ser travada em 1,78 — a arte PREENCHE o palco (cover): a caixa tem a ALTURA do palco (428) e a largura natural da arte (1028px), centrada; abaixo de 2,40 de proporção de palco ela transborda e o overflow corta as laterais, acima de 2,40 sobra faixa lateral que a EXTENSÃO desfocada (§309b) preenche. Recalculei as 9 posições lendo a arte nova (verificado ícone-sobre-ilha). NO PISO (780) o corte é 24% da largura (janela visível 12,1%..87,9%): as duas ilhas de ponta à esquerda (campanha, colecao) ficam em 15,5% — ainda sobre o templo/biblioteca — para o ícone (62px) sobreviver ao piso; TODAS as 9 ficam inteiras em 780/893/1075/1200 (893 = a largura do app do dono, onde tudo cabe com folga). `contador` liga o dado vivo (§305b); `emBreve` desenha o indisponível; `rota`/`params` navegam.",
   "ilhas": [
-    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 17.0, "y": 28.0, "contador": "campanha" },
-    { "chave": "provacoes", "rotulo": "Provações", "rota": "provacoes", "x": 33.0, "y": 30.0, "contador": "provacoes" },
-    { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 67.0, "y": 27.0, "contador": "desafios" },
-    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 87.5, "y": 35.0, "contador": "invocacao" },
-    { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 11.0, "y": 53.0, "contador": "colecao" },
-    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 49.5, "y": 47.0, "emBreve": true },
-    { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 70.0, "y": 56.0, "params": { "novo": true } },
-    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 24.0, "y": 77.0, "emBreve": true, "titulo": "Loja" },
-    { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 79.0, "y": 83.0 }
+    { "chave": "campanha",  "rotulo": "Campanha",  "rota": "campanha",  "x": 15.5, "y": 18.0, "contador": "campanha" },
+    { "chave": "provacoes", "rotulo": "Provações", "rota": "provacoes", "x": 29.0, "y": 22.0, "contador": "provacoes" },
+    { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 66.5, "y": 28.0, "contador": "desafios" },
+    { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 82.0, "y": 24.0, "contador": "invocacao" },
+    { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 15.5, "y": 49.5, "contador": "colecao" },
+    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "emBreve": true },
+    { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 62.5, "y": 51.0, "params": { "novo": true } },
+    { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 22.0, "y": 71.0, "emBreve": true, "titulo": "Loja" },
+    { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 78.0, "y": 71.0 }
   ]
 }

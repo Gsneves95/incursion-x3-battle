@@ -90,37 +90,42 @@ console.log('== §306 MAPA — 3) os 2 "em breve" não abrem e não parecem defe
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');
 {
   home();
-  // §308/§308b: a CAIXA trava em px EXPLÍCITO (762×428) E FORA DO FLUXO (position:absolute). Duas voltas:
-  //  §306 travava com aspect-ratio+max-width+flex — o Chromium honrava, a WebView do S24 NÃO (ia edge-to-edge).
-  //  §308 pôs width:762px, mas num FLEX-ITEM — o Chromium honrava, o S24 ESTICAVA o flex-item p/ a largura do palco.
-  //  §308b tira a caixa do fluxo (absolute): um filho absoluto NÃO é flex-item, nenhum pai consegue esticá-lo — em
-  //  QUALQUER motor. Esta guarda (jsdom) crava as três propriedades engine-proof (px, sem aspect-ratio, fora do fluxo);
-  //  a varredura Chromium no fim é só higiene de largura e NÃO enxerga o motor da WebView (ver a nota lá).
+  // §310: a arte MUDOU (2400×999, 2,40; era 1524×856, 1,78) e a caixa DEIXOU de ser travada em 1,78 — a arte agora
+  //  PREENCHE o palco. A caixa tem a ALTURA do palco (428) e a LARGURA natural da arte a essa altura (≈1028px), fora do
+  //  fluxo (absolute). Mantém a lição do §308b: px EXPLÍCITO + FORA DO FLUXO (um filho absoluto não é flex-item, o motor
+  //  do S24 não estica). O que corta as laterais no piso é o overflow:hidden da .mapa, não uma trava de proporção.
   const caixa = $('.mapa__caixa');
   const cs = w.getComputedStyle(caixa);
-  ok(cs.width === '762px' && cs.height === '428px', `§308: a caixa trava em px explícito 762×428 (é ${cs.width}×${cs.height})`);
-  ok(cs.position === 'absolute', `§308b: a caixa fica FORA DO FLUXO (position:absolute) — flex-item o S24 estica; absoluto não (veio "${cs.position}")`);
-  ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
-  ok(Math.abs(762 / 428 - 1524 / 856) < 1e-6, '762×428 é a razão EXATA da arte (1524×856) — cover preenche sem cortar');
-  // §309: o gutter é EXTENSÃO da arte (cópia desfocada/escurecida sob a caixa), não faixa preta. Mesmo arquivo já em
-  // cache → PESO ZERO (sem 404, sem base64); decorativa (aria-hidden); atrás da caixa (z-index menor).
+  ok(cs.width === '1028px' && cs.height === '428px', `§310: a caixa é px explícito 1028×428 — altura do palco × largura natural da arte (é ${cs.width}×${cs.height})`);
+  ok(cs.position === 'absolute', `§308b/§310: a caixa fica FORA DO FLUXO (position:absolute) — flex-item o S24 estica; absoluto não (veio "${cs.position}")`);
+  ok(!cs.aspectRatio || cs.aspectRatio === 'auto', `§308/§310: a caixa NÃO depende de aspect-ratio (motor da WebView não honra; veio "${cs.aspectRatio}")`);
+  ok(Math.abs(1028 / 428 - 2400 / 999) < 0.001, `§310: a razão da caixa (1028/428=${(1028/428).toFixed(4)}) casa a arte nova (2400/999=${(2400/999).toFixed(4)}) — cover preenche sem corte perceptível`);
+  // §309b/§310: a EXTENSÃO desfocada continua (agora reserva p/ palco > 2,40). Mesmo arquivo em cache → PESO ZERO (sem
+  // 404, sem base64); decorativa (aria-hidden); atrás da caixa nítida (z-index menor).
   const fundo = $('.mapa__fundo');
-  ok(!!fundo && fundo.getAttribute('src') === 'banners/mapa.webp', '§309: a extensão do gutter usa o MESMO arquivo (banners/mapa.webp) — peso zero');
+  ok(!!fundo && fundo.getAttribute('src') === 'banners/mapa.webp', '§309/§310: a extensão usa o MESMO arquivo (banners/mapa.webp) — peso zero');
   ok(!!fundo && !/^data:/.test(fundo.getAttribute('src') || ''), '§309: a extensão NÃO é base64 (arquivo externo em cache)');
   ok(!!fundo && (fundo.getAttribute('aria-hidden') === 'true'), '§309: a extensão é decorativa (aria-hidden) — não entra na leitura');
   const zF = parseInt(w.getComputedStyle(fundo).zIndex) || 0, zC = parseInt(cs.zIndex) || 0;
   ok(zF < zC, `§309: a extensão fica ATRÁS da caixa nítida (z-index fundo ${zF} < caixa ${zC})`);
-  const foraDaArte = [];
-  for (const il of $$('.ilha')){
-    const x = parseFloat(il.style.left), y = parseFloat(il.style.top);
-    // ícone ~62px = ~8,1% da largura (762) e ~14,5% da altura (428); meia-âncora ~4,1%/7,3%.
-    // a folga inclui o rótulo que desce → x em [5,95], y em [8,90] mantém ícone+rótulo dentro da arte.
-    if (!(x >= 5 && x <= 95 && y >= 8 && y <= 90)) foraDaArte.push(`${il.dataset.dest || il.querySelector('.ilha__nome').textContent}@${x},${y}`);
+  // §310: com a arte PREENCHENDO (caixa 1028 centrada, overflow corta), todo ÍCONE (62px) fica INTEIRO no quadro em
+  //  780/893/1075/1200 — inclusive no PISO (780, corte 24%: janela visível 12,1%..87,9%). Cálculo analítico (o mesmo do
+  //  motor: caixa 1028 centrada em cada largura, meia-âncora do ícone 31px).
+  const ART_W = 2400, ART_H = 999, CX = 428 * ART_W / ART_H, MEIA = 31;
+  const larguras = [780, 893, 1075, 1200];
+  const ilhas310 = $$('.ilha').map(il => ({ c: il.dataset.dest || il.querySelector('.ilha__nome').textContent, x: parseFloat(il.style.left) }));
+  const foraQuadro = [];
+  for (const S of larguras) {
+    const left = (S - CX) / 2;
+    for (const it of ilhas310) {
+      const cxStage = left + it.x / 100 * CX;
+      if (cxStage - MEIA < 0 || cxStage + MEIA > S) foraQuadro.push(`${it.c}@${it.x}% (${S}px)`);
+    }
   }
-  ok(foraDaArte.length === 0, `toda ilha ancora dentro da arte [5..95]×[8..90]% (fora: ${foraDaArte.join(' | ')})`);
+  ok(foraQuadro.length === 0, `§310: todo ícone (62px) fica INTEIRO no quadro em 780/893/1075/1200 (fora: ${foraQuadro.join(' | ')})`);
   // as posições são % (não px): garante independência de largura
   ok($$('.ilha').every(il => /%$/.test(il.style.left) && /%$/.test(il.style.top)), 'as ilhas ancoram em % (independe da largura do palco)');
-  console.log('  caixa de proporção travada · 9 âncoras em % dentro da arte');
+  console.log(`  arte preenche o palco (caixa 1028×428) · 9 ícones inteiros no quadro em ${larguras.join('/')}`);
 }
 
 console.log('== §306 MAPA — 5) arte ausente → carrossel de hoje (fallback), sem 404 nem base64 ==');
@@ -147,7 +152,7 @@ console.log('== §306 MAPA — 5) arte ausente → carrossel de hoje (fallback),
 
 console.log('== §306 MAPA — 6) espaçamento das ilhas: nenhum par colado (< ~85px) na mesma faixa ==');
 {
-  const LARG = 762, ALT = 428, PISO = 85;
+  const LARG = 1028, ALT = 428, PISO = 85;   // §310: a caixa passou a ter a largura natural da arte nova (≈1028px)
   const il = w.eval('JSON.stringify(MAPA.ilhas.map(i=>({c:i.chave,x:i.x,y:i.y})))');
   const arr = JSON.parse(il);
   let pior = Infinity, piorPar = '';
@@ -182,18 +187,18 @@ console.log('== §306 MAPA — 7) a referência MENTE (§305): sem nível/envelo
   console.log(`  sem nível/envelope/sino · apelido="${$('.mperfil__nick').textContent}" · moedas ${moedas.join(' / ')} (pt-BR)`);
 }
 
-if (falhas){ console.log(`\n>>> ${falhas} FALHA(S) em §306/§308 MAPA (jsdom)`); process.exit(1); }
-console.log('>>> §306/§308 MAPA (jsdom) OK');
+if (falhas){ console.log(`\n>>> ${falhas} FALHA(S) em §306/§310 MAPA (jsdom)`); process.exit(1); }
+console.log('>>> §306/§310 MAPA (jsdom) OK');
 
-// ================= §308 — VARREDURA DE FAIXA (Chromium), 780..1200 de 10 em 10 =================
-// A caixa trava em 1,78 com gutter em TODA a largura, não em 3 pontos (a convenção de escopo do §295).
+// ================= §310 — VARREDURA DE FAIXA (Chromium), 780..1200 de 10 em 10 =================
+// A arte PREENCHE o palco: a caixa mantém a razão da arte (2,40) e FILL VERTICAL (altura da caixa == altura da .mapa,
+// sem letterbox em cima/baixo), e TODO ícone fica inteiro no quadro em toda a faixa. Mede o RECT REAL de cada .ilha__ic.
 //
 // ⚠ NOTA QUE QUEM LÊ O TESTE PRECISA SABER — o que esta varredura NÃO vê:
-// Isto roda no Chromium do Playwright. O bug do Galaxy S24 (o mapa cortando edge-to-edge) era do MOTOR da WebView, que
-// não honrava o aspect-ratio+max-width+flex do §306 — e o Chromium travava em TODA a faixa MESMO com aquele CSS frágil.
-// Portanto esta varredura NÃO teria pego o bug do aparelho, e NÃO o pega hoje: MEDIR NO CHROMIUM NÃO É MEDIR NO
-// APARELHO (§308). Ela é HIGIENE contra regressões de LARGURA. A proteção real contra o motor é a trava em px
-// EXPLÍCITO (762×428), cravada na guarda jsdom acima — é a única que independe do engine.
+// Isto roda no Chromium do Playwright. O bug do Galaxy S24 (o mapa cortando edge-to-edge, §308) era do MOTOR da WebView,
+// que não honrava o CSS frágil do §306 — e o Chromium não reproduzia. MEDIR NO CHROMIUM NÃO É MEDIR NO APARELHO (§308).
+// Esta varredura é HIGIENE contra regressões de LARGURA/enquadramento. A proteção real contra o motor é a caixa em px
+// EXPLÍCITO (1028×428) e FORA DO FLUXO, cravada na guarda jsdom acima — é a única que independe do engine.
 (async () => {
   let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } };
   const { chromium } = require('playwright');
@@ -207,17 +212,32 @@ console.log('>>> §306/§308 MAPA (jsdom) OK');
   const page = await (await browser.newContext({ viewport: { width: 900, height: 428 }, deviceScaleFactor: 2 })).newPage();
   await page.goto('file://' + distAbs, { waitUntil: 'load' });
   await page.evaluate(() => { perfil = novoPerfil(0, 0); ir('home', {}, { substituir: true }); render(); });
-  const semLock = [];
+  const semFill = [], iconeFora = [];
   for (let D = 780; D <= 1200; D += 10) {
     await page.setViewportSize({ width: D, height: 428 }); await page.waitForTimeout(12);
-    const r = await page.evaluate(() => { const R = el => el.getBoundingClientRect(); const c = R(document.querySelector('.mapa__caixa')), m = R(document.querySelector('.mapa'));
-      return { ratio: +(c.width / c.height).toFixed(4), gutter: Math.round((m.width - c.width) / 2) }; });
-    if (Math.abs(r.ratio - 1.7804) > 0.005 || r.gutter < 0) semLock.push(`${D}(r${r.ratio} gut${r.gutter})`);
+    const r = await page.evaluate(() => {
+      const R = el => el.getBoundingClientRect();
+      const c = R(document.querySelector('.mapa__caixa')), m = R(document.querySelector('.mapa'));
+      // cada ícone: fora do quadro se ultrapassar as bordas da .mapa (que tem overflow:hidden — é o quadro real)
+      const fora = [];
+      for (const ic of document.querySelectorAll('.ilha .ilha__ic')) {
+        const b = R(ic);
+        if (b.left < m.left - 0.5 || b.right > m.right + 0.5) {
+          const nome = (ic.closest('.ilha').dataset.dest) || 'ilha';
+          fora.push(nome);
+        }
+      }
+      // fill vertical = a caixa COBRE a altura do quadro (.mapa), sem faixa em cima/baixo (pode transbordar ~1px pela borda do palco)
+      return { ratio: +(c.width / c.height).toFixed(4), fillV: c.height >= m.height - 0.5, fora };
+    });
+    if (Math.abs(r.ratio - 2.4024) > 0.01 || !r.fillV) semFill.push(`${D}(r${r.ratio} fillV${r.fillV})`);
+    if (r.fora.length) iconeFora.push(`${D}:${[...new Set(r.fora)].join(',')}`);
   }
-  ok2(semLock.length === 0, `§308: a caixa trava em 1,78 com gutter em TODA a faixa 780..1200 (sem lock em: ${semLock.join(' ') || '—'})`);
-  console.log(`  §308 varredura 780..1200/10: ${semLock.length ? ('SEM LOCK em ' + semLock.join(' ')) : 'trava em TODAS (Chromium) — não cobre o motor da WebView, ver nota no teste'}`);
+  ok2(semFill.length === 0, `§310: a arte PREENCHE (razão 2,40 + fill vertical) em TODA a faixa 780..1200 (falhou em: ${semFill.join(' ') || '—'})`);
+  ok2(iconeFora.length === 0, `§310: todo ícone fica INTEIRO no quadro em TODA a faixa 780..1200 (ícone fora em: ${iconeFora.join(' ') || '—'})`);
+  console.log(`  §310 varredura 780..1200/10: ${(semFill.length || iconeFora.length) ? ('FALHAS ' + [...semFill, ...iconeFora].join(' ')) : 'arte preenche + 9 ícones inteiros em TODAS (Chromium) — não cobre o motor da WebView, ver nota'}`);
   await browser.close();
-  if (cf) { console.log(`\n>>> ${cf} FALHA(S) em §308 MAPA (Chromium)`); process.exit(1); }
-  console.log('>>> §306/§308 MAPA OK');
+  if (cf) { console.log(`\n>>> ${cf} FALHA(S) em §310 MAPA (Chromium)`); process.exit(1); }
+  console.log('>>> §306/§310 MAPA OK');
   process.exit(0);
 })();

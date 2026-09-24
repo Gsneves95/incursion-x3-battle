@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §310 — ARTE LARGA (2,40) substitui a extensão: o mapa PREENCHE o palco. Caixa destrava; extensão vira reserva.
+
+O dono ainda via a EMENDA do §309b e gerou a solução de verdade: **arte mais larga**. `banners/mapa.webp` foi de
+1524×856 (1,78) para **2400×999 (2,40)**, perto da proporção do palco (1,82→2,80). A 2,40 a arte PREENCHE o palco no app
+do dono (893) e no piso (780); só sobra faixa acima de 2,40. **A caixa DESTRAVA de 1,78:** `.mapa__caixa` 762×428 →
+**1028×428** (altura do palco × largura natural da arte, 428×2400/999≈1028), centrada, o `overflow` corta as laterais
+(cover). Mantém a lição §308b: px explícito + fora do fluxo (o S24 não estica um absoluto). **Medição do corte (as 9
+ilhas cabem em 780..1200?):** 780 corta 24% (janela 12,1..87,9%), 893 corta 13% (6,6..93,4%), 1075/1200 sobra faixa
+(23/86px cada lado, preenchida pela extensão). Em **893/1075/1200 as 9 cabem com folga**; só no **piso 780** as duas de
+ponta esquerdas cairiam fora com os centros honestos (colecao ~13, campanha ~14) — **resolvi na POSIÇÃO (minha alçada),
+não na trava:** ambas a **15,5%**, ainda sobre biblioteca/templo, e o ícone (62px) sobrevive ao piso. **As 9 ficam
+inteiras em 780/893/1075/1200** (rect real no dist). Resíduo só no piso 780: o contador longo da Campanha raspa a borda
+(ícone inteiro; texto raspa) — 780 é o piso teórico, no 893 do dono lê inteiro; se o dono quiser a trava de volta p/
+blindar o piso é decisão dele (reportado). **Posições recalculadas** lendo a arte nova (composição outra, não
+reenquadramento): maiores saltos treino/invocacao/pvp/campanha — conferido ícone-sobre-ilha (arena, templo-vórtice,
+vulcão, templo branco), não em nuvem. **A EXTENSÃO §309b CONTINUA, rebaixada a RESERVA:** acima de 2,40 preenche a faixa
+lateral; onde a arte enche (≤2,40) fica atrás da caixa, não aparece. **Peso:** arte 549 KB (era 387), externa, 0 base64,
+ícones lazy — o `incursion.html` NÃO cresce (~2,38 MB). **Guardas `mapa.test.js` §310:** caixa px explícito 1028×428, fora
+do fluxo, razão=arte; 9 ícones inteiros no quadro (jsdom analítico + Chromium rect real 780..1200), com a nota Chromium≠
+aparelho. Capturas 780/893/1075/1200 em `docs/capturas-310/`. **Arquivos:** `web/banners/mapa.webp` (arte nova, do dono),
+`data/mapa.json` (9 posições novas + nota), `src/shell.html` (caixa 1028 + comentários), `src/ui/home.js` (comentário),
+`tests/mapa.test.js` (§310). Ver DECISOES §310. Suíte + build verdes.
+
 ## ★ MAPA §309b — a extensão do §309 ficou ESCURA DEMAIS: calibrar o brilho (60–80% do mapa). Lição: a sequência de 4 cortes.
 
 A extensão do §309 (`brightness(.42)`) sumia: o dono mediu no S24 brilho ~27 contra 60–70 do mapa — menos da metade, o

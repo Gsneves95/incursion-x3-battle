@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §310 — ARTE LARGA (2,40) substitui a extensão: o mapa PREENCHE o palco. A caixa destrava; a extensão vira reserva.
+
+O dono, ainda vendo a EMENDA entre o mapa nítido e a extensão desfocada (§309b não convenceu), gerou uma **arte mais
+larga** — a solução de verdade. `web/banners/mapa.webp` passou de **1524×856 (1,78)** para **2400×999 (2,40)**, mais
+próxima da proporção do palco (1,82 no piso → 2,80 no teto). A 2,40 a arte PREENCHE o palco no aparelho do dono (893) e
+no piso (780); só sobra faixa lateral ACIMA de 2,40.
+
+**1) A CAIXA DESTRAVA de 1,78 (a trava existia para a arte antiga).** A `.mapa__caixa` deixa de ser 762×428 e passa a
+**1028×428** — a ALTURA do palco (428) × a largura natural da arte a essa altura (428 × 2400/999 ≈ 1028). Centrada, o
+`overflow:hidden` da `.mapa` corta o excedente lateral quando o palco é mais estreito (cover). **Mantém a lição do §308b:**
+px EXPLÍCITO e FORA DO FLUXO (absolute) — um filho absoluto não é flex-item, o motor do S24 não estica. A razão 1028/428
+(2,4019) casa a arte (2,4024) a menos de 0,03% → cover não corta nada perceptível.
+
+**2) MEDIÇÃO do corte (a pergunta do dono: as 9 ilhas ficam no quadro em 780..1200?).** Modelo: a arte enche a altura
+(1028px de largura), o palco mostra a janela central. **780** (piso): corta 24,1% (janela 12,1%..87,9%). **893** (app do
+dono): corta 13,2% (6,6%..93,4%). **1075** (navegador do dono) e **1200** (teto): sobra faixa lateral (23px / 86px de
+cada lado), que a EXTENSÃO desfocada preenche. **RESULTADO:** em **893/1075/1200 as 9 ilhas cabem com folga**; só no
+**piso 780** as duas ilhas de ponta à esquerda cairiam fora com os centros honestos (colecao ~13%, campanha ~14%).
+**Resolvi na posição (item 2 é minha alçada), não na trava:** coloquei ambas em **15,5%** — ainda sobre a
+biblioteca/templo (verificado ícone-sobre-ilha) — e aí o ícone (62px) sobrevive ao piso. **As 9 ficam inteiras em
+780/893/1075/1200** (medido no dist, rect real de cada ícone). Único resíduo no piso 780: o contador longo da Campanha
+("Capítulo I · Grécia") encosta na borda esquerda — o ÍCONE está inteiro; o TEXTO do rótulo raspa. 780 é o piso teórico;
+no 893 do dono lê inteiro. Se o dono quiser a trava de volta p/ blindar o piso, é decisão dele — reportado.
+
+**3) POSIÇÕES recalculadas** lendo a arte nova (a arte é outra composição, não um reenquadramento — as ilhas mudaram de
+lugar). Quanto cada uma andou (Δ em pontos de %): campanha −1,5/−10 · provacoes −4/−8 · desafios −0,5/+1 · **invocacao
+−5,5/−11** · colecao +4,5/−3,5 · dominios +0,5/+8 · **treino −7,5/−5** · loja −2/−6 · **pvp −1/−12**. Os maiores saltos
+(treino, invocacao, pvp, campanha) são porque a arte ESPALHOU tudo na horizontal e subiu o enquadramento; conferi um a um
+que o ícone caiu na ilha CERTA (arena, templo-vórtice, vulcão, templo branco) — não em nuvem.
+
+**4) A EXTENSÃO desfocada (§309b) CONTINUA, rebaixada a RESERVA.** Acima de 2,40 (1075, 1200) ela preenche a faixa lateral
+que sobra; nas larguras em que a arte enche (≤2,40: 780, 893) ela fica INTEIRA atrás da caixa nítida — não aparece. A
+inversão de papéis é o registro central do §310: **a arte larga é a solução principal; a extensão é o paliativo para
+telas muito largas.**
+
+**5) PESO (item 4 do dono).** A arte nova tem 549 KB (era 387). Continua EXTERNA (`banners/mapa.webp`, 0 base64 no HTML),
+os ícones `loading="lazy"`; o `incursion.html` NÃO cresce com a troca (segue ~2,38 MB — a arte não entra no HTML). O
+custo é 1 download de 549 KB, uma vez, em cache.
+
+**Guardas (`mapa.test.js`, §310):** jsdom crava a caixa em px explícito (1028×428), fora do fluxo, sem aspect-ratio, razão
+= arte nova; e calcula que os 9 ícones ficam inteiros no quadro em 780/893/1075/1200. A varredura Chromium mede o RECT
+REAL de cada `.ilha__ic` na faixa 780..1200 e confirma: a arte preenche (razão 2,40 + fill vertical) e nenhum ícone sai
+do quadro — COM a nota de sempre (§308): Chromium ≠ motor da WebView. Capturas 780/893/1075/1200 em `docs/capturas-310/`.
+
+---
+
 ## §309b — a extensão do §309 ficou ESCURA DEMAIS: calibrar o brilho. E a lição da sequência inteira (quatro cortes).
 
 A extensão do §309 funcionava mas o dono mediu no S24: brilho ~27 nas laterais contra 60–70 do mapa nítido — **menos da
