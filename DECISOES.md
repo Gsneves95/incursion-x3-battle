@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §311b — o halo do mapa ficou ESCURO DEMAIS: a SOMBRA carrega, o radial só complementa. E a lição (o oposto útil do §309b).
+
+O fundo do §311 (radial .95/.93, pior contraste 6,51) tapava arte demais — o dono acabara de gerar a arte larga (§310) e
+quer VÊ-LA. Aliviar sem furar o piso 4,5. Testei DUAS combinações a 893 (a captura é o veredito, §281):
+- **(a) radial mais claro (.90/.87), sombra como está** → pior contraste **5,55**.
+- **(b) radial BEM mais claro (.85/.82) + sombra do texto MAIS FORTE** (contorno preto `0 0 3px/6-7px` que abraça a
+  letra) → pior contraste cru **4,82**. **O dono escolheu (b).**
+
+**O MECANISMO (a razão de (b) ganhar — registrar p/ as próximas telas):** a SOMBRA escurece só ATRÁS DAS LETRAS; o radial
+escurece um CÍRCULO inteiro. Para a MESMA leitura, (b) tapa MENOS arte. E a sombra ACOMPANHA o texto: se um nome/contador
+crescer, a sombra cresce junto; o radial é de tamanho FIXO e a borda do texto cai na transição — foi o que fez o contador
+da Campanha oscilar durante todo este corte (§311/§311b). **Regra:** escurecer o FUNDO custa arte tapada; escurecer atrás
+da LETRA custa NADA. **Onde der, a sombra vem primeiro; o fundo só complementa** o que a sombra não segura.
+
+**Por que o número cru de (b) é baixo (4,82) e ainda assim lê:** a guarda mede o fundo com o TEXTO ESCONDIDO — não enxerga
+a sombra (§304e/§281). Então a sombra reforçada NÃO muda o número cru (definido só pelo radial), mas segura a leitura
+PERCEBIDA na captura. Por isso o radial pôde ficar bem mais claro sem a leitura cair. Deixei 4,82 (não menos) porque a
+borda do contador da Campanha cai na cachoeira clara e oscila; o piso é 4,5, a margem é fina mas a sombra a sustenta.
+
+**★ A LIÇÃO — o OPOSTO ÚTIL do §309b (mesma família, resultado invertido):** no §309b o dono pediu "não competir" SEM alvo
+medível e eu apliquei brightness(.42) — a extensão SUMIU (errei por EXCESSO de obediência literal). Aqui o dono pediu o
+MÍNIMO que ainda funciona COM o piso declarado (4,5), e eu achei **4,82** usando a sombra p/ carregar parte do trabalho.
+**Direção qualitativa SEM número erra por excesso ou por falta; COM o piso declarado, acha-se o mínimo.** (É a segunda
+metade da lição do §309b, agora com o caso positivo: dar o alvo medível não é burocracia — é o que deixa achar o ótimo.)
+
+**Guardas:** as mesmas do §311 (`mapa_contraste.test.js` ≥4,5 nas 4 larguras — agora pior 4,82) seguem verdes; §311b só
+troca a intensidade do radial e reforça a sombra. Capturas atualizadas em `docs/capturas-311/` (variante b).
+
+---
+
 ## §311 — ACABAMENTO do mapa: ícone menor, campanha longe do JOGADOR, e o FUNDO ESCURO atrás dos rótulos (pendente do §309).
 
 Aprovada a arte larga (§310), três acabamentos + o fundo atrás dos ícones que o dono pediu desde o §309 e ficou esperando

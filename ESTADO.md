@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MAPA §311b — o halo ficou escuro demais: a SOMBRA carrega, o radial só complementa. Lição: oposto útil do §309b.
+
+O fundo do §311 (radial .95/.93, pior 6,51) tapava arte demais. Testei duas a 893 (captura = veredito, §281): (a) radial
+.90/.87 sombra igual → pior 5,55; **(b) radial .85/.82 + sombra do texto MAIS FORTE** (contorno preto 0-offset que abraça
+a letra) → pior cru **4,82**. **Dono escolheu (b).** **Mecanismo (vale p/ próximas telas):** a sombra escurece só ATRÁS DA
+LETRA; o radial escurece um CÍRCULO inteiro — p/ a mesma leitura, (b) tapa MENOS arte. E a sombra ACOMPANHA o texto (cresce
+com ele); o radial é FIXO e a borda do texto cai na transição — foi o que fez o contador da Campanha oscilar. **Regra:**
+escurecer o FUNDO custa arte tapada; atrás da LETRA custa nada → a sombra vem primeiro, o fundo só complementa. A guarda
+mede com o texto escondido (não vê a sombra, §304e), então a sombra não muda o número cru (4,82, definido pelo radial) mas
+segura a leitura percebida — por isso o radial pôde clarear. **★ Lição (oposto útil do §309b):** lá o dono pediu "não
+competir" SEM alvo e eu apliquei .42 (sumiu, erro por excesso); aqui pediu o MÍNIMO COM piso declarado (4,5) e achei 4,82
+usando a sombra. Direção qualitativa sem número erra por excesso ou falta; com o piso, acha-se o mínimo. Guardas do §311
+(`mapa_contraste` ≥4,5 nas 4 larguras, agora pior 4,82) seguem verdes. **Arquivos:** `src/shell.html` (radial .85/.82 +
+sombras reforçadas), `docs/capturas-311/` (variante b). Ver DECISOES §311b.
+
 ## ★ MAPA §311 — ACABAMENTO: ícone 62→48px, campanha longe do JOGADOR, fundo escuro atrás dos rótulos (contraste ≥4,5).
 
 Aprovada a arte larga (§310), o acabamento. **(1) Ícone 62→48px:** a 62 tapava a ilha; 48 dá ~40 físicos no S24 (escala
