@@ -362,67 +362,77 @@ function estadoMissao(k, faixaAberta){
 }
 function contarConquistados(){ return Object.keys(MISSOES.missoes).filter(_temDeus).length; }
 
-// os "requisitos ao vivo" (o contador do servidor, DESDE o desbloqueio): "12/40 vitórias gregas · 2/3 seguidas com Cérbero".
-function reqAoVivoHTML(k){
+// §312 — ESTADO de uma missão (espaço de estados §295): as travas RANQUE e COMPANHEIRO são independentes
+// (o servidor avalia as duas em missaoCumprida); a tela reflete as duas. 6 estados online + offline.
+//   conquistada · progresso · disponivel · trava-ranque · trava-comp · trava-ambos
+function estadoMissao312(k){
+  if (_temDeus(k)) return 'conquistada';
   const m = MISSOES.missoes[k];
+  const pts = (contaAtual && contaAtual.ranque && typeof contaAtual.ranque.pontos === 'number') ? contaAtual.ranque.pontos : 0;
+  const rankOk = pts >= (m.faixaMin || 0);
+  const compOk = !m.companheiro || _temDeus(m.companheiro);
+  if (!rankOk && !compOk) return 'trava-ambos';
+  if (!rankOk) return 'trava-ranque';
+  if (!compOk) return 'trava-comp';
   const pv = _progVol(k), ps = _progSeq(k);
-  const adj = PANT_ADJ[m.panteao] || H(m.panteao);
-  let s = `<span class="mreq__v"><b>${Math.min(pv.v, pv.n)}</b>/${pv.n} vitórias ${adj}</span>`;
-  if (ps.n){
-    const alvo = ps.tipo === 'companheiro' ? ('com ' + H(ps.alvoNome)) : (adj);
-    s += `<span class="mreq__s"><b>${Math.min(ps.s, ps.n)}</b>/${ps.n} seguidas ${alvo}</span>`;
-  }
-  return s;
+  return (pv.v === 0 && ps.s === 0) ? 'disponivel' : 'progresso';
 }
+const _MISS_ABERTA = { conquistada: 1, progresso: 1, disponivel: 1 };
+function _barMissHTML(v, n){ const pct = n ? Math.min(100, Math.round(v / n * 100)) : 0; return `<span class="mreq__bar"><i style="width:${pct}%"></i></span>`; }
 
-// TILE de missão: retrato + versalete (linguagem da Fase 4). `estado` muda a cauda e a moldura.
-function tileMissaoHTML(k, estado){
+// §312 — CARTÃO ABERTO (~84px): fita de raridade + retrato + nome + MOTIVO (2 linhas) + as 3 TRAVAS numa
+// linha (volume do panteão com barra · sequência COM O COMPANHEIRO · ranque mínimo). Números do dado, ao vivo.
+function cardMissaoHTML(k, estado){
   const m = MISSOES.missoes[k];
   const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
   const rar = raridadeDe(k);
-  const cor = (estado === 'travada' || estado === 'ranque') ? '#6a6390' : COR(g.elem);
-  let cauda;
-  if (estado === 'progresso') cauda = `<span class="mtile__req">${reqAoVivoHTML(k)}</span>`;
-  else if (estado === 'disponivel') cauda = `<span class="mtile__req"><span class="mreq__v"><b>0</b>/${m.vitoriasPanteao} vitórias ${PANT_ADJ[m.panteao] || H(m.panteao)}</span><span class="mreq__pronto">${m.companheiro ? H(nomeM(m.companheiro)) + ' na mão ✓' : 'pronto para começar'}</span></span>`;
-  else if (estado === 'travada') cauda = `<span class="mtile__trava"><span class="mtrava__falta">precisa de <b>${H(nomeM(m.companheiro))}</b></span><span class="mtrava__motivo">${H(m.motivo)}</span></span>`;
-  else if (estado === 'ranque') cauda = `<span class="mtile__trava"><span class="mtrava__falta">abre em <b>${H(m.faixaNome)}</b></span><span class="mtrava__motivo">${H(m.motivo)}</span></span>`;
-  else cauda = `<span class="mtile__feito">✓ conquistado</span>`;
-  return `<button class="mtile mtile--${estado}" data-deus="${k}" title="${H(g.nome)}">
-    <span class="mtile__rar rar--${rar}"></span>
-    <span class="mtile__art">${slot('god-' + k, ini(g.nome), cor, 34)}</span>
-    <span class="mtile__body">
-      <span class="mtile__nome">${H(g.nome)}</span>
-      ${cauda}
+  const pv = _progVol(k), ps = _progSeq(k);
+  const conq = estado === 'conquistada';
+  const volV = conq ? pv.n : Math.min(pv.v, pv.n);
+  const seqV = conq ? ps.n : Math.min(ps.s, ps.n);
+  const alvo = ps.tipo === 'companheiro' ? H(ps.alvoNome) : ('o ' + (PANT_ADJ[m.panteao] || H(m.panteao)));
+  return `<button class="mcard mcard--${estado}" data-deus="${k}" title="${H(g.nome)}">
+    <span class="mcard__rar rar--${rar}"></span>
+    <span class="mcard__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
+    <span class="mcard__id">
+      <span class="mcard__nome">${H(g.nome)}${conq ? ' <span class="mcard__ok">✓</span>' : ''}</span>
+      <span class="mcard__motivo">${H(m.motivo)}</span>
+    </span>
+    <span class="mcard__reqs">
+      <span class="mreq"><span class="mreq__lbl">Vitórias do panteão</span><span class="mreq__val"><b>${volV}</b>/${pv.n}</span>${_barMissHTML(volV, pv.n)}</span>
+      <span class="mreq"><span class="mreq__lbl">Vitórias seguidas</span><span class="mreq__val"><b>${seqV}</b>/${ps.n}</span><span class="mreq__sub">com ${alvo}</span></span>
+      <span class="mreq"><span class="mreq__lbl">Ranque mínimo</span><span class="mreq__val mreq__faixa">${H(m.faixaNome)}</span></span>
     </span>
   </button>`;
 }
 
-// §241 item 5 — AGRUPA POR FAIXA: uma seção por faixa, com quantas ela libera e o status de ranque
-// ("aberta N/N" ou "falta subir X faixas"). Ver o que espera nas faixas de cima faz querer subir.
-function faixasMissaoHTML(){
-  const faixas = MISSOES.faixas || [];
-  const atual = faixaAtualIdx();
-  const porFaixa = faixas.map(() => []);
-  for (const k of Object.keys(MISSOES.missoes)){ const fi = MISSOES.missoes[k].faixaIndice; if (fi >= 0 && fi < porFaixa.length) porFaixa[fi].push(k); }
-  const ord = arr => arr.sort((a,b)=> (raridadeDe(b)+'').localeCompare(raridadeDe(a)) || nomeM(a).localeCompare(nomeM(b)));
-  return faixas.map((f, fi) => {
-    const arr = ord(porFaixa[fi]);
-    const aberta = fi <= atual;
-    const feitos = arr.filter(_temDeus).length;
-    const faltam = fi - atual;
-    const status = aberta
-      ? `<span class="mfx__ok">${feitos}/${arr.length} conquistados</span>`
-      : `<span class="mfx__lock">falta subir ${faltam} faixa${faltam > 1 ? 's' : ''}</span>`;
-    const tiles = arr.map(k => tileMissaoHTML(k, estadoMissao(k, aberta))).join('');
-    return `<section class="msec msec--faixa ${aberta ? 'mfx--aberta' : 'mfx--lock'}">
-      <div class="msec__cab mfx__cab">
-        <h2>${H(f.nome)}</h2>
-        <span class="mfx__n">${arr.length} Provaç${arr.length === 1 ? 'ão' : 'ões'}</span>
-        ${status}
-      </div>
-      <div class="mgrid">${tiles}</div>
-    </section>`;
-  }).join('');
+// §312 — LINHA TRAVADA (~40px), NÃO interativa (não abre): retrato apagado + nome + o QUE FALTA (§234:
+// "ver que falta o Cérbero é motivação"; nunca só cadeado) + cadeado. Companheiro e/ou ranque.
+function lockMissaoHTML(k, estado){
+  const m = MISSOES.missoes[k];
+  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
+  const rar = raridadeDe(k);
+  const faltas = [];
+  if (estado === 'trava-comp' || estado === 'trava-ambos') faltas.push(`<b>${H(nomeM(m.companheiro))}</b>`);
+  if (estado === 'trava-ranque' || estado === 'trava-ambos') faltas.push(`ranque <b>${H(m.faixaNome)}</b>`);
+  return `<div class="mlock mlock--${estado}" data-lock="${k}" title="${H(g.nome)} — travada">
+    <span class="mlock__rar rar--${rar}"></span>
+    <span class="mlock__art">${slot('god-' + k, ini(g.nome), '#6a6390', 18)}</span>
+    <span class="mlock__nome">${H(g.nome)}</span>
+    <span class="mlock__falta">falta: ${faltas.join(' · ')}</span>
+    <span class="mlock__cad" aria-hidden="true">🔒</span>
+  </div>`;
+}
+
+// §312 — a LISTA PLANA por RANQUE crescente (o híbrido): abertas cheias, travadas curtas. Dentro da mesma
+// faixa, por raridade decrescente e nome. Todos os 91 aparecem (ver o trancado faz querer subir, §234).
+function listaMissoesHTML(){
+  const rarRank = { SS: 2, S: 1, A: 0 };
+  const ks = Object.keys(MISSOES.missoes).sort((a, b) => {
+    const ma = MISSOES.missoes[a], mb = MISSOES.missoes[b];
+    return (ma.faixaIndice - mb.faixaIndice) || ((rarRank[mb.raridade] || 0) - (rarRank[ma.raridade] || 0)) || nomeM(a).localeCompare(nomeM(b));
+  });
+  return ks.map(k => { const e = estadoMissao312(k); return _MISS_ABERTA[e] ? cardMissaoHTML(k, e) : lockMissaoHTML(k, e); }).join('');
 }
 
 // SEM SERVIDOR: o progresso vive no servidor (§228). Não mostra zero — diz a verdade e ainda deixa
@@ -452,11 +462,9 @@ function renderMissoes(){
   } else if (!online){
     corpo = `<div class="tela__rol">${missoesOfflineHTML()}</div>`;
   } else {
-    // §241 item 5: o mapa da coleção AGRUPADO POR FAIXA (o ranque revela). Cada faixa diz quantas libera
-    // e o status ("aberta N/N" ou "falta subir X faixas"); os tiles trazem o estado funcional (§234).
-    const atual = (MISSOES.faixas || [])[faixaAtualIdx()];
-    const cabRanque = atual ? `<p class="mfx__voce">Você está em <b>${H(atual.nome)}</b> — suba de ranque no PvP para revelar as faixas de cima.</p>` : '';
-    corpo = `<div class="tela__rol">${cabRanque}${faixasMissaoHTML()}</div>`;
+    // §312: LISTA PLANA por ranque crescente (o híbrido). Aberta = cartão cheio; travada = linha curta com
+    // o que falta. Os números vêm do dado, ao vivo (§234). Sem cabeçalhos de faixa — o ranque está no cartão.
+    corpo = `<div class="tela__rol"><div class="mlista">${listaMissoesHTML()}</div></div>`;
   }
   const cont = online && missoesDisponivel() ? `<span class="tela__cont">${contarConquistados()}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
@@ -472,8 +480,8 @@ function renderMissoes(){
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  // ELO com o detalhe do deus (§220): da missão vai-se ao deus.
-  [...stage.querySelectorAll('.mtile[data-deus], .mcat[data-deus]')].forEach(b => {
+  // ELO com o detalhe do deus (§220): da missão ABERTA vai-se ao deus. §312: a TRAVADA (.mlock) NÃO abre.
+  [...stage.querySelectorAll('.mcard[data-deus], .mcat[data-deus]')].forEach(b => {
     b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
   });
   // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.

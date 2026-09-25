@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ MISSÕES §312 — diferenciar os grupos idênticos (gerador) + tela HÍBRIDA. Lição: desempate honesto ≠ alfabeto disfarçado.
+
+O dono viu missões "iguais". Duas causas separadas: o DADO gerava grupos idênticos; a TELA escondia o que distingue.
+**Parte 1 — diferenciação (gerador):** com a tupla completa (panteão+volume+seguidas+faixa+companheiro+seguidasAlvo),
+**26/91 em 12 grupos**; SIMULADO: os irmãos completavam na MESMA partida (contadores compartilhados + base de desbloqueio
+comum). Regra do dono em `tools/gerar_missoes.js` (+ `precedencia` em `data/missoes_requisitos.json`): ordena por
+CENTRALIDADE (`outdeg`) decrescente — a chave fica no volume BASE (somar à chave atrasaria a cadeia); empate residual pela
+PRECEDÊNCIA declarada do dono; volume = base + posição×1. → **0 grupos idênticos**, 1º de cada no base. Distância entre
+irmãos 1,64 (Africana) a 2,39 (Japonesa) partidas (alvo ~2). Varredura §202 intacta (validar não lê volume); feasibilidade
++1 vitória no máximo; contadores em andamento só têm o ALVO mexido (nunca regride). **★ Lição (3ª espécie do §300b):** a
+"posição na cadeia" que eu propus era ALFABETO com cara de derivado; o desempate honesto vem de sinal real (centralidade)
+ou de precedência DECLARADA — nunca alfabeto/id/ordem-do-arquivo disfarçados. Babás no gerador que mordem (empate sem
+precedência; precedência velha; tupla dupla; 1º fora do base). **Parte 2 — tela (`renderMissoes`):** LISTA PLANA por ranque
+crescente, números do dado (a referência inventou Bronze/Prata/Ouro — as 8 faixas são Suplicante→Semideus). HÍBRIDA:
+ABERTA = cartão cheio (84px, retrato+nome+motivo 2 linhas+3 travas: volume c/ barra, sequência COM O COMPANHEIRO, ranque
+mínimo); TRAVADA = linha curta (40px) SEMPRE com o que falta ("falta: Zeus · ranque Devoto") + cadeado, NÃO interativa (a
+guarda de toque ≥76 do §234 fica só nos abertos, sem afrouxar). **Guardas §295:** `missoes.test.js` (0 idênticas +
+babás) e `missoes_tela.test.js` (7 estados, 3 travas, o que falta, motivo do dado, só as 8 faixas, toque, não-interativa,
+diferenciação visível; Chromium: nada corta em 780/893/1075/1200 + clamp). Capturas `docs/capturas-312/`. **Arquivos:**
+`tools/gerar_missoes.js`, `data/missoes_requisitos.json` (+precedencia), `data/missoes.json` (v4, regerado),
+`src/ui/home.js`, `src/shell.html`, `tests/missoes.test.js`, `tests/missoes_tela.test.js`. Ver DECISOES §312. Suíte+build verdes.
+
 ## ★ MAPA §311c — FUNDO POR RÓTULO: valor único é refém do pior. Firme onde a arte é clara, leve onde é escura. Sombra ≠ piso.
 
 O dono quis mais transparência. Medido (guarda-método §304e): a **Campanha (4,82, sobre a cachoeira) era o ÚNICO no

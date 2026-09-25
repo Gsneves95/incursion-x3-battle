@@ -9,7 +9,9 @@ const contas = require('../server/contas.js');
 const salas = require('../server/salas.js');
 const missoes = require('../server/missoes.js');
 const gerador = require('../tools/gerar_missoes.js');
-const req = require('../data/missoes_requisitos.json');
+const reqDoc = require('../data/missoes_requisitos.json');
+const req = Array.isArray(reqDoc) ? reqDoc : reqDoc.missoes;   // §312: arquivo virou {missoes, precedencia}
+const precedDono = Array.isArray(reqDoc) ? [] : (reqDoc.precedencia || []);
 const E = require('../src/engine.js');
 const { iaProximaAcao } = require('../src/ia.js');
 
@@ -88,6 +90,51 @@ console.log('\n== 1. a árvore: sem ciclo · alcançáveis · rampa em ordem · 
   // os 3 cruzamentos temáticos seguem.
   ok(doc.panteaoDe.itzamna === 'Maia' && it.panteao === 'Egípcia', 'itzamná: facção real Maia, exige Egípcia (o cruzamento estrutural)');
   ok(doc.panteaoDe.kraken === 'Nórdica' && doc.missoes.kraken.panteao === 'Grega', 'kraken: facção Nórdica, exige Grega (companheiro poseidon)');
+}
+
+// ---------------------------------------------------------------------------
+// 1b. §312 — DIFERENCIAÇÃO: nenhuma tarefa idêntica; o 1º de cada grupo no volume base; as babás MORDEM.
+// ---------------------------------------------------------------------------
+console.log('\n== 1b. §312 diferenciação: sem tarefa idêntica · 1º no base · precedência do dono · babás que mordem ==');
+{
+  const doc = gerador.gerar();
+  // (i) NENHUM par com a tupla de tarefa idêntica no doc gerado (a razão do §312)
+  const porTup = {};
+  for (const k in doc.missoes) { const t = gerador._tupla(doc.missoes[k]); (porTup[t] = porTup[t] || []).push(k); }
+  const iguais = Object.values(porTup).filter(v => v.length > 1);
+  eq(iguais.length, 0, `NENHUMA tarefa idêntica entre as 91 (tupla completa) — antes eram 12 grupos${iguais.length ? ': ' + iguais.map(v => v.join('/')).join(' · ') : ''}`);
+  // (ii) o 1º de cada grupo (a chave, mais central) fica EXATAMENTE no volume base — "o piso não muda"
+  ok(doc.missoes.cerberus.vitoriasPanteao === doc.volumes.A.panteao, `cerberus (chave, outdeg 2) no base A ${doc.volumes.A.panteao}`);
+  ok(doc.missoes.atena.vitoriasPanteao === doc.volumes.S.panteao && doc.missoes.apolo.vitoriasPanteao === doc.volumes.S.panteao + 1 && doc.missoes.ares.vitoriasPanteao === doc.volumes.S.panteao + 2,
+    `precedência do dono: atena ${doc.missoes.atena.vitoriasPanteao} → apolo ${doc.missoes.apolo.vitoriasPanteao} → ares ${doc.missoes.ares.vitoriasPanteao} (não alfabético)`);
+  ok(doc.missoes.vishnu.vitoriasPanteao === doc.volumes.SS.panteao && doc.missoes.shiva.vitoriasPanteao === doc.volumes.SS.panteao + 1,
+    `centralidade separa vishnu/shiva sem precedência: vishnu ${doc.missoes.vishnu.vitoriasPanteao} (base) < shiva ${doc.missoes.shiva.vitoriasPanteao}`);
+
+  // (iii) BABÁ MORDE — grupo idêntico que a centralidade não separa E sem precedência → o gerador acusa.
+  const M2 = {
+    a: { deus: 'a', nome: 'A', raridade: 'A', panteao: 'X', companheiro: null, faixa: 'suplicante', vitoriasPanteao: 8, seguidas: 2, seguidasAlvo: { tipo: 'panteao', chave: 'X' } },
+    b: { deus: 'b', nome: 'B', raridade: 'A', panteao: 'X', companheiro: null, faixa: 'suplicante', vitoriasPanteao: 8, seguidas: 2, seguidasAlvo: { tipo: 'panteao', chave: 'X' } },
+  };
+  const semPrec = gerador.diferenciar(M2, []);
+  ok(semPrec.erros.some(e => /sem desempate/i.test(e)), 'babá MORDE: empate de centralidade sem precedência → erro "sem desempate"');
+  // com precedência CERTA, resolve sem erro
+  const comPrec = gerador.diferenciar(M2, [{ grupo: ['a', 'b'], razao: 't' }]);
+  eq(comPrec.erros.length, 0, 'com a precedência do dono, o mesmo grupo resolve sem erro');
+
+  // (iv) BABÁ MORDE — precedência VELHA/fora (cita grupo que já não colide) → o gerador acusa.
+  const velha = gerador.diferenciar(M2, [{ grupo: ['a', 'b'], razao: 't' }, { grupo: ['zeus', 'hera'], razao: 'velha' }]);
+  ok(velha.erros.some(e => /inútil\/velha/i.test(e)), 'babá MORDE: precedência que não casa empate real → erro "inútil/velha"');
+
+  // (v) BABÁ MORDE — tupla idêntica injetada no doc → validar acusa (a guarda final do §312)
+  const doc2 = gerador.gerar();
+  doc2.missoes.apolo.vitoriasPanteao = doc2.missoes.atena.vitoriasPanteao;   // recria a colisão atena/apolo
+  const v2 = gerador.validar(doc2);
+  ok(!v2.ok && v2.erros.some(e => /tarefas idênticas/i.test(e)), 'babá MORDE: duplicar uma tupla → validar falha ("tarefas idênticas")');
+
+  // (vi) a precedência do dono cita SÓ deuses que existem e colidem (dado consistente com o gerado)
+  const nomesGerados = new Set(Object.keys(doc.missoes));
+  const foraDoJogo = precedDono.flatMap(p => p.grupo).filter(k => !nomesGerados.has(k));
+  eq(foraDoJogo.length, 0, `a precedência do dono só cita deuses reais${foraDoJogo.length ? ': ' + foraDoJogo.join(', ') : ''}`);
 }
 
 // ---------------------------------------------------------------------------

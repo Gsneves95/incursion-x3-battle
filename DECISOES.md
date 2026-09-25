@@ -6,6 +6,46 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §312 — MISSÕES: diferenciar os grupos idênticos (no gerador) + a TELA híbrida. E a lição do desempate honesto.
+
+O dono viu missões "iguais entre deuses". Duas causas, separadas: (A) o DADO gera grupos numericamente idênticos;
+(B) a TELA escondia o que distingue (motivo, sequência, portão de ranque).
+
+**PARTE 1 — a diferenciação (no gerador, nunca à mão).** MEDIÇÃO: com a tupla de TAREFA completa (panteão + volume +
+seguidas + faixa + companheiro + seguidasAlvo — o companheiro importa: dois números iguais com companheiros diferentes são
+tarefas diferentes), **26 de 91 em 12 grupos**. SIMULADO no servidor: os irmãos de um grupo **completam na MESMA partida**
+(mesmos contadores compartilhados — vitoriasPanteaoPvP[panteão] e a sequência — e mesma base de desbloqueio, porque
+destravam juntos). Prova: atena/ares/apolo os três na partida 11; cerberus/medusa na 8. **A regra do dono (em
+`tools/gerar_missoes.js`, com o dado em `data/missoes_requisitos.json`):** dentro de cada grupo, ordena por CENTRALIDADE
+decrescente (`outdeg` = de quantas missões o deus é companheiro) — a CHAVE fica no volume BASE (somar volume à chave
+atrasaria toda a cadeia que depende dela); o empate residual quebra pela PRECEDÊNCIA do dono (campo novo `precedencia`,
+com a razão de cada uma); volume = base + posição × 1 vitória. Resultado: **0 grupos idênticos**, o 1º de cada no base.
+Distância entre irmãos consecutivos = 1 vitória ÷ winRate real: **1,64 (Africana) a 2,39 (Japonesa) partidas** (alvo ~2;
+o pior ≥1,5 → o passo de 1 fica). Varredura §202 intacta (validar() não lê volume). Feasibilidade: winRate
+forma-independente; a banda por raridade sobe no máximo +1 vitória (só o irmão mais tardio). Contadores em andamento: só
+o ALVO muda (nunca a base gravada); missão concluída nunca regride (só concede); em andamento, +poucas partidas.
+
+**★ LIÇÃO DO DESEMPATE (a "3ª espécie" do §300b).** A forma que eu propus antes (B: empate residual pela "posição na
+cadeia") era, na prática, ORDEM ALFABÉTICA — um número arbitrário **com cara de derivado**. O dono recusou: o desempate
+honesto ou vem de algo real (centralidade) ou de uma PRECEDÊNCIA declarada pelo dono, jamais do alfabeto/id/ordem-do-
+arquivo disfarçados. Babás no gerador que MORDEM: grupo empatado sem precedência → falha nomeando o grupo; precedência
+velha (cita deus fora de um empate real) → falha; tupla idêntica no doc gerado → falha; o 1º do grupo fora do base → falha.
+
+**PARTE 2 — a tela (`renderMissoes`, §312).** LISTA PLANA por ranque crescente, números do DADO (nada da referência do
+dono, que inventou "Bronze/Prata/Ouro" — as 8 faixas são Suplicante→Semideus). HÍBRIDA: **ABERTA** = cartão cheio (84px,
+≥76 do §234): retrato, nome (Cinzel), MOTIVO (itálico, clamp 2 linhas — mede o pior no clone solto, cabe em 1) e as 3
+TRAVAS numa linha (volume do panteão com barra · sequência COM O COMPANHEIRO · ranque mínimo). **TRAVADA** = linha curta
+(40px), SEMPRE com o QUE FALTA ("falta: Zeus · ranque Devoto") + cadeado — preserva o §234 (só cadeado o desfaria);
+**NÃO interativa** (não abre), então a guarda de toque ≥76 do §234 fica só nos cartões abertos, sem afrouxar em silêncio.
+O "em breve"/faixa-headers do §241 saíram; a raridade é fita colorida à esquerda.
+
+**Guardas (§295):** `tests/missoes.test.js` (§312: 0 idênticas, precedência, babás que mordem) e `tests/missoes_tela.test.js`
+(os 7 estados — progresso/disponível/trava-comp/trava-ranque/trava-ambos/conquistada/offline —, 3 travas em todo aberto,
+o que falta em toda travada, motivo do dado, só as 8 faixas, toque ≥76, travada não-interativa, a diferenciação visível;
+e Chromium: nada corta em 780/893/1075/1200, clamp do motivo). Capturas em `docs/capturas-312/`.
+
+---
+
 ## §311c — FUNDO POR RÓTULO: um valor único é refém do pior. Firme onde a arte é clara, leve onde é escura. E a sombra ≠ piso.
 
 O dono quis mais transparência ainda. Medi o contraste de cada um dos 9 (guarda-método §304e): **a Campanha (4,82, sobre a

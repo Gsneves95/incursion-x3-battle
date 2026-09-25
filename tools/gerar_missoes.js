@@ -15,7 +15,9 @@ const fs = require('fs');
 const path = require('path');
 const FAM = require('../src/missoes_familias.js');
 
-const REQ = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'missoes_requisitos.json'), 'utf8'));
+const REQDOC = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'missoes_requisitos.json'), 'utf8'));
+const REQ = Array.isArray(REQDOC) ? REQDOC : REQDOC.missoes;                 // §312: o arquivo virou {missoes, precedencia}
+const PRECED = (Array.isArray(REQDOC) ? [] : (REQDOC.precedencia || []));    // §312: desempate temático do dono
 const RAR = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'raridades.json'), 'utf8'));
 const RANQ = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'ranqueado.json'), 'utf8'));
 const GODS = FAM._carregarDeuses();
@@ -92,6 +94,52 @@ function volume(rar) {
   return { panteao, seguidas, base };
 }
 
+// §312 — DIFERENCIAR os grupos de TAREFA IDÊNTICA (mesma tupla panteão+volume+seguidas+faixa+companheiro+
+// seguidasAlvo → o servidor os completa na MESMA partida, provado por simulação). A regra do dono:
+//   (1) ordena os irmãos por CENTRALIDADE DECRESCENTE (outdeg = de quantas missões o deus é companheiro);
+//       a CHAVE (mais central) vem primeiro e FICA no volume base — somar volume à chave atrasaria toda a
+//       cadeia que depende dela (o Cérbero é companheiro de 2). (2) o empate residual (mesma centralidade)
+//       quebra pela PRECEDÊNCIA escrita pelo dono (data/missoes_requisitos.json), NUNCA por alfabeto/id/
+//       ordem-do-arquivo (a "3ª espécie" do §300b: número arbitrário com cara de derivado). (3) volume =
+//       base + posição-na-fila × 1 vitória. Falha ALTO: empate sem precedência, ou precedência velha/fora.
+function _outdeg(missoes) { const o = {}; for (const k in missoes) { const c = missoes[k].companheiro; if (c) o[c] = (o[c] || 0) + 1; } return o; }
+function _alvoK(m) { const a = m.seguidasAlvo || {}; return a.tipo + ':' + a.chave; }
+function _tupla(m) { return [m.panteao, m.vitoriasPanteao, m.seguidas, m.faixa, m.companheiro || '-', _alvoK(m)].join('|'); }
+function diferenciar(missoes, PRECED) {
+  const erros = [];
+  const outdeg = _outdeg(missoes);
+  const groups = {};
+  for (const k in missoes) { const t = _tupla(missoes[k]); (groups[t] = groups[t] || []).push(k); }
+  const precBySet = new Map();            // set-de-chaves -> ordem escrita pelo dono
+  for (const p of PRECED) precBySet.set((p.grupo || []).slice().sort().join(','), p.grupo || []);
+  const usada = new Set();
+  const offsets = {}; for (const k in missoes) offsets[k] = 0;
+  const tabela = [];
+  for (const t in groups) {
+    const membros = groups[t];
+    if (membros.length < 2) continue;
+    // ordena por centralidade decrescente e parte em degraus (tiers) de mesma centralidade
+    membros.sort((a, b) => (outdeg[b] || 0) - (outdeg[a] || 0));
+    const tiers = []; let cur = null, curO = null;
+    for (const k of membros) { const o = outdeg[k] || 0; if (o !== curO) { cur = []; tiers.push(cur); curO = o; } cur.push(k); }
+    const fila = [];
+    for (const tier of tiers) {
+      if (tier.length === 1) { fila.push(tier[0]); continue; }
+      // empate de centralidade: exige precedência do dono cobrindo EXATAMENTE estes irmãos
+      const key = tier.slice().sort().join(',');
+      const ordem = precBySet.get(key);
+      if (!ordem) { erros.push(`§312 grupo idêntico SEM desempate: [${tier.join(', ')}] (panteão ${missoes[tier[0]].panteao} · faixa ${missoes[tier[0]].faixa} · comp ${missoes[tier[0]].companheiro || '-'}) — a centralidade empata e falta precedência do dono`); fila.push(...tier); continue; }
+      usada.add(key);
+      for (const g of ordem) fila.push(g);
+    }
+    fila.forEach((k, i) => { offsets[k] = i; });
+    for (const k of fila) tabela.push({ deus: k, nome: missoes[k].nome, panteao: missoes[k].panteao, antes: missoes[k].vitoriasPanteao, pos: offsets[k], depois: missoes[k].vitoriasPanteao + offsets[k], outdeg: outdeg[k] || 0 });
+  }
+  // babá: precedência que não casa um empate REAL (cita deus fora do grupo, ou grupo que já não colide — dado velho)
+  for (const p of PRECED) { const key = (p.grupo || []).slice().sort().join(','); if (!usada.has(key)) erros.push(`§312 precedência inútil/velha: [${(p.grupo || []).join(', ')}] — não corresponde a um empate de centralidade num grupo que ainda colide`); }
+  return { offsets, erros, outdeg, tabela };
+}
+
 function gerar() {
   const REQmap = {}; for (const r of REQ) REQmap[r.deus] = r;
   const depth = profundidades(REQmap);
@@ -122,14 +170,18 @@ function gerar() {
       familia: CLS[k].familia, feito: { metrica: CLS[k].metrica, habilidade: CLS[k].habilidade, slot: CLS[k].slot },
     };
   }
+  // §312 — DIFERENCIAÇÃO: soma o offset de posição-na-fila ao volume dos irmãos de tarefa idêntica.
+  const dif = diferenciar(missoes, PRECED);
+  for (const k in missoes) missoes[k].vitoriasPanteao += dif.offsets[k];
   const panteaoMap = {};
   for (const k of Object.keys(GODS)) panteaoMap[k] = panteaoDe(k);
   // distribuição real por faixa (confere a DISTRIB) — vira dado para a tela agrupar por faixa (§241 item 5).
   const porFaixa = FAIXAS.map((f, fi) => ({ chave: f.chave, nome: f.nome, min: f.min,
     quantas: Object.values(missoes).filter(m => m.faixaIndice === fi).length }));
   return {
-    versao: 3,
-    _nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.',
+    versao: 4,
+    _nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado · §312 diferenciação): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (8 faixas). §312: grupos de TAREFA IDÊNTICA (mesma tupla) recebem +0/+1/+2 vitórias por posição — ordem por CENTRALIDADE (outdeg) decrescente, empate residual pela PRECEDÊNCIA do dono (missoes_requisitos.json). O 1º da fila fica no volume base. Vínculo temático (companheiro/motivo/precedência) do dono.',
+    _difInfo: { erros: dif.erros, tabela: dif.tabela },
     volumeFator: FATOR_VOLUME, volumePiso: PISO_VOLUME,
     volumes: { A: volume('A'), S: volume('S'), SS: volume('SS') },
     faixas: FAIXAS, distribuicao: porFaixa, seguidasPorTier: SEGUIDAS_POR_TIER,
@@ -198,15 +250,30 @@ function validar(doc) {
   }
   if (foraDeOrdem.length) erros.push(`FORA DE ORDEM na rampa (companheiro destrava depois do deus): ${foraDeOrdem.join(' · ')}`);
 
+  // (e) §312 — DIFERENCIAÇÃO: (1) os erros de fila/precedência que o gerador acumulou; (2) NENHUM par com a
+  // tupla de tarefa idêntica no doc FINAL (a diferenciação zerou os grupos, sem colisão nova entre grupos);
+  // (3) o 1º de cada grupo (posição 0) fica EXATAMENTE no volume base da raridade — o "piso não muda".
+  for (const e of (doc._difInfo && doc._difInfo.erros) || []) erros.push(e);
+  const porTup = {};
+  for (const k of keys) { const t = _tupla(M[k]); (porTup[t] = porTup[t] || []).push(k); }
+  const aindaIguais = Object.values(porTup).filter(v => v.length > 1);
+  if (aindaIguais.length) erros.push(`§312 AINDA HÁ tarefas idênticas após diferenciar (${aindaIguais.length}): ${aindaIguais.map(v => v.join('/')).join(' · ')}`);
+  const baseDe = { A: volume('A').panteao, S: volume('S').panteao, SS: volume('SS').panteao };
+  for (const g of (doc._difInfo && doc._difInfo.tabela) || []) {
+    if (g.pos === 0 && g.depois !== baseDe[M[g.deus].raridade]) erros.push(`§312 o 1º da fila (${g.deus}) não está no volume base (${g.depois} ≠ ${baseDe[M[g.deus].raridade]})`);
+  }
+
   return { ok: erros.length === 0, erros, alcancados: possui.size - doc.iniciais.length, maiaCross: maiaOk };
 }
 
-module.exports = { gerar, validar, panteaoDe, volume };
+module.exports = { gerar, validar, panteaoDe, volume, diferenciar, _tupla };
 
 if (require.main === module) {
   const doc = gerar();
   const v = validar(doc);
   if (!v.ok) { console.error('VALIDAÇÃO FALHOU:'); for (const e of v.erros) console.error('  - ' + e); process.exit(1); }
+  const difTabela = (doc._difInfo && doc._difInfo.tabela) || [];
+  delete doc._difInfo;   // §312: helper de validação — não polui o data/missoes.json
   fs.writeFileSync(path.join(__dirname, '..', 'data', 'missoes.json'), JSON.stringify(doc, null, 1) + '\n');
   const M = doc.missoes, keys = Object.keys(M);
   const cnt = { A: 0, S: 0, SS: 0 }; let comComp = 0;
@@ -225,5 +292,8 @@ if (require.main === module) {
   console.log(`Distribuição por faixa (${doc.distribuicao.map(f => f.nome + ' ' + f.quantas).join(' · ')}) = ${doc.distribuicao.reduce((s, f) => s + f.quantas, 0)}`);
   console.log(`Cadeias (companheiro NÃO-inicial): ${cadeias} · gated (ranque>Suplicante OU cadeia): ${gated} · imediatas: ${imediatas} · profundidade: ${prof} ondas`);
   console.log(`Sequências (§241, rampa 2/3/4): ${Object.keys(seq).sort().map(n => n + '→' + seq[n]).join(' · ')} missões (todas ≥1, teto 4).`);
+  // §312 — diferenciação: a tabela dos irmãos ajustados (deus · antes→depois · posição · centralidade)
+  console.log(`§312 diferenciação: ${difTabela.length} missões em ${new Set(difTabela.map(g => g.panteao + '|' + M[g.deus].companheiro + '|' + M[g.deus].faixa)).size} grupos ajustados (o 1º de cada fica no volume base):`);
+  for (const g of difTabela) console.log(`   ${g.deus.padEnd(14)} ${g.panteao.padEnd(11)} vol ${g.antes}→${g.depois}  (posição ${g.pos}, outdeg ${g.outdeg})`);
   console.log('Escrito: data/missoes.json');
 }

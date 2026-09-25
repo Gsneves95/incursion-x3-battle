@@ -1,6 +1,6 @@
 {
- "versao": 3,
- "_nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (as 8 faixas de ranqueado.json). As três travas correlacionadas por faixa; a faixa vem da PROFUNDIDADE da cadeia. Vínculo temático (companheiro/motivo) do dono, em missoes_requisitos.json.",
+ "versao": 4,
+ "_nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado · §312 diferenciação): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (8 faixas). §312: grupos de TAREFA IDÊNTICA (mesma tupla) recebem +0/+1/+2 vitórias por posição — ordem por CENTRALIDADE (outdeg) decrescente, empate residual pela PRECEDÊNCIA do dono (missoes_requisitos.json). O 1º da fila fica no volume base. Vínculo temático (companheiro/motivo/precedência) do dono.",
  "volumeFator": 0.55,
  "volumePiso": 4,
  "volumes": {
@@ -164,7 +164,7 @@
   "dionisio": "Grega",
   "durga": "Hindu",
   "erinias": "Grega",
-  "exu": "Brasileira",
+  "exu": "Africana",
   "fenrir": "Nórdica",
   "freyja": "Nórdica",
   "fujin": "Japonesa",
@@ -274,7 +274,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
@@ -352,7 +352,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 13,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -378,7 +378,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 12,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -404,7 +404,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 12,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -430,7 +430,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 13,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -456,7 +456,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -976,7 +976,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1288,7 +1288,7 @@
    "faixaIndice": 6,
    "faixaMin": 600,
    "profundidade": 6,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1340,7 +1340,7 @@
    "faixaIndice": 7,
    "faixaMin": 700,
    "profundidade": 6,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1366,7 +1366,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 12,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -1912,7 +1912,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 22,
+   "vitoriasPanteao": 23,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2250,7 +2250,7 @@
    "faixaIndice": 2,
    "faixaMin": 200,
    "profundidade": 2,
-   "vitoriasPanteao": 8,
+   "vitoriasPanteao": 9,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2276,7 +2276,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 12,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
@@ -2432,7 +2432,7 @@
    "faixaIndice": 3,
    "faixaMin": 300,
    "profundidade": 2,
-   "vitoriasPanteao": 11,
+   "vitoriasPanteao": 12,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
