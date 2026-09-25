@@ -1,49 +1,58 @@
 'use strict';
-// FASE 6 / §230-§231 — GERADOR DA ÁRVORE DE MISSÕES a partir dos REQUISITOS DO DONO.
-// As 91 missões NÃO se derivam da mecânica (§230): o vínculo é TEMÁTICO (o Cérbero é o cão do Hades),
-// escrito à mão pelo dono em `data/missoes_requisitos.json` — panteão exigido + companheiro + motivo.
-// O gerador só CASA isso com a raridade real (o volume) e emite `data/missoes.json`, validando por
-// varredura contra os DADOS do repositório (§202).
+// FASE 6 / §230-§231 + §313 — GERADOR DA ÁRVORE DE PROVAÇÕES a partir dos REQUISITOS DO DONO.
+// As 91 Provações NÃO se derivam da mecânica (§230): o vínculo é TEMÁTICO (o Cérbero é o cão do Hades),
+// escrito à mão pelo dono em `data/missoes_requisitos.json` — panteão exigido + companheiro + motivo + a
+// LISTA DE OBJETIVOS (§313). O gerador casa isso com a raridade (volume legado), a profundidade (faixa) e
+// a rampa de sequência, emite `data/missoes.json`, e valida por VARREDURA contra os DADOS (§202) + as
+// 7 babás do §313.
 //
-// O REQUISITO de cada deus (do dono):
-//   - VOLUME por raridade: SS 40 vit c/ o panteão + 5 seguidas c/ o companheiro; S 20 + 3 seguidas;
-//     A 15 (+ companheiro onde houver, sem "seguidas").
-//   - COMPANHEIRO temático (83 têm; 8 são só volume — os portões de entrada de cada mitologia).
-// O feito-por-habilidade do §229 saiu do caminho crítico (o leitor segue para maestria; §230).
+// §313 — cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4). Tipos (contam só em PvP):
+//   ["s",X]     K seguidas com X          ["v",[..]]  N vitórias com ≥1 da lista ("ou")
+//   ["j",[a,b]] N vitórias com a e b       ["c",[a,b]] K seguidas com a E K seguidas com b (separadas)
+//   ["p"]       N vitórias com o panteão   ["sp"]      K seguidas com o panteão
+//   ["a",N]     amplitude: cada vitória soma ≤1 panteão novo; cumpre em N panteões distintos
+// NÚMEROS (regra fixa aqui): K = a sequência da faixa (rampa 2/3/4); "v" 1º da Provação A8/S8/SS14, 2º
+//   S5/SS8; "j" S5/SS8; "p" A8/S6/SS12; "c"/"sp" usam K; "a" carrega seu N.
+// §312 (precedência + diferenciação por posição) ficou OBSOLETO e foi REMOVIDO junto com suas babás.
 
 const fs = require('fs');
 const path = require('path');
 const FAM = require('../src/missoes_familias.js');
 
 const REQDOC = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'missoes_requisitos.json'), 'utf8'));
-const REQ = Array.isArray(REQDOC) ? REQDOC : REQDOC.missoes;                 // §312: o arquivo virou {missoes, precedencia}
-const PRECED = (Array.isArray(REQDOC) ? [] : (REQDOC.precedencia || []));    // §312: desempate temático do dono
+const REQ = Array.isArray(REQDOC) ? REQDOC : REQDOC.missoes;
+const OBJ = (REQDOC && REQDOC.objetivos) || {};            // §313: a lista de objetivos por deus (do dono)
 const RAR = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'raridades.json'), 'utf8'));
 const RANQ = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'ranqueado.json'), 'utf8'));
 const GODS = FAM._carregarDeuses();
 const CLS = FAM.classificarTodos();
 const INICIAIS = ['zeus', 'ogum', 'tyr', 'sobek', 'brigid', 'ganesha', 'cuca', 'fujin', 'nezha'];
 
-// §241 — AS TRÊS ALAVANCAS JUNTAS (o desbloqueio vira caçada longa):
-//   ranque REVELA · cadeia ORDENA · sequência PROVA HABILIDADE.
-// O PORTÃO DE RANQUE reverte o §232 (que o removera): não é cadeado duplo, é ESTRUTURA QUE REVELA
-// (como o "ser no mínimo Anbu" do Naruto-Arena). Reusa as 8 faixas do ranqueado (nenhuma escada nova).
+// §241 — AS TRÊS ALAVANCAS JUNTAS: ranque REVELA · cadeia ORDENA · sequência PROVA HABILIDADE.
 const FAIXAS = RANQ.faixas;                                   // 8, em ordem Suplicante -> Semideus
-// DISTRIBUIÇÃO de missões por faixa, MAIS GENEROSA EMBAIXO (soma = 91). As 3 primeiras abrem 46/91 (51%):
-// quem chega tem o que fazer, e o casual tem ~50 deuses de caminho antes de o ranque apertar (§232: fica
-// LONGE do topo, não trancado).
-const DISTRIB = [18, 15, 13, 12, 11, 9, 7, 6];
-// AS TRÊS TRAVAS CORRELACIONADAS por faixa (rampa, não parede): a sequência sobe 2->3->4 com a faixa;
-// a cadeia fica mais funda no topo (emerge da atribuição por PROFUNDIDADE). Duas faixas por degrau.
-// RAMPA SUAVIZADA para teto 4 (§241, decisão do dono após a MEDIÇÃO): a rampa literal 3/4/5/6 dava
-// 6-8 meses (a simulação em tools/custo_missoes.js) — perto do abandono; as sequências são exponenciais
-// (uma de 6 ~ 126 partidas a 50%) e o contador-desde-o-desbloqueio impede pré-farm, então quase não se
-// sobrepõem entre elos. Teto 4 (2/3/4) traz para ~3-4 meses (a "caçada") mantendo as três travas.
-const SEGUIDAS_POR_TIER = [2, 2, 3, 3, 3, 3, 4, 4];          // por índice de faixa (0..7)
+const DISTRIB = [18, 15, 13, 12, 11, 9, 7, 6];               // por faixa, mais generosa embaixo (soma 91)
+const SEGUIDAS_POR_TIER = [2, 2, 3, 3, 3, 3, 4, 4];          // K por índice de faixa (rampa 2/3/4, teto 4)
 
-// PROFUNDIDADE da cadeia: 1 = a raiz (companheiro inicial ou nulo); N = N-1 deuses de missão antes dele.
-// É o que ORDENA a árvore; a faixa é atribuída por ela, então faixa e cadeia correlacionam por construção.
-function profundidades(REQmap) {
+// §313 — os NÚMEROS dos objetivos (regra fixa). K vem da faixa (SEGUIDAS_POR_TIER); N das tabelas:
+const N_V1 = { A: 8, S: 8, SS: 14 };   // 1º "v" da Provação
+const N_V2 = { A: 5, S: 5, SS: 8 };    // 2º "v" em diante (A é fallback; A nunca tem 2 "v")
+const N_J = { A: 5, S: 5, SS: 8 };    // "j" (o dono deu S5/SS8; A é fallback, A não tem "j")
+const N_P = { A: 8, S: 6, SS: 12 };   // "p"
+const OBJS_POR_RAR = { A: 2, S: 3, SS: 4 };   // §313 babá 1
+
+const REQmap = {}; for (const r of REQ) REQmap[r.deus] = r;
+function ehMissao(k) { return !!REQmap[k]; }
+function panteaoDe(godKey) { const f = GODS[godKey].faccao; return f === 'Olímpica' ? 'Grega' : f; }   // membresia real
+function panteaoExigido(k) { return REQmap[k] ? REQmap[k].panteao : panteaoDe(k); }                    // alvo do "p"/"sp"
+
+// os DEUSES NOMEADOS por um objetivo (s/v/j/c) — a base das dependências e das babás.
+function nomeadosDoObj(o) { const t = o[0]; if (t === 's') return [o[1]]; if (t === 'v' || t === 'j' || t === 'c') return o[1].slice(); return []; }
+function nomeadosDe(k) { const s = []; for (const o of (OBJ[k] || [])) s.push(...nomeadosDoObj(o)); return s; }
+
+// PROFUNDIDADE da cadeia de COMPANHEIRO (§241): 1 = raiz; N = N-1 deuses de missão antes dele. É o que
+// ORDENA a árvore para a FAIXA — inalterado no §313 (a atribuição de faixa segue pela cadeia temática do
+// companheiro, e a babá 4 confirma que TODO nome dos objetivos cai em faixa <= a do alvo).
+function profundidades() {
   const memo = {};
   const dep = (k, vendo) => {
     if (memo[k] != null) return memo[k];
@@ -58,10 +67,26 @@ function profundidades(REQmap) {
   return out;
 }
 
-// ATRIBUIÇÃO DE FAIXA por PROFUNDIDADE: ordena por (profundidade, raridade, nome) e fatia nos baldes da
-// DISTRIB. Como profundidade(companheiro) < profundidade(deus), o companheiro sempre cai numa faixa <= a do
-// deus — a árvore é destravável em ordem (invariante cobrado na validação). Emerge: faixa baixa = cadeia
-// rasa, faixa alta = cadeia funda (a correlação que o §241 pede).
+// §313 — PROFUNDIDADE DA CADEIA DE OBJETIVOS (medição, NÃO dirige a faixa): 1 = sem dependência nomeada;
+// N = 1 + a mais funda entre TODOS os deuses nomeados (s/v/j/c). É a "profundidade real" da caçada.
+function profundidadesObjetivos() {
+  const memo = {};
+  const dep = (k, vendo) => {
+    if (memo[k] != null) return memo[k];
+    if (vendo.has(k)) return 1;                              // guarda de ciclo (o ciclo é pego na validação)
+    vendo.add(k);
+    let mx = 0, algum = false;
+    for (const g of nomeadosDe(k)) { if (INICIAIS.includes(g) || !ehMissao(g)) continue; algum = true; mx = Math.max(mx, dep(g, new Set(vendo))); }
+    return (memo[k] = algum ? mx + 1 : 1);
+  };
+  const out = {};
+  for (const r of REQ) out[r.deus] = dep(r.deus, new Set());
+  return out;
+}
+
+// ATRIBUIÇÃO DE FAIXA por PROFUNDIDADE (cadeia de companheiro): ordena por (profundidade, raridade, nome)
+// e fatia nos baldes da DISTRIB. Como profundidade(companheiro) < profundidade(deus), o companheiro cai
+// numa faixa <= a do deus. (§313 babá 4 estende isso a TODO nome dos objetivos.)
 function atribuirFaixas(depth) {
   const rarRank = { A: 0, S: 1, SS: 2 };
   const ordem = REQ.map(r => r.deus).sort((a, b) =>
@@ -72,77 +97,55 @@ function atribuirFaixas(depth) {
   return faixaIdx;
 }
 
-// PANTEÃO de MEMBRESIA (quem PROVÊ o volume de um panteão) = a facção REAL do deus, normalizada
-// (Olímpica é Grega). É o TRUE pantheon — por isso itzamná (facção Maia) provê Maia depois de liberado,
-// que é o que faz a mitologia sem inicial (Maia) alcançável. NÃO é o panteão EXIGIDO (esse vem do
-// arquivo e pode ser cruzado: itzamná EXIGE Egípcia, mas É Maia).
-function panteaoDe(godKey) { const f = GODS[godKey].faccao; return f === 'Olímpica' ? 'Grega' : f; }
-
-// VOLUME por raridade (a raridade real, §230), a REFERÊNCIA antes do corte.
+// VOLUME por raridade (legado §230/§242): o servidor (§314 ainda por vir) usa vitoriasPanteao/seguidas.
+// Fica no volume BASE — o §312 (base + posição) foi removido. Mantido para compatibilidade do servidor
+// enquanto a Parte 2 (que lê `objetivos`) não entra.
 const VOL_BASE = { A: 15, S: 20, SS: 40 };
-// §242 — O FATOR DE VOLUME (o PARÂMETRO; mora AQUI, muda-se UMA linha e roda `npm run gerar:missoes`).
-// O volume é o FREIO DE TEMPO (a sequência é o de habilidade, §241, e NÃO muda). Com 1 slot ativo o volume
-// deixa de se dividir entre várias Provações — um requisito de 12 fazia sentido contando para cinco missões,
-// sozinho vira parede. Cortar para 40% devolve a proporção que o modelo paralelo tinha. PISO 4 (o corte não
-// trivializa os A). Recalibrar depois = trocar FATOR_VOLUME e regerar; nenhum dos 91 registros é editado à mão.
 const FATOR_VOLUME = 0.55;
 const PISO_VOLUME = 4;
 function volume(rar) {
   const base = (VOL_BASE[rar] != null) ? VOL_BASE[rar] : VOL_BASE.A;
-  const panteao = Math.max(PISO_VOLUME, Math.round(base * FATOR_VOLUME));   // §242: cortado + piso
-  const seguidas = rar === 'SS' ? 5 : (rar === 'S' ? 3 : 0);                // legado (§241 usa SEGUIDAS_POR_TIER)
+  const panteao = Math.max(PISO_VOLUME, Math.round(base * FATOR_VOLUME));
+  const seguidas = rar === 'SS' ? 5 : (rar === 'S' ? 3 : 0);
   return { panteao, seguidas, base };
 }
 
-// §312 — DIFERENCIAR os grupos de TAREFA IDÊNTICA (mesma tupla panteão+volume+seguidas+faixa+companheiro+
-// seguidasAlvo → o servidor os completa na MESMA partida, provado por simulação). A regra do dono:
-//   (1) ordena os irmãos por CENTRALIDADE DECRESCENTE (outdeg = de quantas missões o deus é companheiro);
-//       a CHAVE (mais central) vem primeiro e FICA no volume base — somar volume à chave atrasaria toda a
-//       cadeia que depende dela (o Cérbero é companheiro de 2). (2) o empate residual (mesma centralidade)
-//       quebra pela PRECEDÊNCIA escrita pelo dono (data/missoes_requisitos.json), NUNCA por alfabeto/id/
-//       ordem-do-arquivo (a "3ª espécie" do §300b: número arbitrário com cara de derivado). (3) volume =
-//       base + posição-na-fila × 1 vitória. Falha ALTO: empate sem precedência, ou precedência velha/fora.
-function _outdeg(missoes) { const o = {}; for (const k in missoes) { const c = missoes[k].companheiro; if (c) o[c] = (o[c] || 0) + 1; } return o; }
-function _alvoK(m) { const a = m.seguidasAlvo || {}; return a.tipo + ':' + a.chave; }
-function _tupla(m) { return [m.panteao, m.vitoriasPanteao, m.seguidas, m.faixa, m.companheiro || '-', _alvoK(m)].join('|'); }
-function diferenciar(missoes, PRECED) {
-  const erros = [];
-  const outdeg = _outdeg(missoes);
-  const groups = {};
-  for (const k in missoes) { const t = _tupla(missoes[k]); (groups[t] = groups[t] || []).push(k); }
-  const precBySet = new Map();            // set-de-chaves -> ordem escrita pelo dono
-  for (const p of PRECED) precBySet.set((p.grupo || []).slice().sort().join(','), p.grupo || []);
-  const usada = new Set();
-  const offsets = {}; for (const k in missoes) offsets[k] = 0;
-  const tabela = [];
-  for (const t in groups) {
-    const membros = groups[t];
-    if (membros.length < 2) continue;
-    // ordena por centralidade decrescente e parte em degraus (tiers) de mesma centralidade
-    membros.sort((a, b) => (outdeg[b] || 0) - (outdeg[a] || 0));
-    const tiers = []; let cur = null, curO = null;
-    for (const k of membros) { const o = outdeg[k] || 0; if (o !== curO) { cur = []; tiers.push(cur); curO = o; } cur.push(k); }
-    const fila = [];
-    for (const tier of tiers) {
-      if (tier.length === 1) { fila.push(tier[0]); continue; }
-      // empate de centralidade: exige precedência do dono cobrindo EXATAMENTE estes irmãos
-      const key = tier.slice().sort().join(',');
-      const ordem = precBySet.get(key);
-      if (!ordem) { erros.push(`§312 grupo idêntico SEM desempate: [${tier.join(', ')}] (panteão ${missoes[tier[0]].panteao} · faixa ${missoes[tier[0]].faixa} · comp ${missoes[tier[0]].companheiro || '-'}) — a centralidade empata e falta precedência do dono`); fila.push(...tier); continue; }
-      usada.add(key);
-      for (const g of ordem) fila.push(g);
-    }
-    fila.forEach((k, i) => { offsets[k] = i; });
-    for (const k of fila) tabela.push({ deus: k, nome: missoes[k].nome, panteao: missoes[k].panteao, antes: missoes[k].vitoriasPanteao, pos: offsets[k], depois: missoes[k].vitoriasPanteao + offsets[k], outdeg: outdeg[k] || 0 });
-  }
-  // babá: precedência que não casa um empate REAL (cita deus fora do grupo, ou grupo que já não colide — dado velho)
-  for (const p of PRECED) { const key = (p.grupo || []).slice().sort().join(','); if (!usada.has(key)) erros.push(`§312 precedência inútil/velha: [${(p.grupo || []).join(', ')}] — não corresponde a um empate de centralidade num grupo que ainda colide`); }
-  return { offsets, erros, outdeg, tabela };
+// §313 — MONTA a lista de objetivos RESOLVIDA (com K/N) de uma Provação, a partir do dado do dono + a faixa.
+function construirObjetivos(k, fi, rar) {
+  const raw = OBJ[k] || [];
+  const K = SEGUIDAS_POR_TIER[fi];
+  const P = panteaoExigido(k);
+  let vCount = 0;
+  return raw.map(o => {
+    const t = o[0];
+    if (t === 's') return { tipo: 's', alvo: o[1], k: K };
+    if (t === 'sp') return { tipo: 'sp', panteao: P, k: K };
+    if (t === 'c') return { tipo: 'c', lista: o[1].slice(), k: K };
+    if (t === 'p') return { tipo: 'p', panteao: P, n: N_P[rar] };
+    if (t === 'a') return { tipo: 'a', n: o[1] };
+    if (t === 'j') return { tipo: 'j', lista: o[1].slice(), n: N_J[rar] };
+    if (t === 'v') { vCount++; const n = (vCount === 1 ? N_V1[rar] : N_V2[rar]); return { tipo: 'v', lista: o[1].slice(), n }; }
+    throw new Error(`§313 tipo de objetivo desconhecido "${t}" em ${k}`);
+  });
+}
+
+// assinatura NORMALIZADA de uma lista de objetivos (babá 7): tipo + nomes ordenados + panteão/N.
+function assinaturaObjetivos(objs) {
+  return objs.map(o => {
+    if (o.tipo === 's') return ['s', o.alvo, o.k];
+    if (o.tipo === 'sp') return ['sp', o.panteao, o.k];
+    if (o.tipo === 'c') return ['c', o.lista.slice().sort(), o.k];
+    if (o.tipo === 'p') return ['p', o.panteao, o.n];
+    if (o.tipo === 'a') return ['a', o.n];
+    if (o.tipo === 'j') return ['j', o.lista.slice().sort(), o.n];
+    if (o.tipo === 'v') return ['v', o.lista.slice().sort(), o.n];
+    return [o.tipo];
+  }).map(x => JSON.stringify(x)).sort().join('|');
 }
 
 function gerar() {
-  const REQmap = {}; for (const r of REQ) REQmap[r.deus] = r;
-  const depth = profundidades(REQmap);
+  const depth = profundidades();
+  const depthObj = profundidadesObjetivos();
   const faixaIdx = atribuirFaixas(depth);
   const missoes = {};
   for (const r of REQ) {
@@ -150,60 +153,55 @@ function gerar() {
     const rar = RAR[k];
     const vol = volume(rar);
     const fi = faixaIdx[k];
-    const seguidas = SEGUIDAS_POR_TIER[fi];            // §241: sequência pela FAIXA (rampa 3->6), toda missão tem
-    // §241: TODA missão tem >=1 sequência. Com companheiro, "seguidas com o companheiro" (a cadeia prova
-    // habilidade no deus temático); sem companheiro (as 8 portas de entrada), "seguidas com o PANTEÃO".
+    const seguidas = SEGUIDAS_POR_TIER[fi];
     const alvo = r.companheiro ? { tipo: 'companheiro', chave: r.companheiro } : { tipo: 'panteao', chave: r.panteao };
     missoes[k] = {
       deus: k, nome: GODS[k].nome, raridade: rar,
       panteao: r.panteao,            // EXIGIDO (do dono; pode ser cruzado)
       companheiro: r.companheiro || null,
       motivo: r.motivo,
-      // §241 — o PORTÃO DE RANQUE (reverte §232): a missão só REVELA/destrava a partir desta faixa.
+      // §241 — o PORTÃO DE RANQUE: a Provação só REVELA/destrava a partir desta faixa.
       faixa: FAIXAS[fi].chave, faixaNome: FAIXAS[fi].nome, faixaIndice: fi, faixaMin: FAIXAS[fi].min,
-      profundidade: depth[k],        // §241: profundidade da cadeia (1 = raiz)
-      vitoriasPanteao: vol.panteao,  // VOLUME por raridade (inalterado)
-      seguidas, seguidasAlvo: alvo,  // §241: sequência pela faixa; alvo = companheiro OU panteão
-      // compat: o campo antigo passa a espelhar `seguidas` onde há companheiro (os leitores antigos seguem)
+      profundidade: depth[k],        // §241: profundidade da cadeia de companheiro (dirige a faixa)
+      profundidadeObjetivos: depthObj[k],   // §313: profundidade da cadeia de objetivos (medição)
+      // legado (§230/§242) — o servidor atual ainda usa; a Parte 2 (§314) migra para `objetivos`.
+      vitoriasPanteao: vol.panteao,
+      seguidas, seguidasAlvo: alvo,
       seguidasCompanheiro: r.companheiro ? seguidas : 0,
-      // informativo (maestria/futuro, §230) — a família-assinatura e a habilidade nomeada do kit.
+      // §313 — a LISTA DE OBJETIVOS resolvida (com K/N), o dado que a Parte 2 (servidor + tela) consome.
+      objetivos: construirObjetivos(k, fi, rar),
+      // informativo (maestria/futuro, §230).
       familia: CLS[k].familia, feito: { metrica: CLS[k].metrica, habilidade: CLS[k].habilidade, slot: CLS[k].slot },
     };
   }
-  // §312 — DIFERENCIAÇÃO: soma o offset de posição-na-fila ao volume dos irmãos de tarefa idêntica.
-  const dif = diferenciar(missoes, PRECED);
-  for (const k in missoes) missoes[k].vitoriasPanteao += dif.offsets[k];
   const panteaoMap = {};
   for (const k of Object.keys(GODS)) panteaoMap[k] = panteaoDe(k);
-  // distribuição real por faixa (confere a DISTRIB) — vira dado para a tela agrupar por faixa (§241 item 5).
   const porFaixa = FAIXAS.map((f, fi) => ({ chave: f.chave, nome: f.nome, min: f.min,
     quantas: Object.values(missoes).filter(m => m.faixaIndice === fi).length }));
   return {
-    versao: 4,
-    _nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado · §312 diferenciação): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (8 faixas). §312: grupos de TAREFA IDÊNTICA (mesma tupla) recebem +0/+1/+2 vitórias por posição — ordem por CENTRALIDADE (outdeg) decrescente, empate residual pela PRECEDÊNCIA do dono (missoes_requisitos.json). O 1º da fila fica no volume base. Vínculo temático (companheiro/motivo/precedência) do dono.',
-    _difInfo: { erros: dif.erros, tabela: dif.tabela },
+    versao: 5,
+    _nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume · §313 objetivos): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). Campos legados (vitoriasPanteao/seguidas) mantidos p/ o servidor atual até a Parte 2 (§314) migrar. Vínculo temático (companheiro/motivo/objetivos) do dono.',
     volumeFator: FATOR_VOLUME, volumePiso: PISO_VOLUME,
     volumes: { A: volume('A'), S: volume('S'), SS: volume('SS') },
     faixas: FAIXAS, distribuicao: porFaixa, seguidasPorTier: SEGUIDAS_POR_TIER,
+    objetivosPorRaridade: OBJS_POR_RAR,
+    numerosObjetivos: { v1: N_V1, v2: N_V2, j: N_J, p: N_P },
+    profundidadeObjetivosMax: Math.max(...Object.values(depthObj)),
     iniciais: INICIAIS.slice(),
     panteaoDe: panteaoMap,
     missoes,
   };
 }
 
-// -------- VALIDAÇÃO POR VARREDURA (§202) contra os DADOS do repositório --------
-// (a) sem CICLO nas arestas de companheiro (companheiro -> deus); (b) TODOS alcançáveis a partir dos 9
-// iniciais por PONTO-FIXO: um deus libera quando o companheiro (se houver) já é possuído E o panteão
-// EXIGIDO tem um PROVEDOR possuído (inicial ou já-liberado cuja facção real = o panteão). (c) o caso
-// Maia (sem inicial) fecha pelo cruzamento do itzamná.
+// -------- VALIDAÇÃO POR VARREDURA (§202) + as 7 BABÁS do §313 --------
 function validar(doc) {
   const erros = [];
   const M = doc.missoes;
   const keys = Object.keys(M);
   if (keys.length !== 91) erros.push(`esperado 91 missões, achei ${keys.length}`);
 
-  // (a) CICLO nas arestas companheiro->deus
-  const filhos = {};   // companheiro -> [deuses que o exigem]
+  // (a) CICLO nas arestas companheiro->deus (higiene do dado do companheiro)
+  const filhos = {};
   for (const k of keys) { const c = M[k].companheiro; if (c) { if (!M[c] && !doc.iniciais.includes(c)) erros.push(`${k}: companheiro desconhecido "${c}"`); (filhos[c] = filhos[c] || []).push(k); } }
   const cor = {}; const pilha = []; let ciclo = null;
   const dfs = (n) => {
@@ -215,7 +213,7 @@ function validar(doc) {
   for (const k of keys) if (!cor[k] && dfs(k)) break;
   if (ciclo) erros.push(ciclo);
 
-  // (b) ALCANÇABILIDADE por ponto-fixo (companheiro possuído + provedor do panteão exigido possuído)
+  // (b) ALCANÇABILIDADE (modelo legado do servidor atual): companheiro possuído + provedor do panteão exigido.
   const possui = new Set(doc.iniciais);
   const panteoesPossuidos = () => { const s = new Set(); for (const k of possui) s.add(doc.panteaoDe[k]); return s; };
   let mudou = true;
@@ -226,74 +224,138 @@ function validar(doc) {
       if (possui.has(k)) continue;
       const m = M[k];
       const compOk = m.companheiro ? possui.has(m.companheiro) : true;
-      const volOk = disp.has(m.panteao);   // há um deus possuído cuja facção real = o panteão EXIGIDO
+      const volOk = disp.has(m.panteao);
       if (compOk && volOk) { possui.add(k); mudou = true; }
     }
   }
   const inalc = keys.filter(k => !possui.has(k));
-  if (inalc.length) erros.push(`INALCANÇÁVEIS a partir dos 9 iniciais (${inalc.length}): ${inalc.join(' ')}`);
+  if (inalc.length) erros.push(`INALCANÇÁVEIS (companheiro) a partir dos 9 iniciais (${inalc.length}): ${inalc.join(' ')}`);
 
-  // (c) o caso MAIA: sem inicial, fecha pelo cruzamento
+  // (c) o caso MAIA: sem inicial, fecha pelo cruzamento do itzamná
   const semInicial = !doc.iniciais.some(k => doc.panteaoDe[k] === 'Maia');
   const maias = keys.filter(k => doc.panteaoDe[k] === 'Maia');
   const it = M.itzamna;
   const maiaOk = semInicial && it && it.panteao === 'Egípcia' && it.companheiro === 'ra' && maias.every(k => k === 'itzamna' || M[k].panteao === 'Maia');
   if (!maiaOk) erros.push('caso MAIA não fecha: itzamná deveria exigir Egípcia+ra e os outros Maias (chaac/ahpuch/kukulkan) exigir Maia');
 
-  // (d) §241 — ORDEM DA RAMPA: o companheiro (não-inicial) precisa destravar em faixa <= a do deus, senão
-  // a cadeia não é destravável em ordem. Garante que o portão de ranque não trava o próprio pré-requisito.
+  // (d) §241 — ORDEM DA RAMPA: o companheiro (não-inicial) destrava em faixa <= a do deus.
   const foraDeOrdem = [];
-  for (const k of keys) {
-    const c = M[k].companheiro;
-    if (c && M[c] && M[c].faixaIndice > M[k].faixaIndice)
-      foraDeOrdem.push(`${k} (${M[k].faixa}) exige ${c} que só destrava em ${M[c].faixa}`);
-  }
+  for (const k of keys) { const c = M[k].companheiro; if (c && M[c] && M[c].faixaIndice > M[k].faixaIndice) foraDeOrdem.push(`${k} (${M[k].faixa}) exige ${c} que só destrava em ${M[c].faixa}`); }
   if (foraDeOrdem.length) erros.push(`FORA DE ORDEM na rampa (companheiro destrava depois do deus): ${foraDeOrdem.join(' · ')}`);
 
-  // (e) §312 — DIFERENCIAÇÃO: (1) os erros de fila/precedência que o gerador acumulou; (2) NENHUM par com a
-  // tupla de tarefa idêntica no doc FINAL (a diferenciação zerou os grupos, sem colisão nova entre grupos);
-  // (3) o 1º de cada grupo (posição 0) fica EXATAMENTE no volume base da raridade — o "piso não muda".
-  for (const e of (doc._difInfo && doc._difInfo.erros) || []) erros.push(e);
-  const porTup = {};
-  for (const k of keys) { const t = _tupla(M[k]); (porTup[t] = porTup[t] || []).push(k); }
-  const aindaIguais = Object.values(porTup).filter(v => v.length > 1);
-  if (aindaIguais.length) erros.push(`§312 AINDA HÁ tarefas idênticas após diferenciar (${aindaIguais.length}): ${aindaIguais.map(v => v.join('/')).join(' · ')}`);
-  const baseDe = { A: volume('A').panteao, S: volume('S').panteao, SS: volume('SS').panteao };
-  for (const g of (doc._difInfo && doc._difInfo.tabela) || []) {
-    if (g.pos === 0 && g.depois !== baseDe[M[g.deus].raridade]) erros.push(`§312 o 1º da fila (${g.deus}) não está no volume base (${g.depois} ≠ ${baseDe[M[g.deus].raridade]})`);
-  }
+  // ===== §313 — AS 7 BABÁS =====
+  const b = validarObjetivos(doc);
+  for (const e of b.erros) erros.push(e);
 
-  return { ok: erros.length === 0, erros, alcancados: possui.size - doc.iniciais.length, maiaCross: maiaOk };
+  return { ok: erros.length === 0, erros, alcancados: possui.size - doc.iniciais.length, maiaCross: maiaOk,
+    objetivos: b };
 }
 
-module.exports = { gerar, validar, panteaoDe, volume, diferenciar, _tupla };
+// §313 — as 7 babás dos objetivos, separadas para os testes exercitarem cada uma (e provarem que MORDEM).
+function validarObjetivos(doc) {
+  const erros = [];
+  const M = doc.missoes;
+  const keys = Object.keys(M);
+  const nomeadosResolvidos = (m) => { const s = []; for (const o of (m.objetivos || [])) { if (o.tipo === 's') s.push(o.alvo); else if (o.tipo === 'v' || o.tipo === 'j' || o.tipo === 'c') s.push(...o.lista); } return s; };
+  const existe = (n) => !!M[n] || doc.iniciais.includes(n);
+
+  // babá 1 — número de objetivos por raridade (A 2 · S 3 · SS 4)
+  for (const k of keys) { const esp = doc.objetivosPorRaridade[M[k].raridade]; const n = (M[k].objetivos || []).length; if (n !== esp) erros.push(`§313 b1 ${k}: ${n} objetivos, raridade ${M[k].raridade} espera ${esp}`); }
+
+  // babá 2 — nunca nomear o próprio deus (§230)
+  for (const k of keys) for (const nm of nomeadosResolvidos(M[k])) if (nm === k) erros.push(`§313 b2 ${k} nomeia a si mesmo`);
+
+  // babá 3 — todo nome existe (entre as 91 ou os 9 iniciais)
+  for (const k of keys) for (const nm of nomeadosResolvidos(M[k])) if (!existe(nm)) erros.push(`§313 b3 ${k}: nome inexistente "${nm}"`);
+
+  // babá 4 — nenhum nome de faixa MAIOR que a do alvo
+  for (const k of keys) for (const nm of nomeadosResolvidos(M[k])) { if (!M[nm]) continue; if (M[nm].faixaIndice > M[k].faixaIndice) erros.push(`§313 b4 ${k} (${M[k].faixa}) nomeia ${nm} de faixa MAIOR (${M[nm].faixa})`); }
+
+  // babá 5 — sem ciclo nos objetivos; os 91 alcançáveis (modelo §313); caso Maia resolvido
+  const c5 = varreduraObjetivos(doc);
+  if (c5.ciclo) erros.push(`§313 b5 CICLO nos objetivos: ${c5.ciclo}`);
+  if (c5.inalcancaveis.length) erros.push(`§313 b5 INALCANÇÁVEIS pelos objetivos (${c5.inalcancaveis.length}): ${c5.inalcancaveis.join(' ')}`);
+  const maiasKeys = keys.filter(k => doc.panteaoDe[k] === 'Maia');
+  const maiaResolvido = maiasKeys.every(k => !c5.inalcancaveis.includes(k)) && maiasKeys.length > 0;
+  if (!maiaResolvido) erros.push('§313 b5 caso MAIA não fecha pelos objetivos');
+
+  // babá 6 — PONTE NUNCA OBRIGATÓRIA: cada "v" tem ≥1 do panteão do alvo. Exceção: alvo Maia.
+  for (const k of keys) {
+    if (doc.panteaoDe[k] === 'Maia') continue;   // exceção do dono
+    const P = M[k].panteao;                       // panteão EXIGIDO do alvo
+    for (const o of (M[k].objetivos || [])) {
+      if (o.tipo !== 'v') continue;
+      const temMesmo = o.lista.some(g => (M[g] ? M[g].panteao : doc.panteaoDe[g]) === P || doc.panteaoDe[g] === P);
+      if (!temMesmo) erros.push(`§313 b6 ${k} (${P}): "v" [${o.lista.join(', ')}] sem deus do panteão do alvo (ponte obrigatória)`);
+    }
+  }
+
+  // babá 7 — nenhuma lista de objetivos igual a outra (normalizada por tipo + nomes + panteão/N)
+  const vistos = {};
+  for (const k of keys) { const a = assinaturaObjetivos(M[k].objetivos || []); if (vistos[a]) erros.push(`§313 b7 ${k} tem a MESMA lista de objetivos que ${vistos[a]}`); else vistos[a] = k; }
+
+  return { erros, maiaResolvido, alcancados: c5.alcancados };
+}
+
+// §313 — varredura de alcançabilidade pelos OBJETIVOS (o modelo real da Parte 2): um deus fica possuível
+// quando os nomes obrigatórios (s/j/c) estão possuídos, cada lista "v" tem ≥1 possuído, cada "p"/"sp" tem
+// um provedor do panteão possuído, e cada "a" N tem N panteões distintos possuídos. (Ignora o portão de
+// ranque: o dono decidiu que o ranque é o RITMO, sempre alcançável.) Também detecta ciclo por não-progresso.
+function varreduraObjetivos(doc) {
+  const M = doc.missoes; const keys = Object.keys(M);
+  const possui = new Set(doc.iniciais);
+  const panteoes = () => { const s = new Set(); for (const k of possui) s.add(doc.panteaoDe[k]); return s; };
+  let mudou = true;
+  while (mudou) {
+    mudou = false;
+    const disp = panteoes();
+    for (const k of keys) {
+      if (possui.has(k)) continue;
+      let ok = true;
+      for (const o of M[k].objetivos) {
+        if (o.tipo === 's') { if (!possui.has(o.alvo)) { ok = false; break; } }
+        else if (o.tipo === 'j' || o.tipo === 'c') { if (!o.lista.every(g => possui.has(g))) { ok = false; break; } }
+        else if (o.tipo === 'v') { if (!o.lista.some(g => possui.has(g))) { ok = false; break; } }
+        else if (o.tipo === 'p' || o.tipo === 'sp') { if (!disp.has(o.panteao)) { ok = false; break; } }
+        else if (o.tipo === 'a') { if (disp.size < o.n) { ok = false; break; } }
+      }
+      if (ok) { possui.add(k); mudou = true; }
+    }
+  }
+  const inalcancaveis = keys.filter(k => !possui.has(k));
+  // "ciclo" prático: se sobrou algo inalcançável, aponta o menos-bloqueado como pista.
+  let ciclo = null;
+  if (inalcancaveis.length) {
+    const k = inalcancaveis[0];
+    ciclo = null; // o erro de inalcançável já cobre; ciclo só se um deus depende (transitivamente) de si.
+  }
+  return { alcancados: possui.size - doc.iniciais.length, inalcancaveis, ciclo };
+}
+
+module.exports = { gerar, validar, validarObjetivos, varreduraObjetivos, panteaoDe, volume,
+  construirObjetivos, assinaturaObjetivos, SEGUIDAS_POR_TIER, N_V1, N_V2, N_J, N_P };
 
 if (require.main === module) {
   const doc = gerar();
   const v = validar(doc);
   if (!v.ok) { console.error('VALIDAÇÃO FALHOU:'); for (const e of v.erros) console.error('  - ' + e); process.exit(1); }
-  const difTabela = (doc._difInfo && doc._difInfo.tabela) || [];
-  delete doc._difInfo;   // §312: helper de validação — não polui o data/missoes.json
   fs.writeFileSync(path.join(__dirname, '..', 'data', 'missoes.json'), JSON.stringify(doc, null, 1) + '\n');
   const M = doc.missoes, keys = Object.keys(M);
   const cnt = { A: 0, S: 0, SS: 0 }; let comComp = 0;
   for (const k of keys) { cnt[M[k].raridade]++; if (M[k].companheiro) comComp++; }
   const inicial = k => doc.iniciais.includes(k);
-  // "cadeia" ESTRITA (§241): companheiro NÃO-inicial (a missão fica escondida atrás de um deus a ganhar).
   const cadeias = keys.filter(k => M[k].companheiro && !inicial(M[k].companheiro)).length;
-  // GATED = não disponível de cara: faixa > Suplicante OU companheiro não-inicial. Imediatas = o resto.
   const imediatas = keys.filter(k => M[k].faixaIndice === 0 && (!M[k].companheiro || inicial(M[k].companheiro))).length;
   const gated = keys.length - imediatas;
   const prof = Math.max(...keys.map(k => M[k].profundidade));
+  const profObj = doc.profundidadeObjetivosMax;
   const seq = {}; for (const k of keys) seq[M[k].seguidas] = (seq[M[k].seguidas] || 0) + 1;
-  console.log(`OK — 91 missões (A ${cnt.A} · S ${cnt.S} · SS ${cnt.SS}); ${comComp} com companheiro, ${91 - comComp} só volume.`);
-  console.log(`Volume §242: fator ${FATOR_VOLUME} (piso ${PISO_VOLUME}) → A ${VOL_BASE.A}→${volume('A').panteao} · S ${VOL_BASE.S}→${volume('S').panteao} · SS ${VOL_BASE.SS}→${volume('SS').panteao} vitórias.`);
-  console.log(`Varredura §202: sem ciclo · ${v.alcancados}/91 alcançáveis · rampa em ordem · caso Maia ${v.maiaCross ? 'OK' : 'FALHOU'}.`);
+  const tipos = {}; for (const k of keys) for (const o of M[k].objetivos) tipos[o.tipo] = (tipos[o.tipo] || 0) + 1;
+  console.log(`OK — 91 Provações (A ${cnt.A} · S ${cnt.S} · SS ${cnt.SS}); ${comComp} com companheiro, ${91 - comComp} só volume.`);
+  console.log(`§313 objetivos: por raridade A ${doc.objetivosPorRaridade.A} · S ${doc.objetivosPorRaridade.S} · SS ${doc.objetivosPorRaridade.SS}; tipos ${Object.keys(tipos).sort().map(t => t + ':' + tipos[t]).join(' · ')}.`);
+  console.log(`Varredura §202: sem ciclo · ${v.alcancados}/91 alcançáveis (companheiro) · ${v.objetivos.alcancados}/91 alcançáveis (objetivos) · rampa em ordem · caso Maia ${v.maiaCross ? 'OK' : 'FALHOU'}.`);
   console.log(`Distribuição por faixa (${doc.distribuicao.map(f => f.nome + ' ' + f.quantas).join(' · ')}) = ${doc.distribuicao.reduce((s, f) => s + f.quantas, 0)}`);
-  console.log(`Cadeias (companheiro NÃO-inicial): ${cadeias} · gated (ranque>Suplicante OU cadeia): ${gated} · imediatas: ${imediatas} · profundidade: ${prof} ondas`);
-  console.log(`Sequências (§241, rampa 2/3/4): ${Object.keys(seq).sort().map(n => n + '→' + seq[n]).join(' · ')} missões (todas ≥1, teto 4).`);
-  // §312 — diferenciação: a tabela dos irmãos ajustados (deus · antes→depois · posição · centralidade)
-  console.log(`§312 diferenciação: ${difTabela.length} missões em ${new Set(difTabela.map(g => g.panteao + '|' + M[g.deus].companheiro + '|' + M[g.deus].faixa)).size} grupos ajustados (o 1º de cada fica no volume base):`);
-  for (const g of difTabela) console.log(`   ${g.deus.padEnd(14)} ${g.panteao.padEnd(11)} vol ${g.antes}→${g.depois}  (posição ${g.pos}, outdeg ${g.outdeg})`);
+  console.log(`Cadeias (companheiro NÃO-inicial): ${cadeias} · gated: ${gated} · imediatas: ${imediatas} · profundidade companheiro: ${prof} · profundidade objetivos: ${profObj}`);
+  console.log(`Sequências (§241, rampa 2/3/4): ${Object.keys(seq).sort().map(n => n + '→' + seq[n]).join(' · ')} (todas ≥1, teto 4).`);
   console.log('Escrito: data/missoes.json');
 }

@@ -93,13 +93,8 @@ const foraDas8 = faixasNaTela.filter(f => !FAIXAS8.includes(f));
 ok(foraDas8.length === 0, `nenhum nome de ranque inventado — só as 8 faixas${foraDas8.length ? ': ' + [...new Set(foraDas8)].join(', ') : ''}`);
 ok(!/Bronze|Prata|Ouro|Platina|Diamante/i.test(txt($('.mlista'))), 'nada de Bronze/Prata/Ouro/Platina/Diamante (o erro da referência)');
 
-// ---- 6. a DIFERENCIAÇÃO (§312) aparece: irmãos com números DIFERENTES ----
-console.log('\n== 6. a diferenciação §312 é visível na tela ==');
-{
-  const card = k => $(`.mcard[data-deus="${k}"] .mreq__val`);
-  const apolo = card('apolo'), ares = card('ares');
-  ok(apolo && ares && /\/12/.test(txt(apolo)) && /\/13/.test(txt(ares)), `apolo (${txt(apolo)}) e ares (${txt(ares)}) mostram volumes DIFERENTES`);
-}
+// ---- 6. (§313) a diferenciação por posição do §312 saiu; a tela da Parte 1 segue mostrando o volume legado.
+//      A leitura por OBJETIVOS entra na Parte 2 (§314). Nada a asseverar aqui na Parte 1.
 
 // ---- 7. ALVO DE TOQUE (§234) + travada NÃO interativa ----
 console.log('\n== 7. toque ≥76px no cartão aberto · travada não abre ==');

@@ -6,6 +6,48 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §313 — PROVAÇÕES NOMEADAS (molde Naruto-Arena): cada Provação vira uma LISTA DE OBJETIVOS. (PARTE 1: dado + gerador.)
+
+O dono trocou o modelo de UM requisito numérico (volume + seguidas) por uma **LISTA DE OBJETIVOS** por Provação, escrita à
+mão: **A tem 2 · S tem 3 · SS tem 4**. O companheiro e o motivo do dono ficam. Tipos (contam SÓ em PvP, como hoje):
+`["s",X]` K seguidas com X · `["v",[..]]` N vitórias com ≥1 da lista (o "ou") · `["j",[a,b]]` N vitórias com a e b juntos ·
+`["c",[a,b]]` K seguidas com a E K seguidas com b (separadas) · `["p"]` N vitórias com qualquer deus do panteão do alvo ·
+`["sp"]` K seguidas com o panteão · `["a",N]` amplitude (cada vitória soma ≤1 panteão novo; cumpre em N panteões).
+**Os NÚMEROS são regra fixa no gerador** (`tools/gerar_missoes.js`), nunca à mão: K = a sequência da faixa (rampa 2/3/4);
+`"v"` 1º da Provação A8/S8/SS14, 2º S5/SS8; `"j"` S5/SS8; `"p"` A8/S6/SS12; `"c"`/`"sp"` usam K; `"a"` carrega o seu N.
+O dado (o mapa `objetivos` para os 91) mora em `data/missoes_requisitos.json`; o gerador resolve os números e emite
+`data/missoes.json` (versão 5, campo `objetivos` por Provação).
+
+**O §312 ficou OBSOLETO.** A diferenciação por CENTRALIDADE+PRECEDÊNCIA e o `+1 por posição` foram REMOVIDOS (com as babás
+deles e o campo `precedencia`): a lista de objetivos já torna cada Provação única por construção — a babá 7 abaixo cobra isso
+diretamente, sem mexer no volume. Os campos legados (`vitoriasPanteao`/`seguidas`/`seguidasAlvo`) ficam no `missoes.json`
+para o servidor ATUAL seguir verde; a Parte 2 (§314) migra o servidor e a tela para ler `objetivos`.
+
+**As 7 BABÁS do gerador (cada uma provada que MORDE em `tests/missoes.test.js`):** (1) nº de objetivos por raridade
+(A2·S3·SS4); (2) nunca nomear o próprio deus (§230); (3) todo nome existe (91 ou 9 iniciais); (4) nenhum nome de faixa
+MAIOR que a do alvo; (5) sem ciclo, os 91 alcançáveis (varredura pelos objetivos), caso Maia resolvido; (6) **PONTE NUNCA
+OBRIGATÓRIA** — um deus de outro panteão só aparece dentro de um `"v"` que tenha ≥1 do panteão do alvo (exceção: alvo Maia);
+(7) nenhuma lista de objetivos igual a outra (normalizada por tipo + nomes + panteão/N). O dado do dono passa nas 7.
+
+**Descoberta (medição, não decisão):** a FAIXA continua atribuída pela cadeia de COMPANHEIRO (profundidade 8) — e isso já
+satisfaz a babá 4 (0 violações), então nada se moveu de faixa (o servidor e seus testes seguem verdes). A profundidade da
+cadeia de OBJETIVOS (s/v/j/c) é **11** (kukulkan/ahpuch, os Maias) — a "caçada" real ficou mais funda que a do companheiro.
+**PARTE 2 (a fazer, só com a liberação do dono):** servidor §314 (1 slot ativo, só a ativa conta) + a tela.
+
+## §315 — RANQUE mais duro: pontos ±20 iguais, e as 8 faixas mais espaçadas. Nenhum literal no código.
+
+O dono endureceu o ranque (`data/ranqueado.json`, versionado, §222): **vitória +20 / derrota −20** (iguais — decisão do dono;
+o piso 0 fica, então perder em Suplicante não fica negativo) e os mínimos das 8 faixas passaram a **Suplicante 0 · Devoto 100
+· Iniciado 250 · Adepto 450 · Sacerdote 700 · Oráculo 1000 · Herói 1350 · Semideus 1750** (antes 0/100/200/300/400/500/600/700).
+**Auditoria de consumidores (a exigência do dono: nenhum literal):** o servidor lê tudo de `RANQ` — `faixaDe` (mins), o crédito
+de partida (`RANQ.pontos.vitoria/derrota/piso`), a temporada (`RANQ.temporada.compressao`) e a fila (`RANQ.fila`); a tela
+(`home.js`) lê `faixaMin`/`faixaNome` do `missoes.json` (que o gerador copia de `RANQ.faixas`) e o ranque do servidor;
+`tests/ranqueado.test.js` já lia tudo de `RANQ`. **Único literal encontrado:** `tests/missoes.test.js` fixava `700` como o
+limiar de Semideus na cascata Maia — trocado por `missoes.DOC.missoes.itzamna.faixaMin` (lê do dado). Fora isso, só regerar
+o `missoes.json` propaga os mins novos.
+
+---
+
 ## §312 — MISSÕES: diferenciar os grupos idênticos (no gerador) + a TELA híbrida. E a lição do desempate honesto.
 
 O dono viu missões "iguais entre deuses". Duas causas, separadas: (A) o DADO gera grupos numericamente idênticos;

@@ -1,5 +1,5 @@
 {
- "_nota": "REQUISITOS DO DONO (§230/§241): vínculo TEMÁTICO de cada missão — panteão exigido + companheiro + motivo — escrito à mão. O gerador (tools/gerar_missoes.js) casa isso com a raridade (volume), a profundidade (faixa) e a rampa de sequência. §312: `precedencia` — a ordem de DESEMPATE dentro de um grupo de tarefa idêntica (mesma tupla: panteão+volume+seguidas+faixa+companheiro+seguidasAlvo). A diferenciação ordena os irmãos por CENTRALIDADE decrescente (outdeg); quando a centralidade EMPATA, a ordem vem DAQUI (precedência do dono, jamais alfabeto/id/ordem-do-arquivo). O 1º da fila fica no volume base; os seguintes ganham +1/+2 vitórias. Cada entrada cita EXATAMENTE os irmãos empatados por centralidade, na ordem desejada, com a razão. O gerador FALHA se um empate não tiver precedência, ou se uma entrada citar deus fora de um empate real (dado velho).",
+ "_nota": "REQUISITOS DO DONO (§230/§241/§313): vínculo TEMÁTICO de cada missão — panteão exigido + companheiro + motivo — escrito à mão. §313: cada Provação virou uma LISTA DE OBJETIVOS (campo `objetivos`, do dono, molde Naruto-Arena): A tem 2, S tem 3, SS tem 4. Tipos (contam só em PvP): [\"s\",X]=K seguidas com X; [\"v\",[..]]=N vitórias com pelo menos um da lista (o \"ou\"); [\"j\",[a,b]]=N vitórias com a e b juntos; [\"c\",[a,b]]=K seguidas com a E K seguidas com b (separadas); [\"p\"]=N vitórias com qualquer deus do panteão do alvo; [\"sp\"]=K seguidas com qualquer deus do panteão; [\"a\",N]=amplitude (cada vitória soma no máx 1 panteão novo; cumpre em N panteões). Os NÚMEROS (K, N) são regra fixa no gerador (tools/gerar_missoes.js): K=sequência da faixa; \"v\" 1º A8/S8/SS14, 2º S5/SS8; \"j\" S5/SS8; \"p\" A8/S6/SS12; \"c\"/\"sp\" usam K; \"a\" carrega seu N. O §312 (precedencia + diferenciação por posição) ficou OBSOLETO e foi removido. O gerador casa objetivos+raridade(volume legado)+profundidade(faixa)+rampa, valida 7 babás e emite data/missoes.json.",
  "missoes": [
   {
    "deus": "cerberus",
@@ -548,56 +548,97 @@
    "motivo": "A serpente emplumada desce do céu de Itzamná."
   }
  ],
- "precedencia": [
-  {
-   "grupo": [
-    "atena",
-    "apolo",
-    "ares"
-   ],
-   "razao": "Atena, filha favorita, nascida da cabeça de Zeus; Ares, o filho que Zeus diz detestar — vem por último."
-  },
-  {
-   "grupo": [
-    "hermes",
-    "demeter"
-   ],
-   "razao": "Hermes, o mensageiro de Zeus, à frente (a Hera já sai na frente pela centralidade)."
-  },
-  {
-   "grupo": [
-    "hercules",
-    "dionisio"
-   ],
-   "razao": "Dionísio foi o último a entrar no Olimpo — vem depois de Hércules."
-  },
-  {
-   "grupo": [
-    "fenrir",
-    "ymir"
-   ],
-   "razao": "Tyr perdeu a mão para o Fenrir — o lobo vem primeiro."
-  },
-  {
-   "grupo": [
-    "mnevis",
-    "nefertem"
-   ],
-   "razao": "Mnévis, o touro sagrado de Rá em Heliópolis, vem primeiro."
-  },
-  {
-   "grupo": [
-    "bennu",
-    "khonshu"
-   ],
-   "razao": "O Bennu é o ba de Rá — vem antes de Khonshu."
-  },
-  {
-   "grupo": [
-    "exu",
-    "xango"
-   ],
-   "razao": "Exu abre os caminhos, saudado primeiro."
-  }
- ]
+ "objetivos": {
+  "cerberus": [["p"], ["sp"]],
+  "medusa": [["s", "atena"], ["p"]],
+  "atena": [["s", "zeus"], ["v", ["zeus", "ganesha"]], ["p"]],
+  "ares": [["s", "zeus"], ["v", ["zeus", "ogum", "tyr"]], ["v", ["atena"]]],
+  "apolo": [["s", "zeus"], ["v", ["zeus", "brigid"]], ["v", ["dionisio"]]],
+  "dionisio": [["s", "zeus"], ["p"]],
+  "hercules": [["s", "zeus"], ["v", ["cerberus"]]],
+  "demeter": [["s", "zeus"], ["v", ["zeus", "dionisio"]], ["p"]],
+  "hera": [["s", "zeus"], ["v", ["hercules"]], ["j", ["zeus", "ares"]]],
+  "hermes": [["s", "zeus"], ["v", ["apolo"]], ["p"]],
+  "poseidon": [["s", "zeus"], ["v", ["zeus", "sobek"]], ["v", ["medusa"]], ["p"]],
+  "aquiles": [["s", "hera"], ["v", ["apolo"]]],
+  "erinias": [["s", "cerberus"], ["v", ["cerberus", "medusa"]]],
+  "kraken": [["s", "poseidon"], ["v", ["poseidon", "medusa"]]],
+  "afrodite": [["s", "ares"], ["v", ["hera", "atena"]], ["v", ["poseidon"]]],
+  "orfeu": [["s", "apolo"], ["v", ["cerberus", "erinias"]]],
+  "perseu": [["s", "atena"], ["v", ["medusa", "hermes"]]],
+  "hades": [["s", "cerberus"], ["v", ["zeus", "poseidon"]], ["j", ["cerberus", "erinias"]], ["v", ["demeter"]]],
+  "exu": [["s", "ogum"], ["a", 3], ["p"]],
+  "xango": [["s", "ogum"], ["v", ["ogum", "zeus"]], ["p"]],
+  "iansa": [["s", "xango"], ["v", ["xango", "ogum"]]],
+  "oxala": [["s", "exu"], ["v", ["ogum", "xango", "iansa"]], ["j", ["exu", "ogum"]], ["p"]],
+  "oxum": [["s", "iansa"], ["v", ["xango"]]],
+  "saci": [["s", "cuca"], ["p"]],
+  "iara": [["s", "cuca"], ["v", ["cuca", "sobek"]], ["p"]],
+  "boto": [["s", "iara"], ["v", ["iara", "cuca"]]],
+  "curupira": [["s", "saci"], ["v", ["cuca"]]],
+  "mulasemcabeca": [["s", "saci"], ["p"]],
+  "boitata": [["s", "curupira"], ["j", ["curupira", "saci"]], ["v", ["cuca", "mulasemcabeca"]]],
+  "piranha": [["s", "boto"], ["v", ["iara"]]],
+  "dagda": [["s", "brigid"], ["v", ["brigid", "ganesha"]], ["p"], ["a", 3]],
+  "lugh": [["s", "dagda"], ["j", ["dagda", "brigid"]], ["a", 4]],
+  "morrigan": [["s", "dagda"], ["v", ["dagda", "tyr"]], ["p"]],
+  "cernunnos": [["s", "morrigan"], ["v", ["brigid", "curupira"]]],
+  "aokuang": [["s", "nezha"], ["v", ["nezha", "sobek"]], ["p"]],
+  "guanyu": [["s", "nezha"], ["v", ["nezha", "tyr"]]],
+  "houyi": [["p"], ["sp"]],
+  "change": [["s", "houyi"], ["p"]],
+  "huangdi": [["s", "guanyu"], ["v", ["guanyu", "nezha", "aokuang"]], ["p"]],
+  "nuwa": [["s", "houyi"], ["v", ["huangdi", "nezha"]], ["j", ["houyi", "change"]], ["p"]],
+  "sunwukong": [["s", "aokuang"], ["v", ["nezha"]], ["j", ["aokuang", "huangdi"]]],
+  "yanwong": [["s", "nuwa"], ["v", ["sunwukong"]]],
+  "anubis": [["s", "sobek"], ["v", ["sobek", "cerberus"]], ["p"]],
+  "babi": [["p"], ["s", "sobek"]],
+  "bastet": [["p"], ["sp"], ["v", ["sobek", "babi"]]],
+  "ammit": [["s", "anubis"], ["v", ["anubis", "sobek"]]],
+  "osiris": [["s", "anubis"], ["j", ["anubis", "ammit"]], ["v", ["sobek"]], ["p"]],
+  "isis": [["s", "osiris"], ["j", ["osiris", "anubis"]], ["v", ["bastet"]]],
+  "horus": [["s", "isis"], ["v", ["osiris"]], ["j", ["isis", "osiris"]]],
+  "khnum": [["s", "isis"], ["v", ["sobek"]]],
+  "ra": [["s", "horus"], ["v", ["horus", "bastet"]], ["j", ["horus", "isis"]], ["p"]],
+  "bennu": [["s", "ra"], ["v", ["osiris"]]],
+  "khonshu": [["s", "ra"], ["v", ["bastet", "change"]]],
+  "mnevis": [["s", "ra"], ["p"]],
+  "nefertem": [["s", "ra"], ["v", ["bastet"]]],
+  "itzamna": [["s", "ra"], ["v", ["horus", "amaterasu"]], ["j", ["ra", "khonshu"]], ["a", 4]],
+  "shiva": [["s", "ganesha"], ["p"], ["v", ["ganesha", "ogum"]], ["sp"]],
+  "vishnu": [["s", "ganesha"], ["j", ["ganesha", "shiva"]], ["v", ["shiva", "ganesha"]], ["p"]],
+  "durga": [["s", "shiva"], ["v", ["vishnu", "shiva"]], ["j", ["shiva", "ganesha"]]],
+  "krishna": [["s", "vishnu"], ["v", ["ganesha"]], ["p"]],
+  "brahma": [["s", "vishnu"], ["j", ["vishnu", "shiva"]], ["v", ["ganesha", "krishna"]], ["p"]],
+  "hanuman": [["s", "krishna"], ["v", ["vishnu", "sunwukong"]]],
+  "kali": [["s", "durga"], ["v", ["shiva"]]],
+  "kitsune": [["p"], ["s", "fujin"]],
+  "raijin": [["s", "fujin"], ["v", ["fujin", "zeus"]], ["p"]],
+  "susanoo": [["s", "fujin"], ["v", ["fujin", "poseidon"]], ["j", ["fujin", "raijin"]]],
+  "inari": [["s", "kitsune"], ["v", ["fujin", "demeter"]]],
+  "oni": [["s", "raijin"], ["v", ["raijin", "fujin"]]],
+  "tanuki": [["s", "kitsune"], ["v", ["kitsune", "exu"]]],
+  "yamatotakeru": [["s", "susanoo"], ["p"]],
+  "amaterasu": [["s", "susanoo"], ["v", ["fujin", "raijin", "susanoo"]], ["j", ["inari", "kitsune"]], ["p"]],
+  "izanagi": [["s", "amaterasu"], ["j", ["amaterasu", "susanoo"]], ["v", ["susanoo", "tsukuyomi"]], ["p"]],
+  "shutendoji": [["s", "oni"], ["v", ["yamatotakeru"]]],
+  "tsukuyomi": [["s", "amaterasu"], ["v", ["amaterasu", "change"]], ["v", ["inari"]]],
+  "izanami": [["s", "izanagi"], ["v", ["amaterasu", "hel"]], ["j", ["izanagi", "amaterasu"]]],
+  "kagutsuchi": [["s", "izanami"], ["v", ["izanagi"]]],
+  "chaac": [["s", "itzamna"], ["v", ["itzamna", "raijin", "xango"]]],
+  "kukulkan": [["s", "itzamna"], ["v", ["chaac"]], ["j", ["itzamna", "ra"]]],
+  "ahpuch": [["s", "chaac"], ["v", ["itzamna", "hades", "hel"]]],
+  "bragi": [["p"], ["sp"]],
+  "fenrir": [["s", "tyr"], ["p"]],
+  "ymir": [["sp"], ["v", ["tyr"]]],
+  "freyja": [["s", "tyr"], ["v", ["bragi", "heimdall"]], ["p"]],
+  "heimdall": [["p"], ["sp"], ["v", ["tyr", "bragi"]]],
+  "thor": [["s", "tyr"], ["v", ["ymir"]], ["j", ["tyr", "freyja"]], ["p"]],
+  "baldur": [["s", "freyja"], ["v", ["bragi"]]],
+  "jormungandr": [["s", "thor"], ["v", ["fenrir"]]],
+  "mimir": [["s", "heimdall"], ["v", ["ymir"]]],
+  "loki": [["s", "thor"], ["j", ["fenrir", "jormungandr"]], ["v", ["baldur"]]],
+  "hel": [["s", "loki"], ["v", ["baldur"]]],
+  "odin": [["s", "mimir"], ["c", ["thor", "baldur"]], ["v", ["fenrir"]], ["p"]]
+ }
 }

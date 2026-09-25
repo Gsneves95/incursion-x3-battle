@@ -10,8 +10,7 @@ const salas = require('../server/salas.js');
 const missoes = require('../server/missoes.js');
 const gerador = require('../tools/gerar_missoes.js');
 const reqDoc = require('../data/missoes_requisitos.json');
-const req = Array.isArray(reqDoc) ? reqDoc : reqDoc.missoes;   // §312: arquivo virou {missoes, precedencia}
-const precedDono = Array.isArray(reqDoc) ? [] : (reqDoc.precedencia || []);
+const req = Array.isArray(reqDoc) ? reqDoc : reqDoc.missoes;   // §313: arquivo é {missoes, objetivos}
 const E = require('../src/engine.js');
 const { iaProximaAcao } = require('../src/ia.js');
 
@@ -93,48 +92,46 @@ console.log('\n== 1. a árvore: sem ciclo · alcançáveis · rampa em ordem · 
 }
 
 // ---------------------------------------------------------------------------
-// 1b. §312 — DIFERENCIAÇÃO: nenhuma tarefa idêntica; o 1º de cada grupo no volume base; as babás MORDEM.
+// 1b. §313 — OBJETIVOS: cada Provação é uma LISTA (A2·S3·SS4) com os números fixos; as 7 babás MORDEM.
 // ---------------------------------------------------------------------------
-console.log('\n== 1b. §312 diferenciação: sem tarefa idêntica · 1º no base · precedência do dono · babás que mordem ==');
+console.log('\n== 1b. §313 objetivos: contagem por raridade · números fixos · profundidade 11 · as 7 babás mordem ==');
 {
   const doc = gerador.gerar();
-  // (i) NENHUM par com a tupla de tarefa idêntica no doc gerado (a razão do §312)
-  const porTup = {};
-  for (const k in doc.missoes) { const t = gerador._tupla(doc.missoes[k]); (porTup[t] = porTup[t] || []).push(k); }
-  const iguais = Object.values(porTup).filter(v => v.length > 1);
-  eq(iguais.length, 0, `NENHUMA tarefa idêntica entre as 91 (tupla completa) — antes eram 12 grupos${iguais.length ? ': ' + iguais.map(v => v.join('/')).join(' · ') : ''}`);
-  // (ii) o 1º de cada grupo (a chave, mais central) fica EXATAMENTE no volume base — "o piso não muda"
-  ok(doc.missoes.cerberus.vitoriasPanteao === doc.volumes.A.panteao, `cerberus (chave, outdeg 2) no base A ${doc.volumes.A.panteao}`);
-  ok(doc.missoes.atena.vitoriasPanteao === doc.volumes.S.panteao && doc.missoes.apolo.vitoriasPanteao === doc.volumes.S.panteao + 1 && doc.missoes.ares.vitoriasPanteao === doc.volumes.S.panteao + 2,
-    `precedência do dono: atena ${doc.missoes.atena.vitoriasPanteao} → apolo ${doc.missoes.apolo.vitoriasPanteao} → ares ${doc.missoes.ares.vitoriasPanteao} (não alfabético)`);
-  ok(doc.missoes.vishnu.vitoriasPanteao === doc.volumes.SS.panteao && doc.missoes.shiva.vitoriasPanteao === doc.volumes.SS.panteao + 1,
-    `centralidade separa vishnu/shiva sem precedência: vishnu ${doc.missoes.vishnu.vitoriasPanteao} (base) < shiva ${doc.missoes.shiva.vitoriasPanteao}`);
+  const M = doc.missoes;
+  const obj = (k) => M[k].objetivos;
+  const de = (k, tipo) => obj(k).filter(o => o.tipo === tipo);
 
-  // (iii) BABÁ MORDE — grupo idêntico que a centralidade não separa E sem precedência → o gerador acusa.
-  const M2 = {
-    a: { deus: 'a', nome: 'A', raridade: 'A', panteao: 'X', companheiro: null, faixa: 'suplicante', vitoriasPanteao: 8, seguidas: 2, seguidasAlvo: { tipo: 'panteao', chave: 'X' } },
-    b: { deus: 'b', nome: 'B', raridade: 'A', panteao: 'X', companheiro: null, faixa: 'suplicante', vitoriasPanteao: 8, seguidas: 2, seguidasAlvo: { tipo: 'panteao', chave: 'X' } },
-  };
-  const semPrec = gerador.diferenciar(M2, []);
-  ok(semPrec.erros.some(e => /sem desempate/i.test(e)), 'babá MORDE: empate de centralidade sem precedência → erro "sem desempate"');
-  // com precedência CERTA, resolve sem erro
-  const comPrec = gerador.diferenciar(M2, [{ grupo: ['a', 'b'], razao: 't' }]);
-  eq(comPrec.erros.length, 0, 'com a precedência do dono, o mesmo grupo resolve sem erro');
+  // (i) CONTAGEM por raridade — A 2 · S 3 · SS 4
+  let contagemErr = 0;
+  for (const k in M) if (obj(k).length !== doc.objetivosPorRaridade[M[k].raridade]) contagemErr++;
+  eq(contagemErr, 0, 'toda Provação tem o nº de objetivos da sua raridade (A 2 · S 3 · SS 4)');
 
-  // (iv) BABÁ MORDE — precedência VELHA/fora (cita grupo que já não colide) → o gerador acusa.
-  const velha = gerador.diferenciar(M2, [{ grupo: ['a', 'b'], razao: 't' }, { grupo: ['zeus', 'hera'], razao: 'velha' }]);
-  ok(velha.erros.some(e => /inútil\/velha/i.test(e)), 'babá MORDE: precedência que não casa empate real → erro "inútil/velha"');
+  // (ii) NÚMEROS FIXOS (regra do gerador): K pela faixa; "v" 1º/2º; "j"; "p"; "sp"/"c" usam K; "a" carrega N.
+  eq(de('poseidon', 'v')[0].n, doc.numerosObjetivos.v1.SS, 'poseidon (SS): 1º "v" vale 14 (v1.SS)');
+  eq(de('poseidon', 'v')[1].n, doc.numerosObjetivos.v2.SS, 'poseidon (SS): 2º "v" vale 8 (v2.SS)');
+  eq(de('poseidon', 'p')[0].n, doc.numerosObjetivos.p.SS, 'poseidon (SS): "p" vale 12 (p.SS)');
+  eq(de('ares', 'v')[0].n, doc.numerosObjetivos.v1.S, 'ares (S): 1º "v" vale 8 (v1.S)');
+  eq(de('ares', 'v')[1].n, doc.numerosObjetivos.v2.S, 'ares (S): 2º "v" vale 5 (v2.S)');
+  eq(de('hera', 'j')[0].n, doc.numerosObjetivos.j.S, 'hera (S): "j" vale 5 (j.S)');
+  eq(de('saci', 'p')[0].n, doc.numerosObjetivos.p.A, 'saci (A): "p" vale 8 (p.A)');
+  eq(de('cerberus', 'sp')[0].k, doc.seguidasPorTier[M.cerberus.faixaIndice], 'cerberus: "sp" usa o K da faixa (Suplicante 2)');
+  eq(de('cerberus', 'p')[0].panteao, 'Grega', 'cerberus: "p" mira o panteão EXIGIDO (Grega)');
+  eq(de('itzamna', 's')[0].k, doc.seguidasPorTier[M.itzamna.faixaIndice], 'itzamná: "s" usa o K da faixa (Semideus 4)');
+  eq(de('itzamna', 'a')[0].n, 4, 'itzamná: "a" carrega o seu N do dono (4)');
+  eq(de('odin', 'c')[0].k, doc.seguidasPorTier[M.odin.faixaIndice], 'odin: "c" usa o K da faixa (Oráculo 3)');
 
-  // (v) BABÁ MORDE — tupla idêntica injetada no doc → validar acusa (a guarda final do §312)
-  const doc2 = gerador.gerar();
-  doc2.missoes.apolo.vitoriasPanteao = doc2.missoes.atena.vitoriasPanteao;   // recria a colisão atena/apolo
-  const v2 = gerador.validar(doc2);
-  ok(!v2.ok && v2.erros.some(e => /tarefas idênticas/i.test(e)), 'babá MORDE: duplicar uma tupla → validar falha ("tarefas idênticas")');
+  // (iii) MEDIÇÃO — a profundidade da cadeia de OBJETIVOS é 11 (a caçada ficou mais funda que a do companheiro, 8)
+  eq(doc.profundidadeObjetivosMax, 11, 'profundidade da cadeia de objetivos = 11 (kukulkan/ahpuch); a de companheiro segue 8');
 
-  // (vi) a precedência do dono cita SÓ deuses que existem e colidem (dado consistente com o gerado)
-  const nomesGerados = new Set(Object.keys(doc.missoes));
-  const foraDoJogo = precedDono.flatMap(p => p.grupo).filter(k => !nomesGerados.has(k));
-  eq(foraDoJogo.length, 0, `a precedência do dono só cita deuses reais${foraDoJogo.length ? ': ' + foraDoJogo.join(', ') : ''}`);
+  // (iv) AS 7 BABÁS MORDEM — cada uma pega um dado quebrado (prova que a guarda não é decorativa).
+  const b = (mut) => { const d = gerador.gerar(); mut(d.missoes); return gerador.validarObjetivos(d).erros; };
+  ok(b(m => { m.itzamna.objetivos.pop(); }).some(e => /b1/.test(e)), 'babá 1 MORDE: nº de objetivos errado p/ a raridade');
+  ok(b(m => { m.medusa.objetivos[0].alvo = 'medusa'; }).some(e => /b2/.test(e)), 'babá 2 MORDE: a Provação nomeia o próprio deus');
+  ok(b(m => { m.medusa.objetivos[0].alvo = 'inexistente_xyz'; }).some(e => /b3/.test(e)), 'babá 3 MORDE: nome que não existe');
+  ok(b(m => { m.cerberus.objetivos[0] = { tipo: 's', alvo: 'itzamna', k: 2 }; }).some(e => /b4/.test(e)), 'babá 4 MORDE: nomeia deus de faixa MAIOR que a do alvo');
+  ok(b(m => { m.aquiles.objetivos[0] = { tipo: 's', alvo: 'kraken', k: 2 }; m.kraken.objetivos[0] = { tipo: 's', alvo: 'aquiles', k: 2 }; }).some(e => /b5/.test(e)), 'babá 5 MORDE: dependência em ciclo torna inalcançável');
+  ok(b(m => { m.cerberus.objetivos[0] = { tipo: 'v', lista: ['ganesha'], n: 8 }; }).some(e => /b6/.test(e)), 'babá 6 MORDE: "v" só com deus de outro panteão (ponte obrigatória)');
+  ok(b(m => { m.apolo.objetivos = JSON.parse(JSON.stringify(m.atena.objetivos)); }).some(e => /b7/.test(e)), 'babá 7 MORDE: duas Provações com a MESMA lista de objetivos');
 }
 
 // ---------------------------------------------------------------------------
@@ -220,7 +217,8 @@ console.log('\n== 5. contador desde o desbloqueio (§241 item 4): pré-farm não
 console.log('\n== 6. cascata Maia (Semideus) EM ESTÁGIOS: o contador-desde-o-desbloqueio força jogo sequencial ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const c = novaConta(['sobek', 'zeus', 'ogum', 'ra'], 700);   // POSSUI ra (gacha) + ranque Semideus
+  const semideusMin = missoes.DOC.missoes.itzamna.faixaMin;    // §315: LÊ do dado (Semideus), nenhum literal
+  const c = novaConta(['sobek', 'zeus', 'ogum', 'ra'], semideusMin);   // POSSUI ra (gacha) + ranque Semideus
   const id = c.id;
   const L = () => contas._garantirMissoes(contas._contaPorId(id));
   const D = () => contas._contaPorId(id).perfil.deuses;

@@ -2,6 +2,34 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ PROVAÇÕES §313 (PARTE 1) + RANQUE §315 — cada Provação vira LISTA DE OBJETIVOS; ranque mais duro. §312 removido.
+
+**§313 (Parte 1 — dado + gerador; sem servidor, sem tela):** o dono trocou o requisito único (volume+seguidas) por uma
+**LISTA DE OBJETIVOS** por Provação — **A 2 · S 3 · SS 4** — escrita à mão em `data/missoes_requisitos.json` (campo
+`objetivos`; o `precedencia` do §312 saiu). Tipos (só PvP): `s`=K seguidas com X · `v`=N vitórias com ≥1 da lista ("ou") ·
+`j`=N vitórias com a e b juntos · `c`=K seguidas com a E com b (separadas) · `p`=N vitórias com o panteão · `sp`=K seguidas
+com o panteão · `a`=amplitude (≤1 panteão novo/vitória; cumpre em N panteões). **Números fixos no gerador** (nunca à mão):
+K=sequência da faixa (2/3/4); `v` 1º A8/S8/SS14, 2º S5/SS8; `j` S5/SS8; `p` A8/S6/SS12; `c`/`sp` usam K; `a` carrega N.
+`tools/gerar_missoes.js` resolve e emite `data/missoes.json` (v5, campo `objetivos`). **§312 OBSOLETO e REMOVIDO**
+(diferenciação por centralidade+precedência + `+1 por posição` + babás): a lista de objetivos já torna cada Provação única
+(babá 7). Campos legados (`vitoriasPanteao`/`seguidas`) mantidos p/ o servidor ATUAL seguir verde até a Parte 2 migrar.
+**7 babás no gerador, cada uma provada que MORDE** (`tests/missoes.test.js`): (1) nº por raridade; (2) não nomeia a si;
+(3) todo nome existe; (4) nenhum nome de faixa MAIOR que a do alvo; (5) sem ciclo/91 alcançáveis/Maia; (6) PONTE NUNCA
+OBRIGATÓRIA (deus de outro panteão só em `v` com ≥1 do panteão do alvo; exceção Maia); (7) nenhuma lista igual a outra.
+Dado do dono passa nas 7. **Medições (só p/ o dono saber, não é portão):** faixa segue pela cadeia de COMPANHEIRO (prof. 8;
+já satisfaz a babá 4 → nada mudou de faixa, servidor verde); prof. da cadeia de OBJETIVOS = **11** (kukulkan/ahpuch).
+Top-10 mais nomeados (Provações distintas): **zeus 12 · sobek 9 · tyr 8** · ganesha 7 · ogum 6 · ra 6 · fujin 6 · cerberus 5
+· nezha 5 · cuca 5. Tempo (1 slot, só a ativa conta, serial): grind dos objetivos ~1400–3200 partidas p/ os 91 (otim.–conserv.),
+domina a subida de ranque (Semideus 875 a 55% / 438 a 60%). **PARTE 2 (a fazer, só com a liberação do dono):** servidor §314
+(1 slot ativo) + tela.
+
+**§315 — ranque mais duro (`data/ranqueado.json`):** vitória **+20** / derrota **−20** (iguais; piso 0 fica); mins das 8
+faixas → **0/100/250/450/700/1000/1350/1750** (antes .../200/300/400/500/600/700). Auditoria: nenhum literal — servidor,
+tela e `ranqueado.test.js` já leem de `RANQ`/`missoes.json`; só `missoes.test.js` fixava `700` (Semideus) → trocado por
+`missoes.DOC.missoes.itzamna.faixaMin`. **Arquivos:** `data/ranqueado.json`, `data/missoes_requisitos.json`,
+`tools/gerar_missoes.js`, `data/missoes.json` (v5), `tests/missoes.test.js`, `tests/missoes_tela.test.js`. Ver DECISOES
+§313/§315. Suíte + build verdes.
+
 ## ★ MISSÕES §312 — diferenciar os grupos idênticos (gerador) + tela HÍBRIDA. Lição: desempate honesto ≠ alfabeto disfarçado.
 
 O dono viu missões "iguais". Duas causas separadas: o DADO gerava grupos idênticos; a TELA escondia o que distingue.

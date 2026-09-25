@@ -4,17 +4,17 @@
   "faixas": [
     { "chave": "suplicante", "nome": "Suplicante", "min": 0 },
     { "chave": "devoto",     "nome": "Devoto",     "min": 100 },
-    { "chave": "iniciado",   "nome": "Iniciado",   "min": 200 },
-    { "chave": "adepto",     "nome": "Adepto",     "min": 300 },
-    { "chave": "sacerdote",  "nome": "Sacerdote",  "min": 400 },
-    { "chave": "oraculo",    "nome": "Oráculo",    "min": 500 },
-    { "chave": "heroi",      "nome": "Herói",      "min": 600 },
-    { "chave": "semideus",   "nome": "Semideus",   "min": 700 }
+    { "chave": "iniciado",   "nome": "Iniciado",   "min": 250 },
+    { "chave": "adepto",     "nome": "Adepto",     "min": 450 },
+    { "chave": "sacerdote",  "nome": "Sacerdote",  "min": 700 },
+    { "chave": "oraculo",    "nome": "Oráculo",    "min": 1000 },
+    { "chave": "heroi",      "nome": "Herói",      "min": 1350 },
+    { "chave": "semideus",   "nome": "Semideus",   "min": 1750 }
   ],
 
   "pontos": {
-    "vitoria": 25,
-    "derrota": -18,
+    "vitoria": 20,
+    "derrota": -20,
     "_abandono": "o abandono NÃO tem valor próprio: é uma DERROTA (§223, 3 turnos ociosos). Aplica exatamente `derrota` — assim abandonar nunca custa menos que perder jogando, e perde a chance de virar o jogo.",
     "piso": 0,
     "_piso": "os pontos nunca descem abaixo do piso (uma derrota em Suplicante 0 não fica negativa)."

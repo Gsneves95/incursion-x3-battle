@@ -1,6 +1,6 @@
 {
- "versao": 4,
- "_nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume cortado · §312 diferenciação): VOLUME por panteão (raridade × FATOR_VOLUME, piso) + SEQUÊNCIA pela FAIXA (rampa 2/3/4, teto 4) + PORTÃO DE RANQUE (8 faixas). §312: grupos de TAREFA IDÊNTICA (mesma tupla) recebem +0/+1/+2 vitórias por posição — ordem por CENTRALIDADE (outdeg) decrescente, empate residual pela PRECEDÊNCIA do dono (missoes_requisitos.json). O 1º da fila fica no volume base. Vínculo temático (companheiro/motivo/precedência) do dono.",
+ "versao": 5,
+ "_nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume · §313 objetivos): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). Campos legados (vitoriasPanteao/seguidas) mantidos p/ o servidor atual até a Parte 2 (§314) migrar. Vínculo temático (companheiro/motivo/objetivos) do dono.",
  "volumeFator": 0.55,
  "volumePiso": 4,
  "volumes": {
@@ -34,32 +34,32 @@
   {
    "chave": "iniciado",
    "nome": "Iniciado",
-   "min": 200
+   "min": 250
   },
   {
    "chave": "adepto",
    "nome": "Adepto",
-   "min": 300
+   "min": 450
   },
   {
    "chave": "sacerdote",
    "nome": "Sacerdote",
-   "min": 400
+   "min": 700
   },
   {
    "chave": "oraculo",
    "nome": "Oráculo",
-   "min": 500
+   "min": 1000
   },
   {
    "chave": "heroi",
    "nome": "Herói",
-   "min": 600
+   "min": 1350
   },
   {
    "chave": "semideus",
    "nome": "Semideus",
-   "min": 700
+   "min": 1750
   }
  ],
  "distribuicao": [
@@ -78,37 +78,37 @@
   {
    "chave": "iniciado",
    "nome": "Iniciado",
-   "min": 200,
+   "min": 250,
    "quantas": 13
   },
   {
    "chave": "adepto",
    "nome": "Adepto",
-   "min": 300,
+   "min": 450,
    "quantas": 12
   },
   {
    "chave": "sacerdote",
    "nome": "Sacerdote",
-   "min": 400,
+   "min": 700,
    "quantas": 11
   },
   {
    "chave": "oraculo",
    "nome": "Oráculo",
-   "min": 500,
+   "min": 1000,
    "quantas": 9
   },
   {
    "chave": "heroi",
    "nome": "Herói",
-   "min": 600,
+   "min": 1350,
    "quantas": 7
   },
   {
    "chave": "semideus",
    "nome": "Semideus",
-   "min": 700,
+   "min": 1750,
    "quantas": 6
   }
  ],
@@ -122,6 +122,34 @@
   4,
   4
  ],
+ "objetivosPorRaridade": {
+  "A": 2,
+  "S": 3,
+  "SS": 4
+ },
+ "numerosObjetivos": {
+  "v1": {
+   "A": 8,
+   "S": 8,
+   "SS": 14
+  },
+  "v2": {
+   "A": 5,
+   "S": 5,
+   "SS": 8
+  },
+  "j": {
+   "A": 5,
+   "S": 5,
+   "SS": 8
+  },
+  "p": {
+   "A": 8,
+   "S": 6,
+   "SS": 12
+  }
+ },
+ "profundidadeObjetivosMax": 11,
  "iniciais": [
   "zeus",
   "ogum",
@@ -248,6 +276,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -255,6 +284,18 @@
     "chave": "Grega"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 8
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Grega",
+     "k": 2
+    }
+   ],
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -274,13 +315,26 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "panteao",
     "chave": "Grega"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "atena",
+     "k": 2
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 8
+    }
+   ],
    "familia": "contador",
    "feito": {
     "metrica": "contadoresGanhos",
@@ -300,6 +354,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -307,6 +362,28 @@
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "hercules"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "zeus",
+      "ares"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -326,6 +403,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -333,6 +411,26 @@
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "ganesha"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 6
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -352,13 +450,37 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 13,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "ogum",
+      "tyr"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "atena"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -378,13 +500,36 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 12,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "brigid"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "dionisio"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -404,13 +549,33 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 12,
+   "profundidadeObjetivos": 3,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "apolo"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 6
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -430,13 +595,34 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 13,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "dionisio"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 6
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -456,13 +642,26 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 1,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -480,8 +679,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -489,6 +689,28 @@
     "chave": "ares"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ares",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "hera",
+      "atena"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "poseidon"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -506,8 +728,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -515,6 +738,21 @@
     "chave": "atena"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "atena",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "medusa",
+      "hermes"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -532,8 +770,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -541,6 +780,21 @@
     "chave": "apolo"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "apolo",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cerberus",
+      "erinias"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -558,8 +812,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -567,6 +822,21 @@
     "chave": "cerberus"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "cerberus",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cerberus",
+      "medusa"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -586,6 +856,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -593,6 +864,20 @@
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cerberus"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -610,8 +895,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -619,6 +905,20 @@
     "chave": "hera"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "hera",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "apolo"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -636,8 +936,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -645,6 +946,36 @@
     "chave": "cerberus"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "cerberus",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "poseidon"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "cerberus",
+      "erinias"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "demeter"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -664,6 +995,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -671,6 +1003,33 @@
     "chave": "zeus"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "zeus",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "zeus",
+      "sobek"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "medusa"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Grega",
+     "n": 12
+    }
+   ],
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -688,8 +1047,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -697,6 +1057,21 @@
     "chave": "poseidon"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "poseidon",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "poseidon",
+      "medusa"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -716,6 +1091,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -723,6 +1099,26 @@
     "chave": "Nórdica"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 6
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Nórdica",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "tyr",
+      "bragi"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -742,6 +1138,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -749,6 +1146,18 @@
     "chave": "Nórdica"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 8
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Nórdica",
+     "k": 2
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -768,6 +1177,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -775,6 +1185,33 @@
     "chave": "tyr"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "tyr",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ymir"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "tyr",
+      "freyja"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 12
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -792,8 +1229,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 6,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -801,6 +1239,28 @@
     "chave": "thor"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "thor",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "fenrir",
+      "jormungandr"
+     ],
+     "n": 5
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "baldur"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -820,6 +1280,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -827,6 +1288,26 @@
     "chave": "tyr"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "tyr",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "bragi",
+      "heimdall"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 6
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -844,8 +1325,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -853,6 +1335,20 @@
     "chave": "freyja"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "freyja",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "bragi"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -870,8 +1366,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -879,6 +1376,20 @@
     "chave": "heimdall"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "heimdall",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ymir"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -896,8 +1407,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 3,
+   "profundidadeObjetivos": 7,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -905,6 +1417,20 @@
     "chave": "loki"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "loki",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "baldur"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -924,6 +1450,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -931,6 +1458,18 @@
     "chave": "tyr"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "tyr",
+     "k": 2
+    },
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 8
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -948,8 +1487,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 5,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -957,6 +1497,20 @@
     "chave": "thor"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "thor",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fenrir"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -976,13 +1530,28 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 1,
+   "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "tyr"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "sp",
+     "panteao": "Nórdica",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "tyr"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1000,8 +1569,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 5,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1009,6 +1579,33 @@
     "chave": "mimir"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "mimir",
+     "k": 3
+    },
+    {
+     "tipo": "c",
+     "lista": [
+      "thor",
+      "baldur"
+     ],
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fenrir"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Nórdica",
+     "n": 12
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -1028,6 +1625,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1035,6 +1633,26 @@
     "chave": "Egípcia"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 6
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Egípcia",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "sobek",
+      "babi"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -1054,6 +1672,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1061,6 +1680,18 @@
     "chave": "Egípcia"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 8
+    },
+    {
+     "tipo": "s",
+     "alvo": "sobek",
+     "k": 2
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1080,6 +1711,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1087,6 +1719,26 @@
     "chave": "sobek"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "sobek",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "sobek",
+      "cerberus"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 6
+    }
+   ],
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -1104,8 +1756,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1113,6 +1766,21 @@
     "chave": "anubis"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "anubis",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "anubis",
+      "sobek"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -1130,8 +1798,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1139,6 +1808,33 @@
     "chave": "anubis"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "anubis",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "anubis",
+      "ammit"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "sobek"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 12
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -1156,8 +1852,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 5,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1165,6 +1862,28 @@
     "chave": "osiris"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "osiris",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "osiris",
+      "anubis"
+     ],
+     "n": 5
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "bastet"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -1182,8 +1901,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 4,
+   "profundidadeObjetivos": 6,
    "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1191,6 +1911,28 @@
     "chave": "isis"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "isis",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "osiris"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "isis",
+      "osiris"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -1208,8 +1950,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 5,
+   "profundidadeObjetivos": 7,
    "vitoriasPanteao": 22,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1217,6 +1960,34 @@
     "chave": "horus"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "horus",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "horus",
+      "bastet"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "horus",
+      "isis"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 12
+    }
+   ],
    "familia": "contador",
    "feito": {
     "metrica": "contadoresGanhos",
@@ -1234,8 +2005,9 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 6,
+   "profundidadeObjetivos": 8,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1243,6 +2015,18 @@
     "chave": "ra"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ra",
+     "k": 4
+    },
+    {
+     "tipo": "p",
+     "panteao": "Egípcia",
+     "n": 8
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1260,8 +2044,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 4,
+   "profundidadeObjetivos": 6,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1269,6 +2054,20 @@
     "chave": "isis"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "isis",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "sobek"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -1286,15 +2085,31 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 6,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 8,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "ra"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ra",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "bastet",
+      "change"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1312,8 +2127,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 6,
+   "profundidadeObjetivos": 8,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1321,6 +2137,20 @@
     "chave": "ra"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ra",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "osiris"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1338,15 +2168,30 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 6,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 8,
+   "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "ra"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ra",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "bastet"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1366,13 +2211,34 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 12,
+   "profundidadeObjetivos": 1,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "fujin"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "fujin",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fujin",
+      "zeus"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Japonesa",
+     "n": 6
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1392,6 +2258,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1399,6 +2266,18 @@
     "chave": "Japonesa"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Japonesa",
+     "n": 8
+    },
+    {
+     "tipo": "s",
+     "alvo": "fujin",
+     "k": 2
+    }
+   ],
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -1416,8 +2295,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1425,6 +2305,21 @@
     "chave": "kitsune"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "kitsune",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "kitsune",
+      "exu"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -1442,8 +2337,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1451,6 +2347,21 @@
     "chave": "kitsune"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "kitsune",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fujin",
+      "demeter"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1470,6 +2381,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1477,6 +2389,29 @@
     "chave": "fujin"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "fujin",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fujin",
+      "poseidon"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "fujin",
+      "raijin"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -1494,8 +2429,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 5,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1503,6 +2439,35 @@
     "chave": "susanoo"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "susanoo",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "fujin",
+      "raijin",
+      "susanoo"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "inari",
+      "kitsune"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Japonesa",
+     "n": 12
+    }
+   ],
    "familia": "campo",
    "feito": {
     "metrica": "turnosCampo",
@@ -1520,8 +2485,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 6,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1529,6 +2495,28 @@
     "chave": "amaterasu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "amaterasu",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "amaterasu",
+      "change"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "inari"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "campo",
    "feito": {
     "metrica": "turnosCampo",
@@ -1546,8 +2534,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 7,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1555,6 +2544,34 @@
     "chave": "amaterasu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "amaterasu",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "amaterasu",
+      "susanoo"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "susanoo",
+      "tsukuyomi"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Japonesa",
+     "n": 12
+    }
+   ],
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1572,8 +2589,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 4,
+   "profundidadeObjetivos": 8,
    "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1581,6 +2599,29 @@
     "chave": "izanagi"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "izanagi",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "amaterasu",
+      "hel"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "izanagi",
+      "amaterasu"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -1598,8 +2639,9 @@
    "faixa": "heroi",
    "faixaNome": "Herói",
    "faixaIndice": 6,
-   "faixaMin": 600,
+   "faixaMin": 1350,
    "profundidade": 5,
+   "profundidadeObjetivos": 9,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -1607,6 +2649,20 @@
     "chave": "izanami"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "izanami",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "izanagi"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -1624,8 +2680,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1633,6 +2690,21 @@
     "chave": "raijin"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "raijin",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "raijin",
+      "fujin"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1650,8 +2722,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 6,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1659,6 +2732,20 @@
     "chave": "oni"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "oni",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "yamatotakeru"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -1676,8 +2763,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 5,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1685,6 +2773,18 @@
     "chave": "susanoo"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "susanoo",
+     "k": 3
+    },
+    {
+     "tipo": "p",
+     "panteao": "Japonesa",
+     "n": 8
+    }
+   ],
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -1704,6 +2804,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1711,6 +2812,26 @@
     "chave": "nezha"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "nezha",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "nezha",
+      "sobek"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Chinesa",
+     "n": 6
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1730,6 +2851,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1737,6 +2859,18 @@
     "chave": "Chinesa"
    },
    "seguidasCompanheiro": 0,
+   "objetivos": [
+    {
+     "tipo": "p",
+     "panteao": "Chinesa",
+     "n": 8
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Chinesa",
+     "k": 2
+    }
+   ],
    "familia": "campo",
    "feito": {
     "metrica": "turnosCampo",
@@ -1754,8 +2888,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1763,6 +2898,18 @@
     "chave": "houyi"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "houyi",
+     "k": 3
+    },
+    {
+     "tipo": "p",
+     "panteao": "Chinesa",
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -1780,8 +2927,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1789,6 +2937,28 @@
     "chave": "aokuang"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "aokuang",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "nezha"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "aokuang",
+      "huangdi"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -1808,6 +2978,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1815,6 +2986,21 @@
     "chave": "nezha"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "nezha",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "nezha",
+      "tyr"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -1832,8 +3018,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1841,6 +3028,34 @@
     "chave": "houyi"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "houyi",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "huangdi",
+      "nezha"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "houyi",
+      "change"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Chinesa",
+     "n": 12
+    }
+   ],
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -1858,8 +3073,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1867,6 +3083,20 @@
     "chave": "nuwa"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "nuwa",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "sunwukong"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -1884,8 +3114,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1893,6 +3124,27 @@
     "chave": "guanyu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "guanyu",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "guanyu",
+      "nezha",
+      "aokuang"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Chinesa",
+     "n": 6
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -1912,13 +3164,39 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 23,
+   "profundidadeObjetivos": 1,
+   "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "ganesha"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ganesha",
+     "k": 2
+    },
+    {
+     "tipo": "p",
+     "panteao": "Hindu",
+     "n": 12
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ganesha",
+      "ogum"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "sp",
+     "panteao": "Hindu",
+     "k": 2
+    }
+   ],
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -1936,8 +3214,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1945,6 +3224,29 @@
     "chave": "shiva"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "shiva",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "vishnu",
+      "shiva"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "shiva",
+      "ganesha"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -1962,8 +3264,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 3,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -1971,6 +3274,20 @@
     "chave": "durga"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "durga",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "shiva"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -1990,6 +3307,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -1997,6 +3315,34 @@
     "chave": "ganesha"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ganesha",
+     "k": 2
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "ganesha",
+      "shiva"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "shiva",
+      "ganesha"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Hindu",
+     "n": 12
+    }
+   ],
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -2014,8 +3360,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2023,6 +3370,25 @@
     "chave": "vishnu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "vishnu",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ganesha"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Hindu",
+     "n": 6
+    }
+   ],
    "familia": "dano",
    "feito": {
     "metrica": "danoDireto",
@@ -2040,8 +3406,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 3,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2049,6 +3416,21 @@
     "chave": "krishna"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "krishna",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "vishnu",
+      "sunwukong"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -2066,8 +3448,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 4,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2075,6 +3458,34 @@
     "chave": "vishnu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "vishnu",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "vishnu",
+      "shiva"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ganesha",
+      "krishna"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Hindu",
+     "n": 12
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -2094,6 +3505,7 @@
    "faixaIndice": 0,
    "faixaMin": 0,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 8,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -2101,6 +3513,18 @@
     "chave": "cuca"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "cuca",
+     "k": 2
+    },
+    {
+     "tipo": "p",
+     "panteao": "Brasileira",
+     "n": 8
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -2118,8 +3542,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2127,6 +3552,20 @@
     "chave": "saci"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "saci",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cuca"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "intercepta",
    "feito": {
     "metrica": "interceptacoes",
@@ -2144,8 +3583,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2153,6 +3593,29 @@
     "chave": "curupira"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "curupira",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "curupira",
+      "saci"
+     ],
+     "n": 5
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cuca",
+      "mulasemcabeca"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
@@ -2172,6 +3635,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -2179,6 +3643,26 @@
     "chave": "cuca"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "cuca",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "cuca",
+      "sobek"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Brasileira",
+     "n": 6
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -2196,8 +3680,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2205,6 +3690,21 @@
     "chave": "iara"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "iara",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "iara",
+      "cuca"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -2222,8 +3722,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2231,6 +3732,20 @@
     "chave": "boto"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "boto",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "iara"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "dot",
    "feito": {
     "metrica": "danoDot",
@@ -2248,15 +3763,28 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
-   "vitoriasPanteao": 9,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "saci"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "saci",
+     "k": 3
+    },
+    {
+     "tipo": "p",
+     "panteao": "Brasileira",
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -2276,13 +3804,34 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
-   "vitoriasPanteao": 12,
+   "profundidadeObjetivos": 1,
+   "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "ogum"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ogum",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ogum",
+      "zeus"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Africana",
+     "n": 6
+    }
+   ],
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -2300,8 +3849,9 @@
    "faixa": "iniciado",
    "faixaNome": "Iniciado",
    "faixaIndice": 2,
-   "faixaMin": 200,
+   "faixaMin": 250,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2309,6 +3859,21 @@
     "chave": "xango"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "xango",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "xango",
+      "ogum"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -2328,6 +3893,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 11,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -2335,6 +3901,22 @@
     "chave": "ogum"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ogum",
+     "k": 2
+    },
+    {
+     "tipo": "a",
+     "n": 3
+    },
+    {
+     "tipo": "p",
+     "panteao": "Africana",
+     "n": 6
+    }
+   ],
    "familia": "roubo-de-orbe",
    "feito": {
     "metrica": "orbesRoubados",
@@ -2352,8 +3934,9 @@
    "faixa": "oraculo",
    "faixaNome": "Oráculo",
    "faixaIndice": 5,
-   "faixaMin": 500,
+   "faixaMin": 1000,
    "profundidade": 3,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2361,6 +3944,20 @@
     "chave": "iansa"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "iansa",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "xango"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "cura",
    "feito": {
     "metrica": "curaFeita",
@@ -2378,8 +3975,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 2,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 22,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2387,6 +3985,35 @@
     "chave": "exu"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "exu",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "ogum",
+      "xango",
+      "iansa"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "exu",
+      "ogum"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Africana",
+     "n": 12
+    }
+   ],
    "familia": "absorve",
    "feito": {
     "metrica": "danoAbsorvido",
@@ -2406,6 +4033,7 @@
    "faixaIndice": 1,
    "faixaMin": 100,
    "profundidade": 1,
+   "profundidadeObjetivos": 1,
    "vitoriasPanteao": 22,
    "seguidas": 2,
    "seguidasAlvo": {
@@ -2413,6 +4041,30 @@
     "chave": "brigid"
    },
    "seguidasCompanheiro": 2,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "brigid",
+     "k": 2
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "brigid",
+      "ganesha"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "p",
+     "panteao": "Celta",
+     "n": 12
+    },
+    {
+     "tipo": "a",
+     "n": 3
+    }
+   ],
    "familia": "remove-buff",
    "feito": {
     "metrica": "buffsRemovidos",
@@ -2430,15 +4082,35 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
-   "vitoriasPanteao": 12,
+   "profundidadeObjetivos": 2,
+   "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
     "tipo": "companheiro",
     "chave": "dagda"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "dagda",
+     "k": 3
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "dagda",
+      "brigid"
+     ],
+     "n": 5
+    },
+    {
+     "tipo": "a",
+     "n": 4
+    }
+   ],
    "familia": "execucao",
    "feito": {
     "metrica": "execucoes",
@@ -2456,8 +4128,9 @@
    "faixa": "adepto",
    "faixaNome": "Adepto",
    "faixaIndice": 3,
-   "faixaMin": 300,
+   "faixaMin": 450,
    "profundidade": 2,
+   "profundidadeObjetivos": 2,
    "vitoriasPanteao": 11,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2465,6 +4138,26 @@
     "chave": "dagda"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "dagda",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "dagda",
+      "tyr"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "p",
+     "panteao": "Celta",
+     "n": 6
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -2482,8 +4175,9 @@
    "faixa": "sacerdote",
    "faixaNome": "Sacerdote",
    "faixaIndice": 4,
-   "faixaMin": 400,
+   "faixaMin": 700,
    "profundidade": 3,
+   "profundidadeObjetivos": 3,
    "vitoriasPanteao": 8,
    "seguidas": 3,
    "seguidasAlvo": {
@@ -2491,6 +4185,21 @@
     "chave": "morrigan"
    },
    "seguidasCompanheiro": 3,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "morrigan",
+     "k": 3
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "brigid",
+      "curupira"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "reflexo",
    "feito": {
     "metrica": "danoRefletido",
@@ -2508,8 +4217,9 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 6,
+   "profundidadeObjetivos": 9,
    "vitoriasPanteao": 22,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -2517,6 +4227,33 @@
     "chave": "ra"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "ra",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "horus",
+      "amaterasu"
+     ],
+     "n": 14
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "ra",
+      "khonshu"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "a",
+     "n": 4
+    }
+   ],
    "familia": "revive",
    "feito": {
     "metrica": "revives",
@@ -2534,8 +4271,9 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 7,
+   "profundidadeObjetivos": 10,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -2543,6 +4281,22 @@
     "chave": "itzamna"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "itzamna",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "itzamna",
+      "raijin",
+      "xango"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "controle",
    "feito": {
     "metrica": "controlesAplicados",
@@ -2560,8 +4314,9 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 8,
+   "profundidadeObjetivos": 11,
    "vitoriasPanteao": 8,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -2569,6 +4324,22 @@
     "chave": "chaac"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "chaac",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "itzamna",
+      "hades",
+      "hel"
+     ],
+     "n": 8
+    }
+   ],
    "familia": "anti-revive",
    "feito": {
     "metrica": "revivesNegados",
@@ -2586,8 +4357,9 @@
    "faixa": "semideus",
    "faixaNome": "Semideus",
    "faixaIndice": 7,
-   "faixaMin": 700,
+   "faixaMin": 1750,
    "profundidade": 7,
+   "profundidadeObjetivos": 11,
    "vitoriasPanteao": 11,
    "seguidas": 4,
    "seguidasAlvo": {
@@ -2595,6 +4367,28 @@
     "chave": "itzamna"
    },
    "seguidasCompanheiro": 4,
+   "objetivos": [
+    {
+     "tipo": "s",
+     "alvo": "itzamna",
+     "k": 4
+    },
+    {
+     "tipo": "v",
+     "lista": [
+      "chaac"
+     ],
+     "n": 8
+    },
+    {
+     "tipo": "j",
+     "lista": [
+      "itzamna",
+      "ra"
+     ],
+     "n": 5
+    }
+   ],
    "familia": "area",
    "feito": {
     "metrica": "danoArea",
