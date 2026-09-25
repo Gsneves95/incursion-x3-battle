@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ TELA DE PROVAÇÕES §316 — refeita pela referência do dono (paisagem: painel fixo + lista rolável). Só TELA.
+
+Regras intactas (objetivos §313, uma ativa §314). Layout paisagem (palco 428, 780–1200): **barra superior** (‹ Início ·
+PROVAÇÕES · ranque = elmo + faixa + barra "pontos/próximo mínimo até <próxima>", do servidor + MISSOES.faixas; Semideus →
+"faixa máxima"); **coluna esquerda FIXA** = painel PROVAÇÃO ATIVA (único com moldura dourada acesa+brilho: medalhão redondo,
+nome+selo, panteão·ranque, motivo, objetivos com ÍCONE por tipo + widget — pontos/barra/emblemas —, TROCAR + "1 slot"; vazio =
+"Nenhuma Provação ativa — escolha uma na lista"); **coluna direita ROLÁVEL** = lista agrupada por faixa (atual+abaixo abertas;
+acima fechadas "faltam X pontos", tocar espia). Linha: medalhão · nome · selo (A roxo/S dourado/SS nobre) · estado/ação · seta.
+5 estados: ativa (barra dourada esq, sem seta) · pausada ("pausada · %" + Retomar + seta) · disponivel (ATIVAR cheio + seta) ·
+travada (cadeado "travada" + seta) · conquistada (✓, sem seta). **ACORDEÃO** (o ponto do dono): tocar a linha expande os
+REQUISITOS ali (só uma por vez) — disponível: meta; pausada: progresso guardado; travada: meta + "você ainda não tem <Deus>" /
+"Requer ranque <faixa>" / "você precisa de um destes". Ativar/retomar: sem ativa direto; com ativa, confirmação INLINE
+("<Atual> fica pausada…", padrão §245); enquanto o servidor responde, botão "…" sem toque duplo. Cor: dourado só no painel,
+barras e ATIVAR; resto plano. **Guardas** (`tests/missoes_tela.test.js`, §295/§307/§308): 5 estados + painel cheio/vazio +
+acordeão + faixa fechada/aberta + confirmação; Chromium 780/893/1075/1200 × painel 2/3/4 obj: painel nunca rola, lista nunca
+rola na horizontal (borda direita real, não scrollWidth — que o flex do Chromium infla), nenhum nome cortado por reticência
+(clone; piores "Mula sem Cabeça"/"Yamato Takeru"); objetivos do painel quebram em 2 linhas em vez de cortar. Toque: linha ≥44,
+botões ≥36. **★ Lição §308:** o `scrollWidth` de contêiner flex no Chromium infla pelo `gap` — medir a borda direita real +
+`overflow-x:hidden`. Capturas a 893 em `docs/capturas-316/` (normal · travada exp · pausada exp · confirmação). **Arquivos:**
+`src/ui/home.js`, `src/shell.html`, `tests/missoes_tela.test.js`, `tests/aquisicao.test.js`, `dist/`. Ver DECISOES §316.
+Suíte + build verdes.
+
 ## ★ PROVAÇÕES §314 (PARTE 2) — servidor lê os OBJETIVOS, UMA ativa por vez; tela com painel + lista híbrida.
 
 Fecha o §313. O servidor deixou volume+companheiro (§230/§241) e passou a ler a **LISTA DE OBJETIVOS**, com **UMA Provação

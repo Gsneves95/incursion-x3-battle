@@ -337,7 +337,9 @@ function faixaAtualIdx(){
   return i >= 0 ? i : 0;
 }
 function contarConquistados(){ return Object.keys(MISSOES.missoes).filter(_temDeus).length; }
-function _barMissHTML(v, n){ const pct = n ? Math.min(100, Math.round(v / n * 100)) : 0; return `<span class="mreq__bar"><i style="width:${pct}%"></i></span>`; }
+// §316 — adjetivo SINGULAR do panteão ("qualquer grego"), para os objetivos "p"/"sp" (o PANT_ADJ é plural).
+const PANT_ADJ_SING = { 'Grega': 'grego', 'Nórdica': 'nórdico', 'Egípcia': 'egípcio', 'Japonesa': 'japonês', 'Chinesa': 'chinês', 'Hindu': 'hindu', 'Brasileira': 'brasileiro', 'Africana': 'africano', 'Celta': 'celta', 'Maia': 'maia' };
+function _adjS(p){ return PANT_ADJ_SING[p] || H(p); }
 
 // §314 — DISPONÍVEL PARA ATIVAR: ranque atingido + os NOMES OBRIGATÓRIOS possuídos (o de "s","j","c" e ≥1
 // de cada lista "v"). "p"/"sp"/"a" NÃO travam. Espelha server/missoes.js.disponivelParaAtivar (o servidor
@@ -363,111 +365,200 @@ function estadoProv(k){
   return provDisponivel(k).ok ? 'disponivel' : 'travada';
 }
 function _progObj(k){ const mm = (contaAtual && contaAtual.missoes) || {}; return (mm.progresso && mm.progresso[k]) || null; }
+function _estadoObj(k, i){ const p = _progObj(k); return (p && p.obj && p.obj[i]) || {}; }
 
-// §314 — as LINHAS de objetivo de uma Provação: rótulo humano + progresso x/y (do estado do servidor, ou 0).
-// `conq` (conquistada) enche as barras. "c" (duas sequências separadas) rende DUAS linhas.
-function _objLinhas(k, conq){
-  const m = MISSOES.missoes[k], prog = _progObj(k);
-  const nomeP = (p) => (PANT_ADJ[p] ? PANT_ADJ[p] : H(p));
-  const linhas = [];
-  (m.objetivos || []).forEach((o, i) => {
-    const e = (prog && prog.obj && prog.obj[i]) || {};
-    if (o.tipo === 's') linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.alvo))}</b>`, x: Math.min(e.seq || 0, o.k), y: o.k });
-    else if (o.tipo === 'sp') linhas.push({ txt: `${o.k} seguidas com ${nomeP(o.panteao)}`, x: Math.min(e.seq || 0, o.k), y: o.k });
-    else if (o.tipo === 'c'){
-      linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.lista[0]))}</b>`, x: Math.min(e.seqA || 0, o.k), y: o.k });
-      linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.lista[1]))}</b>`, x: Math.min(e.seqB || 0, o.k), y: o.k });
-    }
-    else if (o.tipo === 'v') linhas.push({ txt: `${o.n} vitórias com ${o.lista.map(g => '<b>' + H(nomeM(g)) + '</b>').join(' ou ')}`, x: Math.min(e.vol || 0, o.n), y: o.n });
-    else if (o.tipo === 'j') linhas.push({ txt: `${o.n} vitórias com <b>${H(nomeM(o.lista[0]))}</b> e <b>${H(nomeM(o.lista[1]))}</b>`, x: Math.min(e.vol || 0, o.n), y: o.n });
-    else if (o.tipo === 'p') linhas.push({ txt: `${o.n} vitórias com ${nomeP(o.panteao)}`, x: Math.min(e.vol || 0, o.n), y: o.n });
-    else if (o.tipo === 'a') linhas.push({ txt: `${o.n} panteões diferentes em vitórias`, x: Math.min((e.pant || []).length, o.n), y: o.n });
-  });
-  if (conq) linhas.forEach(l => { l.x = l.y; });
-  return linhas;
+// ============================ §316 — OBJETIVOS: ícone por tipo, texto, widget de progresso ============================
+// Ícones (SVG inline, currentColor): s corrente · v espadas cruzadas · j elos ligados · c corrente dupla ·
+// p louro+coluna · sp corrente+louro · a emblemas em leque.
+function _obIc(t){
+  const S = (inner) => `<svg class="obic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  if (t === 's')  return S('<rect x="3" y="8.5" width="10" height="7" rx="3.5"/><rect x="11" y="8.5" width="10" height="7" rx="3.5"/>');
+  if (t === 'v')  return S('<path d="M4 4l13 13M6 20l14-14"/><path d="M3 6l3-2M21 6l-3-2"/>');
+  if (t === 'j')  return S('<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>');
+  if (t === 'c')  return S('<rect x="2" y="9" width="8" height="6" rx="3"/><rect x="8" y="9" width="8" height="6" rx="3"/><rect x="14" y="9" width="8" height="6" rx="3"/>');
+  if (t === 'p')  return S('<rect x="10" y="6" width="4" height="13"/><path d="M8 7C4 11 6 16 8 18M16 7c4 4 2 9 0 11"/>');
+  if (t === 'sp') return S('<rect x="8" y="9" width="9" height="6" rx="3"/><path d="M6 8C3 11 4 15 6 17"/>');
+  if (t === 'a')  return S('<path d="M12 5l2 3-2 3-2-3z" fill="currentColor" stroke="none"/><path d="M6 8l1.6 2.4L6 12.8 4.4 10.4z" fill="currentColor" stroke="none"/><path d="M18 8l1.6 2.4L18 12.8l-1.6-2.4z" fill="currentColor" stroke="none"/>');
+  return '';
 }
-function _objLinhasHTML(k, conq){
-  return _objLinhas(k, conq).map(l => `<span class="orow"><span class="orow__t">${l.txt}</span><span class="orow__xy"><b>${l.x}</b>/${l.y}</span>${_barMissHTML(l.x, l.y)}</span>`).join('');
+// TEXTO do objetivo (nomes em <b>; se `mark`, os nomes NÃO possuídos ficam em cinza+cadeado — só na expansão travada).
+function _obTexto(o, mark){
+  const nm = (g) => (mark && !_temDeus(g)) ? `<span class="lk">${H(nomeM(g))} 🔒</span>` : `<b>${H(nomeM(g))}</b>`;
+  if (o.tipo === 's')  return `${o.k} seguidas com ${nm(o.alvo)}`;
+  if (o.tipo === 'sp') return `${o.k} seguidas com qualquer <b>${_adjS(o.panteao)}</b>`;
+  if (o.tipo === 'c')  return `${o.k} seguidas com ${nm(o.lista[0])} e com ${nm(o.lista[1])}`;
+  if (o.tipo === 'v')  return `${o.n} vitórias com ${o.lista.map(nm).join(' ou ')}`;
+  if (o.tipo === 'j')  return `${o.n} vitórias com ${nm(o.lista[0])} e ${nm(o.lista[1])}`;
+  if (o.tipo === 'p')  return `${o.n} vitórias com qualquer <b>${_adjS(o.panteao)}</b>`;
+  if (o.tipo === 'a')  return `${o.n} panteões diferentes`;
+  return '';
+}
+function _obMeta(o){ return (o.tipo === 's' || o.tipo === 'sp' || o.tipo === 'c') ? o.k : o.n; }
+function _obDone(o, e, conq){
+  if (conq) return true;
+  if (o.tipo === 's' || o.tipo === 'sp') return (e.seq || 0) >= o.k;
+  if (o.tipo === 'c') return (e.seqA || 0) >= o.k && (e.seqB || 0) >= o.k;
+  if (o.tipo === 'a') return ((e.pant || []).length) >= o.n;
+  return (e.vol || 0) >= o.n;
+}
+// widgets: pontos (s/sp), pontos-duplos (c), barra (v/j/p), emblemas (a).
+function _dots(x, y){ let s = ''; for (let i = 0; i < y; i++) s += `<i class="dot${i < x ? ' on' : ''}"></i>`; return `<span class="dots">${s}</span>`; }
+function _emblems(x, y){ let s = ''; for (let i = 0; i < y; i++) s += `<i class="emb${i < x ? ' on' : ''}"></i>`; return `<span class="embs">${s}</span>`; }
+function _bar(x, y){ const pct = y ? Math.min(100, Math.round(x / y * 100)) : 0; return `<span class="obar"><i style="width:${pct}%"></i></span>`; }
+// o widget completo (com o x/y ou o ✓), dado o objetivo e seu estado.
+function _obWidget(o, e, conq){
+  if (_obDone(o, e, conq)) return `<span class="ob__ok">✓</span>`;
+  if (o.tipo === 's' || o.tipo === 'sp'){ const x = Math.min(e.seq || 0, o.k); return `${_dots(x, o.k)}<span class="xy">${x}/${o.k}</span>`; }
+  if (o.tipo === 'c'){ const a = Math.min(e.seqA || 0, o.k), b = Math.min(e.seqB || 0, o.k); return `<span class="dupla">${_dots(a, o.k)}${_dots(b, o.k)}</span>`; }
+  if (o.tipo === 'a'){ const x = Math.min((e.pant || []).length, o.n); return `${_emblems(x, o.n)}<span class="xy">${x}/${o.n}</span>`; }
+  const x = Math.min(e.vol || 0, o.n); return `${_bar(x, o.n)}<span class="xy">${x}/${o.n}</span>`;
+}
+// uma LINHA de objetivo (painel): ícone · texto · widget. `mini` reduz para a expansão da lista.
+function _obLinhaHTML(k, o, i, opts){
+  opts = opts || {};
+  const conq = !!opts.conq;
+  const e = _estadoObj(k, i);
+  const dir = opts.meta ? `<span class="ob__meta">${_obMeta(o)}</span>` : `<span class="ob__p">${_obWidget(o, e, conq)}</span>`;
+  return `<div class="ob${opts.mini ? ' ob--mini' : ''}"><span class="ob__ic">${_obIc(o.tipo)}</span><span class="ob__t">${_obTexto(o, !!opts.mark)}</span>${dir}</div>`;
+}
+// progresso MÉDIO de uma pausada (cada objetivo limitado à sua meta) — o "· 55%" da linha.
+function _pausadaPct(k){
+  const m = MISSOES.missoes[k]; const objs = m.objetivos || []; if (!objs.length) return 0;
+  let soma = 0;
+  objs.forEach((o, i) => { const e = _estadoObj(k, i); const meta = _obMeta(o);
+    let x = (o.tipo === 's' || o.tipo === 'sp') ? (e.seq || 0) : (o.tipo === 'c') ? ((Math.min(e.seqA || 0, o.k) + Math.min(e.seqB || 0, o.k)) / 2) : (o.tipo === 'a') ? ((e.pant || []).length) : (e.vol || 0);
+    soma += Math.min(1, meta ? x / meta : 0); });
+  return Math.round(soma / objs.length * 100);
 }
 
-// §314 — PAINEL FIXO "PROVAÇÃO ATIVA" no topo: retrato + nome + cada objetivo x/y + TROCAR. Vazio quando não
-// há ativa. É o resumo sempre visível da única vaga (DOC.slotsGratis).
+// ============================ §316 — PAINEL FIXO "PROVAÇÃO ATIVA" (o único com moldura acesa) ============================
+function _seloHTML(rar){ return `<span class="selo selo--${rar}">${rar}</span>`; }
 function painelAtivaHTML(){
   const mm = (contaAtual && contaAtual.missoes) || {};
   const k = mm.ativa;
   if (!k){
-    return `<div class="pativa pativa--vazio"><span class="pativa__ic">◈</span><p class="pativa__msg">Nenhuma Provação ativa — <b>escolha uma abaixo</b>.</p></div>`;
+    return `<div class="pa pa--vazio">
+      <div class="pa__rot">Provação ativa</div>
+      <div class="pa__vazio"><span class="pa__med pa__med--off">${slot('vazio', '◈', '#4a4570', 40)}</span>
+      <p class="pa__vaziomsg">Nenhuma Provação ativa — <b>escolha uma na lista</b>.</p></div>
+    </div>`;
   }
-  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
-  return `<div class="pativa" data-deus="${k}">
-    <div class="pativa__cab"><span class="pativa__sel">Provação ativa</span><button class="b b--quiet b--sm" id="btrocar">Trocar</button></div>
-    <div class="pativa__corpo">
-      <span class="pativa__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 40)}</span>
-      <div class="pativa__id"><span class="pativa__nome">${H(g.nome)}</span><div class="pativa__objs">${_objLinhasHTML(k, false)}</div></div>
+  const m = MISSOES.missoes[k], g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k);
+  const objs = (m.objetivos || []).map((o, i) => _obLinhaHTML(k, o, i, {})).join('');
+  return `<div class="pa">
+    <div class="pa__rot">Provação ativa</div>
+    <div class="pa__head">
+      <span class="pa__med" data-abrir="${k}">${slot('god-' + k, ini(g.nome), COR(g.elem), 46)}</span>
+      <div class="pa__id">
+        <div class="pa__nome">${H(g.nome)} ${_seloHTML(rar)}</div>
+        <div class="pa__sub">${H(m.panteao)} · ranque ${H(m.faixaNome)}</div>
+        <div class="pa__div"></div>
+        <div class="pa__motivo">${H(m.motivo)}</div>
+      </div>
     </div>
+    <div class="pa__objs">${objs}</div>
+    <div class="pa__foot"><button class="b b--quiet b--sm" id="btrocar">Trocar</button><span class="pa__footdiv"></span><span class="pa__slot">${(MISSOES.slotsGratis || 1)} slot${(MISSOES.slotsGratis || 1) > 1 ? 's' : ''}</span></div>
   </div>`;
 }
 
-// §314 — CARTÃO de Provação (ativa/pausada/disponivel/conquistada): retrato + nome + selo + objetivos + ação.
-// ATIVA/PAUSADA/DISPONIVEL/CONQUISTADA são cartões (≥76px, §234); TRAVADA é linha curta não-interativa.
-function provCardHTML(k, estado){
-  const m = MISSOES.missoes[k];
+// ============================ §316 — BARRA DE RANQUE (topo direito): faixa + barra até a próxima ============================
+function ranqueHTML(){
+  const faixas = MISSOES.faixas || [];
+  const rq = (contaAtual && contaAtual.ranque) || {};
+  const pts = typeof rq.pontos === 'number' ? rq.pontos : 0;
+  const ch = rq.faixa && rq.faixa.chave; let ci = faixas.findIndex(f => f.chave === ch); if (ci < 0) ci = 0;
+  const cur = faixas[ci] || { nome: '—', min: 0 }, prox = faixas[ci + 1];
+  const helm = '<svg class="rq__helm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 12a8 8 0 0116 0v3a2 2 0 01-2 2h-2l-1 3H7l-1-3H4z"/><path d="M12 4v8M4 12h16"/></svg>';
+  if (!prox) return `<span class="rq">${helm}<span class="rq__id"><span class="rq__f">${H(cur.nome)}</span><span class="rq__max">faixa máxima</span></span></span>`;
+  const pct = prox.min ? Math.max(0, Math.min(100, Math.round(pts / prox.min * 100))) : 0;
+  return `<span class="rq">${helm}<span class="rq__id"><span class="rq__f">${H(cur.nome)}</span><span class="rq__bar"><i style="width:${pct}%"></i></span><span class="rq__t">${pts}/${prox.min} até ${H(prox.nome)}</span></span></span>`;
+}
+
+// ============================ §316 — LISTA (coluna direita, rola): agrupada por faixa, linhas + acordeão ============================
+function _medalhaoHTML(k, estado){
   const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
-  const rar = raridadeDe(k);
-  const conq = estado === 'conquistada';
-  let selo = '', acao = '';
-  if (estado === 'ativa') selo = `<span class="mcard__selo mcard__selo--ativa">Ativa</span>`;
-  else if (estado === 'pausada'){ selo = `<span class="mcard__selo mcard__selo--pausada">Pausada</span>`; acao = provAcaoHTML(k, 'Retomar'); }
-  else if (estado === 'disponivel'){ acao = provAcaoHTML(k, 'Ativar'); }
-  else if (conq) selo = `<span class="mcard__ok">✓</span>`;
-  return `<div class="mcard mcard--${estado}" data-deus="${k}" title="${H(g.nome)}">
-    <span class="mcard__rar rar--${rar}"></span>
-    <button class="mcard__abrir" data-abrir="${k}" title="${H(g.nome)}">
-      <span class="mcard__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
-      <span class="mcard__id"><span class="mcard__nome">${H(g.nome)} ${selo}</span><span class="mcard__motivo">${H(m.motivo)}</span></span>
-    </button>
-    <div class="mcard__objs">${_objLinhasHTML(k, conq)}</div>
-    ${acao ? `<div class="mcard__acao">${acao}</div>` : ''}
+  const cls = estado === 'travada' ? 'med--trava' : (estado === 'conquistada' ? 'med--conq' : '');
+  return `<span class="med ${cls}">${slot('god-' + k, ini(g.nome), estado === 'travada' ? '#6a6390' : COR(g.elem), 30)}</span>`;
+}
+// a AÇÃO da linha (Ativar/Retomar), o "…" pendente, ou nada quando a confirmação está aberta (vai abaixo).
+function _linhaAcaoHTML(k, estado){
+  if (provPendente === k) return `<button class="b b--primary b--sm" disabled>…</button>`;
+  if (provTrocaConfirm === k) return '';
+  const mm = (contaAtual && contaAtual.missoes) || {}; const temOutra = mm.ativa && mm.ativa !== k;
+  if (estado === 'disponivel') return `<button class="b b--primary b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">Ativar</button>`;
+  if (estado === 'pausada') return `<button class="b b--quiet b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">Retomar</button>`;
+  return '';
+}
+function linhaHTML(k){
+  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k);
+  const estado = estadoProv(k);
+  const expansivel = (estado === 'pausada' || estado === 'disponivel' || estado === 'travada');
+  const aberta = provExpandida === k;
+  let stTxt = '';
+  if (estado === 'ativa') stTxt = 'ativa';
+  else if (estado === 'conquistada') stTxt = 'conquistada';
+  else if (estado === 'travada') stTxt = '<span class="lr__cad">🔒</span> travada';
+  else if (estado === 'pausada') stTxt = `pausada · ${_pausadaPct(k)}%`;
+  const seta = expansivel ? `<span class="lr__seta${aberta ? ' is-open' : ''}" aria-hidden="true">⌄</span>` : '';
+  const acao = _linhaAcaoHTML(k, estado);
+  const confirmando = provTrocaConfirm === k;
+  const mm = (contaAtual && contaAtual.missoes) || {}; const atual = mm.ativa ? nomeM(mm.ativa) : '';
+  return `<div class="lr lr--${estado}${aberta ? ' is-open' : ''}" data-deus="${k}">
+    <div class="lr__row">
+      <div class="lr__tap"${expansivel ? ` data-linha="${k}"` : ''}>
+        <span class="lr__art">${_medalhaoHTML(k, estado)}</span>
+        <span class="lr__nome">${H(g.nome)}</span>${_seloHTML(rar)}
+        <span class="lr__st">${stTxt}</span>
+        ${seta}
+      </div>
+      ${acao ? `<div class="lr__acao">${acao}</div>` : ''}
+    </div>
+    ${confirmando ? `<div class="lr__conf">Ativar <b>${H(nomeM(k))}</b>? <b>${H(atual)}</b> fica pausada, com o progresso guardado.<span class="lr__confb"><button class="b b--primary b--sm" data-troca-ok="${k}">Confirmar</button><button class="b b--quiet b--sm" data-troca-no="1">Cancelar</button></span></div>` : ''}
+    ${aberta ? `<div class="lr__exp">${expansaoHTML(k, estado)}</div>` : ''}
   </div>`;
 }
-// a AÇÃO do cartão: Ativar/Retomar, ou a CONFIRMAÇÃO inline de troca (quando já há outra ativa — §314).
-function provAcaoHTML(k, rotulo){
-  const mm = (contaAtual && contaAtual.missoes) || {};
-  const temOutra = mm.ativa && mm.ativa !== k;
-  if (provTrocaConfirm === k){
-    return `<span class="mcard__conf">A atual fica <b>pausada</b>, com o progresso guardado.<button class="b b--primary b--sm" data-troca-ok="${k}">Trocar</button><button class="b b--quiet b--sm" data-troca-no="1">Cancelar</button></span>`;
+// a EXPANSÃO (acordeão): motivo + os objetivos (meta / progresso guardado / travados com o que falta).
+function expansaoHTML(k, estado){
+  const m = MISSOES.missoes[k];
+  const objs = (m.objetivos || []).map((o, i) => {
+    if (estado === 'pausada') return _obLinhaHTML(k, o, i, { mini: true });
+    return _obLinhaHTML(k, o, i, { mini: true, meta: true, mark: estado === 'travada' });
+  }).join('');
+  let notas = '';
+  if (estado === 'travada'){
+    const d = provDisponivel(k); const linhas = [];
+    if (!d.rankOk) linhas.push(`<div class="exp__nota">Requer ranque <b>${H(m.faixaNome)}</b></div>`);
+    const faltamMand = [];
+    for (const o of m.objetivos){
+      if (o.tipo === 's'){ if (!_temDeus(o.alvo)) faltamMand.push(o.alvo); }
+      else if (o.tipo === 'j' || o.tipo === 'c'){ for (const g of o.lista) if (!_temDeus(g)) faltamMand.push(g); }
+      else if (o.tipo === 'v'){ if (!o.lista.some(g => _temDeus(g))) linhas.push(`<div class="exp__nota">você precisa de um destes: ${o.lista.map(g => H(nomeM(g))).join(', ')}</div>`); }
+    }
+    [...new Set(faltamMand)].forEach(g => linhas.push(`<div class="exp__nota">você ainda não tem <b>${H(nomeM(g))}</b></div>`));
+    notas = linhas.join('');
   }
-  return `<button class="b b--primary b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">${rotulo}</button>`;
+  return `<div class="exp__motivo">${H(m.motivo)}</div><div class="exp__objs">${objs}</div>${notas}`;
 }
-
-// §314 — LINHA TRAVADA (~40px), NÃO interativa: retrato apagado + nome + o QUE FALTA + cadeado (§234:
-// mostrar o que falta é motivação; nunca só o cadeado). Falta = nomes obrigatórios e/ou ranque.
-function provLockHTML(k){
-  const m = MISSOES.missoes[k];
-  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
-  const rar = raridadeDe(k);
-  const d = provDisponivel(k);
-  const faltas = [];
-  if (d.faltam.length) faltas.push(d.faltam.map(x => `<b>${H(nomeM(x))}</b>`).join(' · '));
-  if (!d.rankOk) faltas.push(`ranque <b>${H(m.faixaNome)}</b>`);
-  return `<div class="mlock" data-lock="${k}" title="${H(g.nome)} — travada">
-    <span class="mlock__rar rar--${rar}"></span>
-    <span class="mlock__art">${slot('god-' + k, ini(g.nome), '#6a6390', 18)}</span>
-    <span class="mlock__nome">${H(g.nome)}</span>
-    <span class="mlock__falta">falta: ${faltas.join(' · ')}</span>
-    <span class="mlock__cad" aria-hidden="true">🔒</span>
-  </div>`;
-}
-
-// §314 — a LISTA por RANQUE crescente (o híbrido): cartões (ativa/pausada/disponivel/conquistada) + linhas
-// travadas. Dentro da mesma faixa, por raridade decrescente e nome. Todos os 91 aparecem (§234).
 function listaProvacoesHTML(){
+  const pts = (contaAtual && contaAtual.ranque && typeof contaAtual.ranque.pontos === 'number') ? contaAtual.ranque.pontos : 0;
+  const cur = faixaAtualIdx();
   const rarRank = { SS: 2, S: 1, A: 0 };
-  const ks = Object.keys(MISSOES.missoes).sort((a, b) => {
-    const ma = MISSOES.missoes[a], mb = MISSOES.missoes[b];
-    return (ma.faixaIndice - mb.faixaIndice) || ((rarRank[mb.raridade] || 0) - (rarRank[ma.raridade] || 0)) || nomeM(a).localeCompare(nomeM(b));
+  const porFaixa = {};
+  for (const k in MISSOES.missoes){ const fi = MISSOES.missoes[k].faixaIndice; (porFaixa[fi] = porFaixa[fi] || []).push(k); }
+  let html = '';
+  (MISSOES.faixas || []).forEach((f, fi) => {
+    const ks = (porFaixa[fi] || []).sort((a, b) => ((rarRank[MISSOES.missoes[b].raridade] || 0) - (rarRank[MISSOES.missoes[a].raridade] || 0)) || nomeM(a).localeCompare(nomeM(b)));
+    if (fi <= cur){
+      html += `<div class="fx"><span class="fx__n">${H(f.nome)}</span><span class="fx__ln"></span></div>`;
+      html += ks.map(linhaHTML).join('');
+    } else {
+      const aberta = faixasEspiadas.has(fi);
+      const faltam = Math.max(0, (f.min || 0) - pts);
+      html += `<button class="fx fx--fechada${aberta ? ' is-open' : ''}" data-fxespiar="${fi}"><span class="fx__n">${H(f.nome)}</span><span class="fx__falta">· faltam ${faltam} pontos</span><span class="fx__seta${aberta ? ' is-open' : ''}" aria-hidden="true">⌄</span></button>`;
+      if (aberta) html += ks.map(linhaHTML).join('');
+    }
   });
-  return ks.map(k => { const e = estadoProv(k); return e === 'travada' ? provLockHTML(k) : provCardHTML(k, e); }).join('');
+  return html;
 }
 
 // SEM SERVIDOR: o progresso vive no servidor (§228). Diz a verdade e deixa LER as histórias + os objetivos.
@@ -487,12 +578,15 @@ function provacoesOfflineHTML(){
   <div class="mcatgrid">${cat}</div>`;
 }
 
-let provTrocaConfirm = null;   // §314: deus com a troca em confirmação inline (sem modal, como o §245)
+let provTrocaConfirm = null;   // §314/§316: deus com a troca em confirmação inline (sem modal, como o §245)
+let provExpandida = null;      // §316: deus com a linha expandida (acordeão, só uma por vez)
+let provPendente = null;       // §316: deus com a ativação em voo (botão "…", sem toque duplo)
+const faixasEspiadas = new Set();   // §316: faixas ACIMA da atual abertas para espiar
 async function _pedirAtivar(k){
-  provTrocaConfirm = null;
-  if (typeof ativarProvacaoServidor !== 'function') return;
-  const r = await ativarProvacaoServidor(k);   // o servidor devolve a conta e o view chama render()
-  if (r && r.erro && typeof toast === 'function') toast(r.erro);
+  if (provPendente) return;              // já há uma em voo — sem toque duplo
+  provTrocaConfirm = null; provPendente = k; render();   // mostra "…"
+  try { if (typeof ativarProvacaoServidor === 'function'){ const r = await ativarProvacaoServidor(k); if (r && r.erro && typeof toast === 'function') toast(r.erro); } }
+  finally { provPendente = null; render(); }
 }
 function renderMissoes(){
   const online = !!contaAtual;
@@ -500,36 +594,46 @@ function renderMissoes(){
   if (!missoesDisponivel()){
     corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O mapa das Provações chega com os dados.</p></div>`;
   } else if (!online){
-    corpo = `<div class="tela__rol">${provacoesOfflineHTML()}</div>`;
+    corpo = `<div class="tela__rol pv__off">${provacoesOfflineHTML()}</div>`;
   } else {
-    corpo = `<div class="pativawrap">${painelAtivaHTML()}</div><div class="tela__rol"><div class="mlista">${listaProvacoesHTML()}</div></div>`;
+    corpo = `<div class="pv__corpo">
+      <aside class="pv__esq">${painelAtivaHTML()}</aside>
+      <section class="pv__dir" id="pvlista">${listaProvacoesHTML()}</section>
+    </div>`;
   }
-  const cont = online && missoesDisponivel() ? `<span class="tela__cont">${contarConquistados()}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
+  const ranque = online && missoesDisponivel() ? `<div class="pv__rq">${ranqueHTML()}</div>` : `<span class="tela__espaco"></span>`;
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
   <div class="tela tela--prov">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Provações</h1>
-      ${cont}
+    <header class="pv__top">
+      <button class="pv__back" id="bvoltar">‹ Início</button>
+      <h1 class="pv__titulo">Provações</h1>
+      ${ranque}
     </header>
     ${corpo}
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  // ELO com o detalhe do deus (§220): abrir (cartão/painel/catálogo) vai ao deus. A TRAVADA (.mlock) NÃO abre.
-  [...stage.querySelectorAll('[data-abrir]')].forEach(b => { b.onclick = () => { ir('deus', { key: b.dataset.abrir }); render(); }; });
-  const pa = stage.querySelector('.pativa[data-deus]'); if (pa) pa.onclick = (ev) => { if (ev.target.closest('#btrocar')) return; ir('deus', { key: pa.dataset.deus }); render(); };
-  // TROCAR (painel): rola até a lista para escolher outra.
-  const bt = stage.querySelector('#btrocar'); if (bt) bt.onclick = () => { const rol = stage.querySelector('.tela__rol'); if (rol) rol.scrollIntoView({ block: 'start' }); };
-  // ATIVAR/RETOMAR: se há outra ativa, pede confirmação inline; senão ativa direto.
-  [...stage.querySelectorAll('[data-ativar]')].forEach(b => { b.onclick = () => {
+  // ELO com o detalhe do deus (§220): o medalhão do PAINEL e o catálogo offline levam ao deus.
+  [...stage.querySelectorAll('[data-abrir]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); ir('deus', { key: b.dataset.abrir }); render(); }; });
+  // ACORDEÃO (§316): tocar na linha (ou seta) EXPANDE ali mesmo; só uma aberta por vez.
+  [...stage.querySelectorAll('[data-linha]')].forEach(b => { b.onclick = () => { const k = b.dataset.linha; provExpandida = (provExpandida === k) ? null : k; render(); }; });
+  // FAIXA fechada (acima da atual): TOCAR abre para espiar.
+  [...stage.querySelectorAll('[data-fxespiar]')].forEach(b => { b.onclick = () => { const fi = +b.dataset.fxespiar; if (faixasEspiadas.has(fi)) faixasEspiadas.delete(fi); else faixasEspiadas.add(fi); render(); }; });
+  // TROCAR (painel): rola a lista até a 1ª disponível/pausada e dá um pulso nos botões ATIVAR/RETOMAR.
+  const bt = stage.querySelector('#btrocar'); if (bt) bt.onclick = () => {
+    const alvo = stage.querySelector('.lr--disponivel, .lr--pausada');
+    if (alvo){ alvo.scrollIntoView({ block: 'center' }); [...stage.querySelectorAll('.lr--disponivel .b, .lr--pausada .b')].forEach(x => { x.classList.remove('pulso'); void x.offsetWidth; x.classList.add('pulso'); }); }
+  };
+  // ATIVAR/RETOMAR: se há outra ativa, pede confirmação inline na linha; senão ativa direto.
+  [...stage.querySelectorAll('[data-ativar]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation();
+    if (provPendente) return;
     const k = b.dataset.ativar;
     if (b.dataset.troca === '1'){ provTrocaConfirm = k; render(); } else { _pedirAtivar(k); }
   }; });
-  [...stage.querySelectorAll('[data-troca-ok]')].forEach(b => { b.onclick = () => _pedirAtivar(b.dataset.trocaOk); });
-  [...stage.querySelectorAll('[data-troca-no]')].forEach(b => { b.onclick = () => { provTrocaConfirm = null; render(); }; });
+  [...stage.querySelectorAll('[data-troca-ok]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); _pedirAtivar(b.dataset.trocaOk); }; });
+  [...stage.querySelectorAll('[data-troca-no]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); provTrocaConfirm = null; render(); }; });
   // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
   if (online && typeof refrescarConta === 'function') refrescarConta();
   fit();

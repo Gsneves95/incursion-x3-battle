@@ -2136,66 +2136,123 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .msec__cab--cat h2{color:var(--ink-dim)}
 .msec__n{font-weight:700;font-size:12px;color:var(--ink-mute)}
 .msec__vazio{font-weight:600;font-size:12.5px;color:var(--ink-mute);line-height:1.45;margin:0;padding:6px 10px;border:1px dashed #2c2648;border-radius:8px}
-/* §314 — PAINEL FIXO "PROVAÇÃO ATIVA" no topo (fora da rolagem): retrato + nome + objetivos x/y + TROCAR. */
-.pativawrap{flex:0 0 auto;margin:0 0 10px}
-.pativa{border:1px solid var(--gold-soft);border-radius:12px;background:rgba(255,217,122,.06);padding:9px 12px}
-.pativa--vazio{display:flex;align-items:center;gap:12px;border-style:dashed;border-color:#3a3358;background:rgba(15,12,30,.5)}
-.pativa__ic{font-family:'Cinzel',serif;font-size:30px;color:var(--gold-soft);flex:0 0 auto}
-.pativa__msg{font-weight:600;font-size:13px;line-height:1.45;color:var(--ink-dim);margin:0}
-.pativa__msg b{color:var(--gold-text)}
-.pativa__cab{display:flex;align-items:center;justify-content:space-between;margin:0 0 7px}
-.pativa__sel{font-family:'Cinzel',serif;font-weight:900;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-text)}
-.pativa__corpo{display:flex;gap:11px;align-items:flex-start}
-.pativa__art{flex:0 0 52px;height:52px;border-radius:8px;overflow:hidden;background:#14112a}
-.pativa__art .slot{width:100%;height:100%}
-.pativa__id{flex:1 1 auto;min-width:0}
-.pativa__nome{display:block;font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.03em;color:var(--gold-text);line-height:1.1;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pativa__objs{display:flex;flex-direction:column;gap:4px}
-/* LISTA por ranque crescente (o híbrido): cartões (ativa/pausada/disponivel/conquistada) + linhas travadas. */
-.mlista{display:flex;flex-direction:column;gap:7px}
-/* CARTÃO (≥76px, §234): fita de raridade + [retrato+nome+motivo] abrível + objetivos + ação. */
-.mcard{position:relative;display:flex;flex-direction:column;width:100%;min-height:76px;
-  border:1px solid #2c2648;border-radius:11px;overflow:hidden;background:rgba(20,16,38,.62);color:var(--gold-soft)}
-.mcard--ativa{border-color:var(--gold-text);background:rgba(255,217,122,.09)}
-.mcard--pausada{border-color:#6a5aa0}
-.mcard--disponivel{border-color:#3b6e5e}
-.mcard--conquistada{border-color:var(--gold-soft);background:rgba(255,217,122,.05)}
-.mcard__rar{position:absolute;left:0;top:0;bottom:0;width:4px;background:currentColor}
-.mcard__abrir{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;border:0;color:inherit;cursor:pointer;padding:8px 12px 6px 12px}
-.mcard__art{flex:0 0 48px;height:48px;border-radius:7px;overflow:hidden;background:#14112a}
-.mcard__art .slot{width:100%;height:100%}
-.mcard__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.mcard__nome{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.03em;color:var(--gold-text);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mcard__ok{color:#7ff0a5;font-size:13px}
-.mcard__selo{display:inline-block;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:999px;vertical-align:middle}
-.mcard__selo--ativa{color:#0a0912;background:var(--gold-text)}
-.mcard__selo--pausada{color:#d8cffa;background:rgba(120,100,180,.4)}
-.mcard__motivo{font-style:italic;font-weight:500;font-size:11px;line-height:1.32;color:var(--ink-dim);
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
-.mcard__objs{display:flex;flex-direction:column;gap:3px;padding:0 12px 8px 12px}
-.mcard__acao{display:flex;justify-content:flex-end;padding:0 12px 9px 12px}
-.mcard__conf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600;font-size:11.5px;color:var(--ink-dim)}
-.mcard__conf b{color:var(--gold-text)}
-/* UMA linha de objetivo: rótulo (flex) + x/y + barra. §234: o cartão como um todo é a área de toque. */
-.orow{display:flex;align-items:center;gap:8px;min-width:0}
-.orow__t{flex:1 1 auto;min-width:0;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11.5px;color:var(--ink-dim);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.orow__t b{color:var(--gold-text);font-weight:700}
-.orow__xy{flex:0 0 auto;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;color:var(--ink-mute)}
-.orow__xy b{color:var(--gold-text);font-weight:800}
-.mreq__bar{flex:0 0 56px;width:56px;height:3px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.16)}
-.mreq__bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#37cfe6,var(--gold-text))}
-/* LINHA TRAVADA (~40px): NÃO interativa (não ativa nem abre); SEMPRE com o que falta (§234) + cadeado. */
-.mlock{display:flex;align-items:center;gap:9px;width:100%;min-height:40px;padding:4px 12px 4px 0;
-  border:1px dashed #322c50;border-radius:9px;overflow:hidden;background:rgba(15,12,30,.5);opacity:.9}
-.mlock__rar{flex:0 0 4px;align-self:stretch;background:currentColor;opacity:.5}
-.mlock__art{flex:0 0 30px;height:30px;margin-left:8px;border-radius:6px;overflow:hidden;background:#14112a;filter:grayscale(1) brightness(.62)}
-.mlock__art .slot{width:100%;height:100%}
-.mlock__nome{font-family:'Cinzel',serif;font-weight:700;font-size:12.5px;letter-spacing:.03em;color:var(--ink-dim);flex:0 0 auto;white-space:nowrap}
-.mlock__falta{flex:1 1 auto;min-width:0;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;color:#c6b0b0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mlock__falta b{color:#e7bd74;font-weight:800}
-.mlock__cad{flex:0 0 auto;font-size:13px;opacity:.72}
+/* ===================== §316 — TELA DE PROVAÇÕES (paisagem: painel fixo à esq + lista rolável à dir) ===================== */
+.tela--prov{--pv-line:rgba(216,178,90,.22)}
+/* BARRA SUPERIOR fina: ‹ Início · PROVAÇÕES · ranque */
+.pv__top{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:7px 18px;border-bottom:1px solid var(--pv-line);
+  background:linear-gradient(180deg,rgba(12,10,26,.85),rgba(12,10,26,0))}
+.pv__back{flex:0 0 auto;background:transparent;border:0;color:var(--ink-dim);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.03em;cursor:pointer;padding:6px 8px;min-height:36px}
+.pv__titulo{flex:1 1 auto;text-align:center;font-family:'Cinzel',serif;font-weight:900;font-size:20px;letter-spacing:.14em;color:var(--gold-text);margin:0}
+.pv__rq{flex:0 0 auto;display:flex;justify-content:flex-end;min-width:184px}
+.rq{display:flex;align-items:center;gap:8px;color:var(--gold)}
+.rq__helm{width:26px;height:26px;flex:0 0 auto;color:var(--gold)}
+.rq__id{display:flex;flex-direction:column;gap:2px;min-width:132px}
+.rq__f{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--gold-text);line-height:1}
+.rq__bar{width:150px;height:4px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.12)}
+.rq__bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold-text))}
+.rq__t{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:10px;color:var(--ink-mute);line-height:1}
+.rq__max{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-soft)}
+/* CORPO — duas colunas: esquerda FIXA (painel), direita ROLA (lista) */
+.pv__corpo{flex:1 1 auto;min-height:0;display:flex;gap:14px;padding:12px 18px 14px}
+.pv__esq{flex:0 0 48%;max-width:48%;min-height:0;display:flex}
+.pv__dir{flex:1 1 auto;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:6px}
+.pv__dir::-webkit-scrollbar{width:6px}
+.pv__dir::-webkit-scrollbar-thumb{background:var(--gold-soft);border-radius:999px}
+.pv__dir::-webkit-scrollbar-track{background:transparent}
+.pv__off{padding:10px 24px 20px}
+
+/* PAINEL PROVAÇÃO ATIVA — o ÚNICO com moldura dourada acesa + brilho */
+.pa{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;border:1.5px solid var(--gold);border-radius:14px;
+  background:linear-gradient(180deg,rgba(40,32,16,.5),rgba(16,13,32,.6));box-shadow:0 0 0 1px rgba(255,217,122,.14),0 0 22px rgba(216,178,90,.26);padding:9px 14px}
+.pa__rot{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:900;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-text);margin:0 0 6px}
+.pa__head{flex:0 0 auto;display:flex;gap:12px;align-items:flex-start}
+.pa__med{flex:0 0 auto;width:92px;height:92px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);box-shadow:0 0 12px rgba(216,178,90,.35);background:#14112a}
+.pa__med .slot{width:100%;height:100%}
+.pa__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pa__nome{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-weight:900;font-size:21px;letter-spacing:.02em;color:var(--gold-text);line-height:1.05;white-space:nowrap;overflow:hidden}
+.pa__sub{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.03em;color:var(--ink-mute)}
+.pa__div{height:1px;background:var(--pv-line);margin:5px 0}
+.pa__motivo{font-style:italic;font-weight:500;font-size:12px;line-height:1.32;color:var(--ink-dim);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.pa__objs{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:6px;margin:8px 0 6px;overflow:hidden}
+.pa__foot{flex:0 0 auto;display:flex;align-items:center;gap:12px;border-top:1px solid var(--pv-line);padding-top:8px}
+.pa__foot .b{min-height:36px}
+.pa__footdiv{width:1px;height:16px;background:var(--pv-line)}
+.pa__slot{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--ink-mute)}
+.pa--vazio .pa__vazio{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.pa__med--off{border-color:#4a4570;box-shadow:none;filter:grayscale(1) brightness(.6);display:grid;place-items:center;color:#4a4570}
+.pa__vaziomsg{font-weight:600;font-size:13px;line-height:1.5;color:var(--ink-dim);max-width:240px}
+.pa__vaziomsg b{color:var(--gold-text)}
+
+/* LINHA DE OBJETIVO (painel + expansão mini): ícone · texto · widget de progresso */
+.ob{display:flex;align-items:center;gap:9px;min-width:0}
+.ob--mini{gap:7px}
+.obic{width:16px;height:16px;flex:0 0 auto;color:var(--gold-soft)}
+.ob--mini .obic{width:13px;height:13px}
+.ob__t{flex:1 1 auto;min-width:0;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;line-height:1.25;color:var(--ink-dim)}
+.ob--mini .ob__t{font-size:11px}
+.ob__t b{color:var(--gold-text);font-weight:700}
+.ob__t .lk{color:var(--ink-mute);opacity:.75}
+.ob__p{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+.ob__meta{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:800;font-size:13px;color:var(--gold-text)}
+.ob__ok{color:var(--gold-text);font-weight:900;font-size:14px}
+.xy{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;color:var(--ink-mute);min-width:26px;text-align:right}
+.dots{display:inline-flex;gap:3px}
+.dot{width:7px;height:7px;border-radius:50%;background:transparent;border:1px solid var(--gold-soft)}
+.dot.on{background:var(--gold-text);border-color:var(--gold-text);box-shadow:0 0 4px rgba(255,217,122,.5)}
+.dupla{display:inline-flex;flex-direction:column;gap:2px}
+.embs{display:inline-flex;gap:3px}
+.emb{width:8px;height:8px;transform:rotate(45deg);background:transparent;border:1px solid var(--gold-soft)}
+.emb.on{background:var(--gold-text);border-color:var(--gold-text)}
+.obar{width:66px;height:5px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.14)}
+.obar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold-text))}
+
+/* SELO de raridade: A roxo · S dourado · SS mais nobre (sem virar brilho) */
+.selo{flex:0 0 auto;display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;font-family:'Cinzel',serif;font-weight:900;font-size:10px;line-height:1;border:1px solid currentColor;vertical-align:middle}
+.selo--A{color:#b48ce0}
+.selo--S{color:var(--gold-text)}
+.selo--SS{color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,var(--gold));border-color:var(--gold-text)}
+
+/* LISTA — plana, sem moldura por linha, sem brilho */
+.fx{display:flex;align-items:center;gap:8px;margin:12px 2px 5px}
+.fx:first-child{margin-top:2px}
+.fx__n{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+.fx__ln{flex:1 1 auto;height:1px;background:var(--pv-line)}
+.fx--fechada{width:100%;display:flex;align-items:center;gap:8px;background:transparent;border:0;border-top:1px solid var(--pv-line);cursor:pointer;padding:9px 2px;color:var(--ink-mute);text-align:left;min-height:42px}
+.fx--fechada .fx__n{color:var(--ink-mute)}
+.fx__falta{flex:1 1 auto;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;color:var(--ink-mute)}
+.fx__seta{flex:0 0 auto;color:var(--ink-mute);font-size:13px;transition:transform .15s}
+.fx__seta.is-open{transform:rotate(180deg)}
+.lr{border-bottom:1px solid rgba(216,178,90,.1)}
+.lr__row{display:flex;align-items:center;min-height:52px}
+.lr__tap{flex:1 1 auto;min-width:0;overflow:hidden;display:flex;align-items:center;gap:10px;background:transparent;border:0;color:inherit;cursor:default;text-align:left;padding:6px 2px;min-height:52px}
+.lr__tap[data-linha]{cursor:pointer}
+.lr--ativa{box-shadow:inset 3px 0 0 var(--gold-text)}
+.lr--ativa .lr__row{padding-left:6px}
+.lr__art{flex:0 0 auto}
+.med{display:block;width:38px;height:38px;border-radius:50%;overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
+.med .slot{width:100%;height:100%}
+.med--trava{filter:grayscale(1) brightness(.62);border-color:#3a3358}
+.lr__nome{flex:0 1 auto;min-width:0;font-family:'Cinzel',serif;font-weight:700;font-size:14.5px;letter-spacing:.02em;color:var(--gold-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr--travada .lr__nome{color:var(--ink-mute)}
+.lr__st{flex:1 1 auto;text-align:right;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;color:var(--ink-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr--ativa .lr__st{color:var(--gold-text)}
+.lr__cad{opacity:.72}
+.lr__seta{flex:0 0 auto;color:var(--ink-mute);font-size:13px;transition:transform .15s;width:16px;text-align:center}
+.lr__seta.is-open{transform:rotate(180deg)}
+.lr__acao{flex:0 0 auto;margin-left:10px}
+.lr__acao .b{min-height:36px}
+.lr__conf{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11.5px;color:var(--ink-dim);padding:2px 2px 9px 48px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.lr__conf b{color:var(--gold-text)}
+.lr__confb{display:inline-flex;gap:8px;margin-left:auto}
+.lr__confb .b{min-height:36px}
+.lr__exp{padding:2px 2px 10px 48px}
+.exp__motivo{font-style:italic;font-weight:500;font-size:11.5px;line-height:1.35;color:var(--ink-mute);margin:0 0 6px}
+.exp__objs{display:flex;flex-direction:column;gap:4px}
+.exp__nota{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;color:#c6b0b0;margin-top:5px}
+.exp__nota b{color:#e7bd74;font-weight:800}
+.b.pulso{animation:pvpulso .6s ease}
+@keyframes pvpulso{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px rgba(255,217,122,.55)}}
 /* SEM SERVIDOR: mensagem honesta (não mostra zero) + catálogo das histórias (os 91 motivos para ler) */
 .moff{display:flex;align-items:center;gap:12px;padding:14px 16px;margin:0 0 16px;border:1px solid var(--gold-soft);border-radius:10px;background:rgba(255,217,122,.05)}
 .moff__ic{font-family:'Cinzel',serif;font-size:34px;color:var(--gold-soft);flex:0 0 auto}

@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §316 — TELA DE PROVAÇÕES refeita pela referência do dono (paisagem: painel fixo + lista rolável). Só TELA.
+
+Nenhuma mudança de regra: os objetivos (§313) e a Provação ativa única (§314) ficam como estão. A tela foi refeita para o
+molde aprovado (paisagem, palco 428, largura 780–1200):
+
+**Barra superior fina** — `‹ Início` · **PROVAÇÕES** (Cinzel dourado) · RANQUE à direita (elmo + faixa + barra "pontos/próximo
+mínimo até <próxima faixa>", lida do servidor + `MISSOES.faixas`; no Semideus, sem barra: "faixa máxima"). **Duas colunas:**
+esquerda FIXA (~48%, não rola) = o painel; direita (~52%) = a lista, que rola (barra de rolagem dourada fina).
+
+**Painel PROVAÇÃO ATIVA — o ÚNICO com moldura dourada acesa + brilho.** Medalhão redondo grande, nome Cinzel + selo de
+raridade, "<Panteão> · ranque <faixa>", divisória, motivo (do dado); uma linha por objetivo com **ícone por tipo** (s
+corrente · v espadas · j elos · c corrente dupla · p louro+coluna · sp corrente+louro · a emblemas), texto (nomes em negrito;
+"p"/"sp" → "qualquer <adjetivo singular>") e **widget de progresso por tipo** (s/sp pontos · c dois grupos de pontos · v/j/p
+barra · a emblemas; concluído → ✓ dourado). Rodapé: TROCAR (contorno) + "1 slot" (de `slotsGratis`). TROCAR não troca sozinho:
+rola a lista até a 1ª disponível/pausada e pulsa os botões. Vazio: medalhão apagado + "Nenhuma Provação ativa — escolha uma
+na lista".
+
+**Lista — plana, sem moldura por linha, sem brilho.** Agrupada por faixa (cabeçalho em versalete); a faixa atual e as de baixo
+abertas, as ACIMA fechadas ("DEVOTO · faltam X pontos", tocar espia). Linha: medalhão redondo · nome · selo (A roxo · S
+dourado · SS nobre) · estado/ação · seta. Os 5 estados: **ativa** (barra dourada à esquerda, "ativa", sem seta) · **pausada**
+("pausada · %" médio + Retomar contorno + seta) · **disponivel** (ATIVAR dourado CHEIO — o único botão cheio — + seta) ·
+**travada** (medalhão cinza, cadeado + "travada" + seta) · **conquistada** (✓ + "conquistada", sem seta).
+
+**Os REQUISITOS antes de ativar (o ponto do dono): ACORDEÃO.** Tocar na linha/seta expande ali mesmo (só uma por vez); os
+botões Ativar/Retomar fazem só a própria ação. A expansão traz o motivo + os objetivos: disponível → a META à direita;
+pausada → o progresso GUARDADO; travada → a meta + o que falta ("você ainda não tem <Deus>" em cinza+cadeado; "Requer ranque
+<faixa>"; "v" sem nenhum → "você precisa de um destes"). Tudo lido do dado e da conta — nenhum texto fixo por deus.
+
+**Ativar/retomar:** sem ativa → direto; com ativa → confirmação INLINE na linha ("Ativar <Deus>? <Atual> fica pausada, com o
+progresso guardado." + Confirmar cheio/Cancelar contorno, padrão §245). Enquanto o servidor responde (autoritativo,
+`provacaoAtivar`), o botão fica em "…" e não aceita toque duplo.
+
+**Regra de cor:** dourado forte só na moldura do painel, nas barras/pontos de progresso e no ATIVAR; o resto plano (linhas de
+1px em dourado apagado, fundo escuro com vinheta).
+
+**Medições (§292/§295/§307/§308).** Guardas em `tests/missoes_tela.test.js`: os 5 estados + painel cheio/vazio + acordeão
+(disponível/pausada/travada com nome faltante e trava de ranque) + faixa fechada/aberta + confirmação; e no Chromium, nas 4
+larguras (780/893/1075/1200) e com o painel de 2/3/4 objetivos: **o painel NUNCA rola** (medido), **a lista NUNCA rola na
+horizontal** (borda direita real, não o `scrollWidth` — que o flexbox do Chromium infla), e **nenhum nome de linha é cortado
+por reticência** (medido por clone solto; piores nomes "Mula sem Cabeça"/"Yamato Takeru"). Os objetivos do painel QUEBRAM em
+duas linhas em vez de cortar (o pior objetivo "8 vitórias com Zeus ou Ogum ou Tyr" cabe sem clip). Toque: a linha ≥44px, os
+botões ≥36px de design (§301/§234). Capturas a 893 em `docs/capturas-316/` (normal · travada expandida · pausada expandida ·
+confirmação). **★ Lição (§308):** o `scrollWidth` de um contêiner flex no Chromium infla pelo `gap`/max-content e não serve de
+guarda de overflow — medir a BORDA DIREITA real de cada filho contra o `clientWidth`, e usar `overflow-x:hidden` no scroller.
+
 ## §314 — UMA PROVAÇÃO ATIVA POR VEZ: servidor migrado para os objetivos + a tela (painel + lista híbrida). (PARTE 2.)
 
 Fecha o §313: o servidor deixou o modelo de volume+companheiro (§230/§241) e passou a ler a **LISTA DE OBJETIVOS**, com
