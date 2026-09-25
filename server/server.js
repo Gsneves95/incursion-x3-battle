@@ -13,6 +13,7 @@ const partidaCtrl = require('./partida.js');
 const salas = require('./salas.js');
 const fila = require('./fila.js');
 const telemetria = require('./telemetria.js');
+const missoesSrv = require('./missoes.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
@@ -93,6 +94,16 @@ wss.on('connection', (ws) => {
         const r = contas.salvarPerfil(msg.token, msg.perfil);
         if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
         return responder('perfilSalvo', { ok: true });
+      }
+
+      // ---- §314: PROVAÇÃO ATIVA. O cliente só PEDE ativar/trocar; o servidor valida (ranque + nomes
+      // possuídos) e é autoritativo sobre o progresso. Ativar com outra ativa PAUSA a atual (o progresso
+      // congela, não zera). Devolve a conta atualizada para o cliente redesenhar. ----
+      case 'provacaoAtivar': {
+        if (!msg.deus || typeof msg.deus !== 'string') return responder('erro', { erro: 'falta o deus da Provação' });
+        const r = missoesSrv.ativarProvacao(ws._conta, msg.deus, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('conta', { conta: contas.paraDono(ws._conta) });   // token NÃO reenviado
       }
 
       // ---- F5.3: NICK + FILA de pareamento (PvP) ----

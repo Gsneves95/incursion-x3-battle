@@ -24,6 +24,9 @@ const REQ = Array.isArray(REQDOC) ? REQDOC : REQDOC.missoes;
 const OBJ = (REQDOC && REQDOC.objetivos) || {};            // §313: a lista de objetivos por deus (do dono)
 const RAR = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'raridades.json'), 'utf8'));
 const RANQ = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'ranqueado.json'), 'utf8'));
+// §314 — SLOTS de Provação ativa (parâmetro do dono em data/, propagado p/ missoes.json → servidor + cliente).
+const SLOTS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'provacoes_slots.json'), 'utf8')); } catch (e) { return { slotsGratis: 1 }; } })();
+const SLOTS_GRATIS = (SLOTS && typeof SLOTS.slotsGratis === 'number') ? SLOTS.slotsGratis : 1;
 const GODS = FAM._carregarDeuses();
 const CLS = FAM.classificarTodos();
 const INICIAIS = ['zeus', 'ogum', 'tyr', 'sobek', 'brigid', 'ganesha', 'cuca', 'fujin', 'nezha'];
@@ -97,18 +100,8 @@ function atribuirFaixas(depth) {
   return faixaIdx;
 }
 
-// VOLUME por raridade (legado §230/§242): o servidor (§314 ainda por vir) usa vitoriasPanteao/seguidas.
-// Fica no volume BASE — o §312 (base + posição) foi removido. Mantido para compatibilidade do servidor
-// enquanto a Parte 2 (que lê `objetivos`) não entra.
-const VOL_BASE = { A: 15, S: 20, SS: 40 };
-const FATOR_VOLUME = 0.55;
-const PISO_VOLUME = 4;
-function volume(rar) {
-  const base = (VOL_BASE[rar] != null) ? VOL_BASE[rar] : VOL_BASE.A;
-  const panteao = Math.max(PISO_VOLUME, Math.round(base * FATOR_VOLUME));
-  const seguidas = rar === 'SS' ? 5 : (rar === 'S' ? 3 : 0);
-  return { panteao, seguidas, base };
-}
+// §314 — o VOLUME por raridade (§230/§242) SAIU: o modelo de objetivos substituiu vitoriasPanteao/seguidas
+// por Provação. O que resta da rampa é o K das sequências (SEGUIDAS_POR_TIER), consumido pelos objetivos.
 
 // §313 — MONTA a lista de objetivos RESOLVIDA (com K/N) de uma Provação, a partir do dado do dono + a faixa.
 function construirObjetivos(k, fi, rar) {
@@ -151,10 +144,7 @@ function gerar() {
   for (const r of REQ) {
     const k = r.deus;
     const rar = RAR[k];
-    const vol = volume(rar);
     const fi = faixaIdx[k];
-    const seguidas = SEGUIDAS_POR_TIER[fi];
-    const alvo = r.companheiro ? { tipo: 'companheiro', chave: r.companheiro } : { tipo: 'panteao', chave: r.panteao };
     missoes[k] = {
       deus: k, nome: GODS[k].nome, raridade: rar,
       panteao: r.panteao,            // EXIGIDO (do dono; pode ser cruzado)
@@ -164,11 +154,7 @@ function gerar() {
       faixa: FAIXAS[fi].chave, faixaNome: FAIXAS[fi].nome, faixaIndice: fi, faixaMin: FAIXAS[fi].min,
       profundidade: depth[k],        // §241: profundidade da cadeia de companheiro (dirige a faixa)
       profundidadeObjetivos: depthObj[k],   // §313: profundidade da cadeia de objetivos (medição)
-      // legado (§230/§242) — o servidor atual ainda usa; a Parte 2 (§314) migra para `objetivos`.
-      vitoriasPanteao: vol.panteao,
-      seguidas, seguidasAlvo: alvo,
-      seguidasCompanheiro: r.companheiro ? seguidas : 0,
-      // §313 — a LISTA DE OBJETIVOS resolvida (com K/N), o dado que a Parte 2 (servidor + tela) consome.
+      // §313 — a LISTA DE OBJETIVOS resolvida (com K/N), o dado que o servidor (§314) e a tela consomem.
       objetivos: construirObjetivos(k, fi, rar),
       // informativo (maestria/futuro, §230).
       familia: CLS[k].familia, feito: { metrica: CLS[k].metrica, habilidade: CLS[k].habilidade, slot: CLS[k].slot },
@@ -180,12 +166,11 @@ function gerar() {
     quantas: Object.values(missoes).filter(m => m.faixaIndice === fi).length }));
   return {
     versao: 5,
-    _nota: 'Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume · §313 objetivos): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). Campos legados (vitoriasPanteao/seguidas) mantidos p/ o servidor atual até a Parte 2 (§314) migrar. Vínculo temático (companheiro/motivo/objetivos) do dono.',
-    volumeFator: FATOR_VOLUME, volumePiso: PISO_VOLUME,
-    volumes: { A: volume('A'), S: volume('S'), SS: volume('SS') },
+    _nota: 'Gerado por tools/gerar_missoes.js (§241 portão de ranque · §313 objetivos · §314 uma ativa): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). O volume/sequência por Provação do §241/§242 saiu (o modelo é objetivos). Vínculo temático (companheiro/motivo/objetivos) do dono.',
     faixas: FAIXAS, distribuicao: porFaixa, seguidasPorTier: SEGUIDAS_POR_TIER,
     objetivosPorRaridade: OBJS_POR_RAR,
     numerosObjetivos: { v1: N_V1, v2: N_V2, j: N_J, p: N_P },
+    slotsGratis: SLOTS_GRATIS,           // §314: quantas Provações ativas ao mesmo tempo (hoje 1)
     profundidadeObjetivosMax: Math.max(...Object.values(depthObj)),
     iniciais: INICIAIS.slice(),
     panteaoDe: panteaoMap,
@@ -332,7 +317,7 @@ function varreduraObjetivos(doc) {
   return { alcancados: possui.size - doc.iniciais.length, inalcancaveis, ciclo };
 }
 
-module.exports = { gerar, validar, validarObjetivos, varreduraObjetivos, panteaoDe, volume,
+module.exports = { gerar, validar, validarObjetivos, varreduraObjetivos, panteaoDe,
   construirObjetivos, assinaturaObjetivos, SEGUIDAS_POR_TIER, N_V1, N_V2, N_J, N_P };
 
 if (require.main === module) {
@@ -349,13 +334,14 @@ if (require.main === module) {
   const gated = keys.length - imediatas;
   const prof = Math.max(...keys.map(k => M[k].profundidade));
   const profObj = doc.profundidadeObjetivosMax;
-  const seq = {}; for (const k of keys) seq[M[k].seguidas] = (seq[M[k].seguidas] || 0) + 1;
+  const kDist = {}; for (const k of keys) { const K = SEGUIDAS_POR_TIER[M[k].faixaIndice]; kDist[K] = (kDist[K] || 0) + 1; }
   const tipos = {}; for (const k of keys) for (const o of M[k].objetivos) tipos[o.tipo] = (tipos[o.tipo] || 0) + 1;
-  console.log(`OK — 91 Provações (A ${cnt.A} · S ${cnt.S} · SS ${cnt.SS}); ${comComp} com companheiro, ${91 - comComp} só volume.`);
+  console.log(`OK — 91 Provações (A ${cnt.A} · S ${cnt.S} · SS ${cnt.SS}); ${comComp} com companheiro, ${91 - comComp} só panteão.`);
   console.log(`§313 objetivos: por raridade A ${doc.objetivosPorRaridade.A} · S ${doc.objetivosPorRaridade.S} · SS ${doc.objetivosPorRaridade.SS}; tipos ${Object.keys(tipos).sort().map(t => t + ':' + tipos[t]).join(' · ')}.`);
   console.log(`Varredura §202: sem ciclo · ${v.alcancados}/91 alcançáveis (companheiro) · ${v.objetivos.alcancados}/91 alcançáveis (objetivos) · rampa em ordem · caso Maia ${v.maiaCross ? 'OK' : 'FALHOU'}.`);
   console.log(`Distribuição por faixa (${doc.distribuicao.map(f => f.nome + ' ' + f.quantas).join(' · ')}) = ${doc.distribuicao.reduce((s, f) => s + f.quantas, 0)}`);
   console.log(`Cadeias (companheiro NÃO-inicial): ${cadeias} · gated: ${gated} · imediatas: ${imediatas} · profundidade companheiro: ${prof} · profundidade objetivos: ${profObj}`);
-  console.log(`Sequências (§241, rampa 2/3/4): ${Object.keys(seq).sort().map(n => n + '→' + seq[n]).join(' · ')} (todas ≥1, teto 4).`);
+  console.log(`K das sequências (rampa 2/3/4): ${Object.keys(kDist).sort().map(n => n + '→' + kDist[n]).join(' · ')} Provações por K (teto 4).`);
+  console.log(`§314: slotsGratis ${doc.slotsGratis} (uma Provação ativa por vez).`);
   console.log('Escrito: data/missoes.json');
 }

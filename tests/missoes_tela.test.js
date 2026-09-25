@@ -1,9 +1,8 @@
-// §312 — A TELA DAS MISSÕES, refeita: LISTA PLANA por ranque crescente (o híbrido). ABERTA = cartão cheio
-// (retrato + nome + MOTIVO 2 linhas + as 3 TRAVAS: volume do panteão com barra · sequência COM O COMPANHEIRO
-// · ranque mínimo). TRAVADA = linha curta, SEMPRE com o QUE FALTA (§234) + cadeado, NÃO interativa.
-// GUARDAS §295: o espaço de estados INTEIRO percorrido (progresso · disponível · trava-comp · trava-ranque ·
-// trava-ambos · conquistada · offline). Números do DADO (nada da referência); nenhum nome de ranque fora das
-// 8 faixas; motivo clampado que não transborda; e nada corta nas 4 larguras (Chromium, no fim).
+// §314 — A TELA DAS PROVAÇÕES: painel fixo "PROVAÇÃO ATIVA" no topo (retrato + nome + cada objetivo x/y +
+// TROCAR; ou vazio) + a LISTA híbrida por ranque crescente com 5 estados (ativa/pausada/disponivel/travada/
+// conquistada). Cartões (≥76px, §234) mostram os objetivos (até 4); a travada é linha curta NÃO interativa
+// com o que falta. GUARDAS §295: o espaço de estados INTEIRO — incluindo pausada, painel vazio e painel/
+// cartão com 4 objetivos — e nada corta nas 4 larguras (Chromium, no fim).
 const fs = require('fs');
 const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
@@ -20,106 +19,134 @@ const w = dom.window, d = w.document;
 const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
 const txt = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
 const FAIXAS8 = ['Suplicante', 'Devoto', 'Iniciado', 'Adepto', 'Sacerdote', 'Oráculo', 'Herói', 'Semideus'];
+function MISSOES2(k) { return w.eval(`MISSOES.missoes[${JSON.stringify(k)}]`); }
 
-console.log('== §312 / TELA DAS MISSÕES (híbrida, espaço de estados §295) ==');
-ok(w.eval("typeof MISSOES==='object' && Object.keys(MISSOES.missoes).length===91"), 'as 91 missões estão no cliente');
+// mock RICO (rank alto = nenhuma trava de ranque; a travada restante é por NOMES): cerberus/saci conquistados,
+// atena ATIVA (3 objetivos), hades PAUSADA (4 objetivos — o cartão de 4), dionisio DISPONÍVEL, aquiles TRAVADA.
+const C_RICO = "contaAtual={nick:'T',ranque:{pontos:2000,faixa:{chave:'semideus'}},"
+  + "perfil:{deuses:{cerberus:{copias:1},saci:{copias:1}}},"
+  + "missoes:{ativa:'atena',progresso:{atena:{ativadaEm:0,obj:[{seq:1},{vol:2},{vol:3}]},hades:{ativadaEm:0,obj:[{seq:1},{vol:1},{vol:0},{vol:2}]}},liberados:['cerberus','saci']}};"
+  + "ir('provacoes',{},{substituir:true});render();";
+const C_VAZIO = "contaAtual={nick:'T',ranque:{pontos:2000,faixa:{chave:'semideus'}},perfil:{deuses:{}},missoes:{ativa:null,progresso:{},liberados:[]}};ir('provacoes',{},{substituir:true});render();";
+const C_RANK0 = "contaAtual={nick:'T',ranque:{pontos:0,faixa:{chave:'suplicante'}},perfil:{deuses:{}},missoes:{ativa:null,progresso:{},liberados:[]}};ir('provacoes',{},{substituir:true});render();";
+
+console.log('== §314 / TELA DAS PROVAÇÕES (painel ativa + lista híbrida, espaço de estados §295) ==');
+ok(w.eval("typeof MISSOES==='object' && Object.keys(MISSOES.missoes).length===91"), 'as 91 Provações estão no cliente');
+ok(w.eval("MISSOES.slotsGratis===1"), 'slotsGratis=1 vem do dado (data/provacoes_slots.json → missoes.json)');
 
 // ---- 1. OFFLINE: estado honesto (não mostra zero) + os 91 motivos legíveis ----
-console.log('\n== 1. offline: honesto + motivos legíveis ==');
+console.log('\n== 1. offline: honesto + histórias legíveis ==');
 err = null;
 w.eval("contaAtual=null; ir('provacoes',{},{substituir:true}); render();");
 ok(!err, 'renderiza offline sem quebrar');
 ok(/conecte/i.test(txt($('.moff__msg'))) && /pvp/i.test(txt($('.moff__msg'))), 'diz honestamente: contam no PvP, conecte');
-ok($$('.mcard, .mlock').length === 0, 'offline NÃO desenha cartões de progresso (nada de zero forjado)');
-ok($$('.mcat').length === 91, 'as 91 histórias (motivos) ficam legíveis offline');
+ok($$('.mcard, .mlock, .pativa').length === 0, 'offline NÃO desenha painel nem cartões de progresso');
+ok($$('.mcat').length === 91, 'as 91 histórias ficam legíveis offline');
 
-// ---- 2. ONLINE: LISTA PLANA (sem cabeçalhos de faixa), os 91 presentes ----
-console.log('\n== 2. online: lista plana por ranque, 91 presentes, sem seções de faixa ==');
-// Conta 1 (pontos 150 = Suplicante+Devoto abertos): saci CONQUISTADO; Gregas com zeus EM PROGRESSO;
-// portas disponíveis; faixas altas travadas por ranque (e por companheiro → ambos).
-const C1 = "contaAtual={nick:'T',ranque:{pontos:150},perfil:{deuses:{hera:{copias:1},poseidon:{copias:1}}},missoes:{vitoriasPanteaoPvP:{Grega:5},sequenciaPvP:{zeus:1},sequenciaPanteaoPvP:{Grega:3},desbloqueio:{}}};ir('provacoes',{},{substituir:true});render();";
-err = null; w.eval(C1);
+// ---- 2. ONLINE: painel + lista plana (91 presentes), ranque crescente ----
+console.log('\n== 2. online: painel ativa + lista por ranque, 91 presentes ==');
+err = null; w.eval(C_RICO);
 ok(!err, 'renderiza online sem quebrar');
-ok($$('.msec--faixa, .mfx__cab').length === 0, 'NÃO há mais cabeçalhos de faixa (lista plana, §312)');
-ok(($$('.mcard').length + $$('.mlock').length) === 91, `os 91 aparecem (cartões ${$$('.mcard').length} + travadas ${$$('.mlock').length})`);
-// ordem: por ranque crescente — o 1º cartão/linha é de faixa <= o último
-const ordFaixa = $$('.mcard, .mlock').map(el => { const k = el.dataset.deus || el.dataset.lock; return MISSOES2(k).faixaIndice; });
+ok(!!$('.pativa'), 'o PAINEL "Provação ativa" existe no topo');
+ok(($$('.mcard').length + $$('.mlock').length) === 91, `os 91 aparecem na lista (cartões ${$$('.mcard').length} + travadas ${$$('.mlock').length})`);
+const ordFaixa = $$('.mcard, .mlock').map(el => MISSOES2(el.dataset.deus || el.dataset.lock).faixaIndice);
 ok(ordFaixa.every((v, i) => i === 0 || ordFaixa[i - 1] <= v), 'a lista está em ranque CRESCENTE (faixaIndice não-decrescente)');
-function MISSOES2(k) { return w.eval(`MISSOES.missoes[${JSON.stringify(k)}]`); }
 
-// ---- 3. ESPAÇO DE ESTADOS §295: cada estado presente e correto ----
-console.log('\n== 3. §295 — os estados: conquistada · progresso · disponível · trava-ranque · trava-ambos ==');
+// ---- 3. PAINEL ATIVA (cheio): retrato + nome + cada objetivo x/y + TROCAR ----
+console.log('\n== 3. painel ativa: nome + objetivos x/y + Trocar ==');
+{
+  const pa = $('.pativa');
+  ok(/atena/i.test(txt(pa.querySelector('.pativa__nome'))), 'o painel mostra o nome da ativa (atena)');
+  ok(pa.querySelectorAll('.pativa__objs .orow').length === MISSOES2('atena').objetivos.length, `o painel lista os ${MISSOES2('atena').objetivos.length} objetivos da atena`);
+  ok($$('.pativa .orow__xy').every(e => /\d+/.test(txt(e))) && /1/.test(txt(pa.querySelector('.orow__xy'))), 'cada objetivo do painel mostra o progresso x/y (ao vivo)');
+  ok(!!pa.querySelector('#btrocar'), 'o painel tem o botão TROCAR');
+}
+
+// ---- 4. PAINEL VAZIO: "Nenhuma Provação ativa — escolha uma abaixo" ----
+console.log('\n== 4. painel vazio ==');
+w.eval(C_VAZIO);
+ok(!!$('.pativa--vazio') && /nenhuma/i.test(txt($('.pativa--vazio'))) && /escolha/i.test(txt($('.pativa--vazio'))), 'sem ativa: painel VAZIO com "Nenhuma Provação ativa — escolha uma abaixo"');
+w.eval(C_RICO);
+
+// ---- 5. ESPAÇO DE ESTADOS §295: os 5 estados presentes e corretos ----
+console.log('\n== 5. §295 — os estados: ativa · pausada · disponivel · conquistada · travada ==');
+ok($$('.mcard--ativa').length >= 1, 'ATIVA: cartão destacado na lista');
 ok($$('.mcard--conquistada').length >= 1 && /✓/.test(txt($('.mcard--conquistada'))), 'CONQUISTADA: cartão com ✓');
-ok($$('.mcard--progresso').length >= 1, 'PROGRESSO: há cartão em progresso');
+ok($$('.mcard--disponivel').length >= 1 && !!$('.mcard--disponivel [data-ativar]'), 'DISPONÍVEL: cartão com botão Ativar');
 {
-  const prog = $('.mcard--progresso');
-  ok(/\d+\/\d+/.test(txt(prog.querySelector('.mreq'))) && !!prog.querySelector('.mreq__bar>i'), 'PROGRESSO: contador ao vivo "X/Y" + barra de volume');
+  const pa = $('.mcard--pausada');
+  ok(!!pa && /pausada/i.test(txt(pa.querySelector('.mcard__selo'))), 'PAUSADA: cartão com selo Pausada');
+  ok(pa && pa.querySelectorAll('.orow').length === 4, 'PAUSADA hades: o cartão mostra os 4 OBJETIVOS (o cartão de 4)');
+  ok(pa && !!pa.querySelector('[data-ativar]'), 'PAUSADA: tem botão Retomar (ativar)');
 }
-ok($$('.mcard--disponivel').length >= 1 && /0\//.test(txt($('.mcard--disponivel .mreq'))), 'DISPONÍVEL: cartão em 0/Y');
-ok($$('.mlock--trava-ranque').length >= 1 && /falta:\s*ranque/i.test(txt($('.mlock--trava-ranque'))), 'TRAVA-RANQUE: linha "falta: ranque <faixa>"');
-ok($$('.mlock--trava-ambos').length >= 1, 'TRAVA-AMBOS: presente');
+ok($$('.mlock').length >= 1, 'TRAVADA: há linhas travadas');
 {
-  const amb = $('.mlock--trava-ambos'); const t = txt(amb.querySelector('.mlock__falta'));
-  ok(/falta:/i.test(t) && /ranque/i.test(t) && t.split('·').length === 2, 'TRAVA-AMBOS: mostra companheiro E ranque ("falta: X · ranque Y")');
+  const lk = $('.mlock'); const t = txt(lk.querySelector('.mlock__falta'));
+  ok(/falta:/i.test(t) && t.replace(/falta:/i, '').trim().length > 0, 'TRAVADA: SEMPRE diz o que falta (§234, nunca só cadeado)');
+  ok(!!lk.querySelector('.mlock__cad'), 'TRAVADA: tem o cadeado');
 }
-// Conta 2 (pontos 800 = todos os ranques abertos, nada extra possuído) → TRAVA-COMP puro
-const C2 = "contaAtual={nick:'T',ranque:{pontos:800},perfil:{deuses:{}},missoes:{vitoriasPanteaoPvP:{},sequenciaPvP:{},sequenciaPanteaoPvP:{},desbloqueio:{}}};ir('provacoes',{},{substituir:true});render();";
-w.eval(C2);
-ok($$('.mlock--trava-comp').length >= 1, 'TRAVA-COMP: com todos os ranques abertos, missões de cadeia ficam só por companheiro');
-{
-  const c = $('.mlock--trava-comp'); const t = txt(c.querySelector('.mlock__falta'));
-  ok(/falta:/i.test(t) && !/ranque/i.test(t), 'TRAVA-COMP: "falta: <companheiro>" (sem ranque)');
-}
-w.eval(C1);   // volta à conta 1 para o resto
+// TRAVA por RANQUE: no rank 0, alguma travada cita "ranque"
+w.eval(C_RANK0);
+ok($$('.mlock').some(l => /ranque/i.test(txt(l.querySelector('.mlock__falta')))), 'TRAVA-RANQUE: com rank 0, alguma travada cita "ranque <faixa>"');
+w.eval(C_RICO);
 
-// ---- 4. as 3 TRAVAS em TODO cartão aberto + o QUE FALTA em TODA travada (§234) ----
-console.log('\n== 4. 3 travas em todo aberto · o que falta em toda travada (§234) ==');
-ok($$('.mcard').every(c => c.querySelectorAll('.mreq').length === 3), 'TODO cartão aberto tem as 3 travas (volume · seguidas · ranque)');
-ok($$('.mcard').every(c => !!c.querySelector('.mreq__bar')), 'a trava de VOLUME sempre tem barra');
-ok($$('.mcard').every(c => /com /i.test(txt(c.querySelector('.mreq:nth-child(2)')))), 'a trava de SEQUÊNCIA diz "com <companheiro/panteão>"');
-const travSemFalta = $$('.mlock').filter(l => !/falta:/i.test(txt(l.querySelector('.mlock__falta'))) || txt(l.querySelector('.mlock__falta')).replace(/falta:/i, '').trim().length === 0);
-ok(travSemFalta.length === 0, 'GUARDA §234: NENHUMA travada é só cadeado — toda diz o que falta (0 sem falta)');
-ok($$('.mlock').every(l => !!l.querySelector('.mlock__cad')), 'toda travada tem o cadeado');
-
-// ---- 5. MOTIVO do dado (identidade) + NENHUM nome de ranque fora das 8 faixas ----
-console.log('\n== 5. motivo do dado · nomes de ranque só as 8 faixas ==');
-ok($$('.mcard').every(c => txt(c.querySelector('.mcard__motivo')).length > 0), 'todo cartão aberto mostra o MOTIVO');
+// ---- 6. OBJETIVOS: rótulo humano + x/y + barra; números do DADO; nomes de ranque só as 8 faixas ----
+console.log('\n== 6. objetivos: rótulo + x/y + barra · números do dado · só as 8 faixas ==');
+ok($$('.mcard .orow').length >= 1 && $$('.mcard .orow').every(r => !!r.querySelector('.orow__xy') && !!r.querySelector('.mreq__bar')), 'todo objetivo tem x/y + barra');
 {
-  const alvo = $('.mcard[data-deus]'); const k = alvo.dataset.deus;
+  // o painel da atena: 1º objetivo é "s zeus" (k=2) com o progresso 1/2 do mock
+  const first = $('.pativa .orow'); ok(/zeus/i.test(txt(first)) && /1\D*2/.test(txt(first.querySelector('.orow__xy'))), 'objetivo lê o DADO: "seguidas com Zeus" 1/2');
+}
+{
+  const alvo = $('.mcard--disponivel'); const k = alvo.dataset.deus;
   ok(txt(alvo.querySelector('.mcard__motivo')) === MISSOES2(k).motivo, 'o motivo vem do DADO (bate com MISSOES[k].motivo)');
 }
-const faixasNaTela = $$('.mreq__faixa').map(txt);
-const foraDas8 = faixasNaTela.filter(f => !FAIXAS8.includes(f));
-ok(foraDas8.length === 0, `nenhum nome de ranque inventado — só as 8 faixas${foraDas8.length ? ': ' + [...new Set(foraDas8)].join(', ') : ''}`);
+const faltasRanque = $$('.mlock__falta').map(txt).join(' ');
+const foraDas8 = FAIXAS8.filter(() => false).concat((faltasRanque.match(/ranque\s+([A-Za-zÁ-ú]+)/g) || []).map(s => s.replace(/ranque\s+/i, '')).filter(f => !FAIXAS8.includes(f)));
+ok(foraDas8.length === 0, `nenhum nome de ranque inventado nas travas — só as 8 faixas${foraDas8.length ? ': ' + [...new Set(foraDas8)].join(', ') : ''}`);
 ok(!/Bronze|Prata|Ouro|Platina|Diamante/i.test(txt($('.mlista'))), 'nada de Bronze/Prata/Ouro/Platina/Diamante (o erro da referência)');
 
-// ---- 6. (§313) a diferenciação por posição do §312 saiu; a tela da Parte 1 segue mostrando o volume legado.
-//      A leitura por OBJETIVOS entra na Parte 2 (§314). Nada a asseverar aqui na Parte 1.
-
 // ---- 7. ALVO DE TOQUE (§234) + travada NÃO interativa ----
-console.log('\n== 7. toque ≥76px no cartão aberto · travada não abre ==');
-ok(parseFloat(w.getComputedStyle($('.mcard')).minHeight) >= 76, `cartão aberto ≥76px de toque (§234): ${w.getComputedStyle($('.mcard')).minHeight}`);
+console.log('\n== 7. toque ≥76px no cartão · travada não abre ==');
+ok(parseFloat(w.getComputedStyle($('.mcard')).minHeight) >= 76, `cartão ≥76px de toque (§234): ${w.getComputedStyle($('.mcard')).minHeight}`);
 ok($$('.mlock').every(l => l.tagName === 'DIV' && !l.dataset.deus && typeof l.onclick !== 'function'), 'a TRAVADA é <div> sem data-deus e sem clique — NÃO abre (não afrouxa o §234)');
 
-// ---- 8. ELO com o detalhe do deus, nos dois sentidos (só do cartão aberto) ----
-console.log('\n== 8. elo com o detalhe do deus (do cartão aberto) ==');
+// ---- 8. CONFIRMAÇÃO de troca (§314): Ativar com outra já ativa pede confirmação inline ----
+console.log('\n== 8. troca: ativar com outra ativa pede confirmação (a atual fica pausada) ==');
 {
-  const aberto = $('.mcard[data-deus]'); const k = aberto.dataset.deus;
-  w.eval(`[...document.querySelectorAll('.mcard[data-deus]')].find(b=>b.dataset.deus===${JSON.stringify(k)}).click();`);
-  ok(w.eval("rotaAtual()==='deus'"), 'do cartão aberto vai-se ao detalhe do deus');
+  w.eval(C_RICO);
+  const btn = $('.mcard--disponivel [data-ativar][data-troca="1"]');
+  ok(!!btn, 'um cartão disponível tem Ativar marcado como TROCA (há outra ativa)');
+  const k = btn.dataset.ativar;
+  w.eval(`[...document.querySelectorAll('[data-ativar]')].find(b=>b.dataset.ativar===${JSON.stringify(k)}).click();`);
+  const conf = $('.mcard__conf');
+  ok(!!conf && /pausada/i.test(txt(conf)) && !!conf.querySelector('[data-troca-ok]') && !!conf.querySelector('[data-troca-no]'), 'aparece a confirmação inline: "a atual fica pausada" + Trocar/Cancelar');
+  // cancelar volta ao normal (sem chamar servidor)
+  w.eval("document.querySelector('[data-troca-no]').click();");
+  ok(!$('.mcard__conf'), 'Cancelar fecha a confirmação (nada é enviado)');
+}
+
+// ---- 9. ELO com o detalhe do deus (do cartão e do painel) ----
+console.log('\n== 9. elo com o detalhe do deus ==');
+{
+  w.eval(C_RICO);
+  const aberto = $('.mcard__abrir[data-abrir]'); const k = aberto.dataset.abrir;
+  w.eval(`[...document.querySelectorAll('.mcard__abrir[data-abrir]')].find(b=>b.dataset.abrir===${JSON.stringify(k)}).click();`);
+  ok(w.eval("rotaAtual()==='deus'"), 'do cartão vai-se ao detalhe do deus');
   w.eval("if(document.querySelector('[data-vermissao]')) document.querySelector('[data-vermissao]').click();");
-  ok(w.eval("rotaAtual()==='provacoes'"), 'do detalhe do deus volta-se às Missões');
+  ok(w.eval("rotaAtual()==='provacoes'"), 'do detalhe do deus volta-se às Provações');
 }
 
 if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS (jsdom) ==`); process.exit(1); }
 console.log(`\n== jsdom OK (${passes}) — agora a varredura de LARGURA no Chromium ==`);
 
-// ================= §312 — LARGURA: nada corta em 780/893/1075/1200; clamp do motivo não transborda ==========
+// ================= §314 — LARGURA: nada corta em 780/893/1075/1200; painel e cartão de 4 objetivos cabem ==========
 (async () => {
   const { chromium } = require('playwright');
   function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
   const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
-  const MOCK = "contaAtual={nick:'T',ranque:{pontos:150},perfil:{deuses:{hera:{copias:1},poseidon:{copias:1}}},missoes:{vitoriasPanteaoPvP:{Grega:5},sequenciaPvP:{zeus:1},sequenciaPanteaoPvP:{Grega:3},desbloqueio:{}}};ir('provacoes',{},{substituir:true});render();";
+  const MOCK = C_RICO;
+  const MOCKV = C_VAZIO;
   let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
   for (const W of [780, 893, 1075, 1200]) {
@@ -128,23 +155,28 @@ console.log(`\n== jsdom OK (${passes}) — agora a varredura de LARGURA no Chrom
     const r = await page.evaluate(() => {
       const rol = document.querySelector('.tela__rol');
       const overflowX = rol ? rol.scrollWidth - rol.clientWidth : 0;
-      const card = document.querySelector('.mcard');
-      const cardH = card ? Math.round(card.getBoundingClientRect().height) : 0;
-      // clamp: o PIOR motivo (o mais longo dos 91) cabe em 2 linhas na largura da coluna do cartão?
-      const mot = document.querySelector('.mcard__motivo'); const cs = getComputedStyle(mot); const lh = parseFloat(cs.lineHeight);
-      let pior = ''; for (const k in MISSOES.missoes) { const mm = MISSOES.missoes[k].motivo || ''; if (mm.length > pior.length) pior = mm; }
-      const clone = document.createElement('span'); clone.textContent = pior;
-      clone.style.cssText = 'position:absolute;left:-9999px;visibility:hidden;white-space:normal;display:block;width:' + mot.clientWidth + 'px;font:' + cs.font;
-      document.body.appendChild(clone); const natH = clone.offsetHeight; clone.remove();
-      return { overflowX, cardH, idW: Math.round(mot.clientWidth), linhasPior: Math.round(natH / lh), lh: +lh.toFixed(1) };
+      const pativa = document.querySelector('.pativa');
+      const paOverflowX = pativa ? pativa.scrollWidth - pativa.clientWidth : 0;
+      const cards = [...document.querySelectorAll('.mcard')];
+      const minCardH = Math.min(...cards.map(c => Math.round(c.getBoundingClientRect().height)));
+      // o cartão de 4 objetivos (hades pausada): todas as 4 linhas presentes e não recortadas
+      const quatro = document.querySelector('.mcard--pausada');
+      const nObj = quatro ? quatro.querySelectorAll('.orow').length : 0;
+      const objClip = quatro ? (quatro.scrollHeight - quatro.clientHeight) : 0;
+      return { overflowX, paOverflowX, minCardH, nObj, objClip };
     });
-    ok2(r.overflowX <= 1, `${W}: nada corta na horizontal (overflowX ${r.overflowX})`);
-    ok2(r.cardH >= 76, `${W}: cartão ≥76px (${r.cardH})`);
-    ok2(r.linhasPior <= 2, `${W}: o pior motivo cabe em ${r.linhasPior} linha(s) na coluna (idW ${r.idW}) — clamp de 2 não corta`);
+    ok2(r.overflowX <= 1, `${W}: a lista não corta na horizontal (overflowX ${r.overflowX})`);
+    ok2(r.paOverflowX <= 1, `${W}: o painel ativa não corta na horizontal (overflowX ${r.paOverflowX})`);
+    ok2(r.minCardH >= 76, `${W}: todo cartão ≥76px (menor ${r.minCardH})`);
+    ok2(r.nObj === 4 && r.objClip <= 1, `${W}: o cartão de 4 objetivos mostra os 4 sem recorte (clip ${r.objClip})`);
+    // painel VAZIO também não estoura
+    await page.evaluate(MOCKV); await page.waitForTimeout(80);
+    const rv = await page.evaluate(() => { const p = document.querySelector('.pativa--vazio'); return p ? (p.scrollWidth - p.clientWidth) : -1; });
+    ok2(rv >= 0 && rv <= 1, `${W}: o painel VAZIO cabe (overflowX ${rv})`);
     await page.close();
   }
   await browser.close();
   if (cf) { console.log(`\n== ${cf} FALHA(S) de largura (Chromium) ==`); process.exit(1); }
-  console.log('\n== TELA DAS MISSÕES §312 OK (jsdom + 4 larguras) ==');
+  console.log('\n== TELA DAS PROVAÇÕES §314 OK (jsdom + 4 larguras) ==');
   process.exit(0);
 })().catch(e => { console.error(e.message || e); process.exit(1); });

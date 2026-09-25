@@ -262,6 +262,19 @@ async function refrescarConta(){
   finally{ _contaRefetchInflight=false; }
 }
 
+// §314 — ATIVAR/TROCAR a Provação ativa. O cliente só PEDE; o servidor valida (ranque + nomes possuídos)
+// e é autoritativo. Devolve a conta atualizada → redesenha. Ativar outra PAUSA a atual (progresso guardado).
+async function ativarProvacaoServidor(deus){
+  if(!contaTransporte) return { erro:'sem servidor' };
+  const t=(typeof lerToken==='function')?lerToken():null; if(!t) return { erro:'sem token' };
+  try{
+    const r=await contaTransporte.pedir(envelope('provacaoAtivar',{token:t,deus}));
+    if(r && r.tipo==='conta'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); render(); return { ok:true }; }
+    if(r && r.tipo==='recusado') return { erro:r.erro, codigo:r.codigo };
+    return { erro:'não foi possível ativar' };
+  }catch(e){ return { erro:(e&&e.message)||'erro' }; }
+}
+
 // portão de IDADE (age-gate). NÃO é login: a lei explicada + duas escolhas de FAIXA. Sem e-mail,
 // sem senha, sem data de nascimento. `aoEscolher(faixa)` recebe 'menor'|'maior'.
 function montarPortaoIdade(aoEscolher){

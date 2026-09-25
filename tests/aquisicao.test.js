@@ -189,8 +189,8 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   // "Provações" → o MAPA DAS MISSÕES (§234). Sem servidor (a sessão é local), diz honestamente que as
   // missões contam no PvP e NÃO lista pergaminhos.
   w.eval("ir('provacoes'); render();");
-  ok(/Miss/i.test($('.tela__titulo').textContent) && /miss/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre o mapa das Missões (conta no PvP)');
-  ok($$('.prow[data-prova]').length === 0, 'o mapa das Missões NÃO lista pergaminhos');
+  ok(/Prova/i.test($('.tela__titulo').textContent) && /prova/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre a tela de Provações (conta no PvP)');
+  ok($$('.prow[data-prova]').length === 0, 'a tela de Provações NÃO lista pergaminhos');
   // "Desafios" → o hub dos DESAFIOS POR DEUS (§245): uma linha por deus possuído
   w.eval("ir('desafios'); render();");
   ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (uma linha por deus possuído)');

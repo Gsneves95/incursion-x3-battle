@@ -1,8 +1,9 @@
 'use strict';
-// FASE 6 / §230-§231 + §241 — MISSÕES: as 91 com os REQUISITOS DO DONO (vínculo temático), o requisito =
-// VOLUME por panteão + SEQUÊNCIA (pela FAIXA) + PORTÃO DE RANQUE, com o CONTADOR COMEÇANDO NO DESBLOQUEIO
-// (§241). A árvore revalidada por varredura (sem ciclo, todos alcançáveis, rampa em ordem, caso Maia), e a
-// GUARDA — o cliente não forja progresso.
+// FASE 6 / §313-§314 — PROVAÇÕES: as 91 com os REQUISITOS DO DONO (vínculo temático), cada uma uma LISTA
+// DE OBJETIVOS (§313), UMA ATIVA por vez (§314). A árvore revalidada por varredura + as 7 babás (§313); a
+// REGRA DE CONTAGEM (vitória avança todos os cumpridos; derrota zera só as sequências; pausada congela; só
+// a ativa conta); a disponibilidade (ranque + nomes); cumprir concede+esvazia; e a GUARDA (o cliente não
+// forja progresso; abandono = derrota; idempotência).
 
 const assert = require('assert');
 const contas = require('../server/contas.js');
@@ -51,11 +52,13 @@ console.log('\n== 1. a árvore: sem ciclo · alcançáveis · rampa em ordem · 
   console.log('  ✓ distribuição por faixa 18·15·13·12·11·9·7·6 (soma 91)'); passes++;
   eq(dist[0] + dist[1] + dist[2], 46, 'as 3 primeiras faixas abrem 46/91 (51%)');
 
-  // §241: RAMPA da sequência correlacionada à faixa (2 embaixo → 4 no topo), TODA missão >=1, TETO 4.
-  let semSeq = 0, acimaTeto = 0;
-  for (const k in doc.missoes) { const m = doc.missoes[k]; if (!(m.seguidas >= 1)) semSeq++; if (m.seguidas > 4) acimaTeto++; }
-  eq(semSeq, 0, 'TODA missão tem ≥1 sequência (§241 item 3)');
-  eq(acimaTeto, 0, 'TETO 4: nenhuma sequência acima de 4 (§241, após a medição)');
+  // §313/§314: a RAMPA agora vive no K das sequências dos OBJETIVOS (s/sp/c) — correlacionada à faixa
+  // (2 embaixo → 4 no topo), TETO 4. Toda Provação com sequência usa o K da sua faixa (SEGUIDAS_POR_TIER).
+  let kForaDaRampa = 0, kAcimaTeto = 0;
+  for (const k in doc.missoes) { const m = doc.missoes[k]; const K = doc.seguidasPorTier[m.faixaIndice];
+    for (const o of m.objetivos) if (o.tipo === 's' || o.tipo === 'sp' || o.tipo === 'c') { if (o.k !== K) kForaDaRampa++; if (o.k > 4) kAcimaTeto++; } }
+  eq(kForaDaRampa, 0, 'toda sequência (s/sp/c) usa o K da FAIXA (a rampa vive no objetivo)');
+  eq(kAcimaTeto, 0, 'TETO 4: nenhum K de sequência acima de 4');
 
   // §241: a cadeia correlaciona com a faixa — o companheiro destrava em faixa <= a do deus (rampa em ordem)
   let foraDeOrdem = 0;
@@ -74,17 +77,15 @@ console.log('\n== 1. a árvore: sem ciclo · alcançáveis · rampa em ordem · 
   eq(foraArquivo, 0, 'as 91 batem com o arquivo do dono (panteão + companheiro)');
   eq(semMotivo, 0, 'cada missão carrega o motivo mitológico (do dono)');
 
-  // §242 — o VOLUME é o FREIO DE TEMPO: cortado por FATOR_VOLUME (piso), lido do doc (não hardcoded, para
-  // recalibrar sem tocar no teste). A sequência (freio de habilidade) NÃO muda (§241).
-  ok(doc.volumeFator > 0 && doc.volumeFator < 1, `o volume tem FATOR (${doc.volumeFator}) — parâmetro no gerador (§242)`);
+  // §313/§314 — o VOLUME/SEQUÊNCIA por Provação do §241/§242 SAIU: não há mais vitoriasPanteao/seguidas no dado.
+  const semLegado = Object.values(doc.missoes).every(m => m.vitoriasPanteao === undefined && m.seguidas === undefined && m.seguidasAlvo === undefined);
+  ok(semLegado && doc.volumes === undefined, 'os campos legados (vitoriasPanteao/seguidas/seguidasAlvo/volumes) saíram do dado (§95/§303)');
   const it = doc.missoes.itzamna;
-  ok(it.raridade === 'SS' && it.vitoriasPanteao === doc.volumes.SS.panteao && it.vitoriasPanteao < 40 && it.faixa === 'semideus' && it.seguidas === 4,
-    `itzamná: SS, volume cortado ${it.vitoriasPanteao} (<40), Semideus, sequência 4 (topo da rampa)`);
+  ok(it.raridade === 'SS' && it.faixa === 'semideus' && it.objetivos.length === 4, 'itzamná: SS, Semideus, 4 objetivos');
   const cerb = doc.missoes.cerberus;
-  ok(cerb.vitoriasPanteao === doc.volumes.A.panteao && cerb.vitoriasPanteao >= (doc.volumePiso || 4) && !cerb.companheiro && cerb.seguidasAlvo.tipo === 'panteao' && cerb.seguidas >= 1,
-    `cerberus: A só-volume ${cerb.vitoriasPanteao} (≥ piso, porta Grega), sequência COM O PANTEÃO`);
+  ok(!cerb.companheiro && cerb.objetivos.length === 2 && cerb.objetivos.some(o => o.tipo === 'sp' && o.panteao === 'Grega'), 'cerberus: A só-panteão (porta Grega), objetivo "sp" com o panteão');
   const hades = doc.missoes.hades;
-  ok(hades.companheiro === 'cerberus' && hades.faixaMin > 0, 'Hades exige o companheiro cerberus e tem portão de ranque (>0)');
+  ok(hades.companheiro === 'cerberus' && hades.faixaMin > 0 && hades.objetivos.some(o => (o.alvo === 'cerberus') || (o.lista && o.lista.includes('cerberus'))), 'Hades exige cerberus (nos objetivos) e tem portão de ranque (>0)');
 
   // os 3 cruzamentos temáticos seguem.
   ok(doc.panteaoDe.itzamna === 'Maia' && it.panteao === 'Egípcia', 'itzamná: facção real Maia, exige Egípcia (o cruzamento estrutural)');
@@ -135,154 +136,154 @@ console.log('\n== 1b. §313 objetivos: contagem por raridade · números fixos �
 }
 
 // ---------------------------------------------------------------------------
-// 2. O VOLUME por panteão + a SEQUÊNCIA por panteão (nova, §241): uma vitória conta por panteão do time.
+// 2. §314 — REGRA DE CONTAGEM: uma vitória com a ATIVA avança TODOS os objetivos que a partida cumpre.
 // ---------------------------------------------------------------------------
-console.log('\n== 2. volume por panteão · sequência por deus E por panteão · derrota reseta ambas ==');
+console.log('\n== 2. §314 uma vitória avança TODOS os objetivos cumpridos da ATIVA (sobreposição dentro) ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const A = novaConta(['zeus', 'tyr', 'sobek']);
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 5000);   // rank alto: nenhuma trava de ranque
   const B = novaConta(['nezha', 'cuca', 'ganesha']);
-  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);
-  const la = contas._garantirMissoes(contas._contaPorId(A.id));
-  eq(la.vitoriasPanteaoPvP['Grega'], 1, 'vitória credita Grega (zeus)');
-  eq(la.vitoriasPanteaoPvP['Egípcia'], 1, 'a MESMA vitória credita Egípcia (sobek) — um por panteão');
-  eq(la.sequenciaPvP['zeus'], 1, 'sequência do deus sobe (zeus)');
-  eq(la.sequenciaPanteaoPvP['Grega'], 1, 'sequência do PANTEÃO sobe (§241, para as missões-porta)');
-  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 1);   // A perde
-  const la2 = contas._garantirMissoes(contas._contaPorId(A.id));
-  eq(la2.sequenciaPvP['zeus'], 0, 'derrota RESETA a sequência do deus');
-  eq(la2.sequenciaPanteaoPvP['Grega'], 0, 'derrota RESETA a sequência do panteão');
-  eq(la2.vitoriasPanteaoPvP['Grega'], 1, 'a derrota NÃO soma volume');
+  const atena = missoes.DOC.missoes.atena;   // [s zeus, v[zeus,ganesha], p Grega]
+  ok(atena.objetivos.length === 3 && atena.objetivos[0].tipo === 's' && atena.objetivos[2].tipo === 'p', 'atena: s zeus · v[zeus,ganesha] · p Grega');
+  const r = missoes.ativarProvacao(contas._contaPorId(A.id), 'atena');
+  ok(r.ok && contas._garantirMissoes(contas._contaPorId(A.id)).ativa === 'atena', 'atena ATIVADA (zeus é inicial → disponível)');
+  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // vitória com zeus (Grega)
+  const p = contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj;
+  eq(p[0].seq, 1, 'a MESMA vitória: "s zeus" +1 (zeus no time)');
+  eq(p[1].vol, 1, '…e "v[zeus,ganesha]" +1 (zeus na lista)');
+  eq(p[2].vol, 1, '…e "p Grega" +1 (zeus é Grega) — sobreposição DENTRO da Provação é intencional');
 }
 
 // ---------------------------------------------------------------------------
-// 3. LIBERAR um A imediato (saci, Suplicante): companheiro inicial + volume + sequência, tudo do rank 0.
+// 3. §314 — SEQUÊNCIAS: derrota zera só as sequências (não o volume); vitória que não cumpre não zera.
 // ---------------------------------------------------------------------------
-console.log('\n== 3. liberar saci (Suplicante, rank 0): cuca + 15 vitórias Brasileira + sequência 2 ==');
+console.log('\n== 3. §314 sequência: derrota zera só as sequências · vitória-sem-cumprir não soma nem zera ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const alvo = missoes.DOC.missoes.saci;
-  ok(alvo.companheiro === 'cuca' && alvo.panteao === 'Brasileira' && alvo.faixaMin === 0, 'saci: cuca (inicial), Brasileira, Suplicante (min 0)');
-  const A = novaConta(['cuca', 'zeus', 'ogum']);
-  const B = novaConta(['nezha', 'tyr', 'sobek']);
-  for (let i = 0; i < 15; i++) vitoria(A.id, B.id, ['cuca', 'zeus', 'ogum'], ['nezha', 'tyr', 'sobek'], 0);
-  const cA = contas._contaPorId(A.id), la = contas._garantirMissoes(cA);
-  eq(la.vitoriasPanteaoPvP['Brasileira'], 15, '15 vitórias com o panteão Brasileira');
-  eq((la.desbloqueio['saci'] || {}).volBase, 0, 'CONTADOR DESDE O DESBLOQUEIO: saci destravou de cara (rank 0), base 0 — as 15 contam');
-  ok(la.liberados['saci'] && cA.perfil.deuses['saci'] && cA.perfil.deuses['saci'].viaMissao, 'saci CONCEDIDO (volume + companheiro + sequência)');
-  ok(!la.liberados['iara'], 'iara (Devoto, min 100) NÃO — o portão de ranque ainda não abriu (rank 0)');
-}
-
-// ---------------------------------------------------------------------------
-// 4. §241 — PORTÃO DE RANQUE: abaixo da faixaMin a missão NÃO destrava, mesmo com volume+companheiro+sequência.
-// ---------------------------------------------------------------------------
-console.log('\n== 4. PORTÃO DE RANQUE (§241 item 1, reverte §232): faixa alta trava até subir ==');
-{
-  contas._resetParaTeste(); salas._limparTudo();
-  const hera = missoes.DOC.missoes.hera;   // Devoto, min 100, companheiro zeus (inicial)
-  ok(hera.faixaMin === 100 && hera.companheiro === 'zeus', 'hera: Devoto (min 100), companheiro zeus');
-  const A = novaConta(['zeus', 'tyr', 'sobek'], 0);   // rank 0
+  const A = novaConta(['zeus', 'tyr', 'sobek', 'medusa'], 5000);   // medusa: Grega possuída, NÃO-inicial
   const B = novaConta(['nezha', 'cuca', 'ganesha']);
-  for (let i = 0; i < 25; i++) vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);
-  let la = contas._garantirMissoes(contas._contaPorId(A.id));
-  ok(!la.liberados['hera'], 'com volume DE SOBRA mas rank 0, hera NÃO destrava (o ranque revela)');
-  ok(!la.desbloqueio['hera'], 'e nem base de desbloqueio foi gravada (ainda travada pelo ranque)');
-  // sobe o ranque e joga mais UMA — agora destrava e a base é o volume ATUAL (o passado não conta)
-  setRank(A.id, 100);
-  const volAoSubir = la.vitoriasPanteaoPvP['Grega'];
-  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);
-  la = contas._garantirMissoes(contas._contaPorId(A.id));
-  eq((la.desbloqueio['hera'] || {}).volBase, volAoSubir, 'ao atingir o ranque, a base = volume DAQUELE momento (vitórias anteriores NÃO contam)');
-  ok(!la.liberados['hera'], 'hera ainda não: só 1 vitória contou desde o desbloqueio, faltam ~20');
+  missoes.ativarProvacao(contas._contaPorId(A.id), 'atena');
+  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // com zeus: seq=1, p=1
+  let p = () => contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj;
+  eq(p()[0].seq, 1, 'após 1 vitória com zeus: seq "s zeus" = 1');
+  vitoria(A.id, B.id, ['medusa', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // vitória SEM zeus (medusa Grega)
+  eq(p()[0].seq, 1, 'vitória SEM zeus: a sequência "s zeus" NÃO soma nem zera (fica 1)');
+  eq(p()[2].vol, 2, '…mas "p Grega" +1 (medusa é Grega) → 2');
+  vitoria(A.id, B.id, ['medusa', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 1);   // A PERDE
+  eq(p()[0].seq, 0, 'DERROTA zera a sequência "s zeus"');
+  eq(p()[2].vol, 2, '…mas o VOLUME "p Grega" NÃO é tocado pela derrota (fica 2)');
 }
 
 // ---------------------------------------------------------------------------
-// 5. §241 — CONTADOR DESDE O DESBLOQUEIO: as vitórias PRÉ-desbloqueio não completam a missão.
+// 4. §314 — SÓ A ATIVA CONTA; a PAUSADA congela (progresso + sequência), e retomar continua de onde parou.
 // ---------------------------------------------------------------------------
-console.log('\n== 5. contador desde o desbloqueio (§241 item 4): pré-farm não vale ==');
+console.log('\n== 4. §314 só a ativa conta · pausada congela · retomar continua ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const A = novaConta(['zeus', 'tyr', 'sobek'], 100);   // já no ranque de hera (Devoto)
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 5000);
   const B = novaConta(['nezha', 'cuca', 'ganesha']);
-  // hera destrava na 1ª avaliação (zeus possuído + rank 100), base = 0 → as vitórias A PARTIR daqui contam.
-  for (let i = 0; i < 20; i++) vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);
-  const la = contas._garantirMissoes(contas._contaPorId(A.id));
-  eq((la.desbloqueio['hera'] || {}).volBase, 0, 'hera destravou de cara (rank já ≥100), base 0');
-  ok(la.liberados['hera'], 'hera CONCEDIDA: 20 vitórias Gregas (volume) + 20 seguidas com zeus (sequência 2) desde o desbloqueio');
+  const cA = contas._contaPorId(A.id);
+  missoes.ativarProvacao(cA, 'atena');
+  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // atena: seq=1
+  const antesAtena = JSON.stringify(contas._garantirMissoes(cA).progresso['atena'].obj);
+  // TROCA: ativa 'dionisio' ([s zeus, p Grega] — precisa só de zeus, inicial) → atena vira PAUSADA
+  missoes.ativarProvacao(cA, 'dionisio');
+  eq(contas._garantirMissoes(cA).ativa, 'dionisio', 'dionisio agora é a ATIVA (atena pausada)');
+  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // conta p/ dionisio
+  eq(contas._garantirMissoes(cA).progresso['dionisio'].obj[0].seq, 1, 'a vitória contou para DIONISIO (a ativa)');
+  eq(JSON.stringify(contas._garantirMissoes(cA).progresso['atena'].obj), antesAtena, 'ATENA (pausada) CONGELOU — nada somou nem zerou');
+  vitoria(A.id, B.id, ['medusa', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 1);   // derrota
+  eq(JSON.stringify(contas._garantirMissoes(cA).progresso['atena'].obj), antesAtena, 'a derrota também NÃO tocou a pausada (a sequência congela)');
+  // RETOMA atena: continua de onde parou (seq ainda 1)
+  missoes.ativarProvacao(cA, 'atena');
+  eq(contas._garantirMissoes(cA).progresso['atena'].obj[0].seq, 1, 'retomar atena: continua de onde parou (seq 1)');
 }
 
 // ---------------------------------------------------------------------------
-// 6. O CASO MAIA em cascata (ponto-fixo) — agora com o ranque no topo (Semideus, min 700).
+// 5. §314 — DISPONIBILIDADE: ranque atingido + nomes possuídos. Ativar recusa o que não está disponível.
 // ---------------------------------------------------------------------------
-console.log('\n== 6. cascata Maia (Semideus) EM ESTÁGIOS: o contador-desde-o-desbloqueio força jogo sequencial ==');
+console.log('\n== 5. §314 disponível = ranque + nomes; ativar recusa fora disso ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const semideusMin = missoes.DOC.missoes.itzamna.faixaMin;    // §315: LÊ do dado (Semideus), nenhum literal
-  const c = novaConta(['sobek', 'zeus', 'ogum', 'ra'], semideusMin);   // POSSUI ra (gacha) + ranque Semideus
-  const id = c.id;
-  const L = () => contas._garantirMissoes(contas._contaPorId(id));
-  const D = () => contas._contaPorId(id).perfil.deuses;
-  // ESTÁGIO 0: itzamná destrava (ra possuído + Semideus), base volume 0 — o passado (nenhum) não conta.
-  missoes._liberarCumpridas(contas._contaPorId(id));
-  ok(L().desbloqueio['itzamna'] && L().desbloqueio['itzamna'].volBase === 0, 'itzamná DESTRAVA (ra + Semideus), base 0');
-  ok(!D()['itzamna'], 'mas NÃO concedido ainda: falta o volume DESDE o desbloqueio (sem pré-farm)');
-  // ESTÁGIO 1: agora sim, farmar Egípcia + seguidas com ra → itzamná concedido.
-  L().vitoriasPanteaoPvP['Egípcia'] = 40; L().sequenciaPvP['ra'] = 4;
-  missoes._liberarCumpridas(contas._contaPorId(id));
-  ok(D()['itzamna'], 'itzamná CONCEDIDO após 40 Egípcia + 4 seguidas com ra (desde o desbloqueio)');
-  ok(L().desbloqueio['chaac'] && !D()['chaac'], 'chaac DESTRAVA (itzamná recém-concedido) mas ainda não completa: precisa de volume Maia FRESCO');
-  // ESTÁGIO 2: farmar Maia + seguidas com itzamná → chaac e kukulkan concedidos.
-  const baseMaia = L().desbloqueio['chaac'].volBase;
-  L().vitoriasPanteaoPvP['Maia'] = baseMaia + 20; L().sequenciaPvP['itzamna'] = 4;
-  missoes._liberarCumpridas(contas._contaPorId(id));
-  ok(D()['chaac'], 'chaac CONCEDIDO (20 Maia DESDE seu desbloqueio + 4 seguidas com itzamná)');
-  ok(D()['kukulkan'], 'kukulkan CONCEDIDO (companheiro itzamná + Maia + sequência)');
-  ok(L().desbloqueio['ahpuch'] && !D()['ahpuch'], 'ahpuch DESTRAVA (chaac concedido) mas espera volume Maia fresco — a caçada é sequencial');
-  // ESTÁGIO 3: mais volume Maia desde o desbloqueio do ahpuch → concedido.
-  L().vitoriasPanteaoPvP['Maia'] = L().desbloqueio['ahpuch'].volBase + 15; L().sequenciaPvP['chaac'] = 4;
-  missoes._liberarCumpridas(contas._contaPorId(id));
-  ok(D()['ahpuch'], 'ahpuch CONCEDIDO — a cascata fecha, mas em ESTÁGIOS (o §241 impede fechar tudo de uma vez)');
+  const hera = missoes.DOC.missoes.hera;   // Devoto (min 100): [s zeus, v[hercules], j[zeus,ares]]
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 0);   // rank 0, só iniciais
+  const cA = contas._contaPorId(A.id);
+  let d = missoes.disponivelParaAtivar(cA, 'hera');
+  ok(!d.ok && d.codigo === 'ranque', `rank 0 < ${hera.faixaMin}: trava por RANQUE`);
+  ok(!missoes.ativarProvacao(cA, 'hera').ok, 'ativar hera RECUSA (ranque)');
+  setRank(A.id, hera.faixaMin);
+  d = missoes.disponivelParaAtivar(cA, 'hera');
+  ok(!d.ok && d.codigo === 'nomes' && d.faltamNomes.includes('hercules') && d.faltamNomes.includes('ares'), 'com ranque mas sem hercules/ares: trava por NOMES (o que falta é dito)');
+  contas._darDeus(A.token, 'hercules'); contas._darDeus(A.token, 'ares');
+  d = missoes.disponivelParaAtivar(cA, 'hera');
+  ok(d.ok, 'com ranque + hercules + ares (zeus é inicial): DISPONÍVEL');
+  ok(missoes.ativarProvacao(cA, 'hera').ok && contas._garantirMissoes(cA).ativa === 'hera', 'ativar hera OK');
 }
 
 // ---------------------------------------------------------------------------
-// 7. SÓ PvP: uma partida PvE NÃO toca o contador de missão (§228).
+// 6. §314 — CUMPRIR: concede o deus e ESVAZIA o slot; conquistar libera o próximo (cascata por nome).
 // ---------------------------------------------------------------------------
-console.log('\n== 7. conta SÓ PvP (PvE não credita missão) ==');
+console.log('\n== 6. §314 cumprir concede + esvazia o slot; conquistar destrava o próximo ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const A = novaConta(['zeus', 'tyr', 'sobek']);
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 5000);
   const B = novaConta(['nezha', 'cuca', 'ganesha']);
+  const cA = contas._contaPorId(A.id);
+  const cerb = missoes.DOC.missoes.cerberus;   // [p Grega (n), sp Grega (k)] — sem nomes, sempre disponível
+  ok(cerb.objetivos[0].tipo === 'p' && cerb.objetivos[1].tipo === 'sp', 'cerberus: p Grega · sp Grega (sem nomes)');
+  ok(missoes.disponivelParaAtivar(cA, 'erinias').faltamNomes.includes('cerberus'), 'erinias exige cerberus (ainda não possuído) → travada por nome');
+  missoes.ativarProvacao(cA, 'cerberus');
+  const nP = cerb.objetivos[0].n;   // vitórias no panteão exigidas
+  for (let i = 0; i < nP; i++) vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // vitórias Gregas (zeus)
+  ok(cA.perfil.deuses['cerberus'] && cA.perfil.deuses['cerberus'].viaMissao, `cerberus CONCEDIDO após ${nP} vitórias Gregas (p) + a sequência (sp)`);
+  eq(contas._garantirMissoes(cA).ativa, null, 'o slot ficou VAZIO (não ativa outra sozinho, §314)');
+  ok(!contas._garantirMissoes(cA).progresso['cerberus'], 'e o progresso da conquistada saiu');
+  ok(missoes.disponivelParaAtivar(cA, 'erinias').ok, 'conquistar cerberus DESTRAVOU erinias (cascata por nome)');
+}
+
+// ---------------------------------------------------------------------------
+// 7. SÓ PvP: uma partida PvE NÃO toca o progresso da Provação (§228).
+// ---------------------------------------------------------------------------
+console.log('\n== 7. conta SÓ PvP (PvE não avança a Provação) ==');
+{
+  contas._resetParaTeste(); salas._limparTudo();
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 5000);
+  const B = novaConta(['nezha', 'cuca', 'ganesha']);
+  missoes.ativarProvacao(contas._contaPorId(A.id), 'atena');
   const salaPvE = salaFake(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], { turno: 3, fim: { lado: 0 }, log: [] }, 'pve');
   salas.finalizarPartida(salaPvE);
-  eq(Object.keys(contas._garantirMissoes(contas._contaPorId(A.id)).vitoriasPanteaoPvP).length, 0, 'PvE: ZERO volume de missão creditado');
+  eq(contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj[0].seq, 0, 'PvE: ZERO progresso na Provação ativa');
 }
 
 // ---------------------------------------------------------------------------
-// 8. A GUARDA — o cliente não forja progresso (§226/§230).
+// 8. A GUARDA — o cliente não forja progresso (§226/§230); abandono = derrota; idempotência.
 // ---------------------------------------------------------------------------
-console.log('\n== 8. a GUARDA: mensagem forjada · inacabada · desconexão · idempotência ==');
+console.log('\n== 8. a GUARDA: perfil forjado · inacabada · abandono=derrota · idempotência ==');
 {
   contas._resetParaTeste(); salas._limparTudo();
-  const A = novaConta(['zeus', 'tyr', 'sobek']);
+  const A = novaConta(['zeus', 'tyr', 'sobek'], 5000);
   const B = novaConta(['nezha', 'cuca', 'ganesha']);
-  contas.salvarPerfil(A.token, Object.assign({}, contas.porToken(A.token).perfil, { missoes: { liberados: { hades: true } } }));
-  eq(contas.missoesPublicas(contas._contaPorId(A.id)).liberados.length, 0, 'perfil forjado IGNORADO — nada liberado');
+  // forjar o PERFIL (que o cliente controla) não mexe no ledger de missões (top-level da conta, do servidor).
+  contas.salvarPerfil(A.token, Object.assign({}, contas.porToken(A.token).perfil, { missoes: { ativa: 'hades', liberados: { hades: true } } }));
+  const pub = contas.missoesPublicas(contas._contaPorId(A.id));
+  ok(pub.ativa === null && pub.liberados.length === 0, 'perfil forjado IGNORADO — sem ativa nem liberados no ledger real');
+  // inacabada (sem st.fim) não entra
+  missoes.ativarProvacao(contas._contaPorId(A.id), 'atena');
   eq(missoes.registrarPvP(salaFake(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], { turno: 2, fim: null, log: [] })), null, 'inacabada não entra (retorna null)');
-  eq(Object.keys(contas._garantirMissoes(contas._contaPorId(A.id)).vitoriasPanteaoPvP).length, 0, 'inacabada: ZERO volume');
-
-  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 1);   // B ganha
-  eq(contas._garantirMissoes(contas._contaPorId(B.id)).sequenciaPvP['nezha'], 1, 'B tinha sequência 1');
-  const volAntes = contas._garantirMissoes(contas._contaPorId(B.id)).vitoriasPanteaoPvP['Chinesa'];
-  missoes.registrarPvP(salaFake(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], { turno: 3, fim: { lado: 0, motivo: 'abandono' }, log: [] }));
-  eq(contas._garantirMissoes(contas._contaPorId(B.id)).sequenciaPvP['nezha'], 0, 'abandono = derrota: a sequência de quem abandonou RESETA');
-  eq(contas._garantirMissoes(contas._contaPorId(B.id)).vitoriasPanteaoPvP['Chinesa'], volAntes, 'abandono NÃO credita volume ao abandonador');
+  eq(contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj[0].seq, 0, 'inacabada: ZERO progresso');
+  // abandono = derrota: zera as sequências da ativa do abandonador
+  vitoria(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], 0);   // seq "s zeus" = 1
+  eq(contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj[0].seq, 1, 'A tinha sequência 1');
+  missoes.registrarPvP(salaFake(A.id, B.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], { turno: 3, fim: { lado: 1, motivo: 'abandono' }, log: [] }));   // A abandona (lado 1 vence)
+  eq(contas._garantirMissoes(contas._contaPorId(A.id)).progresso['atena'].obj[0].seq, 0, 'abandono = derrota: a sequência do abandonador RESETA');
 
   contas._resetParaTeste(); salas._limparTudo();
-  const C = novaConta(['zeus', 'tyr', 'sobek']);
+  const C = novaConta(['zeus', 'tyr', 'sobek'], 5000);
   const D = novaConta(['nezha', 'cuca', 'ganesha']);
+  missoes.ativarProvacao(contas._contaPorId(C.id), 'atena');
   const sala = salaFake(C.id, D.id, ['zeus', 'tyr', 'sobek'], ['nezha', 'cuca', 'ganesha'], { turno: 3, fim: { lado: 0 }, log: [] });
   salas.finalizarPartida(sala); salas.finalizarPartida(sala); salas.finalizarPartida(sala);
-  eq(contas._garantirMissoes(contas._contaPorId(C.id)).vitoriasPanteaoPvP['Grega'], 1, 'idempotente: 3× finalizar = 1 vitória de volume');
+  eq(contas._garantirMissoes(contas._contaPorId(C.id)).progresso['atena'].obj[0].seq, 1, 'idempotente: 3× finalizar = 1 avanço (flag registrado)');
 }
 
 // ---------------------------------------------------------------------------

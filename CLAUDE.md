@@ -138,20 +138,34 @@ ranque) e só muda em `salas.finalizarPartida` no fim de uma partida PvP — nun
 mensagem do cliente. (O dono antes dissera "o contador de missão é o mesmo da maestria";
 a Fase 5, ao criar o PvP, PRODUZIU a correção — daí dois contadores, não um.)
 
-O REQUISITO de desbloqueio é **VOLUME por panteão + COMPANHEIRO temático** (§230), sempre
-com deuses que o jogador JÁ TEM — nunca com o deus a liberar (para liberar o Zeus não dá
-para jogar com o Zeus). O vínculo entre a missão e o alvo é **mitológico** (o Cérbero é o
-cão do Hades), escrito à mão pelo dono em `data/missoes_requisitos.json` — derivação de
-mecânica NÃO descobre isso. O leitor de "feito por habilidade" (`missoes.medir`) segue
-vivo, mas para MAESTRIA/futuro, fora do gate de liberação.
+O REQUISITO de desbloqueio é uma **LISTA DE OBJETIVOS** por Provação (§313), com **UMA
+Provação ATIVA por vez** (§314). Cada Provação (`data/missoes_requisitos.json` → `objetivos`,
+resolvida em `data/missoes.json` pelo gerador) tem A 2 · S 3 · SS 4 objetivos, sempre com
+deuses/panteões que o jogador JÁ TEM — nunca com o deus a liberar. Tipos (contam só em PvP):
+`s`=K seguidas com X · `v`=N vitórias com ≥1 da lista · `j`=N vitórias com a e b juntos ·
+`c`=K seguidas com a E com b · `p`=N vitórias com o panteão · `sp`=K seguidas com o panteão ·
+`a`=amplitude (N panteões distintos). O vínculo é **mitológico** (o Cérbero é o cão do Hades),
+escrito à mão pelo dono. O leitor de "feito por habilidade" (`missoes.medir`) segue vivo, mas
+para MAESTRIA/futuro (perfil.maestria, local), fora do gate de Provação.
 
-**POSSE satisfaz o companheiro — o gacha vale (§235).** "JÁ TEM" é ter (`perfil.deuses`),
-por qualquer via (inicial, gacha ou missão), não ter MERECIDO via missão — as duas trilhas
-existem para se cruzar (§212). Mas a sorte ENCURTA, não PULA: o gacha resolve TER o
-companheiro; o VOLUME (66–92 partidas, §231) e as SEGUIDAS continuam inteiros, lidos do
-servidor (§228). Ter abre a porta; atravessá-la ainda custa as partidas. E **LIBERAR =
-CONCEDER**: a missão cumprida ADICIONA o deus a `perfil.deuses` — selo sem deus é sistema
-invisível (§202), o vazio que a Fase 6 fechou; não o reintroduza.
+**UMA ATIVA por vez (§314).** Nº de vagas = `data/provacoes_slots.json` → `DOC.slotsGratis`
+(hoje **1**; comprar mais é futuro, NÃO há loja). O ledger da conta é
+`{ativa, progresso:{deus:{ativadaEm,obj:[…]}}, liberados}` — **SÓ o servidor mexe** (§226).
+**Regra de contagem:** uma VITÓRIA com a ativa avança TODOS os objetivos que a partida cumpre
+(sobreposição DENTRO da mesma Provação é intencional; ENTRE Provações não há, só a ativa conta);
+as sequências (`s`/`sp`/`c`) uma vitória que não cumpre não soma nem zera, e QUALQUER derrota
+com a ativa (abandono = derrota) zera TODAS elas; o volume (`v`/`j`/`p`) e a amplitude (`a`) só
+crescem em vitória. A **PAUSADA** (trocar a ativa) CONGELA — nada conta nem zera; retomar
+continua de onde parou. **Disponível para ativar** = ranque atingido + os NOMES obrigatórios
+possuídos (o de `s`/`j`/`c` e ≥1 de cada lista `v`; `p`/`sp`/`a` não travam). Cumprir CONCEDE o
+deus e ESVAZIA o slot (não ativa outra sozinho). Os contadores compartilhados do §241
+(vitoriasPanteaoPvP/sequenciaPvP/…) SAÍRAM — sem consumidor após os objetivos (§95/§303).
+
+**POSSE satisfaz os nomes — o gacha vale (§235).** "JÁ TEM" é ter (`perfil.deuses`), por
+qualquer via (inicial, gacha ou Provação), não ter MERECIDO via Provação — as duas trilhas se
+cruzam (§212). A sorte ENCURTA, não PULA: ter os nomes abre a ATIVAÇÃO; cumprir os objetivos
+ainda custa as partidas, lidas do servidor (§228). E **LIBERAR = CONCEDER**: a Provação cumprida
+ADICIONA o deus a `perfil.deuses` — selo sem deus é sistema invisível (§202); não o reintroduza.
 
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 

@@ -1,25 +1,6 @@
 {
  "versao": 5,
- "_nota": "Gerado por tools/gerar_missoes.js (§241 três travas · §242 volume · §313 objetivos): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). Campos legados (vitoriasPanteao/seguidas) mantidos p/ o servidor atual até a Parte 2 (§314) migrar. Vínculo temático (companheiro/motivo/objetivos) do dono.",
- "volumeFator": 0.55,
- "volumePiso": 4,
- "volumes": {
-  "A": {
-   "panteao": 8,
-   "seguidas": 0,
-   "base": 15
-  },
-  "S": {
-   "panteao": 11,
-   "seguidas": 3,
-   "base": 20
-  },
-  "SS": {
-   "panteao": 22,
-   "seguidas": 5,
-   "base": 40
-  }
- },
+ "_nota": "Gerado por tools/gerar_missoes.js (§241 portão de ranque · §313 objetivos · §314 uma ativa): cada Provação é uma LISTA DE OBJETIVOS (A 2 · S 3 · SS 4) que conta só em PvP. Tipos s/v/j/c/p/sp/a; números fixos no gerador (K pela faixa; v 1º A8/S8/SS14 2º S5/SS8; j S5/SS8; p A8/S6/SS12; c/sp usam K; a carrega N). O volume/sequência por Provação do §241/§242 saiu (o modelo é objetivos). Vínculo temático (companheiro/motivo/objetivos) do dono.",
  "faixas": [
   {
    "chave": "suplicante",
@@ -149,6 +130,7 @@
    "SS": 12
   }
  },
+ "slotsGratis": 1,
  "profundidadeObjetivosMax": 11,
  "iniciais": [
   "zeus",
@@ -277,13 +259,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Grega"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -316,13 +291,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Grega"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "s",
@@ -355,13 +323,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -404,13 +365,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -451,13 +405,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -501,13 +448,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -550,13 +490,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -596,13 +529,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -643,13 +569,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -682,13 +601,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ares"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -731,13 +643,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "atena"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -773,13 +678,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "apolo"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -815,13 +713,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "cerberus"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -857,13 +748,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -898,13 +782,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "hera"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -939,13 +816,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "cerberus"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -996,13 +866,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 22,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "zeus"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -1050,13 +913,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "poseidon"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1092,13 +948,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Nórdica"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -1139,13 +988,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Nórdica"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -1178,13 +1020,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 22,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "tyr"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -1232,13 +1067,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 6,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "thor"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1281,13 +1109,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "tyr"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -1328,13 +1149,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "freyja"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1369,13 +1183,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "heimdall"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1410,13 +1217,6 @@
    "faixaMin": 700,
    "profundidade": 3,
    "profundidadeObjetivos": 7,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "loki"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1451,13 +1251,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "tyr"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -1490,13 +1283,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 5,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "thor"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1531,13 +1317,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "tyr"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "sp",
@@ -1572,13 +1351,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 5,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "mimir"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1626,13 +1398,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Egípcia"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -1673,13 +1438,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Egípcia"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -1712,13 +1470,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "sobek"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -1759,13 +1510,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "anubis"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1801,13 +1545,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "anubis"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1855,13 +1592,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 5,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "osiris"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -1904,13 +1634,6 @@
    "faixaMin": 1350,
    "profundidade": 4,
    "profundidadeObjetivos": 6,
-   "vitoriasPanteao": 11,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "isis"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -1953,13 +1676,6 @@
    "faixaMin": 1350,
    "profundidade": 5,
    "profundidadeObjetivos": 7,
-   "vitoriasPanteao": 22,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "horus"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2008,13 +1724,6 @@
    "faixaMin": 1750,
    "profundidade": 6,
    "profundidadeObjetivos": 8,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ra"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2047,13 +1756,6 @@
    "faixaMin": 1350,
    "profundidade": 4,
    "profundidadeObjetivos": 6,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "isis"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2088,13 +1790,6 @@
    "faixaMin": 1350,
    "profundidade": 6,
    "profundidadeObjetivos": 8,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ra"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2130,13 +1825,6 @@
    "faixaMin": 1350,
    "profundidade": 6,
    "profundidadeObjetivos": 8,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ra"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2171,13 +1859,6 @@
    "faixaMin": 1750,
    "profundidade": 6,
    "profundidadeObjetivos": 8,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ra"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2212,13 +1893,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "fujin"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -2259,13 +1933,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Japonesa"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -2298,13 +1965,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "kitsune"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2340,13 +2000,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "kitsune"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2382,13 +2035,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "fujin"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -2432,13 +2078,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 5,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "susanoo"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2488,13 +2127,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 6,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "amaterasu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2537,13 +2169,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 7,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "amaterasu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2592,13 +2217,6 @@
    "faixaMin": 1350,
    "profundidade": 4,
    "profundidadeObjetivos": 8,
-   "vitoriasPanteao": 11,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "izanagi"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2642,13 +2260,6 @@
    "faixaMin": 1350,
    "profundidade": 5,
    "profundidadeObjetivos": 9,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "izanami"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -2683,13 +2294,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "raijin"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2725,13 +2329,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 6,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "oni"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2766,13 +2363,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 5,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "susanoo"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2805,13 +2395,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "nezha"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -2852,13 +2435,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "panteao",
-    "chave": "Chinesa"
-   },
-   "seguidasCompanheiro": 0,
    "objetivos": [
     {
      "tipo": "p",
@@ -2891,13 +2467,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "houyi"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2930,13 +2499,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "aokuang"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -2979,13 +2541,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "nezha"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3021,13 +2576,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "houyi"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3076,13 +2624,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "nuwa"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3117,13 +2658,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "guanyu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3165,13 +2699,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 22,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ganesha"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3217,13 +2744,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "shiva"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3267,13 +2787,6 @@
    "faixaMin": 700,
    "profundidade": 3,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "durga"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3308,13 +2821,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 22,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ganesha"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3363,13 +2869,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "vishnu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3409,13 +2908,6 @@
    "faixaMin": 700,
    "profundidade": 3,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "krishna"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3451,13 +2943,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 4,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "vishnu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3506,13 +2991,6 @@
    "faixaMin": 0,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 8,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "cuca"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3545,13 +3023,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "saci"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3586,13 +3057,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "curupira"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3636,13 +3100,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "cuca"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3683,13 +3140,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "iara"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3725,13 +3175,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "boto"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3766,13 +3209,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "saci"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3805,13 +3241,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ogum"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3852,13 +3281,6 @@
    "faixaMin": 250,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "xango"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3894,13 +3316,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 11,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ogum"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -3937,13 +3352,6 @@
    "faixaMin": 1000,
    "profundidade": 3,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "iansa"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -3978,13 +3386,6 @@
    "faixaMin": 700,
    "profundidade": 2,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 22,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "exu"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -4034,13 +3435,6 @@
    "faixaMin": 100,
    "profundidade": 1,
    "profundidadeObjetivos": 1,
-   "vitoriasPanteao": 22,
-   "seguidas": 2,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "brigid"
-   },
-   "seguidasCompanheiro": 2,
    "objetivos": [
     {
      "tipo": "s",
@@ -4085,13 +3479,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "dagda"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -4131,13 +3518,6 @@
    "faixaMin": 450,
    "profundidade": 2,
    "profundidadeObjetivos": 2,
-   "vitoriasPanteao": 11,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "dagda"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -4178,13 +3558,6 @@
    "faixaMin": 700,
    "profundidade": 3,
    "profundidadeObjetivos": 3,
-   "vitoriasPanteao": 8,
-   "seguidas": 3,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "morrigan"
-   },
-   "seguidasCompanheiro": 3,
    "objetivos": [
     {
      "tipo": "s",
@@ -4220,13 +3593,6 @@
    "faixaMin": 1750,
    "profundidade": 6,
    "profundidadeObjetivos": 9,
-   "vitoriasPanteao": 22,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "ra"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -4274,13 +3640,6 @@
    "faixaMin": 1750,
    "profundidade": 7,
    "profundidadeObjetivos": 10,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "itzamna"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -4317,13 +3676,6 @@
    "faixaMin": 1750,
    "profundidade": 8,
    "profundidadeObjetivos": 11,
-   "vitoriasPanteao": 8,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "chaac"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",
@@ -4360,13 +3712,6 @@
    "faixaMin": 1750,
    "profundidade": 7,
    "profundidadeObjetivos": 11,
-   "vitoriasPanteao": 11,
-   "seguidas": 4,
-   "seguidasAlvo": {
-    "tipo": "companheiro",
-    "chave": "itzamna"
-   },
-   "seguidasCompanheiro": 4,
    "objetivos": [
     {
      "tipo": "s",

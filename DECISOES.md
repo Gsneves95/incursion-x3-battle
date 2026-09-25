@@ -6,6 +6,42 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §314 — UMA PROVAÇÃO ATIVA POR VEZ: servidor migrado para os objetivos + a tela (painel + lista híbrida). (PARTE 2.)
+
+Fecha o §313: o servidor deixou o modelo de volume+companheiro (§230/§241) e passou a ler a **LISTA DE OBJETIVOS**, com
+**UMA Provação ATIVA por vez**. O nº de vagas é PARÂMETRO do dono em `data/provacoes_slots.json` (`slotsGratis`, hoje **1**;
+o gerador copia p/ `missoes.json` → servidor e cliente leem daí; comprar mais é futuro, NÃO há loja).
+
+**O ledger da conta** virou `{ativa, progresso:{deus:{ativadaEm, obj:[…]}}, liberados}` (`server/contas.js`). O formato de
+cada estado espelha o tipo do objetivo (`s`/`sp` → `{seq}`; `c` → `{seqA,seqB}`; `v`/`j`/`p` → `{vol}`; `a` → `{pant:[]}`).
+**REGRA DE CONTAGEM (decisão do dono, em `server/missoes.js._avancar`):** uma VITÓRIA com a ativa avança TODOS os objetivos
+que a partida cumpre — a sobreposição DENTRO da mesma Provação é intencional; ENTRE Provações não existe, porque só a ativa
+conta. As sequências (`s`/`sp`/`c`): uma vitória que não cumpre não soma nem zera, e QUALQUER derrota com a ativa (abandono =
+derrota) zera TODAS elas. O volume (`v`/`j`/`p`) e a amplitude (`a`) só crescem em vitória; empate não faz nada. A **PAUSADA**
+(ao trocar) CONGELA — nada conta nem zera; retomar continua de onde parou. **Disponível para ativar** = ranque atingido + os
+NOMES obrigatórios possuídos (o de `s`/`j`/`c` e ≥1 de cada lista `v`; `p`/`sp`/`a` não travam). Cumprir CONCEDE o deus e
+ESVAZIA o slot (não ativa outra sozinho). O servidor é autoritativo: o cliente só PEDE `provacaoAtivar` (server.js), que valida
+e devolve a conta.
+
+**DÍVIDA REMOVIDA (§95/§303):** migrado o servidor, saíram os contadores compartilhados do §241 sem consumidor —
+`vitoriasPanteaoPvP`, `vitoriasPvP`, `sequenciaPvP`, `sequenciaPanteaoPvP`, `paresPvP`, `feitos`, `desbloqueio` — e os campos
+legados por Provação (`vitoriasPanteao`/`seguidas`/`seguidasAlvo`/`seguidasCompanheiro`) saíram do `missoes.json` slim do
+cliente. `missoes.medir` FICA (é o analisador puro do log p/ maestria, coberto pelo próprio teste — não é contador órfão).
+
+**A TELA (`renderMissoes`, `src/ui/home.js` + `src/shell.html`).** Um PAINEL fixo no topo, fora da rolagem: "Provação ativa"
+com retrato, nome, cada objetivo com o progresso x/y e o botão TROCAR; vazio = "Nenhuma Provação ativa — escolha uma abaixo".
+A LISTA híbrida por ranque crescente com 5 estados: **ativa** (destacada), **pausada** (selo + progresso guardado + Retomar),
+**disponivel** (objetivos em 0/y + Ativar), **travada** (linha curta NÃO interativa, "falta: X · ranque Y" + cadeado, §234) e
+**conquistada** (✓). O cartão agora tem até 4 objetivos — medido: **≥105px** (≥76 do §234) nas 4 larguras. Ativar com outra
+já ativa pede CONFIRMAÇÃO inline ("a atual fica pausada, com o progresso guardado" — padrão do §245, sem modal).
+
+**Guardas §295:** `tests/missoes.test.js` (as 7 babás do gerador + a regra de contagem: vitória avança todos os cumpridos,
+derrota zera só as sequências, pausada congela, só a ativa conta, disponibilidade, cumprir concede+esvazia, guarda anti-forja,
+abandono=derrota, idempotência — cada uma provada que MORDE) e `tests/missoes_tela.test.js` (os 5 estados + painel cheio/vazio
++ cartão de 4 objetivos, toque ≥76, travada não-interativa; Chromium: nada corta a lista nem o painel em 780/893/1075/1200,
+o cartão de 4 objetivos sem recorte). Captura a 893 em `docs/capturas-314/`. **AVISO:** o deploy zera as contas (disco do
+Render) — esperado.
+
 ## §313 — PROVAÇÕES NOMEADAS (molde Naruto-Arena): cada Provação vira uma LISTA DE OBJETIVOS. (PARTE 1: dado + gerador.)
 
 O dono trocou o modelo de UM requisito numérico (volume + seguidas) por uma **LISTA DE OBJETIVOS** por Provação, escrita à

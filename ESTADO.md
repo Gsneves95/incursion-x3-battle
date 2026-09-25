@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ PROVAÇÕES §314 (PARTE 2) — servidor lê os OBJETIVOS, UMA ativa por vez; tela com painel + lista híbrida.
+
+Fecha o §313. O servidor deixou volume+companheiro (§230/§241) e passou a ler a **LISTA DE OBJETIVOS**, com **UMA Provação
+ATIVA por vez** (nº de vagas = `data/provacoes_slots.json`→`slotsGratis`=1; comprar mais é futuro, sem loja). **Ledger da
+conta:** `{ativa, progresso:{deus:{ativadaEm,obj:[…]}}, liberados}` (só o servidor mexe, §226). Estado por objetivo espelha o
+tipo (`s`/`sp`→{seq}; `c`→{seqA,seqB}; `v`/`j`/`p`→{vol}; `a`→{pant:[]}). **Regra de contagem (`_avancar`):** vitória com a
+ativa avança TODOS os objetivos cumpridos (sobreposição DENTRO é intencional; ENTRE não há — só a ativa conta); sequências
+(`s`/`sp`/`c`): vitória-que-não-cumpre não soma nem zera, QUALQUER derrota (abandono=derrota) zera todas; volume/amplitude só
+crescem em vitória; empate nada. **Pausada** congela (troca não zera; retoma de onde parou). **Disponível** = ranque + nomes
+obrigatórios possuídos (`s`/`j`/`c` + ≥1 de cada `v`; `p`/`sp`/`a` não travam). Cumprir CONCEDE o deus + ESVAZIA o slot. O
+cliente só PEDE `provacaoAtivar` (server.js); o servidor valida e devolve a conta. **Dívida removida (§95/§303):** saíram os
+contadores órfãos do §241 (vitoriasPanteaoPvP/sequenciaPvP/…/feitos/desbloqueio) e os campos legados por Provação do slim do
+cliente; `missoes.medir` fica (analisador puro p/ maestria). **Tela (`renderMissoes`+shell):** painel fixo "Provação ativa"
+(retrato/nome/objetivos x/y/TROCAR, ou vazio) + lista híbrida com 5 estados (ativa/pausada/disponivel/travada/conquistada);
+cartão até 4 objetivos, medido **≥105px** (§234); trocar pede confirmação inline (padrão §245). **Guardas §295:**
+`missoes.test.js` (7 babás + regra de contagem, cada uma morde) e `missoes_tela.test.js` (5 estados + painel cheio/vazio +
+cartão de 4; Chromium 780/893/1075/1200: nada corta lista nem painel). Captura a 893 em `docs/capturas-314/`. **AVISO:** o
+deploy zera as contas (disco do Render) — esperado. **Arquivos:** `data/provacoes_slots.json`, `tools/gerar_missoes.js`,
+`tools/build.js`, `server/missoes.js`, `server/contas.js`, `server/server.js`, `src/view.js`, `src/ui/home.js`,
+`src/shell.html`, `data/missoes.json`, `tests/missoes.test.js`, `tests/missoes_tela.test.js`, `tests/aquisicao.test.js`,
+`CLAUDE.md`. Ver DECISOES §314. Suíte + build verdes.
+
 ## ★ PROVAÇÕES §313 (PARTE 1) + RANQUE §315 — cada Provação vira LISTA DE OBJETIVOS; ranque mais duro. §312 removido.
 
 **§313 (Parte 1 — dado + gerador; sem servidor, sem tela):** o dono trocou o requisito único (volume+seguidas) por uma

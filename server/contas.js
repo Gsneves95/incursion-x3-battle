@@ -62,27 +62,31 @@ function _novoToken() { return crypto.randomBytes(32).toString('base64url'); } /
 // cosmética). cosmeticos = faixas conquistadas em temporadas passadas (status, não moeda).
 function _ranqueZero() { return { pontos: 0, vitorias: 0, derrotas: 0, pico: 0, temporada: 1, cosmeticos: [] }; }
 
-// MISSÕES (F6/§228): o contador de PROGRESSÃO, ao lado do ranque e SEPARADO da maestria (§215, local/
-// cosmética). Só o servidor mexe (missão libera deus). Conta SÓ PvP. Nasce vazio.
-// §230: o requisito é VOLUME por panteão + SEGUIDAS com o companheiro. vitoriasPanteaoPvP e sequenciaPvP
-// são o gate; vitoriasPvP/paresPvP/feitos seguem para maestria/futuro (fora do desbloqueio).
-// §241: sequenciaPanteaoPvP (sequência com o PANTEÃO, para as 8 missões-porta sem companheiro) e
-// desbloqueio (por deus: {em, volBase, seqBase}) — o CONTADOR COMEÇA NO DESBLOQUEIO (companheiro possuído
-// + ranque atingido); vitórias anteriores NÃO contam retroativamente.
-function _missoesZero() { return { vitoriasPanteaoPvP: {}, vitoriasPvP: {}, sequenciaPvP: {}, sequenciaPanteaoPvP: {}, paresPvP: {}, feitos: {}, liberados: {}, desbloqueio: {} }; }
+// PROVAÇÕES (§313/§314): o PROGRESSO, ao lado do ranque e SEPARADO da maestria (§215, local/cosmética).
+// Só o servidor mexe (a Provação cumprida CONCEDE o deus). Conta SÓ PvP. Nasce vazio.
+//   - `ativa`: a ÚNICA Provação ativa (deusKey), ou null (§314; nº de vagas = DOC.slotsGratis, hoje 1).
+//   - `progresso`: {deus:{ativadaEm, obj:[…estado por objetivo…]}} — a ativa E as PAUSADAS (a pausada
+//     guarda o progresso congelado). O formato de cada estado espelha o tipo do objetivo (server/missoes.js).
+//   - `liberados`: {deus:true} — histórico das Provações conquistadas.
+// Os contadores compartilhados do §241 (vitoriasPanteaoPvP/sequenciaPvP/sequenciaPanteaoPvP/vitoriasPvP/
+// paresPvP/feitos/desbloqueio) SAÍRAM — sem consumidor após o modelo de objetivos (§95/§303). A migração
+// abaixo os descarta (a posse dos deuses vive em perfil.deuses, não se perde; §314: o deploy zera contas).
+function _missoesZero() { return { ativa: null, progresso: {}, liberados: {} }; }
 function _garantirMissoes(c) {
   if (!c.missoes || typeof c.missoes !== 'object') c.missoes = _missoesZero();
-  for (const k of ['vitoriasPanteaoPvP', 'vitoriasPvP', 'sequenciaPvP', 'sequenciaPanteaoPvP', 'paresPvP', 'feitos', 'liberados', 'desbloqueio']) if (!c.missoes[k] || typeof c.missoes[k] !== 'object') c.missoes[k] = {};
-  return c.missoes;
+  const m = c.missoes;
+  if (typeof m.ativa === 'undefined') m.ativa = null;
+  if (!m.progresso || typeof m.progresso !== 'object') m.progresso = {};
+  if (!m.liberados || typeof m.liberados !== 'object') m.liberados = {};
+  // §314 — MIGRAÇÃO: descarta os contadores legados do §241 (órfãos após os objetivos).
+  for (const k of ['vitoriasPanteaoPvP', 'vitoriasPvP', 'sequenciaPvP', 'sequenciaPanteaoPvP', 'paresPvP', 'feitos', 'desbloqueio']) if (k in m) delete m[k];
+  return m;
 }
-// projeção p/ o cliente DESENHAR (o servidor é autoritativo): o ledger + os deuses liberados + as bases de
-// desbloqueio (a tela precisa mostrar o progresso DESDE o desbloqueio) + o ranque (a tela agrupa por faixa).
+// projeção p/ o cliente DESENHAR (o servidor é autoritativo): a ativa + o progresso por objetivo + os
+// deuses conquistados. O nº de vagas (slotsGratis) o cliente lê do próprio missoes.json (DOC), não daqui.
 function missoesPublicas(c) {
   const m = _garantirMissoes(c);
-  return {
-    vitoriasPanteaoPvP: m.vitoriasPanteaoPvP, sequenciaPvP: m.sequenciaPvP, sequenciaPanteaoPvP: m.sequenciaPanteaoPvP,
-    desbloqueio: m.desbloqueio, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]),
-  };
+  return { ativa: m.ativa || null, progresso: m.progresso, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]) };
 }
 
 // FAIXA a partir dos pontos — SÓ o servidor decide (o cliente nunca classifica). A faixa mais alta

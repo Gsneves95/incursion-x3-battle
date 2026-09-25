@@ -1,16 +1,17 @@
 'use strict';
-// FASE 6 / §230-§231 — O CONTADOR DA MISSÃO, no SERVIDOR (ao lado do ranque). Conta SÓ PvP (§228).
-// Aplicado UMA vez no fim da partida PvP, lido do st.log AUTORITATIVO — o cliente NÃO manda progresso.
+// FASE 6 / §313-§314 — O PROGRESSO DAS PROVAÇÕES, no SERVIDOR (ao lado do ranque). Conta SÓ PvP (§228).
+// Aplicado UMA vez no fim da partida PvP, lido do st AUTORITATIVO — o cliente NÃO manda progresso.
 //
-// O REQUISITO (§230, correção do dono): VOLUME por PANTEÃO + SEGUIDAS com o COMPANHEIRO temático — tudo
-// com deuses que o jogador JÁ TEM (nunca com o deus a liberar). O contador de vitórias por panteão e a
-// sequência por companheiro resolvem o desbloqueio; o feito-por-habilidade saiu do caminho crítico.
+// O REQUISITO (§313): cada Provação é uma LISTA DE OBJETIVOS (data/missoes.json, campo `objetivos`).
+// UMA Provação ATIVA por vez (§314, slots em data/provacoes_slots.json → DOC.slotsGratis). SÓ a ativa
+// conta; a que sai fica PAUSADA (progresso e sequências CONGELAM). Progresso por objetivo, "desde a
+// ativação", em led.progresso[deus].obj[i]. Cumprir a ativa CONCEDE o deus e ESVAZIA o slot.
 //
-// O LEDGER (por conta, em contas): vitoriasPanteaoPvP[panteão] (o volume — conta a vitória por CADA
-// panteão presente no time vencedor), sequenciaPvP[deus] (reset na derrota — para as "seguidas com o
-// companheiro"), vitoriasPvP[deus] e feitos[deus] (MAESTRIA/futuro, §230, fora do gate), liberados[deus].
+// O LEDGER (por conta, em contas.missoes): { ativa, progresso:{deus:{ativadaEm,obj:[…]}}, liberados }.
+// Os contadores compartilhados do §241 (vitoriasPanteaoPvP/sequenciaPvP/…) saíram — sem consumidor
+// após os objetivos (§95/§303). A regra de contagem está em _avancar (abaixo).
 //
-// O FEITO (medir) segue lido do log como a Fase 2 lê — mas agora serve à MAESTRIA, não ao desbloqueio.
+// O FEITO (medir) segue lido do log como a Fase 2 lê — serve à MAESTRIA (§230), fora do gate de Provação.
 // Atribuição por VARREDURA do log pelo LADO ATIVO (turno.lado) + ATOR (acao.origem/slot): o proativo vai
 // ao lado ativo, o reativo (reflexo/intercepta/absorve) ao lado que DEFENDE — resolve o espelho.
 
@@ -78,143 +79,150 @@ function medir(st, time0, time1) {
   return acc;
 }
 
-// -------- avaliar se a missão de um deus está CUMPRIDA, dado o ledger (§230: VOLUME + COMPANHEIRO,
-// tudo com deuses que o jogador JÁ TEM; nada de feito no gate, nada de portão de faixa) --------
-// ctx.possui(k) = o jogador TEM o deus k (inicial, gacha ou missão já cumprida). "JÁ TEM" (§230) é
-// POSSE (perfil.deuses), não só liberação — um Cérbero vindo da Invocação também abre o Hades.
-// §241 — as TRÊS TRAVAS: (1) RANQUE revela: a conta precisa ter atingido a faixaMin da missão. (2) CADEIA
-// ordena: o companheiro temático possuído. (3) SEQUÊNCIA prova habilidade. E o CONTADOR COMEÇA NO
-// DESBLOQUEIO (item 4): volume e sequência contam a PARTIR da base guardada em led.desbloqueio[deus] —
-// vitórias anteriores ao desbloqueio NÃO contam. ctx.pontos = c.ranque.pontos (o servidor classifica).
-function _desbloqueada(m, led, ctx) {
-  if (m.companheiro && !ctx.possui(m.companheiro)) return false;          // cadeia
-  if ((ctx.pontos || 0) < (m.faixaMin || 0)) return false;               // ranque
-  return true;
-}
-function missaoCumprida(m, led, ctx) {
-  if (!_desbloqueada(m, led, ctx)) return false;
-  const base = (led.desbloqueio || {})[m.deus] || { volBase: 0, seqBase: 0 };
-  // 2) VOLUME (desde o desbloqueio): vitórias com o PANTEÃO exigido, menos o que já havia ao desbloquear.
-  const vol = ((led.vitoriasPanteaoPvP || {})[m.panteao] || 0) - (base.volBase || 0);
-  if (vol < (m.vitoriasPanteao || 0)) return false;
-  // 3) SEQUÊNCIA (desde o desbloqueio): toda missão tem >=1; alvo = companheiro OU panteão (§241).
-  const req = _seguidasReq(m);
-  if (req > 0) {
-    const cur = _seqAtual(m, led);
-    const seqBase = (cur < (base.seqBase || 0)) ? 0 : (base.seqBase || 0);   // reset após o desbloqueio conta do zero
-    if ((cur - seqBase) < req) return false;
-  }
-  return true;
-}
-// §241 — grava a BASE do contador quando a missão DESTRAVA (companheiro + ranque), e normaliza a base da
-// sequência se houve derrota (reset) depois do desbloqueio. Idempotente: só grava a base uma vez.
-function _reavaliarDesbloqueios(led, ctx, quando) {
-  for (const k of Object.keys(DOC.missoes)) {
-    const m = DOC.missoes[k];
-    if (!_desbloqueada(m, led, ctx)) continue;
-    if (!led.desbloqueio[k]) {
-      led.desbloqueio[k] = { em: quando, volBase: (led.vitoriasPanteaoPvP[m.panteao] || 0), seqBase: _seqAtual(m, led) };
-    } else {
-      const cur = _seqAtual(m, led);
-      if (cur < (led.desbloqueio[k].seqBase || 0)) led.desbloqueio[k].seqBase = 0;   // um reset zera a base: a nova sequência conta inteira
-    }
-  }
-}
+// ============================================================================
+// §313/§314 — O MODELO DE OBJETIVOS, UMA PROVAÇÃO ATIVA POR VEZ.
+// Cada Provação é uma LISTA DE OBJETIVOS (data/missoes.json, campo `objetivos`). Progresso POR OBJETIVO,
+// gravado na conta em led.progresso[deus].obj[i], contado "desde a ATIVAÇÃO". SÓ a Provação ATIVA conta.
+// REGRA DE CONTAGEM (§314, decisão do dono):
+//   - Uma VITÓRIA com a ativa avança TODOS os objetivos dela que a partida cumpre (sobreposição DENTRO da
+//     mesma Provação é intencional; ENTRE Provações não existe, porque só a ativa conta).
+//   - Sequências ("s","sp","c"): uma vitória que NÃO cumpre não soma nem zera; QUALQUER derrota com a ativa
+//     zera TODAS as sequências dela. Abandono = derrota (chega como st.fim.lado do oponente).
+//   - Volume ("v","j","p") e amplitude ("a"): só crescem em vitória; derrota não mexe. Empate não faz nada.
+//   - PAUSADA (led.ativa !== deus): nada conta nem zera; o progresso (e as sequências) CONGELA.
+// ============================================================================
 
-// -------- REGISTRAR o fim de UMA partida PvP no ledger das duas contas (a ÚNICA porta que mexe no
-// contador de missão, e é do SERVIDOR). Chamada por salas.finalizarPartida, UMA vez (flag no chamador).
-// Lê o st AUTORITATIVO: vencedor por st.fim.lado (o cliente não diz). O cliente não manda progresso —
-// nem por mensagem, nem por desconexão (abandono = derrota, o log fecha), nem por partida inacabada
-// (sem st.fim, nem entra aqui). --------
-function _garante(led) {
-  led.vitoriasPanteaoPvP = led.vitoriasPanteaoPvP || {};
-  led.vitoriasPvP = led.vitoriasPvP || {}; led.sequenciaPvP = led.sequenciaPvP || {};
-  led.sequenciaPanteaoPvP = led.sequenciaPanteaoPvP || {};   // §241: sequência por PANTEÃO (missões sem companheiro)
-  led.desbloqueio = led.desbloqueio || {};                   // §241: {deus:{em,volBase,seqBase}} — contador desde o desbloqueio
-  led.paresPvP = led.paresPvP || {}; led.feitos = led.feitos || {}; led.liberados = led.liberados || {};
-  return led;
-}
-// §241 — o ALVO da sequência de uma missão: o companheiro, ou (sem companheiro, as 8 portas) o PANTEÃO.
-function _alvoSeq(m) { return m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao }); }
-function _seqAtual(m, led) { const a = _alvoSeq(m); return (a.tipo === 'companheiro' ? (led.sequenciaPvP[a.chave] || 0) : (led.sequenciaPanteaoPvP[a.chave] || 0)); }
-function _seguidasReq(m) { return (typeof m.seguidas === 'number') ? m.seguidas : (m.seguidasCompanheiro || 0); }
-function _parKey(a, b) { return [a, b].sort().join('+'); }
 // o panteão de MEMBRESIA de uma key (facção real normalizada) — do doc gerado, com fallback local.
 function _panteaoDe(k) { return (DOC.panteaoDe && DOC.panteaoDe[k]) || (GODS[k] && (GODS[k].faccao === 'Olímpica' ? 'Grega' : GODS[k].faccao)) || null; }
+// POSSE (§230): o jogador TEM o deus (inicial, gacha ou Provação já conquistada).
+function _possui(c, k) { const d = (c.perfil && c.perfil.deuses) || {}; return DOC.iniciais.includes(k) || !!d[k]; }
 
+// estado inicial de UM objetivo (zerado) — a forma espelha o tipo.
+function _objZero(o) {
+  if (o.tipo === 's' || o.tipo === 'sp') return { seq: 0 };
+  if (o.tipo === 'c') return { seqA: 0, seqB: 0 };
+  if (o.tipo === 'a') return { pant: [] };
+  return { vol: 0 };   // v, j, p
+}
+function _progInicial(deus, quando) { return { ativadaEm: quando, obj: (DOC.missoes[deus].objetivos || []).map(_objZero) }; }
+
+// UM objetivo está cumprido dado o seu estado?
+function _objCumprido(o, e) {
+  if (o.tipo === 's' || o.tipo === 'sp') return (e.seq || 0) >= o.k;
+  if (o.tipo === 'c') return (e.seqA || 0) >= o.k && (e.seqB || 0) >= o.k;
+  if (o.tipo === 'a') return ((e.pant || []).length) >= o.n;
+  return (e.vol || 0) >= o.n;   // v, j, p
+}
+function _provacaoCumprida(deus, prog) {
+  const objs = DOC.missoes[deus].objetivos || [];
+  return objs.every((o, i) => _objCumprido(o, (prog.obj || [])[i] || _objZero(o)));
+}
+
+// AVANÇA o progresso da ATIVA após uma partida. meu = o time (3 keys) DESTE lado; venceu/perdeu do lado.
+function _avancar(deus, prog, meu, venceu, perdeu) {
+  const objs = DOC.missoes[deus].objetivos || [];
+  const time = new Set(meu);
+  const temPanteao = (P) => meu.some(g => _panteaoDe(g) === P);
+  const pantsMeu = [...new Set(meu.map(_panteaoDe).filter(Boolean))];
+  objs.forEach((o, i) => {
+    const e = prog.obj[i] || (prog.obj[i] = _objZero(o));
+    switch (o.tipo) {
+      case 's':  if (venceu) { if (time.has(o.alvo)) e.seq++; } else if (perdeu) e.seq = 0; break;
+      case 'sp': if (venceu) { if (temPanteao(o.panteao)) e.seq++; } else if (perdeu) e.seq = 0; break;
+      case 'c':  if (venceu) { if (time.has(o.lista[0])) e.seqA++; if (time.has(o.lista[1])) e.seqB++; } else if (perdeu) { e.seqA = 0; e.seqB = 0; } break;
+      case 'v':  if (venceu && o.lista.some(g => time.has(g))) e.vol = Math.min(o.n, (e.vol || 0) + 1); break;
+      case 'j':  if (venceu && o.lista.every(g => time.has(g))) e.vol = Math.min(o.n, (e.vol || 0) + 1); break;
+      case 'p':  if (venceu && temPanteao(o.panteao)) e.vol = Math.min(o.n, (e.vol || 0) + 1); break;
+      case 'a':  if (venceu) { const novo = pantsMeu.find(P => !(e.pant || []).includes(P)); if (novo && (e.pant || []).length < o.n) e.pant.push(novo); } break;
+    }
+  });
+}
+
+// CONCEDE o deus (LIBERAR = CONCEDER, §230): entra em perfil.deuses; marca o histórico.
+function _conceder(c, deus, quando) {
+  if (!c.perfil) c.perfil = {};
+  const d = c.perfil.deuses = c.perfil.deuses || {};
+  if (!d[deus]) d[deus] = { copias: 1, favorito: false, obtidoEm: quando, viaMissao: true };
+  const led = contas._garantirMissoes(c);
+  led.liberados[deus] = true;
+}
+
+// DISPONÍVEL PARA ATIVAR (§314): ranque atingido + os NOMES OBRIGATÓRIOS possuídos (o de "s", "j" e "c",
+// e ≥1 de cada lista "v"). "p"/"sp"/"a" NÃO travam a ativação (grinda-se depois). Retorna o que falta.
+function disponivelParaAtivar(c, deus) {
+  const m = DOC.missoes[deus];
+  if (!m) return { ok: false, codigo: 'provacao_desconhecida', erro: 'Provação desconhecida' };
+  const pontos = (c.ranque && typeof c.ranque.pontos === 'number') ? c.ranque.pontos : 0;
+  const rankOk = pontos >= (m.faixaMin || 0);
+  const faltamNomes = [];
+  for (const o of (m.objetivos || [])) {
+    if (o.tipo === 's') { if (!_possui(c, o.alvo)) faltamNomes.push(o.alvo); }
+    else if (o.tipo === 'j' || o.tipo === 'c') { for (const g of o.lista) if (!_possui(c, g)) faltamNomes.push(g); }
+    else if (o.tipo === 'v') { if (!o.lista.some(g => _possui(c, g))) faltamNomes.push(o.lista[0]); }   // ≥1 da lista
+  }
+  const ok = rankOk && faltamNomes.length === 0;
+  return { ok, rankOk, faixaMin: m.faixaMin || 0, faixaNome: m.faixaNome, faltamNomes,
+    codigo: ok ? undefined : (!rankOk ? 'ranque' : 'nomes'),
+    erro: ok ? undefined : (!rankOk ? `exige ranque ${m.faixaNome}` : `falta possuir: ${[...new Set(faltamNomes)].join(', ')}`) };
+}
+
+// ESTADO de uma Provação para a conta: conquistada · ativa · pausada · disponivel · travada.
+function estadoProvacao(c, deus) {
+  if (_possui(c, deus)) return 'conquistada';
+  const led = contas._garantirMissoes(c);
+  if (led.ativa === deus) return 'ativa';
+  if (led.progresso[deus]) return 'pausada';
+  return disponivelParaAtivar(c, deus).ok ? 'disponivel' : 'travada';
+}
+
+// ATIVAR (ou TROCAR): põe `deus` na ÚNICA vaga ativa. A que sai fica PAUSADA (o progresso guardado
+// CONGELA, não zera). Retomar uma pausada continua de onde parou (o progresso já existe). Servidor
+// autoritativo: valida disponibilidade e posse; o cliente só PEDE. Idempotente se já é a ativa.
+function ativarProvacao(c, deus, agora) {
+  const led = contas._garantirMissoes(c);
+  const m = DOC.missoes[deus];
+  if (!m) return { ok: false, codigo: 'provacao_desconhecida', erro: 'Provação desconhecida' };
+  if (_possui(c, deus)) return { ok: false, codigo: 'ja_conquistada', erro: 'você já conquistou este deus' };
+  const disp = disponivelParaAtivar(c, deus);
+  if (!disp.ok && led.ativa !== deus && !led.progresso[deus]) return { ok: false, codigo: disp.codigo, erro: disp.erro };
+  const quando = typeof agora === 'number' ? agora : Date.now();
+  led.ativa = deus;                                        // a anterior vira PAUSADA só por não ser mais a ativa
+  if (!led.progresso[deus]) led.progresso[deus] = _progInicial(deus, quando);   // fresca; se pausada, retoma o guardado
+  contas._salvar();
+  return { ok: true, ativa: deus };
+}
+
+// -------- REGISTRAR o fim de UMA partida PvP (a ÚNICA porta que mexe no progresso, e é do SERVIDOR).
+// Chamada por salas.finalizarPartida, UMA vez. Lê o st AUTORITATIVO: vencedor por st.fim.lado. SÓ a
+// Provação ATIVA de cada conta avança/zera; as pausadas e as sem-ativa não são tocadas. --------
 function registrarPvP(sala) {
   const st = sala && sala.P && sala.P.st;
   if (!st || !st.fim) return null;                       // inacabada: nada
   const venc = (st.fim.lado === 0 || st.fim.lado === 1) ? st.fim.lado : null;
   const time = [sala.time0.slice(), sala.time1.slice()];
-  const feitosPorLado = medir(st, sala.time0, sala.time1);   // MAESTRIA (§230), fora do gate
-
   const ids = [sala.participantes[0].contaId, sala.participantes[1].contaId];
+  const quando = Date.now();
   const projecoes = [];
   for (let L = 0; L < 2; L++) {
     const c = contas._contaPorId(ids[L]); if (!c) { projecoes.push(null); continue; }
-    const led = _garante(contas._garantirMissoes(c));
-    // §241: grava as bases de desbloqueio ANTES de creditar esta partida — assim uma missão já destravada
-    // (companheiro possuído + ranque atingido, ex.: as imediatas na Suplicante) conta ESTA vitória, e a base
-    // fica no estado PRÉ-partida (o ranque desta partida só é aplicado DEPOIS, em salas.finalizarPartida).
-    {
-      const deuses = (c.perfil && c.perfil.deuses) || {};
-      const ctxPre = { iniciais: DOC.iniciais, possui: k => DOC.iniciais.includes(k) || !!deuses[k], pontos: (c.ranque && c.ranque.pontos) || 0 };
-      _reavaliarDesbloqueios(led, ctxPre, Date.now());
+    const led = contas._garantirMissoes(c);
+    const venceu = (venc === L), perdeu = (venc === (1 - L));
+    let conquistou = null;
+    if (led.ativa && led.progresso[led.ativa] && !_possui(c, led.ativa)) {   // SÓ a ativa conta
+      const deus = led.ativa;
+      _avancar(deus, led.progresso[deus], time[L], venceu, perdeu);
+      if (_provacaoCumprida(deus, led.progresso[deus])) {                    // cumpriu → concede e ESVAZIA o slot
+        _conceder(c, deus, quando);
+        delete led.progresso[deus];
+        led.ativa = null;                                                    // não ativa outra sozinho (§314)
+        conquistou = deus;
+      }
     }
-    const meu = time[L], venceu = (venc === L), perdeu = (venc === (1 - L));
-    // 1) VOLUME: em VITÓRIA, conta uma vitória por CADA panteão presente no time (o requisito é
-    //    "vitórias com o panteão"). vitórias/sequência por deus também (sequência = "seguidas").
-    const pantsMeu = new Set(meu.map(_panteaoDe).filter(Boolean));
-    for (const k of meu) {
-      if (venceu) { led.vitoriasPvP[k] = (led.vitoriasPvP[k] || 0) + 1; led.sequenciaPvP[k] = (led.sequenciaPvP[k] || 0) + 1; }
-      else if (perdeu) { led.sequenciaPvP[k] = 0; }        // empate técnico não zera nem soma
-    }
-    if (venceu) {
-      for (const p of pantsMeu) { led.vitoriasPanteaoPvP[p] = (led.vitoriasPanteaoPvP[p] || 0) + 1; led.sequenciaPanteaoPvP[p] = (led.sequenciaPanteaoPvP[p] || 0) + 1; }
-    } else if (perdeu) {
-      for (const p of pantsMeu) led.sequenciaPanteaoPvP[p] = 0;   // §241: derrota zera a sequência do panteão
-    }
-    // 2) pares (registro histórico; não é mais o gate — §230) e feitos (MAESTRIA): acumulam sempre.
-    if (venceu) for (let i = 0; i < meu.length; i++) for (let j = i + 1; j < meu.length; j++) { const pk = _parKey(meu[i], meu[j]); led.paresPvP[pk] = (led.paresPvP[pk] || 0) + 1; }
-    for (const k of meu) { const fam = FAM.assinatura(GODS[k]); const v = (feitosPorLado[L] || {})[fam.metrica] || 0; if (v) led.feitos[k] = (led.feitos[k] || 0) + v; }
-    projecoes.push({ id: c.id, venceu });
+    projecoes.push({ id: c.id, venceu, conquistou });
   }
-  // 3) liberar as missões cumpridas (progressão) — reavaliação por ponto-fixo, idempotente
-  for (let L = 0; L < 2; L++) { const c = contas._contaPorId(ids[L]); if (c) _liberarCumpridas(c); }
   contas._salvar();
   return { vencedor: venc, projecoes };
 }
 
-// reavalia TODAS as missões da conta, LIBERA (concede o deus) as cumpridas e marca o histórico.
-// LIBERAR = CONCEDER (§230: "a missão libera deus") — o deus entra em perfil.deuses; é o que o jogador
-// passa a TER e a poder escalar. PONTO-FIXO: conceder um deus (que vira companheiro de outro) pode
-// habilitar o próximo na MESMA passagem — é o que faz o encadeamento Maia (itzamná → chaac/kukulkan →
-// ahpuch) fechar. Idempotente: quem já possui (gacha/inicial/missão) é pulado; progressão só cresce.
-function _liberarCumpridas(c, agora) {
-  const led = _garante(contas._garantirMissoes(c));
-  if (!c.perfil) c.perfil = {};
-  const deuses = c.perfil.deuses = c.perfil.deuses || {};
-  const possui = (k) => DOC.iniciais.includes(k) || !!deuses[k];
-  const pontos = (c.ranque && typeof c.ranque.pontos === 'number') ? c.ranque.pontos : 0;   // §241: RANQUE revela
-  const ctx = { iniciais: DOC.iniciais, possui, pontos };
-  const quando = typeof agora === 'number' ? agora : Date.now();
-  // §241: grava as bases de desbloqueio (o contador começa aqui) ANTES de avaliar conclusão.
-  _reavaliarDesbloqueios(led, ctx, quando);
-  let mudou = true;
-  while (mudou) {
-    mudou = false;
-    for (const k of Object.keys(DOC.missoes)) {
-      if (deuses[k]) continue;   // já possuído (gacha/missão anterior): nada a conceder
-      if (missaoCumprida(DOC.missoes[k], led, ctx)) {
-        deuses[k] = { copias: 1, favorito: false, obtidoEm: quando, viaMissao: true };   // CONCEDE o deus
-        led.liberados[k] = true;                                                          // histórico da missão
-        mudou = true;
-        _reavaliarDesbloqueios(led, ctx, quando);   // conceder um deus pode DESTRAVAR o próximo (base = agora)
-      }
-    }
-  }
-  return led;
-}
-
-module.exports = { DOC, medir, missaoCumprida, registrarPvP, _liberarCumpridas, _reavaliarDesbloqueios, _garante, GODS };
+module.exports = { DOC, medir, registrarPvP, ativarProvacao, disponivelParaAtivar, estadoProvacao,
+  _provacaoCumprida, _avancar, _objCumprido, _progInicial, _possui, _panteaoDe, GODS };

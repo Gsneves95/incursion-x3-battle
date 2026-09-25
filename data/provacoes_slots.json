@@ -1,0 +1,4 @@
+{
+  "_nota": "§314 — quantas Provações podem estar ATIVAS ao mesmo tempo. Do dono, versionado em data/ (§222): muda sem publicar app. HOJE 1 (uma ativa por vez). Comprar mais slots é futuro — NÃO há loja. O servidor e o cliente leem daqui (via data/missoes.json, que o gerador copia); nenhum literal de slots no código.",
+  "slotsGratis": 1
+}

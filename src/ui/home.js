@@ -336,86 +336,121 @@ function faixaAtualIdx(){
   const i = faixas.findIndex(f => f.chave === ch);
   return i >= 0 ? i : 0;
 }
-// PROGRESSO desde o desbloqueio (§241): volume e sequência descontam a BASE gravada no servidor.
-function _progVol(k){
-  const m = MISSOES.missoes[k], led = (contaAtual && contaAtual.missoes) || {};
-  const base = ((led.desbloqueio || {})[k] || {}).volBase || 0;
-  const cur = (led.vitoriasPanteaoPvP || {})[m.panteao] || 0;
-  return { v: Math.max(0, cur - base), n: m.vitoriasPanteao || 0 };
-}
-function _progSeq(k){
-  const m = MISSOES.missoes[k], led = (contaAtual && contaAtual.missoes) || {};
-  const alvo = m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao });
-  const cur = alvo.tipo === 'companheiro' ? ((led.sequenciaPvP || {})[alvo.chave] || 0) : ((led.sequenciaPanteaoPvP || {})[alvo.chave] || 0);
-  const base = ((led.desbloqueio || {})[k] || {}).seqBase || 0;
-  const eff = (cur < base) ? cur : (cur - base);
-  return { s: Math.max(0, eff), n: m.seguidas || 0, tipo: alvo.tipo, alvoNome: alvo.tipo === 'companheiro' ? nomeM(alvo.chave) : alvo.chave };
-}
-// ESTADO funcional de uma missão dentro de uma faixa (aberta ou não pelo ranque).
-function estadoMissao(k, faixaAberta){
-  if (_temDeus(k)) return 'concluida';
-  if (!faixaAberta) return 'ranque';                          // §241: travada pelo PORTÃO DE RANQUE
-  const m = MISSOES.missoes[k];
-  if (m.companheiro && !_temDeus(m.companheiro)) return 'travada';   // falta o companheiro (cadeia)
-  const pv = _progVol(k), ps = _progSeq(k);
-  return (pv.v === 0 && ps.s === 0) ? 'disponivel' : 'progresso';
-}
 function contarConquistados(){ return Object.keys(MISSOES.missoes).filter(_temDeus).length; }
+function _barMissHTML(v, n){ const pct = n ? Math.min(100, Math.round(v / n * 100)) : 0; return `<span class="mreq__bar"><i style="width:${pct}%"></i></span>`; }
 
-// §312 — ESTADO de uma missão (espaço de estados §295): as travas RANQUE e COMPANHEIRO são independentes
-// (o servidor avalia as duas em missaoCumprida); a tela reflete as duas. 6 estados online + offline.
-//   conquistada · progresso · disponivel · trava-ranque · trava-comp · trava-ambos
-function estadoMissao312(k){
-  if (_temDeus(k)) return 'conquistada';
+// §314 — DISPONÍVEL PARA ATIVAR: ranque atingido + os NOMES OBRIGATÓRIOS possuídos (o de "s","j","c" e ≥1
+// de cada lista "v"). "p"/"sp"/"a" NÃO travam. Espelha server/missoes.js.disponivelParaAtivar (o servidor
+// é autoritativo; isto é só para desenhar). Retorna { ok, rankOk, faltam:[nomes] }.
+function provDisponivel(k){
   const m = MISSOES.missoes[k];
   const pts = (contaAtual && contaAtual.ranque && typeof contaAtual.ranque.pontos === 'number') ? contaAtual.ranque.pontos : 0;
   const rankOk = pts >= (m.faixaMin || 0);
-  const compOk = !m.companheiro || _temDeus(m.companheiro);
-  if (!rankOk && !compOk) return 'trava-ambos';
-  if (!rankOk) return 'trava-ranque';
-  if (!compOk) return 'trava-comp';
-  const pv = _progVol(k), ps = _progSeq(k);
-  return (pv.v === 0 && ps.s === 0) ? 'disponivel' : 'progresso';
+  const faltam = [];
+  for (const o of (m.objetivos || [])){
+    if (o.tipo === 's'){ if (!_temDeus(o.alvo)) faltam.push(o.alvo); }
+    else if (o.tipo === 'j' || o.tipo === 'c'){ for (const g of o.lista) if (!_temDeus(g)) faltam.push(g); }
+    else if (o.tipo === 'v'){ if (!o.lista.some(g => _temDeus(g))) faltam.push(o.lista[0]); }
+  }
+  return { ok: rankOk && faltam.length === 0, rankOk, faltam: [...new Set(faltam)] };
 }
-const _MISS_ABERTA = { conquistada: 1, progresso: 1, disponivel: 1 };
-function _barMissHTML(v, n){ const pct = n ? Math.min(100, Math.round(v / n * 100)) : 0; return `<span class="mreq__bar"><i style="width:${pct}%"></i></span>`; }
+// §314 — ESTADO de uma Provação (espaço de estados §295): conquistada · ativa · pausada · disponivel · travada.
+function estadoProv(k){
+  if (_temDeus(k)) return 'conquistada';
+  const mm = (contaAtual && contaAtual.missoes) || {};
+  if (mm.ativa === k) return 'ativa';
+  if (mm.progresso && mm.progresso[k]) return 'pausada';
+  return provDisponivel(k).ok ? 'disponivel' : 'travada';
+}
+function _progObj(k){ const mm = (contaAtual && contaAtual.missoes) || {}; return (mm.progresso && mm.progresso[k]) || null; }
 
-// §312 — CARTÃO ABERTO (~84px): fita de raridade + retrato + nome + MOTIVO (2 linhas) + as 3 TRAVAS numa
-// linha (volume do panteão com barra · sequência COM O COMPANHEIRO · ranque mínimo). Números do dado, ao vivo.
-function cardMissaoHTML(k, estado){
+// §314 — as LINHAS de objetivo de uma Provação: rótulo humano + progresso x/y (do estado do servidor, ou 0).
+// `conq` (conquistada) enche as barras. "c" (duas sequências separadas) rende DUAS linhas.
+function _objLinhas(k, conq){
+  const m = MISSOES.missoes[k], prog = _progObj(k);
+  const nomeP = (p) => (PANT_ADJ[p] ? PANT_ADJ[p] : H(p));
+  const linhas = [];
+  (m.objetivos || []).forEach((o, i) => {
+    const e = (prog && prog.obj && prog.obj[i]) || {};
+    if (o.tipo === 's') linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.alvo))}</b>`, x: Math.min(e.seq || 0, o.k), y: o.k });
+    else if (o.tipo === 'sp') linhas.push({ txt: `${o.k} seguidas com ${nomeP(o.panteao)}`, x: Math.min(e.seq || 0, o.k), y: o.k });
+    else if (o.tipo === 'c'){
+      linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.lista[0]))}</b>`, x: Math.min(e.seqA || 0, o.k), y: o.k });
+      linhas.push({ txt: `${o.k} seguidas com <b>${H(nomeM(o.lista[1]))}</b>`, x: Math.min(e.seqB || 0, o.k), y: o.k });
+    }
+    else if (o.tipo === 'v') linhas.push({ txt: `${o.n} vitórias com ${o.lista.map(g => '<b>' + H(nomeM(g)) + '</b>').join(' ou ')}`, x: Math.min(e.vol || 0, o.n), y: o.n });
+    else if (o.tipo === 'j') linhas.push({ txt: `${o.n} vitórias com <b>${H(nomeM(o.lista[0]))}</b> e <b>${H(nomeM(o.lista[1]))}</b>`, x: Math.min(e.vol || 0, o.n), y: o.n });
+    else if (o.tipo === 'p') linhas.push({ txt: `${o.n} vitórias com ${nomeP(o.panteao)}`, x: Math.min(e.vol || 0, o.n), y: o.n });
+    else if (o.tipo === 'a') linhas.push({ txt: `${o.n} panteões diferentes em vitórias`, x: Math.min((e.pant || []).length, o.n), y: o.n });
+  });
+  if (conq) linhas.forEach(l => { l.x = l.y; });
+  return linhas;
+}
+function _objLinhasHTML(k, conq){
+  return _objLinhas(k, conq).map(l => `<span class="orow"><span class="orow__t">${l.txt}</span><span class="orow__xy"><b>${l.x}</b>/${l.y}</span>${_barMissHTML(l.x, l.y)}</span>`).join('');
+}
+
+// §314 — PAINEL FIXO "PROVAÇÃO ATIVA" no topo: retrato + nome + cada objetivo x/y + TROCAR. Vazio quando não
+// há ativa. É o resumo sempre visível da única vaga (DOC.slotsGratis).
+function painelAtivaHTML(){
+  const mm = (contaAtual && contaAtual.missoes) || {};
+  const k = mm.ativa;
+  if (!k){
+    return `<div class="pativa pativa--vazio"><span class="pativa__ic">◈</span><p class="pativa__msg">Nenhuma Provação ativa — <b>escolha uma abaixo</b>.</p></div>`;
+  }
+  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
+  return `<div class="pativa" data-deus="${k}">
+    <div class="pativa__cab"><span class="pativa__sel">Provação ativa</span><button class="b b--quiet b--sm" id="btrocar">Trocar</button></div>
+    <div class="pativa__corpo">
+      <span class="pativa__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 40)}</span>
+      <div class="pativa__id"><span class="pativa__nome">${H(g.nome)}</span><div class="pativa__objs">${_objLinhasHTML(k, false)}</div></div>
+    </div>
+  </div>`;
+}
+
+// §314 — CARTÃO de Provação (ativa/pausada/disponivel/conquistada): retrato + nome + selo + objetivos + ação.
+// ATIVA/PAUSADA/DISPONIVEL/CONQUISTADA são cartões (≥76px, §234); TRAVADA é linha curta não-interativa.
+function provCardHTML(k, estado){
   const m = MISSOES.missoes[k];
   const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
   const rar = raridadeDe(k);
-  const pv = _progVol(k), ps = _progSeq(k);
   const conq = estado === 'conquistada';
-  const volV = conq ? pv.n : Math.min(pv.v, pv.n);
-  const seqV = conq ? ps.n : Math.min(ps.s, ps.n);
-  const alvo = ps.tipo === 'companheiro' ? H(ps.alvoNome) : ('o ' + (PANT_ADJ[m.panteao] || H(m.panteao)));
-  return `<button class="mcard mcard--${estado}" data-deus="${k}" title="${H(g.nome)}">
+  let selo = '', acao = '';
+  if (estado === 'ativa') selo = `<span class="mcard__selo mcard__selo--ativa">Ativa</span>`;
+  else if (estado === 'pausada'){ selo = `<span class="mcard__selo mcard__selo--pausada">Pausada</span>`; acao = provAcaoHTML(k, 'Retomar'); }
+  else if (estado === 'disponivel'){ acao = provAcaoHTML(k, 'Ativar'); }
+  else if (conq) selo = `<span class="mcard__ok">✓</span>`;
+  return `<div class="mcard mcard--${estado}" data-deus="${k}" title="${H(g.nome)}">
     <span class="mcard__rar rar--${rar}"></span>
-    <span class="mcard__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
-    <span class="mcard__id">
-      <span class="mcard__nome">${H(g.nome)}${conq ? ' <span class="mcard__ok">✓</span>' : ''}</span>
-      <span class="mcard__motivo">${H(m.motivo)}</span>
-    </span>
-    <span class="mcard__reqs">
-      <span class="mreq"><span class="mreq__lbl">Vitórias do panteão</span><span class="mreq__val"><b>${volV}</b>/${pv.n}</span>${_barMissHTML(volV, pv.n)}</span>
-      <span class="mreq"><span class="mreq__lbl">Vitórias seguidas</span><span class="mreq__val"><b>${seqV}</b>/${ps.n}</span><span class="mreq__sub">com ${alvo}</span></span>
-      <span class="mreq"><span class="mreq__lbl">Ranque mínimo</span><span class="mreq__val mreq__faixa">${H(m.faixaNome)}</span></span>
-    </span>
-  </button>`;
+    <button class="mcard__abrir" data-abrir="${k}" title="${H(g.nome)}">
+      <span class="mcard__art">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
+      <span class="mcard__id"><span class="mcard__nome">${H(g.nome)} ${selo}</span><span class="mcard__motivo">${H(m.motivo)}</span></span>
+    </button>
+    <div class="mcard__objs">${_objLinhasHTML(k, conq)}</div>
+    ${acao ? `<div class="mcard__acao">${acao}</div>` : ''}
+  </div>`;
+}
+// a AÇÃO do cartão: Ativar/Retomar, ou a CONFIRMAÇÃO inline de troca (quando já há outra ativa — §314).
+function provAcaoHTML(k, rotulo){
+  const mm = (contaAtual && contaAtual.missoes) || {};
+  const temOutra = mm.ativa && mm.ativa !== k;
+  if (provTrocaConfirm === k){
+    return `<span class="mcard__conf">A atual fica <b>pausada</b>, com o progresso guardado.<button class="b b--primary b--sm" data-troca-ok="${k}">Trocar</button><button class="b b--quiet b--sm" data-troca-no="1">Cancelar</button></span>`;
+  }
+  return `<button class="b b--primary b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">${rotulo}</button>`;
 }
 
-// §312 — LINHA TRAVADA (~40px), NÃO interativa (não abre): retrato apagado + nome + o QUE FALTA (§234:
-// "ver que falta o Cérbero é motivação"; nunca só cadeado) + cadeado. Companheiro e/ou ranque.
-function lockMissaoHTML(k, estado){
+// §314 — LINHA TRAVADA (~40px), NÃO interativa: retrato apagado + nome + o QUE FALTA + cadeado (§234:
+// mostrar o que falta é motivação; nunca só o cadeado). Falta = nomes obrigatórios e/ou ranque.
+function provLockHTML(k){
   const m = MISSOES.missoes[k];
   const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
   const rar = raridadeDe(k);
+  const d = provDisponivel(k);
   const faltas = [];
-  if (estado === 'trava-comp' || estado === 'trava-ambos') faltas.push(`<b>${H(nomeM(m.companheiro))}</b>`);
-  if (estado === 'trava-ranque' || estado === 'trava-ambos') faltas.push(`ranque <b>${H(m.faixaNome)}</b>`);
-  return `<div class="mlock mlock--${estado}" data-lock="${k}" title="${H(g.nome)} — travada">
+  if (d.faltam.length) faltas.push(d.faltam.map(x => `<b>${H(nomeM(x))}</b>`).join(' · '));
+  if (!d.rankOk) faltas.push(`ranque <b>${H(m.faixaNome)}</b>`);
+  return `<div class="mlock" data-lock="${k}" title="${H(g.nome)} — travada">
     <span class="mlock__rar rar--${rar}"></span>
     <span class="mlock__art">${slot('god-' + k, ini(g.nome), '#6a6390', 18)}</span>
     <span class="mlock__nome">${H(g.nome)}</span>
@@ -424,55 +459,58 @@ function lockMissaoHTML(k, estado){
   </div>`;
 }
 
-// §312 — a LISTA PLANA por RANQUE crescente (o híbrido): abertas cheias, travadas curtas. Dentro da mesma
-// faixa, por raridade decrescente e nome. Todos os 91 aparecem (ver o trancado faz querer subir, §234).
-function listaMissoesHTML(){
+// §314 — a LISTA por RANQUE crescente (o híbrido): cartões (ativa/pausada/disponivel/conquistada) + linhas
+// travadas. Dentro da mesma faixa, por raridade decrescente e nome. Todos os 91 aparecem (§234).
+function listaProvacoesHTML(){
   const rarRank = { SS: 2, S: 1, A: 0 };
   const ks = Object.keys(MISSOES.missoes).sort((a, b) => {
     const ma = MISSOES.missoes[a], mb = MISSOES.missoes[b];
     return (ma.faixaIndice - mb.faixaIndice) || ((rarRank[mb.raridade] || 0) - (rarRank[ma.raridade] || 0)) || nomeM(a).localeCompare(nomeM(b));
   });
-  return ks.map(k => { const e = estadoMissao312(k); return _MISS_ABERTA[e] ? cardMissaoHTML(k, e) : lockMissaoHTML(k, e); }).join('');
+  return ks.map(k => { const e = estadoProv(k); return e === 'travada' ? provLockHTML(k) : provCardHTML(k, e); }).join('');
 }
 
-// SEM SERVIDOR: o progresso vive no servidor (§228). Não mostra zero — diz a verdade e ainda deixa
-// LER as histórias (os 91 motivos foram escritos para serem lidos), como catálogo sem contador.
-function missoesOfflineHTML(){
+// SEM SERVIDOR: o progresso vive no servidor (§228). Diz a verdade e deixa LER as histórias + os objetivos.
+function provacoesOfflineHTML(){
   const cat = Object.keys(MISSOES.missoes).sort((a,b)=> nomeM(a).localeCompare(nomeM(b))).map(k => {
     const m = MISSOES.missoes[k];
-    const alvo = m.companheiro ? `precisa de <b>${H(nomeM(m.companheiro))}</b>` : `volume ${H(m.panteao)}`;
-    return `<button class="mcat" data-deus="${k}" title="${H(nomeM(k))}">
+    return `<button class="mcat" data-abrir="${k}" title="${H(nomeM(k))}">
       <span class="mcat__art">${slot('god-' + k, ini(nomeM(k)), '#6a6390', 26)}</span>
-      <span class="mcat__b"><span class="mcat__n">${H(nomeM(k))}</span><span class="mcat__f">${alvo}</span><span class="mcat__m">${H(m.motivo)}</span></span>
+      <span class="mcat__b"><span class="mcat__n">${H(nomeM(k))}</span><span class="mcat__f">${(m.objetivos||[]).length} objetivos · ranque ${H(m.faixaNome)}</span><span class="mcat__m">${H(m.motivo)}</span></span>
     </button>`;
   }).join('');
   return `<div class="moff">
     <span class="moff__ic">◈</span>
-    <p class="moff__msg">As missões contam no <b>PvP</b>. <b>Conecte</b> para ver seu progresso — o contador vive no servidor.</p>
+    <p class="moff__msg">As Provações contam no <b>PvP</b>. <b>Conecte</b> para ativar uma e ver seu progresso — ele vive no servidor.</p>
   </div>
   <div class="msec__cab msec__cab--cat"><h2>As histórias</h2><span class="msec__n">${Object.keys(MISSOES.missoes).length}</span></div>
   <div class="mcatgrid">${cat}</div>`;
 }
 
+let provTrocaConfirm = null;   // §314: deus com a troca em confirmação inline (sem modal, como o §245)
+async function _pedirAtivar(k){
+  provTrocaConfirm = null;
+  if (typeof ativarProvacaoServidor !== 'function') return;
+  const r = await ativarProvacaoServidor(k);   // o servidor devolve a conta e o view chama render()
+  if (r && r.erro && typeof toast === 'function') toast(r.erro);
+}
 function renderMissoes(){
   const online = !!contaAtual;
   let corpo;
   if (!missoesDisponivel()){
-    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O mapa das missões chega com os dados.</p></div>`;
+    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O mapa das Provações chega com os dados.</p></div>`;
   } else if (!online){
-    corpo = `<div class="tela__rol">${missoesOfflineHTML()}</div>`;
+    corpo = `<div class="tela__rol">${provacoesOfflineHTML()}</div>`;
   } else {
-    // §312: LISTA PLANA por ranque crescente (o híbrido). Aberta = cartão cheio; travada = linha curta com
-    // o que falta. Os números vêm do dado, ao vivo (§234). Sem cabeçalhos de faixa — o ranque está no cartão.
-    corpo = `<div class="tela__rol"><div class="mlista">${listaMissoesHTML()}</div></div>`;
+    corpo = `<div class="pativawrap">${painelAtivaHTML()}</div><div class="tela__rol"><div class="mlista">${listaProvacoesHTML()}</div></div>`;
   }
   const cont = online && missoesDisponivel() ? `<span class="tela__cont">${contarConquistados()}/${Object.keys(MISSOES.missoes).length}</span>` : `<span class="tela__espaco"></span>`;
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="stagemark">INCURSION</div>
-  <div class="tela">
+  <div class="tela tela--prov">
     <header class="tela__cab">
       <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Missões</h1>
+      <h1 class="tela__titulo">Provações</h1>
       ${cont}
     </header>
     ${corpo}
@@ -480,10 +518,18 @@ function renderMissoes(){
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  // ELO com o detalhe do deus (§220): da missão ABERTA vai-se ao deus. §312: a TRAVADA (.mlock) NÃO abre.
-  [...stage.querySelectorAll('.mcard[data-deus], .mcat[data-deus]')].forEach(b => {
-    b.onclick = () => { ir('deus', { key: b.dataset.deus }); render(); };
-  });
+  // ELO com o detalhe do deus (§220): abrir (cartão/painel/catálogo) vai ao deus. A TRAVADA (.mlock) NÃO abre.
+  [...stage.querySelectorAll('[data-abrir]')].forEach(b => { b.onclick = () => { ir('deus', { key: b.dataset.abrir }); render(); }; });
+  const pa = stage.querySelector('.pativa[data-deus]'); if (pa) pa.onclick = (ev) => { if (ev.target.closest('#btrocar')) return; ir('deus', { key: pa.dataset.deus }); render(); };
+  // TROCAR (painel): rola até a lista para escolher outra.
+  const bt = stage.querySelector('#btrocar'); if (bt) bt.onclick = () => { const rol = stage.querySelector('.tela__rol'); if (rol) rol.scrollIntoView({ block: 'start' }); };
+  // ATIVAR/RETOMAR: se há outra ativa, pede confirmação inline; senão ativa direto.
+  [...stage.querySelectorAll('[data-ativar]')].forEach(b => { b.onclick = () => {
+    const k = b.dataset.ativar;
+    if (b.dataset.troca === '1'){ provTrocaConfirm = k; render(); } else { _pedirAtivar(k); }
+  }; });
+  [...stage.querySelectorAll('[data-troca-ok]')].forEach(b => { b.onclick = () => _pedirAtivar(b.dataset.trocaOk); });
+  [...stage.querySelectorAll('[data-troca-no]')].forEach(b => { b.onclick = () => { provTrocaConfirm = null; render(); }; });
   // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
   if (online && typeof refrescarConta === 'function') refrescarConta();
   fit();
@@ -1529,16 +1575,24 @@ function comoConseguirHTML(k, rar){
     </div>
   </div>`;
 }
-// texto curto do requisito de missão (para o detalhe do deus): "40 vitórias gregas + 5 seguidas com Cérbero".
+// texto curto do requisito de Provação (§314, para o detalhe do deus): resume a LISTA DE OBJETIVOS.
+// Texto PLANO (o chamador embrulha em H()): "3 objetivos: 2 seguidas com Zeus · 8 vitórias com Zeus/Ganesha
+// · 8 vitórias no panteão · abre em Devoto".
 function reqMissaoTexto(k){
   const m = MISSOES.missoes[k]; if (!m) return '';
-  const adj = PANT_ADJ[m.panteao] || m.panteao;
-  let s = `${m.vitoriasPanteao} vitórias ${adj}`;
-  // §241: sequência (companheiro OU panteão) + o portão de ranque, tudo desde o desbloqueio.
-  const seg = m.seguidas || m.seguidasCompanheiro || 0;
-  const alvo = m.seguidasAlvo || (m.companheiro ? { tipo: 'companheiro', chave: m.companheiro } : { tipo: 'panteao', chave: m.panteao });
-  if (seg) s += ` + ${seg} seguidas ${alvo.tipo === 'companheiro' ? 'com ' + nomeM(alvo.chave) : adj}`;
-  else if (m.companheiro) s += ` · com ${nomeM(m.companheiro)}`;
+  const adj = (p) => PANT_ADJ[p] || p;
+  const rot = (o) => {
+    if (o.tipo === 's') return `${o.k} seguidas com ${nomeM(o.alvo)}`;
+    if (o.tipo === 'sp') return `${o.k} seguidas no panteão ${adj(o.panteao)}`;
+    if (o.tipo === 'c') return `${o.k} seguidas com ${nomeM(o.lista[0])} e com ${nomeM(o.lista[1])}`;
+    if (o.tipo === 'v') return `${o.n} vitórias com ${o.lista.map(nomeM).join('/')}`;
+    if (o.tipo === 'j') return `${o.n} vitórias com ${nomeM(o.lista[0])} e ${nomeM(o.lista[1])}`;
+    if (o.tipo === 'p') return `${o.n} vitórias no panteão ${adj(o.panteao)}`;
+    if (o.tipo === 'a') return `${o.n} panteões diferentes`;
+    return '';
+  };
+  const objs = (m.objetivos || []);
+  let s = `${objs.length} objetivos: ${objs.map(rot).join(' · ')}`;
   if (m.faixaNome && (m.faixaMin || 0) > 0) s += ` · abre em ${m.faixaNome}`;
   return s;
 }

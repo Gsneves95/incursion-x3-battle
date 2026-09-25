@@ -81,11 +81,12 @@ const missoesDoc = (() => {
   try {
     const d = JSON.parse(ler('data/missoes.json'));
     const slim = {};
-    for (const k in d.missoes) { const m = d.missoes[k]; slim[k] = { nome: m.nome, raridade: m.raridade, panteao: m.panteao, companheiro: m.companheiro, motivo: m.motivo, vitoriasPanteao: m.vitoriasPanteao, seguidasCompanheiro: m.seguidasCompanheiro,
-      // §241: a tela agrupa por FAIXA e conta a sequência (companheiro OU panteão) desde o desbloqueio.
-      faixa: m.faixa, faixaNome: m.faixaNome, faixaIndice: m.faixaIndice, faixaMin: m.faixaMin, seguidas: m.seguidas, seguidasAlvo: m.seguidasAlvo }; }
-    return { volumes: d.volumes, iniciais: d.iniciais, panteaoDe: d.panteaoDe, faixas: d.faixas, distribuicao: d.distribuicao, missoes: slim };
-  } catch (e) { return { volumes: {}, iniciais: [], panteaoDe: {}, faixas: [], distribuicao: [], missoes: {} }; }
+    // §314: a tela desenha por FAIXA (portão de ranque) e a LISTA DE OBJETIVOS (§313). O progresso por
+    // objetivo vem do servidor (§228). Os campos legados de volume/sequência saíram (sem consumidor no cliente).
+    for (const k in d.missoes) { const m = d.missoes[k]; slim[k] = { nome: m.nome, raridade: m.raridade, panteao: m.panteao, companheiro: m.companheiro, motivo: m.motivo,
+      faixa: m.faixa, faixaNome: m.faixaNome, faixaIndice: m.faixaIndice, faixaMin: m.faixaMin, objetivos: m.objetivos }; }
+    return { iniciais: d.iniciais, panteaoDe: d.panteaoDe, faixas: d.faixas, distribuicao: d.distribuicao, slotsGratis: d.slotsGratis, missoes: slim };
+  } catch (e) { return { iniciais: [], panteaoDe: {}, faixas: [], distribuicao: [], slotsGratis: 1, missoes: {} }; }
 })();
 const casca  = ler('src/shell.html');
 
