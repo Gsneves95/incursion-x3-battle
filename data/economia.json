@@ -90,6 +90,12 @@
     "_fonte": "DESAFIO DA SEMANA (§245, decisao do dono): passa a dar GEMA (recurso de invocacao) em vez de Essencia — o desafio semanal AJUDA A COLECIONAR. Continua gratis e expirando por semana. So a 1a vitoria da semana paga; a maestria acumula sempre. Valor tunavel aqui.",
     "recompensa": { "gema": 150 }
   },
+  "pvp": {
+    "_fonte": "§318 F2 (decisao do dono): RENDA CONTINUA de Gema pelo PvP. Vitoria (ranqueado E casual) paga `vitoria.gema`; teto `tetoDia` vitorias PAGAS por dia no relogio do SERVIDOR (o mesmo dia do teto de Essencia). Derrota/empate nao pagam. ANTI-FARM: so paga se a partida durou >= `minRodadas` rodadas (st.turno conta rodadas a partir de quem abriu); vitoria por abandono cedo nao paga. Credito no finalizarPartida do servidor; o cliente nunca soma. Tunavel aqui.",
+    "vitoria": { "gema": 15 },
+    "tetoDia": 10,
+    "minRodadas": 3
+  },
   "pergaminhos": {
     "_fonte": "DESAFIOS POR DEUS (§245, decisao do dono): os pergaminhos viram desafios POR DEUS, comprados com ESSENCIA, e cumprir da MAESTRIA daquele deus (a moldura sai no MESTRE, limiar 30 do §204). custoEssencia 30 (confere contra a renda de repetidos A15/S40/SS120); maestriaPorVitoria 3 (30/3 = 10 desafios por moldura); recargaHoras 8 (3 por dia por deus, uma moldura em ~3 dias de foco). So de deus que se TEM; nao avanca Provacao (PvP). Tunavel aqui.",
     "custoEssencia": 30,

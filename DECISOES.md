@@ -66,6 +66,18 @@ recusam, mesma partida 2× credita 1×, tetos (sandbox/semanal/campanha/desafio/
 E3 as 8 linhas batem a fórmula + somam 100 + SS natural ≤1%, 1M sorteios (qui-quadrado), raridade natural
 1/14/85, pity 60, conversões, `subirNivel` + recusas, sem gemas → recusa. Suíte + build verdes nas 4.
 
+**ADENDO — RENDA CONTÍNUA de Gema pelo PvP (decisão do dono).** Faltava a fonte contínua de GEMA (a invocação
+consome; a duplicata deixou de produzir Essência e o PvE repetível cobre a Essência, mas a gema de meio de
+jogo dependia só de sandbox/semanal). Regra: vitória em PvP (ranqueado E casual) paga **15 gema**, teto **10
+vitórias/dia** (150) no relógio do SERVIDOR (o mesmo dia do teto de Essência), derrota/empate não pagam,
+**anti-farm** = só paga com ≥ **3 rodadas** (`st.turno` conta rodadas a partir de quem abriu — abandono cedo
+não paga). Crédito no `finalizarPartida` (`server/salas.js` → `contas.creditarPvPVitoria` → `pve.creditarPvP`,
+ledger `conta.pve.pvpDia`); o cliente só REFLETE o saldo do snapshot (`gemaPvP`) e mostra "+15 (7/10 hoje)" —
+nunca soma. **Recusada:** creditar no cliente (mesma razão da E1). **Medição** (`tools/medir_economia.js`):
+renda ~181 gema/dia casual (~1h) e ~271/dia batendo o teto; dias até MAXIMIZAR 1 deus (18 cópias de um deus
+específico, grind de fim de jogo): Suplicante ~137–236d, Adepto ~71–408d conforme a raridade/cenário. Babás:
+vitória paga 15, a 11ª/dia não paga, dia seguinte zera, partida curta não paga, cliente não credita.
+
 ---
 
 ## §318 F1 FECHO (triagem) + FASE 2 AUDITORIA (PARE no §95 da Essência)

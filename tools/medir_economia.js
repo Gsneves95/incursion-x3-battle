@@ -57,11 +57,14 @@ console.log('===== §318 F2 E4 — MEDIÇÃO DA ECONOMIA =====\n');
 console.log('(1) INVOCAÇÕES até MAXIMIZAR o 1º deus (18 pontos = 3 slots no nv4), por faixa e raridade:');
 console.log('    (A1/S2/SS4 pontos por duplicata; média de trials)');
 const RANQ = require(path.join(__dirname, '..', 'data', 'ranqueado.json'));
-for (const [nome, pts] of [['Suplicante(0)', RANQ.faixas[0].min], ['Adepto(3)', RANQ.faixas[3].min]]) {
+const MAXPULLS = {};
+for (const [nome, idx] of [['Suplicante', 0], ['Adepto', 3]]) {
+  const pts = RANQ.faixas[idx].min;
   const rng = mulberry(12345);
   const a = pullsAteMaximizar(pts, 'A', 200, rng);
   const s = pullsAteMaximizar(pts, 'S', 200, rng);
   const ss = pullsAteMaximizar(pts, 'SS', 60, rng);
+  MAXPULLS[nome] = { A: a, S: s, SS: ss };
   console.log(`    ${nome}: A ~${a} pulls · S ~${s} pulls · SS ~${ss} pulls  (≈ ${Math.round(a * ECON.invocacao.custo.avulso / 1000)}k / ${Math.round(s * ECON.invocacao.custo.avulso / 1000)}k / ${Math.round(ss * ECON.invocacao.custo.avulso / 1000)}k gema no avulso)`);
 }
 
@@ -105,6 +108,29 @@ console.log('\n(4) CUSTO do REPLAY por partida no servidor (re-simulação):');
   for (let i = 0; i < N; i++) pve.verificar(ct, replay, Date.now());
   const t1 = process.hrtime.bigint();
   console.log(`    re-simulação de uma partida (${ops.length} ops): ${(Number(t1 - t0) / 1e6 / N).toFixed(3)} ms/verificação (N=${N})`);
+})();
+
+console.log('\n(5) RENDA DE GEMA/DIA e DIAS até MAXIMIZAR 1 deus (com a renda de PvP nova):');
+(function () {
+  const custoPull = ECON.invocacao.custo.pacote10 / 10;   // gema por pull no pacote de 10 (135)
+  const semanalDia = (ECON.semanal.recompensa.gema || 0) / 7;
+  const sandboxTeto = (ECON.sandbox.recompensas.vitoria.gema || 0) * (ECON.sandbox.tetoDia || 0);   // 5×20=100
+  const pvpVit = ECON.pvp.vitoria.gema, pvpTeto = ECON.pvp.tetoDia;
+  // (a) ~1h/dia ≈ 8 partidas, 50% vitória = 4 vitórias de PvP; + sandbox no teto (treino barato) + semanal amortizado
+  const A_pvpVit = 4;
+  const rendaA = A_pvpVit * pvpVit + sandboxTeto + semanalDia;
+  // (b) batendo o teto diário de gemas do PvP + sandbox no teto + semanal
+  const rendaB = pvpTeto * pvpVit + sandboxTeto + semanalDia;
+  console.log(`    fontes: PvP ${pvpVit}/vit (teto ${pvpTeto}/dia) · sandbox ${sandboxTeto}/dia (teto) · semanal ${(ECON.semanal.recompensa.gema)}/sem = ${semanalDia.toFixed(0)}/dia · pull ${custoPull} gema (pacote 10)`);
+  console.log(`    (a) casual ~1h/dia (${A_pvpVit} vit PvP=${A_pvpVit * pvpVit} + sandbox ${sandboxTeto} + semanal ${semanalDia.toFixed(0)}) = ~${Math.round(rendaA)} gema/dia`);
+  console.log(`    (b) batendo o teto de gemas (${pvpTeto} vit PvP=${pvpTeto * pvpVit} + sandbox ${sandboxTeto} + semanal ${semanalDia.toFixed(0)}) = ~${Math.round(rendaB)} gema/dia`);
+  for (const nome of ['Suplicante', 'Adepto']) {
+    const mp = MAXPULLS[nome];
+    const dias = (pulls, renda) => Math.ceil(pulls * custoPull / renda);
+    console.log(`    DIAS até maximizar 1 deus — ${nome}:`);
+    console.log(`       cenário (a): A ~${dias(mp.A, rendaA)}d · S ~${dias(mp.S, rendaA)}d · SS ~${dias(mp.SS, rendaA)}d`);
+    console.log(`       cenário (b): A ~${dias(mp.A, rendaB)}d · S ~${dias(mp.S, rendaB)}d · SS ~${dias(mp.SS, rendaB)}d`);
+  }
 })();
 
 console.log('\n===== fim da medição =====');

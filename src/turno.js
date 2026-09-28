@@ -212,6 +212,12 @@ function receberPushOnline(msg) {
 // só desenha). Uma vez só. `montarBannerRanque` é global da view (guardado por typeof).
 function _bannerRanqueTalvez() {
   if (MP && MP.fim && MP.ranqueadoResultado && !MP._banner && typeof montarBannerRanque === 'function') { MP._banner = true; montarBannerRanque(MP.ranqueadoResultado); }
+  _gemaPvPTalvez();
+}
+// §318 F2: ao fim de uma partida PvP (ranqueado E casual), mostra a renda de gema (o servidor creditou; o
+// cliente só reflete o saldo e mostra "+15 (7/10 hoje)"). Uma vez só; funciona sem banner de ranque (casual).
+function _gemaPvPTalvez() {
+  if (MP && MP.fim && MP.gemaPvP && !MP._gemaMostrada && typeof montarGemaPvPToast === 'function') { MP._gemaMostrada = true; montarGemaPvPToast(MP.gemaPvP); }
 }
 function resultadoRanqueOnline() { return MP ? (MP.ranqueadoResultado || null) : null; }
 

@@ -46,6 +46,7 @@ function garantirPve(conta) {
   if (!p.essenciaDia || typeof p.essenciaDia !== 'object') p.essenciaDia = { dia: '', total: 0 };
   if (!p.dominioRun || typeof p.dominioRun !== 'object') p.dominioRun = { id: '', essencia: 0 };
   if (!p.sandbox || typeof p.sandbox !== 'object') p.sandbox = { dia: '', vitorias: 0 };
+  if (!p.pvpDia || typeof p.pvpDia !== 'object') p.pvpDia = { dia: '', vitorias: 0 };
   return p;
 }
 
@@ -288,6 +289,23 @@ function _saldo(conta) {
   return { gema: m.gema || 0, essencia: m.essencia || 0 };
 }
 
+// ---- §318 F2 — RENDA DE GEMA por VITÓRIA de PvP (ranqueado e casual). Chamado no finalizarPartida do
+// servidor (o vencedor e o nº de rodadas são do st autoritativo; o cliente não informa nada). Teto diário
+// no relógio do SERVIDOR + piso de rodadas (anti-farm). Muta conta.perfil.moedas + conta.pve.pvpDia. ----
+function creditarPvP(conta, rodadas, agora) {
+  agora = (typeof agora === 'number') ? agora : Date.now();
+  const pve = garantirPve(conta);
+  const dia = _diaISO(agora);
+  const cfg = ECON.pvp || {};
+  const minR = cfg.minRodadas || 0, teto = cfg.tetoDia || 0, val = (cfg.vitoria && cfg.vitoria.gema) || 0;
+  if (pve.pvpDia.dia !== dia) pve.pvpDia = { dia, vitorias: 0 };
+  if ((rodadas || 0) < minR) return { ok: true, creditou: false, gema: 0, vitoriasHoje: pve.pvpDia.vitorias, teto, motivo: 'partida_curta', saldo: _saldo(conta) };
+  if (pve.pvpDia.vitorias >= teto) return { ok: true, creditou: false, gema: 0, vitoriasHoje: pve.pvpDia.vitorias, teto, motivo: 'teto_diario', saldo: _saldo(conta) };
+  const gema = _addMoeda(conta, 'gema', val);
+  pve.pvpDia.vitorias += 1;
+  return { ok: true, creditou: true, gema, vitoriasHoje: pve.pvpDia.vitorias, teto, motivo: '', saldo: _saldo(conta) };
+}
+
 // ---- processa um LOTE (a fila offline do cliente): credita cada replay, na ordem. ----
 function creditarLote(conta, replays, agora) {
   agora = (typeof agora === 'number') ? agora : Date.now();
@@ -296,4 +314,4 @@ function creditarLote(conta, replays, agora) {
   return { ok: true, resultados, saldo: _saldo(conta) };
 }
 
-module.exports = { garantirPve, verificar, creditar, creditarLote, MODOS, _chaveSemana, _diaISO };
+module.exports = { garantirPve, verificar, creditar, creditarLote, creditarPvP, MODOS, _chaveSemana, _diaISO };

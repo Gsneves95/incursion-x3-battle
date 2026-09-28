@@ -480,6 +480,14 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     pergaminhos. Isto convive com o invariante 3 do jeito dos Domínios: o poder de kit sobe por CÓPIAS
     (níveis §318), decisão explícita do dono — não é "estrela/equipamento" solto, é o eixo de progressão
     medido no piloto §318 F1 (triagem: MÁX 0–25pp, nenhuma habilidade nv4 acima de +15pp).
+34. **RENDA CONTÍNUA de Gema pelo PvP, no servidor (§318 F2).** Vitória em PvP (ranqueado E casual) paga
+    `economia.pvp.vitoria.gema` (15), teto `tetoDia` (10 = 150/dia) no relógio do SERVIDOR, e só se a partida
+    durou ≥ `minRodadas` (3 — `st.turno` conta rodadas a partir de quem abriu; abandono cedo não paga).
+    Derrota/empate não pagam (o crédito é win-only por construção). Roda no `finalizarPartida` do servidor
+    (`contas.creditarPvPVitoria` → `pve.creditarPvP`, ledger `conta.pve.pvpDia`); o vencedor e o nº de rodadas
+    vêm do `st` autoritativo, o cliente não informa nada e nunca soma — só REFLETE o saldo que volta no
+    snapshot (`gemaPvP`) e mostra "+15 (7/10 hoje)". É a fonte contínua de Gema que a invocação consome; a de
+    Essência é o PvE repetível (invariante 33).
 
 ---
 

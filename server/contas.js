@@ -394,6 +394,16 @@ function comprarPergaminho(token, deus) {
   if (r.ok) _persistir();
   return Object.assign({}, r, { conta: paraDono(c) });
 }
+// §318 F2 — RENDA DE GEMA por vitória de PvP. Chamado por server/salas.js no fim da partida (por ID de
+// conta, não token — a partida é keyed por conta). Persiste e devolve o resultado p/ o snapshot mostrar.
+function creditarPvPVitoria(idVenc, rodadas, agora) {
+  _carregar();
+  const c = _contaPorId(idVenc);
+  if (!c) return null;
+  const r = _pve.creditarPvP(c, rodadas, agora);
+  _persistir();
+  return Object.assign({ contaId: idVenc }, r);
+}
 function devCredito(token) {
   _carregar();
   const c = _contas.get(token);
@@ -437,7 +447,7 @@ function _setPontos(token, n) { _carregar(); const c = _contas.get(token); if (c
 module.exports = {
   FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, creditarPve, planoDoNick,
-  invocar, subirNivel, comprarPergaminho, devCredito, chancesInvocacao,
+  invocar, subirNivel, comprarPergaminho, devCredito, chancesInvocacao, creditarPvPVitoria,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,

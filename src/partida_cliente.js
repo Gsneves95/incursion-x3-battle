@@ -84,6 +84,7 @@ function _absorver(MP, snap) {
   MP.restanteMs = snap.restanteMs;
   MP.fim = snap.fim || null;   // SÓ o servidor decide o fim
   if (snap.ranqueadoResultado) MP.ranqueadoResultado = snap.ranqueadoResultado;   // mudança de faixa/pontos (o servidor computou)
+  if (snap.gemaPvP) MP.gemaPvP = snap.gemaPvP;   // §318 F2: renda de gema por vitória (o servidor creditou; o cliente só mostra)
   return MP;
 }
 // AVISO do cliente (divergência corrigida, recusa, tempo esgotado): canal SEPARADO do st.log. O
@@ -192,7 +193,7 @@ async function jogar(transporte, MP, op, opts = {}) {
 
   if (resp.hash === hashLocal) {
     // confirmou e bateu (o caso normal): mantém o desenho local, só atualiza relógio/turno/fim.
-    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado;
+    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado; if (resp.gemaPvP) MP.gemaPvP = resp.gemaPvP;
     return { ok: true, divergiu: false };
   }
   // DIVERGÊNCIA (não deveria acontecer): corrige pelo servidor e grita no log.
@@ -228,7 +229,7 @@ async function encerrar(transporte, MP, opts = {}) {
     return { ok: false, erro: (resp && resp.erro) || 'sem resposta do servidor' };
   }
   if (resp.hash === hashLocal) {
-    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado;
+    MP.turnoDe = resp.turnoDe; MP.deadline = resp.deadline; MP.agora = resp.agora; MP.restanteMs = resp.restanteMs; MP.fim = resp.fim || null; if (resp.ranqueadoResultado) MP.ranqueadoResultado = resp.ranqueadoResultado; if (resp.gemaPvP) MP.gemaPvP = resp.gemaPvP;
     return { ok: true, divergiu: false, cpuOps: resp.cpuOps || [] };
   }
   const antesHash = hashLocal;

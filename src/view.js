@@ -467,6 +467,26 @@ async function iniciarRanqueado(nick, time){
 
 // F5.5 — BANNER de mudança de faixa ao fim de uma partida ranqueada. O SERVIDOR computou (subiu/desceu,
 // pontos, faixa antes->depois); o cliente só DESENHA. DOM próprio, fora do #stage.
+// §318 F2 — RENDA DE GEMA por vitória de PvP. O servidor JÁ creditou; o cliente REFLETE o saldo autoritativo
+// (não credita) e mostra a linha "+15 (7/10 hoje)" / "teto diário atingido". Toast leve — coexiste com o
+// banner de ranque (ranqueado) e aparece sozinho no casual.
+function montarGemaPvPToast(g){
+  if(!g) return;
+  if(g.saldo){
+    if(contaAtual && contaAtual.perfil){ contaAtual.perfil.moedas = contaAtual.perfil.moedas || {}; contaAtual.perfil.moedas.gema = g.saldo.gema; contaAtual.perfil.moedas.essencia = g.saldo.essencia; }
+    if(typeof perfil!=='undefined' && perfil){ perfil.moedas = perfil.moedas || { gema:0, essencia:0 }; if(typeof g.saldo.gema==='number') perfil.moedas.gema = g.saldo.gema; if(typeof g.saldo.essencia==='number') perfil.moedas.essencia = g.saldo.essencia; try{ if(typeof salvar==='function') salvar(perfil); }catch(e){} }
+  }
+  const txt = g.creditou ? `+${g.gema} 💎 (${g.vitoriasHoje}/${g.teto} hoje)` : (g.motivo==='teto_diario' ? 'teto diário de gemas atingido' : '');
+  if(!txt) return;
+  try{
+    if(document.getElementById('gema-pvp-toast')) return;
+    const el=document.createElement('div'); el.id='gema-pvp-toast';
+    el.setAttribute('style','position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:9600;background:#1d1836;border:1px solid #b9a94a;color:#efe9ff;border-radius:12px;padding:10px 18px;font:700 15px/1.2 inherit;box-shadow:0 8px 28px rgba(0,0,0,.5)');
+    el.textContent='🏆 '+txt;
+    document.body.appendChild(el);
+    setTimeout(()=>{ try{ el.remove(); }catch(e){} }, 4200);
+  }catch(e){}
+}
 function montarBannerRanque(res){
   if(!res || document.getElementById('banner-ranque')) return;
   const subiu=res.subiu, desceu=res.desceu, venceu=res.venceu;

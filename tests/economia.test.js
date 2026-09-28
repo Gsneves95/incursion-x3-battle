@@ -398,6 +398,62 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
   ok(!r2.ok && r2.motivo === 'gemas_insuficientes', 'pacote sem 1350 recusa também');
 })();
 
+// ================================================================================================
+// §318 F2 — RENDA DE GEMA por VITÓRIA de PvP (ranqueado e casual). 15/vitória, teto 10/dia no relógio do
+// SERVIDOR, mínimo de rodadas (anti-farm). Derrota/empate não pagam (crédito é win-only, por construção).
+// ================================================================================================
+console.log('');
+console.log('== PvP: renda contínua de Gema por vitória (autoritativa no servidor) ==');
+const pvem = require('../server/pve.js');
+const VG = ECON3.pvp.vitoria.gema, VTETO = ECON3.pvp.tetoDia, VMINR = ECON3.pvp.minRodadas;
+
+// --- (1) vitória (>= minRodadas) paga 15; a (teto+1)ª do dia não paga; o dia seguinte zera ---
+(() => {
+  const c = contaFake(0, 0, {});
+  const dia = Date.parse('2026-05-10T12:00:00Z');
+  let creditadas = 0, somaGema = 0;
+  for (let i = 0; i < VTETO + 3; i++) { const r = pvem.creditarPvP(c, VMINR, dia); if (r.creditou) { creditadas++; somaGema += r.gema; } }
+  ok(creditadas === VTETO, `paga no máximo ${VTETO} vitórias/dia (pagou ${creditadas})`);
+  ok(somaGema === VTETO * VG, `${VTETO} vitórias = ${VTETO * VG} gema (deu ${somaGema})`);
+  const r11 = pvem.creditarPvP(c, VMINR, dia);
+  ok(!r11.creditou && r11.motivo === 'teto_diario', `a ${VTETO + 1}ª do dia não paga (teto_diario)`);
+  const rAmanha = pvem.creditarPvP(c, VMINR, dia + 24 * 3600 * 1000);
+  ok(rAmanha.creditou && rAmanha.gema === VG, 'no dia seguinte volta a pagar (reset por data do servidor)');
+})();
+
+// --- (2) a 1ª vitória paga EXATO 15 e credita no saldo do servidor ---
+(() => {
+  const c = contaFake(0, 0, {});
+  const g0 = c.perfil.moedas.gema;
+  const r = pvem.creditarPvP(c, VMINR, Date.now());
+  ok(r.creditou && r.gema === VG, `vitória paga ${VG} gema exato (deu ${r.gema})`);
+  ok(c.perfil.moedas.gema === g0 + VG, 'o saldo do servidor subiu 15');
+  ok(r.vitoriasHoje === 1 && r.teto === VTETO, `a tela recebe "${r.gema} gemas (${r.vitoriasHoje}/${r.teto} hoje)"`);
+})();
+
+// --- (3) partida curta (< minRodadas) NÃO paga, mesmo com vitória (anti-farm/abandono cedo) ---
+(() => {
+  const c = contaFake(0, 0, {});
+  const g0 = c.perfil.moedas.gema;
+  const r = pvem.creditarPvP(c, VMINR - 1, Date.now());
+  ok(!r.creditou && r.motivo === 'partida_curta', `vitória com < ${VMINR} rodadas não paga (partida_curta)`);
+  ok(c.perfil.moedas.gema === g0, 'saldo intacto na partida curta');
+  const r2 = pvem.creditarPvP(c, VMINR, Date.now());
+  ok(r2.creditou, `com ${VMINR} rodadas já paga`);
+})();
+
+// --- (4) o CLIENTE não credita: forjar gema via salvarPerfil não muda a conta (mesmo após "vencer") ---
+(() => {
+  contas._resetParaTeste();
+  const r = contas.criar({ faixaIdade: 'maior' });
+  const tok = r.conta.token;
+  const g0 = contas.porToken(tok).perfil.moedas.gema;
+  const forj = clone(contas.porToken(tok).perfil); forj.moedas.gema += 99999;
+  contas.salvarPerfil(tok, forj);
+  ok(contas.porToken(tok).perfil.moedas.gema === g0, 'cliente forjando gema de PvP via salvarPerfil → conta inalterada');
+  contas._resetParaTeste();
+})();
+
 console.log('');
 console.log(falhas === 0 ? '>>> ECONOMIA OK' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);

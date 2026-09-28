@@ -14,6 +14,10 @@ A economia inteira passou para o SERVIDOR. Ver DECISOES "§318 FASE 2" e os inva
   sobe pra SS); pity 60 renormalizado. Duplicata→PONTOS (A1/S2/SS4); subirNivel 1/2/3; excedente MAX→Essência.
 - **E4** tela mostra a TABELA DE CHANCES do servidor; aviso honesto de "conta recomeçou" após deploy que zerou
   (§274). Medição em `tools/medir_economia.js` (números na DECISOES).
+- **RENDA DE PvP** (adendo do dono): vitória PvP (ranqueado+casual) paga 15 gema, teto 10/dia (relógio do
+  servidor), ≥3 rodadas (anti-farm), derrota/empate não pagam. Crédito no `finalizarPartida` (`pve.creditarPvP`,
+  ledger `conta.pve.pvpDia`); o cliente reflete o saldo (`gemaPvP` no snapshot) e mostra "+15 (7/10 hoje)". É a
+  fonte contínua de GEMA que a invocação consome. Medição: ~181 gema/dia casual, ~271/dia no teto.
 
 **Fronteiras/estado:** o disco do Render grátis é efêmero (§274) — as contas de teste zeram a cada deploy; o
 aviso de recomeço é o contrato honesto até um store durável. O DEV topup agora credita no SERVIDOR (marca

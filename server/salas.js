@@ -59,6 +59,13 @@ function finalizarPartida(sala) {
     // cliente não manda progresso. Idempotente pelo mesmo flag `registrado` (uma vez por partida).
     missoes.registrarPvP(sala);
   }
+  // §318 F2 — RENDA DE GEMA por vitória de PvP (ranqueado E casual), UMA vez, com teto diário e piso de
+  // rodadas (anti-farm). O vencedor e o nº de rodadas (st.turno) são do servidor; o cliente não influencia.
+  if (sala.modo === 'pvp' && !sala.gemaPaga && venc !== null) {
+    sala.gemaPaga = true;
+    const idVenc = sala.participantes[venc].contaId;
+    sala.gemaResultado = contas.creditarPvPVitoria(idVenc, sala.P.st.turno, Date.now());
+  }
   // PONTOS: só ranqueado, uma vez. Abandono chega como derrota do abandonador — o cliente não influencia.
   if (!sala.ranqueado || sala.pontuado) return sala.resultado;
   sala.pontuado = true;
@@ -85,6 +92,10 @@ function snapshotPara(sala, contaId, extra) {
   if (sala.resultado) {
     const meu = (sala.resultado.vencedor.id === contaId) ? sala.resultado.vencedor : (sala.resultado.perdedor.id === contaId ? sala.resultado.perdedor : null);
     if (meu) snap.ranqueadoResultado = Object.assign({ venceu: sala.resultado.vencedor.id === contaId, motivo: sala.resultado.motivo }, meu);
+  }
+  // §318 F2: a RENDA DE GEMA vai só para o VENCEDOR (o servidor creditou; o cliente só mostra "+15 (7/10)").
+  if (sala.gemaResultado && sala.gemaResultado.contaId === contaId) {
+    snap.gemaPvP = { creditou: sala.gemaResultado.creditou, gema: sala.gemaResultado.gema, vitoriasHoje: sala.gemaResultado.vitoriasHoje, teto: sala.gemaResultado.teto, motivo: sala.gemaResultado.motivo, saldo: sala.gemaResultado.saldo };
   }
   // §318: projeção PÚBLICA dos níveis — o jogador recebe os níveis do time ADVERSÁRIO (o seu ele já
   // conhece pela própria conta). Tudo público; o texto do oponente mostra o número atual.
