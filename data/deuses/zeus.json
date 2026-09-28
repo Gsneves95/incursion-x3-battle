@@ -48,21 +48,21 @@
             {
               "caminho": "fx[0].v",
               "de": 15,
-              "para": 17
+              "para": 16
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 17,
-              "para": 19
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "19 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -80,7 +80,7 @@
               }
             }
           ],
-          "desc": "19 de dano a 1 inimigo; ele causa 3 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 3 menos de dano por 1 turno."
         }
       ]
     },

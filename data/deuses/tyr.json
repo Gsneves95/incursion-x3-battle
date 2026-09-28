@@ -204,12 +204,12 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[2].eff.dur",
-              "de": 2,
+              "caminho": "cd",
+              "de": 4,
               "para": 3
             }
           ],
-          "desc": "Tyr perde 15 de HP; o time fica imune a controle por 2 turnos e causa +9 de dano por 3 turnos."
+          "desc": "Tyr perde 15 de HP; o time fica imune a controle e causa +9 de dano por 2 turnos."
         }
       ]
     }

@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 F1c — RÉGUA REATIVA + AJUSTE DOS DEGRAUS À FAIXA
+
+**Política REATIVA** (`tools/medir_niveis.js --reativo`): habilidade cujo efeito no fx é provocação/redução/
+escudo/imunidade só é usada quando HÁ MOTIVO — (a) aliado < 50% HP; (b) lançador < 60% (efeito no self);
+(c) inimigo com dano pronto. Fora disso, cai na forçada. A classificação vem do fx BASE (identidade, independe
+do nível) e é reportada por habilidade. Tyr: habilidade REATIVA (provocação, redução), milagre REATIVA (imunidade).
+
+**Faixa-alvo (desenho):** deus no MÁX +10 a +15pp; nenhuma habilidade sozinha no nv4 acima de +12pp. Medida
+na REATIVA, N=3000 (IC95 ≈ ±2,5pp). Degraus pequenos não se afinam um a um (a resolução não permite): só têm
+de ficar ≥0 no ruído.
+
+**Degraus revisados (dado do dono, aplicados):** Zeus básico passo pequeno virou +1 (15→16→17); Oxum milagre
+— a cura continua (20→22→24), saiu o regen 8→10, nv4 = +1 turno de regen; Tyr milagre nv4 virou recarga 4→3
+(saiu o dur 2→3). Tyr habilidade sem mudança.
+
+**Medida e iteração (±1 só nos degraus pequenos; SALTO não se toca — propõe):**
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MAX | faixa |
+|---|---|---|---|---|---|
+| Zeus (dado do dono) | +8,2 | +6,6 | +9,2 | **+19,4** | FORA (alto) |
+| Oxum (após ±1: hab+mil pequenos +2→+1) | +4,9 | +1,5 | +9,0 | **+14,2** | **na faixa** |
+| Tyr (dado do dono) | +4,9 | **−5,2** | +7,1 | **+3,4** | FORA (baixo) |
+
+Nenhuma habilidade sozinha passou de +12pp em nenhum dos três. **Oxum** entrou na faixa com o lever autorizado
+(±1: habilidade 20→21→22, milagre 20→21→22 — foi o que a medida mostrou: +18,1→+14,2). **Zeus** o lever NÃO
+resolve (±1 em hab+mil deu +19,4→+20,0, no ruído): o excesso é o VOLUME do básico (usado ~6/partida, passo já
+no mínimo +1) mais os três saltos combinados. **Tyr** o lever não alcança (básico +2 deu +3,4→+6,7): a
+habilidade é NEGATIVA (−5,2 reativa, −11,7 forçada, +0,0 gulosa) — provocar/reduzir num espelho simétrico não
+vence; é um tanque cujo valor é sobrevivência, que o win-rate de espelho não captura.
+
+**PROPOSTAS (SALTO/kit — NÃO aplicadas, param aqui):** (Zeus) para caber em ≤15 sem mexer no volume do básico,
+abrandar UM salto — ex. milagre nv4 manter cd 4 (tirar o 4→3), ou básico nv4 sem o dmgDown; medir de novo.
+(Tyr) medir o tanque num cenário ASSIMÉTRICO (protegendo um carry), não no espelho; OU aceitar o tanque abaixo
+da faixa (a régua de vitória subestima sobrevivência); a habilidade reativa não é tunável por degrau pequeno.
+
+**Regras de desenho de degrau aprendidas (valem para os 97):** (a) **+1 turno de duração em buff de time é o
+salto mais pesado** (o dur-salto domina o marginal — Zeus habilidade e Oxum milagre); (b) **no básico, o passo
+pequeno é +1** (o +2 estoura; o +1 é o menor que ainda muda o estado); (c) **habilidade reativa mede-se pela
+política reativa** (na forçada ela superestima o custo — Tyr −11,7 forçada vs −5,2 reativa; na gulosa mede 0).
+
+Régua reativa e dado revisado commitados; números de SALTO não mexidos (proposta acima). Suíte + build verdes.
+
+---
+
 ## §318 F1b — A RÉGUA ANTES DOS NÚMEROS (diagnóstico + babá do degrau + régua de uso forçado). NENHUM degrau ajustado.
 
 **Os três números impossíveis eram a IA, não o kit — nenhum defeito.** (a) Milagre da Oxum +20pp com "0,05

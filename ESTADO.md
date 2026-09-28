@@ -2,6 +2,34 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS §318 F1c — RÉGUA REATIVA + AJUSTE DOS DEGRAUS À FAIXA
+
+**Política REATIVA** (`tools/medir_niveis.js --reativo`): habilidade reativa (provocação/redução/escudo/
+imunidade, classificada do fx base) só é usada com MOTIVO — aliado <50% HP, ou lançador <60% (efeito no self),
+ou inimigo com dano pronto; senão cai na forçada. Faixa-alvo: MÁX +10 a +15pp; nenhuma habilidade nv4 > +12pp.
+Medida REATIVA, N=3000, IC95 ≈ ±2,5pp.
+
+**Degraus revisados (dado do dono, aplicados):** Zeus básico passo +1 (15→16→17); Oxum milagre cura 20→22→24,
+regen fica 8, nv4 +1 turno de regen; Tyr milagre nv4 recarga 4→3.
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MAX | faixa |
+|---|---|---|---|---|---|
+| Zeus | +8,2 | +6,6 | +9,2 | **+19,4** | FORA (alto) |
+| Oxum (após ±1 hab+mil) | +4,9 | +1,5 | +9,0 | **+14,2** | **na faixa** |
+| Tyr | +4,9 | **−5,2** | +7,1 | **+3,4** | FORA (baixo) |
+
+Tyr habilidade nv4 nas 3 políticas: gulosa +0,0 · forçada −11,7 · **reativa −5,2**.
+
+**Ajuste feito:** só a Oxum, via o lever autorizado (±1: habilidade 20→21→22, milagre 20→21→22) → +18,1→+14,2
+na faixa. **Zeus** o ±1 não resolve (+19,4→+20,0 no ruído): excesso = volume do básico (~6/partida, passo já no
+mínimo +1) + os 3 saltos. **Tyr** o ±1 não alcança (+3,4→+6,7 com básico +2): a habilidade é NEGATIVA — tanque
+num espelho simétrico não vence por win-rate. **Proposto (SALTO/kit, NÃO aplicado — para aqui):** Zeus abrandar
+um salto (milagre manter cd 4, ou básico sem dmgDown); Tyr medir em cenário assimétrico (proteger um carry) ou
+aceitar o tanque abaixo da faixa. **Regras de degrau (valem p/ os 97):** (a) +1 turno de dur em buff de time é o
+salto mais pesado; (b) no básico o passo pequeno é +1; (c) habilidade reativa mede-se pela política reativa.
+Arquivos: `data/deuses/{zeus,oxum,tyr}.json`, `tools/medir_niveis.js` (--reativo). Ver DECISOES §318 F1c.
+Suíte + build verdes.
+
 ## ★ NÍVEIS §318 F1b — A RÉGUA ANTES DOS NÚMEROS (diagnóstico + babá do degrau + régua forçada). NENHUM degrau ajustado.
 
 **Os 3 números impossíveis eram a IA gulosa, não o kit (nenhum defeito).** (a) Oxum milagre +20pp/0,05-uso:

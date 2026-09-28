@@ -39,6 +39,52 @@ function forcadoProxima(st) {
   return null;
 }
 
+// §318 F1c — POLÍTICA REATIVA. Habilidade cujo EFEITO (no fx, não no nome) é provocação / redução /
+// escudo / imunidade só é usada quando HÁ MOTIVO: (a) um aliado < 50% de HP; (b) o lançador < 60% de HP
+// (para efeito no PRÓPRIO); (c) o time inimigo tem uma habilidade de dano pronta. Fora disso, cai na
+// política forçada (a próxima prioridade). O tipo é classificado do fx BASE (identidade da habilidade,
+// independe do nível). Só para MEDIR habilidades reativas (tank/suporte) sem inflar nem zerar o uso.
+const _CTRL = ['atordoado', 'adormecido', 'submerso', 'taunt', 'silenceClass', 'lockSkill', 'dominado', 'medo', 'agarrar', 'pacificado', 'selado'];
+function tagsReativas(baseAb) {
+  const fx = (baseAb && baseAb.fx) || [];
+  const ap = fx.filter(f => f.t === 'apply').map(f => f.eff && f.eff.type);
+  const t = [];
+  if (ap.includes('taunt')) t.push('provocação');
+  if (ap.includes('dmgReduction')) t.push('redução');
+  if (fx.some(f => f.t === 'shield') || ap.includes('shield')) t.push('escudo');
+  if (ap.some(x => ['controlImmune', 'invulneravel', 'imunidade'].includes(x))) t.push('imunidade');
+  return t;
+}
+const abBaseDe = (key, slot) => (GODS[key] && (GODS[key].ab || []).find(a => a.slot === slot)) || null;
+const ehReativa = baseAb => tagsReativas(baseAb).length > 0;
+function motivoReativo(st, u, baseAb) {
+  const ali = st.lados[u.lado].units.filter(x => x.vivo);
+  if (ali.some(x => x.hp < 0.5 * (x.maxHp || 120))) return true;                              // (a) aliado ferido
+  const selfEff = (baseAb.fx || []).some(f => f.escopo === 'self' && (f.t === 'apply' || f.t === 'shield'));
+  if (selfEff && u.hp < 0.6 * (u.maxHp || 120)) return true;                                  // (b) efeito no self e lançador ferido
+  const ini = st.lados[1 - u.lado].units;
+  if (ini.some(e => e.vivo && podeAgir(e) && acoesDe(st, e).some(a => a.disponivel && (abBaseDe(e.key, a.slot) || {}).fx && abBaseDe(e.key, a.slot).fx.some(f => f.t === 'dmg')))) return true;   // (c) inimigo com dano pronto
+  return false;
+}
+function reativaProxima(st) {
+  const lado = st.ativo, base = iaPontuar(st, lado);
+  for (const u of st.lados[lado].units) {
+    if (!podeAgir(u)) continue;
+    const cands = iaCandidatos(st, u);
+    if (!cands.length) continue;
+    for (const slot of PRIO_FORCADO) {                    // prioridade milagre>hab>básico; pula a reativa sem motivo
+      const sc = cands.filter(c => c.slot === slot);
+      if (!sc.length) continue;
+      const ab = abBaseDe(u.key, slot);
+      if (ehReativa(ab) && !motivoReativo(st, u, ab)) continue;   // reativa sem motivo → tenta a próxima prioridade
+      let bc = null, bd = -Infinity;
+      for (const c of sc) { const cl = iaClonar(st); const r = agir(cl, c.uid, c.slot, c.alvos, c.escolhas); if (!r || !r.ok) continue; const d = iaPontuar(cl, lado) - base; if (d > bd) { bd = d; bc = c; } }
+      if (bc) return bc;
+    }
+  }
+  return null;
+}
+
 const GODS = E.GODS;
 const SLOTS = ['basico', 'habilidade', 'milagre'];
 const arg = (nome, def) => { const p = process.argv.find(a => a.startsWith('--' + nome + '=')); return p ? p.split('=')[1] : def; };
@@ -49,7 +95,9 @@ const TIME = arg('time', 'zeus,ares,atena').split(',');
 const X = arg('x', TIME[0]);
 const FALSO = tem('falso');
 const FORCADO = tem('forcado');   // §318 F1b: política de uso forçado (mede o que a IA gulosa não usa)
-const proximaAcao = FORCADO ? forcadoProxima : iaProximaAcao;
+const REATIVO = tem('reativo');   // §318 F1c: forçada, mas habilidade reativa só com motivo
+const proximaAcao = REATIVO ? reativaProxima : FORCADO ? forcadoProxima : iaProximaAcao;
+const POLITICA = REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)';
 // vetor de nível de X: --niv=basico:4,... (default: básico no 4, resto 1) OU o delta falso (básico 2)
 function parseNiv(s) { const o = { basico: 1, habilidade: 1, milagre: 1 }; for (const p of (s || '').split(',')) { const [k, v] = p.split(':'); if (SLOTS.includes(k)) o[k] = parseInt(v, 10) || 1; } return o; }
 const NIV = FALSO ? { basico: 2, habilidade: 1, milagre: 1 } : parseNiv(arg('niv', 'basico:4'));
@@ -120,7 +168,9 @@ const pct = x => (100 * x).toFixed(1) + '%';
 console.log('=== §318 — RÉGUA DE NÍVEIS ===');
 console.log(`time (espelho): ${TIME.join(', ')} · X = ${X} (${GODS[X] ? GODS[X].nome : '?'})`);
 console.log(`vetor de nível de X: ${SLOTS.map(s => s + ':' + NIV[s]).join(' ')}${FALSO ? '   [DELTA FALSO: +5 dano no básico — NÃO commitar]' : ''}`);
-console.log(`N = ${N} partidas por corrida · política = ${FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)'}`);
+console.log(`N = ${N} partidas por corrida · política = ${POLITICA}`);
+// §318 F1c: classificação REATIVA das habilidades de X (do fx base) — reportada por habilidade.
+for (const slot of ['basico', 'habilidade', 'milagre']) { const t = tagsReativas(abBaseDe(X, slot)); if (t.length) console.log(`  ${X}.${slot}: REATIVA (${t.join(', ')})`); }
 
 const cat = catalogoComEscada();
 

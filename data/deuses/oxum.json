@@ -109,21 +109,21 @@
             {
               "caminho": "fx[0].v",
               "de": 20,
-              "para": 22
+              "para": 21
             }
           ],
-          "desc": "Cura 22 em 1 aliado; o time ganha 1 orbe de Maré."
+          "desc": "Cura 21 em 1 aliado; o time ganha 1 orbe de Maré."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 22,
-              "para": 24
+              "de": 21,
+              "para": 22
             }
           ],
-          "desc": "Cura 24 em 1 aliado; o time ganha 1 orbe de Maré."
+          "desc": "Cura 22 em 1 aliado; o time ganha 1 orbe de Maré."
         },
         {
           "nv": 4,
@@ -141,7 +141,7 @@
               }
             }
           ],
-          "desc": "Cura 24 em 1 aliado e ele regenera 4 no turno seguinte; o time ganha 1 orbe de Maré."
+          "desc": "Cura 22 em 1 aliado e ele regenera 4 no turno seguinte; o time ganha 1 orbe de Maré."
         }
       ]
     },
@@ -184,21 +184,21 @@
             {
               "caminho": "fx[0].v",
               "de": 20,
-              "para": 22
+              "para": 21
             }
           ],
-          "desc": "Cura 22 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
+          "desc": "Cura 21 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[1].eff.v",
-              "de": 8,
-              "para": 10
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
             }
           ],
-          "desc": "Cura 22 no time, regenera 10 por turno durante 2 turnos e o time ganha 2 orbes."
+          "desc": "Cura 22 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
         },
         {
           "nv": 4,
@@ -209,7 +209,7 @@
               "para": 3
             }
           ],
-          "desc": "Cura 22 no time, regenera 10 por turno durante 3 turnos e o time ganha 2 orbes."
+          "desc": "Cura 22 no time, regenera 8 por turno durante 3 turnos e o time ganha 2 orbes."
         }
       ]
     }
