@@ -2,6 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 2 — ECONOMIA AUTORITATIVA (4 ETAPAS, todas verdes + push)
+
+A economia inteira passou para o SERVIDOR. Ver DECISOES "§318 FASE 2" e os invariantes 30–33 em CLAUDE.md.
+- **E1** `salvarPerfil` com LISTA BRANCA: moedas/deuses/pontos/níveis são do servidor; forja do cliente ignorada.
+- **E2** PvE pago por REPLAY: o cliente grava montagem+ações do jogador (`src/replay_cliente.js`), o servidor
+  re-simula (`server/pve.js`, motor determinístico) e credita só se bater. Dificuldade do DADO
+  (`server/dados-pve.js`), IA no servidor. Portões/tetos em `conta.pve`. Fila offline (20), dedupe por idPartida.
+- **E3** invocação por FAIXA×RARIDADE no servidor (`server/invocacao.js`): Math.random saiu de `invocacao.js`.
+  Faixa = ranque; linha por fórmula (própria 60/acima 2·×0,2/abaixo rateado); raridade SS1/S14/A85 (desce, nunca
+  sobe pra SS); pity 60 renormalizado. Duplicata→PONTOS (A1/S2/SS4); subirNivel 1/2/3; excedente MAX→Essência.
+- **E4** tela mostra a TABELA DE CHANCES do servidor; aviso honesto de "conta recomeçou" após deploy que zerou
+  (§274). Medição em `tools/medir_economia.js` (números na DECISOES).
+
+**Fronteiras/estado:** o disco do Render grátis é efêmero (§274) — as contas de teste zeram a cada deploy; o
+aviso de recomeço é o contrato honesto até um store durável. O DEV topup agora credita no SERVIDOR (marca
+`conta.dev`). Pergaminho debita Essência no servidor; a recarga/estado do pergaminho segue no cliente (não é
+moeda) — hardening futuro se precisar. A régua da invocação (linhas) é fórmula pura, sem tabela à mão.
+
 ## ★ NÍVEIS §318 F1 FECHO (triagem) + FASE 2 AUDITORIA — PARE no §95 da Essência
 
 **A. Piloto fechado (triagem = régua PADRÃO dos 97: espelho sorteado + reativa apertada).** Critérios de

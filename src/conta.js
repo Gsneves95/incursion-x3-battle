@@ -49,8 +49,10 @@ async function iniciarConta(transporte, opts = {}) {
   if (token) {
     const r = await transporte.pedir(envelope('entrar', { token }));
     if (r && r.tipo === 'conta') return { fase: 'entrou', conta: r.conta };
-    // token não vale mais (conta excluída, ou outro aparelho): esquece e trata como 1ª abertura
+    // token não vale mais (conta excluída, OUTRO aparelho, ou §274/§318 F2 E4: um DEPLOY zerou as contas de
+    // teste no disco efêmero do Render). Esquece e trata como 1ª abertura, MAS sinaliza `recomecou` p/ o aviso honesto.
     apagarToken();
+    return { fase: 'perguntarFaixa', recomecou: true };
   }
   return { fase: 'perguntarFaixa' };
 }

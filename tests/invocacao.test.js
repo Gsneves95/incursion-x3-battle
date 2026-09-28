@@ -130,6 +130,15 @@ function pedir(msg) {
   ok(/mask-image:linear-gradient/.test(bloco) && /mask-composite:intersect/.test(bloco), 'a .iv-arte funde as bordas (máscara)');
   ok(/aspect-ratio:512\/590/.test(bloco), 'a caixa é travada na proporção do retrato');
 
+  console.log('== 13. §318 F2 E4: token rejeitado após deploy (conta zerada) → recomecou + aviso honesto ==');
+  w.eval("try{localStorage.setItem('incursion:token','tok-velho')}catch(e){}");
+  w.__ftReset = { pedir: (m) => Promise.resolve(m && m.tipo === 'ola' ? { tipo: 'ola', v: 1 } : { tipo: 'recusado', codigo: 'token_invalido', erro: 'x' }) };
+  const rboot = await w.eval("iniciarConta(window.__ftReset,{})");
+  ok(rboot && rboot.fase === 'perguntarFaixa' && rboot.recomecou === true, 'token inválido após deploy → perguntarFaixa + recomecou=true');
+  w.eval('_avisoRecomeco()');
+  const av = d.getElementById('aviso-recomeco');
+  ok(!!av && /recomeçaram/.test(av.textContent), 'o aviso honesto de recomeço aparece (uma linha, dispensável)');
+
   console.log('');
   console.log(falhas === 0 ? '>>> INVOCAÇÃO OK' : `>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

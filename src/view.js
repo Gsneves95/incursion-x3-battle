@@ -150,6 +150,18 @@ function _aplicarPveCreditado(r){
   try{ render(); }catch(e){}
 }
 function _wireReplay(){ if(typeof REPLAY!=='undefined' && REPLAY.configurar) REPLAY.configurar({ transporte: contaTransporte, token: (typeof lerToken==='function')?lerToken():null, aoCreditar: _aplicarPveCreditado }); }
+// §318 F2 E4 — AVISO HONESTO no 1º login após um deploy que ZEROU as contas de teste (§274: disco efêmero do
+// Render). Uma linha, dispensável. Não é erro do jogador — o servidor recomeçou.
+function _avisoRecomeco(){
+  try{
+    if(document.getElementById('aviso-recomeco')) return;
+    const el=document.createElement('div'); el.id='aviso-recomeco';
+    el.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#2a1e0a;color:#ffe9b0;border:1px solid #6b5220;border-radius:10px;padding:10px 14px;font:500 13px/1.35 system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center;justify-content:space-between';
+    el.innerHTML='<span>⚠ O servidor foi atualizado e as contas de teste recomeçaram.</span><button style="background:#6b5220;color:#ffe9b0;border:0;border-radius:6px;padding:6px 12px;font-weight:600;cursor:pointer">OK</button>';
+    el.querySelector('button').onclick=()=>{ try{ el.remove(); }catch(e){} };
+    document.body.appendChild(el);
+  }catch(e){}
+}
 registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderMissoes });    // F4/§213: MISSÕES (marcador honesto; chegam no PvP)
 registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFIOS (pergaminhos + semanal + composição)
@@ -510,7 +522,7 @@ async function retomarPartidaServidor(token){
     else if(r.fase==='perguntarFaixa'){
       montarPortaoIdade(async(faixa)=>{
         const rc=await criarConta(trans,{faixaIdade:faixa,tinhaPerfil:_tinhaPerfilAntes,perfilLocal:perfil});
-        if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); _wireReplay(); render(); }
+        if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); _wireReplay(); if(r.recomecou) _avisoRecomeco(); render(); }
       });
     }
   } catch(e){ /* qualquer falha na conta: o app segue local */ }

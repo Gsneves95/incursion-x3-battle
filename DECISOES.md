@@ -6,6 +6,68 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 2 — ECONOMIA AUTORITATIVA (4 ETAPAS, cada uma verde). O servidor é a fonte da verdade.
+
+**O PROBLEMA (auditoria da PARTE 1, §318 F2):** toda a economia rodava no CLIENTE — o sorteio com
+`Math.random` em `invocacao.js`, o crédito de PvE no `perfil` local, e `salvarPerfil` gravava o blob do
+cliente verbatim. Qualquer um forjava gema/deuses editando o localStorage. Decisão do dono: mover TUDO
+para o servidor, em 4 etapas com commit verde ao fim de cada.
+
+**ETAPA 1 — fechar o buraco.** `salvarPerfil` deixou de gravar o blob: passa por uma LISTA BRANCA
+(`PERFIL_LOCAIS` = versao/times/maestria/campanha/desafios/dominios/sandbox/invocacao/provacoes) e
+SEMPRE mantém `moedas` e a posse de deuses (ownership+cópias) do SERVIDOR. Só a preferência `favorito`
+sobrevive de dentro de `deuses`. Pontos e níveis nem moram no perfil (vivem na conta), imunes por
+construção. Babá: cliente forja +99999 gema / deus novo / copias:50 → nada muda.
+
+**ETAPA 2 — PvE pago por REPLAY.** O cliente grava a montagem do modo (mode+params+seed+comeca) + as
+AÇÕES DO JOGADOR (`src/replay_cliente.js`: agir/converter/alocarLivre/fim) e, ao vencer, ENVIA; o
+servidor RE-SIMULA no MESMO motor determinístico (`server/pve.js` importa `src/engine.js`) e só credita
+se bater. **Aprovação B:** o servidor consome as ações do jogador nos turnos dele e RODA a IA
+determinística ('normal', a mesma do cliente) nos turnos dela — o cliente só manda as ações DELE. A
+dificuldade vem do DADO (`server/dados-pve.js`, os mesmos JSON da build), NUNCA do envelope — um forjador
+não declara inimigos fracos. Recompensas movidas: campanha (encontro/chefe 1ª vez), semanal 150 (relógio
+do SERVIDOR), sandbox 20 (teto 5/dia), desafio de composição (20 na 1ª, 8 repetida), Domínios (2/nível).
+Portões e ledgers em `conta.pve` (nunca no perfil): 1ª-vez, 1×/semana, teto por corrida (30) e teto
+DIÁRIO de Essência (90). Fila offline (cap 20), dedupe por `idPartida`. **Recusada:** creditar
+provisoriamente no cliente (o dono foi explícito: "o cliente NUNCA credita"). **Recusada:** verificar as
+ações da IA contra o replay (mais frágil que gerar a IA no servidor). Replay só com montagem+ops (sem
+serialização por passo): re-sim medido em ~2,7 ms/partida.
+
+**ETAPA 3 — invocação e cópias no servidor.** O `Math.random` do gacha SAIU de `invocacao.js`. Sorteio
+3-passos em `server/invocacao.js`: **faixa** do deus por FÓRMULA da faixa de RANQUE do jogador
+(a "faixa" é a de ranque, as 8 Suplicante→Semideus; a faixa de cada deus = `faixaIndice` em `missoes.json`
++ os 9 iniciais na 0 → 27/15/13/12/11/9/7/6 deuses). A LINHA (decisão do dono): própria faixa 60%; faixas
+ACIMA 2% e cada seguinte ×0,2 (5× mais rara); faixas ABAIXO dividem o resto na proporção do nº de deuses;
+sem faixa abaixo (Suplicante) a própria absorve (97,5%). Confere: Suplicante 97,5/2/0,4/…; Devoto 37,5/60/
+2/…; Semideus 11,5/6,4/…/60. **Raridade** dentro da faixa: SS 1 / S 14 / A 85 (SUBSTITUI o 3/17/80 — o
+dono quis SS bem mais difícil); a ausente DESCE para a mais comum, NUNCA sobe para SS. Pity 60 força SS
+com a faixa renormalizada entre as que têm SS. Débito de gema no servidor (150/1350). **Cópia repetida
+vira PONTOS** (A1/S2/SS4), não Essência; `subirNivel` gasta pontos (custo 1/2/3, 18 = deus MAX); só o
+EXCEDENTE do deus MAX vira Essência (15/40/120). Isto resolve o §95 da PARTE 1: a duplicata some como
+produtor contínuo de Essência, que passa a vir do PvE repetível, tetada em 90/dia = 3 pergaminhos.
+Pergaminho debita Essência no servidor. Bênção do Iniciante e crédito DEV também no servidor.
+
+**ETAPA 4 — tela + medição.** A tela da invocação mostra a TABELA DE CHANCES da faixa atual, lida do
+servidor (`chancesInvocacao`, atrás do "Ver detalhes/?"; substitui a "auditoria de 1000 sorteios locais").
+Aviso honesto no 1º login após um deploy que zerou as contas de teste (§274, disco efêmero do Render):
+`iniciarConta` sinaliza `recomecou` quando o token guardado não é mais reconhecido → uma linha dispensável.
+**MEDIÇÃO** (`tools/medir_economia.js`):
+- Invocações até MAXIMIZAR o 1º deus (18 pontos): Suplicante ~A 274 / S 317 / SS 278 pulls; Adepto ~A 142
+  / S 440 / SS 547 (a faixa do jogador enviesa QUAL raridade é mais acessível — no Adepto o A da própria
+  faixa é barato, o SS caro).
+- Taxa de SS por faixa: NATURAL ≤1% em todas (Suplicante 0,995% · Adepto 0,311%); com pity 60 a EFETIVA
+  fica ~1,8–2,2% (o pity é o grosso do SS, como esperado).
+- Essência: teto 90/dia = 3 pergaminhos (custo 30, recarga 8h) — a fonte contínua paga exatamente o
+  sorvedouro contínuo.
+- Custo do replay: ~2,7 ms/verificação (partida de 15 ops).
+
+**Babás (`tests/economia.test.js`):** E1 forjas ignoradas; E2 replay legítimo credita exato, ops forjadas
+recusam, mesma partida 2× credita 1×, tetos (sandbox/semanal/campanha/desafio/Domínios diário+corrida);
+E3 as 8 linhas batem a fórmula + somam 100 + SS natural ≤1%, 1M sorteios (qui-quadrado), raridade natural
+1/14/85, pity 60, conversões, `subirNivel` + recusas, sem gemas → recusa. Suíte + build verdes nas 4.
+
+---
+
 ## §318 F1 FECHO (triagem) + FASE 2 AUDITORIA (PARE no §95 da Essência)
 
 **A. Piloto fechado pela régua de TRIAGEM (o PADRÃO dos 97).** Régua = espelho SORTEADO (30 comps) + reativa

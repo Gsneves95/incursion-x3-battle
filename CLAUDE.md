@@ -450,6 +450,37 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     se um N grande simultâneo for desejado, e esbarra em `fetch()` de JSON bloqueado em `file://`
     (≠ `<img>` das artes) — a semana corrente teria de ficar embutida como fallback offline (§275-bis).
 
+### Economia autoritativa — §318 FASE 2 (a economia é do SERVIDOR)
+30. **A ECONOMIA É DO SERVIDOR; o cliente NUNCA credita.** Gema, Essência, a POSSE de deuses
+    (ownership + cópias), PONTOS e NÍVEIS vivem na CONTA (`server/contas.js`), nunca no perfil que o
+    cliente escreve. `salvarPerfil` só aceita uma LISTA BRANCA de campos genuinamente locais (desenho,
+    preferências, maestria cosmética, corrida de Domínio, times, provações locais); moedas/deuses vindos
+    do cliente são IGNORADOS (ETAPA 1). Um cliente que manda +99999 gema, um deus novo ou copias:50 não
+    muda NADA. O cliente LÊ de `contaAtual` e mostra; não há crédito local nem provisório.
+31. **PvE é pago por REPLAY (ETAPA 2).** O cliente grava a montagem do modo + as AÇÕES DO JOGADOR e
+    envia ao vencer; o servidor RE-SIMULA no MESMO motor determinístico (`src/engine.js` importado) e só
+    credita se o resultado bater. A dificuldade vem do DADO (`server/dados-pve.js` — os mesmos JSON da
+    build), a IA roda no servidor. Portões em `conta.pve` (nunca no perfil): 1ª vez (campanha/desafio),
+    1×/semana (relógio do SERVIDOR), teto sandbox 5/dia, teto por corrida (Domínios 30) e teto DIÁRIO de
+    Essência (90 = 3 pergaminhos). Fila offline no cliente (cap 20); dedupe por `idPartida` (reenvio
+    credita 1×). Nada de serialização por passo — só a montagem + ops (re-sim ~2,7 ms/partida).
+32. **A INVOCAÇÃO é por FAIXA×RARIDADE, no servidor (ETAPA 3).** Sorteio em 3 passos: (1) a FAIXA do
+    deus (o ranque que o libera — as 8, de `faixaIndice` em `data/missoes.json` + os 9 iniciais na 0) sai
+    por FÓRMULA da faixa de ranque do jogador (`economia.invocacao.faixaSorteio`: própria 60%, 1ª acima
+    2% ×0.2 por degrau, abaixo rateado pela contagem de deuses; cada linha soma 100%, SS natural ≤1%);
+    (2) a RARIDADE dentro da faixa é SS 1 / S 14 / A 85 (a ausente DESCE para a mais comum, NUNCA sobe
+    para SS); (3) o DEUS é uniforme. Pity 60 força SS com a faixa renormalizada entre as que têm SS. O
+    `Math.random` do gacha SAIU de `src/invocacao.js` — o cliente só pede e mostra. Débito de gema no
+    servidor. A tabela de CHANCES da tela é lida do servidor (`chancesInvocacao`).
+33. **CÓPIA REPETIDA vira PONTOS, não Essência (ETAPA 3).** A 1ª cópia é posse; a duplicata credita
+    PONTOS do deus (A1/S2/SS4), gastos em `subirNivel` (custo 1/2/3 por slot, 18 = deus MAX). Só a
+    duplicata EXCEDENTE (deus com os 3 slots no nv4) vira Essência (15/40/120). Assim a duplicata da
+    invocação some como produtor contínuo de Essência (§95 resolvido pelo dono): a Essência de
+    começo/meio passa a vir do PvE repetível (Domínios/Desafios), tetada em 90/dia = o consumo de 3
+    pergaminhos. Isto convive com o invariante 3 do jeito dos Domínios: o poder de kit sobe por CÓPIAS
+    (níveis §318), decisão explícita do dono — não é "estrela/equipamento" solto, é o eixo de progressão
+    medido no piloto §318 F1 (triagem: MÁX 0–25pp, nenhuma habilidade nv4 acima de +15pp).
+
 ---
 
 ## NÃO FAÇA
