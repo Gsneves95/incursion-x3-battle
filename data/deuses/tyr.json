@@ -134,12 +134,12 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "cost.Aurora",
+              "caminho": "fx[1].eff.dur",
               "de": 2,
-              "para": 1
+              "para": 3
             }
           ],
-          "desc": "Provoca o alvo por 2 turnos; Tyr recebe 19 de redução por 2 turnos."
+          "desc": "Provoca o alvo por 2 turnos; Tyr recebe 19 de redução por 3 turnos."
         }
       ]
     },

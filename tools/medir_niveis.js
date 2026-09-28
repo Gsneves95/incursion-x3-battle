@@ -57,13 +57,25 @@ function tagsReativas(baseAb) {
 }
 const abBaseDe = (key, slot) => (GODS[key] && (GODS[key].ab || []).find(a => a.slot === slot)) || null;
 const ehReativa = baseAb => tagsReativas(baseAb).length > 0;
+// dano DIRETO de alvo único de uma habilidade EFETIVA (o maior fx dmg; ignora AoE/posicional/dot p/ a ameaça 1-a-1).
+function danoDireto(ab) { return Math.max(0, 0, ...((ab && ab.fx) || []).filter(f => f.t === 'dmg' && typeof f.v === 'number' && !f.posicional).map(f => f.v)); }
 function motivoReativo(st, u, baseAb) {
   const ali = st.lados[u.lado].units.filter(x => x.vivo);
-  if (ali.some(x => x.hp < 0.5 * (x.maxHp || 120))) return true;                              // (a) aliado ferido
+  if (ali.some(x => x.hp < 0.5 * (x.maxHp || 120))) return true;                              // (a) aliado já ferido (<50%)
   const selfEff = (baseAb.fx || []).some(f => f.escopo === 'self' && (f.t === 'apply' || f.t === 'shield'));
-  if (selfEff && u.hp < 0.6 * (u.maxHp || 120)) return true;                                  // (b) efeito no self e lançador ferido
-  const ini = st.lados[1 - u.lado].units;
-  if (ini.some(e => e.vivo && podeAgir(e) && acoesDe(st, e).some(a => a.disponivel && (abBaseDe(e.key, a.slot) || {}).fx && abBaseDe(e.key, a.slot).fx.some(f => f.t === 'dmg')))) return true;   // (c) inimigo com dano pronto
+  if (selfEff && u.hp < 0.6 * (u.maxHp || 120)) return true;                                  // (b) efeito no self e lançador <60%
+  // (c) §318 F1d APERTADO: um inimigo tem dano PRONTO que deixaria um aliado abaixo de 50% (ou o mataria),
+  // calculado com o dano do kit EFETIVO. Antes era "inimigo com dano pronto" (quase sempre true no 3v3).
+  for (const e of st.lados[1 - u.lado].units) {
+    if (!e.vivo || !podeAgir(e)) continue;
+    const ek = kitDe(st, e); if (!ek) continue;
+    for (const a of acoesDe(st, e)) {
+      if (!a.disponivel) continue;
+      const eab = (ek.ab || []).find(x => x.slot === a.slot); if (!eab) continue;
+      const D = danoDireto(eab); if (D <= 0) continue;
+      if (ali.some(x => x.hp <= D || (x.hp - D) < 0.5 * (x.maxHp || 120))) return true;
+    }
+  }
   return false;
 }
 function reativaProxima(st) {
@@ -155,6 +167,40 @@ function corrida(cat, time, niv, usarDelta) {
   return { vit, emp, usou, p: vit / N };
 }
 
+// §318 F1d — RÉGUA SORTEADA (candidata a padrão dos 97): 30 composições sorteadas com semente fixa,
+// cada uma X + 2 companheiros do roster; cada composição em ESPELHO. Delta = MÉDIA dos 30 deltas-de-
+// composição, com IC de CLUSTER (não binomial) — captura a variância ENTRE composições, não só o ruído
+// de partida. Menos enviesada que um único time fixo. M partidas por composição por corrida (nula/nivelada).
+const _COMPS = 30;
+function _mulberry32(s) { return function () { s |= 0; s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function _composicoes(x, n, semente) {
+  const pool = Object.keys(GODS).filter(k => k !== x && (GODS[k].ab || []).length >= 3);
+  const r = _mulberry32(semente); const out = [];
+  for (let i = 0; i < n; i++) { const a = pool[Math.floor(r() * pool.length)]; let b = pool[Math.floor(r() * pool.length)]; let g = 0; while (b === a && g++ < 20) b = pool[Math.floor(r() * pool.length)]; out.push([x, a, b]); }
+  return out;
+}
+function corridaSorteada(cat, niv) {
+  const comps = _composicoes(X, _COMPS, 20240318);
+  const M = Math.max(2, Math.round(N / _COMPS));   // partidas por composição por corrida
+  const deltas = []; const usou = { basico: 0, habilidade: 0, milagre: 0 };
+  for (let ci = 0; ci < comps.length; ci++) {
+    const time = comps[ci]; let vN = 0, vD = 0;
+    for (let i = 0; i < M; i++) {
+      const leveled = i % 2, comeca = (i >> 1) % 2, seed = ci * 100003 + i + 1;
+      if (jogar(cat, time, leveled, niv, seed, comeca, false).venceuNivelado) vN++;
+      const rd = jogar(cat, time, leveled, niv, seed, comeca, true);
+      if (rd.venceuNivelado) vD++;
+      for (const s of SLOTS) usou[s] += rd.usouX[s];
+    }
+    deltas.push(vD / M - vN / M);
+  }
+  const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+  const sd = Math.sqrt(deltas.reduce((a, b) => a + (b - mean) ** 2, 0) / (deltas.length - 1));
+  const half = 1.96 * sd / Math.sqrt(deltas.length);
+  return { mean, half, sd, usou, M, comps: comps.length };
+}
+const SORTEADO = tem('sorteado');
+
 // IC de Wilson 95% para uma proporção.
 function wilson(k, n) {
   if (!n) return { lo: 0, hi: 0, half: 0 };
@@ -173,6 +219,19 @@ console.log(`N = ${N} partidas por corrida · política = ${POLITICA}`);
 for (const slot of ['basico', 'habilidade', 'milagre']) { const t = tagsReativas(abBaseDe(X, slot)); if (t.length) console.log(`  ${X}.${slot}: REATIVA (${t.join(', ')})`); }
 
 const cat = catalogoComEscada();
+
+if (SORTEADO) {
+  const t0 = Date.now();
+  const r = corridaSorteada(cat, NIV);
+  const dt = (Date.now() - t0) / 1000;
+  const detecta = (r.mean - r.half > 0) || (r.mean + r.half < 0);
+  console.log('');
+  console.log(`RÉGUA SORTEADA — ${r.comps} composições × ${r.M}×2 partidas — política ${POLITICA}`);
+  console.log(`DELTA (média das composições): ${(100 * r.mean).toFixed(1)} pp  ±${(100 * r.half).toFixed(1)} pp (IC95 cluster)  · sd entre comps ${(100 * r.sd).toFixed(1)}pp  → ${detecta ? 'DETECTADO' : 'não detectado'}`);
+  console.log(`uso de X na nivelada: ${SLOTS.map(s => s + ' ' + (r.usou[s] / (r.comps * r.M)).toFixed(2)).join(' · ')}/partida`);
+  console.log(`(${2 * r.comps * r.M} partidas em ${dt.toFixed(1)}s)`);
+  process.exit(0);
+}
 
 const t0 = Date.now();
 const nulo = corrida(cat, TIME, NIV, false);   // baseline: delta zero

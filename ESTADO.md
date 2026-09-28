@@ -2,6 +2,34 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS §318 F1d — CONSERTAR A RÉGUA DO TANQUE + FECHAR O PILOTO
+
+**(c) reativa apertada:** inimigo com dano PRONTO que deixaria um aliado <50% (ou o mataria), pelo dano do kit
+EFETIVO (`kitDe` exportado). Uso do Tyr caiu pouco (hab 2,18→2,03/part, mil 1,75→1,68). **Régua SORTEADA vira
+PADRÃO dos 97** (`--sorteado`: 30 composições sorteadas com semente, espelho, IC de cluster). É menos enviesada
+que a fixa — a fixa mediu Oxum +14,2 ("na faixa") mas a sorteada dá **+24,3** (um time só enviesa até ±10pp).
+Ressalva: 30 comps → IC ±4–5pp > janela de 5pp da faixa; é régua de TRIAGEM (faixa fina pede mais comps).
+
+**Aplicado nesta fase:** (c) apertada; régua padrão sorteada; **Tyr habilidade nv4 trocado** cost 2→1 → dur 2→3
+("recebe 19 de redução por 3 turnos") — a habilidade foi de **−5,2 para +6,3** (o salto de FREQUÊNCIA piorava;
+o de DURAÇÃO ajuda). **Não aplicado:** as 3 variantes do Zeso (V1 dmgDown v2 +20,1 · V2 milagre eff.v6→7 +21,9 ·
+V3 +20,2) — nenhuma na faixa, mantido o dado do dono; Oxum sem mudança (F1c).
+
+**TABELA FINAL (régua PADRÃO sorteada, reativa apertada, N=3000):**
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MÁX | faixa |
+|---|---|---|---|---|---|
+| Zeus | +9,4 | +2,6 | +12,3 | **+22,4** | FORA (alto) |
+| Oxum | +6,3 | +2,8 | +18,3 | **+24,3** | FORA (alto) |
+| Tyr (swap) | −5,4 | +6,3 | +3,3 | **+0,3** | FORA (baixo) |
+
+**Fecho:** sob a régua representativa os níveis estão FORTES (milagres Oxum +18,3 / Zeus +12,3 passam do teto
++12) e o tanque abaixo. Trazer à faixa é decisão de MAGNITUDE do dono (degrau pequeno e um salto isolado não
+alcançam). **Regras (p/ os 97):** (a) régua padrão = SORTEADA (a fixa enviesa até ±10pp); (b) salto que só
+aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus (Tyr freq −5,2 × dur +6,3); (c) reativa com (c)
+apertada. Arquivos: `tools/medir_niveis.js` (--sorteado + (c) apertada), `src/ia.js`/`src/engine.js`
+(kitDe/iaCandidatos exportados), `data/deuses/tyr.json` (swap). Ver DECISOES §318 F1d. Suíte + build verdes.
+
 ## ★ NÍVEIS §318 F1c — RÉGUA REATIVA + AJUSTE DOS DEGRAUS À FAIXA
 
 **Política REATIVA** (`tools/medir_niveis.js --reativo`): habilidade reativa (provocação/redução/escudo/

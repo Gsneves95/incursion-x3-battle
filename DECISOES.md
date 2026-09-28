@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 F1d — CONSERTAR A RÉGUA DO TANQUE + FECHAR O PILOTO
+
+**Condição (c) da reativa APERTADA.** Antes "inimigo com dano pronto" era quase sempre verdadeira num 3v3 e a
+reativa colapsava na forçada. Agora: um inimigo tem dano PRONTO que deixaria um aliado abaixo de 50% (ou o
+mataria), calculado com o dano do kit EFETIVO (`kitDe`, exportado do motor). (a)/(b) ficam. Uso do Tyr (time
+fixo, N=3000): habilidade 2,18→2,03/partida, milagre 1,75→1,68 — a reativa deixou de gastar o taunt à toa.
+
+**Régua SORTEADA vira a PADRÃO dos 97** (`tools/medir_niveis.js --sorteado`). 30 composições sorteadas com
+semente fixa (X + 2 companheiros do roster), cada uma em espelho; delta = média dos 30 deltas-de-composição
+com IC de CLUSTER. **Por que é melhor que a fixa:** a fixa é PRECISA mas ENVIESADA pelo time escolhido —
+Oxum media +14,2 (fixa, "na faixa") e +24,3 (sorteada); um único time mexeu a resposta em +10pp. A sorteada
+tira esse viés (mede a média entre companheiros, o que vale para os 97). **Ressalva:** com 30 composições o
+IC de cluster (±4–5pp) é MAIOR que a janela da faixa (5pp) — é régua de TRIAGEM; decisão fina de faixa pede
+mais composições. Fixo × sorteado (MAX, N=3000): Zeus +19,4 / +22,4; Oxum +14,2 / +24,3; Tyr +2,6 / −2,1.
+
+**Zeus — 3 variantes (sorteada, N=3000):** BASE +22,4 · V1 (dmgDown v2) +20,1 · V2 (milagre eff.v 6→7, cd fica
+4) +21,9 · V3 (V1+V2) +20,2. **NENHUMA na faixa** (10–15) → não apliquei nada (mantido o dado do dono). Os
+saltos mal movem o Zeus: o excesso é o volume do básico + o milagre (nv4 +12,3 sozinho) sobre o roster inteiro.
+
+**Tyr — salto da habilidade TROCADO e aplicado:** nv4 saiu `cost.Aurora 2→1` e entrou `fx[1].eff.dur 2→3`
+("recebe 19 de redução por 3 turnos"). A habilidade passou de **−5,2 para +6,3** (sorteada) — o salto de
+FREQUÊNCIA (custo menor = mais taunts) PIORAVA o Tyr; o de DURAÇÃO ajuda. Mesmo assim o Tyr MÁX = +0,3 (abaixo
+da faixa): o básico dele é NEGATIVO no sorteado (−5,4) — tanque não vence espelho por win-rate. Reportado, não
+subido nada (decisão do dono).
+
+**TABELA FINAL (régua PADRÃO = sorteada, reativa apertada, N=3000, IC95 cluster ±3–6pp):**
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MÁX | faixa |
+|---|---|---|---|---|---|
+| Zeus (dado do dono) | +9,4 | +2,6 | +12,3 | **+22,4** | FORA (alto) |
+| Oxum (dado do dono) | +6,3 | +2,8 | +18,3 | **+24,3** | FORA (alto) |
+| Tyr (hab swap dur 2→3) | −5,4 | +6,3 | +3,3 | **+0,3** | FORA (baixo) |
+
+**Fecho do piloto:** sob a régua REPRESENTATIVA, os níveis estão FORTES (milagres da Oxum +18,3 e do Zeus
++12,3 passam do teto de +12 por habilidade) e o tanque fica abaixo. Trazer os três à faixa não se faz com
+degrau pequeno (±1) nem com um salto isolado — é decisão de MAGNITUDE do dono (ex.: milagres de time custam
+menos degrau, ou a faixa acomoda o milagre de suporte à parte). Aplicado nesta fase: (c) apertada, régua
+padrão sorteada, e o swap do salto do Tyr. Zeus/Oxum sem mudança de número (nenhuma variante na faixa).
+
+**Regras de desenho aprendidas (valem para os 97):** (a) **régua padrão = SORTEADA** (a fixa enviesa até
+±10pp pelo time); (b) **salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus** (Tyr
+habilidade: frequência −5,2 × duração +6,3); (c) reativa mede com (c) apertada (ameaça real, não "há inimigo").
+
+---
+
 ## §318 F1c — RÉGUA REATIVA + AJUSTE DOS DEGRAUS À FAIXA
 
 **Política REATIVA** (`tools/medir_niveis.js --reativo`): habilidade cujo efeito no fx é provocação/redução/

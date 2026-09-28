@@ -2358,7 +2358,7 @@ if (typeof module !== 'undefined') {
     infoPassiva,            // §266 — a passiva está AGINDO agora? (para acender o P e ler o valor/fonte)
     // §318 — níveis de habilidade (a função-de-um-ponto-só + o portão de build + a lente texto×número)
     kitEfetivo, catalogoEfetivo, validarNiveisDeus, conferirTextoNiveis, _categoriaCaminho, NIVEL_MIN, NIVEL_MAX, SLOTS_NIVEIS,
-    registrarCatalogoComId, catalogoAtivo,   // §318 F1 — o cliente registra os catálogos efetivos por lado (PvP nivelado)
+    registrarCatalogoComId, catalogoAtivo, kitDe,   // §318 F1 — o cliente registra os catálogos efetivos por lado (PvP nivelado); kitDe: régua reativa lê o dano EFETIVO do inimigo (§318 F1d)
     _limparCatalogos: () => { for (const k in CATALOGOS) delete CATALOGOS[k]; },   // TESTE: simular um cliente FRESCO (registro de catálogos vazio)
   };
 }
