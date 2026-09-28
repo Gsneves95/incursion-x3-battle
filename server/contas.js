@@ -324,12 +324,29 @@ function paraDono(c) {
 // Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
 function publica(c) { if (!c) return null; return { id: c.id, nick: c.nick, ranque: ranquePublico(c) }; }
 
-// ---- salvar o perfil de uma conta autenticada (o servidor é autoritativo sobre o perfil). ----
+// ---- salvar o perfil de uma conta autenticada. ----
+// §318 F2 E1 — A ECONOMIA É DO SERVIDOR. salvarPerfil NÃO grava mais o blob do cliente verbatim: aceita
+// só os campos LOCAIS (desenho / preferência / progresso local); MOEDAS e a POSSE de deuses (ownership +
+// copias) ficam SEMPRE as do servidor. Pontos e níveis nem moram no perfil (vivem na conta: c.niveis/
+// c.pontos), então são imunes por construção. Assim um cliente que manda +99999 gemas, um deus novo ou
+// copias:50 não muda NADA na conta — o crédito de economia passa a vir só das portas do servidor (invocação,
+// replay do PvE). A única coisa do cliente DENTRO de deuses que sobrevive é a preferência `favorito`.
+const PERFIL_LOCAIS = ['versao', 'times', 'maestria', 'campanha', 'desafios', 'dominios', 'sandbox', 'invocacao', 'provacoes'];
+function _mesclarPerfilLocal(base, cli) {
+  const out = _clone(base || {});
+  cli = cli || {};
+  for (const campo of PERFIL_LOCAIS) if (cli[campo] !== undefined) out[campo] = _clone(cli[campo]);
+  out.moedas = _clone((base && base.moedas) || { gema: 0, essencia: 0 });   // AUTORITATIVO: nunca do cliente
+  out.deuses = {};                                                          // AUTORITATIVO: posse + copias do servidor
+  const bd = (base && base.deuses) || {};
+  for (const k in bd) { out.deuses[k] = _clone(bd[k]); const cd = cli.deuses && cli.deuses[k]; if (cd && typeof cd.favorito === 'boolean') out.deuses[k].favorito = cd.favorito; }   // só a preferência
+  return out;
+}
 function salvarPerfil(token, perfil) {
   _carregar();
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
-  c.perfil = _clone(perfil);
+  c.perfil = _mesclarPerfilLocal(c.perfil, perfil);
   _persistir();
   return { ok: true };
 }
