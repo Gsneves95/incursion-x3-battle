@@ -107,6 +107,15 @@ function checarKits() {
   const erros = [];
   for (const g of deuses) erros.push(...validarDeus(g));
   validarHabilidade(E.DEFESA, 'DEFESA (regra universal)', erros);   // a Defesa tem o formato de habilidade
+  // §318 — NÍVEIS DE HABILIDADE: o FORMATO dos niveis (whitelist de caminho, salto só no nv4 e ≤1
+  // por habilidade, `de` cumulativo, passiva sem niveis) falha ALTO na build — nunca em runtime.
+  for (const g of deuses) erros.push(...E.validarNiveisDeus(g));
+  // §318 texto×número dos NÍVEIS: o portão trava a DIREÇÃO PRECISA — "valor>texto": um nível MUDOU um
+  // número (muda.para) mas o texto do nível não o cita (o bug silencioso: subiu o dano, esqueceu o texto).
+  // A direção inversa (todo número do texto é um valor) é LENTE COARSE — reportada, não travada, porque
+  // frases estruturais ("a 1 inimigo", "por 2 turnos", tique de DoT) a fariam falso-positivar; quem guarda
+  // o texto BASE fino é o checar_cadeia (§286). FASE 0 não tem conteúdo → no-op agora, guarda o futuro.
+  for (const g of deuses) for (const d of E.conferirTextoNiveis(g)) if (d.nivel > 1 && d.tipo === 'valor>texto') erros.push(`${d.deus}.${d.slot} nv${d.nivel}: texto×número — ${d.detalhe}`);
   if (erros.length) { console.error('ERRO de schema de kit:\n  ' + erros.join('\n  ')); process.exit(1); }
 }
 checarKits();

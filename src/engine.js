@@ -366,7 +366,190 @@ function registrarCatalogo(catalogo) {
   if (!CATALOGOS[id]) CATALOGOS[id] = Object.freeze(Object.assign({}, catalogo));
   return id;
 }
-function kitDe(st, u) { return (CATALOGOS[st.catId] || catalogoAtivo())[u.key]; }
+// §318: catId é ESCALAR (os dois lados leem o MESMO catálogo — o caso de sempre, regressão
+// zero byte a byte) OU um par [idLado0, idLado1] quando os lados têm kits EFETIVOS distintos
+// (níveis diferentes em PvP). O caminho escalar é idêntico ao de antes; o par só existe quando
+// os catálogos efetivos divergem (ver novoEstado).
+function kitDe(st, u) {
+  const cid = Array.isArray(st.catId) ? st.catId[u.lado] : st.catId;
+  return (CATALOGOS[cid] || catalogoAtivo())[u.key];
+}
+
+// ===================================================================
+// §318 — NÍVEIS DE HABILIDADE (FASE 0: fundação, SEM conteúdo). O kit EFETIVO = o kit
+// base + os deltas CUMULATIVOS até o nível de CADA habilidade ATIVA (basico/habilidade/
+// milagre). A PASSIVA fica FORA (nunca tem niveis). É a FUNÇÃO-DE-UM-PONTO-SÓ: o motor lê
+// o kit por kitDe → do catálogo da partida; o catálogo é montado por catalogoEfetivo AO
+// MONTAR O TIME (novoEstado). Níveis default 1 → kit idêntico ao base (regressão zero: a
+// mesma string canônica, o mesmo catId, o mesmo hash de partida).
+//
+// FORMATO (data/deuses/<key>.json, por ab[i]):
+//   "niveis": [ { "nv":2, "muda":[{ "caminho":"fx[0].v", "de":15, "para":17 }], "desc":"…" }, … ]
+//   nv ∈ {2,3,4}. CUMULATIVO: para chegar ao nv N aplica-se nv2..nvN em ordem; cada `de` tem
+//   de BATER com o valor ATUAL (após os níveis anteriores) — senão QUEBRA ALTO na build, nunca
+//   aplica errado em silêncio. `desc` carrega o TEXTO INTEIRO daquele nível (o texto mostra o nº atual).
+//
+// CAMINHO (whitelist; a CATEGORIA é DERIVADA do caminho, nunca declarada à mão):
+//   PEQUENO (nv 2–4): "fx[i].v" (dano/cura/escudo direto) · "fx[i].eff.v" (o v de um efeito aplicado).
+//   SALTO   (nv 4, no MÁX 1 por habilidade): "cd" · "cost.<Recurso>" · "fx[i].eff.dur" · "fx[]"
+//           (um efeito NOVO empurrado no fim de fx; `de` tem de ser null — não há valor anterior).
+// ===================================================================
+const NIVEL_MIN = 1, NIVEL_MAX = 4;
+const SLOTS_NIVEIS = ['basico', 'habilidade', 'milagre'];   // a PASSIVA está FORA
+
+// categoria DERIVADA do caminho. null = FORA da whitelist (a build quebra).
+function _categoriaCaminho(c) {
+  if (typeof c !== 'string') return null;
+  if (/^fx\[\d+\]\.v$/.test(c)) return 'pequeno';
+  if (/^fx\[\d+\]\.eff\.v$/.test(c)) return 'pequeno';
+  if (c === 'cd') return 'salto';
+  if (/^cost\.[^.[\]]+$/.test(c)) return 'salto';
+  if (/^fx\[\d+\]\.eff\.dur$/.test(c)) return 'salto';
+  if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx
+  return null;
+}
+// lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
+function _lerCaminho(ab, c) {
+  let m;
+  if (c === 'fx[]') return null;   // append: não há valor anterior
+  if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.v : undefined; }
+  if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.v : undefined; }
+  if (c === 'cd') return ab.cd;
+  if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
+  if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.dur : undefined; }
+  return undefined;
+}
+// escreve `para` no caminho (mutando o ab JÁ CLONADO). fx[] empurra o efeito novo.
+function _escreverCaminho(ab, c, para) {
+  let m;
+  if (c === 'fx[]') { (ab.fx = ab.fx || []).push(para); return; }
+  if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { if (ab.fx && ab.fx[+m[1]]) ab.fx[+m[1]].v = para; return; }
+  if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.v = para; return; }
+  if (c === 'cd') { ab.cd = para; return; }
+  if ((m = c.match(/^cost\.(.+)$/))) { (ab.cost = ab.cost || {})[m[1]] = para; return; }
+  if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.dur = para; return; }
+}
+function _cloneKit(g) { return JSON.parse(JSON.stringify(g)); }
+
+// kitEfetivo(deus, niveis) — PURA. Devolve um kit NOVO (clone) = base + deltas cumulativos até
+// o nível de cada habilidade ativa. niveis = { basico, habilidade, milagre } (cada 1–4; ausente
+// = 1). Nível 1 (ou ausente/inválido) → nada muda: o clone fica DEEP-EQUAL ao base (regressão
+// zero). Não relê `de` em runtime — a build (validarNiveisDeus) é o portão que garante os `de`.
+function kitEfetivo(deus, niveis) {
+  if (!deus || typeof deus !== 'object') return deus;
+  const nv = niveis || {};
+  const g = _cloneKit(deus);
+  for (const ab of (g.ab || [])) {
+    if (!SLOTS_NIVEIS.includes(ab.slot)) continue;
+    const alvo = nv[ab.slot];
+    if (!(alvo > 1)) continue;   // ausente / 1 / inválido → kit base
+    const teto = Math.min(NIVEL_MAX, alvo);
+    const defs = ab.niveis || [];
+    let descFinal = null;
+    for (let n = 2; n <= teto; n++) {
+      const d = defs.find(x => x && x.nv === n);
+      if (!d) continue;
+      for (const mud of (d.muda || [])) _escreverCaminho(ab, mud.caminho, mud.para);
+      if (d.desc != null) descFinal = d.desc;   // o texto do nível atual (texto inteiro)
+    }
+    if (descFinal != null) ab.desc = descFinal;
+  }
+  return g;
+}
+
+// catalogoEfetivo(catalogo, niveisMap) — monta um catálogo efetivo. niveisMap = { deusKey:
+// {basico,habilidade,milagre} }. Deus sem entrada (ou todo-1) MANTÉM a referência base (sem
+// clone). Se NENHUM deus tem nível > 1, devolve o PRÓPRIO catálogo base (identidade) — o
+// registrarCatalogo dá o mesmo id, e a partida é byte-idêntica à de sempre (regressão zero).
+function catalogoEfetivo(catalogo, niveisMap) {
+  if (!niveisMap) return catalogo;
+  let mudou = false;
+  const out = {};
+  for (const k in catalogo) {
+    const nv = niveisMap[k];
+    const precisa = nv && SLOTS_NIVEIS.some(s => (nv[s] || 1) > 1);
+    if (precisa) { out[k] = kitEfetivo(catalogo[k], nv); mudou = true; }
+    else out[k] = catalogo[k];   // referência base (sem clone)
+  }
+  return mudou ? out : catalogo;
+}
+
+// validarNiveisDeus(deus) — PORTÃO DE BUILD (falha ALTO, nunca em runtime). Confere o FORMATO
+// dos niveis de um deus. Devolve lista de erros (vazia = ok). Cobre: passiva sem niveis;
+// caminho na whitelist; SALTO só no nv4 e ≤1 por habilidade; `de` bate com o valor atual
+// (cumulativo); nv ∈ {2,3,4} sem repetição; niveis só nas 3 ativas.
+function validarNiveisDeus(deus) {
+  const erros = [];
+  const nome = (deus && (deus.nome || deus.key)) || '(sem nome)';
+  if (!deus || typeof deus !== 'object') return [`${nome}: não é objeto`];
+  if (deus.passiva && deus.passiva.niveis !== undefined) erros.push(`${nome}.passiva: a PASSIVA não pode ter niveis (está fora do sistema de níveis)`);
+  for (const ab of (deus.ab || [])) {
+    if (ab.niveis === undefined) continue;
+    if (!SLOTS_NIVEIS.includes(ab.slot)) { erros.push(`${nome}.${ab.slot}: só basico/habilidade/milagre podem ter niveis`); continue; }
+    if (!Array.isArray(ab.niveis)) { erros.push(`${nome}.${ab.slot}: niveis tem de ser lista`); continue; }
+    const work = _cloneKit(ab);   // aplica cumulativo p/ conferir cada `de` contra o valor atual
+    let saltos = 0;
+    const vistos = new Set();
+    for (const d of ab.niveis) {
+      const nvl = d && d.nv;
+      if (![2, 3, 4].includes(nvl)) { erros.push(`${nome}.${ab.slot}: nv inválido ${JSON.stringify(nvl)} (só 2, 3 ou 4)`); continue; }
+      if (vistos.has(nvl)) erros.push(`${nome}.${ab.slot} nv${nvl}: nível repetido`);
+      vistos.add(nvl);
+      for (const mud of (d.muda || [])) {
+        const cat = _categoriaCaminho(mud.caminho);
+        if (!cat) { erros.push(`${nome}.${ab.slot} nv${nvl}: caminho FORA da whitelist ${JSON.stringify(mud.caminho)}`); continue; }
+        if (cat === 'salto') { saltos++; if (nvl !== 4) erros.push(`${nome}.${ab.slot} nv${nvl}: SALTO (${JSON.stringify(mud.caminho)}) só é permitido no nv4`); }
+        if (mud.caminho === 'fx[]') {
+          if (mud.de !== null && mud.de !== undefined) erros.push(`${nome}.${ab.slot} nv${nvl}: efeito NOVO (fx[]) exige "de":null`);
+        } else {
+          const atual = _lerCaminho(work, mud.caminho);
+          if (!('de' in (mud || {}))) erros.push(`${nome}.${ab.slot} nv${nvl}: falta "de" em ${JSON.stringify(mud.caminho)}`);
+          else if (atual !== mud.de) erros.push(`${nome}.${ab.slot} nv${nvl}: "de" (${JSON.stringify(mud.de)}) ≠ valor atual (${JSON.stringify(atual)}) em ${JSON.stringify(mud.caminho)}`);
+        }
+        _escreverCaminho(work, mud.caminho, mud.para);
+      }
+    }
+    if (saltos > 1) erros.push(`${nome}.${ab.slot}: ${saltos} saltos (máx 1 por habilidade)`);
+  }
+  return erros;
+}
+
+// TEXTO×NÚMERO (§318 babá 6, extensão do §286): todo número do `desc` de um nível existe entre os
+// valores EFETIVOS daquele nível, e todo valor que o nível MUDOU aparece no `desc`. Vale também para
+// o texto BASE. Lente COARSE (inteiros no texto × números de combate do fx/cd/cost) — reporta, não
+// conserta. conferirTextoNiveis devolve [{deus, slot, nivel, tipo, detalhe}].
+function _numerosNoTexto(s) { return [...String(s || '').matchAll(/\d+/g)].map(m => +m[0]); }
+function _valoresDeCombate(ab) {
+  const vs = [];
+  for (const f of (ab.fx || [])) {
+    if (typeof f.v === 'number') vs.push(f.v);
+    if (f.eff && typeof f.eff.v === 'number') vs.push(f.eff.v);
+    if (f.eff && typeof f.eff.dur === 'number') vs.push(f.eff.dur);
+  }
+  if (typeof ab.cd === 'number' && ab.cd > 0) vs.push(ab.cd);
+  for (const k in (ab.cost || {})) if (typeof ab.cost[k] === 'number') vs.push(ab.cost[k]);
+  return vs;
+}
+function conferirTextoNiveis(deus) {
+  const div = [];
+  const nome = (deus && (deus.nome || deus.key)) || '(sem nome)';
+  for (const abBase of (deus.ab || [])) {
+    if (!SLOTS_NIVEIS.includes(abBase.slot)) continue;
+    // BASE (nível 1)
+    const baseEf = kitEfetivo(deus, {}).ab.find(a => a.slot === abBase.slot);
+    const baseVals = new Set(_valoresDeCombate(baseEf));
+    for (const n of _numerosNoTexto(baseEf.desc)) if (!baseVals.has(n)) div.push({ deus: nome, slot: abBase.slot, nivel: 1, tipo: 'texto>valor', detalhe: `o texto cita ${n}, ausente dos valores de combate {${[...baseVals].join(',')}}` });
+    // cada NÍVEL declarado
+    for (const d of (abBase.niveis || [])) {
+      if (![2, 3, 4].includes(d && d.nv)) continue;
+      const ef = kitEfetivo(deus, { [abBase.slot]: d.nv }).ab.find(a => a.slot === abBase.slot);
+      const vals = new Set(_valoresDeCombate(ef));
+      for (const n of _numerosNoTexto(d.desc)) if (!vals.has(n)) div.push({ deus: nome, slot: abBase.slot, nivel: d.nv, tipo: 'texto>valor', detalhe: `o texto do nv${d.nv} cita ${n}, ausente dos valores efetivos {${[...vals].join(',')}}` });
+      for (const mud of (d.muda || [])) if (typeof mud.para === 'number' && !_numerosNoTexto(d.desc).includes(mud.para)) div.push({ deus: nome, slot: abBase.slot, nivel: d.nv, tipo: 'valor>texto', detalhe: `o nv${d.nv} muda ${mud.caminho} para ${mud.para}, ausente do texto ${JSON.stringify(d.desc)}` });
+    }
+  }
+  return div;
+}
 
 function novaUnidade(key, idx, lado, catalogo) {
   const g = catalogo[key];
@@ -398,8 +581,15 @@ function novaUnidade(key, idx, lado, catalogo) {
 // permanece puro. Quem abre recebe só 1 energia (abertura 1/3, estilo NA).
 // `catalogo` é RECEBIDO (o motor não possui os dados). Default = catálogo ativo, para os
 // testes que chamam com chaves e mutam E.GODS seguirem valendo sem edição.
-function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo = catalogoAtivo()) {
-  const catId = registrarCatalogo(catalogo);   // snapshot congelado, indexado por chave (ver acima)
+// §318 `niveis` (OPCIONAL) = [ niveisLado0, niveisLado1 ], cada um { deusKey:{basico,habilidade,
+// milagre} }. Ausente (null) → os dois lados leem o catálogo base (comportamento de SEMPRE, byte a
+// byte). Com níveis, monta o catálogo EFETIVO de cada lado; se os dois coincidirem (ex.: tudo nv1),
+// o catId volta a ser ESCALAR e a partida é idêntica à base (regressão zero).
+function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo = catalogoAtivo(), niveis = null) {
+  const catA = niveis ? catalogoEfetivo(catalogo, niveis[0]) : catalogo;
+  const catB = niveis ? catalogoEfetivo(catalogo, niveis[1]) : catalogo;
+  const idA = registrarCatalogo(catA), idB = registrarCatalogo(catB);   // snapshot congelado, indexado por conteúdo
+  const catId = (idA === idB) ? idA : [idA, idB];   // ESCALAR quando iguais (o caso de sempre)
   const st = {
     turno: 1, ativo: comeca, starter: comeca, aberturaFeita: false,
     catId,                    // chave do catálogo desta partida (sobrevive ao clone da IA)
@@ -409,8 +599,8 @@ function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo
     marcos: { semBuffLado: [null, null], everBuffLado: [false, false] },   // §156 (iansã): MARCO — turno em que TODAS as unidades vivas de um lado ficaram sem buff (nem efeito-buff nem escudo), DEPOIS de o lado JÁ TER carregado buff (everBuff). O gate everBuff evita a trivialidade do estado inicial vazio (antes de o inimigo buffar). Latch (1ª vez), sobrevive ao clone. Lido por limparBuffsAntesDeAbate; a 1ª queda vem do log (que carrega `turno`).
     orbeGasto: [0, 0],        // §158 (hermes rewrite): total de orbes GASTOS em custo por lado (específico + livre + conversão). NÃO conta roubo. Lido por tetoDeGasto.
     lados: [
-      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
-      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catalogo)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
+      { units: timeA.map((k, i) => novaUnidade(k, i, 0, catA)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
+      { units: timeB.map((k, i) => novaUnidade(k, i, 1, catB)), orbs: zeroOrbs(), converteu: false, estreou: false, ultHabilidade: null, dividaLivre: 0, contadores: {} },
     ],
   };
   // §121 (M2): iniciativa PERMANENTE (Exu/Hermes) força o starter no SETUP — "age primeiro" = liderar a rodada = ser o
@@ -2152,5 +2342,7 @@ if (typeof module !== 'undefined') {
     aplicarFx, bater, addContador, getContador, contadorNoCampo, addContadorLado, getContadorLado, espalharContador, definirFase, caidos, reviver,
     bonusDanoDeclarativo,   // passiva declarativa (F1.2) — testada em isolamento
     infoPassiva,            // §266 — a passiva está AGINDO agora? (para acender o P e ler o valor/fonte)
+    // §318 — níveis de habilidade (a função-de-um-ponto-só + o portão de build + a lente texto×número)
+    kitEfetivo, catalogoEfetivo, validarNiveisDeus, conferirTextoNiveis, _categoriaCaminho, NIVEL_MIN, NIVEL_MAX, SLOTS_NIVEIS,
   };
 }

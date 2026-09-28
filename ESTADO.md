@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS DE HABILIDADE §318 — FASE 0 (fundação técnica, SEM conteúdo)
+
+3 habilidades ATIVAS com níveis 1–4, PASSIVA fora. **Motor um-ponto-só:** `kitEfetivo(deus,niveis)` (PURA, src/engine.js) =
+base + deltas cumulativos; catálogo da partida montado por `catalogoEfetivo` em `novoEstado(...,niveis=[nivL0,nivL1])`; o kit
+lê por `kitDe`, agora **efetivo por LADO** (`st.catId` ESCALAR quando os lados coincidem — regressão zero byte a byte — PAR só
+no PvP nivelado). **Formato** `ab[i].niveis:[{nv,muda:[{caminho,de,para}],desc}]` (nv 2–4, CUMULATIVO, `de` obrigatório bate o
+valor atual, `desc` = texto inteiro). **Whitelist** (categoria DERIVADA): PEQUENO nv2–4 `fx[i].v`/`fx[i].eff.v`; SALTO nv4 ≤1/hab
+`cd`/`cost.<R>`/`fx[i].eff.dur`/`fx[]`. **Build** valida formato + texto×número (direção precisa "valor mudado sem texto"; a
+inversa é lente coarse, só relato — o guarda fino do BASE é o §286). **Conta** `c.niveis={deus:{basico,habilidade,milagre}}`
+default 1, server-autoritativo; `definirNivel` recusa fora 1–4/passiva/não-possuído; `paraDono` projeta; oponente recebe
+`niveisPublicos` (salas → `niveisOponente`). **Cliente nunca informa nível** — quem monta os dois lados é o servidor
+(`salas.criarPvP`→`partida.criarPvP`→`montarProvacao(prov.niveis)`). **Telas de detalhe** (home ficha, seleção) passam o kit
+por kitEfetivo(nv do jogador). **Consumidores mapeados:** motor(kitDe)/IA(acoesDe)/servidor/cliente/telas — todos pela função.
+**7 babás** (tests/niveis.test.js, cada uma MORDE): regressão zero · passiva sem niveis · caminho fora whitelist · salto fora
+nv4/>1 · `de`≠atual (nomeia) · texto×número · nível fora 1–4 recusado. **Régua** `tools/medir_niveis.js`: espelho IA×IA, delta
+nivelada−nula com IC Wilson, uso por habilidade (avisa se milagre nunca usado). **Delta falso Zeus +5 dano básico (não
+commitado): nula 50,0%→nivelada 66,0% = +16pp, IC exclui 0 → DETECTADO**; ~63 part/s; ±3pp ≈ 1068 partidas. **Semente aberta
+(Fase 1):** no PvP nivelado o cliente precisa registrar os catálogos efetivos dos dois lados p/ o hash F5.0 bater (hoje tudo
+nv1 → catId escalar → não morde). **Lift Fase 1:** pilotos além de Zeus (SS) = Oxum (A, healer: cura 20/regen 8) + Tyr (S,
+tank: redução 15/provocar). Passos escondidos: execução por limiar HP · golpes-p/-abater vs HP 120 · escudo absorve golpe
+inteiro · arredondamentos (ceil/floor de metades). **Arquivos:** src/engine.js, tools/build.js, server/{contas,partida,salas}.js,
+src/provacao.js, src/ui/{home,selecao}.js, tests/niveis.test.js, tools/medir_niveis.js. Ver DECISOES §318. Suíte + build verdes.
+
 ## ★ TELA DE PROVAÇÕES §316 — refeita pela referência do dono (paisagem: painel fixo + lista rolável). Só TELA.
 
 Regras intactas (objetivos §313, uma ativa §314). Layout paisagem (palco 428, 780–1200): **barra superior** (‹ Início ·

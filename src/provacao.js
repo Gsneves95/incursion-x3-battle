@@ -510,7 +510,10 @@ function montarProvacao(prov) {
   const m = prov.montar || {};
   // catálogo MERGED (deuses ∪ bestiário): os inimigos de uma Ordália podem ser criaturas. novoEstado recebe o
   // catálogo (o motor não possui dados); passo energia=null p/ manter o default de geração.
-  const st = novoEstado(prov.aliados, prov.inimigos, m.seed || 1, m.comeca || 0, null, catalogoProvacao());
+  // §318: prov.niveis (OPCIONAL) = [ niveisLado0, niveisLado1 ] — o servidor monta o kit EFETIVO dos
+  // dois lados a partir das contas (PvP autoritativo). Ausente → catálogo base (Provações/Ordálias
+  // têm aliados FIXOS, sem níveis de jogador; regressão zero).
+  const st = novoEstado(prov.aliados, prov.inimigos, m.seed || 1, m.comeca || 0, null, catalogoProvacao(), prov.niveis || null);
   if (m.orbs) for (const l of [0, 1]) if (m.orbs[l]) for (const el in m.orbs[l]) st.lados[l].orbs[el] = m.orbs[l][el];
   if (m.semRenda) st.semRenda = m.semRenda;   // §158 (hermes): [lado0, lado1] booleanos — lado sem renda de orbe (orçamento fixo)
   if (m.rendaFracao) st.rendaFracao = m.rendaFracao;   // §158 (hermes rewrite): [lado0, lado1] frações — renda pela metade (0.5) etc.

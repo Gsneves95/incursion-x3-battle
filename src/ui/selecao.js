@@ -102,7 +102,10 @@ function painelFiltroHTML(){
 // mostram a MESMA linha p/ o mesmo deus. custo/recarga saem do `a.cost`/`a.cd` (objeto do motor), não do texto.
 function painelKitHTML(){
   if(!focoPk)return '';
-  const k=focoPk, g=RMAP[k], kd=(typeof GODS!=='undefined'&&GODS[k])||null, liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
+  const k=focoPk, g=RMAP[k], kdBase=(typeof GODS!=='undefined'&&GODS[k])||null, liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
+  // §318: passa o kit exibido pelo kitEfetivo (nv do jogador, da conta). Sem níveis (FASE 0) = base.
+  const _nv=(typeof contaAtual!=='undefined'&&contaAtual&&contaAtual.niveis&&contaAtual.niveis[k])||null;
+  const kd=(kdBase&&kdBase.ab&&typeof kitEfetivo==='function')?kitEfetivo(kdBase,_nv):kdBase;
   const ab={}; if(kd)(kd.ab||[]).forEach(a=>ab[a.slot]=a);
   const rar=(typeof RARIDADE!=='undefined'&&RARIDADE[k])||'';
   const linha=(rot,a)=>a?`<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>

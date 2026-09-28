@@ -31,8 +31,13 @@ function criar(contaId, pergaminho, opts = {}) {
 // ranqueado: a partida vale pontos (aplicados UMA vez no fim, pelo servidor — o cliente nunca soma).
 function criarPvP(a, b, opts = {}) {
   encerrar(a.contaId); encerrar(b.contaId);
-  const P = partidaCtrl.criarPvP(a.time, b.time, { seed: opts.seed, comeca: opts.comeca, limiteMs: opts.limiteMs, agora: Date.now() });
+  // §318: o servidor monta os kits EFETIVOS dos DOIS lados a partir das contas (autoritativo; o
+  // cliente nunca informa nível). niveis[0] = time do lado 0, niveis[1] = lado 1.
+  const cA = contas._contaPorId(a.contaId), cB = contas._contaPorId(b.contaId);
+  const niveis = [contas.niveisPublicos(cA, a.time), contas.niveisPublicos(cB, b.time)];
+  const P = partidaCtrl.criarPvP(a.time, b.time, { seed: opts.seed, comeca: opts.comeca, limiteMs: opts.limiteMs, agora: Date.now(), niveis });
   return _registrar({ P, modo: 'pvp', ranqueado: !!opts.ranqueado, pontuado: false, registrado: false, resultado: null,
+    niveis,   // §318: projeção PÚBLICA — cada lado recebe os níveis do time adversário no snapshot
     time0: a.time.slice(), time1: b.time.slice(),   // os times ESCOLHIDOS (a telemetria mede a escolha do jogador)
     participantes: [
       { contaId: a.contaId, ws: a.ws || null, ultimoLogVisto: 0 },
@@ -81,6 +86,9 @@ function snapshotPara(sala, contaId, extra) {
     const meu = (sala.resultado.vencedor.id === contaId) ? sala.resultado.vencedor : (sala.resultado.perdedor.id === contaId ? sala.resultado.perdedor : null);
     if (meu) snap.ranqueadoResultado = Object.assign({ venceu: sala.resultado.vencedor.id === contaId, motivo: sala.resultado.motivo }, meu);
   }
+  // §318: projeção PÚBLICA dos níveis — o jogador recebe os níveis do time ADVERSÁRIO (o seu ele já
+  // conhece pela própria conta). Tudo público; o texto do oponente mostra o número atual.
+  if (sala.niveis && lado >= 0) snap.niveisOponente = sala.niveis[1 - lado] || {};
   return Object.assign(snap, { desdeLog }, extra || {});
 }
 // snapshot "genérico" (participante 0) — usado onde só há um lado (PvE) ou para o próprio remetente.

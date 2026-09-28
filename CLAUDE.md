@@ -167,6 +167,24 @@ cruzam (§212). A sorte ENCURTA, não PULA: ter os nomes abre a ATIVAÇÃO; cump
 ainda custa as partidas, lidas do servidor (§228). E **LIBERAR = CONCEDER**: a Provação cumprida
 ADICIONA o deus a `perfil.deuses` — selo sem deus é sistema invisível (§202); não o reintroduza.
 
+### NÍVEIS DE HABILIDADE por cópias (§318) — o kit efetivo vem de UM ponto só
+
+As 3 habilidades ATIVAS (basico/habilidade/milagre) têm níveis **1–4**; a **PASSIVA fica FORA** (nunca tem `niveis`).
+O kit que o combate usa é o **EFETIVO**: `kitEfetivo(deus, niveis)` (src/engine.js, PURA) = base + os deltas CUMULATIVOS
+até o nível de cada habilidade. **É o ÚNICO ponto** — o motor lê o kit por `kitDe`, que resolve do catálogo da partida
+montado por `catalogoEfetivo` ao MONTAR O TIME (`novoEstado(..., niveis=[nivLado0,nivLado1])`). NÃO leia o kit por outro
+caminho, NÃO asse `u.kit` (a IA clona o estado; assar dobra o clone, §24). `st.catId` é **ESCALAR** quando os dois lados
+leem o mesmo catálogo (o caso de sempre → regressão zero byte a byte) e um **PAR** só quando os kits efetivos divergem
+(PvP nivelado). **Níveis default 1** ⇒ kitEfetivo deep-equal ao base; nunca mude isso sem provar a regressão zero.
+
+O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`; SALTO nv4 ≤1/hab:
+`cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
+GUARDADOS NA BUILD por `validarNiveisDeus`/`conferirTextoNiveis` (falham ALTO). O nível vive na **conta** (`c.niveis`,
+server-autoritativo, default 1; `definirNivel` recusa fora de 1–4/passiva/não-possuído) — **o cliente NUNCA informa nível**,
+quem monta os kits efetivos dos dois lados é o servidor (`salas.criarPvP` → `partida.criarPvP` → `montarProvacao`), e o
+oponente recebe os níveis do time adversário na projeção pública (`niveisOponente`). Tudo é público; o texto de tela mostra
+o número ATUAL (as telas de detalhe passam por kitEfetivo). A régua é `tools/medir_niveis.js` (Fase 1).
+
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 
 - **`faccao`** (roster, `data/deuses/*.json`) = **MECÂNICA**: o que os kits contam (a passiva

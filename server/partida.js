@@ -48,7 +48,9 @@ function criarPvP(time0, time1, opts = {}) {
   const limiteMs = typeof opts.limiteMs === 'number' ? opts.limiteMs : LIMITE_MS;
   const seed = (typeof opts.seed === 'number') ? opts.seed : 1;
   const comeca = (opts.comeca === 1) ? 1 : 0;
-  const st = host.montar({ aliados: time0, inimigos: time1, montar: { seed, comeca }, condicoes: [] });
+  // §318: níveis EFETIVOS dos dois lados (autoritativo, das contas). opts.niveis = [niv0, niv1];
+  // ausente → base (regressão zero). O cliente nunca informa nível — quem monta é o servidor.
+  const st = host.montar({ aliados: time0, inimigos: time1, montar: { seed, comeca }, condicoes: [], niveis: opts.niveis || null });
   const P = _base(st, agora, limiteMs, 'pvp');
   P.abre = st.starter;   // quem o motor decidiu que abre (iniciativa OU o comeca sorteado)
   return P;

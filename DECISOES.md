@@ -6,6 +6,72 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 — NÍVEIS DE HABILIDADE POR CÓPIAS · FASE 0 (fundação técnica, SEM conteúdo)
+
+Cada deus tem 3 habilidades ATIVAS (basico/habilidade/milagre) com níveis 1–4; a PASSIVA fica FORA. N2/N3 = melhorias
+pequenas (dano/cura/escudo/buff/debuff); N4 = o SALTO (recarga/custo/duração, ou efeito novo), no máximo 1 salto por
+habilidade. Vale em TODOS os modos, inclusive PvP; tudo público (os dois lados veem os níveis; o texto mostra o número atual).
+FASE 0 entrega só a FUNDAÇÃO — nenhum deus recebeu escada ainda.
+
+**Formato do dado (data/deuses/<key>.json, por `ab[i]`).** `"niveis": [ { "nv":2, "muda":[{"caminho":"fx[0].v","de":15,
+"para":17}], "desc":"17 de dano a 1 inimigo." }, … ]`. nv ∈ {2,3,4}. CUMULATIVO: para chegar ao nv N aplica-se nv2..nvN em
+ordem; cada `de` tem de BATER com o valor ATUAL (após os níveis anteriores). `de` é OBRIGATÓRIO — se o valor-base mudar depois,
+o nível QUEBRA ALTO na build em vez de aplicar errado em silêncio. `desc` carrega o TEXTO INTEIRO daquele nível.
+**Whitelist de `caminho` (a CATEGORIA é DERIVADA do caminho, nunca declarada):** PEQUENO (nv 2–4) = `fx[i].v`, `fx[i].eff.v`;
+SALTO (nv 4, ≤1 por habilidade) = `cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[]` (efeito NOVO empurrado; `de`:null).
+
+**Motor — um ponto só.** `kitEfetivo(deus, niveis)` (PURA, em src/engine.js) = base + deltas cumulativos até o nível de cada
+habilidade. O catálogo da partida é montado por `catalogoEfetivo` ao MONTAR O TIME (novoEstado ganhou o parâmetro opcional
+`niveis = [nivLado0, nivLado1]`). O motor lê o kit por `kitDe`, que agora resolve por LADO: `st.catId` é ESCALAR quando os
+dois lados leem o mesmo catálogo (o caso de sempre) e um PAR `[idA, idB]` só quando os kits efetivos divergem (PvP com níveis
+distintos). **Regressão zero por construção:** sem `niveis` (ou tudo-nv1), os dois catálogos coincidem → catId escalar
+idêntico → a partida é byte a byte a de antes (a suíte inteira passou sem tocar um só teste de combate).
+
+**Alternativa recusada:** assar o kit efetivo em cada unidade (u.kit). A IA clona o estado por JSON.stringify a cada nó da
+busca; assar dobrava o clone (a mesma razão de §24). O par de catId custa ~20 bytes no clone e só existe no PvP nivelado.
+
+**Consumidores do kit (mapeados; TODOS passam pela função-de-um-ponto-só):** (1) MOTOR — todo combate lê por `kitDe`
+(o único ponto), que agora é efetivo-por-lado; (2) IA — só lê por `acoesDe` (motor) → herda; (3) SERVIDOR — motor-host →
+`montarProvacao(prov.niveis)`; PvP autoritativo: `salas.criarPvP` monta os níveis dos DOIS lados das contas →
+`partida.criarPvP(opts.niveis)` → montarProvacao; (4) CLIENTE — domínios/campanha/provação/seleção chamam novoEstado/
+montarProvacao (parâmetro opcional, default base); (5) TELAS DE DETALHE — `home.deusKitEfetivo` (ficha) e `selecao.painelKit`
+passam o kit exibido por kitEfetivo(nv do jogador). Metadados não-nivelados (facção/elemento/classe/função/hp, nome da passiva)
+seguem lidos direto. **Semente aberta (reportada, NÃO fechada na F0):** no PvP com níveis reais o CLIENTE, ao reproduzir o
+snapshot do servidor, precisa registrar os catálogos efetivos dos dois lados (da projeção pública `niveisOponente` + a própria
+conta) para o hash da prova F5.0 bater — hoje o catId-par não existe em F0 (tudo nv1 → escalar), então não morde; é fiação da
+Fase 1.
+
+**Conta (server/contas.js).** `c.niveis = { deusKey:{basico,habilidade,milagre} }`, cada 1–4, default 1. Nasce vazio `{}`.
+Portão `definirNivel(token, deus, slot, nivel)` recusa nível fora de 1–4, slot=passiva e deus não possuído (a Fase 2 gastará
+cópias aqui — hoje SEM UI e SEM economia). `paraDono` projeta `niveis`; o oponente recebe `niveisPublicos(time)` do time
+adversário no snapshot (`niveisOponente`, em salas.snapshotPara). O cliente NUNCA informa nível — quem monta é o servidor.
+
+**Sete babás (cada uma provada a MORDER, em tests/niveis.test.js).** (1) REGRESSÃO ZERO: kitEfetivo(base, null/{}/tudo-1)
+deep-equal ao base + novoEstado com catId escalar idêntico (morde: kit alterado ≠ base); (2) PASSIVA nunca tem niveis
+(validador morde + nenhum dos deuses publicados a tem); (3) caminho fora da whitelist quebra; (4) SALTO fora do nv4 OU >1 por
+habilidade quebra; (5) `de`≠valor atual (cumulativo) quebra NOMEANDO deus/habilidade/nível; (6) TEXTO×NÚMERO — o build trava a
+direção PRECISA "valor mudado ausente do texto" (o bug silencioso); a direção inversa é lente coarse (artefatos de "a 1
+inimigo"/"por 2 turnos"/tique de DoT), só relatada — o guarda fino do texto BASE segue o §286/checar_cadeia (0 divergências);
+(7) nível fora de 1–4 na conta recusado pelo servidor.
+
+**Régua (tools/medir_niveis.js, Fase 1).** Partidas ESPELHO (mesmo time dos dois lados, IA nos dois), X com vetor de nível ×
+X no nv1, alternando quem começa e qual lado é o nivelado. Reporta taxa de vitória + IC de Wilson, o DELTA (nivelada − nula)
+com IC, partidas/s, quantas partidas dão ±3pp, e o USO por habilidade de X (se a IA nunca usa o milagre, o nível do milagre
+mede ZERO — a régua avisa). **Delta FALSO de teste (Zeus +5 de dano no básico, NÃO commitado):** nula 50,0% → nivelada 66,0%
+= **+16pp (IC exclui 0) → DETECTADO**. ~63 partidas/s; ±3pp ≈ 1068 partidas (pior caso). Uso de Zeus: básico 6,1/partida,
+habilidade 1,3, milagre 1,0 — os três medíveis neste time.
+
+**Lift da Fase 1 (candidatos, além de Zeus SS).** HEALER = **Oxum (A, Suporte)** — cura 20 (habilidade fx heal.v), cura 20 +
+regen 8/turno×2 (milagre), passiva "curado → +5 de dano": números limpos de cura/regen para escalar em N2/N3, salto natural no
+custo/duração do milagre. TANK = **Tyr (S, Guardião)** — redução 15 + provocar dur 2 (habilidade), milagre imune-a-controle +
++8 dano custando 20 HP, passiva "dano não reduzível/absorvível": escala a redução/duração da provocação; três raridades
+distintas (SS/A/S). **Passos escondidos do motor a vigiar quando o conteúdo entrar:** execução por limiar de HP
+(`executaAbaixoDe`: +dano pode empurrar o alvo abaixo do corte — ganho não-linear); golpes-para-abater vs HP base 120 (+2 num
+golpe de 15 muda o nº de golpes); escudo que absorve o golpe INTEIRO (dano pequeno some sob escudo até ele quebrar);
+arredondamentos (`Math.ceil(base/2)`, `Math.floor(total/2)` em metades de dano/cura).
+
+---
+
 ## §316 — TELA DE PROVAÇÕES refeita pela referência do dono (paisagem: painel fixo + lista rolável). Só TELA.
 
 Nenhuma mudança de regra: os objetivos (§313) e a Provação ativa única (§314) ficam como estão. A tela foi refeita para o

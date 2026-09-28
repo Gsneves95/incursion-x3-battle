@@ -89,6 +89,46 @@ function missoesPublicas(c) {
   return { ativa: m.ativa || null, progresso: m.progresso, liberados: Object.keys(m.liberados).filter(k => m.liberados[k]) };
 }
 
+// ============================================================
+// §318 — NÍVEIS DE HABILIDADE. O servidor é AUTORITATIVO (o cliente nunca informa nível). O nível
+// vive na CONTA (paralelo a ranque/missões), não no perfil sincronizado — combate público, ambos os
+// lados veem. Formato: c.niveis = { deusKey: { basico, habilidade, milagre } }, cada 1–4, default 1.
+// FASE 0: SEM UI e SEM economia (subir nível é a Fase 2); o portão definirNivel já existe e recusa
+// nível fora de 1–4 (a babá o prova). Nasce vazio {} = tudo no nível 1.
+// ============================================================
+const NIVEIS_SLOTS = ['basico', 'habilidade', 'milagre'];   // a PASSIVA está fora (§318)
+const NIVEL_MIN = 1, NIVEL_MAX = 4;
+function _niveisZero() { return {}; }
+function _garantirNiveis(c) { if (!c.niveis || typeof c.niveis !== 'object') c.niveis = _niveisZero(); return c.niveis; }
+// níveis EFETIVOS de um deus na conta (default 1 em cada slot; clamp defensivo 1–4).
+function _niveisDeDeus(c, key) {
+  const raw = (c && c.niveis && c.niveis[key]) || {};
+  const out = {};
+  for (const s of NIVEIS_SLOTS) { const n = raw[s]; out[s] = (typeof n === 'number' && n >= NIVEL_MIN && n <= NIVEL_MAX) ? (n | 0) : 1; }
+  return out;
+}
+// mapa { deusKey: {basico,habilidade,milagre} } dos 3 deuses de um TIME — alimenta o montador
+// autoritativo (o servidor monta os kits efetivos dos dois lados) E a projeção pública ao oponente.
+function _niveisDeTime(c, time) { const m = {}; for (const k of (time || [])) m[k] = _niveisDeDeus(c, k); return m; }
+// AUTORITATIVO: os níveis do MEU time (por token), para o servidor montar o kit efetivo do meu lado.
+function niveisDoTime(token, time) { _carregar(); const c = _contas.get(token); return c ? _niveisDeTime(c, time) : _niveisDeTime(null, time); }
+// PÚBLICO: os níveis dos deuses do time adversário que o oponente recebe para DESENHAR (tudo público).
+function niveisPublicos(c, time) { return _niveisDeTime(c, time); }
+// PORTÃO de escrita (Fase 2 gastará cópias aqui). FASE 0: sem UI, mas o portão já recusa fora de 1–4.
+// token, deus, slot, nivel -> { ok, niveis } | { ok:false, codigo, erro }.
+function definirNivel(token, deus, slot, nivel) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  if (!NIVEIS_SLOTS.includes(slot)) return { ok: false, codigo: 'slot_invalido', erro: `slot inválido "${slot}" (só ${NIVEIS_SLOTS.join('/')} — a passiva não sobe)` };
+  if (!Number.isInteger(nivel) || nivel < NIVEL_MIN || nivel > NIVEL_MAX) return { ok: false, codigo: 'nivel_invalido', erro: `nível fora de ${NIVEL_MIN}–${NIVEL_MAX}` };
+  if (!possui(token, deus)) return { ok: false, codigo: 'deus_nao_possuido', erro: `você não possui: ${deus}` };
+  const nv = _garantirNiveis(c);
+  nv[deus] = Object.assign(_niveisDeDeus(c, deus), { [slot]: nivel });
+  _persistir();
+  return { ok: true, niveis: nv[deus] };
+}
+
 // FAIXA a partir dos pontos — SÓ o servidor decide (o cliente nunca classifica). A faixa mais alta
 // cujo `min` <= pontos.
 function faixaDe(pontos) {
@@ -166,6 +206,7 @@ function criar({ faixaIdade, perfil, agora } = {}) {
     nick: null,                 // reservado: vem só no PvP (F5.3). Ver planoDoNick().
     ranque: _ranqueZero(),      // §221-d: sempre zero, inclusive no perfil migrado
     missoes: _missoesZero(),    // F6/§228: contador de missão (progressão), só o servidor mexe, só PvP
+    niveis: _niveisZero(),      // §318: níveis de habilidade por deus, só o servidor mexe. Nasce vazio = tudo nv1
     perfil: perfilConta,
     criadaEm: quando,
   };
@@ -276,7 +317,8 @@ function validarTime(token, time) {
 // aparelho; e reenviá-lo à toa é vazá-lo em log/rede). Inclui o perfil (ele precisa dele).
 function paraDono(c) {
   if (!c) return null;
-  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), perfil: c.perfil, criadaEm: c.criadaEm };
+  _garantirNiveis(c);
+  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), niveis: c.niveis, perfil: c.perfil, criadaEm: c.criadaEm };
 }
 // publica: o que OUTRO jogador poderá ver (perfil competitivo). Sem token, sem perfil, sem faixa etária.
 // Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
@@ -321,5 +363,6 @@ module.exports = {
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,
+  NIVEIS_SLOTS, _garantirNiveis, niveisDoTime, niveisPublicos, definirNivel,   // §318
   _total, _resetParaTeste, _existeToken, _darDeus, _setPontos,
 };

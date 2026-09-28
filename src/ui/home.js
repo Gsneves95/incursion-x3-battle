@@ -1708,6 +1708,12 @@ function reqMissaoTexto(k){
 }
 
 // as 4 skills que DEFINEM o deus na Coleção (a Defesa é universal e fica fora): cada uma tem arte.
+// §318: os níveis do jogador para EXIBIR o kit efetivo na tela de detalhe (o texto mostra o número
+// atual). Vêm da conta (autoritativa, do servidor). null/ausente → kit base (nv1). FASE 0: tudo nv1.
+function niveisDeExibicao(k){ return (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.niveis && contaAtual.niveis[k]) || null; }
+// aplica kitEfetivo quando disponível (bundle) — passa TODA leitura de kit da tela de detalhe pela
+// função-de-um-ponto-só do motor. Sem níveis (FASE 0) o kit efetivo é DEEP-EQUAL ao base (regressão zero).
+function deusKitEfetivo(k, g){ return (typeof kitEfetivo === 'function' && g && g.ab) ? kitEfetivo(g, niveisDeExibicao(k)) : g; }
 // §284-ajuste2: lê de data/deuses (g.ab / g.passiva) — a MESMA fonte da sobreposição. `a` é o item cru.
 function deusSkills(g){
   const ab = {}; (g && g.ab || []).forEach(x => ab[x.slot] = x);
@@ -1740,6 +1746,7 @@ function renderDeusDetalhe(){
   // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR) — o que o jogador lê é o que o motor
   // usa. O roster (HRM) segue para nome/retrato; faccao/elem/classe/funcao vêm de GODS quando existe.
   const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // §284-ajuste2: o kit lê daqui (data/deuses), não do CKIT
+  const gmEf = deusKitEfetivo(k, gm);   // §318: o kit EXIBIDO passa pelo kitEfetivo (nv atual do jogador)
   const tem = temDeus(k);
   const rar = raridadeDe(k);
   if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
@@ -1764,8 +1771,8 @@ function renderDeusDetalhe(){
         <span class="dchip">${H(gm.funcao)}</span>
       </div>
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
-      <div class="dkit">${deusSkills(gm).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
-      ${deusDetalheHTML(gm, deusSel)}
+      <div class="dkit">${deusSkills(gmEf).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
+      ${deusDetalheHTML(gmEf, deusSel)}
     </div>
   </div>
   </div>`;
