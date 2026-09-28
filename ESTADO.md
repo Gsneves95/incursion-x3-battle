@@ -2,6 +2,32 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS §318 F1 FECHO (triagem) + FASE 2 AUDITORIA — PARE no §95 da Essência
+
+**A. Piloto fechado (triagem = régua PADRÃO dos 97: espelho sorteado + reativa apertada).** Critérios de
+triagem (não a faixa fina +10–15): MÁX entre 0 e +25pp; nenhuma habilidade nv4 acima de +15pp. Tanque/suporte
+abaixo de 0 por limitação da IA → aceita, marca p/ revisão. Ajuste fino aguarda dados de partida real.
+**Oxum milagre nv4** trocado (dur 2→3 → cd 4→3): milagre +18,3→+7,1, MÁX +24,3→**+15,6**.
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MÁX | triagem |
+|---|---|---|---|---|---|
+| Zeus | +9,4 | +2,6 | +12,3 | +22,4 | DENTRO |
+| Oxum | +6,3 | +2,8 | +7,1 | +15,6 | DENTRO |
+| Tyr | −5,4 | +6,3 | +3,3 | +0,3 | DENTRO (básico −5,4 = limitação da IA, p/ revisão) |
+
+Régua sorteada corrigida (`catalogoComEscada` lê o dado real; não injeta mais escada sintética).
+
+**B. FASE 2 — PARE na auditoria prévia (o portão pedido). NADA da economia/gacha construído.** DOIS bloqueios:
+**(B1)** o sorteio e TODA a economia rodam no CLIENTE (`invocacao.js` Math.random; `perfil.js` credita Essência;
+`home.js` debita/credita) — a FASE 2 exige tudo no servidor: é MIGRAÇÃO grande (módulo de gacha no servidor +
+protocolo + mover o roll). **(B2) §95:** produtor de Essência hoje = DUPLICATA na invocação (dominante/contínuo)
++ campanha/desafios (finitos); consumidor = **pergaminhos** (30 ✦, recarga 8h, único sorvedouro contínuo). A
+FASE 2 manda a duplicata virar PONTOS (Essência só na cópia excedente de deus maximizado) → o sorvedouro fica
+SEM produtor no começo/meio → §95. **Decisão do dono necessária** antes de construir: de onde vem a Essência
+(pergaminhos custam Pontos/Gema? fonte nova? sorvedouro de fim de jogo?). Ver DECISOES §318 F1-fecho/FASE2.
+Arquivos tocados: `data/deuses/oxum.json` (milagre swap), `tools/medir_niveis.js` (sorteado + reativa apertada +
+fix do catalogoComEscada), `src/engine.js` (kitDe export). Suíte + build verdes.
+
 ## ★ NÍVEIS §318 F1d — CONSERTAR A RÉGUA DO TANQUE + FECHAR O PILOTO
 
 **(c) reativa apertada:** inimigo com dano PRONTO que deixaria um aliado <50% (ou o mataria), pelo dano do kit

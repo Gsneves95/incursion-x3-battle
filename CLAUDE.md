@@ -183,7 +183,14 @@ GUARDADOS NA BUILD por `validarNiveisDeus`/`conferirTextoNiveis` (falham ALTO). 
 server-autoritativo, default 1; `definirNivel` recusa fora de 1–4/passiva/não-possuído) — **o cliente NUNCA informa nível**,
 quem monta os kits efetivos dos dois lados é o servidor (`salas.criarPvP` → `partida.criarPvP` → `montarProvacao`), e o
 oponente recebe os níveis do time adversário na projeção pública (`niveisOponente`). Tudo é público; o texto de tela mostra
-o número ATUAL (as telas de detalhe passam por kitEfetivo). A régua é `tools/medir_niveis.js` (Fase 1).
+o número ATUAL (as telas de detalhe passam por kitEfetivo). A régua PADRÃO dos 97 (§318 F1d) é
+`tools/medir_niveis.js --sorteado --reativo`: espelho SORTEADO (30 composições) + política reativa apertada;
+a régua de TIME FIXO enviesa até ±10pp e não vale para balancear. **Triagem** (não faixa fina, que espera
+dados de partida real): MÁX 0–+25pp, nenhuma habilidade nv4 acima de +15pp; tanque/suporte < 0 por limitação
+da IA aceita-se e marca-se p/ revisão. Regras de degrau: +1 turno de duração em buff de time é o salto mais
+pesado; salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus. **FASE 2 (cópias→níveis,
+gacha por faixa) está BLOQUEADA:** o sorteio/economia rodam no CLIENTE (têm de ir ao servidor) e a Essência
+perde o produtor (§95) se a duplicata virar pontos — decisão do dono pendente (DECISOES §318 F1-fecho/FASE2).
 
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 

@@ -204,12 +204,12 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[1].eff.dur",
-              "de": 2,
+              "caminho": "cd",
+              "de": 4,
               "para": 3
             }
           ],
-          "desc": "Cura 22 no time, regenera 8 por turno durante 3 turnos e o time ganha 2 orbes."
+          "desc": "Cura 22 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
         }
       ]
     }

@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 F1 FECHO (triagem) + FASE 2 AUDITORIA (PARE no §95 da Essência)
+
+**A. Piloto fechado pela régua de TRIAGEM (o PADRÃO dos 97).** Régua = espelho SORTEADO (30 comps) + reativa
+apertada. **Critérios de triagem** (não a faixa fina de +10–15, que precisa de dados de partida real):
+deus no MÁX entre **0 e +25pp**; **nenhuma habilidade sozinha no nv4 acima de +15pp**. Tanque/suporte que medir
+ABAIXO de 0 por limitação da IA (a IA não usa bem o kit): reporta-se e ACEITA, marcado para revisão quando a IA
+usar o kit (fila). O ajuste fino de número fica para **dados de partidas reais** — registrado.
+
+**Oxum milagre nv4 trocado (aplicado):** saiu `fx[1].eff.dur 2→3`, entrou `cd 4→3` (desc do nv4 = do nv3). O
+milagre nv4 caiu de **+18,3 para +7,1** e o MÁX de +24,3 para **+15,6** (o salto de +1 turno de buff de time era
+pesado demais — regra §318 F1c-a). **TABELA FINAL DE TRIAGEM (sorteada, reativa apertada, N=3000):**
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MÁX | triagem (MÁX 0–25, nv4 ≤+15) |
+|---|---|---|---|---|---|
+| Zeus | +9,4 | +2,6 | +12,3 | +22,4 | DENTRO |
+| Oxum | +6,3 | +2,8 | +7,1 | +15,6 | DENTRO |
+| Tyr | −5,4 | +6,3 | +3,3 | +0,3 | DENTRO (básico −5,4 = limitação da IA, marcado p/ revisão) |
+
+Os três pilotos passam a triagem. Régua sorteada corrigida (`catalogoComEscada` não injeta mais escada
+sintética — lê o dado real; só `--falso` injeta o delta de teste).
+
+**B. FASE 2 — AUDITORIA PRÉVIA (o portão que o dono pediu): PARE por DOIS motivos antes de construir.**
+
+**(B1) O sorteio e TODA a economia rodam no CLIENTE, não no servidor.** `src/invocacao.js` sorteia com
+`Math.random()` ("O sorteio roda no CLIENTE só no protótipo"); `src/perfil.js::registrarInvocacao` credita
+Essência na duplicata; `src/ui/home.js` debita Essência (pergaminhos) e credita (campanha/desafios) — tudo no
+`perfil` LOCAL, sincronizado por `salvarPerfil`. A FASE 2 exige o sorteio e a economia AUTORITATIVOS no servidor
+(pontos, subirNivel, excedente→Essência, draw por faixa×raridade, pity, projeção da tabela). Isso é uma
+MIGRAÇÃO grande (novo módulo de gacha no servidor + mensagens de protocolo + mover o roll de invocacao.js). O
+dono pediu "reportar e mover" — reporto: mover é o grosso da FASE 2, e depende da decisão de B2.
+
+**(B2) §95 — a Essência perde o produtor.** PRODUTORES de Essência hoje: (1) DUPLICATA na invocação (perfil.js,
+A15/S40/SS120) — o produtor DOMINANTE e contínuo; (2) chefe de campanha (40, 1ª vez, finito); (3) desafio de
+composição (20, 1ª vez, finito). CONSUMIDOR de Essência hoje: (1) **pergaminhos** (desafios por deus, 30 por
+desafio, recarga 8h) — o ÚNICO sorvedouro contínuo. A FASE 2 manda a duplicata virar PONTOS (não Essência),
+Essência só na cópia EXCEDENTE (deus com as 3 no nv4 = 18 pontos = muitas duplicatas). Resultado: o produtor
+dominante e contínuo (1) some do começo/meio de jogo; sobra campanha+desafios (finitos). O sorvedouro contínuo
+(pergaminhos) fica SEM produtor até um deus ser maximizado → **§95: consumidor sem produtor suficiente.**
+Conforme a instrução ("PARE e reporte antes de seguir"), PARO aqui. **Decisão do dono necessária:** de onde vem
+a Essência no começo/meio (ex.: pergaminhos passam a custar PONTOS/Gema; ou uma fonte nova de Essência; ou
+aceitar que pergaminhos são sorvedouro de fim de jogo). Nada da economia/gacha foi construído.
+
+---
+
 ## §318 F1d — CONSERTAR A RÉGUA DO TANQUE + FECHAR O PILOTO
 
 **Condição (c) da reativa APERTADA.** Antes "inimigo com dano pronto" era quase sempre verdadeira num 3v3 e a

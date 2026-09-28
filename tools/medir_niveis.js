@@ -114,24 +114,17 @@ const POLITICA = REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jo
 function parseNiv(s) { const o = { basico: 1, habilidade: 1, milagre: 1 }; for (const p of (s || '').split(',')) { const [k, v] = p.split(':'); if (SLOTS.includes(k)) o[k] = parseInt(v, 10) || 1; } return o; }
 const NIV = FALSO ? { basico: 2, habilidade: 1, milagre: 1 } : parseNiv(arg('niv', 'basico:4'));
 
-// catálogo com a ESCADA de X. --falso: +5 de dano no básico (15→20) como nv2. Senão: uma escada
-// SINTÉTICA de demonstração no básico (a Fase 0 não tem conteúdo real) — a régua mede o que existir.
+// catálogo com que se mede: o REAL (data/deuses, com as escadas commitadas). --falso injeta o delta de
+// TESTE (+5 de dano no básico, nv2) sobre o básico p/ provar que a régua detecta um ganho conhecido.
+// (Antes injetava uma escada sintética quando não havia conteúdo — F0; agora o conteúdo é real.)
 function catalogoComEscada() {
   const cat = JSON.parse(JSON.stringify(GODS));
   const x = cat[X]; if (!x) throw new Error('deus desconhecido: ' + X);
-  const basico = (x.ab || []).find(a => a.slot === 'basico');
-  if (FALSO && basico && basico.fx && typeof basico.fx[0].v === 'number') {
-    const de = basico.fx[0].v;
-    basico.niveis = [{ nv: 2, muda: [{ caminho: 'fx[0].v', de, para: de + 5 }], desc: `${de + 5} de dano (delta de teste +5).` }];
-  } else if (basico && basico.fx && typeof basico.fx[0].v === 'number') {
-    const de = basico.fx[0].v;   // escada de demonstração: +2 por nível no dano do básico (nv2..nv4)
-    basico.niveis = [
-      { nv: 2, muda: [{ caminho: 'fx[0].v', de, para: de + 2 }], desc: `${de + 2} de dano.` },
-      { nv: 3, muda: [{ caminho: 'fx[0].v', de: de + 2, para: de + 4 }], desc: `${de + 4} de dano.` },
-      { nv: 4, muda: [{ caminho: 'fx[0].v', de: de + 4, para: de + 6 }], desc: `${de + 6} de dano.` },
-    ];
+  if (FALSO) {
+    const basico = (x.ab || []).find(a => a.slot === 'basico');
+    if (basico && basico.fx && typeof basico.fx[0].v === 'number') { const de = basico.fx[0].v; basico.niveis = [{ nv: 2, muda: [{ caminho: 'fx[0].v', de, para: de + 5 }], desc: `${de + 5} de dano (delta de teste +5).` }]; }
   }
-  return cat;
+  return cat;   // senão: escadas REAIS do dado commitado
 }
 
 // UMA partida-espelho. leveled = lado (0/1) que recebe o vetor NIV em X; comeca = quem abre.
