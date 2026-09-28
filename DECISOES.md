@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 F1b — A RÉGUA ANTES DOS NÚMEROS (diagnóstico + babá do degrau + régua de uso forçado). NENHUM degrau ajustado.
+
+**Os três números impossíveis eram a IA, não o kit — nenhum defeito.** (a) Milagre da Oxum +20pp com "0,05
+uso/partida": o 0,05 era do MAX (onde o básico domina); no vetor milagre-só a IA gulosa PASSA a lançar o
+milagre porque o +2 de cura cruza o LIMIAR DE ESCOLHA dela (seed 10: 0→2 lançamentos). Prova definitiva na
+régua forçada: o mesmo milagre nv2, quando SEMPRE lançado, dá **+0,0pp** — o +20 era "a IA começa a usar",
+não o valor da cura. (b) Deltas idênticos nv3=nv4 (Tyr básico, Oxum habilidade): o efeito novo do nv4 É
+aplicado (provado no estado — Tyr básico nv4 põe dmgReduction v5/dur1 no Tyr; Oxum habilidade nv4 põe regen
+v4/dur1 no aliado; ausentes no nv3); o win-rate (binário, grosso) simplesmente não vira nesses seeds — não é
+defeito. (c) Habilidade da Oxum nv2 = −6,7pp: a cura maior PERTURBA a escolha da IA e ela pula o milagre que
+venceria (seeds 12/13) — artefato de escolha, não do kit. **Conclusão: a régua gulosa mede "o número cruzou
+o limiar de escolha da IA?", não "quanto o número vale". Por isso a régua forçada.**
+
+**Babá 8 — TODO DEGRAU MUDA O ESTADO** (`tests/niveis_degrau.test.js`, vale para os 900). Por degrau: (A) o
+kit efetivo no nv N difere do nv N−1 (fora o `desc`) e o `caminho` vira `para` — degrau INERTE quebra; (B)
+lançar a habilidade num cenário fixo produz estado de combate DIFERENTE — degrau que não chega ao motor
+quebra, nomeando deus/habilidade/nível. Prova que morde com um degrau falso inerte (fx[0].v 15→15).
+
+**Régua de USO FORÇADO** (`tools/medir_niveis.js --forcado`, só p/ MEDIR — a IA do jogo NÃO muda). Política:
+cada unidade ativa usa a habilidade pronta e paga de maior prioridade (milagre>habilidade>básico), alvo pela
+mira da própria IA. Exportei `iaCandidatos`/`iaClonar` da ia.js p/ reusar a mira. Sweep dos 3 (N=1100) gulosa
+× forçada em ESTADO/§318 F1b: sob forçado a Oxum usa milagre 1,3/part (vs 0,05) e o Tyr usa habilidade/milagre
+(vs 0,00); os deltas dos degraus pequenos de suporte/tank COLAPSAM (o valor real deles é pequeno; o grande
+delta guloso era a mudança de escolha). Números NÃO ajustados (decisão do dono).
+
+**Tamanho do problema da IA (só medido):** no BASE, IA gulosa, ~144 jogos/deus — **40/100 habilidades** e
+**14/100 milagres** com uso < 0,1/partida. Por efeito: habilidade — buff 12, utilitário/condicional 22,
+controle 4, provocação 1, redução 1; milagre — buff 8, utilitário/condicional 6. Isso afeta campanha, Domínios
+e Desafios (mesmo oponente). A régua forçada é o contorno para MEDIR; consertar a IA é outra decisão.
+
+---
+
 ## §318 F1 — NÍVEIS: PILOTO (fechar a semente do PvP · carregar os 27 degraus · medir)
 
 **1. Semente do PvP fechada.** No PvP com níveis distintos entre os lados, o cliente reproduz a partida a

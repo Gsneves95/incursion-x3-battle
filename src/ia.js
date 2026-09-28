@@ -125,5 +125,5 @@ function iaProximaAcao(st, nivel = 'normal') {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { iaProximaAcao, iaPontuar, NIVEIS_IA };
+  module.exports = { iaProximaAcao, iaPontuar, NIVEIS_IA, iaCandidatos, iaClonar };   // iaCandidatos/iaClonar: §318 F1b régua de USO FORÇADO (força o slot, reusa a MIRA da IA)
 }

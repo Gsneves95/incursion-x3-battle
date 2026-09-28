@@ -2,6 +2,40 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS §318 F1b — A RÉGUA ANTES DOS NÚMEROS (diagnóstico + babá do degrau + régua forçada). NENHUM degrau ajustado.
+
+**Os 3 números impossíveis eram a IA gulosa, não o kit (nenhum defeito).** (a) Oxum milagre +20pp/0,05-uso:
+o +2 de cura cruza o LIMIAR DE ESCOLHA e a IA passa a lançar o milagre (seed 10: 0→2); na régua forçada o
+mesmo nv2 dá **+0,0pp**. (b) nv3=nv4 idênticos: o efeito novo do nv4 É aplicado ao estado (Tyr básico→
+dmgReduction v5/dur1; Oxum hab→regen v4/dur1; ausentes no nv3), o win-rate binário só não vira. (c) Oxum hab
+nv2 −6,7pp: a cura maior faz a IA pular o milagre que venceria (seeds 12/13). **A régua gulosa mede "o número
+cruzou o limiar de escolha da IA?", não "quanto vale".**
+
+**Babá 8 (`tests/niveis_degrau.test.js`, vale p/ os 900):** por degrau, (A) o kit efetivo muda no `caminho` p/
+`para` (INERTE quebra) e (B) lançar num cenário fixo muda o estado de combate. Morde com degrau falso inerte.
+
+**Régua de USO FORÇADO (`tools/medir_niveis.js --forcado`):** milagre>hab>básico, mira da IA. Δ vs nula (pp):
+
+| deus | política | básico n2/n3/n4 | habilidade n2/n3/n4 | milagre n2/n3/n4 | MAX | uso bás/hab/mil |
+|---|---|---|---|---|---|---|
+| Zeus | gulosa | +7,6/+15,1/+22,9 | +2,5/+3,5/+7,8 | +4,7/+6,0/+7,1 | +33,0 | 6,0/1,2/1,2 |
+| Zeus | forçada | +5,5/+11,5/+16,8 | +2,5/+2,3/+5,3 | +2,9/+5,2/+6,5 | +23,6 | 5,7/1,1/1,3 |
+| Oxum | gulosa | +3,3/+8,3/+9,3 | −6,7/+6,8/+6,8 | **+20,1**/+19,1/+24,2 | +15,2 | 3,7/0,9/**0,05** |
+| Oxum | forçada | −3,5/−0,1/+5,5 | +1,7/+4,4/+4,4 | **+0,0**/+1,9/+13,6 | +20,0 | 1,9/4,4/**1,3** |
+| Tyr | gulosa | +9,2/+23,2/+23,2 | **0/0/0** | **0/0/0** | +23,2 | 6,7/**0**/**0** |
+| Tyr | forçada | +0,7/+2,5/+2,5 | +0,5/+0,5/−12,5 | +2,5/+5,9/+23,2 | +15,0 | 1,8/**3,0**/**2,0** |
+
+IC95 ≈ ±2,9pp. Leitura: sob FORÇADO o suporte/tank passam a usar o kit (Oxum milagre 0,05→1,3; Tyr hab/mil
+0→3,0/2,0) e os degraus PEQUENOS de suporte colapsam (o grande delta guloso era mudança-de-escolha, não valor).
+O delta negativo de Tyr hab-forçado (−12,5) = forçar taunt/troca de alvo atrapalha o time — sinal de que o kit
+do Tyr é reativo, não proativo. **A régua confiável para dano-que-a-IA-usa é a gulosa; para o resto, a forçada.**
+
+**Tamanho do problema da IA (só medido, BASE, ~144 jogos/deus):** **40/100 habilidades** e **14/100 milagres**
+com uso < 0,1/partida (buff 12+8, utilitário/condicional 22+6, controle 4, provocação 1, redução 1). Afeta
+campanha/Domínios/Desafios (mesmo oponente). Arquivos: `tests/niveis_degrau.test.js`, `tools/medir_niveis.js`
+(--forcado), `src/ia.js` (exporta iaCandidatos/iaClonar). Números NÃO ajustados. Ver DECISOES §318 F1b.
+Suíte + build verdes.
+
 ## ★ NÍVEIS §318 FASE 1 — PILOTO (semente do PvP fechada · 27 degraus carregados · medido)
 
 **1. Semente do PvP.** O cliente reproduz o PvP nivelado montando os catálogos EFETIVOS dos dois lados

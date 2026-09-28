@@ -16,7 +16,28 @@
 const path = require('path');
 const E = require(path.join(__dirname, '..', 'src', 'engine.js'));
 Object.assign(global, E);
-const { iaProximaAcao } = require(path.join(__dirname, '..', 'src', 'ia.js'));
+const { iaProximaAcao, iaPontuar, iaCandidatos, iaClonar } = require(path.join(__dirname, '..', 'src', 'ia.js'));
+
+// §318 F1b — POLÍTICA DE USO FORÇADO (só para MEDIR; a IA do jogo NÃO muda). Em cada lance, a unidade
+// ativa usa a habilidade PRONTA E PAGA de maior prioridade (milagre > habilidade > básico), com o ALVO
+// pela regra da própria IA (iaCandidatos usa a mira por menor HP). Diferente da IA gulosa, USA mesmo que
+// o lance baixe a pontuação — assim o nível de uma habilidade defensiva/cara é medido em vez de ignorado.
+const PRIO_FORCADO = ['milagre', 'habilidade', 'basico'];
+function forcadoProxima(st) {
+  const lado = st.ativo, base = iaPontuar(st, lado);
+  for (const u of st.lados[lado].units) {
+    if (!podeAgir(u)) continue;
+    const cands = iaCandidatos(st, u);
+    if (!cands.length) continue;
+    const slot = PRIO_FORCADO.find(s => cands.some(c => c.slot === s));
+    if (!slot) continue;
+    const sc = cands.filter(c => c.slot === slot);
+    let bc = null, bd = -Infinity;                       // entre os alvos do slot forçado, o que a IA escolheria
+    for (const c of sc) { const cl = iaClonar(st); const r = agir(cl, c.uid, c.slot, c.alvos, c.escolhas); if (!r || !r.ok) continue; const d = iaPontuar(cl, lado) - base; if (d > bd) { bd = d; bc = c; } }
+    if (bc) return bc;                                    // só devolve um lance que o motor ACEITA (evita laço)
+  }
+  return null;
+}
 
 const GODS = E.GODS;
 const SLOTS = ['basico', 'habilidade', 'milagre'];
@@ -27,6 +48,8 @@ const N = parseInt(arg('n', '1200'), 10);
 const TIME = arg('time', 'zeus,ares,atena').split(',');
 const X = arg('x', TIME[0]);
 const FALSO = tem('falso');
+const FORCADO = tem('forcado');   // §318 F1b: política de uso forçado (mede o que a IA gulosa não usa)
+const proximaAcao = FORCADO ? forcadoProxima : iaProximaAcao;
 // vetor de nível de X: --niv=basico:4,... (default: básico no 4, resto 1) OU o delta falso (básico 2)
 function parseNiv(s) { const o = { basico: 1, habilidade: 1, milagre: 1 }; for (const p of (s || '').split(',')) { const [k, v] = p.split(':'); if (SLOTS.includes(k)) o[k] = parseInt(v, 10) || 1; } return o; }
 const NIV = FALSO ? { basico: 2, habilidade: 1, milagre: 1 } : parseNiv(arg('niv', 'basico:4'));
@@ -60,7 +83,7 @@ function jogar(cat, time, leveled, niv, seed, comeca, usarDelta) {
   let guard = 0;
   while (!st.fim && guard++ < 400) {
     let passos = 0, a;
-    while (!st.fim && (a = iaProximaAcao(st)) && passos++ < 8) {
+    while (!st.fim && (a = proximaAcao(st)) && passos++ < 8) {
       const u = st.lados.flatMap(l => l.units).find(x => x.uid === a.uid);
       if (u && u.lado === leveled && u.key === X && SLOTS.includes(a.slot)) usouX[a.slot]++;
       E.agir(st, a.uid, a.slot, a.alvos, a.escolhas);
@@ -97,7 +120,7 @@ const pct = x => (100 * x).toFixed(1) + '%';
 console.log('=== §318 — RÉGUA DE NÍVEIS ===');
 console.log(`time (espelho): ${TIME.join(', ')} · X = ${X} (${GODS[X] ? GODS[X].nome : '?'})`);
 console.log(`vetor de nível de X: ${SLOTS.map(s => s + ':' + NIV[s]).join(' ')}${FALSO ? '   [DELTA FALSO: +5 dano no básico — NÃO commitar]' : ''}`);
-console.log(`N = ${N} partidas por corrida`);
+console.log(`N = ${N} partidas por corrida · política = ${FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)'}`);
 
 const cat = catalogoComEscada();
 
