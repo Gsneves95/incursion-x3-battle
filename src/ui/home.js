@@ -381,13 +381,15 @@ function _obIc(t){
   if (t === 'a')  return S('<path d="M12 5l2 3-2 3-2-3z" fill="currentColor" stroke="none"/><path d="M6 8l1.6 2.4L6 12.8 4.4 10.4z" fill="currentColor" stroke="none"/><path d="M18 8l1.6 2.4L18 12.8l-1.6-2.4z" fill="currentColor" stroke="none"/>');
   return '';
 }
+// junta uma lista de nomes com o "ou" só no último ("Zeus, Ogum ou Tyr"; "Zeus ou Brigid"; "Zeus").
+function _juntarOu(partes){ if (partes.length <= 1) return partes[0] || ''; if (partes.length === 2) return partes[0] + ' ou ' + partes[1]; return partes.slice(0, -1).join(', ') + ' ou ' + partes[partes.length - 1]; }
 // TEXTO do objetivo (nomes em <b>; se `mark`, os nomes NÃO possuídos ficam em cinza+cadeado — só na expansão travada).
 function _obTexto(o, mark){
   const nm = (g) => (mark && !_temDeus(g)) ? `<span class="lk">${H(nomeM(g))} 🔒</span>` : `<b>${H(nomeM(g))}</b>`;
   if (o.tipo === 's')  return `${o.k} seguidas com ${nm(o.alvo)}`;
   if (o.tipo === 'sp') return `${o.k} seguidas com qualquer <b>${_adjS(o.panteao)}</b>`;
   if (o.tipo === 'c')  return `${o.k} seguidas com ${nm(o.lista[0])} e com ${nm(o.lista[1])}`;
-  if (o.tipo === 'v')  return `${o.n} vitórias com ${o.lista.map(nm).join(' ou ')}`;
+  if (o.tipo === 'v')  return `${o.n} vitórias com ${_juntarOu(o.lista.map(nm))}`;
   if (o.tipo === 'j')  return `${o.n} vitórias com ${nm(o.lista[0])} e ${nm(o.lista[1])}`;
   if (o.tipo === 'p')  return `${o.n} vitórias com qualquer <b>${_adjS(o.panteao)}</b>`;
   if (o.tipo === 'a')  return `${o.n} panteões diferentes`;
@@ -634,6 +636,10 @@ function renderMissoes(){
   }; });
   [...stage.querySelectorAll('[data-troca-ok]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); _pedirAtivar(b.dataset.trocaOk); }; });
   [...stage.querySelectorAll('[data-troca-no]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); provTrocaConfirm = null; render(); }; });
+  // §316: ao EXPANDIR (ou abrir a confirmação), rola a coluna para a área aberta ficar INTEIRA visível — o
+  // jogador não fica com o requisito abaixo da dobra. block:'nearest' mostra a linha+área por completo se cabe.
+  const _aberta = provExpandida ? stage.querySelector(`.lr[data-deus="${provExpandida}"]`) : (provTrocaConfirm ? stage.querySelector(`.lr[data-deus="${provTrocaConfirm}"]`) : null);
+  if (_aberta && typeof _aberta.scrollIntoView === 'function') { try { _aberta.scrollIntoView({ block: 'nearest' }); } catch (e) { try { _aberta.scrollIntoView(false); } catch (e2) {} } }
   // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
   if (online && typeof refrescarConta === 'function') refrescarConta();
   fit();

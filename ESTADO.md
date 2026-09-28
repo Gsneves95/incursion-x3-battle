@@ -18,9 +18,12 @@ REQUISITOS ali (só uma por vez) — disponível: meta; pausada: progresso guard
 barras e ATIVAR; resto plano. **Guardas** (`tests/missoes_tela.test.js`, §295/§307/§308): 5 estados + painel cheio/vazio +
 acordeão + faixa fechada/aberta + confirmação; Chromium 780/893/1075/1200 × painel 2/3/4 obj: painel nunca rola, lista nunca
 rola na horizontal (borda direita real, não scrollWidth — que o flex do Chromium infla), nenhum nome cortado por reticência
-(clone; piores "Mula sem Cabeça"/"Yamato Takeru"); objetivos do painel quebram em 2 linhas em vez de cortar. Toque: linha ≥44,
-botões ≥36. **★ Lição §308:** o `scrollWidth` de contêiner flex no Chromium infla pelo `gap` — medir a borda direita real +
-`overflow-x:hidden`. Capturas a 893 em `docs/capturas-316/` (normal · travada exp · pausada exp · confirmação). **Arquivos:**
+(clone; piores "Mula sem Cabeça"/"Yamato Takeru"); objetivos do painel quebram em 2 linhas em vez de cortar. **Correções p/ o
+aparelho:** (1) toque — linha ≥44 e CADA botão (Ativar/Retomar/Confirmar/Cancelar/Trocar) a **44 de design** (~37 físico S24,
+piso §301); (2) expandir/confirmar **rola p/ a área ficar inteira na vista** (scrollIntoView nearest; guarda: última linha
+expandida dentro do viewport); (3) lista de nomes "A, B ou C"/"A ou B"; (4) guardas+capturas sobre o **DIST**. **★ Lição §308:**
+o `scrollWidth` de contêiner flex no Chromium infla pelo `gap` — medir a borda direita real + `overflow-x:hidden`. Capturas a
+893 em `docs/capturas-316/` (normal · travada exp · pausada exp · confirmação — Medusa/Hércules em posição real). **Arquivos:**
 `src/ui/home.js`, `src/shell.html`, `tests/missoes_tela.test.js`, `tests/aquisicao.test.js`, `dist/`. Ver DECISOES §316.
 Suíte + build verdes.
 

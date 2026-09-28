@@ -46,10 +46,19 @@ progresso guardado." + Confirmar cheio/Cancelar contorno, padrão §245). Enquan
 larguras (780/893/1075/1200) e com o painel de 2/3/4 objetivos: **o painel NUNCA rola** (medido), **a lista NUNCA rola na
 horizontal** (borda direita real, não o `scrollWidth` — que o flexbox do Chromium infla), e **nenhum nome de linha é cortado
 por reticência** (medido por clone solto; piores nomes "Mula sem Cabeça"/"Yamato Takeru"). Os objetivos do painel QUEBRAM em
-duas linhas em vez de cortar (o pior objetivo "8 vitórias com Zeus ou Ogum ou Tyr" cabe sem clip). Toque: a linha ≥44px, os
-botões ≥36px de design (§301/§234). Capturas a 893 em `docs/capturas-316/` (normal · travada expandida · pausada expandida ·
+duas linhas em vez de cortar. Capturas a 893 em `docs/capturas-316/` (normal · travada expandida · pausada expandida ·
 confirmação). **★ Lição (§308):** o `scrollWidth` de um contêiner flex no Chromium infla pelo `gap`/max-content e não serve de
 guarda de overflow — medir a BORDA DIREITA real de cada filho contra o `clientWidth`, e usar `overflow-x:hidden` no scroller.
+
+**Correções antes do teste no aparelho (4):** (1) **Piso de toque §301** — ATIVAR/RETOMAR/CONFIRMAR/CANCELAR e o TROCAR foram
+de 36 a **44px de design** (~37 físicos no S24, escala ~0,84 — acima do piso 28–34; a guarda mede CADA botão, não só a linha,
+que segue ≥44). (2) **Expandir não abre fora da vista** — ao expandir uma linha (ou abrir a confirmação), o `renderMissoes`
+rola a coluna (`scrollIntoView block:'nearest'`) para a área aberta ficar INTEIRA visível; guarda: expandir a ÚLTIMA linha
+deixa a `.lr__exp` dentro do viewport da coluna nas 4 larguras (topo ≥−1, base ≤+1). As capturas de "travada"/"pausada"
+expandidas mostram Medusa/Hércules nas POSIÇÕES REAIS (roladas até a vista), não movidas ao topo. (3) **Lista de nomes** — um
+"v" lê "A, B ou C" (vírgula, "ou" só no último) e "A ou B" com dois; vale painel e expansão (o pior, huangdi, lê "Guan Yu,
+Nezha ou Ao Kuang"). (4) **DIST** — guardas (jsdom + Chromium) e capturas rodam sobre `dist/incursion.html` (o que o app
+carrega): a suíte builda o dist antes, o teste lê o dist e o Chromium abre o dist por `file://`.
 
 ## §314 — UMA PROVAÇÃO ATIVA POR VEZ: servidor migrado para os objetivos + a tela (painel + lista híbrida). (PARTE 2.)
 

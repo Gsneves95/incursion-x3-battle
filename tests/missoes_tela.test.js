@@ -137,11 +137,22 @@ console.log('\n== 10. elo com o deus (medalhão do painel) ==');
   ok(w.eval("rotaAtual()==='deus'"), 'o medalhão do painel leva ao detalhe do deus');
 }
 
-// ---- 11. ALVOS DE TOQUE (§234/§301) ----
-console.log('\n== 11. toque: linha e botões acima do piso ==');
-w.eval(C_RICO);
+// ---- 11. ALVOS DE TOQUE (§234/§301): a LINHA e CADA BOTÃO no piso ~44 de design ----
+console.log('\n== 11. toque: linha e CADA botão ≥44px de design (piso §301) ==');
+w.eval(C_RICO); w.eval("provTrocaConfirm='anubis';render();");   // abre a confirmação p/ medir Confirmar/Cancelar
 ok(parseFloat(w.getComputedStyle($('.lr__tap')).minHeight) >= 44, `a linha tem alvo de toque ≥44px de design (${w.getComputedStyle($('.lr__tap')).minHeight})`);
-ok($$('.lr__acao .b, .pa__foot .b').every(b => parseFloat(w.getComputedStyle(b).minHeight) >= 36), 'os botões (Ativar/Retomar/Trocar) ≥36px de design');
+{
+  const bs = $$('.lr__acao .b, .pa__foot .b, .lr__confb .b');
+  const rotulos = bs.map(b => txt(b));
+  const menores = bs.filter(b => parseFloat(w.getComputedStyle(b).minHeight) < 44).map(b => txt(b));
+  ok(bs.length >= 4 && menores.length === 0, `CADA botão (${rotulos.join('/')}) ≥44px de design (§301); abaixo: ${menores.join(',') || 'nenhum'}`);
+}
+w.eval("provTrocaConfirm=null;");
+
+// ---- 12. LISTA DE NOMES (§316-fix): "A, B ou C" (vírgula + "ou" só no último); "A ou B" com dois ----
+console.log('\n== 12. gramática da lista de nomes ==');
+ok(w.eval("_obTexto({tipo:'v',lista:['zeus','ogum','tyr'],n:8},false)") === '8 vitórias com <b>Zeus</b>, <b>Ogum</b> ou <b>Tyr</b>', 'três nomes: "Zeus, Ogum ou Tyr"');
+ok(w.eval("_obTexto({tipo:'v',lista:['zeus','brigid'],n:8},false)") === '8 vitórias com <b>Zeus</b> ou <b>Brigid</b>', 'dois nomes: "Zeus ou Brigid"');
 
 if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS (jsdom) ==`); process.exit(1); }
 console.log(`\n== jsdom OK (${passes}) — agora a varredura de LARGURA no Chromium ==`);
@@ -176,6 +187,21 @@ console.log(`\n== jsdom OK (${passes}) — agora a varredura de LARGURA no Chrom
       ok2(r.paClip <= 1, `${W} ${nome}: o painel NÃO rola (clip ${r.paClip})`);
       ok2(r.over <= 1, `${W} ${nome}: a lista não corta na horizontal (over ${r.over})`);
       ok2(r.nameClip <= 1, `${W} ${nome}: nenhum nome de linha cortado por reticência (clip ${r.nameClip})`);
+      await page.close();
+    }
+    // §316-fix: EXPANDIR A ÚLTIMA linha da lista → a área aberta fica INTEIRA dentro do viewport da coluna.
+    {
+      const page = await (await browser.newContext({ viewport: { width: W, height: 428 }, deviceScaleFactor: 2 })).newPage();
+      await page.goto(distAbs, { waitUntil: 'load' }); await page.evaluate(M3); await page.waitForTimeout(90);
+      const r = await page.evaluate(() => {
+        const rows = [...document.querySelectorAll('.lr[data-deus]')].filter(x => x.querySelector('.lr__tap[data-linha]'));
+        const last = rows[rows.length - 1]; const k = last.dataset.deus;
+        provExpandida = k; render();   // expande a última + rola p/ dentro da vista (o próprio renderMissoes)
+        const rol = document.querySelector('.pv__dir'); const rb = rol.getBoundingClientRect();
+        const exp = document.querySelector(`.lr[data-deus="${k}"] .lr__exp`); const eb = exp.getBoundingClientRect();
+        return { k, top: Math.round(eb.top - rb.top), bot: Math.round(eb.bottom - rb.bottom) };
+      });
+      ok2(r.top >= -1 && r.bot <= 1, `${W}: expandir a ÚLTIMA linha (${r.k}) — área aberta INTEIRA na vista (topo ${r.top}, base ${r.bot})`);
       await page.close();
     }
   }
