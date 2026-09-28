@@ -10,8 +10,24 @@
     "nome": "Sabedoria Tática",
     "desc": "O time começa a partida com 1 orbe de Aurora extra; o time causa +5 de dano contra inimigos sob controle.",
     "fx": [
-      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 1, "para": "Aurora" } ] },
-      { "gatilho": "bonusDano", "v": 5, "escopo": "time", "quando": { "alvoDebuff": "controle" } }
+      {
+        "gatilho": "abertura",
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Aurora"
+          }
+        ]
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 5,
+        "escopo": "time",
+        "quando": {
+          "alvoDebuff": "controle"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,36 +35,175 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Lança de Prata",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cost.Aurora",
+              "de": 1,
+              "para": 0
+            }
+          ],
+          "desc": "Grátis. 14 de dano a 1 inimigo."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Égide",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física.",
       "fx": [
-        { "t": "shield", "v": 25 },
-        { "t": "apply", "eff": { "type": "contraAtaca", "v": 10, "dur": 2, "contraClasse": "Físico" } }
+        {
+          "t": "shield",
+          "v": 25
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "contraAtaca",
+            "v": 10,
+            "dur": 2,
+            "contraClasse": "Físico"
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 28
+            }
+          ],
+          "desc": "1 aliado ganha 28 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 12
+            }
+          ],
+          "desc": "1 aliado ganha 28 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "1 aliado ganha 28 de Defesa Destrutível por 3 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Estratégia Divina",
-      "cost": { "Aurora": 2, "livre": 1 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Remove todos os debuffs do time; o time causa +8 de dano por 2 turnos.",
       "fx": [
-        { "t": "cleanse", "escopo": "time" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" }
+        {
+          "t": "cleanse",
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Remove todos os debuffs do time; o time causa +9 de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos."
+        }
       ]
     }
   ]

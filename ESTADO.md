@@ -2,6 +2,37 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 1 — 7 gregos do Suplicante (medidos; 3 FORA → PROPOSTO, PARADO)
+
+63 degraus (Cérberus/Atena/Dionísio/Medusa/Ares/Apolo/Hércules × 3 slots × nv2–4). Duas extensões da whitelist
+no motor, provadas a MORDER: **NOVO-PEQUENO** (efeito simples ≤8 no nv2 em habilidade sem magnitude base) e
+**fx[i].dur** (dur de dot/hot como SALTO nv4). Ver DECISOES "§318 FASE 3 · LOTE 1" e a whitelist em CLAUDE.md.
+
+**Achado (reportado, NÃO adaptado):** o dano NOVO-PEQUENO CHEGA ao motor; a babá 8 acusava "inerte" por artefato
+do cenário (o inimigo Thor dava −6 ao time e engolia os 5 de dano). Cenário da babá corrigido (inimigos limpos +
+debuff semeado p/ ver o cleanse); as escadas ficaram intactas.
+
+**Triagem (espelho sorteado + reativa, N=3000):**
+
+| deus | básico n4 | habil n4 | milagre n4 | MÁX | triagem |
+|---|---|---|---|---|---|
+| Cérberus | +30,1 | +4,8 | +2,5 | +35,4 | **FORA** (AoE) |
+| Atena | +27,0 | +2,1 | +5,0 | +32,2 | **FORA** (grátis nv4) |
+| Dionísio | +1,4 | +6,9 | +11,3 | +16,7 | DENTRO |
+| Medusa | +11,8 | +1,6 | +8,4 | +20,8 | DENTRO |
+| Ares | +2,8 | +1,0 | +7,7 | +13,4 | DENTRO |
+| Apolo | +7,0 | +14,9 | +11,7 | +29,3 | **FORA** (soma) |
+| Hércules | +4,5 | +7,6 | +6,8 | +15,8 | DENTRO |
+
+Drivers isolados: Cérberus 1 passo AoE = +12,8pp (não é levelável por dano); Atena sem o grátis = +4,9pp (o
+SALTO `cost 1→0` do nv4 vale ~+22 sozinho); Apolo = soma de cura de suporte. Hércules +5 empilhável só +7,6
+(DENTRO); Medusa Veneno-3-turnos +11,8 (DENTRO). **Propostas na DECISOES** (Cérberus básico sem dano; trocar o
+grátis da Atena; encolher a cura do Apolo) — aguardam OK do dono.
+
+**Commit é SEGURO:** os 63 degraus estão DORMENTES (nível default 1 = kitEfetivo deep-equal ao base; a FASE 2 que
+sobe nível está BLOQUEADA §95). Portão: FASE 2 não liga o LOTE 1 até os 3 FORA re-medirem DENTRO. Babás 1–8 +
+suíte + build verdes.
+
 ## ★ §318 FASE 2 — ECONOMIA AUTORITATIVA (4 ETAPAS, todas verdes + push)
 
 A economia inteira passou para o SERVIDOR. Ver DECISOES "§318 FASE 2" e os invariantes 30–33 em CLAUDE.md.

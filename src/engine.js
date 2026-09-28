@@ -414,8 +414,27 @@ function _categoriaCaminho(c) {
   if (c === 'cd') return 'salto';
   if (/^cost\.[^.[\]]+$/.test(c)) return 'salto';
   if (/^fx\[\d+\]\.eff\.dur$/.test(c)) return 'salto';
-  if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx
+  if (/^fx\[\d+\]\.dur$/.test(c)) return 'salto';   // §318 F3 (extensão b): dur de dot/hot (Veneno, Queimadura) — salto, só nv4
+  if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx (NOVO-PEQUENO vira 'pequeno' em validarNiveisDeus)
   return null;
+}
+// §318 F3 (extensão a) — NOVO-PEQUENO: uma habilidade cujo fx BASE não tem MAGNITUDE pequena (nenhum
+// dmg/heal/shield com `v`, nenhum `eff.v`) pode ACRESCENTAR no nv2 um efeito SIMPLES {t:dmg|heal|shield,
+// v:≤8, escopo?}. Contador (marca) e roubaOrbe (n) NÃO são magnitude — não bloqueiam. O `v` guarda o teto 8.
+const _T_MAGNITUDE = ['dmg', 'heal', 'shield'];
+function _temMagnitudePequena(ab) {
+  for (const f of (ab.fx || [])) {
+    if (_T_MAGNITUDE.indexOf(f.t) >= 0 && typeof f.v === 'number') return true;
+    if (f.eff && typeof f.eff.v === 'number') return true;
+  }
+  return false;
+}
+function _ehNovoPequenoPara(para) {
+  if (!para || typeof para !== 'object') return false;
+  if (_T_MAGNITUDE.indexOf(para.t) < 0) return false;             // só dmg/heal/shield
+  if (typeof para.v !== 'number' || para.v > 8) return false;     // magnitude ≤ 8
+  for (const k in para) if (['t', 'v', 'escopo'].indexOf(k) < 0) return false;   // sem kind/golpes/efeito/eff
+  return true;
 }
 // lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
 function _lerCaminho(ab, c) {
@@ -426,17 +445,19 @@ function _lerCaminho(ab, c) {
   if (c === 'cd') return ab.cd;
   if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
   if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.dur : undefined; }
+  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.dur : undefined; }   // §318 F3: dur de dot/hot
   return undefined;
 }
 // escreve `para` no caminho (mutando o ab JÁ CLONADO). fx[] empurra o efeito novo.
 function _escreverCaminho(ab, c, para) {
   let m;
-  if (c === 'fx[]') { (ab.fx = ab.fx || []).push(para); return; }
+  if (c === 'fx[]') { (ab.fx = ab.fx || []).push(_cloneKit(para)); return; }   // CLONE: nunca guardar a referência do `para` da fonte (senão um nv seguinte que escreve fx[i].v corromperia o `muda.para` original — bug §318 F3)
   if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { if (ab.fx && ab.fx[+m[1]]) ab.fx[+m[1]].v = para; return; }
   if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.v = para; return; }
   if (c === 'cd') { ab.cd = para; return; }
   if ((m = c.match(/^cost\.(.+)$/))) { (ab.cost = ab.cost || {})[m[1]] = para; return; }
   if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.dur = para; return; }
+  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { if (ab.fx && ab.fx[+m[1]]) ab.fx[+m[1]].dur = para; return; }   // §318 F3: dur de dot/hot
 }
 function _cloneKit(g) { return JSON.parse(JSON.stringify(g)); }
 
@@ -505,8 +526,21 @@ function validarNiveisDeus(deus) {
       if (vistos.has(nvl)) erros.push(`${nome}.${ab.slot} nv${nvl}: nível repetido`);
       vistos.add(nvl);
       for (const mud of (d.muda || [])) {
-        const cat = _categoriaCaminho(mud.caminho);
+        let cat = _categoriaCaminho(mud.caminho);
         if (!cat) { erros.push(`${nome}.${ab.slot} nv${nvl}: caminho FORA da whitelist ${JSON.stringify(mud.caminho)}`); continue; }
+        // §318 F3 (extensão a) — NOVO-PEQUENO: um fx[] com efeito SIMPLES (dmg/heal/shield, v≤8) numa
+        // habilidade SEM magnitude base vira 'pequeno' e SÓ pode entrar no nv2. Com magnitude base, o fx[]
+        // simples continua SALTO (nv4) — é o caso do Ares habil nv4 (heal 6) e do Cérberus basico nv4.
+        if (mud.caminho === 'fx[]' && _ehNovoPequenoPara(mud.para) && !_temMagnitudePequena(ab)) {
+          cat = 'pequeno';
+          if (nvl !== 2) erros.push(`${nome}.${ab.slot} nv${nvl}: NOVO-PEQUENO (efeito simples ≤8 em habilidade sem magnitude) só é permitido no nv2`);
+        }
+        // §318 F3 (extensão b) — fx[i].dur só em dot/hot (Veneno, Queimadura).
+        if (/^fx\[(\d+)\]\.dur$/.test(mud.caminho)) {
+          const idx = +mud.caminho.match(/^fx\[(\d+)\]\.dur$/)[1];
+          const alvo = (work.fx || [])[idx];
+          if (!alvo || (alvo.t !== 'dot' && alvo.t !== 'hot')) erros.push(`${nome}.${ab.slot} nv${nvl}: fx[${idx}].dur só vale em dot/hot (é ${JSON.stringify(alvo && alvo.t)})`);
+        }
         if (cat === 'salto') { saltos++; if (nvl !== 4) erros.push(`${nome}.${ab.slot} nv${nvl}: SALTO (${JSON.stringify(mud.caminho)}) só é permitido no nv4`); }
         if (mud.caminho === 'fx[]') {
           if (mud.de !== null && mud.de !== undefined) erros.push(`${nome}.${ab.slot} nv${nvl}: efeito NOVO (fx[]) exige "de":null`);

@@ -27,6 +27,7 @@ function lerCaminho(ab, c) {
   if (c === 'cd') return ab.cd;
   if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
   if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.dur : undefined; }
+  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.dur : undefined; }   // §318 F3 LOTE1: dur do próprio fx (dot/hot) como SALTO
   return undefined;
 }
 const semDesc = ab => { const o = clone(ab); delete o.desc; return o; };
@@ -38,7 +39,10 @@ const CENARIO = {
   oxum: { time: ['oxum', 'ogum', 'tyr'], inim: ['ares', 'thor', 'odin'] },
   tyr: { time: ['tyr', 'thor', 'odin'], inim: ['ares', 'atena', 'apolo'] },
 };
-const _cenPad = key => CENARIO[key] || { time: [key, 'ares', 'atena'], inim: ['ogum', 'thor', 'odin'] };
+// §318 F3 LOTE1: o cenário PADRÃO usa inimigos LIMPOS (sem redução de time — Thor daria −6 a todos e ENGOLIRIA um dano
+// NOVO-PEQUENO de 5, mascarando o degrau como "inerte"). demeter/ganesha/hades não reduzem, não têm invulnerabilidade
+// nem evasão: um dano pequeno POUSA e o degrau fica VISÍVEL. Deuses com CENARIO próprio (zeus/oxum/tyr) seguem intactos.
+const _cenPad = key => CENARIO[key] || { time: [key, 'ares', 'atena'], inim: ['demeter', 'ganesha', 'hades'] };
 
 // projeção de combate do estado (o que o degrau pode mexer): os dois lados (unidades: hp, efeitos,
 // dots, shield, cd, contadores) + orbes. NÃO o catId (que muda com o nível por construção) nem o log.
@@ -51,6 +55,14 @@ function estadoAposCast(catBase, key, slot, nv) {
   const st = E.novoEstado(cen.time.slice(), cen.inim.slice(), 7, 0, null, cat, [{ [key]: { [slot]: nv } }, {}]);
   E.ELEMS.forEach(e => { st.lados[0].orbs[e] = 9; });     // orbes cheios: paga qualquer custo
   st.lados[0].units.forEach(u => { u.hp = 60; });          // lado 0 ferido: curas/self-heal ficam VISÍVEIS (abaixo do teto)
+  // §318 F3 LOTE1: SEMEIA um debuff nos ALIADOS do lançador (nunca no lançador — ele precisa agir) — igual em N e N−1,
+  // então CANCELA para todo degrau que não o toca; só um `cleanse`/strip de escopo TIME o consome, tornando o degrau
+  // (ex.: Apolo milagre nv4) VISÍVEL no estado. Um efeito (vulneravel) e um DoT (veneno) cobrem as duas famílias.
+  for (let i = 1; i < st.lados[0].units.length; i++) {
+    const al = st.lados[0].units[i];
+    al.efeitos.push({ type: 'vulneravel', v: 5, dur: 3, origem: st.lados[1].units[0].uid });
+    al.dots.push({ nome: 'veneno', v: 4, dur: 3, origem: st.lados[1].units[0].uid });
+  }
   const u = st.lados[0].units[0];
   const a = E.acoesDe(st, u).find(x => x.slot === slot);
   if (!a || !a.disponivel) return null;

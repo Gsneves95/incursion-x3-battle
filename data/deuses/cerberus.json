@@ -10,7 +10,9 @@
     "nome": "Corrente do Submundo",
     "desc": "Enquanto Cérberus vive, inimigos não podem ser revividos.",
     "fx": [
-      { "gatilho": "antiReviveAura" }
+      {
+        "gatilho": "antiReviveAura"
+      }
     ]
   },
   "ab": [
@@ -18,36 +20,191 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Dentada Tripla",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "todosInimigos",
       "desc": "8 de dano em até 3 inimigos.",
-      "fx": [ { "t": "dmg", "v": 8, "escopo": "todosInimigos" } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 8,
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "9 de dano em até 3 inimigos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "10 de dano em até 3 inimigos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 4,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "10 de dano em até 3 inimigos; Cérberus cura 4."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Marca do Guardião",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 1,
       "alvo": "inimigo",
       "desc": "Provoca 1 inimigo por 2 turnos; Cérberus recebe 15 de redução de dano por 2 turnos.",
       "fx": [
-        { "t": "apply", "eff": { "type": "taunt", "dur": 2 } },
-        { "t": "apply", "eff": { "type": "dmgReduction", "v": 15, "dur": 2 }, "escopo": "self" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "taunt",
+            "dur": 2
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgReduction",
+            "v": 15,
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 15,
+              "para": 17
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos; Cérberus recebe 17 de redução de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 17,
+              "para": 19
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos; Cérberus recebe 19 de redução de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos; Cérberus recebe 19 de redução de dano por 3 turnos."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Vigília Infernal",
-      "cost": { "Umbra": 1, "livre": 2 },
+      "cost": {
+        "Umbra": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Provoca todos os inimigos por 1 turno; Cérberus ganha 25 de Defesa Destrutível.",
       "fx": [
-        { "t": "apply", "eff": { "type": "taunt", "dur": 1 }, "escopo": "todosInimigos" },
-        { "t": "shield", "v": 25, "escopo": "self" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "taunt",
+            "dur": 1
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "shield",
+          "v": 25,
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 25,
+              "para": 28
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 1 turno; Cérberus ganha 28 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 28,
+              "para": 31
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 1 turno; Cérberus ganha 31 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 10,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 1 turno; Cérberus ganha 31 de Defesa Destrutível e 10 de redução de dano por 1 turno."
+        }
       ]
     }
   ]

@@ -6,6 +6,86 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 1 — os 7 gregos do Suplicante (escadas medidas; 3 FORA da triagem → PROPOR e PARAR)
+
+**O que foi construído.** As escadas de nível (nv2–4) dos 7 gregos da faixa Suplicante — Cérberus, Atena,
+Dionísio, Medusa, Ares, Apolo, Hércules — **63 degraus** no total (7 deuses × 3 slots × 3 degraus). Duas
+**extensões da whitelist** de `caminho` foram implementadas no motor E provadas a MORDER (tests/niveis.test.js
+B3b/B4b):
+- **(a) NOVO-PEQUENO** — uma habilidade cujo fx BASE **não tem magnitude pequena** (nenhum `fx[i].v` de
+  dmg/heal/shield, nenhum `eff.v`) pode ACRESCENTAR **no nv2** um efeito SIMPLES `{t:dmg|heal|shield, v:≤8,
+  escopo?}` (`fx[]` vira categoria 'pequeno' em `validarNiveisDeus`). Morde: em habilidade que já tem número →
+  quebra (vira SALTO, só nv4); `v>8` → quebra; fora do nv2 → quebra. (Nuance: `contador`/`roubaOrbe` NÃO contam
+  como magnitude — por isso Medusa milagre, cujo base é `contador` de Pedra, é elegível; Ares habilidade, com
+  `fx[0].v`, NÃO é — o `heal 6` do nv4 dele continua SALTO.)
+- **(b) fx[i].dur** — a duração de um dot/hot (Veneno, Queimadura) sobe como **SALTO (só nv4)**. Morde: fora do
+  nv4 → quebra; em fx que não é dot/hot → quebra.
+
+**Achado de motor (reportado, não adaptado em silêncio — instrução do dono).** O dano NOVO-PEQUENO (v=5) de
+Dionísio milagre e Medusa milagre **CHEGA ao motor** — `bater` é chamado em todos os inimigos. A babá 8 (TODO
+DEGRAU MUDA O ESTADO) acusava "ESTADO inerte" por um artefato do CENÁRIO, não do degrau: o inimigo padrão da babá
+era o **Thor**, cuja passiva dá **−6 de redução ao time**, e isso ENGOLIA os 5 de dano (5−6<0). Corrigido no
+cenário da babá (inimigos limpos demeter/ganesha/hades, sem redução; e um debuff semeado no time do lançador p/
+tornar o `cleanse` do Apolo milagre nv4 observável) — as escadas ficaram intactas. O motor aplica todos os 63
+degraus como escritos; nada foi adaptado.
+
+**Bug de referência corrigido (pego pela babá servidor.test §1: dist ≠ servidor).** `_escreverCaminho(work,
+'fx[]', para)` EMPURRAVA o `para` POR REFERÊNCIA. Em `validarNiveisDeus`, `work` é um clone do `ab`, mas o laço
+percorre o `ab.niveis` ORIGINAL — então o `para` do NOVO (nv2) entrava no `work.fx` compartilhando objeto com o
+dado real; um degrau seguinte que escreve `fx[i].v` (nv3) MUTAVA o `para` do nv2 na fonte (Dionísio hab nv2
+{dmg,v:6}→9; Medusa/Dionísio milagre idem). Isso corrompia SÓ o catálogo em memória do build (a build roda
+`validarNiveisDeus` sobre o array `deuses` antes de injetá-lo no dist): o dist saía com o valor errado, o servidor
+lia o arquivo certo, e o `catId` (hash do catálogo) DIVERGIA no passo 0. Padrão exclusivo do LOTE 1 (NOVO no nv2 +
+bump no nv3); os pilotos (NOVO só no nv4) nunca o exibiram. Consertado: `_escreverCaminho` empurra um CLONE do
+`para`. Suíte + build verdes; servidor==cliente em cada passo de novo.
+
+**TRIAGEM (régua PADRÃO: espelho SORTEADO 30 comps + reativa apertada, N=3000):**
+
+| deus | básico n4 | habilidade n4 | milagre n4 | MÁX | triagem (MÁX 0–25, nv4 ≤+15) |
+|---|---|---|---|---|---|
+| Cérberus | +30,1 | +4,8 | +2,5 | +35,4 | **FORA** (básico AoE) |
+| Atena | +27,0 | +2,1 | +5,0 | +32,2 | **FORA** (grátis do nv4) |
+| Dionísio | +1,4 | +6,9 | +11,3 | +16,7 | DENTRO |
+| Medusa | +11,8 | +1,6 | +8,4 | +20,8 | DENTRO |
+| Ares | +2,8 | +1,0 | +7,7 | +13,4 | DENTRO |
+| Apolo | +7,0 | +14,9 | +11,7 | +29,3 | **FORA** (soma cura/suporte) |
+| Hércules | +4,5 | +7,6 | +6,8 | +15,8 | DENTRO |
+
+**4 DENTRO, 3 FORA.** As boas notícias que o dono temia NÃO se confirmaram: o **+5 empilhável do Hércules** mede
+só +7,6pp (DENTRO) e o **Veneno de 3 turnos da Medusa** deixa o básico em +11,8pp (DENTRO). O dano de alvo ÚNICO
+sobe de leve por degrau (Dionísio básico +1,4; Ares básico +2,8) — leveláveis à vontade.
+
+**Por que os 3 FORA (drivers isolados por medição):**
+- **Cérberus básico +30,1** — a "Dentada Tripla" bate em **3 inimigos**; subir o dano AoE mesmo o mínimo +1 já
+  vale **+12,8pp** (medido: básico:2 só, 8→9). Dois passos (8→10) + cura self = +30. Não há como reduzir abaixo
+  de +1/degrau sem tornar o degrau INERTE (babá 8). **AoE não é levelável por dano.**
+- **Atena básico +27,0** — o dano 12→14 SEM o nv4 vale só **+4,9pp** (medido: básico:3). O culpado é o **SALTO
+  `cost.Aurora 1→0` do nv4 (básico grátis)**: atacar de graça todo turno vale ~+22pp sozinho. É o "salto que
+  aumenta a FREQUÊNCIA" que o dono já marcara como o mais pesado.
+- **Apolo MÁX +29,3** — nenhum slot estoura sozinho, mas a SOMA passa de 25: habilidade +14,9 (cura 25→28→31,
+  +3/degrau, + regen NOVO no nv4) e milagre +11,7 (AoE 20→22 + cura 12→14 + cleanse). Cura de suporte levelada
+  soma rápido.
+
+**Regra do dono: "fora da triagem, ajustar SÓ degraus pequenos (±1) e re-medir; SALTO → propor e parar."**
+Nenhum dos 3 fecha com ±1: Cérberus e Atena são estruturais (AoE / SALTO grátis) e Apolo precisa de ~−5pp na
+soma (cura em passos de +3). Então, conforme a regra, **PROPONHO e PARO** — não apliquei as correções grandes.
+
+**Propostas (aguardam o OK do dono):**
+1. **Cérberus** — básico NÃO leva dano. Escada utilitária: nv2 = NOVO-PEQUENO `heal self` (ex.: 3), nv3 = subir
+   essa cura em degrau pequeno (4), nv4 = SALTO barato (`cd` ou `cost`). Mantém a identidade AoE no dano base.
+2. **Atena** — trocar o SALTO `cost.Aurora 1→0` do nv4 (grátis pesado, como o dono trocou o milagre da Oxum no
+   piloto). Sugestão: nv4 = NOVO-PEQUENO `shield self` (≤8) OU um SALTO tamer; o dano 12→13→14 fica.
+3. **Apolo** — encolher a cura: habilidade 25→26→27 (passos +1 em vez de +3) e milagre cura 12→13; re-medir.
+   Se ainda somar >25, mover o `cleanse`/`regen` NOVO para um degrau que a IA use menos.
+
+**Estado do commit (SEGURO).** Os 63 degraus foram COMMITADOS medidos, mas ficam **DORMENTES**: o nível vive na
+conta (default 1), a economia que sobe nível (invocação/cópias→pontos→subirNivel) é a **FASE 2, que está
+BLOQUEADA** (§95). Com todos em nv1, `kitEfetivo` é deep-equal ao base (babá 1) — nenhuma partida de hoje muda.
+**Portão:** a FASE 2 não pode LIGAR o LOTE 1 até Cérberus/Atena/Apolo serem re-medidos DENTRO. Babás 1–8 verdes
+para os 63 (incl. as duas extensões provadas a morder); suíte + build verdes.
+
+---
+
 ## §318 FASE 2 — ECONOMIA AUTORITATIVA (4 ETAPAS, cada uma verde). O servidor é a fonte da verdade.
 
 **O PROBLEMA (auditoria da PARTE 1, §318 F2):** toda a economia rodava no CLIENTE — o sorteio com

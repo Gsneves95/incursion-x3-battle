@@ -103,6 +103,33 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(umSalto).length === 0, 'B4 passa: 1 salto (cd) no nv4');
 })();
 
+// BABÁ 3b — §318 F3 LOTE1 EXTENSÃO NOVO-PEQUENO. Uma habilidade cujo fx BASE não tem caminho PEQUENO (nenhum
+// fx[i].v nem fx[i].eff.v) PODE acrescentar no nv2 UM efeito simples {t:dmg|heal|shield, v:≤8, escopo?}. Provado a
+// morder: em habilidade que JÁ tem número → quebra; v>8 → quebra; fora do nv2 → quebra. (Real: Dionísio milagre = só
+// `agendar`/`dominar`, sem magnitude; Zeus básico = fx[0].v=15, tem magnitude.)
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'efeito novo pequeno.' }];
+  // PASSA: Dionísio milagre (sem magnitude) ganha dmg 5 no nv2
+  ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', NP(2, { t: 'dmg', v: 5, escopo: 'todosInimigos' }))).length === 0, 'B3b passa: NOVO-PEQUENO dmg≤8 no nv2 (habilidade sem número)');
+  // MORDE: habilidade que já tem número (Zeus básico fx[0].v=15) → o fx[] vira SALTO (só nv4), recusado no nv2
+  ok(E.validarNiveisDeus(so(catalogo.zeus, 'basico', NP(2, { t: 'heal', v: 4, escopo: 'self' }))).length > 0, 'B3b MORDE: NOVO-PEQUENO em habilidade que já tem número (Zeus básico)');
+  // MORDE: v>8 não é PEQUENO → recusado no nv2
+  ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', NP(2, { t: 'dmg', v: 9, escopo: 'todosInimigos' }))).length > 0, 'B3b MORDE: NOVO-PEQUENO com v>8');
+  // MORDE: fora do nv2 (nv3) → recusado com a mensagem do NOVO-PEQUENO
+  ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', NP(3, { t: 'dmg', v: 5, escopo: 'todosInimigos' }))).some(e => /NOVO-PEQUENO.*nv2/i.test(e)), 'B3b MORDE: NOVO-PEQUENO fora do nv2');
+})();
+
+// BABÁ 4b — §318 F3 LOTE1 EXTENSÃO fx[i].dur (dot/hot) como SALTO. A duração de um Veneno/Queimadura sobe só no nv4.
+// Provado a morder: fora do nv4 → quebra (é SALTO); em fx que não é dot/hot → quebra (dur não faz sentido). (Real:
+// Medusa básico fx[1] = dot Veneno com dur:2 → dur:3.)
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 4, muda: [{ caminho: 'fx[1].dur', de: 2, para: 3 }], desc: '11 de dano + Veneno (8 de dano puro/turno por 3 turnos).' }])).length === 0, 'B4b passa: fx[i].dur (dot) 2→3 no nv4');
+  ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 2, muda: [{ caminho: 'fx[1].dur', de: 2, para: 3 }], desc: 'x' }])).some(e => /SALTO.*nv4/i.test(e)), 'B4b MORDE: fx[i].dur fora do nv4');
+  ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 4, muda: [{ caminho: 'fx[0].dur', de: undefined, para: 3 }], desc: 'x' }])).some(e => /dot\/hot/i.test(e)), 'B4b MORDE: fx[i].dur em fx que não é dot/hot');
+})();
+
 // BABÁ 5 — "de" ≠ valor atual (cumulativo) → quebra, NOMEANDO deus/habilidade/nível.
 (() => {
   const badDe = clone(catalogo.zeus); badDe.ab[0].niveis = [{ nv: 2, muda: [{ caminho: 'fx[0].v', de: 99, para: 17 }], desc: '17 de dano a 1 inimigo.' }];

@@ -10,8 +10,23 @@
     "nome": "Fúria Marcial",
     "desc": "Ares causa +1 de dano por cada 10 de HP perdido; ao abater um inimigo, sua recarga volta.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 0, "porHpFaltante": { "v": 1, "passo": 10 } },
-      { "gatilho": "aoCair", "quem": "inimigo", "faz": [ { "t": "zeraCd" } ] }
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "porHpFaltante": {
+          "v": 1,
+          "passo": 10
+        }
+      },
+      {
+        "gatilho": "aoCair",
+        "quem": "inimigo",
+        "faz": [
+          {
+            "t": "zeraCd"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -19,34 +34,176 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Golpe Sanguinário",
-      "cost": { "Chama": 1 },
+      "cost": {
+        "Chama": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo; Ares cura 6.",
       "fx": [
-        { "t": "dmg", "v": 15 },
-        { "t": "heal", "v": 6, "escopo": "self" }
+        {
+          "t": "dmg",
+          "v": 15
+        },
+        {
+          "t": "heal",
+          "v": 6,
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo; Ares cura 6."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 6,
+              "para": 8
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo; Ares cura 8."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Ares cura 8."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Sede de Sangue",
-      "cost": { "Chama": 2 },
+      "cost": {
+        "Chama": 2
+      },
       "cd": 1,
       "alvo": "inimigo",
       "desc": "22 de dano a 1 inimigo, +1 de dano por cada 4 de HP que falta em Ares.",
-      "fx": [ { "t": "dmg", "v": 22, "porHpFaltante": { "v": 1, "passo": 4 } } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 22,
+          "porHpFaltante": {
+            "v": 1,
+            "passo": 4
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 24
+            }
+          ],
+          "desc": "24 de dano a 1 inimigo, +1 de dano por cada 4 de HP que falta em Ares."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 24,
+              "para": 26
+            }
+          ],
+          "desc": "26 de dano a 1 inimigo, +1 de dano por cada 4 de HP que falta em Ares."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 6,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "26 de dano a 1 inimigo, +1 de dano por cada 4 de HP que falta em Ares; Ares cura 6."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Massacre",
-      "cost": { "Chama": 2, "livre": 1 },
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
       "cd": 3,
       "alvo": "inimigo",
       "desc": "4 golpes de 12 no mesmo alvo; se o alvo for derrotado, a recarga do Massacre zera.",
-      "fx": [ { "t": "dmg", "v": 12, "golpes": 4 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12,
+          "golpes": 4
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "4 golpes de 13 no mesmo alvo; se o alvo for derrotado, a recarga do Massacre zera."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "4 golpes de 14 no mesmo alvo; se o alvo for derrotado, a recarga do Massacre zera."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 10,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "4 golpes de 14 no mesmo alvo; se o alvo for derrotado, a recarga do Massacre zera; Ares cura 10."
+        }
+      ]
     }
   ]
 }

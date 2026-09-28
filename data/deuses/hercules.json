@@ -13,7 +13,11 @@
       {
         "gatilho": "abertura",
         "faz": [
-          { "t": "vidaExtra", "hp": 1, "escopo": "self" }
+          {
+            "t": "vidaExtra",
+            "hp": 1,
+            "escopo": "self"
+          }
         ]
       }
     ]
@@ -23,37 +27,179 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Punho Hercúleo",
-      "cost": { "Chama": 1 },
+      "cost": {
+        "Chama": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
       "fx": [
-        { "t": "dmg", "v": 15 }
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 4,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Hércules recebe 4 de redução de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Os Doze Trabalhos",
-      "cost": { "Chama": 2 },
+      "cost": {
+        "Chama": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "20 de dano a 1 inimigo; +4 de dano permanente a cada uso na partida.",
       "fx": [
-        { "t": "dmg", "v": 20 },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 4, "dur": 99 }, "escopo": "self" }
+        {
+          "t": "dmg",
+          "v": 20
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 4,
+            "dur": 99
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 22
+            }
+          ],
+          "desc": "22 de dano a 1 inimigo; +4 de dano permanente a cada uso na partida."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 4,
+              "para": 5
+            }
+          ],
+          "desc": "22 de dano a 1 inimigo; +5 de dano permanente a cada uso na partida."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 8,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "22 de dano a 1 inimigo; +5 de dano permanente a cada uso na partida; Hércules cura 8."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Força Sobre-humana",
-      "cost": { "Chama": 2, "livre": 1 },
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "inimigo",
       "desc": "40 de dano perfurante a 1 inimigo (ignora redução de dano).",
       "fx": [
-        { "t": "dmg", "v": 40, "kind": "perfurante" }
+        {
+          "t": "dmg",
+          "v": 40,
+          "kind": "perfurante"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 40,
+              "para": 43
+            }
+          ],
+          "desc": "43 de dano perfurante a 1 inimigo (ignora redução de dano)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 43,
+              "para": 46
+            }
+          ],
+          "desc": "46 de dano perfurante a 1 inimigo (ignora redução de dano)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "46 de dano perfurante a 1 inimigo (ignora redução de dano)."
+        }
       ]
     }
   ]

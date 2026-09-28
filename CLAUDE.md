@@ -177,8 +177,9 @@ caminho, NÃO asse `u.kit` (a IA clona o estado; assar dobra o clone, §24). `st
 leem o mesmo catálogo (o caso de sempre → regressão zero byte a byte) e um **PAR** só quando os kits efetivos divergem
 (PvP nivelado). **Níveis default 1** ⇒ kitEfetivo deep-equal ao base; nunca mude isso sem provar a regressão zero.
 
-O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`; SALTO nv4 ≤1/hab:
-`cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
+O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`; NOVO-PEQUENO **só nv2**:
+`fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a;
+SALTO nv4 ≤1/hab: `cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[i].dur` (dur de dot/hot — §318 F3 ext.b), `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
 GUARDADOS NA BUILD por `validarNiveisDeus`/`conferirTextoNiveis` (falham ALTO). O nível vive na **conta** (`c.niveis`,
 server-autoritativo, default 1; `definirNivel` recusa fora de 1–4/passiva/não-possuído) — **o cliente NUNCA informa nível**,
 quem monta os kits efetivos dos dois lados é o servidor (`salas.criarPvP` → `partida.criarPvP` → `montarProvacao`), e o
@@ -188,7 +189,11 @@ o número ATUAL (as telas de detalhe passam por kitEfetivo). A régua PADRÃO do
 a régua de TIME FIXO enviesa até ±10pp e não vale para balancear. **Triagem** (não faixa fina, que espera
 dados de partida real): MÁX 0–+25pp, nenhuma habilidade nv4 acima de +15pp; tanque/suporte < 0 por limitação
 da IA aceita-se e marca-se p/ revisão. Regras de degrau: +1 turno de duração em buff de time é o salto mais
-pesado; salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus. **FASE 2 (cópias→níveis,
+pesado; salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus. **Lição do LOTE 1 (§318 F3):**
+dano de **alvo único** sobe de leve por degrau (levelável); dano **AoE** ×3 NÃO é levelável por dano (um só +1
+já vale ~+13pp); **básico grátis** (`cost→0`) é o salto mais pesado (~+22pp); cura de **suporte** levelada soma
+rápido no MÁX. **LOTE 1: Cérberus/Atena/Apolo mediram FORA — degraus commitados mas DORMENTES; a FASE 2 não pode
+LIGAR o LOTE 1 até eles re-medirem DENTRO** (propostas em DECISOES §318 F3 LOTE 1). **FASE 2 (cópias→níveis,
 gacha por faixa) está BLOQUEADA:** o sorteio/economia rodam no CLIENTE (têm de ir ao servidor) e a Essência
 perde o produtor (§95) se a duplicata virar pontos — decisão do dono pendente (DECISOES §318 F1-fecho/FASE2).
 
