@@ -250,6 +250,154 @@ console.log('== ETAPA 2: PvE pago por replay (crédito autoritativo no servidor)
   ok(c.perfil.moedas.essencia === e0 + 90, 'saldo do dia parou em +90');
 })();
 
+// ================================================================================================
+// ETAPA 3 — INVOCAÇÃO e CÓPIAS no servidor. Sorteio 3-passos (faixa×raridade×deus) por FÓRMULA da faixa
+// de ranque do jogador; pity 60; duplicata→PONTOS (A1/S2/SS4); excedente do deus MAX→Essência (15/40/120);
+// subirNivel gasta pontos (1/2/3); débito de gema no servidor.
+// ================================================================================================
+const invoc = require('../server/invocacao.js');
+const ECON3 = JSON.parse(require('fs').readFileSync(__dirname + '/../data/economia.json', 'utf8'));
+
+console.log('');
+console.log('== ETAPA 3: invocação por faixa×raridade (autoritativa no servidor) ==');
+
+// contas de teste (mínimo que invocar/subirNivel leem): perfil.moedas/deuses + ranque.pontos + ledgers
+function contaFake(pontosRanque, gema, deuses) {
+  return { ranque: { pontos: pontosRanque || 0 }, perfil: { moedas: { gema: gema || 0, essencia: 0 }, deuses: deuses || {} }, niveis: {}, gacha: { pity: 0 }, pontos: {} };
+}
+function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++) if (esp[i] > 0) x += (obs[i] - esp[i]) * (obs[i] - esp[i]) / esp[i]; return x; }
+
+// --- (1) as 8 LINHAS de faixa: batem a fórmula, somam 100, e o SS efetivo ≤ 1% em toda faixa do jogador ---
+(() => {
+  const esperado = {
+    0: [97.5, 2, 0.4, 0.08, 0.016, 0.0032, 0.00064, 0.000128],
+    1: [37.5, 60, 2, 0.4, 0.08, 0.016, 0.0032, 0.00064],
+    7: [11.489, 6.383, 5.532, 5.106, 4.681, 3.830, 2.979, 60],
+  };
+  for (const f of [0, 1, 7]) {
+    const r = invoc.linhaFaixa(Number(f));
+    let bate = true; for (let i = 0; i < 8; i++) if (Math.abs(r[i] - esperado[f][i]) > 0.05) bate = false;
+    ok(bate, `linha da faixa ${f} bate os valores do dono (${r.map(x => x.toFixed(2)).join('/')})`);
+  }
+  for (let f = 0; f < invoc.NFAIXAS; f++) {
+    const r = invoc.linhaFaixa(f);
+    const soma = r.reduce((a, b) => a + b, 0);
+    ok(Math.abs(soma - 100) < 1e-6, `faixa ${f}: a linha soma 100 (${soma.toFixed(4)})`);
+    // SS efetivo (natural, sem pity) = Σ linha[f']·1% sobre as faixas que TÊM SS
+    let ssEf = 0; for (const ff of invoc.FAIXAS_COM_SS) ssEf += r[ff] * ECON3.invocacao.taxas.SS / 100;
+    ok(ssEf <= 0.01 + 1e-9, `faixa ${f}: SS efetivo natural ≤ 1% (${(ssEf * 100).toFixed(3)}%)`);
+  }
+})();
+
+// --- (2) QUI-QUADRADO: 1M seleções de faixa batem a linha (mecanismo puro, sem pity) ---
+(() => {
+  const f = 3;   // Adepto
+  const row = invoc.linhaFaixa(f);
+  const rng = invoc.mulberry32(20260928);
+  const N = 1000000; const obs = new Array(invoc.NFAIXAS).fill(0);
+  // amostra a seleção de faixa pela própria linha (o mesmo _pesoPick que o sorteio usa)
+  const total = row.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < N; i++) { let x = rng() * total; let k = 0; for (; k < row.length; k++) { x -= row[k]; if (x < 0) break; } if (k >= row.length) k = row.length - 1; obs[k]++; }
+  const esp = row.map(p => p / 100 * N);
+  // gl = faixas com esperado > 5; qui-quadrado crítico ~ generoso (as caudas raríssimas juntam ruído)
+  let x2 = 0, gl = 0; for (let i = 0; i < obs.length; i++) if (esp[i] > 30) { x2 += (obs[i] - esp[i]) ** 2 / esp[i]; gl++; }
+  ok(x2 < 30, `1M sorteios de faixa (Adepto): qui-quadrado ${x2.toFixed(2)} dentro do esperado (gl≈${gl})`);
+})();
+
+// --- (3) RARIDADE NATURAL dentro de uma faixa cheia: SS≈1 / S≈14 / A≈85 (1M, sem pity) ---
+// (o pity — que garante SS a cada 60 — é medido à parte no item 4; aqui é a taxa NATURAL da raridade.)
+(() => {
+  let f = -1; for (let i = 0; i < invoc.NFAIXAS; i++) if (invoc.POOL[i].A.length && invoc.POOL[i].S.length && invoc.POOL[i].SS.length) { f = i; break; }
+  ok(f >= 0, `existe faixa com as 3 raridades (faixa ${f})`);
+  const rng = invoc.mulberry32(777);
+  const N = 1000000; const t = { SS: 0, S: 0, A: 0 };
+  for (let i = 0; i < N; i++) t[invoc._raridadeNaFaixa(f, rng)]++;
+  const ssPct = t.SS / N * 100, sPct = t.S / N * 100, aPct = t.A / N * 100;
+  ok(Math.abs(ssPct - 1) < 0.15, `SS natural ≈ 1% (${ssPct.toFixed(3)}%)`);
+  ok(Math.abs(sPct - 14) < 0.5, `S natural ≈ 14% (${sPct.toFixed(2)}%)`);
+  ok(Math.abs(aPct - 85) < 0.5, `A natural ≈ 85% (${aPct.toFixed(2)}%)`);
+})();
+
+// --- (4) PITY 60: 60 sorteios sem SS garantem SS no 60º, e o contador zera ---
+(() => {
+  // rng que nunca dá SS naturalmente (x sempre alto) para isolar o pity
+  const rngSemSS = () => 0.999999;
+  const est = { pity: 0 };
+  let ssEm = -1;
+  for (let i = 1; i <= 60; i++) { const o = invoc.sortearUm(est, 3, rngSemSS, null); if (o.raridade === 'SS') { ssEm = i; break; } }
+  ok(ssEm === 60, `pity DURO entrega SS exatamente no 60º sorteio (deu ${ssEm})`);
+  ok(est.pity === 0, 'o contador de pity zera após o SS garantido');
+})();
+
+// --- (5) INVOCAR: débito de gema + posse/pontos/essência ---
+(() => {
+  const c = contaFake(0, 300, {});   // Suplicante, 300 gema
+  const rng = invoc.mulberry32(42);
+  const r = invoc.invocar(c, { pacote: false }, 0, rng);
+  ok(r.ok && r.saldo.gema === 150, `avulso debita 150 gema (saldo ${r.saldo.gema})`);
+  ok(r.resultados.length === 1 && r.resultados[0].novo, 'o 1º deus é NOVO (posse)');
+  ok(c.perfil.deuses[r.resultados[0].key] && c.perfil.deuses[r.resultados[0].key].copias === 1, 'deus novo entra com 1 cópia');
+  // segunda cópia do MESMO deus (força uma duplicata dando o deus e re-invocando com rng que o repita não é trivial;
+  // testamos a conversão diretamente pela regra): dar o deus, marcá-lo não-max, e invocar até repetir
+  const k = r.resultados[0].key, rar = r.resultados[0].raridade;
+  // simula uma duplicata: chama invocar num rng preparado é frágil; validamos a REGRA de pontos via muitos pulls
+  let dupViu = false;
+  const c2 = contaFake(0, 100000, {}); const rng2 = invoc.mulberry32(7);
+  for (let i = 0; i < 60 && !dupViu; i++) { const rr = invoc.invocar(c2, { pacote: true }, 0, rng2); for (const o of rr.resultados) if (o.pontos > 0) { dupViu = true; ok((ECON3.invocacao.pontosPorDuplicata[o.raridade]) === o.pontos, `duplicata ${o.raridade} vira ${o.pontos} ponto(s) (A1/S2/SS4)`); break; } }
+  ok(dupViu, 'duplicatas viram PONTOS ao longo de vários pacotes');
+})();
+
+// --- (6) EXCEDENTE: deus MAXIMIZADO (3 slots nv4) → duplicata vira Essência (15/40/120) ---
+(() => {
+  const c = contaFake(0, 100000, { zeus: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c.niveis = { zeus: { basico: 4, habilidade: 4, milagre: 4 } };   // zeus MAX (SS)
+  ok(invoc._maximizado(c, 'zeus'), 'zeus está maximizado (3 slots no nv4)');
+  const e0 = c.perfil.moedas.essencia;
+  // força um destaque em zeus (SS) via pity: 60 pulls forçam SS = zeus (destaque)
+  const est = { pity: 59 };
+  const o = invoc.sortearUm(est, invoc.FAIXA_DEUS.zeus || 0, () => 0.5, 'zeus');
+  ok(o.key === 'zeus' && o.raridade === 'SS', 'o destaque no pity entrega o zeus (SS)');
+  // aplica a regra do excedente diretamente por invocar com destaque zeus e pity alto
+  const c2 = contaFake(0, 100000, { zeus: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c2.niveis = { zeus: { basico: 4, habilidade: 4, milagre: 4 } };
+  c2.gacha.pity = 59;   // o próximo pull força SS = zeus (destaque), que está MAX → Essência
+  const rr = invoc.invocar(c2, { pacote: false, destaque: 'zeus' }, 0, () => 0.5);
+  const zres = rr.resultados[0];
+  ok(zres.key === 'zeus' && zres.essencia === ECON3.invocacao.essenciaPorDuplicata.SS, `excedente SS do zeus MAX vira Essência ${zres.essencia} (=120)`);
+  ok(c2.perfil.moedas.essencia === e0 + ECON3.invocacao.essenciaPorDuplicata.SS, 'a Essência do excedente entra no saldo');
+})();
+
+// --- (7) SUBIR NÍVEL: custo 1/2/3, gasta pontos, e todas as recusas ---
+(() => {
+  const c = contaFake(0, 0, { zeus: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c.pontos = { zeus: 6 };   // exatamente 1+2+3 = maximiza UM slot do nv1 ao nv4
+  let r = invoc.subirNivel(c, 'zeus', 'basico');
+  ok(r.ok && r.nivel === 2 && c.pontos.zeus === 5, `nv1→2 custa 1 ponto (sobrou ${c.pontos.zeus})`);
+  r = invoc.subirNivel(c, 'zeus', 'basico');
+  ok(r.ok && r.nivel === 3 && c.pontos.zeus === 3, `nv2→3 custa 2 pontos (sobrou ${c.pontos.zeus})`);
+  r = invoc.subirNivel(c, 'zeus', 'basico');
+  ok(r.ok && r.nivel === 4 && c.pontos.zeus === 0, `nv3→4 custa 3 pontos (sobrou ${c.pontos.zeus})`);
+  r = invoc.subirNivel(c, 'zeus', 'basico');
+  ok(!r.ok && r.motivo === 'ja_no_maximo', 'slot no nv4 recusa (ja_no_maximo)');
+  r = invoc.subirNivel(c, 'zeus', 'habilidade');
+  ok(!r.ok && r.motivo === 'pontos_insuficientes', 'sem pontos recusa (pontos_insuficientes)');
+  r = invoc.subirNivel(c, 'zeus', 'lixo');
+  ok(!r.ok && r.motivo === 'slot_invalido', 'slot inexistente recusa (slot_invalido)');
+  r = invoc.subirNivel(c, 'poseidon', 'basico');
+  ok(!r.ok && r.motivo === 'nao_possui', 'deus não possuído recusa (nao_possui)');
+})();
+
+// --- (8) SEM GEMAS → recusa (nada muda) ---
+(() => {
+  const c = contaFake(0, 100, {});   // 100 gema < 150
+  const antes = JSON.stringify(c.perfil);
+  const r = invoc.invocar(c, { pacote: false }, 0, invoc.mulberry32(1));
+  ok(!r.ok && r.motivo === 'gemas_insuficientes', 'invocar sem gema suficiente recusa');
+  ok(JSON.stringify(c.perfil) === antes, 'a recusa não mexe no perfil (sem débito, sem sorteio)');
+  const r2 = invoc.invocar(c, { pacote: true }, 0, invoc.mulberry32(1));
+  ok(!r2.ok && r2.motivo === 'gemas_insuficientes', 'pacote sem 1350 recusa também');
+})();
+
 console.log('');
 console.log(falhas === 0 ? '>>> ECONOMIA OK' : `>>> ${falhas} FALHA(S)`);
 process.exit(falhas ? 1 : 0);

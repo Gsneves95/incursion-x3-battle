@@ -17,10 +17,25 @@
       "pacote10": 1350,
       "_desconto": "1350 = 10x150 - 10%. O codigo antigo cobrava 1500 (sem desconto)."
     },
-    "taxas": { "SS": 0.03, "S": 0.17, "A": 0.80 },
+    "taxas": { "SS": 0.01, "S": 0.14, "A": 0.85 },
+    "_taxas_nota": "§318 F2 E3 (decisao do dono): SS 1% / S 14% / A 85% DENTRO da faixa sorteada. SUBSTITUI o 3/17/80 antigo (SS bem mais dificil). Se a faixa sorteada nao tem deuses de uma raridade, a fatia DESCE para a mais comum presente, NUNCA sobe para SS.",
+    "faixaSorteio": {
+      "own": 60,
+      "primeiroAcima": 2,
+      "razaoAcima": 0.2,
+      "_fonte": "§318 F2 E3 (decisao do dono): a FAIXA do deus sorteado sai por FORMULA da faixa de RANQUE do jogador (as 8: Suplicante..Semideus; a faixa de cada deus = faixaIndice em data/missoes.json + os 9 iniciais na 0). (1) A propria faixa leva `own` (60%). (2) Faixas ACIMA: a 1a acima leva `primeiroAcima` (2%) e cada seguinte e `razaoAcima` (0.2 = 5x mais rara). (3) Faixas ABAIXO dividem o que sobra na PROPORCAO do numero de deuses de cada uma. Sem faixa abaixo (Suplicante), a propria faixa absorve o resto (97,5%). Cada linha soma 100%. O codigo LE daqui; a particao dos deuses e DADO (missoes.json), nao literal."
+    },
+    "pontosPorDuplicata": {
+      "A": 1, "S": 2, "SS": 4,
+      "_nota": "§318 F2 E3 (decisao do dono): a DUPLICATA nao vira mais Essencia — vira PONTOS do deus (A1/S2/SS4), gastos em subirNivel. A 1a copia sempre fica (posse). So quando o deus esta MAXIMIZADO (3 slots no nv4 = 18 pontos gastos) a duplicata EXCEDENTE vira Essencia (essenciaPorDuplicata)."
+    },
+    "custoNivel": {
+      "2": 1, "3": 2, "4": 3,
+      "_nota": "§318 F2 E3: custo em PONTOS do deus para subir um slot AO nivel-chave: nv1->2 = 1, nv2->3 = 2, nv3->4 = 3. Por slot; 3 slots x (1+2+3) = 18 pontos para maximizar um deus."
+    },
     "essenciaPorDuplicata": {
       "A": 15, "S": 40, "SS": 120,
-      "_nota": "Repetido vira Essencia (F3.2): invocar um deus que ja esta na colecao credita Essencia por ordem A/S/SS, e NAO dissolve a copia unica (a 1a copia sempre fica). Fonte unica; o codigo LE daqui, sem literal em invocacao.js."
+      "_nota": "§318 F2 E3: agora so o EXCEDENTE (duplicata de um deus JA MAXIMIZADO, 3 slots no nv4) vira Essencia, por ordem A/S/SS. A duplicata comum vira PONTOS (pontosPorDuplicata). Fonte unica; o codigo LE daqui."
     },
     "pity": {
       "duro": 60,

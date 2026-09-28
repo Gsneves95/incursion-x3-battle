@@ -37,37 +37,32 @@ function sessao() {
   return { w, d, $: s => d.querySelector(s), $$: s => [...d.querySelectorAll(s)] };
 }
 
-console.log('== 2. Invocação: odds VISÍVEIS antes da compra + pity + carteira com Essência ==');
+console.log('== 2. Invocação: tela monta, pity visível, carteira com Essência; as CHANCES vêm do servidor (§318 F2 E3/E4) ==');
 {
   const { w, $ } = sessao();
   w.eval("ir('invocacao'); INV.montar();");
   ok(!!$('#iv'), 'a tela de invocação monta a partir da home');
-  // §304: as odds saíram da tela principal (mockup) e moram atrás do "Ver detalhes"/"?" (mesma auditoria de taxas).
-  // Continuam DISPONÍVEIS antes da compra, a um toque — abrimos e conferimos os 3/17/80 + a garantia de 60.
-  w.eval('INV.openAudit()');
-  const box = $('#iv-auditBox');
-  ok(!!box && /3%/.test(box.textContent) && /17%/.test(box.textContent) && /80%/.test(box.textContent), 'as odds 3/17/80 aparecem na auditoria (Ver detalhes), antes de invocar');
-  ok(/60/.test(box.textContent), 'a garantia dura (pity 60) é anunciada na auditoria');
-  w.eval("document.getElementById('iv-audit').classList.remove('iv-show')");
   ok(!!$('#iv-pity') && /\/60/.test($('#iv-pity').textContent), 'o contador de pity é visível na tela');
   ok(!!$('#iv-essencia'), 'a carteira mostra Essência');
+  // §304/§318: as odds saíram do "1000 sorteios locais" e viraram a TABELA DE CHANCES do SERVIDOR (por faixa).
+  // Sem conexão (sessão local), o painel abre e avisa honestamente que a economia é do servidor.
+  w.eval('INV.openAudit()');
+  const box = $('#iv-auditBox');
+  ok(!!box && $('#iv-audit').classList.contains('iv-show'), 'o painel de chances abre (Ver detalhes / ?)');
+  ok(/chances/i.test(box.textContent), 'o painel é a tabela de chances (do servidor), não sorteio local');
 }
 
-console.log('== 3. invocar de verdade (via DEV) e ver repetido creditar Essência ==');
+console.log('== 3. §318 F2 E3: SEM servidor o cliente NÃO sorteia nem credita (a economia é do servidor) ==');
 {
-  const { w, $ } = sessao();
+  const { w } = sessao();
   w.eval("ir('invocacao'); render();");
-  // dá gemas de teste e força um deus já possuído para garantir repetido no reveal
-  w.eval("INV.topup();");
+  const totalAntes = w.eval('(perfil.invocacao && perfil.invocacao.total) || 0');
   const essAntes = w.eval('perfil.moedas.essencia||0');
-  // pull ×10: com 100 no pool e coleção pequena, garante ao menos alguns; verifica que a Essência não regride
+  const gemaAntes = w.eval('perfil.moedas.gema||0');
   w.eval("INV.pull(10);");
-  const essDepois = w.eval('perfil.moedas.essencia||0');
-  ok(essDepois >= essAntes, 'a Essência nunca regride ao invocar');
-  ok(w.eval('perfil.invocacao.total>=10'), 'o total de invocações avançou');
-  // um repetido garantido: invoca o mesmo deus que já temos via registrarInvocacao no runtime seria trapaça;
-  // em vez disso, confirmamos que a carteira reflete essência (render escreve o número)
-  ok(/\d/.test($('#iv-essencia').textContent), 'a carteira de Essência renderiza um número');
+  ok(w.eval('((perfil.invocacao && perfil.invocacao.total) || 0)') === totalAntes, 'sem servidor o total NÃO avança (nada local)');
+  ok(w.eval('perfil.moedas.essencia||0') === essAntes, 'a Essência não muda no cliente');
+  ok(w.eval('perfil.moedas.gema||0') === gemaAntes, 'a gema não é debitada no cliente');
 }
 
 console.log('== 4. Coleção (§282 refeita): os 100 navegáveis por BUSCA/FILTRO/ABAS de cultura + dois estados ==');

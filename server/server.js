@@ -107,6 +107,34 @@ wss.on('connection', (ws) => {
         return responder('pveCreditado', { resultados: r.resultados, saldo: r.saldo, conta: r.conta });
       }
 
+      // ---- §318 F2 E3: INVOCAÇÃO no servidor. O sorteio, o débito de gema e a conversão (posse/pontos/
+      // essência) são autoritativos. O cliente só pede (avulso/pacote) e mostra o que volta. ----
+      case 'invocar': {
+        const r = contas.invocar(msg.token, { pacote: !!msg.pacote, iniciante: !!msg.iniciante, destaque: msg.destaque || null }, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
+        return responder('invocado', { resultados: r.resultados, saldo: r.saldo, pity: r.pity, pontos: r.pontos, inicianteUsado: r.inicianteUsado, conta: r.conta });
+      }
+      case 'devCredito': {
+        const r = contas.devCredito(msg.token);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo || 'recusado', erro: r.erro });
+        return responder('devCreditado', { valor: r.valor, saldo: r.saldo, conta: r.conta });
+      }
+      case 'subirNivel': {
+        const r = contas.subirNivel(msg.token, msg.deus, msg.slot);
+        if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
+        return responder('nivelSubiu', { deus: r.deus, slot: r.slot, nivel: r.nivel, pontos: r.pontos, conta: r.conta });
+      }
+      case 'comprarPergaminho': {
+        const r = contas.comprarPergaminho(msg.token, msg.deus);
+        if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
+        return responder('pergaminhoComprado', { custo: r.custo, saldo: r.saldo, conta: r.conta });
+      }
+      case 'chancesInvocacao': {
+        const r = contas.chancesInvocacao(msg.token);
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('chancesInvocacao', { faixa: r.faixa, faixaNome: r.faixaNome, faixaNomes: r.faixaNomes, linhaFaixa: r.linhaFaixa, raridade: r.raridade, pity: r.pity });
+      }
+
       // ---- §314: PROVAÇÃO ATIVA. O cliente só PEDE ativar/trocar; o servidor valida (ranque + nomes
       // possuídos) e é autoritativo sobre o progresso. Ativar com outra ativa PAUSA a atual (o progresso
       // congela, não zera). Devolve a conta atualizada para o cliente redesenhar. ----

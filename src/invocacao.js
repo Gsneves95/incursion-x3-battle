@@ -205,48 +205,38 @@ const INV = (function () {
   // perfil ainda é null (o boot carrega depois), então ler aqui, na abertura da tela, é
   // o momento certo. INTERIM: o pity é um contador único (desdeUltimoSS) no banner principal.
   function sincronizarCarteira() {
-    S.gemas = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
-    if (typeof perfil !== 'undefined' && perfil && perfil.invocacao) S.pity = perfil.invocacao.desdeUltimoSS || 0;
+    // §318 F2 E3 — a economia é do SERVIDOR: lê saldo + pity da conta autoritativa (contaAtual), com
+    // fallback ao perfil local só para o preview isolado (sem conta).
+    const ca = (typeof contaAtual !== 'undefined') ? contaAtual : null;
+    const m = (ca && ca.perfil && ca.perfil.moedas) || ((typeof perfil !== 'undefined' && perfil && perfil.moedas) || null);
+    S.gemas = m ? (m.gema || 0) : 0;
+    S.pity = (ca && typeof ca.pity === 'number') ? ca.pity : ((typeof perfil !== 'undefined' && perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0);
+    if (ca && ca.inicianteUsado) S.iniciante.used = true;
   }
 
-  // Aleatório: durante um lote, roda por SEMENTE (mulberry32 do motor), para o
-  // sorteio ser reproduzível e auditável. Fora de um lote, cai no Math.random do
-  // cliente (borda) só para gerar a semente.
-  let _rng = null;
-  const rnd = () => (_rng ? _rng() : Math.random());
-  const rand = a => a[Math.floor(rnd() * a.length)];
-  function rollRarity(st) {
-    st.pity++;
-    const x = rnd();
-    if (st.pity >= PITY || x < P.SS) return 'SS';   // pity DURO: no PITY-ésimo sem SS, garante SS
-    if (x < P.SS + P.S) return 'S';
-    return 'A';
-  }
-  function pickUnit(rar, bkey, st) {
-    const b = BANNERS[bkey];
-    if (rar === 'SS') {
-      st.pity = 0;
-      // Destaque: o SS é sempre o DEUS destacado (rate-up de deus, não de taxa).
-      if (b.feat) return byKey[FEAT_SS];
-      return rand(POOL.SS);
+  // §318 F2 E3 — O SORTEIO SAIU DAQUI. A economia é do SERVIDOR: o Math.random do gacha foi removido.
+  // O sorteio (faixa×raridade×deus), o débito de gema e a conversão (posse/pontos/essência) rodam em
+  // server/invocacao.js. O cliente só PEDE `invocar` e MOSTRA o que volta. Ver executar()/_aplicarInvocado().
+  function _tx() { return (typeof contaTransporte !== 'undefined') ? contaTransporte : null; }
+  function _token() { return (typeof lerToken === 'function') ? lerToken() : null; }
+  // aplica a resposta autoritativa do servidor: atualiza a conta, espelha o saldo/pity e revela as cartas.
+  function _aplicarInvocado(r, n, gratis) {
+    if (typeof contaAtual !== 'undefined' && r.conta) contaAtual = r.conta;
+    if (typeof perfil !== 'undefined' && perfil && r.saldo) {
+      perfil.moedas = perfil.moedas || { gema: 0, essencia: 0 };
+      perfil.moedas.gema = r.saldo.gema; perfil.moedas.essencia = r.saldo.essencia;
+      try { if (typeof salvar === 'function') salvar(perfil); } catch (e) {}
     }
-    if (rar === 'S') return rand(POOL.S);   // rate-up só no SS destacado; S sai do pool cheio
-    return rand(POOL.A.length ? POOL.A : POOL.S);
-  }
-  function doRoll(bkey, st) { const r = rollRarity(st); return { u: pickUnit(r, bkey, st), r }; }
-
-  // Sorteio PURO: dada uma semente, o banner, o pity de entrada e a quantidade,
-  // devolve o resultado e o pity de saída. Não olha perfil, não grava, não desenha
-  // — o simulador de economia da Fase 3 chama só isto, milhares de vezes.
-  function sortearLote(seed, bkey, pityEntrada, n) {
-    const anterior = _rng;
-    _rng = (typeof mulberry32 === 'function') ? mulberry32(seed >>> 0) : Math.random;
-    const st = { pity: (pityEntrada && pityEntrada.pity) || 0 };
-    const out = [];
-    for (let i = 0; i < n; i++) out.push(doRoll(bkey, st));
-    if (bkey === 'iniciante' && !out.some(o => o.r === 'SS')) out[out.length - 1] = { u: rand(POOL.SS), r: 'SS' };
-    _rng = anterior;
-    return { out, pity: st };
+    if (r.saldo) S.gemas = r.saldo.gema;
+    if (typeof r.pity === 'number') S.pity = r.pity;
+    if (r.inicianteUsado) S.iniciante.used = true;
+    const out = (r.resultados || []).map(o => ({
+      u: byKey[o.key] || { key: o.key, nome: o.key, funcao: 'Guardião', elem: 'raio' },
+      r: o.raridade, novo: o.novo, essencia: o.essencia || 0, pontos: o.pontos || 0,
+    }));
+    out.forEach(o => { S.stats[o.r] = (S.stats[o.r] || 0) + 1; S.stats.total++; S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1; });
+    S._lastN = n;
+    showReveal(out, !!gratis); render();
   }
 
   // §302: pull() é sempre a invocação PAGA (a única, com o deus em evidência). O sorteio grátis do
@@ -256,51 +246,27 @@ const INV = (function () {
     if (S.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
     executar('iniciante', ECONOMIA.invocacao.banners.iniciante.qtd);
   }
+  // §318 F2 E3 — o cliente só PEDE. O servidor sorteia, debita a gema e converte (posse/pontos/essência),
+  // devolvendo o resultado + o saldo/pity autoritativos. Sem servidor (preview isolado): recusa clara.
   function executar(bkey, n) {
-    let cost = 0;
-    if (bkey === 'iniciante') {
-      if (S.iniciante.used) { flash('Bênção do Iniciante já usada.'); return; }
-    } else {
-      cost = n === 10 ? ECONOMIA.invocacao.custo.pacote10 : ECONOMIA.invocacao.custo.avulso;
-      // SALDO INSUFICIENTE BLOQUEIA ANTES DE QUALQUER MUDANÇA DE ESTADO: sem sorteio, sem
-      // mexer no pity, sem gravar. Falha de pagamento não avança estado nenhum. Checa o
-      // PERFIL (a verdade), não o mirror. Sem perfil, também bloqueia (não há carteira).
-      const saldo = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.gema || 0) : 0;
-      if (!(typeof perfil !== 'undefined' && perfil) || saldo < cost) { flash('Gemas insuficientes — use o + (DEV) para recarregar.'); return; }
-    }
-    // UM pity só: o iniciante entra com o pity corrente (a garantia dele repõe um SS, que zera o
-    // contador único — coerente com "um contador"). O pago entra com o pity espelhado do perfil.
-    const pityEntrada = { pity: S.pity };
-    const seed = (Math.floor(Math.random() * 4294967296)) >>> 0;   // borda: semente do cliente
-    const { out, pity } = sortearLote(seed, bkey, pityEntrada, n);
-    S.pity = pity.pity;
-    if (bkey === 'iniciante') S.iniciante.used = true;
-    // dono ANTES do lote (a verdade é o perfil, não o mirror de sessão): decide NOVO × repetido.
-    // Repetido vira Essência; a contagem é SEQUENCIAL para a 2ª cópia do mesmo deus no MESMO lote já contar como dup.
-    const donoAntes = {};
-    if (typeof perfil !== 'undefined' && perfil && perfil.deuses) for (const k in perfil.deuses) donoAntes[k] = true;
-    out.forEach(o => {
-      S.stats[o.r]++; S.stats.total++;
-      if (o.r === 'SS' && o.u.key === FEAT_SS) S.stats.fSS++;
-      o.novo = !donoAntes[o.u.key];
-      o.essencia = o.novo ? 0 : (ESS[o.r] || 0);   // repetido → Essência por ordem
-      donoAntes[o.u.key] = true;
-      S.owned[o.u.key] = (S.owned[o.u.key] || 0) + 1;
-    });
-    // PERSISTE ANTES de revelar: recompensa se commita antes de aparecer, nunca
-    // depois — se o app morrer na animação, o jogador já recebeu. O DÉBITO das gemas
-    // entra AQUI, no mesmo commit: paga antes de ver (mesma regra da recompensa). O
-    // histórico guarda a SEMENTE, o pity de entrada e o custo: tudo reproduzível/auditável.
-    if (typeof perfil !== 'undefined' && perfil && typeof registrarInvocacao === 'function') {
-      if (cost > 0 && typeof debitar === 'function') perfil = debitar(perfil, 'gema', cost);   // saldo já checado; nunca fica negativo
-      perfil = registrarInvocacao(perfil, { resultados: out.map(o => ({ key: o.u.key, raridade: o.r })), pity: pity.pity }, 0, ESS);
-      if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'invocacao', banner: bkey, seed, pityEntrada: pityEntrada.pity, qtd: n, custo: cost, deuses: out.map(o => o.u.key) });
-      const rs = (typeof salvar === 'function') ? salvar(perfil) : { ok: true };
-      if (!rs.ok) flash('Invocado — mas não consegui salvar: ' + rs.erro);
-      S.gemas = perfil.moedas.gema;   // mirror segue a verdade
-    }
-    S._lastN = n;
-    showReveal(out, bkey === 'iniciante'); render();
+    const tx = _tx(), token = _token();
+    if (!tx || !token) { flash('Sem servidor — a invocação é autoritativa (conecte-se para invocar).'); return; }
+    if (S._invocando) return;   // uma invocação por vez (a resposta é do servidor)
+    S._invocando = true;
+    const gratis = bkey === 'iniciante';
+    const msg = gratis ? envelope('invocar', { token, iniciante: true }) : envelope('invocar', { token, pacote: n === 10 });
+    Promise.resolve(tx.pedir(msg)).then((r) => {
+      S._invocando = false;
+      if (!r || r.tipo === 'recusado' || !r.resultados) {
+        const cod = r && (r.codigo || r.erro);
+        flash(cod === 'gemas_insuficientes' ? 'Gemas insuficientes — use o + (DEV) para recarregar.'
+          : cod === 'iniciante_ja_usado' ? 'Bênção do Iniciante já usada.'
+          : ('Invocação recusada' + (cod ? ': ' + cod : '')));
+        render();
+        return;
+      }
+      _aplicarInvocado(r, n, gratis);
+    }).catch(() => { S._invocando = false; flash('Falha ao invocar (servidor).'); });
   }
 
   function showReveal(out, gratis) {
@@ -324,19 +290,24 @@ const INV = (function () {
   function closeReveal() { document.getElementById('iv-reveal').classList.remove('iv-show'); }
   function rollAgain() { pull(S._lastN || 1); }
 
+  // §318 F2 E3/E4 — a TABELA DE CHANCES vem do SERVIDOR (nada de 1000 sorteios locais com Math.random):
+  // a FAIXA do deus (o ranque que o libera) sai pela linha da sua faixa; dentro dela, a raridade é fixa.
   function openAudit() {
-    const N = 1000, st = { pity: 0 }, t = { SS: 0, S: 0, A: 0 }; let fss = 0;
-    for (let i = 0; i < N; i++) { const o = doRoll(PRINCIPAL, st); t[o.r]++; if (o.r === 'SS' && o.u.key === FEAT_SS) fss++; }
-    const pct = v => (v * 100).toFixed(0) + '%';
-    const exp = { SS: pct(P.SS) + ' + pity', S: pct(P.S) + ' + pity', A: pct(ECONOMIA.invocacao.taxas.A) };
-    const rows = ['SS', 'S', 'A'].map(r => `<tr><td class="iv-${r.toLowerCase()}c">${r}</td><td>${t[r]}</td><td>${(t[r] / N * 100).toFixed(1)}%</td><td style="color:var(--iv-dim)">${exp[r]}</td></tr>`).join('');
-    document.getElementById('iv-auditBox').innerHTML = `<h3>Auditoria de 1.000 invocações</h3>
-      <p>${BANNERS[PRINCIPAL].nome} · não gasta moedas nem afeta seus contadores</p>
-      <table><tr><th>Ordem</th><th>Qtd</th><th>Observado</th><th>Esperado</th></tr>${rows}
-      <tr><td>↳ SS em destaque (${byKey[FEAT_SS].nome})</td><td>${fss}</td><td>${t.SS ? (fss / t.SS * 100).toFixed(0) : 0}% dos SS</td><td style="color:var(--iv-dim)">100% (destaque)</td></tr></table>
-      <p style="margin-top:12px">O SS observado fica acima de ${pct(P.SS)} porque o <b style="color:var(--iv-gold)">pity</b> (garantia dura em ${PITY}) eleva a taxa efetiva. É o esperado.</p>
-      <button class="iv-close" onclick="document.getElementById('iv-audit').classList.remove('iv-show')">Fechar</button>`;
+    const box = document.getElementById('iv-auditBox');
     document.getElementById('iv-audit').classList.add('iv-show');
+    const tx = _tx(), token = _token();
+    const fechar = `<button class="iv-close" onclick="document.getElementById('iv-audit').classList.remove('iv-show')">Fechar</button>`;
+    if (!tx || !token) { box.innerHTML = `<h3>Tabela de chances</h3><p>Conecte-se para ver a tabela (a economia é do servidor).</p>${fechar}`; return; }
+    box.innerHTML = `<h3>Tabela de chances</h3><p>carregando…</p>`;
+    Promise.resolve(tx.pedir(envelope('chancesInvocacao', { token }))).then((r) => {
+      if (!r || !r.linhaFaixa) { box.innerHTML = `<h3>Tabela de chances</h3><p>indisponível.</p>${fechar}`; return; }
+      const nomes = r.faixaNomes || [];
+      const rar = r.raridade || {};
+      const linhas = r.linhaFaixa.map((p, i) => `<tr${i === r.faixa ? ' style="color:var(--iv-gold)"' : ''}><td>${nomes[i] || ('faixa ' + i)}${i === r.faixa ? ' · você' : ''}</td><td>${p.toFixed(p < 1 ? 3 : 1)}%</td></tr>`).join('');
+      box.innerHTML = `<h3>Tabela de chances · ${r.faixaNome || ('faixa ' + r.faixa)}</h3>
+        <p>A <b>faixa</b> do deus (o ranque que o libera) sai por esta tabela. Dentro da faixa: <b>SS ${(rar.SS * 100).toFixed(0)}%</b> · S ${(rar.S * 100).toFixed(0)}% · A ${(rar.A * 100).toFixed(0)}% (a raridade ausente desce para a mais comum, nunca sobe para SS). O <b style="color:var(--iv-gold)">pity</b> garante SS em ${PITY}: ${r.pity}/${PITY}.</p>
+        <table><tr><th>Faixa (ranque)</th><th>Chance</th></tr>${linhas}</table>${fechar}`;
+    }).catch(() => { box.innerHTML = `<h3>Tabela de chances</h3><p>falha ao carregar.</p>${fechar}`; });
   }
 
   // Crédito DEV: credita de VERDADE no perfil (para exercitar invocação sem grindar) mas
@@ -344,14 +315,18 @@ const INV = (function () {
   // nunca confundível com transação de jogo. O indicador na tela (ver render) fica aceso
   // enquanto o perfil estiver marcado. Sai antes do release (ver ESTADO).
   function topup() {
-    if (typeof perfil === 'undefined' || !perfil || typeof creditarDev !== 'function') { flash('Sem perfil para creditar.'); return; }
-    const v = ECONOMIA.grantTeste.gema;
-    perfil = creditarDev(perfil, 'gema', v, 0);
-    if (typeof registrarHistorico === 'function') registrarHistorico({ tipo: 'dev-credito', moeda: 'gema', valor: v });
-    if (typeof salvar === 'function') salvar(perfil);
-    S.gemas = perfil.moedas.gema;
-    render();
-    flash('+' + v.toLocaleString('pt-BR') + ' 💎 — DEV, contamina o perfil');
+    // §318 F2 E3 — a gema é do SERVIDOR: o crédito de TESTE roda lá (devCredito) e contamina a CONTA. Sem
+    // servidor não há como creditar (o servidor ignora gema forjada pelo cliente desde a ETAPA 1).
+    const tx = _tx(), token = _token();
+    if (!tx || !token) { flash('Sem servidor para creditar (DEV).'); return; }
+    Promise.resolve(tx.pedir(envelope('devCredito', { token }))).then((r) => {
+      if (!r || r.tipo === 'recusado' || !r.saldo) { flash('Crédito DEV recusado.'); return; }
+      if (typeof contaAtual !== 'undefined' && r.conta) contaAtual = r.conta;
+      if (typeof perfil !== 'undefined' && perfil) { perfil.moedas = perfil.moedas || { gema: 0, essencia: 0 }; perfil.moedas.gema = r.saldo.gema; perfil.moedas.essencia = r.saldo.essencia; try { if (typeof salvar === 'function') salvar(perfil); } catch (e) {} }
+      S.gemas = r.saldo.gema; render();
+      flash('+' + (r.valor || 0).toLocaleString('pt-BR') + ' 💎 — DEV (servidor)');
+    }).catch(() => flash('Falha no crédito DEV.'));
+    return;
   }
   let flashT;
   function flash(msg) {
@@ -461,5 +436,5 @@ const INV = (function () {
 
   function montar() { sincronizarCarteira(); document.getElementById('stage').innerHTML = SKELETON; render(); }
 
-  return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar, sortearLote };
+  return { render, pull, claimIniciante, openAudit, topup, closeReveal, rollAgain, montar };
 })();

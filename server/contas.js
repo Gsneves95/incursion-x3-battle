@@ -318,7 +318,7 @@ function validarTime(token, time) {
 function paraDono(c) {
   if (!c) return null;
   _garantirNiveis(c);
-  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), niveis: c.niveis, perfil: c.perfil, criadaEm: c.criadaEm };
+  return { id: c.id, faixaIdade: c.faixaIdade, nick: c.nick, ranque: ranquePublico(c), missoes: missoesPublicas(c), niveis: c.niveis, pontos: c.pontos || {}, pity: (c.gacha && c.gacha.pity) || 0, perfil: c.perfil, criadaEm: c.criadaEm };
 }
 // publica: o que OUTRO jogador poderá ver (perfil competitivo). Sem token, sem perfil, sem faixa etária.
 // Inclui nick + faixa (do servidor) + ratio EXIBIDO (não classifica; o jogador quer ver).
@@ -367,6 +367,50 @@ function creditarPve(token, replays, agora) {
   return { ok: true, resultados: r.resultados, saldo: r.saldo, conta: paraDono(c) };
 }
 
+// §318 F2 E3 — INVOCAÇÃO e CÓPIAS no servidor. O cliente só PEDE; o sorteio, o débito de gema e a conversão
+// (posse/pontos/essência) rodam aqui, autoritativos. Devolve a conta atualizada para o cliente redesenhar.
+const _invoc = require('./invocacao.js');
+function invocar(token, opts, agora) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _invoc.invocar(c, opts || {}, agora);
+  if (r.ok) _persistir();
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+function subirNivel(token, deus, slot) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _invoc.subirNivel(c, deus, slot);
+  if (r.ok) _persistir();
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+function comprarPergaminho(token, deus) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _invoc.comprarPergaminho(c, deus);
+  if (r.ok) _persistir();
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+function devCredito(token) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _invoc.devCredito(c);
+  if (r.ok) _persistir();
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// tabela de CHANCES da faixa atual do jogador (para a tela da invocação, §318 F2 E4). SÓ leitura.
+function chancesInvocacao(token) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const f = _invoc.faixaDoJogador(c);
+  return { ok: true, faixa: f, faixaNome: (RANQ.faixas[f] && RANQ.faixas[f].nome) || '', faixaNomes: (RANQ.faixas || []).map(x => x.nome), linhaFaixa: _invoc.linhaFaixa(f), raridade: (ECON.invocacao && ECON.invocacao.taxas) || null, pity: (c.gacha && c.gacha.pity) || 0 };
+}
+
 // ---- PLANO DO NICK (F5.3, quando o PvP chegar). Documentado aqui para não se perder. ----
 // O campo já existe (nick:null). Quando for pedido:
 //  - UNICIDADE: índice único por nick_normalizado (minúsculas, sem acento, sem espaços nas pontas).
@@ -393,6 +437,7 @@ function _setPontos(token, n) { _carregar(); const c = _contas.get(token); if (c
 module.exports = {
   FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, creditarPve, planoDoNick,
+  invocar, subirNivel, comprarPergaminho, devCredito, chancesInvocacao,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,
