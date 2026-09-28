@@ -79,6 +79,8 @@ function encerrarTurno(forcar) {
   if (!forcar && (l.dividaLivre || 0) > 0 && ov !== 'livre') {
     ov = 'livre'; livrePlano = {}; armado = null; alvos = []; escolhidos = []; detalhe = null; menuAberto = false; _redesenhar(); return;
   }
+  // §318 F2 E2: grava o FIM do turno do JOGADOR (não o da IA) para o replay — antes do fimTurno, que troca o lado.
+  if (typeof REPLAY !== 'undefined' && REPLAY.gravando() && !cpuControla(st.ativo)) REPLAY.gravarOp({ tipo: 'fim' });
   fimTurno(st); armado = null; alvos = []; escolhidos = []; detalhe = null; abaFoe = null; convAlvo = null;
   ov = null; livrePlano = {}; menuAberto = false;
   relogio = TURNO_SEG; _redesenhar();
@@ -163,9 +165,13 @@ function confirmar() {
   if (!a || !a.disponivel) { armado = null; alvos = []; escolhidos = []; _redesenhar(); return; }
   // ONLINE (F5.2): a ação vai ao SERVIDOR (otimista: aplica local e desenha; o servidor confirma).
   if (MP) return confirmarOnline({ uid: armado.uid, slot: a.slot, alvos: [...escolhidos] });
+  const _opRep = { tipo: 'agir', uid: armado.uid, slot: a.slot, alvos: [...escolhidos], escolhas: null, modo: null };
   const r = agir(st, armado.uid, a.slot, [...escolhidos]);
   if (!r.ok) st.log.push({ turno: st.turno, msg: '✗ ' + r.erro });
-  else if (typeof prova !== 'undefined' && prova) provaLances++;   // F3.1: conta o lance do jogador (o placar) — só ação confirmada e válida
+  else {
+    if (typeof prova !== 'undefined' && prova) provaLances++;   // F3.1: conta o lance do jogador (o placar) — só ação confirmada e válida
+    if (typeof REPLAY !== 'undefined' && REPLAY.gravando()) REPLAY.gravarOp(_opRep);   // §318 F2 E2: grava a ação do jogador
+  }
   armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar();
 }
 

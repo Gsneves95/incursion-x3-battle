@@ -62,9 +62,13 @@ function overlayHTML(){
   if(st.fim){
     // F4 — SANDBOX (Batalha CPU): a recompensa simbólica da vitória (com teto diário) aparece aqui.
     const sb=st._sandbox;
-    const sbHTML = sb ? (sb.creditou
-      ? `<p class="result__sandbox">🛡 Sandbox · +${sb.gema} 💎 · ${sb.vitoriasHoje}/${sb.teto} hoje</p>`
-      : `<p class="result__sandbox result__sandbox--teto">🛡 Sandbox · teto diário atingido (${sb.vitoriasHoje}/${sb.teto}) — sem recompensa</p>`) : '';
+    // §318 F2 E2: a Gema do sandbox é do SERVIDOR (teto 5/dia no relógio dele). O cliente ENVIA o replay e
+    // o saldo atualiza quando o servidor confirma — sem crédito local. `enviado` = novo fluxo autoritativo.
+    const sbHTML = sb ? (sb.enviado
+      ? `<p class="result__sandbox">🛡 Sandbox · +${sb.gema} 💎 (creditado no servidor, até ${sb.teto}/dia)</p>`
+      : (sb.creditou
+        ? `<p class="result__sandbox">🛡 Sandbox · +${sb.gema} 💎 · ${sb.vitoriasHoje}/${sb.teto} hoje</p>`
+        : `<p class="result__sandbox result__sandbox--teto">🛡 Sandbox · teto diário atingido (${sb.vitoriasHoje}/${sb.teto}) — sem recompensa</p>`)) : '';
     return `<div class="ov"><div class="ovbox"><div class="result">
       <h1>${H(narrar(st.fim))}</h1><p>ENCERROU NO TURNO ${st.turno}</p>
       ${sbHTML}
@@ -144,8 +148,10 @@ function ligarSobrepor(){
     b.onclick=()=>{convAlvo=convAlvo===b.dataset.ct?null:b.dataset.ct;render();};});
   const cc=q('#ctcanc'); if(cc)cc.onclick=()=>{ov=null;convAlvo=null;render();};
   const co=q('#ctok'); if(co&&!co.disabled)co.onclick=()=>{
+    const _alvoConv=convAlvo;
     const r=converter(st,convAlvo);
     if(!r.ok)st.log.push({turno:st.turno,msg:'✗ '+r.erro});
+    else if(typeof REPLAY!=='undefined'&&REPLAY.gravando())REPLAY.gravarOp({tipo:'converter',para:_alvoConv});   // §318 F2 E2
     ov=null;convAlvo=null;render();};
   const oc=q('#ovconv'); if(oc)oc.onclick=ev=>{if(ev.target===oc){ov=null;convAlvo=null;render();}};
   // overlay de energia livre (escolha no fim do turno)
@@ -156,8 +162,10 @@ function ligarSobrepor(){
       render();};});
   const ll=q('#lvlimpar'); if(ll)ll.onclick=()=>{livrePlano={};render();};
   const lo=q('#lvok'); if(lo&&!lo.disabled)lo.onclick=()=>{
+    const _plano=Object.assign({},livrePlano);
     const r=alocarLivre(st,livrePlano);
-    if(r.ok){ov=null;livrePlano={};encerrarTurno();}
+    if(r.ok){ if(typeof REPLAY!=='undefined'&&REPLAY.gravando())REPLAY.gravarOp({tipo:'alocarLivre',plano:_plano});   // §318 F2 E2 (antes do fim)
+      ov=null;livrePlano={};encerrarTurno();}
     else{st.log.push({turno:st.turno,msg:'✗ '+r.erro});render();}};
   const ol=q('#ovlivre'); if(ol)ol.onclick=ev=>{if(ev.target===ol){ov=null;livrePlano={};render();}};
   const bl=q('#bclose'); if(bl)bl.onclick=()=>{ov=null;render();};

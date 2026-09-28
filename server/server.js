@@ -96,6 +96,17 @@ wss.on('connection', (ws) => {
         return responder('perfilSalvo', { ok: true });
       }
 
+      // ---- §318 F2 E2: PvE PAGO POR REPLAY. O cliente manda UM replay (msg.replay) ou o LOTE da fila
+      // offline (msg.replays). O servidor re-simula no motor autoritativo e credita só o que bate; devolve
+      // a conta atualizada (a economia é do servidor — o cliente lê o saldo daqui, nunca credita local). ----
+      case 'pveResultado': {
+        const replays = Array.isArray(msg.replays) ? msg.replays : (msg.replay ? [msg.replay] : []);
+        if (!replays.length) return responder('erro', { erro: 'falta o replay do PvE' });
+        const r = contas.creditarPve(msg.token, replays, Date.now());
+        if (!r.ok) return responder('recusado', { codigo: r.codigo, erro: r.erro });
+        return responder('pveCreditado', { resultados: r.resultados, saldo: r.saldo, conta: r.conta });
+      }
+
       // ---- §314: PROVAÇÃO ATIVA. O cliente só PEDE ativar/trocar; o servidor valida (ranque + nomes
       // possuídos) e é autoritativo sobre o progresso. Ativar com outra ativa PAUSA a atual (o progresso
       // congela, não zera). Devolve a conta atualizada para o cliente redesenhar. ----

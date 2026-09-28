@@ -965,7 +965,8 @@ function atualizarProva(){
   provaFim = { resultado: r.resultado, categoria: classificarFim(r), motivo: r.motivo, lances: provaLances, minimo: prova.minimo, jaTinha: false };
   pararRelogio();
   if (r.resultado === 'vitoria') aplicarDesbloqueioProva(prova);
-  else if (!st.fim) st.fim = { tipo: 'fim', resultado: 'vitoria', lado: 1 };   // congela o motor quando a condição quebrou com a luta ainda em curso
+  else { if (typeof REPLAY !== 'undefined') REPLAY.descartar();   // §318 F2 E2: derrota/condição quebrada → não envia replay
+    if (!st.fim) st.fim = { tipo: 'fim', resultado: 'vitoria', lado: 1 }; }   // congela o motor quando a condição quebrou com a luta ainda em curso
 }
 function aplicarDesbloqueioProva(p){
   if (!perfil) return;
@@ -983,28 +984,32 @@ function aplicarDesbloqueioProva(p){
   if (!perfil.provacoes) perfil.provacoes = {};
   if (p.desafio) {
     // DESAFIO DE COMPOSIÇÃO (F3.6): sem desbloqueio de deus. Recompensa LEVE (Essência) só na 1ª vitória.
+    // §318 F2 E2 — a economia é do SERVIDOR: NÃO credita Essência local. Marca o feito (UI) e ENVIA o replay;
+    // o servidor credita a 1ª vitória (20) e as repetidas (8, tetadas). O saldo volta do servidor.
     const jaFeito = !!perfil.provacoes[p.scoreKey];
-    if (!jaFeito && p.recompensaEss) perfil = creditar(perfil, 'essencia', p.recompensaEss);
     perfil.provacoes[p.scoreKey] = { feito: true, em: Date.now() };
     provaFim.jaFeito = jaFeito;
-    provaFim.recompensaEss = jaFeito ? 0 : (p.recompensaEss || 0);
+    provaFim.recompensaEss = jaFeito ? 0 : (p.recompensaEss || 0);   // exibição do valor da 1ª vez
     const rd = salvar(perfil);
-    if (rd && !rd.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rd.erro });
+    if (rd && !rd.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação local falhou: ' + rd.erro });
+    if (typeof REPLAY !== 'undefined') REPLAY.concluir();
     return;
   }
   if (p.semanal) {
     // §245 — DESAFIO DA SEMANA: dá GEMA (recurso de invocação; ajuda a colecionar) na 1ª vitória da semana,
     // + maestria (acima) + placar. Grátis, expira por semana (o scoreKey traz ano+semana).
+    // §318 F2 E2 — a economia é do SERVIDOR: NÃO credita Gema local. Marca o recorde/feito (UI) e ENVIA o
+    // replay; o servidor credita 150 na 1ª vitória da SUA semana (relógio dele). O saldo volta do servidor.
     const jaFeito = !!perfil.provacoes[p.scoreKey];
     const gema = ((typeof ECONOMIA !== 'undefined' && ECONOMIA.semanal && ECONOMIA.semanal.recompensa && ECONOMIA.semanal.recompensa.gema)) || 0;
-    if (!jaFeito && gema) perfil = creditar(perfil, 'gema', gema);
-    provaFim.recompensaGema = jaFeito ? 0 : gema;
+    provaFim.recompensaGema = jaFeito ? 0 : gema;   // exibição do valor da 1ª vez da semana
     const antesS = perfil.provacoes[p.scoreKey];
     const recorde = !antesS || antesS.lances == null || provaLances < antesS.lances;
     if (recorde) perfil.provacoes[p.scoreKey] = { lances: provaLances, minimo: p.minimo, em: Date.now(), feito: true };
     provaFim.recorde = recorde;
     const rs = salvar(perfil);
-    if (rs && !rs.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + rs.erro });
+    if (rs && !rs.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação local falhou: ' + rs.erro });
+    if (typeof REPLAY !== 'undefined') REPLAY.concluir();
     return;
   }
   // PERGAMINHO legado (jogo direto sem compra) — maestria + placar. O hub agora só entra pago; isto sobra
@@ -1155,6 +1160,7 @@ function iniciarDesafioDeus(k){
   prova = Object.assign({}, p, { desafioDeus: k });   // flag: desafio POR DEUS pago (dá maestria, não avança nada)
   provaFim = null; provaLances = 0;
   st = montarProvacao(prova);
+  if (typeof REPLAY !== 'undefined') REPLAY.descartar();   // §318 F2 E2: desafio POR DEUS não é fonte de moeda (é maestria) — não grava replay
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2126,6 +2132,7 @@ function iniciarAto(cap, ato){
   campanha = Object.assign({}, ato, { aliados: time, _capNome: cap.nome, _capIdx: campCapIdx });
   campanhaFim = null;
   st = montarProvacao(campanha);
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: ato.id, aliados: time });   // §318 F2 E2
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2179,6 +2186,7 @@ function iniciarEncontroComTime(enc, time){
   campanha = Object.assign({}, enc, { aliados: time });
   campanhaFim = null;
   st = montarProvacao(campanha);               // reusa a máquina: só usa aliados/inimigos/montar
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: enc.id, aliados: time });   // §318 F2 E2
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2251,6 +2259,7 @@ function atualizarCampanha(){
   campanhaFim = { venceu, recompensa: null, jaFeito: false };
   pararRelogio();
   if (venceu) { creditarMaestria(); concluirEncontro(campanha); }   // F3.5: encontro vencido conta p/ maestria
+  else if (typeof REPLAY !== 'undefined') REPLAY.descartar();   // §318 F2 E2: derrota não envia replay
 }
 // F4 — SANDBOX (Batalha CPU): ao FIM de uma batalha PLANA (sem prova/campanha) contra a CPU,
 // se o humano (lado 0) venceu, credita a recompensa simbólica com TETO diário. Latch em st
@@ -2258,17 +2267,17 @@ function atualizarCampanha(){
 // NÃO avança missão nem ranque (não existem ainda); pode avançar maestria (cosmética, §212).
 function atualizarSandbox(){
   if (!st || !st.fim || st._sandbox !== undefined) return;   // uma vez por partida
-  if (!vsCPU || st.fim.resultado !== 'vitoria' || st.fim.lado !== 0) { st._sandbox = null; return; }
+  if (!vsCPU || st.fim.resultado !== 'vitoria' || st.fim.lado !== 0) { st._sandbox = null; if (typeof REPLAY !== 'undefined') REPLAY.descartar(); return; }
   creditarMaestria();   // sandbox pode avançar maestria (cosmética) — decisão do dono
   const econ = (typeof ECONOMIA !== 'undefined' && ECONOMIA.sandbox) ? ECONOMIA.sandbox : null;
   const gemaV = (econ && econ.recompensas && econ.recompensas.vitoria) ? (econ.recompensas.vitoria.gema || 0) : 0;
   const teto = econ ? (econ.tetoDia || 0) : 0;
-  const hoje = new Date().toISOString().slice(0, 10);   // borda impura: data local do dispositivo
-  const r = creditarSandbox(perfil, hoje, gemaV, teto);
-  perfil = r.perfil;
-  st._sandbox = { creditou: r.creditou, gema: r.gema, vitoriasHoje: r.vitoriasHoje, teto: r.teto };
-  const res = salvar(perfil);
-  if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
+  // §318 F2 E2 — a economia é do SERVIDOR: NÃO credita Gema local. Envia o replay; o servidor credita (teto
+  // 5/dia no relógio DELE) e devolve o saldo. `enviado` marca a exibição do overlay (recompensa em confirmação).
+  st._sandbox = { creditou: false, gema: gemaV, vitoriasHoje: null, teto: teto, enviado: true };
+  const res = salvar(perfil);   // persiste só a maestria cosmética (borda local)
+  if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação local falhou: ' + res.erro });
+  if (typeof REPLAY !== 'undefined') REPLAY.concluir();
 }
 function concluirEncontro(enc){
   if (!perfil) return;
@@ -2276,18 +2285,17 @@ function concluirEncontro(enc){
   if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
   const jaFeito = perfil.campanha.concluidas.includes(enc.id);
   const r = recompensaDe(enc.recompensa) || {};
+  // §318 F2 E2 — a economia é do SERVIDOR: NÃO credita moeda local. Marca o progresso (UI) e ENVIA o replay;
+  // o servidor re-simula e credita só a 1ª vitória de cada encontro. O saldo volta do servidor (pveCreditado).
   if (!jaFeito) {
-    if (r.gema) perfil = creditar(perfil, 'gema', r.gema);
-    if (r.essencia) perfil = creditar(perfil, 'essencia', r.essencia);
-    if (!perfil.campanha) perfil.campanha = { capitulo: 0, fase: 0, concluidas: [] };
-    if (!Array.isArray(perfil.campanha.concluidas)) perfil.campanha.concluidas = [];
     perfil.campanha.concluidas.push(enc.id);
     perfil.campanha.capitulo = Math.max(perfil.campanha.capitulo || 0, (typeof CAMPANHA !== 'undefined' && CAMPANHA) ? CAMPANHA.capitulo : 1);
     const res = salvar(perfil);
-    if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação falhou: ' + res.erro });
+    if (res && !res.ok && st) st.log.push({ turno: st.turno, msg: '⚠ vitória, mas a gravação local falhou: ' + res.erro });
   }
+  if (typeof REPLAY !== 'undefined') REPLAY.concluir();   // envia o replay (crédito autoritativo no servidor)
   campanhaFim.jaFeito = jaFeito;
-  campanhaFim.recompensa = jaFeito ? null : r;   // re-jogar não paga de novo
+  campanhaFim.recompensa = jaFeito ? null : r;   // exibição: o valor que o servidor confirma na 1ª vez (re-jogar não paga)
 }
 // próximo ATO depois de vencer a batalha atual (dentro do capítulo ou o 1º do próximo).
 function proximoAtoDepois(){
@@ -2393,6 +2401,7 @@ function iniciarSemanal(){
   campanha = null; campanhaFim = null;
   prova = p; provaFim = null; provaLances = 0;
   st = montarProvacao(p);
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'semanal' });   // §318 F2 E2 (o servidor escolhe o puzzle pela SUA semana)
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2622,6 +2631,7 @@ function iniciarDesafio(dsf, time){
   };
   provaFim = null; provaLances = 0;
   st = montarProvacao(prova);
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'desafio', desafioId: dsf.id, aliados: time });   // §318 F2 E2
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2922,6 +2932,7 @@ function iniciarCorridaDominio(cultura){
   const c = String(cultura).toLowerCase(), sem = semanaInfo(lad);
   // a corrida carrega A SUA semana (índice + chave) e a MARCA a bater (recorde da semana anterior)
   const run = domNovaCorrida(lad, sem.idx, sem.chave, recSemanaDominio(c, sem.chaveAnt));
+  run.id = 'dom_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);   // §318 F2 E2: id da corrida (teto de Essência POR CORRIDA no servidor)
   salvarRunDominio(c, run);
   iniciarNivelDominio(c);
 }
@@ -2935,6 +2946,7 @@ function iniciarNivelDominio(cultura){
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
   st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1 });
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2: estado da corrida ANTES do nível
   ir('batalha', {}, { substituir: true });
   render();
 }
@@ -2973,6 +2985,8 @@ function atualizarDominio(){
   dominioFim = { venceu: r.venceu, chefe: r.chefe, completou: r.completou, superou: !!r.superou, nivel: nivelJogado, profundidade: run.profundidade, marca: run.marcaAnterior || 0 };
   pararRelogio();
   salvarRunDominio(c, run);   // PERSISTE por-domínio: recorde da semana + melhor de sempre, a cada nível — nunca se perde ao sair da tela
+  // §318 F2 E2: nível LIMPO → envia o replay (o servidor credita Essência por nível, tetado por corrida/dia); derrota → descarta.
+  if (typeof REPLAY !== 'undefined') { if (r.venceu) REPLAY.concluir(); else REPLAY.descartar(); }
 }
 
 /* ---------- sobreposição de resultado ---------- */

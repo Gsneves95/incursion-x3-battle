@@ -161,20 +161,21 @@ console.log('== 8. Pergaminho vencido NÃO libera deus (coleção = só gacha, �
   ok(w.eval(`!!(perfil.maestria[${JSON.stringify(alvoKey)}] && perfil.maestria[${JSON.stringify(alvoKey)}].vitorias>=1)`), 'e a maestria avançou (cosmética)');
 }
 
-console.log('== 9. SANDBOX (Batalha CPU): vitória plana vs CPU credita 20 Gema, com teto (F4) ==');
+console.log('== 9. §318 F2 E2 — SANDBOX (Batalha CPU): vitória ENVIA replay (a Gema é do servidor, sem crédito local; teto 5/dia no servidor) ==');
 {
   const { w } = sessao();
-  w.eval("perfil.sandbox={dia:'',vitorias:0};");
   const g0 = w.eval('perfil.moedas.gema');
-  // batalha PLANA vs CPU (sem prova/campanha), humano (lado 0) vence
-  w.eval("prova=null;campanha=null;provaFim=null;campanhaFim=null; vsCPU=true; st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); st.ativo=0; ir('batalha',{},{substituir:true}); pararRelogio();");
+  // batalha PLANA vs CPU: grava a montagem e as ações; ao vencer, ENVIA o replay (não credita local).
+  w.eval("prova=null;campanha=null;provaFim=null;campanhaFim=null; vsCPU=true; REPLAY.iniciar({modo:'sandbox',aliados:['zeus','ogum','tyr'],inimigos:['sobek','brigid','ganesha'],seed:1,comeca:0}); st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); st.ativo=0; ir('batalha',{},{substituir:true}); pararRelogio();");
+  const nFila0 = w.eval('REPLAY.fila().length');
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; render();");
-  ok(w.eval('!!(st._sandbox && st._sandbox.creditou && st._sandbox.gema===20)'), 'a vitória plana vs CPU credita 20 Gema');
-  ok(w.eval('perfil.moedas.gema') === g0 + 20, 'o saldo subiu 20');
-  ok(w.eval('perfil.sandbox.vitorias') === 1, 'contou 1 vitória no dia');
-  // derrota NÃO credita
+  ok(w.eval('!!(st._sandbox && st._sandbox.enviado)'), 'a vitória vs CPU marca envio ao servidor');
+  ok(w.eval('perfil.moedas.gema') === g0, 'a Gema NÃO é creditada local (a economia é do servidor)');
+  ok(w.eval('REPLAY.fila().length') === nFila0 + 1, 'a vitória ENFILEIRA um replay');
+  ok(JSON.parse(w.eval('JSON.stringify(REPLAY.fila()[REPLAY.fila().length-1])')).modo === 'sandbox', 'o replay é do modo sandbox');
+  // derrota NÃO credita nem envia
   const g1 = w.eval('perfil.moedas.gema');
-  w.eval("st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); st.ativo=0; st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");
+  w.eval("REPLAY.iniciar({modo:'sandbox',aliados:['zeus','ogum','tyr'],inimigos:['sobek','brigid','ganesha'],seed:1,comeca:0}); st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0); st.ativo=0; st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");
   ok(w.eval('st._sandbox===null') && w.eval('perfil.moedas.gema') === g1, 'derrota (CPU vence) não credita nada');
 }
 

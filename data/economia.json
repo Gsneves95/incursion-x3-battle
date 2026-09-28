@@ -54,10 +54,22 @@
     }
   },
   "desafios": {
-    "_fonte": "Recompensas dos Desafios de Composicao (F3.6). LEVE de proposito (dono): o valor e o quebra-cabeca de montagem, nao a recompensa — recompensa pesada viraria grind obrigatorio. So a 1a vitoria de cada desafio paga; a maestria (contador de vitorias) acumula sempre.",
+    "_fonte": "Recompensas dos Desafios de Composicao (F3.6). LEVE de proposito (dono): o valor e o quebra-cabeca de montagem, nao a recompensa — recompensa pesada viraria grind obrigatorio. A 1a vitoria de cada desafio paga `padrao`; a partir da 2a paga `repeticao` (§318 F2, decisao do dono: a Essencia perdeu o produtor da duplicata da invocacao, que virou PONTOS, entao os modos REPETIVEIS de PvE passam a produzir Essencia — sujeito ao teto diario). A maestria (contador de vitorias) acumula sempre.",
     "recompensas": {
-      "padrao": { "essencia": 20 }
+      "padrao": { "essencia": 20 },
+      "repeticao": { "essencia": 8 }
     }
+  },
+  "dominios": {
+    "_fonte": "§318 F2 (decisao do dono): os DOMINIOS passam a produzir Essencia — a fonte REPETIVEL de comeco/meio de jogo que substitui a duplicata da invocacao. `porNivel` credita a cada NIVEL limpo (verificado por replay no servidor); `tetoRunEssencia` limita quanto uma unica corrida rende (2/nivel ate 30 = 15 niveis limpos). Sujeito TAMBEM ao teto diario global. Tunavel aqui.",
+    "recompensas": {
+      "porNivel": { "essencia": 2 }
+    },
+    "tetoRunEssencia": 30
+  },
+  "tetoDiarioEssencia": {
+    "valor": 90,
+    "_fonte": "§318 F2 (decisao do dono): TETO DIARIO de Essencia dos produtores REPETIVEIS de PvE (Desafio repetido + Dominios por nivel) = 90 = 3 pergaminhos (custoEssencia 30). Reset por DATA no relogio do SERVIDOR (nao do aparelho). NAO cobre as fontes finitas de 1a vez (chefe de campanha 40, 1a vitoria de desafio 20), que nao sustentam grind. Objetivo: limitar o farm continuo sem estrangular o onboarding."
   },
   "semanal": {
     "_fonte": "DESAFIO DA SEMANA (§245, decisao do dono): passa a dar GEMA (recurso de invocacao) em vez de Essencia — o desafio semanal AJUDA A COLECIONAR. Continua gratis e expirando por semana. So a 1a vitoria da semana paga; a maestria acumula sempre. Valor tunavel aqui.",

@@ -296,8 +296,11 @@ function ligarSelecao(){
   q('#bgo').onclick=()=>{
     if(!(pick[0].length===3&&pick[1].length===3))return;
     prova=null; campanha=null;   // batalha de seleção não é Provação nem encontro de campanha
-    st=novoEstado(pick[0],pick[1],Math.floor(Math.random()*1e6),Math.floor(Math.random()*2),
+    const _seed=Math.floor(Math.random()*1e6), _comeca=Math.floor(Math.random()*2);
+    st=novoEstado(pick[0],pick[1],_seed,_comeca,
       (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null);   // regra de geração de energia (economia.json)
+    // §318 F2 E2: sandbox vs CPU é fonte de Gema (tetada no servidor) — grava o replay com a montagem exata (seed/comeca aleatórios).
+    if(typeof REPLAY!=='undefined'){ if(vsCPU) REPLAY.iniciar({modo:'sandbox',aliados:pick[0].slice(),inimigos:pick[1].slice(),seed:_seed,comeca:_comeca}); else REPLAY.descartar(); }
     // batalha SUBSTITUI a seleção na pilha (não empilha): "voltar" não pode
     // abandonar a partida. aoSair(selecao) limpa a sobreposição; aoEntrar(batalha)
     // inicia o relógio — por isso não há mais limpeza nem iniciarRelogio aqui.

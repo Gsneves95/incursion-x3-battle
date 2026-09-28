@@ -100,12 +100,15 @@ console.log('\n== o DESAFIO DA SEMANA foi renomeado e dá Gema ==');
   w.eval("perfil.provacoes={}; ir('desafios'); render();");
   const banner = $('.psem[data-semanal]');
   ok(!!banner && /DESAFIO DA SEMANA/.test(banner.textContent) && !/PROVAÇÃO/.test(banner.textContent), 'o banner diz "DESAFIO DA SEMANA" (renomeado)');
-  // a via de recompensa credita GEMA na 1ª vitória da semana (aplicarDesbloqueioProva)
-  w.eval("prova=provaSemanalAtual(); provaFim={resultado:'vitoria'}; provaLances=13;");
+  // §318 F2 E2: a 1ª vitória da semana ENVIA um replay ao servidor (que credita 150 Gema no relógio dele);
+  // o cliente NÃO credita Gema local (a economia é do servidor).
+  w.eval("prova=provaSemanalAtual(); provaFim={resultado:'vitoria'}; provaLances=13; REPLAY.iniciar({modo:'semanal'});");
   const g0 = w.eval('perfil.moedas.gema');
+  const nFila0 = w.eval('REPLAY.fila().length');
   w.eval("aplicarDesbloqueioProva(prova);");
-  const gema = require('../data/economia.json').semanal.recompensa.gema;
-  ok(w.eval('perfil.moedas.gema') === g0 + gema, `vencer o Desafio da Semana credita ${gema} de Gema`);
+  ok(w.eval('perfil.moedas.gema') === g0, 'vencer o Desafio da Semana NÃO credita Gema local (economia do servidor)');
+  ok(w.eval('REPLAY.fila().length') === nFila0 + 1, 'vencer o Desafio da Semana ENVIA um replay ao servidor');
+  ok(JSON.parse(w.eval('JSON.stringify(REPLAY.fila()[REPLAY.fila().length-1])')).modo === 'semanal', 'o replay é do modo semanal');
 }
 
 console.log(`\n== DESAFIOS OK — ${passes} asserções, ${falhas} falha(s) ==`);

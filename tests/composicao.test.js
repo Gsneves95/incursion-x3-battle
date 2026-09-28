@@ -77,9 +77,11 @@ console.log('== 4. jogar o desafio: rider ativo, e a vitória dá maestria + Ess
   ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!(prova&&prova.desafio)'), 'entra na batalha do desafio');
   ok(w.eval('prova.condicoes.some(c=>c.predicado==="semPerderAliado")'), 'o rider do desafio está ativo (sem perder aliado)');
   ok(w.eval('st.lados[0].units.map(u=>u.key).join(",")') === time.join(','), 'joga com o time que o jogador montou');
-  // vitória
+  const nFila0 = w.eval('REPLAY.fila().length');
+  // vitória — §318 F2 E2: NÃO credita Essência local; ENVIA um replay de desafio ao servidor (que paga 20 na 1ª, 8 nas repetidas).
   w.eval("st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0;}); st.fim={tipo:'fim',resultado:'vitoria',lado:0}; render();");
-  ok(w.eval('perfil.moedas.essencia') === essAntes + w.eval('ECONOMIA.desafios.recompensas.padrao.essencia'), 'a 1ª vitória paga a Essência leve');
+  ok(w.eval('perfil.moedas.essencia') === essAntes, 'a vitória NÃO credita Essência local (a economia é do servidor)');
+  ok(w.eval('REPLAY.fila().length') === nFila0 + 1 && JSON.parse(w.eval('JSON.stringify(REPLAY.fila()[REPLAY.fila().length-1])')).modo === 'desafio', 'a vitória envia um replay de desafio ao servidor');
   ok(w.eval('Object.keys(perfil.deuses).length') === donosAntes, 'NÃO desbloqueia deus (não é Provação)');
   ok(time.every(k => w.eval(`perfil.maestria[${JSON.stringify(k)}] && perfil.maestria[${JSON.stringify(k)}].vitorias===1`)), 'conta vitória de maestria para os 3 que jogaram');
   ok(/DESAFIO VENCIDO/.test($('.result--prova').textContent), 'overlay de desafio vencido');

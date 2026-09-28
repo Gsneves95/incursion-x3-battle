@@ -148,30 +148,37 @@ console.log('== 6. BATALHA: a CTA monta o time (travado + emprestado) e entra na
   ok(w.eval('st.lados[1].units.length===3'), 'os 3 inimigos montaram (3×3)');
 }
 
-console.log('== 7. VITÓRIA paga UMA vez (chave de economia); DERROTA não paga nem conclui ==');
+console.log('== 7. §318 F2 E2: VITÓRIA ENVIA replay (economia é do servidor, sem crédito local); DERROTA não envia nem conclui ==');
 {
   const { w, $ } = sessao();
   const prologoTudo = ['pro-i', 'pro-ii', 'pro-iii', 'pro-iv', 'pro-v', 'pro-vi', 'pro-vii'];
   abrir(w, 1, 0, prologoTudo);
   w.eval("document.querySelector('#campcta').click(); vsCPU=false; pararRelogio();");
   const gema0 = w.eval('perfil.moedas.gema');
-  const rec = w.eval('ECONOMIA.campanha.recompensas.encontro.gema');
+  const nFila0 = w.eval('REPLAY.fila().length');
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:0}; render();");
-  ok(w.eval('perfil.moedas.gema') === gema0 + rec, `vitória paga a chave de economia (${rec})`);
-  ok(w.eval('perfil.campanha.concluidas.includes("cap1-i")'), 'o ato entra em concluidas');
+  ok(w.eval('perfil.moedas.gema') === gema0, 'vitória NÃO credita moeda local (a economia é do servidor)');   // §318 F2 E2
+  ok(w.eval('REPLAY.fila().length') === nFila0 + 1, 'vitória ENFILEIRA um replay para o servidor');
+  const rp = JSON.parse(w.eval('JSON.stringify(REPLAY.fila()[REPLAY.fila().length-1])'));
+  ok(rp.modo === 'campanha' && rp.atoId === 'cap1-i', `o replay é campanha/cap1-i (${rp.modo}/${rp.atoId})`);
+  ok(w.eval('perfil.campanha.concluidas.includes("cap1-i")'), 'o ato entra em concluidas (progresso da UI)');
   ok(/ATO CONCLUÍDO/.test($('.result--prova').textContent), 'overlay anuncia o ato concluído');
-  // re-jogar não paga
+  // re-jogar: o cliente AINDA envia (o servidor deduplica e decide a 1ª vez); local não muda
   w.eval("sairCampanha(); campCapIdx=1; campAtoIdx=0; ir('campanha'); render(); document.querySelector('#campcta').click(); vsCPU=false; pararRelogio();");
   const gema1 = w.eval('perfil.moedas.gema');
+  const nFila1 = w.eval('REPLAY.fila().length');
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:0}; render();");
-  ok(w.eval('perfil.moedas.gema') === gema1, 're-jogar um ato vencido não paga de novo');
-  // derrota
+  ok(w.eval('perfil.moedas.gema') === gema1, 're-jogar não credita local');
+  ok(w.eval('REPLAY.fila().length') === nFila1 + 1, 're-jogar ainda envia replay (o servidor decide o crédito)');
+  // derrota: não envia, não conclui
   abrir(w, 1, 2, prologoTudo.concat(['cap1-i', 'cap1-ii']));   // Cap 1 ato III (batalha)
   w.eval("document.querySelector('#campcta').click(); vsCPU=false; pararRelogio();");
   const gemaD = w.eval('perfil.moedas.gema');
+  const nFilaD = w.eval('REPLAY.fila().length');
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render();");
-  ok(w.eval('perfil.moedas.gema') === gemaD, 'derrota não paga');
+  ok(w.eval('perfil.moedas.gema') === gemaD, 'derrota não credita');
   ok(w.eval('!perfil.campanha.concluidas.includes("cap1-iii")'), 'derrota não conclui');
+  ok(w.eval('REPLAY.fila().length') === nFilaD, 'derrota NÃO envia replay');
   ok(!!$('#cftentar'), 'derrota oferece tentar de novo');
 }
 

@@ -351,6 +351,22 @@ function salvarPerfil(token, perfil) {
   return { ok: true };
 }
 
+// §318 F2 E2 — CRÉDITO DE PvE POR REPLAY. contas é a dona da persistência: recebe um replay (ou o LOTE da
+// fila offline do cliente), delega a VERIFICAÇÃO e o crédito ao módulo `pve` (re-simulação determinística
+// no motor autoritativo) e persiste. O ledger de recompensa (pve.*) vive na CONTA, nunca no perfil que o
+// cliente escreve — por isso teto/1ª-vez/1×-semana/dedupe não se forjam. Devolve a conta atualizada para
+// o cliente redesenhar o saldo (a economia é do servidor: o cliente lê daqui, não credita local).
+const _pve = require('./pve.js');
+function creditarPve(token, replays, agora) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const lote = Array.isArray(replays) ? replays : (replays ? [replays] : []);
+  const r = _pve.creditarLote(c, lote, agora);
+  _persistir();
+  return { ok: true, resultados: r.resultados, saldo: r.saldo, conta: paraDono(c) };
+}
+
 // ---- PLANO DO NICK (F5.3, quando o PvP chegar). Documentado aqui para não se perder. ----
 // O campo já existe (nick:null). Quando for pedido:
 //  - UNICIDADE: índice único por nick_normalizado (minúsculas, sem acento, sem espaços nas pontas).
@@ -376,7 +392,7 @@ function _setPontos(token, n) { _carregar(); const c = _contas.get(token); if (c
 
 module.exports = {
   FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
-  criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, planoDoNick,
+  criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, creditarPve, planoDoNick,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,

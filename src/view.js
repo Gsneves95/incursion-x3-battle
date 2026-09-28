@@ -135,6 +135,21 @@ configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
 // §318 F1: dá ao cliente os MEUS níveis (da conta) para reproduzir o PvP nivelado e bater o hash do
 // servidor. O oponente vem do snapshot (niveisOponente); o cliente nunca informa nível ao servidor.
 if(typeof PARTIDA_CLI!=='undefined' && PARTIDA_CLI.configurarNiveis) PARTIDA_CLI.configurarNiveis(()=>(contaAtual&&contaAtual.niveis)||{});
+// §318 F2 E2 — a economia de PvE é do SERVIDOR. Quando o servidor confirma um replay (pveCreditado),
+// aplicamos o SALDO AUTORITATIVO: atualiza contaAtual e espelha no perfil LOCAL (a UI antiga lê perfil.moedas).
+function _aplicarPveCreditado(r){
+  if(!r) return;
+  if(r.conta) contaAtual = r.conta;
+  const saldo = r.saldo || (r.conta && r.conta.perfil && r.conta.perfil.moedas);
+  if(saldo && typeof perfil!=='undefined' && perfil){
+    perfil.moedas = perfil.moedas || { gema:0, essencia:0 };
+    if(typeof saldo.gema==='number') perfil.moedas.gema = saldo.gema;
+    if(typeof saldo.essencia==='number') perfil.moedas.essencia = saldo.essencia;
+    try{ if(typeof salvar==='function') salvar(perfil); }catch(e){}
+  }
+  try{ render(); }catch(e){}
+}
+function _wireReplay(){ if(typeof REPLAY!=='undefined' && REPLAY.configurar) REPLAY.configurar({ transporte: contaTransporte, token: (typeof lerToken==='function')?lerToken():null, aoCreditar: _aplicarPveCreditado }); }
 registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderMissoes });    // F4/§213: MISSÕES (marcador honesto; chegam no PvP)
 registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFIOS (pergaminhos + semanal + composição)
@@ -488,13 +503,14 @@ async function retomarPartidaServidor(token){
     const r=await iniciarConta(trans,{});
     if(r.fase==='entrou'){ contaAtual=r.conta; montarBotaoConta();
       if(trans.aoPush) trans.aoPush(aoPushGlobal);   // pronto para receber pareamento/relógio/oponente
+      _wireReplay();   // §318 F2 E2: liga o envio de replays + esvazia a fila offline pendente
       // F5.4: reconectou com token válido — havia partida em curso? Retoma antes de qualquer coisa.
       try { await retomarPartidaServidor(lerToken()); } catch(e){}
     }
     else if(r.fase==='perguntarFaixa'){
       montarPortaoIdade(async(faixa)=>{
         const rc=await criarConta(trans,{faixaIdade:faixa,tinhaPerfil:_tinhaPerfilAntes,perfilLocal:perfil});
-        if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); render(); }
+        if(rc&&rc.fase==='entrou'){ contaAtual=rc.conta; fecharPortaoIdade(); montarBotaoConta(); _wireReplay(); render(); }
       });
     }
   } catch(e){ /* qualquer falha na conta: o app segue local */ }
