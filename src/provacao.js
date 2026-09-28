@@ -467,7 +467,11 @@ function _canon(v) {
 // entra no hash; só um rótulo comprovadamente de tela sai. Assim um novo campo de combate nunca
 // passa em silêncio; no pior caso re-carimba-se um cosmético que poderia ter ficado de fora.
 const TELA_TOPO = ['nome', 'curto', 'arquetipo'];   // deus/criatura: rótulos exibidos (§262; arquetipo §282 — legenda de tela, o motor NUNCA o lê)
-const TELA_AB   = ['nome', 'desc'];         // habilidade: nome e descrição são de tela (busca por `slot`, §..)
+// §318 F1: `niveis` (a escada de cópias) NÃO entra no carimbo. A Provação/Ordália roda no NÍVEL 1
+// (times fixos, sem níveis de jogador) — a escada nunca é exercida nessa partida, então não é combate
+// DAQUELE match (o mesmo critério do §263: o carimbo só vê o combate que a partida REALMENTE roda).
+// Assim adicionar/ajustar a escada não re-carimba as 100 Provações; um fx BASE mudado ainda invalida.
+const TELA_AB   = ['nome', 'desc', 'niveis'];   // habilidade: nome e descrição são de tela (busca por `slot`); niveis é a escada §318 (fora do combate nv1)
 const TELA_OPC  = ['nome'];                 // opção: escolhida por ÍNDICE (escolhas:[i]) — nome é rótulo
 const TELA_PASS = ['nome', 'desc'];         // passiva: idem
 function _semTela(obj, chaves) { const o = {}; for (const k in obj) if (!chaves.includes(k)) o[k] = obj[k]; return o; }

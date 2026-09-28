@@ -366,6 +366,15 @@ function registrarCatalogo(catalogo) {
   if (!CATALOGOS[id]) CATALOGOS[id] = Object.freeze(Object.assign({}, catalogo));
   return id;
 }
+// §318 — registra um catálogo sob um id JÁ CONHECIDO (o do servidor). O CLIENTE reproduz uma partida
+// PvP com níveis a partir do estado serializado do servidor (que carrega o catId); ele NÃO recomputa o
+// id (a ordem de chaves do catálogo base poderia divergir) — só precisa que kitDe(st,u) ache o kit
+// EFETIVO por lado sob o id que o servidor já pôs em st.catId. Os VALORES do kit batem (mesmo
+// kitEfetivo, mesmos níveis); a ausência do bestiário no cliente não importa (PvP só tem deuses).
+function registrarCatalogoComId(id, catalogo) {
+  if (id != null && !CATALOGOS[id]) CATALOGOS[id] = Object.freeze(Object.assign({}, catalogo));
+  return id;
+}
 // §318: catId é ESCALAR (os dois lados leem o MESMO catálogo — o caso de sempre, regressão
 // zero byte a byte) OU um par [idLado0, idLado1] quando os lados têm kits EFETIVOS distintos
 // (níveis diferentes em PvP). O caminho escalar é idêntico ao de antes; o par só existe quando
@@ -545,7 +554,12 @@ function conferirTextoNiveis(deus) {
       const ef = kitEfetivo(deus, { [abBase.slot]: d.nv }).ab.find(a => a.slot === abBase.slot);
       const vals = new Set(_valoresDeCombate(ef));
       for (const n of _numerosNoTexto(d.desc)) if (!vals.has(n)) div.push({ deus: nome, slot: abBase.slot, nivel: d.nv, tipo: 'texto>valor', detalhe: `o texto do nv${d.nv} cita ${n}, ausente dos valores efetivos {${[...vals].join(',')}}` });
-      for (const mud of (d.muda || [])) if (typeof mud.para === 'number' && !_numerosNoTexto(d.desc).includes(mud.para)) div.push({ deus: nome, slot: abBase.slot, nivel: d.nv, tipo: 'valor>texto', detalhe: `o nv${d.nv} muda ${mud.caminho} para ${mud.para}, ausente do texto ${JSON.stringify(d.desc)}` });
+      for (const mud of (d.muda || [])) {
+        if (typeof mud.para !== 'number') continue;                                   // efeito NOVO (objeto): números conferidos pela lente coarse
+        if (mud.caminho === 'cd' || /^cost\./.test(mud.caminho)) continue;           // §318 F1: cd/custo são campos de INTERFACE, não do texto — isentos
+        if (!_numerosNoTexto(d.desc).includes(Math.abs(mud.para)))                    // magnitude: o texto mostra "perde 15", não "-15"
+          div.push({ deus: nome, slot: abBase.slot, nivel: d.nv, tipo: 'valor>texto', detalhe: `o nv${d.nv} muda ${mud.caminho} para ${mud.para}, ausente do texto ${JSON.stringify(d.desc)}` });
+      }
     }
   }
   return div;
@@ -2344,5 +2358,7 @@ if (typeof module !== 'undefined') {
     infoPassiva,            // §266 — a passiva está AGINDO agora? (para acender o P e ler o valor/fonte)
     // §318 — níveis de habilidade (a função-de-um-ponto-só + o portão de build + a lente texto×número)
     kitEfetivo, catalogoEfetivo, validarNiveisDeus, conferirTextoNiveis, _categoriaCaminho, NIVEL_MIN, NIVEL_MAX, SLOTS_NIVEIS,
+    registrarCatalogoComId, catalogoAtivo,   // §318 F1 — o cliente registra os catálogos efetivos por lado (PvP nivelado)
+    _limparCatalogos: () => { for (const k in CATALOGOS) delete CATALOGOS[k]; },   // TESTE: simular um cliente FRESCO (registro de catálogos vazio)
   };
 }

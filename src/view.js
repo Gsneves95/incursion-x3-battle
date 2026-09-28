@@ -132,6 +132,9 @@ let contaAtual=null, contaTransporte=null;
   if(c.motivo && !/inacess/.test(c.motivo)) console.warn('perfil corrompido ('+c.motivo+') — recriei com o grant inicial'); }
 configurarTurno({ redesenhar: render, emBatalha: ()=>rotaAtual()==='batalha',
   rotulo: (lado)=>rotuloLado(lado).toUpperCase() });
+// §318 F1: dá ao cliente os MEUS níveis (da conta) para reproduzir o PvP nivelado e bater o hash do
+// servidor. O oponente vem do snapshot (niveisOponente); o cliente nunca informa nível ao servidor.
+if(typeof PARTIDA_CLI!=='undefined' && PARTIDA_CLI.configurarNiveis) PARTIDA_CLI.configurarNiveis(()=>(contaAtual&&contaAtual.niveis)||{});
 registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderMissoes });    // F4/§213: MISSÕES (marcador honesto; chegam no PvP)
 registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFIOS (pergaminhos + semanal + composição)

@@ -11,7 +11,13 @@
     "nome": "O Maneta",
     "desc": "O dano de Tyr não pode ser reduzido nem absorvido por escudo.",
     "fx": [
-      { "gatilho": "danoIrredutivel", "ignora": ["reducao", "escudo"] }
+      {
+        "gatilho": "danoIrredutivel",
+        "ignora": [
+          "reducao",
+          "escudo"
+        ]
+      }
     ]
   },
   "ab": [
@@ -27,6 +33,49 @@
         {
           "t": "dmg",
           "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Grátis. 13 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "Grátis. 14 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 5,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Grátis. 14 de dano; Tyr recebe 5 de redução por 1 turno."
         }
       ]
     },
@@ -56,6 +105,41 @@
             "dur": 2
           },
           "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 15,
+              "para": 17
+            }
+          ],
+          "desc": "Provoca o alvo por 2 turnos; Tyr recebe 17 de redução por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 17,
+              "para": 19
+            }
+          ],
+          "desc": "Provoca o alvo por 2 turnos; Tyr recebe 19 de redução por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cost.Aurora",
+              "de": 2,
+              "para": 1
+            }
+          ],
+          "desc": "Provoca o alvo por 2 turnos; Tyr recebe 19 de redução por 2 turnos."
         }
       ]
     },
@@ -91,6 +175,41 @@
             "dur": 2
           },
           "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[2].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Tyr perde 20 de HP; o time fica imune a controle e causa +9 de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": -20,
+              "para": -15
+            }
+          ],
+          "desc": "Tyr perde 15 de HP; o time fica imune a controle e causa +9 de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Tyr perde 15 de HP; o time fica imune a controle por 2 turnos e causa +9 de dano por 3 turnos."
         }
       ]
     }

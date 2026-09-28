@@ -32,6 +32,41 @@ function _fn(nome) {
   if (typeof globalThis !== 'undefined' && typeof globalThis[nome] === 'function') return globalThis[nome];
   throw new Error('partida_cliente: função do motor ausente: ' + nome);
 }
+// mesma resolução do _fn, mas OPCIONAL (devolve null se ausente, sem lançar) — para as funções de
+// catálogo do §318, que só existem quando há níveis em jogo.
+function _fnOpt(nome) {
+  if (_deps && typeof _deps[nome] === 'function') return _deps[nome];
+  if (typeof globalThis !== 'undefined' && typeof globalThis[nome] === 'function') return globalThis[nome];
+  return null;
+}
+
+// §318 F1 — NÍVEIS no cliente. Provedor dos MEUS níveis (da conta), injetado pela view. O oponente vem
+// do snapshot (niveisOponente, projeção pública do servidor). O cliente NUNCA informa nível ao servidor;
+// isto é só para REPRODUZIR a partida (montar os kits efetivos dos dois lados e bater o hash da prova).
+let _niveisProvider = null;
+function configurarNiveis(fn) { _niveisProvider = (typeof fn === 'function') ? fn : null; }
+
+// registra, sob os ids que o SERVIDOR pôs em st.catId, os catálogos EFETIVOS de cada lado, para que
+// kitDe(st,u) na reprodução ache o kit certo por lado. NO-OP quando nada está nivelado (o caminho de
+// sempre: fallback ao catálogo base) — assim as partidas sem nível ficam byte a byte idênticas.
+function _registrarCatalogosPvP(st, snap) {
+  if (!st || st.catId == null) return;
+  const catAtivo = _fnOpt('catalogoAtivo'), catEf = _fnOpt('catalogoEfetivo'), reg = _fnOpt('registrarCatalogoComId');
+  if (!catAtivo || !catEf || !reg) return;   // sem as funções do motor (contexto sem níveis) → nada a fazer
+  const base = catAtivo();
+  const humano = (snap && typeof snap.humano === 'number') ? snap.humano : 0;
+  const meus = (_niveisProvider && _niveisProvider()) || {};
+  const oponente = (snap && snap.niveisOponente) || {};
+  const porLado = [];
+  porLado[humano] = meus;
+  porLado[1 - humano] = oponente;
+  const cat0 = catEf(base, porLado[0] || {});
+  const cat1 = catEf(base, porLado[1] || {});
+  if (cat0 === base && cat1 === base) return;   // nada nivelado → caminho de sempre (regressão zero)
+  const ids = Array.isArray(st.catId) ? st.catId : [st.catId, st.catId];
+  reg(ids[0], cat0);
+  reg(ids[1], cat1);
+}
 
 const PROTO_VERSAO = 1;   // igual a src/conta.js / server/protocol.js
 function _env(tipo, dados) { return Object.assign({ v: PROTO_VERSAO, tipo }, dados || {}); }
@@ -40,6 +75,7 @@ function _tokenMsg(t) { return t ? { token: t } : {}; }
 // aplica o snapshot autoritativo do servidor à minha partida (substitui o estado desenhado).
 function _absorver(MP, snap) {
   MP.st = snap.estado;
+  _registrarCatalogosPvP(MP.st, snap);   // §318 F1: garante os catálogos efetivos por lado antes de reproduzir
   MP.turnoDe = snap.turnoDe;
   MP.humano = snap.humano;      // "você é este lado" (PvP: 0 ou 1)
   MP.modo = snap.modo || MP.modo || 'pve';
@@ -213,9 +249,9 @@ function aplicarPush(MP, msg) {
 
 // Handle de NAMESPACE para o resto do bundle (evita colisão de nomes genéricos como `jogar`/`encerrar`
 // no escopo único concatenado). No build isto vira um global; a view/turno chamam PARTIDA_CLI.jogar(...).
-const PARTIDA_CLI = { hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush, definirNick, entrarFila, entrarFilaRanqueada, sairFila, absorverPareado };
+const PARTIDA_CLI = { hashEstadoCli, configurarPartida, configurarNiveis, novaPartida, retomar, jogar, encerrar, aplicarPush, definirNick, entrarFila, entrarFilaRanqueada, sairFila, absorverPareado };
 
 if (typeof module !== 'undefined') module.exports = {
-  hashEstadoCli, configurarPartida, novaPartida, retomar, jogar, encerrar, aplicarPush,
+  hashEstadoCli, configurarPartida, configurarNiveis, novaPartida, retomar, jogar, encerrar, aplicarPush,
   definirNick, entrarFila, entrarFilaRanqueada, sairFila, absorverPareado,
 };

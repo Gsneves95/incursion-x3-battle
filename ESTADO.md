@@ -2,6 +2,39 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ NÍVEIS §318 FASE 1 — PILOTO (semente do PvP fechada · 27 degraus carregados · medido)
+
+**1. Semente do PvP.** O cliente reproduz o PvP nivelado montando os catálogos EFETIVOS dos dois lados
+(minha conta + `niveisOponente`) e registrando-os SOB OS IDS DO SERVIDOR (`registrarCatalogoComId`) — não
+recomputa o id; os valores batem. `_registrarCatalogosPvP` roda em `_absorver` (NO-OP sem níveis → regressão
+zero). Babá `tests/niveis_pvp.test.js`: replay assimétrico (Zeus nv3×nv2) bate o hash a cada passo; ignorar
+`niveisOponente` → hash diverge (guarda acusa). `_limparCatalogos` simula cliente fresco. **2. 27 degraus**
+em `data/deuses/{zeus,oxum,tyr}.json` (dado do dono, sem ajuste). Os 4 efeitos novos rodam sem adaptação
+(escopo:self cura/buffa o lançador; apply sem escopo vai ao alvo da habilidade). `niveis` na whitelist do
+valida_kit; `projecaoCombate` exclui `niveis` do carimbo (Provação roda nv1 → escada não é exercida, §263).
+texto×número: cd/custo isentos (campos de interface), valor comparado por magnitude (selfHp −20→−15).
+
+**3. Medição (régua espelho IA×IA, N=1100/medida, ~55–90 partidas/s).** Δ vs nula (pp de vitória):
+
+| deus | básico n2/n3/n4 | habilidade n2/n3/n4 | milagre n2/n3/n4 | MAX | uso/partida no MAX |
+|---|---|---|---|---|---|
+| Zeus (SS) | +7,6 / +15,1 / **+22,9** | +2,5 / +3,5 / +7,8 | +4,7 / +6,0 / +7,1 | **+33,0** | bás 6,0 · hab 1,2 · mil 1,2 |
+| Oxum (A) | +3,3 / +8,3 / +9,3 | −6,7 / +6,8 / +6,8 | +20,1 / +19,1 / +24,2 | +15,2 | bás 3,7 · hab 0,9 · **mil 0,05** |
+| Tyr (S) | +9,2 / +23,2 / +23,2 | **0,0 / 0,0 / 0,0** | **0,0 / 0,0 / 0,0** | +23,2 | bás 6,7 · **hab 0 · mil 0** |
+
+IC95 ≈ ±2,9pp. **SALTO > N2+N3:** só Zeus habilidade (+4,3 marginal). **VALIDADE (o ponto crítico):** a IA
+gulosa de 1 lance só usa habilidades de DANO IMEDIATO — **nunca** usa a habilidade/milagre do Tyr (0,00) nem
+quase o milagre da Oxum (0,05), então esses níveis medem ZERO/ruído (Oxum hab n2 dá −6,7pp: artefato de
+escolha da IA, não do kit). A régua é confiável só para dano que a IA usa (Zeus inteiro, Oxum/Tyr básico).
+**Passos escondidos:** golpes-p/-abater HP120 — Zeus bás cruza 8→7 no nv3, Oxum bás 12→11(n2)/11→10(n3),
+Tyr bás 10→9(n3) (sem bump visível no win-rate: a cura dilui o limiar); redução do Tyr 15→17→19 passa a zerar
+básicos maiores; SEM arredondamentos (kits planos). **PROPOSTA (não aplicada — decisão do dono):** faixa-alvo
+do deus no MÁX ≈ **+8 a +15pp**. Zeus (+33) e Tyr-básico (+23) estão ACIMA → encolher os degraus de DANO do
+básico (Zeus dá +7,6pp por +2; Tyr +14pp no n3); a habilidade/milagre de tank/healer NÃO dá para tunar com
+esta IA — precisa de IA multi-lance ou uso roteirizado antes de mexer nesses degraus. Arquivos: engine.js,
+partida_cliente.js, view.js, provacao.js, valida_kit.js, data/deuses/{zeus,oxum,tyr}.json,
+tests/niveis_pvp.test.js. Ver DECISOES §318 F1. Suíte + build verdes.
+
 ## ★ NÍVEIS DE HABILIDADE §318 — FASE 0 (fundação técnica, SEM conteúdo)
 
 3 habilidades ATIVAS com níveis 1–4, PASSIVA fora. **Motor um-ponto-só:** `kitEfetivo(deus,niveis)` (PURA, src/engine.js) =

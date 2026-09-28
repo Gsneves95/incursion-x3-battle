@@ -25,7 +25,7 @@ const V = E.VOCAB;
 
 const CHAVES_DEUS = new Set(['key', 'nome', 'curto', 'faccao', 'elem', 'classe', 'funcao', 'arquetipo', 'inicial', 'passiva', 'provacao', 'ab', 'hp']);   // F2.3: `hp` opcional — ausente = 120 (os 100 deuses); presente = HP do kit (bestiário fora da faixa, chefe). §262: `curto` opcional — nome de 1 palavra (só bestiário) p/ as caixas apertadas (briefing/retrato); ausente = usa `nome`. §282: `arquetipo` = legenda de tela (só texto; o motor nunca lê) — espelha o kits.json, guardado pelo checar_cadeia
 const CHAVES_PASSIVA = new Set(['nome', 'desc', 'fx', 'inerte']);   // inerte: passiva ainda não funcional (UI acinzenta)
-const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'cdSe', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c. cdSe (§101): recarga condicional
+const CHAVES_AB = new Set(['slot', 'classe', 'classePorModo', 'nome', 'cost', 'cd', 'cdSe', 'alvo', 'desc', 'fx', 'alterna', 'modos', 'opcoes', 'universal', 'umaVez', 'ignoraInalvejavel', 'niveis']);   // ignoraInalvejavel (F1.9): flag PONTUAL de habilidade — mira o oculto (Odin/Hórus no básico). §84 decisão c. cdSe (§101): recarga condicional. niveis (§318): a escada de cópias — o FORMATO é validado à parte por E.validarNiveisDeus (build.js)
 const CLASSES_DEUS = new Set([...V.classes, 'Híbrido']);   // no deus, Híbrido é rótulo válido; na habilidade não
 
 function validarCusto(cost, ctx, errs) {

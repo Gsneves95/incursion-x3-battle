@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 F1 — NÍVEIS: PILOTO (fechar a semente do PvP · carregar os 27 degraus · medir)
+
+**1. Semente do PvP fechada.** No PvP com níveis distintos entre os lados, o cliente reproduz a partida a
+partir do estado serializado do servidor (que carrega o `catId`). Para o hash da prova F5.0 bater, o
+cliente agora monta os catálogos EFETIVOS dos DOIS lados e os registra SOB OS IDS DO SERVIDOR
+(`registrarCatalogoComId`, engine): NÃO recomputa o id (a ordem de chaves do catálogo base poderia
+divergir) — os VALORES do kit batem (mesmo `kitEfetivo`, mesmos níveis), e kitDe acha o kit por lado.
+Os níveis do meu lado vêm da conta (provedor injetado pela view, `configurarNiveis`); os do oponente,
+da projeção pública do snapshot (`niveisOponente`). `_registrarCatalogosPvP` roda em `_absorver` e é
+NO-OP quando nada está nivelado (fallback ao base — regressão zero). **Babá** (`tests/niveis_pvp.test.js`):
+partida PvP assimétrica (Zeus nv3 de um lado, nv2 do outro) — o replay do cliente bate o hash do servidor
+a cada passo; cliente que IGNORA `niveisOponente` → o hash diverge quando o lado do oponente age (a guarda
+acusa). `_limparCatalogos` (teste) simula um cliente FRESCO (senão o registro do servidor mascararia a prova).
+
+**2. Os 27 degraus carregados** (Zeus/Oxum/Tyr, dado do dono, em `data/deuses/<key>.json`). O motor
+SUPORTA os 4 efeitos novos como escritos, sem adaptação: heal `escopo:self` e apply `escopo:self` num
+básico de alvo inimigo curam/buffam o LANÇADOR (`e.escopo==='self' → sel=[u]`); apply sem escopo numa
+habilidade de aliado aplica no ALIADO-alvo (`escopo = a.alvo`); dmgDown num básico aplica no inimigo-alvo.
+`niveis` entrou na whitelist de `valida_kit` (formato validado à parte por `validarNiveisDeus`). **Carimbo:**
+`projecaoCombate` passa a EXCLUIR `niveis` — a Provação roda no nível 1 (times fixos), a escada nunca é
+exercida nela, então não é combate DAQUELE match (§263); assim as 100 Provações não re-carimbam, mas um fx
+BASE mudado ainda invalida. **texto×número (build):** cd/custo são ISENTOS da direção precisa (campos de
+interface, não texto — Zeus milagre nv4 cd 4→3, Tyr habilidade nv4 custo 2→1); e o valor mudado compara por
+MAGNITUDE (Tyr milagre nv3 selfHp −20→−15, texto "perde 15").
+
+**3. Medição — ver o relatório da sessão + ESTADO §318 F1.** Régua de espelho (IA×IA, ~1.100 partidas/medida).
+Os NÚMEROS não foram ajustados nesta entrega (decisão do dono): FASE 1 mede e PROPÕE; o ajuste dos degraus
+vem depois.
+
+---
+
 ## §318 — NÍVEIS DE HABILIDADE POR CÓPIAS · FASE 0 (fundação técnica, SEM conteúdo)
 
 Cada deus tem 3 habilidades ATIVAS (basico/habilidade/milagre) com níveis 1–4; a PASSIVA fica FORA. N2/N3 = melhorias
