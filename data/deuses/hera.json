@@ -10,7 +10,15 @@
     "nome": "Rainha Ciumenta",
     "desc": "Sempre que um aliado é curado, ele ganha 10 de Defesa Destrutível.",
     "fx": [
-      { "gatilho": "aoCurar", "faz": [ { "t": "shield", "v": 10 } ] }
+      {
+        "gatilho": "aoCurar",
+        "faz": [
+          {
+            "t": "shield",
+            "v": 10
+          }
+        ]
+      }
     ]
   },
   "provacao": {
@@ -34,6 +42,45 @@
         {
           "t": "dmg",
           "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 5,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; Hera ganha 5 de Defesa Destrutível."
         }
       ]
     },
@@ -64,6 +111,44 @@
             "dur": 2
           }
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "2 aliados causam +9 de dano e recebem 10 de redução por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "2 aliados causam +9 de dano e recebem 11 de redução por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 4
+              }
+            }
+          ],
+          "desc": "2 aliados causam +9 de dano e recebem 11 de redução por 2 turnos, e curam 4."
+        }
       ]
     },
     {
@@ -88,6 +173,44 @@
             "type": "controlImmune",
             "dur": 2
           }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 6
+              }
+            }
+          ],
+          "desc": "Vincula 2 aliados por 2 turnos: o dano que cada um recebe é dividido entre os dois, ambos ficam imunes a controle e ganham 6 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 6,
+              "para": 8
+            }
+          ],
+          "desc": "Vincula 2 aliados por 2 turnos: o dano que cada um recebe é dividido entre os dois, ambos ficam imunes a controle e ganham 8 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "Vincula 2 aliados por 2 turnos: o dano que cada um recebe é dividido entre os dois, ambos ficam imunes a controle e ganham 8 de Defesa Destrutível."
         }
       ]
     }

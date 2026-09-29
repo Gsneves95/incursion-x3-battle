@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 2 — 7 gregos do Devoto/Iniciado (3 DENTRO liberados; 4 FORA → PROPOSTO)
+
+63 degraus (Hera/Hermes/Deméter/Poseidon/Erínias/Aquiles/Kraken). Mesma whitelist + regras (a'/b'/c'). Babás 1–8
+verdes; os 3 achados do dono (cura NOVO da Deméter nos 2 ramos, escudo do Juramento nos 2, 4 mudas do Aquiles)
+aplicam como escritos. Triagem N=3000:
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Hera | +11,6 | +16,1 | +10,7 | +32,7 | **FORA** |
+| Hermes | +0,3 | +28,2 | +21,3 | +36,6 | **FORA** |
+| Deméter | +12,3 | +7,1 | +8,3 | +23,2 | DENTRO |
+| Poseidon | +11,2 | +6,2 | +4,9 | +19,0 | DENTRO |
+| Erínias | +6,3 | +4,1 | +2,6 | +9,2 | DENTRO |
+| Aquiles | +26,4 | +14,5 | +5,1 | +38,2 | **FORA** |
+| Kraken | +22,5 | +16,9 | +10,1 | +34,9 | **FORA** |
+
+**Liberados: Deméter, Poseidon, Erínias** (Poseidon Encharcado nv4 não estourou). **4 FORA (Hera/Hermes/Aquiles/
+Kraken) → PROPOSTO e PARADO** (drivers isolados na DECISOES): Aquiles/Kraken = dano de básico de unidade durável
+spammada (irredutível, achado novo); Kraken habil = shield10 SALTO; Hermes = cura/dano NOVO sobre utilitário já
+forte; Hera = cura4 SALTO no nv4 + kit-de-buff que soma. Aguardam decisão do dono. Os 63 commitados; trava =
+lista de liberados.
+
 ## ★ §318 FASE 3 · LOTE 1 — 7 gregos do Suplicante (medidos; 3 FORA → PROPOSTO, PARADO)
 
 63 degraus (Cérberus/Atena/Dionísio/Medusa/Ares/Apolo/Hércules × 3 slots × nv2–4). Duas extensões da whitelist

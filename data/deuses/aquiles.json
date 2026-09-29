@@ -37,6 +37,48 @@
           "t": "dmg",
           "v": 15
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "vulneravel",
+                  "v": 3,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele recebe +3 de dano de todas as fontes por 1 turno."
+        }
       ]
     },
     {
@@ -54,6 +96,45 @@
           "t": "dmg",
           "v": 25,
           "kind": "puro"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 27
+            }
+          ],
+          "desc": "27 de dano puro a 1 inimigo (ignora redução e Defesa Destrutível)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 29
+            }
+          ],
+          "desc": "29 de dano puro a 1 inimigo (ignora redução e Defesa Destrutível)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 5,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "29 de dano puro a 1 inimigo (ignora redução e Defesa Destrutível); Aquiles cura 5."
         }
       ]
     },
@@ -92,6 +173,71 @@
             "dur": 1
           },
           "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            },
+            {
+              "caminho": "fx[1].v",
+              "de": 11,
+              "para": 12
+            },
+            {
+              "caminho": "fx[2].v",
+              "de": 11,
+              "para": 12
+            },
+            {
+              "caminho": "fx[3].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "4 golpes de 12 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            },
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            },
+            {
+              "caminho": "fx[2].v",
+              "de": 12,
+              "para": 13
+            },
+            {
+              "caminho": "fx[3].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "4 golpes de 13 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "4 golpes de 13 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
         }
       ]
     }

@@ -10,8 +10,16 @@
     "nome": "Mensageiro dos Deuses",
     "desc": "Hermes age primeiro no turno 1; ataques de alvo único contra ele causam 5 menos de dano.",
     "fx": [
-      { "gatilho": "iniciativa" },
-      { "gatilho": "reducao", "v": 5, "contra": { "alcance": "unico" } }
+      {
+        "gatilho": "iniciativa"
+      },
+      {
+        "gatilho": "reducao",
+        "v": 5,
+        "contra": {
+          "alcance": "unico"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,33 +27,185 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Golpe Alado",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "2 golpes de 8 em 1 inimigo (16 total).",
-      "fx": [ { "t": "dmg", "v": 8, "golpes": 2 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 8,
+          "golpes": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "2 golpes de 9 em 1 inimigo (18 total)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "2 golpes de 10 em 1 inimigo (20 total)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "2 golpes de 10 em 1 inimigo (20 total); ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Passo Alado",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 1,
       "alvo": "aliado",
       "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno.",
-      "fx": [ { "t": "cdShift", "unidade": true, "v": -1 } ]
+      "fx": [
+        {
+          "t": "cdShift",
+          "unidade": true,
+          "v": -1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 6
+              }
+            }
+          ],
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 6."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 6,
+              "para": 8
+            }
+          ],
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 8."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgUp",
+                  "v": 3,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno; ele cura 8 e causa +3 de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Roubo Divino",
-      "cost": { "Tempestade": 1, "livre": 2 },
+      "cost": {
+        "Tempestade": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Rouba 2 orbes do inimigo e remove 1 buff de cada inimigo.",
       "fx": [
-        { "t": "roubaOrbe", "n": 2, "rouba": true },
-        { "t": "stripOne", "escopo": "todosInimigos" }
+        {
+          "t": "roubaOrbe",
+          "n": 2,
+          "rouba": true
+        },
+        {
+          "t": "stripOne",
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 5,
+                "escopo": "todosInimigos"
+              }
+            }
+          ],
+          "desc": "5 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 5,
+              "para": 7
+            }
+          ],
+          "desc": "7 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "7 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+        }
       ]
     }
   ]

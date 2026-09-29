@@ -6,6 +6,61 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 2 — os 7 gregos do Devoto/Iniciado (3 DENTRO liberados; 4 FORA → PROPOR e PARAR)
+
+**Construído.** 63 degraus (Hera, Hermes, Deméter, Poseidon, Erínias, Aquiles, Kraken × 3 slots × nv2–4), mesma
+whitelist + regras (a')(b')(c'). validarNiveisDeus=0; babás 1–8 verdes.
+
+**Achados de motor (verificados, aplicados como escritos — nada adaptado em silêncio):** os 3 pontos que o dono
+marcou funcionam. Deméter milagre nv2 (cura 4 NOVO no time) aplica em AMBOS os ramos do condicional — sem caído
+60→89 (heal25+4), com caído o caído revive a 48 e cura +4 (=52), os vivos +4. Hera milagre nv2 (escudo 6) cai
+nos 2 aliados-alvo do Juramento (ares:6, atena:6). Aquiles milagre (4 mudas fx[0..3].v no mesmo nível) aplica as
+4 — kit efetivo 12/12/12/12.
+
+**TRIAGEM (espelho sorteado + reativa, N=3000):**
+
+| deus | básico n4 | habil n4 | milagre n4 | MÁX | triagem |
+|---|---|---|---|---|---|
+| Hera | +11,6 | +16,1 | +10,7 | +32,7 | **FORA** |
+| Hermes | +0,3 | +28,2 | +21,3 | +36,6 | **FORA** |
+| Deméter | +12,3 | +7,1 | +8,3 | +23,2 | DENTRO |
+| Poseidon | +11,2 | +6,2 | +4,9 | +19,0 | DENTRO |
+| Erínias | +6,3 | +4,1 | +2,6 | +9,2 | DENTRO |
+| Aquiles | +26,4 | +14,5 | +5,1 | +38,2 | **FORA** |
+| Kraken | +22,5 | +16,9 | +10,1 | +34,9 | **FORA** |
+
+**3 DENTRO → liberados: Deméter, Poseidon, Erínias.** O nv4 do básico do Poseidon (Encharcado) NÃO estourou
+(+11,2) — a exceção autorizada (trocar por dmgDown) não foi precisa.
+
+**4 FORA — drivers isolados por medição:**
+- **Aquiles básico +26,4** — o dano 15→17 SOZINHO vale **+20,7** (o Encharcado… não; o vulneravel do nv4 só
+  soma +5,7). Achado NOVO: o dano de ALVO ÚNICO de um **bruiser durável** (passiva reducao 12) que spamma o
+  básico é forte — ele sobrevive e bate muito, então o +2 escala. E o ladder +2 é IRREDUTÍVEL (15→16→17; menor
+  vira degrau inerte). Não fecha com ±1.
+- **Kraken básico +22,5** — o dano 15→17 vale **+22,5** e o dmgReduction self do nv4 é **IRRELEVANTE** ao placar
+  (básico:3 sem ele = +22,5 igual, como no Cérberus). Mesmo caso do Aquiles (tanque, reducao 10). **Kraken habil
+  +16,9** — o dano 15→17 só +5,8; o **shield 10 self do nv4 (SALTO)** é o driver (+11).
+- **Hermes habil +28,2** — o **NOVO cura 6** sozinho vale **+20,7**: o cdShift-base (reduz recargas do aliado) já
+  é o valor; pendurar cura nele estoura. **milagre +21,3** — o **NOVO dano 5 AoE** vale **+15,4**.
+- **Hera habil +16,1** — os bumps de buff (dmgUp 8→9, reducao 10→11) valem só **+3,3**; o **NOVO cura 4 nos 2
+  aliados do nv4 (SALTO)** vale +12,8. O MÁX +32,7 é a SOMA de um kit todo-de-buff (os 3 slots ~11–16).
+
+**Regra do dono ("±1 nos degraus pequenos; SALTO → propor e parar"): os 4 são SALTO/NOVO ou ladder irredutível →
+PROPONHO e PARO** (não liberei nem apliquei correções grandes). Propostas concretas p/ o dono decidir:
+1. **Aquiles** — regra NOVA (análoga à a'): básico de unidade DURÁVEL (reducao passiva alta) não sobe dano; usa
+   NOVO-PEQUENO de cura/escudo **self** (como o Cérberus). Habil (+14,5) e milagre (+5,1) ficam.
+2. **Kraken** — básico igual ao Aquiles (não sobe dano). Habil: tirar o **shield 10 self** do nv4 (trocar por um
+   NOVO-PEQUENO menor ou um SALTO tamer). Milagre (+10,1) fica.
+3. **Hermes** — o cdShift já é o valor: habil **sem a cura NOVO** (nv2/nv3 usam outro pequeno, ou nada); milagre
+   **sem o dano NOVO** (ou bem menor). É um utilitário forte — a escada precisa da sua decisão.
+4. **Hera** — habil nv4 **sem a cura 4** (trocar por `cd` ou efeito self pequeno). Como o MÁX é soma de kit-de-
+   buff, pode precisar afinar mais de um slot; re-meço quando você escolher a direção.
+
+Estes 4 ficam FORA da lista de liberados (a trava impede subir nível neles). Os 63 degraus estão commitados e
+medidos; a proteção é a lista de liberados. Suíte + build verdes.
+
+---
+
 ## §318 FASE 3 · LOTE 1 — os 7 gregos do Suplicante (escadas medidas; 3 FORA da triagem → PROPOR e PARAR)
 
 **O que foi construído.** As escadas de nível (nv2–4) dos 7 gregos da faixa Suplicante — Cérberus, Atena,

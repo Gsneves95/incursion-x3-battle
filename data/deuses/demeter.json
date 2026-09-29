@@ -10,7 +10,19 @@
     "nome": "Ciclo das Estações",
     "desc": "No início de cada turno, o aliado mais ferido cura 6.",
     "fx": [
-      { "gatilho": "porTurno", "faz": [ { "t": "heal", "v": 6, "alvoHp": { "lado": "aliado", "ext": "min" } } ] }
+      {
+        "gatilho": "porTurno",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 6,
+            "alvoHp": {
+              "lado": "aliado",
+              "ext": "min"
+            }
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -22,28 +34,186 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "10 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 10 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Dádiva da Terra",
-      "cost": { "Verdejante": 2 },
+      "cost": {
+        "Verdejante": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "O time regenera 12 de HP por turno durante 2 turnos.",
-      "fx": [ { "t": "apply", "eff": { "type": "regen", "v": 12, "dur": 2 }, "escopo": "time" } ]
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "regen",
+            "v": 12,
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "O time regenera 13 de HP por turno durante 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "O time regenera 14 de HP por turno durante 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "cleanse",
+                "escopo": "time"
+              }
+            }
+          ],
+          "desc": "O time regenera 14 de HP por turno durante 2 turnos e perde todos os debuffs."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Estação Eterna",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time.",
       "fx": [
-        { "t": "condicional", "se": { "aliadoCaido": true }, "entao": [ { "t": "revive", "hp": 48, "escopo": "umCaido" } ], "senao": [ { "t": "heal", "v": 25, "escopo": "time" } ] }
+        {
+          "t": "condicional",
+          "se": {
+            "aliadoCaido": true
+          },
+          "entao": [
+            {
+              "t": "revive",
+              "hp": 48,
+              "escopo": "umCaido"
+            }
+          ],
+          "senao": [
+            {
+              "t": "heal",
+              "v": 25,
+              "escopo": "time"
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 4,
+                "escopo": "time"
+              }
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 4."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 4,
+              "para": 5
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 5."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 5."
+        }
       ]
     }
   ]

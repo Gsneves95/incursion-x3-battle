@@ -39,6 +39,49 @@
           "t": "dmg",
           "v": 15
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Kraken recebe 3 de redução de dano por 1 turno."
+        }
       ]
     },
     {
@@ -63,6 +106,45 @@
             "dur": 1
           }
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 2 inimigos; eles não podem usar Habilidade por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 2 inimigos; eles não podem usar Habilidade por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 10,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 2 inimigos; eles não podem usar Habilidade por 1 turno; Kraken ganha 10 de Defesa Destrutível."
+        }
       ]
     },
     {
@@ -82,6 +164,41 @@
           "v": 22,
           "kind": "puro",
           "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano puro a todos os inimigos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 23,
+              "para": 24
+            }
+          ],
+          "desc": "24 de dano puro a todos os inimigos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "24 de dano puro a todos os inimigos."
         }
       ]
     }
