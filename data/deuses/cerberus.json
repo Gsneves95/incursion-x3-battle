@@ -38,23 +38,27 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[0].v",
-              "de": 8,
-              "para": 9
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 1,
+                "escopo": "self"
+              }
             }
           ],
-          "desc": "9 de dano em até 3 inimigos."
+          "desc": "8 de dano em até 3 inimigos; Cérberus cura 1."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[0].v",
-              "de": 9,
-              "para": 10
+              "caminho": "fx[1].v",
+              "de": 1,
+              "para": 2
             }
           ],
-          "desc": "10 de dano em até 3 inimigos."
+          "desc": "8 de dano em até 3 inimigos; Cérberus cura 2."
         },
         {
           "nv": 4,
@@ -63,13 +67,17 @@
               "caminho": "fx[]",
               "de": null,
               "para": {
-                "t": "heal",
-                "v": 4,
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 4,
+                  "dur": 1
+                },
                 "escopo": "self"
               }
             }
           ],
-          "desc": "10 de dano em até 3 inimigos; Cérberus cura 4."
+          "desc": "8 de dano em até 3 inimigos; Cérberus cura 2 e recebe 4 de redução de dano por 1 turno."
         }
       ]
     },

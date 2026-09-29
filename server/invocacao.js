@@ -18,6 +18,9 @@ const INV = ECON.invocacao;
 const RARIDADE = ler('data/raridades.json');          // deus -> 'A'|'S'|'SS'
 const RANQ = ler('data/ranqueado.json');
 const NFAIXAS = (RANQ.faixas || []).length || 8;
+// §318 F3 — TRAVA DE LIBERAÇÃO: só os deuses cujas escadas passaram na triagem podem subir de nível.
+// subirNivel recusa deus fora desta lista (mesmo com pontos). A lista cresce quando um deus mede DENTRO.
+const NIVEIS_LIBERADOS = (function () { try { return new Set(ler('data/niveis_liberados.json').liberados || []); } catch (e) { return new Set(); } })();
 const ORDEM_COMUM = ['A', 'S', 'SS'];                  // do mais comum ao mais raro (para "descer, nunca subir")
 
 // deus -> faixaIndice (a faixa da Provação que o libera; iniciais na 0)
@@ -206,6 +209,7 @@ function devCredito(conta) {
 function subirNivel(conta, deus, slot) {
   garantir(conta);
   if (!_possui(conta, deus)) return { ok: false, motivo: 'nao_possui' };
+  if (!NIVEIS_LIBERADOS.has(deus)) return { ok: false, motivo: 'niveis_nao_liberados' };   // §318 F3: escada ainda não passou na triagem
   if (SLOTS.indexOf(slot) < 0) return { ok: false, motivo: 'slot_invalido' };
   const n = _niveisDeus(conta, deus);
   const cur = n[slot];
@@ -234,6 +238,6 @@ function comprarPergaminho(conta, deus) {
 
 module.exports = {
   linhaFaixa, faixaDoJogador, sortearUm, sortearLote, invocar, subirNivel, comprarPergaminho, devCredito, garantir,
-  mulberry32, NFAIXAS, CONTA_FAIXA, FAIXA_DEUS, POOL, FAIXAS_COM_SS, _maximizado, _niveisDeus,
+  mulberry32, NFAIXAS, CONTA_FAIXA, FAIXA_DEUS, POOL, FAIXAS_COM_SS, _maximizado, _niveisDeus, NIVEIS_LIBERADOS,
   _raridadeNaFaixa, _pesoPick,
 };

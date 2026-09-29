@@ -26,12 +26,16 @@ debuff semeado p/ ver o cleanse); as escadas ficaram intactas.
 
 Drivers isolados: Cérberus 1 passo AoE = +12,8pp (não é levelável por dano); Atena sem o grátis = +4,9pp (o
 SALTO `cost 1→0` do nv4 vale ~+22 sozinho); Apolo = soma de cura de suporte. Hércules +5 empilhável só +7,6
-(DENTRO); Medusa Veneno-3-turnos +11,8 (DENTRO). **Propostas na DECISOES** (Cérberus básico sem dano; trocar o
-grátis da Atena; encolher a cura do Apolo) — aguardam OK do dono.
+(DENTRO); Medusa Veneno-3-turnos +11,8 (DENTRO).
 
-**Commit é SEGURO:** os 63 degraus estão DORMENTES (nível default 1 = kitEfetivo deep-equal ao base; a FASE 2 que
-sobe nível está BLOQUEADA §95). Portão: FASE 2 não liga o LOTE 1 até os 3 FORA re-medirem DENTRO. Babás 1–8 +
-suíte + build verdes.
+**CORREÇÕES (decisões do dono, 2ª rodada):** a FASE 2 **NÃO está bloqueada** (está no ar; `subirNivel` funciona) —
+premissa anterior corrigida. A trava real é uma **LISTA DE LIBERADOS** (`data/niveis_liberados.json`): `subirNivel`
+recusa (`niveis_nao_liberados`) deus fora da lista. Liberados: zeus/oxum/tyr + dionisio/medusa/ares/hercules; os 3
+FORA entram ao medir DENTRO. 3 regras aprendidas no motor+babá: **(a')** básico AoE não sobe dano (usa NOVO-PEQUENO
+cura/escudo self); **(b')** custo de básico nunca vai a 0; **(c')** cura de suporte sobe +1. Rungs corrigidos:
+Cérberus básico (heal/escudo self), Atena básico nv4 (dmgDown, sem grátis), Apolo cura +1. **Re-medido N=3000: os
+3 agora DENTRO** — Atena +15,2 · Apolo +21,1 · Cérberus +19,7 (este só no PISO: cura self 1→2, pois o básico é
+spammado ~12×/turno; a magnitude do dmgReduction do nv4 não move o placar). **Os 10 deuses do LOTE 1 liberados.**
 
 ## ★ §318 FASE 2 — ECONOMIA AUTORITATIVA (4 ETAPAS, todas verdes + push)
 

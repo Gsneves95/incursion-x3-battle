@@ -436,6 +436,19 @@ function _ehNovoPequenoPara(para) {
   for (const k in para) if (['t', 'v', 'escopo'].indexOf(k) < 0) return false;   // sem kind/golpes/efeito/eff
   return true;
 }
+// §318 F3 (regra a') — BÁSICO EM ÁREA: um básico cujo dano é AoE (algum fx dmg escopo:'todosInimigos') NÃO
+// sobe dano (um só passo AoE já vale ~+13pp — medido). Os degraus pequenos dele usam NOVO-PEQUENO de CURA ou
+// ESCUDO no PRÓPRIO lançador (escopo:'self'), MESMO o básico tendo número. Vale só para esse caso.
+function _ehBasicoArea(ab) {
+  return ab && ab.slot === 'basico' && (ab.fx || []).some(f => f.t === 'dmg' && f.escopo === 'todosInimigos');
+}
+// NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em área pode heal/shield self com número.
+function _novoPequenoPermitido(ab, para) {
+  if (!_ehNovoPequenoPara(para)) return false;
+  if (!_temMagnitudePequena(ab)) return true;
+  if (_ehBasicoArea(ab) && (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self') return true;   // (a')
+  return false;
+}
 // lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
 function _lerCaminho(ab, c) {
   let m;
@@ -531,10 +544,12 @@ function validarNiveisDeus(deus) {
         // §318 F3 (extensão a) — NOVO-PEQUENO: um fx[] com efeito SIMPLES (dmg/heal/shield, v≤8) numa
         // habilidade SEM magnitude base vira 'pequeno' e SÓ pode entrar no nv2. Com magnitude base, o fx[]
         // simples continua SALTO (nv4) — é o caso do Ares habil nv4 (heal 6) e do Cérberus basico nv4.
-        if (mud.caminho === 'fx[]' && _ehNovoPequenoPara(mud.para) && !_temMagnitudePequena(ab)) {
+        if (mud.caminho === 'fx[]' && _novoPequenoPermitido(ab, mud.para)) {
           cat = 'pequeno';
-          if (nvl !== 2) erros.push(`${nome}.${ab.slot} nv${nvl}: NOVO-PEQUENO (efeito simples ≤8 em habilidade sem magnitude) só é permitido no nv2`);
+          if (nvl !== 2) erros.push(`${nome}.${ab.slot} nv${nvl}: NOVO-PEQUENO (efeito simples ≤8 em habilidade sem magnitude, ou cura/escudo self em básico de área) só é permitido no nv2`);
         }
+        // §318 F3 (regra b') — o custo de um BÁSICO nunca vai a 0 (básico grátis valeu +22pp sozinho na Atena).
+        if (ab.slot === 'basico' && /^cost\./.test(mud.caminho) && mud.para === 0) erros.push(`${nome}.${ab.slot} nv${nvl}: custo de BÁSICO não pode ir a 0 (básico grátis é forte demais)`);
         // §318 F3 (extensão b) — fx[i].dur só em dot/hot (Veneno, Queimadura).
         if (/^fx\[(\d+)\]\.dur$/.test(mud.caminho)) {
           const idx = +mud.caminho.match(/^fx\[(\d+)\]\.dur$/)[1];

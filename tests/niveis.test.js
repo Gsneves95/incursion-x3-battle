@@ -130,6 +130,32 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 4, muda: [{ caminho: 'fx[0].dur', de: undefined, para: 3 }], desc: 'x' }])).some(e => /dot\/hot/i.test(e)), 'B4b MORDE: fx[i].dur em fx que não é dot/hot');
 })();
 
+// BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
+// NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
+// um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'x' }];
+  // Cérberus básico é AoE (Dentada Tripla, escopo todosInimigos) e TEM número (dmg 8)
+  ok(E.validarNiveisDeus(so(catalogo.cerberus, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'self' }))).length === 0, "B3c passa: cura self no nv2 de básico AoE (regra a')");
+  ok(E.validarNiveisDeus(so(catalogo.cerberus, 'basico', NP(2, { t: 'shield', v: 5, escopo: 'self' }))).length === 0, "B3c passa: escudo self no nv2 de básico AoE");
+  ok(E.validarNiveisDeus(so(catalogo.cerberus, 'basico', NP(2, { t: 'dmg', v: 5, escopo: 'todosInimigos' }))).length > 0, 'B3c MORDE: dano NOVO num básico AoE (não se sobe dano de área)');
+  ok(E.validarNiveisDeus(so(catalogo.cerberus, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'time' }))).length > 0, 'B3c MORDE: cura NÃO-self (a regra a\' é só self)');
+  // Atena básico é ALVO ÚNICO e tem número → NOVO-PEQUENO de cura self segue barrado (não é AoE)
+  ok(E.validarNiveisDeus(so(catalogo.atena, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'self' }))).length > 0, 'B3c MORDE: cura self num básico de ALVO ÚNICO com número (só AoE tem o passe)');
+})();
+
+// BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  // Atena básico tem cost.Aurora:1 → levá-lo a 0 no nv4 quebra
+  ok(E.validarNiveisDeus(so(catalogo.atena, 'basico', [{ nv: 4, muda: [{ caminho: 'cost.Aurora', de: 1, para: 0 }], desc: 'x' }])).some(e => /custo de BÁSICO não pode ir a 0/i.test(e)), 'B4c MORDE: cost de básico a 0');
+  // reduzir o cost de um MILAGRE a 0 NÃO é barrado por (b') (a regra é só do básico)
+  const mil = catalogo.atena.ab.find(a => a.slot === 'milagre');
+  const rec = mil && mil.cost && Object.keys(mil.cost)[0];
+  if (rec) ok(!E.validarNiveisDeus(so(catalogo.atena, 'milagre', [{ nv: 4, muda: [{ caminho: 'cost.' + rec, de: mil.cost[rec], para: 0 }], desc: 'x' }])).some(e => /custo de BÁSICO/i.test(e)), 'B4c passa: (b\') não atinge milagre');
+})();
+
 // BABÁ 5 — "de" ≠ valor atual (cumulativo) → quebra, NOMEANDO deus/habilidade/nível.
 (() => {
   const badDe = clone(catalogo.zeus); badDe.ab[0].niveis = [{ nv: 2, muda: [{ caminho: 'fx[0].v', de: 99, para: 17 }], desc: '17 de dano a 1 inimigo.' }];

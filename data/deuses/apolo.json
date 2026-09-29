@@ -107,21 +107,21 @@
             {
               "caminho": "fx[0].v",
               "de": 25,
-              "para": 28
+              "para": 26
             }
           ],
-          "desc": "Cura 28 em 1 aliado e remove Veneno, Queimadura e Sangramento dele."
+          "desc": "Cura 26 em 1 aliado e remove Veneno, Queimadura e Sangramento dele."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 28,
-              "para": 31
+              "de": 26,
+              "para": 27
             }
           ],
-          "desc": "Cura 31 em 1 aliado e remove Veneno, Queimadura e Sangramento dele."
+          "desc": "Cura 27 em 1 aliado e remove Veneno, Queimadura e Sangramento dele."
         },
         {
           "nv": 4,
@@ -139,7 +139,7 @@
               }
             }
           ],
-          "desc": "Cura 31 em 1 aliado, remove Veneno, Queimadura e Sangramento dele, e ele regenera 5 no turno seguinte."
+          "desc": "Cura 27 em 1 aliado, remove Veneno, Queimadura e Sangramento dele, e ele regenera 5 no turno seguinte."
         }
       ]
     },
@@ -184,10 +184,10 @@
             {
               "caminho": "fx[1].v",
               "de": 12,
-              "para": 14
+              "para": 13
             }
           ],
-          "desc": "22 de dano a todos os inimigos; o time cura 14."
+          "desc": "22 de dano a todos os inimigos; o time cura 13."
         },
         {
           "nv": 4,
@@ -201,7 +201,7 @@
               }
             }
           ],
-          "desc": "22 de dano a todos os inimigos; o time cura 14 e perde todos os debuffs."
+          "desc": "22 de dano a todos os inimigos; o time cura 13 e perde todos os debuffs."
         }
       ]
     }

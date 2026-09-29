@@ -74,12 +74,19 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "cost.Aurora",
-              "de": 1,
-              "para": 0
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
             }
           ],
-          "desc": "Grátis. 14 de dano a 1 inimigo."
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },

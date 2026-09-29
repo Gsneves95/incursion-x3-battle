@@ -188,14 +188,17 @@ o número ATUAL (as telas de detalhe passam por kitEfetivo). A régua PADRÃO do
 `tools/medir_niveis.js --sorteado --reativo`: espelho SORTEADO (30 composições) + política reativa apertada;
 a régua de TIME FIXO enviesa até ±10pp e não vale para balancear. **Triagem** (não faixa fina, que espera
 dados de partida real): MÁX 0–+25pp, nenhuma habilidade nv4 acima de +15pp; tanque/suporte < 0 por limitação
-da IA aceita-se e marca-se p/ revisão. Regras de degrau: +1 turno de duração em buff de time é o salto mais
-pesado; salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus. **Lição do LOTE 1 (§318 F3):**
-dano de **alvo único** sobe de leve por degrau (levelável); dano **AoE** ×3 NÃO é levelável por dano (um só +1
-já vale ~+13pp); **básico grátis** (`cost→0`) é o salto mais pesado (~+22pp); cura de **suporte** levelada soma
-rápido no MÁX. **LOTE 1: Cérberus/Atena/Apolo mediram FORA — degraus commitados mas DORMENTES; a FASE 2 não pode
-LIGAR o LOTE 1 até eles re-medirem DENTRO** (propostas em DECISOES §318 F3 LOTE 1). **FASE 2 (cópias→níveis,
-gacha por faixa) está BLOQUEADA:** o sorteio/economia rodam no CLIENTE (têm de ir ao servidor) e a Essência
-perde o produtor (§95) se a duplicata virar pontos — decisão do dono pendente (DECISOES §318 F1-fecho/FASE2).
+da IA aceita-se e marca-se p/ revisão. Regras de degrau (§318 F3, valem p/ os próximos lotes): +1 turno de duração
+em buff de time é o salto mais pesado; salto que só aumenta a FREQUÊNCIA de um efeito reativo pode PIORAR o deus;
+**(a')** dano de **básico em ÁREA** (fx dmg escopo todosInimigos) NÃO sobe — um só passo AoE vale ~+13pp; os
+degraus dele usam NOVO-PEQUENO de cura/escudo **self** mesmo tendo número (validarNiveisDeus abre essa exceção só
+p/ básico AoE); **(b')** o **custo de um básico nunca vai a 0** (básico grátis valeu +22pp); **(c')** cura de
+**suporte** sobe de 1 em 1. Dano de **alvo único** sobe de leve (levelável).
+**TRAVA DE LIBERAÇÃO:** `subirNivel` só aceita deus em `data/niveis_liberados.json` (senão `niveis_nao_liberados`);
+um deus entra na lista só depois de MEDIR DENTRO. Liberados: os 10 do LOTE 1 (zeus/oxum/tyr + os 7 gregos) — os 3
+que mediram FORA (Cérberus/Atena/Apolo) foram corrigidos e re-medidos DENTRO (Cérberus só no PISO: básico AoE
+spammado não leva escada de verdade). **A FASE 2 (economia/gacha/níveis)
+ESTÁ NO AR** (§318 F2 E1–E4 + renda PvP): a proteção contra escada não-medida é a lista de liberados, NÃO dormência.
 
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 

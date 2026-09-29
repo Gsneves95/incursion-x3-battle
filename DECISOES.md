@@ -78,11 +78,50 @@ soma (cura em passos de +3). Então, conforme a regra, **PROPONHO e PARO** — n
 3. **Apolo** — encolher a cura: habilidade 25→26→27 (passos +1 em vez de +3) e milagre cura 12→13; re-medir.
    Se ainda somar >25, mover o `cleanse`/`regen` NOVO para um degrau que a IA use menos.
 
-**Estado do commit (SEGURO).** Os 63 degraus foram COMMITADOS medidos, mas ficam **DORMENTES**: o nível vive na
-conta (default 1), a economia que sobe nível (invocação/cópias→pontos→subirNivel) é a **FASE 2, que está
-BLOQUEADA** (§95). Com todos em nv1, `kitEfetivo` é deep-equal ao base (babá 1) — nenhuma partida de hoje muda.
-**Portão:** a FASE 2 não pode LIGAR o LOTE 1 até Cérberus/Atena/Apolo serem re-medidos DENTRO. Babás 1–8 verdes
-para os 63 (incl. as duas extensões provadas a morder); suíte + build verdes.
+**CORREÇÃO DE PREMISSA (decisão do dono).** A FASE 2 **NÃO está bloqueada** — foi construída e está no ar
+(§318 F2 E1–E4 + renda PvP). `subirNivel` funciona no servidor e cópias viram pontos. Logo os degraus **NÃO são
+dormentes**: qualquer conta com pontos poderia ativá-los. A trava que faltava não é "FASE 2 desligada" — é uma
+**LISTA DE LIBERADOS por deus**.
+
+**TRAVA POR LISTA DE LIBERADOS.** `data/niveis_liberados.json` lista os deuses cujas escadas passaram na triagem.
+`invocacao.subirNivel` RECUSA (motivo `niveis_nao_liberados`) qualquer deus fora da lista, mesmo com pontos (a
+recusa não gasta ponto nem cria nível). Liberados agora: **zeus, oxum, tyr** (piloto) **+ dionisio, medusa, ares,
+hercules** (LOTE 1 DENTRO na 1ª medição). Cérberus/Atena/Apolo entram quando as escadas CORRIGIDAS medirem DENTRO.
+Babá (economia.test 7b): deus fora da lista → recusa; liberado (zeus) → sobe. (`definirNivel` — setter direto por
+token — não é exposto no server.js; o único caminho de produção é `subirNivel`, que a trava cobre.)
+
+**CORREÇÕES DAS 3 ESCADAS FORA (decisões do dono) + 3 REGRAS APRENDIDAS (valem para os próximos lotes):**
+- **(a') dano de BÁSICO EM ÁREA não sobe.** Um básico cujo dano é AoE (fx dmg escopo `todosInimigos`) não leva
+  dano nos degraus — um só passo AoE já vale ~+13pp. Os degraus pequenos dele usam **NOVO-PEQUENO de CURA ou
+  ESCUDO no self**, MESMO o básico tendo número. Só nesse caso; a extensão (a) segue mordendo fora dele (babá
+  niveis.test B3c). **Cérberus básico** vira: nv2 `heal self 3`, nv3 `heal 3→5`, nv4 `apply dmgReduction 4/1t self`.
+- **(b') o custo de um BÁSICO nunca vai a 0.** Básico grátis valeu +22pp sozinho na Atena (o "salto que aumenta a
+  FREQUÊNCIA"). `validarNiveisDeus` quebra se um `cost.*` de básico for a 0 (babá B4c). **Atena básico nv4**: sai
+  o `cost.Aurora 1→0`, entra `apply dmgDown 2/1t` no alvo; o dano 12→13→14 fica.
+- **(c') cura de SUPORTE sobe de 1 em 1.** **Apolo habilidade** cura 25→26→27 (passos +1, não +3), nv4 regen 5
+  igual; **milagre** cura 12→13, nv4 cleanse igual (o nv2 de dano 20→22 fica).
+
+**RE-MEDIÇÃO DOS 3 (N=3000, régua padrão) — os 3 agora DENTRO:**
+
+| deus | básico n4 | habil n4 | milagre n4 | MÁX | antes → depois |
+|---|---|---|---|---|---|
+| Cérberus | +11,3 | +4,8 | +2,5 | **+19,7** | +35,4 → **DENTRO** |
+| Atena | +8,7 | +2,1 | +5,0 | **+15,2** | +32,2 → **DENTRO** |
+| Apolo | +7,0 | +5,0 | +10,8 | **+21,1** | +29,3 → **DENTRO** |
+
+- **Atena** e **Apolo** fecharam com as correções exatas do dono (dmgDown no lugar do grátis; cura +1). Entraram na lista.
+- **Cérberus** ainda mediu FORA com a escada do dono (heal 3→5 + dmgReduction 4 → básico +21,1, MÁX +28,9): o
+  básico é usado ~12×/partida, então QUALQUER benefício por-uso escala ×12. Fechei pela regra do dono ("±1 nos
+  degraus pequenos e medir de novo"): baixei SÓ a cura (pequeno) até o **piso** — nv2 cura 1, nv3 cura 2 —
+  **mantendo o SALTO do dono intacto** (nv4 dmgReduction 4). Medido: a magnitude do dmgReduction do nv4 é
+  IRRELEVANTE ao placar (dmgReduction 2 e 4 deram o MESMO +11,3/+19,7) — o driver é 100% a cura por-uso. Com a
+  cura no piso, básico +11,3 e MÁX +19,7: DENTRO. A escada do Cérberus é minúscula de propósito (o preço de um
+  básico spammável). Entrou na lista. Se o dono quiser uma escada mais generosa, Cérberus não cabe em +15 sem
+  mudar a natureza do básico (ex.: torná-lo mais caro/menos frequente).
+
+**Estado do commit.** Os degraus vivem na conta (default 1 = `kitEfetivo` deep-equal ao base, babá 1). O que
+protege o jogo de uma escada não-medida NÃO é dormência (a FASE 2 está no ar) — é a **lista de liberados**: um
+deus só sobe nível depois de MEDIR DENTRO. Babás 1–8 verdes; suíte + build verdes.
 
 ---
 

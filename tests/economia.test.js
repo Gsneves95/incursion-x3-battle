@@ -387,6 +387,22 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
   ok(!r.ok && r.motivo === 'nao_possui', 'deus não possuído recusa (nao_possui)');
 })();
 
+// --- (7b) §318 F3 TRAVA DE LIBERAÇÃO: subir nível só em deus cuja escada passou na triagem ---
+(() => {
+  // deus POSSUÍDO e COM pontos, mas FORA da lista de liberados → recusa 'niveis_nao_liberados'
+  const naoLib = ['thor', 'poseidon', 'odin', 'loki'].find(k => !invoc.NIVEIS_LIBERADOS.has(k)) || 'thor';
+  const c = contaFake(0, 0, { [naoLib]: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c.pontos = { [naoLib]: 6 };
+  let r = invoc.subirNivel(c, naoLib, 'basico');
+  ok(!r.ok && r.motivo === 'niveis_nao_liberados', `deus fora da lista de liberados recusa (${naoLib} → niveis_nao_liberados)`);
+  ok((c.pontos[naoLib] === 6) && !(c.niveis && c.niveis[naoLib]), 'a recusa não gasta pontos nem cria nível');
+  // deus LIBERADO (zeus) com pontos → sobe normalmente
+  const c2 = contaFake(0, 0, { zeus: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c2.pontos = { zeus: 1 };
+  const r2 = invoc.subirNivel(c2, 'zeus', 'basico');
+  ok(invoc.NIVEIS_LIBERADOS.has('zeus') && r2.ok && r2.nivel === 2, 'deus liberado (zeus) sobe de nível');
+})();
+
 // --- (8) SEM GEMAS → recusa (nada muda) ---
 (() => {
   const c = contaFake(0, 100, {});   // 100 gema < 150
