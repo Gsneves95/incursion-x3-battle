@@ -10,7 +10,13 @@
     "nome": "Melodia Hipnótica",
     "desc": "Inimigos Adormecidos recebem +8 de dano e não geram orbes.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "adormecido" } }
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": {
+          "alvoDebuff": "adormecido"
+        }
+      }
     ]
   },
   "ab": [
@@ -22,31 +28,175 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "10 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 10 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Canção Órfica",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Adormece 1 inimigo por 2 turnos; ele acorda se sofrer dano de Habilidade ou Milagre.",
       "fx": [
-        { "t": "apply", "eff": { "type": "adormecido", "dur": 2 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "adormecido",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 3,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Adormece 1 inimigo por 2 turnos; ele acorda se sofrer dano de Habilidade ou Milagre. Orfeu cura 3."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Adormece 1 inimigo por 2 turnos; ele acorda se sofrer dano de Habilidade ou Milagre. Orfeu cura 4."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Adormece 1 inimigo por 3 turnos; ele acorda se sofrer dano de Habilidade ou Milagre. Orfeu cura 4."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Lamento do Submundo",
-      "cost": { "Umbra": 1, "livre": 2 },
+      "cost": {
+        "Umbra": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Todos os inimigos causam 8 menos de dano por 2 turnos; o time cura 15.",
       "fx": [
-        { "t": "apply", "eff": { "type": "dmgDown", "v": 8, "dur": 2 }, "escopo": "todosInimigos" },
-        { "t": "heal", "v": 15, "escopo": "time" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgDown",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 15,
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 15."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 16."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 16."
+        }
       ]
     }
   ]

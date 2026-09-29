@@ -145,6 +145,20 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.atena, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'self' }))).length > 0, 'B3c MORDE: cura self num básico de ALVO ÚNICO com número (só AoE tem o passe)');
 })();
 
+// BABÁ 3d — §318 F3 regra (d') BÁSICO DE DEUS DURÁVEL. Se a passiva dá redução PERMANENTE ≥10, o básico (mesmo
+// alvo único, mesmo com número) pode ganhar NOVO-PEQUENO cura/escudo self no nv2. Morde fora do caso: básico de
+// deus sem redução forte (Perseu: passiva sem reducao) segue barrado.
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'x' }];
+  // Aquiles (passiva reducao 12) e Kraken (reducao 10) → cura self no básico passa
+  ok(E.validarNiveisDeus(so(catalogo.aquiles, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length === 0, "B3d passa: cura self no básico de deus durável (Aquiles reducao 12, regra d')");
+  ok(E.validarNiveisDeus(so(catalogo.kraken, 'basico', NP(2, { t: 'shield', v: 3, escopo: 'self' }))).length === 0, 'B3d passa: escudo self no básico do Kraken (reducao 10)');
+  // Perseu (passiva sem reducao) → barrado; e Poseidon (reducao 5 gated <10) → barrado
+  ok(E.validarNiveisDeus(so(catalogo.perseu, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length > 0, 'B3d MORDE: cura self no básico de deus SEM redução forte (Perseu)');
+  ok(E.validarNiveisDeus(so(catalogo.poseidon, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length > 0, 'B3d MORDE: reducao passiva <10 ou gated não conta (Poseidon reducao 5 protegido)');
+})();
+
 // BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.
 (() => {
   const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };

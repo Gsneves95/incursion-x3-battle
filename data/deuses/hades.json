@@ -14,8 +14,15 @@
         "gatilho": "aoCair",
         "quem": "qualquerInimigo",
         "faz": [
-          { "t": "heal", "v": 15 },
-          { "t": "orbGain", "n": 1, "para": "Umbra" }
+          {
+            "t": "heal",
+            "v": 15
+          },
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Umbra"
+          }
         ]
       }
     ]
@@ -25,36 +32,177 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Toque Fúnebre",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dot",
+                "nome": "tormento",
+                "v": 3,
+                "dur": 1
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo + Tormento (3 de dano puro por 1 turno)."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Correntes do Tártaro",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 3,
       "alvo": "inimigo",
       "desc": "1 inimigo fica Selado por 1 turno (só Básico) e sofre 10 de dano puro por turno durante 2 turnos.",
       "fx": [
-        { "t": "apply", "eff": { "type": "selado", "dur": 1 } },
-        { "t": "dot", "nome": "tormento", "v": 10, "dur": 2 }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "selado",
+            "dur": 1
+          }
+        },
+        {
+          "t": "dot",
+          "nome": "tormento",
+          "v": 10,
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "1 inimigo fica Selado por 1 turno (só Básico) e sofre 11 de dano puro por turno durante 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "1 inimigo fica Selado por 1 turno (só Básico) e sofre 12 de dano puro por turno durante 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "1 inimigo fica Selado por 1 turno (só Básico) e sofre 12 de dano puro por turno durante 3 turnos."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Portões do Submundo",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "inimigo",
       "desc": "40 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe.",
       "fx": [
-        { "t": "dmg", "v": 40, "executaAbaixoDe": 24 },
-        { "t": "roubaOrbe", "n": 1, "rouba": true }
+        {
+          "t": "dmg",
+          "v": 40,
+          "executaAbaixoDe": 24
+        },
+        {
+          "t": "roubaOrbe",
+          "n": 1,
+          "rouba": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 40,
+              "para": 42
+            }
+          ],
+          "desc": "42 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 42,
+              "para": 44
+            }
+          ],
+          "desc": "44 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "44 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado. Rouba 1 orbe."
+        }
       ]
     }
   ]

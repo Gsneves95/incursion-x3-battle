@@ -127,14 +127,20 @@ function catalogoComEscada() {
   return cat;   // senão: escadas REAIS do dado commitado
 }
 
-// UMA partida-espelho. leveled = lado (0/1) que recebe o vetor NIV em X; comeca = quem abre.
-// Devolve { venceuNivelado, empate, usouX:{basico,habilidade,milagre} } — uso de X no lado nivelado.
+// §318 F3 — TETO DE RODADAS por partida: uma partida sem fim (dois times que não se matam, ou um ciclo do motor)
+// NUNCA pode travar a varredura. Ao bater o teto sem `st.fim`, a partida é EMPATE-POR-TETO: contada à parte,
+// NÃO conta como vitória nem derrota (não enviesa o delta), e a 1ª ocorrência de cada corrida é registrada com
+// (time, seed, comeca, leveled) p/ reproduzir a partida exata. (O teto protege o LAÇO DE TURNOS; um laço DENTRO
+// de um único agir/fimTurno é outra coisa — as varreduras rodam cada medida sob `timeout` no shell como cinto.)
+const TETO_RODADAS = 300;
+let CAPS = 0;              // partidas empate-por-teto na corrida corrente
+const CAPS_AMOSTRA = [];   // amostra (até 5) das partidas que bateram o teto, p/ reproduzir
 function jogar(cat, time, leveled, niv, seed, comeca, usarDelta) {
   const niveis = usarDelta ? (leveled === 0 ? [{ [X]: niv }, {}] : [{}, { [X]: niv }]) : [{}, {}];
   const st = E.novoEstado(time.slice(), time.slice(), seed, comeca, null, cat, niveis);
   const usouX = { basico: 0, habilidade: 0, milagre: 0 };
   let guard = 0;
-  while (!st.fim && guard++ < 400) {
+  while (!st.fim && guard++ < TETO_RODADAS) {
     let passos = 0, a;
     while (!st.fim && (a = proximaAcao(st)) && passos++ < 8) {
       const u = st.lados.flatMap(l => l.units).find(x => x.uid === a.uid);
@@ -144,8 +150,10 @@ function jogar(cat, time, leveled, niv, seed, comeca, usarDelta) {
     if (st.fim) break;
     E.fimTurno(st);
   }
+  const capou = !st.fim;   // bateu o teto de rodadas sem terminar
+  if (capou) { CAPS++; if (CAPS_AMOSTRA.length < 5) CAPS_AMOSTRA.push({ time: time.join('+'), seed, comeca, leveled, niveladoUsouDelta: usarDelta }); }
   const venceuNivelado = !!(st.fim && st.fim.resultado === 'vitoria' && st.fim.lado === leveled);
-  return { venceuNivelado, empate: !!(st.fim && st.fim.resultado === 'empate'), usouX };
+  return { venceuNivelado, empate: !!(st.fim && st.fim.resultado === 'empate') || capou, capou, usouX };
 }
 
 // corre N partidas alternando leveled e comeca; usarDelta=false = corrida NULA (baseline).
@@ -222,7 +230,12 @@ if (SORTEADO) {
   console.log(`RÉGUA SORTEADA — ${r.comps} composições × ${r.M}×2 partidas — política ${POLITICA}`);
   console.log(`DELTA (média das composições): ${(100 * r.mean).toFixed(1)} pp  ±${(100 * r.half).toFixed(1)} pp (IC95 cluster)  · sd entre comps ${(100 * r.sd).toFixed(1)}pp  → ${detecta ? 'DETECTADO' : 'não detectado'}`);
   console.log(`uso de X na nivelada: ${SLOTS.map(s => s + ' ' + (r.usou[s] / (r.comps * r.M)).toFixed(2)).join(' · ')}/partida`);
-  console.log(`(${2 * r.comps * r.M} partidas em ${dt.toFixed(1)}s)`);
+  const totP = 2 * r.comps * r.M;
+  if (CAPS > 0) {
+    console.log(`⚠ EMPATE-POR-TETO: ${CAPS} de ${totP} partidas bateram ${TETO_RODADAS} rodadas sem fim (não contam vitória/derrota). Amostra p/ reproduzir:`);
+    for (const c of CAPS_AMOSTRA) console.log(`    time=${c.time} seed=${c.seed} comeca=${c.comeca} leveled=${c.leveled} nivelada=${c.niveladoUsouDelta}`);
+  } else { console.log(`empate-por-teto: 0 de ${totP} (nenhuma partida sem fim)`); }
+  console.log(`(${totP} partidas em ${dt.toFixed(1)}s)`);
   process.exit(0);
 }
 

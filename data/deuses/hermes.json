@@ -109,22 +109,22 @@
               "de": null,
               "para": {
                 "t": "heal",
-                "v": 6
+                "v": 2
               }
             }
           ],
-          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 6."
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 2."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 6,
-              "para": 8
+              "de": 2,
+              "para": 3
             }
           ],
-          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 8."
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno, e ele cura 3."
         },
         {
           "nv": 4,
@@ -136,13 +136,13 @@
                 "t": "apply",
                 "eff": {
                   "type": "dmgUp",
-                  "v": 3,
+                  "v": 2,
                   "dur": 1
                 }
               }
             }
           ],
-          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno; ele cura 8 e causa +3 de dano por 1 turno."
+          "desc": "Todas as recargas de 1 aliado são reduzidas em 1 turno; ele cura 3 e causa +2 de dano por 1 turno."
         }
       ]
     },
@@ -177,23 +177,23 @@
               "de": null,
               "para": {
                 "t": "dmg",
-                "v": 5,
+                "v": 2,
                 "escopo": "todosInimigos"
               }
             }
           ],
-          "desc": "5 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+          "desc": "2 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[2].v",
-              "de": 5,
-              "para": 7
+              "de": 2,
+              "para": 3
             }
           ],
-          "desc": "7 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+          "desc": "3 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
         },
         {
           "nv": 4,
@@ -204,7 +204,7 @@
               "para": 3
             }
           ],
-          "desc": "7 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
+          "desc": "3 de dano a todos os inimigos; rouba 2 orbes do inimigo e remove 1 buff de cada inimigo."
         }
       ]
     }

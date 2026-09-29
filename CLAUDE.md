@@ -193,7 +193,12 @@ em buff de time é o salto mais pesado; salto que só aumenta a FREQUÊNCIA de u
 **(a')** dano de **básico em ÁREA** (fx dmg escopo todosInimigos) NÃO sobe — um só passo AoE vale ~+13pp; os
 degraus dele usam NOVO-PEQUENO de cura/escudo **self** mesmo tendo número (validarNiveisDeus abre essa exceção só
 p/ básico AoE); **(b')** o **custo de um básico nunca vai a 0** (básico grátis valeu +22pp); **(c')** cura de
-**suporte** sobe de 1 em 1. Dano de **alvo único** sobe de leve (levelável).
+**suporte** sobe de 1 em 1; **(d')** básico de deus cuja **passiva dá redução permanente ≥10** NÃO sobe dano (o
+deus é durável e spamma o básico — Aquiles reducao 12 = +20,7 só com 15→17; Kraken reducao 10 = +22,5); usa
+NOVO-PEQUENO de cura/escudo self, como (a') (validarNiveisDeus abre a exceção; `_passivaReducaoForte`); **(e')**
+NÃO dar cura em habilidade de deus cuja **passiva reage a cura** (a cura dispararia a passiva junto — Hera
+aoCurar→escudo). Diretriz (não-babá): NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica
+em 2–3, não 5–8. Dano de **alvo único** de deus **frágil** sobe de leve (levelável).
 **TRAVA DE LIBERAÇÃO:** `subirNivel` só aceita deus em `data/niveis_liberados.json` (senão `niveis_nao_liberados`);
 um deus entra na lista só depois de MEDIR DENTRO. Liberados: os 10 do LOTE 1 (zeus/oxum/tyr + os 7 gregos) — os 3
 que mediram FORA (Cérberus/Atena/Apolo) foram corrigidos e re-medidos DENTRO (Cérberus só no PISO: básico AoE

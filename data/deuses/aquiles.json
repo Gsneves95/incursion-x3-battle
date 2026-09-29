@@ -43,23 +43,27 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 1,
+                "escopo": "self"
+              }
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo; Aquiles cura 1."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "caminho": "fx[1].v",
+              "de": 1,
+              "para": 2
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo; Aquiles cura 2."
         },
         {
           "nv": 4,
@@ -77,7 +81,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; ele recebe +3 de dano de todas as fontes por 1 turno."
+          "desc": "15 de dano a 1 inimigo; Aquiles cura 2; ele recebe +3 de dano de todas as fontes por 1 turno."
         }
       ]
     },

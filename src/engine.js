@@ -442,11 +442,22 @@ function _ehNovoPequenoPara(para) {
 function _ehBasicoArea(ab) {
   return ab && ab.slot === 'basico' && (ab.fx || []).some(f => f.t === 'dmg' && f.escopo === 'todosInimigos');
 }
-// NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em área pode heal/shield self com número.
-function _novoPequenoPermitido(ab, para) {
+// §318 F3 (regra d') — BÁSICO DE DEUS DURÁVEL: se a PASSIVA dá redução de dano PERMANENTE ≥ 10 (fx reducao com
+// v≥10 e SEM gate — sem contra/estado/protegido), o deus sobrevive e spamma o básico, então subir o dano dele é
+// forte demais (Aquiles reducao 12 = +20,7 só com 15→17; Kraken reducao 10 = +22,5). O básico não sobe dano: os
+// degraus usam NOVO-PEQUENO de cura/escudo self, como o básico AoE (a').
+function _passivaReducaoForte(deus) {
+  const fx = (deus && deus.passiva && deus.passiva.fx) || [];
+  return fx.some(f => f.gatilho === 'reducao' && typeof f.v === 'number' && f.v >= 10 && !f.contra && !f.estado && !f.protegido);
+}
+// NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em área; regra (d'): básico de deus
+// com redução passiva forte — ambos podem ganhar heal/shield SELF (≤8) no nv2 mesmo o básico tendo número.
+function _novoPequenoPermitido(ab, para, deus) {
   if (!_ehNovoPequenoPara(para)) return false;
   if (!_temMagnitudePequena(ab)) return true;
-  if (_ehBasicoArea(ab) && (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self') return true;   // (a')
+  const curaOuEscudoSelf = (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self';
+  if (_ehBasicoArea(ab) && curaOuEscudoSelf) return true;   // (a')
+  if (ab.slot === 'basico' && curaOuEscudoSelf && _passivaReducaoForte(deus)) return true;   // (d')
   return false;
 }
 // lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
@@ -544,7 +555,7 @@ function validarNiveisDeus(deus) {
         // §318 F3 (extensão a) — NOVO-PEQUENO: um fx[] com efeito SIMPLES (dmg/heal/shield, v≤8) numa
         // habilidade SEM magnitude base vira 'pequeno' e SÓ pode entrar no nv2. Com magnitude base, o fx[]
         // simples continua SALTO (nv4) — é o caso do Ares habil nv4 (heal 6) e do Cérberus basico nv4.
-        if (mud.caminho === 'fx[]' && _novoPequenoPermitido(ab, mud.para)) {
+        if (mud.caminho === 'fx[]' && _novoPequenoPermitido(ab, mud.para, deus)) {
           cat = 'pequeno';
           if (nvl !== 2) erros.push(`${nome}.${ab.slot} nv${nvl}: NOVO-PEQUENO (efeito simples ≤8 em habilidade sem magnitude, ou cura/escudo self em básico de área) só é permitido no nv2`);
         }

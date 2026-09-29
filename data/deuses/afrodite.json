@@ -35,6 +35,48 @@
           "t": "dmg",
           "v": 12
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
@@ -51,6 +93,44 @@
         {
           "t": "dominar",
           "dur": 1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 3
+              }
+            }
+          ],
+          "desc": "3 de dano a 1 inimigo e o Domina por 1 turno: ele usa o próprio Básico contra um aliado dele (você escolhe o alvo)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano a 1 inimigo e o Domina por 1 turno: ele usa o próprio Básico contra um aliado dele (você escolhe o alvo)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 4,
+              "para": 5
+            }
+          ],
+          "desc": "5 de dano a 1 inimigo e o Domina por 1 turno: ele usa o próprio Básico contra um aliado dele (você escolhe o alvo)."
         }
       ]
     },
@@ -83,6 +163,41 @@
             "dur": 1
           },
           "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Todos os inimigos causam 11 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "Todos os inimigos causam 12 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "Todos os inimigos causam 12 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno."
         }
       ]
     }
