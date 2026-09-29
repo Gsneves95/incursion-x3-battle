@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 3 + correções LOTE 2 — varredura dos 8 (3 novos DENTRO; 5 FORA → PROPOSTO)
+
+Regras novas: **(d')** básico de deus com redução passiva ≥10 não sobe dano (cura/escudo self; motor+babá B3d);
+**(e')** não dar cura em habilidade cuja passiva reage a cura. Correções L2 aplicadas + LOTE 3 (Afrodite/Perseu/
+Orfeu/Hades). Achados verificados: dano+dominar da Afrodite e cura-self-sem-acordar do Orfeu aplicam como escritos.
+
+**"Varredura de 4h30": suspensão do container, NÃO partida sem fim** (motor já encerra na rodada 40; probe de
+200k passos varreu Afrodite MÁX sem estouro; o "HANG" foi contenção de CPU de processos concorrentes). Blindagem:
+`medir_niveis.js` com TETO_RODADAS (empate-por-teto contado à parte) + cada medida sob `timeout`. Sem defeito no jogo.
+
+Varredura N=3000 (0 empates-por-teto): **DENTRO → liberados: Perseu (+21,0), Orfeu (+15,3), Hades (+2,9)**.
+**FORA (propostos, não liberados):** Hera +25,8 e Hermes habil +15,8 (marginais ~0,8); Afrodite +29,8 (dmgDown do
+básico nv4 = +8,1; dano do básico +10,2 DENTRO); **Aquiles +29,2 / Kraken +24,3 — achado: (d') não basta p/ deus
+MUITO durável** (só a cura self 1→2 já vale +24 porque reducao 12/10 faz spammar o básico ~13×). Proposta: básico
+de deus muito durável sem escada nenhuma. Detalhes/propostas na DECISOES. Total DENTRO acumulado: 16 deuses.
+
 ## ★ §318 FASE 3 · LOTE 2 — 7 gregos do Devoto/Iniciado (3 DENTRO liberados; 4 FORA → PROPOSTO)
 
 63 degraus (Hera/Hermes/Deméter/Poseidon/Erínias/Aquiles/Kraken). Mesma whitelist + regras (a'/b'/c'). Babás 1–8

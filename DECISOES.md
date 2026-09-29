@@ -6,6 +6,66 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 3 + correções LOTE 2 — varredura dos 8 (3 novos DENTRO; 5 FORA → PROPOR e PARAR)
+
+**Regras novas (decisões do dono, valem daqui em diante):** **(d')** básico de deus com redução passiva permanente
+≥10 não sobe dano — usa NOVO-PEQUENO de cura/escudo self (motor: `_passivaReducaoForte`, babá B3d). **(e')** não
+dar cura em habilidade de deus cuja passiva reage a cura (Hera aoCurar→escudo). Diretriz: NOVO-PEQUENO em
+habilidade UTILITÁRIA forte fica em 2–3, não 5–8.
+
+**Correções do LOTE 2 aplicadas** (Aquiles/Kraken básico por d'; Kraken habil nv4 dmgDown; Hermes habil/milagre
+menores; Hera habil nv4 eff.v em vez de cura) **+ LOTE 3** (Afrodite/Perseu/Orfeu/Hades, 36 degraus). Achados de
+motor verificados como escritos (nada adaptado): o dano NOVO da Afrodite aplica junto do dominar; a cura self do
+Orfeu não acorda o alvo adormecido.
+
+**A "VARREDURA DE 4h30" — diagnóstico (o dono pediu):** a medição travou por **suspensão do container** (o restart
+confirmou), NÃO por partida sem fim. Provas: (1) o motor JÁ encerra toda partida na **rodada 40** (`fimTurno`
+engine.js — empate/vitória por HP), então laço de turnos é impossível; (2) as cadeias de reação (contra/reflexo/
+thorns) têm trava; (3) um probe com teto de 200 000 passos por partida varreu Afrodite MÁX (6000 partidas) SEM
+nenhum estouro. O "HANG" que aparecera em Afrodite MÁX numa varredura foi **contenção de CPU** (7 processos de
+medição concorrentes, deixados por varreduras anteriores) estourando o `timeout`, não um ciclo de código.
+**Não há defeito no jogo real.** Blindagem adicionada mesmo assim: `tools/medir_niveis.js` ganhou **TETO_RODADAS**
+(partida sem fim = empate-por-teto, contada/reportada à parte, não enviesa), e as varreduras rodam cada medida sob
+`timeout` no shell — uma partida que travasse de verdade seria morta e registrada, nunca mais parando a varredura.
+
+**VARREDURA N=3000 (espelho sorteado + reativa) — 0 empates-por-teto em todas:**
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Perseu | +5,0 | +5,7 | +4,5 | +21,0 | DENTRO |
+| Orfeu | +5,4 | +6,8 | 0,0 | +15,3 | DENTRO |
+| Hades | −2,5 | +2,3 | −0,8 | +2,9 | DENTRO |
+| Hera | +11,6 | +3,6 | +10,7 | +25,8 | **FORA** (marginal) |
+| Hermes | +0,3 | +15,8 | +7,1 | +17,3 | **FORA** (marginal) |
+| Afrodite | +18,3 | +6,7 | +13,7 | +29,8 | **FORA** |
+| Aquiles | +29,2 | +14,5 | +5,1 | +38,8 | **FORA** |
+| Kraken | +24,3 | +10,0 | +10,1 | +34,3 | **FORA** |
+
+**3 novos DENTRO → liberados: Perseu, Orfeu, Hades.** (Os DENTRO acumulados do LOTE são 16: os 10 do L1 + Deméter/
+Poseidon/Erínias do L2 + estes 3.)
+
+**As correções do LOTE 2 AJUDARAM muito** (Hera MÁX 32,7→25,8 com o e'; Hermes habil 28,2→15,8 e milagre 21,3→7,1;
+Kraken habil 16,9→10,0 com o dmgDown) — mas 4 não fecharam, e o achado novo abaixo explica por quê.
+
+**5 FORA — drivers isolados; PROPONHO e PARO (todos SALTO/estrutural):**
+- **Aquiles básico +29,2 / Kraken básico +24,3 — a regra (d') NÃO basta p/ deus MUITO durável.** Medido: só a
+  cura self 1→2 (o piso do Cérberus) já vale **+24,6 (Aquiles)** e **+24,3 (Kraken)** — o dmgReduction/vulneravel
+  do nv4 é quase irrelevante. Aquiles (reducao 12) e Kraken (reducao 10) sobrevivem tanto que spammam o básico ~13×/
+  partida; QUALQUER benefício por-uso (mesmo cura 1) escala demais. **Proposta:** para deus MUITo durável, o básico
+  não leva escada NENHUMA — os 3 degraus vão só p/ habilidade/milagre (ou o básico fica sem níveis). Precisa da sua
+  decisão (é mais forte que o d').
+- **Afrodite básico +18,3** — o dano 12→14 sozinho é **+10,2 (DENTRO)**; o **dmgDown do nv4 (SALTO)** soma +8,1.
+  **Proposta:** básico nv4 sem o dmgDown (um self pequeno, ou sem nv4-salto); aí básico ~+10 e o MÁX cai p/ DENTRO.
+- **Hera +25,8** e **Hermes habil +15,8** — **marginais** (~0,8 acima, dentro do ruído IC±5). Os pequenos já são
+  degraus +1 mínimos (não dá p/ −1 sem degrau inerte); o único lever é a magnitude do SALTO do nv4. **Proposta:**
+  ou você aceita o limite (essencialmente no teto), ou encolho um SALTO do nv4 (Hera básico shield 5→3; Hermes
+  dmgUp 2→1) e re-meço.
+
+Os 5 FORA ficam fora de `niveis_liberados.json` (a trava impede subir nível neles). Os degraus estão commitados e
+medidos. Suíte + build verdes.
+
+---
+
 ## §318 FASE 3 · LOTE 2 — os 7 gregos do Devoto/Iniciado (3 DENTRO liberados; 4 FORA → PROPOR e PARAR)
 
 **Construído.** 63 degraus (Hera, Hermes, Deméter, Poseidon, Erínias, Aquiles, Kraken × 3 slots × nv2–4), mesma
