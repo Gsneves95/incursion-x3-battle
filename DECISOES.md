@@ -6,6 +6,66 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · correção (j') ESCADA CURTA + LOTE 12 (7 japoneses) — 7 de 7 DENTRO; defeito do Fujin (L11) consertado
+
+**Correção (j') — ESCADA CURTA.** O ±1 do LOTE 11 deixou o Fujin com dois defeitos que a babá 8 (só varre degraus
+DECLARADOS) não pegou: básico com **buraco** (nv2 e nv4, sem nv3 → subir p/ nv3 custava 2 pontos e não mudava nada) e
+milagre só até nv3 (o que aconteceria ao tentar nv4?). A regra (j') resolve a categoria toda:
+- **Contiguidade obrigatória:** os níveis de um slot vão de 2 em diante sem buraco. `validarNiveisDeus` quebra a build
+  em qualquer buraco (babá B4j).
+- **Marcação `escadaCurta:"<motivo>"`:** um slot com MENOS de 3 degraus exige a marcação com o motivo/medida (string
+  não-vazia). Escada COMPLETA (3 degraus) NÃO pode levá-la. O SALTO (se houver) fica no ÚLTIMO degrau (não mais "só nv4"):
+  numa escada completa é o nv4, numa curta é o maior nv declarado.
+- **Topo do slot = 1 + nº de degraus** (`server/invocacao.js._topoSlot`): `subirNivel` recusa acima do topo
+  (`motivo:'nivel_maximo'`, antes era `ja_no_maximo` fixo no 4) e `_maximizado`/excedente→Essência usam o topo POR SLOT
+  — senão um slot de escada curta jamais "maximizaria" (o excedente→Essência nunca dispararia) e dava para pagar por um
+  nível acima do topo que não muda nada (o defeito exato do Fujin).
+- `TELA_AB` (provacao.js) e `CHAVES_AB` (valida_kit.js) ganharam `escadaCurta` (fora do hash de combate, campo válido).
+
+**Fujin consertado** (o conteúdo não muda, então a medida do L11 vale): básico = nv2 `fx[0].v` 12→13 + nv3 novo dmgDown
+(salto no último degrau), contíguo; milagre = nv2 16, nv3 17 (já contíguo). Ambos marcados `escadaCurta` com a medida
+(MÁX +30,1 → +23,4). Babás B4j (buraco→quebra; curta sem marcação→quebra; escada completa marcada→quebra; salto fora do
+último→quebra; escadaCurta sem niveis→quebra) e economia (subir além do topo→`nivel_maximo`; `_maximizado` usa topo).
+
+**VARREDURA dos deuses com escada (buracos / escadas curtas não marcadas) — o que o dono pediu:** rodei o scan em
+TODOS os deuses com escada. **Único achado: o Fujin** (básico buraco [2,4] + milagre curto [2,3], ambos não marcados) —
+consertado acima. Todos os outros 75 (agora 82 com o L12) têm escada completa de 3 degraus contíguos. Nenhum outro
+buraco, nenhuma outra escada curta.
+
+**LOTE 12 (7 japoneses):** Yamato Takeru, Amaterasu, Tsukuyomi, Shuten Dōji, Izanagi, Izanami, Kagutsuchi. **Uma
+varredura** N=3000 sorteado+reativo, higiene antes, **0 empate-por-teto**. Izanami medido só em básico/milagre/MÁX
+(habilidade SEM ESCADA). **7 de 7 DENTRO sem ajuste** — nenhuma habilidade nv4 > +15pp (maior single: Izanagi básico
++12,3); todo MÁX ≤ +25 (maior: Izanagi +21,6). Nenhum ±1, nenhum (h') precisou (Shuten, durável por cura-por-turno, mede
+básico +1,7 — a (h') autorizada não foi usada).
+
+**IZANAMI habilidade SEM ESCADA** (marcação `semEscada` com motivo): o dano vem só do contador; o único número é a base
+de um **dot PERMANENTE (dur 99) em área** — qualquer +1 é dano eterno em 3 alvos. Sem escada por desenho.
+
+**Motor verificado aplicado-como-escrito** (o dono mandou conferir): Amaterasu milagre — só `fx[0].v` sobe (18→21), o
+`seDia:28` fica FORA da lista branca (não sobe), verificado no kit efetivo. Izanagi habilidade nv4 pela ext.(i)
+condicional (`fx[2].entao[0].v` 10→11, o "se removeu uma Maldição, cura +N no time") — verificado em combate: com um
+aliado amaldiçoado, o ramo dispara e o time cura 10 (nv3) vs 11 (nv4). Kagutsuchi — dano e dot (`fx[i].v` do `dot`
+queimadura) sobem como PEQUENO; a duração do dot NÃO (seria salto). A babá 8 ganhou o preparo do ramo `se.alvoContador`
+(o ALVO tem contador ≥ n) para o degrau do Izanagi ficar observável.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Yamato Takeru | +3,4 | +0,4 | +6,8 | +13,4 | DENTRO |
+| Amaterasu | +5,4 | +3,4 | +5,9 | +14,1 | DENTRO |
+| Tsukuyomi | +1,0 | +8,7 | +0,0 | +14,3 | DENTRO |
+| Shuten Dōji | +1,7 | +0,0 | +4,2 | +5,5 | DENTRO |
+| Izanagi | +12,3 | +4,7 | +8,2 | +21,6 | DENTRO |
+| Izanami | +5,1 | — SEM ESCADA | +4,6 | +6,9 | DENTRO |
+| Kagutsuchi | +2,2 | +0,3 | +5,0 | +8,8 | DENTRO |
+
+**7 de 7 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **83 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 L8 + 7 L9 + 8 L10 + 7 L11 + 7 L12 + zeus/oxum/tyr). Régua a'–h'+**j'** + whitelist a/b/i(+agenda)/ii/iii-leve/v.
+0 Provação estale (TELA_AB tira `niveis`/`semEscada`/`escadaCurta` do hash de combate).
+
+---
+
 ## §318 FASE 3 · LOTE 11 (7 japoneses) — 7 de 7 DENTRO; ext.(v) POSICIONAL (Raijin); 2 SEM ESCADA por desenho (Susanoo/Tanuki habil); ±1 no Fujin
 
 **Uma varredura** dos 7 (Fujin/Kitsune/Raijin/Susanoo/Inari/Oni/Tanuki), N=3000 sorteado+reativo, higiene antes,

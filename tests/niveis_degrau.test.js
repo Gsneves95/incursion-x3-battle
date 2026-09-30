@@ -93,6 +93,8 @@ function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
       if (seMarca) { const inim = st.lados[1].units[0]; inim.efeitos.push({ type: seMarca.se.alvoMarca, dur: 3, origem: st.lados[0].units[0].uid }); }
       const seCont = scanFx(efAb.fx, f => f.se && f.se.contador && typeof f.se.contador.n === 'number');   // §318 F3 L8 — ramo "contador >= n": arma o contador do lançador (Dagda: clava a cada 3º uso)
       if (seCont) { const u0 = st.lados[0].units[0]; u0.contadores = u0.contadores || {}; u0.contadores[seCont.se.contador.nome] = seCont.se.contador.n; }
+      const seAlvoCont = scanFx(efAb.fx, f => f.se && f.se.alvoContador && typeof f.se.alvoContador.n === 'number');   // §318 F3 L12 — ramo "o ALVO tem contador >= n" (Izanagi: limpa+cura um ALIADO com Maldição): semeia o contador no aliado-alvo
+      if (seAlvoCont) { const al = st.lados[0].units[1]; al.contadores = al.contadores || {}; al.contadores[seAlvoCont.se.alvoContador.nome] = seAlvoCont.se.alvoContador.n; }
     }
   }
   const u = st.lados[0].units[0];

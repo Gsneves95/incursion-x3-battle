@@ -10,8 +10,20 @@
     "nome": "Chama que Consome",
     "desc": "Todas as Queimaduras no campo causam +4 de dano; Kagutsuchi perde 3 de HP por turno.",
     "fx": [
-      { "gatilho": "amplificaDot", "nome": "queimadura", "v": 4 },
-      { "gatilho": "porTurno", "faz": [ { "t": "selfHp", "v": -3 } ] }
+      {
+        "gatilho": "amplificaDot",
+        "nome": "queimadura",
+        "v": 4
+      },
+      {
+        "gatilho": "porTurno",
+        "faz": [
+          {
+            "t": "selfHp",
+            "v": -3
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -19,39 +31,180 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Brasa",
-      "cost": { "Chama": 1 },
+      "cost": {
+        "Chama": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "10 de dano + Queimadura (8/turno por 2 turnos).",
       "fx": [
-        { "t": "dmg", "v": 10 },
-        { "t": "dot", "nome": "queimadura", "v": 8, "dur": 2 }
+        {
+          "t": "dmg",
+          "v": 10
+        },
+        {
+          "t": "dot",
+          "nome": "queimadura",
+          "v": 8,
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano + Queimadura (8/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "11 de dano + Queimadura (9/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano + Queimadura (9/turno por 2 turnos)."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Fornalha",
-      "cost": { "Chama": 2 },
+      "cost": {
+        "Chama": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Queimadura pesada (14/turno por 2 turnos); o alvo não pode ser curado por 2 turnos.",
       "fx": [
-        { "t": "dot", "nome": "queimadura", "v": 14, "dur": 2 },
-        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } }
+        {
+          "t": "dot",
+          "nome": "queimadura",
+          "v": 14,
+          "dur": 2
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "noHeal",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "Queimadura pesada (15/turno por 2 turnos); o alvo não pode ser curado por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Queimadura pesada (16/turno por 2 turnos); o alvo não pode ser curado por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Queimadura pesada (16/turno por 2 turnos); o alvo não pode ser curado por 3 turnos."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Nascimento em Chamas",
-      "cost": { "Chama": 2, "livre": 1 },
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "15 de dano a todos os inimigos + Queimadura (10/turno por 2 turnos).",
       "fx": [
-        { "t": "dmg", "v": 15, "escopo": "todosInimigos" },
-        { "t": "dot", "nome": "queimadura", "v": 10, "dur": 2, "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 15,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "dot",
+          "nome": "queimadura",
+          "v": 10,
+          "dur": 2,
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a todos os inimigos + Queimadura (10/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "16 de dano a todos os inimigos + Queimadura (11/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a todos os inimigos + Queimadura (11/turno por 2 turnos)."
+        }
       ]
     }
   ]

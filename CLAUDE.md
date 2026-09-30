@@ -216,7 +216,12 @@ alvo-único) NÃO. **(e')** NÃO dar cura em habilidade de deus cuja **passiva r
 básico que **ESTOURA com a escada mínima** (+1/+1 já mede FORA e não há degrau menor que ainda mude o estado) fica
 **sem escada**, marcado EXPLICITAMENTE no dado com `semEscada:"<motivo com a medida>"` (motivo obrigatório). O
 validador aceita básico sem `niveis` se for **(f')** OU tiver a marcação **(h')**; `subirNivel`/excedente tratam (h')
-igual a (f') — máximo de 12 pontos (Afrodite: escada mínima +10,2 e qualquer nv4 leva a +17,1 > +15). Diretriz
+igual a (f') — máximo de 12 pontos (Afrodite: escada mínima +10,2 e qualquer nv4 leva a +17,1 > +15). **(j')** ESCADA
+CURTA (§318 F3 L12): quando até o passo mínimo estoura, um slot pode ter MENOS de 3 degraus — **contíguos a partir do 2**
+(buraco → a build quebra), marcados no dado com `escadaCurta:"<motivo com a medida>"`, com o SALTO (se houver) no ÚLTIMO
+degrau. O **topo do slot = 1 + nº de degraus**: `subirNivel` recusa acima do topo (`nivel_maximo`), e `_maximizado`/
+excedente→Essência usam o topo por slot (uma escada curta maximiza no seu topo, não no 4). `validarNiveisDeus` exige a
+contiguidade e a marcação (Fujin básico/milagre = 2 degraus após o ±1 do L11). Diretriz
 (não-babá): NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8. Dano de
 **alvo único** de deus **frágil** sobe de leve (levelável).
 **TRAVA DE LIBERAÇÃO:** `subirNivel` só aceita deus em `data/niveis_liberados.json` (senão `niveis_nao_liberados`);

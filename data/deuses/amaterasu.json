@@ -10,7 +10,14 @@
     "nome": "Soberana Celestial",
     "desc": "Durante o DIA, o time recebe 6 de redução de dano.",
     "fx": [
-      { "gatilho": "reducao", "v": 6, "escopo": "time", "estado": { "fase": "Dia" } }
+      {
+        "gatilho": "reducao",
+        "v": 6,
+        "escopo": "time",
+        "estado": {
+          "fase": "Dia"
+        }
+      }
     ]
   },
   "ab": [
@@ -18,36 +25,189 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Espelho Yata",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Amanhecer",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 12 no time.",
       "fx": [
-        { "t": "fase", "v": "Dia", "dur": 3 },
-        { "t": "heal", "v": 12, "escopo": "time" }
+        {
+          "t": "fase",
+          "v": "Dia",
+          "dur": 3
+        },
+        {
+          "t": "heal",
+          "v": 12,
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 13 no time."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 14 no time."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 15 no time."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Luz da Caverna",
-      "cost": { "Aurora": 2, "livre": 1 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno.",
       "fx": [
-        { "t": "dmg", "v": 18, "seDia": 28, "escopo": "todosInimigos" },
-        { "t": "condicional", "se": { "fase": "Dia" }, "entao": [ { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 }, "escopo": "todosInimigos" } ] }
+        {
+          "t": "dmg",
+          "v": 18,
+          "seDia": 28,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "condicional",
+          "se": {
+            "fase": "Dia"
+          },
+          "entao": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "lockSkill",
+                "slot": "habilidade",
+                "dur": 1
+              },
+              "escopo": "todosInimigos"
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+        }
       ]
     }
   ]

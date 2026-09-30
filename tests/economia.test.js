@@ -378,7 +378,7 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
   r = invoc.subirNivel(c, 'zeus', 'basico');
   ok(r.ok && r.nivel === 4 && c.pontos.zeus === 0, `nv3→4 custa 3 pontos (sobrou ${c.pontos.zeus})`);
   r = invoc.subirNivel(c, 'zeus', 'basico');
-  ok(!r.ok && r.motivo === 'ja_no_maximo', 'slot no nv4 recusa (ja_no_maximo)');
+  ok(!r.ok && r.motivo === 'nivel_maximo', 'slot no topo (nv4, escada completa) recusa (nivel_maximo, regra j\')');
   r = invoc.subirNivel(c, 'zeus', 'habilidade');
   ok(!r.ok && r.motivo === 'pontos_insuficientes', 'sem pontos recusa (pontos_insuficientes)');
   r = invoc.subirNivel(c, 'zeus', 'lixo');
@@ -416,6 +416,27 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
     // _maximizado conta só as escadas EXISTENTES: hab+milagre nv4 já maximiza (básico não tem escada)
     ok(invoc._maximizado({ niveis: { [durao]: { basico: 1, habilidade: 4, milagre: 4 } } }, durao), `${durao} maximiza com hab+milagre nv4 (básico não conta, regra f')`);
   }
+})();
+
+// --- (7c) §318 F3 L12 REGRA (j') ESCADA CURTA no servidor: topo = 1 + nº de degraus. subirNivel recusa acima do
+// topo ('nivel_maximo'); _maximizado usa o topo por slot (Fujin básico/milagre têm 2 degraus → topo 3). ---
+(() => {
+  if (!invoc.NIVEIS_LIBERADOS.has('fujin')) { ok(true, '(7c pulado: fujin não liberado)'); return; }
+  const topoBas = require('../src/catalogo.js').GODS.fujin.ab.find(a => a.slot === 'basico').niveis.length + 1;
+  ok(topoBas === 3, `Fujin básico é escada curta: topo = 1 + ${topoBas - 1} degraus = ${topoBas}`);
+  const c = contaFake(0, 0, { fujin: { copias: 1, favorito: false, obtidoEm: 0 } });
+  c.pontos = { fujin: 99 };
+  ok(invoc.subirNivel(c, 'fujin', 'basico').nivel === 2, 'Fujin básico 1→2 sobe');
+  ok(invoc.subirNivel(c, 'fujin', 'basico').nivel === 3, 'Fujin básico 2→3 sobe (topo curto)');
+  const rMax = invoc.subirNivel(c, 'fujin', 'basico');
+  ok(!rMax.ok && rMax.motivo === 'nivel_maximo' && rMax.topo === 3, "Fujin básico 3→4 recusa: acima do topo (nivel_maximo, topo 3)");
+  // milagre também é curto (topo 3); habilidade é completa (topo 4)
+  invoc.subirNivel(c, 'fujin', 'milagre'); invoc.subirNivel(c, 'fujin', 'milagre');
+  const rMil = invoc.subirNivel(c, 'fujin', 'milagre');
+  ok(!rMil.ok && rMil.motivo === 'nivel_maximo', 'Fujin milagre 3→4 recusa (topo 3 curto)');
+  // _maximizado: básico 3 + milagre 3 + habilidade 4 (cada no SEU topo) → maximizado
+  ok(invoc._maximizado({ niveis: { fujin: { basico: 3, habilidade: 4, milagre: 3 } } }, 'fujin'), 'Fujin maximiza com básico 3 + milagre 3 + habilidade 4 (topo por slot, j\')');
+  ok(!invoc._maximizado({ niveis: { fujin: { basico: 3, habilidade: 3, milagre: 3 } } }, 'fujin'), 'Fujin NÃO maximiza com habilidade 3 (topo dela é 4)');
 })();
 
 // --- (8) SEM GEMAS → recusa (nada muda) ---

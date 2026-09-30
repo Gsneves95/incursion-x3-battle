@@ -2,6 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · correção (j') ESCADA CURTA + LOTE 12 (7 japoneses) — 7/7 DENTRO; 83 liberados
+
+**Correção (j') ESCADA CURTA** (consertou o defeito do Fujin no L11): um slot pode ter <3 degraus, mas **contíguos a
+partir do 2** (buraco → build quebra) e marcados `escadaCurta:"<motivo>"`; o salto (se houver) no ÚLTIMO degrau. **Topo
+do slot = 1 + nº de degraus**: `subirNivel` recusa acima (`nivel_maximo`), `_maximizado`/excedente→Essência usam o topo
+por slot (`server/invocacao.js._topoSlot`). `validarNiveisDeus` exige contiguidade+marcação; `TELA_AB`/`CHAVES_AB` ganharam
+`escadaCurta`. Fujin consertado: básico [nv2 dmg13, nv3 dmgDown] + milagre [16,17], ambos `escadaCurta` (MÁX +30,1→+23,4;
+conteúdo inalterado, a medida vale). Babás B4j (niveis) + economia (topo). **VARREDURA de buracos/curtas em TODOS os
+deuses com escada: único achado foi o Fujin** (consertado); os outros têm escada completa de 3.
+
+**LOTE 12** (Yamato Takeru/Amaterasu/Tsukuyomi/Shuten Dōji/Izanagi/Izanami/Kagutsuchi): uma varredura N=3000, higiene
+antes, 0 empate-por-teto. Izanami só básico/milagre/MÁX (habil SEM ESCADA — dot permanente dur 99 em área, qualquer +1 é
+dano eterno). **7/7 DENTRO sem ajuste** (maior single Izanagi básico +12,3; maior MÁX Izanagi +21,6; Shuten durável básico
++1,7, h' não precisou). Motor verificado (kitEfetivo/combate): Amaterasu milagre só `fx[0].v` sobe (seDia:28 fica fora);
+Izanagi habil nv4 ext.(i) `fx[2].entao[0].v` dispara em combate (aliado amaldiçoado → cura time 10/11); Kagutsuchi dot v
+sobe (dur não). Babá 8 ganhou o preparo do ramo `se.alvoContador`. Liberados → **83 deuses** (…+7 L11 + 7 L12 + 3 pilotos).
+0 Provação estale. Tabela na DECISOES "correção (j') + LOTE 12".
+
 ## ★ §318 FASE 3 · LOTE 11 (7 japoneses) — 7/7 DENTRO; 76 liberados; ext.(v) POSICIONAL (Raijin) + 2 SEM ESCADA
 
 **Uma varredura** dos 7 (Fujin/Kitsune/Raijin/Susanoo/Inari/Oni/Tanuki), N=3000, higiene antes, 0 empate-por-teto.

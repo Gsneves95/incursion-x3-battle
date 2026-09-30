@@ -141,10 +141,20 @@ function _escadasDe(deus) {
   const g = _CATN[deus]; if (!g || !Array.isArray(g.ab)) return [];
   return SLOTS.filter(s => { const ab = g.ab.find(a => a.slot === s); return ab && Array.isArray(ab.niveis) && ab.niveis.length; });
 }
+// §318 F3 L12 (regra j') — TOPO de um slot = 1 + número de degraus. Escada completa (3) → topo 4; escada CURTA de 2
+// degraus → topo 3 (Fujin básico/milagre); slot sem escada → topo 1 (não sobe). subirNivel/_maximizado usam o topo,
+// não mais o 4 fixo — senão um slot de escada curta jamais "maximiza" (o excedente → Essência nunca dispararia) e
+// dava para pagar por um nível acima do topo que não muda nada (o defeito do Fujin no L11).
+function _topoSlot(deus, slot) {
+  const g = _CATN[deus]; if (!g || !Array.isArray(g.ab)) return 4;
+  const ab = g.ab.find(a => a.slot === slot);
+  const n = (ab && Array.isArray(ab.niveis)) ? ab.niveis.length : 0;
+  return 1 + n;
+}
 function _maximizado(conta, deus) {
   const n = _niveisDeus(conta, deus);
   const slots = _escadasDe(deus);
-  return slots.length > 0 && slots.every(s => n[s] >= 4);   // só as escadas que EXISTEM (regra f': básico sem escada)
+  return slots.length > 0 && slots.every(s => n[s] >= _topoSlot(deus, s));   // topo por slot (j'): escada curta maximiza no seu topo, não no 4
 }
 function _possui(conta, deus) { return !!(conta.perfil && conta.perfil.deuses && conta.perfil.deuses[deus]); }
 function _addMoeda(conta, moeda, v) {
@@ -222,7 +232,8 @@ function subirNivel(conta, deus, slot) {
   if (!_escadasDe(deus).includes(slot)) return { ok: false, motivo: 'nivel_inexistente' };   // §318 F3 (f'): slot sem escada (ex.: básico de deus muito durável)
   const n = _niveisDeus(conta, deus);
   const cur = n[slot];
-  if (cur >= 4) return { ok: false, motivo: 'ja_no_maximo' };
+  const topo = _topoSlot(deus, slot);   // §318 F3 L12 (j'): topo = 1 + nº de degraus (escada curta pára antes do 4)
+  if (cur >= topo) return { ok: false, motivo: 'nivel_maximo', topo };   // acima do topo do slot → recusa (nada mudaria)
   const alvo = cur + 1;
   const custo = (INV.custoNivel && INV.custoNivel[String(alvo)]) || 0;
   const pts = conta.pontos[deus] || 0;

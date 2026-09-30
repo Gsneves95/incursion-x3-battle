@@ -10,7 +10,13 @@
     "nome": "Vingança do Banquete",
     "desc": "Tsukuyomi causa +10 de dano contra inimigos que foram curados no turno anterior.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoCuradoAntes": true } }
+      {
+        "gatilho": "bonusDano",
+        "v": 10,
+        "quando": {
+          "alvoCuradoAntes": true
+        }
+      }
     ]
   },
   "ab": [
@@ -18,36 +24,193 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Lâmina Crescente",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Anoitecer",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Ativa a NOITE por 3 turnos (aliados Umbra +8 de dano; inimigos Aurora causam 5 menos); adormece 1 inimigo por 1 turno.",
       "fx": [
-        { "t": "fase", "v": "Noite", "dur": 3 },
-        { "t": "apply", "eff": { "type": "adormecido", "dur": 1 } }
+        {
+          "t": "fase",
+          "v": "Noite",
+          "dur": 3
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "adormecido",
+            "dur": 1
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Ativa a NOITE por 3 turnos (aliados Umbra +8 de dano; inimigos Aurora causam 5 menos); adormece 1 inimigo por 1 turno. Tsukuyomi ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Ativa a NOITE por 3 turnos (aliados Umbra +8 de dano; inimigos Aurora causam 5 menos); adormece 1 inimigo por 1 turno. Tsukuyomi ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Ativa a NOITE por 3 turnos (aliados Umbra +8 de dano; inimigos Aurora causam 5 menos); adormece 1 inimigo por 1 turno. Tsukuyomi ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Julgamento da Lua",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos.",
       "fx": [
-        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
-        { "t": "condicional", "se": { "fase": "Noite" }, "entao": [ { "t": "apply", "eff": { "type": "selado", "dur": 2 }, "escopo": "todosInimigos" } ] }
+        {
+          "t": "dmg",
+          "v": 18,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "condicional",
+          "se": {
+            "fase": "Noite"
+          },
+          "entao": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "selado",
+                "dur": 2
+              },
+              "escopo": "todosInimigos"
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos."
+        }
       ]
     }
   ]

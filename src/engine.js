@@ -609,12 +609,16 @@ function validarNiveisDeus(deus) {
   if (!deus || typeof deus !== 'object') return [`${nome}: não é objeto`];
   if (deus.passiva && deus.passiva.niveis !== undefined) erros.push(`${nome}.passiva: a PASSIVA não pode ter niveis (está fora do sistema de níveis)`);
   for (const ab of (deus.ab || [])) {
-    if (ab.niveis === undefined) continue;
+    if (ab.niveis === undefined) { if (ab.escadaCurta !== undefined) erros.push(`${nome}.${ab.slot}: "escadaCurta" (regra j') só faz sentido em slot COM escada (niveis)`); continue; }
     if (!SLOTS_NIVEIS.includes(ab.slot)) { erros.push(`${nome}.${ab.slot}: só basico/habilidade/milagre podem ter niveis`); continue; }
     if (!Array.isArray(ab.niveis)) { erros.push(`${nome}.${ab.slot}: niveis tem de ser lista`); continue; }
     const work = _cloneKit(ab);   // aplica cumulativo p/ conferir cada `de` contra o valor atual
     let saltos = 0;
     const vistos = new Set();
+    // §318 F3 L12 (regra j') — o SALTO (se houver) fica no ÚLTIMO degrau da escada (o topo), que numa escada
+    // completa é o nv4 e numa escada CURTA é o maior nv declarado (ex.: Fujin básico curto: salto no nv3).
+    const nvsDecl = ab.niveis.map(x => x && x.nv).filter(n => [2, 3, 4].includes(n));
+    const maxNvDecl = nvsDecl.length ? Math.max(...nvsDecl) : 4;
     for (const d of ab.niveis) {
       const nvl = d && d.nv;
       if (![2, 3, 4].includes(nvl)) { erros.push(`${nome}.${ab.slot}: nv inválido ${JSON.stringify(nvl)} (só 2, 3 ou 4)`); continue; }
@@ -638,7 +642,7 @@ function validarNiveisDeus(deus) {
           const alvo = (work.fx || [])[idx];
           if (!alvo || (alvo.t !== 'dot' && alvo.t !== 'hot')) erros.push(`${nome}.${ab.slot} nv${nvl}: fx[${idx}].dur só vale em dot/hot (é ${JSON.stringify(alvo && alvo.t)})`);
         }
-        if (cat === 'salto') { saltos++; if (nvl !== 4) erros.push(`${nome}.${ab.slot} nv${nvl}: SALTO (${JSON.stringify(mud.caminho)}) só é permitido no nv4`); }
+        if (cat === 'salto') { saltos++; if (nvl !== maxNvDecl) erros.push(`${nome}.${ab.slot} nv${nvl}: SALTO (${JSON.stringify(mud.caminho)}) só é permitido no ÚLTIMO degrau da escada (nv${maxNvDecl}) — regra j'`); }
         if (mud.caminho === 'fx[]') {
           if (mud.de !== null && mud.de !== undefined) erros.push(`${nome}.${ab.slot} nv${nvl}: efeito NOVO (fx[]) exige "de":null`);
         } else {
@@ -650,6 +654,20 @@ function validarNiveisDeus(deus) {
       }
     }
     if (saltos > 1) erros.push(`${nome}.${ab.slot}: ${saltos} saltos (máx 1 por habilidade)`);
+    // §318 F3 L12 (regra j') — ESCADA CURTA: níveis CONTÍGUOS a partir do 2 (buraco → quebra); escada com menos de
+    // 3 degraus exige a marcação `escadaCurta:"<motivo com a medida>"`; escada COMPLETA (3 degraus) não a leva. O topo
+    // do slot = 1 + número de degraus (é o que subirNivel/_maximizado/excedente usam no servidor).
+    const nvsOrd = [...vistos].sort((a, b) => a - b);
+    if (nvsOrd.length) {
+      let contig = nvsOrd[0] === 2;
+      for (let i = 0; i < nvsOrd.length; i++) if (nvsOrd[i] !== 2 + i) contig = false;
+      if (!contig) erros.push(`${nome}.${ab.slot}: níveis não CONTÍGUOS a partir do 2 (${JSON.stringify(nvsOrd)}) — regra j' proíbe buraco na escada`);
+    }
+    const curta = ab.niveis.length < 3;
+    const temMarcaCurta = ab.escadaCurta !== undefined;
+    if (curta && !temMarcaCurta) erros.push(`${nome}.${ab.slot}: escada CURTA (${ab.niveis.length} degrau(s)) exige a marcação "escadaCurta":"<motivo com a medida>" (regra j')`);
+    else if (curta && (typeof ab.escadaCurta !== 'string' || !ab.escadaCurta.trim())) erros.push(`${nome}.${ab.slot}: "escadaCurta" (regra j') exige um motivo (string com a medida), não ${JSON.stringify(ab.escadaCurta)}`);
+    if (!curta && temMarcaCurta) erros.push(`${nome}.${ab.slot}: escada COMPLETA (3 degraus) NÃO pode ser marcada "escadaCurta" (a marcação é só para escada de <3 degraus)`);
   }
   // §318 F3 (regra f') — BÁSICO DE DEUS MUITO DURÁVEL não tem escada. Deus com redução passiva ≥10: básico NÃO
   // pode ter niveis. Deus SEM essa redução que já tem escada em algum slot: o básico DEVE ter escada (senão é

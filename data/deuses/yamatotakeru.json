@@ -10,8 +10,29 @@
     "nome": "Espírito de Kusanagi",
     "desc": "+1 de dano por 3 de Combo; imune a controle com 15 ou mais de Combo.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porContadorLado": { "nome": "combo", "v": 1, "passo": 3 } },
-      { "gatilho": "imunidade", "a": [ "controle" ], "estado": { "contadorLado": { "nome": "combo", "op": "min", "n": 15 } } }
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "escopo": "self",
+        "porContadorLado": {
+          "nome": "combo",
+          "v": 1,
+          "passo": 3
+        }
+      },
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "controle"
+        ],
+        "estado": {
+          "contadorLado": {
+            "nome": "combo",
+            "op": "min",
+            "n": 15
+          }
+        }
+      }
     ]
   },
   "ab": [
@@ -19,36 +40,190 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Kusanagi",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano perfurante a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15, "kind": "perfurante" } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "kind": "perfurante"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano perfurante a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano perfurante a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano perfurante a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Disfarce",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Yamato fica Inalvejável por 1 turno; o próximo ataque dele é dano puro.",
       "fx": [
-        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
-        { "t": "apply", "eff": { "type": "proximoGolpePuro", "dur": 9 }, "escopo": "self" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "inalvejavel",
+            "dur": 1
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "proximoGolpePuro",
+            "dur": 9
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Yamato fica Inalvejável por 1 turno; o próximo ataque dele é dano puro. Yamato ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Yamato fica Inalvejável por 1 turno; o próximo ataque dele é dano puro. Yamato ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Yamato fica Inalvejável por 1 turno; o próximo ataque dele é dano puro. Yamato ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Corte Ceifa-Ervas",
-      "cost": { "Tempestade": 2, "livre": 1 },
+      "cost": {
+        "Tempestade": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "inimigo",
       "desc": "28 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele.",
       "fx": [
-        { "t": "dmg", "v": 28, "porContadorLado": { "nome": "combo", "v": 2, "passo": 1 }, "consomeContadorLado": "combo" },
-        { "t": "stripBuffs" }
+        {
+          "t": "dmg",
+          "v": 28,
+          "porContadorLado": {
+            "nome": "combo",
+            "v": 2,
+            "passo": 1
+          },
+          "consomeContadorLado": "combo"
+        },
+        {
+          "t": "stripBuffs"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 28,
+              "para": 30
+            }
+          ],
+          "desc": "30 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 30,
+              "para": 32
+            }
+          ],
+          "desc": "32 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "32 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+        }
       ]
     }
   ]
