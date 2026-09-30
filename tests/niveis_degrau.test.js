@@ -25,10 +25,13 @@ function lerCaminho(ab, c) {
   if (c === 'fx[]') return undefined;
   if (c === 'cd') return ab.cd;
   if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
-  const nm = c.match(/^fx\[(\d+)\]/);
+  // §318 F3 L9 (ext iii leve) — prefixo opcoes[k].: navega dentro da opção k (Lugh)
+  let base = ab, c1 = c, om;
+  if ((om = c.match(/^opcoes\[(\d+)\]\./))) { base = (ab.opcoes || [])[+om[1]]; if (!base) return undefined; c1 = c.slice(om[0].length); }
+  const nm = c1.match(/^fx\[(\d+)\]/);
   if (!nm) return undefined;
-  let node = (ab.fx || [])[+nm[1]];
-  let rest = c.slice(nm[0].length), bm;
+  let node = (base.fx || [])[+nm[1]];
+  let rest = c1.slice(nm[0].length), bm;
   while ((bm = rest.match(/^\.(entao|senao)\[(\d+)\]/))) { if (!node) return undefined; const arr = node[bm[1]]; node = Array.isArray(arr) ? arr[+bm[2]] : undefined; rest = rest.slice(bm[0].length); }
   if (!node) return undefined;
   if (rest === '.v') return node.v;
@@ -100,7 +103,9 @@ function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
   else if (a.alvo === '2aliados') alvos = ['0-1', '0-2'];
   else if (a.alvo === 'aliado+inimigo') alvos = ['0-1', '1-0'];
   else if (a.alvo === 'distribui') alvos = ['1-0', '1-1', '1-2'];   // §318 F3 L6: multi-golpe distribuído (Babi milagre)
-  const r = E.agir(st, u.uid, slot, alvos, null);
+  // §318 F3 L9 (ext iii leve) — habilidade de ESCOLHA (opcoes, Lugh): lança TODAS as opções para o degrau de cada uma ficar visível
+  const escolhas = (efAb && Array.isArray(efAb.opcoes)) ? efAb.opcoes.map((_, i) => i) : null;
+  const r = E.agir(st, u.uid, slot, alvos, escolhas);
   if (!r || !r.ok) return null;
   return projLados(st);
 }

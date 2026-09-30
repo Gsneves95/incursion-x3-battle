@@ -422,6 +422,11 @@ function _categoriaCaminho(c) {
   if (/^fx\[\d+\](\.(entao|senao)\[\d+\])+\.eff\.v$/.test(c)) return 'pequeno';
   // §318 F3 L6 (extensão ii) — HP de revive/vidaExtra (inclusive dentro de ramo) é PEQUENO.
   if (/^fx\[\d+\](\.(entao|senao)\[\d+\])*\.hp$/.test(c)) return 'pequeno';
+  // §318 F3 L9 (extensão iii LEVE) — NÚMERO dentro de uma OPÇÃO (habilidade de escolha, ex.: Lugh GUERRA/CURA/FORJA)
+  // é PEQUENO: `opcoes[k].fx[i].v` e `opcoes[k].fx[i].eff.v`. As opções já têm número — sem NOVO-PEQUENO em opção
+  // (isso segue deferido, Exu sem escada). Só o `v`/`eff.v` sobe.
+  if (/^opcoes\[\d+\]\.fx\[\d+\]\.v$/.test(c)) return 'pequeno';
+  if (/^opcoes\[\d+\]\.fx\[\d+\]\.eff\.v$/.test(c)) return 'pequeno';
   if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx (NOVO-PEQUENO vira 'pequeno' em validarNiveisDeus)
   return null;
 }
@@ -487,10 +492,17 @@ function _novoPequenoPermitido(ab, para, deus) {
 // §318 F3 L6 — navega um caminho baseado em fx[i] (com ramos entao/senao ANINHADOS) até a propriedade final
 // gravável. Devolve {obj, key} ou null. NÃO trata cd/cost/fx[] (esses ficam fora, na ler/escrever).
 function _navFx(ab, c) {
-  const m = /^fx\[(\d+)\]/.exec(c);
+  // §318 F3 L9 (ext iii leve) — prefixo `opcoes[k].`: a base da navegação passa a ser a opção k (Lugh)
+  let base = ab, c0 = c, om;
+  if ((om = /^opcoes\[(\d+)\]\./.exec(c))) {
+    base = (ab.opcoes || [])[+om[1]];
+    if (!base) return null;
+    c0 = c.slice(om[0].length);   // rest = "fx[i]..." (dentro da opção)
+  }
+  const m = /^fx\[(\d+)\]/.exec(c0);
   if (!m) return null;
-  let node = (ab.fx || [])[+m[1]];
-  let rest = c.slice(m[0].length);
+  let node = (base.fx || [])[+m[1]];
+  let rest = c0.slice(m[0].length);
   let bm;
   while ((bm = /^\.(entao|senao)\[(\d+)\]/.exec(rest))) {
     if (!node) return null;

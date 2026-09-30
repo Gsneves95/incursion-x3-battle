@@ -10,7 +10,22 @@
     "nome": "Forma de Corvo",
     "desc": "Quando um inimigo é derrotado, Morrigan cura 15 e ganha 1 orbe de Umbra.",
     "fx": [
-      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" }, { "t": "orbGain", "n": 1, "para": "Umbra" } ] }
+      {
+        "gatilho": "aoCair",
+        "quem": "qualquerInimigo",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 15,
+            "escopo": "self"
+          },
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Umbra"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,36 +33,193 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Bico de Corvo",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mental",
       "nome": "Presságio de Morte",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Por 2 turnos, 1 inimigo não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP.",
       "fx": [
-        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } },
-        { "t": "apply", "eff": { "type": "pressagio", "dur": 2, "execLimiar": 24 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "noHeal",
+            "dur": 2
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "pressagio",
+            "dur": 2,
+            "execLimiar": 24
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "2 de dano a 1 inimigo; por 2 turnos, ele não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "3 de dano a 1 inimigo; por 2 turnos, ele não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano a 1 inimigo; por 2 turnos, ele não pode ser curado e é eliminado se terminar um turno com 24 ou menos de HP."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mental",
       "nome": "As Três Irmãs",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "15 de dano a todos + Medo por 2 turnos; 25 nos profetizados.",
       "fx": [
-        { "t": "dmg", "v": 15, "escopo": "todosInimigos", "seCond": { "quando": { "alvoMarca": "pressagio" }, "v": 25 } },
-        { "t": "apply", "eff": { "type": "medo", "dur": 2 }, "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 15,
+          "escopo": "todosInimigos",
+          "seCond": {
+            "quando": {
+              "alvoMarca": "pressagio"
+            },
+            "v": 25
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "medo",
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "18 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+        }
       ]
     }
   ]

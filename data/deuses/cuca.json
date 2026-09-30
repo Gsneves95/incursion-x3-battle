@@ -11,8 +11,19 @@
     "nome": "Só Dorme de Sete em Sete Anos",
     "desc": "Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "adormecido" ] },
-      { "gatilho": "aCadaN", "n": 3, "custoGratis": { "slot": "basico" } }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "adormecido"
+        ]
+      },
+      {
+        "gatilho": "aCadaN",
+        "n": 3,
+        "custoGratis": {
+          "slot": "basico"
+        }
+      }
     ]
   },
   "ab": [
@@ -30,6 +41,48 @@
         {
           "t": "dmg",
           "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -51,6 +104,45 @@
             "dur": 2
           }
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre. Cuca ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre. Cuca ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre. Cuca ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
@@ -70,6 +162,41 @@
           "v": 25,
           "seAdormecido": 38,
           "curaMetade": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 27
+            }
+          ],
+          "desc": "27 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 29
+            }
+          ],
+          "desc": "29 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 29,
+              "para": 31
+            }
+          ],
+          "desc": "31 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
         }
       ]
     }

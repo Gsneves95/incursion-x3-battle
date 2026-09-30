@@ -10,8 +10,18 @@
     "nome": "Protetor dos Bichos",
     "desc": "Os aliados recebem 5 de redução de dano; Curupira causa +10 de dano contra unidades Chama.",
     "fx": [
-      { "gatilho": "reducao", "v": 5, "escopo": "time" },
-      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoElem": "Chama" } }
+      {
+        "gatilho": "reducao",
+        "v": 5,
+        "escopo": "time"
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 10,
+        "quando": {
+          "alvoElem": "Chama"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,37 +29,177 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Cipó Chicoteante",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
       "fx": [
-        { "t": "dmg", "v": 15 }
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Pés Virados",
-      "cost": { "Verdejante": 2 },
+      "cost": {
+        "Verdejante": 2
+      },
       "cd": 3,
       "alvo": "inimigo",
       "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo).",
       "fx": [
-        { "t": "redirect", "dur": 2 }
+        {
+          "t": "redirect",
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Fúria da Floresta",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 15 no time.",
       "fx": [
-        { "t": "apply", "eff": { "type": "selado", "dur": 1 }, "escopo": "todosInimigos" },
-        { "t": "heal", "v": 15, "escopo": "time" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "selado",
+            "dur": 1
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 15,
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 16 no time."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 17 no time."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 18 no time."
+        }
       ]
     }
   ]

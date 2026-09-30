@@ -178,8 +178,10 @@ leem o mesmo catálogo (o caso de sempre → regressão zero byte a byte) e um *
 (PvP nivelado). **Níveis default 1** ⇒ kitEfetivo deep-equal ao base; nunca mude isso sem provar a regressão zero.
 
 O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`, e §318 F3 L6 ext.i
-os mesmos DENTRO de ramos condicionais aninhados `fx[i].entao[j].v` / `fx[i].senao[j].v` / `…senao[k].eff.v`, e ext.ii
-`fx[i].hp` (revive/vidaExtra); NOVO-PEQUENO **só nv2**:
+os mesmos DENTRO de ramos condicionais aninhados `fx[i].entao[j].v` / `fx[i].senao[j].v` / `…senao[k].eff.v`, ext.ii
+`fx[i].hp` (revive/vidaExtra), e §318 F3 L9 ext.iii LEVE `opcoes[k].fx[i].v` / `opcoes[k].fx[i].eff.v` (número DENTRO de
+uma OPÇÃO de habilidade de escolha, ex.: Lugh GUERRA/CURA/FORJA — SEM NOVO-PEQUENO em opção, que segue deferido: o Exu
+fica sem escada na habilidade, marcado `semEscada`); NOVO-PEQUENO **só nv2**:
 `fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a
 (ext.i: magnitude conta também ANINHADA, mas só **DANO** `t:dmg` dentro de ramo bloqueia; cura/buff condicional não —
 preserva Deméter/Freyja); os LIMIARES da condição (`se:{...}`, `executaAbaixoDe`) ficam FORA da whitelist — degrau escondido, nunca sobem;

@@ -10,7 +10,10 @@
     "nome": "Gorro Vermelho",
     "desc": "O primeiro ataque de alvo único contra Saci em cada turno falha; quando falha, Saci contra-ataca por 10.",
     "fx": [
-      { "gatilho": "evadeContra", "v": 10 }
+      {
+        "gatilho": "evadeContra",
+        "v": 10
+      }
     ]
   },
   "ab": [
@@ -18,40 +21,162 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Cachimbo em Brasa",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano + Queimadura leve (5/turno por 2 turnos).",
       "fx": [
-        { "t": "dmg", "v": 12 },
-        { "t": "dot", "nome": "queimadura", "v": 5, "dur": 2 }
+        {
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "dot",
+          "nome": "queimadura",
+          "v": 5,
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano + Queimadura leve (5/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "13 de dano + Queimadura leve (6/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "13 de dano + Queimadura leve (6/turno por 3 turnos)."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Redemoinho",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 1,
       "alvo": "nenhum",
       "desc": "Saci fica Inalvejável por 1 turno; ao voltar, rouba 1 buff de um inimigo.",
       "fx": [
-        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
-        { "t": "agendar", "alvo": "nenhum", "agenda": [ { "t": "stripOne", "rouba": true, "alvoHp": { "lado": "inimigo", "ext": "max" } } ] }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "inalvejavel",
+            "dur": 1
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "agendar",
+          "alvo": "nenhum",
+          "agenda": [
+            {
+              "t": "stripOne",
+              "rouba": true,
+              "alvoHp": {
+                "lado": "inimigo",
+                "ext": "max"
+              }
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Saci fica Inalvejável por 1 turno e cura 2; ao voltar, rouba 1 buff de um inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Saci fica Inalvejável por 1 turno e cura 3; ao voltar, rouba 1 buff de um inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Saci fica Inalvejável por 1 turno e cura 4; ao voltar, rouba 1 buff de um inimigo."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Travessura Maior",
-      "cost": { "Tempestade": 1, "livre": 2 },
+      "cost": {
+        "Tempestade": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Rouba 2 orbes do inimigo e trava a Habilidade de cada inimigo por 1 turno.",
       "fx": [
-        { "t": "roubaOrbe", "n": 2, "rouba": true },
-        { "t": "apply", "eff": { "type": "lockSkill", "slot": "habilidade", "dur": 1 }, "escopo": "todosInimigos" }
-      ]
+        {
+          "t": "roubaOrbe",
+          "n": 2,
+          "rouba": true
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "lockSkill",
+            "slot": "habilidade",
+            "dur": 1
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "semEscada": "h' no MILAGRE — qualquer dano NOVO no milagre de controle puro (rouba orbes + trava habilidade em massa) estoura: dmg 1 já mede milagre +19,1 / MÁX +37,5, §318 F3 L9"
     }
   ]
 }

@@ -10,7 +10,14 @@
     "nome": "Luz do Sol",
     "desc": "Durante o DIA, Lugh causa +10 de dano e Samildánach fica sem recarga.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 10, "escopo": "self", "estado": { "fase": "Dia" } }
+      {
+        "gatilho": "bonusDano",
+        "v": 10,
+        "escopo": "self",
+        "estado": {
+          "fase": "Dia"
+        }
+      }
     ]
   },
   "ab": [
@@ -18,37 +25,239 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Lança de Assal",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "ignoraInalvejavel": true,
       "desc": "15 de dano a 1 inimigo; não pode ser evitado nem contra-atacado.",
-      "fx": [ { "t": "dmg", "v": 15, "semContra": true } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "semContra": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo; não pode ser evitado nem contra-atacado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; não pode ser evitado nem contra-atacado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; não pode ser evitado nem contra-atacado; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Samildánach",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 1,
-      "cdSe": { "estado": { "fase": "Dia" }, "cd": 0 },
+      "cdSe": {
+        "estado": {
+          "fase": "Dia"
+        },
+        "cd": 0
+      },
       "alvo": "nenhum",
       "desc": "Escolha: GUERRA (15 de dano a todos) · CURA (18 no time) · FORJA (time causa +8 de dano por 2 turnos). Sem recarga durante o DIA.",
       "opcoes": [
-        { "nome": "GUERRA", "fx": [ { "t": "dmg", "v": 15, "escopo": "todosInimigos" } ] },
-        { "nome": "CURA", "fx": [ { "t": "heal", "v": 18, "escopo": "time" } ] },
-        { "nome": "FORJA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" } ] }
+        {
+          "nome": "GUERRA",
+          "fx": [
+            {
+              "t": "dmg",
+              "v": 15,
+              "escopo": "todosInimigos"
+            }
+          ]
+        },
+        {
+          "nome": "CURA",
+          "fx": [
+            {
+              "t": "heal",
+              "v": 18,
+              "escopo": "time"
+            }
+          ]
+        },
+        {
+          "nome": "FORJA",
+          "fx": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "dmgUp",
+                "v": 8,
+                "dur": 2
+              },
+              "escopo": "time"
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 15,
+              "para": 16
+            },
+            {
+              "caminho": "opcoes[1].fx[0].v",
+              "de": 18,
+              "para": 19
+            },
+            {
+              "caminho": "opcoes[2].fx[0].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Escolha: GUERRA (16 de dano a todos) · CURA (19 no time) · FORJA (time causa +9 de dano por 2 turnos). Sem recarga durante o DIA."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 16,
+              "para": 17
+            },
+            {
+              "caminho": "opcoes[1].fx[0].v",
+              "de": 19,
+              "para": 20
+            },
+            {
+              "caminho": "opcoes[2].fx[0].eff.v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "Escolha: GUERRA (17 de dano a todos) · CURA (20 no time) · FORJA (time causa +10 de dano por 2 turnos). Sem recarga durante o DIA."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 17,
+              "para": 18
+            },
+            {
+              "caminho": "opcoes[1].fx[0].v",
+              "de": 20,
+              "para": 21
+            },
+            {
+              "caminho": "opcoes[2].fx[0].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Escolha: GUERRA (18 de dano a todos) · CURA (21 no time) · FORJA (time causa +11 de dano por 2 turnos). Sem recarga durante o DIA."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Funda de Balor",
-      "cost": { "Aurora": 2, "livre": 1 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "auto",
       "desc": "38 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado.",
-      "fx": [ { "t": "dmg", "v": 38, "kind": "puro", "alvoHp": { "lado": "inimigo", "ext": "max" }, "executaAbaixoDe": 24 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 38,
+          "kind": "puro",
+          "alvoHp": {
+            "lado": "inimigo",
+            "ext": "max"
+          },
+          "executaAbaixoDe": 24
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 38,
+              "para": 40
+            }
+          ],
+          "desc": "40 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 40,
+              "para": 42
+            }
+          ],
+          "desc": "42 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "42 de dano puro ao inimigo de maior HP; se ele estiver com 24 ou menos, é eliminado."
+        }
+      ]
     }
   ]
 }

@@ -471,7 +471,7 @@ const TELA_TOPO = ['nome', 'curto', 'arquetipo'];   // deus/criatura: rótulos e
 // (times fixos, sem níveis de jogador) — a escada nunca é exercida nessa partida, então não é combate
 // DAQUELE match (o mesmo critério do §263: o carimbo só vê o combate que a partida REALMENTE roda).
 // Assim adicionar/ajustar a escada não re-carimba as 100 Provações; um fx BASE mudado ainda invalida.
-const TELA_AB   = ['nome', 'desc', 'niveis'];   // habilidade: nome e descrição são de tela (busca por `slot`); niveis é a escada §318 (fora do combate nv1)
+const TELA_AB   = ['nome', 'desc', 'niveis', 'semEscada'];   // habilidade: nome e descrição são de tela (busca por `slot`); niveis é a escada §318 (fora do combate nv1); semEscada (§318 F3 h'/L8/L9) é metadado da escada — NÃO é combate nv1, então fora do hash de Provação
 const TELA_OPC  = ['nome'];                 // opção: escolhida por ÍNDICE (escolhas:[i]) — nome é rótulo
 const TELA_PASS = ['nome', 'desc'];         // passiva: idem
 function _semTela(obj, chaves) { const o = {}; for (const k in obj) if (!chaves.includes(k)) o[k] = obj[k]; return o; }

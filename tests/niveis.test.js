@@ -156,6 +156,15 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.bastet, 'milagre', [{ nv: 4, muda: [{ caminho: 'fx[0].hp', de: 30, para: 32 }], desc: 'x' }])).length === 0, 'B4e passa: fx[i].hp de vidaExtra é PEQUENO (nv4)');
 })();
 
+// BABÁ 4f — §318 F3 L9 EXTENSÃO (iii) LEVE: número DENTRO de uma OPÇÃO (habilidade de escolha, Lugh) é PEQUENO
+// (`opcoes[k].fx[i].v` / `.eff.v`). Caminho para opção INEXISTENTE → FORA (de≠valor). SEM NOVO em opção (fx[] fora).
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[0].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).length === 0, 'B4f passa: opcoes[k].fx[i].v é PEQUENO');
+  ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[2].fx[0].eff.v', de: 8, para: 9 }], desc: 'x' }])).length === 0, 'B4f passa: opcoes[k].fx[i].eff.v é PEQUENO');
+  ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[9].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4f MORDE: caminho em opção INEXISTENTE (de≠valor)');
+})();
+
 // BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).

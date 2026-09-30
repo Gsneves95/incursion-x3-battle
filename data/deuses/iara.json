@@ -10,8 +10,20 @@
     "nome": "Beleza Fatal",
     "desc": "Ataques de alvo único contra Iara causam 5 menos de dano; +8 de dano contra Encharcados.",
     "fx": [
-      { "gatilho": "reducao", "v": 5, "contra": { "alcance": "unico" } },
-      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "encharcado" } }
+      {
+        "gatilho": "reducao",
+        "v": 5,
+        "contra": {
+          "alcance": "unico"
+        }
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": {
+          "alvoDebuff": "encharcado"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,38 +31,190 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Canto Suave",
-      "cost": { "Maré": 1 },
+      "cost": {
+        "Maré": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano + Encharcado por 2 turnos.",
       "fx": [
-        { "t": "dmg", "v": 12 },
-        { "t": "apply", "eff": { "type": "encharcado", "dur": 2 } }
+        {
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "encharcado",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano + Encharcado por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano + Encharcado por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano + Encharcado por 2 turnos; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Canto da Sedução",
-      "cost": { "Maré": 2 },
+      "cost": {
+        "Maré": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Provoca 1 inimigo por 2 turnos e o Silencia (só Básico).",
       "fx": [
-        { "t": "apply", "eff": { "type": "taunt", "dur": 2 } },
-        { "t": "apply", "eff": { "type": "selado", "dur": 2 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "taunt",
+            "dur": 2
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "selado",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos e o Silencia (só Básico). Iara ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos e o Silencia (só Básico). Iara ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Provoca 1 inimigo por 2 turnos e o Silencia (só Básico). Iara ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Afogamento",
-      "cost": { "Maré": 2, "livre": 1 },
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP.",
       "fx": [
-        { "t": "dmg", "v": 18, "executaAbaixoDe": 24, "execIf": { "alvoDebuff": "encharcado" }, "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 18,
+          "executaAbaixoDe": 24,
+          "execIf": {
+            "alvoDebuff": "encharcado"
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
+        }
       ]
     }
   ]

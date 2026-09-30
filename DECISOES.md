@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 9 (3 celtas + 4 brasileiros) — 7 de 7 DENTRO; ext.(iii) LEVE (opções com número, Lugh); (h') no MILAGRE (Saci)
+
+**Uma varredura** dos 7 (Lugh/Morrígan/Cernunnos/Cuca/Saci/Iara/Curupira), N=3000 sorteado+reativo, higiene antes, **0
+empate-por-teto**. **7 de 7 DENTRO** — 6 sem ajuste, Saci via (h') no milagre.
+
+**Extensão (iii) LEVE — número DENTRO de uma OPÇÃO.** A habilidade do **Lugh** tem `opcoes` (GUERRA/CURA/FORJA) e as três
+JÁ têm número. Whitelist ganhou `opcoes[k].fx[i].v` e `opcoes[k].fx[i].eff.v` como PEQUENO (`_navFx` navega o prefixo
+`opcoes[k].`); o mesmo nível muda as 3 opções (3 mudas). **SEM NOVO-PEQUENO em opção** (a ext.iii cheia — acrescentar
+efeito numa opção — segue deferida; o Exu segue sem escada na habilidade). Babá B4f (opção existe → PEQUENO; opção
+inexistente → FORA). A babá 8 lança TODAS as opções (escolhas=[0..n]) para o degrau de cada uma ficar visível.
+
+**(h') no MILAGRE (Saci) — a régua estende o (h') para além do básico.** O milagre do Saci é controle PURO (rouba 2
+orbes + trava a Habilidade de TODOS); a escada era um NOVO-PEQUENO de dano AoE. Medido: com dmg 4 o milagre vale +21,3
+e o MÁX +38,6; ±1 para baixo (dmg 1) **quase não move** (+19,1 / +37,5) — não é a magnitude, é o TIPO: acrescentar
+qualquer kill-pressure a um milagre de controle puro de recarga baixa e alcance total é um salto. É a condição da (h')
+("estoura com a escada mínima"), agora no milagre: marquei o milagre com `semEscada` (motivo + medida) e Saci entra com
+básico+habilidade — **MÁX +17,8** (básico +5,1, habil +11,1). Determinístico (a régua tem seed fixo; re-medida idêntica).
+
+**Higiene do carimbo de Provação:** `semEscada` era metadado da escada mas VAZAVA para o hash de combate da Provação
+(`projecaoCombate`), o que estava staleando toda Provação que tivesse Saci/Exu/Afrodite/Hel no elenco (41 no pico).
+Adicionei `semEscada` à lista `TELA_AB` (junto de `nome`/`desc`/`niveis`) — é metadado, não combate nv1. `recarimbar_hash
+--aplicar` refrescou os 8 hashes que tinham a marcação embutida (migração §263, não re-resolve). Build limpo; nenhum
+balanço mexido em silêncio.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Lugh | Iniciado | +6,5 | +6,4 | −0,3 | +11,7 | DENTRO |
+| Morrígan | — | +7,7 | +3,4 | +12,9 | +19,0 | DENTRO |
+| Cernunnos | — | +3,0 | +3,6 | +5,6 | +12,5 | DENTRO |
+| Cuca | Iniciado | +9,9 | +2,0 | +12,1 | +23,9 | DENTRO |
+| Saci | — | +5,1 | +11,1 | — (h') | +17,8 | DENTRO¹ |
+| Iara | — | +14,6 | +2,5 | +7,7 | +22,3 | DENTRO |
+| Curupira | — | +11,0 | +11,2 | +5,3 | +23,5 | DENTRO |
+
+¹ milagre sem escada (h'): dano NOVO no milagre de controle puro estoura (dmg 1 → +19,1); MÁX de básico+habil = +17,8.
+Iara básico +14,6 e Curupira/Cuca no teto de MÁX, todos DENTRO sem (h') (só o Saci-milagre precisou).
+
+**7 de 7 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **61 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 africanos/L8 + 7 celtas/br + zeus/oxum/tyr). Régua a'–h' + whitelist a/b/i/ii/**iii-leve**.
+
+---
+
 ## §318 FASE 3 · LOTE 8 (5 africanos + Brigid + Dagda) — 7 de 7 DENTRO; ext.(iii) opcoes DEFERIDA (Exu sem escada na habilidade)
 
 **Uma varredura** dos 7 (Ogum/Xangô/Exu/Iansã/Oxalá/Brigid/Dagda), N=3000 sorteado+reativo, higiene antes, **0

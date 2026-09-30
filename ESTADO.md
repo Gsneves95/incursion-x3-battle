@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 9 (3 celtas + 4 brasileiros) — 7/7 DENTRO; 61 liberados; ext.(iii) LEVE + (h') no milagre (Saci)
+
+**Uma varredura** dos 7 (Lugh/Morrígan/Cernunnos/Cuca/Saci/Iara/Curupira), N=3000, higiene antes, 0 empate-por-teto.
+**7/7 DENTRO** (6 sem ajuste; Saci via h' no milagre). Liberados → **61 deuses** (18 gregos + 12 nórdicos + 13 egípcios
++ 7 L8 + 7 L9 + 3 pilotos).
+
+**Ext.(iii) LEVE:** número DENTRO de OPÇÃO é PEQUENO — `opcoes[k].fx[i].v` / `.eff.v` (Lugh GUERRA/CURA/FORJA, 3 mudas/nv;
+`_navFx` navega o prefixo `opcoes[k].`). SEM NOVO-PEQUENO em opção (ext.iii cheia segue deferida; Exu sem escada). Babá
+B4f; babá 8 lança todas as opções.
+
+**(h') no MILAGRE (Saci):** milagre de controle puro (rouba orbes + trava habilidade em massa) + qualquer dano NOVO
+estoura — dmg 4 → milagre +21,3/MÁX +38,6; ±1 (dmg 1) quase não move (+19,1/+37,5): é o TIPO, não a magnitude. Marquei o
+milagre `semEscada`; Saci entra com básico+habil (MÁX +17,8). Determinístico. **Higiene:** `semEscada` vazava para o hash
+de Provação (`projecaoCombate`) — staleava 41; adicionado a `TELA_AB` (metadado, não combate); `recarimbar_hash --aplicar`
+refrescou 8 (migração §263). Build limpo. Tabela dos 7 na DECISOES "LOTE 9".
+
 ## ★ §318 FASE 3 · LOTE 8 (5 africanos + Brigid + Dagda) — 7/7 DENTRO; 54 liberados; ext.(iii) opcoes DEFERIDA
 
 **Uma varredura** dos 7 (Ogum/Xangô/Exu/Iansã/Oxalá/Brigid/Dagda), N=3000, higiene antes, 0 empate-por-teto. **7/7
