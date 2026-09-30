@@ -18,18 +18,28 @@ const canon = v => (v === null || typeof v !== 'object') ? JSON.stringify(v)
   : Array.isArray(v) ? '[' + v.map(canon).join(',') + ']'
     : '{' + Object.keys(v).sort().map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
 
-// lê o valor de um `caminho` num ab (espelha o motor; fx[] não tem valor "atual").
+// lê o valor de um `caminho` num ab (espelha o motor; fx[] não tem valor "atual"). §318 F3 L6: navega ramos
+// condicionais aninhados (entao/senao) e o `.hp` de revive/vidaExtra — igual ao _navFx do motor.
 function lerCaminho(ab, c) {
   let m;
   if (c === 'fx[]') return undefined;
-  if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.v : undefined; }
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.v : undefined; }
   if (c === 'cd') return ab.cd;
   if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.dur : undefined; }
-  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.dur : undefined; }   // §318 F3 LOTE1: dur do próprio fx (dot/hot) como SALTO
+  const nm = c.match(/^fx\[(\d+)\]/);
+  if (!nm) return undefined;
+  let node = (ab.fx || [])[+nm[1]];
+  let rest = c.slice(nm[0].length), bm;
+  while ((bm = rest.match(/^\.(entao|senao)\[(\d+)\]/))) { if (!node) return undefined; const arr = node[bm[1]]; node = Array.isArray(arr) ? arr[+bm[2]] : undefined; rest = rest.slice(bm[0].length); }
+  if (!node) return undefined;
+  if (rest === '.v') return node.v;
+  if (rest === '.dur') return node.dur;
+  if (rest === '.hp') return node.hp;
+  if (rest === '.eff.v') return node.eff ? node.eff.v : undefined;
+  if (rest === '.eff.dur') return node.eff ? node.eff.dur : undefined;
   return undefined;
 }
+// §318 F3 L6 — varre fx recursivamente (inclui ramos) procurando um marcador.
+function scanFx(fxArr, pred) { for (const f of (fxArr || [])) { if (pred(f)) return f; for (const br of ['entao', 'senao']) { const r = f && Array.isArray(f[br]) && scanFx(f[br], pred); if (r) return r; } } return null; }
 const semDesc = ab => { const o = clone(ab); delete o.desc; return o; };
 
 // companheiros e inimigos por deus (só precisam ser deuses válidos e estáveis; a escolha se cancela
@@ -46,10 +56,10 @@ const _cenPad = key => CENARIO[key] || { time: [key, 'ares', 'atena'], inim: ['d
 
 // projeção de combate do estado (o que o degrau pode mexer): os dois lados (unidades: hp, efeitos,
 // dots, shield, cd, contadores) + orbes. NÃO o catId (que muda com o nível por construção) nem o log.
-function projLados(st) { return canon(st.lados.map(l => ({ orbs: l.orbs, units: l.units.map(u => ({ hp: u.hp, shield: u.shield, cd: u.cd, efeitos: u.efeitos, dots: u.dots, contadores: u.contadores, vivo: u.vivo })) }))); }
+function projLados(st) { return canon(st.lados.map(l => ({ orbs: l.orbs, units: l.units.map(u => ({ hp: u.hp, shield: u.shield, cd: u.cd, efeitos: u.efeitos, dots: u.dots, contadores: u.contadores, vivo: u.vivo, vidaExtra: u.vidaExtra })) }))); }   // §318 F3 L6: vidaExtra (Bastet) é campo próprio da unidade — sem ele o degrau de hp da Vida Extra pareceria inerte
 
 // monta o cenário FIXO e lança `slot` de ALVO no nível `nv`; devolve a projeção de estado (ou null se não deu p/ lançar).
-function estadoAposCast(catBase, key, slot, nv) {
+function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
   const cen = _cenPad(key);
   const cat = clone(catBase);
   const st = E.novoEstado(cen.time.slice(), cen.inim.slice(), 7, 0, null, cat, [{ [key]: { [slot]: nv } }, {}]);
@@ -63,6 +73,21 @@ function estadoAposCast(catBase, key, slot, nv) {
     al.efeitos.push({ type: 'vulneravel', v: 5, dur: 3, origem: st.lados[1].units[0].uid });
     al.dots.push({ nome: 'veneno', v: 4, dur: 3, origem: st.lados[1].units[0].uid });
   }
+  // §318 F3 L6 — PREPARA a condição só quando o DEGRAU testado precisa dela (senão o ramo/revive nunca dispara e
+  // pareceria inerte). Guiado pelo CAMINHO do degrau: um degrau no ramo `entao` quer a condição VERDADEIRA; no `senao`
+  // quer FALSA (cenário padrão); um degrau `.hp` é revive/vidaExtra. O cenário é idêntico em N e N−1 → a diferença cancela.
+  const efAb = E.kitEfetivo(cat[key], { [slot]: nv }).ab.find(a => a.slot === slot);
+  const cam = caminhoAtual || '';
+  const inEntao = /\.entao\[/.test(cam);
+  if (efAb) {
+    if (/\.hp$/.test(cam) && scanFx(efAb.fx, f => f.t === 'revive' || f.t === 'reviveProximoTurno')) { const cai = st.lados[0].units[2]; cai.vivo = false; cai.hp = 0; cai.efeitos = []; cai.dots = []; }   // revive: aliado caído
+    if (inEntao) {
+      const seHp = scanFx(efAb.fx, f => f.se && f.se.alvoHp && f.se.alvoHp.op === 'abaixo');   // ramo "hp abaixo de X": fere o aliado-alvo (Osíris)
+      if (seHp) { const al = st.lados[0].units[1]; al.hp = Math.max(1, seHp.se.alvoHp.v - 20); }
+      const seMarca = scanFx(efAb.fx, f => f.se && f.se.alvoMarca);   // ramo "tem a marca": semeia a marca no inimigo-alvo (Hórus: o Olho)
+      if (seMarca) { const inim = st.lados[1].units[0]; inim.efeitos.push({ type: seMarca.se.alvoMarca, dur: 3, origem: st.lados[0].units[0].uid }); }
+    }
+  }
   const u = st.lados[0].units[0];
   const a = E.acoesDe(st, u).find(x => x.slot === slot);
   if (!a || !a.disponivel) return null;
@@ -72,6 +97,7 @@ function estadoAposCast(catBase, key, slot, nv) {
   else if (a.alvo === '2inimigos') alvos = ['1-0', '1-1'];
   else if (a.alvo === '2aliados') alvos = ['0-1', '0-2'];
   else if (a.alvo === 'aliado+inimigo') alvos = ['0-1', '1-0'];
+  else if (a.alvo === 'distribui') alvos = ['1-0', '1-1', '1-2'];   // §318 F3 L6: multi-golpe distribuído (Babi milagre)
   const r = E.agir(st, u.uid, slot, alvos, null);
   if (!r || !r.ok) return null;
   return projLados(st);
@@ -97,9 +123,11 @@ function conferirDeus(catBase, g, okFn) {
           ok(lerCaminho(efN, mud.caminho) === mud.para, `${tag}: ${mud.caminho} devia virar ${JSON.stringify(mud.para)} no kit efetivo, veio ${JSON.stringify(lerCaminho(efN, mud.caminho))}`);
         }
       }
-      // (B) ESTADO: lançar a habilidade no nível N muda o combate vs N−1.
-      const sN = estadoAposCast(catBase, g.key, ab.slot, nv);
-      const sP = estadoAposCast(catBase, g.key, ab.slot, nv - 1);
+      // (B) ESTADO: lançar a habilidade no nível N muda o combate vs N−1. O cenário é preparado p/ o caminho do
+      // degrau nv (ramo entao/senao, revive) — IGUAL em N e N−1, isolando a diferença deste degrau.
+      const camDegrau = (d.muda && d.muda[0] && d.muda[0].caminho) || '';
+      const sN = estadoAposCast(catBase, g.key, ab.slot, nv, camDegrau);
+      const sP = estadoAposCast(catBase, g.key, ab.slot, nv - 1, camDegrau);
       if (sN === null || sP === null) { ok(false, `${tag}: não consegui lançar ${ab.slot} no cenário (indisponível)`); continue; }
       ok(sN !== sP, `${tag}: ESTADO inerte — lançar a habilidade no nv${nv} produz o MESMO estado do nv${nv - 1} (o degrau não chega ao motor)`);
     }

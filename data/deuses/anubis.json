@@ -10,8 +10,20 @@
     "nome": "Pesador de Almas",
     "desc": "Inimigos com Atadura não podem ser revividos e recebem +2 de dano por Atadura.",
     "fx": [
-      { "gatilho": "antiReviveContador", "contador": "atadura" },
-      { "gatilho": "bonusDano", "v": 0, "escopo": "time", "porContador": { "onde": "alvo", "nome": "atadura", "v": 2 } }
+      {
+        "gatilho": "antiReviveContador",
+        "contador": "atadura"
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "escopo": "time",
+        "porContador": {
+          "onde": "alvo",
+          "nome": "atadura",
+          "v": 2
+        }
+      }
     ]
   },
   "ab": [
@@ -19,41 +31,217 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Toque do Embalsamador",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo + 1 Atadura.",
       "fx": [
-        { "t": "dmg", "v": 12 },
-        { "t": "contador", "nome": "atadura", "v": 1 }
+        {
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "contador",
+          "nome": "atadura",
+          "v": 1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo + 1 Atadura."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo + 1 Atadura."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo + 1 Atadura; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mental",
       "nome": "Pesagem do Coração",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 25 de dano.",
       "fx": [
-        { "t": "condicional", "se": { "alvoMaisDebuffs": true },
-          "entao": [ { "t": "apply", "eff": { "type": "atordoado", "dur": 1 } }, { "t": "contador", "nome": "atadura", "v": 2 } ],
-          "senao": [ { "t": "dmg", "v": 25 } ] }
+        {
+          "t": "condicional",
+          "se": {
+            "alvoMaisDebuffs": true
+          },
+          "entao": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "atordoado",
+                "dur": 1
+              }
+            },
+            {
+              "t": "contador",
+              "nome": "atadura",
+              "v": 2
+            }
+          ],
+          "senao": [
+            {
+              "t": "dmg",
+              "v": 25
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].senao[0].v",
+              "de": 25,
+              "para": 27
+            }
+          ],
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 27 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].senao[0].v",
+              "de": 27,
+              "para": 29
+            }
+          ],
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 29 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].senao[0].v",
+              "de": 29,
+              "para": 31
+            }
+          ],
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 31 de dano."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mental",
       "nome": "Sentença do Duat",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "+2 Ataduras em todos os inimigos; quem chegar a 4 Ataduras fica Selado por 2 turnos.",
       "fx": [
-        { "t": "contador", "nome": "atadura", "v": 2, "escopo": "todosInimigos" },
-        { "t": "condicional", "escopo": "todosInimigos", "se": { "alvoContador": { "nome": "atadura", "op": "min", "n": 4 } },
-          "entao": [ { "t": "apply", "eff": { "type": "selado", "dur": 2 } } ] }
+        {
+          "t": "contador",
+          "nome": "atadura",
+          "v": 2,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "condicional",
+          "escopo": "todosInimigos",
+          "se": {
+            "alvoContador": {
+              "nome": "atadura",
+              "op": "min",
+              "n": 4
+            }
+          },
+          "entao": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "selado",
+                "dur": 2
+              }
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "+2 Ataduras em todos os inimigos; quem chegar a 4 Ataduras fica Selado por 2 turnos. Anúbis ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "+2 Ataduras em todos os inimigos; quem chegar a 4 Ataduras fica Selado por 2 turnos. Anúbis ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "+2 Ataduras em todos os inimigos; quem chegar a 4 Ataduras fica Selado por 2 turnos. Anúbis ganha 4 de Defesa Destrutível."
+        }
       ]
     }
   ]

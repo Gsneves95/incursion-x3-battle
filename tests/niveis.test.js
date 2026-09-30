@@ -130,6 +130,32 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 4, muda: [{ caminho: 'fx[0].dur', de: undefined, para: 3 }], desc: 'x' }])).some(e => /dot\/hot/i.test(e)), 'B4b MORDE: fx[i].dur em fx que não é dot/hot');
 })();
 
+// BABÁ 4d — §318 F3 L6 EXTENSÃO (i): caminhos DENTRO de ramos condicionais (aninhados) são PEQUENO; os LIMIARES da
+// condição (se/executaAbaixoDe) ficam FORA (degrau escondido, nunca sobem); e a elegibilidade do NOVO-PEQUENO passa a
+// considerar DANO aninhado (habilidade com dmg dentro de condicional NÃO é "sem número").
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  // PASSA: dano dentro do senao (Anúbis habil) — pequeno, qualquer nv
+  ok(E.validarNiveisDeus(so(catalogo.anubis, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[0].senao[0].v', de: 25, para: 27 }], desc: 'x' }])).length === 0, 'B4d passa: fx[i].senao[j].v (dano em ramo) é PEQUENO');
+  // PASSA: ramo aninhado FUNDO (Ammit milagre, 3 níveis) e shield dentro do entao (Osíris habil)
+  ok(E.validarNiveisDeus(so(catalogo.ammit, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[0].senao[0].senao[0].senao[0].v', de: 35, para: 37 }], desc: 'x' }])).length === 0, 'B4d passa: ramo aninhado fundo (senao.senao.senao.v)');
+  ok(E.validarNiveisDeus(so(catalogo.osiris, 'habilidade', [{ nv: 4, muda: [{ caminho: 'fx[0].entao[0].v', de: 15, para: 17 }], desc: 'x' }])).length === 0, 'B4d passa: fx[i].entao[j].v (escudo em ramo)');
+  // MORDE: mexer no LIMIAR — caminho para o `se` da condição ou para `executaAbaixoDe` está FORA da whitelist
+  ok(E.validarNiveisDeus(so(catalogo.osiris, 'habilidade', [{ nv: 4, muda: [{ caminho: 'fx[0].se.alvoHp.v', de: 60, para: 50 }], desc: 'x' }])).some(e => /FORA da whitelist/i.test(e)), 'B4d MORDE: limiar da condição (fx[i].se...) é degrau escondido, FORA');
+  ok(E.validarNiveisDeus(so(catalogo.ammit, 'milagre', [{ nv: 4, muda: [{ caminho: 'fx[0].entao[0].executaAbaixoDe', de: 200, para: 400 }], desc: 'x' }])).some(e => /FORA da whitelist/i.test(e)), 'B4d MORDE: executaAbaixoDe (limiar de execução) FORA');
+  // MORDE: NOVO-PEQUENO numa habilidade com DANO aninhado (Anúbis habil tem dmg 25 no senao) → não é "sem número"
+  ok(E.validarNiveisDeus(so(catalogo.anubis, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'shield', v: 2, escopo: 'self' } }], desc: 'x' }])).some(e => /SALTO.*nv4/i.test(e)), 'B4d MORDE: NOVO-PEQUENO em habilidade com dano ANINHADO (não é sem número)');
+  // NÃO regride: cura/buff CONDICIONAL não bloqueia o NOVO-PEQUENO (Freyja milagre dmgUp no senao continua elegível)
+  ok(E.validarNiveisDeus(so(catalogo.freyja, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'shield', v: 2, escopo: 'time' } }], desc: 'x' }])).length === 0, 'B4d passa: NOVO-PEQUENO ainda ok com buff/cura CONDICIONAL no ramo (Freyja)');
+})();
+
+// BABÁ 4e — §318 F3 L6 EXTENSÃO (ii): fx[i].hp (revive/vidaExtra) é PEQUENO (nv 2–4).
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  ok(E.validarNiveisDeus(so(catalogo.osiris, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[0].hp', de: 60, para: 62 }], desc: 'x' }])).length === 0, 'B4e passa: fx[i].hp de revive é PEQUENO (nv2)');
+  ok(E.validarNiveisDeus(so(catalogo.bastet, 'milagre', [{ nv: 4, muda: [{ caminho: 'fx[0].hp', de: 30, para: 32 }], desc: 'x' }])).length === 0, 'B4e passa: fx[i].hp de vidaExtra é PEQUENO (nv4)');
+})();
+
 // BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).

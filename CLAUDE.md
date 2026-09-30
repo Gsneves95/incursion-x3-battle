@@ -177,8 +177,12 @@ caminho, NÃO asse `u.kit` (a IA clona o estado; assar dobra o clone, §24). `st
 leem o mesmo catálogo (o caso de sempre → regressão zero byte a byte) e um **PAR** só quando os kits efetivos divergem
 (PvP nivelado). **Níveis default 1** ⇒ kitEfetivo deep-equal ao base; nunca mude isso sem provar a regressão zero.
 
-O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`; NOVO-PEQUENO **só nv2**:
-`fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a;
+O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`, e §318 F3 L6 ext.i
+os mesmos DENTRO de ramos condicionais aninhados `fx[i].entao[j].v` / `fx[i].senao[j].v` / `…senao[k].eff.v`, e ext.ii
+`fx[i].hp` (revive/vidaExtra); NOVO-PEQUENO **só nv2**:
+`fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a
+(ext.i: magnitude conta também ANINHADA, mas só **DANO** `t:dmg` dentro de ramo bloqueia; cura/buff condicional não —
+preserva Deméter/Freyja); os LIMIARES da condição (`se:{...}`, `executaAbaixoDe`) ficam FORA da whitelist — degrau escondido, nunca sobem;
 SALTO nv4 ≤1/hab: `cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[i].dur` (dur de dot/hot — §318 F3 ext.b), `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
 GUARDADOS NA BUILD por `validarNiveisDeus`/`conferirTextoNiveis` (falham ALTO). O nível vive na **conta** (`c.niveis`,
 server-autoritativo, default 1; `definirNivel` recusa fora de 1–4/passiva/não-possuído) — **o cliente NUNCA informa nível**,

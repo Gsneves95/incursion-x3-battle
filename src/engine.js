@@ -415,6 +415,13 @@ function _categoriaCaminho(c) {
   if (/^cost\.[^.[\]]+$/.test(c)) return 'salto';
   if (/^fx\[\d+\]\.eff\.dur$/.test(c)) return 'salto';
   if (/^fx\[\d+\]\.dur$/.test(c)) return 'salto';   // §318 F3 (extensão b): dur de dot/hot (Veneno, Queimadura) — salto, só nv4
+  // §318 F3 L6 (extensão i) — CAMINHOS DENTRO DE RAMOS condicionais (entao/senao, aninhados) são PEQUENO. O `v` do
+  // dano/cura/escudo e o `eff.v` dentro de qualquer ramo. Os LIMIARES da condição (se:{...}, executaAbaixoDe) ficam
+  // FORA da whitelist (nunca sobem — degrau escondido): qualquer caminho que não termine em .v/.eff.v/.hp cai no null.
+  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])+\.v$/.test(c)) return 'pequeno';
+  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])+\.eff\.v$/.test(c)) return 'pequeno';
+  // §318 F3 L6 (extensão ii) — HP de revive/vidaExtra (inclusive dentro de ramo) é PEQUENO.
+  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])*\.hp$/.test(c)) return 'pequeno';
   if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx (NOVO-PEQUENO vira 'pequeno' em validarNiveisDeus)
   return null;
 }
@@ -422,12 +429,22 @@ function _categoriaCaminho(c) {
 // dmg/heal/shield com `v`, nenhum `eff.v`) pode ACRESCENTAR no nv2 um efeito SIMPLES {t:dmg|heal|shield,
 // v:≤8, escopo?}. Contador (marca) e roubaOrbe (n) NÃO são magnitude — não bloqueiam. O `v` guarda o teto 8.
 const _T_MAGNITUDE = ['dmg', 'heal', 'shield'];
-function _temMagnitudePequena(ab) {
-  for (const f of (ab.fx || [])) {
+// §318 F3 L6 (extensão i) — a MAGNITUDE conta mesmo ANINHADA dentro de ramos condicionais. No TOPO, qualquer
+// magnitude (dmg/heal/shield com `v`, ou `eff.v`) bloqueia o NOVO-PEQUENO (comportamento original). ANINHADO (dentro
+// de entao/senao), só DANO (`t:dmg`) conta — é a redação do dono: "habilidade com DANO dentro de condicional NÃO é
+// 'sem número'" (Anúbis habil tem dmg 25 no senao → bloqueia). Cura/buff CONDICIONAL não bloqueia — preserva os
+// milagres já medidos e liberados (Deméter heal 25 e Freyja dmgUp 12 no senao continuam elegíveis ao NOVO-PEQUENO).
+function _fxTemMagnitude(f, aninhado) {
+  if (!f || typeof f !== 'object') return false;
+  if (!aninhado) {
     if (_T_MAGNITUDE.indexOf(f.t) >= 0 && typeof f.v === 'number') return true;
     if (f.eff && typeof f.eff.v === 'number') return true;
-  }
+  } else if (f.t === 'dmg' && typeof f.v === 'number') return true;
+  for (const br of ['entao', 'senao']) if (Array.isArray(f[br]) && f[br].some(x => _fxTemMagnitude(x, true))) return true;
   return false;
+}
+function _temMagnitudePequena(ab) {
+  return (ab.fx || []).some(f => _fxTemMagnitude(f, false));
 }
 function _ehNovoPequenoPara(para) {
   if (!para || typeof para !== 'object') return false;
@@ -467,28 +484,47 @@ function _novoPequenoPermitido(ab, para, deus) {
   if (_ehBasicoArea(ab) && (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self') return true;   // (a')
   return false;
 }
+// §318 F3 L6 — navega um caminho baseado em fx[i] (com ramos entao/senao ANINHADOS) até a propriedade final
+// gravável. Devolve {obj, key} ou null. NÃO trata cd/cost/fx[] (esses ficam fora, na ler/escrever).
+function _navFx(ab, c) {
+  const m = /^fx\[(\d+)\]/.exec(c);
+  if (!m) return null;
+  let node = (ab.fx || [])[+m[1]];
+  let rest = c.slice(m[0].length);
+  let bm;
+  while ((bm = /^\.(entao|senao)\[(\d+)\]/.exec(rest))) {
+    if (!node) return null;
+    const arr = node[bm[1]];
+    node = Array.isArray(arr) ? arr[+bm[2]] : undefined;
+    rest = rest.slice(bm[0].length);
+  }
+  if (!node) return null;
+  switch (rest) {
+    case '.v': return { obj: node, key: 'v' };
+    case '.dur': return { obj: node, key: 'dur' };
+    case '.hp': return { obj: node, key: 'hp' };   // §318 F3 L6 (ext ii): revive/vidaExtra
+    case '.eff.v': return node.eff ? { obj: node.eff, key: 'v' } : null;
+    case '.eff.dur': return node.eff ? { obj: node.eff, key: 'dur' } : null;
+    default: return null;
+  }
+}
 // lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
 function _lerCaminho(ab, c) {
   let m;
   if (c === 'fx[]') return null;   // append: não há valor anterior
-  if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.v : undefined; }
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.v : undefined; }
   if (c === 'cd') return ab.cd;
   if ((m = c.match(/^cost\.(.+)$/))) return ab.cost ? ab.cost[m[1]] : undefined;
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f && f.eff ? f.eff.dur : undefined; }
-  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { const f = (ab.fx || [])[+m[1]]; return f ? f.dur : undefined; }   // §318 F3: dur de dot/hot
-  return undefined;
+  const r = _navFx(ab, c);   // fx[i].v · fx[i].eff.v · fx[i].eff.dur · fx[i].dur · fx[i].hp · ramos aninhados
+  return r ? r.obj[r.key] : undefined;
 }
 // escreve `para` no caminho (mutando o ab JÁ CLONADO). fx[] empurra o efeito novo.
 function _escreverCaminho(ab, c, para) {
   let m;
   if (c === 'fx[]') { (ab.fx = ab.fx || []).push(_cloneKit(para)); return; }   // CLONE: nunca guardar a referência do `para` da fonte (senão um nv seguinte que escreve fx[i].v corromperia o `muda.para` original — bug §318 F3)
-  if ((m = c.match(/^fx\[(\d+)\]\.v$/))) { if (ab.fx && ab.fx[+m[1]]) ab.fx[+m[1]].v = para; return; }
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.v$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.v = para; return; }
   if (c === 'cd') { ab.cd = para; return; }
   if ((m = c.match(/^cost\.(.+)$/))) { (ab.cost = ab.cost || {})[m[1]] = para; return; }
-  if ((m = c.match(/^fx\[(\d+)\]\.eff\.dur$/))) { if (ab.fx && ab.fx[+m[1]] && ab.fx[+m[1]].eff) ab.fx[+m[1]].eff.dur = para; return; }
-  if ((m = c.match(/^fx\[(\d+)\]\.dur$/))) { if (ab.fx && ab.fx[+m[1]]) ab.fx[+m[1]].dur = para; return; }   // §318 F3: dur de dot/hot
+  const r = _navFx(ab, c);
+  if (r) r.obj[r.key] = para;
 }
 function _cloneKit(g) { return JSON.parse(JSON.stringify(g)); }
 

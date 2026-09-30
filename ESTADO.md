@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 6 (7 egípcios) — 7/7 DENTRO; extensões (i) condicional + (ii) hp-de-revive na whitelist
+
+**Uma varredura** dos 7 (Babi/Bastet/Anúbis/Ammit/Osíris/Ísis/Hórus), N=3000, higiene antes, 0 empate-por-teto. **7/7
+DENTRO sem ajuste** (maior single Bastet básico +13,1; maior MÁX Babi +23,1). Liberados → **40 deuses** (18 gregos + 12
+nórdicos + 7 egípcios + 3 pilotos).
+
+**Extensão whitelist (i):** caminhos DENTRO de ramos condicionais aninhados (`fx[i].entao[j].v`, `fx[i].senao[j].v`,
+`…senao[k].v`, `eff.v` em ramo) são PEQUENO; os LIMIARES (`se`, `executaAbaixoDe`) ficam FORA (degrau escondido, nunca
+sobem). NOVO-PEQUENO passa a ver DANO aninhado (Anúbis habil dmg 25 no senao → bloqueado); **só dano** aninhado bloqueia
+— cura/buff condicional não (Deméter/Freyja preservados, verificado). **Extensão (ii):** `fx[i].hp` de revive/vidaExtra
+é PEQUENO. Motor: `_navFx` + `_categoriaCaminho` + `_temMagnitudePequena` recursivo; babás B4d/B4e.
+
+**Conferidos e CORRETOS (não divergência):** Osíris "remove debuffs" — `reviver()` zera efeitos/dots; Hórus "ignora
+Inalvejável" — flag `ignoraInalvejavel:true` no nível da habilidade. Tabela dos 7 na DECISOES "§318 FASE 3 · LOTE 6".
+
 ## ★ §318 FASE 3 · LOTE 5 (últimos 6 nórdicos) + Afrodite entra — 7/7 DENTRO; regra (h'); extensões (e')(f')
 
 **Uma varredura para os 7** (Afrodite + Mimir/Baldur/Jörmungandr/Loki/Hel/Odin), N=3000, higiene antes, 0 empate-por-

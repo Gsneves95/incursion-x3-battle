@@ -10,7 +10,12 @@
     "nome": "Nome Secreto",
     "desc": "Ísis é imune a controle.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "controle" ] }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "controle"
+        ]
+      }
     ]
   },
   "ab": [
@@ -22,31 +27,164 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Feitiço Roubado",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Copia e usa imediatamente a última Habilidade usada por um aliado (sem pagar o custo dela).",
       "fx": [
-        { "t": "copiar", "fonte": "ultimaHabilidadeAliada" }
+        {
+          "t": "copiar",
+          "fonte": "ultimaHabilidadeAliada"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 2,
+                "escopo": "time"
+              }
+            }
+          ],
+          "desc": "Copia e usa imediatamente a última Habilidade usada por um aliado (sem pagar o custo dela); o time cura 2."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Copia e usa imediatamente a última Habilidade usada por um aliado (sem pagar o custo dela); o time cura 3."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Copia e usa imediatamente a última Habilidade usada por um aliado (sem pagar o custo dela); o time cura 4."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Ressurreição de Osíris",
-      "cost": { "Aurora": 2, "livre": 2 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 2
+      },
       "cd": 5,
       "umaVez": true,
       "alvo": "nenhum",
       "desc": "Revive todos os aliados caídos com 36 de HP. Uma vez por partida.",
       "fx": [
-        { "t": "revive", "hp": 36, "escopo": "todosCaidos" }
+        {
+          "t": "revive",
+          "hp": 36,
+          "escopo": "todosCaidos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 36,
+              "para": 38
+            }
+          ],
+          "desc": "Revive todos os aliados caídos com 38 de HP. Uma vez por partida."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 38,
+              "para": 40
+            }
+          ],
+          "desc": "Revive todos os aliados caídos com 40 de HP. Uma vez por partida."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 40,
+              "para": 42
+            }
+          ],
+          "desc": "Revive todos os aliados caídos com 42 de HP. Uma vez por partida."
+        }
       ]
     }
   ]

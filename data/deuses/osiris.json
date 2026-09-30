@@ -10,7 +10,12 @@
     "nome": "Rei dos Mortos",
     "desc": "Por cada aliado caído, o time causa +8 de dano.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 0, "porAliadoCaido": 8, "escopo": "time" }
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "porAliadoCaido": 8,
+        "escopo": "time"
+      }
     ]
   },
   "ab": [
@@ -22,30 +27,175 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Trigo do Renascimento",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Cura 20 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível.",
       "fx": [
-        { "t": "condicional", "se": { "alvoHp": { "op": "abaixo", "v": 60 } }, "entao": [ { "t": "shield", "v": 15 } ] },
-        { "t": "heal", "v": 20 }
+        {
+          "t": "condicional",
+          "se": {
+            "alvoHp": {
+              "op": "abaixo",
+              "v": 60
+            }
+          },
+          "entao": [
+            {
+              "t": "shield",
+              "v": 15
+            }
+          ]
+        },
+        {
+          "t": "heal",
+          "v": 20
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "Cura 21 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "Cura 22 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].entao[0].v",
+              "de": 15,
+              "para": 17
+            }
+          ],
+          "desc": "Cura 22 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 17 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Tribunal do Duat",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Revive 1 aliado caído com 60 de HP e remove os debuffs dele.",
-      "fx": [ { "t": "revive", "hp": 60, "escopo": "umCaido" } ]
+      "fx": [
+        {
+          "t": "revive",
+          "hp": 60,
+          "escopo": "umCaido"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 60,
+              "para": 62
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 62 de HP e remove os debuffs dele."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 62,
+              "para": 64
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 64 de HP e remove os debuffs dele."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].hp",
+              "de": 64,
+              "para": 66
+            }
+          ],
+          "desc": "Revive 1 aliado caído com 66 de HP e remove os debuffs dele."
+        }
+      ]
     }
   ]
 }

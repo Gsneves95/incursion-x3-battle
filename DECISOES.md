@@ -6,6 +6,49 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 6 (7 egípcios) — 7 de 7 DENTRO; extensões (i) condicional e (ii) hp-de-revive na whitelist
+
+**Uma varredura** dos 7 (Babi/Bastet/Anúbis/Ammit/Osíris/Ísis/Hórus), N=3000 sorteado+reativo, higiene antes, **0
+empate-por-teto**. **7 de 7 DENTRO sem ajuste** — nenhuma habilidade nv4 > +15pp (maior single: Bastet básico +13,1),
+todo MÁX ≤ +25 (maior: Babi +23,1).
+
+**Duas extensões da whitelist** (o panteão egípcio vive de condicionais e revives — os caminhos precisavam alcançá-los):
+- **(i) CAMINHOS DENTRO DE RAMOS CONDICIONAIS são PEQUENO** (aninhados): `fx[i].entao[j].v`, `fx[i].senao[j].v`,
+  `fx[i].senao[j].senao[k].v` (Ammit milagre tem 3 níveis de senao), e `eff.v` dentro de ramo. Os **LIMIARES** da
+  condição (`se:{...}`, `executaAbaixoDe`) ficam **FORA da whitelist** — são degrau escondido e **nunca sobem** (só o
+  dano/cura/escudo do ramo sobe; o gatilho fica fixo). A elegibilidade do NOVO-PEQUENO passa a considerar magnitude
+  ANINHADA: uma habilidade com **DANO** (`t:dmg`) dentro de um ramo NÃO é "sem número" (Anúbis habil tem `dmg 25` no
+  senao → não pode ganhar NOVO-PEQUENO). **Só DANO aninhado bloqueia** — cura/buff condicional não, senão quebraria os
+  milagres já medidos e liberados (Deméter `heal 25` e Freyja `dmgUp 12` no senao continuam elegíveis ao NOVO-PEQUENO;
+  isso foi verificado, teria sido uma regressão silenciosa).
+- **(ii) HP DE REVIVE/vidaExtra é PEQUENO**: `fx[i].hp` (Bastet vidaExtra, Osíris revive-1, Ísis revive-todos).
+
+Motor: `_navFx` navega caminhos com ramos aninhados (ler/escrever); `_categoriaCaminho` reconhece os novos padrões;
+`_temMagnitudePequena` recorre nos ramos (só `t:dmg` conta aninhado). Babás B4d (ext i: ramo passa; limiar `se`/
+`executaAbaixoDe` morde; NOVO-PEQUENO com dano aninhado morde; buff condicional NÃO regride) e B4e (ext ii: `fx[i].hp`).
+
+**Dois "text×efeito" que o dono mandou conferir — ambos CORRETOS, não são divergência:**
+- **Osíris milagre** "remove os debuffs dele": o motor `reviver()` zera `efeitos`/`dots` no revive — o texto bate.
+- **Hórus básico** "ignora Inalvejável": a flag `ignoraInalvejavel:true` está no NÍVEL DA HABILIDADE (não no fx) — existe
+  e está correta.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Babi | — | +7,4 | +5,0 | +11,5 | +23,1 | DENTRO |
+| Bastet | — | +13,1 | +6,0 | +2,5 | +19,3 | DENTRO |
+| Anúbis | — | +2,1 | +4,4 | +7,8 | +12,6 | DENTRO |
+| Ammit | — | +6,1 | +0,3 | +3,9 | +15,8 | DENTRO |
+| Osíris | — | +12,5 | +4,4 | +1,2 | +16,1 | DENTRO |
+| Ísis | — | +6,7 | +7,1 | +0,0 | +15,6 | DENTRO |
+| Hórus | — | +10,6 | +1,9 | +4,2 | +14,3 | DENTRO |
+
+**7 de 7 egípcios DENTRO**, todos liberados. Total em `niveis_liberados.json`: **40 deuses** (18 gregos + 12 nórdicos +
+7 egípcios + zeus/oxum/tyr pilotos). Régua de regras a'–h' + whitelist ext.a/b/**i/ii** (ver CLAUDE.md).
+
+---
+
 ## §318 FASE 3 · LOTE 5 (últimos 6 nórdicos) + Afrodite entra — 7 de 7 DENTRO; nova regra (h'); extensões (e') e (f')
 
 **Uma varredura para os 7** (Afrodite + Mimir/Baldur/Jörmungandr/Loki/Hel/Odin), N=3000 sorteado+reativo, higiene

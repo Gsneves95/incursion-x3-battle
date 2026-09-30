@@ -10,7 +10,13 @@
     "nome": "Devorador de Entranhas",
     "desc": "Babi causa +10 de dano contra inimigos com Medo.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 10, "quando": { "alvoDebuff": "medo" } }
+      {
+        "gatilho": "bonusDano",
+        "v": 10,
+        "quando": {
+          "alvoDebuff": "medo"
+        }
+      }
     ]
   },
   "ab": [
@@ -18,33 +24,176 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Presas Selvagens",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Rugido Aterrorizante",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "todosInimigos",
       "desc": "Medo em todos os inimigos por 2 turnos: causam 8 menos de dano e não podem usar Milagre.",
       "fx": [
-        { "t": "apply", "eff": { "type": "medo", "dur": 2, "dmgDown": 8 }, "escopo": "todosInimigos" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "medo",
+            "dur": 2,
+            "dmgDown": 8
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Medo em todos os inimigos por 2 turnos: causam 8 menos de dano e não podem usar Milagre. Babi ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Medo em todos os inimigos por 2 turnos: causam 8 menos de dano e não podem usar Milagre. Babi ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Medo em todos os inimigos por 2 turnos: causam 8 menos de dano e não podem usar Milagre. Babi ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Frenesi Sanguinário",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 3,
       "alvo": "distribui",
       "desc": "4 golpes de 10 de dano, distribuídos entre os inimigos que você escolher; Babi cura metade do dano TOTAL causado. O extra da divisão vai para os primeiros selecionados.",
-      "fx": [ { "t": "dmg", "v": 10, "golpes": 4, "curaMetade": true } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10,
+          "golpes": 4,
+          "curaMetade": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "4 golpes de 11 de dano, distribuídos entre os inimigos que você escolher; Babi cura metade do dano TOTAL causado. O extra da divisão vai para os primeiros selecionados."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "4 golpes de 12 de dano, distribuídos entre os inimigos que você escolher; Babi cura metade do dano TOTAL causado. O extra da divisão vai para os primeiros selecionados."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "4 golpes de 13 de dano, distribuídos entre os inimigos que você escolher; Babi cura metade do dano TOTAL causado. O extra da divisão vai para os primeiros selecionados."
+        }
+      ]
     }
   ]
 }
