@@ -75,12 +75,12 @@
               "de": null,
               "para": {
                 "t": "shield",
-                "v": 5,
+                "v": 3,
                 "escopo": "self"
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; Hera ganha 5 de Defesa Destrutível."
+          "desc": "14 de dano a 1 inimigo; Hera ganha 3 de Defesa Destrutível."
         }
       ]
     },

@@ -6,6 +6,68 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · FECHO DO PANTEÃO GREGO — 17 de 18 DENTRO (só Afrodite fora)
+
+**Regra (f') substitui a (d').** Básico de deus com redução passiva permanente ≥10 **não tem escada** (sem
+`niveis` no básico): medido, até a cura self 1→2 vale +24pp (Aquiles reducao 12, Kraken reducao 10 — sobrevivem e
+usam o básico ~13×/partida). Motor: `validarNiveisDeus` recusa escada no básico desses deuses e exige básico-com-
+escada nos demais totalmente escalados; `subirNivel` no básico deles → `nivel_inexistente`; `_maximizado` e o
+excedente→Essência contam só as escadas EXISTENTES (esses maximizam com 12 pontos = habil+milagre). Babá B3d
+reescrita p/ (f'). Aplicado: **Aquiles e Kraken sem escada no básico** → ambos entraram DENTRO.
+
+**Correções finais:** Hera básico nv4 shield 5→3; Hermes habil nv4 dmgUp 2→1 — ambos entraram DENTRO.
+**Afrodite:** as duas variantes do básico nv4 mediram FORA (V1 dmg→15: MÁX +30,0; V2 shield2 self: MÁX +30,3) —
+conforme a regra "se as duas ficarem fora, reportar e parar", **Afrodite fica FORA** (o gargalo é a SOMA
+milagre+básico, não o básico sozinho: o dano do básico sem o nv4 é só +10,2). Único grego fora.
+
+**Higiene da varredura (feito):** o script de varredura agora mata processos de medição sobrando (`pgrep`/`pkill`,
+registrado no log) antes de começar, e roda uma medida por vez. (A "varredura de 4h30" foi suspensão do container
++ contenção de CPU de processos concorrentes, não partida sem fim — diagnóstico completo abaixo.)
+
+**TABELA FINAL DO PANTEÃO GREGO (18 deuses, nv4 por slot · MÁX · N=3000 sorteado+reativo):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Cérberus | Suplicante | +11,3¹ | +4,8 | +2,5 | +19,7 | DENTRO |
+| Atena | Suplicante | +8,7 | +2,1 | +5,0 | +15,2 | DENTRO |
+| Dionísio | Suplicante | +1,4 | +6,9 | +11,3 | +16,7 | DENTRO |
+| Medusa | Suplicante | +11,8 | +1,6 | +8,4 | +20,8 | DENTRO |
+| Ares | Suplicante | +2,8 | +1,0 | +7,7 | +13,4 | DENTRO |
+| Apolo | Suplicante | +7,0 | +5,0 | +10,8 | +21,1 | DENTRO |
+| Hércules | Suplicante | +4,5 | +7,6 | +6,8 | +15,8 | DENTRO |
+| Deméter | Devoto | +12,3 | +7,1 | +8,3 | +23,2 | DENTRO |
+| Poseidon | Devoto | +11,2 | +6,2 | +4,9 | +19,0 | DENTRO |
+| Erínias | Devoto | +6,3 | +4,1 | +2,6 | +9,2 | DENTRO |
+| Hera | Devoto | +11,6 | +3,6 | +10,7 | +21,9 | DENTRO² |
+| Hermes | Devoto | +0,3 | +14,2 | +7,1 | +17,0 | DENTRO² |
+| Aquiles | Iniciado | — (f') | +14,5 | +5,1 | +17,9 | DENTRO³ |
+| Kraken | Iniciado | — (f') | +10,0 | +10,1 | +17,5 | DENTRO³ |
+| Perseu | Iniciado | +5,0 | +5,7 | +4,5 | +21,0 | DENTRO |
+| Orfeu | Iniciado | +5,4 | +6,8 | 0,0 | +15,3 | DENTRO |
+| Hades | Iniciado | −2,5 | +2,3 | −0,8 | +2,9 | DENTRO |
+| **Afrodite** | Iniciado | +18,3 | +6,7 | +13,7 | **+29,8** | **FORA** |
+
+¹ piso (cura self 1→2): básico AoE, regra (a'). ² corrigido (shield 5→3 / dmgUp 2→1). ³ básico sem escada, regra (f').
+
+**17 de 18 liberados** (`niveis_liberados.json`). Só **Afrodite** fora — MÁX ~+30 nas duas variantes de básico; o
+gargalo é a soma milagre(+13,7)+básico, não o básico só. Proposta p/ o dono: encolher o milagre (dmgDown AoE 10→11
+em vez de 10→12) e/ou deixar o básico sem escada como suporte-frágil; re-meço quando decidir.
+
+**PADRÃO PARA OS PRÓXIMOS PANTEÕES (régua §318 F3, regras a'–f'):**
+- **(a')** básico em ÁREA não sobe dano — degraus de cura/escudo **self** (mesmo com número).
+- **(b')** custo de básico nunca vai a 0 (básico grátis = +22pp).
+- **(c')** cura de SUPORTE sobe de 1 em 1.
+- **(f')** básico de deus com redução passiva ≥10 **não tem escada** (é durável demais + spamma).
+- **(e')** não dar cura em habilidade de deus cuja passiva reage a cura.
+- Diretriz: NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8.
+- O que estoura, em geral: **frequência × durabilidade** (básico spammado por unidade que sobrevive) e **soma de
+  suporte** (cura/buff/AoE de milagre somando no MÁX). Dano de alvo único de unidade frágil e efeitos de milagre
+  (baixa frequência) sobem tranquilos.
+- Régua: `medir_niveis.js --sorteado --reativo` N=3000; motor encerra na rodada 40 (sem partida sem fim); teto de
+  rodadas + `timeout` por medida como cinto; higiene de processos antes de cada varredura.
+
+---
+
 ## §318 FASE 3 · LOTE 3 + correções LOTE 2 — varredura dos 8 (3 novos DENTRO; 5 FORA → PROPOR e PARAR)
 
 **Regras novas (decisões do dono, valem daqui em diante):** **(d')** básico de deus com redução passiva permanente

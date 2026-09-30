@@ -145,18 +145,21 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.atena, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'self' }))).length > 0, 'B3c MORDE: cura self num básico de ALVO ÚNICO com número (só AoE tem o passe)');
 })();
 
-// BABÁ 3d — §318 F3 regra (d') BÁSICO DE DEUS DURÁVEL. Se a passiva dá redução PERMANENTE ≥10, o básico (mesmo
-// alvo único, mesmo com número) pode ganhar NOVO-PEQUENO cura/escudo self no nv2. Morde fora do caso: básico de
-// deus sem redução forte (Perseu: passiva sem reducao) segue barrado.
+// BABÁ 3d — §318 F3 regra (f', substitui d') BÁSICO DE DEUS MUITO DURÁVEL não tem escada. Deus com redução
+// passiva permanente ≥10 (Aquiles 12, Kraken 10): o básico NÃO pode ter niveis; a escada vive só em habilidade/
+// milagre. Deus SEM essa redução, que já tem escada em algum slot, DEVE ter escada no básico (senão é esquecimento).
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
-  const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'x' }];
-  // Aquiles (passiva reducao 12) e Kraken (reducao 10) → cura self no básico passa
-  ok(E.validarNiveisDeus(so(catalogo.aquiles, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length === 0, "B3d passa: cura self no básico de deus durável (Aquiles reducao 12, regra d')");
-  ok(E.validarNiveisDeus(so(catalogo.kraken, 'basico', NP(2, { t: 'shield', v: 3, escopo: 'self' }))).length === 0, 'B3d passa: escudo self no básico do Kraken (reducao 10)');
-  // Perseu (passiva sem reducao) → barrado; e Poseidon (reducao 5 gated <10) → barrado
-  ok(E.validarNiveisDeus(so(catalogo.perseu, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length > 0, 'B3d MORDE: cura self no básico de deus SEM redução forte (Perseu)');
-  ok(E.validarNiveisDeus(so(catalogo.poseidon, 'basico', NP(2, { t: 'heal', v: 1, escopo: 'self' }))).length > 0, 'B3d MORDE: reducao passiva <10 ou gated não conta (Poseidon reducao 5 protegido)');
+  // habEscada: deus totalmente escalado (habilidade E milagre) mas com o básico SEM niveis (o formato f')
+  const habEscada = g => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 4, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; } return d; };
+  const comBasico = g => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === 'basico').niveis = [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'heal', v: 1, escopo: 'self' } }], desc: 'x' }]; return d; };
+  // Aquiles (reducao 12) e Kraken (reducao 10): básico COM escada → QUEBRA (f')
+  ok(E.validarNiveisDeus(comBasico(catalogo.aquiles)).some(e => /regra f'/.test(e)), "B3d MORDE: básico com escada num deus da regra f' (Aquiles reducao 12)");
+  ok(E.validarNiveisDeus(comBasico(catalogo.kraken)).some(e => /regra f'/.test(e)), 'B3d MORDE: básico com escada no Kraken (reducao 10)');
+  // Aquiles com escada só na habilidade e básico SEM escada → PASSA (é o formato f')
+  ok(E.validarNiveisDeus(habEscada(catalogo.aquiles)).length === 0, "B3d passa: deus f' com escada só em habilidade e básico sem niveis");
+  // Perseu (sem reducao) e Poseidon (reducao 5 gated <10): escada na habilidade mas básico SEM escada → QUEBRA
+  ok(E.validarNiveisDeus(habEscada(catalogo.perseu)).some(e => /só é permitido para deus da regra f'/.test(e)), "B3d MORDE: básico sem escada num deus fora da f' (Perseu)");
+  ok(E.validarNiveisDeus(habEscada(catalogo.poseidon)).some(e => /só é permitido para deus da regra f'/.test(e)), "B3d MORDE: reducao <10/gated não é f' (Poseidon reducao 5 protegido)");
 })();
 
 // BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.

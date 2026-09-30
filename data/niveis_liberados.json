@@ -1,4 +1,4 @@
 {
   "_nota": "§318 F3 — deuses cujas ESCADAS DE NÍVEL passaram na triagem (MÁX 0..+25pp, nenhuma habilidade nv4 > +15pp). subirNivel RECUSA (motivo 'niveis_nao_liberados') deus fora desta lista, mesmo com pontos. Um deus só entra aqui depois de MEDIR DENTRO.",
-  "liberados": ["zeus", "oxum", "tyr", "dionisio", "medusa", "ares", "hercules", "atena", "apolo", "cerberus", "demeter", "poseidon", "erinias", "perseu", "orfeu", "hades"]
+  "liberados": ["zeus", "oxum", "tyr", "dionisio", "medusa", "ares", "hercules", "atena", "apolo", "cerberus", "demeter", "poseidon", "erinias", "perseu", "orfeu", "hades", "hera", "hermes", "aquiles", "kraken"]
 }

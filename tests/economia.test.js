@@ -401,6 +401,18 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
   c2.pontos = { zeus: 1 };
   const r2 = invoc.subirNivel(c2, 'zeus', 'basico');
   ok(invoc.NIVEIS_LIBERADOS.has('zeus') && r2.ok && r2.nivel === 2, 'deus liberado (zeus) sobe de nível');
+  // §318 F3 (f'): subir o BÁSICO de um deus muito durável (Aquiles/Kraken, sem escada no básico) → nivel_inexistente
+  const durao = ['aquiles', 'kraken'].find(k => invoc.NIVEIS_LIBERADOS.has(k));
+  if (durao) {
+    const c3 = contaFake(0, 0, { [durao]: { copias: 1, favorito: false, obtidoEm: 0 } });
+    c3.pontos = { [durao]: 6 };
+    const rb = invoc.subirNivel(c3, durao, 'basico');
+    ok(!rb.ok && rb.motivo === 'nivel_inexistente', `básico de deus (f') recusa (${durao} → nivel_inexistente)`);
+    const rh = invoc.subirNivel(c3, durao, 'habilidade');
+    ok(rh.ok && rh.nivel === 2, `${durao} sobe habilidade normalmente (só o básico é bloqueado)`);
+    // _maximizado conta só as escadas EXISTENTES: hab+milagre nv4 já maximiza (básico não tem escada)
+    ok(invoc._maximizado({ niveis: { [durao]: { basico: 1, habilidade: 4, milagre: 4 } } }, durao), `${durao} maximiza com hab+milagre nv4 (básico não conta, regra f')`);
+  }
 })();
 
 // --- (8) SEM GEMAS → recusa (nada muda) ---

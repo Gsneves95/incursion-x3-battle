@@ -134,9 +134,17 @@ function _niveisDeus(conta, deus) {
   const raw = (conta.niveis && conta.niveis[deus]) || {};
   return { basico: raw.basico || 1, habilidade: raw.habilidade || 1, milagre: raw.milagre || 1 };
 }
+// §318 F3 — os SLOTS que TÊM escada no catálogo (data/deuses). Um deus da regra (f') não tem escada no básico,
+// então "maximizado" e o custo total contam só as escadas EXISTENTES, não os 3 slots fixos.
+const _CATN = (function () { try { return require('../src/catalogo.js').GODS; } catch (e) { return {}; } })();
+function _escadasDe(deus) {
+  const g = _CATN[deus]; if (!g || !Array.isArray(g.ab)) return [];
+  return SLOTS.filter(s => { const ab = g.ab.find(a => a.slot === s); return ab && Array.isArray(ab.niveis) && ab.niveis.length; });
+}
 function _maximizado(conta, deus) {
   const n = _niveisDeus(conta, deus);
-  return SLOTS.every(s => n[s] >= 4);
+  const slots = _escadasDe(deus);
+  return slots.length > 0 && slots.every(s => n[s] >= 4);   // só as escadas que EXISTEM (regra f': básico sem escada)
 }
 function _possui(conta, deus) { return !!(conta.perfil && conta.perfil.deuses && conta.perfil.deuses[deus]); }
 function _addMoeda(conta, moeda, v) {
@@ -211,6 +219,7 @@ function subirNivel(conta, deus, slot) {
   if (!_possui(conta, deus)) return { ok: false, motivo: 'nao_possui' };
   if (!NIVEIS_LIBERADOS.has(deus)) return { ok: false, motivo: 'niveis_nao_liberados' };   // §318 F3: escada ainda não passou na triagem
   if (SLOTS.indexOf(slot) < 0) return { ok: false, motivo: 'slot_invalido' };
+  if (!_escadasDe(deus).includes(slot)) return { ok: false, motivo: 'nivel_inexistente' };   // §318 F3 (f'): slot sem escada (ex.: básico de deus muito durável)
   const n = _niveisDeus(conta, deus);
   const cur = n[slot];
   if (cur >= 4) return { ok: false, motivo: 'ja_no_maximo' };

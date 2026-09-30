@@ -37,52 +37,6 @@
           "t": "dmg",
           "v": 15
         }
-      ],
-      "niveis": [
-        {
-          "nv": 2,
-          "muda": [
-            {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "heal",
-                "v": 1,
-                "escopo": "self"
-              }
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Aquiles cura 1."
-        },
-        {
-          "nv": 3,
-          "muda": [
-            {
-              "caminho": "fx[1].v",
-              "de": 1,
-              "para": 2
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Aquiles cura 2."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "apply",
-                "eff": {
-                  "type": "vulneravel",
-                  "v": 3,
-                  "dur": 1
-                }
-              }
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Aquiles cura 2; ele recebe +3 de dano de todas as fontes por 1 turno."
-        }
       ]
     },
     {

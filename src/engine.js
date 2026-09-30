@@ -442,22 +442,21 @@ function _ehNovoPequenoPara(para) {
 function _ehBasicoArea(ab) {
   return ab && ab.slot === 'basico' && (ab.fx || []).some(f => f.t === 'dmg' && f.escopo === 'todosInimigos');
 }
-// §318 F3 (regra d') — BÁSICO DE DEUS DURÁVEL: se a PASSIVA dá redução de dano PERMANENTE ≥ 10 (fx reducao com
-// v≥10 e SEM gate — sem contra/estado/protegido), o deus sobrevive e spamma o básico, então subir o dano dele é
-// forte demais (Aquiles reducao 12 = +20,7 só com 15→17; Kraken reducao 10 = +22,5). O básico não sobe dano: os
-// degraus usam NOVO-PEQUENO de cura/escudo self, como o básico AoE (a').
+// §318 F3 (regra f', substitui a d') — BÁSICO DE DEUS MUITO DURÁVEL: se a PASSIVA dá redução PERMANENTE ≥ 10
+// (fx reducao com v≥10 e SEM gate), o deus sobrevive tanto que spamma o básico ~13×/partida — até a cura self 1→2
+// vale +24pp (Aquiles reducao 12, Kraken reducao 10). Então o básico NÃO TEM ESCADA (sem `niveis`): o `validar
+// NiveisDeus` recusa escada no básico desses deuses e exige básico-com-escada nos demais que já têm escada em
+// outro slot. (A regra d' — heal self no básico durável — foi medida e NÃO bastava; f' a substitui.)
 function _passivaReducaoForte(deus) {
   const fx = (deus && deus.passiva && deus.passiva.fx) || [];
   return fx.some(f => f.gatilho === 'reducao' && typeof f.v === 'number' && f.v >= 10 && !f.contra && !f.estado && !f.protegido);
 }
-// NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em área; regra (d'): básico de deus
-// com redução passiva forte — ambos podem ganhar heal/shield SELF (≤8) no nv2 mesmo o básico tendo número.
+// NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em ÁREA pode heal/shield SELF (≤8)
+// mesmo tendo número (Cérberus). (Deus MUITO durável cai na f' — básico sem escada — não nesta função.)
 function _novoPequenoPermitido(ab, para, deus) {
   if (!_ehNovoPequenoPara(para)) return false;
   if (!_temMagnitudePequena(ab)) return true;
-  const curaOuEscudoSelf = (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self';
-  if (_ehBasicoArea(ab) && curaOuEscudoSelf) return true;   // (a')
-  if (ab.slot === 'basico' && curaOuEscudoSelf && _passivaReducaoForte(deus)) return true;   // (d')
+  if (_ehBasicoArea(ab) && (para.t === 'heal' || para.t === 'shield') && para.escopo === 'self') return true;   // (a')
   return false;
 }
 // lê o valor ATUAL de `ab` no caminho (para conferir `de`). undefined se ausente.
@@ -579,6 +578,17 @@ function validarNiveisDeus(deus) {
       }
     }
     if (saltos > 1) erros.push(`${nome}.${ab.slot}: ${saltos} saltos (máx 1 por habilidade)`);
+  }
+  // §318 F3 (regra f') — BÁSICO DE DEUS MUITO DURÁVEL não tem escada. Deus com redução passiva ≥10: básico NÃO
+  // pode ter niveis. Deus SEM essa redução que já tem escada em algum slot: o básico DEVE ter escada (senão é
+  // esquecimento). Deuses sem escada nenhuma (ainda não trabalhados) passam livres.
+  const _basico = (deus.ab || []).find(a => a.slot === 'basico');
+  if (_basico) {
+    const durao = _passivaReducaoForte(deus);
+    const _tem = s => { const a = (deus.ab || []).find(x => x.slot === s); return a && Array.isArray(a.niveis); };
+    if (durao && Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: deus com redução passiva ≥10 (regra f') NÃO pode ter escada no básico`);
+    // deus totalmente escalado (habilidade E milagre com escada) mas SEM básico → esquecimento, salvo se for da f'
+    if (!durao && _tem('habilidade') && _tem('milagre') && !Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: básico SEM escada só é permitido para deus da regra f' (redução passiva permanente ≥10)`);
   }
   return erros;
 }

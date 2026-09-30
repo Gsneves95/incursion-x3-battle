@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · FECHO DO PANTEÃO GREGO — 17 de 18 DENTRO (só Afrodite fora)
+
+**Regra (f') substitui (d'):** básico de deus com redução passiva ≥10 (Aquiles 12, Kraken 10) **não tem escada**
+(medido: até cura self 1→2 = +24pp; sobrevivem e spammam o básico). Motor: validarNiveisDeus recusa escada no
+básico desses; subirNivel→`nivel_inexistente`; `_maximizado`/excedente só contam escadas existentes (maximizam com
+12 pts). Aquiles/Kraken sem básico → DENTRO. Hera básico nv4 shield 5→3 e Hermes habil nv4 dmgUp 2→1 → DENTRO.
+**Afrodite:** as 2 variantes do básico mediram FORA (MÁX +30,0 / +30,3) — gargalo é a soma milagre+básico, não o
+básico só → único grego FORA, reportado.
+
+Higiene: o script de varredura mata processos de medição sobrando antes de começar (a "varredura de 4h30" foi
+suspensão do container + contenção de CPU, não partida sem fim; motor encerra na rodada 40).
+
+**Panteão grego (18): 17 liberados** (só Afrodite fora). Regras da régua p/ os próximos panteões (a'–f') resumidas
+na DECISOES "FECHO DO PANTEÃO GREGO". Total DENTRO na lista: 20 deuses (17 gregos + 3 pilotos zeus/oxum/tyr).
+
 ## ★ §318 FASE 3 · LOTE 3 + correções LOTE 2 — varredura dos 8 (3 novos DENTRO; 5 FORA → PROPOSTO)
 
 Regras novas: **(d')** básico de deus com redução passiva ≥10 não sobe dano (cura/escudo self; motor+babá B3d);

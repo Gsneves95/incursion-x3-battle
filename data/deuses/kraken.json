@@ -39,53 +39,6 @@
           "t": "dmg",
           "v": 15
         }
-      ],
-      "niveis": [
-        {
-          "nv": 2,
-          "muda": [
-            {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "heal",
-                "v": 1,
-                "escopo": "self"
-              }
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Kraken cura 1."
-        },
-        {
-          "nv": 3,
-          "muda": [
-            {
-              "caminho": "fx[1].v",
-              "de": 1,
-              "para": 2
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Kraken cura 2."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "apply",
-                "eff": {
-                  "type": "dmgReduction",
-                  "v": 3,
-                  "dur": 1
-                },
-                "escopo": "self"
-              }
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo; Kraken cura 2 e recebe 3 de redução de dano por 1 turno."
-        }
       ]
     },
     {
