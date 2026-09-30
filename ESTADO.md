@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 11 (7 japoneses) — 7/7 DENTRO; 76 liberados; ext.(v) POSICIONAL (Raijin) + 2 SEM ESCADA
+
+**Uma varredura** dos 7 (Fujin/Kitsune/Raijin/Susanoo/Inari/Oni/Tanuki), N=3000, higiene antes, 0 empate-por-teto.
+Susanoo/Tanuki medidos só em básico/milagre/MÁX (habil SEM ESCADA). **7/7 DENTRO** (maior single Inari habil +14,7; maior
+MÁX Fujin +23,4 após ±1). Só **Fujin** saiu FORA na 1ª varredura (MÁX +30,1 — 3 fontes de dano AoE/alta-freq compõem):
+±1 nos pequenos (teto básico 14→13, milagre 18→17; habil intacto) → **+23,4 DENTRO**. Liberados → **76 deuses** (18 gregos
++ 12 nórdicos + 13 egípcios + 7 L8 + 7 L9 + 8 L10 + 7 L11 + 3 pilotos).
+
+**Ext.(v) POSICIONAL: `fx[i].posicional[k]`** (Raijin Raio em Cadeia, vetor [18,12,8] — o i-ésimo alvo leva `posicional[i]`).
+Cada casa é PEQUENO independente (`_categoriaCaminho`/`_navFx`/`_fxTemMagnitude`/`_valoresDeCombate` ganharam posicional);
+ÍNDICE FORA DO VETOR quebra a build (babá B4h). Raijin habil: [18,12,8]→[19,13,9] (uma casa por degrau; atordoamento não
+cresce). Verificado aplicado em combate (nv4 [19,13,9], nv1 [18,12,8]) — `posicional` já era resolvido no motor §135, só
+liguei o leveling. **2 SEM ESCADA por desenho:** Susanoo habil (8 golpes de 4: menor degrau soma +8 de uma vez = salto a'),
+Tanuki habil (escolha sem número; NOVO em opção deferido como o Exu) — `semEscada` com motivo. Tanuki milagre pela
+ext.(iii) leve (MORTE 35→41 +2, FORTUNA 12→15 +1; ROUBO sem número fica igual — verificado). Babás niveis (B4h) + degrau
+(lerCaminho ganhou posicional) + suíte + build verdes; 0 Provação estale. Tabela na DECISOES "LOTE 11".
+
 ## ★ §318 FASE 3 · LOTE 10 (4 brasileiros + 4 maias) — 8/8 DENTRO; 69 liberados; ext.(i) AMPLIADA (agenda)
 
 **Uma varredura** dos 8 (Boto/Mula/Boitatá/Piranha/Itzamná/Chaac/Kukulkán/Ah Puch), N=3000, higiene antes, 0

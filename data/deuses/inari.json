@@ -10,8 +10,23 @@
     "nome": "Mensageiros Kitsune",
     "desc": "A cada 3 turnos o time ganha 1 orbe de Verdejante; se a Kitsune está no time, ela começa com 1 Cauda.",
     "fx": [
-      { "gatilho": "aCadaN", "n": 3, "faz": [ { "t": "orbGain", "n": 1, "para": "Verdejante" } ] },
-      { "gatilho": "sinergiaAliado", "aliado": "kitsune", "contador": "cauda", "v": 1 }
+      {
+        "gatilho": "aCadaN",
+        "n": 3,
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Verdejante"
+          }
+        ]
+      },
+      {
+        "gatilho": "sinergiaAliado",
+        "aliado": "kitsune",
+        "contador": "cauda",
+        "v": 1
+      }
     ]
   },
   "ab": [
@@ -23,29 +38,168 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "10 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 10 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Colheita Abençoada",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "O time ganha 2 orbes de Verdejante.",
-      "fx": [ { "t": "orbGain", "n": 2, "para": "Verdejante" } ]
+      "fx": [
+        {
+          "t": "orbGain",
+          "n": 2,
+          "para": "Verdejante"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 2,
+                "escopo": "time"
+              }
+            }
+          ],
+          "desc": "O time ganha 2 orbes de Verdejante e cura 2."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "O time ganha 2 orbes de Verdejante e cura 3."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "O time ganha 2 orbes de Verdejante e cura 4."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Bênção das Mil Portas",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "O time ganha 3 orbes livres e cura 15.",
       "fx": [
-        { "t": "orbGain", "n": 3 },
-        { "t": "heal", "v": 15, "escopo": "time" }
+        {
+          "t": "orbGain",
+          "n": 3
+        },
+        {
+          "t": "heal",
+          "v": 15,
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "O time ganha 3 orbes livres e cura 16."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "O time ganha 3 orbes livres e cura 17."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "O time ganha 3 orbes livres e cura 18."
+        }
       ]
     }
   ]

@@ -6,6 +6,63 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 11 (7 japoneses) — 7 de 7 DENTRO; ext.(v) POSICIONAL (Raijin); 2 SEM ESCADA por desenho (Susanoo/Tanuki habil); ±1 no Fujin
+
+**Uma varredura** dos 7 (Fujin/Kitsune/Raijin/Susanoo/Inari/Oni/Tanuki), N=3000 sorteado+reativo, higiene antes,
+**0 empate-por-teto**. Susanoo e Tanuki medidos só em básico, milagre e MÁX (habilidade SEM ESCADA). **7 de 7 DENTRO** —
+nenhuma habilidade nv4 > +15pp (maior single: Inari habil +14,7); Fujin precisou de **±1** (MÁX +30,1 → +23,4).
+
+**Extensão (v) — dano POSICIONAL (Raijin, Raio em Cadeia).** A habilidade tem `fx[0].posicional = [18,12,8]` (o i-ésimo
+alvo SELECIONADO leva `posicional[i]`). Tratei cada casa do vetor como PEQUENO independente: `fx[i].posicional[k]` entra
+na whitelist (`_categoriaCaminho` → 'pequeno'), `_navFx` navega o terminal `.posicional[k]` e **ÍNDICE FORA DO VETOR →
+null** (caminho não-gravável → `de` não bate → a build quebra; babá B4h). `_fxTemMagnitude` passou a contar `dmg` com
+`posicional` como magnitude (bloqueia NOVO-PEQUENO), e `_valoresDeCombate` inclui as casas do vetor (texto×número).
+A escada do Raijin habil sobe uma casa por degrau: `posicional[0]` 18→19 (nv2), `posicional[1]` 12→13 (nv3),
+`posicional[2]` 8→9 (nv4); o atordoamento não cresce. **Verificado aplicado-como-escrito** (o dono mandou conferir): em
+combate contra 3 alvos que não reduzem, nv4 = [19,13,9], nv1 = [18,12,8] (a barata do motor: `posicional[i]` já existia
+no resolvedor de dano §135 — a extensão só ligou o leveling ao vetor que já era aplicado). Não foi preciso o fallback.
+
+**SEM ESCADA desde o desenho (marcação `semEscada`, 2 casos, o dono decidiu na régua):**
+- **Susanoo habilidade** (Yamata no Orochi, "8 golpes de 4"): o menor degrau de magnitude (4→5) soma **+8 de dano de uma
+  vez** (8 golpes) — já é um SALTO pela lógica da a'. Marcada `semEscada` com o motivo. Sem escada.
+- **Tanuki habilidade** (Metamorfose, escolha MÍMICA/ILUSÃO): **nenhuma opção tem número** (copiar básico / ficar
+  Inalvejável); e NOVO-PEQUENO dentro de opção segue **deferido como o Exu** (§318 L8). Marcada `semEscada`.
+- Servidor conta essas como básico-sem-escada (`_escadasDe`/`_maximizado` só contam slots com `niveis`): máx 12 pontos.
+
+**Tanuki milagre pela ext.(iii) LEVE** (opções com número, §318 L9): a opção **MORTE** (`opcoes[0].fx[0].v`) sobe 35→37→
+39→41 (+2/degrau) e **FORTUNA** (`opcoes[2].fx[0].eff.v`, o dmgUp) 12→13→14→15 (+1/degrau), na mesma muda; a opção
+**ROUBO** não tem número e **fica igual** (verificado no kit efetivo — o dono pediu para conferir que a opção sem número
+não muda). Dois `caminho` por degrau, ambos PEQUENO.
+
+**±1 no Fujin (único FORA na 1ª varredura).** Fujin (inicial) mede MÁX **+30,1** com todas as escadas mínimas — a soma
+de três fontes de dano de ÁREA/alta-frequência (básico single 12→14 +9,9; habil AoE NOVO-PEQUENO 0→4 +8,4; milagre AoE
+15→18 +13,3) compõe acima de +25, embora nenhuma habilidade sozinha passe de +15. Como o passo pequeno é +1 (mínimo),
+o "±1 nos pequenos" é **baixar o teto de um degrau em cada uma das duas maiores** (não há degrau menor): o básico deixa
+de subir a 14 (teto 13; mantém nv2 + o dmgDown do nv4) e o milagre deixa de subir a 18 (teto 17; nv2/nv3). Re-medido:
+básico +7,5 · habil +8,4 · milagre +10,7 · **MÁX +23,4 → DENTRO**. Habil intacto.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Fujin (inicial) | +7,5¹ | +8,4 | +10,7¹ | +23,4 | DENTRO (±1) |
+| Kitsune | +0,4 | +11,2 | +7,0 | +20,0 | DENTRO |
+| Raijin | +9,7 | −0,6² | +4,8 | +11,5 | DENTRO |
+| Susanoo | +8,4 | — SEM ESCADA | +6,9 | +16,2 | DENTRO |
+| Inari | +6,1 | +14,7 | +4,5 | +22,3 | DENTRO |
+| Oni | +5,4 | +2,7 | +4,2 | +12,6 | DENTRO |
+| Tanuki | +6,1 | — SEM ESCADA | +4,4 | +13,0 | DENTRO |
+
+¹ Fujin com ±1 (teto do pequeno: básico 14→13, milagre 18→17). Antes do ±1: básico +9,9 · milagre +13,3 · MÁX +30,1.
+² Raijin habil (posicional, alta variância entre comps) mede −0,6 (não detectado): a escada +1 por casa é pequena e a
+IA-espelho às vezes não seleciona 3 alvos vivos — negativo é limitação da IA já conhecida (aceito).
+
+**7 de 7 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **76 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 L8 + 7 L9 + 8 L10 + 7 L11 + zeus/oxum/tyr). Régua a'–h' + whitelist a/b/i(+agenda)/ii/iii-leve/**v-posicional**.
+0 Provação estale (TELA_AB tira `niveis`/`semEscada` do hash de combate — o conserto do L9 segurou).
+
+---
+
 ## §318 FASE 3 · LOTE 10 (4 brasileiros + 4 maias) — 8 de 8 DENTRO; ext.(i) AMPLIADA (agenda, Kukulkán)
 
 **Uma varredura** dos 8 (Boto/Mula/Boitatá/Piranha/Itzamná/Chaac/Kukulkán/Ah Puch), N=3000 sorteado+reativo, higiene

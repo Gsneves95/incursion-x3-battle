@@ -10,7 +10,14 @@
     "nome": "Exílio Divino",
     "desc": "Cada ataque de Susanoo gera 2 de Combo do time (teto 20); +6 de dano por aliado a menos que o inimigo.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porDeficitAliados": { "v": 6 } }
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "escopo": "self",
+        "porDeficitAliados": {
+          "v": 6
+        }
+      }
     ]
   },
   "ab": [
@@ -18,39 +25,156 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Corte de Kusanagi",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo; remove 1 buff dele. Gera 2 de Combo.",
       "fx": [
-        { "t": "dmg", "v": 15 },
-        { "t": "stripOne" },
-        { "t": "contador", "nome": "combo", "pool": "lado", "v": 2, "max": 20 }
+        {
+          "t": "dmg",
+          "v": 15
+        },
+        {
+          "t": "stripOne"
+        },
+        {
+          "t": "contador",
+          "nome": "combo",
+          "pool": "lado",
+          "v": 2,
+          "max": 20
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo; remove 1 buff dele. Gera 2 de Combo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; remove 1 buff dele. Gera 2 de Combo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; remove 1 buff dele; ele causa 2 menos de dano por 1 turno. Gera 2 de Combo."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Yamata no Orochi",
-      "cost": { "Tempestade": 2 },
+      "cost": {
+        "Tempestade": 2
+      },
       "cd": 2,
       "alvo": "todosInimigos",
       "desc": "8 golpes de 4 distribuídos entre os inimigos (32 total). Gera 2 de Combo.",
       "fx": [
-        { "t": "dmg", "v": 4, "golpes": 8, "escopo": "todosInimigos" },
-        { "t": "contador", "nome": "combo", "pool": "lado", "v": 2, "max": 20 }
-      ]
+        {
+          "t": "dmg",
+          "v": 4,
+          "golpes": 8,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "contador",
+          "nome": "combo",
+          "pool": "lado",
+          "v": 2,
+          "max": 20
+        }
+      ],
+      "semEscada": "8 golpes de 4: o menor degrau (4 para 5) soma +8 de dano de uma vez — ja e salto (logica da a'). Sem escada por desenho."
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Fúria do Tufão",
-      "cost": { "Tempestade": 2, "livre": 1 },
+      "cost": {
+        "Tempestade": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo).",
       "fx": [
-        { "t": "dmg", "v": 18, "escopo": "todosInimigos", "porContadorLado": { "nome": "combo", "v": 2, "passo": 1 }, "consomeContadorLado": "combo" }
+        {
+          "t": "dmg",
+          "v": 18,
+          "escopo": "todosInimigos",
+          "porContadorLado": {
+            "nome": "combo",
+            "v": 2,
+            "passo": 1
+          },
+          "consomeContadorLado": "combo"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo)."
+        }
       ]
     }
   ]

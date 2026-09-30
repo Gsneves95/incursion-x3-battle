@@ -39,6 +39,8 @@ function lerCaminho(ab, c) {
   if (rest === '.hp') return node.hp;
   if (rest === '.eff.v') return node.eff ? node.eff.v : undefined;
   if (rest === '.eff.dur') return node.eff ? node.eff.dur : undefined;
+  let pm;   // §318 F3 L11 (ext v): dano POSICIONAL (Raijin) — fx[i].posicional[k]
+  if ((pm = rest.match(/^\.posicional\[(\d+)\]$/))) return (node.posicional || [])[+pm[1]];
   return undefined;
 }
 // §318 F3 L6 — varre fx recursivamente (inclui ramos) procurando um marcador.

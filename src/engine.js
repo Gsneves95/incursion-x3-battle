@@ -429,6 +429,10 @@ function _categoriaCaminho(c) {
   // (isso segue deferido, Exu sem escada). Só o `v`/`eff.v` sobe.
   if (/^opcoes\[\d+\]\.fx\[\d+\]\.v$/.test(c)) return 'pequeno';
   if (/^opcoes\[\d+\]\.fx\[\d+\]\.eff\.v$/.test(c)) return 'pequeno';
+  // §318 F3 L11 (extensão v) — dano POSICIONAL (Raijin, Raio em Cadeia): fx[i].posicional = [v0,v1,v2] (dano por
+  // ordem de seleção do alvo). Cada ENTRADA do vetor é um número PEQUENO independente (sobe uma casa por degrau).
+  // O índice é conferido em _navFx: fora do vetor → não-gravável → a build quebra (`de` não bate).
+  if (/^fx\[\d+\]\.posicional\[\d+\]$/.test(c)) return 'pequeno';
   if (c === 'fx[]') return 'salto';   // efeito NOVO empurrado no fim de fx (NOVO-PEQUENO vira 'pequeno' em validarNiveisDeus)
   return null;
 }
@@ -446,6 +450,7 @@ function _fxTemMagnitude(f, aninhado) {
   if (!aninhado) {
     if (_T_MAGNITUDE.indexOf(f.t) >= 0 && typeof f.v === 'number') return true;
     if (f.eff && typeof f.eff.v === 'number') return true;
+    if (f.t === 'dmg' && Array.isArray(f.posicional)) return true;   // §318 F3 L11 (ext v): dano posicional [v0,v1,v2] É magnitude (bloqueia NOVO-PEQUENO)
   } else if (f.t === 'dmg' && typeof f.v === 'number') return true;
   for (const br of ['entao', 'senao', 'agenda']) if (Array.isArray(f[br]) && f[br].some(x => _fxTemMagnitude(x, true))) return true;   // §318 F3 L10: dano dentro de agenda (Kukulkán) também conta
   return false;
@@ -513,6 +518,15 @@ function _navFx(ab, c) {
     rest = rest.slice(bm[0].length);
   }
   if (!node) return null;
+  // §318 F3 L11 (ext v) — terminal posicional[k]: entra no vetor `posicional` do fx. ÍNDICE FORA DO VETOR (ou
+  // posicional ausente/não-array) → null: caminho não-gravável, a build recusa (_lerCaminho→undefined, `de` não bate).
+  let pm;
+  if ((pm = /^\.posicional\[(\d+)\]$/.exec(rest))) {
+    if (!Array.isArray(node.posicional)) return null;
+    const k = +pm[1];
+    if (k < 0 || k >= node.posicional.length) return null;
+    return { obj: node.posicional, key: k };
+  }
   switch (rest) {
     case '.v': return { obj: node, key: 'v' };
     case '.dur': return { obj: node, key: 'dur' };
@@ -678,6 +692,7 @@ function _valoresDeCombate(ab) {
   const vs = [];
   for (const f of (ab.fx || [])) {
     if (typeof f.v === 'number') vs.push(f.v);
+    if (Array.isArray(f.posicional)) for (const p of f.posicional) if (typeof p === 'number') vs.push(p);   // §318 F3 L11 (ext v): cada casa do dano posicional é um valor de combate
     if (f.eff && typeof f.eff.v === 'number') vs.push(f.eff.v);
     if (f.eff && typeof f.eff.dur === 'number') vs.push(f.eff.dur);
   }

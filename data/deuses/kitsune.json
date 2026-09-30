@@ -10,8 +10,27 @@
     "nome": "Yokai Ancestral",
     "desc": "Kitsune ganha 1 Cauda a cada 2 turnos (máx. 9); a cada 3 Caudas, recebe 5 de redução de dano.",
     "fx": [
-      { "gatilho": "aCadaN", "n": 2, "faz": [ { "t": "contador", "nome": "cauda", "v": 1, "max": 9 } ] },
-      { "gatilho": "reducao", "v": 0, "porContador": { "nome": "cauda", "v": 5, "passo": 3 } }
+      {
+        "gatilho": "aCadaN",
+        "n": 2,
+        "faz": [
+          {
+            "t": "contador",
+            "nome": "cauda",
+            "v": 1,
+            "max": 9
+          }
+        ]
+      },
+      {
+        "gatilho": "reducao",
+        "v": 0,
+        "porContador": {
+          "nome": "cauda",
+          "v": 5,
+          "passo": 3
+        }
+      }
     ]
   },
   "ab": [
@@ -19,36 +38,200 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Fogo-fátuo",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Ilusão da Raposa",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 1,
       "alvo": "nenhum",
       "desc": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda.",
       "fx": [
-        { "t": "intercepta", "protege": "time", "contra": "unico", "dur": 99 },
-        { "t": "contador", "nome": "cauda", "v": 1, "max": 9, "alvo": "self" }
+        {
+          "t": "intercepta",
+          "protege": "time",
+          "contra": "unico",
+          "dur": 99
+        },
+        {
+          "t": "contador",
+          "nome": "cauda",
+          "v": 1,
+          "max": 9,
+          "alvo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda. Kitsune ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda. Kitsune ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Uma miragem intercepta o próximo ataque de alvo único contra o time; +1 Cauda. Kitsune ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Nove Caudas",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "inimigo",
       "desc": "12 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno.",
       "fx": [
-        { "t": "dmg", "v": 12, "escopo": "todosInimigos", "porContador": { "onde": "self", "nome": "cauda", "v": 3, "passo": 1 } },
-        { "t": "condicional", "se": { "contador": { "nome": "cauda", "op": "min", "n": 5 } }, "entao": [ { "t": "dominar", "dur": 1 } ] }
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos",
+          "porContador": {
+            "onde": "self",
+            "nome": "cauda",
+            "v": 3,
+            "passo": 1
+          }
+        },
+        {
+          "t": "condicional",
+          "se": {
+            "contador": {
+              "nome": "cauda",
+              "op": "min",
+              "n": 5
+            }
+          },
+          "entao": [
+            {
+              "t": "dominar",
+              "dur": 1
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "15 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+        }
       ]
     }
   ]

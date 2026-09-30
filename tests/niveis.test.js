@@ -178,6 +178,24 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'dmg', v: 5, escopo: 'todosInimigos' } }], desc: 'x' }])).length === 0, 'B4g passa: NOVO-PEQUENO ainda ok com agenda SEM dano (Dionísio)');
 })();
 
+// BABÁ 4h — §318 F3 L11 EXTENSÃO (v) POSICIONAL (Raijin, Raio em Cadeia): `fx[i].posicional[k]` é PEQUENO — cada casa do
+// vetor de dano [18,12,8] sobe uma por degrau, independente. ÍNDICE FORA DO VETOR → quebra (caminho não-gravável, `de`
+// não bate). O motor APLICA o valor subido em combate (o i-ésimo alvo selecionado leva posicional[i]).
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  ok(E._categoriaCaminho('fx[0].posicional[0]') === 'pequeno', 'B4h: fx[i].posicional[k] é categoria PEQUENO');
+  ok(E.validarNiveisDeus(so(catalogo.raijin, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[0].posicional[0]', de: 18, para: 19 }], desc: '19 de dano ao 1º alvo, 12 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno.' }])).length === 0, 'B4h passa: fx[i].posicional[k] no vetor é PEQUENO válido');
+  // índice FORA do vetor (posicional tem 3 casas: 0,1,2) → o `de` não bate (valor atual undefined) → build quebra
+  ok(E.validarNiveisDeus(so(catalogo.raijin, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[0].posicional[5]', de: 0, para: 1 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4h MORDE: índice FORA do vetor posicional → quebra');
+  // o valor subido CHEGA ao motor: 3 alvos que não reduzem, o 3º alvo leva posicional[2] subido de 8→9 no nv4
+  const st = E.novoEstado(['raijin'], ['fujin', 'fujin', 'fujin'], 1, 0);
+  const habilNv4 = E.kitEfetivo(catalogo.raijin, { habilidade: 4 }).ab.find(a => a.slot === 'habilidade');
+  const inim = st.lados[1].units, antes = inim.map(u => u.hp);
+  E.aplicarFx(st, st.lados[0].units[0], habilNv4.fx, {}, inim);
+  const dano = antes.map((b, i) => b - inim[i].hp);
+  ok(dano[0] === 19 && dano[1] === 13 && dano[2] === 9, `B4h: posicional subido aplica em combate [19,13,9], veio [${dano}]`);
+})();
+
 // BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).

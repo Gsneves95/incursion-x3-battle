@@ -10,7 +10,12 @@
     "nome": "Ritmo do Trovão",
     "desc": "Cada alvo atingido por Raijin gera 1 de Combo.",
     "fx": [
-      { "gatilho": "geraContadorPorGolpe", "contador": "combo", "v": 1, "max": 20 }
+      {
+        "gatilho": "geraContadorPorGolpe",
+        "contador": "combo",
+        "v": 1,
+        "max": 20
+      }
     ]
   },
   "ab": [
@@ -18,36 +23,184 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Tambor Trovejante",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Raio em Cadeia",
-      "cost": { "Tempestade": 2 },
+      "cost": {
+        "Tempestade": 2
+      },
       "cd": 2,
       "alvo": "distribui",
       "desc": "18 de dano ao 1º alvo, 12 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno.",
       "fx": [
-        { "t": "dmg", "posicional": [ 18, 12, 8 ] },
-        { "t": "apply", "eff": { "type": "atordoado", "dur": 1 }, "idx": 0 }
+        {
+          "t": "dmg",
+          "posicional": [
+            18,
+            12,
+            8
+          ]
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "atordoado",
+            "dur": 1
+          },
+          "idx": 0
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].posicional[0]",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano ao 1º alvo, 12 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].posicional[1]",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "19 de dano ao 1º alvo, 13 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].posicional[2]",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "19 de dano ao 1º alvo, 13 ao 2º, 9 ao 3º; atordoa o 1º por 1 turno."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Tempestade dos Tambores",
-      "cost": { "Tempestade": 2, "livre": 1 },
+      "cost": {
+        "Tempestade": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "22 de dano a todos os inimigos; +4 de Combo.",
       "fx": [
-        { "t": "dmg", "v": 22, "escopo": "todosInimigos" },
-        { "t": "contador", "nome": "combo", "pool": "lado", "v": 4, "max": 20 }
+        {
+          "t": "dmg",
+          "v": 22,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "contador",
+          "nome": "combo",
+          "pool": "lado",
+          "v": 4,
+          "max": 20
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano a todos os inimigos; +4 de Combo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 23,
+              "para": 24
+            }
+          ],
+          "desc": "24 de dano a todos os inimigos; +4 de Combo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 24,
+              "para": 25
+            }
+          ],
+          "desc": "25 de dano a todos os inimigos; +4 de Combo."
+        }
       ]
     }
   ]

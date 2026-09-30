@@ -181,7 +181,8 @@ O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: 
 os mesmos DENTRO de ramos aninhados — condicional `entao`/`senao` e §318 F3 L10 `agenda` (payload telegrafado, Kukulkán): `fx[i].entao[j].v` / `fx[i].senao[j].v` / `fx[i].agenda[j].v` / `…eff.v`, ext.ii
 `fx[i].hp` (revive/vidaExtra), e §318 F3 L9 ext.iii LEVE `opcoes[k].fx[i].v` / `opcoes[k].fx[i].eff.v` (número DENTRO de
 uma OPÇÃO de habilidade de escolha, ex.: Lugh GUERRA/CURA/FORJA — SEM NOVO-PEQUENO em opção, que segue deferido: o Exu
-fica sem escada na habilidade, marcado `semEscada`); NOVO-PEQUENO **só nv2**:
+fica sem escada na habilidade, marcado `semEscada`), e §318 F3 L11 ext.v POSICIONAL `fx[i].posicional[k]` (cada casa do
+vetor de dano posicional sobe uma por degrau, Raijin Raio em Cadeia — ÍNDICE FORA do vetor quebra a build); NOVO-PEQUENO **só nv2**:
 `fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a
 (ext.i: magnitude conta também ANINHADA, mas só **DANO** `t:dmg` dentro de ramo bloqueia; cura/buff condicional não —
 preserva Deméter/Freyja); os LIMIARES da condição (`se:{...}`, `executaAbaixoDe`) ficam FORA da whitelist — degrau escondido, nunca sobem;
