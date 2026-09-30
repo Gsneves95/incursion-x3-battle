@@ -11,8 +11,20 @@
     "nome": "Senhor do Ferro",
     "desc": "+10 de dano contra alvos com escudo ou redução; o dano de Ogum não pode ser reduzido.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 10, "escopo": "self", "quando": { "alvoDefesa": true } },
-      { "gatilho": "danoIrredutivel", "ignora": ["reducao"] }
+      {
+        "gatilho": "bonusDano",
+        "v": 10,
+        "escopo": "self",
+        "quando": {
+          "alvoDefesa": true
+        }
+      },
+      {
+        "gatilho": "danoIrredutivel",
+        "ignora": [
+          "reducao"
+        ]
+      }
     ]
   },
   "ab": [
@@ -31,6 +43,48 @@
           "t": "dmg",
           "v": 15,
           "kind": "perfurante"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano perfurante."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano perfurante."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano perfurante; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -54,6 +108,41 @@
         {
           "t": "dmg",
           "v": 20
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "Destrói todo o escudo do alvo e seus buffs defensivos; 21 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "Destrói todo o escudo do alvo e seus buffs defensivos; 22 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "Destrói todo o escudo do alvo e seus buffs defensivos; 23 de dano."
         }
       ]
     },
@@ -82,6 +171,41 @@
             "dur": 99
           },
           "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 38,
+              "para": 40
+            }
+          ],
+          "desc": "40 de dano puro; Ogum causa +10 de dano pelo resto da partida."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "40 de dano puro; Ogum causa +11 de dano pelo resto da partida."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 40,
+              "para": 42
+            }
+          ],
+          "desc": "42 de dano puro; Ogum causa +11 de dano pelo resto da partida."
         }
       ]
     }

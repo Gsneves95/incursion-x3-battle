@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 8 (5 africanos + Brigid + Dagda) — 7/7 DENTRO; 54 liberados; ext.(iii) opcoes DEFERIDA
+
+**Uma varredura** dos 7 (Ogum/Xangô/Exu/Iansã/Oxalá/Brigid/Dagda), N=3000, higiene antes, 0 empate-por-teto. **7/7
+DENTRO sem ajuste** (maior single Oxalá básico +14,0; maior MÁX Iansã +19,2; Brigid MÁX −5,9 = suporte curador, limitação
+da IA aceita/marcada). Liberados → **54 deuses** (18 gregos + 12 nórdicos + 13 egípcios + 7 L8 + 3 pilotos).
+
+**Ext.(iii) `opcoes` (Exu ABRIR/FECHAR) DEFERIDA** — nivelar por opção mexeria em ~5 funções do núcleo de leveling
+(risco alto por 1 habilidade); fallback pré-autorizado: **habilidade do Exu SEM ESCADA**, marcada (`semEscada`). O
+validador agora aceita `semEscada` em QUALQUER slot (motivo obrigatório, sem niveis; babá B3f). Exu tem escada em básico
+e milagre (DENTRO). Motor verificado (kitEfetivo): Dagda básico com degrau no ramo do contador (senao/entao) aplica; o
+limiar `n:3` fica FORA. Babá 8 ganhou preparo de cenário p/ condição de CONTADOR. Tabela dos 7 na DECISOES "LOTE 8".
+
 ## ★ §318 FASE 3 · LOTE 7 (6 egípcios + Sobek) — 7/7 DENTRO; egípcio fecha 13/13; 47 liberados
 
 **Uma varredura** dos 7 (Khnum/Rá/Khonshu/Bennu/Mnevis/Nefertem/Sobek), N=3000, higiene antes, 0 empate-por-teto. **7/7

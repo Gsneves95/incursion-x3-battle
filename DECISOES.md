@@ -6,6 +6,46 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 8 (5 africanos + Brigid + Dagda) — 7 de 7 DENTRO; ext.(iii) opcoes DEFERIDA (Exu sem escada na habilidade)
+
+**Uma varredura** dos 7 (Ogum/Xangô/Exu/Iansã/Oxalá/Brigid/Dagda), N=3000 sorteado+reativo, higiene antes, **0
+empate-por-teto**. **7 de 7 DENTRO sem ajuste** — nenhuma habilidade nv4 > +15pp (maior single: Oxalá básico +14,0),
+todo MÁX ≤ +25 (maior: Iansã +19,2). **Brigid MÁX −5,9** (suporte curador puro): negativo sob IA-espelho é a limitação
+da IA conhecida (como Tyr/Hades) — aceito e marcado p/ revisão; a escada é sã, a IA é que não aproveita a cura.
+
+**Extensão (iii) — habilidade de ESCOLHA (`opcoes`) — DEFERIDA (fallback do dono aplicado).** A habilidade do Exu tem
+`opcoes` (ABRIR/FECHAR) em vez de `fx` no topo. Nivelar por opção exigiria mexer em ~5 funções do núcleo de leveling
+(`_categoriaCaminho`, `_navFx` ler/escrever, NOVO-PEQUENO por opção, o append de `fx[]` do validador, e o cast por-opção
+da babá 8) — cirurgia de risco no motor que porteia 47 deuses liberados, por UMA habilidade de UM deus. Conforme o
+fallback pré-autorizado, a **habilidade do Exu fica SEM ESCADA**, marcada explicitamente (`semEscada` com o motivo, como
+a h'). O validador agora aceita a marcação `semEscada` em QUALQUER slot (não só básico): exige motivo e proíbe niveis
+junto (babá B3f). Exu segue com escada no **básico e no milagre** (ambos medidos DENTRO). A ext.(iii) completa fica como
+dívida, se algum dia valer o custo.
+
+**Motor verificado aplicado-como-escrito** (`kitEfetivo`, o dono mandou conferir): **Dagda básico** — o degrau no ramo do
+contador (`fx[1].senao[0].v` e `fx[1].entao[0].v`, a cura "a cada 3º uso") aplica; o limiar do contador (`n:3`) fica FORA
+e não muda. A babá 8 ganhou o preparo de cenário para condição de CONTADOR (arma o `clava` do lançador no ramo entao).
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Ogum | Iniciado | +6,4 | −3,6 | +5,4 | +12,3 | DENTRO |
+| Xangô | — | +6,5 | +0,4 | +7,2 | +12,5 | DENTRO |
+| Exu | — | +4,1 | — (s/ escada) | +4,5 | +6,7 | DENTRO |
+| Iansã | — | +5,0 | +10,4 | +6,1 | +19,2 | DENTRO |
+| Oxalá | — | +14,0 | +2,8 | +1,5 | +16,8 | DENTRO |
+| Brigid | Iniciado | −9,6 | +2,9 | +3,5 | −5,9 | DENTRO¹ |
+| Dagda | — | −3,7 | +4,6 | +7,8 | +8,7 | DENTRO |
+
+¹ suporte curador: MÁX < 0 é limitação da IA-espelho (aceito, marcado p/ revisão).
+
+**7 de 7 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **54 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 do LOTE 8 + zeus/oxum/tyr pilotos). Regras a'–h' + whitelist a/b/i/ii inalteradas; a ext.(iii) fica deferida
+com o Exu marcado.
+
+---
+
 ## §318 FASE 3 · LOTE 7 (6 egípcios + Sobek) — 7 de 7 DENTRO; fecha o panteão egípcio (13) e Sobek
 
 **Uma varredura** dos 7 (Khnum/Rá/Khonshu/Bennu/Mnevis/Nefertem/Sobek), N=3000 sorteado+reativo, higiene antes, **0

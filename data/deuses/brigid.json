@@ -11,8 +11,18 @@
     "nome": "Ferreira Divina",
     "desc": "O time causa +5 de dano (permanente); curas no time curam +5 se algum inimigo estiver com Queimadura.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 5, "escopo": "time" },
-      { "gatilho": "bonusCura", "v": 5, "quandoCura": { "inimigoTem": "queimadura" } }
+      {
+        "gatilho": "bonusDano",
+        "v": 5,
+        "escopo": "time"
+      },
+      {
+        "gatilho": "bonusCura",
+        "v": 5,
+        "quandoCura": {
+          "inimigoTem": "queimadura"
+        }
+      }
     ]
   },
   "ab": [
@@ -34,6 +44,41 @@
           "nome": "queimadura",
           "v": 5,
           "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Grátis. 11 de dano + Queimadura (5/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "Grátis. 11 de dano + Queimadura (6/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Grátis. 11 de dano + Queimadura (6/turno por 3 turnos)."
         }
       ]
     },
@@ -57,6 +102,41 @@
           "t": "dmg",
           "v": 12,
           "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Cura 16 no time E causa 12 de dano a todos os inimigos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Cura 16 no time E causa 13 de dano a todos os inimigos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "Cura 17 no time E causa 13 de dano a todos os inimigos."
         }
       ]
     },
@@ -89,6 +169,41 @@
             "dur": 2
           },
           "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 26
+            }
+          ],
+          "desc": "Cura 26 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Cura 26 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 26,
+              "para": 27
+            }
+          ],
+          "desc": "Cura 27 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
         }
       ]
     }

@@ -86,6 +86,8 @@ function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
       if (seHp) { const al = st.lados[0].units[1]; al.hp = Math.max(1, seHp.se.alvoHp.v - 20); }
       const seMarca = scanFx(efAb.fx, f => f.se && f.se.alvoMarca);   // ramo "tem a marca": semeia a marca no inimigo-alvo (Hórus: o Olho)
       if (seMarca) { const inim = st.lados[1].units[0]; inim.efeitos.push({ type: seMarca.se.alvoMarca, dur: 3, origem: st.lados[0].units[0].uid }); }
+      const seCont = scanFx(efAb.fx, f => f.se && f.se.contador && typeof f.se.contador.n === 'number');   // §318 F3 L8 — ramo "contador >= n": arma o contador do lançador (Dagda: clava a cada 3º uso)
+      if (seCont) { const u0 = st.lados[0].units[0]; u0.contadores = u0.contadores || {}; u0.contadores[seCont.se.contador.nome] = seCont.se.contador.n; }
     }
   }
   const u = st.lados[0].units[0];

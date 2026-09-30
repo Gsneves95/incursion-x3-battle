@@ -207,6 +207,16 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(marcadoComNiveis).some(e => /NÃO pode ter niveis ao mesmo tempo/.test(e)), "B3e MORDE: semEscada (h') e niveis juntos");
 })();
 
+// BABÁ 3f — §318 F3 L8: a marcação `semEscada` também vale em HABILIDADE/MILAGRE (ex.: habilidade de ESCOLHA do Exu,
+// com `opcoes` — a ext.iii de leveling por opção não foi implementada; o slot fica sem escada, marcado). Motivo
+// obrigatório; niveis junto → quebra.
+(() => {
+  const marcarHab = (g, motivo, comNiveis) => { const d = clone(g); const h = d.ab.find(a => a.slot === 'habilidade'); h.semEscada = motivo; if (comNiveis) h.niveis = [{ nv: 2, muda: [{ caminho: 'fx[0].v', de: 0, para: 1 }], desc: 'x' }]; else delete h.niveis; return d; };
+  ok(E.validarNiveisDeus(marcarHab(catalogo.exu, "ext.iii não implementada — habilidade de opções sem escada, §318 F3 L8", false)).length === 0, 'B3f passa: habilidade marcada semEscada (motivo válido, sem niveis)');
+  ok(E.validarNiveisDeus(marcarHab(catalogo.exu, '', false)).some(e => /exige um motivo/.test(e)), 'B3f MORDE: semEscada em habilidade sem motivo');
+  ok(E.validarNiveisDeus(marcarHab(catalogo.exu, 'motivo ok', true)).some(e => /NÃO pode ter niveis ao mesmo tempo/.test(e)), 'B3f MORDE: semEscada em habilidade + niveis juntos');
+})();
+
 // BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.
 (() => {
   const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };

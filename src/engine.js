@@ -644,6 +644,14 @@ function validarNiveisDeus(deus) {
     // deus totalmente escalado (habilidade E milagre com escada) mas SEM básico → esquecimento, salvo f' OU marcação h'
     if (!durao && !temMarca && _tem('habilidade') && _tem('milagre') && !Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: básico SEM escada só é permitido para deus da regra f' (redução passiva permanente ≥10) ou com a marcação "semEscada" (regra h')`);
   }
+  // §318 F3 L8 — a marcação `semEscada` também vale em HABILIDADE/MILAGRE quando o formato do slot não cabe na escada
+  // (ex.: a habilidade de ESCOLHA do Exu, com `opcoes` em vez de `fx` no topo — a ext.iii de leveling por opção não foi
+  // implementada; a habilidade fica sem escada, marcada). Exige motivo e proíbe niveis junto. (Básico é tratado acima.)
+  for (const ab of (deus.ab || [])) {
+    if (ab.slot === 'basico' || ab.semEscada === undefined) continue;
+    if (typeof ab.semEscada !== 'string' || !ab.semEscada.trim()) erros.push(`${nome}.${ab.slot}: "semEscada" exige um motivo (string com a medida), não ${JSON.stringify(ab.semEscada)}`);
+    if (Array.isArray(ab.niveis)) erros.push(`${nome}.${ab.slot}: slot marcado "semEscada" NÃO pode ter niveis ao mesmo tempo`);
+  }
   return erros;
 }
 

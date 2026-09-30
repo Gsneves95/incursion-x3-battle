@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "1055c40b",
+    "hash": "6c1747bb",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 33,
     "comDica": false,
     "nos": 439,
-    "ms": 272,
+    "ms": 314,
     "caminho": [
       "perseu Cabeça da Medusa → exu",
       "tyr Espada de Uma Mão → exu",

@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "30dae4ec",
+    "hash": "e01fc5dc",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
     "nos": 298,
-    "ms": 390,
+    "ms": 394,
     "caminho": [
       "zeus Cetro do Trovão → krishna",
       "shutendoji Saké Envenenado → oxum",

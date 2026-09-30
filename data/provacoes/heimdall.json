@@ -27,13 +27,13 @@
     }
   ],
   "verificacao": {
-    "hash": "39f371ac",
+    "hash": "65492ddc",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
     "nos": 4722,
-    "ms": 1551,
+    "ms": 1473,
     "caminho": [
       "heimdall Lâmina Vigilante → exu",
       "thor Golpe de Mjölnir → exu",
