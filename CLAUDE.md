@@ -199,9 +199,11 @@ p/ básico AoE); **(b')** o **custo de um básico nunca vai a 0** (básico grát
 `validarNiveisDeus` recusa escada no básico desses deuses (`_passivaReducaoForte`) e exige básico-com-escada nos
 demais que já têm escada em outro slot; `subirNivel` no básico deles → `nivel_inexistente`; `_maximizado`/excedente→
 Essência contam só as escadas EXISTENTES (esses deuses maximizam com 12 pontos: habil+milagre); **(e')** NÃO dar
-cura em habilidade de deus cuja **passiva reage a cura** (Hera aoCurar→escudo). Diretriz (não-babá): NOVO-PEQUENO
-em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8. Dano de **alvo único** de deus
-**frágil** sobe de leve (levelável).
+cura em habilidade de deus cuja **passiva reage a cura** (Hera aoCurar→escudo); **(g')** recarga menor (`cd`) em
+**milagre de efeito EM MASSA** (buff/debuff em todos) é SALTO pesado — medido −4,8pp ao trocar `cd 4→3` por `eff.v`
+no milagre da Afrodite; em milagre de massa, prefira subir `fx[i].eff.v`/duração ao invés do `cd`. Diretriz (não-babá):
+NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8. Dano de **alvo único** de
+deus **frágil** sobe de leve (levelável).
 **TRAVA DE LIBERAÇÃO:** `subirNivel` só aceita deus em `data/niveis_liberados.json` (senão `niveis_nao_liberados`);
 um deus entra na lista só depois de MEDIR DENTRO. Liberados: os 10 do LOTE 1 (zeus/oxum/tyr + os 7 gregos) — os 3
 que mediram FORA (Cérberus/Atena/Apolo) foram corrigidos e re-medidos DENTRO (Cérberus só no PISO: básico AoE

@@ -10,7 +10,11 @@
     "nome": "Protetor de Midgard",
     "desc": "Todos os aliados recebem 6 de redução de dano.",
     "fx": [
-      { "gatilho": "reducao", "v": 6, "escopo": "time" }
+      {
+        "gatilho": "reducao",
+        "v": 6,
+        "escopo": "time"
+      }
     ]
   },
   "provacao": {
@@ -35,6 +39,49 @@
           "t": "dmg",
           "v": 15
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Thor recebe 3 de redução de dano por 1 turno."
+        }
       ]
     },
     {
@@ -58,6 +105,41 @@
           "v": 12,
           "idx": 1
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano no primeiro alvo e 12 no segundo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "23 de dano no primeiro alvo e 13 no segundo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 23,
+              "para": 24
+            }
+          ],
+          "desc": "24 de dano no primeiro alvo e 13 no segundo."
+        }
       ]
     },
     {
@@ -78,8 +160,49 @@
         },
         {
           "t": "apply",
-          "eff": { "type": "atordoado", "dur": 1 },
-          "alvoHp": { "lado": "inimigo", "ext": "min" }
+          "eff": {
+            "type": "atordoado",
+            "dur": 1
+          },
+          "alvoHp": {
+            "lado": "inimigo",
+            "ext": "min"
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; atordoa o de menor HP por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "22 de dano a todos os inimigos; atordoa o de menor HP por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano a todos os inimigos; atordoa o de menor HP por 1 turno."
         }
       ]
     }

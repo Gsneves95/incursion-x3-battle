@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 4 (nórdicos) + Afrodite — 6/6 nórdicos DENTRO; Afrodite FORA; regra (g')
+
+**Uma varredura para os 7** (Afrodite + 6 nórdicos), N=3000 sorteado+reativo, higiene antes (0 de 42000 empates-por-
+teto). **6 nórdicos DENTRO sem ajuste:** Bragi MÁX +13,6 · Fenrir +4,3 · Ymir +12,7 · Heimdall +8,2 · Freyja +2,2 ·
+Thor +21,8 (nenhuma habilidade nv4 > +15pp; maior single foi Thor básico +11,4). Liberados em `niveis_liberados.json`
+→ **26 deuses no total**. Motor verificado aplicado-como-escrito: escudo NOVO-PEQUENO da Freyja (irmão do condicional)
+entra nos DOIS ramos; dano do Thor no 2º alvo pelo `idx` (24 no idx0, 13 no idx1) — ambos por `kitEfetivo`.
+
+**Afrodite continua FORA.** O swap do milagre nv4 (tirar `cd 4→3`, pôr `eff.v 12→13`) baixou o milagre de +13,7 → +8,9
+(validou a (g')), mas o básico nv4 (dmg 14→15) fica +17,1 (>15) e o MÁX +28,1 (>25). Gargalo = soma milagre+básico num
+suporte. Não liberada; a escada dela fica no dado (medido), só gated pela trava.
+
+**Regra NOVA (g'):** recarga menor (`cd`) em milagre de efeito EM MASSA (buff/debuff em TODOS) é salto pesado — medido
+−4,8pp só por trocar a recarga pela magnitude no milagre da Afrodite. Prefira subir `fx[i].eff.v`/duração, não o `cd`,
+em milagre de massa. (Ver DECISOES "§318 FASE 3 · LOTE 4".)
+
 ## ★ §318 FASE 3 · FECHO DO PANTEÃO GREGO — 17 de 18 DENTRO (só Afrodite fora)
 
 **Regra (f') substitui (d'):** básico de deus com redução passiva ≥10 (Aquiles 12, Kraken 10) **não tem escada**

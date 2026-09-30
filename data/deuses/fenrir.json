@@ -50,6 +50,46 @@
           "t": "dmg",
           "v": 15
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dot",
+                "nome": "sangramento",
+                "v": 3,
+                "dur": 1
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo + Sangramento (3 de dano por 1 turno)."
+        }
       ]
     },
     {
@@ -74,6 +114,41 @@
             "dur": 2
           }
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 27
+            }
+          ],
+          "desc": "27 de dano a 1 inimigo; ele não pode ser curado por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 29
+            }
+          ],
+          "desc": "29 de dano a 1 inimigo; ele não pode ser curado por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "29 de dano a 1 inimigo; ele não pode ser curado por 3 turnos."
+        }
       ]
     },
     {
@@ -92,6 +167,41 @@
           "t": "dmg",
           "v": 38,
           "executaAbaixoDe": 24
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 38,
+              "para": 40
+            }
+          ],
+          "desc": "40 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 40,
+              "para": 42
+            }
+          ],
+          "desc": "42 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "cd",
+              "de": 4,
+              "para": 3
+            }
+          ],
+          "desc": "42 de dano a 1 inimigo; se ele estiver com 24 ou menos de HP, é eliminado."
         }
       ]
     }

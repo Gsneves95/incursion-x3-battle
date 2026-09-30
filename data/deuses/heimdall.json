@@ -10,7 +10,9 @@
     "nome": "Sentinela",
     "desc": "O inimigo não pode roubar nem remover orbes do time.",
     "fx": [
-      { "gatilho": "protegeOrbe" }
+      {
+        "gatilho": "protegeOrbe"
+      }
     ]
   },
   "ab": [
@@ -18,35 +20,178 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Lâmina Vigilante",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Heimdall recebe 3 de redução de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Visão de Cem Léguas",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Por 2 turnos, 1 aliado contra-ataca por 15 quem o atingir com alvo único.",
       "fx": [
-        { "t": "apply", "eff": { "type": "contraAtaca", "v": 15, "dur": 2 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "contraAtaca",
+            "v": 15,
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Por 2 turnos, 1 aliado contra-ataca por 16 quem o atingir com alvo único."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "Por 2 turnos, 1 aliado contra-ataca por 17 quem o atingir com alvo único."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Por 3 turnos, 1 aliado contra-ataca por 17 quem o atingir com alvo único."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Chamado do Gjallarhorn",
-      "cost": { "Aurora": 1, "livre": 2 },
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "O time ganha 20 de Defesa Destrutível e imunidade a controle por 2 turnos.",
       "fx": [
-        { "t": "shield", "v": 20, "escopo": "time" },
-        { "t": "apply", "eff": { "type": "controlImmune", "dur": 2 }, "escopo": "time" }
+        {
+          "t": "shield",
+          "v": 20,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "controlImmune",
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "O time ganha 21 de Defesa Destrutível e imunidade a controle por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "O time ganha 22 de Defesa Destrutível e imunidade a controle por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "O time ganha 23 de Defesa Destrutível e imunidade a controle por 2 turnos."
+        }
       ]
     }
   ]

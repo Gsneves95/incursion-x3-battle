@@ -63,19 +63,12 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "apply",
-                "eff": {
-                  "type": "dmgDown",
-                  "v": 2,
-                  "dur": 1
-                }
-              }
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "15 de dano a 1 inimigo."
         }
       ]
     },
@@ -192,12 +185,12 @@
           "nv": 4,
           "muda": [
             {
-              "caminho": "cd",
-              "de": 4,
-              "para": 3
+              "caminho": "fx[0].eff.v",
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Todos os inimigos causam 12 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno."
+          "desc": "Todos os inimigos causam 13 menos de dano por 2 turnos e têm a Habilidade travada por 1 turno."
         }
       ]
     }

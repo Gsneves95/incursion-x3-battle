@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 4 (nórdicos) + fecho de Afrodite — 6 de 6 nórdicos DENTRO; Afrodite continua FORA; nova regra (g')
+
+**Uma varredura só para os 7** (Afrodite + 6 nórdicos), N=3000 sorteado+reativo, higiene de processos antes
+(`pgrep`/`pkill` no log, uma medida por vez). **0 de 42000 partidas empataram por teto** — nenhuma partida sem fim.
+
+**Os 6 nórdicos entraram DENTRO sem ajuste** (MÁX 0..+25pp, nenhuma habilidade nv4 > +15pp):
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Bragi | — | +2,4 | +0,6 | +11,2 | +13,6 | DENTRO |
+| Fenrir | — | −6,2 | +1,0 | +7,9 | +4,3 | DENTRO |
+| Ymir | — | +3,0 | +5,3 | +4,3 | +12,7 | DENTRO |
+| Heimdall | — | +1,8 | −0,0 | +6,5 | +8,2 | DENTRO |
+| Freyja | — | −1,8 | +1,7 | +1,6 | +2,2 | DENTRO |
+| Thor | — | +11,4 | +4,4 | +10,6 | +21,8 | DENTRO |
+
+Os 6 liberados em `niveis_liberados.json` (agora 26 deuses no total).
+
+**Dois pontos de motor verificados aplicados-como-escritos (não adaptados em silêncio):**
+- **Freyja milagre nv4** — o escudo NOVO-PEQUENO (`fx[]` shield escopo `time`) é IRMÃO do condicional (`fx[0]`), não
+  filho de um ramo. Logo aplica nos DOIS ramos (reviveu alguém OU o time ganhou dmgUp): o time sempre ganha os 4 de
+  Defesa Destrutível. Confirmado pelo `kitEfetivo`.
+- **Thor habilidade nv4** — os dois alvos são endereçados por `idx`: `fx[0]` dmg 24 `idx:0`, `fx[1]` dmg 13 `idx:1`.
+  Cada alvo leva o seu número. Confirmado pelo `kitEfetivo` (24 no primeiro, 13 no segundo).
+
+**Afrodite — o swap do milagre validou a (g'), mas ela CONTINUA FORA.** A troca do milagre nv4 (tirar a recarga
+`cd 4→3`, pôr `eff.v 12→13`) baixou o milagre de **+13,7 → +8,9** — o degrau pesado ERA a recarga menor, não o número
+do efeito. Mesmo assim, com o básico nv4 = dmg 14→15 (V1, só dano), o básico continua **+17,1** (> +15) e o **MÁX
++28,1** (> +25). O gargalo é a SOMA milagre+básico num kit de suporte. Conforme "se ficar FORA, reportar e parar",
+**Afrodite não é liberada** (segue única grega fora). O dado da escada dela fica no arquivo (medido), apenas gated
+pela trava — não entra em `niveis_liberados.json`.
+
+**REGRA NOVA (g') — recarga menor (`cd`) em milagre de efeito EM MASSA (buff/debuff em TODOS) é salto pesado.** Medido
+duas vezes no mesmo milagre da Afrodite: com `cd 4→3` o milagre valia +13,7; trocando a recarga por `eff.v 12→13`
+(efeito um ponto maior, sem mexer na recarga) caiu para +8,9 — **−4,8pp só por não baixar a recarga**. Um milagre que
+já afeta os três inimigos ganha muito mais poder por poder ser LANÇADO MAIS VEZES do que por ficar um ponto mais forte.
+Portanto: `cd` de milagre de massa NÃO é um bom degrau de nv4 (embora esteja na whitelist de SALTO em geral); prefira
+subir a magnitude do efeito (`fx[i].eff.v` pequeno) ou a duração. Vale para os próximos panteões.
+
+---
+
 ## §318 FASE 3 · FECHO DO PANTEÃO GREGO — 17 de 18 DENTRO (só Afrodite fora)
 
 **Regra (f') substitui a (d').** Básico de deus com redução passiva permanente ≥10 **não tem escada** (sem
