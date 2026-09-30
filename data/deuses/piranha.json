@@ -14,13 +14,21 @@
         "gatilho": "aoAgirSobEfeito",
         "efeito": "sangramento",
         "noAtor": [
-          { "t": "dmg", "v": 4 }
+          {
+            "t": "dmg",
+            "v": 4
+          }
         ]
       },
       {
         "gatilho": "bonusDano",
         "v": 8,
-        "quando": { "alvoHp": { "op": "abaixo", "v": 60 } }
+        "quando": {
+          "alvoHp": {
+            "op": "abaixo",
+            "v": 60
+          }
+        }
       }
     ]
   },
@@ -29,42 +37,225 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Mordidas",
-      "cost": { "Maré": 1 },
+      "cost": {
+        "Maré": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "3 golpes de 5 + Sangramento (6/turno por 2 turnos).",
       "fx": [
-        { "t": "dmg", "v": 5 },
-        { "t": "dmg", "v": 5 },
-        { "t": "dmg", "v": 5 },
-        { "t": "dot", "nome": "sangramento", "v": 6, "dur": 2 }
+        {
+          "t": "dmg",
+          "v": 5
+        },
+        {
+          "t": "dmg",
+          "v": 5
+        },
+        {
+          "t": "dmg",
+          "v": 5
+        },
+        {
+          "t": "dot",
+          "nome": "sangramento",
+          "v": 6,
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[3].v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "3 golpes de 5 + Sangramento (7/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "1 golpe de 6 e 2 de 5 + Sangramento (7/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "2 golpes de 6 e 1 de 5 + Sangramento (7/turno por 2 turnos)."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Frenesi Alimentar",
-      "cost": { "Maré": 2 },
+      "cost": {
+        "Maré": 2
+      },
       "cd": 1,
       "alvo": "inimigo",
       "desc": "4 golpes de 6 em 1 inimigo; +3 por golpe se ele estiver Sangrando.",
       "fx": [
-        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
-        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
-        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } },
-        { "t": "dmg", "v": 6, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 9 } }
+        {
+          "t": "dmg",
+          "v": 6,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "sangramento"
+            },
+            "v": 9
+          }
+        },
+        {
+          "t": "dmg",
+          "v": 6,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "sangramento"
+            },
+            "v": 9
+          }
+        },
+        {
+          "t": "dmg",
+          "v": 6,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "sangramento"
+            },
+            "v": 9
+          }
+        },
+        {
+          "t": "dmg",
+          "v": 6,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "sangramento"
+            },
+            "v": 9
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 6,
+              "para": 7
+            },
+            {
+              "caminho": "fx[1].v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "2 golpes de 7 e 2 de 6 em 1 inimigo; 9 por golpe se ele estiver Sangrando."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 6,
+              "para": 7
+            },
+            {
+              "caminho": "fx[3].v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "4 golpes de 7 em 1 inimigo; 9 por golpe se ele estiver Sangrando."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 7,
+              "para": 8
+            }
+          ],
+          "desc": "1 golpe de 8 e 3 de 7 em 1 inimigo; 9 por golpe se ele estiver Sangrando."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Águas Vermelhas",
-      "cost": { "Maré": 2, "livre": 1 },
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado.",
       "fx": [
-        { "t": "dmg", "v": 18, "seEncharcado": 28, "seCond": { "quando": { "alvoDebuff": "sangramento" }, "v": 28 }, "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 18,
+          "seEncharcado": 28,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "sangramento"
+            },
+            "v": 28
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado."
+        }
       ]
     }
   ]

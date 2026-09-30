@@ -178,7 +178,7 @@ leem o mesmo catálogo (o caso de sempre → regressão zero byte a byte) e um *
 (PvP nivelado). **Níveis default 1** ⇒ kitEfetivo deep-equal ao base; nunca mude isso sem provar a regressão zero.
 
 O **formato** (`ab[i].niveis`) e a **whitelist de `caminho`** (PEQUENO nv2–4: `fx[i].v`, `fx[i].eff.v`, e §318 F3 L6 ext.i
-os mesmos DENTRO de ramos condicionais aninhados `fx[i].entao[j].v` / `fx[i].senao[j].v` / `…senao[k].eff.v`, ext.ii
+os mesmos DENTRO de ramos aninhados — condicional `entao`/`senao` e §318 F3 L10 `agenda` (payload telegrafado, Kukulkán): `fx[i].entao[j].v` / `fx[i].senao[j].v` / `fx[i].agenda[j].v` / `…eff.v`, ext.ii
 `fx[i].hp` (revive/vidaExtra), e §318 F3 L9 ext.iii LEVE `opcoes[k].fx[i].v` / `opcoes[k].fx[i].eff.v` (número DENTRO de
 uma OPÇÃO de habilidade de escolha, ex.: Lugh GUERRA/CURA/FORJA — SEM NOVO-PEQUENO em opção, que segue deferido: o Exu
 fica sem escada na habilidade, marcado `semEscada`); NOVO-PEQUENO **só nv2**:

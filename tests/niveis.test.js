@@ -165,6 +165,19 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[9].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4f MORDE: caminho em opção INEXISTENTE (de≠valor)');
 })();
 
+// BABÁ 4g — §318 F3 L10 EXTENSÃO (i) AMPLIADA: `agenda[j]` (payload telegrafado, Kukulkán) é ramo — o número dentro é
+// PEQUENO (`fx[i].agenda[j].v`); caminho em agenda inexistente → FORA; e DANO dentro de agenda bloqueia NOVO-PEQUENO
+// (Kukulkán habil tem dmg na agenda), mas agenda SEM dano não regride (Dionísio/Saci seguem elegíveis).
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === slot).niveis = niveis; return d; };
+  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[0].v', de: 25, para: 26 }], desc: 'x' }])).length === 0, 'B4g passa: fx[i].agenda[j].v (dano telegrafado) é PEQUENO');
+  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[9].v', de: 25, para: 26 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4g MORDE: caminho em agenda inexistente (de≠valor)');
+  // NOVO-PEQUENO numa habilidade com DANO na agenda (Kukulkán) → bloqueado (não é "sem número")
+  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'shield', v: 2, escopo: 'self' } }], desc: 'x' }])).some(e => /SALTO.*nv4/i.test(e)), 'B4g MORDE: NOVO-PEQUENO em habilidade com dano na AGENDA');
+  // agenda SEM dano (Dionísio Bacanal = dominar) não regride: NOVO-PEQUENO ainda ok
+  ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'dmg', v: 5, escopo: 'todosInimigos' } }], desc: 'x' }])).length === 0, 'B4g passa: NOVO-PEQUENO ainda ok com agenda SEM dano (Dionísio)');
+})();
+
 // BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).

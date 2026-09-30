@@ -10,8 +10,22 @@
     "nome": "Guardião do Dia",
     "desc": "Curas no time curam +5; durante o DIA, o time ganha 1 orbe extra por turno.",
     "fx": [
-      { "gatilho": "bonusCura", "v": 5 },
-      { "gatilho": "porTurno", "estado": { "fase": "Dia" }, "faz": [ { "t": "orbGain", "n": 1 } ] }
+      {
+        "gatilho": "bonusCura",
+        "v": 5
+      },
+      {
+        "gatilho": "porTurno",
+        "estado": {
+          "fase": "Dia"
+        },
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 1
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -23,33 +37,176 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Escrita Sagrada",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 1,
       "alvo": "aliado",
       "desc": "1 aliado tem todas as recargas reduzidas em 1 turno e causa +5 de dano por 2 turnos (acumulável).",
       "fx": [
-        { "t": "cdShift", "unidade": true, "v": -1 },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 2 } }
+        {
+          "t": "cdShift",
+          "unidade": true,
+          "v": -1
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 5,
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "1 aliado tem todas as recargas reduzidas em 1 turno e causa +6 de dano por 2 turnos (acumulável)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "1 aliado tem todas as recargas reduzidas em 1 turno e causa +7 de dano por 2 turnos (acumulável)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 7,
+              "para": 8
+            }
+          ],
+          "desc": "1 aliado tem todas as recargas reduzidas em 1 turno e causa +8 de dano por 2 turnos (acumulável)."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Aurora da Criação",
-      "cost": { "Aurora": 2, "livre": 1 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Cura 25 no time, restaura todo HP máximo perdido (Podridão) e remove todos os debuffs.",
       "fx": [
-        { "t": "heal", "v": 25, "escopo": "time" },
-        { "t": "restauraMax", "escopo": "time" },
-        { "t": "cleanse", "escopo": "time" }
+        {
+          "t": "heal",
+          "v": 25,
+          "escopo": "time"
+        },
+        {
+          "t": "restauraMax",
+          "escopo": "time"
+        },
+        {
+          "t": "cleanse",
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 26
+            }
+          ],
+          "desc": "Cura 26 no time, restaura todo HP máximo perdido (Podridão) e remove todos os debuffs."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 26,
+              "para": 27
+            }
+          ],
+          "desc": "Cura 27 no time, restaura todo HP máximo perdido (Podridão) e remove todos os debuffs."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 28
+            }
+          ],
+          "desc": "Cura 28 no time, restaura todo HP máximo perdido (Podridão) e remove todos os debuffs."
+        }
       ]
     }
   ]

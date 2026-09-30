@@ -32,7 +32,7 @@ function lerCaminho(ab, c) {
   if (!nm) return undefined;
   let node = (base.fx || [])[+nm[1]];
   let rest = c1.slice(nm[0].length), bm;
-  while ((bm = rest.match(/^\.(entao|senao)\[(\d+)\]/))) { if (!node) return undefined; const arr = node[bm[1]]; node = Array.isArray(arr) ? arr[+bm[2]] : undefined; rest = rest.slice(bm[0].length); }
+  while ((bm = rest.match(/^\.(entao|senao|agenda)\[(\d+)\]/))) { if (!node) return undefined; const arr = node[bm[1]]; node = Array.isArray(arr) ? arr[+bm[2]] : undefined; rest = rest.slice(bm[0].length); }
   if (!node) return undefined;
   if (rest === '.v') return node.v;
   if (rest === '.dur') return node.dur;
@@ -59,7 +59,7 @@ const _cenPad = key => CENARIO[key] || { time: [key, 'ares', 'atena'], inim: ['d
 
 // projeção de combate do estado (o que o degrau pode mexer): os dois lados (unidades: hp, efeitos,
 // dots, shield, cd, contadores) + orbes. NÃO o catId (que muda com o nível por construção) nem o log.
-function projLados(st) { return canon(st.lados.map(l => ({ orbs: l.orbs, units: l.units.map(u => ({ hp: u.hp, shield: u.shield, cd: u.cd, efeitos: u.efeitos, dots: u.dots, contadores: u.contadores, vivo: u.vivo, vidaExtra: u.vidaExtra })) }))); }   // §318 F3 L6: vidaExtra (Bastet) é campo próprio da unidade — sem ele o degrau de hp da Vida Extra pareceria inerte
+function projLados(st) { return canon(st.lados.map(l => ({ orbs: l.orbs, units: l.units.map(u => ({ hp: u.hp, shield: u.shield, cd: u.cd, efeitos: u.efeitos, dots: u.dots, contadores: u.contadores, vivo: u.vivo, vidaExtra: u.vidaExtra, pendente: u.pendente })) }))); }   // §318 F3 L6: vidaExtra (Bastet) é campo próprio da unidade — sem ele o degrau de hp da Vida Extra pareceria inerte
 
 // monta o cenário FIXO e lança `slot` de ALVO no nível `nv`; devolve a projeção de estado (ou null se não deu p/ lançar).
 function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {

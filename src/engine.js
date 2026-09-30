@@ -418,10 +418,12 @@ function _categoriaCaminho(c) {
   // §318 F3 L6 (extensão i) — CAMINHOS DENTRO DE RAMOS condicionais (entao/senao, aninhados) são PEQUENO. O `v` do
   // dano/cura/escudo e o `eff.v` dentro de qualquer ramo. Os LIMIARES da condição (se:{...}, executaAbaixoDe) ficam
   // FORA da whitelist (nunca sobem — degrau escondido): qualquer caminho que não termine em .v/.eff.v/.hp cai no null.
-  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])+\.v$/.test(c)) return 'pequeno';
-  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])+\.eff\.v$/.test(c)) return 'pequeno';
+  // §318 F3 L10 (extensão i ampliada) — `agenda[j]` (payload telegrafado do próximo turno, Kukulkán) conta como
+  // mais um RAMO, igual a entao/senao: o número dentro dele é PEQUENO; o LIMIAR/gatilho continua fora.
+  if (/^fx\[\d+\](\.(entao|senao|agenda)\[\d+\])+\.v$/.test(c)) return 'pequeno';
+  if (/^fx\[\d+\](\.(entao|senao|agenda)\[\d+\])+\.eff\.v$/.test(c)) return 'pequeno';
   // §318 F3 L6 (extensão ii) — HP de revive/vidaExtra (inclusive dentro de ramo) é PEQUENO.
-  if (/^fx\[\d+\](\.(entao|senao)\[\d+\])*\.hp$/.test(c)) return 'pequeno';
+  if (/^fx\[\d+\](\.(entao|senao|agenda)\[\d+\])*\.hp$/.test(c)) return 'pequeno';
   // §318 F3 L9 (extensão iii LEVE) — NÚMERO dentro de uma OPÇÃO (habilidade de escolha, ex.: Lugh GUERRA/CURA/FORJA)
   // é PEQUENO: `opcoes[k].fx[i].v` e `opcoes[k].fx[i].eff.v`. As opções já têm número — sem NOVO-PEQUENO em opção
   // (isso segue deferido, Exu sem escada). Só o `v`/`eff.v` sobe.
@@ -445,7 +447,7 @@ function _fxTemMagnitude(f, aninhado) {
     if (_T_MAGNITUDE.indexOf(f.t) >= 0 && typeof f.v === 'number') return true;
     if (f.eff && typeof f.eff.v === 'number') return true;
   } else if (f.t === 'dmg' && typeof f.v === 'number') return true;
-  for (const br of ['entao', 'senao']) if (Array.isArray(f[br]) && f[br].some(x => _fxTemMagnitude(x, true))) return true;
+  for (const br of ['entao', 'senao', 'agenda']) if (Array.isArray(f[br]) && f[br].some(x => _fxTemMagnitude(x, true))) return true;   // §318 F3 L10: dano dentro de agenda (Kukulkán) também conta
   return false;
 }
 function _temMagnitudePequena(ab) {
@@ -504,7 +506,7 @@ function _navFx(ab, c) {
   let node = (base.fx || [])[+m[1]];
   let rest = c0.slice(m[0].length);
   let bm;
-  while ((bm = /^\.(entao|senao)\[(\d+)\]/.exec(rest))) {
+  while ((bm = /^\.(entao|senao|agenda)\[(\d+)\]/.exec(rest))) {   // §318 F3 L10: agenda é ramo (Kukulkán)
     if (!node) return null;
     const arr = node[bm[1]];
     node = Array.isArray(arr) ? arr[+bm[2]] : undefined;

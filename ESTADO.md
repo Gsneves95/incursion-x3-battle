@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 10 (4 brasileiros + 4 maias) — 8/8 DENTRO; 69 liberados; ext.(i) AMPLIADA (agenda)
+
+**Uma varredura** dos 8 (Boto/Mula/Boitatá/Piranha/Itzamná/Chaac/Kukulkán/Ah Puch), N=3000, higiene antes, 0
+empate-por-teto (32/32). **8/8 DENTRO sem ajuste** (maior single Boitatá +7,5; maior MÁX Boitatá +19,2; Piranha MÁX −5,5
+= frágil multi-golpe, limitação da IA aceita/marcada). Liberados → **69 deuses** (18 gregos + 12 nórdicos + 13 egípcios
++ 7 L8 + 7 L9 + 8 L10 + 3 pilotos).
+
+**Ext.(i) AMPLIADA: `agenda` é ramo** (payload telegrafado, Kukulkán) — `fx[i].agenda[j].v` é PEQUENO (`_categoriaCaminho`
+/`_navFx`/`_fxTemMagnitude` ganharam `agenda`); dano na agenda bloqueia NOVO-PEQUENO (Kukulkán), agenda sem dano não
+regride (Dionísio/Saci). Babá B4g; babá 8 captura `u.pendente` na projeção. Motor verificado (kitEfetivo): Kukulkán
+agenda 25→28, Piranha 2-muda + 2 golpes 6, Boto dominar+dmg. Nenhum (h') precisou. Tabela na DECISOES "LOTE 10".
+
 ## ★ §318 FASE 3 · LOTE 9 (3 celtas + 4 brasileiros) — 7/7 DENTRO; 61 liberados; ext.(iii) LEVE + (h') no milagre (Saci)
 
 **Uma varredura** dos 7 (Lugh/Morrígan/Cernunnos/Cuca/Saci/Iara/Curupira), N=3000, higiene antes, 0 empate-por-teto.

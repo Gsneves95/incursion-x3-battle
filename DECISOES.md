@@ -6,6 +6,43 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 10 (4 brasileiros + 4 maias) — 8 de 8 DENTRO; ext.(i) AMPLIADA (agenda, Kukulkán)
+
+**Uma varredura** dos 8 (Boto/Mula/Boitatá/Piranha/Itzamná/Chaac/Kukulkán/Ah Puch), N=3000 sorteado+reativo, higiene
+antes, **0 empate-por-teto** (32/32 medidas). **8 de 8 DENTRO sem ajuste** — nenhuma habilidade nv4 > +15pp (maior single:
+Boitatá milagre/habil +7,5/+7,2), todo MÁX ≤ +25 (maior: Boitatá +19,2). **Piranha MÁX −5,5** (frágil multi-golpe
+dependente de Sangramento): negativo sob IA-espelho é a limitação da IA já conhecida — aceito, marcado p/ revisão.
+
+**Extensão (i) AMPLIADA — `agenda` é ramo.** O Voo da Serpente do **Kukulkán** guarda o dano em `agendar` → `agenda[j]`
+(payload telegrafado do próximo turno). Tratei `agenda` como mais um RAMO, igual a `entao`/`senao`: `fx[i].agenda[j].v`
+é PEQUENO (`_categoriaCaminho`, `_navFx` e `_fxTemMagnitude` ganharam `agenda`). A elegibilidade do NOVO-PEQUENO passa
+a ver DANO dentro da agenda (Kukulkán habil tem dmg 25 na agenda → bloqueado); agenda SEM dano NÃO regride (Dionísio
+Bacanal = `dominar`, Saci = `stripOne` — seguem elegíveis, verificado). Babá B4g. A babá 8 captura `u.pendente` na
+projeção (o payload agendado) — sem isso o degrau do dano telegrafado pareceria inerte.
+
+**Motor verificado aplicado-como-escrito** (`kitEfetivo`, o dono mandou conferir): Kukulkán habil agenda dmg 25→28;
+Piranha habil 2 mudas no nv2/nv3 (os 4 golpes idx) + básico 2 golpes 6/6/5; Boto habil `dominar` + NOVO-PEQUENO dmg 4.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Boto | — | +5,1 | +7,1 | +6,8 | +15,9 | DENTRO |
+| Mula sem Cabeça | — | +7,5 | +1,8 | +2,6 | +11,0 | DENTRO |
+| Boitatá | — | +6,9 | +7,2 | +7,5 | +19,2 | DENTRO |
+| Piranha | — | −9,1 | +1,7 | +2,2 | −5,5 | DENTRO¹ |
+| Itzamná | — | −0,6 | +1,6 | +4,9 | +6,9 | DENTRO |
+| Chaac | — | +2,8 | +1,9 | +5,4 | +9,3 | DENTRO |
+| Kukulkán | — | +6,5 | +2,7 | +3,4 | +14,6 | DENTRO |
+| Ah Puch | — | +4,2 | +2,4 | +4,7 | +10,2 | DENTRO |
+
+¹ frágil multi-golpe (Sangramento): MÁX < 0 é limitação da IA-espelho (aceito, marcado p/ revisão).
+
+**8 de 8 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **69 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 L8 + 7 L9 + 8 L10 + zeus/oxum/tyr). Régua a'–h' + whitelist a/b/i(+agenda)/ii/iii-leve.
+
+---
+
 ## §318 FASE 3 · LOTE 9 (3 celtas + 4 brasileiros) — 7 de 7 DENTRO; ext.(iii) LEVE (opções com número, Lugh); (h') no MILAGRE (Saci)
 
 **Uma varredura** dos 7 (Lugh/Morrígan/Cernunnos/Cuca/Saci/Iara/Curupira), N=3000 sorteado+reativo, higiene antes, **0

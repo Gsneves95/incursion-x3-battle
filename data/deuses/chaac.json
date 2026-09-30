@@ -10,8 +10,20 @@
     "nome": "Senhor das Colheitas",
     "desc": "+8 de dano contra Encharcados; regenerações no time curam +4.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoDebuff": "encharcado" } },
-      { "gatilho": "bonusCura", "v": 4, "quandoCura": { "viaRegen": true } }
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": {
+          "alvoDebuff": "encharcado"
+        }
+      },
+      {
+        "gatilho": "bonusCura",
+        "v": 4,
+        "quandoCura": {
+          "viaRegen": true
+        }
+      }
     ]
   },
   "ab": [
@@ -19,39 +31,198 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Machado das Nuvens",
-      "cost": { "Maré": 1 },
+      "cost": {
+        "Maré": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano + Encharcado por 2 turnos.",
       "fx": [
-        { "t": "dmg", "v": 12 },
-        { "t": "apply", "eff": { "type": "encharcado", "dur": 2 } }
+        {
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "encharcado",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano + Encharcado por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano + Encharcado por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano + Encharcado por 2 turnos; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "As Quatro Chuvas",
-      "cost": { "Maré": 2 },
+      "cost": {
+        "Maré": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Encharcado em todos os inimigos por 2 turnos; cura 12 no time.",
       "fx": [
-        { "t": "apply", "eff": { "type": "encharcado", "dur": 2 }, "escopo": "todosInimigos" },
-        { "t": "heal", "v": 12, "escopo": "time" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "encharcado",
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 12,
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Encharcado em todos os inimigos por 2 turnos; cura 13 no time."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "Encharcado em todos os inimigos por 2 turnos; cura 14 no time."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "Encharcado em todos os inimigos por 2 turnos; cura 15 no time."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Tempestade de Raios",
-      "cost": { "Maré": 2, "livre": 1 },
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "20 de dano a todos; 32 nos Encharcados e os atordoa por 1 turno.",
       "fx": [
-        { "t": "dmg", "v": 20, "seCond": { "quando": { "alvoDebuff": "encharcado" }, "v": 32 }, "escopo": "todosInimigos" },
-        { "t": "apply", "eff": { "type": "atordoado", "dur": 1 }, "escopo": "todosInimigos", "soSe": { "alvoDebuff": "encharcado" } }
+        {
+          "t": "dmg",
+          "v": 20,
+          "seCond": {
+            "quando": {
+              "alvoDebuff": "encharcado"
+            },
+            "v": 32
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "atordoado",
+            "dur": 1
+          },
+          "escopo": "todosInimigos",
+          "soSe": {
+            "alvoDebuff": "encharcado"
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos; 32 nos Encharcados e os atordoa por 1 turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "22 de dano a todos; 32 nos Encharcados e os atordoa por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano a todos; 32 nos Encharcados e os atordoa por 1 turno."
+        }
       ]
     }
   ]

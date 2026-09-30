@@ -10,8 +10,26 @@
     "nome": "Senhor da Morte",
     "desc": "Quando um inimigo é derrotado, Ah Puch cura 15 e ganha 1 orbe; quem tem Podridão não pode ser revivido.",
     "fx": [
-      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" }, { "t": "orbGain", "n": 1, "para": "Umbra" } ] },
-      { "gatilho": "antiReviveContador", "contador": "podridao" }
+      {
+        "gatilho": "aoCair",
+        "quem": "qualquerInimigo",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 15,
+            "escopo": "self"
+          },
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Umbra"
+          }
+        ]
+      },
+      {
+        "gatilho": "antiReviveContador",
+        "contador": "podridao"
+      }
     ]
   },
   "ab": [
@@ -19,39 +37,192 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Toque da Podridão",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano + 1 Podridão.",
       "fx": [
-        { "t": "dmg", "v": 12 },
-        { "t": "contador", "nome": "podridao", "v": 1, "reduzMaxHp": 10 }
+        {
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "contador",
+          "nome": "podridao",
+          "v": 1,
+          "reduzMaxHp": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano + 1 Podridão."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano + 1 Podridão."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano + 1 Podridão; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Decomposição",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "+1 Podridão em 1 inimigo. Cada Podridão reduz o HP máximo dele em 10 e ele não pode ser curado.",
       "fx": [
-        { "t": "contador", "nome": "podridao", "v": 1, "reduzMaxHp": 10 },
-        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 } }
+        {
+          "t": "contador",
+          "nome": "podridao",
+          "v": 1,
+          "reduzMaxHp": 10
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "noHeal",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "2 de dano e +1 Podridão em 1 inimigo. Cada Podridão reduz o HP máximo dele em 10 e ele não pode ser curado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "3 de dano e +1 Podridão em 1 inimigo. Cada Podridão reduz o HP máximo dele em 10 e ele não pode ser curado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano e +1 Podridão em 1 inimigo. Cada Podridão reduz o HP máximo dele em 10 e ele não pode ser curado."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Portões de Xibalbá",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Ah Puch perde 15 de HP; 18 de dano a todos os inimigos, +8 por Podridão no campo.",
       "fx": [
-        { "t": "selfHp", "v": -15 },
-        { "t": "dmg", "v": 18, "porContadorCampo": { "nome": "podridao", "v": 8, "lado": "inimigo" }, "escopo": "todosInimigos" }
+        {
+          "t": "selfHp",
+          "v": -15
+        },
+        {
+          "t": "dmg",
+          "v": 18,
+          "porContadorCampo": {
+            "nome": "podridao",
+            "v": 8,
+            "lado": "inimigo"
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "Ah Puch perde 15 de HP; 19 de dano a todos os inimigos, +8 por Podridão no campo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": -15,
+              "para": -12
+            }
+          ],
+          "desc": "Ah Puch perde 12 de HP; 19 de dano a todos os inimigos, +8 por Podridão no campo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "Ah Puch perde 12 de HP; 20 de dano a todos os inimigos, +8 por Podridão no campo."
+        }
       ]
     }
   ]
