@@ -10,7 +10,13 @@
     "nome": "Bênção de Frigga",
     "desc": "Baldur recebe 15 de redução de dano, exceto de habilidades Verdejantes (o visco).",
     "fx": [
-      { "gatilho": "reducao", "v": 15, "contra": { "elemNao": "Verdejante" } }
+      {
+        "gatilho": "reducao",
+        "v": 15,
+        "contra": {
+          "elemNao": "Verdejante"
+        }
+      }
     ]
   },
   "ab": [
@@ -18,35 +24,138 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Golpe Radiante",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Luz Purificadora",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Cura 20 em 1 aliado e remove todos os debuffs dele.",
       "fx": [
-        { "t": "heal", "v": 20 },
-        { "t": "cleanse" }
+        {
+          "t": "heal",
+          "v": 20
+        },
+        {
+          "t": "cleanse"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "Cura 21 em 1 aliado e remove todos os debuffs dele."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "Cura 22 em 1 aliado e remove todos os debuffs dele."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "regen",
+                  "v": 4,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "Cura 22 em 1 aliado, remove todos os debuffs dele, e ele regenera 4 no turno seguinte."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Invulnerabilidade de Baldur",
-      "cost": { "Aurora": 1, "livre": 2 },
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "aliado",
       "desc": "1 aliado (ou Baldur) fica Invulnerável por 2 turnos.",
       "fx": [
-        { "t": "apply", "eff": { "type": "invulneravel", "dur": 2 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "invulneravel",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "1 aliado (ou Baldur) fica Invulnerável por 2 turnos e cura 2."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "1 aliado (ou Baldur) fica Invulnerável por 2 turnos e cura 3."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "1 aliado (ou Baldur) fica Invulnerável por 2 turnos e cura 4."
+        }
       ]
     }
   ]

@@ -36,41 +36,7 @@
           "v": 12
         }
       ],
-      "niveis": [
-        {
-          "nv": 2,
-          "muda": [
-            {
-              "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
-            }
-          ],
-          "desc": "13 de dano a 1 inimigo."
-        },
-        {
-          "nv": 3,
-          "muda": [
-            {
-              "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
-            }
-          ],
-          "desc": "14 de dano a 1 inimigo."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[0].v",
-              "de": 14,
-              "para": 15
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo."
-        }
-      ]
+      "semEscada": "h' — escada mínima (dmg 12→14, +1/+1) mediu +10,2 e qualquer nv4 por cima leva a +17,1 (>+15), §318 F3 L4"
     },
     {
       "slot": "habilidade",

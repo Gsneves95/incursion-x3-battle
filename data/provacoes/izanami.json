@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "b0dcb843",
+    "hash": "70492955",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 23,
     "comDica": false,
     "nos": 78881,
-    "ms": 30198,
+    "ms": 29669,
     "caminho": [
       "perseu Lâmina Curva → ares",
       "passar",

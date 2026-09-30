@@ -390,7 +390,10 @@ function quiQuadrado(obs, esp) { let x = 0; for (let i = 0; i < obs.length; i++)
 // --- (7b) §318 F3 TRAVA DE LIBERAÇÃO: subir nível só em deus cuja escada passou na triagem ---
 (() => {
   // deus POSSUÍDO e COM pontos, mas FORA da lista de liberados → recusa 'niveis_nao_liberados'
-  const naoLib = ['thor', 'poseidon', 'odin', 'loki'].find(k => !invoc.NIVEIS_LIBERADOS.has(k)) || 'thor';
+  // (deriva do catálogo: pega qualquer deus que ainda NÃO passou na triagem — robusto a novos lotes liberados)
+  const _GODS = require('../src/catalogo.js').GODS;
+  const naoLib = Object.keys(_GODS).find(k => !invoc.NIVEIS_LIBERADOS.has(k));
+  ok(!!naoLib, 'existe ao menos um deus ainda não liberado para o teste da trava');
   const c = contaFake(0, 0, { [naoLib]: { copias: 1, favorito: false, obtidoEm: 0 } });
   c.pontos = { [naoLib]: 6 };
   let r = invoc.subirNivel(c, naoLib, 'basico');

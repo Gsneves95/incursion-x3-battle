@@ -198,12 +198,20 @@ p/ básico AoE); **(b')** o **custo de um básico nunca vai a 0** (básico grát
 1→2 vale +24pp (a d', que dava heal self a esse básico, foi medida e não bastou). O básico fica **sem `niveis`**;
 `validarNiveisDeus` recusa escada no básico desses deuses (`_passivaReducaoForte`) e exige básico-com-escada nos
 demais que já têm escada em outro slot; `subirNivel` no básico deles → `nivel_inexistente`; `_maximizado`/excedente→
-Essência contam só as escadas EXISTENTES (esses deuses maximizam com 12 pontos: habil+milagre); **(e')** NÃO dar
-cura em habilidade de deus cuja **passiva reage a cura** (Hera aoCurar→escudo); **(g')** recarga menor (`cd`) em
-**milagre de efeito EM MASSA** (buff/debuff em todos) é SALTO pesado — medido −4,8pp ao trocar `cd 4→3` por `eff.v`
-no milagre da Afrodite; em milagre de massa, prefira subir `fx[i].eff.v`/duração ao invés do `cd`. Diretriz (não-babá):
-NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8. Dano de **alvo único** de
-deus **frágil** sobe de leve (levelável).
+Essência contam só as escadas EXISTENTES (esses deuses maximizam com 12 pontos: habil+milagre). A f' vale também p/
+redução **quase-universal**: uma `reducao` ≥10 cujo único filtro é `contra:{elemNao:X}` (aplica contra ~todo o dano,
+só exclui um elemento) conta como forte (Baldur 15, exceto Verdejante) — um `contra` mais estreito (ex.: só vs
+alvo-único) NÃO. **(e')** NÃO dar cura em habilidade de deus cuja **passiva reage a cura** (Hera aoCurar→escudo);
+**extensão (e'):** não acrescentar **DANO** a uma habilidade cuja passiva **multiplica o dano** naquela condição
+(Odin +6 vs marcados → o degrau do básico/habilidade de Odin usa escudo self, não dano); **(g')** recarga menor
+(`cd`) em **milagre de efeito EM MASSA** (buff/debuff em todos) é SALTO pesado — medido −4,8pp ao trocar `cd 4→3` por
+`eff.v` no milagre da Afrodite; em milagre de massa, prefira subir `fx[i].eff.v`/duração ao invés do `cd`; **(h')**
+básico que **ESTOURA com a escada mínima** (+1/+1 já mede FORA e não há degrau menor que ainda mude o estado) fica
+**sem escada**, marcado EXPLICITAMENTE no dado com `semEscada:"<motivo com a medida>"` (motivo obrigatório). O
+validador aceita básico sem `niveis` se for **(f')** OU tiver a marcação **(h')**; `subirNivel`/excedente tratam (h')
+igual a (f') — máximo de 12 pontos (Afrodite: escada mínima +10,2 e qualquer nv4 leva a +17,1 > +15). Diretriz
+(não-babá): NOVO-PEQUENO em habilidade UTILITÁRIA forte (recarga/orbes/controle) fica em 2–3, não 5–8. Dano de
+**alvo único** de deus **frágil** sobe de leve (levelável).
 **TRAVA DE LIBERAÇÃO:** `subirNivel` só aceita deus em `data/niveis_liberados.json` (senão `niveis_nao_liberados`);
 um deus entra na lista só depois de MEDIR DENTRO. Liberados: os 10 do LOTE 1 (zeus/oxum/tyr + os 7 gregos) — os 3
 que mediram FORA (Cérberus/Atena/Apolo) foram corrigidos e re-medidos DENTRO (Cérberus só no PISO: básico AoE

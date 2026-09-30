@@ -6,6 +6,85 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 5 (últimos 6 nórdicos) + Afrodite entra — 7 de 7 DENTRO; nova regra (h'); extensões (e') e (f')
+
+**Uma varredura para os 7** (Afrodite + Mimir/Baldur/Jörmungandr/Loki/Hel/Odin), N=3000 sorteado+reativo, higiene
+antes. **0 empate-por-teto.** Todos os 7 entraram DENTRO — Afrodite via a nova (h'), Baldur via ±1, Hel via (h').
+
+**Regra NOVA (h') — básico que ESTOURA com a escada mínima fica SEM escada.** Quando o `+1/+1` já mede FORA e não há
+degrau menor que ainda mude o estado, o básico não leva escada — marcação EXPLÍCITA no dado: `semEscada:"<motivo com a
+medida>"` (motivo obrigatório). O validador aceita básico sem `niveis` se for **(f')** OU tiver a marcação **(h')**;
+`subirNivel`/excedente tratam (h') igual a (f') (máx 12 pontos — as escadas existentes são habilidade+milagre). Babá
+B3e: básico sem escada fora da f' e sem marcação → quebra; marcação sem motivo → quebra; marcação + niveis juntos →
+quebra. Dois casos medidos:
+- **Afrodite** — a escada mínima do básico (dmg 12→14, +1/+1) já vale +10,2 e qualquer nv4 leva a +17,1 (>+15). Com
+  o básico marcado (h') e removido, o **MÁX caiu de +28,1 → +15,8** e Afrodite finalmente entra DENTRO (habil +6,7,
+  milagre +8,9). **A última grega estava fora só pelo básico; a (h') a resolveu.**
+- **Hel** — mesmo a escada só-dano (13/14/15) mede +18,6 no básico (MÁX +31,8): o auto-heal do básico (heal self 8),
+  **amplificado pela passiva `bonusCura +8` em turno ímpar** e spammado ~13×/partida, mantém FORA. Marcado (h'); com o
+  básico sem escada o **MÁX caiu para +15,0** (habil +13,8, milagre +4,5) → DENTRO. É o primo do (f'): durabilidade ×
+  frequência, mas a durabilidade vem de auto-cura amplificada, não de redução.
+
+**Extensão da (f') — redução QUASE-UNIVERSAL conta.** O detector `_passivaReducaoForte` rejeitava qualquer `contra`,
+mas o **Baldur** tem `reducao 15 contra:{elemNao:"Verdejante"}` — reduz contra ~todo o dano (só exclui um elemento),
+tão durável quanto uma permanente. Estendido: uma `reducao ≥10` cujo ÚNICO filtro é `contra:{elemNao:X}` é forte (um
+`contra` mais estreito, ex.: só vs alvo-único da Afrodite, continua NÃO). Só o Baldur casa hoje. Baldur é (f') como o
+dono declarou; sem a extensão o motor não o reconheceria — **reportado, não adaptado em silêncio.**
+
+**Extensão da (e') — não dar DANO a habilidade cuja passiva multiplica o dano naquela condição.** Odin tem
+`bonusDano +6 vs marcados`; a habilidade dele marca todos os inimigos, então um NOVO-PEQUENO de dano viraria 2→8 em
+cada. O degrau de Odin (habil e básico) usa **escudo self** / marca, não dano. (Análogo da (e') original: cura em
+habilidade cuja passiva reage a cura.)
+
+**Baldur milagre — ±1.** O milagre (invuln + cura NOVA) mediu +15,1 (0,1 acima); baixei a cura 3/4/5 → 2/3/4 e
+re-medi: **+14,0**, MÁX +18,5 → DENTRO.
+
+**Motor verificado aplicado-como-escrito** (via `kitEfetivo`): Loki habil/milagre NOVO-PEQUENO de dano empilha em
+`fx[2]` (habil sem magnitude base → permitido); Odin habil NOVO-PEQUENO **escudo** self (não dano); Baldur milagre
+NOVO heal e habil NOVO regen (SALTO); Jörmungandr básico e Hel habil estendem `dur` de dot (SALTO extensão b); Odin
+milagre sobe `fx[0].v` de −15→−12 (auto-dano menor) como PEQUENO.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Mimir | — | +5,4 | +0,2 | +3,3 | +7,9 | DENTRO |
+| Baldur | — | — (f') | +7,4 | +14,0¹ | +18,5 | DENTRO |
+| Jörmungandr | — | +12,2 | +5,8 | +4,2 | +21,2 | DENTRO |
+| Loki | — | +0,3 | +11,0 | +13,7 | +22,4 | DENTRO |
+| Hel | — | — (h') | +13,8 | +4,5 | +15,0² | DENTRO |
+| Odin | — | −0,1 | −0,1 | +2,9 | +3,2 | DENTRO |
+| **Afrodite** | Iniciado | — (h') | +6,7 | +8,9 | +15,8 | **DENTRO** |
+
+¹ após ±1 (cura do milagre 3/4/5→2/3/4; era +15,1). ² após (h') no básico (era +31,8).
+
+**TABELA FINAL DO PANTEÃO NÓRDICO (12 deuses + Tyr piloto · nv4 por slot · MÁX · N=3000 sorteado+reativo):**
+
+| deus | lote | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Bragi | L4 | +2,4 | +0,6 | +11,2 | +13,6 | DENTRO |
+| Fenrir | L4 | −6,2 | +1,0 | +7,9 | +4,3 | DENTRO |
+| Ymir | L4 | +3,0 | +5,3 | +4,3 | +12,7 | DENTRO |
+| Heimdall | L4 | +1,8 | −0,0 | +6,5 | +8,2 | DENTRO |
+| Freyja | L4 | −1,8 | +1,7 | +1,6 | +2,2 | DENTRO |
+| Thor | L4 | +11,4 | +4,4 | +10,6 | +21,8 | DENTRO |
+| Mimir | L5 | +5,4 | +0,2 | +3,3 | +7,9 | DENTRO |
+| Baldur | L5 | — (f') | +7,4 | +14,0 | +18,5 | DENTRO |
+| Jörmungandr | L5 | +12,2 | +5,8 | +4,2 | +21,2 | DENTRO |
+| Loki | L5 | +0,3 | +11,0 | +13,7 | +22,4 | DENTRO |
+| Hel | L5 | — (h') | +13,8 | +4,5 | +15,0 | DENTRO |
+| Odin | L5 | −0,1 | −0,1 | +2,9 | +3,2 | DENTRO |
+| Tyr | piloto | −5,4 | +6,3 | +3,3 | +0,3 | DENTRO |
+
+**12 de 12 nórdicos DENTRO** (+ Tyr piloto) — todos liberados. Com Afrodite, o **panteão grego fecha 18/18**. Total
+em `niveis_liberados.json`: **33 deuses** (18 gregos + 12 nórdicos + zeus/oxum/tyr pilotos).
+
+**Régua de regras agora a'–h'** (ver CLAUDE.md). O que estoura, em geral, continua: **frequência × durabilidade**
+(básico spammado por unidade que sobrevive — via redução (f'), redução quase-universal, ou auto-cura amplificada (h'))
+e **soma de suporte** no MÁX. Dano de alvo único de deus frágil e efeitos de milagre sobem tranquilos.
+
+---
+
 ## §318 FASE 3 · LOTE 4 (nórdicos) + fecho de Afrodite — 6 de 6 nórdicos DENTRO; Afrodite continua FORA; nova regra (g')
 
 **Uma varredura só para os 7** (Afrodite + 6 nórdicos), N=3000 sorteado+reativo, higiene de processos antes

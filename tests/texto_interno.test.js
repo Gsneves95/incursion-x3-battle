@@ -26,6 +26,7 @@ function walkData(node, keyPath, arquivo) {
   if (node && typeof node === 'object') {
     for (const k of Object.keys(node)) {
       if (k.startsWith('_')) continue;   // campo interno (convenção §283) — não é texto exibido
+      if (k === 'semEscada') continue;   // §318 F3 L5 (regra h'): motivo INTERNO do básico sem escada — não é exibido ao jogador
       walkData(node[k], keyPath ? keyPath + '.' + k : k, arquivo);
     }
   }

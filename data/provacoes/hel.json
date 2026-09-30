@@ -27,13 +27,13 @@
     }
   ],
   "verificacao": {
-    "hash": "22de398",
+    "hash": "2f19f30e",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 34,
     "comDica": false,
     "nos": 113798,
-    "ms": 36183,
+    "ms": 51885,
     "caminho": [
       "perseu Lâmina Curva → bennu",
       "passar",

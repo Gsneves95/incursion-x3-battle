@@ -449,7 +449,15 @@ function _ehBasicoArea(ab) {
 // outro slot. (A regra d' — heal self no básico durável — foi medida e NÃO bastava; f' a substitui.)
 function _passivaReducaoForte(deus) {
   const fx = (deus && deus.passiva && deus.passiva.fx) || [];
-  return fx.some(f => f.gatilho === 'reducao' && typeof f.v === 'number' && f.v >= 10 && !f.contra && !f.estado && !f.protegido);
+  return fx.some(f => {
+    if (f.gatilho !== 'reducao' || typeof f.v !== 'number' || f.v < 10 || f.estado || f.protegido) return false;
+    if (!f.contra) return true;   // redução PERMANENTE incondicional (Aquiles 12, Kraken 10)
+    // §318 F3 L5 — redução QUASE-UNIVERSAL: só EXCLUI um elemento (contra:{elemNao:X}) aplica contra ~todo o dano,
+    // então é tão durável quanto uma permanente (Baldur 15, exceto Verdejante). Um contra mais ESTREITO (alcance,
+    // etc.) NÃO conta (Afrodite reducao 5 só vs alvo-único é genuinamente condicional).
+    const ks = Object.keys(f.contra);
+    return ks.length === 1 && ks[0] === 'elemNao';
+  });
 }
 // NOVO-PEQUENO permitido? base: habilidade SEM magnitude. regra (a'): básico em ÁREA pode heal/shield SELF (≤8)
 // mesmo tendo número (Cérberus). (Deus MUITO durável cai na f' — básico sem escada — não nesta função.)
@@ -582,13 +590,23 @@ function validarNiveisDeus(deus) {
   // §318 F3 (regra f') — BÁSICO DE DEUS MUITO DURÁVEL não tem escada. Deus com redução passiva ≥10: básico NÃO
   // pode ter niveis. Deus SEM essa redução que já tem escada em algum slot: o básico DEVE ter escada (senão é
   // esquecimento). Deuses sem escada nenhuma (ainda não trabalhados) passam livres.
+  // Além da f' (durabilidade), a §318 F3 (regra h') aceita básico SEM escada quando ele ESTOURA com a escada
+  // mínima (+1/+1 já mede FORA e não há degrau menor que mude o estado): marcação EXPLÍCITA `semEscada:"<motivo>"`
+  // no próprio básico, com o motivo (medida) obrigatório. subirNivel/excedente já tratam (h') = (f') porque ambos
+  // significam "básico sem niveis" (ver _escadasDe/_maximizado no server): máx 12 pontos.
   const _basico = (deus.ab || []).find(a => a.slot === 'basico');
   if (_basico) {
     const durao = _passivaReducaoForte(deus);
+    const temMarca = _basico.semEscada !== undefined;   // regra h'
     const _tem = s => { const a = (deus.ab || []).find(x => x.slot === s); return a && Array.isArray(a.niveis); };
+    // (h') a marcação exige um MOTIVO (string não-vazia com a medida)
+    if (temMarca && (typeof _basico.semEscada !== 'string' || !_basico.semEscada.trim()))
+      erros.push(`${nome}.basico: "semEscada" (regra h') exige um motivo (string com a medida), não ${JSON.stringify(_basico.semEscada)}`);
+    // marcação h' e niveis ao mesmo tempo é contradição
+    if (temMarca && Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: básico marcado "semEscada" (h') NÃO pode ter niveis ao mesmo tempo`);
     if (durao && Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: deus com redução passiva ≥10 (regra f') NÃO pode ter escada no básico`);
-    // deus totalmente escalado (habilidade E milagre com escada) mas SEM básico → esquecimento, salvo se for da f'
-    if (!durao && _tem('habilidade') && _tem('milagre') && !Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: básico SEM escada só é permitido para deus da regra f' (redução passiva permanente ≥10)`);
+    // deus totalmente escalado (habilidade E milagre com escada) mas SEM básico → esquecimento, salvo f' OU marcação h'
+    if (!durao && !temMarca && _tem('habilidade') && _tem('milagre') && !Array.isArray(_basico.niveis)) erros.push(`${nome}.basico: básico SEM escada só é permitido para deus da regra f' (redução passiva permanente ≥10) ou com a marcação "semEscada" (regra h')`);
   }
   return erros;
 }

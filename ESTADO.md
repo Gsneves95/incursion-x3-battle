@@ -2,6 +2,27 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 5 (últimos 6 nórdicos) + Afrodite entra — 7/7 DENTRO; regra (h'); extensões (e')(f')
+
+**Uma varredura para os 7** (Afrodite + Mimir/Baldur/Jörmungandr/Loki/Hel/Odin), N=3000, higiene antes, 0 empate-por-
+teto. **7/7 DENTRO.** Liberados → **33 deuses no total** (18 gregos + 12 nórdicos + 3 pilotos). **Panteão nórdico fecha
+12/12; grego fecha 18/18.**
+
+**Regra NOVA (h'):** básico que ESTOURA com a escada mínima (+1/+1 já mede FORA) fica SEM escada, marcado no dado com
+`semEscada:"<motivo>"` (motivo obrigatório; validador aceita básico sem niveis se (f') OU (h'); subirNivel/excedente =
+(f'), máx 12 pts; babá B3e). **Afrodite** entrou por ela: básico mínimo +10,2 e qualquer nv4 → +17,1; marcado (h'), o
+MÁX caiu +28,1→+15,8 (a última grega estava fora só pelo básico). **Hel** idem: básico só-dano ainda +18,6 (auto-heal
+amplificado pela passiva bonusCura +8 ímpar), MÁX +31,8→+15,0 com (h').
+
+**Extensão (f'):** redução quase-universal (`reducao ≥10` cujo único filtro é `contra:{elemNao:X}`) conta como forte —
+Baldur (15, exceto Verdejante) é (f') como o dono declarou; o detector foi estendido (reportado, não adaptado em
+silêncio). **Extensão (e'):** não dar DANO a habilidade cuja passiva multiplica o dano (Odin +6 vs marcados → degrau
+usa escudo self). **Baldur milagre** ±1 (cura 3/4/5→2/3/4: +15,1→+14,0).
+
+Motor verificado (kitEfetivo): Loki NOVO-PEQUENO dano em fx[2]; Odin NOVO-PEQUENO escudo self; Baldur NOVO heal/regen;
+Jörm/Hel estendem dur de dot; Odin milagre −15→−12 (auto-dano). Régua agora a'–h' (CLAUDE.md). Detalhes/tabela dos 12
+nórdicos + Tyr na DECISOES "§318 FASE 3 · LOTE 5".
+
 ## ★ §318 FASE 3 · LOTE 4 (nórdicos) + Afrodite — 6/6 nórdicos DENTRO; Afrodite FORA; regra (g')
 
 **Uma varredura para os 7** (Afrodite + 6 nórdicos), N=3000 sorteado+reativo, higiene antes (0 de 42000 empates-por-

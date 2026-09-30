@@ -10,8 +10,19 @@
     "nome": "Serpente do Mundo",
     "desc": "Imune a controle; +8 de dano contra unidades Tempestade.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "controle" ] },
-      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoElem": "Tempestade" } }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "controle"
+        ]
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": {
+          "alvoElem": "Tempestade"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,38 +30,181 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Bote Venenoso",
-      "cost": { "Maré": 1 },
+      "cost": {
+        "Maré": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "10 de dano + Veneno (8 de dano/turno por 2 turnos).",
       "fx": [
-        { "t": "dmg", "v": 10 },
-        { "t": "dot", "nome": "veneno", "v": 8, "dur": 2 }
+        {
+          "t": "dmg",
+          "v": 10
+        },
+        {
+          "t": "dot",
+          "nome": "veneno",
+          "v": 8,
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano + Veneno (8 de dano/turno por 2 turnos)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "11 de dano + Veneno (9 de dano/turno por 2 turnos)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].dur",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "11 de dano + Veneno (9 de dano/turno por 3 turnos)."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Anel do Mundo",
-      "cost": { "Maré": 2 },
+      "cost": {
+        "Maré": 2
+      },
       "cd": 3,
       "alvo": "nenhum",
       "desc": "Veneno (10 de dano/turno por 2 turnos) em todos os inimigos; eles causam 5 menos de dano.",
       "fx": [
-        { "t": "dot", "nome": "veneno", "v": 10, "dur": 2, "escopo": "todosInimigos" },
-        { "t": "apply", "eff": { "type": "dmgDown", "v": 5, "dur": 2 }, "escopo": "todosInimigos" }
+        {
+          "t": "dot",
+          "nome": "veneno",
+          "v": 10,
+          "dur": 2,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgDown",
+            "v": 5,
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Veneno (11 de dano/turno por 2 turnos) em todos os inimigos; eles causam 5 menos de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "Veneno (11 de dano/turno por 2 turnos) em todos os inimigos; eles causam 6 menos de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "Veneno (12 de dano/turno por 2 turnos) em todos os inimigos; eles causam 6 menos de dano."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Veneno do Ragnarök",
-      "cost": { "Maré": 2, "livre": 1 },
+      "cost": {
+        "Maré": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "16 de dano a todos os inimigos, +8 por inimigo envenenado.",
       "fx": [
-        { "t": "dmg", "v": 16, "porStatus": { "v": 8, "categoria": "veneno", "onde": "timeInimigo" }, "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 16,
+          "porStatus": {
+            "v": 8,
+            "categoria": "veneno",
+            "onde": "timeInimigo"
+          },
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a todos os inimigos, +8 por inimigo envenenado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "18 de dano a todos os inimigos, +8 por inimigo envenenado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos, +8 por inimigo envenenado."
+        }
       ]
     }
   ]

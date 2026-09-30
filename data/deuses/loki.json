@@ -10,7 +10,9 @@
     "nome": "Metamorfo",
     "desc": "A primeira tentativa de controle contra Loki em cada turno falha.",
     "fx": [
-      { "gatilho": "evadeControle" }
+      {
+        "gatilho": "evadeControle"
+      }
     ]
   },
   "ab": [
@@ -18,36 +20,188 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Adaga Traiçoeira",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Ilusão",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 1,
       "alvo": "inimigo",
       "desc": "Loki fica Inalvejável por 1 turno; o próximo ataque de alvo único contra o time é redirecionado a um inimigo.",
       "fx": [
-        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 1 }, "escopo": "self" },
-        { "t": "redirect", "contra": "unico", "dur": 1 }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "inalvejavel",
+            "dur": 1
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "redirect",
+          "contra": "unico",
+          "dur": 1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "2 de dano a 1 inimigo; Loki fica Inalvejável por 1 turno; o próximo ataque de alvo único contra o time é redirecionado a um inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "3 de dano a 1 inimigo; Loki fica Inalvejável por 1 turno; o próximo ataque de alvo único contra o time é redirecionado a um inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano a 1 inimigo; Loki fica Inalvejável por 1 turno; o próximo ataque de alvo único contra o time é redirecionado a um inimigo."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Trama do Caos",
-      "cost": { "Umbra": 1, "livre": 2 },
+      "cost": {
+        "Umbra": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Rouba todos os buffs dos inimigos e transfere todos os debuffs do time para eles.",
       "fx": [
-        { "t": "realoca", "categoria": "buff", "de": "inimigos", "para": "self" },
-        { "t": "realoca", "categoria": "debuff", "de": "time", "para": "inimigos" }
+        {
+          "t": "realoca",
+          "categoria": "buff",
+          "de": "inimigos",
+          "para": "self"
+        },
+        {
+          "t": "realoca",
+          "categoria": "debuff",
+          "de": "time",
+          "para": "inimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 2,
+                "escopo": "todosInimigos"
+              }
+            }
+          ],
+          "desc": "2 de dano a todos os inimigos; rouba todos os buffs dos inimigos e transfere todos os debuffs do time para eles."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "3 de dano a todos os inimigos; rouba todos os buffs dos inimigos e transfere todos os debuffs do time para eles."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano a todos os inimigos; rouba todos os buffs dos inimigos e transfere todos os debuffs do time para eles."
+        }
       ]
     }
   ]

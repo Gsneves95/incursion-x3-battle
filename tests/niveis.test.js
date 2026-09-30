@@ -160,6 +160,25 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   // Perseu (sem reducao) e Poseidon (reducao 5 gated <10): escada na habilidade mas básico SEM escada → QUEBRA
   ok(E.validarNiveisDeus(habEscada(catalogo.perseu)).some(e => /só é permitido para deus da regra f'/.test(e)), "B3d MORDE: básico sem escada num deus fora da f' (Perseu)");
   ok(E.validarNiveisDeus(habEscada(catalogo.poseidon)).some(e => /só é permitido para deus da regra f'/.test(e)), "B3d MORDE: reducao <10/gated não é f' (Poseidon reducao 5 protegido)");
+  // §318 F3 L5 — Baldur (reducao 15 contra:{elemNao:"Verdejante"}, quase-universal) É f': básico sem escada PASSA, com escada QUEBRA
+  ok(E.validarNiveisDeus(habEscada(catalogo.baldur)).length === 0, "B3d passa: Baldur (reducao 15 quase-universal) é f' — básico sem escada");
+  ok(E.validarNiveisDeus(comBasico(catalogo.baldur)).some(e => /regra f'/.test(e)), "B3d MORDE: básico com escada no Baldur (reducao 15 elemNao é f')");
+})();
+
+// BABÁ 3e — §318 F3 regra (h') BÁSICO QUE ESTOURA COM A ESCADA MÍNIMA: marcação EXPLÍCITA `semEscada:"<motivo>"`
+// no básico (com motivo obrigatório) autoriza básico sem niveis mesmo fora da f'. Marcação sem motivo → quebra;
+// marcação + niveis → quebra; e (regressão) básico sem escada, fora da f' e SEM marcação → quebra.
+(() => {
+  // marcado(motivo): habilidade+milagre com escada, básico SEM niveis mas COM a marcação h'
+  const marcado = (g, motivo) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 4, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; } d.ab.find(a => a.slot === 'basico').semEscada = motivo; return d; };
+  // Perseu (fora da f') com marcação h' VÁLIDA → PASSA (mesmo sem niveis no básico)
+  ok(E.validarNiveisDeus(marcado(catalogo.perseu, "h' — escada mínima mediu +17,1, teste")).length === 0, "B3e passa: básico marcado semEscada (h') autoriza deus fora da f' sem niveis no básico");
+  // Marcação SEM motivo (string vazia / não-string) → QUEBRA
+  ok(E.validarNiveisDeus(marcado(catalogo.perseu, '')).some(e => /exige um motivo/.test(e)), "B3e MORDE: semEscada sem motivo (string vazia)");
+  ok(E.validarNiveisDeus(marcado(catalogo.perseu, true)).some(e => /exige um motivo/.test(e)), 'B3e MORDE: semEscada não-string (true)');
+  // Marcação h' + niveis no básico ao mesmo tempo → QUEBRA (contradição)
+  const marcadoComNiveis = (() => { const d = marcado(catalogo.perseu, "motivo ok"); d.ab.find(a => a.slot === 'basico').niveis = [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'heal', v: 1, escopo: 'self' } }], desc: 'x' }]; return d; })();
+  ok(E.validarNiveisDeus(marcadoComNiveis).some(e => /NÃO pode ter niveis ao mesmo tempo/.test(e)), "B3e MORDE: semEscada (h') e niveis juntos");
 })();
 
 // BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.

@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "37876fee",
+    "hash": "bd3b854",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 33,
     "comDica": false,
     "nos": 15511,
-    "ms": 2559,
+    "ms": 3313,
     "caminho": [
       "zeus Cetro do Trovão → shiva",
       "perseu Lâmina Curva → shiva",
