@@ -10,7 +10,12 @@
     "nome": "Guardião dos Viajantes",
     "desc": "1× por partida, quando um aliado seria atordoado, Khonshu anula o efeito.",
     "fx": [
-      { "gatilho": "guardaControle", "a": [ "atordoado" ] }
+      {
+        "gatilho": "guardaControle",
+        "a": [
+          "atordoado"
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,33 +23,177 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Foice Lunar",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Passagem do Tempo",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "Aumenta em 1 turno todas as recargas de 1 inimigo.",
-      "fx": [ { "t": "cdShift", "unidade": true, "v": 1 } ]
+      "fx": [
+        {
+          "t": "cdShift",
+          "unidade": true,
+          "v": 1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "dmg",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "2 de dano a 1 inimigo; aumenta em 1 turno todas as recargas dele."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "3 de dano a 1 inimigo; aumenta em 1 turno todas as recargas dele."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "4 de dano a 1 inimigo; aumenta em 1 turno todas as recargas dele."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Luar Vingador",
-      "cost": { "Umbra": 1, "livre": 2 },
+      "cost": {
+        "Umbra": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "inimigo",
       "desc": "Cura 20 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro.",
       "fx": [
-        { "t": "heal", "v": 20, "escopo": "time" },
-        { "t": "apply", "eff": { "type": "retaliacao", "v": 30, "dur": 9 } }
+        {
+          "t": "heal",
+          "v": 20,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "retaliacao",
+            "v": 30,
+            "dur": 9
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "Cura 21 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 30,
+              "para": 32
+            }
+          ],
+          "desc": "Cura 21 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "Cura 22 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
+        }
       ]
     }
   ]

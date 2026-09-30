@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 7 (6 egípcios + Sobek) — 7/7 DENTRO; egípcio fecha 13/13; 47 liberados
+
+**Uma varredura** dos 7 (Khnum/Rá/Khonshu/Bennu/Mnevis/Nefertem/Sobek), N=3000, higiene antes, 0 empate-por-teto. **7/7
+DENTRO sem ajuste** (maior single Khnum básico +14,8; maior MÁX Sobek +22,6). Nenhuma extensão nova de motor. Liberados
+→ **47 deuses** (18 gregos + 12 nórdicos + 13 egípcios + 3 pilotos). **Panteão egípcio fecha 13/13.**
+
+**Sobek NÃO precisou da (h'):** básico +14,5 (≤+15) — a redução dele é CONDICIONAL (só vs Básicos), o
+`_passivaReducaoForte` corretamente não o marca (f'); escada mantida. Motor verificado (kitEfetivo): Mnevis habil com 2
+mudas no nv2 (fx[0].v e fx[1].v, os dois idx) aplicam ambas; Khonshu milagre retaliação sobe fx[1].eff.v 30→32.
+Tabela dos 7 na DECISOES "§318 FASE 3 · LOTE 7".
+
 ## ★ §318 FASE 3 · LOTE 6 (7 egípcios) — 7/7 DENTRO; extensões (i) condicional + (ii) hp-de-revive na whitelist
 
 **Uma varredura** dos 7 (Babi/Bastet/Anúbis/Ammit/Osíris/Ísis/Hórus), N=3000, higiene antes, 0 empate-por-teto. **7/7

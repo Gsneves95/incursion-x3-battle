@@ -10,7 +10,20 @@
     "nome": "Montaria do Sol",
     "desc": "Com Rá no time, Mnevis intercepta o primeiro ataque de alvo único contra Rá em cada turno.",
     "fx": [
-      { "gatilho": "porTurno", "estado": { "aliadoPresente": "ra" }, "faz": [ { "t": "intercepta", "protege": "ra", "contra": "unico", "dur": 1 } ] }
+      {
+        "gatilho": "porTurno",
+        "estado": {
+          "aliadoPresente": "ra"
+        },
+        "faz": [
+          {
+            "t": "intercepta",
+            "protege": "ra",
+            "contra": "unico",
+            "dur": 1
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,37 +31,194 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Chifrada",
-      "cost": { "Aurora": 1 },
+      "cost": {
+        "Aurora": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Mnevis recebe 3 de redução de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Investida Solar",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "2inimigos",
       "desc": "15 de dano a 2 inimigos; Mnevis ganha 15 de Defesa Destrutível.",
       "fx": [
-        { "t": "dmg", "v": 15, "idx": 0 },
-        { "t": "dmg", "v": 15, "idx": 1 },
-        { "t": "shield", "v": 15, "escopo": "self" }
+        {
+          "t": "dmg",
+          "v": 15,
+          "idx": 0
+        },
+        {
+          "t": "dmg",
+          "v": 15,
+          "idx": 1
+        },
+        {
+          "t": "shield",
+          "v": 15,
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            },
+            {
+              "caminho": "fx[1].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 2 inimigos; Mnevis ganha 15 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 15,
+              "para": 17
+            }
+          ],
+          "desc": "16 de dano a 2 inimigos; Mnevis ganha 17 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 17,
+              "para": 19
+            }
+          ],
+          "desc": "16 de dano a 2 inimigos; Mnevis ganha 19 de Defesa Destrutível."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Fúria do Touro de Rá",
-      "cost": { "Aurora": 1, "livre": 2 },
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Provoca todos os inimigos por 2 turnos; Mnevis reflete 10 de todo dano que recebe.",
       "fx": [
-        { "t": "apply", "eff": { "type": "taunt", "dur": 2 }, "escopo": "todosInimigos" },
-        { "t": "apply", "eff": { "type": "refleteDano", "v": 10, "dur": 2 }, "escopo": "self" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "taunt",
+            "dur": 2
+          },
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "refleteDano",
+            "v": 10,
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 2 turnos; Mnevis reflete 11 de todo dano que recebe."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 2 turnos; Mnevis reflete 12 de todo dano que recebe."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Provoca todos os inimigos por 2 turnos; Mnevis reflete 13 de todo dano que recebe."
+        }
       ]
     }
   ]

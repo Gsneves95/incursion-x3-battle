@@ -36,6 +36,48 @@
           "t": "dmg",
           "v": 10
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
@@ -59,6 +101,41 @@
           "v": 12,
           "escopo": "time"
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a todos os inimigos; cura 12 no time."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a todos os inimigos; cura 13 no time."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a todos os inimigos; cura 13 no time."
+        }
       ]
     },
     {
@@ -81,6 +158,41 @@
         {
           "t": "cleanse",
           "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 26
+            }
+          ],
+          "desc": "Cura 26 no time e remove todos os debuffs."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 26,
+              "para": 27
+            }
+          ],
+          "desc": "Cura 27 no time e remove todos os debuffs."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 28
+            }
+          ],
+          "desc": "Cura 28 no time e remove todos os debuffs."
         }
       ]
     }

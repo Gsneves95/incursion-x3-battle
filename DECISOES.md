@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 7 (6 egípcios + Sobek) — 7 de 7 DENTRO; fecha o panteão egípcio (13) e Sobek
+
+**Uma varredura** dos 7 (Khnum/Rá/Khonshu/Bennu/Mnevis/Nefertem/Sobek), N=3000 sorteado+reativo, higiene antes, **0
+empate-por-teto**. **7 de 7 DENTRO sem ajuste** — nenhuma habilidade nv4 > +15pp (maior single: Khnum básico +14,8),
+todo MÁX ≤ +25 (maior: Sobek +22,6). Nenhuma extensão nova de motor — só as regras a'–h' e whitelist a/b/i/ii.
+
+**Sobek NÃO precisou da (h').** A suspeita era que a redução 10 contra Básicos (o ataque mais usado) o tornasse durável
+demais para carregar escada no básico. Medido: básico **+14,5** (≤ +15) — DENTRO com a escada intacta; a redução dele é
+CONDICIONAL (só vs slot básico) e o `_passivaReducaoForte` corretamente NÃO o marca como (f'). Escada mantida.
+
+**Motor verificado aplicado-como-escrito** (via `kitEfetivo`, o dono mandou conferir): **Mnevis habil** com DUAS mudas
+no nv2 (`fx[0].v` e `fx[1].v`, os dois alvos `idx`) — ambas aplicam (16/16), o validador itera `d.muda`; **Khonshu
+milagre** a retaliação sobe `fx[1].eff.v 30→32` (o efeito `retaliacao`).
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | faixa | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|---|
+| Khnum | — | +14,8 | +2,5 | +7,3 | +20,9 | DENTRO |
+| Rá | — | +4,3 | +1,4 | +7,7 | +10,3 | DENTRO |
+| Khonshu | — | +3,9 | +5,6 | +4,2 | +12,2 | DENTRO |
+| Bennu | — | +12,2 | +3,4 | +5,9 | +19,4 | DENTRO |
+| Mnevis | — | +6,4 | +4,4 | +2,4 | +12,1 | DENTRO |
+| Nefertem | — | +5,6 | +3,9 | +5,6 | +14,0 | DENTRO |
+| Sobek | Iniciado | +14,5 | +4,2 | +8,8 | +22,6 | DENTRO |
+
+**7 de 7 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **47 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + zeus/oxum/tyr pilotos). O **panteão egípcio fecha 13/13** (Babi/Bastet/Anúbis/Ammit/Osíris/Ísis/Hórus do
+LOTE 6 + Khnum/Rá/Khonshu/Bennu/Mnevis/Nefertem do LOTE 7).
+
+---
+
 ## §318 FASE 3 · LOTE 6 (7 egípcios) — 7 de 7 DENTRO; extensões (i) condicional e (ii) hp-de-revive na whitelist
 
 **Uma varredura** dos 7 (Babi/Bastet/Anúbis/Ammit/Osíris/Ísis/Hórus), N=3000 sorteado+reativo, higiene antes, **0

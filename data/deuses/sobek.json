@@ -11,8 +11,22 @@
     "nome": "Pele de Couraça",
     "desc": "10 de redução contra Básicos; +6 de dano contra alvos com debuff.",
     "fx": [
-      { "gatilho": "reducao", "v": 10, "escopo": "self", "contra": { "slot": "basico" } },
-      { "gatilho": "bonusDano", "v": 6, "escopo": "self", "quando": { "alvoDebuff": "qualquer" } }
+      {
+        "gatilho": "reducao",
+        "v": 10,
+        "escopo": "self",
+        "contra": {
+          "slot": "basico"
+        }
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 6,
+        "escopo": "self",
+        "quando": {
+          "alvoDebuff": "qualquer"
+        }
+      }
     ]
   },
   "ab": [
@@ -30,6 +44,49 @@
         {
           "t": "dmg",
           "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano; Sobek recebe 3 de redução de dano por 1 turno."
         }
       ]
     },
@@ -58,6 +115,45 @@
             "dur": 3
           }
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "Submerge o alvo por 1 turno (não age, não pode ser alvo, não gera orbe); ao voltar, fica Encharcado. Sobek ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Submerge o alvo por 1 turno (não age, não pode ser alvo, não gera orbe); ao voltar, fica Encharcado. Sobek ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Submerge o alvo por 1 turno (não age, não pode ser alvo, não gera orbe); ao voltar, fica Encharcado. Sobek ganha 4 de Defesa Destrutível."
+        }
       ]
     },
     {
@@ -76,6 +172,41 @@
           "t": "dmg",
           "v": 18,
           "seEncharcado": 30
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos; Encharcados sofrem 30."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos; Encharcados sofrem 30."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos; Encharcados sofrem 30."
         }
       ]
     }

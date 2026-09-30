@@ -10,7 +10,17 @@
     "nome": "Modelador",
     "desc": "Quando um aliado cai, o time cura 12.",
     "fx": [
-      { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "heal", "v": 12, "escopo": "time" } ] }
+      {
+        "gatilho": "aoCair",
+        "quem": "aliado",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 12,
+            "escopo": "time"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,33 +28,178 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Torno de Barro",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Couraça de Barro",
-      "cost": { "Verdejante": 2 },
+      "cost": {
+        "Verdejante": 2
+      },
       "cd": 3,
       "alvo": "aliado",
       "desc": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 25 de Defesa Destrutível.",
-      "fx": [ { "t": "intercepta", "contra": "todos", "dur": 2 }, { "t": "shield", "v": 25 } ]
+      "fx": [
+        {
+          "t": "intercepta",
+          "contra": "todos",
+          "dur": 2
+        },
+        {
+          "t": "shield",
+          "v": 25
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 25,
+              "para": 26
+            }
+          ],
+          "desc": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 26 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 26,
+              "para": 27
+            }
+          ],
+          "desc": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 27 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 27,
+              "para": 28
+            }
+          ],
+          "desc": "Por 2 turnos, Khnum intercepta os golpes de alvo único contra 1 aliado, que ganha 28 de Defesa Destrutível."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Sopro da Criação",
-      "cost": { "Verdejante": 1, "livre": 2 },
+      "cost": {
+        "Verdejante": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "aliado",
       "desc": "O time ganha 20 de Defesa Destrutível; 1 aliado causa +12 de dano por 2 turnos.",
       "fx": [
-        { "t": "shield", "v": 20, "escopo": "time" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 } }
+        {
+          "t": "shield",
+          "v": 20,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 12,
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "O time ganha 21 de Defesa Destrutível; 1 aliado causa +12 de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "O time ganha 21 de Defesa Destrutível; 1 aliado causa +13 de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "O time ganha 22 de Defesa Destrutível; 1 aliado causa +13 de dano por 2 turnos."
+        }
       ]
     }
   ]

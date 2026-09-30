@@ -10,7 +10,13 @@
     "nome": "Fragrância Serena",
     "desc": "Curas feitas por aliados Egípcios curam +5.",
     "fx": [
-      { "gatilho": "bonusCura", "v": 5, "quandoCura": { "curadorFaccao": "Egípcia" } }
+      {
+        "gatilho": "bonusCura",
+        "v": 5,
+        "quandoCura": {
+          "curadorFaccao": "Egípcia"
+        }
+      }
     ]
   },
   "ab": [
@@ -23,33 +29,174 @@
       "alvo": "inimigo",
       "desc": "10 de dano a 1 inimigo.",
       "fx": [
-        { "t": "dmg", "v": 10 }
+        {
+          "t": "dmg",
+          "v": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "11 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Perfume de Lótus",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 1,
       "alvo": "aliado",
       "desc": "Remove 1 debuff de 1 aliado; ele causa +8 de dano por 2 turnos.",
       "fx": [
-        { "t": "cleanse" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 } }
+        {
+          "t": "cleanse"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Remove 1 debuff de 1 aliado; ele causa +9 de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "Remove 1 debuff de 1 aliado; ele causa +10 de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Remove 1 debuff de 1 aliado; ele causa +11 de dano por 2 turnos."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Desabrochar da Aurora",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Cura 18 no time e regenera 8 por turno durante 3 turnos.",
       "fx": [
-        { "t": "heal", "v": 18, "escopo": "time" },
-        { "t": "apply", "eff": { "type": "regen", "v": 8, "dur": 3 }, "escopo": "time" }
+        {
+          "t": "heal",
+          "v": 18,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "regen",
+            "v": 8,
+            "dur": 3
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "Cura 19 no time e regenera 8 por turno durante 3 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Cura 19 no time e regenera 9 por turno durante 3 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "Cura 20 no time e regenera 9 por turno durante 3 turnos."
+        }
       ]
     }
   ]
