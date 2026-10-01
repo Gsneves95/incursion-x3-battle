@@ -10,7 +10,17 @@
     "nome": "Ascese Cósmica",
     "desc": "Quando qualquer aliado usa um Milagre, Shiva ganha 1 orbe de Umbra.",
     "fx": [
-      { "gatilho": "aoUsarHabilidade", "slot": "milagre", "faz": [ { "t": "orbGain", "n": 1, "para": "Umbra" } ] }
+      {
+        "gatilho": "aoUsarHabilidade",
+        "slot": "milagre",
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 1,
+            "para": "Umbra"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,36 +28,178 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Tridente Trishula",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Tandava",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 2,
       "alvo": "todosInimigos",
       "desc": "12 de dano a todos os inimigos; +6 de dano permanente a cada uso na partida.",
       "fx": [
-        { "t": "dmg", "v": 12, "escopo": "todosInimigos" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 6, "dur": 99 }, "escopo": "self" }
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 6,
+            "dur": 99
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a todos os inimigos; +6 de dano permanente a cada uso na partida."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "13 de dano a todos os inimigos; +7 de dano permanente a cada uso na partida."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a todos os inimigos; +7 de dano permanente a cada uso na partida."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Terceiro Olho",
-      "cost": { "Umbra": 2, "livre": 2 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 2
+      },
       "cd": 5,
       "alvo": "inimigo",
       "umaVez": true,
       "desc": "45 de dano puro a 1 inimigo; ignora Invulnerabilidade, Defesa Destrutível e 'não cai abaixo de 1 HP'. UMA VEZ POR PARTIDA.",
       "fx": [
-        { "t": "dmg", "v": 45, "kind": "puro", "ignoraInvuln": true, "ignoraPiso": true }
+        {
+          "t": "dmg",
+          "v": 45,
+          "kind": "puro",
+          "ignoraInvuln": true,
+          "ignoraPiso": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 45,
+              "para": 47
+            }
+          ],
+          "desc": "47 de dano puro a 1 inimigo; ignora Invulnerabilidade, Defesa Destrutível e 'não cai abaixo de 1 HP'. UMA VEZ POR PARTIDA."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 47,
+              "para": 49
+            }
+          ],
+          "desc": "49 de dano puro a 1 inimigo; ignora Invulnerabilidade, Defesa Destrutível e 'não cai abaixo de 1 HP'. UMA VEZ POR PARTIDA."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 49,
+              "para": 51
+            }
+          ],
+          "desc": "51 de dano puro a 1 inimigo; ignora Invulnerabilidade, Defesa Destrutível e 'não cai abaixo de 1 HP'. UMA VEZ POR PARTIDA."
+        }
       ]
     }
   ]

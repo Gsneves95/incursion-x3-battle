@@ -11,7 +11,15 @@
     "nome": "Senhor dos Começos",
     "desc": "No turno 1, o time ganha 2 orbes extras.",
     "fx": [
-      { "gatilho": "abertura", "faz": [ { "t": "orbGain", "n": 2 } ] }
+      {
+        "gatilho": "abertura",
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 2
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -27,6 +35,48 @@
         {
           "t": "dmg",
           "v": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Grátis. 11 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "Grátis. 12 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "Grátis. 12 de dano; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -47,6 +97,44 @@
         {
           "t": "stripOne",
           "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "heal",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "Remove todos os debuffs de 1 aliado e 1 buff de cada inimigo; o aliado cura 2."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Remove todos os debuffs de 1 aliado e 1 buff de cada inimigo; o aliado cura 3."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Remove todos os debuffs de 1 aliado e 1 buff de cada inimigo; o aliado cura 4."
         }
       ]
     },
@@ -74,6 +162,45 @@
         {
           "t": "orbGain",
           "n": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2,
+                "escopo": "time"
+              }
+            }
+          ],
+          "desc": "Remove todo controle e debuff do time, reduz as recargas em 1, o time ganha 2 orbes e 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[3].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Remove todo controle e debuff do time, reduz as recargas em 1, o time ganha 2 orbes e 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[3].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Remove todo controle e debuff do time, reduz as recargas em 1, o time ganha 2 orbes e 4 de Defesa Destrutível."
         }
       ]
     }

@@ -6,6 +6,97 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · FECHO — 100 de 100 deuses com escada medida e liberada
+
+A FASE 3 (escadas de nível por deus, medidas na régua e liberadas uma a uma) **fechou com os 100 deuses**. Todos têm
+escada em `data/deuses/*.json`, todos passaram na triagem (MÁX 0..+25pp; nenhuma habilidade nv4 > +15pp) ou foram
+tratados por regra (±1, h', j', SEM ESCADA de desenho), e todos estão em `data/niveis_liberados.json`. A trava de
+liberação (`subirNivel` recusa deus fora da lista) agora cobre o panteão inteiro; o portão real sempre foi a lista, não
+dormência. Build + suíte + babás verdes; `recarimbar_hash` = 0 estale; varredura de buracos/escadas-curtas nos 100 = 0
+buraco, 4 escadas curtas (todas marcadas).
+
+**Resumo por panteão (100):**
+
+| panteão | deuses |
+|---|---|
+| Grega | 18 |
+| Japonesa | 14 |
+| Nórdica | 14 |
+| Egípcia | 14 |
+| Chinesa | 9 |
+| Brasileira | 8 |
+| Hindu | 8 |
+| Africana | 6 |
+| Celta | 5 |
+| Maia | 4 |
+
+**Habilidades SEM ESCADA (12 no total) — o motivo de cada:**
+- **Regra f' (3 básicos, redução passiva permanente ≥10, sem marcação):** `aquiles.basico`, `kraken.basico`,
+  `baldur.basico` (durões demais — o básico spammado ~13×/partida leva até a cura-self 1→2 a +24pp).
+- **Regra h' (3, estoura com a escada mínima, marcado `semEscada`):** `afrodite.basico` (mínima +10,2; qualquer nv4 →
+  +17,1), `hel.basico` (mínima só-dano +18,6, amplificada pela passiva de cura em turno ímpar), `saci.milagre` (dano NOVO
+  num milagre de controle puro em massa: dmg 1 já mede +19,1 / MÁX +37,5).
+- **SEM ESCADA por desenho (6, marcado `semEscada`):** `exu.habilidade` e `tanuki.habilidade` (escolha com `opcoes`,
+  SEM número nas opções — ext.iii de NOVO em opção fica deferida); `nezha.habilidade` (alternada sem fx no topo);
+  `susanoo.habilidade` (8 golpes de 4: +1 = +8 de uma vez = salto a') e `houyi.milagre` (9 flechas de 5: +1 = +9 = salto);
+  `izanami.habilidade` (dano só do contador; único número é a base de um dot PERMANENTE dur 99 em área).
+
+**ESCADAS CURTAS (4, regra j', marcado `escadaCurta` — contíguas a partir do 2):**
+- `brahma.habilidade` (1 degrau): pilha PERMANENTE e acumulável de dano para o time — cada +1 fica para sempre nos 3.
+- `fujin.basico` e `fujin.milagre` (2 degraus): ±1 do L11 (MÁX +30,1 → +23,4).
+- `huangdi.milagre` (2 degraus): NOVO-PEQUENO de escudo num milagre que zera recargas de 2 aliados (shield 4 = +17,5 →
+  teto 3 = +11,9).
+
+**Deuses marcados para REVISÃO quando a IA usar o kit (mediram abaixo de 0 sob IA-espelho — limitação conhecida da
+IA, aceita):** `piranha` (L10, MÁX −5,5 — frágil multi-golpe dependente de Sangramento) e `kali.milagre` (L14, −5,4 — o
+`noHeal`-self + danoFimTurno prejudica nas mãos da IA-espelho). Casos de borda não-detectados perto de 0 (ruído, não
+negativos reais): `krishna.habilidade` −0,5, `raijin.habilidade` −0,6.
+
+**Régua final: regras (a')–(j') + PRAZO DE EXECUÇÃO; whitelist PEQUENO = `fx[i].v`/`.eff.v`, ramos
+`entao`/`senao`/`agenda`, `fx[i].hp` (revive/vidaExtra), `opcoes[k].fx[i].v`/`.eff.v` (ext.iii leve),
+`fx[i].posicional[k]` (ext.v); NOVO-PEQUENO só nv2; SALTO (`cd`/`cost`/`fx[i].eff.dur`/`fx[i].dur`/`fx[]`) só no último
+degrau, ≤1/hab, e NUNCA no `eff.dur` de um `livro` (prazo de execução).** Guardas: `validarNiveisDeus` +
+`conferirTextoNiveis` (build), babá 8 "todo degrau muda o estado" (100 deuses, 859 degraus), babás B3/B4(a–k) da whitelist.
+
+---
+
+## §318 FASE 3 · LOTE 14 (8 hindus) — o ÚLTIMO; 8 de 8 DENTRO; Brahma habil escada curta (j')
+
+**Varredura em DUAS METADES** (o limite de 30 min de processo em segundo plano cortou a do L13), N=3000 sorteado+reativo,
+higiene antes, **0 empate-por-teto**. Na prática rodei em sub-lotes de ≤4 gods para caber na janela. **8 de 8 DENTRO sem
+ajuste** — nenhuma habilidade nv4 > +15pp (maior single: Shiva básico +13,7); todo MÁX ≤ +25 (maior: Ganesha +22,6).
+Nenhum ±1, nenhum (h') precisou (os NOVO-PEQUENO de cura/escudo em utilitário forte — Ganesha habil/milagre, Krishna
+habil — ficaram dentro: habil +12,3 / milagre +10,0 / +9,0 no máx).
+
+**Brahma habilidade = ESCADA CURTA (j', item 0):** é uma pilha PERMANENTE e acumulável de dano para o time inteiro
+(dmgUp dur 99, +4 a cada uso, para sempre nos 3). Só nv2 (4→5), marcado `escadaCurta`. Topo do slot = 2.
+
+**Motor verificado aplicado-como-escrito** (o dono mandou conferir, tudo no kit efetivo): Vishnu habil (ext.iii leve) sobe
+NARASIMHA (eff.v 8→11) e KURMA (shield 15→18) juntos; Hanuman milagre cura no Senhor (`fx[1].v alvoSenhor` 30→31,
+`alvoSenhor:true` preservado); Kali milagre `danoFimTurno` eff.v 12→13 (ataque de fim de turno); Shiva habil sobe o AoE
+(12→14) e a pilha permanente dur 99 (eff.v 6→7); Durga básico de 2 golpes (fx[0].v / fx[1].v) sem debuff novo (ligaria a
+passiva +8); Durga milagre sobe a base (32→38), o 48-vs-HP-alto (seCond) fica fora. A babá 8 ganhou o preparo do ramo
+`seCond.alvoHp.acima` (fere o alvo abaixo do limiar para a BASE do Durga milagre aplicar).
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Ganesha (inicial) | +2,0 | +12,3 | +10,0 | +22,6 | DENTRO |
+| Shiva | +13,7 | +7,9 | +2,2 | +15,9 | DENTRO |
+| Vishnu | +6,0 | +6,1 | +2,5 | +14,4 | DENTRO |
+| Durga | +7,7 | +0,3 | +0,5 | +8,8 | DENTRO |
+| Krishna | +5,5 | −0,5 | +9,0 | +12,0 | DENTRO |
+| Brahma | +7,7 | +1,4² | +1,9 | +11,5 | DENTRO |
+| Hanuman | +2,5 | +0,8 | +1,9 | +7,3 | DENTRO |
+| Kali | +10,0 | +2,4 | −5,4¹ | +5,9 | DENTRO |
+
+¹ Kali milagre negativo sob IA-espelho (noHeal-self + danoFimTurno prejudica nas mãos da IA) → marcado para revisão.
+² Brahma habil = escada curta de 1 degrau (pilha permanente). **8 de 8 DENTRO**, todos liberados → **100 deuses** (FASE 3
+fechada). Tabela-resumo e inventário completo acima, no FECHO.
+
+---
+
 ## §318 FASE 3 · LOTE 13 (9 chineses) — 9 de 9 DENTRO; 2 SEM ESCADA (Nezha habil, Hou Yi milagre); ±1 no Huang Di; regra do PRAZO DE EXECUÇÃO
 
 **Uma varredura** dos 9 (Nezha/Ao Kuang/Hou Yi/Guan Yu/Chang'e/Huang Di/Nüwa/Sun Wukong/Yan Wong), N=3000

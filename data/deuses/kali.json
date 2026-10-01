@@ -10,8 +10,23 @@
     "nome": "Guirlanda de Caveiras",
     "desc": "Por inimigo derrotado, Kali causa +10 de dano e cura 15.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 0, "escopo": "self", "porInimigoCaido": 10 },
-      { "gatilho": "aoCair", "quem": "qualquerInimigo", "faz": [ { "t": "heal", "v": 15, "escopo": "self" } ] }
+      {
+        "gatilho": "bonusDano",
+        "v": 0,
+        "escopo": "self",
+        "porInimigoCaido": 10
+      },
+      {
+        "gatilho": "aoCair",
+        "quem": "qualquerInimigo",
+        "faz": [
+          {
+            "t": "heal",
+            "v": 15,
+            "escopo": "self"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -19,34 +34,186 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Golpe da Foice",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Sede de Sangue",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 1,
       "alvo": "inimigo",
       "desc": "20 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP.",
-      "fx": [ { "t": "dmg", "v": 20, "porInimigoHp": { "v": 10, "abaixo": 60 } } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 20,
+          "porInimigoHp": {
+            "v": 10,
+            "abaixo": 60
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "22 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano a 1 inimigo, +10 por inimigo abaixo de 60 de HP."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Dança da Aniquilação",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos; por 2 turnos Kali ataca de graça por 12 no fim do turno, mas não pode ser curada.",
       "fx": [
-        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
-        { "t": "apply", "eff": { "type": "danoFimTurno", "v": 12, "dur": 2 }, "escopo": "self" },
-        { "t": "apply", "eff": { "type": "noHeal", "dur": 2 }, "escopo": "self" }
+        {
+          "t": "dmg",
+          "v": 18,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "danoFimTurno",
+            "v": 12,
+            "dur": 2
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "noHeal",
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos; por 2 turnos Kali ataca de graça por 12 no fim do turno, mas não pode ser curada."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "19 de dano a todos; por 2 turnos Kali ataca de graça por 13 no fim do turno, mas não pode ser curada."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos; por 2 turnos Kali ataca de graça por 13 no fim do turno, mas não pode ser curada."
+        }
       ]
     }
   ]

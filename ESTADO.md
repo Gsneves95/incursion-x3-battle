@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · FECHO + LOTE 14 (8 hindus, o ÚLTIMO) — 100/100 deuses com escada liberada
+
+**FASE 3 FECHADA: os 100 deuses têm escada medida na régua e liberada** (`data/niveis_liberados.json` = 100). A trava
+(`subirNivel` recusa deus fora da lista) cobre o panteão inteiro. Build + suíte + babás verdes; 0 Provação estale;
+varredura nos 100 = 0 buraco, 4 escadas curtas (todas marcadas).
+
+**LOTE 14 (Ganesha/Shiva/Vishnu/Durga/Krishna/Brahma/Hanuman/Kali):** varredura N=3000 em sub-lotes de ≤4 gods (o limite
+de 30 min de processo corta ~16 medições), higiene antes, 0 empate-por-teto. **8/8 DENTRO sem ajuste** (maior single
+Shiva básico +13,7; maior MÁX Ganesha +22,6). Brahma habil = escada curta (j') de 1 degrau (pilha permanente de dano ao
+time). Kali milagre −5,4 (negativo sob IA-espelho: noHeal-self + danoFimTurno) → marcado para revisão. Motor verificado
+(kitEfetivo): Vishnu opções, Hanuman cura-no-Senhor, Kali danoFimTurno, Durga 2-golpes + seCond-48-fora. Babá 8 ganhou o
+preparo `seCond.alvoHp.acima` (Durga milagre).
+
+**Inventário do fecho (ver DECISOES "FECHO"):** por panteão — Grega 18, Japonesa 14, Nórdica 14, Egípcia 14, Chinesa 9,
+Brasileira 8, Hindu 8, Africana 6, Celta 5, Maia 4. **SEM ESCADA (12):** f' 3 (aquiles/kraken/baldur básico); h' 3
+(afrodite/hel básico, saci milagre); desenho 6 (exu/tanuki/nezha/susanoo/izanami habil, houyi milagre). **ESCADA CURTA (4,
+j'):** brahma habil (1), fujin básico+milagre (2), huangdi milagre (2). **REVISÃO IA (abaixo de 0):** piranha (MÁX −5,5),
+kali milagre (−5,4).
+
 ## ★ §318 FASE 3 · LOTE 13 (9 chineses) — 9/9 DENTRO; 92 liberados; regra do PRAZO DE EXECUÇÃO
 
 **Uma varredura** dos 9 (Nezha/Ao Kuang/Hou Yi/Guan Yu/Chang'e/Huang Di/Nüwa/Sun Wukong/Yan Wong), N=3000, higiene antes,

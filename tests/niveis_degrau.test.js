@@ -86,6 +86,10 @@ function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
   const inEntao = /\.entao\[/.test(cam);
   if (efAb) {
     if (/\.hp$/.test(cam) && scanFx(efAb.fx, f => f.t === 'revive' || f.t === 'reviveProximoTurno')) { const cai = st.lados[0].units[2]; cai.vivo = false; cai.hp = 0; cai.efeitos = []; cai.dots = []; }   // revive: aliado caído
+    // §318 F3 L14 — dmg com BÔNUS vs alvo de HP ALTO (Durga milagre: 48 se o alvo estiver acima de 84): fere o inimigo-alvo
+    // ABAIXO do limiar p/ a BASE aplicar (o fx[i].v levelado), senão o ramo do bônus engole o degrau e ele pareceria inerte.
+    const seCondHp = scanFx(efAb.fx, f => f.seCond && f.seCond.quando && f.seCond.quando.alvoHp && f.seCond.quando.alvoHp.op === 'acima');
+    if (seCondHp) { const inim = st.lados[1].units[0]; inim.hp = Math.max(1, seCondHp.seCond.quando.alvoHp.v - 20); }
     if (inEntao) {
       const seHp = scanFx(efAb.fx, f => f.se && f.se.alvoHp && f.se.alvoHp.op === 'abaixo');   // ramo "hp abaixo de X": fere o aliado-alvo (Osíris)
       if (seHp) { const al = st.lados[0].units[1]; al.hp = Math.max(1, seHp.se.alvoHp.v - 20); }

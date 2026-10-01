@@ -10,7 +10,14 @@
     "nome": "Auriga de Arjuna",
     "desc": "O aliado que causou mais dano no turno anterior causa +5 de dano.",
     "fx": [
-      { "gatilho": "bonusDano", "v": 5, "escopo": "time", "quando": { "atacanteMaiorDanoAntes": true } }
+      {
+        "gatilho": "bonusDano",
+        "v": 5,
+        "escopo": "time",
+        "quando": {
+          "atacanteMaiorDanoAntes": true
+        }
+      }
     ]
   },
   "ab": [
@@ -22,29 +29,173 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Conselho do Gita",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Ação Perfeita em 1 aliado: a próxima habilidade dele não pode ser evitada, reduzida, absorvida nem contra-atacada.",
-      "fx": [ { "t": "apply", "eff": { "type": "acaoPerfeita", "dur": 2 } } ]
+      "fx": [
+        {
+          "t": "apply",
+          "eff": {
+            "type": "acaoPerfeita",
+            "dur": 2
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "Ação Perfeita em 1 aliado: a próxima habilidade dele não pode ser evitada, reduzida, absorvida nem contra-atacada. Ele ganha 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Ação Perfeita em 1 aliado: a próxima habilidade dele não pode ser evitada, reduzida, absorvida nem contra-atacada. Ele ganha 3 de Defesa Destrutível."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 3,
+              "para": 4
+            }
+          ],
+          "desc": "Ação Perfeita em 1 aliado: a próxima habilidade dele não pode ser evitada, reduzida, absorvida nem contra-atacada. Ele ganha 4 de Defesa Destrutível."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Forma Universal",
-      "cost": { "Aurora": 1, "livre": 2 },
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "O time causa +12 de dano por 2 turnos e ganha 2 orbes.",
       "fx": [
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "time" },
-        { "t": "orbGain", "n": 2 }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 12,
+            "dur": 2
+          },
+          "escopo": "time"
+        },
+        {
+          "t": "orbGain",
+          "n": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "O time causa +13 de dano por 2 turnos e ganha 2 orbes."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "O time causa +14 de dano por 2 turnos e ganha 2 orbes."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "O time causa +15 de dano por 2 turnos e ganha 2 orbes."
+        }
       ]
     }
   ]

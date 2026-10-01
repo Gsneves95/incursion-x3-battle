@@ -10,8 +10,20 @@
     "nome": "Filho do Vento",
     "desc": "Imune a Queimadura; com Sun Wukong no time, Hanuman causa +8 de dano.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "queimadura" ] },
-      { "gatilho": "bonusDano", "v": 8, "escopo": "self", "estado": { "aliadoPresente": "sunwukong" } }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "queimadura"
+        ]
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "escopo": "self",
+        "estado": {
+          "aliadoPresente": "sunwukong"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,36 +31,181 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Maça Gada",
-      "cost": { "Tempestade": 1 },
+      "cost": {
+        "Tempestade": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Hanuman recebe 3 de redução de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Devoção a Rama",
-      "cost": { "Tempestade": 2 },
+      "cost": {
+        "Tempestade": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Adota 1 aliado como Senhor por 2 turnos: Hanuman intercepta todo o dano dirigido a ele e causa +10 de dano.",
       "fx": [
-        { "t": "intercepta", "dur": 2, "contra": "todos" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 2 }, "escopo": "self" }
+        {
+          "t": "intercepta",
+          "dur": 2,
+          "contra": "todos"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 10,
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Adota 1 aliado como Senhor por 2 turnos: Hanuman intercepta todo o dano dirigido a ele e causa +11 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 11,
+              "para": 12
+            }
+          ],
+          "desc": "Adota 1 aliado como Senhor por 2 turnos: Hanuman intercepta todo o dano dirigido a ele e causa +12 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Adota 1 aliado como Senhor por 2 turnos: Hanuman intercepta todo o dano dirigido a ele e causa +13 de dano."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Montanha Dronagiri",
-      "cost": { "Tempestade": 2, "livre": 1 },
+      "cost": {
+        "Tempestade": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos e cura 30 no Senhor (ou no aliado mais ferido).",
       "fx": [
-        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
-        { "t": "heal", "v": 30, "alvoSenhor": true }
+        {
+          "t": "dmg",
+          "v": 18,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "heal",
+          "v": 30,
+          "alvoSenhor": true
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos e cura 30 no Senhor (ou no aliado mais ferido)."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 30,
+              "para": 31
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos e cura 31 no Senhor (ou no aliado mais ferido)."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos e cura 31 no Senhor (ou no aliado mais ferido)."
+        }
       ]
     }
   ]
