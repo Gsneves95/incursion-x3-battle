@@ -47,10 +47,27 @@ buraco, 4 escadas curtas (todas marcadas).
 - `huangdi.milagre` (2 degraus): NOVO-PEQUENO de escudo num milagre que zera recargas de 2 aliados (shield 4 = +17,5 →
   teto 3 = +11,9).
 
-**Deuses marcados para REVISÃO quando a IA usar o kit (mediram abaixo de 0 sob IA-espelho — limitação conhecida da
-IA, aceita):** `piranha` (L10, MÁX −5,5 — frágil multi-golpe dependente de Sangramento) e `kali.milagre` (L14, −5,4 — o
-`noHeal`-self + danoFimTurno prejudica nas mãos da IA-espelho). Casos de borda não-detectados perto de 0 (ruído, não
-negativos reais): `krishna.habilidade` −0,5, `raijin.habilidade` −0,6.
+**Deuses marcados para REVISÃO quando a IA usar o kit — TODA medição < 0 da Fase 3 (piloto + L1–L14), varrida das tabelas.**
+Negativo sob IA-espelho é limitação conhecida da IA (ela às vezes não joga o kit direito), aceita na triagem; listado aqui
+para rever quando a IA passar a usar os kits. Dois eixos:
+
+*(a) MÁX < 0 — o deus INTEIRO mede líquido-negativo (prioridade de revisão):*
+- `brigid` — MÁX **−5,9** (L8) — suporte frágil; a escada não compensa a fragilidade sob IA.
+- `piranha` — MÁX **−5,5** (L10) — multi-golpe dependente de Sangramento.
+
+*(b) habilidade nv4 (slot único) < 0 — a escada daquele slot, medida SOZINHA, mede negativo (nos casos abaixo o MÁX do
+deus é ≥ 0, fora Brigid/Piranha acima):*
+- `brigid.basico` **−9,6** (L8) · `piranha.basico` **−9,1** (L10) · `fenrir.basico` **−6,2** (L4) ·
+  `tyr.basico` **−5,4** (piloto/L1) · `kali.milagre` **−5,4** (L14) · `dagda.basico` **−3,7** (L8) ·
+  `ogum.habilidade` **−3,6** (L8) · `hades.basico` **−2,5** (L3) · `freyja.basico` **−1,8** (L4) ·
+  `hades.milagre` **−0,8** (L3) · `raijin.habilidade` **−0,6** (L11) · `itzamna.basico` **−0,6** (L10) ·
+  `krishna.habilidade` **−0,5** (L14) · `lugh.milagre` **−0,3** (L9) · `odin.basico` **−0,1** (L5) ·
+  `odin.habilidade` **−0,1** (L5).
+
+Os de magnitude ≥ 1 (brigid/piranha/fenrir/tyr/kali/dagda/ogum/hades/freyja) são frágeis-sob-IA de verdade; os de
+|v| < 1 (hades.milagre, raijin, itzamná, krishna, lugh, odin) são "não-detectados" perto de 0 — ruído de medição, não
+negativos reais, mas listados por completude. (Nota: o Tyr teve variantes exploratórias no L1 ainda mais negativas —
+`habilidade` −5,2 no "dado do dono" — descartadas; a escada EMBARCADA do Tyr é a `básico −5,4` acima.)
 
 **Régua final: regras (a')–(j') + PRAZO DE EXECUÇÃO; whitelist PEQUENO = `fx[i].v`/`.eff.v`, ramos
 `entao`/`senao`/`agenda`, `fx[i].hp` (revive/vidaExtra), `opcoes[k].fx[i].v`/`.eff.v` (ext.iii leve),

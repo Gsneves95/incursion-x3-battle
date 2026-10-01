@@ -18,8 +18,12 @@ preparo `seCond.alvoHp.acima` (Durga milagre).
 **Inventário do fecho (ver DECISOES "FECHO"):** por panteão — Grega 18, Japonesa 14, Nórdica 14, Egípcia 14, Chinesa 9,
 Brasileira 8, Hindu 8, Africana 6, Celta 5, Maia 4. **SEM ESCADA (12):** f' 3 (aquiles/kraken/baldur básico); h' 3
 (afrodite/hel básico, saci milagre); desenho 6 (exu/tanuki/nezha/susanoo/izanami habil, houyi milagre). **ESCADA CURTA (4,
-j'):** brahma habil (1), fujin básico+milagre (2), huangdi milagre (2). **REVISÃO IA (abaixo de 0):** piranha (MÁX −5,5),
-kali milagre (−5,4).
+j'):** brahma habil (1), fujin básico+milagre (2), huangdi milagre (2). **REVISÃO IA — toda medição < 0 da Fase 3 (varrida
+das tabelas piloto+L1–L14):** MÁX<0 (deus inteiro líquido-negativo) = brigid −5,9 (L8), piranha −5,5 (L10). Slot nv4<0
+(escada do slot sozinha, MÁX do deus ≥0 fora os 2 acima): brigid.bas −9,6, piranha.bas −9,1, fenrir.bas −6,2 (L4),
+tyr.bas −5,4 (piloto), kali.mil −5,4 (L14), dagda.bas −3,7, ogum.hab −3,6 (L8), hades.bas −2,5 / hades.mil −0,8 (L3),
+freyja.bas −1,8 (L4), e os ~0 (ruído, não-detectado): raijin.hab −0,6, itzamna.bas −0,6, krishna.hab −0,5, lugh.mil −0,3,
+odin.bas/hab −0,1. Lista completa com motivos na DECISOES "FECHO".
 
 ## ★ §318 FASE 3 · LOTE 13 (9 chineses) — 9/9 DENTRO; 92 liberados; regra do PRAZO DE EXECUÇÃO
 
