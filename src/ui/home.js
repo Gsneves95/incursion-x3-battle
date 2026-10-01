@@ -1674,6 +1674,10 @@ function provacaoDetalheHTML(k){
 // (skills) vai à direita, coerente com o §214). deusSel = skill selecionada; abre na PASSIVA (ela
 // define o deus e é o que menos se pensaria em tocar). deusSelKey reseta a seleção ao trocar de deus.
 let deusSel = 'passiva', deusSelKey = null;
+// §319 FASE 4 — a tela de NÍVEIS: confirmação inline por painel (§245, sem modal). nlConfirm = slot com a
+// confirmação aberta (só um por vez); nlPendente trava o toque duplo enquanto o servidor responde; nlMsg =
+// {slot,texto} com a recusa curta do servidor. Resetam ao trocar de deus (ver renderDeusDetalhe).
+let nlConfirm = null, nlPendente = false, nlMsg = null;
 
 // COMO CONSEGUIR (substitui a maestria quando NÃO se possui o deus): maestria zero não é informação;
 // a rota de aquisição é. Duas vias: INVOCAÇÃO (gacha) e MISSÃO (§234). O ELO com a tela de Missões
@@ -1746,49 +1750,208 @@ function deusDetalheHTML(g, sel){
   if (!s || !s.a) return `<div class="ddet"><div class="col2k__row col2k__row--vazio">Kit em produção.</div></div>`;
   return `<div class="ddet">${kitLinhaHTML(s.tipo, s.a, s.slot === 'passiva')}</div>`;
 }
+// ===================================================================
+// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). A rota 'deus' da Coleção passa a
+// ser a tela de NÍVEIS: coluna esquerda = identidade + PASSIVA (sem níveis) + rodapé "X de Y"; coluna direita
+// = os 3 painéis das habilidades ativas (básico/habilidade/milagre), cada um com os marcadores de nível, o
+// "Atual" e o "Próximo" (SÓ o que muda), e o botão SUBIR. O servidor (subirNivel) é AUTORITATIVO (pontos,
+// topo por slot, trava de liberação); isto é TELA — nada do que o jogador vê é inventado aqui, tudo deriva
+// do data/deuses (escadas), do kitEfetivo (texto no nível) e da economia.json (custo em pontos).
+// ===================================================================
+function NL_ECON(){ return (typeof ECONOMIA !== 'undefined' && ECONOMIA.invocacao) || {}; }
+function nlCustoNivel(alvo){ const c = NL_ECON().custoNivel || {}; return c[String(alvo)] || 0; }   // pontos p/ chegar AO nível
+function nlPontosPorCopia(rar){ const p = NL_ECON().pontosPorDuplicata || {}; return p[rar] || 0; }
+function nlNivel(k, sl){ const n = niveisDeExibicao(k); return (n && n[sl]) || 1; }                   // nível atual do slot (conta; 1 default)
+function nlPontos(k){ return (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.pontos && contaAtual.pontos[k]) || 0; }
+function nlAb(gm, sl){ return (gm && gm.ab || []).find(a => a.slot === sl) || null; }
+// SEM ESCADA: sem niveis (ou vazio) OU marcado semEscada (f'/h'). Não sobe. O motivo técnico do dado (que
+// cita medidas internas) NUNCA aparece na tela — a cópia é genérica.
+function nlSemEscada(ab){ return !ab || !Array.isArray(ab.niveis) || ab.niveis.length === 0 || ab.semEscada === true; }
+// TOPO real do slot: sem escada → 1; senão 1 + nº de degraus (escada curta pára antes do 4 — §318 j').
+function nlTopo(ab){ return nlSemEscada(ab) ? 1 : 1 + ab.niveis.length; }
+// "X de Y": X = soma dos níveis atuais das 3 ativas; Y = soma dos TOPOS REAIS (conta escada curta e sem-escada).
+function nlResumo(k, gm){
+  let x = 0, y = 0;
+  for (const sl of ['basico', 'habilidade', 'milagre']){
+    const ab = nlAb(gm, sl), topo = nlTopo(ab);
+    x += nlSemEscada(ab) ? 1 : Math.min(nlNivel(k, sl), topo);
+    y += topo;
+  }
+  return { x, y };
+}
+// até onde os PONTOS alcançam a partir do nível atual (marcadores "pode" — mostra o alcance, não só o próximo).
+function nlAlcance(k, ab, cur){
+  let pts = nlPontos(k), lvl = cur; const topo = nlTopo(ab);
+  while (lvl < topo){ const c = nlCustoNivel(lvl + 1); if (c <= pts){ pts -= c; lvl++; } else break; }
+  return lvl;
+}
+// a habilidade EFETIVA num nível arbitrário do slot (clona o deus e aplica a escada — §318 kitEfetivo).
+function nlAbEf(gm, sl, nivel){
+  if (typeof kitEfetivo !== 'function') return nlAb(gm, sl);
+  const nv = {}; nv[sl] = nivel;
+  const kit = kitEfetivo(gm, nv);
+  return (kit.ab || []).find(a => a.slot === sl) || nlAb(gm, sl);
+}
+// "nova parte" = as orações do desc do nível cur+1 que NÃO estão no desc do nível cur (derivada do texto, não
+// escrita à mão). É o que se mostra num SALTO (efeito novo, duração que muda a redação).
+function nlNovaParte(gm, sl, cur){
+  const a = nlAbEf(gm, sl, cur), b = nlAbEf(gm, sl, cur + 1);
+  const split = s => (s || '').split(/[;.]/).map(x => x.trim()).filter(Boolean);
+  const antes = new Set(split(a.desc));
+  return split(b.desc).filter(cl => !antes.has(cl)).join('; ');
+}
+// "Próximo" = SÓ o que muda no degrau cur→cur+1, derivado do `muda` (caminho) + o texto do próximo nível:
+// número (16 → 17) · Recarga 4 → 3 · Custo 2 → 1 <orbe> · Novo: <nova parte>. Nada escrito por deus.
+function nlProxFrags(gm, sl, cur){
+  const ab = nlAb(gm, sl);
+  const degrau = (ab && ab.niveis || []).find(x => x && x.nv === cur + 1);
+  if (!degrau) return [];
+  const frags = []; let novoFeito = false;
+  for (const m of (degrau.muda || [])){
+    const c = m.caminho || '';
+    if (/(^|\.)cd$/.test(c)) frags.push({ t: 'recarga', txt: `Recarga ${m.de} → ${m.para}` });
+    else if (/^cost\./.test(c)){ const orb = c.slice(5); frags.push({ t: 'custo', txt: `Custo ${m.de} → ${m.para} ${orb === 'livre' ? 'livre' : orb}` }); }
+    else if (/(\.v|\.hp|\.eff\.v)$/.test(c) || /\.posicional\[\d+\]$/.test(c)) frags.push({ t: 'num', txt: `${m.de} → ${m.para}` });
+    else if (!novoFeito){ const nova = nlNovaParte(gm, sl, cur); if (nova){ frags.push({ t: 'novo', txt: 'Novo: ' + nova }); novoFeito = true; } }
+  }
+  const visto = new Set();
+  return frags.filter(f => { const key = f.t + f.txt; if (visto.has(key)) return false; visto.add(key); return true; });
+}
+// tradução curta das recusas do servidor (subirNivel) p/ uma linha no painel.
+function nlMotivoTexto(cod){
+  switch (cod){
+    case 'pontos_insuficientes': return 'Pontos insuficientes.';
+    case 'nivel_maximo':         return 'Este slot já está no nível máximo.';
+    case 'niveis_nao_liberados': return 'Os níveis deste deus ainda não foram liberados.';
+    case 'nivel_inexistente':    return 'Este nível não existe para esta habilidade.';
+    case 'nao_possui':           return 'Você ainda não tem este deus.';
+    case 'slot_invalido':        return 'Habilidade inválida.';
+    default:                     return 'Sem conexão com o servidor.';
+  }
+}
+
+// um PAINEL de habilidade (coluna direita). sl = slot ('basico'|'habilidade'|'milagre'); tipo = rótulo.
+function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
+  const ab = nlAb(gm, sl), abEf = nlAb(gmEf, sl);
+  if (!ab) return '';
+  const cab = `<div class="nlp__cab">
+      <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, true)}</span>
+      <div class="nlp__id"><b class="nlp__nome">${H(ab.nome || '—')}</b><span class="nlp__tipo">${tipo}</span></div>
+    </div>
+    <div class="nlp__meta">${pipsDetalhe(abEf.cost || {})}<span class="nlp__cd">${abEf.cd ? 'recarga ' + abEf.cd : 'sem recarga'}</span></div>`;
+  // SEM ESCADA: troca os marcadores pela cópia genérica (sem o motivo técnico do dado), sem botão.
+  if (nlSemEscada(ab)){
+    return `<div class="nlp" data-slot="${sl}">${cab}
+      <div class="nlp__sem"><p class="nlp__semt">Esta habilidade não tem níveis.</p><p class="nlp__sems">Melhorá-la desequilibraria o deus.</p></div>
+      <p class="nlp__atual"><span class="nlp__rot">Atual:</span> ${realce(abEf.desc || '')}</p>
+    </div>`;
+  }
+  const topo = nlTopo(ab);
+  const cur = Math.min(nlNivel(k, sl), topo);
+  const alc = (tem && online) ? nlAlcance(k, ab, cur) : cur;
+  let pins = '';
+  for (let i = 1; i <= topo; i++){ const cls = i <= cur ? 'on' : (i <= alc ? 'pode' : ''); pins += `<i class="nlpin ${cls}"></i>`; }
+  const esc = `<div class="nlp__esc"><div class="nlp__pins">${pins}</div><span class="nlp__nv">Nível ${cur} de ${topo}</span></div>`;
+  const atual = `<p class="nlp__atual"><span class="nlp__rot">Atual:</span> ${realce(abEf.desc || '')}</p>`;
+  let prox = '';
+  if (cur < topo){
+    const frags = nlProxFrags(gm, sl, cur);
+    const corpo = frags.length
+      ? frags.map(f => f.t === 'novo' ? `<span class="nlp__novo">${H(f.txt)}</span>` : `<b>${H(f.txt)}</b>`).join(' · ')
+      : '<span class="nlp__mut">afina o efeito</span>';
+    prox = `<p class="nlp__prox"><span class="nlp__rot">Próximo (nível ${cur + 1}):</span> ${corpo}</p>`;
+  }
+  // AÇÃO: não-possuído (sem botão) · máximo · confirmação inline · sem conexão · pode pagar · faltam pontos.
+  let acao = '';
+  if (!tem){
+    acao = '';
+  } else if (cur >= topo){
+    acao = `<div class="nlp__max">NÍVEL MÁXIMO</div>`;
+  } else if (nlConfirm === sl){
+    const custo = nlCustoNivel(cur + 1);
+    acao = `<div class="nlp__conf"><span class="nlp__confq">Subir <b>${H(ab.nome)}</b> para o nível ${cur + 1} por <b>${custo} ${custo === 1 ? 'ponto' : 'pontos'}</b>? Não dá para desfazer.</span>
+      <span class="nlp__confb"><button class="b b--primary b--md" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button>
+      <button class="b b--sec b--md" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
+  } else if (!online){
+    acao = `<div class="nlp__acao"><button class="b b--wait b--md" disabled>SUBIR</button><span class="nlp__nota">Sem conexão com o servidor</span></div>`;
+  } else {
+    const custo = nlCustoNivel(cur + 1), pts = nlPontos(k), falta = custo - pts;
+    acao = pts >= custo
+      ? `<div class="nlp__acao"><button class="b b--primary b--md nlp__subir" data-subir="${sl}">SUBIR · ${custo} ${custo === 1 ? 'ponto' : 'pontos'}</button></div>`
+      : `<div class="nlp__acao"><button class="b b--sec b--md" disabled>SUBIR · ${custo} ${custo === 1 ? 'ponto' : 'pontos'}</button><span class="nlp__nota">${falta === 1 ? 'Falta' : 'Faltam'} ${falta} ${falta === 1 ? 'ponto' : 'pontos'}</span></div>`;
+  }
+  const msg = (nlMsg && nlMsg.slot === sl) ? `<p class="nlp__erro">${H(nlMsg.texto)}</p>` : '';
+  return `<div class="nlp" data-slot="${sl}">${cab}${esc}${atual}${prox}${acao}${msg}</div>`;
+}
+
+async function _nlConfirmar(k, sl){
+  if (nlPendente) return;                 // o servidor é a verdade — um pedido por vez (sem toque duplo)
+  nlPendente = true; nlMsg = null; render();
+  let r = null;
+  try { if (typeof subirNivelServidor === 'function') r = await subirNivelServidor(k, sl); else r = { erro: 'sem servidor', codigo: 'sem_conexao' }; }
+  catch (e) { r = { erro: (e && e.message) || 'falha', codigo: 'sem_conexao' }; }
+  nlPendente = false; nlConfirm = null;
+  nlMsg = (r && r.ok) ? null : { slot: sl, texto: nlMotivoTexto(r && r.codigo) };
+  render();
+}
+
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
-  // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR) — o que o jogador lê é o que o motor
-  // usa. O roster (HRM) segue para nome/retrato; faccao/elem/classe/funcao vêm de GODS quando existe.
-  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // §284-ajuste2: o kit lê daqui (data/deuses), não do CKIT
-  const gmEf = deusKitEfetivo(k, gm);   // §318: o kit EXIBIDO passa pelo kitEfetivo (nv atual do jogador)
+  // §271: os METADADOS vêm do data/deuses (a fonte do MOTOR). O roster (HRM) segue para nome/retrato.
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
+  const gmEf = deusKitEfetivo(k, gm);     // §318: o kit EXIBIDO (Atual/custo/recarga) passa pelo kitEfetivo
   const tem = temDeus(k);
+  const online = (typeof contaAtual !== 'undefined' && !!contaAtual);
   const rar = raridadeDe(k);
-  if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
-  stage.innerHTML = `<div id="baselayer" class="deus ${tem ? '' : 'deus--falta'}">
+  if (deusSelKey !== k) { deusSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera a confirmação/erro
+  const pts = nlPontos(k), porCopia = nlPontosPorCopia(rar), res = nlResumo(k, gm);
+  const passiva = gm.passiva || g.passiva || null;
+  const topoInfo = tem
+    ? `<div class="nltop__pts"><span class="nltop__cri" aria-hidden="true">◈</span>
+       <span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
+       <span class="nltop__cop">${porCopia} ${porCopia === 1 ? 'ponto' : 'pontos'} por cópia (${RAR_ROT[rar] || rar})</span></div>`
+    : `<div class="nltop__pts nltop__pts--falta"><span class="nltop__ptn">Você ainda não tem este deus</span></div>`;
+  const painel = ['basico', 'habilidade', 'milagre']
+    .map((sl, i) => nlPainelHTML(k, gm, gmEf, sl, ['BÁSICO', 'HABILIDADE', 'MILAGRE'][i], tem, online)).join('');
+  stage.innerHTML = `<div id="baselayer" class="deus nl ${tem ? '' : 'deus--falta'}">
   <div class="stage__bg"></div><div class="stage__scrim"></div>
-  <header class="dtop">
-    <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-    <span class="dtop__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+  <header class="dtop nltop">
+    <button class="b b--quiet b--md" id="bvoltar">‹ Coleção</button>
+    <h1 class="nltop__nome">${H(g.nome)}</h1>
+    ${topoInfo}
   </header>
-  <div class="dbody">
-    <div class="dart">
-      ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
-      ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dart__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
-      ${tem ? '' : '<span class="dart__tag">VOCÊ NÃO POSSUI</span>'}
-      <div class="dart__nome">${H(g.nome)}</div>
-    </div>
-    <div class="dcol">
-      <div class="dchips">
-        <span class="dchip">${H(gm.faccao)}</span>
-        <span class="dchip dchip--el" style="--c:${COR(gm.elem)}">${H(ELAB[gm.elem] || gm.elem)}</span>
-        <span class="dchip">${H(gm.classe)}</span>
-        <span class="dchip">${H(gm.funcao)}</span>
+  <div class="nlbody">
+    <aside class="nlesq">
+      <div class="nlmed">
+        ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
+        ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="nlmed__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
+        ${tem ? '' : '<span class="nlmed__tag">NÃO POSSUI</span>'}
       </div>
-      ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
-      <div class="dkit">${deusSkills(gmEf).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
-      ${deusDetalheHTML(gmEf, deusSel)}
-    </div>
+      <div class="nlid">
+        <div class="nlid__l1"><b class="nlid__nome">${H(g.nome)}</b><span class="nlid__rar rar--${rar}">${RAR_ROT[rar] || rar}</span></div>
+        <span class="nlid__sub">${H(gm.faccao)} · ${H(ELAB[gm.elem] || gm.elem)}</span>
+      </div>
+      ${passiva ? `<div class="nlpas">
+        <span class="nlpas__rot">PASSIVA</span>
+        <b class="nlpas__nome">${H(passiva.nome || '—')}</b>
+        <p class="nlpas__txt">${realce(passiva.desc || '')}</p>
+        <p class="nlpas__nota">A passiva não tem níveis.</p>
+      </div>` : ''}
+      <div class="nlfoot">
+        <div class="nlfoot__cab"><span class="nlfoot__lab">Níveis</span><span class="nlfoot__num">${res.x} de ${res.y}</span></div>
+        <div class="nlfoot__bar"><i style="width:${res.y ? Math.round(res.x / res.y * 100) : 0}%"></i></div>
+        <p class="nlfoot__nota">Com tudo no máximo, as cópias extras viram Essência.</p>
+      </div>
+    </aside>
+    <section class="nldir">${painel}</section>
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
-    b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
-  // ELO com a tela de Missões (§234): do detalhe do deus vai-se ao mapa das missões.
-  const vm = stage.querySelector('[data-vermissao]');
-  if (vm) vm.onclick = () => { ir('provacoes'); render(); };
+  stage.querySelectorAll('[data-subir]').forEach(b => { b.onclick = () => { nlConfirm = b.dataset.subir; nlMsg = null; render(); }; });
+  stage.querySelectorAll('[data-subir-no]').forEach(b => { b.onclick = () => { if (nlPendente) return; nlConfirm = null; render(); }; });
+  stage.querySelectorAll('[data-subir-ok]').forEach(b => { b.onclick = () => _nlConfirmar(k, b.dataset.subirOk); });
   fit();
 }
 

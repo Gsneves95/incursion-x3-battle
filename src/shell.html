@@ -2116,6 +2116,87 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .ddet__txt{flex:1 1 auto;min-height:0;overflow-y:auto;font-weight:600;font-size:13px;line-height:1.5;color:var(--ink)}
 .ddet__txt b{color:var(--gold-text)}
 
+/* ===================== §319 FASE 4 — TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono) =====================
+   Paisagem: barra superior (‹ Coleção · nome · pontos), COLUNA ESQUERDA (~32%) identidade+PASSIVA+rodapé "X de Y"
+   que NUNCA rola, e COLUNA DIREITA (~68%) com os 3 painéis de habilidade que PODE rolar. Painéis planos, 1px
+   ouro-fosco, fundo escuro; o brilho dourado fica só no botão SUBIR cheio e nos marcadores acesos. */
+.nl{overflow:hidden}
+.nltop{gap:12px}
+.nltop__nome{flex:0 1 auto;min-width:0;margin:0;font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.03em;color:var(--gold-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nltop__pts{margin-left:auto;display:grid;grid-template-columns:auto auto;column-gap:7px;align-items:center;justify-items:end}
+.nltop__cri{grid-row:1/3;grid-column:1;font-size:16px;color:var(--gold-text)}
+.nltop__ptn{grid-column:2;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--ink);white-space:nowrap}
+.nltop__ptn b{color:var(--gold-text)}
+.nltop__cop{grid-column:2;font-weight:600;font-size:10.5px;letter-spacing:.02em;color:var(--ink-mute);white-space:nowrap}
+.nltop__pts--falta{display:block}
+.nltop__pts--falta .nltop__ptn{color:var(--ink-mute);font-style:italic}
+.nlbody{flex:1 1 auto;min-height:0;position:relative;z-index:2;display:flex;gap:14px;padding:10px 16px 12px}
+.nlesq{flex:0 0 32%;max-width:32%;min-height:0;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.nldir{flex:1 1 auto;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:6px;display:flex;flex-direction:column;gap:10px}
+.nldir::-webkit-scrollbar{width:6px}
+.nldir::-webkit-scrollbar-thumb{background:var(--gold-soft);border-radius:999px}
+.nldir::-webkit-scrollbar-track{background:transparent}
+/* --- coluna esquerda: medalhão redondo + identidade + passiva + rodapé --- */
+.nlmed{position:relative;flex:0 0 auto;width:92px;height:92px;align-self:center;border-radius:50%;overflow:hidden;border:1px solid var(--gold-soft);background:#0c0a18}
+.nlmed .slot{width:100%;height:100%}
+.nlmed__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
+.deus--falta .nlmed{filter:grayscale(1) brightness(.72)}
+.nlmed__tag{position:absolute;left:0;right:0;bottom:0;text-align:center;font-family:'Cinzel',serif;font-weight:800;font-size:7.5px;letter-spacing:.08em;color:#f0e6ff;background:rgba(8,6,20,.82);padding:2px 0}
+.nlid{flex:0 0 auto;text-align:center}
+.nlid__l1{display:flex;align-items:center;justify-content:center;gap:7px}
+.nlid__nome{font-family:'Cinzel',serif;font-weight:700;font-size:15px;color:var(--ink);line-height:1.1}
+.nlid__rar{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em}
+.nlid__sub{display:block;margin-top:2px;font-weight:600;font-size:11px;letter-spacing:.02em;color:var(--ink-dim)}
+.nlpas{flex:0 0 auto;border:1px solid #2c2648;border-radius:9px;padding:8px 10px;background:rgba(20,16,38,.5)}
+.nlpas__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase}
+.nlpas__nome{display:block;margin:2px 0 3px;font-weight:700;font-size:12.5px;color:var(--ink)}
+.nlpas__txt{margin:0;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-dim)}
+.nlpas__txt b{color:var(--gold-text)}
+.nlpas__nota{margin:4px 0 0;font-weight:600;font-size:10px;font-style:italic;color:var(--ink-mute)}
+.nlfoot{margin-top:auto;flex:0 0 auto}
+.nlfoot__cab{display:flex;align-items:baseline;justify-content:space-between}
+.nlfoot__lab{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.12em;color:var(--gold-soft);text-transform:uppercase}
+.nlfoot__num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:var(--ink)}
+.nlfoot__bar{height:5px;margin:4px 0 5px;border:1px solid #2c2648;border-radius:999px;background:#120f24;overflow:hidden}
+.nlfoot__bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-soft),var(--gold-text))}
+.nlfoot__nota{margin:0;font-weight:600;font-size:10px;line-height:1.35;color:var(--ink-mute)}
+/* --- coluna direita: painel de habilidade --- */
+.nlp{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:rgba(20,16,38,.5);border:1px solid #2c2648;border-radius:10px}
+.nlp__cab{display:flex;align-items:center;gap:9px}
+.nlp__art{width:40px;height:40px;flex:0 0 auto;border-radius:8px;overflow:hidden;border:1px solid #5a4560}
+.nlp__art .slot{width:40px;height:40px}
+.nlp__id{min-width:0;display:flex;flex-direction:column}
+.nlp__nome{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:var(--gold-text);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nlp__tipo{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.1em;color:var(--ink-mute)}
+.nlp__meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.nlp__cd{font-weight:700;font-size:9.5px;letter-spacing:.02em;color:#8b83b8;text-transform:uppercase}
+.nlp__esc{display:flex;align-items:center;gap:9px}
+.nlp__pins{display:flex;gap:5px}
+.nlpin{width:16px;height:7px;border-radius:2px;border:1px solid #403862;background:transparent}
+.nlpin.pode{border-color:var(--gold-soft)}
+.nlpin.on{background:var(--gold-text);border-color:var(--gold-text);box-shadow:0 0 5px rgba(255,217,122,.55)}
+.nlp__nv{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.03em;color:var(--ink-mute);text-transform:uppercase}
+.nlp__atual,.nlp__prox{margin:0;font-weight:600;font-size:11.5px;line-height:1.4;color:var(--ink-dim)}
+.nlp__atual b,.nlp__prox b{color:var(--gold-text)}
+.nlp__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase;margin-right:4px}
+.nlp__prox b{font-weight:800}
+.nlp__novo{color:var(--gold-text);font-weight:700}
+.nlp__mut{color:var(--ink-mute)}
+.nlp__sem{padding:3px 0 1px}
+.nlp__semt{margin:0;font-weight:700;font-size:12px;color:var(--ink-dim)}
+.nlp__sems{margin:1px 0 0;font-weight:600;font-size:10.5px;color:var(--ink-mute)}
+.nlp__acao{display:flex;align-items:center;gap:10px;margin-top:1px}
+.nlp__acao .b{min-height:44px}
+.nlp__subir{box-shadow:0 0 10px rgba(255,217,122,.35)}
+.nlp__nota{font-weight:600;font-size:11px;color:var(--ink-mute)}
+.nlp__max{align-self:flex-start;font-family:'Cinzel',serif;font-weight:800;font-size:11px;letter-spacing:.08em;color:var(--gold-soft);border:1px solid var(--gold-soft);border-radius:6px;padding:5px 10px;text-transform:uppercase}
+.nlp__erro{margin:1px 0 0;font-weight:700;font-size:11px;color:#ff9db4}
+.nlp__conf{font-weight:600;font-size:11.5px;line-height:1.4;color:var(--ink-dim);display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.nlp__conf b{color:var(--gold-text)}
+.nlp__confq{flex:1 1 200px;min-width:0}
+.nlp__confb{display:inline-flex;gap:8px;margin-left:auto}
+.nlp__confb .b{min-height:44px}
+
 /* ===================== F3.6 — Desafios de composição (entrada + validação de time ao vivo) ===================== */
 .pdesafios{display:flex;align-items:center;justify-content:space-between;width:100%;cursor:pointer;
   padding:11px 15px;margin:0 0 14px;font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.06em;

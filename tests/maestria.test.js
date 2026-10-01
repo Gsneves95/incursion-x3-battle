@@ -76,20 +76,24 @@ console.log('== 4. A RESTRIÇÃO: maestria NÃO muda número de combate ==');
   ok(!/perfil\.maestria|maestria\[/.test(w.eval("montarProvacao.toString()")), 'montarProvacao nem lê perfil.maestria');
 }
 
-console.log('== 5. o detalhe mostra a maestria; o ladrilho mostra o nível ==');
+console.log('== 5. a MAESTRIA vive no PAINEL da Coleção; a rota "deus" virou a TELA DE NÍVEIS (§319) e não a traz ==');
 {
   const { w, $, $$ } = sessao();
   w.eval("perfil.deuses.ares={copias:1,favorito:false,obtidoEm:0}; perfil.maestria={ares:{vitorias:15,milagre:false}};");
+  // §282: a maestria é mostrada no PAINEL-leitor da Coleção (col2m). §319 tirou-a da rota 'deus' (agora níveis).
+  w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares');");
+  const m = $('#col2painel .col2m');
+  ok(!!m && /MAESTRIA/.test(m.textContent), 'o painel da Coleção traz o bloco de maestria');
+  ok(/Adepto/.test(m.textContent), 'mostra o nível atual (Adepto)');
+  ok(/Mestre/.test(m.textContent), 'diz o que falta p/ o Mestre');
+  // §319: a rota 'deus' é a tela de NÍVEIS — NÃO traz maestria (nem .dmaes antigo, nem col2m)
   w.eval("ir('deus',{key:'ares'}); render();");
-  ok(!!$('.dmaes') && /MAESTRIA/.test($('.dmaes').textContent), 'o detalhe traz o bloco de maestria');
-  ok(/Adepto/.test($('.dmaes').textContent), 'mostra o nível atual (Adepto)');
-  ok(/Mestre/.test($('.dmaes').textContent) && /Milagre/.test($('.dmaes').textContent), 'diz o que falta p/ o Mestre (vitórias + Milagre)');
-  // §282: a Coleção foi refeita (grade filtrável + painel-leitor). O pip de NÍVEL de maestria por cartão foi
-  // retirado da grade — o nível de maestria vive no DETALHE do deus (asserido acima, .dmaes) e na tela de
-  // DESAFIOS. A grade mostra o cartão do possuído; a moldura de MESTRE (nível 4) permanece no cartão.
+  ok(!$('.dmaes') && !$('.nl .col2m'), 'a tela de níveis (rota deus) não traz o bloco de maestria');
+  ok(!!$('.nl .nlpas') && $$('.nldir .nlp').length === 3, 'a tela de níveis traz passiva + 3 painéis de habilidade');
+  // grade: o cartão do possuído aparece; a moldura de MESTRE (nível 4) permanece no cartão.
   w.eval("ir('colecao'); render();");
   const card = $('.col2c[data-deus="ares"]');
-  ok(!!card && card.classList.contains('col2c--tem'), 'o cartão do deus possuído aparece na grade (o nível de maestria mora no detalhe do deus, §282)');
+  ok(!!card && card.classList.contains('col2c--tem'), 'o cartão do deus possuído aparece na grade');
 }
 
 console.log('== 6. SEMANAL: semente (ano, semana) — ano diferente NÃO repete a mesma semana ==');

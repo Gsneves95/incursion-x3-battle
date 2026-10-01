@@ -6,6 +6,45 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §319 FASE 4 · A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono)
+
+**O que:** a rota `deus` da Coleção (`renderDeusDetalhe`, `src/ui/home.js`) deixou de ser a ficha antiga (arte + chips +
+seletor de kit + maestria) e passou a ser a **tela de NÍVEIS** da referência do dono: duas colunas — esquerda (identidade +
+PASSIVA + rodapé "X de Y", nunca rola) e direita (3 painéis das habilidades ativas, rolável). Cada painel tem marcadores de
+nível, "Atual", "Próximo (só o que muda)" e o botão SUBIR com confirmação inline.
+
+**Por quê isto e não um anexo à ficha antiga:** a referência é uma tela inteira, não um bloco a mais. Enfiar níveis na
+ficha de 4 chips quebraria o layout aprovado. A ficha antiga já tinha redundância com a Coleção (o painel-leitor `col2p` e a
+sobreposição `col2ov` mostram identidade + kit); a rota `deus` ganhou um propósito próprio — subir níveis.
+
+**Fonte única, nada inventado na tela (invariante §286/§318 estendido):** o que o jogador lê deriva do dado —
+`Atual` = `kitEfetivo` no nível atual; `Próximo` = o `muda` do degrau (número `15 → 16`, `Recarga`, `Custo … <orbe>`) e,
+num SALTO, `Novo: <nova parte>` = as orações do desc do próximo nível que não estão no atual (`nlNovaParte`, diff de texto).
+Custo em pontos = `economia.json` (`custoNivel` 1/2/3); pontos por cópia = `pontosPorDuplicata` (A1/S2/SS4); topo por slot =
+1 + nº de degraus (escada curta pára antes do 4). **Nenhum texto de nível escrito à mão por deus.**
+
+**O servidor é a verdade (não há caminho local):** SUBIR → confirmação inline (§245) → `subirNivelServidor` (novo em
+`view.js`, espelha `ativarProvacaoServidor`) → `subirNivel` no servidor (já existia; o protocolo `subirNivel`/`nivelSubiu`
+já estava em `server.js` desde a Fase 2). A resposta (conta autoritativa) atualiza pontos/nível/"X de Y". Recusas do servidor
+viram UMA linha no painel; offline → botões apagados + "Sem conexão". O cliente nunca credita nível por conta própria.
+
+**SEM ESCADA sem vazar medida interna:** slot sem `niveis` (ou `semEscada:true`) mostra só "Esta habilidade não tem níveis."
+\+ "Melhorá-la desequilibraria o deus." — os `semEscada` do dado **não têm** campo `motivo` (confirmado: 9 habilidades, só a
+flag), então não há medida técnica a esconder; a cópia é genérica por decisão.
+
+**Duas escolhas que fogem da referência textual (reportadas ao dono para bater contra a imagem):**
+1. **Maestria saiu desta tela.** O layout aprovado (medalhão + passiva + 3 painéis) não a inclui. A maestria continua viva no
+   PAINEL da Coleção (`col2m`) e na tela de Desafios — só não aparece na rota `deus`. Se o dono quiser maestria aqui também,
+   é um bloco a mais na coluna esquerda.
+2. **"ALL payable levels full, not just one"** virou: UM botão SUBIR (o próximo nível) + marcadores "pode" que mostram ATÉ
+   ONDE os pontos alcançam (não só o degrau seguinte). Um botão por degrau pagável empilhado é troca de poucas linhas se a
+   referência pedir.
+
+**Guardas:** `tests/niveis_tela.test.js` — jsdom (50 asserções: todos os estados, Próximo derivado, "X de Y" com topos
+reais, confirmação/cancelar/recusa) + Chromium 780/893/1075/1200 × 10 estados (esquerda nunca rola, direita nunca corta na
+horizontal, nome de habilidade sem reticência por clone solto, toque ≥ 44px §301). Provado que morde. **FORA (§320):** os
+níveis NA BATALHA.
+
 ## §318 FASE 3 · FECHO — 100 de 100 deuses com escada medida e liberada
 
 A FASE 3 (escadas de nível por deus, medidas na régua e liberadas uma a uma) **fechou com os 100 deuses**. Todos têm

@@ -242,37 +242,34 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   }
 
   // == §220: DETALHE do deus — arte quadrada (sem corte feio), nome não coberto, skill ≥76, texto sem rolar ==
-  console.log('== geometria (§220): detalhe do deus — arte, nome, toque das skills, texto ==');
+  console.log('== geometria (§319): TELA DE NÍVEIS — medalhão redondo, toque do SUBIR, coluna direita sem corte horizontal ==');
   {
     await page.setViewportSize({ width: 926, height: 428 });
     const g = await page.evaluate(() => {
-      // §284-ajuste2: a maior descrição vem de data/deuses (GODS), a MESMA fonte que a tela agora lê.
-      let best = { len: 0 };
+      // o deus com a maior descrição de habilidade (data/deuses) estressa o "Atual" dos painéis.
+      let best = { len: 0, k: 'zeus' };
       for (const k in GODS) { const gg = GODS[k];
-        (gg.ab || []).forEach(a => { if (a.desc && a.desc.length > best.len) best = { len: a.desc.length, k, s: a.slot }; });
-        if (gg.passiva && gg.passiva.desc && gg.passiva.desc.length > best.len) best = { len: gg.passiva.desc.length, k, s: 'passiva' };
+        (gg.ab || []).forEach(a => { if (a.desc && a.desc.length > best.len) best = { len: a.desc.length, k }; });
       }
       perfil.deuses[best.k] = perfil.deuses[best.k] || { obtidoEm: Date.now() };
-      ir('deus', { key: best.k }, { substituir: true }); render(); deusSel = best.s; render();
+      // POSSUÍDO + ONLINE + com pontos: os 3 painéis e o botão SUBIR ficam presentes p/ medir o toque.
+      contaAtual = { pontos: { [best.k]: 9 }, niveis: {}, perfil: { deuses: { [best.k]: { copias: 1 } } }, missoes: { ativa: null, progresso: {}, liberados: [] } };
+      ir('deus', { key: best.k }, { substituir: true }); render();
       const R = el => el.getBoundingClientRect();
-      const art = R(document.querySelector('.dart')), nome = R(document.querySelector('.dart__nome'));
-      const kit = R(document.querySelector('.dkit'));
-      const sk = [...document.querySelectorAll('.dsk')].map(R);
-      const txt = document.querySelector('.ddet');   // §284-ajuste2: a casca .ddet é o contêiner de rolagem do detalhe
-      return {
-        artW: art.width, artH: art.height, artB: art.bottom,
-        nomeTop: nome.top, kitTop: kit.top,            // o nome (na arte, esq) não pode ser coberto pelo kit (col, dir)
-        nomeDentroDaArte: nome.left >= art.left - 0.6 && nome.right <= art.right + 0.6,
-        skMin: Math.min(...sk.map(s => Math.min(s.width, s.height))),
-        txtScroll: txt.scrollHeight, txtClient: txt.clientHeight, len: best.len,
-      };
+      const med = R(document.querySelector('.nlmed'));
+      const dir = document.querySelector('.nldir'); const db = dir.getBoundingClientRect(); const dcw = dir.clientWidth;
+      let over = 0; dir.querySelectorAll('*').forEach(el => { const o = el.getBoundingClientRect().right - db.left - dcw; if (o > over) over = o; });
+      const esq = document.querySelector('.nlesq'); const esqClip = esq.scrollHeight - esq.clientHeight;
+      const btn = document.querySelector('.nlp__subir') || document.querySelector('.nlp__acao .b');
+      const bb = btn ? R(btn) : { width: 0, height: 0 };
+      return { medW: med.width, medH: med.height, over: Math.round(over), esqClip: Math.round(esqClip), btnH: bb.height, btnW: bb.width, len: best.len, k: best.k };
     });
-    ok(Math.abs(g.artW - g.artH) <= 3, `a arte é ~quadrada (não corta feio): ${Math.round(g.artW)}x${Math.round(g.artH)}`);
-    ok(g.nomeDentroDaArte, 'o nome fica dentro da arte (à esquerda), longe da coluna de chips/tag');
-    ok(g.skMin >= 76, `o toque de cada skill é >=76px (menor lado ${Math.round(g.skMin)})`);
-    ok(g.txtScroll <= g.txtClient + 1, `a maior descrição (${g.len} chars) cai no detalhe sem rolar (${g.txtScroll}/${g.txtClient})`);
-    console.log(`  arte ${Math.round(g.artW)}x${Math.round(g.artH)} · skill toque ${Math.round(g.skMin)}px · maior texto ${g.len} chars sem rolar`);
-    await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
+    ok(Math.abs(g.medW - g.medH) <= 2, `o medalhão é redondo/quadrado (${Math.round(g.medW)}x${Math.round(g.medH)})`);
+    ok(g.over <= 1, `a coluna direita não corta na horizontal (over ${g.over})`);
+    ok(g.esqClip <= 1, `a coluna esquerda não rola (clip ${g.esqClip})`);
+    ok(g.btnH >= 44, `o toque do SUBIR é >=44px de altura (${Math.round(g.btnH)}px)`);
+    console.log(`  medalhão ${Math.round(g.medW)}px · SUBIR ${Math.round(g.btnW)}x${Math.round(g.btnH)} · maior Atual ${g.len} chars`);
+    await page.evaluate(() => { contaAtual = null; ir('home', {}, { substituir: true }); render(); });
   }
 
   console.log('== retrato: mostra "gire o aparelho", esconde o palco ==');

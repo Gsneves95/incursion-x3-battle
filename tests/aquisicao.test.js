@@ -81,33 +81,34 @@ console.log('== 4. Coleção (§282 refeita): os 100 navegáveis por BUSCA/FILTR
   ok($$('#col2grade .col2c__foot').length === 100, 'nome/cultura moram na faixa (col2c__foot) de cada cartão');
 }
 
-console.log('== 5. detalhe do deus (§220): arte à esquerda + coluna; passiva pré-selecionada; possui x não-possui ==');
+console.log('== 5. §319 — a rota "deus" é a TELA DE NÍVEIS: identidade + passiva à esquerda, 3 painéis à direita; possui x não-possui ==');
 {
   const { w, $, $$ } = sessao();
-  // POSSUINDO: garante o deus na coleção e abre o detalhe
-  w.eval("perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now()}; ir('deus',{key:'zeus'}); render();");
-  ok(($('.dart__nome').textContent || '').trim() === 'Zeus', 'o nome sobreposto na arte nomeia o deus');
-  ok(!$('.deus--falta') && !$('.dart__tag'), 'possuindo: sem tag de ausência');
-  ok($$('.dchips .dchip').length === 4, 'os 4 chips de identidade (facção/elemento/classe/função)');
-  ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como conseguir")');
-  // guarda permanente: as 4 skills sempre presentes e tocáveis
-  ok($$('.dkit .dsk').length === 4, `o kit tem as 4 skills (bás/hab/mil/pas), há ${$$('.dkit .dsk').length}`);
-  ok($$('.dkit .dsk:not([disabled])').length === 4, 'as 4 skills são tocáveis');
-  // decisão do dono: ao abrir, a PASSIVA já vem selecionada
-  ok(/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'a PASSIVA já vem selecionada ao abrir');
-  ok($('.ddet .col2k__ef').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
-  // tocar outra skill troca o detalhe
-  const outra = $$('.dsk[data-deussel]').find(b => !b.classList.contains('is-sel'));
-  outra.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(!/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'tocar outra skill muda a seleção');
-  ok(!!$('.ddet .cost, .ddet .col2k__cd'), 'a skill mostra custo/recarga no detalhe');
+  const T = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
+  // POSSUINDO + ONLINE (a tela lê pontos/níveis da conta): zeus com 3 pontos, tudo nv1.
+  w.eval("perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now()}; contaAtual={pontos:{zeus:3},niveis:{zeus:{basico:1,habilidade:1,milagre:1}},perfil:{deuses:{zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('deus',{key:'zeus'}); render();");
+  ok(T($('.nltop__nome')) === 'Zeus', 'a barra superior nomeia o deus');
+  ok(!$('.deus--falta') && !$('.nlmed__tag'), 'possuindo: sem tag de ausência no medalhão');
+  ok(!!$('.nlesq .nlmed .slot'), 'o medalhão redondo aparece na coluna esquerda');
+  ok(/Pontos de Zeus: 3/.test(T($('.nltop__ptn'))), 'possuindo+online: a barra mostra os pontos do deus');
+  ok(/por cópia \(SS\)/.test(T($('.nltop__cop'))), 'mostra quantos pontos cada cópia rende (pela raridade, do dado)');
+  ok(!!$('.nlpas') && /PASSIVA/.test(T($('.nlpas__rot'))) && /não tem níveis/i.test(T($('.nlpas__nota'))), 'a PASSIVA fica à esquerda e diz que não tem níveis');
+  // os 3 painéis das habilidades ativas (básico/habilidade/milagre) — a passiva NÃO é painel (fica à esquerda)
+  ok($$('.nldir .nlp').length === 3, `a coluna direita traz os 3 painéis ativos, há ${$$('.nldir .nlp').length}`);
+  ok($$('.nldir .nlp .nlp__esc').length === 3, 'cada painel traz os marcadores de nível');
+  ok(/\dde \d/.test(T($('.nlfoot__num')).replace(/\s/g, '')) || /de/.test(T($('.nlfoot__num'))), 'o rodapé mostra "X de Y"');
+  ok(!!$('.nldir .nlp [data-subir]'), 'com pontos, há ao menos um botão SUBIR');
+  ok(/SUBIR · 1 ponto/.test(T($('.nldir .nlp [data-subir]'))), 'o botão SUBIR traz o custo em pontos (do economia.json)');
+  // SUBIR abre a confirmação inline NO painel (§245, sem modal)
+  $('.nldir .nlp [data-subir]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(!!$('.nlp__conf') && !!$('[data-subir-ok]') && !!$('[data-subir-no]'), 'tocar SUBIR abre a confirmação inline (CONFIRMAR/CANCELAR) no painel');
 
-  // NÃO POSSUINDO: tag + "como conseguir" no lugar da maestria, e o kit CONTINUA legível/tocável
-  w.eval("delete perfil.deuses.ahpuch; ir('deus',{key:'ahpuch'}); render();");
-  ok(!!$('.deus--falta') && !!$('.dart__tag') && /NÃO POSSUI/.test($('.dart__tag').textContent), 'não-possuindo: tag "VOCÊ NÃO POSSUI" na arte');
-  ok(!!$('.dcomo') && !$('.dmaes'), 'não-possuindo: "COMO CONSEGUIR" no lugar da maestria');
-  ok(/Invoca/.test($('.dcomo').textContent), 'o "como conseguir" cita a Invocação');
-  ok($$('.dkit .dsk:not([disabled])').length === 4, 'não-possuindo: as 4 skills continuam legíveis e tocáveis');
+  // NÃO POSSUINDO: aviso no topo, tag no medalhão, NENHUM botão SUBIR; a escada fica só-leitura
+  w.eval("delete perfil.deuses.ahpuch; contaAtual={pontos:{},niveis:{},perfil:{deuses:{}},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('deus',{key:'ahpuch'}); render();");
+  ok(!!$('.deus--falta') && /não tem este deus/i.test(T($('.nltop__pts--falta'))), 'não-possuindo: "Você ainda não tem este deus" na barra');
+  ok(!!$('.nlmed__tag') && /NÃO POSSUI/.test(T($('.nlmed__tag'))), 'não-possuindo: tag no medalhão');
+  ok($$('[data-subir]').length === 0 && $$('[data-subir-ok]').length === 0, 'não-possuindo: nenhum botão de subir (escada só-leitura)');
+  ok($$('.nldir .nlp .nlp__esc').length >= 1, 'não-possuindo: a escada continua legível');
 }
 
 console.log('== 6. §245 — DESAFIO POR DEUS: comprar com Essência inicia a batalha marcada como paga; só de deus que você TEM ==');

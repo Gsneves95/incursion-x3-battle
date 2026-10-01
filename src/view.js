@@ -305,6 +305,20 @@ async function ativarProvacaoServidor(deus){
   }catch(e){ return { erro:(e&&e.message)||'erro' }; }
 }
 
+// §319 FASE 4 — SUBIR NÍVEL. O cliente só PEDE; o servidor (subirNivel) é autoritativo sobre pontos, topo
+// e trava de liberação. Devolve a conta atualizada → redesenha. Recusa → código p/ a tela traduzir numa
+// linha curta (sem pontos · nível máximo · não liberado · nível inexistente · sem conexão).
+async function subirNivelServidor(deus, slot){
+  if(!contaTransporte) return { erro:'sem servidor', codigo:'sem_conexao' };
+  const t=(typeof lerToken==='function')?lerToken():null; if(!t) return { erro:'sem token', codigo:'sem_conexao' };
+  try{
+    const r=await contaTransporte.pedir(envelope('subirNivel',{token:t,deus,slot}));
+    if(r && r.tipo==='nivelSubiu'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); render(); return { ok:true, deus:r.deus, slot:r.slot, nivel:r.nivel, pontos:r.pontos }; }
+    if(r && r.tipo==='recusado') return { erro:r.erro, codigo:r.codigo };
+    return { erro:'não foi possível subir', codigo:'erro' };
+  }catch(e){ return { erro:(e&&e.message)||'erro', codigo:'sem_conexao' }; }
+}
+
 // portão de IDADE (age-gate). NÃO é login: a lei explicada + duas escolhas de FAIXA. Sem e-mail,
 // sem senha, sem data de nascimento. `aoEscolher(faixa)` recebe 'menor'|'maior'.
 function montarPortaoIdade(aoEscolher){

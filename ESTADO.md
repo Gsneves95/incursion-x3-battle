@@ -2,6 +2,39 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §319 FASE 4 · A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono)
+
+**A rota `deus` da Coleção virou a TELA DE NÍVEIS** (`renderDeusDetalhe` em `src/ui/home.js`). Layout paisagem: barra
+superior (‹ Coleção · nome em Cinzel ouro · pontos do deus + "N pontos por cópia (raridade)"); COLUNA ESQUERDA (~32%, NUNCA
+rola) = medalhão redondo + identidade (nome/selo/panteão·elemento) + bloco PASSIVA ("A passiva não tem níveis.") + rodapé
+"Níveis: X de Y" com barra; COLUNA DIREITA (~68%, rolável) = 3 painéis das habilidades ativas. Cada painel: ícone + nome
+(Cinzel) + tipo, custo (orbes) + recarga (do kit efetivo), marcadores de nível (acesos até o atual; topo = 4, ou 2–3 na
+escada curta), "Nível N de TOPO", **Atual:** (texto do nível atual, kitEfetivo) e **Próximo (nível N+1):** SÓ o que muda
+(número `15 → 16`, `Recarga`, `Custo … <orbe>`, ou `Novo: <nova parte>`) — tudo DERIVADO do `muda` do degrau + o desc do
+próximo nível, **nada escrito à mão por deus**.
+
+**O servidor é a verdade.** O botão SUBIR (custo 1/2/3 do `economia.json`) abre uma CONFIRMAÇÃO INLINE no painel (§245, sem
+modal): CONFIRMAR chama `subirNivelServidor` (novo em `view.js`) → `subirNivel` do servidor (já existia; o protocolo
+`subirNivel`/`nivelSubiu` já estava em `server.js`). A resposta atualiza pontos/nível/textos/"X de Y". Recusas viram uma
+linha curta no painel (sem pontos · nível máximo · não liberado · nível inexistente · sem conexão). ESTADOS: pode-pagar
+(ouro) · faltam pontos (apagado) · NÍVEL MÁXIMO (selo, sem botão) · SEM ESCADA ("Esta habilidade não tem níveis." +
+"Melhorá-la desequilibraria o deus.", sem o motivo técnico) · ESCADA CURTA (topo < 4) · NÃO POSSUÍDO ("Você ainda não tem
+este deus", escada só-leitura) · SEM CONEXÃO (botões apagados). O "X de Y" conta os TOPOS REAIS (escada curta e sem-escada
+contam topo=1).
+
+**Decisão registrada (reportada ao dono):** a referência do dono é a tela de NÍVEIS; o layout aprovado não traz **maestria**
+nem os chips de identidade/sinergia que a rota `deus` antiga mostrava. A maestria continua no PAINEL da Coleção (`col2m`,
+`colSelecionar`) e na tela de Desafios — só saiu DESTA tela. O "ALL payable levels full" da spec virou: UM botão SUBIR (o
+próximo nível) + marcadores "pode" mostrando ATÉ ONDE os pontos alcançam (não só o próximo). Se a referência quiser vários
+botões SUBIR empilhados, é troca de 1 linha — avisar.
+
+**Testes/guardas:** `tests/niveis_tela.test.js` (novo, na suíte) — 50 asserções jsdom (todos os estados, Próximo derivado,
+"X de Y", confirmação/recusa) + 4 larguras Chromium (780/893/1075/1200 × 10 estados: esquerda nunca rola, direita nunca
+corta na horizontal, nome de habilidade sem reticência, toque SUBIR/CONFIRMAR/CANCELAR ≥ 44px). Provado que MORDE (quebrar
+`nlTopo` derruba 3 asserções). Migrados p/ o layout novo: `aquisicao` (ficha→níveis), `maestria` (maestria agora no painel
+da Coleção), `moldura` (geometria da tela de níveis). Capturas 893 em `docs/capturas-319/`. **FORA (próximo, §320):** os
+níveis NA BATALHA.
+
 ## ★ §318 FASE 3 · FECHO + LOTE 14 (8 hindus, o ÚLTIMO) — 100/100 deuses com escada liberada
 
 **FASE 3 FECHADA: os 100 deuses têm escada medida na régua e liberada** (`data/niveis_liberados.json` = 100). A trava
