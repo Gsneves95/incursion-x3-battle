@@ -32,6 +32,12 @@ public class MainActivity extends BridgeActivity {
     if (hasFocus) aplicarImersivo();   // reafirma ao voltar do 2º plano (as duas barras)
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    aplicarImersivo();   // §319b — reforço: alguns OEMs readmitem a barra no RESUME antes do onWindowFocusChanged
+  }
+
   private void aplicarImersivo() {
     WindowCompat.setDecorFitsSystemWindows(getWindow(), false);   // WebView de borda a borda (sem faixa)
     WindowInsetsControllerCompat c =

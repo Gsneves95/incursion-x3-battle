@@ -278,5 +278,34 @@ console.log('\n== 9. sem 404 de arte (§213) ==');
   ok($$('#col2grade .col2c__art img').every(im => artes.has(im.getAttribute('src'))), 'todo <img> da grade referencia arte confirmada em IMG');
 }
 
+// ---- 10. §319b — DESCOBRIR OS NÍVEIS: posse com pontos, linha "Níveis X de Y", selo ▲ e botão dourado
+//          "Subir níveis" SÓ quando há nível pagável (provado que morde com 0 e com pontos). ----
+console.log('\n== 10. §319b: descoberta de níveis (posse+pontos, "X de Y", selo ▲ e botão dourado só se pagável) ==');
+{
+  // zeus possuído e COM pontos (pagável); ares possuído e SEM pontos (não pagável).
+  w.eval(`perfil.deuses.zeus=perfil.deuses.zeus||{copias:1,obtidoEm:0}; perfil.deuses.ares=perfil.deuses.ares||{copias:1,obtidoEm:0};
+    contaAtual={pontos:{zeus:3,ares:0},niveis:{zeus:{basico:1,habilidade:1,milagre:1},ares:{basico:1,habilidade:1,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};
+    colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.status='';colF.raridade=''; ir('colecao',{},{substituir:true}); render();`);
+  // SELO na grade: só o pagável (zeus) tem ▲; o não-pagável (ares) não.
+  ok(!!$('.col2c[data-deus="zeus"] .col2c__subir'), 'grade: o deus com nível pagável ganha o selo ▲');
+  ok(!$('.col2c[data-deus="ares"] .col2c__subir'), 'grade: o deus sem pontos NÃO tem selo (morde)');
+  // PAINEL do pagável: posse com pontos + linha "Níveis X de Y" + botão DOURADO "Subir níveis" → rota deus.
+  w.eval("colSelecionar('zeus')");
+  ok(/· 3 pontos/.test(txt($('#col2painel .col2p__posse'))), 'painel: a posse mostra os pontos do deus');
+  ok(/Níveis 3 de 12/.test(txt($('#col2painel .col2p__niveis'))), 'painel: linha "Níveis X de Y" (mesma conta da tela §319)');
+  ok(!!$('#col2painel .col2p__ver--subir[data-subirdeus="zeus"]') && /Subir níveis/.test(txt($('#col2painel .col2p__ver--subir'))), 'painel: botão dourado "Subir níveis ›" quando pagável');
+  w.eval("document.querySelector('#col2painel .col2p__ver--subir').click()");
+  ok(w.eval("rotaAtual()") === 'deus', '"Subir níveis" leva à tela de níveis (rota deus)');
+  // PAINEL do não-pagável: "Ver detalhes" (não dourado) + sem botão subir.
+  w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares')");
+  ok(!$('#col2painel .col2p__ver--subir') && !!$('#col2painel .col2p__ver[data-verdeus="ares"]'), 'painel sem pontos: botão "Ver detalhes" (não dourado), sem "Subir níveis"');
+  // BITE: dar pontos ao ares faz o selo e o botão aparecerem; tirar, somem.
+  w.eval("contaAtual.pontos.ares=3; ir('colecao',{},{substituir:true}); render();");
+  ok(!!$('.col2c[data-deus="ares"] .col2c__subir'), 'bite: com pontos, o selo ▲ do ares aparece');
+  w.eval("colSelecionar('ares')");
+  ok(!!$('#col2painel .col2p__ver--subir[data-subirdeus="ares"]'), 'bite: com pontos, o botão "Subir níveis" do ares aparece');
+  w.eval("contaAtual=null; ir('colecao',{},{substituir:true}); render();");
+}
+
 console.log(`\n${falhas ? '✗ ' + falhas + ' FALHA(S)' : '✓ tudo verde'} · ${passes} asserções`);
 process.exit(falhas ? 1 : 0);

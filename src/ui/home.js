@@ -1238,8 +1238,11 @@ function colCardHTML(k){
   // §284: o cartão NÃO carrega indicador de maestria (nem a moldura de Mestre). A maestria mora SÓ no painel
   // (o §282 tirou o pip da grade por duplicação; o §284 traz o posto+barra ao painel e ali fica). O cartão é
   // só raridade + cultura + retrato + nome/cultura + estado possuído/falta.
+  // §319b: selo de NÍVEL PAGÁVEL (▲ dourado) num canto livre — só quando há próximo nível a pagar agora.
+  const subir = nlTemPagavel(k) ? '<span class="col2c__subir" title="Há nível para subir">▲</span>' : '';
   return `<button class="col2c ${tem ? 'col2c--tem' : 'col2c--falta'}${sel ? ' is-sel' : ''}" data-deus="${H(k)}" title="${H(colNome(k))} · ${H(g.faccao || '')}">
     <span class="col2c__rar col2c__rar--${rar}">${rar}</span>
+    ${subir}
     <span class="col2c__cult" title="${H(g.faccao || '')}">${H(colCultMon(g.faccao))}</span>
     <span class="col2c__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 26)}</span>
     <span class="col2c__foot"><span class="col2c__n">${H(colNome(k))}</span><span class="col2c__f">${H(g.faccao || '')}</span></span>
@@ -1364,9 +1367,15 @@ function colSinergiaPainelHTML(k){
 function colPainelHTML(k){
   if (!k) return colRepousoHTML();
   const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
+  // §319b — a posse deixa clara a economia de níveis: cópias + PONTOS acumulados do deus.
+  const pts = nlPontos(k), gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
   const posse = tem
-    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
+    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'} · ${pts} ponto${pts === 1 ? '' : 's'}</span>`
     : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
+  // §319b — linha "Níveis X de Y" (a MESMA conta da tela de níveis, §319): o jogador descobre que níveis existem.
+  const res = nlResumo(k, gm);
+  const niveis = tem ? `<div class="col2p__niveis"><span class="col2p__nivlab">Níveis</span> <span class="col2p__nivnum">${res.x} de ${res.y}</span></div>` : '';
+  const pagavel = nlTemPagavel(k);
   return `<div class="col2p ${tem ? '' : 'col2p--falta'}">
     <button class="col2p__fechar" id="col2fechar" aria-label="Fechar painel">×</button>
     <div class="col2p__cab">
@@ -1382,9 +1391,12 @@ function colPainelHTML(k){
       <span class="col2p__tag">${H(g.funcao || '')}</span>
     </div>
     ${posse}
+    ${niveis}
     ${tem ? colMaestriaHTML(k) : ''}
     ${colSinergiaPainelHTML(k)}
-    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
+    ${pagavel
+      ? `<button class="col2p__ver col2p__ver--subir" data-subirdeus="${H(k)}">Subir níveis ›</button>`
+      : `<button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>`}
   </div>`;
 }
 
@@ -1641,7 +1653,9 @@ function colSelecionar(k){
 }
 function colLigarPainel(){
   // §284: VER DETALHES abre a SOBREPOSIÇÃO do kit (não a rota 'deus'); o × fecha o painel (volta ao repouso).
-  const ver = stage.querySelector('.col2p__ver'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
+  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
+  // §319b: "Subir níveis ›" leva direto à TELA DE NÍVEIS (rota 'deus'), não à sobreposição de kit.
+  const sub = stage.querySelector('.col2p__ver--subir[data-subirdeus]'); if (sub) sub.onclick = () => { ir('deus', { key: sub.dataset.subirdeus }); render(); };
   const mais = stage.querySelector('.col2s__mais'); if (mais) mais.onclick = () => colAbrirVer(mais.dataset.sinmais, 'sinergia');   // §294: "+N ›" abre a lista completa
   const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
 }
@@ -1778,6 +1792,20 @@ function nlResumo(k, gm){
     y += topo;
   }
   return { x, y };
+}
+// §319b — o deus TEM pelo menos um próximo nível PAGÁVEL agora? (possui + tem pontos + algum slot com escada
+// abaixo do topo cujo custo cabe nos pontos). Alimenta o selo da grade e o botão dourado "Subir níveis" — só
+// acende quando há de fato o que pagar; sem pontos ou tudo no máximo, fica apagado (leva a "Ver detalhes").
+function nlTemPagavel(k){
+  if (!temDeus(k)) return false;
+  const gm = (typeof GODS !== 'undefined' && GODS[k]); if (!gm) return false;
+  const pts = nlPontos(k); if (pts <= 0) return false;
+  for (const sl of ['basico', 'habilidade', 'milagre']){
+    const ab = nlAb(gm, sl); if (nlSemEscada(ab)) continue;
+    const topo = nlTopo(ab), cur = Math.min(nlNivel(k, sl), topo);
+    if (cur < topo && nlCustoNivel(cur + 1) <= pts) return true;
+  }
+  return false;
 }
 // até onde os PONTOS alcançam a partir do nível atual (marcadores "pode" — mostra o alcance, não só o próximo).
 function nlAlcance(k, ab, cur){

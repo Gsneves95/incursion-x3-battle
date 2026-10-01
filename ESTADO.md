@@ -2,6 +2,34 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §319b · DOIS ACHADOS DO DONO NO S24 (descoberta dos níveis + regressão da barra do Android)
+
+**1) Os níveis agora se DESCOBREM na Coleção** (`src/ui/home.js`). Antes, a tela de níveis (§319) só abria por "Ver
+detalhes" e nada avisava que níveis/pontos existiam. Agora:
+- **Painel do deus (`col2p`):** a posse mostra os pontos — "Possuído · N cópia(s) · N pontos"; nova linha compacta
+  "Níveis X de Y" (a MESMA conta da tela §319, `nlResumo`).
+- **Botão do painel:** vira **"Subir níveis ›" DOURADO** (e leva à rota `deus`, a tela de níveis) quando o deus tem
+  pontos para pagar ao menos um próximo nível (`nlTemPagavel`); senão fica **"Ver detalhes ›" quieto** (contorno) e
+  abre a sobreposição de kit como antes. O ouro virou sinal de "tem o que fazer aqui", não decoração.
+- **Cartão da grade (`col2c`):** selo **▲ dourado** num canto livre só quando há nível pagável; sem ele, cartão normal.
+- Orçamento vertical do painel estava no piso 428 (maestria+sinergia); a linha nova entrou reclamando ~10px de espaço
+  interno do bloco de maestria (`col2m`) e do `col2p` — medido verde em `colecao_sinergia` (pior deus hades 426 ≤ 428).
+- Guardas: `colecao_tela.test.js` §319b — selo+botão só com pagável, provado que mordem (0 pontos → somem; com pontos
+  → aparecem). Captura 893 `docs/capturas-319/e-colecao-descobrir.png`.
+
+**2) Regressão da BARRA DE NAVEGAÇÃO do Android — causa: APK, não o repo.** As duas peças do modo imersivo estão
+**intactas e inalteradas desde o §243/§244**: o lado WEB (`src/view.js` `imersivo()` + reafirmação em
+resume/focus/visibilitychange — esconde a barra de STATUS, vem do servidor) e o lado NATIVO
+(`native/MainActivity.java`, aplicado por `tools/cap-native.js` no `npm run cap:sync` — esconde a barra de NAVEGAÇÃO,
+vive DENTRO do APK). Nada no §318/§319 tocou nelas (confirmado por `git log -L` da função). Logo, a barra de navegação
+voltar ⟹ o **APK instalado** não tem o MainActivity do §244 — ou é anterior a ele, ou a pasta `android/` foi
+regenerada (`cap add` cria um MainActivity vanilla) e o APK foi montado **sem** `npm run cap:sync`. **Conserto = APK
+NOVO** (nenhuma mudança de servidor esconde a barra de navegação; o Fullscreen web sozinho deixa faixa lateral em
+paisagem — motivo pelo qual o §244 pôs isso no nativo). Reforço aplicado no código (entra no próximo APK):
+`MainActivity.onResume()` reafirma o imersivo além do `onWindowFocusChanged` (alguns OEMs readmitem a barra no resume
+antes do foco). Runbook passo a passo em **`docs/apk-imersivo.md`** (cap add → `npm run cap:sync` → `gradlew
+assembleDebug` → `adb install -r`). **O dono precisa gerar e instalar o APK novo (guiado).**
+
 ## ★ §319 FASE 4 · A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono)
 
 **A rota `deus` da Coleção virou a TELA DE NÍVEIS** (`renderDeusDetalhe` em `src/ui/home.js`). Layout paisagem: barra

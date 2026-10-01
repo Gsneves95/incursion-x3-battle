@@ -6,6 +6,30 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §319b · descoberta dos níveis na Coleção + regressão da barra do Android (achados do dono no S24)
+
+**1) Descoberta dos níveis.** O dono não achava onde subir habilidade: a tela de níveis (§319) só abria por um botão
+genérico e nada sinalizava que níveis/pontos existiam. Decisões:
+- O botão do painel só fica **DOURADO** ("Subir níveis ›", leva à rota `deus`) quando há **nível pagável**
+  (`nlTemPagavel` = possui + pontos > 0 + algum slot abaixo do topo com custo que cabe). Sem isso fica **quieto**
+  ("Ver detalhes ›", contorno, abre a sobreposição de kit). **Por quê:** o ouro é caro — vira ruído se estiver sempre
+  aceso. Dourado = "há algo a fazer aqui agora"; a mesma regra acende o selo ▲ no cartão da grade. Alternativa recusada:
+  dois botões (ver + subir) sempre — polui o painel já cheio (maestria+sinergia no piso 428).
+- A posse ganhou os **pontos** ("Possuído · N cópia(s) · N pontos") e o painel ganhou a linha **"Níveis X de Y"** (a
+  conta de `nlResumo`, a mesma da tela §319). A barra cheia NÃO entra no painel (orçamento vertical no piso); fica só na
+  tela de níveis. Para a linha caber, o bloco de maestria (`col2m`) e o `col2p` cederam ~10px internos — medido verde.
+
+**2) A barra de navegação do Android que "voltou" é o APK, não o repositório.** O modo imersivo tem duas peças e as
+duas estão **intactas e inalteradas desde o §243/§244**: WEB (`view.js imersivo()`, barra de STATUS, vem do servidor)
+e NATIVO (`native/MainActivity.java` via `cap-native.js` no `cap:sync`, barra de NAVEGAÇÃO, vive no APK). `git log -L`
+confirma que a função não muda desde o §244. Então a barra de navegação só volta se o **APK instalado** não tiver o
+MainActivity do §244 (APK anterior a ele, ou `android/` regenerada por `cap add` e montada sem `npm run cap:sync`).
+**Conserto = APK NOVO** — não há caminho de servidor que esconda a barra de navegação (o Fullscreen web sozinho deixa
+faixa lateral em paisagem; foi por isso que o §244 foi para o nativo). **Por quê não "consertar em código":** o código
+já está certo; inventar mudança seria teatro. O que se fez de código é reforço honesto — `onResume()` reafirma o
+imersivo além do `onWindowFocusChanged` (OEMs que readmitem a barra no resume antes do foco) — e entra só no próximo
+APK. Runbook do rebuild: `docs/apk-imersivo.md`.
+
 ## §319 FASE 4 · A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono)
 
 **O que:** a rota `deus` da Coleção (`renderDeusDetalhe`, `src/ui/home.js`) deixou de ser a ficha antiga (arte + chips +
