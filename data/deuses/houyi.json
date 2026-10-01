@@ -10,8 +10,16 @@
     "nome": "Olho de Águia",
     "desc": "Hou Yi ignora Inalvejável; causa +8 de dano contra inimigos com qualquer buff.",
     "fx": [
-      { "gatilho": "ignoraInalvejavel" },
-      { "gatilho": "bonusDano", "v": 8, "quando": { "alvoBuff": "qualquer" } }
+      {
+        "gatilho": "ignoraInalvejavel"
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 8,
+        "quando": {
+          "alvoBuff": "qualquer"
+        }
+      }
     ]
   },
   "ab": [
@@ -19,34 +27,149 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Flecha Solar",
-      "cost": { "Chama": 1 },
+      "cost": {
+        "Chama": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano perfurante a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15, "kind": "perfurante" } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "kind": "perfurante"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano perfurante a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano perfurante a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano perfurante a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Abater o Sol",
-      "cost": { "Chama": 2 },
+      "cost": {
+        "Chama": 2
+      },
       "cd": 2,
       "alvo": "inimigo",
       "desc": "25 de dano a 1 inimigo (40 se ele for Aurora); remove o DIA.",
       "fx": [
-        { "t": "dmg", "v": 25, "seCond": { "quando": { "alvoElem": "Aurora" }, "v": 40 } },
-        { "t": "fase", "remove": "Dia" }
+        {
+          "t": "dmg",
+          "v": 25,
+          "seCond": {
+            "quando": {
+              "alvoElem": "Aurora"
+            },
+            "v": 40
+          }
+        },
+        {
+          "t": "fase",
+          "remove": "Dia"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 27
+            }
+          ],
+          "desc": "27 de dano a 1 inimigo (40 se ele for Aurora); remove o DIA."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 29
+            }
+          ],
+          "desc": "29 de dano a 1 inimigo (40 se ele for Aurora); remove o DIA."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 29,
+              "para": 31
+            }
+          ],
+          "desc": "31 de dano a 1 inimigo (40 se ele for Aurora); remove o DIA."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Nove Flechas",
-      "cost": { "Chama": 2, "livre": 1 },
+      "cost": {
+        "Chama": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "distribui",
       "desc": "9 flechas de 5 de dano (8 contra alvos de Aurora), repartidas entre os inimigos que você escolher. O extra da divisão vai para os primeiros selecionados.",
-      "fx": [ { "t": "dmg", "v": 5, "golpes": 9, "seCond": { "quando": { "alvoElem": "Aurora" }, "v": 8 } } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 5,
+          "golpes": 9,
+          "seCond": {
+            "quando": {
+              "alvoElem": "Aurora"
+            },
+            "v": 8
+          }
+        }
+      ],
+      "semEscada": "9 flechas de 5: o menor degrau (5 para 6) soma +9 de dano de uma vez — já é salto (como o Susanoo). Sem escada por desenho."
     }
   ]
 }

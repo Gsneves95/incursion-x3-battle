@@ -6,6 +6,57 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318 FASE 3 · LOTE 13 (9 chineses) — 9 de 9 DENTRO; 2 SEM ESCADA (Nezha habil, Hou Yi milagre); ±1 no Huang Di; regra do PRAZO DE EXECUÇÃO
+
+**Uma varredura** dos 9 (Nezha/Ao Kuang/Hou Yi/Guan Yu/Chang'e/Huang Di/Nüwa/Sun Wukong/Yan Wong), N=3000
+sorteado+reativo, higiene antes, **0 empate-por-teto**. Nezha medido só em básico/milagre/MÁX (habil SEM ESCADA); Hou Yi
+só em básico/habil/MÁX (milagre SEM ESCADA). **9 de 9 DENTRO** — nenhuma habilidade nv4 > +15pp após o ajuste; Huang Di
+precisou de **±1** (milagre +17,5 → +11,9; MÁX +26,9 → +20,8).
+
+**2 SEM ESCADA desde o desenho (marcação `semEscada`):**
+- **Nezha habilidade** (alternada ANEL/MANTO): sem fx no topo (só `modos`) — fora da lista branca, como opção sem número.
+- **Hou Yi milagre** (9 flechas de 5): o menor degrau (5→6) soma **+9 de dano de uma vez** — já é salto (como o Susanoo).
+
+**Regra do PRAZO DE EXECUÇÃO (motor + babá B4k).** O Livro do Submundo do **Yan Wong** (inscreve → elimina em N turnos)
+tem `fx[0].eff.dur = 3`. Esse `eff.dur` é a contagem regressiva da morte, não uma magnitude — subi-lo adia a execução
+(muda a regra, não o número). `validarNiveisDeus` recusa `fx[i].eff.dur` quando o eff.type é de prazo de execução
+(`_EFF_PRAZO_EXECUCAO = ['livro']`). Um `eff.dur` normal (noHeal do Kagutsuchi) segue SALTO válido no último degrau. A
+escada do Yan Wong habil sobe o `eff.v` do vulnerável (fx[1], 8→11), nunca o dur do Livro.
+
+**±1 no Huang Di (único FORA na 1ª varredura).** O milagre é um NOVO-PEQUENO de ESCUDO num milagre que **zera as recargas
+de 2 aliados** (utilitário fortíssimo) — o escudo cresce caro: medi a curva shield 2 / 3 / 4 = **+6,7 / +11,9 / +17,5**
+(≈ +5/casa; a magnitude importa, não só "existe escudo"). O nv4 (shield 4) estoura (+17,5 > +15). ±1: **teto shield 3**
+(escada curta (j') de 2 degraus, marcada `escadaCurta`). Re-medido: milagre **+11,9**, MÁX **+20,8 → DENTRO**.
+
+**Motor verificado aplicado-como-escrito** (o dono mandou conferir, tudo no kit efetivo): Guan Yu habil nv2 com 2 mudas
+(fx[0].eff.v + fx[1].eff.v, ambos 8→9) e nv3/nv4 no contra-ataque (fx[2].v 15→17); Nüwa habil (ext.iii leve) sobe CURA/
+FÚRIA/ESCUDO juntos (20→23 / 8→11 / 15→18) e **PURIFICA/ORBE sem número ficam iguais**; Chang'e milagre (ext.i) sobe
+senao (Dia-não, 20→21), regen (fx[1].eff.v 8→9) e entao (NOITE, 30→31), verificado em combate (o ramo NOITE dispara);
+Sun Wukong básico de 2 alvos (fx[0].v 15→16, fx[1].v 10→11); Hou Yi habil sobe fx[0].v (25→31) e o **40-vs-Aurora
+(seCond) fica fora** da lista branca.
+
+**Resultado da varredura (N=3000, 0 empate-por-teto):**
+
+| deus | básico | habil | milagre | MÁX | triagem |
+|---|---|---|---|---|---|
+| Nezha (inicial) | +8,8 | — SEM ESCADA | +5,8 | +14,4 | DENTRO |
+| Ao Kuang | +7,1 | +7,7 | +6,7 | +18,8 | DENTRO |
+| Hou Yi | +10,3 | +1,7 | — SEM ESCADA | +11,3 | DENTRO |
+| Guan Yu | +3,3 | +1,5 | +6,9 | +9,3 | DENTRO |
+| Chang'e | +14,3 | +4,1 | +3,3 | +20,2 | DENTRO |
+| Huang Di | +4,4 | +0,0 | +11,9¹ | +20,8¹ | DENTRO (±1) |
+| Nüwa | +8,1 | +3,4 | +5,3 | +14,0 | DENTRO |
+| Sun Wukong | +11,8 | +0,2 | +4,2 | +16,1 | DENTRO |
+| Yan Wong | +3,4 | +5,1 | +4,2 | +14,1 | DENTRO |
+
+¹ Huang Di ±1 (milagre teto shield 3, escada curta j'). Antes: milagre +17,5 · MÁX +26,9.
+
+**9 de 9 DENTRO**, todos liberados. Total em `niveis_liberados.json`: **92 deuses** (18 gregos + 12 nórdicos + 13
+egípcios + 7 L8 + 7 L9 + 8 L10 + 7 L11 + 7 L12 + 9 L13 + zeus/oxum/tyr). Régua a'–h'+j' + whitelist a/b/i(+agenda)/ii/
+iii-leve/v + o PRAZO DE EXECUÇÃO fora do leveling de `eff.dur`. 0 Provação estale.
+
+---
+
 ## §318 FASE 3 · correção (j') ESCADA CURTA + LOTE 12 (7 japoneses) — 7 de 7 DENTRO; defeito do Fujin (L11) consertado
 
 **Correção (j') — ESCADA CURTA.** O ±1 do LOTE 11 deixou o Fujin com dois defeitos que a babá 8 (só varre degraus

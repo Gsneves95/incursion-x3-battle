@@ -11,8 +11,23 @@
     "nome": "Renascido do Lótus",
     "desc": "Imune a Veneno e Queimadura; 1× por partida, ao cair, retorna no turno seguinte com 48 de HP.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "veneno", "queimadura" ] },
-      { "gatilho": "aoCair", "quem": "self", "faz": [ { "t": "reviveProximoTurno", "hp": 48 } ] }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "veneno",
+          "queimadura"
+        ]
+      },
+      {
+        "gatilho": "aoCair",
+        "quem": "self",
+        "faz": [
+          {
+            "t": "reviveProximoTurno",
+            "hp": 48
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -31,6 +46,48 @@
           "t": "dmg",
           "v": 15
         }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "17 de dano; ele causa 2 menos de dano por 1 turno."
+        }
       ]
     },
     {
@@ -47,7 +104,11 @@
       "alvo": "auto",
       "desc": "Alterna a cada uso. ANEL: trava a Habilidade do alvo por 1 turno. MANTO: 12 a todos + Queimadura 8/turno.",
       "alterna": true,
-      "modos": ["ANEL", "MANTO"]
+      "modos": [
+        "ANEL",
+        "MANTO"
+      ],
+      "semEscada": "Habilidade alternada (ANEL/MANTO) sem fx no topo: fora da lista branca, como opção sem número. Sem escada por desenho."
     },
     {
       "slot": "milagre",
@@ -65,6 +126,41 @@
           "t": "dmg",
           "v": 22,
           "seAliadoJaAgiu": 10
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 22,
+              "para": 23
+            }
+          ],
+          "desc": "23 de dano a 2 inimigos; +10 cada se outro aliado já agiu neste turno."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 23,
+              "para": 24
+            }
+          ],
+          "desc": "24 de dano a 2 inimigos; +10 cada se outro aliado já agiu neste turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 24,
+              "para": 25
+            }
+          ],
+          "desc": "25 de dano a 2 inimigos; +10 cada se outro aliado já agiu neste turno."
         }
       ]
     }

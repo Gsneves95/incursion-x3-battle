@@ -10,7 +10,16 @@
     "nome": "Soberano Civilizador",
     "desc": "No início de cada turno, a recarga mais longa do time é reduzida em 1.",
     "fx": [
-      { "gatilho": "porTurno", "faz": [ { "t": "cdShift", "soMaiorDoTime": true, "v": -1 } ] }
+      {
+        "gatilho": "porTurno",
+        "faz": [
+          {
+            "t": "cdShift",
+            "soMaiorDoTime": true,
+            "v": -1
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -22,33 +31,166 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Ordem Imperial",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Reduz em 1 turno todas as recargas do time; o time causa +5 de dano por 2 turnos.",
       "fx": [
-        { "t": "cdShift", "v": -1, "lado": "proprio" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 5, "dur": 2 }, "escopo": "time" }
+        {
+          "t": "cdShift",
+          "v": -1,
+          "lado": "proprio"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 5,
+            "dur": 2
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 5,
+              "para": 6
+            }
+          ],
+          "desc": "Reduz em 1 turno todas as recargas do time; o time causa +6 de dano por 2 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 6,
+              "para": 7
+            }
+          ],
+          "desc": "Reduz em 1 turno todas as recargas do time; o time causa +7 de dano por 2 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 7,
+              "para": 8
+            }
+          ],
+          "desc": "Reduz em 1 turno todas as recargas do time; o time causa +8 de dano por 2 turnos."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Carruagem que Aponta o Sul",
-      "cost": { "Aurora": 1, "livre": 2 },
+      "cost": {
+        "Aurora": 1,
+        "livre": 2
+      },
       "cd": 4,
       "alvo": "2aliados",
       "desc": "Zera todas as recargas de 2 aliados e remove os debuffs deles.",
       "fx": [
-        { "t": "cdShift", "unidade": true, "v": -99 },
-        { "t": "cleanse" }
-      ]
+        {
+          "t": "cdShift",
+          "unidade": true,
+          "v": -99
+        },
+        {
+          "t": "cleanse"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "shield",
+                "v": 2
+              }
+            }
+          ],
+          "desc": "Zera todas as recargas de 2 aliados, remove os debuffs deles e eles ganham 2 de Defesa Destrutível."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 2,
+              "para": 3
+            }
+          ],
+          "desc": "Zera todas as recargas de 2 aliados, remove os debuffs deles e eles ganham 3 de Defesa Destrutível."
+        }
+      ],
+      "escadaCurta": "NOVO-PEQUENO de escudo num milagre que zera recargas de 2 aliados: shield 4 (nv4) mede +17,5 > +15; teto 3 (+11,9)."
     }
   ]
 }

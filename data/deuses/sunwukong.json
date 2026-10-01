@@ -10,8 +10,22 @@
     "nome": "Corpo Imortal",
     "desc": "Não pode ser eliminado por execução; 1× por partida sobrevive a um golpe letal com 1 de HP.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "execucao" ] },
-      { "gatilho": "abertura", "faz": [ { "t": "vidaExtra", "hp": 1, "escopo": "self" } ] }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "execucao"
+        ]
+      },
+      {
+        "gatilho": "abertura",
+        "faz": [
+          {
+            "t": "vidaExtra",
+            "hp": 1,
+            "escopo": "self"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -19,33 +33,191 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Bastão Ruyi Jingu",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 0,
       "alvo": "2inimigos",
       "desc": "15 de dano a 1 inimigo e 10 a outro.",
-      "fx": [ { "t": "dmg", "v": 15, "idx": 0 }, { "t": "dmg", "v": 10, "idx": 1 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "idx": 0
+        },
+        {
+          "t": "dmg",
+          "v": 10,
+          "idx": 1
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo e 10 a outro."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo e 11 a outro."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo e 11 a outro; eles causam 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Fios de Cabelo",
-      "cost": { "Verdejante": 2 },
+      "cost": {
+        "Verdejante": 2
+      },
       "cd": 3,
       "alvo": "distribui",
       "desc": "4 golpes de 8 distribuídos entre os inimigos.",
-      "fx": [ { "t": "dmg", "v": 8, "golpes": 4 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 8,
+          "golpes": 4
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "4 golpes de 9 distribuídos entre os inimigos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "4 golpes de 10 distribuídos entre os inimigos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "4 golpes de 10 distribuídos entre os inimigos; os atingidos causam 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "72 Transformações",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "Por 2 turnos, Wukong causa +12 de dano e é Inalvejável por habilidades de alvo único.",
       "fx": [
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 12, "dur": 2 }, "escopo": "self" },
-        { "t": "apply", "eff": { "type": "inalvejavel", "dur": 2 }, "escopo": "self" }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 12,
+            "dur": 2
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "inalvejavel",
+            "dur": 2
+          },
+          "escopo": "self"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "Por 2 turnos, Wukong causa +13 de dano e é Inalvejável por habilidades de alvo único."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "Por 2 turnos, Wukong causa +14 de dano e é Inalvejável por habilidades de alvo único."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 14,
+              "para": 15
+            }
+          ],
+          "desc": "Por 2 turnos, Wukong causa +15 de dano e é Inalvejável por habilidades de alvo único."
+        }
       ]
     }
   ]

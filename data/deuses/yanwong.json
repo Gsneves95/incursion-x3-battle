@@ -10,7 +10,15 @@
     "nome": "Juiz dos Mortos",
     "desc": "Quem morre sob o Livro não pode ser revivido; Yan Wong ganha 1 orbe por execução.",
     "fx": [
-      { "gatilho": "porExecucao", "faz": [ { "t": "orbGain", "n": 1 } ] }
+      {
+        "gatilho": "porExecucao",
+        "faz": [
+          {
+            "t": "orbGain",
+            "n": 1
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -18,36 +26,181 @@
       "slot": "basico",
       "classe": "Mágico",
       "nome": "Selo do Julgamento",
-      "cost": { "Umbra": 1 },
+      "cost": {
+        "Umbra": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Livro da Vida e Morte",
-      "cost": { "Umbra": 2 },
+      "cost": {
+        "Umbra": 2
+      },
       "cd": 3,
       "alvo": "inimigo",
       "desc": "Inscreve 1 inimigo: em 3 turnos ele é eliminado se o efeito não for removido; enquanto marcado recebe +8 de dano.",
       "fx": [
-        { "t": "apply", "eff": { "type": "livro", "dur": 3, "naoRevive": true } },
-        { "t": "apply", "eff": { "type": "vulneravel", "v": 8, "dur": 3 } }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "livro",
+            "dur": 3,
+            "naoRevive": true
+          }
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "vulneravel",
+            "v": 8,
+            "dur": 3
+          }
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Inscreve 1 inimigo: em 3 turnos ele é eliminado se o efeito não for removido; enquanto marcado recebe +9 de dano."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 9,
+              "para": 10
+            }
+          ],
+          "desc": "Inscreve 1 inimigo: em 3 turnos ele é eliminado se o efeito não for removido; enquanto marcado recebe +10 de dano."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "Inscreve 1 inimigo: em 3 turnos ele é eliminado se o efeito não for removido; enquanto marcado recebe +11 de dano."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Convocação dos Yamas",
-      "cost": { "Umbra": 2, "livre": 1 },
+      "cost": {
+        "Umbra": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "18 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos.",
       "fx": [
-        { "t": "dmg", "v": 18, "escopo": "todosInimigos" },
-        { "t": "aceleraLivro", "escopo": "todosInimigos" }
+        {
+          "t": "dmg",
+          "v": 18,
+          "escopo": "todosInimigos"
+        },
+        {
+          "t": "aceleraLivro",
+          "escopo": "todosInimigos"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 18,
+              "para": 19
+            }
+          ],
+          "desc": "19 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 19,
+              "para": 20
+            }
+          ],
+          "desc": "20 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "21 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+        }
       ]
     }
   ]

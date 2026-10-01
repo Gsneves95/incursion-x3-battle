@@ -223,6 +223,16 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus((() => { const d = clone(catalogo.zeus); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === 'habilidade').escadaCurta = 'x'; return d; })()).some(e => /só faz sentido em slot COM escada/.test(e)), "B4j MORDE: escadaCurta em slot sem niveis → quebra");
 })();
 
+// BABÁ 4k — §318 F3 L13: o `eff.dur` de um PRAZO DE EXECUÇÃO (Livro do Yan Wong) NÃO sobe — é a contagem regressiva da
+// morte, não uma magnitude. fx[i].eff.dur em eff.type 'livro' → quebra. Um eff.dur normal (noHeal do Kagutsuchi) passa.
+(() => {
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = '(fixture j)'; return d; };
+  // Yan Wong habil fx[0] = Livro (apply, eff.dur:3). Subir esse dur → quebra.
+  ok(E.validarNiveisDeus(so(catalogo.yanwong, 'habilidade', [{ nv: 4, muda: [{ caminho: 'fx[0].eff.dur', de: 3, para: 4 }], desc: 'x' }])).some(e => /PRAZO DE EXECU/.test(e)), "B4k MORDE: eff.dur do Livro (prazo de execução) não sobe → quebra");
+  // um eff.dur normal (Kagutsuchi habil fx[1] = noHeal, eff.dur:2) segue sendo SALTO válido no último degrau
+  ok(E.validarNiveisDeus(so(catalogo.kagutsuchi, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].eff.dur', de: 2, para: 3 }], desc: 'x' }])).length === 0, "B4k passa: eff.dur normal (noHeal) é SALTO válido no último degrau (escada curta nv2)");
+})();
+
 // BABÁ 3c — §318 F3 regra (a') BÁSICO EM ÁREA. Um básico AoE (fx dmg escopo:todosInimigos) PODE ganhar no nv2 um
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).

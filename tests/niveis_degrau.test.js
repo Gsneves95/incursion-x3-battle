@@ -95,6 +95,8 @@ function estadoAposCast(catBase, key, slot, nv, caminhoAtual) {
       if (seCont) { const u0 = st.lados[0].units[0]; u0.contadores = u0.contadores || {}; u0.contadores[seCont.se.contador.nome] = seCont.se.contador.n; }
       const seAlvoCont = scanFx(efAb.fx, f => f.se && f.se.alvoContador && typeof f.se.alvoContador.n === 'number');   // §318 F3 L12 — ramo "o ALVO tem contador >= n" (Izanagi: limpa+cura um ALIADO com Maldição): semeia o contador no aliado-alvo
       if (seAlvoCont) { const al = st.lados[0].units[1]; al.contadores = al.contadores || {}; al.contadores[seAlvoCont.se.alvoContador.nome] = seAlvoCont.se.alvoContador.n; }
+      const seFase = scanFx(efAb.fx, f => f.se && f.se.fase);   // §318 F3 L13 — ramo "durante a FASE X" (Chang'e: durante a NOITE, cura 30): arma a fase global p/ o ramo entao disparar
+      if (seFase) { st.fase = seFase.se.fase; st.faseDur = 3; }
     }
   }
   const u = st.lados[0].units[0];

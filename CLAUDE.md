@@ -186,7 +186,7 @@ vetor de dano posicional sobe uma por degrau, Raijin Raio em Cadeia — ÍNDICE 
 `fx[]` com efeito SIMPLES `{t:dmg|heal|shield, v:≤8, escopo?}` numa habilidade cujo fx BASE **não tem magnitude** — §318 F3 ext.a
 (ext.i: magnitude conta também ANINHADA, mas só **DANO** `t:dmg` dentro de ramo bloqueia; cura/buff condicional não —
 preserva Deméter/Freyja); os LIMIARES da condição (`se:{...}`, `executaAbaixoDe`) ficam FORA da whitelist — degrau escondido, nunca sobem;
-SALTO nv4 ≤1/hab: `cd`, `cost.<Recurso>`, `fx[i].eff.dur`, `fx[i].dur` (dur de dot/hot — §318 F3 ext.b), `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
+SALTO nv4 ≤1/hab: `cd`, `cost.<Recurso>`, `fx[i].eff.dur` (EXCETO de um PRAZO DE EXECUÇÃO — o `eff.dur` de um `livro`, Yan Wong, é a contagem regressiva da morte, não uma magnitude: §318 F3 L13, a build quebra), `fx[i].dur` (dur de dot/hot — §318 F3 ext.b), `fx[]`), o `de` cumulativo OBRIGATÓRIO e o texto×número dos níveis são
 GUARDADOS NA BUILD por `validarNiveisDeus`/`conferirTextoNiveis` (falham ALTO). O nível vive na **conta** (`c.niveis`,
 server-autoritativo, default 1; `definirNivel` recusa fora de 1–4/passiva/não-possuído) — **o cliente NUNCA informa nível**,
 quem monta os kits efetivos dos dois lados é o servidor (`salas.criarPvP` → `partida.criarPvP` → `montarProvacao`), e o

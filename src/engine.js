@@ -440,6 +440,9 @@ function _categoriaCaminho(c) {
 // dmg/heal/shield com `v`, nenhum `eff.v`) pode ACRESCENTAR no nv2 um efeito SIMPLES {t:dmg|heal|shield,
 // v:≤8, escopo?}. Contador (marca) e roubaOrbe (n) NÃO são magnitude — não bloqueiam. O `v` guarda o teto 8.
 const _T_MAGNITUDE = ['dmg', 'heal', 'shield'];
+// §318 F3 L13 — tipos de efeito que são um PRAZO DE EXECUÇÃO (contagem regressiva da morte): o `eff.dur` deles é a
+// regra (adia a execução), não uma magnitude, então NÃO sobe na escada (Yan Wong, Livro do Submundo).
+const _EFF_PRAZO_EXECUCAO = ['livro'];
 // §318 F3 L6 (extensão i) — a MAGNITUDE conta mesmo ANINHADA dentro de ramos condicionais. No TOPO, qualquer
 // magnitude (dmg/heal/shield com `v`, ou `eff.v`) bloqueia o NOVO-PEQUENO (comportamento original). ANINHADO (dentro
 // de entao/senao), só DANO (`t:dmg`) conta — é a redação do dono: "habilidade com DANO dentro de condicional NÃO é
@@ -641,6 +644,14 @@ function validarNiveisDeus(deus) {
           const idx = +mud.caminho.match(/^fx\[(\d+)\]\.dur$/)[1];
           const alvo = (work.fx || [])[idx];
           if (!alvo || (alvo.t !== 'dot' && alvo.t !== 'hot')) erros.push(`${nome}.${ab.slot} nv${nvl}: fx[${idx}].dur só vale em dot/hot (é ${JSON.stringify(alvo && alvo.t)})`);
+        }
+        // §318 F3 L13 — o `eff.dur` de um PRAZO DE EXECUÇÃO (Livro do Yan Wong: inscreve → elimina em N turnos) NÃO sobe:
+        // é a contagem regressiva da morte, não uma magnitude. Subir a duração de um `livro` adia a execução (muda a
+        // regra, não o número). fx[i].eff.dur em eff.type 'livro' → a build quebra.
+        let effDurM;
+        if ((effDurM = /^fx\[(\d+)\]\.eff\.dur$/.exec(mud.caminho))) {
+          const alvoE = (work.fx || [])[+effDurM[1]];
+          if (alvoE && alvoE.eff && _EFF_PRAZO_EXECUCAO.includes(alvoE.eff.type)) erros.push(`${nome}.${ab.slot} nv${nvl}: eff.dur de um PRAZO DE EXECUÇÃO (${JSON.stringify(alvoE.eff.type)}) NÃO pode subir — é o prazo da morte, não uma magnitude`);
         }
         if (cat === 'salto') { saltos++; if (nvl !== maxNvDecl) erros.push(`${nome}.${ab.slot} nv${nvl}: SALTO (${JSON.stringify(mud.caminho)}) só é permitido no ÚLTIMO degrau da escada (nv${maxNvDecl}) — regra j'`); }
         if (mud.caminho === 'fx[]') {

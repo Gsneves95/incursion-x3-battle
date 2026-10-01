@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318 FASE 3 · LOTE 13 (9 chineses) — 9/9 DENTRO; 92 liberados; regra do PRAZO DE EXECUÇÃO
+
+**Uma varredura** dos 9 (Nezha/Ao Kuang/Hou Yi/Guan Yu/Chang'e/Huang Di/Nüwa/Sun Wukong/Yan Wong), N=3000, higiene antes,
+0 empate-por-teto. Nezha só básico/milagre/MÁX (habil SEM ESCADA — alternada ANEL/MANTO, sem fx no topo); Hou Yi só
+básico/habil/MÁX (milagre SEM ESCADA — 9 flechas de 5, +1 = +9 = salto). **9/9 DENTRO** (maior single Chang'e básico
++14,3; maior MÁX Huang Di +20,8 após ±1). Só **Huang Di** saiu FORA na 1ª varredura (milagre NOVO-PEQUENO de escudo num
+milagre que zera recargas de 2 aliados: curva shield 2/3/4 = +6,7/+11,9/+17,5; nv4 estoura) → ±1 teto shield 3 (escada
+curta j') → milagre +11,9, MÁX +20,8. Liberados → **92 deuses** (…+7 L12 + 9 L13 + 3 pilotos).
+
+**Regra do PRAZO DE EXECUÇÃO** (motor + babá B4k): o `eff.dur` de um `livro` (Yan Wong, inscreve→elimina em N turnos) é
+a contagem regressiva da morte, não magnitude — `validarNiveisDeus` recusa `fx[i].eff.dur` em eff.type de prazo de
+execução (`_EFF_PRAZO_EXECUCAO`). eff.dur normal (noHeal) segue SALTO válido. Motor verificado (kitEfetivo/combate): Guan
+Yu 2-muda, Nüwa opções (PURIFICA/ORBE sem número ficam iguais), Chang'e ramos (NOITE dispara), Wukong 2-alvo, Hou Yi
+seCond:40 fora. Babá 8 ganhou o preparo do ramo `se.fase` (Chang'e NOITE). Babás + suíte + build verdes; 0 Provação
+estale. Tabela na DECISOES "LOTE 13".
+
 ## ★ §318 FASE 3 · correção (j') ESCADA CURTA + LOTE 12 (7 japoneses) — 7/7 DENTRO; 83 liberados
 
 **Correção (j') ESCADA CURTA** (consertou o defeito do Fujin no L11): um slot pode ter <3 degraus, mas **contíguos a

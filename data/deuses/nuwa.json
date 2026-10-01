@@ -10,7 +10,21 @@
     "nome": "Mãe da Humanidade",
     "desc": "Quando um aliado cai, os demais causam +10 de dano pelo resto da partida.",
     "fx": [
-      { "gatilho": "aoCair", "quem": "aliado", "faz": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 10, "dur": 99 }, "escopo": "time" } ] }
+      {
+        "gatilho": "aoCair",
+        "quem": "aliado",
+        "faz": [
+          {
+            "t": "apply",
+            "eff": {
+              "type": "dmgUp",
+              "v": 10,
+              "dur": 99
+            },
+            "escopo": "time"
+          }
+        ]
+      }
     ]
   },
   "ab": [
@@ -22,35 +36,246 @@
       "cd": 0,
       "alvo": "inimigo",
       "desc": "12 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 12 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 12
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
+            }
+          ],
+          "desc": "13 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgDown",
+                  "v": 2,
+                  "dur": 1
+                }
+              }
+            }
+          ],
+          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Mágico",
       "nome": "Pedras das Cinco Cores",
-      "cost": { "Aurora": 2 },
+      "cost": {
+        "Aurora": 2
+      },
       "cd": 2,
       "alvo": "nenhum",
       "desc": "Escolha 2: cura 20 no time · time causa +8 de dano por 2 turnos · time ganha 15 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe.",
       "opcoes": [
-        { "nome": "CURA", "fx": [ { "t": "heal", "v": 20, "escopo": "time" } ] },
-        { "nome": "FÚRIA", "fx": [ { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "time" } ] },
-        { "nome": "ESCUDO", "fx": [ { "t": "shield", "v": 15, "escopo": "time" } ] },
-        { "nome": "PURIFICA", "fx": [ { "t": "cleanse", "escopo": "time" } ] },
-        { "nome": "ORBE", "fx": [ { "t": "orbGain", "n": 1 } ] }
+        {
+          "nome": "CURA",
+          "fx": [
+            {
+              "t": "heal",
+              "v": 20,
+              "escopo": "time"
+            }
+          ]
+        },
+        {
+          "nome": "FÚRIA",
+          "fx": [
+            {
+              "t": "apply",
+              "eff": {
+                "type": "dmgUp",
+                "v": 8,
+                "dur": 2
+              },
+              "escopo": "time"
+            }
+          ]
+        },
+        {
+          "nome": "ESCUDO",
+          "fx": [
+            {
+              "t": "shield",
+              "v": 15,
+              "escopo": "time"
+            }
+          ]
+        },
+        {
+          "nome": "PURIFICA",
+          "fx": [
+            {
+              "t": "cleanse",
+              "escopo": "time"
+            }
+          ]
+        },
+        {
+          "nome": "ORBE",
+          "fx": [
+            {
+              "t": "orbGain",
+              "n": 1
+            }
+          ]
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 20,
+              "para": 21
+            },
+            {
+              "caminho": "opcoes[1].fx[0].eff.v",
+              "de": 8,
+              "para": 9
+            },
+            {
+              "caminho": "opcoes[2].fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Escolha 2: cura 21 no time · time causa +9 de dano por 2 turnos · time ganha 16 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 21,
+              "para": 22
+            },
+            {
+              "caminho": "opcoes[1].fx[0].eff.v",
+              "de": 9,
+              "para": 10
+            },
+            {
+              "caminho": "opcoes[2].fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "Escolha 2: cura 22 no time · time causa +10 de dano por 2 turnos · time ganha 17 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "opcoes[0].fx[0].v",
+              "de": 22,
+              "para": 23
+            },
+            {
+              "caminho": "opcoes[1].fx[0].eff.v",
+              "de": 10,
+              "para": 11
+            },
+            {
+              "caminho": "opcoes[2].fx[0].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "Escolha 2: cura 23 no time · time causa +11 de dano por 2 turnos · time ganha 18 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Mágico",
       "nome": "Remendar o Céu",
-      "cost": { "Aurora": 2, "livre": 1 },
+      "cost": {
+        "Aurora": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "nenhum",
       "desc": "O time ganha 20 de Defesa Destrutível e regenera 10 por turno durante 3 turnos.",
       "fx": [
-        { "t": "shield", "v": 20, "escopo": "time" },
-        { "t": "apply", "eff": { "type": "regen", "v": 10, "dur": 3 }, "escopo": "time" }
+        {
+          "t": "shield",
+          "v": 20,
+          "escopo": "time"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "regen",
+            "v": 10,
+            "dur": 3
+          },
+          "escopo": "time"
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 20,
+              "para": 21
+            }
+          ],
+          "desc": "O time ganha 21 de Defesa Destrutível e regenera 10 por turno durante 3 turnos."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 10,
+              "para": 11
+            }
+          ],
+          "desc": "O time ganha 21 de Defesa Destrutível e regenera 11 por turno durante 3 turnos."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 21,
+              "para": 22
+            }
+          ],
+          "desc": "O time ganha 22 de Defesa Destrutível e regenera 11 por turno durante 3 turnos."
+        }
       ]
     }
   ]

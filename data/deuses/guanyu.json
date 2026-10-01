@@ -10,8 +10,30 @@
     "nome": "Inabalável",
     "desc": "Com 3 aliados vivos, o time é imune a Medo; o time recebe 5 de redução de dano.",
     "fx": [
-      { "gatilho": "imunidade", "a": [ "medo" ], "escopo": "time", "estado": { "aliadosVivos": { "op": "min", "n": 3 } } },
-      { "gatilho": "reducao", "v": 5, "escopo": "time", "estado": { "aliadosVivos": { "op": "min", "n": 3 } } }
+      {
+        "gatilho": "imunidade",
+        "a": [
+          "medo"
+        ],
+        "escopo": "time",
+        "estado": {
+          "aliadosVivos": {
+            "op": "min",
+            "n": 3
+          }
+        }
+      },
+      {
+        "gatilho": "reducao",
+        "v": 5,
+        "escopo": "time",
+        "estado": {
+          "aliadosVivos": {
+            "op": "min",
+            "n": 3
+          }
+        }
+      }
     ]
   },
   "ab": [
@@ -19,35 +41,193 @@
       "slot": "basico",
       "classe": "Físico",
       "nome": "Lâmina do Dragão Verde",
-      "cost": { "Verdejante": 1 },
+      "cost": {
+        "Verdejante": 1
+      },
       "cd": 0,
       "alvo": "inimigo",
       "desc": "15 de dano a 1 inimigo.",
-      "fx": [ { "t": "dmg", "v": 15 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a 1 inimigo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[]",
+              "de": null,
+              "para": {
+                "t": "apply",
+                "eff": {
+                  "type": "dmgReduction",
+                  "v": 3,
+                  "dur": 1
+                },
+                "escopo": "self"
+              }
+            }
+          ],
+          "desc": "17 de dano a 1 inimigo; Guan Yu recebe 3 de redução de dano por 1 turno."
+        }
+      ]
     },
     {
       "slot": "habilidade",
       "classe": "Físico",
       "nome": "Juramento do Pêssego",
-      "cost": { "Verdejante": 2 },
+      "cost": {
+        "Verdejante": 2
+      },
       "cd": 2,
       "alvo": "aliado",
       "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +8 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado.",
       "fx": [
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 }, "escopo": "self" },
-        { "t": "apply", "eff": { "type": "dmgUp", "v": 8, "dur": 2 } },
-        { "t": "contraAtaca", "v": 15, "protege": "alvo", "contra": "unico", "dur": 2 }
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          },
+          "escopo": "self"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgUp",
+            "v": 8,
+            "dur": 2
+          }
+        },
+        {
+          "t": "contraAtaca",
+          "v": 15,
+          "protege": "alvo",
+          "contra": "unico",
+          "dur": 2
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].eff.v",
+              "de": 8,
+              "para": 9
+            },
+            {
+              "caminho": "fx[1].eff.v",
+              "de": 8,
+              "para": 9
+            }
+          ],
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 16 quem atingir o aliado."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[2].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 17 quem atingir o aliado."
+        }
       ]
     },
     {
       "slot": "milagre",
       "classe": "Físico",
       "nome": "Investida do General",
-      "cost": { "Verdejante": 2, "livre": 1 },
+      "cost": {
+        "Verdejante": 2,
+        "livre": 1
+      },
       "cd": 4,
       "alvo": "todosInimigos",
       "desc": "15 de dano a todos os inimigos, +8 por aliado vivo.",
-      "fx": [ { "t": "dmg", "v": 15, "escopo": "todosInimigos", "porAliadoVivo": 8 } ]
+      "fx": [
+        {
+          "t": "dmg",
+          "v": 15,
+          "escopo": "todosInimigos",
+          "porAliadoVivo": 8
+        }
+      ],
+      "niveis": [
+        {
+          "nv": 2,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
+            }
+          ],
+          "desc": "16 de dano a todos os inimigos, +8 por aliado vivo."
+        },
+        {
+          "nv": 3,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
+            }
+          ],
+          "desc": "17 de dano a todos os inimigos, +8 por aliado vivo."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "18 de dano a todos os inimigos, +8 por aliado vivo."
+        }
+      ]
     }
   ]
 }
