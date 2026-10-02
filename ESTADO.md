@@ -2,6 +2,34 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318b-3 · a economia dos Desafios migra ao servidor (fecha o carve-out do §318b-2)
+
+**DEFEITO do dono:** os Desafios por deus GASTAVAM Essência no CELULAR (`comprarDesafio → debitar(perfil,'essencia')`).
+A Essência é GANHA no servidor (Domínios/Desafios por replay) mas o `salvarPerfil` **nem aceita** gravar `moedas`
+(lista branca, §318 F2): o débito local nunca chegava ao servidor, enquanto o estado do desafio — que ESTAVA na lista
+branca — era gravado verbatim. Resultado: desafios **sem pagar de verdade**. Era o carve-out que o §318b-2 deixou
+explícito para resolver. Fechado aqui.
+
+**O que mudou:**
+- **Servidor** (`server/invocacao.js`, `contas.js`, `server.js`): `comprarPergaminho(conta, deus)` valida posse / não
+  ativo / não em recarga / Essência ≥ custo, então **debita 30 e fixa a recarga de 8h NA COMPRA** (relógio do servidor);
+  `fecharDesafio(conta, deus, cumpriu)` zera o `ativo`. Protocolo: `comprarPergaminho` → `pergaminhoComprado`,
+  `fecharDesafio` → `desafioFechado`; recusas `essencia_insuficiente` / `desafio_recarga` / `desafio_ativo`. O estado
+  `perfil.desafios` **saiu da lista branca** do `salvarPerfil` — é autoritativo do servidor; o cliente LÊ, não grava.
+- **Cliente** (`src/view.js`, `src/ui/home.js`, `src/ui/base.js`): wrappers `comprarPergaminhoServidor` /
+  `fecharDesafioServidor` (setam `contaAtual` da resposta). `comprarDesafioEIniciar(k)` trava o botão, pede ao servidor,
+  e ao ok inicia a batalha; recusas viram toast por código. `desafioEstado` lê `contaAtual.perfil.desafios`;
+  `podeComprarDesafio` decide pela Essência de `moedaServidor()` (offline → "sem conexão"). A tela mostra o saldo do
+  servidor ("—" desconectado). **Caiu o último leitor/gastador local de moeda.** Maestria segue local/cosmética (§215).
+
+**Guardas (provado que morde):**
+- `tests/desafio_net.test.js` — **servidor REAL em processo + WebSocket**: (A) ganhar Essência por replay de Domínio
+  (nível 1 vencido, teto de corrida 30); (B) comprar → debita 30 + recarga de ~8h; (C) sem Essência → recusa; (D) em
+  recarga → recusa (após `fecharDesafio`); (E) cliente forjando `+999` de Essência e desafio no `salvarPerfil` → nada
+  muda; (F) guarda de código com **controle negativo** que pega o `comprarDesafio→debitar` velho. 26 asserções.
+- `tests/desafios.test.js` — **migrado**: regras do cliente que seguem locais (maestria/moldura no Mestre, derivações
+  `desafioEstado`/`podeComprar` pela fonte do servidor, tela por `moedaServidor`, semanal por replay). 26 asserções.
+
 ## ★ §318b-2 · RECONEXÃO PROATIVA + toda barra de moedas do servidor
 
 Dois complementos ao §318b, antes do teste no aparelho:
@@ -18,9 +46,9 @@ queda cedo e já reergue. Independente do Capacitor — vale no WebView e no nav
 também aparecia na **Coleção**. Fonte única: `moedaServidor()` lê só `contaAtual.perfil.moedas`; `fmtMoeda` mostra **"—"**
 quando desconectado — **zero fallback ao perfil local**. Roteados: barra da **home/mapa** (`mapaMoedasHTML`), barra da
 **Coleção** (`col2__moedas`), confirmação **APAGAR DADOS** (`sobrepor.js`). A invocação já era server-only (§318b, `S._online`).
-**Exceção consciente e documentada:** os **DESAFIOS** ainda GASTAM Essência LOCAL (`comprarDesafio → debitar(perfil)`,
-economia não migrada ao servidor) — aquela tela segue mostrando o ledger LOCAL que de fato gasta; casar com o servidor
-ali mostraria um saldo que não é o gasto. Migrar a economia dos desafios ao servidor fica como tarefa separada.
+**Exceção consciente e documentada (RESOLVIDA no §318b-3):** à época os **DESAFIOS** ainda GASTAVAM Essência LOCAL
+(`comprarDesafio → debitar(perfil)`, economia não migrada ao servidor). O §318b-3 migrou a compra ao servidor e removeu
+o último leitor/gastador local — a tela dos Desafios agora também lê `moedaServidor()`.
 
 **Guardas (`tests/reconexao_foco.test.js`, na suíte):** A) foco derrubado → `religar` chamado + `entrar` forçado +
 conta refrescada (gema 1500), e visibilitychange idem; B) home/Coleção mostram **"—"** desconectado e o saldo do

@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318b-3 · a economia dos Desafios migra ao servidor (fecha o carve-out do §318b-2)
+
+**Defeito do dono:** os Desafios por deus ainda GASTAVAM Essência no CELULAR — `comprarDesafio` fazia
+`debitar(perfil,'essencia')`. Mas a Essência é GANHA no servidor (Domínios/Desafios por replay) e o `salvarPerfil`
+**nem aceita** gravar `moedas` (lista branca, §318 F2). Então o débito local nunca chegava ao servidor E o estado do
+desafio (que estava na lista branca) era gravado verbatim: o jogador abria desafios **sem pagar de verdade**. Não é
+exceção aceitável — é defeito. (O §318b-2 deixou isso explícito como carve-out a resolver; este é o fecho.)
+
+**Decisões:**
+- **A COMPRA é do servidor (`comprarPergaminho`).** Débito de Essência + recarga de 8h, com o relógio do SERVIDOR,
+  autoritativos. **Design: a recarga começa NA COMPRA** (não ao cumprir/desistir). Motivo: casa com o pedido do dono
+  ("comprar → debita e entra em recarga") e torna a recarga imune ao relógio do aparelho — o cliente não tem mais o que
+  escrever. Alternativa recusada (recarga ao fechar, como no §245 local): exigiria o cliente gravar `recargaAte`, que é
+  exatamente o estado que saiu da lista branca.
+- **`desafios` SAIU da lista branca do `salvarPerfil`.** O estado (ativo + recarga) é do servidor; o cliente LÊ
+  (`contaAtual.perfil.desafios`), não grava. `fecharDesafio(cumpriu)` zera o `ativo` (a recarga já foi fixada na
+  compra). Um cliente que forja `perfil.desafios` ou `+999` de Essência não muda NADA — provado que morde
+  (`desafio_net.test.js`, parte E).
+- **A tela dos Desafios lê `moedaServidor()`**, como as outras barras: "—" desconectado, nunca um saldo local. Caiu o
+  **último** leitor/gastador local de moeda; a guarda "nenhum leitor de moeda fora da conta" agora vale também para os
+  Desafios (guarda de código em `desafio_net.test.js`, parte F, com controle negativo que pega o código velho).
+- **Recusas sempre com mensagem**, nunca em silêncio: `essencia_insuficiente` / `desafio_recarga` / `desafio_ativo` /
+  sem conexão — traduzidas na tela por código.
+- **A MAESTRIA continua local/cosmética (§215).** Não é moeda; cumprir credita +3 no cliente e salva (campo `maestria`
+  segue na lista branca). Não viola a invariante da economia.
+- **Teste de ponta a ponta com o servidor REAL** (`desafio_net.test.js`): ganhar Essência por replay de Domínio →
+  comprar debita 30 + entra em recarga de 8h → sem Essência recusa → em recarga recusa → cliente gastando local não
+  muda nada. O `comprarPergaminho` do servidor (antes um protótipo de pacote sem uso no cliente) foi **reaproveitado**
+  para este fim.
+
 ## §318b-2 · reconexão proativa no foco + toda barra de moedas do servidor
 
 Complementos ao §318b, pedidos antes do teste no aparelho.

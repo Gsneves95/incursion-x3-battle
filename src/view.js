@@ -353,6 +353,31 @@ async function subirNivelServidor(deus, slot){
   }catch(e){ return { erro:(e&&e.message)||'erro', codigo:'sem_conexao' }; }
 }
 
+// §318b-3 — COMPRAR DESAFIO (pergaminho) no servidor: débito de Essência + recarga de 8h, autoritativos. O
+// cliente só pede; a resposta traz a conta atualizada (saldo + desafios). Recusas → código p/ a tela traduzir.
+async function comprarPergaminhoServidor(deus){
+  if(!contaTransporte) return { erro:'sem servidor', codigo:'sem_conexao' };
+  const t=(typeof lerToken==='function')?lerToken():null; if(!t) return { erro:'sem token', codigo:'sem_conexao' };
+  try{
+    const r=await contaTransporte.pedir(envelope('comprarPergaminho',{token:t,deus}));
+    if(r && r.tipo==='pergaminhoComprado'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); return { ok:true, deus:r.deus, custo:r.custo, saldo:r.saldo }; }
+    if(r && r.tipo==='recusado') return { erro:r.erro, codigo:r.codigo };
+    return { erro:'não foi possível comprar', codigo:'erro' };
+  }catch(e){ return { erro:(e&&e.message)||'erro', codigo:'sem_conexao' }; }
+}
+// encerrar a tentativa do desafio no servidor (cumpriu/desistiu): zera o `ativo`. A maestria, ao cumprir, é do
+// cliente (cosmética). Fire-and-forget tolerante: offline, o `ativo` fica e o jogador reencerra ao voltar.
+async function fecharDesafioServidor(deus, cumpriu){
+  if(!contaTransporte) return { erro:'sem servidor', codigo:'sem_conexao' };
+  const t=(typeof lerToken==='function')?lerToken():null; if(!t) return { erro:'sem token', codigo:'sem_conexao' };
+  try{
+    const r=await contaTransporte.pedir(envelope('fecharDesafio',{token:t,deus,cumpriu:!!cumpriu}));
+    if(r && r.tipo==='desafioFechado'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); return { ok:true, deus:r.deus }; }
+    if(r && r.tipo==='recusado') return { erro:r.erro, codigo:r.codigo };
+    return { erro:'não foi possível fechar', codigo:'erro' };
+  }catch(e){ return { erro:(e&&e.message)||'erro', codigo:'sem_conexao' }; }
+}
+
 // portão de IDADE (age-gate). NÃO é login: a lei explicada + duas escolhas de FAIXA. Sem e-mail,
 // sem senha, sem data de nascimento. `aoEscolher(faixa)` recebe 'menor'|'maior'.
 function montarPortaoIdade(aoEscolher){

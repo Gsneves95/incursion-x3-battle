@@ -245,19 +245,40 @@ function subirNivel(conta, deus, slot) {
   return { ok: true, deus, slot, nivel: alvo, pontos: conta.pontos[deus] };
 }
 
-// ---- PERGAMINHO: debita Essência no servidor (a posse + recarga seguem no cliente por ora) ----
-function comprarPergaminho(conta, deus) {
+// ---- DESAFIO POR DEUS (§318b-3): comprar o pergaminho é SERVIDOR — débito de Essência + a RECARGA de 8h
+// (relógio do servidor), não mais um gasto local que o salvarPerfil nem aceita. O estado do desafio
+// (ativo + recargaAte) vive em conta.perfil.desafios, gerido SÓ por aqui (saiu da lista branca do
+// salvarPerfil): o cliente lê, não grava. A maestria segue local/cosmética (§215). ----
+function _desafiosConta(conta) { if (!conta.perfil) conta.perfil = {}; if (!conta.perfil.desafios || typeof conta.perfil.desafios !== 'object') conta.perfil.desafios = {}; return conta.perfil.desafios; }
+function comprarPergaminho(conta, deus, agora) {
   garantir(conta);
   if (!_possui(conta, deus)) return { ok: false, motivo: 'nao_possui' };
+  const now = (typeof agora === 'number') ? agora : Date.now();
+  const des = _desafiosConta(conta);
+  const d = des[deus] || null;
+  if (d && d.ativo) return { ok: false, motivo: 'desafio_ativo' };                                   // já em andamento
+  if (d && d.recargaAte && d.recargaAte > now) return { ok: false, motivo: 'desafio_recarga', restaMs: d.recargaAte - now };
   const custo = (ECON.pergaminhos && ECON.pergaminhos.custoEssencia) || 0;
   const ess = (conta.perfil && conta.perfil.moedas && conta.perfil.moedas.essencia) || 0;
   if (ess < custo) return { ok: false, motivo: 'essencia_insuficiente', custo, essencia: ess };
   _addMoeda(conta, 'essencia', -custo);
-  return { ok: true, custo, saldo: _saldo(conta) };
+  const horas = (ECON.pergaminhos && ECON.pergaminhos.recargaHoras) || 8;
+  des[deus] = { ativo: true, recargaAte: now + horas * 3600 * 1000 };   // débito + recarga NA COMPRA (relógio do servidor)
+  return { ok: true, custo, saldo: _saldo(conta), deus };
+}
+// encerrar a tentativa (cumpriu = venceu, ou desistiu): só zera o `ativo`; a recarga já foi fixada na compra.
+// A MAESTRIA (ao cumprir) é creditada no cliente (cosmética, §215) — aqui é só o estado do desafio.
+function fecharDesafio(conta, deus, cumpriu) {
+  garantir(conta);
+  const des = _desafiosConta(conta);
+  const d = des[deus];
+  if (!d || !d.ativo) return { ok: false, motivo: 'nao_ativo' };
+  d.ativo = false;
+  return { ok: true, deus, cumpriu: !!cumpriu };
 }
 
 module.exports = {
-  linhaFaixa, faixaDoJogador, sortearUm, sortearLote, invocar, subirNivel, comprarPergaminho, devCredito, garantir,
+  linhaFaixa, faixaDoJogador, sortearUm, sortearLote, invocar, subirNivel, comprarPergaminho, fecharDesafio, devCredito, garantir,
   mulberry32, NFAIXAS, CONTA_FAIXA, FAIXA_DEUS, POOL, FAIXAS_COM_SS, _maximizado, _niveisDeus, NIVEIS_LIBERADOS,
   _raridadeNaFaixa, _pesoPick,
 };

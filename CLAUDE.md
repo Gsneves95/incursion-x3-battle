@@ -494,7 +494,12 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     cliente escreve. `salvarPerfil` só aceita uma LISTA BRANCA de campos genuinamente locais (desenho,
     preferências, maestria cosmética, corrida de Domínio, times, provações locais); moedas/deuses vindos
     do cliente são IGNORADOS (ETAPA 1). Um cliente que manda +99999 gema, um deus novo ou copias:50 não
-    muda NADA. O cliente LÊ de `contaAtual` e mostra; não há crédito local nem provisório.
+    muda NADA. O cliente LÊ de `contaAtual` e mostra; não há crédito local nem provisório. Simétrico ao
+    crédito, o GASTO também é do servidor: a compra do desafio por deus (`comprarPergaminho`: débito de
+    Essência + recarga de 8h no relógio do servidor) e o estado do desafio (`perfil.desafios`, FORA da lista
+    branca) são autoritativos — §318b-3 removeu o último gastador local (`comprarDesafio → debitar(perfil)`).
+    Guarda: nenhum leitor/gastador de moeda fora de `contaAtual` (as barras e a tela dos Desafios usam
+    `moedaServidor()`), provado que morde em `tests/desafio_net.test.js` e `tests/reconexao_foco.test.js`.
 31. **PvE é pago por REPLAY (ETAPA 2).** O cliente grava a montagem do modo + as AÇÕES DO JOGADOR e
     envia ao vencer; o servidor RE-SIMULA no MESMO motor determinístico (`src/engine.js` importado) e só
     credita se o resultado bater. A dificuldade vem do DADO (`server/dados-pve.js` — os mesmos JSON da

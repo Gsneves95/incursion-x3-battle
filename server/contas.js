@@ -333,7 +333,11 @@ function publica(c) { if (!c) return null; return { id: c.id, nick: c.nick, ranq
 // c.pontos), então são imunes por construção. Assim um cliente que manda +99999 gemas, um deus novo ou
 // copias:50 não muda NADA na conta — o crédito de economia passa a vir só das portas do servidor (invocação,
 // replay do PvE). A única coisa do cliente DENTRO de deuses que sobrevive é a preferência `favorito`.
-const PERFIL_LOCAIS = ['versao', 'times', 'maestria', 'campanha', 'desafios', 'dominios', 'sandbox', 'invocacao', 'provacoes'];
+// §318b-3 — 'desafios' SAIU da lista branca: o estado do desafio (ativo + recarga) é AUTORITATIVO do servidor
+// (débito de Essência + recarga de 8h, geridos por comprarPergaminho/fecharDesafio). O cliente lê, não grava —
+// antes ele gravava o desafio (whitelisted) e gastava a Essência localmente (que o salvarPerfil nem aceitava):
+// o defeito do §318b-3. Maestria segue local/cosmética.
+const PERFIL_LOCAIS = ['versao', 'times', 'maestria', 'campanha', 'dominios', 'sandbox', 'invocacao', 'provacoes'];
 function _mesclarPerfilLocal(base, cli) {
   const out = _clone(base || {});
   cli = cli || {};
@@ -392,7 +396,17 @@ function comprarPergaminho(token, deus) {
   _carregar();
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
-  const r = _invoc.comprarPergaminho(c, deus);
+  const r = _invoc.comprarPergaminho(c, deus, Date.now());
+  if (r.ok) _persistir();
+  return Object.assign({}, r, { conta: paraDono(c) });
+}
+// §318b-3 — encerrar a tentativa do desafio (cumpriu/desistiu) no servidor: zera o `ativo` (a recarga foi
+// fixada na compra). A maestria, ao cumprir, é do cliente (cosmética).
+function fecharDesafio(token, deus, cumpriu) {
+  _carregar();
+  const c = _contas.get(token);
+  if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
+  const r = _invoc.fecharDesafio(c, deus, cumpriu);
   if (r.ok) _persistir();
   return Object.assign({}, r, { conta: paraDono(c) });
 }
@@ -449,7 +463,7 @@ function _setPontos(token, n) { _carregar(); const c = _contas.get(token); if (c
 module.exports = {
   FAIXAS, GRANT_GEMA, ARQ, NICK_MIN, NICK_MAX, RANQ,
   criar, entrar, porToken, excluir, paraDono, publica, salvarPerfil, creditarPve, planoDoNick,
-  invocar, subirNivel, comprarPergaminho, devCredito, chancesInvocacao, creditarPvPVitoria,
+  invocar, subirNivel, comprarPergaminho, fecharDesafio, devCredito, chancesInvocacao, creditarPvPVitoria,
   normalizarNick, nickDisponivel, definirNick, possui, validarTime,
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,

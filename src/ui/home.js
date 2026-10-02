@@ -827,10 +827,10 @@ function renderProvacoes(){
     || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0)
     || ((HRM[a] && HRM[a].nome) || a).localeCompare((HRM[b] && HRM[b].nome) || b, 'pt'));
   const mestres = meus.filter(k => nivelMaestria(k) === 4).length;
-  // §318b-2 — EXCEÇÃO consciente: os DESAFIOS ainda GASTAM Essência LOCAL (comprarDesafio → debitar(perfil)),
-  // economia não migrada ao servidor. Esta tela mostra o ledger LOCAL que ela de fato gasta — NÃO a barra da
-  // conta. Casar com o servidor aqui mostraria um saldo que não é o gasto. (A barra de CONTA usa moedaServidor.)
-  const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
+  // §318b-3 — a Essência dos Desafios é GASTA no SERVIDOR (comprarPergaminho). Esta tela mostra o saldo do
+  // servidor (moedaServidor), como as outras barras da conta — "—" quando offline. Sem leitor local de moedas.
+  const _mo = moedaServidor();
+  const ess = _mo.online ? _mo.essencia : '—';
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="tela">
@@ -855,7 +855,7 @@ function renderProvacoes(){
   const bd = stage.querySelector('.pdesafios[data-desafios]');
   if (bd) bd.onclick = () => { ir('composicao'); render(); };
   // COMPRAR → paga e já entra na batalha (perdeu, volta e o "Jogar" repete de graça).
-  [...stage.querySelectorAll('[data-comprar]')].forEach(b => b.onclick = () => { const k = b.dataset.comprar; const r = comprarDesafio(k); if (r.ok) iniciarDesafioDeus(k); else render(); });
+  [...stage.querySelectorAll('[data-comprar]')].forEach(b => b.onclick = () => comprarDesafioEIniciar(b.dataset.comprar));
   [...stage.querySelectorAll('[data-jogar]')].forEach(b => b.onclick = () => iniciarDesafioDeus(b.dataset.jogar));
   [...stage.querySelectorAll('[data-desistir]')].forEach(b => b.onclick = () => { desafioDesistindo = b.dataset.desistir; render(); });
   [...stage.querySelectorAll('[data-desiste-ok]')].forEach(b => b.onclick = () => { desistirDesafio(b.dataset.desisteOk); desafioDesistindo = null; render(); });
@@ -1111,7 +1111,9 @@ function iniciarProva(key){
 //  7. Recarga de 8h (3/dia por deus).  8. SÓ de deus que você TEM.  9. NÃO avança a Provação (é puzzle, não PvP).
 // ===================================================================
 function DESAFIO_CFG(){ return (typeof ECONOMIA !== 'undefined' && ECONOMIA.pergaminhos) || { custoEssencia: 30, maestriaPorVitoria: 3, recargaHoras: 8 }; }
-function _desafios(){ if (perfil && !perfil.desafios) perfil.desafios = {}; return (perfil && perfil.desafios) || {}; }
+// §318b-3 — o estado do desafio (ativo + recarga) é do SERVIDOR (conta.perfil.desafios): o cliente LÊ, não grava.
+// A compra debita Essência e fixa a recarga no servidor (comprarPergaminho); fechar zera o `ativo` (fecharDesafio).
+function _desafios(){ return (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.perfil && contaAtual.perfil.desafios) || {}; }
 function provacaoDe(k){ return acervoPergaminhos().find(p => p.key === k) || null; }
 function desafioEstado(k){
   const d = _desafios()[k], agora = Date.now();
@@ -1128,33 +1130,48 @@ function podeComprarDesafio(k){
   if (e.estado === 'ativo') return { ok: false, motivo: 'já em andamento' };           // REGRA 1
   if (e.estado === 'recarga') return { ok: false, motivo: 'em recarga' };              // REGRA 6/7
   const custo = DESAFIO_CFG().custoEssencia;
-  if ((perfil.moedas.essencia || 0) < custo) return { ok: false, motivo: 'Essência insuficiente' };
+  // §318b-3 — a Essência é do SERVIDOR (moedaServidor): desconectado não dá para comprar; saldo insuficiente idem.
+  const mo = (typeof moedaServidor === 'function') ? moedaServidor() : { online: false, essencia: 0 };
+  if (!mo.online) return { ok: false, motivo: 'sem conexão com o servidor' };
+  if (mo.essencia < custo) return { ok: false, motivo: 'Essência insuficiente' };
   return { ok: true, custo };
 }
-function comprarDesafio(k){
-  const p = podeComprarDesafio(k); if (!p.ok) return p;
-  perfil = debitar(perfil, 'essencia', p.custo);   // paga (clone com a Essência descontada)
-  if (!perfil.desafios) perfil.desafios = {};
-  perfil.desafios[k] = { ativo: true, recargaAte: 0 };   // vira ATIVO — recarga NÃO começa na compra (REGRA 6)
-  salvar(perfil);
-  return { ok: true };
+// §318b-3 — COMPRAR é do SERVIDOR: débito de Essência + recarga de 8h autoritativos (não há mais gasto local).
+// Sem toque em silêncio: trava o botão, pede, e ao voltar inicia a batalha (ok) ou mostra a recusa curta.
+let desafioComprando = null;   // deus com a compra em voo (evita toque duplo)
+async function comprarDesafioEIniciar(k){
+  if (desafioComprando) return;
+  const p = podeComprarDesafio(k); if (!p.ok) { if (typeof toast === 'function') toast(p.motivo); return; }
+  desafioComprando = k; render();
+  let r = null;
+  try { if (typeof comprarPergaminhoServidor === 'function') r = await comprarPergaminhoServidor(k); else r = { codigo: 'sem_conexao' }; }
+  catch (e) { r = { codigo: 'sem_conexao' }; }
+  desafioComprando = null;
+  if (r && r.ok) { iniciarDesafioDeus(k); return; }
+  const cod = r && r.codigo;
+  if (typeof toast === 'function') toast(
+    cod === 'essencia_insuficiente' ? 'Essência insuficiente.'
+    : cod === 'desafio_recarga' ? 'Em recarga — tente mais tarde.'
+    : cod === 'desafio_ativo' ? 'Desafio já em andamento.'
+    : cod === 'sem_conexao' ? 'Sem conexão com o servidor. Tente de novo.'
+    : 'Não foi possível comprar o desafio.');
+  render();
 }
+// §318b-3 — desistir: sem reembolso; a recarga já corre desde a COMPRA (servidor). Só zeramos o `ativo` no
+// servidor (fecharDesafio). Tolerante a offline: o `ativo` fica e o jogador reencerra ao voltar.
 function desistirDesafio(k){
   const d = _desafios()[k]; if (!d || !d.ativo) return;
-  const rec = DESAFIO_CFG().recargaHoras * 3600 * 1000;
-  perfil.desafios[k] = { ativo: false, recargaAte: Date.now() + rec };   // REGRA 5: sem reembolso, recarga começa
-  salvar(perfil);
+  if (typeof fecharDesafioServidor === 'function') { try { Promise.resolve(fecharDesafioServidor(k, false)).then(() => { if (typeof render === 'function') render(); }).catch(() => {}); } catch (e) {} }
 }
-// vitória num desafio por deus: +maestria ao DEUS-TÍTULO (+milagre), recarga começa. Sem moeda (já pagou).
+// vitória num desafio por deus: +maestria ao DEUS-TÍTULO (local/cosmética, §215). O ESTADO (ativo→false; a
+// recarga foi fixada na compra, §318b-3) é do SERVIDOR — fecharDesafio(cumpriu). Sem moeda (já pagou na compra).
 function cumprirDesafioDeus(k){
   if (!perfil.maestria) perfil.maestria = {};
   const m = perfil.maestria[k] || (perfil.maestria[k] = { vitorias: 0, milagre: false });
   m.vitorias = (m.vitorias || 0) + DESAFIO_CFG().maestriaPorVitoria;   // +3 (10 desafios → 30 = Mestre)
   m.milagre = true;   // o desafio desenhado (pilotar o deus até vencer) É a prova de kit do Mestre
-  if (!perfil.desafios) perfil.desafios = {};
-  const rec = DESAFIO_CFG().recargaHoras * 3600 * 1000;
-  perfil.desafios[k] = { ativo: false, recargaAte: Date.now() + rec };   // REGRA 6: recarga começa ao cumprir
   salvar(perfil);
+  if (typeof fecharDesafioServidor === 'function') { try { Promise.resolve(fecharDesafioServidor(k, true)).then(() => { if (typeof render === 'function') render(); }).catch(() => {}); } catch (e) {} }
 }
 // inicia a batalha do desafio por deus (o pergaminho do deus), marcada como paga (§245).
 function iniciarDesafioDeus(k){

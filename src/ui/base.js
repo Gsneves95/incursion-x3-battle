@@ -11,8 +11,8 @@ const ELAB = {Tempestade:'TEMPESTADE',Umbra:'UMBRA','Maré':'MARÉ',Aurora:'AURO
 // §318b-2 — FONTE ÚNICA das moedas da CONTA: a barra de moedas (gema/Essência) lê SEMPRE do servidor
 // (contaAtual), nunca do perfil local — o perfil era o "26.100 fantasma" que sobrevivia desconectado/pós-wipe.
 // `online:false` quando não há conta autoritativa; `fmtMoeda` então mostra "—" em vez de inventar um número.
-// (Exceção consciente: os DESAFIOS ainda gastam Essência LOCAL — economia não migrada; aquela tela segue o
-//  ledger local, documentado no DECISOES. Toda barra de CONTA passa por aqui.)
+// §318b-3 — a última exceção caiu: os DESAFIOS agora GASTAM Essência no SERVIDOR (comprarPergaminho) e a tela
+//  deles também lê daqui. NÃO há mais leitor/gastador local de moeda — toda barra de CONTA passa por aqui.
 function moedaServidor(){
   const ca = (typeof contaAtual !== 'undefined') ? contaAtual : null;
   const m = ca && ca.perfil && ca.perfil.moedas;

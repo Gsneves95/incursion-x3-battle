@@ -111,18 +111,23 @@ console.log('== 5. §319 — a rota "deus" é a TELA DE NÍVEIS: identidade + pa
   ok($$('.nldir .nlp .nlp__esc').length >= 1, 'não-possuindo: a escada continua legível');
 }
 
-console.log('== 6. §245 — DESAFIO POR DEUS: comprar com Essência inicia a batalha marcada como paga; só de deus que você TEM ==');
+console.log('== 6. §318b-3 — DESAFIO POR DEUS: a compra é do SERVIDOR; só de deus que você TEM; sem gasto local ==');
 {
   const { w, $ } = sessao();
-  w.eval("perfil.moedas.essencia=100; ir('desafios'); render();");
+  // §318b-3: a Essência é do servidor (contaAtual). Online + com saldo → o hub mostra o comprável.
+  w.eval("contaAtual={perfil:{moedas:{gema:0,essencia:100},desafios:{}}}; ir('desafios'); render();");
   // o hub lista os deuses que você TEM (os 9 iniciais); zeus (inicial, possuído) aparece comprável.
   ok(!!$('[data-comprar="zeus"]'), 'um deus possuído (zeus) tem desafio comprável no hub');
   ok(!w.eval("!!(perfil.deuses['durga'])") && !$('[data-comprar="durga"]') && !$('[data-jogar="durga"]'), 'um deus NÃO possuído (durga) não aparece (só de deus que você tem)');
-  // COMPRAR paga Essência e entra na batalha marcada como desafio POR DEUS (pago).
-  const essAntes = w.eval('perfil.moedas.essencia'), custo = w.eval('ECONOMIA.pergaminhos.custoEssencia');
+  // DESCONECTADO: clicar NÃO gasta nada local e NÃO entra na batalha (recusa, nunca em silêncio). Prova que o
+  // gastador local do §318b-2 (comprarDesafio → debitar(perfil)) morreu: o saldo LOCAL fantasma não é tocado.
+  w.eval("contaAtual=null; perfil.moedas={gema:0,essencia:100}; ir('desafios'); render();");
   $('[data-comprar="zeus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('perfil.moedas.essencia') === essAntes - custo, `comprar debita a Essência (${custo})`);
-  ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.desafioDeus==="zeus"'), 'comprar inicia a batalha do desafio POR DEUS (pago)');
+  ok(w.eval('perfil.moedas.essencia') === 100, 'desconectado: clicar NÃO debita Essência local (o gastador local morreu)');
+  ok(w.eval("rotaAtual()") === 'desafios', 'desconectado: clicar NÃO entra na batalha (recusa com toast, não em silêncio)');
+  // a batalha paga do desafio POR DEUS (o downstream do ok do servidor) inicia marcada como paga.
+  w.eval("iniciarDesafioDeus('zeus');");
+  ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.desafioDeus==="zeus"'), 'iniciarDesafioDeus entra na batalha do desafio POR DEUS (pago)');
 }
 
 console.log('== 7. §245 — cobertura 100%: os 100 têm pergaminho, nenhum genérico; o hub lista os deuses possuídos ==');

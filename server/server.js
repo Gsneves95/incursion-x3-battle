@@ -129,10 +129,15 @@ wss.on('connection', (ws) => {
         if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
         return responder('nivelSubiu', { deus: r.deus, slot: r.slot, nivel: r.nivel, pontos: r.pontos, conta: r.conta });
       }
-      case 'comprarPergaminho': {
+      case 'comprarPergaminho': {   // §318b-3: desafio por deus — débito de Essência + recarga de 8h, no servidor
         const r = contas.comprarPergaminho(msg.token, msg.deus);
         if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
-        return responder('pergaminhoComprado', { custo: r.custo, saldo: r.saldo, conta: r.conta });
+        return responder('pergaminhoComprado', { custo: r.custo, saldo: r.saldo, deus: r.deus, conta: r.conta });
+      }
+      case 'fecharDesafio': {        // §318b-3: encerrar a tentativa (cumpriu/desistiu) — zera o `ativo` no servidor
+        const r = contas.fecharDesafio(msg.token, msg.deus, !!msg.cumpriu);
+        if (!r.ok) return responder('recusado', { codigo: r.motivo || r.codigo || 'recusado', erro: r.motivo || r.erro });
+        return responder('desafioFechado', { deus: r.deus, cumpriu: r.cumpriu, conta: r.conta });
       }
       case 'chancesInvocacao': {
         const r = contas.chancesInvocacao(msg.token);
