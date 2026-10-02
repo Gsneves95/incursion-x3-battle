@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318b · o transporte não podia PENDURAR (defeito: invocar não fazia nada)
+
+**Defeito do dono:** na invocação, apertar os botões não fazia NADA — sem resultado, sem mensagem. **Causa:** o
+transporte WebSocket casava resposta↔pedido por ORDEM (FIFO) e não tinha tempo limite nem tratamento de queda; no
+celular o socket morre calado e o `pedir` ficava pendurado → `S._invocando` travado → todo toque engolido. A barra
+mostrava "26.100" porque, com `contaAtual` nula, ela caía no saldo LOCAL.
+
+**Decisões:**
+- **Correlação por id, não por ordem.** Um socket é FIFO só enquanto nenhuma resposta falta; qualquer mensagem não
+  respondida (ou um push mal roteado) desalinha todas as seguintes. Cada pedido leva um `rid` e a resposta devolve o
+  mesmo — robusto a faltas e a ordem. Alternativa recusada (manter FIFO + só timeout): timeout sem correlação
+  desalinha o resto, porque remover um pendente do meio embaralha o casamento.
+- **Todo pedido tem teto de tempo e toda queda limpa os pendentes.** O princípio: *nenhuma promessa de rede fica
+  pendurada*. Estourou/caiu → `{tipo:'semResposta',codigo:'sem_conexao'}`. Assim a tela sempre sai do "aguardando".
+- **A barra de moedas é SEMPRE o servidor.** Removido o fallback ao perfil local (era o "26.100 fantasma"):
+  desconectado, a barra mostra "—", não um número que mente. A economia é do servidor desde a ETAPA 3; a barra tinha
+  de refletir isso.
+- **Nenhum toque em silêncio.** Todo botão que fala com o servidor fica "…" enquanto espera e, em poucos segundos,
+  mostra o resultado OU uma linha curta (gemas insuficientes · sem conexão · sessão expirada). É a aplicação, na UI,
+  do mesmo invariante de honestidade das outras telas.
+- **O servidor religa sozinho no próximo pedido**, mas a reconexão proativa (no resume/foco) fica como melhoria —
+  registrada, não feita, para não inflar o conserto.
+
 ## §319b · descoberta dos níveis na Coleção + regressão da barra do Android (achados do dono no S24)
 
 **1) Descoberta dos níveis.** O dono não achava onde subir habilidade: a tela de níveis (§319) só abria por um botão

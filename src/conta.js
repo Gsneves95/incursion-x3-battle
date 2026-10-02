@@ -87,9 +87,18 @@ async function excluir(transporte) {
   return { fase: 'excluida', apagou: false, motivo: (r && r.erro) || 'sem confirmação do servidor' };
 }
 
-// ---- TRANSPORTE WebSocket para o app. Resolve null se não se aplica (file://) — deixando o app
-// dormente. Faz pergunta/resposta sequencial (nada de tempo real). Timeout curto para não travar
-// a abertura se o servidor estiver fora. ----
+// ---- TRANSPORTE WebSocket para o app. Resolve null se não se aplica (file:// / sem WebSocket / o
+// servidor não respondeu na 1ª abertura) — deixando o app dormente. Depois de aberto, é AUTO-CURATIVO:
+//
+// §318b (defeito do dono: invocar não fazia NADA) — a versão antiga casava resposta↔pedido por ORDEM
+// (FIFO) e NÃO tinha nem tempo limite nem tratamento de queda. No celular a WebSocket morre em silêncio
+// (2º plano, troca de rede, o Render ocioso fecha o socket): o `pedir` pendente ficava PENDURADO para
+// sempre, o `S._invocando` travava em true e todo toque seguinte era engolido — sem resultado, sem aviso.
+// Agora: cada pedido leva um `rid` e a resposta devolve o MESMO rid (correlação, não ordem); cada pedido
+// tem TEMPO LIMITE (estourou → resolve com {tipo:'semResposta',codigo:'sem_conexao'}, nunca pendura); a
+// QUEDA do socket (onclose/onerror) resolve TODOS os pendentes com o mesmo sentinela; e o `pedir` RELIGA
+// o socket sozinho quando ele caiu. Resposta sem rid → cai no mais antigo (compat. retro). Um pedido
+// anterior sem resposta JAMAIS trava os seguintes (cada um tem seu próprio rid + prazo).
 function criarTransporteWS(url, opts = {}) {
   return new Promise((resolve) => {
     if (typeof WebSocket === 'undefined') return resolve(null);
@@ -101,27 +110,55 @@ function criarTransporteWS(url, opts = {}) {
         alvo = (loc.protocol === 'https:' ? 'wss://' : 'ws://') + loc.host;
       } catch (e) { return resolve(null); }
     }
-    let ws;
-    try { ws = new WebSocket(alvo); } catch (e) { return resolve(null); }
-    const prazo = setTimeout(() => { try { ws.close(); } catch (e) {} resolve(null); }, opts.timeout || 2500);
-    ws.onerror = () => { clearTimeout(prazo); resolve(null); };
-    ws.onopen = () => {
-      clearTimeout(prazo);
-      const fila = [];
-      let _onPush = null;
-      // uma mensagem com push:true é NÃO-solicitada (o relógio do servidor estourou, F5.2): vai para o
-      // handler de push, não casa com um pedido pendente. As demais são respostas em ordem (fila).
+    const PRAZO_PEDIDO = opts.pedidoTimeout || 12000;   // teto por pedido (religa/avisa, nunca pendura)
+    const SEM = { tipo: 'semResposta', codigo: 'sem_conexao', erro: 'sem conexão com o servidor' };
+    let ws = null, seq = 0, _onPush = null, resolvido = false;
+    const pend = new Map();     // rid -> { res, timer }
+    const ordem = [];           // rids na ordem de envio (fallback p/ resposta sem rid)
+
+    function soltar(rid, valor) {
+      const p = pend.get(rid); if (!p) return;
+      clearTimeout(p.timer); pend.delete(rid);
+      const i = ordem.indexOf(rid); if (i >= 0) ordem.splice(i, 1);
+      try { p.res(valor); } catch (e) {}
+    }
+    function soltarTodos(valor) { for (const rid of [...ordem]) soltar(rid, valor); }
+
+    function conectar() {
+      if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;   // já conectando/aberto
+      try { ws = new WebSocket(alvo); } catch (e) { ws = null; return; }
+      ws.onopen = () => { if (!resolvido) { resolvido = true; clearTimeout(prazoAbrir); resolve(api); } };
       ws.onmessage = (ev) => {
         let m = null; try { m = JSON.parse(ev.data); } catch (e) {}
-        if (m && m.push) { if (_onPush) _onPush(m); return; }
-        const cb = fila.shift(); if (cb) cb(m);
+        if (m && m.push) { if (_onPush) _onPush(m); return; }   // não-solicitada (relógio/PvP): nunca casa pedido
+        if (m && m.rid != null && pend.has(m.rid)) return soltar(m.rid, m);
+        if (ordem.length) return soltar(ordem[0], m);           // resposta sem rid → o mais antigo (compat.)
       };
-      resolve({
-        pedir: (msg) => new Promise((res) => { fila.push(res); try { ws.send(JSON.stringify(msg)); } catch (e) { fila.pop(); res(null); } }),
-        aoPush: (cb) => { _onPush = cb; },
-        fechar: () => { try { ws.close(); } catch (e) {} },
-      });
+      ws.onerror = () => { /* o onclose limpa; evita resolver null após já aberto */ };
+      ws.onclose = () => { ws = null; soltarTodos(SEM); };       // queda: nenhum pedido fica pendurado
+    }
+
+    // 1ª abertura: se não abrir no prazo, o app fica DORMENTE (resolve null) — contrato preservado
+    // (file://, servidor fora no boot). Depois de aberto uma vez, quedas são auto-curadas.
+    const prazoAbrir = setTimeout(() => { if (!resolvido) { resolvido = true; try { if (ws) ws.close(); } catch (e) {} resolve(null); } }, opts.timeout || 2500);
+
+    const api = {
+      pedir: (msg) => new Promise((res) => {
+        const rid = ++seq; try { msg.rid = rid; } catch (e) {}
+        const timer = setTimeout(() => soltar(rid, SEM), PRAZO_PEDIDO);
+        pend.set(rid, { res, timer }); ordem.push(rid);
+        if (!ws || ws.readyState > 1) conectar();   // socket caiu: religa p/ este e os próximos
+        try {
+          if (ws && ws.readyState === 1) ws.send(JSON.stringify(msg));
+          else if (ws && ws.readyState === 0) ws.addEventListener('open', () => { try { if (pend.has(rid)) ws.send(JSON.stringify(msg)); } catch (e) {} }, { once: true });
+          // sem socket: o timer resolve sem_conexao; a próxima chamada tenta reconectar
+        } catch (e) { soltar(rid, SEM); }
+      }),
+      aoPush: (cb) => { _onPush = cb; },
+      fechar: () => { try { if (ws) ws.close(); } catch (e) {} },
     };
+
+    conectar();
   });
 }
 

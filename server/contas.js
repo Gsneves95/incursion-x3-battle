@@ -23,7 +23,9 @@ const ECON = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'econ
 const GRANT_GEMA = (ECON && ECON.grantInicial && typeof ECON.grantInicial.gema === 'number') ? ECON.grantInicial.gema : 0;
 
 const FAIXAS = ['menor', 'maior'];   // menor de 18 | 18 ou mais. Só a faixa, nunca a data.
-const DIR = path.join(__dirname, 'dados');
+// §318b — o diretório de dados aceita override por env (INCURSION_DADOS_DIR) para o teste e2e rodar num
+// arquivo descartável, sem tocar os dados reais do jogador. Sem a env, o caminho de sempre.
+const DIR = process.env.INCURSION_DADOS_DIR ? path.resolve(process.env.INCURSION_DADOS_DIR) : path.join(__dirname, 'dados');
 const ARQ = path.join(DIR, 'contas.json');
 
 // F5.3 — NICK: curadoria de palavra ofensiva versionada em data/ (§222: o que precisa mudar sem

@@ -2,6 +2,42 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318b · DEFEITO do dono: invocar não fazia NADA (transporte que pendurava)
+
+**CAUSA (achada antes de consertar):** o transporte WebSocket (`src/conta.js` `criarTransporteWS`) casava
+resposta↔pedido por **ORDEM (FIFO)** e **não tinha nem tempo limite nem tratamento de queda**. No celular a
+WebSocket morre em silêncio (2º plano, troca de rede, o Render ocioso fecha o socket): o `tx.pedir` pendente ficava
+**pendurado para sempre**, o `S._invocando` da invocação travava em `true`, e **todo toque seguinte era engolido pelo
+guard `if (S._invocando) return;`** — sem resultado, sem "…", sem mensagem. E como a `contaAtual` ficava velha/nula, a
+barra de moedas caía no **fallback do perfil local** (`invocacao.js:211`), mostrando o **"26.100 fantasma"** que o
+dono viu. As duas coisas do print, uma causa só.
+
+**CONSERTO:**
+- **Transporte auto-curativo (`src/conta.js`):** cada pedido leva um `rid`; a resposta devolve o MESMO rid
+  (**correlação, não ordem**). Cada pedido tem **tempo limite** (estourou → `{tipo:'semResposta',codigo:'sem_conexao'}`,
+  nunca pendura). A **queda** do socket (`onclose`/`onerror`) solta TODOS os pendentes com o mesmo sentinela. E o
+  `pedir` **religa** o socket sozinho quando ele caiu. Resposta sem rid cai no mais antigo (compat. retro). Um pedido
+  anterior sem resposta JAMAIS trava os seguintes. O servidor (`server/server.js` `responder`) passou a **ecoar o rid**.
+  Contrato preservado: `resolve(null)` (app dormente) só em file:// / sem WebSocket / servidor fora na 1ª abertura.
+- **Barra de moedas = SEMPRE o servidor (`src/invocacao.js`):** `sincronizarCarteira` lê só `contaAtual` — **sem
+  fallback local**. Desconectado → a barra mostra **"—"** (nunca o saldo fantasma).
+- **Nenhum toque em silêncio:** os botões de invocar ficam **travados + "Invocando…"** enquanto espera; a resposta
+  (ou o `sem_conexao` do tempo limite) **libera** e mostra o resultado OU a mensagem curta: *Gemas insuficientes* ·
+  *Sem conexão com o servidor. Tente de novo.* · *Sessão expirada — reabra o aplicativo.* O mesmo tratamento em
+  `openAudit` (tabela de chances) e `topup` (crédito DEV).
+
+**Guardas (provado que mordem — `tests/invocacao_net.test.js`, na suíte):** PARTE 1, transporte com WebSocket de
+mentira — correlação com resposta fora de ordem, pedido anterior sem resposta não trava o seguinte, tempo limite →
+`sem_conexao`, queda solta os pendentes, religar; PARTE 2, **servidor REAL em processo** — invocar com gemas →
+resultado + saldo do servidor; sem gemas → `gemas_insuficientes`; servidor morto → `sem_conexao` no tempo limite.
+Desligar o casamento por rid derruba 3 asserções (bite confirmado). Testes de rede existentes (wss/servidor/contas/
+partida/reconexao/pareamento/ranqueado) seguem verdes — o rid é transparente. `server/contas.js` ganhou override do
+diretório de dados por env (`INCURSION_DADOS_DIR`) p/ o e2e rodar em arquivo descartável.
+
+**Pendência honesta:** o transporte agora RELIGA sozinho no próximo pedido, mas não há reconexão proativa em 2º
+plano — se o jogador voltar e o socket tiver caído, o 1º toque pode pegar `sem_conexao` e o 2º já reconecta. Melhoria
+futura: religar no `resume`/`focus` (view.js) junto do imersivo (§319b).
+
 ## ★ §319b · DOIS ACHADOS DO DONO NO S24 (descoberta dos níveis + regressão da barra do Android)
 
 **1) Os níveis agora se DESCOBREM na Coleção** (`src/ui/home.js`). Antes, a tela de níveis (§319) só abria por "Ver

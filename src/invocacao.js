@@ -205,12 +205,15 @@ const INV = (function () {
   // perfil ainda é null (o boot carrega depois), então ler aqui, na abertura da tela, é
   // o momento certo. INTERIM: o pity é um contador único (desdeUltimoSS) no banner principal.
   function sincronizarCarteira() {
-    // §318 F2 E3 — a economia é do SERVIDOR: lê saldo + pity da conta autoritativa (contaAtual), com
-    // fallback ao perfil local só para o preview isolado (sem conta).
+    // §318 F2 E3 / §318b — a economia é do SERVIDOR e a barra mostra SEMPRE o saldo do servidor. SEM
+    // fallback ao perfil local (era ele o "26.100 fantasma" que o dono via desconectado): quando não há
+    // conta autoritativa (contaAtual), a barra não inventa um número — marca offline (render mostra "—").
     const ca = (typeof contaAtual !== 'undefined') ? contaAtual : null;
-    const m = (ca && ca.perfil && ca.perfil.moedas) || ((typeof perfil !== 'undefined' && perfil && perfil.moedas) || null);
+    const m = (ca && ca.perfil && ca.perfil.moedas) || null;
+    S._online = !!m;
     S.gemas = m ? (m.gema || 0) : 0;
-    S.pity = (ca && typeof ca.pity === 'number') ? ca.pity : ((typeof perfil !== 'undefined' && perfil && perfil.invocacao) ? (perfil.invocacao.desdeUltimoSS || 0) : 0);
+    S.essencia = m ? (m.essencia || 0) : 0;
+    S.pity = (ca && typeof ca.pity === 'number') ? ca.pity : 0;
     if (ca && ca.inicianteUsado) S.iniciante.used = true;
   }
 
@@ -227,7 +230,7 @@ const INV = (function () {
       perfil.moedas.gema = r.saldo.gema; perfil.moedas.essencia = r.saldo.essencia;
       try { if (typeof salvar === 'function') salvar(perfil); } catch (e) {}
     }
-    if (r.saldo) S.gemas = r.saldo.gema;
+    if (r.saldo) { S.gemas = r.saldo.gema; S.essencia = r.saldo.essencia; S._online = true; }   // §318b: resposta do servidor ⇒ online
     if (typeof r.pity === 'number') S.pity = r.pity;
     if (r.inicianteUsado) S.iniciante.used = true;
     const out = (r.resultados || []).map(o => ({
@@ -248,25 +251,35 @@ const INV = (function () {
   }
   // §318 F2 E3 — o cliente só PEDE. O servidor sorteia, debita a gema e converte (posse/pontos/essência),
   // devolvendo o resultado + o saldo/pity autoritativos. Sem servidor (preview isolado): recusa clara.
+  // §318b — pinta o estado AGUARDANDO: desabilita os botões de invocar e mostra "…" (nenhum toque em
+  // silêncio). Idempotente; chamado com true ao pedir e false ao responder/estourar.
+  function _marcarInvocando(on) {
+    [...document.querySelectorAll('.iv-pb, .iv-oferta')].forEach(b => { b.disabled = on; b.classList.toggle('is-wait', on); });
+    const st = document.getElementById('iv-status'); if (st) st.textContent = on ? 'Invocando…' : '';
+  }
   function executar(bkey, n) {
     const tx = _tx(), token = _token();
-    if (!tx || !token) { flash('Sem servidor — a invocação é autoritativa (conecte-se para invocar).'); return; }
+    if (!tx || !token) { flash('Sem conexão com o servidor — a invocação é autoritativa (conecte-se para invocar).'); return; }
     if (S._invocando) return;   // uma invocação por vez (a resposta é do servidor)
-    S._invocando = true;
+    S._invocando = true; _marcarInvocando(true);
     const gratis = bkey === 'iniciante';
     const msg = gratis ? envelope('invocar', { token, iniciante: true }) : envelope('invocar', { token, pacote: n === 10 });
+    // §318b — todo pedido tem tempo limite no transporte: estourou/caiu → {tipo:'semResposta',codigo:'sem_conexao'},
+    // nunca pendura. Aqui liberamos o botão e mostramos a mensagem — jamais "nada acontece".
     Promise.resolve(tx.pedir(msg)).then((r) => {
-      S._invocando = false;
-      if (!r || r.tipo === 'recusado' || !r.resultados) {
+      S._invocando = false; _marcarInvocando(false);
+      if (!r || r.tipo === 'recusado' || r.tipo === 'semResposta' || !r.resultados) {
         const cod = r && (r.codigo || r.erro);
         flash(cod === 'gemas_insuficientes' ? 'Gemas insuficientes — use o + (DEV) para recarregar.'
           : cod === 'iniciante_ja_usado' ? 'Bênção do Iniciante já usada.'
+          : (cod === 'sem_conexao' || !r) ? 'Sem conexão com o servidor. Tente de novo.'
+          : cod === 'token_invalido' ? 'Sessão expirada — reabra o aplicativo.'
           : ('Invocação recusada' + (cod ? ': ' + cod : '')));
         render();
         return;
       }
       _aplicarInvocado(r, n, gratis);
-    }).catch(() => { S._invocando = false; flash('Falha ao invocar (servidor).'); });
+    }).catch(() => { S._invocando = false; _marcarInvocando(false); flash('Sem conexão com o servidor. Tente de novo.'); });
   }
 
   function showReveal(out, gratis) {
@@ -300,6 +313,7 @@ const INV = (function () {
     if (!tx || !token) { box.innerHTML = `<h3>Tabela de chances</h3><p>Conecte-se para ver a tabela (a economia é do servidor).</p>${fechar}`; return; }
     box.innerHTML = `<h3>Tabela de chances</h3><p>carregando…</p>`;
     Promise.resolve(tx.pedir(envelope('chancesInvocacao', { token }))).then((r) => {
+      if (r && (r.tipo === 'semResposta' || r.codigo === 'sem_conexao')) { box.innerHTML = `<h3>Tabela de chances</h3><p>Sem conexão com o servidor. Tente de novo.</p>${fechar}`; return; }
       if (!r || !r.linhaFaixa) { box.innerHTML = `<h3>Tabela de chances</h3><p>indisponível.</p>${fechar}`; return; }
       const nomes = r.faixaNomes || [];
       const rar = r.raridade || {};
@@ -318,14 +332,15 @@ const INV = (function () {
     // §318 F2 E3 — a gema é do SERVIDOR: o crédito de TESTE roda lá (devCredito) e contamina a CONTA. Sem
     // servidor não há como creditar (o servidor ignora gema forjada pelo cliente desde a ETAPA 1).
     const tx = _tx(), token = _token();
-    if (!tx || !token) { flash('Sem servidor para creditar (DEV).'); return; }
+    if (!tx || !token) { flash('Sem conexão com o servidor para creditar (DEV).'); return; }
     Promise.resolve(tx.pedir(envelope('devCredito', { token }))).then((r) => {
+      if (r && (r.tipo === 'semResposta' || r.codigo === 'sem_conexao')) { flash('Sem conexão com o servidor. Tente de novo.'); return; }
       if (!r || r.tipo === 'recusado' || !r.saldo) { flash('Crédito DEV recusado.'); return; }
       if (typeof contaAtual !== 'undefined' && r.conta) contaAtual = r.conta;
       if (typeof perfil !== 'undefined' && perfil) { perfil.moedas = perfil.moedas || { gema: 0, essencia: 0 }; perfil.moedas.gema = r.saldo.gema; perfil.moedas.essencia = r.saldo.essencia; try { if (typeof salvar === 'function') salvar(perfil); } catch (e) {} }
-      S.gemas = r.saldo.gema; render();
+      S.gemas = r.saldo.gema; S.essencia = r.saldo.essencia; S._online = true; render();
       flash('+' + (r.valor || 0).toLocaleString('pt-BR') + ' 💎 — DEV (servidor)');
-    }).catch(() => flash('Falha no crédito DEV.'));
+    }).catch(() => flash('Sem conexão com o servidor. Tente de novo.'));
     return;
   }
   let flashT;
@@ -360,9 +375,9 @@ const INV = (function () {
   function render() {
     const scr = document.getElementById('iv'); if (!scr) return;
     // carteira (duas moedas) + marca DEV
-    document.getElementById('iv-gemas').textContent = S.gemas.toLocaleString('pt-BR');
-    { const ess = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? (perfil.moedas.essencia || 0) : 0;
-      const en = document.getElementById('iv-essencia'); if (en) en.textContent = ess.toLocaleString('pt-BR'); }
+    // §318b — a barra mostra SEMPRE o servidor; desconectado → "—" (nunca o saldo local fantasma).
+    document.getElementById('iv-gemas').textContent = S._online ? S.gemas.toLocaleString('pt-BR') : '—';
+    { const en = document.getElementById('iv-essencia'); if (en) en.textContent = S._online ? (S.essencia || 0).toLocaleString('pt-BR') : '—'; }
     const dev = document.getElementById('iv-devmark');
     if (dev) dev.style.display = (typeof perfil !== 'undefined' && perfil && perfil.dev) ? 'inline-flex' : 'none';
 
@@ -425,6 +440,7 @@ const INV = (function () {
         <button class="iv-pb iv-x1" onclick="INV.pull(1)"><span class="iv-pb__t">Invocação ×1</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.avulso}</span></button>
         <button class="iv-pb iv-x10" onclick="INV.pull(10)"><span class="iv-off">10% OFF</span><span class="iv-pb__t">Invocação ×10</span><span class="iv-cost">💎 ${ECONOMIA.invocacao.custo.pacote10.toLocaleString('pt-BR')}</span></button>
       </div>
+      <div class="iv-status" id="iv-status" aria-live="polite"></div>
     </div>
     <div class="iv-reveal" id="iv-reveal" onclick="INV.closeReveal()">
       <div class="iv-grid" id="iv-cards"></div>

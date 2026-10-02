@@ -49,12 +49,17 @@ const wss = new WebSocketServer({ server });
 //    (independente de conexão). O cliente desenha o que volta e NUNCA declara resultado.
 wss.on('connection', (ws) => {
   let partida = null;         // F5.0: arnês de determinismo (per-conexão, sem estado de conta)
-  const responder = (tipo, dados) => ws.send(JSON.stringify(proto.envelope(tipo, dados)));
+  // §318b — ECO do `rid`: o cliente correlaciona resposta↔pedido por id (não por ordem). Guardamos o rid
+  // da mensagem em curso e o devolvemos no envelope da resposta síncrona. Pushes (push:true) saem fora
+  // deste caminho e sem rid — o cliente já os roteia à parte, então nunca casam um pedido.
+  let _rid = null;
+  const responder = (tipo, dados) => { const e = proto.envelope(tipo, dados); if (_rid != null) e.rid = _rid; ws.send(JSON.stringify(e)); };
   const snapshot = () => ({ estado: JSON.parse(host.serializar(partida)), hash: host.hashEstado(partida), bytes: host.tamanhoBytes(partida) });
 
   ws.on('message', (raw) => {
     let msg;
-    try { msg = JSON.parse(raw.toString()); } catch (e) { return responder('erro', { erro: 'JSON inválido' }); }
+    try { msg = JSON.parse(raw.toString()); } catch (e) { _rid = null; return responder('erro', { erro: 'JSON inválido' }); }
+    _rid = (msg && msg.rid != null) ? msg.rid : null;   // §318b: eco p/ a correlação do cliente
     // 1ª coisa SEMPRE: a versão do protocolo. Incompatível = recusa clara, nunca silenciosa.
     const vc = proto.checarVersao(msg);
     if (!vc.ok) return responder('recusado', { codigo: vc.codigo, erro: vc.erro });

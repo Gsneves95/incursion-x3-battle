@@ -873,6 +873,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #iv .iv-pb.iv-x10 .iv-cost{color:#3a2c07}
 #iv .iv-pb:hover{transform:translateY(-2px);border-color:var(--iv-gold)}
 #iv .iv-off{position:absolute;top:0;right:0;background:#c0322b;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;letter-spacing:.04em;padding:2px 8px;border-bottom-left-radius:8px}
+/* §318b — enquanto o servidor responde: botões travados (sem toque duplo) e status "Invocando…". */
+#iv .iv-pb.is-wait,#iv .iv-oferta.is-wait{opacity:.5;pointer-events:none;filter:saturate(.6)}
+#iv .iv-pb:disabled,#iv .iv-oferta:disabled{cursor:default}
+#iv .iv-status{min-height:14px;margin-top:6px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.04em;color:var(--iv-gold);text-align:center}
 #iv .iv-reveal{position:absolute;inset:0;z-index:80;background:radial-gradient(circle at 50% 45%,rgba(30,24,60,.96),rgba(5,4,10,.98));display:none;align-items:center;justify-content:center;flex-direction:column;padding:14px}
 #iv .iv-reveal.iv-show{display:flex}
 #iv .iv-grid{display:flex;flex-wrap:nowrap;gap:5px;justify-content:center;align-items:flex-start;width:100%}
