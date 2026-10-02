@@ -128,7 +128,7 @@ function overlayHTML(){
   if(ov==='apagar'){
     // confirmação NOMEADA: diz exatamente o que se perde, não um "Confirmar?" genérico.
     const nd=perfil?Object.keys(perfil.deuses).length:0, nt=perfil?perfil.times.length:0;
-    const g=perfil?perfil.moedas.gema:0, es=perfil?perfil.moedas.essencia:0;
+    const mo=moedaServidor(), g=fmtMoeda(mo.online,mo.gema), es=fmtMoeda(mo.online,mo.essencia);   // §318b-2: saldo do servidor, "—" desconectado
     return `<div class="ov"><div class="ovbox"><div class="ovh"><h2>APAGAR DADOS</h2>
       <span class="push"><button class="b b--quiet b--md" id="bclose">Cancelar</button></span></div>
       <div class="ovb" style="font-size:13px;font-weight:600;line-height:1.5">

@@ -139,11 +139,11 @@ function mapaPerfilHTML(){
 
 // moeda no formato que o jogo já usa (§305: toLocaleString('pt-BR'), sem "K"). Gema (💎) + Essência (◈).
 function mapaMoedasHTML(){
-  const m = (typeof perfil !== 'undefined' && perfil && perfil.moedas) ? perfil.moedas : {};
-  const fmt = n => Number(n || 0).toLocaleString('pt-BR');
+  // §318b-2 — do SERVIDOR (moedaServidor), "—" desconectado. Nunca o saldo local fantasma.
+  const m = moedaServidor();
   return `<div class="mmoedas">
-    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--gema">💎</span><b>${fmt(m.gema)}</b></span>
-    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--ess">◈</span><b>${fmt(m.essencia)}</b></span>
+    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--gema">💎</span><b>${fmtMoeda(m.online, m.gema)}</b></span>
+    <span class="mmoeda"><span class="mmoeda__ic mmoeda__ic--ess">◈</span><b>${fmtMoeda(m.online, m.essencia)}</b></span>
   </div>`;
 }
 
@@ -827,6 +827,9 @@ function renderProvacoes(){
     || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0)
     || ((HRM[a] && HRM[a].nome) || a).localeCompare((HRM[b] && HRM[b].nome) || b, 'pt'));
   const mestres = meus.filter(k => nivelMaestria(k) === 4).length;
+  // §318b-2 — EXCEÇÃO consciente: os DESAFIOS ainda GASTAM Essência LOCAL (comprarDesafio → debitar(perfil)),
+  // economia não migrada ao servidor. Esta tela mostra o ledger LOCAL que ela de fato gasta — NÃO a barra da
+  // conta. Casar com o servidor aqui mostraria um saldo que não é o gasto. (A barra de CONTA usa moedaServidor.)
   const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
@@ -1596,8 +1599,7 @@ function renderColecao(){
   // a interação usa colSelecionar/colAtualizarGrade/colAbrirVer, cirúrgicos, que não passam por aqui.)
   colSel = null; colVer = null;
   const donos = ROSTER.map(e => e.key).filter(temDeus).length;
-  const ess = (perfil && perfil.moedas && perfil.moedas.essencia) || 0;
-  const gema = (perfil && perfil.moedas && perfil.moedas.gema) || 0;
+  const mo = moedaServidor();   // §318b-2: a barra da Coleção é do SERVIDOR ("—" desconectado), não o perfil fantasma
   const tabs = [''].concat(PANTEOES).map(f =>
     `<button class="col2__tab${colF.cultura === f ? ' is-on' : ''}" data-cultura="${H(f)}">${f ? H(f) : 'Todas'}</button>`).join('');
   const barra = colSelectHTML('classe', 'Classe', COL_CLASSES.map(v => ({ v, t: v })), colF.classe)
@@ -1610,8 +1612,8 @@ function renderColecao(){
       <button class="col2__voltar" id="bvoltar" aria-label="Voltar"><i class="dsel__seta"></i></button>
       <div class="col2__tit"><h1 class="col2__titulo">Personagens</h1><span class="col2__sub">COLECIONE · LEIA O KIT · MONTE A LENDA</span></div>
       <div class="col2__moedas">
-        <span class="col2__moeda"><i class="col2__mic col2__mic--ess">◈</i><b>${ess.toLocaleString('pt-BR')}</b></span>
-        <span class="col2__moeda"><i class="col2__mic col2__mic--gem">◆</i><b>${gema.toLocaleString('pt-BR')}</b></span>
+        <span class="col2__moeda"><i class="col2__mic col2__mic--ess">◈</i><b>${fmtMoeda(mo.online, mo.essencia)}</b></span>
+        <span class="col2__moeda"><i class="col2__mic col2__mic--gem">◆</i><b>${fmtMoeda(mo.online, mo.gema)}</b></span>
         <span class="col2__moeda col2__moeda--pos"><i class="col2__mic col2__mic--pos">⬡</i><b>${donos}<span>/${ROSTER.length}</span></b></span>
       </div>
     </header>

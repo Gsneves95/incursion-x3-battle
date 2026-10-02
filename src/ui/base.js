@@ -8,6 +8,17 @@ const EVAR = {Tempestade:'--e-Tempestade',Umbra:'--e-Umbra','Maré':'--e-Mare',
   Aurora:'--e-Aurora',Chama:'--e-Chama',Verdejante:'--e-Verdejante'};
 const COR = k => `var(${EVAR[k]})`;
 const ELAB = {Tempestade:'TEMPESTADE',Umbra:'UMBRA','Maré':'MARÉ',Aurora:'AURORA',Chama:'CHAMA',Verdejante:'VERDEJANTE'};
+// §318b-2 — FONTE ÚNICA das moedas da CONTA: a barra de moedas (gema/Essência) lê SEMPRE do servidor
+// (contaAtual), nunca do perfil local — o perfil era o "26.100 fantasma" que sobrevivia desconectado/pós-wipe.
+// `online:false` quando não há conta autoritativa; `fmtMoeda` então mostra "—" em vez de inventar um número.
+// (Exceção consciente: os DESAFIOS ainda gastam Essência LOCAL — economia não migrada; aquela tela segue o
+//  ledger local, documentado no DECISOES. Toda barra de CONTA passa por aqui.)
+function moedaServidor(){
+  const ca = (typeof contaAtual !== 'undefined') ? contaAtual : null;
+  const m = ca && ca.perfil && ca.perfil.moedas;
+  return { online: !!m, gema: m ? (m.gema || 0) : 0, essencia: m ? (m.essencia || 0) : 0 };
+}
+function fmtMoeda(online, v){ return online ? Number(v || 0).toLocaleString('pt-BR') : '—'; }
 const SLOTLAB = {basico:'básico',habilidade:'habilidade',milagre:'milagre',defesa:'defesa'};
 const GLIFO = {basico:'I',habilidade:'II',milagre:'III',defesa:'\u25c7'};
 

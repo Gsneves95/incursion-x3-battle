@@ -2,6 +2,32 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §318b-2 · RECONEXÃO PROATIVA + toda barra de moedas do servidor
+
+Dois complementos ao §318b, antes do teste no aparelho:
+
+**1) Reconexão proativa (`src/view.js` `ligarReconexao`, `src/conta.js`).** No celular o socket cai sempre que o app
+vai ao 2º plano; com o §318b o 1º toque ao voltar pegava "Sem conexão" e só o 2º funcionava. Agora, ao voltar o FOCO
+(`focus` / `visibilitychange` visível / `resume`), o cliente **religa o socket e refresca a conta (forçado) ANTES de
+qualquer toque**. O transporte ganhou `religar()`/`estaViva()`; `conectar()` prende os handlers ao socket específico
+(religar rápido durante CLOSING não mexe no novo). `refrescarConta(forcar)` ignora o throttle de 3s no retorno ao foco.
+Um **ping leve** a cada 25s em 1º plano (`ola`, SEM_TOKEN; `setInterval` com `.unref()` p/ não prender testes) detecta a
+queda cedo e já reergue. Independente do Capacitor — vale no WebView e no navegador.
+
+**2) Toda barra de moedas da CONTA lê do servidor (`src/ui/base.js` `moedaServidor`/`fmtMoeda`).** O "26.100 fantasma"
+também aparecia na **Coleção**. Fonte única: `moedaServidor()` lê só `contaAtual.perfil.moedas`; `fmtMoeda` mostra **"—"**
+quando desconectado — **zero fallback ao perfil local**. Roteados: barra da **home/mapa** (`mapaMoedasHTML`), barra da
+**Coleção** (`col2__moedas`), confirmação **APAGAR DADOS** (`sobrepor.js`). A invocação já era server-only (§318b, `S._online`).
+**Exceção consciente e documentada:** os **DESAFIOS** ainda GASTAM Essência LOCAL (`comprarDesafio → debitar(perfil)`,
+economia não migrada ao servidor) — aquela tela segue mostrando o ledger LOCAL que de fato gasta; casar com o servidor
+ali mostraria um saldo que não é o gasto. Migrar a economia dos desafios ao servidor fica como tarefa separada.
+
+**Guardas (`tests/reconexao_foco.test.js`, na suíte):** A) foco derrubado → `religar` chamado + `entrar` forçado +
+conta refrescada (gema 1500), e visibilitychange idem; B) home/Coleção mostram **"—"** desconectado e o saldo do
+servidor conectado (nunca o 26.100 local); C) guarda de código: `mapaMoedasHTML` usa `moedaServidor()` e não
+`perfil.moedas`. Provado que morde (reverter ao fallback local derruba 4 asserções). A reconexão do SOCKET em si
+(enviar + casar após religar) já estava provada no transporte (`tests/invocacao_net.test.js`).
+
 ## ★ §318b · DEFEITO do dono: invocar não fazia NADA (transporte que pendurava)
 
 **CAUSA (achada antes de consertar):** o transporte WebSocket (`src/conta.js` `criarTransporteWS`) casava

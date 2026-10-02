@@ -126,16 +126,17 @@ function criarTransporteWS(url, opts = {}) {
 
     function conectar() {
       if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;   // já conectando/aberto
-      try { ws = new WebSocket(alvo); } catch (e) { ws = null; return; }
-      ws.onopen = () => { if (!resolvido) { resolvido = true; clearTimeout(prazoAbrir); resolve(api); } };
-      ws.onmessage = (ev) => {
+      let s; try { s = new WebSocket(alvo); } catch (e) { ws = null; return; }
+      ws = s;   // handlers presos a ESTE socket (s): um socket velho fechando não mexe no novo (religar rápido)
+      s.onopen = () => { if (!resolvido) { resolvido = true; clearTimeout(prazoAbrir); resolve(api); } };
+      s.onmessage = (ev) => {
         let m = null; try { m = JSON.parse(ev.data); } catch (e) {}
         if (m && m.push) { if (_onPush) _onPush(m); return; }   // não-solicitada (relógio/PvP): nunca casa pedido
         if (m && m.rid != null && pend.has(m.rid)) return soltar(m.rid, m);
         if (ordem.length) return soltar(ordem[0], m);           // resposta sem rid → o mais antigo (compat.)
       };
-      ws.onerror = () => { /* o onclose limpa; evita resolver null após já aberto */ };
-      ws.onclose = () => { ws = null; soltarTodos(SEM); };       // queda: nenhum pedido fica pendurado
+      s.onerror = () => { /* o onclose limpa; evita resolver null após já aberto */ };
+      s.onclose = () => { if (ws === s) { ws = null; soltarTodos(SEM); } };   // só a queda do socket ATUAL solta pendentes
     }
 
     // 1ª abertura: se não abrir no prazo, o app fica DORMENTE (resolve null) — contrato preservado
@@ -156,6 +157,10 @@ function criarTransporteWS(url, opts = {}) {
       }),
       aoPush: (cb) => { _onPush = cb; },
       fechar: () => { try { if (ws) ws.close(); } catch (e) {} },
+      // §318b-2 — RECONEXÃO PROATIVA: o app chama religar() ao voltar ao foco (no celular o socket cai sempre
+      // no 2º plano). Idempotente: se já está aberto/conectando, no-op; se caiu, reergue ANTES do 1º toque.
+      religar: () => { conectar(); },
+      estaViva: () => !!ws && ws.readyState === 1,
     };
 
     conectar();

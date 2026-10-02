@@ -183,12 +183,18 @@ console.log('== §306 MAPA — 7) a referência MENTE (§305): sem nível/envelo
   // apelido presente (offline = "Jogador"); a faixa aparece só online (aqui, offline, não engana com faixa fake)
   ok($('.mperfil__nick').textContent.trim().length > 0, 'o chip mostra o apelido');
   ok(!$('.mperfil__faixa'), 'offline NÃO inventa faixa de ranque (§305: faixa só com conta)');
-  // moeda no formato pt-BR (toLocaleString): milhar com ponto, sem "K"
-  w.eval("perfil=novoPerfil(0,0); perfil.moedas.gema=2450; perfil.moedas.essencia=12360; ir('home',{},{substituir:true}); render();");
+  // moeda no formato pt-BR (toLocaleString): milhar com ponto, sem "K". §318b-2: a barra lê do SERVIDOR
+  // (contaAtual), não do perfil local — por isso o saldo é semeado na conta, não em perfil.moedas.
+  w.eval("perfil=novoPerfil(0,0); contaAtual={perfil:{moedas:{gema:2450,essencia:12360}}}; ir('home',{},{substituir:true}); render();");
   const moedas = $$('.mmoeda b').map(x => x.textContent);
   ok(moedas.includes('2.450'), `a gema 2450 deveria ler "2.450" em pt-BR (achei: ${moedas.join(' / ')})`);
   ok(moedas.includes('12.360'), `a essência 12360 deveria ler "12.360" em pt-BR (achei: ${moedas.join(' / ')})`);
   ok(!moedas.some(m => /K/i.test(m)), 'a moeda NÃO usa abreviação "K" (§305)');
+  // §318b-2: desconectado (sem conta), a barra mostra "—", nunca o saldo local
+  w.eval("contaAtual=null; ir('home',{},{substituir:true}); render();");
+  const moedasOff = $$('.mmoeda b').map(x => x.textContent);
+  ok(moedasOff.every(m => m === '—'), `desconectado: a barra mostra "—" (achei: ${moedasOff.join(' / ')})`);
+  w.eval("contaAtual={perfil:{moedas:{gema:2450,essencia:12360}}}; ir('home',{},{substituir:true}); render();");
   console.log(`  sem nível/envelope/sino · apelido="${$('.mperfil__nick').textContent}" · moedas ${moedas.join(' / ')} (pt-BR)`);
 }
 

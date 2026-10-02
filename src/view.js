@@ -188,6 +188,7 @@ render();
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
 ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)
 ligarPlataformaNativa();// §240: dentro do APK (Capacitor) — botão VOLTAR do Android + esconder o splash
+ligarReconexao();// §318b-2: religar o socket + refrescar a conta ao voltar ao foco (+ ping leve em 1º plano)
 
 // ============================================================
 // §240 — PLATAFORMA NATIVA (o APK Capacitor, modelo servidor-apontado). Só faz efeito DENTRO do app:
@@ -280,9 +281,9 @@ function voltarNativo(){
 // Missões. THROTTLE (3s) + flag em voo impedem laço: render()->renderMissoes()->refrescarConta() volta
 // no-op enquanto acabou de buscar. O progresso é do SERVIDOR (§228); o cliente só o desenha.
 let _contaRefetchTs=0, _contaRefetchInflight=false;
-async function refrescarConta(){
+async function refrescarConta(forcar){
   if(!contaTransporte) return;
-  if(_contaRefetchInflight || (Date.now()-_contaRefetchTs)<3000) return;
+  if(_contaRefetchInflight || (!forcar && (Date.now()-_contaRefetchTs)<3000)) return;   // §318b-2: forcar ignora o throttle (volta ao foco)
   _contaRefetchInflight=true;
   try{
     const t=(typeof lerToken==='function')?lerToken():null; if(!t) return;
@@ -290,6 +291,39 @@ async function refrescarConta(){
     if(r && r.tipo==='conta'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); render(); }
   }catch(e){ /* mantém contaAtual */ }
   finally{ _contaRefetchInflight=false; }
+}
+
+// §318b-2 — RECONEXÃO PROATIVA. No celular a WebSocket cai sempre que o app vai ao 2º plano; sem isto, o 1º
+// toque ao voltar pegava "Sem conexão" e só o 2º funcionava. Ao voltar o foco (resume/focus/visibilitychange
+// visível) RELIGAMOS o socket e REFRESCAMOS a conta (forçado) ANTES de qualquer toque. E um PING LEVE periódico
+// em 1º plano (um 'ola' barato, SEM_TOKEN) detecta a queda cedo e já reergue. Independente do Capacitor: vale
+// no WebView e no navegador. Idempotente; não dispara laço (religar/pedir não re-renderizam sozinhos).
+var _pingT=null;   // var (não let): ligarReconexao() roda no boot, antes desta linha — evita o TDZ
+function _aoVoltarAoFoco(){
+  if(!contaTransporte) return;
+  try{ if(contaTransporte.religar) contaTransporte.religar(); }catch(e){}
+  refrescarConta(true);
+}
+function _pingLeve(){
+  if(!contaTransporte) return;
+  if(typeof document!=='undefined' && document.hidden) return;   // só em 1º plano
+  try{
+    const viva = contaTransporte.estaViva ? contaTransporte.estaViva() : true;
+    if(!viva && contaTransporte.religar){ contaTransporte.religar(); refrescarConta(true); return; }
+    Promise.resolve(contaTransporte.pedir(envelope('ola'))).then((r)=>{
+      if(!r || r.codigo==='sem_conexao'){ try{ if(contaTransporte.religar) contaTransporte.religar(); }catch(e){} refrescarConta(true); }
+    }).catch(()=>{});
+  }catch(e){}
+}
+function ligarReconexao(){
+  if(typeof addEventListener!=='function') return;
+  addEventListener('focus', _aoVoltarAoFoco);
+  if(typeof document!=='undefined') document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) _aoVoltarAoFoco(); });
+  // ping a cada 25s em 1º plano (cobre o keep-alive do Render e pega a queda antes do toque). Sob jsdom (testes)
+  // o setInterval devolve um número sem .unref() e prenderia o processo — pula lá; os handlers de FOCO (o que
+  // importa testar) seguem ligados. No navegador/WebView real roda normalmente.
+  const _ehJsdom = (typeof navigator !== 'undefined') && /jsdom/i.test(navigator.userAgent || '');
+  if(!_pingT && !_ehJsdom){ _pingT=setInterval(_pingLeve, 25000); if(_pingT && typeof _pingT.unref==='function') _pingT.unref(); }
 }
 
 // §314 — ATIVAR/TROCAR a Provação ativa. O cliente só PEDE; o servidor valida (ranque + nomes possuídos)

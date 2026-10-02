@@ -6,6 +6,24 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §318b-2 · reconexão proativa no foco + toda barra de moedas do servidor
+
+Complementos ao §318b, pedidos antes do teste no aparelho.
+
+- **Religar ao voltar o foco, não no 1º toque.** O §318b fazia o socket religar sozinho no próximo `pedir` — mas no
+  celular o socket cai a CADA ida ao 2º plano, então o 1º toque ao voltar sempre pegava "Sem conexão". Decisão: ao
+  voltar o FOCO (focus/visibilitychange/resume) religar + refrescar a conta (forçado, ignorando o throttle) ANTES de
+  qualquer toque. Mais um **ping leve** (25s, `ola`) para pegar a queda cedo — com `.unref()` para não prender o
+  processo nos testes. Alternativa recusada (só confiar no religar-no-pedir): deixaria o 1º toque sempre falhando, que
+  é exatamente a queixa.
+- **Barra de moedas da CONTA = sempre o servidor, em TODA tela.** Fonte única `moedaServidor()` (base.js): lê só
+  `contaAtual`, "—" desconectado, zero fallback ao perfil local (o "26.100 fantasma" aparecia na home E na Coleção).
+  Alternativa recusada (ler perfil local como cache): é justamente o que mentia pós-wipe/desconectado.
+- **Carve-out consciente: DESAFIOS seguem com Essência LOCAL.** `comprarDesafio` ainda debita `perfil` (economia não
+  migrada ao servidor). Aquela tela mostra o ledger LOCAL que ela de fato gasta — casar com o servidor ali exibiria um
+  saldo que não é gasto. Decisão: deixar explícito (comentado no código, documentado aqui) e migrar a economia dos
+  desafios ao servidor como tarefa à parte, em vez de criar um "mostra-servidor/gasta-local" pior que o bug.
+
 ## §318b · o transporte não podia PENDURAR (defeito: invocar não fazia nada)
 
 **Defeito do dono:** na invocação, apertar os botões não fazia NADA — sem resultado, sem mensagem. **Causa:** o
