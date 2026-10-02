@@ -2,6 +2,35 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §319c · a ficha do deus RESTAURADA; a tela de níveis vira rota própria
+
+**CORREÇÃO do dono:** o §319 fez a rota `deus` VIRAR a tela de níveis, comendo a ficha antiga (arte, chips,
+seletor de kit, maestria). O dono quis a ficha de volta como era, e a tela de níveis à parte.
+
+**O que mudou:**
+- **`src/ui/home.js`** — `renderDeusDetalhe` (rota `deus`) voltou a ser a FICHA de antes do §319 (casca `.deus/
+  .dart/.dcol/.dkit/.ddet`, maestria/como-conseguir, seletor que abre na PASSIVA). A tela de níveis virou
+  `renderNiveis` (rota `niveis`), inalterada no que faz; o "‹" dela diz "‹ <Nome>" e volta para a ficha
+  (desempilha se a ficha está abaixo, senão SUBSTITUI por ela — sem laço). Chave `nlSelKey` separada de
+  `deusSelKey`. Novo botão **"SUBIR HABILIDADES ›"** no topo da ficha → rota `niveis`: `b--primary` (ouro cheio)
+  quando `nlTemPagavel`, `b--sec` (contorno) quando não — e presente para não-possuído. O painel da Coleção:
+  "Subir níveis ›" → `niveis`; "Ver detalhes ›" → ficha `deus` (a sobreposição `colAbrirVer` segue no "+N ›").
+- **`src/view.js`** — registra a rota `niveis` (`renderNiveis`); `deus` volta a apontar para a ficha.
+- **`src/shell.html`** — `.dtop__subir` (posiciona o botão no alto à direita, encolhe a régua p/ caber nas 4
+  larguras). O CSS da ficha (`.deus…`) nunca fora removido; o `.nl*` (níveis) permanece.
+
+**Guardas (provado que morde):**
+- `tests/aquisicao.test.js` §5 **revertido** (ficha: arte/chips/4 skills/passiva pré-selecionada/maestria×como-
+  conseguir) + §5b **novo**: o botão leva à rota `niveis`; DOURADO só com nível pagável (bite: sem pontos vira
+  contorno); aparece p/ não-possuído e abre "Você ainda não tem este deus".
+- `tests/maestria.test.js` §5 e `tests/moldura.test.js` §220 **revertidos** às versões pré-§319 (a ficha traz a
+  maestria e passa na geometria da arte/kit/texto).
+- `tests/niveis_tela.test.js` — aponta para a rota `niveis`; o "‹" diz "‹ <Nome>" e **volta para a ficha** (rota
+  `deus`). Os 10 estados × 4 larguras do §319 seguem verdes na rota nova.
+- `tests/colecao_tela.test.js` — "Subir níveis" → `niveis`; "Ver detalhes" → ficha `deus`; a sobreposição §288
+  é exercida por `colAbrirVer` direto. `tests/render_sweep.test.js` — rota `niveis` coberta (sai p/ a ficha e a
+  ficha p/ a home). Capturas 893 em `docs/capturas-319c/` (pagável/contorno/não-possuído).
+
 ## ★ §318b-3 · a economia dos Desafios migra ao servidor (fecha o carve-out do §318b-2)
 
 **DEFEITO do dono:** os Desafios por deus GASTAVAM Essência no CELULAR (`comprarDesafio → debitar(perfil,'essencia')`).

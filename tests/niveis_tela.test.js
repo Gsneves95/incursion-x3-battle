@@ -1,5 +1,5 @@
-// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). A rota 'deus' da Coleção virou a
-// tela de NÍVEIS: barra superior (‹ Coleção · nome · pontos), COLUNA ESQUERDA (identidade + PASSIVA + rodapé
+// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). §319c: é a rota PRÓPRIA 'niveis'
+// (o "‹" volta para a FICHA do deus): barra superior (‹ <Nome> · nome · pontos), COLUNA ESQUERDA (identidade + PASSIVA + rodapé
 // "X de Y") que NUNCA rola, e COLUNA DIREITA (3 painéis de habilidade) que PODE rolar. O servidor (subirNivel)
 // é AUTORITATIVO; isto é TELA — tudo deriva do data/deuses (escadas), do kitEfetivo (texto no nível) e da
 // economia.json (custo em pontos). GUARDAS §292/§295/§307/§308: estados × 4 larguras, nada cortado em silêncio,
@@ -20,14 +20,14 @@ const w = dom.window, d = w.document;
 const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
 const txt = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
 const clk = el => el.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-// monta uma conta ONLINE possuindo os deuses dados, com níveis/pontos à escolha, e abre a rota 'deus'.
+// monta uma conta ONLINE possuindo os deuses dados, com níveis/pontos à escolha, e abre a rota 'niveis'.
 function abrir(k, opts = {}) {
   const niveis = opts.niveis || {};
   const pontos = opts.pontos || {};
   const deuses = {}; (opts.possui || [k]).forEach(x => deuses[x] = { copias: 1 });
   w.eval(`perfil.deuses=${JSON.stringify(deuses)};
     contaAtual={nick:'T',ranque:{pontos:60},pontos:${JSON.stringify(pontos)},niveis:${JSON.stringify(niveis)},perfil:{deuses:${JSON.stringify(deuses)}},missoes:{ativa:null,progresso:{},liberados:[]}};
-    nlConfirm=null;nlPendente=false;nlMsg=null;deusSelKey=null;ir('deus',{key:${JSON.stringify(k)}},{substituir:true});render();`);
+    nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:${JSON.stringify(k)}},{substituir:true});render();`);
 }
 
 console.log('== §319 / TELA DOS NÍVEIS DE HABILIDADE ==');
@@ -39,7 +39,10 @@ console.log('\n== 1. barra superior + coluna esquerda (identidade, passiva, roda
 err = null;
 abrir('zeus', { pontos: { zeus: 3 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
 ok(!err, 'renderiza sem quebrar (' + (err || 'ok') + ')');
-ok(/‹ Coleção/.test(txt($('#bvoltar'))), 'o voltar diz "‹ Coleção"');
+ok(/‹ Zeus/.test(txt($('#bvoltar'))), 'o voltar diz "‹ <Nome do deus>" (§319c: volta para a FICHA)');
+w.eval("document.querySelector('#bvoltar').click()");
+ok(w.eval("rotaAtual()") === 'deus', 'o "‹" da tela de níveis volta para a FICHA do deus (rota deus)');
+abrir('zeus', { pontos: { zeus: 3 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
 ok(txt($('.nltop__nome')) === 'Zeus', 'a barra nomeia o deus (Cinzel)');
 ok(/Pontos de Zeus: 3/.test(txt($('.nltop__ptn'))), 'os pontos do deus vêm da conta (servidor)');
 ok(/4 pontos por cópia \(SS\)/.test(txt($('.nltop__cop'))), 'os pontos por cópia saem da raridade (pontosPorDuplicata, do dado)');
@@ -153,7 +156,7 @@ setTimeout(() => {
 
     // ---- 10. SEM CONEXÃO: botões apagados + aviso; nenhum SUBIR ativo ----
     console.log('\n== 10. sem conexão: botões apagados + aviso ==');
-    w.eval("contaAtual=null;perfil.deuses={zeus:{copias:1,obtidoEm:0}};deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();");
+    w.eval("contaAtual=null;perfil.deuses={zeus:{copias:1,obtidoEm:0}};nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();");
     const z0 = $$('.nldir .nlp')[0];
     ok(!!z0.querySelector('.b--wait[disabled]') && /Sem conexão/.test(txt(z0.querySelector('.nlp__nota'))), 'offline: botão SUBIR apagado + "Sem conexão com o servidor"');
     ok($$('[data-subir]').length === 0, 'offline: nenhum SUBIR ativo (o servidor é a verdade)');
@@ -179,8 +182,8 @@ function larguras() {
       }
       return best.k;
     })();
-    // mocks (cada um retorna o eval que arma contaAtual + abre a rota 'deus')
-    const C = (k, pontos, niveis, possui) => `perfil.deuses=${JSON.stringify((possui || [k]).reduce((o, x) => (o[x] = { copias: 1, obtidoEm: 0 }, o), {}))};contaAtual={nick:'T',ranque:{pontos:60},pontos:${JSON.stringify(pontos || {})},niveis:${JSON.stringify(niveis || {})},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};nlConfirm=null;nlPendente=false;nlMsg=null;deusSelKey=null;ir('deus',{key:${JSON.stringify(k)}},{substituir:true});render();`;
+    // mocks (cada um retorna o eval que arma contaAtual + abre a rota 'niveis')
+    const C = (k, pontos, niveis, possui) => `perfil.deuses=${JSON.stringify((possui || [k]).reduce((o, x) => (o[x] = { copias: 1, obtidoEm: 0 }, o), {}))};contaAtual={nick:'T',ranque:{pontos:60},pontos:${JSON.stringify(pontos || {})},niveis:${JSON.stringify(niveis || {})},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:${JSON.stringify(k)}},{substituir:true});render();`;
     const casos = {
       'zeus meio':       C('zeus', { zeus: 5 }, { zeus: { basico: 2, habilidade: 1, milagre: 1 } }),
       'zeus nv1':        C('zeus', { zeus: 0 }, { zeus: { basico: 1, habilidade: 1, milagre: 1 } }),
@@ -191,7 +194,7 @@ function larguras() {
       'não possuído':    C('ahpuch', {}, {}, ['zeus']),
       'nome longo':      C(nomeLongo, { [nomeLongo]: 9 }, {}),
       'confirmação':     C('zeus', { zeus: 3 }, { zeus: { basico: 1, habilidade: 1, milagre: 1 } }) + "clk();",
-      'sem conexão':     `perfil.deuses={zeus:{copias:1,obtidoEm:0}};contaAtual=null;nlConfirm=null;nlMsg=null;deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();`,
+      'sem conexão':     `perfil.deuses={zeus:{copias:1,obtidoEm:0}};contaAtual=null;nlConfirm=null;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();`,
     };
     let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
     const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });

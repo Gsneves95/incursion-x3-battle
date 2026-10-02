@@ -119,9 +119,11 @@ console.log('\n== 6b. vitórias cumpridas, só falta o Milagre: sem barra, requi
 console.log('\n== 7. sobreposição §288: 4 ícones + caixa (abre no básico), o ícone troca a caixa ==');
 {
   const norm = s => (s || '').replace(/\s+/g, ' ').trim();
-  w.eval("colSelecionar('zeus'); document.querySelector('.col2p__ver').click()");
+  // §319c: o "Ver detalhes ›" do painel passou a abrir a FICHA (rota 'deus'); a SOBREPOSIÇÃO de kit segue viva
+  // (usada pelo "+N ›" da sinergia) e é exercida aqui por colAbrirVer direto.
+  w.eval("colSelecionar('zeus'); colAbrirVer('zeus')");
   const ov = $('#col2ov');
-  ok(!!ov, 'VER DETALHES abre a sobreposição');
+  ok(!!ov, 'a sobreposição de kit (colAbrirVer) abre');
   ok(ov.querySelectorAll('.col2ov__sk').length === 4, 'a sobreposição mostra os QUATRO ícones (básico/habilidade/milagre/passiva)');
   ok($('.col2ov__sk.is-sel') && $('.col2ov__sk.is-sel').dataset.versel === 'basico', 'abre no BÁSICO (o ícone básico é o selecionado)');
   const nomeBasico = w.eval("(GODS.zeus.ab.find(a=>a.slot==='basico')||{}).nome");
@@ -295,10 +297,13 @@ console.log('\n== 10. §319b: descoberta de níveis (posse+pontos, "X de Y", sel
   ok(/Níveis 3 de 12/.test(txt($('#col2painel .col2p__niveis'))), 'painel: linha "Níveis X de Y" (mesma conta da tela §319)');
   ok(!!$('#col2painel .col2p__ver--subir[data-subirdeus="zeus"]') && /Subir níveis/.test(txt($('#col2painel .col2p__ver--subir'))), 'painel: botão dourado "Subir níveis ›" quando pagável');
   w.eval("document.querySelector('#col2painel .col2p__ver--subir').click()");
-  ok(w.eval("rotaAtual()") === 'deus', '"Subir níveis" leva à tela de níveis (rota deus)');
-  // PAINEL do não-pagável: "Ver detalhes" (não dourado) + sem botão subir.
+  ok(w.eval("rotaAtual()") === 'niveis', '§319c: "Subir níveis" leva à TELA DE NÍVEIS (rota própria "niveis")');
+  // PAINEL do não-pagável: "Ver detalhes" (não dourado) + sem botão subir; §319c: leva à FICHA (rota "deus").
   w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares')");
   ok(!$('#col2painel .col2p__ver--subir') && !!$('#col2painel .col2p__ver[data-verdeus="ares"]'), 'painel sem pontos: botão "Ver detalhes" (não dourado), sem "Subir níveis"');
+  w.eval("document.querySelector('#col2painel .col2p__ver[data-verdeus]').click()");
+  ok(w.eval("rotaAtual()") === 'deus', '§319c: "Ver detalhes" abre a FICHA restaurada (rota "deus")');
+  w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares')");
   // BITE: dar pontos ao ares faz o selo e o botão aparecerem; tirar, somem.
   w.eval("contaAtual.pontos.ares=3; ir('colecao',{},{substituir:true}); render();");
   ok(!!$('.col2c[data-deus="ares"] .col2c__subir'), 'bite: com pontos, o selo ▲ do ares aparece');

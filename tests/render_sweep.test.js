@@ -177,6 +177,7 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     provacoes:    "ir('provacoes')",       // §213: marcador de missões
     colecao:      "ir('colecao')",
     deus:         "ir('deus',{key:'zeus'})",
+    niveis:       "ir('niveis',{key:'zeus'})",   // §319c: tela de NÍVEIS (rota própria; sai por ‹ <Nome> → ficha → home)
     campanha:     "ir('campanha')",
     dominios:     "ir('dominios')",        // §274: tela de SELEÇÃO dos Domínios — sai por ‹ Início
     dominio:      "ir('dominio',{cultura:'grega'})",   // §274: HUB de um Domínio — sai por ‹ Voltar
@@ -206,6 +207,15 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
           if (!d.querySelector(sel)) { semSaida.push('batalha:' + sel); vivo = false; break; }
           w.eval(`document.querySelector('${sel}').click()`);
         }
+      }
+    } else if (r === 'niveis') {
+      // §319c: a tela de NÍVEIS sai para a FICHA do deus ('deus'), e a ficha sai para a home — duas etapas.
+      if (!d.querySelector('#bvoltar')) { semSaida.push('niveis:#bvoltar'); vivo = false; }
+      else {
+        w.eval("document.querySelector('#bvoltar').click()");   // niveis → ficha
+        if (w.eval("rotaAtual()") !== 'deus') { naoChegou.push('niveis→' + w.eval('rotaAtual()') + ' (esperava a ficha)'); vivo = false; }
+        else if (!d.querySelector('#bvoltar')) { semSaida.push('niveis:ficha#bvoltar'); vivo = false; }
+        else w.eval("document.querySelector('#bvoltar').click()");   // ficha → home
       }
     } else {
       const sel = ['#binicio', '#bvoltar', '.iv-hbtn'].find(s => d.querySelector(s));

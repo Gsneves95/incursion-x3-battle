@@ -1671,10 +1671,11 @@ function colSelecionar(k){
   colLigarPainel();
 }
 function colLigarPainel(){
-  // §284: VER DETALHES abre a SOBREPOSIÇÃO do kit (não a rota 'deus'); o × fecha o painel (volta ao repouso).
-  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
-  // §319b: "Subir níveis ›" leva direto à TELA DE NÍVEIS (rota 'deus'), não à sobreposição de kit.
-  const sub = stage.querySelector('.col2p__ver--subir[data-subirdeus]'); if (sub) sub.onclick = () => { ir('deus', { key: sub.dataset.subirdeus }); render(); };
+  // §319c: "Ver detalhes ›" abre a FICHA restaurada (rota 'deus'); a SOBREPOSIÇÃO de kit (colAbrirVer) segue
+  // viva, usada pelo "+N ›" da sinergia. O × fecha o painel (volta ao repouso).
+  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => { ir('deus', { key: ver.dataset.verdeus }); render(); };
+  // §319c: "Subir níveis ›" (dourado) leva direto à TELA DE NÍVEIS (rota própria 'niveis').
+  const sub = stage.querySelector('.col2p__ver--subir[data-subirdeus]'); if (sub) sub.onclick = () => { ir('niveis', { key: sub.dataset.subirdeus }); render(); };
   const mais = stage.querySelector('.col2s__mais'); if (mais) mais.onclick = () => colAbrirVer(mais.dataset.sinmais, 'sinergia');   // §294: "+N ›" abre a lista completa
   const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
 }
@@ -1710,7 +1711,7 @@ let deusSel = 'passiva', deusSelKey = null;
 // §319 FASE 4 — a tela de NÍVEIS: confirmação inline por painel (§245, sem modal). nlConfirm = slot com a
 // confirmação aberta (só um por vez); nlPendente trava o toque duplo enquanto o servidor responde; nlMsg =
 // {slot,texto} com a recusa curta do servidor. Resetam ao trocar de deus (ver renderDeusDetalhe).
-let nlConfirm = null, nlPendente = false, nlMsg = null;
+let nlConfirm = null, nlPendente = false, nlMsg = null, nlSelKey = null;   // §319c: chave da tela de NÍVEIS (decoupla da ficha)
 
 // COMO CONSEGUIR (substitui a maestria quando NÃO se possui o deus): maestria zero não é informação;
 // a rota de aquisição é. Duas vias: INVOCAÇÃO (gacha) e MISSÃO (§234). O ELO com a tela de Missões
@@ -1783,9 +1784,65 @@ function deusDetalheHTML(g, sel){
   if (!s || !s.a) return `<div class="ddet"><div class="col2k__row col2k__row--vazio">Kit em produção.</div></div>`;
   return `<div class="ddet">${kitLinhaHTML(s.tipo, s.a, s.slot === 'passiva')}</div>`;
 }
+// §319c — FICHA do deus RESTAURADA (rota 'deus', como era ANTES do §319): arte à esquerda + coluna de
+// identidade (chips), maestria (ou "como conseguir" se não possui), seletor de kit e detalhe da skill (abre na
+// PASSIVA). A tela de NÍVEIS virou rota própria ('niveis'); o elo daqui é o botão "SUBIR HABILIDADES ›":
+// dourado CHEIO (b--primary) quando há um próximo nível PAGÁVEL agora, de CONTORNO (b--sec) quando não há — mas
+// abre do mesmo jeito (ver as escadas) — e PRESENTE também para deus não possuído (a tela de níveis mostra
+// "Você ainda não tem este deus"). Nada de leitor de moeda/conteúdo novo: a casca é a de antes + um elo.
+function renderDeusDetalhe(){
+  const k = (paramsAtuais() || {}).key;
+  const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
+  // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR). O roster (HRM) segue para nome/retrato.
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // §284-ajuste2: o kit lê daqui (data/deuses)
+  const gmEf = deusKitEfetivo(k, gm);   // §318: o kit EXIBIDO passa pelo kitEfetivo (nv atual do jogador)
+  const tem = temDeus(k);
+  const rar = raridadeDe(k);
+  const pagavel = nlTemPagavel(k);      // §319c: só então o "Subir habilidades" acende dourado cheio
+  if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
+  stage.innerHTML = `<div id="baselayer" class="deus ${tem ? '' : 'deus--falta'}">
+  <div class="stage__bg"></div><div class="stage__scrim"></div>
+  <header class="dtop">
+    <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+    <button class="b b--md dtop__subir ${pagavel ? 'b--primary' : 'b--sec'}" data-irniveis="${H(k)}">SUBIR HABILIDADES ›</button>
+    <span class="dtop__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+  </header>
+  <div class="dbody">
+    <div class="dart">
+      ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
+      ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dart__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
+      ${tem ? '' : '<span class="dart__tag">VOCÊ NÃO POSSUI</span>'}
+      <div class="dart__nome">${H(g.nome)}</div>
+    </div>
+    <div class="dcol">
+      <div class="dchips">
+        <span class="dchip">${H(gm.faccao)}</span>
+        <span class="dchip dchip--el" style="--c:${COR(gm.elem)}">${H(ELAB[gm.elem] || gm.elem)}</span>
+        <span class="dchip">${H(gm.classe)}</span>
+        <span class="dchip">${H(gm.funcao)}</span>
+      </div>
+      ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
+      <div class="dkit">${deusSkills(gmEf).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
+      ${deusDetalheHTML(gmEf, deusSel)}
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
+    b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
+  // §319c: o elo para a TELA DE NÍVEIS (rota própria), daquele deus.
+  const sb = stage.querySelector('[data-irniveis]');
+  if (sb) sb.onclick = () => { ir('niveis', { key: k }); render(); };
+  // ELO com a tela de Missões (§234): do detalhe do deus vai-se ao mapa das missões.
+  const vm = stage.querySelector('[data-vermissao]');
+  if (vm) vm.onclick = () => { ir('provacoes'); render(); };
+  fit();
+}
 // ===================================================================
-// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). A rota 'deus' da Coleção passa a
-// ser a tela de NÍVEIS: coluna esquerda = identidade + PASSIVA (sem níveis) + rodapé "X de Y"; coluna direita
+// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). §319c: é a rota PRÓPRIA 'niveis'
+// (renderNiveis), alcançada pelo botão "SUBIR HABILIDADES ›" da ficha e pelo "Subir níveis ›" da Coleção.
+// Coluna esquerda = identidade + PASSIVA (sem níveis) + rodapé "X de Y"; coluna direita
 // = os 3 painéis das habilidades ativas (básico/habilidade/milagre), cada um com os marcadores de nível, o
 // "Atual" e o "Próximo" (SÓ o que muda), e o botão SUBIR. O servidor (subirNivel) é AUTORITATIVO (pontos,
 // topo por slot, trava de liberação); isto é TELA — nada do que o jogador vê é inventado aqui, tudo deriva
@@ -1942,7 +1999,9 @@ async function _nlConfirmar(k, sl){
   render();
 }
 
-function renderDeusDetalhe(){
+// §319c — a tela de NÍVEIS é ROTA PRÓPRIA ('niveis'); a rota 'deus' voltou a ser a FICHA (renderDeusDetalhe,
+// restaurada). O "‹" daqui volta para a FICHA do deus (‹ <Nome>), não para a Coleção.
+function renderNiveis(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
   // §271: os METADADOS vêm do data/deuses (a fonte do MOTOR). O roster (HRM) segue para nome/retrato.
@@ -1951,7 +2010,7 @@ function renderDeusDetalhe(){
   const tem = temDeus(k);
   const online = (typeof contaAtual !== 'undefined' && !!contaAtual);
   const rar = raridadeDe(k);
-  if (deusSelKey !== k) { deusSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera a confirmação/erro
+  if (nlSelKey !== k) { nlSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera a confirmação/erro
   const pts = nlPontos(k), porCopia = nlPontosPorCopia(rar), res = nlResumo(k, gm);
   const passiva = gm.passiva || g.passiva || null;
   const topoInfo = tem
@@ -1964,7 +2023,7 @@ function renderDeusDetalhe(){
   stage.innerHTML = `<div id="baselayer" class="deus nl ${tem ? '' : 'deus--falta'}">
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   <header class="dtop nltop">
-    <button class="b b--quiet b--md" id="bvoltar">‹ Coleção</button>
+    <button class="b b--quiet b--md" id="bvoltar">‹ ${H(g.nome)}</button>
     <h1 class="nltop__nome">${H(g.nome)}</h1>
     ${topoInfo}
   </header>
@@ -1995,7 +2054,15 @@ function renderDeusDetalhe(){
   </div>
   </div>`;
   const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  // §319c: o "‹" volta SEMPRE para a FICHA do deus. Se a ficha já está logo abaixo na pilha (veio da ficha →
+  // SUBIR), desempilha (voltar); se veio direto (Coleção → "Subir níveis"), SUBSTITUI o topo pela ficha — assim
+  // o "‹" da ficha depois volta à origem real (Coleção/home), sem empilhar deus/niveis em laço.
+  if (v) v.onclick = () => {
+    const abaixo = (typeof NAV !== 'undefined' && NAV.pilha.length >= 2) ? NAV.pilha[NAV.pilha.length - 2] : null;
+    if (abaixo && abaixo.rota === 'deus' && abaixo.params && abaixo.params.key === k) voltar();
+    else ir('deus', { key: k }, { substituir: true });
+    render();
+  };
   stage.querySelectorAll('[data-subir]').forEach(b => { b.onclick = () => { nlConfirm = b.dataset.subir; nlMsg = null; render(); }; });
   stage.querySelectorAll('[data-subir-no]').forEach(b => { b.onclick = () => { if (nlPendente) return; nlConfirm = null; render(); }; });
   stage.querySelectorAll('[data-subir-ok]').forEach(b => { b.onclick = () => _nlConfirmar(k, b.dataset.subirOk); });

@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §319c · a tela de níveis não podia COMER a ficha do deus (correção do dono)
+
+O §319 fez a rota `deus` VIRAR a tela de níveis. O dono pediu de volta a FICHA antiga (arte, chips de
+identidade, seletor de kit, maestria) — ela já estava boa — e a tela de níveis numa rota à parte.
+
+**Decisões:**
+- **A ficha volta como era (rota `deus`, `renderDeusDetalhe`), com o CSS dela intacto.** O CSS `.deus/.dtop/
+  .dart/.dcol/.dkit/.ddet` nunca tinha sido removido (o §319 só ADICIONOU o `.nl*`), então restaurar foi
+  reconstruir a função e reusar as mesmas classes. Os testes que o §319 migrou (aquisicao §5, maestria §5,
+  moldura §220) voltaram às versões de antes.
+- **A tela de níveis é ROTA PRÓPRIA (`niveis`, `renderNiveis`).** Nada do que ela faz mudou. O "‹" dela diz
+  "‹ <Nome do deus>" e volta para a FICHA — nunca para a Coleção. Chave de estado própria (`nlSelKey`) para
+  não colidir com o `deusSelKey` da ficha.
+- **Navegação sem laço.** O "‹" de `niveis`: se a ficha já está logo abaixo na pilha (veio da ficha → SUBIR),
+  desempilha (`voltar`); se veio direto (Coleção → "Subir níveis"), SUBSTITUI o topo pela ficha — assim o "‹"
+  da ficha depois volta à origem real (Coleção/home), sem empilhar `deus/niveis` em círculo.
+- **Botão "SUBIR HABILIDADES ›" na ficha**, no alto à direita (antes da raridade, onde cabe nas 4 larguras sem
+  cortar). DOURADO CHEIO (`b--primary`) quando há um próximo nível PAGÁVEL agora (`nlTemPagavel`); de CONTORNO
+  (`b--sec`) quando não há — mas abre do mesmo jeito (ver as escadas). Aparece TAMBÉM para deus não possuído (a
+  tela de níveis mostra "Você ainda não tem este deus"). Reusa a semântica de botão já existente (cheio = ouro;
+  contorno = régua), então "provar que morde" é checar a classe.
+- **Coleção.** O "Subir níveis ›" dourado do painel (§319b) passa a abrir `niveis`; o "Ver detalhes ›" abre a
+  FICHA restaurada (`deus`). A SOBREPOSIÇÃO de kit (`colAbrirVer`, §284/§288) segue viva — agora alcançada pelo
+  "+N ›" da sinergia; a ficha restaurada já mostra o kit completo, então o painel aponta para ela.
+
 ## §318b-3 · a economia dos Desafios migra ao servidor (fecha o carve-out do §318b-2)
 
 **Defeito do dono:** os Desafios por deus ainda GASTAVAM Essência no CELULAR — `comprarDesafio` fazia

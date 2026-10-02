@@ -2083,6 +2083,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .deus{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}
 .dtop{flex:0 0 46px;position:relative;z-index:2;display:flex;align-items:center;gap:12px;padding:0 12px}
 .dtop__rar{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em}
+/* §319c — elo para a tela de NÍVEIS, no alto à direita (antes da raridade). b--primary (ouro cheio) quando há
+   nível pagável, b--sec (contorno) quando não há. Encolhe a régua no texto p/ caber nas 4 larguras sem cortar. */
+.dtop__subir{margin-left:auto;font-size:10.5px;letter-spacing:.05em;max-width:52%;overflow:hidden;text-overflow:ellipsis}
+.dtop__subir ~ .dtop__rar{margin-left:0}
 .dbody{flex:1 1 auto;min-height:0;position:relative;z-index:2;display:flex}   /* acima do scrim (senão a coluna some) */
 /* ARTE: quadrada (fonte 168², confirmado), preenche a altura do corpo; nome sobreposto na base */
 .dart{flex:0 0 382px;height:100%;position:relative;overflow:hidden;background:#0c0a18;border-right:1px solid rgba(216,178,90,.3)}

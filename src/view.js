@@ -166,7 +166,8 @@ registrar('home',      { render: renderHome });
 registrar('provacoes', { render: renderMissoes });    // F4/§213: MISSÕES (marcador honesto; chegam no PvP)
 registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFIOS (pergaminhos + semanal + composição)
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
-registrar('deus',      { render: renderDeusDetalhe }); // F3.2: detalhe (kit + arte + Provação)
+registrar('deus',      { render: renderDeusDetalhe }); // F3.2: FICHA do deus (kit + arte + maestria) — §319c restaurada
+registrar('niveis',    { render: renderNiveis });      // §319c: TELA DE NÍVEIS DE HABILIDADE (rota própria, params.key)
 registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
 registrar('dominios',  { render: renderDominios });    // §274: a TELA DE SELEÇÃO dos cinco Domínios
 registrar('dominio',   { render: renderDominioHub });  // §274: o HUB/entrada de UM Domínio (params.cultura)
