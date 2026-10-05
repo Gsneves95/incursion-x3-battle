@@ -2,7 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §321 · Coleção: kit + níveis na MESMA sobreposição; "Ritos" para o PvE
+## ★ §319b-2 · MainActivity `onResume()` → `public` (APK não compilava)
+
+`native/MainActivity.java`: o `onResume()` do §319b estava `protected`; o `BridgeActivity` o declara `public`, e o
+Java recusa enfraquecer (`attempting to assign weaker access privileges`) → `./gradlew assembleDebug` não compila.
+Agora é `public void onResume()`. Guarda nova em `tests/cap_native.test.js`: lê cada `@Override` do template e exige
+`public` (não roda `javac` — é estática); provada que morde trocando `onResume` de volta para `protected`.
+`docs/apk-imersivo.md`: acrescentado o passo `echo "sdk.dir=$HOME/Library/Android/sdk" > android/local.properties`
+antes do `./gradlew` (faltava na pasta nova; é local da máquina, fora do git).
+
+## §321 · Coleção: kit + níveis na MESMA sobreposição; "Ritos" para o PvE
 
 **A — sobreposição do kit com a visão de níveis embutida (`src/ui/home.js`, `src/shell.html`):**
 - Tocar no cartão da grade → `colAbrirVer` (abre a sobreposição direto). O painel volta ao botão único

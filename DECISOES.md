@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §319b-2 · `onResume()` tem de ser `public` (correção de compilação do APK)
+
+Achado do dono ao **gerar o APK** na pasta `android/` nova: o `native/MainActivity.java` declarava
+`protected void onResume()`, mas o `BridgeActivity` (de quem herdamos) declara `onResume()` como `public`.
+O Java recusa enfraquecer a visibilidade herdada — `attempting to assign weaker access privileges` — e o
+`./gradlew assembleDebug` **não compila**. O dono corrigiu à mão na pasta `android/` para gerar o APK; a fonte
+da verdade (`native/MainActivity.java`) ficou errada. Decidido: `public void onResume()` no arquivo versionado.
+
+**Por que o teste não pegou:** `tests/cap_native.test.js` valida o template por regex (não roda `javac`), então
+um `protected` passava verde. **Alternativa recusada:** compilar o template de verdade no teste — exige um JDK no
+CI/local, caro e frágil para uma regra de uma linha. **Escolhido:** uma guarda estática que lê cada método
+`@Override` do template e exige visibilidade `public` (qualquer `@Override` que sobrescreve BridgeActivity/Activity
+não pode enfraquecer o acesso). Provada que morde: trocar `onResume` de volta para `protected` reprova a guarda.
+
+**Runbook:** `docs/apk-imersivo.md` ganhou o passo que faltou na pasta nova — criar `android/local.properties`
+com `sdk.dir=$HOME/Library/Android/sdk` (ajustar ao SO) antes do `./gradlew assembleDebug`, senão o Gradle não
+acha o Android SDK. É local da máquina, fora do git.
+
+---
+
 ## §321 · a Coleção abre o kit com os níveis DENTRO da sobreposição; "Ritos" para o PvE
 
 Dois pedidos do dono.

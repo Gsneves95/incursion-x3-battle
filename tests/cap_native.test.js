@@ -31,6 +31,39 @@ console.log('== §244 / cap-native — MainActivity imersivo versionado ==');
   ok(/onWindowFocusChanged/.test(src), 'reafirma o imersivo ao voltar o foco (resume) — as duas barras');
 }
 
+// 1b) §319b — GUARDA de visibilidade: todo método com @Override (que sobrescreve BridgeActivity/Activity)
+//     tem de ser `public`. O Android recusa enfraquecer a visibilidade herdada
+//     ("attempting to assign weaker access privileges"): BridgeActivity declara onResume/onCreate/
+//     onWindowFocusChanged como public, então um `protected`/pacote-privado NÃO compila. O teste não
+//     rodava javac, então deixou passar um `protected onResume()` — esta guarda fecha o buraco.
+function overridesNaoPublicos(java) {
+  const ruins = [];
+  // @Override  <modificadores>  <tipo-de-retorno>  <nome>(
+  const re = /@Override\b\s+((?:public|protected|private|static|final|synchronized|\s)*)([\w.$<>\[\],? ]+?)\s+(\w+)\s*\(/g;
+  let m;
+  while ((m = re.exec(java))) {
+    const mods = m[1] || '';
+    const nome = m[3];
+    if (!/\bpublic\b/.test(mods)) ruins.push(nome);
+  }
+  return ruins;
+}
+{
+  const src = fs.readFileSync(path.join(__dirname, '..', 'native', 'MainActivity.java'), 'utf8');
+  // sanidade: o parser realmente enxerga os @Override do template (não é uma lista vazia por regex quebrada)
+  const todos = [...src.matchAll(/@Override\b\s+(?:public|protected|private|static|final|synchronized|\s)*[\w.$<>\[\],? ]+?\s+(\w+)\s*\(/g)].map(x => x[1]);
+  ok(todos.includes('onResume') && todos.includes('onCreate') && todos.includes('onWindowFocusChanged'),
+     'a guarda enxerga os @Override do template (onCreate, onResume, onWindowFocusChanged)');
+  ok(overridesNaoPublicos(src).length === 0,
+     'todo @Override do MainActivity é public (não enfraquece a visibilidade do BridgeActivity)');
+  // prova que MORDE: enfraquecer onResume para protected tem de ser pego
+  const quebrado = src.replace(/public void onResume\(\)/, 'protected void onResume()');
+  ok(quebrado !== src, 'sanidade: a mutação trocou onResume para protected');
+  const pegos = overridesNaoPublicos(quebrado);
+  ok(pegos.includes('onResume'),
+     'a guarda MORDE: um @Override protected onResume() é reprovado ("weaker access privileges")');
+}
+
 // 2) aplicar() escreve no path derivado do appId, com o package certo
 {
   const raiz = raizFake('com.gsneves.incursionx3battle', true);

@@ -35,17 +35,26 @@ No computador, dentro da pasta do projeto:
    npm run cap:sync
    ```
    Deve imprimir uma linha tipo `MainActivity imersivo (§244) aplicado em android/app/src/main/java/.../MainActivity.java`.
-3. **Montar o APK** (debug serve para instalar no próprio aparelho):
+3. **Apontar o SDK do Android** (passo que FALTOU na pasta nova — §319b). Quando a pasta `android/` é recém-criada
+   pelo `npx cap add android`, ela não traz o `android/local.properties`, e o `./gradlew` não acha o SDK. Crie-o
+   **uma vez** apontando para onde o Android SDK está instalado:
+   ```
+   echo "sdk.dir=$HOME/Library/Android/sdk" > android/local.properties
+   ```
+   (no macOS o Android Studio instala o SDK em `~/Library/Android/sdk`; no Linux costuma ser `~/Android/Sdk` e no
+   Windows `C:\Users\<voce>\AppData\Local\Android\Sdk` — ajuste o caminho ao seu sistema.) O `local.properties` é
+   local da máquina e **não vai para o git**.
+4. **Montar o APK** (debug serve para instalar no próprio aparelho):
    ```
    cd android && ./gradlew assembleDebug
    ```
    O APK sai em `android/app/build/outputs/apk/debug/app-debug.apk`.
-4. **Instalar no aparelho** (USB com depuração ligada):
+5. **Instalar no aparelho** (USB com depuração ligada):
    ```
    adb install -r app/build/outputs/apk/debug/app-debug.apk
    ```
    (ou copiar o `.apk` para o telefone e tocar nele para instalar.)
-5. **Conferir no S24:** abrir o app, trocar para outro app e voltar — a barra de navegação deve continuar
+6. **Conferir no S24:** abrir o app, trocar para outro app e voltar — a barra de navegação deve continuar
    escondida; deslizar da borda de baixo traz as barras de volta por alguns segundos (comportamento esperado).
 
 ## Conferência rápida (sem recompilar) — qual MainActivity está no projeto?
@@ -61,3 +70,10 @@ sem isso, é o "vanilla" — rode `npm run cap:sync` (passo 2) e monte de novo (
 Além do `onWindowFocusChanged` (reafirma ao voltar do 2º plano), o MainActivity agora também reafirma no
 `onResume()` — alguns OEMs readmitem a barra no resume antes do foco. Já está no `native/MainActivity.java`; entra
 no APK no próximo `npm run cap:sync` + montagem.
+
+**Correção de compilação (achada ao gerar o APK):** o `onResume()` tinha sido declarado `protected`, mas o
+`BridgeActivity` o declara `public`; o Java recusa enfraquecer a visibilidade herdada
+(`attempting to assign weaker access privileges`) e o `./gradlew` **não compila**. Agora é `public void onResume()`.
+O teste `tests/cap_native.test.js` ganhou uma guarda que reprova qualquer `@Override` não-`public` no template
+(ela deixava passar antes porque não roda `javac`) — provada que morde trocando o `onResume` de volta para
+`protected`.

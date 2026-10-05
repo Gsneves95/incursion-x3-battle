@@ -33,9 +33,9 @@ public class MainActivity extends BridgeActivity {
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    aplicarImersivo();   // §319b — reforço: alguns OEMs readmitem a barra no RESUME antes do onWindowFocusChanged
+  public void onResume() {   // §319b — PRECISA ser public: o BridgeActivity declara onResume() como public e
+    super.onResume();        // o Java recusa enfraquecer a visibilidade ("attempting to assign weaker access privileges").
+    aplicarImersivo();   // reforço: alguns OEMs readmitem a barra no RESUME antes do onWindowFocusChanged
   }
 
   private void aplicarImersivo() {
