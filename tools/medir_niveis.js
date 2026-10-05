@@ -108,8 +108,13 @@ const X = arg('x', TIME[0]);
 const FALSO = tem('falso');
 const FORCADO = tem('forcado');   // §318 F1b: política de uso forçado (mede o que a IA gulosa não usa)
 const REATIVO = tem('reativo');   // §318 F1c: forçada, mas habilidade reativa só com motivo
-const proximaAcao = REATIVO ? reativaProxima : FORCADO ? forcadoProxima : iaProximaAcao;
-const POLITICA = REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)';
+// §322: --proto=papel|ply2|combo usa uma candidata de tools/ia_proto.js como POLÍTICA DA PARTIDA (medição;
+// a IA do jogo não muda). Serve p/ re-medir o MÁX dos deuses da lista de revisão sob a IA que USA o kit.
+const PROTO = arg('proto', '');
+let protoProxima = null;
+if (PROTO) { const { PROTOS } = require(path.join(__dirname, 'ia_proto.js')); protoProxima = PROTOS[PROTO]; if (!protoProxima) throw new Error('--proto desconhecido: ' + PROTO); }
+const proximaAcao = protoProxima ? protoProxima : REATIVO ? reativaProxima : FORCADO ? forcadoProxima : iaProximaAcao;
+const POLITICA = protoProxima ? ('PROTÓTIPO ' + PROTO) : REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)';
 // vetor de nível de X: --niv=basico:4,... (default: básico no 4, resto 1) OU o delta falso (básico 2)
 function parseNiv(s) { const o = { basico: 1, habilidade: 1, milagre: 1 }; for (const p of (s || '').split(',')) { const [k, v] = p.split(':'); if (SLOTS.includes(k)) o[k] = parseInt(v, 10) || 1; } return o; }
 const NIV = FALSO ? { basico: 2, habilidade: 1, milagre: 1 } : parseNiv(arg('niv', 'basico:4'));

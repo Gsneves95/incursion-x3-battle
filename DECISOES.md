@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §322 Parte 1 · IA que usa o kit inteiro — medir e prototipar (nada muda no jogo)
+
+A IA gulosa de 1 lance deixa **43 habilidades e 14 milagres (de 100 deuses) com uso < 0,1/partida** (confirma o
+§318 F1b). Prototipei 3 candidatas em `tools/ia_proto.js` (fora do jogo) e medi (`tools/medir_ia.js`): **papel**
+(1 lance, pontuação por PAPEL do efeito), **ply2** (meu lance + melhor resposta gulosa do inimigo), **combo**.
+
+**Recomendada: `papel`.** É a única que ao mesmo tempo (a) usa muito mais do kit (habilidades 43→27, milagres
+14→6), (b) é mais forte que a atual (**53,2%**, IC95 [50,8; 55,7] — exclui 50) e (c) custa **o mesmo** (~2,4 ms/
+decisão no celular, replay ~21 ms/partida — cabe no piso de 50 ms e é replay-safe).
+
+**Alternativas recusadas — e o achado:** olhar 2 lances **enfraquece** a IA (ply2 **21,9%**, combo **34,4%** contra
+a atual) e estoura o custo (~65 ms/decisão no celular, replay ~25× mais caro). A antevisão da resposta do inimigo
+deixa a IA passiva e ela gasta turnos com utilidade que não converte em vitória. **Lição:** o caminho para a força é
+uma **pontuação de 1 lance melhor**, não profundidade de busca.
+
+**Ressalva honesta:** `papel` é confiavelmente mais forte, mas **não** atinge “vence com folga (≥60%)” — fica em
++3 pp. Afinar os pesos da `pontuarPapel` (converter controle/provocação/vulnerável em vitória; resolver o Tyr, que
+nem a `papel` usa a provocação — 0,01/partida) é a **Fase 5**.
+
+**Lista de revisão** (MÁX do slot negativo, re-medido com `papel` como política via `medir_niveis --proto`): Fenrir
+básico −6,2→**+5,3**, Piranha básico −9,1→**+3,2**, Kali milagre −5,4→**+1,5**, Brigid milagre −5,9→**0,0** (4 saem
+do negativo); Tyr básico −5,4→−3,0 (melhora, ainda negativo).
+
+**Determinismo (replay):** todas as candidatas são determinísticas — `medir_ia.js verif` mediu 28.108 pares de
+decisões (mesma posição, 2 chamadas), 0 divergências. **Plano de versionamento cliente/servidor** (para a Fase 5):
+congelar a gulosa como IA v1; a candidata entra como v2; o replay passa a carregar `iaVer` (hoje não carrega), o
+servidor re-simula com a versão do envelope, replays antigos sem `iaVer` caem no v1; cliente e servidor sobem v2 no
+mesmo commit (uma fonte, `src/ia.js`). Detalhes e números em `docs/ia-kit-inteiro.md`.
+
+**Entregue:** `tools/ia_proto.js` (candidatas), `tools/medir_ia.js` (uso/força/custo/verif), `tools/medir_niveis.js`
+ganhou `--proto=`. Nenhuma mudança em `src/` nem na IA do jogo.
+
+---
+
 ## §319b-2 · `onResume()` tem de ser `public` (correção de compilação do APK)
 
 Achado do dono ao **gerar o APK** na pasta `android/` nova: o `native/MainActivity.java` declarava

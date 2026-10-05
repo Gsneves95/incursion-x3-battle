@@ -2,7 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §319b-2 · MainActivity `onResume()` → `public` (APK não compilava)
+## ★ §322 Parte 1 · IA que usa o kit inteiro — SÓ medição/protótipo (nada muda no jogo)
+
+Protótipos em `tools/ia_proto.js` (fora de `src/`, não ligados no jogo); medição em `tools/medir_ia.js`
+(`uso`/`forca`/`custo`/`verif`); `tools/medir_niveis.js` ganhou `--proto=`. **Recomendada: `papel`** (gulosa de 1
+lance com pontuação por PAPEL do efeito): USO habilidades 43→27 / milagres 14→6; FORÇA 53,2% vs atual (IC95
+[50,8;55,7], exclui 50); CUSTO ~2,4 ms/decisão no celular (= atual), replay-safe. **ply2/combo recusadas** (mais
+fracas: 21,9%/34,4%, e >50 ms). Achado: 2 lances enfraquece — o caminho é pontuação de 1 lance melhor. Lista de
+revisão sob `papel`: Fenrir/Piranha/Kali/Brigid saem do negativo; Tyr só melhora (não usa a taunt). Todas
+determinísticas (verif: 28.108 pares, 0 divergências). Plano de versão cliente/servidor (replay carrega `iaVer`,
+congela gulosa=v1) e tudo em `docs/ia-kit-inteiro.md`. **Fase 5** (ligar + afinar pesos p/ ≥60% + re-balancear PvE)
+NÃO feita. Relatório pediu PARAR aqui.
+
+## §319b-2 · MainActivity `onResume()` → `public` (APK não compilava)
 
 `native/MainActivity.java`: o `onResume()` do §319b estava `protected`; o `BridgeActivity` o declara `public`, e o
 Java recusa enfraquecer (`attempting to assign weaker access privileges`) → `./gradlew assembleDebug` não compila.
