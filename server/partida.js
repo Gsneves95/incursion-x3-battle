@@ -126,7 +126,7 @@ function _passarTurno(P, agora) {
   if (P.modo === 'pve') {
     let guarda = 0;
     while (!st.fim && st.ativo === P.cpu && guarda++ < 200) {
-      const mv = ia.iaProximaAcao(st, 'normal', ia.IA_VERSAO_JOGO);   // §322: a partida ao vivo roda a IA v2 (lockstep com a previsão do cliente)
+      const mv = ia.iaProximaAcao(st, 'normal', ia.iaVersaoDeModo(P.modo));   // §322 P3: versão pela TABELA do modo (lockstep com o cliente; 'pve' ao vivo → v1 seguro)
       if (!mv) { E.fimTurno(st); break; }
       const r = E.agir(st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
       if (r && r.ok) cpuOps.push({ uid: mv.uid, slot: mv.slot, alvos: mv.alvos || [] });

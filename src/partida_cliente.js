@@ -214,7 +214,7 @@ async function encerrar(transporte, MP, opts = {}) {
   if (MP.modo !== 'pvp') {
     let guarda = 0;
     while (!MP.st.fim && MP.st.ativo !== humano && guarda++ < 200) {
-      const mv = _fn('iaProximaAcao')(MP.st, 'normal', (typeof IA_VERSAO_JOGO !== 'undefined' ? IA_VERSAO_JOGO : 2));   // §322: prevê com a MESMA IA v2 do servidor (lockstep)
+      const mv = _fn('iaProximaAcao')(MP.st, 'normal', (typeof iaVersaoDeModo === 'function' ? iaVersaoDeModo(MP.modo) : 1));   // §322 P3: MESMA versão do servidor pela tabela do modo (lockstep; 'pve' ao vivo → v1)
       if (!mv) { _fn('fimTurno')(MP.st); break; }
       const r = _fn('agir')(MP.st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
       if (!r || !r.ok) { _fn('fimTurno')(MP.st); break; }

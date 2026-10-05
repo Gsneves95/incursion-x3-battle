@@ -8,6 +8,11 @@ const TURNO_SEG = 60;
 let relogio = TURNO_SEG, tick = null;
 let vsCPU = true, IA_LADO = 1, iaAtiva = false;   // Jogador 2 controlado pela IA (modo vs CPU)
 const cpuControla = lado => vsCPU && lado === IA_LADO;
+// §322 P3 — a versão da IA DESTA batalha (1=gulosa congelada, 2=papel). O lançador do modo a define por
+// iaVersaoDeModo(modo) antes de ir('batalha'); o replay carimba exatamente esta. Default 1 (seguro).
+let _iaVerBatalha = 1;
+function definirIaVersao(v) { _iaVerBatalha = (v === 2) ? 2 : 1; }
+function iaVersaoBatalhaAtual() { return _iaVerBatalha; }
 
 // ---- perspectiva e modo de partida (F0.7) ----
 // O lado EXIBIDO à esquerda (com os discos) é PERSPECTIVA, não turno. Em hot-seat os
@@ -95,7 +100,7 @@ function talvezIA() {
 }
 function passoIA() {
   if (!_emBatalha() || st.fim || !cpuControla(st.ativo)) { iaAtiva = false; return; }
-  const a = iaProximaAcao(st, 'normal', (typeof IA_VERSAO_JOGO !== 'undefined' ? IA_VERSAO_JOGO : 2));   // §322: o jogo roda a IA v2 (papel)
+  const a = iaProximaAcao(st, 'normal', _iaVerBatalha);   // §322 P3: a versão vem do MODO (definirIaVersao no lançador)
   if (a) { agir(st, a.uid, a.slot, a.alvos, a.escolhas); armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar(); setTimeout(passoIA, 750); }
   else {
     iaAtiva = false;
@@ -221,4 +226,4 @@ function _gemaPvPTalvez() {
 }
 function resultadoRanqueOnline() { return MP ? (MP.ranqueadoResultado || null) : null; }
 
-if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, resultadoRanqueOnline, confirmarOnline, encerrarOnline };
+if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, resultadoRanqueOnline, confirmarOnline, encerrarOnline, definirIaVersao, iaVersaoBatalhaAtual };

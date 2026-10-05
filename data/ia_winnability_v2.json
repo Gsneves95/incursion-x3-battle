@@ -1,0 +1,234 @@
+{
+  "_nota": "Winnability do PvE sob a IA v2 (§322 P3). Gerado por tools/verificar_pve_v2.js. ok=true → o modo pode usar a v2.",
+  "modos": {
+    "campanha": {
+      "total": 6,
+      "vencivel": 6,
+      "naoVencivel": [],
+      "orc": 200000,
+      "versao": 2,
+      "segundos": 0,
+      "ok": true
+    },
+    "semanal": {
+      "total": 52,
+      "vencivel": 48,
+      "naoVencivel": [
+        {
+          "id": "ammit",
+          "nome": "ammit",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 117 há 199935 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "guanyu",
+          "nome": "guanyu",
+          "veredito": "INVENCIVEL",
+          "motivo": "espaço de estados ESGOTADO sem caminho de vitória (exaustão real)"
+        },
+        {
+          "id": "afrodite",
+          "nome": "afrodite",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 153 há 188803 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "mnevis",
+          "nome": "mnevis",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 10 há 157644 nós) — a Provação é candidata a DICA de sequência"
+        }
+      ],
+      "orc": 200000,
+      "versao": 2,
+      "segundos": 531,
+      "ok": false
+    },
+    "composicao": {
+      "total": 0,
+      "vencivel": 0,
+      "naoVencivel": [],
+      "naoVerificavel": true,
+      "_nota": "time do jogador é LIVRE (sem solução única) — não verificável por este método; a REGRA mantém na v1 até a Fase 5."
+    },
+    "rito": {
+      "total": 100,
+      "vencivel": 72,
+      "naoVencivel": [
+        {
+          "id": "ahpuch",
+          "nome": "A Podridão",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 501 há 198994 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "amaterasu",
+          "nome": "O Sol Não Se Põe",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 120 há 199943 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "ammit",
+          "nome": "Devorar a Alma",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 1 há 199847 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "aquiles",
+          "nome": "O Calcanhar",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 22 há 33276 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "boitata",
+          "nome": "Guardiã dos Campos",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 35 há 172992 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "change",
+          "nome": "Saudade",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 92 há 71011 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "curupira",
+          "nome": "Pés Virados",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 8 há 90741 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "demeter",
+          "nome": "A Colheita Retorna",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 67 há 102690 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "hades",
+          "nome": "Portões do Submundo",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 1 há 197501 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "hanuman",
+          "nome": "Devoção a Rama",
+          "veredito": "INVENCIVEL",
+          "motivo": "espaço de estados ESGOTADO sem caminho de vitória (exaustão real)"
+        },
+        {
+          "id": "hel",
+          "nome": "O Portão de Helheim",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 0 há 70726 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "hera",
+          "nome": "O Juramento",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 30 há 197539 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "hercules",
+          "nome": "Os Doze Trabalhos",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 16 há 193520 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "iansa",
+          "nome": "O Corisco",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 0 há 149293 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "isis",
+          "nome": "O Nome Secreto",
+          "veredito": "INDETERMINADO",
+          "motivo": "ORÇAMENTO esgotado (200000 nós; heurística ainda progredindo, melhorH=67) — aumentar o orçamento"
+        },
+        {
+          "id": "izanami",
+          "nome": "Portal de Yomotsu",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 89 há 199400 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "khnum",
+          "nome": "Couraça de Barro",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 2 há 178015 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "kitsune",
+          "nome": "As Nove Caudas",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 8 há 196419 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "morrigan",
+          "nome": "Presságio de Morte",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 1 há 199847 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "osiris",
+          "nome": "O Tribunal",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 55 há 84538 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "piranha",
+          "nome": "Águas Vermelhas",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 1001 há 196876 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "ra",
+          "nome": "Olho de Rá",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 10 há 163846 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "shiva",
+          "nome": "O Terceiro Olho",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 0 há 198420 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "sobek",
+          "nome": "Prova de Domínio",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 74 há 181743 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "susanoo",
+          "nome": "Esquadrão da Tempestade",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 9 há 101779 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "thor",
+          "nome": "O Trovão de Asgard",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 6 há 53188 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "vishnu",
+          "nome": "Preservar",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 66 há 192318 nós) — a Provação é candidata a DICA de sequência"
+        },
+        {
+          "id": "yanwong",
+          "nome": "Livro da Vida e Morte",
+          "veredito": "INDETERMINADO",
+          "motivo": "heurística ESTAGNOU (melhorH parou em 1 há 198507 nós) — a Provação é candidata a DICA de sequência"
+        }
+      ],
+      "orc": 200000,
+      "versao": 2,
+      "segundos": 2456,
+      "ok": false
+    }
+  },
+  "geradoEm": "2026-10-05T21:48:19.899Z"
+}

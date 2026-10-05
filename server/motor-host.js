@@ -12,6 +12,9 @@ const E = require(path.join(__dirname, '..', 'src', 'engine.js'));
 // onde tudo é global). Para importá-los no Node é preciso pôr o motor no global ANTES — é o mesmo
 // contorno que a suíte já usa (tests: `Object.assign(global, E)`). Não reescrevo o motor; exponho-o.
 Object.assign(globalThis, E);
+// §322 P3: a TABELA de versão da IA por modo (fonte única cliente/servidor). Posta no global ANTES de ia.js
+// para que ia.iaVersaoDeModo a enxergue no servidor também (o cliente a recebe embutida pelo build).
+try { globalThis.IA_POR_MODO = require(path.join(__dirname, '..', 'data', 'ia_por_modo.json')); } catch (e) { /* ausente: iaVersaoDeModo cai em v1 */ }
 const PROV = require(path.join(__dirname, '..', 'src', 'provacao.js'));
 const ia = require(path.join(__dirname, '..', 'src', 'ia.js'));
 

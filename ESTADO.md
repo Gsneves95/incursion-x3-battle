@@ -2,7 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §322 Parte 2 · a IA "papel" afinada ENTROU no jogo como v2 (versionada)
+## ★ §322 Parte 3 · versão da IA POR MODO (ponte de segurança)
+
+A v2 só vale num modo se TODO o conteúdo dele vencer sob a v2 (senão v1). **Fonte única** `data/ia_por_modo.json`
+(cliente+servidor). Tabela: **campanha/dominio/sandbox = v2**; **rito/desafioDeus/semanal/composicao = v1**.
+Winnability provada em `data/ia_winnability_v2.json` (`tools/verificar_pve_v2.js`): campanha 6/6 vence; rito tem
+`hanuman` INVENCÍVEL; semanal tem `guanyu` INVENCÍVEL; composicao não-verificável (time livre). Cliente:
+`iaVersaoDeModo(modo)` + `definirIaVersao` por batalha (turno.js); replay carimba a versão da batalha; servidor
+re-sim pelo envelope (sem `iaVer` → v1). **Build quebra** se um modo v2 tiver item não-vencível
+(`tools/ia_modo_guard.js`, morde com hanuman). Domínios/sandbox isentos (dificuldade ≈ igual — `medir_dominio_dif.js`).
+Guardas em `tests/ia_modo.test.js`. Online-live `pve` → v1 (não é modo de conteúdo). Fase 5 traz cada modo à v2.
+Detalhes/relatório: `docs/ia-por-modo.md`.
+
+## §322 Parte 2 · a IA "papel" afinada ENTROU no jogo como v2 (versionada)
 
 Afinei `pontuarPapel` (subida coordenada CRN, treino/confirmação separados, `tools/afinar_ia.js`) com termos de
 execução/foco, controle-pelo-dano-negado, provocação e vulnerável. **Alvos batidos:** FORÇA 58,9% [57,0;60,9]

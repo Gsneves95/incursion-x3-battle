@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §322 Parte 3 · ponte de segurança — versão da IA POR MODO (gated por winnability)
+
+A v2 (P2) entrou global, mas quebrou conteúdo: `hanuman` ficou INVENCÍVEL e ~26 Ritos muito mais difíceis.
+**Decisão do dono:** um modo de PvE só usa a v2 se TODO o seu conteúdo verificável for VENCÍVEL sob a v2; senão
+fica na v1 (a gulosa congelada, sempre vencível). A Fase 5 traz cada modo para a v2.
+
+**Fonte única** `data/ia_por_modo.json` (cliente e servidor leem dela): o lançador de cada batalha faz
+`definirIaVersao(iaVersaoDeModo(modo))`; a IA do turno roda nessa versão; o replay carimba a versão usada e o
+servidor re-simula pelo envelope (sem `iaVer` → v1). Modo desconhecido → v1 (falha segura). **Guarda do build**
+(`tools/ia_modo_guard.js`): um modo marcado v2 com qualquer item não-vencível no manifesto `ia_winnability_v2.json`
+QUEBRA o build — provado que morde (pôr `rito` em v2 falha por `hanuman`). Domínios/sandbox são isentos (sem
+solução fixa). **Alternativa recusada:** forçar a v2 em tudo (deixa `hanuman`/`guanyu` impossíveis) ou reverter a
+v2 por completo (joga fora o ganho onde é seguro) — a versão por modo é o meio-termo que não deixa conteúdo
+impossível.
+
+**Winnability sob a v2** (`tools/verificar_pve_v2.js` → `solucionador --v2`): **campanha 6/6 VENCÍVEL → v2**;
+rito/desafioDeus (hanuman INVENCÍVEL + ~27 indeterminados) → v1; semanal (guanyu INVENCÍVEL + 3 indeterminados) →
+v1; composicao (time livre, não verificável) → v1; dominio/sandbox → v2 (sem solução fixa; dificuldade por
+`tools/medir_dominio_dif.js` praticamente igual — a escala domina, não a IA). Tabela e lista completa em
+`docs/ia-por-modo.md`.
+
+**Impacto ao jogador:** campanha fica mais difícil mas 100% vencível; Ritos/Desafios por deus/Semanais/Composição
+seguem na v1 (como antes do §322) — nada impossível; voltam à v2 na Fase 5. Replays antigos de qualquer modo
+continuam creditando (re-sim pelo envelope).
+
+---
+
 ## §322 Parte 2 · a IA "papel" afinada ENTRA no jogo como v2 (versionada)
 
 Afinei os pesos da `pontuarPapel` por subida coordenada (CRN) com treino/confirmação em sementes separadas

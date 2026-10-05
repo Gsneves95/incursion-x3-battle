@@ -314,6 +314,7 @@ function ligarSelecao(){
       (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null);   // regra de geração de energia (economia.json)
     // §318 F2 E2: sandbox vs CPU é fonte de Gema (tetada no servidor) — grava o replay com a montagem exata (seed/comeca aleatórios).
     if(typeof REPLAY!=='undefined'){ if(vsCPU) REPLAY.iniciar({modo:'sandbox',aliados:pick[0].slice(),inimigos:pick[1].slice(),seed:_seed,comeca:_comeca}); else REPLAY.descartar(); }
+    if(typeof definirIaVersao==='function') definirIaVersao(vsCPU?iaVersaoDeModo('sandbox'):1);   // §322 P3: sandbox vs CPU usa v2; hot-seat não tem IA
     // batalha SUBSTITUI a seleção na pilha (não empilha): "voltar" não pode
     // abandonar a partida. aoSair(selecao) limpa a sobreposição; aoEntrar(batalha)
     // inicia o relógio — por isso não há mais limpeza nem iniciarRelogio aqui.

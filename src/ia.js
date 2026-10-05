@@ -105,7 +105,14 @@ function iaCandidatosLado(st, lado, nivel) {
 // sementes separadas = 58,9%–63,1% contra a v1; alvo ≥58% batido). Ver docs/ia-kit-inteiro.md.
 // VERSIONADA: o replay carrega iaVer; v1 = a gulosa histórica (abaixo), v2 = esta. NUNCA mudar estes pesos
 // sem criar uma v3 — mudá-los quebraria a re-simulação dos replays v2 (divergência).
-const IA_VERSAO_JOGO = 2;   // a versão que o jogo (cliente+servidor) roda e CARIMBA nos replays novos
+const IA_VERSAO_JOGO = 2;   // §322 P2: a versão "mais nova" disponível (papel). §322 P3: QUAL modo a usa está em
+// data/ia_por_modo.json (não é mais global) — iaVersaoDeModo decide por modo. IA_VERSAO_JOGO fica como o teto.
+// §322 P3 — versão da IA de um MODO de PvE, lida da tabela única (IA_POR_MODO, embutida pelo build). Default 1
+// (a v1 congelada, sempre vencível): um modo desconhecido ou sem tabela NUNCA sobe para a v2 por acidente.
+function iaVersaoDeModo(modo) {
+  try { const t = (typeof IA_POR_MODO !== 'undefined') ? IA_POR_MODO : null; const v = t && t.modos && t.modos[modo]; return v === 2 ? 2 : 1; }
+  catch (e) { return 1; }
+}
 const IA_V2_W = {
   hpAliado: 1.0, escudoUtil: 0.7, escudoBase: 0.15, reducao: 0.6, invuln: 0.8, piso: 6, defExtra: 4,
   buffOff: 0.4, regen: 0.5, ctrlProprio: 6, debuffProprio: 2,
@@ -226,5 +233,5 @@ function iaProximaAcao(st, nivel = 'normal', versao = 1) {
 
 if (typeof module !== 'undefined') {
   module.exports = { iaProximaAcao, iaPontuar, NIVEIS_IA, iaCandidatos, iaClonar,   // iaCandidatos/iaClonar: §318 F1b régua de USO FORÇADO (força o slot, reusa a MIRA da IA)
-    iaPontuarPapel, iaProximaAcaoPapel, IA_V2_W, IA_VERSAO_JOGO };                  // §322: IA v2 (papel) + versão carimbada
+    iaPontuarPapel, iaProximaAcaoPapel, IA_V2_W, IA_VERSAO_JOGO, iaVersaoDeModo };   // §322: IA v2 (papel) + versão por modo (P3)
 }

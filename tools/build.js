@@ -74,6 +74,7 @@ const invoc  = ler('src/invocacao.js');
 const ia     = semGuard(ler('src/ia.js'));
 const raridades = ler('data/raridades.json').trim();
 const economia = ler('data/economia.json').trim();
+const iaPorModoObj = JSON.parse(ler('data/ia_por_modo.json'));   // §322 P3: versão da IA por modo (fonte única cliente/servidor)
 const batalhaTxt = ler('data/batalha.json').trim();   // §299: textos da tela de batalha (citação do rodapé = repouso), dado, não literal
 const kits   = ler('data/kits.json').trim();
 // MISSÕES (F6/§234): a árvore para a TELA — SLIM (sem a calibração/feasibilidade, que é de ferramenta).
@@ -492,6 +493,18 @@ const mapaObj = (() => {
   return doc;
 })();
 
+// §322 P3 — GUARDA da ponte de segurança: um modo marcado v2 em data/ia_por_modo.json SÓ pode estar v2 se a
+// prova de winnability (data/ia_winnability_v2.json) disser que TODO item verificável dele vence sob a v2.
+// Domínios e sandbox são isentos (sem solução fixa). Isto MORDE: por o 'rito' em v2 quebra o build (hanuman é
+// INVENCÍVEL sob a v2). Falha fechada: v2 sem prova no manifesto também quebra.
+(() => {
+  const guard = require('./ia_modo_guard.js');
+  let manifesto = null;
+  try { manifesto = JSON.parse(ler('data/ia_winnability_v2.json')); } catch (e) { manifesto = null; }
+  const erros = guard.validar(iaPorModoObj, manifesto);
+  if (erros.length) { console.error('ERRO §322 P3 — ia_por_modo.json × ia_winnability_v2.json:\n  ' + erros.join('\n  ')); process.exit(1); }
+})();
+
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
 const saida = casca
@@ -505,7 +518,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

@@ -1098,6 +1098,7 @@ function iniciarProva(key){
   prova = p; provaFim = null; provaLances = 0;
   st = montarProvacao(p);
   vsCPU = true;   // os inimigos da Provação são a CPU (o jogador controla o lado 0)
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('rito'));   // §322 P3: Rito usa a versão do modo
   ir('batalha', {}, { substituir: true });
   render();
 }
@@ -1182,6 +1183,7 @@ function iniciarDesafioDeus(k){
   st = montarProvacao(prova);
   if (typeof REPLAY !== 'undefined') REPLAY.descartar();   // §318 F2 E2: desafio POR DEUS não é fonte de moeda (é maestria) — não grava replay
   vsCPU = true;
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('desafioDeus'));   // §322 P3
   ir('batalha', {}, { substituir: true });
   render();
 }
@@ -2487,6 +2489,7 @@ function iniciarAto(cap, ato){
   campanhaFim = null;
   st = montarProvacao(campanha);
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: ato.id, aliados: time });   // §318 F2 E2
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha'));   // §322 P3
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2541,6 +2544,7 @@ function iniciarEncontroComTime(enc, time){
   campanhaFim = null;
   st = montarProvacao(campanha);               // reusa a máquina: só usa aliados/inimigos/montar
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: enc.id, aliados: time });   // §318 F2 E2
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha'));   // §322 P3
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2688,7 +2692,7 @@ function ligarCampanhaFim(){
   const v = q('#cfvoltar'); if (v) v.onclick = () => { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); };
   // §255: "Tentar de novo" remonta a MESMA semente e o MESMO time (campanha.aliados já traz a troca do
   // jogador). Semente estável de propósito — o ato é um quebra-cabeça que se aprende, não se rola de novo.
-  const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarProvacao(campanha); ir('batalha', {}, { substituir: true }); render(); };
+  const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarProvacao(campanha); if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha')); ir('batalha', {}, { substituir: true }); render(); };
   // §255: "Voltar ao ato" — volta à tela do ato PERDIDO como ato ATUAL, SEM resetar campSwap/campVistaAto,
   // então o time que o jogador montou sobrevive e segue trocável (a promessa do §252 vale na derrota).
   const vt = q('#cfvoltarato'); if (vt) vt.onclick = () => voltarAoAto();
@@ -2756,6 +2760,7 @@ function iniciarSemanal(){
   prova = p; provaFim = null; provaLances = 0;
   st = montarProvacao(p);
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'semanal' });   // §318 F2 E2 (o servidor escolhe o puzzle pela SUA semana)
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('semanal'));   // §322 P3
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -2986,6 +2991,7 @@ function iniciarDesafio(dsf, time){
   provaFim = null; provaLances = 0;
   st = montarProvacao(prova);
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'desafio', desafioId: dsf.id, aliados: time });   // §318 F2 E2
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('composicao'));   // §322 P3: desafio de composição
   vsCPU = true;
   ir('batalha', {}, { substituir: true });
   render();
@@ -3301,6 +3307,7 @@ function iniciarNivelDominio(cultura){
   vsCPU = true;
   st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1 });
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2: estado da corrida ANTES do nível
+  if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('dominio'));   // §322 P3: Domínios usam v2 (sem solução fixa)
   ir('batalha', {}, { substituir: true });
   render();
 }
