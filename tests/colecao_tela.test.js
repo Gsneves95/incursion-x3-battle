@@ -280,36 +280,41 @@ console.log('\n== 9. sem 404 de arte (§213) ==');
   ok($$('#col2grade .col2c__art img').every(im => artes.has(im.getAttribute('src'))), 'todo <img> da grade referencia arte confirmada em IMG');
 }
 
-// ---- 10. §319b — DESCOBRIR OS NÍVEIS: posse com pontos, linha "Níveis X de Y", selo ▲ e botão dourado
-//          "Subir níveis" SÓ quando há nível pagável (provado que morde com 0 e com pontos). ----
-console.log('\n== 10. §319b: descoberta de níveis (posse+pontos, "X de Y", selo ▲ e botão dourado só se pagável) ==');
+// ---- 10. §319b/§321 — DESCOBRIR OS NÍVEIS: posse com pontos, linha "Níveis X de Y", selo ▲ (só se pagável);
+//          §321: o painel volta ao "Ver detalhes ›" (reabre a SOBREPOSIÇÃO); subir vive DENTRO dela. ----
+console.log('\n== 10. §319b/§321: descoberta de níveis (posse+pontos, "X de Y", selo ▲) + painel "Ver detalhes" reabre a sobreposição ==');
 {
   // zeus possuído e COM pontos (pagável); ares possuído e SEM pontos (não pagável).
   w.eval(`perfil.deuses.zeus=perfil.deuses.zeus||{copias:1,obtidoEm:0}; perfil.deuses.ares=perfil.deuses.ares||{copias:1,obtidoEm:0};
     contaAtual={pontos:{zeus:3,ares:0},niveis:{zeus:{basico:1,habilidade:1,milagre:1},ares:{basico:1,habilidade:1,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};
     colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.status='';colF.raridade=''; ir('colecao',{},{substituir:true}); render();`);
-  // SELO na grade: só o pagável (zeus) tem ▲; o não-pagável (ares) não.
+  // SELO na grade: só o pagável (zeus) tem ▲; o não-pagável (ares) não (§319b — continua).
   ok(!!$('.col2c[data-deus="zeus"] .col2c__subir'), 'grade: o deus com nível pagável ganha o selo ▲');
   ok(!$('.col2c[data-deus="ares"] .col2c__subir'), 'grade: o deus sem pontos NÃO tem selo (morde)');
-  // PAINEL do pagável: posse com pontos + linha "Níveis X de Y" + botão DOURADO "Subir níveis" → rota deus.
+  // PAINEL (§321): posse com pontos + linha "Níveis X de Y" + botão "VER DETALHES ›" (sempre; reabre a sobreposição).
   w.eval("colSelecionar('zeus')");
   ok(/· 3 pontos/.test(txt($('#col2painel .col2p__posse'))), 'painel: a posse mostra os pontos do deus');
   ok(/Níveis 3 de 12/.test(txt($('#col2painel .col2p__niveis'))), 'painel: linha "Níveis X de Y" (mesma conta da tela §319)');
-  ok(!!$('#col2painel .col2p__ver--subir[data-subirdeus="zeus"]') && /Subir níveis/.test(txt($('#col2painel .col2p__ver--subir'))), 'painel: botão dourado "Subir níveis ›" quando pagável');
-  w.eval("document.querySelector('#col2painel .col2p__ver--subir').click()");
-  ok(w.eval("rotaAtual()") === 'niveis', '§319c: "Subir níveis" leva à TELA DE NÍVEIS (rota própria "niveis")');
-  // PAINEL do não-pagável: "Ver detalhes" (não dourado) + sem botão subir; §319c: leva à FICHA (rota "deus").
-  w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares')");
-  ok(!$('#col2painel .col2p__ver--subir') && !!$('#col2painel .col2p__ver[data-verdeus="ares"]'), 'painel sem pontos: botão "Ver detalhes" (não dourado), sem "Subir níveis"');
+  ok(!$('#col2painel .col2p__ver--subir') && !!$('#col2painel .col2p__ver[data-verdeus="zeus"]') && /Ver detalhes/.test(txt($('#col2painel .col2p__ver'))), '§321: o painel traz "Ver detalhes ›" (sem mais o botão "Subir níveis")');
   w.eval("document.querySelector('#col2painel .col2p__ver[data-verdeus]').click()");
-  ok(w.eval("rotaAtual()") === 'deus', '§319c: "Ver detalhes" abre a FICHA restaurada (rota "deus")');
+  ok(!!$('#col2ov') && w.eval("rotaAtual()") === 'colecao', '§321: "Ver detalhes" reabre a SOBREPOSIÇÃO (sem mudar de rota)');
+  // dentro da sobreposição, o botão SUBIR HABILIDADES fica dourado (pagável) e abre a visão de níveis sem rota
+  ok(!!$('#col2ovsubir') && $('#col2ovsubir').classList.contains('b--primary'), '§321: na sobreposição, "SUBIR HABILIDADES" fica DOURADO quando pagável');
+  w.eval("document.querySelector('#col2ovsubir').click()");
+  ok(!!$('.col2ov__nivscroll') && w.eval("rotaAtual()") === 'colecao', '§321: SUBIR troca para a visão de níveis DENTRO da sobreposição (sem rota)');
+  ok($$('.col2ov__nivscroll .nlp').length === 3 && /Pontos de/.test(txt($('.col2ov__nivscroll .nltop__ptn'))), 'a visão de níveis traz os 3 painéis + os pontos do deus');
+  ok(!!$('#col2ovkit'), '§321: há o "‹ Kit" para voltar à visão do kit');
+  w.eval("document.querySelector('#col2ovkit').click()");
+  ok(!!$('.col2ov__sks') && !$('.col2ov__nivscroll'), '§321: "‹ Kit" volta à visão do kit, na mesma sobreposição');
+  w.eval("colFecharVer();");
+  // BITE do selo: dar pontos ao ares faz o selo aparecer; na sobreposição do ares o SUBIR fica dourado.
   w.eval("ir('colecao',{},{substituir:true}); render(); colSelecionar('ares')");
-  // BITE: dar pontos ao ares faz o selo e o botão aparecerem; tirar, somem.
+  ok(!$('.col2c[data-deus=\"ares\"] .col2c__subir'), 'ares sem pontos: sem selo ▲');
   w.eval("contaAtual.pontos.ares=3; ir('colecao',{},{substituir:true}); render();");
   ok(!!$('.col2c[data-deus="ares"] .col2c__subir'), 'bite: com pontos, o selo ▲ do ares aparece');
-  w.eval("colSelecionar('ares')");
-  ok(!!$('#col2painel .col2p__ver--subir[data-subirdeus="ares"]'), 'bite: com pontos, o botão "Subir níveis" do ares aparece');
-  w.eval("contaAtual=null; ir('colecao',{},{substituir:true}); render();");
+  w.eval("colSelecionar('ares'); colAbrirVer('ares')");
+  ok(!!$('#col2ovsubir') && $('#col2ovsubir').classList.contains('b--primary'), 'bite: com pontos, o SUBIR da sobreposição do ares fica dourado');
+  w.eval("colFecharVer(); contaAtual=null; ir('colecao',{},{substituir:true}); render();");
 }
 
 console.log(`\n${falhas ? '✗ ' + falhas + ' FALHA(S)' : '✓ tudo verde'} · ${passes} asserções`);

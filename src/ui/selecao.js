@@ -69,7 +69,7 @@ function infoHTML(){
   const base=`<b>${H(g.nome.toUpperCase())}</b> \u00b7 ${H(g.faccao)} \u00b7 ${H(ELAB[g.elem])} \u00b7 ${H(g.classe)} \u00b7 ${H(g.funcao)}`;
   if(!liv){
     const p=g.prov;
-    return base+` \u2014 <i>BLOQUEADO.</i> ${p?`${H(p.nivel)} "${H(p.nome)}" (dificuldade ${p.dif}${p.req&&p.req!=='\u2014'?', requisito: '+H(p.req):''}): ${H(p.cond)}`:'Desbloqueie pela Provação dele ou por invocação.'}`;
+    return base+` \u2014 <i>BLOQUEADO.</i> ${p?`Rito "${H(p.nome)}" (dificuldade ${p.dif}${p.req&&p.req!=='\u2014'?', requisito: '+H(p.req):''}): ${H(p.cond)}`:'Desbloqueie pela Provação dele ou por invocação.'}`;
   }
   if(!kit)return base+` \u2014 <i>kit ainda não implementado no protótipo.</i> ${GODS_FEITOS} de 100 prontos.`;
   if(dono!==null&&dono!==vez)return base+` \u2014 <i>já escolhido ${modoPartida()==='hotseat'?'pelo Jogador '+(dono+1):(dono===0?'no seu time':'no time do oponente')}.</i>`;

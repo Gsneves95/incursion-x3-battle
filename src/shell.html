@@ -1733,6 +1733,20 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__modo{flex:1;padding:2px 0;cursor:pointer;font-family:'Cinzel',serif;font-weight:700;font-size:10px;
   letter-spacing:.06em;color:var(--ink-mute);background:rgba(20,16,38,.5);border:1px solid #2c2648;border-radius:8px}
 .col2ov__modo.is-on{color:#1a1530;background:var(--ouro-grad);border-color:transparent}
+/* §321 — botão SUBIR HABILIDADES na barra de modos (empurrado à direita) + a VISÃO DE NÍVEIS embutida */
+.col2ov__subir{flex:0 0 auto;margin-left:auto;font-size:9.5px;letter-spacing:.04em;padding:0 10px;min-height:24px}
+.col2ov__nivbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin:2px 0 2px}
+.col2ov__voltakit{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--gold-text);background:transparent;border:1px solid var(--gold-soft);border-radius:8px;padding:3px 12px;cursor:pointer}
+.col2ov__voltakit:active{transform:translateY(1px)}
+.col2ov__nivlab{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase}
+.col2ov__corpo--niv{min-height:0}
+.col2ov__nivscroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:8px;padding-right:4px;scrollbar-width:thin}
+.col2ov__nivscroll::-webkit-scrollbar{width:6px} .col2ov__nivscroll::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+.col2ov__nivpaineis{display:flex;flex-direction:column;gap:8px}
+/* na sobreposição os painéis de nível (§319 .nlp) ficam um tom mais compactos p/ caber na janela */
+.col2ov__nivscroll .nltop__pts{display:grid;grid-template-columns:auto 1fr;column-gap:7px;align-items:center;justify-items:start;margin-bottom:2px}
+.col2ov__nivscroll .nlp{padding:8px 10px;gap:5px}
+.col2ov__nivscroll .nlp__acao .b,.col2ov__nivscroll .nlp__confb .b{height:44px;min-height:44px}
 .col2ov__corpo{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 .col2ov__sinfaixa{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:4px 0 7px;font-size:11px;line-height:1.3;color:#8ec9a6}
 .col2ov__sinfaixa i{font-style:normal;opacity:.85}

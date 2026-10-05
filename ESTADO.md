@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §321 · Coleção: kit + níveis na MESMA sobreposição; "Ritos" para o PvE
+
+**A — sobreposição do kit com a visão de níveis embutida (`src/ui/home.js`, `src/shell.html`):**
+- Tocar no cartão da grade → `colAbrirVer` (abre a sobreposição direto). O painel volta ao botão único
+  "VER DETALHES ›" (`data-verdeus` → `colAbrirVer`); a linha "Níveis X de Y" e o selo ▲ continuam.
+- Estado novo `colVerVista` ('kit'|'niveis'), persiste nas setas. Na vista KIT, um botão **"SUBIR HABILIDADES ›"**
+  (dourado se `nlTemPagavel`, contorno se não) troca para a vista NÍVEIS **sem rota**; "‹ Kit" volta. A visão de
+  níveis é a do §319, **extraída em componente** (`nlTopoPtsHTML`/`nlPaineisHTML`/`nlRodapeHTML` + `colNiveisCorpoHTML`).
+  Subir dentro da sobreposição redesenha só o corpo e refresca painel/selo do baselayer; `subirNivelServidor`
+  virou net-wrapper puro (sem `render()`, que mataria o overlay). CSS `.col2ov__subir/__nivbar/__voltakit/__nivscroll`.
+- A ficha (rota `deus`) e a tela de níveis (rota `niveis`) seguem intactas (§319c).
+
+**B — RITOS (`src/ui/home.js`, `src/ui/selecao.js`):** os desafios de PvE com história são "Rito" em todo texto
+visível — resultado ("RITO VENCIDO" / selo "Rito ·"), detalhe do kit ("RITO" / "Jogar Rito" / "Sem rito"),
+condição ("do Rito"), seleção ("Rito \"<nome>\""), e o "‹ Desafios" da composição. "Provação" fica SÓ na tela de
+desbloqueio (rota `provacoes`). Glossário no CLAUDE.md; identificadores internos inalterados.
+
+**Guardas (`tests/colecao_niveis.test.js`, na suíte):** jsdom — tocar no cartão abre a sobreposição (bite); SUBIR
+troca para níveis SEM mudar de rota; "‹ Kit" volta; a setinha mantém a vista de níveis no vizinho; subir atualiza
+pontos+marcadores; o PvE diz "Rito" e nunca "Provação"/"Pergaminho" (bite), e a tela de desbloqueio segue
+"Provações" (escopo). Chromium 780/893/1075/1200 — a visão de níveis não vaza o cartão, nada corta, toque ≥44px
+(altura de design; o #stage escala). `colecao_tela`/`provacao_loop` atualizados. Capturas em `docs/capturas-321/`.
+
 ## ★ §320 · níveis de habilidade VISÍVEIS na batalha (os dois lados) + seleção
 
 O motor já usava os níveis (`kitDe` = catálogo efetivo por lado; PvP traz `niveisOponente`). O §320 só MOSTRA.

@@ -1030,7 +1030,7 @@ function motivoHumano(motivo){
   const pred = String(motivo || '').split(':')[0];
   const c = prova.condicoes.find(x => x.predicado === pred);
   if (c) { const t = descreverCondicao(c).texto; return 'Faltou: ' + t.charAt(0).toLowerCase() + t.slice(1) + '.'; }
-  return 'A condição da Provação não foi cumprida.';
+  return 'A condição do Rito não foi cumprida.';
 }
 function provaResultadoOverlay(){
   if (!prova || !provaFim) return '';
@@ -1049,7 +1049,7 @@ function provaResultadoOverlay(){
     titulo = 'DESAFIO DA SEMANA VENCIDO'; cls = 'venceu';
     msg = f.recompensaGema ? `+${f.recompensaGema} de Gema. Maestria avançada.` : 'A Gema desta semana já veio. Maestria avançada.';
   } else if (venceu) {
-    titulo = 'PERGAMINHO VENCIDO'; cls = 'venceu';
+    titulo = 'RITO VENCIDO'; cls = 'venceu';
     msg = f.recorde ? 'Perícia provada. Maestria avançada e novo recorde.' : 'Perícia provada. Maestria avançada.';
   }
   else if (f.categoria === 'hp') { titulo = 'DERROTA'; cls = 'hp'; msg = 'Seus deuses tombaram em campo.'; }
@@ -1060,7 +1060,7 @@ function provaResultadoOverlay(){
   const placar = (venceu && !ehDesafio && !ehPago && f.minimo != null)
     ? `<div class="result__placar"><span>Vencido em <b>${f.lances}</b> lance${f.lances === 1 ? '' : 's'}</span><span class="result__min">melhor conhecido: ${f.minimo}</span>${f.lances <= f.minimo ? '<span class="result__rec">✦ no ritmo do ótimo</span>' : ''}</div>`
     : '';
-  const selo = ehPago ? `Desafio · ${H(nome)}` : ehDesafio ? 'Desafio de composição' : prova.semanal ? 'Desafio da Semana' : `Pergaminho · ${H(prova.faixa || prova.nivel)}`;
+  const selo = ehPago ? `Desafio · ${H(nome)}` : ehDesafio ? 'Desafio de composição' : prova.semanal ? 'Desafio da Semana' : `Rito · ${H(prova.faixa || prova.nivel)}`;
   return `<div class="ov"><div class="ovbox"><div class="result result--prova result--${cls}">
     <span class="result__selo">${selo}</span>
     <h1>${titulo}</h1>
@@ -1222,6 +1222,7 @@ let colSel = null;   // deus selecionado no painel (null = repouso; §284: come�
 let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada) — lido pelo voltar do Android (§240)
 let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobreposição (abre no BÁSICO — decisão do dono)
 let colVerModo = 'kit';     // §294: modo da sobreposição — 'kit' (seletor+detalhe) ou 'sinergia' (lista completa)
+let colVerVista = 'kit';    // §321: VISÃO da sobreposição — 'kit' (kit/sinergia) ou 'niveis' (visão de níveis §319 embutida). Persiste na navegação pelas setas.
 let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
@@ -1395,7 +1396,6 @@ function colPainelHTML(k){
   // §319b — linha "Níveis X de Y" (a MESMA conta da tela de níveis, §319): o jogador descobre que níveis existem.
   const res = nlResumo(k, gm);
   const niveis = tem ? `<div class="col2p__niveis"><span class="col2p__nivlab">Níveis</span> <span class="col2p__nivnum">${res.x} de ${res.y}</span></div>` : '';
-  const pagavel = nlTemPagavel(k);
   return `<div class="col2p ${tem ? '' : 'col2p--falta'}">
     <button class="col2p__fechar" id="col2fechar" aria-label="Fechar painel">×</button>
     <div class="col2p__cab">
@@ -1414,9 +1414,9 @@ function colPainelHTML(k){
     ${niveis}
     ${tem ? colMaestriaHTML(k) : ''}
     ${colSinergiaPainelHTML(k)}
-    ${pagavel
-      ? `<button class="col2p__ver col2p__ver--subir" data-subirdeus="${H(k)}">Subir níveis ›</button>`
-      : `<button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>`}
+    ${/* §321 — o botão do painel volta ao de ANTES do §319b: "VER DETALHES ›" reabre a SOBREPOSIÇÃO (com os
+         níveis dentro dela). A linha "Níveis X de Y" e o selo ▲ continuam (acima/na grade). */ ''}
+    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
   </div>`;
 }
 
@@ -1478,11 +1478,14 @@ function colOverlayCardHTML(k){
           <span class="col2ov__tag">${H(g.funcao || '')}</span>
         </div>
         ${posse}
-        <div class="col2ov__modos">
+        ${colVerVista === 'niveis'
+          ? `<div class="col2ov__nivbar"><button class="col2ov__voltakit" id="col2ovkit">‹ Kit</button><span class="col2ov__nivlab">SUBIR HABILIDADES</span></div>`
+          : `<div class="col2ov__modos">
           <button class="col2ov__modo${colVerModo === 'sinergia' ? '' : ' is-on'}" data-modo="kit">KIT</button>
           <button class="col2ov__modo${colVerModo === 'sinergia' ? ' is-on' : ''}" data-modo="sinergia">SINERGIA</button>
-        </div>
-        <div class="col2ov__corpo" id="col2ovcorpo">${colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g)}</div>
+          <button class="b b--sm col2ov__subir ${nlTemPagavel(k) ? 'b--primary' : 'b--sec'}" id="col2ovsubir">SUBIR HABILIDADES ›</button>
+        </div>`}
+        <div class="col2ov__corpo${colVerVista === 'niveis' ? ' col2ov__corpo--niv' : ''}" id="col2ovcorpo">${colVerVista === 'niveis' ? colNiveisCorpoHTML(k) : (colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g))}</div>
       </div>
     </div>`;
 }
@@ -1534,6 +1537,7 @@ function colAbrirVer(k, modo){
   if (!k) return;
   colVer = k; colVerSel = 'basico';   // §288: a caixa abre sempre no BÁSICO
   colVerModo = (modo === 'sinergia') ? 'sinergia' : 'kit';   // §294: o "+N ›" abre direto na SINERGIA
+  colVerVista = (modo === 'niveis') ? 'niveis' : 'kit';      // §321: abre no KIT (ou direto nos NÍVEIS, se pedido)
   colVerMontar();
 }
 function colVerMontar(){
@@ -1546,10 +1550,19 @@ function colVerMontar(){
   colVerLigarCorpo(ov, colVer);
   colVerLigarNav(ov);
 }
-// §294: o corpo tem dois modos; liga o que estiver ativo (chips no KIT) + o alternador KIT/SINERGIA.
+// §294/§321: o corpo tem a VISTA (kit|niveis). No KIT liga os chips + o alternador KIT/SINERGIA + o botão SUBIR
+// HABILIDADES (vai para a visão de níveis, SEM rota). Na visão de NÍVEIS liga o "‹ Kit" + os botões de subir.
 function colVerLigarCorpo(ov, k){
   const g = colG(k);
+  if (colVerVista === 'niveis') {
+    const kit = ov.querySelector('#col2ovkit');
+    if (kit) kit.onclick = () => { colVerVista = 'kit'; colVerRefrescarCard(ov, k); };
+    colNivLigar(ov, k);
+    return;
+  }
   colVerLigarChips(ov, k);
+  const sub = ov.querySelector('#col2ovsubir');
+  if (sub) sub.onclick = () => { colVerVista = 'niveis'; colVerRefrescarCard(ov, k); };
   [...ov.querySelectorAll('.col2ov__modo[data-modo]')].forEach(b => b.onclick = () => {
     if (colVerModo === b.dataset.modo) return;
     colVerModo = b.dataset.modo;
@@ -1558,6 +1571,42 @@ function colVerLigarCorpo(ov, k){
     if (corpo) { corpo.innerHTML = colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g); }
     colVerLigarChips(ov, k);   // re-fia os chips quando volta ao KIT
   });
+}
+// §321 — re-desenha o CARTÃO inteiro da sobreposição (troca de VISTA kit↔niveis, ou de deus pelas setas) sem
+// re-renderizar a rota (o overlay é DOM à parte; render() mataria). Re-fia corpo + nav; o × continua fechando.
+function colVerRefrescarCard(ov, k){
+  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayCardHTML(k);
+  ov.querySelector('.col2ov__card').replaceWith(wrap.firstElementChild);
+  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
+  colVerLigarCorpo(ov, k);
+  colVerAtualizarNav(ov);
+}
+// §321 — liga os botões de SUBIR da visão de níveis DENTRO da sobreposição. Redesenha só o CORPO (sem render
+// global): toggle da confirmação inline e o pedido ao servidor. Ao subir, refaz o corpo (pontos/marcadores) e
+// refresca o painel/selo do baselayer (que fica atrás, inerte) sem tocar no overlay.
+function colNivLigar(ov, k){
+  ov.querySelectorAll('[data-subir]').forEach(b => b.onclick = () => { nlConfirm = b.dataset.subir; nlMsg = null; colNivRedesenhar(ov, k); });
+  ov.querySelectorAll('[data-subir-no]').forEach(b => b.onclick = () => { if (nlPendente) return; nlConfirm = null; colNivRedesenhar(ov, k); });
+  ov.querySelectorAll('[data-subir-ok]').forEach(b => b.onclick = () => _colNivConfirmar(ov, k, b.dataset.subirOk));
+}
+function colNivRedesenhar(ov, k){
+  const corpo = ov.querySelector('#col2ovcorpo'); if (!corpo) return;
+  corpo.innerHTML = colNiveisCorpoHTML(k);
+  colNivLigar(ov, k);
+  // o botão SUBIR do topo acende/apaga conforme ainda há nível pagável (atualiza após subir)
+  const sub = ov.querySelector('#col2ovsubir');
+  if (sub) { sub.classList.toggle('b--primary', nlTemPagavel(k)); sub.classList.toggle('b--sec', !nlTemPagavel(k)); }
+}
+async function _colNivConfirmar(ov, k, sl){
+  if (nlPendente) return;
+  nlPendente = true; nlMsg = null; colNivRedesenhar(ov, k);
+  let r = null;
+  try { r = (typeof subirNivelServidor === 'function') ? await subirNivelServidor(k, sl) : { codigo: 'sem_conexao' }; }
+  catch (e) { r = { codigo: 'sem_conexao' }; }
+  nlPendente = false; nlConfirm = null;
+  nlMsg = (r && r.ok) ? null : { slot: sl, texto: nlMotivoTexto(r && r.codigo) };
+  colNivRedesenhar(ov, k);
+  if (r && r.ok) { try { colAtualizarGrade(); } catch (e) {} try { colSelecionar(k); } catch (e) {} }   // §321: selo ▲ da grade + painel "Níveis X de Y" do baselayer acompanham (grade antes, p/ o is-sel reaplicar)
 }
 // §288: tocar num ícone troca SÓ a caixa de detalhe (e o realce do chip). Sem render → preserva grade/rolagem.
 function colVerLigarChips(ov, k){
@@ -1661,7 +1710,9 @@ function colAtualizarGrade(){
   const ks = colecaoFiltrada();
   grade.innerHTML = ks.length ? ks.map(colCardHTML).join('') : '<p class="col2__vazio">Nenhum personagem com esses filtros.</p>';
   // tocar num cartão SELECIONA; tocar no já-selecionado DESSELECIONA (volta ao repouso). Sem re-render da grade.
-  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => colSelecionar(b.dataset.deus === colSel ? null : b.dataset.deus));
+  // §321 — tocar num cartão ABRE DIRETO a sobreposição do kit (sem passar pelo "Ver detalhes"); o painel da
+  // esquerda acompanha (seleção), para quando a sobreposição fechar. (Antes só selecionava.)
+  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => { colSelecionar(b.dataset.deus); colAbrirVer(b.dataset.deus); });
 }
 // troca só o painel (e o realce do cartão) — sem re-render da tela toda. k=null → repouso.
 function colSelecionar(k){
@@ -1671,11 +1722,9 @@ function colSelecionar(k){
   colLigarPainel();
 }
 function colLigarPainel(){
-  // §319c: "Ver detalhes ›" abre a FICHA restaurada (rota 'deus'); a SOBREPOSIÇÃO de kit (colAbrirVer) segue
-  // viva, usada pelo "+N ›" da sinergia. O × fecha o painel (volta ao repouso).
-  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => { ir('deus', { key: ver.dataset.verdeus }); render(); };
-  // §319c: "Subir níveis ›" (dourado) leva direto à TELA DE NÍVEIS (rota própria 'niveis').
-  const sub = stage.querySelector('.col2p__ver--subir[data-subirdeus]'); if (sub) sub.onclick = () => { ir('niveis', { key: sub.dataset.subirdeus }); render(); };
+  // §321: "VER DETALHES ›" reabre a SOBREPOSIÇÃO do kit (com a visão de níveis dentro dela) — volta ao de
+  // ANTES do §319b. O × fecha o painel (volta ao repouso).
+  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
   const mais = stage.querySelector('.col2s__mais'); if (mais) mais.onclick = () => colAbrirVer(mais.dataset.sinmais, 'sinergia');   // §294: "+N ›" abre a lista completa
   const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
 }
@@ -1685,22 +1734,22 @@ function colLigarPainel(){
 // data/deuses; deusSkills passou a ler g.ab. §285: o CKIT foi APAGADO — a fonte é data/deuses direto.)
 function provacaoDetalheHTML(k){
   const g = HRM[k] || {};
-  if (g.inicial) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Deus inicial — vem com você, sem pergaminho.</p></div>`;
+  if (g.inicial) return `<div class="dprov"><span class="dprov__rot">RITO</span><p class="dprov__none">Deus inicial — vem com você, sem rito.</p></div>`;
   const p = provDe(k);
   // genérica = fora do acervo jogável (§212): existe no dado como histórico, mas não se joga.
-  if (!p || p.generica) return `<div class="dprov"><span class="dprov__rot">PERGAMINHO</span><p class="dprov__none">Sem pergaminho no acervo para este deus.</p></div>`;
+  if (!p || p.generica) return `<div class="dprov"><span class="dprov__rot">RITO</span><p class="dprov__none">Sem rito no acervo para este deus.</p></div>`;
   const rec = perfil && perfil.provacoes && perfil.provacoes[k];
   const estado = rec && rec.lances != null
     ? `<span class="dprov__feita">✓ Vencido em ${rec.lances} lance${rec.lances === 1 ? '' : 's'}${rec.minimo != null ? ` · mínimo ${rec.minimo}` : ''}</span>`
     : `<span class="dprov__aberta">No acervo</span>`;
   return `<div class="dprov">
-    <span class="dprov__rot">PERGAMINHO</span>
+    <span class="dprov__rot">RITO</span>
     <div class="dprov__linha">
       <span class="dprov__faixa faixa--${faixaClasse(p.faixa)}">${H(p.faixa || '—')}</span>
       <span class="dprov__tit">${H(p.titulo)}</span>
     </div>
     <div class="dprov__pe">${estado}
-      <button class="b b--primary b--sm" data-jogarprova="${k}">${rec && rec.lances != null ? 'Jogar de novo' : 'Jogar Pergaminho'}</button>
+      <button class="b b--primary b--sm" data-jogarprova="${k}">${rec && rec.lances != null ? 'Jogar de novo' : 'Jogar Rito'}</button>
     </div>
   </div>`;
 }
@@ -1999,6 +2048,44 @@ async function _nlConfirmar(k, sl){
   render();
 }
 
+// §321 — COMPONENTES reusáveis da visão de NÍVEIS. A tela §319 (rota 'niveis') E a sobreposição da Coleção
+// (§321) os usam — "extrair em componente, não duplicar". Cada um lê o MESMO estado (contaAtual.niveis/pontos).
+function nlTopoPtsHTML(k, g, tem){
+  const rar = raridadeDe(k), pts = nlPontos(k), porCopia = nlPontosPorCopia(rar);
+  return tem
+    ? `<div class="nltop__pts"><span class="nltop__cri" aria-hidden="true">◈</span>
+       <span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
+       <span class="nltop__cop">${porCopia} ${porCopia === 1 ? 'ponto' : 'pontos'} por cópia (${RAR_ROT[rar] || rar})</span></div>`
+    : `<div class="nltop__pts nltop__pts--falta"><span class="nltop__ptn">Você ainda não tem este deus</span></div>`;
+}
+function nlPaineisHTML(k, gm, gmEf, tem, online){
+  return ['basico', 'habilidade', 'milagre']
+    .map((sl, i) => nlPainelHTML(k, gm, gmEf, sl, ['BÁSICO', 'HABILIDADE', 'MILAGRE'][i], tem, online)).join('');
+}
+function nlRodapeHTML(k, gm){
+  const res = nlResumo(k, gm);
+  return `<div class="nlfoot">
+    <div class="nlfoot__cab"><span class="nlfoot__lab">Níveis</span><span class="nlfoot__num">${res.x} de ${res.y}</span></div>
+    <div class="nlfoot__bar"><i style="width:${res.y ? Math.round(res.x / res.y * 100) : 0}%"></i></div>
+    <p class="nlfoot__nota">Com tudo no máximo, as cópias extras viram Essência.</p>
+  </div>`;
+}
+// §321 — CORPO da VISÃO DE NÍVEIS dentro da sobreposição da Coleção (compacto: a identidade/retrato já estão no
+// cartão; aqui vão pontos + 3 painéis + rodapé). MESMA lógica do §319 (reusa nlPainelHTML/nlResumo/nlPontos…).
+function colNiveisCorpoHTML(k){
+  const g = colG(k);
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
+  const gmEf = deusKitEfetivo(k, gm);
+  const tem = temDeus(k);
+  const online = (typeof contaAtual !== 'undefined' && !!contaAtual);
+  if (nlSelKey !== k) { nlSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera confirmação/erro
+  return `<div class="col2ov__nivscroll">
+    ${nlTopoPtsHTML(k, { nome: colNome(k) }, tem)}
+    <div class="col2ov__nivpaineis">${nlPaineisHTML(k, gm, gmEf, tem, online)}</div>
+    ${nlRodapeHTML(k, gm)}
+  </div>`;
+}
+
 // §319c — a tela de NÍVEIS é ROTA PRÓPRIA ('niveis'); a rota 'deus' voltou a ser a FICHA (renderDeusDetalhe,
 // restaurada). O "‹" daqui volta para a FICHA do deus (‹ <Nome>), não para a Coleção.
 function renderNiveis(){
@@ -2011,15 +2098,9 @@ function renderNiveis(){
   const online = (typeof contaAtual !== 'undefined' && !!contaAtual);
   const rar = raridadeDe(k);
   if (nlSelKey !== k) { nlSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera a confirmação/erro
-  const pts = nlPontos(k), porCopia = nlPontosPorCopia(rar), res = nlResumo(k, gm);
   const passiva = gm.passiva || g.passiva || null;
-  const topoInfo = tem
-    ? `<div class="nltop__pts"><span class="nltop__cri" aria-hidden="true">◈</span>
-       <span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
-       <span class="nltop__cop">${porCopia} ${porCopia === 1 ? 'ponto' : 'pontos'} por cópia (${RAR_ROT[rar] || rar})</span></div>`
-    : `<div class="nltop__pts nltop__pts--falta"><span class="nltop__ptn">Você ainda não tem este deus</span></div>`;
-  const painel = ['basico', 'habilidade', 'milagre']
-    .map((sl, i) => nlPainelHTML(k, gm, gmEf, sl, ['BÁSICO', 'HABILIDADE', 'MILAGRE'][i], tem, online)).join('');
+  const topoInfo = nlTopoPtsHTML(k, g, tem);           // §321: componente compartilhado com a sobreposição
+  const painel = nlPaineisHTML(k, gm, gmEf, tem, online);
   stage.innerHTML = `<div id="baselayer" class="deus nl ${tem ? '' : 'deus--falta'}">
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   <header class="dtop nltop">
@@ -2044,11 +2125,7 @@ function renderNiveis(){
         <p class="nlpas__txt">${realce(passiva.desc || '')}</p>
         <p class="nlpas__nota">A passiva não tem níveis.</p>
       </div>` : ''}
-      <div class="nlfoot">
-        <div class="nlfoot__cab"><span class="nlfoot__lab">Níveis</span><span class="nlfoot__num">${res.x} de ${res.y}</span></div>
-        <div class="nlfoot__bar"><i style="width:${res.y ? Math.round(res.x / res.y * 100) : 0}%"></i></div>
-        <p class="nlfoot__nota">Com tudo no máximo, as cópias extras viram Essência.</p>
-      </div>
+      ${nlRodapeHTML(k, gm)}
     </aside>
     <section class="nldir">${painel}</section>
   </div>
@@ -2760,7 +2837,7 @@ function maestriaDetalheHTML(key){
     return `<span class="mtier ${atingido ? 'on' : ''} ${nv === n ? 'cur' : ''}">${MAESTRIA_NOME[n]}</span>`;
   }).join('<span class="mtier__sep">›</span>');
   let prox = '';
-  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença o Pergaminho (ou 1 batalha) para o Iniciado.';
+  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença o Rito (ou 1 batalha) para o Iniciado.';
   else if (nv === 1) prox = `Aprendiz em ${Math.max(0, MAESTRIA_LIMIAR.aprendiz - v)} vitória(s).`;
   else if (nv === 2) prox = `Adepto em ${Math.max(0, MAESTRIA_LIMIAR.adepto - v)} vitória(s).`;
   else if (nv === 3) prox = `Mestre: ${Math.max(0, MAESTRIA_LIMIAR.mestre - v)} vitória(s)${m.milagre ? '' : ' + vencer usando o Milagre dele'}.`;
@@ -2832,7 +2909,7 @@ function renderDesafios(){
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
   <div class="tela">
     <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Provações</button>
+      <button class="b b--quiet b--md" id="bvoltar">‹ Desafios</button>
       <h1 class="tela__titulo">Desafios de Composição</h1>
       <span class="tela__cont">${feitos}/${lista.length}</span>
     </header>

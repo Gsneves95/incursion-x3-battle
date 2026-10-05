@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §321 · a Coleção abre o kit com os níveis DENTRO da sobreposição; "Ritos" para o PvE
+
+Dois pedidos do dono.
+
+**A — sobreposição do kit com a visão de níveis embutida:**
+- **Tocar no cartão abre DIRETO a sobreposição** (a do §284/§288), sem passar pelo "Ver detalhes". O painel da
+  esquerda continua selecionando o deus (para quando a sobreposição fechar); o botão do painel volta ao de ANTES
+  do §319b: **"VER DETALHES ›"** reabre a sobreposição. (O §319b/§319c tinham desviado o painel para rotas.)
+- **"SUBIR HABILIDADES" DENTRO da sobreposição** troca a VISTA (kit ↔ níveis) **sem navegar** — a visão de níveis
+  é a MESMA do §319, extraída em componente (`nlTopoPtsHTML`/`nlPaineisHTML`/`nlRodapeHTML`, usados pela rota
+  `niveis` E pela sobreposição — não duplicar). "‹ Kit" volta. Dourado cheio quando há nível pagável, contorno
+  quando não. As setas mantêm a vista (navegar de deus em deus já na visão de níveis).
+- **Sem rota:** o overlay é DOM à parte; toda interação redesenha só o corpo do overlay. Por isso o
+  `subirNivelServidor` **deixou de chamar `render()`** (passou a ser um net-wrapper puro, como os outros): a rota
+  de níveis já renderiza depois (`_nlConfirmar`), e a sobreposição redesenha o corpo + refresca painel/selo do
+  baselayer. Alternativa recusada (deixar o render() no wrapper): mataria o overlay no meio do subir.
+- A ficha (rota `deus`) e a tela de níveis (rota `niveis`) continuam para quem chega por outros caminhos (§319c).
+
+**B — "Ritos" para o PvE:** "Provação" fica SÓ para a tela de desbloqueio (objetivos/ativa/ranque). Os desafios
+de PvE com história (os 91) são **RITOS** em todo texto visível (resultado de partida, selo, detalhe do kit,
+seleção, botão "Jogar Rito"). Identificadores internos ficam (glossário no CLAUDE.md). Guarda: nenhum texto
+visível de PvE usa "Provação" (provado que morde), e a tela de desbloqueio segue "Provações" (escopo).
+
 ## §320 · mostrar os NÍVEIS DE HABILIDADE na batalha (os dois lados) — TELA
 
 O motor já usa os níveis (`kitDe` lê o catálogo EFETIVO por lado; o PvP traz `niveisOponente` no snapshot).

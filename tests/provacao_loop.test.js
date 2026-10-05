@@ -48,7 +48,7 @@ console.log('== 2. VITÓRIA: SEM desbloqueio de deus (§212) — maestria + plac
   ok(w.eval(`perfil.provacoes && perfil.provacoes.${KEY} && perfil.provacoes.${KEY}.lances===11`), 'o placar (lances) deveria ser gravado no perfil');
   ok(w.eval(`!!(perfil.maestria && perfil.maestria.${KEY} && perfil.maestria.${KEY}.vitorias>=1)`), 'a maestria avança (cosmética)');
   const ov = $('.result--prova');
-  ok(!!ov && /PERGAMINHO VENCIDO/.test(ov.textContent), 'o overlay de vitória deveria aparecer (Pergaminho)');
+  ok(!!ov && /RITO VENCIDO/.test(ov.textContent), 'o overlay de vitória deveria aparecer (Rito, §321)');
   ok(/Vencido em/.test(ov.textContent) && /11/.test(ov.textContent), 'o placar deveria mostrar os lances');
   ok(/melhor conhecido/.test(ov.textContent), 'o placar deveria citar o mínimo do solucionador');
   $('#pfvoltar').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));

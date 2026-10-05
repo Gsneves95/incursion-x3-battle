@@ -138,6 +138,14 @@ ranque) e só muda em `salas.finalizarPartida` no fim de uma partida PvP — nun
 mensagem do cliente. (O dono antes dissera "o contador de missão é o mesmo da maestria";
 a Fase 5, ao criar o PvP, PRODUZIU a correção — daí dois contadores, não um.)
 
+**GLOSSÁRIO (§321) — Provação × Rito (dois conceitos, nomes distintos no texto visível):**
+- **Provação** = o **desbloqueio de deus** (`data/missoes*.json`): a lista de objetivos / a ativa / o ranque.
+  A tela "Provações" (rota `provacoes`, `renderMissoes`) é SÓ isto. O texto visível dela mantém "Provação".
+- **Rito** = o **desafio de PvE com história** (os antigos "Provações" de PvE — os 91 de `data/provacoes/`,
+  jogados como skill-puzzle). Em TODO texto visível (título, botão, resultado de partida, seleção), é "Rito",
+  nunca "Provação". Identificadores internos e nomes de arquivo (`provacoes.json`, `PROVACOES`, `montarProvacao`,
+  o `nivel` Rito/Provação/Ordália do dado) PODEM ficar — renomear é risco sem ganho; só o texto visível muda.
+
 O REQUISITO de desbloqueio é uma **LISTA DE OBJETIVOS** por Provação (§313), com **UMA
 Provação ATIVA por vez** (§314). Cada Provação (`data/missoes_requisitos.json` → `objetivos`,
 resolvida em `data/missoes.json` pelo gerador) tem A 2 · S 3 · SS 4 objetivos, sempre com

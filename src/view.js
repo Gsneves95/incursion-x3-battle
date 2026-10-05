@@ -348,7 +348,9 @@ async function subirNivelServidor(deus, slot){
   const t=(typeof lerToken==='function')?lerToken():null; if(!t) return { erro:'sem token', codigo:'sem_conexao' };
   try{
     const r=await contaTransporte.pedir(envelope('subirNivel',{token:t,deus,slot}));
-    if(r && r.tipo==='nivelSubiu'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); render(); return { ok:true, deus:r.deus, slot:r.slot, nivel:r.nivel, pontos:r.pontos }; }
+    // §321: NÃO chama render() aqui (como os outros net-wrappers) — quem pede redesenha. A tela de níveis
+    // (_nlConfirmar) renderiza em seguida; a sobreposição da Coleção redesenha só o corpo (sem matar o overlay).
+    if(r && r.tipo==='nivelSubiu'){ contaAtual=r.conta; _contaRefetchTs=Date.now(); return { ok:true, deus:r.deus, slot:r.slot, nivel:r.nivel, pontos:r.pontos }; }
     if(r && r.tipo==='recusado') return { erro:r.erro, codigo:r.codigo };
     return { erro:'não foi possível subir', codigo:'erro' };
   }catch(e){ return { erro:(e&&e.message)||'erro', codigo:'sem_conexao' }; }
