@@ -384,6 +384,38 @@ function kitDe(st, u) {
   return (CATALOGOS[cid] || catalogoAtivo())[u.key];
 }
 
+// §320 — NÍVEL efetivo de um slot EM BATALHA, derivado do que o MOTOR de fato usa: compara o kit do
+// lado (kitDe → catálogo efetivo registrado) com o base + a escada daquele slot. PURO, não toca o estado
+// (nada entra no hash). "sem escada" (ou criatura PvE fora do catálogo base) ou nv1 → 1. Garante por
+// construção a regra do §320: o nível MOSTRADO é o nível que o motor aplicou (mesmo kitDe, mesma escada).
+function nivelSlotEmBatalha(st, u, slot) {
+  if (!SLOTS_NIVEIS.includes(slot)) return 1;
+  const base = catalogoAtivo()[u.key];
+  const abBase = base && (base.ab || []).find(a => a.slot === slot);
+  if (!abBase || !Array.isArray(abBase.niveis) || !abBase.niveis.length) return 1;   // sem escada / criatura PvE
+  const abEf = (kitDe(st, u).ab || []).find(a => a.slot === slot);
+  if (!abEf) return 1;
+  const cEf = JSON.stringify(abEf);
+  if (cEf === JSON.stringify(abBase)) return 1;                       // caminho comum (PvE / nv1): nada mudou
+  const topo = 1 + abBase.niveis.length;
+  for (let n = topo; n >= 2; n--) {
+    const cand = (kitEfetivo(base, { [slot]: n }).ab || []).find(a => a.slot === slot);
+    if (cand && JSON.stringify(cand) === cEf) return n;
+  }
+  return 1;
+}
+// os três níveis das habilidades ativas (basico/habilidade/milagre) de uma unidade em batalha.
+function niveisEmBatalha(st, u) {
+  return { basico: nivelSlotEmBatalha(st, u, 'basico'), habilidade: nivelSlotEmBatalha(st, u, 'habilidade'), milagre: nivelSlotEmBatalha(st, u, 'milagre') };
+}
+// o slot TEM escada no base? (há o que subir — define se o botão mostra "Nv"). Criatura PvE → false.
+function slotTemEscada(key, slot) {
+  if (!SLOTS_NIVEIS.includes(slot)) return false;
+  const base = catalogoAtivo()[key];
+  const ab = base && (base.ab || []).find(a => a.slot === slot);
+  return !!(ab && Array.isArray(ab.niveis) && ab.niveis.length);
+}
+
 // ===================================================================
 // §318 — NÍVEIS DE HABILIDADE (FASE 0: fundação, SEM conteúdo). O kit EFETIVO = o kit
 // base + os deltas CUMULATIVOS até o nível de CADA habilidade ATIVA (basico/habilidade/
@@ -2549,6 +2581,7 @@ if (typeof module !== 'undefined') {
     // §318 — níveis de habilidade (a função-de-um-ponto-só + o portão de build + a lente texto×número)
     kitEfetivo, catalogoEfetivo, validarNiveisDeus, conferirTextoNiveis, _categoriaCaminho, NIVEL_MIN, NIVEL_MAX, SLOTS_NIVEIS,
     registrarCatalogoComId, catalogoAtivo, kitDe,   // §318 F1 — o cliente registra os catálogos efetivos por lado (PvP nivelado); kitDe: régua reativa lê o dano EFETIVO do inimigo (§318 F1d)
+    nivelSlotEmBatalha, niveisEmBatalha, slotTemEscada,   // §320 — níveis na batalha (derivados do kitDe, batem com o motor)
     _limparCatalogos: () => { for (const k in CATALOGOS) delete CATALOGOS[k]; },   // TESTE: simular um cliente FRESCO (registro de catálogos vazio)
   };
 }

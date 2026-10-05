@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §320 · níveis de habilidade VISÍVEIS na batalha (os dois lados) + seleção
+
+O motor já usava os níveis (`kitDe` = catálogo efetivo por lado; PvP traz `niveisOponente`). O §320 só MOSTRA.
+
+**O que mudou:**
+- **`src/engine.js`** — `nivelSlotEmBatalha(st,u,slot)` / `niveisEmBatalha(st,u)` / `slotTemEscada(key,slot)`:
+  derivam o nível aplicado comparando `kitDe(st,u)` (o que o motor usa) com o base + a escada. Puro, não toca
+  o estado (nada entra no hash → lockstep do PvP intacto). Exportados.
+- **`src/ui/campo.js`** — no retrato (aliado E inimigo), `nivBatalhaHTML(u)` = indicador "3·1·4" dos 3 slots,
+  só quando algum ≥2 (todo nv1 → nada). Nos botões, "Nv N" por tile quando o slot ≥2 (sem escada → nada). O
+  tooltip/leitura (`lerHabilidade` e o kit do inimigo) já lia o efetivo (via `acoesDe`→`kitDe`).
+- **`src/ui/selecao.js`** — `nivBadgeSelHTML(k)` no tile dos deuses ESCOLHIDOS, lido de `contaAtual.niveis`.
+- **`src/shell.html`** — `.portrait__niv`/`.skill__nv`/`.pk__niv` (+`.pniv__c`/`.pkniv__c`): pequeno, dourado
+  apagado, sem brilho; "--up" realça o slot ≥2.
+
+**Guardas (`tests/niveis_batalha.test.js`, na suíte):**
+- jsdom: indicador no retrato dos dois lados com os números certos; nv1 oculto; "Nv N" só ≥2 (Defesa nunca);
+  **bite** — o tooltip do inimigo mostra o kit EFETIVO dele (não o base) e `niveisEmBatalha` = o nível do
+  servidor; tudo-nv1 → nada; seleção mostra o indicador nos escolhidos.
+- Chromium 780/893/1075/1200: o indicador não cobre HP, efeitos nem custo, fica dentro do retrato/tile, nada
+  corta. Capturas em `docs/capturas-320/` (batalha com níveis dos dois lados).
+
 ## ★ §319c · a ficha do deus RESTAURADA; a tela de níveis vira rota própria
 
 **CORREÇÃO do dono:** o §319 fez a rota `deus` VIRAR a tela de níveis, comendo a ficha antiga (arte, chips,

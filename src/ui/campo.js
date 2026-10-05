@@ -52,6 +52,17 @@ function efeitosHTML(u){
   return itens.map(chip).join('');
 }
 
+// §320 — INDICADOR de níveis das 3 habilidades no retrato (aliado E inimigo). Deriva do kitDe (o que o
+// MOTOR usa) por niveisEmBatalha: o número mostrado É o nível que o motor aplicou (valor público). Todo nv1
+// → NADA (zero poluição no caso comum: PvE, novatos). Pequeno, dourado apagado, sem brilho. "3·1·4".
+function nivBatalhaHTML(u){
+  if(typeof niveisEmBatalha!=='function'||typeof st==='undefined'||!st) return '';
+  let nv; try{ nv=niveisEmBatalha(st,u); }catch(e){ return ''; }
+  if(!(nv.basico>1||nv.habilidade>1||nv.milagre>1)) return '';
+  const cel=(n,lab)=>`<span class="pniv__c${n>1?' pniv__c--up':''}" title="${lab} nível ${n}">${n}</span>`;
+  return `<div class="portrait__niv" aria-label="níveis de habilidade">${cel(nv.basico,'Básico')}${cel(nv.habilidade,'Habilidade')}${cel(nv.milagre,'Milagre')}</div>`;
+}
+
 /* ---------- retrato (§214): 88 de largura, nome INTEIRO, aro ouro (aliado) x vermelho (inimigo) ---------- */
 function retrato(u,inimigo){
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
@@ -74,6 +85,7 @@ function retrato(u,inimigo){
       <span class="portrait__elem" style="background:${COR(u.elem)}"></span>
       ${g.passiva?`<button class="portrait__pas ${g.passiva.inerte?'inert':''} ${passivaAcesa(u)?'pas--on':''}" data-pas="${u.uid}">P</button>`:''}
       ${inimigo&&u.vivo?`<span class="portrait__ask" title="segure para ver o kit">?</span>`:''}
+      ${u.vivo?nivBatalhaHTML(u):''}
       <div class="portrait__nome" title="${H(u.nome)}">${H(metaComb(u.key).curto)}</div>
       <div class="${hpcls.join(' ')}">
         ${u.vivo?`<div class="hp__fill" style="width:${pct}%"></div>`:''}
@@ -133,6 +145,9 @@ function tilesHTML(u){
     if(arm)cls.push('is-armed');
     cls.push('skill--'+a.slot);
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
+    // §320: o NÍVEL da habilidade num canto do tile (discreto, dourado apagado). Só quando ≥2 (nv1 e
+    // habilidade SEM escada → nada: zero poluição). Deriva do kitDe (bate com o motor).
+    const nvSk=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,a.slot):1;
     // TODA habilidade é TOCÁVEL PARA LER (§238): nunca `disabled`. data-arma=1 arma; 0 só lê (mostra o
     // que faz + POR QUE está indisponível, no rodapé). Ler nunca custa nada (invariante do projeto).
     return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}">
@@ -142,6 +157,7 @@ function tilesHTML(u){
         <span class="skill__cd">${cd||''}</span>
         <span class="skill__lock">⊘</span>
         <span class="skill__na">∅</span>
+        ${nvSk>1?`<span class="skill__nv">Nv ${nvSk}</span>`:''}
       </span>
       ${pipsMini(a.cost, st.lados[u.lado].orbs)}
     </button>`;

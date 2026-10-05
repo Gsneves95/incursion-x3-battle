@@ -363,6 +363,18 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .skill__na{font-size:23px;color:#e7bd74;
   background:radial-gradient(circle,rgba(6,5,16,.52) 26%,rgba(6,5,16,.20) 46%,transparent 66%)}
 .skill.is-notarget .skill__na{display:flex}
+/* §320 — NÍVEIS DE HABILIDADE na batalha e na seleção: pequeno, dourado APAGADO, sem brilho. Só aparece
+   quando há nível ≥2 (o render decide); por isso não precisa reservar espaço no caso comum. */
+.skill__nv{position:absolute;left:2px;top:2px;z-index:3;padding:0 3px;border-radius:3px;pointer-events:none;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;line-height:14px;letter-spacing:.02em;
+  color:var(--gold-text);background:rgba(8,6,20,.82);border:1px solid var(--gold-soft)}
+.portrait__niv{position:absolute;left:50%;top:1px;transform:translateX(-50%);z-index:3;display:flex;gap:2px;
+  padding:1px;border-radius:3px;background:rgba(8,6,20,.7);pointer-events:none}
+.pk__niv{position:absolute;left:2px;top:2px;z-index:3;display:flex;gap:2px;pointer-events:none}
+.pniv__c,.pkniv__c{display:inline-flex;align-items:center;justify-content:center;min-width:11px;height:12px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:9px;line-height:1;color:var(--ink-mute);
+  border:1px solid #3a3358;border-radius:2px;background:rgba(16,13,32,.6)}
+.pniv__c--up,.pkniv__c--up{color:var(--gold-text);border-color:var(--gold-soft)}
 /* §257: custo = cápsula de bolinhas assente na ARCO INFERIOR do círculo (não mais pendurada na base
    reta). Fica DENTRO da pegada de 92px (não colide com a fileira de baixo) e cobre só o aro de baixo,
    não o miolo do medalhão. Fundo opaco + anel = claramente ligada à ficha e legível sobre qualquer arte. */

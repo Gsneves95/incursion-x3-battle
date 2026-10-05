@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §320 · mostrar os NÍVEIS DE HABILIDADE na batalha (os dois lados) — TELA
+
+O motor já usa os níveis (`kitDe` lê o catálogo EFETIVO por lado; o PvP traz `niveisOponente` no snapshot).
+Faltava MOSTRAR. É só tela — nada de novo no motor nem na economia.
+
+**Decisões:**
+- **O número MOSTRADO é DERIVADO do que o motor usa, não um dado paralelo.** `nivelSlotEmBatalha(st,u,slot)`
+  (motor) compara o kit do lado (`kitDe`) com o base + a escada e devolve o nível aplicado. Assim "o valor
+  público bate com o motor" é verdade **por construção** — não há um segundo caminho que possa divergir.
+  Alternativa recusada (carimbar o nível em `st`/na unidade): mudaria o hash e quebraria o lockstep do PvP
+  (cliente×servidor) por um dado que é PURO derivável. A função é pura e não toca o estado.
+- **Zero poluição no caso comum.** O indicador do retrato só aparece se ALGUM slot ≥2; então mostra os três
+  ("3·1·4", incluindo os 1). No botão, "Nv N" só quando ≥2. Sem escada (ex.: Defesa; criatura PvE) → nada.
+  PvE: o oponente roda no catálogo base → tudo nv1 → o indicador simplesmente não aparece.
+- **O tooltip/leitura já lia o efetivo** (`lerHabilidade`/kit do inimigo passam por `acoesDe`→`kitDe`), então
+  não houve o que corrigir — mas a guarda prova (bite): o texto do kit do inimigo é o EFETIVO dele, nunca o
+  base. O `niveisEmBatalha` do inimigo = o nível do kit efetivo do servidor.
+- **Visual no padrão das telas novas:** pequeno, dourado APAGADO, sem brilho. Retrato: faixa no topo, entre o
+  "?" e o "P", fora do HP/nome/efeitos. Botão: "Nv N" no canto superior, longe do custo.
+- **Seleção de time:** o mesmo indicador nos deuses escolhidos, lido da CONTA (`contaAtual.niveis` — os meus;
+  o oponente não entra nessa tela).
+
 ## §319c · a tela de níveis não podia COMER a ficha do deus (correção do dono)
 
 O §319 fez a rota `deus` VIRAR a tela de níveis. O dono pediu de volta a FICHA antiga (arte, chips de

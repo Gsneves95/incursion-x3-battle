@@ -32,6 +32,18 @@ function listaFiltrada(){
 }
 function donoDe(k){return pick[0].includes(k)?0:pick[1].includes(k)?1:null;}
 
+// \u00a7320 \u2014 indicador compacto de n\u00edveis nos deuses ESCOLHIDOS (sele\u00e7\u00e3o de time). L\u00ea os n\u00edveis da CONTA
+// (contaAtual.niveis \u2014 os MEUS; o oponente do PvP n\u00e3o entra nesta tela). Todo nv1 \u2192 nada. Mesmo visual
+// pequeno/dourado-apagado da batalha. slotTemEscada garante "sem escada \u2192 sem n\u00famero".
+function nivBadgeSelHTML(k){
+  const nv=(typeof contaAtual!=='undefined'&&contaAtual&&contaAtual.niveis&&contaAtual.niveis[k])||null;
+  if(!nv) return '';
+  const lv=s=> (typeof slotTemEscada==='function'&&!slotTemEscada(k,s))?1:Math.max(1,Math.min(4,nv[s]||1));
+  const b=lv('basico'),h=lv('habilidade'),m=lv('milagre');
+  if(!(b>1||h>1||m>1)) return '';
+  const cel=n=>`<span class="pkniv__c${n>1?' pkniv__c--up':''}">${n}</span>`;
+  return `<span class="pk__niv" aria-label="n\u00edveis de habilidade">${cel(b)}${cel(h)}${cel(m)}</span>`;
+}
 function tileHTML(k){
   const g=RMAP[k], liv=liberado(k), kit=temKit(k), dono=donoDe(k);
   const cls=['pk'];
@@ -44,6 +56,7 @@ function tileHTML(k){
     <span class="pk__el" style="background:${COR(g.elem)}"></span>
     ${liv?(kit?'':'<span class="pk__wip">WIP</span>'):'<span class="pk__lock">\u26bf</span>'}
     ${dono!==null?`<span class="pk__mark">${dono+1}</span>`:''}
+    ${dono!==null?nivBadgeSelHTML(k):''}
     <span class="pk__n">${H(g.nome)}</span>
   </button>`;
 }
