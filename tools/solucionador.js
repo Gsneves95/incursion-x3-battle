@@ -25,6 +25,7 @@ const ia = require(path.join(__dirname, '..', 'src', 'ia.js'));
 const PROV = require(path.join(__dirname, '..', 'src', 'provacao.js'));
 
 const NIVEL_PADRAO = 'normal';                    // §150: a Provação pina no 'normal' (a gulosa); IDENTIDADE — verificar contra o MESMO oponente que o jogo roda
+let _verIA = 1;                                   // §322: versão da IA do oponente (1 = gulosa; 2 = papel). resolver() define a partir de opts.versao
 
 // clone barato: o log CRESCE, então não o serializo — cada nó recebe uma cópia RASA do array (os eventos são
 // imutáveis: o motor só empilha objetos novos, nunca muta os antigos), como a ia.js faz com o clone da IA.
@@ -78,7 +79,7 @@ function avancarOponente(st, nivel) {   // roda o turno da IA (determinística, 
   let guard = 0;
   while (!st.fim && st.ativo === 1 && guard++ < 60) {
     let a, p = 0;
-    while (!st.fim && (a = ia.iaProximaAcao(st, nivel)) && p++ < 8) E.agir(st, a.uid, a.slot, a.alvos, a.escolhas);
+    while (!st.fim && (a = ia.iaProximaAcao(st, nivel, _verIA)) && p++ < 8) E.agir(st, a.uid, a.slot, a.alvos, a.escolhas);
     if (st.fim) break;
     E.fimTurno(st);
   }
@@ -131,6 +132,7 @@ function aplicarDica(raiz, prov, NIVEL_IA) {
 // ACIONÁVEL: distingue "orçamento" (heurística progredindo) de "dica" (heurística estagnou).
 function resolver(prov, opts = {}) {
   const orcamento = opts.orcamentoNos || 200000;
+  _verIA = (opts.versao === 2) ? 2 : 1;            // §322: re-checar sob a IA v2 (papel) quando opts.versao===2
   const NIVEL_IA = prov.nivelIA || NIVEL_PADRAO;   // IDENTIDADE: verifica contra o oponente que a Provação declara
   const ctx = ctxDe(prov);
   const t0 = Date.now();
@@ -184,13 +186,17 @@ if (require.main === module) {
   const fs = require('fs');
   const args = process.argv.slice(2);
   const carimbar = args.includes('--carimbar');
-  const rest = args.filter(a => a !== '--carimbar');
+  const v2 = args.includes('--v2');   // §322: re-checar winnability sob a IA v2 (papel) — reporta, NÃO carimba
+  const rest = args.filter(a => a !== '--carimbar' && a !== '--v2');
   const alvo = rest[0]; const orc = parseInt(rest[1], 10) || 200000;
+  if (v2 && carimbar) { console.error('§322: --v2 é só para CONFERIR (não carimbe sob v2 — isso é Fase 5).'); process.exit(1); }
   const dir = path.join(__dirname, '..', 'data', 'provacoes');
   const arquivos = fs.readdirSync(dir).filter(f => f.endsWith('.json') && (!alvo || f === alvo + '.json'));
+  let _nVenc = 0, _nNao = 0;
   for (const f of arquivos) {
     const prov = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-    const r = resolver(prov, { orcamentoNos: orc });
+    const r = resolver(prov, { orcamentoNos: orc, versao: v2 ? 2 : 1 });
+    if (r.veredito === 'VENCIVEL') _nVenc++; else _nNao++;
     console.log(`\n=== ${prov.key} (${prov.titulo || ''}) — ${r.veredito} ===`);
     console.log(`  nós ${r.nos} · heap máx ${r.maxHeap} · ramificação máx ${r.maxRam} · ${r.ms}ms · IA ${r.nivelIA}`);
     if (r.veredito === 'VENCIVEL') { console.log(`  caminho (${r.comprimento} lances até vencer — NÃO o mínimo):`); r.sequencia.forEach((m, i) => console.log(`    ${i + 1}. ${m}`)); }
@@ -207,4 +213,5 @@ if (require.main === module) {
       console.log('  → carimbado.');
     }
   }
+  console.log(`\n=== RESUMO${v2 ? ' (IA v2 — papel)' : ''}: ${_nVenc} VENCÍVEL · ${_nNao} não-vencível de ${arquivos.length} ===`);
 }

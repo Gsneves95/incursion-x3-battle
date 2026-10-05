@@ -2,7 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §322 Parte 1 · IA que usa o kit inteiro — SÓ medição/protótipo (nada muda no jogo)
+## ★ §322 Parte 2 · a IA "papel" afinada ENTROU no jogo como v2 (versionada)
+
+Afinei `pontuarPapel` (subida coordenada CRN, treino/confirmação separados, `tools/afinar_ia.js`) com termos de
+execução/foco, controle-pelo-dano-negado, provocação e vulnerável. **Alvos batidos:** FORÇA 58,9% [57,0;60,9]
+(independente) / 63,1% (confirmação); USO 23 hab / 7 mil < 0,1 (era 43/14); CUSTO ~2 ms/decisão e 17,8 ms/replay;
+0 divergências. Lista de revisão sai do negativo (Fenrir +9,2 / Piranha +6,3 / Tyr +5,3 / Kali +5,0 / Brigid +0,5)
+e a provocação do Tyr passa a ser usada.
+
+**No jogo:** `src/ia.js` — v1 (gulosa) congelada; v2 = `iaProximaAcaoPapel`+`IA_V2_W`; `iaProximaAcao(st,'normal',
+versao)` despacha (default 1). `IA_VERSAO_JOGO=2`. Replay carimba `iaVer` (`src/replay_cliente.js`); `server/pve.js`
+re-simula com a versão do envelope (sem `iaVer` → v1, replays antigos/fila offline seguem válidos). Jogo roda v2 no
+cliente (`turno.js`, `partida_cliente.js`) e servidor (`partida.js`) — lockstep. `medir_niveis --v2` e
+`solucionador --v2` existem; padrão da régua continua v1. Guardas: `tests/ia_v2.test.js` (dispatch/determinismo/
+replay-versão, mordem). USO residual (~18 nicho + ~12 ponto-cego-de-1-lance, recurso/tempo futuro) documentado em
+`docs/ia-kit-inteiro.md`; não re-mexi nos pesos validados por isto. Ritos re-conferidos sob a v2 (reporte, sem
+re-carimbar — Fase 5). **Fase 5 (recalibrar o PvE) NÃO entra aqui.**
+
+## §322 Parte 1 · IA que usa o kit inteiro — SÓ medição/protótipo (nada muda no jogo)
 
 Protótipos em `tools/ia_proto.js` (fora de `src/`, não ligados no jogo); medição em `tools/medir_ia.js`
 (`uso`/`forca`/`custo`/`verif`); `tools/medir_niveis.js` ganhou `--proto=`. **Recomendada: `papel`** (gulosa de 1

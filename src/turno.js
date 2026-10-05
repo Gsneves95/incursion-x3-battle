@@ -95,7 +95,7 @@ function talvezIA() {
 }
 function passoIA() {
   if (!_emBatalha() || st.fim || !cpuControla(st.ativo)) { iaAtiva = false; return; }
-  const a = iaProximaAcao(st);
+  const a = iaProximaAcao(st, 'normal', (typeof IA_VERSAO_JOGO !== 'undefined' ? IA_VERSAO_JOGO : 2));   // §322: o jogo roda a IA v2 (papel)
   if (a) { agir(st, a.uid, a.slot, a.alvos, a.escolhas); armado = null; alvos = []; escolhidos = []; detalhe = null; _redesenhar(); setTimeout(passoIA, 750); }
   else {
     iaAtiva = false;

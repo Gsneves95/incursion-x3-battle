@@ -6,6 +6,35 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §322 Parte 2 · a IA "papel" afinada ENTRA no jogo como v2 (versionada)
+
+Afinei os pesos da `pontuarPapel` por subida coordenada (CRN) com treino/confirmação em sementes separadas
+(`tools/afinar_ia.js`); a forma ganhou execução/foco, controle creditado pelo dano negado, provocação (taunt que
+salva aliado frágil) e vulnerável/dmgDown. **Alvos batidos:** FORÇA **58,9%** [57,0; 60,9] em semente independente
+(63,1% na confirmação) — ≥58% e IC-inf >55%; USO **23 hab / 7 mil** < 0,1 (era 43/14); CUSTO **~2 ms/decisão** no
+celular e **17,8 ms/replay** (abaixo da v1); **0** divergências. Lista de revisão sob a v2: Fenrir/Piranha/Tyr/Kali
+saem do negativo e Brigid neutraliza; a provocação do Tyr passa a ser usada.
+
+**Decisão:** congelar a gulosa como **v1** (nunca mudar) e ligar a afinada como **v2** no jogo. **Versionamento do
+replay:** o cliente carimba `iaVer`; o servidor re-simula com a versão do envelope; **sem `iaVer` cai na v1**
+(replays pré-§322 e da fila offline continuam creditando). Cliente e servidor sobem a v2 no mesmo commit (uma
+fonte, `src/ia.js`) — a partida ao vivo fica em lockstep. **Alternativa recusada:** forçar tudo à v2 — recusaria
+crédito justo de replays antigos (um replay que venceu a v1 pode não vencer a v2). Guardas em `tests/ia_v2.test.js`
+provam que mordem.
+
+**Pesos NÃO re-mexidos pelo USO residual:** das 30 habilidades/milagres ainda < 0,1, ~18 são nicho genuíno
+(reativa/condicional/preventiva) e ~12 são ponto cego ESTRUTURAL de 1 lance (ganho em turno futuro: cdShift,
+orbGain/roubaOrbe, agendar, armazenaDano, marcas). Dar valor cego a recurso/tempo sem busca arrisca a IA acumular
+sem converter, e **olhar 2 lances foi medido como mais fraco** (Parte 1) — então o ganho restante é uma iteração
+de IA à parte (medida e validada), não um ajuste solto que regrediria a v2 já validada. Nenhuma é bloqueio.
+
+**Régua de nível:** `medir_niveis --v2` mede sob a v2; o **padrão continua a v1** até decidirmos.
+
+**Ritos sob a v2:** `solucionador --v2` re-verifica winnability (reporta, NÃO re-carimba — Fase 5). O PvE ficou mais
+difícil (aceito): detalhes e tabela em `docs/ia-kit-inteiro.md`.
+
+---
+
 ## §322 Parte 1 · IA que usa o kit inteiro — medir e prototipar (nada muda no jogo)
 
 A IA gulosa de 1 lance deixa **43 habilidades e 14 milagres (de 100 deuses) com uso < 0,1/partida** (confirma o

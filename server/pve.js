@@ -74,10 +74,12 @@ function _dispatch(st, op) {
 
 // re-simula. montarFn() → st inicial. jogadorOps = ações do JOGADOR (agir/converter/alocarLivre/fim), na
 // ordem. ladoJog = lado do jogador (0). Devolve { ok, venceu, turnos, motivo? }.
-function _reproduzir(montarFn, jogadorOps, ladoJog) {
+function _reproduzir(montarFn, jogadorOps, ladoJog, iaVer) {
   let st;
   try { st = montarFn(); } catch (e) { return { ok: false, motivo: 'montagem_falhou: ' + (e && e.message) }; }
   if (!st) return { ok: false, motivo: 'montagem_nula' };
+  // §322: re-simula com a VERSÃO da IA do envelope. Sem iaVer (replay pré-§322 / fila offline antiga) → v1.
+  const ver = (iaVer === 2) ? 2 : 1;
   const iaLado = 1 - ladoJog;
   let i = 0, guarda = 0;
   while (!st.fim && guarda++ < 6000) {
@@ -88,7 +90,7 @@ function _reproduzir(montarFn, jogadorOps, ladoJog) {
       else { const r = _dispatch(st, op); if (!r || !r.ok) return { ok: false, motivo: 'op_jogador_ilegal: ' + (op && op.tipo) + ' · ' + ((r && r.erro) || '') }; }
     } else {
       let p = 0, mv;
-      while (!st.fim && (mv = ia.iaProximaAcao(st, 'normal')) && p++ < 16) {
+      while (!st.fim && (mv = ia.iaProximaAcao(st, 'normal', ver)) && p++ < 16) {
         E.agir(st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
       }
       if (!st.fim) E.fimTurno(st);
@@ -193,7 +195,7 @@ function verificar(conta, r, agora) {
   if (!Array.isArray(r.ops)) return { ok: false, motivo: 'ops_ausentes' };
   const m = _montarPara(conta, r, agora);
   if (m.erro) return { ok: false, motivo: m.erro };
-  const res = _reproduzir(m.montar, r.ops, 0);
+  const res = _reproduzir(m.montar, r.ops, 0, r.iaVer);   // §322: a versão da IA vem do envelope do replay
   return Object.assign({ chave: m.chave, recompensaKey: m.recompensaKey, runId: m.runId, nivel: m.nivel }, res);
 }
 

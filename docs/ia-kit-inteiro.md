@@ -144,3 +144,131 @@ node tools/medir_ia.js custo [--rodadas=12]
 node tools/medir_ia.js verif
 node tools/medir_niveis.js --sorteado --proto=papel --x=fenrir --niv=basico:4 --n=600
 ```
+
+---
+
+# §322 Parte 2 — afinação da "papel" e entrada no jogo (IA v2)
+
+> Os alvos foram **batidos** → a IA afinada entrou no jogo como **v2**. A recalibragem do PvE (Fase 5) **não**
+> entra aqui.
+
+## Afinação (determinística, medida, anti-sobreajuste)
+
+Reescrevi a `pontuarPapel` com termos de **papel** parametrizados por pesos e afinei por **subida coordenada**
+(`tools/afinar_ia.js`) com **sementes comuns** (CRN — o que muda entre avaliações é só o peso, não a sorte),
+medindo a FORÇA contra a v1 num conjunto de **treino** e **confirmando** num conjunto **separado** que a busca
+nunca viu. Termos novos de alta alavancagem: **execução/foco** (empurrar UM inimigo p/ a morte), **controle
+creditado pelo dano negado** (controlar um bruto > controlar um fraco), **provocação** (taunt que salva um aliado
+mais frágil que o provocador) e **vulnerável/dmgDown** no inimigo.
+
+Duas rodadas: a 1ª (treino 40 comps) confirmou 57,6% [55,5; 59,8] — perto, mas abaixo do alvo e com folga de
+sobreajuste ~7,6 pp. A 2ª (treino **64 comps**, grade alargada nas bordas, arranque a quente) quebrou o alvo: o
+salto veio de `hpInimigo 1,1→1,0`, `execLimiar→48`, `provoca→1,6`, `controle→12`.
+
+**Pesos finais (IA_V2_W, congelados em `src/ia.js`):**
+`exec 0,6 · execLimiar 48 · controle 12 · provoca 1,6 · vulneravel 0,9 · dmgDownIni 0,6 · buffOff 0,4 ·
+hpInimigo 1,0 · reducao 0,6 · escudoUtil 0,7 · regen 0,5 · (demais no DEFAULT).`
+
+## Critérios (todos batidos)
+
+| Critério | Alvo | v1 (atual) | **v2 (papel)** |
+|---|---|---|---|
+| **FORÇA** vs v1 | ≥58%, IC-inf >55% | — | **58,9%** [57,0; 60,9] (semente independente) · **63,1%** [61,1; 65,0] (confirmação) ✓ |
+| **USO** < 0,1/partida | só nicho justificado | 43 hab / 14 mil | **23 hab / 7 mil** ✓ |
+| **CUSTO** | ≤5 ms/decisão (celular) | ~2,4 ms | **~1,98 ms** · replay **17,8 ms/partida** (< v1) ✓ |
+| **DETERMINISMO** | 0 divergências | 0 | **0** (28.108 pares) ✓ |
+
+### Lista de revisão (MÁX do slot que era negativo, re-medido sob a v2)
+
+| deus | slot | embarcado (REATIVA) | sob v2 | saiu do negativo? |
+|---|---|---|---|---|
+| Fenrir | básico | −6,2 | **+9,2** | ✓ |
+| Piranha | básico | −9,1 | **+6,3** | ✓ |
+| Tyr | básico | −5,4 | **+5,3** | ✓ (e a provocação do Tyr passa a ser usada — ver abaixo) |
+| Kali | milagre | −5,4 | **+5,0** | ✓ |
+| Brigid | milagre | −5,9 | **+0,5** | ✓ (neutro) |
+
+**Provocação (caso obrigatório):** o Tyr **saiu da lista de raras** (uso da habilidade ≥ 0,1/partida na arena do
+roster) — a v2 provoca quando há um aliado mais frágil que o provocador em risco do próximo golpe. (Na régua de
+nível, que fixa um trio e nivela o básico, a oportunidade de provocar aparece menos — é esperado.)
+
+## USO residual — cada < 0,1/partida, justificado
+
+As que seguem < 0,1/partida sob a v2 **e por quê**. Dois grupos: **(N) nicho real** (reativa/condicional/
+preventiva/preparação — só vale numa situação específica, que a arena-espelho quase não cria) e **(C) ponto cego
+de 1 lance** (o ganho é em turno FUTURO — recurso/tempo/agendado — que uma pontuação da posição imediata não
+enxerga; olhar 2 lances foi medido como mais fraco, então não é o caminho).
+
+**Habilidades (23):**
+- Ah Puch (noHeal no inimigo) — N: só morde se o inimigo for curar.
+- Bastet (interceptar por aliado) — N: reativa, só quando um aliado levaria o golpe.
+- Cernunnos (refleteDano no time) — N: só compensa apanhando muito.
+- Chang'e (pisoVida no aliado) — N: salva-vidas, só quando alguém morreria.
+- Curupira (redirect) — C: redirecionar mira é ganho situacional de posicionamento.
+- Fujin (cdShift) — C: acelerar cooldown paga no turno seguinte.
+- Ganesha (cleanse+stripOne) — N: só com debuff no aliado / buff no inimigo.
+- Heimdall (contraAtaca no aliado) — N: buff reativo.
+- Hermes (cdShift no aliado) — C: tempo (futuro).
+- Inari (orbGain) — C: banca recurso p/ turnos futuros.
+- Izanami (AoE espalha+dot) — N/parcial: dot de área rende aos poucos; pontua, mas abaixo do golpe direto.
+- Khnum (interceptar+escudo) — N: defensiva reativa.
+- Khonshu (cdShift no inimigo) — C: atrasa o inimigo (futuro).
+- Kitsune (interceptar+contador) — N: defensiva reativa.
+- Krishna (acaoPerfeita no aliado) — C: prepara a PRÓXIMA habilidade (futuro).
+- Kukulkán (inalvejável+agendar) — C: evasão + efeito agendado (futuro).
+- Loki (inalvejável+redirect) — N/C: evasão/redirecionamento situacional.
+- Nezha (auto, sem fx direto) — N: transformação/estado condicional.
+- Odin (marcado em todos) — C: marca de preparação (o dano vem depois, do irmão `vulneravel`/bônus).
+- Saci (inalvejável+agendar) — C: igual Kukulkán.
+- Tsukuyomi (fase+adormecido) — N: o adormecido tem gatilho de fase/condição; controle sim, mas condicionado.
+- Xangô (armazenaDano) — C: acumula p/ liberar depois (futuro).
+- Yamato Takeru (inalvejável+próximoGolpePuro, self) — C: prepara o próprio golpe seguinte (futuro).
+
+**Milagres (7):**
+- Anúbis (contador+condicional em todos) — N: dispara sob condição.
+- Bastet (vidaExtra no aliado) — N: preventivo.
+- Dionísio (agendar) — C: efeito agendado (futuro).
+- Ganesha (cleanse+cdShift+orbGain) — C: utilitário de recurso/tempo (futuro).
+- Hera (víForevínculo+controlImmune em 2 aliados) — N: preventivo, só vale com controle chegando.
+- Hermes (roubaOrbe+stripOne) — C: recurso (futuro).
+- Medusa (contador em todos) — N: acumula p/ o gatilho (condicional).
+
+**Conclusão do USO:** das 30, ~18 são **nicho genuíno** (não são falha — a arena-espelho simétrica quase não
+cria a situação que as justifica) e ~12 são o **ponto cego estrutural de 1 lance** (ganho em turno futuro:
+cdShift, orbGain/roubaOrbe, agendar, armazenaDano, marcas de preparação). Corrigi-las de verdade exige avaliar o
+FUTURO — e medimos que **olhar 2 lances enfraquece** a IA (Parte 1); dar valor cego a "recurso/tempo" sem busca
+arrisca fazer a IA acumular recurso sem converter. Logo **não** mexi nos pesos já validados por isto; o ganho
+restante é uma iteração de IA à parte (heurística dedicada de recurso/tempo, medida e validada como esta foi),
+**não** um ajuste solto neste commit. Nenhuma dessas é bloqueio de jogo: o kit inteiro já é usado onde há motivo.
+
+## Entrada no jogo (versionamento)
+
+- `src/ia.js`: a gulosa histórica é a **v1** (congelada — nunca mudar); a afinada é a **v2** (`iaProximaAcaoPapel`
+  + `IA_V2_W`). `iaProximaAcao(st, 'normal', versao)` despacha; **default `versao=1`** (preserva os chamadores de
+  teste). `IA_VERSAO_JOGO = 2`.
+- **Replay versionado:** `src/replay_cliente.js` carimba `iaVer = IA_VERSAO_JOGO` no envelope; `server/pve.js`
+  re-simula com `r.iaVer` (sem `iaVer` → **v1**, então replays pré-§322 e os da fila offline continuam creditando).
+- **Cliente e servidor na mesma versão:** o jogo roda a v2 no cliente (`src/turno.js`, `src/partida_cliente.js`)
+  e no servidor (`server/partida.js`), no mesmo commit (uma fonte, `src/ia.js`); a partida ao vivo fica em
+  lockstep. O PvE (campanha, Domínios, Ritos, Desafios, sandbox) passa a enfrentar a v2.
+- **Régua de nível:** `tools/medir_niveis.js --v2` mede sob a v2; o **padrão continua a v1** até decidirmos trocar.
+- **Guardas** (`tests/ia_v2.test.js`, provadas que mordem): v2 ≠ v1 (dispatch ligado); v2 determinística; replay
+  novo (iaVer:2) só credita sob a v2; replay antigo vencedor sob a v1 **não vence** forçado à v2 (por isso o
+  envelope manda); envelope **sem iaVer** cai na v1; o cliente carimba a versão certa.
+
+## Ritos sob a v2 (winnability — recalcular e conferir, NÃO rebalancear)
+
+`tools/solucionador.js --v2` re-verifica cada Rito contra o oponente v2 (sem re-carimbar — isso é Fase 5).
+Resultado (orçamento 200k nós/Rito):
+
+| veredito (v2) | nº de 100 | leitura |
+|---|---|---|
+| **VENCÍVEL** | **72** (+ curupira a 900k = 73) | continua vencível — alguns com linha mais longa |
+| **INDETERMINADO** | 27→26 | o solucionador NÃO achou a vitória no orçamento; vs a v1 ele achava em dezenas–centenas de nós, então sob a v2 a linha vencedora ficou **muito mais funda** (um bump para 900k/90s não resolveu a maioria — curupira resolveu). Winnability **não refutada**; são os "ficaram mais difíceis". |
+| **INVENCÍVEL** | **1** — `hanuman` ("Devoção a Rama") | v1 vencia em 23 lances; sob a v2 o espaço de estados **esgota sem vitória** (exaustão real, 530 nós). É um Rito que a v2 torna **invencível**. |
+
+**Conclusão (reporte, SEM rebalancear — Fase 5):** nenhum re-carimbo foi gravado. A v2 torna o PvE
+substancialmente mais difícil (resultado aceito): **72–73 Ritos seguem vencíveis**, **~26 ficaram muito mais
+difíceis** (linha vencedora bem mais funda — candidatos a `dica`/ajuste na Fase 5) e **1 (`hanuman`) ficou
+invencível** — este é um **bloqueio real** que a Fase 5 tem de destravar (ajustar inimigos/condição ou dar dica)
+antes que valha a pena para o jogador. O `solucionador --v2` reproduz tudo isto.

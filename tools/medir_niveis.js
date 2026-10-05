@@ -113,8 +113,11 @@ const REATIVO = tem('reativo');   // §318 F1c: forçada, mas habilidade reativa
 const PROTO = arg('proto', '');
 let protoProxima = null;
 if (PROTO) { const { PROTOS } = require(path.join(__dirname, 'ia_proto.js')); protoProxima = PROTOS[PROTO]; if (!protoProxima) throw new Error('--proto desconhecido: ' + PROTO); }
-const proximaAcao = protoProxima ? protoProxima : REATIVO ? reativaProxima : FORCADO ? forcadoProxima : iaProximaAcao;
-const POLITICA = protoProxima ? ('PROTÓTIPO ' + PROTO) : REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)';
+// §322: --v2 mede com a IA v2 do JOGO (papel). O PADRÃO continua a v1 (gulosa) até decidirmos trocar a régua.
+const V2 = tem('v2');
+const v2Proxima = st => iaProximaAcao(st, 'normal', 2);
+const proximaAcao = V2 ? v2Proxima : protoProxima ? protoProxima : REATIVO ? reativaProxima : FORCADO ? forcadoProxima : iaProximaAcao;
+const POLITICA = V2 ? 'IA v2 (jogo, papel)' : protoProxima ? ('PROTÓTIPO ' + PROTO) : REATIVO ? 'REATIVA' : FORCADO ? 'USO FORÇADO' : 'IA gulosa (jogo)';
 // vetor de nível de X: --niv=basico:4,... (default: básico no 4, resto 1) OU o delta falso (básico 2)
 function parseNiv(s) { const o = { basico: 1, habilidade: 1, milagre: 1 }; for (const p of (s || '').split(',')) { const [k, v] = p.split(':'); if (SLOTS.includes(k)) o[k] = parseInt(v, 10) || 1; } return o; }
 const NIV = FALSO ? { basico: 2, habilidade: 1, milagre: 1 } : parseNiv(arg('niv', 'basico:4'));

@@ -29,7 +29,10 @@ function _repDescartar() { _repRec = null; }                              // par
 // finaliza a gravação (só chame quando VENCEU) com os parâmetros finais do modo; enfileira e tenta enviar.
 function _repConcluir(extra) {
   if (!_repRec) return null;
-  const replay = Object.assign({}, _repRec.desc, extra || {}, { ops: _repRec.ops, idPartida: _repNovoId() });
+  // §322: carimba a VERSÃO da IA que o cliente rodou. O servidor re-simula com esta versão; replays sem iaVer
+  // (gravados antes do §322, inclusive os da fila offline) caem na v1 no servidor.
+  const iaVer = (typeof IA_VERSAO_JOGO !== 'undefined' ? IA_VERSAO_JOGO : 1);
+  const replay = Object.assign({}, _repRec.desc, extra || {}, { ops: _repRec.ops, iaVer, idPartida: _repNovoId() });
   _repRec = null;
   _repEnfileirar(replay);
   _repEnviarPendentes();
