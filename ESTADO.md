@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §323 Fase 5 Parte 2 ETAPA B · só-fundos × fechados (re-medida a 900k)
+
+`docs/pve-v2-fase5-etapaB.md` + `tools/remedir_fundo.js`. Re-rodei os 30 indeterminados a 900k (4,5× a régua).
+**Só 4 eram "só fundo"** (vencem deep, em faixa, saem da fila SEM ajuste): `rito/aquiles` (32/29), `rito/curupira`
+(34/29), `rito/demeter` (42/39), `semanal/afrodite#23` (37/31). **Os outros 26 seguem fechados mesmo a 900k** →
+ETAPA C: 24 rito (ahpuch, amaterasu, ammit, boitata, change, hades, hel, hera, hercules, iansa, isis, izanami,
+khnum, kitsune, morrigan, osiris, piranha, ra, shiva, sobek, susanoo, thor, vishnu, yanwong) + semanal mnevis#25 +
+ammit#10, mais os 2 INVENCÍVEIS (hanuman, guanyu#20). A v2 fechou o catálogo de puzzles de time-fixo quase inteiro.
+Nota p/ ETAPA E: os 4 só-fundos vencem > 200k, então o manifesto a 200k ainda os marca indeterminados — a
+verificação do modo precisa reconhecer a vitória profunda (subir orçamento) OU levá-los à régua. Diagnóstico, nada
+mudou no conteúdo. **ETAPA C é uma recalibragem grande (~28 itens) — confirmar a abordagem com o dono antes de aplicar.**
+
 ## ★ §323 Fase 5 Parte 2 ETAPA A · níveis do jogador em TODO o PvE
 
 Antes os níveis só valiam no PvP. Agora **todo modo de PvE** monta o lado 0 com os níveis da conta:

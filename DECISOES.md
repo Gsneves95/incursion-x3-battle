@@ -6,6 +6,14 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 2 ETAPA B · só-fundos × fechados (diagnóstico a 900k)
+
+Re-medida a 900k (`tools/remedir_fundo.js`, relatório `docs/pve-v2-fase5-etapaB.md`) dos 30 indeterminados do
+manifesto 200k. **Achado:** só 4 são "só fundo" (vencem com mais busca, em faixa) — os outros 26 seguem fechados
+mesmo a 4,5× a régua. **Decisão de método:** os 4 só-fundos saem da fila SEM tocar conteúdo (a dificuldade é
+legítima, só é fundo); os 26 fechados vão à régua de ajuste (ETAPA C). Diagnóstico — não muda conteúdo. Nenhum
+arquivo de jogo tocado (só tool + docs); suíte/build inalterados desde a ETAPA A.
+
 ## §323 Fase 5 Parte 2 ETAPA A · níveis do jogador em TODO o PvE
 
 **Decisão:** os níveis de habilidade do jogador, que só valiam no PvP, passam a valer em TODO o PvE (decisão do dono).
