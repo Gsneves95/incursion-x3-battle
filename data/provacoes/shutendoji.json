@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "30dae4ec",
+    "hash": "e53567c5",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 298,
-    "ms": 394,
+    "nos": 74,
+    "ms": 373,
     "caminho": [
       "zeus Cetro do Trovão → krishna",
       "shutendoji Saké Envenenado → oxum",
@@ -52,18 +52,18 @@
       "passar",
       "susanoo Yamata no Orochi",
       "passar",
-      "zeus Julgamento do Trovão → oxum",
-      "passar",
       "susanoo Corte de Kusanagi → krishna",
       "zeus Cetro do Trovão → oxum",
       "passar",
-      "susanoo Corte de Kusanagi → exu",
+      "zeus Ira Celestial",
+      "passar",
+      "susanoo Yamata no Orochi",
+      "passar",
+      "zeus Julgamento do Trovão → exu",
       "passar",
       "susanoo Corte de Kusanagi → exu",
       "passar",
-      "susanoo Corte de Kusanagi → exu",
-      "passar",
-      "susanoo Yamata no Orochi"
+      "susanoo Corte de Kusanagi → exu"
     ]
   }
 }

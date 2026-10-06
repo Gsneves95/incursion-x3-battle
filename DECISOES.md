@@ -6,6 +6,39 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §324 Parte 2 · consertar os 8 casos claros + diagnóstico do Suporte (por partes; Tyr/Saci/funções ficam p/ depois)
+
+Relatório `docs/kits-revisao-324-p2.md`. Régua do §324 P1 (`tools/medir_kits.js`, IA v2): força (arena, +IC) +
+slot morto (Δ pareado) + uso. **A — consertados 8 deuses com o MENOR ajuste derivado do kit** (tema ≠ mecânica,
+destravar o que já existe). Seis eram **habilidade morta** (a IA nunca escolhia: mesmo dano do Básico, custo
+maior, ou efeito sem valor que a vitória persegue) — o conserto deu à habilidade um valor que o Básico não tem
+(área, cura de time, atordoar, selar+dot, reflexo), **não** inflou número. Fujin ganhou **passiva autônoma**
+(+6 dano sempre, +2 com Raijin — não depende mais do Raijin não-inicial) + habilidade com dano em área; Afrodite
+teve a passiva anti-sinergia (Δ−2,7) trocada por redução de dano **de time**.
+
+Força antes→depois (todos na faixa, nenhum >65% nem <35%; Fujin/Afrodite em 40–60%): Fujin 27,6→42,1 · Afrodite
+24,5→49,5 · Xangô 49,8→45,0 · Cernunnos 45,6→44,2 · Curupira 61,2→56,9 · Kukulkán 60,3→58,4 · Hades 54,7→57,1 ·
+Shuten 46,1→43,9. Uso da habilidade subiu de ~0 para 0,58–1,09/partida nos seis slots mortos.
+
+**O que arrastou (feito junto):** kit sincronizado (`kits.json` × `deuses`, cadeia verde); **Ritos re-carimbados**
+(Fenrir/Yan Wong quebraram — Kukulkán é inimigo e o AoE novo os tornou invencíveis — consertados pela **alavanca
+de HP do Rito**, NÃO pelo kit, régua §323); **Semanal #13** (Afrodite inimiga) idem, alavanca de HP; escadas das
+habilidades na triagem §318 (nv4 ≤+15pp, todas passam). **Domínios NÃO regenerados** (decisão): o re-tune de
+dificuldade do PvE gerado é equilíbrio adiado pelo dono e o §323 C já fixou "não mexer em PvE por causa de kit";
+a dificuldade medida fica levemente defasada nos poucos níveis com deus reforçado, sem dano prático. **Arnês de
+replay de PvE corrigido** (economia/desafio-net): a pré-condição usava um guloso-só-Básico — piso frágil (a
+régua do gerador de Domínios é a IA gulosa COMPLETA; nenhum nível é garantido vencível só com Básico, e o Fujin
+inimigo reforçado derrubou o n1 da Grega). Passou a dirigir o jogador pela IA real (`iaProximaAcao`); o replay
+re-simula idêntico no servidor.
+
+**B — diagnóstico (nada mudou): o domínio do Suporte é problema de KIT, não de IA.** Força por função sob as
+DUAS IAs (kits pós-conserto): Suporte 60,2% (v1) / 61,1% (v2) ≫ Atacante ~50 > Guardião 46 > Controlador 42 >
+Manipulador ~40. Top-10 idêntico nas duas (8–9/10 Suporte; Brigid #1 nas duas, Oxum #2–3). Fosse artefato da v2,
+só apareceria na v2 — aparece nas duas. Causa (lendo os kits do topo): **Oxum** (passiva cura→+5 dano, habilidade
+cd1 cura 20 + orbe, milagre cura-time + regen + orbes) e **Brigid** (passiva +5 dano de time PERMANENTE, básico
+grátis, habilidade cura 15 **e** 12 AoE num golpe) empilham sustain + dano de time + economia **sem custo de
+oportunidade**. Material para a parte "equilíbrio entre funções", adiada pelo dono.
+
 ## §324 Parte 1 · revisão de kits sob a IA v2 (medir + propor; nada mudou no kit)
 
 Relatório `docs/kits-revisao-324-p1.md` + `docs/kits-forca-v2.txt` + `tools/medir_kits.js` (forca/slot). Medição
@@ -10734,5 +10767,5 @@ liberada por um gancho-balde do topo — `bonusDano-escala-dinamica` (trava 11, 
 | **`aoCair` — matador-bound vs qualquer-morte** | **RESOLVIDO (§49): qualquer-morte.** `quem:'qualquerInimigo'` construído (F1.3 morte 4/4); coexiste com `quem:'inimigo'` (matador, zeus). Falta ainda `quem:'aliado'`/`qualquerAliado` (erinias/nuwa/khnum — família F1.4). |
 | **Nome dos elementos** | O design visual do dono usa Solar/Lunar/Vital/Caos/Vazio/Tempestade; a planilha usa Tempestade/Umbra/Maré/Aurora/Chama/Verdejante. Renomear é trivial no dado mas quebra ganchos: Maré aplica Encharcado, Chama aplica Queimadura, Aurora e Umbra ativam Dia e Noite. ~60 habilidades a retraduzir. |
 | **Pick/ban** | Recomendado com força, ainda não desenhado. Sem ele o meta converge para 8 deuses e o gacha perde razão de existir. |
-| **Passiva do Fujin** | Ou Raijin entra nos iniciais, ou Fujin ganha passiva autônoma. |
+| ~~**Passiva do Fujin**~~ | **RESOLVIDO (§324 P2): passiva autônoma.** "Fúria dos Ventos" dá +6 de dano sempre (+2 a mais com Raijin como *extra*); não depende mais do Raijin não-inicial. Força 27,6→42,1%. |
 | **Dilúvio do Sobek** | 30 em área contra Encharcados, contra teto de 22. Condicional e o próprio Sobek precisa aplicar antes — único número acima do orçamento. |

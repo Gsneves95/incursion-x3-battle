@@ -26,7 +26,8 @@ const NOME = k => E.GODS[k].nome || k;
 
 function mulberry32(seed) { return function () { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 function embaralhar(arr, r) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-const V2 = s => iaProximaAcao(s, 'normal', 2);
+const VER = parseInt(arg('ia', '2'), 10) === 1 ? 1 : 2;   // --ia=1 mede sob a v1 gulosa (default v2)
+const V2 = s => iaProximaAcao(s, 'normal', VER);
 
 // joga uma partida; proibido = {uidSet, slot} (opcional) p/ vetar um slot de certas unidades. conta USO por key/slot.
 function jogar(timeA, timeB, seed, comeca, catalogo, veto, statUso) {

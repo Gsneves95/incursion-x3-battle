@@ -93,11 +93,18 @@
       },
       "cd": 3,
       "alvo": "inimigo",
-      "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo).",
+      "desc": "14 de dano a 1 inimigo e o Atordoa por 1 turno.",
       "fx": [
         {
-          "t": "redirect",
-          "dur": 2
+          "t": "dmg",
+          "v": 14
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "atordoado",
+            "dur": 1
+          }
         }
       ],
       "niveis": [
@@ -105,38 +112,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "shield",
-                "v": 2,
-                "escopo": "self"
-              }
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 2 de Defesa Destrutível."
+          "desc": "15 de dano a 1 inimigo e o Atordoa por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 2,
-              "para": 3
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 3 de Defesa Destrutível."
+          "desc": "16 de dano a 1 inimigo e o Atordoa por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 3,
-              "para": 4
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Por 2 turnos, as habilidades de alvo único dos inimigos atingem um aliado deles (você escolhe o alvo). Curupira ganha 4 de Defesa Destrutível."
+          "desc": "17 de dano a 1 inimigo e o Atordoa por 1 turno."
         }
       ]
     },

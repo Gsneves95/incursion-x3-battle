@@ -1843,15 +1843,12 @@ console.log('== §117 Kukulkán (M1, agendador): habilidade telegrafada (Inalvej
   E.agir(st, k.uid, 'basico', [e[0].uid]);
   ok(h - e[0].hp === 15, `Presas do Vento: 15 (${h - e[0].hp})`);
 
-  // habilidade: NO lançamento fica Inalvejável e agenda; o AoE 25 só cai no próximo turno do Kukulkán
+  // §324: a habilidade virou IMEDIATA — Inalvejável 1 turno + 14 a todos AGORA (antes era agendada p/ o próximo
+  // turno; a habilidade estava MORTA sob a v2, que não montava o set-up telegrafado — §324 P1).
   st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 986); orbs(st.lados[0]);
   k = st.lados[0].units[0]; e = st.lados[1].units; const hb = e.map(x => x.hp);
   E.agir(st, k.uid, 'habilidade', []);
-  ok(!!E.ef(k, 'inalvejavel') && e.every((x, i) => x.hp === hb[i]), 'Voo da Serpente: Inalvejável no lançamento, AoE ainda não caiu');
-  E.fimTurno(st);   // turno inimigo — protegido, e o AoE não dispara aqui
-  ok(!!E.ef(k, 'inalvejavel') && e.every((x, i) => x.hp === hb[i]), 'durante o turno inimigo: ainda Inalvejável, AoE não disparou');
-  E.fimTurno(st);   // volta ao Kukulkán → o payload dispara
-  ok(e.every((x, i) => hb[i] - x.hp === 25), `no próximo turno do Kukulkán: 25 a TODOS (${e.map((x, i) => hb[i] - x.hp)})`);
+  ok(!!E.ef(k, 'inalvejavel') && e.every((x, i) => hb[i] - x.hp === 14), `Voo da Serpente (§324): Inalvejável + 14 a todos AGORA (${e.map((x, i) => hb[i] - x.hp)})`);
 
   // milagre: 20 a todos + o time causa +10 por 2 turnos
   st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 987); orbs(st.lados[0]);
@@ -1867,7 +1864,7 @@ console.log('== §117 Kukulkán (M1, agendador): habilidade telegrafada (Inalvej
   const hf = foe.hp;
   E.agir(st, k.uid, 'basico', [foe.uid]);
   ok(hf - foe.hp === 23, `Deus-Rei: +8 vs Encharcado (15+8=23) (${hf - foe.hp})`);
-  console.log('  Presas 15 · Voo da Serpente telegrafado (Inalvejável agora, 25 a todos no próximo turno) · Estrela 20+dmgUp · +8 vs Encharcado');
+  console.log('  Presas 15 · Voo da Serpente §324 (Inalvejável + 14 a todos IMEDIATO) · Estrela 20+dmgUp · +8 vs Encharcado');
 }
 
 console.log('== §118 Ares + Ammit (M3, consequência de abate): zeraCd-ao-abater (si) + naoRevive-ao-abater (o morto) ==');
@@ -2501,19 +2498,16 @@ console.log('== §138 B5/Dagda (M2 A2 + M6): Clava (3º uso cura) · Caldeirão 
   console.log('  Dagda: Clava (ciclo por-uso) · Caldeirão (regen + piso condicional) · Harpa (A2 passe forçado + M6 buffs suspensos)');
 }
 
-console.log('== Cernunnos (sem invocação): Fúria da Matilha (refleteDano no TIME) + passiva aoSerAtingido{aliado}→cura 8 ==');
+console.log('== Cernunnos (sem invocação): Fúria da Matilha (§324: 12 de dano + cura 10 no time) + passiva aoSerAtingido{aliado}→cura 8 ==');
 {
   const orbs = l => { E.ELEMS.forEach(e => l.orbs[e] = 9); l.orbs.livre = 9; };
-  // habilidade Fúria da Matilha: TODO o time ganha refleteDano 10 por 2 turnos (thorns do Mnevis, escopo time)
+  // §324: a habilidade virou ATIVA — 12 de dano a 1 inimigo + cura 10 no time (antes refleteDano reativo, morto sob v2)
   let st = E.novoEstado(['cernunnos', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1140, 0); orbs(st.lados[0]);
-  let ce = st.lados[0].units[0];
-  E.agir(st, ce.uid, 'habilidade', []);
-  ok(st.lados[0].units.every(u => E.ef(u, 'refleteDano') && E.ef(u, 'refleteDano').v === 10),
-    `Fúria da Matilha: refleteDano 10 nos 3 aliados`);
-  // um aliado (zeus) é atingido → o atacante sofre 10 refletidos
-  const ally = st.lados[0].units[1], atk = st.lados[1].units[0], atkHp = atk.hp;
-  E.bater(st, atk, ally, 12, 'afetado', 'basico', { unico: true });
-  ok(atkHp - atk.hp === 10, `aliado atingido reflete 10 ao atacante (${atkHp - atk.hp})`);
+  let ce = st.lados[0].units[0]; const allyW = st.lados[0].units[1]; allyW.hp = 80;
+  const foe = st.lados[1].units[0], fh = foe.hp;
+  E.agir(st, ce.uid, 'habilidade', [foe.uid]);
+  ok(fh - foe.hp === 12, `Fúria da Matilha (§324): 12 de dano a 1 inimigo (${fh - foe.hp})`);
+  ok(allyW.hp === 90, `Fúria da Matilha (§324): cura 10 no time (80→${allyW.hp})`);
 
   // passiva aoSerAtingido{aliado}: quando um ALIADO é atingido, Cernunnos cura 8 (o próprio golpe acima já disparou;
   // Cernunnos abriu em 120, então testo num estado limpo com Cernunnos ferido)
@@ -2527,7 +2521,7 @@ console.log('== Cernunnos (sem invocação): Fúria da Matilha (refleteDano no T
   ce = st.lados[0].units[0]; ce.hp = 100;
   E.bater(st, st.lados[1].units[0], ce, 15, 'afetado', 'basico', { unico: true });
   ok(ce.hp === 85, `Cernunnos atingido em si NÃO auto-cura (quem:aliado ≠ self): 100−15=${ce.hp}`);
-  console.log('  Cernunnos: Fúria da Matilha (refleteDano 10 no time) · passiva cura 8 quando um aliado (não ele) é atingido');
+  console.log('  Cernunnos: Fúria da Matilha §324 (12 de dano + cura 10 no time) · passiva cura 8 quando um aliado (não ele) é atingido');
 }
 
 // CARACTERIZAÇÃO do revive da Nezha (aoCair quem:'self') — trava ORDEM, não só magnitude: a Nezha reage à

@@ -99,16 +99,16 @@
         "Verdejante": 2
       },
       "cd": 3,
-      "alvo": "nenhum",
-      "desc": "Por 2 turnos, todo aliado atingido reflete 10 ao atacante.",
+      "alvo": "inimigo",
+      "desc": "12 de dano a 1 inimigo; cura 10 no time.",
       "fx": [
         {
-          "t": "apply",
-          "eff": {
-            "type": "refleteDano",
-            "v": 10,
-            "dur": 2
-          },
+          "t": "dmg",
+          "v": 12
+        },
+        {
+          "t": "heal",
+          "v": 10,
           "escopo": "time"
         }
       ],
@@ -117,34 +117,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[0].eff.v",
-              "de": 10,
-              "para": 11
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Por 2 turnos, todo aliado atingido reflete 11 ao atacante."
+          "desc": "13 de dano a 1 inimigo; cura 10 no time."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[0].eff.v",
-              "de": 11,
-              "para": 12
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Por 2 turnos, todo aliado atingido reflete 12 ao atacante."
+          "desc": "14 de dano a 1 inimigo; cura 10 no time."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[0].eff.v",
-              "de": 12,
-              "para": 13
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Por 2 turnos, todo aliado atingido reflete 13 ao atacante."
+          "desc": "15 de dano a 1 inimigo; cura 10 no time."
         }
       ]
     },

@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "9fd0ac40",
+    "hash": "8d6a035b",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 20,
     "comDica": false,
     "nos": 254,
-    "ms": 346,
+    "ms": 296,
     "caminho": [
       "perseu Lâmina Curva → mnevis",
       "passar",

@@ -30,17 +30,14 @@ function jogar(montarFn) {
   const ops = []; let g = 0;
   while (!st.fim && g++ < 6000) {
     if (st.ativo === 0) {
-      for (const u of st.lados[0].units) {
-        if (st.fim) break;
-        if (!E.podeAgir(u)) continue;
-        const acoes = E.acoesDe(st, u).filter(a => a.disponivel);
-        if (!acoes.length) continue;
-        const a = acoes[0];
-        let alvos = [];
-        if (a.alvo === 'distribui') { const vs = E.alvosValidos(st, u, a, 0, []); if (vs.length) alvos = [vs[0].uid]; }
-        else { const passos = (a.passos || []).length; let bom = true; for (let p = 0; p < passos; p++) { const vs = E.alvosValidos(st, u, a, p, alvos); if (!vs.length) { bom = false; break; } alvos.push(vs[0].uid); } if (!bom) continue; }
-        const r = E.agir(st, u.uid, a.slot, alvos, null, null);
-        if (r && r.ok) ops.push({ tipo: 'agir', uid: u.uid, slot: a.slot, alvos, escolhas: null, modo: null });
+      // §324 P2: o lado do JOGADOR é dirigido pela IA real (iaProximaAcao), não por um guloso-só-Básico.
+      // A régua do gerador de Domínios é a IA gulosa COMPLETA — nenhum nível é garantidamente vencível só
+      // com o Básico. A IA real vence o que o gerador mede como vencível, e o replay gravado (só as ações do
+      // jogador) re-simula idêntico no servidor (pve.js roda o MESMO motor e a MESMA IA inimiga sobre os ops).
+      let p = 0, mv;
+      while (!st.fim && (mv = ia.iaProximaAcao(st, 'normal')) && p++ < 16) {
+        const r = E.agir(st, mv.uid, mv.slot, mv.alvos || [], mv.escolhas || null, mv.modo || null);
+        if (r && r.ok) ops.push({ tipo: 'agir', uid: mv.uid, slot: mv.slot, alvos: mv.alvos || [], escolhas: mv.escolhas || null, modo: mv.modo || null });
       }
       if (st.fim) break;
       ops.push({ tipo: 'fim' }); E.fimTurno(st);

@@ -99,12 +99,20 @@
       },
       "cd": 3,
       "alvo": "inimigo",
-      "desc": "Por 2 turnos Xangô armazena todo o dano que o time recebe; ao fim, devolve o total (máx. 50) a 1 inimigo como dano puro.",
+      "desc": "25 de dano a 1 inimigo; por 1 turno, Xangô reflete 8 do dano que sofrer.",
       "fx": [
         {
-          "t": "armazenaDano",
-          "dur": 2,
-          "max": 50
+          "t": "dmg",
+          "v": 25
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "refleteDano",
+            "v": 8,
+            "dur": 1
+          },
+          "escopo": "self"
         }
       ],
       "niveis": [
@@ -112,37 +120,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "dmg",
-                "v": 2
-              }
+              "caminho": "fx[0].v",
+              "de": 25,
+              "para": 26
             }
           ],
-          "desc": "2 de dano a 1 inimigo; por 2 turnos Xangô armazena todo o dano que o time recebe; ao fim, devolve o total (máx. 50) a 1 inimigo como dano puro."
+          "desc": "26 de dano a 1 inimigo; por 1 turno, Xangô reflete 8 do dano que sofrer."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 2,
-              "para": 3
+              "caminho": "fx[0].v",
+              "de": 26,
+              "para": 27
             }
           ],
-          "desc": "3 de dano a 1 inimigo; por 2 turnos Xangô armazena todo o dano que o time recebe; ao fim, devolve o total (máx. 50) a 1 inimigo como dano puro."
+          "desc": "27 de dano a 1 inimigo; por 1 turno, Xangô reflete 8 do dano que sofrer."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 3,
-              "para": 4
+              "caminho": "fx[0].v",
+              "de": 27,
+              "para": 28
             }
           ],
-          "desc": "4 de dano a 1 inimigo; por 2 turnos Xangô armazena todo o dano que o time recebe; ao fim, devolve o total (máx. 50) a 1 inimigo como dano puro."
+          "desc": "28 de dano a 1 inimigo; por 1 turno, Xangô reflete 8 do dano que sofrer."
         }
       ]
     },

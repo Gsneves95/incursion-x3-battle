@@ -168,15 +168,19 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[9].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4f MORDE: caminho em opção INEXISTENTE (de≠valor)');
 })();
 
-// BABÁ 4g — §318 F3 L10 EXTENSÃO (i) AMPLIADA: `agenda[j]` (payload telegrafado, Kukulkán) é ramo — o número dentro é
-// PEQUENO (`fx[i].agenda[j].v`); caminho em agenda inexistente → FORA; e DANO dentro de agenda bloqueia NOVO-PEQUENO
-// (Kukulkán habil tem dmg na agenda), mas agenda SEM dano não regride (Dionísio/Saci seguem elegíveis).
+// BABÁ 4g — §318 F3 L10 EXTENSÃO (i) AMPLIADA: `agenda[j]` (payload telegrafado) é ramo — o número dentro é
+// PEQUENO (`fx[i].agenda[j].v`); caminho em agenda inexistente → FORA; e DANO dentro de agenda bloqueia NOVO-PEQUENO,
+// mas agenda SEM dano não regride (Dionísio/Saci seguem elegíveis).
+// §324 P2: nenhum deus real tem mais DANO telegrafado na agenda (Kukulkán virou AoE imediato); usa fixture sintética.
 (() => {
   const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
-  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[0].v', de: 25, para: 26 }], desc: 'x' }])).length === 0, 'B4g passa: fx[i].agenda[j].v (dano telegrafado) é PEQUENO');
-  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[9].v', de: 25, para: 26 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4g MORDE: caminho em agenda inexistente (de≠valor)');
-  // NOVO-PEQUENO numa habilidade com DANO na agenda (Kukulkán) → bloqueado (não é "sem número")
-  ok(E.validarNiveisDeus(so(catalogo.kukulkan, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'shield', v: 2, escopo: 'self' } }], desc: 'x' }, { nv: 3, muda: [{ caminho: 'fx[1].agenda[0].v', de: 25, para: 26 }], desc: 'x' }])).some(e => /[UÚ]LTIMO degrau/.test(e)), 'B4g MORDE: fx[] com dano na AGENDA vira SALTO (fora do último degrau → quebra)');
+  // fixture: deus com habilidade que telegrafa DANO na agenda (fx[1].agenda[0] = dmg 25) — era a forma antiga do Kukulkán
+  const comAgendaDano = clone(catalogo.kukulkan);
+  comAgendaDano.ab.find(x => x.slot === 'habilidade').fx = [{ t: 'dmg', v: 14, escopo: 'todosInimigos' }, { t: 'agendar', alvo: 'nenhum', agenda: [{ t: 'dmg', v: 25, escopo: 'todosInimigos' }] }];
+  ok(E.validarNiveisDeus(so(comAgendaDano, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[0].v', de: 25, para: 26 }], desc: 'x' }])).length === 0, 'B4g passa: fx[i].agenda[j].v (dano telegrafado) é PEQUENO');
+  ok(E.validarNiveisDeus(so(comAgendaDano, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[1].agenda[9].v', de: 25, para: 26 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4g MORDE: caminho em agenda inexistente (de≠valor)');
+  // NOVO-PEQUENO numa habilidade com DANO na agenda → bloqueado (não é "sem número")
+  ok(E.validarNiveisDeus(so(comAgendaDano, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'shield', v: 2, escopo: 'self' } }], desc: 'x' }, { nv: 3, muda: [{ caminho: 'fx[1].agenda[0].v', de: 25, para: 26 }], desc: 'x' }])).some(e => /[UÚ]LTIMO degrau/.test(e)), 'B4g MORDE: fx[] com dano na AGENDA vira SALTO (fora do último degrau → quebra)');
   // agenda SEM dano (Dionísio Bacanal = dominar) não regride: NOVO-PEQUENO ainda ok
   ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'dmg', v: 5, escopo: 'todosInimigos' } }], desc: 'x' }])).length === 0, 'B4g passa: NOVO-PEQUENO ainda ok com agenda SEM dano (Dionísio)');
 })();

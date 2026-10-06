@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "b9374ca2",
+    "hash": "4bb8f0eb",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 38,
     "comDica": false,
     "nos": 211,
-    "ms": 350,
+    "ms": 466,
     "caminho": [
       "perseu Cabeça da Medusa → shutendoji",
       "oxum Espelho Dourado → shutendoji",

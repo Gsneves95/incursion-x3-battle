@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f570362a",
+    "hash": "e9f9bac7",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 28,
+    "lancesNesteCaminho": 24,
     "comDica": false,
-    "nos": 21258,
-    "ms": 8820,
+    "nos": 25342,
+    "ms": 9777,
     "caminho": [
       "perseu Lâmina Curva → loki",
       "passar",
@@ -54,16 +54,12 @@
       "perseu Lâmina Curva → aokuang",
       "passar",
       "fujin Vendaval",
-      "houyi Abater o Sol → yanwong",
+      "houyi Nove Flechas → yanwong",
       "perseu Lâmina Curva → yanwong",
-      "passar",
-      "perseu Cabeça da Medusa → yanwong",
-      "houyi Flecha Solar → yanwong",
       "passar",
       "fujin Rajada → yanwong",
-      "perseu Lâmina Curva → yanwong",
-      "passar",
-      "fujin Rajada → yanwong"
+      "houyi Flecha Solar → yanwong",
+      "perseu Lâmina Curva → yanwong"
     ]
   }
 }

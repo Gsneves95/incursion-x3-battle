@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "37876fee",
+    "hash": "8879e5bf",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 33,
+    "lancesNesteCaminho": 32,
     "comDica": false,
-    "nos": 15511,
-    "ms": 3313,
+    "nos": 104,
+    "ms": 190,
     "caminho": [
       "zeus Cetro do Trovão → shiva",
       "perseu Lâmina Curva → shiva",
@@ -55,20 +55,19 @@
       "perseu Lâmina Curva → lugh",
       "passar",
       "perseu Cabeça da Medusa → lugh",
-      "zeus Julgamento do Trovão → horus",
+      "zeus Julgamento do Trovão → lugh",
       "passar",
+      "afrodite Encanto → shiva+lugh",
       "perseu Lâmina Curva → horus",
-      "afrodite Sussurro Encantado → shiva",
       "passar",
       "perseu Foice Adamantina → horus",
       "passar",
-      "afrodite Encanto → lugh+horus",
+      "afrodite Sussurro Encantado → horus",
+      "perseu Lâmina Curva → horus",
       "passar",
-      "afrodite Sussurro Encantado → lugh",
+      "perseu Foice Adamantina → horus",
       "passar",
-      "afrodite Sussurro Encantado → lugh",
-      "passar",
-      "afrodite Sussurro Encantado → lugh"
+      "perseu Lâmina Curva → shiva"
     ]
   }
 }

@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "4eb6ace2",
+    "hash": "6d8c454b",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 28,
     "comDica": false,
-    "nos": 20778,
-    "ms": 6355,
+    "nos": 20733,
+    "ms": 7511,
     "caminho": [
       "zeus Cetro do Trovão → nezha",
       "passar",

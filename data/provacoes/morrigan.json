@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "dccff621",
+    "hash": "ff506a5a",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 22,
+    "lancesNesteCaminho": 21,
     "comDica": false,
-    "nos": 58202,
-    "ms": 17075,
+    "nos": 142,
+    "ms": 160,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "passar",
@@ -44,7 +44,7 @@
       "passar",
       "perseu Foice Adamantina → ares",
       "passar",
-      "perseu Lâmina Curva → kukulkan",
+      "perseu Lâmina Curva → ares",
       "passar",
       "perseu Foice Adamantina → ares",
       "passar",
@@ -53,10 +53,9 @@
       "kali Dança da Aniquilação",
       "perseu Foice Adamantina → houyi",
       "passar",
+      "kali Sede de Sangue → kukulkan",
       "morrigan As Três Irmãs",
-      "kali Sede de Sangue → houyi",
       "passar",
-      "perseu Lâmina Curva → kukulkan",
       "morrigan Presságio de Morte → kukulkan",
       "passar"
     ]

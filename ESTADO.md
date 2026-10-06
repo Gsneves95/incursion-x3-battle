@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §324 Parte 2 · consertados os 8 casos claros + diagnóstico do Suporte (por partes)
+
+`docs/kits-revisao-324-p2.md`. **8 deuses destravados** com o menor ajuste derivado do kit (seis eram habilidade
+morta → ganharam um valor que o Básico não tem; Fujin ganhou passiva autônoma; Afrodite deixou de ser
+anti-sinergia). Força antes→depois (todos na faixa 35–65, Fujin/Afrodite 40–60): Fujin 27,6→42,1 · Afrodite
+24,5→49,5 · Xangô 49,8→45,0 · Cernunnos 45,6→44,2 · Curupira 61,2→56,9 · Kukulkán 60,3→58,4 · Hades 54,7→57,1 ·
+Shuten 46,1→43,9. Uso da habilidade 0→0,58–1,09/partida (slots deixaram de estar mortos).
+- **Arrastou:** kits sincronizados (cadeia verde); Ritos Fenrir/Yan Wong (Kukulkán inimigo) e Semanal #13
+  (Afrodite inimiga) consertados pela **alavanca de HP** (NÃO pelo kit, régua §323) e re-carimbados; escadas das
+  habilidades passam a triagem §318. **Domínios NÃO regenerados** (equilíbrio de PvE adiado; §323 C). **Arnês de
+  replay de PvE** (economia/desafio-net) migrado de guloso-só-Básico → IA real (`iaProximaAcao`): o só-Básico era
+  piso frágil (nenhum nível é garantido vencível só com Básico; o Fujin inimigo reforçado derrubou o n1 da Grega).
+- **B (diagnóstico, nada mudou):** o domínio do **Suporte é problema de KIT, não de IA** — Suporte 60,2% (v1) /
+  61,1% (v2), top-10 idêntico nas duas IAs (Brigid #1, Oxum #2–3). Oxum/Brigid empilham sustain + dano de time +
+  economia sem custo de oportunidade. Para a parte "equilíbrio entre funções" (adiada).
+- Suíte + build **verdes**.
+
 ## ★ §324 Parte 1 · revisão de kits sob a IA v2 (medir + propor; NADA mudou no kit)
 
 `docs/kits-revisao-324-p1.md` (+ ranking completo `docs/kits-forca-v2.txt`; ferramenta `tools/medir_kits.js`).
@@ -1601,9 +1618,9 @@ Sete acertos de desenho (medidos no dist, fontes reais, rede bloqueada, 780; ANT
 
 **§271 — a auditoria (§270) do Exu virou conserto.** Havia 3–4 catálogos de metadado: `data/deuses` (o MOTOR lê), `kits.json` (prosa de desenho, o que a Coleção mostrava), `roster_data.js`/ROSTER (chips da ficha) e a intenção. Divergiam. **(1) 5 metadados reconciliados:** afrodite/apolo Olímpica→Grega, exu Brasileira→Africana, kraken Grega→Nórdica (kits.json), hermes Suporte→Manipulador (li o kit). Único de combate: hermes (Aquiles sofre +10 de Manipulador), mas Hermes×Aquiles nunca se opõem → 0 veredito. 10 facções, soma 100. Re-carimbo §263: 13 Provações, 0 veredito move. **(2) Guarda de sincronia MAIOR** (`checar_cadeia`, falha-alto): antes só dano/cura (2 de 6 eixos); agora + metadados (faccao/elem/classe/funcao) + `orbe`/`escudo`/`combo` estritos + `duração` com a convenção do agendado codificada (medido: 1 convenção, 54 ambiguidade de texto, 0 defeito). **DE FORA, declarado:** o eixo `buff` (magnitude em ≥5 tipos de efeito, texto não distingue buff/debuff/redução) e os 5,4% não-conferível (multi/condicional/dinâmico) — reportados, nunca falha-alto; o risco é achar que o guarda cobre tudo. **(3) Coleção lê `.desc`+metadados de `data/deuses`** — as 9 omissões substantivas (odin +6, susanoo Combo, boto Noite) somem; fonte única. kits.json deixa de ser fonte de TEXTO DE TELA mas segue o LADO ESQUERDO da cadeia (a intenção que a build confere). Varredura pós-fix: 0 nota de dev nos 100 `.desc`. **(4) Fujin implementado:** engine `geraContadorPorGolpe` gateado por `estado` (mesmo `estadoOK`, Raijin intacto, no VOCAB); Fujin gera Combo só com Raijin (inerte no conteúdo atual — nunca ficam juntos — 0 veredito); P do §266 acende só com Raijin. **Babás:** `cadeia.test.js` (eixo a eixo) + `capacidades.test.js` §271. **Arquivos:** `data/deuses/{afrodite,apolo,exu,hermes,fujin}.json`, `data/kits.json`, `data/provacoes/*` (14 re-carimbos), `src/engine.js`, `tools/checar_cadeia.js`, `tests/{cadeia,capacidades}.test.js`, `src/ui/home.js`, `DECISOES.md`, `CLAUDE.md`.
 
-**SLOTS MORTOS (revisão de kit, Fase 4 — precisa de medição própria, NÃO entra em conserto avulso):**
-1. **Fujin — `fx:null` era o pior dos cinco** (§271): passiva de deus INICIAL dependendo de deus NÃO-INICIAL (Raijin). **Texto e mecânica RESOLVIDOS** (o `fx:null` virou `geraContadorPorGolpe` condicional), **mas o DESENHO segue PENDENTE**: continua morto para quem acaba de instalar (Raijin não é inicial). Revisão de kit da Fase 4.
-2. Balança do Xangô · 3. reflexo do Cernunnos · 4. grind do Hércules · 5. roubo do Shutendoji — os 4 suspeitos do §189 (fracos, não inexistentes); telemetria de gente real é a 2ª evidência antes de rebalancear.
+**SLOTS MORTOS — ★ MAIORIA RESOLVIDA no §324 P2** (medidos sob a IA v2; destravados com o menor ajuste derivado do kit; ver `docs/kits-revisao-324-p2.md`). Restam para a parte "equilíbrio entre funções" (adiada): Tyr, Saci, e o domínio do Suporte (problema de KIT, confirmado nas duas IAs).
+1. ~~**Fujin**~~ **RESOLVIDO (§324 P2):** passiva autônoma (+6 dano sempre, +2 com Raijin) — não depende mais do Raijin não-inicial; + habilidade com dano em área. Força 27,6→42,1%, uso hab 0→0,98/partida.
+2. ~~Balança do Xangô~~ **RESOLVIDO** (nuke+reflexo, uso 0→0,75) · 3. ~~reflexo do Cernunnos~~ **RESOLVIDO** (dano+cura de time, 0→0,86) · 4. grind do Hércules — **NÃO era morto** (§324 P1: é o slot FORTE, Δ37) · 5. ~~roubo do Shutendoji~~ **RESOLVIDO** (dano+Torpor, 0,10→0,58). (+ no §324 P2: Curupira, Kukulkán, Hades, passiva da Afrodite.)
 6. **★ ASSIMETRIA DA RODA DE ELEMENTOS (achado do §293 — maior que o mapa de sinergia).** O jogo tem **6 elementos**, e **só 2 estão ligados por mecânica**: a FASE (Amaterasu/Tsukuyomi) toca **Aurora/Umbra**, a aura do Rá toca **Aurora**. **Verdejante, Chama, Maré e Tempestade não têm setter nem aura de elemento → não têm sinergia de elemento POR CONSTRUÇÃO.** Prova medida: dos 100 deuses, os **36 sem parceiro par-a-par são EXATAMENTE os 4 elementos neutros** (Verdejante 12, Chama 10, Maré 8, Tempestade 6); zero Aurora/Umbra entre eles. Metade da roda ligada, metade solta — **ninguém decidiu isso; emergiu de 100 kits escritos um a um.** **A PERGUNTA que abre (decisão do dono, com medição, na Fase 4 — NÃO consertar agora):** os 4 elementos neutros DEVEM ganhar sinergia própria (um setter/aura por elemento), ou a assimetria é DESENHO — Aurora/Umbra como o eixo especial do jogo (dia/noite) e os outros 4 como elementos "de corpo", fortes sozinhos? É item de revisão de kit, não de mapa.
 
 ## ★ CORREÇÕES DOS ATOS DE ESCOLHA §269: o prêmio vazio do Nezha e a opção sem rosto.

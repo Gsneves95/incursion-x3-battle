@@ -97,26 +97,20 @@
       },
       "cd": 3,
       "alvo": "nenhum",
-      "desc": "Kukulkán fica Inalvejável por 1 turno; no turno seguinte causa 25 de dano a todos os inimigos.",
+      "desc": "Kukulkán causa 14 de dano a todos os inimigos e fica Inalvejável por 1 turno.",
       "fx": [
+        {
+          "t": "dmg",
+          "v": 14,
+          "escopo": "todosInimigos"
+        },
         {
           "t": "apply",
           "eff": {
             "type": "inalvejavel",
-            "dur": 2
+            "dur": 1
           },
           "escopo": "self"
-        },
-        {
-          "t": "agendar",
-          "alvo": "todosInimigos",
-          "agenda": [
-            {
-              "t": "dmg",
-              "v": 25,
-              "escopo": "todosInimigos"
-            }
-          ]
         }
       ],
       "niveis": [
@@ -124,34 +118,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[1].agenda[0].v",
-              "de": 25,
-              "para": 26
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Kukulkán fica Inalvejável por 1 turno; no turno seguinte causa 26 de dano a todos os inimigos."
+          "desc": "Kukulkán causa 15 de dano a todos os inimigos e fica Inalvejável por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[1].agenda[0].v",
-              "de": 26,
-              "para": 27
+              "caminho": "fx[0].v",
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Kukulkán fica Inalvejável por 1 turno; no turno seguinte causa 27 de dano a todos os inimigos."
+          "desc": "Kukulkán causa 16 de dano a todos os inimigos e fica Inalvejável por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[1].agenda[0].v",
-              "de": 27,
-              "para": 28
+              "caminho": "fx[0].v",
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Kukulkán fica Inalvejável por 1 turno; no turno seguinte causa 28 de dano a todos os inimigos."
+          "desc": "Kukulkán causa 17 de dano a todos os inimigos e fica Inalvejável por 1 turno."
         }
       ]
     },

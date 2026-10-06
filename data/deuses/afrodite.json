@@ -8,14 +8,12 @@
   "arquetipo": "Charmer",
   "passiva": {
     "nome": "Beleza Irresistível",
-    "desc": "Ataques de alvo único contra Afrodite causam 5 menos de dano.",
+    "desc": "O time de Afrodite sofre 4 menos de dano.",
     "fx": [
       {
         "gatilho": "reducao",
-        "v": 5,
-        "contra": {
-          "alcance": "unico"
-        }
+        "v": 4,
+        "escopo": "time"
       }
     ]
   },

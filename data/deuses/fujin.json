@@ -8,14 +8,16 @@
   "arquetipo": "Negação de iniciativa",
   "inicial": true,
   "passiva": {
-    "nome": "Companheiro de Raijin",
-    "desc": "Com Raijin no time, ambos geram 1 de Combo a cada alvo atingido.",
+    "nome": "Fúria dos Ventos",
+    "desc": "Fujin causa +6 de dano; +2 a mais com Raijin no time.",
     "fx": [
       {
-        "gatilho": "geraContadorPorGolpe",
-        "contador": "combo",
-        "v": 1,
-        "max": 20,
+        "gatilho": "bonusDano",
+        "v": 6
+      },
+      {
+        "gatilho": "bonusDano",
+        "v": 2,
         "estado": {
           "aliadoPresente": "raijin"
         }
@@ -80,9 +82,14 @@
         "Tempestade": 2
       },
       "cd": 2,
-      "alvo": "nenhum",
-      "desc": "Aumenta em 1 turno todas as recargas do time inimigo.",
+      "alvo": "todosInimigos",
+      "desc": "12 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo.",
       "fx": [
+        {
+          "t": "dmg",
+          "v": 12,
+          "escopo": "todosInimigos"
+        },
         {
           "t": "cdShift",
           "v": 1,
@@ -94,38 +101,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "dmg",
-                "v": 2,
-                "escopo": "todosInimigos"
-              }
+              "caminho": "fx[0].v",
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "2 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
+          "desc": "13 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 2,
-              "para": 3
+              "caminho": "fx[0].v",
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "3 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
+          "desc": "14 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[1].v",
-              "de": 3,
-              "para": 4
+              "caminho": "fx[0].v",
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "4 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
+          "desc": "15 de dano a todos os inimigos; aumenta em 1 turno todas as recargas do time inimigo."
         }
       ]
     },

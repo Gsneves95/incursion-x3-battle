@@ -15,7 +15,15 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 100,
+        "hp": 100
+      }
+    ]
   },
   "condicoes": [
     {
@@ -29,35 +37,34 @@
     }
   ],
   "verificacao": {
-    "hash": "fabd0e2e",
+    "hash": "fd1873b5",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 21,
+    "lancesNesteCaminho": 20,
     "comDica": false,
-    "nos": 1913,
-    "ms": 722,
+    "nos": 8680,
+    "ms": 3627,
     "caminho": [
       "perseu Lâmina Curva → change",
       "passar",
-      "perseu Cabeça da Medusa → change",
+      "perseu Cabeça da Medusa → kukulkan",
       "fenrir Mordida → change",
       "passar",
-      "perseu Foice Adamantina → houyi",
+      "perseu Foice Adamantina → change",
       "passar",
       "perseu Lâmina Curva → change",
       "passar",
       "fenrir Fauces do Fim → change",
       "passar",
-      "passar",
       "kali Dança da Aniquilação",
+      "passar",
+      "kali Golpe da Foice → kukulkan",
+      "passar",
+      "kali Golpe da Foice → kukulkan",
       "passar",
       "kali Golpe da Foice → houyi",
       "passar",
-      "kali Golpe da Foice → kukulkan",
-      "passar",
-      "kali Golpe da Foice → kukulkan",
-      "passar",
-      "kali Golpe da Foice → kukulkan"
+      "kali Golpe da Foice → houyi"
     ]
   }
 }

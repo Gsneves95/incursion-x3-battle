@@ -138,9 +138,9 @@ console.log('== §267 redução com `contra`: acende SÓ quando o golpe mirado c
   ok(!reduzOn(sobek,null),'sobek (contra=básico): PARADO em repouso — não engana sem golpe mirado');
   ok(reduzOn(sobek,{slot:'basico',classe:'Físico',elem:'Tempestade',unico:true}),'sobek ACENDE com golpe BÁSICO mirado (casa o contra)');
   ok(!reduzOn(sobek,{slot:'habilidade',classe:'Mágico',elem:'Tempestade',unico:true}),'sobek NÃO acende com HABILIDADE mirada (não casa — o indicador não engana)');
-  // afrodite: contra={alcance:'unico'}
-  ok(reduzOn(afro,{slot:'basico',classe:'Físico',elem:'x',unico:true}),'afrodite (contra=único) ACENDE com golpe ÚNICO');
-  ok(!reduzOn(afro,{slot:'habilidade',classe:'Mágico',elem:'x',unico:false}),'afrodite NÃO acende com golpe de ÁREA');
+  // afrodite (§324): passiva passou a ser redução de TIME (sem `contra`, escopo time) — PERMANENTE, acende em
+  // repouso como poseidon (a versão antiga, self + contra:único, tinha anti-sinergia medida no §324 P1).
+  ok(reduzOn(afro,null),'afrodite (§324, redução de time sem contra): PERMANENTE, acende em repouso');
   // poseidon: SEM contra — redução permanente, de pé mesmo em repouso
   ok(reduzOn(pos,null),'poseidon (sem contra): redução PERMANENTE acende em repouso (de pé, como a aura incondicional)');
   console.log('  contra-redução gateada pelo golpe · redução permanente de pé');
@@ -156,8 +156,8 @@ console.log('== §271 geraContadorPorGolpe gateado por `estado`: Raijin intacto,
     return E.getContadorLado(st,0,'combo');
   };
   ok(comboApos(['raijin','zeus','ogum'],'raijin')===1,'Raijin sem estado gera Combo por golpe (incondicional, intacto)');   // BABÁ
-  ok(comboApos(['fujin','zeus','ogum'],'fujin')===0,'Fujin sem Raijin no time NÃO gera Combo (estado não casa)');   // BABÁ
-  ok(comboApos(['fujin','raijin','zeus'],'fujin')===1,'Fujin com Raijin no time gera Combo (estado casa)');   // BABÁ
+  // §324: a passiva do Fujin MIGROU de geraContadorPorGolpe (presa ao Raijin, morta no deus inicial) para
+  // bonusDano próprio (+6; +2 com Raijin) — o gate por `estado` segue coberto pelo deus sintético abaixo.
   // gate genérico: é vocabulário, não código de deus
   E.GODS.tgc={key:'tgc',nome:'TGC',faccao:'T',elem:'Chama',classe:'Físico',funcao:'Atacante',
     passiva:{nome:'p',desc:'d',fx:[{gatilho:'geraContadorPorGolpe',contador:'combo',v:1,max:20,estado:{aliadoPresente:'zeus'}}]},
@@ -165,11 +165,11 @@ console.log('== §271 geraContadorPorGolpe gateado por `estado`: Raijin intacto,
   ok(comboApos(['tgc','zeus','ogum'],'tgc')===1,'gate genérico: com o aliado exigido, gera');   // BABÁ
   ok(comboApos(['tgc','tyr','ogum'],'tgc')===0,'gate genérico: sem o aliado exigido, NÃO gera');   // BABÁ
   delete E.GODS.tgc;
-  // §266: a passiva do Fujin é LEGÍVEL — o P acende só com Raijin em campo
-  const pOn=time=>{const st=E.novoEstado(time,['tyr','sobek','cuca'],5,0); const fj=st.lados[0].units.find(x=>x.key==='fujin'); return E.infoPassiva(st,fj).propria.some(x=>x.gat==='geraContadorPorGolpe');};
-  ok(pOn(['fujin','raijin','zeus']),'Fujin: P acende com Raijin no time (legível, não só funcional)');   // BABÁ
-  ok(!pOn(['fujin','zeus','ogum']),'Fujin: P NÃO acende sem Raijin (o indicador não engana)');   // BABÁ
-  console.log('  Raijin intacto · Fujin gera/legível só com Raijin · gate é vocabulário (data, não motor)');
+  // §324: a passiva nova do Fujin (bonusDano próprio) é LEGÍVEL e funciona SEM Raijin (deus inicial não depende
+  // mais de um não-inicial); o bônus +2 com Raijin ainda usa o gate `estado` (coberto pelo sintético acima).
+  const pFujin=time=>{const st=E.novoEstado(time,['tyr','sobek','cuca'],5,0); const fj=st.lados[0].units.find(x=>x.key==='fujin'); return E.infoPassiva(st,fj).propria.some(x=>x.gat==='bonusDano');};
+  ok(pFujin(['fujin','zeus','ogum']),'Fujin (§324): P acende SOZINHO (bonusDano próprio, sem depender do Raijin)');   // BABÁ
+  console.log('  Raijin intacto · Fujin migrou p/ bonusDano próprio (vale sozinho) · gate `estado` coberto pelo sintético');
 }
 
 console.log('');
