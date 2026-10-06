@@ -2,7 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §322 Parte 3 · versão da IA POR MODO (ponte de segurança)
+## ★ §323 Fase 5 Parte 1 · mapa + proposta da recalibragem do PvE p/ a v2 (SÓ relatório)
+
+`docs/pve-v2-fase5-mapa.md`. (1) Níveis do jogador **não valem em nenhum modo de PvE** (montam no catálogo base;
+só PvP passa `niveis`) — provado; p/ valerem: lançadores passam `niveis=[conta,{}]`, envelope do replay carrega o
+snapshot, servidor re-monta por ele (sem `niveis` → base). (2) A v2 fecha conteúdo usando controle/debuff/buff/
+sustain que a v1 ignorava, derrubando as condições de prazo (ex. hanuman: durga lockSkill/atordoado + fenrir
+noHeal; guanyu: mimir dmgUp/cdShift + inari heal); 2 INVENCÍVEIS fechados, 27+3 indeterminados separados em
+fundo×cinza. (3) Regra de ajuste: alavancas no DADO (HP↓ → prazo↑ → vazão de recurso↓ → trocar inimigo → nº
+inimigos → dica por último), orçamento 200k, alvo comprimento v2 ∈ [0,8×,1,5×] do v1; NUNCA kit. (4) Composição:
+times de referência. Ferramentas novas: `tools/medir_dominio_dif.js`, `tools/verificar_pve_v2.js` (já existia).
+Parte 2 (aplicar) não feita. Nada mudou no conteúdo.
+
+## §322 Parte 3 · versão da IA POR MODO (ponte de segurança)
 
 A v2 só vale num modo se TODO o conteúdo dele vencer sob a v2 (senão v1). **Fonte única** `data/ia_por_modo.json`
 (cliente+servidor). Tabela: **campanha/dominio/sandbox = v2**; **rito/desafioDeus/semanal/composicao = v1**.

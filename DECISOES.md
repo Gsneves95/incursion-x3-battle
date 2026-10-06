@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 1 · mapear e propor a recalibragem do PvE para a v2 (nada muda no conteúdo)
+
+Relatório (`docs/pve-v2-fase5-mapa.md`), sem tocar conteúdo/kit.
+
+**1. Níveis do jogador no PvE:** provado que **não valem em NENHUM modo** (campanha/Ritos/Desafios por deus/
+Semanais/composição/Domínios/sandbox) — `montarProvacao`/`domMontarBatalha`/sandbox montam no catálogo BASE
+(não passam `niveis` ao `novoEstado`); só o PvP passa (`server/partida.js`). Prova empírica: `niveisEmBatalha` do
+jogador = nv1 no PvE, nv4 só com `niveis`. Para valerem em todos (decisão do dono), sem quebrar replay: cada
+lançador passa `niveis=[conta,{}]`; o ENVELOPE do replay passa a carregar o snapshot de `niveis` (hoje não
+carrega); o servidor re-monta por ele; sem `niveis` → base (back-compat). É ortogonal à versão da IA (§322 P3).
+
+**2. O que fecha cada conteúdo sob a v2:** a v1 ignorava a utilidade do inimigo; a v2 usa controle/debuff/buff/
+sustain/foco, que derrubam as CONDIÇÕES de prazo/sobrevivência. Ex.: hanuman (durga lockSkill/atordoado + fenrir
+noHeal quebram "proteger sunwukong 10t"); guanyu (mimir dmgUp/cdShift + inari heal impedem o burst a tempo). Os 2
+INVENCÍVEIS (hanuman, guanyu) = fechados (exaustão); os INDETERMINADOS separados em "só fundos" (vencem com mais
+busca, p.ex. curupira a 900k) × zona cinza (tabela no doc).
+
+**3. Regra de ajuste proposta (o Rito se ajusta ao deus, NUNCA o kit):** alavancas no DADO, da mais leve à mais
+pesada — (1) HP dos inimigos↓, (2) prazo da condição↑, (3) vazão de recurso do inimigo↓ (semRenda/rendaFracao —
+ataca a frequência da utilidade da v2), (4) trocar 1 inimigo, (5) nº de inimigos 3→2, (6) **dica (último** — lição
+"derivado-sem-dica vence ambicioso-com-dica"). Orçamento fixo 200k nós. Alvo de dificuldade: comprimento da vitória
+mais curta sob a v2 ∈ [0,8×, 1,5×] do comprimento sob a v1 (nem trivial, nem mais punitivo). Novo carimbo v2 ao
+lado do v1.
+
+**4. Composição (time livre):** verificar por **times de referência** (1–3 trios válidos no dado); desafio
+vencível se ≥1 vence sob a v2 (200k); modo vai a v2 quando todos os desafios têm um time de referência vencedor.
+
+PARE no fim (Parte 1). A aplicação (ligar níveis + ajustar os 32 + composição) é a Parte 2.
+
+---
+
 ## §322 Parte 3 · ponte de segurança — versão da IA POR MODO (gated por winnability)
 
 A v2 (P2) entrou global, mas quebrou conteúdo: `hanuman` ficou INVENCÍVEL e ~26 Ritos muito mais difíceis.
