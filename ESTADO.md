@@ -2,6 +2,13 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §323 Fase 5 Parte 2 ETAPA C · Ritos/Semanais FICAM na v1 (decisão do dono)
+
+Diante do achado da ETAPA B (26 de 30 fechados mesmo a 900k → nerfar ~28 puzzles autorais), o dono decidiu **não
+nerfar**: Ritos, Desafios por deus e Semanais **ficam na v1** (já estão). Nenhuma alavanca aplicada — ETAPA C de
+ajuste cancelada. A v2 segue só onde já é vencível (campanha/Domínios/sandbox). Restam ETAPA D (composição) e E
+(virar só os modos aptos — na prática, talvez só composição, se a verificação por times de referência passar).
+
 ## ★ §323 Fase 5 Parte 2 ETAPA B · só-fundos × fechados (re-medida a 900k)
 
 `docs/pve-v2-fase5-etapaB.md` + `tools/remedir_fundo.js`. Re-rodei os 30 indeterminados a 900k (4,5× a régua).

@@ -6,6 +6,20 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 2 ETAPA C · Ritos/Semanais FICAM na v1 (decisão do dono)
+
+A ETAPA B provou que a v2 fecha quase TODO o catálogo de puzzles de time-fixo: dos 30 indeterminados, só 4 eram
+"só fundo"; os outros 26 (+ 2 INVENCÍVEIS) seguem fechados mesmo a 900k. Levá-los à v2 exigiria nerfar ~28 puzzles
+feitos à mão (HP/prazo/renda dos inimigos).
+
+**Decisão do dono:** NÃO nerfar. Os modos de time-fixo — **Ritos, Desafios por deus, Semanais — ficam na v1**
+(como já estão em `data/ia_por_modo.json`). A v2 segue só onde é vencível sem mexer em conteúdo autoral: campanha
+(já v2), Domínios e sandbox (já v2, sem solução fixa). Não há aplicação de alavancas (ETAPA C de ajuste cancelada).
+
+**Por quê:** esses Ritos/Semanais foram balanceados para a v1 (gulosa); a v2 é um oponente qualitativamente mais
+forte, e homogeneizar 26 puzzles com nerf descaracterizaria o catálogo. A regra do §322 (um modo só usa v2 se TODO
+o conteúdo é vencível) já os mantém na v1 com segurança — nada a mudar nesses três modos.
+
 ## §323 Fase 5 Parte 2 ETAPA B · só-fundos × fechados (diagnóstico a 900k)
 
 Re-medida a 900k (`tools/remedir_fundo.js`, relatório `docs/pve-v2-fase5-etapaB.md`) dos 30 indeterminados do
