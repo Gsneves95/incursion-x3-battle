@@ -6,6 +6,15 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 2 ETAPA D · composição por times de referência
+
+Composição é time LIVRE → "vencível" = existe um time válido que vence. `tools/ref_composicao.js` gera por REGRA
+(menor raridade somada, determinístico; p/ `livre` também os atacantes mais baratos) até 3 times de referência por
+desafio e os resolve sob v2 a 200k. **5 de 6 vencem**; só `cx_semmilagre` (vencer sem milagre) não — nem com times
+de atacantes. **Decisão:** composição **fica na v1** (regra do §322 + não nerfar). Recusado nerfar o inimigo de
+`cx_semmilagre` só para virar um modo (coerente com a ETAPA C). Guarda rápida `tests/composicao_ref.test.js` prova
+a regra + determinismo (sem solucionador, que é lento). Relatório em `docs/pve-v2-fase5-etapaD.md`.
+
 ## §323 Fase 5 Parte 2 ETAPA C · Ritos/Semanais FICAM na v1 (decisão do dono)
 
 A ETAPA B provou que a v2 fecha quase TODO o catálogo de puzzles de time-fixo: dos 30 indeterminados, só 4 eram

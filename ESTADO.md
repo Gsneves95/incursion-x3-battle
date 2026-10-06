@@ -2,6 +2,15 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §323 Fase 5 Parte 2 ETAPA D · composição por times de referência
+
+`tools/ref_composicao.js` gera, por regra (menor raridade somada, determinístico; p/ `livre` também os atacantes
+mais baratos), até 3 times de referência por desafio e verifica sob v2 a 200k. Resultado: **5 de 6 vencíveis**
+(cx_elemento, cx_funcao, cx_trio, cx_panteao, cx_linha). **cx_semmilagre** (vencer sem milagre) NÃO vence nem com
+atacantes fortes → **composição fica na v1** (regra do §322 + decisão de não nerfar). Guarda rápida:
+`tests/composicao_ref.test.js` (regra cumprida + determinismo, sem solucionador). Relatório
+`docs/pve-v2-fase5-etapaD.md`. Nenhum dado de jogo tocado.
+
 ## ★ §323 Fase 5 Parte 2 ETAPA C · Ritos/Semanais FICAM na v1 (decisão do dono)
 
 Diante do achado da ETAPA B (26 de 30 fechados mesmo a 900k → nerfar ~28 puzzles autorais), o dono decidiu **não
