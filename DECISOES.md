@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 2 ETAPA A · níveis do jogador em TODO o PvE
+
+**Decisão:** os níveis de habilidade do jogador, que só valiam no PvP, passam a valer em TODO o PvE (decisão do dono).
+
+**Como, sem quebrar replay já gravado:**
+- O lado 0 monta com os níveis da conta (`montarPvEComNiveis` no cliente; `_validarNiveis`+`prov.niveis` no servidor).
+- O **envelope do replay carrega um SNAPSHOT** dos níveis usados (`replay.niveis`); o servidor re-monta com ELE, não
+  com a conta atual — senão um replay gravado antes de subir de nível divergiria do kit atual e o crédito seria negado.
+- **Segurança (os níveis só sobem):** o servidor confere cada nível do snapshot ≤ o nível atual da conta; acima = forjado
+  → `niveis_invalidos`. Deus não possuído no snapshot → recusa. Snapshot ABAIXO da conta é aceito (replay antigo).
+- **Envelope sem `niveis` → base** (replays pré-mudança e fila offline seguem creditando — back-compat, zero quebra).
+
+**Recusado:** re-montar no servidor com a conta ATUAL (sem snapshot) — quebraria o crédito de replays/fila gravados
+antes de um nível subir, porque o kit mudaria. O snapshot congela a montagem da partida; a conta só serve de TETO.
+
+**Verificação de vencibilidade continua no nível 1** (pior caso): os níveis só ajudam o jogador, então um conteúdo
+vencível a nv1 segue vencível com níveis — a régua de ajuste (ETAPA C) mede o caso difícil.
+
+Guardas que mordem: `tests/niveis_pve.test.js` + seção §F de `tests/niveis_batalha.test.js`.
+
 ## §323 Fase 5 Parte 1 · mapear e propor a recalibragem do PvE para a v2 (nada muda no conteúdo)
 
 Relatório (`docs/pve-v2-fase5-mapa.md`), sem tocar conteúdo/kit.

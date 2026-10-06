@@ -126,7 +126,9 @@ function domMontarBatalha(run, ladder, opc = {}) {
   if (!def) return null;
   const seed = (opc.seed != null) ? opc.seed : ((run.nivel * 7919) >>> 0) || 1;
   const cat = domCatalogoNivel(gods, trio, run.bonus, def.inimigos, def.danoMult || 1);
-  const st = novoEstado(trio, def.inimigos, seed, 0, null, cat);   // comeca=0: o jogador abre
+  // §323 P2: níveis do jogador (lado 0). opc.niveis = [ mapaLado0, {} ] | null. Aplica sobre o catálogo JÁ
+  // escalado da corrida (só o trio ganha os deltas; os inimigos seguem a escala do Domínio). null → base.
+  const st = novoEstado(trio, def.inimigos, seed, 0, null, cat, opc.niveis || null);   // comeca=0: o jogador abre
   st.lados[0].units.forEach((u, i) => {
     const c = run.vida[i];
     if (c && c.vivo) { u.hp = Math.min(u.maxHp, c.hp); }

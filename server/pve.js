@@ -57,6 +57,42 @@ function _timeValido(conta, time) {
   return time.every(k => typeof k === 'string' && _possui(conta, k));
 }
 
+// §323 P2 — NÍVEIS no PvE. O servidor re-monta o kit do jogador com o SNAPSHOT do envelope, mas CONFERE
+// cada nível contra a conta: os níveis só SOBEM, então um snapshot ACIMA da conta é forjado. Formato do
+// snapshot: { deusKey: {basico,habilidade,milagre} } (cada 1–4). Regras:
+//   • sem snapshot (undefined/null) → base (replays antigos e fila offline seguem creditando);
+//   • deus do snapshot não POSSUÍDO → recusa;
+//   • qualquer nível fora de 1–4, ou ACIMA do nível atual da conta → recusa ("niveis_invalidos").
+// Devolve { niveis } (mapa validado, ou null = base) OU { erro: 'niveis_invalidos' }.
+const _NIVEL_SLOTS = ['basico', 'habilidade', 'milagre'];
+function _nivelConta(conta, key) {   // níveis EFETIVOS da conta (default 1; clamp 1–4) — espelha contas._niveisDeDeus
+  const raw = (conta && conta.niveis && conta.niveis[key]) || {};
+  const out = {};
+  for (const s of _NIVEL_SLOTS) { const n = raw[s]; out[s] = (typeof n === 'number' && n >= 1 && n <= 4) ? (n | 0) : 1; }
+  return out;
+}
+function _validarNiveis(conta, snap) {
+  if (snap == null) return { niveis: null };
+  if (typeof snap !== 'object' || Array.isArray(snap)) return { erro: 'niveis_invalidos' };
+  const out = {}; let tem = false;
+  for (const k in snap) {
+    if (!_possui(conta, k)) return { erro: 'niveis_invalidos' };          // deus não possuído no snapshot
+    const atual = _nivelConta(conta, k);
+    const e = snap[k];
+    if (!e || typeof e !== 'object') return { erro: 'niveis_invalidos' };
+    const v = {};
+    for (const s of _NIVEL_SLOTS) {
+      const n = e[s];
+      if (n === undefined || n === 1) { v[s] = 1; continue; }
+      if (!Number.isInteger(n) || n < 1 || n > 4) return { erro: 'niveis_invalidos' };
+      if (n > atual[s]) return { erro: 'niveis_invalidos' };              // snapshot ACIMA da conta = forjado
+      v[s] = n; tem = true;
+    }
+    out[k] = v;
+  }
+  return { niveis: tem ? out : null };
+}
+
 // ============================================================
 // RE-SIMULAÇÃO (aprovação B): o servidor consome as ações do JOGADOR nos turnos dele e RODA a IA nos
 // turnos dela. Determinístico: mesma montagem + mesmas ações do jogador → mesmo resultado que o cliente viu.
@@ -126,7 +162,8 @@ function _montarCampanha(conta, r) {
     for (const k of aliados) if (!_possui(conta, k)) return { erro: 'aliado_nao_possuido: ' + k };
     if (new Set(aliados).size !== aliados.length) return { erro: 'time_repetido' };
   }
-  const prov = { aliados, inimigos: ato.inimigos, montar: ato.montar || {} };
+  const vn = _validarNiveis(conta, r.niveis); if (vn.erro) return { erro: vn.erro };   // §323 P2
+  const prov = { aliados, inimigos: ato.inimigos, montar: ato.montar || {}, niveis: vn.niveis ? [vn.niveis, {}] : null };
   return { montar: () => PROV.montarProvacao(prov), chave: r.atoId, recompensaKey: ato.recompensa };
 }
 
@@ -136,7 +173,8 @@ function _montarSemanal(conta, r, agora) {
   const wk = _semanaISO(agora), ano = _anoISO(agora);
   const idx = (((wk + ano * 7) % pool.length) + pool.length) % pool.length;
   const raw = pool[idx];
-  const prov = { aliados: raw.aliados, inimigos: raw.inimigos, montar: raw.montar || {} };
+  const vn = _validarNiveis(conta, r.niveis); if (vn.erro) return { erro: vn.erro };   // §323 P2
+  const prov = { aliados: raw.aliados, inimigos: raw.inimigos, montar: raw.montar || {}, niveis: vn.niveis ? [vn.niveis, {}] : null };
   return { montar: () => PROV.montarProvacao(prov), chave: ano + 'W' + wk };
 }
 
@@ -144,7 +182,8 @@ function _montarDesafio(conta, r) {
   const dsf = DADOS.desafioComp(r.desafioId);
   if (!dsf) return { erro: 'desafio_desconhecido' };
   if (!_timeValido(conta, r.aliados)) return { erro: 'time_invalido' };   // §318: posse validada; a REGRA de composição segue no cliente (recompensa é leve/tetada)
-  const prov = { aliados: r.aliados, inimigos: dsf.inimigos, montar: dsf.montar || {} };
+  const vn = _validarNiveis(conta, r.niveis); if (vn.erro) return { erro: vn.erro };   // §323 P2
+  const prov = { aliados: r.aliados, inimigos: dsf.inimigos, montar: dsf.montar || {}, niveis: vn.niveis ? [vn.niveis, {}] : null };
   return { montar: () => PROV.montarProvacao(prov), chave: r.desafioId };
 }
 
@@ -155,7 +194,9 @@ function _montarSandbox(conta, r) {
   const seed = (typeof r.seed === 'number') ? r.seed : 1;
   const comeca = (r.comeca === 1) ? 1 : 0;
   const energia = (ECON && ECON.energia) || null;                        // sandbox usa a energia da economia (selecao.js)
-  return { montar: () => E.novoEstado(pT, eT, seed, comeca, energia), chave: 'sandbox' };
+  const vn = _validarNiveis(conta, r.niveis); if (vn.erro) return { erro: vn.erro };   // §323 P2
+  const niveis = vn.niveis ? [vn.niveis, {}] : null;
+  return { montar: () => E.novoEstado(pT, eT, seed, comeca, energia, undefined, niveis), chave: 'sandbox' };
 }
 
 function _montarDominio(conta, r) {
@@ -175,7 +216,9 @@ function _montarDominio(conta, r) {
     reviveGasto: (r.run && Array.isArray(r.run.reviveGasto)) ? r.run.reviveGasto.filter(k => typeof k === 'string') : [],
   };
   const seed = (nivel * 7919) >>> 0 || 1;
-  return { montar: () => DOM.domMontarBatalha(run, escada, { seed }), chave: (r.runId || '') + ':' + nivel, runId: r.runId || '', nivel };
+  const vn = _validarNiveis(conta, r.niveis); if (vn.erro) return { erro: vn.erro };   // §323 P2
+  const niveis = vn.niveis ? [vn.niveis, {}] : null;
+  return { montar: () => DOM.domMontarBatalha(run, escada, { seed, niveis }), chave: (r.runId || '') + ':' + nivel, runId: r.runId || '', nivel };
 }
 
 function _montarPara(conta, r, agora) {

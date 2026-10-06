@@ -13,6 +13,12 @@ const cpuControla = lado => vsCPU && lado === IA_LADO;
 let _iaVerBatalha = 1;
 function definirIaVersao(v) { _iaVerBatalha = (v === 2) ? 2 : 1; }
 function iaVersaoBatalhaAtual() { return _iaVerBatalha; }
+// §323 P2 — os NÍVEIS do jogador DESTA batalha (lado 0): { deusKey:{basico,habilidade,milagre} } | null.
+// O lançador do modo os define (niveisTimeLocal da conta) antes de ir('batalha'); o replay carimba este
+// SNAPSHOT e o servidor re-monta com ele (conferindo ≤ conta). null = base (regressão zero / replay antigo).
+let _niveisBatalha = null;
+function definirNiveisBatalha(nv) { _niveisBatalha = (nv && typeof nv === 'object' && Object.keys(nv).length) ? nv : null; }
+function niveisBatalhaAtual() { return _niveisBatalha; }
 
 // ---- perspectiva e modo de partida (F0.7) ----
 // O lado EXIBIDO à esquerda (com os discos) é PERSPECTIVA, não turno. Em hot-seat os
@@ -226,4 +232,4 @@ function _gemaPvPTalvez() {
 }
 function resultadoRanqueOnline() { return MP ? (MP.ranqueadoResultado || null) : null; }
 
-if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, resultadoRanqueOnline, confirmarOnline, encerrarOnline, definirIaVersao, iaVersaoBatalhaAtual };
+if (typeof module !== 'undefined') module.exports = { configurarTurno, iniciarRelogio, pararRelogio, tique, encerrarTurno, talvezIA, passoIA, armar, atualizarAlvos, alvo, faltamAlvos, confirmar, cpuControla, modoPartida, ladoExibido, ehMeuTurno, entrarModoOnline, sairModoOnline, ehOnline, receberPushOnline, ocupadoOnline, fimOnline, avisosOnline, resultadoRanqueOnline, confirmarOnline, encerrarOnline, definirIaVersao, iaVersaoBatalhaAtual, definirNiveisBatalha, niveisBatalhaAtual };

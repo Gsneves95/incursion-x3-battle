@@ -19,6 +19,19 @@ function moedaServidor(){
   return { online: !!m, gema: m ? (m.gema || 0) : 0, essencia: m ? (m.essencia || 0) : 0 };
 }
 function fmtMoeda(online, v){ return online ? Number(v || 0).toLocaleString('pt-BR') : '—'; }
+// §323 P2 — o mapa de níveis do TIME do jogador (da conta) para MONTAR o kit efetivo no PvE e para o
+// SNAPSHOT do replay (o servidor re-monta com ele, conferindo ≤ conta). Só inclui o deus com algum nível
+// > 1 → quando nada subiu, devolve null (montagem = catálogo base, byte-idêntica a hoje; regressão zero).
+// Compartilhado (home.js e selecao.js o usam) — por isso vive aqui, no único ui que outros ui podem chamar.
+function niveisTimeLocal(time){
+  const base = (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.niveis) || {};
+  const m = {}; let tem = false;
+  for (const k of (time || [])) {
+    const n = k && base[k];
+    if (n && ['basico','habilidade','milagre'].some(s => (n[s] || 1) > 1)) { m[k] = n; tem = true; }
+  }
+  return tem ? m : null;
+}
 const SLOTLAB = {basico:'básico',habilidade:'habilidade',milagre:'milagre',defesa:'defesa'};
 const GLIFO = {basico:'I',habilidade:'II',milagre:'III',defesa:'\u25c7'};
 

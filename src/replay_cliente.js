@@ -33,7 +33,11 @@ function _repConcluir(extra) {
   // re-simula com esta versão; replays sem iaVer (pré-§322, inclusive fila offline) caem na v1 no servidor.
   const iaVer = (typeof iaVersaoBatalhaAtual === 'function') ? iaVersaoBatalhaAtual()
     : (typeof IA_VERSAO_JOGO !== 'undefined' ? IA_VERSAO_JOGO : 1);
+  // §323 P2: SNAPSHOT dos níveis do jogador (lado 0) usados NESTA batalha. O servidor re-monta com ele,
+  // conferindo cada nível ≤ a conta (snapshot acima = forjado → recusa). null/ausente → base (replay antigo).
+  const niveis = (typeof niveisBatalhaAtual === 'function') ? niveisBatalhaAtual() : null;
   const replay = Object.assign({}, _repRec.desc, extra || {}, { ops: _repRec.ops, iaVer, idPartida: _repNovoId() });
+  if (niveis && Object.keys(niveis).length) replay.niveis = niveis;   // só carimba quando há nível > 1 (envelope limpo + back-compat)
   _repRec = null;
   _repEnfileirar(replay);
   _repEnviarPendentes();

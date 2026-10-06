@@ -2,6 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §323 Fase 5 Parte 2 ETAPA A · níveis do jogador em TODO o PvE
+
+Antes os níveis só valiam no PvP. Agora **todo modo de PvE** monta o lado 0 com os níveis da conta:
+- **Cliente**: `niveisTimeLocal(time)` (em `ui/base.js`) = mapa `{deus:{basico,habilidade,milagre}}` do time, só o que
+  subiu de nível (nada subiu → `null` = base, byte-idêntico a hoje). `montarPvEComNiveis(prov,time)` (home.js) monta
+  com `niveis=[nv,{}]` e carimba o snapshot da batalha (`definirNiveisBatalha` em turno.js). Todos os lançadores
+  (Ritos, Desafios por deus, campanha + encontro + retry, Semanais, composição, Domínios via `domMontarBatalha opc.niveis`,
+  sandbox vs CPU) passaram a usar isso.
+- **Replay**: `_repConcluir` carimba `replay.niveis` = snapshot (só quando há nível > 1).
+- **Servidor** (`pve.js`): `_validarNiveis(conta, snap)` — re-monta com o snapshot MAS confere contra a conta: deus não
+  possuído → recusa; nível fora de 1–4 ou **acima** da conta → `niveis_invalidos` (os níveis só sobem; abaixo pode).
+  Sem `niveis` no envelope → base (replays antigos / fila offline seguem creditando). Cada `_montarX` aplica.
+- **Verificação de vencibilidade** (solucionador) fica no **nível 1** (pior caso: os níveis só ajudam).
+- Guardas: `tests/niveis_pve.test.js` (12, servidor: montagem morde + round-trip credita + forjado/não-possuído
+  recusado + abaixo credita + sem-níveis=base) e `tests/niveis_batalha.test.js` §F (cliente: lançador monta com os
+  níveis + snapshot carimbado + nv1 = base). Suíte + build verdes.
+
+Falta (Parte 2): ETAPA B (re-medir a 900k os 30 indeterminados), C (ajustar com alavancas 1–3), D (composição por
+times de referência), E (virar os modos vencíveis para v2 em `ia_por_modo.json`).
+
 ## ★ §323 Fase 5 Parte 1 · mapa + proposta da recalibragem do PvE p/ a v2 (SÓ relatório)
 
 `docs/pve-v2-fase5-mapa.md`. (1) Níveis do jogador **não valem em nenhum modo de PvE** (montam no catálogo base;

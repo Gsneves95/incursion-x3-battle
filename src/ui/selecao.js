@@ -310,8 +310,12 @@ function ligarSelecao(){
     if(!(pick[0].length===3&&pick[1].length===3))return;
     prova=null; campanha=null;   // batalha de seleção não é Provação nem encontro de campanha
     const _seed=Math.floor(Math.random()*1e6), _comeca=Math.floor(Math.random()*2);
+    // §323 P2: no sandbox vs CPU (PvE) os níveis do jogador valem no lado 0. Hot-seat (2 humanos) fica no
+    // base — aplicar nível só de um lado seria assimétrico. nv null → catálogo base (regressão zero).
+    const _nvSb=(vsCPU && typeof niveisTimeLocal==='function')?niveisTimeLocal(pick[0]):null;
+    if(typeof definirNiveisBatalha==='function') definirNiveisBatalha(_nvSb);
     st=novoEstado(pick[0],pick[1],_seed,_comeca,
-      (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null);   // regra de geração de energia (economia.json)
+      (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null, undefined, _nvSb?[_nvSb,{}]:null);   // regra de geração de energia (economia.json)
     // §318 F2 E2: sandbox vs CPU é fonte de Gema (tetada no servidor) — grava o replay com a montagem exata (seed/comeca aleatórios).
     if(typeof REPLAY!=='undefined'){ if(vsCPU) REPLAY.iniciar({modo:'sandbox',aliados:pick[0].slice(),inimigos:pick[1].slice(),seed:_seed,comeca:_comeca}); else REPLAY.descartar(); }
     if(typeof definirIaVersao==='function') definirIaVersao(vsCPU?iaVersaoDeModo('sandbox'):1);   // §322 P3: sandbox vs CPU usa v2; hot-seat não tem IA

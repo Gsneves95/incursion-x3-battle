@@ -1096,7 +1096,7 @@ function iniciarProva(key){
   if (!p) return;
   campanha = null; campanhaFim = null;   // não é encontro de campanha
   prova = p; provaFim = null; provaLances = 0;
-  st = montarProvacao(p);
+  st = montarPvEComNiveis(p, p.aliados);   // §323 P2: níveis do jogador no PvE
   vsCPU = true;   // os inimigos da Provação são a CPU (o jogador controla o lado 0)
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('rito'));   // §322 P3: Rito usa a versão do modo
   ir('batalha', {}, { substituir: true });
@@ -1180,7 +1180,7 @@ function iniciarDesafioDeus(k){
   campanha = null; campanhaFim = null;
   prova = Object.assign({}, p, { desafioDeus: k });   // flag: desafio POR DEUS pago (dá maestria, não avança nada)
   provaFim = null; provaLances = 0;
-  st = montarProvacao(prova);
+  st = montarPvEComNiveis(prova, prova.aliados);   // §323 P2
   if (typeof REPLAY !== 'undefined') REPLAY.descartar();   // §318 F2 E2: desafio POR DEUS não é fonte de moeda (é maestria) — não grava replay
   vsCPU = true;
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('desafioDeus'));   // §322 P3
@@ -1806,6 +1806,14 @@ function reqMissaoTexto(k){
 // §318: os níveis do jogador para EXIBIR o kit efetivo na tela de detalhe (o texto mostra o número
 // atual). Vêm da conta (autoritativa, do servidor). null/ausente → kit base (nv1). FASE 0: tudo nv1.
 function niveisDeExibicao(k){ return (typeof contaAtual !== 'undefined' && contaAtual && contaAtual.niveis && contaAtual.niveis[k]) || null; }
+// §323 P2: niveisTimeLocal vive em ui/base.js (compartilhado com selecao.js — ui não chama ui).
+// monta a Provação aplicando os níveis do jogador (lado 0) e carimba o snapshot da batalha (replay).
+// Não MUTA o dado compartilhado (clona com Object.assign). nv null → base.
+function montarPvEComNiveis(prov, time){
+  const nv = niveisTimeLocal(time);
+  if (typeof definirNiveisBatalha === 'function') definirNiveisBatalha(nv);
+  return montarProvacao(nv ? Object.assign({}, prov, { niveis: [nv, {}] }) : prov);
+}
 // aplica kitEfetivo quando disponível (bundle) — passa TODA leitura de kit da tela de detalhe pela
 // função-de-um-ponto-só do motor. Sem níveis (FASE 0) o kit efetivo é DEEP-EQUAL ao base (regressão zero).
 function deusKitEfetivo(k, g){ return (typeof kitEfetivo === 'function' && g && g.ab) ? kitEfetivo(g, niveisDeExibicao(k)) : g; }
@@ -2487,7 +2495,7 @@ function iniciarAto(cap, ato){
   prova = null; provaFim = null;
   campanha = Object.assign({}, ato, { aliados: time, _capNome: cap.nome, _capIdx: campCapIdx });
   campanhaFim = null;
-  st = montarProvacao(campanha);
+  st = montarPvEComNiveis(campanha, time);   // §323 P2
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: ato.id, aliados: time });   // §318 F2 E2
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha'));   // §322 P3
   vsCPU = true;
@@ -2542,7 +2550,7 @@ function iniciarEncontroComTime(enc, time){
   prova = null; provaFim = null;               // não é Provação
   campanha = Object.assign({}, enc, { aliados: time });
   campanhaFim = null;
-  st = montarProvacao(campanha);               // reusa a máquina: só usa aliados/inimigos/montar
+  st = montarPvEComNiveis(campanha, time);     // §323 P2 (reusa a máquina: só usa aliados/inimigos/montar)
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: enc.id, aliados: time });   // §318 F2 E2
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha'));   // §322 P3
   vsCPU = true;
@@ -2692,7 +2700,7 @@ function ligarCampanhaFim(){
   const v = q('#cfvoltar'); if (v) v.onclick = () => { sairCampanha(); ir('campanha', {}, { substituir: true }); render(); };
   // §255: "Tentar de novo" remonta a MESMA semente e o MESMO time (campanha.aliados já traz a troca do
   // jogador). Semente estável de propósito — o ato é um quebra-cabeça que se aprende, não se rola de novo.
-  const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarProvacao(campanha); if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha')); ir('batalha', {}, { substituir: true }); render(); };
+  const t = q('#cftentar'); if (t) t.onclick = () => { campanhaFim = null; st = montarPvEComNiveis(campanha, campanha && campanha.aliados); if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('campanha')); ir('batalha', {}, { substituir: true }); render(); };
   // §255: "Voltar ao ato" — volta à tela do ato PERDIDO como ato ATUAL, SEM resetar campSwap/campVistaAto,
   // então o time que o jogador montou sobrevive e segue trocável (a promessa do §252 vale na derrota).
   const vt = q('#cfvoltarato'); if (vt) vt.onclick = () => voltarAoAto();
@@ -2758,7 +2766,7 @@ function iniciarSemanal(){
   if (!p) return;
   campanha = null; campanhaFim = null;
   prova = p; provaFim = null; provaLances = 0;
-  st = montarProvacao(p);
+  st = montarPvEComNiveis(p, p.aliados);   // §323 P2
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'semanal' });   // §318 F2 E2 (o servidor escolhe o puzzle pela SUA semana)
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('semanal'));   // §322 P3
   vsCPU = true;
@@ -2989,7 +2997,7 @@ function iniciarDesafio(dsf, time){
     scoreKey: 'desafio:' + dsf.id, recompensaEss: (recompensaDesafio(dsf.recompensa).essencia || 0),
   };
   provaFim = null; provaLances = 0;
-  st = montarProvacao(prova);
+  st = montarPvEComNiveis(prova, time);   // §323 P2
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'desafio', desafioId: dsf.id, aliados: time });   // §318 F2 E2
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('composicao'));   // §322 P3: desafio de composição
   vsCPU = true;
@@ -3305,7 +3313,9 @@ function iniciarNivelDominio(cultura){
   dominioFim = null;
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
-  st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1 });
+  const nvDom = niveisTimeLocal(escada.trio);   // §323 P2: níveis do jogador no trio do Domínio
+  if (typeof definirNiveisBatalha === 'function') definirNiveisBatalha(nvDom);
+  st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1, niveis: nvDom ? [nvDom, {}] : null });
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2: estado da corrida ANTES do nível
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('dominio'));   // §322 P3: Domínios usam v2 (sem solução fixa)
   ir('batalha', {}, { substituir: true });

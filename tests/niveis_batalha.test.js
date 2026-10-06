@@ -105,6 +105,31 @@ const html = fs.readFileSync(distAbs, 'utf8');
   // um deus NÃO escolhido não mostra (mesmo que exista no pool): o indicador é dos escolhidos
   ok(!!$(`.pk[data-k="${selInfo.outro}"]`) && !$(`.pk[data-k="${selInfo.outro}"] .pk__niv`), 'um deus NÃO escolhido (presente no pool) não mostra o indicador');
 
+  // ---- F) §323 P2: o LANÇADOR de PvE monta com os níveis da CONTA e carimba o snapshot do replay ----
+  console.log('\n== F) §323 P2: PvE monta com os níveis da conta + snapshot do replay (cliente) ==');
+  ok(w.eval("typeof niveisTimeLocal==='function' && typeof montarPvEComNiveis==='function' && typeof niveisBatalhaAtual==='function'"), 'o cliente expõe niveisTimeLocal/montarPvEComNiveis/niveisBatalhaAtual');
+  // conta com o deus de escada no básico nv2 (o MESMO allyK), time de PvE = ally
+  const provF = JSON.stringify({ aliados: ally, inimigos: enemy, montar: { seed: 1, comeca: 0 } });
+  const r323 = JSON.parse(w.eval(`(function(){
+    contaAtual = { niveis: { '${allyK}': { basico: 2 } }, perfil: { deuses: { '${allyK}':1, '${ally[1]}':1, '${ally[2]}':1 } } };
+    const snap = niveisTimeLocal(${JSON.stringify(ally)});
+    st = montarPvEComNiveis(${provF}, ${JSON.stringify(ally)});
+    const nvMontado = niveisEmBatalha(st, st.lados[0].units[0]).basico;
+    const carimbo = niveisBatalhaAtual();
+    return JSON.stringify({ snap, nvMontado, carimbo });
+  })()`));
+  ok(r323.snap && r323.snap[allyK] && r323.snap[allyK].basico === 2, 'niveisTimeLocal pega o básico nv2 do deus da conta');
+  ok(r323.nvMontado === 2, 'o LANÇADOR monta o lado 0 com o básico nv2 da conta (niveisEmBatalha prova)');
+  ok(r323.carimbo && r323.carimbo[allyK] && r323.carimbo[allyK].basico === 2, 'o snapshot da batalha (para o replay) foi carimbado com os níveis da conta');
+  // BITE: conta toda nv1 → montagem base e snapshot nulo (regressão zero / replay antigo)
+  const r323b = JSON.parse(w.eval(`(function(){
+    contaAtual = { niveis: {}, perfil: { deuses: { '${allyK}':1 } } };
+    const snap = niveisTimeLocal(${JSON.stringify(ally)});
+    st = montarPvEComNiveis(${provF}, ${JSON.stringify(ally)});
+    return JSON.stringify({ snap, nvMontado: niveisEmBatalha(st, st.lados[0].units[0]).basico, carimbo: niveisBatalhaAtual() });
+  })()`));
+  ok(r323b.snap === null && r323b.carimbo === null && r323b.nvMontado === 1, 'BITE: conta toda nv1 → montagem base, snapshot nulo (sem níveis = byte-idêntico a hoje)');
+
   try { w.close(); } catch (e) {}
 })();
 
