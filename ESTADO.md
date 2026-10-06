@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §323 Fase 5 Parte 2 ETAPA E · tabela final da IA por modo
+
+A tabela `data/ia_por_modo.json` **não mudou** (já estava no estado final): campanha/Domínios/sandbox = **v2**;
+Ritos, Desafios por deus, Semanais, composição = **v1** (decisões ETAPA C/D — não nerfar). Nenhum modo novo entrou
+na v2. Só atualizei o `_nota` do JSON para marcar isso como decisão fechada (não TODO). Guarda `ia_modo_guard` +
+`tests/ia_modo.test.js` seguem verdes. Relatório `docs/pve-v2-fase5-etapaE.md`.
+
+**Fecho da §323 Parte 2:** o único ganho de jogo foi a ETAPA A (níveis do jogador valem em TODO o PvE). As ETAPAS
+B–E foram medição + decisão (manter o catálogo autoral na v1). Alavancas 4–6 nunca foram necessárias (não houve
+ajuste de conteúdo). Ferramentas novas: `tools/remedir_fundo.js`, `tools/ref_composicao.js`.
+
 ## ★ §323 Fase 5 Parte 2 ETAPA D · composição por times de referência
 
 `tools/ref_composicao.js` gera, por regra (menor raridade somada, determinístico; p/ `livre` também os atacantes

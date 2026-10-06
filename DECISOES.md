@@ -6,6 +6,15 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §323 Fase 5 Parte 2 ETAPA E · tabela final da IA por modo (nada flipou)
+
+A régua do §322 (modo só vai a v2 se TODO o conteúdo é vencível sob ela), combinada com as decisões ETAPA C/D (não
+nerfar), fez a tabela `data/ia_por_modo.json` permanecer EXATAMENTE como no §322 P3: campanha/Domínios/sandbox v2;
+Ritos/Desafios por deus/Semanais/composição v1. Nenhum modo novo entrou na v2 — por isso não houve edição dos
+`modos`, só do `_nota` (marcar a decisão como fechada). As alavancas 4–6 (trocar inimigo / reduzir nº / dica) nunca
+chegaram a ser propostas por item porque NENHUM ajuste de conteúdo foi aplicado (ETAPA C cancelada, composição
+mantida v1). Relatório `docs/pve-v2-fase5-etapaE.md`.
+
 ## §323 Fase 5 Parte 2 ETAPA D · composição por times de referência
 
 Composição é time LIVRE → "vencível" = existe um time válido que vence. `tools/ref_composicao.js` gera por REGRA

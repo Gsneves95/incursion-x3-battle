@@ -1,5 +1,5 @@
 {
-  "_nota": "§322 Parte 3 — a VERSÃO da IA por MODO de PvE. FONTE ÚNICA: cliente e servidor leem daqui. REGRA (dono): um modo só usa a v2 se TODO o seu conteúdo verificável for VENCÍVEL sob a v2 (prova em data/ia_winnability_v2.json). Enquanto não for, o modo fica na v1. A Fase 5 (recalibragem) é que traz cada modo para a v2. Domínios e sandbox não têm solução fixa (corrida/livre) — usam v2, e a mudança de dificuldade é reportada à parte.",
+  "_nota": "§322 P3 + §323 Fase 5 — a VERSÃO da IA por MODO de PvE. FONTE ÚNICA: cliente e servidor leem daqui. REGRA (dono): um modo só usa a v2 se TODO o seu conteúdo verificável for VENCÍVEL sob a v2 (prova em data/ia_winnability_v2.json). §323 Fase 5 (decisão do dono): a v2 fecha quase todo o catálogo de puzzles de time-fixo e NÃO vamos nerfar conteúdo autoral — então Ritos, Desafios por deus e Semanais FICAM na v1 (settled, não é TODO). Composição fica na v1 enquanto cx_semmilagre não for vencível sob a v2 (5/6 passam; ver tools/ref_composicao.js). Campanha vai a v2 (6/6 vencível). Domínios e sandbox não têm solução fixa (corrida/livre) — usam v2, dificuldade reportada à parte. NB §323: os níveis do jogador agora valem em TODO o PvE (ortogonal à versão da IA).",
   "default": 1,
   "modos": {
     "campanha": 2,
