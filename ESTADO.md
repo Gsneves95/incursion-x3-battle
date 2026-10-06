@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §324 Parte 1 · revisão de kits sob a IA v2 (medir + propor; NADA mudou no kit)
+
+`docs/kits-revisao-324-p1.md` (+ ranking completo `docs/kits-forca-v2.txt`; ferramenta `tools/medir_kits.js`).
+- **FORÇA v2** (arena v2×v2, ~288 jogos/deus, IC): topo Oxum 91% / Brigid 90% / Mimir 84% (8/9 Suporte); base
+  Afrodite 24,5% / Boto 27,5% / Fujin 27,6%. O eixo que domina é **FUNÇÃO** (Suporte 60,6% ≫ Controlador/Manipulador
+  ~41%), não o elemento (~9pts de spread; neutros não custam força — Umbra, tocada pela fase, é a mais fraca).
+- **SLOT MORTO** (pareado, triagem M=200 + confirmação N=3000): MORTOS confirmados — Fujin passiva+habilidade;
+  habilidade de Xangô/Cernunnos/Shuten/Tyr/Curupira/Saci/Kukulkán (Δ~0, uso~0); Hades habilidade ~morta; **Afrodite
+  passiva ANTI-sinergia (Δ−2,7: desligar AJUDA)**. Sistêmico: **~30 habilidades** com uso<0,12 e Δ~0 (o §318 F1b
+  persiste sob a v2). Suspeitas conferidas: Hércules "pilha" é o slot FORTE (Δ37, suspeita invertida); Oni se
+  sustenta sob a v2.
+- **Elementos neutros**: 3 opções (A não mexer / B gancho leve por elemento no motor / C 2º eixo de fase) — recomendo
+  leitura, não decisão; força não está presa ao elemento.
+- **Propostas** por deus lendo o kit + o que cada uma ARRASTA (escada + Ritos v1 que usam o deus + carimbos). Alcance:
+  Tyr arrasta 11 Ritos, Saci ~40 (inimigo), Oni 9. Parte 2 (aplicar) NÃO feita.
+
 ## ★ §323 Fase 5 Parte 2 ETAPA E · tabela final da IA por modo
 
 A tabela `data/ia_por_modo.json` **não mudou** (já estava no estado final): campanha/Domínios/sandbox = **v2**;

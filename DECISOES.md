@@ -6,6 +6,17 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §324 Parte 1 · revisão de kits sob a IA v2 (medir + propor; nada mudou no kit)
+
+Relatório `docs/kits-revisao-324-p1.md` + `docs/kits-forca-v2.txt` + `tools/medir_kits.js` (forca/slot). Medição
+determinística com a IA v2. **Método do "slot morto":** desligar um slot por vez em jogos PAREADOS (ativo = proibir a
+IA de escolhê-lo; passiva = zerar fx) e medir a queda de win-rate (Δ). Δ≈0 = morto. Triagem M=200, confirmação
+N=3000. **Achados principais:** (1) sob a v2 o balanço é dominado pela FUNÇÃO (Suporte ≫ Controlador/Manipulador), não
+pelo elemento; (2) um naipe grande de HABILIDADES é mecanicamente morto (o §318 F1b persiste); (3) Fujin tem passiva
+E habilidade mortas; (4) a passiva da Afrodite é ANTI-sinergia (Δ−2,7). Propostas lêem o KIT (não o tema) e listam o
+que cada uma arrasta (escada de níveis + Ritos v1 + carimbos). Parte 2 (aplicar) não feita — decisão do dono sobre o
+escopo (casos extremos × naipe inteiro × régua por função) fica para a Parte 2.
+
 ## §323 Fase 5 Parte 2 ETAPA E · tabela final da IA por modo (nada flipou)
 
 A régua do §322 (modo só vai a v2 se TODO o conteúdo é vencível sob ela), combinada com as decisões ETAPA C/D (não
