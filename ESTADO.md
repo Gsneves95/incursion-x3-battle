@@ -18,10 +18,13 @@
 - **Tyr** destravado (taunt+auto-redução **+ Vulnerável no provocado**; Δhab +23,8, uso 1,73; segue tanque).
   **Saci** destravado (Inalvejável+roubo **+ 8 AoE**; Δhab +41,2, uso 5,03). (Kits não tocados na re-alavancagem.)
 - **Arrastou:** descs (base+degraus) + kits.json (cadeia + texto×número + **auditoria** verdes); escadas
-  re-ancoradas + re-triagem §318 (habs alteradas ≤+15pp → `niveis_liberados` inalterado; **Dagda e Saci seguem
-  fora** da P2/escada do AoE); **47 Ritos re-carimbados**, 3 fecharam → alavanca HP (Cérberus 58, Hades 55, Thor
-  60); **1 Semanal** (ogum) → alavanca HP 55 + minimo recomputado; **campanha** Cérberus (Prólogo) **VENCÍVEL
-  sob v2**; **Domínios NÃO regenerados** (recalibragem adiada).
+  re-ancoradas + **re-triagem §318 em TODOS os 95 slots com valor alterado** (não só habilidade; régua: slot
+  ≤+25pp, habilidade ≤+15pp): 92 dentro; **Dionísio saiu de `niveis_liberados`** (básico +26,3>+25; escada do
+  básico nunca triada antes), Dagda/Saci seguem fora (hab) → **liberados 98→97**; relatório por-deus das
+  mudanças em `docs/kits-324-p3-mudancas.md`; **47 Ritos re-carimbados**, 3 fecharam → alavanca HP (Cérberus 58,
+  Hades 55, Thor 60); **1 Semanal** (ogum) → alavanca HP 55 + minimo recomputado; **campanha** Cérberus (Prólogo)
+  **VENCÍVEL sob v2**; **Domínios NÃO regenerados** (recalibragem adiada; **1471/1600** níveis com inimigo
+  alterado — Chinesa 299 · Egípcia 293 · Grega 281 · Japonesa 317 · Nórdica 281).
 - Suíte + build **verdes**.
 
 ## ★ §324 Parte 2 · consertados os 8 casos claros + diagnóstico do Suporte (por partes)

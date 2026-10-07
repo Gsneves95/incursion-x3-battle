@@ -40,13 +40,17 @@ pela re-alavancagem.)
 
 **O que arrastou:** descs (base + TODOS os degraus) + `kits.json` sincronizados (cadeia + texto×número verdes);
 **teto de dano verde** (auditoria: 19 restantes acima do teto são todas whitelisted, nenhum aumento plano);
-escadas re-ancoradas e re-validadas; **re-triagem §318** das habs alteradas (Ammit −0,8 · Ymir +6,2 · Boto +6,5
-· Odin −1,2 · Heimdall −1,1 — todas ≤+15pp) → `niveis_liberados` inalterado, **Dagda e Saci seguem fora** (da
-P2/escada do AoE, a re-afinar); **47 Ritos re-carimbados** (hash mudou), **3 fecharam → alavanca de HP**
-(Cérberus 58, Hades 55, Thor 60); **1 Semanal fechou** (ogum, Ammit inimigo) → alavanca HP 55 + `minimo`
-recomputado (18→11); **campanha** — Cérberus (chefe do Prólogo, 250 HP) re-verificado **sob a v2: VENCÍVEL**;
-**Domínios NÃO regenerados** (recalibragem adiada; níveis com um dos 24 re-alavancados como inimigo ficam
-defasados, relatório só). Suíte + build verdes.
+escadas re-ancoradas e re-validadas; **re-triagem §318 em TODOS os 95 slots com valor alterado** (não só
+habilidade — conferência final pedida pelo dono; régua: qualquer slot ≤+25pp, habilidade ≤+15pp). 92 dentro
+(básicos/milagres que passam de +15 ficam ≤+25, o limite deles; freyja:hab +12,4 a N=1500 segue liberado). 1
+FORA e ação: **Dionísio — básico +26,3pp > +25 → tirado de `niveis_liberados`** (a escada do básico nunca fora
+triada; o §318 original só media habilidade). Dagda (hab +15,2) e Saci (hab +34,5) já estavam fora. **`niveis_liberados`
+98→97.** Relatório por-deus das mudanças em `docs/kits-324-p3-mudancas.md` (para o dono vetar o que descaracterizar).
+**47 Ritos re-carimbados** (hash mudou), **3 fecharam → alavanca de HP** (Cérberus 58, Hades 55, Thor 60); **1
+Semanal fechou** (ogum, Ammit inimigo) → alavanca HP 55 + `minimo` recomputado (18→11); **campanha** — Cérberus
+(chefe do Prólogo, 250 HP) re-verificado **sob a v2: VENCÍVEL**; **Domínios NÃO regenerados** (recalibragem
+adiada; **1471/1600 níveis** com inimigo alterado: Chinesa 299 · Egípcia 293 · Grega 281 · Japonesa 317 ·
+Nórdica 281 — relatório só). Suíte + build verdes.
 
 ## §324 Parte 2 · consertar os 8 casos claros + diagnóstico do Suporte (por partes; Tyr/Saci/funções ficam p/ depois)
 
