@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 65,
+        "hp": 65
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 65,
+        "hp": 65
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 65,
+        "hp": 65
+      }
+    ]
   },
   "condicoes": [
     {
@@ -36,39 +56,26 @@
     }
   ],
   "verificacao": {
-    "hash": "c7c79fe6",
+    "hash": "f74a9a5c",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 25,
+    "lancesNesteCaminho": 12,
     "comDica": false,
-    "nos": 37876,
-    "ms": 8926,
+    "nos": 15076,
+    "ms": 21467,
     "caminho": [
       "houyi Flecha Solar → zeus",
       "passar",
       "ares Massacre → zeus",
       "passar",
-      "ares Sede de Sangue → zeus",
+      "ares Sede de Sangue → ares",
       "houyi Flecha Solar → zeus",
       "passar",
-      "houyi Nove Flechas → zeus",
-      "passar",
-      "ares Massacre → ares",
-      "passar",
-      "ares Golpe Sanguinário → ares",
-      "houyi Flecha Solar → ares",
-      "passar",
-      "houyi Abater o Sol → ares",
-      "ares Golpe Sanguinário → ares",
+      "houyi Nove Flechas → zeus+ares+saci",
       "passar",
       "ares Massacre → saci",
       "passar",
-      "vishnu Preservação Cósmica",
-      "passar",
-      "vishnu Encarnação",
-      "passar",
-      "vishnu Encarnação",
-      "houyi Nove Flechas → saci"
+      "ares Massacre → ares"
     ]
   }
 }

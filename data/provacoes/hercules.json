@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "a3903e2",
+    "hash": "551e6062",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 31,
+    "lancesNesteCaminho": 30,
     "comDica": false,
-    "nos": 8288,
-    "ms": 3234,
+    "nos": 15636,
+    "ms": 4106,
     "caminho": [
       "kali Golpe da Foice → oni",
       "perseu Lâmina Curva → oni",
@@ -58,7 +58,6 @@
       "passar",
       "kali Golpe da Foice → aquiles",
       "perseu Foice Adamantina → aquiles",
-      "hercules Punho Hercúleo → aquiles",
       "passar",
       "kali Golpe da Foice → aquiles",
       "hercules Os Doze Trabalhos → aquiles",

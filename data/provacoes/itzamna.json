@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 65,
+        "hp": 65
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 65,
+        "hp": 65
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 65,
+        "hp": 65
+      }
+    ]
   },
   "condicoes": [
     {
@@ -32,44 +52,29 @@
     }
   ],
   "verificacao": {
-    "hash": "34a429f8",
+    "hash": "dfd90bf1",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 31,
+    "lancesNesteCaminho": 16,
     "comDica": false,
-    "nos": 15713,
-    "ms": 5208,
+    "nos": 431,
+    "ms": 284,
     "caminho": [
       "kali Golpe da Foice → ahpuch",
       "itzamna Glifo Sagrado → ahpuch",
       "perseu Lâmina Curva → ahpuch",
       "passar",
       "kali Dança da Aniquilação",
-      "passar",
-      "kali Sede de Sangue → ahpuch",
       "itzamna Glifo Sagrado → ogum",
       "perseu Lâmina Curva → oni",
-      "passar",
-      "kali Sede de Sangue → oni",
-      "itzamna Glifo Sagrado → ogum",
-      "perseu Lâmina Curva → oni",
-      "passar",
-      "kali Sede de Sangue → oni",
-      "itzamna Glifo Sagrado → ogum",
-      "perseu Lâmina Curva → ogum",
-      "passar",
-      "perseu Cabeça da Medusa → ogum",
-      "kali Golpe da Foice → ogum",
-      "itzamna Glifo Sagrado → oni",
-      "passar",
-      "itzamna Glifo Sagrado → oni",
       "passar",
       "kali Sede de Sangue → ogum",
-      "itzamna Aurora da Criação",
+      "passar",
+      "itzamna Glifo Sagrado → oni",
       "passar",
       "itzamna Escrita Sagrada → itzamna",
       "passar",
-      "itzamna Escrita Sagrada → perseu",
+      "itzamna Escrita Sagrada → itzamna",
       "kali Golpe da Foice → oni"
     ]
   }

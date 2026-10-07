@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "3f615a4c",
+    "hash": "79dceeff",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 36,
+    "lancesNesteCaminho": 34,
     "comDica": false,
-    "nos": 57410,
-    "ms": 22255,
+    "nos": 52940,
+    "ms": 21307,
     "caminho": [
       "susanoo Corte de Kusanagi → horus",
       "demeter Foice de Ouro → horus",
@@ -55,24 +55,22 @@
       "susanoo Fúria do Tufão",
       "demeter Foice de Ouro → fenrir",
       "passar",
-      "susanoo Yamata no Orochi",
-      "demeter Foice de Ouro → fenrir",
+      "susanoo Corte de Kusanagi → fenrir",
+      "demeter Foice de Ouro → durga",
       "passar",
       "demeter Foice de Ouro → durga",
       "passar",
       "susanoo Corte de Kusanagi → durga",
       "demeter Estação Eterna",
       "passar",
-      "demeter Foice de Ouro → durga",
-      "khnum Couraça de Barro → khnum",
-      "passar",
-      "demeter Foice de Ouro → fenrir",
-      "khnum Sopro da Criação → susanoo",
-      "passar",
+      "susanoo Corte de Kusanagi → fenrir",
+      "khnum Sopro da Criação → khnum",
       "passar",
       "khnum Couraça de Barro → susanoo",
       "passar",
-      "susanoo Yamata no Orochi"
+      "passar",
+      "passar",
+      "demeter Foice de Ouro → durga"
     ]
   }
 }

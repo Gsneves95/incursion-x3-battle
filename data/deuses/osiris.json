@@ -13,7 +13,7 @@
       {
         "gatilho": "bonusDano",
         "v": 0,
-        "porAliadoCaido": 8,
+        "porAliadoCaido": 5,
         "escopo": "time"
       }
     ]
@@ -85,7 +85,7 @@
       },
       "cd": 2,
       "alvo": "aliado",
-      "desc": "Cura 20 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível.",
+      "desc": "Cura 8 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível.",
       "fx": [
         {
           "t": "condicional",
@@ -104,7 +104,7 @@
         },
         {
           "t": "heal",
-          "v": 20
+          "v": 8
         }
       ],
       "niveis": [
@@ -113,22 +113,22 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 20,
-              "para": 21
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Cura 21 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+          "desc": "Cura 9 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 21,
-              "para": 22
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "Cura 22 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+          "desc": "Cura 10 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
         },
         {
           "nv": 4,
@@ -139,7 +139,7 @@
               "para": 17
             }
           ],
-          "desc": "Cura 22 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 17 de Defesa Destrutível."
+          "desc": "Cura 10 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 17 de Defesa Destrutível."
         }
       ]
     },
@@ -151,13 +151,13 @@
         "Umbra": 2,
         "livre": 1
       },
-      "cd": 4,
+      "cd": 5,
       "alvo": "nenhum",
-      "desc": "Revive 1 aliado caído com 60 de HP e remove os debuffs dele.",
+      "desc": "Revive 1 aliado caído com 30 de HP e remove os debuffs dele.",
       "fx": [
         {
           "t": "revive",
-          "hp": 60,
+          "hp": 30,
           "escopo": "umCaido"
         }
       ],
@@ -167,33 +167,33 @@
           "muda": [
             {
               "caminho": "fx[0].hp",
-              "de": 60,
-              "para": 62
+              "de": 30,
+              "para": 32
             }
           ],
-          "desc": "Revive 1 aliado caído com 62 de HP e remove os debuffs dele."
+          "desc": "Revive 1 aliado caído com 32 de HP e remove os debuffs dele."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].hp",
-              "de": 62,
-              "para": 64
+              "de": 32,
+              "para": 34
             }
           ],
-          "desc": "Revive 1 aliado caído com 64 de HP e remove os debuffs dele."
+          "desc": "Revive 1 aliado caído com 34 de HP e remove os debuffs dele."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].hp",
-              "de": 64,
-              "para": 66
+              "de": 34,
+              "para": 36
             }
           ],
-          "desc": "Revive 1 aliado caído com 66 de HP e remove os debuffs dele."
+          "desc": "Revive 1 aliado caído com 36 de HP e remove os debuffs dele."
         }
       ]
     }

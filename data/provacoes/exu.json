@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "ab2d02f1",
+    "hash": "e7b0e22d",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 29,
     "comDica": false,
-    "nos": 9728,
-    "ms": 3438,
+    "nos": 1848,
+    "ms": 753,
     "caminho": [
       "perseu Lâmina Curva → loki",
       "exu Padê → loki",
@@ -52,19 +52,19 @@
       "exu Padê → loki",
       "passar",
       "perseu Foice Adamantina → cuca",
-      "houyi Flecha Solar → cuca",
-      "exu Encruzilhada",
+      "houyi Abater o Sol → cuca",
+      "exu Padê → cuca",
       "passar",
-      "perseu Cabeça da Medusa → cuca",
       "houyi Flecha Solar → cuca",
+      "perseu Lâmina Curva → cuca",
+      "exu Padê → cuca",
       "passar",
       "houyi Nove Flechas → saci",
-      "perseu Lâmina Curva → cuca",
-      "exu Abrir e Fechar Caminhos → saci",
-      "passar",
-      "houyi Flecha Solar → saci",
       "exu Padê → saci",
-      "perseu Foice Adamantina → saci"
+      "perseu Cabeça da Medusa → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "exu Padê → saci"
     ]
   }
 }

@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 90,
+        "hp": 90
+      }
+    ]
   },
   "condicoes": [
     {
@@ -30,13 +50,13 @@
     }
   ],
   "verificacao": {
-    "hash": "6fe1f4df",
+    "hash": "b0f6e893",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 29,
+    "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 17780,
-    "ms": 4803,
+    "nos": 3899,
+    "ms": 12481,
     "caminho": [
       "oxum Espelho Dourado → zeus",
       "passar",
@@ -51,19 +71,17 @@
       "oxum Espelho Dourado → zeus",
       "passar",
       "zeus Julgamento do Trovão → ares",
-      "oxum Espelho Dourado → zeus",
+      "oxum Águas de Oxum → aquiles",
       "passar",
       "zeus Ira Celestial",
-      "oxum Espelho Dourado → ares",
       "passar",
-      "oxum Rio de Ouro",
-      "aquiles Fúria de Aquiles → ares",
+      "zeus Julgamento do Trovão → ares",
+      "aquiles Estocada de Peleu → ares",
       "passar",
-      "aquiles Estocada de Peleu → saci",
-      "oxum Espelho Dourado → saci",
+      "aquiles Fúria de Aquiles → saci",
+      "zeus Cetro do Trovão → saci",
       "passar",
-      "oxum Espelho Dourado → saci",
-      "aquiles Lança Implacável → saci",
+      "passar",
       "passar",
       "passar",
       "aquiles Fúria de Aquiles → saci"

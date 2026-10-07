@@ -155,12 +155,12 @@
       },
       "cd": 3,
       "alvo": "inimigo",
-      "desc": "25 de dano (38 se estiver Adormecido, +8 do próprio sono = 46); Cuca cura metade do dano causado.",
+      "desc": "30 de dano (38 se estiver Adormecido, +8 do próprio sono = 46); Cuca cura metade do dano causado.",
       "fx": [
         {
           "t": "dmg",
-          "v": 25,
-          "seAdormecido": 38,
+          "v": 30,
+          "seAdormecido": 44,
           "curaMetade": true
         }
       ],
@@ -170,33 +170,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 25,
-              "para": 27
+              "de": 30,
+              "para": 32
             }
           ],
-          "desc": "27 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
+          "desc": "32 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 27,
-              "para": 29
+              "de": 32,
+              "para": 34
             }
           ],
-          "desc": "29 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
+          "desc": "34 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 29,
-              "para": 31
+              "de": 34,
+              "para": 36
             }
           ],
-          "desc": "31 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
+          "desc": "36 de dano (38 se estiver Adormecido); Cuca cura metade do dano causado."
         }
       ]
     }

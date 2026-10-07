@@ -87,14 +87,14 @@
       },
       "cd": 2,
       "alvo": "aliado",
-      "desc": "Remove todos os debuffs de 1 aliado e cura 20; se removeu uma Maldição, cura 10 no time.",
+      "desc": "Remove todos os debuffs de 1 aliado e cura 14; se removeu uma Maldição, cura 6 no time.",
       "fx": [
         {
           "t": "cleanse"
         },
         {
           "t": "heal",
-          "v": 20
+          "v": 14
         },
         {
           "t": "condicional",
@@ -108,7 +108,7 @@
           "entao": [
             {
               "t": "heal",
-              "v": 10,
+              "v": 6,
               "escopo": "time"
             }
           ]
@@ -120,33 +120,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 20,
-              "para": 21
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Remove todos os debuffs de 1 aliado e cura 21; se removeu uma Maldição, cura 10 no time."
+          "desc": "Remove todos os debuffs de 1 aliado e cura 15; se removeu uma Maldição, cura 6 no time."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 21,
-              "para": 22
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Remove todos os debuffs de 1 aliado e cura 22; se removeu uma Maldição, cura 10 no time."
+          "desc": "Remove todos os debuffs de 1 aliado e cura 16; se removeu uma Maldição, cura 6 no time."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[2].entao[0].v",
-              "de": 10,
-              "para": 11
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "Remove todos os debuffs de 1 aliado e cura 22; se removeu uma Maldição, cura 11 no time."
+          "desc": "Remove todos os debuffs de 1 aliado e cura 16; se removeu uma Maldição, cura 7 no time."
         }
       ]
     },
@@ -160,18 +160,18 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "O time ganha 20 de Defesa Destrutível e regenera 8 por turno durante 3 turnos.",
+      "desc": "O time ganha 14 de Defesa Destrutível e regenera 6 por turno durante 3 turnos.",
       "fx": [
         {
           "t": "shield",
-          "v": 20,
+          "v": 14,
           "escopo": "time"
         },
         {
           "t": "apply",
           "eff": {
             "type": "regen",
-            "v": 8,
+            "v": 6,
             "dur": 3
           },
           "escopo": "time"
@@ -183,33 +183,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "O time ganha 21 de Defesa Destrutível e regenera 8 por turno durante 3 turnos."
+          "desc": "O time ganha 15 de Defesa Destrutível e regenera 6 por turno durante 3 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "O time ganha 21 de Defesa Destrutível e regenera 9 por turno durante 3 turnos."
+          "desc": "O time ganha 15 de Defesa Destrutível e regenera 7 por turno durante 3 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "O time ganha 22 de Defesa Destrutível e regenera 9 por turno durante 3 turnos."
+          "desc": "O time ganha 16 de Defesa Destrutível e regenera 7 por turno durante 3 turnos."
         }
       ]
     }

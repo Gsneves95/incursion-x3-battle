@@ -146,13 +146,13 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "Todos os inimigos causam 8 menos de dano por 2 turnos; o time cura 15.",
+      "desc": "Todos os inimigos causam 5 menos de dano por 2 turnos; o time cura 15.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "dmgDown",
-            "v": 8,
+            "v": 5,
             "dur": 2
           },
           "escopo": "todosInimigos"
@@ -169,11 +169,11 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 5,
+              "para": 6
             }
           ],
-          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 15."
+          "desc": "Todos os inimigos causam 6 menos de dano por 2 turnos; o time cura 15."
         },
         {
           "nv": 3,
@@ -184,7 +184,7 @@
               "para": 16
             }
           ],
-          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 16."
+          "desc": "Todos os inimigos causam 6 menos de dano por 2 turnos; o time cura 16."
         },
         {
           "nv": 4,
@@ -195,7 +195,7 @@
               "para": 3
             }
           ],
-          "desc": "Todos os inimigos causam 9 menos de dano por 2 turnos; o time cura 16."
+          "desc": "Todos os inimigos causam 6 menos de dano por 2 turnos; o time cura 16."
         }
       ]
     }

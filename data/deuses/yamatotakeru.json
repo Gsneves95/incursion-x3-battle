@@ -174,11 +174,11 @@
       },
       "cd": 4,
       "alvo": "inimigo",
-      "desc": "28 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele.",
+      "desc": "38 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele.",
       "fx": [
         {
           "t": "dmg",
-          "v": 28,
+          "v": 38,
           "porContadorLado": {
             "nome": "combo",
             "v": 2,
@@ -196,22 +196,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 28,
-              "para": 30
+              "de": 38,
+              "para": 40
             }
           ],
-          "desc": "30 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+          "desc": "40 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 30,
-              "para": 32
+              "de": 40,
+              "para": 42
             }
           ],
-          "desc": "32 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+          "desc": "42 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
         },
         {
           "nv": 4,
@@ -222,7 +222,7 @@
               "para": 3
             }
           ],
-          "desc": "32 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+          "desc": "42 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
         }
       ]
     }

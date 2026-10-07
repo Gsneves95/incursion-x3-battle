@@ -106,23 +106,23 @@
       },
       "cd": 4,
       "alvo": "inimigo",
-      "desc": "4 golpes de 11 no mesmo alvo; Aquiles fica Invulnerável por 1 turno.",
+      "desc": "4 golpes de 9 no mesmo alvo; Aquiles fica Invulnerável por 1 turno.",
       "fx": [
         {
           "t": "dmg",
-          "v": 11
+          "v": 9
         },
         {
           "t": "dmg",
-          "v": 11
+          "v": 9
         },
         {
           "t": "dmg",
-          "v": 11
+          "v": 9
         },
         {
           "t": "dmg",
-          "v": 11
+          "v": 9
         },
         {
           "t": "apply",
@@ -139,52 +139,52 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 11,
-              "para": 12
+              "de": 9,
+              "para": 10
             },
             {
               "caminho": "fx[1].v",
-              "de": 11,
-              "para": 12
+              "de": 9,
+              "para": 10
             },
             {
               "caminho": "fx[2].v",
-              "de": 11,
-              "para": 12
+              "de": 9,
+              "para": 10
             },
             {
               "caminho": "fx[3].v",
-              "de": 11,
-              "para": 12
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "4 golpes de 12 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+          "desc": "4 golpes de 10 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             },
             {
               "caminho": "fx[1].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             },
             {
               "caminho": "fx[2].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             },
             {
               "caminho": "fx[3].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "4 golpes de 13 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+          "desc": "4 golpes de 11 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
         },
         {
           "nv": 4,
@@ -195,7 +195,7 @@
               "para": 3
             }
           ],
-          "desc": "4 golpes de 13 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+          "desc": "4 golpes de 11 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
         }
       ]
     }

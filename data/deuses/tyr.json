@@ -105,6 +105,14 @@
             "dur": 2
           },
           "escopo": "self"
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "vulneravel",
+            "v": 8,
+            "dur": 2
+          }
         }
       ],
       "niveis": [

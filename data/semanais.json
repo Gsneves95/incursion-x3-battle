@@ -74,7 +74,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -86,7 +106,7 @@
           "quem": "medusa"
         }
       ],
-      "minimo": 14
+      "minimo": 10
     },
     {
       "key": "fujin",
@@ -270,7 +290,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -282,7 +322,7 @@
           "quem": "aquiles"
         }
       ],
-      "minimo": 24
+      "minimo": 14
     },
     {
       "key": "ammit",
@@ -354,7 +394,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -387,8 +447,20 @@
           {
             "lado": 1,
             "idx": 0,
-            "maxHp": 110,
-            "hp": 110
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
           }
         ]
       },
@@ -402,7 +474,7 @@
           "quem": "sunwukong"
         }
       ],
-      "minimo": 24
+      "minimo": 15
     },
     {
       "key": "krishna",
@@ -502,7 +574,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -514,7 +606,7 @@
           "quem": "horus"
         }
       ],
-      "minimo": 27
+      "minimo": 16
     },
     {
       "key": "nefertem",
@@ -586,7 +678,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -598,7 +710,7 @@
           "quem": "guanyu"
         }
       ],
-      "minimo": 16
+      "minimo": 9
     },
     {
       "key": "ra",
@@ -726,7 +838,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -738,7 +870,7 @@
           "quem": "mnevis"
         }
       ],
-      "minimo": 27
+      "minimo": 28
     },
     {
       "key": "chaac",
@@ -838,7 +970,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -850,7 +1002,7 @@
           "quem": "ogum"
         }
       ],
-      "minimo": 18
+      "minimo": 11
     },
     {
       "key": "cerberus",
@@ -894,7 +1046,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -906,7 +1078,7 @@
           "quem": "saci"
         }
       ],
-      "minimo": 18
+      "minimo": 8
     },
     {
       "key": "ammit",
@@ -1062,7 +1234,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1074,7 +1266,7 @@
           "quem": "ammit"
         }
       ],
-      "minimo": 23
+      "minimo": 13
     },
     {
       "key": "isis",
@@ -1118,7 +1310,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1130,7 +1342,7 @@
           "quem": "ares"
         }
       ],
-      "minimo": 21
+      "minimo": 16
     },
     {
       "key": "izanagi",
@@ -1230,7 +1442,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1242,7 +1474,7 @@
           "quem": "mimir"
         }
       ],
-      "minimo": 17
+      "minimo": 11
     },
     {
       "key": "hera",
@@ -1258,7 +1490,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1270,7 +1522,7 @@
           "quem": "hera"
         }
       ],
-      "minimo": 38
+      "minimo": 18
     },
     {
       "key": "raijin",
@@ -1342,7 +1594,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1354,7 +1626,7 @@
           "quem": "houyi"
         }
       ],
-      "minimo": 18
+      "minimo": 12
     },
     {
       "key": "fenrir",

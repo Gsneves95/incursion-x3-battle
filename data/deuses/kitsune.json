@@ -43,11 +43,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "14 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 14
         }
       ],
       "niveis": [
@@ -56,22 +56,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -89,7 +89,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "16 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -168,11 +168,11 @@
       },
       "cd": 4,
       "alvo": "inimigo",
-      "desc": "12 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno.",
+      "desc": "16 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12,
+          "v": 16,
           "escopo": "todosInimigos",
           "porContador": {
             "onde": "self",
@@ -204,33 +204,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "13 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+          "desc": "17 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 17,
+              "para": 18
             }
           ],
-          "desc": "14 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+          "desc": "18 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 14,
-              "para": 15
+              "de": 18,
+              "para": 19
             }
           ],
-          "desc": "15 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+          "desc": "19 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
         }
       ]
     }

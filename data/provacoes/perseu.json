@@ -31,25 +31,25 @@
     }
   ],
   "verificacao": {
-    "hash": "b1b11f3a",
+    "hash": "4e24c730",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 3579,
-    "ms": 1857,
+    "nos": 1780,
+    "ms": 1530,
     "caminho": [
       "houyi Flecha Solar → medusa",
       "perseu Lâmina Curva → medusa",
       "passar",
-      "zeus Julgamento do Trovão → izanami",
+      "zeus Julgamento do Trovão → medusa",
       "houyi Flecha Solar → medusa",
       "perseu Lâmina Curva → izanami",
       "passar",
       "zeus Ira Celestial",
       "perseu Lâmina Curva → medusa",
       "passar",
-      "zeus Julgamento do Trovão → medusa",
+      "zeus Julgamento do Trovão → izanami",
       "perseu Lâmina Curva → medusa",
       "passar",
       "houyi Nove Flechas → izanami",
@@ -57,15 +57,15 @@
       "zeus Cetro do Trovão → izanami",
       "passar",
       "houyi Abater o Sol → durga",
+      "zeus Julgamento do Trovão → durga",
       "perseu Lâmina Curva → durga",
+      "passar",
+      "zeus Cetro do Trovão → durga",
       "passar",
       "houyi Flecha Solar → medusa",
-      "perseu Lâmina Curva → durga",
-      "passar",
-      "houyi Abater o Sol → durga",
       "passar",
       "passar",
-      "houyi Nove Flechas → durga"
+      "houyi Abater o Sol → durga"
     ]
   }
 }

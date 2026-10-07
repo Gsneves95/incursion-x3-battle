@@ -1,69 +1,85 @@
 {
- "key": "boitata",
- "titulo": "Guardiã dos Campos",
- "nivel": "Provação",
- "dificuldade": 2,
- "aliados": [
-  "boitata",
-  "perseu",
-  "houyi"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 12
+  "key": "boitata",
+  "titulo": "Guardiã dos Campos",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "boitata",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 90,
+        "hp": 90
+      }
+    ]
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "boitata"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "boitata"
+    }
+  ],
+  "verificacao": {
+    "hash": "a9a03f4f",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 24,
+    "comDica": false,
+    "nos": 1258,
+    "ms": 3098,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "boitata Bote Flamejante → cuca",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "boitata Olhos de Brasa",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "boitata Cobra de Fogo",
+      "houyi Flecha Solar → saci",
+      "perseu Foice Adamantina → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "2b9f5c0d",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 28,
-  "comDica": false,
-  "nos": 30722,
-  "ms": 18495,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → loki",
-   "passar",
-   "perseu Foice Adamantina → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Foice Adamantina → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "boitata Bote Flamejante → cuca",
-   "passar",
-   "houyi Nove Flechas → cuca",
-   "perseu Lâmina Curva → cuca",
-   "passar",
-   "boitata Cobra de Fogo",
-   "passar",
-   "boitata Bote Flamejante → saci",
-   "perseu Cabeça da Medusa → saci",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "boitata Bote Flamejante → saci",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "houyi Nove Flechas → saci"
-  ]
- }
 }

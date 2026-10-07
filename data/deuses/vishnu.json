@@ -12,7 +12,7 @@
     "fx": [
       {
         "gatilho": "reducao",
-        "v": 5,
+        "v": 3,
         "escopo": "time"
       }
     ]
@@ -89,7 +89,7 @@
       },
       "cd": 1,
       "alvo": "nenhum",
-      "desc": "Alterna: NARASIMHA (time causa +8 de dano por 2 turnos) ou KURMA (time ganha 15 de Defesa Destrutível).",
+      "desc": "Alterna: NARASIMHA (time causa +5 de dano por 2 turnos) ou KURMA (time ganha 15 de Defesa Destrutível).",
       "opcoes": [
         {
           "nome": "NARASIMHA",
@@ -98,7 +98,7 @@
               "t": "apply",
               "eff": {
                 "type": "dmgUp",
-                "v": 8,
+                "v": 5,
                 "dur": 2
               },
               "escopo": "time"
@@ -122,8 +122,8 @@
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 5,
+              "para": 6
             },
             {
               "caminho": "opcoes[1].fx[0].v",
@@ -131,15 +131,15 @@
               "para": 16
             }
           ],
-          "desc": "Alterna: NARASIMHA (time causa +9 de dano por 2 turnos) ou KURMA (time ganha 16 de Defesa Destrutível)."
+          "desc": "Alterna: NARASIMHA (time causa +6 de dano por 2 turnos) ou KURMA (time ganha 16 de Defesa Destrutível)."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].eff.v",
-              "de": 9,
-              "para": 10
+              "de": 6,
+              "para": 7
             },
             {
               "caminho": "opcoes[1].fx[0].v",
@@ -147,15 +147,15 @@
               "para": 17
             }
           ],
-          "desc": "Alterna: NARASIMHA (time causa +10 de dano por 2 turnos) ou KURMA (time ganha 17 de Defesa Destrutível)."
+          "desc": "Alterna: NARASIMHA (time causa +7 de dano por 2 turnos) ou KURMA (time ganha 17 de Defesa Destrutível)."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 7,
+              "para": 8
             },
             {
               "caminho": "opcoes[1].fx[0].v",
@@ -163,7 +163,7 @@
               "para": 18
             }
           ],
-          "desc": "Alterna: NARASIMHA (time causa +11 de dano por 2 turnos) ou KURMA (time ganha 18 de Defesa Destrutível)."
+          "desc": "Alterna: NARASIMHA (time causa +8 de dano por 2 turnos) ou KURMA (time ganha 18 de Defesa Destrutível)."
         }
       ]
     },
@@ -177,11 +177,11 @@
       },
       "cd": 5,
       "alvo": "nenhum",
-      "desc": "Cura 25 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno.",
+      "desc": "Cura 14 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno.",
       "fx": [
         {
           "t": "heal",
-          "v": 25,
+          "v": 14,
           "escopo": "time"
         },
         {
@@ -203,33 +203,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 25,
-              "para": 26
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Cura 26 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Cura 15 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 26,
-              "para": 27
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Cura 27 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Cura 16 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 27,
-              "para": 28
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Cura 28 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Cura 17 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
         }
       ]
     }

@@ -172,7 +172,7 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "Ah Puch perde 15 de HP; 18 de dano a todos os inimigos, +8 por Podridão no campo.",
+      "desc": "Ah Puch perde 15 de HP; 22 de dano a todos os inimigos, +8 por Podridão no campo.",
       "fx": [
         {
           "t": "selfHp",
@@ -180,7 +180,7 @@
         },
         {
           "t": "dmg",
-          "v": 18,
+          "v": 22,
           "porContadorCampo": {
             "nome": "podridao",
             "v": 8,
@@ -195,11 +195,11 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 18,
-              "para": 19
+              "de": 22,
+              "para": 23
             }
           ],
-          "desc": "Ah Puch perde 15 de HP; 19 de dano a todos os inimigos, +8 por Podridão no campo."
+          "desc": "Ah Puch perde 15 de HP; 23 de dano a todos os inimigos, +8 por Podridão no campo."
         },
         {
           "nv": 3,
@@ -210,18 +210,18 @@
               "para": -12
             }
           ],
-          "desc": "Ah Puch perde 12 de HP; 19 de dano a todos os inimigos, +8 por Podridão no campo."
+          "desc": "Ah Puch perde 12 de HP; 23 de dano a todos os inimigos, +8 por Podridão no campo."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 19,
-              "para": 20
+              "de": 23,
+              "para": 24
             }
           ],
-          "desc": "Ah Puch perde 12 de HP; 20 de dano a todos os inimigos, +8 por Podridão no campo."
+          "desc": "Ah Puch perde 12 de HP; 24 de dano a todos os inimigos, +8 por Podridão no campo."
         }
       ]
     }

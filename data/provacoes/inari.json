@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 90,
+        "hp": 90
+      }
+    ]
   },
   "condicoes": [
     {
@@ -29,13 +49,13 @@
     }
   ],
   "verificacao": {
-    "hash": "a18cc349",
+    "hash": "3eca9416",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 43,
+    "lancesNesteCaminho": 37,
     "comDica": false,
-    "nos": 123047,
-    "ms": 38820,
+    "nos": 167,
+    "ms": 992,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "inari Espiga Dourada → houyi",
@@ -45,40 +65,34 @@
       "inari Espiga Dourada → houyi",
       "oxum Espelho Dourado → houyi",
       "passar",
-      "perseu Foice Adamantina → houyi",
+      "perseu Foice Adamantina → ra",
       "inari Espiga Dourada → houyi",
       "oxum Espelho Dourado → ra",
       "passar",
       "perseu Lâmina Curva → ra",
       "inari Espiga Dourada → ra",
-      "oxum Espelho Dourado → houyi",
+      "oxum Espelho Dourado → ra",
       "passar",
       "perseu Foice Adamantina → ra",
-      "inari Espiga Dourada → ra",
-      "oxum Espelho Dourado → ra",
       "passar",
-      "perseu Cabeça da Medusa → ra",
-      "oxum Espelho Dourado → ra",
+      "perseu Cabeça da Medusa → mnevis",
+      "inari Espiga Dourada → mnevis",
+      "oxum Espelho Dourado → mnevis",
       "passar",
-      "oxum Espelho Dourado → ra",
+      "perseu Foice Adamantina → mnevis",
+      "inari Espiga Dourada → mnevis",
+      "oxum Espelho Dourado → mnevis",
       "passar",
-      "oxum Águas de Oxum → oxum",
+      "inari Espiga Dourada → mnevis",
       "passar",
       "passar",
-      "oxum Águas de Oxum → oxum",
       "passar",
-      "perseu Lâmina Curva → mnevis",
-      "oxum Águas de Oxum → perseu",
-      "passar",
-      "perseu Lâmina Curva → mnevis",
       "oxum Rio de Ouro",
       "passar",
-      "perseu Lâmina Curva → mnevis",
-      "oxum Espelho Dourado → mnevis",
       "passar",
-      "perseu Lâmina Curva → mnevis",
-      "oxum Espelho Dourado → mnevis",
+      "oxum Águas de Oxum → perseu",
       "passar",
+      "oxum Espelho Dourado → mnevis",
       "perseu Cabeça da Medusa → mnevis"
     ]
   }

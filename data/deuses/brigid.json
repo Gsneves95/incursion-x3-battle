@@ -9,16 +9,16 @@
   "inicial": true,
   "passiva": {
     "nome": "Ferreira Divina",
-    "desc": "O time causa +5 de dano (permanente); curas no time curam +5 se algum inimigo estiver com Queimadura.",
+    "desc": "O time causa +1 de dano (permanente); curas no time curam +5 se algum inimigo estiver com Queimadura.",
     "fx": [
       {
         "gatilho": "bonusDano",
-        "v": 5,
+        "v": 1,
         "escopo": "time"
       },
       {
         "gatilho": "bonusCura",
-        "v": 5,
+        "v": 2,
         "quandoCura": {
           "inimigoTem": "queimadura"
         }
@@ -33,16 +33,16 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "Grátis. 10 de dano + Queimadura (5/turno por 2 turnos).",
+      "desc": "Grátis. 6 de dano + Queimadura (4/turno por 2 turnos).",
       "fx": [
         {
           "t": "dmg",
-          "v": 10
+          "v": 6
         },
         {
           "t": "dot",
           "nome": "queimadura",
-          "v": 5,
+          "v": 4,
           "dur": 2
         }
       ],
@@ -52,22 +52,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 10,
-              "para": 11
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "Grátis. 11 de dano + Queimadura (5/turno por 2 turnos)."
+          "desc": "Grátis. 7 de dano + Queimadura (4/turno por 2 turnos)."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 5,
-              "para": 6
+              "de": 4,
+              "para": 5
             }
           ],
-          "desc": "Grátis. 11 de dano + Queimadura (6/turno por 2 turnos)."
+          "desc": "Grátis. 7 de dano + Queimadura (5/turno por 2 turnos)."
         },
         {
           "nv": 4,
@@ -78,7 +78,7 @@
               "para": 3
             }
           ],
-          "desc": "Grátis. 11 de dano + Queimadura (6/turno por 3 turnos)."
+          "desc": "Grátis. 7 de dano + Queimadura (5/turno por 3 turnos)."
         }
       ]
     },
@@ -91,16 +91,16 @@
       },
       "cd": 2,
       "alvo": "nenhum",
-      "desc": "Cura 15 no time E causa 12 de dano a todos os inimigos.",
+      "desc": "Cura 8 no time E causa 8 de dano a todos os inimigos.",
       "fx": [
         {
           "t": "heal",
-          "v": 15,
+          "v": 8,
           "escopo": "time"
         },
         {
           "t": "dmg",
-          "v": 12,
+          "v": 8,
           "escopo": "todosInimigos"
         }
       ],
@@ -110,33 +110,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Cura 16 no time E causa 12 de dano a todos os inimigos."
+          "desc": "Cura 9 no time E causa 8 de dano a todos os inimigos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 12,
-              "para": 13
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Cura 16 no time E causa 13 de dano a todos os inimigos."
+          "desc": "Cura 9 no time E causa 9 de dano a todos os inimigos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "Cura 17 no time E causa 13 de dano a todos os inimigos."
+          "desc": "Cura 10 no time E causa 9 de dano a todos os inimigos."
         }
       ]
     },
@@ -150,11 +150,11 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Cura 25 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.",
+      "desc": "Cura 12 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.",
       "fx": [
         {
           "t": "heal",
-          "v": 25,
+          "v": 12,
           "escopo": "time"
         },
         {
@@ -177,11 +177,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 25,
-              "para": 26
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Cura 26 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
+          "desc": "Cura 13 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
         },
         {
           "nv": 3,
@@ -192,18 +192,18 @@
               "para": 9
             }
           ],
-          "desc": "Cura 26 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
+          "desc": "Cura 13 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 26,
-              "para": 27
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Cura 27 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
+          "desc": "Cura 14 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
         }
       ]
     }

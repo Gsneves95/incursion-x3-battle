@@ -32,15 +32,15 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "2 golpes de 7 em 1 inimigo.",
+      "desc": "2 golpes de 9 em 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 7
+          "v": 9
         },
         {
           "t": "dmg",
-          "v": 7
+          "v": 9
         }
       ],
       "niveis": [
@@ -49,22 +49,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 7,
-              "para": 8
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "1 golpe de 8 e 1 de 7 em 1 inimigo."
+          "desc": "1 golpe de 10 e 1 de 9 em 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 7,
-              "para": 8
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "2 golpes de 8 em 1 inimigo."
+          "desc": "2 golpes de 10 em 1 inimigo."
         },
         {
           "nv": 4,
@@ -83,7 +83,7 @@
               }
             }
           ],
-          "desc": "2 golpes de 8 em 1 inimigo; Bastet recebe 3 de redução de dano por 1 turno."
+          "desc": "2 golpes de 10 em 1 inimigo; Bastet recebe 3 de redução de dano por 1 turno."
         }
       ]
     },
@@ -102,7 +102,7 @@
           "t": "intercepta",
           "dur": 2,
           "contra": "unico",
-          "contraAtaca": 15
+          "contraAtaca": 20
         }
       ],
       "niveis": [

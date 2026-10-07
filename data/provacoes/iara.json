@@ -29,19 +29,19 @@
     }
   ],
   "verificacao": {
-    "hash": "93ad84f7",
+    "hash": "55a801a6",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 17,
+    "lancesNesteCaminho": 21,
     "comDica": false,
-    "nos": 25466,
-    "ms": 12208,
+    "nos": 26833,
+    "ms": 19221,
     "caminho": [
       "susanoo Corte de Kusanagi → ogum",
       "passar",
-      "susanoo Corte de Kusanagi → fenrir",
+      "susanoo Corte de Kusanagi → ogum",
       "passar",
-      "susanoo Corte de Kusanagi → fenrir",
+      "susanoo Corte de Kusanagi → tyr",
       "passar",
       "susanoo Corte de Kusanagi → ogum",
       "passar",
@@ -49,11 +49,15 @@
       "passar",
       "poseidon Maremoto",
       "passar",
-      "iara Afogamento",
+      "poseidon Golpe do Tridente → ogum",
       "passar",
-      "poseidon Tridente Colossal → tyr",
+      "poseidon Golpe do Tridente → fenrir",
       "passar",
-      "iara Canto Suave → tyr"
+      "passar",
+      "passar",
+      "poseidon Maremoto",
+      "passar",
+      "poseidon Tridente Colossal → tyr+fenrir"
     ]
   }
 }

@@ -37,11 +37,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -50,22 +50,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -81,7 +81,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo + Sangramento (3 de dano por 1 turno)."
+          "desc": "17 de dano a 1 inimigo + Sangramento (3 de dano por 1 turno)."
         }
       ]
     },
@@ -94,13 +94,13 @@
       },
       "cd": 2,
       "alvo": "inimigo",
-      "desc": "Marca 1 inimigo por 2 turnos: ele recebe +8 de dano de todas as fontes e não pode ser curado.",
+      "desc": "Marca 1 inimigo por 2 turnos: ele recebe +10 de dano de todas as fontes e não pode ser curado.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "vulneravel",
-            "v": 8,
+            "v": 10,
             "dur": 2
           }
         },
@@ -118,22 +118,22 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "Marca 1 inimigo por 2 turnos: ele recebe +9 de dano de todas as fontes e não pode ser curado."
+          "desc": "Marca 1 inimigo por 2 turnos: ele recebe +11 de dano de todas as fontes e não pode ser curado."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 9,
-              "para": 10
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "Marca 1 inimigo por 2 turnos: ele recebe +10 de dano de todas as fontes e não pode ser curado."
+          "desc": "Marca 1 inimigo por 2 turnos: ele recebe +12 de dano de todas as fontes e não pode ser curado."
         },
         {
           "nv": 4,
@@ -144,7 +144,7 @@
               "para": 3
             }
           ],
-          "desc": "Marca 1 inimigo: por 2 turnos ele recebe +10 de dano de todas as fontes, e por 3 turnos não pode ser curado."
+          "desc": "Marca 1 inimigo: por 2 turnos ele recebe +12 de dano de todas as fontes, e por 3 turnos não pode ser curado."
         }
       ]
     },
@@ -158,11 +158,11 @@
       },
       "cd": 3,
       "alvo": "inimigo",
-      "desc": "25 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs.",
+      "desc": "36 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs.",
       "fx": [
         {
           "t": "dmg",
-          "v": 25,
+          "v": 36,
           "porStatus": {
             "v": 10,
             "categoria": "debuff",
@@ -179,22 +179,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 25,
-              "para": 27
+              "de": 36,
+              "para": 38
             }
           ],
-          "desc": "27 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
+          "desc": "38 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 27,
-              "para": 29
+              "de": 38,
+              "para": 40
             }
           ],
-          "desc": "29 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
+          "desc": "40 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
         },
         {
           "nv": 4,
@@ -205,7 +205,7 @@
               "para": 2
             }
           ],
-          "desc": "29 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
+          "desc": "40 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
         }
       ]
     }

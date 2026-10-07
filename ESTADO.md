@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §324 Parte 3 · equilíbrio entre FUNÇÕES + Tyr + Saci
+
+`docs/kits-revisao-324-p3.md`. **Reequilíbrio dos 100 deuses** (arena IA v2, veredito rounds=400):
+- **100 na faixa [35,65]** (antes 13>65, 9<35 → **0/0**); **5 funções em [45,55]** (Suporte 61,1→55,1 ·
+  Atacante 49,7→50,5 · Guardião 46,2→48,3 · Manipulador 40,7→46,2 · Controlador 42,4→45,0).
+- **Alterados** (menor ajuste, atacando a fonte do excesso da P2 — dano-de-time + sustain barato): topo cortado
+  (Brigid 93→62, Oxum 92→61, Brahma/Mimir/Nüwa/Freyja/Krishna ~80→60, …), base subida (Boto 26→36, Hermes
+  36→56, Tanuki 35→49, Cérberus 36→53, Boitatá 38→50, Tsukuyomi/Iansã/Erínias/Medusa, …).
+- **TETO DE DANO respeitado (decisão do dono):** aumentos que cruzavam o teto (`auditoria`) foram
+  **re-alavancados** p/ caber — dano incondicional de base ≤ teto; a força voltou por recarga/custo/efeito
+  não-dano NA HABILIDADE QUE A IA USA (lido por `uso/partida`; "deuses de básico" buffados no básico: Odin
+  Gungnir marca, Heimdall −dano, Boitatá Queimadura, Cérberus milagre em área, Ammit Vulnerável, Mimir
+  passiva-de-time +2→+1 + básico 10→13). NÃO se abriu a whitelist (lista curada de exceções estruturais).
+- **Tyr** destravado (taunt+auto-redução **+ Vulnerável no provocado**; Δhab +23,8, uso 1,73; segue tanque).
+  **Saci** destravado (Inalvejável+roubo **+ 8 AoE**; Δhab +41,2, uso 5,03). (Kits não tocados na re-alavancagem.)
+- **Arrastou:** descs (base+degraus) + kits.json (cadeia + texto×número + **auditoria** verdes); escadas
+  re-ancoradas + re-triagem §318 (habs alteradas ≤+15pp → `niveis_liberados` inalterado; **Dagda e Saci seguem
+  fora** da P2/escada do AoE); **47 Ritos re-carimbados**, 3 fecharam → alavanca HP (Cérberus 58, Hades 55, Thor
+  60); **1 Semanal** (ogum) → alavanca HP 55 + minimo recomputado; **campanha** Cérberus (Prólogo) **VENCÍVEL
+  sob v2**; **Domínios NÃO regenerados** (recalibragem adiada).
+- Suíte + build **verdes**.
+
 ## ★ §324 Parte 2 · consertados os 8 casos claros + diagnóstico do Suporte (por partes)
 
 `docs/kits-revisao-324-p2.md`. **8 deuses destravados** com o menor ajuste derivado do kit (seis eram habilidade

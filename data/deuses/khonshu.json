@@ -28,11 +28,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -41,22 +41,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -74,7 +74,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -144,11 +144,11 @@
       },
       "cd": 4,
       "alvo": "inimigo",
-      "desc": "Cura 20 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro.",
+      "desc": "Cura 26 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro.",
       "fx": [
         {
           "t": "heal",
-          "v": 20,
+          "v": 26,
           "escopo": "time"
         },
         {
@@ -166,11 +166,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 26,
+              "para": 27
             }
           ],
-          "desc": "Cura 21 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro."
+          "desc": "Cura 27 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro."
         },
         {
           "nv": 3,
@@ -181,18 +181,18 @@
               "para": 32
             }
           ],
-          "desc": "Cura 21 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
+          "desc": "Cura 27 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 27,
+              "para": 28
             }
           ],
-          "desc": "Cura 22 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
+          "desc": "Cura 28 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 32 de dano puro."
         }
       ]
     }

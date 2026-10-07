@@ -1,72 +1,73 @@
 {
- "key": "chaac",
- "titulo": "As Quatro Chuvas",
- "nivel": "Provação",
- "dificuldade": 3,
- "aliados": [
-  "chaac",
-  "perseu",
-  "houyi"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 12
+  "key": "chaac",
+  "titulo": "As Quatro Chuvas",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "chaac",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "chaac"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "chaac"
+    }
+  ],
+  "verificacao": {
+    "hash": "3a826491",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 32,
+    "comDica": false,
+    "nos": 3675,
+    "ms": 3540,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "passar",
+      "perseu Lâmina Curva → cuca",
+      "houyi Flecha Solar → saci",
+      "chaac As Quatro Chuvas",
+      "passar",
+      "chaac Tempestade de Raios",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "chaac Machado das Nuvens → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "chaac Machado das Nuvens → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "52b8aead",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 31,
-  "comDica": false,
-  "nos": 40066,
-  "ms": 40890,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "houyi Abater o Sol → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "houyi Nove Flechas → loki",
-   "perseu Foice Adamantina → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Abater o Sol → cuca",
-   "passar",
-   "houyi Flecha Solar → cuca",
-   "perseu Lâmina Curva → cuca",
-   "chaac As Quatro Chuvas",
-   "passar",
-   "chaac Tempestade de Raios",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "chaac As Quatro Chuvas",
-   "passar",
-   "houyi Nove Flechas → saci"
-  ]
- }
 }

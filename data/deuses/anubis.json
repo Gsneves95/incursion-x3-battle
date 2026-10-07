@@ -36,11 +36,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo + 1 Atadura.",
+      "desc": "14 de dano a 1 inimigo + 1 Atadura.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 14
         },
         {
           "t": "contador",
@@ -54,22 +54,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "13 de dano a 1 inimigo + 1 Atadura."
+          "desc": "15 de dano a 1 inimigo + 1 Atadura."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "14 de dano a 1 inimigo + 1 Atadura."
+          "desc": "16 de dano a 1 inimigo + 1 Atadura."
         },
         {
           "nv": 4,
@@ -87,7 +87,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo + 1 Atadura; ele causa 2 menos de dano por 1 turno."
+          "desc": "16 de dano a 1 inimigo + 1 Atadura; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -100,7 +100,7 @@
       },
       "cd": 2,
       "alvo": "inimigo",
-      "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 25 de dano.",
+      "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 30 de dano.",
       "fx": [
         {
           "t": "condicional",
@@ -124,7 +124,7 @@
           "senao": [
             {
               "t": "dmg",
-              "v": 25
+              "v": 30
             }
           ]
         }
@@ -135,33 +135,33 @@
           "muda": [
             {
               "caminho": "fx[0].senao[0].v",
-              "de": 25,
-              "para": 27
+              "de": 30,
+              "para": 32
             }
           ],
-          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 27 de dano."
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 32 de dano."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].senao[0].v",
-              "de": 27,
-              "para": 29
+              "de": 32,
+              "para": 34
             }
           ],
-          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 29 de dano."
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 34 de dano."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].senao[0].v",
-              "de": 29,
-              "para": 31
+              "de": 34,
+              "para": 36
             }
           ],
-          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 31 de dano."
+          "desc": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 36 de dano."
         }
       ]
     },

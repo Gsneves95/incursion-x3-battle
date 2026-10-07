@@ -25,11 +25,19 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno.",
       "fx": [
         {
           "t": "dmg",
           "v": 15
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "dmgDown",
+            "v": 3,
+            "dur": 1
+          }
         }
       ],
       "niveis": [
@@ -42,7 +50,7 @@
               "para": 16
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno."
         },
         {
           "nv": 3,
@@ -53,7 +61,7 @@
               "para": 17
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno."
         },
         {
           "nv": 4,
@@ -72,7 +80,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; Heimdall recebe 3 de redução de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; Heimdall recebe 3 de redução de dano por 1 turno; o alvo causa 3 menos de dano por 1 turno."
         }
       ]
     },
@@ -83,15 +91,15 @@
       "cost": {
         "Aurora": 2
       },
-      "cd": 2,
+      "cd": 1,
       "alvo": "aliado",
-      "desc": "Por 2 turnos, 1 aliado contra-ataca por 15 quem o atingir com alvo único.",
+      "desc": "Por 2 turnos, 1 aliado contra-ataca por 20 quem o atingir com alvo único.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "contraAtaca",
-            "v": 15,
+            "v": 20,
             "dur": 2
           }
         }
@@ -102,22 +110,22 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 15,
-              "para": 16
+              "de": 20,
+              "para": 21
             }
           ],
-          "desc": "Por 2 turnos, 1 aliado contra-ataca por 16 quem o atingir com alvo único."
+          "desc": "Por 2 turnos, 1 aliado contra-ataca por 21 quem o atingir com alvo único."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 16,
-              "para": 17
+              "de": 21,
+              "para": 22
             }
           ],
-          "desc": "Por 2 turnos, 1 aliado contra-ataca por 17 quem o atingir com alvo único."
+          "desc": "Por 2 turnos, 1 aliado contra-ataca por 22 quem o atingir com alvo único."
         },
         {
           "nv": 4,
@@ -128,7 +136,7 @@
               "para": 3
             }
           ],
-          "desc": "Por 3 turnos, 1 aliado contra-ataca por 17 quem o atingir com alvo único."
+          "desc": "Por 3 turnos, 1 aliado contra-ataca por 22 quem o atingir com alvo único."
         }
       ]
     },
@@ -140,7 +148,7 @@
         "Aurora": 1,
         "livre": 2
       },
-      "cd": 4,
+      "cd": 3,
       "alvo": "nenhum",
       "desc": "O time ganha 20 de Defesa Destrutível e imunidade a controle por 2 turnos.",
       "fx": [

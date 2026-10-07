@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 55,
+        "hp": 55
+      }
+    ]
   },
   "condicoes": [
     {
@@ -29,42 +49,31 @@
     }
   ],
   "verificacao": {
-    "hash": "6d8c454b",
+    "hash": "72406380",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 28,
+    "lancesNesteCaminho": 17,
     "comDica": false,
-    "nos": 20733,
-    "ms": 7511,
+    "nos": 18777,
+    "ms": 11489,
     "caminho": [
       "zeus Cetro do Trovão → nezha",
       "passar",
       "zeus Ira Celestial",
       "passar",
-      "zeus Julgamento do Trovão → nezha",
+      "zeus Julgamento do Trovão → iansa",
       "passar",
       "zeus Cetro do Trovão → nezha",
       "passar",
+      "zeus Cetro do Trovão → iansa",
+      "passar",
       "zeus Julgamento do Trovão → nezha",
+      "hades Portões do Submundo → bastet",
       "passar",
       "zeus Ira Celestial",
-      "hades Toque Fúnebre → iansa",
-      "passar",
-      "zeus Julgamento do Trovão → nezha",
       "hades Toque Fúnebre → nezha",
       "passar",
-      "hades Portões do Submundo → iansa",
-      "zeus Cetro do Trovão → iansa",
-      "anubis Toque do Embalsamador → iansa",
-      "passar",
-      "anubis Pesagem do Coração → bastet",
-      "zeus Cetro do Trovão → nezha",
-      "passar",
-      "zeus Ira Celestial",
-      "hades Toque Fúnebre → bastet",
-      "passar",
-      "passar",
-      "hades Portões do Submundo → bastet"
+      "hades Toque Fúnebre → nezha"
     ]
   }
 }

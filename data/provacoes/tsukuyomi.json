@@ -1,73 +1,70 @@
 {
- "key": "tsukuyomi",
- "titulo": "A Lua Julga",
- "nivel": "Provação",
- "dificuldade": 3,
- "aliados": [
-  "tsukuyomi",
-  "perseu",
-  "houyi"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 12
+  "key": "tsukuyomi",
+  "titulo": "A Lua Julga",
+  "nivel": "Provação",
+  "dificuldade": 3,
+  "aliados": [
+    "tsukuyomi",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "tsukuyomi"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "tsukuyomi"
+    }
+  ],
+  "verificacao": {
+    "hash": "71eab582",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 4378,
+    "ms": 5149,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "passar",
+      "houyi Nove Flechas → loki",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "tsukuyomi Lâmina Crescente → cuca",
+      "passar",
+      "tsukuyomi Anoitecer → saci",
+      "perseu Lâmina Curva → saci",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "tsukuyomi Julgamento da Lua",
+      "houyi Flecha Solar → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "tsukuyomi Lâmina Crescente → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "5d020af7",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 32,
-  "comDica": false,
-  "nos": 70707,
-  "ms": 68549,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "houyi Abater o Sol → loki",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "perseu Foice Adamantina → loki",
-   "passar",
-   "houyi Nove Flechas → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Abater o Sol → cuca",
-   "passar",
-   "perseu Lâmina Curva → cuca",
-   "tsukuyomi Anoitecer → saci",
-   "passar",
-   "tsukuyomi Julgamento da Lua",
-   "houyi Flecha Solar → saci",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "houyi Flecha Solar → cuca",
-   "tsukuyomi Anoitecer → saci",
-   "passar",
-   "houyi Nove Flechas → saci"
-  ]
- }
 }

@@ -92,13 +92,13 @@
       },
       "cd": 2,
       "alvo": "nenhum",
-      "desc": "O time regenera 12 de HP por turno durante 2 turnos.",
+      "desc": "O time regenera 6 de HP por turno durante 2 turnos.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "regen",
-            "v": 12,
+            "v": 6,
             "dur": 2
           },
           "escopo": "time"
@@ -110,22 +110,22 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 12,
-              "para": 13
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "O time regenera 13 de HP por turno durante 2 turnos."
+          "desc": "O time regenera 7 de HP por turno durante 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 13,
-              "para": 14
+              "de": 7,
+              "para": 8
             }
           ],
-          "desc": "O time regenera 14 de HP por turno durante 2 turnos."
+          "desc": "O time regenera 8 de HP por turno durante 2 turnos."
         },
         {
           "nv": 4,
@@ -139,7 +139,7 @@
               }
             }
           ],
-          "desc": "O time regenera 14 de HP por turno durante 2 turnos e perde todos os debuffs."
+          "desc": "O time regenera 8 de HP por turno durante 2 turnos e perde todos os debuffs."
         }
       ]
     },
@@ -153,7 +153,7 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time.",
+      "desc": "Revive 1 aliado caído com 36 de HP; se ninguém caiu, cura 11 no time.",
       "fx": [
         {
           "t": "condicional",
@@ -163,14 +163,14 @@
           "entao": [
             {
               "t": "revive",
-              "hp": 48,
+              "hp": 36,
               "escopo": "umCaido"
             }
           ],
           "senao": [
             {
               "t": "heal",
-              "v": 25,
+              "v": 11,
               "escopo": "time"
             }
           ]
@@ -190,7 +190,7 @@
               }
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 4."
+          "desc": "Revive 1 aliado caído com 36 de HP; se ninguém caiu, cura 11 no time. Em qualquer caso, o time cura 4."
         },
         {
           "nv": 3,
@@ -201,7 +201,7 @@
               "para": 5
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 5."
+          "desc": "Revive 1 aliado caído com 36 de HP; se ninguém caiu, cura 11 no time. Em qualquer caso, o time cura 5."
         },
         {
           "nv": 4,
@@ -212,7 +212,7 @@
               "para": 3
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time. Em qualquer caso, o time cura 5."
+          "desc": "Revive 1 aliado caído com 36 de HP; se ninguém caiu, cura 11 no time. Em qualquer caso, o time cura 5."
         }
       ]
     }

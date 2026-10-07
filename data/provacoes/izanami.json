@@ -15,51 +15,86 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 0,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 1,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 2,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 30,
+        "hp": 30
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 30,
+        "hp": 30
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 30,
+        "hp": 30
+      }
+    ]
   },
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 14
+      "turnos": 22
     },
     {
       "predicado": "abatePorExecucao",
       "quem": "inimigo",
-      "quantos": 2
+      "quantos": 1
     }
   ],
   "verificacao": {
-    "hash": "b0dcb843",
+    "hash": "38fcf88f",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 23,
+    "lancesNesteCaminho": 20,
     "comDica": false,
-    "nos": 78881,
-    "ms": 29669,
+    "nos": 1816,
+    "ms": 911,
     "caminho": [
       "perseu Lâmina Curva → ares",
       "passar",
-      "perseu Cabeça da Medusa → ares",
+      "perseu Cabeça da Medusa → thor",
       "passar",
       "perseu Foice Adamantina → ares",
       "passar",
       "perseu Lâmina Curva → thor",
       "passar",
-      "perseu Foice Adamantina → thor",
+      "perseu Foice Adamantina → hel",
+      "kali Golpe da Foice → ares",
       "passar",
-      "perseu Lâmina Curva → thor",
-      "passar",
-      "perseu Cabeça da Medusa → ares",
-      "passar",
-      "perseu Foice Adamantina → thor",
-      "izanami Praga de Yomi",
-      "passar",
-      "perseu Lâmina Curva → thor",
-      "izanami Portal de Yomotsu",
+      "perseu Lâmina Curva → hel",
       "passar",
       "passar",
-      "perseu Cabeça da Medusa → hel",
-      "passar"
+      "izanami Toque de Yomi → hel",
+      "perseu Lâmina Curva → hel",
+      "passar",
+      "perseu Lâmina Curva → hel",
+      "passar",
+      "izanami Portal de Yomotsu"
     ]
   }
 }

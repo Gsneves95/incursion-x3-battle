@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "3e030ed",
+    "hash": "e0c7c0dc",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 30,
+    "lancesNesteCaminho": 31,
     "comDica": false,
-    "nos": 3012,
-    "ms": 1462,
+    "nos": 8694,
+    "ms": 2887,
     "caminho": [
       "perseu Lâmina Curva → thor",
       "passar",
@@ -48,24 +48,25 @@
       "perseu Lâmina Curva → thor",
       "passar",
       "perseu Foice Adamantina → thor",
-      "houyi Flecha Solar → thor",
+      "houyi Flecha Solar → tyr",
       "passar",
-      "houyi Abater o Sol → thor",
-      "perseu Lâmina Curva → thor",
+      "houyi Abater o Sol → tyr",
+      "perseu Lâmina Curva → ogum",
       "passar",
-      "houyi Flecha Solar → thor",
+      "houyi Flecha Solar → ogum",
       "perseu Lâmina Curva → ogum",
       "passar",
       "houyi Abater o Sol → ogum",
-      "perseu Foice Adamantina → ogum",
       "passar",
       "houyi Flecha Solar → ogum",
       "passar",
       "houyi Abater o Sol → ogum",
       "passar",
-      "houyi Flecha Solar → tyr",
+      "houyi Flecha Solar → thor",
       "passar",
-      "houyi Abater o Sol → tyr"
+      "houyi Abater o Sol → thor",
+      "passar",
+      "houyi Flecha Solar → thor"
     ]
   }
 }

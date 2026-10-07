@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "2784ca5c",
+    "hash": "c37df998",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 28,
     "comDica": false,
-    "nos": 7753,
-    "ms": 1410,
+    "nos": 7759,
+    "ms": 4469,
     "caminho": [
       "kali Golpe da Foice → shiva",
       "perseu Lâmina Curva → shiva",

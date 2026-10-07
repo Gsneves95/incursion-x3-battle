@@ -34,11 +34,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo.",
+      "desc": "13 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 15
+          "v": 13
         }
       ],
       "niveis": [
@@ -47,22 +47,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "14 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -80,7 +80,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "15 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -153,7 +153,7 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 15 no time.",
+      "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 12 no time.",
       "fx": [
         {
           "t": "apply",
@@ -165,7 +165,7 @@
         },
         {
           "t": "heal",
-          "v": 15,
+          "v": 12,
           "escopo": "time"
         }
       ],
@@ -175,33 +175,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 15,
-              "para": 16
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 16 no time."
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 13 no time."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 16,
-              "para": 17
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 17 no time."
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 14 no time."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 17,
-              "para": 18
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 18 no time."
+          "desc": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 15 no time."
         }
       ]
     }

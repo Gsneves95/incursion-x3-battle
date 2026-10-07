@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 90,
+        "hp": 90
+      }
+    ]
   },
   "condicoes": [
     {
@@ -29,32 +49,32 @@
     }
   ],
   "verificacao": {
-    "hash": "5576fdee",
+    "hash": "e436fb24",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 20,
     "comDica": false,
-    "nos": 98469,
-    "ms": 34559,
+    "nos": 65527,
+    "ms": 79873,
     "caminho": [
       "loki Adaga Traiçoeira → brahma",
       "passar",
       "kali Dança da Aniquilação",
+      "loki Adaga Traiçoeira → brahma",
       "passar",
       "loki Trama do Caos",
-      "shiva Tandava",
-      "passar",
       "shiva Tridente Trishula → brahma",
       "passar",
       "shiva Tandava",
+      "passar",
+      "kali Sede de Sangue → hercules",
+      "passar",
+      "kali Sede de Sangue → ogum",
+      "passar",
+      "shiva Tandava",
+      "passar",
+      "shiva Tridente Trishula → hercules",
       "kali Golpe da Foice → ogum",
-      "passar",
-      "shiva Tridente Trishula → ogum",
-      "passar",
-      "kali Dança da Aniquilação",
-      "shiva Tridente Trishula → ogum",
-      "passar",
-      "kali Golpe da Foice → hercules",
       "passar",
       "kali Golpe da Foice → hercules"
     ]

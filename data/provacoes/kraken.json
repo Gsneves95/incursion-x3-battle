@@ -1,75 +1,75 @@
 {
- "key": "kraken",
- "titulo": "O Abismo Reclama",
- "nivel": "Provação",
- "dificuldade": 2,
- "aliados": [
-  "kraken",
-  "perseu",
-  "oxum"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 14
+  "key": "kraken",
+  "titulo": "O Abismo Reclama",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "kraken",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "kraken"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "kraken"
+    }
+  ],
+  "verificacao": {
+    "hash": "fd6b6f83",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 34,
+    "comDica": false,
+    "nos": 19383,
+    "ms": 4889,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Foice Adamantina → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "kraken Fúria do Abismo",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "oxum Rio de Ouro",
+      "kraken Agarre Abissal → saci+cuca",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "passar",
+      "oxum Espelho Dourado → saci",
+      "kraken Investida de Tentáculo → saci",
+      "passar",
+      "kraken Fúria do Abismo",
+      "passar",
+      "kraken Agarre Abissal → saci+cuca",
+      "passar",
+      "passar",
+      "kraken Agarre Abissal → saci+cuca",
+      "passar",
+      "kraken Fúria do Abismo"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "ecefadc0",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 34,
-  "comDica": false,
-  "nos": 2294,
-  "ms": 1022,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Cabeça da Medusa → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Foice Adamantina → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "kraken Fúria do Abismo",
-   "oxum Espelho Dourado → cuca",
-   "passar",
-   "kraken Agarre Abissal → saci+cuca",
-   "oxum Espelho Dourado → cuca",
-   "passar",
-   "kraken Investida de Tentáculo → cuca",
-   "oxum Espelho Dourado → cuca",
-   "passar",
-   "kraken Agarre Abissal → saci+cuca",
-   "oxum Águas de Oxum → oxum",
-   "passar",
-   "kraken Fúria do Abismo",
-   "oxum Espelho Dourado → cuca",
-   "passar",
-   "kraken Agarre Abissal → saci",
-   "passar",
-   "passar",
-   "kraken Agarre Abissal → saci",
-   "passar",
-   "passar",
-   "kraken Fúria do Abismo"
-  ]
- }
 }

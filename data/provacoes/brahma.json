@@ -15,27 +15,65 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 0,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 1,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 2,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 55,
+        "hp": 55
+      }
+    ]
   },
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 14
+      "turnos": 24
     },
     {
       "predicado": "acumulo",
       "fonte": "danoBonus",
-      "limiar": 80
+      "limiar": 24
     }
   ],
   "verificacao": {
-    "hash": "23a0096a",
+    "hash": "68b71360",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 33,
+    "lancesNesteCaminho": 31,
     "comDica": false,
-    "nos": 38242,
-    "ms": 15022,
+    "nos": 78,
+    "ms": 105,
     "caminho": [
       "kali Golpe da Foice → oni",
       "brahma Cajado do Criador → ogum",
@@ -44,32 +82,30 @@
       "perseu Cabeça da Medusa → oni",
       "brahma Cajado do Criador → ogum",
       "passar",
-      "perseu Foice Adamantina → oni",
-      "brahma Cajado do Criador → ogum",
-      "passar",
-      "brahma Cajado do Criador → ogum",
-      "perseu Lâmina Curva → oni",
-      "passar",
-      "kali Dança da Aniquilação",
       "perseu Foice Adamantina → ogum",
       "brahma Cajado do Criador → ogum",
       "passar",
-      "kali Golpe da Foice → aquiles",
+      "kali Sede de Sangue → aquiles",
+      "brahma Cajado do Criador → aquiles",
+      "perseu Lâmina Curva → aquiles",
       "passar",
-      "kali Golpe da Foice → aquiles",
-      "passar",
-      "passar",
-      "brahma Sopro da Criação → brahma",
-      "passar",
-      "perseu Cabeça da Medusa → aquiles",
-      "brahma Sopro da Criação → brahma",
-      "passar",
-      "brahma Sopro da Criação → brahma",
-      "passar",
-      "brahma Sopro da Criação → perseu",
+      "brahma Cajado do Criador → aquiles",
+      "perseu Lâmina Curva → aquiles",
       "passar",
       "brahma Quatro Faces",
-      "kali Dança da Aniquilação"
+      "perseu Lâmina Curva → aquiles",
+      "passar",
+      "brahma Cajado do Criador → aquiles",
+      "perseu Lâmina Curva → aquiles",
+      "passar",
+      "passar",
+      "passar",
+      "brahma Quatro Faces",
+      "passar",
+      "brahma Sopro da Criação → brahma",
+      "passar",
+      "brahma Quatro Faces",
+      "kali Golpe da Foice → aquiles"
     ]
   }
 }

@@ -28,34 +28,31 @@
     }
   ],
   "verificacao": {
-    "hash": "8d6a035b",
+    "hash": "cb7fc68b",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 20,
+    "lancesNesteCaminho": 17,
     "comDica": false,
-    "nos": 254,
-    "ms": 296,
+    "nos": 52,
+    "ms": 143,
     "caminho": [
       "perseu Lâmina Curva → mnevis",
       "passar",
       "perseu Cabeça da Medusa → mnevis",
       "zeus Cetro do Trovão → mnevis",
       "passar",
-      "houyi Nove Flechas → iara",
-      "perseu Lâmina Curva → iara",
-      "passar",
-      "houyi Abater o Sol → mnevis",
+      "houyi Nove Flechas → mnevis+iara+kukulkan",
       "perseu Lâmina Curva → mnevis",
       "passar",
-      "zeus Cetro do Trovão → kukulkan",
-      "houyi Flecha Solar → kukulkan",
-      "perseu Lâmina Curva → mnevis",
-      "passar",
-      "perseu Cabeça da Medusa → kukulkan",
       "houyi Abater o Sol → kukulkan",
+      "perseu Lâmina Curva → kukulkan",
       "passar",
-      "houyi Nove Flechas → kukulkan",
-      "perseu Lâmina Curva → mnevis"
+      "perseu Foice Adamantina → kukulkan",
+      "houyi Flecha Solar → mnevis",
+      "passar",
+      "houyi Abater o Sol → iara",
+      "passar",
+      "houyi Nove Flechas → iara+kukulkan"
     ]
   }
 }

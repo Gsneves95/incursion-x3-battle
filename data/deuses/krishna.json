@@ -28,11 +28,11 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "10 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 10
         }
       ],
       "niveis": [
@@ -41,22 +41,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "11 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "12 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -74,7 +74,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -146,13 +146,13 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "O time causa +12 de dano por 2 turnos e ganha 2 orbes.",
+      "desc": "O time causa +5 de dano por 2 turnos e ganha 2 orbes.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 12,
+            "v": 5,
             "dur": 2
           },
           "escopo": "time"
@@ -168,33 +168,33 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 12,
-              "para": 13
+              "de": 5,
+              "para": 6
             }
           ],
-          "desc": "O time causa +13 de dano por 2 turnos e ganha 2 orbes."
+          "desc": "O time causa +6 de dano por 2 turnos e ganha 2 orbes."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 13,
-              "para": 14
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "O time causa +14 de dano por 2 turnos e ganha 2 orbes."
+          "desc": "O time causa +7 de dano por 2 turnos e ganha 2 orbes."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 14,
-              "para": 15
+              "de": 7,
+              "para": 8
             }
           ],
-          "desc": "O time causa +15 de dano por 2 turnos e ganha 2 orbes."
+          "desc": "O time causa +8 de dano por 2 turnos e ganha 2 orbes."
         }
       ]
     }

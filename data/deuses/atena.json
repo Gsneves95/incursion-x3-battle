@@ -99,11 +99,11 @@
       },
       "cd": 2,
       "alvo": "aliado",
-      "desc": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física.",
+      "desc": "1 aliado ganha 30 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física.",
       "fx": [
         {
           "t": "shield",
-          "v": 25
+          "v": 30
         },
         {
           "t": "apply",
@@ -121,11 +121,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 25,
-              "para": 28
+              "de": 30,
+              "para": 33
             }
           ],
-          "desc": "1 aliado ganha 28 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
+          "desc": "1 aliado ganha 33 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
         },
         {
           "nv": 3,
@@ -136,7 +136,7 @@
               "para": 12
             }
           ],
-          "desc": "1 aliado ganha 28 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
+          "desc": "1 aliado ganha 33 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
         },
         {
           "nv": 4,
@@ -147,7 +147,7 @@
               "para": 3
             }
           ],
-          "desc": "1 aliado ganha 28 de Defesa Destrutível por 3 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
+          "desc": "1 aliado ganha 33 de Defesa Destrutível por 3 turnos; enquanto durar, contra-ataca por 12 quem o atingir com habilidade Física."
         }
       ]
     },
@@ -161,7 +161,7 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Remove todos os debuffs do time; o time causa +8 de dano por 2 turnos.",
+      "desc": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos.",
       "fx": [
         {
           "t": "cleanse",
@@ -171,7 +171,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 8,
+            "v": 10,
             "dur": 2
           },
           "escopo": "time"
@@ -183,22 +183,22 @@
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "Remove todos os debuffs do time; o time causa +9 de dano por 2 turnos."
+          "desc": "Remove todos os debuffs do time; o time causa +11 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 9,
-              "para": 10
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos."
+          "desc": "Remove todos os debuffs do time; o time causa +12 de dano por 2 turnos."
         },
         {
           "nv": 4,
@@ -209,7 +209,7 @@
               "para": 3
             }
           ],
-          "desc": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos."
+          "desc": "Remove todos os debuffs do time; o time causa +12 de dano por 2 turnos."
         }
       ]
     }

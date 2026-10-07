@@ -1,77 +1,77 @@
 {
- "key": "durga",
- "titulo": "Mahishasura",
- "nivel": "Rito",
- "dificuldade": 1,
- "aliados": [
-  "durga",
-  "perseu",
-  "oxum"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 14
+  "key": "durga",
+  "titulo": "Mahishasura",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "durga",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "durga"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "durga"
+    }
+  ],
+  "verificacao": {
+    "hash": "bf81cfe4",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 36,
+    "comDica": false,
+    "nos": 567,
+    "ms": 541,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "oxum Rio de Ouro",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "durga Lâminas dos Deuses → cuca",
+      "perseu Foice Adamantina → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "durga Lâminas dos Deuses → cuca",
+      "passar",
+      "oxum Rio de Ouro",
+      "passar",
+      "durga Lâminas dos Deuses → saci",
+      "perseu Cabeça da Medusa → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "durga Fim de Mahishasura → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "durga Arsenal dos Deuses → saci",
+      "oxum Espelho Dourado → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "ca51c6c7",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 36,
-  "comDica": false,
-  "nos": 196,
-  "ms": 313,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Cabeça da Medusa → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Rio de Ouro",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "oxum Águas de Oxum → durga",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "oxum Águas de Oxum → durga",
-   "passar",
-   "durga Lâminas dos Deuses → loki",
-   "perseu Lâmina Curva → cuca",
-   "oxum Águas de Oxum → durga",
-   "passar",
-   "durga Lâminas dos Deuses → cuca",
-   "perseu Foice Adamantina → saci",
-   "oxum Espelho Dourado → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "durga Fim de Mahishasura → saci",
-   "oxum Espelho Dourado → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "durga Arsenal dos Deuses → saci",
-   "oxum Espelho Dourado → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "durga Lâminas dos Deuses → saci"
-  ]
- }
 }

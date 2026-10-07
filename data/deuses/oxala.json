@@ -8,11 +8,11 @@
   "arquetipo": "Pacificador/protetor",
   "passiva": {
     "nome": "O Mais Velho",
-    "desc": "O time recebe 5 de redução de dano e começa a partida com 1 orbe de Aurora extra.",
+    "desc": "O time recebe 3 de redução de dano e começa a partida com 1 orbe de Aurora extra.",
     "fx": [
       {
         "gatilho": "reducao",
-        "v": 5,
+        "v": 2,
         "escopo": "time"
       },
       {
@@ -35,11 +35,11 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "10 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 10
         }
       ],
       "niveis": [
@@ -48,22 +48,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "11 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "12 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -81,7 +81,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -92,7 +92,7 @@
       "cost": {
         "Aurora": 2
       },
-      "cd": 3,
+      "cd": 4,
       "alvo": "todosInimigos",
       "desc": "Por 1 turno, os inimigos podem agir mas causam 0 de dano.",
       "fx": [
@@ -155,7 +155,7 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Remove todos os debuffs do time, concede 20 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno.",
+      "desc": "Remove todos os debuffs do time, concede 12 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno.",
       "fx": [
         {
           "t": "cleanse",
@@ -163,7 +163,7 @@
         },
         {
           "t": "shield",
-          "v": 20,
+          "v": 12,
           "escopo": "time"
         },
         {
@@ -181,33 +181,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 20,
-              "para": 21
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Remove todos os debuffs do time, concede 21 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Remove todos os debuffs do time, concede 13 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 21,
-              "para": 22
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Remove todos os debuffs do time, concede 22 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Remove todos os debuffs do time, concede 14 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 22,
-              "para": 23
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "Remove todos os debuffs do time, concede 23 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
+          "desc": "Remove todos os debuffs do time, concede 15 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
         }
       ]
     }

@@ -1,71 +1,71 @@
 {
- "key": "nuwa",
- "titulo": "Remendar o Céu",
- "nivel": "Rito",
- "dificuldade": 1,
- "aliados": [
-  "nuwa",
-  "perseu",
-  "houyi"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 12
+  "key": "nuwa",
+  "titulo": "Remendar o Céu",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "nuwa",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "nuwa"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "nuwa"
+    }
+  ],
+  "verificacao": {
+    "hash": "b2ed92f3",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 30,
+    "comDica": false,
+    "nos": 175,
+    "ms": 650,
+    "caminho": [
+      "houyi Flecha Solar → loki",
+      "nuwa Escama Celeste → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "nuwa Escama Celeste → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "nuwa Escama Celeste → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Flecha Solar → cuca",
+      "nuwa Escama Celeste → cuca",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Abater o Sol → cuca",
+      "nuwa Escama Celeste → cuca",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "nuwa Escama Celeste → cuca",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "nuwa Escama Celeste → cuca",
+      "perseu Lâmina Curva → saci",
+      "houyi Abater o Sol → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "nuwa Escama Celeste → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "7afd8f9e",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 30,
-  "comDica": false,
-  "nos": 41,
-  "ms": 133,
-  "caminho": [
-   "houyi Flecha Solar → loki",
-   "nuwa Escama Celeste → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "nuwa Escama Celeste → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Abater o Sol → loki",
-   "nuwa Escama Celeste → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Flecha Solar → cuca",
-   "nuwa Escama Celeste → cuca",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Abater o Sol → cuca",
-   "nuwa Escama Celeste → cuca",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "nuwa Escama Celeste → cuca",
-   "perseu Lâmina Curva → cuca",
-   "passar",
-   "nuwa Escama Celeste → cuca",
-   "perseu Lâmina Curva → saci",
-   "houyi Abater o Sol → saci",
-   "passar",
-   "perseu Lâmina Curva → saci",
-   "nuwa Escama Celeste → saci"
-  ]
- }
 }

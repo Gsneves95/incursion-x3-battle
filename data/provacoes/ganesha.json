@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "2a272af3",
+    "hash": "2209eaa4",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 27,
+    "lancesNesteCaminho": 25,
     "comDica": false,
-    "nos": 44,
-    "ms": 86,
+    "nos": 541,
+    "ms": 758,
     "caminho": [
       "perseu Cabeça da Medusa → freyja",
       "ganesha Presa Quebrada → freyja",
@@ -51,18 +51,16 @@
       "perseu Lâmina Curva → freyja",
       "ganesha Presa Quebrada → izanami",
       "passar",
-      "perseu Cabeça da Medusa → izanami",
+      "perseu Cabeça da Medusa → dionisio",
       "houyi Abater o Sol → izanami",
-      "ganesha Presa Quebrada → dionisio",
-      "passar",
-      "perseu Foice Adamantina → dionisio",
-      "ganesha Presa Quebrada → dionisio",
-      "passar",
-      "houyi Nove Flechas → dionisio",
-      "perseu Lâmina Curva → dionisio",
       "ganesha Presa Quebrada → izanami",
       "passar",
-      "ganesha Presa Quebrada → dionisio"
+      "perseu Foice Adamantina → dionisio",
+      "ganesha Presa Quebrada → izanami",
+      "passar",
+      "houyi Nove Flechas → dionisio",
+      "ganesha Presa Quebrada → izanami",
+      "perseu Lâmina Curva → dionisio"
     ]
   }
 }

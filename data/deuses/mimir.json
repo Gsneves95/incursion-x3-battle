@@ -8,11 +8,11 @@
   "arquetipo": "Suporte pós-morte",
   "passiva": {
     "nome": "Cabeça Falante",
-    "desc": "Mesmo derrotado, Mimir concede +6 de dano ao time — mas não pode ser revivido.",
+    "desc": "Mesmo derrotado, Mimir concede +1 de dano ao time — mas não pode ser revivido.",
     "fx": [
       {
         "gatilho": "bonusDano",
-        "v": 6,
+        "v": 1,
         "escopo": "time",
         "mesmoMorto": true
       },
@@ -29,11 +29,11 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "10 de dano a 1 inimigo.",
+      "desc": "13 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 10
+          "v": 13
         }
       ],
       "niveis": [
@@ -42,22 +42,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 10,
-              "para": 11
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "11 de dano a 1 inimigo."
+          "desc": "14 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 11,
-              "para": 12
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "12 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -75,7 +75,7 @@
               }
             }
           ],
-          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "15 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -88,7 +88,7 @@
       },
       "cd": 2,
       "alvo": "aliado",
-      "desc": "Remove 1 orbe do inimigo; 1 aliado causa +8 de dano por 2 turnos.",
+      "desc": "Remove 1 orbe do inimigo; 1 aliado causa +6 de dano por 2 turnos.",
       "fx": [
         {
           "t": "roubaOrbe",
@@ -98,7 +98,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 8,
+            "v": 6,
             "dur": 2
           }
         }
@@ -109,33 +109,33 @@
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +9 de dano por 2 turnos."
+          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +7 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 9,
-              "para": 10
+              "de": 7,
+              "para": 8
             }
           ],
-          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +10 de dano por 2 turnos."
+          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +8 de dano por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +11 de dano por 2 turnos."
+          "desc": "Remove 1 orbe do inimigo; 1 aliado causa +9 de dano por 2 turnos."
         }
       ]
     },
@@ -149,7 +149,7 @@
       },
       "cd": 4,
       "alvo": "aliado",
-      "desc": "Zera todas as recargas de 1 aliado; ele causa +10 de dano por 2 turnos.",
+      "desc": "Zera todas as recargas de 1 aliado; ele causa +6 de dano por 2 turnos.",
       "fx": [
         {
           "t": "cdShift",
@@ -160,7 +160,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 10,
+            "v": 6,
             "dur": 2
           }
         }
@@ -171,33 +171,33 @@
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "Zera todas as recargas de 1 aliado; ele causa +11 de dano por 2 turnos."
+          "desc": "Zera todas as recargas de 1 aliado; ele causa +7 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 11,
-              "para": 12
+              "de": 7,
+              "para": 8
             }
           ],
-          "desc": "Zera todas as recargas de 1 aliado; ele causa +12 de dano por 2 turnos."
+          "desc": "Zera todas as recargas de 1 aliado; ele causa +8 de dano por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 12,
-              "para": 13
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Zera todas as recargas de 1 aliado; ele causa +13 de dano por 2 turnos."
+          "desc": "Zera todas as recargas de 1 aliado; ele causa +9 de dano por 2 turnos."
         }
       ]
     }

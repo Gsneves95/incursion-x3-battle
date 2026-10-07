@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 60,
+        "hp": 60
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 60,
+        "hp": 60
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 60,
+        "hp": 60
+      }
+    ]
   },
   "condicoes": [
     {
@@ -27,38 +47,26 @@
     }
   ],
   "verificacao": {
-    "hash": "a5159eb8",
+    "hash": "ced71057",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 24,
+    "lancesNesteCaminho": 12,
     "comDica": false,
-    "nos": 38186,
-    "ms": 38543,
+    "nos": 727,
+    "ms": 776,
     "caminho": [
       "houyi Flecha Solar → fenrir",
       "passar",
       "houyi Nove Flechas → ammit",
       "passar",
-      "houyi Abater o Sol → fenrir",
-      "passar",
       "houyi Flecha Solar → ammit",
       "passar",
-      "houyi Abater o Sol → ammit",
-      "passar",
-      "houyi Nove Flechas → ammit",
-      "passar",
-      "houyi Flecha Solar → fenrir",
-      "hermes Roubo Divino",
-      "passar",
-      "thor Tempestade de Asgard",
       "houyi Abater o Sol → fenrir",
       "passar",
-      "thor Arremesso de Mjölnir → fenrir+durga",
+      "hermes Golpe Alado → fenrir",
       "houyi Flecha Solar → durga",
       "passar",
-      "houyi Nove Flechas → durga",
-      "thor Arremesso de Mjölnir → durga",
-      "hermes Golpe Alado → durga"
+      "houyi Nove Flechas → durga"
     ]
   }
 }

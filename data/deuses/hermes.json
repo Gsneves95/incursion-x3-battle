@@ -32,11 +32,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "2 golpes de 8 em 1 inimigo (16 total).",
+      "desc": "2 golpes de 11 em 1 inimigo (22 total).",
       "fx": [
         {
           "t": "dmg",
-          "v": 8,
+          "v": 11,
           "golpes": 2
         }
       ],
@@ -46,22 +46,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 8,
-              "para": 9
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "2 golpes de 9 em 1 inimigo (18 total)."
+          "desc": "2 golpes de 12 em 1 inimigo (24 total)."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 9,
-              "para": 10
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "2 golpes de 10 em 1 inimigo (20 total)."
+          "desc": "2 golpes de 13 em 1 inimigo (26 total)."
         },
         {
           "nv": 4,
@@ -79,7 +79,7 @@
               }
             }
           ],
-          "desc": "2 golpes de 10 em 1 inimigo (20 total); ele causa 2 menos de dano por 1 turno."
+          "desc": "2 golpes de 13 em 1 inimigo (26 total); ele causa 2 menos de dano por 1 turno."
         }
       ]
     },

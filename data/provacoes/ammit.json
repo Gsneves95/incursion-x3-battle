@@ -29,37 +29,35 @@
     }
   ],
   "verificacao": {
-    "hash": "7c9837e2",
+    "hash": "9c07720d",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 23,
+    "lancesNesteCaminho": 21,
     "comDica": false,
-    "nos": 146,
-    "ms": 166,
+    "nos": 9149,
+    "ms": 8498,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "passar",
       "perseu Cabeça da Medusa → ares",
-      "ammit Mandíbula → ares",
+      "ammit Mandíbula → kukulkan",
       "passar",
-      "perseu Foice Adamantina → ares",
+      "perseu Foice Adamantina → kukulkan",
       "passar",
-      "perseu Lâmina Curva → ares",
+      "perseu Lâmina Curva → kukulkan",
       "passar",
       "perseu Foice Adamantina → ares",
       "passar",
       "perseu Cabeça da Medusa → kukulkan",
       "passar",
       "ammit Devorar a Alma → kukulkan",
-      "perseu Foice Adamantina → houyi",
+      "perseu Foice Adamantina → ares",
       "passar",
-      "ammit Mandíbula → ares",
-      "perseu Lâmina Curva → houyi",
+      "kali Dança da Aniquilação",
       "passar",
-      "perseu Foice Adamantina → houyi",
-      "ammit Faro do Pecado → houyi",
+      "kali Golpe da Foice → houyi",
       "passar",
-      "perseu Cabeça da Medusa → houyi"
+      "kali Golpe da Foice → houyi"
     ]
   }
 }

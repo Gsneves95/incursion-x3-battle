@@ -6,6 +6,48 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §324 Parte 3 · equilíbrio entre FUNÇÕES + Tyr + Saci
+
+Relatório `docs/kits-revisao-324-p3.md`. Régua §324 P1 (arena IA v2); veredito final na **rounds=400**.
+**Resultado:** os 100 deuses na faixa [35,65] (antes 13 acima, 9 abaixo → **0/0**) e as 5 funções em [45,55]
+(Suporte 61,1→**55,1** · Atacante 49,7→50,5 · Guardião 46,2→48,3 · Manipulador 40,7→**46,2** · Controlador
+42,4→**45,0**). Tyr e Saci destravados (Δhab +23,8/uso 1,73 e Δhab +41,2/uso 5,03; Tyr segue tanque).
+
+**Método (régua do dono):** (1) **cortar os excessos do maior p/ o menor, re-medindo a cada leva** — o balanço
+é soma quase-constante (cortar o topo PROMOVE o próximo), por isso cada leva re-mede. Cortados os excessos,
+Controlador/Manipulador seguiam **<45** → a régua autoriza SUBIR a base (bidirecional). (2) **Menor ajuste
+derivado do kit, atacando a FONTE do excesso da P2** — amplificação de dano de TIME + sustain barato: Brigid
+(passiva +5 dano de time→+1; `bonusCura +5`→+2), Oxum (cura+orbe recarga 1→2; passiva→+2/1t), etc. (3) **Nunca
+mexer em kit p/ caber em conteúdo** — todo arrasto por alavanca.
+
+**DECISÃO do teto de dano (desta parte):** vários aumentos de base cruzavam o teto documentado
+(`tests/auditoria.test.js`). Alternativa recusada: **abrir a whitelist** — ela é uma lista curada de exceções
+ESTRUTURAIS (bônus condicional, multi-golpe distribuído, nuke-único), nunca de aumentos planos; enchê-la com
+subidas de valor seria mexer num guard p/ caber, o oposto da régua. **Escolhido (pelo dono): re-alavancar p/
+caber no teto** — **todo dano INCONDICIONAL de base ≤ teto**; bônus condicional (seCond/seDia/porStatus) e
+multi-golpe por-golpe seguem como identidade whitelisted. A força do corte voltou por **recarga/custo/efeito
+não-dano NA HABILIDADE QUE A IA USA** (lido por `uso/partida`): "deuses de básico" (Odin, Heimdall, Mimir,
+Cérberus) com hab/milagre ~0 de uso foram buffados no BÁSICO/no que usam — Odin (Gungnir marca → casa com a
+passiva +9 de time), Heimdall (−3 de dano no alvo), Boitatá (Queimadura que alimenta a Cobra), Ao Kuang/Izanami
+(básico 12→15, no teto), Cérberus (milagre passa a causar 12 em área), Ammit (Devorar 35→40 + Mandíbula aplica
+Vulnerável), Mimir (passiva de time +2→+1, básico 10→13). 20 bases limitadas ao teto (16 que falhavam + 4
+mascaradas por whitelist velha: Amaterasu/Luz, Ammit/Faro, Boitatá/Cobra, Morrigan/As Três Irmãs); Hermes/Susanoo
+multi-golpe só tiveram o texto `(N total)` corrigido.
+
+**Tyr** — "Duelo de Honra" mantém taunt+auto-redução (tanque) e ganha gancho ofensivo: o provocado fica
+Vulnerável (+8). **Saci** — "Redemoinho" mantém Inalvejável+roubo e ganha 8 de dano em área. (Kits NÃO tocados
+pela re-alavancagem.)
+
+**O que arrastou:** descs (base + TODOS os degraus) + `kits.json` sincronizados (cadeia + texto×número verdes);
+**teto de dano verde** (auditoria: 19 restantes acima do teto são todas whitelisted, nenhum aumento plano);
+escadas re-ancoradas e re-validadas; **re-triagem §318** das habs alteradas (Ammit −0,8 · Ymir +6,2 · Boto +6,5
+· Odin −1,2 · Heimdall −1,1 — todas ≤+15pp) → `niveis_liberados` inalterado, **Dagda e Saci seguem fora** (da
+P2/escada do AoE, a re-afinar); **47 Ritos re-carimbados** (hash mudou), **3 fecharam → alavanca de HP**
+(Cérberus 58, Hades 55, Thor 60); **1 Semanal fechou** (ogum, Ammit inimigo) → alavanca HP 55 + `minimo`
+recomputado (18→11); **campanha** — Cérberus (chefe do Prólogo, 250 HP) re-verificado **sob a v2: VENCÍVEL**;
+**Domínios NÃO regenerados** (recalibragem adiada; níveis com um dos 24 re-alavancados como inimigo ficam
+defasados, relatório só). Suíte + build verdes.
+
 ## §324 Parte 2 · consertar os 8 casos claros + diagnóstico do Suporte (por partes; Tyr/Saci/funções ficam p/ depois)
 
 Relatório `docs/kits-revisao-324-p2.md`. Régua do §324 P1 (`tools/medir_kits.js`, IA v2): força (arena, +IC) +

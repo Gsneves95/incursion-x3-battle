@@ -432,9 +432,9 @@ console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correç�
   const brigid = st.lados[0].units[0], zeusAlly = st.lados[0].units[1], cucaAlly = st.lados[0].units[2];
   const alvo = st.lados[1].units[0];
   let h = alvo.hp; E.bater(st, zeusAlly, alvo, 15, 'afetado', 'basico');
-  ok(h - alvo.hp === 20, `brigid: aliado (zeus) 15+5=20 (deu ${h - alvo.hp})`);
+  ok(h - alvo.hp === 16, `brigid: aliado (zeus) 15+1=16 §324P3 (deu ${h - alvo.hp})`);
   h = alvo.hp; E.bater(st, cucaAlly, alvo, 15, 'afetado', 'basico');
-  ok(h - alvo.hp === 20, `ESCOPO: time (qualquer elemento) ganha — cuca também = 20 (deu ${h - alvo.hp})`);
+  ok(h - alvo.hp === 16, `ESCOPO: time (qualquer elemento) ganha — cuca também = 16 (deu ${h - alvo.hp})`);
   brigid.vivo = false; h = alvo.hp; E.bater(st, zeusAlly, alvo, 15, 'afetado', 'basico');
   ok(h - alvo.hp === 15, `com Brigid morta: 15 (deu ${h - alvo.hp})`);
 }
@@ -445,7 +445,7 @@ console.log('== caracterização LOTE B: brigid, cuca, ganesha, zeus (+ correç�
   ok(a1.hp === 110, `sem queimadura: cura 20 (90->110), deu ${a1.hp}`);
   a1.hp = 90; inimigo.dots.push({ nome: 'queimadura', v: 8, dur: 2 });
   E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
-  ok(a1.hp === 115, `INIMIGO queima: cura 20+5=25 (90->115), deu ${a1.hp}`);
+  ok(a1.hp === 112, `INIMIGO queima: cura 20+2=22 (90->112) §324P3, deu ${a1.hp}`);
   inimigo.dots = []; aliado2.dots.push({ nome: 'queimadura', v: 8, dur: 2 });
   a1.hp = 90; E.aplicarFx(st, a1, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'self', slot: 'basico' }, []);
   ok(a1.hp === 110, `§39 ESCOPO: só ALIADO queima -> SEM bônus, cura 20 (90->110), deu ${a1.hp}`);
@@ -1433,12 +1433,12 @@ console.log('== §91 Odin: faccaoConta (2+ Nórdicos → orbe na abertura), marc
   E.aplicarFx(st, o, E.GODS.odin.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'todosInimigos', slot: 'habilidade' }, st.lados[1].units);
   ok(!!E.ef(foe, 'marcado'), 'habilidade marca todos os inimigos');
   let h = foe.hp; E.aplicarFx(st, ally, [{ t: 'dmg', v: 10 }], { alvo: 'inimigo', slot: 'basico' }, [foe]);
-  ok(h - foe.hp === 16, `ALIADO do Odin causa +6 contra marcado: 10+6 = 16 (${h - foe.hp})`);
+  ok(h - foe.hp === 19, `ALIADO do Odin causa +9 contra marcado: 10+9 = 19 §324P3 (${h - foe.hp})`);
   // ignora-Invuln no básico
   st = E.novoEstado(['odin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 603);
   const o2 = st.lados[0].units[0], f2 = st.lados[1].units[0]; f2.efeitos.push({ type: 'invulneravel', dur: 2 });
   h = f2.hp; E.aplicarFx(st, o2, E.GODS.odin.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [f2]);
-  ok(h - f2.hp === 15, `básico fura Invulnerabilidade: 15 (${h - f2.hp})`);
+  ok(h - f2.hp === 15, `básico fura Invulnerabilidade: 15 §324P3 (${h - f2.hp})`);
   console.log('  faccaoConta gateia por facção (small-serve-um); marca+time-bônus; ignora-Invuln no básico');
 }
 
@@ -1451,7 +1451,7 @@ console.log('== §96 Amaterasu: Amanhecer ativa o Dia + cura; passiva reducao-no
   let a = st.lados[0].units[0], ally = st.lados[0].units[1]; a.hp = 80; ally.hp = 80;
   E.aplicarFx(st, a, hab, { alvo: 'nenhum', slot: 'habilidade' }, []);
   ok(st.fase === 'Dia' && st.faseDur === 3, `Amanhecer ativa o Dia por 3 (${st.fase}/${st.faseDur})`);
-  ok(a.hp === 92 && ally.hp === 92, `e cura 12 no time (${a.hp}/${ally.hp})`);
+  ok(a.hp === 95 && ally.hp === 95, `e cura 15 no time §324P3 (${a.hp}/${ally.hp})`);
   // passiva reducao 6 durante o Dia: um atacante REDUZÍVEL (zeus) bate 20 → 14; sem a Amaterasu viva, 20
   const foe = st.lados[1].units[0]; let h = ally.hp;
   E.bater(st, foe, ally, 20, 'afetado', 'basico', { semContra: true });
@@ -1463,14 +1463,14 @@ console.log('== §96 Amaterasu: Amanhecer ativa o Dia + cura; passiva reducao-no
   st = E.novoEstado(['amaterasu', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 701);  // tyr defensor: dano reduzível não confunde (é o atacante que importa)
   a = st.lados[0].units[0]; let e0 = st.lados[1].units[0]; h = e0.hp;
   E.aplicarFx(st, a, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
-  ok(h - e0.hp === 18 && !E.ef(e0, 'lockSkill'), `fora do Dia: 18 e SEM trava (${h - e0.hp})`);
+  ok(h - e0.hp === 22 && !E.ef(e0, 'lockSkill'), `fora do Dia: 22 §324P3 e SEM trava (${h - e0.hp})`);
   st = E.novoEstado(['amaterasu', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 702);
   a = st.lados[0].units[0]; e0 = st.lados[1].units[0]; E.definirFase(st, 'Dia', 3);
   E.ELEMS.forEach(x => st.lados[1].orbs[x] = 9);   // energia p/ o inimigo: assim o único bloqueio da Habilidade é a TRAVA, não falta de orbe
   h = e0.hp;
   E.aplicarFx(st, a, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
   // 28 (seDia) + 8 (a própria Amaterasu é Aurora e bate mais no SEU Dia — payload §96 aplica ao atacante Aurora) = 36
-  ok(h - e0.hp === 36 && !!E.ef(e0, 'lockSkill'), `no Dia: 28+8(payload Aurora)=36 e trava a Habilidade de todos (${h - e0.hp}/${!!E.ef(e0, 'lockSkill')})`);
+  ok(h - e0.hp === 42 && !!E.ef(e0, 'lockSkill'), `no Dia: 34+8(payload Aurora)=42 §324P3 e trava a Habilidade de todos (${h - e0.hp}/${!!E.ef(e0, 'lockSkill')})`);
   const hab2 = E.acoesDe(st, e0).find(x => x.slot === 'habilidade');
   ok(!hab2.disponivel && hab2.motivo === 'travada', `e a Habilidade travada fica indisponível (${hab2.motivo})`);
   console.log('  Amanhecer→Dia+cura · reducao-no-Dia (some com a fonte) · Luz da Caverna 18→36(28+payload) e trava no Dia');
@@ -1484,11 +1484,11 @@ console.log('== §97 Tsukuyomi: passiva +10 a curado-no-anterior; Anoitecer escr
   E.aplicarFx(st, foe, [{ t: 'heal', v: 20, escopo: 'self' }], { alvo: 'nenhum' }, []);
   st.ativo = 1; E.iniciarTurno(st);   // promove o rastreio do inimigo (lado inativo)
   let h = foe.hp; E.aplicarFx(st, t, E.GODS.tsukuyomi.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [foe]);
-  ok(h - foe.hp === 22, `passiva: +10 contra curado-no-turno-anterior (12+10=22): ${h - foe.hp}`);
+  ok(h - foe.hp === 25, `passiva: +10 contra curado-no-turno-anterior (15+10=25): ${h - foe.hp}`);
   // um inimigo NÃO curado no anterior: sem bônus
   const foe2 = st.lados[1].units[1]; h = foe2.hp;
   E.aplicarFx(st, t, E.GODS.tsukuyomi.ab.find(a => a.slot === 'basico').fx, { alvo: 'inimigo', slot: 'basico' }, [foe2]);
-  ok(h - foe2.hp === 12, `sem cura no anterior: 12, sem bônus (${h - foe2.hp})`);
+  ok(h - foe2.hp === 15, `sem cura no anterior: 15, sem bônus (${h - foe2.hp})`);
 
   // Anoitecer: escreve a Noite (escritor da metade que estava ociosa) + adormece 1 inimigo
   st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 721);
@@ -1506,12 +1506,12 @@ console.log('== §97 Tsukuyomi: passiva +10 a curado-no-anterior; Anoitecer escr
   t = st.lados[0].units[0]; const mil = E.GODS.tsukuyomi.ab.find(a => a.slot === 'milagre').fx;
   let e0 = st.lados[1].units[0]; h = e0.hp;
   E.aplicarFx(st, t, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
-  ok(h - e0.hp === 18 && !E.ef(e0, 'selado'), `fora da Noite: 18 e SEM silêncio (${h - e0.hp})`);
+  ok(h - e0.hp === 22 && !E.ef(e0, 'selado'), `fora da Noite: 22 §324P3 e SEM silêncio (${h - e0.hp})`);
   st = E.novoEstado(['tsukuyomi', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 723);
   t = st.lados[0].units[0]; E.definirFase(st, 'Noite', 3); e0 = st.lados[1].units[0]; h = e0.hp;
   E.aplicarFx(st, t, mil, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
-  // 18 + 8 (Tsukuyomi Umbra na sua Noite) = 26; e silencia todos
-  ok(h - e0.hp === 26 && !!E.ef(e0, 'selado'), `na Noite: 18+8(payload)=26 e Silencia todos (${h - e0.hp}/${!!E.ef(e0, 'selado')})`);
+  // 22 (base §324P3) + 8 (Tsukuyomi Umbra na sua Noite) = 30; e silencia todos
+  ok(h - e0.hp === 30 && !!E.ef(e0, 'selado'), `na Noite: 22+8(payload)=30 §324P3 e Silencia todos (${h - e0.hp}/${!!E.ef(e0, 'selado')})`);
   console.log('  passiva +10 a curado-no-anterior · Anoitecer acorda a Noite + adormece · Julgamento silencia na Noite');
 }
 
@@ -1537,7 +1537,7 @@ console.log('== §99 dominar: Afrodite (fechada retroativamente) e Boto (lifeste
   E.ELEMS.forEach(x => st.lados[1].orbs[x] = 9);
   E.aplicarFx(st, b2, E.GODS.boto.ab.find(x => x.slot === 'milagre').fx, { alvo: 'todosInimigos', slot: 'milagre' }, st.lados[1].units);
   const mil = E.acoesDe(st, st.lados[1].units[0]).find(x => x.slot === 'milagre');
-  ok(!mil.disponivel && mil.motivo === 'travada' && ally2.hp === 75, `Festa de São João: Milagre inimigo travado e time curado 15 (${mil.motivo}/${ally2.hp})`);
+  ok(!mil.disponivel && mil.motivo === 'travada' && ally2.hp === 88, `Festa de São João: Milagre inimigo travado e time curado 28 (${mil.motivo}/${ally2.hp})`);
   console.log('  Afrodite fechada (vítima bate no aliado) · Boto dreba o golpe · milagre trava Milagre + cura');
 }
 
@@ -1596,17 +1596,17 @@ console.log('== §103 Deméter: seletor-por-HP (aliado mais ferido cura 6 por tu
   st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 972);
   const d = st.lados[0].units[0];
   E.aplicarFx(st, d, E.GODS.demeter.ab.find(a => a.slot === 'habilidade').fx, { alvo: 'nenhum', slot: 'habilidade' }, []);
-  ok(st.lados[0].units.every(x => E.ef(x, 'regen') && E.ef(x, 'regen').v === 12), 'Dádiva: regen 12 em todo o time');
+  ok(st.lados[0].units.every(x => E.ef(x, 'regen') && E.ef(x, 'regen').v === 6), 'Dádiva: regen 6 em todo o time (§324 P3)');
 
   // milagre: revive 1 caído (48) OU, sem caídos, cura 25 no time
   st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 973);
   const d2 = st.lados[0].units[0], caido = st.lados[0].units[1]; caido.vivo = false; caido.hp = 0;
   E.aplicarFx(st, d2, E.GODS.demeter.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
-  ok(caido.vivo && caido.hp === 48, `milagre com caído: revive com 48 (${caido.vivo}/${caido.hp})`);
+  ok(caido.vivo && caido.hp === 36, `milagre com caído: revive com 36 (${caido.vivo}/${caido.hp})`);
   st = E.novoEstado(['demeter', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 974);
   const d3 = st.lados[0].units[0]; st.lados[0].units.forEach(x => x.hp = 50);
   E.aplicarFx(st, d3, E.GODS.demeter.ab.find(a => a.slot === 'milagre').fx, { alvo: 'nenhum', slot: 'milagre' }, []);
-  ok(st.lados[0].units.every(x => x.hp === 75), `milagre sem caído: cura 25 no time (${st.lados[0].units.map(x => x.hp)})`);
+  ok(st.lados[0].units.every(x => x.hp === 61), `milagre sem caído: cura 11 no time §324P3 (${st.lados[0].units.map(x => x.hp)})`);
   console.log('  aliado mais ferido cura 6/turno (empate=menor índice) · regen 12 no time · revive 48 ou cura 25');
 }
 
@@ -1749,7 +1749,7 @@ console.log('== §111 Krishna: Ação Perfeita (buff transferido, os 4 ignores, 
   let kr = st.lados[0].units[0], foe = st.lados[1].units[0];
   let h = foe.hp;
   E.agir(st, kr.uid, 'basico', [foe.uid]);
-  ok(h - foe.hp === 12, `Flauta Divina: 12 a 1 inimigo (${h - foe.hp})`);
+  ok(h - foe.hp === 10, `Flauta Divina: 10 a 1 inimigo (${h - foe.hp})`);
 
   // Conselho do Gita ARMA a Ação Perfeita num aliado; Krishna não a carrega
   st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 981); orbs(st.lados[0]);
@@ -1779,7 +1779,7 @@ console.log('== §111 Krishna: Ação Perfeita (buff transferido, os 4 ignores, 
   kr = st.lados[0].units[0]; ally = st.lados[0].units[1];
   E.agir(st, kr.uid, 'milagre', []);
   const up = E.ef(ally, 'dmgUp'), upK = E.ef(kr, 'dmgUp');
-  ok(up && up.v === 12 && upK && upK.v === 12, `Forma Universal: +12 de dano em TODO o time (${up && up.v})`);
+  ok(up && up.v === 5 && upK && upK.v === 5, `Forma Universal: +5 de dano em TODO o time (${up && up.v})`);
 
   // passiva Auriga de Arjuna: quem causou MAIS dano no turno anterior (do time) causa +5
   st = E.novoEstado(['krishna', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 984); orbs(st.lados[0]);
@@ -1800,7 +1800,7 @@ console.log('== §114 Izanami: contágio (espalha) + DoT escalado por Maldição
   let iz = st.lados[0].units[0], f0 = st.lados[1].units[0];
   let h = f0.hp, c = E.getContador(f0, 'maldicao');
   E.agir(st, iz.uid, 'basico', [f0.uid]);
-  ok(h - f0.hp === 12 && E.getContador(f0, 'maldicao') - c === 1, `Toque de Yomi: 12 de dano + 1 Maldição (${h - f0.hp}, +${E.getContador(f0, 'maldicao') - c})`);
+  ok(h - f0.hp === 15 && E.getContador(f0, 'maldicao') - c === 1, `Toque de Yomi: 15 de dano + 1 Maldição §324P3 (${h - f0.hp}, +${E.getContador(f0, 'maldicao') - c})`);
 
   // passiva Mil por Dia: no início do turno, o inimigo de MAIOR HP ganha 1 Maldição
   st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 981); orbs(st.lados[0]);
@@ -1820,7 +1820,7 @@ console.log('== §114 Izanami: contágio (espalha) + DoT escalado por Maldição
   ok(e.every(x => x.dots.some(d => d.nome === 'maldicao')), 'Praga aplica o DoT da Maldição a todos');
   const hp0 = e[0].hp;
   E.fimTurno(st);   // vai aos inimigos → o DoT tica no iniciarTurno deles
-  ok(hp0 - e[0].hp === 18, `o DoT escalado tica 6×3 = 18 puro/turno (${hp0 - e[0].hp})`);
+  ok(hp0 - e[0].hp === 24, `o DoT escalado tica 8×3 = 24 puro/turno (${hp0 - e[0].hp})`);
 
   // milagre Portal de Yomotsu: 20 a todos + elimina amaldiçoados com ≤30 HP
   st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 983); orbs(st.lados[0]);
@@ -1855,7 +1855,7 @@ console.log('== §117 Kukulkán (M1, agendador): habilidade telegrafada (Inalvej
   k = st.lados[0].units[0]; const ally = st.lados[0].units[1]; e = st.lados[1].units; const hm = e.map(x => x.hp);
   E.agir(st, k.uid, 'milagre', []);
   const up = E.ef(ally, 'dmgUp');
-  ok(e.every((x, i) => hm[i] - x.hp === 20) && up && up.v === 10, `Estrela da Manhã: 20 a todos + time dmgUp 10 (${e.map((x, i) => hm[i] - x.hp)}, up ${up && up.v})`);
+  ok(e.every((x, i) => hm[i] - x.hp === 20) && up && up.v === 8, `Estrela da Manhã: 20 a todos + time dmgUp 8 (${e.map((x, i) => hm[i] - x.hp)}, up ${up && up.v})`);
 
   // passiva: +8 contra Encharcados
   st = E.novoEstado(['kukulkan', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 988); orbs(st.lados[0]);
@@ -1891,8 +1891,8 @@ console.log('== §118 Ares + Ammit (M3, consequência de abate): zeraCd-ao-abate
   st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 993); orbs(st.lados[0]);
   let am = st.lados[0].units[0]; foe = st.lados[1].units[0];
   foe.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 }, { type: 'vulneravel', v: 5, dur: 2 });   // 2 debuffs
-  const h3 = foe.hp; E.agir(st, am.uid, 'habilidade', [foe.uid]);   // 22 + 6×2 = 34, +5 vulneravel de entrada = 39
-  ok(h3 - foe.hp === 39, `Faro do Pecado: 22 + 6×2 debuffs = 34, +5 (vulnerável) = 39 (${h3 - foe.hp})`);
+  const h3 = foe.hp; E.agir(st, am.uid, 'habilidade', [foe.uid]);   // §324P3: 25 + 8×2 = 41, +5 vulneravel de entrada = 46
+  ok(h3 - foe.hp === 46, `Faro do Pecado: 25 + 8×2 debuffs = 41, +5 (vulnerável) = 46 §324P3 (${h3 - foe.hp})`);
   // AMMIT milagre: elimina Atordoado/Selado/≤30; senão 35
   st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 994); orbs(st.lados[0]);
   am = st.lados[0].units[0]; let e = st.lados[1].units;
@@ -1902,7 +1902,7 @@ console.log('== §118 Ares + Ammit (M3, consequência de abate): zeraCd-ao-abate
   st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 995); orbs(st.lados[0]);
   am = st.lados[0].units[0]; e = st.lados[1].units; e[0].hp = 100;
   const h4 = e[0].hp; E.agir(st, am.uid, 'milagre', [e[0].uid]);
-  ok(e[0].vivo && h4 - e[0].hp === 35, `Devorar sem gatilho: 35 de dano (${h4 - e[0].hp})`);
+  ok(e[0].vivo && h4 - e[0].hp === 40, `Devorar sem gatilho: 40 de dano §324P3 (${h4 - e[0].hp})`);
   // AMMIT passiva: quem ele abate não revive (mesmo Nezha, que renasceria)
   st = E.novoEstado(['ammit', 'zeus', 'zeus'], ['nezha', 'tyr', 'tyr'], 996); orbs(st.lados[0]);
   am = st.lados[0].units[0]; const nez = st.lados[1].units[0]; nez.efeitos = []; nez.hp = 5;
@@ -1924,12 +1924,12 @@ console.log('== §120 Izanagi (M4, extensão da imunidade): o TIME imune a Maldi
   st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 998); orbs(st.lados[0]);
   iz = st.lados[0].units[0]; const al = st.lados[0].units[1]; al.hp = 40; al.efeitos.push({ type: 'dmgDown', v: 5, dur: 2 });
   E.agir(st, iz.uid, 'habilidade', [al.uid]);
-  ok(al.hp === 60 && !al.efeitos.some(x => x.type === 'dmgDown'), `Misogi: cleanse + cura 20 (40→60) (${al.hp})`);
+  ok(al.hp === 54 && !al.efeitos.some(x => x.type === 'dmgDown'), `Misogi: cleanse + cura 14 (40→54) (${al.hp})`);
   // milagre Criação das Ilhas: time +20 escudo + regen 8
   st = E.novoEstado(['izanagi', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 999); orbs(st.lados[0]);
   iz = st.lados[0].units[0]; const a2 = st.lados[0].units[1];
   E.agir(st, iz.uid, 'milagre', []);
-  ok(a2.shield === 20 && E.ef(a2, 'regen') && E.ef(a2, 'regen').v === 8, `Criação das Ilhas: time +20 escudo + regen 8 (escudo ${a2.shield})`);
+  ok(a2.shield === 14 && E.ef(a2, 'regen') && E.ef(a2, 'regen').v === 6, `Criação das Ilhas: time +14 escudo + regen 6 (escudo ${a2.shield})`);
   // passiva Fuga de Yomi: o TIME de Izanagi é imune ao contador de Maldição (básico do Izanami) E ao contágio (Praga)
   st = E.novoEstado(['izanami', 'zeus', 'zeus'], ['izanagi', 'tyr', 'tyr'], 1000); orbs(st.lados[0]);
   const izm = st.lados[0].units[0], izg = st.lados[1].units[0], teamAlly = st.lados[1].units[1];
@@ -1954,7 +1954,7 @@ console.log('== §121 Hermes (M2, iniciativa como regra de setup): age primeiro 
   E.ELEMS.forEach(e => st.lados[0].orbs[e] = 9); st.lados[0].orbs.livre = 9;
   let hrm = st.lados[0].units[0], foe = st.lados[1].units[0];
   let h = foe.hp; E.agir(st, hrm.uid, 'basico', [foe.uid]);
-  ok(h - foe.hp === 16, `Golpe Alado: 2 golpes de 8 = 16 (${h - foe.hp})`);
+  ok(h - foe.hp === 22, `Golpe Alado: 2 golpes de 11 = 22 (${h - foe.hp})`);
   // passiva reducao·unico: golpe ÚNICO contra Hermes −5; ÁREA não
   let hh = hrm.hp; E.bater(st, foe, hrm, 15, 'afetado', 'basico', { unico: true });
   ok(hh - hrm.hp === 10, `golpe único contra Hermes: 15−5 = 10 (${hh - hrm.hp})`);
@@ -1982,25 +1982,25 @@ console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arr
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1011); orbs(st.lados[0]);
   os = st.lados[0].units[0]; let al = st.lados[0].units[1]; al.hp = 40;
   E.agir(st, os.uid, 'habilidade', [al.uid]);
-  ok(al.hp === 60 && al.shield === 15, `Trigo do Renascimento: aliado a 40 (<60) → escudo 15 + cura 20 = 60 HP (${al.hp}/${al.shield})`);
+  ok(al.hp === 48 && al.shield === 15, `Trigo do Renascimento: aliado a 40 (<60) → escudo 15 + cura 8 = 48 HP §324P3 (${al.hp}/${al.shield})`);
   // aliado saudável (>=60): só cura, sem escudo
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1012); orbs(st.lados[0]);
   os = st.lados[0].units[0]; al = st.lados[0].units[1]; al.hp = 70;
   E.agir(st, os.uid, 'habilidade', [al.uid]);
-  ok(al.hp === 90 && al.shield === 0, `aliado a 70 (>=60): cura 20 (→90), SEM escudo (${al.hp}/${al.shield})`);
+  ok(al.hp === 78 && al.shield === 0, `aliado a 70 (>=60): cura 8 (→78), SEM escudo §324P3 (${al.hp}/${al.shield})`);
   // milagre: revive 1 caído com 60 e limpa os debuffs dele (o reviver já zera efeitos/dots)
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1013); orbs(st.lados[0]);
   os = st.lados[0].units[0]; const caido = st.lados[0].units[1]; caido.hp = 5;
   E.bater(st, st.lados[1].units[0], caido, 15, 'afetado', 'basico', {});   // derruba o aliado
   ok(!caido.vivo, 'aliado caiu (pré-condição do revive)');
   E.agir(st, os.uid, 'milagre', []);
-  ok(caido.vivo && caido.hp === 60 && caido.efeitos.length === 0, `Tribunal do Duat: revive com 60 e sem debuffs (vivo ${caido.vivo}, hp ${caido.hp})`);
+  ok(caido.vivo && caido.hp === 30 && caido.efeitos.length === 0, `Tribunal do Duat: revive com 30 e sem debuffs (vivo ${caido.vivo}, hp ${caido.hp})`);
   // passiva Rei dos Mortos: +8 de dano ao TIME por aliado caído
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1014);
   let atk = st.lados[0].units[1]; foe = st.lados[1].units[0];
   ok(E.bonusDanoDeclarativo(st, atk, foe) === 0, `Rei dos Mortos: 0 caídos → +0 (${E.bonusDanoDeclarativo(st, atk, foe)})`);
   st.lados[0].units[2].vivo = false;
-  ok(E.bonusDanoDeclarativo(st, atk, foe) === 8, `1 caído → +8 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 5, `1 caído → +5 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
 
   // ---- NÜWA (limpo): opcoes escolha-2 (idiom do Lugh) + aoCair (idiom da Erínias) ----
   // básico 12
@@ -2012,43 +2012,43 @@ console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arr
   st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1016); orbs(st.lados[0]);
   nu = st.lados[0].units[0]; st.lados[0].units.forEach(u => u.hp = 50);
   E.agir(st, nu.uid, 'habilidade', [], [0, 2]);
-  ok(st.lados[0].units.every(u => u.hp === 70 && u.shield === 15), `Pedras (CURA+ESCUDO): time cura 20 (→70) e escuda 15 (${st.lados[0].units.map(u => u.hp + '/' + u.shield)})`);
+  ok(st.lados[0].units.every(u => u.hp === 62 && u.shield === 10), `Pedras (CURA+ESCUDO): time cura 12 (→62) e escuda 10 (${st.lados[0].units.map(u => u.hp + '/' + u.shield)})`);
   // milagre Remendar o Céu: time +20 escudo + regen 10 por 3
   st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1017); orbs(st.lados[0]);
   nu = st.lados[0].units[0]; const na = st.lados[0].units[1];
   E.agir(st, nu.uid, 'milagre', []);
-  ok(na.shield === 20 && E.ef(na, 'regen') && E.ef(na, 'regen').v === 10, `Remendar o Céu: time +20 escudo + regen 10 (escudo ${na.shield})`);
+  ok(na.shield === 8 && E.ef(na, 'regen') && E.ef(na, 'regen').v === 4, `Remendar o Céu: time +8 escudo + regen 4 (escudo ${na.shield})`);
   // passiva Mãe da Humanidade: quando um aliado cai, os VIVOS ganham dmgUp +10 (resto da partida)
   st = E.novoEstado(['nuwa', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1018); orbs(st.lados[0]);
   const surv = st.lados[0].units[1], dying = st.lados[0].units[2]; dying.hp = 5;
   E.bater(st, st.lados[1].units[0], dying, 15, 'afetado', 'basico', {});
   const dU = surv.efeitos.find(x => x.type === 'dmgUp');
-  ok(dU && dU.v === 10, `Mãe da Humanidade: queda de aliado → sobrevivente ganha dmgUp +10 (${dU ? dU.v : 'nenhum'})`);
+  ok(dU && dU.v === 6, `Mãe da Humanidade: queda de aliado → sobrevivente ganha dmgUp +6 §324P3 (${dU ? dU.v : 'nenhum'})`);
 
   // ---- MIMIR (arrastou): suporte pós-morte — os 2 hooks já provados em primitivas §31, aqui o KIT ----
-  // básico 10
+  // básico 13 (§324 P3 re-lever: Mimir deslocou força da passiva de time p/ o próprio básico)
   st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1019); orbs(st.lados[0]);
   let mi = st.lados[0].units[0]; foe = st.lados[1].units[0];
   h = foe.hp; E.agir(st, mi.uid, 'basico', [foe.uid]);
-  ok(h - foe.hp === 16, `Sussurro Ancestral: 10 + a própria passiva (+6 ao time, Mimir incluso) = 16 (${h - foe.hp})`);
+  ok(h - foe.hp === 14, `Sussurro Ancestral: 13 + a própria passiva (+1 ao time, Mimir incluso) = 14 (${h - foe.hp})`);
   // habilidade Conselho do Poço: remove 1 orbe do inimigo + 1 aliado causa +8 por 2 turnos
   st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1020); orbs(st.lados[0]);
   mi = st.lados[0].units[0]; al = st.lados[0].units[1];
   st.lados[1].orbs.Chama = 3; const antes = E.totalOrbs(st.lados[1]);
   E.agir(st, mi.uid, 'habilidade', [al.uid]);
   const buff = al.efeitos.find(x => x.type === 'dmgUp');
-  ok(E.totalOrbs(st.lados[1]) === antes - 1 && buff && buff.v === 8 && buff.dur === 2, `Conselho do Poço: −1 orbe inimigo + aliado dmgUp 8/2 (orbes ${antes}→${E.totalOrbs(st.lados[1])}, buff ${buff ? buff.v : '-'})`);
+  ok(E.totalOrbs(st.lados[1]) === antes - 1 && buff && buff.v === 6 && buff.dur === 2, `Conselho do Poço: −1 orbe inimigo + aliado dmgUp 6/2 (orbes ${antes}→${E.totalOrbs(st.lados[1])}, buff ${buff ? buff.v : '-'})`);
   // milagre Segredos de Mímir: zera TODAS as recargas de 1 aliado (cdShift v:-99) + ele causa +10 por 2
   st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1021); orbs(st.lados[0]);
   mi = st.lados[0].units[0]; al = st.lados[0].units[1]; al.cd.habilidade = 2; al.cd.milagre = 4;
   E.agir(st, mi.uid, 'milagre', [al.uid]);
   const b2 = al.efeitos.find(x => x.type === 'dmgUp');
-  ok(al.cd.habilidade === 0 && al.cd.milagre === 0 && b2 && b2.v === 10, `Segredos: zera as recargas do aliado + dmgUp 10 (cds ${al.cd.habilidade}/${al.cd.milagre}, buff ${b2 ? b2.v : '-'})`);
+  ok(al.cd.habilidade === 0 && al.cd.milagre === 0 && b2 && b2.v === 6, `Segredos: zera as recargas do aliado + dmgUp 6 (cds ${al.cd.habilidade}/${al.cd.milagre}, buff ${b2 ? b2.v : '-'})`);
   // passiva Cabeça Falante (o KIT, não o hook): Mimir MORTO ainda dá +6 ao time
   st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1022);
   mi = st.lados[0].units[0]; atk = st.lados[0].units[1]; foe = st.lados[1].units[0];
   mi.vivo = false;
-  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Cabeça Falante: Mimir derrotado ainda concede +6 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 1, `Cabeça Falante: Mimir derrotado ainda concede +1 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
   console.log('  Osíris limpo (revive+escudo-condicional+porCaído) · Nüwa limpa (opcoes-2+aoCair) · Mimir arrastou mesmoMorto+naoRevivivel');
 }
 
@@ -2071,7 +2071,7 @@ console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · K
   st = E.novoEstado(['susanoo', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1032); orbs(st.lados[0]);
   su = st.lados[0].units[0]; st.lados[0].contadores.combo = 5; const e0 = st.lados[1].units.map(x => x.hp);
   E.agir(st, su.uid, 'milagre', []);
-  ok(st.lados[1].units.every((x, i) => e0[i] - x.hp === 28) && E.getContadorLado(st, 0, 'combo') === 0, `Fúria do Tufão: 18 + 2×5 = 28 a todos, Combo zerado (${st.lados[1].units.map((x, i) => e0[i] - x.hp)}, combo ${E.getContadorLado(st, 0, 'combo')})`);
+  ok(st.lados[1].units.every((x, i) => e0[i] - x.hp === 32) && E.getContadorLado(st, 0, 'combo') === 0, `Fúria do Tufão: 22 + 2×5 = 32 a todos, Combo zerado §324P3 (${st.lados[1].units.map((x, i) => e0[i] - x.hp)}, combo ${E.getContadorLado(st, 0, 'combo')})`);
 
   // ---- KITSUNE ----
   // passiva reducao ESCALADA por Cauda: a cada 3 Caudas, +5 (a cada terco; piso 0). Atacante ZEUS: o Tyr tem
@@ -2093,7 +2093,7 @@ console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · K
   st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1036); orbs(st.lados[0]);
   ki = st.lados[0].units[0]; ki.contadores.cauda = 5; const ke = st.lados[1].units; const kh = ke.map(x => x.hp);
   E.agir(st, ki.uid, 'milagre', [ke[0].uid]);
-  ok(ke.every((x, i) => kh[i] - x.hp === 27) && !!E.ef(ke[0], 'dominado'), `Nove Caudas: 12 + 3×5 = 27 a todos + Domina o alvo (${ke.map((x, i) => kh[i] - x.hp)}, dominado ${!!E.ef(ke[0], 'dominado')})`);
+  ok(ke.every((x, i) => kh[i] - x.hp === 31) && !!E.ef(ke[0], 'dominado'), `Nove Caudas: 16 + 3×5 = 31 a todos + Domina o alvo (${ke.map((x, i) => kh[i] - x.hp)}, dominado ${!!E.ef(ke[0], 'dominado')})`);
   // com <5 Caudas: sem dominar
   st = E.novoEstado(['kitsune', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1037); orbs(st.lados[0]);
   ki = st.lados[0].units[0]; ki.contadores.cauda = 4; const ke2 = st.lados[1].units;
@@ -2105,7 +2105,7 @@ console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · K
   st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1038); orbs(st.lados[0]);
   let an = st.lados[0].units[0]; foe = st.lados[1].units[0];
   h = foe.hp; E.agir(st, an.uid, 'basico', [foe.uid]);
-  ok(h - foe.hp === 12 && E.getContador(foe, 'atadura') === 1, `Toque do Embalsamador: 12 + 1 Atadura (${h - foe.hp}, atadura ${E.getContador(foe, 'atadura')})`);
+  ok(h - foe.hp === 14 && E.getContador(foe, 'atadura') === 1, `Toque do Embalsamador: 14 + 1 Atadura (${h - foe.hp}, atadura ${E.getContador(foe, 'atadura')})`);
   // passiva: +2 dano por Atadura (escopo time — vale p/ aliado) + Atadura bloqueia revive
   st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1039);
   const aliA = st.lados[0].units[1]; foe = st.lados[1].units[0]; foe.contadores.atadura = 3;
@@ -2122,7 +2122,7 @@ console.log('== §126 Leva 1 do HOOK: Susanoo (déficit + Combo por-ataque) · K
   st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1042); orbs(st.lados[0]);
   an = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.efeitos.push({ type: 'dmgUp', v: 5, dur: 3 });
   h = foe.hp; E.agir(st, an.uid, 'habilidade', [foe.uid]);
-  ok(h - foe.hp === 25, `Pesagem (mais buffs): 25 de dano (${h - foe.hp})`);
+  ok(h - foe.hp === 30, `Pesagem (mais buffs): 30 de dano (${h - foe.hp})`);
   // milagre: +2 Atadura a todos; quem chega a 4 → Selado (a condicional AoE por-alvo, §87)
   st = E.novoEstado(['anubis', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1043); orbs(st.lados[0]);
   an = st.lados[0].units[0]; const ae = st.lados[1].units;
@@ -2158,7 +2158,7 @@ console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morriga
   he = st.lados[0].units[0]; he.hp = 50; const e = st.lados[1].units;
   e[0].efeitos.push({ type: 'dmgDown', v: 5, dur: 3 }); e[1].efeitos.push({ type: 'noHeal', dur: 3 });   // 2 debuffs no time (nenhum mexe no dano de entrada)
   const hp0 = e.map(x => x.hp); E.agir(st, he.uid, 'milagre', []);
-  ok(e.every((x, i) => hp0[i] - x.hp === 28) && he.hp === 65, `Colheita Fúnebre: 18 + 5×2 debuffs = 28 a todos; Hel cura 5×3 = +15 (dano ${e.map((x, i) => hp0[i] - x.hp)}, hp ${he.hp})`);
+  ok(e.every((x, i) => hp0[i] - x.hp === 24) && he.hp === 65, `Colheita Fúnebre: 14 + 5×2 debuffs = 24 a todos; Hel cura 5×3 = +15 (dano ${e.map((x, i) => hp0[i] - x.hp)}, hp ${he.hp})`);
 
   // ---- MORRIGAN ----
   // básico 12
@@ -2186,7 +2186,7 @@ console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morriga
   st = E.novoEstado(['zeus', 'zeus', 'zeus'], ['morrigan', 'zeus', 'zeus'], 1058, 1); orbs(st.lados[1]);
   mo = st.lados[1].units[0]; const me = st.lados[0].units; me[0].efeitos.push({ type: 'pressagio', dur: 2, execLimiar: 24 });
   const mh = me.map(x => x.hp); E.agir(st, mo.uid, 'milagre', []);
-  ok(mh[0] - me[0].hp === 25 && mh[1] - me[1].hp === 15 && me.every(x => !!E.ef(x, 'medo')), `As Três Irmãs: 25 no profetizado, 15 nos outros, Medo em todos (${me.map((x, i) => mh[i] - x.hp)})`);
+  ok(mh[0] - me[0].hp === 32 && mh[1] - me[1].hp === 22 && me.every(x => !!E.ef(x, 'medo')), `As Três Irmãs: 32 no profetizado, 22 nos outros, Medo em todos §324P3 (${me.map((x, i) => mh[i] - x.hp)})`);
 
   // ---- TANUKI ----
   // passiva Fortuna: abertura → +1 orbe Verdejante
@@ -2195,7 +2195,7 @@ console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morriga
   // básico 12
   st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1060, 0); orbs(st.lados[0]);
   let ta = st.lados[0].units[0]; foe = st.lados[1].units[0];
-  h = foe.hp; E.agir(st, ta.uid, 'basico', [foe.uid]); ok(h - foe.hp === 12, `Pancada da Barriga: 12 (${h - foe.hp})`);
+  h = foe.hp; E.agir(st, ta.uid, 'basico', [foe.uid]); ok(h - foe.hp === 15, `Pancada da Barriga: 15 (${h - foe.hp})`);
   // habilidade MÍMICA: copia o básico do aliado escolhido (Xangô = 15)
   st = E.novoEstado(['tanuki', 'xango', 'zeus'], ['zeus', 'zeus', 'zeus'], 1061, 0); orbs(st.lados[0]);
   ta = st.lados[0].units[0]; const alX = st.lados[0].units[1]; foe = st.lados[1].units[0];
@@ -2209,7 +2209,7 @@ console.log('== §127 Leva 2 do HOOK: Hel (paridade + Marca da Morte) · Morriga
   st = E.novoEstado(['tanuki', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1063, 0); orbs(st.lados[0]);
   ta = st.lados[0].units[0]; foe = st.lados[1].units[0]; foe.shield = 10;
   h = foe.hp; E.agir(st, ta.uid, 'milagre', [foe.uid], [0]);
-  ok(h - foe.hp === 35 && foe.shield === 10, `Golpe da Sorte/MORTE: 35 puro fura o escudo (dano ${h - foe.hp}, escudo ${foe.shield})`);
+  ok(h - foe.hp === 42 && foe.shield === 10, `Golpe da Sorte/MORTE: 42 puro fura o escudo (dano ${h - foe.hp}, escudo ${foe.shield})`);
   console.log('  Hel paridade+Marca-da-Morte(naoRevive)+curaPorAlvo · Morrigan execução-diferida+aoCair+profetizado · Tanuki copia-básico+ilusão');
 }
 
@@ -2220,7 +2220,7 @@ console.log('== §130 B1 do MECANISMO REAL: Dionísio (negaOrbe + Bacanal em mas
   // básico 10
   let st = E.novoEstado(['dionisio', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1070, 0); orbs(st.lados[0]);
   let di = st.lados[0].units[0], foe = st.lados[1].units[0];
-  let h = foe.hp; E.agir(st, di.uid, 'basico', [foe.uid]); ok(h - foe.hp === 10, `Taça Derramada: 10 (${h - foe.hp})`);
+  let h = foe.hp; E.agir(st, di.uid, 'basico', [foe.uid]); ok(h - foe.hp === 13, `Taça Derramada: 13 (${h - foe.hp})`);
   // habilidade Delírio: selado (só básico) + inimigo perde 1 orbe
   st = E.novoEstado(['dionisio', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1071, 0); orbs(st.lados[0]);
   di = st.lados[0].units[0]; foe = st.lados[1].units[0]; st.lados[1].orbs.Chama = 3; const a0 = E.totalOrbs(st.lados[1]);
@@ -2317,7 +2317,7 @@ console.log('== §132 B3/Guan Yu (M7 delegado): Juramento (contra delegado) + In
   // básico 15
   let st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1090, 0); orbs(st.lados[0]);
   let gy = st.lados[0].units[0], foe = st.lados[1].units[0];
-  let h = foe.hp; E.agir(st, gy.uid, 'basico', [foe.uid]); ok(h - foe.hp === 15, `Lâmina do Dragão Verde: 15 (${h - foe.hp})`);
+  let h = foe.hp; E.agir(st, gy.uid, 'basico', [foe.uid]); ok(h - foe.hp === 13, `Lâmina do Dragão Verde: 13 (${h - foe.hp})`);
   // passiva Inabalável: 3 aliados vivos → imune a Medo + reducao 5; cai p/ 2 vivos
   st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1091, 0);
   gy = st.lados[0].units[0]; const en = st.lados[1].units[0];
@@ -2334,12 +2334,12 @@ console.log('== §132 B3/Guan Yu (M7 delegado): Juramento (contra delegado) + In
   E.agir(st, gy.uid, 'habilidade', [ali.uid]);
   ok(!!E.ef(gy, 'dmgUp') && !!E.ef(ali, 'dmgUp'), `Juramento: ambos ganham +8 de dano`);
   const ha = foe.hp; E.bater(st, foe, ali, 15, 'afetado', 'basico', { unico: true });
-  ok(ha - foe.hp === 23, `atingir o aliado → Guan Yu contra-ataca 15 (+8 do próprio buff = 23) (${ha - foe.hp})`);
+  ok(ha - foe.hp === 21, `atingir o aliado → Guan Yu contra-ataca 15 (+6 do próprio buff = 21) (${ha - foe.hp})`);
   // milagre Investida: 15 + 8 por aliado vivo (3 vivos → 39)
   st = E.novoEstado(['guanyu', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1093, 0); orbs(st.lados[0]);
   gy = st.lados[0].units[0]; const e = st.lados[1].units; const hp0 = e.map(x => x.hp);
   E.agir(st, gy.uid, 'milagre', []);
-  ok(e.every((x, i) => hp0[i] - x.hp === 39), `Investida: 15 + 8×3 aliados vivos = 39 a todos (${e.map((x, i) => hp0[i] - x.hp)})`);
+  ok(e.every((x, i) => hp0[i] - x.hp === 24), `Investida: 12 + 4×3 aliados vivos = 24 a todos (${e.map((x, i) => hp0[i] - x.hp)})`);
   console.log('  Guan Yu: Inabalável (imunidade+reducao condicionais a 3 vivos) · Juramento (contra delegado) · Investida (porAliadoVivo)');
 }
 
@@ -2392,7 +2392,7 @@ console.log('== §135 B4 (os 3 rebaixados): Kali (ação recorrente) · Shuten (
   st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1108, 0); orbs(st.lados[0]);
   let ra = st.lados[0].units[0]; foe = st.lados[1].units[0];
   h = foe.hp; E.agir(st, ra.uid, 'basico', [foe.uid]);
-  ok(h - foe.hp === 15 && E.getContadorLado(st, 0, 'combo') === 1, `Tambor: 15 + 1 Combo (1 alvo atingido) (combo ${E.getContadorLado(st, 0, 'combo')})`);
+  ok(h - foe.hp === 15 && E.getContadorLado(st, 0, 'combo') === 1, `Tambor: 15 + 1 Combo (1 alvo atingido) §324P3 (combo ${E.getContadorLado(st, 0, 'combo')})`);
   // habilidade posicional 18/12/8 + atordoa o 1º + 3 Combo
   st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1109, 0); orbs(st.lados[0]);
   ra = st.lados[0].units[0]; const re = st.lados[1].units; const rh = re.map(x => x.hp);
@@ -2402,7 +2402,7 @@ console.log('== §135 B4 (os 3 rebaixados): Kali (ação recorrente) · Shuten (
   st = E.novoEstado(['raijin', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1110, 0); orbs(st.lados[0]);
   ra = st.lados[0].units[0]; const me = st.lados[1].units; const mh = me.map(x => x.hp);
   E.agir(st, ra.uid, 'milagre', []);
-  ok(me.every((x, i) => mh[i] - x.hp === 22) && E.getContadorLado(st, 0, 'combo') === 7, `Tempestade: 22 a todos + 4 Combo + 3 por-golpe (passiva) = 7 (combo ${E.getContadorLado(st, 0, 'combo')})`);
+  ok(me.every((x, i) => mh[i] - x.hp === 22) && E.getContadorLado(st, 0, 'combo') === 7, `Tempestade: 22 a todos + 4 Combo + 3 por-golpe (passiva) = 7 §324P3 (combo ${E.getContadorLado(st, 0, 'combo')})`);
   console.log('  Kali (porInimigoCaido+aoCair+porInimigoHp+ataque-recorrente) · Shuten (porTurno-hp+lifesteal+roubaOrbe reativo) · Raijin (feed por-golpe+posicional)');
 }
 
@@ -2479,12 +2479,12 @@ console.log('== §138 B5/Dagda (M2 A2 + M6): Clava (3º uso cura) · Caldeirão 
   let h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]); const u1 = h - foe.hp;
   E.fimTurno(st); E.fimTurno(st); h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]); const u2 = h - foe.hp;
   E.fimTurno(st); E.fimTurno(st); const ah = ali.hp; h = foe.hp; E.agir(st, da.uid, 'basico', [foe.uid]);
-  ok(u1 === 12 && u2 === 12 && h - foe.hp === 0 && ali.hp - ah === 25, `Clava: usos 1/2 = 12; 3º cura 20+5 um aliado (dano ${h - foe.hp}, cura ${ali.hp - ah})`);
+  ok(u1 === 12 && u2 === 12 && h - foe.hp === 0 && ali.hp - ah === 19, `Clava: usos 1/2 = 12; 3º cura 14+5 um aliado (dano ${h - foe.hp}, cura ${ali.hp - ah})`);
   // habilidade: regen 12 + Caldeirão; piso condicional (curado neste turno não cai abaixo de 1)
   st = E.novoEstado(['dagda', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 1132, 0); orbs(st.lados[0]);
   da = st.lados[0].units[0]; ali = st.lados[0].units[1];
   E.agir(st, da.uid, 'habilidade', []);
-  ok(E.ef(ali, 'regen') && E.ef(ali, 'regen').v === 12 && !!E.ef(ali, 'caldeirao'), `Caldeirão: regen 12 + marca Caldeirão`);
+  ok(E.ef(ali, 'regen') && E.ef(ali, 'regen').v === 8 && !!E.ef(ali, 'caldeirao'), `Caldeirão: regen 8 + marca Caldeirão`);
   ali.curadoAgora = true; ali.hp = 8; E.bater(st, st.lados[1].units[0], ali, 50, 'afetado', 'basico', {});
   ok(ali.vivo && ali.hp === 1, `Caldeirão-piso: aliado curado neste turno não cai abaixo de 1 (${ali.hp})`);
   // milagre Harpa: o time inimigo perde a ação do próximo turno + buffs suspensos

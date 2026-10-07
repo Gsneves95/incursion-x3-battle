@@ -15,62 +15,80 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 0,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 1,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 2,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 40,
+        "hp": 40
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 40,
+        "hp": 40
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 40,
+        "hp": 40
+      }
+    ]
   },
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 18
+      "turnos": 26
     },
     {
       "predicado": "acumulo",
       "fonte": "contador",
       "quem": "kitsune",
       "contador": "cauda",
-      "limiar": 8
+      "limiar": 3
     }
   ],
   "verificacao": {
-    "hash": "ecc73aed",
+    "hash": "b4ba9e2f",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 32,
+    "lancesNesteCaminho": 12,
     "comDica": false,
-    "nos": 69817,
-    "ms": 34948,
+    "nos": 14,
+    "ms": 52,
     "caminho": [
       "perseu Lâmina Curva → oni",
       "passar",
-      "perseu Cabeça da Medusa → ogum",
+      "perseu Cabeça da Medusa → oni",
       "passar",
-      "perseu Foice Adamantina → oni",
-      "passar",
-      "perseu Lâmina Curva → oni",
-      "passar",
-      "perseu Foice Adamantina → oni",
-      "passar",
-      "kali Dança da Aniquilação",
+      "kali Golpe da Foice → ogum",
+      "perseu Foice Adamantina → ogum",
       "passar",
       "passar",
-      "kitsune Nove Caudas → oni",
-      "kali Sede de Sangue → ogum",
+      "perseu Foice Adamantina → aquiles",
       "passar",
-      "kitsune Fogo-fátuo → ogum",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles",
-      "passar",
-      "passar",
-      "kitsune Nove Caudas → aquiles",
-      "passar",
-      "kitsune Fogo-fátuo → aquiles"
+      "kali Golpe da Foice → aquiles",
+      "perseu Cabeça da Medusa → aquiles"
     ]
   }
 }

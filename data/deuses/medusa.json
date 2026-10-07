@@ -37,11 +37,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "10 de dano + Veneno (8 de dano puro/turno por 2 turnos).",
+      "desc": "12 de dano + Veneno (8 de dano puro/turno por 2 turnos).",
       "fx": [
         {
           "t": "dmg",
-          "v": 10
+          "v": 12
         },
         {
           "t": "dot",
@@ -56,11 +56,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 10,
-              "para": 11
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "11 de dano + Veneno (8 de dano puro/turno por 2 turnos)."
+          "desc": "13 de dano + Veneno (8 de dano puro/turno por 2 turnos)."
         },
         {
           "nv": 3,
@@ -71,7 +71,7 @@
               "para": 9
             }
           ],
-          "desc": "11 de dano + Veneno (9 de dano puro/turno por 2 turnos)."
+          "desc": "13 de dano + Veneno (9 de dano puro/turno por 2 turnos)."
         },
         {
           "nv": 4,
@@ -82,7 +82,7 @@
               "para": 3
             }
           ],
-          "desc": "11 de dano + Veneno (9 de dano puro/turno por 3 turnos)."
+          "desc": "13 de dano + Veneno (9 de dano puro/turno por 3 turnos)."
         }
       ]
     },
@@ -95,11 +95,11 @@
       },
       "cd": 2,
       "alvo": "inimigo",
-      "desc": "20 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra.",
+      "desc": "24 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra.",
       "fx": [
         {
           "t": "dmg",
-          "v": 20
+          "v": 24
         },
         {
           "t": "apply",
@@ -129,22 +129,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 22
+              "de": 24,
+              "para": 26
             }
           ],
-          "desc": "22 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
+          "desc": "26 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 22,
-              "para": 24
+              "de": 26,
+              "para": 28
             }
           ],
-          "desc": "24 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
+          "desc": "28 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
         },
         {
           "nv": 4,
@@ -155,7 +155,7 @@
               "para": 2
             }
           ],
-          "desc": "24 de dano a 1 inimigo; ele não pode usar Habilidade por 2 turnos e ganha 1 marca de Pedra."
+          "desc": "28 de dano a 1 inimigo; ele não pode usar Habilidade por 2 turnos e ganha 1 marca de Pedra."
         }
       ]
     },

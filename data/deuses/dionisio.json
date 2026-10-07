@@ -28,11 +28,11 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "10 de dano a 1 inimigo.",
+      "desc": "13 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 10
+          "v": 13
         }
       ],
       "niveis": [
@@ -41,22 +41,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 10,
-              "para": 11
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "11 de dano a 1 inimigo."
+          "desc": "14 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 11,
-              "para": 12
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "12 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -72,7 +72,7 @@
               }
             }
           ],
-          "desc": "12 de dano a 1 inimigo + Veneno (4 de dano puro por 1 turno)."
+          "desc": "15 de dano a 1 inimigo + Veneno (4 de dano puro por 1 turno)."
         }
       ]
     },

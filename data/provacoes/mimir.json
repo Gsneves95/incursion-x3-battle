@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "399e4d6f",
+    "hash": "f6f8eb9c",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 31,
+    "lancesNesteCaminho": 34,
     "comDica": false,
-    "nos": 36,
-    "ms": 78,
+    "nos": 43,
+    "ms": 346,
     "caminho": [
       "odin Gungnir → thor",
       "zeus Cetro do Trovão → thor",
@@ -50,9 +50,10 @@
       "mimir Sussurro Ancestral → thor",
       "passar",
       "zeus Julgamento do Trovão → thor",
-      "passar",
-      "zeus Ira Celestial",
       "mimir Sussurro Ancestral → tyr",
+      "passar",
+      "mimir Sussurro Ancestral → tyr",
+      "zeus Ira Celestial",
       "passar",
       "zeus Julgamento do Trovão → tyr",
       "odin Gungnir → tyr",
@@ -60,14 +61,16 @@
       "passar",
       "odin Gungnir → tyr",
       "mimir Sussurro Ancestral → tyr",
-      "zeus Cetro do Trovão → heimdall",
+      "passar",
+      "zeus Julgamento do Trovão → heimdall",
+      "odin Gungnir → heimdall",
+      "mimir Sussurro Ancestral → heimdall",
       "passar",
       "passar",
       "zeus Julgamento do Trovão → heimdall",
       "odin Gungnir → heimdall",
       "passar",
-      "zeus Ira Celestial",
-      "odin Gungnir → heimdall"
+      "zeus Ira Celestial"
     ]
   }
 }

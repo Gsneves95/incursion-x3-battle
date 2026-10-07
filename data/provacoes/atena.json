@@ -27,13 +27,13 @@
     }
   ],
   "verificacao": {
-    "hash": "317438ab",
+    "hash": "650252e",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 28,
+    "lancesNesteCaminho": 22,
     "comDica": false,
-    "nos": 18849,
-    "ms": 5463,
+    "nos": 18984,
+    "ms": 6449,
     "caminho": [
       "hermes Golpe Alado → fenrir",
       "atena Lança de Prata → kali",
@@ -46,23 +46,17 @@
       "houyi Flecha Solar → fenrir",
       "passar",
       "hermes Golpe Alado → fenrir",
-      "houyi Flecha Solar → fenrir",
+      "houyi Flecha Solar → durga",
       "atena Égide → atena",
       "passar",
-      "hermes Golpe Alado → fenrir",
+      "hermes Golpe Alado → durga",
       "passar",
       "hermes Golpe Alado → durga",
-      "houyi Flecha Solar → durga",
+      "houyi Flecha Solar → fenrir",
       "passar",
       "houyi Nove Flechas → durga",
-      "atena Lança de Prata → fenrir",
-      "hermes Roubo Divino",
-      "passar",
-      "houyi Abater o Sol → durga",
-      "atena Égide → houyi",
-      "passar",
       "hermes Golpe Alado → durga",
-      "atena Lança de Prata → durga"
+      "atena Lança de Prata → fenrir"
     ]
   }
 }

@@ -150,7 +150,7 @@
         "Tempestade": 2,
         "livre": 1
       },
-      "cd": 4,
+      "cd": 3,
       "alvo": "todosInimigos",
       "desc": "22 de dano a todos os inimigos; +4 de Combo.",
       "fx": [

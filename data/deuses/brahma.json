@@ -8,14 +8,14 @@
   "arquetipo": "Recarga/criação",
   "passiva": {
     "nome": "Pai dos Deuses",
-    "desc": "O time começa com 12 de Defesa Destrutível; cada Milagre aliado usado dá +3 de dano permanente ao time.",
+    "desc": "O time começa com 4 de Defesa Destrutível; cada Milagre aliado usado dá +1 de dano permanente ao time.",
     "fx": [
       {
         "gatilho": "abertura",
         "faz": [
           {
             "t": "shield",
-            "v": 12,
+            "v": 4,
             "escopo": "time"
           }
         ]
@@ -28,7 +28,7 @@
             "t": "apply",
             "eff": {
               "type": "dmgUp",
-              "v": 3,
+              "v": 1,
               "dur": 99
             },
             "escopo": "time"
@@ -104,14 +104,14 @@
       },
       "cd": 2,
       "alvo": "nenhum",
-      "desc": "O time causa +4 de dano — permanente e acumulável a cada uso.",
+      "desc": "O time causa +2 de dano por 2 turnos.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 4,
-            "dur": 99
+            "v": 2,
+            "dur": 2
           },
           "escopo": "time"
         }
@@ -122,11 +122,11 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 4,
-              "para": 5
+              "de": 2,
+              "para": 3
             }
           ],
-          "desc": "O time causa +5 de dano — permanente e acumulável a cada uso."
+          "desc": "O time causa +3 de dano por 2 turnos."
         }
       ],
       "escadaCurta": "Pilha PERMANENTE e acumulável de dano para o time inteiro: cada +1 fica para sempre nos 3 e soma de novo a cada uso."
@@ -141,7 +141,7 @@
       },
       "cd": 4,
       "alvo": "aliado",
-      "desc": "1 aliado zera todas as recargas e cura 18; o time ganha 3 orbes.",
+      "desc": "1 aliado zera todas as recargas e cura 12; o time ganha 2 orbes.",
       "fx": [
         {
           "t": "cdShift",
@@ -150,11 +150,11 @@
         },
         {
           "t": "heal",
-          "v": 18
+          "v": 12
         },
         {
           "t": "orbGain",
-          "n": 3
+          "n": 2
         }
       ],
       "niveis": [
@@ -163,33 +163,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 18,
-              "para": 19
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "1 aliado zera todas as recargas e cura 19; o time ganha 3 orbes."
+          "desc": "1 aliado zera todas as recargas e cura 13; o time ganha 3 orbes."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 19,
-              "para": 20
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "1 aliado zera todas as recargas e cura 20; o time ganha 3 orbes."
+          "desc": "1 aliado zera todas as recargas e cura 14; o time ganha 3 orbes."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 20,
-              "para": 21
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "1 aliado zera todas as recargas e cura 21; o time ganha 3 orbes."
+          "desc": "1 aliado zera todas as recargas e cura 15; o time ganha 3 orbes."
         }
       ]
     }

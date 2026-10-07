@@ -46,11 +46,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo.",
+      "desc": "13 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 15
+          "v": 13
         }
       ],
       "niveis": [
@@ -59,22 +59,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "14 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -93,7 +93,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; Guan Yu recebe 3 de redução de dano por 1 turno."
+          "desc": "15 de dano a 1 inimigo; Guan Yu recebe 3 de redução de dano por 1 turno."
         }
       ]
     },
@@ -106,13 +106,13 @@
       },
       "cd": 2,
       "alvo": "aliado",
-      "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +8 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado.",
+      "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +6 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 8,
+            "v": 6,
             "dur": 2
           },
           "escopo": "self"
@@ -121,7 +121,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 8,
+            "v": 6,
             "dur": 2
           }
         },
@@ -139,16 +139,16 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 6,
+              "para": 7
             },
             {
               "caminho": "fx[1].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 6,
+              "para": 7
             }
           ],
-          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado."
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +7 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado."
         },
         {
           "nv": 3,
@@ -159,7 +159,7 @@
               "para": 16
             }
           ],
-          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 16 quem atingir o aliado."
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +7 de dano e Guan Yu contra-ataca por 16 quem atingir o aliado."
         },
         {
           "nv": 4,
@@ -170,7 +170,7 @@
               "para": 17
             }
           ],
-          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +9 de dano e Guan Yu contra-ataca por 17 quem atingir o aliado."
+          "desc": "Vincula-se a 1 aliado por 2 turnos: ambos causam +7 de dano e Guan Yu contra-ataca por 17 quem atingir o aliado."
         }
       ]
     },
@@ -184,13 +184,13 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "15 de dano a todos os inimigos, +8 por aliado vivo.",
+      "desc": "12 de dano a todos os inimigos, +8 por aliado vivo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 15,
+          "v": 12,
           "escopo": "todosInimigos",
-          "porAliadoVivo": 8
+          "porAliadoVivo": 4
         }
       ],
       "niveis": [
@@ -199,33 +199,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "16 de dano a todos os inimigos, +8 por aliado vivo."
+          "desc": "13 de dano a todos os inimigos, +8 por aliado vivo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "17 de dano a todos os inimigos, +8 por aliado vivo."
+          "desc": "14 de dano a todos os inimigos, +8 por aliado vivo."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 17,
-              "para": 18
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "18 de dano a todos os inimigos, +8 por aliado vivo."
+          "desc": "15 de dano a todos os inimigos, +8 por aliado vivo."
         }
       ]
     }

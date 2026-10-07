@@ -15,48 +15,72 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 0,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 1,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 0,
+        "idx": 2,
+        "maxHp": 200,
+        "hp": 200
+      },
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 55,
+        "hp": 55
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 55,
+        "hp": 55
+      }
+    ]
   },
   "condicoes": [
     {
       "predicado": "deadline",
-      "turnos": 14
+      "turnos": 24
     },
     {
       "predicado": "acumulo",
       "fonte": "curaAcumulada",
-      "limiar": 240
+      "limiar": 80
     }
   ],
   "verificacao": {
-    "hash": "c8e6e325",
+    "hash": "b016b92",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 40,
+    "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 994,
-    "ms": 476,
+    "nos": 87,
+    "ms": 134,
     "caminho": [
       "susanoo Corte de Kusanagi → shiva",
       "perseu Lâmina Curva → shiva",
       "oxum Espelho Dourado → shiva",
       "passar",
-      "perseu Cabeça da Medusa → shiva",
-      "oxum Espelho Dourado → shiva",
-      "passar",
-      "perseu Foice Adamantina → shiva",
-      "oxum Espelho Dourado → shiva",
-      "passar",
-      "perseu Lâmina Curva → lugh",
-      "oxum Espelho Dourado → shiva",
-      "passar",
-      "oxum Águas de Oxum → oxum",
-      "susanoo Fúria do Tufão",
-      "perseu Foice Adamantina → lugh",
-      "passar",
       "perseu Cabeça da Medusa → lugh",
-      "oxum Espelho Dourado → lugh",
-      "susanoo Corte de Kusanagi → lugh",
+      "oxum Espelho Dourado → shiva",
       "passar",
       "perseu Foice Adamantina → lugh",
       "oxum Espelho Dourado → zeus",
@@ -64,11 +88,9 @@
       "perseu Lâmina Curva → zeus",
       "oxum Espelho Dourado → zeus",
       "passar",
-      "oxum Rio de Ouro",
-      "susanoo Yamata no Orochi",
       "perseu Foice Adamantina → zeus",
+      "oxum Espelho Dourado → shiva",
       "passar",
-      "oxum Águas de Oxum → oxum",
       "passar",
       "passar",
       "oxum Águas de Oxum → oxum",
@@ -76,7 +98,10 @@
       "oxum Rio de Ouro",
       "passar",
       "oxum Águas de Oxum → oxum",
-      "susanoo Corte de Kusanagi → zeus"
+      "passar",
+      "passar",
+      "oxum Águas de Oxum → oxum",
+      "susanoo Corte de Kusanagi → lugh"
     ]
   }
 }

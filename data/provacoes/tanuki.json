@@ -1,75 +1,70 @@
 {
- "key": "tanuki",
- "titulo": "A Sorte Não Existe",
- "nivel": "Provação",
- "dificuldade": 2,
- "aliados": [
-  "tanuki",
-  "perseu",
-  "houyi"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 12
+  "key": "tanuki",
+  "titulo": "A Sorte Não Existe",
+  "nivel": "Provação",
+  "dificuldade": 2,
+  "aliados": [
+    "tanuki",
+    "perseu",
+    "houyi"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "tanuki"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 12
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "tanuki"
+    }
+  ],
+  "verificacao": {
+    "hash": "ef01149a",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 29,
+    "comDica": false,
+    "nos": 1465,
+    "ms": 1279,
+    "caminho": [
+      "tanuki Pancada da Barriga → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Abater o Sol → loki",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "houyi Flecha Solar → loki",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "houyi Flecha Solar → loki",
+      "passar",
+      "houyi Nove Flechas → saci",
+      "perseu Cabeça da Medusa → cuca",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "tanuki Golpe da Sorte → saci",
+      "passar",
+      "tanuki Pancada da Barriga → cuca",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "tanuki Pancada da Barriga → cuca"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "81253201",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 34,
-  "comDica": false,
-  "nos": 18489,
-  "ms": 15046,
-  "caminho": [
-   "tanuki Pancada da Barriga → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "houyi Abater o Sol → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "perseu Foice Adamantina → loki",
-   "houyi Flecha Solar → saci",
-   "passar",
-   "houyi Flecha Solar → loki",
-   "perseu Lâmina Curva → loki",
-   "passar",
-   "houyi Nove Flechas → saci",
-   "tanuki Pancada da Barriga → cuca",
-   "perseu Lâmina Curva → saci",
-   "passar",
-   "houyi Flecha Solar → cuca",
-   "perseu Lâmina Curva → saci",
-   "tanuki Golpe da Sorte → saci",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "passar",
-   "tanuki Pancada da Barriga → cuca",
-   "perseu Lâmina Curva → cuca",
-   "passar",
-   "tanuki Pancada da Barriga → cuca"
-  ]
- }
 }

@@ -32,11 +32,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -45,22 +45,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -78,7 +78,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -128,14 +128,14 @@
       },
       "cd": 4,
       "alvo": "inimigo",
-      "desc": "Escolha: 35 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +12 de dano por 2 turnos.",
+      "desc": "Escolha: 42 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +12 de dano por 2 turnos.",
       "opcoes": [
         {
           "nome": "MORTE",
           "fx": [
             {
               "t": "dmg",
-              "v": 35,
+              "v": 42,
               "kind": "puro"
             }
           ]
@@ -171,8 +171,8 @@
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 35,
-              "para": 37
+              "de": 42,
+              "para": 44
             },
             {
               "caminho": "opcoes[2].fx[0].eff.v",
@@ -180,15 +180,15 @@
               "para": 13
             }
           ],
-          "desc": "Escolha: 37 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +13 de dano por 2 turnos."
+          "desc": "Escolha: 44 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +13 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 37,
-              "para": 39
+              "de": 44,
+              "para": 46
             },
             {
               "caminho": "opcoes[2].fx[0].eff.v",
@@ -196,15 +196,15 @@
               "para": 14
             }
           ],
-          "desc": "Escolha: 39 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +14 de dano por 2 turnos."
+          "desc": "Escolha: 46 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +14 de dano por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 39,
-              "para": 41
+              "de": 46,
+              "para": 48
             },
             {
               "caminho": "opcoes[2].fx[0].eff.v",
@@ -212,7 +212,7 @@
               "para": 15
             }
           ],
-          "desc": "Escolha: 41 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +15 de dano por 2 turnos."
+          "desc": "Escolha: 48 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +15 de dano por 2 turnos."
         }
       ]
     }

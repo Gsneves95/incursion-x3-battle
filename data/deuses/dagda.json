@@ -24,7 +24,7 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 20 em 1 aliado.",
+      "desc": "12 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 14 em 1 aliado.",
       "fx": [
         {
           "t": "contador",
@@ -45,7 +45,7 @@
           "entao": [
             {
               "t": "heal",
-              "v": 20,
+              "v": 14,
               "alvoHp": {
                 "lado": "aliado",
                 "ext": "min"
@@ -76,7 +76,7 @@
               "para": 13
             }
           ],
-          "desc": "13 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 20 em 1 aliado."
+          "desc": "13 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 14 em 1 aliado."
         },
         {
           "nv": 3,
@@ -87,18 +87,18 @@
               "para": 14
             }
           ],
-          "desc": "14 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 20 em 1 aliado."
+          "desc": "14 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 14 em 1 aliado."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].entao[0].v",
-              "de": 20,
-              "para": 22
+              "de": 14,
+              "para": 16
             }
           ],
-          "desc": "14 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 22 em 1 aliado."
+          "desc": "14 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 16 em 1 aliado."
         }
       ]
     },
@@ -111,13 +111,13 @@
       },
       "cd": 3,
       "alvo": "nenhum",
-      "desc": "O time regenera 12 por turno durante 3 turnos.",
+      "desc": "O time regenera 8 por turno durante 3 turnos.",
       "fx": [
         {
           "t": "apply",
           "eff": {
             "type": "regen",
-            "v": 12,
+            "v": 8,
             "dur": 3
           },
           "escopo": "time"
@@ -137,33 +137,33 @@
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 12,
-              "para": 13
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "O time regenera 13 por turno durante 3 turnos."
+          "desc": "O time regenera 9 por turno durante 3 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 13,
-              "para": 14
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "O time regenera 14 por turno durante 3 turnos."
+          "desc": "O time regenera 10 por turno durante 3 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].eff.v",
-              "de": 14,
-              "para": 15
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "O time regenera 15 por turno durante 3 turnos."
+          "desc": "O time regenera 11 por turno durante 3 turnos."
         }
       ]
     },

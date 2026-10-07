@@ -37,36 +37,34 @@
     }
   ],
   "verificacao": {
-    "hash": "c9afc9fb",
+    "hash": "726a39ed",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 22,
+    "lancesNesteCaminho": 20,
     "comDica": false,
-    "nos": 62959,
-    "ms": 40845,
+    "nos": 70159,
+    "ms": 26729,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "passar",
       "perseu Cabeça da Medusa → ares",
-      "kali Golpe da Foice → ares",
+      "kali Golpe da Foice → kukulkan",
       "passar",
-      "perseu Foice Adamantina → ares",
+      "perseu Foice Adamantina → kukulkan",
       "passar",
       "perseu Lâmina Curva → kukulkan",
       "passar",
-      "perseu Foice Adamantina → kukulkan",
+      "perseu Foice Adamantina → ares",
       "passar",
       "perseu Cabeça da Medusa → kukulkan",
       "passar",
-      "kali Dança da Aniquilação",
-      "perseu Foice Adamantina → kukulkan",
-      "passar",
-      "perseu Lâmina Curva → ares",
+      "perseu Foice Adamantina → ares",
       "yanwong Livro da Vida e Morte → houyi",
       "passar",
-      "perseu Foice Adamantina → houyi",
       "yanwong Convocação dos Yamas",
-      "passar"
+      "perseu Lâmina Curva → ares",
+      "passar",
+      "yanwong Selo do Julgamento → ares"
     ]
   }
 }

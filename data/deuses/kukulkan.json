@@ -159,7 +159,7 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "20 de dano a todos; o time causa +10 de dano por 2 turnos.",
+      "desc": "20 de dano a todos; o time causa +8 de dano por 2 turnos.",
       "fx": [
         {
           "t": "dmg",
@@ -170,7 +170,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 10,
+            "v": 8,
             "dur": 2
           },
           "escopo": "time"
@@ -186,18 +186,18 @@
               "para": 21
             }
           ],
-          "desc": "21 de dano a todos; o time causa +10 de dano por 2 turnos."
+          "desc": "21 de dano a todos; o time causa +8 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "21 de dano a todos; o time causa +11 de dano por 2 turnos."
+          "desc": "21 de dano a todos; o time causa +9 de dano por 2 turnos."
         },
         {
           "nv": 4,
@@ -208,7 +208,7 @@
               "para": 22
             }
           ],
-          "desc": "22 de dano a todos; o time causa +11 de dano por 2 turnos."
+          "desc": "22 de dano a todos; o time causa +9 de dano por 2 turnos."
         }
       ]
     }

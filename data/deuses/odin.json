@@ -8,7 +8,7 @@
   "arquetipo": "Estrategista",
   "passiva": {
     "nome": "Rei de Asgard",
-    "desc": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra; o time causa +6 de dano contra marcados.",
+    "desc": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra; o time causa +9 de dano contra marcados.",
     "fx": [
       {
         "gatilho": "abertura",
@@ -28,7 +28,7 @@
       },
       {
         "gatilho": "bonusDano",
-        "v": 6,
+        "v": 9,
         "escopo": "time",
         "quando": {
           "alvoMarca": "qualquer"
@@ -47,12 +47,19 @@
       "cd": 0,
       "alvo": "inimigo",
       "ignoraInalvejavel": true,
-      "desc": "15 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável.",
+      "desc": "15 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 1 turno.",
       "fx": [
         {
           "t": "dmg",
           "v": 15,
           "ignoraInvuln": true
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "marcado",
+            "dur": 1
+          }
         }
       ],
       "niveis": [
@@ -65,7 +72,7 @@
               "para": 16
             }
           ],
-          "desc": "16 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável."
+          "desc": "16 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 1 turno."
         },
         {
           "nv": 3,
@@ -76,24 +83,18 @@
               "para": 17
             }
           ],
-          "desc": "17 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável."
+          "desc": "17 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "apply",
-                "eff": {
-                  "type": "marcado",
-                  "dur": 1
-                }
-              }
+              "caminho": "fx[1].eff.dur",
+              "de": 1,
+              "para": 2
             }
           ],
-          "desc": "17 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 2 turnos."
         }
       ]
     },
@@ -104,9 +105,9 @@
       "cost": {
         "Umbra": 2
       },
-      "cd": 2,
+      "cd": 1,
       "alvo": "todosInimigos",
-      "desc": "Marca todos os inimigos por 2 turnos: o time causa +6 de dano contra marcados.",
+      "desc": "Marca todos os inimigos por 2 turnos: o time causa +9 de dano contra marcados.",
       "fx": [
         {
           "t": "apply",
@@ -165,9 +166,9 @@
         "Umbra": 1,
         "livre": 2
       },
-      "cd": 3,
+      "cd": 2,
       "alvo": "aliado",
-      "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +10 de dano por 2 turnos.",
+      "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +18 de dano por 2 turnos.",
       "fx": [
         {
           "t": "selfHp",
@@ -182,7 +183,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 10,
+            "v": 18,
             "dur": 2
           }
         }
@@ -193,11 +194,11 @@
           "muda": [
             {
               "caminho": "fx[2].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 18,
+              "para": 19
             }
           ],
-          "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +11 de dano por 2 turnos."
+          "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +19 de dano por 2 turnos."
         },
         {
           "nv": 3,
@@ -208,18 +209,18 @@
               "para": -12
             }
           ],
-          "desc": "Odin perde 12 de HP; 1 aliado zera todas as recargas e causa +11 de dano por 2 turnos."
+          "desc": "Odin perde 12 de HP; 1 aliado zera todas as recargas e causa +19 de dano por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[2].eff.v",
-              "de": 11,
-              "para": 12
+              "de": 19,
+              "para": 20
             }
           ],
-          "desc": "Odin perde 12 de HP; 1 aliado zera todas as recargas e causa +12 de dano por 2 turnos."
+          "desc": "Odin perde 12 de HP; 1 aliado zera todas as recargas e causa +20 de dano por 2 turnos."
         }
       ]
     }

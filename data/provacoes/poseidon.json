@@ -29,33 +29,33 @@
     }
   ],
   "verificacao": {
-    "hash": "ccc97cc8",
+    "hash": "322fab77",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 19,
     "comDica": false,
-    "nos": 677,
-    "ms": 409,
+    "nos": 363,
+    "ms": 518,
     "caminho": [
       "poseidon Golpe do Tridente → kagutsuchi",
+      "passar",
+      "iara Afogamento",
       "passar",
       "poseidon Maremoto",
       "passar",
       "poseidon Tridente Colossal → kagutsuchi+mulasemcabeca",
       "piranha Mordidas → kagutsuchi",
       "passar",
-      "poseidon Golpe do Tridente → mulasemcabeca",
-      "piranha Frenesi Alimentar → mulasemcabeca",
+      "piranha Mordidas → mulasemcabeca",
+      "iara Canto Suave → mulasemcabeca",
       "passar",
       "piranha Frenesi Alimentar → hercules",
-      "poseidon Golpe do Tridente → hercules",
       "passar",
-      "piranha Frenesi Alimentar → hercules",
+      "piranha Mordidas → hercules",
       "iara Canto Suave → hercules",
       "passar",
       "iara Canto Suave → hercules",
-      "passar",
-      "iara Canto Suave → hercules"
+      "passar"
     ]
   }
 }

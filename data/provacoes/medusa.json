@@ -1,77 +1,79 @@
 {
- "key": "medusa",
- "titulo": "Três Marcas",
- "nivel": "Rito",
- "dificuldade": 1,
- "aliados": [
-  "medusa",
-  "perseu",
-  "oxum"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 14
+  "key": "medusa",
+  "titulo": "Três Marcas",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "medusa",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "medusa"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "medusa"
+    }
+  ],
+  "verificacao": {
+    "hash": "cb7e04e0",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 38,
+    "comDica": false,
+    "nos": 280,
+    "ms": 168,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "oxum Águas de Oxum → medusa",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "medusa Presa Peçonhenta → loki",
+      "oxum Rio de Ouro",
+      "passar",
+      "medusa Olhar Petrificante → cuca",
+      "perseu Lâmina Curva → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "medusa Presa Peçonhenta → saci",
+      "oxum Águas de Oxum → medusa",
+      "passar",
+      "perseu Cabeça da Medusa → saci",
+      "medusa Olhar Petrificante → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "medusa Presa Peçonhenta → saci",
+      "oxum Espelho Dourado → saci",
+      "passar"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "d0fc4705",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 36,
-  "comDica": false,
-  "nos": 248,
-  "ms": 426,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Cabeça da Medusa → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Rio de Ouro",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "oxum Águas de Oxum → medusa",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "medusa Olhar Petrificante → cuca",
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → cuca",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "medusa Presa Peçonhenta → loki",
-   "oxum Águas de Oxum → medusa",
-   "passar",
-   "medusa Olhar Petrificante → cuca",
-   "oxum Rio de Ouro",
-   "passar",
-   "medusa Presa Peçonhenta → saci",
-   "perseu Cabeça da Medusa → saci",
-   "oxum Espelho Dourado → saci",
-   "passar",
-   "passar",
-   "medusa Presa Peçonhenta → saci",
-   "perseu Foice Adamantina → saci"
-  ]
- }
 }

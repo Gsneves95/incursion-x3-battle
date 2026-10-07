@@ -84,7 +84,7 @@
       },
       "cd": 1,
       "alvo": "nenhum",
-      "desc": "Saci fica Inalvejável por 1 turno; ao voltar, rouba 1 buff de um inimigo.",
+      "desc": "Saci fica Inalvejável por 1 turno e causa 8 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP.",
       "fx": [
         {
           "t": "apply",
@@ -107,6 +107,11 @@
               }
             }
           ]
+        },
+        {
+          "t": "dmg",
+          "v": 8,
+          "escopo": "todosInimigos"
         }
       ],
       "niveis": [
@@ -114,38 +119,34 @@
           "nv": 2,
           "muda": [
             {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "heal",
-                "v": 2,
-                "escopo": "self"
-              }
+              "caminho": "fx[2].v",
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "Saci fica Inalvejável por 1 turno e cura 2; ao voltar, rouba 1 buff de um inimigo."
+          "desc": "Saci fica Inalvejável por 1 turno e causa 9 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[2].v",
-              "de": 2,
-              "para": 3
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "Saci fica Inalvejável por 1 turno e cura 3; ao voltar, rouba 1 buff de um inimigo."
+          "desc": "Saci fica Inalvejável por 1 turno e causa 10 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[2].v",
-              "de": 3,
-              "para": 4
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "Saci fica Inalvejável por 1 turno e cura 4; ao voltar, rouba 1 buff de um inimigo."
+          "desc": "Saci fica Inalvejável por 1 turno e causa 11 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
         }
       ]
     },

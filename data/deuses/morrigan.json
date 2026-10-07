@@ -164,17 +164,17 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "15 de dano a todos + Medo por 2 turnos; 25 nos profetizados.",
+      "desc": "22 de dano a todos + Medo por 2 turnos; 32 nos profetizados.",
       "fx": [
         {
           "t": "dmg",
-          "v": 15,
+          "v": 22,
           "escopo": "todosInimigos",
           "seCond": {
             "quando": {
               "alvoMarca": "pressagio"
             },
-            "v": 25
+            "v": 32
           }
         },
         {
@@ -192,33 +192,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 22,
+              "para": 23
             }
           ],
-          "desc": "16 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+          "desc": "23 de dano a todos + Medo por 2 turnos; 32 nos profetizados."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 23,
+              "para": 24
             }
           ],
-          "desc": "17 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+          "desc": "24 de dano a todos + Medo por 2 turnos; 32 nos profetizados."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 17,
-              "para": 18
+              "de": 24,
+              "para": 25
             }
           ],
-          "desc": "18 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+          "desc": "25 de dano a todos + Medo por 2 turnos; 32 nos profetizados."
         }
       ]
     }

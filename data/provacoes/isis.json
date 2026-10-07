@@ -18,9 +18,22 @@
     "comeca": 0,
     "unidades": [
       {
-        "lado": 0,
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
         "idx": 2,
-        "caido": true
+        "maxHp": 90,
+        "hp": 90
       }
     ],
     "orbs": {
@@ -40,50 +53,45 @@
     }
   ],
   "verificacao": {
-    "hash": "416f0886",
+    "hash": "500455",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 36,
+    "lancesNesteCaminho": 31,
     "comDica": false,
-    "nos": 174781,
-    "ms": 40820,
+    "nos": 112,
+    "ms": 977,
     "caminho": [
-      "isis Ressurreição de Osíris",
       "perseu Cabeça da Medusa → fenrir",
-      "passar",
-      "houyi Nove Flechas → fenrir",
+      "houyi Flecha Solar → fenrir",
       "isis Verbo Mágico → fenrir",
-      "perseu Lâmina Curva → fenrir",
       "passar",
-      "houyi Abater o Sol → durga",
-      "isis Verbo Mágico → fenrir",
-      "perseu Lâmina Curva → durga",
-      "passar",
-      "isis Verbo Mágico → fenrir",
-      "perseu Lâmina Curva → durga",
-      "passar",
-      "perseu Foice Adamantina → durga",
+      "perseu Foice Adamantina → fenrir",
       "isis Verbo Mágico → durga",
       "passar",
-      "isis Verbo Mágico → saci",
-      "perseu Cabeça da Medusa → saci",
-      "passar",
-      "isis Feitiço Roubado",
+      "houyi Nove Flechas → durga",
+      "isis Verbo Mágico → durga",
       "perseu Lâmina Curva → durga",
       "passar",
-      "perseu Foice Adamantina → durga",
-      "passar",
-      "perseu Lâmina Curva → saci",
-      "isis Feitiço Roubado",
+      "isis Verbo Mágico → fenrir",
+      "houyi Flecha Solar → durga",
       "passar",
       "isis Verbo Mágico → saci",
       "perseu Cabeça da Medusa → saci",
-      "passar",
-      "perseu Lâmina Curva → saci",
-      "isis Feitiço Roubado",
+      "houyi Abater o Sol → saci",
       "passar",
       "isis Verbo Mágico → saci",
-      "perseu Foice Adamantina → saci"
+      "houyi Flecha Solar → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "passar",
+      "passar",
+      "passar",
+      "passar",
+      "passar",
+      "houyi Abater o Sol → saci",
+      "isis Ressurreição de Osíris",
+      "perseu Lâmina Curva → saci"
     ]
   }
 }

@@ -45,11 +45,17 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo + Queimadura (4/turno por 2 turnos).",
       "fx": [
         {
           "t": "dmg",
           "v": 15
+        },
+        {
+          "t": "dot",
+          "nome": "queimadura",
+          "v": 4,
+          "dur": 2
         }
       ],
       "niveis": [
@@ -62,7 +68,7 @@
               "para": 16
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo + Queimadura (4/turno por 2 turnos)."
         },
         {
           "nv": 3,
@@ -73,7 +79,7 @@
               "para": 17
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo + Queimadura (4/turno por 2 turnos)."
         },
         {
           "nv": 4,
@@ -92,7 +98,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; Boitatá recebe 3 de redução de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; Boitatá recebe 3 de redução de dano por 1 turno + Queimadura (4/turno por 2 turnos)."
         }
       ]
     },
@@ -161,18 +167,18 @@
         "Chama": 2,
         "livre": 1
       },
-      "cd": 4,
+      "cd": 3,
       "alvo": "todosInimigos",
-      "desc": "20 de dano a todos os inimigos; 32 em quem estiver com Queimadura.",
+      "desc": "22 de dano a todos os inimigos; 38 em quem estiver com Queimadura.",
       "fx": [
         {
           "t": "dmg",
-          "v": 20,
+          "v": 22,
           "seCond": {
             "quando": {
               "alvoDebuff": "queimadura"
             },
-            "v": 32
+            "v": 38
           },
           "escopo": "todosInimigos"
         }
@@ -183,33 +189,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 22,
+              "para": 23
             }
           ],
-          "desc": "21 de dano a todos os inimigos; 32 em quem estiver com Queimadura."
+          "desc": "23 de dano a todos os inimigos; 38 em quem estiver com Queimadura."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 23,
+              "para": 24
             }
           ],
-          "desc": "22 de dano a todos os inimigos; 32 em quem estiver com Queimadura."
+          "desc": "24 de dano a todos os inimigos; 38 em quem estiver com Queimadura."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 22,
-              "para": 23
+              "de": 24,
+              "para": 25
             }
           ],
-          "desc": "23 de dano a todos os inimigos; 32 em quem estiver com Queimadura."
+          "desc": "25 de dano a todos os inimigos; 38 em quem estiver com Queimadura."
         }
       ]
     }

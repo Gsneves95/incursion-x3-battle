@@ -1052,12 +1052,12 @@ console.log('== 30. iniciativa: um lado com a passiva ABRE (força o starter); a
 // ------------------------------------------------------------ 31. Mimir (§123): bonusDano `mesmoMorto` (vale derrotado) + gatilho `naoRevivivel` (self não revive)
 console.log('== 31. Mimir: bonusDano mesmoMorto vale MORTO (gate por-fx) + naoRevivivel carimba o próprio morto ==');
 {
-  // (a) mesmoMorto: Mimir VIVO dá +6 ao time; MORTO continua dando +6 (a "Cabeça Falante" fala do além)
+  // (a) mesmoMorto: Mimir VIVO dá +1 ao time; MORTO continua dando +1 (§324 P3 re-lever) (a "Cabeça Falante" fala do além)
   let st = E.novoEstado(['mimir', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 990);
   let mimir = st.lados[0].units[0], atk = st.lados[0].units[1], foe = st.lados[1].units[0];
-  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Mimir vivo: +6 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 1, `Mimir vivo: +1 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
   mimir.vivo = false;
-  ok(E.bonusDanoDeclarativo(st, atk, foe) === 6, `Mimir MORTO: +6 continua (mesmoMorto relaxa o gate de vivo) (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 1, `Mimir MORTO: +1 continua (mesmoMorto relaxa o gate de vivo) (${E.bonusDanoDeclarativo(st, atk, foe)})`);
   // (b) o gate é POR-FX, não por-unidade: um bonusDano SEM mesmoMorto (Osíris) morto contribui 0,
   //     mesmo sendo agora 1 caído que faria o porAliadoCaido:8 render — o fx é pulado antes de escalar
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['zeus', 'zeus', 'zeus'], 991);

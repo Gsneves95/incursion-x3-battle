@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "d2843a6f",
+    "hash": "c3c110ee",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 19,
+    "lancesNesteCaminho": 20,
     "comDica": false,
-    "nos": 26,
-    "ms": 72,
+    "nos": 38,
+    "ms": 127,
     "caminho": [
       "kali Golpe da Foice → zeus",
       "passar",
@@ -48,11 +48,12 @@
       "medusa Presa Peçonhenta → zeus",
       "passar",
       "kali Sede de Sangue → raijin",
-      "medusa Presa Peçonhenta → raijin",
+      "jormungandr Bote Venenoso → raijin",
       "passar",
       "kali Dança da Aniquilação",
       "passar",
       "kali Sede de Sangue → horus",
+      "passar",
       "passar",
       "jormungandr Anel do Mundo",
       "medusa Presa Peçonhenta → horus"

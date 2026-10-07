@@ -607,7 +607,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte.
     const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.up--ally [data-pas]')]; if (ps[1]) ps[1].click();
       const t = document.querySelector('.leitura__txt') || document.querySelector('.leitura'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
-    ok(/\+5/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +5 e a FONTE (Brígida): "${p2.slice(0, 60)}"`);
+    ok(/\+1/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +1 e a FONTE (Brígida, §324 P3): "${p2.slice(0, 60)}"`);
 
     // GUARDA 3 — todo chip de modificador NUMÉRICO mostra o número (modo largo, ≤3 efeitos): adormecido +8, vulneravel +v.
     console.log('== §266: chip numérico mostra a magnitude (adormecido +8, vulnerável +v) ==');

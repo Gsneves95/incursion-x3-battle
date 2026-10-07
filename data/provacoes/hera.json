@@ -15,7 +15,45 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 0,
+        "idx": 0,
+        "maxHp": 170,
+        "hp": 170
+      },
+      {
+        "lado": 0,
+        "idx": 1,
+        "maxHp": 170,
+        "hp": 170
+      },
+      {
+        "lado": 0,
+        "idx": 2,
+        "maxHp": 170,
+        "hp": 170
+      },
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 45,
+        "hp": 45
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 45,
+        "hp": 45
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 45,
+        "hp": 45
+      }
+    ]
   },
   "condicoes": [
     {
@@ -28,35 +66,26 @@
     }
   ],
   "verificacao": {
-    "hash": "e7790666",
+    "hash": "5decdb35",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 21,
+    "lancesNesteCaminho": 12,
     "comDica": false,
-    "nos": 172843,
-    "ms": 36226,
+    "nos": 18,
+    "ms": 124,
     "caminho": [
       "ares Golpe Sanguinário → zeus",
       "passar",
-      "ares Massacre → zeus",
-      "passar",
-      "ares Sede de Sangue → zeus",
-      "passar",
-      "ares Sede de Sangue → zeus",
-      "passar",
       "ares Massacre → houyi",
       "passar",
       "ares Sede de Sangue → zeus",
       "passar",
-      "passar",
-      "ares Massacre → houyi",
-      "hera Bênção Real → hera+zeus",
+      "ares Golpe Sanguinário → houyi",
       "passar",
       "ares Massacre → saci",
-      "hera Juramento Nupcial → hera+ares",
       "passar",
-      "zeus Cetro do Trovão → saci",
-      "ares Sede de Sangue → saci"
+      "hera Juramento Nupcial → hera+ares",
+      "ares Golpe Sanguinário → zeus"
     ]
   }
 }

@@ -1,70 +1,82 @@
 {
- "key": "houyi",
- "titulo": "Abater o Sol",
- "nivel": "Rito",
- "dificuldade": 1,
- "aliados": [
-  "houyi",
-  "perseu",
-  "oxum"
- ],
- "inimigos": [
-  "saci",
-  "loki",
-  "cuca"
- ],
- "montar": {
-  "seed": 1,
-  "comeca": 0
- },
- "condicoes": [
-  {
-   "predicado": "deadline",
-   "turnos": 14
+  "key": "houyi",
+  "titulo": "Abater o Sol",
+  "nivel": "Rito",
+  "dificuldade": 1,
+  "aliados": [
+    "houyi",
+    "perseu",
+    "oxum"
+  ],
+  "inimigos": [
+    "saci",
+    "loki",
+    "cuca"
+  ],
+  "montar": {
+    "seed": 1,
+    "comeca": 0
   },
-  {
-   "predicado": "semPerderAliado",
-   "quem": "houyi"
+  "condicoes": [
+    {
+      "predicado": "deadline",
+      "turnos": 14
+    },
+    {
+      "predicado": "semPerderAliado",
+      "quem": "houyi"
+    }
+  ],
+  "verificacao": {
+    "hash": "17f4e7e5",
+    "nivelIA": "normal",
+    "veredito": "VENCIVEL",
+    "lancesNesteCaminho": 41,
+    "comDica": false,
+    "nos": 606,
+    "ms": 593,
+    "caminho": [
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Cabeça da Medusa → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "oxum Espelho Dourado → loki",
+      "passar",
+      "perseu Lâmina Curva → loki",
+      "passar",
+      "oxum Rio de Ouro",
+      "perseu Foice Adamantina → loki",
+      "passar",
+      "perseu Cabeça da Medusa → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "perseu Foice Adamantina → cuca",
+      "houyi Flecha Solar → cuca",
+      "oxum Espelho Dourado → cuca",
+      "passar",
+      "houyi Nove Flechas → saci+cuca",
+      "perseu Lâmina Curva → cuca",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Abater o Sol → saci",
+      "oxum Águas de Oxum → houyi",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Flecha Solar → saci",
+      "oxum Rio de Ouro",
+      "passar",
+      "houyi Flecha Solar → saci",
+      "perseu Cabeça da Medusa → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Flecha Solar → saci"
+    ]
   }
- ],
- "verificacao": {
-  "hash": "12779dc6",
-  "nivelIA": "normal",
-  "veredito": "VENCIVEL",
-  "lancesNesteCaminho": 29,
-  "comDica": false,
-  "nos": 79,
-  "ms": 195,
-  "caminho": [
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Cabeça da Medusa → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Espelho Dourado → loki",
-   "passar",
-   "perseu Lâmina Curva → loki",
-   "oxum Rio de Ouro",
-   "passar",
-   "perseu Foice Adamantina → cuca",
-   "oxum Águas de Oxum → houyi",
-   "passar",
-   "perseu Cabeça da Medusa → cuca",
-   "oxum Águas de Oxum → houyi",
-   "passar",
-   "houyi Nove Flechas → saci+loki+cuca",
-   "perseu Lâmina Curva → saci",
-   "oxum Águas de Oxum → houyi",
-   "passar",
-   "houyi Flecha Solar → saci",
-   "perseu Foice Adamantina → saci",
-   "oxum Águas de Oxum → houyi",
-   "passar",
-   "houyi Flecha Solar → saci",
-   "perseu Lâmina Curva → saci",
-   "oxum Espelho Dourado → saci"
-  ]
- }
 }

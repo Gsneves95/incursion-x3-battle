@@ -31,13 +31,13 @@
     }
   ],
   "verificacao": {
-    "hash": "d2e175c",
+    "hash": "f505f7dc",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 19,
     "comDica": false,
     "nos": 47,
-    "ms": 87,
+    "ms": 30,
     "caminho": [
       "perseu Lâmina Curva → oni",
       "kali Golpe da Foice → oni",

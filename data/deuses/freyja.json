@@ -8,7 +8,7 @@
   "arquetipo": "Buffer/revive",
   "passiva": {
     "nome": "Seiðr",
-    "desc": "Aliados curados por Freyja causam +5 de dano no turno seguinte.",
+    "desc": "Aliados curados por Freyja causam +3 de dano no turno seguinte.",
     "fx": [
       {
         "gatilho": "aoCurar",
@@ -17,7 +17,7 @@
             "t": "apply",
             "eff": {
               "type": "dmgUp",
-              "v": 5,
+              "v": 2,
               "dur": 2
             }
           }
@@ -33,11 +33,11 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "10 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 10
         }
       ],
       "niveis": [
@@ -46,22 +46,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "11 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "12 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -79,7 +79,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "12 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -92,17 +92,17 @@
       },
       "cd": 2,
       "alvo": "2aliados",
-      "desc": "Cura 20 em 2 aliados; eles causam +6 de dano por 2 turnos.",
+      "desc": "Cura 12 em 2 aliados; eles causam +3 de dano por 2 turnos.",
       "fx": [
         {
           "t": "heal",
-          "v": 20
+          "v": 12
         },
         {
           "t": "apply",
           "eff": {
             "type": "dmgUp",
-            "v": 6,
+            "v": 3,
             "dur": 2
           }
         }
@@ -113,33 +113,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Cura 21 em 2 aliados; eles causam +6 de dano por 2 turnos."
+          "desc": "Cura 13 em 2 aliados; eles causam +3 de dano por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 6,
-              "para": 7
+              "de": 3,
+              "para": 4
             }
           ],
-          "desc": "Cura 21 em 2 aliados; eles causam +7 de dano por 2 turnos."
+          "desc": "Cura 13 em 2 aliados; eles causam +4 de dano por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Cura 22 em 2 aliados; eles causam +7 de dano por 2 turnos."
+          "desc": "Cura 14 em 2 aliados; eles causam +4 de dano por 2 turnos."
         }
       ]
     },
@@ -153,7 +153,7 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos.",
+      "desc": "Revive 1 aliado caído com 30 de HP; se ninguém caiu, o time causa +5 de dano por 2 turnos.",
       "fx": [
         {
           "t": "condicional",
@@ -163,7 +163,7 @@
           "entao": [
             {
               "t": "revive",
-              "hp": 48,
+              "hp": 30,
               "escopo": "umCaido"
             }
           ],
@@ -172,7 +172,7 @@
               "t": "apply",
               "eff": {
                 "type": "dmgUp",
-                "v": 12,
+                "v": 5,
                 "dur": 2
               },
               "escopo": "time"
@@ -194,7 +194,7 @@
               }
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos. Em qualquer caso, o time ganha 2 de Defesa Destrutível."
+          "desc": "Revive 1 aliado caído com 30 de HP; se ninguém caiu, o time causa +5 de dano por 2 turnos. Em qualquer caso, o time ganha 2 de Defesa Destrutível."
         },
         {
           "nv": 3,
@@ -205,7 +205,7 @@
               "para": 3
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos. Em qualquer caso, o time ganha 3 de Defesa Destrutível."
+          "desc": "Revive 1 aliado caído com 30 de HP; se ninguém caiu, o time causa +5 de dano por 2 turnos. Em qualquer caso, o time ganha 3 de Defesa Destrutível."
         },
         {
           "nv": 4,
@@ -216,7 +216,7 @@
               "para": 4
             }
           ],
-          "desc": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos. Em qualquer caso, o time ganha 4 de Defesa Destrutível."
+          "desc": "Revive 1 aliado caído com 30 de HP; se ninguém caiu, o time causa +5 de dano por 2 turnos. Em qualquer caso, o time ganha 4 de Defesa Destrutível."
         }
       ]
     }

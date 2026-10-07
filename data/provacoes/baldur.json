@@ -24,13 +24,13 @@
     }
   ],
   "verificacao": {
-    "hash": "e669bbce",
+    "hash": "206cf37f",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 31,
+    "lancesNesteCaminho": 26,
     "comDica": false,
-    "nos": 36557,
-    "ms": 12876,
+    "nos": 39,
+    "ms": 46,
     "caminho": [
       "houyi Flecha Solar → thor",
       "perseu Lâmina Curva → thor",
@@ -47,22 +47,17 @@
       "houyi Flecha Solar → thor",
       "perseu Lâmina Curva → thor",
       "passar",
-      "houyi Abater o Sol → tyr",
+      "houyi Abater o Sol → ogum",
+      "perseu Lâmina Curva → thor",
       "passar",
-      "houyi Flecha Solar → thor",
+      "houyi Nove Flechas → ogum",
+      "perseu Cabeça da Medusa → thor",
       "passar",
       "houyi Abater o Sol → thor",
-      "baldur Golpe Radiante → thor",
       "passar",
-      "houyi Flecha Solar → thor",
-      "baldur Luz Purificadora → houyi",
+      "houyi Flecha Solar → tyr",
       "passar",
-      "baldur Invulnerabilidade de Baldur → houyi",
-      "passar",
-      "baldur Golpe Radiante → thor",
-      "houyi Nove Flechas → ogum",
-      "passar",
-      "baldur Golpe Radiante → ogum"
+      "houyi Flecha Solar → ogum"
     ]
   }
 }

@@ -34,13 +34,13 @@
     }
   ],
   "verificacao": {
-    "hash": "200ee463",
+    "hash": "6c3157ce",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 28,
     "comDica": false,
     "nos": 43,
-    "ms": 141,
+    "ms": 50,
     "caminho": [
       "perseu Cabeça da Medusa → fenrir",
       "orfeu Corda da Lira → fenrir",

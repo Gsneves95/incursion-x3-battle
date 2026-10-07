@@ -31,11 +31,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "14 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 14
         }
       ],
       "niveis": [
@@ -44,22 +44,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "15 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -77,7 +77,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "16 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -155,11 +155,11 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "18 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos.",
+      "desc": "22 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos.",
       "fx": [
         {
           "t": "dmg",
-          "v": 18,
+          "v": 22,
           "escopo": "todosInimigos"
         },
         {
@@ -173,33 +173,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 18,
-              "para": 19
+              "de": 22,
+              "para": 23
             }
           ],
-          "desc": "19 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+          "desc": "23 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 19,
-              "para": 20
+              "de": 23,
+              "para": 24
             }
           ],
-          "desc": "20 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+          "desc": "24 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 24,
+              "para": 25
             }
           ],
-          "desc": "21 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+          "desc": "25 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
         }
       ]
     }

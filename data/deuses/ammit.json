@@ -25,11 +25,19 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo; o alvo fica Vulnerável (+3 de dano recebido) por 2 turnos.",
       "fx": [
         {
           "t": "dmg",
           "v": 15
+        },
+        {
+          "t": "apply",
+          "eff": {
+            "type": "vulneravel",
+            "v": 3,
+            "dur": 2
+          }
         }
       ],
       "niveis": [
@@ -42,7 +50,7 @@
               "para": 16
             }
           ],
-          "desc": "16 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo; o alvo fica Vulnerável (+3 de dano recebido) por 2 turnos."
         },
         {
           "nv": 3,
@@ -53,7 +61,7 @@
               "para": 17
             }
           ],
-          "desc": "17 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo; o alvo fica Vulnerável (+3 de dano recebido) por 2 turnos."
         },
         {
           "nv": 4,
@@ -71,7 +79,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno; o alvo fica Vulnerável (+3 de dano recebido) por 2 turnos."
         }
       ]
     },
@@ -84,13 +92,13 @@
       },
       "cd": 1,
       "alvo": "inimigo",
-      "desc": "22 de dano a 1 inimigo, +6 por debuff ativo nele.",
+      "desc": "25 de dano a 1 inimigo, +8 por debuff ativo nele.",
       "fx": [
         {
           "t": "dmg",
-          "v": 22,
+          "v": 25,
           "porStatus": {
-            "v": 6,
+            "v": 8,
             "categoria": "debuff",
             "onde": "alvo"
           }
@@ -102,33 +110,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 22,
-              "para": 23
+              "de": 25,
+              "para": 26
             }
           ],
-          "desc": "23 de dano a 1 inimigo, +6 por debuff ativo nele."
+          "desc": "26 de dano a 1 inimigo, +8 por debuff ativo nele."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 23,
-              "para": 24
+              "de": 26,
+              "para": 27
             }
           ],
-          "desc": "24 de dano a 1 inimigo, +6 por debuff ativo nele."
+          "desc": "27 de dano a 1 inimigo, +8 por debuff ativo nele."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 24,
-              "para": 25
+              "de": 27,
+              "para": 28
             }
           ],
-          "desc": "25 de dano a 1 inimigo, +6 por debuff ativo nele."
+          "desc": "28 de dano a 1 inimigo, +8 por debuff ativo nele."
         }
       ]
     },
@@ -140,9 +148,9 @@
         "Umbra": 2,
         "livre": 1
       },
-      "cd": 4,
+      "cd": 2,
       "alvo": "inimigo",
-      "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 35 de dano.",
+      "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 40 de dano.",
       "fx": [
         {
           "t": "condicional",
@@ -188,7 +196,7 @@
                   "senao": [
                     {
                       "t": "dmg",
-                      "v": 35
+                      "v": 40
                     }
                   ]
                 }
@@ -203,33 +211,33 @@
           "muda": [
             {
               "caminho": "fx[0].senao[0].senao[0].senao[0].v",
-              "de": 35,
-              "para": 37
+              "de": 40,
+              "para": 42
             }
           ],
-          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 37 de dano."
+          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 42 de dano."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].senao[0].senao[0].senao[0].v",
-              "de": 37,
-              "para": 39
+              "de": 42,
+              "para": 44
             }
           ],
-          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 39 de dano."
+          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 44 de dano."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].senao[0].senao[0].senao[0].v",
-              "de": 39,
-              "para": 41
+              "de": 44,
+              "para": 46
             }
           ],
-          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 41 de dano."
+          "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 46 de dano."
         }
       ]
     }

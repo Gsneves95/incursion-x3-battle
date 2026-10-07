@@ -33,11 +33,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -46,22 +46,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -80,7 +80,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; Ymir recebe 3 de redução de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; Ymir recebe 3 de redução de dano por 1 turno."
         }
       ]
     },
@@ -93,11 +93,11 @@
       },
       "cd": 3,
       "alvo": "todosInimigos",
-      "desc": "12 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno.",
+      "desc": "15 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12,
+          "v": 15,
           "escopo": "todosInimigos"
         },
         {
@@ -116,22 +116,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
+          "desc": "16 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
+          "desc": "17 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
         },
         {
           "nv": 4,
@@ -146,7 +146,7 @@
               }
             }
           ],
-          "desc": "14 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno; Ymir ganha 8 de Defesa Destrutível."
+          "desc": "17 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno; Ymir ganha 8 de Defesa Destrutível."
         }
       ]
     },

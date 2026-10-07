@@ -96,12 +96,12 @@ console.log('== Thor: redução de 6 para o time todo ==');
   st.lados[0].orbs['Tempestade']=9;
   const alvo=st.lados[1].units[2];   // Cuca, sem redução própria
   E.agir(st,st.lados[0].units[0].uid,'basico',[alvo.uid]);   // 15 afetado
-  ok(120-alvo.hp===9,`15 menos 6 do Thor = 9, deu ${120-alvo.hp}`);
+  ok(120-alvo.hp===11,`15 menos 4 do Thor (§324 P3) = 11, deu ${120-alvo.hp}`);
   st.lados[1].units[0].vivo=false;
   const h=alvo.hp;
   E.agir(st,st.lados[0].units[1].uid,'basico',[alvo.uid]);
   ok(h-alvo.hp===15,`sem Thor vivo deveria levar 15, levou ${h-alvo.hp}`);
-  console.log('  Thor vivo: 9 \u00b7 Thor caído: 15');
+  console.log('  Thor vivo: 11 \u00b7 Thor caído: 15');
 }
 
 // §266 — infoPassiva: a passiva SE ANUNCIA quando age (a base do "P acende" e da leitura com valor/fonte).
@@ -111,8 +111,8 @@ console.log('== §266 infoPassiva: passiva agindo vs parada, e a aura legível a
   const st=E.novoEstado(['brigid','apolo','tyr'],['zeus','zeus','zeus'],3);
   const [b,ap]=st.lados[0].units;
   const iB=E.infoPassiva(st,b), iAp=E.infoPassiva(st,ap);
-  ok(iB.propria.some(x=>x.gat==='bonusDano'&&x.v===5),'Brígida: a própria aura +5 aparece como AGINDO');
-  ok(iAp.recebidas.some(x=>x.v===5&&x.fonte==='brigid'),'o aliado AFETADO lê o +5 e a FONTE (Brígida) — a aura é legível a partir de quem recebe');
+  ok(iB.propria.some(x=>x.gat==='bonusDano'&&x.v===1),'Brígida: a própria aura +1 aparece como AGINDO (§324 P3)');
+  ok(iAp.recebidas.some(x=>x.v===1&&x.fonte==='brigid'),'o aliado AFETADO lê o +1 e a FONTE (Brígida) — a aura é legível a partir de quem recebe');
   // SÓ-ALVO (Ogum +10 vs defendido): PARADA em repouso, AGE ao mirar um alvo que casa
   const st2=E.novoEstado(['ogum','tyr','zeus'],['zeus','zeus','zeus'],3);
   const og=st2.lados[0].units[0], alvo=st2.lados[1].units[0];

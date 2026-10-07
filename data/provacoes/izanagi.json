@@ -27,13 +27,13 @@
     }
   ],
   "verificacao": {
-    "hash": "d4f73eee",
+    "hash": "56ec4497",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 27,
+    "lancesNesteCaminho": 25,
     "comDica": false,
-    "nos": 774,
-    "ms": 589,
+    "nos": 5735,
+    "ms": 2253,
     "caminho": [
       "izanagi Lança Ame-no-Nuboko → jormungandr",
       "perseu Lâmina Curva → jormungandr",
@@ -47,21 +47,19 @@
       "izanagi Lança Ame-no-Nuboko → kagutsuchi",
       "passar",
       "houyi Abater o Sol → kagutsuchi",
+      "izanagi Lança Ame-no-Nuboko → jormungandr",
+      "perseu Lâmina Curva → kagutsuchi",
+      "passar",
+      "houyi Flecha Solar → kagutsuchi",
       "izanagi Lança Ame-no-Nuboko → kagutsuchi",
       "perseu Lâmina Curva → kagutsuchi",
       "passar",
-      "perseu Foice Adamantina → piranha",
-      "houyi Flecha Solar → kagutsuchi",
+      "houyi Nove Flechas → piranha",
       "izanagi Lança Ame-no-Nuboko → piranha",
-      "passar",
-      "houyi Flecha Solar → piranha",
       "perseu Lâmina Curva → piranha",
       "passar",
-      "houyi Nove Flechas → jormungandr+kagutsuchi+piranha",
       "perseu Cabeça da Medusa → piranha",
-      "izanagi Lança Ame-no-Nuboko → piranha",
-      "passar",
-      "izanagi Lança Ame-no-Nuboko → piranha"
+      "houyi Abater o Sol → piranha"
     ]
   }
 }

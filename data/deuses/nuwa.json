@@ -8,7 +8,7 @@
   "arquetipo": "Buffer/criadora",
   "passiva": {
     "nome": "Mãe da Humanidade",
-    "desc": "Quando um aliado cai, os demais causam +10 de dano pelo resto da partida.",
+    "desc": "Quando um aliado cai, os demais causam +6 de dano pelo resto da partida.",
     "fx": [
       {
         "gatilho": "aoCair",
@@ -18,7 +18,7 @@
             "t": "apply",
             "eff": {
               "type": "dmgUp",
-              "v": 10,
+              "v": 6,
               "dur": 99
             },
             "escopo": "time"
@@ -92,16 +92,16 @@
       "cost": {
         "Aurora": 2
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "nenhum",
-      "desc": "Escolha 2: cura 20 no time · time causa +8 de dano por 2 turnos · time ganha 15 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe.",
+      "desc": "Escolha 2: cura 12 no time · time causa +4 de dano por 2 turnos · time ganha 10 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe.",
       "opcoes": [
         {
           "nome": "CURA",
           "fx": [
             {
               "t": "heal",
-              "v": 20,
+              "v": 12,
               "escopo": "time"
             }
           ]
@@ -113,7 +113,7 @@
               "t": "apply",
               "eff": {
                 "type": "dmgUp",
-                "v": 8,
+                "v": 4,
                 "dur": 2
               },
               "escopo": "time"
@@ -125,7 +125,7 @@
           "fx": [
             {
               "t": "shield",
-              "v": 15,
+              "v": 10,
               "escopo": "time"
             }
           ]
@@ -155,63 +155,63 @@
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 12,
+              "para": 13
             },
             {
               "caminho": "opcoes[1].fx[0].eff.v",
-              "de": 8,
-              "para": 9
+              "de": 4,
+              "para": 5
             },
             {
               "caminho": "opcoes[2].fx[0].v",
-              "de": 15,
-              "para": 16
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "Escolha 2: cura 21 no time · time causa +9 de dano por 2 turnos · time ganha 16 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+          "desc": "Escolha 2: cura 13 no time · time causa +5 de dano por 2 turnos · time ganha 11 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 13,
+              "para": 14
             },
             {
               "caminho": "opcoes[1].fx[0].eff.v",
-              "de": 9,
-              "para": 10
+              "de": 5,
+              "para": 6
             },
             {
               "caminho": "opcoes[2].fx[0].v",
-              "de": 16,
-              "para": 17
+              "de": 11,
+              "para": 12
             }
           ],
-          "desc": "Escolha 2: cura 22 no time · time causa +10 de dano por 2 turnos · time ganha 17 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+          "desc": "Escolha 2: cura 14 no time · time causa +6 de dano por 2 turnos · time ganha 12 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "opcoes[0].fx[0].v",
-              "de": 22,
-              "para": 23
+              "de": 14,
+              "para": 15
             },
             {
               "caminho": "opcoes[1].fx[0].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 6,
+              "para": 7
             },
             {
               "caminho": "opcoes[2].fx[0].v",
-              "de": 17,
-              "para": 18
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Escolha 2: cura 23 no time · time causa +11 de dano por 2 turnos · time ganha 18 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
+          "desc": "Escolha 2: cura 15 no time · time causa +7 de dano por 2 turnos · time ganha 13 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
         }
       ]
     },
@@ -225,18 +225,18 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "O time ganha 20 de Defesa Destrutível e regenera 10 por turno durante 3 turnos.",
+      "desc": "O time ganha 8 de Defesa Destrutível e regenera 4 por turno durante 3 turnos.",
       "fx": [
         {
           "t": "shield",
-          "v": 20,
+          "v": 8,
           "escopo": "time"
         },
         {
           "t": "apply",
           "eff": {
             "type": "regen",
-            "v": 10,
+            "v": 4,
             "dur": 3
           },
           "escopo": "time"
@@ -248,33 +248,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "O time ganha 21 de Defesa Destrutível e regenera 10 por turno durante 3 turnos."
+          "desc": "O time ganha 9 de Defesa Destrutível e regenera 4 por turno durante 3 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].eff.v",
-              "de": 10,
-              "para": 11
+              "de": 4,
+              "para": 5
             }
           ],
-          "desc": "O time ganha 21 de Defesa Destrutível e regenera 11 por turno durante 3 turnos."
+          "desc": "O time ganha 9 de Defesa Destrutível e regenera 5 por turno durante 3 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 21,
-              "para": 22
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "O time ganha 22 de Defesa Destrutível e regenera 11 por turno durante 3 turnos."
+          "desc": "O time ganha 10 de Defesa Destrutível e regenera 5 por turno durante 3 turnos."
         }
       ]
     }

@@ -104,19 +104,20 @@
     "basico": {
       "nome": "Lança de Prata",
       "custo": "1 Aurora",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Égide",
       "custo": "2 Aurora",
       "recarga": 2,
-      "efeito": "1 aliado ganha 25 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
+      "efeito": "1 aliado ganha 30 de Defesa Destrutível por 2 turnos; enquanto durar, contra-ataca por 10 quem o atingir com habilidade Física."
     },
     "milagre": {
       "nome": "Estratégia Divina",
       "custo": "2 Aurora + 1 livre",
       "recarga": 4,
-      "efeito": "Remove todos os debuffs do time; o time causa +8 de dano por 2 turnos."
+      "efeito": "Remove todos os debuffs do time; o time causa +10 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Sabedoria Tática",
@@ -259,19 +260,20 @@
     "basico": {
       "nome": "Foice de Ouro",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Dádiva da Terra",
       "custo": "2 Verdejante",
       "recarga": 2,
-      "efeito": "O time regenera 12 de HP por turno durante 2 turnos."
+      "efeito": "O time regenera 6 de HP por turno durante 2 turnos."
     },
     "milagre": {
       "nome": "Estação Eterna",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, cura 25 no time."
+      "efeito": "Revive 1 aliado caído com 36 de HP; se ninguém caiu, cura 11 no time."
     },
     "passiva": {
       "nome": "Ciclo das Estações",
@@ -290,7 +292,8 @@
     "basico": {
       "nome": "Taça Derramada",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Delírio",
@@ -302,7 +305,7 @@
       "nome": "Bacanal",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "No próximo turno, todos os inimigos usam o Básico contra aliados deles (você escolhe os alvos)."
+      "efeito": "No próximo turno, todos os inimigos usam o Básico contra aliados deles."
     },
     "passiva": {
       "nome": "Êxtase",
@@ -321,7 +324,8 @@
     "basico": {
       "nome": "Golpe Alado",
       "custo": "1 Tempestade",
-      "efeito": "2 golpes de 8 em 1 inimigo (16 total)."
+      "efeito": "2 golpes de 11 em 1 inimigo (22 total).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Passo Alado",
@@ -383,7 +387,8 @@
     "basico": {
       "nome": "Estocada de Peleu",
       "custo": "1 Chama",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Lança Implacável",
@@ -395,7 +400,7 @@
       "nome": "Fúria de Aquiles",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "4 golpes de 11 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
+      "efeito": "4 golpes de 9 no mesmo alvo; Aquiles fica Invulnerável por 1 turno."
     },
     "passiva": {
       "nome": "Calcanhar de Aquiles",
@@ -445,7 +450,8 @@
     "basico": {
       "nome": "Corda da Lira",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Canção Órfica",
@@ -457,7 +463,7 @@
       "nome": "Lamento do Submundo",
       "custo": "1 Umbra + 2 livres",
       "recarga": 4,
-      "efeito": "Todos os inimigos causam 8 menos de dano por 2 turnos; o time cura 15."
+      "efeito": "Todos os inimigos causam 5 menos de dano por 2 turnos; o time cura 15."
     },
     "passiva": {
       "nome": "Melodia Hipnótica",
@@ -476,13 +482,14 @@
     "basico": {
       "nome": "Presa Peçonhenta",
       "custo": "1 Umbra",
-      "efeito": "10 de dano + Veneno (8 de dano puro/turno por 2 turnos)."
+      "efeito": "12 de dano + Veneno (8 de dano puro/turno por 2 turnos).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Olhar Petrificante",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "20 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
+      "efeito": "24 de dano a 1 inimigo; ele não pode usar Habilidade por 1 turno e ganha 1 marca de Pedra."
     },
     "milagre": {
       "nome": "Face da Górgona",
@@ -507,7 +514,8 @@
     "basico": {
       "nome": "Dentada Tripla",
       "custo": "1 Umbra",
-      "efeito": "8 de dano em até 3 inimigos."
+      "efeito": "10 de dano em até 3 inimigos.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Marca do Guardião",
@@ -518,8 +526,8 @@
     "milagre": {
       "nome": "Vigília Infernal",
       "custo": "1 Umbra + 2 livres",
-      "recarga": 4,
-      "efeito": "Provoca todos os inimigos por 1 turno; Cérberus ganha 25 de Defesa Destrutível."
+      "recarga": 1,
+      "efeito": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 35 de Defesa Destrutível."
     },
     "passiva": {
       "nome": "Corrente do Submundo",
@@ -538,19 +546,20 @@
     "basico": {
       "nome": "Chicote de Sangue",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Perseguição",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "Marca 1 inimigo por 2 turnos: ele recebe +8 de dano de todas as fontes e não pode ser curado."
+      "efeito": "Marca 1 inimigo por 2 turnos: ele recebe +10 de dano de todas as fontes e não pode ser curado."
     },
     "milagre": {
       "nome": "Julgamento das Fúrias",
       "custo": "2 Umbra + 1 livre",
       "recarga": 3,
-      "efeito": "25 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
+      "efeito": "36 de dano a 1 inimigo, +10 por debuff ativo nele; remove esses debuffs."
     },
     "passiva": {
       "nome": "Fúria Vingativa",
@@ -600,23 +609,24 @@
     "basico": {
       "nome": "Gungnir",
       "custo": "1 Umbra",
-      "efeito": "15 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável."
+      "efeito": "15 de dano a 1 inimigo; ignora Invulnerabilidade e Inalvejável; marca o alvo por 1 turno.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Huginn e Muninn",
       "custo": "2 Umbra",
-      "recarga": 2,
-      "efeito": "Marca todos os inimigos por 2 turnos: o time causa +6 de dano contra marcados."
+      "recarga": 1,
+      "efeito": "Marca todos os inimigos por 2 turnos: o time causa +9 de dano contra marcados."
     },
     "milagre": {
       "nome": "Sabedoria do Enforcado",
       "custo": "1 Umbra + 2 livres",
-      "recarga": 3,
-      "efeito": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +10 de dano por 2 turnos."
+      "recarga": 2,
+      "efeito": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +18 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Rei de Asgard",
-      "efeito": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra."
+      "efeito": "Com 2+ Nórdicos no time, o time começa a partida com 1 orbe extra; o time causa +9 de dano contra marcados."
     }
   },
   {
@@ -631,23 +641,24 @@
     "basico": {
       "nome": "Golpe de Mjölnir",
       "custo": "1 Tempestade",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Arremesso de Mjölnir",
       "custo": "2 Tempestade",
       "recarga": 1,
-      "efeito": "22 de dano a 1 inimigo e 12 a outro."
+      "efeito": "22 de dano no primeiro alvo e 12 no segundo."
     },
     "milagre": {
       "nome": "Tempestade de Asgard",
       "custo": "2 Tempestade + 1 livre",
       "recarga": 4,
-      "efeito": "20 de dano a todos os inimigos; atordoa o de menor HP por 1 turno."
+      "efeito": "16 de dano a todos os inimigos; atordoa o de menor HP por 1 turno."
     },
     "passiva": {
       "nome": "Protetor de Midgard",
-      "efeito": "Todos os aliados recebem 6 de redução de dano."
+      "efeito": "Todos os aliados recebem 4 de redução de dano."
     }
   },
   {
@@ -724,7 +735,8 @@
     "basico": {
       "nome": "Toque Gélido",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo; Hel cura 8."
+      "efeito": "12 de dano a 1 inimigo; Hel cura 5.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Domínio de Helheim",
@@ -736,7 +748,7 @@
       "nome": "Colheita Fúnebre",
       "custo": "2 Umbra + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos, +5 por debuff ativo no time inimigo; Hel cura 5 por alvo atingido."
+      "efeito": "14 de dano a todos os inimigos, +5 por debuff ativo no time inimigo; Hel cura 5 por alvo atingido."
     },
     "passiva": {
       "nome": "Metade Viva, Metade Morta",
@@ -755,18 +767,19 @@
     "basico": {
       "nome": "Lâmina Vigilante",
       "custo": "1 Aurora",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Visão de Cem Léguas",
       "custo": "2 Aurora",
-      "recarga": 2,
-      "efeito": "Por 2 turnos, 1 aliado contra-ataca por 15 quem o atingir com alvo único."
+      "recarga": 1,
+      "efeito": "Por 2 turnos, 1 aliado contra-ataca por 20 quem o atingir com alvo único."
     },
     "milagre": {
       "nome": "Chamado do Gjallarhorn",
       "custo": "1 Aurora + 2 livres",
-      "recarga": 4,
+      "recarga": 3,
       "efeito": "O time ganha 20 de Defesa Destrutível e imunidade a controle por 2 turnos."
     },
     "passiva": {
@@ -786,23 +799,24 @@
     "basico": {
       "nome": "Lâmina de Brísingamen",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Bênção de Fólkvangr",
       "custo": "2 Aurora",
       "recarga": 2,
-      "efeito": "Cura 20 em 2 aliados; eles causam +6 de dano por 2 turnos."
+      "efeito": "Cura 12 em 2 aliados; eles causam +3 de dano por 2 turnos."
     },
     "milagre": {
       "nome": "Salão dos Caídos",
       "custo": "2 Aurora + 1 livre",
       "recarga": 4,
-      "efeito": "Revive 1 aliado caído com 48 de HP; se ninguém caiu, o time causa +12 de dano por 2 turnos."
+      "efeito": "Revive 1 aliado caído com 30 de HP; se ninguém caiu, o time causa +5 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Seiðr",
-      "efeito": "Aliados curados por Freyja causam +5 de dano no turno seguinte."
+      "efeito": "Aliados curados por Freyja causam +3 de dano no turno seguinte."
     }
   },
   {
@@ -817,13 +831,14 @@
     "basico": {
       "nome": "Espada de Uma Mão",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "Grátis. 12 de dano.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Duelo de Honra",
       "custo": "2 Aurora",
       "recarga": 1,
-      "efeito": "Provoca 1 inimigo por 2 turnos; Tyr recebe 15 de redução de dano por 2 turnos."
+      "efeito": "Provoca o alvo por 2 turnos; Tyr recebe 15 de redução por 2 turnos."
     },
     "milagre": {
       "nome": "Sacrifício do Bravo",
@@ -833,7 +848,7 @@
     },
     "passiva": {
       "nome": "O Maneta",
-      "efeito": "O dano de Tyr não pode ser reduzido nem absorvido por Defesa Destrutível."
+      "efeito": "O dano de Tyr não pode ser reduzido nem absorvido por escudo."
     }
   },
   {
@@ -910,23 +925,24 @@
     "basico": {
       "nome": "Sussurro Ancestral",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Conselho do Poço",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "Remove 1 orbe do inimigo; 1 aliado causa +8 de dano por 2 turnos."
+      "efeito": "Remove 1 orbe do inimigo; 1 aliado causa +6 de dano por 2 turnos."
     },
     "milagre": {
       "nome": "Segredos de Mímir",
       "custo": "1 Umbra + 2 livres",
       "recarga": 4,
-      "efeito": "Zera todas as recargas de 1 aliado; ele causa +10 de dano por 2 turnos."
+      "efeito": "Zera todas as recargas de 1 aliado; ele causa +6 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Cabeça Falante",
-      "efeito": "Mesmo derrotado, Mimir concede +6 de dano ao time — mas não pode ser revivido."
+      "efeito": "Mesmo derrotado, Mimir concede +1 de dano ao time — mas não pode ser revivido."
     }
   },
   {
@@ -941,13 +957,14 @@
     "basico": {
       "nome": "Punho de Gelo",
       "custo": "1 Maré",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Sopro de Niflheim",
       "custo": "2 Maré",
       "recarga": 3,
-      "efeito": "12 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
+      "efeito": "15 de dano a todos os inimigos; eles não podem usar Habilidade por 1 turno."
     },
     "milagre": {
       "nome": "Corpo do Mundo",
@@ -1034,19 +1051,20 @@
     "basico": {
       "nome": "Cajado e Mangual",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Trigo do Renascimento",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "Cura 20 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+      "efeito": "Cura 8 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
     },
     "milagre": {
       "nome": "Tribunal do Duat",
       "custo": "2 Umbra + 1 livre",
-      "recarga": 4,
-      "efeito": "Revive 1 aliado caído com 60 de HP e remove os debuffs dele."
+      "recarga": 5,
+      "efeito": "Revive 1 aliado caído com 30 de HP e remove os debuffs dele."
     },
     "passiva": {
       "nome": "Rei dos Mortos",
@@ -1127,13 +1145,14 @@
     "basico": {
       "nome": "Toque do Embalsamador",
       "custo": "1 Umbra",
-      "efeito": "12 de dano + 1 Atadura."
+      "efeito": "14 de dano a 1 inimigo + 1 Atadura.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Pesagem do Coração",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 25 de dano."
+      "efeito": "Se o alvo tem mais debuffs que buffs: atordoa por 1 turno e aplica 2 Ataduras. Senão: 30 de dano."
     },
     "milagre": {
       "nome": "Sentença do Duat",
@@ -1158,7 +1177,8 @@
     "basico": {
       "nome": "Arranhão Rápido",
       "custo": "1 Aurora",
-      "efeito": "2 golpes de 7 em 1 inimigo."
+      "efeito": "2 golpes de 9 em 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Vigília da Gata",
@@ -1220,19 +1240,20 @@
     "basico": {
       "nome": "Mandíbula",
       "custo": "1 Umbra",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo; o alvo fica Vulnerável (+3 de dano recebido) por 2 turnos.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Faro do Pecado",
       "custo": "2 Umbra",
       "recarga": 1,
-      "efeito": "22 de dano a 1 inimigo, +6 por debuff ativo nele."
+      "efeito": "25 de dano a 1 inimigo, +8 por debuff ativo nele."
     },
     "milagre": {
       "nome": "Devorar a Alma",
       "custo": "2 Umbra + 1 livre",
-      "recarga": 4,
-      "efeito": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 35 de dano."
+      "recarga": 2,
+      "efeito": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 40 de dano."
     },
     "passiva": {
       "nome": "Sentença Final",
@@ -1251,23 +1272,24 @@
     "basico": {
       "nome": "Bico Flamejante",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Chama Purificadora",
       "custo": "2 Chama",
       "recarga": 2,
-      "efeito": "12 de dano a todos os inimigos; cura 12 no time."
+      "efeito": "8 de dano a todos os inimigos; cura 6 no time."
     },
     "milagre": {
       "nome": "Renascer das Cinzas",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 25 no time e remove todos os debuffs."
+      "efeito": "Cura 12 no time e remove todos os debuffs."
     },
     "passiva": {
       "nome": "Imortal",
-      "efeito": "1× por partida, Bennu retorna no turno seguinte com 60 de HP após ser derrotado."
+      "efeito": "1x por partida, Bennu retorna no turno seguinte com 60 de HP após ser derrotado."
     }
   },
   {
@@ -1313,7 +1335,8 @@
     "basico": {
       "nome": "Foice Lunar",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Passagem do Tempo",
@@ -1325,7 +1348,7 @@
       "nome": "Luar Vingador",
       "custo": "1 Umbra + 2 livres",
       "recarga": 4,
-      "efeito": "Cura 20 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro."
+      "efeito": "Cura 26 no time e marca 1 inimigo: se ele derrubar um aliado, sofre 30 de dano puro."
     },
     "passiva": {
       "nome": "Guardião dos Viajantes",
@@ -1437,19 +1460,20 @@
     "basico": {
       "nome": "Espelho Yata",
       "custo": "1 Aurora",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Amanhecer",
       "custo": "2 Aurora",
       "recarga": 2,
-      "efeito": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 12 no time."
+      "efeito": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 15 no time."
     },
     "milagre": {
       "nome": "Luz da Caverna",
       "custo": "2 Aurora + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+      "efeito": "22 de dano a todos os inimigos; durante o DIA, 34 e eles não podem usar Habilidade por 1 turno."
     },
     "passiva": {
       "nome": "Soberana Celestial",
@@ -1468,23 +1492,24 @@
     "basico": {
       "nome": "Corte de Kusanagi",
       "custo": "1 Tempestade",
-      "efeito": "15 de dano a 1 inimigo; remove 1 buff dele."
+      "efeito": "15 de dano a 1 inimigo; remove 1 buff dele. Gera 2 de Combo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Yamata no Orochi",
       "custo": "2 Tempestade",
       "recarga": 2,
-      "efeito": "8 golpes de 4 distribuídos como você quiser (32 total)."
+      "efeito": "8 golpes de 5 distribuídos entre os inimigos (40 total). Gera 2 de Combo."
     },
     "milagre": {
       "nome": "Fúria do Tufão",
       "custo": "2 Tempestade + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo)."
+      "efeito": "22 de dano a todos os inimigos, +2 por ponto de Combo (consome todo o Combo)."
     },
     "passiva": {
       "nome": "Exílio Divino",
-      "efeito": "Cada ataque de Susanoo gera 2 de Combo do time (pool por lado, teto 20); +6 de dano por aliado a menos que o inimigo."
+      "efeito": "Cada ataque de Susanoo gera 2 de Combo do time (teto 20); +6 de dano por aliado a menos que o inimigo."
     }
   },
   {
@@ -1499,7 +1524,8 @@
     "basico": {
       "nome": "Lâmina Crescente",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Anoitecer",
@@ -1510,12 +1536,12 @@
     "milagre": {
       "nome": "Julgamento da Lua",
       "custo": "2 Umbra + 1 livre",
-      "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos."
+      "recarga": 3,
+      "efeito": "22 de dano a todos os inimigos; durante a NOITE, Silencia todos por 2 turnos."
     },
     "passiva": {
       "nome": "Vingança do Banquete",
-      "efeito": "+10 de dano contra inimigos que foram curados no turno anterior."
+      "efeito": "Tsukuyomi causa +10 de dano contra inimigos que foram curados no turno anterior."
     }
   },
   {
@@ -1530,7 +1556,8 @@
     "basico": {
       "nome": "Toque de Yomi",
       "custo": "1 Umbra",
-      "efeito": "12 de dano + 1 Maldição de Yomi."
+      "efeito": "15 de dano + 1 Maldição de Yomi.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Praga de Yomi",
@@ -1541,8 +1568,8 @@
     "milagre": {
       "nome": "Portal de Yomotsu",
       "custo": "2 Umbra + 1 livre",
-      "recarga": 4,
-      "efeito": "20 de dano a todos os inimigos; elimina amaldiçoados com 30 ou menos de HP."
+      "recarga": 3,
+      "efeito": "22 de dano a todos os inimigos; elimina amaldiçoados com 30 ou menos de HP."
     },
     "passiva": {
       "nome": "Mil por Dia",
@@ -1561,19 +1588,20 @@
     "basico": {
       "nome": "Lança Ame-no-Nuboko",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Misogi",
       "custo": "2 Verdejante",
       "recarga": 2,
-      "efeito": "Remove todos os debuffs de 1 aliado e cura 20; se removeu uma Maldição, cura 10 no time."
+      "efeito": "Remove todos os debuffs de 1 aliado e cura 14; se removeu uma Maldição, cura 6 no time."
     },
     "milagre": {
       "nome": "Criação das Ilhas",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "O time ganha 20 de Defesa Destrutível e regenera 8 por turno durante 3 turnos."
+      "efeito": "O time ganha 14 de Defesa Destrutível e regenera 6 por turno durante 3 turnos."
     },
     "passiva": {
       "nome": "Fuga de Yomi",
@@ -1592,7 +1620,8 @@
     "basico": {
       "nome": "Tambor Trovejante",
       "custo": "1 Tempestade",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Raio em Cadeia",
@@ -1603,7 +1632,7 @@
     "milagre": {
       "nome": "Tempestade dos Tambores",
       "custo": "2 Tempestade + 1 livre",
-      "recarga": 4,
+      "recarga": 3,
       "efeito": "22 de dano a todos os inimigos; +4 de Combo."
     },
     "passiva": {
@@ -1716,7 +1745,8 @@
     "basico": {
       "nome": "Fogo-fátuo",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "14 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Ilusão da Raposa",
@@ -1728,7 +1758,7 @@
       "nome": "Nove Caudas",
       "custo": "2 Umbra + 1 livre",
       "recarga": 4,
-      "efeito": "12 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
+      "efeito": "16 de dano a todos os inimigos, +3 por Cauda; com 5+ Caudas, Domina 1 inimigo por 1 turno."
     },
     "passiva": {
       "nome": "Yokai Ancestral",
@@ -1747,7 +1777,8 @@
     "basico": {
       "nome": "Pancada da Barriga",
       "custo": "1 Verdejante",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Metamorfose",
@@ -1759,11 +1790,11 @@
       "nome": "Golpe da Sorte",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "Escolha: 35 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +12 de dano por 2 turnos."
+      "efeito": "Escolha: 42 de dano puro, OU rouba 2 orbes do inimigo, OU o time causa +12 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Fortuna",
-      "efeito": "No início da partida, escolha 1 orbe extra de qualquer elemento."
+      "efeito": "No início da partida, Tanuki ganha 1 orbe extra do seu elemento."
     }
   },
   {
@@ -1840,7 +1871,8 @@
     "basico": {
       "nome": "Kusanagi",
       "custo": "1 Tempestade",
-      "efeito": "15 de dano perfurante a 1 inimigo."
+      "efeito": "15 de dano perfurante a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Disfarce",
@@ -1852,7 +1884,7 @@
       "nome": "Corte Ceifa-Ervas",
       "custo": "2 Tempestade + 1 livre",
       "recarga": 4,
-      "efeito": "28 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
+      "efeito": "38 de dano a 1 inimigo, +2 por ponto de Combo (consome); remove todos os buffs dele."
     },
     "passiva": {
       "nome": "Espírito de Kusanagi",
@@ -1902,23 +1934,24 @@
     "basico": {
       "nome": "Escama Celeste",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Pedras das Cinco Cores",
       "custo": "2 Aurora",
-      "recarga": 2,
-      "efeito": "Escolha 2: cura 20 no time · time causa +8 de dano · time ganha 15 de Defesa Destrutível · remove 1 debuff de cada aliado · time ganha 1 orbe."
+      "recarga": 3,
+      "efeito": "Escolha 2: cura 12 no time · time causa +4 de dano por 2 turnos · time ganha 10 de Defesa Destrutível · remove os debuffs de cada aliado · time ganha 1 orbe."
     },
     "milagre": {
       "nome": "Remendar o Céu",
       "custo": "2 Aurora + 1 livre",
       "recarga": 4,
-      "efeito": "O time ganha 20 de Defesa Destrutível e regenera 10 por turno durante 3 turnos."
+      "efeito": "O time ganha 8 de Defesa Destrutível e regenera 4 por turno durante 3 turnos."
     },
     "passiva": {
       "nome": "Mãe da Humanidade",
-      "efeito": "Quando um aliado cai, os demais causam +10 de dano pelo resto da partida."
+      "efeito": "Quando um aliado cai, os demais causam +6 de dano pelo resto da partida."
     }
   },
   {
@@ -1964,7 +1997,8 @@
     "basico": {
       "nome": "Garra do Dragão",
       "custo": "1 Maré",
-      "efeito": "12 de dano + Encharcado por 2 turnos."
+      "efeito": "15 de dano + Encharcado por 2 turnos.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Tempestade de Chuva",
@@ -1975,8 +2009,8 @@
     "milagre": {
       "nome": "Fúria do Dragão do Mar",
       "custo": "2 Maré + 1 livre",
-      "recarga": 4,
-      "efeito": "20 de dano a todos os inimigos; atordoa os Encharcados por 1 turno."
+      "recarga": 3,
+      "efeito": "22 de dano a todos os inimigos; atordoa os Encharcados por 1 turno."
     },
     "passiva": {
       "nome": "Senhor da Chuva",
@@ -2026,19 +2060,20 @@
     "basico": {
       "nome": "Lâmina do Dragão Verde",
       "custo": "1 Verdejante",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Juramento do Pêssego",
       "custo": "2 Verdejante",
       "recarga": 2,
-      "efeito": "Vincula-se a 1 aliado por 2 turnos: ambos causam +8 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado."
+      "efeito": "Vincula-se a 1 aliado por 2 turnos: ambos causam +6 de dano e Guan Yu contra-ataca por 15 quem atingir o aliado."
     },
     "milagre": {
       "nome": "Investida do General",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "15 de dano a todos os inimigos, +8 por aliado vivo."
+      "efeito": "12 de dano a todos os inimigos, +8 por aliado vivo."
     },
     "passiva": {
       "nome": "Inabalável",
@@ -2088,7 +2123,8 @@
     "basico": {
       "nome": "Selo do Julgamento",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "14 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Livro da Vida e Morte",
@@ -2100,7 +2136,7 @@
       "nome": "Convocação dos Yamas",
       "custo": "2 Umbra + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
+      "efeito": "22 de dano a todos os inimigos; acelera em 1 turno a contagem dos inscritos."
     },
     "passiva": {
       "nome": "Juiz dos Mortos",
@@ -2181,19 +2217,20 @@
     "basico": {
       "nome": "Chakra Sudarshana",
       "custo": "1 Aurora",
-      "efeito": "12 de dano a 1 inimigo; remove 1 buff dele."
+      "efeito": "12 de dano a 1 inimigo; remove 1 buff dele.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Encarnação",
       "custo": "2 Aurora",
       "recarga": 1,
-      "efeito": "Alterna: NARASIMHA (time causa +8 de dano por 2 turnos) ou KURMA (time ganha 15 de Defesa Destrutível)."
+      "efeito": "Alterna: NARASIMHA (time causa +5 de dano por 2 turnos) ou KURMA (time ganha 15 de Defesa Destrutível)."
     },
     "milagre": {
       "nome": "Preservação Cósmica",
       "custo": "2 Aurora + 1 livre",
       "recarga": 5,
-      "efeito": "Cura 25 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+      "efeito": "Cura 14 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
     },
     "passiva": {
       "nome": "Serpente Ananta",
@@ -2212,7 +2249,8 @@
     "basico": {
       "nome": "Flauta Divina",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Conselho do Gita",
@@ -2224,7 +2262,7 @@
       "nome": "Forma Universal",
       "custo": "1 Aurora + 2 livres",
       "recarga": 4,
-      "efeito": "O time causa +12 de dano por 2 turnos e ganha 2 orbes."
+      "efeito": "O time causa +5 de dano por 2 turnos e ganha 2 orbes."
     },
     "passiva": {
       "nome": "Auriga de Arjuna",
@@ -2274,23 +2312,24 @@
     "basico": {
       "nome": "Cajado do Criador",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Quatro Faces",
       "custo": "2 Verdejante",
       "recarga": 2,
-      "efeito": "O time causa +4 de dano — permanente e acumulável a cada uso."
+      "efeito": "O time causa +2 de dano por 2 turnos."
     },
     "milagre": {
       "nome": "Sopro da Criação",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "1 aliado zera todas as recargas e cura 18; o time ganha 3 orbes."
+      "efeito": "1 aliado zera todas as recargas e cura 12; o time ganha 2 orbes."
     },
     "passiva": {
       "nome": "Pai dos Deuses",
-      "efeito": "O time começa com 12 de Defesa Destrutível; cada Milagre aliado usado dá +3 de dano permanente ao time."
+      "efeito": "O time começa com 4 de Defesa Destrutível; cada Milagre aliado usado dá +1 de dano permanente ao time."
     }
   },
   {
@@ -2398,13 +2437,14 @@
     "basico": {
       "nome": "Cachimbo em Brasa",
       "custo": "1 Tempestade",
-      "efeito": "12 de dano + Queimadura leve (5/turno por 2 turnos)."
+      "efeito": "12 de dano + Queimadura leve (5/turno por 2 turnos).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Redemoinho",
       "custo": "1 Tempestade",
       "recarga": 1,
-      "efeito": "Saci fica Inalvejável por 1 turno; ao voltar, rouba 1 buff de um inimigo."
+      "efeito": "Saci fica Inalvejável por 1 turno e causa 8 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
     },
     "milagre": {
       "nome": "Travessura Maior",
@@ -2429,7 +2469,8 @@
     "basico": {
       "nome": "Bote Flamejante",
       "custo": "1 Chama",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo + Queimadura (4/turno por 2 turnos).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Olhos de Brasa",
@@ -2440,8 +2481,8 @@
     "milagre": {
       "nome": "Cobra de Fogo",
       "custo": "2 Chama + 1 livre",
-      "recarga": 4,
-      "efeito": "20 de dano a todos os inimigos; 32 em quem estiver com Queimadura."
+      "recarga": 3,
+      "efeito": "22 de dano a todos os inimigos; 38 em quem estiver com Queimadura."
     },
     "passiva": {
       "nome": "Guardiã dos Campos",
@@ -2460,7 +2501,8 @@
     "basico": {
       "nome": "Canto Suave",
       "custo": "1 Maré",
-      "efeito": "12 de dano + Encharcado por 2 turnos."
+      "efeito": "12 de dano + Encharcado por 2 turnos.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Canto da Sedução",
@@ -2472,7 +2514,7 @@
       "nome": "Afogamento",
       "custo": "2 Maré + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
+      "efeito": "22 de dano a todos os inimigos; elimina Encharcados com 24 ou menos de HP."
     },
     "passiva": {
       "nome": "Beleza Fatal",
@@ -2491,7 +2533,8 @@
     "basico": {
       "nome": "Cipó Chicoteante",
       "custo": "1 Verdejante",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Pés Virados",
@@ -2503,7 +2546,7 @@
       "nome": "Fúria da Floresta",
       "custo": "2 Verdejante + 1 livre",
       "recarga": 4,
-      "efeito": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 15 no time."
+      "efeito": "Enraíza todos os inimigos por 1 turno (não podem usar Habilidade nem Milagre); cura 12 no time."
     },
     "passiva": {
       "nome": "Protetor dos Bichos",
@@ -2522,23 +2565,24 @@
     "basico": {
       "nome": "Garra de Jacaré",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Nana Neném",
       "custo": "2 Umbra",
       "recarga": 2,
-      "efeito": "Adormece 1 inimigo por 2 turnos; adormecido recebe +8 de dano e não gera orbes (acorda ao sofrer dano de Habilidade ou Milagre)."
+      "efeito": "Adormece o alvo por 2 turnos: +8 de dano recebido, não gera orbe, acorda com dano de Habilidade ou Milagre."
     },
     "milagre": {
       "nome": "O Papão",
       "custo": "2 Umbra + 1 livre",
       "recarga": 3,
-      "efeito": "25 de dano a 1 inimigo (38 se estiver Adormecido; com o +8 do próprio sono, 46). Cuca cura metade do dano causado."
+      "efeito": "30 de dano (38 se estiver Adormecido, +8 do próprio sono = 46); Cuca cura metade do dano causado."
     },
     "passiva": {
       "nome": "Só Dorme de Sete em Sete Anos",
-      "efeito": "Imune a Dormir; a cada 3 turnos, Cuca usa o Básico de graça."
+      "efeito": "Imune a Adormecer; a cada 3 turnos, o Básico não custa orbe."
     }
   },
   {
@@ -2553,19 +2597,20 @@
     "basico": {
       "nome": "Coice",
       "custo": "1 Chama",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "13 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Galope em Chamas",
       "custo": "2 Chama",
       "recarga": 2,
-      "efeito": "15 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
+      "efeito": "7 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
     },
     "milagre": {
       "nome": "Relincho Infernal",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "22 de dano a todos os inimigos + Medo por 2 turnos."
+      "efeito": "12 de dano a todos os inimigos + Medo por 2 turnos."
     },
     "passiva": {
       "nome": "Maldição de Quinta-feira",
@@ -2584,19 +2629,20 @@
     "basico": {
       "nome": "Nadadeira Ágil",
       "custo": "1 Maré",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Baile do Boto",
       "custo": "2 Maré",
-      "recarga": 2,
-      "efeito": "Domina 1 inimigo por 1 turno (usa o Básico contra um aliado dele); Boto cura o dano causado."
+      "recarga": 1,
+      "efeito": "Domina 1 inimigo por 1 turno (usa o Básico contra um aliado dele, você escolhe); Boto cura o dano causado. Na NOITE, a Dominação dura +1 turno."
     },
     "milagre": {
       "nome": "Festa de São João",
       "custo": "1 Maré + 2 livres",
-      "recarga": 4,
-      "efeito": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 15."
+      "recarga": 3,
+      "efeito": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 28."
     },
     "passiva": {
       "nome": "Some ao Amanhecer",
@@ -2615,19 +2661,20 @@
     "basico": {
       "nome": "Mordidas",
       "custo": "1 Maré",
-      "efeito": "3 golpes de 5 + Sangramento (6/turno por 2 turnos)."
+      "efeito": "3 golpes de 4 + Sangramento (6/turno por 2 turnos).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Frenesi Alimentar",
       "custo": "2 Maré",
       "recarga": 1,
-      "efeito": "4 golpes de 6 em 1 inimigo; +3 por golpe se ele estiver Sangrando."
+      "efeito": "4 golpes de 5 em 1 inimigo; 8 por golpe se ele estiver Sangrando."
     },
     "milagre": {
       "nome": "Águas Vermelhas",
       "custo": "2 Maré + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado."
+      "efeito": "14 de dano a todos os inimigos; 28 em quem estiver Sangrando ou Encharcado."
     },
     "passiva": {
       "nome": "Sangue na Água",
@@ -2708,23 +2755,24 @@
     "basico": {
       "nome": "Opaxorô",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Paz de Oxalá",
       "custo": "2 Aurora",
-      "recarga": 3,
-      "efeito": "Por 1 turno, os inimigos podem agir mas causam 0 de dano (Pacificar)."
+      "recarga": 4,
+      "efeito": "Por 1 turno, os inimigos podem agir mas causam 0 de dano."
     },
     "milagre": {
       "nome": "Manto Branco",
       "custo": "2 Aurora + 1 livre",
       "recarga": 4,
-      "efeito": "Remove todos os debuffs do time, concede 20 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
+      "efeito": "Remove todos os debuffs do time, concede 12 de Defesa Destrutível; o time não cai abaixo de 1 de HP por 1 turno."
     },
     "passiva": {
       "nome": "O Mais Velho",
-      "efeito": "O time recebe 5 de redução de dano e começa a partida com 1 orbe de Aurora extra."
+      "efeito": "O time recebe 3 de redução de dano e começa a partida com 1 orbe de Aurora extra."
     }
   },
   {
@@ -2770,23 +2818,24 @@
     "basico": {
       "nome": "Espelho Dourado",
       "custo": "—",
-      "efeito": "10 de dano a 1 inimigo."
+      "efeito": "10 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Águas de Oxum",
       "custo": "1 Maré",
-      "recarga": 1,
-      "efeito": "Cura 20 em 1 aliado; o time ganha 1 orbe de Maré."
+      "recarga": 2,
+      "efeito": "Cura 9 em 1 aliado; o time ganha 1 orbe de Maré."
     },
     "milagre": {
       "nome": "Rio de Ouro",
       "custo": "2 Maré + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 20 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
+      "efeito": "Cura 10 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
     },
     "passiva": {
       "nome": "Doçura e Ouro",
-      "efeito": "Aliados curados por Oxum causam +5 de dano no turno seguinte."
+      "efeito": "Aliados curados por Oxum causam +2 de dano no turno seguinte."
     }
   },
   {
@@ -2801,7 +2850,8 @@
     "basico": {
       "nome": "Espada de Vento",
       "custo": "1 Tempestade",
-      "efeito": "12 de dano a 1 inimigo; remove 1 buff dele."
+      "efeito": "14 de dano a 1 inimigo; remove 1 buff dele.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Ventania",
@@ -2813,7 +2863,7 @@
       "nome": "Guardiã dos Eguns",
       "custo": "2 Tempestade + 1 livre",
       "recarga": 4,
-      "efeito": "18 de dano a todos os inimigos; remove todos os buffs deles e impede revives por 2 turnos."
+      "efeito": "22 de dano a todos os inimigos; remove todos os buffs deles e impede revives por 2 turnos."
     },
     "passiva": {
       "nome": "Corisco",
@@ -2832,13 +2882,14 @@
     "basico": {
       "nome": "Clava de Dois Fins",
       "custo": "—",
-      "efeito": "12 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 20 em 1 aliado."
+      "efeito": "12 de dano a 1 inimigo; a cada 3º uso, em vez de atacar, cura 14 em 1 aliado.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Caldeirão da Fartura",
       "custo": "2 Verdejante",
       "recarga": 3,
-      "efeito": "O time regenera 12 por turno durante 3 turnos."
+      "efeito": "O time regenera 8 por turno durante 3 turnos."
     },
     "milagre": {
       "nome": "Harpa Uaithne",
@@ -2894,7 +2945,8 @@
     "basico": {
       "nome": "Bico de Corvo",
       "custo": "1 Umbra",
-      "efeito": "12 de dano a 1 inimigo."
+      "efeito": "12 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Presságio de Morte",
@@ -2906,7 +2958,7 @@
       "nome": "As Três Irmãs",
       "custo": "2 Umbra + 1 livre",
       "recarga": 4,
-      "efeito": "15 de dano a todos + Medo por 2 turnos; 25 nos profetizados."
+      "efeito": "22 de dano a todos + Medo por 2 turnos; 32 nos profetizados."
     },
     "passiva": {
       "nome": "Forma de Corvo",
@@ -2925,23 +2977,24 @@
     "basico": {
       "nome": "Fagulha da Forja",
       "custo": "—",
-      "efeito": "10 de dano + Queimadura leve (5/turno por 2 turnos)."
+      "efeito": "Grátis. 6 de dano + Queimadura (4/turno por 2 turnos).",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Chama Sagrada",
       "custo": "2 Chama",
       "recarga": 2,
-      "efeito": "Cura 15 no time E causa 12 de dano a todos os inimigos no mesmo golpe."
+      "efeito": "Cura 8 no time E causa 8 de dano a todos os inimigos."
     },
     "milagre": {
       "nome": "Poço de Cura",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 25 no time, remove todos os debuffs e regenera 8 por turno durante 2 turnos."
+      "efeito": "Cura 12 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
     },
     "passiva": {
       "nome": "Ferreira Divina",
-      "efeito": "O time começa a partida causando +5 de dano (permanente); curas curam +5 se algum inimigo estiver com Queimadura."
+      "efeito": "O time causa +1 de dano (permanente); curas no time curam +5 se algum inimigo estiver com Queimadura."
     }
   },
   {
@@ -2987,7 +3040,8 @@
     "basico": {
       "nome": "Presas do Vento",
       "custo": "1 Tempestade",
-      "efeito": "15 de dano a 1 inimigo."
+      "efeito": "15 de dano a 1 inimigo.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Voo da Serpente",
@@ -2999,7 +3053,7 @@
       "nome": "Estrela da Manhã",
       "custo": "2 Tempestade + 1 livre",
       "recarga": 4,
-      "efeito": "20 de dano a todos; o time causa +10 de dano por 2 turnos."
+      "efeito": "20 de dano a todos; o time causa +8 de dano por 2 turnos."
     },
     "passiva": {
       "nome": "Deus-Rei",
@@ -3018,7 +3072,8 @@
     "basico": {
       "nome": "Toque da Podridão",
       "custo": "1 Umbra",
-      "efeito": "12 de dano + 1 Podridão."
+      "efeito": "12 de dano + 1 Podridão.",
+      "recarga": 0
     },
     "habilidade": {
       "nome": "Decomposição",
@@ -3030,7 +3085,7 @@
       "nome": "Portões de Xibalbá",
       "custo": "2 Umbra + 1 livre",
       "recarga": 4,
-      "efeito": "Ah Puch perde 15 de HP; 18 de dano a todos os inimigos, +8 por Podridão no campo."
+      "efeito": "Ah Puch perde 15 de HP; 22 de dano a todos os inimigos, +8 por Podridão no campo."
     },
     "passiva": {
       "nome": "Senhor da Morte",

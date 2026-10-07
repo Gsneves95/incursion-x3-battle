@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 90,
+        "hp": 90
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 90,
+        "hp": 90
+      }
+    ]
   },
   "condicoes": [
     {
@@ -27,43 +47,34 @@
     }
   ],
   "verificacao": {
-    "hash": "d3827428",
+    "hash": "76afe282",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 30,
+    "lancesNesteCaminho": 21,
     "comDica": false,
-    "nos": 59600,
-    "ms": 22081,
+    "nos": 103916,
+    "ms": 76143,
     "caminho": [
       "zeus Cetro do Trovão → fenrir",
       "dagda Clava de Dois Fins → fenrir",
       "passar",
+      "ares Sede de Sangue → fenrir",
+      "dagda Clava de Dois Fins → fenrir",
+      "passar",
       "ares Golpe Sanguinário → fenrir",
-      "dagda Clava de Dois Fins → fenrir",
-      "passar",
-      "ares Massacre → fenrir",
-      "dagda Clava de Dois Fins → fenrir",
-      "passar",
-      "dagda Clava de Dois Fins → fenrir",
-      "ares Golpe Sanguinário → horus",
       "zeus Cetro do Trovão → fenrir",
       "passar",
-      "zeus Cetro do Trovão → horus",
-      "ares Golpe Sanguinário → horus",
-      "dagda Harpa Uaithne",
-      "passar",
       "ares Massacre → horus",
-      "dagda Clava de Dois Fins → horus",
-      "zeus Cetro do Trovão → horus",
-      "passar",
-      "ares Sede de Sangue → ammit",
       "zeus Ira Celestial",
       "dagda Clava de Dois Fins → ammit",
       "passar",
-      "ares Golpe Sanguinário → ammit",
+      "zeus Julgamento do Trovão → horus",
       "dagda Clava de Dois Fins → ammit",
       "passar",
-      "ares Massacre → ammit",
+      "ares Sede de Sangue → ammit",
+      "dagda Harpa Uaithne",
+      "passar",
+      "zeus Julgamento do Trovão → ammit",
       "dagda Clava de Dois Fins → ammit"
     ]
   }

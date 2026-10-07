@@ -15,7 +15,27 @@
   ],
   "montar": {
     "seed": 1,
-    "comeca": 0
+    "comeca": 0,
+    "unidades": [
+      {
+        "lado": 1,
+        "idx": 0,
+        "maxHp": 58,
+        "hp": 58
+      },
+      {
+        "lado": 1,
+        "idx": 1,
+        "maxHp": 58,
+        "hp": 58
+      },
+      {
+        "lado": 1,
+        "idx": 2,
+        "maxHp": 58,
+        "hp": 58
+      }
+    ]
   },
   "condicoes": [
     {
@@ -28,35 +48,27 @@
     }
   ],
   "verificacao": {
-    "hash": "256aa22a",
+    "hash": "a88bc049",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 21,
+    "lancesNesteCaminho": 13,
     "comDica": false,
-    "nos": 56589,
-    "ms": 16680,
+    "nos": 90,
+    "ms": 119,
     "caminho": [
       "zeus Cetro do Trovão → durga",
       "passar",
-      "ares Massacre → shiva",
+      "ares Massacre → ammit",
       "passar",
       "ares Sede de Sangue → durga",
       "passar",
       "ares Sede de Sangue → shiva",
       "passar",
-      "ares Massacre → shiva",
+      "ares Golpe Sanguinário → durga",
+      "zeus Cetro do Trovão → ammit",
       "passar",
-      "passar",
-      "passar",
-      "ares Massacre → durga",
-      "passar",
-      "ares Sede de Sangue → ammit",
-      "zeus Ira Celestial",
-      "passar",
-      "zeus Julgamento do Trovão → ammit",
-      "ares Golpe Sanguinário → ammit",
-      "passar",
-      "zeus Cetro do Trovão → ammit"
+      "zeus Cetro do Trovão → durga",
+      "ares Massacre → shiva"
     ]
   }
 }

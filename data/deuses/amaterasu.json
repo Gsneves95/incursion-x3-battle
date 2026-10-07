@@ -30,11 +30,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -43,22 +43,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -76,7 +76,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -89,7 +89,7 @@
       },
       "cd": 2,
       "alvo": "nenhum",
-      "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 12 no time.",
+      "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 15 no time.",
       "fx": [
         {
           "t": "fase",
@@ -98,7 +98,7 @@
         },
         {
           "t": "heal",
-          "v": 12,
+          "v": 15,
           "escopo": "time"
         }
       ],
@@ -108,33 +108,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 13 no time."
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 16 no time."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 14 no time."
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 17 no time."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 14,
-              "para": 15
+              "de": 17,
+              "para": 18
             }
           ],
-          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 15 no time."
+          "desc": "Ativa o DIA por 3 turnos (aliados Aurora +8 de dano; inimigos Umbra causam 5 menos); cura 18 no time."
         }
       ]
     },
@@ -148,12 +148,12 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "18 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno.",
+      "desc": "22 de dano a todos os inimigos; durante o DIA, 34 e eles não podem usar Habilidade por 1 turno.",
       "fx": [
         {
           "t": "dmg",
-          "v": 18,
-          "seDia": 28,
+          "v": 22,
+          "seDia": 34,
           "escopo": "todosInimigos"
         },
         {
@@ -180,33 +180,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 18,
-              "para": 19
+              "de": 22,
+              "para": 23
             }
           ],
-          "desc": "19 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+          "desc": "23 de dano a todos os inimigos; durante o DIA, 34 e eles não podem usar Habilidade por 1 turno."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 19,
-              "para": 20
+              "de": 23,
+              "para": 24
             }
           ],
-          "desc": "20 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+          "desc": "24 de dano a todos os inimigos; durante o DIA, 34 e eles não podem usar Habilidade por 1 turno."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 20,
-              "para": 21
+              "de": 24,
+              "para": 25
             }
           ],
-          "desc": "21 de dano a todos os inimigos; durante o DIA, 28 e eles não podem usar Habilidade por 1 turno."
+          "desc": "25 de dano a todos os inimigos; durante o DIA, 34 e eles não podem usar Habilidade por 1 turno."
         }
       ]
     }

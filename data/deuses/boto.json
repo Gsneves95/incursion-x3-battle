@@ -36,11 +36,11 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "12 de dano a 1 inimigo.",
+      "desc": "15 de dano a 1 inimigo.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12
+          "v": 15
         }
       ],
       "niveis": [
@@ -49,22 +49,22 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "13 de dano a 1 inimigo."
+          "desc": "16 de dano a 1 inimigo."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "14 de dano a 1 inimigo."
+          "desc": "17 de dano a 1 inimigo."
         },
         {
           "nv": 4,
@@ -82,7 +82,7 @@
               }
             }
           ],
-          "desc": "14 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },
@@ -93,7 +93,7 @@
       "cost": {
         "Maré": 2
       },
-      "cd": 2,
+      "cd": 1,
       "alvo": "2inimigos",
       "desc": "Domina 1 inimigo por 1 turno (usa o Básico contra um aliado dele, você escolhe); Boto cura o dano causado. Na NOITE, a Dominação dura +1 turno.",
       "fx": [
@@ -151,9 +151,9 @@
         "Maré": 1,
         "livre": 2
       },
-      "cd": 4,
+      "cd": 3,
       "alvo": "todosInimigos",
-      "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 15.",
+      "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 28.",
       "fx": [
         {
           "t": "apply",
@@ -166,7 +166,7 @@
         },
         {
           "t": "heal",
-          "v": 15,
+          "v": 28,
           "escopo": "time"
         }
       ],
@@ -176,33 +176,33 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 15,
-              "para": 16
+              "de": 28,
+              "para": 29
             }
           ],
-          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 16."
+          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 29."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 16,
-              "para": 17
+              "de": 29,
+              "para": 30
             }
           ],
-          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 17."
+          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 30."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 17,
-              "para": 18
+              "de": 30,
+              "para": 31
             }
           ],
-          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 18."
+          "desc": "Todos os inimigos não podem usar Milagre por 2 turnos; o time cura 31."
         }
       ]
     }
