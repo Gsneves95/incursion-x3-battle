@@ -153,19 +153,9 @@
             }
           ],
           "desc": "O time regenera 10 por turno durante 3 turnos."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[0].eff.v",
-              "de": 10,
-              "para": 11
-            }
-          ],
-          "desc": "O time regenera 11 por turno durante 3 turnos."
         }
-      ]
+      ],
+      "escadaCurta": "324-P3b: encurtada (nv2-3, sem o degrau de regen no nv4) — habilidade nv4×nv1 +12,3pp (era +15,2; teto de habilidade +15pp)."
     },
     {
       "slot": "milagre",

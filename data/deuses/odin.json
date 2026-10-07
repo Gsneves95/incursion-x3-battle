@@ -166,7 +166,7 @@
         "Umbra": 1,
         "livre": 2
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "aliado",
       "desc": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +18 de dano por 2 turnos.",
       "fx": [

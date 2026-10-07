@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "e420117b",
+    "hash": "d017081a",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 30,
     "comDica": false,
     "nos": 4600,
-    "ms": 6402,
+    "ms": 7285,
     "caminho": [
       "perseu Lâmina Curva → loki",
       "passar",

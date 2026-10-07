@@ -89,13 +89,13 @@
       "cost": {
         "Chama": 2
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "nenhum",
-      "desc": "Cura 8 no time E causa 8 de dano a todos os inimigos.",
+      "desc": "Cura 9 no time E causa 8 de dano a todos os inimigos.",
       "fx": [
         {
           "t": "heal",
-          "v": 8,
+          "v": 9,
           "escopo": "time"
         },
         {
@@ -110,11 +110,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 8,
-              "para": 9
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "Cura 9 no time E causa 8 de dano a todos os inimigos."
+          "desc": "Cura 10 no time E causa 8 de dano a todos os inimigos."
         },
         {
           "nv": 3,
@@ -125,18 +125,18 @@
               "para": 9
             }
           ],
-          "desc": "Cura 9 no time E causa 9 de dano a todos os inimigos."
+          "desc": "Cura 10 no time E causa 9 de dano a todos os inimigos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 9,
-              "para": 10
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "Cura 10 no time E causa 9 de dano a todos os inimigos."
+          "desc": "Cura 11 no time E causa 9 de dano a todos os inimigos."
         }
       ]
     },
@@ -150,11 +150,11 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Cura 12 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.",
+      "desc": "Cura 15 no time, remove todos os debuffs e regenera 8/turno por 2 turnos.",
       "fx": [
         {
           "t": "heal",
-          "v": 12,
+          "v": 15,
           "escopo": "time"
         },
         {
@@ -177,11 +177,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Cura 13 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
+          "desc": "Cura 16 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
         },
         {
           "nv": 3,
@@ -192,18 +192,18 @@
               "para": 9
             }
           ],
-          "desc": "Cura 13 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
+          "desc": "Cura 16 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Cura 14 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
+          "desc": "Cura 17 no time, remove todos os debuffs e regenera 9/turno por 2 turnos."
         }
       ]
     }

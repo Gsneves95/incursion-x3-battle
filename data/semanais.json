@@ -1358,7 +1358,27 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 55,
+            "hp": 55
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 55,
+            "hp": 55
+          }
+        ]
       },
       "condicoes": [
         {
@@ -1370,7 +1390,7 @@
           "quem": "izanagi"
         }
       ],
-      "minimo": 30
+      "minimo": 17
     },
     {
       "key": "oni",
@@ -1566,34 +1586,6 @@
       ],
       "montar": {
         "seed": 1,
-        "comeca": 0
-      },
-      "condicoes": [
-        {
-          "predicado": "deadline",
-          "turnos": 13
-        },
-        {
-          "predicado": "semPerderAliado",
-          "quem": "amaterasu"
-        }
-      ],
-      "minimo": 27
-    },
-    {
-      "key": "houyi",
-      "aliados": [
-        "houyi",
-        "oxum",
-        "hercules"
-      ],
-      "inimigos": [
-        "dionisio",
-        "dagda",
-        "aquiles"
-      ],
-      "montar": {
-        "seed": 1,
         "comeca": 0,
         "unidades": [
           {
@@ -1619,6 +1611,54 @@
       "condicoes": [
         {
           "predicado": "deadline",
+          "turnos": 13
+        },
+        {
+          "predicado": "semPerderAliado",
+          "quem": "amaterasu"
+        }
+      ],
+      "minimo": 19
+    },
+    {
+      "key": "houyi",
+      "aliados": [
+        "houyi",
+        "oxum",
+        "hercules"
+      ],
+      "inimigos": [
+        "dionisio",
+        "dagda",
+        "aquiles"
+      ],
+      "montar": {
+        "seed": 1,
+        "comeca": 0,
+        "unidades": [
+          {
+            "lado": 1,
+            "idx": 0,
+            "maxHp": 45,
+            "hp": 45
+          },
+          {
+            "lado": 1,
+            "idx": 1,
+            "maxHp": 45,
+            "hp": 45
+          },
+          {
+            "lado": 1,
+            "idx": 2,
+            "maxHp": 45,
+            "hp": 45
+          }
+        ]
+      },
+      "condicoes": [
+        {
+          "predicado": "deadline",
           "turnos": 16
         },
         {
@@ -1626,7 +1666,7 @@
           "quem": "houyi"
         }
       ],
-      "minimo": 12
+      "minimo": 13
     },
     {
       "key": "fenrir",

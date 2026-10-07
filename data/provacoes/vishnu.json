@@ -56,13 +56,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f74a9a5c",
+    "hash": "109352fd",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 12,
     "comDica": false,
     "nos": 15076,
-    "ms": 21467,
+    "ms": 8826,
     "caminho": [
       "houyi Flecha Solar → zeus",
       "passar",

@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "e4b00f44",
+    "hash": "381183c5",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 19,
     "comDica": false,
     "nos": 3775,
-    "ms": 4669,
+    "ms": 4350,
     "caminho": [
       "zeus Cetro do Trovão → fenrir",
       "passar",

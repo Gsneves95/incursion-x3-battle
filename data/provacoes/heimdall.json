@@ -27,13 +27,13 @@
     }
   ],
   "verificacao": {
-    "hash": "4831288",
+    "hash": "d41cd70e",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 26,
     "comDica": false,
     "nos": 150,
-    "ms": 225,
+    "ms": 414,
     "caminho": [
       "heimdall Lâmina Vigilante → exu",
       "zeus Cetro do Trovão → exu",

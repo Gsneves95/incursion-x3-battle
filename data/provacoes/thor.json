@@ -47,13 +47,13 @@
     }
   ],
   "verificacao": {
-    "hash": "ced71057",
+    "hash": "8ec7ce16",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 12,
     "comDica": false,
     "nos": 727,
-    "ms": 776,
+    "ms": 902,
     "caminho": [
       "houyi Flecha Solar → fenrir",
       "passar",

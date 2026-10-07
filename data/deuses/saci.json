@@ -125,30 +125,9 @@
             }
           ],
           "desc": "Saci fica Inalvejável por 1 turno e causa 9 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
-        },
-        {
-          "nv": 3,
-          "muda": [
-            {
-              "caminho": "fx[2].v",
-              "de": 9,
-              "para": 10
-            }
-          ],
-          "desc": "Saci fica Inalvejável por 1 turno e causa 10 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[2].v",
-              "de": 10,
-              "para": 11
-            }
-          ],
-          "desc": "Saci fica Inalvejável por 1 turno e causa 11 de dano a todos os inimigos; ao voltar, rouba 1 buff do inimigo de maior HP."
         }
-      ]
+      ],
+      "escadaCurta": "324-P3b: encurtada (só nv2) — o AoE em área amplificava demais o nv4; habilidade nv4×nv1 +13,5pp (era +34,5; teto de habilidade +15pp)."
     },
     {
       "slot": "milagre",

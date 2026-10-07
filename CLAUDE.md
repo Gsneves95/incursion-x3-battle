@@ -238,6 +238,21 @@ que mediram FORA (Cérberus/Atena/Apolo) foram corrigidos e re-medidos DENTRO (C
 spammado não leva escada de verdade). **A FASE 2 (economia/gacha/níveis)
 ESTÁ NO AR** (§318 F2 E1–E4 + renda PvP): a proteção contra escada não-medida é a lista de liberados, NÃO dormência.
 
+### Rebalanceamento — duas regras de desenho (§324 P3b, decisão do dono)
+
+Valem para TODA revisão de kit (não só a atual). São sobre COMO ajustar, não sobre o alvo (o alvo segue o
+§324 P1: força de cada deus em 35–65%, média de cada função em 45–55%, arena IA v2).
+
+- **R1 — MILAGRE tem recarga ≥ 3.** O milagre é o momento grande da partida; não pode virar habilidade comum.
+  É **TRAVA DE BUILD** (`tools/build.js`, checarKits): milagre com `cd < 3` quebra a build. EXCEÇÕES só as
+  **nomeadas** em `R1_EXCECOES` (milagres que JÁ eram `cd<3` antes do §324 — auditado: NENHUM; a lista está
+  vazia de propósito). Precisa de mais força num milagre? Venha por valor/custo/efeito, não por baixar a recarga.
+- **R2 — não corte CURA nem DANO PRINCIPAL de um slot em mais de 40% numa mesma revisão.** Se o deus precisa
+  descer tanto, o resto vem por OUTRO caminho (custo, recarga da habilidade, efeito secundário) — não por
+  esmagar o número principal do slot. Ferramenta: **`node tools/auditar_cortes.js [ref] [--limite=0.4]`**
+  compara o kit atual com um commit de referência e aponta os cortes > 40% (rode contra a base da revisão em
+  curso; a baseline do §324 é `21951d8`). Dano principal = 1º `fx` de dano incondicional; cura = `fx` de heal.
+
 ### Cada deus tem DUAS facções, que medem coisas diferentes — a divergência é desenho (§233)
 
 - **`faccao`** (roster, `data/deuses/*.json`) = **MECÂNICA**: o que os kits contam (a passiva

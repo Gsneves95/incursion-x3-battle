@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "9c07720d",
+    "hash": "1995690c",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 21,
     "comDica": false,
-    "nos": 9149,
-    "ms": 8498,
+    "nos": 9055,
+    "ms": 7347,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "passar",

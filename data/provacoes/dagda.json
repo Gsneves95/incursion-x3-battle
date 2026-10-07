@@ -47,13 +47,13 @@
     }
   ],
   "verificacao": {
-    "hash": "76afe282",
+    "hash": "3a8213c3",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 21,
     "comDica": false,
     "nos": 103916,
-    "ms": 76143,
+    "ms": 62138,
     "caminho": [
       "zeus Cetro do Trovão → fenrir",
       "dagda Clava de Dois Fins → fenrir",

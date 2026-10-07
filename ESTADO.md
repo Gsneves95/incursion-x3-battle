@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §324 P3b · regras de desenho R1/R2 + refazer só os violadores
+
+`docs/kits-324-p3-mudancas.md`. Duas regras do dono, agora guardas permanentes (CLAUDE.md):
+- **R1 — milagre recarga ≥ 3** → **trava de build** (exceções só nomeadas; baseline não tinha nenhuma).
+- **R2 — não cortar cura/dano principal > 40% numa revisão** → ferramenta `tools/auditar_cortes.js [ref]`.
+- **Violadores corrigidos** (força devolvida por recarga/custo/efeito, nunca re-esmagando o número): R1 — Ammit
+  (Devorar cd 2→3), Cérberus (Vigília 1→3, dano área 12→18 em troca), Odin (2→3); R2 — Oxum/Brigid/Bennu/Osíris/
+  Vishnu/Mula (cura/dano ao piso −40% + recarga). Heimdall ajustado de faixa (−3→−5 no alvo).
+- **Re-medido (r400): 100 na faixa [35,65]** (0/0). Funções: Sup 55,0 · Atq 50,7 · Grd 48,7 · Man 45,7 ·
+  **Ctl 44,7** (largura-de-ruído do piso; IC inclui 45; nenhum Ctl é violador → não mexido, por regra do dono).
+- **3 devolvidos aos liberados** (só escada, marcada `escadaCurta`): Dionísio +26,3→+13,5 · Dagda +15,2→+12,3 ·
+  Saci +34,5→+13,5. **`niveis_liberados` 97→100.**
+- **Arrastou:** kits/descs sincronizados (cadeia/texto×número/auditoria/R1-trava verdes; R2 0 cortes>40%);
+  re-triagem §318 dos 12 slots da P3b (dentro); **47 Ritos** re-carimbados (1 fechou: nezha → HP 90→80); **3
+  Semanais** (Oxum aliada) → HP + minimo; **campanha** Cérberus VENCÍVEL sob v2; Domínios inalterados.
+- Suíte + build **verdes**.
+
 ## ★ §324 Parte 3 · equilíbrio entre FUNÇÕES + Tyr + Saci
 
 `docs/kits-revisao-324-p3.md`. **Reequilíbrio dos 100 deuses** (arena IA v2, veredito rounds=400):

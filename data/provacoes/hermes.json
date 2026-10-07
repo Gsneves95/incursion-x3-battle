@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "eddf0d43",
+    "hash": "52a2cec5",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 25,
+    "lancesNesteCaminho": 26,
     "comDica": false,
-    "nos": 49671,
-    "ms": 34677,
+    "nos": 75855,
+    "ms": 44973,
     "caminho": [
       "hermes Golpe Alado → heimdall",
       "passar",
@@ -48,11 +48,12 @@
       "zeus Julgamento do Trovão → heimdall",
       "hermes Golpe Alado → heimdall",
       "passar",
-      "susanoo Yamata no Orochi",
-      "passar",
+      "hermes Golpe Alado → mimir",
       "susanoo Corte de Kusanagi → mimir",
       "passar",
       "susanoo Yamata no Orochi",
+      "passar",
+      "susanoo Corte de Kusanagi → mimir",
       "passar",
       "susanoo Fúria do Tufão",
       "passar",
@@ -60,7 +61,7 @@
       "passar",
       "hermes Golpe Alado → tanuki",
       "passar",
-      "hermes Golpe Alado → mimir"
+      "hermes Golpe Alado → tanuki"
     ]
   }
 }

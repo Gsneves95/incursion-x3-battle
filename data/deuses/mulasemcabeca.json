@@ -94,13 +94,13 @@
       "cost": {
         "Chama": 2
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "todosInimigos",
-      "desc": "7 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno.",
+      "desc": "9 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno.",
       "fx": [
         {
           "t": "dmg",
-          "v": 7,
+          "v": 9,
           "escopo": "todosInimigos"
         },
         {
@@ -125,11 +125,11 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 7,
-              "para": 8
+              "de": 9,
+              "para": 10
             }
           ],
-          "desc": "8 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
+          "desc": "10 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
         },
         {
           "nv": 3,
@@ -140,18 +140,18 @@
               "para": 9
             }
           ],
-          "desc": "8 de dano a todos os inimigos + Queimadura (9/turno por 2 turnos); a Mula é imune a controle neste turno."
+          "desc": "10 de dano a todos os inimigos + Queimadura (9/turno por 2 turnos); a Mula é imune a controle neste turno."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 8,
-              "para": 9
+              "de": 10,
+              "para": 11
             }
           ],
-          "desc": "9 de dano a todos os inimigos + Queimadura (9/turno por 2 turnos); a Mula é imune a controle neste turno."
+          "desc": "11 de dano a todos os inimigos + Queimadura (9/turno por 2 turnos); a Mula é imune a controle neste turno."
         }
       ]
     },
@@ -165,11 +165,11 @@
       },
       "cd": 4,
       "alvo": "todosInimigos",
-      "desc": "12 de dano a todos os inimigos + Medo por 2 turnos.",
+      "desc": "14 de dano a todos os inimigos + Medo por 2 turnos.",
       "fx": [
         {
           "t": "dmg",
-          "v": 12,
+          "v": 14,
           "escopo": "todosInimigos"
         },
         {
@@ -187,33 +187,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 14,
+              "para": 15
             }
           ],
-          "desc": "13 de dano a todos os inimigos + Medo por 2 turnos."
+          "desc": "15 de dano a todos os inimigos + Medo por 2 turnos."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "14 de dano a todos os inimigos + Medo por 2 turnos."
+          "desc": "16 de dano a todos os inimigos + Medo por 2 turnos."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 14,
-              "para": 15
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "15 de dano a todos os inimigos + Medo por 2 turnos."
+          "desc": "17 de dano a todos os inimigos + Medo por 2 turnos."
         }
       ]
     }

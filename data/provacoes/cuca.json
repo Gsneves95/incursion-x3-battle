@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f5896193",
+    "hash": "cfc581cb",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 26,
     "comDica": false,
     "nos": 167,
-    "ms": 409,
+    "ms": 597,
     "caminho": [
       "oxum Espelho Dourado → kali",
       "passar",

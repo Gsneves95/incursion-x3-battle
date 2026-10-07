@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f6f8eb9c",
+    "hash": "65831b9b",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 34,
     "comDica": false,
-    "nos": 43,
-    "ms": 346,
+    "nos": 46,
+    "ms": 200,
     "caminho": [
       "odin Gungnir → thor",
       "zeus Cetro do Trovão → thor",
@@ -60,7 +60,7 @@
       "mimir Sussurro Ancestral → tyr",
       "passar",
       "odin Gungnir → tyr",
-      "mimir Sussurro Ancestral → tyr",
+      "zeus Cetro do Trovão → tyr",
       "passar",
       "zeus Julgamento do Trovão → heimdall",
       "odin Gungnir → heimdall",

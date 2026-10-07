@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "b7d1a6e7",
+    "hash": "eebd90be",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 42,
+    "lancesNesteCaminho": 41,
     "comDica": false,
-    "nos": 3538,
-    "ms": 3277,
+    "nos": 1665,
+    "ms": 3470,
     "caminho": [
       "perseu Lâmina Curva → loki",
       "oxum Espelho Dourado → loki",
@@ -43,7 +43,7 @@
       "oxum Espelho Dourado → loki",
       "passar",
       "perseu Lâmina Curva → loki",
-      "oxum Águas de Oxum → cernunnos",
+      "oxum Águas de Oxum → perseu",
       "passar",
       "perseu Foice Adamantina → loki",
       "oxum Rio de Ouro",
@@ -75,9 +75,8 @@
       "perseu Lâmina Curva → saci",
       "oxum Espelho Dourado → saci",
       "passar",
-      "perseu Lâmina Curva → saci",
-      "oxum Rio de Ouro",
-      "cernunnos Chifres do Bosque → saci"
+      "oxum Espelho Dourado → saci",
+      "perseu Foice Adamantina → saci"
     ]
   }
 }

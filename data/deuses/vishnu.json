@@ -177,11 +177,11 @@
       },
       "cd": 5,
       "alvo": "nenhum",
-      "desc": "Cura 14 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno.",
+      "desc": "Cura 15 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno.",
       "fx": [
         {
           "t": "heal",
-          "v": 14,
+          "v": 15,
           "escopo": "time"
         },
         {
@@ -203,17 +203,6 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 14,
-              "para": 15
-            }
-          ],
-          "desc": "Cura 15 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
-        },
-        {
-          "nv": 3,
-          "muda": [
-            {
-              "caminho": "fx[0].v",
               "de": 15,
               "para": 16
             }
@@ -221,7 +210,7 @@
           "desc": "Cura 16 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
         },
         {
-          "nv": 4,
+          "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
@@ -230,6 +219,17 @@
             }
           ],
           "desc": "Cura 17 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+        },
+        {
+          "nv": 4,
+          "muda": [
+            {
+              "caminho": "fx[0].v",
+              "de": 17,
+              "para": 18
+            }
+          ],
+          "desc": "Cura 18 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
         }
       ]
     }

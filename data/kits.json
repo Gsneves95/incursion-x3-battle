@@ -526,8 +526,8 @@
     "milagre": {
       "nome": "Vigília Infernal",
       "custo": "1 Umbra + 2 livres",
-      "recarga": 1,
-      "efeito": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 35 de Defesa Destrutível."
+      "recarga": 3,
+      "efeito": "18 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 35 de Defesa Destrutível."
     },
     "passiva": {
       "nome": "Corrente do Submundo",
@@ -621,7 +621,7 @@
     "milagre": {
       "nome": "Sabedoria do Enforcado",
       "custo": "1 Umbra + 2 livres",
-      "recarga": 2,
+      "recarga": 3,
       "efeito": "Odin perde 15 de HP; 1 aliado zera todas as recargas e causa +18 de dano por 2 turnos."
     },
     "passiva": {
@@ -767,7 +767,7 @@
     "basico": {
       "nome": "Lâmina Vigilante",
       "custo": "1 Aurora",
-      "efeito": "15 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno.",
+      "efeito": "15 de dano a 1 inimigo; o alvo causa 5 menos de dano por 1 turno.",
       "recarga": 0
     },
     "habilidade": {
@@ -1057,8 +1057,8 @@
     "habilidade": {
       "nome": "Trigo do Renascimento",
       "custo": "2 Umbra",
-      "recarga": 2,
-      "efeito": "Cura 8 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+      "recarga": 4,
+      "efeito": "Cura 12 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
     },
     "milagre": {
       "nome": "Tribunal do Duat",
@@ -1068,7 +1068,7 @@
     },
     "passiva": {
       "nome": "Rei dos Mortos",
-      "efeito": "Por cada aliado caído, o time causa +8 de dano."
+      "efeito": "Por cada aliado caído, o time causa +3 de dano."
     }
   },
   {
@@ -1252,7 +1252,7 @@
     "milagre": {
       "nome": "Devorar a Alma",
       "custo": "2 Umbra + 1 livre",
-      "recarga": 2,
+      "recarga": 3,
       "efeito": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 40 de dano."
     },
     "passiva": {
@@ -1278,14 +1278,14 @@
     "habilidade": {
       "nome": "Chama Purificadora",
       "custo": "2 Chama",
-      "recarga": 2,
-      "efeito": "8 de dano a todos os inimigos; cura 6 no time."
+      "recarga": 3,
+      "efeito": "8 de dano a todos os inimigos; cura 8 no time."
     },
     "milagre": {
       "nome": "Renascer das Cinzas",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 12 no time e remove todos os debuffs."
+      "efeito": "Cura 15 no time e remove todos os debuffs."
     },
     "passiva": {
       "nome": "Imortal",
@@ -2230,7 +2230,7 @@
       "nome": "Preservação Cósmica",
       "custo": "2 Aurora + 1 livre",
       "recarga": 5,
-      "efeito": "Cura 14 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
+      "efeito": "Cura 15 no time, remove todos os debuffs; o time não cai abaixo de 1 de HP por 1 turno."
     },
     "passiva": {
       "nome": "Serpente Ananta",
@@ -2603,14 +2603,14 @@
     "habilidade": {
       "nome": "Galope em Chamas",
       "custo": "2 Chama",
-      "recarga": 2,
-      "efeito": "7 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
+      "recarga": 3,
+      "efeito": "9 de dano a todos os inimigos + Queimadura (8/turno por 2 turnos); a Mula é imune a controle neste turno."
     },
     "milagre": {
       "nome": "Relincho Infernal",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "12 de dano a todos os inimigos + Medo por 2 turnos."
+      "efeito": "14 de dano a todos os inimigos + Medo por 2 turnos."
     },
     "passiva": {
       "nome": "Maldição de Quinta-feira",
@@ -2824,14 +2824,14 @@
     "habilidade": {
       "nome": "Águas de Oxum",
       "custo": "1 Maré",
-      "recarga": 2,
-      "efeito": "Cura 9 em 1 aliado; o time ganha 1 orbe de Maré."
+      "recarga": 3,
+      "efeito": "Cura 12 em 1 aliado; o time ganha 1 orbe de Maré."
     },
     "milagre": {
       "nome": "Rio de Ouro",
       "custo": "2 Maré + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 10 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
+      "efeito": "Cura 12 no time, regenera 8 por turno durante 2 turnos e o time ganha 2 orbes."
     },
     "passiva": {
       "nome": "Doçura e Ouro",
@@ -2983,14 +2983,14 @@
     "habilidade": {
       "nome": "Chama Sagrada",
       "custo": "2 Chama",
-      "recarga": 2,
-      "efeito": "Cura 8 no time E causa 8 de dano a todos os inimigos."
+      "recarga": 3,
+      "efeito": "Cura 9 no time E causa 8 de dano a todos os inimigos."
     },
     "milagre": {
       "nome": "Poço de Cura",
       "custo": "2 Chama + 1 livre",
       "recarga": 4,
-      "efeito": "Cura 12 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
+      "efeito": "Cura 15 no time, remove todos os debuffs e regenera 8/turno por 2 turnos."
     },
     "passiva": {
       "nome": "Ferreira Divina",

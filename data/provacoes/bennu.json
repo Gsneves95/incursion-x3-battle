@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "75358666",
+    "hash": "af0ab3ce",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 36,
+    "lancesNesteCaminho": 38,
     "comDica": false,
-    "nos": 76,
-    "ms": 75,
+    "nos": 45,
+    "ms": 279,
     "caminho": [
       "perseu Lâmina Curva → thor",
       "bennu Bico Flamejante → thor",
@@ -61,17 +61,19 @@
       "houyi Nove Flechas → tyr",
       "perseu Lâmina Curva → thor",
       "passar",
-      "bennu Chama Purificadora",
-      "passar",
       "bennu Bico Flamejante → saci",
       "perseu Cabeça da Medusa → saci",
+      "houyi Abater o Sol → saci",
       "passar",
       "bennu Bico Flamejante → saci",
       "perseu Foice Adamantina → saci",
       "passar",
-      "houyi Nove Flechas → saci",
       "bennu Bico Flamejante → saci",
-      "perseu Lâmina Curva → saci"
+      "houyi Flecha Solar → saci",
+      "perseu Lâmina Curva → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "houyi Flecha Solar → saci"
     ]
   }
 }

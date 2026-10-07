@@ -109,7 +109,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // morder: em habilidade que JÁ tem número → quebra; v>8 → quebra; fora do nv2 → quebra. (Real: Dionísio milagre = só
 // `agendar`/`dominar`, sem magnitude; Zeus básico = fx[0].v=15, tem magnitude.)
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'efeito novo pequeno.' }];
   // PASSA: Dionísio milagre (sem magnitude) ganha dmg 5 no nv2
   ok(E.validarNiveisDeus(so(catalogo.dionisio, 'milagre', NP(2, { t: 'dmg', v: 5, escopo: 'todosInimigos' }))).length === 0, 'B3b passa: NOVO-PEQUENO dmg≤8 no nv2 (habilidade sem número)');
@@ -125,7 +125,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // Provado a morder: fora do nv4 → quebra (é SALTO); em fx que não é dot/hot → quebra (dur não faz sentido). (Real:
 // Medusa básico fx[1] = dot Veneno com dur:2 → dur:3.)
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 2, muda: [{ caminho: 'fx[1].dur', de: 2, para: 3 }], desc: '11 de dano + Veneno (8 de dano puro/turno por 3 turnos).' }])).length === 0, "B4b passa: fx[i].dur (dot) 2→3 é SALTO no último degrau (aqui nv2 de escada curta)");
   // §L12 (j'): dur é SALTO — no MEIO da escada ([dur no nv2, pequeno no nv3]) → quebra
   ok(E.validarNiveisDeus(so(catalogo.medusa, 'basico', [{ nv: 2, muda: [{ caminho: 'fx[1].dur', de: 2, para: 3 }], desc: 'x' }, { nv: 3, muda: [{ caminho: 'fx[0].v', de: 10, para: 11 }], desc: '11 de dano a 1 inimigo.' }])).some(e => /[UÚ]LTIMO degrau/.test(e)), 'B4b MORDE: fx[i].dur (SALTO) fora do último degrau');
@@ -136,7 +136,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // condição (se/executaAbaixoDe) ficam FORA (degrau escondido, nunca sobem); e a elegibilidade do NOVO-PEQUENO passa a
 // considerar DANO aninhado (habilidade com dmg dentro de condicional NÃO é "sem número").
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   // PASSA: dano dentro do senao (Anúbis habil) — pequeno, qualquer nv
   ok(E.validarNiveisDeus(so(catalogo.anubis, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[0].senao[0].v', de: 30, para: 32 }], desc: 'x' }])).length === 0, 'B4d passa: fx[i].senao[j].v (dano em ramo) é PEQUENO');
   // PASSA: ramo aninhado FUNDO (Ammit milagre, 3 níveis) e shield dentro do entao (Osíris habil)
@@ -154,7 +154,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 
 // BABÁ 4e — §318 F3 L6 EXTENSÃO (ii): fx[i].hp (revive/vidaExtra) é PEQUENO (nv 2–4).
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   ok(E.validarNiveisDeus(so(catalogo.osiris, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[0].hp', de: 30, para: 32 }], desc: 'x' }])).length === 0, 'B4e passa: fx[i].hp de revive é PEQUENO (nv2)');
   ok(E.validarNiveisDeus(so(catalogo.bastet, 'milagre', [{ nv: 2, muda: [{ caminho: 'fx[0].hp', de: 30, para: 32 }], desc: 'x' }])).length === 0, 'B4e passa: fx[i].hp de vidaExtra é PEQUENO');
 })();
@@ -162,7 +162,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // BABÁ 4f — §318 F3 L9 EXTENSÃO (iii) LEVE: número DENTRO de uma OPÇÃO (habilidade de escolha, Lugh) é PEQUENO
 // (`opcoes[k].fx[i].v` / `.eff.v`). Caminho para opção INEXISTENTE → FORA (de≠valor). SEM NOVO em opção (fx[] fora).
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[0].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).length === 0, 'B4f passa: opcoes[k].fx[i].v é PEQUENO');
   ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[2].fx[0].eff.v', de: 8, para: 9 }], desc: 'x' }])).length === 0, 'B4f passa: opcoes[k].fx[i].eff.v é PEQUENO');
   ok(E.validarNiveisDeus(so(catalogo.lugh, 'habilidade', [{ nv: 2, muda: [{ caminho: 'opcoes[9].fx[0].v', de: 15, para: 16 }], desc: 'x' }])).some(e => /≠ valor atual/.test(e)), 'B4f MORDE: caminho em opção INEXISTENTE (de≠valor)');
@@ -173,7 +173,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // mas agenda SEM dano não regride (Dionísio/Saci seguem elegíveis).
 // §324 P2: nenhum deus real tem mais DANO telegrafado na agenda (Kukulkán virou AoE imediato); usa fixture sintética.
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   // fixture: deus com habilidade que telegrafa DANO na agenda (fx[1].agenda[0] = dmg 25) — era a forma antiga do Kukulkán
   const comAgendaDano = clone(catalogo.kukulkan);
   comAgendaDano.ab.find(x => x.slot === 'habilidade').fx = [{ t: 'dmg', v: 14, escopo: 'todosInimigos' }, { t: 'agendar', alvo: 'nenhum', agenda: [{ t: 'dmg', v: 25, escopo: 'todosInimigos' }] }];
@@ -189,7 +189,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // vetor de dano [18,12,8] sobe uma por degrau, independente. ÍNDICE FORA DO VETOR → quebra (caminho não-gravável, `de`
 // não bate). O motor APLICA o valor subido em combate (o i-ésimo alvo selecionado leva posicional[i]).
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   ok(E._categoriaCaminho('fx[0].posicional[0]') === 'pequeno', 'B4h: fx[i].posicional[k] é categoria PEQUENO');
   ok(E.validarNiveisDeus(so(catalogo.raijin, 'habilidade', [{ nv: 2, muda: [{ caminho: 'fx[0].posicional[0]', de: 18, para: 19 }], desc: '19 de dano ao 1º alvo, 12 ao 2º, 8 ao 3º; atordoa o 1º por 1 turno.' }])).length === 0, 'B4h passa: fx[i].posicional[k] no vetor é PEQUENO válido');
   // índice FORA do vetor (posicional tem 3 casas: 0,1,2) → o `de` não bate (valor atual undefined) → build quebra
@@ -206,7 +206,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // BABÁ 4j — §318 F3 L12 REGRA (j') ESCADA CURTA: níveis CONTÍGUOS a partir do 2 (buraco → quebra); escada com <3
 // degraus exige `escadaCurta:"<motivo>"`; escada COMPLETA não a leva; o SALTO (se houver) fica no ÚLTIMO degrau.
 (() => {
-  const so = (g, slot, niveis, extra) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (extra) Object.assign(a, extra); return d; };
+  const so = (g, slot, niveis, extra) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (extra) Object.assign(a, extra); return d; };
   const bas = (nv, de, para) => ({ nv, muda: [{ caminho: 'fx[0].v', de, para }], desc: `${para} de dano a 1 inimigo.` });
   const cdBase = catalogo.zeus.ab.find(a => a.slot === 'basico').cd;
   // BURACO [2,4] → quebra
@@ -224,13 +224,13 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
   // SALTO no MEIO (nv2) de escada curta [2,3] → quebra (salto só no último)
   ok(E.validarNiveisDeus(so(catalogo.zeus, 'basico', [{ nv: 2, muda: [{ caminho: 'cd', de: cdBase, para: (cdBase || 1) + 1 }], desc: 'x' }, bas(3, 15, 16)], { escadaCurta: 'x' })).some(e => /[UÚ]LTIMO degrau/.test(e)), "B4j MORDE: salto no meio (nv2) da escada curta → quebra");
   // escadaCurta em slot SEM niveis → quebra
-  ok(E.validarNiveisDeus((() => { const d = clone(catalogo.zeus); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === 'habilidade').escadaCurta = 'x'; return d; })()).some(e => /só faz sentido em slot COM escada/.test(e)), "B4j MORDE: escadaCurta em slot sem niveis → quebra");
+  ok(E.validarNiveisDeus((() => { const d = clone(catalogo.zeus); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } d.ab.find(a => a.slot === 'habilidade').escadaCurta = 'x'; return d; })()).some(e => /só faz sentido em slot COM escada/.test(e)), "B4j MORDE: escadaCurta em slot sem niveis → quebra");
 })();
 
 // BABÁ 4k — §318 F3 L13: o `eff.dur` de um PRAZO DE EXECUÇÃO (Livro do Yan Wong) NÃO sobe — é a contagem regressiva da
 // morte, não uma magnitude. fx[i].eff.dur em eff.type 'livro' → quebra. Um eff.dur normal (noHeal do Kagutsuchi) passa.
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = '(fixture j)'; return d; };
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = '(fixture j)'; return d; };
   // Yan Wong habil fx[0] = Livro (apply, eff.dur:3). Subir esse dur → quebra.
   ok(E.validarNiveisDeus(so(catalogo.yanwong, 'habilidade', [{ nv: 4, muda: [{ caminho: 'fx[0].eff.dur', de: 3, para: 4 }], desc: 'x' }])).some(e => /PRAZO DE EXECU/.test(e)), "B4k MORDE: eff.dur do Livro (prazo de execução) não sobe → quebra");
   // um eff.dur normal (Kagutsuchi habil fx[1] = noHeal, eff.dur:2) segue sendo SALTO válido no último degrau
@@ -241,7 +241,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // NOVO-PEQUENO de CURA/ESCUDO no self, MESMO tendo número. Mas dano NOVO nele → NÃO (não se sobe dano de AoE), e
 // um básico de ALVO ÚNICO com número continua barrado (a extensão (a) segue mordendo fora do caso AoE).
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   const NP = (nv, para) => [{ nv, muda: [{ caminho: 'fx[]', de: null, para }], desc: 'x' }];
   // Cérberus básico é AoE (Dentada Tripla, escopo todosInimigos) e TEM número (dmg 8)
   ok(E.validarNiveisDeus(so(catalogo.cerberus, 'basico', NP(2, { t: 'heal', v: 3, escopo: 'self' }))).length === 0, "B3c passa: cura self no nv2 de básico AoE (regra a')");
@@ -258,8 +258,8 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // milagre. Deus SEM essa redução, que já tem escada em algum slot, DEVE ter escada no básico (senão é esquecimento).
 (() => {
   // habEscada: deus totalmente escalado (habilidade E milagre) mas com o básico SEM niveis (o formato f')
-  const habEscada = g => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 2, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; ab.escadaCurta = '(fixture: salto único no último degrau)'; } return d; };   // §L12 (j'): escada curta 1-degrau (salto no último) marcada
-  const comBasico = g => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; d.ab.find(a => a.slot === 'basico').niveis = [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'heal', v: 1, escopo: 'self' } }], desc: 'x' }]; return d; };
+  const habEscada = g => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 2, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; ab.escadaCurta = '(fixture: salto único no último degrau)'; } return d; };   // §L12 (j'): escada curta 1-degrau (salto no último) marcada
+  const comBasico = g => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } d.ab.find(a => a.slot === 'basico').niveis = [{ nv: 2, muda: [{ caminho: 'fx[]', de: null, para: { t: 'heal', v: 1, escopo: 'self' } }], desc: 'x' }]; return d; };
   // Aquiles (reducao 12) e Kraken (reducao 10): básico COM escada → QUEBRA (f')
   ok(E.validarNiveisDeus(comBasico(catalogo.aquiles)).some(e => /regra f'/.test(e)), "B3d MORDE: básico com escada num deus da regra f' (Aquiles reducao 12)");
   ok(E.validarNiveisDeus(comBasico(catalogo.kraken)).some(e => /regra f'/.test(e)), 'B3d MORDE: básico com escada no Kraken (reducao 10)');
@@ -278,7 +278,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 // marcação + niveis → quebra; e (regressão) básico sem escada, fora da f' e SEM marcação → quebra.
 (() => {
   // marcado(motivo): habilidade+milagre com escada, básico SEM niveis mas COM a marcação h'
-  const marcado = (g, motivo) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 2, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; ab.escadaCurta = '(fixture: salto único no último degrau)'; } d.ab.find(a => a.slot === 'basico').semEscada = motivo; return d; };   // §L12 (j'): hab/milagre curtas marcadas
+  const marcado = (g, motivo) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } for (const s of ['habilidade', 'milagre']) { const ab = d.ab.find(a => a.slot === s); ab.niveis = [{ nv: 2, muda: [{ caminho: 'cd', de: ab.cd, para: Math.max(0, (ab.cd || 1) - 1) }], desc: 'x' }]; ab.escadaCurta = '(fixture: salto único no último degrau)'; } d.ab.find(a => a.slot === 'basico').semEscada = motivo; return d; };   // §L12 (j'): hab/milagre curtas marcadas
   // Perseu (fora da f') com marcação h' VÁLIDA → PASSA (mesmo sem niveis no básico)
   ok(E.validarNiveisDeus(marcado(catalogo.perseu, "h' — escada mínima mediu +17,1, teste")).length === 0, "B3e passa: básico marcado semEscada (h') autoriza deus fora da f' sem niveis no básico");
   // Marcação SEM motivo (string vazia / não-string) → QUEBRA
@@ -301,7 +301,7 @@ console.log('§318 — NÍVEIS DE HABILIDADE (FASE 0)');
 
 // BABÁ 4c — §318 F3 regra (b') o custo de um BÁSICO nunca vai a 0.
 (() => {
-  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) delete ab.niveis; const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
+  const so = (g, slot, niveis) => { const d = clone(g); for (const ab of d.ab) { delete ab.niveis; delete ab.escadaCurta; delete ab.semEscada; } const a = d.ab.find(x => x.slot === slot); a.niveis = niveis; if (niveis.length < 3 && a.escadaCurta === undefined) a.escadaCurta = "(fixture de isolamento — escada curta j)"; return d; };   // §L12 j: fixtures de isolamento são escadas curtas → marca escadaCurta p/ o (j) não mascarar o que o teste isola
   // Atena básico tem cost.Aurora:1 → levá-lo a 0 no nv4 quebra
   ok(E.validarNiveisDeus(so(catalogo.atena, 'basico', [{ nv: 4, muda: [{ caminho: 'cost.Aurora', de: 1, para: 0 }], desc: 'x' }])).some(e => /custo de BÁSICO não pode ir a 0/i.test(e)), 'B4c MORDE: cost de básico a 0');
   // reduzir o cost de um MILAGRE a 0 NÃO é barrado por (b') (a regra é só do básico)

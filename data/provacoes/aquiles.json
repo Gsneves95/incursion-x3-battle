@@ -50,13 +50,13 @@
     }
   ],
   "verificacao": {
-    "hash": "b0f6e893",
+    "hash": "ba840d8a",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 3899,
-    "ms": 12481,
+    "nos": 3928,
+    "ms": 4662,
     "caminho": [
       "oxum Espelho Dourado → zeus",
       "passar",
@@ -71,7 +71,7 @@
       "oxum Espelho Dourado → zeus",
       "passar",
       "zeus Julgamento do Trovão → ares",
-      "oxum Águas de Oxum → aquiles",
+      "oxum Águas de Oxum → zeus",
       "passar",
       "zeus Ira Celestial",
       "passar",

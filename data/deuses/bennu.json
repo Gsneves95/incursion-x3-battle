@@ -87,9 +87,9 @@
       "cost": {
         "Chama": 2
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "todosInimigos",
-      "desc": "8 de dano a todos os inimigos; cura 6 no time.",
+      "desc": "8 de dano a todos os inimigos; cura 8 no time.",
       "fx": [
         {
           "t": "dmg",
@@ -98,7 +98,7 @@
         },
         {
           "t": "heal",
-          "v": 6,
+          "v": 8,
           "escopo": "time"
         }
       ],
@@ -112,18 +112,18 @@
               "para": 9
             }
           ],
-          "desc": "9 de dano a todos os inimigos; cura 6 no time."
+          "desc": "9 de dano a todos os inimigos; cura 8 no time."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 6,
-              "para": 7
+              "de": 8,
+              "para": 9
             }
           ],
-          "desc": "9 de dano a todos os inimigos; cura 7 no time."
+          "desc": "9 de dano a todos os inimigos; cura 9 no time."
         },
         {
           "nv": 4,
@@ -134,7 +134,7 @@
               "para": 10
             }
           ],
-          "desc": "10 de dano a todos os inimigos; cura 7 no time."
+          "desc": "10 de dano a todos os inimigos; cura 9 no time."
         }
       ]
     },
@@ -148,11 +148,11 @@
       },
       "cd": 4,
       "alvo": "nenhum",
-      "desc": "Cura 12 no time e remove todos os debuffs.",
+      "desc": "Cura 15 no time e remove todos os debuffs.",
       "fx": [
         {
           "t": "heal",
-          "v": 12,
+          "v": 15,
           "escopo": "time"
         },
         {
@@ -166,33 +166,33 @@
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 12,
-              "para": 13
+              "de": 15,
+              "para": 16
             }
           ],
-          "desc": "Cura 13 no time e remove todos os debuffs."
+          "desc": "Cura 16 no time e remove todos os debuffs."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 13,
-              "para": 14
+              "de": 16,
+              "para": 17
             }
           ],
-          "desc": "Cura 14 no time e remove todos os debuffs."
+          "desc": "Cura 17 no time e remove todos os debuffs."
         },
         {
           "nv": 4,
           "muda": [
             {
               "caminho": "fx[0].v",
-              "de": 14,
-              "para": 15
+              "de": 17,
+              "para": 18
             }
           ],
-          "desc": "Cura 15 no time e remove todos os debuffs."
+          "desc": "Cura 18 no time e remove todos os debuffs."
         }
       ]
     }

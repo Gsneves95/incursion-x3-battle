@@ -118,6 +118,12 @@ function checarKits() {
   // frases estruturais ("a 1 inimigo", "por 2 turnos", tique de DoT) a fariam falso-positivar; quem guarda
   // o texto BASE fino é o checar_cadeia (§286). FASE 0 não tem conteúdo → no-op agora, guarda o futuro.
   for (const g of deuses) for (const d of E.conferirTextoNiveis(g)) if (d.nivel > 1 && d.tipo === 'valor>texto') erros.push(`${d.deus}.${d.slot} nv${d.nivel}: texto×número — ${d.detalhe}`);
+  // §324 P3b / R1 — o MILAGRE é o momento grande da partida: recarga SEMPRE ≥ 3 (não pode virar
+  // habilidade comum). Falha alto. EXCEÇÕES NOMEADAS: milagres que JÁ eram cd<3 antes do §324
+  // (baseline 21951d8). Auditoria feita: NENHUM — a lista está vazia de propósito. Para grandfatherar
+  // um milagre no futuro, adicione a key aqui com a justificativa.
+  const R1_EXCECOES = new Set([]);   // ex.: 'algum_deus' — milagre cd<3 herdado do pré-§324
+  for (const g of deuses) { const mil = (g.ab || [])[2]; if (mil && mil.slot === 'milagre' && mil.cd < 3 && !R1_EXCECOES.has(g.key)) erros.push(`${g.key}.milagre "${mil.nome}" cd=${mil.cd} < 3 — R1 (§324 P3b): o milagre tem recarga mínima 3. Suba a recarga e compense por outro caminho, ou grandfathere em R1_EXCECOES com justificativa.`); }
   if (erros.length) { console.error('ERRO de schema de kit:\n  ' + erros.join('\n  ')); process.exit(1); }
 }
 checarKits();

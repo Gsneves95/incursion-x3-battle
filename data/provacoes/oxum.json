@@ -67,13 +67,13 @@
     }
   ],
   "verificacao": {
-    "hash": "b016b92",
+    "hash": "9bd1e34b",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 27,
+    "lancesNesteCaminho": 25,
     "comDica": false,
-    "nos": 87,
-    "ms": 134,
+    "nos": 68,
+    "ms": 175,
     "caminho": [
       "susanoo Corte de Kusanagi → shiva",
       "perseu Lâmina Curva → shiva",
@@ -96,8 +96,6 @@
       "oxum Águas de Oxum → oxum",
       "passar",
       "oxum Rio de Ouro",
-      "passar",
-      "oxum Águas de Oxum → oxum",
       "passar",
       "passar",
       "oxum Águas de Oxum → oxum",

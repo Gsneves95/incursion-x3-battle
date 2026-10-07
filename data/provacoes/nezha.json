@@ -20,20 +20,20 @@
       {
         "lado": 1,
         "idx": 0,
-        "maxHp": 90,
-        "hp": 90
+        "maxHp": 80,
+        "hp": 80
       },
       {
         "lado": 1,
         "idx": 1,
-        "maxHp": 90,
-        "hp": 90
+        "maxHp": 80,
+        "hp": 80
       },
       {
         "lado": 1,
         "idx": 2,
-        "maxHp": 90,
-        "hp": 90
+        "maxHp": 80,
+        "hp": 80
       }
     ]
   },
@@ -48,13 +48,13 @@
     }
   ],
   "verificacao": {
-    "hash": "74943334",
+    "hash": "7340894d",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 27,
+    "lancesNesteCaminho": 24,
     "comDica": false,
-    "nos": 6306,
-    "ms": 24834,
+    "nos": 713,
+    "ms": 1162,
     "caminho": [
       "perseu Cabeça da Medusa → shutendoji",
       "oxum Espelho Dourado → exu",
@@ -64,25 +64,22 @@
       "oxum Espelho Dourado → shutendoji",
       "passar",
       "perseu Lâmina Curva → shutendoji",
-      "oxum Espelho Dourado → exu",
-      "passar",
-      "oxum Rio de Ouro",
-      "perseu Foice Adamantina → shutendoji",
-      "passar",
-      "perseu Cabeça da Medusa → mnevis",
-      "oxum Espelho Dourado → shutendoji",
-      "passar",
-      "nezha Arsenal Celeste [modo 1]",
-      "perseu Lâmina Curva → exu",
       "oxum Águas de Oxum → nezha",
       "passar",
-      "nezha Arsenal Celeste [modo 1]",
+      "perseu Foice Adamantina → shutendoji",
+      "oxum Espelho Dourado → shutendoji",
+      "passar",
+      "oxum Rio de Ouro",
+      "perseu Cabeça da Medusa → mnevis",
+      "passar",
+      "nezha Rodas de Vento e Fogo → exu+mnevis",
       "perseu Lâmina Curva → exu",
-      "oxum Espelho Dourado → exu",
+      "oxum Espelho Dourado → mnevis",
       "passar",
       "perseu Foice Adamantina → mnevis",
-      "nezha Rodas de Vento e Fogo → mnevis",
-      "oxum Espelho Dourado → mnevis"
+      "nezha Arsenal Celeste [modo 1]",
+      "passar",
+      "nezha Lança de Ponta Flamejante → exu"
     ]
   }
 }

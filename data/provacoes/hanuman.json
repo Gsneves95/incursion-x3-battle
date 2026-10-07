@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "5ad81d50",
+    "hash": "36a58191",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 22,
     "comDica": false,
     "nos": 57958,
-    "ms": 35001,
+    "ms": 31823,
     "caminho": [
       "sunwukong Bastão Ruyi Jingu → fenrir+durga",
       "passar",

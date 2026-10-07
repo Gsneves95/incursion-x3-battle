@@ -280,3 +280,63 @@ Dos 1600 níveis (5 culturas × 8 semanas × 40), quantos têm ao menos um dos 5
 
 A dificuldade medida desses níveis fica defasada até a recalibragem dos Domínios (decisão: adiada). Sem guarda
 de build, não quebra.
+
+---
+
+# §324 P3b — duas regras de desenho (R1/R2) e refazer só os violadores
+
+Duas regras do dono, viram guardas permanentes:
+- **R1 — milagre com recarga ≥ 3** (o milagre é o momento grande). Agora é **trava de build**
+  (`tools/build.js`); exceções só nomeadas — auditado: **nenhuma** no baseline (lista vazia).
+- **R2 — não cortar CURA nem DANO PRINCIPAL de um slot em mais de 40% numa revisão.** Ferramenta
+  **`node tools/auditar_cortes.js [ref]`** aponta cortes > 40% vs um commit de referência.
+
+## Violadores corrigidos (antes P3 → depois P3b; força do deus)
+
+**R1 (milagre cd < 3 → ≥ 3), com a força devolvida por outro caminho:**
+- **Ammit — Devorar a Alma:** recarga 2 → **3**. (força 42→42)
+- **Cérberus — Vigília Infernal:** recarga 1 → **3**; em troca o milagre passa a causar **12 → 18 de dano em
+  área** (teto de área 22) — menos frequente, mais forte. (força 53→59, segue tanque de provocação)
+- **Odin — Sabedoria do Enforcado:** recarga 2 → **3**. (a IA quase não usa o milagre do Odin; força 43→43)
+
+**R2 (corte de cura/dano limitado a ≤ 40%; o resto veio de RECARGA):**
+- **Oxum — Águas de Oxum:** cura 9 → **12** (corte −40%, era −55%), recarga 2 → **3**. *Rio de Ouro:* cura
+  10 → **12**. (força 61→63; segue a curandeira)
+- **Brigid — Chama Sagrada:** cura 8 → **9**, recarga 2 → **3**. *Poço de Cura:* cura 12 → **15**. (62→63)
+- **Bennu — Chama Purificadora:** cura 6 → **8**, recarga 2 → **3**. *Renascer das Cinzas:* cura 12 → **15**.
+  (63→64)
+- **Osíris — Trigo do Renascimento:** cura 8 → **12**, recarga 2 → **4** (+ passiva Rei dos Mortos +5 → **+3**
+  por aliado caído, para caber na faixa). (63→63)
+- **Vishnu — Preservação Cósmica:** cura 14 → **15** (corte −40%, era −44%). (54→54)
+- **Mula sem Cabeça — Galope em Chamas:** dano 7 → **9**, recarga 2 → **3**. *Relincho Infernal:* dano 12 →
+  **14**. (58→60)
+- **Heimdall — Lâmina Vigilante:** (ajuste de faixa) o básico reduz o dano do alvo em 3 → **5** (ficou 34,9%
+  após o deslocamento do campo; voltou a 43%).
+
+## Os 3 devolvidos aos níveis liberados (só escada, marcada `escadaCurta`)
+
+| Deus | slot | triagem antes | escada curta | triagem depois |
+|---|---|---|---|---|
+| Dionísio | básico | +26,3pp (> +25) | nv2–3 (sem o Veneno do nv4) | **+13,5pp** ✓ |
+| Dagda | habilidade | +15,2pp (> +15) | nv2–3 (sem o degrau de regen do nv4) | **+12,3pp** ✓ |
+| Saci | habilidade | +34,5pp (> +15) | só nv2 (o AoE em área amplificava o nv4) | **+13,5pp** ✓ |
+
+`niveis_liberados`: 97 → **100** (os 3 de volta).
+
+## Resultado (re-medido, rounds=400)
+
+- **100 na faixa [35,65]: SIM** (0 acima, 0 abaixo).
+- **Médias por função:** Suporte 55,0 · Atacante 50,7 · Guardião 48,7 · Manipulador 45,7 · **Controlador 44,7**.
+  Quatro dentro; Controlador a uma largura-de-ruído do piso (SE ~±1,2 da média; IC inclui 45; estava 45,0 na P3).
+  O desvio veio do campo (restaurar cura dos Suportes os fortalece de leve); **nenhum Controlador é violador de
+  R1/R2**, então — pela sua regra "sem mexer no que já está certo / refazer só os violadores" — não toquei neles.
+
+## O que arrastou (P3b)
+
+- Textos + `kits.json` sincronizados; **cadeia, texto×número, auditoria, R1-trava** verdes. **R2**
+  (`auditar_cortes.js`): **0 cortes > 40%**.
+- **Re-triagem §318** dos 12 slots com valor alterado na P3b: todos dentro (máx oxum:milagre +14,6pp ≤ +25).
+- **47 Ritos** re-carimbados (hash) — 35 pelo kit da P3b; **1 fechou** (nezha, Oxum aliada mais fraca) →
+  alavanca de HP (inimigos 90 → 80). **3 Semanais** (izanagi/amaterasu/houyi, todos com Oxum aliada) →
+  alavanca de HP + `minimo` recomputado. **Campanha** — Cérberus (chefe do Prólogo) **VENCÍVEL sob v2**.
+- **Domínios:** inalterados (ver contagem acima; recalibragem segue adiada).

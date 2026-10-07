@@ -8,12 +8,12 @@
   "arquetipo": "Ressurreição/almas",
   "passiva": {
     "nome": "Rei dos Mortos",
-    "desc": "Por cada aliado caído, o time causa +8 de dano.",
+    "desc": "Por cada aliado caído, o time causa +3 de dano.",
     "fx": [
       {
         "gatilho": "bonusDano",
         "v": 0,
-        "porAliadoCaido": 5,
+        "porAliadoCaido": 3,
         "escopo": "time"
       }
     ]
@@ -83,9 +83,9 @@
       "cost": {
         "Umbra": 2
       },
-      "cd": 2,
+      "cd": 4,
       "alvo": "aliado",
-      "desc": "Cura 8 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível.",
+      "desc": "Cura 12 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível.",
       "fx": [
         {
           "t": "condicional",
@@ -104,7 +104,7 @@
         },
         {
           "t": "heal",
-          "v": 8
+          "v": 12
         }
       ],
       "niveis": [
@@ -113,22 +113,22 @@
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 8,
-              "para": 9
+              "de": 12,
+              "para": 13
             }
           ],
-          "desc": "Cura 9 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+          "desc": "Cura 13 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
         },
         {
           "nv": 3,
           "muda": [
             {
               "caminho": "fx[1].v",
-              "de": 9,
-              "para": 10
+              "de": 13,
+              "para": 14
             }
           ],
-          "desc": "Cura 10 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
+          "desc": "Cura 14 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 15 de Defesa Destrutível."
         },
         {
           "nv": 4,
@@ -139,7 +139,7 @@
               "para": 17
             }
           ],
-          "desc": "Cura 10 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 17 de Defesa Destrutível."
+          "desc": "Cura 14 em 1 aliado; se ele estiver abaixo de 60 de HP, ganha também 17 de Defesa Destrutível."
         }
       ]
     },

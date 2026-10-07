@@ -29,13 +29,13 @@
     }
   ],
   "verificacao": {
-    "hash": "322fab77",
+    "hash": "a6107e3e",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 19,
     "comDica": false,
-    "nos": 363,
-    "ms": 518,
+    "nos": 168,
+    "ms": 262,
     "caminho": [
       "poseidon Golpe do Tridente → kagutsuchi",
       "passar",

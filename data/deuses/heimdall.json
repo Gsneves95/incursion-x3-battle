@@ -25,7 +25,7 @@
       },
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "15 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno.",
+      "desc": "15 de dano a 1 inimigo; o alvo causa 5 menos de dano por 1 turno.",
       "fx": [
         {
           "t": "dmg",
@@ -35,7 +35,7 @@
           "t": "apply",
           "eff": {
             "type": "dmgDown",
-            "v": 3,
+            "v": 5,
             "dur": 1
           }
         }
@@ -50,7 +50,7 @@
               "para": 16
             }
           ],
-          "desc": "16 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno."
+          "desc": "16 de dano a 1 inimigo; o alvo causa 5 menos de dano por 1 turno."
         },
         {
           "nv": 3,
@@ -61,7 +61,7 @@
               "para": 17
             }
           ],
-          "desc": "17 de dano a 1 inimigo; o alvo causa 3 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; o alvo causa 5 menos de dano por 1 turno."
         },
         {
           "nv": 4,
@@ -80,7 +80,7 @@
               }
             }
           ],
-          "desc": "17 de dano a 1 inimigo; Heimdall recebe 3 de redução de dano por 1 turno; o alvo causa 3 menos de dano por 1 turno."
+          "desc": "17 de dano a 1 inimigo; Heimdall recebe 3 de redução de dano por 1 turno; o alvo causa 5 menos de dano por 1 turno."
         }
       ]
     },

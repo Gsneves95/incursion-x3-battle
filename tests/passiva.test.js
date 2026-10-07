@@ -1982,12 +1982,12 @@ console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arr
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1011); orbs(st.lados[0]);
   os = st.lados[0].units[0]; let al = st.lados[0].units[1]; al.hp = 40;
   E.agir(st, os.uid, 'habilidade', [al.uid]);
-  ok(al.hp === 48 && al.shield === 15, `Trigo do Renascimento: aliado a 40 (<60) → escudo 15 + cura 8 = 48 HP §324P3 (${al.hp}/${al.shield})`);
+  ok(al.hp === 52 && al.shield === 15, `Trigo do Renascimento: aliado a 40 (<60) → escudo 15 + cura 12 = 52 HP §324P3b (${al.hp}/${al.shield})`);
   // aliado saudável (>=60): só cura, sem escudo
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1012); orbs(st.lados[0]);
   os = st.lados[0].units[0]; al = st.lados[0].units[1]; al.hp = 70;
   E.agir(st, os.uid, 'habilidade', [al.uid]);
-  ok(al.hp === 78 && al.shield === 0, `aliado a 70 (>=60): cura 8 (→78), SEM escudo §324P3 (${al.hp}/${al.shield})`);
+  ok(al.hp === 82 && al.shield === 0, `aliado a 70 (>=60): cura 12 (→82), SEM escudo §324P3b (${al.hp}/${al.shield})`);
   // milagre: revive 1 caído com 60 e limpa os debuffs dele (o reviver já zera efeitos/dots)
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1013); orbs(st.lados[0]);
   os = st.lados[0].units[0]; const caido = st.lados[0].units[1]; caido.hp = 5;
@@ -1995,12 +1995,12 @@ console.log('== §123 leva JÁ DÁ: Osíris (limpo) + Nüwa (limpo) + Mimir (arr
   ok(!caido.vivo, 'aliado caiu (pré-condição do revive)');
   E.agir(st, os.uid, 'milagre', []);
   ok(caido.vivo && caido.hp === 30 && caido.efeitos.length === 0, `Tribunal do Duat: revive com 30 e sem debuffs (vivo ${caido.vivo}, hp ${caido.hp})`);
-  // passiva Rei dos Mortos: +8 de dano ao TIME por aliado caído
+  // passiva Rei dos Mortos: +3 de dano ao TIME por aliado caído (§324 P3b: era +5; nerf do amp-de-time)
   st = E.novoEstado(['osiris', 'zeus', 'zeus'], ['tyr', 'tyr', 'tyr'], 1014);
   let atk = st.lados[0].units[1]; foe = st.lados[1].units[0];
   ok(E.bonusDanoDeclarativo(st, atk, foe) === 0, `Rei dos Mortos: 0 caídos → +0 (${E.bonusDanoDeclarativo(st, atk, foe)})`);
   st.lados[0].units[2].vivo = false;
-  ok(E.bonusDanoDeclarativo(st, atk, foe) === 5, `1 caído → +5 ao time (${E.bonusDanoDeclarativo(st, atk, foe)})`);
+  ok(E.bonusDanoDeclarativo(st, atk, foe) === 3, `1 caído → +3 ao time §324P3b (${E.bonusDanoDeclarativo(st, atk, foe)})`);
 
   // ---- NÜWA (limpo): opcoes escolha-2 (idiom do Lugh) + aoCair (idiom da Erínias) ----
   // básico 12

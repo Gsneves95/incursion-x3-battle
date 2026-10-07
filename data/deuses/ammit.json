@@ -148,7 +148,7 @@
         "Umbra": 2,
         "livre": 1
       },
-      "cd": 2,
+      "cd": 3,
       "alvo": "inimigo",
       "desc": "Elimina o alvo se ele estiver Atordoado, Selado ou com 30 ou menos de HP; senão, 40 de dano.",
       "fx": [

@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "39f73d17",
+    "hash": "d3e08a4e",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 36,
+    "lancesNesteCaminho": 37,
     "comDica": false,
-    "nos": 563,
-    "ms": 599,
+    "nos": 296,
+    "ms": 809,
     "caminho": [
       "perseu Lâmina Curva → loki",
       "oxum Espelho Dourado → loki",
@@ -46,9 +46,10 @@
       "oxum Espelho Dourado → loki",
       "passar",
       "perseu Lâmina Curva → loki",
-      "passar",
       "oxum Rio de Ouro",
+      "passar",
       "perseu Foice Adamantina → loki",
+      "oxum Espelho Dourado → loki",
       "passar",
       "perseu Cabeça da Medusa → cuca",
       "oxum Espelho Dourado → cuca",
@@ -65,12 +66,12 @@
       "xango Balança da Justiça → saci",
       "oxum Águas de Oxum → xango",
       "passar",
-      "perseu Lâmina Curva → saci",
-      "xango Machado Oxê → saci",
-      "oxum Rio de Ouro",
-      "passar",
       "xango Machado Oxê → saci",
       "perseu Cabeça da Medusa → saci",
+      "oxum Espelho Dourado → saci",
+      "passar",
+      "perseu Lâmina Curva → saci",
+      "xango Machado Oxê → saci",
       "oxum Espelho Dourado → saci"
     ]
   }

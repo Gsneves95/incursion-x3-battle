@@ -48,13 +48,13 @@
     }
   ],
   "verificacao": {
-    "hash": "a88bc049",
+    "hash": "d5cbb5e0",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 13,
     "comDica": false,
     "nos": 90,
-    "ms": 119,
+    "ms": 269,
     "caminho": [
       "zeus Cetro do Trovão → durga",
       "passar",

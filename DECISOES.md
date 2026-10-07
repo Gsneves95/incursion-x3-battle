@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §324 P3b · duas regras de desenho (R1/R2) + refazer só os violadores
+
+Relatório `docs/kits-324-p3-mudancas.md`. Duas regras do dono viram guardas permanentes (CLAUDE.md):
+**R1 — milagre tem recarga ≥ 3** (o momento grande da partida não vira habilidade comum): **trava de build**
+(`tools/build.js`, checarKits), exceções só nomeadas em `R1_EXCECOES` — auditado o baseline `21951d8`: **nenhum**
+milagre era cd<3 (lista vazia de propósito). **R2 — não cortar CURA nem DANO PRINCIPAL de um slot em mais de
+40% numa revisão**: ferramenta `node tools/auditar_cortes.js [ref]` aponta os cortes > 40% (dano principal = 1º
+fx de dano; cura = fx de heal). Alternativa recusada: cortar fundo o número principal — a identidade do deus mora
+no número que ele exibe; o resto do nerf vem de custo/recarga/efeito secundário.
+
+**Violadores (auditados vs 21951d8) e correção:** R1 — Ammit/Devorar (cd 2→3), Cérberus/Vigília (1→3, com o
+dano de área 12→18 em troca), Odin/Sabedoria (2→3). R2 — Oxum (Águas cura 9→12 +rec 2→3; Rio 10→12), Brigid
+(Chama 8→9 +rec; Poço 12→15), Bennu (Purif. 6→8 +rec; Renascer 12→15), Osíris (Trigo 8→12 +rec 2→4 + passiva
++5→+3), Vishnu (Preservação 14→15), Mula (Galope 7→9 +rec; Relincho 12→14). A força perdida no corte limitado
+voltou por **recarga/custo/efeito** — nunca re-esmagando o número. Heimdall (ajuste de faixa: básico −3→−5 de
+dano no alvo, caíra a 34,9 no deslocamento).
+
+**Re-medido (rounds=400):** **100 na faixa [35,65]** (0/0). Funções: Suporte 55,0 · Atacante 50,7 · Guardião
+48,7 · Manipulador 45,7 · **Controlador 44,7** (a uma largura-de-ruído do piso, IC inclui 45; estava 45,0 na P3).
+O desvio veio do campo (restaurar cura dos Suportes os fortalece de leve); **nenhum Controlador viola R1/R2**, e a
+regra do dono foi "refazer só os violadores, sem mexer no que já está certo" → não toquei neles (reportado).
+
+**Devolvidos aos liberados (só escada, marcada `escadaCurta` — regra j' do §318):** Dionísio/básico (+26,3→
+**+13,5pp**, nv2-3 sem o Veneno do nv4), Dagda/habilidade (+15,2→**+12,3**, nv2-3), Saci/habilidade (+34,5→
+**+13,5**, só nv2 — o AoE em área amplificava o nv4). `niveis_liberados` 97 → **100**.
+
+**Arrastou:** kits.json + descs sincronizados (cadeia/texto×número/auditoria/**R1-trava** verdes; **R2** 0 cortes
+>40%); re-triagem §318 dos 12 slots da P3b (todos dentro); **47 Ritos re-carimbados**, 1 fechou (nezha, Oxum
+aliada enfraquecida) → alavanca HP 90→80; **3 Semanais** (izanagi/amaterasu/houyi, Oxum aliada) → alavanca HP +
+`minimo`; **campanha** Cérberus (Prólogo) **VENCÍVEL sob v2**; Domínios inalterados (recalibragem adiada). Suíte +
+build verdes.
+
 ## §324 Parte 3 · equilíbrio entre FUNÇÕES + Tyr + Saci
 
 Relatório `docs/kits-revisao-324-p3.md`. Régua §324 P1 (arena IA v2); veredito final na **rounds=400**.

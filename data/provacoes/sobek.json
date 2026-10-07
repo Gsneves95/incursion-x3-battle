@@ -28,13 +28,13 @@
     }
   ],
   "verificacao": {
-    "hash": "f5f95301",
+    "hash": "86576178",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 33,
     "comDica": false,
     "nos": 144,
-    "ms": 625,
+    "ms": 569,
     "caminho": [
       "houyi Flecha Solar → nefertem",
       "oxum Espelho Dourado → nefertem",

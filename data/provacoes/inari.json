@@ -49,13 +49,13 @@
     }
   ],
   "verificacao": {
-    "hash": "3eca9416",
+    "hash": "202f302f",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
-    "lancesNesteCaminho": 37,
+    "lancesNesteCaminho": 36,
     "comDica": false,
-    "nos": 167,
-    "ms": 992,
+    "nos": 105,
+    "ms": 198,
     "caminho": [
       "perseu Lâmina Curva → houyi",
       "inari Espiga Dourada → houyi",
@@ -87,12 +87,11 @@
       "passar",
       "passar",
       "passar",
-      "oxum Rio de Ouro",
-      "passar",
-      "passar",
       "oxum Águas de Oxum → perseu",
       "passar",
+      "passar",
       "oxum Espelho Dourado → mnevis",
+      "passar",
       "perseu Cabeça da Medusa → mnevis"
     ]
   }

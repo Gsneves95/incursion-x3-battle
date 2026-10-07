@@ -57,24 +57,9 @@
             }
           ],
           "desc": "15 de dano a 1 inimigo."
-        },
-        {
-          "nv": 4,
-          "muda": [
-            {
-              "caminho": "fx[]",
-              "de": null,
-              "para": {
-                "t": "dot",
-                "nome": "veneno",
-                "v": 4,
-                "dur": 1
-              }
-            }
-          ],
-          "desc": "15 de dano a 1 inimigo + Veneno (4 de dano puro por 1 turno)."
         }
-      ]
+      ],
+      "escadaCurta": "324-P3b: encurtada (nv2-3, sem o salto de Veneno no nv4) — básico nv4×nv1 +13,5pp (era +26,3; teto de básico +25pp)."
     },
     {
       "slot": "habilidade",

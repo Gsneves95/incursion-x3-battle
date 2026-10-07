@@ -153,9 +153,9 @@
         "Umbra": 1,
         "livre": 2
       },
-      "cd": 1,
+      "cd": 3,
       "alvo": "nenhum",
-      "desc": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 35 de Defesa Destrutível.",
+      "desc": "18 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 35 de Defesa Destrutível.",
       "fx": [
         {
           "t": "apply",
@@ -172,7 +172,7 @@
         },
         {
           "t": "dmg",
-          "v": 12,
+          "v": 18,
           "escopo": "todosInimigos"
         }
       ],
@@ -186,7 +186,7 @@
               "para": 38
             }
           ],
-          "desc": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 38 de Defesa Destrutível."
+          "desc": "18 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 38 de Defesa Destrutível."
         },
         {
           "nv": 3,
@@ -197,7 +197,7 @@
               "para": 41
             }
           ],
-          "desc": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 41 de Defesa Destrutível."
+          "desc": "18 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 41 de Defesa Destrutível."
         },
         {
           "nv": 4,
@@ -216,7 +216,7 @@
               }
             }
           ],
-          "desc": "12 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 41 de Defesa Destrutível e 10 de redução de dano por 1 turno."
+          "desc": "18 de dano a todos os inimigos; provoca todos os inimigos por 1 turno; Cérberus ganha 41 de Defesa Destrutível e 10 de redução de dano por 1 turno."
         }
       ]
     }

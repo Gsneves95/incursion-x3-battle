@@ -35,13 +35,13 @@
     }
   ],
   "verificacao": {
-    "hash": "3c406b6a",
+    "hash": "3302cd3",
     "nivelIA": "normal",
     "veredito": "VENCIVEL",
     "lancesNesteCaminho": 27,
     "comDica": false,
-    "nos": 321,
-    "ms": 217,
+    "nos": 398,
+    "ms": 628,
     "caminho": [
       "passar",
       "zeus Ira Celestial",
