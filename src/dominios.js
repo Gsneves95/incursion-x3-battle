@@ -64,6 +64,18 @@ function domCatalogoNivel(base, trioKeys, bonus, inimigos, danoMult) {
   if (danoMult !== 1) for (const k of (inimigos || [])) if (gods[k] && !trioKeys.includes(k)) cat[k] = domEscalarKit(gods[k], danoMult);
   return cat;
 }
+// §325: catálogos POR LADO. O jogador (lado 0) traz um TIME LIVRE — pode incluir um deus da cultura do
+// Domínio que também é INIMIGO. Um deus nos dois lados precisa de kits DIFERENTES (bônus do jogador ×
+// danoMult do inimigo); por isso dois catálogos. novoEstado([catJog, catIni]) lê cada lado pelo seu.
+function domCatalogosPorLado(base, timeKeys, bonus, inimigos, danoMult) {
+  const gods = base || _domGods();
+  const catJog = {}, catIni = {};
+  for (const k in gods) { catJog[k] = gods[k]; catIni[k] = gods[k]; }
+  const pMul = 1 + (bonus || 0);
+  if (pMul !== 1) for (const k of (timeKeys || [])) if (gods[k]) catJog[k] = domEscalarKit(gods[k], pMul);
+  if (danoMult !== 1) for (const k of (inimigos || [])) if (gods[k]) catIni[k] = domEscalarKit(gods[k], danoMult);
+  return [catJog, catIni];
+}
 
 // ---- CICLO SEMANAL (§275): a semana SEM servidor, robusta a relógio errado ----
 // A semana é a ISO-8601 do RELÓGIO DO APARELHO (como as Provações semanais). A CHAVE é
@@ -97,19 +109,23 @@ function domEscadaSemana(ladder, weekIndex) {
 // (termina na sua escada mesmo se a semana virar) e a MARCA a bater (recorde da semana anterior,
 // capturada no início — a superação dela é o instante comemorável). Opcionais: fora do ciclo (gerador
 // medindo piso) a corrida roda na semana 0 sem marca.
-function domNovaCorrida(ladder, weekIndex, weekChave, marcaAnterior) {
+// §325: `time` = o TIME LIVRE que o jogador montou (3 chaves). Grava-se em run.time e TRAVA pela corrida
+// (regra B); retomar usa o time gravado. Fallback para ladder.trio (o trio icônico da cultura) só p/ chamadas
+// antigas sem time — no runtime a UI sempre passa o time montado (com empréstimo da campanha).
+function domNovaCorrida(ladder, weekIndex, weekChave, marcaAnterior, time) {
   const gods = _domGods();
-  const trio = ladder.trio;
+  const equipe = (Array.isArray(time) && time.length === 3) ? time.slice() : (ladder.trio || []).slice();
   return {
     cultura: ladder.cultura,
+    time: equipe,                       // §325: TIME do jogador (travado pela corrida, regra B)
     semanaIdx: weekIndex || 0,          // índice da escada semanal desta corrida
     semana: weekChave || '',            // chave "AAAA-Www" — a corrida pertence a esta semana
     marcaAnterior: marcaAnterior || 0,  // recorde da semana anterior (a marca a bater)
     superou: false,                     // já anunciou a superação da marca nesta corrida?
     nivel: 1,
-    vida: trio.map(k => ({ hp: _domHpBase(gods, k), vivo: true })),   // [{hp,vivo}] por SLOT do trio
+    vida: equipe.map(k => ({ hp: _domHpBase(gods, k), vivo: true })),   // [{hp,vivo}] por SLOT do time
     bonus: 0,                 // bônus de dano acumulado (0..DOM_TETO_BONUS)
-    reviveGasto: [],          // chaves do trio cuja rede de ressurreição já foi usada
+    reviveGasto: [],          // chaves do time cuja rede de ressurreição já foi usada
     profundidade: 0,          // nível mais fundo LIMPO
     status: 'ativo',          // 'ativo' | 'morto' | 'completo'
     aguardandoPremio: false,  // venceu um chefe e ainda não escolheu o prêmio
@@ -121,19 +137,20 @@ function domDefNivel(ladder, n) { return (ladder.niveis || [])[n - 1] || null; }
 // monta o st de um nível: novoEstado FRESCO + vida que carrega + rede gasta + catálogo escalado.
 function domMontarBatalha(run, ladder, opc = {}) {
   const gods = opc.gods || _domGods();
-  const trio = ladder.trio;
+  const time = (run.time && run.time.length === 3) ? run.time : ladder.trio;   // §325: TIME do jogador
   const def = domDefNivel(ladder, run.nivel);
   if (!def) return null;
   const seed = (opc.seed != null) ? opc.seed : ((run.nivel * 7919) >>> 0) || 1;
-  const cat = domCatalogoNivel(gods, trio, run.bonus, def.inimigos, def.danoMult || 1);
+  // §325: catálogos POR LADO (o time pode conter um deus da cultura que também é inimigo — kits distintos).
+  const cats = domCatalogosPorLado(gods, time, run.bonus, def.inimigos, def.danoMult || 1);
   // §323 P2: níveis do jogador (lado 0). opc.niveis = [ mapaLado0, {} ] | null. Aplica sobre o catálogo JÁ
-  // escalado da corrida (só o trio ganha os deltas; os inimigos seguem a escala do Domínio). null → base.
-  const st = novoEstado(trio, def.inimigos, seed, 0, null, cat, opc.niveis || null);   // comeca=0: o jogador abre
+  // escalado da corrida (só o time ganha os deltas; os inimigos seguem a escala do Domínio). null → base.
+  const st = novoEstado(time, def.inimigos, seed, 0, null, cats, opc.niveis || null);   // comeca=0: o jogador abre
   st.lados[0].units.forEach((u, i) => {
     const c = run.vida[i];
     if (c && c.vivo) { u.hp = Math.min(u.maxHp, c.hp); }
     else { u.hp = 0; u.vivo = false; }
-    if (run.reviveGasto.includes(trio[i])) u.reviveGastoCorrida = true;   // §273: a rede deste deus já foi gasta na corrida
+    if (run.reviveGasto.includes(time[i])) u.reviveGastoCorrida = true;   // §273: a rede deste deus já foi gasta na corrida
   });
   return st;
 }
@@ -149,7 +166,7 @@ function domRevivesNaBatalha(st, trioKeys) {
 
 // resolve o fim de um nível: muta a corrida. Devolve {venceu, chefe, morreu, completou}.
 function domResolverBatalha(run, ladder, st) {
-  const trio = ladder.trio;
+  const trio = (run.time && run.time.length === 3) ? run.time : ladder.trio;   // §325: TIME do jogador
   const venceu = !!(st.fim && st.fim.resultado === 'vitoria' && st.fim.lado === 0);
   const chefe = domEhChefe(run.nivel);
   if (!venceu) { run.status = 'morto'; return { venceu: false, chefe, morreu: true, completou: false }; }
@@ -175,7 +192,7 @@ function domAvancar(run, ladder) {
   return false;
 }
 function domCurarParcial(run, ladder) {
-  const gods = _domGods(), trio = ladder.trio, cura = ladder.curaPorNivel || 0;
+  const gods = _domGods(), trio = (run.time && run.time.length === 3) ? run.time : ladder.trio, cura = ladder.curaPorNivel || 0;
   run.vida = run.vida.map((c, i) => c.vivo ? { hp: Math.min(_domHpBase(gods, trio[i]), c.hp + cura), vivo: true } : c);
 }
 
@@ -188,7 +205,7 @@ function domPremiosDisponiveis(run) {
 }
 // aplica o prêmio e AVANÇA (o prêmio é o portão para o próximo nível). alvo: índice do slot caído (reviver).
 function domAplicarPremio(run, ladder, tipo, alvo) {
-  const gods = _domGods(), trio = ladder.trio;
+  const gods = _domGods(), trio = (run.time && run.time.length === 3) ? run.time : ladder.trio;
   if (tipo === 'cura') run.vida = run.vida.map((c, i) => c.vivo ? { hp: _domHpBase(gods, trio[i]), vivo: true } : c);
   else if (tipo === 'reviver') {
     let i = (typeof alvo === 'number') ? alvo : trio.indexOf(alvo);
@@ -200,8 +217,9 @@ function domAplicarPremio(run, ladder, tipo, alvo) {
 }
 
 // ---- validação de FORMA da escada (chamada na BUILD; falha alto, não em runtime) ----
-function _domValidarNiveis(rot, niveis, trio, catalogoKeys, tol, erros) {
+function _domValidarNiveis(rot, niveis, cultura, catalogoKeys, tol, erros) {
   if (!Array.isArray(niveis) || !niveis.length) { erros.push(`${rot}: sem niveis`); return; }
+  const gods = _domGods();
   let anterior = -Infinity;
   niveis.forEach((lv, idx) => {
     const n = idx + 1;
@@ -209,7 +227,8 @@ function _domValidarNiveis(rot, niveis, trio, catalogoKeys, tol, erros) {
     if (!Array.isArray(lv.inimigos) || lv.inimigos.length !== 3) erros.push(`${rot}/n${n}: precisa de 3 inimigos (tem ${lv.inimigos ? lv.inimigos.length : 0})`);
     for (const k of (lv.inimigos || [])) {
       if (!catalogoKeys.has(k)) erros.push(`${rot}/n${n}: inimigo "${k}" fora do catálogo`);
-      if ((trio || []).includes(k)) erros.push(`${rot}/n${n}: inimigo "${k}" é do próprio trio`);
+      // §325 P1: TODO inimigo de um Domínio é da CULTURA do Domínio (comuns e chefes). Falha o build.
+      else if (cultura && gods[k] && gods[k].faccao !== cultura) erros.push(`${rot}/n${n}: inimigo "${k}" é da facção "${gods[k].faccao}" ≠ cultura "${cultura}" [P1 cultura]`);
     }
     if (domEhChefe(n) !== !!lv.chefe) erros.push(`${rot}/n${n}: chefe=${!!lv.chefe} mas nível ${domEhChefe(n) ? 'é' : 'não é'} múltiplo de ${DOM_FAIXA}`);
     if (typeof lv.dificuldade !== 'number') erros.push(`${rot}/n${n}: dificuldade medida ausente`);
@@ -220,16 +239,30 @@ function domValidarLadder(ladder, catalogoKeys) {
   const erros = [];
   const nome = (ladder && ladder.cultura) || '(sem cultura)';
   if (!ladder || typeof ladder !== 'object') return [`${nome}: não é objeto`];
+  // §325: `trio` agora é o TRIO ICÔNICO INIMIGO da cultura (o chefe final, mostrado no cartão), não o jogador.
+  const gods = _domGods();
   if (!Array.isArray(ladder.trio) || ladder.trio.length !== 3) erros.push(`${nome}: trio precisa de 3 deuses (tem ${ladder.trio ? ladder.trio.length : 0})`);
-  for (const k of (ladder.trio || [])) if (!catalogoKeys.has(k)) erros.push(`${nome}: trio "${k}" fora do catálogo`);
+  for (const k of (ladder.trio || [])) {
+    if (!catalogoKeys.has(k)) erros.push(`${nome}: trio "${k}" fora do catálogo`);
+    else if (ladder.cultura && gods[k] && gods[k].faccao !== ladder.cultura) erros.push(`${nome}: trio icônico "${k}" não é da cultura "${ladder.cultura}" [P1 cultura]`);
+  }
   if (!(ladder.tetoBonusDano <= DOM_TETO_BONUS + 1e-9)) erros.push(`${nome}: tetoBonusDano ${ladder.tetoBonusDano} passa do teto ${DOM_TETO_BONUS}`);
+  // §325 F: a régua é um CONJUNTO FIXO de times de referência (regua.times). Validação de FORMA (sem simular):
+  // a viabilidade de fato (nv1 vencível pelo mais barato) é o portão P3, medido em tools/dominio_p3_guard.js.
+  const times = ladder.regua && ladder.regua.times;
+  if (!Array.isArray(times) || !times.length) erros.push(`${nome}: regua.times ausente ou vazio [regua]`);
+  else times.forEach((t, i) => {
+    if (!Array.isArray(t) || t.length !== 3 || new Set(t).size !== 3) erros.push(`${nome}: regua.times[${i}] precisa de 3 deuses distintos`);
+    else for (const k of t) if (!catalogoKeys.has(k)) erros.push(`${nome}: regua.times[${i}] deus "${k}" fora do catálogo`);
+  });
   const tol = (typeof ladder.tolMonotonia === 'number') ? ladder.tolMonotonia : 0.06;   // tolerância de ruído da régua (medida)
   // §275: CICLO SEMANAL — uma escada por semana em `semanas[]`; cada semana é monotônica.
+  // §325 P1: cada nível valida que o inimigo é da CULTURA (passa ladder.cultura ao validador de níveis).
   if (Array.isArray(ladder.semanas)) {
     if (!ladder.semanas.length) erros.push(`${nome}: semanas vazio`);
-    ladder.semanas.forEach((s, w) => _domValidarNiveis(`${nome}/s${w + 1}`, s && s.niveis, ladder.trio, catalogoKeys, tol, erros));
+    ladder.semanas.forEach((s, w) => _domValidarNiveis(`${nome}/s${w + 1}`, s && s.niveis, ladder.cultura, catalogoKeys, tol, erros));
   } else {
-    _domValidarNiveis(nome, ladder.niveis, ladder.trio, catalogoKeys, tol, erros);   // compat: escada de semana única (fatia 1/2)
+    _domValidarNiveis(nome, ladder.niveis, ladder.cultura, catalogoKeys, tol, erros);   // compat: escada de semana única (fatia 1/2)
   }
   return erros;
 }
@@ -237,7 +270,7 @@ function domValidarLadder(ladder, catalogoKeys) {
 if (typeof module !== 'undefined') {
   module.exports = {
     DOM_TETO_BONUS, DOM_PASSO_BONUS, DOM_FAIXA, DOM_HP_REVIVER,
-    domEhChefe, domEscalarFx, domEscalarKit, domCatalogoNivel,
+    domEhChefe, domEscalarFx, domEscalarKit, domCatalogoNivel, domCatalogosPorLado,
     domSemanaChave, domSemanaAbsoluta, domIndiceSemana, domChaveSemanaAnterior, domEscadaSemana,
     domNovaCorrida, domDefNivel, domMontarBatalha, domVidaFinal, domRevivesNaBatalha,
     domResolverBatalha, domAvancar, domCurarParcial,

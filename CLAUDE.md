@@ -455,10 +455,12 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     build anota `_arteOk` por arquivo presente em `web/banners/campanha/`.
 
 ### Domínios — a corrida run-scoped (§273/§274)
-26. **DOMÍNIOS é roguelike RUN-SCOPED, e por isso NÃO fere o invariante 3.** Três
-    deuses fixos descem uma escada de batalhas 3×3; a vida CARREGA com cura parcial, a
-    cada 10 um chefe, e o prêmio do chefe (cura/reviver/bônus de dano) ACUMULA na
-    corrida. O progresso é POR DOMÍNIO e independente: `perfil.dominios.porDominio[<cultura>] =
+26. **DOMÍNIOS é roguelike RUN-SCOPED, e por isso NÃO fere o invariante 3.** **§325: o
+    JOGADOR MONTA o time** de três deuses (não é mais trio fixo) — travado pela corrida
+    (`run.time`; a vida carrega POR DEUS do time; só troca ao abrir corrida nova; retomar
+    usa o time gravado). Esse time desce uma escada de batalhas 3×3; a vida CARREGA com
+    cura parcial, a cada 10 um chefe, e o prêmio do chefe (cura/reviver/bônus de dano)
+    ACUMULA na corrida. O progresso é POR DOMÍNIO e independente: `perfil.dominios.porDominio[<cultura>] =
     { run:{...}|null, recorde:N }` (§274). A run ZERA com a corrida (`run:null`); o `recorde`
     (nível mais fundo) é progresso PESSOAL LOCAL que persiste, mas **nunca** toca
     `deuses`/kit/HP-base — poder que evapora não é progressão, e um recorde local não é
@@ -467,17 +469,25 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     no perfil local); a fronteira é: progresso pessoal = local, comparação entre jogadores =
     servidor durável (§274 mediu: o disco do Render grátis é efêmero, §237).
 27. **A ESCADA é DADO, nunca código.** `data/dominios/<cultura>.json`, GERADA e MEDIDA
-    por `tools/gerar_dominios.js` (a régua é o exp 4 da fase 1: 1 − vitória gulosa a vida
-    cheia). O SORTEIO está PROIBIDO no runtime (a fase 1 provou que é loteria — 6% de
-    derrota a vida cheia); a dificuldade sobe por DANO do inimigo em faixa de 10 (não por
-    vida, que só alonga), e a escada é MONOTÔNICA na dificuldade medida (a build valida,
-    `domValidarLadder`). Domínio novo = arquivo novo (`--todas` gera os cinco). **O trio de
-    cada cultura** (§274) segue três critérios, nesta ordem: JOGÁVEL (sustain+dano+controle),
-    AUTOSSUFICIENTE (nenhum dos três depende de um deus fora do trio — o Fujin do §271 é o
-    contra-exemplo), ICÔNICO. Método e régua IDÊNTICOS entre os Domínios — se um trio fica fora
-    da curva (piso muito alto/baixo), troca-se o TRIO, nunca os parâmetros por-cultura. O banner
-    de home é o placeholder do §213 até a ILUSTRAÇÃO definitiva `web/banners/dominios.webp` (a
-    build não valida banner de home; um `<img>` ausente dá 404 → placeholder é o certo).
+    por `tools/gerar_dominios.js`. **§325: TODO inimigo (comum E chefe) é da CULTURA do
+    Domínio** (`faccao`) — portão **P1** (`domValidarLadder`, falha o build). O nv40 é o trio
+    ICÔNICO da cultura (`ladder.trio`, agora o CHEFE FINAL INIMIGO, não o jogador); os chefes
+    10/20/30 são trios da cultura em dureza crescente. **A régua (§325 F) não é mais um trio
+    fixo:** `dificuldade[n] = 1 − média de vitória` (vida cheia, IA v2, no danoMult da faixa)
+    de um CONJUNTO FIXO de TIMES DE REFERÊNCIA (`regua.times`, determinísticos — menor raridade
+    somada + cobertura de funções, estilo `ref_composicao.js` ETAPA D), média sobre times ×
+    seeds; `capComum` 0.45 medido contra a média dos refs. O SORTEIO está PROIBIDO no runtime;
+    a dificuldade sobe por DANO do inimigo em faixa de 10, e a escada é MONOTÔNICA (selada por
+    `difFinal = max(dif, prev)`; a build valida, P2). **Método e régua IDÊNTICOS entre as 5
+    culturas — NÃO se calibra parâmetro por cultura** (a dureza real da cultura é dado, reportado,
+    não mascarado). Domínio novo = arquivo novo (`--todas` gera os cinco). **Portões adicionais:**
+    **P3** — nv1 vencível pelo time de referência MAIS BARATO sob v2 vida cheia
+    (`tools/dominio_p3_guard.js`, SIMULADO no build, re-verifica o dado); **P4** — o servidor
+    recusa replay de Domínio com deus nem possuído nem emprestável (`_timeDominioValido`:
+    posse OU starter `INICIAIS`, o mesmo empréstimo da campanha). **Catálogos POR LADO**
+    (`domCatalogosPorLado`): o time pode conter um deus da cultura que também é inimigo — cada
+    lado tem seu kit (jogador escala por bônus, inimigo por danoMult). O banner de home é o
+    placeholder do §213 até a ILUSTRAÇÃO definitiva `web/banners/dominios.webp`.
 28. **Regras da corrida (medidas, não afrouxe):** o "1× por partida" que RESSUSCITA
     (revive/vidaExtra/auto-renascimento) vira **1× por CORRIDA** — flag
     `reviveGastoCorrida` no motor, **default false: fora de Domínios NADA muda**; o resto

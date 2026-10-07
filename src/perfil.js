@@ -4,7 +4,7 @@
 // parâmetro (`agora`), para as funções ficarem determinísticas/testáveis.
 // O HISTÓRICO NÃO mora no perfil (cresce e é reescrito a cada salvar) — vive em
 // chave própria, cuidada pelo armazenamento.js. Uma chave por DONO.
-const VERSAO_PERFIL = 6;   // v2: grant inicial (1500); v3: `sandbox` (F4); v4: `dominios` run-scoped (§273); v5: `dominios` por-domínio (§274); v6: recorde por-domínio vira SEMANAL — {run, melhorSempre, semanas:{<AAAA-Www>:prof}} (§275, ciclo semanal + melhor de sempre)
+const VERSAO_PERFIL = 7;   // v2: grant inicial (1500); v3: `sandbox` (F4); v4: `dominios` run-scoped (§273); v5: `dominios` por-domínio (§274); v6: recorde por-domínio vira SEMANAL — {run, melhorSempre, semanas:{<AAAA-Www>:prof}} (§275, ciclo semanal + melhor de sempre); v7: §325 — o jogador MONTA o time (run.time); a corrida do modo antigo (trio fixo, sem run.time) ENCERRA na migração, preservando melhorSempre e semanas
 const INICIAIS = ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha']; // DECISOES §4
 const MAX_TIMES = 5;
 
@@ -197,6 +197,15 @@ function migrar(p, grantGema = 0) {
     const pd = (q.dominios && q.dominios.porDominio) || {};
     const novo = {};
     for (const c of Object.keys(pd)) { const e = pd[c] || {}; novo[c] = { run: e.run || null, melhorSempre: e.melhorSempre || e.recorde || 0, semanas: (e.semanas && typeof e.semanas === 'object') ? e.semanas : {} }; }
+    q.dominios = { porDominio: novo };
+  }
+  // v<7 → v7 (§325): o jogador agora MONTA o time (run.time). A corrida em curso do modo ANTIGO (trio fixo
+  // da cultura, sem run.time) NÃO é retomável no novo modo — ENCERRA a run (run:null) de todo Domínio,
+  // PRESERVANDO melhorSempre e semanas (os recordes nunca se perdem). Clona por-domínio para não mutar.
+  if (v < 7) {
+    const pd = (q.dominios && q.dominios.porDominio) || {};
+    const novo = {};
+    for (const c of Object.keys(pd)) { const e = pd[c] || {}; novo[c] = { run: null, melhorSempre: e.melhorSempre || 0, semanas: (e.semanas && typeof e.semanas === 'object') ? e.semanas : {} }; }
     q.dominios = { porDominio: novo };
   }
   q.versao = VERSAO_PERFIL;

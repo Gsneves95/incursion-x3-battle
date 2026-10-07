@@ -15,6 +15,13 @@ const ladder = D.domEscadaSemana(ladderFile, 0);   // §275: vista PLANA da sema
 const GODS = E.GODS;
 
 let f = 0; const ok = (c, m) => { if (!c) { f++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
+// §325: abrir uma corrida pela UI passa pelo passo MONTAR TIME (o jogador monta 3 deuses) antes da batalha.
+// Helper: abre a seleção → cartão → "Montar time" → escolhe 3 starters → "Começar corrida".
+const abrirCorrida = (w, c) => w.eval(`ir("dominios",{},{substituir:true}); render();`
+  + `document.querySelector('.domcard[data-cultura="${c}"]').click();`
+  + `document.querySelector('#dentrar').click();`
+  + `[...document.querySelectorAll('.ctile[data-pick]')].slice(0,3).forEach(b=>b.click());`
+  + `document.querySelector('#bcomecar').click();`);
 const primeiroDano = kit => { let v = null; (kit.ab || []).forEach(a => (a.fx || []).forEach(e => { if (e.t === 'dmg' && typeof e.v === 'number' && v == null) v = e.v; })); return v; };
 
 console.log('== 1) RESSURREIÇÃO é 1× por CORRIDA: o gate reviveGastoCorrida no motor ==');
@@ -136,8 +143,9 @@ console.log('== 6) TELA DE SELEÇÃO: os cinco aparecem, cada um abre o seu; pro
   ok(todosAbrem, 'cada cartão abre o SEU Domínio (hub com Entrar)' + (todosAbrem ? '' : ' — falhou em ' + erroAbre));
   // PROGRESSO INDEPENDENTE: iniciar uma corrida na 1ª cultura NÃO mexe na 2ª
   const c0 = cards[0], c1 = cards[1];
-  w.eval(`ir("dominios",{},{substituir:true}); render(); document.querySelector('.domcard[data-cultura="${c0}"]').click(); document.querySelector('#dentrar').click();`);
-  ok(w.eval('rotaAtual()') === 'batalha', 'entrar no 1º Domínio abre a batalha');
+  abrirCorrida(w, c0);
+  ok(w.eval('rotaAtual()') === 'batalha', 'montar time + começar no 1º Domínio abre a batalha');
+  ok(w.eval(`(perfil.dominios.porDominio["${c0}"].run.time||[]).length===3`), '§325: a corrida gravou o TIME montado (3 deuses)');
   ok(w.eval(`!!(perfil.dominios.porDominio["${c0}"] && perfil.dominios.porDominio["${c0}"].run)`), 'a corrida do 1º Domínio foi persistida');
   ok(w.eval(`!perfil.dominios.porDominio["${c1}"]`), 'INDEPENDENTE: o 2º Domínio segue sem corrida (correr num não mexe no outro)');
   // RETOMÁVEL e NUNCA se perde ao SAIR: avança um nível, sai para a seleção, volta — a corrida está lá
@@ -165,7 +173,7 @@ console.log('== 7) §210/§240: fim de nível tem saída; o "voltar" fecha para 
   const w = dom.window, d = w.document;
   w.eval('perfil=novoPerfil(0,0);');
   const c0 = w.eval('Object.keys(DOMINIOS)[0]');
-  w.eval(`ir("dominios",{},{substituir:true}); render(); document.querySelector('.domcard[data-cultura="${c0}"]').click(); document.querySelector('#dentrar').click();`);
+  abrirCorrida(w, c0);
   // força vitória de CHEFE (nível 10) → sobreposição com escolha de prêmio
   w.eval(`perfil.dominios.porDominio["${c0}"].run.nivel=10; st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0}); st.fim={tipo:"fim",resultado:"vitoria",lado:0}; render();`);
   ok(!!d.querySelector('#dfpremio'), 'chefe vencido: sobreposição de fim tem AÇÃO (não é tela sem saída — §210)');
@@ -211,8 +219,8 @@ console.log('== 9) RECORDE ANTERIOR aparece e a SUPERAÇÃO é anunciada (o inst
   // o hub mostra o recorde anterior a bater
   w.eval(`ir("dominio",{cultura:"${c0}"},{substituir:true}); render();`);
   ok(/Recorde anterior/.test(d.querySelector('.domhub').textContent) && /2/.test(d.querySelector('.domhub').textContent), 'o hub mostra o RECORDE ANTERIOR a bater (nível 2)');
-  // inicia a corrida — a marca a bater viaja na run
-  w.eval(`document.querySelector('#dentrar').click();`);
+  // inicia a corrida (montar time) — a marca a bater viaja na run
+  abrirCorrida(w, c0);
   ok(w.eval(`perfil.dominios.porDominio["${c0}"].run.marcaAnterior`) === 2, 'a corrida carrega a marca a bater (2)');
   // vence nível 1 (prof 1, não supera), depois 2 (prof 2, empata, não supera), depois 3 (prof 3 > 2 → SUPERA)
   const vencerNivel = () => w.eval('st.lados[1].units.forEach(u=>{u.vivo=false;u.hp=0}); st.fim={tipo:"fim",resultado:"vitoria",lado:0}; render();');
@@ -388,6 +396,84 @@ console.log('== 13) §280 LADO CHEIO: os cinco Domínios têm ARTE PRESENTE (o �
   ok(noDisco, 'os cinco dominio-<ascii>.webp existem em web/banners/dominios/');
   ok(errs.length === 0, 'sem erros de jsdom no fluxo' + (errs.length ? ': ' + errs.join(' | ') : ''));
   w.close();
+}
+
+console.log('== 14) §325 P1: TODO inimigo (comum E chefe) é da CULTURA; o trio icônico é o CHEFE FINAL da cultura ==');
+{
+  const keys = new Set(Object.keys(GODS));
+  const files = { grega:'Grega', nórdica:'Nórdica', egípcia:'Egípcia', japonesa:'Japonesa', chinesa:'Chinesa' };
+  let p1Erros = 0, iconErros = 0;
+  for (const f0 of Object.keys(files)) {
+    const lad = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', f0 + '.json'), 'utf8'));
+    // trio icônico é da cultura
+    if (!lad.trio.every(k => GODS[k] && GODS[k].faccao === lad.cultura)) iconErros++;
+    for (const s of (lad.semanas || [])) for (const lv of s.niveis) for (const k of lv.inimigos) {
+      if (!(GODS[k] && GODS[k].faccao === lad.cultura)) p1Erros++;
+    }
+  }
+  ok(p1Erros === 0, `§325 P1: nenhum inimigo fora da cultura em NENHUMA das 5 escadas (${p1Erros} fora)`);
+  ok(iconErros === 0, `o trio icônico das 5 culturas é da própria cultura (${iconErros} fora)`);
+  // domValidarLadder morde um inimigo de outra cultura (P1) e um time de referência ausente (§325 F)
+  const grega = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+  const sujo = JSON.parse(JSON.stringify(grega)); sujo.semanas[0].niveis[0].inimigos = ['thor', 'thor', 'thor'];
+  ok(D.domValidarLadder(sujo, keys).some(e => /P1/.test(e)), 'domValidarLadder ACUSA um inimigo de outra facção (P1 morde)');
+  const semRegua = JSON.parse(JSON.stringify(grega)); delete semRegua.regua;
+  ok(D.domValidarLadder(semRegua, keys).some(e => /regua\.times/.test(e)), 'domValidarLadder ACUSA régua de times ausente (§325 F)');
+}
+
+console.log('== 15) §325: a corrida usa o TIME DO JOGADOR (run.time), travado; catálogos POR LADO (deus da cultura no time) ==');
+{
+  const grega = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+  const escada = D.domEscadaSemana(grega, 0);
+  // o jogador traz um deus da PRÓPRIA cultura do Domínio (zeus é Grego e também inimigo icônico) + dois de fora
+  const time = ['zeus', 'ogum', 'tyr'];
+  const run = D.domNovaCorrida(grega, 0, '', 0, time);
+  ok(run.time.join('/') === 'zeus/ogum/tyr', 'domNovaCorrida grava o TIME do jogador (run.time)');
+  ok(run.vida.length === 3, 'a vida é por SLOT do time montado');
+  const st = D.domMontarBatalha(run, escada, { seed: 1 });
+  ok(st.lados[0].units.map(u => u.key).join('/') === 'zeus/ogum/tyr', 'a batalha monta o lado do jogador com o TIME (não o trio icônico)');
+  ok(st.lados[1].units.every(u => GODS[u.key].faccao === 'Grega'), 'o lado inimigo é todo da cultura (Grega)');
+  // catálogos POR LADO: zeus no time (com BÔNUS do jogador) e zeus inimigo (com danoMult) têm kits distintos.
+  const nvZeus = escada.niveis.find(lv => lv.inimigos.includes('zeus'));
+  if (nvZeus) {
+    const run2 = D.domNovaCorrida(grega, 0, '', 0, ['zeus', 'ogum', 'tyr']); run2.nivel = nvZeus.n; run2.bonus = 0.3;
+    const st2 = D.domMontarBatalha(run2, escada, { seed: 3 });
+    ok(Array.isArray(st2.catId), 'catId é POR-LADO [catJog, catIni] quando o time (com bônus) e o inimigo compartilham um deus (zeus)');
+    const zJog = st2.lados[0].units.find(u => u.key === 'zeus'), zIni = st2.lados[1].units.find(u => u.key === 'zeus');
+    const dmg0 = u => { const kit = E.kitDe(st2, u); let v = null; (kit.ab || []).forEach(a => (a.fx || []).forEach(e => { if (e.t === 'dmg' && typeof e.v === 'number' && v == null) v = e.v; })); return v; };
+    ok(zJog && zIni && dmg0(zJog) !== dmg0(zIni), `zeus do time (bônus) e zeus inimigo (danoMult) têm dano distinto (${dmg0(zJog)} vs ${dmg0(zIni)}) — catálogos por lado`);
+  } else ok(true, '(nenhum nível com zeus inimigo nesta semana — colisão não exercitada, tudo bem)');
+}
+
+console.log('== 16) §325 P3: o nível 1 de cada cultura é vencível pelo time de referência MAIS BARATO (v2, vida cheia) ==');
+{
+  const P3 = require(path.join(__dirname, '..', 'tools', 'dominio_p3_guard.js'));
+  const files = ['grega', 'nórdica', 'egípcia', 'japonesa', 'chinesa'];
+  let reprovadas = [];
+  for (const f0 of files) {
+    const lad = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', f0 + '.json'), 'utf8'));
+    const erros = P3.validar(lad, 16);   // 16 seeds: o mesmo portão do build (24) com margem p/ a suíte
+    if (erros.length) reprovadas.push(f0 + ': ' + erros[0]);
+  }
+  ok(reprovadas.length === 0, 'as 5 culturas passam o portão P3 (nv1 vencível pelo mais barato)' + (reprovadas.length ? ' — ' + reprovadas.join(' | ') : ''));
+}
+
+console.log('== 17) §325 P4: o servidor recusa replay de Domínio com deus NEM possuído NEM emprestável; com time ok, monta ==');
+{
+  const PVE = require(path.join(__dirname, '..', 'server', 'pve.js'));
+  const PERF = require(path.join(__dirname, '..', 'src', 'perfil.js'));
+  // conta com só os starters (coleção de início)
+  const conta = { perfil: PERF.novoPerfil(0, 0), pve: {} };
+  PVE.garantirPve(conta);
+  const base = { modo: 'dominio', cultura: 'Grega', runId: 'dom_test', iaVer: 2, ops: [], niveis: null };
+  // deus NEM possuído NEM starter (ex.: 'hades' não é INICIAL) → time_invalido
+  const comEstranho = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['hades', 'ogum', 'tyr'], vida: [{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true}], reviveGasto: [] } });
+  const v1 = PVE.verificar(conta, comEstranho, Date.now());
+  ok(v1 && v1.motivo === 'time_invalido', 'P4: replay com deus não possuído e não emprestável é RECUSADO (' + (v1 && v1.motivo) + ')');
+  // time de starters (emprestáveis/possuídos) → monta (verificar vai além da montagem, mas não dá time_invalido)
+  const comStarters = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'ogum', 'tyr'], vida: [{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true}], reviveGasto: [] } });
+  const v2 = PVE.verificar(conta, comStarters, Date.now());
+  ok(!(v2 && v2.motivo === 'time_invalido'), 'P4: time de starters (possuídos/emprestáveis) NÃO é recusado por posse (' + (v2 && v2.motivo || 'ok') + ')');
 }
 
 console.log('');

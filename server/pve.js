@@ -17,6 +17,8 @@ const E = HOST.E, ia = HOST.ia, PROV = HOST.PROV;
 const DOM = require(path.join(__dirname, '..', 'src', 'dominios.js'));   // usa novoEstado do global (posto por motor-host)
 const DADOS = require('./dados-pve.js');
 const ECON = DADOS.ECONOMIA;
+const { INICIAIS } = require(path.join(__dirname, '..', 'src', 'perfil.js'));   // §325 P4: pool de EMPRÉSTIMO (starters)
+const EMPRESTAVEL = new Set(INICIAIS);   // deus emprestável mesmo sem posse (mecanismo da campanha)
 
 const MODOS = ['campanha', 'semanal', 'sandbox', 'desafio', 'dominio'];
 const CAP_CREDITOS = 500;                          // anel de idPartida (dedupe de reenvio da fila offline)
@@ -55,6 +57,14 @@ function _timeValido(conta, time) {
   if (!Array.isArray(time) || time.length !== 3) return false;
   if (new Set(time).size !== 3) return false;
   return time.every(k => typeof k === 'string' && _possui(conta, k));
+}
+// §325 P4: o time de um Domínio é LIVRE (o jogador monta). Cada slot é POSSUÍDO ou EMPRESTADO (starter) —
+// o mesmo mecanismo da campanha (nenhuma corrida é impossível de abrir com coleção vazia). Um deus
+// nem possuído nem emprestável recusa o crédito (replay forjado com deus que o jogador não tem).
+function _timeDominioValido(conta, time) {
+  if (!Array.isArray(time) || time.length !== 3) return false;
+  if (new Set(time).size !== 3) return false;
+  return time.every(k => typeof k === 'string' && (_possui(conta, k) || EMPRESTAVEL.has(k)));
 }
 
 // §323 P2 — NÍVEIS no PvE. O servidor re-monta o kit do jogador com o SNAPSHOT do envelope, mas CONFERE
@@ -208,8 +218,13 @@ function _montarDominio(conta, r) {
   const totalNiveis = (escada.niveis || []).length;
   const nivel = r.run && r.run.nivel;
   if (!(nivel >= 1 && nivel <= totalNiveis)) return { erro: 'dominio_nivel_invalido' };
+  // §325 P4: o TIME do jogador vem do replay e é validado por POSSE/EMPRÉSTIMO. A re-simulação usa ESTE
+  // time (run.time); sem ele, domMontarBatalha cairia no trio icônico INIMIGO — não bate com o cliente.
+  const time = r.run && r.run.time;
+  if (!_timeDominioValido(conta, time)) return { erro: 'time_invalido' };
   // saneia a corrida que o cliente traz (bounds — só pode PIORAR, nunca criar vantagem além do teto)
   const run = {
+    time: time.slice(),
     nivel,
     bonus: Math.max(0, Math.min(DOM.DOM_TETO_BONUS, (r.run && r.run.bonus) || 0)),
     vida: (r.run && Array.isArray(r.run.vida)) ? r.run.vida.slice(0, 3).map(c => ({ hp: Math.max(0, (c && c.hp) || 0), vivo: !!(c && c.vivo) })) : [{ hp: 999, vivo: true }, { hp: 999, vivo: true }, { hp: 999, vivo: true }],

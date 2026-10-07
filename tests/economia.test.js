@@ -229,7 +229,7 @@ console.log('== ETAPA 2: PvE pago por replay (crédito autoritativo no servidor)
   const c = novaConta();
   const lad = DADOS.dominioLadder('grega');
   const esc = DOM.domEscadaSemana(lad, 0);
-  const run = { nivel: 1, bonus: 0, semanaIdx: 0, vida: [{ hp: 999, vivo: true }, { hp: 999, vivo: true }, { hp: 999, vivo: true }], reviveGasto: [] };
+  const run = { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'nezha', 'ogum'], vida: [{ hp: 999, vivo: true }, { hp: 999, vivo: true }, { hp: 999, vivo: true }], reviveGasto: [] };   // §325: o jogador monta o time (starters possuídos; vence o n1 sob a IA do replay)
   const j = jogar(() => DOM.domMontarBatalha(run, esc, { seed: (1 * 7919) >>> 0 }));
   ok(j.venceu, 'domínio grega n1: vence (pré-condição)');
   const rep = () => ({ modo: 'dominio', cultura: 'grega', runId: 'runA', run: run, ops: j.ops, idPartida: idNovo() });

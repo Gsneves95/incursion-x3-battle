@@ -822,8 +822,13 @@ function novaUnidade(key, idx, lado, catalogo) {
 // byte). Com níveis, monta o catálogo EFETIVO de cada lado; se os dois coincidirem (ex.: tudo nv1),
 // o catId volta a ser ESCALAR e a partida é idêntica à base (regressão zero).
 function novoEstado(timeA, timeB, seed = 1, comeca = 0, energia = null, catalogo = catalogoAtivo(), niveis = null) {
-  const catA = niveis ? catalogoEfetivo(catalogo, niveis[0]) : catalogo;
-  const catB = niveis ? catalogoEfetivo(catalogo, niveis[1]) : catalogo;
+  // §325: `catalogo` pode ser POR-LADO [catLado0, catLado1] (um deus que esteja nos DOIS lados com
+  // kits DIFERENTES — ex.: Domínios, jogador trazendo um deus da própria cultura que também é inimigo).
+  // Escalar (o caso de sempre) = um objeto só → os dois lados leem o MESMO catálogo (regressão zero).
+  const base0 = Array.isArray(catalogo) ? catalogo[0] : catalogo;
+  const base1 = Array.isArray(catalogo) ? catalogo[1] : catalogo;
+  const catA = niveis ? catalogoEfetivo(base0, niveis[0]) : base0;
+  const catB = niveis ? catalogoEfetivo(base1, niveis[1]) : base1;
   const idA = registrarCatalogo(catA), idB = registrarCatalogo(catB);   // snapshot congelado, indexado por conteúdo
   const catId = (idA === idB) ? idA : [idA, idB];   // ESCALAR quando iguais (o caso de sempre)
   const st = {

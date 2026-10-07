@@ -25,6 +25,7 @@ let campanha=null, campanhaFim=null;
 // (a escada em jogo), `dominioFim` = o resultado do nível já decidido (uma vez só). A corrida
 // em si (nivel/vida/bônus/rede) PERSISTE run-scoped em perfil.dominios.run — aqui só a batalha.
 let dominio=null, dominioFim=null;
+let domTimePick=[];   // §325: seleção do TIME antes de iniciar a corrida (time livre, com empréstimo de starters)
 
 // Perfil do jogador (persistido; ver src/perfil.js + src/armazenamento.js). Carregado
 // no bootstrap; a F0.4b liga o pity do gacha a ele.
@@ -172,6 +173,7 @@ registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensi
 registrar('dominios',  { render: renderDominios });    // §274: a TELA DE SELEÇÃO dos cinco Domínios
 registrar('dominio',   { render: renderDominioHub });  // §274: o HUB/entrada de UM Domínio (params.cultura)
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
+registrar('dominiomontar',{ render: renderDominioMontarTime }); // §325: MONTAR TIME antes de iniciar a corrida (time livre, empréstimo)
 registrar('composicao',{ render: renderDesafios });     // F3.6/§213: desafios de composição (sub-tela do hub)
 registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra
 registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)

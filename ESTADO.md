@@ -2,6 +2,31 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §325 · DOMÍNIOS: time livre do jogador + inimigos da cultura
+
+Inverte o "trio fixo / sem montar time" do §273. **O jogador MONTA o time; TODOS os inimigos (comuns E chefes)
+são da CULTURA do Domínio.** A régua não é mais um trio fixo.
+- **Régua (§325 F):** `dificuldade[n] = 1 − média de vitória` (vida cheia, IA v2, no danoMult da faixa) de um
+  **conjunto fixo de 6 TIMES DE REFERÊNCIA** (`regua.times`, determinísticos — menor raridade somada + cobertura
+  de funções, estilo `ref_composicao.js` ETAPA D), média sobre times × 8 seeds. **Mesmo método e mesma régua nas
+  5 culturas** (sem ajuste por cultura). `capComum` 0.45 medido contra a média dos refs.
+- **Escada:** nv40 = trio ICÔNICO da cultura; chefes 10/20/30 = trios da cultura em dureza crescente (percentil);
+  comuns na rampa-alvo com **janela de variedade** (não repete trio inimigo em 6 níveis). Monotonia selada por
+  construção (`difFinal = max(dif, prev)`). `tools/gerar_dominios.js [--todas]` — DADO em `data/dominios/*.json`.
+- **Motor:** `run.time` (o time montado, TRAVADO pela corrida — regra B); **catálogos POR LADO** (`domCatalogosPorLado`
+  / `novoEstado([catJog,catIni])`) — o jogador pode trazer um deus da própria cultura que também é inimigo, cada lado
+  com seu kit (jogador escala por bônus, inimigo por danoMult). Resto da corrida intocado (cura, prêmio, teto +50%,
+  reviver 1×, ciclo semanal, recordes).
+- **Portões (falham o build):** P1 inimigo = cultura (`domValidarLadder`); P2 monotonia; **P3** nv1 vencível pelo
+  time mais barato sob v2 vida cheia (`tools/dominio_p3_guard.js`, SIMULADO no build); **P4** servidor recusa replay
+  com deus nem possuído nem emprestável (`_timeDominioValido`, empréstimo = starters INICIAIS).
+- **Tela:** HUB mostra o trio icônico como **CHEFE FINAL (inimigo)**; passo **"Montar time"** (reusa o componente da
+  campanha — rota `dominiomontar`) antes de começar; corrida ativa mostra o time travado; saídas/Android-back/§240 ok.
+- **Perfil v6→v7:** a corrida do modo antigo (sem `run.time`) **encerra na migração** (run:null); `melhorSempre` e
+  `semanas` (recordes) **preservados**.
+- **Relatório por cultura** (8 sem, seeds 8/pool 6): trios distintos/escada, chefes, piso por time, tempo — em
+  `docs/dominios-325.md`. Geração total ~16 min. Suíte + build **verdes**.
+
 ## ★ §324 P3b · regras de desenho R1/R2 + refazer só os violadores
 
 `docs/kits-324-p3-mudancas.md`. Duas regras do dono, agora guardas permanentes (CLAUDE.md):

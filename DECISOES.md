@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §325 · DOMÍNIOS: o jogador monta o time; os inimigos são da cultura
+
+**Decidido (inverte o "trio fixo / sem montar time" do §273):**
+1. **O jogador MONTA o time** (3 deuses) antes de cada corrida. O time **trava pela corrida** (a vida carrega por
+   deus; só troca ao abrir uma corrida nova). A corrida grava o time (`run.time`); retomar usa o time gravado.
+2. **TODOS os inimigos (comuns E chefes) são deuses da CULTURA do Domínio** (`faccao`). O nv40 é o trio **ICÔNICO**
+   da cultura; os chefes 10/20/30 são trios da cultura em dureza crescente, escolhidos pelo gerador.
+
+**A régua, sem trio fixo (a parte nova — §325 F).** A dificuldade de um nível não pode mais ser "1 − vitória de UM
+trio", porque não há trio fixo. Ela passa a ser **1 − média de vitória de um CONJUNTO FIXO de TIMES DE REFERÊNCIA**
+(`regua.times`), vida cheia, IA v2, no danoMult da faixa, média sobre times × seeds. Os times são **gerados por regra
+determinística** (menor raridade somada + cobertura das funções, no estilo de `tools/ref_composicao.js` ETAPA D) —
+"o que um jogador de início montaria". **Mesmo método e mesma régua nas 5 culturas** (sem calibrar parâmetro por
+cultura, por decisão do dono). O `capComum` (0.45) é medido contra a média dos refs.
+- **Alternativa recusada:** calibrar a régua por cultura (para "emparelhar" o nº de comuns). Recusada: quebraria a
+  comparabilidade entre Domínios e abriria a porta para afinar número por número. A dureza real de cada cultura
+  (a Chinesa tem 9 deuses de elite → só 7 trios comuns; a Egípcia, 14 → 59) é uma PROPRIEDADE do dado, reportada
+  com honestidade, não um defeito a mascarar.
+
+**Catálogos POR LADO (a colisão que a regra A criou).** A regra A deixa o jogador trazer um deus da PRÓPRIA cultura
+do Domínio — que também pode ser inimigo no mesmo nível. Com um catálogo único escalado por chave, o mesmo deus nos
+dois lados colidiria (o bônus do jogador contaminaria o inimigo e vice-versa). Solução: `domCatalogosPorLado` devolve
+`[catJogador, catInimigo]` e `novoEstado` aceita catálogo **por-lado** (o motor já lia `catId` por lado em `kitDe`);
+o jogador escala por bônus, o inimigo por danoMult, cada um no seu catálogo. (Nada muda fora de Domínios: catálogo
+único continua o caminho padrão.)
+
+**Portões (falham o build, não são relatório):**
+- **P1** — todo inimigo de `data/dominios/<cultura>.json` tem `faccao` = a cultura do arquivo (`domValidarLadder`).
+- **P2** — escada monotônica (selada por construção: `difFinal = max(dif, prev)`).
+- **P3** — o nv1 de cada cultura é vencível, sob v2 vida cheia, pelo time de referência **mais barato**
+  (`tools/dominio_p3_guard.js`, **simulado no build** — re-verifica o dado, não lê carimbo). As 5 passam (79–100%).
+- **P4** — o servidor recusa replay de Domínio com deus **nem possuído nem emprestável** e credita com time válido
+  (`_timeDominioValido`: posse OU starter `INICIAIS` — o mesmo empréstimo da campanha; nenhuma corrida é impossível
+  de abrir com coleção vazia). A re-simulação usa o `run.time` do envelope.
+
+**Piso raso é esperado, não bug.** Os times de referência são de propósito os mais fracos (coleção de início). O
+"piso" medido (nível médio que cada ref alcança numa corrida com vida carregando) fica em ~1 em todas as culturas:
+as cheias de A perdem vida e caem cedo contra deuses de elite da cultura. É a consequência honesta de medir contra
+uma coleção de início; o P3 (nv1 vencível pelo mais barato, vida cheia) separa "começo justo" de "corrida funda".
+
+**Migração de perfil v6→v7:** a corrida do modo antigo (trio fixo, sem `run.time`) **encerra** (run:null) — não é
+retomável no novo modo. `melhorSempre` e os recordes semanais são **preservados**.
+
+Relatório por cultura em `docs/dominios-325.md`. **NÃO se tocou** em kits/HP/outros modos/economia/campanha/Ritos.
+
 ## §324 P3b · duas regras de desenho (R1/R2) + refazer só os violadores
 
 Relatório `docs/kits-324-p3-mudancas.md`. Duas regras do dono viram guardas permanentes (CLAUDE.md):

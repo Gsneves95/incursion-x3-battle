@@ -182,6 +182,7 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     dominios:     "ir('dominios')",        // §274: tela de SELEÇÃO dos Domínios — sai por ‹ Início
     dominio:      "ir('dominio',{cultura:'grega'})",   // §274: HUB de um Domínio — sai por ‹ Voltar
     montartime:   "ir('montartime',{id:CAMPANHA.encontros[0].id})",
+    dominiomontar:"ir('dominiomontar',{cultura:'grega'})",   // §325: MONTAR TIME — sai por ‹ Voltar ao HUB, e o hub à home (duas etapas)
     desafios:     "ir('desafios')",        // §213: hub de Desafios (pergaminhos+semanal+composição)
     composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)
     desafiomontar:"ir('desafiomontar',{id:COMPOSICAO.desafios[0].id})",
@@ -207,6 +208,15 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
           if (!d.querySelector(sel)) { semSaida.push('batalha:' + sel); vivo = false; break; }
           w.eval(`document.querySelector('${sel}').click()`);
         }
+      }
+    } else if (r === 'dominiomontar') {
+      // §325: MONTAR TIME sai para o HUB do Domínio, e o hub sai para a home — duas etapas.
+      if (!d.querySelector('#bvoltar')) { semSaida.push('dominiomontar:#bvoltar'); vivo = false; }
+      else {
+        w.eval("document.querySelector('#bvoltar').click()");   // montar → hub
+        if (w.eval("rotaAtual()") !== 'dominio') { naoChegou.push('dominiomontar→' + w.eval('rotaAtual()') + ' (esperava o hub)'); vivo = false; }
+        else if (!d.querySelector('#bvoltar')) { semSaida.push('dominiomontar:hub#bvoltar'); vivo = false; }
+        else w.eval("document.querySelector('#bvoltar').click()");   // hub → home
       }
     } else if (r === 'niveis') {
       // §319c: a tela de NÍVEIS sai para a FICHA do deus ('deus'), e a ficha sai para a home — duas etapas.

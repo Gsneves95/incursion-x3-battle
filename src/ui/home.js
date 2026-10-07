@@ -3226,7 +3226,11 @@ function renderDominioHub(){
   const c = String(lad.cultura).toLowerCase();
   const run = dominioRun(c), sem = semanaInfo(lad), total = domTotalNiveis(lad);
   const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt), melhor = dominioMelhor(c);
-  const trioHTML = lad.trio.map((k, i) => dominioFichaHTML(k, run && run.vida ? run.vida[i] : { hp: (GODS[lad.trio[i]] && GODS[lad.trio[i]].hp) || 120, vivo: true })).join('');
+  // §325: o TIME do jogador (travado pela corrida, regra B) mostra a vida que carrega; o trio ICÔNICO é o
+  // chefe final INIMIGO da cultura (mostrado como ameaça, sem vida do jogador).
+  const timeDaRun = (run && run.time && run.time.length === 3) ? run.time : null;
+  const timeTrioHTML = timeDaRun ? timeDaRun.map((k, i) => dominioFichaHTML(k, run.vida ? run.vida[i] : { hp: (GODS[k] && GODS[k].hp) || 120, vivo: true })).join('') : '';
+  const inimigoTrioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
   // bloco de recordes (semana · anterior a bater · melhor de sempre) — comum a vários estados
   const recordesHTML = `<div class="domsec__linha"><span>Recorde desta semana</span><b>${recSem > 0 ? 'nível ' + recSem : '—'}</b></div>
       <div class="domsec__linha"><span>Recorde anterior (a bater)</span><b>${recAnt > 0 ? 'nível ' + recAnt : '— 1ª semana'}</b></div>
@@ -3251,7 +3255,8 @@ function renderDominioHub(){
       <div class="domsec__linha"><span>Nível atual</span><b>${run.nivel} / ${total}</b></div>
       ${recordesHTML}
       <div class="domsec__linha"><span>Bônus de dano</span><b>+${bonusPct}%</b></div>
-      <div class="domtrio">${trioHTML}</div>
+      <div class="domsec__rot">Seu time (travado nesta corrida)</div>
+      <div class="domtrio">${timeTrioHTML}</div>
       <button class="b b--primary b--lg" id="ddescer">Descer ao nível ${run.nivel} ›</button>
     </div>`;
   } else if (run && run.status === 'morto'){
@@ -3267,9 +3272,10 @@ function renderDominioHub(){
   } else {
     corpo = `<div class="domsec">
       ${recordesHTML}
-      <p class="domsec__msg">Três deuses definidos, iguais para todos. Desça a <b>escada da semana</b>: cada nível é uma batalha 3×3, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. Bata o seu recorde da semana passada. Sem montar time — só a mão.</p>
-      <div class="domtrio">${trioHTML}</div>
-      <button class="b b--primary b--lg" id="dentrar">Entrar no Domínio</button></div>`;
+      <p class="domsec__msg">Você <b>monta o seu time</b> e desce a <b>escada da semana</b>: cada nível é uma batalha 3×3 contra deuses ${H(lad.cultura)}, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. O time trava pela corrida. Bata o seu recorde da semana passada.</p>
+      <div class="domsec__rot">Chefe final do Domínio</div>
+      <div class="domtrio">${inimigoTrioHTML}</div>
+      <button class="b b--primary b--lg" id="dentrar">Montar time e começar ›</button></div>`;
   }
 
   stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
@@ -3287,23 +3293,80 @@ function renderDominioHub(){
 
   const q = s => stage.querySelector(s);
   const b = q('#bvoltar'); if (b) b.onclick = () => { if (!voltar()) ir('dominios', {}, { substituir: true }); render(); };
-  const en = q('#dentrar'); if (en) en.onclick = () => iniciarCorridaDominio(c);
-  const nv = q('#dnova'); if (nv) nv.onclick = () => iniciarCorridaDominio(c);
+  // §325: o passo MONTAR TIME é transitório (substitui o hub na pilha, como a batalha entrava no modo antigo) —
+  // mantém a pilha rasa (dominios → batalha) e o "voltar" do Android/§240 volta à SELEÇÃO sem hub duplicado.
+  const en = q('#dentrar'); if (en) en.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
+  const nv = q('#dnova'); if (nv) nv.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const de = q('#ddescer'); if (de) de.onclick = () => descerDominio(c);
   [...stage.querySelectorAll('.dompremio')].forEach(btn => { btn.onclick = () => escolherPremioDominio(c, btn.getAttribute('data-premio')); });
   fit();
 }
 
 /* ---------- lançar a batalha de um nível (por cultura, na ESCADA DA SEMANA) ---------- */
-function iniciarCorridaDominio(cultura){
+function iniciarCorridaDominio(cultura, time){
   const lad = dominioPorCultura(cultura); if (!lad) return;
   const c = String(cultura).toLowerCase(), sem = semanaInfo(lad);
-  // a corrida carrega A SUA semana (índice + chave) e a MARCA a bater (recorde da semana anterior)
-  const run = domNovaCorrida(lad, sem.idx, sem.chave, recSemanaDominio(c, sem.chaveAnt));
+  if (!(Array.isArray(time) && time.length === 3)) { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); return; }   // §325: sem time montado → volta ao montador
+  // §325: a corrida carrega A SUA semana (índice + chave), a MARCA a bater (recorde da semana anterior) e o
+  // TIME que o jogador montou (travado pela corrida, regra B).
+  const run = domNovaCorrida(lad, sem.idx, sem.chave, recSemanaDominio(c, sem.chaveAnt), time.slice());
   run.id = 'dom_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);   // §318 F2 E2: id da corrida (teto de Essência POR CORRIDA no servidor)
   salvarRunDominio(c, run);
   iniciarNivelDominio(c);
 }
+/* ---------- §325: MONTAR TIME antes da corrida (rota 'dominiomontar', params.cultura) ----------
+   Reusa o componente de escolha de time da campanha (mesmas classes ctile/cgrid/cmontarpe): o jogador
+   monta 3 deuses SEUS. Os starters (INICIAIS) são sempre possuídos → nenhuma corrida é impossível de abrir
+   (regra A/empréstimo). O time TRAVA pela corrida (regra B). Mostra o chefe final INIMIGO como ameaça. */
+function renderDominioMontarTime(){
+  const c = String(((paramsAtuais() || {}).cultura) || '').toLowerCase();
+  const lad = dominioPorCultura(c);
+  if (!lad){ sairDominio(); ir('dominios', {}, { substituir: true }); render(); return; }
+  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
+  const tile = k => {
+    const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    const on = domTimePick.includes(k);
+    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}">
+      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
+      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
+      ${on ? `<span class="ctile__mark">${domTimePick.indexOf(k) + 1}</span>` : ''}
+      <span class="ctile__n">${H(g.nome)}</span>
+    </button>`;
+  };
+  const inimigoTrioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
+  const pronto = domTimePick.length === 3;
+  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
+  <div class="tela">
+    <header class="tela__cab">
+      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
+      <h1 class="tela__titulo">Monte seu time</h1>
+      <span class="tela__cont">${domTimePick.length}/3</span>
+    </header>
+    <div class="tela__rol">
+      <div class="ccap"><h2>${H(lad.nome)}</h2><p>Três deuses seus para descer a escada ${H(lad.cultura)}. O time trava pela corrida.</p></div>
+      <div class="domsec__rot">Chefe final do Domínio</div>
+      <div class="domtrio">${inimigoTrioHTML}</div>
+      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
+    </div>
+    <div class="cmontarpe">
+      <button class="b b--primary b--lg" id="bcomecar" ${pronto ? '' : 'disabled'}>Começar corrida${pronto ? '' : ` (${domTimePick.length}/3)`}</button>
+    </div>
+  </div>
+  </div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { ir('dominio', { cultura: c }, { substituir: true }); render(); };   // §325: Voltar devolve ao HUB (montar substituiu o hub)
+  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
+    b.onclick = () => {
+      const k = b.dataset.pick, j = domTimePick.indexOf(k);
+      if (j >= 0) domTimePick.splice(j, 1); else if (domTimePick.length < 3) domTimePick.push(k);
+      render();
+    };
+  });
+  const bc = stage.querySelector('#bcomecar');
+  if (bc && pronto) bc.onclick = () => iniciarCorridaDominio(c, domTimePick.slice());
+  fit();
+}
+
 function descerDominio(cultura){ iniciarNivelDominio(cultura); }
 function iniciarNivelDominio(cultura){
   const c = String(cultura).toLowerCase(), lad = dominioPorCultura(c), run = dominioRun(c);
@@ -3313,10 +3376,11 @@ function iniciarNivelDominio(cultura){
   dominioFim = null;
   prova = null; provaFim = null; provaLances = 0; campanha = null; campanhaFim = null;
   vsCPU = true;
-  const nvDom = niveisTimeLocal(escada.trio);   // §323 P2: níveis do jogador no trio do Domínio
+  const timeRun = (run.time && run.time.length === 3) ? run.time : escada.trio;   // §325: níveis/replay do TIME do jogador
+  const nvDom = niveisTimeLocal(timeRun);   // §323 P2: níveis do jogador no SEU time (não no trio inimigo)
   if (typeof definirNiveisBatalha === 'function') definirNiveisBatalha(nvDom);
   st = domMontarBatalha(run, escada, { seed: (run.nivel * 7919) >>> 0 || 1, niveis: nvDom ? [nvDom, {}] : null });
-  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2: estado da corrida ANTES do nível
+  if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'dominio', cultura: c, runId: run.id || '', run: { nivel: run.nivel, bonus: run.bonus, semanaIdx: run.semanaIdx, time: (run.time || []).slice(), vida: JSON.parse(JSON.stringify(run.vida || [])), reviveGasto: (run.reviveGasto || []).slice() } });   // §318 F2 E2 + §325 P4: estado da corrida ANTES do nível (inclui o TIME p/ a re-simulação do servidor)
   if (typeof definirIaVersao === 'function') definirIaVersao(iaVersaoDeModo('dominio'));   // §322 P3: Domínios usam v2 (sem solução fixa)
   ir('batalha', {}, { substituir: true });
   render();
@@ -3365,7 +3429,8 @@ function dominioResultadoOverlay(){
   if (!dominio || !dominioFim) return '';
   const f = dominioFim, lad = dominio.ladder, run = dominioRun(dominio.cultura);
   const total = (dominio.escada && dominio.escada.niveis.length) || domTotalNiveis(lad);
-  const vidaHTML = run ? `<div class="domtrio domtrio--result">${lad.trio.map((k, i) => dominioFichaHTML(k, run.vida[i])).join('')}</div>` : '';
+  const timeRun = (run && run.time && run.time.length === 3) ? run.time : (run ? lad.trio : null);   // §325: a vida final é do TIME do jogador
+  const vidaHTML = run ? `<div class="domtrio domtrio--result">${timeRun.map((k, i) => dominioFichaHTML(k, run.vida[i])).join('')}</div>` : '';
   let selo, titulo, msg, acoes, cls = f.venceu ? 'venceu' : 'hp';
   if (f.completou){
     selo = H(lad.nome); titulo = 'DOMÍNIO CONQUISTADO'; msg = 'Você desceu os ' + total + ' níveis da semana. A corrida se encerra no topo.';
