@@ -234,7 +234,7 @@ function gerar(CFG, REF) {
     faixa: CFG.faixa, rampaDano: CFG.rampaDano, curaPorNivel: CFG.curaPorNivel,
     tetoBonusDano: D.DOM_TETO_BONUS, passoBonusDano: D.DOM_PASSO_BONUS, tolMonotonia: CFG.tolMonotonia,
     regua: {
-      metodo: '§325b: 1 − média de vitória (vida cheia, IA v2) dos 6 times de referência (2 fracos/2 médios/2 fortes por força v2 do §324), no danoMult da faixa',
+      metodo: '1 − média de vitória (vida cheia, IA v2) dos 6 times de referência (2 fracos/2 médios/2 fortes por força v2), no danoMult da faixa',
       seeds: SEEDS, times: refTimes, faixas: REF.faixas, p3Time: REF.p3Time,
     },
     semanas,

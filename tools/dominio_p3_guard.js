@@ -25,8 +25,10 @@ function _jogo(time, inimigos, seed, danoMult) {
 
 // devolve { tx, vit, seeds, cheapest, nv1 } da semana 0 (a cultura é a mesma em todas as semanas; o nv1 é o comum mais fácil).
 function medir(ladder, seeds = 24) {
-  const times = (ladder.regua && ladder.regua.times) || [];
-  const cheapest = times[0];
+  const reg = ladder.regua || {};
+  // §325b: o P3 usa o MELHOR trio formável SÓ com os INICIAIS (o que o jogador novo tem), gravado em regua.p3Time.
+  // Fallback para regua.times[0] (dado §325 antigo, sem p3Time).
+  const cheapest = (Array.isArray(reg.p3Time) && reg.p3Time.length === 3) ? reg.p3Time : (reg.times || [])[0];
   const sem0 = (ladder.semanas || [])[0] || { niveis: ladder.niveis || [] };
   const nv1 = sem0.niveis[0];
   if (!cheapest || !nv1) return { tx: 0, vit: 0, seeds, cheapest, nv1: nv1 && nv1.inimigos };
@@ -39,8 +41,8 @@ function medir(ladder, seeds = 24) {
 function validar(ladder, seeds = 24) {
   const nome = (ladder && ladder.cultura) || '(sem cultura)';
   const r = medir(ladder, seeds);
-  if (!r.cheapest) return [`${nome}: regua.times ausente — sem time de referência para o P3 (§325 F)`];
-  if (!(r.tx > 0.5)) return [`${nome}: nível 1 NÃO vencível pelo time mais barato (${r.cheapest.join('+')}) sob v2 vida cheia: ${(r.tx * 100).toFixed(0)}% (${r.vit}/${r.seeds}) — §325 P3`];
+  if (!r.cheapest) return [`${nome}: regua.p3Time/times ausente — sem trio de iniciais para o P3 (§325b)`];
+  if (!(r.tx > 0.5)) return [`${nome}: nível 1 NÃO vencível pelo melhor trio de INICIAIS (${r.cheapest.join('+')}) sob v2 vida cheia: ${(r.tx * 100).toFixed(0)}% (${r.vit}/${r.seeds}) — §325 P3`];
   return [];
 }
 

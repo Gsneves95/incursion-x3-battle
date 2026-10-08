@@ -445,7 +445,7 @@ console.log('== 15) §325: a corrida usa o TIME DO JOGADOR (run.time), travado; 
   } else ok(true, '(nenhum nível com zeus inimigo nesta semana — colisão não exercitada, tudo bem)');
 }
 
-console.log('== 16) §325 P3: o nível 1 de cada cultura é vencível pelo time de referência MAIS BARATO (v2, vida cheia) ==');
+console.log('== 16) §325 P3: o nível 1 de cada cultura é vencível pelo melhor trio de INICIAIS (v2, vida cheia) ==');
 {
   const P3 = require(path.join(__dirname, '..', 'tools', 'dominio_p3_guard.js'));
   const files = ['grega', 'nórdica', 'egípcia', 'japonesa', 'chinesa'];
@@ -455,7 +455,7 @@ console.log('== 16) §325 P3: o nível 1 de cada cultura é vencível pelo time 
     const erros = P3.validar(lad, 16);   // 16 seeds: o mesmo portão do build (24) com margem p/ a suíte
     if (erros.length) reprovadas.push(f0 + ': ' + erros[0]);
   }
-  ok(reprovadas.length === 0, 'as 5 culturas passam o portão P3 (nv1 vencível pelo mais barato)' + (reprovadas.length ? ' — ' + reprovadas.join(' | ') : ''));
+  ok(reprovadas.length === 0, 'as 5 culturas passam o portão P3 (nv1 vencível pelo melhor trio de INICIAIS)' + (reprovadas.length ? ' — ' + reprovadas.join(' | ') : ''));
 }
 
 console.log('== 17) §325 P4: o servidor recusa replay de Domínio com deus NEM possuído NEM emprestável; com time ok, monta ==');
@@ -474,6 +474,51 @@ console.log('== 17) §325 P4: o servidor recusa replay de Domínio com deus NEM 
   const comStarters = Object.assign({}, base, { run: { nivel: 1, bonus: 0, semanaIdx: 0, time: ['zeus', 'ogum', 'tyr'], vida: [{hp:999,vivo:true},{hp:999,vivo:true},{hp:999,vivo:true}], reviveGasto: [] } });
   const v2 = PVE.verificar(conta, comStarters, Date.now());
   ok(!(v2 && v2.motivo === 'time_invalido'), 'P4: time de starters (possuídos/emprestáveis) NÃO é recusado por posse (' + (v2 && v2.motivo || 'ok') + ')');
+}
+
+console.log('== 18) §325b: conjunto de referência — 6 times em 3 faixas, 18 distintos fora das culturas, cobre 5 funções ==');
+{
+  const files = ['grega', 'nórdica', 'egípcia', 'japonesa', 'chinesa'];
+  const DOM = new Set(['Grega', 'Nórdica', 'Egípcia', 'Japonesa', 'Chinesa']);
+  const INICIAIS = require(path.join(__dirname, '..', 'src', 'perfil.js')).INICIAIS;
+  // a régua é IDÊNTICA nas 5 culturas (§325b): mesmos times, faixas e p3Time
+  const reguas = files.map(f0 => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', f0 + '.json'), 'utf8')).regua);
+  const r0 = reguas[0];
+  ok(Array.isArray(r0.times) && r0.times.length === 6, 'a régua tem 6 times de referência');
+  ok(Array.isArray(r0.faixas) && r0.faixas.length === 6, 'a régua tem 6 faixas (paralelas aos times)');
+  const porFaixa = {}; r0.faixas.forEach(x => porFaixa[x.faixa] = (porFaixa[x.faixa] || 0) + 1);
+  ok(porFaixa.fraco === 2 && porFaixa.medio === 2 && porFaixa.forte === 2, '2 times fracos, 2 médios, 2 fortes (' + JSON.stringify(porFaixa) + ')');
+  // força crescente: fortes > médios > fracos (pela força média gravada)
+  const mediaFaixa = fx => { const v = r0.faixas.filter(x => x.faixa === fx).map(x => x.forca); return v.reduce((a, b) => a + b, 0) / v.length; };
+  ok(mediaFaixa('forte') > mediaFaixa('medio') && mediaFaixa('medio') > mediaFaixa('fraco'), `força forte>médio>fraco (${mediaFaixa('forte').toFixed(0)}>${mediaFaixa('medio').toFixed(0)}>${mediaFaixa('fraco').toFixed(0)})`);
+  const todos = r0.times.flat();
+  ok(new Set(todos).size === 18, '18 deuses distintos (nenhum repete entre os 6 times) — tem ' + new Set(todos).size);
+  ok(todos.every(k => GODS[k] && !DOM.has(GODS[k].faccao)), 'todos os 18 refs estão FORA das 5 culturas de Domínio (nenhum ref é também inimigo)');
+  ok(new Set(todos.map(k => GODS[k].funcao)).size === 5, 'o conjunto cobre as 5 funções');
+  ok(r0.times.every(t => new Set(t.map(k => GODS[k].funcao)).size >= 2), 'cada time tem ≥2 funções diferentes');
+  ok(Array.isArray(r0.p3Time) && r0.p3Time.length === 3 && r0.p3Time.every(k => INICIAIS.includes(k)), 'regua.p3Time é um trio formável SÓ com INICIAIS (' + (r0.p3Time || []).join('+') + ')');
+  // régua idêntica nas 5 culturas
+  const mesma = reguas.every(r => JSON.stringify(r.times) === JSON.stringify(r0.times) && JSON.stringify(r.p3Time) === JSON.stringify(r0.p3Time));
+  ok(mesma, 'a régua (times + p3Time) é IDÊNTICA nas 5 culturas');
+}
+
+console.log('== 19) §325b P5: variedade dos COMUNS — ≥70% dos deuses, nenhum trio >12×, distância ≥5 por semana ==');
+{
+  const P5 = require(path.join(__dirname, '..', 'tools', 'dominio_p5_guard.js'));
+  const godsMapa = {}; for (const k of Object.keys(GODS)) godsMapa[k] = { faccao: GODS[k].faccao };
+  const files = ['grega', 'nórdica', 'egípcia', 'japonesa', 'chinesa'];
+  let reprovadas = [];
+  for (const f0 of files) {
+    const lad = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', f0 + '.json'), 'utf8'));
+    const erros = P5.validar(lad, godsMapa);
+    if (erros.length) reprovadas.push(erros[0]);
+  }
+  ok(reprovadas.length === 0, 'as 5 culturas passam o portão P5 (variedade)' + (reprovadas.length ? ' — ' + reprovadas.join(' | ') : ''));
+  // a guarda MORDE: uma escada com um trio repetido 99× falha
+  const mau = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'dominios', 'grega.json'), 'utf8'));
+  const trio = mau.semanas[0].niveis.find(l => !l.chefe).inimigos;
+  for (const s of mau.semanas) for (const lv of s.niveis) if (!lv.chefe) lv.inimigos = trio.slice();
+  ok(P5.validar(mau, godsMapa).some(e => /P5/.test(e)), 'P5 ACUSA uma escada sem variedade (prova de que morde)');
 }
 
 console.log('');

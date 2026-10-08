@@ -383,18 +383,23 @@ const dominiosObj = (() => {
   const dir = path.join(raiz, 'data', 'dominios');
   if (!fs.existsSync(dir)) return null;
   const { domValidarLadder } = require('../src/dominios.js');
-  const p3 = require('./dominio_p3_guard.js');   // §325 P3: nv1 vencível pelo time mais barato (SIMULADO, v2)
+  const p3 = require('./dominio_p3_guard.js');   // §325 P3: nv1 vencível pelo melhor trio de INICIAIS (SIMULADO, v2)
+  const p5 = require('./dominio_p5_guard.js');   // §325b P5: variedade dos comuns (estrutural)
+  const godsMapa = {}; for (const d of deuses) godsMapa[d.key] = { faccao: d.faccao };
   const catalogoKeys = new Set([...deuses.map(d => d.key), ...bestiarioDados.map(b => b.key)]);
-  const mapa = {}; const erros = []; const errosP3 = [];
+  const mapa = {}; const erros = []; const errosP3 = []; const errosP5 = [];
   for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.json')).sort()) {
     const lad = JSON.parse(ler('data/dominios/' + f));
     erros.push(...domValidarLadder(lad, catalogoKeys));
     mapa[(lad.cultura || f.replace(/\.json$/, '')).toLowerCase()] = lad;
   }
   if (erros.length) { console.error('ERRO de schema de Domínios (§273/§325 P1/P2):\n  ' + erros.join('\n  ')); process.exit(1); }
-  // §325 P3: SÓ simula se o schema (P1/P2) passou — barato (nv1 × time mais barato × 24 seeds × 5 culturas).
+  // §325b P5: variedade dos comuns (estrutural, barato) — roda antes do P3 (que simula).
+  for (const k of Object.keys(mapa)) errosP5.push(...p5.validar(mapa[k], godsMapa));
+  if (errosP5.length) { console.error('ERRO §325b P5 — Domínios (variedade dos comuns):\n  ' + errosP5.join('\n  ')); process.exit(1); }
+  // §325 P3: SÓ simula se o schema (P1/P2) passou — barato (nv1 × melhor trio de INICIAIS × 24 seeds × 5 culturas).
   for (const k of Object.keys(mapa)) errosP3.push(...p3.validar(mapa[k], 24));
-  if (errosP3.length) { console.error('ERRO §325 P3 — Domínios (nv1 vencível pelo time mais barato sob v2):\n  ' + errosP3.join('\n  ')); process.exit(1); }
+  if (errosP3.length) { console.error('ERRO §325 P3 — Domínios (nv1 vencível pelo melhor trio de INICIAIS sob v2):\n  ' + errosP3.join('\n  ')); process.exit(1); }
   return mapa;
 })();
 

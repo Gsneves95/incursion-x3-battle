@@ -51,6 +51,30 @@ retomável no novo modo. `melhorSempre` e os recordes semanais são **preservado
 
 Relatório por cultura em `docs/dominios-325.md`. **NÃO se tocou** em kits/HP/outros modos/economia/campanha/Ritos.
 
+### §325b — consertar o conjunto de referência da régua + portão de variedade
+
+**Defeito do §325 (no dado publicado).** Os 6 times de referência saíram por MENOR RARIDADE em ordem alfabética →
+caíram todos nos mesmos ~7 deuses baratos e fracos (ahpuch, ammit, aquiles, babi, baldur, bennu, boto), sem cobrir as
+funções. Consequências: o `capComum` medido contra esse conjunto fraco baniu quase todos os trios (Chinesa 7 comuns,
+Grega ~20) → a variedade dos COMUNS desabou (um trio chinês aparecia 44×); o piso ficou ~1 em tudo, sem informar nada.
+
+**Correção (decidida, não reabrir):**
+1. **Conjunto de referência por FORÇA v2, não por raridade.** 6 times em **3 FAIXAS** — 2 fracos, 2 médios, 2 fortes
+   (força = wr% do §324 pós-P3b, `docs/kits-forca-v2.txt`). Regra determinística: pool = os 31 deuses **FORA das 5
+   culturas de Domínio** (para nenhum ref ser também inimigo), por força desc; 3 terços; em cada terço, 2 times de 3
+   preferindo **funções distintas** e completando por força. **18 deuses distintos**, o conjunto cobre as **5 funções**,
+   cada time ≥2 funções. Desempate por força (nunca alfabético). Mesmo conjunto nas 5 culturas; gravado em
+   `regua.times` + `regua.faixas` (faixa+força+funções de cada time). **Nenhum ref precisou ser de dentro das culturas.**
+2. A dificuldade segue 1 − média de vitória (v2, vida cheia, danoMult da faixa) sobre os 6; `capComum` 0.45 contra
+   essa média.
+3. **P3 passa a usar o melhor trio formável SÓ com os INICIAIS** (o que o novato tem de verdade): `brigid+ogum+nezha`,
+   gravado em `regua.p3Time`. (Antes o P3 usava `regua.times[0]`, que agora é um time forte, não o do novato.)
+4. **Portão novo P5 — variedade (falha o build)**, contando só comuns, somando as 8 semanas: (a) ≥70% dos deuses da
+   cultura aparecem como inimigos; (b) nenhum trio >12×; (c) por semana, nenhum trio se repete a <5 níveis
+   (`tools/dominio_p5_guard.js`, estrutural). O gerador espalha o uso (menos-usado primeiro) e impõe a distância dura.
+- **Resultado:** as 5 culturas passam P5 — comuns distintos saltam (Chinesa 7→~32, Grega 20→142), **cobertura 100%**
+  dos deuses, **trio máx ≤ 12×**. Relatório em `docs/dominios-325.md`.
+
 ## §324 P3b · duas regras de desenho (R1/R2) + refazer só os violadores
 
 Relatório `docs/kits-324-p3-mudancas.md`. Duas regras do dono viram guardas permanentes (CLAUDE.md):

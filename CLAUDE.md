@@ -474,19 +474,21 @@ parte: temático Maia = faccao Maia; a Egípcia que a missão dele exige é a PO
     ICÔNICO da cultura (`ladder.trio`, agora o CHEFE FINAL INIMIGO, não o jogador); os chefes
     10/20/30 são trios da cultura em dureza crescente. **A régua (§325 F) não é mais um trio
     fixo:** `dificuldade[n] = 1 − média de vitória` (vida cheia, IA v2, no danoMult da faixa)
-    de um CONJUNTO FIXO de TIMES DE REFERÊNCIA (`regua.times`, determinísticos — menor raridade
-    somada + cobertura de funções, estilo `ref_composicao.js` ETAPA D), média sobre times ×
-    seeds; `capComum` 0.45 medido contra a média dos refs. O SORTEIO está PROIBIDO no runtime;
-    a dificuldade sobe por DANO do inimigo em faixa de 10, e a escada é MONOTÔNICA (selada por
-    `difFinal = max(dif, prev)`; a build valida, P2). **Método e régua IDÊNTICOS entre as 5
-    culturas — NÃO se calibra parâmetro por cultura** (a dureza real da cultura é dado, reportado,
-    não mascarado). Domínio novo = arquivo novo (`--todas` gera os cinco). **Portões adicionais:**
-    **P3** — nv1 vencível pelo time de referência MAIS BARATO sob v2 vida cheia
-    (`tools/dominio_p3_guard.js`, SIMULADO no build, re-verifica o dado); **P4** — o servidor
-    recusa replay de Domínio com deus nem possuído nem emprestável (`_timeDominioValido`:
-    posse OU starter `INICIAIS`, o mesmo empréstimo da campanha). **Catálogos POR LADO**
-    (`domCatalogosPorLado`): o time pode conter um deus da cultura que também é inimigo — cada
-    lado tem seu kit (jogador escala por bônus, inimigo por danoMult). O banner de home é o
+    de um CONJUNTO FIXO de TIMES DE REFERÊNCIA (`regua.times`). **§325b: os 6 refs são por FORÇA v2
+    (não raridade): 2 fracos/2 médios/2 fortes, 18 deuses distintos FORA das 5 culturas (nenhum ref
+    é também inimigo), cobrindo as 5 funções** (regra determinística, força desc em terços, funções
+    distintas por força; força de `docs/kits-forca-v2.txt`, gravada em `regua.faixas`). `capComum` 0.45
+    medido contra a média dos 6. O SORTEIO está PROIBIDO no runtime; a dificuldade sobe por DANO do
+    inimigo em faixa de 10, e a escada é MONOTÔNICA (selada por `difFinal = max(dif, prev)`; a build
+    valida, P2). **Método e régua IDÊNTICOS entre as 5 culturas — NÃO se calibra parâmetro por cultura**
+    (a dureza real da cultura é dado, reportado, não mascarado). Domínio novo = arquivo novo (`--todas`
+    gera os cinco). **Portões adicionais:** **P3** — nv1 vencível pelo MELHOR trio só de INICIAIS
+    (`regua.p3Time`, o que o novato tem) sob v2 vida cheia (`tools/dominio_p3_guard.js`, SIMULADO no
+    build); **P4** — o servidor recusa replay com deus nem possuído nem emprestável (`_timeDominioValido`:
+    posse OU starter `INICIAIS`); **§325b P5** — variedade dos COMUNS (`tools/dominio_p5_guard.js`,
+    estrutural): ≥70% dos deuses da cultura aparecem, nenhum trio comum >12×, distância ≥5 por semana.
+    **Catálogos POR LADO** (`domCatalogosPorLado`): o time pode conter um deus da cultura que também é
+    inimigo — cada lado tem seu kit (jogador escala por bônus, inimigo por danoMult). O banner de home é o
     placeholder do §213 até a ILUSTRAÇÃO definitiva `web/banners/dominios.webp`.
 28. **Regras da corrida (medidas, não afrouxe):** o "1× por partida" que RESSUSCITA
     (revive/vidaExtra/auto-renascimento) vira **1× por CORRIDA** — flag

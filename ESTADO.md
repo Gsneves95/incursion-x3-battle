@@ -2,6 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §325b · DOMÍNIOS: conjunto de referência por FORÇA + portão de variedade (P5)
+
+Conserta o defeito do §325 (os 6 times de referência saíram todos de ~7 deuses baratos/fracos em ordem alfabética
+→ `capComum` baniu quase tudo → variedade dos comuns desabou).
+- **Régua por FORÇA v2 (não raridade):** 6 times em **3 faixas** (2 fracos/2 médios/2 fortes), 18 deuses distintos
+  **fora das 5 culturas** (nenhum ref é também inimigo), cobrindo as 5 funções; gravado em `regua.times`+`regua.faixas`.
+  Regra determinística (força desc, terços, funções distintas por força). Força lida de `docs/kits-forca-v2.txt` (§324).
+- **P3 agora usa o melhor trio só de INICIAIS** (`brigid+ogum+nezha`, em `regua.p3Time`) — o que o novato tem.
+- **P5 (portão novo, falha o build):** só comuns, 8 semanas — (a) ≥70% dos deuses da cultura; (b) trio ≤12×;
+  (c) distância ≥5 por semana. `tools/dominio_p5_guard.js`. Gerador espalha o uso + distância dura.
+- **Resultado:** 5 culturas passam P5; comuns distintos saltam (Chinesa 7→32, Grega 20→142), cobertura **100%**,
+  trio máx ≤12×. Relatório em `docs/dominios-325.md`. Suíte + build verdes.
+
 ## ★ §325 · DOMÍNIOS: time livre do jogador + inimigos da cultura
 
 Inverte o "trio fixo / sem montar time" do §273. **O jogador MONTA o time; TODOS os inimigos (comuns E chefes)
