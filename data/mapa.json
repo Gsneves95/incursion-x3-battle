@@ -6,7 +6,7 @@
     { "chave": "desafios",  "rotulo": "Desafios",  "rota": "desafios",  "x": 66.5, "y": 28.0, "contador": "desafios" },
     { "chave": "invocacao", "rotulo": "Invocação", "rota": "invocacao", "x": 82.0, "y": 24.0, "contador": "invocacao", "fundoForte": true },
     { "chave": "colecao",   "rotulo": "Coleção",   "rota": "colecao",   "x": 15.5, "y": 54.0, "contador": "colecao" },
-    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "emBreve": true, "fundoForte": true },
+    { "chave": "dominios",  "rotulo": "Domínios",  "rota": "dominios",  "x": 50.0, "y": 55.0, "fundoForte": true },
     { "chave": "treino",    "rotulo": "Treino",    "rota": "selecao",   "x": 62.5, "y": 51.0, "params": { "novo": true } },
     { "chave": "loja",      "rotulo": "Loja",      "rota": "embreve",   "x": 22.0, "y": 74.0, "emBreve": true, "titulo": "Loja", "fundoForte": true },
     { "chave": "pvp",       "rotulo": "PvP",       "rota": "pvp",       "x": 78.0, "y": 71.0 }

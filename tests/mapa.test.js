@@ -2,7 +2,7 @@
 // espaço de estados (§295): o que NÃO pode acontecer na 1ª tela do jogo.
 //  1) 9 destinos aparecem e cada um abre O SEU modo (Treino = selecao {novo:true}).
 //  2) os 5 contadores mostram DADO REAL (lido do perfil), nunca número escrito no código.
-//  3) os 2 "em breve" (Domínios, Loja) NÃO abrem nada e NÃO parecem defeito (nunca vermelho).
+//  3) §326: só a Loja fica "em breve" (não abre, nunca vermelho); Domínios está destravado e navegável.
 //  4) os ícones ancoram em % DA ARTE → nunca saem das ilhas em nenhuma largura (780..1200).
 //  5) a arte ausente cai no CARROSSEL de hoje (fallback), sem 404 e sem base64 (o pacote não cresce).
 //  6) o espaçamento das ilhas: nenhum par colado (< ~85px de design) na mesma faixa horizontal.
@@ -26,7 +26,7 @@ console.log('== §306 MAPA — 1) 9 destinos, cada um abre o seu modo ==');
   ok(!!$('.mapa') && !$('.hscroll'), 'a home é o MAPA (não o carrossel): .mapa presente, .hscroll ausente');
   ok($$('.ilha').length === 9, `9 ilhas no mapa (tem ${$$('.ilha').length})`);
   // rota esperada por destino (a fonte é data/mapa.json; Treino = selecao com novo:true)
-  const espera = { campanha: 'campanha', provacoes: 'provacoes', desafios: 'desafios', invocacao: 'invocacao', colecao: 'colecao', treino: 'selecao', pvp: 'pvp' };
+  const espera = { campanha: 'campanha', provacoes: 'provacoes', desafios: 'desafios', invocacao: 'invocacao', colecao: 'colecao', dominios: 'dominios', treino: 'selecao', pvp: 'pvp' };   // §326: Domínios destravado
   for (const chave of Object.keys(espera)){
     home();
     const b = $(`.ilha[data-dest="${chave}"]`);
@@ -37,7 +37,7 @@ console.log('== §306 MAPA — 1) 9 destinos, cada um abre o seu modo ==');
     ok(r === espera[chave], `${chave} deveria abrir "${espera[chave]}" (abriu "${r}")`);
     if (chave === 'treino') ok(w.eval('!!paramsAtuais().novo'), 'Treino abre a seleção com novo:true (nova investida)');
   }
-  console.log('  9 ilhas · 7 navegam para o modo certo · Treino=selecao{novo:true}');
+  console.log('  9 ilhas · 8 navegam para o modo certo (Domínios destravado §326) · Treino=selecao{novo:true}');
 }
 
 console.log('== §306 MAPA — 2) os 5 contadores mostram DADO REAL do perfil (não escrito no código) ==');
@@ -68,23 +68,31 @@ console.log('== §306 MAPA — 2) os 5 contadores mostram DADO REAL do perfil (n
   console.log(`  contadores leem o perfil: coleção 0→3/100, pity 0→17/${duro}, campanha 0→1 + barra, desafios=${acervo}`);
 }
 
-console.log('== §306 MAPA — 3) os 2 "em breve" não abrem e não parecem defeito (nunca vermelho) ==');
+console.log('== §306/§326 MAPA — 3) só a Loja fica "em breve"; Domínios está DESTRAVADO e navegável ==');
 {
   home();
   const breve = $$('.ilha--breve');
-  ok(breve.length === 2, `2 ilhas "em breve" (tem ${breve.length})`);
+  ok(breve.length === 1, `1 ilha "em breve" (tem ${breve.length}) — §326 destravou Domínios`);
   const nomes = breve.map(x => x.querySelector('.ilha__nome').textContent).sort().join(',');
-  ok(nomes === 'Domínios,Loja', `as "em breve" são Domínios e Loja (achei: ${nomes})`);
-  ok(breve.every(x => x.tagName === 'DIV' && !x.hasAttribute('data-dest')), 'as "em breve" são <div> sem data-dest (não focam, não navegam)');
-  ok(breve.every(x => !!x.querySelector('.ilha__breveTag')), 'cada "em breve" tem a tag · em breve');
+  ok(nomes === 'Loja', `a única "em breve" é a Loja (achei: ${nomes})`);
+  ok(breve.every(x => x.tagName === 'DIV' && !x.hasAttribute('data-dest')), 'a "em breve" é <div> sem data-dest (não foca, não navega)');
+  ok(breve.every(x => !!x.querySelector('.ilha__breveTag')), 'a "em breve" tem a tag · em breve');
   // NUNCA vermelho: a cor da tag não pode ser um vermelho de erro
   const vermelhas = breve.filter(x => { const c = w.getComputedStyle(x.querySelector('.ilha__breveTag')).color || ''; return /\bred\b|crimson/i.test(c) || /rgb\(\s*(1[89]\d|2\d\d)\s*,\s*([0-5]?\d)\s*,/.test(c); });
   ok(vermelhas.length === 0, 'a tag "em breve" NUNCA é vermelha (§306: indisponível, não defeito)');
-  // clicar numa "em breve" não muda a rota
+  // clicar na "em breve" (Loja) não muda a rota
   w.eval("ir('home',{},{substituir:true}); render();");
   breve[0].dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('rotaAtual()') === 'home', 'clicar numa "em breve" NÃO navega (fica na home)');
-  console.log('  Domínios + Loja: <div> inertes, tag apagada (não vermelha), clique não navega');
+  ok(w.eval('rotaAtual()') === 'home', 'clicar na "em breve" NÃO navega (fica na home)');
+  // §326: a ilha de Domínios está NAVEGÁVEL — <button> com data-dest, sem a classe/tag de "em breve", ícone normal
+  home();
+  const dom = $('.ilha[data-dest="dominios"]');
+  ok(!!dom, 'a ilha de Domínios tem data-dest (é navegável)');
+  ok(dom && dom.tagName === 'BUTTON', 'a ilha de Domínios é um <button> (foca e navega)');
+  ok(dom && !dom.classList.contains('ilha--breve'), 'a ilha de Domínios NÃO tem a classe --breve (ícone sem o apagado/dessaturado)');
+  ok(dom && !dom.querySelector('.ilha__breveTag'), 'a ilha de Domínios NÃO tem a tag · em breve');
+  ok(dom && !!dom.querySelector('img.ilha__ic'), 'a ilha de Domínios mostra o ícone (mapa/dominios.webp)');
+  console.log('  só Loja em breve · Domínios: <button> data-dest, ícone normal, sem tag em breve');
 }
 
 console.log('== §306 MAPA — 4) ícones ancorados em % DA ARTE → nunca saem das ilhas (780..1200) ==');
@@ -196,6 +204,28 @@ console.log('== §306 MAPA — 7) a referência MENTE (§305): sem nível/envelo
   ok(moedasOff.every(m => m === '—'), `desconectado: a barra mostra "—" (achei: ${moedasOff.join(' / ')})`);
   w.eval("contaAtual={perfil:{moedas:{gema:2450,essencia:12360}}}; ir('home',{},{substituir:true}); render();");
   console.log(`  sem nível/envelope/sino · apelido="${$('.mperfil__nick').textContent}" · moedas ${moedas.join(' / ')} (pt-BR)`);
+}
+
+console.log('== §326 e2e — da home à corrida: tocar Domínios → seleção → Olimpo → Montar time; voltar à home ==');
+{
+  const toque = el => el.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  home();
+  toque($('.ilha[data-dest="dominios"]'));
+  ok(w.eval('rotaAtual()') === 'dominios', `tocar a ilha abre a SELEÇÃO de Domínios (abriu "${w.eval('rotaAtual()')}")`);
+  ok($$('.domcard').length === 5, `a seleção mostra os 5 Domínios (tem ${$$('.domcard').length})`);
+  // o voltar da seleção retorna à HOME (a ilha foi aberta a partir da home)
+  toque($('#binicio'));
+  ok(w.eval('rotaAtual()') === 'home', `o voltar da seleção retorna à HOME (foi para "${w.eval('rotaAtual()')}")`);
+  // entrar no Olimpo (grega) leva ao HUB e daí ao passo MONTAR TIME (§325)
+  home();
+  toque($('.ilha[data-dest="dominios"]'));
+  toque($('.domcard[data-cultura="grega"]'));
+  ok(w.eval('rotaAtual()') === 'dominio' && w.eval('(paramsAtuais()||{}).cultura') === 'grega', 'abrir o Olimpo leva ao HUB do Domínio grego');
+  ok(!!$('#dentrar'), 'o hub do Olimpo tem o botão de começar (Montar time e começar)');
+  toque($('#dentrar'));
+  ok(w.eval('rotaAtual()') === 'dominiomontar', `o hub leva ao passo MONTAR TIME (foi para "${w.eval('rotaAtual()')}")`);
+  ok(!!$('.ctile[data-pick]'), 'o passo Montar time mostra a grade de deuses (componente reusado da campanha)');
+  console.log('  home → Domínios(seleção, 5) → Olimpo(hub) → Montar time · voltar da seleção = home');
 }
 
 if (falhas){ console.log(`\n>>> ${falhas} FALHA(S) em §306/§310 MAPA (jsdom)`); process.exit(1); }

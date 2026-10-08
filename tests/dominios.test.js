@@ -188,19 +188,23 @@ console.log('== 7) §210/§240: fim de nível tem saída; o "voltar" fecha para 
   w.close();
 }
 
-console.log('== 8) MAPA (§306): a ilha Domínios é "em breve" (não abre) e o ícone aponta arquivo — sem 404 ==');
+console.log('== 8) MAPA (§306/§326): a ilha Domínios está DESTRAVADA — navega para a seleção; ícone sem 404 ==');
 {
   const jsdom = require('jsdom');
   const html = fs.readFileSync(path.join(__dirname, '..', 'dist', 'incursion.html'), 'utf8');
   const dom = new jsdom.JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true });
   const w = dom.window, d = w.document;
   w.eval('perfil=novoPerfil(0,0); ir("home",{},{substituir:true}); render();');
-  // §306: Domínios entra como "em breve" no mapa — <div> sem data-dest, não navega; ícone a ~50% (arquivo real, sem 404).
-  const dilha = [...d.querySelectorAll('.ilha--breve')].find(x => /Domínios/.test(x.querySelector('.ilha__nome').textContent));
-  ok(!!dilha && dilha.tagName === 'DIV' && !dilha.hasAttribute('data-dest'), 'a ilha de Domínios é "em breve" (§306): não navega');
+  // §326: Domínios saiu do "em breve" — <button data-dest="dominios"> navegável, ícone normal (arquivo real, sem 404).
+  const dilha = d.querySelector('.ilha[data-dest="dominios"]');
+  ok(!!dilha && dilha.tagName === 'BUTTON' && !dilha.classList.contains('ilha--breve'), '§326: a ilha de Domínios NAVEGA (button data-dest, sem --breve)');
+  ok(dilha && !dilha.querySelector('.ilha__breveTag'), '§326: a ilha de Domínios não tem mais a tag "em breve"');
   const dimg = dilha && dilha.querySelector('img.ilha__ic');
   const dsrc = dimg ? (dimg.getAttribute('src') || '') : '';
   ok(dsrc === 'mapa/dominios.webp' && fs.existsSync(path.join(__dirname, '..', 'web', 'mapa', 'dominios.webp')), 'o ícone de Domínios aponta um arquivo existente (contra 404)');
+  // tocar a ilha abre a SELEÇÃO dos Domínios (da home)
+  dilha.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval('rotaAtual()') === 'dominios', '§326: tocar a ilha abre a seleção de Domínios');
   ok(!fs.existsSync(path.join(__dirname, '..', 'web', 'banners', 'dominios.webp')), 'o banner programático segue removido (§274: aguarda a ilustração definitiva)');
   w.close();
 }

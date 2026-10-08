@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §326 · destravar a ilha de Domínios no mapa da home
+
+**Achado do dono:** no celular, a ilha DOMÍNIOS do mapa aparecia como "em breve" e não abria, apesar de o modo estar
+construído e jogável (§273–§275, §325, §325b). Desde o §306 a home é um mapa guiado por `data/mapa.json`, e a ilha
+`dominios` ficou com `"emBreve": true` — um resquício de quando o modo ainda não existia.
+
+**Feito:** removido só o `"emBreve": true` da ilha `dominios` em `data/mapa.json` (rota/x/y/`fundoForte` intactos). O
+render é 100% guiado por dado (`ilhaHTML` lê `i.emBreve`), então a ilha volta a ser um `<button data-dest="dominios">`
+navegável, com o ícone normal (sem o apagado de `.ilha--breve`) e sem a tag "· em breve". **A Loja segue em breve.**
+Nada de código mudou.
+
+**Varredura de alcance (item 4 — toda rota de modo tem caminho desde a home?):** as 18 rotas registradas foram
+conferidas. Todos os MODOS jogáveis são alcançáveis: ilhas diretas (campanha, provacoes, desafios, invocacao, colecao,
+**dominios**, treino→selecao, pvp) e sub-telas por navegação (deus/niveis via Coleção; composicao/desafiomontar via
+Desafios; montartime via Campanha; dominio/dominiomontar via Domínios; batalha por todos). **A única trava de dado
+esquecida era a de Domínios** — agora corrigida. `embreve` é o marcador "em breve" da Loja (intencional, não é modo).
+Nenhum outro caso para consertar.
+
+**Guardas:** `tests/mapa.test.js` passa de "2 em breve" para "1 em breve" (só Loja) e exige Domínios NAVEGÁVEL
+(data-dest, sem `--breve`, sem tag, com ícone); e2e jsdom: tocar Domínios na home → seleção dos 5 → Olimpo → passo
+Montar time; o voltar da seleção retorna à home. §306/§311 (enquadramento/contraste/varredura) seguem verdes.
+
 ## §325 · DOMÍNIOS: o jogador monta o time; os inimigos são da cultura
 
 **Decidido (inverte o "trio fixo / sem montar time" do §273):**

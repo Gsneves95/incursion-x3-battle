@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §326 · destravar a ilha de Domínios no mapa da home
+
+A ilha DOMÍNIOS do mapa estava "em breve" e não abria, apesar do modo pronto (§273–§325b). Desde o §306 a home é
+guiada por `data/mapa.json`; a ilha `dominios` carregava `"emBreve": true` (resquício).
+- **Correção (só dado):** removido `"emBreve": true` da ilha `dominios` (rota/x/y/`fundoForte` intactos). O render é
+  guiado por dado, então a ilha volta a ser `<button data-dest>` navegável, ícone normal, sem tag "em breve". **Loja
+  segue em breve.** Nenhum código mudou.
+- **Alcance (varredura):** todas as 18 rotas conferidas — todo MODO jogável é alcançável desde a home; Domínios era a
+  **única** trava de dado esquecida. `embreve` é o marcador da Loja (intencional).
+- **Guardas:** `tests/mapa.test.js` 2→1 em breve + Domínios navegável + e2e (home→seleção→Olimpo→Montar time; voltar=home).
+  §306/§311 verdes. Suíte + build verdes.
+
 ## ★ §325b · DOMÍNIOS: conjunto de referência por FORÇA + portão de variedade (P5)
 
 Conserta o defeito do §325 (os 6 times de referência saíram todos de ~7 deuses baratos/fracos em ordem alfabética
