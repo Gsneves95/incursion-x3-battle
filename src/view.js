@@ -14,6 +14,10 @@ let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
 // foeGesto/foeTimer rastreiam o gesto no retrato inimigo em nível de MÓDULO (sobrevivem ao render()
 // que troca o DOM no meio do toque — é o que consertava o fechamento no pointerup).
 let painelRecolhido=false, peekKit=null, kitSel=null, foeGesto=null, foeTimer=null;
+// §328 — QUADRO DE INSPEÇÃO: `inspec` = uid da unidade inspecionada (null = fechado); `inspecSlot` = a
+// miniatura selecionada (basico|habilidade|milagre|defesa). Abrir NÃO gasta ação, não muda o estado nem
+// para o cronômetro — é leitura pura. Fecha por X, toque fora ou voltar do Android.
+let inspec=null, inspecSlot='habilidade';
 
 // F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
 // resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
@@ -49,13 +53,16 @@ function voltarInvocacao(){ if(!voltar())ir('home',{},{substituir:true}); render
 
 // Ganchos de ciclo de vida das telas (usados pelos hooks de rota). A limpeza de
 // sobreposição mora AQUI, num lugar só; parar o relógio é do turno.js.
-function limparSobreposicao(){ armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;menuAberto=false;ov=null;livrePlano={}; }
-function sairBatalha(){ pararRelogio(); limparSobreposicao(); }
+function limparSobreposicao(){ armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;menuAberto=false;ov=null;livrePlano={};inspec=null; }
+function sairBatalha(){ pararRelogio(); limparSobreposicao(); try{ document.body.classList.remove('embatalha'); }catch(e){} }
 
 // render() despacha pela ROTA: chama o gancho de render da tela atual.
 function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 
 function renderBatalha(){
+  // §328: na batalha, o botão "conta" e o carimbo "build" do canto inferior esquerdo (fixos no body) são
+  // ESCONDIDOS — eles atrapalhavam a dica de energia. O acesso à conta e ao build vive agora no menu ⋯.
+  try{ document.body.classList.add('embatalha'); }catch(e){}
   // §214 — ZONAS por ergonomia (paisagem 2.16, polegar direito): LEITURA à esquerda (painel),
   // TOQUE à direita (tiles/alvo/encerrar). PERSPECTIVA fixa (F0.7): eu = ladoExibido.
   // Cada FILEIRA pareia um aliado (retrato + 4 tiles) com o inimigo da mesma posição (retrato).
@@ -86,6 +93,7 @@ function renderBatalha(){
       <span class="teamlbl teamlbl--enemy">${H(rotuloLado(1-eu))}</span>
       ${Array.from({length:Math.max(l.units.length,o.units.length,1)},(_,i)=>filaHTML(l.units[i], o.units[i])).join('')}
     </div>
+    ${inspec?quadroInspecaoHTML():''}
   </div>
   <footer class="footer">
     <div class="acaoestado">${acaoRodapeHTML()}</div>
@@ -247,6 +255,8 @@ function voltarNativo(){
   // §284/§240: a SOBREPOSIÇÃO de kit da Coleção fecha ANTES de sair da tela — cirurgicamente (colFecharVer
   // remove o nó e des-inerta a base), preservando seleção e rolagem da grade. Só depois vem o voltar genérico.
   if(typeof colVer!=='undefined'&&colVer&&typeof colFecharVer==='function'){ colFecharVer(); return; }
+  // §328: o QUADRO DE INSPEÇÃO é leitura por cima do campo — o voltar do Android o fecha ANTES de tudo.
+  if(typeof inspec!=='undefined'&&inspec){ inspec=null; render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

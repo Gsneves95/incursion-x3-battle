@@ -171,8 +171,8 @@ function acharChromium() {
         document.querySelectorAll('.portrait__niv').forEach(el => {
           const b = R(el), port = R(el.closest('.portrait'));
           const hp = el.closest('.portrait').querySelector('.hp'); if (hp && over(b, R(hp))) cobreHP++;
-          // a faixa de efeitos é irmã do retrato (fxstrip) — não pode haver sobreposição
-          const row = el.closest('.brow'); const fx = row && row.querySelector('.fxstrip'); if (fx && R(fx).height > 0 && over(b, R(fx))) cobreFx++;
+          // §328: a faixa de etiquetas é irmã do retrato (fxtags, abaixo da vida) — o selo de nível não pode cobri-la
+          const row = el.closest('.brow'); const fx = row && row.querySelector('.fxtags'); if (fx && R(fx).height > 0 && over(b, R(fx))) cobreFx++;
           if (b.left < port.left - 0.5 || b.right > port.right + 0.5 || b.top < port.top - 0.5) foraRetrato++;
           if (b.right > vw + 0.5) cortaH++;
         });

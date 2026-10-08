@@ -216,10 +216,14 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     // moldura passa por baixo do retrato E das habilidades (une os dois)
     ok(meu.unitL <= meu.porL + EPS, `moldura começa antes do retrato (unit ${Math.round(meu.unitL)} <= retrato ${Math.round(meu.porL)})`);
     ok(meu.unitR >= meu.tLastR - EPS, `moldura passa atrás da última habilidade (unit ${Math.round(meu.unitR)} >= tile ${Math.round(meu.tLastR)})`);
-    // o retrato SOBREPÕE a borda de cima da placa — fica POR CIMA dela
-    ok(meu.porT < meu.plateT - EPS, `o retrato sobrepõe a borda de cima da placa (retrato ${Math.round(meu.porT)} acima de ${Math.round(meu.plateT)})`);
-    // habilidades COLADAS ao retrato (esquerda), NÃO centralizadas: respiro >> gap
-    ok(gap >= 0 && gap <= 24, `as habilidades colam no retrato (vão ${Math.round(gap)}px <= 24)`);
+    // §328: o retrato NÃO pop mais acima da placa — ele encolheu (92→58) e cabe DENTRO da banda, abrindo espaço
+    // ABAIXO da barra de vida para a coluna de ETIQUETAS de efeito. A moldura segue unindo retrato + fichas (acima).
+    ok(meu.porT >= meu.plateT - EPS, `§328: o retrato fica contido na placa, sem popar acima (retrato ${Math.round(meu.porT)} >= topo da placa ${Math.round(meu.plateT)})`);
+    // §328: a BANDA entre o retrato e as fichas é reservada à coluna de ETIQUETAS; elas não invadem as fichas.
+    const fxR = await page.evaluate(() => { const b = document.querySelector('.brow'); const u = st.lados[0].units[0]; u.efeitos = [{ type: 'vulneravel', v: 6, dur: 2 }]; render();
+      const fx = b.querySelector('.brow__ally .fxtags'); const t0 = b.querySelector('.brow__tiles .skill');
+      return { fxRight: fx ? fx.getBoundingClientRect().right : 0, t0Left: t0.getBoundingClientRect().left }; });
+    ok(fxR.fxRight <= fxR.t0Left + EPS, `§328: a coluna de etiquetas não invade as fichas (etiquetas →${Math.round(fxR.fxRight)} <= ficha ${Math.round(fxR.t0Left)})`);
     ok(respiro > gap + 30, `há respiro largo antes do inimigo, não centralizado (respiro ${Math.round(respiro)} >> vão ${Math.round(gap)})`);
     ok(meu.tLastR <= 770, `§257: as 4 fichas (círculo 90) terminam por volta de ~764, com respiro até o inimigo (terminaram em ${Math.round(meu.tLastR)} <= 770)`);
     ok(meu.enemyL > meu.tLastR + 30, `o inimigo continua à direita, sem colidir (inimigo ${Math.round(meu.enemyL)} > tiles ${Math.round(meu.tLastR)})`);
@@ -384,12 +388,14 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false;
       ir('batalha', {}, { substituir: true }); pararRelogio(); render();
     });
-    // GUARDA hierarquia (§214): retrato MAIOR que a ficha nas duas dimensões; e aliado = inimigo (simetria)
+    // GUARDA forma (§328): retrato QUADRADO e SIMÉTRICO (aliado = inimigo); a ficha segue 90. O retrato encolheu
+    // (92→58) p/ abrir as etiquetas abaixo da vida — a hierarquia "retrato > ficha" do §214 foi revista (DECISOES §328).
     const dim = await rpg.evaluate(() => {
       const R = el => { const r = el.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; };
       return { por: R(document.querySelector('.brow__ally .portrait')), sk: R(document.querySelector('.brow__tiles .skill')), foe: R(document.querySelector('.brow__enemy .portrait')) };
     });
-    ok(dim.por.w > dim.sk.w && dim.por.h > dim.sk.h, `§214: retrato ${dim.por.w}×${dim.por.h} > ficha ${dim.sk.w}×${dim.sk.h} nas duas dimensões`);
+    ok(dim.por.w === dim.por.h, `§328: o retrato é QUADRADO (${dim.por.w}x${dim.por.h})`);
+    ok(dim.sk.w === 90 && dim.sk.h === 90, `§257: a ficha segue 90x90 (${dim.sk.w}x${dim.sk.h})`);
     ok(dim.por.w === dim.foe.w && dim.por.h === dim.foe.h, `simetria: retrato aliado = inimigo (${dim.por.w}×${dim.por.h} vs ${dim.foe.w}×${dim.foe.h})`);
 
     // GUARDA vida OPACA: força a arte do retrato a BRANCO (pior caso) e prova que a barra não deixa a arte
@@ -417,30 +423,30 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(hp.maxL > 0.85, `o rótulo de vida tem texto claro visível sobre a barra (L ${hp.maxL} > 0.85)`);
     console.log(`  vida: canto L ${hp.cornerL} (arte branca não vaza) · texto L ${hp.maxL} · contraste do rótulo contra o preenchimento (não a arte)`);
 
-    // §299 GUARDA efeitos: a faixa SUBIU para ACIMA das fichas (fora do retrato); no pior caso de 6 efeitos
-    // TODO chip mostra a magnitude — SEM colapso e SEM "+N" — e a faixa não estoura a fileira (banda folgada).
+    // §328 GUARDA efeitos: as ETIQUETAS vivem ABAIXO da barra de vida (fora do retrato). Com 6 efeitos mostram
+    // até 3 nomeadas + "+N" (o excedente não some nem corta), cada uma com NOME escrito, dentro do board.
     const fx = await rpg.evaluate(() => {
       const board = document.querySelector('.board').getBoundingClientRect();
       const u = st.lados[0].units[0];
       u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'dmgDown', v: 4, dur: 2 }];
-      u.dots = [{ nome: 'Queimadura', dur: 2, dano: 5 }];   // 6 no total
+      u.dots = [{ nome: 'queimadura', dur: 2, v: 5 }];   // 6 no total
       render();
-      const strip = document.querySelector('.brow .fxstrip--ally');
-      const tiles = strip.parentElement.querySelector('.brow__tiles').getBoundingClientRect();
-      const sr = strip.getBoundingClientRect();
-      const chips = strip.querySelectorAll('.effect').length;
-      const mags = strip.querySelectorAll('.effect--mag .effect__v').length;
-      const temMais = !!strip.querySelector('.fxmore');
-      // acima das fichas + dentro do board (não corta)
-      const acima = sr.bottom <= tiles.top + 1;
-      const dentro = sr.top >= board.top - 1 && sr.bottom <= board.bottom + 1;
-      return { acima, dentro, chips, mags, temMais };
+      const up = document.querySelector('.brow .up--ally');
+      const fxs = up.querySelector('.fxtags');
+      const hp = up.querySelector('.hp').getBoundingClientRect();
+      const sr = fxs.getBoundingClientRect();
+      const cells = fxs.querySelectorAll('.fxtag').length;
+      const nomeados = [...fxs.querySelectorAll('.fxtag:not(.fxtag--mais) .fxtag__n')].filter(n => (n.textContent || '').trim()).length;
+      const temMais = !!fxs.querySelector('.fxtag--mais');
+      const abaixo = sr.top >= hp.bottom - 1;   // começa ABAIXO da barra de vida
+      const dentro = sr.top >= board.top - 1 && sr.bottom <= board.bottom + 1;   // não corta o board
+      return { abaixo, dentro, cells, nomeados, temMais };
     });
-    ok(fx.acima, '§299: a faixa de efeitos fica ACIMA das fichas (não dentro do retrato)');
-    ok(fx.dentro, '§299: com 6 efeitos a faixa NÃO corta (dentro do board)');
-    ok(fx.chips === 6 && !fx.temMais, `§299: 6 efeitos → 6 chips, sem "+N" (chips ${fx.chips}, +N ${fx.temMais})`);
-    ok(fx.mags >= 5, `§299: os chips numéricos mostram a magnitude sempre (mag ${fx.mags} de 6)`);
-    console.log(`  efeitos: ${fx.chips} chips acima das fichas, ${fx.mags} com magnitude, sem "+N", sem corte`);
+    ok(fx.abaixo, '§328: as etiquetas ficam ABAIXO da barra de vida (não dentro do retrato)');
+    ok(fx.dentro, '§328: com 6 efeitos a faixa NÃO corta (dentro do board)');
+    ok(fx.cells <= 3 && fx.temMais, `§328: 6 efeitos → até 3 células + "+N" (células ${fx.cells}, +N ${fx.temMais})`);
+    ok(fx.nomeados >= 1 && fx.nomeados === fx.cells - (fx.temMais ? 1 : 0), `§328: toda etiqueta visível tem NOME escrito (nomeados ${fx.nomeados})`);
+    console.log(`  efeitos: ${fx.cells} etiquetas abaixo da vida, ${fx.nomeados} nomeadas, "+N" ${fx.temMais}, sem corte`);
     await rctx.close();
   }
 
@@ -609,29 +615,29 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       const t = document.querySelector('.leitura__txt') || document.querySelector('.leitura'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
     ok(/\+1/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +1 e a FONTE (Brígida, §324 P3): "${p2.slice(0, 60)}"`);
 
-    // GUARDA 3 — todo chip de modificador NUMÉRICO mostra o número (modo largo, ≤3 efeitos): adormecido +8, vulneravel +v.
-    console.log('== §266: chip numérico mostra a magnitude (adormecido +8, vulnerável +v) ==');
+    // GUARDA 3 (§328) — toda ETIQUETA de modificador numérico mostra o número escrito (vulnerável +8, redução −5).
+    console.log('== §328: etiqueta numérica mostra a magnitude (vulnerável +8, redução −5) ==');
     const p3 = await gp.evaluate(() => {
       st = montarProvacao({ aliados: ['zeus', 'nuwa', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; painelRecolhido = false;
-      st.lados[1].units[0].efeitos = [{ type: 'adormecido', dur: 2 }, { type: 'vulneravel', v: 8, dur: 2 }]; ir('batalha', {}, { substituir: true }); render();
-      const band = [...document.querySelectorAll('.brow__enemy .fxstrip--enemy')].find(x => x.children.length);
-      const vs = [...band.querySelectorAll('.effect__v')].map(e => e.textContent.trim());
+      st.lados[1].units[0].efeitos = [{ type: 'vulneravel', v: 8, dur: 2 }, { type: 'dmgReduction', v: 5, dur: 2 }]; ir('batalha', {}, { substituir: true }); render();
+      const band = [...document.querySelectorAll('.fxtags--enemy')].find(x => x.children.length);
+      const vs = [...band.querySelectorAll('.fxtag__v')].map(e => e.textContent.trim());
       return { nChips: band.children.length, valores: vs };
     });
-    ok(p3.valores.includes('+8'), `§266: o chip do ADORMECIDO mostra +8 sem toque (chips numéricos: ${JSON.stringify(p3.valores)})`);
-    ok(p3.valores.filter(v => /^[+−]\d/.test(v)).length >= 2, `§266: os chips numéricos (adormecido, vulnerável) mostram o número (${JSON.stringify(p3.valores)})`);
+    ok(p3.valores.includes('+8'), `§328: a etiqueta de VULNERÁVEL mostra +8 sem toque (valores: ${JSON.stringify(p3.valores)})`);
+    ok(p3.valores.filter(v => /^[+−]\d/.test(v)).length >= 2, `§328: as etiquetas numéricas mostram o número (${JSON.stringify(p3.valores)})`);
 
-    // GUARDA 4 (§299) — no pior caso de 6 efeitos a faixa (banda folgada, acima das fichas) NÃO estoura
-    // e NÃO colapsa: os 6 chips aparecem, todos com magnitude, sem "+N" (o compromisso do §266 acabou).
+    // GUARDA 4 (§328) — no pior caso de 6 efeitos as etiquetas NÃO estouram na horizontal e o excedente
+    // colapsa em "+N" (até 3 células): ler tudo é tarefa do QUADRO de inspeção, a faixa só resume.
     const p4 = await gp.evaluate(() => {
       const u = st.lados[1].units[1];
       u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]; render();
-      const band = [...document.querySelectorAll('.brow__enemy .fxstrip--enemy')].filter(x => x.children.length)[1];
-      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length, temMais: !!band.querySelector('.fxmore') };
+      const band = [...document.querySelectorAll('.fxtags--enemy')].filter(x => x.children.length)[1];
+      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length, temMais: !!band.querySelector('.fxtag--mais') };
     });
-    ok(!p4.estoura, `§299: a faixa com 6 efeitos NÃO estoura na horizontal (${p4.n} chips)`);
-    ok(p4.n === 6 && !p4.temMais, `§299: os 6 efeitos aparecem sem colapso e sem "+N" (${p4.n} chips, +N ${p4.temMais})`);
+    ok(!p4.estoura, `§328: a faixa com 6 efeitos NÃO estoura na horizontal (${p4.n} células)`);
+    ok(p4.n <= 3 && p4.temMais, `§328: 6 efeitos → até 3 células + "+N" (${p4.n} células, +N ${p4.temMais})`);
 
     // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
     console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');

@@ -28,28 +28,55 @@ function rotuloPassivaItem(it){
   if(it.gat==='amplificaDot') return '+'+it.v+' por tique de '+(it.nome||'dano contínuo');
   return '';
 }
-// §266 — a MAGNITUDE numérica de um efeito (o número que muda o dano). null = efeito sem número (atordoado…).
-// adormecido é +8 FIXO (regra do motor, não um campo `v`); o dono pediu esse explicitamente.
-function magEfeito(e){
-  if(e.type==='dmgUp'||e.type==='vulneravel'||e.type==='regen') return e.v!=null?('+'+e.v):null;
-  if(e.type==='dmgDown'||e.type==='dmgReduction') return e.v!=null?('−'+e.v):null;
-  if(e.type==='adormecido') return '+8';
-  return null;
+// §328 — ETIQUETAS de efeito LEGÍVEIS (nome escrito, nunca só ícone). Lê data/status_visual.json (STATUS_VISUAL,
+// injetado na build), que tem UMA entrada por tipo que o motor pode pôr numa unidade (portão de build garante).
+function _svDe(key){ return (typeof STATUS_VISUAL!=='undefined'&&STATUS_VISUAL&&STATUS_VISUAL[key])||null; }
+// o NÚMERO exibido na etiqueta (valor assinado / acúmulo ×N / nenhum), conforme o campo `num` do dado.
+const _TAG_PLAIN=['queimadura','veneno','sangramento','tormento','maldicao','marcaMorte','shield'];   // valor cru (sem sinal)
+function _numTag(sv,key,v){
+  if(!sv) return '';
+  if(sv.num==='acumulo') return '×'+v;
+  if(sv.num==='valor'){
+    if(v==null) return '';
+    if(key==='dmgDown'||key==='dmgReduction') return '−'+Math.abs(v);
+    if(_TAG_PLAIN.includes(key)) return ''+v;
+    return '+'+v;
+  }
+  return '';
 }
-function efeitosHTML(u){
-  const itens=[];
-  for(const e of u.efeitos){const s=SYM[e.type]; if(!s)continue; itens.push({s,mag:magEfeito(e),dur:e.dur>90?'∞':e.dur,key:e.type});}
-  for(const d of u.dots) itens.push({s:['✹','dot',H(d.nome)],mag:null,dur:d.dur,key:d.nome,dot:true});
-  // §299: a FAIXA subiu para ACIMA das fichas (banda folgada, largura dos tiles) — o compromisso do §266
-  // (colapsar o chip em ≥4 e cortar em "+N" quando passava de FX_MAX) ACABOU. TODO chip mostra a magnitude
-  // SEMPRE, sem teto e sem "+N": o pior empilhamento REAL medido (IA×IA, 1200 partidas) é 4 chips, e a banda
-  // de 235px comporta 7 com magnitude. O jogador vê todo modificador, sempre — a tese do §266, agora cumprida.
-  const chip=(it)=>{
-    const attr = it.dot?`data-dot="${u.uid}|${it.s[2]}"`:`data-ef="${u.uid}|${it.key}"`;
-    if(it.mag) return `<button class="effect effect--${it.s[1]} effect--mag" ${attr}><span class="effect__g">${it.s[0]}</span><span class="effect__v">${it.mag}</span><span class="effect__turns effect__turns--in">${it.dur}</span></button>`;
-    return `<button class="effect effect--${it.s[1]}" ${attr}><div class="slot" data-slot="effect-${it.dot?'dot':it.key}"><span class="effect__g">${it.s[0]}</span></div><div class="effect__turns">${it.dur}</div></button>`;
-  };
-  return itens.map(chip).join('');
+// lista ORDENADA de etiquetas de uma unidade: controle → ruim → defesa → bom (o perigo primeiro). Reúne
+// u.efeitos (buff/debuff), u.dots (dano contínuo), u.contadores (acúmulos) e u.shield (Defesa). Cada item:
+// {key, nome, icone, num, dur (null=permanente, sem selinho), cat}. Usada pela faixa do retrato E pelo quadro.
+function tagsDe(u){
+  const out=[];
+  const push=(key,v,dur)=>{ const sv=_svDe(key); if(!sv) return; out.push({key,nome:sv.nome,icone:sv.icone,num:_numTag(sv,key,v),dur,cat:sv.cat,desc:sv.desc}); };
+  if(u.shield>0) push('shield',u.shield,null);
+  for(const e of (u.efeitos||[])){ if(e.type==='shield') continue; push(e.type, e.v, (e.dur>90?null:e.dur)); }
+  for(const d of (u.dots||[])) push(d.nome, d.v, (d.dur>90?null:d.dur));
+  for(const k in (u.contadores||{})){ const c=u.contadores[k]; if(c>0) push(k,c,null); }
+  const ord={controle:0,ruim:1,defesa:2,bom:3};
+  out.sort((a,b)=>((ord[a.cat]==null?9:ord[a.cat])-(ord[b.cat]==null?9:ord[b.cat])));
+  return out;
+}
+// §328: as etiquetas são EMPILHADAS (1 por linha, nome INTEIRO legível) sob a barra de vida. A banda do retrato
+// só comporta ~3 linhas (board 306/3 = 102px de design/fileira, retrato 58 + 3 linhas), então mostramos ATÉ 3
+// etiquetas e o resto vira "+N" (toque abre o quadro, que lista TODAS com descrição). O "+N" conta como uma célula.
+const FXTAGS_MAX=3;
+// uma ETIQUETA: [ícone] Nome [valor/acúmulo não-truncável] + selinho redondo de TURNOS (só se não for permanente).
+function _pillHTML(u,t){
+  return `<span class="fxtag fxtag--${t.cat}" data-insp="${u.uid}" title="${H(t.nome)}${t.num?' '+H(t.num):''}">`
+    +`<span class="fxtag__i" aria-hidden="true">${t.icone}</span>`
+    +`<span class="fxtag__n">${H(t.nome)}</span>`
+    +`${t.num?`<span class="fxtag__v">${H(t.num)}</span>`:''}`
+    +`${t.dur!=null?`<span class="fxtag__t">${t.dur}</span>`:''}</span>`;
+}
+function fxtagsHTML(u){
+  const tags=tagsDe(u); if(!tags.length) return '';
+  // cabem no máximo FXTAGS_MAX células: se houver mais etiquetas, a última célula é o "+N".
+  const vis = tags.length<=FXTAGS_MAX ? tags : tags.slice(0, FXTAGS_MAX-1);
+  const resto = tags.length - vis.length;
+  const mais = resto>0 ? `<span class="fxtag fxtag--mais" data-insp="${u.uid}">+${resto}</span>` : '';
+  return vis.map(t=>_pillHTML(u,t)).join('')+mais;
 }
 
 // §320 — INDICADOR de níveis das 3 habilidades no retrato (aliado E inimigo). Deriva do kitDe (o que o
@@ -93,7 +120,9 @@ function retrato(u,inimigo){
         <div class="hp__label">${u.hp}${u.shield?' ◧'+u.shield:''}</div>
       </div>
       <div class="portrait__x"></div>
-    </div></div>`;
+    </div>
+    <div class="fxtags fxtags--${inimigo?'enemy':'ally'}">${u.vivo?fxtagsHTML(u):''}</div>
+  </div>`;
 }
 
 /* ---------- fileira (§214): aliado (retrato + 4 tiles) x inimigo (retrato) da mesma posicao ---------- */
@@ -107,16 +136,16 @@ function filaHTML(a, e){
   // §299: a FAIXA de efeitos subiu — ACIMA das fichas (aliado) e ACIMA do retrato (inimigo), fora do
   // retrato (§258 volta a ser só a arte). A linha tem altura fixa e o conteúdo é ancorado embaixo, então a
   // faixa ocupa o espaço ACIMA sem empurrar a ficha nem mudar a moldura (§239) — sem pulo.
+  // §328: as etiquetas de efeito agora vivem ABAIXO da barra de vida (dentro do retrato, ambos os lados) —
+  // a faixa acima das fichas (§299) saiu. O retrato (ally/enemy) já emite a sua fileira de etiquetas.
   return `<div class="brow">
     <div class="brow__unit">
       <div class="brow__ally">${a?retrato(a,false):''}</div>
       <div class="brow__tilecol">
-        <div class="fxstrip fxstrip--ally">${a&&a.vivo?efeitosHTML(a):''}</div>
         <div class="brow__tiles">${a?tilesHTML(a):''}</div>
       </div>
     </div>
     <div class="brow__enemy">
-      <div class="fxstrip fxstrip--enemy">${e&&e.vivo?efeitosHTML(e):''}</div>
       ${e?retrato(e,true):''}
     </div>
   </div>`;
@@ -188,6 +217,59 @@ function ficha(u){
   peekKit=null; armado=null;alvos=[];escolhidos=[];render();
 }
 
+/* ---------- §328: QUADRO DE INSPEÇÃO (abre ao tocar um retrato/etiqueta sem habilidade armada) ----------
+   Leitura PURA: não gasta ação, não muda o estado nem para o cronômetro. Mostra retrato, nome, função·elemento,
+   vida, passiva, as 4 miniaturas (com o Nv REAL desta partida) e os efeitos ativos com descrição. Vem com a
+   Habilidade selecionada. Fecha por ✕, toque fora ou voltar do Android. Reusa o quadrado das habilidades. */
+function abrirInspec(uid){ if(!todas().find(x=>x.uid===uid)) return; inspec=uid; inspecSlot='habilidade'; peekKit=null; detalhe=null; armado=null; alvos=[]; escolhidos=[]; render(); }
+function fecharInspec(){ inspec=null; render(); }
+const _ROT_SLOT={ basico:'Básico', habilidade:'Habilidade', milagre:'Milagre', defesa:'Defesa' };
+function quadroInspecaoHTML(){
+  const u=inspec&&todas().find(x=>x.uid===inspec); if(!u) return '';
+  const g=_catPartida()[u.key]||{};
+  const acoes=acoesDe(st,u); const porSlot={}; acoes.forEach(a=>porSlot[a.slot]=a);
+  const ordem=['basico','habilidade','milagre','defesa'].filter(s=>porSlot[s]);
+  const sel = porSlot[inspecSlot]?inspecSlot:(ordem.includes('habilidade')?'habilidade':ordem[0]);
+  const nivSlot=s=>{ try{ return (typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,s):1; }catch(e){ return 1; } };
+  const mini=s=>{ const a=porSlot[s]; const nv=nivSlot(s); const anel=s==='defesa'?'var(--ink-mute)':COR(u.elem);
+    return `<button class="inspmini ${s===sel?'is-sel':''}" data-inspslot="${s}">
+      <span class="inspmini__disc" style="border-color:${anel}">
+        ${slot('skill-'+u.key+'-'+s,'',null,0,true)}<span class="inspmini__mono" style="color:${anel}">${H(mono(a))}</span>
+        ${nv>1?`<span class="inspmini__nv">Nv ${nv}</span>`:''}
+      </span>
+      <span class="inspmini__lab">${_ROT_SLOT[s]||H(s)}</span>
+    </button>`; };
+  const a=porSlot[sel]; const cd=u.cd[sel]||0;
+  const recarga = a.cd ? (cd>0?`Recarga ${a.cd} · pronta em ${cd} turno${cd>1?'s':''}`:`Recarga ${a.cd} · pronta`) : 'Sem recarga';
+  const detSel=`<div class="inspdet">
+    <div class="inspdet__cab"><b>${H(a.nome)}</b>${pipsDetalhe(a.cost)}<span class="inspdet__cd">${H(recarga)}</span></div>
+    <div class="inspdet__txt">${realce(a.desc||'')}</div>
+  </div>`;
+  const tags=tagsDe(u);
+  const efAtivos = tags.length
+    ? `<div class="inspef">${tags.map(t=>`<div class="inspef__l inspef__l--${t.cat}"><span class="inspef__i" aria-hidden="true">${t.icone}</span><b class="inspef__n">${H(t.nome)}${t.num?' '+H(t.num):''}</b><span class="inspef__t">${t.dur!=null?t.dur+'t':'perm.'}</span><span class="inspef__d">${H(t.desc||'')}</span></div>`).join('')}</div>`
+    : `<div class="inspef inspef--vazio">Sem efeitos ativos.</div>`;
+  const pas = g.passiva?`<div class="insppas"><b>Passiva — ${H(g.passiva.nome)}:</b> ${H(g.passiva.desc)}</div>`:'';
+  return `<div class="inspecao" data-insproot="1">
+    <div class="inspbox" role="dialog" aria-label="Inspeção de ${H(u.nome)}">
+      <button class="inspx" data-inspx="1" aria-label="Fechar">✕</button>
+      <div class="inspcab">
+        <div class="inspcab__p">${slot('god-'+u.key,ini(u.nome),COR(u.elem),26)}<span class="inspcab__el" style="background:${COR(u.elem)}"></span></div>
+        <div class="inspcab__id">
+          <div class="inspcab__nome">${H(u.nome)}</div>
+          <div class="inspcab__sub">${H(u.funcao)} · ${H(ELAB[u.elem]||u.elem)}</div>
+        </div>
+        <div class="inspcab__hp">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>
+      </div>
+      ${pas}
+      <div class="inspminis">${ordem.map(mini).join('')}</div>
+      ${detSel}
+      <div class="inspef__tit">Efeitos ativos</div>
+      ${efAtivos}
+    </div>
+  </div>`;
+}
+
 /* ---------- eventos do campo (tiles, alvo, retrato, toque longo do inimigo, passiva, efeitos) ---------- */
 function ligarCampo(){
   // TILES de habilidade (aliado): data-arma=1 ARMA; 0 só LÊ (§238 item 3 — tocar para ler nunca custa).
@@ -197,9 +279,10 @@ function ligarCampo(){
       else lerHabilidade(uid,slot); };});
   // ALVO aliado (cura/buff): retrato aliado marcado como alvo — toque escolhe
   stage.querySelectorAll('.portrait[data-target]:not([data-foe])').forEach(el=>el.onclick=()=>alvo(el.dataset.uid));
-  // retrato aliado comum: ficha da unidade
+  // §328: retrato aliado comum (sem habilidade armada) ABRE o QUADRO DE INSPEÇÃO. Com habilidade armada, o
+  // toque é escolher alvo (os aliados-alvo têm o handler acima); aliado que não é alvo não abre o quadro.
   stage.querySelectorAll('.portrait:not([data-foe]):not([data-target])').forEach(el=>{
-    el.onclick=ev=>{ev.stopPropagation();const u=todas().find(x=>x.uid===el.dataset.uid); if(u)ficha(u);};});
+    el.onclick=ev=>{ev.stopPropagation(); if(!armado) abrirInspec(el.dataset.uid);};});
   // retrato INIMIGO: TOQUE LONGO abre o kit; toque curto = alvo (se for) ou ficha (§214 item 8)
   stage.querySelectorAll('.portrait[data-foe]').forEach(el=>ligarFoe(el));
   // §299: o painel lateral saiu — não há mais aba de recolher. O histórico é o ≡ REGISTRO do topo.
@@ -225,21 +308,12 @@ function ligarCampo(){
     peekKit=null; armado=null;alvos=[];escolhidos=[];render();});
   stage.querySelectorAll('[data-ficha]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const u=todas().find(x=>x.uid===b.dataset.ficha); if(u)ficha(u);});
-  stage.querySelectorAll('[data-ef]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const[uid,tp]=b.dataset.ef.split('|');const u=todas().find(x=>x.uid===uid);
-    const e=u.efeitos.find(x=>x.type===tp),s=SYM[tp];
-    detalhe={nome:s[2].toUpperCase(),chave:'effect-'+tp,glifo:s[0],
-      meta:u.nome.toUpperCase()+' · '+(e.dur>90?'PERMANENTE':e.dur+' TURNO(S)')+(e.v?' · VALOR '+e.v:''),
-      texto:s[3],classes:'AS DURAÇÕES DESCONTAM NO FIM DO TURNO DE QUEM CARREGA O EFEITO'};
-    peekKit=null; render();});
-  stage.querySelectorAll('[data-dot]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const[uid,nm]=b.dataset.dot.split('|');const u=todas().find(x=>x.uid===uid);
-    const d=u.dots.find(x=>x.nome===nm);
-    detalhe={nome:rotuloEfeito(d.nome).toUpperCase(),chave:'effect-dot',glifo:'✹',
-      meta:u.nome.toUpperCase()+' · '+d.v+'/TURNO · '+d.dur+' TURNO(S)',
-      texto:'Dano contínuo. Conta no início do turno de quem sofre, ANTES de ele agir — pode matar sem que a unidade jogue.',
-      classes:'DANO PURO · IGNORA REDUÇÃO E ESCUDO · ATRAVESSA INVULNERABILIDADE'};
-    peekKit=null; render();});
+  // §328: tocar uma ETIQUETA de efeito (ou o "+N") abre o QUADRO DE INSPEÇÃO da unidade (sem habilidade armada).
+  stage.querySelectorAll('[data-insp]').forEach(b=>b.onclick=ev=>{ev.stopPropagation(); if(!armado) abrirInspec(b.dataset.insp);});
+  // §328: QUADRO DE INSPEÇÃO — trocar a miniatura selecionada, fechar no ✕ e fechar ao tocar FORA da caixa.
+  stage.querySelectorAll('[data-inspslot]').forEach(b=>b.onclick=ev=>{ev.stopPropagation(); inspecSlot=b.dataset.inspslot; render();});
+  const ix=stage.querySelector('[data-inspx]'); if(ix)ix.onclick=ev=>{ev.stopPropagation(); fecharInspec();};
+  const iroot=stage.querySelector('[data-insproot]'); if(iroot)iroot.onclick=ev=>{ if(ev.target===iroot) fecharInspec(); };
   // resumo do turno (F0.7): some ao PRIMEIRO toque em qualquer coisa.
   if(resumoTurno) stage.addEventListener('pointerdown',()=>{ resumoTurno=null; },{once:true,capture:true});
 }
@@ -280,8 +354,8 @@ function ligarFoe(el){
     if(g.abriu) return;                    // o toque longo já abriu o kit — soltar não fecha nada
     if(g.moved) return;                    // arrastou — gesto cancelado
     if(Date.now()-g.t>=420) return;        // segurou o bastante (o timer pode não ter disparado) — já é consulta
-    if(el.dataset.target){ alvo(uid); }    // toque curto com arma em curso: escolhe alvo
-    else { const u=todas().find(x=>x.uid===uid); if(u)ficha(u); }   // toque curto solto: ficha
+    if(el.dataset.target){ alvo(uid); }    // toque curto com arma em curso: escolhe alvo (§328: NÃO abre o quadro)
+    else if(!armado){ abrirInspec(uid); }   // §328: toque curto solto (sem arma) → QUADRO DE INSPEÇÃO
   });
   el.addEventListener('pointercancel',()=>{ clearTimeout(foeTimer); foeGesto=null; });
   el.addEventListener('pointerleave',()=>{ clearTimeout(foeTimer); });   // leave não zera foeGesto: o up decide

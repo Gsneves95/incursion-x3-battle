@@ -1,0 +1,394 @@
+{
+  "_nota": "§328 — DADO de apresentação dos EFEITOS na tela de batalha. UMA entrada por tipo que o motor pode pôr numa unidade (VOCAB.efeitos ∪ VOCAB.dots ∪ VOCAB.contadores). PORTÃO DE BUILD: todo tipo sem entrada aqui FALHA o build (nenhum efeito pode aparecer sem nome). Campos: nome (pt), cat (bom|ruim|controle|defesa → cor da borda verde-dourada|vermelha|roxa|azul), icone (emoji; o NOME é sempre escrito, o ícone é só reforço), num (valor|acumulo|nenhum → qual número a etiqueta mostra), desc (uma linha). NÃO toca motor/regra; só leitura.",
+  "efeitos": {
+    "atordoado": {
+      "nome": "Atordoado",
+      "cat": "controle",
+      "icone": "💫",
+      "num": "nenhum",
+      "desc": "Perde a ação inteira. Ainda gera energia."
+    },
+    "adormecido": {
+      "nome": "Adormecido",
+      "cat": "controle",
+      "icone": "😴",
+      "num": "nenhum",
+      "desc": "Perde a ação, recebe +8 de dano e não gera energia. Acorda ao sofrer dano de Habilidade ou Milagre."
+    },
+    "submerso": {
+      "nome": "Submerso",
+      "cat": "controle",
+      "icone": "🌀",
+      "num": "nenhum",
+      "desc": "Fora do combate: não age, não pode ser alvo, não sofre dano contínuo e não gera energia."
+    },
+    "taunt": {
+      "nome": "Provocado",
+      "cat": "controle",
+      "icone": "🎯",
+      "num": "nenhum",
+      "desc": "Só pode atacar quem o provocou. Suspende se o provocador ficar Invulnerável."
+    },
+    "silenceClass": {
+      "nome": "Classe travada",
+      "cat": "controle",
+      "icone": "🔇",
+      "num": "nenhum",
+      "desc": "As habilidades da classe indicada ficam indisponíveis. Básico e Defesa seguem liberados."
+    },
+    "lockSkill": {
+      "nome": "Hab. travada",
+      "cat": "controle",
+      "icone": "🚫",
+      "num": "nenhum",
+      "desc": "A entrada indicada fica indisponível. As outras seguem liberadas."
+    },
+    "dominado": {
+      "nome": "Dominado",
+      "cat": "controle",
+      "icone": "🧟",
+      "num": "nenhum",
+      "desc": "Usa o próprio Básico contra um aliado — quem dominou escolhe o alvo."
+    },
+    "selado": {
+      "nome": "Selado",
+      "cat": "controle",
+      "icone": "🔒",
+      "num": "nenhum",
+      "desc": "Habilidade e Milagre ficam travados. Básico e Defesa seguem liberados."
+    },
+    "agarrar": {
+      "nome": "Agarrado",
+      "cat": "controle",
+      "icone": "✊",
+      "num": "nenhum",
+      "desc": "A Habilidade fica travada."
+    },
+    "pacificado": {
+      "nome": "Pacificado",
+      "cat": "controle",
+      "icone": "☮️",
+      "num": "nenhum",
+      "desc": "Não pode usar ataques neste período."
+    },
+    "medo": {
+      "nome": "Medo",
+      "cat": "controle",
+      "icone": "😱",
+      "num": "nenhum",
+      "desc": "O Milagre fica travado."
+    },
+    "dmgDown": {
+      "nome": "Dano reduzido",
+      "cat": "ruim",
+      "icone": "⬇️",
+      "num": "valor",
+      "desc": "Reduz o dano que esta unidade CAUSA. Soma com outros do mesmo tipo."
+    },
+    "vulneravel": {
+      "nome": "Vulnerável",
+      "cat": "ruim",
+      "icone": "⊕",
+      "num": "valor",
+      "desc": "Recebe +N de dano de cada golpe, somado antes da redução e do escudo."
+    },
+    "encharcado": {
+      "nome": "Encharcado",
+      "cat": "ruim",
+      "icone": "💧",
+      "num": "nenhum",
+      "desc": "Recebe +5 de dano de Maré e Tempestade; serve de gatilho para vários kits."
+    },
+    "noHeal": {
+      "nome": "Sem cura",
+      "cat": "ruim",
+      "icone": "⛔",
+      "num": "nenhum",
+      "desc": "Bloqueia cura e regeneração."
+    },
+    "livro": {
+      "nome": "Inscrito",
+      "cat": "ruim",
+      "icone": "📖",
+      "num": "nenhum",
+      "desc": "Marca de sentença: certos kits punem ou aceleram quem está inscrito."
+    },
+    "antiRevive": {
+      "nome": "Irrevivível",
+      "cat": "ruim",
+      "icone": "⚰️",
+      "num": "nenhum",
+      "desc": "Se cair enquanto marcado, não pode ser revivido."
+    },
+    "olho": {
+      "nome": "Olho",
+      "cat": "ruim",
+      "icone": "👁️",
+      "num": "nenhum",
+      "desc": "Marca ofensiva: certos kits punem o alvo marcado."
+    },
+    "pressagio": {
+      "nome": "Presságio",
+      "cat": "ruim",
+      "icone": "🔮",
+      "num": "nenhum",
+      "desc": "Marca ofensiva: certos kits punem o alvo marcado."
+    },
+    "marcado": {
+      "nome": "Marcado",
+      "cat": "ruim",
+      "icone": "🎯",
+      "num": "nenhum",
+      "desc": "Marca ofensiva: certos kits punem o alvo marcado."
+    },
+    "torpor": {
+      "nome": "Torpor",
+      "cat": "ruim",
+      "icone": "🌫️",
+      "num": "nenhum",
+      "desc": "Quando o portador agir, quem aplicou o torpor reage."
+    },
+    "retaliacao": {
+      "nome": "Retaliação",
+      "cat": "ruim",
+      "icone": "⚡",
+      "num": "valor",
+      "desc": "Se o marcado derrubar um aliado de quem marcou, sofre dano puro."
+    },
+    "dmgReduction": {
+      "nome": "Redução de dano",
+      "cat": "defesa",
+      "icone": "🛡️",
+      "num": "valor",
+      "desc": "Subtrai um valor fixo de cada golpe, antes do escudo. Vale a maior, não soma."
+    },
+    "shield": {
+      "nome": "Defesa",
+      "cat": "defesa",
+      "icone": "🔰",
+      "num": "valor",
+      "desc": "Escudo que absorve dano antes da vida."
+    },
+    "invulneravel": {
+      "nome": "Invulnerável",
+      "cat": "defesa",
+      "icone": "✨",
+      "num": "nenhum",
+      "desc": "Imune a dano e a efeitos novos. Continua podendo ser alvo; dano contínuo já aplicado ainda conta."
+    },
+    "controlImmune": {
+      "nome": "Imune a ctrl",
+      "cat": "defesa",
+      "icone": "🧿",
+      "num": "nenhum",
+      "desc": "Ignora atordoar, adormecer, provocar, silenciar, submergir e dominar."
+    },
+    "vinculo": {
+      "nome": "Vínculo",
+      "cat": "defesa",
+      "icone": "🔗",
+      "num": "nenhum",
+      "desc": "Liga o destino a um aliado enquanto durar."
+    },
+    "pisoVida": {
+      "nome": "Piso de vida",
+      "cat": "defesa",
+      "icone": "❤️",
+      "num": "nenhum",
+      "desc": "Não cai abaixo de 1 de vida enquanto durar."
+    },
+    "dmgUp": {
+      "nome": "Dano",
+      "cat": "bom",
+      "icone": "⚔️",
+      "num": "valor",
+      "desc": "Aumenta o dano que esta unidade CAUSA. Soma com outros do mesmo tipo."
+    },
+    "regen": {
+      "nome": "Regeneração",
+      "cat": "bom",
+      "icone": "➕",
+      "num": "valor",
+      "desc": "Cura no início do turno. Vale a maior, não soma."
+    },
+    "intercepta": {
+      "nome": "Interceptar",
+      "cat": "bom",
+      "icone": "🙋",
+      "num": "nenhum",
+      "desc": "Toma para si o golpe que miraria um aliado protegido."
+    },
+    "contraAtaca": {
+      "nome": "Contra-ataque",
+      "cat": "bom",
+      "icone": "↩️",
+      "num": "valor",
+      "desc": "Devolve dano a quem atacar o portador."
+    },
+    "armazenaDano": {
+      "nome": "Acumula dano",
+      "cat": "bom",
+      "icone": "🔋",
+      "num": "valor",
+      "desc": "Guarda o dano sofrido para liberar depois."
+    },
+    "redirect": {
+      "nome": "Redirecionar",
+      "cat": "bom",
+      "icone": "🔀",
+      "num": "nenhum",
+      "desc": "Desvia para outro alvo o golpe recebido."
+    },
+    "inalvejavel": {
+      "nome": "Inalvejável",
+      "cat": "bom",
+      "icone": "🫥",
+      "num": "nenhum",
+      "desc": "Sai da mira inimiga de alvo único."
+    },
+    "refleteDano": {
+      "nome": "Espinhos",
+      "cat": "bom",
+      "icone": "🌵",
+      "num": "valor",
+      "desc": "Devolve um valor fixo a quem causar dano ao portador."
+    },
+    "acaoPerfeita": {
+      "nome": "Ação perfeita",
+      "cat": "bom",
+      "icone": "🌟",
+      "num": "nenhum",
+      "desc": "A próxima habilidade não pode ser evitada, reduzida, absorvida nem contra-atacada."
+    },
+    "danoFimTurno": {
+      "nome": "Golpe fim-turno",
+      "cat": "bom",
+      "icone": "🔁",
+      "num": "valor",
+      "desc": "No fim de cada turno, ataca de graça um inimigo."
+    },
+    "proximoGolpePuro": {
+      "nome": "Golpe puro",
+      "cat": "bom",
+      "icone": "🗡️",
+      "num": "nenhum",
+      "desc": "O próximo ataque é dano puro: fura redução e escudo."
+    },
+    "caldeirao": {
+      "nome": "Caldeirão",
+      "cat": "bom",
+      "icone": "⚗️",
+      "num": "nenhum",
+      "desc": "Quem for curado neste turno não cai abaixo de 1 de vida."
+    }
+  },
+  "dots": {
+    "queimadura": {
+      "nome": "Queimadura",
+      "cat": "ruim",
+      "icone": "🔥",
+      "num": "valor",
+      "desc": "Dano contínuo no início do turno, antes de agir. Ignora redução e escudo."
+    },
+    "veneno": {
+      "nome": "Veneno",
+      "cat": "ruim",
+      "icone": "☠️",
+      "num": "valor",
+      "desc": "Dano contínuo no início do turno, antes de agir. Ignora redução e escudo."
+    },
+    "sangramento": {
+      "nome": "Sangramento",
+      "cat": "ruim",
+      "icone": "🩸",
+      "num": "valor",
+      "desc": "Dano contínuo no início do turno, antes de agir. Ignora redução e escudo."
+    },
+    "tormento": {
+      "nome": "Tormento",
+      "cat": "ruim",
+      "icone": "💀",
+      "num": "valor",
+      "desc": "Dano contínuo no início do turno, antes de agir. Ignora redução e escudo."
+    },
+    "maldicao": {
+      "nome": "Maldição",
+      "cat": "ruim",
+      "icone": "🕯️",
+      "num": "valor",
+      "desc": "Dano contínuo que cresce com o acúmulo da maldição. Ignora redução e escudo."
+    },
+    "marcaMorte": {
+      "nome": "Marca da Morte",
+      "cat": "ruim",
+      "icone": "⚰️",
+      "num": "valor",
+      "desc": "Dano contínuo puro; quem cair sob ela não pode ser revivido."
+    }
+  },
+  "contadores": {
+    "discoSolar": {
+      "nome": "Disco Solar",
+      "cat": "bom",
+      "icone": "☀️",
+      "num": "acumulo",
+      "desc": "Carga acumulada que alimenta as habilidades do portador."
+    },
+    "Coroa": {
+      "nome": "Coroa",
+      "cat": "bom",
+      "icone": "👑",
+      "num": "acumulo",
+      "desc": "Carga acumulada que alimenta as habilidades do portador."
+    },
+    "Pedra": {
+      "nome": "Pedra",
+      "cat": "ruim",
+      "icone": "🪨",
+      "num": "acumulo",
+      "desc": "Marcas de pedra no alvo; acumulam até petrificar."
+    },
+    "podridao": {
+      "nome": "Podridão",
+      "cat": "ruim",
+      "icone": "🦠",
+      "num": "acumulo",
+      "desc": "Reduz a vida máxima e bloqueia revive conforme acumula."
+    },
+    "cauda": {
+      "nome": "Cauda",
+      "cat": "bom",
+      "icone": "🦊",
+      "num": "acumulo",
+      "desc": "Cargas do portador; escalam o efeito a cada acúmulo."
+    },
+    "maldicao": {
+      "nome": "Maldição",
+      "cat": "ruim",
+      "icone": "🕯️",
+      "num": "acumulo",
+      "desc": "Acúmulo da maldição; quanto maior, mais dano contínuo."
+    },
+    "atadura": {
+      "nome": "Atadura",
+      "cat": "ruim",
+      "icone": "🩹",
+      "num": "acumulo",
+      "desc": "Faixas no alvo: bloqueiam revive e aumentam o dano que ele recebe de certos golpes."
+    },
+    "combo": {
+      "nome": "Combo",
+      "cat": "bom",
+      "icone": "🎴",
+      "num": "acumulo",
+      "desc": "Cargas do time; certos kits as consomem."
+    },
+    "clava": {
+      "nome": "Clava",
+      "cat": "bom",
+      "icone": "🏏",
+      "num": "acumulo",
+      "desc": "Conta os usos do Básico; a cada ciclo, cura em vez de atacar."
+    }
+  }
+}

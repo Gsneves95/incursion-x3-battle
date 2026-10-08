@@ -508,6 +508,35 @@ const mapaObj = (() => {
   return doc;
 })();
 
+// §328 — DADO de apresentação dos EFEITOS (data/status_visual.json). PORTÃO: todo tipo que o motor pode pôr
+// numa unidade (VOCAB.efeitos ∪ VOCAB.dots ∪ VOCAB.contadores) TEM de ter entrada — senão o efeito apareceria
+// sem nome na tela. Falha o build (alto, como os outros schemas). Achata as 3 seções num mapa único por chave.
+const statusVisualObj = (() => {
+  const E = require('../src/engine.js');
+  const doc = JSON.parse(ler('data/status_visual.json'));
+  const CATS = new Set(['bom', 'ruim', 'controle', 'defesa']);
+  const NUMS = new Set(['valor', 'acumulo', 'nenhum']);
+  const mapa = {}; const erros = [];
+  for (const sec of ['efeitos', 'dots', 'contadores']) {
+    const bloco = doc[sec] || {};
+    for (const k of Object.keys(bloco)) {
+      const v = bloco[k];
+      if (!v.nome) erros.push(`${sec}.${k}: nome ausente`);
+      if (!CATS.has(v.cat)) erros.push(`${sec}.${k}: cat "${v.cat}" inválida (bom|ruim|controle|defesa)`);
+      if (!v.icone) erros.push(`${sec}.${k}: ícone ausente`);
+      if (!NUMS.has(v.num)) erros.push(`${sec}.${k}: num "${v.num}" inválido (valor|acumulo|nenhum)`);
+      if (!v.desc) erros.push(`${sec}.${k}: desc ausente`);
+      mapa[k] = v;   // chave coincidente entre seções (maldicao é DoT e contador) resolve para a mesma entrada
+    }
+  }
+  // PORTÃO: cada tipo do VOCAB tem entrada (nenhum efeito sem nome).
+  const precisa = [...new Set([...E.VOCAB.efeitos, ...E.VOCAB.dots, ...E.VOCAB.contadores])];
+  const faltam = precisa.filter(k => !mapa[k]);
+  if (faltam.length) erros.push(`efeitos do motor SEM entrada em status_visual.json (§328): ${faltam.join(', ')}`);
+  if (erros.length) { console.error('ERRO §328 — data/status_visual.json:\n  ' + erros.join('\n  ')); process.exit(1); }
+  return mapa;
+})();
+
 // §322 P3 — GUARDA da ponte de segurança: um modo marcado v2 em data/ia_por_modo.json SÓ pode estar v2 se a
 // prova de winnability (data/ia_winnability_v2.json) disser que TODO item verificável dele vence sob a v2.
 // Domínios e sandbox são isentos (sem solução fixa). Isto MORDE: por o 'rito' em v2 quebra o build (hanuman é
@@ -533,7 +562,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

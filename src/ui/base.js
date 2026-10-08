@@ -207,6 +207,8 @@ function diagInfo(){
 function renderDiag(){ const el=document.getElementById('diag'); if(!el||!el.classList.contains('on'))return;
   const txt=document.getElementById('diagtext')||el;
   txt.textContent = diagInfo().map(([k,v])=>k.padEnd(8)+v).join('\n'); }
+// §328: o carimbo de build como TEXTO (para o menu ⋯ da batalha). Lê o #build injetado na build; "—" se ausente.
+function buildStr(){ try{ const b=document.getElementById('build'); return (b&&b.textContent&&b.textContent.trim())||'—'; }catch(e){ return '—'; } }
 function ligarDiag(){
   const el=document.getElementById('diag'); if(!el)return;
   if(/diag/i.test(location.search)||/diag/i.test(location.hash)) el.classList.add('on');

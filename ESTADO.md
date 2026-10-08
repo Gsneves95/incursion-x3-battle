@@ -2,6 +2,30 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §328 · TELA DE BATALHA: etiquetas de efeito legíveis + quadro de inspeção
+
+A tela de batalha é a MESMA em todos os modos. Dois achados do dono: (1) efeitos como ícone minúsculo + número azul no
+canto, ilegíveis; (2) sem jeito de ver habilidades/passiva do oponente.
+- **Parte 0 (o que o dono viu):** "▯6" ao lado da vida = ESCUDO/Defesa (`◧6`, glifo não renderizou); "+⬚2" no canto da
+  ficha = um EFEITO/magnitude (o indicador minúsculo antigo), NÃO o selo de nível (o nível é o "Nv N" dourado do §320,
+  que fica). Catálogo: `VOCAB` tem 54 tipos — `efeitos[]` (40, `{type,v,dur}`), `dots[]` (6, `{nome,v,dur}`),
+  `contadores{}` (9, chave→qtde) + `shield` (número); `dur>90` = permanente.
+- **Parte 1 (etiquetas):** `data/status_visual.json` (novo) dá nome pt/categoria/ícone/num/descrição por tipo; **portão de
+  build** exige entrada p/ todo tipo do motor. Cada retrato (2 lados) ganha, abaixo da vida, até **3 etiquetas
+  empilhadas** `[ícone] Nome valor + selinho de turnos`, borda por categoria (verde/vermelho/roxo/azul); excedente → "+N".
+  O **retrato encolheu 92→58** (quadrado, simétrico; ficha segue 90) p/ caber retrato+etiquetas na banda de ~102px/fileira
+  sem cortar — revisa a hierarquia "retrato > ficha" do §214 (troca deliberada: ler o efeito > tamanho do retrato).
+- **Parte 2 (quadro):** tocar QUALQUER retrato SEM arma abre o quadro (com arma, segue escolhendo alvo); tocar etiqueta/"+N"
+  também. Mostra retrato, nome, Função·Elemento, vida, Passiva, 4 miniaturas quadradas (Básico/Habilidade/Milagre/Defesa
+  com "Nv N" real e, ao tocar, custo+recarga+efeito NO NÍVEL ATUAL) e "Efeitos ativos" (nome+turnos+descrição). Vive no VÃO
+  entre as fichas do jogador e os inimigos (`left:554 right:156` no palco escalado) → nunca cobre ficha/retrato/ENCERRAR;
+  encolhe se aperta. Fecha no ✕, fora, e no voltar do Android. Não custa ação, não muda estado, não para o relógio.
+- **Parte 3 (faxina):** "Sua conta" e o carimbo "build …" saíram do canto (sobre a dica de energia) p/ o menu "⋯".
+- **NÃO mudou:** motor, IA, regras, balanceamento, níveis, economia, outras telas.
+- **Guardas:** `batalha_inspecao.test.js` (novo, jsdom, 25 ok); `batalha_faixa.test.js` reescrito p/ §328 (nada corta em
+  20:9/16:9/piso, "+N", nomes escritos); `interface`/`moldura` ajustados. Screenshots em `docs/telas/` (1600×738 e
+  1280×720). Suíte + build verdes.
+
 ## ★ §327 · Domínios seguia "em breve" no ar depois do §326 — cache do HTML
 
 Mesmo com 5f5fa00 (§326) Live no Render, a ilha Domínios aparecia "em breve" no celular (cache limpo) e no navegador do PC.

@@ -6,6 +6,68 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §328 · TELA DE BATALHA: etiquetas de efeito legíveis + quadro de inspeção
+
+**Achados do dono (jogando).** (1) os efeitos apareciam como um ícone minúsculo + número azul no canto, ilegíveis;
+(2) não havia como ver as habilidades e a passiva do oponente. A tela de batalha é a MESMA em todos os modos (PvP,
+campanha, Domínios, Ritos, Desafios, sandbox), então o conserto vale para todos de uma vez.
+
+**PARTE 0 — o que eram os selos que o dono viu.**
+- **"▯6" ao lado da vida (ex.: Mnevis):** é o ESCUDO/Defesa — `hp__label` monta `${hp}${shield?' ◧'+shield}` (campo.js).
+  O "▯" é o glifo ◧ que não renderizou no aparelho; "6" é o valor do escudo. É um STATUS, não um nível. Agora também
+  vira a etiqueta legível **"Defesa 6"** e aparece no quadro ("Efeitos ativos").
+- **"+⬚2" no canto da 1ª ficha:** é um EFEITO/STATUS (a magnitude de um modificador, ex.: +2), do antigo indicador
+  minúsculo de efeito — exatamente a ilegibilidade que o dono apontou. O "⬚" é o ícone do efeito que não renderizou.
+  NÃO é o selo de nível de habilidade: o nível é o selo **dourado "Nv N"** (§320), separado, que CONTINUA no canto da
+  ficha, legível, porque é informação de habilidade (não de efeito). Então: efeito → vira etiqueta nomeada; nível → fica.
+- **Catálogo de efeitos (onde o motor guarda):** `VOCAB` (engine.js) lista 54 chaves em 3 famílias — `efeitos` (40
+  buffs/debuffs em `u.efeitos[]`, cada `{type, v, dur}`), `dots` (6 danos-contínuos em `u.dots[]`, `{nome, v, dur}`),
+  `contadores` (9 acúmulos em `u.contadores{}`, chave→quantidade). O escudo é `u.shield` (número). Turnos: `dur` (>90 =
+  permanente, sem selinho). Cada família tem nome pt, categoria, ícone e descrição em `data/status_visual.json` (novo).
+
+**PARTE 1 — etiquetas legíveis.** `data/status_visual.json` (novo): por tipo → `{nome, cat (bom|ruim|controle|defesa),
+icone, num (valor|acumulo|nenhum), desc}`. **PORTÃO DE BUILD** (`tools/build.js`): todo tipo criável pelo motor
+(`VOCAB.efeitos ∪ dots ∪ contadores`) PRECISA de entrada, senão o build quebra — "nenhum efeito sem nome". Cada retrato
+(dois lados) ganha, LOGO ABAIXO da barra de vida, uma faixa de etiquetas: `[ícone] Nome [valor/acúmulo] + selinho de
+TURNOS`. Cor da borda = categoria (verde bom · vermelho ruim · roxo controle · azul defesa). O NOME é SEMPRE escrito
+(nunca só ícone); o valor fica em `span` próprio, nunca truncado.
+
+**Decisão de layout (a mais difícil).** A banda por fileira é curta: board = 306px de design ÷ 3 fileiras = ~102px cada.
+Para caber RETRATO + etiquetas nessa banda sem cortar, o **retrato de batalha encolheu de 92 p/ 58** (segue QUADRADO e
+simétrico aliado=inimigo; a ficha segue 90). As etiquetas são **empilhadas 1 por linha (nome inteiro legível)**, até **3
+por retrato** (58 + 2 + 41 = 101 ≤ 102); o excedente vira **"+N"** (toque abre o quadro, que lista TODAS com descrição).
+- **Recusado:** (a) grade 2×2 de etiquetas — caberiam 4, mas cada célula de ~70px TRUNCA nomes longos ("Redução de
+  dano", "Regeneração"), e o dono pediu LER o efeito; (b) manter o retrato em 92 — empurra as etiquetas p/ fora do board
+  (corte de até 26px medido). A troca é deliberada: a LEGIBILIDADE do efeito pesa mais que o tamanho isolado do retrato.
+  Isso REVISA a hierarquia "retrato > ficha" do §214/§258 — registrado aqui para não ser desfeito por parecer regressão.
+- Alguns nomes foram encurtados p/ caberem em 1 linha de 142px: "Habilidade travada"→"Hab. travada", "Imune a
+  controle"→"Imune a ctrl", "Golpe de fim de turno"→"Golpe fim-turno", "Próximo golpe puro"→"Golpe puro".
+
+**PARTE 2 — quadro de inspeção.** Tocar QUALQUER retrato (aliado ou inimigo) SEM habilidade armada abre o quadro; COM
+habilidade armada, o toque segue escolhendo ALVO (não abre o quadro). Tocar uma etiqueta ou o "+N" também abre.
+Conteúdo: retrato, nome, "Função · Elemento", vida atual/máx; "Passiva — Nome: texto"; 4 miniaturas QUADRADAS (mesmo
+formato das fichas) com rótulo (Básico/Habilidade/Milagre/Defesa) e selo "Nv N" com o nível REAL desta partida; tocar
+uma miniatura mostra nome, custo (pips), "Recarga X · pronta[/em N turnos]", o efeito NO NÍVEL ATUAL, e "Efeitos
+ativos" (cada um com nome, turnos e descrição do status_visual.json). Abre com Habilidade selecionada. Fecha no ✕, ao
+tocar fora, e no VOLTAR do Android (`voltarNativo` fecha o quadro ANTES de qualquer outra camada). Abrir não custa ação,
+não muda o estado, não para o relógio.
+- **Posição (sem sobrepor botões):** o quadro vive no VÃO entre as fichas do jogador (terminam em ~554px de design) e a
+  coluna dos inimigos (~156px da direita): `left:554px; right:156px` dentro do palco JÁ escalado (px = design). Assim
+  nunca cobre ficha, retrato nem o ENCERRAR TURNO; se o vão aperta, o quadro ENCOLHE (`width:min(400px, vão)`), nunca
+  sobrepõe. **Recusado:** centralizar no board — cobria as fichas do próprio jogador (violaria "não cobrir botões").
+
+**PARTE 3 — faxina.** O botão "Sua conta" e o carimbo de "build …" saíram do canto inferior esquerdo (sobre a dica "Ao
+encerrar, escolha 1 energia livre") e foram para o menu "⋯" (`body.embatalha` esconde os do canto; `topo.js` os recria
+no menu). Nada mais sobre a dica de energia.
+
+**NÃO MUDOU:** motor, IA, regras, balanceamento, níveis, economia, outras telas.
+
+**Guardas.** `tests/batalha_inspecao.test.js` (novo, jsdom): tocar aliado sem arma abre o quadro com a passiva; tocar a
+miniatura Milagre mostra o texto do Milagre; com arma, tocar o inimigo é ALVO (não quadro); TODO tipo do VOCAB vira
+etiqueta nomeada; o voltar do Android fecha o quadro. `tests/batalha_faixa.test.js` reescrito p/ §328 (etiquetas abaixo
+da vida, "+N", nada corta em 20:9/16:9/piso). `interface.test.js` e `moldura.test.js` ajustados (efeitos agora são
+etiquetas + quadro; retrato quadrado 58, ficha 90).
+
 ## §327 · Domínios seguia "em breve" no ar depois do §326 — cache do HTML
 
 **Achado do dono:** o Render mostra 5f5fa00 (§326) Live, branch certa, Auto-Deploy On Commit, conta zerada (servidor

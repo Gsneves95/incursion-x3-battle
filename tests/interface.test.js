@@ -203,11 +203,11 @@ ok($$('.skill').length === 12, `só o time aliado tem ladrilhos, há ${$$('.skil
 ok(!$('.foetab') && !$('.foepanel') && !$('.foesk'), 'a exibição/abas permanentes das habilidades inimigas saíram (§214)');
 ok($$('.portrait[data-foe] [data-sk]').length === 0, 'nada do lado inimigo pode ser armável');
 ok($$('.portrait__ask').length === 3, `todo inimigo vivo precisa da marca "?" de consulta (item 8), há ${$$('.portrait__ask').length}`);
-// §299: a faixa de efeitos SUBIU — fora do retrato, ACIMA das fichas (aliado) e do retrato (inimigo)
-ok($$('.brow__enemy .portrait .effects').length === 0, '§299: a faixa NÃO vive mais dentro do retrato inimigo');
-ok($$('.portrait .effects').length === 0, '§299: nenhuma faixa de efeitos dentro de retrato algum');
-ok($$('.brow .fxstrip--ally').length === 3, '§299: cada fileira tem a faixa do aliado ACIMA das fichas');
-ok($$('.brow .fxstrip--enemy').length === 3, '§299: cada fileira tem a faixa do inimigo ACIMA do retrato');
+// §328: as ETIQUETAS de efeito vivem LOGO ABAIXO da barra de vida, FORA do retrato (sibling do .portrait),
+// nos DOIS lados. (Substitui a faixa .fxstrip do §299, que ficava acima das fichas.)
+ok($$('.portrait .fxstrip, .portrait .effects, .portrait .fxtags').length === 0, '§328: nenhuma faixa de efeitos DENTRO do retrato');
+ok($$('.brow .fxtags--ally').length === 3, '§328: cada fileira tem a faixa de etiquetas do aliado (abaixo da vida)');
+ok($$('.brow .fxtags--enemy').length === 3, '§328: cada fileira tem a faixa de etiquetas do inimigo (abaixo da vida)');
 // §215: MINHAS orbes (interativas) à esquerda, as do OPONENTE (leitura) à direita — as duas visíveis
 ok($$('.energy--me .energy__pill').length >= 1 && $$('.energy--me .energy__pill').length <= 6,
   `minhas orbes: 1 a 6 tipos, há ${$$('.energy--me .energy__pill').length}`);
@@ -372,7 +372,10 @@ console.log('== 4c. hierarquia visual e legibilidade ==');
   const scs = w.getComputedStyle($('.brow__tiles .skill'));
   const pW = parseFloat(pcs.width), pH = parseFloat(pcs.height);
   const sW = parseFloat(scs.width), sH = parseFloat(scs.height);
-  ok(pW > sW && pH > sH, `§214 restaurada: o retrato (${pW}×${pH}) é MAIOR que a ficha (${sW}×${sH}) nas duas dimensões`);
+  // §328: o retrato continua QUADRADO e SIMÉTRICO, mas ENCOLHEU (92→58) p/ abrir a faixa de etiquetas abaixo
+  // da vida. A hierarquia "retrato > ficha" do §214 foi revista aqui (ver DECISOES §328); a ficha segue 90.
+  ok(pW === pH, `§328: o retrato é QUADRADO (${pW}x${pH})`);
+  ok(sW === 90 && sH === 90, `§257: a ficha segue 90x90 (veio ${sW}x${sH})`);
   const ecs = w.getComputedStyle($('.brow__enemy .portrait'));
   ok(parseFloat(ecs.width) === pW && parseFloat(ecs.height) === pH,
     `retrato aliado e inimigo do mesmo tamanho (aliado ${pW}×${pH} vs inimigo ${parseFloat(ecs.width)}×${parseFloat(ecs.height)})`);
@@ -451,7 +454,7 @@ console.log('== 4c2. contagem de objetos e ruído ==');
   ok(!/\u03a3/.test($('.energy--me').textContent), 'o total \u03a3 era redundante e deveria ter saído');
   ok(!$('.player__rank'), 'a linha "3 de pé \u00b7 N energia" duplicava o que a tela já mostra');
   ok(!/\/100|\/120/.test($('.hp__label').textContent), 'o "/max" era redundante no rótulo de vida');
-  ok($$('.brow .fxstrip--ally').length === 3, '§299: 1 faixa de efeitos por aliado, ACIMA das fichas');
+  ok($$('.brow .fxtags--ally').length === 3, '§328: 1 faixa de etiquetas por aliado (abaixo da vida)');
   console.log(`  ${objetos} objetos em repouso \u00b7 ${pills} pílulas`);
 }
 
@@ -516,28 +519,32 @@ console.log('== 8. recarga sobre o ícone ==');
   console.log(`  ${cds.length} em recarga com número visível`);
 }
 
-console.log('== 9. passiva e efeitos são tocáveis ==');
+console.log('== 9. passiva (rodapé) e efeitos (etiquetas nomeadas + quadro) ==');
+w.eval('armado=null; inspec=null; detalhe=null; render();');
 tap($('.portrait__pas'));
 ok($$('.leitura__cd').some(e => /PASSIVA|INERTE/.test(e.textContent)), 'detalhe deveria identificar a passiva');
-console.log(`  passiva: "${$('.leitura__nome').textContent}"`);
+console.log(`  passiva: "${$('.leitura__nome') ? $('.leitura__nome').textContent : ''}"`);
 {
-  const u = S().lados[S().ativo].units[0];
-  u.efeitos.push({ type: 'dmgUp', v: 8, dur: 2 });
-  u.dots.push({ nome: 'queimadura', v: 5, dur: 2 });   // DoT é CHAVE; a UI resolve p/ "Queimadura"
-  w.eval('render()');
-  ok($$('.effect').length >= 2, 'ícones de efeito deveriam aparecer');
-  tap($('[data-ef]'));
-  ok($$('.leitura__cd').some(e => /TURNO|PERMANENTE|∞/.test(e.textContent)), 'detalhe do efeito deveria mostrar duração (no rodapé)');
-  tap($('[data-dot]'));
-  ok(/QUEIMADURA/.test($('.leitura__nome').textContent), 'detalhe do dano contínuo');
-  console.log(`  ${$$('.effect').length} ícones, todos abrem explicação`);
+  // §328: os efeitos deixaram de ser ícones no rodapé — são ETIQUETAS nomeadas abaixo da vida; tocar abre o QUADRO.
+  w.eval(`(function(){ const u=st.lados[st.ativo].units[0]; u.efeitos=[{type:'dmgUp',v:8,dur:2}]; u.dots=[{nome:'queimadura',v:5,dur:2}]; armado=null; inspec=null; detalhe=null; render(); })()`);
+  const tags = $$('.unit__portrait .fxtag');
+  ok(tags.length >= 2, '§328: os efeitos viram ETIQUETAS nomeadas abaixo da vida');
+  ok($$('.fxtag__n').some(n => /Dano/i.test(n.textContent)), '§328: o buff aparece escrito como "Dano"');
+  ok($$('.fxtag__n').some(n => /Queimadura/i.test(n.textContent)), '§328: o DoT aparece nomeado como "Queimadura"');
+  tap($('.fxtag[data-insp]'));
+  ok(!!$('.inspecao'), '§328: tocar a etiqueta abre o QUADRO de inspeção');
+  ok(/Queimadura|Dano/i.test(($('.inspef') || {}).textContent || ''), '§328: o quadro lista os efeitos ativos nomeados');
+  console.log(`  ${tags.length} etiquetas; o quadro abre com "Efeitos ativos"`);
 }
 
-console.log('== 10. retrato abre a ficha da unidade ==');
+console.log('== 10. tocar o retrato (sem arma) abre o QUADRO de inspeção (§328) ==');
+w.eval('armado=null; inspec=null; detalhe=null; render();');
 tap($$('.brow__ally .portrait')[1]);
-ok($('.leitura__nome').textContent.length > 1, 'ficha deveria abrir no rodapé');
-ok($$('.leitura__cd').some(e => /\d+\/120/.test(e.textContent)), 'ficha deveria mostrar vida');
-console.log(`  ficha: "${$('.leitura__nome').textContent}" \u2014 ${$('.leitura__cd').textContent}`);
+ok(!!$('.inspecao'), '§328: o quadro abre ao tocar o retrato aliado (sem habilidade armada)');
+ok((($('.inspcab__nome') || {}).textContent || '').length > 1, 'o quadro nomeia a unidade');
+ok(/\d+\/\d+/.test(($('.inspcab__hp') || {}).textContent || ''), 'o quadro mostra a vida (atual/máx)');
+w.eval('inspec=null; detalhe=null; armado=null; render();');   // fecha o quadro p/ não poluir os testes seguintes
+console.log(`  quadro: "${($('.inspcab__nome') || {}).textContent || ''}"`);
 
 console.log('== 11. troca de energia em popup ==');
 {

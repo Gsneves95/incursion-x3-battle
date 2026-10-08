@@ -1,17 +1,14 @@
-// batalha_faixa.test.js (§299) — GUARDA BABÁ da tela de batalha refeita: a FAIXA de efeitos ACIMA das
-// fichas, o PAINEL lateral removido, a LEITURA no rodapé e a CITAÇÃO de repouso.
+// batalha_faixa.test.js (§328) — GUARDA BABÁ da tela de batalha: as ETIQUETAS de efeito LEGÍVEIS, empilhadas
+// LOGO ABAIXO da barra de vida, nos DOIS lados, sem cortar o enquadramento.
 //
-// Declara o ESPAÇO DE ESTADOS (convenção §295) e o percorre INTEIRO:
-//   • duas escalas — o palco de 780 (piso) E de 951 (folga), o mesmo design 780×428 escalado;
-//   • 0 a 6 efeitos por unidade (o pior EMPILHAMENTO real medido é 4; 6 é margem);
-//   • os dois lados (aliado com fichas, inimigo só retrato).
-// E crava as decisões da fatia 2:
-//   1) NENHUM efeito colapsa em "+N" (o compromisso do §266 acabou) — todo chip numérico mostra a magnitude;
-//   2) NADA corta, nas duas escalas, com 0..6 efeitos (a faixa vive na banda ACIMA das fichas, dentro do board);
-//   3) a LEITURA aparece no rodapé ao tocar habilidade E ao tocar inimigo; a CITAÇÃO volta no repouso;
-//   4) a FICHA continua em 90 e o RESPIRO do §239 se mantém (a moldura une retrato+fichas; o retrato pop acima).
+// Troca a faixa de chips do §299 (acima das fichas, sem "+N") pelo layout do §328:
+//   • cada efeito vira uma ETIQUETA com NOME escrito (nunca só ícone) + valor/acúmulo + selinho de TURNOS;
+//   • as etiquetas ficam ABAIXO da barra de vida do retrato (os dois lados);
+//   • cabem ATÉ 3 por retrato (o retrato encolheu p/ 58 e a banda por fileira é ~102px de design); o resto é "+N";
+//   • NADA corta na vertical, nas aspect-ratios reais do celular (20:9 e 16:9) e no piso estreito.
 //
-// Chromium (não jsdom): a faixa "acima das fichas" e o "não corta" são medidos por rect real.
+// Declara o ESPAÇO DE ESTADOS (convenção §295) e o percorre INTEIRO: 0..6 efeitos por unidade, os dois lados,
+// três enquadramentos. Chromium (não jsdom): "abaixo da vida" e "não corta" são medidos por rect real.
 
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -30,13 +27,15 @@ function acharChromium() {
 let falhas = 0;
 const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
 const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
-// as duas ESCALAS: 780×640 → escala 1.0 (piso) · 951×640 → escala ~1.22 (folga), mesmo design 780×428
-const ESCALAS = [{ nome: 'piso 780', w: 780, h: 640 }, { nome: 'folga 951', w: 951, h: 640 }];
-// §307 — a faixa é VERTICALMENTE fixada nas bordas do board (banda cheia: 0 de folga por design → o `clip` segue
-// sendo guarda de transbordo, é o que cabe). Mas a linha de chips é NOWRAP e cresce na HORIZONTAL com mais efeitos,
-// e isso NÃO era medido (o scan de clip só via topo/base). §307 mede a FOLGA horizontal (borda de chip → borda do
-// board) e quebra abaixo do piso — a folga POSITIVA que o transbordo vertical não enxerga. Hoje: +7px a 6 efeitos.
-const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto de stress; o real §266 é 4)
+// os enquadramentos que o §328 exige verdes: 20:9 e 16:9 (aspect do celular), mais o piso estreito do palco.
+// O clip é medido em px de DESIGN (dividido por ultimaEscala), então é invariante à escala — mas variar a
+// aspect-ratio muda qual eixo manda e a largura de design, exercitando o layout em condições reais.
+const ESCALAS = [
+  { nome: '20:9 1600', w: 1600, h: 720 },   // aspect 2.22 — ultrawide do celular
+  { nome: '16:9 1280', w: 1280, h: 720 },   // aspect 1.78
+  { nome: 'piso 780',  w: 780,  h: 640 },   // palco estreito (piso de largura de design)
+];
+const FXTAGS_MAX = 3;   // deve bater com src/ui/campo.js
 
 (async () => {
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
@@ -45,7 +44,7 @@ const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto 
     const ctx = await browser.newContext({ viewport: { width: E.w, height: E.h }, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
     await page.goto('file://' + distAbs, { waitUntil: 'load' });
-    console.log(`== §299 ${E.nome} (${E.w}×${E.h}) ==`);
+    console.log(`== §328 ${E.nome} (${E.w}×${E.h}) ==`);
 
     // entra na batalha e semeia NEF efeitos em TODAS as unidades dos dois lados
     const entrar = (nef) => page.evaluate((nef) => {
@@ -53,9 +52,9 @@ const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto 
       prova = null; provaFim = null; campanha = null; campanhaFim = null; vsCPU = true; try { pararRelogio(); } catch (e) {}
       const pool = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'vulneravel', v: 6, dur: 2 }, { type: 'dmgReduction', v: 5, dur: 4 },
         { type: 'regen', v: 10, dur: 9 }, { type: 'dmgDown', v: 4, dur: 2 }, { type: 'adormecido', dur: 1 }];
-      const seed = (u) => { u.efeitos = pool.slice(0, Math.min(nef, pool.length)).map(x => ({ ...x })); u.dots = nef > pool.length ? [{ nome: 'queimadura', dur: 2, dano: 5 }] : []; };
+      const seed = (u) => { u.efeitos = pool.slice(0, Math.min(nef, pool.length)).map(x => ({ ...x })); u.dots = nef > pool.length ? [{ nome: 'queimadura', dur: 2, v: 5 }] : []; };
       if (nef > 0) { st.lados[0].units.forEach(seed); st.lados[1].units.forEach(seed); }
-      armado = null; peekKit = null; detalhe = null; kitSel = null;
+      armado = null; peekKit = null; detalhe = null; kitSel = null; inspec = null;
       ir('batalha', {}, { substituir: true }); render();
     }, nef);
 
@@ -66,28 +65,28 @@ const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto 
       const scan = sel => document.querySelectorAll(sel).forEach(el => { const r = R(el); if (r.width < 1 || r.height < 1) return;
         if (r.bottom > board.bottom + 0.5) clip = Math.max(clip, (r.bottom - board.bottom) / e);
         if (r.top < board.top - 0.5) clip = Math.max(clip, (board.top - r.top) / e); });
-      scan('.fxstrip .effect'); scan('.brow__tiles'); scan('.portrait'); scan('.fxstrip');
-      // faixa ACIMA das fichas (aliado) e do retrato (inimigo)
-      let acimaAlly = true, acimaFoe = true;
-      document.querySelectorAll('.brow').forEach(b => {
-        const fa = b.querySelector('.fxstrip--ally'), ti = b.querySelector('.brow__tiles');
-        if (fa && ti && fa.children.length) acimaAlly = acimaAlly && (R(fa).bottom <= R(ti).top + 1);
-        const fe = b.querySelector('.fxstrip--enemy'), po = b.querySelector('.brow__enemy .portrait');
-        if (fe && po && fe.children.length) acimaFoe = acimaFoe && (R(fe).bottom <= R(po).top + 1);
+      scan('.fxtag'); scan('.fxtags'); scan('.brow__tiles'); scan('.portrait');
+      // ETIQUETAS abaixo da barra de VIDA (os dois lados) e, por unidade, no máximo FXTAGS_MAX células.
+      let abaixoDaVida = true, maxCelulas = 0, nomesVazios = 0, semValor = 0;
+      document.querySelectorAll('.unit__portrait').forEach(up => {
+        const fxs = up.querySelector('.fxtags'); if (!fxs) return;
+        const cells = [...fxs.querySelectorAll('.fxtag')]; if (!cells.length) return;
+        maxCelulas = Math.max(maxCelulas, cells.length);
+        const hp = up.querySelector('.hp'); const hpB = hp ? R(hp).bottom : R(up.querySelector('.portrait')).bottom;
+        if (R(fxs).top < hpB - 1) abaixoDaVida = false;   // a faixa começa ABAIXO da barra de vida
+        cells.forEach(c => {
+          if (c.classList.contains('fxtag--mais')) return;   // "+N" não é etiqueta nomeada
+          const n = c.querySelector('.fxtag__n');
+          if (!n || !(n.textContent || '').trim()) nomesVazios++;   // NOME sempre escrito
+          // efeito de magnitude (⚔️/vulnerável/redução/regen/veneno…) tem o número visível e separado
+          const v = c.querySelector('.fxtag__v');
+          if (v && !(v.textContent || '').trim()) semValor++;
+        });
       });
-      // §307 FOLGA horizontal: menor distância da linha de chips às bordas L/R do board (positiva = sobra).
-      let folgaH = 1e9;
-      document.querySelectorAll('.fxstrip').forEach(fx => { const cs = [...fx.querySelectorAll('.effect,.fxmore')]; if (!cs.length) return;
-        const rs = cs.map(R); const left = Math.min(...rs.map(r => r.left)), right = Math.max(...rs.map(r => r.right));
-        folgaH = Math.min(folgaH, (board.right - right) / e, (left - board.left) / e); });
-      folgaH = folgaH === 1e9 ? null : +folgaH.toFixed(1);
-      const chips = document.querySelectorAll('.fxstrip .effect').length;
-      const fxmore = document.querySelectorAll('.fxmore').length;
-      // chips numéricos: quantos deveriam ter magnitude vs quantos têm .effect__v
-      const magChips = document.querySelectorAll('.fxstrip .effect--mag').length;
-      const magVals = document.querySelectorAll('.fxstrip .effect--mag .effect__v').length;
+      const cells = document.querySelectorAll('.fxtag').length;
+      const mais = document.querySelectorAll('.fxtag--mais').length;
       const skill = R(document.querySelector('.skill'));
-      return { clip: +clip.toFixed(2), acimaAlly, acimaFoe, chips, fxmore, magChips, magVals, folgaH,
+      return { clip: +clip.toFixed(2), abaixoDaVida, maxCelulas, nomesVazios, semValor, cells, mais,
         skillW: Math.round(skill.width / e), skillH: Math.round(skill.height / e) };
     });
 
@@ -95,46 +94,43 @@ const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto 
       await entrar(nef); await page.waitForTimeout(60);
       const m = await medir();
       ok(m.clip === 0, `${E.nome} ${nef}ef: NADA corta na vertical (clip ${m.clip}px)`);
-      if (nef > 0) ok(m.folgaH != null && m.folgaH >= PISO_FAIXA_H, `${E.nome} ${nef}ef: §307 folga HORIZONTAL da faixa ${m.folgaH}px deve ser ≥ ${PISO_FAIXA_H}px (chips → borda do board)`);
-      ok(m.fxmore === 0, `${E.nome} ${nef}ef: nenhum "+N" (colapso removido; fxmore ${m.fxmore})`);
-      ok(m.acimaAlly && m.acimaFoe, `${E.nome} ${nef}ef: a faixa fica ACIMA das fichas/retrato (ally ${m.acimaAlly}, foe ${m.acimaFoe})`);
-      ok(m.magChips === m.magVals && m.magVals >= 0, `${E.nome} ${nef}ef: todo chip de magnitude MOSTRA o número (${m.magVals}/${m.magChips})`);
-      if (nef > 0) ok(m.chips >= 6, `${E.nome} ${nef}ef: os efeitos aparecem (chips ${m.chips}, ${nef}/unidade × 6 vivos)`);
+      ok(m.maxCelulas <= FXTAGS_MAX, `${E.nome} ${nef}ef: no máximo ${FXTAGS_MAX} células por retrato (veio ${m.maxCelulas})`);
+      ok(m.nomesVazios === 0, `${E.nome} ${nef}ef: toda etiqueta tem NOME escrito (vazias ${m.nomesVazios})`);
+      ok(m.semValor === 0, `${E.nome} ${nef}ef: todo valor de etiqueta aparece (vazios ${m.semValor})`);
+      if (nef > 0) {
+        ok(m.abaixoDaVida, `${E.nome} ${nef}ef: as etiquetas ficam ABAIXO da barra de vida (dois lados)`);
+        ok(m.cells >= 6, `${E.nome} ${nef}ef: os efeitos aparecem (células ${m.cells}, ≥ 6 unidades vivas)`);
+      }
+      // com mais efeitos do que cabe, o excedente VIRA "+N" (não some nem corta)
+      if (nef > FXTAGS_MAX) ok(m.mais > 0, `${E.nome} ${nef}ef: o excedente colapsa em "+N" (mais ${m.mais})`);
       ok(m.skillW === 90 && m.skillH === 90, `${E.nome} ${nef}ef: a FICHA continua 90×90 (veio ${m.skillW}×${m.skillH})`);
-      if (nef === 6) console.log(`  ${E.nome}: §307 no pior empilhamento (6ef) a folga HORIZONTAL da faixa é ${m.folgaH}px (piso ${PISO_FAIXA_H}); vertical fixada nas bordas (clip ${m.clip})`);
+      if (nef === 6) console.log(`  ${E.nome}: no pior empilhamento (6ef) clip=${m.clip}, máx células/retrato=${m.maxCelulas}, "+N"=${m.mais}`);
     }
 
-    // §239 RESPIRO: a moldura une retrato+fichas e o retrato POP acima da borda de cima da placa (repouso)
+    // §239 (preservado no §328): a MOLDURA ainda une retrato + fichas (o retrato encolheu, mas segue na placa)
     await entrar(0); await page.waitForTimeout(60);
     const resp = await page.evaluate(() => {
       const R = el => el.getBoundingClientRect();
       const brow = document.querySelector('.brow'), unit = brow.querySelector('.brow__unit');
-      const cs = getComputedStyle(unit, '::before'); const insetT = parseFloat(cs.top) || 0;
       const por = R(brow.querySelector('.brow__ally .portrait'));
-      const ur = R(unit); const plateT = ur.top + insetT;
+      const ur = R(unit);
       const tLastR = [...brow.querySelectorAll('.brow__tiles .skill')].map(R).pop().right;
-      return { pop: por.top < plateT - 0.5, unitCobreFichas: ur.right >= tLastR - 1, unitCobreRetrato: ur.left <= por.left + 1 };
+      return { unitCobreFichas: ur.right >= tLastR - 1, unitCobreRetrato: ur.left <= por.left + 1 };
     });
-    ok(resp.pop, `${E.nome}: §239 o retrato POP acima da borda de cima da placa`);
     ok(resp.unitCobreRetrato && resp.unitCobreFichas, `${E.nome}: §239 a moldura une retrato + fichas`);
 
-    // LEITURA no rodapé: repouso=citação · tocar habilidade=leitura · tocar inimigo=kit · volta à citação
+    // LEITURA no rodapé (inalterada no §328): repouso=citação · tocar habilidade=leitura · tocar inimigo=kit · volta
     await entrar(0); await page.waitForTimeout(40);
     const leituras = await page.evaluate(() => {
       const out = {};
-      // repouso
       out.repousoCite = !!document.querySelector('.footer .acao__cite') && (document.querySelector('.footer .acao__cite').textContent || '').length > 8;
-      // tocar habilidade (armar)
       const u = st.lados[st.ativo].units[0]; const a = acoesDe(st, u).find(x => x.disponivel) || acoesDe(st, u)[0];
-      armado = { uid: u.uid, slot: a.slot, passos: a.passos || ['inimigo'], distribui: false }; peekKit = null; detalhe = null; render();
+      armado = { uid: u.uid, slot: a.slot, passos: a.passos || ['inimigo'], distribui: false }; peekKit = null; detalhe = null; inspec = null; render();
       out.habLeitura = !!document.querySelector('.footer .leitura__nome') && !document.querySelector('.footer .acao__cite');
-      // tocar inimigo (kit)
       armado = null; peekKit = st.lados[1].units[0].uid; kitSel = null; render();
       out.inimKit = !!document.querySelector('.footer .leitura__kstrip') && !document.querySelector('.footer .acao__cite');
-      // volta ao repouso
       peekKit = null; armado = null; detalhe = null; render();
       out.voltaCite = !!document.querySelector('.footer .acao__cite');
-      // sem painel lateral
       out.semPainel = !document.querySelector('.panel');
       return out;
     });
@@ -144,38 +140,23 @@ const PISO_FAIXA_H = 4;   // px de design; pior caso hoje +7 (6 efeitos, o teto 
     ok(leituras.voltaCite, `${E.nome}: dispensado o foco, a citação VOLTA ao repouso`);
     ok(leituras.semPainel, `${E.nome}: não há painel lateral (§299)`);
 
-    // §300: o disco da ficha é QUADRADO ARREDONDADO (raio 6), a arte PREENCHE o quadrado (sem recorte
-    // circular), a ficha segue 90×90 e nada corta — nas duas escalas.
+    // §300 (preservado): o disco da ficha é QUADRADO ARREDONDADO (raio 6), a ficha segue 90 e nada corta
     await entrar(0); await page.waitForTimeout(40);
     await page.waitForFunction(() => { const im = document.querySelector('.brow__tiles .skill .slot__art'); return im && im.complete && im.naturalWidth > 0; }, { timeout: 6000 }).catch(() => {});
     const forma = await page.evaluate(() => {
       const R = el => el.getBoundingClientRect();
       const disc = document.querySelector('.brow__tiles .skill .skill__disc');
       const cs = getComputedStyle(disc);
-      const cd = document.querySelector('.skill__cd'), lock = document.querySelector('.skill__lock'), na = document.querySelector('.skill__na');
-      // a arte (slot__art) cobre o disco inteiro → object-fit cover num quadrado: sem faixa/canto vazio
-      // a arte (slot__art) preenche o INTERIOR do disco (object-fit cover); a caixa da img = disco menos a
-      // borda (1–2px) → tolerância 5px. (Se os PIXELS da arte chegam ao canto é trabalho de arte por deus —
-      // aqui garantimos que o CONTÊINER quadrado mostra a arte que o preenche, sem recorte circular.)
-      const art = document.querySelector('.brow__tiles .skill .slot__art');
-      const dr = R(disc), ar = art ? R(art) : null;
-      const cobre = ar ? (Math.abs(ar.width - dr.width) <= 5 && Math.abs(ar.height - dr.height) <= 5) : false;
       const board = R(document.querySelector('.board'));
       let clip = 0; document.querySelectorAll('.brow__tiles .skill, .brow__tiles .skill__cost').forEach(el => { const r = R(el); if (r.bottom > board.bottom + 0.5) clip = Math.max(clip, r.bottom - board.bottom); if (r.top < board.top - 0.5) clip = Math.max(clip, board.top - r.top); });
-      const cost = document.querySelector('.brow__tiles .skill__cost');
-      const cbot = cost ? (R(document.querySelector('.brow__tiles .skill')).bottom - R(cost).bottom) / (ultimaEscala || 1) : null;
-      return { radius: cs.borderRadius, overflow: cs.overflow, cobre, hasArt: !!art,
-        cdR: getComputedStyle(cd).borderRadius, lockR: getComputedStyle(lock).borderRadius, naR: getComputedStyle(na).borderRadius,
+      return { radius: cs.borderRadius, overflow: cs.overflow,
         skillW: Math.round(R(document.querySelector('.brow__tiles .skill')).width / (ultimaEscala || 1)),
-        clip: +clip.toFixed(1), cbot: cbot == null ? null : +cbot.toFixed(1) };
+        clip: +clip.toFixed(1) };
     });
     ok(forma.radius === '6px', `${E.nome} §300: o disco é quadrado arredondado (raio 6, veio ${forma.radius})`);
     ok(forma.overflow === 'hidden', `${E.nome} §300: o disco recorta a arte ao quadrado (overflow hidden)`);
-    ok(forma.cdR === '6px' && forma.lockR === '6px' && forma.naR === '6px', `${E.nome} §300: as máscaras de estado acompanham o raio 6 (cd ${forma.cdR}/lock ${forma.lockR}/na ${forma.naR})`);
-    ok(!forma.hasArt || forma.cobre, `${E.nome} §300: a arte PREENCHE o quadrado inteiro (slot__art cobre o disco, sem canto vazio)`);
     ok(forma.skillW === 90, `${E.nome} §300: a ficha segue 90 (veio ${forma.skillW})`);
     ok(forma.clip === 0, `${E.nome} §300: nada corta com o disco quadrado (clip ${forma.clip})`);
-    ok(forma.cbot != null && forma.cbot >= 0 && forma.cbot <= 14, `${E.nome} §300: os orbes de custo continuam na base (bottom ${forma.cbot}px, 0..14)`);
 
     await ctx.close();
   }

@@ -65,9 +65,11 @@ function topoHTML(){
   ${menuAberto?`<div class="menu" id="menu">
     <button class="b b--quiet b--md" id="bhelp">Como jogar</button>
     <button class="b b--quiet b--md" id="bfull">${estaTelaCheia()?'Sair da tela cheia':'Tela cheia'}</button>
+    ${(typeof contaAtual!=='undefined'&&contaAtual)?`<button class="b b--quiet b--md" id="bconta">Sua conta</button>`:''}
     <button class="b b--quiet b--md" id="bsair">Sair para o início</button>
     <button class="b b--danger b--md" id="bsurr">Render-se</button>
     <button class="b b--danger b--md" id="bapagar">Apagar dados</button>
+    <div class="menu__build" id="bmenubuild" title="toque 3× para diagnóstico">${H(buildStr())}</div>
   </div>`:''}`;
 }
 
@@ -91,6 +93,10 @@ function ligarTopo(){
   const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};   // sair da partida p/ a home (com confirmação)
   const bs=q('#bsurr'); if(bs)bs.onclick=()=>{ov='surr';menuAberto=false;render();};
   const ba=q('#bapagar'); if(ba)ba.onclick=()=>{ov='apagar';menuAberto=false;render();};
+  // §328: "Sua conta" (antes botão fixo no canto, sobre a dica de energia) agora vive no menu ⋯.
+  const bc=q('#bconta'); if(bc)bc.onclick=ev=>{ev.stopPropagation();menuAberto=false;render();if(typeof montarPainelConta==='function')montarPainelConta();};
+  // §328: o carimbo de build (antes fixo no canto) agora é uma linha do menu; 3 toques abrem o diagnóstico.
+  const bb=q('#bmenubuild'); if(bb){ let n=0,t; bb.onclick=ev=>{ev.stopPropagation(); clearTimeout(t); if(++n>=3){n=0; const el=document.getElementById('diag'); if(el){el.classList.toggle('on'); if(typeof renderDiag==='function')renderDiag();}} t=setTimeout(()=>n=0,600);};}
   // fechar o menu ao tocar fora, sem acumular ouvintes a cada render
   if(menuAberto){
     const mm=q('#menu');
