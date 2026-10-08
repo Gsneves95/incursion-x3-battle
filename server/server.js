@@ -34,7 +34,20 @@ function servirEstatico(req, res) {
 function enviar(res, arquivo) {
   fs.readFile(arquivo, (err, buf) => {
     if (err) { res.writeHead(404); return res.end('não encontrado'); }
-    res.writeHead(200, { 'Content-Type': TIPOS[path.extname(arquivo)] || 'application/octet-stream' });
+    const ext = path.extname(arquivo);
+    const headers = { 'Content-Type': TIPOS[ext] || 'application/octet-stream' };
+    // §327: o HTML NUNCA é cacheado. O dist é gerado no deploy (npm start = build + server) e o jogo é
+    // uma página só; sem isto, o navegador/CDN segura uma cópia velha (ex.: Domínios "em breve" depois de
+    // destravado no §326). Os assets de web/ (imagem/fonte) cacheiam 1 dia — mudam de conteúdo com a arte,
+    // e o HTML (não cacheado) sempre vem fresco para referenciá-los.
+    if (ext === '.html') {
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      headers['Pragma'] = 'no-cache';
+      headers['Expires'] = '0';
+    } else {
+      headers['Cache-Control'] = 'public, max-age=86400';
+    }
+    res.writeHead(200, headers);
     res.end(buf);
   });
 }

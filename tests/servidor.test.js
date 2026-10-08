@@ -99,6 +99,21 @@ const prov = require('../data/provacoes/afrodite.json');   // montagem de Pergam
   if (batendo) ok(true, '');
   console.log(`  WS: recusa versão errada · handshake · montar+${passo - 1} ações, hash autoritativo == referência em cada passo`);
   ws.close();
+
+  // ===== (5) §327 — CABEÇALHOS DE CACHE: o HTML nunca cacheia (senão o cliente/CDN segura uma versão velha
+  // — Domínios "em breve" depois do §326); os assets de web/ (imagem/fonte) cacheiam 1 dia. =====
+  console.log('== 5. §327: cabeçalhos de cache — GET / traz no-cache; GET de um .webp traz max-age ==');
+  const http = require('http');
+  const cab = (caminho) => new Promise((res, rej) => { http.get({ host: 'localhost', port, path: caminho }, r => { r.resume(); res({ status: r.statusCode, h: r.headers }); }).on('error', rej); });
+  const rHtml = await cab('/');
+  const ccHtml = rHtml.h['cache-control'] || '';
+  ok(rHtml.status === 200 && /no-cache/.test(ccHtml) && /no-store/.test(ccHtml) && /must-revalidate/.test(ccHtml), `GET / traz no-cache, no-store, must-revalidate (veio "${ccHtml}")`);
+  ok((rHtml.h['pragma'] || '') === 'no-cache' && String(rHtml.h['expires']) === '0', `GET / traz Pragma:no-cache e Expires:0 (pragma "${rHtml.h['pragma']}", expires "${rHtml.h['expires']}")`);
+  const rWebp = await cab('/banners/mapa.webp');
+  const ccWebp = rWebp.h['cache-control'] || '';
+  ok(rWebp.status === 200 && /public/.test(ccWebp) && /max-age=86400/.test(ccWebp), `GET de um .webp traz public, max-age=86400 (veio "${ccWebp}")`);
+  console.log(`  / → "${ccHtml}" · .webp → "${ccWebp}"`);
+
   await new Promise(r => server.close(r));
 
   console.log('');

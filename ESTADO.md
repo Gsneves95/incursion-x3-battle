@@ -2,6 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §327 · Domínios seguia "em breve" no ar depois do §326 — cache do HTML
+
+Mesmo com 5f5fa00 (§326) Live no Render, a ilha Domínios aparecia "em breve" no celular (cache limpo) e no navegador do PC.
+- **Diagnóstico:** não deu para baixar a página no ar (o proxy de egresso NEGA `onrender.com:443`, 403 de política).
+  Pelo repositório: `data/mapa.json` e o `dist` local estão certos (dominios sem `emBreve`); `dist/` é gitignored e o
+  `npm start` do Render regera o dist no deploy → o servidor serve o HTML NOVO; **não há service worker**. O `enviar()`
+  do servidor mandava o HTML **sem `Cache-Control`**.
+- **Causa (a): cache no cliente/borda.** Build certo + dist regerado + sem SW → o servidor entrega o certo, mas sem
+  `Cache-Control` o navegador/borda do Render reaproveita uma cópia velha de `/`.
+- **Correção (`server/server.js` `enviar()`):** HTML (`/`, `/index.html`) → `no-cache, no-store, must-revalidate` +
+  `Pragma` + `Expires: 0`; assets de web/ (webp/png/fontes) → `public, max-age=86400`. Guarda em `servidor.test.js`.
+- Suíte + build verdes. (O cliente, os Domínios e o mapa não mudaram.)
+
 ## ★ §326 · destravar a ilha de Domínios no mapa da home
 
 A ilha DOMÍNIOS do mapa estava "em breve" e não abria, apesar do modo pronto (§273–§325b). Desde o §306 a home é

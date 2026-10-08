@@ -6,6 +6,32 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §327 · Domínios seguia "em breve" no ar depois do §326 — cache do HTML
+
+**Achado do dono:** o Render mostra 5f5fa00 (§326) Live, branch certa, Auto-Deploy On Commit, conta zerada (servidor
+novo rodando). Mesmo assim, no celular (cache do app limpo) e no navegador do PC, a ilha Domínios aparecia "· em breve".
+
+**Diagnóstico.** Não consegui baixar a página no ar deste ambiente: o proxy de egresso NEGA `incursion-servidor.onrender.com:443`
+(403 de política — `connect_rejected`). Então os itens 1–3 (baixar o HTML/cabeçalhos do ar) ficaram de fora; o
+diagnóstico foi pelo repositório e pelo código do servidor:
+- `data/mapa.json` e o `dist` LOCAL (recém-buildado) têm a ilha `dominios` SEM `emBreve` (só a Loja tem). O build está correto.
+- `dist/` está no `.gitignore` → nunca é versionado; o `npm start` do Render é `node tools/build.js && node server/server.js`,
+  então **o deploy REGERA o dist** do fonte a cada subida. O servidor novo serve o HTML NOVO.
+- Não existe service worker no projeto (nada registra `navigator.serviceWorker`) → não é cache de SW.
+- `server/server.js` `enviar()` mandava o HTML **sem nenhum `Cache-Control`**.
+
+**Causa: (a) cache no cliente/borda.** Com o build correto, o dist regerado no deploy e sem service worker, o
+servidor entrega o HTML certo — mas, servido sem `Cache-Control`, o navegador (e/ou a borda do Render) reaproveita
+uma cópia VELHA de `/` (cache heurístico). O celular teve o cache do app limpo, mas o navegador do PC (sem
+hard-refresh) e/ou a borda ainda seguravam o HTML antigo. Não é (b) build velho (o dist é regerado; não é versionado)
+nem service worker.
+
+**Correção (certa de qualquer forma).** `server/server.js` `enviar()`: o **HTML** (`/` e `/index.html`, ext `.html`)
+vai com `Cache-Control: no-cache, no-store, must-revalidate` + `Pragma: no-cache` + `Expires: 0` (é uma página só,
+regerada no deploy — nunca deve ser cacheada). Os **assets de web/** (webp/png/fontes) vão com
+`Cache-Control: public, max-age=86400` (mudam de conteúdo junto com a arte; o HTML não-cacheado sempre vem fresco
+para referenciá-los). Guarda em `tests/servidor.test.js`: `GET /` traz `no-cache`; `GET` de um `.webp` traz `max-age`.
+
 ## §326 · destravar a ilha de Domínios no mapa da home
 
 **Achado do dono:** no celular, a ilha DOMÍNIOS do mapa aparecia como "em breve" e não abria, apesar de o modo estar
