@@ -85,7 +85,9 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       const ecEl=document.querySelector('.bt-ebox .bt-ec'); const ecFonte=ecEl?parseFloat(getComputedStyle(ecEl).fontSize)||0:0;
       const acao=document.querySelectorAll('.bt-acao,[data-acao]').length;
       const centro=!!document.querySelector('.bt-centro .bt-centro__corpo');
-      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr, acao, centro,
+      // §331 item 2: o texto do ENCERRAR TURNO não quebra nem transborda (fica em 1 linha, com respiro).
+      const enc=document.querySelector('.bt-encerrar'); const encWrap = enc ? (enc.scrollWidth>enc.clientWidth+1) : false;
+      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr, acao, centro, encWrap,
         tam:{ skMin:+skMin.toFixed(1), ptMin:+ptMin.toFixed(1), efMin:+efMin.toFixed(1), pipMin:+pipMin.toFixed(1), ecFonte:+ecFonte.toFixed(1) } };
     },sel=TOQUE);
     // §329c Parte B2: o ÍCONE DE EFEITO não é um quadrado vazio — a amostra CENTRAL tem pixels VISÍVEIS de cor
@@ -105,6 +107,19 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       return rects.map((r,i)=>{ const bg=px(r.x+r.w*0.14, r.y+r.h*0.14);   // canto sup-esq interno = fundo do azulejo
         let maxD=0; for(let gx=0.30;gx<=0.70;gx+=0.1) for(let gy=0.30;gy<=0.70;gy+=0.1) maxD=Math.max(maxD,dist(px(r.x+r.w*gx,r.y+r.h*gy),bg));
         return {i,cls:r.cls,maxD}; });
+    };
+    // §331 item 3: NENHUM botão de habilidade tem fundo CLARO — a amostra no canto interno do disco (a arte é
+    // recortada em círculo) deve ser ≈ o fundo escuro do disco (soma RGB baixa). Medido em pixels reais.
+    const discosClaros=async()=>{
+      const dsf=2;
+      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill .bt-skill__disc')].map(el=>{ const r=el.getBoundingClientRect();
+        return {x:r.x,y:r.y,w:r.width,h:r.height}; }));
+      if(!rects.length) return [];
+      const buf=await page.screenshot(); const img=sharp(buf); const meta=await img.metadata(); const raw=await img.raw().toBuffer();
+      const ch=raw.length/(meta.width*meta.height);
+      const px=(cx,cy)=>{ const X=Math.max(0,Math.min(meta.width-1,Math.round(cx*dsf))), Y=Math.max(0,Math.min(meta.height-1,Math.round(cy*dsf)));
+        const o=(Y*meta.width+X)*ch; return [raw[o],raw[o+1],raw[o+2]]; };
+      return rects.map((r,i)=>{ const c=px(r.x+r.w*0.1, r.y+r.h*0.1); return {i,soma:c[0]+c[1]+c[2]}; }).filter(x=>x.soma>180);
     };
 
     for(const modo of ['meu','oponente']){
@@ -126,6 +141,12 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       ok(m.acao===0, `${E.nome} [${modo}]: o quadro de ação não existe no DOM (há ${m.acao})`);
       // §330: a arte do centro (fixa por turno) aparece nos 3 enquadramentos reais (largura ≥ 25u).
       ok(m.centro, `${E.nome} [${modo}]: a arte FIXA do centro está presente (.bt-centro__corpo)`);
+      // §331 item 2: o botão ENCERRAR TURNO não quebra/transborda o texto (1 linha, com respiro).
+      ok(!m.encWrap, `${E.nome} [${modo}]: o texto do ENCERRAR TURNO não quebra nem toca a borda`);
+      // §331 item 3: nenhum botão de habilidade tem fundo claro (canto interno ≈ fundo escuro), em qualquer estado.
+      const claros=await discosClaros();
+      ok(claros.length===0, `${E.nome} [${modo}]: nenhum botão de habilidade tem fundo claro`
+        + (claros.length?` (${claros.map(c=>'sk'+c.i+'='+c.soma).join(', ')})`:''));
       // §330: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
       if(E.w===780){
         ok(m.tam.skMin>=66, `${E.nome} [${modo}]: botão de habilidade ≥66px (${m.tam.skMin}px)`);

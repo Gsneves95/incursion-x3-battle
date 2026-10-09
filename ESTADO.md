@@ -2,6 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §331 · TELA DE BATALHA: confirmação de encerrar turno + 2 acabamentos do §330
+
+1. **Confirmar ENCERRAR sem ação:** tocar ENCERRAR com nada marcado/usado E ≥1 habilidade usável → caixa "ENCERRAR SEM
+   AGIR?" ([ENCERRAR MESMO ASSIM]/[VOLTAR]). Com algo armado/usado, ou sem nada usável, encerra direto. Decisão em
+   `deveConfirmarEncerrar()` (turno.js); overlay `ov='confirmEnc'` (sobrepor.js); clique em `#bend2` (topo.js ligarTopo).
+   Cronômetro NÃO para: tempo esgotado com a caixa aberta → `tique`→`encerrarTurno` fecha e encerra. Voltar do Android e
+   toque fora (`#ovenc`) = VOLTAR. Vale em todos os modos (inclusive PvP). jsdom: 6 casos em batalha_inspecao.
+2. **ENCERRAR TURNO em 1 linha:** `white-space:nowrap` + respiro; botão alargado (encerrar.w 30→36u) no vão antes do
+   avatar da CPU, sem reduzir fonte (2,6u). Prova: scrollWidth ≤ clientWidth em 20:9/16:9/piso.
+3. **Sem fundo branco nas habilidades:** não era o estado — algumas artes (Anúbis, Defesa) são redondas sobre quadrado
+   claro. A arte do disco agora é recortada em CÍRCULO (`.bt-skill__disc .slot{border-radius:50%}`) → cantos escuros.
+   Usável = só a moldura acesa; selecionado = moldura dourada + ✓. Prova (pixels): canto interno de todo disco é escuro.
+- **Arquivos:** src/turno.js (deveConfirmarEncerrar), src/ui/topo.js (clique do #bend2), src/ui/sobrepor.js (overlay +
+  wiring), data/layout_batalha.json (encerrar.w 36), src/shell.html (bt-encerrar nowrap/padding, disco circular),
+  tests/{batalha_inspecao,batalha_faixa}.test.js. Capturas docs/telas/331-* (meu, confirmação, oponente — 780×360).
+  Suíte + build verdes.
+- **NÃO mudou:** motor, IA, regras, demais telas.
+
 ## ★ §330 · TELA DE BATALHA: ajustes do dono depois de jogar
 
 Seis achados do dono no celular. Tudo em `data/layout_batalha.json` (u = 1% da altura); motor/regras intocados.

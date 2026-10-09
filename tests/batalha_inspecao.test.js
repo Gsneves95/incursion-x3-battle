@@ -98,6 +98,37 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(w.eval("!armado"),'tocar o MESMO botão de novo DESMARCA a habilidade');
   ok(!$('.bt-skill.is-armed'),'nenhum botão fica marcado após desmarcar');
 
+  // ---- 7) §331: confirmar ENCERRAR TURNO sem nenhuma ação ----
+  console.log('\n== 7) §331: confirmar encerrar turno sem agir ==');
+  const fresh = (extra='') => w.eval(`st=montarProvacao({aliados:${JSON.stringify(ally)},inimigos:${JSON.stringify(enemy)},montar:{seed:3,comeca:0}});
+    prova=null;campanha=null;dominio=null;provaFim=null;campanhaFim=null;vsCPU=true;IA_LADO=1;modoPvP=false;iaAtiva=false;
+    st.ativo=0; armado=null;detalhe=null;escolhidos=[];alvos=[];ov=null; try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}
+    st.lados[0].dividaLivre=0; foco=st.lados[0].units[0].uid; relogio=60; ${extra} render();`);
+  // (a) zero marcadas + há usável → abre a confirmação
+  fresh(); $('#bend2').onclick();
+  ok(w.eval("ov")==='confirmEnc', '(a) zero marcadas + usável → abre a confirmação');
+  // (b) VOLTAR mantém o turno
+  $('#bencvolta').onclick();
+  ok(w.eval("ov")===null && w.eval("st.ativo")===0, '(b) VOLTAR fecha a caixa e MANTÉM o turno (ativo=0)');
+  // (c) ENCERRAR MESMO ASSIM encerra (o lado passa)
+  fresh(); $('#bend2').onclick(); ok(w.eval("ov")==='confirmEnc','(c) abriu para encerrar');
+  $('#bencok').onclick();
+  ok(w.eval("ov")===null && w.eval("st.ativo")===1, '(c) ENCERRAR MESMO ASSIM encerra o turno (ativo=1)');
+  // (d) com UMA habilidade marcada (armada) → NÃO abre
+  fresh(`armar(st.lados[0].units[0].uid,'basico');`);
+  ok(w.eval("!!armado"), '(d) há uma habilidade marcada (armada)');
+  $('#bend2').onclick();
+  ok(w.eval("ov")!=='confirmEnc', '(d) com uma marcada → NÃO abre a confirmação (encerra direto)');
+  // (e) sem NADA usável (todos dormindo) → NÃO abre
+  fresh(`st.lados[0].units.forEach(u=>u.efeitos=[{type:'adormecido',dur:1}]);`);
+  ok(!w.eval("deveConfirmarEncerrar()"), '(e) sem habilidade usável → não pede confirmação');
+  $('#bend2').onclick();
+  ok(w.eval("ov")!=='confirmEnc', '(e) sem nada usável → NÃO abre (encerra direto)');
+  // (f) tempo esgotado com a caixa aberta → ela fecha e o turno encerra
+  fresh(); $('#bend2').onclick(); ok(w.eval("ov")==='confirmEnc','(f) caixa aberta');
+  w.eval("relogio=1; tique();");
+  ok(w.eval("ov")===null && w.eval("st.ativo")===1, '(f) tempo esgotado com a caixa aberta → fecha e encerra o turno');
+
   console.log(`\n${falhas===0?'>>> BATALHA_INSPECAO OK':'>>> '+falhas+' FALHA(S)'} (${passes} ok)`);
   process.exit(falhas?1:0);
 })();

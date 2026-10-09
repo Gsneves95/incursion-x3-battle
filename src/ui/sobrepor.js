@@ -104,6 +104,16 @@ function overlayHTML(){
         <button class="b b--quiet b--md" id="bclose">Voltar</button>
         <button class="b b--danger b--md" id="bsurrok">Confirmar rendição</button></div></div></div></div>`;
   }
+  if(ov==='confirmEnc'){
+    // §331: encerrar o turno sem usar nenhuma habilidade. O cronômetro NÃO para; se o tempo acabar, a caixa
+    // fecha e o turno encerra como no fim do tempo (o tique chama encerrarTurno, que limpa ov). Toque fora/Voltar
+    // do Android = VOLTAR (voltarNativo fecha qualquer ov; o backdrop #ovenc fecha no clique fora da caixa).
+    return `<div class="ov" id="ovenc"><div class="ovbox"><div class="result">
+      <h1>ENCERRAR SEM AGIR?</h1><p>Encerrar o turno sem usar nenhuma habilidade?</p>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="b b--primary b--md" id="bencok">Encerrar mesmo assim</button>
+        <button class="b b--quiet b--md" id="bencvolta">Voltar</button></div></div></div></div>`;
+  }
   if(ov==='sair'){
     // sair ≠ render-se: não registra derrota, só ABANDONA e vai pra home. CONFIRMA porque
     // um toque errado descartaria a partida em andamento (invariante: a batalha tem saída).
@@ -169,6 +179,10 @@ function ligarSobrepor(){
     else{st.log.push({turno:st.turno,msg:'✗ '+r.erro});render();}};
   const ol=q('#ovlivre'); if(ol)ol.onclick=ev=>{if(ev.target===ol){ov=null;livrePlano={};render();}};
   const bl=q('#bclose'); if(bl)bl.onclick=()=>{ov=null;render();};
+  // §331: confirmação de encerrar sem agir — Voltar/fora-da-caixa mantém o turno; "Encerrar mesmo assim" segue o fluxo.
+  const bev=q('#bencvolta'); if(bev)bev.onclick=()=>{ov=null;render();};
+  const beo=q('#bencok'); if(beo)beo.onclick=()=>{ov=null;encerrarTurno();};
+  const oe=q('#ovenc'); if(oe)oe.onclick=ev=>{if(ev.target===oe){ov=null;render();}};
   const ba=q('#bapagarok'); if(ba)ba.onclick=()=>{apagarDados();ov=null;render();};
   const bso=q('#bsurrok'); if(bso)bso.onclick=()=>{
     // rendição é decisão da VIEW (não do motor): st.fim estruturado (mesma forma da vitória

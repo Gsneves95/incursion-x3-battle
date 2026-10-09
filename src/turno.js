@@ -97,6 +97,19 @@ function encerrarTurno(forcar) {
   relogio = TURNO_SEG; _redesenhar();
 }
 
+// §331: pedir CONFIRMAÇÃO ao tocar ENCERRAR TURNO quando o jogador não marcou/usou nada E ainda há uma habilidade
+// usável agora (energia + recarga permitem). Com algo marcado/usado, ou sem nada usável, encerra direto (sem perguntar).
+// Só DECIDE; quem abre a caixa é o clique do botão (ligarTopo). Vale em todos os modos (inclusive PvP).
+function deveConfirmarEncerrar() {
+  if (typeof st === 'undefined' || !st || st.fim) return false;
+  if (typeof _emBatalha === 'function' && !_emBatalha()) return false;
+  const l = st.lados[st.ativo]; if (!l) return false;
+  if (typeof armado !== 'undefined' && armado) return false;          // há uma habilidade MARCADA (✓) → encerra direto
+  if (l.units.some(u => u.vivo && u.agiu)) return false;              // já usou alguma habilidade neste turno → direto
+  // há pelo menos UMA habilidade usável agora?
+  return l.units.some(u => u.vivo && podeAgir(u) && acoesDe(st, u).some(a => a.disponivel));
+}
+
 // ---- IA do oponente ----
 function talvezIA() {
   if (MP) return;   // ONLINE: a IA do oponente roda no SERVIDOR (o encerrar já trouxe/desenhou a jogada dela)

@@ -121,7 +121,8 @@ function ligarTopo(){
       if(bate) base.classList.add('bt-topaperto'); } }catch(e){}
   stage.querySelectorAll('[data-prof]').forEach(b=>b.onclick=()=>{ov='perfil';menuAberto=false;render();});
   const bt=q('#btrocar'); if(bt&&!bt.disabled)bt.onclick=()=>{ ov='conv';convAlvo=null;armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render(); };
-  const be=q('#bend2'); if(be&&!be.disabled)be.onclick=()=>encerrarTurno();
+  // §331: ENCERRAR sem agir (nada marcado/usado, mas há habilidade usável) → pede confirmação; senão encerra direto.
+  const be=q('#bend2'); if(be&&!be.disabled)be.onclick=()=>{ if(deveConfirmarEncerrar()){ ov='confirmEnc'; menuAberto=false; render(); } else encerrarTurno(); };
   const baj=q('#bajustes'); if(baj)baj.onclick=ev=>{ev.stopPropagation();menuAberto=!menuAberto;render();};
   const bm=q('#bmenu'); if(bm)bm.onclick=ev=>{ev.stopPropagation();menuAberto=!menuAberto;render();};
   const bs=q('#bsurr'); if(bs)bs.onclick=()=>{ov='surr';menuAberto=false;render();};

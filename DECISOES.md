@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §331 · TELA DE BATALHA: confirmação de encerrar turno + 2 acabamentos do §330
+
+1. **Confirmar ENCERRAR TURNO sem ação.** Ao tocar ENCERRAR com NADA marcado/usado neste turno E havendo ≥1 habilidade
+   usável agora, abre uma caixa no estilo do jogo ("ENCERRAR SEM AGIR?" / "Encerrar o turno sem usar nenhuma
+   habilidade?" · [ENCERRAR MESMO ASSIM] [VOLTAR]). Com algo marcado (armado) ou já usado, ou sem nada usável, encerra
+   DIRETO. A decisão é `deveConfirmarEncerrar()` (turno.js): `!armado && nenhum u.agiu && alguma habilidade a.disponivel
+   com podeAgir`. Quem abre é o clique do `#bend2` (ligarTopo); o overlay é `ov='confirmEnc'` (sobrepor.js). Vale em
+   todos os modos (inclusive PvP — "Encerrar mesmo assim" chama o mesmo encerrarTurno→encerrarOnline).
+   - **O cronômetro NÃO para** (o `tique` nunca pausa por sobreposição): se o tempo acaba com a caixa aberta, o `tique`
+     chama `encerrarTurno()`, que limpa `ov` e encerra como no fim do tempo.
+   - **Voltar do Android** fecha qualquer `ov` (voltarNativo, §240) = VOLTAR; **toque fora da caixa** (backdrop
+     `#ovenc`) = VOLTAR. "Encerrar mesmo assim" segue o fluxo atual (energia livre etc.) sem mudança.
+2. **Botão ENCERRAR TURNO em UMA linha** (antes quebrava e encostava nas bordas): `white-space:nowrap`, padding de
+   respiro (2u), e o botão foi ALARGADO (`topo.encerrar.w` 30→36u) no espaço livre antes do avatar da CPU — sem reduzir
+   a fonte (segue 2,6u ≥ 2,2u). Prova (`batalha_faixa`): o texto não transborda (`scrollWidth ≤ clientWidth`) em
+   20:9/16:9/piso.
+3. **Sem fundo branco nas habilidades.** A causa real NÃO era o estado "usável": algumas artes de habilidade (as do
+   Anúbis, e as de Defesa) são ilustrações REDONDAS sobre um quadrado claro, e o quadrado aparecia nos cantos do disco.
+   Correção: a arte do disco é recortada em CÍRCULO (`.bt-skill__disc .slot{border-radius:50%}`) → os cantos mostram o
+   fundo ESCURO do disco (#14112a). O "usável" segue marcado só pela moldura acesa (is-ready, cor do tipo + brilho); o
+   "selecionado" pela moldura dourada + selo ✓. Prova (`batalha_faixa`, pixels reais): o canto interno de TODO disco de
+   habilidade é escuro (soma RGB ≤ 180), em qualquer estado.
+
+**NÃO MUDOU** mais nada (motor, IA, regras, demais telas). Testes jsdom do item 1 em `batalha_inspecao.test.js` (abre /
+VOLTAR mantém / ENCERRAR encerra / marcada não abre / sem usável não abre / tempo esgotado encerra). Capturas
+`docs/telas/331-*`.
+
 ## §330 · TELA DE BATALHA: ajustes do dono depois de jogar
 
 Seis achados do dono no celular, todos em `data/layout_batalha.json` (u = 1% da altura) salvo o motor/regras (intocados):
