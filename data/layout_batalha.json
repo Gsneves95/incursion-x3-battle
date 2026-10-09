@@ -1,47 +1,47 @@
 {
-  "_nota": "§329 — LAYOUT da tela de batalha, À RISCA da referência do dono (imagens 2=meu turno, 3=turno do oponente). DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). ALTURA manda; a largura que sobra (celular 20:9 é mais largo que a referência) vai TODA para o espaço de arte do centro: o lado do jogador ancora à ESQUERDA (x em u a partir da borda esquerda), o do inimigo à DIREITA (dir em u a partir da borda direita), o centro preenche o vão. Todos os valores em u salvo onde dito.",
+  "_nota": "§329/§329c — LAYOUT da tela de batalha, À RISCA da referência do dono. DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). ALTURA manda; a largura que sobra (celular 20:9 é mais largo que a referência) vai TODA para o espaço de arte do centro: o lado do jogador ancora à ESQUERDA (x em u a partir da borda esquerda), o do inimigo à DIREITA (dir em u a partir da borda direita), o centro preenche o vão. §329c: tudo MAIOR p/ preencher a tela — retrato 17u, quadrados 15u, faixa até 110.5u (bloco do jogador ≥48% da largura no piso). Todos os valores em u salvo onde dito.",
   "u_px_design": 4.28,
   "topo": {
     "faixaY": [0, 14],
     "ajustes": { "x": 1.5, "y": 1.5, "size": 4 },
     "jogador": { "nomeFimX": 37.5, "avatar": { "x": 39, "y": 2.4, "size": 9 } },
     "oponente": { "nomeIniDir": 37.5, "avatar": { "dir": 39, "y": 2.4, "size": 9 } },
-    "estado": { "y": [3, 6] },
-    "barra": { "w": 34, "h": 2, "y": [5.6, 7.5] },
-    "energia": { "y": [9.2, 11.3] },
-    "trocar": { "y": [12, 14] }
+    "estado": { "y": [2.6, 6] },
+    "barra": { "w": 34, "h": 1.8, "y": [4.9, 6.7] },
+    "energia": { "y": [9.3, 11.4] },
+    "trocar": { "y": [12.2, 14] }
   },
   "fileiras": {
-    "tops": [12, 33.4, 54.9],
-    "altura": 13.6
+    "tops": [12, 35, 58],
+    "altura": 17
   },
   "jogador": {
-    "retrato": { "x": 5.1, "size": 13.6 },
+    "retrato": { "x": 4, "size": 17 },
     "vida": { "h": 2.7 },
-    "efeitos": { "size": 3.75, "gap": 0.7, "x0": 19.8 },
-    "faixa": { "x0": 18.4, "x1": 85, "h": 13.6, "dyTopo": 4.1 },
+    "efeitos": { "size": 5, "gap": 0.7, "x0": 23 },
+    "faixa": { "x0": 22, "x1": 110.5, "h": 17, "dyTopo": 5 },
     "quadros": {
-      "size": 9.9, "dyTopo": 6.1,
-      "acao": 21.7, "basico": 35.1, "habilidade": 46.2, "milagre": 57.2, "defesa": 68.1
+      "size": 15, "dyTopo": 6,
+      "acao": 24.5, "basico": 42.5, "habilidade": 59.5, "milagre": 76.5, "defesa": 93.5
     }
   },
   "jogadorTurnoOponente": {
-    "faixa": { "x0": 18.4, "x1": 72 },
-    "quadros": { "basico": 22, "habilidade": 33, "milagre": 44, "defesa": 55 }
+    "faixa": { "x0": 22, "x1": 93 },
+    "quadros": { "basico": 25, "habilidade": 42, "milagre": 59, "defesa": 76 }
   },
   "inimigo": {
-    "retrato": { "dir": 7, "size": 13.6 },
+    "retrato": { "dir": 4, "size": 17 },
     "vida": { "h": 2.7 },
-    "efeitos": { "size": 3.75, "gap": 0.7 }
+    "efeitos": { "size": 5, "gap": 0.7 }
   },
-  "centro": { "x0": 85, "dirFolga": 2, "y": [15, 78] },
+  "centro": { "x0": 113, "dirFolga": 2, "y": [12, 80] },
   "cantoInferior": {
-    "desistir": { "x": [5, 29], "y": [77.8, 83] },
-    "menu": { "x": [5, 29], "y": [85, 90.4] },
-    "som": { "x": [5, 29], "y": [92.8, 96.9] },
+    "desistir": { "x": [4, 28], "y": [84, 88.5] },
+    "menu": { "x": [4, 28], "y": [89.5, 94] },
+    "som": { "x": [4, 28], "y": [95, 98.5] },
     "arte": { "x": [22, 48], "y": [75, 100] }
   },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [77.8, 98.2], "img": 13.6,
-    "fonte": { "titulo": 3.4, "corpo": 2.8, "corpoMin": 2.4, "rodape": 2.2 } },
-  "habMini": { "iniDir": 48, "fimDir": 25, "y": [72.6, 77.5], "size": 4.3 }
+  "painel": { "x0": 44, "dirFolga": 2, "y": [82, 98], "img": 13,
+    "fonte": { "titulo": 3.2, "corpo": 2.6, "corpoMin": 2.4, "rodape": 2 } },
+  "habMini": { "iniDir": 52, "fimDir": 23, "y": [72.5, 81.5], "size": 5.5 }
 }

@@ -2540,11 +2540,16 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 /* ---- retrato (jogador e inimigo) ---- */
 .bt-portrait{position:absolute;border:1px solid #3a3358;border-radius:calc(var(--u)*1.1);overflow:hidden;background:#14112a;
   box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer}
-.bt-portrait .slot{width:100%;height:100%}
+.bt-portrait .slot{width:100%;height:100%;position:relative}
+/* §329c (B1): o monograma-reserva é IRMÃO do <img> dentro do .slot (flex-center); fora da arte do bestiário ele
+   empurrava a imagem p/ a esquerda (largura do irmão varia pela inicial → terço direito escuro). Tirá-lo do fluxo
+   (absolute) deixa o <img> sozinho preencher o quadro, com a MESMA caixa do quadro (menos a borda). */
+.bt-portrait .slot__glyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .bt-portrait .slot>img{object-position:center 22%}
-/* §329b: a arte do bestiário (inimigos) é quadrada com o sujeito fora do centro → zoom leve p/ preencher o quadro
-   centrado no sujeito, como os retratos do jogador (a caixa recorta o excedente). */
-.bt-portrait--foe .slot>img{transform:scale(1.18);transform-origin:50% 32%}
+/* §329c: SEM zoom/transform no retrato do inimigo — a arte (bestiário quadrado) preenche o quadro por object-fit:cover,
+   com a caixa do <img> IGUAL à do quadro (menos a borda). O scale(1.18) anterior empurrava a imagem p/ a esquerda e
+   deixava o terço direito escuro. */
+.bt-portrait--foe .slot>img{object-position:center 28%}
 .bt-portrait--ally{border-color:var(--gold-soft)}
 .bt-portrait--foe{border-color:#8a4a5c}
 .turno-eles .bt-portrait--foe{border-color:#ff6b86;box-shadow:0 0 0 1px rgba(255,107,134,.5),0 0 calc(var(--u)*2.5) rgba(255,74,104,.5)}
@@ -2580,8 +2585,11 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-hp__lab{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;
   font-weight:700;font-size:calc(var(--u)*1.9);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95)}
 /* ---- ícones de efeito ---- */
+/* §329c: COR clara no ícone — símbolos monocromáticos (⊕ ⛔ ⚡ ✊ ✨) renderizam quase pretos no fundo escuro e
+   somem; forçar texto claro os torna visíveis. Emoji coloridos (😴 🔒 …) ignoram `color` e seguem coloridos. */
 .bt-eff{position:relative;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:calc(var(--u)*0.6);
-  border:1px solid #4a4470;background:rgba(14,11,30,.92);overflow:visible;cursor:pointer;font-size:calc(var(--u)*2.2)}
+  border:1px solid #4a4470;background:rgba(14,11,30,.92);overflow:visible;cursor:pointer;color:#f2ecff;
+  font-size:calc(var(--u)*3);line-height:1}
 .bt-eff .slot{width:100%;height:100%;border-radius:calc(var(--u)*0.5)}
 .bt-eff--bom{border-color:#6fe6a0}.bt-eff--defesa{border-color:#6fb6ff}.bt-eff--ruim{border-color:#ff6b86}.bt-eff--controle{border-color:#b98bff}
 .bt-eff__t{position:absolute;right:calc(var(--u)*-0.6);bottom:calc(var(--u)*-0.6);min-width:calc(var(--u)*2);height:calc(var(--u)*2);
@@ -2621,7 +2629,7 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-centro__glifo{font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*26);color:var(--ink-mute);opacity:.5;align-self:center}
 /* §329: o HUD de modo (Rito/campanha/Domínio) vive numa FAIXA no topo do espaço de arte do centro — livre de
    toda área de toque (topo, fileiras, painel, minis). Reposiciona o .phud de home.js sem mexer no conteúdo dele. */
-#baselayer.bt .phud{left:calc(var(--u)*85);right:calc(var(--u)*35);top:calc(var(--u)*14.4);height:calc(var(--u)*5.6);
+#baselayer.bt .phud{left:calc(var(--u)*113);right:calc(var(--u)*39);top:calc(var(--u)*12.6);height:calc(var(--u)*5.2);
   border-radius:calc(var(--u)*1.2);padding:0 calc(var(--u)*1.4);gap:calc(var(--u)*1.4)}
 /* ---- canto inferior esquerdo ---- §329b: arte FIXA (Nezha) com a MESMA máscara de degradê do centro, atrás dos botões. */
 .bt-corner-art{position:absolute;overflow:visible;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;z-index:1}
@@ -2645,7 +2653,7 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 /* ---- painel de baixo ---- */
 .bt-panel{position:absolute;z-index:2;border:1px solid var(--gold-soft);border-radius:calc(var(--u)*1.6);
   background:linear-gradient(180deg,rgba(28,24,56,.96),rgba(14,11,30,.97));box-shadow:0 calc(var(--u)*2) calc(var(--u)*6) rgba(0,0,0,.5);
-  display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*2);padding:calc(var(--u)*2)}
+  display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*1.8);padding:calc(var(--u)*1.5)}
 .bt-panel__img{position:relative;align-self:start;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
 .bt-panel__img .slot{width:100%;height:100%}
 .bt-panel__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*4.2)}

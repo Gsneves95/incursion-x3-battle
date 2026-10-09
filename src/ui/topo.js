@@ -57,9 +57,9 @@ function topoHTML(){
     <span class="bt-name__sub" style="font-size:${U(2)}">${H(_subOponente())}</span>
   </div>
   <button class="bt-estado" id="bend2" ${meu?'':'disabled'} style="${cx};top:${U(es.y[0])};height:${U(en.y[0]-es.y[0]-0.3)};width:${U(ba.w+8)}">
-    <span class="bt-estado__l" style="position:absolute;top:0;${cx};font-size:${U(2.1)};white-space:nowrap">${H(estadoTxt)}${hud}</span>
+    <span class="bt-estado__l" style="position:absolute;top:0;${cx};font-size:${U(1.9)};white-space:nowrap">${H(estadoTxt)}${hud}</span>
     <span class="bt-barra" style="${cx};top:${U(ba.y[0]-es.y[0])};width:${U(ba.w)};height:${U(ba.h)}"><span class="bt-barra__fill" style="width:${pct}%"></span></span>
-    <span style="position:absolute;top:${U(ba.y[1]-es.y[0]+0.2)};${cx};white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:${U(1.4)};color:var(--ink-dim);text-transform:none">${meu?(l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+' a agir':'todas agiram')):'aguarde'} · ${mm}:${ss}</span>
+    <span style="position:absolute;top:${U(ba.y[1]-es.y[0]+0.3)};${cx};white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:${U(1.9)};color:var(--ink-dim);text-transform:none">${meu?(l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+' a agir':'todas agiram')):'aguarde'} · ${mm}:${ss}</span>
   </button>
   <div class="bt-energia" style="${cx};top:${U(en.y[0])};height:${U(en.y[1]-en.y[0])};font-size:${U(2.1)}">${btEnergiaHTML(l)}</div>
   <button class="bt-trocar" id="btrocar" ${(!meu||l.converteu||totalOrbs(l)<CONV_CUSTO)?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1"

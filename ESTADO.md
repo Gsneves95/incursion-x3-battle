@@ -2,6 +2,30 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §329c · TELA DE BATALHA: preencher a tela (tudo maior) + 3 defeitos do §329b
+
+Disposição APROVADA e intacta (mesma ordem/lugar/comportamento); mudam só TAMANHOS/POSIÇÕES em `layout_batalha.json`.
+O §329 ficou pequeno e vazio (copiou tamanhos da referência quase-quadrada); §329c cresce os blocos p/ encher a tela.
+- **Parte A (encher):** fileiras passo 23u (topos 12/35/58); retrato **17u** alinhado à faixa (y+5..+22); vida 2,7u logo
+  abaixo; ícones de efeito **5u** no topo (y+0); faixa 22u→110,5u (17u alt.); quadrados **15u** centrados. Inimigo
+  espelha (retrato 17u, efeitos 5u, 4u da borda). Centro de 113u. Painel 44u→borda, img 13u, fontes 3,2/2,6/2u. Minis 5,5u.
+  **Provas de tamanho (px reais, piso 780×360):** habilidade ≥50px, retrato ≥58px, efeito ≥17px, bloco do jogador ≥48%
+  da largura (`batalha_faixa.test.js`). Overlap/corte seguem verdes em 20:9/16:9/piso.
+- **B1 — retrato do inimigo preenche o quadro:** o terço direito escuro era o monograma-IRMÃO no `.slot` flex empurrando
+  o `<img>`; agora o monograma de `.bt-portrait` é `absolute` (fora do fluxo) e o `<img>` enche por `object-fit:cover`
+  (removido o `scale(1.18)`). Prova: caixa do img = quadro (offset/aresta ≤2) nos 6 retratos.
+- **B2 — ícone de efeito visível:** símbolos monocromáticos (`⊕⛔⚡✊✨`) renderizavam quase pretos; `color` claro em
+  `.bt-eff` (emoji coloridos ignoram). Prova refeita por PIXEL (screenshot+`sharp`): amostra central ≠ fundo (Δ≥40).
+- **B3 — "N a agir · m:ss"** abaixo da barra, fonte 1,9u; título 1,9u; barra reposicionada no JSON (topo).
+- **Arquivos:** data/layout_batalha.json (todos os tamanhos), src/ui/campo.js (retrato alinhado à faixa),
+  src/ui/topo.js (estado/barra/dica), src/shell.html (CSS: slot/glyph, foe sem scale, bt-eff color, painel, phud),
+  tests/batalha_faixa.test.js (provas de tamanho + B1 + B2). Capturas `docs/telas/329c-*` (meu turno 780×360 e 1600×738
+  e 16:9; inspeção; turno do oponente). Suíte + build verdes.
+- **NÃO mudou:** ordem/lugar dos blocos, comportamento dos dois turnos, motor, IA, regras, balanço, níveis, economia,
+  outras telas, fluxo de encerrar turno/energia livre.
+- **Pendente p/ o dono:** `web/corpo/<deus>.webp` (centro) e `web/banners/batalha_canto.webp` (canto); os ~400 ícones de
+  habilidade. As flags de build já os detectam quando chegarem.
+
 ## ★ §329b · TELA DE BATALHA: acabamento do §329 (disposição aprovada, não muda)
 
 Conserta os defeitos de acabamento do §329 (posições do `layout_batalha.json` intactas):

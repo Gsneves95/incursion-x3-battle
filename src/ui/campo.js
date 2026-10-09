@@ -98,12 +98,13 @@ function btEfeitos(u, inimigo, topU){
 /* ---------- retrato do ALIADO + vida + efeitos + faixa de habilidades ---------- */
 function btUnidadeAliada(u, topU, meu){
   const L=_LB(); const J=L.jogador||{}; const re=J.retrato||{x:5.1,size:13.6}; const vi=J.vida||{h:2.7};
+  const dyP=(J.faixa&&J.faixa.dyTopo)||0;   // §329c: retrato ALINHADO à faixa (y+dyTopo); os ícones de efeito ficam no topo (y+0)
   const alvo=alvos.some(x=>x.uid===u.uid), jaEsc=escolhidos.includes(u.uid);
   const g=_catPartida()[u.key]||{};
   const pcls=['bt-portrait','bt-portrait--ally'];
   if(!u.vivo)pcls.push('is-down'); if(alvo)pcls.push('is-target'); if(jaEsc)pcls.push('is-picked');
   if(u.vivo&&!podeAgir(u))pcls.push('acted');
-  const pStyle=`left:${U(re.x)};top:${U(topU)};width:${U(re.size)};height:${U(re.size)}`;
+  const pStyle=`left:${U(re.x)};top:${U(topU+dyP)};width:${U(re.size)};height:${U(re.size)}`;
   const portrait=`<div class="${pcls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="${pStyle}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 26)}
     <span class="bt-portrait__el" style="background:${COR(u.elem)}"></span>
@@ -111,7 +112,7 @@ function btUnidadeAliada(u, topU, meu){
     ${u.vivo?btNiv(u):''}
     <div class="bt-portrait__x"></div>
   </div>`;
-  const hp=btHp(u, `left:${U(re.x)};top:${U(topU+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
+  const hp=btHp(u, `left:${U(re.x)};top:${U(topU+dyP+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
   const efeitos=btEfeitos(u,false,topU);
   const faixa=btFaixa(u, topU, meu);
   return portrait+hp+efeitos+faixa;
@@ -166,11 +167,12 @@ function btSkill(u, a, relX, relTop, size, meu){
 /* ---------- retrato do INIMIGO + vida + efeitos ---------- */
 function btUnidadeInimiga(u, topU){
   const L=_LB(); const im=L.inimigo||{}; const re=im.retrato||{dir:7,size:13.6}; const vi=im.vida||{h:2.7};
+  const dyP=((L.jogador||{}).faixa&&(L.jogador||{}).faixa.dyTopo)||0;   // §329c: mesmas alturas do aliado (retrato alinhado à faixa)
   const alvo=alvos.some(x=>x.uid===u.uid), jaEsc=escolhidos.includes(u.uid);
   const g=_catPartida()[u.key]||{};
   const pcls=['bt-portrait','bt-portrait--foe'];
   if(!u.vivo)pcls.push('is-down'); if(alvo)pcls.push('is-target'); if(jaEsc)pcls.push('is-picked');
-  const pStyle=`right:${U(re.dir)};top:${U(topU)};width:${U(re.size)};height:${U(re.size)}`;
+  const pStyle=`right:${U(re.dir)};top:${U(topU+dyP)};width:${U(re.size)};height:${U(re.size)}`;
   const portrait=`<div class="${pcls.join(' ')}" data-uid="${u.uid}" data-foe="1"${alvo?' data-target="1"':''} style="${pStyle}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 26)}
     <span class="bt-portrait__el" style="background:${COR(u.elem)}"></span>
@@ -179,7 +181,7 @@ function btUnidadeInimiga(u, topU){
     ${u.vivo?btNiv(u):''}
     <div class="bt-portrait__x"></div>
   </div>`;
-  const hp=btHp(u, `right:${U(re.dir)};top:${U(topU+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
+  const hp=btHp(u, `right:${U(re.dir)};top:${U(topU+dyP+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
   const efeitos=btEfeitos(u,true,topU);
   return portrait+hp+efeitos;
 }

@@ -6,6 +6,7 @@
 // Chromium (não jsdom): sobreposição e corte são medidos por rect real. Três enquadramentos: 20:9, 16:9 e o piso.
 
 const { chromium } = require('playwright');
+const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 function acharChromium(){ if(process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
@@ -67,8 +68,42 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
       document.querySelectorAll('.bt-eff').forEach((el,i)=>{ const hasImg=!!el.querySelector('img'); const t=(el.textContent||'').replace(/\s/g,''); if(!hasImg&&!t) vazios.push('eff'+i); });
       document.querySelectorAll('.bt-mini').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-mini__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('mini'+i); });
       document.querySelectorAll('.bt-skill').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-skill__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('skill'+i); });
-      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios };
+      // §329c Parte B1: a caixa do <img> de CADA retrato preenche o quadro (até a borda de 1px). Medida
+      // normalizada pela escala (divide por e) → a borda lê ~1 em qualquer enquadramento. Offset por aresta.
+      const retr=[...document.querySelectorAll('.bt-portrait')].map(p=>{ const img=p.querySelector('img'); if(!img) return {foe:p.classList.contains('bt-portrait--foe'),semImg:true};
+        const rp=R(p), ri=R(img);
+        return { foe:p.classList.contains('bt-portrait--foe'),
+          dl:+((ri.left-rp.left)/e).toFixed(1), dt:+((ri.top-rp.top)/e).toFixed(1),
+          dr:+((rp.right-ri.right)/e).toFixed(1), db:+((rp.bottom-ri.bottom)/e).toFixed(1) }; });
+      // §329c Parte A: TAMANHOS que preenchem a tela (medidos em px reais, só no piso). Bloco do jogador = do
+      // início do retrato do aliado até o fim da faixa, como fração da largura do palco.
+      const w=el=>el?R(el).width:0;
+      const skMin=Math.min(...[...document.querySelectorAll('.bt-skill')].map(w).concat([1e9]));
+      const ptMin=Math.min(...[...document.querySelectorAll('.bt-portrait')].map(w).concat([1e9]));
+      const efMin=Math.min(...[...document.querySelectorAll('.bt-eff')].map(w).concat([1e9]));
+      const al=document.querySelector('.bt-portrait--ally'), fx=document.querySelector('.bt-faixa');
+      const blocoPct=(al&&fx)?((R(fx).right-R(al).left)/sr.width*100):0;
+      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr,
+        tam:{ skMin:+skMin.toFixed(1), ptMin:+ptMin.toFixed(1), efMin:+efMin.toFixed(1), blocoPct:+blocoPct.toFixed(1) } };
     },sel=TOQUE);
+    // §329c Parte B2: o ÍCONE DE EFEITO não é um quadrado vazio — a amostra CENTRAL tem pixels VISÍVEIS de cor
+    // diferente do fundo do próprio ícone (símbolos monocromáticos como ⊕ agora renderizam claros). Medido em
+    // PIXELS REAIS: screenshot + amostra da região central vs. um canto do ícone (fundo do azulejo).
+    const efVisiveis=async()=>{
+      const dsf=2;
+      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-eff')].map(el=>{ const r=el.getBoundingClientRect();
+        return {x:r.x,y:r.y,w:r.width,h:r.height,cls:el.className}; }));
+      if(!rects.length) return [];
+      const buf=await page.screenshot();
+      const img=sharp(buf); const meta=await img.metadata(); const raw=await img.raw().toBuffer();
+      const ch=raw.length/(meta.width*meta.height);
+      const px=(cx,cy)=>{ const X=Math.max(0,Math.min(meta.width-1,Math.round(cx*dsf))), Y=Math.max(0,Math.min(meta.height-1,Math.round(cy*dsf)));
+        const o=(Y*meta.width+X)*ch; return [raw[o],raw[o+1],raw[o+2]]; };
+      const dist=(a,b)=>Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2]);
+      return rects.map((r,i)=>{ const bg=px(r.x+r.w*0.14, r.y+r.h*0.14);   // canto sup-esq interno = fundo do azulejo
+        let maxD=0; for(let gx=0.30;gx<=0.70;gx+=0.1) for(let gy=0.30;gy<=0.70;gy+=0.1) maxD=Math.max(maxD,dist(px(r.x+r.w*gx,r.y+r.h*gy),bg));
+        return {i,cls:r.cls,maxD}; });
+    };
 
     for(const modo of ['meu','oponente']){
       await entrar(modo); await page.waitForTimeout(80);
@@ -77,6 +112,21 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
       ok(m.clip===0, `${E.nome} [${modo}]: nada de toque corta fora do palco (clip ${m.clip}px)`);
       ok(m.corta.length===0, `${E.nome} [${modo}]: nome/vida/função não transbordam` + (m.corta.length?` (${m.corta.join(', ')})`:''));
       ok(m.vazios.length===0, `${E.nome} [${modo}]: nenhum ícone/miniatura/botão vazio (sem imagem e sem fallback)` + (m.vazios.length?` (${m.vazios.join(', ')})`:''));
+      // §329c B1: a caixa do <img> enche o quadro em TODO retrato (|offset| por aresta ≤ 2, borda ~1).
+      const b1Ruim=m.retr.filter(r=>r.semImg||Math.max(Math.abs(r.dl),Math.abs(r.dt),Math.abs(r.dr),Math.abs(r.db))>2);
+      ok(b1Ruim.length===0, `${E.nome} [${modo}]: a imagem preenche o quadro em todos os ${m.retr.length} retratos (±1px da borda)`
+        + (b1Ruim.length?` (${b1Ruim.map(r=>(r.foe?'foe':'ally')+(r.semImg?':sem-img':`:${r.dl}/${r.dt}/${r.dr}/${r.db}`)).join(', ')})`:''));
+      // §329c B2: ícone de efeito com amostra central VISÍVEL (cor ≠ fundo do azulejo), medido em pixels reais.
+      const vis=await efVisiveis(); const b2Ruim=vis.filter(v=>v.maxD<40);
+      ok(vis.length>0 && b2Ruim.length===0, `${E.nome} [${modo}]: ícones de efeito com pixels visíveis no centro (≠ fundo)`
+        + (b2Ruim.length?` (vazios: ${b2Ruim.map(v=>'eff'+v.i+'='+v.maxD).join(', ')})`:` (${vis.length} ícones, menor Δ=${Math.min(...vis.map(v=>v.maxD))})`));
+      // §329c Parte A: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
+      if(E.w===780){
+        ok(m.tam.skMin>=50, `${E.nome} [${modo}]: botão de habilidade ≥50px (${m.tam.skMin}px)`);
+        ok(m.tam.ptMin>=58, `${E.nome} [${modo}]: retrato ≥58px (${m.tam.ptMin}px)`);
+        ok(m.tam.efMin>=17, `${E.nome} [${modo}]: ícone de efeito ≥17px (${m.tam.efMin}px)`);
+        if(modo==='meu') ok(m.tam.blocoPct>=48, `${E.nome} [${modo}]: bloco do jogador ≥48% da largura (${m.tam.blocoPct}%)`);
+      }
     }
     // §329b item 6 reforço: com um INIMIGO do bestiário em FOCO, as minis dele (sem arte) caem no monograma — não ficam vazias.
     await page.evaluate(()=>{ foco=st.lados[1].units[0].uid; detalhe=null; armado=null; render(); });

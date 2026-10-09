@@ -6,6 +6,42 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §329c · TELA DE BATALHA: preencher a tela (tudo maior) + 3 defeitos do §329b
+
+A disposição segue APROVADA e INTACTA (mesma ordem/lugar de cada bloco, mesmo comportamento nos dois turnos); mudam só
+TAMANHOS e POSIÇÕES, todos em `data/layout_batalha.json` (u = 1% da altura). O §329 copiou tamanhos relativos à
+ALTURA da referência (quase quadrada) e jogou toda a largura extra do 20:9 na arte do centro → retratos/habilidades
+pequenos e muito vazio. §329c cresce os blocos p/ encher a tela:
+
+- **Fileiras** com passo 23u (topos 12/35/58); **retrato 17u** alinhado à faixa (y+5..+22); **vida 2,7u** logo abaixo;
+  **ícones de efeito 5u** no topo (y+0), à direita do retrato; **faixa de habilidades** de 22u a 110,5u (17u de altura);
+  **quadrados 15u** centrados na faixa. O bloco do jogador (início do retrato → fim da faixa) ocupa **≥48% da largura**
+  no piso. Inimigo espelha (retrato 17u, vida, efeitos 5u), a 4u da borda direita. Centro de 113u até os ícones do
+  inimigo. Canto inferior (Desistir/Menu/Som) maior e mais baixo. Painel de baixo de 44u à borda, imagem 13u, fontes
+  título 3,2u / corpo 2,6u / rodapé 2u. "Toque numa habilidade" com minis 5,5u.
+- **PROVAS DE TAMANHO** (medidas em px reais no piso 780×360, em `batalha_faixa.test.js`): botão de habilidade ≥50px,
+  retrato ≥58px, ícone de efeito ≥17px, bloco do jogador ≥48% da largura. Seguem válidas: nenhuma área de toque se
+  sobrepõe, nada de texto cortado, em 20:9 / 16:9 / piso.
+
+Três defeitos das capturas do §329b:
+1. **(B1) Retrato do inimigo não preenchia o quadro.** O terço direito ficava escuro. Causa real: o monograma-reserva é
+   IRMÃO do `<img>` dentro do `.slot` (flex-center) — nos inimigos o `<img>` do bestiário vem COM o monograma, cuja
+   largura (varia pela inicial) EMPURRAVA a imagem p/ a esquerda; o `scale(1.18)` do §329b só mascarava e deslocava mais.
+   Correção: o monograma dentro de `.bt-portrait` sai do fluxo (`position:absolute;inset:0`), o `<img>` fica sozinho e
+   preenche o quadro por `object-fit:cover`. Removido o `scale`/`transform` do inimigo. **Prova** (`batalha_faixa`):
+   em TODO retrato (6 por estado) a caixa do `<img>` enche o quadro — offset por aresta ≤2 (borda ~1), normalizado pela
+   escala.
+2. **(B2) Ícone de efeito "vazio".** O teste do §329b passava porque media o TEXTO (o emoji está no DOM). Mas o ícone
+   `⊕` (Vulnerável) e outros símbolos monocromáticos (`⛔⚡✊✨`) renderizam quase PRETOS no fundo escuro e somem — os
+   emoji coloridos (`😴🔒`) aparecem. Correção: `color` claro em `.bt-eff` (emoji coloridos ignoram `color`; símbolos
+   monocromáticos ficam claros e visíveis). **Prova** refeita medindo o que se VÊ (screenshot + `sharp`): a amostra
+   CENTRAL de cada `.bt-eff` tem pixels de cor diferente do fundo do próprio azulejo (Δ ≥ 40).
+3. **(B3) "N a agir · m:ss" apertado.** Movido para claramente ABAIXO da barra, fonte 1,9u (≥1,8u); título encolhido
+   p/ 1,9u e a barra reposicionada no JSON (estado/barra/energia) p/ abrir espaço.
+
+**NÃO MUDOU:** ordem/lugar dos blocos, comportamento dos dois turnos, motor, IA, regras, balanço, níveis, economia,
+outras telas, nem o fluxo de encerrar turno / energia livre. Capturas `docs/telas/329c-*`.
+
 ## §329b · TELA DE BATALHA: acabamento do §329 (disposição APROVADA, não muda)
 
 A disposição do §329 foi aprovada; `data/layout_batalha.json` segue a fonte das posições. §329b só conserta o
