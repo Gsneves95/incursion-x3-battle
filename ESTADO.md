@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §329b · TELA DE BATALHA: acabamento do §329 (disposição aprovada, não muda)
+
+Conserta os defeitos de acabamento do §329 (posições do `layout_batalha.json` intactas):
+1. Monograma só como RESERVA (some quando a arte existe, `:has(.slot__art)`) — botões, minis e imagem do painel; onde
+   a arte falta aparece o monograma (minis de bestiário não ficam mais vazias).
+2. Retrato do inimigo preenche o quadro (zoom leve `.bt-portrait--foe .slot>img`, centrado no sujeito).
+3. Arte do centro = personagem sobre o cenário: CONTAIN ancorado embaixo, bordas esfumadas por máscara, nunca amplia
+   além do nativo; usa `web/corpo/<deus>.webp` (flag `CORPO_ARTE`) quando existir, senão o retrato.
+4. Arte do canto inferior FIXA (Nezha, flag `CANTO_ARTE` → `web/banners/batalha_canto.webp`), com máscara, atrás dos botões.
+5. Topo central sem sobreposição (título acima da barra, "N a agir · m:ss" abaixo) — ajustado por tamanho de fonte.
+6. Sem ícones vazios (fallback: ícone de status_visual nos efeitos, monograma nas habilidades) — guarda no item 6.
+7. 2ª linha do nome = modo (RITO/CAMPANHA/DOMÍNIO·CULTURA) ou ranque PvP; SANDBOX p/ o jogador, OPONENTE p/ a CPU.
+8. Controle de som no padrão do jogo (trilho escuro, dourado).
+9. Painel: corpo 2,8u / título 3,4u / rodapé 2,2u (em `layout_batalha.json → painel.fonte`); encolhe até 2,4u e então
+   rola; nunca vazio (1º deus do jogador em repouso).
+- **Arquivos:** src/shell.html (CSS bt-*), src/ui/campo.js (centro/minis/mono), src/ui/topo.js (nome/canto/estado/som),
+  src/ui/painel.js (fontes/nunca-vazio/_ajustarPainel), data/layout_batalha.json (painel.fonte), tools/build.js
+  (CORPO_ARTE/CANTO_ARTE), tests/batalha_faixa.test.js (+ item 6).
+- **NÃO mudou:** posições/tamanhos dos blocos, regras, fluxo, motor, IA, outras telas. Guardas §329 verdes + item 6.
+- Capturas `docs/telas/329b-*` (meu turno 780×360 e 1600×738; inspeção de inimigo; turno do oponente). Suíte + build verdes.
+- **Pendente p/ o dono:** `web/corpo/<deus>.webp` (centro) e `web/banners/batalha_canto.webp` (canto); os 400 ícones de
+  habilidade. As flags de build já os detectam quando chegarem.
+
 ## ★ §329 · TELA DE BATALHA: LAYOUT refeito À RISCA da referência (data-driven)
 
 O layout do §328 foi REPROVADO (quadro central cortado, texto encavalado, nome truncado, minis sem arte). §329 refaz

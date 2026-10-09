@@ -191,13 +191,23 @@ function unidadeFoco(){
   const lado = ehMeuTurno()? st.lados[eu] : st.lados[1-eu];
   return (lado.units.find(x=>x.vivo)) || st.lados[eu].units.find(x=>x.vivo) || st.lados[eu].units[0];
 }
+// a FONTE de arte de um deus p/ o espaço do centro: corpo inteiro (web/corpo) > bestiário (web/bestiario) >
+// retrato embutido (IMG). Nunca amplia além do nativo (CSS contain + max-width/height); o retrato é a reserva.
+function _artePersonagem(key){
+  if(typeof CORPO_ARTE!=='undefined'&&CORPO_ARTE&&CORPO_ARTE[key]) return 'corpo/'+key+'.webp';
+  if(typeof IMG!=='undefined'&&IMG[key]) return IMG[key];
+  if(typeof BESTIARIO_ARTE!=='undefined'&&BESTIARIO_ARTE&&BESTIARIO_ARTE[key]) return 'bestiario/'+key+'.webp';
+  return '';
+}
 function btCentroHTML(){
   const u=unidadeFoco(); if(!u) return '';
   const L=_LB(); const c=L.centro||{x0:85,y:[15,78]};
   const topU=c.y[0], botU=100-c.y[1];
-  return `<div class="bt-centro" style="left:${U(c.x0)};right:${U(_centroDir())};top:${U(topU)};bottom:${U(botU)}">
-    ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 64)}
-  </div>`;
+  const src=_artePersonagem(u.key);
+  const art = src
+    ? `<img class="bt-centro__corpo" src="${H(src)}" alt="" onerror="this.style.display='none'">`
+    : `<span class="bt-centro__glifo">${ini(u.nome)}</span>`;
+  return `<div class="bt-centro" style="left:${U(c.x0)};right:${U(_centroDir())};top:${U(topU)};bottom:${U(botU)}">${art}</div>`;
 }
 /* ---------- caixa "Toque numa habilidade": as 4 minis do deus em FOCO (leitura; vê o kit do OPONENTE) ---------- */
 function habMiniHTML(){
@@ -208,7 +218,7 @@ function habMiniHTML(){
     const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
     const sel=typeof detalhe!=='undefined'&&detalhe&&detalhe.kind==='skill'&&detalhe.chave==='skill-'+u.key+'-'+a.slot;
     return `<button class="bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}"
-      style="width:${U(hm.size)};height:${U(hm.size)};border-color:${anel}">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</button>`;
+      style="width:${U(hm.size)};height:${U(hm.size)};border-color:${anel}"><span class="bt-mini__mono" style="color:${anel}">${H(mono(a))}</span>${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</button>`;
   }).join('');
   return `<div class="bt-habmini" style="${box}">
     <span class="bt-habmini__lab">Toque numa habilidade</span>
@@ -248,7 +258,7 @@ function lerHabilidade(uid,slot){
   const a=acoesDe(st,u).find(x=>x.slot===slot); if(!a)return;
   const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,slot):1;
   if(typeof foco!=='undefined') foco=uid;
-  detalhe={kind:'skill', nome:a.nome, nv:nv, chave:'skill-'+u.key+'-'+a.slot, cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),
+  detalhe={kind:'skill', nome:a.nome, nv:nv, chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),
     desc:a.desc, cost:a.cost, cd:a.cd, cdNow:(u.cd[slot]||0), tf:classesTxt(u,a),
     motivo: a.disponivel ? '' : motivoIndisponivel(u,a)};
   armado=null; alvos=[]; escolhidos=[]; render();

@@ -362,6 +362,16 @@ const retratoArte = (() => {
   for (const d of deuses) if (d.key && fs.existsSync(path.join(dir, d.key + '.webp'))) mapa[d.key] = 1;
   return mapa;
 })();
+// §329b: ARTE de CORPO INTEIRO do deus para o ESPAÇO DE ARTE do centro da batalha (web/corpo/<key>.webp).
+// Ausente → o espaço cai no retrato pequeno (sem ampliar além do nativo). A build anota quais existem.
+const corpoArte = (() => {
+  const dir = path.join(raiz, 'web', 'corpo');
+  const mapa = {};
+  if (fs.existsSync(dir)) for (const d of deuses) if (d.key && fs.existsSync(path.join(dir, d.key + '.webp'))) mapa[d.key] = 1;
+  return mapa;
+})();
+// §329b: ARTE FIXA do canto inferior esquerdo da batalha (web/banners/batalha_canto.webp). Ausente → retrato do Nezha.
+const cantoArte = fs.existsSync(path.join(raiz, 'web', 'banners', 'batalha_canto.webp')) ? 1 : 0;
 
 // §276: ARTE da tela de escolha de DOMÍNIOS por ARQUIVO em web/banners/dominios/ (pôster por cultura,
 // emblema por cultura, e um fundo opcional). A build anota quais existem (o cliente não pode checar
@@ -574,7 +584,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\nconst CORPO_ARTE=' + JSON.stringify(corpoArte) + ';\nconst CANTO_ARTE=' + cantoArte + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

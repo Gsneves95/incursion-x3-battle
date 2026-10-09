@@ -2541,6 +2541,10 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-portrait{position:absolute;border:1px solid #3a3358;border-radius:calc(var(--u)*1.1);overflow:hidden;background:#14112a;
   box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer}
 .bt-portrait .slot{width:100%;height:100%}
+.bt-portrait .slot>img{object-position:center 22%}
+/* §329b: a arte do bestiário (inimigos) é quadrada com o sujeito fora do centro → zoom leve p/ preencher o quadro
+   centrado no sujeito, como os retratos do jogador (a caixa recorta o excedente). */
+.bt-portrait--foe .slot>img{transform:scale(1.18);transform-origin:50% 32%}
 .bt-portrait--ally{border-color:var(--gold-soft)}
 .bt-portrait--foe{border-color:#8a4a5c}
 .turno-eles .bt-portrait--foe{border-color:#ff6b86;box-shadow:0 0 0 1px rgba(255,107,134,.5),0 0 calc(var(--u)*2.5) rgba(255,74,104,.5)}
@@ -2596,6 +2600,7 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-skill.is-off .bt-skill__disc .slot,.bt-skill.is-off .bt-skill__mono{filter:grayscale(1) brightness(.5)}
 .bt-skill__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;
   font-weight:900;font-size:calc(var(--u)*4);opacity:.9;pointer-events:none}
+.bt-skill__disc:has(.slot__art) .bt-skill__mono{opacity:0}   /* §329b: o monograma é RESERVA — some quando a arte existe */
 .bt-skill__cd{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-family:'Cinzel',serif;
   font-weight:900;font-size:calc(var(--u)*6);color:var(--gold-text);background:rgba(8,6,20,.7);border-radius:calc(var(--u)*1.1)}
 .bt-skill.is-cooldown .bt-skill__cd{display:flex}
@@ -2606,35 +2611,51 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
   display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
 .bt-acao__q{font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*5);color:var(--ink-mute)}
 .bt-acao .bt-skill__disc{border-style:solid}
-/* ---- espaço de arte do centro ---- */
-.bt-centro{position:absolute;overflow:hidden;border-radius:calc(var(--u)*2);display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
-.bt-centro .slot{width:100%;height:100%}
-.bt-centro__art{width:100%;height:100%;object-fit:cover;object-position:center top}
+/* ---- espaço de arte do centro ---- §329b: PERSONAGEM sobre o cenário — sem caixa/moldura, ancorado embaixo,
+   CONTAIN (nunca amplia além do nativo: max-width/height + width/height auto), bordas esfumadas por máscara de degradê. */
+.bt-centro{position:absolute;overflow:visible;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;background:none}
+.bt-centro__corpo{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 9%,#000 84%,transparent);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 9%,#000 84%,transparent);
+  mask-composite:intersect}
+.bt-centro__glifo{font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*26);color:var(--ink-mute);opacity:.5;align-self:center}
 /* §329: o HUD de modo (Rito/campanha/Domínio) vive numa FAIXA no topo do espaço de arte do centro — livre de
    toda área de toque (topo, fileiras, painel, minis). Reposiciona o .phud de home.js sem mexer no conteúdo dele. */
 #baselayer.bt .phud{left:calc(var(--u)*85);right:calc(var(--u)*35);top:calc(var(--u)*14.4);height:calc(var(--u)*5.6);
   border-radius:calc(var(--u)*1.2);padding:0 calc(var(--u)*1.4);gap:calc(var(--u)*1.4)}
-/* ---- canto inferior esquerdo ---- */
-.bt-corner-art{position:absolute;overflow:hidden;pointer-events:none;opacity:.9;display:flex;align-items:flex-end;justify-content:center;z-index:1}
-.bt-corner-art .slot{width:100%;height:100%}
+/* ---- canto inferior esquerdo ---- §329b: arte FIXA (Nezha) com a MESMA máscara de degradê do centro, atrás dos botões. */
+.bt-corner-art{position:absolute;overflow:visible;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;z-index:1}
+.bt-corner-art__img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;opacity:.92;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent),linear-gradient(to bottom,transparent,#000 10%,#000 86%,transparent);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent),linear-gradient(to bottom,transparent,#000 10%,#000 86%,transparent);
+  mask-composite:intersect}
 .bt-cbtn{position:absolute;z-index:2;display:flex;align-items:center;justify-content:flex-start;gap:calc(var(--u)*1);
   border:1px solid var(--gold-soft);border-radius:calc(var(--u)*1);background:rgba(10,8,22,.72);color:var(--ink);
   font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;padding:0 calc(var(--u)*2)}
 .bt-cbtn--danger{color:#ffc2cd;border-color:#8a4a5c}
-.bt-som{position:absolute;z-index:2;display:flex;align-items:center;gap:calc(var(--u)*1);color:var(--ink-dim)}
-.bt-som input{flex:1 1 auto;min-width:0}
+.bt-som{position:absolute;z-index:2;display:flex;align-items:center;gap:calc(var(--u)*1);color:var(--gold-text)}
+/* §329b: controle de som no padrão do jogo — trilho escuro, preenchimento e botão dourados. */
+.bt-som input[type=range]{flex:1 1 auto;min-width:0;-webkit-appearance:none;appearance:none;height:calc(var(--u)*1.2);
+  border-radius:calc(var(--u)*0.6);background:linear-gradient(90deg,var(--gold) 0 80%,#2a2450 80% 100%);outline:none;cursor:pointer}
+.bt-som input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:calc(var(--u)*2.6);height:calc(var(--u)*2.6);
+  border-radius:50%;background:var(--gold);border:1px solid #7a5a12;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+.bt-som input[type=range]::-moz-range-thumb{width:calc(var(--u)*2.6);height:calc(var(--u)*2.6);border-radius:50%;background:var(--gold);border:1px solid #7a5a12}
+.bt-som input[type=range]::-moz-range-track{height:calc(var(--u)*1.2);border-radius:calc(var(--u)*0.6);background:#2a2450}
+.bt-som input[type=range]::-moz-range-progress{height:calc(var(--u)*1.2);border-radius:calc(var(--u)*0.6);background:var(--gold)}
 /* ---- painel de baixo ---- */
 .bt-panel{position:absolute;z-index:2;border:1px solid var(--gold-soft);border-radius:calc(var(--u)*1.6);
   background:linear-gradient(180deg,rgba(28,24,56,.96),rgba(14,11,30,.97));box-shadow:0 calc(var(--u)*2) calc(var(--u)*6) rgba(0,0,0,.5);
   display:grid;grid-template-columns:auto 1fr;gap:calc(var(--u)*2);padding:calc(var(--u)*2)}
-.bt-panel__img{align-self:start;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
+.bt-panel__img{position:relative;align-self:start;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
 .bt-panel__img .slot{width:100%;height:100%}
+.bt-panel__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*4.2)}
+.bt-panel__img:has(.slot__art) .bt-panel__mono{opacity:0}   /* §329b: monograma só quando a arte da habilidade falta */
 .bt-panel__body{min-width:0;display:flex;flex-direction:column;position:relative;height:100%}
 .bt-panel__titulo{font-family:'Cinzel',serif;font-weight:800;color:#ff6b6b;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   font-size:calc(var(--u)*2.6);padding-right:calc(var(--u)*18)}
 .bt-panel__nv{color:var(--gold-text);font-size:.85em;margin-left:calc(var(--u)*0.8)}
-.bt-panel__desc{flex:1 1 auto;min-height:0;overflow:hidden;margin-top:calc(var(--u)*0.6);font-family:'Rajdhani',sans-serif;
-  font-weight:500;font-size:calc(var(--u)*2);line-height:1.22;color:var(--ink)}
+.bt-panel__desc{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:calc(var(--u)*0.6);font-family:'Rajdhani',sans-serif;
+  font-weight:500;font-size:calc(var(--u)*2.8);line-height:1.24;color:var(--ink)}
 .bt-panel__custo{position:absolute;right:0;top:0;display:flex;align-items:center;gap:calc(var(--u)*0.6);
   font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.7);color:var(--ink-dim);text-transform:uppercase}
 .bt-panel__custo i{width:calc(var(--u)*1.8);height:calc(var(--u)*1.8);border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
@@ -2655,6 +2676,8 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-mini{border:1px solid;border-radius:calc(var(--u)*0.8);overflow:hidden;background:#14112a;cursor:pointer;padding:0;position:relative}
 .bt-mini .slot{width:100%;height:100%}
 .bt-mini.is-sel{box-shadow:0 0 0 calc(var(--u)*0.5) var(--gold)}
+.bt-mini__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*1.7);pointer-events:none}
+.bt-mini:has(.slot__art) .bt-mini__mono{opacity:0}   /* §329b: monograma de reserva — some quando a arte existe */
 </style>
 </head>
 <body>

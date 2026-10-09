@@ -62,7 +62,12 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
       const corta=[];
       const chk=(s,lab)=>document.querySelectorAll(s).forEach(el=>{ if(el.scrollWidth>el.clientWidth+1) corta.push(lab+':"'+(el.textContent||'').trim().slice(0,18)+'"'); });
       chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-panel__tf','funcao'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
-      return { n:els.length, over, clip:+clip.toFixed(1), corta };
+      // §329b item 6: nenhum ícone de efeito/miniatura/botão renderiza SEM imagem E SEM fallback (monograma/ícone).
+      const vazios=[];
+      document.querySelectorAll('.bt-eff').forEach((el,i)=>{ const hasImg=!!el.querySelector('img'); const t=(el.textContent||'').replace(/\s/g,''); if(!hasImg&&!t) vazios.push('eff'+i); });
+      document.querySelectorAll('.bt-mini').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-mini__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('mini'+i); });
+      document.querySelectorAll('.bt-skill').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-skill__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('skill'+i); });
+      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios };
     },sel=TOQUE);
 
     for(const modo of ['meu','oponente']){
@@ -71,7 +76,13 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
       ok(!m.over, `${E.nome} [${modo}]: nenhuma área de toque se sobrepõe` + (m.over?` (${m.over.a} × ${m.over.b} = ${m.over.ix}×${m.over.iy}u)`:` (${m.n} alvos)`));
       ok(m.clip===0, `${E.nome} [${modo}]: nada de toque corta fora do palco (clip ${m.clip}px)`);
       ok(m.corta.length===0, `${E.nome} [${modo}]: nome/vida/função não transbordam` + (m.corta.length?` (${m.corta.join(', ')})`:''));
+      ok(m.vazios.length===0, `${E.nome} [${modo}]: nenhum ícone/miniatura/botão vazio (sem imagem e sem fallback)` + (m.vazios.length?` (${m.vazios.join(', ')})`:''));
     }
+    // §329b item 6 reforço: com um INIMIGO do bestiário em FOCO, as minis dele (sem arte) caem no monograma — não ficam vazias.
+    await page.evaluate(()=>{ foco=st.lados[1].units[0].uid; detalhe=null; armado=null; render(); });
+    await page.waitForTimeout(40);
+    const mf=await medir();
+    ok(mf.vazios.length===0, `${E.nome}: com inimigo do bestiário em foco, minis caem no monograma (sem vazio)` + (mf.vazios.length?` (${mf.vazios.join(', ')})`:''));
     await ctx.close();
   }
   await browser.close();

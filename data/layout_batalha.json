@@ -41,6 +41,7 @@
     "som": { "x": [5, 29], "y": [92.8, 96.9] },
     "arte": { "x": [22, 48], "y": [75, 100] }
   },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [77.8, 98.2], "img": 13.6 },
+  "painel": { "x0": 44, "dirFolga": 2, "y": [77.8, 98.2], "img": 13.6,
+    "fonte": { "titulo": 3.4, "corpo": 2.8, "corpoMin": 2.4, "rodape": 2.2 } },
   "habMini": { "iniDir": 48, "fimDir": 25, "y": [72.6, 77.5], "size": 4.3 }
 }

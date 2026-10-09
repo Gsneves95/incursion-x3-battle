@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §329b · TELA DE BATALHA: acabamento do §329 (disposição APROVADA, não muda)
+
+A disposição do §329 foi aprovada; `data/layout_batalha.json` segue a fonte das posições. §329b só conserta o
+acabamento visto nas capturas `docs/telas/329-*-780x360.png`:
+1. **Monograma só como RESERVA.** O monograma (TEM/RCO/…) aparecia POR CIMA da arte de habilidade. Agora some quando a
+   arte existe (`:has(.slot__art)`) — nos botões, nas minis e na imagem do painel. Onde a arte falta (minis de criatura
+   do bestiário, p.ex.), o monograma aparece como fallback (antes a mini ficava VAZIA).
+2. **Retrato do inimigo preenche o quadro.** A arte do bestiário é quadrada com o sujeito fora do centro; um zoom leve
+   (`.bt-portrait--foe .slot>img{scale 1.18, origin 50% 32%}`) preenche o quadro centrado no sujeito, como o do jogador.
+3. **Arte do centro = PERSONAGEM sobre o cenário.** Sem moldura/caixa; CONTAIN ancorado embaixo; bordas esfumadas por
+   máscara de degradê nos 4 lados (`mask-composite:intersect`); **nunca amplia além do nativo** (`max-width/height` +
+   `width/height:auto` → 168² mostra a 168²). Usa `web/corpo/<deus>.webp` quando existir (flag `CORPO_ARTE` no build),
+   senão o retrato embutido; bestiário usa a arte do bestiário.
+4. **Arte do canto inferior é FIXA (Nezha).** Independe do deus em foco, com a mesma máscara, atrás dos botões. Usa
+   `web/banners/batalha_canto.webp` quando existir (flag `CANTO_ARTE`), senão o retrato do Nezha.
+5. **Topo central sem sobreposição.** "SEU TURNO — ENCERRAR"/"TURNO DO OPONENTE…" fica INTEIRO acima da barra; a linha
+   "N a agir · m:ss" fica abaixo da barra. Ajustado pelo TAMANHO da fonte (título 2,1u, linha 1,4u), não pela posição
+   dos blocos (a barra fica onde o JSON manda).
+6. **Sem ícones vazios.** Toda imagem ausente cai no fallback (ícone de `status_visual.json` nos efeitos; monograma nas
+   habilidades). Guarda em `batalha_faixa.test.js`: nenhum `.bt-eff`/`.bt-mini`/`.bt-skill` sem imagem E sem fallback,
+   inclusive com um inimigo do bestiário em foco (minis sem arte → monograma).
+7. **2ª linha do nome.** Mostra o MODO (RITO/CAMPANHA/DOMÍNIO · CULTURA) ou o ranque no PvP; cai em SANDBOX p/ o jogador
+   e OPONENTE p/ a CPU (antes repetia "VOCÊ").
+8. **Controle de som no padrão do jogo** (trilho escuro, preenchimento e botão dourados), sem mudar o comportamento.
+9. **Texto do painel maior + nunca vazio.** Corpo 2,8u, título 3,4u, rodapé 2,2u (gravados em
+   `layout_batalha.json → painel.fonte`); se o corpo não couber, encolhe até 2,4u e então ROLA (`_ajustarPainel`, no
+   navegador; em jsdom é no-op). Em repouso o painel mostra o 1º deus do jogador (retrato + passiva), no lugar da citação.
+
+**NÃO MUDOU:** posições/tamanhos dos blocos, regras, fluxo, motor, IA, outras telas. Guardas do §329 seguem verdes
+(sem sobreposição de toque, sem texto cortado) + o teste do item 6. Capturas `docs/telas/329b-*`.
+
 ## §329 · TELA DE BATALHA: LAYOUT refeito À RISCA da referência (data-driven)
 
 **O §328 foi REPROVADO pelo dono:** o quadro central saía cortado, o texto encavalava ("MANIPULADOR 120/120"), o

@@ -5,6 +5,17 @@
 const AVATAR_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg>';
 
 function _LBT(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.topo)||{}; }
+// §329b: a 2ª linha do nome mostra o MODO (ou o ranque no PvP). Para o jogador cai em SANDBOX; p/ a CPU, OPONENTE.
+function _modoRotulo(){
+  if(typeof prova!=='undefined'&&prova) return 'RITO';
+  if(typeof campanha!=='undefined'&&campanha) return 'CAMPANHA';
+  if(typeof dominio!=='undefined'&&dominio){ const c=dominio.cultura||(dominio.run&&dominio.run.cultura)||''; return 'DOMÍNIO'+(c?' · '+String(c).toUpperCase():''); }
+  return '';
+}
+function _subJogador(){ const m=_modoRotulo(); if(m) return m;
+  if(typeof MP!=='undefined'&&MP){ const r=(typeof contaAtual!=='undefined'&&contaAtual&&(contaAtual.ranque||contaAtual.rank))||''; return r?String(r).toUpperCase():'PvP'; }
+  return 'SANDBOX'; }
+function _subOponente(){ return _modoRotulo() || 'OPONENTE'; }
 // contadores de energia do MEU lado: quadradinho colorido + ×N por tipo presente, e o total no fim.
 function btEnergiaHTML(l){
   const proprios=new Set(l.units.filter(u=>u.vivo).map(u=>u.elem));
@@ -33,7 +44,7 @@ function topoHTML(){
   </button>
   <div class="bt-name bt-name--me" style="left:${U(aj.x+aj.size+1)};right:calc(100% - ${U(jg.nomeFimX)});top:${U(aj.y)};height:${U(jg.avatar.size)}">
     <span class="bt-name__nick" style="font-size:${U(3.2)}">${H('Você')}</span>
-    <span class="bt-name__sub" style="font-size:${U(2)}">${H(rotuloLado(eu))}</span>
+    <span class="bt-name__sub" style="font-size:${U(2)}">${H(_subJogador())}</span>
   </div>
   <button class="bt-prof" data-prof="me" title="Perfil" style="left:${U(jg.avatar.x)};top:${U(jg.avatar.y)};width:${U(jg.avatar.size)};height:${U(jg.avatar.size)}">
     <span class="bt-prof__pic" style="width:100%;height:100%">${AVATAR_SVG}</span>
@@ -43,12 +54,12 @@ function topoHTML(){
   </button>
   <div class="bt-name bt-name--foe" style="left:calc(100% - ${U(op.nomeIniDir)});right:${U(aj.x)};top:${U(op.avatar.y)};height:${U(op.avatar.size)}">
     <span class="bt-name__nick" style="font-size:${U(3.2)}">${H(rotuloLado(1-eu))}</span>
-    <span class="bt-name__sub" style="font-size:${U(2)}">${H('Oponente')}</span>
+    <span class="bt-name__sub" style="font-size:${U(2)}">${H(_subOponente())}</span>
   </div>
-  <button class="bt-estado" id="bend2" ${meu?'':'disabled'} style="${cx};top:${U(es.y[0])};height:${U(en.y[0]-es.y[0]-0.3)};min-width:${U(ba.w+2)}">
-    <span class="bt-estado__l">${H(estadoTxt)}${hud}</span>
+  <button class="bt-estado" id="bend2" ${meu?'':'disabled'} style="${cx};top:${U(es.y[0])};height:${U(en.y[0]-es.y[0]-0.3)};width:${U(ba.w+8)}">
+    <span class="bt-estado__l" style="position:absolute;top:0;${cx};font-size:${U(2.1)};white-space:nowrap">${H(estadoTxt)}${hud}</span>
     <span class="bt-barra" style="${cx};top:${U(ba.y[0]-es.y[0])};width:${U(ba.w)};height:${U(ba.h)}"><span class="bt-barra__fill" style="width:${pct}%"></span></span>
-    <span style="position:absolute;top:${U(ba.y[1]-es.y[0]+0.1)};${cx};white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:${U(1.5)};color:var(--ink-dim);text-transform:none">${meu?(l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+' a agir':'todas agiram')):'aguarde'} · ${mm}:${ss}</span>
+    <span style="position:absolute;top:${U(ba.y[1]-es.y[0]+0.2)};${cx};white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:${U(1.4)};color:var(--ink-dim);text-transform:none">${meu?(l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+' a agir':'todas agiram')):'aguarde'} · ${mm}:${ss}</span>
   </button>
   <div class="bt-energia" style="${cx};top:${U(en.y[0])};height:${U(en.y[1]-en.y[0])};font-size:${U(2.1)}">${btEnergiaHTML(l)}</div>
   <button class="bt-trocar" id="btrocar" ${(!meu||l.converteu||totalOrbs(l)<CONV_CUSTO)?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1"
@@ -62,9 +73,11 @@ function cantoInfHTML(){
   const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.cantoInferior)||{};
   const ds=L.desistir||{x:[5,29],y:[77.8,83]}, me=L.menu||{x:[5,29],y:[85,90.4]}, so=L.som||{x:[5,29],y:[92.8,96.9]}, ar=L.arte||{x:[22,48],y:[75,100]};
   const box=(o)=>`left:${U(o.x[0])};top:${U(o.y[0])};width:${U(o.x[1]-o.x[0])};height:${U(o.y[1]-o.y[0])}`;
-  const foc=(typeof foco!=='undefined'&&foco&&typeof todas==='function')?todas().find(x=>x.uid===foco):null;
+  // §329b: arte do canto é FIXA (Nezha), independente do deus em foco — até o dono gerar web/banners/batalha_canto.webp.
+  const cantoSrc=(typeof CANTO_ARTE!=='undefined'&&CANTO_ARTE)?'banners/batalha_canto.webp'
+    :((typeof IMG!=='undefined'&&IMG['nezha'])?IMG['nezha']:'');
   return `
-  <div class="bt-corner-art" style="${box(ar)}">${foc?slot('god-'+foc.key,'',null,0,true):''}</div>
+  <div class="bt-corner-art" style="${box(ar)}">${cantoSrc?`<img class="bt-corner-art__img" src="${H(cantoSrc)}" alt="" onerror="this.style.display='none'">`:''}</div>
   <button class="bt-cbtn bt-cbtn--danger" id="bsurr" style="${box(ds)};font-size:${U(2.2)}">Desistir</button>
   <button class="bt-cbtn" id="bmenu" style="${box(me)};font-size:${U(2.2)}">Menu</button>
   <div class="bt-som" style="${box(so)};font-size:${U(2)}">🔊<input type="range" min="0" max="100" value="80" aria-label="Volume"></div>`;
