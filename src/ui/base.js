@@ -84,6 +84,9 @@ const LOG_MARCO = new Set(['turno', 'queda', 'revive', 'passiva', 'fim']);
 
 const stage = document.getElementById('stage');
 const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// §329 — u = 1% da altura do palco (1u = 4.28px de design). As POSIÇÕES do layout de batalha vêm de
+// data/layout_batalha.json em u; U(n) devolve o CSS calc() correspondente. Fonte única da conversão.
+function U(n){ return 'calc(var(--u) * ' + (Math.round((+n||0)*1000)/1000) + ')'; }
 // realça palavras-chave por categoria no painel de descrição (estilo Naruto-Arena).
 // Vocabulários disjuntos entre categorias -> substituição sequencial não duplo-envolve.
 const KW=[

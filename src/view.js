@@ -14,10 +14,10 @@ let st=null, pick=[[],[]], armado=null, alvos=[], escolhidos=[],
 // foeGesto/foeTimer rastreiam o gesto no retrato inimigo em nível de MÓDULO (sobrevivem ao render()
 // que troca o DOM no meio do toque — é o que consertava o fechamento no pointerup).
 let painelRecolhido=false, peekKit=null, kitSel=null, foeGesto=null, foeTimer=null;
-// §328 — QUADRO DE INSPEÇÃO: `inspec` = uid da unidade inspecionada (null = fechado); `inspecSlot` = a
-// miniatura selecionada (basico|habilidade|milagre|defesa). Abrir NÃO gasta ação, não muda o estado nem
-// para o cronômetro — é leitura pura. Fecha por X, toque fora ou voltar do Android.
-let inspec=null, inspecSlot='habilidade';
+// §329 — FOCO: uid do deus mostrado no ESPAÇO DE ARTE do centro e cujas 4 minis aparecem na caixa "Toque numa
+// habilidade". Default = 1º do jogador ao abrir; o último retrato/habilidade tocado passa a ser o foco; no turno
+// do oponente o centro troca para quem está agindo (resolvido em campo.js/unidadeFoco). Inspecionar é leitura pura.
+let foco=null;
 
 // F3.1 — estado da PROVAÇÃO ativa (null numa batalha normal): a Provação em curso, o
 // resultado já decidido (uma vez só) e o contador de lances do jogador (o placar).
@@ -53,7 +53,7 @@ function voltarInvocacao(){ if(!voltar())ir('home',{},{substituir:true}); render
 
 // Ganchos de ciclo de vida das telas (usados pelos hooks de rota). A limpeza de
 // sobreposição mora AQUI, num lugar só; parar o relógio é do turno.js.
-function limparSobreposicao(){ armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;menuAberto=false;ov=null;livrePlano={};inspec=null; }
+function limparSobreposicao(){ armado=null;alvos=[];escolhidos=[];detalhe=null;abaFoe=null;convAlvo=null;menuAberto=false;ov=null;livrePlano={};foco=null; }
 function sairBatalha(){ pararRelogio(); limparSobreposicao(); try{ document.body.classList.remove('embatalha'); }catch(e){} }
 
 // render() despacha pela ROTA: chama o gancho de render da tela atual.
@@ -83,30 +83,19 @@ function renderBatalha(){
   // herda e o sobrepõe aos gradientes (cover), com o .stage__scrim de véu por cima. Ausente o arquivo (BATALHA_ARTE
   // 0), fica só o gradiente do §214 — placeholder, nunca 404. Lazy (só pinta na batalha), nunca base64.
   const artBg = (typeof BATALHA_ARTE !== 'undefined' && BATALHA_ARTE) ? ' style="--art-bg:url(banners/batalha-fundo.webp)"' : '';
-  stage.innerHTML = `<div id="baselayer" class="${cls.join(' ')}"${scrim?' inert':''}${artBg}>
+  // §329: o FOCO default é o 1º do meu time ao abrir; se o foco morreu/sumiu, unidadeFoco() recai nele.
+  if(!foco || !todas().find(x=>x.uid===foco&&x.vivo)){ const f0=l.units.find(u=>u.vivo)||l.units[0]; foco=f0?f0.uid:null; }
+  // §329 — LAYOUT À RISCA da referência (data/layout_batalha.json): topo + campo (jogador/inimigo/centro) +
+  // painel de baixo. Tudo ABSOLUTO em #baselayer.bt (u = 1% da altura). O ENCERRAR TURNO é o texto+barra do topo.
+  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA)||{};
+  const pn=L.painel||{x0:44,dirFolga:2,y:[77.8,98.2]};
+  const panelStyle=`left:${U(pn.x0)};right:${U(pn.dirFolga||2)};top:${U(pn.y[0])};bottom:${U(100-pn.y[1])}`;
+  stage.innerHTML = `<div id="baselayer" class="bt ${cls.join(' ')}"${scrim?' inert':''}${artBg}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
   ${topoHTML()}
   ${prova?provaHUD():campanha?campanhaHUD():dominio?dominioHUD():''}
-  <div class="board">
-    <div class="rows">
-      <span class="teamlbl teamlbl--ally">Você</span>
-      <span class="teamlbl teamlbl--enemy">${H(rotuloLado(1-eu))}</span>
-      ${Array.from({length:Math.max(l.units.length,o.units.length,1)},(_,i)=>filaHTML(l.units[i], o.units[i])).join('')}
-    </div>
-    ${inspec?quadroInspecaoHTML():''}
-  </div>
-  <footer class="footer">
-    <div class="acaoestado">${acaoRodapeHTML()}</div>
-    ${ehMeuTurno()
-      ? `<button class="b ${scrim?'b--sec':'b--primary'} b--md endturn" id="bend">
-      <span class="endturn__l1">Encerrar turno</span>
-      <span class="endturn__hint">${l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+(prontas>1?' a agir':' a agir'):'todas agiram')}</span>
-    </button>`
-      : `<div class="endturn endturn--wait" aria-live="polite">
-      <span class="endturn__l1">Vez de ${H(rotuloLado(st.ativo))}</span>
-      <span class="endturn__hint">aguarde</span>
-    </div>`}
-  </footer>
+  ${campoHTML(l,o)}
+  ${painelBaixoHTML(panelStyle)}
   </div>
   ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():(dominio&&dominioFim)?dominioResultadoOverlay():overlayHTML()}`;
 
@@ -255,8 +244,6 @@ function voltarNativo(){
   // §284/§240: a SOBREPOSIÇÃO de kit da Coleção fecha ANTES de sair da tela — cirurgicamente (colFecharVer
   // remove o nó e des-inerta a base), preservando seleção e rolagem da grade. Só depois vem o voltar genérico.
   if(typeof colVer!=='undefined'&&colVer&&typeof colFecharVer==='function'){ colFecharVer(); return; }
-  // §328: o QUADRO DE INSPEÇÃO é leitura por cima do campo — o voltar do Android o fecha ANTES de tudo.
-  if(typeof inspec!=='undefined'&&inspec){ inspec=null; render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

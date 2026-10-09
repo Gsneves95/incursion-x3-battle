@@ -537,6 +537,18 @@ const statusVisualObj = (() => {
   return mapa;
 })();
 
+// §329 — LAYOUT da batalha (dado). Lido pela tela; validado aqui (chaves obrigatórias) e injetado como LAYOUT_BATALHA.
+const layoutBatalhaObj = (() => {
+  const doc = JSON.parse(ler('data/layout_batalha.json'));
+  const erros = [];
+  const precisa = ['topo', 'fileiras', 'jogador', 'jogadorTurnoOponente', 'inimigo', 'centro', 'cantoInferior', 'painel', 'habMini'];
+  for (const k of precisa) if (!doc[k]) erros.push(`seção "${k}" ausente`);
+  if (doc.fileiras && (!Array.isArray(doc.fileiras.tops) || doc.fileiras.tops.length !== 3)) erros.push('fileiras.tops deve ter 3 topos');
+  if (doc.jogador && doc.jogador.quadros) { for (const s of ['acao', 'basico', 'habilidade', 'milagre', 'defesa']) if (typeof doc.jogador.quadros[s] !== 'number') erros.push(`jogador.quadros.${s} ausente`); }
+  if (erros.length) { console.error('ERRO §329 — data/layout_batalha.json:\n  ' + erros.join('\n  ')); process.exit(1); }
+  return doc;
+})();
+
 // §322 P3 — GUARDA da ponte de segurança: um modo marcado v2 em data/ia_por_modo.json SÓ pode estar v2 se a
 // prova de winnability (data/ia_winnability_v2.json) disser que TODO item verificável dele vence sob a v2.
 // Domínios e sandbox são isentos (sem solução fixa). Isto MORDE: por o 'rito' em v2 quebra o build (hanuman é
@@ -562,7 +574,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

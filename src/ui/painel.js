@@ -1,164 +1,85 @@
-// ui/painel.js — a LATERAL do histórico (§256) e a LEITURA no rodapé.
-// §256: a leitura tem UM endereço, o RODAPÉ. A lateral esquerda guarda SÓ o histórico (SEMPRE) e
-// RECOLHE por uma aba na borda. A prioridade da leitura vive toda no rodapé (`acaoRodapeHTML`):
-// ação armada (habilidade SUA) > kit do inimigo (toque longo §214) > resumo do turno do oponente >
-// detalhe tocado (inimiga / passiva / efeito / ficha) > dica.
+// ui/painel.js — §329: o PAINEL DE BAIXO À RISCA da referência (imagem à esquerda, título vermelho, descrição
+// com palavras-chave coloridas, CUSTO no canto sup. direito, Tipo·Função embaixo-esq, RECARGA embaixo-dir).
+// O conteúdo segue o toque: habilidade (minha, armada) · retrato (nome/função/vida/passiva) · ícone de efeito ·
+// leitura de habilidade (inclusive do OPONENTE pela caixa de minis). Posições vêm de LAYOUT_BATALHA (view.js posiciona).
 
-function painelHTML(){
-  return `<aside class="panel">
-    <button class="panel__tab" title="${painelRecolhido?'abrir leitura':'recolher leitura'}">${painelRecolhido?'›':'‹'}</button>
-    ${painelRecolhido?'':`<div class="panel__box"><div class="panel__body">${painelConteudoHTML()}</div></div>`}
-  </aside>`;
+// CUSTO em bolinhas (sem realce de falta — leitura pura); "SEM CUSTO" quando não há.
+function btCustoHTML(cost){
+  const out=[]; if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(`<i style="background:${COR(k)}"></i>`); }
+    for(let i=0;i<(cost.livre||0);i++) out.push(`<i class="free"></i>`); }
+  return `<div class="bt-panel__custo">Custo:${out.length?' '+out.join(''):' <span style="text-transform:none">livre</span>'}</div>`;
 }
+function _recargaTxt(cd, cdNow){ if(!cd) return 'Sem recarga'; return cdNow>0 ? `Recarga ${cd} · pronta em ${cdNow}` : `Recarga ${cd} · pronta`; }
 
-// §256: a LATERAL é SÓ o histórico, SEMPRE — nunca troca de conteúdo. Toda leitura (habilidade, efeito,
-// KIT do inimigo, resumo do turno) mora num endereço ÚNICO: o rodapé (acaoRodapeHTML). O painel não vira
-// sobreposição: o processo do oponente é oculto na resolução (F0.7), e o LOG é o único canal de "por que
-// perdi 45 de vida" — informação que precisa de um toque para aparecer é informação que some.
-function painelConteudoHTML(){
-  return historicoHTML();
-}
-
-// card genérico de detalhe (estados 2/3/4 e ficha/efeito): ícone + nome + custo/recarga + texto + classes.
-function detalheCard(d){
-  return `<div class="detail ${d.consulta?'detail--consulta':''}">
-    ${d.deKit?`<button class="b b--quiet b--sm kit__back" data-kitback="1">‹ kit</button>`:''}
-    <div class="detail__top">
-      <div class="detail__icon ${d.redondo?'detail__icon--skill':''}" ${d.redondo?`style="border-color:${d.cor||'#3a3358'}"`:''}>${
-        slot(d.chave||'detail',d.glifo||'',d.cor,20,d.redondo)}</div>
-      <div class="detail__id">
-        <div class="detail__name">${H(d.nome)}</div>
-        <div class="detail__meta">${d.pips||''}${d.meta?`<span class="detail__cd">${H(d.meta)}</span>`:''}</div>
-      </div>
-    </div>
-    <div class="detail__text">${realce(d.texto||'')}</div>
-    ${d.classes?`<div class="detail__classes">${H(d.classes)}</div>`:''}
-  </div>`;
-}
-
-function detalheHabilidadeArmada(){
-  const u=st.lados[st.ativo].units.find(x=>x.uid===armado.uid);
-  const a=u&&acoesDe(st,u).find(x=>x.slot===armado.slot);
-  if(!a) return historicoHTML();
-  const modo=a.alterna?(u.modo===0?' — ANEL':' — MANTO'):'';
-  return detalheCard({nome:a.nome.toUpperCase()+modo,chave:'skill-'+u.key+'-'+a.slot,glifo:mono(a),
-    cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),redondo:true,
-    pips:pipsDetalhe(a.cost), meta:(a.cd?'RECARGA '+a.cd:'SEM RECARGA'),
-    texto:a.desc, classes:classesTxt(u,a)});
-}
-
-// custo do inimigo em pílulas pequenas (para o CHIP): só mostra o que a habilidade custa — sem
-// realce de "falta" (a energia é dele, não minha; aqui é leitura pura).
-function pipsKitMini(cost){
-  const out=[];
-  for(const k in cost){ if(k==='livre')continue;
-    for(let i=0;i<cost[k];i++)out.push(`<i class="kpip" style="background:${COR(k)}"></i>`);}
-  for(let i=0;i<(cost.livre||0);i++)out.push(`<i class="kpip kpip--free"></i>`);
-  return out.length?`<span class="kchip__pips">${out.join('')}</span>`:'';
-}
-
-
-// RODAPÉ (§238 item 2) — a LEITURA transitória: o que a habilidade faz, custo e recarga aparecem AQUI
-// (não mais na lateral). ALTURA FIXA (`.leitura`) para NÃO pular: descrição quando há habilidade em foco
-// (armada OU tocada-para-ler), dica de ação quando não há. Confirmar/Cancelar vivem aqui, à esquerda do ENCERRAR.
-function leituraCardHTML(d, statusHTML, acoesHTML){
-  return `<div class="leitura">
-    <div class="leitura__icon ${d.redondo?'is-skill':''}"${d.cor?` style="border-color:${d.cor}"`:''}>${slot(d.chave||'detail',d.glifo||'',d.cor,18,d.redondo)}</div>
-    <div class="leitura__corpo">
-      <div class="leitura__cab"><b class="leitura__nome">${H(d.nome)}</b>${d.pips||''}${d.meta?`<span class="leitura__cd">${H(d.meta)}</span>`:''}</div>
-      <div class="leitura__txt">${realce(d.texto||'')}</div>
-      ${statusHTML||''}
-      ${d.motivo?`<div class="leitura__motivo">⊘ ${H(d.motivo)}</div>`:''}
-    </div>
-    ${acoesHTML?`<div class="acao__act">${acoesHTML}</div>`:''}
-  </div>`;
-}
-function acaoRodapeHTML(){
+// MODELO do painel conforme o estado de interação.
+function _modeloPainel(){
+  const l=st.lados[st.ativo];
   if(armado){
     const u=st.lados[st.ativo].units.find(x=>x.uid===armado.uid);
     const a=u&&acoesDe(st,u).find(x=>x.slot===armado.slot);
     if(a){
-      const nome=H(a.nome);
+      const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,armado.slot):1;
       const falta=faltamAlvos();
-      let txt;
-      if(armado.distribui) txt = escolhidos.length
-        ? `${escolhidos.length} alvo${escolhidos.length>1?'s':''} · reparte`
-        : `toque os inimigos a repartir`;
-      else if(falta>0){ const passo=armado.passos[escolhidos.length];
-        const quem=passo==='aliado'?'o aliado':'o inimigo';
-        txt = armado.passos.length>1 ? `toque ${quem} ${escolhidos.length+1}/${armado.passos.length}` : `toque ${quem}`; }
-      else txt=`pronto · confirme`;
+      let hint;
+      if(armado.distribui) hint = escolhidos.length ? `${escolhidos.length} alvo${escolhidos.length>1?'s':''} · reparte` : 'toque os inimigos a repartir';
+      else if(falta>0){ const passo=armado.passos[escolhidos.length]; const quem=passo==='aliado'?'o aliado':'o inimigo';
+        hint = armado.passos.length>1 ? `toque ${quem} ${escolhidos.length+1}/${armado.passos.length}` : `toque ${quem}`; }
+      else hint='pronto · confirme';
       const podeConf = armado.distribui ? escolhidos.length>0 : falta<=0;
       const modo=a.alterna?(u.modo===0?' — ANEL':' — MANTO'):'';
-      const acoes=`${podeConf?`<button class="b b--ok b--sm" id="bconf">Confirmar</button>`:''}<button class="b b--quiet b--sm" id="bcanc">Cancelar</button>`;
-      return leituraCardHTML(
-        { nome:a.nome.toUpperCase()+modo, chave:'skill-'+u.key+'-'+a.slot, glifo:mono(a), redondo:true,
-          cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem), pips:pipsDetalhe(a.cost), meta:(a.cd?'RECARGA '+a.cd:'SEM RECARGA'), texto:a.desc },
-        `<div class="leitura__status">▸ ${txt}</div>`, acoes);
+      return { chave:'skill-'+u.key+'-'+a.slot, cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem), redondo:true,
+        titulo:(a.nome+modo).toUpperCase(), nv, status:'▸ '+hint, desc:a.desc, custo:a.cost, tf:classesTxt(u,a), cd:_recargaTxt(a.cd, u.cd[armado.slot]||0),
+        act:`${podeConf?`<button class="b b--ok b--sm" id="bconf">Confirmar</button>`:''}<button class="b b--quiet b--sm" id="bcanc">Cancelar</button>` };
     }
   }
-  if(peekKit!=null){ const k=kitRodapeHTML(peekKit); if(k) return k; }   // §256: KIT do inimigo no RODAPÉ (toque longo) — persiste até outra leitura
-  if(resumoTurno&&resumoTurno.length) return resumoRodapeHTML();          // §256: resumo do turno do oponente também desce
-  if(detalhe) return leituraCardHTML(detalhe, '', '');   // §238: qualquer LEITURA (habilidade tocada, efeito, passiva, ficha)
-  const l=st.lados[st.ativo];
-  // §299: o REPOUSO do rodapé é a CITAÇÃO (dado, não literal) — "o descanso de um espaço que trabalha".
-  // Só o que é AÇÃO pendente a substitui em repouso: a dívida de energia livre (ao encerrar) e a espera do
-  // turno do oponente. Tocar uma habilidade/inimigo troca pela leitura (ramos acima); soltar volta à citação.
-  if(ehMeuTurno() && (l.dividaLivre||0)>0)
-    return `<div class="leitura leitura--dica"><span class="acao__txt">Ao encerrar, escolha <b>${l.dividaLivre}</b> energia livre</span></div>`;
-  if(!ehMeuTurno())
-    return `<div class="leitura leitura--dica"><span class="acao__txt">Vez de ${H(rotuloLado(st.ativo))} — aguarde</span></div>`;
-  const cite=(typeof BATALHA_TXT!=='undefined'&&BATALHA_TXT&&BATALHA_TXT.citacao)?BATALHA_TXT.citacao:'';
-  return `<div class="leitura leitura--cite"><span class="acao__cite">${H(cite)}</span></div>`;
-}
-
-// §256: o KIT do inimigo no RODAPÉ. Mesma matéria do §219 (arte da selecionada + custo + recarga + texto
-// completo + a tira de chips para trocar de habilidade), mas no endereço ÚNICO da leitura. Reusa o card
-// `.leitura` (a descrição já rola em `.leitura__txt`, max-height 44 — não estoura os 86px do rodapé) e os
-// `.kchip` do §219. PERSISTE: fica até outra leitura tomar o lugar (o ✕ é o fechar deliberado). O "qual
-// dos três inimigos" é o que foi tocado longo (peekKit = uid); segurar outro troca; tocar um chip troca a
-// habilidade dentro daquele inimigo.
-function kitRodapeHTML(uid){
-  const u=todas().find(x=>x.uid===uid); if(!u) return null;
-  const g=_catPartida()[u.key]||{};
-  const acoes=acoesDe(st,u);
-  const slots=acoes.map(a=>a.slot).concat(g.passiva?['passiva']:[]);
-  const sel = kitSel && slots.includes(kitSel) ? kitSel : slots[0];
-  const chips=acoes.map(a=>{
-    const cd=u.cd[a.slot]||0;
-    return `<button class="kchip ${a.slot===sel?'is-sel':''}" data-kitsel="${uid}|${a.slot}" title="${H(a.nome)}">
-      <span class="kchip__art">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}${cd?`<span class="kchip__cd">↻${cd}</span>`:''}</span>
-      ${pipsKitMini(a.cost)}</button>`;
-  }).join('');
-  const chipPas=g.passiva?`<button class="kchip kchip--pas ${sel==='passiva'?'is-sel':''}" data-kitsel="${uid}|passiva" title="${H(g.passiva.nome)}">
-      <span class="kchip__art kchip__art--pas" style="color:${COR(u.elem)}">P</span>
-      <span class="kchip__pips"><span class="kchip__paslbl">PAS</span></span></button>`:'';
-  // o CARD da selecionada (habilidade ou passiva), no mesmo formato de leitura
-  let d;
-  if(sel==='passiva'&&g.passiva){
-    d={nome:(u.nome+' · '+g.passiva.nome).toUpperCase(),chave:'god-'+u.key,glifo:'P',cor:COR(u.elem),
-       meta:'PASSIVA'+(g.passiva.inerte?' · INERTE':''),texto:g.passiva.desc};
-  }else{
-    const a=acoes.find(x=>x.slot===sel)||acoes[0]; const cd=u.cd[a.slot]||0;
-    d={nome:(u.nome+' · '+a.nome).toUpperCase(),chave:'skill-'+u.key+'-'+a.slot,glifo:mono(a),redondo:true,
-       cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),pips:pipsDetalhe(a.cost),
-       meta:(cd?'PRONTA EM '+cd+' TURNO(S)':'PRONTA AGORA'),texto:a.desc};
+  if(typeof detalhe!=='undefined' && detalhe) return _modeloDetalhe(detalhe);
+  if(typeof resumoTurno!=='undefined' && resumoTurno && resumoTurno.length) {
+    const linhas=resumoTurno.filter(r=>r.tipo!=='turno'&&r.tipo!=='abertura').slice(-5).map(r=>narrar(r)).filter(Boolean);
+    return { chave:'detail', titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(), desc:linhas.join('  ·  ')||'sem ações', cd:'Turno '+st.turno };
   }
-  const strip=`<div class="leitura__kstrip">${chips}${chipPas}</div>
-    <button class="b b--quiet b--icon kit__x" data-kitclose="1" title="fechar o kit">✕</button>`;
-  return leituraCardHTML(Object.assign({consulta:true},d), '<div class="leitura__status leitura__status--kit">KIT INIMIGO · segure outro para trocar</div>', strip);
+  if(ehMeuTurno() && (l.dividaLivre||0)>0) return { dica:`Ao encerrar, escolha ${l.dividaLivre} energia livre` };
+  if(!ehMeuTurno()) return { dica:`Vez de ${rotuloLado(st.ativo)} — aguarde` };
+  const cite=(typeof BATALHA_TXT!=='undefined'&&BATALHA_TXT&&BATALHA_TXT.citacao)?BATALHA_TXT.citacao:'';
+  return { cite };
 }
-// §256: o resumo do turno do oponente, no rodapé (era painel). Card de leitura com as últimas ações.
-function resumoRodapeHTML(){
-  const linhas=resumoTurno.filter(r=>r.tipo!=='turno'&&r.tipo!=='abertura').slice(-5).map(r=>narrar(r)).filter(Boolean);
-  const quem=rotuloLado(1-ladoExibido()).toUpperCase();
-  return leituraCardHTML(
-    {nome:'RESUMO · '+quem,chave:'detail',glifo:'↺',cor:'var(--gold-soft)',meta:'TURNO '+st.turno,
-     texto:linhas.join('  ·  ')||'sem ações'},
-    '<div class="leitura__status">toque em qualquer coisa para dispensar</div>','');
+function _modeloDetalhe(d){
+  if(d.kind==='skill') return { chave:d.chave, cor:d.cor, redondo:true, titulo:d.nome.toUpperCase(), nv:d.nv,
+    desc:d.desc, custo:d.cost, tf:d.tf, cd:_recargaTxt(d.cd, d.cdNow), motivo:d.motivo };
+  if(d.kind==='unidade') return { chave:d.chave, cor:d.cor, titulo:d.nome.toUpperCase(),
+    desc:(d.passivaNome?`Passiva — ${d.passivaNome}: ${d.passivaDesc}`:'Sem passiva.'),
+    tf:d.sub, cd:`Vida ${d.hp}/${d.maxHp}${d.shield?' ◧'+d.shield:''}` };
+  if(d.kind==='efeito') return { emoji:d.icone, cor:d.cor, titulo:(d.nome+(d.num?' '+d.num:'')).toUpperCase(),
+    desc:d.desc, tf:'em '+d.dono, cd:(d.dur!=null? d.dur+' turno'+(d.dur>1?'s':'') : 'permanente') };
+  if(d.kind==='passiva') return { chave:d.chave, cor:d.cor, titulo:d.nome.toUpperCase(),
+    desc:d.desc, tf:'NÃO GASTA A AÇÃO · NÃO SILENCIÁVEL'+(d.inerte?' · INERTE':''), cd:d.dono.toUpperCase()+' · PASSIVA' };
+  return { dica:'' };
+}
+// o PAINEL de baixo (view.js injeta o `style` de posição em u).
+function painelBaixoHTML(styleStr){
+  const m=_modeloPainel();
+  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{img:13.6};
+  const imgStyle=`width:${U(L.img||13.6)};height:${U(L.img||13.6)}`;
+  if(m.dica!=null || m.cite!=null){
+    const txt = m.cite!=null ? `<span style="font-style:italic;color:var(--gold-soft)">${H(m.cite)}</span>` : `<b>${H(m.dica)}</b>`;
+    return `<div class="bt-panel" style="${styleStr}"><div class="bt-panel__img" style="${imgStyle}"></div>
+      <div class="bt-panel__body"><div class="bt-panel__desc" style="display:flex;align-items:center;height:100%">${txt}</div></div></div>`;
+  }
+  const img = m.emoji
+    ? `<div class="bt-panel__img" style="${imgStyle};display:flex;align-items:center;justify-content:center;font-size:${U(7)}">${m.emoji}</div>`
+    : `<div class="bt-panel__img" style="${imgStyle}${m.cor?';border-color:'+m.cor:''}">${slot(m.chave||'detail','',m.cor,0,m.redondo)}</div>`;
+  return `<div class="bt-panel" style="${styleStr}">
+    ${img}
+    <div class="bt-panel__body">
+      ${btCustoHTML(m.custo)}
+      <div class="bt-panel__titulo">${H(m.titulo||'')}${m.nv>1?`<span class="bt-panel__nv">Nv ${m.nv}</span>`:''}</div>
+      <div class="bt-panel__desc">${m.status?`<span style="color:var(--gold-text);font-weight:700">${H(m.status)}</span>  `:''}${realce(m.desc||'')}${m.motivo?`<div class="bt-panel__motivo">⊘ ${H(m.motivo)}</div>`:''}</div>
+      <div class="bt-panel__rodape"><span class="bt-panel__tf">${H(m.tf||'')}</span><span class="bt-panel__cd">${H(m.cd||'')}</span></div>
+      ${m.act?`<div class="bt-panel__act">${m.act}</div>`:''}
+    </div>
+  </div>`;
 }
 
-/* ---------- eventos do painel/rodapé (ação primária) ---------- */
+/* ---------- eventos do painel (confirmar/cancelar/encerrar) ---------- */
 function ligarPainel(){
   const q=s=>stage.querySelector(s);
   const bcf=q('#bconf'); if(bcf)bcf.onclick=()=>confirmar();

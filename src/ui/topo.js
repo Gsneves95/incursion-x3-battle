@@ -1,108 +1,106 @@
-// ui/topo.js — barra superior (§215): ESPAÇO RESERVADO para o perfil dos DOIS jogadores.
-// De cada lado: FOTO + NICK (+ RANQUE, que chega no PvP/Fase 5) e as ORBES daquele lado.
-// A energia do OPONENTE é informação de JOGO (prever o Milagre dele), não decoração — voltou.
-// Centro: relógio + os botões de menu. Tocar numa foto abre um marcador honesto (Fase 5).
-// Perspectiva fixa (F0.7): eu = ladoExibido; o oponente é o outro lado.
+// ui/topo.js — §329: a BARRA SUPERIOR À RISCA da referência + o CANTO INFERIOR ESQUERDO (DESISTIR/MENU/SOM).
+// Posições em u de data/layout_batalha.json (LAYOUT_BATALHA). O texto de estado + a barra de tempo são o BOTÃO
+// de ENCERRAR TURNO (fluxo de hoje: energia livre etc.). Energia e ⇄ TROCAR no centro. Perspectiva fixa (F0.7).
 
-// avatar genérico (silhueta): placeholder de FOTO até o perfil online existir (Fase 5).
 const AVATAR_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg>';
 
-// pílulas de energia de um lado. `meu`=true no meu lado (converte por toque, realça gasto);
-// no lado do oponente é LEITURA (sem toque, sem realce) — só mostrar quanto ele tem.
-function pilulasEnergia(lado, meu, plano){
-  const proprios=new Set(lado.units.filter(u=>u.vivo).map(u=>u.elem));
-  const mostrar=ELEMS.filter(e=>proprios.has(e)||lado.orbs[e]>0||(meu&&plano&&plano[e]>0));
-  if(!mostrar.length) return '';
-  return mostrar.map(e=>{
-    const n=lado.orbs[e], g=meu&&plano&&plano[e]>0;
-    if(!meu) return `<span class="energy__pill energy__pill--ro ${n===0?'zero':''}" title="${ELAB[e]}">
-      <span class="energy__dot" style="background:${COR(e)}"></span><span class="energy__n">${n}</span></span>`;
-    return `<button class="energy__pill ${g?'spend':''} ${n===0?'zero':''} ${convAlvo===e?'target':''}"
-      data-conv="${e}" title="${ELAB[e]}">
-      <span class="energy__dot" style="background:${COR(e)}"></span><span class="energy__n">${n}</span></button>`;
-  }).join('');
+function _LBT(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.topo)||{}; }
+// contadores de energia do MEU lado: quadradinho colorido + ×N por tipo presente, e o total no fim.
+function btEnergiaHTML(l){
+  const proprios=new Set(l.units.filter(u=>u.vivo).map(u=>u.elem));
+  const mostrar=ELEMS.filter(e=>proprios.has(e)||l.orbs[e]>0);
+  const total=ELEMS.reduce((s,e)=>s+l.orbs[e],0);
+  const cel=e=>`<span class="bt-ec" title="${ELAB[e]}"><span class="bt-ec__dot" style="background:${COR(e)}"></span>×${l.orbs[e]}</span>`;
+  return mostrar.map(cel).join('')+`<span class="bt-ec"><span class="bt-ec__dot bt-ec__dot--tot">Σ</span>×${total}</span>`;
 }
-
-// perfil (foto + nick + ranque). Reservado para o online (Fase 5): a foto e o nick são
-// placeholder; o ranque é "—" até existir conta. `foe`=true no oponente (aro/nome vermelho).
-function perfilChip(nome, foe){
-  return `<button class="prof ${foe?'prof--foe':''}" data-prof="${foe?'foe':'me'}" title="Perfil do jogador (Fase 5)">
-    <span class="prof__pic">${AVATAR_SVG}</span>
-    <span class="prof__id"><b class="prof__nick">${H(nome)}</b><span class="prof__rank">—</span></span>
-  </button>`;
-}
-
 function topoHTML(){
-  const eu=ladoExibido();
+  const T=_LBT(); const eu=ladoExibido();
   const l=st.lados[eu], o=st.lados[1-eu];
-  let plano=null;
-  if(armado){const u=l.units.find(x=>x.uid===armado.uid);
-    const a=acoesDe(st,u).find(x=>x.slot===armado.slot); if(a)plano=planoPag(l,a.cost);}
-  else if(convAlvo)plano=planoConversao(l,convAlvo);
+  const meu=ehMeuTurno();
+  const aj=T.ajustes||{x:1.5,y:1.5,size:4};
+  const jg=T.jogador||{nomeFimX:37.5,avatar:{x:39,y:2.4,size:9}};
+  const op=T.oponente||{nomeIniDir:37.5,avatar:{dir:39,y:2.4,size:9}};
+  const es=T.estado||{y:[3,6]}, ba=T.barra||{w:34,h:2,y:[5.6,7.5]}, en=T.energia||{y:[9.2,11.3]}, tr=T.trocar||{y:[12,14]};
   const mm=Math.floor(relogio/60), ss=String(relogio%60).padStart(2,'0');
-  return `<header class="topbar">
-    <div class="side side--me">
-      ${perfilChip('Você', false)}
-      <div class="energy energy--me">${pilulasEnergia(l,true,plano)}</div>
-      <button class="b b--sec b--sm b--icon" id="btrocar" ${!ehMeuTurno()||l.converteu||totalOrbs(l)<CONV_CUSTO?'disabled':''}
-        title="Trocar ${CONV_CUSTO} energias por 1 da sua escolha">⇄</button>
-    </div>
-    <div class="topmid">
-      <div class="timer ${relogio<=10?'low':''}">
-        <div class="timer__fill" style="width:${Math.round(relogio/TURNO_SEG*100)}%"></div>
-        <div class="timer__label">TURNO ${st.turno}${st.turno>=30?'/40':''} · ${mm}:${ss}</div>
-      </div>
-      <div class="tools">
-        <button class="b b--quiet b--icon" id="blog" title="Registro">≡</button>
-        <button class="b b--quiet b--icon" id="bmenu" title="Mais">⋯</button>
-      </div>
-    </div>
-    <div class="side side--foe">
-      <div class="energy energy--foe">${pilulasEnergia(o,false,null)}</div>
-      ${perfilChip(rotuloLado(1-eu), true)}
-    </div>
-  </header>
-  ${menuAberto?`<div class="menu" id="menu">
+  const pct=Math.max(0,Math.min(100,Math.round(relogio/TURNO_SEG*100)));
+  const hud = (prova||campanha||dominio) ? `<span class="bt-estado__hud">T${st.turno}${st.turno>=30?'/40':''}</span>` : '';
+  const estadoTxt = meu ? 'Seu turno — Encerrar' : 'Turno do oponente…';
+  const prontas=l.units.filter(u=>podeAgir(u)).length;
+  const cx='left:50%;transform:translateX(-50%)';
+  return `
+  <button class="bt-ajustes" id="bajustes" title="Menu" style="left:${U(aj.x)};top:${U(aj.y)};width:${U(aj.size)};height:${U(aj.size)}">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h12M17 7h4M3 17h4M9 17h12M14 3v8M8 13v8"/><circle cx="15.5" cy="7" r="2"/><circle cx="8.5" cy="17" r="2"/></svg>
+  </button>
+  <div class="bt-name bt-name--me" style="left:${U(aj.x+aj.size+1)};right:calc(100% - ${U(jg.nomeFimX)});top:${U(aj.y)};height:${U(jg.avatar.size)}">
+    <span class="bt-name__nick" style="font-size:${U(3.2)}">${H('Você')}</span>
+    <span class="bt-name__sub" style="font-size:${U(2)}">${H(rotuloLado(eu))}</span>
+  </div>
+  <button class="bt-prof" data-prof="me" title="Perfil" style="left:${U(jg.avatar.x)};top:${U(jg.avatar.y)};width:${U(jg.avatar.size)};height:${U(jg.avatar.size)}">
+    <span class="bt-prof__pic" style="width:100%;height:100%">${AVATAR_SVG}</span>
+  </button>
+  <button class="bt-prof bt-prof--foe" data-prof="foe" title="Perfil" style="right:${U(op.avatar.dir)};top:${U(op.avatar.y)};width:${U(op.avatar.size)};height:${U(op.avatar.size)}">
+    <span class="bt-prof__pic" style="width:100%;height:100%">${AVATAR_SVG}</span>
+  </button>
+  <div class="bt-name bt-name--foe" style="left:calc(100% - ${U(op.nomeIniDir)});right:${U(aj.x)};top:${U(op.avatar.y)};height:${U(op.avatar.size)}">
+    <span class="bt-name__nick" style="font-size:${U(3.2)}">${H(rotuloLado(1-eu))}</span>
+    <span class="bt-name__sub" style="font-size:${U(2)}">${H('Oponente')}</span>
+  </div>
+  <button class="bt-estado" id="bend2" ${meu?'':'disabled'} style="${cx};top:${U(es.y[0])};height:${U(en.y[0]-es.y[0]-0.3)};min-width:${U(ba.w+2)}">
+    <span class="bt-estado__l">${H(estadoTxt)}${hud}</span>
+    <span class="bt-barra" style="${cx};top:${U(ba.y[0]-es.y[0])};width:${U(ba.w)};height:${U(ba.h)}"><span class="bt-barra__fill" style="width:${pct}%"></span></span>
+    <span style="position:absolute;top:${U(ba.y[1]-es.y[0]+0.1)};${cx};white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:${U(1.5)};color:var(--ink-dim);text-transform:none">${meu?(l.dividaLivre>0?`escolher ${l.dividaLivre} energia livre`:(prontas?prontas+' a agir':'todas agiram')):'aguarde'} · ${mm}:${ss}</span>
+  </button>
+  <div class="bt-energia" style="${cx};top:${U(en.y[0])};height:${U(en.y[1]-en.y[0])};font-size:${U(2.1)}">${btEnergiaHTML(l)}</div>
+  <button class="bt-trocar" id="btrocar" ${(!meu||l.converteu||totalOrbs(l)<CONV_CUSTO)?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1"
+    style="${cx};top:${U(tr.y[0])};height:${U(tr.y[1]-tr.y[0])};font-size:${U(1.9)}">⇄ Trocar energia</button>
+  ${cantoInfHTML()}
+  ${menuAberto?menuDropHTML():''}`;
+}
+
+// CANTO INFERIOR ESQUERDO: DESISTIR, MENU, SOM, e um espaço de arte decorativo ATRÁS (sem cobrir toque).
+function cantoInfHTML(){
+  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.cantoInferior)||{};
+  const ds=L.desistir||{x:[5,29],y:[77.8,83]}, me=L.menu||{x:[5,29],y:[85,90.4]}, so=L.som||{x:[5,29],y:[92.8,96.9]}, ar=L.arte||{x:[22,48],y:[75,100]};
+  const box=(o)=>`left:${U(o.x[0])};top:${U(o.y[0])};width:${U(o.x[1]-o.x[0])};height:${U(o.y[1]-o.y[0])}`;
+  const foc=(typeof foco!=='undefined'&&foco&&typeof todas==='function')?todas().find(x=>x.uid===foco):null;
+  return `
+  <div class="bt-corner-art" style="${box(ar)}">${foc?slot('god-'+foc.key,'',null,0,true):''}</div>
+  <button class="bt-cbtn bt-cbtn--danger" id="bsurr" style="${box(ds)};font-size:${U(2.2)}">Desistir</button>
+  <button class="bt-cbtn" id="bmenu" style="${box(me)};font-size:${U(2.2)}">Menu</button>
+  <div class="bt-som" style="${box(so)};font-size:${U(2)}">🔊<input type="range" min="0" max="100" value="80" aria-label="Volume"></div>`;
+}
+function menuDropHTML(){
+  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.cantoInferior)||{};
+  const me=L.menu||{x:[5,29],y:[85,90.4]};
+  return `<div class="menu bt-menu" id="menu" style="position:absolute;left:${U(me.x[0])};bottom:${U(100-me.y[0]+1)};z-index:30;min-width:${U(30)}">
     <button class="b b--quiet b--md" id="bhelp">Como jogar</button>
+    <button class="b b--quiet b--md" id="blog">Registro</button>
     <button class="b b--quiet b--md" id="bfull">${estaTelaCheia()?'Sair da tela cheia':'Tela cheia'}</button>
     ${(typeof contaAtual!=='undefined'&&contaAtual)?`<button class="b b--quiet b--md" id="bconta">Sua conta</button>`:''}
     <button class="b b--quiet b--md" id="bsair">Sair para o início</button>
-    <button class="b b--danger b--md" id="bsurr">Render-se</button>
     <button class="b b--danger b--md" id="bapagar">Apagar dados</button>
     <div class="menu__build" id="bmenubuild" title="toque 3× para diagnóstico">${H(buildStr())}</div>
-  </div>`:''}`;
+  </div>`;
 }
 
-/* ---------- eventos da barra superior (energia, trocar, perfil, registro, menu) ---------- */
+/* ---------- eventos da barra superior + canto inferior ---------- */
 function ligarTopo(){
   const q=s=>stage.querySelector(s);
-  stage.querySelectorAll('[data-conv]').forEach(b=>b.onclick=()=>{
-    if(!ehMeuTurno())return;   // sem converter no turno do oponente (a barra é só leitura)
-    const l0=st.lados[st.ativo];
-    if(l0.converteu||totalOrbs(l0)<CONV_CUSTO)return;
-    ov='conv';convAlvo=b.dataset.conv;
-    armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render();});
-  const bt=q('#btrocar'); if(bt&&!bt.disabled)bt.onclick=()=>{
-    ov='conv';convAlvo=null;armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render();};
-  // FOTO do perfil (dos dois lados): marcador honesto — o perfil de verdade é Fase 5 (online).
   stage.querySelectorAll('[data-prof]').forEach(b=>b.onclick=()=>{ov='perfil';menuAberto=false;render();});
-  const bl=q('#blog'); if(bl)bl.onclick=()=>{ov=ov==='log'?null:'log';menuAberto=false;render();};
-  const bm=q('#bmenu'); if(bm)bm.onclick=()=>{menuAberto=!menuAberto;render();};
-  const bh=q('#bhelp'); if(bh)bh.onclick=()=>{ov='help';menuAberto=false;render();};
-  const bf=q('#bfull'); if(bf)bf.onclick=()=>{alternarTelaCheia();menuAberto=false;render();};
-  const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};   // sair da partida p/ a home (com confirmação)
+  const bt=q('#btrocar'); if(bt&&!bt.disabled)bt.onclick=()=>{ ov='conv';convAlvo=null;armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;menuAberto=false;render(); };
+  const be=q('#bend2'); if(be&&!be.disabled)be.onclick=()=>encerrarTurno();
+  const baj=q('#bajustes'); if(baj)baj.onclick=ev=>{ev.stopPropagation();menuAberto=!menuAberto;render();};
+  const bm=q('#bmenu'); if(bm)bm.onclick=ev=>{ev.stopPropagation();menuAberto=!menuAberto;render();};
   const bs=q('#bsurr'); if(bs)bs.onclick=()=>{ov='surr';menuAberto=false;render();};
+  const bh=q('#bhelp'); if(bh)bh.onclick=()=>{ov='help';menuAberto=false;render();};
+  const bl=q('#blog'); if(bl)bl.onclick=()=>{ov=ov==='log'?null:'log';menuAberto=false;render();};
+  const bf=q('#bfull'); if(bf)bf.onclick=()=>{alternarTelaCheia();menuAberto=false;render();};
+  const bx=q('#bsair'); if(bx)bx.onclick=()=>{ov='sair';menuAberto=false;render();};
   const ba=q('#bapagar'); if(ba)ba.onclick=()=>{ov='apagar';menuAberto=false;render();};
-  // §328: "Sua conta" (antes botão fixo no canto, sobre a dica de energia) agora vive no menu ⋯.
   const bc=q('#bconta'); if(bc)bc.onclick=ev=>{ev.stopPropagation();menuAberto=false;render();if(typeof montarPainelConta==='function')montarPainelConta();};
-  // §328: o carimbo de build (antes fixo no canto) agora é uma linha do menu; 3 toques abrem o diagnóstico.
   const bb=q('#bmenubuild'); if(bb){ let n=0,t; bb.onclick=ev=>{ev.stopPropagation(); clearTimeout(t); if(++n>=3){n=0; const el=document.getElementById('diag'); if(el){el.classList.toggle('on'); if(typeof renderDiag==='function')renderDiag();}} t=setTimeout(()=>n=0,600);};}
-  // fechar o menu ao tocar fora, sem acumular ouvintes a cada render
   if(menuAberto){
     const mm=q('#menu');
-    stage.onclick=ev=>{
-      if(mm&&!mm.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('#bmenu'))){
-        stage.onclick=null;menuAberto=false;render();}
-    };
+    stage.onclick=ev=>{ if(mm&&!mm.contains(ev.target)&&!(ev.target.closest&&(ev.target.closest('#bmenu')||ev.target.closest('#bajustes')))){ stage.onclick=null;menuAberto=false;render(); } };
   } else stage.onclick=null;
 }
