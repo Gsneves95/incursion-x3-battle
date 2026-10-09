@@ -90,7 +90,21 @@ function painelBaixoHTML(styleStr){
       <div class="bt-panel__rodape" style="font-size:${U(F.rodape)}"><span class="bt-panel__tf">${H(m.tf||'')}</span><span class="bt-panel__cd">${H(m.cd||'')}</span></div>
       ${m.act?`<div class="bt-panel__act">${m.act}</div>`:''}
     </div>
+    ${_painelMinis(L)}
   </div>`;
+}
+// §330: a caixa "Toque numa habilidade" vive DENTRO do painel, na ponta direita — as 4 minis do deus em FOCO
+// (leitura; vê o kit do oponente). O clique [data-look] é religado pelo campo, que varre o stage inteiro.
+function _painelMinis(L){
+  const u=_focoGod(); if(!u||!u.vivo) return '';
+  const sz=(L&&L.mini)||5.5;
+  const minis=acoesDe(st,u).map(a=>{
+    const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
+    const sel=typeof detalhe!=='undefined'&&detalhe&&detalhe.kind==='skill'&&detalhe.chave==='skill-'+u.key+'-'+a.slot;
+    return `<button class="bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}"
+      style="width:${U(sz)};height:${U(sz)};border-color:${anel}"><span class="bt-mini__mono" style="color:${anel}">${H(mono(a))}</span>${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</button>`;
+  }).join('');
+  return `<div class="bt-panel__minis"><span class="bt-panel__minilab">Toque numa habilidade</span><div class="bt-panel__minirow">${minis}</div></div>`;
 }
 
 // §329b: encaixe fino do painel — encolhe título/função até caber na LARGURA; encolhe o corpo até o mínimo e,

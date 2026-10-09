@@ -66,31 +66,28 @@ console.log('== 3. a IA MOVE criaturas de bestiário e a tela re-renderiza (o ou
   console.log(`  IA moveu ${moves} criaturas · render limpo`);
 }
 
-console.log('== 4. §207: o HUD da condição NÃO cruza a área de ação (discos/retratos), em Provação e Campanha ==');
+console.log('== 4. §330: o HUD de modo SAIU da batalha — o modo vai p/ a sublinha do nome e o prazo p/ a linha do ENCERRAR ==');
 {
-  // Invariante de LAYOUT (§207/§214): o HUD mora numa faixa PRÓPRIA (top 47, alt 19 → termina em 66)
-  // que ACABA antes de o board com HUD começar (top 68 — ver #baselayer.temhud .board no shell). Aqui
-  // lemos a faixa DECLARADA do .phud (regra de classe simples, que o jsdom resolve) e conferimos que ela
-  // fecha antes dos 68px. A prova GEOMÉTRICA em navegador real (phud.bottom ≤ topo das fileiras) mora em
-  // tests/moldura.test.js — o jsdom não aplica o override composto #baselayer.temhud .board.
-  const BOARD_HUD_TOP = 68;
-  const num = v => parseFloat(v) || 0;
-  const gs = el => w.getComputedStyle(el);
-  const fundo = (setup, label) => {
+  // §330: não há mais faixa de HUD (.phud) nem a classe temhud. O que o HUD mostrava foi para:
+  //   - modo + progresso → sublinha do nome do jogador (.bt-name--me .bt-name__sub);
+  //   - número do turno + prazo → a linha do botão ENCERRAR (.bt-encerrar__linha).
+  const fundo = (setup, rotulo, label) => {
     w.eval(setup + ' render();');
     const bl = d.querySelector('#baselayer');
-    ok(/\btemhud\b/.test(bl.className), `${label}: a batalha com HUD marca #baselayer.temhud`);
-    const phud = d.querySelector('.phud');
-    ok(!!phud, `${label}: o HUD existe`);
-    const hudBottom = num(gs(phud).top) + num(gs(phud).height);
-    ok(hudBottom <= BOARD_HUD_TOP, `${label}: a faixa do HUD termina (${hudBottom}px) antes do board com HUD (top ${BOARD_HUD_TOP}px) — sem cruzar discos/retratos`);
+    ok(!/\btemhud\b/.test(bl.className), `${label}: a batalha não marca mais #baselayer.temhud`);
+    ok(!d.querySelector('.phud'), `${label}: não há mais a faixa de HUD (.phud)`);
+    const sub = d.querySelector('.bt-name--me .bt-name__sub');
+    ok(!!sub && new RegExp(rotulo, 'i').test(sub.textContent), `${label}: o modo aparece na sublinha do nome ("${sub ? sub.textContent.trim() : ''}")`);
   };
-  fundo("prova=PROVACOES.find(x=>x.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'PROVAÇÃO');
-  fundo("prova=null;provaFim=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'CAMPANHA');
-  // batalha NORMAL (sem HUD) não marca temhud nem desloca o layout
-  w.eval("prova=null;campanha=null;st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0);ir('batalha',{},{substituir:true});pararRelogio();render();");
+  fundo("prova=PROVACOES.find(x=>x.key==='durga');provaFim=null;campanha=null;dominio=null;st=montarProvacao(prova);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'RITO', 'PROVAÇÃO');
+  // o prazo (T/N) foi para a linha do ENCERRAR
+  const lin = d.querySelector('.bt-encerrar__linha');
+  ok(!!lin && /Turno\s*1\s*\/\s*14/.test(lin.textContent.replace(/\s+/g,' ')), `PROVAÇÃO: a linha do ENCERRAR mostra o prazo ("${lin ? lin.textContent.trim() : ''}")`);
+  fundo("prova=null;provaFim=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;dominio=null;st=montarProvacao(campanha);vsCPU=false;pararRelogio();ir('batalha',{},{substituir:true});", 'CAMPANHA', 'CAMPANHA');
+  // batalha NORMAL (sem modo): sublinha = SANDBOX, sem phud/temhud
+  w.eval("prova=null;campanha=null;dominio=null;st=novoEstado(['zeus','ogum','tyr'],['sobek','brigid','ganesha'],1,0);ir('batalha',{},{substituir:true});pararRelogio();render();");
   ok(!/\btemhud\b/.test(d.querySelector('#baselayer').className) && !d.querySelector('.phud'), 'batalha normal NÃO tem HUD nem desloca o layout');
-  console.log('  HUD fora do tabuleiro (Provação + Campanha); batalha normal intacta');
+  console.log('  modo na sublinha do nome · prazo na linha do ENCERRAR · sem .phud/.temhud');
 }
 
 console.log('== 5. MAPA da home (§306/§326): os 9 ícones carregam (arquivo, nenhum 404), 1 "em breve" (só Loja) não abre, e o layout independe da carteira ==');

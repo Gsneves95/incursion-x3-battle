@@ -1,47 +1,41 @@
 {
-  "_nota": "§329/§329c — LAYOUT da tela de batalha, À RISCA da referência do dono. DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). ALTURA manda; a largura que sobra (celular 20:9 é mais largo que a referência) vai TODA para o espaço de arte do centro: o lado do jogador ancora à ESQUERDA (x em u a partir da borda esquerda), o do inimigo à DIREITA (dir em u a partir da borda direita), o centro preenche o vão. §329c: tudo MAIOR p/ preencher a tela — retrato 17u, quadrados 15u, faixa até 110.5u (bloco do jogador ≥48% da largura no piso). Todos os valores em u salvo onde dito.",
+  "_nota": "§330 — LAYOUT da tela de batalha (ajustes do dono depois de jogar). DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). ALTURA manda; a largura que sobra vai para a arte FIXA do centro. §330: SEM quadro de ação (a habilidade escolhida é marcada no próprio botão); fileiras maiores (retrato/quadrado 19u) com os efeitos DENTRO da faixa (grade 2×3 de 6,5u); bolinhas de custo sobre cada botão; topo refeito em UMA linha (caixa de energias + ⇄ TROCAR, depois ENCERRAR TURNO com barra e a linha 'Turno N'); arte do centro FIXA por turno (data/arte_turno.json); sem HUD de modo (o modo vai p/ a sublinha do nome). Todos os valores em u salvo onde dito.",
   "u_px_design": 4.28,
   "topo": {
-    "faixaY": [0, 14],
-    "ajustes": { "x": 1.5, "y": 1.5, "size": 4 },
-    "jogador": { "nomeFimX": 37.5, "avatar": { "x": 39, "y": 2.4, "size": 9 } },
-    "oponente": { "nomeIniDir": 37.5, "avatar": { "dir": 39, "y": 2.4, "size": 9 } },
-    "estado": { "y": [2.6, 6] },
-    "barra": { "w": 34, "h": 1.8, "y": [4.9, 6.7] },
-    "energia": { "y": [9.3, 11.4] },
-    "trocar": { "y": [12.2, 14] }
+    "faixaY": [0, 12],
+    "ajustes": { "x": 1.5, "y": 1.3, "size": 4 },
+    "jogador": { "nomeFimX": 40, "avatar": { "x": 41, "y": 1.3, "size": 8 } },
+    "oponente": { "nomeIniDir": 40, "avatar": { "dir": 41, "y": 1.3, "size": 8 } },
+    "centro": { "y": 0.8, "h": 10.4, "gap": 2 },
+    "energia": { "orb": 3.6, "fonte": 2.6, "trocar": 4.5 },
+    "encerrar": { "w": 30, "h": 6, "fonte": 2.6, "barra": 1.2, "linha": 1.9 }
   },
   "fileiras": {
-    "tops": [12, 35, 58],
-    "altura": 17
+    "tops": [13, 36.5, 60],
+    "altura": 22
   },
   "jogador": {
-    "retrato": { "x": 4, "size": 17 },
-    "vida": { "h": 2.7 },
-    "efeitos": { "size": 5, "gap": 0.7, "x0": 23 },
-    "faixa": { "x0": 22, "x1": 110.5, "h": 17, "dyTopo": 5 },
+    "retrato": { "x": 4, "size": 19 },
+    "vida": { "h": 2.7, "dy": 0.3 },
+    "efeitos": { "size": 6.5, "gap": 0.7, "x0": 110.5, "cols": 2 },
+    "faixa": { "x0": 24.5, "x1": 126, "h": 22, "dyTopo": 0 },
     "quadros": {
-      "size": 15, "dyTopo": 6,
-      "acao": 24.5, "basico": 42.5, "habilidade": 59.5, "milagre": 76.5, "defesa": 93.5
+      "size": 19, "dyTopo": 1.5,
+      "basico": 26.5, "habilidade": 47.5, "milagre": 68.5, "defesa": 89.5
     }
   },
-  "jogadorTurnoOponente": {
-    "faixa": { "x0": 22, "x1": 93 },
-    "quadros": { "basico": 25, "habilidade": 42, "milagre": 59, "defesa": 76 }
-  },
   "inimigo": {
-    "retrato": { "dir": 4, "size": 17 },
-    "vida": { "h": 2.7 },
-    "efeitos": { "size": 5, "gap": 0.7 }
+    "retrato": { "dir": 4, "size": 19 },
+    "vida": { "h": 2.7, "dy": 0.3 },
+    "efeitos": { "size": 6.5, "gap": 0.7, "cols": 2 }
   },
-  "centro": { "x0": 113, "dirFolga": 2, "y": [12, 80] },
+  "centro": { "x0": 128, "y": [13, 82], "minW": 25, "folga": 1 },
   "cantoInferior": {
-    "desistir": { "x": [4, 28], "y": [84, 88.5] },
-    "menu": { "x": [4, 28], "y": [89.5, 94] },
-    "som": { "x": [4, 28], "y": [95, 98.5] },
-    "arte": { "x": [22, 48], "y": [75, 100] }
+    "desistir": { "x": [4, 40], "y": [84, 88.5] },
+    "menu": { "x": [4, 40], "y": [89.5, 94] },
+    "som": { "x": [4, 40], "y": [95, 98.5] }
   },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [82, 98], "img": 13,
-    "fonte": { "titulo": 3.2, "corpo": 2.6, "corpoMin": 2.4, "rodape": 2 } },
-  "habMini": { "iniDir": 52, "fimDir": 23, "y": [72.5, 81.5], "size": 5.5 }
+  "painel": { "x0": 44, "dirFolga": 2, "y": [84, 98.5], "img": 12, "mini": 5.5,
+    "fonte": { "titulo": 3, "corpo": 2.5, "corpoMin": 2.3, "rodape": 1.9 } },
+  "custoPip": { "size": 2.2 }
 }

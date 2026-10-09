@@ -2,6 +2,38 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §330 · TELA DE BATALHA: ajustes do dono depois de jogar
+
+Seis achados do dono no celular. Tudo em `data/layout_batalha.json` (u = 1% da altura); motor/regras intocados.
+1. **Sem quadro de ação "?":** a habilidade armada marca-se no próprio botão (moldura `is-armed` + selo `✓`); re-toque
+   desarma (`armar()` alterna). Removido `.bt-acao` (DOM/CSS/handler) e `jogadorTurnoOponente` (mesma geometria nos dois
+   turnos; oponente = botões apagados `data-dead`).
+2. **Fileiras maiores + efeitos na faixa:** topos 13/36,5/60; faixa 22u (24,5→126); retrato **19u** no topo; vida abaixo;
+   4 quadrados **19u** (26,5/47,5/68,5/89,5); EFEITOS em grade **2×3 de 6,5u** dentro da faixa (110,5→125), 6º vira "+N".
+   Inimigo espelha.
+3. **Bolinhas de custo** sobre cada botão (`.bt-skill__pips`, 2,2u, cor do tipo; livre neutra). Seguem no painel; recarga
+   = número grande no botão apagado.
+4. **Topo (0–12u) em UMA linha:** caixa de energias (orbe 3,6u + ×N 2,6u + Σ + `⇄ TROCAR` 4,5u) e, à direita, ENCERRAR
+   TURNO (dourado 6u×30u) com barra (1,2u) e linha "Turno N · X a agir · m:ss" (1,9u). Oponente: botão apagado + barra.
+   16:9 estreito: esconde imagens de avatar (`.bt-topaperto`, guard em ligarTopo), nomes ficam, energia nunca <2,2u.
+5. **HUD de modo REMOVIDO** (não chamado em renderBatalha; motor avalia por atualizar*). Nada se perde: turno+prazo→linha
+   do ENCERRAR; modo+progresso→sublinha do nome (`_modoSub` em view.js: RITO·título / CAMPANHA·ato / DOMÍNIO·CULTURA·n/
+   total); objetivos/lição/marca detalhados seguem no cartão de pré-batalha e no resultado.
+6. **Arte do centro FIXA por TURNO** (`data/arte_turno.json {meu:"nezha",oponente:"zeus"}`, PROVISÓRIO; flag `TURNO_ARTE`
+   p/ `web/banners/turno_meu|oponente.webp`). Área 128→(efeitos inimigo −1), 13→82; some se <25u (16:9 estreito).
+7. **Rodapé:** arte do canto SAIU; Desistir/Menu/Som x4→40; painel x44→borda, y84→98,5, img 12u, fontes 3/2,5(mín2,3)/1,9;
+   a caixa "Toque numa habilidade" (4 minis 5,5u) foi p/ DENTRO do painel, na ponta direita.
+- **Provas (px, piso 780×360):** habilidade ≥66, retrato ≥66, efeito ≥22, bolinha de custo ≥7, energia ≥9px; overlap/corte
+  verdes em 20:9/16:9/piso; quadro de ação ausente do DOM; marcar/desmarcar pelo botão (jsdom).
+- **Arquivos:** data/layout_batalha.json, data/arte_turno.json (novo), tools/build.js (ARTE_TURNO/TURNO_ARTE + validação
+  sem acao/jogadorTurnoOponente), src/ui/campo.js (retrato no topo, grade de efeitos, pips, selo, sem acao, centro fixo),
+  src/ui/topo.js (topo refeito, _prazoN, avatar-hide), src/ui/painel.js (minis no painel), src/view.js (_modoSub, sem
+  phud), src/shell.html (CSS topo/pips/selo/minis, sem bt-acao), tests/{batalha_faixa,batalha_inspecao,interface}.test.js.
+  Capturas `docs/telas/330-*` (meu, armado, inspeção, oponente 780×360; meu 1280×720). Suíte + build verdes.
+- **NÃO mudou:** motor, IA, regras, balanço, níveis, economia, fluxo de energia livre, outras telas.
+- **Pendente p/ o dono:** escolher as artes de turno e gerar `web/banners/turno_meu.webp`/`turno_oponente.webp`; os ~400
+  ícones de habilidade; `web/corpo/<deus>.webp`. As flags de build já os detectam quando chegarem.
+
 ## ★ §329c · TELA DE BATALHA: preencher a tela (tudo maior) + 3 defeitos do §329b
 
 Disposição APROVADA e intacta (mesma ordem/lugar/comportamento); mudam só TAMANHOS/POSIÇÕES em `layout_batalha.json`.

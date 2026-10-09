@@ -32,10 +32,14 @@ console.log('== 1. entrar na Provação: monta o estado e mostra o HUD ==');
   ok(w.eval('!!prova && prova.key==="' + KEY + '"'), 'a Provação ativa deveria ser a tocada');
   ok(w.eval('st.lados[0].units.map(u=>u.key).join(",")') === 'durga,perseu,oxum', 'o estado montou os aliados da Provação');
   ok(w.eval('st.lados[1].units.map(u=>u.key).join(",")') === 'saci,loki,cuca', 'o estado montou os inimigos da Provação');
-  ok(!!$('.phud'), 'o HUD da condição deveria aparecer na batalha');
-  ok(/T\s*1/.test($('.phud').textContent) && /14/.test($('.phud').textContent), 'o HUD deveria mostrar o prazo (T1/14) na faixa');
-  ok(/Mantenha Durga/.test($('.phud').textContent), 'o HUD deveria descrever a condição de manter o título de pé');
-  console.log('  HUD: ' + $('.phud').textContent.replace(/\s+/g, ' ').trim());
+  // §330: o HUD de modo saiu. O prazo (T1/14) foi p/ a linha do ENCERRAR; o modo (RITO) p/ a sublinha do nome. O
+  // texto detalhado da condição ("Mantenha Durga") segue no cartão de pré-batalha e na tela de resultado.
+  ok(!$('.phud'), '§330: não há mais a faixa de HUD (.phud) na batalha');
+  const lin = $('.bt-encerrar__linha');
+  ok(!!lin && /T\s*urno\s*1\s*\/\s*14/.test(lin.textContent.replace(/\s+/g, ' ')), 'a linha do ENCERRAR mostra o prazo (Turno 1/14)');
+  const sub = $('.bt-name--me .bt-name__sub');
+  ok(!!sub && /RITO/i.test(sub.textContent), 'a sublinha do nome mostra o modo (RITO)');
+  console.log('  prazo: ' + (lin ? lin.textContent.replace(/\s+/g, ' ').trim() : '—') + ' · modo: ' + (sub ? sub.textContent.trim() : '—'));
 }
 
 console.log('== 2. VITÓRIA: SEM desbloqueio de deus (§212) — maestria + placar, mostra o overlay ==');

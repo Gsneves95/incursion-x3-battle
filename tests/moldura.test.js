@@ -404,21 +404,22 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(/\+8/.test(p3.ptxt), `§329: tocar o efeito mostra a magnitude +8 no painel ("${p3.ptxt.slice(0, 80)}")`);
     ok(p3.titles.filter(t => /[+−]\d/.test(t)).length >= 2, `§329: os ícones numéricos carregam o número (${JSON.stringify(p3.titles)})`);
 
-    // GUARDA 4 (§329) — no pior caso de 6 efeitos os ícones NÃO estouram na horizontal e o excedente
-    // colapsa em "+N" (até 3 ícones): ler tudo é tarefa do PAINEL de inspeção, a faixa só resume.
-    const p4 = await gp.evaluate(() => {
-      const u = st.lados[1].units[1];
-      u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]; render();
+    // GUARDA 4 (§330) — a zona de efeitos é uma GRADE 2×3: até 6 efeitos aparecem todos (sem "+N") e a grade não
+    // estoura na horizontal nem na vertical; com 7+ o excedente colapsa no "+N" (5 ícones + "+N" = 6 células).
+    const medeGrade = async (efeitos) => gp.evaluate((efeitos) => {
+      const u = st.lados[1].units[1]; u.efeitos = efeitos; render();
       const foeUid = u.uid;
       const effs = [...document.querySelectorAll(`.bt-eff[data-eff^="${foeUid}|"]`)];
-      const row = effs.length ? effs[0].closest('.bt-eff-row') : null;
-      const rb = row ? row.getBoundingClientRect() : null;
+      const grid = effs.length ? effs[0].closest('.bt-eff-grid') : null;
+      const rb = grid ? grid.getBoundingClientRect() : null;
       const vw = document.documentElement.clientWidth;
-      // §329: o colapso em ≤3 ícones + "+N" mantém a faixa compacta — ela não corre pela tela na horizontal.
-      return { foraTela: rb ? (rb.left < -0.5 || rb.right > vw + 0.5) : true, n: effs.length, temMais: effs.some(e => e.classList.contains('bt-eff--mais')) };
-    });
-    ok(!p4.foraTela, `§329: a faixa com 6 efeitos não sai da tela na horizontal (${p4.n} ícones)`);
-    ok(p4.n <= 3 && p4.temMais, `§329: 6 efeitos → até 3 ícones + "+N" (${p4.n} ícones, +N ${p4.temMais})`);
+      return { fora: rb ? (rb.left < -0.5 || rb.right > vw + 0.5) : true, n: effs.length, temMais: effs.some(e => e.classList.contains('bt-eff--mais')) };
+    }, efeitos);
+    const p4 = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]);
+    ok(!p4.fora, `§330: a grade com 6 efeitos não sai da tela na horizontal (${p4.n} ícones)`);
+    ok(p4.n === 6 && !p4.temMais, `§330: 6 efeitos → 6 ícones na grade 2×3, sem "+N" (${p4.n} ícones, +N ${p4.temMais})`);
+    const p4b = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }, { type: 'vulneravel', v: 3, dur: 2 }]);
+    ok(!p4b.fora && p4b.n === 6 && p4b.temMais, `§330: 7 efeitos → 5 ícones + "+N" (${p4b.n} células, +N ${p4b.temMais})`);
 
     // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
     console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');

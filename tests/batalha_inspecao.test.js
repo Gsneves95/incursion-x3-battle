@@ -82,6 +82,22 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(w.eval("detalhe&&detalhe.kind")==='efeito','tocar o ícone abre a leitura do EFEITO no painel');
   ok(/Dano|Queimadura/i.test(txt($('.bt-panel__titulo'))),'o painel nomeia o efeito');
 
+  // ---- 6) §330: SEM quadro de ação; marcar/desmarcar uma habilidade funciona pelo PRÓPRIO botão ----
+  console.log('\n== 6) §330: sem quadro de ação; marcar/desmarcar pelo próprio botão ==');
+  w.eval(`st=montarProvacao({aliados:${JSON.stringify(ally)},inimigos:${JSON.stringify(enemy)},montar:{seed:3,comeca:0}});
+    st.ativo=0;iaAtiva=false;armado=null;detalhe=null;escolhidos=[];alvos=[];try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){} foco=st.lados[0].units[0].uid; render();`);
+  ok($$('.bt-acao').length===0 && $$('[data-acao]').length===0, `o quadro de ação não existe no DOM (há ${$$('.bt-acao').length})`);
+  let bsk=$(`.bt-skill[data-sk="${allyUid}|basico"]`);
+  ok(!!bsk && bsk.dataset.arma==='1','o Básico é armável (data-arma=1)');
+  bsk.onclick(); w.eval('render()');
+  ok(w.eval(`armado&&armado.slot==='basico'`),'tocar o botão ARMA a habilidade (sem quadro de ação)');
+  const bskArm=$(`.bt-skill[data-sk="${allyUid}|basico"]`);
+  ok(!!bskArm && bskArm.classList.contains('is-armed'),'o botão fica marcado (moldura is-armed)');
+  ok(!!$('.bt-skill.is-armed .bt-skill__sel'),'o selo ✓ aparece no botão marcado');
+  bskArm.onclick(); w.eval('render()');
+  ok(w.eval("!armado"),'tocar o MESMO botão de novo DESMARCA a habilidade');
+  ok(!$('.bt-skill.is-armed'),'nenhum botão fica marcado após desmarcar');
+
   console.log(`\n${falhas===0?'>>> BATALHA_INSPECAO OK':'>>> '+falhas+' FALHA(S)'} (${passes} ok)`);
   process.exit(falhas?1:0);
 })();

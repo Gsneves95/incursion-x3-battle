@@ -188,9 +188,11 @@ tap($('#bgo'));
 // o cliente sorteia quem abre; nos testes fixamos o lado 0 para asserções determinísticas
 w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 
-console.log('== 2. estrutura da tela de batalha (§329: layout À RISCA da referência) ==');
-ok(!!$('#baselayer.bt'), 'a batalha usa o layout §329 (#baselayer.bt)');
-['.bt-ajustes','.bt-prof','.bt-prof--foe','.bt-estado','.bt-barra','.bt-energia','.bt-trocar','.bt-panel','.bt-habmini','.bt-centro']
+console.log('== 2. estrutura da tela de batalha (§330: topo refeito, sem quadro de ação, minis no painel) ==');
+ok(!!$('#baselayer.bt'), 'a batalha usa o layout §329/§330 (#baselayer.bt)');
+// §330: .bt-centro é CONDICIONAL (a arte do centro some se a largura disponível < 25u — 16:9 estreito, e no jsdom
+// degenerado 0×0 a largura cai no piso de 780px → ~182u). Sua presença em tela real é provada em batalha_faixa.
+['.bt-ajustes','.bt-prof','.bt-prof--foe','.bt-topcentro','.bt-ebox','.bt-trocar','.bt-encerrar','.bt-panel','.bt-panel__minis']
   .forEach(s => ok(!!$(s), `falta ${s}`));
 ok($$('.bt-portrait--ally').length === 3, `3 retratos aliados, há ${$$('.bt-portrait--ally').length}`);
 ok($$('.bt-portrait--foe[data-foe]').length === 3, `3 retratos inimigos, há ${$$('.bt-portrait--foe[data-foe]').length}`);
@@ -200,13 +202,14 @@ ok($$('.bt-portrait__ask').length === 3, `todo inimigo vivo tem a marca "?" de c
 ok($$('.bt-portrait .bt-portrait__x').length === 6, 'todo retrato tem o X de derrota');
 ok($$('.bt-hp').length === 6, `6 barras de vida (atual/máx), há ${$$('.bt-hp').length}`);
 ok($$('.bt-hp__lab').every(e => /\d+\/\d+/.test(e.textContent)), 'toda barra de vida mostra atual/máx');
-// o quadro de AÇÃO "?" por deus (só no meu turno) e as 4 minis do deus em foco
-ok($$('.bt-acao[data-acao]').length === 3, `3 quadros de ação "?" (um por deus), há ${$$('.bt-acao[data-acao]').length}`);
-ok($$('.bt-habmini .bt-mini[data-look]').length >= 1, 'a caixa "Toque numa habilidade" traz as minis do deus em foco');
+// §330: o quadro de ação "?" FOI REMOVIDO (a habilidade escolhida marca-se no próprio botão); as 4 minis do deus
+// em foco vivem DENTRO do painel ("Toque numa habilidade").
+ok($$('.bt-acao').length === 0, `§330: sem quadro de ação no DOM, há ${$$('.bt-acao').length}`);
+ok($$('.bt-panel__minis .bt-mini[data-look]').length >= 1, 'as minis do deus em foco vivem no painel ("Toque numa habilidade")');
 ok(/você/i.test($('.bt-name--me .bt-name__nick').textContent), `perfil esquerdo = VOCÊ ("${$('.bt-name--me .bt-name__nick').textContent}")`);
 ok($('.bt-name--foe .bt-name__nick').textContent.trim().length > 0, 'o oponente é nomeado à direita');
 ok(!!$('.bt-prof[data-prof="me"] .bt-prof__pic svg') && !!$('.bt-prof--foe .bt-prof__pic svg'), 'cada perfil tem a foto placeholder tocável');
-ok($$('.bt-energia .bt-ec').length >= 1, `contadores de energia no topo, há ${$$('.bt-energia .bt-ec').length}`);
+ok($$('.bt-ebox .bt-ec').length >= 1, `contadores de energia na caixa do topo, há ${$$('.bt-ebox .bt-ec').length}`);
 console.log(`  topo + 3 fileiras + centro + painel · ${$$('.bt-skill').length} habilidades · ${$$('.bt-portrait__ask').length} marcas "?"`);
 
 console.log('== 3. encaixes de arte com chave ==');

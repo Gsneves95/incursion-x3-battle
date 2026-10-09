@@ -59,6 +59,18 @@ function sairBatalha(){ pararRelogio(); limparSobreposicao(); try{ document.body
 // render() despacha pela ROTA: chama o gancho de render da tela atual.
 function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 
+// §330: a sublinha do nome do jogador carrega o MODO + progresso (o HUD de modo saiu da tela). O número do turno e o
+// prazo vão para a linha do ENCERRAR TURNO (topo.js). Objetivos detalhados do modo seguem no cartão de pré-batalha e
+// na tela de resultado; o motor segue avaliando vitória/derrota (atualizarProva/Campanha/Dominio).
+function _modoSub(){
+  if(typeof prova!=='undefined'&&prova) return 'RITO'+(prova.titulo?' · '+String(prova.titulo).toUpperCase():'');
+  if(typeof campanha!=='undefined'&&campanha){ const nm=campanha._capNome||campanha.nome||''; return 'CAMPANHA'+(nm?' · '+String(nm).toUpperCase():''); }
+  if(typeof dominio!=='undefined'&&dominio){ const c=(dominio.cultura||'').toUpperCase(); let prog='';
+    try{ const run=dominioRun(dominio.cultura); const total=(dominio.escada&&dominio.escada.niveis&&dominio.escada.niveis.length)||0;
+      if(run) prog=' · '+run.nivel+(total?'/'+total:''); }catch(e){}
+    return 'DOMÍNIO'+(c?' · '+c:'')+prog; }
+  return '';
+}
 function renderBatalha(){
   // §328: na batalha, o botão "conta" e o carimbo "build" do canto inferior esquerdo (fixos no body) são
   // ESCONDIDOS — eles atrapalhavam a dica de energia. O acesso à conta e ao build vive agora no menu ⋯.
@@ -75,7 +87,7 @@ function renderBatalha(){
   if(prova) atualizarProva(); else if(campanha) atualizarCampanha(); else if(dominio) atualizarDominio(); else atualizarSandbox();
 
   const scrim = !!ov || !!st.fim || !!provaFim || !!campanhaFim || !!dominioFim;
-  const cls=[]; if(prova||campanha||dominio)cls.push('temhud'); if(painelRecolhido)cls.push('pnfold');
+  const cls=[]; if(painelRecolhido)cls.push('pnfold');   // §330: sem HUD de modo (o modo foi p/ a sublinha do nome)
   // §239 item 4: a ênfase inverte com o turno SEM mover nada — o lado ativo acende. Em hot-seat a tela
   // gira e o jogador da vez é sempre "eu" (turno-eu); vs CPU/PvP, o turno dele acende o lado dele.
   cls.push(ehMeuTurno()?'turno-eu':'turno-eles');
@@ -92,8 +104,7 @@ function renderBatalha(){
   const panelStyle=`left:${U(pn.x0)};right:${U(pn.dirFolga||2)};top:${U(pn.y[0])};bottom:${U(100-pn.y[1])}`;
   stage.innerHTML = `<div id="baselayer" class="bt ${cls.join(' ')}"${scrim?' inert':''}${artBg}>
   <div class="stage__bg"></div><div class="stage__scrim"></div>
-  ${topoHTML()}
-  ${prova?provaHUD():campanha?campanhaHUD():dominio?dominioHUD():''}
+  ${topoHTML(_modoSub())}
   ${campoHTML(l,o)}
   ${painelBaixoHTML(panelStyle)}
   </div>

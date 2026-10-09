@@ -39,7 +39,7 @@ console.log('== 9. modo espectador no turno do oponente ==');
   ok($$('.bt-skill.is-armed').length === 0, 'nenhuma habilidade armada');
   ok(!w.eval('detalhe'), 'nenhuma consulta de kit aberta por conta própria');
   ok($$('.bt-portrait.is-target').length === 0, 'nenhum alvo pulsando');
-  // §329: o ENCERRAR TURNO é o botão de estado .bt-estado (#bend2); no turno dele ele desabilita e indica espera.
+  // §330: o ENCERRAR TURNO é o botão .bt-encerrar (#bend2); no turno dele ele desabilita e vira "TURNO DO OPONENTE…".
   const estado = $('#bend2');
   ok(!!estado && estado.disabled && /oponente|aguarde/i.test(estado.textContent), 'o botão de encerrar vira indicador de espera (desabilitado) no turno dele');
   console.log('  habilidades mortas (não respondem), nenhuma arma, sem alvo, encerrar = espera');
@@ -94,9 +94,9 @@ console.log('== 13. §329: a MINHA energia aparece no topo (contadores de leitur
 {
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=0");
   w.eval("ELEMS.forEach(e=>{st.lados[0].orbs[e]=2; st.lados[1].orbs[e]=2;}); render()");
-  // §329: os contadores de energia (leitura) do MEU lado vivem no topo, em .bt-energia > .bt-ec (quadradinho + ×N).
-  ok($$('.bt-energia .bt-ec').length >= 1, 'os meus contadores de energia aparecem no topo');
-  ok(/×2/.test($('.bt-energia').textContent), 'os contadores mostram a quantidade (×N) por elemento');
+  // §330: os contadores de energia (leitura) do MEU lado vivem na caixa do topo, em .bt-ebox > .bt-ec (orbe + ×N).
+  ok($$('.bt-ebox .bt-ec').length >= 1, 'os meus contadores de energia aparecem no topo');
+  ok(/×2/.test($('.bt-ebox').textContent), 'os contadores mostram a quantidade (×N) por elemento');
   // §329: obsoleto — a energia do OPONENTE não é mais exibida em separado no topo (§215 refeito), e não há
   // mais pílulas [data-conv] na barra: a conversão passou a ser pelo botão ⇄ Trocar (abre a sobreposição conv).
   ok($$('[data-conv]').length === 0, 'não há mais pílulas [data-conv] no topo');

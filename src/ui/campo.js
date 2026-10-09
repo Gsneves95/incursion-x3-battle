@@ -52,13 +52,18 @@ function tagsDe(u){
   out.sort((a,b)=>((ord[a.cat]==null?9:ord[a.cat])-(ord[b.cat]==null?9:ord[b.cat])));
   return out;
 }
-const BT_EFF_MAX=3;   // ícones de efeito mostrados por unidade; o resto vira "+N" (toque abre o painel)
+const BT_EFF_MAX=6;   // §330: ícones de efeito por unidade (grade 2×3); do 6º em diante o último vira "+N"
 
 /* ---------- geometria: atalhos de LAYOUT_BATALHA ---------- */
 function _LB(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA)||{}; }
-// right em u a partir da borda direita → CSS right
-function _centroDir(){ const L=_LB(); const im=L.inimigo||{}; const re=im.retrato||{dir:7,size:13.6}; const ef=im.efeitos||{size:3.75,gap:0.7};
-  return (re.dir||7)+(re.size||13.6)+BT_EFF_MAX*((ef.size||3.75)+(ef.gap||0.7))+1; }
+// §330: largura (u) da grade de efeitos (cols×size + (cols-1)·gap)
+function _gridEfLarg(ef){ const cols=ef.cols||2, size=ef.size||6.5, gap=ef.gap||0.7; return cols*size+(cols-1)*gap; }
+// right em u a partir da borda direita até onde a arte do centro pode ir: retrato + zona de efeitos do inimigo + folga
+function _centroDir(){ const L=_LB(); const im=L.inimigo||{}; const re=im.retrato||{dir:4,size:19}; const ef=im.efeitos||{size:6.5,gap:0.7,cols:2};
+  const folga=(L.centro&&L.centro.folga)||1;
+  return (re.dir||4)+(re.size||19)+_gridEfLarg(ef)+folga; }
+// §330: largura (u) do palco em design, a partir do último fit — p/ decidir se a arte do centro cabe
+function _largPalcoU(){ const px=(typeof ultimaLarguraDesign!=='undefined'&&ultimaLarguraDesign)||926; return px/4.28; }
 
 /* ---------- barra de vida ---------- */
 function _hpCls(u){ if(!u.vivo) return 'bt-hp dead'; const p=u.hp/u.maxHp*100; if(p<25) return 'bt-hp low'; if(p<50) return 'bt-hp warn'; return 'bt-hp'; }
@@ -78,33 +83,32 @@ function btNiv(u){
   const c=(n)=>`<span class="${n>1?'pniv__c--up':''}">${n}</span>`;
   return `<div class="bt-portrait__niv">${c(nv.basico)}${c(nv.habilidade)}${c(nv.milagre)}</div>`;
 }
-/* ---------- ícones de efeito (acima da faixa / à esquerda do inimigo) ---------- */
+/* ---------- ícones de efeito — §330: grade 2×3 DENTRO da faixa (jogador) / à esquerda do inimigo ---------- */
 function btEfeitos(u, inimigo, topU){
   const tags=u.vivo?tagsDe(u):[]; if(!tags.length) return '';
-  const L=_LB(); const ef=(inimigo?(_LB().inimigo||{}).efeitos:(_LB().jogador||{}).efeitos)||{size:3.75,gap:0.7};
-  const size=ef.size||3.75, gap=ef.gap||0.7;
+  const L=_LB(); const ef=(inimigo?(L.inimigo||{}).efeitos:(L.jogador||{}).efeitos)||{size:6.5,gap:0.7,cols:2};
+  const size=ef.size||6.5, gap=ef.gap||0.7, cols=ef.cols||2;
   const vis = tags.length<=BT_EFF_MAX ? tags : tags.slice(0, BT_EFF_MAX-1);
   const resto = tags.length - vis.length;
   const cel=(t,i)=>`<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}"
       style="width:${U(size)};height:${U(size)}">${t.icone}${t.dur!=null?`<span class="bt-eff__t">${t.dur}</span>`:(t.num?`<span class="bt-eff__t">${H(t.num)}</span>`:'')}</button>`;
   let cels=vis.map(cel).join('');
   if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="width:${U(size)};height:${U(size)}"><span class="bt-eff__mais">+${resto}</span></button>`;
-  const base=`position:absolute;top:${U(topU)};gap:${U(gap)};display:inline-flex`;
-  if(inimigo){ const re=(L.inimigo||{}).retrato||{dir:7,size:13.6};
-    return `<div class="bt-eff-row" style="${base};right:${U((re.dir||7)+(re.size||13.6)+gap)};flex-direction:row-reverse">${cels}</div>`; }
-  const j=(L.jogador||{}).efeitos||{x0:19.8};
-  return `<div class="bt-eff-row" style="${base};left:${U(j.x0||19.8)};flex-direction:row">${cels}</div>`;
+  const base=`position:absolute;top:${U(topU+0.5)};display:grid;grid-template-columns:repeat(${cols},${U(size)});gap:${U(gap)};grid-auto-rows:${U(size)}`;
+  if(inimigo){ const re=(L.inimigo||{}).retrato||{dir:4,size:19};
+    return `<div class="bt-eff-grid" style="${base};right:${U((re.dir||4)+(re.size||19))}">${cels}</div>`; }
+  const j=(L.jogador||{}).efeitos||{x0:110.5};
+  return `<div class="bt-eff-grid" style="${base};left:${U(j.x0||110.5)}">${cels}</div>`;
 }
 /* ---------- retrato do ALIADO + vida + efeitos + faixa de habilidades ---------- */
 function btUnidadeAliada(u, topU, meu){
-  const L=_LB(); const J=L.jogador||{}; const re=J.retrato||{x:5.1,size:13.6}; const vi=J.vida||{h:2.7};
-  const dyP=(J.faixa&&J.faixa.dyTopo)||0;   // §329c: retrato ALINHADO à faixa (y+dyTopo); os ícones de efeito ficam no topo (y+0)
+  const L=_LB(); const J=L.jogador||{}; const re=J.retrato||{x:4,size:19}; const vi=J.vida||{h:2.7,dy:0.3};
   const alvo=alvos.some(x=>x.uid===u.uid), jaEsc=escolhidos.includes(u.uid);
   const g=_catPartida()[u.key]||{};
   const pcls=['bt-portrait','bt-portrait--ally'];
   if(!u.vivo)pcls.push('is-down'); if(alvo)pcls.push('is-target'); if(jaEsc)pcls.push('is-picked');
   if(u.vivo&&!podeAgir(u))pcls.push('acted');
-  const pStyle=`left:${U(re.x)};top:${U(topU+dyP)};width:${U(re.size)};height:${U(re.size)}`;
+  const pStyle=`left:${U(re.x)};top:${U(topU)};width:${U(re.size)};height:${U(re.size)}`;   // §330: retrato no TOPO da fileira
   const portrait=`<div class="${pcls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="${pStyle}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 26)}
     <span class="bt-portrait__el" style="background:${COR(u.elem)}"></span>
@@ -112,35 +116,34 @@ function btUnidadeAliada(u, topU, meu){
     ${u.vivo?btNiv(u):''}
     <div class="bt-portrait__x"></div>
   </div>`;
-  const hp=btHp(u, `left:${U(re.x)};top:${U(topU+dyP+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
+  const hp=btHp(u, `left:${U(re.x)};top:${U(topU+re.size+(vi.dy||0))};width:${U(re.size)};height:${U(vi.h)}`);
   const efeitos=btEfeitos(u,false,topU);
   const faixa=btFaixa(u, topU, meu);
   return portrait+hp+efeitos+faixa;
 }
-/* ---------- faixa de habilidades (jogador) ---------- */
+/* ---------- faixa de habilidades (jogador) — §330: SEM quadro de ação; mesma geometria nos dois turnos
+   (no turno do oponente os 4 botões ficam apagados e sem toque, data-dead). ---------- */
 function btFaixa(u, topU, meu){
   const L=_LB(); const J=L.jogador||{};
-  const fx = meu ? (J.faixa||{x0:18.4,x1:85,h:13.6,dyTopo:4.1})
-                 : Object.assign({}, J.faixa, (L.jogadorTurnoOponente||{}).faixa);
-  const q = meu ? (J.quadros||{}) : Object.assign({}, J.quadros, (L.jogadorTurnoOponente||{}).quadros);
-  const x0=fx.x0, x1=fx.x1, h=J.faixa.h, dyTopo=J.faixa.dyTopo, size=q.size, relTop=q.dyTopo-dyTopo;
+  const fx=J.faixa||{x0:24.5,x1:126,h:22,dyTopo:0};
+  const q=J.quadros||{};
+  const x0=fx.x0, x1=fx.x1, h=fx.h, dyTopo=fx.dyTopo||0, size=q.size, relTop=(q.dyTopo||0)-dyTopo;
   const faixaStyle=`left:${U(x0)};top:${U(topU+dyTopo)};width:${U(x1-x0)};height:${U(h)}`;
   let inner='';
-  // QUADRO DE AÇÃO (só no meu turno): a habilidade escolhida p/ este deus, ou "?" — tocar desfaz.
-  if(meu){
-    const armEste = armado && armado.uid===u.uid;
-    const a = armEste ? acoesDe(st,u).find(x=>x.slot===armado.slot) : null;
-    const anel = a ? (a.slot==='defesa'?'var(--ink-mute)':COR(u.elem)) : 'var(--ink-mute)';
-    inner += `<button class="bt-acao" data-acao="${u.uid}" style="left:${U(q.acao-x0)};top:${U(relTop)};width:${U(size)};height:${U(size)}">`
-      + (a ? `<span class="bt-skill__disc" style="border-color:${anel}">${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}<span class="bt-skill__mono" style="color:${anel}">${H(mono(a))}</span></span>`
-           : `<span class="bt-acao__q">?</span>`)
-      + `</button>`;
-  }
-  // os 4 quadrados
   for(const a of acoesDe(st,u)){
     inner += btSkill(u, a, q[a.slot]-x0, relTop, size, meu);
   }
   return `<div class="bt-faixa" style="${faixaStyle}">${inner}</div>`;
+}
+/* ---------- §330: bolinhas de CUSTO sobre o botão (uma por energia, na cor do tipo; livre = neutra) ---------- */
+function btCustoPips(cost){
+  if(!cost) return '';
+  const L=_LB(); const sz=(L.custoPip&&L.custoPip.size)||2.2;
+  const pips=[];
+  for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(`<i style="background:${COR(k)}"></i>`); }
+  for(let i=0;i<(cost.livre||0);i++) pips.push(`<i class="free"></i>`);
+  if(!pips.length) return '';
+  return `<span class="bt-skill__pips" style="--pip:${U(sz)}">${pips.join('')}</span>`;
 }
 function btSkill(u, a, relX, relTop, size, meu){
   const cd=u.cd[a.slot]||0;
@@ -160,19 +163,20 @@ function btSkill(u, a, relX, relTop, size, meu){
       ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
       <span class="bt-skill__mono" style="color:${anel}">${H(mono(a))}</span>
     </span>
+    ${btCustoPips(a.cost)}
+    <span class="bt-skill__sel" aria-hidden="true">✓</span>
     <span class="bt-skill__cd">${cd||''}</span>
     ${nvSk>1?`<span class="bt-skill__nv">Nv ${nvSk}</span>`:''}
   </button>`;
 }
 /* ---------- retrato do INIMIGO + vida + efeitos ---------- */
 function btUnidadeInimiga(u, topU){
-  const L=_LB(); const im=L.inimigo||{}; const re=im.retrato||{dir:7,size:13.6}; const vi=im.vida||{h:2.7};
-  const dyP=((L.jogador||{}).faixa&&(L.jogador||{}).faixa.dyTopo)||0;   // §329c: mesmas alturas do aliado (retrato alinhado à faixa)
+  const L=_LB(); const im=L.inimigo||{}; const re=im.retrato||{dir:4,size:19}; const vi=im.vida||{h:2.7,dy:0.3};
   const alvo=alvos.some(x=>x.uid===u.uid), jaEsc=escolhidos.includes(u.uid);
   const g=_catPartida()[u.key]||{};
   const pcls=['bt-portrait','bt-portrait--foe'];
   if(!u.vivo)pcls.push('is-down'); if(alvo)pcls.push('is-target'); if(jaEsc)pcls.push('is-picked');
-  const pStyle=`right:${U(re.dir)};top:${U(topU+dyP)};width:${U(re.size)};height:${U(re.size)}`;
+  const pStyle=`right:${U(re.dir)};top:${U(topU)};width:${U(re.size)};height:${U(re.size)}`;   // §330: retrato no topo
   const portrait=`<div class="${pcls.join(' ')}" data-uid="${u.uid}" data-foe="1"${alvo?' data-target="1"':''} style="${pStyle}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 26)}
     <span class="bt-portrait__el" style="background:${COR(u.elem)}"></span>
@@ -181,7 +185,7 @@ function btUnidadeInimiga(u, topU){
     ${u.vivo?btNiv(u):''}
     <div class="bt-portrait__x"></div>
   </div>`;
-  const hp=btHp(u, `right:${U(re.dir)};top:${U(topU+dyP+re.size)};width:${U(re.size)};height:${U(vi.h)}`);
+  const hp=btHp(u, `right:${U(re.dir)};top:${U(topU+re.size+(vi.dy||0))};width:${U(re.size)};height:${U(vi.h)}`);
   const efeitos=btEfeitos(u,true,topU);
   return portrait+hp+efeitos;
 }
@@ -201,37 +205,36 @@ function _artePersonagem(key){
   if(typeof BESTIARIO_ARTE!=='undefined'&&BESTIARIO_ARTE&&BESTIARIO_ARTE[key]) return 'bestiario/'+key+'.webp';
   return '';
 }
-function btCentroHTML(){
-  const u=unidadeFoco(); if(!u) return '';
-  const L=_LB(); const c=L.centro||{x0:85,y:[15,78]};
-  const topU=c.y[0], botU=100-c.y[1];
-  const src=_artePersonagem(u.key);
-  const art = src
-    ? `<img class="bt-centro__corpo" src="${H(src)}" alt="" onerror="this.style.display='none'">`
-    : `<span class="bt-centro__glifo">${ini(u.nome)}</span>`;
-  return `<div class="bt-centro" style="left:${U(c.x0)};right:${U(_centroDir())};top:${U(topU)};bottom:${U(botU)}">${art}</div>`;
+// §330: a arte do centro é FIXA por TURNO (data/arte_turno.json), não segue mais o deus em foco.
+// web/banners/turno_meu.webp / turno_oponente.webp quando existir (TURNO_ARTE); senão o retrato embutido do deus
+// nomeado, com a máscara do §329b e sem ampliar. Some se a largura disponível < centro.minW (16:9 estreito).
+function _arteTurnoSrc(){
+  const meu=ehMeuTurno();
+  const flags=(typeof TURNO_ARTE!=='undefined'&&TURNO_ARTE)||{};
+  const cfg=(typeof ARTE_TURNO!=='undefined'&&ARTE_TURNO)||{meu:'',oponente:''};
+  if(meu && flags.meu) return 'banners/turno_meu.webp';
+  if(!meu && flags.oponente) return 'banners/turno_oponente.webp';
+  const key = meu ? cfg.meu : cfg.oponente;
+  if(typeof IMG!=='undefined'&&IMG[key]) return IMG[key];
+  if(typeof CORPO_ARTE!=='undefined'&&CORPO_ARTE&&CORPO_ARTE[key]) return 'corpo/'+key+'.webp';
+  if(typeof BESTIARIO_ARTE!=='undefined'&&BESTIARIO_ARTE&&BESTIARIO_ARTE[key]) return 'bestiario/'+key+'.webp';
+  return '';
 }
-/* ---------- caixa "Toque numa habilidade": as 4 minis do deus em FOCO (leitura; vê o kit do OPONENTE) ---------- */
-function habMiniHTML(){
-  const u=unidadeFoco(); if(!u||!u.vivo) return '';
-  const L=_LB(); const hm=L.habMini||{iniDir:48,fimDir:25,y:[72.6,77.5],size:4.3};
-  const box=`position:absolute;left:calc(100% - ${U(hm.iniDir)});right:${U(hm.fimDir)};top:${U(hm.y[0])};height:${U(hm.y[1]-hm.y[0])}`;
-  const minis=acoesDe(st,u).map(a=>{
-    const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
-    const sel=typeof detalhe!=='undefined'&&detalhe&&detalhe.kind==='skill'&&detalhe.chave==='skill-'+u.key+'-'+a.slot;
-    return `<button class="bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}"
-      style="width:${U(hm.size)};height:${U(hm.size)};border-color:${anel}"><span class="bt-mini__mono" style="color:${anel}">${H(mono(a))}</span>${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</button>`;
-  }).join('');
-  return `<div class="bt-habmini" style="${box}">
-    <span class="bt-habmini__lab">Toque numa habilidade</span>
-    <div class="bt-habmini__row">${minis}</div>
-  </div>`;
+function btCentroHTML(){
+  const L=_LB(); const c=L.centro||{x0:128,y:[13,82],minW:25};
+  const dir=_centroDir();
+  const larg=_largPalcoU()-c.x0-dir;   // largura disponível p/ a arte, em u
+  if(larg < (c.minW||25)) return '';   // 16:9 estreito: a arte some (nunca espreme/sobrepõe)
+  const topU=c.y[0], botU=100-c.y[1];
+  const src=_arteTurnoSrc();
+  if(!src) return '';
+  return `<div class="bt-centro" style="left:${U(c.x0)};right:${U(dir)};top:${U(topU)};bottom:${U(botU)}"><img class="bt-centro__corpo" src="${H(src)}" alt="" onerror="this.style.display='none'"></div>`;
 }
 
 /* ---------- composição do campo ---------- */
 function campoHTML(l,o){
   const meu=ehMeuTurno();
-  const tops=(_LB().fileiras||{}).tops||[12,33.4,54.9];
+  const tops=(_LB().fileiras||{}).tops||[13,36.5,60];
   let html='';
   for(let i=0;i<3;i++){
     const a=l.units[i], e=o.units[i], top=tops[i];
@@ -239,7 +242,6 @@ function campoHTML(l,o){
     if(e) html+=btUnidadeInimiga(e, top);
   }
   html+=btCentroHTML();
-  html+=habMiniHTML();
   return html;
 }
 
@@ -292,8 +294,8 @@ function ligarCampo(){
     if(b.dataset.dead==='1') return;   // turno do oponente: as habilidades do jogador não respondem
     b.onclick=()=>{ const[uid,slot]=b.dataset.sk.split('|');
       if(b.dataset.arma==='1'){ armar(uid,slot); } else lerHabilidade(uid,slot); };});
-  // QUADRO DE AÇÃO: tocar desfaz a escolha (cancela o armado deste deus).
-  stage.querySelectorAll('[data-acao]').forEach(b=>b.onclick=()=>{ armado=null;alvos=[];escolhidos=[];detalhe=null;render(); });
+  // §330: sem quadro de ação — a habilidade armada se marca no próprio botão (moldura + ✓); tocar nela de novo desfaz
+  // (armar() já alterna). O fluxo de alvo não muda.
   // retrato (aliado ou inimigo): com habilidade armada e sendo ALVO → escolhe alvo; senão → inspeção no painel.
   stage.querySelectorAll('.bt-portrait').forEach(el=>{
     el.onclick=ev=>{ ev.stopPropagation(); const uid=el.dataset.uid;

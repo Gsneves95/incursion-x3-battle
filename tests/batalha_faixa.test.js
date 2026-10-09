@@ -17,7 +17,7 @@ let falhas=0; const ok=(c,m)=>{ if(!c){ falhas++; console.log('  XX '+m); } };
 const distAbs=path.resolve(__dirname,'..','dist','incursion.html');
 const ESCALAS=[{nome:'20:9 1600',w:1600,h:720},{nome:'16:9 1280',w:1280,h:720},{nome:'piso 780',w:780,h:360}];
 // seletores de TOQUE (controles distintos). O contains-skip trata o aninhado (o "P" dentro do retrato é intencional).
-const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-portrait,.bt-eff,.bt-mini,.bt-cbtn,.bt-som,.bt-portrait__pas,.bt-panel';
+const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait,.bt-eff,.bt-mini,.bt-cbtn,.bt-som,.bt-portrait__pas,.bt-panel';
 
 (async()=>{
   const browser=await chromium.launch({executablePath:acharChromium(),headless:true,args:['--no-sandbox']});
@@ -75,16 +75,18 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
         return { foe:p.classList.contains('bt-portrait--foe'),
           dl:+((ri.left-rp.left)/e).toFixed(1), dt:+((ri.top-rp.top)/e).toFixed(1),
           dr:+((rp.right-ri.right)/e).toFixed(1), db:+((rp.bottom-ri.bottom)/e).toFixed(1) }; });
-      // §329c Parte A: TAMANHOS que preenchem a tela (medidos em px reais, só no piso). Bloco do jogador = do
-      // início do retrato do aliado até o fim da faixa, como fração da largura do palco.
+      // §330: TAMANHOS que preenchem a tela (medidos em px reais, no piso). Inclui a bolinha de custo e a fonte dos
+      // números de energia no topo. Também: o quadro de ação NÃO EXISTE mais no DOM.
       const w=el=>el?R(el).width:0;
       const skMin=Math.min(...[...document.querySelectorAll('.bt-skill')].map(w).concat([1e9]));
       const ptMin=Math.min(...[...document.querySelectorAll('.bt-portrait')].map(w).concat([1e9]));
       const efMin=Math.min(...[...document.querySelectorAll('.bt-eff')].map(w).concat([1e9]));
-      const al=document.querySelector('.bt-portrait--ally'), fx=document.querySelector('.bt-faixa');
-      const blocoPct=(al&&fx)?((R(fx).right-R(al).left)/sr.width*100):0;
-      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr,
-        tam:{ skMin:+skMin.toFixed(1), ptMin:+ptMin.toFixed(1), efMin:+efMin.toFixed(1), blocoPct:+blocoPct.toFixed(1) } };
+      const pipMin=Math.min(...[...document.querySelectorAll('.bt-skill__pips i')].map(w).concat([1e9]));
+      const ecEl=document.querySelector('.bt-ebox .bt-ec'); const ecFonte=ecEl?parseFloat(getComputedStyle(ecEl).fontSize)||0:0;
+      const acao=document.querySelectorAll('.bt-acao,[data-acao]').length;
+      const centro=!!document.querySelector('.bt-centro .bt-centro__corpo');
+      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr, acao, centro,
+        tam:{ skMin:+skMin.toFixed(1), ptMin:+ptMin.toFixed(1), efMin:+efMin.toFixed(1), pipMin:+pipMin.toFixed(1), ecFonte:+ecFonte.toFixed(1) } };
     },sel=TOQUE);
     // §329c Parte B2: o ÍCONE DE EFEITO não é um quadrado vazio — a amostra CENTRAL tem pixels VISÍVEIS de cor
     // diferente do fundo do próprio ícone (símbolos monocromáticos como ⊕ agora renderizam claros). Medido em
@@ -120,12 +122,17 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-estado,.bt-trocar,.bt-skill,.bt-acao,.bt-p
       const vis=await efVisiveis(); const b2Ruim=vis.filter(v=>v.maxD<40);
       ok(vis.length>0 && b2Ruim.length===0, `${E.nome} [${modo}]: ícones de efeito com pixels visíveis no centro (≠ fundo)`
         + (b2Ruim.length?` (vazios: ${b2Ruim.map(v=>'eff'+v.i+'='+v.maxD).join(', ')})`:` (${vis.length} ícones, menor Δ=${Math.min(...vis.map(v=>v.maxD))})`));
-      // §329c Parte A: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
+      // §330: sem quadro de ação no DOM (a escolha marca-se no próprio botão).
+      ok(m.acao===0, `${E.nome} [${modo}]: o quadro de ação não existe no DOM (há ${m.acao})`);
+      // §330: a arte do centro (fixa por turno) aparece nos 3 enquadramentos reais (largura ≥ 25u).
+      ok(m.centro, `${E.nome} [${modo}]: a arte FIXA do centro está presente (.bt-centro__corpo)`);
+      // §330: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
       if(E.w===780){
-        ok(m.tam.skMin>=50, `${E.nome} [${modo}]: botão de habilidade ≥50px (${m.tam.skMin}px)`);
-        ok(m.tam.ptMin>=58, `${E.nome} [${modo}]: retrato ≥58px (${m.tam.ptMin}px)`);
-        ok(m.tam.efMin>=17, `${E.nome} [${modo}]: ícone de efeito ≥17px (${m.tam.efMin}px)`);
-        if(modo==='meu') ok(m.tam.blocoPct>=48, `${E.nome} [${modo}]: bloco do jogador ≥48% da largura (${m.tam.blocoPct}%)`);
+        ok(m.tam.skMin>=66, `${E.nome} [${modo}]: botão de habilidade ≥66px (${m.tam.skMin}px)`);
+        ok(m.tam.ptMin>=66, `${E.nome} [${modo}]: retrato ≥66px (${m.tam.ptMin}px)`);
+        ok(m.tam.efMin>=22, `${E.nome} [${modo}]: ícone de efeito ≥22px (${m.tam.efMin}px)`);
+        if(modo==='meu') ok(m.tam.pipMin>=7, `${E.nome} [${modo}]: bolinha de custo ≥7px (${m.tam.pipMin}px)`);
+        if(modo==='meu') ok(m.tam.ecFonte>=9, `${E.nome} [${modo}]: números de energia ≥9px (${m.tam.ecFonte}px)`);
       }
     }
     // §329b item 6 reforço: com um INIMIGO do bestiário em FOCO, as minis dele (sem arte) caem no monograma — não ficam vazias.

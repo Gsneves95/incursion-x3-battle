@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §330 · TELA DE BATALHA: ajustes do dono depois de jogar
+
+Seis achados do dono no celular, todos em `data/layout_batalha.json` (u = 1% da altura) salvo o motor/regras (intocados):
+
+1. **Sem quadro de ação "?".** Era redundante (o painel de baixo já mostra a habilidade escolhida). A habilidade armada
+   marca-se no PRÓPRIO botão: moldura dourada (`.is-armed`) + selo `✓` (`.bt-skill__sel`), e segue no painel. Desfazer =
+   tocar nela de novo (`armar()` já alterna). O fluxo de alvo não muda. Removido o `.bt-acao` do DOM, do CSS e o handler
+   `[data-acao]`. Como não há mais quadro de ação, a faixa do turno do oponente NÃO encolhe: `jogadorTurnoOponente` saiu
+   do JSON (mesma geometria nos dois turnos; no turno do oponente os 4 botões ficam apagados e sem toque, `data-dead`).
+2. **Fileiras maiores, efeitos DENTRO da faixa.** Topos 13/36,5/60; faixa 22u (x 24,5→126); retrato **19u** no TOPO da
+   fileira; vida 19×2,7 logo abaixo (y+19,3). Quadrados **19u** centrados, em x 26,5/47,5/68,5/89,5. Zona de EFEITOS em
+   GRADE 2×3 de 6,5u DENTRO da faixa (x 110,5→125); do 6º efeito o último vira "+N" (`BT_EFF_MAX=6`). Inimigo espelha
+   (retrato 19u, grade 2×3 à esquerda).
+3. **Bolinhas de custo** de volta SOBRE cada botão (`.bt-skill__pips`, 2,2u, cor do tipo, livre neutra) — na borda de
+   cima, por dentro. Seguem no painel; a recarga continua número grande no meio do botão apagado.
+4. **Topo refeito (0–12u)** numa ÚNICA linha central: caixa de energias com moldura (`.bt-ebox`: orbe 3,6u + ×N 2,6u,
+   depois Σ e o `⇄ TROCAR` 4,5u dentro) e, à direita, o ENCERRAR TURNO de verdade (`.bt-encerrar`: dourado 6u×30u,
+   texto 2,6u) com a barra de tempo (1,2u) e a linha `Turno N · X a agir · m:ss` (1,9u) embaixo. No turno do oponente o
+   botão fica apagado ("TURNO DO OPONENTE…") com a barra correndo. Em 16:9 ESTREITO, se a linha central encostar num
+   avatar, as IMAGENS de avatar somem (`.bt-topaperto`, guard em `ligarTopo`) — os nomes ficam, nada sobrepõe, e os
+   números de energia nunca encolhem (fixos no JSON).
+5. **HUD de modo REMOVIDO** da batalha (`provaHUD/campanhaHUD/dominioHUD` não são mais chamados em `renderBatalha`; o
+   motor segue avaliando por `atualizarProva/Campanha/Dominio`). **Onde cada informação foi (nada se perdeu):**
+   - *número do turno* → linha do ENCERRAR ("Turno N").
+   - *prazo (RITO/CAMPANHA)* → a mesma linha ("Turno N/Prazo · faltam R") via `_prazoN()`.
+   - *modo + progresso* → SUBLINHA do nome do jogador (`_modoSub()` em view.js): "RITO · <título>", "CAMPANHA · <ato>",
+     "DOMÍNIO · <CULTURA> · <nível>/<total>".
+   - *objetivos/lição/marca/bônus detalhados* (chips do HUD) saem da batalha; seguem no CARTÃO de pré-batalha (onde já
+     cabem) e na tela de RESULTADO. (Se o dono quiser um chip de objetivo vivo na batalha, é um acréscimo fácil.)
+6. **Arte do centro FIXA por TURNO** (novo `data/arte_turno.json {meu,oponente}`, PROVISÓRIO), não segue mais o deus em
+   foco. Usa `web/banners/turno_meu.webp`/`turno_oponente.webp` quando existirem (flag `TURNO_ARTE` no build), senão o
+   retrato do deus nomeado, com a máscara do §329b e sem ampliar. Área x 128→(efeitos do inimigo −1), y 13→82; some se
+   a largura disponível < 25u (16:9 estreito).
+7. **Rodapé:** a arte do canto SAIU (invadia a 3ª fileira). Desistir/Menu/Som x 4→40 (y 84/89,5/95). Painel de baixo
+   x 44→borda, y 84→98,5, imagem 12u, fontes 3 / 2,5 (mín 2,3, depois rola) / 1,9. A caixa "Toque numa habilidade" saiu
+   de cima do painel e foi para DENTRO dele, na 3ª coluna (ponta direita): rótulo + as 4 minis (5,5u) do deus em foco.
+
+**PROVAS (px reais, piso 780×360, `batalha_faixa.test.js`):** habilidade ≥66px, retrato ≥66px, ícone de efeito ≥22px,
+bolinha de custo ≥7px, números de energia ≥9px; + nenhuma área de toque sobreposta e nenhum texto cortado em 20:9/16:9/
+piso; + o quadro de ação não existe no DOM. **jsdom (`batalha_inspecao.test.js`):** marcar/desmarcar uma habilidade pelo
+próprio botão (arma, mostra ✓/moldura, re-toque desarma).
+
+**NÃO MUDOU:** motor, IA, regras, balanço, níveis, economia, o fluxo de energia livre, outras telas. Capturas
+`docs/telas/330-*`.
+
 ## §329c · TELA DE BATALHA: preencher a tela (tudo maior) + 3 defeitos do §329b
 
 A disposição segue APROVADA e INTACTA (mesma ordem/lugar de cada bloco, mesmo comportamento nos dois turnos); mudam só

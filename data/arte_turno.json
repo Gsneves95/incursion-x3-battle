@@ -1,0 +1,5 @@
+{
+  "_nota": "§330 — ARTE FIXA do espaço do centro da batalha, POR TURNO (não segue mais o deus em foco). No MEU turno aparece a arte de 'meu'; no turno do oponente, a de 'oponente'. PROVISÓRIO: o dono vai escolher. A tela usa web/banners/turno_meu.webp e web/banners/turno_oponente.webp quando existirem (flag TURNO_ARTE no build); senão cai no retrato embutido do deus nomeado aqui, com a máscara de degradê do §329b e SEM ampliar além do nativo.",
+  "meu": "nezha",
+  "oponente": "zeus"
+}
