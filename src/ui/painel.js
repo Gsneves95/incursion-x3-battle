@@ -70,7 +70,7 @@ function painelBaixoHTML(styleStr){
   return `<div class="bt-panel" style="${styleStr}">
     ${img}
     <div class="bt-panel__body">
-      ${btCustoHTML(m.custo)}
+      ${m.custo!==undefined?btCustoHTML(m.custo):''}
       <div class="bt-panel__titulo">${H(m.titulo||'')}${m.nv>1?`<span class="bt-panel__nv">Nv ${m.nv}</span>`:''}</div>
       <div class="bt-panel__desc">${m.status?`<span style="color:var(--gold-text);font-weight:700">${H(m.status)}</span>  `:''}${realce(m.desc||'')}${m.motivo?`<div class="bt-panel__motivo">⊘ ${H(m.motivo)}</div>`:''}</div>
       <div class="bt-panel__rodape"><span class="bt-panel__tf">${H(m.tf||'')}</span><span class="bt-panel__cd">${H(m.cd||'')}</span></div>

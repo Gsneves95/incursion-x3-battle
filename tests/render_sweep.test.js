@@ -248,16 +248,18 @@ console.log('== 7. §238: os três estados + tocar-para-ler + histórico agrupad
   // ("validado num caminho, quebrado no outro") aplicada aos estados novos.
   const battle = (extra) => w.eval(`prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=false;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);${extra||''}ir('batalha',{},{substituir:true});pararRelogio();render();`);
   battle("st.lados[0].units[1].cd={habilidade:2};st.lados[0].units[2].agiu=true;");
-  ok($$('.skill.nv-pronto').length > 0, 'estado PRONTO presente (arte cheia)');
-  ok($$('.skill.nv-indispon').length > 0, 'estado INDISPONÍVEL presente (recarga; a unidade pode agir)');
-  ok($$('.skill.nv-recuo').length > 0, 'estado RECUO presente (a unidade já agiu)');
-  // tocar-para-ler uma indisponível: LÊ (descrição + motivo no rodapé) e NÃO arma (nunca custa)
-  const ind = $$('.brow__tiles .skill[data-arma="0"]').find(b => b.querySelector('.skill__disc'));
+  // §329: os três estados §238 agora são classes do botão (.bt-skill): is-ready (pronta), is-cooldown (recarga),
+  // e o RECUO (a unidade já agiu) marca o RETRATO (.bt-portrait--ally.acted) — o layout refez a hierarquia.
+  ok($$('.bt-skill.is-ready').length > 0, 'estado PRONTO presente (habilidade disponível)');
+  ok($$('.bt-skill.is-cooldown').length > 0, 'estado INDISPONÍVEL presente (recarga; a unidade pode agir)');
+  ok($$('.bt-portrait--ally.acted').length > 0, 'estado RECUO presente (a unidade já agiu — retrato marcado)');
+  // tocar-para-ler uma indisponível: LÊ (descrição + motivo no painel de baixo) e NÃO arma (nunca custa)
+  const ind = $$('.bt-skill[data-arma="0"]').find(b => b.querySelector('.bt-skill__disc'));
   ok(!!ind, 'há uma habilidade indisponível para ler');
   if (ind) ind.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(!!d.querySelector('.leitura__nome') && d.querySelector('.leitura__txt').textContent.length > 0, 'tocar indisponível LÊ a descrição no rodapé');
-  ok(!!d.querySelector('.leitura__motivo'), 'e diz POR QUE está indisponível');
-  ok($$('.skill.is-armed').length === 0, 'tocar para ler NÃO arma (não custa)');
+  ok(!!d.querySelector('.bt-panel__titulo') && d.querySelector('.bt-panel__desc').textContent.length > 0, 'tocar indisponível LÊ a descrição no painel de baixo');
+  ok(!!d.querySelector('.bt-panel__motivo'), 'e diz POR QUE está indisponível');
+  ok($$('.bt-skill.is-armed').length === 0, 'tocar para ler NÃO arma (não custa)');
   // §299: o histórico agrupado (§238) mudou de casa — o painel lateral saiu, agora vive no ≡ REGISTRO.
   // Continua agrupado por turno, mais recente no topo, autoria distinta (você × o outro lado).
   w.eval("st.log=[{tipo:'turno',turno:1,lado:0},{tipo:'dano',turno:1,origem:'iara',alvo:'sobek',valor:10},{tipo:'turno',turno:2,lado:1},{tipo:'dano',turno:2,origem:'sobek',alvo:'iara',valor:8}];ov='log';render()");
@@ -266,18 +268,18 @@ console.log('== 7. §238: os três estados + tocar-para-ler + histórico agrupad
   ok($$('.hist__l--eu').length >= 1 && $$('.hist__l--eles').length >= 1, 'autoria distinta: você × o outro lado (cor + alinhamento)');
   // os MESMOS estados na PROVAÇÃO e na CAMPANHA (mesma renderBatalha, oponente IA)
   w.eval("prova=PROVACOES.find(p=>p.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()");
-  ok($$('.skill.nv-pronto, .skill.nv-indispon, .skill.nv-recuo').length > 0, 'PROVAÇÃO: os níveis de estado aparecem (mesma tela)');
+  ok($$('.bt-skill.is-ready, .bt-skill.is-cooldown, .bt-skill.is-off').length > 0, 'PROVAÇÃO: os estados das habilidades aparecem (mesma tela)');
   w.eval("prova=null;campanha=Object.assign({},CAMPANHA.encontros[0]);campanhaFim=null;st=montarProvacao(campanha);st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()");
-  ok($$('.skill.nv-pronto, .skill.nv-indispon, .skill.nv-recuo').length > 0, 'CAMPANHA: os níveis de estado aparecem (mesma tela)');
+  ok($$('.bt-skill.is-ready, .bt-skill.is-cooldown, .bt-skill.is-off').length > 0, 'CAMPANHA: os estados das habilidades aparecem (mesma tela)');
   console.log('  três estados + tocar-para-ler + histórico agrupado, em sandbox/Provação/Campanha (PvP usa a mesma tela)');
 }
 
-console.log('== 8. §239: moldura une retrato+habilidades; ênfase por turno (turno-eu/eles), nos QUATRO modos ==');
+console.log('== 8. §329: campo com retratos + habilidades do jogador e inimigo; ênfase por turno (turno-eu/eles), nos QUATRO modos ==');
 {
   const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
-  // MOLDURA (item 5): o retrato E os 4 tiles vivem DENTRO de .brow__unit (a placa que os une); o inimigo
-  // fica FORA dela (irmão), à direita. Geometria (colar, sobrepor, ~710) é medida em moldura.test.js;
-  // aqui garanto a ESTRUTURA que a moldura precisa, e a classe de turno, nos modos que usam a batalha.
+  // §329: obsoleto — a moldura .brow__unit que unia retrato+habilidades (e o inimigo "fora" dela) foi refeita.
+  // Agora retrato, vida, efeitos e habilidades são IRMÃOS absolutos em #baselayer.bt. Aqui garanto a ESTRUTURA do
+  // campo (3 retratos do jogador + 12 habilidades + 3 retratos do inimigo) e a classe de turno, nos modos de batalha.
   const modos = {
     sandbox: "prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=false;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);",
     'Provação': "prova=PROVACOES.find(p=>p.key==='durga');provaFim=null;campanha=null;st=montarProvacao(prova);",
@@ -285,19 +287,17 @@ console.log('== 8. §239: moldura une retrato+habilidades; ênfase por turno (tu
   };
   for (const [nome, pre] of Object.entries(modos)) {
     w.eval(`${pre}st.ativo=0;ELEMS.forEach(e=>st.lados[0].orbs[e]=6);ir('batalha',{},{substituir:true});pararRelogio();render()`);
-    const unit = $('.brow .brow__unit');
-    ok(!!unit, `${nome}: a moldura .brow__unit existe`);
-    ok(!!unit && !!unit.querySelector('.brow__ally .portrait') && !!unit.querySelector('.brow__tiles'),
-      `${nome}: a moldura contém o retrato E as habilidades (une os dois)`);
-    ok(!!unit && unit.parentElement.querySelector(':scope > .brow__enemy'),
-      `${nome}: o inimigo fica FORA da moldura (irmão de .brow__unit, à direita)`);
+    const nAliados = w.eval('st.lados[0].units.length'), nInimigos = w.eval('st.lados[1].units.length');
+    ok($$('.bt-portrait--ally').length === nAliados, `${nome}: os ${nAliados} retratos do jogador renderizam`);
+    ok($$('.bt-skill').length === nAliados * 4, `${nome}: as habilidades do jogador renderizam (4 por retrato)`);
+    ok($$('.bt-portrait--foe').length === nInimigos, `${nome}: os ${nInimigos} retratos do inimigo renderizam (lado oposto)`);
     ok($('#baselayer').classList.contains('turno-eu'), `${nome}: na minha vez o baselayer marca turno-eu`);
   }
   // ênfase inverte com o turno (a POSIÇÃO não — provado em moldura.test.js): vs CPU no turno dele
   w.eval("prova=null;campanha=null;provaFim=null;campanhaFim=null;vsCPU=true;IA_LADO=1;st=novoEstado(['iara','zeus','ogum'],['sobek','brigid','ganesha'],1,0);st.ativo=1;ir('batalha',{},{substituir:true});pararRelogio();render()");
   ok($('#baselayer').classList.contains('turno-eles'), 'no turno do oponente o baselayer marca turno-eles (ênfase inverte)');
-  ok($$('.brow__tiles .skill.nv-recuo').length === 12, 'e as minhas habilidades recuam (a luz vai para o lado dele)');
-  console.log('  moldura une retrato+habilidades (inimigo fora) em sandbox/Provação/Campanha · turno-eu ⇄ turno-eles');
+  ok($$('.bt-skill[data-dead="1"]').length === 12, 'e as minhas habilidades ficam mortas (não respondem) no turno dele');
+  console.log('  campo com retratos+habilidades (jogador e inimigo) em sandbox/Provação/Campanha · turno-eu ⇄ turno-eles');
 }
 
 try { dom.window.close(); } catch (e) {}

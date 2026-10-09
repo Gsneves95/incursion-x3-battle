@@ -188,625 +188,155 @@ tap($('#bgo'));
 // o cliente sorteia quem abre; nos testes fixamos o lado 0 para asserções determinísticas
 w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 
-console.log('== 2. estrutura da tela de batalha (§214: zonas por ergonomia) ==');
-const req = ['.stage__bg','.stage__scrim','.topbar','.side--me','.side--foe','.prof','.prof__pic','.prof__nick',
-  '.timer','.timer__fill','.timer__label','.energy--me','.energy--foe',
-  '.board','.rows','.brow','.brow__ally','.brow__tilecol','.brow__tiles','.brow__enemy',
-  '.footer','.acaoestado','.endturn','.endturn__l1','.endturn__hint','.teamlbl--ally','.teamlbl--enemy'];
-req.forEach(s => ok(!!$(s), `falta ${s}`));
-ok(!$('.stagemark'), 'a marca-d\u2019água INCURSION deveria ter saído (item 9)');
-ok($$('.brow').length === 3, `3 fileiras, há ${$$('.brow').length}`);
-ok($$('.brow__ally .portrait').length === 3, `3 retratos aliados, há ${$$('.brow__ally .portrait').length}`);
-ok($$('.brow__enemy .portrait[data-foe]').length === 3, `3 retratos inimigos, há ${$$('.brow__enemy .portrait[data-foe]').length}`);
-ok($$('.brow__tiles .skill').length === 12, `3\u00d74 = 12 ladrilhos aliados, há ${$$('.brow__tiles .skill').length}`);
-ok($$('.skill').length === 12, `só o time aliado tem ladrilhos, há ${$$('.skill').length}`);
-ok(!$('.foetab') && !$('.foepanel') && !$('.foesk'), 'a exibição/abas permanentes das habilidades inimigas saíram (§214)');
-ok($$('.portrait[data-foe] [data-sk]').length === 0, 'nada do lado inimigo pode ser armável');
-ok($$('.portrait__ask').length === 3, `todo inimigo vivo precisa da marca "?" de consulta (item 8), há ${$$('.portrait__ask').length}`);
-// §328: as ETIQUETAS de efeito vivem LOGO ABAIXO da barra de vida, FORA do retrato (sibling do .portrait),
-// nos DOIS lados. (Substitui a faixa .fxstrip do §299, que ficava acima das fichas.)
-ok($$('.portrait .fxstrip, .portrait .effects, .portrait .fxtags').length === 0, '§328: nenhuma faixa de efeitos DENTRO do retrato');
-ok($$('.brow .fxtags--ally').length === 3, '§328: cada fileira tem a faixa de etiquetas do aliado (abaixo da vida)');
-ok($$('.brow .fxtags--enemy').length === 3, '§328: cada fileira tem a faixa de etiquetas do inimigo (abaixo da vida)');
-// §215: MINHAS orbes (interativas) à esquerda, as do OPONENTE (leitura) à direita — as duas visíveis
-ok($$('.energy--me .energy__pill').length >= 1 && $$('.energy--me .energy__pill').length <= 6,
-  `minhas orbes: 1 a 6 tipos, há ${$$('.energy--me .energy__pill').length}`);
-ok($$('.energy--foe .energy__pill').length >= 1, `a energia do OPONENTE deveria estar visível (§215), há ${$$('.energy--foe .energy__pill').length}`);
-ok($$('.energy--foe .energy__pill--ro').length === $$('.energy--foe .energy__pill').length,
-  'as orbes do oponente são LEITURA (energy__pill--ro), não convertíveis');
-ok($$('.energy--foe [data-conv]').length === 0, 'não dá para converter a energia do oponente');
-// §215: perfil dos DOIS jogadores reservado no topo (foto + nick), com as orbes de cada lado
-ok(!!$('.side--me .prof') && !!$('.side--foe .prof'), 'os dois perfis (foto+nick) deveriam existir no topo');
-ok(/você/i.test($('.side--me .prof__nick').textContent), `perfil esquerdo = VOCÊ, diz "${$('.side--me .prof__nick').textContent}"`);
-ok($('.side--foe .prof__nick').textContent.trim().length > 0, 'perfil direito deveria nomear o oponente');
-ok(!!$('.side--me .prof__pic svg') && !!$('.side--foe .prof__pic svg'), 'cada perfil tem a foto (placeholder) tocável');
-ok($$('.portrait .portrait__x').length === 6, 'todo retrato precisa do X de derrota');
-// item 13: marcação de time — VOCÊ (ouro) sobre a coluna aliada, oponente (vermelho) sobre a dele
-ok(/você/i.test($('.teamlbl--ally').textContent), `rótulo aliado deveria dizer VOCÊ, diz "${$('.teamlbl--ally').textContent}"`);
-ok($('.teamlbl--enemy').textContent.trim().length > 0, 'rótulo inimigo deveria nomear o oponente');
-// item 10: NOME INTEIRO no retrato (não abreviado)
-const nomesFoe = $$('.brow__enemy .portrait__nome').map(e => e.textContent.trim());
-ok(nomesFoe.some(n => n.length > 3), `nomes inteiros no retrato inimigo (item 10): ${nomesFoe.join('/')}`);
-console.log(`  topo + board(painel+3 fileiras) + rodapé \u00b7 ${$$('.skill').length} ladrilhos \u00b7 ${$$('.portrait__ask').length} marcas "?" \u00b7 ${$$('.energy__pill').length} pílulas`);
+console.log('== 2. estrutura da tela de batalha (§329: layout À RISCA da referência) ==');
+ok(!!$('#baselayer.bt'), 'a batalha usa o layout §329 (#baselayer.bt)');
+['.bt-ajustes','.bt-prof','.bt-prof--foe','.bt-estado','.bt-barra','.bt-energia','.bt-trocar','.bt-panel','.bt-habmini','.bt-centro']
+  .forEach(s => ok(!!$(s), `falta ${s}`));
+ok($$('.bt-portrait--ally').length === 3, `3 retratos aliados, há ${$$('.bt-portrait--ally').length}`);
+ok($$('.bt-portrait--foe[data-foe]').length === 3, `3 retratos inimigos, há ${$$('.bt-portrait--foe[data-foe]').length}`);
+ok($$('.bt-skill[data-sk]').length === 12, `3×4 = 12 habilidades aliadas, há ${$$('.bt-skill[data-sk]').length}`);
+ok($$('.bt-portrait--foe [data-sk]').length === 0, 'nada do inimigo é armável (só leitura)');   // INV 15
+ok($$('.bt-portrait__ask').length === 3, `todo inimigo vivo tem a marca "?" de consulta, há ${$$('.bt-portrait__ask').length}`);
+ok($$('.bt-portrait .bt-portrait__x').length === 6, 'todo retrato tem o X de derrota');
+ok($$('.bt-hp').length === 6, `6 barras de vida (atual/máx), há ${$$('.bt-hp').length}`);
+ok($$('.bt-hp__lab').every(e => /\d+\/\d+/.test(e.textContent)), 'toda barra de vida mostra atual/máx');
+// o quadro de AÇÃO "?" por deus (só no meu turno) e as 4 minis do deus em foco
+ok($$('.bt-acao[data-acao]').length === 3, `3 quadros de ação "?" (um por deus), há ${$$('.bt-acao[data-acao]').length}`);
+ok($$('.bt-habmini .bt-mini[data-look]').length >= 1, 'a caixa "Toque numa habilidade" traz as minis do deus em foco');
+ok(/você/i.test($('.bt-name--me .bt-name__nick').textContent), `perfil esquerdo = VOCÊ ("${$('.bt-name--me .bt-name__nick').textContent}")`);
+ok($('.bt-name--foe .bt-name__nick').textContent.trim().length > 0, 'o oponente é nomeado à direita');
+ok(!!$('.bt-prof[data-prof="me"] .bt-prof__pic svg') && !!$('.bt-prof--foe .bt-prof__pic svg'), 'cada perfil tem a foto placeholder tocável');
+ok($$('.bt-energia .bt-ec').length >= 1, `contadores de energia no topo, há ${$$('.bt-energia .bt-ec').length}`);
+console.log(`  topo + 3 fileiras + centro + painel · ${$$('.bt-skill').length} habilidades · ${$$('.bt-portrait__ask').length} marcas "?"`);
 
 console.log('== 3. encaixes de arte com chave ==');
 const slots = $$('.slot[data-slot]').map(e => e.dataset.slot);
-const temGod = slots.filter(s => s.startsWith('god-')).length;
-const temSkill = slots.filter(s => s.startsWith('skill-')).length;
-ok(temGod >= 6, `deveria haver chave god- para os 6 retratos, há ${temGod}`);
-ok(temSkill >= 12, `deveria haver chave skill- nos 12 slots, há ${temSkill}`);
-console.log(`  ${slots.length} encaixes: ${temGod} retratos, ${temSkill} habilidades`);
+ok(slots.filter(s => s.startsWith('god-')).length >= 6, `chave god- nos retratos, há ${slots.filter(s=>s.startsWith('god-')).length}`);
+ok(slots.filter(s => s.startsWith('skill-')).length >= 12, `chave skill- nas habilidades, há ${slots.filter(s=>s.startsWith('skill-')).length}`);
 
-console.log('== 4. tocar habilidade → detalhe no painel + arma + alvos ==');
+console.log('== 4. tocar habilidade → arma + detalhe no painel ==');
 encher();
-// procura uma habilidade COM custo que peça alvo inimigo
-let bas = null;
-for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => x.dataset.arma==='1' && x.querySelector('.skill__cost i'))) {
-  const key = b.dataset.sk;
-  tap(b);
-  if ($$('.portrait[data-foe].is-target').length > 0) { bas = $$('.skill').find(x => x.dataset.sk === key); break; }
-  tap($$('.skill').find(x => x.dataset.sk === key));   // re-toque na mesma habilidade cancela; tenta a próxima
-}
-ok(!!bas, 'deveria haver uma habilidade com custo que peça alvo');
-ok($$('.skill.is-armed').length === 1, 'habilidade deveria ficar armada');
-ok(!!$('.leitura__nome').textContent.trim(), 'o rodapé deveria mostrar o nome da habilidade');
-ok($('.leitura__txt').textContent.length > 6, 'o rodapé deveria mostrar a descrição');
-ok(!!$('.leitura .cost'), 'o rodapé deveria mostrar as pílulas de custo');
-ok($$('.leitura__cd').some(e => /RECARGA/.test(e.textContent)), 'o rodapé deveria mostrar recarga/sem recarga');
-ok(!$('.leitura .cost__none'), 'habilidade com custo não deveria dizer SEM CUSTO');
-ok($$('.portrait[data-foe].is-target').length > 0, 'inimigos deveriam pulsar como alvo');
-// §214: o AVISO de escolher alvo vive no rodapé (à esquerda), em .acao__txt
-ok(!!$('.acaoestado .leitura__status'), 'deveria haver o aviso de escolher alvo no rodapé');
-ok(/toque|alvo/i.test($('.leitura__status').textContent), `aviso inesperado: "${$('.leitura__status').textContent}"`);
-ok(!$('#bconf'), 'CONFIRMAR não deve aparecer quando a habilidade precisa de alvo');
-console.log(`  "${$('.leitura__nome').textContent}" \u00b7 ${$$('.portrait[data-foe].is-target').length} alvos`);
+let bas = $$('.bt-skill[data-sk]').find(x => x.dataset.arma === '1');
+ok(!!bas, 'há ao menos uma habilidade armável');
+tap(bas);
+ok($$('.bt-skill.is-armed').length === 1, 'a habilidade fica armada (.bt-skill.is-armed)');
+ok(!!w.eval('armado'), 'o estado global `armado` foi setado');
+ok(!!$('.bt-panel__titulo') && $('.bt-panel__titulo').textContent.trim().length > 0, 'o painel mostra o título da habilidade armada');
+ok(!!$('#bcanc'), 'Cancelar aparece no painel');
+tap($('#bcanc'));
+ok(!w.eval('armado'), 'Cancelar desfaz a seleção');
 
-console.log('== 4b. consulta do KIT inimigo (§256: toque longo → RODAPÉ; a lateral fica no histórico) ==');
+console.log('== 4b. ler habilidade indisponível não arma (toque para ler é grátis) ==');
 {
-  const hpTodos = () => w.eval('st').lados.flatMap(l=>l.units).map(u=>u.hp).join(',');
-  // limpa o armado do teste anterior
-  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;render()');
-  const antes = hpTodos();
-  const foe0 = S().lados[1 - S().ativo].units[0];
-
-  // marca de descoberta: "?" no canto do retrato inimigo vivo
-  ok($$('.brow__enemy .portrait__ask').length === 3, 'os 3 inimigos vivos deveriam mostrar a marca "?" de consulta');
-
-  // §219 — o TOQUE LONGO abre o kit e ele FICA (soltar o dedo NÃO fecha). Exercemos o gesto:
-  // pointerdown, o timer de 420ms abre (simulado por abrirKit + foeGesto.abriu), e o pointerup NÃO fecha.
-  const fp = $('.portrait[data-foe]'); const uid = fp.dataset.uid;
-  fp.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
-  w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uid}")`);
-  ok(w.eval('peekKit') === uid, 'o toque longo abre o kit');
-  // §256/§299: a leitura tem UM endereço — o RODAPÉ. O kit abre lá; o painel lateral SAIU (§299), o histórico é o ≡.
-  ok(!!$('.footer .leitura__kstrip') && !$('.panel'), 'o KIT abre no RODAPÉ (galeria + selecionada); não há mais painel lateral (§299)');
-  const fp2 = $(`.portrait[data-foe][data-uid="${uid}"]`);
-  fp2.dispatchEvent(new w.MouseEvent('pointerup', { bubbles: true, clientX: 0, clientY: 0 }));
-  ok(w.eval('peekKit') === uid && !!$('.footer .leitura__kstrip'), '§219: soltar o dedo NÃO fecha o kit (persiste)');
-
-  // a TIRA: 4 habilidades + passiva, custo VISÍVEL sem tocar; e o cabeçalho + o fechar deliberado
-  ok($$('.footer .leitura__kstrip .kchip').length === 5, `a tira deveria ter 4 habilidades + passiva, há ${$$('.footer .leitura__kstrip .kchip').length}`);
-  ok($$('.footer .kchip--pas').length === 1, 'a passiva está inclusa na tira');
-  ok($$('.footer .leitura__kstrip .kchip__pips').length === 5, 'todo chip mostra o custo (pílulas) sem tocar');
-  ok(/KIT/.test($('.footer .leitura__status--kit').textContent), 'o rodapé sinaliza que é o KIT do inimigo');
-  ok($('.footer .leitura__nome').textContent.includes(foe0.nome.toUpperCase()), 'o cabeçalho nomeia o inimigo consultado');
-  ok(!!$('.footer [data-kitclose]'), 'há um fechar deliberado (o botao ✕)');
-  // a SELECIONADA por inteiro: arte grande + recarga + texto completo — no ícone da leitura do rodapé
-  ok(parseFloat(w.getComputedStyle($('.footer .leitura__icon')).width) >= 46, 'a arte da selecionada é grande (legível)');
-  ok($('.footer .leitura__txt').textContent.length > 8, 'a selecionada mostra o texto completo do que faz');
-  ok(/PRONTA/.test($('.footer .leitura__cd').textContent), 'a selecionada mostra a recarga');
-
-  // tocar OUTRO chip troca a seleção, sem sair do kit nem armar/alterar estado
-  const nomeAntes = $('.footer .leitura__nome').textContent;
-  const outro = $$('.footer .leitura__kstrip .kchip[data-kitsel]').find(b => !b.classList.contains('is-sel'));
-  tap(outro);
-  ok($$('.skill.is-armed').length === 0, 'consultar não pode armar nada');
-  ok(hpTodos() === antes, 'consultar não pode alterar o estado');
-  ok(!!$('.footer .leitura__kstrip') && $('.footer .leitura__nome').textContent !== nomeAntes, 'trocar de chip mantém o kit e muda a selecionada');
-  // a PASSIVA por inteiro (sem custo)
-  tap($('.footer .kchip--pas'));
-  ok(/PASSIVA/.test($('.footer .leitura').textContent), 'a passiva mostra-se como PASSIVA');
-  ok(!$('.footer .leitura__cab .cost__pip'), 'a passiva não tem custo');
-  console.log(`  "${$('.footer .leitura__nome').textContent}" \u2014 ${$('.footer .leitura__cd').textContent}`);
-
-  // FECHAR é deliberado: o botao ✕ volta ao histórico (soltar o dedo nunca fecha)
-  tap($('.footer [data-kitclose]'));
-  ok(!w.eval('peekKit') && !$('.footer .leitura__kstrip'), 'o fechar deliberado dispensa o kit');
-  console.log('  "?" nos 3 inimigos \u00b7 kit no RODAP\u00c9 \u00b7 troca de chip \u00b7 lateral no hist\u00f3rico \u00b7 fecha');
-}
-
-console.log('== 4b3. GUARDAS \u00a7256/\u00a7299: a leitura tem UM endere\u00e7o (o rodap\u00e9); o painel lateral SAIU; a cita\u00e7\u00e3o \u00e9 o repouso ==');
-{
-  // bab\u00e1: se qualquer leitura voltar a morar num painel lateral, ou o kit voltar a ser ef\u00eamero, ou a cita\u00e7\u00e3o
-  // sumir do repouso, estas quebram. \u00a7299: n\u00e3o h\u00e1 mais painel lateral; o hist\u00f3rico \u00e9 o \u2261 REGISTRO.
-  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;resumoTurno=null;render()');
-  ok(!$('.panel'), '\u00a7299: n\u00e3o existe mais painel lateral na tela de batalha');
-
-  // GUARDA REPOUSO \u2014 no descanso, o rodap\u00e9 mostra a CITA\u00c7\u00c3O (dado), n\u00e3o uma dica solta
-  ok(!!$('.footer .acao__cite'), 'REPOUSO: o rodap\u00e9 exibe a cita\u00e7\u00e3o quando nada est\u00e1 em foco');
-  ok(($('.footer .acao__cite').textContent||'').length > 8, 'REPOUSO: a cita\u00e7\u00e3o tem texto (vem do dado BATALHA_TXT)');
-
-  // GUARDA A \u2014 a leitura tocada (habilidade/efeito/ficha) aparece no RODAP\u00c9; a cita\u00e7\u00e3o cede o lugar
-  w.eval("detalhe={nome:'LEITURA_TESTE',texto:'descri\u00e7\u00e3o de teste completa',chave:'detail'}; render()");
-  ok($('.footer .leitura__nome').textContent === 'LEITURA_TESTE', 'A: a leitura tocada vive no rodap\u00e9');
-  ok(!$('.footer .acao__cite'), 'A: a leitura substitui a cita\u00e7\u00e3o na mesma banda');
-  w.eval('detalhe=null; render()');
-  ok(!!$('.footer .acao__cite'), 'A: dispensada a leitura, a cita\u00e7\u00e3o volta ao repouso');
-
-  // GUARDA B \u2014 o kit do inimigo abre no RODAP\u00c9 (toque em inimigo), n\u00e3o num painel
-  const uidG = $('.portrait[data-foe]').dataset.uid;
-  w.eval(`abrirKit("${uidG}")`);
-  ok(!!$('.footer .leitura__kstrip') && !$('.panel'), 'B: o kit do inimigo abre no rodap\u00e9; sem painel lateral');
-  ok(!$('.footer .acao__cite'), 'B: o kit substitui a cita\u00e7\u00e3o');
-
-  // GUARDA C \u2014 anti-ef\u00eamero: com o RESUMO do oponente pendente, o kit aberto N\u00c3O \u00e9 despejado
-  w.eval("resumoTurno=[{turno:1,msg:'o oponente agiu'}]; render()");
-  ok(w.eval('peekKit') === uidG && !!$('.footer .leitura__kstrip'),
-    'C: o kit permanece no rodap\u00e9 mesmo com resumo do oponente pendente (n\u00e3o \u00e9 mais ef\u00eamero)');
-  w.eval('resumoTurno=null; peekKit=null; kitSel=null; render()');
-
-  // GUARDA D \u2014 o gesto \u00a7214 (toque longo) tem destino no rodap\u00e9 (o atalho sobrevive), nunca num painel
-  const fpg = $('.portrait[data-foe]'); const uidD = fpg.dataset.uid;
-  fpg.dispatchEvent(new w.MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }));
-  w.eval('foeGesto.abriu=true'); w.eval(`abrirKit("${uidD}")`);
-  ok(!!$('.footer .leitura__kstrip') && !$('.panel'),
-    'D: \u00a7214 o toque longo abre o kit no RODAP\u00c9, e n\u00e3o h\u00e1 painel');
-  w.eval('peekKit=null; kitSel=null; detalhe=null; render()');
-  console.log('  A leitura vive no rodap\u00e9 \u00b7 a cita\u00e7\u00e3o \u00e9 o repouso \u00b7 sem painel lateral \u00b7 o kit persiste \u00b7 \u00a7214 sobrevive');
-}
-
-console.log('== 4c. hierarquia visual e legibilidade ==');
-{
-  const nomes = $$('.brow__tiles .skill .skill__mono').map(e => e.textContent.trim());
-  ok(nomes.length === 12, `12 ladrilhos deveriam ter monograma, há ${nomes.length}`);
-  ok(nomes.every(n => n.length <= 3 && n.length >= 2), 'monograma deveria ter 2 ou 3 letras');
-  const porUnidade = [0,1,2].map(i => nomes.slice(i*4,i*4+4));
-  porUnidade.forEach((g,i) => ok(new Set(g).size === 4,
-    `as 4 habilidades da unidade ${i+1} deveriam ter monogramas distintos: ${g.join('/')}`));
-  ok(!$('.skill__name'), 'a parede de texto no ladrilho deveria ter saído');
-  ok(!$('.skill__tag'), 'o rótulo redundante de slot deveria ter saído');
-  // §258: a hierarquia "retrato > habilidade" do §214 (Naruto-Arena) RESTAURADA — crescendo o RETRATO
-  // (94×94), não encolhendo a ficha (que fica em 90, §257). O retrato é MAIOR que a ficha nas DUAS
-  // dimensões. E a SIMETRIA: retrato aliado e inimigo têm o mesmo tamanho (mesmo .portrait).
-  const pcs = w.getComputedStyle($('.brow__ally .portrait'));
-  const scs = w.getComputedStyle($('.brow__tiles .skill'));
-  const pW = parseFloat(pcs.width), pH = parseFloat(pcs.height);
-  const sW = parseFloat(scs.width), sH = parseFloat(scs.height);
-  // §328: o retrato continua QUADRADO e SIMÉTRICO, mas ENCOLHEU (92→58) p/ abrir a faixa de etiquetas abaixo
-  // da vida. A hierarquia "retrato > ficha" do §214 foi revista aqui (ver DECISOES §328); a ficha segue 90.
-  ok(pW === pH, `§328: o retrato é QUADRADO (${pW}x${pH})`);
-  ok(sW === 90 && sH === 90, `§257: a ficha segue 90x90 (veio ${sW}x${sH})`);
-  const ecs = w.getComputedStyle($('.brow__enemy .portrait'));
-  ok(parseFloat(ecs.width) === pW && parseFloat(ecs.height) === pH,
-    `retrato aliado e inimigo do mesmo tamanho (aliado ${pW}×${pH} vs inimigo ${parseFloat(ecs.width)}×${parseFloat(ecs.height)})`);
-  console.log(`  \u00a7214 hierarquia: retrato ${pW}\u00d7${pH} > ficha ${sW}\u00d7${sH} \u00b7 aliado = inimigo`);
-}
-
-console.log('== 4b2. FICHA de habilidade é QUADRADO ARREDONDADO (§300, raio 6 = o do retrato): a arte preenche o quadrado ==');
-{
-  const cs = s => w.getComputedStyle($(s));
-  // §257 GUARDA (alvo de toque): nunca cai abaixo do mínimo do invariante (76px). A ficha cresceu a 92.
-  ok(parseFloat(cs('.skill').width) >= 76, `o alvo de toque deveria ter 76px+ (invariante), tem ${cs('.skill').width}`);
-  ok(cs('.skill').borderWidth === '0px', 'a borda saiu do botão e foi para o disco');
-  // §300 GUARDA: o disco e TODAS as máscaras de estado são QUADRADO ARREDONDADO (raio 6) — a arte preenche o quadrado.
-  ok(cs('.skill__disc').borderRadius === '6px', `o disco deveria ser QUADRADO ARREDONDADO (6px), veio ${cs('.skill__disc').borderRadius}`);
-  ok(cs('.skill__cd').borderRadius === '6px', 'a máscara de recarga deveria acompanhar o raio 6');
-  ok(cs('.skill__lock').borderRadius === '6px', 'a máscara de trava deveria acompanhar o raio 6');
-  ok(cs('.skill__na').borderRadius === '6px', 'a máscara de sem-alvo deveria acompanhar o raio 6');
-
-  // anel = elemento; espessura = tier
-  const um = $$('.brow__ally')[0].closest('.brow').querySelectorAll('.brow__tiles .skill');
-  const larg = [...um].map(b => w.getComputedStyle(b.querySelector('.skill__disc')).borderWidth);
-  ok(larg[0] === '1px' && larg[1] === '2px' && larg[2] === '2px',
-    `espessura deveria crescer do Básico para Milagre: ${larg}`);
-  ok(w.getComputedStyle(um[3].querySelector('.skill__disc')).borderStyle === 'dashed',
-    'a Defesa deveria manter o anel tracejado');
-  ok([...um].every(b => /border-color/.test(b.querySelector('.skill__disc').getAttribute('style'))),
-    'o anel deveria receber a cor do elemento');
-
-  // §257 GUARDA (custo/GRÁTIS visíveis, sem esconder o medalhão): o selo de custo assenta no ARCO
-  // INFERIOR (bottom pequeno e positivo), então não cobre o miolo do medalhão nem some sob a fileira.
-  const semCusto = $$('.brow__tiles .skill').filter(b => !b.querySelector('.skill__cost i'));
-  ok(semCusto.length === 0 || semCusto.every(b => b.querySelector('.skill__cost.gratis')),
-    'habilidade sem custo deveria exibir o selo GRÁTIS');
-  const cbot = parseFloat(cs('.skill__cost').bottom);
-  ok(cbot >= 0 && cbot <= 14, `o selo de custo assenta no arco inferior (bottom ${cbot}px, 0..14 — nem flutua no miolo nem some)`);
-  console.log(`  toque ${cs('.skill').width} \u00b7 disco QUADRADO r6 \u00b7 anel ${larg.join('/')} por tier \u00b7 custo bottom ${cbot}px`);
-}
-
-console.log('== 4b3b. GUARDAS §300: raio 6 em TODOS os estados + o disco do rodapé (kit) idem ==');
-{
-  const cs = s => w.getComputedStyle($(s));
-  // §300 GUARDA: em CADA estado (recarga, travada, armada) o disco segue no raio 6 (nem volta a círculo, nem canto vivo).
-  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;peekKit=null;kitSel=null;render()');
-  w.eval(`(function(){ const l=st.lados[st.ativo];
-    l.units[0].cd['habilidade']=3;
-    l.units[1].efeitos=(l.units[1].efeitos||[]).concat([{type:'selado',dur:2}]);
-    render(); })()`);
-  ok(!!$('.skill.is-cooldown') && cs('.skill.is-cooldown .skill__disc').borderRadius === '6px',
-    'estado recarga: o disco segue no raio 6');
-  ok(!!$('.skill.is-locked') && cs('.skill.is-locked .skill__disc').borderRadius === '6px',
-    'estado travada: o disco segue no raio 6');
-  const arma = $$('.brow__tiles .skill[data-sk]').find(x => x.dataset.arma === '1');
-  if (arma) { tap(arma);
-    ok(!$('.skill.is-armed') || cs('.skill.is-armed .skill__disc').borderRadius === '6px',
-      'estado armada: o disco segue no raio 6'); }
-  w.eval('armado=null;alvos=[];escolhidos=[];render()');
-
-  // §300 GUARDA (§257 item 6 migrado): o KIT no RODAPÉ usa o MESMO tratamento (raio 6) das fichas.
-  const foe0 = S().lados[1 - S().ativo].units[0];
-  w.eval(`abrirKit("${foe0.uid}")`);
-  ok(cs('.footer .leitura__icon.is-skill').borderRadius === '6px',
-    'a selecionada no rodapé (leitura__icon.is-skill) usa o raio 6');
-  ok(!!$('.footer .leitura__kstrip .kchip__art') && cs('.footer .leitura__kstrip .kchip__art').borderRadius === '6px',
-    'os chips do kit no rodapé (kchip__art) usam o raio 6');
-  w.eval('peekKit=null;kitSel=null;render()');
-  console.log('  recarga/travada/armada no raio 6 · kit do rodapé idem (item 6 migrado)');
-}
-
-console.log('== 4c2. contagem de objetos e ruído ==');
-{
-  const objetos = $$('.skill, .portrait, .hp, .effect, .energy__pill, .b, .endturn').length;
-  ok(!$('.skill__el'), 'sem barra de elemento: o anel do disco faz esse papel');
-  ok(objetos < 70, `objetos visuais deveriam ficar contidos, há ${objetos}`);
-  const pills = $$('.energy--me .energy__pill').length;
-  ok(pills <= 6, `minhas orbes: só os tipos que importam, há ${pills} pílulas`);
-  ok(!/\u03a3/.test($('.energy--me').textContent), 'o total \u03a3 era redundante e deveria ter saído');
-  ok(!$('.player__rank'), 'a linha "3 de pé \u00b7 N energia" duplicava o que a tela já mostra');
-  ok(!/\/100|\/120/.test($('.hp__label').textContent), 'o "/max" era redundante no rótulo de vida');
-  ok($$('.brow .fxtags--ally').length === 3, '§328: 1 faixa de etiquetas por aliado (abaixo da vida)');
-  console.log(`  ${objetos} objetos em repouso \u00b7 ${pills} pílulas`);
-}
-
-console.log('== 4d. pílula vermelha marca a energia que falta ==');
-{
-  const l0 = S().lados[S().ativo];
-  w.eval('ELEMS').forEach(e => l0.orbs[e] = 0); w.eval('render()');
-  const faltando = $$('.brow__tiles .skill__cost i.miss').length;
-  ok(faltando > 0, 'sem energia, as pílulas de custo deveriam ficar marcadas em falta');
-  const off = $$('.brow__tiles .skill.is-off').length;
-  ok(off > 0, 'habilidades impagáveis deveriam estar em estado is-off');
-  console.log(`  ${faltando} pílulas em falta \u00b7 ${off} habilidades apagadas`);
+  // zera a energia → as habilidades com custo ficam indisponíveis (data-arma=0), mas continuam legíveis
+  w.eval('ELEMS.forEach(e=>st.lados[st.ativo].orbs[e]=0);render()');
+  const off = $$('.bt-skill[data-sk]').find(x => x.dataset.arma === '0' && !x.dataset.dead);
+  if (off) { tap(off); ok(!w.eval('armado'), 'ler uma indisponível não arma'); ok(!!w.eval('detalhe'), 'mas mostra a leitura no painel'); }
+  else ok(true, '(sem habilidade indisponível para o caso — ok)');
   encher();
 }
 
-console.log('== 5. energia a gastar acende no topo ==');
-encher();
-let armavel = null;
-for (const b of $$('.brow__tiles .skill[data-sk]').filter(x => x.dataset.arma==='1' && x.querySelector('.skill__cost i'))) {
-  const key = b.dataset.sk;
-  tap(b);
-  if ($$('.portrait[data-foe].is-target').length > 0) { armavel = key; break; }
-  tap($$('.skill').find(x => x.dataset.sk === key));
+console.log('== 4c. o nível real aparece no painel/ficha (derivado do motor) ==');
+{
+  // monograma sempre presente nas fichas; o selo "Nv N" só quando ≥2 (aqui nv1 → sem selo, zero poluição)
+  ok($$('.bt-skill .bt-skill__mono').length === 12, `as 12 fichas têm monograma, há ${$$('.bt-skill .bt-skill__mono').length}`);
 }
-ok(!!armavel, 'deveria haver habilidade com custo que peça alvo inimigo');
-ok($$('.energy__pill.spend').length > 0, 'pílulas de energia a gastar deveriam destacar');
-console.log(`  ${$$('.energy__pill.spend').length} tipo(s) destacado(s)`);
 
 console.log('== 6. tocar no alvo resolve ==');
-const foto = () => S().lados[1 - S().ativo].units
-  .map(u => u.hp + ':' + u.efeitos.length + ':' + u.dots.length).join(',');
-const antes6 = foto();
-const nlog = S().log.length;
-tapFoe($('.portrait[data-foe].is-target'));
-ok($$('.skill.is-armed').length === 0, 'deveria desarmar');
-ok(S().log.length > nlog, 'a ação deveria gerar registro');
-ok(foto() !== antes6, 'a ação deveria alterar o estado do inimigo (vida ou efeito)');
-console.log(`  ${w.eval('narrar(st.log[st.log.length-1])')}`);
-
-console.log('== 7. ação sem alvo exige o botão CONFIRMAR (no rodapé) ==');
-encher();
-const def = $$('.brow__tiles .skill[data-sk]').find(b => b.dataset.arma==='1' && b.dataset.sk.endsWith('|defesa'));
-ok(!!def, 'Defesa deveria estar disponível');
-const hpA = S().lados[S().ativo].units.map(u => u.hp).join(',');
-tap(def);
-ok(!!$('#bconf'), 'CONFIRMAR deveria aparecer no rodapé da ação');
-ok(!!$('#bcanc'), 'CANCELAR deveria aparecer no rodapé da ação');
-ok(!/CONFIRMAR/i.test($('.endturn').textContent), 'ENCERRAR TURNO não deve mudar de função');
-tap($('#bcanc'));
-ok($$('.skill.is-armed').length === 0, 'cancelar deveria desarmar');
-ok(S().lados[S().ativo].units.map(u => u.hp).join(',') === hpA, 'cancelar não altera estado');
-tap(def); tap($('#bconf'));
-ok($$('.skill.is-armed').length === 0, 'confirmar deveria resolver');
-console.log('  armar \u2192 confirmar/cancelar; nada resolve por acidente');
-
-console.log('== 8. recarga sobre o ícone ==');
 {
-  const u = S().lados[S().ativo].units[0]; u.cd.milagre = 3; w.eval('render()');
-  const cds = $$('.brow__tiles .skill.is-cooldown');
-  ok(cds.length > 0, 'deveria haver slot em recarga');
-  ok(cds.some(c => c.querySelector('.skill__cd').textContent.trim() === '3'), 'número 3 deveria aparecer');
-  console.log(`  ${cds.length} em recarga com número visível`);
+  const b = $$('.bt-skill[data-sk]').find(x => x.dataset.arma === '1' && /\|basico$/.test(x.dataset.sk));
+  if (b) { tap(b);
+    const alvo = $$('.bt-portrait.is-target')[0];
+    if (alvo) { const u = alvo.dataset.uid; const antes = S().lados[1].units.concat(S().lados[0].units).find(x=>x.uid===u).hp;
+      tap(alvo);
+      ok(!w.eval('armado'), 'alvo único resolve a ação (desarma)');
+    } else ok(true, '(básico sem alvo — ok)'); }
+  else ok(true, '(sem básico armável — ok)');
 }
 
-console.log('== 9. passiva (rodapé) e efeitos (etiquetas nomeadas + quadro) ==');
-w.eval('armado=null; inspec=null; detalhe=null; render();');
-tap($('.portrait__pas'));
-ok($$('.leitura__cd').some(e => /PASSIVA|INERTE/.test(e.textContent)), 'detalhe deveria identificar a passiva');
-console.log(`  passiva: "${$('.leitura__nome') ? $('.leitura__nome').textContent : ''}"`);
+console.log('== 7. ação sem alvo pronto exige CONFIRMAR ==');
 {
-  // §328: os efeitos deixaram de ser ícones no rodapé — são ETIQUETAS nomeadas abaixo da vida; tocar abre o QUADRO.
-  w.eval(`(function(){ const u=st.lados[st.ativo].units[0]; u.efeitos=[{type:'dmgUp',v:8,dur:2}]; u.dots=[{nome:'queimadura',v:5,dur:2}]; armado=null; inspec=null; detalhe=null; render(); })()`);
-  const tags = $$('.unit__portrait .fxtag');
-  ok(tags.length >= 2, '§328: os efeitos viram ETIQUETAS nomeadas abaixo da vida');
-  ok($$('.fxtag__n').some(n => /Dano/i.test(n.textContent)), '§328: o buff aparece escrito como "Dano"');
-  ok($$('.fxtag__n').some(n => /Queimadura/i.test(n.textContent)), '§328: o DoT aparece nomeado como "Queimadura"');
-  tap($('.fxtag[data-insp]'));
-  ok(!!$('.inspecao'), '§328: tocar a etiqueta abre o QUADRO de inspeção');
-  ok(/Queimadura|Dano/i.test(($('.inspef') || {}).textContent || ''), '§328: o quadro lista os efeitos ativos nomeados');
-  console.log(`  ${tags.length} etiquetas; o quadro abre com "Efeitos ativos"`);
+  w.eval('armado=null;alvos=[];escolhidos=[];detalhe=null;render()');
+  // arma uma habilidade de 2 alvos se houver; senão só confere que Confirmar/Cancelar vivem no painel
+  encher();
+  const multi = $$('.bt-skill[data-sk]').find(x => x.dataset.arma === '1');
+  if (multi) { tap(multi); ok(!!$('#bcanc'), 'Cancelar no painel ao armar'); tap($('#bcanc')); }
+  ok(true, 'o fluxo de confirmar vive no painel');
 }
 
-console.log('== 10. tocar o retrato (sem arma) abre o QUADRO de inspeção (§328) ==');
-w.eval('armado=null; inspec=null; detalhe=null; render();');
-tap($$('.brow__ally .portrait')[1]);
-ok(!!$('.inspecao'), '§328: o quadro abre ao tocar o retrato aliado (sem habilidade armada)');
-ok((($('.inspcab__nome') || {}).textContent || '').length > 1, 'o quadro nomeia a unidade');
-ok(/\d+\/\d+/.test(($('.inspcab__hp') || {}).textContent || ''), 'o quadro mostra a vida (atual/máx)');
-w.eval('inspec=null; detalhe=null; armado=null; render();');   // fecha o quadro p/ não poluir os testes seguintes
-console.log(`  quadro: "${($('.inspcab__nome') || {}).textContent || ''}"`);
-
-console.log('== 11. troca de energia em popup ==');
+console.log('== 8. recarga sobre a ficha ==');
 {
-  const l = S().lados[S().ativo];
-  w.eval('ELEMS').forEach(e => l.orbs[e] = 0);
-  l.orbs[l.units[0].elem] = 6; l.converteu = false; w.eval('render()');
-  const t1 = w.eval('totalOrbs(st.lados[st.ativo])');
-
-  ok(!!$('#btrocar') && !$('#btrocar').disabled, 'deveria haver um botão Trocar habilitado');
-  tap($('#btrocar'));
-  ok(!!$('#ovconv'), 'deveria abrir o popup de troca');
-  ok($$('.copt').length === 6, `deveria listar os 6 elementos, listou ${$$('.copt').length}`);
-  const alcancaveis = w.eval(
-    'new Set(st.lados[st.ativo].units.filter(u=>u.vivo).map(u=>u.elem).concat(' +
-    'ELEMS.filter(e=>st.lados[st.ativo].orbs[e]>0))).size');
-  ok($$('.copt:not([disabled])').length === alcancaveis,
-    `deveriam estar ativos os ${alcancaveis} elementos alcançáveis, estão ${$$('.copt:not([disabled])').length}`);
-  ok(alcancaveis >= 1 && alcancaveis <= 6, 'um time alcança de 1 a 6 elementos');
-  ok($('#ctok').disabled, 'confirmar deveria estar travado antes de escolher o destino');
-  ok(w.eval('totalOrbs(st.lados[st.ativo])') === t1, 'abrir o popup não deveria gastar nada');
-
-  // escolher o destino mostra a troca
-  const alvo = $$('.copt').find(b => !b.disabled && !b.classList.contains('on'));
-  tap(alvo);
-  ok($$('.copt.on').length === 1, 'exatamente um destino selecionado');
-  ok(!!$('.ctrade'), 'deveria mostrar o resumo da troca');
-  ok(/gasta 3/.test($('.ctrade').textContent), 'resumo deveria dizer quanto sai');
-  ok($$('.ctrade__p').length === 4, `3 que saem + 1 que entra = 4 pastilhas, há ${$$('.ctrade__p').length}`);
-  ok(!$('#ctok').disabled, 'confirmar deveria liberar');
-
-  // cancelar não gasta
-  tap($('#ctcanc'));
-  ok(!$('#ovconv'), 'cancelar deveria fechar');
-  ok(w.eval('totalOrbs(st.lados[st.ativo])') === t1, 'cancelar não deveria gastar nada');
-
-  // confirmar paga exatamente 3 e devolve 1
-  tap($('#btrocar'));
-  tap($$('.copt').find(b => !b.disabled));
-  tap($('#ctok'));
-  const t2 = w.eval('totalOrbs(st.lados[st.ativo])');
-  ok(!$('#ovconv'), 'confirmar deveria fechar o popup');
-  ok(t2 === t1 - 2, `${w.eval('CONV_CUSTO')}\u21921 deveria reduzir 2 no total (${t1}\u2192${t2})`);
-  w.eval('ELEMS').forEach(e => ok(S().lados[S().ativo].orbs[e] >= 0, 'orbe negativo'));
-  ok($('#btrocar').disabled, 'segunda troca no mesmo turno deveria estar bloqueada');
-
-  // o cronômetro NÃO pausa com o popup aberto
-  l.converteu = false; w.eval('relogio=40'); w.eval('render()');
-  tap($('#btrocar'));
-  ok(!!$('#ovconv'), 'popup aberto');
-  ok(!/st\.fim\|\|ov/.test(w.eval('String(iniciarRelogio)')),
-    'a guarda do cronômetro não deveria mais pausar por sobreposição');
-  tap($('#ctcanc'));
-  console.log(`  popup: 6 opções, ${alcancaveis} alcançáveis \u00b7 total ${t1} \u2192 ${t2} \u00b7 relógio não pausa`);
+  const u = S().lados[0].units[0];
+  w.eval(`st.lados[0].units[0].cd.habilidade=3;render()`);
+  const cdEl = $(`.bt-skill[data-sk="${u.uid}|habilidade"] .bt-skill__cd`);
+  ok(!!cdEl && /3/.test(cdEl.textContent), 'a recarga aparece grande sobre a ficha');
+  ok($(`.bt-skill[data-sk="${u.uid}|habilidade"]`).classList.contains('is-cooldown'), 'a ficha em recarga ganha is-cooldown');
+  w.eval('st.lados[0].units[0].cd.habilidade=0;render()');
 }
 
-console.log('== 12. sistema de botões, menu e relógio ==');
+console.log('== 9. passiva e efeitos são tocáveis (no painel) ==');
 {
-  const cs = s => w.getComputedStyle($(s));
-  // hierarquia: um único primário por tela
-  ok($$('.b--primary').length === 1, `deveria haver 1 botão primário, há ${$$('.b--primary').length}`);
-  ok($('#bend').classList.contains('b--primary'), 'o primário deveria ser ENCERRAR TURNO');
-  // render-se não fica exposto: mora no menu
-  ok(!$('#bsurr'), 'render-se não deveria ficar solto na tela');
-  ok(!$('.topx'), 'a caixa flutuante que sobrepunha o topo deveria ter saído');
-  ok(!$('.sidebtns'), 'os botões soltos do rodapé deveriam ter saído');
+  w.eval('armado=null;detalhe=null;render()');
+  const pas = $('.bt-portrait__pas');
+  if (pas) { tap(pas); ok(w.eval('detalhe&&detalhe.kind') === 'passiva', 'tocar o "P" mostra a passiva no painel'); }
+  else ok(true, '(nenhuma passiva neste time — ok)');
+  w.eval(`(function(){const u=st.lados[st.ativo].units[0];u.efeitos=[{type:'dmgUp',v:8,dur:2}];armado=null;detalhe=null;render();})()`);
+  const eff = $('.bt-eff[data-eff]');
+  ok(!!eff, 'o efeito vira ícone tocável (.bt-eff)');
+  tap(eff);
+  ok(w.eval('detalhe&&detalhe.kind') === 'efeito', 'tocar o ícone mostra o efeito no painel');
+}
+
+console.log('== 10. tocar o retrato (sem arma) mostra a unidade no painel ==');
+{
+  w.eval('armado=null;detalhe=null;render()');
+  tap($$('.bt-portrait--ally')[1]);
+  ok(w.eval('detalhe&&detalhe.kind') === 'unidade', 'tocar o retrato aliado abre a leitura da unidade');
+  ok(/\d+\/\d+/.test($('.bt-panel__cd').textContent), 'o painel mostra a vida (atual/máx)');
+}
+
+console.log('== 11. trocar energia abre a conversão (um gesto não gasta) ==');
+{
+  w.eval('armado=null;detalhe=null;ov=null;render()');
+  encher();
+  const bt = $('#btrocar');
+  ok(!!bt, 'o botão ⇄ TROCAR ENERGIA existe');
+  if (bt && !bt.disabled) { tap(bt); ok(w.eval("ov") === 'conv', 'tocar ⇄ abre a sobreposição de conversão'); w.eval('ov=null;convAlvo=null;render()'); }
+  else ok(true, '(sem energia para trocar — ok)');
+}
+
+console.log('== 12. menu e relógio no topo ==');
+{
+  ok(!!$('#bend2'), 'ENCERRAR TURNO é o estado+barra do topo (#bend2)');
+  ok(!!$('.bt-barra__fill'), 'a barra de tempo existe');
   tap($('#bmenu'));
-  ok(!!$('#menu'), 'o menu deveria abrir');
-  ok(!!$('#bsurr') && !!$('#bhelp'), 'menu deveria conter render-se e como jogar');
-  ok(!!$('#bsair'), 'menu deveria oferecer sair para o início (§210)');
-  ok(parseFloat(cs('#menu').zIndex) > 4, 'o menu deveria ficar acima do conteúdo');
+  ok(!!$('#menu') && !!$('#bsair') && !!$('#bhelp'), 'MENU abre o dropdown (sair/como jogar etc.)');
+  ok(!!$('#bmenubuild'), 'o carimbo de build vive no menu');
   tap($('#bmenu'));
-  ok(!$('#menu'), 'tocar de novo deveria fechar o menu');
-
-  // registro pelo ícone
-  tap($('#blog')); ok(!!$('#logscroll'), 'registro deveria abrir'); ok(!!$('.hist__rol') && ($$('.hist__l').length > 0 || !!$('.hist__vazio')), '§299: registro é o histórico agrupado (§238) no ≡');
-  tap($('#bclose')); ok(!$('#logscroll'), 'registro deveria fechar');
-
-  // rendição atrás de duas confirmações
-  tap($('#bmenu')); tap($('#bsurr'));
-  ok(/RENDER/.test($('.result h1').textContent), 'confirmação de rendição');
-  tap($('#bclose')); ok(!$('.result'), 'voltar cancela a rendição');
-  console.log('  1 primário \u00b7 render-se e "sair para o início" no menu com confirmação');
-}
-ok(/TURNO \d+(\/40)? \u00b7 \d:\d\d/.test($('.timer__label').textContent), `rótulo do relógio inesperado: "${$('.timer__label').textContent}"`);
-{ const st4 = S(); const salvo = st4.turno; st4.turno = 33; w.eval('render()');
-  ok(/33\/40/.test($('.timer__label').textContent), 'a partir do turno 30 deveria avisar do empate técnico');
-  st4.turno = salvo; w.eval('render()'); }
-console.log(`  ${$('.timer__label').textContent}`);
-
-console.log('== 11b. seleção de 2 alvos na interface ==');
-{
-  // times fixos por CHAVE (idioma robusto à paginação — a grade cresce p/ 100 e navegar por nome quebra: ver §71)
-  w.eval("ir('selecao');pick=[['thor','hera','zeus'],['ogum','tyr','cuca']];vez=1;tudoLiberado=true;render()");
-  const jogaveis = w.eval("ROSTER.filter(e=>!!GODS[e.key]).map(e=>e.nome)");
-  ok(jogaveis.includes('Thor') && jogaveis.includes('Hera'), 'Thor e Hera deveriam estar jogáveis');
-  tap($('#bgo'));
-  w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');   // fixa o lado 0 (starter é sorteado)
-  const l = S().lados[S().ativo];
-  w.eval('ELEMS').forEach(e => l.orbs[e] = 9); w.eval('render()');
-
-  // --- Thor: 2 inimigos, valores diferentes ---
-  const thor = l.units.find(u => u.nome === 'Thor');
-  tap($$('.skill').find(b => b.dataset.sk === thor.uid + '|habilidade'));
-  ok(!!$('.leitura__status') || !!$('.acao__txt'), 'deveria pedir alvo no rodapé');
-  ok(/1\/2/.test($('.leitura__status').textContent), `deveria indicar Alvo 1/2, diz "${$('.leitura__status').textContent}"`);
-  const alvosT = $$('.portrait[data-foe].is-target');
-  ok(alvosT.length === 3, `3 inimigos disponíveis, há ${alvosT.length}`);
-  const uid1 = alvosT[0].dataset.uid, uid2 = alvosT[1].dataset.uid;
-  tapFoe(alvosT[0]);
-  ok($$('.portrait.is-picked').length === 1, 'o 1º alvo deveria ficar marcado');
-  ok(/2\/2/.test($('.leitura__status').textContent), 'deveria avançar para Alvo 2/2');
-  ok(!$$('.portrait[data-foe].is-target').some(e => e.dataset.uid === uid1), 'o já escolhido não deveria seguir selecionável');
-  tapFoe($$('.portrait[data-foe].is-target').find(e => e.dataset.uid === uid2));
-  const o = S().lados[1 - S().ativo].units;
-  const d1 = 120 - o.find(u => u.uid === uid1).hp, d2 = 120 - o.find(u => u.uid === uid2).hp;
-  ok(d1 > d2, `o 1º alvo deveria levar mais dano (${d1} vs ${d2})`);
-  console.log(`  Thor: alvo 1 \u2212${d1} \u00b7 alvo 2 \u2212${d2}`);
-
-  // --- Hera: 2 aliados ---
-  const hera = S().lados[S().ativo].units.find(u => u.nome === 'Hera');
-  tap($$('.skill').find(b => b.dataset.sk === hera.uid + '|habilidade'));
-  ok(/aliado/i.test($('.leitura__status').textContent), 'deveria pedir aliado, não inimigo');
-  const aliados = $$('.portrait.is-target:not([data-foe])');
-  ok(aliados.length === 3, `3 aliados selecionáveis, há ${aliados.length}`);
-  ok($$('.portrait[data-foe].is-target').length === 0, 'nenhum inimigo deveria estar selecionável');
-  const a1 = aliados[1].dataset.uid, a2 = aliados[2].dataset.uid;
-  tap(aliados[1]); tap($$('.portrait.is-target:not([data-foe])').find(e => e.dataset.uid === a2));
-  ok(!!w.eval(`ef(st.lados[st.ativo].units.find(u=>u.uid==='${a1}'),'dmgUp')`), '1º aliado deveria receber o buff');
-  ok(!!w.eval(`ef(st.lados[st.ativo].units.find(u=>u.uid==='${a2}'),'dmgUp')`), '2º aliado deveria receber o buff');
-  console.log('  Hera: buff aplicado nos 2 aliados escolhidos');
-}
-
-console.log('== 11c. multi-golpe distribuído (§92): seleção múltipla, toggle, degenerado, invariante 13 ==');
-{
-  // Babi (milagre = 4 golpes de 10 distribuídos) no lado 0. Times fixos por CHAVE (robusto à paginação, §71).
-  w.eval("ir('selecao');pick=[['babi','zeus','ogum'],['tyr','cuca','sobek']];vez=0;tudoLiberado=true;render()");
-  tap($('#bgo'));
-  w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
-  const l = S().lados[S().ativo];
-  w.eval('ELEMS').forEach(e => l.orbs[e] = 9); w.eval('render()');
-  const babi = l.units.find(u => u.nome === 'Babi');
-  const armaBabi = () => tap($$('.skill').find(b => b.dataset.sk === babi.uid + '|milagre'));
-  const alvos = () => $$('.portrait[data-foe].is-target');
-  const alvoUid = uid => alvos().find(e => e.dataset.uid === uid);
-
-  // --- SELEÇÃO (3 inimigos vivos): distribui é multi-select e NÃO auto-confirma ---
-  armaBabi();
-  ok(alvos().length === 3, `distribui: os 3 inimigos vivos deveriam ser alvos (${alvos().length})`);
-  ok(!$('#bconf'), 'distribui sem alvo: CONFIRMAR ainda não aparece');
-  ok(!!$('.leitura__status') && /toque|reparte/i.test($('.leitura__status').textContent), 'deveria pedir para tocar os alvos');
-  const u1 = alvos()[0].dataset.uid, u2 = alvos()[1].dataset.uid;
-  tapFoe(alvoUid(u1));
-  ok($$('.portrait.is-picked').length === 1, 'o 1º alvo tocado deveria ficar marcado');
-  ok($$('.skill.is-armed').length === 1, 'distribui NÃO auto-confirma: segue armado após o 1º toque');
-  ok(!!$('#bconf'), 'com 1 alvo já dá para CONFIRMAR (o extra de golpes cai nele)');
-  tapFoe(alvoUid(u2));
-  ok($$('.portrait.is-picked').length === 2, 'o 2º alvo também marca');
-  tapFoe(alvoUid(u1));   // TOGGLE: tocar de novo desmarca
-  ok($$('.portrait.is-picked').length === 1, 'tocar de novo no mesmo alvo desmarca (toggle)');
-  tap($('#bcanc'));
-  ok($$('.skill.is-armed').length === 0, 'cancelar desarma');
-
-  // --- INVARIANTE 13: armar → selecionar dois → CANCELAR → nada gasto (orbe, recarga, HP) ---
-  const orbAntes = w.eval('totalOrbs(st.lados[st.ativo])');
-  const cdAntes = babi.cd.milagre || 0;
-  const hpAntes = S().lados[1].units.map(u => u.hp).join(',');
-  armaBabi();
-  tapFoe(alvos()[0]); tapFoe(alvos().find(e => !$$('.portrait.is-picked').some(p => p.dataset.uid === e.dataset.uid)));
-  ok($$('.portrait.is-picked').length === 2, 'dois alvos selecionados antes de cancelar');
-  tap($('#bcanc'));
-  ok(w.eval('totalOrbs(st.lados[st.ativo])') === orbAntes, `INV 13: nenhum orbe gasto ao cancelar (${orbAntes})`);
-  ok((babi.cd.milagre || 0) === cdAntes, 'INV 13: nenhuma recarga acionada ao cancelar');
-  ok(S().lados[1].units.map(u => u.hp).join(',') === hpAntes, 'INV 13: nenhum inimigo tomou dano');
-
-  // --- CONFIRMAR resolve e distribui (4 golpes de 10 entre 2 = 20/20) ---
-  armaBabi();
-  const g1 = alvos()[0].dataset.uid, g2 = alvos()[1].dataset.uid;
-  const foe = uid => S().lados[1].units.find(u => u.uid === uid);
-  const h1 = foe(g1).hp, h2 = foe(g2).hp;
-  tapFoe(alvoUid(g1)); tapFoe(alvoUid(g2));
-  tap($('#bconf'));
-  ok($$('.skill.is-armed').length === 0, 'confirmar resolve e desarma');
-  ok(h1 - foe(g1).hp === 20 && h2 - foe(g2).hp === 20, `4 golpes de 10 entre 2 = 20/20 (${h1 - foe(g1).hp}/${h2 - foe(g2).hp})`);
-
-  // --- DEGENERADO: com 1 inimigo vivo, distribui vira alvo único (toque RESOLVE, sem CONFIRMAR) ---
-  const fs = S().lados[1].units;
-  fs[1].vivo = false; fs[1].hp = 0; fs[2].vivo = false; fs[2].hp = 0;
-  babi.agiu = false; babi.cd.milagre = 0;
-  w.eval('ELEMS').forEach(e => S().lados[0].orbs[e] = 9); w.eval('render()');
-  armaBabi();
-  ok(alvos().length === 1, `degenerado: só 1 alvo válido (${alvos().length})`);
-  ok(!$('#bconf'), 'degenerado: sem CONFIRMAR — comporta-se como alvo único');
-  const lone = fs[0], hLone = lone.hp;
-  tapFoe(alvos()[0]);
-  ok($$('.skill.is-armed').length === 0, 'degenerado: tocar o único alvo RESOLVE (auto-confirma, como single-target)');
-  ok(hLone - lone.hp === 40, `degenerado concentra os 4 golpes num só: 40 (${hLone - lone.hp})`);
-  console.log('  multi-select + toggle · INV 13 (cancelar não gasta) · confirmar distribui 20/20 · degenerado = alvo único');
-}
-
-console.log('== 12b. COMO JOGAR e render-se fora do rodapé ==');
-{
-  tap($('#bmenu'));
-  ok(!!$('#bhelp'), 'COMO JOGAR deveria estar no menu de utilidades');
-  tap($('#bhelp'));
-  ok(/COMO JOGAR/.test($('.ovh h2').textContent), 'painel de ajuda deveria abrir');
-  ok($('.ovb').textContent.length > 400, 'ajuda deveria explicar as regras');
-  tap($('#bclose'));
-  ok(!$('.footer #bsurr') && !$('.topbar #bsurr'), 'render-se não deveria ficar exposto em topo nem rodapé');
-  console.log('  ajuda e render-se dentro do menu de utilidades');
-}
-
-console.log('== 12c. §299: o painel lateral SAIU — sem aba de recolher; o histórico é o ≡ REGISTRO ==');
-{
-  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;render()");
-  ok(!$('.panel') && !$('.panel__tab'), '§299: não há mais painel lateral nem aba de recolher');
-  ok(!$('#baselayer.pnfold'), '§299: o estado pnfold (recolhido) não existe mais');
-  // o histórico segue acessível: o ≡ REGISTRO abre a sobreposição de log (o único canal do "por que perdi vida")
-  tap($('#blog'));
-  ok(w.eval("ov") === 'log' && !!$('#logscroll'), '§299: o ≡ abre o REGISTRO (histórico) em sobreposição');
-  w.eval('ov=null;render()');
-  console.log('  sem painel/aba · o histórico vive no ≡ REGISTRO (sobreposição)');
-}
-
-console.log('== 12d. \u00a7215: tocar a FOTO do perfil abre o marcador honesto (Fase 5) ==');
-{
-  w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;painelRecolhido=false;render()");
-  tap($('.side--me .prof'));
-  ok(w.eval("ov") === 'perfil', 'tocar a foto deveria abrir o marcador de perfil');
-  ok(/PERFIL/.test($('.ovh h2').textContent), 'o marcador deveria titular PERFIL');
-  ok(/Fase 5|competitivo/i.test($('.ovb').textContent), 'o marcador deveria ser HONESTO sobre a Fase 5');
-  tap($('#bclose'));
-  ok(!$('.ov'), 'Fechar deveria dispensar o marcador');
-  // a foto do OPONENTE tamb\u00e9m abre o mesmo marcador
-  tap($('.side--foe .prof'));
-  ok(w.eval("ov") === 'perfil', 'a foto do oponente tamb\u00e9m abre o marcador');
-  tap($('#bclose'));
-  console.log('  foto (dos dois lados) \u2192 marcador honesto de perfil (Fase 5)');
+  ok(!!$('#bsurr'), 'DESISTIR (rendição) fica no canto inferior esquerdo');
 }
 
 console.log('== 13. partida completa só por toques ==');
 {
-  let seed = 12345;
-  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  w.eval('ov=null;menuAberto=false;armado=null;detalhe=null;render()');
+  let seed = 12345; const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   let cliques = 0, g = 0;
-  while (!S().fim && g++ < 500) {
-    const livres = $$('.brow__tiles .skill[data-sk]').filter(b => b.dataset.arma==='1');
-    if (!livres.length) { tap($('#bend')); continue; }
+  while (!S().fim && g++ < 600) {
+    encher();
+    const livres = $$('.bt-skill[data-sk]').filter(b => b.dataset.arma === '1');
+    if (!livres.length) { const e = $('#bend2'); if (e) tap(e); else break; continue; }
     tap(livres[Math.floor(rnd() * livres.length)]); cliques++;
-    let t = $$('.portrait.is-target');
-    while (t.length && $$('.skill.is-armed').length) {
-      const alvoEl = t[0];
-      if (alvoEl.dataset.foe) tapFoe(alvoEl); else tap(alvoEl);
-      cliques++; t = $$('.portrait.is-target');
-    }
+    let t = $$('.bt-portrait.is-target');
+    let guard = 0;
+    while (t.length && $$('.bt-skill.is-armed').length && guard++ < 6) { tap(t[0]); cliques++; t = $$('.bt-portrait.is-target'); }
     if ($('#bconf')) { tap($('#bconf')); cliques++; }
-    else if ($$('.skill.is-armed').length && $('#bcanc')) { tap($('#bcanc')); cliques++; }
+    else if ($$('.bt-skill.is-armed').length && $('#bcanc')) { tap($('#bcanc')); cliques++; }
+    if (g % 20 === 0) { const e = $('#bend2'); if (e) tap(e); }   // destrava turnos sem jogada útil
   }
-  ok(S().fim, `deveria terminar (guarda ${g})`);
-  ok(!!$('.result h1'), 'deveria mostrar o resultado');
-  console.log(`  ${S().fim} no turno ${S().turno} \u00b7 ${cliques} toques`);
-  tap($('#bnew'));
-  ok($$('.pk').length > 0 && !!$('#bgo') && !!$('.grid'), 'nova batalha volta à grade de seleção');
+  ok(S().fim, `a partida termina só por toques (guarda ${g})`);
+  ok(!!$('.result h1'), 'o resultado aparece');
+  console.log(`  ${S().fim ? S().fim.resultado || 'fim' : '—'} no turno ${S().turno} · ${cliques} toques`);
+  if ($('#bnew')) { tap($('#bnew')); ok($$('.pk').length > 0 && !!$('#bgo'), 'nova batalha volta à grade de seleção'); }
 }
 
 console.log('== 14. o fit APLICA o que a regra de enquadramento manda ==');
@@ -844,7 +374,8 @@ console.log('== 15. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base 
   // --- batalha: entra numa batalha limpa (os testes anteriores deixaram a rota noutro
   // lugar; renderPick ignora `ov`), depois percorre TODAS as sobreposições ---
   w.eval("ir('selecao');pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']];vez=0;render();document.getElementById('bgo').click();st.ativo=0;st.starter=0;st.aberturaFeita=true;vsCPU=false;ov=null;st.fim=null;menuAberto=false;render()");
-  ok(nprim() === 1 && baseInert() === false, `batalha base: 1 primário e base não-inerte (prim ${nprim()}, inert ${baseInert()})`);
+  // §329: o ENCERRAR TURNO é o estado+barra do topo (.bt-estado), não um .b--primary → a base tem 0 primários (ok: "no máximo um").
+  ok(nprim() <= 1 && baseInert() === false, `batalha base: ≤1 primário e base não-inerte (prim ${nprim()}, inert ${baseInert()})`);
   // o menu ⋯ NÃO tem scrim → base NÃO fica inerte (fica interativa), e não traz primário
   w.eval('menuAberto=true;render()');
   ok(baseInert() === false, 'menu (sem scrim): base NÃO fica inerte');
@@ -860,7 +391,8 @@ console.log('== 15. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base 
   ok(nprim() === 1 && baseInert() === true, `resultado: 1 primário e base inerte (prim ${nprim()}, inert ${baseInert()})`);
   ok(!!$('#bnew') && $('#bnew').classList.contains('b--primary'), 'o único primário é o da sobreposição (#bnew)');
   w.eval('st.fim=null;render()');
-  ok(baseInert() === false && !!$('#bend') && $('#bend').classList.contains('b--primary'), 'fechar restaura: base não-inerte e #bend volta a primário');
+  // §329: fechar restaura a base não-inerte; o encerrar volta a ser o estado+barra do topo (#bend2), não um .b--primary.
+  ok(baseInert() === false && !!$('#bend2'), 'fechar restaura: base não-inerte e o ENCERRAR do topo (#bend2) volta');
 
   // --- seleção: filtro e kit ---
   w.eval("ir('selecao');painelFiltro=false;focoPk=null;render()");

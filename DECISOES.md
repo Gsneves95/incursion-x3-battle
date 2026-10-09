@@ -6,6 +6,71 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §329 · TELA DE BATALHA: LAYOUT refeito À RISCA da referência (data-driven)
+
+**O §328 foi REPROVADO pelo dono:** o quadro central saía cortado, o texto encavalava ("MANIPULADOR 120/120"), o
+nome truncava ("L…") e as miniaturas apareciam sem arte. O dono anexou 2 imagens de referência (de outro jogo) e
+mandou refazer o layout **EXATAMENTE** igual, com a mesma distribuição e os mesmos tamanhos relativos.
+
+**Aproveitado do §328 (só dados/lógica):** `data/status_visual.json`, a leitura de efeitos/níveis/recarga e o
+conteúdo de inspeção. **Descartado:** todo o layout (quadro central, etiquetas sob o retrato, bloco largo do inimigo).
+
+**Decisão central — o layout é DADO, não código.** Todas as medidas da referência, convertidas em **u = 1% da ALTURA
+da área do jogo** (design 428 → 1u = 4,28px), vivem em `data/layout_batalha.json`; a tela LÊ de lá (injetado como
+`LAYOUT_BATALHA`; `U(n)` em `ui/base.js` converte u→`calc()`). **Altura manda; a largura que sobra no celular (20:9 é
+mais largo que a referência) vai TODA para o espaço de arte do centro:** o lado do jogador ancora à ESQUERDA (x em u a
+partir da borda esquerda), o do inimigo à DIREITA (dir em u a partir da borda direita), e o centro preenche o vão.
+Isso é coerente com o enquadramento existente (§F0.6b: altura fixa 428, largura fluida 780–1200).
+
+**O layout (meu turno — imagem 2 do dono):**
+- **Topo (0–14u):** botão de ajustes (4u, canto); nome+ranque do jogador à direita terminando em 37,5u + avatar 9×9
+  em x=39; espelhado à direita p/ o oponente; no CENTRO (de cima p/ baixo) o texto "SEU TURNO — ENCERRAR" + a barra de
+  tempo 34×2u (juntos são o BOTÃO de encerrar, com o fluxo de energia livre de hoje), os contadores de energia
+  (quadradinho + ×N por tipo + total), e o ⇄ TROCAR ENERGIA. O botão grande de encerrar do canto inferior **saiu**.
+- **3 fileiras do jogador** (topos 12 / 33,4 / 54,9u): retrato 13,6² em x=5,1 + barra de vida (13,6×2,7, verde/
+  amarela/vermelha, atual/máx dentro); ícones de efeito 3,75² a partir de x=19,8 ACIMA da faixa; FAIXA de habilidades
+  x 18,4→85u com o QUADRO DE AÇÃO "?" (x=21,7, desfaz a escolha) + Básico/Habilidade/Milagre/Defesa 9,9² (indisponível
+  apagada; recarga grande sobre ela; **as bolinhas de custo saíram da ficha e foram p/ o painel**).
+- **3 inimigos** nas mesmas alturas: retrato 13,6² a 7u da direita + vida abaixo; efeitos à ESQUERDA do retrato;
+  "?" e "P" seguem.
+- **Espaço de arte do centro** (85u→ícones do inimigo, y 15→78): o deus em FOCO (último tocado; 1º do jogador ao abrir).
+  Por ora o retrato grande recortado (aceita `web/corpo/<deus>.webp` quando o dono mandar).
+- **Canto inferior esquerdo:** DESISTIR, MENU (abre o que era ≡ e ⋯ — Registro/Como jogar/Tela cheia/Sua conta/Sair/
+  Apagar/build), controle de som; arte decorativa ATRÁS, sem cobrir toque.
+- **Painel de baixo** (x=44→direita, y 77,8→98,2): imagem à esquerda, TÍTULO vermelho, descrição com palavras-chave
+  coloridas, CUSTO no canto sup. direito, "Tipo · Função" embaixo-esq, "RECARGA X · pronta[/em N]" embaixo-dir. O
+  conteúdo segue o toque: habilidade minha (arma + detalhe); retrato (nome + Função·Elemento + vida + passiva); ícone
+  de efeito (nome + descrição + turnos + dono); nível real no título ("Nv N"). Com habilidade armada, tocar retrato é
+  ESCOLHER ALVO.
+- **Caixa "Toque numa habilidade"** (acima do painel, à direita): 4 minis do deus em foco — **é como se vê o kit do
+  OPONENTE** (leitura pura, `data-look`, nunca `data-sk` — invariante 15 preservado).
+
+**HUD de modo (Rito/campanha/Domínio):** o `.phud` (prazo + objetivos) de `home.js` é reposicionado por CSS p/ uma
+FAIXA no topo do espaço de arte do centro (`#baselayer.bt .phud`, left 85u) — livre de toda área de toque; o conteúdo
+dele não muda. (Em sandbox/PvP não há HUD.)
+
+**Turno do oponente (imagem 3):** topo "TURNO DO OPONENTE…" com a barra correndo; as faixas ENCOLHEM (x 18,4→72), o
+quadro de ação some, os 4 quadrados vão p/ x=22/33/44/55 **apagados e sem resposta** (`data-dead=1` → `ligarCampo` não
+os liga); o centro troca p/ o deus do oponente que age; retratos/efeitos/painel seguem tocáveis (dá p/ inspecionar).
+
+**Trade-offs registrados:**
+- O retrato de batalha é 13,6u (≈58px em 780×360) — menor que no §214, porque a referência manda assim; a identidade
+  do deus também aparece GRANDE no espaço de arte do centro.
+- A arte de habilidade e de corpo-inteiro ainda falta (os 400 ícones, §arte): a ficha cai no **monograma** (fallback do
+  `slot`) e o centro usa o retrato quadrado recortado — nunca um `<img>` 404 (§213).
+- Os ícones de efeito usam, por ora, o ícone de `status_visual.json` (o motor não guarda qual habilidade causou cada
+  efeito); o espaço já aceita a arte-da-habilidade quando essa origem existir.
+
+**NÃO MUDOU:** motor, IA, regras, balanço, níveis, economia e o fluxo de encerrar turno/energia livre (só mudou ONDE
+fica o botão). Outras telas não mudaram.
+
+**Guardas:** `tests/batalha_faixa.test.js` reescrito p/ §329 — mede as caixas de TODOS os elementos tocáveis em CADA
+estado (meu turno / turno do oponente) e falha se duas se sobrepõem, se algo corta fora do palco, ou se nome/vida/
+função transbordam (em 20:9, 16:9 e no piso). `tests/batalha_inspecao.test.js` reescrito — as 5 provas jsdom do dono.
+`interface.test.js` com a seção de batalha refeita p/ o DOM §329; `moldura`/`perspectiva`/`render_sweep`/
+`niveis_batalha`/`provacao_loop` ajustados ao novo DOM. Capturas em `docs/telas/` (780×360 meu turno / inspeção /
+turno do oponente; 915×412 e 1600×738 meu turno).
+
 ## §328 · TELA DE BATALHA: etiquetas de efeito legíveis + quadro de inspeção
 
 **Achados do dono (jogando).** (1) os efeitos apareciam como um ícone minúsculo + número azul no canto, ilegíveis;

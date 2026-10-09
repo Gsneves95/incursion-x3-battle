@@ -49,21 +49,21 @@ const html = fs.readFileSync(distAbs, 'utf8');
   ok(/"basico":2/.test(nvAlly), 'motor: aliado 0 tem básico nível 2');
   ok(/"basico":2/.test(nvEnemy), 'motor: inimigo 0 tem básico nível 2');
   const allyUid = w.eval("st.lados[0].units[0].uid"), enemyUid = w.eval("st.lados[1].units[0].uid");
-  const pAlly = $(`.portrait[data-uid="${allyUid}"] .portrait__niv`);
-  const pEnemy = $(`.portrait[data-uid="${enemyUid}"] .portrait__niv`);
+  const pAlly = $(`.bt-portrait[data-uid="${allyUid}"] .bt-portrait__niv`);
+  const pEnemy = $(`.bt-portrait[data-uid="${enemyUid}"] .bt-portrait__niv`);
   ok(!!pAlly && /^2/.test(txt(pAlly)), 'o retrato do ALIADO mostra o indicador começando em 2 (ex.: 2·1·1)');
   ok(!!pEnemy && /^2/.test(txt(pEnemy)), 'o retrato do INIMIGO mostra o indicador começando em 2');
   // uma unidade toda nv1 (um dos fill) NÃO tem indicador
   const u1Uid = w.eval("st.lados[0].units[1].uid");
-  ok(!$(`.portrait[data-uid="${u1Uid}"] .portrait__niv`), 'uma unidade toda nível 1 NÃO tem indicador (zero poluição)');
+  ok(!$(`.bt-portrait[data-uid="${u1Uid}"] .bt-portrait__niv`), 'uma unidade toda nível 1 NÃO tem indicador (zero poluição)');
   ok(w.eval("nivelSlotEmBatalha(st, st.lados[0].units[0], 'habilidade')") === 1, 'um slot sem subir fica nível 1 (o indicador o mostra como 1, não some sozinho)');
 
   // ---- B) botão de habilidade: "Nv N" só quando ≥2; sem escada / nv1 → nada ----
   console.log('\n== B) botão de habilidade: "Nv N" (≥2); sem escada / nv1 → nada ==');
-  const tileBas = $(`.skill[data-sk="${allyUid}|basico"] .skill__nv`);
+  const tileBas = $(`.bt-skill[data-sk="${allyUid}|basico"] .bt-skill__nv`);
   ok(!!tileBas && /Nv\s*2/.test(txt(tileBas)), 'o tile do BÁSICO do aliado (nv2) mostra "Nv 2"');
-  ok(!$(`.skill[data-sk="${allyUid}|habilidade"] .skill__nv`), 'o tile de uma habilidade em nv1 NÃO mostra nível');
-  ok(!$(`.skill[data-sk="${allyUid}|defesa"] .skill__nv`), 'a DEFESA (universal, sem escada) NUNCA mostra nível');
+  ok(!$(`.bt-skill[data-sk="${allyUid}|habilidade"] .bt-skill__nv`), 'o tile de uma habilidade em nv1 NÃO mostra nível');
+  ok(!$(`.bt-skill[data-sk="${allyUid}|defesa"] .bt-skill__nv`), 'a DEFESA (universal, sem escada) NUNCA mostra nível');
 
   // ---- C) o TOOLTIP lê o kit EFETIVO do lado (bite: difere do base) ----
   console.log('\n== C) tooltip/inspeção lê o kit EFETIVO dos dois lados (bite) ==');
@@ -71,22 +71,27 @@ const html = fs.readFileSync(distAbs, 'utf8');
   const baseAlly = w.eval("GODS[st.lados[0].units[0].key].ab.find(a=>a.slot==='basico').desc");
   ok(efAlly !== baseAlly, 'pré-condição: o básico efetivo do aliado difere do base (nv2 mudou o texto)');
   w.eval(`lerHabilidade('${allyUid}','basico')`);
-  ok(w.eval("detalhe && detalhe.texto") === efAlly, 'ao LER a habilidade do aliado, o tooltip mostra o texto EFETIVO (não o base)');
-  // INIMIGO: abre o kit (toque longo) e o rodapé mostra o efetivo DELE
+  // §329: a leitura mora no PAINEL de baixo (detalhe.desc), não mais num `detalhe.texto`.
+  ok(w.eval("detalhe && detalhe.desc") === efAlly, 'ao LER a habilidade do aliado, o painel mostra o texto EFETIVO (não o base)');
+  // INIMIGO: §329/invariante #15 — o kit do oponente é LEITURA pela caixa de minis (data-look, nunca data-sk).
+  // Foca o inimigo (o centro e as minis trocam p/ ele) e toca a mini do básico; o PAINEL de baixo mostra o efetivo DELE.
   const efEnemy = w.eval("kitDe(st, st.lados[1].units[0]).ab.find(a=>a.slot==='basico').desc");
   const baseEnemy = w.eval("GODS[st.lados[1].units[0].key].ab.find(a=>a.slot==='basico').desc");
   ok(efEnemy !== baseEnemy, 'pré-condição: o básico efetivo do inimigo difere do base');
-  w.eval(`abrirKit('${enemyUid}'); kitSel='basico'; render();`);
-  const rod = txt($('#baselayer'));
-  ok(rod.indexOf(efEnemy.slice(0, 24)) >= 0, 'o KIT do inimigo (rodapé) mostra o texto EFETIVO dele');
+  w.eval(`foco='${enemyUid}'; render();`);
+  const miniFoe = $(`.bt-mini[data-look="${enemyUid}|basico"]`);
+  ok(!!miniFoe, 'a caixa de minis mostra as habilidades do oponente em foco (leitura, data-look)');
+  if(miniFoe) miniFoe.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const rod = txt($('.bt-panel'));
+  ok(rod.indexOf(efEnemy.slice(0, 24)) >= 0, 'o KIT do inimigo (painel) mostra o texto EFETIVO dele');
   ok(baseEnemy !== efEnemy && rod.indexOf(baseEnemy) < 0, 'BITE: o kit do inimigo NÃO mostra o texto base (seria o erro do §320)');
   ok(w.eval("nivelSlotEmBatalha(st, st.lados[1].units[0], 'basico')") === 2, 'o nível mostrado do inimigo = o nível do kit efetivo do servidor (valor público)');
 
   // ---- D) PvE / tudo nv1 → nenhum indicador, nenhum "Nv" ----
   console.log('\n== D) tudo nível 1 (PvE) → nada ==');
   w.eval(`st = novoEstado(${JSON.stringify(ally)}, ${JSON.stringify(enemy)}, 1, 0); ir('batalha',{},{substituir:true}); if(typeof pararRelogio==='function') pararRelogio(); render();`);
-  ok($$('.portrait__niv').length === 0, 'nível 1 em todos: NENHUM indicador de retrato');
-  ok($$('.skill__nv').length === 0, 'nível 1 em todos: NENHUM "Nv" nos botões');
+  ok($$('.bt-portrait__niv').length === 0, 'nível 1 em todos: NENHUM indicador de retrato');
+  ok($$('.bt-skill__nv').length === 0, 'nível 1 em todos: NENHUM "Nv" nos botões');
 
   // ---- E) SELEÇÃO de time: indicador nos deuses escolhidos (níveis da conta) ----
   console.log('\n== E) seleção de time: indicador nos deuses escolhidos ==');
@@ -165,34 +170,40 @@ function acharChromium() {
         const R = el => el.getBoundingClientRect();
         const over = (a, b) => !(a.right <= b.left + 0.5 || a.left >= b.right - 0.5 || a.bottom <= b.top + 0.5 || a.top >= b.bottom - 0.5);
         const vw = document.documentElement.clientWidth;
-        let niv = document.querySelectorAll('.portrait__niv').length;
-        let sk = document.querySelectorAll('.skill__nv').length;
-        let cobreHP = 0, cobreFx = 0, foraRetrato = 0, cortaH = 0, cobreCusto = 0, foraTile = 0;
-        document.querySelectorAll('.portrait__niv').forEach(el => {
-          const b = R(el), port = R(el.closest('.portrait'));
-          const hp = el.closest('.portrait').querySelector('.hp'); if (hp && over(b, R(hp))) cobreHP++;
-          // §328: a faixa de etiquetas é irmã do retrato (fxtags, abaixo da vida) — o selo de nível não pode cobri-la
-          const row = el.closest('.brow'); const fx = row && row.querySelector('.fxtags'); if (fx && R(fx).height > 0 && over(b, R(fx))) cobreFx++;
+        // §329: retrato/vida/efeitos/habilidades agora são IRMÃOS absolutos (sem contêiner por unidade). O selo de
+        // nível (.bt-portrait__niv) mora DENTRO do retrato; checamos sua sobreposição contra TODAS as barras de vida,
+        // ícones de efeito e habilidades do campo — a intenção (o selo não cobre nada disso) é preservada.
+        let niv = document.querySelectorAll('.bt-portrait__niv').length;
+        let sk = document.querySelectorAll('.bt-skill__nv').length;
+        let cobreHP = 0, cobreFx = 0, foraRetrato = 0, cortaH = 0, cobreSkill = 0, foraTile = 0;
+        const hps = [...document.querySelectorAll('.bt-hp')].map(R);
+        const effs = [...document.querySelectorAll('.bt-eff')].map(R);
+        const skills = [...document.querySelectorAll('.bt-skill')].map(R);
+        document.querySelectorAll('.bt-portrait__niv').forEach(el => {
+          const b = R(el), port = R(el.closest('.bt-portrait'));
+          if (hps.some(h => over(b, h))) cobreHP++;
+          if (effs.some(f => over(b, f))) cobreFx++;
+          if (skills.some(s => over(b, s))) cobreSkill++;
           if (b.left < port.left - 0.5 || b.right > port.right + 0.5 || b.top < port.top - 0.5) foraRetrato++;
           if (b.right > vw + 0.5) cortaH++;
         });
-        document.querySelectorAll('.skill__nv').forEach(el => {
-          const b = R(el), tile = R(el.closest('.skill'));
-          const cost = el.closest('.skill').querySelector('.skill__cost, [class*="cost"]'); if (cost && over(b, R(cost))) cobreCusto++;
+        document.querySelectorAll('.bt-skill__nv').forEach(el => {
+          const b = R(el), tile = R(el.closest('.bt-skill'));
+          // §329: obsoleto — o custo saiu do tile para o painel de baixo; o selo "Nv" só precisa caber no tile.
           if (b.left < tile.left - 0.5 || b.right > tile.right + 0.5 || b.top < tile.top - 0.5 || b.bottom > tile.bottom + 0.5) foraTile++;
           if (b.right > vw + 0.5) cortaH++;
         });
-        return { niv, sk, cobreHP, cobreFx, foraRetrato, cortaH, cobreCusto, foraTile };
+        return { niv, sk, cobreHP, cobreFx, foraRetrato, cortaH, cobreSkill, foraTile };
       }, { ally, enemy });
       ok(r.niv >= 2, `@${W}: há indicador nos retratos dos dois lados (${r.niv})`);
       ok(r.sk >= 1, `@${W}: há "Nv" no(s) botão(ões) do aliado (${r.sk})`);
       ok(r.cobreHP === 0, `@${W}: o indicador NÃO cobre a barra de HP (${r.cobreHP})`);
-      ok(r.cobreFx === 0, `@${W}: o indicador NÃO cobre a faixa de efeitos (${r.cobreFx})`);
+      ok(r.cobreFx === 0, `@${W}: o indicador NÃO cobre os ícones de efeito (${r.cobreFx})`);
+      ok(r.cobreSkill === 0, `@${W}: o indicador NÃO cobre as habilidades (${r.cobreSkill})`);
       ok(r.foraRetrato === 0, `@${W}: o indicador fica DENTRO do retrato (${r.foraRetrato})`);
-      ok(r.cobreCusto === 0, `@${W}: o "Nv" NÃO cobre o custo do tile (${r.cobreCusto})`);
       ok(r.foraTile === 0, `@${W}: o "Nv" fica DENTRO do tile (${r.foraTile})`);
       ok(r.cortaH === 0, `@${W}: nada do indicador corta na horizontal (${r.cortaH})`);
-      console.log(`  @${W}: retratos ${r.niv} · botões ${r.sk} · sem cobrir HP/efeitos/custo · sem corte`);
+      console.log(`  @${W}: retratos ${r.niv} · botões ${r.sk} · sem cobrir HP/efeitos/habilidades · sem corte`);
     }
   } finally { try { await browser.close(); } catch (e) {} }
   fechar();

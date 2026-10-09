@@ -128,122 +128,13 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     }
   }
 
-  // == geometria da batalha (§214/§257): a última fileira NUNCA cruza o rodapé e a ficha
-  // (círculo 90 aberto; cresce a 96 RECOLHIDO) NUNCA estoura a fileira. Medido em
-  // navegador REAL a 926×428 (o palco de referência), com rect real, aberto e recolhido. ==
-  console.log('== geometria (§214): fileira não cruza o rodapé; tile recolhido não estoura a fileira ==');
-  {
-    await page.setViewportSize({ width: 926, height: 428 });
-    await page.evaluate(() => {
-      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
-      ELEMS.forEach(e => st.lados[0].orbs[e] = 3);
-      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false; peekKit = null;
-      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
-    });
-    const geo = async () => page.evaluate(() => {
-      const rows = [...document.querySelectorAll('.brow')];
-      const last = rows[rows.length - 1].getBoundingClientRect();
-      const ft = document.querySelector('.footer').getBoundingClientRect();
-      const r0 = rows[0].getBoundingClientRect();
-      const tile = rows[0].querySelector('.brow__tiles .skill');
-      const tr = tile ? tile.getBoundingClientRect() : null;
-      return { lastB: last.bottom, ftT: ft.top, rowT: r0.top, rowB: r0.bottom,
-        tileT: tr ? tr.top : null, tileB: tr ? tr.bottom : null, tileW: tr ? tr.width : null };
-    });
-    const a = await geo();
-    ok(a.lastB <= a.ftT + EPS, `aberto: última fileira (${Math.round(a.lastB)}) cruza o rodapé (${Math.round(a.ftT)})`);
-    ok(a.tileB <= a.rowB + EPS && a.tileT >= a.rowT - EPS,
-      `aberto: tile estoura a fileira (tile ${Math.round(a.tileT)}..${Math.round(a.tileB)} vs fileira ${Math.round(a.rowT)}..${Math.round(a.rowB)})`);
-    // §299: o painel lateral SAIU — não há mais recolher/crescer tiles. A geometria (fileira ≤ rodapé,
-    // ficha dentro da fileira) segue valendo com a faixa de efeitos acima das fichas.
-    console.log(`  fila≤rodapé (${Math.round(a.lastB)}≤${Math.round(a.ftT)}) · ficha ${Math.round(a.tileW)}px dentro da fileira`);
+  // §329: obsoleto — a geometria de batalha §214/§257 (fileiras .brow/.brow__tiles, rodapé .footer, ficha 90,
+  // faixa do HUD acima das fileiras) foi refeita: o campo agora é posicionamento ABSOLUTO em #baselayer.bt, sem
+  // fileiras nem rodapé. A seção de medição geométrica dessas fileiras foi removida junto com o layout que media.
 
-    // §207/§214: numa Provação (com HUD), a faixa do HUD termina ANTES das fileiras — medido de verdade.
-    const hud = await page.evaluate(() => {
-      prova = PROVACOES.find(x => x.key === 'durga'); provaFim = null; campanha = null; painelRecolhido = false;
-      st = montarProvacao(prova); vsCPU = false; pararRelogio(); ir('batalha', {}, { substituir: true }); render();
-      const ph = document.querySelector('.phud').getBoundingClientRect();
-      const rows = [...document.querySelectorAll('.brow')];
-      const r0 = rows[0].getBoundingClientRect();
-      const last = rows[rows.length - 1].getBoundingClientRect();
-      const ft = document.querySelector('.footer').getBoundingClientRect();
-      return { phB: ph.bottom, rowT: r0.top, lastB: last.bottom, ftT: ft.top };
-    });
-    ok(hud.phB <= hud.rowT + EPS, `HUD: a faixa (${Math.round(hud.phB)}) cruza as fileiras (${Math.round(hud.rowT)})`);
-    ok(hud.lastB <= hud.ftT + EPS, `HUD: a última fileira (${Math.round(hud.lastB)}) cruza o rodapé (${Math.round(hud.ftT)})`);
-    console.log(`  com HUD: faixa≤fileiras (${Math.round(hud.phB)}≤${Math.round(hud.rowT)}), fila≤rodapé (${Math.round(hud.lastB)}≤${Math.round(hud.ftT)})`);
-    await page.evaluate(() => { prova = null; painelRecolhido = false; ir('home', {}, { substituir: true }); render(); });
-  }
-
-  // == §239: MOLDURA (item 5) + ênfase que NÃO move (item 4). A placa (.brow__unit) passa por baixo do
-  // retrato E das 4 habilidades, unindo-os; o retrato SOBREPÕE a borda de cima da placa (fica por cima).
-  // As habilidades COLAM no retrato (esquerda), com respiro largo antes do inimigo (não centralizadas).
-  // GUARDA PERMANENTE: a POSIÇÃO das habilidades é IDÊNTICA na minha vez e na do oponente. ==
-  console.log('== geometria (§239): moldura sob o retrato + habilidades coladas + posição imóvel entre turnos ==');
-  {
-    await page.setViewportSize({ width: 926, height: 428 });
-    // limpa a safe-area injetada pela matriz (senão o padding lateral desloca as posições absolutas)
-    await page.evaluate(() => { const s = document.getElementById('safeinject'); if (s) s.remove(); dispatchEvent(new Event('resize')); });
-    const medirFila = () => page.evaluate(() => {
-      const R = el => el.getBoundingClientRect();
-      const brow = document.querySelector('.brow');
-      const unit = brow.querySelector('.brow__unit');
-      const ur = R(unit);
-      const cs = getComputedStyle(unit, '::before');
-      const insetT = parseFloat(cs.top) || 0, insetB = parseFloat(cs.bottom) || 0;
-      const por = R(brow.querySelector('.brow__ally .portrait'));
-      const tiles = [...brow.querySelectorAll('.brow__tiles .skill')].map(R);
-      const enemy = R(brow.querySelector('.brow__enemy .portrait'));
-      const rows = document.querySelector('.rows').getBoundingClientRect();
-      return {
-        unitL: ur.left, unitR: ur.right, plateT: ur.top + insetT, plateB: ur.bottom - insetB,
-        porL: por.left, porR: por.right, porT: por.top, porB: por.bottom,
-        t0L: tiles[0].left, tLastR: tiles[tiles.length - 1].right, nTiles: tiles.length,
-        enemyL: enemy.left, enemyR: enemy.right, rowsR: rows.right,
-      };
-    });
-    const posBattle = (ativo) => page.evaluate((ativo) => {
-      vsCPU = true; IA_LADO = 1; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = ativo;
-      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
-      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false; peekKit = null;
-      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
-    }, ativo);
-
-    await posBattle(0);                 // minha vez (eu = lado 0, CPU = lado 1)
-    const meu = await medirFila();
-    const gap = meu.t0L - meu.porR;      // vão entre o retrato e o 1º tile (colados = pequeno)
-    const respiro = meu.enemyL - meu.tLastR;   // vão até o inimigo (grande, à direita)
-    // moldura passa por baixo do retrato E das habilidades (une os dois)
-    ok(meu.unitL <= meu.porL + EPS, `moldura começa antes do retrato (unit ${Math.round(meu.unitL)} <= retrato ${Math.round(meu.porL)})`);
-    ok(meu.unitR >= meu.tLastR - EPS, `moldura passa atrás da última habilidade (unit ${Math.round(meu.unitR)} >= tile ${Math.round(meu.tLastR)})`);
-    // §328: o retrato NÃO pop mais acima da placa — ele encolheu (92→58) e cabe DENTRO da banda, abrindo espaço
-    // ABAIXO da barra de vida para a coluna de ETIQUETAS de efeito. A moldura segue unindo retrato + fichas (acima).
-    ok(meu.porT >= meu.plateT - EPS, `§328: o retrato fica contido na placa, sem popar acima (retrato ${Math.round(meu.porT)} >= topo da placa ${Math.round(meu.plateT)})`);
-    // §328: a BANDA entre o retrato e as fichas é reservada à coluna de ETIQUETAS; elas não invadem as fichas.
-    const fxR = await page.evaluate(() => { const b = document.querySelector('.brow'); const u = st.lados[0].units[0]; u.efeitos = [{ type: 'vulneravel', v: 6, dur: 2 }]; render();
-      const fx = b.querySelector('.brow__ally .fxtags'); const t0 = b.querySelector('.brow__tiles .skill');
-      return { fxRight: fx ? fx.getBoundingClientRect().right : 0, t0Left: t0.getBoundingClientRect().left }; });
-    ok(fxR.fxRight <= fxR.t0Left + EPS, `§328: a coluna de etiquetas não invade as fichas (etiquetas →${Math.round(fxR.fxRight)} <= ficha ${Math.round(fxR.t0Left)})`);
-    ok(respiro > gap + 30, `há respiro largo antes do inimigo, não centralizado (respiro ${Math.round(respiro)} >> vão ${Math.round(gap)})`);
-    ok(meu.tLastR <= 770, `§257: as 4 fichas (círculo 90) terminam por volta de ~764, com respiro até o inimigo (terminaram em ${Math.round(meu.tLastR)} <= 770)`);
-    ok(meu.enemyL > meu.tLastR + 30, `o inimigo continua à direita, sem colidir (inimigo ${Math.round(meu.enemyL)} > tiles ${Math.round(meu.tLastR)})`);
-    console.log(`  moldura ${Math.round(meu.unitL)}..${Math.round(meu.unitR)} sob retrato ${Math.round(meu.porL)}..${Math.round(meu.porR)} + tiles →${Math.round(meu.tLastR)} · retrato pop ${Math.round(meu.plateT - meu.porT)}px acima da placa · vão ${Math.round(gap)} « respiro ${Math.round(respiro)}`);
-
-    await posBattle(1);                 // vez do oponente — a ÊNFASE muda, a POSIÇÃO não
-    const dele = await medirFila();
-    const imovel = ['porL', 'porR', 'porT', 'porB', 't0L', 'tLastR', 'unitL', 'unitR', 'enemyL', 'enemyR']
-      .every(k => Math.abs(meu[k] - dele[k]) < EPS);
-    ok(imovel, `GUARDA PERMANENTE: nada se move entre turnos (minha vez vs vez dele: ` +
-      ['porL', 't0L', 'tLastR', 'enemyL'].map(k => `${k} ${Math.round(meu[k])}/${Math.round(dele[k])}`).join(', ') + ')');
-    // e a ênfase INVERTE: o baselayer marca de quem é a vez (a luz segue a classe, não o layout)
-    const classes = await page.evaluate(() => document.getElementById('baselayer').className);
-    ok(/turno-eles/.test(classes), `no turno do oponente o baselayer marca turno-eles (veio "${classes}")`);
-    await posBattle(0);
-    const c0 = await page.evaluate(() => document.getElementById('baselayer').className);
-    ok(/turno-eu/.test(c0), `na minha vez o baselayer marca turno-eu (veio "${c0}")`);
-    console.log(`  posição imóvel entre turnos (item 4) · ênfase por classe: turno-eu ⇄ turno-eles`);
-    await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
-  }
+  // §329: obsoleto — a MOLDURA §239 (.brow__unit unindo retrato+habilidades, inimigo "fora" dela, ficha colada,
+  // posição imóvel entre turnos) não existe mais: retrato, vida, efeitos e habilidades viraram irmãos absolutos.
+  // A ênfase por turno (turno-eu/turno-eles no #baselayer) PERMANECE e segue coberta em render_sweep.test.js.
 
   // == §220: DETALHE do deus — arte quadrada (sem corte feio), nome não coberto, skill ≥76, texto sem rolar ==
   console.log('== geometria (§220): detalhe do deus — arte, nome, toque das skills, texto ==');
@@ -319,136 +210,13 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await ctx.close();
   }
 
-  // == §238 REVISA §211: TRÊS níveis de estado na ARTE, distinguíveis E reconhecíveis ==
-  // O §211 travava "arte nunca apagada" (sat >= 30, sem filtro). Certo na DIREÇÃO, errado na INTENSIDADE:
-  // o dono, no celular, não distinguia o que podia usar. Agora a arte PESA o estado em três níveis —
-  // pronto > indisponível > recuo — mas nenhum apaga o deus. O guarda foi REVISADO (não apagado): mede o
-  // pixel real e cobra (a) a ORDEM (pronto mais saturado que indisponível, que é mais que recuo) e
-  // (b) o PISO de reconhecimento — todos acima do grayscale antigo (~18), que era o que apagava.
-  // Motivo do número: medido no aparelho (DPR 2), pronto ~55 · indisponível ~37 · recuo ~28; o piso 22
-  // fica acima do apagado ~18 e abaixo do recuo, e as margens separam os três sem ambiguidade.
-  const PISO_RECONHECE = 22;   // §238: abaixo disto a arte "apaga" (o grayscale do §211 dava ~18)
-  console.log(`== §238 discos: três níveis distinguíveis, todos reconhecíveis (sat >= ${PISO_RECONHECE}) ==`);
-  {
-    const dctx = await browser.newContext({ deviceScaleFactor: 2, viewport: { width: 926, height: 428 } });
-    const dpg = await dctx.newPage();
-    await dpg.goto('file://' + distAbs, { waitUntil: 'load' });
-    await dpg.evaluate(() => {
-      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
-      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
-      prova = null; campanha = null; provaFim = null; campanhaFim = null;
-      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
-    });
-    await dpg.waitForFunction(() => { const im = document.querySelector('.skill--habilidade .skill__disc .slot__art'); return im && im.complete && im.naturalWidth > 0; }, { timeout: 6000 }).catch(() => {});
-    async function satDoNivel(nv) {
-      await dpg.evaluate((nv) => {
-        const sk = document.querySelector('.skill--habilidade');
-        sk.classList.remove('nv-pronto', 'nv-indispon', 'nv-recuo'); sk.classList.add(nv);
-      }, nv);
-      await dpg.waitForTimeout(180);
-      const disc = await dpg.$('.skill--habilidade .skill__disc');
-      const buf = await disc.screenshot();
-      return await dpg.evaluate(async (url) => {
-        const img = new Image(); img.src = url; await img.decode();
-        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
-        const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
-        const d = cx.getImageData(0, 0, cv.width, cv.height).data;
-        const W = cv.width, Hh = cv.height, cxp = W / 2, cyp = Hh / 2, rad = Math.min(W, Hh) * 0.46;
-        let ss = 0, n = 0;
-        for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) {
-          const dx = x - cxp, dy = y - cyp; if (dx * dx + dy * dy > rad * rad) continue;
-          const i = (y * W + x) * 4, r = d[i] / 255, g = d[i + 1] / 255, bb = d[i + 2] / 255;
-          const mx = Math.max(r, g, bb), mn = Math.min(r, g, bb); ss += mx === 0 ? 0 : (mx - mn) / mx; n++;
-        }
-        return Math.round(ss / n * 100);
-      }, 'data:image/png;base64,' + buf.toString('base64'));
-    }
-    const pronto = await satDoNivel('nv-pronto');
-    const indispon = await satDoNivel('nv-indispon');
-    const recuo = await satDoNivel('nv-recuo');
-    console.log(`  ANTES→DEPOIS (§211→§238):  pronto ${pronto}  >  indisponível ${indispon}  >  recuo ${recuo}   (piso reconhece ${PISO_RECONHECE})`);
-    ok(pronto >= 45, `pronto: arte cheia (sat ${pronto} >= 45)`);
-    ok(pronto - indispon >= 8, `indisponível é NITIDAMENTE mais fraco que pronto (${indispon} vs ${pronto})`);
-    ok(indispon - recuo >= 4, `recuo é mais fraco que indisponível (${recuo} vs ${indispon})`);
-    ok(recuo >= PISO_RECONHECE, `recuo AINDA reconhecível (sat ${recuo} >= ${PISO_RECONHECE}, acima do apagado ~18)`);
-    ok(indispon >= PISO_RECONHECE, `indisponível reconhecível (sat ${indispon} >= ${PISO_RECONHECE})`);
-    await dctx.close();
-  }
+  // §329: obsoleto — a medição de SATURAÇÃO dos três níveis de disco §238 (classes nv-pronto/nv-indispon/nv-recuo
+  // no .skill--habilidade) foi removida: §329 refez o disco (.bt-skill__disc) e os estados viraram is-ready/
+  // is-cooldown/is-off, sem os três níveis de arte medidos por pixel aqui.
 
-  // == §258: retrato > ficha (§214 restaurada, crescendo o retrato) · aliado=inimigo · vida OPACA
-  // sobre a arte (legibilidade não muda) · faixa de efeitos cabe com os 6 do pior caso ==
-  console.log('== §258 retrato: hierarquia restaurada + simetria + vida opaca sobre a arte + efeitos cabem ==');
-  {
-    const rctx = await browser.newContext({ deviceScaleFactor: 3, viewport: { width: 926, height: 428 } });
-    const rpg = await rctx.newPage();
-    await rpg.goto('file://' + distAbs, { waitUntil: 'load' });
-    await rpg.evaluate(() => {
-      vsCPU = false; st = novoEstado(['iara', 'zeus', 'ogum'], ['sobek', 'brigid', 'ganesha'], 1, 0); st.ativo = 0;
-      ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
-      prova = null; campanha = null; provaFim = null; campanhaFim = null; painelRecolhido = false;
-      ir('batalha', {}, { substituir: true }); pararRelogio(); render();
-    });
-    // GUARDA forma (§328): retrato QUADRADO e SIMÉTRICO (aliado = inimigo); a ficha segue 90. O retrato encolheu
-    // (92→58) p/ abrir as etiquetas abaixo da vida — a hierarquia "retrato > ficha" do §214 foi revista (DECISOES §328).
-    const dim = await rpg.evaluate(() => {
-      const R = el => { const r = el.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; };
-      return { por: R(document.querySelector('.brow__ally .portrait')), sk: R(document.querySelector('.brow__tiles .skill')), foe: R(document.querySelector('.brow__enemy .portrait')) };
-    });
-    ok(dim.por.w === dim.por.h, `§328: o retrato é QUADRADO (${dim.por.w}x${dim.por.h})`);
-    ok(dim.sk.w === 90 && dim.sk.h === 90, `§257: a ficha segue 90x90 (${dim.sk.w}x${dim.sk.h})`);
-    ok(dim.por.w === dim.foe.w && dim.por.h === dim.foe.h, `simetria: retrato aliado = inimigo (${dim.por.w}×${dim.por.h} vs ${dim.foe.w}×${dim.foe.h})`);
-
-    // GUARDA vida OPACA: força a arte do retrato a BRANCO (pior caso) e prova que a barra não deixa a arte
-    // vazar — o rótulo lê contra o preenchimento, não contra a arte, então a legibilidade não piora (§258).
-    await rpg.evaluate(() => {
-      document.querySelectorAll('.up--ally .portrait .slot').forEach(e => e.style.background = '#fff');
-      document.querySelectorAll('.up--ally .portrait .slot img').forEach(e => e.style.filter = 'brightness(4)');
-    });
-    await rpg.waitForTimeout(150);
-    const hpEl = await rpg.$('.up--ally .hp');
-    const hbuf = await hpEl.screenshot();
-    const hp = await rpg.evaluate(async (url) => {
-      const img = new Image(); img.src = url; await img.decode();
-      const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
-      const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0);
-      const d = cx.getImageData(0, 0, cv.width, cv.height).data; const W = cv.width, H = cv.height;
-      const L = (r, g, b) => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
-      let maxL = 0, cornerMax = 0;   // canto = base esquerda, longe do texto central
-      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4; const l = L(d[i], d[i + 1], d[i + 2]);
-        if (l > maxL) maxL = l;
-        if (x < W * 0.18 && y > H * 0.5 && l > cornerMax) cornerMax = l; }
-      return { maxL: +maxL.toFixed(3), cornerL: +cornerMax.toFixed(3) };
-    }, 'data:image/png;base64,' + hbuf.toString('base64'));
-    ok(hp.cornerL < 0.5, `vida OPACA: com a arte BRANCA por trás, o canto da barra segue escuro (L ${hp.cornerL} < 0.5) — a arte não vaza`);
-    ok(hp.maxL > 0.85, `o rótulo de vida tem texto claro visível sobre a barra (L ${hp.maxL} > 0.85)`);
-    console.log(`  vida: canto L ${hp.cornerL} (arte branca não vaza) · texto L ${hp.maxL} · contraste do rótulo contra o preenchimento (não a arte)`);
-
-    // §328 GUARDA efeitos: as ETIQUETAS vivem ABAIXO da barra de vida (fora do retrato). Com 6 efeitos mostram
-    // até 3 nomeadas + "+N" (o excedente não some nem corta), cada uma com NOME escrito, dentro do board.
-    const fx = await rpg.evaluate(() => {
-      const board = document.querySelector('.board').getBoundingClientRect();
-      const u = st.lados[0].units[0];
-      u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'dmgDown', v: 4, dur: 2 }];
-      u.dots = [{ nome: 'queimadura', dur: 2, v: 5 }];   // 6 no total
-      render();
-      const up = document.querySelector('.brow .up--ally');
-      const fxs = up.querySelector('.fxtags');
-      const hp = up.querySelector('.hp').getBoundingClientRect();
-      const sr = fxs.getBoundingClientRect();
-      const cells = fxs.querySelectorAll('.fxtag').length;
-      const nomeados = [...fxs.querySelectorAll('.fxtag:not(.fxtag--mais) .fxtag__n')].filter(n => (n.textContent || '').trim()).length;
-      const temMais = !!fxs.querySelector('.fxtag--mais');
-      const abaixo = sr.top >= hp.bottom - 1;   // começa ABAIXO da barra de vida
-      const dentro = sr.top >= board.top - 1 && sr.bottom <= board.bottom + 1;   // não corta o board
-      return { abaixo, dentro, cells, nomeados, temMais };
-    });
-    ok(fx.abaixo, '§328: as etiquetas ficam ABAIXO da barra de vida (não dentro do retrato)');
-    ok(fx.dentro, '§328: com 6 efeitos a faixa NÃO corta (dentro do board)');
-    ok(fx.cells <= 3 && fx.temMais, `§328: 6 efeitos → até 3 células + "+N" (células ${fx.cells}, +N ${fx.temMais})`);
-    ok(fx.nomeados >= 1 && fx.nomeados === fx.cells - (fx.temMais ? 1 : 0), `§328: toda etiqueta visível tem NOME escrito (nomeados ${fx.nomeados})`);
-    console.log(`  efeitos: ${fx.cells} etiquetas abaixo da vida, ${fx.nomeados} nomeadas, "+N" ${fx.temMais}, sem corte`);
-    await rctx.close();
-  }
+  // §329: obsoleto — a hierarquia "retrato > ficha" §258/§214 (retrato .brow__ally/.brow__enemy .portrait, ficha
+  // .brow__tiles .skill 90×90, barra .hp sobre a arte, faixa de etiquetas .fxtags abaixo da vida dentro do .board)
+  // não existe mais: §329 posiciona retrato, vida e habilidades em absoluto (.bt-portrait/.bt-hp/.bt-skill/.bt-eff).
 
   // == §260: FONTES LOCAIS — o jogo publicado NÃO faz requisição a domínio externo; a tipografia é
   // verdadeira SEM REDE (Cinzel/Rajdhani locais, não o fallback serif). ==
@@ -558,35 +326,36 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       campCapIdx = 0; campAtoIdx = 4; render();
       const cinim = document.querySelector('.camp__inims .cinim__nome'); const cCin = getComputedStyle(cinim);
       const boxCin = cinim.clientWidth, fontCin = cCin.fontWeight + ' ' + cCin.fontSize + ' ' + cCin.fontFamily.split(',')[0].replace(/['"]/g, '');
-      // caixa batalha (portrait__nome) — monta uma provação com criaturas do bestiário
-      st = montarProvacao({ aliados: ['zeus', 'nuwa', 'mulasemcabeca'], inimigos: ['naiade', 'servo_cinzas', 'ghoul'], montar: { seed: 3, comeca: 0 } });
-      prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
-      const port = document.querySelector('.up--enemy .portrait__nome'); const cPor = getComputedStyle(port);
-      const boxPor = port.clientWidth, fontPor = cPor.fontWeight + ' ' + cPor.fontSize + ' ' + cPor.fontFamily.split(',')[0].replace(/['"]/g, ''), lsPor = cPor.letterSpacing;
-      // todos os 12 curtos, do DATA
+      // §329: obsoleto — o retrato de batalha não tem mais caixa de NOME (.portrait__nome); o nome é lido no painel/centro.
+      // Resta a caixa apertada do BRIEFING (campanha), que §329 não mexeu.
       const curtos = BESTIARIO_DADOS.map(b => ({ key: b.key, curto: b.curto || b.nome, temCurto: !!b.curto }));
       const cv = document.createElement('canvas'), cx = cv.getContext('2d');
       const larg = (t, f, ls) => { cx.font = f; try { cx.letterSpacing = ls || 'normal'; } catch (e) {} return cx.measureText(t).width; };
       const cortaCin = curtos.filter(c => larg(c.curto, fontCin, 'normal') > boxCin).map(c => c.key);
-      const cortaPor = curtos.filter(c => larg(c.curto, fontPor, lsPor) > boxPor).map(c => c.key);
       const semCurto = curtos.filter(c => !c.temCurto).map(c => c.key);
-      // o render de fato usa o curto? (o retrato do inimigo mostra 1 palavra)
-      const renderCurto = /^\S+$/.test(port.textContent.trim());
-      return { total: curtos.length, boxCin, boxPor, cortaCin, cortaPor, semCurto, renderCurto, exemploPort: port.textContent.trim() };
+      return { total: curtos.length, boxCin, cortaCin, semCurto };
     });
     ok(c3.total === 12 && c3.semCurto.length === 0, `§262 C3: bestiário sem campo 'curto' em: ${c3.semCurto.join(', ')}`);
     ok(c3.cortaCin.length === 0, `§262 C3: nome curto corta no BRIEFING (${c3.boxCin}px): ${c3.cortaCin.join(', ')}`);
-    ok(c3.cortaPor.length === 0, `§262 C3: nome curto corta no RETRATO (${c3.boxPor}px): ${c3.cortaPor.join(', ')}`);
-    ok(c3.renderCurto, `§262 C3: o retrato de inimigo deveria mostrar o nome CURTO de 1 palavra (veio "${c3.exemploPort}")`);
+    // §329: obsoleto — a caixa de nome no RETRATO de batalha (.portrait__nome) sumiu; a asserção de corte no retrato foi removida.
 
     // -- C4: apelido de 16ch não corta na vertical (a barra de identidade, Cinzel alta) --
     console.log('== §262 C4: apelido sem corte vertical ==');
     const c4 = await gp.evaluate(() => {
-      const e = document.querySelector('.prof__nick'); if (!e) return { ausente: true };
-      e.textContent = 'ÁÇÃOJOGADORÍSSÍM'; // 16ch, maiúsculas altas + acentos
-      return { cortaV: e.scrollHeight > e.clientHeight + 0.5, ch: e.clientHeight, sh: e.scrollHeight };
+      // §329: a barra de identidade da batalha usa .bt-name__nick (antes .prof__nick).
+      st = novoEstado(['zeus', 'ogum', 'tyr'], ['sobek', 'brigid', 'ganesha'], 1, 0);
+      prova = null; campanha = null; provaFim = null; campanhaFim = null; vsCPU = true; IA_LADO = 1;
+      ir('batalha', {}, { substituir: true }); try { pararRelogio(); } catch (e) {} render();
+      const e = document.querySelector('.bt-name__nick'); if (!e) return { ausente: true };
+      const h0 = e.clientHeight;                       // altura com o nick curto (1 linha)
+      e.textContent = 'ÁÇÃOJOGADORÍSSÍM';              // 16ch, maiúsculas altas + acentos
+      const h1 = e.clientHeight;                       // §329: deve seguir 1 linha (não quebra/cresce)
+      const cs = getComputedStyle(e);
+      // §329: o nick trunca HORIZONTALMENTE por ellipsis (1 linha nowrap), nunca quebra nem corta na vertical.
+      return { cresceu: h1 > h0 + 0.5, h0, h1, nowrap: cs.whiteSpace === 'nowrap', ellipsis: cs.textOverflow === 'ellipsis' };
     });
-    ok(!c4.ausente && !c4.cortaV, `§262 C4: o apelido de 16ch corta na vertical (ch ${c4 && c4.ch}, sh ${c4 && c4.sh})`);
+    ok(!c4.ausente && !c4.cresceu && c4.nowrap && c4.ellipsis,
+      `§262 C4 (§329): o apelido de 16ch fica em 1 linha (ellipsis horizontal), sem quebrar/cortar na vertical (h ${c4 && c4.h0}→${c4 && c4.h1}, nowrap ${c4 && c4.nowrap}, ellipsis ${c4 && c4.ellipsis})`);
     await g.close();
   }
 
@@ -603,41 +372,53 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     const p1 = await gp.evaluate(() => {
       st = montarProvacao({ aliados: ['brigid', 'apolo', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; escolhidos = []; painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
-      const ally = [...document.querySelectorAll('.up--ally .portrait__pas')].map(b => b.classList.contains('pas--on'));
-      const foe = [...document.querySelectorAll('.up--enemy .portrait__pas')].map(b => b.classList.contains('pas--on'));
+      // §329: o "P" é .bt-portrait__pas, no retrato aliado (.bt-portrait--ally) / inimigo (.bt-portrait--foe).
+      const ally = [...document.querySelectorAll('.bt-portrait--ally .bt-portrait__pas')].map(b => b.classList.contains('pas--on'));
+      const foe = [...document.querySelectorAll('.bt-portrait--foe .bt-portrait__pas')].map(b => b.classList.contains('pas--on'));
       return { ally, foe };
     });
     ok(p1.ally.length === 3 && p1.ally.every(Boolean), `§266: sob a aura da Brígida os 3 P aliados ACENDEM (${JSON.stringify(p1.ally)})`);
     ok(p1.foe.every(x => !x), `§266: o P do inimigo (aura não o alcança) fica APAGADO — agindo é distinguível de parado (${JSON.stringify(p1.foe)})`);
 
-    // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte.
-    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.up--ally [data-pas]')]; if (ps[1]) ps[1].click();
-      const t = document.querySelector('.leitura__txt') || document.querySelector('.leitura'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
+    // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte (no painel §329).
+    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.bt-portrait--ally [data-pas]')]; if (ps[1]) ps[1].click();
+      const t = document.querySelector('.bt-panel__desc') || document.querySelector('.bt-panel'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
     ok(/\+1/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +1 e a FONTE (Brígida, §324 P3): "${p2.slice(0, 60)}"`);
 
-    // GUARDA 3 (§328) — toda ETIQUETA de modificador numérico mostra o número escrito (vulnerável +8, redução −5).
-    console.log('== §328: etiqueta numérica mostra a magnitude (vulnerável +8, redução −5) ==');
+    // GUARDA 3 (§329) — o modificador numérico carrega a magnitude: no TÍTULO do ícone de efeito e no PAINEL ao tocar.
+    // (§329: o ícone .bt-eff mostra os TURNOS no badge; a magnitude vive no título e no painel de inspeção.)
+    console.log('== §329: a magnitude do efeito é legível (vulnerável +8, redução −5) ==');
     const p3 = await gp.evaluate(() => {
       st = montarProvacao({ aliados: ['zeus', 'nuwa', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; painelRecolhido = false;
       st.lados[1].units[0].efeitos = [{ type: 'vulneravel', v: 8, dur: 2 }, { type: 'dmgReduction', v: 5, dur: 2 }]; ir('batalha', {}, { substituir: true }); render();
-      const band = [...document.querySelectorAll('.fxtags--enemy')].find(x => x.children.length);
-      const vs = [...band.querySelectorAll('.fxtag__v')].map(e => e.textContent.trim());
-      return { nChips: band.children.length, valores: vs };
+      const foeUid = st.lados[1].units[0].uid;
+      const effs = [...document.querySelectorAll(`.bt-eff[data-eff^="${foeUid}|"]`)];
+      const titles = effs.map(e => e.getAttribute('title') || '');
+      const vuln = effs.find(e => /vulner/i.test(e.getAttribute('title') || ''));
+      if (vuln) vuln.click();   // tocar o efeito abre a inspeção no painel
+      const painel = document.querySelector('.bt-panel'); const ptxt = painel ? painel.textContent.replace(/\s+/g, ' ') : '';
+      return { nChips: effs.length, titles, ptxt };
     });
-    ok(p3.valores.includes('+8'), `§328: a etiqueta de VULNERÁVEL mostra +8 sem toque (valores: ${JSON.stringify(p3.valores)})`);
-    ok(p3.valores.filter(v => /^[+−]\d/.test(v)).length >= 2, `§328: as etiquetas numéricas mostram o número (${JSON.stringify(p3.valores)})`);
+    ok(p3.titles.some(t => /\+8/.test(t)), `§329: o ícone de VULNERÁVEL carrega a magnitude +8 no título (títulos: ${JSON.stringify(p3.titles)})`);
+    ok(/\+8/.test(p3.ptxt), `§329: tocar o efeito mostra a magnitude +8 no painel ("${p3.ptxt.slice(0, 80)}")`);
+    ok(p3.titles.filter(t => /[+−]\d/.test(t)).length >= 2, `§329: os ícones numéricos carregam o número (${JSON.stringify(p3.titles)})`);
 
-    // GUARDA 4 (§328) — no pior caso de 6 efeitos as etiquetas NÃO estouram na horizontal e o excedente
-    // colapsa em "+N" (até 3 células): ler tudo é tarefa do QUADRO de inspeção, a faixa só resume.
+    // GUARDA 4 (§329) — no pior caso de 6 efeitos os ícones NÃO estouram na horizontal e o excedente
+    // colapsa em "+N" (até 3 ícones): ler tudo é tarefa do PAINEL de inspeção, a faixa só resume.
     const p4 = await gp.evaluate(() => {
       const u = st.lados[1].units[1];
       u.efeitos = [{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]; render();
-      const band = [...document.querySelectorAll('.fxtags--enemy')].filter(x => x.children.length)[1];
-      return { estoura: band.scrollWidth > band.clientWidth + 0.5, n: band.children.length, temMais: !!band.querySelector('.fxtag--mais') };
+      const foeUid = u.uid;
+      const effs = [...document.querySelectorAll(`.bt-eff[data-eff^="${foeUid}|"]`)];
+      const row = effs.length ? effs[0].closest('.bt-eff-row') : null;
+      const rb = row ? row.getBoundingClientRect() : null;
+      const vw = document.documentElement.clientWidth;
+      // §329: o colapso em ≤3 ícones + "+N" mantém a faixa compacta — ela não corre pela tela na horizontal.
+      return { foraTela: rb ? (rb.left < -0.5 || rb.right > vw + 0.5) : true, n: effs.length, temMais: effs.some(e => e.classList.contains('bt-eff--mais')) };
     });
-    ok(!p4.estoura, `§328: a faixa com 6 efeitos NÃO estoura na horizontal (${p4.n} células)`);
-    ok(p4.n <= 3 && p4.temMais, `§328: 6 efeitos → até 3 células + "+N" (${p4.n} células, +N ${p4.temMais})`);
+    ok(!p4.foraTela, `§329: a faixa com 6 efeitos não sai da tela na horizontal (${p4.n} ícones)`);
+    ok(p4.n <= 3 && p4.temMais, `§329: 6 efeitos → até 3 ícones + "+N" (${p4.n} ícones, +N ${p4.temMais})`);
 
     // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
     console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');
@@ -647,9 +428,9 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       armado = null; alvos = []; escolhidos = []; ir('batalha', {}, { substituir: true });
       const u = st.lados[0].units[0];
       armar(u.uid, 'basico'); render();
-      const onBasico = document.querySelector('.up--enemy .portrait__pas').classList.contains('pas--on');
+      const onBasico = document.querySelector('.bt-portrait--foe .bt-portrait__pas').classList.contains('pas--on');
       armado = null; alvos = []; armar(u.uid, 'habilidade'); render();
-      const onHab = document.querySelector('.up--enemy .portrait__pas').classList.contains('pas--on');
+      const onHab = document.querySelector('.bt-portrait--foe .bt-portrait__pas').classList.contains('pas--on');
       return { onBasico, onHab };
     });
     ok(p5.onBasico, '§267: sobek (contra=básico) ACENDE quando o atacante arma um BÁSICO (casa)');

@@ -2,6 +2,38 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §329 · TELA DE BATALHA: LAYOUT refeito À RISCA da referência (data-driven)
+
+O layout do §328 foi REPROVADO (quadro central cortado, texto encavalado, nome truncado, minis sem arte). §329 refaz
+o layout seguindo 2 imagens de referência do dono, EXATAMENTE.
+- **Dado, não código:** todas as medidas (em **u = 1% da altura do palco**, 1u=4,28px) vivem em
+  `data/layout_batalha.json` (injetado como `LAYOUT_BATALHA`; `U(n)` em ui/base.js converte u→calc). **Altura manda; a
+  largura que sobra vai TODA p/ o espaço de arte do centro** — jogador ancora à esquerda, inimigo à direita, centro flui.
+- **Meu turno:** topo (ajustes · nome+avatar dos 2 lados · "SEU TURNO — ENCERRAR"+barra = botão de encerrar ·
+  contadores de energia · ⇄ trocar); 3 fileiras (retrato+vida+efeitos+faixa com quadro de ação "?" e Básico/Habilidade/
+  Milagre/Defesa); 3 inimigos (retrato+vida+efeitos à esquerda); espaço de arte do centro (deus em foco); canto inf.
+  esq. (Desistir/Menu/Som + arte atrás); painel de baixo; caixa "Toque numa habilidade" (4 minis do foco = ver o kit
+  do oponente). As bolinhas de custo saíram das fichas p/ o painel. O botão de encerrar do canto saiu.
+- **Turno do oponente:** topo "TURNO DO OPONENTE…" com barra correndo; faixas encolhem (x 18,4→72), quadro de ação
+  some, 4 quadrados apagados e SEM resposta (data-dead); centro = deus do oponente agindo; retratos/efeitos/painel
+  seguem tocáveis.
+- **Aproveitado do §328:** status_visual.json + leitura de efeitos/níveis/recarga + conteúdo de inspeção. **Descartado:**
+  todo o layout do §328.
+- **HUD de modo (Rito/campanha/Domínio):** o `.phud` é reposicionado por CSS p/ uma faixa no topo do espaço de arte do
+  centro, livre de toda área de toque (captura `329-rito-hud-780x360.png`). Sandbox/PvP não têm HUD.
+- **Arquivos:** src/view.js (renderBatalha), src/ui/campo.js (campo/retrato/faixa/efeitos/centro/minis), src/ui/topo.js
+  (topo + canto inferior + menu), src/ui/painel.js (painel de baixo), src/shell.html (bloco CSS §329, classes bt-*),
+  src/ui/base.js (U), tools/build.js (injeção+validação do layout).
+- **NÃO mudou:** motor, IA, regras, balanço, níveis, economia, fluxo de encerrar/energia livre, outras telas.
+- **Trade-offs:** retrato de batalha menor (13,6u) que no §214 (a referência manda; identidade também grande no centro);
+  arte de habilidade/corpo ainda falta → monograma/retrato recortado (nunca 404); ícone de efeito usa o de
+  status_visual (o motor não guarda a origem do efeito).
+- **Guardas:** `batalha_faixa.test.js` (sobreposição de toque + corte + encaixe de texto, 2 estados × 3 enquadramentos);
+  `batalha_inspecao.test.js` (5 provas jsdom); interface/moldura/perspectiva/render_sweep/niveis_batalha/provacao_loop
+  ajustados. Capturas em docs/telas/ (780×360 ×3, 915×412, 1600×738). Build + suíte verdes.
+- **Pendente p/ o dono:** artes de corpo-inteiro (`web/corpo/<deus>.webp`) p/ o espaço do centro; os 400 ícones de
+  habilidade. O espaço já os aceita quando chegarem.
+
 ## ★ §328 · TELA DE BATALHA: etiquetas de efeito legíveis + quadro de inspeção
 
 A tela de batalha é a MESMA em todos os modos. Dois achados do dono: (1) efeitos como ícone minúsculo + número azul no

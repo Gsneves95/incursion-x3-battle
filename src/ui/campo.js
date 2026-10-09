@@ -151,8 +151,9 @@ function btSkill(u, a, relX, relTop, size, meu){
   if(!clicavel)cls.push('is-off'); if(arm)cls.push('is-armed');
   const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
   const nvSk=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,a.slot):1;
-  // no turno do oponente as habilidades ficam APAGADAS e SEM toque de uso (só leitura via mini); data-arma=0.
-  return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}"
+  // no turno do oponente as habilidades ficam APAGADAS e NÃO RESPONDEM (data-dead=1 → ligarCampo não as liga);
+  // a leitura do kit (inclusive do oponente) é pela caixa de minis. data-arma=0 quando indisponível no meu turno.
+  return `<button class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}"${meu?'':' data-dead="1"'}
       style="left:${U(relX)};top:${U(relTop)};width:${U(size)};height:${U(size)};--anel:${anel}">
     <span class="bt-skill__disc" style="border-color:${anel}">
       ${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}
@@ -276,6 +277,7 @@ function infoEfeito(uid, idx){
 function ligarCampo(){
   // habilidade (aliado): data-arma=1 arma; 0 só lê.
   stage.querySelectorAll('.bt-skill').forEach(b=>{
+    if(b.dataset.dead==='1') return;   // turno do oponente: as habilidades do jogador não respondem
     b.onclick=()=>{ const[uid,slot]=b.dataset.sk.split('|');
       if(b.dataset.arma==='1'){ armar(uid,slot); } else lerHabilidade(uid,slot); };});
   // QUADRO DE AÇÃO: tocar desfaz a escolha (cancela o armado deste deus).

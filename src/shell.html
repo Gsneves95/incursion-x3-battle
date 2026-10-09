@@ -2576,7 +2576,7 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-hp__lab{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;
   font-weight:700;font-size:calc(var(--u)*1.9);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95)}
 /* ---- ícones de efeito ---- */
-.bt-eff{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:calc(var(--u)*0.6);
+.bt-eff{position:relative;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:calc(var(--u)*0.6);
   border:1px solid #4a4470;background:rgba(14,11,30,.92);overflow:visible;cursor:pointer;font-size:calc(var(--u)*2.2)}
 .bt-eff .slot{width:100%;height:100%;border-radius:calc(var(--u)*0.5)}
 .bt-eff--bom{border-color:#6fe6a0}.bt-eff--defesa{border-color:#6fb6ff}.bt-eff--ruim{border-color:#ff6b86}.bt-eff--controle{border-color:#b98bff}
@@ -2610,6 +2610,10 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-centro{position:absolute;overflow:hidden;border-radius:calc(var(--u)*2);display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
 .bt-centro .slot{width:100%;height:100%}
 .bt-centro__art{width:100%;height:100%;object-fit:cover;object-position:center top}
+/* §329: o HUD de modo (Rito/campanha/Domínio) vive numa FAIXA no topo do espaço de arte do centro — livre de
+   toda área de toque (topo, fileiras, painel, minis). Reposiciona o .phud de home.js sem mexer no conteúdo dele. */
+#baselayer.bt .phud{left:calc(var(--u)*85);right:calc(var(--u)*35);top:calc(var(--u)*14.4);height:calc(var(--u)*5.6);
+  border-radius:calc(var(--u)*1.2);padding:0 calc(var(--u)*1.4);gap:calc(var(--u)*1.4)}
 /* ---- canto inferior esquerdo ---- */
 .bt-corner-art{position:absolute;overflow:hidden;pointer-events:none;opacity:.9;display:flex;align-items:flex-end;justify-content:center;z-index:1}
 .bt-corner-art .slot{width:100%;height:100%}
