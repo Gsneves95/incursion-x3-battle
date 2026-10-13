@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §332 · Arte de habilidade QUADRADA preenche o botão inteiro
+
+O dono refaz as artes no formato QUADRADO cheio (Zeus já). O §331 recortava TODO disco em círculo (p/ esconder o
+quadrado claro das artes antigas, redondas sobre fundo liso) → artes novas saíam cortadas e o Ares mostrava anel claro.
+§332 trata cada arte pela SUA forma:
+1. **Build classifica** (`classificarArtesSkill`, sharp; sem lista à mão): CHEIA = cantos diferentes (vai à borda);
+   DISCO = 4 cantos iguais (fundo liso) + mede o RAIO real do disco (mediana de 16 raios). Injeta `SKILL_ARTE_FORMA`
+   `{arq:{forma:"cheia"}|{forma:"disco",raio}}`. **112 cheia / 289 disco** (401).
+2. **Render** em `slot()` (base.js), no próprio `<img>` → vale em todo lugar (botões/minis/painel/Coleção/ficha/níveis):
+   CHEIA = object-fit cover (cantos do botão); DISCO = clip-path circle(raio−2%) centrado, cantos no fundo escuro.
+   Removido o `.bt-skill__disc .slot{border-radius:50%}` global do §331.
+3. Custo/✓/recarga/apagado seguem por cima, iguais.
+4. **"Turno N"** saiu do painel (RESUMO sem `cd`) — já está na linha do ENCERRAR.
+5. **RESUMO nunca vazio** — retrato do deus que agiu por último (senão 1º do resumo; senão arte de turno do oponente;
+   senão 1ª unidade do oponente).
+- **Arquivos:** tools/build.js (classificarArtesSkill + injeção SKILL_ARTE_FORMA, tail async), src/ui/base.js (slot:
+  forma cheia/disco), src/shell.html (tirou o círculo global; .slot__art--cheia cover), src/ui/painel.js (resumo: sem
+  cd, retrato nunca vazio), tests/{batalha_faixa,batalha_inspecao}.test.js. Capturas docs/telas/332-* (meu turno
+  Zeus+Ares+Brigid; resumo da CPU). Suíte + build verdes.
+- **Provas:** jsdom (Zeus cheia / Ares+Anúbis disco com raio; RESUMO nunca vazio); Chromium (DISCO sem anel; CHEIA
+  preenche o canto). NÃO mudou mais nada.
+- **Pendente p/ o dono:** terminar de refazer as artes quadradas cheias (o build reclassifica sozinho a cada arte nova).
+
 ## ★ §331 · TELA DE BATALHA: confirmação de encerrar turno + 2 acabamentos do §330
 
 1. **Confirmar ENCERRAR sem ação:** tocar ENCERRAR com nada marcado/usado E ≥1 habilidade usável → caixa "ENCERRAR SEM

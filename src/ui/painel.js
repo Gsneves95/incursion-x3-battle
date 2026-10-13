@@ -50,7 +50,16 @@ function _modeloPainel(){
   if(typeof detalhe!=='undefined' && detalhe) return _modeloDetalhe(detalhe);
   if(typeof resumoTurno!=='undefined' && resumoTurno && resumoTurno.length) {
     const linhas=resumoTurno.filter(r=>r.tipo!=='turno'&&r.tipo!=='abertura').slice(-5).map(r=>narrar(r)).filter(Boolean);
-    return { chave:'detail', titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(), desc:linhas.join('  ·  ')||'sem ações', cd:'Turno '+st.turno };
+    // §332 item 4: o "Turno N" NÃO aparece aqui (já está na linha do ENCERRAR) → sem `cd`.
+    // §332 item 5: a imagem NUNCA fica vazia — retrato do deus que agiu por último (senão o 1º do resumo; senão a
+    // arte de turno do oponente; senão a 1ª unidade do oponente).
+    const acoes=resumoTurno.filter(r=>r.tipo==='acao'&&r.origem);
+    let key = acoes.length ? acoes[acoes.length-1].origem : null;
+    if(!key && typeof ARTE_TURNO!=='undefined' && ARTE_TURNO) key = ARTE_TURNO.oponente;
+    if(!key){ const lo=st.lados[1-ladoExibido()]; const u0=lo&&(lo.units.find(x=>x.vivo)||lo.units[0]); key=u0&&u0.key; }
+    const un = key && typeof todas==='function' ? todas().find(x=>x.key===key) : null;
+    const cor = un ? COR(un.elem) : 'var(--gold-soft)';
+    return { chave: key?('god-'+key):'detail', cor, titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(), desc:linhas.join('  ·  ')||'sem ações' };
   }
   // §329b: em repouso o painel NUNCA fica vazio — mostra o deus em foco (retrato + passiva), no lugar da citação.
   return _unidadeModeloFoco();

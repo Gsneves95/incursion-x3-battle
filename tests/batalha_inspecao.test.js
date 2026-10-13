@@ -129,6 +129,22 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   w.eval("relogio=1; tique();");
   ok(w.eval("ov")===null && w.eval("st.ativo")===1, '(f) tempo esgotado com a caixa aberta → fecha e encerra o turno');
 
+  // ---- 8) §332: classificação das artes de habilidade (build) + resumo nunca com imagem vazia ----
+  console.log('\n== 8) §332: artes de habilidade classificadas (cheia/disco) + resumo nunca vazio ==');
+  ok(w.eval("typeof SKILL_ARTE_FORMA==='object' && !!SKILL_ARTE_FORMA"), 'SKILL_ARTE_FORMA injetado pelo build');
+  const forma = k => w.eval(`(SKILL_ARTE_FORMA['${k}']||{}).forma`);
+  const raio  = k => w.eval(`(SKILL_ARTE_FORMA['${k}']||{}).raio`);
+  ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre'].forEach(k=>ok(forma(k)==='cheia', `${k} → CHEIA (${forma(k)})`));
+  ['skill-ares-basico','skill-ares-habilidade','skill-ares-milagre','skill-anubis-basico','skill-anubis-milagre'].forEach(k=>ok(forma(k)==='disco', `${k} → DISCO (${forma(k)})`));
+  ['skill-ares-basico','skill-anubis-basico'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `${k} tem raio medido (${raio(k)})`));
+  // resumo com uma ação da CPU → o painel mostra o retrato de quem agiu, não um quadrado vazio; e sem "Turno N".
+  w.eval(`st=montarProvacao({aliados:${JSON.stringify(ally)},inimigos:${JSON.stringify(enemy)},montar:{seed:3,comeca:0}});
+    prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null; foco=null;
+    resumoTurno=[{turno:st.turno,tipo:'acao',origem:'${enemy[0]}',slot:'basico'}]; render();`);
+  ok(/RESUMO/.test(($('.bt-panel__titulo')||{}).textContent||''), 'o painel está no RESUMO');
+  ok(!!$('.bt-panel__img img'), 'o painel do RESUMO mostra uma imagem (retrato de quem agiu), não um quadrado vazio');
+  ok(!/Turno\s*\d/i.test(($('.bt-panel__cd')||{}).textContent||''), 'o "Turno N" não aparece mais no canto do painel');
+
   console.log(`\n${falhas===0?'>>> BATALHA_INSPECAO OK':'>>> '+falhas+' FALHA(S)'} (${passes} ok)`);
   process.exit(falhas?1:0);
 })();

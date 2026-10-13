@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §332 · Arte de habilidade QUADRADA preenche o botão inteiro
+
+O dono está refazendo as artes de habilidade no formato QUADRADO e cheio (as do Zeus já estão). O §331 recortava TODO
+disco de habilidade em círculo (para esconder o quadrado claro das artes antigas, que são ilustrações redondas sobre
+fundo liso) — então as artes novas quadradas saíam recortadas, e o círculo maior que o disco desenhado mostrava um ANEL
+claro (Ares). §332 passa a tratar cada arte conforme a SUA forma:
+
+1. **Classificação no BUILD** (`classificarArtesSkill` em tools/build.js, com `sharp`; sem lista à mão — arte nova é
+   reclassificada sozinha no próximo build). Para cada `web/skills/*.webp` (reduzida a 64²):
+   - **CHEIA** — os 4 cantos NÃO são um fundo liso igual entre si (dist. de cor entre cantos > 30).
+   - **DISCO** — os 4 cantos têm a mesma cor (≤ 30): arte redonda sobre fundo liso. Mede o RAIO real do disco (16 raios
+     do centro até a cor virar a do fundo; mediana, fração do lado, travada em [0,3; 0,5]).
+   Resultado injetado como `SKILL_ARTE_FORMA = {arquivo: {forma:"cheia"} | {forma:"disco", raio:0.44}}`.
+2. **Render** — `slot()` (base.js) aplica no próprio `<img class="slot__art">`, então vale em TODO lugar (botões,
+   minis, imagem do painel, Coleção, ficha, níveis): CHEIA → `object-fit:cover`, sem círculo (cantos arredondados do
+   botão); DISCO → `clip-path:circle(raio−2% )` centrado, cantos no fundo escuro do botão (sem anel). Removido o
+   `.bt-skill__disc .slot{border-radius:50%}` global do §331.
+3. Bolinhas de custo, selo ✓, número de recarga e o apagado seguem por cima, iguais nos dois casos (não mudaram).
+4. **"Turno N" fora do painel** — o RESUMO não emite mais `cd:'Turno N'` (o turno já está na linha do ENCERRAR).
+5. **RESUMO nunca com imagem vazia** — mostra o retrato do deus que agiu por último (senão o 1º do resumo; senão a arte
+   de turno do oponente de `arte_turno.json`; senão a 1ª unidade do oponente).
+
+**PROVAS:** classificação (jsdom, lê `SKILL_ARTE_FORMA`): Zeus → cheia; Ares/Anúbis → disco (com raio). Chromium
+(`batalha_faixa`): botão DISCO sem anel claro nos cantos; botão CHEIA preenche o canto com a arte. Painel do RESUMO
+nunca renderiza imagem vazia (jsdom). Classificadas no build: **112 cheia / 289 disco** (401 artes). Capturas
+`docs/telas/332-*`. NÃO mudou mais nada.
+
 ## §331 · TELA DE BATALHA: confirmação de encerrar turno + 2 acabamentos do §330
 
 1. **Confirmar ENCERRAR TURNO sem ação.** Ao tocar ENCERRAR com NADA marcado/usado neste turno E havendo ≥1 habilidade

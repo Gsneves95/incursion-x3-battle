@@ -108,18 +108,20 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
         let maxD=0; for(let gx=0.30;gx<=0.70;gx+=0.1) for(let gy=0.30;gy<=0.70;gy+=0.1) maxD=Math.max(maxD,dist(px(r.x+r.w*gx,r.y+r.h*gy),bg));
         return {i,cls:r.cls,maxD}; });
     };
-    // §331 item 3: NENHUM botão de habilidade tem fundo CLARO — a amostra no canto interno do disco (a arte é
-    // recortada em círculo) deve ser ≈ o fundo escuro do disco (soma RGB baixa). Medido em pixels reais.
-    const discosClaros=async()=>{
+    // §332: por FORMA da arte (classe no <img>): DISCO não mostra fundo claro nos cantos (sem anel — os cantos são o
+    // fundo ESCURO do disco); CHEIA preenche (o canto mostra a ARTE, distinta do fundo escuro). Medido em pixels reais.
+    const arteBotoes=async()=>{
       const dsf=2;
-      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill .bt-skill__disc')].map(el=>{ const r=el.getBoundingClientRect();
-        return {x:r.x,y:r.y,w:r.width,h:r.height}; }));
+      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill')].map(b=>{ const d=b.querySelector('.bt-skill__disc'); const im=b.querySelector('.slot__art'); const r=d.getBoundingClientRect();
+        return {x:r.x,y:r.y,w:r.width,h:r.height, forma: im?((im.className.match(/slot__art--(\w+)/)||[])[1]||'?'):'none'}; }));
       if(!rects.length) return [];
       const buf=await page.screenshot(); const img=sharp(buf); const meta=await img.metadata(); const raw=await img.raw().toBuffer();
       const ch=raw.length/(meta.width*meta.height);
       const px=(cx,cy)=>{ const X=Math.max(0,Math.min(meta.width-1,Math.round(cx*dsf))), Y=Math.max(0,Math.min(meta.height-1,Math.round(cy*dsf)));
         const o=(Y*meta.width+X)*ch; return [raw[o],raw[o+1],raw[o+2]]; };
-      return rects.map((r,i)=>{ const c=px(r.x+r.w*0.1, r.y+r.h*0.1); return {i,soma:c[0]+c[1]+c[2]}; }).filter(x=>x.soma>180);
+      const disc=[20,17,42], dist=(a,b)=>Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2]);
+      return rects.map((r,i)=>{ const pts=[[0.1,0.1],[0.9,0.1],[0.1,0.9],[0.9,0.9]].map(([fx,fy])=>px(r.x+r.w*fx, r.y+r.h*fy));
+        return {i, forma:r.forma, somaMax:Math.max(...pts.map(c=>c[0]+c[1]+c[2])), distMax:Math.max(...pts.map(c=>dist(c,disc)))}; });
     };
 
     for(const modo of ['meu','oponente']){
@@ -143,10 +145,13 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       ok(m.centro, `${E.nome} [${modo}]: a arte FIXA do centro está presente (.bt-centro__corpo)`);
       // §331 item 2: o botão ENCERRAR TURNO não quebra/transborda o texto (1 linha, com respiro).
       ok(!m.encWrap, `${E.nome} [${modo}]: o texto do ENCERRAR TURNO não quebra nem toca a borda`);
-      // §331 item 3: nenhum botão de habilidade tem fundo claro (canto interno ≈ fundo escuro), em qualquer estado.
-      const claros=await discosClaros();
-      ok(claros.length===0, `${E.nome} [${modo}]: nenhum botão de habilidade tem fundo claro`
-        + (claros.length?` (${claros.map(c=>'sk'+c.i+'='+c.soma).join(', ')})`:''));
+      // §332: arte DISCO sem anel claro nos cantos; arte CHEIA preenche o botão (canto mostra a arte).
+      const arte=await arteBotoes();
+      const anel=arte.filter(a=>a.forma==='disco' && a.somaMax>180);
+      ok(anel.length===0, `${E.nome} [${modo}]: nenhum botão DISCO mostra fundo claro nos cantos (sem anel)`
+        + (anel.length?` (${anel.map(a=>'sk'+a.i+'='+a.somaMax).join(', ')})`:''));
+      const cheiaCheias=arte.filter(a=>a.forma==='cheia' && a.distMax>40);
+      ok(cheiaCheias.length>=1, `${E.nome} [${modo}]: botão(ões) de arte CHEIA preenchem o canto com a arte (${cheiaCheias.length} de ${arte.filter(a=>a.forma==='cheia').length})`);
       // §330: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
       if(E.w===780){
         ok(m.tam.skMin>=66, `${E.nome} [${modo}]: botão de habilidade ≥66px (${m.tam.skMin}px)`);

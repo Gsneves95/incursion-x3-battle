@@ -2608,9 +2608,11 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .turno-eu .bt-faixa{border-color:var(--gold);box-shadow:0 0 calc(var(--u)*2.5) rgba(255,217,122,.15),inset 0 0 0 1px rgba(255,217,122,.15)}
 .bt-skill{position:absolute;border:0;background:none;padding:0;cursor:pointer}
 .bt-skill__disc{position:absolute;inset:0;border:1px solid;border-radius:calc(var(--u)*1.1);overflow:hidden;background:#14112a;box-shadow:0 2px 6px rgba(0,0,0,.5)}
-/* §331: a arte da habilidade é uma ilustração REDONDA (algumas vêm sobre um quadrado claro) — recorta em círculo
-   para os cantos mostrarem o fundo ESCURO do disco, nunca um fundo branco chapado. O "usável" é só a moldura acesa. */
-.bt-skill__disc .slot{width:100%;height:100%;border-radius:50%;overflow:hidden}
+/* §332: a FORMA da arte decide o recorte (classificada no build, SKILL_ARTE_FORMA, aplicada no <img> por slot()):
+   CHEIA preenche o botão (cover + os cantos arredondados do disco); DISCO é recortada em círculo no raio medido
+   (clip-path no próprio <img>), e os cantos mostram o fundo ESCURO do disco — nunca o fundo claro da arte antiga. */
+.bt-skill__disc .slot{width:100%;height:100%;overflow:hidden}
+.slot__art--cheia{object-fit:cover}
 .bt-skill.is-ready .bt-skill__disc{box-shadow:0 0 calc(var(--u)*2) -1px var(--anel,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}
 .bt-skill.is-armed .bt-skill__disc{box-shadow:0 0 0 calc(var(--u)*0.7) var(--gold),0 0 calc(var(--u)*2.5) rgba(255,217,122,.7)}
 .bt-skill.is-off .bt-skill__disc .slot,.bt-skill.is-off .bt-skill__mono{filter:grayscale(1) brightness(.5)}

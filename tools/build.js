@@ -382,6 +382,38 @@ const turnoArte = {
   oponente: fs.existsSync(path.join(raiz, 'web', 'banners', 'turno_oponente.webp')) ? 1 : 0
 };
 
+// §332: CLASSIFICA cada arte de habilidade (web/skills/*.webp) no build, sem lista à mão — arte nova é reclassificada
+// sozinha no próximo build. CHEIA = quadrada, vai à borda (os 4 cantos NÃO são um fundo liso igual). DISCO = redonda
+// sobre fundo liso (os 4 cantos têm a mesma cor); para essas mede o RAIO real do disco (fração do lado, a partir do
+// centro até a cor virar a do fundo). O render usa isso: cheia preenche o botão; disco recorta no raio medido (sem anel).
+async function classificarArtesSkill() {
+  const forma = {};
+  const dir = path.join(raiz, 'web', 'skills');
+  if (!fs.existsSync(dir)) return forma;
+  let sharp; try { sharp = require('sharp'); } catch (e) { console.warn('sharp ausente — artes de habilidade tratadas como CHEIA'); return forma; }
+  const N = 64, dist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+  for (const f of fs.readdirSync(dir).filter(x => /\.webp$/i.test(x))) {
+    const key = f.replace(/\.webp$/i, '');
+    try {
+      const { data, info } = await sharp(path.join(dir, f)).resize(N, N, { fit: 'fill' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      const ch = info.channels, px = (x, y) => { const o = (y * N + x) * ch; return [data[o], data[o + 1], data[o + 2]]; };
+      const patch = (cx, cy) => { let r = 0, g = 0, b = 0, n = 0; for (let dx = 0; dx < 4; dx++) for (let dy = 0; dy < 4; dy++) { const p = px(cx + dx, cy + dy); r += p[0]; g += p[1]; b += p[2]; n++; } return [r / n, g / n, b / n]; };
+      const c = [patch(0, 0), patch(N - 4, 0), patch(0, N - 4), patch(N - 4, N - 4)];
+      let maxd = 0; for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) maxd = Math.max(maxd, dist(c[i], c[j]));
+      if (maxd > 30) { forma[key] = { forma: 'cheia' }; continue; }   // cantos diferentes → arte vai à borda
+      const bg = [0, 1, 2].map(k => (c[0][k] + c[1][k] + c[2][k] + c[3][k]) / 4);
+      const cen = N / 2, raios = [];
+      for (let a = 0; a < 16; a++) { const ang = a * Math.PI / 8, dx = Math.cos(ang), dy = Math.sin(ang);
+        let last = 0; for (let r = 1; r < cen; r++) { const x = Math.round(cen + dx * r), y = Math.round(cen + dy * r); if (x < 0 || y < 0 || x >= N || y >= N) break; if (dist(px(x, y), bg) > 40) last = r; }
+        raios.push(last / N); }
+      raios.sort((a, b) => a - b);
+      const raio = Math.min(0.5, Math.max(0.3, raios[Math.floor(raios.length / 2)]));   // mediana (robusta a um raio ruidoso)
+      forma[key] = { forma: 'disco', raio: +raio.toFixed(3) };
+    } catch (e) { forma[key] = { forma: 'cheia' }; }   // falha ao ler → preenche (nunca um anel)
+  }
+  return forma;
+}
+
 // §276: ARTE da tela de escolha de DOMÍNIOS por ARQUIVO em web/banners/dominios/ (pôster por cultura,
 // emblema por cultura, e um fundo opcional). A build anota quais existem (o cliente não pode checar
 // disco); a tela só emite <img> para os presentes — ausência vira o placeholder do §213, NUNCA um 404.
@@ -583,6 +615,10 @@ const layoutBatalhaObj = (() => {
 
 const build = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 
+(async () => {
+const skillArteForma = await classificarArtesSkill();
+const _formas = Object.values(skillArteForma);
+const _cheias = _formas.filter(x => x.forma === 'cheia').length, _discos = _formas.filter(x => x.forma === 'disco').length;
 const saida = casca
   // Os kits vêm de data/deuses/* → array DEUSES → catalogo.js monta o global GODS ANTES do
   // motor (o motor lê GODS só em runtime, mas a UI o lê no render; e é "dado consumido cedo").
@@ -594,7 +630,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\nconst CORPO_ARTE=' + JSON.stringify(corpoArte) + ';\nconst CANTO_ARTE=' + cantoArte + ';\nconst ARTE_TURNO=' + JSON.stringify(arteTurno) + ';\nconst TURNO_ARTE=' + JSON.stringify(turnoArte) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\nconst CORPO_ARTE=' + JSON.stringify(corpoArte) + ';\nconst CANTO_ARTE=' + cantoArte + ';\nconst ARTE_TURNO=' + JSON.stringify(arteTurno) + ';\nconst TURNO_ARTE=' + JSON.stringify(turnoArte) + ';\nconst SKILL_ARTE_FORMA=' + JSON.stringify(skillArteForma) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {
@@ -613,4 +649,5 @@ if (fs.existsSync(web)) for (const f of fs.readdirSync(web))
 
 smokeCarga(distAbs);
 console.log('dist/incursion.html —', (saida.length / 1024 / 1024).toFixed(2),
-  `MB · direção ui ok · smoke ok · cadeia ok (${cadeia.R.match} conf, ${cadeia.R.naoConf} não-conf)`);
+  `MB · direção ui ok · smoke ok · cadeia ok (${cadeia.R.match} conf, ${cadeia.R.naoConf} não-conf) · artes skill: ${_cheias} cheia/${_discos} disco`);
+})();
