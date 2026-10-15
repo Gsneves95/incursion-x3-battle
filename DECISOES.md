@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §334 · Classificação de arte de habilidade: discos com fundo CLARO e brilho
+
+As habilidades da Babi mostravam FUNDO BRANCO nos cantos do botão: são artes em DISCO sobre fundo claro com brilho/
+degradê que o classificador do §332 marcava como CHEIA (os 4 cantos não são idênticos — têm brilho e vinheta — então o
+`maxd>30` caía em "cheia", e o render preenchia o botão mostrando o canto claro).
+
+**Diagnóstico medido (não pelo olho):** os 4 CANTOS da Babi NÃO são todos claros — há vinheta escura em 2 deles (ex.:
+babi-habilidade cantos ≈ [43,20,107,109]). O sinal confiável é outro: os **MEIOS das 4 bordas são claros** (luma>190:
+[200,230,197,193]), porque é ali que o disco mais se aproxima da aresta e aparece o brilho. O Zeus (arte quadrada cheia,
+escura) tem os meios ESCUROS ([29,45,61,58]) — separa limpo.
+
+**Regra nova (tools/build.js, `classificarArtesSkill`):** além de "4 cantos iguais" (§332, fundo liso), classifica como
+DISCO quando os **4 meios das bordas são claros (luma > 190)**, mesmo que os cantos difiram (vinheta). Para esses, mede o
+RAIO partindo da ARESTA clara e entrando até a transição para o disco (moldura/conteúdo que difere do brilho); ignora os
+raios cuja aresta é escura (vinheta de canto), que não medem o disco. Mediana dos raios, travada em [0,3; 0,5].
+
+**Artes que MUDARAM (cheia → disco), conferidas uma a uma (todas são discos de verdade; nenhuma quadrada cheia virou
+disco):** skill-babi-habilidade, skill-babi-milagre, skill-babi-passiva, skill-hermes-basico, skill-itzamna-milagre,
+skill-itzamna-passiva, skill-loki-basico, skill-loki-habilidade, skill-nefertem-basico, skill-nefertem-habilidade,
+skill-oxala-habilidade, skill-oxala-milagre, skill-oxala-passiva (13 artes). Total: **99 cheia / 302 disco** (eram
+112/289). O Zeus segue CHEIA (os meios das bordas são escuros).
+
+**PROVAS.** jsdom (`batalha_inspecao`): Babi → DISCO (com raio), Zeus → CHEIA. Chromium (`batalha_painel`): nenhum botão
+em DISCO mostra pixel CLARO nos cantos (mede o pixel real do canto via screenshot; a arte foi recortada no círculo).
+Captura `docs/telas/334-meu-turno-780x360.png` (Hades, Babi, Zeus). NÃO mudou mais nada.
+
+---
+
 ## §333b · PAINEL DE BAIXO: seguir EXATAMENTE os modelos do dono
 
 O dono mandou 2 modelos (print antes/depois) do painel de baixo e pediu para seguir À RISCA, por ser a tela principal.

@@ -137,6 +137,11 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre'].forEach(k=>ok(forma(k)==='cheia', `${k} → CHEIA (${forma(k)})`));
   ['skill-ares-basico','skill-ares-habilidade','skill-ares-milagre','skill-anubis-basico','skill-anubis-milagre'].forEach(k=>ok(forma(k)==='disco', `${k} → DISCO (${forma(k)})`));
   ['skill-ares-basico','skill-anubis-basico'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `${k} tem raio medido (${raio(k)})`));
+  // §334: discos com FUNDO CLARO/brilho (cantos com vinheta, meios das bordas claros) agora são DISCO, não CHEIA.
+  ['skill-babi-habilidade','skill-babi-milagre','skill-babi-passiva'].forEach(k=>ok(forma(k)==='disco', `§334 ${k} → DISCO (${forma(k)})`));
+  ['skill-babi-habilidade','skill-babi-milagre'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `§334 ${k} tem raio medido (${raio(k)})`));
+  // e as artes QUADRADAS cheias de verdade (Zeus) continuam CHEIA (não viram disco por engano).
+  ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre','skill-zeus-passiva'].forEach(k=>ok(forma(k)==='cheia', `§334 ${k} segue CHEIA (${forma(k)})`));
   // resumo com uma ação da CPU → o painel mostra o retrato de quem agiu, não um quadrado vazio; e sem "Turno N".
   w.eval(`st=montarProvacao({aliados:${JSON.stringify(ally)},inimigos:${JSON.stringify(enemy)},montar:{seed:3,comeca:0}});
     prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null; foco=null;

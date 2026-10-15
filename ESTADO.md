@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §334 · Classificação de arte: discos com fundo CLARO e brilho
+
+As habilidades da Babi (disco sobre fundo claro com brilho/vinheta) eram marcadas CHEIA pelo §332 (cantos diferem por
+causa do brilho) → o botão mostrava o canto branco. O §334 acrescenta um 2º caminho para DISCO:
+- **Regra (tools/build.js):** DISCO quando "4 cantos iguais" (§332) OU os **4 MEIOS das bordas são claros (luma>190)**,
+  mesmo que os cantos tenham vinheta e difiram. Mede o raio partindo da aresta clara para dentro (transição ao disco);
+  pula raios de aresta escura (vinheta). O sinal foi medido: Babi tem meios ≈[200,230,197,193] (claros) e cantos com
+  vinheta; o Zeus (quadrado cheio) tem meios escuros ≈[29,45,61,58] → segue CHEIA.
+- **Mudaram (cheia→disco), conferidas uma a uma (todos discos reais):** babi-{habilidade,milagre,passiva}, hermes-basico,
+  itzamna-{milagre,passiva}, loki-{basico,habilidade}, nefertem-{basico,habilidade}, oxala-{habilidade,milagre,passiva}
+  = 13 artes. Total **99 cheia / 302 disco** (eram 112/289). Zeus intacto (CHEIA).
+- **Provas:** jsdom (`batalha_inspecao`) Babi→DISCO+raio, Zeus→CHEIA; Chromium (`batalha_painel`) nenhum botão DISCO com
+  pixel claro nos cantos (pixel real do canto via screenshot). Captura docs/telas/334-meu-turno-780x360.png. Suíte +
+  build verdes. NÃO mudou mais nada.
+
 ## ★ §333b · PAINEL DE BAIXO: seguir EXATAMENTE os modelos do dono
 
 O dono mandou 2 modelos (antes/depois) e pediu seguir à risca. IMAGEM 1 = PERSONAGEM; IMAGEM 2 = HABILIDADE ARMADA. O

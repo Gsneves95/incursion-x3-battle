@@ -6,6 +6,7 @@
 // título ≥12px, descrição ≥9px, pílula ≥7px.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
+let sharp; try { sharp = require('sharp'); } catch (e) { sharp = null; }
 function acharChromium(){ if(process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
   try{ const base='/opt/pw-browsers'; const d=fs.readdirSync(base).filter(x=>/^chromium-\d+$/.test(x)).sort().pop();
     if(d){ const b=path.join(base,d,'chrome-linux','chrome'); if(fs.existsSync(b)) return b; } }catch(e){} return undefined; }
@@ -69,6 +70,21 @@ const SIT={
       ok(f.re>=64, `780: o RETRATO é ≥ 64px (${f.re&&f.re.toFixed(1)})`);
       ok(f.sk>=64, `780: a HABILIDADE é ≥ 64px (${f.sk&&f.sk.toFixed(1)})`);
       ok(f.ef>=22, `780: o ícone de EFEITO é ≥ 22px (${f.ef&&f.ef.toFixed(1)})`);
+      // §334: nenhum botão em DISCO mostra pixel CLARO nos cantos (a arte foi recortada em círculo — inclusive os
+      // discos de FUNDO CLARO/brilho, antes classificados como CHEIA). Mede o pixel real do canto (screenshot).
+      if(sharp){
+        await page.evaluate(BOOT); await page.waitForTimeout(80);
+        const discos=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill')].filter(b=>b.querySelector('.slot__art--disco'))
+          .map(b=>{const r=b.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}).filter(b=>b.w>8&&b.h>8));
+        ok(discos.length>0, '780: há botões em DISCO para checar os cantos');
+        for(const b of discos.slice(0,10)){
+          const buf=await page.screenshot({clip:{x:b.x,y:b.y,width:b.w,height:b.h}});
+          const {data,info}=await sharp(buf).raw().toBuffer({resolveWithObject:true});
+          const W=info.width,H=info.height,chn=info.channels, L=(x,y)=>{const o=(y*W+x)*chn;return 0.299*data[o]+0.587*data[o+1]+0.114*data[o+2];};
+          const m=3, cantos=[L(m,m),L(W-1-m,m),L(m,H-1-m),L(W-1-m,H-1-m)].map(v=>Math.round(v));
+          ok(!cantos.some(v=>v>150), `780: botão DISCO sem pixel claro nos cantos (lumas ${cantos.join(',')})`);
+        }
+      }
     }
     await ctx.close();
   }
