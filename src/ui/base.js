@@ -150,7 +150,7 @@ function miniPips(l){
 }
 
 /* ---------- enquadramento: altura fixa (428), largura fluida (F0.6b) ---------- */
-let ultimaEscala = 1, ultimaLarguraDesign = 926;   // expostas para o painel de diagnóstico
+let ultimaEscala = 1, ultimaLarguraDesign = 926, ultimaEscalaBatalha = 1;   // expostas para o painel de diagnóstico
 // Área útil num LUGAR SÓ: visualViewport quando existe (reporta a viewport visual
 // real), innerWidth/Height como reserva. Desconta as safe areas — que, sendo zero
 // no aparelho testado, não descontam nada (o innerWidth já exclui a barra de
@@ -164,6 +164,20 @@ function areaUtil(){
 }
 function fit(){
   const u = areaUtil();
+  // §335: a BATALHA usa uma TELA FIXA de 1846×852 (design do dono) escalada por min(w/1846,h/852), centrada, com a
+  // canvas (#03050B) nas sobras — substitui o sistema de 'u' só na batalha. O #stage vira a moldura da canvas (sem
+  // borda/arredondado) e o #batalha se escala sozinho dentro dele.
+  const emBatalha = (typeof rotaAtual === 'function' && rotaAtual() === 'batalha') && document.getElementById('batalha');
+  try{ stage.classList.toggle('bt2', !!emBatalha); }catch(e){}
+  if(emBatalha){
+    const s = Math.min(u.w / 1846, u.h / 852);
+    ultimaEscala = s; ultimaEscalaBatalha = s; ultimaLarguraDesign = 1846;
+    stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';
+    stage.style.transform = 'translate(-50%,-50%)';
+    emBatalha.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+    renderDiag();
+    return;
+  }
   // a REGRA vive em calcularEnquadramento (src/enquadramento.js); aqui só APLICA.
   const { escala, larguraDesign } = calcularEnquadramento({ larguraUtil: u.w, alturaUtil: u.h });
   ultimaEscala = escala; ultimaLarguraDesign = larguraDesign;

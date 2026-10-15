@@ -1,42 +1,38 @@
 {
-  "_nota": "§333b — LAYOUT da tela de batalha seguindo os MODELOS do dono. DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). §333b: mais ALTURA p/ as fileiras e p/ o painel (legível no celular); o painel de baixo é [IMAGEM][CONTEÚDO] | [CUSTO/RECARGA] | [DIREITA], com divisores verticais dourados; a DIREITA é 4 miniaturas (situação PERSONAGEM) ou o botão CANCELAR (habilidade ARMADA). Todos os valores em u salvo onde dito.",
-  "u_px_design": 4.28,
-  "topo": {
-    "faixaY": [0, 12],
-    "ajustes": { "x": 1.5, "y": 1.3, "size": 4 },
-    "jogador": { "nomeFimX": 40, "avatar": { "x": 41, "y": 1.3, "size": 8 } },
-    "oponente": { "nomeIniDir": 40, "avatar": { "dir": 41, "y": 1.3, "size": 8 } },
-    "centro": { "y": 0.8, "h": 10.4, "gap": 2 },
-    "energia": { "orb": 3.6, "fonte": 2.6, "trocar": 4.5 },
-    "encerrar": { "w": 36, "h": 6, "fonte": 2.6, "barra": 1.2, "linha": 1.9 }
+  "_nota": "§335 — LAYOUT da tela de batalha reproduzindo o design do dono (Claude Design). DADO, não código. TELA FIXA de 1846×852 px escalada para caber (scale = min(w/1846, h/852)), centrada, com o fundo da canvas nas sobras. TODAS as medidas em PX DE DESIGN transcritas do HTML (substitui o sistema de 'u' do §329 só na batalha). A tela (view.js/ui/*.js) LÊ daqui.",
+  "canvas": { "w": 1846, "h": 852, "bg": "#03050B",
+    "fundo": "radial-gradient(70% 60% at 50% 40%,#0B1226 0%,#060914 60%,#03050B 100%)" },
+  "cor": {
+    "gold": "#C9A44C", "goldSoft": "rgba(201,164,76,.6)", "goldText": "#F0B43C", "goldHi": "#E6C77A",
+    "foe": "#E8343C", "foeSoft": "#C9343C", "alvo": "#FF4A4A", "alvoBorda": "#E5384A",
+    "verde": "#4BE38A", "ink": "#EAF0FF", "inkSoft": "#E8ECF4", "inkDim": "#C9CED8", "mute": "#9AA4B8",
+    "acentoMeu": "#E9B949", "acentoMeuTexto": "#F2BE48", "acentoMeuGlow": "rgba(240,180,60,.6)",
+    "acentoOpo": "#D8434A", "acentoOpoTexto": "#E8545B", "acentoOpoGlow": "rgba(216,67,74,.55)"
   },
-  "fileiras": {
-    "tops": [12.5, 34.5, 56.5],
-    "altura": 20.5
+  "header": {
+    "h": 96,
+    "jogador": { "left": 66, "top": 19, "gap": 18, "avatar": 58, "nome": 25, "sub": 18 },
+    "energia": { "left": 590, "top": 26, "w": 388, "h": 50, "quad": 26, "xN": 21, "sigma": 24, "trocarH": 34 },
+    "turno": { "left": 1000, "top": 4, "w": 307, "btnH": 52, "btnFonte": 23, "barra": 9, "linha": 18 },
+    "menuBtn": { "left": 1328, "top": 18, "size": 46 },
+    "oponente": { "left": 1562, "top": 19, "gap": 16, "avatar": 58, "nome": 25, "sub": 18 }
   },
-  "jogador": {
-    "retrato": { "x": 4, "size": 18 },
-    "vida": { "h": 2.7, "dy": 0.3 },
-    "efeitos": { "size": 6.2, "gap": 0.7, "x0": 105.5, "cols": 2 },
-    "faixa": { "x0": 24.5, "x1": 121, "h": 20.5, "dyTopo": 0 },
-    "quadros": {
-      "size": 18, "dyTopo": 1,
-      "basico": 25.5, "habilidade": 45.5, "milagre": 65.5, "defesa": 85.5
-    }
+  "campo": {
+    "left": 58, "top": 98, "w": 1732, "h": 536,
+    "cols": { "aliados": 676, "inimigos": 172 },
+    "fileira": { "h": 168, "gap": 8 },
+    "retrato": 140, "selo": 26, "seloFonte": 17, "vida": { "h": 20, "dy": 4, "fonte": 16 },
+    "efeitos": { "size": 24, "gap": 8, "valor": 19, "max": 3 },
+    "skill": { "size": 108, "gap": 14, "mtop": -28, "cdFonte": 46, "pipPill": 22, "pip": 14 },
+    "cena": { "left": -60, "right": -40, "mask": [14, 86], "anuncioTop": 266, "titulo": 48, "sub": 22, "ornato": [190, 92], "linha": 560 },
+    "mira": { "size": 54 }
   },
-  "inimigo": {
-    "retrato": { "dir": 4, "size": 18 },
-    "vida": { "h": 2.7, "dy": 0.3 },
-    "efeitos": { "size": 6.2, "gap": 0.7, "cols": 2 }
+  "painel": {
+    "left": 58, "top": 640, "w": 1732, "h": 166,
+    "cols": { "info": 840, "meio": 564 },
+    "img": 134, "titulo": 27, "pilulaH": 32, "pilula": 19, "desc": 21,
+    "rotulo": 19, "pip": 27, "recargaNum": 30, "instIcone": 44, "instTit": 22, "instSub": 18,
+    "cancelW": 274, "cancelH": 80, "cancelFonte": 23, "mini": 70
   },
-  "centro": { "x0": 123, "y": [12.5, 77], "minW": 25, "folga": 1 },
-  "cantoInferior": {
-    "desistir": { "x": [4, 40], "y": [79.5, 84.5] },
-    "menu": { "x": [4, 40], "y": [85.5, 90.5] },
-    "som": { "x": [4, 40], "y": [92, 97] }
-  },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [79, 99],
-    "img": 15, "mini": 7.5, "miniMin": 6, "gapMini": 1.5, "meio": 30, "cancelW": 26, "cancelH": 9, "gapCol": 2, "pad": 1.5,
-    "fonte": { "titulo": 3.4, "tituloMin": 2.8, "corpo": 2.6, "corpoMin": 2.3, "pilula": 2, "rotulo": 1.8, "pip": 3, "dado": 2.6, "miraIcone": 3.4, "miraTit": 2.4, "miraSub": 1.8, "minilab": 1.8 } },
-  "custoPip": { "size": 2.2 }
+  "menu": { "w": 420, "itemH": 58, "titulo": 26, "item": 20 }
 }

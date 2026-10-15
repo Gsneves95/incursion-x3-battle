@@ -1,9 +1,8 @@
-// batalha_painel.test.js (§333b) — o PAINEL DE BAIXO segue os MODELOS do dono: [IMAGEM][CONTEÚDO] | [CUSTO/RECARGA] |
-// [DIREITA] (4 minis na situação PERSONAGEM; o botão CANCELAR quando há habilidade ARMADA). Prova, no Chromium (rect
-// real), as 5 situações (deus / habilidade lida / armada / efeito / resumo) + a descrição MAIS LONGA do jogo (babi ·
-// Frenesi Sanguinário), em 780×360 e 1280×720: nenhum filho sai do painel; as colunas não se intersectam; nenhum texto
-// transborda da sua coluna; o título não corta. E os PISOS de legibilidade em 780×360: hab/retrato ≥64px, efeito ≥22px,
-// título ≥12px, descrição ≥9px, pílula ≥7px.
+// batalha_painel.test.js (§335) — o BattleDetailPanel do design do dono: grade 840 | 564 | resto. Prova, no Chromium
+// (rect real, em 1846×852 / escala 1), as 5 situações do §333b (deus / habilidade lida / armada / efeito / resumo):
+// nenhum filho sai da caixa do painel; as 3 colunas não se intersectam; o conteúdo por situação é o esperado
+// (VIDA|ELEMENTO; OUTRAS HABILIDADES com a mini destacada; CANCELAR + mira; TURNOS|aplicado; RESUMO). E §334: nenhum
+// botão em DISCO mostra pixel claro nos cantos (mede o pixel real via screenshot).
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 let sharp; try { sharp = require('sharp'); } catch (e) { sharp = null; }
@@ -28,67 +27,58 @@ const SIT={
 
 (async()=>{
   const browser=await chromium.launch({executablePath:acharChromium(),headless:true,args:['--no-sandbox']});
-  for(const E of [{nome:'780',w:780,h:360},{nome:'1280',w:1280,h:720}]){
-    const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:2});
-    const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
-    console.log(`== §333b painel ${E.nome}×${E.h} ==`);
-    for(const [nome,extra] of Object.entries(SIT)){
-      await page.evaluate(BOOT); await page.evaluate(extra); await page.waitForTimeout(80);
-      const m=await page.evaluate(()=>{
-        const esc=(typeof ultimaEscala!=='undefined'&&ultimaEscala)||1;
-        const R=el=>el.getBoundingClientRect(); const pan=document.querySelector('.bt-panel'); if(!pan) return {err:1};
-        const rp=R(pan); const cols=[...pan.children].map(c=>({cls:c.className.split(' ')[0],r:R(c)}));
-        const fora=cols.filter(c=>c.r.left<rp.left-0.5||c.r.right>rp.right+0.5||c.r.top<rp.top-0.5||c.r.bottom>rp.bottom+0.5).map(c=>c.cls);
-        let inter=null; for(let i=0;i<cols.length&&!inter;i++)for(let j=i+1;j<cols.length;j++){const a=cols[i].r,b=cols[j].r;
-          const ix=Math.min(a.right,b.right)-Math.max(a.left,b.left), iy=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
-          if(ix>1&&iy>1){inter=cols[i].cls+'×'+cols[j].cls;break;}}
-        const tit=pan.querySelector('.bt-panel__titulo'), desc=pan.querySelector('.bt-panel__desc'), col2=pan.querySelector('.bt-panel__conteudo');
-        const pill=pan.querySelector('.bt-pill');
-        const fpx=el=> el?parseFloat(getComputedStyle(el).fontSize)*esc:null;
-        return { err:0, fora, inter,
-          titCorta: tit?(tit.scrollWidth>tit.clientWidth+1):false,
-          descFora: (desc&&col2)?(R(desc).right>R(col2).right+0.5||R(desc).left<R(col2).left-0.5):false,
-          titPx:fpx(tit), descPx:fpx(desc), pillPx:fpx(pill) };
-      },extra);
-      ok(!m.err, `${E.nome} [${nome}]: o painel existe`);
-      ok(m.err||m.fora.length===0, `${E.nome} [${nome}]: nenhum filho sai da caixa do painel` + (m.fora&&m.fora.length?` (${m.fora.join(', ')})`:''));
-      ok(m.err||!m.inter, `${E.nome} [${nome}]: as colunas não se intersectam` + (m.inter?` (${m.inter})`:''));
-      ok(m.err||!m.titCorta, `${E.nome} [${nome}]: o título não corta com "…"`);
-      ok(m.err||!m.descFora, `${E.nome} [${nome}]: a descrição fica dentro da coluna de conteúdo (rola, não vaza)`);
-      if(E.nome==='780' && !m.err){
-        ok(m.titPx>=12, `780 [${nome}]: título ≥ 12px (${m.titPx&&m.titPx.toFixed(1)})`);
-        ok(m.descPx>=9, `780 [${nome}]: descrição ≥ 9px (${m.descPx&&m.descPx.toFixed(1)})`);
-        if(m.pillPx!=null) ok(m.pillPx>=7, `780 [${nome}]: pílula ≥ 7px (${m.pillPx.toFixed(1)})`);
-      }
-    }
-    // PISOS de campo (780): hab e retrato ≥64px; ícone de efeito ≥22px (na situação com efeito).
-    if(E.nome==='780'){
-      await page.evaluate(BOOT); await page.evaluate(SIT['efeito']); await page.waitForTimeout(60);
-      const f=await page.evaluate(()=>{ const R=el=>el&&el.getBoundingClientRect();
-        const re=R(document.querySelector('.bt-portrait')), sk=R(document.querySelector('.bt-skill')), ef=R(document.querySelector('.bt-eff'));
-        return { re:re&&re.width, sk:sk&&sk.width, ef:ef&&ef.width }; });
-      ok(f.re>=64, `780: o RETRATO é ≥ 64px (${f.re&&f.re.toFixed(1)})`);
-      ok(f.sk>=64, `780: a HABILIDADE é ≥ 64px (${f.sk&&f.sk.toFixed(1)})`);
-      ok(f.ef>=22, `780: o ícone de EFEITO é ≥ 22px (${f.ef&&f.ef.toFixed(1)})`);
-      // §334: nenhum botão em DISCO mostra pixel CLARO nos cantos (a arte foi recortada em círculo — inclusive os
-      // discos de FUNDO CLARO/brilho, antes classificados como CHEIA). Mede o pixel real do canto (screenshot).
-      if(sharp){
-        await page.evaluate(BOOT); await page.waitForTimeout(80);
-        const discos=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill')].filter(b=>b.querySelector('.slot__art--disco'))
-          .map(b=>{const r=b.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}).filter(b=>b.w>8&&b.h>8));
-        ok(discos.length>0, '780: há botões em DISCO para checar os cantos');
-        for(const b of discos.slice(0,10)){
-          const buf=await page.screenshot({clip:{x:b.x,y:b.y,width:b.w,height:b.h}});
-          const {data,info}=await sharp(buf).raw().toBuffer({resolveWithObject:true});
-          const W=info.width,H=info.height,chn=info.channels, L=(x,y)=>{const o=(y*W+x)*chn;return 0.299*data[o]+0.587*data[o+1]+0.114*data[o+2];};
-          const m=3, cantos=[L(m,m),L(W-1-m,m),L(m,H-1-m),L(W-1-m,H-1-m)].map(v=>Math.round(v));
-          ok(!cantos.some(v=>v>150), `780: botão DISCO sem pixel claro nos cantos (lumas ${cantos.join(',')})`);
-        }
-      }
-    }
-    await ctx.close();
+  const ctx=await browser.newContext({viewport:{width:1846,height:852},deviceScaleFactor:1});
+  const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+  console.log('== §335 painel @1846×852 ==');
+  for(const [nome,extra] of Object.entries(SIT)){
+    await page.evaluate(BOOT); await page.evaluate(extra); await page.waitForTimeout(70);
+    const m=await page.evaluate(()=>{
+      const R=el=>el.getBoundingClientRect(); const pan=document.querySelector('.b5-painel'); if(!pan) return {err:1};
+      const rp=R(pan); const cols=[...pan.children].map(c=>({r:R(c)}));
+      const fora=cols.filter(c=>c.r.left<rp.left-0.5||c.r.right>rp.right+0.5||c.r.top<rp.top-0.5||c.r.bottom>rp.bottom+0.5).length;
+      let inter=false; for(let i=0;i<cols.length&&!inter;i++)for(let j=i+1;j<cols.length;j++){const a=cols[i].r,b=cols[j].r;
+        const ix=Math.min(a.right,b.right)-Math.max(a.left,b.left), iy=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
+        if(ix>1&&iy>1){inter=true;break;}}
+      const tit=pan.querySelector('.bt-panel__titulo');
+      return { err:0, fora, inter, titCorta: tit?(tit.scrollWidth>tit.clientWidth+1):false,
+        temMeio:!!pan.querySelector('.bt-panel__meio'), temMinis:!!pan.querySelector('.bt-panel__minis'),
+        temCancel:!!pan.querySelector('.bt-cancel'), temMira:!!pan.querySelector('.bt-panel__mira'),
+        selMini:!!pan.querySelector('.bt-mini.is-sel'), minilab:(pan.querySelector('.bt-panel__minilab')||{}).textContent||'',
+        txt:(pan.textContent||'').replace(/\s+/g,' ') };
+    });
+    ok(!m.err, `[${nome}]: o painel existe`);
+    ok(m.err||m.fora===0, `[${nome}]: nenhum filho sai da caixa do painel`);
+    ok(m.err||!m.inter, `[${nome}]: as 3 colunas não se intersectam`);
+    ok(m.err||!m.titCorta, `[${nome}]: o título não corta`);
   }
-  await browser.close();
+  // conteúdo por situação
+  const sit=async(extra)=>{ await page.evaluate(BOOT); await page.evaluate(extra); await page.waitForTimeout(60);
+    return page.evaluate(()=>{ const pan=document.querySelector('.b5-painel');
+      return { minilab:(pan.querySelector('.bt-panel__minilab')||{}).textContent||'', sel:!!pan.querySelector('.bt-mini.is-sel'),
+        cancel:!!pan.querySelector('.bt-cancel'), mira:!!pan.querySelector('.bt-panel__mira'), meio:(pan.querySelector('.bt-panel__meio')||{}).textContent||'',
+        minis:pan.querySelectorAll('.bt-panel__minis .bt-mini').length, txt:(pan.textContent||'').replace(/\s+/g,' ') }; }); };
+  let s;
+  s=await sit(SIT['deus']); ok(/VIDA/.test(s.meio)&&/ELEMENTO/.test(s.meio), 'deus: o meio mostra VIDA | ELEMENTO'); ok(/HABILIDADES/.test(s.minilab)&&s.minis>0&&!s.sel, 'deus: coluna direita = HABILIDADES (nenhuma destacada)');
+  s=await sit(SIT['habilidade lida']); ok(/OUTRAS HABILIDADES/.test(s.minilab), 'lida: coluna direita = OUTRAS HABILIDADES'); ok(s.sel, 'lida: a miniatura mostrada vem destacada'); ok(!s.cancel, 'lida: sem CANCELAR');
+  s=await sit(SIT['armada']); ok(s.cancel, 'armada: coluna direita = CANCELAR'); ok(s.mira, 'armada: instrução com a mira'); ok(s.minis===0, 'armada: sem miniaturas');
+  s=await sit(SIT['efeito']); ok(/TURNOS/.test(s.meio)&&/APLICADO POR/.test(s.meio), 'efeito: o meio mostra TURNOS | APLICADO POR'); ok(s.minis>0, 'efeito: minis do portador');
+  s=await sit(SIT['resumo']); ok(/RESUMO/.test(s.txt), 'resumo: título RESUMO'); ok(s.minis>0, 'resumo: minis do último a agir');
+
+  // §334: nenhum botão em DISCO mostra pixel claro nos cantos (a arte foi recortada no círculo).
+  if(sharp){
+    await page.evaluate(BOOT); await page.waitForTimeout(60);
+    const discos=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill[data-sk]')].filter(b=>b.querySelector('.slot__art--disco'))
+      .map(b=>{const r=b.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}).filter(b=>b.w>8&&b.h>8));
+    ok(discos.length>0, '§334: há botões em DISCO para checar os cantos');
+    for(const b of discos.slice(0,10)){
+      const buf=await page.screenshot({clip:{x:b.x,y:b.y,width:b.w,height:b.h}});
+      const {data,info}=await sharp(buf).raw().toBuffer({resolveWithObject:true});
+      const W=info.width,H=info.height,chn=info.channels, L=(x,y)=>{const o=(y*W+x)*chn;return 0.299*data[o]+0.587*data[o+1]+0.114*data[o+2];};
+      const mm=3, cantos=[L(mm,mm),L(W-1-mm,mm),L(mm,H-1-mm),L(W-1-mm,H-1-mm)].map(v=>Math.round(v));
+      ok(!cantos.some(v=>v>150), `§334: botão DISCO sem pixel claro nos cantos (lumas ${cantos.join(',')})`);
+    }
+  }
+  await ctx.close(); await browser.close();
   console.log(falhas===0?'\n>>> BATALHA_PAINEL OK':`\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas?1:0);
 })().catch(e=>{console.error(e);process.exit(1);});

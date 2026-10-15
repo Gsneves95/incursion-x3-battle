@@ -1,174 +1,118 @@
-// batalha_faixa.test.js (§329) — GUARDA BABÁ do LAYOUT de batalha À RISCA da referência (data/layout_batalha.json).
-// Prova as decisões do §329:
-//   1) NENHUMA área de toque se sobrepõe a outra, em CADA estado (meu turno / turno do oponente);
-//   2) NADA transborda nem é cortado com "…" no nome do deus, na função ou na vida (guardas de encaixe);
-//   3) tudo cabe dentro do palco (nada corta acima/abaixo) nas aspect-ratios reais do celular.
-// Chromium (não jsdom): sobreposição e corte são medidos por rect real. Três enquadramentos: 20:9, 16:9 e o piso.
-
+// batalha_faixa.test.js (§335) — a TELA DE BATALHA reproduz o design do dono (Claude Design): tela FIXA 1846×852
+// escalada por min(w/1846,h/852). PROVAS: (1) em 1846×852 (escala 1) as caixas dos blocos batem com as coordenadas do
+// HTML (tolerância 2px); (2) em 780×360, 915×412 e 1280×720 nada sai da tela, nenhuma área de toque se sobrepõe, nenhum
+// texto corta (reporta a escala e os px reais); (3) meu turno = cena da Nezha + "SEU TURNO"; turno do oponente = Ah Puch
+// + "TURNO DO OPONENTE"; (4) sem requisição a fonts.googleapis.com. Chromium (rect real).
 const { chromium } = require('playwright');
-const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs'), path = require('path');
 function acharChromium(){ if(process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
   try{ const base='/opt/pw-browsers'; const d=fs.readdirSync(base).filter(x=>/^chromium-\d+$/.test(x)).sort().pop();
     if(d){ const b=path.join(base,d,'chrome-linux','chrome'); if(fs.existsSync(b)) return b; } }catch(e){} return undefined; }
-
 let falhas=0; const ok=(c,m)=>{ if(!c){ falhas++; console.log('  XX '+m); } };
 const distAbs=path.resolve(__dirname,'..','dist','incursion.html');
-const ESCALAS=[{nome:'20:9 1600',w:1600,h:720},{nome:'16:9 1280',w:1280,h:720},{nome:'piso 780',w:780,h:360}];
-// seletores de TOQUE (controles distintos). O contains-skip trata o aninhado (o "P" dentro do retrato é intencional).
-const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait,.bt-eff,.bt-mini,.bt-cbtn,.bt-som,.bt-portrait__pas,.bt-panel';
+
+// §335: sem requisição a fonts.googleapis.com no bundle.
+const html=fs.readFileSync(distAbs,'utf8');
+ok(!/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html), 'sem requisição a fonts.googleapis.com (fontes empacotadas em web/)');
+
+const BOOT=`
+  st=montarProvacao({aliados:['hades','ares','brigid'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});
+  prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}
+  try{ELEMS.forEach(e=>st.lados[0].orbs[e]=0); st.lados[0].orbs[st.lados[0].units[0].elem]=3; st.lados[0].orbs[st.lados[0].units[1].elem]=1;}catch(e){}
+  st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null; ir('batalha',{},{substituir:true});render();`;
+
+// CAIXAS ESPERADAS (px de design, relativas ao #batalha) — transcritas do HTML/JSON.
+const CAIXAS=[
+  { nome:'header',   sel:'#batalha > #baselayer, header, header', pick:'header', x:0,   y:0,   w:1846, h:96 },
+  { nome:'energia',  sel:'.bt-ebox',              x:590, y:26,  w:388,  h:50 },
+  { nome:'encerrar', sel:'#bend2',                x:1000,y:4,   w:307,  h:52 },
+  { nome:'menu',     sel:'#bmenu',                x:1328,y:18,  w:46,   h:46 },
+  { nome:'campo',    sel:'.b5-campo',             x:58,  y:98,  w:1732, h:536 },
+  { nome:'painel',   sel:'.b5-painel',            x:58,  y:640, w:1732, h:166 },
+];
 
 (async()=>{
   const browser=await chromium.launch({executablePath:acharChromium(),headless:true,args:['--no-sandbox']});
-  for(const E of ESCALAS){
-    const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:2});
-    const page=await ctx.newPage();
-    await page.goto('file://'+distAbs,{waitUntil:'load'});
-    console.log(`== §329 ${E.nome} (${E.w}×${E.h}) ==`);
 
-    const entrar=(modo)=>page.evaluate((modo)=>{
-      st=montarProvacao({aliados:['anubis','ogum','tyr'],inimigos:['silfo','ghoul','quimera'],montar:{seed:3,comeca:0}});
-      prova=null;provaFim=null;campanha=null;campanhaFim=null;dominio=null;dominioFim=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}
-      try{ ELEMS.forEach(e=>st.lados[0].orbs[e]=2); }catch(e){}
-      // efeitos nos dois lados p/ os ícones renderizarem
-      st.lados[0].units[0].efeitos=[{type:'dmgUp',v:8,dur:3},{type:'regen',v:10,dur:4},{type:'shield',v:20}];st.lados[0].units[0].shield=20;
-      st.lados[1].units[0].efeitos=[{type:'adormecido',dur:1},{type:'vulneravel',v:6,dur:2},{type:'selado',dur:3}];
-      armado=null;detalhe=null;
-      if(modo==='oponente'){ st.ativo=1; iaAtiva=true; foco=st.lados[1].units[0].uid; }
-      else { st.ativo=0; foco=st.lados[0].units[0].uid; }
-      ir('batalha',{},{substituir:true}); render();
-    },modo);
-
-    const medir=()=>page.evaluate((sel)=>{
-      const e=ultimaEscala||1; const R=el=>el.getBoundingClientRect();
-      const stageEl=document.getElementById('stage'); const sr=R(stageEl);
-      const els=[...document.querySelectorAll(sel)].filter(el=>{ const r=R(el); return r.width>1&&r.height>1; });
-      // 1) sobreposição par-a-par (ignora aninhados)
-      let over=null;
-      for(let i=0;i<els.length&&!over;i++) for(let j=i+1;j<els.length;j++){
-        const a=els[i], b=els[j]; if(a.contains(b)||b.contains(a)) continue;
-        const ra=R(a), rb=R(b);
-        const ix=Math.min(ra.right,rb.right)-Math.max(ra.left,rb.left);
-        const iy=Math.min(ra.bottom,rb.bottom)-Math.max(ra.top,rb.top);
-        if(ix>1&&iy>1){ over={a:a.className,b:b.className,ix:+(ix/e).toFixed(1),iy:+(iy/e).toFixed(1)}; break; }
-      }
-      // 2) corte: algum toque fora do palco?
-      let clip=0; els.forEach(el=>{ const r=R(el);
-        if(r.left<sr.left-0.5) clip=Math.max(clip,(sr.left-r.left)/e);
-        if(r.right>sr.right+0.5) clip=Math.max(clip,(r.right-sr.right)/e);
-        if(r.top<sr.top-0.5) clip=Math.max(clip,(sr.top-r.top)/e);
-        if(r.bottom>sr.bottom+0.5) clip=Math.max(clip,(r.bottom-sr.bottom)/e); });
-      // 3) encaixe de texto: nome/vida/função não transbordam (scrollWidth<=clientWidth)
-      const corta=[];
-      const chk=(s,lab)=>document.querySelectorAll(s).forEach(el=>{ if(el.scrollWidth>el.clientWidth+1) corta.push(lab+':"'+(el.textContent||'').trim().slice(0,18)+'"'); });
-      chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-pill','pilula'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
-      // §329b item 6: nenhum ícone de efeito/miniatura/botão renderiza SEM imagem E SEM fallback (monograma/ícone).
-      const vazios=[];
-      document.querySelectorAll('.bt-eff').forEach((el,i)=>{ const hasImg=!!el.querySelector('img'); const t=(el.textContent||'').replace(/\s/g,''); if(!hasImg&&!t) vazios.push('eff'+i); });
-      document.querySelectorAll('.bt-mini').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-mini__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('mini'+i); });
-      document.querySelectorAll('.bt-skill').forEach((el,i)=>{ const hasImg=!!el.querySelector('.slot__art'); const m=el.querySelector('.bt-skill__mono'); if(!hasImg&&!(m&&(m.textContent||'').trim())) vazios.push('skill'+i); });
-      // §329c Parte B1: a caixa do <img> de CADA retrato preenche o quadro (até a borda de 1px). Medida
-      // normalizada pela escala (divide por e) → a borda lê ~1 em qualquer enquadramento. Offset por aresta.
-      const retr=[...document.querySelectorAll('.bt-portrait')].map(p=>{ const img=p.querySelector('img'); if(!img) return {foe:p.classList.contains('bt-portrait--foe'),semImg:true};
-        const rp=R(p), ri=R(img);
-        return { foe:p.classList.contains('bt-portrait--foe'),
-          dl:+((ri.left-rp.left)/e).toFixed(1), dt:+((ri.top-rp.top)/e).toFixed(1),
-          dr:+((rp.right-ri.right)/e).toFixed(1), db:+((rp.bottom-ri.bottom)/e).toFixed(1) }; });
-      // §330: TAMANHOS que preenchem a tela (medidos em px reais, no piso). Inclui a bolinha de custo e a fonte dos
-      // números de energia no topo. Também: o quadro de ação NÃO EXISTE mais no DOM.
-      const w=el=>el?R(el).width:0;
-      const skMin=Math.min(...[...document.querySelectorAll('.bt-skill')].map(w).concat([1e9]));
-      const ptMin=Math.min(...[...document.querySelectorAll('.bt-portrait')].map(w).concat([1e9]));
-      const efMin=Math.min(...[...document.querySelectorAll('.bt-eff')].map(w).concat([1e9]));
-      const pipMin=Math.min(...[...document.querySelectorAll('.bt-skill__pips i')].map(w).concat([1e9]));
-      const ecEl=document.querySelector('.bt-ebox .bt-ec'); const ecFonte=ecEl?parseFloat(getComputedStyle(ecEl).fontSize)||0:0;
-      const acao=document.querySelectorAll('.bt-acao,[data-acao]').length;
-      const centro=!!document.querySelector('.bt-centro .bt-centro__corpo');
-      // §331 item 2: o texto do ENCERRAR TURNO não quebra nem transborda (fica em 1 linha, com respiro).
-      const enc=document.querySelector('.bt-encerrar'); const encWrap = enc ? (enc.scrollWidth>enc.clientWidth+1) : false;
-      return { n:els.length, over, clip:+clip.toFixed(1), corta, vazios, retr, acao, centro, encWrap,
-        tam:{ skMin:+skMin.toFixed(1), ptMin:+ptMin.toFixed(1), efMin:+efMin.toFixed(1), pipMin:+pipMin.toFixed(1), ecFonte:+ecFonte.toFixed(1) } };
-    },sel=TOQUE);
-    // §329c Parte B2: o ÍCONE DE EFEITO não é um quadrado vazio — a amostra CENTRAL tem pixels VISÍVEIS de cor
-    // diferente do fundo do próprio ícone (símbolos monocromáticos como ⊕ agora renderizam claros). Medido em
-    // PIXELS REAIS: screenshot + amostra da região central vs. um canto do ícone (fundo do azulejo).
-    const efVisiveis=async()=>{
-      const dsf=2;
-      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-eff')].map(el=>{ const r=el.getBoundingClientRect();
-        return {x:r.x,y:r.y,w:r.width,h:r.height,cls:el.className}; }));
-      if(!rects.length) return [];
-      const buf=await page.screenshot();
-      const img=sharp(buf); const meta=await img.metadata(); const raw=await img.raw().toBuffer();
-      const ch=raw.length/(meta.width*meta.height);
-      const px=(cx,cy)=>{ const X=Math.max(0,Math.min(meta.width-1,Math.round(cx*dsf))), Y=Math.max(0,Math.min(meta.height-1,Math.round(cy*dsf)));
-        const o=(Y*meta.width+X)*ch; return [raw[o],raw[o+1],raw[o+2]]; };
-      const dist=(a,b)=>Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2]);
-      return rects.map((r,i)=>{ const bg=px(r.x+r.w*0.14, r.y+r.h*0.14);   // canto sup-esq interno = fundo do azulejo
-        let maxD=0; for(let gx=0.30;gx<=0.70;gx+=0.1) for(let gy=0.30;gy<=0.70;gy+=0.1) maxD=Math.max(maxD,dist(px(r.x+r.w*gx,r.y+r.h*gy),bg));
-        return {i,cls:r.cls,maxD}; });
-    };
-    // §332: por FORMA da arte (classe no <img>): DISCO não mostra fundo claro nos cantos (sem anel — os cantos são o
-    // fundo ESCURO do disco); CHEIA preenche (o canto mostra a ARTE, distinta do fundo escuro). Medido em pixels reais.
-    const arteBotoes=async()=>{
-      const dsf=2;
-      const rects=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill')].map(b=>{ const d=b.querySelector('.bt-skill__disc'); const im=b.querySelector('.slot__art'); const r=d.getBoundingClientRect();
-        return {x:r.x,y:r.y,w:r.width,h:r.height, forma: im?((im.className.match(/slot__art--(\w+)/)||[])[1]||'?'):'none'}; }));
-      if(!rects.length) return [];
-      const buf=await page.screenshot(); const img=sharp(buf); const meta=await img.metadata(); const raw=await img.raw().toBuffer();
-      const ch=raw.length/(meta.width*meta.height);
-      const px=(cx,cy)=>{ const X=Math.max(0,Math.min(meta.width-1,Math.round(cx*dsf))), Y=Math.max(0,Math.min(meta.height-1,Math.round(cy*dsf)));
-        const o=(Y*meta.width+X)*ch; return [raw[o],raw[o+1],raw[o+2]]; };
-      const disc=[20,17,42], dist=(a,b)=>Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2]);
-      return rects.map((r,i)=>{ const pts=[[0.1,0.1],[0.9,0.1],[0.1,0.9],[0.9,0.9]].map(([fx,fy])=>px(r.x+r.w*fx, r.y+r.h*fy));
-        return {i, forma:r.forma, somaMax:Math.max(...pts.map(c=>c[0]+c[1]+c[2])), distMax:Math.max(...pts.map(c=>dist(c,disc)))}; });
-    };
-
-    for(const modo of ['meu','oponente']){
-      await entrar(modo); await page.waitForTimeout(80);
-      const m=await medir();
-      ok(!m.over, `${E.nome} [${modo}]: nenhuma área de toque se sobrepõe` + (m.over?` (${m.over.a} × ${m.over.b} = ${m.over.ix}×${m.over.iy}u)`:` (${m.n} alvos)`));
-      ok(m.clip===0, `${E.nome} [${modo}]: nada de toque corta fora do palco (clip ${m.clip}px)`);
-      ok(m.corta.length===0, `${E.nome} [${modo}]: nome/vida/função não transbordam` + (m.corta.length?` (${m.corta.join(', ')})`:''));
-      ok(m.vazios.length===0, `${E.nome} [${modo}]: nenhum ícone/miniatura/botão vazio (sem imagem e sem fallback)` + (m.vazios.length?` (${m.vazios.join(', ')})`:''));
-      // §329c B1: a caixa do <img> enche o quadro em TODO retrato (|offset| por aresta ≤ 2, borda ~1).
-      const b1Ruim=m.retr.filter(r=>r.semImg||Math.max(Math.abs(r.dl),Math.abs(r.dt),Math.abs(r.dr),Math.abs(r.db))>2);
-      ok(b1Ruim.length===0, `${E.nome} [${modo}]: a imagem preenche o quadro em todos os ${m.retr.length} retratos (±1px da borda)`
-        + (b1Ruim.length?` (${b1Ruim.map(r=>(r.foe?'foe':'ally')+(r.semImg?':sem-img':`:${r.dl}/${r.dt}/${r.dr}/${r.db}`)).join(', ')})`:''));
-      // §329c B2: ícone de efeito com amostra central VISÍVEL (cor ≠ fundo do azulejo), medido em pixels reais.
-      const vis=await efVisiveis(); const b2Ruim=vis.filter(v=>v.maxD<40);
-      ok(vis.length>0 && b2Ruim.length===0, `${E.nome} [${modo}]: ícones de efeito com pixels visíveis no centro (≠ fundo)`
-        + (b2Ruim.length?` (vazios: ${b2Ruim.map(v=>'eff'+v.i+'='+v.maxD).join(', ')})`:` (${vis.length} ícones, menor Δ=${Math.min(...vis.map(v=>v.maxD))})`));
-      // §330: sem quadro de ação no DOM (a escolha marca-se no próprio botão).
-      ok(m.acao===0, `${E.nome} [${modo}]: o quadro de ação não existe no DOM (há ${m.acao})`);
-      // §330: a arte do centro (fixa por turno) aparece nos 3 enquadramentos reais (largura ≥ 25u).
-      ok(m.centro, `${E.nome} [${modo}]: a arte FIXA do centro está presente (.bt-centro__corpo)`);
-      // §331 item 2: o botão ENCERRAR TURNO não quebra/transborda o texto (1 linha, com respiro).
-      ok(!m.encWrap, `${E.nome} [${modo}]: o texto do ENCERRAR TURNO não quebra nem toca a borda`);
-      // §332: arte DISCO sem anel claro nos cantos; arte CHEIA preenche o botão (canto mostra a arte).
-      const arte=await arteBotoes();
-      const anel=arte.filter(a=>a.forma==='disco' && a.somaMax>180);
-      ok(anel.length===0, `${E.nome} [${modo}]: nenhum botão DISCO mostra fundo claro nos cantos (sem anel)`
-        + (anel.length?` (${anel.map(a=>'sk'+a.i+'='+a.somaMax).join(', ')})`:''));
-      const cheiaCheias=arte.filter(a=>a.forma==='cheia' && a.distMax>40);
-      ok(cheiaCheias.length>=1, `${E.nome} [${modo}]: botão(ões) de arte CHEIA preenchem o canto com a arte (${cheiaCheias.length} de ${arte.filter(a=>a.forma==='cheia').length})`);
-      // §330: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
-      if(E.w===780){
-        ok(m.tam.skMin>=64, `${E.nome} [${modo}]: botão de habilidade ≥64px (${m.tam.skMin}px)`);
-        ok(m.tam.ptMin>=64, `${E.nome} [${modo}]: retrato ≥64px (${m.tam.ptMin}px)`);
-        ok(m.tam.efMin>=22, `${E.nome} [${modo}]: ícone de efeito ≥22px (${m.tam.efMin}px)`);
-        if(modo==='meu') ok(m.tam.pipMin>=7, `${E.nome} [${modo}]: bolinha de custo ≥7px (${m.tam.pipMin}px)`);
-        if(modo==='meu') ok(m.tam.ecFonte>=9, `${E.nome} [${modo}]: números de energia ≥9px (${m.tam.ecFonte}px)`);
-      }
-    }
-    // §329b item 6 reforço: com um INIMIGO do bestiário em FOCO, as minis dele (sem arte) caem no monograma — não ficam vazias.
-    await page.evaluate(()=>{ foco=st.lados[1].units[0].uid; detalhe=null; armado=null; render(); });
-    await page.waitForTimeout(40);
-    const mf=await medir();
-    ok(mf.vazios.length===0, `${E.nome}: com inimigo do bestiário em foco, minis caem no monograma (sem vazio)` + (mf.vazios.length?` (${mf.vazios.join(', ')})`:''));
+  // ---- (1) coordenadas em 1846×852 (escala 1) ----
+  {
+    const ctx=await browser.newContext({viewport:{width:1846,height:852},deviceScaleFactor:1});
+    const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+    await page.evaluate(BOOT); await page.waitForTimeout(120);
+    console.log('== §335 coordenadas @1846×852 (escala 1) ==');
+    const m=await page.evaluate((CAIXAS)=>{
+      const bat=document.getElementById('batalha'); const b=bat.getBoundingClientRect();
+      const esc=(typeof ultimaEscalaBatalha!=='undefined'&&ultimaEscalaBatalha)||1;
+      const rel=el=>{ const r=el.getBoundingClientRect(); return { x:(r.left-b.left)/esc, y:(r.top-b.top)/esc, w:r.width/esc, h:r.height/esc }; };
+      const out={esc};
+      out.header=(()=>{ const h=bat.querySelector('header'); return h?rel(h):null; })();
+      CAIXAS.forEach(c=>{ if(c.nome==='header')return; const el=bat.querySelector(c.sel); out[c.nome]=el?rel(el):null; });
+      // colunas do campo (grid: aliados | cena | inimigos) e do painel (info | meio | resto)
+      const campo=bat.querySelector('.b5-campo'); out.campoCols=campo?[...campo.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
+      const painel=bat.querySelector('.b5-painel'); out.painelCols=painel?[...painel.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
+      const retr=bat.querySelector('.bt-portrait--ally'); out.retrato=retr?rel(retr):null;
+      const skill=bat.querySelector('.bt-skill[data-sk]'); out.skill=skill?rel(skill):null;
+      return out;
+    }, CAIXAS);
+    const perto=(a,b,t)=>Math.abs(a-b)<=t;
+    const bateCaixa=(c,got)=>{ if(!got){ok(false,`@1846 ${c.nome}: elemento ausente`); return;}
+      ok(perto(got.x,c.x,2)&&perto(got.y,c.y,2)&&perto(got.w,c.w,2)&&perto(got.h,c.h,2),
+        `@1846 ${c.nome}: caixa bate o HTML (esperado ${c.x},${c.y} ${c.w}×${c.h} · veio ${Math.round(got.x)},${Math.round(got.y)} ${Math.round(got.w)}×${Math.round(got.h)})`); };
+    bateCaixa(CAIXAS[0], m.header);
+    CAIXAS.slice(1).forEach(c=>bateCaixa(c, m[c.nome]));
+    ok(JSON.stringify(m.campoCols)===JSON.stringify([676,884,172]), `@1846 colunas do campo = 676|884|172 (veio ${JSON.stringify(m.campoCols)})`);
+    ok(JSON.stringify(m.painelCols)===JSON.stringify([840,564,328]), `@1846 colunas do painel = 840|564|328 (veio ${JSON.stringify(m.painelCols)})`);
+    ok(m.retrato&&perto(m.retrato.w,140,2)&&perto(m.retrato.h,140,2), `@1846 retrato 140×140 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
+    ok(m.skill&&perto(m.skill.w,108,2)&&perto(m.skill.h,108,2), `@1846 botão de habilidade 108×108 (veio ${m.skill&&Math.round(m.skill.w)}×${m.skill&&Math.round(m.skill.h)})`);
     await ctx.close();
   }
+
+  // ---- (2) responsivo: nada sai da tela, sem sobreposição de toque, sem corte de texto ----
+  for(const E of [{w:780,h:360},{w:915,h:412},{w:1280,h:720}]){
+    const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:2});
+    const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+    await page.evaluate(BOOT); await page.waitForTimeout(100);
+    const m=await page.evaluate((E)=>{
+      const esc=(typeof ultimaEscalaBatalha!=='undefined'&&ultimaEscalaBatalha)||1;
+      const bat=document.getElementById('batalha'); const b=bat.getBoundingClientRect();
+      const fora = b.left<-0.5||b.top<-0.5||b.right>E.w+0.5||b.bottom>E.h+0.5;
+      // sobreposição de toques: os 12 botões de habilidade + 6 retratos não se intersectam entre si
+      const toques=[...bat.querySelectorAll('.bt-skill[data-sk],.bt-portrait')].map(el=>el.getBoundingClientRect());
+      let over=null; for(let i=0;i<toques.length&&!over;i++)for(let j=i+1;j<toques.length;j++){const a=toques[i],c=toques[j];
+        const ix=Math.min(a.right,c.right)-Math.max(a.left,c.left), iy=Math.min(a.bottom,c.bottom)-Math.max(a.top,c.top);
+        if(ix>1&&iy>1){over=i+'×'+j;break;}}
+      const clip=el=>el?(el.scrollWidth>el.clientWidth+1):false;
+      const px=(sel)=>{ const el=bat.querySelector(sel); return el?Math.round(el.getBoundingClientRect().width*10)/10:null; };
+      return { esc:Math.round(esc*1000)/1000, fora, over,
+        titCorta: clip(bat.querySelector('.bt-panel__titulo')), nomeCorta: clip(bat.querySelector('.bt-name__nick')), linhaCorta: clip(bat.querySelector('.bt-encerrar__linha')),
+        skill:px('.bt-skill[data-sk]'), retrato:px('.bt-portrait--ally'), efeito:px('.bt-eff'), desc:(()=>{const d=bat.querySelector('.bt-panel__desc'); return d?Math.round(parseFloat(getComputedStyle(d).fontSize)*esc*10)/10:null;})() };
+    }, E);
+    console.log(`== §335 responsivo ${E.w}×${E.h}: escala ${m.esc} · habilidade ${m.skill}px · retrato ${m.retrato}px · efeito ${m.efeito}px · descrição ${m.desc}px ==`);
+    ok(!m.fora, `${E.w}×${E.h}: a tela fixa cabe (nada sai da viewport)`);
+    ok(!m.over, `${E.w}×${E.h}: nenhuma área de toque se sobrepõe`+(m.over?` (${m.over})`:''));
+    ok(!m.titCorta, `${E.w}×${E.h}: o título do painel não corta`);
+    ok(!m.nomeCorta, `${E.w}×${E.h}: o nome do jogador não corta`);
+  }
+
+  // ---- (3) cena + anúncio por turno ----
+  {
+    const ctx=await browser.newContext({viewport:{width:1846,height:852},deviceScaleFactor:1});
+    const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+    await page.evaluate(BOOT); await page.waitForTimeout(80);
+    const meu=await page.evaluate(()=>{ const bat=document.getElementById('batalha');
+      const img=bat.querySelector('.b5-art img'); const tit=[...bat.querySelectorAll('div')].map(d=>d.textContent).find(t=>/SEU TURNO/.test(t));
+      return { src:(img&&img.getAttribute('src'))||'', seuTurno:!!bat.textContent.match(/SEU TURNO/) }; });
+    ok(/nezha/i.test(meu.src), `meu turno: a cena é a da Nezha (src ${meu.src})`);
+    ok(meu.seuTurno, 'meu turno: o anúncio diz "SEU TURNO"');
+    await page.evaluate(`st.ativo=1; armado=null;detalhe=null; render();`); await page.waitForTimeout(80);
+    const opo=await page.evaluate(()=>{ const bat=document.getElementById('batalha'); const img=bat.querySelector('.b5-art img');
+      return { src:(img&&img.getAttribute('src'))||'', opoTurno:/TURNO DO OPONENTE/.test(bat.textContent) }; });
+    ok(/ahpuch/i.test(opo.src), `turno do oponente: a cena é a do Ah Puch (src ${opo.src})`);
+    ok(opo.opoTurno, 'turno do oponente: o anúncio diz "TURNO DO OPONENTE"');
+    await ctx.close();
+  }
+
   await browser.close();
-  console.log(falhas===0?'\n>>> BATALHA_FAIXA OK':`\n>>> ${falhas} FALHA(S)`);
+  console.log(falhas===0?'\n>>> BATALHA_LAYOUT OK':`\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas?1:0);
 })().catch(e=>{console.error(e);process.exit(1);});

@@ -381,6 +381,12 @@ const turnoArte = {
   meu: fs.existsSync(path.join(raiz, 'web', 'banners', 'turno_meu.webp')) ? 1 : 0,
   oponente: fs.existsSync(path.join(raiz, 'web', 'banners', 'turno_oponente.webp')) ? 1 : 0
 };
+// §335: ARTE LARGA da CENA central por turno (web/cena/turno_meu.webp / turno_oponente.webp). Ausente → cai no retrato
+// do deus de arte_turno.json (RETRATO_ARTE) em cover com a máscara do design. A build anota quais arquivos existem.
+const cenaArte = {
+  meu: fs.existsSync(path.join(raiz, 'web', 'cena', 'turno_meu.webp')) ? 1 : 0,
+  oponente: fs.existsSync(path.join(raiz, 'web', 'cena', 'turno_oponente.webp')) ? 1 : 0
+};
 
 // §332/§334: CLASSIFICA cada arte de habilidade (web/skills/*.webp) no build, sem lista à mão — arte nova é
 // reclassificada sozinha no próximo build. CHEIA = quadrada, vai à borda. DISCO = redonda sobre um fundo, de dois tipos:
@@ -608,16 +614,14 @@ const statusVisualObj = (() => {
   return mapa;
 })();
 
-// §329 — LAYOUT da batalha (dado). Lido pela tela; validado aqui (chaves obrigatórias) e injetado como LAYOUT_BATALHA.
+// §335 — LAYOUT da batalha (dado, tela fixa 1846×852 do design do dono). Validado aqui e injetado como LAYOUT_BATALHA.
 const layoutBatalhaObj = (() => {
   const doc = JSON.parse(ler('data/layout_batalha.json'));
   const erros = [];
-  // §330: sem jogadorTurnoOponente (posições iguais nos dois turnos) e sem quadro de ação.
-  const precisa = ['topo', 'fileiras', 'jogador', 'inimigo', 'centro', 'cantoInferior', 'painel'];
+  const precisa = ['canvas', 'cor', 'header', 'campo', 'painel', 'menu'];
   for (const k of precisa) if (!doc[k]) erros.push(`seção "${k}" ausente`);
-  if (doc.fileiras && (!Array.isArray(doc.fileiras.tops) || doc.fileiras.tops.length !== 3)) erros.push('fileiras.tops deve ter 3 topos');
-  if (doc.jogador && doc.jogador.quadros) { for (const s of ['basico', 'habilidade', 'milagre', 'defesa']) if (typeof doc.jogador.quadros[s] !== 'number') erros.push(`jogador.quadros.${s} ausente`); }
-  if (erros.length) { console.error('ERRO §329 — data/layout_batalha.json:\n  ' + erros.join('\n  ')); process.exit(1); }
+  if (doc.canvas && (doc.canvas.w !== 1846 || doc.canvas.h !== 852)) erros.push('canvas deve ser 1846×852 (design do dono)');
+  if (erros.length) { console.error('ERRO §335 — data/layout_batalha.json:\n  ' + erros.join('\n  ')); process.exit(1); }
   return doc;
 })();
 
@@ -650,7 +654,7 @@ const saida = casca
     + roster + '\n' + motor + '\nconst KITS=' + kits + ';')
   // RARIDADE/ECONOMIA vêm ANTES do blocoVisao: o boot (view.js → iniciar()) lê ECONOMIA
   // para o grant inicial, então o dado precisa estar inicializado antes de a view rodar.
-  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\nconst CORPO_ARTE=' + JSON.stringify(corpoArte) + ';\nconst CANTO_ARTE=' + cantoArte + ';\nconst ARTE_TURNO=' + JSON.stringify(arteTurno) + ';\nconst TURNO_ARTE=' + JSON.stringify(turnoArte) + ';\nconst SKILL_ARTE_FORMA=' + JSON.stringify(skillArteForma) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
+  .replace('/*__VIEW__*/', 'const RARIDADE=' + raridades + ';\nconst ECONOMIA=' + economia + ';\nconst PROVACOES=' + JSON.stringify(provacoes) + ';\nconst CAMPANHA=' + JSON.stringify(campanhaObj) + ';\nconst CAMPANHAS=' + JSON.stringify(campanhasObj) + ';\nconst SEMANAIS=' + JSON.stringify(semanaisObj) + ';\nconst COMPOSICAO=' + JSON.stringify(composicaoObj) + ';\nconst DOMINIOS=' + JSON.stringify(dominiosObj) + ';\nconst DOMINIOS_ARTE=' + JSON.stringify(dominiosArte) + ';\nconst MISSOES=' + JSON.stringify(missoesDoc) + ';\nconst SINERGIA=' + JSON.stringify(sinergiaObj) + ';\nconst BATALHA_ARTE=' + batalhaArte + ';\nconst BATALHA_TXT=' + batalhaTxt + ';\nconst SELOS_ARTE=' + selosArte + ';\nconst INVOCACAO=' + JSON.stringify(invocacaoObj) + ';\nconst INVOC_FUNDO=' + JSON.stringify(invocFundo) + ';\nconst INVOC_ARTE=' + JSON.stringify(invocArte) + ';\nconst MAPA_ARTE=' + mapaArte + ';\nconst MAPA_ICONES=' + JSON.stringify(mapaIcones) + ';\nconst MAPA=' + JSON.stringify(mapaObj) + ';\nconst IA_POR_MODO=' + JSON.stringify(iaPorModoObj) + ';\nconst STATUS_VISUAL=' + JSON.stringify(statusVisualObj) + ';\nconst LAYOUT_BATALHA=' + JSON.stringify(layoutBatalhaObj) + ';\nconst CORPO_ARTE=' + JSON.stringify(corpoArte) + ';\nconst CANTO_ARTE=' + cantoArte + ';\nconst ARTE_TURNO=' + JSON.stringify(arteTurno) + ';\nconst TURNO_ARTE=' + JSON.stringify(turnoArte) + ';\nconst CENA_ARTE=' + JSON.stringify(cenaArte) + ';\nconst SKILL_ARTE_FORMA=' + JSON.stringify(skillArteForma) + ';\n' + blocoVisao + '\n' + invoc + '\n' + ia)
   .replace('/*__BUILD__*/', build);
 
 if (saida.includes('__ENGINE__') || saida.includes('__VIEW__')) {

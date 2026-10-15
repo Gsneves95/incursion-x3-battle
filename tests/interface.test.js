@@ -189,28 +189,25 @@ tap($('#bgo'));
 w.eval('st.ativo=0;st.starter=0;st.aberturaFeita=true;render()');
 
 console.log('== 2. estrutura da tela de batalha (§330: topo refeito, sem quadro de ação, minis no painel) ==');
-ok(!!$('#baselayer.bt'), 'a batalha usa o layout §329/§330 (#baselayer.bt)');
-// §330: .bt-centro é CONDICIONAL (a arte do centro some se a largura disponível < 25u — 16:9 estreito, e no jsdom
-// degenerado 0×0 a largura cai no piso de 780px → ~182u). Sua presença em tela real é provada em batalha_faixa.
-['.bt-ajustes','.bt-prof','.bt-prof--foe','.bt-topcentro','.bt-ebox','.bt-trocar','.bt-encerrar','.bt-panel','.bt-panel__minis']
+ok(!!$('#batalha'), 'a batalha usa a tela fixa do design do dono (§335: #batalha)');
+// §335: header (nomes+energia+encerrar+menu), campo (3 fileiras + cena) e painel do design, em px de design.
+['[data-prof="me"]','[data-prof="foe"]','.bt-ebox','.bt-trocar','#bend2','#bmenu','.bt-panel','.bt-panel__minis']
   .forEach(s => ok(!!$(s), `falta ${s}`));
 ok($$('.bt-portrait--ally').length === 3, `3 retratos aliados, há ${$$('.bt-portrait--ally').length}`);
 ok($$('.bt-portrait--foe[data-foe]').length === 3, `3 retratos inimigos, há ${$$('.bt-portrait--foe[data-foe]').length}`);
 ok($$('.bt-skill[data-sk]').length === 12, `3×4 = 12 habilidades aliadas, há ${$$('.bt-skill[data-sk]').length}`);
 ok($$('.bt-portrait--foe [data-sk]').length === 0, 'nada do inimigo é armável (só leitura)');   // INV 15
-ok($$('.bt-portrait__ask').length === 3, `todo inimigo vivo tem a marca "?" de consulta, há ${$$('.bt-portrait__ask').length}`);
-ok($$('.bt-portrait .bt-portrait__x').length === 6, 'todo retrato tem o X de derrota');
+ok($$('[data-inspect]').length === 3, `todo inimigo vivo tem a marca "?" de consulta, há ${$$('[data-inspect]').length}`);
 ok($$('.bt-hp').length === 6, `6 barras de vida (atual/máx), há ${$$('.bt-hp').length}`);
 ok($$('.bt-hp__lab').every(e => /\d+\/\d+/.test(e.textContent)), 'toda barra de vida mostra atual/máx');
-// §330: o quadro de ação "?" FOI REMOVIDO (a habilidade escolhida marca-se no próprio botão); as 4 minis do deus
-// em foco vivem DENTRO do painel ("Toque numa habilidade").
-ok($$('.bt-acao').length === 0, `§330: sem quadro de ação no DOM, há ${$$('.bt-acao').length}`);
-ok($$('.bt-panel__minis .bt-mini[data-look]').length >= 1, 'as minis do deus em foco vivem no painel ("Toque numa habilidade")');
+// §335: a habilidade escolhida marca-se no próprio botão; as 4 minis do deus em foco vivem no painel.
+ok($$('.bt-acao').length === 0, `sem quadro de ação no DOM, há ${$$('.bt-acao').length}`);
+ok($$('.bt-panel__minis .bt-mini[data-look]').length >= 1, 'as minis do deus em foco vivem no painel ("OUTRAS HABILIDADES")');
 ok(/você/i.test($('.bt-name--me .bt-name__nick').textContent), `perfil esquerdo = VOCÊ ("${$('.bt-name--me .bt-name__nick').textContent}")`);
 ok($('.bt-name--foe .bt-name__nick').textContent.trim().length > 0, 'o oponente é nomeado à direita');
-ok(!!$('.bt-prof[data-prof="me"] .bt-prof__pic svg') && !!$('.bt-prof--foe .bt-prof__pic svg'), 'cada perfil tem a foto placeholder tocável');
+ok(!!$('[data-prof="me"] svg') && !!$('[data-prof="foe"] svg'), 'cada perfil tem a foto placeholder tocável');
 ok($$('.bt-ebox .bt-ec').length >= 1, `contadores de energia na caixa do topo, há ${$$('.bt-ebox .bt-ec').length}`);
-console.log(`  topo + 3 fileiras + centro + painel · ${$$('.bt-skill').length} habilidades · ${$$('.bt-portrait__ask').length} marcas "?"`);
+console.log(`  topo + 3 fileiras + cena + painel · ${$$('.bt-skill').length} habilidades · ${$$('[data-inspect]').length} marcas "?"`);
 
 console.log('== 3. encaixes de arte com chave ==');
 const slots = $$('.slot[data-slot]').map(e => e.dataset.slot);
@@ -313,10 +310,11 @@ console.log('== 12. menu e relógio no topo ==');
   ok(!!$('#bend2'), 'ENCERRAR TURNO é o estado+barra do topo (#bend2)');
   ok(!!$('.bt-barra__fill'), 'a barra de tempo existe');
   tap($('#bmenu'));
-  ok(!!$('#menu') && !!$('#bsair') && !!$('#bhelp'), 'MENU abre o dropdown (sair/como jogar etc.)');
+  ok(!!$('#menu') && !!$('#bsair') && !!$('#bhelp'), 'o MENU (☰) abre o overlay (sair/como jogar etc.)');
   ok(!!$('#bmenubuild'), 'o carimbo de build vive no menu');
+  ok(!!$('#bsurr'), '§335: RENDER-SE (rendição) vive no menu');
+  ok(!!$('#bcontinuar'), '§335: CONTINUAR fecha o menu');
   tap($('#bmenu'));
-  ok(!!$('#bsurr'), 'DESISTIR (rendição) fica no canto inferior esquerdo');
 }
 
 console.log('== 13. partida completa só por toques ==');

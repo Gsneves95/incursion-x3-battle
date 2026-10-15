@@ -404,8 +404,8 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     ok(/\+8/.test(p3.ptxt), `§329: tocar o efeito mostra a magnitude +8 no painel ("${p3.ptxt.slice(0, 80)}")`);
     ok(p3.titles.filter(t => /[+−]\d/.test(t)).length >= 2, `§329: os ícones numéricos carregam o número (${JSON.stringify(p3.titles)})`);
 
-    // GUARDA 4 (§330) — a zona de efeitos é uma GRADE 2×3: até 6 efeitos aparecem todos (sem "+N") e a grade não
-    // estoura na horizontal nem na vertical; com 7+ o excedente colapsa no "+N" (5 ícones + "+N" = 6 células).
+    // GUARDA 4 (§335) — o StatusEffects do design mostra ATÉ 3 ícones (24px + número); com mais de 3, o excedente
+    // colapsa no "+N" (2 ícones + "+N" = 3 células). A linha não estoura na horizontal.
     const medeGrade = async (efeitos) => gp.evaluate((efeitos) => {
       const u = st.lados[1].units[1]; u.efeitos = efeitos; render();
       const foeUid = u.uid;
@@ -415,11 +415,11 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       const vw = document.documentElement.clientWidth;
       return { fora: rb ? (rb.left < -0.5 || rb.right > vw + 0.5) : true, n: effs.length, temMais: effs.some(e => e.classList.contains('bt-eff--mais')) };
     }, efeitos);
-    const p4 = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]);
-    ok(!p4.fora, `§330: a grade com 6 efeitos não sai da tela na horizontal (${p4.n} ícones)`);
-    ok(p4.n === 6 && !p4.temMais, `§330: 6 efeitos → 6 ícones na grade 2×3, sem "+N" (${p4.n} ícones, +N ${p4.temMais})`);
-    const p4b = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }, { type: 'vulneravel', v: 3, dur: 2 }]);
-    ok(!p4b.fora && p4b.n === 6 && p4b.temMais, `§330: 7 efeitos → 5 ícones + "+N" (${p4b.n} células, +N ${p4b.temMais})`);
+    const p4 = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }]);
+    ok(!p4.fora, `§335: a linha com 3 efeitos não sai da tela na horizontal (${p4.n} ícones)`);
+    ok(p4.n === 3 && !p4.temMais, `§335: 3 efeitos → 3 ícones, sem "+N" (${p4.n} ícones, +N ${p4.temMais})`);
+    const p4b = await medeGrade([{ type: 'dmgUp', v: 8, dur: 3 }, { type: 'dmgReduction', v: 5, dur: 2 }, { type: 'adormecido', dur: 2 }, { type: 'regen', v: 6, dur: 2 }, { type: 'invulneravel', dur: 1 }, { type: 'dmgDown', v: 4, dur: 2 }]);
+    ok(!p4b.fora && p4b.n === 3 && p4b.temMais, `§335: 6 efeitos → 2 ícones + "+N" (${p4b.n} células, +N ${p4b.temMais})`);
 
     // GUARDA 5 (§267) — a redução do defensor com `contra` só acende quando o golpe MIRADO casa (simetria).
     console.log('== §267: redução com contra acende só quando o golpe mirado casa ==');

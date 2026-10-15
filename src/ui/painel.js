@@ -1,27 +1,22 @@
-// ui/painel.js — §333b: o PAINEL DE BAIXO seguindo os MODELOS do dono. Ordem: [IMAGEM][CONTEÚDO] | [CUSTO/RECARGA] |
-// [DIREITA]. As barras "|" são divisores verticais finos dourados. A DIREITA é 4 miniaturas (situação PERSONAGEM:
-// retrato, habilidade lida, efeito, resumo) OU o botão CANCELAR (quando há habilidade ARMADA). As miniaturas são
-// SEMPRE do DONO do conteúdo (donoUid, §333). Tamanhos/fontes vêm de LAYOUT_BATALHA.painel.
+// ui/painel.js — §335: o BattleDetailPanel do design do dono (Claude Design), em PX de design (tela fixa 1846×852).
+// Grade 840 | 564 | resto: [IMAGEM+TÍTULO+PÍLULAS+DESCRIÇÃO] | [CUSTO/RECARGA + mira de instrução] | [CANCELAR ou
+// OUTRAS HABILIDADES]. O CONTEÚDO por situação é o do §333b (deus / habilidade lida / armada / efeito / resumo);
+// as miniaturas são SEMPRE do DONO do conteúdo (donoUid, §333). O painel nunca fica vazio (§329b).
 
 const TIPO_SLOT = { basico:'BÁSICO', habilidade:'HABILIDADE', milagre:'MILAGRE', defesa:'DEFESA' };
-// categoria do efeito → rótulo da pílula + cor (as mesmas cores das bordas de efeito em campo)
 const CAT_PILL = { bom:{txt:'BOM',cor:'#6fe6a0'}, ruim:{txt:'RUIM',cor:'#ff6b86'},
   controle:{txt:'CONTROLE',cor:'#b98bff'}, defesa:{txt:'DEFESA',cor:'#6fb6ff'} };
+function _P(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{}; }
+function _PC(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.cor)||{}; }
 
-// bolinhas de custo (tamanho em u; a livre em cinza). Sem custo → "livre".
-function _custoPips(cost, szU){
-  const sz=szU||3;
-  if(!cost || !Object.keys(cost).length) return `<span class="bt-panel__livre">livre</span>`;
+// bolinhas de custo (tamanho em px; livre em cinza). Sem custo → "livre".
+function _custoPips(cost, sz){
+  sz=sz||27;
+  if(!cost || !Object.keys(cost).length) return `<span style="color:#9AA4B8">livre</span>`;
   const out=[];
-  for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(`<i style="width:${U(sz)};height:${U(sz)};background:${COR(k)}"></i>`); }
-  for(let i=0;i<(cost.livre||0);i++) out.push(`<i class="free" style="width:${U(sz)};height:${U(sz)}"></i>`);
-  return out.length ? `<span class="bt-panel__pips">${out.join('')}</span>` : `<span class="bt-panel__livre">livre</span>`;
-}
-// valor da célula RECARGA: "4 · pronta" (pronta em VERDE) / "4 · pronta em 2" (em DOURADO).
-function _recargaHTML(cd, cdNow){
-  if(!cd) return `<span class="bt-panel__livre">—</span>`;
-  return cdNow>0 ? `${cd} · <span class="bt-panel__ouro">pronta em ${cdNow}</span>`
-                 : `${cd} · <span class="bt-panel__verde">pronta</span>`;
+  for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:${COR(k)};box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.25)"></span>`); }
+  for(let i=0;i<(cost.livre||0);i++) out.push(`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:repeating-conic-gradient(#888 0 25%,#555 0 50%)"></span>`);
+  return out.length ? `<div style="display:flex;gap:10px">${out.join('')}</div>` : `<span style="color:#9AA4B8">livre</span>`;
 }
 
 // o DEUS em foco (replicado aqui p/ não cruzar ui→ui; `todas`/`_catPartida` são globais isentos).
@@ -31,8 +26,7 @@ function _focoGod(){
   const eu=ladoExibido(); const lado=ehMeuTurno()?st.lados[eu]:st.lados[1-eu];
   return lado.units.find(x=>x.vivo)||st.lados[eu].units.find(x=>x.vivo)||st.lados[eu].units[0];
 }
-
-// pílulas (etiquetas) de uma HABILIDADE: TIPO (cor da energia) · classe · alvo · NV N.
+// pílulas de uma HABILIDADE: TIPO (cor da energia) · classe · alvo · NV N (sempre por último).
 function _etqSkill(slotName, tf, nv, cor){
   const parts=(tf||'').split(' · ');
   const etq=[{txt:(TIPO_SLOT[slotName]||slotName.toUpperCase()), cor}];
@@ -41,36 +35,30 @@ function _etqSkill(slotName, tf, nv, cor){
   etq.push({txt:'NV '+(nv||1)});
   return etq;
 }
-
-// MIRA (só quando ARMADA): instrução de alvo que se adapta ao tipo de alvo. `pronto` → o bloco confirma ao toque.
-function _miraPainel(a){
-  const falta=(typeof faltamAlvos==='function')?faltamAlvos():0;
-  if(armado && armado.distribui){
-    const n=escolhidos.length;
-    return { titulo: n?`Confirmar · ${n} alvo${n>1?'s':''}`:'Toque os inimigos a repartir',
-      sub: n?'Toque para repartir o dano entre os escolhidos.':'Toque os inimigos para repartir o dano.', pronto:n>0 };
-  }
-  if(falta>0){
-    const passo=armado.passos[escolhidos.length];
-    let quem, quemSub;
-    if(passo==='aliado' && alvos.length===1 && alvos[0] && alvos[0].uid===armado.uid){ quem='em si mesmo'; quemSub='a si mesmo'; }
-    else if(passo==='aliado'){ quem='o aliado'; quemSub='um aliado'; }
-    else { quem='o inimigo'; quemSub='um inimigo'; }
-    const multi = armado.passos.length>1 ? ` ${escolhidos.length+1}/${armado.passos.length}` : '';
-    return { titulo:`Toque ${quem}${multi}`, sub:`Selecione ${quemSub} para usar esta habilidade.`, pronto:false };
-  }
-  return { titulo:'Toque para confirmar', sub:'Toque para confirmar o uso desta habilidade.', pronto:true };
+// INSTRUÇÃO de alvo (adapta como no HTML). o={alvo,passos,cdNow,disponivel,motivo,alvoNome}.
+function _instSkill(o){
+  if(o.cdNow>0) return {title:'Em recarga', sub:'Disponível em '+o.cdNow+' turno(s).', color:'#9AA4B8'};
+  if(!o.disponivel && o.motivo==='sem_energia') return {title:'Energia insuficiente', sub:'Troque ou acumule energia para usar.', color:'#E8343C'};
+  if(o.alvoNome) return {title:'Alvo: '+o.alvoNome, sub:'Ação marcada para este turno.', color:'#4BE38A'};
+  if(o.alvo==='todosInimigos') return {title:'Todos os inimigos', sub:'Toque qualquer inimigo para confirmar.', color:'#F0B43C'};
+  const p=(o.passos&&o.passos[0])||'';
+  if(p==='aliado') return {title:'Toque um aliado', sub:'Selecione um aliado para usar esta habilidade.', color:'#F0B43C'};
+  if(!p) return {title:'Toque para confirmar', sub:'Use esta habilidade neste turno.', color:'#F0B43C'};
+  return {title:'Toque um inimigo', sub:'Selecione um inimigo para usar esta habilidade.', color:'#F0B43C'};
 }
 
-/* ---------- MODELOS (quem é o dono; que pílulas; que bloco do meio; que direita) ---------- */
-// base de uma HABILIDADE (compartilhada por ARMADA e LIDA). A direita padrão são as minis do dono.
-function _modeloSkill(u, a, nv, cdNow){
-  const cor=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
+/* ---------- MODELOS (reaproveitam o §333b; meio = 2 células; inst = instrução; dir = cancelar | minis) ---------- */
+function _dadosSkill(u, a, nv, cdNow, armadoFlag){
+  const cor=a.slot==='defesa'?'#D6DAE2':COR(u.elem);
   const modo=a.alterna?(u.modo===0?' — ANEL':' — MANTO'):'';
-  return { tipo:'skill', chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), redondo:true, cor,
-    titulo:a.nome+modo, nv, desc:a.desc, etiquetas:_etqSkill(a.slot, classesTxt(u,a), nv, cor), donoUid:u.uid,
-    meio:[{rotulo:'CUSTO', pips:a.cost||{}}, {rotulo:'RECARGA', html:_recargaHTML(a.cd||0, cdNow)}],
-    dir:{modo:'minis', selSlot:a.slot} };
+  const alvoNome = (armadoFlag && typeof escolhidos!=='undefined' && escolhidos.length)
+    ? (todas().find(x=>x.uid===escolhidos[0])||{}).nome : '';
+  return { tipo:'skill', chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), redondo:false, cor,
+    titulo:(a.nome+modo),
+    tituloCor: a.slot==='milagre'?'#E8343C':a.slot==='defesa'?'#D6DAE2':'#F0B43C',
+    nv, desc:a.desc, etiquetas:_etqSkill(a.slot, classesTxt(u,a), nv, cor), donoUid:u.uid,
+    meio:[{rotulo:'CUSTO', pips:a.cost||{}}, {rotulo:'RECARGA', num:String(a.cd||0), state:(cdNow>0?('· '+cdNow+' turno(s)'):'· pronta'), stateCor:(cdNow>0?'#E8343C':'#4BE38A')}],
+    inst:_instSkill({alvo:a.alvo, passos:a.passos, cdNow, disponivel:a.disponivel, motivo:a.motivo, alvoNome}) };
 }
 function _modeloPainel(){
   if(armado){
@@ -79,9 +67,8 @@ function _modeloPainel(){
     if(a){
       const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,armado.slot):1;
       const cdNow=u.cd[armado.slot]||0;
-      const m=_modeloSkill(u, a, nv, cdNow);
-      m.armado=true; m.mira=_miraPainel(a);
-      m.dir={ modo:'cancelar', recarga:`Recarga ${a.cd||0} · ${cdNow>0?('pronta em '+cdNow):'pronta'}` };
+      const m=_dadosSkill(u, a, nv, cdNow, true);
+      m.armado=true; m.dir={ modo:'cancelar' };
       return m;
     }
   }
@@ -93,9 +80,9 @@ function _modeloPainel(){
     if(!key && typeof ARTE_TURNO!=='undefined' && ARTE_TURNO) key=ARTE_TURNO.oponente;
     if(!key){ const lo=st.lados[1-ladoExibido()]; const u0=lo&&(lo.units.find(x=>x.vivo)||lo.units[0]); key=u0&&u0.key; }
     const un=key&&typeof todas==='function'?todas().find(x=>x.key===key):null;
-    const cor=un?COR(un.elem):'var(--gold-soft)';
-    return { tipo:'resumo', chave:key?('god-'+key):'detail', cor, titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(),
-      desc:linhas.join('  ·  ')||'sem ações', donoUid:un?un.uid:null,
+    return { tipo:'resumo', chave:key?('god-'+key):'detail', cor:'#C9A44C', tituloCor:'#9AA4B8',
+      titulo:'RESUMO · '+rotuloLado(1-ladoExibido()).toUpperCase(), desc:linhas.join('  ·  ')||'sem ações',
+      donoUid:un?un.uid:null, inst:{title:'Resumo do turno', sub:'Toque para continuar.', color:'#F0B43C'},
       dir: un?{modo:'minis', selSlot:null}:null };
   }
   return _unidadeModeloFoco();
@@ -103,33 +90,41 @@ function _modeloPainel(){
 function _modeloDetalhe(d){
   if(d.kind==='skill'){
     const slotName=(d.chave||'').split('-').pop();
+    const u=todas().find(x=>x.uid===d.uid);
+    const a=u&&acoesDe(st,u).find(x=>x.slot===slotName);
     const cor=d.cor;
-    return { tipo:'skill', chave:d.chave, mono:d.mono, redondo:true, cor, titulo:d.nome, nv:d.nv,
-      desc:d.desc, motivo:d.motivo, etiquetas:_etqSkill(slotName, d.tf, d.nv, cor), donoUid:d.uid,
-      meio:[{rotulo:'CUSTO', pips:d.cost||{}}, {rotulo:'RECARGA', html:_recargaHTML(d.cd||0, d.cdNow||0)}],
-      dir:{modo:'minis', selSlot:slotName} };
+    const inst = a ? _instSkill({alvo:a.alvo, passos:a.passos, cdNow:(d.cdNow||0), disponivel:a.disponivel, motivo:a.motivo})
+                   : {title:'Toque um inimigo', sub:'Selecione um alvo para usar esta habilidade.', color:'#F0B43C'};
+    return { tipo:'skill', chave:d.chave, mono:d.mono, redondo:false, cor,
+      titulo:(d.nome||''), tituloCor: slotName==='milagre'?'#E8343C':slotName==='defesa'?'#D6DAE2':'#F0B43C',
+      nv:d.nv, desc:d.desc, motivo:d.motivo, etiquetas:_etqSkill(slotName, d.tf, d.nv, cor), donoUid:d.uid,
+      meio:[{rotulo:'CUSTO', pips:d.cost||{}}, {rotulo:'RECARGA', num:String(d.cd||0), state:((d.cdNow||0)>0?('· '+d.cdNow+' turno(s)'):'· pronta'), stateCor:((d.cdNow||0)>0?'#E8343C':'#4BE38A')}],
+      inst, dir:{modo:'minis', selSlot:slotName} };
   }
   if(d.kind==='unidade'){
     const sub=(d.sub||'').split(' · ');
-    const etq=[{txt:'PASSIVA', cor:d.cor}];
+    const aliado = st.lados[ladoExibido()].units.some(x=>x.uid===d.uid);
+    const etq=[{txt:aliado?'ALIADO':'INIMIGO', cor:aliado?'#C9A44C':'#E5384A'}];
     if(sub[0]) etq.push({txt:sub[0]});
     if(sub[1]) etq.push({txt:sub[1]});
-    return { tipo:'deus', chave:d.chave, cor:d.cor, titulo:d.nome, donoUid:d.uid,
+    return { tipo:'deus', chave:d.chave, cor:aliado?'#C9A44C':'#C9343C', tituloCor:aliado?'#F0B43C':'#E8343C',
+      titulo:(d.nome||''), donoUid:d.uid,
       desc:(d.passivaNome?`Passiva — ${d.passivaNome}: ${d.passivaDesc}`:'Sem passiva.'), etiquetas:etq,
       meio:[{rotulo:'VIDA', valor:`${d.hp}/${d.maxHp}${d.shield?' ◧'+d.shield:''}`}, {rotulo:'ELEMENTO', valor:(sub[1]||'')}],
+      inst:{title:'Toque uma habilidade', sub:aliado?'Escolha uma ação para este deus.':'Veja as habilidades ao lado.', color:'#F0B43C'},
       dir:{modo:'minis', selSlot:null} };
   }
   if(d.kind==='efeito'){
-    const cp=CAT_PILL[d.cat]||{txt:(d.cat||'EFEITO').toUpperCase(), cor:'var(--gold-soft)'};
+    const cp=CAT_PILL[d.cat]||{txt:(d.cat||'EFEITO').toUpperCase(), cor:'#C9A44C'};
     const durTxt=(d.dur!=null)?`${d.dur} turno${d.dur>1?'s':''}`:'permanente';
-    return { tipo:'efeito', emoji:d.icone, cor:d.cor, titulo:(d.nome+(d.num?' '+d.num:'')), donoUid:d.uid,
+    return { tipo:'efeito', emoji:d.icone, cor:d.cor, tituloCor:'#F0B43C', titulo:(d.nome+(d.num?' '+d.num:'')), donoUid:d.uid,
       desc:d.desc, etiquetas:[{txt:cp.txt, cor:cp.cor}, {txt:(d.dur!=null)?`${d.dur} TURNO${d.dur>1?'S':''}`:'PERMANENTE'}],
       meio:[{rotulo:'TURNOS', valor:durTxt}, {rotulo:'APLICADO POR', valor:(d.aplicadoPor||'—')}],
-      dir:{modo:'minis', selSlot:null} };
+      inst:{title:'Efeito ativo', sub:'Toque uma habilidade para agir.', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
   }
   if(d.kind==='passiva'){
-    return { tipo:'passiva', chave:d.chave, cor:d.cor, titulo:d.nome, donoUid:d.uid,
-      desc:d.desc, etiquetas:[{txt:'PASSIVA', cor:d.cor}], dir:{modo:'minis', selSlot:null} };
+    return { tipo:'passiva', chave:d.chave, cor:d.cor, tituloCor:'#F0B43C', titulo:(d.nome||''), donoUid:d.uid,
+      desc:d.desc, etiquetas:[{txt:'PASSIVA', cor:d.cor}], inst:{title:'Passiva', sub:'Não gasta a ação.', color:'#F0B43C'}, dir:{modo:'minis', selSlot:null} };
   }
   return _unidadeModeloFoco();
 }
@@ -138,120 +133,114 @@ function _unidadeModeloFoco(){
   const cat=(typeof _catPartida==='function')?_catPartida():(typeof GODS!=='undefined'?GODS:{});
   const g=cat[u.key]||{};
   const elem=(ELAB[u.elem]||u.elem);
-  const etq=[{txt:'PASSIVA', cor:COR(u.elem)}];
+  const aliado = st.lados[ladoExibido()].units.some(x=>x.uid===u.uid);
+  const etq=[{txt:aliado?'ALIADO':'INIMIGO', cor:aliado?'#C9A44C':'#E5384A'}];
   const funcao=(u.funcao||g.funcao||''); if(funcao) etq.push({txt:funcao.toUpperCase()});
   etq.push({txt:elem});
-  return { tipo:'deus', chave:'god-'+u.key, cor:COR(u.elem), titulo:(u.nome||''), donoUid:u.uid,
+  return { tipo:'deus', chave:'god-'+u.key, cor:aliado?'#C9A44C':'#C9343C', tituloCor:aliado?'#F0B43C':'#E8343C',
+    titulo:(u.nome||''), donoUid:u.uid,
     desc:(g.passiva?`Passiva — ${g.passiva.nome}: ${g.passiva.desc}`:'Sem passiva.'), etiquetas:etq,
     meio:[{rotulo:'VIDA', valor:`${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}`}, {rotulo:'ELEMENTO', valor:elem}],
+    inst:{title:'Toque uma habilidade', sub:aliado?'Escolha uma ação para este deus.':'Veja as habilidades ao lado.', color:'#F0B43C'},
     dir:{modo:'minis', selSlot:null} };
 }
 
-/* ---------- RENDER ---------- */
-// BLOCO do meio (CUSTO/RECARGA ou VIDA/ELEMENTO ou TURNOS/APLICADO POR) + MIRA quando armada. Vem com o seu divisor.
-function _meioHTML(m, L, F){
-  if(!m.meio || !m.meio.length) return '';
-  const cel=c=>`<div class="bt-panel__cel"><span class="bt-panel__rotulo" style="font-size:${U(F.rotulo||1.8)}">${H(c.rotulo||'')}</span>`
-    +`<span class="bt-panel__celval" style="font-size:${U(F.dado||2.6)}">${c.pips?_custoPips(c.pips, F.pip||3):(c.html||`<span class="bt-panel__valor">${H(c.valor||'')}</span>`)}</span></div>`;
-  const cels=m.meio.map(cel).join('<div class="bt-panel__sepvm"></div>');
-  let mira='';
-  if(m.armado && m.mira){
-    mira=`<div class="bt-panel__seph"></div>
-      <div class="bt-panel__mira"${m.mira.pronto?' id="bconf" role="button" tabindex="0"':''}>
-        <div class="bt-panel__miratop"><span class="bt-panel__miraico" style="font-size:${U(F.miraIcone||3.4)}">◎</span><span class="bt-panel__miratit" style="font-size:${U(F.miraTit||2.4)}">${H(m.mira.titulo)}</span></div>
-        <div class="bt-panel__mirasub" style="font-size:${U(F.miraSub||1.8)}">${H(m.mira.sub)}</div>
-      </div>`;
-  }
-  return `<div class="bt-panel__sepv"></div><div class="bt-panel__meio ${m.armado?'is-armado':''}" style="width:${U(L.meio||30)}"><div class="bt-panel__meiocels">${cels}</div>${mira}</div>`;
+/* ---------- RENDER (§335: px de design) ---------- */
+function _pilulasHTML(m, P){
+  if(!m.etiquetas||!m.etiquetas.length) return '';
+  const h=P.pilulaH||32, fs=P.pilula||19;
+  const pil=e=>{ const st=e.cor?`background:${e.cor}33;box-shadow:inset 0 0 0 1px ${e.cor};color:#F2ECFF`
+    :`background:transparent;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#E4E8F0`;
+    return `<div style="height:${h}px;padding:0 18px;display:flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.04em;white-space:nowrap">${H(e.txt)}</div>`; };
+  return `<div style="display:flex;gap:18px;flex-wrap:wrap">${m.etiquetas.map(pil).join('')}</div>`;
 }
-// COLUNA da DIREITA: miniaturas do dono OU o botão CANCELAR. Vem com o seu divisor.
-function _dirHTML(m, L, F){
-  if(!m.dir) return '';
+// COLUNA 1 — imagem + título + pílulas + descrição
+function _col1HTML(m, P){
+  const img=P.img||134, acc=m.cor||'#C9A44C';
+  let imgInner;
+  if(m.emoji) imgInner=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:${Math.round(img*0.5)}px">${m.emoji}</div>`;
+  else imgInner=slot(m.chave||'detail','',acc,0,m.redondo);
+  return `<div style="display:flex;align-items:center;gap:24px;padding:0 24px 0 16px;min-width:0">
+    <div class="bt-panel__img" style="width:${img}px;height:${img}px;flex:none;border-radius:4px;overflow:hidden;background:#0A0E1C;box-shadow:inset 0 0 0 2px ${acc},0 0 0 1px rgba(0,0,0,.6)">${imgInner}</div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||27}px;line-height:1.1;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
+      ${_pilulasHTML(m,P)}
+      <div class="bt-panel__desc" style="font-size:${P.desc||21}px;font-weight:500;line-height:1.3;color:#E4E8F0;max-width:610px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${realce(m.desc||'')}${m.motivo?`<span class="bt-panel__motivo" style="color:#ff9db4"> ⊘ ${H(m.motivo)}</span>`:''}</div>
+    </div></div>`;
+}
+// COLUNA 2 — células (CUSTO/RECARGA ou VIDA/ELEMENTO ...) + linha dourada + instrução com a mira
+function _col2HTML(m, P){
+  const cells=m.meio||[];
+  const cel=(c)=>{ let val;
+    if(c.pips) val=_custoPips(c.pips, P.pip||27);
+    else if(c.num!=null) val=`<div style="font-size:${P.recargaNum||30}px;font-weight:600;line-height:1.1;color:#C9CED8">${H(c.num)} <span style="color:${c.stateCor||'#C9CED8'}">${H(c.state||'')}</span></div>`;
+    else val=`<div style="font-size:${P.recargaNum||30}px;font-weight:600;color:#F2F4F8;line-height:1">${H(c.valor||'')}</div>`;
+    return `<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><div style="font-size:${P.rotulo||19}px;font-weight:600;letter-spacing:.06em;color:#C9CED8">${H(c.rotulo||'')}</div>${val}</div>`; };
+  const topo = cells.length ? `<div style="display:grid;grid-template-columns:216px minmax(0,1fr);height:76px">
+      <div style="padding-left:44px;padding-top:2px">${cel(cells[0])}</div>
+      <div style="padding-left:40px;padding-top:2px;border-left:1px solid rgba(201,164,76,.5);margin-bottom:6px">${cells[1]?cel(cells[1]):''}</div>
+    </div>` : `<div style="height:20px"></div>`;
+  const hr = cells.length ? `<div style="position:absolute;left:256px;right:42px;top:86px;height:1px;background:linear-gradient(90deg,rgba(201,164,76,.85),rgba(201,164,76,.35))"></div>` : '';
+  const inst=m.inst||{title:'',sub:'',color:'#F0B43C'}; const ic=inst.color||'#F0B43C'; const sz=P.instIcone||44;
+  const mira=`<div style="position:relative;width:${sz}px;height:${sz}px;flex:none">
+    <div style="position:absolute;inset:4px;border-radius:50%;box-shadow:inset 0 0 0 3px ${ic}"></div>
+    <span style="position:absolute;left:50%;top:0;width:3px;height:12px;margin-left:-1.5px;background:${ic}"></span>
+    <span style="position:absolute;left:50%;bottom:0;width:3px;height:12px;margin-left:-1.5px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;left:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;right:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span></div>`;
+  const instr=`<div class="bt-panel__mira" style="display:flex;align-items:center;gap:20px;padding-left:36px;padding-top:12px">
+    ${mira}<div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+      <div class="bt-panel__miratit" style="font-size:${P.instTit||22}px;font-weight:600;color:${ic}">${H(inst.title||'')}</div>
+      <div style="font-size:${P.instSub||18}px;font-weight:500;color:#D5DAE4">${H(inst.sub||'')}</div></div></div>`;
+  return `<div class="bt-panel__meio" style="position:relative;display:grid;grid-template-rows:76px minmax(0,1fr);border-left:1px solid rgba(201,164,76,.5);margin:16px 0">${topo}${hr}${instr}</div>`;
+}
+// COLUNA 3 — CANCELAR (armada) ou OUTRAS HABILIDADES / HABILIDADES (miniaturas do dono)
+function _col3HTML(m, P){
+  if(!m.dir) return `<div style="border-left:1px solid rgba(201,164,76,.5);margin:16px 0"></div>`;
   if(m.dir.modo==='cancelar'){
-    const w=L.cancelW||26, h=L.cancelH||9;
-    return `<div class="bt-panel__sepv"></div><div class="bt-panel__dir bt-panel__cancelwrap" style="width:${U(w)}">`
-      +`<button class="bt-cancel" id="bcanc" style="height:${U(h)}"><span class="bt-cancel__t">CANCELAR</span><span class="bt-cancel__r">${H(m.dir.recarga||'')}</span></button></div>`;
+    const w=P.cancelW||274, h=P.cancelH||80;
+    return `<div style="display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(201,164,76,.5);margin:16px 0">
+      <button class="b5-cancel bt-cancel" id="bcanc" style="width:${w}px;height:${h}px;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;cursor:pointer;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C,inset 0 0 0 4px rgba(0,0,0,.5)">
+        <span class="cin" style="font-weight:700;font-size:${P.cancelFonte||23}px;letter-spacing:.04em;color:#F4F1EA">CANCELAR</span></button></div>`;
   }
-  const sz=L.mini||7.5, gap=L.gapMini||1.5, w=4*sz+3*gap;
-  const minis=_painelMinis(m, L, F, sz, gap, w);
-  return minis ? `<div class="bt-panel__sepv"></div>${minis}` : '';
+  return `<div style="display:flex;align-items:center;border-left:1px solid rgba(201,164,76,.5);margin:16px 0">${_painelMinis(m,P)}</div>`;
 }
-// §333 REGRA (a): as 4 miniaturas são SEMPRE do DONO do conteúdo (donoUid). A mostrada vem destacada (moldura dourada).
-function _painelMinis(m, L, F, sz, gap, w){
+// miniaturas do DONO do conteúdo (donoUid, §333). A mostrada vem destacada (moldura dourada). ~70px p/ caber.
+function _painelMinis(m, P){
   const uid=m.donoUid;
   const u=uid&&typeof todas==='function'?todas().find(x=>x.uid===uid):null;
   if(!u || !u.vivo) return '';
-  const selSlot=m.dir&&m.dir.selSlot;
+  const selSlot=m.dir&&m.dir.selSlot, sz=P.mini||70;
   const lab=(m.tipo==='skill')?'OUTRAS HABILIDADES':'HABILIDADES';
   const minis=acoesDe(st,u).map(a=>{
-    const anel=a.slot==='defesa'?'var(--ink-mute)':COR(u.elem);
+    const anel=a.slot==='defesa'?'#D6DAE2':COR(u.elem);
     const sel=selSlot&&a.slot===selSlot;
-    return `<button class="bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}"
-      style="width:${U(sz)};height:${U(sz)};border-color:${anel}"><span class="bt-mini__mono" style="color:${anel}">${H(mono(a))}</span>${slot('skill-'+u.key+'-'+a.slot,'',null,0,true)}</button>`;
+    const sombra = sel?`inset 0 0 0 2px #FFE7A0,0 0 0 2px #C9A44C,0 0 14px rgba(240,180,60,.7)`:`inset 0 0 0 1.5px ${anel}`;
+    return `<div class="b5-skill bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}" style="position:relative;width:${sz}px;height:${sz}px;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra}">
+      ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}
+      <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
   }).join('');
-  return `<div class="bt-panel__dir bt-panel__minis" style="width:${U(w)}"><span class="bt-panel__minilab" style="font-size:${U(F.minilab||1.8)}">${H(lab)}</span><div class="bt-panel__minirow" style="gap:${U(gap)}">${minis}</div></div>`;
+  return `<div class="bt-panel__minis" style="display:flex;flex-direction:column;gap:10px;padding:0 16px;min-width:0">
+    <div class="cin bt-panel__minilab" style="font-size:${P.rotulo||18}px;font-weight:700;letter-spacing:.05em;color:#F0B43C">${H(lab)}</div>
+    <div style="display:flex;gap:12px">${minis}</div></div>`;
 }
-// o PAINEL de baixo (view.js injeta o `style` de posição em u). §333b: grade [imagem][conteúdo] | [meio] | [direita].
-function painelBaixoHTML(styleStr){
-  const m=_modeloPainel();
-  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{img:15};
-  const F=L.fonte||{};
-  const imgSz=L.img||15; const imgStyle=`width:${U(imgSz)};height:${U(imgSz)}`;
-  let img;
-  if(m.emoji) img=`<div class="bt-panel__img" style="${imgStyle};display:flex;align-items:center;justify-content:center;font-size:${U(7)}${m.cor?';border-color:'+m.cor:''}">${m.emoji}</div>`;
-  else {
-    const ehSkill=/^skill-/.test(m.chave||'');
-    const fb=ehSkill&&m.mono?`<span class="bt-panel__mono" style="color:${m.cor||'var(--ink-dim)'}">${H(m.mono)}</span>`:'';
-    img=`<div class="bt-panel__img" style="${imgStyle}${m.cor?';border-color:'+m.cor:''}">${slot(m.chave||'detail','',m.cor,0,m.redondo)}${fb}</div>`;
-  }
-  const tags=(m.etiquetas&&m.etiquetas.length)
-    ? `<div class="bt-panel__tags">${m.etiquetas.map(e=>`<span class="bt-pill${e.cor?' bt-pill--cor':''}" style="font-size:${U(F.pilula||2)}${e.cor?';--pc:'+e.cor:''}">${H(e.txt)}</span>`).join('')}</div>`
-    : '';
-  const gap=L.gapCol||2, pad=L.pad||1.5;
-  return `<div class="bt-panel" style="${styleStr};gap:${U(gap)};padding:${U(pad)}">
-    ${img}
-    <div class="bt-panel__conteudo">
-      <div class="bt-panel__titulo" style="font-size:${U(F.titulo||3.4)}">${H(m.titulo||'')}</div>
-      ${tags}
-      <div class="bt-panel__desc" style="font-size:${U(F.corpo||2.6)}">${realce(m.desc||'')}${m.motivo?`<div class="bt-panel__motivo">⊘ ${H(m.motivo)}</div>`:''}</div>
-    </div>
-    ${_meioHTML(m,L,F)}
-    ${_dirHTML(m,L,F)}
-  </div>`;
+// o PAINEL de baixo (grade 840 | 564 | resto). view.js injeta nada — tudo em px de design.
+function painelBaixoHTML(){
+  const m=_modeloPainel(), P=_P();
+  return `<section class="b5-painel bt-panel" style="position:absolute;left:${P.left||58}px;top:${P.top||640}px;width:${P.w||1732}px;height:${P.h||166}px;box-sizing:border-box;overflow:hidden;display:grid;grid-template-columns:${(P.cols&&P.cols.info)||840}px ${(P.cols&&P.cols.meio)||564}px minmax(0,1fr);grid-template-rows:${P.h||166}px;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
+    ${_col1HTML(m,P)}${_col2HTML(m,P)}${_col3HTML(m,P)}
+  </section>`;
 }
 
-// §333b: encaixe fino. O TÍTULO encolhe até tituloMin p/ caber em 1 linha sem "…". A DESCRIÇÃO não encolhe: rola
-// dentro da coluna 2. Em 16:9 ESTREITO (coluna 2 < 38u) some o rótulo das minis e, se preciso, elas encolhem p/ 6u.
-function _ajustarPainel(){
-  const panel=stage.querySelector('.bt-panel'); if(!panel) return;
-  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA.painel)||{};
-  const F=L.fonte||{};
-  const base=document.getElementById('baselayer');
-  const u1=base?(parseFloat(getComputedStyle(base).getPropertyValue('--u'))||4.28):4.28;
-  const esc=(typeof ultimaEscala!=='undefined'&&ultimaEscala)||1;
-  const tit=panel.querySelector('.bt-panel__titulo');
-  if(tit){ const floor=(F.tituloMin||2.8)*u1; let fs=parseFloat(getComputedStyle(tit).fontSize)||14, g=0;
-    while(tit.scrollWidth>tit.clientWidth+1 && fs>floor && g++<40){ fs-=0.5; tit.style.fontSize=fs+'px'; } }
-  const col2=panel.querySelector('.bt-panel__conteudo');
-  if(col2){ const w=col2.getBoundingClientRect().width;
-    const estreito = w>0 && (w/esc) < 38*u1;
-    panel.classList.toggle('bt-panel--estreito', estreito);
-    if(estreito){ const mm=(L.miniMin||6)*u1; panel.querySelectorAll('.bt-panel__minirow .bt-mini').forEach(b=>{ b.style.width=mm+'px'; b.style.height=mm+'px'; }); }
-  }
-}
-
-/* ---------- eventos do painel (confirmar na mira / cancelar na direita / encerrar) ---------- */
+/* ---------- eventos do painel ---------- */
 function ligarPainel(){
   const q=s=>stage.querySelector(s);
-  const bcf=q('#bconf'); if(bcf){ bcf.onclick=()=>confirmar(); bcf.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); confirmar(); } }; }
-  // §333b: CANCELAR desarma e VOLTA à leitura (situação 2) daquela habilidade. Reconstrói o `detalhe` de leitura aqui
-  // (só com helpers de base.js/motor) — a leitura de campo.js é ui→ui proibida, então repetimos o mínimo.
+  // §333b: CANCELAR desarma e VOLTA à leitura (situação 2) daquela habilidade (sem chamar campo.js — ui→ui).
   const bcn=q('#bcanc'); if(bcn)bcn.onclick=()=>{ const a=armado; armado=null;alvos=[];escolhidos=[]; detalhe=null;
     if(a){ const u=st.lados[st.ativo].units.find(x=>x.uid===a.uid); const ac=u&&acoesDe(st,u).find(x=>x.slot===a.slot);
       if(u&&ac){ const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,a.slot):1; if(typeof foco!=='undefined') foco=u.uid;
         detalhe={kind:'skill', uid:u.uid, nome:ac.nome, nv, chave:'skill-'+u.key+'-'+ac.slot, mono:mono(ac),
-          cor:ac.slot==='defesa'?'var(--ink-mute)':COR(u.elem), desc:ac.desc, cost:ac.cost, cd:ac.cd, cdNow:(u.cd[a.slot]||0), tf:classesTxt(u,ac), motivo:''}; } }
+          cor:ac.slot==='defesa'?'#D6DAE2':COR(u.elem), desc:ac.desc, cost:ac.cost, cd:ac.cd, cdNow:(u.cd[a.slot]||0), tf:classesTxt(u,ac), motivo:''}; } }
     render(); };
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
-  try{ _ajustarPainel(); }catch(e){}
 }

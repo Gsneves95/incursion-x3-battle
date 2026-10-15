@@ -105,17 +105,14 @@ function renderBatalha(){
   const artBg = (typeof BATALHA_ARTE !== 'undefined' && BATALHA_ARTE) ? ' style="--art-bg:url(banners/batalha-fundo.webp)"' : '';
   // §329: o FOCO default é o 1º do meu time ao abrir; se o foco morreu/sumiu, unidadeFoco() recai nele.
   if(!foco || !todas().find(x=>x.uid===foco&&x.vivo)){ const f0=l.units.find(u=>u.vivo)||l.units[0]; foco=f0?f0.uid:null; }
-  // §329 — LAYOUT À RISCA da referência (data/layout_batalha.json): topo + campo (jogador/inimigo/centro) +
-  // painel de baixo. Tudo ABSOLUTO em #baselayer.bt (u = 1% da altura). O ENCERRAR TURNO é o texto+barra do topo.
-  const L=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA)||{};
-  const pn=L.painel||{x0:44,dirFolga:2,y:[77.8,98.2]};
-  const panelStyle=`left:${U(pn.x0)};right:${U(pn.dirFolga||2)};top:${U(pn.y[0])};bottom:${U(100-pn.y[1])}`;
-  stage.innerHTML = `<div id="baselayer" class="bt ${cls.join(' ')}"${scrim?' inert':''}${artBg}>
-  <div class="stage__bg"></div><div class="stage__scrim"></div>
+  // §335 — a BATALHA reproduz o design do dono (Claude Design): tela FIXA de 1846×852 (px de design) escalada por
+  // min(w/1846,h/852) em fit() (base.js), com a canvas #03050B nas sobras. O #batalha contém header + campo + painel.
+  stage.innerHTML = `<div id="baselayer" class="bt2 ${cls.join(' ')}"${scrim?' inert':''}>
+  <div id="batalha">
   ${topoHTML(_modoSub())}
   ${campoHTML(l,o)}
-  ${painelBaixoHTML(panelStyle)}
-  </div>
+  ${painelBaixoHTML()}
+  </div></div>
   ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():(dominio&&dominioFim)?dominioResultadoOverlay():overlayHTML()}`;
 
   hpAnt={}; todas().forEach(u=>hpAnt[u.uid]=u.hp);

@@ -76,14 +76,14 @@ console.log('== 12. rótulos de time por modo (§329: placas sumiram — os NOME
   w.eval("vsCPU=true; IA_LADO=1"); batalha(0); w.eval("st.ativo=0; render()");
   const aliado = $('.bt-name--me .bt-name__nick')?.textContent.trim();
   const inimigo = $('.bt-name--foe .bt-name__nick')?.textContent.trim();
-  ok(aliado === 'Você', 'nome do jogador no topo = Você (veio ' + aliado + ')');
+  ok(aliado === 'VOCÊ', 'nome do jogador no topo = Você (veio ' + aliado + ')');
   ok(inimigo === 'CPU', 'nome do oponente no topo = CPU (veio ' + inimigo + ')');
   // st.fim é EVENTO estruturado (docs/eventos.md); o narrador resolve lado -> rótulo por modo.
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
   ok($('.result h1').textContent.trim() === 'CPU VENCE', 'banner traduz lado 1 → CPU (veio ' + $('.result h1').textContent.trim() + ')');
   // hot-seat: o nome do jogador da vez é sempre VOCÊ; o oponente é numerado.
   w.eval("vsCPU=false"); batalha(0); w.eval("st.ativo=0; render()");
-  ok($('.bt-name--me .bt-name__nick')?.textContent.trim() === 'Você', 'hot-seat: o nome da vez é sempre VOCÊ');
+  ok($('.bt-name--me .bt-name__nick')?.textContent.trim() === 'VOCÊ', 'hot-seat: o nome da vez é sempre VOCÊ');
   ok($('.bt-name--foe .bt-name__nick')?.textContent.trim() === 'Jogador 2', 'hot-seat: o oponente é Jogador 2');
   w.eval("st.fim={tipo:'fim',resultado:'vitoria',lado:1}; render()");
   ok($('.result h1').textContent.trim() === 'JOGADOR 2 VENCE', 'hot-seat: lado 1 → JOGADOR 2 (numeração neutra)');
@@ -96,7 +96,7 @@ console.log('== 13. §329: a MINHA energia aparece no topo (contadores de leitur
   w.eval("ELEMS.forEach(e=>{st.lados[0].orbs[e]=2; st.lados[1].orbs[e]=2;}); render()");
   // §330: os contadores de energia (leitura) do MEU lado vivem na caixa do topo, em .bt-ebox > .bt-ec (orbe + ×N).
   ok($$('.bt-ebox .bt-ec').length >= 1, 'os meus contadores de energia aparecem no topo');
-  ok(/×2/.test($('.bt-ebox').textContent), 'os contadores mostram a quantidade (×N) por elemento');
+  ok(/x2/.test($('.bt-ebox').textContent), 'os contadores mostram a quantidade (×N) por elemento');
   // §329: obsoleto — a energia do OPONENTE não é mais exibida em separado no topo (§215 refeito), e não há
   // mais pílulas [data-conv] na barra: a conversão passou a ser pelo botão ⇄ Trocar (abre a sobreposição conv).
   ok($$('[data-conv]').length === 0, 'não há mais pílulas [data-conv] no topo');

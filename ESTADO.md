@@ -2,6 +2,31 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §335 · TELA DE BATALHA: design do dono (Claude Design)
+
+A batalha reproduz o design exportado do Claude Design (HTML à risca + imagem). **TELA FIXA 1846×852** escalada por
+min(w/1846,h/852), canvas #03050B nas sobras — substitui o "u" do §329 só na batalha; todas as medidas em PX DE DESIGN
+em `data/layout_batalha.json`.
+- **fit()** (base.js): na rota batalha escala o `#batalha` (1846×852) e usa o `#stage` como moldura.
+- **Header** (topo.js): nome 25 + sublinha curta (§333); EnergyCounter 388×50 (quadrados+Σ+⇄TROCAR); ENCERRAR 307×52 +
+  barra 9 + linha de turno; ☰ 46; oponente. Canto inferior (DESISTIR/MENU/som/ajustes) SAIU → tudo no menu ☰.
+- **Campo** (campo.js, grade 676|1fr|172): retrato 140 (selo P, vida DENTRO), StatusEffects (até 3 + "+N"), 4 botões 108
+  (custo em pílula, recarga 46, arte cheia/disco §332/§334, armada = moldura+✓). Cena COVER (máscara 14/86) +
+  TurnAnnouncement (sol + Cinzel 48). Inimigo: "?" inspeciona, selo "P", borda vermelha nos alvejáveis, MIRA no alvo.
+- **Painel** (painel.js, grade 840|564|resto): img 134 + título 27 + pílulas 32 (NV por último) + desc 21 (2 linhas) |
+  CUSTO/RECARGA + mira de instrução | CANCELAR 274×80 ou OUTRAS HABILIDADES (4 minis ~70, do dono §333). Situações do
+  §333b; nunca vazio (§329b). O painel fixa a linha do grid (overflow:hidden) p/ as colunas caberem na caixa.
+- **Menu ☰** (overlay 420): CONTINUAR · SOM · utilidades (conta/build/ajuda/registro/tela cheia/apagar/sair) · RENDER-SE.
+- **Cena** (arte_turno.json {meu:nezha, oponente:ahpuch}): web/cena/turno_*.webp (CENA_ARTE) senão o retrato em cover.
+- **Fontes** Cinzel/Rajdhani woff2 locais (sem Google Fonts). Título do painel usa text-transform (preserva o Õ).
+- **Arquivos:** data/layout_batalha.json (reescrito), data/arte_turno.json, tools/build.js (validação §335 + CENA_ARTE),
+  src/ui/base.js (fit batalha), src/view.js (#batalha), src/ui/{topo,campo,painel}.js (reescritos), src/shell.html (CSS
+  §335; removido o bloco .bt do §329). Testes: batalha_faixa (layout), batalha_painel (painel+§334), batalha_inspecao,
+  interface, moldura, perspectiva migrados ao novo DOM.
+- **Provas:** Chromium — caixas @1846 batem o HTML (±2px); responsivo @780/915/1280 sem estouro/sobreposição/corte;
+  cena/turno (Nezha/Ah Puch); sem fonts.googleapis.com. Capturas docs/telas/335-* + 335-comparacao.png. Suíte + build
+  verdes. NÃO mudou engine/IA/regras nem as outras telas.
+
 ## ★ §334 · Classificação de arte: discos com fundo CLARO e brilho
 
 As habilidades da Babi (disco sobre fundo claro com brilho/vinheta) eram marcadas CHEIA pelo §332 (cantos diferem por

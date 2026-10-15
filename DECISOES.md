@@ -6,6 +6,67 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §335 · TELA DE BATALHA: reproduzir o design do dono (Claude Design)
+
+O dono exportou a tela de batalha do Claude Design (um HTML À RISCA + a imagem final "Batalha de Zeus — Seu Turno") e
+pediu para reproduzir o mais fiel possível, por ser a tela principal. O HTML é a FONTE DE VERDADE de posições, tamanhos,
+cores, sombras e gradientes.
+
+**Sistema de tela.** A batalha passa a usar uma **TELA FIXA de 1846×852 px (≈20:9)** escalada por
+`min(largura/1846, altura/852)`, centrada, com a canvas `#03050B` nas sobras — substitui o sistema de "u" do §329 SÓ na
+batalha. Todas as medidas do HTML foram transcritas em PX DE DESIGN e gravadas em `data/layout_batalha.json`. O `fit()`
+(base.js) detecta a rota `batalha`, escala o `#batalha` e usa o `#stage` como moldura da canvas. O template do Claude
+Design foi TRADUZIDO para o renderizador do jogo (DOM/CSS do projeto): nada de `support.js`/`image-slot.js`/`<x-dc>`/
+`sc-for`/`{{ }}`, e a lógica de demonstração do `<script>` (dados fictícios, "Habilidades ocultas", energia em rodízio)
+NÃO entrou — dados e comportamento continuam do motor e das regras (§330–§334).
+
+**Blocos reproduzidos (coordenadas do HTML):**
+- **BattleHeader (h 96):** PlayerHeader (avatar 58 + nome Cinzel 25 dourado + sublinha 18); EnergyCounter (caixa 388×50
+  em left 590/top 26, quadrados 26 + "xN" + Σ + ⇄ TROCAR); TurnControl (ENCERRAR TURNO 307×52 em left 1000, barra de
+  tempo 9px vermelho→dourado, linha "Turno N · X a agir · m:ss"); BattleMenuButton ☰ 46×46 em left 1328; OpponentHeader
+  em left 1562.
+- **BattleField (left 58, top 98, 1732×536, grade 676 | 1fr | 172):** fileiras de 168 com retrato 140×140 (selo "P"
+  dourado no canto, BARRA DE VIDA dentro do retrato embaixo), StatusEffects (até 3 ícones 24 + número 19, resto "+N") e
+  4 SkillButtons 108×108 (bolinhas de custo numa pílula embaixo; recarga Cinzel 46 sobre escurecimento radial; a arte
+  cheia preenche e a disco recorta, §332/§334; armada = moldura+brilho dourados e selo ✓). BattleScene no meio: arte em
+  COVER sangrando −60/−40 com máscara horizontal 14/86 + o TurnAnnouncement (ornamento de sol, linhas, título Cinzel 48,
+  subtítulo 22, losango). EnemyCharacterRow com "?" (inspeciona) à esquerda e o selo "P" à direita (que no HTML estava
+  vazio por engano — aqui mostra "P"), borda vermelha nos alvejáveis e a MIRA vermelha no alvo escolhido.
+- **BattleDetailPanel (left 58, top 640, 1732×166, grade 840 | 564 | resto):** imagem 134; título Cinzel 27; pílulas 32
+  (a 1ª na cor da energia; "NV N" sempre por último, §333b); descrição 21 em até 2 linhas; bloco do meio CUSTO (bolinhas
+  27) | RECARGA (número 30 + estado verde "pronta"/vermelho), linha dourada e a instrução com a mira 44 que se adapta
+  ("Toque um inimigo/aliado", "Todos os inimigos", "Em recarga", "Energia insuficiente", "Alvo: X"); e, à direita,
+  CANCELAR 274×80 (habilidade armada) OU "OUTRAS HABILIDADES"/"HABILIDADES" com 4 miniaturas (~70px, a mostrada em
+  dourado — do DONO do conteúdo, §333). O conteúdo por situação continua o do §333b; o painel nunca fica vazio (§329b).
+- **MENU (☰):** overlay central do HTML (420 de largura) — CONTINUAR · SOM (slider dourado) · utilidades (COMO JOGAR,
+  REGISTRO, TELA CHEIA, SUA CONTA, APAGAR DADOS, SAIR, carimbo de build) · RENDER-SE (borda vermelha). Os botões
+  DESISTIR/MENU/som do canto e o botão de ajustes do canto SAÍRAM — tudo foi para o menu. O voltar do Android fecha o
+  menu, depois o painel.
+- **Cena por turno:** `data/arte_turno.json` = `{meu:"nezha", oponente:"ahpuch"}`; usa `web/cena/turno_*.webp` (flag
+  CENA_ARTE) se existirem, senão o RETRATO (`web/retratos/<key>.webp`) em cover com a máscara. Meu turno = Nezha + "SEU
+  TURNO" (acento dourado); turno do oponente = Ah Puch + "TURNO DO OPONENTE" (acento vermelho).
+- **Fontes:** Cinzel e Rajdhani já eram woff2 locais (web/fonts), SEM requisição a fonts.googleapis.com.
+- **Sublinha do jogador:** segue o formato curto do §333 ("CAMPANHA · CAP. 1 · ATO III"), nunca cortada.
+- **Título do painel (acentos):** o nome vai no CASO NATURAL ("Portões do Submundo") SEM `text-transform:uppercase`; a
+  Cinzel (fonte só-de-maiúsculas) desenha as minúsculas como VERSALETE preservando o til/acento (Õ, Á…) — exatamente como
+  na imagem do dono. Com `text-transform:uppercase` a Cinzel caía no "Õ" maiúsculo sem glifo e o til sumia ("PORTOES").
+
+**Tradução das provas.** O `#baselayer.bt`/sistema-de-u da batalha foi removido; os renderizadores (campo/topo/painel)
+reemitem o DOM em px de design. Os testes de batalha foram migrados ao novo DOM: `batalha_faixa` virou a PROVA de layout
+(caixas @1846 com tolerância 2px + responsivo @780/915/1280 sem estouro/sobreposição/corte + cena/turno + sem Google
+Fonts); `batalha_painel` prova as 5 situações do painel + os cantos dos discos (§334); `batalha_inspecao`, `interface`,
+`moldura`, `perspectiva`, `render_sweep`, `provacao_loop` seguem válidos (as classes de estado — is-ready/is-armed/
+is-target/pas--on/bt-portrait--ally… — foram mantidas no novo DOM como ganchos de leitura).
+
+**PROVAS.** Chromium: em 1846×852 (escala 1) as caixas dos blocos batem o HTML (tolerância 2px: header, energia,
+encerrar, menu, campo e colunas 676|884|172, retratos 140, botões 108, painel e colunas 840|564|328); em 780×360,
+915×412 e 1280×720 nada sai da tela, nenhuma área de toque se sobrepõe, nenhum texto corta (reporta escala e px); meu
+turno = Nezha + "SEU TURNO", oponente = Ah Puch + "TURNO DO OPONENTE"; sem requisição a fonts.googleapis.com. Capturas
+`docs/telas/335-*` (meu turno armado, oponente, lida, inspeção, menu em 1846×852; meu turno em 780×360) e
+`335-comparacao.png` (lado a lado com a imagem do dono). NÃO mudou engine/IA/regras/fluxo nem as outras telas.
+
+---
+
 ## §334 · Classificação de arte de habilidade: discos com fundo CLARO e brilho
 
 As habilidades da Babi mostravam FUNDO BRANCO nos cantos do botão: são artes em DISCO sobre fundo claro com brilho/
