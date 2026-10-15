@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §335b · Quatro ajustes de fidelidade da tela de batalha (contra o design do dono)
+
+Revendo a `335-armado` contra o design do dono, quatro detalhes ainda diferiam:
+
+1. **Cena central sem arte larga.** Enquanto `web/cena/turno_meu.webp`/`turno_oponente.webp` não existem, a cena usa o
+   RETRATO (quadrado) em `cover` — e o `cover` CENTRADO cortava o ROSTO (a Nezha aparecia do pescoço p/ baixo). No
+   fallback de retrato o recorte passa a ancorar no terço de cima (`object-position: 50% 18%`), mostrando o rosto inteiro
+   (Nezha e Ah Puch). Quando a arte LARGA existir, ela volta ao `cover` centrado, como no HTML. (campo.js, `btCenaHTML`.)
+2. **Pílula de tipo sem fundo.** A 1ª pílula (MILAGRE etc.) devia ter FUNDO na cor da energia (acento ~20% alfa = o "+33"
+   do `tag()` do HTML), borda no acento e texto claro (#F2ECFF). O código fazia `${cor}33`, mas `COR()` devolve
+   `var(--e-<Elem>)` e concatenar "33" num `var()` é CSS inválido (só a borda, via box-shadow, pegava). Trocado por
+   `color-mix(in srgb, ${cor} 20%, transparent)`. (painel.js, `_pilulasHTML`.)
+3. **Imagem do painel sem moldura.** A moldura `inset 0 0 0 2px {acento}` existia no box-shadow do contêiner, mas a ARTE
+   (preenchendo 100%) desenhava por cima e a escondia. Agora a moldura é um overlay `position:absolute;inset:0` com o
+   box-shadow inset, POR CIMA da arte; o contorno escuro externo fica no contêiner. (painel.js, `_col1HTML`.)
+4. **Avatares genéricos no topo.** O avatar do jogador passa a ser o RETRATO do 1º deus do time; o da CPU, o do 1º
+   inimigo (molduras dourada/vermelha do HTML). Sem arte (ou no fallback) volta ao ícone genérico. No PvP não há avatar de
+   perfil guardado, então o 1º deus serve igual. (topo.js, `_avatarInner`.)
+
+**Provas (batalha_faixa, bloco 4, Chromium @1846):** no fallback o `object-position` Y da cena < 50% (rosto à mostra); a
+1ª pílula tem fundo com alfa > 0; a imagem do painel tem moldura inset; os avatares têm `img` de retrato (hades/poseidon).
+Capturas `docs/telas/335b-*` (armado e oponente @1846, meu turno @780) e `335b-comparacao.png`. NÃO mudou mais nada.
+
+---
+
 ## §335 · TELA DE BATALHA: reproduzir o design do dono (Claude Design)
 
 O dono exportou a tela de batalha do Claude Design (um HTML À RISCA + a imagem final "Batalha de Zeus — Seu Turno") e

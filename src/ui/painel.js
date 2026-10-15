@@ -149,7 +149,9 @@ function _unidadeModeloFoco(){
 function _pilulasHTML(m, P){
   if(!m.etiquetas||!m.etiquetas.length) return '';
   const h=P.pilulaH||32, fs=P.pilula||19;
-  const pil=e=>{ const st=e.cor?`background:${e.cor}33;box-shadow:inset 0 0 0 1px ${e.cor};color:#F2ECFF`
+  // §335b: a 1ª pílula (tipo) vem no acento da energia — FUNDO na cor (acento ~20% alfa, = +33 do HTML), borda no acento,
+  // texto claro. Como COR() devolve var(--elem-…), usa color-mix p/ o alfa (append "33" num var() é CSS inválido = sem fundo).
+  const pil=e=>{ const st=e.cor?`background:color-mix(in srgb, ${e.cor} 20%, transparent);box-shadow:inset 0 0 0 1px ${e.cor};color:#F2ECFF`
     :`background:transparent;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#E4E8F0`;
     return `<div style="height:${h}px;padding:0 18px;display:flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.04em;white-space:nowrap">${H(e.txt)}</div>`; };
   return `<div style="display:flex;gap:18px;flex-wrap:wrap">${m.etiquetas.map(pil).join('')}</div>`;
@@ -161,7 +163,7 @@ function _col1HTML(m, P){
   if(m.emoji) imgInner=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:${Math.round(img*0.5)}px">${m.emoji}</div>`;
   else imgInner=slot(m.chave||'detail','',acc,0,m.redondo);
   return `<div style="display:flex;align-items:center;gap:24px;padding:0 24px 0 16px;min-width:0">
-    <div class="bt-panel__img" style="width:${img}px;height:${img}px;flex:none;border-radius:4px;overflow:hidden;background:#0A0E1C;box-shadow:inset 0 0 0 2px ${acc},0 0 0 1px rgba(0,0,0,.6)">${imgInner}</div>
+    <div class="bt-panel__img" style="position:relative;width:${img}px;height:${img}px;flex:none;border-radius:4px;overflow:hidden;background:#0A0E1C;box-shadow:0 0 0 1px rgba(0,0,0,.6)">${imgInner}<div style="position:absolute;inset:0;border-radius:4px;box-shadow:inset 0 0 0 2px ${acc};pointer-events:none"></div></div>
     <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
       <div class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||27}px;line-height:1.1;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
       ${_pilulasHTML(m,P)}

@@ -213,8 +213,12 @@ function btCenaHTML(){
   const titulo = meu ? 'SEU TURNO' : 'TURNO DO OPONENTE';
   const sub = meu ? 'Escolha uma habilidade e selecione um alvo.' : 'Aguarde a ação do oponente.';
   const src=_cenaSrc();
+  // §335b: a arte LARGA (cena/turno_*.webp) fica em cover CENTRADO (como no HTML). No FALLBACK de retrato (quadrado), o
+  // cover centrado cortava o ROSTO — ancora o recorte no terço de cima para mostrar o rosto inteiro (Nezha/Ah Puch).
+  const larga = /^cena\//.test(src);
+  const objPos = larga ? '50% 50%' : '50% 12%';
   const art = src ? `<div class="b5-art" style="position:absolute;left:${cn.left}px;right:${cn.right}px;top:0;bottom:0;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 ${cn.mask[0]}%,#000 ${cn.mask[1]}%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 ${cn.mask[0]}%,#000 ${cn.mask[1]}%,transparent 100%)">
-      <img src="${H(src)}" alt="" onerror="this.style.display='none'">
+      <img src="${H(src)}" alt="" style="object-position:${objPos}" onerror="this.style.display='none'">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,14,.55) 0%,rgba(4,6,14,0) 16%,rgba(4,6,14,0) 70%,rgba(4,6,14,.6) 100%);pointer-events:none"></div>
     </div>` : '';
   const [ow,oh]=cn.ornato; const lw=cn.linha;

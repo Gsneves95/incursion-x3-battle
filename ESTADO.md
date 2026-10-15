@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §335b · Quatro ajustes de fidelidade da batalha
+- **Cena (fallback de retrato):** `object-position:50% 18%` mostra o ROSTO (antes o `cover` centrado cortava a Nezha/
+  Ah Puch); com arte larga (`web/cena/turno_*.webp`) volta ao `cover` centrado. (campo.js `btCenaHTML`.)
+- **Pílula de tipo:** FUNDO na cor da energia via `color-mix(... 20% ...)` (o `${cor}33` era inválido porque `COR()` é um
+  `var()`). (painel.js `_pilulasHTML`.)
+- **Imagem do painel:** moldura `inset 2px` do acento agora é overlay POR CIMA da arte (antes a arte a cobria).
+  (painel.js `_col1HTML`.)
+- **Avatares do topo:** retrato do 1º deus do time (jogador) / 1º inimigo (CPU); fallback = ícone genérico. (topo.js
+  `_avatarInner`.)
+- **Provas:** batalha_faixa bloco 4 (cena Y<50%, pílula alfa>0, moldura inset, avatares com img). Capturas `335b-*` +
+  `335b-comparacao.png`. Suíte + build verdes. NÃO mudou mais nada.
+
 ## ★ §335 · TELA DE BATALHA: design do dono (Claude Design)
 
 A batalha reproduz o design exportado do Claude Design (HTML à risca + imagem). **TELA FIXA 1846×852** escalada por

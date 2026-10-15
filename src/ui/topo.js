@@ -4,6 +4,14 @@
 // Os botões DESISTIR/MENU/som do canto e o botão de ajustes do canto SAÍRAM (tudo foi para o menu).
 
 const AVATAR_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" style="width:72%;height:72%;color:#C9A44C"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg>';
+// §335b: o AVATAR do topo mostra o RETRATO do 1º deus do lado (jogador/CPU). Se a arte faltar (ou no fallback), volta
+// ao ícone genérico (fallbackSvg). No PvP não há avatar de perfil guardado, então o 1º deus do time serve igual.
+function _avatarInner(unidade, fallbackSvg){
+  const key=unidade&&unidade.key;
+  const tem=key&&(typeof RETRATO_ARTE!=='undefined'&&RETRATO_ARTE&&RETRATO_ARTE[key]);
+  if(tem) return `<img src="retratos/${H(key)}.webp" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 18%" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:100%;height:100%;align-items:center;justify-content:center">${fallbackSvg}</span>`;
+  return fallbackSvg;
+}
 
 function _LBT(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA)||{}; }
 // §330/§333: a sublinha do jogador mostra o MODO + progresso curto (calculado em view.js); senão ranque PvP ou SANDBOX.
@@ -46,7 +54,7 @@ function topoHTML(modoSub){
   const endBg = meu ? 'linear-gradient(180deg,#FBE29A 0%,#E9C25A 45%,#C9962F 100%)' : 'linear-gradient(180deg,#8C7A55,#5E4F33)';
 
   const player=`<div class="bt-name bt-name--me" style="position:absolute;left:${jg.left}px;top:${jg.top}px;display:flex;align-items:center;gap:${jg.gap}px">
-    <button class="b5-hover" data-prof="me" title="Perfil" style="width:${jg.avatar}px;height:${jg.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9A44C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer">${AVATAR_SVG}</button>
+    <button class="b5-hover" data-prof="me" title="Perfil" style="width:${jg.avatar}px;height:${jg.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9A44C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer">${_avatarInner(l.units[0],AVATAR_SVG)}</button>
     <div style="display:flex;flex-direction:column;gap:2px">
       <div class="cin bt-name__nick" style="font-weight:700;font-size:${jg.nome}px;line-height:1.1;color:#F0B43C;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:440px">VOCÊ</div>
       <div class="bt-name__sub" style="font-size:${jg.sub}px;font-weight:600;line-height:1.1;color:#E8ECF4;letter-spacing:.02em;white-space:nowrap">${H(_subJogador(modoSub))}</div>
@@ -68,7 +76,7 @@ function topoHTML(modoSub){
     <span style="width:22px;height:2.5px;border-radius:2px;background:#E6C77A"></span><span style="width:22px;height:2.5px;border-radius:2px;background:#E6C77A"></span><span style="width:22px;height:2.5px;border-radius:2px;background:#E6C77A"></span></button>`;
 
   const opp=`<div class="bt-name bt-name--foe" style="position:absolute;left:${op.left}px;top:${op.top}px;display:flex;align-items:center;gap:${op.gap}px">
-    <button class="b5-hover" data-prof="foe" title="Perfil" style="width:${op.avatar}px;height:${op.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9343C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:72%;height:72%;color:#C9343C"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg></button>
+    <button class="b5-hover" data-prof="foe" title="Perfil" style="width:${op.avatar}px;height:${op.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9343C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer">${_avatarInner(o.units[0],'<svg viewBox="0 0 24 24" aria-hidden="true" style="width:72%;height:72%;color:#C9343C"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg>')}</button>
     <div style="display:flex;flex-direction:column;gap:2px">
       <div class="cin bt-name__nick" style="font-weight:700;font-size:${op.nome}px;line-height:1.1;color:#E8343C;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px">${H(rotuloLado(1-eu))}</div>
       <div class="bt-name__sub" style="font-size:${op.sub}px;font-weight:600;line-height:1.1;color:#E8ECF4;letter-spacing:.02em">${H(_subOponente())}</div>

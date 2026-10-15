@@ -112,6 +112,40 @@ const CAIXAS=[
     await ctx.close();
   }
 
+  // ---- (4) §335b: cena com rosto (recorte no topo no fallback), pílula de tipo com fundo, moldura da imagem, avatares ----
+  {
+    const ctx=await browser.newContext({viewport:{width:1846,height:852},deviceScaleFactor:1});
+    const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+    await page.evaluate(BOOT);
+    await page.evaluate(`armar(st.lados[0].units[0].uid,'milagre'); render();`); await page.waitForTimeout(120);
+    console.log('== §335b detalhes (cena/pílula/moldura/avatares) ==');
+    const m=await page.evaluate(()=>{
+      const bat=document.getElementById('batalha');
+      // (a) cena: no FALLBACK de retrato, o recorte ancora no topo (object-position Y < 50%) p/ mostrar o rosto
+      const art=bat.querySelector('.b5-art img');
+      const op=art?getComputedStyle(art).objectPosition:''; const opY=parseFloat((op.split(' ')[1]||'50%'));
+      const artSrc=art?art.getAttribute('src'):'';
+      // (b) 1ª pílula (tipo): fundo colorido (alpha > 0)
+      const tit=bat.querySelector('.bt-panel__titulo'); const pilRow=tit&&tit.nextElementSibling;
+      const pil1=pilRow&&pilRow.firstElementChild; const bg=pil1?getComputedStyle(pil1).backgroundColor:'';
+      const alpha=(()=>{ const cm=/\/\s*([0-9.]+)\s*\)/.exec(bg); if(cm)return parseFloat(cm[1]); // color(srgb r g b / a)
+        const m=/rgba?\(([^)]+)\)/.exec(bg); if(m){const p=m[1].split(',').map(s=>parseFloat(s)); return p.length>3?p[3]:1;}
+        return (bg&&bg!=='transparent'&&bg!=='rgba(0, 0, 0, 0)')?1:0; })();
+      // (c) moldura da imagem: a imagem tem um filho com box-shadow inset (moldura do acento)
+      const img=bat.querySelector('.bt-panel__img'); const overlay=img&&img.lastElementChild;
+      const bs=overlay?getComputedStyle(overlay).boxShadow:''; const temMoldura=/inset/.test(bs);
+      // (d) avatares: retratos reais (img) no topo
+      const avMe=bat.querySelector('[data-prof="me"] img'); const avFoe=bat.querySelector('[data-prof="foe"] img');
+      return { opY, artSrc, alpha, temMoldura, avMe:avMe?avMe.getAttribute('src'):'', avFoe:avFoe?avFoe.getAttribute('src'):'' };
+    });
+    ok(/nezha/i.test(m.artSrc)&&m.opY<50, `§335b cena: fallback de retrato ancora no topo p/ mostrar o rosto (object-position Y=${m.opY}%)`);
+    ok(m.alpha>0, `§335b pílula de tipo: fundo colorido (alpha ${m.alpha})`);
+    ok(m.temMoldura, '§335b imagem do painel: moldura inset na cor do acento');
+    ok(/hades/i.test(m.avMe), `§335b avatar do jogador: retrato do 1º deus (src ${m.avMe})`);
+    ok(/poseidon/i.test(m.avFoe), `§335b avatar da CPU: retrato do 1º inimigo (src ${m.avFoe})`);
+    await ctx.close();
+  }
+
   await browser.close();
   console.log(falhas===0?'\n>>> BATALHA_LAYOUT OK':`\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas?1:0);
