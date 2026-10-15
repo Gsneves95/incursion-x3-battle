@@ -295,7 +295,7 @@ console.log('== 10. tocar o retrato (sem arma) mostra a unidade no painel ==');
   w.eval('armado=null;detalhe=null;render()');
   tap($$('.bt-portrait--ally')[1]);
   ok(w.eval('detalhe&&detalhe.kind') === 'unidade', 'tocar o retrato aliado abre a leitura da unidade');
-  ok(/\d+\/\d+/.test($('.bt-panel__cd').textContent), 'o painel mostra a vida (atual/máx)');
+  ok(/\d+\/\d+/.test($('.bt-panel__dados').textContent), 'o painel mostra a vida (atual/máx) na coluna de dados');
 }
 
 console.log('== 11. trocar energia abre a conversão (um gesto não gasta) ==');

@@ -145,6 +145,33 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(!!$('.bt-panel__img img'), 'o painel do RESUMO mostra uma imagem (retrato de quem agiu), não um quadrado vazio');
   ok(!/Turno\s*\d/i.test(($('.bt-panel__cd')||{}).textContent||''), 'o "Turno N" não aparece mais no canto do painel');
 
+  // ---- 9) §333 (a): as miniaturas do painel seguem o DONO do conteúdo, não o "deus em foco" ----
+  console.log('\n== 9) §333: miniaturas seguem o DONO do conteúdo do painel ==');
+  w.eval(`st=montarProvacao({aliados:['hades','zeus','ares'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});
+    prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null;
+    try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){} foco=st.lados[0].units[1].uid; render();`);
+  const hadesUid=w.eval("st.lados[0].units[0].uid"), zeusUid=w.eval("st.lados[0].units[1].uid"), poseUid=w.eval("st.lados[1].units[0].uid");
+  const minisUid = ()=>$$('.bt-panel__minis .bt-mini[data-look]');
+  const todasDoUid = (uid)=>{ const ms=minisUid(); return ms.length>0 && ms.every(b=>b.dataset.look.split('|')[0]===uid); };
+  // (a) armar o Hades (com o foco no Zeus) → miniaturas do HADES
+  w.eval(`foco='${zeusUid}'; armar('${hadesUid}','milagre'); render();`);
+  ok(w.eval("!!(armado&&armado.slot==='milagre')"), '(a) o Milagre do Hades ficou armado');
+  ok(/Hades/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(a) rótulo "Habilidades de Hades"');
+  ok(todasDoUid(hadesUid), '(a) as miniaturas são do Hades (dono), não do foco (Zeus)');
+  // (b) inspecionar o inimigo Poseidon → miniaturas do POSEIDON
+  w.eval(`armado=null; infoUnidade('${poseUid}'); render();`);
+  ok(/Poseidon/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(b) rótulo "Habilidades de Poseidon"');
+  ok(todasDoUid(poseUid), '(b) as miniaturas são do Poseidon inspecionado');
+  // (c) tocar num efeito do aliado Zeus → miniaturas do ZEUS (portador)
+  w.eval(`armado=null;detalhe=null; st.lados[0].units[1].efeitos=[{type:'vulneravel',v:6,dur:2}]; infoEfeito('${zeusUid}',0); render();`);
+  ok(/Zeus/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(c) rótulo "Habilidades de Zeus"');
+  ok(todasDoUid(zeusUid), '(c) as miniaturas são do portador do efeito (Zeus)');
+
+  // ---- 10) §333 item 7: linha de modo da campanha é CURTA e não corta ("CAMPANHA · CAP. N · ATO <roman>") ----
+  console.log('\n== 10) §333 item 7: linha de modo curta da campanha ==');
+  const sub=w.eval(`prova=null;dominio=null;campanha={_capIdx:0,_atoIdx:2,_capNome:'CAPITULO 1 — A QUEDA DOS TITÃS',nome:'x'}; const s=_modoSub(); campanha=null; s;`);
+  ok(sub==='CAMPANHA · CAP. 1 · ATO III', `_modoSub da campanha curto e sem "…" (veio "${sub}")`);
+
   console.log(`\n${falhas===0?'>>> BATALHA_INSPECAO OK':'>>> '+falhas+' FALHA(S)'} (${passes} ok)`);
   process.exit(falhas?1:0);
 })();

@@ -62,9 +62,17 @@ function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 // §330: a sublinha do nome do jogador carrega o MODO + progresso (o HUD de modo saiu da tela). O número do turno e o
 // prazo vão para a linha do ENCERRAR TURNO (topo.js). Objetivos detalhados do modo seguem no cartão de pré-batalha e
 // na tela de resultado; o motor segue avaliando vitória/derrota (atualizarProva/Campanha/Dominio).
+// §333: romano simples p/ o número do ato (1→I, 4→IV, …), suficiente p/ a faixa de atos de um capítulo.
+function _romano(n){ if(!(n>0)) return String(n);
+  const T=[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]; let s=''; for(const [v,r] of T){ while(n>=v){ s+=r; n-=v; } } return s; }
 function _modoSub(){
   if(typeof prova!=='undefined'&&prova) return 'RITO'+(prova.titulo?' · '+String(prova.titulo).toUpperCase():'');
-  if(typeof campanha!=='undefined'&&campanha){ const nm=campanha._capNome||campanha.nome||''; return 'CAMPANHA'+(nm?' · '+String(nm).toUpperCase():''); }
+  // §333: linha CURTA que não corta — CAP. número + ATO em romano (o nome completo do capítulo fica no menu/pré-batalha).
+  if(typeof campanha!=='undefined'&&campanha){
+    const cap=(campanha._capIdx!=null)?(' · CAP. '+(campanha._capIdx+1)):'';
+    const ato=(campanha._atoIdx!=null)?(' · ATO '+_romano(campanha._atoIdx+1)):'';
+    return 'CAMPANHA'+cap+ato || 'CAMPANHA';
+  }
   if(typeof dominio!=='undefined'&&dominio){ const c=(dominio.cultura||'').toUpperCase(); let prog='';
     try{ const run=dominioRun(dominio.cultura); const total=(dominio.escada&&dominio.escada.niveis&&dominio.escada.niveis.length)||0;
       if(run) prog=' · '+run.nivel+(total?'/'+total:''); }catch(e){}

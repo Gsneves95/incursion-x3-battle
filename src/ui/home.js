@@ -2493,7 +2493,7 @@ function iniciarAto(cap, ato){
   const time = timeDoAto(ato).filter(Boolean);
   if (time.length !== 3) return;
   prova = null; provaFim = null;
-  campanha = Object.assign({}, ato, { aliados: time, _capNome: cap.nome, _capIdx: campCapIdx });
+  campanha = Object.assign({}, ato, { aliados: time, _capNome: cap.nome, _capIdx: campCapIdx, _atoIdx: campAtoIdx });   // §333: _atoIdx p/ a linha curta "CAMPANHA · CAP. N · ATO <roman>"
   campanhaFim = null;
   st = montarPvEComNiveis(campanha, time);   // §323 P2
   if (typeof REPLAY !== 'undefined') REPLAY.iniciar({ modo: 'campanha', atoId: ato.id, aliados: time });   // §318 F2 E2

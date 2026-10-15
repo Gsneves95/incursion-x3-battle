@@ -262,7 +262,7 @@ function lerHabilidade(uid,slot){
   const a=acoesDe(st,u).find(x=>x.slot===slot); if(!a)return;
   const nv=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,slot):1;
   if(typeof foco!=='undefined') foco=uid;
-  detalhe={kind:'skill', nome:a.nome, nv:nv, chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),
+  detalhe={kind:'skill', uid:u.uid, nome:a.nome, nv:nv, chave:'skill-'+u.key+'-'+a.slot, mono:mono(a), cor:a.slot==='defesa'?'var(--ink-mute)':COR(u.elem),
     desc:a.desc, cost:a.cost, cd:a.cd, cdNow:(u.cd[slot]||0), tf:classesTxt(u,a),
     motivo: a.disponivel ? '' : motivoIndisponivel(u,a)};
   armado=null; alvos=[]; escolhidos=[]; render();
@@ -282,8 +282,12 @@ function infoEfeito(uid, idx){
   const u=todas().find(x=>x.uid===uid); if(!u)return;
   const tags=tagsDe(u); const t=tags[idx]||tags[0]; if(!t)return;
   if(typeof foco!=='undefined') foco=uid;
-  detalhe={kind:'efeito', nome:t.nome, cor:COR(u.elem), icone:t.icone, cat:t.cat, num:t.num, desc:t.desc,
-    dur:t.dur, dono:u.nome};
+  // §333: quem APLICOU o efeito (e.origem), quando o motor souber — vira "aplicado por X" nos dados do painel.
+  let aplicadoPor='';
+  const raw=(u.efeitos||[]).find(e=>e.type===t.key) || (u.dots||[]).find(d=>d.nome===t.key);
+  if(raw && raw.origem){ const o=todas().find(x=>x.uid===raw.origem); if(o && o.uid!==u.uid) aplicadoPor=o.nome; }
+  detalhe={kind:'efeito', uid:u.uid, nome:t.nome, cor:COR(u.elem), icone:t.icone, cat:t.cat, num:t.num, desc:t.desc,
+    dur:t.dur, dono:u.nome, aplicadoPor};
   armado=null; alvos=[]; escolhidos=[]; peekKit=null; render();
 }
 
@@ -310,7 +314,7 @@ function ligarCampo(){
     for(const it of info.recebidas) linhas.push(rotuloPassivaItem(it)+' — de '+H(it.fonteNome));
     const agora = linhas.length ? ('AGINDO AGORA: '+linhas.join(' · ')) : 'PARADA AGORA (a condição não vale no momento)';
     if(typeof foco!=='undefined') foco=u.uid;
-    detalhe={kind:'passiva', nome:g.passiva.nome, cor:COR(u.elem), chave:'god-'+u.key,
+    detalhe={kind:'passiva', uid:u.uid, nome:g.passiva.nome, cor:COR(u.elem), chave:'god-'+u.key,
       dono:u.nome, inerte:g.passiva.inerte, desc:agora+'\n'+g.passiva.desc};
     armado=null;alvos=[];escolhidos=[];peekKit=null;render();});
   // ícone de efeito: detalhe do efeito no painel.

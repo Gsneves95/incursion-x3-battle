@@ -35,7 +35,8 @@
     "menu": { "x": [4, 40], "y": [89.5, 94] },
     "som": { "x": [4, 40], "y": [95, 98.5] }
   },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [84, 98.5], "img": 12, "mini": 5.5,
-    "fonte": { "titulo": 3, "corpo": 2.5, "corpoMin": 2.3, "rodape": 1.9 } },
+  "painel": { "x0": 44, "dirFolga": 2, "y": [84, 98.5],
+    "img": 12, "mini": 5.5, "dados": 22, "acao": 17, "minis": 27, "gapCol": 1.5, "pad": 1,
+    "fonte": { "titulo": 3, "tituloMin": 2.4, "corpo": 2.5, "corpoMin": 2.3, "rodape": 1.9, "rotulo": 1.7, "dado": 1.9, "acao": 1.9 } },
   "custoPip": { "size": 2.2 }
 }

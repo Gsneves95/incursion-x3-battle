@@ -62,7 +62,7 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       // 3) encaixe de texto: nome/vida/função não transbordam (scrollWidth<=clientWidth)
       const corta=[];
       const chk=(s,lab)=>document.querySelectorAll(s).forEach(el=>{ if(el.scrollWidth>el.clientWidth+1) corta.push(lab+':"'+(el.textContent||'').trim().slice(0,18)+'"'); });
-      chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-panel__tf','funcao'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
+      chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-panel__rodape','funcao'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
       // §329b item 6: nenhum ícone de efeito/miniatura/botão renderiza SEM imagem E SEM fallback (monograma/ícone).
       const vazios=[];
       document.querySelectorAll('.bt-eff').forEach((el,i)=>{ const hasImg=!!el.querySelector('img'); const t=(el.textContent||'').replace(/\s/g,''); if(!hasImg&&!t) vazios.push('eff'+i); });

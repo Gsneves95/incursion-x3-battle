@@ -74,13 +74,14 @@ const html = fs.readFileSync(distAbs, 'utf8');
   // §329: a leitura mora no PAINEL de baixo (detalhe.desc), não mais num `detalhe.texto`.
   ok(w.eval("detalhe && detalhe.desc") === efAlly, 'ao LER a habilidade do aliado, o painel mostra o texto EFETIVO (não o base)');
   // INIMIGO: §329/invariante #15 — o kit do oponente é LEITURA pela caixa de minis (data-look, nunca data-sk).
-  // Foca o inimigo (o centro e as minis trocam p/ ele) e toca a mini do básico; o PAINEL de baixo mostra o efetivo DELE.
+  // §333 REGRA (a): as minis são do DONO do conteúdo do painel. Inspeciona o inimigo (o painel e as minis passam a
+  // ser DELE) e toca a mini do básico; o PAINEL de baixo mostra o efetivo DELE.
   const efEnemy = w.eval("kitDe(st, st.lados[1].units[0]).ab.find(a=>a.slot==='basico').desc");
   const baseEnemy = w.eval("GODS[st.lados[1].units[0].key].ab.find(a=>a.slot==='basico').desc");
   ok(efEnemy !== baseEnemy, 'pré-condição: o básico efetivo do inimigo difere do base');
-  w.eval(`foco='${enemyUid}'; render();`);
+  w.eval(`armado=null; detalhe=null; infoUnidade('${enemyUid}'); render();`);
   const miniFoe = $(`.bt-mini[data-look="${enemyUid}|basico"]`);
-  ok(!!miniFoe, 'a caixa de minis mostra as habilidades do oponente em foco (leitura, data-look)');
+  ok(!!miniFoe, 'a caixa de minis mostra as habilidades do oponente (dono do conteúdo, §333) — leitura data-look');
   if(miniFoe) miniFoe.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   const rod = txt($('.bt-panel'));
   ok(rod.indexOf(efEnemy.slice(0, 24)) >= 0, 'o KIT do inimigo (painel) mostra o texto EFETIVO dele');

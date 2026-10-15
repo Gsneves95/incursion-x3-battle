@@ -2,6 +2,36 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §333 · PAINEL DE BAIXO: grade de 5 colunas + 2 defeitos do §332
+
+O dono apontou: **(a)** as minis "toque numa habilidade" seguiam o DEUS EM FOCO, não o dono do que o painel mostrava
+(armar hab. do Hades com foco no Zeus → minis do Zeus); **(b)** distribuição interna ruim — CANCELAR/"Recarga 4 · pronta"
+sobre o fim da descrição, "Recarga…" fora da caixa, CUSTO solto, "▸ toque o inimigo" colado ao texto (tudo era absoluto
+por cima do texto). A **posição externa do painel NÃO muda** (x 44u→W−2u, y 84u→98,5u); por dentro vira **GRADE DE
+COLUNAS** (flex, centrada, pad 1u, gap 1,5u, nada absoluto):
+1. **COL1 imagem** 12u. **COL2 conteúdo** (flex): título 3u (encolhe a 2,4u) + "Nv N"; descrição 2,5u que ROLA dentro da
+   própria coluna (overflow-y:auto, nunca vaza, nunca corta palavra); rodapé 1,9u (etiquetas). **COL3 dados** fixa 22u
+   (CUSTO+bolinhas, RECARGA "4 turnos · pronta"; ou VIDA; ou TURNOS+"aplicado por X") — some sem dados. **COL4 ação** fixa
+   17u só com habilidade ARMADA ("▸ Toque o inimigo" no topo + CANCELAR 4,5u) — some fora de armado. **COL5 minis** ~27u
+   (rótulo "Habilidades de \<NOME>" + 4 minis, a do painel destacada em ouro).
+2. **REGRA (a): minis são do DONO do conteúdo** (hab.→dono, inspeção→deus, efeito→portador, resumo→último a agir),
+   threaded por `donoUid` em todo `detalhe`/modelo — não mais pelo foco. Em 16:9 (col2<40u) o rótulo das minis some
+   (`.bt-panel--estreito`).
+3. **Item 6:** o quadrado dourado no retrato inimigo ERA o selo de passiva, invisível (cor-de-rosa sobre ouro por
+   especificidade do `--foe`). Corrigido: `.bt-portrait--foe .pas--on{color:#1a1408}` → "P" escuro legível.
+4. **Item 7:** linha de modo cortada → `_modoSub` curto "CAMPANHA · CAP. 1 · ATO III" (ato em romano, `_romano`); nome
+   inteiro do capítulo segue no menu/pré-batalha.
+- **Arquivos:** data/layout_batalha.json (painel: x0/dirFolga/y/img/dados/acao/minis/gapCol/pad/fonte), src/ui/painel.js
+  (grade: `painelBaixoHTML`, `_dadosHTML`, `_acaoHTML`, `_painelMinis` por donoUid, `_recargaCurto`, `_custoPips`,
+  `_ajustarPainel`), src/shell.html (CSS .bt-panel flex + colunas), src/ui/campo.js (detalhe skill/efeito/passiva com
+  uid+dados+rodape+aplicadoPor), src/ui/home.js (campanha com _capIdx/_atoIdx), src/view.js (`_romano`, `_modoSub`
+  curto), tests/{batalha_painel(novo),batalha_inspecao,batalha_faixa,interface,niveis_batalha}.test.js, package.json.
+  (niveis_batalha: a leitura do kit do inimigo agora inspeciona o inimigo — dono do conteúdo, §333 — antes seguia o foco.)
+- **Provas:** Chromium (`batalha_painel`) 5 situações + descrição mais longa (babi) em 780×360 e 1280×720: nenhum filho
+  fora da caixa, colunas sem interseção, título sem "…", rodapé sem transbordo, descrição dentro da col2; item 6 "P"
+  escuro. jsdom (`batalha_inspecao` #9/#10): minis seguem o dono (Hades/Poseidon/portador); `_modoSub`="CAMPANHA · CAP. 1
+  · ATO III". Capturas docs/telas/333-*. Suíte + build verdes. NÃO mudou engine/IA/regras/balanço nem mais nada.
+
 ## ★ §332 · Arte de habilidade QUADRADA preenche o botão inteiro
 
 O dono refaz as artes no formato QUADRADO cheio (Zeus já). O §331 recortava TODO disco em círculo (p/ esconder o

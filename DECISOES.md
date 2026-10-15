@@ -6,6 +6,53 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §333 · PAINEL DE BAIXO: grade de 5 colunas + 2 defeitos do §332
+
+O dono jogou e apontou dois problemas no painel de baixo da batalha: **(a)** as miniaturas "toque numa habilidade"
+mostravam as habilidades do DEUS EM FOCO, não as do dono do conteúdo mostrado no painel (armar uma habilidade do Hades
+enquanto o foco estava no Zeus → minis do Zeus); **(b)** a distribuição interna estava ruim — CANCELAR e "Recarga 4 ·
+pronta" sobrepunham o fim da descrição, "Recarga…" saía da caixa, CUSTO solto no topo, "▸ toque o inimigo" colado ao
+texto. Causa: os elementos estavam posicionados ABSOLUTOS por cima do texto, sem grade.
+
+**A POSIÇÃO EXTERNA do painel NÃO muda** (x 44u→W−2u, y 84u→98,5u, de §329c). Por dentro vira uma **GRADE DE COLUNAS**
+(flex lado a lado), centrada na vertical, 1u de padding, 1,5u entre colunas, nada absoluto por cima de nada. Tudo em
+`data/layout_batalha.json → painel`:
+
+1. **COLUNA 1 — IMAGEM** (12u quadrado): arte/retrato do conteúdo.
+2. **COLUNA 2 — CONTEÚDO** (flexível): TÍTULO (3u, 1 linha, encolhe até 2,4u) + selo "Nv N" quando habilidade;
+   DESCRIÇÃO (2,5u, ROLA dentro da própria coluna — `overflow-y:auto` — nunca vaza para baixo das outras, nunca corta
+   palavra); RODAPÉ/etiquetas (1,9u, 1 linha, ex.: "MÁGICO · ALVO ÚNICO · MILAGRE").
+3. **COLUNA 3 — DADOS** (fixa 22u, empilhada): CUSTO (rótulo + bolinhas) + RECARGA ("4 turnos · pronta"/"pronta em 2");
+   vira VIDA (deus) ou TURNOS + "aplicado por X" (efeito). Some quando não há dados e a coluna 2 cresce.
+4. **COLUNA 4 — AÇÃO** (fixa 17u, só quando há habilidade ARMADA): instrução no topo ("▸ Toque o inimigo" — saiu de
+   dentro da descrição) + botão CANCELAR embaixo (4,5u de altura). Some quando nada está armado.
+5. **COLUNA 5 — MINIATURAS** (fixa ~27u): rótulo "Habilidades de \<NOME>" + 4 minis; a mini mostrada no painel vem
+   destacada (moldura dourada). **REGRA (a): as minis são SEMPRE do DONO do conteúdo do painel** (dono da habilidade,
+   deus inspecionado, portador do efeito, ou o último a agir no resumo) — threaded por `donoUid` em todo `detalhe`/
+   modelo, não mais pelo foco.
+
+Cinco situações usam a mesma grade: deus inspecionado (retrato; VIDA; minis do deus), habilidade armada (arte+Nv;
+CUSTO+RECARGA; ação; minis do dono, destacada), habilidade só lida (igual sem coluna de ação), efeito (ícone; TURNOS+
+aplicado por; minis do portador), resumo CPU (retrato do último a agir; sem dados/ação; minis dele). **Em 16:9**, se a
+coluna 2 fica < 40u o rótulo das minis some primeiro (`.bt-panel--estreito`).
+
+6. **Item 6 — selo "P" do inimigo.** O quadrado dourado no canto do retrato inimigo ERA o selo de passiva, mas invisível:
+   a regra de cor do retrato-inimigo (`--foe`) ganhava de `.pas--on` por especificidade e pintava o "P" cor-de-rosa
+   sobre fundo dourado. Corrigido com `.bt-portrait--foe .bt-portrait__pas.pas--on{color:#1a1408}` — o "P" fica escuro
+   e legível, igual ao dos aliados.
+7. **Item 7 — linha de modo cortada.** "CAMPANHA · CAPITULO 1 — A QUEDA…" não cabia. `_modoSub` (view.js) passa a usar
+   formato curto "CAMPANHA · CAP. 1 · ATO III" (número do ato em romano, `_romano`); o nome inteiro do capítulo segue no
+   menu/pré-batalha.
+
+**PROVAS.** Chromium (`batalha_painel.test.js`): nas 5 situações + a descrição MAIS LONGA do jogo (babi · Frenesi
+Sanguinário), em 780×360 E 1280×720 — nenhum filho sai da caixa do painel; as 5 colunas não se intersectam; o título não
+corta com "…"; o rodapé não transborda; a descrição fica dentro da coluna 2 (rola, não vaza). Item 6: o "P" do inimigo é
+escuro/legível. jsdom (`batalha_inspecao.test.js` #9/#10): armar habilidade do Hades → minis do Hades; inspecionar
+Poseidon → minis do Poseidon; efeito no aliado → minis do portador; `_modoSub` da campanha = exatamente "CAMPANHA ·
+CAP. 1 · ATO III". Capturas `docs/telas/333-*`. NÃO mudou engine/IA/regras/balanço nem mais nada.
+
+---
+
 ## §332 · Arte de habilidade QUADRADA preenche o botão inteiro
 
 O dono está refazendo as artes de habilidade no formato QUADRADO e cheio (as do Zeus já estão). O §331 recortava TODO

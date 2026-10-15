@@ -2570,6 +2570,9 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
   font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*2.2);line-height:calc(var(--u)*3);text-align:center;cursor:pointer;padding:0}
 .bt-portrait__pas.pas--on{background:var(--gold);border-color:var(--gold);color:#1a1408;box-shadow:0 0 calc(var(--u)*1.6) rgba(212,175,55,.85)}
 .bt-portrait--foe .bt-portrait__pas{border-color:#8a4a5c;color:#ff8fae}
+/* §333 item 6: no inimigo, quando a passiva está ACESA (pas--on, fundo dourado) o "P" precisa do mesmo texto escuro
+   dos aliados — senão o rosa sobre dourado fica ilegível (parecia um quadradinho dourado vazio). */
+.bt-portrait--foe .bt-portrait__pas.pas--on{color:#1a1408}
 .bt-portrait__ask{position:absolute;left:calc(var(--u)*0.4);top:calc(var(--u)*0.4);width:calc(var(--u)*2.8);height:calc(var(--u)*2.8);
   border-radius:calc(var(--u)*0.5);background:rgba(6,5,16,.8);border:1px solid #8a4a5c;color:#ff9db4;
   font-weight:800;font-size:calc(var(--u)*2);line-height:calc(var(--u)*2.6);text-align:center;pointer-events:none}
@@ -2667,37 +2670,47 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 .bt-som input[type=range]::-moz-range-track{height:calc(var(--u)*1.2);border-radius:calc(var(--u)*0.6);background:#2a2450}
 .bt-som input[type=range]::-moz-range-progress{height:calc(var(--u)*1.2);border-radius:calc(var(--u)*0.6);background:var(--gold)}
 /* ---- painel de baixo ---- */
+/* §333: o painel é uma GRADE DE COLUNAS lado a lado (flex), centradas na vertical. Nenhum elemento é absoluto por
+   cima de outro. gap/padding vêm do JSON (inline). Colunas: 1 imagem · 2 conteúdo (flex) · 3 dados · 4 ação · 5 minis. */
 .bt-panel{position:absolute;z-index:2;border:1px solid var(--gold-soft);border-radius:calc(var(--u)*1.6);
   background:linear-gradient(180deg,rgba(28,24,56,.96),rgba(14,11,30,.97));box-shadow:0 calc(var(--u)*2) calc(var(--u)*6) rgba(0,0,0,.5);
-  display:grid;grid-template-columns:auto 1fr auto;gap:calc(var(--u)*1.8);padding:calc(var(--u)*1.5)}
-.bt-panel__img{position:relative;align-self:start;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
+  display:flex;align-items:center}
+.bt-panel__img{flex:0 0 auto;align-self:center;position:relative;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
 .bt-panel__img .slot{width:100%;height:100%}
 .bt-panel__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*4.2)}
 .bt-panel__img:has(.slot__art) .bt-panel__mono{opacity:0}   /* §329b: monograma só quando a arte da habilidade falta */
-.bt-panel__body{min-width:0;display:flex;flex-direction:column;position:relative;height:100%}
-.bt-panel__titulo{font-family:'Cinzel',serif;font-weight:800;color:#ff6b6b;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  font-size:calc(var(--u)*2.6);padding-right:calc(var(--u)*18)}
+/* COLUNA 2 — conteúdo (flexível): título (1 linha), descrição (rola), rodapé (1 linha) */
+.bt-panel__conteudo{flex:1 1 auto;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:calc(var(--u)*0.4)}
+.bt-panel__titulo{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:800;color:#ff6b6b;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bt-panel__nv{color:var(--gold-text);font-size:.85em;margin-left:calc(var(--u)*0.8)}
-.bt-panel__desc{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:calc(var(--u)*0.6);font-family:'Rajdhani',sans-serif;
-  font-weight:500;font-size:calc(var(--u)*2.8);line-height:1.24;color:var(--ink)}
-.bt-panel__custo{position:absolute;right:0;top:0;display:flex;align-items:center;gap:calc(var(--u)*0.6);
-  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.7);color:var(--ink-dim);text-transform:uppercase}
-.bt-panel__custo i{width:calc(var(--u)*1.8);height:calc(var(--u)*1.8);border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
-.bt-panel__custo i.free{background:repeating-conic-gradient(#888 0 25%,#555 0 50%)}
-.bt-panel__rodape{display:flex;justify-content:space-between;align-items:flex-end;gap:calc(var(--u)*1.5);margin-top:calc(var(--u)*0.6);
-  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.6);letter-spacing:.03em}
-.bt-panel__tf{color:var(--ink-mute);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bt-panel__cd{color:var(--gold-text);white-space:nowrap}
+.bt-panel__desc{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;font-family:'Rajdhani',sans-serif;
+  font-weight:500;line-height:1.24;color:var(--ink);overflow-wrap:break-word;word-break:normal}
 .bt-panel__motivo{color:#ff9db4}
-.bt-panel__act{position:absolute;right:0;bottom:0;display:flex;gap:calc(var(--u)*1)}
-.bt-panel__act .b{font-size:calc(var(--u)*1.9)}
+.bt-panel__rodape{flex:0 0 auto;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.03em;color:var(--ink-mute);
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* COLUNA 3 — dados (largura fixa, pilha) */
+.bt-panel__dados{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:calc(var(--u)*0.7);min-width:0}
+.bt-panel__dado{display:flex;flex-direction:column;gap:calc(var(--u)*0.15);min-width:0}
+.bt-panel__rotulo{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em}
+.bt-panel__dadoval{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);display:flex;align-items:center;gap:calc(var(--u)*0.5);min-width:0}
+.bt-panel__valor{color:var(--gold-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.bt-panel__pips{display:flex;align-items:center;gap:calc(var(--u)*0.5);flex-wrap:wrap}
+.bt-panel__pips i{width:calc(var(--u)*2.2);height:calc(var(--u)*2.2);border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
+.bt-panel__pips i.free{background:repeating-conic-gradient(#888 0 25%,#555 0 50%)}
+/* COLUNA 4 — ação (só com habilidade armada) */
+.bt-panel__acao{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:calc(var(--u)*0.6)}
+.bt-panel__acaohint{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);text-align:center;line-height:1.1}
+.bt-panel__acaobtns{display:flex;flex-direction:column;gap:calc(var(--u)*0.5)}
+.bt-panel__acaobtns .b{width:100%;min-height:calc(var(--u)*4.5);font-size:calc(var(--u)*1.9)}
 /* realce de palavras-chave (reusa as cores do realce) */
 .bt-panel__desc .k-dano{color:#ff6b6b}.bt-panel__desc .k-def{color:#6fb6ff}.bt-panel__desc .k-turno{color:#5fe0d0}.bt-panel__desc .k-aumento{color:#7ff0a5}.bt-panel__desc .k-controle{color:#b98bff}
-/* ---- caixa "toque numa habilidade" (mini do deus em foco) ---- */
-/* §330: a caixa "Toque numa habilidade" vive DENTRO do painel, na 3ª coluna (ponta direita) */
-.bt-panel__minis{align-self:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.6)}
-.bt-panel__minilab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.7);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap}
+/* COLUNA 5 — miniaturas (§333: do DONO do conteúdo do painel, não do deus em foco) */
+.bt-panel__minis{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.6)}
+.bt-panel__minilab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.7);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;text-align:center}
 .bt-panel__minirow{display:flex;gap:calc(var(--u)*0.8)}
+/* §333: 16:9 estreito — some o rótulo das minis e os dados viram linha (nunca sobrepõe) */
+.bt-panel--estreito .bt-panel__minilab{display:none}
+.bt-panel--estreito .bt-panel__dado{flex-direction:row;align-items:baseline;gap:calc(var(--u)*0.5)}
 .bt-mini{border:1px solid;border-radius:calc(var(--u)*0.8);overflow:hidden;background:#14112a;cursor:pointer;padding:0;position:relative}
 .bt-mini .slot{width:100%;height:100%}
 .bt-mini.is-sel{box-shadow:0 0 0 calc(var(--u)*0.5) var(--gold)}
