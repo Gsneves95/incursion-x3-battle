@@ -62,7 +62,7 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       // 3) encaixe de texto: nome/vida/função não transbordam (scrollWidth<=clientWidth)
       const corta=[];
       const chk=(s,lab)=>document.querySelectorAll(s).forEach(el=>{ if(el.scrollWidth>el.clientWidth+1) corta.push(lab+':"'+(el.textContent||'').trim().slice(0,18)+'"'); });
-      chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-panel__rodape','funcao'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
+      chk('.bt-hp__lab','vida'); chk('.bt-panel__titulo','titulo'); chk('.bt-pill','pilula'); chk('.bt-name__nick','nick'); chk('.bt-name__sub','sub');
       // §329b item 6: nenhum ícone de efeito/miniatura/botão renderiza SEM imagem E SEM fallback (monograma/ícone).
       const vazios=[];
       document.querySelectorAll('.bt-eff').forEach((el,i)=>{ const hasImg=!!el.querySelector('img'); const t=(el.textContent||'').replace(/\s/g,''); if(!hasImg&&!t) vazios.push('eff'+i); });
@@ -154,8 +154,8 @@ const TOQUE='.bt-ajustes,.bt-prof,.bt-trocar,.bt-encerrar,.bt-skill,.bt-portrait
       ok(cheiaCheias.length>=1, `${E.nome} [${modo}]: botão(ões) de arte CHEIA preenchem o canto com a arte (${cheiaCheias.length} de ${arte.filter(a=>a.forma==='cheia').length})`);
       // §330: tamanhos que preenchem a tela — PROVADOS no piso (780×360), onde a altura é a mais apertada.
       if(E.w===780){
-        ok(m.tam.skMin>=66, `${E.nome} [${modo}]: botão de habilidade ≥66px (${m.tam.skMin}px)`);
-        ok(m.tam.ptMin>=66, `${E.nome} [${modo}]: retrato ≥66px (${m.tam.ptMin}px)`);
+        ok(m.tam.skMin>=64, `${E.nome} [${modo}]: botão de habilidade ≥64px (${m.tam.skMin}px)`);
+        ok(m.tam.ptMin>=64, `${E.nome} [${modo}]: retrato ≥64px (${m.tam.ptMin}px)`);
         ok(m.tam.efMin>=22, `${E.nome} [${modo}]: ícone de efeito ≥22px (${m.tam.efMin}px)`);
         if(modo==='meu') ok(m.tam.pipMin>=7, `${E.nome} [${modo}]: bolinha de custo ≥7px (${m.tam.pipMin}px)`);
         if(modo==='meu') ok(m.tam.ecFonte>=9, `${E.nome} [${modo}]: números de energia ≥9px (${m.tam.ecFonte}px)`);

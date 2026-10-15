@@ -2672,45 +2672,62 @@ body.embatalha #build, body.embatalha #conta-botao{display:none!important}   /* 
 /* ---- painel de baixo ---- */
 /* §333: o painel é uma GRADE DE COLUNAS lado a lado (flex), centradas na vertical. Nenhum elemento é absoluto por
    cima de outro. gap/padding vêm do JSON (inline). Colunas: 1 imagem · 2 conteúdo (flex) · 3 dados · 4 ação · 5 minis. */
+/* §333b — painel de baixo: [imagem][conteúdo] | [custo/recarga] | [direita]; divisores verticais dourados */
 .bt-panel{position:absolute;z-index:2;border:1px solid var(--gold-soft);border-radius:calc(var(--u)*1.6);
   background:linear-gradient(180deg,rgba(28,24,56,.96),rgba(14,11,30,.97));box-shadow:0 calc(var(--u)*2) calc(var(--u)*6) rgba(0,0,0,.5);
-  display:flex;align-items:center}
-.bt-panel__img{flex:0 0 auto;align-self:center;position:relative;border-radius:calc(var(--u)*1.1);overflow:hidden;border:1px solid var(--gold-soft);background:#14112a}
+  display:flex;align-items:stretch}
+.bt-panel__img{flex:0 0 auto;align-self:center;position:relative;border-radius:calc(var(--u)*1.1);overflow:hidden;border:calc(var(--u)*0.4) solid var(--gold-soft);background:#14112a}
 .bt-panel__img .slot{width:100%;height:100%}
-.bt-panel__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*4.2)}
+.bt-panel__mono{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:900;font-size:calc(var(--u)*5)}
 .bt-panel__img:has(.slot__art) .bt-panel__mono{opacity:0}   /* §329b: monograma só quando a arte da habilidade falta */
-/* COLUNA 2 — conteúdo (flexível): título (1 linha), descrição (rola), rodapé (1 linha) */
-.bt-panel__conteudo{flex:1 1 auto;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:calc(var(--u)*0.4)}
+/* divisor VERTICAL fino dourado, do topo ao fim do conteúdo */
+.bt-panel__sepv{flex:0 0 auto;align-self:stretch;width:1px;background:var(--gold-soft);opacity:.55}
+/* CONTEÚDO (flexível): título (1 linha) + pílulas + descrição (rola) */
+.bt-panel__conteudo{flex:1 1 auto;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:calc(var(--u)*0.6)}
 .bt-panel__titulo{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:800;color:#ff6b6b;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bt-panel__nv{color:var(--gold-text);font-size:.85em;margin-left:calc(var(--u)*0.8)}
+.bt-panel__tags{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--u)*0.6)}
+.bt-pill{display:inline-flex;align-items:center;min-height:calc(var(--u)*3.2);padding:0 calc(var(--u)*1);border-radius:calc(var(--u)*1.6);
+  border:1px solid var(--ink-mute);background:rgba(255,255,255,.05);color:var(--ink);font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;line-height:1}
+.bt-pill--cor{border-color:var(--pc);background:color-mix(in srgb, var(--pc) 34%, transparent);color:#fff}
 .bt-panel__desc{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;font-family:'Rajdhani',sans-serif;
   font-weight:500;line-height:1.24;color:var(--ink);overflow-wrap:break-word;word-break:normal}
 .bt-panel__motivo{color:#ff9db4}
-.bt-panel__rodape{flex:0 0 auto;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.03em;color:var(--ink-mute);
-  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* COLUNA 3 — dados (largura fixa, pilha) */
-.bt-panel__dados{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:calc(var(--u)*0.7);min-width:0}
-.bt-panel__dado{display:flex;flex-direction:column;gap:calc(var(--u)*0.15);min-width:0}
-.bt-panel__rotulo{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em}
-.bt-panel__dadoval{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);display:flex;align-items:center;gap:calc(var(--u)*0.5);min-width:0}
-.bt-panel__valor{color:var(--gold-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.bt-panel__pips{display:flex;align-items:center;gap:calc(var(--u)*0.5);flex-wrap:wrap}
-.bt-panel__pips i{width:calc(var(--u)*2.2);height:calc(var(--u)*2.2);border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
+/* BLOCO do meio: duas células (CUSTO/RECARGA etc.) + MIRA quando armada */
+.bt-panel__meio{flex:0 0 auto;align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:calc(var(--u)*0.9)}
+.bt-panel__meiocels{display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*1.2)}
+.bt-panel__sepvm{align-self:stretch;width:1px;background:var(--gold-soft);opacity:.4}
+.bt-panel__cel{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.4);min-width:0}
+.bt-panel__rotulo{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.bt-panel__celval{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*0.4);white-space:nowrap}
+.bt-panel__valor{color:var(--gold-text)}
+.bt-panel__verde{color:#7ff0a5}
+.bt-panel__ouro{color:var(--gold-text)}
+.bt-panel__livre{color:var(--ink-mute);text-transform:none}
+.bt-panel__pips{display:flex;align-items:center;gap:calc(var(--u)*0.5)}
+.bt-panel__pips i{border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
 .bt-panel__pips i.free{background:repeating-conic-gradient(#888 0 25%,#555 0 50%)}
-/* COLUNA 4 — ação (só com habilidade armada) */
-.bt-panel__acao{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;gap:calc(var(--u)*0.6)}
-.bt-panel__acaohint{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);text-align:center;line-height:1.1}
-.bt-panel__acaobtns{display:flex;flex-direction:column;gap:calc(var(--u)*0.5)}
-.bt-panel__acaobtns .b{width:100%;min-height:calc(var(--u)*4.5);font-size:calc(var(--u)*1.9)}
-/* realce de palavras-chave (reusa as cores do realce) */
+/* MIRA (só armada): divisor horizontal + ícone/instrução de alvo */
+.bt-panel__seph{align-self:stretch;height:1px;background:var(--gold-soft);opacity:.5}
+.bt-panel__mira{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.2);text-align:center;cursor:default}
+.bt-panel__mira[id="bconf"]{cursor:pointer}
+.bt-panel__miratop{display:flex;align-items:center;gap:calc(var(--u)*0.6)}
+.bt-panel__miraico{color:var(--gold-text);line-height:1}
+.bt-panel__miratit{font-family:'Rajdhani',sans-serif;font-weight:800;color:var(--gold-text);line-height:1.05}
+.bt-panel__mirasub{font-family:'Rajdhani',sans-serif;font-weight:500;color:var(--ink-mute);line-height:1.1}
 .bt-panel__desc .k-dano{color:#ff6b6b}.bt-panel__desc .k-def{color:#6fb6ff}.bt-panel__desc .k-turno{color:#5fe0d0}.bt-panel__desc .k-aumento{color:#7ff0a5}.bt-panel__desc .k-controle{color:#b98bff}
-/* COLUNA 5 — miniaturas (§333: do DONO do conteúdo do painel, não do deus em foco) */
-.bt-panel__minis{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.6)}
-.bt-panel__minilab{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:calc(var(--u)*1.7);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;text-align:center}
-.bt-panel__minirow{display:flex;gap:calc(var(--u)*0.8)}
-/* §333: 16:9 estreito — some o rótulo das minis e os dados viram linha (nunca sobrepõe) */
+/* DIREITA: miniaturas do dono OU o botão CANCELAR */
+.bt-panel__dir{flex:0 0 auto}
+.bt-panel__minis{align-self:center;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*0.8)}
+.bt-panel__minilab{font-family:'Rajdhani',sans-serif;font-weight:800;color:var(--gold-text);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;text-align:center}
+.bt-panel__minirow{display:flex;align-items:center}
+.bt-panel__cancelwrap{align-self:center;display:flex;align-items:center;justify-content:center}
+.bt-cancel{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*0.3);
+  border:calc(var(--u)*0.3) solid var(--gold);border-radius:calc(var(--u)*1.2);background:rgba(20,17,42,.6);cursor:pointer}
+.bt-cancel__t{font-family:'Cinzel',serif;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;font-size:calc(var(--u)*2.6)}
+.bt-cancel__r{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold-text);font-size:calc(var(--u)*1.8)}
+/* §333b: 16:9 estreito — some o rótulo das minis (as minis encolhem via JS) */
 .bt-panel--estreito .bt-panel__minilab{display:none}
-.bt-panel--estreito .bt-panel__dado{flex-direction:row;align-items:baseline;gap:calc(var(--u)*0.5)}
 .bt-mini{border:1px solid;border-radius:calc(var(--u)*0.8);overflow:hidden;background:#14112a;cursor:pointer;padding:0;position:relative}
 .bt-mini .slot{width:100%;height:100%}
 .bt-mini.is-sel{box-shadow:0 0 0 calc(var(--u)*0.5) var(--gold)}

@@ -145,27 +145,40 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(!!$('.bt-panel__img img'), 'o painel do RESUMO mostra uma imagem (retrato de quem agiu), não um quadrado vazio');
   ok(!/Turno\s*\d/i.test(($('.bt-panel__cd')||{}).textContent||''), 'o "Turno N" não aparece mais no canto do painel');
 
-  // ---- 9) §333 (a): as miniaturas do painel seguem o DONO do conteúdo, não o "deus em foco" ----
-  console.log('\n== 9) §333: miniaturas seguem o DONO do conteúdo do painel ==');
+  // ---- 9) §333 (a) + §333b: as miniaturas são do DONO do conteúdo (situação PERSONAGEM); na ARMADA não há minis, há
+  //        CANCELAR; o CANCELAR volta à leitura (situação 2) daquela habilidade ----
+  console.log('\n== 9) §333b: minis do dono · armada = CANCELAR (sem minis) · cancelar volta à leitura ==');
   w.eval(`st=montarProvacao({aliados:['hades','zeus','ares'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});
     prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null;
     try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){} foco=st.lados[0].units[1].uid; render();`);
   const hadesUid=w.eval("st.lados[0].units[0].uid"), zeusUid=w.eval("st.lados[0].units[1].uid"), poseUid=w.eval("st.lados[1].units[0].uid");
   const minisUid = ()=>$$('.bt-panel__minis .bt-mini[data-look]');
   const todasDoUid = (uid)=>{ const ms=minisUid(); return ms.length>0 && ms.every(b=>b.dataset.look.split('|')[0]===uid); };
-  // (a) armar o Hades (com o foco no Zeus) → miniaturas do HADES
-  w.eval(`foco='${zeusUid}'; armar('${hadesUid}','milagre'); render();`);
-  ok(w.eval("!!(armado&&armado.slot==='milagre')"), '(a) o Milagre do Hades ficou armado');
-  ok(/Hades/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(a) rótulo "Habilidades de Hades"');
-  ok(todasDoUid(hadesUid), '(a) as miniaturas são do Hades (dono), não do foco (Zeus)');
-  // (b) inspecionar o inimigo Poseidon → miniaturas do POSEIDON
+  // (a) tocar o RETRATO do inimigo Poseidon (situação 1) → minis do POSEIDON, nenhuma destacada, sem CANCELAR
   w.eval(`armado=null; infoUnidade('${poseUid}'); render();`);
-  ok(/Poseidon/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(b) rótulo "Habilidades de Poseidon"');
-  ok(todasDoUid(poseUid), '(b) as miniaturas são do Poseidon inspecionado');
-  // (c) tocar num efeito do aliado Zeus → miniaturas do ZEUS (portador)
+  ok(todasDoUid(poseUid), '(a) tocar o retrato abre a situação 1 — minis do Poseidon (dono)');
+  ok($$('.bt-panel__minis .bt-mini.is-sel').length===0, '(a) na situação 1 nenhuma miniatura fica destacada');
+  ok(!$('.bt-cancel'), '(a) na situação 1 NÃO há botão CANCELAR');
+  // (b) tocar uma MINIATURA (leitura) → situação 2: a mini daquele slot destacada, rótulo "OUTRAS HABILIDADES"
+  const miniP=$(`.bt-panel__minis .bt-mini[data-look="${poseUid}|milagre"]`);
+  ok(!!miniP, '(b) a miniatura do Milagre existe na coluna da direita');
+  if(miniP) miniP.onclick({stopPropagation(){}});
+  ok(w.eval("detalhe&&detalhe.kind")==='skill', '(b) tocar a miniatura abre a situação 2 (leitura de habilidade)');
+  ok(!!$('.bt-panel__minis .bt-mini.is-sel'), '(b) a miniatura mostrada fica destacada (is-sel)');
+  ok(/OUTRAS HABILIDADES/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(b) rótulo "OUTRAS HABILIDADES"');
+  // (c) tocar num EFEITO do aliado Zeus (situação 4) → minis do ZEUS (portador)
   w.eval(`armado=null;detalhe=null; st.lados[0].units[1].efeitos=[{type:'vulneravel',v:6,dur:2}]; infoEfeito('${zeusUid}',0); render();`);
-  ok(/Zeus/i.test(($('.bt-panel__minilab')||{}).textContent||''), '(c) rótulo "Habilidades de Zeus"');
-  ok(todasDoUid(zeusUid), '(c) as miniaturas são do portador do efeito (Zeus)');
+  ok(todasDoUid(zeusUid), '(c) tocar o efeito mostra as minis do portador (Zeus)');
+  // (d) ARMAR o Hades (com foco no Zeus) → situação 3: SEM minis, COM CANCELAR; o conteúdo é do Hades (dono)
+  w.eval(`foco='${zeusUid}'; detalhe=null; armar('${hadesUid}','milagre'); render();`);
+  ok(w.eval("!!(armado&&armado.slot==='milagre')"), '(d) o Milagre do Hades ficou armado');
+  ok(minisUid().length===0, '(d) na habilidade ARMADA não há miniaturas (coluna vira CANCELAR)');
+  ok(!!$('#bcanc')||!!$('.bt-cancel'), '(d) na habilidade ARMADA aparece o botão CANCELAR');
+  ok(!!$('.bt-panel__mira'), '(d) na habilidade ARMADA aparece a mira "Toque o inimigo"');
+  // (e) CANCELAR desarma e volta à LEITURA (situação 2) daquela habilidade
+  const bc=$('#bcanc'); if(bc) bc.onclick({stopPropagation(){}}); else w.eval(`const a=armado;armado=null;lerHabilidade(a.uid,a.slot);`);
+  ok(w.eval("!armado"), '(e) o CANCELAR desarma');
+  ok(w.eval("!!(detalhe&&detalhe.kind==='skill'&&detalhe.uid==='"+hadesUid+"')"), '(e) e volta à leitura (situação 2) daquela habilidade do Hades');
 
   // ---- 10) §333 item 7: linha de modo da campanha é CURTA e não corta ("CAMPANHA · CAP. N · ATO <roman>") ----
   console.log('\n== 10) §333 item 7: linha de modo curta da campanha ==');

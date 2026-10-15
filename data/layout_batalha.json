@@ -1,5 +1,5 @@
 {
-  "_nota": "§330 — LAYOUT da tela de batalha (ajustes do dono depois de jogar). DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). ALTURA manda; a largura que sobra vai para a arte FIXA do centro. §330: SEM quadro de ação (a habilidade escolhida é marcada no próprio botão); fileiras maiores (retrato/quadrado 19u) com os efeitos DENTRO da faixa (grade 2×3 de 6,5u); bolinhas de custo sobre cada botão; topo refeito em UMA linha (caixa de energias + ⇄ TROCAR, depois ENCERRAR TURNO com barra e a linha 'Turno N'); arte do centro FIXA por turno (data/arte_turno.json); sem HUD de modo (o modo vai p/ a sublinha do nome). Todos os valores em u salvo onde dito.",
+  "_nota": "§333b — LAYOUT da tela de batalha seguindo os MODELOS do dono. DADO, não código: a tela (view.js/ui/*.js) LÊ daqui. Unidade u = 1% da ALTURA da área do jogo (design 428px → 1u = 4.28px). §333b: mais ALTURA p/ as fileiras e p/ o painel (legível no celular); o painel de baixo é [IMAGEM][CONTEÚDO] | [CUSTO/RECARGA] | [DIREITA], com divisores verticais dourados; a DIREITA é 4 miniaturas (situação PERSONAGEM) ou o botão CANCELAR (habilidade ARMADA). Todos os valores em u salvo onde dito.",
   "u_px_design": 4.28,
   "topo": {
     "faixaY": [0, 12],
@@ -11,32 +11,32 @@
     "encerrar": { "w": 36, "h": 6, "fonte": 2.6, "barra": 1.2, "linha": 1.9 }
   },
   "fileiras": {
-    "tops": [13, 36.5, 60],
-    "altura": 22
+    "tops": [12.5, 34.5, 56.5],
+    "altura": 20.5
   },
   "jogador": {
-    "retrato": { "x": 4, "size": 19 },
+    "retrato": { "x": 4, "size": 18 },
     "vida": { "h": 2.7, "dy": 0.3 },
-    "efeitos": { "size": 6.5, "gap": 0.7, "x0": 110.5, "cols": 2 },
-    "faixa": { "x0": 24.5, "x1": 126, "h": 22, "dyTopo": 0 },
+    "efeitos": { "size": 6.2, "gap": 0.7, "x0": 105.5, "cols": 2 },
+    "faixa": { "x0": 24.5, "x1": 121, "h": 20.5, "dyTopo": 0 },
     "quadros": {
-      "size": 19, "dyTopo": 1.5,
-      "basico": 26.5, "habilidade": 47.5, "milagre": 68.5, "defesa": 89.5
+      "size": 18, "dyTopo": 1,
+      "basico": 25.5, "habilidade": 45.5, "milagre": 65.5, "defesa": 85.5
     }
   },
   "inimigo": {
-    "retrato": { "dir": 4, "size": 19 },
+    "retrato": { "dir": 4, "size": 18 },
     "vida": { "h": 2.7, "dy": 0.3 },
-    "efeitos": { "size": 6.5, "gap": 0.7, "cols": 2 }
+    "efeitos": { "size": 6.2, "gap": 0.7, "cols": 2 }
   },
-  "centro": { "x0": 128, "y": [13, 82], "minW": 25, "folga": 1 },
+  "centro": { "x0": 123, "y": [12.5, 77], "minW": 25, "folga": 1 },
   "cantoInferior": {
-    "desistir": { "x": [4, 40], "y": [84, 88.5] },
-    "menu": { "x": [4, 40], "y": [89.5, 94] },
-    "som": { "x": [4, 40], "y": [95, 98.5] }
+    "desistir": { "x": [4, 40], "y": [79.5, 84.5] },
+    "menu": { "x": [4, 40], "y": [85.5, 90.5] },
+    "som": { "x": [4, 40], "y": [92, 97] }
   },
-  "painel": { "x0": 44, "dirFolga": 2, "y": [84, 98.5],
-    "img": 12, "mini": 5.5, "dados": 22, "acao": 17, "minis": 27, "gapCol": 1.5, "pad": 1,
-    "fonte": { "titulo": 3, "tituloMin": 2.4, "corpo": 2.5, "corpoMin": 2.3, "rodape": 1.9, "rotulo": 1.7, "dado": 1.9, "acao": 1.9 } },
+  "painel": { "x0": 44, "dirFolga": 2, "y": [79, 99],
+    "img": 15, "mini": 7.5, "miniMin": 6, "gapMini": 1.5, "meio": 30, "cancelW": 26, "cancelH": 9, "gapCol": 2, "pad": 1.5,
+    "fonte": { "titulo": 3.4, "tituloMin": 2.8, "corpo": 2.6, "corpoMin": 2.3, "pilula": 2, "rotulo": 1.8, "pip": 3, "dado": 2.6, "miraIcone": 3.4, "miraTit": 2.4, "miraSub": 1.8, "minilab": 1.8 } },
   "custoPip": { "size": 2.2 }
 }

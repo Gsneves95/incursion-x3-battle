@@ -2,6 +2,29 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §333b · PAINEL DE BAIXO: seguir EXATAMENTE os modelos do dono
+
+O dono mandou 2 modelos (antes/depois) e pediu seguir à risca. IMAGEM 1 = PERSONAGEM; IMAGEM 2 = HABILIDADE ARMADA. O
+§333b substitui a DISTRIBUIÇÃO INTERNA do §333 e dá mais ALTURA às fileiras e ao painel.
+- **PARTE 1 (geometria, layout_batalha.json):** fileiras 12,5/34,5/56,5 (faixa 20,5); retrato 18u (vida 18×2,7); habs 18u
+  em 25,5/45,5/65,5/85,5; efeitos de x=105,5 (2×3 de 6,2); centro de x=123 (y 12,5→77); PAINEL x44→W−2, y79→99 (20u);
+  DESISTIR/MENU/som em 79,5/85,5/92.
+- **PARTE 2 (interno):** `[IMAGEM 15u][CONTEÚDO] | [CUSTO/RECARGA] | [DIREITA]` com divisores verticais dourados.
+  CONTEÚDO = título 3,4u (→2,8u) + PÍLULAS (TIPO na cor da energia + classe + alvo + "NV N") + descrição 2,6u que ROLA.
+  MEIO = CUSTO (bolinhas 3u) · RECARGA ("4 · pronta", pronta verde); SÓ armada: divisor + mira "Toque o inimigo"
+  (adapta p/ aliado/si/confirmar). DIREITA = 4 minis 7,5u (PERSONAGEM; a mostrada destacada) OU botão CANCELAR 9u
+  (ARMADA; desarma e volta à leitura).
+- **Situações:** 1 deus (PASSIVA·Função·Elemento; VIDA·ELEMENTO) · 2 lida (minis do dono, destacada) · 3 armada · 4
+  efeito (categoria·N TURNOS; TURNOS·APLICADO POR; minis do portador) · 5 resumo (retrato do último; sem meio).
+- **Diferença registrada dos modelos:** a mira só aparece ARMADA (o texto do dono governa); a IMAGEM 1 a desenhava, mas
+  isso separa a situação 2 da 3. Resto seguido à risca.
+- **Arquivos:** data/layout_batalha.json, src/ui/painel.js (modelos+grade+mira+cancelar-volta-à-leitura, sem chamar
+  campo.js), src/shell.html (CSS pílulas/divisores/mira/cancelar), tests/{batalha_painel(reescrito),batalha_inspecao,
+  batalha_faixa(piso 64),interface}.test.js. Capturas docs/telas/333b-* (5 situações 780; situação 2 e 3 em 1280).
+- **Provas:** Chromium pisos (hab/retrato ≥64, efeito ≥22, título ≥12, desc ≥9, pílula ≥7) + não-sobreposição nas 5
+  situações + desc mais longa, 780 e 1280; jsdom (retrato→1; mini→2 destacada; armar→3 sem minis+CANCELAR+mira; CANCELAR
+  volta à leitura). Suíte + build verdes. NÃO mudou engine/IA/regras/balanço nem mais nada.
+
 ## ★ §333 · PAINEL DE BAIXO: grade de 5 colunas + 2 defeitos do §332
 
 O dono apontou: **(a)** as minis "toque numa habilidade" seguiam o DEUS EM FOCO, não o dono do que o painel mostrava

@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §333b · PAINEL DE BAIXO: seguir EXATAMENTE os modelos do dono
+
+O dono mandou 2 modelos (print antes/depois) do painel de baixo e pediu para seguir À RISCA, por ser a tela principal.
+IMAGEM 1 = situação PERSONAGEM (um deus/habilidade navegado); IMAGEM 2 = HABILIDADE ARMADA. O §333 (regras: minis do
+dono do conteúdo; provas de não-sobreposição; capturas por situação) continua valendo — §333b troca a DISTRIBUIÇÃO
+INTERNA e dá mais ALTURA às fileiras e ao painel.
+
+**PARTE 1 — geometria (data/layout_batalha.json, em u):** fileiras com topo 12,5/34,5/56,5 e faixa de 20,5; retrato 18u
+em x=4 com vida 18×2,7 abaixo (y+18,3); habilidades 18u em x=25,5/45,5/65,5/85,5; zona de efeitos de x=105,5 (grade 2×3
+de 6,2, gap 0,7); arte do centro de x=123, y 12,5→77; PAINEL x 44→W−2, y 79→99 (20u de altura); DESISTIR 79,5–84,5,
+MENU 85,5–90,5, som 92–97.
+
+**PARTE 2 — distribuição interna igual aos modelos:** `[IMAGEM][CONTEÚDO] | [CUSTO/RECARGA] | [DIREITA]`, com divisores
+VERTICAIS finos dourados (do topo ao fim do conteúdo).
+- **IMAGEM** 15u quadrada, moldura na cor da energia do conteúdo.
+- **CONTEÚDO** (flexível): TÍTULO vermelho serifado 3,4u (encolhe até 2,8u, 1 linha, sem "…"); ETIQUETAS em PÍLULAS de
+  3,2u (texto 2u, caixa alta): a 1ª é o TIPO (BÁSICO/HABILIDADE/MILAGRE/DEFESA) com fundo+borda na cor da energia, as
+  demais (classe, alvo) escuras com borda cinza, e por fim uma pílula neutra "NV N"; DESCRIÇÃO 2,6u, até 2 linhas, ROLA
+  dentro da coluna; palavras-chave coloridas como hoje. O "▸ toque o inimigo" saiu de dentro da descrição.
+- **CUSTO/RECARGA**: duas células lado a lado com divisor vertical — "CUSTO" (rótulo 1,8u + bolinhas 3u, livre cinza) e
+  "RECARGA" ("4 · pronta" 2,6u; "pronta" em VERDE, "pronta em N" em DOURADO). SÓ quando ARMADA: divisor horizontal +
+  ícone de mira dourado + "Toque o inimigo" (adapta p/ aliado/si mesmo/confirmar) + a sublinha explicativa. Sem armar,
+  as duas células ficam centradas na altura.
+- **DIREITA**: PERSONAGEM → rótulo "OUTRAS HABILIDADES"/"HABILIDADES" + 4 miniaturas 7,5u (a mostrada com moldura
+  dourada); ARMADA → sem miniaturas, botão CANCELAR (moldura dourada, 9u de altura) "CANCELAR" + "Recarga N · pronta".
+  O CANCELAR desarma e VOLTA à leitura (situação 2) daquela habilidade.
+
+**CONTEÚDO POR SITUAÇÃO** (a mesma estrutura): 1 deus (retrato; pílulas PASSIVA·Função·Elemento; meio VIDA·ELEMENTO;
+minis do deus, nenhuma destacada) · 2 habilidade lida (minis do dono, a lida destacada, "OUTRAS HABILIDADES") · 3 armada
+(IMAGEM 2) · 4 efeito (ícone; pílulas categoria·N TURNOS; meio TURNOS·APLICADO POR; minis do portador) · 5 resumo CPU
+(retrato do último a agir; sem meio; minis dele).
+
+**Interpretação registrada (diferença dos modelos):** o texto do dono diz que a MIRA ("Toque o inimigo") só aparece
+quando a habilidade está ARMADA. A IMAGEM 1 (habilidade lida) a desenhava, mas o texto governa e separa a situação 2 da
+3 — então a situação 2 (leitura) NÃO mostra a mira; ela aparece só na 3 (armada, IMAGEM 2). O resto das duas imagens foi
+seguido à risca. O "Causa" em dourado da IMAGEM 2 é realce de palavra-chave sobre o texto REAL da habilidade (o print do
+dono editou o texto; o jogo usa o texto do kit).
+
+**PROVAS.** Chromium (`batalha_painel`), 780×360: hab/retrato ≥64px, efeito ≥22px, título ≥12px, descrição ≥9px, pílula
+≥7px; e nas 5 situações + a descrição mais longa (babi) em 780×360 e 1280×720: nenhum filho sai do painel, as colunas
+não se intersectam, a descrição fica na coluna (rola), o título não corta. jsdom (`batalha_inspecao`): tocar retrato →
+situação 1; tocar miniatura → situação 2 com ela destacada; armar → situação 3 (sem minis, com CANCELAR e mira);
+CANCELAR desarma e volta à leitura. Capturas `docs/telas/333b-*`. NÃO mudou engine/IA/regras/balanço nem mais nada.
+
+---
+
 ## §333 · PAINEL DE BAIXO: grade de 5 colunas + 2 defeitos do §332
 
 O dono jogou e apontou dois problemas no painel de baixo da batalha: **(a)** as miniaturas "toque numa habilidade"
