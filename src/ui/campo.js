@@ -127,8 +127,8 @@ function btUnidadeAliada(u, meu){
 function btCustoPips(cost){
   const C=_C(), p=C.skill.pip||14;
   const pips=[];
-  if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(`<span style="width:${p}px;height:${p}px;border-radius:50%;background:${COR(k)};box-shadow:inset 0 1px 0 rgba(255,255,255,.3)"></span>`); }
-    for(let i=0;i<(cost.livre||0);i++) pips.push(`<span style="width:${p}px;height:${p}px;border-radius:50%;background:repeating-conic-gradient(#888 0 25%,#555 0 50%)"></span>`); }
+  if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(orbe(k,p)); }
+    for(let i=0;i<(cost.livre||0);i++) pips.push(orbe('livre',p)); }
   if(!pips.length) return '';
   return `<div style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);height:${C.skill.pipPill||22}px;padding:0 6px;display:flex;align-items:center;gap:4px;border-radius:11px;background:rgba(4,6,12,.85);pointer-events:none">${pips.join('')}</div>`;
 }

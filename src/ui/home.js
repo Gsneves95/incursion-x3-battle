@@ -810,7 +810,7 @@ function desafioRowHTML(k){
   else { const pc = podeComprarDesafio(k); acao = `<button class="b b--sec b--sm" data-comprar="${k}" ${pc.ok ? '' : 'disabled'} title="${pc.ok ? 'pilote ' + H(g.nome) + ' até vencer' : H(pc.motivo)}">Comprar ${cfg.custoEssencia} ✦</button>`; }
   return `<li class="dsfli"><div class="dsf dsf--m${nv}">
     <span class="dsf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span>
-    <span class="dsf__el" style="background:${COR(g.elem)}"></span>
+    <span class="dsf__el dsf__el--orbe" style="${orbeBg(g.elem)}"></span>
     <span class="dsf__id">
       <span class="dsf__n">${H(g.nome)}</span>
       <span class="dsf__maes m--${nv}">${MAESTRIA_NOME[nv]} · <b>${Math.min(v, alvo)}</b>/${alvo} p/ Mestre</span>

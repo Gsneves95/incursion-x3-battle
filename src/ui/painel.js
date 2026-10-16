@@ -14,8 +14,8 @@ function _custoPips(cost, sz){
   sz=sz||27;
   if(!cost || !Object.keys(cost).length) return `<span style="color:#9AA4B8">livre</span>`;
   const out=[];
-  for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:${COR(k)};box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.25)"></span>`); }
-  for(let i=0;i<(cost.livre||0);i++) out.push(`<span style="width:${sz}px;height:${sz}px;border-radius:50%;background:repeating-conic-gradient(#888 0 25%,#555 0 50%)"></span>`);
+  for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(orbe(k,sz)); }
+  for(let i=0;i<(cost.livre||0);i++) out.push(orbe('livre',sz));
   return out.length ? `<div style="display:flex;gap:10px">${out.join('')}</div>` : `<span style="color:#9AA4B8">livre</span>`;
 }
 

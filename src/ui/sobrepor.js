@@ -8,16 +8,16 @@ function trocaHTML(){
     const alcanca=proprios.has(e)||l.orbs[e]>0;
     return `<button class="copt ${convAlvo===e?'on':''}" data-ct="${e}" ${alcanca?'':'disabled'}
       title="${alcanca?'':'nenhum deus seu usa este elemento'}">
-      <span class="copt__d" style="background:${COR(e)}"></span>
+      <span class="copt__d" style="${orbeBg(e)}"></span>
       <span class="copt__n">${H(ELAB[e])}</span>
       <span class="copt__q">${l.orbs[e]}</span></button>`;}).join('');
   const troca=g?`<div class="ctrade">
       <span class="ctrade__g">${ELEMS.filter(e=>g[e]>0).map(e=>
-        Array(g[e]).fill(`<i class="ctrade__p" style="background:${COR(e)}"></i>`).join('')).join('')}</span>
+        Array(g[e]).fill(`<i class="ctrade__p" style="${orbeBg(e)}"></i>`).join('')).join('')}</span>
       <span class="ctrade__t">gasta ${CONV_CUSTO}</span>
       <span class="ctrade__a">\u2192</span>
       <span class="ctrade__t">recebe 1</span>
-      <span class="ctrade__g"><i class="ctrade__p" style="background:${COR(convAlvo)}"></i></span>
+      <span class="ctrade__g"><i class="ctrade__p" style="${orbeBg(convAlvo)}"></i></span>
     </div>`:'';
   return `<div class="ov" id="ovconv"><div class="cbox">
     <div class="cbox__h"><h2>Trocar energia</h2>
@@ -41,7 +41,7 @@ function livreHTML(){
   const opts=ELEMS.map(e=>{
     const disp=l.orbs[e]||0, m=livrePlano[e]||0;
     return `<button class="copt ${m>0?'on':''}" data-lv="${e}" ${disp>0?'':'disabled'}>
-      <span class="copt__d" style="background:${COR(e)}"></span>
+      <span class="copt__d" style="${orbeBg(e)}"></span>
       <span class="copt__n">${H(ELAB[e])}</span>
       <span class="copt__q">${m}/${disp}</span></button>`;}).join('');
   return `<div class="ov" id="ovlivre"><div class="cbox">

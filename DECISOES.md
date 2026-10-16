@@ -6,6 +6,49 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §337 · ORBES de elemento: cor lisa vira bolinha de vidro com brilho, no jogo todo
+
+Toda representação de energia/elemento que era um QUADRADO ou CÍRCULO de COR LISA passa a ser uma ORBE (runa de vidro:
+corpo em degradê, aro claro, reflexo e halo). O desenho é o do dono; a arte é GERADA, não desenhada à mão.
+
+**Gerador (`tools/gerar_orbes.js`).** Emite `web/orbes/orbe_<elem>.svg` (com halo) e `orbe_<elem>_min.svg` (sem halo,
+viewBox 24 24 80 80) para os 7 elems (tempestade, umbra, mare, aurora, chama, verdejante, livre). Cada SVG prefixa os ids
+com `<elem>-` (não colidem ao embutir vários). A cor principal (C) dos 6 elementos vem das `--e-*` do shell.html (se mudar
+lá, a orbe acompanha); CLARO/MUITO/ESCURO/FUNDO são a paleta do desenho; `livre` é todo da tabela. O **build roda o
+gerador** antes de copiar `web/` → `dist/`, então a arte nunca fica velha.
+
+**Helper (`src/ui/base.js`).** `orbe(elem, px, {apagado})` devolve um `<img>`: `_min` quando px<14; com halo quando
+px≥14 (o corpo fica em px e o halo TRANSBORDA via margem negativa — não empurra o layout). `apagado` = custo não pago
+(opacidade/saturação baixas, como antes). `orbeBg(elem)` devolve o estilo de FUNDO (orbe `_min` em `contain`) p/ trocar um
+dot de cor lisa mantendo o tamanho/forma do CSS. (base.js é a fundação — os outros ui/ podem chamar; direção ui ok.)
+
+**Onde trocou (grep por `background:${COR(...)}` nos dots):**
+- Batalha, como `<img>` de orbe (prova checa): contador de energia do topo (topo.js `btEnergiaHTML`, quadrado→orbe, caixa
+  agora `overflow:visible` p/ o halo); bolinhas de custo dos botões de habilidade (campo.js `btCustoPips`); CUSTO do
+  painel de baixo (painel.js `_custoPips`). O "livre" usa `orbe_livre`.
+- Batalha, overlays (fundo de orbe): troca de energia — opções `copt__d` e o resumo `ctrade__p` (sobrepor.js
+  `trocaHTML`); pagar energia livre — opções `copt__d` (sobrepor.js `livreHTML`).
+- Fora da batalha (fundo de orbe): mini-pips de energia `nrgmini` (base.js `miniPips`); custo mini `skill__cost` +
+  `.free` (base.js `pipsMini`); custo detalhe `cost__pip` + livre (base.js `pipsDetalhe`) — aparece na Coleção (kit),
+  na ficha/Níveis do deus (`nlp`) e na seleção de kit (`krow`); elemento na ficha do deus `dsf__el` (home.js); chip de
+  filtro de ELEMENTO `chip2__d` (selecao.js).
+- **Deixados como estão** (são BARRAS finas de acento, não bolinha/quadrado): as fitas de elemento `prow__el` (4×34),
+  `ctile__el` (4×16, nos tiles da Coleção) e `pk__el` (3px, nas cartas de seleção). Converter uma fita de 3–4 px numa
+  orbe redonda distorceria o desenho; se o dono quiser, troco também.
+- **NÃO mexido:** o `COR()` como cor do MONOGRAMA (fallback do `slot()`), o ANEL/brilho dos botões/retratos, e as
+  bordas/textos de elemento (tags) — não são dots de cor lisa.
+
+Regra de tamanho: ≥14 px → orbe com halo (transborda sem empurrar); <14 px → `_min`. Tamanho e posição de cada bolinha
+não mudam; muda só o desenho. Bolinha "não paga" segue apagada (opacidade/saturação).
+
+**Provas (`orbes.test.js`):** os 14 SVGs existem, são válidos e têm ids com o prefixo do elemento (o `_min` sem halo e
+viewBox 24 24 80 80); no Chromium, na batalha, o contador do topo e as bolinhas de custo (botões + painel) são `<img>` de
+orbe (não cor lisa), todas apontando p/ `web/orbes/`. As provas de layout do §335/§336b seguem verdes (nenhuma caixa
+mudou de posição/tamanho). Capturas `337-batalha-1846x852`, `337-batalha-780x360`, `337-niveis-custos-1280x800`.
+NÃO mudou regras/motor/IA/layout/cores dos outros elementos da interface.
+
+---
+
 ## §336b · A caixa de energia escondia o Σ e o ⇄ TROCAR com muitos tipos
 
 Com 6 tipos de energia, a caixa fixa de 388 px (§335) mostrava os 6 "xN" e, por `overflow:hidden`, CORTAVA o Σ total e o

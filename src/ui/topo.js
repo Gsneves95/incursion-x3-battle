@@ -81,7 +81,7 @@ function _geoEnergia(l, en, jg, modoSub){
 function btEnergiaHTML(l, S){
   const tipos=_tiposEnergia(l);
   const total=ELEMS.reduce((s,e)=>s+l.orbs[e],0);
-  const cel=e=>`<div class="bt-ec" style="flex:none;display:flex;align-items:center;gap:${S.ig}px"><div title="${ELAB[e]}" style="width:${S.q}px;height:${S.q}px;border-radius:4px;background:${COR(e)};box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.25)"></div><span style="font-size:${S.f}px;font-weight:600;color:#F2F4F8">x${l.orbs[e]}</span></div>`;
+  const cel=e=>`<div class="bt-ec" title="${ELAB[e]}" style="flex:none;display:flex;align-items:center;gap:${S.ig}px">${orbe(e,S.q)}<span style="font-size:${S.f}px;font-weight:600;color:#F2F4F8">x${l.orbs[e]}</span></div>`;
   const sigma=`<div class="bt-esigma" style="flex:none;display:flex;align-items:center;gap:4px"><span class="cin" style="font-weight:700;font-size:${S.s}px;color:#F0B43C;line-height:1">Σ</span><span style="font-size:${S.f}px;font-weight:600;color:#F2F4F8">x${total}</span></div>`;
   return tipos.map(cel).join('')+sigma;
 }
@@ -111,7 +111,7 @@ function topoHTML(modoSub){
     </div></div>`;
 
   const geo=_geoEnergia(l, en, jg, modoSub);
-  const energia=`<div class="bt-ebox" style="position:absolute;left:${geo.left}px;top:${en.top}px;width:${geo.width}px;height:${en.h}px;box-sizing:border-box;overflow:hidden;display:flex;align-items:center;gap:${geo.S.g}px;padding:0 10px 0 12px;border-radius:7px;background:linear-gradient(180deg,rgba(12,16,30,.92),rgba(5,8,16,.92));box-shadow:inset 0 0 0 1px rgba(201,164,76,.75)">
+  const energia=`<div class="bt-ebox" style="position:absolute;left:${geo.left}px;top:${en.top}px;width:${geo.width}px;height:${en.h}px;box-sizing:border-box;overflow:visible;display:flex;align-items:center;gap:${geo.S.g}px;padding:0 10px 0 12px;border-radius:7px;background:linear-gradient(180deg,rgba(12,16,30,.92),rgba(5,8,16,.92));box-shadow:inset 0 0 0 1px rgba(201,164,76,.75)">
     ${btEnergiaHTML(l,geo.S)}
     <button class="b5-hover bt-trocar" id="btrocar" ${trocarDisab?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1" style="flex:none;margin-left:auto;height:${en.trocarH||34}px;padding:0 12px;display:flex;align-items:center;gap:6px;border-radius:5px;border:0;background:none;box-shadow:inset 0 0 0 1px rgba(201,164,76,.9);cursor:pointer;opacity:${trocarDisab?.5:1}">
       <span style="font-size:20px;font-weight:700;color:#F0B43C;line-height:1">⇄</span><span style="font-size:20px;font-weight:700;letter-spacing:.04em;color:#F0B43C">TROCAR</span></button></div>`;

@@ -2,6 +2,18 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §337 · ORBES de elemento (cor lisa → bolinha de vidro com brilho) no jogo todo
+- **Gerador** `tools/gerar_orbes.js` → `web/orbes/orbe_<elem>.svg` (halo) e `_min` (sem halo, viewBox 24 24 80 80) p/ 7
+  elems; ids prefixados por elem; C vem das `--e-*` do shell.html, resto da paleta do dono. O BUILD roda o gerador.
+- **Helper** base.js: `orbe(elem,px,{apagado})` → `<img>` (_min <14px; halo ≥14, transborda via margem negativa);
+  `orbeBg(elem)` → fundo (orbe _min em contain) p/ dots de CSS. apagado = custo não pago (opacidade/saturação baixas).
+- **Trocado:** batalha como `<img>` — contador do topo (topo.js, caixa agora overflow:visible), custo dos botões
+  (campo.js btCustoPips), CUSTO do painel (painel.js _custoPips); overlays de troca/energia-livre (sobrepor.js); fora da
+  batalha como fundo — base.js miniPips/pipsMini/pipsDetalhe (Coleção/Níveis/seleção), ficha dsf__el, chip de elemento
+  (selecao). **Deixados:** fitas finas de elemento prow__el/ctile__el/pk__el (são barras, não bolinhas).
+- **Provas:** `orbes.test.js` (14 SVGs válidos + ids prefixados; batalha usa `<img>` de orbe no topo e nos custos).
+  Layout §335/§336b segue verde. Capturas `337-*`. (Só o DESENHO mudou; tamanho/posição/regras intactos.)
+
 ## ★ §336b · Caixa de energia não esconde mais o Σ / ⇄ TROCAR
 - Com muitos tipos a caixa fixa (388, §335) cortava o Σ e o TROCAR. Agora a caixa tem borda DIREITA fixa (978, antes do
   ENCERRAR) e CRESCE p/ a esquerda até 24px do fim do nome; se nem no máximo couber, os quadrados encolhem (26→20) e a

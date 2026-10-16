@@ -89,7 +89,7 @@ function painelFiltroHTML(){
   const chipSet=(campo,itens,cor)=>itens.map(it=>{
     const c=ROSTER.filter(e=>e[campo==='faccoes'?'faccao':campo==='elems'?'elem':campo==='funcoes'?'funcao':'classe']===it).length;
     return `<button class="chip2 ${F[campo].has(it)?'on':''}" data-fs="${campo}|${it}">
-      ${cor?`<span class="chip2__d" style="background:${COR(it)}"></span>`:''}${H(it)}
+      ${cor?`<span class="chip2__d" style="${orbeBg(it)}"></span>`:''}${H(it)}
       <span class="chip2__n">${c}</span></button>`;}).join('');
   return `<div class="fpanel" id="fpanel"><div class="fbox">
     <div class="fbox__h"><h2>FILTRAR</h2>

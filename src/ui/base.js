@@ -8,6 +8,18 @@ const EVAR = {Tempestade:'--e-Tempestade',Umbra:'--e-Umbra','Maré':'--e-Mare',
   Aurora:'--e-Aurora',Chama:'--e-Chama',Verdejante:'--e-Verdejante'};
 const COR = k => `var(${EVAR[k]})`;
 const ELAB = {Tempestade:'TEMPESTADE',Umbra:'UMBRA','Maré':'MARÉ',Aurora:'AURORA',Chama:'CHAMA',Verdejante:'VERDEJANTE'};
+// §337 — ORBE de elemento (runa de vidro, web/orbes/orbe_<elem>.svg). `orbe()` devolve um <img> no TAMANHO px (halo p/
+// ≥14, transbordando via margem negativa; _min p/ <14). `orbeBg()` é o estilo de FUNDO (orbe _min em contain) p/ trocar
+// um dot de COR LISA mantendo o tamanho/forma do CSS. `apagado` = custo não pago (opacidade/saturação baixas, como antes).
+const _ORBE_KEY = {Tempestade:'tempestade',Umbra:'umbra','Maré':'mare',Mare:'mare',Aurora:'aurora',Chama:'chama',Verdejante:'verdejante',livre:'livre',Livre:'livre'};
+function _orbeKey(e){ return _ORBE_KEY[e] || String(e||'').toLowerCase(); }
+function orbe(e, px, opts){ opts=opts||{}; const k=_orbeKey(e);
+  const dim = opts.apagado ? 'opacity:.4;filter:saturate(.35) brightness(.85);' : '';
+  if(px < 14) return `<img class="orbe orbe--min" src="orbes/orbe_${k}_min.svg" alt="" style="width:${px}px;height:${px}px;display:block;${dim}">`;
+  const full=Math.round(px*128/80), m=Math.round((full-px)/2);   // corpo = px; halo transborda (margem negativa = não empurra)
+  return `<img class="orbe orbe--halo" src="orbes/orbe_${k}.svg" alt="" style="width:${full}px;height:${full}px;display:block;margin:-${m}px;${dim}">`;
+}
+function orbeBg(e){ const k=_orbeKey(e); return `background:url(orbes/orbe_${k}_min.svg) center/contain no-repeat`; }
 // §318b-2 — FONTE ÚNICA das moedas da CONTA: a barra de moedas (gema/Essência) lê SEMPRE do servidor
 // (contaAtual), nunca do perfil local — o perfil era o "26.100 fantasma" que sobrevivia desconectado/pós-wipe.
 // `online:false` quando não há conta autoritativa; `fmtMoeda` então mostra "—" em vez de inventar um número.
@@ -145,7 +157,7 @@ function historicoHTML(){
 // elemento — deixa "ele paga um Milagre?" legível sem somar número nenhum.
 function miniPips(l){
   const out=[];
-  ELEMS.forEach(e=>{ for(let i=0;i<l.orbs[e];i++) out.push(`<i style="background:${COR(e)}"></i>`); });
+  ELEMS.forEach(e=>{ for(let i=0;i<l.orbs[e];i++) out.push(`<i style="${orbeBg(e)}"></i>`); });
   return `<span class="nrgmini">${out.join('')||'<i class="nrgmini__zero"></i>'}</span>`;
 }
 
@@ -331,18 +343,18 @@ function pipsMini(cost,orbs){
   for(const k in cost){ if(k==='livre')continue;
     for(let i=0;i<cost[k];i++){
       const paga=!disp||disp[k]>0; if(disp&&paga){disp[k]--;sobra--;}
-      out.push(`<i class="${paga?'':'miss'}" style="background:${COR(k)}"></i>`);}}
+      out.push(`<i class="${paga?'':'miss'}" style="${orbeBg(k)}"></i>`);}}
   for(let i=0;i<(cost.livre||0);i++){
     const paga=!disp||sobra>0; if(disp&&paga)sobra--;
-    out.push(`<i class="free ${paga?'':'miss'}"></i>`);}
+    out.push(`<i class="free ${paga?'':'miss'}" style="${orbeBg('livre')}"></i>`);}
   return out.length?`<div class="skill__cost">${out.join('')}</div>`
     :`<div class="skill__cost gratis"><span>GRÁTIS</span></div>`;
 }
 function pipsDetalhe(cost){
   const out=[];
   for(const k in cost){for(let i=0;i<cost[k];i++)
-    out.push(k==='livre'?'<span class="cost__pip cost__pip--empty"></span>'
-      :`<span class="cost__pip" style="background:${COR(k)}"></span>`);}
+    out.push(k==='livre'?`<span class="cost__pip cost__pip--empty" style="${orbeBg('livre')}"></span>`
+      :`<span class="cost__pip" style="${orbeBg(k)}"></span>`);}
   return out.length?`<div class="cost">${out.join('')}</div>`
     :`<div class="cost"><span class="cost__none">SEM CUSTO</span></div>`;
 }

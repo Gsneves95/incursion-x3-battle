@@ -6,6 +6,10 @@
 const fs = require('fs'), path = require('path');
 const raiz = path.join(__dirname, '..');
 const ler = p => fs.readFileSync(path.join(raiz, p), 'utf8');
+
+// §337: (re)gera as ORBES de elemento (web/orbes/*.svg) a partir do desenho + das --e-* do shell.html, antes de copiar
+// web/ para dist/. Assim a arte nunca fica desatualizada em relação às cores.
+try { require('./gerar_orbes.js').gerar(); } catch (e) { console.warn('§337: falha ao gerar orbes —', e.message); }
 const semGuard = s => s.split("if (typeof module !== 'undefined')")[0];
 
 // ---------- 1. checagem de direção: nenhum ui/ referencia OUTRO ui/ (só base.js e narrar.js) ----------
