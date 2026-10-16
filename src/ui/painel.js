@@ -69,6 +69,15 @@ function _modeloPainel(){
       const cdNow=u.cd[armado.slot]||0;
       const m=_dadosSkill(u, a, nv, cdNow, true);
       m.armado=true; m.dir={ modo:'cancelar' };
+      // §336: a instrução vira CONFIRMAR clicável quando a ação está pronta p/ disparar (área, sem-alvo, si-mesmo, auto,
+      // ou distribui com ≥1 escolhido). Restaura o caminho do #bconf de antes do §335 (o toque no alvo também confirma).
+      const pronto=(typeof faltamAlvos==='function')?(faltamAlvos()<=0):false;
+      if(pronto){ m.prontoConfirmar=true;
+        if(armado.distribui){ const n=(typeof escolhidos!=='undefined'?escolhidos.length:0); m.inst={title:`Confirmar · ${n} alvo${n>1?'s':''}`, sub:'Toque aqui para repartir o dano entre os escolhidos.', color:'#4BE38A'}; }
+        else if(armado.aoe==='aliados'){ m.inst={title:'Todos os aliados', sub:'Toque qualquer aliado (ou aqui) para confirmar.', color:'#F0B43C'}; }
+        else if(armado.aoe==='inimigos'){ m.inst={title:'Todos os inimigos', sub:'Toque qualquer inimigo (ou aqui) para confirmar.', color:'#F0B43C'}; }
+        else { m.inst={title:'Confirmar', sub:'Toque aqui para usar esta habilidade.', color:'#4BE38A'}; }
+      } else if(armado.distribui){ m.inst={title:'Repartir o dano', sub:'Toque os inimigos para escolher quem recebe.', color:'#F0B43C'}; }
       return m;
     }
   }
@@ -190,7 +199,8 @@ function _col2HTML(m, P){
     <span style="position:absolute;left:50%;bottom:0;width:3px;height:12px;margin-left:-1.5px;background:${ic}"></span>
     <span style="position:absolute;top:50%;left:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span>
     <span style="position:absolute;top:50%;right:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span></div>`;
-  const instr=`<div class="bt-panel__mira" style="display:flex;align-items:center;gap:20px;padding-left:36px;padding-top:12px">
+  const conf=m.prontoConfirmar?' id="bconf" role="button" tabindex="0"':'';
+  const instr=`<div class="bt-panel__mira"${conf} style="display:flex;align-items:center;gap:20px;padding-left:36px;padding-top:12px;${m.prontoConfirmar?'cursor:pointer':''}">
     ${mira}<div style="display:flex;flex-direction:column;gap:2px;min-width:0">
       <div class="bt-panel__miratit" style="font-size:${P.instTit||22}px;font-weight:600;color:${ic}">${H(inst.title||'')}</div>
       <div style="font-size:${P.instSub||18}px;font-weight:500;color:#D5DAE4">${H(inst.sub||'')}</div></div></div>`;
@@ -244,5 +254,8 @@ function ligarPainel(){
         detalhe={kind:'skill', uid:u.uid, nome:ac.nome, nv, chave:'skill-'+u.key+'-'+ac.slot, mono:mono(ac),
           cor:ac.slot==='defesa'?'#D6DAE2':COR(u.elem), desc:ac.desc, cost:ac.cost, cd:ac.cd, cdNow:(u.cd[a.slot]||0), tf:classesTxt(u,ac), motivo:''}; } }
     render(); };
+  // §336: a instrução (mira) CONFIRMA quando a ação está pronta (área/sem-alvo/si-mesmo/auto/distribui) — restaura o #bconf.
+  const bcf=q('#bconf'); if(bcf){ bcf.onclick=()=>{ if(typeof confirmar==='function') confirmar(); };
+    bcf.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(typeof confirmar==='function') confirmar(); } }; }
   const be=q('#bend'); if(be)be.onclick=()=>encerrarTurno();
 }

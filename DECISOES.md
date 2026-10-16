@@ -6,6 +6,45 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §336 · Duas regressões do §335 (acha­das pelo dono jogando)
+
+**1. Habilidade em ÁREA / sem-alvo não confirmava.** Antes do §335, a instrução (a "mira" do painel) era um botão
+`#bconf` que chamava `confirmar()` — era assim que se confirmavam as habilidades SEM passo de seleção. O §335 reescreveu
+o painel e não recriou esse `#bconf`, então os tipos de alvo sem passo ficaram sem caminho de confirmação.
+
+Auditoria dos tipos de alvo que existem nos kits (passos em `PASSOS`, engine.js):
+- `inimigo` (['inimigo']) — OK (toca o inimigo realçado → confirma).
+- `aliado` (['aliado']) — OK (toca o aliado realçado).
+- `2inimigos` / `2aliados` — OK (toca os dois; o 2º confirma).
+- `distribui` (Babi "Frenesi Sanguinário") — **QUEBRADO**: toggla a seleção mas não havia como confirmar (sem `#bconf`).
+- `todosInimigos` — **QUEBRADO**: nenhum inimigo era alvo (passos vazio → `alvos=[]`), toque não fazia nada.
+- `nenhum` (auto-aplica/self) — **QUEBRADO**: sem `#bconf`, nada confirmava.
+- `auto` — **QUEBRADO**: idem.
+- `self` NÃO é um alvo armável de topo — só aparece como ESCOPO interno de `fx` (dagda/ra/kitsune); coberto por
+  `nenhum`/`auto`.
+
+Correção: (a) turno.js marca `armado.aoe` para `todosInimigos`/`todosAliados`; `atualizarAlvos()` realça TODOS os vivos
+do lado alvo e `alvo()` CONFIRMA ao tocar qualquer um (o motor atinge todos de qualquer jeito). (b) painel.js restaura a
+instrução clicável `#bconf` → `confirmar()` quando a ação está pronta (área, sem-alvo, auto, ou distribui com ≥1
+escolhido); a instrução passa a dizer "Toque qualquer inimigo (ou aqui) para confirmar" / "Confirmar · N alvos".
+
+**2. Habilidade inusável tem que parecer inativa.** O §335 só dessaturava no turno do oponente (`meu ? 'none' : …`). Agora,
+no MEU turno, a habilidade INUSÁVEL (`!clicavel`: falta energia, em recarga, deus impedido/atordoado/selado/silenciado/
+adormecido/travada, ou morto) fica apagada (`grayscale(.85) brightness(.55)`, sem o brilho do acento); a USÁVEL mantém as
+cores e a moldura/brilho do acento. O deus que já agiu tem `podeAgir=false` → `clicavel=false` → as outras habilidades
+dele apagam também (igual a antes do §335, que escondia o ANEL de "pronta" e escurecia; reproduzido). O estado recalcula a
+cada `render()`: gastar energia apaga na hora as que dependiam dela; desmarcar devolve. Tocar numa inusável abre a LEITURA
+no painel com o motivo (`data-arma=0` → `lerHabilidade`), sem armar. O número grande de recarga continua por cima.
+
+**Provas (batalha_alvos.test.js, Chromium, TOQUE REAL `.click()`):** (1) um caso por tipo de alvo com habilidade real
+(afrodite/amaterasu/lugh/apolo/freyja/babi) — arma no toque do botão e a unidade AGIU após o toque de confirmação certo;
+(2) inusável por cada motivo (sem energia / recarga / atordoado / morto) fica com `grayscale` e `data-arma=0` e NÃO arma
+(abre leitura com motivo), usável fica sem filtro e arma, e gastar a energia apaga na hora o basico de OUTRA unidade.
+O teste FALHA se os seletores do campo/painel mudarem de novo. Capturas `336-mix-usaveis-inusaveis` e `336-area-armada`.
+NÃO mudou engine/IA/regras.
+
+---
+
 ## §335b · Quatro ajustes de fidelidade da tela de batalha (contra o design do dono)
 
 Revendo a `335-armado` contra o design do dono, quatro detalhes ainda diferiam:

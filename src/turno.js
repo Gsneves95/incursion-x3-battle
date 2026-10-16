@@ -144,6 +144,9 @@ function armar(uid, slot) {
   // DEGENERADO: com 1 inimigo válido não há o que repartir — cai no fluxo normal de alvo único (toque = resolve).
   // Só com 2+ vira modo distribui (toggle, sem auto-confirmar). Ver §92 e o teste de transição do degenerado.
   if (a.alvo === 'distribui' && alvosValidos(st, u, a, 0, []).length > 1) { armado.distribui = true; armado.passos = []; }
+  // §336: ÁREA (todosInimigos/todosAliados) não tem passo de seleção — marca aoe p/ a UI realçar TODOS os alvos e
+  // confirmar com um toque em QUALQUER um (antes do §335 confirmava-se pela instrução; agora também pelo alvo).
+  armado.aoe = (a.alvo === 'todosInimigos') ? 'inimigos' : (a.alvo === 'todosAliados') ? 'aliados' : null;
   atualizarAlvos();
   _redesenhar();
 }
@@ -157,6 +160,8 @@ function atualizarAlvos() {
   if (!a) return;
   // distribui: a piscina é SEMPRE todos os inimigos válidos (a UI realça os já escolhidos); não encurta por passo.
   if (armado.distribui) { alvos = alvosValidos(st, u, a, 0, []); return; }
+  // §336: ÁREA — realça TODOS os vivos do lado alvo (o toque em qualquer um confirma; o motor atinge todos de qualquer jeito).
+  if (armado.aoe) { const lado = (armado.aoe === 'aliados') ? st.lados[u.lado] : st.lados[1 - u.lado]; alvos = lado.units.filter(x => x.vivo); return; }
   const i = escolhidos.length;
   if (i >= armado.passos.length) return;
   const c = alvosValidos(st, u, a, i, escolhidos);
@@ -175,6 +180,8 @@ function alvo(uid) {
     _redesenhar();
     return;
   }
+  // §336: ÁREA — qualquer toque num alvo realçado CONFIRMA (sem acumular em escolhidos; o motor atinge todos).
+  if (armado.aoe) { if (!alvos.some(x => x.uid === uid)) return; confirmar(); return; }
   if (faltamAlvos() <= 0) return;
   if (!alvos.some(x => x.uid === uid)) return;
   escolhidos.push(uid);

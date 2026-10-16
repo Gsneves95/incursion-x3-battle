@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §336 · Duas regressões do §335 (quebravam a partida)
+- **Alvo em área/sem-alvo não confirmava:** o §335 não recriou a instrução clicável `#bconf`. Tipos quebrados:
+  `todosInimigos`, `nenhum`, `auto`, `distribui`. Corrigido: turno.js marca `armado.aoe` (realça todos os inimigos/aliados
+  e o toque em qualquer um confirma) e painel.js restaura `#bconf` → `confirmar()` quando pronto. Tipos OK antes: `inimigo`,
+  `aliado`, `2inimigos`, `2aliados`. (`self` não é alvo armável de topo — só escopo de fx.)
+- **Inusável parecia ativa:** no MEU turno a habilidade sem energia / em recarga / impedida (atordoado/selado/…) / morta
+  agora apaga (`grayscale(.85) brightness(.55)`, sem brilho do acento); a usável fica colorida com a moldura do acento.
+  Recalcula a cada render (gastar energia apaga as dependentes). Tocar numa inusável abre a leitura com o motivo, sem armar.
+- **Provas:** `batalha_alvos.test.js` (toque REAL `.click()`): um caso por tipo de alvo (a unidade AGIU após o toque) +
+  inusável por motivo (grayscale + data-arma=0 + não arma) + recálculo de energia. Capturas `336-*`. NÃO mudou engine/IA/regras.
+
 ## ★ §335b · Quatro ajustes de fidelidade da batalha
 - **Cena (fallback de retrato):** `object-position:50% 18%` mostra o ROSTO (antes o `cover` centrado cortava a Nezha/
   Ah Puch); com arte larga (`web/cena/turno_*.webp`) volta ao `cover` centrado. (campo.js `btCenaHTML`.)

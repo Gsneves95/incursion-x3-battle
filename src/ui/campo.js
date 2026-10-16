@@ -139,9 +139,15 @@ function btSkill(u, a, meu){
   const clicavel=a.disponivel&&meu&&podeAgir(u)&&ehMeuTurno();
   const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
   const anel=a.slot==='defesa'?'#D6DAE2':COR(u.elem);
+  // §336: no MEU turno a INUSÁVEL (sem energia / recarga / impedido / morto → !clicavel) fica APAGADA (dessaturada e
+  // escura, sem o brilho do acento); a USÁVEL mantém as cores e a moldura/brilho do acento (§335). No turno do oponente,
+  // tudo fica levemente dessaturado (como antes). O estado recalcula a cada render (gastar energia apaga as que zeraram).
   const sombra = arm ? 'inset 0 0 0 2px #FFE7A0,0 0 0 2px '+(cor.gold||'#C9A44C')+',0 0 22px rgba(240,180,60,.75)'
+                     : (meu&&!clicavel) ? 'inset 0 0 0 1.5px rgba(86,92,110,.55)'
                      : 'inset 0 0 0 1.5px '+anel+',0 0 10px '+anel+'55';
-  const filtro = meu ? 'none' : 'saturate(.5) brightness(.75)';
+  const filtro = !meu ? 'saturate(.5) brightness(.75)'
+               : clicavel ? 'none'
+               : 'grayscale(.85) brightness(.55)';
   const nvSk=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,a.slot):1;
   const cdOv = cd>0 ? `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(50% 50% at 50% 46%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.4) 100%);pointer-events:none"><span class="cin bt-skill__cd" style="font-weight:700;font-size:${C.skill.cdFonte||46}px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.9)">${cd}</span></div>` : '';
   const armSel = arm ? `<span class="cin bt-skill__sel" style="position:absolute;right:5px;top:5px;width:30px;height:30px;border-radius:50%;background:#C9A44C;color:#2A1A04;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:19px;box-shadow:0 1px 4px rgba(0,0,0,.6)">✓</span>` : '';
