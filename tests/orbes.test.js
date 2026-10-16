@@ -53,7 +53,7 @@ const BOOT=`
     const painelOrbs=bat.querySelectorAll('.bt-panel img.orbe').length;
     // todas as orbes apontam p/ web/orbes/
     const todas=[...bat.querySelectorAll('img.orbe')];
-    const srcOk=todas.length>0 && todas.every(i=>/orbes\/orbe_[a-z]+(_min)?\.svg$/.test(i.getAttribute('src')||''));
+    const srcOk=todas.length>0 && todas.every(i=>/orbes\/orbe_[a-z]+(_min)?\.svg(\?v=\d+)?$/.test(i.getAttribute('src')||''));
     return { orbTopo, celFlat, skillOrbs, painelOrbs, total:todas.length, srcOk };
   });
   ok(m.orbTopo>=2, `o contador do topo usa orbes (<img>): ${m.orbTopo}`);

@@ -13,13 +13,16 @@ const ELAB = {Tempestade:'TEMPESTADE',Umbra:'UMBRA','Maré':'MARÉ',Aurora:'AURO
 // um dot de COR LISA mantendo o tamanho/forma do CSS. `apagado` = custo não pago (opacidade/saturação baixas, como antes).
 const _ORBE_KEY = {Tempestade:'tempestade',Umbra:'umbra','Maré':'mare',Mare:'mare',Aurora:'aurora',Chama:'chama',Verdejante:'verdejante',livre:'livre',Livre:'livre'};
 function _orbeKey(e){ return _ORBE_KEY[e] || String(e||'').toLowerCase(); }
-function orbe(e, px, opts){ opts=opts||{}; const k=_orbeKey(e);
+// §337b: ?v=<versão do build> fura o cache de 1 dia — o celular podia ter guardado a orbe com o Content-Type errado
+// (antes de o server ganhar '.svg'). O servidor ignora a query ao achar o arquivo (split('?')).
+function _orbeVer(){ return (typeof ORBE_VER!=='undefined'&&ORBE_VER)?('?v='+ORBE_VER):''; }
+function orbe(e, px, opts){ opts=opts||{}; const k=_orbeKey(e), v=_orbeVer();
   const dim = opts.apagado ? 'opacity:.4;filter:saturate(.35) brightness(.85);' : '';
-  if(px < 14) return `<img class="orbe orbe--min" src="orbes/orbe_${k}_min.svg" alt="" style="width:${px}px;height:${px}px;display:block;${dim}">`;
+  if(px < 14) return `<img class="orbe orbe--min" src="orbes/orbe_${k}_min.svg${v}" alt="" style="width:${px}px;height:${px}px;display:block;${dim}">`;
   const full=Math.round(px*128/80), m=Math.round((full-px)/2);   // corpo = px; halo transborda (margem negativa = não empurra)
-  return `<img class="orbe orbe--halo" src="orbes/orbe_${k}.svg" alt="" style="width:${full}px;height:${full}px;display:block;margin:-${m}px;${dim}">`;
+  return `<img class="orbe orbe--halo" src="orbes/orbe_${k}.svg${v}" alt="" style="width:${full}px;height:${full}px;display:block;margin:-${m}px;${dim}">`;
 }
-function orbeBg(e){ const k=_orbeKey(e); return `background:url(orbes/orbe_${k}_min.svg) center/contain no-repeat`; }
+function orbeBg(e){ const k=_orbeKey(e); return `background:url(orbes/orbe_${k}_min.svg${_orbeVer()}) center/contain no-repeat`; }
 // §318b-2 — FONTE ÚNICA das moedas da CONTA: a barra de moedas (gema/Essência) lê SEMPRE do servidor
 // (contaAtual), nunca do perfil local — o perfil era o "26.100 fantasma" que sobrevivia desconectado/pós-wipe.
 // `online:false` quando não há conta autoritativa; `fmtMoeda` então mostra "—" em vez de inventar um número.

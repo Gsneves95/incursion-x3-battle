@@ -17,8 +17,15 @@ const missoesSrv = require('./missoes.js');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 8788;
+// §337b: TODO tipo que exista em web/ precisa estar aqui — senão sai application/octet-stream e o navegador/WebView não
+// desenha (SVG em <img>/background some no celular). web/ hoje tem: .webp .svg .woff2 .md .png .webmanifest (+ o .html do
+// dist e o .js). As demais são tipos comuns deixados prontos p/ não cair em octet-stream se um asset novo entrar.
 const TIPOS = { '.html': 'text/html; charset=utf-8', '.webp': 'image/webp', '.png': 'image/png',
-  '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.js': 'text/javascript' };
+  '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.js': 'text/javascript',
+  '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf',
+  '.css': 'text/css; charset=utf-8', '.md': 'text/markdown; charset=utf-8',
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.ico': 'image/x-icon',
+  '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg' };
 
 // estático mínimo: / -> dist/incursion.html ; /skills|/banners|/icon... -> web/ ; sem path traversal.
 function servirEstatico(req, res) {

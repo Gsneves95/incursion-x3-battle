@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §337b · As orbes do §337 saíam como IMAGEM QUEBRADA no celular
+
+As orbes (web/orbes/*.svg) apareciam quebradas no celular. **Causa:** `server/server.js` servia tudo que não estava na
+tabela `TIPOS` como `application/octet-stream`, e `.svg` não estava lá — o navegador/WebView não desenha SVG (em `<img>` nem
+em `background`) com esse tipo. As provas do §337 passaram porque o Chromium abriu o `dist` por `file://`, SEM o servidor.
+
+**Correções:**
+1. **TIPOS completo (server.js).** Acrescentado `.svg` → `image/svg+xml`, e todo tipo presente em `web/` que faltava
+   (`.woff2`→font/woff2, `.md`→text/markdown) mais os comuns deixados prontos (`.woff`, `.ttf`, `.css`, `.jpg`, `.jpeg`,
+   `.gif`, `.ico`, `.mp3`, `.ogg`). As extensões hoje em `web/` são: `.webp .svg .woff2 .md .png .webmanifest` — nenhuma
+   cai mais em octet-stream.
+2. **Fura-cache (base.js).** Os assets cacheiam 1 dia, então o celular podia ter guardado a orbe com o tipo errado. As URLs
+   das orbes ganham `?v=<ORBE_VER>` (timestamp do build, injetado em build.js), em `orbe()` e `orbeBg()`. O servidor já
+   ignora a query ao achar o arquivo (`split('?')`).
+
+**Provas (`orbes_server.test.js`, SERVIDOR de verdade):** sobe o server; `GET /orbes/orbe_umbra.svg` e
+`/orbes/orbe_livre_min.svg` → 200 `image/svg+xml`; a orbe com `?v=` também (o servidor ignora a query); nenhum asset de
+`web/` (um por extensão) responde octet-stream; no Chromium pelo `http://localhost` (não file://), numa batalha toda
+`<img class="orbe">` tem `naturalWidth>0` e, na tela de Níveis, um elemento com `orbeBg` tem o fundo carregado. Falha se o
+`.svg` sair da tabela. NÃO mudou mais nada.
+
+---
+
 ## §337 · ORBES de elemento: cor lisa vira bolinha de vidro com brilho, no jogo todo
 
 Toda representação de energia/elemento que era um QUADRADO ou CÍRCULO de COR LISA passa a ser uma ORBE (runa de vidro:

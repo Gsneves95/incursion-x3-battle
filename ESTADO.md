@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §337b · Orbes quebradas no celular — Content-Type + fura-cache
+- **Causa:** server.js servia `.svg` como `application/octet-stream` (faltava na tabela TIPOS); o WebView não desenha SVG
+  assim. As provas do §337 passaram por rodarem via `file://`.
+- **Correção:** TIPOS ganhou `.svg`→image/svg+xml e todo tipo de web/ que faltava (`.woff2`,`.md`) + comuns
+  (`.woff/.ttf/.css/.jpg/.jpeg/.gif/.ico/.mp3/.ogg`). E `orbe()/orbeBg()` (base.js) anexam `?v=<ORBE_VER>` (timestamp do
+  build, injetado em build.js) p/ furar o cache de 1 dia; o server ignora a query (`split('?')`).
+- **Provas:** `orbes_server.test.js` (servidor real): orbes → 200 image/svg+xml (com e sem `?v=`); nenhum asset de web/
+  (um por extensão) é octet-stream; no Chromium via http, `<img.orbe>` com naturalWidth>0 e orbeBg carregado (Níveis).
+  Falha se `.svg` sair da tabela. Build/suíte verdes. (Só server.js + as URLs das orbes mudaram.)
+
 ## ★ §337 · ORBES de elemento (cor lisa → bolinha de vidro com brilho) no jogo todo
 - **Gerador** `tools/gerar_orbes.js` → `web/orbes/orbe_<elem>.svg` (halo) e `_min` (sem halo, viewBox 24 24 80 80) p/ 7
   elems; ids prefixados por elem; C vem das `--e-*` do shell.html, resto da paleta do dono. O BUILD roda o gerador.
