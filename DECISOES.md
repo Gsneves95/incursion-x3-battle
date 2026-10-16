@@ -6,6 +6,28 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §336b · A caixa de energia escondia o Σ e o ⇄ TROCAR com muitos tipos
+
+Com 6 tipos de energia, a caixa fixa de 388 px (§335) mostrava os 6 "xN" e, por `overflow:hidden`, CORTAVA o Σ total e o
+botão ⇄ TROCAR — sem o TROCAR o jogador não consegue converter energia.
+
+**Regra de quais tipos aparecem** (mantida, topo.js `_tiposEnergia`): os ELEMENTOS DO TIME (unidades vivas) ∪ qualquer
+tipo com quantidade > 0.
+
+**Correção (topo.js).** A caixa passa a ter **borda DIREITA fixa** (em `en.left+en.w` = 978, logo antes do ENCERRAR em
+1000) e **cresce para a ESQUERDA**. A largura é calculada do conteúdo (canvas `measureText`, com estimativa de reserva se
+o canvas faltar): enquanto o conteúdo couber na largura do HTML (388) a caixa fica IGUAL ao HTML (388 em 590) — vale p/ 1–3
+tipos quando cabem; quando não cabe, cresce à esquerda até no máximo **24 px antes do fim do bloco do nome do jogador**. Se
+nem no máximo couber, os quadrados encolhem (26→20) e a fonte do "xN" (21→17). O **Σ** e o **⇄ TROCAR** são `flex:none` e
+entram SEMPRE no cálculo — nunca somem nem cortam. (Observação: 3 tipos DISTINTOS medem ~418 px reais > 388, então a borda
+esquerda recua ~30 px do 590 do HTML — o mínimo para o TROCAR não cortar; com ≤2 tipos fica 388@590 exato.)
+
+**Provas (batalha_faixa, bloco 5, Chromium, 1846×852 e 780×360):** com 1, 3 e 6 tipos — o Σ e o ⇄ TROCAR ficam inteiros e
+dentro da caixa (sem corte), nenhum quadrado corta, a caixa não encosta no ENCERRAR TURNO nem invade o bloco do nome, e
+tocar no ⇄ TROCAR abre a troca (`ov='conv'`). Captura `336b-energia-6-tipos-1846x852`. NÃO mudou mais nada.
+
+---
+
 ## §336 · Duas regressões do §335 (acha­das pelo dono jogando)
 
 **1. Habilidade em ÁREA / sem-alvo não confirmava.** Antes do §335, a instrução (a "mira" do painel) era um botão

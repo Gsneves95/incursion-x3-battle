@@ -146,6 +146,46 @@ const CAIXAS=[
     await ctx.close();
   }
 
+  // ---- (5) §336b: a caixa de energia nunca esconde o Σ nem o ⇄ TROCAR, com 1/3/6 tipos, em 1846×852 e 780×360 ----
+  const CENAS_EN=[
+    { n:1, aliados:['afrodite','amaterasu','apolo'], orbs:{Aurora:6} },
+    { n:3, aliados:['afrodite','ahpuch','aokuang'],  orbs:{Aurora:3,'Umbra':3,'Maré':3} },
+    { n:6, aliados:['afrodite','ahpuch','aokuang'],  orbs:{Tempestade:1,'Umbra':2,'Maré':3,Aurora:4,Chama:5,Verdejante:6} },
+  ];
+  for(const E of [{w:1846,h:852,dsf:1},{w:780,h:360,dsf:2}]){
+    for(const C of CENAS_EN){
+      const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:E.dsf});
+      const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
+      await page.evaluate((C)=>{ st=montarProvacao({aliados:C.aliados,inimigos:['poseidon','hera','zeus'],montar:{seed:3,comeca:0}});
+        prova=null;campanha={_capIdx:0,_atoIdx:2};dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}
+        ELEMS.forEach(e=>st.lados[0].orbs[e]=0); for(const k in C.orbs) st.lados[0].orbs[k]=C.orbs[k];
+        st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null; ir('batalha',{},{substituir:true});render(); }, C);
+      await page.waitForTimeout(80);
+      const m=await page.evaluate(()=>{ const bat=document.getElementById('batalha');
+        const box=bat.querySelector('.bt-ebox'), tr=bat.querySelector('#btrocar'), sig=bat.querySelector('.bt-esigma'),
+          end=bat.querySelector('#bend2'), nome=bat.querySelector('.bt-name--me');
+        const R=el=>el?el.getBoundingClientRect():null; const vw=window.innerWidth;
+        const dentro=(a,b)=>a&&b&&a.left>=b.left-0.6&&a.right<=b.right+0.6;
+        const vis=el=>{ const r=R(el); return !!r&&r.width>1&&r.height>1&&r.left>=-0.6&&r.right<=vw+0.6; };
+        const cells=[...bat.querySelectorAll('.bt-ec')]; const clipCel=cells.some(c=>c.scrollWidth>c.clientWidth+1);
+        return { b:R(box), tr:R(tr), sig:R(sig), end:R(end), nome:R(nome),
+          sigVis:vis(sig), trVis:vis(tr), sigDentro:dentro(R(sig),R(box)), trDentro:dentro(R(tr),R(box)),
+          trClip:tr?(tr.scrollWidth>tr.clientWidth+1):true, clipCel, nCells:cells.length }; });
+      const tag=`${E.w}×${E.h}/${C.n}tipos`;
+      ok(m.nCells===C.n, `${tag}: mostra ${C.n} tipo(s) (veio ${m.nCells})`);
+      ok(m.sigVis&&m.sigDentro, `${tag}: o Σ está inteiro e visível dentro da caixa`);
+      ok(m.trVis&&m.trDentro&&!m.trClip, `${tag}: o ⇄ TROCAR está inteiro e visível dentro da caixa`);
+      ok(!m.clipCel, `${tag}: nenhum quadrado de energia corta`);
+      ok(m.b.right<=m.end.left+0.6, `${tag}: a caixa não encosta no ENCERRAR TURNO`);
+      ok(m.b.left>=m.nome.right-0.6, `${tag}: a caixa não invade o bloco do nome`);
+      // tocar no TROCAR abre a troca (ov='conv')
+      await page.$eval('#btrocar', el=>el.click());
+      const abriu=await page.evaluate(()=>ov==='conv');
+      ok(abriu, `${tag}: tocar no ⇄ TROCAR abre a troca`);
+      await ctx.close();
+    }
+  }
+
   await browser.close();
   console.log(falhas===0?'\n>>> BATALHA_LAYOUT OK':`\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas?1:0);

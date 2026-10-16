@@ -2,6 +2,14 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §336b · Caixa de energia não esconde mais o Σ / ⇄ TROCAR
+- Com muitos tipos a caixa fixa (388, §335) cortava o Σ e o TROCAR. Agora a caixa tem borda DIREITA fixa (978, antes do
+  ENCERRAR) e CRESCE p/ a esquerda até 24px do fim do nome; se nem no máximo couber, os quadrados encolhem (26→20) e a
+  fonte (21→17). Σ e ⇄ TROCAR são `flex:none` e nunca somem/cortam. ≤2 tipos (e 3 quando cabem) ficam 388@590 do HTML;
+  3 distintos recuam ~30px à esquerda (precisam de ~418 reais). Regra dos tipos: elementos do time (vivos) ∪ qtd>0.
+- **Provas:** batalha_faixa bloco 5 (1/3/6 tipos em 1846×852 e 780×360): Σ+TROCAR inteiros e dentro da caixa, sem corte,
+  caixa não encosta no ENCERRAR nem no nome, TROCAR abre a troca. Captura `336b-energia-6-tipos`. (topo.js, só a caixa.)
+
 ## ★ §336 · Duas regressões do §335 (quebravam a partida)
 - **Alvo em área/sem-alvo não confirmava:** o §335 não recriou a instrução clicável `#bconf`. Tipos quebrados:
   `todosInimigos`, `nenhum`, `auto`, `distribui`. Corrigido: turno.js marca `armado.aoe` (realça todos os inimigos/aliados

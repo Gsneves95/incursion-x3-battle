@@ -25,15 +25,65 @@ function _prazoN(){
   if(!src||!src.condicoes) return null;
   const dl=src.condicoes.find(c=>c.predicado==='deadline'); return dl?dl.turnos:null;
 }
-// §335: quadrados de energia (um por elemento presente, cor do elemento) + ×N, e o Σ total.
-function btEnergiaHTML(l, en){
-  const q=en.quad||26;
+// §336b: medidor de texto (canvas) p/ dimensionar a caixa de energia sem estourar; cai p/ estimativa se o canvas faltar.
+// IMPORTANTE: no jsdom o getContext LANÇA "Not implemented" e suja o console virtual (um teste acusa isso), então nem
+// tentamos lá — detecta o jsdom pelo userAgent e usa a estimativa. No navegador real mede de verdade.
+let _emc=null;
+function _canvasMedivel(){
+  try{ if(typeof document==='undefined'||!document.createElement) return false;
+    if(typeof navigator!=='undefined' && navigator.userAgent && /jsdom|node\.js/i.test(navigator.userAgent)) return false;
+    return true; }catch(e){ return false; }
+}
+function _medeTxt(txt, font, px){
+  try{ if(_emc===null){ _emc = _canvasMedivel() ? (document.createElement('canvas').getContext('2d')) : false; }
+    if(_emc){ _emc.font=font; const w=_emc.measureText(txt).width; if(w>0) return w; } }catch(e){ _emc=false; }
+  return (txt?String(txt).length:0)*px*0.56;   // estimativa (char×fator)
+}
+// §335: a REGRA de quais tipos aparecem — os ELEMENTOS DO TIME (vivos) ∪ qualquer tipo com quantidade > 0.
+function _tiposEnergia(l){
   const proprios=new Set(l.units.filter(u=>u.vivo).map(u=>u.elem));
-  const mostrar=ELEMS.filter(e=>proprios.has(e)||l.orbs[e]>0);
+  return ELEMS.filter(e=>proprios.has(e)||l.orbs[e]>0);
+}
+// §336b: largura do conteúdo da caixa p/ um tamanho S={q,f,s,g,ig}. Σ e ⇄ TROCAR SEMPRE contam (nunca somem/cortam).
+function _larguraEnergia(l, tipos, total, S){
+  const padd=22;                                   // padding 12 (esq) + 10 (dir)
+  let cells=0; for(const e of tipos) cells += S.q + S.ig + _medeTxt('x'+l.orbs[e], `${S.f}px Rajdhani, sans-serif`, S.f) + 2;
+  const sigma = _medeTxt('Σ', `700 ${S.s}px Cinzel, serif`, S.s) + 4 + _medeTxt('x'+total, `${S.f}px Rajdhani, sans-serif`, S.f) + 2;
+  // ⇄ TROCAR: padding 24 + glifo + gap 6 + rótulo (fonte fixa 20, NUNCA encolhe) + folga interna
+  const trocar = 24 + _medeTxt('⇄', '700 20px Rajdhani, sans-serif', 20) + 6 + _medeTxt('TROCAR', '700 20px Rajdhani, sans-serif', 20) + 10;
+  const gaps = (tipos.length + 2 - 1) * S.g;        // células + Σ + TROCAR
+  return Math.ceil(padd + cells + sigma + trocar + gaps + 12);   // +12 de folga p/ nunca cortar
+}
+// §336b: fim (px) do bloco do NOME do jogador — avatar + maior das duas linhas (nick capado em 440 como no CSS).
+function _fimNomeJogador(jg, modoSub){
+  const nick=_medeTxt('VOCÊ', `700 ${jg.nome}px Cinzel, serif`, jg.nome);
+  const sub =_medeTxt(_subJogador(modoSub), `600 ${jg.sub}px Rajdhani, sans-serif`, jg.sub);
+  const txt=Math.max(Math.min(nick,440), sub);
+  return jg.left + jg.avatar + jg.gap + txt;
+}
+// §336b: geometria da caixa de energia — borda DIREITA fixa (não encosta no ENCERRAR), cresce p/ a esquerda até 24px do
+// fim do nome; se não couber, encolhe os quadrados (26→20) e a fonte (21→17). Com ≤3 tipos fica igual ao HTML (388@590).
+function _geoEnergia(l, en, jg, modoSub){
+  const tipos=_tiposEnergia(l), total=ELEMS.reduce((s,e)=>s+l.orbs[e],0);
+  const rightEdge=en.left+en.w;                     // borda direita fixa (978)
+  const leftMin=_fimNomeJogador(jg, modoSub)+24;    // limite esquerdo
+  const Wmax=Math.max(en.w, rightEdge-leftMin);     // nunca menor que o tamanho do HTML
+  const SIZES=[{q:26,f:21,s:24,g:14,ig:7},{q:24,f:20,s:23,g:12,ig:6},{q:22,f:19,s:22,g:10,ig:5},{q:20,f:17,s:20,g:8,ig:4}];
+  // cabe no tamanho do HTML (388)? então fica igual ao HTML (388 em 590) — vale p/ poucos tipos (1–3 quando couberem).
+  if(_larguraEnergia(l,tipos,total,SIZES[0]) <= en.w) return { left:en.left, width:en.w, S:SIZES[0] };
+  // senão, cresce p/ a esquerda (borda direita fixa); encolhe os quadrados/fonte só se nem no máximo couber.
+  let S=SIZES[0], w=_larguraEnergia(l,tipos,total,S);
+  for(const cand of SIZES){ S=cand; w=_larguraEnergia(l,tipos,total,cand); if(w<=Wmax) break; }
+  const width=Math.min(Math.max(w, en.w), Wmax);
+  return { left:rightEdge-width, width, S };
+}
+// §335/§336b: quadrados de energia (um por tipo mostrado, cor do elemento) + ×N e o Σ total, no tamanho S.
+function btEnergiaHTML(l, S){
+  const tipos=_tiposEnergia(l);
   const total=ELEMS.reduce((s,e)=>s+l.orbs[e],0);
-  const cel=e=>`<div class="bt-ec" style="display:flex;align-items:center;gap:7px"><div title="${ELAB[e]}" style="width:${q}px;height:${q}px;border-radius:4px;background:${COR(e)};box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.25)"></div><span style="font-size:${en.xN||21}px;font-weight:600;color:#F2F4F8">x${l.orbs[e]}</span></div>`;
-  const sigma=`<div style="display:flex;align-items:center;gap:4px"><span class="cin" style="font-weight:700;font-size:${en.sigma||24}px;color:#F0B43C;line-height:1">Σ</span><span style="font-size:${en.xN||21}px;font-weight:600;color:#F2F4F8">x${total}</span></div>`;
-  return mostrar.map(cel).join('')+sigma;
+  const cel=e=>`<div class="bt-ec" style="flex:none;display:flex;align-items:center;gap:${S.ig}px"><div title="${ELAB[e]}" style="width:${S.q}px;height:${S.q}px;border-radius:4px;background:${COR(e)};box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.25)"></div><span style="font-size:${S.f}px;font-weight:600;color:#F2F4F8">x${l.orbs[e]}</span></div>`;
+  const sigma=`<div class="bt-esigma" style="flex:none;display:flex;align-items:center;gap:4px"><span class="cin" style="font-weight:700;font-size:${S.s}px;color:#F0B43C;line-height:1">Σ</span><span style="font-size:${S.f}px;font-weight:600;color:#F2F4F8">x${total}</span></div>`;
+  return tipos.map(cel).join('')+sigma;
 }
 function topoHTML(modoSub){
   const L=_LBT(), Hd=L.header||{}, cor=L.cor||{}, eu=ladoExibido();
@@ -60,9 +110,10 @@ function topoHTML(modoSub){
       <div class="bt-name__sub" style="font-size:${jg.sub}px;font-weight:600;line-height:1.1;color:#E8ECF4;letter-spacing:.02em;white-space:nowrap">${H(_subJogador(modoSub))}</div>
     </div></div>`;
 
-  const energia=`<div class="bt-ebox" style="position:absolute;left:${en.left}px;top:${en.top}px;width:${en.w}px;height:${en.h}px;box-sizing:border-box;overflow:hidden;display:flex;align-items:center;gap:14px;padding:0 10px 0 12px;border-radius:7px;background:linear-gradient(180deg,rgba(12,16,30,.92),rgba(5,8,16,.92));box-shadow:inset 0 0 0 1px rgba(201,164,76,.75)">
-    ${btEnergiaHTML(l,en)}
-    <button class="b5-hover bt-trocar" id="btrocar" ${trocarDisab?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1" style="margin-left:auto;height:${en.trocarH||34}px;padding:0 12px;display:flex;align-items:center;gap:6px;border-radius:5px;border:0;background:none;box-shadow:inset 0 0 0 1px rgba(201,164,76,.9);cursor:pointer;opacity:${trocarDisab?.5:1}">
+  const geo=_geoEnergia(l, en, jg, modoSub);
+  const energia=`<div class="bt-ebox" style="position:absolute;left:${geo.left}px;top:${en.top}px;width:${geo.width}px;height:${en.h}px;box-sizing:border-box;overflow:hidden;display:flex;align-items:center;gap:${geo.S.g}px;padding:0 10px 0 12px;border-radius:7px;background:linear-gradient(180deg,rgba(12,16,30,.92),rgba(5,8,16,.92));box-shadow:inset 0 0 0 1px rgba(201,164,76,.75)">
+    ${btEnergiaHTML(l,geo.S)}
+    <button class="b5-hover bt-trocar" id="btrocar" ${trocarDisab?'disabled':''} title="Trocar ${CONV_CUSTO} energias por 1" style="flex:none;margin-left:auto;height:${en.trocarH||34}px;padding:0 12px;display:flex;align-items:center;gap:6px;border-radius:5px;border:0;background:none;box-shadow:inset 0 0 0 1px rgba(201,164,76,.9);cursor:pointer;opacity:${trocarDisab?.5:1}">
       <span style="font-size:20px;font-weight:700;color:#F0B43C;line-height:1">⇄</span><span style="font-size:20px;font-weight:700;letter-spacing:.04em;color:#F0B43C">TROCAR</span></button></div>`;
 
   const turno=`<div style="position:absolute;left:${tc.left}px;top:${tc.top}px;width:${tc.w}px;display:flex;flex-direction:column;align-items:stretch;gap:6px">
