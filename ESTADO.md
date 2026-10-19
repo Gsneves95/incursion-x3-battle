@@ -2,6 +2,12 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §338 · Básicos grátis: MANTIDOS (3 variantes medidas e reprovadas)
+- Os 26 básicos grátis valem 56,9% vs 47,6% dos demais (vantagem moderada, ninguém >65% na base). Medidas e reprovadas:
+  "1 livre" (26→40,2; 8 abaixo de 35; 11 acima de 65); A "grátis+recarga 1" (26→56,7; efeito nulo; Perseu 66,6/Curupira
+  65,3 >65); B "1 livre+3 dano" (26→45,5; Chang'e 33,2; ~11 >65). Decisão do dono: manter grátis. Ajuste futuro, se
+  houver, é POR DEUS (dispersão 45,7–63,2 entre os 26), não em massa. Detalhes no §338 do DECISOES.md. Nada em data/ mudou.
+
 ## ★ §337b · Orbes quebradas no celular — Content-Type + fura-cache
 - **Causa:** server.js servia `.svg` como `application/octet-stream` (faltava na tabela TIPOS); o WebView não desenha SVG
   assim. As provas do §337 passaram por rodarem via `file://`.

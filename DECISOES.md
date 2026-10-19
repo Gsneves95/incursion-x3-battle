@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §338 · BÁSICOS GRÁTIS: medido, três variantes reprovadas, decisão = MANTER grátis
+
+26 dos 100 deuses têm o básico com custo "—" (grátis): demeter, dionisio, perseu, orfeu, freyja, tyr, bragi, mimir,
+osiris, isis, bennu, nefertem, izanagi, inari, nuwa, huangdi, change, krishna, brahma, ganesha, exu, oxala, oxum, dagda,
+brigid, itzamna (22 são Suporte). O dono suspeitou que grátis fosse forte demais e pediu medição como PORTÃO. Régua
+padrão do §324 (`tools/medir_kits.js forca --rounds=300`, ~288 jogos/deus, espelho v2, seeds idênticas em todas as
+variantes). Portões: 100 deuses em 35–65%, funções em ~45–55% (Controlador ~44,7 tolerado), nenhum dos 26 < 35%.
+
+**Base (nada mudado).** Os 26 somam **56,9%** de média contra **47,6%** dos outros 74 — vantagem real, mas MODERADA, e
+**ninguém acima de 65%** (o topo dos 26 é Itzamná/Perseu/Oxum ~63%). Média geral 50,0%; a única fora de faixa na base é a
+Tsukuyomi a 34,3% (pré-existente, não é dos 26).
+
+**Três variantes medidas — TODAS reprovaram algum portão:**
+
+1. **"1 livre"** (custo "—" → 1 livre, §338). Enfraquecimento grande demais:
+   - média dos 26: **56,9 → 40,2**; **8 abaixo de 35%** (Huang Di 29,5; Perseu 30,7; Chang'e 32,9; Ísis 33,6; Freyja
+     33,7; Orfeu 33,9; Bragi 34,2; Dionísio 34,7); **11 de fora subiram acima de 65%** (por tabela: Mula 73,6; Ares 73,1;
+     Rá 70,3; Guan Yu 69,6; Kali 67,9; Jörmungandr 67,1; Cérberus 66,9; Kagutsuchi 66,4; Saci 66,4; Shiva 66,3; Curupira
+     66,0); Suporte caiu para 42,4%. Falhou G1, G2 e G3.
+
+2. **A — "grátis + recarga 1"** (§338b). Efeito quase NULO (a IA não dependia de repetir o básico todo turno):
+   - média dos 26: **56,9 → 56,7**; funções e "nenhum < 35" PASSAM, mas **G1 falhou**: Perseu **66,6** e Curupira **65,3**
+     acima de 65%. Não resolve o problema do grátis e ainda estoura 2 deuses.
+
+3. **B — "1 livre + 3 de dano"** (10→13, 12→15, 13→16; Brigid 6→9 + Queimadura igual; só o dano direto sobe; §338b).
+   Vai na direção certa (aproxima 26 dos 74: |dif| 9,0 → 6,1), mas ainda nerfa demais e infla por tabela:
+   - média dos 26: **56,9 → 45,5**; **G3 falhou** (Chang'e **33,2** < 35) e **G1 falhou** com ~11 de fora acima de 65%
+     (Mula 74,7; Rá 71,4; Ares 68,9; Saci 68,9; Aquiles 66,2; Cérberus 66,2; Kagutsuchi 66,1; Curupira 66,0; Hel 65,6;
+     Shiva 65,6; Jörmungandr 65,4) além de Khonshu 34,7.
+
+**Decisão do dono: MANTER os 26 básicos grátis como estão.** Nada em `data/`, código ou testes foi alterado por este §338.
+
+**Por quê.** A vantagem do grátis é moderada e **dentro da faixa** (nenhum dos 26 passa de 65% na base). Uma REGRA ÚNICA
+para os 26 não acerta todos por causa da **dispersão entre eles** (vão de Ganesha 45,7% a Itzamná 63,2%): qualquer nerf
+uniforme ou afunda a cauda de baixo (< 35%) ou deixa a de cima ainda alta, e o remanejamento por tabela estoura deuses de
+fora acima de 65%. Se houver ajuste futuro, deve ser **POR DEUS** (os que de fato passam de ~63%), não em massa.
+Nota: **"1 livre + 2 de dano"** iria na direção ERRADA — como "1 livre" tira ~17pp e cada +1 de dano devolve ~3–4pp, com
++2 o resultado fica ENTRE a "1 livre" (40,2) e a B (45,5), ou seja, enfraquece MAIS que a B, que já reprovou.
+
+---
+
 ## §337b · As orbes do §337 saíam como IMAGEM QUEBRADA no celular
 
 As orbes (web/orbes/*.svg) apareciam quebradas no celular. **Causa:** `server/server.js` servia tudo que não estava na
