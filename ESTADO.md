@@ -2,6 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §339b · Ajustes na tela DESAFIOS (banner que vazava + toque mínimo)
+- **Banner da semana** não vaza mais: o `<section class="df-sem psem">` herdava `width:100%` do `.psem` antigo e esticava
+  a caixa além de 1846 (JOGAR cortado). Corrigido com `width:auto` em `.df-sem` + `id` do banner em `flex:1`. Agora termina
+  em 1814, alinhado à direita com Composição/grade, e o JOGAR fica dentro.
+- **Tamanhos mínimos (desenho 1846×852):** todo botão ≥72px de altura; corpo ≥20px; nome do deus ≥26px. Cartões da grade
+  cresceram (mín. 156px, a grade rola), 3 colunas mantidas. Pilha re-orçada (banner 98/190, compos 296, regras 382,
+  filtros 464, grade 550). No 780×360 (escala 0,423): botões ~30px, corpo ~8,4px, nada corta/sobrepõe.
+- **"conta"/"build" não somem** — são elementos do `<body>`, só ocultos por `body.emdesafios`/`body.embatalha`; reaparecem
+  na home e nas demais telas (o botão "conta" → painel de exclusão segue acessível ali).
+- **Provas:** `desafios_tela.test.js` ganhou (Chromium) botão ≥72 / corpo ≥20 / nome ≥26 / banner alinhado+JOGAR dentro +
+  @780 botões ≥30 / corpo ≥8,4; (jsdom) guarda de que conta/build seguem no DOM após voltar à home. Capturas `339b-*`.
+- Só CSS + testes de layout; regras/economia/servidor/handlers/outras telas intactos. Suíte + build verdes.
+
 ## ★ §339 · Tela DESAFIOS no modelo do dono (tela fixa 1846×852)
 - `renderProvacoes` reconstruída como tela fixa 1846×852 escalada (fit() ganhou o ramo `desafios`/`#desafios`); só a
   grade de deuses rola. Cabeçalho (INÍCIO/título/ESSÊNCIA do servidor/MESTRES X/Y), banner da semana (Termina em = virada

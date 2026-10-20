@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §339b · Três ajustes na tela DESAFIOS (banner que vazava + alvos de toque mínimos)
+
+Três ajustes pedidos pelo dono sobre o §339 (vistos na 339-estados-1846x852):
+
+**1. O cartão DESAFIO DA SEMANA vazava pela direita** (JOGAR cortado, moldura direita somia). Causa: o `<section>` do
+banner tem **duas classes** — `df-sem psem` — e o `.psem` antigo (do carrossel de hoje) traz `width:100%`, que numa caixa
+`position:absolute` com `left:32/right:32` **vencia** a largura automática e esticava a caixa até 1878px (além da tela de
+1846). Correção cirúrgica: `width:auto` em `.df-sem` (mesma especificidade, vem depois → vence o `.psem`), e o `id` do
+banner virou `flex:1` para absorver a folga. Agora o banner termina em **1814px**, no mesmo alinhamento direito de
+Composição e da grade, e o JOGAR fica dentro (1785px). O `.psem` fica intacto (os testes miram `.psem[data-semanal]`).
+
+**2. Tamanhos mínimos de toque/leitura** (o relatório do §339 mediu botão ~24px e nome ~9,7px no 780×360). Agora, no
+desenho de 1846×852: **todo botão** (‹ INÍCIO, JOGAR, COMPRAR, Desistir, SIM/NÃO, filtros, Ordenar, "?", "Onde ganhar
+Essência?") tem **≥72px de altura**; **todo texto de corpo** (regras, maestria, 5/15/30, nomes dos oponentes, "Termina
+em", objetivo) tem **≥20px**; o **nome do deus** tem **≥26px**. Para caber, os cartões da grade cresceram em altura
+(mín. 156px, a grade rola) mantendo 3 colunas e a disposição do modelo; a linha de regras pode quebrar em 2 linhas (o
+"?" fica fixo à direita). A pilha vertical foi re-orçada (banner 98/190, composição 296, regras 382, filtros 464, grade
+550). No 780×360 (escala 0,423) isso dá **botões ~30px** e **corpo ~8,4px** — exatamente os mínimos pedidos — sem corte
+nem sobreposição.
+
+**3. "conta" e "build" não somem de vez** — continuam no `<body>` (elementos fixos compartilhados por todas as telas),
+apenas **ocultos por CSS** na tela fixa (`body.emdesafios` / `body.embatalha`, §328/§339). Ao voltar à **home** (e em
+qualquer tela que não seja a batalha/Desafios) reaparecem no canto; o botão "conta" (que abre o painel de exclusão de
+conta) segue acessível ali. A função não foi removida, só escondida nas duas telas de canvas fixo.
+
+Nada de regras, economia, servidor, maestria, handlers ou outras telas mudou — foi só CSS (larguras/alturas/tamanhos) e
+os testes de layout.
+
+---
+
 ## §339 · TELA DESAFIOS no modelo do dono (tela fixa 1846×852 escalada)
 
 A tela DESAFIOS (`renderProvacoes` em home.js) foi reconstruída no modelo aprovado pelo dono, como o §335 fez com a
