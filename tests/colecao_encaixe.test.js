@@ -128,6 +128,28 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
   ok(frase.corta === 0, `§304b: sem cite na sobreposição, nenhum efeito corta (${frase.corta}/400) — a frase não rouba o orçamento daqui`);
   console.log(`  §304b FRASE — folga REAL da caixa de efeito ~${frase.folgaMin}px (natural, não scrollHeight): mesmo assim não comporta a cite (2–3 linhas ≈ 50px). Com frase em todos: ${frase.cites} cites, ${frase.corta}/400 cortes.`);
 
+  // §346 — a Coleção (grade + filtros do montador) cabe, sem corte e sem a grade invadir o painel, @1846 e @780.
+  console.log('== §346: Coleção (grade/filtros do montador) — cabe, nada corta, sem sobreposição (Chromium) ==');
+  for (const [W, H] of [[1846, 852], [780, 360]]) {
+    await page.setViewportSize({ width: W, height: H });
+    const m = await page.evaluate(() => {
+      perfil.deuses = {}; ROSTER.slice(0, 40).forEach(e => perfil.deuses[e.key] = { copias: 1, obtidoEm: Date.now() });
+      colF = { busca: '', cultura: '', classe: '', funcao: '', elem: '', status: '', raridade: '', ordem: 'recentes' };
+      ir('colecao', {}, { substituir: true }); render(); colSelecionar(colecaoFiltrada()[0]);
+      const g = document.getElementById('gsplash'); if (g) g.remove();
+      const cl = document.querySelector('.col2'); const b = cl.getBoundingClientRect();
+      const fora = b.left < -1 || b.top < -1 || b.right > window.innerWidth + 1 || b.bottom > window.innerHeight + 1;
+      let clips = []; cl.querySelectorAll('.col2c__n,.col2c__f,.col2fchip,.col2pill,.col2__titulo,.col2__conta').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className); });
+      const p = cl.querySelector('.col2__painel'), gr = cl.querySelector('.col2__grade');
+      const pr = p.getBoundingClientRect(), grr = gr.getBoundingClientRect();
+      const overlap = pr.right > grr.left + 1;
+      return { fora, clips: clips.slice(0, 5), overlap };
+    });
+    ok(!m.fora, `§346 Coleção @${W}×${H}: cabe na tela (nada fora)`);
+    ok(m.clips.length === 0, `§346 Coleção @${W}×${H}: nenhum texto corta (${m.clips.join(',') || 'ok'})`);
+    ok(!m.overlap, `§346 Coleção @${W}×${H}: a grade não invade o painel da esquerda`);
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> COLEÇÃO-ENCAIXE OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

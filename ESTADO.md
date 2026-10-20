@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §346 · Coleção com a grade e os filtros do montador (§342)
+- `renderColecao` (home.js) ganhou a linguagem do montador na GRADE e nos FILTROS, SEM mexer no painel/overlay/maestria/
+  níveis. Decisão de layout: **mantido o shell fluido `col2`** (o painel de esquerda é rico e "não mudar"; o canvas fixo
+  1846×852 o deixaria minúsculo). As classes `dm-*` são escopadas a `#dommontar`, então a Coleção usa `col2f*`/`col2pill`
+  com o mesmo visual.
+- Filtros: "Todos" + 6 ORBES de ELEMENTO (filtro NOVO) + 5 FUNÇÕES em pílulas + busca + contagem; STATUS e RARIDADE viraram
+  pílulas; CLASSE/ORDENAR em controles compactos; abas de cultura seguem. `colF.elem` novo; `colecaoFiltrada` combina todos
+  os eixos.
+- Cartão `.col2c`: visual do montador (retrato cheio + degradê + nome Cinzel + orbe + função), mantendo selo de raridade,
+  monograma de cultura, ▲ (§319b), não-possuído dessaturado sem orbe (§216) e realce do selecionado. Nome em 2 linhas,
+  word-break normal (§344b).
+- Provas: `colecao_tela.test.js` (elemento reduz/combina; 6 orbes+5 pílulas+Todos+contagem; raridade pílulas SS/S/A) e
+  `colecao_encaixe.test.js` (Chromium @1846/@780: cabe, nada corta, grade não invade o painel). Capturas `346-selecionado`
+  (1846 e 780), `346-elemento`, `346-naopossuidos`.
+
 ## ★ §341 · Tela de carregamento real (3 camadas) no lugar da página do Render
 - O APK dormia na página de espera do Render (~50 s p/ acordar). Agora: (1) splash nativa #03050B (capacitor.config); (2)
   LANÇADOR local `web/carregamento/lancador.html` (empacotado em www/ pelo cap-www.js) que abre ANTES do Render — tirei o

@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §346 · COLEÇÃO com a GRADE e os FILTROS do montador (§342)
+
+O dono quis na Coleção o modelo de visualização do montador do §342 (cartões + linha de filtros com orbes de elemento e
+funções em pílulas). A Coleção NÃO monta time — mostra os 100 deuses (tem/não tem) e abre o painel/kit de cada um.
+
+**Decisão de layout (item 3 do pedido): mantive o SHELL fluido atual (`col2`), mudando só a GRADE e os FILTROS.** O
+sistema de tela fixa 1846×852 é tentador pela consistência, mas a Coleção tem um PAINEL de esquerda rico (detalhe, kit,
+maestria, níveis, "Subir habilidades") que é compacto e o pedido diz **NÃO MUDAR o painel**. Enfiá-lo no canvas fixo
+exigiria re-escalá-lo/reestilizá-lo para não ficar minúsculo — ou seja, mexer no painel. Então: col2 fluido fica, o painel
+fica intacto, e a grade/filtros ganham a linguagem do montador na escala da Coleção. (As classes `dm-*` do montador são
+escopadas a `#dommontar`; por isso a Coleção usa classes próprias `col2f*`/`col2pill` com o MESMO visual, não as `dm-*`.)
+
+**Filtros (novo):** linha do montador — "Todos" + as **6 ORBES de ELEMENTO** (filtro NOVO: a Coleção não tinha) + as **5
+FUNÇÕES em pílulas** + busca + contagem ("N deuses"). STATUS (Todos/Possuídos/Não possuídos) e RARIDADE (Todas/SS/S/A)
+viraram **pílulas curtas** na linha de baixo; CLASSE e ORDENAR ficaram em controles compactos ("Mais filtros" / "Ordenar").
+As abas de CULTURA continuam. `colF` ganhou o campo `elem`; `colecaoFiltrada` filtra por ele e combina com todos os eixos.
+
+**Cartão (novo visual, marcas da Coleção preservadas):** `.col2c` passou do octógono chanfrado para o cartão do montador
+(retrato cheio + degradê + nome Cinzel + orbe do elemento + função no rodapé, cantos arredondados, moldura dourada no
+possuído, realce no selecionado). Mantém: selo de RARIDADE (SS/S/A), monograma de CULTURA, ▲ de nível pagável (§319b),
+tratamento de NÃO-POSSUÍDO (retrato dessaturado, sem a cor/orbe do elemento — §216) e o realce do SELECIONADO. O nome usa
+`word-break:normal` + 2 linhas (disciplina do §344b: nunca corta no meio da palavra, nada de reticência feia).
+
+**Preservado:** o cabeçalho (voltar, Personagens, Essência/Gema do servidor, X/100), o PAINEL inteiro (colPainelHTML) e a
+sobreposição de kit (colAbrirVer), `colSelecionar` (tocar seleciona para o painel — sem "i", sem montar time), maestria,
+níveis, "Subir habilidades".
+
+Provas: `colecao_tela.test.js` (filtro de elemento reduz e combina; 6 orbes + 5 pílulas + "Todos" + contagem no DOM; tocar
+na orbe filtra, "Todos" limpa; raridade como pílulas SS/S/A; os testes antigos de contagem/ordenar/painel/▲ seguem);
+`colecao_encaixe.test.js` (Chromium @1846 e @780: cabe, nada corta, a grade não invade o painel). Capturas `346-selecionado`
+(1846 e 780), `346-elemento`, `346-naopossuidos`.
+
+---
+
 ## §341 · TELA DE CARREGAMENTO REAL (substitui a página de espera do Render)
 
 **Problema.** O app abria direto `server.url` (o Render). No plano grátis o servidor dorme e leva ~50 s para acordar; nesse

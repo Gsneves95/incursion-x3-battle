@@ -57,7 +57,7 @@ console.log('\n== 3. só SS/S/A (nenhum B) ==');
   ok(rars.every(r => r === 'SS' || r === 'S' || r === 'A'), 'toda raridade ∈ {SS,S,A}');
   const conta = rars.reduce((a, r) => (a[r] = (a[r] || 0) + 1, a), {});
   ok(conta.SS === 16 && conta.S === 31 && conta.A === 53, `distribuição 16/31/53 (${conta.SS}/${conta.S}/${conta.A})`);
-  ok(!$('.col2c__rar--B') && $$('select[data-filtro="raridade"] option').map(o => o.value).filter(Boolean).join(',') === 'SS,S,A', 'nenhuma banda B; filtro só SS/S/A');
+  ok(!$('.col2c__rar--B') && $$('[data-colrar]').map(b => b.dataset.colrar).filter(Boolean).join(',') === 'SS,S,A', 'nenhuma banda B; filtro (pílulas §346) só SS/S/A');
 }
 
 // ---- 4. cada filtro reduz a grade ----
@@ -71,6 +71,22 @@ console.log('\n== 4. cada filtro reduz a grade ==');
   ok(medir('funcao', 'Suporte') < base, 'FUNÇÃO reduz');
   ok(medir('status', 'nao') < base, 'STATUS reduz');
   ok(medir('raridade', 'SS') < base, 'RARIDADE reduz');
+  // §346: o filtro de ELEMENTO (novo, vindo do montador) reduz e combina com os demais eixos.
+  const nChama = w.eval("colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.status='';colF.raridade='';colF.elem='Chama'; colecaoFiltrada().length");
+  ok(nChama < base && nChama === w.eval("ROSTER.filter(e=>(GODS[e.key]||HRM[e.key]).elem==='Chama').length"), `ELEMENTO (Chama) reduz e bate a contagem real (${nChama})`);
+  const nComb = w.eval("colF.funcao='Atacante'; colecaoFiltrada().length");
+  ok(nComb <= nChama && nComb === w.eval("ROSTER.filter(e=>{const g=GODS[e.key]||HRM[e.key];return g.elem==='Chama'&&g.funcao==='Atacante';}).length"), `ELEMENTO combina com FUNÇÃO (Chama∩Atacante = ${nComb})`);
+  w.eval("colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.elem='';colF.status='';colF.raridade=''; colAtualizarGrade();");
+  // §346: o DOM tem os controles do montador — 6 orbes de elemento + 5 pílulas de função + "Todos" + a contagem
+  w.eval("ir('colecao',{},{substituir:true}); render();");
+  ok($$('[data-colelem]').length === 6, `6 orbes de elemento na linha de filtros (há ${$$('[data-colelem]').length})`);
+  ok($$('[data-colfunc]').length === 5, `5 funções em pílulas (há ${$$('[data-colfunc]').length})`);
+  ok(!!$('[data-coltodos]') && /deuses/.test(txt($('#col2conta'))), 'há o "Todos" e a contagem na linha de filtros');
+  // tocar numa orbe filtra pela grade (via DOM) e o "Todos" limpa
+  { const chama = $$('[data-colelem]').find(b => b.dataset.colelem === 'Chama'); chama.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    ok(w.eval("colF.elem") === 'Chama' && $$('#col2grade .col2c').length === nChama, 'tocar na orbe filtra a grade por elemento');
+    $('[data-coltodos]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+    ok(w.eval("colF.elem") === '' && w.eval("colF.funcao") === '' && $$('#col2grade .col2c').length === 100, '"Todos" limpa elemento e função'); }
   w.eval("colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.status='';colF.raridade=''; colAtualizarGrade();");
 }
 

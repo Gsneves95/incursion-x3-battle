@@ -1367,7 +1367,7 @@ let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada)
 let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobreposição (abre no BÁSICO — decisão do dono)
 let colVerModo = 'kit';     // §294: modo da sobreposição — 'kit' (seletor+detalhe) ou 'sinergia' (lista completa)
 let colVerVista = 'kit';    // §321: VISÃO da sobreposição — 'kit' (kit/sinergia) ou 'niveis' (visão de níveis §319 embutida). Persiste na navegação pelas setas.
-let colF = { busca: '', cultura: '', classe: '', funcao: '', status: '', raridade: '', ordem: 'recentes' };
+let colF = { busca: '', cultura: '', classe: '', funcao: '', elem: '', status: '', raridade: '', ordem: 'recentes' };   // §346: + filtro de ELEMENTO (grade do montador)
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
 function colNome(k){ return (HRM[k] && HRM[k].nome) || colG(k).nome || k; }
@@ -1382,6 +1382,7 @@ function colecaoFiltrada(){
   if (f.cultura) ks = ks.filter(k => (colG(k).faccao) === f.cultura);
   if (f.classe) ks = ks.filter(k => (colG(k).classe) === f.classe);
   if (f.funcao) ks = ks.filter(k => (colG(k).funcao) === f.funcao);
+  if (f.elem) ks = ks.filter(k => (colG(k).elem) === f.elem);   // §346: filtro de elemento (combina com os demais)
   if (f.status) ks = ks.filter(k => f.status === 'tem' ? temDeus(k) : !temDeus(k));
   if (f.raridade) ks = ks.filter(k => raridadeDe(k) === f.raridade);
   if (f.ordem === 'nome') ks.sort((a, b) => colNome(a).localeCompare(colNome(b)));
@@ -1405,12 +1406,15 @@ function colCardHTML(k){
   // só raridade + cultura + retrato + nome/cultura + estado possuído/falta.
   // §319b: selo de NÍVEL PAGÁVEL (▲ dourado) num canto livre — só quando há próximo nível a pagar agora.
   const subir = nlTemPagavel(k) ? '<span class="col2c__subir" title="Há nível para subir">▲</span>' : '';
+  // §346: o cartão ganha o VISUAL do montador (retrato cheio + degradê + nome + orbe do elemento + função).
+  // Mantém as marcas da Coleção: selo de raridade, monograma de cultura, ▲ de nível pagável, apagado se não-possuído.
   return `<button class="col2c ${tem ? 'col2c--tem' : 'col2c--falta'}${sel ? ' is-sel' : ''}" data-deus="${H(k)}" title="${H(colNome(k))} · ${H(g.faccao || '')}">
+    <span class="col2c__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 34)}</span>
+    <span class="col2c__grad"></span>
     <span class="col2c__rar col2c__rar--${rar}">${rar}</span>
-    ${subir}
     <span class="col2c__cult" title="${H(g.faccao || '')}">${H(colCultMon(g.faccao))}</span>
-    <span class="col2c__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 26)}</span>
-    <span class="col2c__foot"><span class="col2c__n">${H(colNome(k))}</span><span class="col2c__f">${H(g.faccao || '')}</span></span>
+    ${subir}
+    <span class="col2c__foot"><b class="col2c__n">${H(colNome(k))}</b><span class="col2c__meta">${tem ? orbe(g.elem, 16) : ''}<span class="col2c__f">${H(g.funcao || '')}</span></span></span>
   </button>`;
 }
 
@@ -1812,10 +1816,15 @@ function renderColecao(){
   const mo = moedaServidor();   // §318b-2: a barra da Coleção é do SERVIDOR ("—" desconectado), não o perfil fantasma
   const tabs = [''].concat(PANTEOES).map(f =>
     `<button class="col2__tab${colF.cultura === f ? ' is-on' : ''}" data-cultura="${H(f)}">${f ? H(f) : 'Todas'}</button>`).join('');
-  const barra = colSelectHTML('classe', 'Classe', COL_CLASSES.map(v => ({ v, t: v })), colF.classe)
-    + colSelectHTML('funcao', 'Função', COL_FUNCOES.map(v => ({ v, t: v })), colF.funcao)
-    + colSelectHTML('status', 'Status', [{ v: 'tem', t: 'Possuídos' }, { v: 'nao', t: 'Não possuídos' }], colF.status)
-    + colSelectHTML('raridade', 'Raridade', [{ v: 'SS', t: 'SS' }, { v: 'S', t: 'S' }, { v: 'A', t: 'A' }], colF.raridade)
+  // §346: a linha de FILTROS vira a do montador — "Todos" + 6 orbes de ELEMENTO + 5 FUNÇÕES em pílulas + busca + contagem.
+  const semEF = !colF.elem && !colF.funcao;
+  const orbesEl = ELEMS.map(e => `<button class="col2forbe${colF.elem === e ? ' is-on' : ''}" data-colelem="${H(e)}" aria-label="${H((typeof ELAB !== 'undefined' && ELAB[e]) || e)}">${orbe(e, 24)}</button>`).join('');
+  const chipsFn = COL_FUNCOES.map(f => `<button class="col2fchip${colF.funcao === f ? ' is-on' : ''}" data-colfunc="${H(f)}">${H(f)}</button>`).join('');
+  const pill = (attr, val, atual, txt) => `<button class="col2pill${atual === val ? ' is-on' : ''}" data-${attr}="${H(val)}">${txt}</button>`;
+  const pillsStatus = pill('colstatus', '', colF.status, 'Todos') + pill('colstatus', 'tem', colF.status, 'Possuídos') + pill('colstatus', 'nao', colF.status, 'Não possuídos');
+  const pillsRar = pill('colrar', '', colF.raridade, 'Todas') + pill('colrar', 'SS', colF.raridade, 'SS') + pill('colrar', 'S', colF.raridade, 'S') + pill('colrar', 'A', colF.raridade, 'A');
+  // CLASSE + ORDENAR ficam em controles compactos (§346). CLASSE sob "Mais filtros".
+  const compactos = colSelectHTML('classe', 'Mais filtros', COL_CLASSES.map(v => ({ v, t: v })), colF.classe)
     + `<label class="col2__sel col2__sel--ord"><span class="col2__selrot">Ordenar</span><select data-filtro="ordem"><option value="recentes"${colF.ordem === 'recentes' ? ' selected' : ''}>Mais recentes</option><option value="nome"${colF.ordem === 'nome' ? ' selected' : ''}>Nome (A–Z)</option></select></label>`;
   stage.innerHTML = `<div id="baselayer" class="col2">
     <header class="col2__topo">
@@ -1830,20 +1839,38 @@ function renderColecao(){
     <div class="col2__corpo">
       <aside class="col2__painel" id="col2painel">${colPainelHTML(colSel)}</aside>
       <section class="col2__dir">
-        <div class="col2__barra">
+        <div class="col2__filtros">
+          <button class="col2fchip col2fchip--todos${semEF ? ' is-on' : ''}" data-coltodos="1">Todos</button>
+          <span class="col2forbes">${orbesEl}</span>
+          <span class="col2ffuncs">${chipsFn}</span>
           <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar personagens…" value="${H(colF.busca)}" autocomplete="off"></label>
-          ${barra}
+          <span class="col2__conta" id="col2conta"></span>
+        </div>
+        <div class="col2__pills">
+          <span class="col2pill__grp">${pillsStatus}</span>
+          <span class="col2pill__grp">${pillsRar}</span>
+          <span class="col2pill__sp">${compactos}</span>
         </div>
         <div class="col2__tabs">${tabs}</div>
         <div class="col2__grade" id="col2grade"></div>
       </section>
     </div>
   </div>`;
-  const q = s => stage.querySelector(s);
+  const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
   const v = q('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const busca = q('#col2busca'); if (busca) busca.oninput = () => { colF.busca = busca.value; colAtualizarGrade(); };
-  [...stage.querySelectorAll('select[data-filtro]')].forEach(s => s.onchange = () => { colF[s.dataset.filtro] = s.value; colAtualizarGrade(); });
-  [...stage.querySelectorAll('.col2__tab')].forEach(t => t.onclick = () => { colF.cultura = t.dataset.cultura; [...stage.querySelectorAll('.col2__tab')].forEach(x => x.classList.toggle('is-on', x === t)); colAtualizarGrade(); });
+  qq('select[data-filtro]').forEach(s => s.onchange = () => { colF[s.dataset.filtro] = s.value; colAtualizarGrade(); });
+  qq('.col2__tab').forEach(t => t.onclick = () => { colF.cultura = t.dataset.cultura; qq('.col2__tab').forEach(x => x.classList.toggle('is-on', x === t)); colAtualizarGrade(); });
+  // §346: orbes de ELEMENTO + pílulas de FUNÇÃO (um ativo por eixo, toggle) + "Todos" (limpa elemento e função).
+  const marcarTodos = () => { const bt = q('[data-coltodos]'); if (bt) bt.classList.toggle('is-on', !colF.elem && !colF.funcao); };
+  qq('[data-colelem]').forEach(b => b.onclick = () => { const e = b.dataset.colelem; colF.elem = (colF.elem === e ? '' : e);
+    qq('[data-colelem]').forEach(x => x.classList.toggle('is-on', !!colF.elem && x.dataset.colelem === colF.elem)); marcarTodos(); colAtualizarGrade(); });
+  qq('[data-colfunc]').forEach(b => b.onclick = () => { const f = b.dataset.colfunc; colF.funcao = (colF.funcao === f ? '' : f);
+    qq('[data-colfunc]').forEach(x => x.classList.toggle('is-on', !!colF.funcao && x.dataset.colfunc === colF.funcao)); marcarTodos(); colAtualizarGrade(); });
+  const bt = q('[data-coltodos]'); if (bt) bt.onclick = () => { colF.elem = ''; colF.funcao = '';
+    qq('[data-colelem]').forEach(x => x.classList.remove('is-on')); qq('[data-colfunc]').forEach(x => x.classList.remove('is-on')); bt.classList.add('is-on'); colAtualizarGrade(); };
+  qq('[data-colstatus]').forEach(b => b.onclick = () => { colF.status = b.dataset.colstatus; qq('[data-colstatus]').forEach(x => x.classList.toggle('is-on', x === b)); colAtualizarGrade(); });
+  qq('[data-colrar]').forEach(b => b.onclick = () => { colF.raridade = b.dataset.colrar; qq('[data-colrar]').forEach(x => x.classList.toggle('is-on', x === b)); colAtualizarGrade(); });
   colAtualizarGrade();
   colLigarPainel();
   fit();
@@ -1853,6 +1880,7 @@ function colAtualizarGrade(){
   const grade = stage.querySelector('#col2grade'); if (!grade) return;
   const ks = colecaoFiltrada();
   grade.innerHTML = ks.length ? ks.map(colCardHTML).join('') : '<p class="col2__vazio">Nenhum personagem com esses filtros.</p>';
+  const cont = stage.querySelector('#col2conta'); if (cont) cont.textContent = ks.length + ' deuses';   // §346: contagem (como no montador)
   // tocar num cartão SELECIONA; tocar no já-selecionado DESSELECIONA (volta ao repouso). Sem re-render da grade.
   // §321 — tocar num cartão ABRE DIRETO a sobreposição do kit (sem passar pelo "Ver detalhes"); o painel da
   // esquerda acompanha (seleção), para quando a sobreposição fechar. (Antes só selecionava.)
