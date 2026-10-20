@@ -364,7 +364,7 @@ function pipsDetalhe(cost){
     out.push(k==='livre'?`<span class="cost__pip cost__pip--empty" style="${orbeBg('livre')}"></span>`
       :`<span class="cost__pip" style="${orbeBg(k)}"></span>`);}
   return out.length?`<div class="cost">${out.join('')}</div>`
-    :`<div class="cost"><span class="cost__none">SEM CUSTO</span></div>`;
+    :`<div class="cost"><span class="cost__none cost__gratis">GRÁTIS</span></div>`;   // §340: custo vazio → "GRÁTIS" (verde), não mais "SEM CUSTO"
 }
 // converte a string de custo do kits.json ("2 Tempestade + 1 livre") em {Tempestade:2, livre:1}
 function custoParaCost(str){

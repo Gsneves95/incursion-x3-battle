@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §340 · Habilidade GRÁTIS mostra "GRÁTIS" onde aparece o custo (em todo o jogo)
+
+Achado do dono: as habilidades de custo vazio (os 26 básicos grátis do §338 e qualquer outra com `cost:{}`) não
+mostravam NADA no lugar do custo — o jogador não sabia se era grátis ou se faltou informação. Agora, em TODO desenhador
+de custo, custo vazio mostra o indicador **"GRÁTIS"** (verde-pronta `#4BE38A`, Rajdhani negrito, caixa alta), no mesmo
+lugar e formato das orbes — dentro da mesma pílula escura quando há pílula.
+
+**Desenhadores de custo (grep) e o que cada um passou a fazer:**
+- `base.js · pipsMini` (classe `skill__cost`): já emitia "GRÁTIS" para custo vazio — mantido (cor ajustada p/ verde). É
+  código legado sem chamador hoje.
+- `base.js · pipsDetalhe` (classe `cost__pip`/`cost__none`): custo vazio passou de **"SEM CUSTO"** (cinza) para
+  **"GRÁTIS"** (verde, classe `cost__gratis`). É o desenhador de FORA da batalha — usado por `selecao.js` (seleção de
+  kit), `home.js · kitLinhaHTML` (Coleção/Campanha), `home.js · colVerDetalheHTML` (ficha/rota 'deus') e `home.js`
+  (Níveis). Composição e Provações reusam essas mesmas linhas.
+- `painel.js · _custoPips` (painel de baixo da batalha, coluna CUSTO): custo vazio passou de **"livre"** (cinza) para
+  **"Grátis"** (verde, ~fonte do valor da RECARGA ao lado).
+- `campo.js · btCustoPips` (botão de habilidade na batalha): custo vazio, que antes não mostrava NADA, agora mostra a
+  pílula com **"GRÁTIS"** (≥16px no desenho de 1846×852).
+- `base.js · miniPips` (classe `nrgmini`): é a reserva de energia de um LADO (quantas orbes o lado tem), não o custo de
+  uma habilidade — por isso o "zero" ali continua sendo um traço, não "GRÁTIS" (não seria verdade chamar de grátis o
+  bolso vazio de um jogador).
+
+**Textos (item 3):** o "Grátis." foi tirado do começo do efeito de tyr, ganesha e brigid em `data/deuses/*.json` (e, por
+consistência, do `efeito` espelho em `data/kits.json`) — o indicador agora cobre todos, o texto não precisa repetir. A
+cadeia de verdade compara NÚMEROS extraídos da prosa, não o prefixo, então continua verde.
+
+**Regras intactas (item 4):** o motor, a IA, o "usável/inusável" (§336: grátis nunca apaga por falta de energia) e a
+instrução do painel seguem iguais. Confirmado por teste: um básico grátis com 0 de energia continua usável e o painel
+NUNCA diz "Energia insuficiente" para ele.
+
+---
+
 ## §339b · Três ajustes na tela DESAFIOS (banner que vazava + alvos de toque mínimos)
 
 Três ajustes pedidos pelo dono sobre o §339 (vistos na 339-estados-1846x852):

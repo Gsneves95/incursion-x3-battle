@@ -385,7 +385,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .skill__cost i.free{background:transparent;border-color:#9a8fc0}
 .skill__cost i.miss{background:transparent!important;border-color:var(--danger);box-shadow:0 0 4px rgba(255,59,59,.9)}
 .skill__cost.gratis{padding:1px 5px}
-.skill__cost.gratis span{font-size:8px;font-weight:700;letter-spacing:.06em;color:var(--ink-mute)}
+.skill__cost.gratis span{font-size:8px;font-weight:700;letter-spacing:.06em;color:#4BE38A}  /* §340: GRÁTIS em verde-pronta */
 
 /* ---------- PAINEL de leitura: 4 estados + histórico (§214) ---------- */
 .panel__body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:8px 9px}
@@ -532,6 +532,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .cost__pip{width:9px;height:9px;border:1px solid #0a0912;border-radius:50%}
 .cost__pip--empty{background:#1a1730;border-color:#4a3f72}
 .cost__none{font-size:9.5px;font-weight:700;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase}
+.cost__gratis{color:#4BE38A}  /* §340: indicador GRÁTIS em verde-pronta (mesmo verde do "pronta" do painel) */
 .kw{font-weight:700}
 .kw--ctrl{color:#c58bff}   /* controle/Mental */
 .kw--dot{color:#ff9a5c}    /* dano contínuo/Aflição */
@@ -1720,6 +1721,7 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .col2ov__chip{display:inline-flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.05em;
   color:var(--ink-dim);background:rgba(20,16,40,.7);border:1px solid #4a4368;border-radius:7px;padding:3px 9px}
 .col2ov__chip .cost{gap:3px} .col2ov__chip .cost__none{font-size:9.5px;color:var(--ink-dim)}
+.col2ov__chip .cost__gratis{color:#4BE38A}  /* §340: o GRÁTIS fica verde mesmo dentro do chip da ficha */
 .col2ov__chip--cd{color:var(--gold-text)}
 .col2ov__chip--pas{color:#b6a8dc;letter-spacing:.02em}
 .col2ov__deftxt{flex:1 1 auto;min-height:0;overflow-y:auto;font-weight:500;font-size:12.5px;line-height:1.42;color:var(--ink-dim);scrollbar-width:thin}

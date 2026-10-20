@@ -83,16 +83,16 @@ console.log('== 1. seleção: grade de coleção ==');
   ok(w.eval('pick[0]').length === 0, 'abrir o kit de um bloqueado não adiciona');
   tap($('#kitclose')); ok(!$('#kpanel'), 'Fechar deveria fechar o painel');
 
-  // §287 — o painel da SELEÇÃO lê data/deuses (a MESMA fonte da Coleção), NÃO mais o kits.efeito.
-  // tyr é inicial e diverge entre as fontes: kits.efeito "12 de dano a 1 inimigo." × deuses.desc "Grátis. 12 de dano."
+  // §287 — o painel da SELEÇÃO lê data/deuses (a MESMA fonte da Coleção), NÃO um catálogo à parte.
+  // §340 — tyr tem básico GRÁTIS: o painel mostra o indicador "GRÁTIS" no lugar do custo, e o "Grátis." saiu do texto.
   {
     const alvo = 'tyr';
     w.eval(`previewPk("${alvo}");renderPick()`);
     const descBas = w.eval(`(GODS['${alvo}'].ab.find(a=>a.slot==='basico')||{}).desc`);
     const linhas = $$('#kpanel .krow__t').map(e => e.textContent.trim());
     ok(linhas.includes(descBas), 'seleção: o básico mostra o deuses.desc (lê data/deuses)');
-    ok(/Grátis/.test($('#kpanel').textContent) && !/a 1 inimigo/.test($('#kpanel').textContent),
-      'seleção: mostra a redação do data/deuses, NÃO a do kits.efeito');
+    ok(/GRÁTIS/.test($('#kpanel').textContent) && !/^Grátis\./.test(descBas),
+      'seleção: o básico grátis mostra o indicador GRÁTIS (§340), sem "Grátis." no texto do efeito');
     // a MESMA linha que a Coleção — a sobreposição (home.js, §288) abre no básico e lê o mesmo GODS[k].ab[].desc
     const ov = new w.DOMParser().parseFromString(w.eval(`colVerSel='basico'; colOverlayHTML("${alvo}")`), 'text/html');
     const efCol = ((ov.querySelector('.col2ov__deftxt') || {}).textContent || '').trim();

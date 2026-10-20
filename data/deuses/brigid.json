@@ -33,7 +33,7 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "Grátis. 6 de dano + Queimadura (4/turno por 2 turnos).",
+      "desc": "6 de dano + Queimadura (4/turno por 2 turnos).",
       "fx": [
         {
           "t": "dmg",
@@ -56,7 +56,7 @@
               "para": 7
             }
           ],
-          "desc": "Grátis. 7 de dano + Queimadura (4/turno por 2 turnos)."
+          "desc": "7 de dano + Queimadura (4/turno por 2 turnos)."
         },
         {
           "nv": 3,
@@ -67,7 +67,7 @@
               "para": 5
             }
           ],
-          "desc": "Grátis. 7 de dano + Queimadura (5/turno por 2 turnos)."
+          "desc": "7 de dano + Queimadura (5/turno por 2 turnos)."
         },
         {
           "nv": 4,
@@ -78,7 +78,7 @@
               "para": 3
             }
           ],
-          "desc": "Grátis. 7 de dano + Queimadura (5/turno por 3 turnos)."
+          "desc": "7 de dano + Queimadura (5/turno por 3 turnos)."
         }
       ]
     },

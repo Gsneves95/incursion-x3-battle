@@ -129,8 +129,10 @@ function btCustoPips(cost){
   const pips=[];
   if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(orbe(k,p)); }
     for(let i=0;i<(cost.livre||0);i++) pips.push(orbe('livre',p)); }
-  if(!pips.length) return '';
-  return `<div style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);height:${C.skill.pipPill||22}px;padding:0 6px;display:flex;align-items:center;gap:4px;border-radius:11px;background:rgba(4,6,12,.85);pointer-events:none">${pips.join('')}</div>`;
+  const pill=`position:absolute;left:50%;bottom:4px;transform:translateX(-50%);height:${C.skill.pipPill||22}px;padding:0 6px;display:flex;align-items:center;gap:4px;border-radius:11px;background:rgba(4,6,12,.85);pointer-events:none`;
+  // §340: custo vazio → "GRÁTIS" (verde-pronta, Rajdhani negrito, caixa alta, ≥16px) na MESMA pílula escura das orbes
+  if(!pips.length) return `<div style="${pill}"><span style="font-size:16px;font-weight:700;letter-spacing:.07em;color:#4BE38A">GRÁTIS</span></div>`;
+  return `<div style="${pill}">${pips.join('')}</div>`;
 }
 /* ---------- botão de habilidade 108×108 (arte cheia/disco §332/§334; cd; usada; custo; ✓ armada) ---------- */
 function btSkill(u, a, meu){

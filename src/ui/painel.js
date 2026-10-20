@@ -9,14 +9,16 @@ const CAT_PILL = { bom:{txt:'BOM',cor:'#6fe6a0'}, ruim:{txt:'RUIM',cor:'#ff6b86'
 function _P(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{}; }
 function _PC(){ return (typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.cor)||{}; }
 
-// bolinhas de custo (tamanho em px; livre em cinza). Sem custo → "livre".
+// bolinhas de custo (tamanho em px; livre em cinza). §340: custo vazio → "Grátis"
+// (verde-pronta #4BE38A, Rajdhani negrito, ~fonte do valor da RECARGA ao lado) no lugar das orbes.
 function _custoPips(cost, sz){
   sz=sz||27;
-  if(!cost || !Object.keys(cost).length) return `<span style="color:#9AA4B8">livre</span>`;
+  const gratis=`<span style="font-size:${Math.round(sz*1.1)}px;font-weight:700;letter-spacing:.03em;color:#4BE38A">Grátis</span>`;
+  if(!cost || !Object.keys(cost).length) return gratis;
   const out=[];
   for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) out.push(orbe(k,sz)); }
   for(let i=0;i<(cost.livre||0);i++) out.push(orbe('livre',sz));
-  return out.length ? `<div style="display:flex;gap:10px">${out.join('')}</div>` : `<span style="color:#9AA4B8">livre</span>`;
+  return out.length ? `<div style="display:flex;gap:10px">${out.join('')}</div>` : gratis;
 }
 
 // o DEUS em foco (replicado aqui p/ não cruzar ui→ui; `todas`/`_catPartida` são globais isentos).

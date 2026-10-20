@@ -30,7 +30,7 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "Grátis. 10 de dano.",
+      "desc": "10 de dano.",
       "fx": [
         {
           "t": "dmg",
@@ -47,7 +47,7 @@
               "para": 11
             }
           ],
-          "desc": "Grátis. 11 de dano."
+          "desc": "11 de dano."
         },
         {
           "nv": 3,
@@ -58,7 +58,7 @@
               "para": 12
             }
           ],
-          "desc": "Grátis. 12 de dano."
+          "desc": "12 de dano."
         },
         {
           "nv": 4,
@@ -76,7 +76,7 @@
               }
             }
           ],
-          "desc": "Grátis. 12 de dano; ele causa 2 menos de dano por 1 turno."
+          "desc": "12 de dano; ele causa 2 menos de dano por 1 turno."
         }
       ]
     },

@@ -28,7 +28,7 @@
       "cost": {},
       "cd": 0,
       "alvo": "inimigo",
-      "desc": "Grátis. 12 de dano.",
+      "desc": "12 de dano.",
       "fx": [
         {
           "t": "dmg",
@@ -45,7 +45,7 @@
               "para": 13
             }
           ],
-          "desc": "Grátis. 13 de dano."
+          "desc": "13 de dano."
         },
         {
           "nv": 3,
@@ -56,7 +56,7 @@
               "para": 14
             }
           ],
-          "desc": "Grátis. 14 de dano."
+          "desc": "14 de dano."
         },
         {
           "nv": 4,
@@ -75,7 +75,7 @@
               }
             }
           ],
-          "desc": "Grátis. 14 de dano; Tyr recebe 5 de redução por 1 turno."
+          "desc": "14 de dano; Tyr recebe 5 de redução por 1 turno."
         }
       ]
     },

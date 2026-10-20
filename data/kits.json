@@ -831,7 +831,7 @@
     "basico": {
       "nome": "Espada de Uma Mão",
       "custo": "—",
-      "efeito": "Grátis. 12 de dano.",
+      "efeito": "12 de dano.",
       "recarga": 0
     },
     "habilidade": {
@@ -2977,7 +2977,7 @@
     "basico": {
       "nome": "Fagulha da Forja",
       "custo": "—",
-      "efeito": "Grátis. 6 de dano + Queimadura (4/turno por 2 turnos).",
+      "efeito": "6 de dano + Queimadura (4/turno por 2 turnos).",
       "recarga": 0
     },
     "habilidade": {

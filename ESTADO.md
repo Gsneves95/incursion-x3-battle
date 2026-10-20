@@ -2,6 +2,20 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §340 · Habilidade GRÁTIS mostra "GRÁTIS" onde aparece o custo
+- Custo vazio (`cost:{}`) agora mostra o indicador **GRÁTIS** (verde-pronta #4BE38A, Rajdhani negrito, caixa alta) em
+  TODO desenhador de custo, no mesmo lugar/formato das orbes: `campo.js btCustoPips` (botão de batalha, pílula, ≥16px),
+  `painel.js _custoPips` (coluna CUSTO → "Grátis", ~fonte da recarga), `base.js pipsDetalhe` (fora da batalha: Coleção/
+  kit, ficha, Níveis, seleção, Composição/Provações — era "SEM CUSTO", virou "GRÁTIS"/`cost__gratis`).
+- `base.js miniPips` (`nrgmini`) NÃO mudou: é a reserva de energia de um LADO, não o custo de uma habilidade.
+- Texto: tirado o "Grátis." do começo do efeito de tyr/ganesha/brigid em `data/deuses` (e do espelho em `data/kits.json`).
+  A cadeia compara números, não o prefixo → verde.
+- Regras intactas (§336): grátis com 0 de energia segue usável; o painel nunca diz "Energia insuficiente" p/ grátis.
+- **Provas:** `tests/gratis_custo.test.js` (unidade dos 3 desenhadores; varredura — as 26 de custo vazio viram GRÁTIS no
+  botão; fora-da-batalha nas 4 telas; batalha botão+painel; regra §336; textos; Chromium: GRÁTIS cabe na pílula @1846 e
+  @780, fonte ≥16px @1846). `interface.test.js` ajustado (o discriminador deixou de ser o "Grátis." do texto). Capturas
+  `340-*` (batalha, painel, Coleção, batalha @780).
+
 ## ★ §339b · Ajustes na tela DESAFIOS (banner que vazava + toque mínimo)
 - **Banner da semana** não vaza mais: o `<section class="df-sem psem">` herdava `width:100%` do `.psem` antigo e esticava
   a caixa além de 1846 (JOGAR cortado). Corrigido com `width:auto` em `.df-sem` + `id` do banner em `flex:1`. Agora termina

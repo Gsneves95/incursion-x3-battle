@@ -1570,7 +1570,7 @@ function colVerDetalheHTML(k, g, sel){
   const s = sks.find(x => x.slot === sel && x.a) || sks.find(x => x.a);
   if (!s || !s.a) return `<div class="col2ov__detvazio">Kit em produção.</div>`;
   const a = s.a;
-  // custo/recarga com o vocabulário QUE JÁ EXISTE: `pipsDetalhe` diz SEM CUSTO; a linha do kit diz "sem recarga"
+  // custo/recarga com o vocabulário QUE JÁ EXISTE: `pipsDetalhe` diz GRÁTIS (§340); a linha do kit diz "sem recarga"
   // (§288: seguir o que existe, não inventar). A passiva não gasta a ação → sem chip de custo/recarga.
   const meta = s.slot === 'passiva'
     ? `<span class="col2ov__chip col2ov__chip--pas">passiva · não gasta a ação</span>`
