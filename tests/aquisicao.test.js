@@ -144,9 +144,12 @@ console.log('== 6. §318b-3 — DESAFIO POR DEUS: a compra é do SERVIDOR; só d
   // DESCONECTADO: clicar NÃO gasta nada local e NÃO entra na batalha (recusa, nunca em silêncio). Prova que o
   // gastador local do §318b-2 (comprarDesafio → debitar(perfil)) morreu: o saldo LOCAL fantasma não é tocado.
   w.eval("contaAtual=null; perfil.moedas={gema:0,essencia:100}; ir('desafios'); render();");
-  $('[data-comprar="zeus"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(w.eval('perfil.moedas.essencia') === 100, 'desconectado: clicar NÃO debita Essência local (o gastador local morreu)');
-  ok(w.eval("rotaAtual()") === 'desafios', 'desconectado: clicar NÃO entra na batalha (recusa com toast, não em silêncio)');
+  // §339: offline, o hub NÃO oferece comprar (a Essência é do servidor) — mostra o estado travado "Onde ganhar
+  // Essência?". Sem botão de compra, clicar é impossível: o gastador local permanece morto por construção.
+  ok(!$('[data-comprar="zeus"]'), 'desconectado: não há botão de compra no hub (a Essência é do servidor)');
+  const compraOff = $('[data-comprar="zeus"]'); if (compraOff) compraOff.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(w.eval('perfil.moedas.essencia') === 100, 'desconectado: nada debita Essência local (o gastador local morreu)');
+  ok(w.eval("rotaAtual()") === 'desafios', 'desconectado: NÃO entra na batalha (recusa, não em silêncio)');
   // a batalha paga do desafio POR DEUS (o downstream do ok do servidor) inicia marcada como paga.
   w.eval("iniciarDesafioDeus('zeus');");
   ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!prova && prova.desafioDeus==="zeus"'), 'iniciarDesafioDeus entra na batalha do desafio POR DEUS (pago)');
@@ -162,11 +165,11 @@ console.log('== 7. §245 — cobertura 100%: os 100 têm pergaminho, nenhum gen�
   const fx = n => n == null ? null : n < 5000 ? 'Fácil' : n < 50000 ? 'Médio' : n < 200000 ? 'Difícil' : 'Épico';
   const errosFaixa = w.eval('PROVACOES').filter(p => p.faixa !== fx(p.nos));
   ok(errosFaixa.length === 0, `a faixa injetada bate a derivada dos nós (${errosFaixa.length} divergências)`);
-  // a TELA "Desafios": título Desafios, seção DESAFIOS POR DEUS, uma linha por deus POSSUÍDO
+  // a TELA "Desafios" (§339, modelo do dono): título DESAFIOS, uma grade de cartões, um por deus POSSUÍDO
   w.eval("ir('desafios'); render();");
-  ok(/Desafios/.test($('.tela__titulo').textContent), 'a tela se chama "Desafios"');
-  ok(/DESAFIOS POR DEUS/.test($('#provrol').textContent), 'a seção é "Desafios por deus"');
-  ok($$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), `uma linha por deus possuído (${$$('.dsf').length})`);
+  ok(/DESAFIOS/i.test($('.df-titulo').textContent), 'a tela se chama "Desafios"');
+  ok(!!$('#dfgrade'), 'a grade de desafios por deus existe');
+  ok($$('.df-card').length === w.eval('Object.keys(perfil.deuses).length'), `um cartão por deus possuído (${$$('.df-card').length})`);
 }
 
 console.log('== 8. Pergaminho vencido NÃO libera deus (coleção = só gacha, §212) ==');
@@ -215,9 +218,9 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   w.eval("ir('provacoes'); render();");
   ok(/Prova/i.test(($('.pv__titulo')||$('.tela__titulo')).textContent) && /prova/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre a tela de Provações (conta no PvP)');
   ok($$('.prow[data-prova]').length === 0, 'a tela de Provações NÃO lista pergaminhos');
-  // "Desafios" → o hub dos DESAFIOS POR DEUS (§245): uma linha por deus possuído
+  // "Desafios" → o hub dos DESAFIOS POR DEUS (§245/§339): um cartão por deus possuído na grade
   w.eval("ir('desafios'); render();");
-  ok(/Desafios/.test($('.tela__titulo').textContent) && $$('.dsf').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (uma linha por deus possuído)');
+  ok(/DESAFIOS/i.test($('.df-titulo').textContent) && $$('.df-card').length === w.eval('Object.keys(perfil.deuses).length'), 'Desafios abre o hub dos desafios por deus (um cartão por deus possuído)');
   // §306: a home é MAPA — a ilha Desafios tem seu ícone (arquivo) e NAVEGA (não é "em breve").
   w.eval("ir('home',{},{substituir:true}); render();");
   const cd = $('.ilha[data-dest="desafios"]');

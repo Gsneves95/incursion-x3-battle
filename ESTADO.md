@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §339 · Tela DESAFIOS no modelo do dono (tela fixa 1846×852)
+- `renderProvacoes` reconstruída como tela fixa 1846×852 escalada (fit() ganhou o ramo `desafios`/`#desafios`); só a
+  grade de deuses rola. Cabeçalho (INÍCIO/título/ESSÊNCIA do servidor/MESTRES X/Y), banner da semana (Termina em = virada
+  segunda 00:00 UTC), composição (→composicao), linha de regras + "?" (painel de ajuda), filtros+ordenar (lembrados),
+  grade de cartões com a ORBE do elemento (§337) e barra 5/15/30. 7 estados (a–g) com os handlers de hoje; toast() criado.
+  build/#conta somem (`body.emdesafios`), seguem na home/menu. (a) e (b) são exclusivos online (saldo único).
+- **Provas:** `desafios_tela.test.js` (jsdom: estados a–g + handlers + sem-conexão + filtros + 3 ordens + "Termina em";
+  Chromium: caixas @1846 tol.2px, @780 sem corte). `desafios.test.js` migrado (saldo no cartão ESSÊNCIA). Capturas `339-*`.
+  NÃO mudou regras/economia/servidor/maestria/Composição/outras telas.
+
 ## ★ §338 · Básicos grátis: MANTIDOS (3 variantes medidas e reprovadas)
 - Os 26 básicos grátis valem 56,9% vs 47,6% dos demais (vantagem moderada, ninguém >65% na base). Medidas e reprovadas:
   "1 livre" (26→40,2; 8 abaixo de 35; 11 acima de 65); A "grátis+recarga 1" (26→56,7; efeito nulo; Perseu 66,6/Curupira

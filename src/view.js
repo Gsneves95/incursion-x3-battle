@@ -260,6 +260,9 @@ function voltarNativo(){
   // §284/§240: a SOBREPOSIÇÃO de kit da Coleção fecha ANTES de sair da tela — cirurgicamente (colFecharVer
   // remove o nó e des-inerta a base), preservando seleção e rolagem da grade. Só depois vem o voltar genérico.
   if(typeof colVer!=='undefined'&&colVer&&typeof colFecharVer==='function'){ colFecharVer(); return; }
+  // §339: na tela DESAFIOS, o voltar do Android fecha primeiro o painel "?" e, depois, a confirmação de desistência.
+  if(typeof desafioAjuda!=='undefined'&&desafioAjuda){ desafioAjuda=false; render(); return; }
+  if(typeof desafioDesistindo!=='undefined'&&desafioDesistindo){ desafioDesistindo=null; render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

@@ -65,7 +65,8 @@ console.log('== 4. o banner joga a semanal; o placar grava sob chave SEMANAL (se
   w.eval("ir('desafios'); render();");
   const b = $('.psem[data-semanal]');
   ok(!!b && /DESAFIO DA SEMANA/.test(b.textContent), 'o banner da semana aparece no topo da lista');
-  b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  // §339: o banner é um card; o JOGAR é um botão próprio (iniciarSemanal)
+  $('[data-semanal-jogar]').dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   w.eval("vsCPU=false; pararRelogio();");
   ok(w.eval("rotaAtual()") === 'batalha' && w.eval('!!(prova&&prova.semanal)'), 'tocar o banner entra na Provação semanal');
   const sk = w.eval('prova.scoreKey');

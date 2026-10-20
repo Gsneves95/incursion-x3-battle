@@ -183,13 +183,18 @@ function fit(){
   // canvas (#03050B) nas sobras — substitui o sistema de 'u' só na batalha. O #stage vira a moldura da canvas (sem
   // borda/arredondado) e o #batalha se escala sozinho dentro dele.
   const emBatalha = (typeof rotaAtual === 'function' && rotaAtual() === 'batalha') && document.getElementById('batalha');
-  try{ stage.classList.toggle('bt2', !!emBatalha); }catch(e){}
-  if(emBatalha){
+  // §339: a tela DESAFIOS também é uma TELA FIXA de 1846×852 escalada (igual à batalha §335); só a grade de deuses rola
+  // por dentro. `#desafios` é a canvas; o `#stage` vira a moldura (fundo #03050B nas sobras).
+  const emDesafios = (typeof rotaAtual === 'function' && rotaAtual() === 'desafios') && document.getElementById('desafios');
+  const fixa = emBatalha || emDesafios;
+  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios);
+    document.body.classList.toggle('emdesafios', !!emDesafios); }catch(e){}   // §339: carimbo build + botão conta somem desta tela (vivem na home/menu)
+  if(fixa){
     const s = Math.min(u.w / 1846, u.h / 852);
     ultimaEscala = s; ultimaEscalaBatalha = s; ultimaLarguraDesign = 1846;
     stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';
     stage.style.transform = 'translate(-50%,-50%)';
-    emBatalha.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+    fixa.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
     renderDiag();
     return;
   }

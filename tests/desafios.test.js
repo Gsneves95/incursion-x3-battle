@@ -88,16 +88,18 @@ console.log('\n== a MAESTRIA (cosmética, local) ao cumprir + a moldura no MESTR
 console.log('\n== a TELA dos Desafios mostra o saldo do SERVIDOR (moedaServidor), "—" desconectado ==');
 {
   const { w, $ } = sessao();
-  // CONECTADO: "você tem <essência do servidor>"
+  // CONECTADO: o cartão ESSÊNCIA mostra o saldo do servidor (§339: saiu do cabeçalho do acervo p/ o cartão do topo)
   w.eval(conta(77, {}));
   w.eval("ir('desafios'); render();");
-  const cab = $('.psec__cab--acervo .psec__n');
-  ok(!!cab && new RegExp(CFG.custoEssencia + ' ✦').test(cab.textContent) && /você tem 77/.test(cab.textContent), `cabeçalho: "${CFG.custoEssencia} ✦ · você tem 77" (saldo do servidor)`);
-  // DESCONECTADO: "você tem —" (nunca um saldo local fantasma)
+  const ess = $('[data-ess]');
+  ok(!!ess && ess.textContent.trim() === '77', 'o cartão ESSÊNCIA mostra o saldo do servidor (77)');
+  const regras = $('.df-regras');
+  ok(!!regras && new RegExp(CFG.custoEssencia + ' ✦').test(regras.textContent), `a linha de regras mostra "Custa ${CFG.custoEssencia} ✦"`);
+  // DESCONECTADO: "—" (nunca um saldo local fantasma)
   w.eval("contaAtual=null; perfil.moedas={gema:9,essencia:555};");
   w.eval("ir('desafios'); render();");
-  const cab2 = $('.psec__cab--acervo .psec__n');
-  ok(!!cab2 && /você tem —/.test(cab2.textContent) && !/555/.test(cab2.textContent), 'desconectado: "você tem —" (não o 555 local fantasma)');
+  const ess2 = $('[data-ess]');
+  ok(!!ess2 && ess2.textContent.trim() === '—' && !/555/.test(ess2.textContent), 'desconectado: ESSÊNCIA "—" (não o 555 local fantasma)');
 }
 
 console.log('\n== o DESAFIO DA SEMANA dá Gema PELO SERVIDOR (envia replay, não credita local) ==');

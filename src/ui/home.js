@@ -794,73 +794,203 @@ function linhaProvHTML(p){
   </button></li>`;
 }
 
-// §245 — a TELA "Desafios": o DESAFIO DA SEMANA (dá Gema), os Desafios de Composição, e os DESAFIOS POR
-// DEUS (comprados com Essência → maestria; a moldura sai no Mestre). Só de deus que você TEM.
+// ===================================================================
+// §339 — TELA DESAFIOS no modelo do dono: TELA FIXA de 1846×852 escalada (fit() §335), só a grade de deuses rola.
+// Todo o comportamento de hoje se mantém (os handlers de compra/jogar/desistir/semanal/composição não mudam).
+// ===================================================================
 let desafioDesistindo = null;   // deus com a desistência em confirmação (inline, sem modal)
-// UMA linha de desafio por deus, com a ação conforme o estado (comprar / jogar+desistir / recarga / mestre).
-function desafioRowHTML(k){
-  const g = HRM[k] || { nome: k, elem: 'Umbra' };
-  const nv = nivelMaestria(k), v = maestriaDe(k).vitorias || 0, alvo = MAESTRIA_LIMIAR.mestre;
-  const e = desafioEstado(k), cfg = DESAFIO_CFG();
-  let acao;
-  if (nv === 4) acao = `<span class="dsf__mestre" title="dominado — a moldura saiu">★ Mestre</span>`;
-  else if (desafioDesistindo === k) acao = `<span class="dsf__conf">desistir?<button class="b b--danger b--sm" data-desiste-ok="${k}">Sim</button><button class="b b--quiet b--sm" data-desiste-no="1">Não</button></span>`;
-  else if (e.estado === 'ativo') acao = `<span class="dsf__acts"><button class="b b--primary b--sm" data-jogar="${k}">Jogar</button><button class="b b--quiet b--sm" data-desistir="${k}">Desistir</button></span>`;
-  else if (e.estado === 'recarga') acao = `<span class="dsf__recarga" title="recarga após cumprir/desistir (8h)">↻ ${fmtRecarga(e.restaMs)}</span>`;
-  else { const pc = podeComprarDesafio(k); acao = `<button class="b b--sec b--sm" data-comprar="${k}" ${pc.ok ? '' : 'disabled'} title="${pc.ok ? 'pilote ' + H(g.nome) + ' até vencer' : H(pc.motivo)}">Comprar ${cfg.custoEssencia} ✦</button>`; }
-  return `<li class="dsfli"><div class="dsf dsf--m${nv}">
-    <span class="dsf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span>
-    <span class="dsf__el dsf__el--orbe" style="${orbeBg(g.elem)}"></span>
-    <span class="dsf__id">
-      <span class="dsf__n">${H(g.nome)}</span>
-      <span class="dsf__maes m--${nv}">${MAESTRIA_NOME[nv]} · <b>${Math.min(v, alvo)}</b>/${alvo} p/ Mestre</span>
-    </span>
-    <span class="dsf__pe">${acao}</span>
-  </div></li>`;
+let desafioFiltro = 'todos';    // filtro lembrado enquanto o app está aberto (§339-5)
+let desafioOrdem = 'padrao';    // 'padrao' | 'nome' | 'maestria'
+let desafioAjuda = false;       // painel "?" aberto
+let _dfRecargaTimer = null;     // re-render periódico p/ o contador de recarga andar sem sair da tela
+
+// §339: tempo até a VIRADA DA SEMANA. A semana ISO vira na SEGUNDA 00:00 UTC (provaSemanalAtual usa getUTC*/Date.UTC).
+function _msAteViradaSemana(){
+  const agora = new Date();
+  const dia = agora.getUTCDay() || 7;                         // segunda=1 … domingo=7
+  const prox = new Date(Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate() + (8 - dia), 0, 0, 0, 0));
+  return Math.max(0, prox.getTime() - agora.getTime());
 }
+function fmtPrazoSemana(ms){
+  const h = Math.floor(ms / 3600000), d = Math.floor(h / 24);
+  if (d >= 1) return d + 'd ' + (h - d * 24) + 'h';
+  if (h >= 1) return h + 'h ' + Math.floor((ms % 3600000) / 60000) + 'm';
+  return Math.max(1, Math.floor(ms / 60000)) + 'm';
+}
+// §339-7: AVISO (toast) no visual do modelo — fundo escuro, linha/ícone vermelho, X p/ fechar; some sozinho.
+function toast(msg){
+  try{
+    const host = document.getElementById('desafios') || stage; if (!host) return;
+    const t = document.createElement('div'); t.className = 'df-toast';
+    t.innerHTML = `<span class="df-toast__ic">!</span><span class="df-toast__msg"></span><button class="df-toast__x" aria-label="fechar">✕</button>`;
+    t.querySelector('.df-toast__msg').textContent = String(msg || '');
+    const fechar = () => { try{ t.remove(); }catch(e){} };
+    t.querySelector('.df-toast__x').onclick = fechar;
+    host.appendChild(t); setTimeout(fechar, 4000);
+  }catch(e){}
+}
+
+// categoria do deus p/ filtro/ordem: mestre | ativo | recarga | disponivel
+function _dfCat(k){ if (nivelMaestria(k) === 4) return 'mestre'; const e = desafioEstado(k); return e.estado === 'ativo' ? 'ativo' : e.estado === 'recarga' ? 'recarga' : 'disponivel'; }
+function _dfContagens(meus){
+  const c = { todos: meus.length, disp: 0, andamento: 0, recarga: 0, mestres: 0 };
+  for (const k of meus){ const cat = _dfCat(k); if (cat === 'disponivel') c.disp++; else if (cat === 'ativo') c.andamento++; else if (cat === 'recarga') c.recarga++; else c.mestres++; }
+  return c;
+}
+function _dfOrdenar(meus){
+  const nome = k => (HRM[k] && HRM[k].nome) || k;
+  if (desafioOrdem === 'nome') return meus.slice().sort((a, b) => nome(a).localeCompare(nome(b), 'pt'));
+  if (desafioOrdem === 'maestria') return meus.slice().sort((a, b) => nivelMaestria(b) - nivelMaestria(a) || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0) || nome(a).localeCompare(nome(b), 'pt'));
+  // padrão: em andamento → recarga → disponíveis (mais perto do Mestre à frente) → Mestres
+  const rank = k => { const cat = _dfCat(k); return cat === 'ativo' ? 0 : cat === 'recarga' ? 1 : cat === 'disponivel' ? 2 : 4; };
+  return meus.slice().sort((a, b) => rank(a) - rank(b) || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0) || nome(a).localeCompare(nome(b), 'pt'));
+}
+const _ORDEM_ROT = { padrao: 'Padrão', nome: 'Nome', maestria: 'Maestria' };
+
+// §339-6: um CARTÃO horizontal por deus, com a ação conforme o estado (a–g).
+function _dfCardHTML(k){
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  const nv = nivelMaestria(k), v = maestriaDe(k).vitorias || 0, alvo = MAESTRIA_LIMIAR.mestre, cfg = DESAFIO_CFG();
+  const e = desafioEstado(k);
+  const frac = Math.max(0, Math.min(1, Math.min(v, alvo) / alvo));
+  const mestre = nv === 4;
+  const retr = `<span class="df-card__p${mestre ? ' df-card__p--mestre' : ''}">${slot('god-' + k, ini(g.nome), COR(g.elem), 40)}</span>`;
+  const marcas = [5, 15, 30].map(m => `<span class="df-bar__mk" style="left:${(m / alvo) * 100}%"></span>`).join('');
+  const rotulos = [5, 15, 30].map(m => `<span style="position:absolute;left:${(m / alvo) * 100}%;transform:translateX(-50%)">${m}</span>`).join('');
+  const barra = `<span class="df-bar"><span class="df-bar__fill" style="width:${frac * 100}%"></span>${marcas}</span><span class="df-bar__lab">${rotulos}</span>`;
+  let acao;
+  if (mestre) acao = `<span class="df-card__mestre">★ Mestre<small>Moldura conquistada</small></span>`;
+  else if (desafioComprando === k) acao = `<span class="df-card__comprando"><i class="df-spin"></i>Comprando…</span>`;
+  else if (desafioDesistindo === k) acao = `<span class="df-card__conf"><span class="df-card__conftxt">Desistir? A Essência não volta.</span><span class="df-card__confbs"><button class="dfb dfb--danger" data-desiste-ok="${k}">SIM</button><button class="dfb dfb--quiet" data-desiste-no="1">NÃO</button></span></span>`;
+  else if (e.estado === 'ativo') acao = `<span class="df-card__acts"><button class="dfb dfb--primary" data-jogar="${k}">JOGAR</button><button class="dfb dfb--quiet" data-desistir="${k}">Desistir</button></span>`;
+  else if (e.estado === 'recarga') acao = `<span class="df-card__recarga">⟳ Em recarga<small data-recarga="${k}">${fmtRecarga(e.restaMs)}</small></span>`;
+  else { const pc = podeComprarDesafio(k);
+    acao = pc.ok ? `<button class="dfb dfb--buy" data-comprar="${k}">COMPRAR ${cfg.custoEssencia} ✦</button>`
+      : `<span class="df-card__trava"><span class="df-card__motivo">${H(pc.motivo)}</span><button class="dfb dfb--ghost" data-ondeganhar="1">⌂ Onde ganhar Essência?</button></span>`; }
+  return `<div class="df-card df-card--m${nv}" data-godcard="${k}">
+    ${retr}
+    <span class="df-card__id">
+      <span class="df-card__top"><b class="df-card__n">${H(g.nome)}</b>${orbe(g.elem, 22)}</span>
+      <span class="df-card__maes">${MAESTRIA_NOME[nv]} <span class="df-card__dot">◆</span> ${Math.min(v, alvo)}/${alvo}</span>
+      ${barra}
+    </span>
+    <span class="df-card__pe">${acao}</span>
+  </div>`;
+}
+
 function renderProvacoes(){
   const meus = (perfil && perfil.deuses) ? Object.keys(perfil.deuses) : [];
   const cfg = DESAFIO_CFG();
-  // ordem: em andamento/recarga primeiro, depois compráveis (mais perto do Mestre à frente), Mestres no fim.
-  const rank = k => { const nv = nivelMaestria(k); if (nv === 4) return 4; const e = desafioEstado(k); return e.estado === 'ativo' ? 0 : e.estado === 'recarga' ? 1 : 2; };
-  const ord = meus.slice().sort((a, b) => rank(a) - rank(b)
-    || (maestriaDe(b).vitorias || 0) - (maestriaDe(a).vitorias || 0)
-    || ((HRM[a] && HRM[a].nome) || a).localeCompare((HRM[b] && HRM[b].nome) || b, 'pt'));
   const mestres = meus.filter(k => nivelMaestria(k) === 4).length;
-  // §318b-3 — a Essência dos Desafios é GASTA no SERVIDOR (comprarPergaminho). Esta tela mostra o saldo do
-  // servidor (moedaServidor), como as outras barras da conta — "—" quando offline. Sem leitor local de moedas.
   const _mo = moedaServidor();
-  const ess = _mo.online ? _mo.essencia : '—';
+  const essTxt = fmtMoeda(_mo.online, _mo.essencia);
+  const cont = _dfContagens(meus);
+  // filtro → ordem
+  const porFiltro = { todos: () => true, disp: k => _dfCat(k) === 'disponivel', andamento: k => _dfCat(k) === 'ativo', recarga: k => _dfCat(k) === 'recarga', mestres: k => _dfCat(k) === 'mestre' };
+  const lista = _dfOrdenar(meus.filter(porFiltro[desafioFiltro] || porFiltro.todos));
 
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">Desafios</h1>
-      <span class="tela__cont">${mestres}/${meus.length} ★</span>
-    </header>
-    <div class="tela__rol" id="provrol">
-      ${bannerSemanalHTML()}
-      <button class="pdesafios" data-desafios="1"><span>⚔ Desafios de Composição</span><span class="pdesafios__go">›</span></button>
-      <div class="psec__cab psec__cab--acervo"><h2>DESAFIOS POR DEUS</h2><span class="psec__n">${cfg.custoEssencia} ✦ · você tem ${ess}</span></div>
-      <p class="psec__nota">Escolha um deus que você tem, compre com Essência e pilote-o até vencer: cada desafio dá <b>${cfg.maestriaPorVitoria}</b> de maestria (a <b>moldura</b> sai no Mestre). Um por deus por vez; quantos deuses quiser ao mesmo tempo. Perdeu? Repete de graça. Recarga de ${cfg.recargaHoras}h ao cumprir ou desistir.</p>
-      <ul class="dsflist">${ord.map(desafioRowHTML).join('')}</ul>
-    </div>
-  </div>
+  // --- DESAFIO DA SEMANA (dados do jogo; visual do modelo) ---
+  const ps = provaSemanalAtual();
+  let bannerHTML = '';
+  if (ps){
+    const gs = HRM[ps.key] || { nome: ps.key, elem: 'Umbra' };
+    const feito = !!(perfil && perfil.provacoes && perfil.provacoes[ps.scoreKey]);
+    const gema = ((typeof ECONOMIA !== 'undefined' && ECONOMIA.semanal && ECONOMIA.semanal.recompensa && ECONOMIA.semanal.recompensa.gema)) || 0;
+    const minis = (ps.inimigos || []).slice(0, 3).map(ik => { const ig = HRM[ik] || { nome: ik, elem: 'Umbra' };
+      return `<span class="df-sem__foe"><span class="df-sem__foep">${slot('god-' + ik, ini(ig.nome), COR(ig.elem), 18)}</span><span class="df-sem__foen">${H(ig.nome)}</span></span>`; }).join('');
+    bannerHTML = `<section class="df-sem psem" data-semanal="1">
+      <span class="df-sem__art">${slot('god-' + ps.key, ini(gs.nome), COR(gs.elem), 48)}</span>
+      <span class="df-sem__id">
+        <span class="df-sem__rot">DESAFIO DA SEMANA <b>#${ps.semanaISO}</b></span>
+        <span class="df-sem__tit cin">DESAFIO DE ${H((gs.nome || '').toUpperCase())}</span>
+        <span class="df-sem__obj">Mantenha ${H(gs.nome)} de pé em ${ps.deadline} turnos.</span>
+      </span>
+      <span class="df-sem__foes"><span class="df-sem__contra">Contra:</span>${minis}</span>
+      <span class="df-sem__rec">
+        <span class="df-sem__reclab">RECOMPENSA</span>
+        <span class="df-sem__recval">${feito ? '✓ Gema recebida' : (gema ? `<span class="df-gem">◈</span> ${gema} de Gema` : 'grátis')}</span>
+        <span class="df-sem__prazo">⌛ Termina em <b>${fmtPrazoSemana(_msAteViradaSemana())}</b></span>
+      </span>
+      <button class="dfb dfb--jogar" data-semanal-jogar="1">JOGAR</button>
+    </section>`;
+  }
+
+  // --- barra de regras (valores de DESAFIO_CFG, nunca fixos) ---
+  const regras = `<div class="df-regras">
+    <span><span class="df-gem">◈</span> Custa ${cfg.custoEssencia} ✦ de Essência</span>
+    <span>⟲ +${cfg.maestriaPorVitoria} de maestria por vitória <small>(Mestre aos ${MAESTRIA_LIMIAR.mestre} = moldura)</small></span>
+    <span>↻ Recarga de ${cfg.recargaHoras} h após comprar</span>
+    <span>∞ Perdeu? Repete de graça</span>
+    <span>⧉ Um desafio por deus de cada vez</span>
+    <button class="df-regras__q" data-ajuda="1" aria-label="ajuda">?</button>
   </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  const bs = stage.querySelector('.psem[data-semanal]');
-  if (bs) bs.onclick = () => iniciarSemanal();
-  const bd = stage.querySelector('.pdesafios[data-desafios]');
-  if (bd) bd.onclick = () => { ir('composicao'); render(); };
-  // COMPRAR → paga e já entra na batalha (perdeu, volta e o "Jogar" repete de graça).
-  [...stage.querySelectorAll('[data-comprar]')].forEach(b => b.onclick = () => comprarDesafioEIniciar(b.dataset.comprar));
-  [...stage.querySelectorAll('[data-jogar]')].forEach(b => b.onclick = () => iniciarDesafioDeus(b.dataset.jogar));
-  [...stage.querySelectorAll('[data-desistir]')].forEach(b => b.onclick = () => { desafioDesistindo = b.dataset.desistir; render(); });
-  [...stage.querySelectorAll('[data-desiste-ok]')].forEach(b => b.onclick = () => { desistirDesafio(b.dataset.desisteOk); desafioDesistindo = null; render(); });
-  [...stage.querySelectorAll('[data-desiste-no]')].forEach(b => b.onclick = () => { desafioDesistindo = null; render(); });
+
+  // --- filtros + ordenar ---
+  const chip = (id, rot, n) => `<button class="df-chip${desafioFiltro === id ? ' is-on' : ''}" data-filtro="${id}">${rot} <b>(${n})</b></button>`;
+  const filtros = `<div class="df-filtros">
+    <span class="df-chips">${chip('todos', 'Todos', cont.todos)}${chip('disp', 'Disponíveis', cont.disp)}${chip('andamento', 'Em andamento', cont.andamento)}${chip('recarga', 'Recarga', cont.recarga)}${chip('mestres', 'Mestres', cont.mestres)}</span>
+    <button class="df-ordenar" data-ordenar="1">Ordenar: <b>${_ORDEM_ROT[desafioOrdem]}</b> ▾</button>
+  </div>`;
+
+  // --- composição ---
+  const ds = (typeof desafios === 'function') ? desafios() : [];
+  const feitos = ds.filter(d => desafioFeito(d.id)).length;
+  const compFrac = ds.length ? feitos / ds.length : 0;
+  const compos = `<button class="df-compos" data-compos="1">
+    <span class="df-compos__ic">⚔</span>
+    <span class="df-compos__id"><b>DESAFIOS DE COMPOSIÇÃO</b><small>Complete formações específicas e ganhe recompensas extras.</small></span>
+    <span class="df-compos__prog"><span class="df-compos__n">${feitos} de ${ds.length} cumpridos</span><span class="df-compos__bar"><span style="width:${compFrac * 100}%"></span></span></span>
+    <span class="df-compos__go">›</span>
+  </button>`;
+
+  const essCard = _mo.online
+    ? `<span class="df-ess"><span class="df-ess__lab"><span class="df-gem">◈</span> Essência ✦</span><b class="df-ess__v" data-ess>${essTxt}</b></span>`
+    : `<span class="df-ess df-ess--off"><span class="df-ess__lab">Essência ✦</span><b class="df-ess__v" data-ess>—</b><span class="df-ess__sem">⊘ Sem conexão</span></span>`;
+
+  stage.innerHTML = `<div id="baselayer" class="df2"><div id="desafios">
+    <header class="df-cab">
+      <button class="dfb dfb--voltar" id="bvoltar" data-voltar="1">‹ INÍCIO</button>
+      <h1 class="df-titulo cin">DESAFIOS</h1>
+      <span class="df-cab__cards">${essCard}<span class="df-mestres"><span class="df-mestres__lab">★ Mestres</span><b data-mestres>${mestres}/${meus.length}</b></span></span>
+    </header>
+    ${bannerHTML}
+    ${compos}
+    ${regras}
+    ${filtros}
+    <div class="df-grade" id="dfgrade">${lista.length ? lista.map(_dfCardHTML).join('') : '<p class="df-vazio">Nenhum deus neste filtro.</p>'}</div>
+    ${desafioAjuda ? _dfAjudaHTML(cfg) : ''}
+  </div></div>`;
+
+  // --- wiring (todos os handlers de hoje) ---
+  const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
+  const bv = q('[data-voltar]'); if (bv) bv.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const bsem = q('[data-semanal-jogar]'); if (bsem) bsem.onclick = () => iniciarSemanal();
+  const bc = q('[data-compos]'); if (bc) bc.onclick = () => { ir('composicao'); render(); };
+  qq('[data-filtro]').forEach(b => b.onclick = () => { desafioFiltro = b.dataset.filtro; desafioDesistindo = null; render(); });
+  const bo = q('[data-ordenar]'); if (bo) bo.onclick = () => { const seq = ['padrao', 'nome', 'maestria']; desafioOrdem = seq[(seq.indexOf(desafioOrdem) + 1) % seq.length]; render(); };
+  qq('[data-comprar]').forEach(b => b.onclick = () => comprarDesafioEIniciar(b.dataset.comprar));
+  qq('[data-jogar]').forEach(b => b.onclick = () => iniciarDesafioDeus(b.dataset.jogar));
+  qq('[data-desistir]').forEach(b => b.onclick = () => { desafioDesistindo = b.dataset.desistir; render(); });
+  qq('[data-desiste-ok]').forEach(b => b.onclick = () => { desistirDesafio(b.dataset.desisteOk); desafioDesistindo = null; render(); });
+  qq('[data-desiste-no]').forEach(b => b.onclick = () => { desafioDesistindo = null; render(); });
+  qq('[data-ondeganhar]').forEach(b => b.onclick = () => { ir('dominios'); render(); });
+  const bq = q('[data-ajuda]'); if (bq) bq.onclick = () => { desafioAjuda = true; render(); };
+  const bqf = q('[data-ajuda-fechar]'); if (bqf) bqf.onclick = () => { desafioAjuda = false; render(); };
+  const ov = q('#df-ajuda'); if (ov) ov.onclick = (ev) => { if (ev.target === ov) { desafioAjuda = false; render(); } };
+
+  // contador de recarga anda sem sair da tela
+  if (_dfRecargaTimer) { clearTimeout(_dfRecargaTimer); _dfRecargaTimer = null; }
+  if (meus.some(k => _dfCat(k) === 'recarga')) _dfRecargaTimer = setTimeout(() => { if (typeof rotaAtual === 'function' && rotaAtual() === 'desafios') render(); }, 30000);
   fit();
+}
+// §339-4: o painel "?" — a explicação completa (o texto de hoje + as duas notas). Fecha com X, toque fora, voltar Android.
+function _dfAjudaHTML(cfg){
+  return `<div class="df-ajuda" id="df-ajuda"><div class="df-ajuda__card">
+    <div class="df-ajuda__cab"><h2 class="cin">Como funcionam os Desafios</h2><button class="df-ajuda__x" data-ajuda-fechar="1" aria-label="fechar">✕</button></div>
+    <p>Escolha um deus que você tem, compre com Essência e pilote-o até vencer: cada desafio dá <b>${cfg.maestriaPorVitoria}</b> de maestria (a <b>moldura</b> sai no Mestre). Um por deus por vez; quantos deuses quiser ao mesmo tempo. Perdeu? Repete de graça. Recarga de ${cfg.recargaHoras}h ao cumprir ou desistir.</p>
+    <p>Desistir <b>não devolve a Essência</b>.</p>
+    <p>Você pode ter <b>vários deuses em desafio ao mesmo tempo</b>.</p>
+  </div></div>`;
 }
 
 // ===================================================================

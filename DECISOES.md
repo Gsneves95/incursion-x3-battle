@@ -6,6 +6,53 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §339 · TELA DESAFIOS no modelo do dono (tela fixa 1846×852 escalada)
+
+A tela DESAFIOS (`renderProvacoes` em home.js) foi reconstruída no modelo aprovado pelo dono, como o §335 fez com a
+batalha: **TELA FIXA de 1846×852** escalada por `min(w/1846, h/852)`, centrada, com `#03050B` nas sobras; **só a grade de
+deuses rola** por dentro (o resto fica fixo). O `fit()` (base.js) ganhou o ramo da rota `desafios` (canvas `#desafios`),
+igual ao `#batalha`. Traduzido ao DOM/CSS do projeto (nada do runtime do Claude Design); os dados vêm todos do jogo. (Só
+a imagem do modelo veio em anexo — não o HTML; as medidas foram transcritas da imagem em px de design.)
+
+**Blocos (todo o comportamento de hoje mantido, nada removido):** cabeçalho "‹ INÍCIO" (→ home) + título + cartão
+ESSÊNCIA (saldo do servidor `moedaServidor`; "—" + "Sem conexão" offline, compras travadas) + cartão MESTRES X/Y;
+DESAFIO DA SEMANA (arte, "#N", "DESAFIO DE <DEUS>", objetivo, "Contra:" 3 minis, RECOMPENSA "N de Gema" ou "✓ Gema
+recebida", "Termina em" até a virada da semana, JOGAR = `iniciarSemanal`); DESAFIOS DE COMPOSIÇÃO (→ `ir('composicao')`,
+progresso de `desafios()`/`desafioFeito()`); linha de REGRAS com os valores de `DESAFIO_CFG()` + "?" que abre o painel de
+ajuda (texto do `psec__nota` + "desistir não devolve a Essência" + "vários deuses ao mesmo tempo"; fecha com X, toque
+fora, voltar do Android); FILTROS (Todos/Disponíveis/Em andamento/Recarga/Mestres com contagem real, selecionado em
+dourado) + ORDENAR (Padrão/Nome/Maestria) lembrados enquanto o app está aberto; GRADE em 3 colunas de cartões, só os
+deuses que tenho, com **a ORBE do elemento (§337) ao lado do nome** (não os ícones do modelo, que não existem no jogo),
+maestria + "v/30" e a barra com marcadores 5/15/30.
+
+**Ações por estado (handlers de hoje):** (a) disponível+paga → "COMPRAR N ✦" (`comprarDesafioEIniciar` →
+`comprarPergaminhoServidor`); (b) disponível sem pagar → travado com o motivo de `podeComprarDesafio` + "Onde ganhar
+Essência?" (→ `ir('dominios')`); (c) comprando (`desafioComprando`) → "Comprando…"; (d) em andamento → JOGAR
+(`iniciarDesafioDeus`) + Desistir; (e) confirmando desistência no cartão → "Desistir? A Essência não volta." SIM
+(`desistirDesafio`) / NÃO; (f) recarga → "Em recarga" + `fmtRecarga` (re-render a cada 30s sem sair da tela); (g) Mestre
+→ moldura dourada + "★ Mestre · Moldura conquistada", sem ação. AVISOS via `toast()` (fundo escuro, ícone/linha
+vermelha, X) — a função que só existia defensivamente agora existe de fato.
+
+**"Termina em":** a semana ISO vira na **segunda 00:00 UTC** (confirmado: `provaSemanalAtual`/`semanaISOAtual` usam
+`getUTC*`/`Date.UTC`). `_msAteViradaSemana` conta até a próxima segunda 00:00 UTC.
+
+**build + conta:** o carimbo `#build` e o botão flutuante `#conta-botao` SOMEM nesta tela (`body.emdesafios`, como o
+`body.embatalha` do §328) — seguem acessíveis na home (canto) e no menu ⋯ da batalha; a função não foi removida.
+
+**(a) vs (b):** são mutuamente exclusivos num render online válido (a Essência é um saldo único do servidor; ou todos os
+disponíveis podem pagar, ou nenhum) — a imagem do dono é um mosaico ilustrativo. A captura dos estados mostra (a) e a de
+sem-conexão mostra (b).
+
+**Provas:** `desafios_tela.test.js` — jsdom: cada estado (a–g) renderiza a ação certa e o clique chama o handler certo
+(comprar→comprarPergaminhoServidor, jogar→iniciarDesafioDeus, desistir→confirmação→SIM=fecharDesafioServidor/NÃO,
+onde-ganhar→ir(dominios), semana→iniciarSemanal, composição→ir(composicao), voltar→home, "?" abre/fecha); sem conexão
+trava tudo e mostra "—"; os filtros contam e filtram; os 3 ordenamentos ordenam; "Termina em" bate com a virada da
+semana; Chromium @1846 as caixas batem (tol. 2px) e @780×360 nada sai/corta (escala 0.423, nome do cartão 9.7px, botão
+23.7px). `desafios.test.js` migrado só nos seletores (saldo no cartão ESSÊNCIA). Capturas `docs/telas/339-*`.
+NÃO mudou regras/economia/servidor/maestria/handlers/Composição/outras telas.
+
+---
+
 ## §338 · BÁSICOS GRÁTIS: medido, três variantes reprovadas, decisão = MANTER grátis
 
 26 dos 100 deuses têm o básico com custo "—" (grátis): demeter, dionisio, perseu, orfeu, freyja, tyr, bragi, mimir,
