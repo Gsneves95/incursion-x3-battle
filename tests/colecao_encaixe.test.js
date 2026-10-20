@@ -150,6 +150,41 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
     ok(!m.overlap, `§346 Coleção @${W}×${H}: a grade não invade o painel da esquerda`);
   }
 
+  // §346b — TELA CHEIA + filtros compactos: a Coleção (canvas fixo 1100×508 escalado) enche a tela, os filtros ficam
+  // em ≤2 linhas, ≥2 fileiras inteiras de cartões aparecem sem rolar, e o carimbo "build" some (não cobre botão).
+  console.log('== §346b: Coleção em tela cheia — ≥98% da tela, filtros ≤2 linhas, ≥2 fileiras de cartões, build oculto ==');
+  for (const [W, H] of [[1846, 852], [780, 360]]) {
+    await page.setViewportSize({ width: W, height: H });
+    const m = await page.evaluate(() => {
+      perfil.deuses = {}; ROSTER.slice(0, 40).forEach(e => perfil.deuses[e.key] = { copias: 1, obtidoEm: Date.now() });
+      colF = { busca: '', cultura: '', classe: '', funcao: '', elem: '', status: '', raridade: '', ordem: 'recentes' };
+      ir('colecao', {}, { substituir: true }); render(); colSelecionar(colecaoFiltrada()[0]);
+      const g = document.getElementById('gsplash'); if (g) g.remove();
+      const fix = document.getElementById('colfix'); const fb = fix.getBoundingClientRect();
+      // 1) tela cheia: a proporção é a mesma do canvas (2.166) → as duas dimensões enchem (≥98%).
+      const pw = fb.width / window.innerWidth, ph = fb.height / window.innerHeight;
+      // 2) filtros em ≤2 linhas: agrupa os tops dos filhos das DUAS barras (filtros + pills) em faixas.
+      const kids = [...document.querySelectorAll('.col2__filtros > *, .col2__pills > *')];
+      const tops = kids.map(el => el.getBoundingClientRect().top).sort((a, b) => a - b);
+      let linhas = 0, ultimo = -1e9;
+      for (const t of tops) { if (t - ultimo > 20) { linhas++; ultimo = t; } }   // nova faixa quando o top salta > 20px (acima do jitter de alinhamento vertical, abaixo do salto de linha ~45px)
+      // 3) ≥2 fileiras INTEIRAS de cartões visíveis sem rolar (card.bottom ≤ grade.bottom).
+      const grade = document.getElementById('col2grade'); const gr = grade.getBoundingClientRect();
+      const linhasCards = []; let ucard = -1e9;
+      for (const c of grade.querySelectorAll('.col2c')) { const r = c.getBoundingClientRect();
+        if (r.bottom <= gr.bottom + 1) { if (r.top - ucard > 6) { linhasCards.push(r.top); ucard = r.top; } } }
+      // 4) carimbo build + botão conta ocultos nesta tela.
+      const bv = el => { if (!el) return false; const s = getComputedStyle(el); return s.display !== 'none' && s.visibility !== 'hidden' && el.getBoundingClientRect().width > 0; };
+      const buildVis = bv(document.getElementById('build')), contaVis = bv(document.getElementById('conta-botao'));
+      return { pw, ph, linhas, fileirasCards: linhasCards.length, buildVis, contaVis };
+    });
+    ok(Math.min(m.pw, m.ph) >= 0.98, `§346b @${W}×${H}: a Coleção enche a tela (${(m.pw * 100).toFixed(1)}% larg × ${(m.ph * 100).toFixed(1)}% alt ≥ 98%)`);
+    ok(m.linhas <= 2, `§346b @${W}×${H}: os filtros ocupam ≤2 linhas (${m.linhas})`);
+    ok(m.fileirasCards >= 2, `§346b @${W}×${H}: ≥2 fileiras inteiras de cartões sem rolar (${m.fileirasCards})`);
+    ok(!m.buildVis && !m.contaVis, `§346b @${W}×${H}: carimbo "build"/botão "conta" ocultos (build ${m.buildVis}, conta ${m.contaVis})`);
+    console.log(`  @${W}×${H}: ${(m.pw * 100).toFixed(1)}%×${(m.ph * 100).toFixed(1)}% · ${m.linhas} linha(s) de filtro · ${m.fileirasCards} fileira(s) de cartões · build ${m.buildVis} conta ${m.contaVis}`);
+  }
+
   await browser.close();
   console.log(falhas === 0 ? '\n>>> COLEÇÃO-ENCAIXE OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);

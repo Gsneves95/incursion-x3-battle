@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §346b · Coleção: filtros em 2 linhas + tela cheia (canvas fixo 1100×508 escalado)
+- **Pivô vs §346:** a Coleção deixou de ser `col2` fluido e virou TELA FIXA escalada (como batalha/desafios/montador). O
+  design é **1100×508** (metade de 1846×852, mesma proporção 2.166), onde o CSS atual da Coleção cabe; `fit()` tem o ramo
+  `emColecao` (escala `min(w/1100,h/508)`, centrado). Estrutura: `#baselayer.col2fix` > `#colfix` (1100×508) > `.col2`. O
+  painel da esquerda é idêntico — **só muda a escala** (condição do pedido). Carimbo "build" + botão "conta" ocultos aqui
+  (classe `emcolecao`), não cobrem mais o "Ver detalhes".
+- **Filtros em ≤2 linhas:** linha 1 = Todos + 6 orbes + 5 funções + busca; linha 2 = status + raridade + "Mais filtros" +
+  Ordenar + contagem. CULTURA (10 panteões) e CLASSE saíram da barra para o painel **"MAIS FILTROS"** (chips `.fbox`/`.fgrp`/
+  `.chip2` do §345, com contagem por opção); o botão mostra os ativos ("Mais filtros · 2"). Tudo continua combinando. Para a
+  linha 1 caber nos ~827px: orbes 34→30, pílulas de função menores, busca flex 150→110 (escala, não conteúdo).
+- Novo em home.js: `colMaisAberto`, `colExtrasAtivos()`, `colMaisFiltrosHTML()`, `colReabrir()`; wrapper `col2fix`/`colfix`.
+- Provas: `colecao_encaixe.test.js` (Chromium @1846/@780: enche ≥98% larg×alt, filtros ≤2 linhas, ≥2 fileiras de cartões sem
+  rolar, build/conta ocultos, nada corta/invade). `colecao_tela.test.js` (jsdom: "Mais filtros" abre, 10 panteões+3 classes
+  filtram/COMBINAM, botão "· 2", Limpar/Pronto). `aquisicao.test.js` migrado (culturas = chips do "Mais filtros", não abas).
+  Capturas `346b-colecao-sel` e `346b-colecao-maisfiltros` (1846×852 e 780×360).
+
 ## ★ §346 · Coleção com a grade e os filtros do montador (§342)
 - `renderColecao` (home.js) ganhou a linguagem do montador na GRADE e nos FILTROS, SEM mexer no painel/overlay/maestria/
   níveis. Decisão de layout: **mantido o shell fluido `col2`** (o painel de esquerda é rico e "não mudar"; o canvas fixo

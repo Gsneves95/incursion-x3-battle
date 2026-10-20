@@ -6,6 +6,36 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §346b · COLEÇÃO: filtros compactos (2 linhas) + TELA CHEIA (canvas fixo escalado)
+
+O §346 acertou cartão/filtros mas deixou dois defeitos de encaixe (vistos nas capturas 346-*): a 780×360 os filtros
+ocupavam ~4 faixas e só 1 fileira de cartões aparecia; a 1846×852 a Coleção era uma caixa pequena no centro, com muito
+vazio. O §346b corrige os dois — e **reverte a decisão de layout do §346** (que mantinha o `col2` fluido).
+
+**Pivô de layout: a Coleção agora é uma TELA FIXA escalada, como batalha (§335), desafios (§339) e montador (§342).** O
+§346 preferiu o fluido para não mexer no painel; medindo, o fluido NÃO resolve o pedido: a 780 de largura o painel de 233px
+deixa só ~530px para os filtros, que não cabem em 2 linhas de jeito nenhum. A saída é o canvas fixo — mas num design de
+**1100×508** (metade de 1846×852, **mesma proporção 2.166**), não 1846×852: a 1100 o CSS atual da Coleção já cabe, a área
+de filtros fica ~827px (2 linhas folgadas), e como 780 e 1846 têm a MESMA proporção, a escala é UNIFORME → o que cabe num
+tamanho cabe no outro. O painel da esquerda **não muda** (conteúdo e funções idênticos) — **só a escala**, que era
+exatamente a condição do pedido ("use a tela fixa se o painel couber sem mudar o conteúdo, só a escala"). `fit()` ganhou o
+ramo `emColecao` (escala `min(w/1100,h/508)`, centrado, canvas #03050B nas sobras); `#baselayer.col2fix` > `#colfix`
+(1100×508) carrega o `.col2`. O carimbo "build" e o botão "conta" somem aqui (classe `emcolecao`), como nas outras telas
+fixas — não cobrem mais o "Ver detalhes".
+
+**Filtros em ≤2 linhas:** linha 1 = "Todos" + 6 orbes + 5 funções + busca; linha 2 = STATUS + RARIDADE + "Mais filtros" +
+"Ordenar" + a contagem. As **abas de CULTURA saíram da tela** e foram para dentro de **"MAIS FILTROS"**, junto com a CLASSE
+(o mesmo painel de chips do §345 — `.fbox`/`.fgrp`/`.chip2` — com a contagem por opção). O botão mostra quantos filtros
+extras estão ativos ("Mais filtros · 2"). Nenhum filtro se perdeu: cultura, classe, status, raridade, elemento, função,
+busca e ordenar seguem combinando. Para a linha 1 caber nos 827px, encolhi orbes (34→30) e as pílulas de função
+(padding/fonte menores) e a busca (flex-basis 150→110) — ajuste de escala, não de conteúdo.
+
+Provas: `colecao_encaixe.test.js` (Chromium @1846 e @780) — a Coleção enche ≥98% da largura E da altura, filtros em ≤2
+linhas, ≥2 fileiras inteiras de cartões sem rolar, "build"/"conta" ocultos, nada corta nem invade o painel.
+`colecao_tela.test.js` (jsdom) — "Mais filtros" abre o painel, os 10 panteões + 3 classes filtram e COMBINAM, o botão mostra
+"· 2", "Limpar" zera e "Pronto" fecha. `aquisicao.test.js` migrado (as culturas agora são chips do "Mais filtros", não
+abas). Capturas `346b-colecao-sel` e `346b-colecao-maisfiltros` (1846×852 e 780×360).
+
 ## §346 · COLEÇÃO com a GRADE e os FILTROS do montador (§342)
 
 O dono quis na Coleção o modelo de visualização do montador do §342 (cartões + linha de filtros com orbes de elemento e

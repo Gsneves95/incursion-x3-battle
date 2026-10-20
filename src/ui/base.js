@@ -193,9 +193,22 @@ function fit(){
   // §342/§344: as telas de MONTAR TIME (Domínio, Campanha, Composição, PvP) são a mesma TELA FIXA de 1846×852 escalada.
   const _rM = (typeof rotaAtual === 'function') && rotaAtual();
   const emMontar = (_rM === 'dominiomontar' || _rM === 'montartime' || _rM === 'desafiomontar' || _rM === 'pvp' || _rM === 'selecao') && document.getElementById('dommontar');   // §345: a Batalha CPU/hot-seat usa o mesmo montador
+  // §346b: a COLEÇÃO vira uma TELA FIXA escalada (como batalha/montador): enche a tela. O design é 1100×508 (MESMA
+  // proporção 2.166 da batalha 1846×852), onde o CSS atual da Coleção já cabe — e escalado garante os filtros em 2
+  // linhas e 2+ fileiras de cartões em qualquer tamanho (780 e 1846 têm a mesma proporção → escala uniforme).
+  const emColecao = (_rM === 'colecao') && document.getElementById('colfix');
   const fixa = emBatalha || emDesafios || emMontar;
-  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar);
-    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); }catch(e){}   // §339/§342: carimbo build + botão conta somem destas telas (vivem na home/menu)
+  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('col2fix', !!emColecao);
+    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b: carimbo build + botão conta somem destas telas (vivem na home/menu)
+  if(emColecao && !fixa){
+    const CW = 1100, CH = 508, s = Math.min(u.w / CW, u.h / CH);
+    ultimaEscala = s; ultimaLarguraDesign = CW;
+    stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';
+    stage.style.transform = 'translate(-50%,-50%)';
+    emColecao.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+    renderDiag();
+    return;
+  }
   if(fixa){
     const s = Math.min(u.w / 1846, u.h / 852);
     ultimaEscala = s; ultimaEscalaBatalha = s; ultimaLarguraDesign = 1846;

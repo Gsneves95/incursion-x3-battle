@@ -1368,6 +1368,23 @@ let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobrepo
 let colVerModo = 'kit';     // §294: modo da sobreposição — 'kit' (seletor+detalhe) ou 'sinergia' (lista completa)
 let colVerVista = 'kit';    // §321: VISÃO da sobreposição — 'kit' (kit/sinergia) ou 'niveis' (visão de níveis §319 embutida). Persiste na navegação pelas setas.
 let colF = { busca: '', cultura: '', classe: '', funcao: '', elem: '', status: '', raridade: '', ordem: 'recentes' };   // §346: + filtro de ELEMENTO (grade do montador)
+let colMaisAberto = false;   // §346b: painel "MAIS FILTROS" (cultura + classe), fora da tela principal
+function colExtrasAtivos(){ return (colF.cultura ? 1 : 0) + (colF.classe ? 1 : 0); }   // §346b: filtros no "MAIS FILTROS"
+// §346b: o painel "MAIS FILTROS" — CULTURA + CLASSE em chips com contagem (modelo do §345). Único por eixo (toggle).
+function colMaisFiltrosHTML(){
+  if (!colMaisAberto) return '';
+  const n = colecaoFiltrada().length;
+  const chip = (campo, val, rot) => { const c = ROSTER.filter(e => (colG(e.key)[campo === 'cultura' ? 'faccao' : 'classe']) === val).length;
+    return `<button class="chip2 ${colF[campo] === val ? 'on' : ''}" data-colmf="${campo}|${H(val)}">${H(rot)}<span class="chip2__n">${c}</span></button>`; };
+  const grupo = (rot, chips) => `<div class="fgrp"><span class="fgrp__l">${rot}</span><div class="fgrp__c">${chips}</div></div>`;
+  return `<div class="col2mf" id="col2mf"><div class="fbox col2mf__box">
+    <div class="fbox__h"><h2>MAIS FILTROS</h2><span class="fbox__n"><b>${n}</b> de ${ROSTER.length} deuses</span>
+      <span class="push"><button class="col2mf__b col2mf__b--quiet" id="col2mflimpar">Limpar</button><button class="col2mf__b col2mf__b--go" id="col2mfok">Pronto</button></span></div>
+    <div class="fbox__b">
+      ${grupo('PANTEÃO', PANTEOES.map(f => chip('cultura', f, f)).join(''))}
+      ${grupo('CLASSE', COL_CLASSES.map(c => chip('classe', c, c)).join(''))}
+    </div></div></div>`;
+}
 
 function colG(k){ return (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {}; }
 function colNome(k){ return (HRM[k] && HRM[k].nome) || colG(k).nome || k; }
@@ -1814,8 +1831,6 @@ function renderColecao(){
   colSel = null; colVer = null;
   const donos = ROSTER.map(e => e.key).filter(temDeus).length;
   const mo = moedaServidor();   // §318b-2: a barra da Coleção é do SERVIDOR ("—" desconectado), não o perfil fantasma
-  const tabs = [''].concat(PANTEOES).map(f =>
-    `<button class="col2__tab${colF.cultura === f ? ' is-on' : ''}" data-cultura="${H(f)}">${f ? H(f) : 'Todas'}</button>`).join('');
   // §346: a linha de FILTROS vira a do montador — "Todos" + 6 orbes de ELEMENTO + 5 FUNÇÕES em pílulas + busca + contagem.
   const semEF = !colF.elem && !colF.funcao;
   const orbesEl = ELEMS.map(e => `<button class="col2forbe${colF.elem === e ? ' is-on' : ''}" data-colelem="${H(e)}" aria-label="${H((typeof ELAB !== 'undefined' && ELAB[e]) || e)}">${orbe(e, 24)}</button>`).join('');
@@ -1823,10 +1838,14 @@ function renderColecao(){
   const pill = (attr, val, atual, txt) => `<button class="col2pill${atual === val ? ' is-on' : ''}" data-${attr}="${H(val)}">${txt}</button>`;
   const pillsStatus = pill('colstatus', '', colF.status, 'Todos') + pill('colstatus', 'tem', colF.status, 'Possuídos') + pill('colstatus', 'nao', colF.status, 'Não possuídos');
   const pillsRar = pill('colrar', '', colF.raridade, 'Todas') + pill('colrar', 'SS', colF.raridade, 'SS') + pill('colrar', 'S', colF.raridade, 'S') + pill('colrar', 'A', colF.raridade, 'A');
-  // CLASSE + ORDENAR ficam em controles compactos (§346). CLASSE sob "Mais filtros".
-  const compactos = colSelectHTML('classe', 'Mais filtros', COL_CLASSES.map(v => ({ v, t: v })), colF.classe)
+  // §346b: CULTURA e CLASSE saem da tela e vão p/ o "MAIS FILTROS" (com contagem de ativos); ORDENAR segue compacto.
+  const nExtra = colExtrasAtivos();
+  const btMais = `<button class="col2fchip col2mf__abre${nExtra ? ' is-on' : ''}" id="col2mfabre" data-colmfabre="1">Mais filtros${nExtra ? ' · ' + nExtra : ''}</button>`;
+  const compactos = btMais
     + `<label class="col2__sel col2__sel--ord"><span class="col2__selrot">Ordenar</span><select data-filtro="ordem"><option value="recentes"${colF.ordem === 'recentes' ? ' selected' : ''}>Mais recentes</option><option value="nome"${colF.ordem === 'nome' ? ' selected' : ''}>Nome (A–Z)</option></select></label>`;
-  stage.innerHTML = `<div id="baselayer" class="col2">
+  // §346b: TELA CHEIA — a Coleção vive num canvas fixo 1100×508 (mesma proporção 2.166 de 1846×852) que fit()
+  // escala uniforme p/ preencher qualquer tamanho; o conteúdo do painel esquerdo não muda, só a escala.
+  stage.innerHTML = `<div id="baselayer" class="col2fix"><div id="colfix" class="col2">
     <header class="col2__topo">
       <button class="col2__voltar" id="bvoltar" aria-label="Voltar"><i class="dsel__seta"></i></button>
       <div class="col2__tit"><h1 class="col2__titulo">Personagens</h1><span class="col2__sub">COLECIONE · LEIA O KIT · MONTE A LENDA</span></div>
@@ -1844,23 +1863,28 @@ function renderColecao(){
           <span class="col2forbes">${orbesEl}</span>
           <span class="col2ffuncs">${chipsFn}</span>
           <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar personagens…" value="${H(colF.busca)}" autocomplete="off"></label>
-          <span class="col2__conta" id="col2conta"></span>
         </div>
         <div class="col2__pills">
           <span class="col2pill__grp">${pillsStatus}</span>
           <span class="col2pill__grp">${pillsRar}</span>
-          <span class="col2pill__sp">${compactos}</span>
+          ${compactos}
+          <span class="col2__conta" id="col2conta"></span>
         </div>
-        <div class="col2__tabs">${tabs}</div>
         <div class="col2__grade" id="col2grade"></div>
       </section>
     </div>
-  </div>`;
+    ${colMaisFiltrosHTML()}
+  </div></div>`;
   const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
   const v = q('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const busca = q('#col2busca'); if (busca) busca.oninput = () => { colF.busca = busca.value; colAtualizarGrade(); };
   qq('select[data-filtro]').forEach(s => s.onchange = () => { colF[s.dataset.filtro] = s.value; colAtualizarGrade(); });
-  qq('.col2__tab').forEach(t => t.onclick = () => { colF.cultura = t.dataset.cultura; qq('.col2__tab').forEach(x => x.classList.toggle('is-on', x === t)); colAtualizarGrade(); });
+  // §346b: CULTURA e CLASSE pelo painel "MAIS FILTROS" (preserva a seleção do painel esquerdo via colReabrir).
+  const abre = q('#col2mfabre'); if (abre) abre.onclick = () => { colMaisAberto = !colMaisAberto; colReabrir(); };
+  const mfok = q('#col2mfok'); if (mfok) mfok.onclick = () => { colMaisAberto = false; colReabrir(); };
+  const mfov = q('#col2mf'); if (mfov) mfov.onclick = ev => { if (ev.target === mfov) { colMaisAberto = false; colReabrir(); } };
+  const mflimpar = q('#col2mflimpar'); if (mflimpar) mflimpar.onclick = () => { colF.cultura = ''; colF.classe = ''; colReabrir(); };
+  qq('[data-colmf]').forEach(b => b.onclick = () => { const [campo, val] = b.dataset.colmf.split('|'); colF[campo] = (colF[campo] === val ? '' : val); colReabrir(); });
   // §346: orbes de ELEMENTO + pílulas de FUNÇÃO (um ativo por eixo, toggle) + "Todos" (limpa elemento e função).
   const marcarTodos = () => { const bt = q('[data-coltodos]'); if (bt) bt.classList.toggle('is-on', !colF.elem && !colF.funcao); };
   qq('[data-colelem]').forEach(b => b.onclick = () => { const e = b.dataset.colelem; colF.elem = (colF.elem === e ? '' : e);
@@ -1886,6 +1910,9 @@ function colAtualizarGrade(){
   // esquerda acompanha (seleção), para quando a sobreposição fechar. (Antes só selecionava.)
   [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => { colSelecionar(b.dataset.deus); colAbrirVer(b.dataset.deus); });
 }
+// §346b: re-render da Coleção PRESERVANDO a seleção do painel (renderColecao entra em repouso; aqui restauramos).
+// Usado pelo "MAIS FILTROS" (cultura/classe) p/ a tela redesenhar com o painel aberto e sem perder o deus escolhido.
+function colReabrir(){ const s = colSel; renderColecao(); if (s) colSelecionar(s); }
 // troca só o painel (e o realce do cartão) — sem re-render da tela toda. k=null → repouso.
 function colSelecionar(k){
   colSel = k;

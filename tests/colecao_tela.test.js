@@ -333,5 +333,34 @@ console.log('\n== 10. §319b/§321: descoberta de níveis (posse+pontos, "X de Y
   w.eval("colFecharVer(); contaAtual=null; ir('colecao',{},{substituir:true}); render();");
 }
 
+// ---- §346b: CULTURA e CLASSE pelo "MAIS FILTROS" (fora da barra), combinando e com contagem de ativos no botão. ----
+console.log('\n== §346b: PANTEÃO/CLASSE pelo "MAIS FILTROS" (combinam; contagem no botão) ==');
+{
+  w.eval("colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'}; colMaisAberto=false; ir('colecao',{},{substituir:true}); render();");
+  ok(!$('#col2mf'), 'em repouso o painel "MAIS FILTROS" fica fechado');
+  ok(/^Mais filtros$/.test(txt($('#col2mfabre'))), 'o botão não mostra contagem quando não há filtro extra');
+  // abre o painel → tem os 10 panteões + as 3 classes como chips
+  w.eval("document.getElementById('col2mfabre').click();");
+  ok(!!$('#col2mf'), 'tocar em "Mais filtros" abre o painel sobreposto');
+  ok($$('[data-colmf^="cultura|"]').length === 10, 'o painel traz os 10 panteões como chips');
+  ok($$('[data-colmf^="classe|"]').length === 3, 'o painel traz as 3 classes como chips');
+  const todos = w.eval("colecaoFiltrada().length");
+  // escolhe PANTEÃO Grega → reduz
+  w.eval("document.querySelector('[data-colmf=\\\"cultura|Grega\\\"]').click();");
+  const soGrega = w.eval("colecaoFiltrada().length");
+  ok(w.eval("colF.cultura") === 'Grega' && soGrega > 0 && soGrega < todos, `o panteão filtra (${soGrega} < ${todos})`);
+  // soma CLASSE Físico → COMBINA (subconjunto de Grega)
+  w.eval("document.querySelector('[data-colmf=\\\"classe|Físico\\\"]').click();");
+  const gregaFis = w.eval("colecaoFiltrada().length");
+  ok(w.eval("colF.classe") === 'Físico' && gregaFis > 0 && gregaFis <= soGrega, `panteão + classe COMBINAM (${gregaFis} ≤ ${soGrega})`);
+  // com os dois ativos, o botão da barra mostra "· 2"
+  ok(/Mais filtros · 2/.test(txt($('#col2mfabre'))), 'com 2 filtros extras, o botão mostra "Mais filtros · 2"');
+  // "Limpar" zera os dois; "Pronto" fecha o painel
+  w.eval("document.getElementById('col2mflimpar').click();");
+  ok(w.eval("colF.cultura") === '' && w.eval("colF.classe") === '' && w.eval("colecaoFiltrada().length") === todos, '"Limpar" zera panteão e classe');
+  w.eval("document.getElementById('col2mfok').click();");
+  ok(!$('#col2mf'), '"Pronto" fecha o painel');
+}
+
 console.log(`\n${falhas ? '✗ ' + falhas + ' FALHA(S)' : '✓ tudo verde'} · ${passes} asserções`);
 process.exit(falhas ? 1 : 0);

@@ -72,9 +72,16 @@ console.log('== 4. Coleção (§282 refeita): os 100 navegáveis por BUSCA/FILTR
   // §282: a vitrine por-panteão (10 seções .csec) deu lugar a GRADE filtrável + ABAS de cultura + PAINEL-leitor.
   ok(!!$('.col2') && /Personagens/i.test($('.col2__titulo').textContent), 'a tela de Personagens monta (.col2)');
   ok($$('#col2grade .col2c[data-deus]').length === 100, `a grade lista os 100 deuses (tem ${$$('#col2grade .col2c[data-deus]').length})`);
-  // as 10 culturas agora são ABAS (não seções): "Todas" + os 10 panteões na ordem
-  const abas = $$('.col2__tab').map(e => e.textContent.trim());
-  ok(abas.join(',') === 'Todas,Grega,Nórdica,Egípcia,Japonesa,Chinesa,Hindu,Brasileira,Africana,Celta,Maia', 'as 10 culturas + "Todas" como abas, na ordem');
+  // §346b: as 10 culturas saíram da barra (que agora tem 2 linhas) e vivem no painel "MAIS FILTROS".
+  w.eval("document.getElementById('col2mfabre').click();");   // abre o painel de panteão/classe
+  const panteoes = $$('[data-colmf^="cultura|"]').map(e => e.textContent.replace(/\d+$/, '').trim());
+  ok(panteoes.join(',') === 'Grega,Nórdica,Egípcia,Japonesa,Chinesa,Hindu,Brasileira,Africana,Celta,Maia', 'os 10 panteões como chips no "MAIS FILTROS", na ordem');
+  // selecionar um panteão filtra a grade (e combina com os demais filtros)
+  const soGrega = $$('[data-colmf^="cultura|"]').find(b => /Grega/.test(b.textContent));
+  soGrega.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const nGrega = $$('#col2grade .col2c[data-deus]').length;
+  ok(nGrega > 0 && nGrega < 100, `escolher um panteão filtra a grade (Grega: ${nGrega})`);
+  w.eval("colF.cultura=''; colReabrir();");   // volta ao repouso para as medições de estado abaixo
   // §216: dois estados INEQUÍVOCOS — possuído (col2c--tem, dourado) x ausência (col2c--falta, apagado), cobrindo os 100
   ok($$('.col2c--tem').length + $$('.col2c--falta').length === 100, 'todo cartão é ou "tem" (col2c--tem) ou "falta" (col2c--falta)');
   // nome/cultura moram na FAIXA (col2c__foot) de cada cartão, sobre um scrim — nunca texto solto na arte crua
