@@ -2,6 +2,15 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §344c · Painel de troca do emprestado em largura cheia + fundo opaco
+- A grade "SEUS DEUSES" da troca agora ocupa a tela toda: `.dm-dir--full` com `width:auto` (left:57+right:57 → x 57→1789;
+  o `width:1190` da `.dm-dir` deixou de vencer), `top:116`/`height:699`, e `#dommontar.dm-troca .dm-grade` em `repeat(7,1fr)`
+  (mais colunas, cartões no mesmo tamanho). Filtros numa linha só (sobra espaço na largura cheia).
+- O painel ficou OPACO: removido o `#dommontar.dm-troca{background:none}` → usa o radial-gradient do montador, a campanha
+  não aparece atrás. O escurecimento `rgba` da `.dm-troca-ov` só aparece fora do painel (letterbox de outra proporção).
+- Provas em `montar_modos.test.js` (Chromium @1846 e @780): grade x ≤ 70 → ≥ 1777; centro da metade esquerda é o fundo do
+  painel (não a campanha). Captura `344c-campanha-troca` (1846×852 e 780×360).
+
 ## ★ §344b · Três ajustes no §344 (vistos nas capturas 344-*)
 - **PvP, 3ª vaga cabe:** o "↺ Usar último time" saiu da linha própria acima das vagas e foi para a linha do título
   "SEU TIME" (`.dm-time__cab`, à direita); o cfg `acimaVagasHTML` virou `timeAcaoHTML`. Só no PvP (`#dommontar.dm--pvp`) o

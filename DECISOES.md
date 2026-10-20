@@ -6,6 +6,25 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §344c · O painel de troca do emprestado em LARGURA CHEIA, com fundo opaco
+
+A captura `344b-campanha-troca` mostrou a grade "SEUS DEUSES" ainda na posição que ela tem no montador (área da
+direita): a grade terminava em x≈1247 (o `width:1190px` da `.dm-dir` vencia o `right:57px` do modo cheio, porque
+left+width+right é over-constrained e o `right` é ignorado), e o painel era transparente (`background:none`), então a
+campanha aparecia por trás da metade vazia.
+
+Decisão: `.dm-dir--full` ganha `width:auto` (aí `left:57`+`right:57` dão a largura toda, x 57→1789) e sobe para
+`top:116`/`height:699` (abaixo do título/X), e a grade da troca passa a `repeat(7,1fr)` — mais colunas para manter o
+tamanho dos cartões na largura maior; os filtros, que no montador (1190px) quebravam em 2 linhas, agora cabem numa só.
+O `#dommontar.dm-troca{background:none}` foi removido: o painel usa o fundo opaco do montador (o radial-gradient), então
+a campanha não aparece atrás da área do painel; o escurecimento `rgba` da `.dm-troca-ov` continua, mas só aparece FORA do
+painel (quando a tela tem outra proporção e sobra letterbox). Nada mais mudou.
+
+Provas (`montar_modos.test.js`, Chromium @1846 e @780): a caixa da grade começa em x ≤ 70 e termina em x ≥ 1777; o pixel
+no centro da metade esquerda do painel é o fundo do painel (elementFromPoint cai dentro do `#dommontar`, não na campanha).
+
+---
+
 ## §344b · Três ajustes no §344 (3ª vaga do PvP, painel de troca, nomes partidos)
 
 Capturas do §344 em 1846×852 mostraram três defeitos; o resto da tela ficou como estava.

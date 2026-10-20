@@ -175,6 +175,24 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
     await ctx.close();
   }
 
+  // ---------- §344c: no painel de troca a grade ocupa a largura toda + fundo opaco (campanha não aparece atrás) ----------
+  console.log('\n== §344c Campanha: grade de troca em largura cheia + fundo opaco (Chromium) ==');
+  for (const [W, H, dsf] of [[1846, 852, 1], [780, 360, 2]]) {
+    const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dsf });
+    const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+    await page.evaluate(BASE + "ir('campanha',{},{substituir:true}); render(); campPicker=0; render();");
+    await page.waitForTimeout(140);
+    const m = await page.evaluate(() => { const dm = document.getElementById('dommontar'); const dir = dm.querySelector('.dm-dir');
+      const dmr = dm.getBoundingClientRect(), d = dir.getBoundingClientRect(), esc = dmr.width / 1846;
+      const left = (d.left - dmr.left) / esc, right = (d.right - dmr.left) / esc;
+      const px = d.left + d.width * 0.25, py = d.top + d.height * 0.5;   // centro da metade esquerda do painel
+      const el = document.elementFromPoint(px, py); const fundoPainel = dm.contains(el);
+      return { left: Math.round(left), right: Math.round(right), fundoPainel }; });
+    ok(m.left <= 70 && m.right >= 1777, `troca @${W}×${H}: grade em largura cheia (x ${m.left}→${m.right}, esperado ≤70 e ≥1777)`);
+    ok(m.fundoPainel, `troca @${W}×${H}: o centro da metade esquerda é o fundo do painel (campanha não aparece atrás)`);
+    await ctx.close();
+  }
+
   // ---------- §344b-3: nenhum nome de inimigo parte palavra (todos os encontros e desafios) ----------
   console.log('\n== §344b nomes nunca quebram no meio da palavra (Chromium) ==');
   {

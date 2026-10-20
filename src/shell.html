@@ -2769,11 +2769,11 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dm-aviso{position:absolute;left:57px;right:57px;top:180px;display:flex;align-items:flex-start;gap:18px;padding:28px 32px;border-radius:12px;background:rgba(14,18,32,.85);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
 .dm-aviso__ic{font-size:36px;color:#C9A44C;flex:none}
 .dm-aviso p{font-size:22px;line-height:1.4;color:#D5DAE4;margin:0}
-/* grade em LARGURA CHEIA (seletor de troca da campanha) */
-.dm-dir--full{left:57px;right:57px;top:170px;height:640px}
+/* grade em LARGURA CHEIA (seletor de troca da campanha) — §344c: x 57→1789 (width:auto vence o width:1190 da .dm-dir) */
+.dm-dir--full{left:57px;right:57px;width:auto;top:116px;height:699px}
+#dommontar.dm-troca .dm-grade{grid-template-columns:repeat(7,1fr)}   /* §344c: mais colunas p/ manter o tamanho dos cartões na largura cheia */
 /* seletor de troca — host no #viewport (fora do stage), escala própria a 1846 */
-.dm-troca-ov{position:fixed;inset:0;z-index:60;background:rgba(4,6,14,.78)}
-#dommontar.dm-troca{background:none}
+.dm-troca-ov{position:fixed;inset:0;z-index:60;background:rgba(4,6,14,.78)}   /* §344c: o escurecimento rgba só aparece FORA do painel (quando há letterbox) */
 /* §344b: X claro (≥72px) p/ fechar a troca sem gravar campSwap */
 .dm-troca-x{position:absolute;top:24px;right:57px;width:88px;height:88px;border:0;border-radius:14px;cursor:pointer;
   background:rgba(14,18,32,.94);box-shadow:inset 0 0 0 2px rgba(201,164,76,.6);color:#F0D79A;font-size:46px;font-weight:700;line-height:1;z-index:4}
