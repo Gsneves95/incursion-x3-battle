@@ -3,19 +3,17 @@
   "appName": "INCURSION",
   "webDir": "www",
   "server": {
-    "url": "https://incursion-servidor.onrender.com",
     "androidScheme": "https",
-    "cleartext": false
+    "cleartext": false,
+    "allowNavigation": ["incursion-servidor.onrender.com"]
   },
-  "backgroundColor": "#0a0812",
+  "backgroundColor": "#03050B",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 30000,
+      "launchShowDuration": 3000,
       "launchAutoHide": true,
-      "backgroundColor": "#0a0812",
-      "showSpinner": true,
-      "androidSpinnerStyle": "large",
-      "spinnerColor": "#e7bd74"
+      "backgroundColor": "#03050B",
+      "showSpinner": false
     },
     "StatusBar": {
       "overlaysWebView": true,

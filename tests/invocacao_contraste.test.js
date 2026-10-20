@@ -25,7 +25,7 @@ let falhas = 0; const ok = (c, m) => { if (!c) { console.log('  XX ' + m); falha
     const p = await (await b.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 })).newPage();
     await p.goto(dist, { waitUntil: 'load' });
     // com o deus em destaque e um pity no meio (barra parcialmente cheia — o pior p/ o número sobre o fill)
-    await p.evaluate(() => { ir('invocacao', {}, { substituir: true }); INV.montar(); perfil.invocacao.desdeUltimoSS = 30; INV.montar(); });
+    await p.evaluate(() => { var g = document.getElementById('gsplash'); if (g) g.remove(); ir('invocacao', {}, { substituir: true }); INV.montar(); perfil.invocacao.desdeUltimoSS = 30; INV.montar(); });   // §341: tira a splash de boot
     await p.waitForTimeout(250);
     const els = await p.evaluate(() => { const g = s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, color: getComputedStyle(e).color }; }; return { 'SS GARANTIDO': g('.iv-pity__lbl'), 'número': g('.iv-pity__num'), '?': g('.iv-pity__q') }; });
     ok(els['SS GARANTIDO'] && els['número'] && els['?'], `${W}: a barra e seus três elementos existem`);

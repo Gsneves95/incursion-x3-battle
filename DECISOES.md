@@ -6,6 +6,42 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §341 · TELA DE CARREGAMENTO REAL (substitui a página de espera do Render)
+
+**Problema.** O app abria direto `server.url` (o Render). No plano grátis o servidor dorme e leva ~50 s para acordar; nesse
+tempo o celular mostrava a PÁGINA DE ESPERA DO RENDER (genérica). Qualquer tela do jogo só vinha depois — tarde demais.
+
+**Solução — carregamento em TRÊS camadas com o MESMO visual (parece uma tela só):**
+1. **Splash nativa (Android).** `capacitor.config.json` → SplashScreen `backgroundColor:#03050B`, sem spinner, `launchAutoHide`.
+   Abre instantânea e escura (nada de branco). O lançador a esconde (`SplashScreen.hide()`) assim que pinta.
+2. **Lançador local** (`web/carregamento/lancador.html`, empacotado em `www/` pelo `tools/cap-www.js`): o app agora abre
+   PRIMEIRO este arquivo local — tirei o `server.url` do capacitor.config e pus o host do Render em `server.allowNavigation`
+   (o lançador navega pra lá com `location.replace`). É autossuficiente: a arte (`fundo.webp`), a fonte (Cinzel, `cinzel.woff2`)
+   e o script são LOCAIS — a tela aparece sem depender do servidor. Visual: arte em cover + degradê escuro no terço de baixo,
+   "INCURSION" em Cinzel dourado, barra fina dourada com moldura (estilo do ENCERRAR TURNO), frase que troca a cada ~4 s, dica,
+   versão no canto. Lógica: `GET /ping` a cada 2 s (timeout por tentativa); a barra segue uma CURVA no tempo (0→90% até ~45 s,
+   depois rasteja até um teto de 98% — NUNCA enche sozinha); quando o ping responde, completa a 100% em ~300 ms e navega
+   (respeitando ~1 s mínimo de tela, sem piscar). Sem rede → "Sem conexão com a internet" + TENTAR DE NOVO (volta sozinho
+   quando a rede volta); >90 s → "O servidor está demorando para responder." + TENTAR DE NOVO, sem travar a barra num valor falso.
+   O núcleo é um STEPPER puro (`criarLancador(cfg, deps)`) com deps injetáveis (agora/online/ping/navegar) — por isso é testável
+   com relógio controlado, sem esperar 45/90 s de verdade.
+3. **Splash dentro do jogo** (`shell.html`, `#gsplash` no início do `<body>`, CSS no `<head>`): visível desde o 1º byte, mesmo
+   visual (arte `carregamento/fundo.webp` servida pelo Render; o `#03050B` segura até carregar; barra quase cheia). Some com
+   fade (`_splashFora()` em `view.js`, logo após o 1º `render()`).
+
+**/ping no servidor.** `server/server.js` ganhou `GET /ping` → 200 `"ok"`, sem cache (`no-cache,no-store`) e com CORS liberado
+(`Access-Control-Allow-Origin:*`; responde OPTIONS). É a única mudança de comportamento do servidor.
+
+**Modelo servidor-apontado (§240) preservado:** o jogo continua vindo do Render (publicar o servidor atualiza o app); o APK só
+ganhou a antessala local. A arte do carregamento é arte do dono → entrou no repo (`web/carregamento/fundo.webp`, webp ~260 kB).
+
+Provas: `servidor.test.js` (/ping 200 "ok" + no-cache + CORS); `carregamento.test.js` (lançador: responde de 1ª→navega ~1 s;
+demora→barra ≤90% antes, teto 98%, depois completa+navega; sem rede→TENTAR DE NOVO; >90 s→mensagem; e o `#gsplash` do shell
+aparece e some). Os testes de contraste por pixel (mapa/invocação/painel) tiram o `#gsplash` de boot antes de medir (a splash
+não é a tela sob medição). Capturas `341-lancador-carregando`, `341-lancador-sem-conexao` (1846×852 e 780×360), `341-splash-jogo`.
+
+---
+
 ## §347 · As duas CENAS LARGAS do centro da batalha (artes do dono)
 
 O dono gerou as duas cenas do centro da batalha (§335): a NEZHA ("Guerreira em Chamas no Templo Celestial", meu turno) e

@@ -30,6 +30,15 @@ const TIPOS = { '.html': 'text/html; charset=utf-8', '.webp': 'image/webp', '.pn
 // estático mínimo: / -> dist/incursion.html ; /skills|/banners|/icon... -> web/ ; sem path traversal.
 function servirEstatico(req, res) {
   let rel = decodeURIComponent((req.url.split('?')[0]) || '/');
+  // §341: PING do lançador do APK — acorda o servidor (plano grátis dorme) e diz "estou vivo". 200 "ok",
+  // SEM cache (cada tentativa é fresca) e com CORS liberado (a origem do app, https://localhost, é outra).
+  if (rel === '/ping') {
+    const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': '*' };
+    if (req.method === 'OPTIONS') { res.writeHead(204, cors); return res.end(); }
+    res.writeHead(200, Object.assign({ 'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }, cors));
+    return res.end('ok');
+  }
   if (rel === '/' || rel === '/index.html') return enviar(res, path.join(ROOT, 'dist', 'incursion.html'));
   rel = rel.replace(/^\/+/, '');
   if (rel.includes('..')) { res.writeHead(400); return res.end('caminho inválido'); }

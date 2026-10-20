@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>INCURSION</title>
+<!-- §341 — LANÇADOR LOCAL: empacotado no APK, abre ANTES da URL do Render. Autossuficiente: nem fonte, nem
+     imagem, nem script vêm do servidor. Faz ping no servidor (que dorme no plano grátis, ~50s p/ acordar) e só
+     então navega para o jogo. Mesmo visual da splash do jogo (shell.html) e da splash nativa → parece uma tela só. -->
+<style>
+  @font-face{font-family:"Cinzel";font-style:normal;font-weight:900;font-display:block;src:url(cinzel.woff2) format("woff2")}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:#03050B;color:#E8ECF4;
+    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;overflow:hidden}
+  #lan{position:fixed;inset:0;background:#03050B}
+  .lan__art{position:absolute;inset:0;background:#03050B center/cover no-repeat;background-image:url(fundo.webp)}
+  .lan__grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,5,11,0) 42%,rgba(3,5,11,.82) 70%,#03050B 100%)}
+  .lan__box{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;
+    gap:18px;padding:0 24px 7vh;text-align:center}
+  .lan__name{font-family:"Cinzel",serif;font-weight:900;margin:0;letter-spacing:.17em;
+    font-size:clamp(30px,6.2vw,58px);color:#F0D79A;text-shadow:0 2px 20px rgba(0,0,0,.85),0 0 30px rgba(201,164,76,.25)}
+  /* barra fina dourada com moldura — no estilo do botão ENCERRAR TURNO */
+  .lan__bar{width:min(520px,76vw);height:12px;border-radius:7px;background:rgba(8,11,20,.75);
+    box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.6),0 2px 12px rgba(0,0,0,.6);overflow:hidden}
+  .lan__bar i{display:block;height:100%;width:0;border-radius:7px;
+    background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:0 0 10px rgba(240,180,60,.5);transition:width .18s linear}
+  .lan__frase{margin:0;font-size:clamp(14px,2.4vw,19px);font-weight:600;color:#D5DAE4;letter-spacing:.02em;min-height:1.3em;
+    text-shadow:0 2px 10px rgba(0,0,0,.9);transition:opacity .4s}
+  .lan__dica{margin:0;font-size:clamp(11px,1.9vw,15px);color:#9AA4B8;max-width:620px;line-height:1.4;text-shadow:0 1px 8px rgba(0,0,0,.9)}
+  .lan__erro{display:none;flex-direction:column;align-items:center;gap:14px}
+  .lan--erro .lan__bar,.lan--erro .lan__frase,.lan--erro .lan__dica{display:none}
+  .lan--erro .lan__erro{display:flex}
+  .lan__erromsg{margin:0;font-size:clamp(15px,2.6vw,20px);font-weight:700;color:#F2B6BA;text-shadow:0 2px 10px rgba(0,0,0,.9)}
+  .lan__retry{font-family:"Cinzel",serif;font-weight:900;letter-spacing:.08em;font-size:clamp(15px,2.4vw,19px);
+    color:#2A1A04;border:0;border-radius:10px;cursor:pointer;padding:14px 34px;min-height:52px;
+    background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6),0 3px 12px rgba(0,0,0,.55)}
+  .lan__ver{position:absolute;right:12px;bottom:10px;font-size:11px;color:#5a6076;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div id="lan">
+  <div class="lan__art"></div>
+  <div class="lan__grad"></div>
+  <div class="lan__box">
+    <h1 class="lan__name">INCURSION</h1>
+    <div class="lan__bar"><i id="lanbar"></i></div>
+    <p class="lan__frase" id="lanfrase">Despertando os deuses…</p>
+    <p class="lan__dica" id="landica"></p>
+    <div class="lan__erro" id="lanerro">
+      <p class="lan__erromsg" id="lanerromsg"></p>
+      <button class="lan__retry" id="lanretry" type="button">TENTAR DE NOVO</button>
+    </div>
+  </div>
+  <div class="lan__ver" id="lanver"></div>
+</div>
+<script>
+(function(){
+  "use strict";
+  // ===== configuração (cap-www.js troca __JOGO_URL__/__APP_VER__ ao empacotar) =====
+  var CFG = {
+    jogoUrl: "__JOGO_URL__",
+    ver: "__APP_VER__",
+    pingMs: 2000,        // intervalo entre pings
+    pingTimeout: 4000,   // tempo limite por tentativa
+    alvoMs: 45000,       // a barra chega a ~90% por volta daqui
+    teto: 98,            // nunca enche sozinha (só o ping leva a 100)
+    completarMs: 300,    // ao responder, completa até 100 neste tempo
+    minMs: 1000,         // tempo mínimo de tela (sem piscar)
+    demoraMs: 90000      // acima disto: "servidor demorando"
+  };
+  var FRASES = ["Despertando os deuses…","Reabrindo os portais do Eixo…","Reunindo os campeões…","Acendendo os altares…"];
+  var DICAS = [
+    "Três funções se completam: quem bate, quem aguenta, quem controla.",
+    "O elemento certo contra o inimigo decide a luta antes do primeiro golpe.",
+    "Habilidade grátis nunca fica sem energia.",
+    "Monte o time pensando na composição — não só na força de cada deus."
+  ];
+  // deps injetáveis — o teste sobrescreve antes de chamar iniciarLancador()
+  var DEPS = {
+    agora: function(){ return Date.now(); },
+    online: function(){ return navigator.onLine !== false; },
+    navegar: function(u){ location.replace(u); },
+    ping: null   // default definido abaixo (fetch)
+  };
+
+  // curva do progresso: 0→90% até alvoMs (ease), depois rasteja até `teto`, nunca 100 sozinha
+  function curva(el, cfg){
+    if (el <= 0) return 0;
+    if (el <= cfg.alvoMs) return 90 * Math.pow(el / cfg.alvoMs, 0.65);
+    var extra = 1 - Math.exp(-(el - cfg.alvoMs) / 60000);
+    return Math.min(cfg.teto, 90 + (cfg.teto - 90) * extra);
+  }
+
+  // NÚCLEO testável: um stepper puro. passo(now) devolve {acao, prog, estado}.
+  function criarLancador(cfg, deps){
+    var t0 = deps.agora();
+    var prog = 0, estado = "carregando";   // carregando | semrede | demora
+    var respondeu = false, tResp = 0, progResp = 0, navegou = false;
+    function marcarResposta(now){ if (respondeu) return; respondeu = true; tResp = now; progResp = prog; }
+    function passo(now){
+      var el = now - t0;
+      if (!deps.online()) { estado = "semrede"; }
+      else if (estado === "semrede") { estado = "carregando"; }
+      if (!respondeu) {
+        prog = curva(el, cfg);
+        if (estado !== "semrede" && el > cfg.demoraMs) estado = "demora";
+        return { acao: "pintar", prog: prog, estado: estado };
+      }
+      // respondeu: completa até 100 em completarMs; navega só após minMs de tela
+      var k = Math.min(1, (now - tResp) / cfg.completarMs);
+      prog = progResp + (100 - progResp) * k;
+      if (k >= 1 && el >= cfg.minMs && !navegou) { navegou = true; return { acao: "navegar", prog: 100, estado: "pronto" }; }
+      return { acao: "pintar", prog: prog, estado: "completando" };
+    }
+    return {
+      passo: passo, marcarResposta: marcarResposta,
+      get prog(){ return prog; }, get estado(){ return estado; },
+      get respondeu(){ return respondeu; }
+    };
+  }
+  window.criarLancador = criarLancador;   // test hook
+  window.LAN = { CFG: CFG, DEPS: DEPS, FRASES: FRASES, DICAS: DICAS };
+
+  // ===== produção: pinta, faz ping e navega =====
+  function pingReal(){
+    return new Promise(function(resolve){
+      var base = String(CFG.jogoUrl).replace(/\/+$/, "");
+      var ac = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      var to = setTimeout(function(){ if (ac) ac.abort(); resolve(false); }, CFG.pingTimeout);
+      try {
+        fetch(base + "/ping", { method: "GET", cache: "no-store", signal: ac ? ac.signal : undefined })
+          .then(function(r){ clearTimeout(to); resolve(!!(r && (r.ok || r.status === 0))); })
+          .catch(function(){ clearTimeout(to); resolve(false); });
+      } catch (e) { clearTimeout(to); resolve(false); }
+    });
+  }
+
+  function iniciarLancador(){
+    var barra = document.getElementById("lanbar");
+    var frase = document.getElementById("lanfrase");
+    var dica  = document.getElementById("landica");
+    var erro  = document.getElementById("lanerromsg");
+    var lan   = document.getElementById("lan");
+    var retry = document.getElementById("lanretry");
+    var verEl = document.getElementById("lanver");
+    if (verEl) verEl.textContent = CFG.ver && CFG.ver.charAt(0) !== "_" ? ("v" + CFG.ver) : "";
+    if (dica) dica.textContent = DICAS[Math.floor(Math.random() * DICAS.length)];
+
+    var ping = DEPS.ping || pingReal;
+    var L = criarLancador(CFG, DEPS);
+    var ultPing = -1e9, fraseIdx = 0, ultFrase = DEPS.agora(), tickTimer = null;
+
+    function trocarFrase(now){
+      if (now - ultFrase < 4000) return;
+      ultFrase = now; fraseIdx = (fraseIdx + 1) % FRASES.length;
+      if (frase) { frase.style.opacity = "0"; setTimeout(function(){ if (frase) { frase.textContent = FRASES[fraseIdx]; frase.style.opacity = "1"; } }, 220); }
+    }
+    function pintar(r){
+      if (barra) barra.style.width = (r.prog || 0).toFixed(1) + "%";
+      lan.classList.toggle("lan--erro", r.estado === "semrede" || r.estado === "demora");
+      if (r.estado === "semrede") erro.textContent = "Sem conexão com a internet";
+      else if (r.estado === "demora") erro.textContent = "O servidor está demorando para responder.";
+    }
+    function tick(){
+      var now = DEPS.agora();
+      // ping periódico (só com rede e antes de responder)
+      if (!L.respondeu && DEPS.online() && (now - ultPing) >= CFG.pingMs) {
+        ultPing = now;
+        ping().then(function(ok){ if (ok) L.marcarResposta(DEPS.agora()); });
+      }
+      if (!L.respondeu) trocarFrase(now);
+      var r = L.passo(now);
+      pintar(r);
+      if (r.acao === "navegar") { if (tickTimer) clearInterval(tickTimer); DEPS.navegar(CFG.jogoUrl); }
+    }
+    // esconde a splash NATIVA agora que a camada 2 (este lançador) está pintando
+    try { if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.SplashScreen) Capacitor.Plugins.SplashScreen.hide(); } catch (e) {}
+    if (retry) retry.addEventListener("click", function(){ ultPing = -1e9; tick(); });
+    window.addEventListener("online", function(){ ultPing = -1e9; tick(); });
+    tick();
+    tickTimer = setInterval(tick, 100);
+    window.__lanTick = tick;   // p/ depuração
+  }
+  window.iniciarLancador = iniciarLancador;
+  if (!window.__LAN_TEST__) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciarLancador);
+    else iniciarLancador();
+  }
+})();
+</script>
+</body>
+</html>

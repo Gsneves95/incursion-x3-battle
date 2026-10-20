@@ -77,3 +77,27 @@ no APK no próximo `npm run cap:sync` + montagem.
 O teste `tests/cap_native.test.js` ganhou uma guarda que reprova qualquer `@Override` não-`public` no template
 (ela deixava passar antes porque não roda `javac`) — provada que morde trocando o `onResume` de volta para
 `protected`.
+
+## §341 — tela de carregamento (lançador local): o que mudou na geração do APK
+
+O APK agora **abre PRIMEIRO um lançador local** (a tela de carregamento do próprio jogo), em vez de abrir direto a URL
+do Render. Isso muda o que o `npm run cap:sync` empacota, mas **NÃO muda os comandos** nem as dependências — é o mesmo
+runbook acima.
+
+**O que mudou no projeto (já commitado):**
+- `capacitor.config.json`: saiu o `server.url`; entrou `server.allowNavigation: ["incursion-servidor.onrender.com"]`
+  (o lançador navega pra lá sozinho). `SplashScreen.backgroundColor` agora é `#03050B`, sem spinner.
+- `tools/cap-www.js`: o `www/` deixou de ser só um index de segurança — agora empacota o **lançador** (`index.html`),
+  a **arte** (`fundo.webp`) e a **fonte** (`cinzel.woff2`). Fonte do lançador versionada em `web/carregamento/lancador.html`.
+- `server/server.js`: ganhou `GET /ping` (o lançador usa para saber quando o servidor acordou). Já está no deploy do Render
+  assim que o servidor subir com este commit.
+
+**Dependências novas:** nenhuma. O `@capacitor/splash-screen` já estava no `package.json` (não precisa instalar nada novo).
+
+**Como gerar o APK novo (Mac):** é o MESMO runbook acima — `npm run cap:sync` (agora também monta o lançador em `www/`),
+depois `cd android && ./gradlew assembleDebug`, depois `adb install -r ...`. O `cap:sync` imprime uma linha
+`www/ montado (LANÇADOR local §341): index.html + fundo.webp + cinzel.woff2`, confirmando que o lançador entrou no pacote.
+
+**Conferir no S24:** ao abrir o app, aparece a tela "INCURSION" com a arte e a barra dourada (não mais a página do Render).
+Se o servidor estava dormindo, a barra sobe até ~90% enquanto ele acorda e completa quando ele responde; aí o jogo entra.
+Sem internet, aparece "Sem conexão com a internet" e o botão TENTAR DE NOVO.

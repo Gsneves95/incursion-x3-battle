@@ -114,6 +114,17 @@ const prov = require('../data/provacoes/afrodite.json');   // montagem de Pergam
   ok(rWebp.status === 200 && /public/.test(ccWebp) && /max-age=86400/.test(ccWebp), `GET de um .webp traz public, max-age=86400 (veio "${ccWebp}")`);
   console.log(`  / → "${ccHtml}" · .webp → "${ccWebp}"`);
 
+  // ===== (6) §341 — /ping do lançador: 200 "ok", sem cache, com CORS. =====
+  console.log('== 6. §341: GET /ping → 200 "ok", Cache-Control no-cache, CORS presente ==');
+  const corpo = (caminho) => new Promise((res, rej) => { http.get({ host: 'localhost', port, path: caminho }, r => {
+    let b = ''; r.on('data', d => b += d); r.on('end', () => res({ status: r.statusCode, h: r.headers, body: b })); }).on('error', rej); });
+  const rPing = await corpo('/ping');
+  const ccPing = rPing.h['cache-control'] || '';
+  ok(rPing.status === 200 && rPing.body === 'ok', `GET /ping → 200 "ok" (status ${rPing.status}, body "${rPing.body}")`);
+  ok(/no-cache/.test(ccPing) && /no-store/.test(ccPing), `/ping traz Cache-Control no-cache/no-store (veio "${ccPing}")`);
+  ok(rPing.h['access-control-allow-origin'] === '*', `/ping traz CORS (Access-Control-Allow-Origin "${rPing.h['access-control-allow-origin']}")`);
+  console.log(`  /ping → ${rPing.status} "${rPing.body}" · cache "${ccPing}" · CORS "${rPing.h['access-control-allow-origin']}"`);
+
   await new Promise(r => server.close(r));
 
   console.log('');

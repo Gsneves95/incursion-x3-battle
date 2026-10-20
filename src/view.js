@@ -59,6 +59,10 @@ function sairBatalha(){ pararRelogio(); limparSobreposicao(); try{ document.body
 // render() despacha pela ROTA: chama o gancho de render da tela atual.
 function render(){ const h=hooksAtuais(); if(h.render)h.render(); }
 
+// §341: tira a splash do shell (#gsplash) com um fade quando o jogo terminou de iniciar. Idempotente.
+function _splashFora(){ try { const s=document.getElementById('gsplash'); if(!s) return;
+  s.classList.add('gsplash--fora'); setTimeout(function(){ try{ s.remove(); }catch(e){} }, 600); } catch(e){} }
+
 // §330: a sublinha do nome do jogador carrega o MODO + progresso (o HUD de modo saiu da tela). O número do turno e o
 // prazo vão para a linha do ENCERRAR TURNO (topo.js). Objetivos detalhados do modo seguem no cartão de pré-batalha e
 // na tela de resultado; o motor segue avaliando vitória/derrota (atualizarProva/Campanha/Dominio).
@@ -201,6 +205,7 @@ registrar('pvp',       { render: renderPvP,        aoEntrar: ()=>{ if(typeof pvp
 // grande (ver invocacao.js: lê SELOS_ARTE e usa o webp no reveal, com o SVG como fallback). Ver DECISOES §303.
 ir('home');
 render();
+_splashFora();   // §341: o jogo iniciou — tira a splash do shell com um fade
 ligarDiag();   // F0.6 passo 1: painel de diagnóstico (oculto; ?diag ou 3 toques no build)
 ligarModoApp();// F0.6 passo 3: modo app (manifest embutido + tela cheia no 1º toque)
 ligarPlataformaNativa();// §240: dentro do APK (Capacitor) — botão VOLTAR do Android + esconder o splash

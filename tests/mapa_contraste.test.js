@@ -27,7 +27,7 @@ const ok = (c, m) => { if (!c) { console.log('  XX ' + m); falhas++; } };
   for (const W of [780, 893, 1075, 1200]) {
     const p = await (await b.newContext({ viewport: { width: W, height: 428 }, deviceScaleFactor: 2 })).newPage();
     await p.goto(dist, { waitUntil: 'load' });
-    await p.evaluate(() => { perfil = novoPerfil(0, 0); ir('home', {}, { substituir: true }); render(); });
+    await p.evaluate(() => { perfil = novoPerfil(0, 0); ir('home', {}, { substituir: true }); render(); var g = document.getElementById('gsplash'); if (g) g.remove(); });   // §341: a splash de boot não é a tela sob medição
     await p.waitForTimeout(180);
     // por ilha: nome + contador/tag (rect + cor)
     const items = await p.evaluate(() => {

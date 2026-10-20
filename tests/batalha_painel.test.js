@@ -15,7 +15,8 @@ const distAbs=path.resolve(__dirname,'..','dist','incursion.html');
 const BOOT=`
   st=montarProvacao({aliados:['hades','babi','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});
   prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){} try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}
-  st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null; ir('batalha',{},{substituir:true});render();`;
+  st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null; ir('batalha',{},{substituir:true});render();
+  { var _g=document.getElementById('gsplash'); if(_g)_g.remove(); }`;
 const SIT={
   'deus':`detalhe=null;armado=null; infoUnidade(st.lados[1].units[0].uid);`,
   'habilidade lida':`armado=null; lerHabilidade(st.lados[0].units[2].uid,'habilidade');`,

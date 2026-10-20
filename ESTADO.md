@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §341 · Tela de carregamento real (3 camadas) no lugar da página do Render
+- O APK dormia na página de espera do Render (~50 s p/ acordar). Agora: (1) splash nativa #03050B (capacitor.config); (2)
+  LANÇADOR local `web/carregamento/lancador.html` (empacotado em www/ pelo cap-www.js) que abre ANTES do Render — tirei o
+  `server.url` e pus o host em `server.allowNavigation`; ele pinga `/ping` e navega com location.replace; (3) splash
+  `#gsplash` no shell.html (mesmo visual), some com `_splashFora()` (view.js) após o 1º render.
+- Lançador autossuficiente: arte `fundo.webp` + fonte `cinzel.woff2` + script LOCAIS (cap-www copia p/ www/). Barra em curva
+  (0→90% até ~45 s, teto 98%, nunca enche sozinha); ping responde → 100% em ~300 ms e navega (≥1 s de tela). Sem rede →
+  "Sem conexão" + TENTAR DE NOVO; >90 s → "servidor demorando". Núcleo = `criarLancador(cfg,deps)` (stepper puro, testável).
+- Servidor: `GET /ping` → 200 "ok", no-cache, CORS `*` (única mudança no server; server/server.js). Arte do dono entrou:
+  `web/carregamento/fundo.webp` (~260 kB).
+- cap-www.js reescrito (empacota o lançador+arte+fonte); capacitor.config.json (sem server.url, +allowNavigation, SplashScreen
+  #03050B). Provas: `servidor.test.js` (/ping), `carregamento.test.js` (lançador + #gsplash). Testes de contraste por pixel
+  tiram o #gsplash antes de medir. Capturas `341-lancador-carregando`, `341-lancador-sem-conexao`, `341-splash-jogo`.
+- **Para valer no celular é preciso APK NOVO** (o lançador vive dentro do APK). Passos no docs/apk-imersivo.md.
+
 ## ★ §347 · As duas cenas largas do centro da batalha (artes do dono)
 - Entraram no repo: `web/cena/turno_meu.webp` (Nezha "Guerreira em Chamas", meu turno) e `web/cena/turno_oponente.webp`
   (Ah Puch "Rei Esquelético sob a Lua de Sangue", turno do oponente) — webp 1600 px, ~274/255 kB. O build do §335 as
