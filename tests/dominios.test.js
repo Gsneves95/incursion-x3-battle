@@ -20,7 +20,7 @@ let f = 0; const ok = (c, m) => { if (!c) { f++; console.log('  XX ' + m); } els
 const abrirCorrida = (w, c) => w.eval(`ir("dominios",{},{substituir:true}); render();`
   + `document.querySelector('.domcard[data-cultura="${c}"]').click();`
   + `document.querySelector('#dentrar').click();`
-  + `[...document.querySelectorAll('.ctile[data-pick]')].slice(0,3).forEach(b=>b.click());`
+  + `[...document.querySelectorAll('.dm-card[data-pick]')].slice(0,3).forEach(b=>b.click());`   // §342: montador novo (.dm-card)
   + `document.querySelector('#bcomecar').click();`);
 const primeiroDano = kit => { let v = null; (kit.ab || []).forEach(a => (a.fx || []).forEach(e => { if (e.t === 'dmg' && typeof e.v === 'number' && v == null) v = e.v; })); return v; };
 

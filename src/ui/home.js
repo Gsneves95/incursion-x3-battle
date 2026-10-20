@@ -3444,57 +3444,197 @@ function iniciarCorridaDominio(cultura, time){
   salvarRunDominio(c, run);
   iniciarNivelDominio(c);
 }
-/* ---------- §325: MONTAR TIME antes da corrida (rota 'dominiomontar', params.cultura) ----------
-   Reusa o componente de escolha de time da campanha (mesmas classes ctile/cgrid/cmontarpe): o jogador
-   monta 3 deuses SEUS. Os starters (INICIAIS) são sempre possuídos → nenhuma corrida é impossível de abrir
-   (regra A/empréstimo). O time TRAVA pela corrida (regra B). Mostra o chefe final INIMIGO como ameaça. */
+/* ===================== §342 — MONTADOR DE TIME (base reaproveitável) =====================
+   1ª de 5 telas de montar time. A BASE (montadorTimeHTML + ligarMontadorTime) desenha a grade de
+   SEUS DEUSES (filtros+busca), as 3 vagas, o painel de kit e o rodapé; o que muda por modo vem do cfg.
+   Só o DOMÍNIO usa agora (Campanha/Composição/PvP/Batalha CPU seguem iguais). Tela fixa 1846×852 (§335/§339). */
+let montFiltroElem = null, montFiltroFunc = null, montBusca = '', montKitAberto = null, montDica = false;
+const _montNorm = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+function _montNivelMax(k){ const n = niveisDeExibicao(k); if (!n) return 1; let mx = 1; for (const s in n) if (n[s] > mx) mx = n[s]; return mx; }
+function _montJogaveis(){ return ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k)); }
+function _montFiltrados(ks){ const q = _montNorm(montBusca);
+  return ks.filter(k => { const g = HRM[k] || {};
+    if (montFiltroElem && g.elem !== montFiltroElem) return false;
+    if (montFiltroFunc && g.funcao !== montFiltroFunc) return false;
+    if (q && !_montNorm(g.nome).includes(q)) return false;
+    return true; }); }
+// time resolvido na ORDEM das vagas (vaga livre puxa do pick; travada/emprestada traz o deus fixo)
+function _montTime(cfg){ let pi = 0; return cfg.vagas.map(v => v.tipo === 'livre' ? (cfg.pick[pi++] || null) : (v.deus || null)); }
+function _montFreeCount(cfg){ return cfg.vagas.filter(v => v.tipo === 'livre').length; }
+
+function _montCardHTML(k, cfg){
+  const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
+  const pos = cfg.pick.indexOf(k), on = pos >= 0, nvmax = _montNivelMax(k);
+  return `<button class="dm-card${on ? ' dm-card--sel' : ''}" data-pick="${k}">
+    <span class="dm-card__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
+    <span class="dm-card__grad"></span>
+    ${nvmax > 1 ? `<span class="dm-card__nv">Nv ${nvmax}</span>` : ''}
+    <span class="dm-card__i" data-info="${k}" role="button" aria-label="kit">i</span>
+    ${on ? `<span class="dm-card__vaga">${pos + 1}</span>` : ''}
+    <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 18)}<span class="dm-card__f">${H(g.funcao || '')}</span></span></span>
+  </button>`;
+}
+function _montVagaHTML(i, k, v){
+  const n = i + 1;
+  if (!k) return `<div class="dm-vaga dm-vaga--vazia"><span class="dm-vaga__num">${n}</span><span class="dm-vaga__add">+</span><span class="dm-vaga__txt">Escolha um deus</span></div>`;
+  const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' }, trav = v.tipo === 'travada';
+  return `<div class="dm-vaga"><span class="dm-vaga__num">${n}</span>
+    <span class="dm-vaga__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 24)}</span>
+    <span class="dm-vaga__id"><b class="dm-vaga__n">${H(g.nome)}</b><span class="dm-vaga__meta">${orbe(g.elem, 16)}<span class="dm-vaga__f">${H(g.funcao || '')}</span></span></span>
+    ${trav ? `<span class="dm-vaga__lock">🔒</span>` : `<button class="dm-vaga__x" data-rem="${k}" aria-label="remover">✕</button>`}
+  </div>`;
+}
+function _montKitPanelHTML(k, cfg){
+  const g = (typeof GODS !== 'undefined' && GODS[k]) || null; if (!g) return '';
+  const hg = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
+  const eg = deusKitEfetivo(k, g), pos = cfg.pick.indexOf(k), on = pos >= 0;
+  const cheio = cfg.pick.length >= _montFreeCount(cfg) && !on;
+  const linha = ([sl, lab]) => {
+    const a = sl === 'defesa' ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : (eg.ab || []).find(x => x.slot === sl);
+    if (!a) return '';
+    const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);
+    return `<div class="dmk-ab">
+      <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
+      <div class="dmk-ab__body">
+        <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span>${nv > 1 ? `<span class="dmk-ab__nv">Nv ${nv}</span>` : ''}</div>
+        <div class="dmk-ab__meta">${pipsDetalhe(a.cost || {})}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
+        <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
+      </div></div>`;
+  };
+  const acao = on ? `<button class="dmb dmb--go" data-kit-toggle="${k}">TIRAR DO TIME</button>`
+    : cheio ? `<button class="dmb dmb--go" disabled>Time cheio</button>`
+      : `<button class="dmb dmb--go" data-kit-toggle="${k}">ESCOLHER ${H((hg.nome || '').toUpperCase())}</button>`;
+  return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
+    <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
+    <div class="dm-kit__cab">
+      <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
+      <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+    </div>
+    ${g.passiva ? `<div class="dmk-pas"><span class="dmk-pas__t">PASSIVA · ${H(g.passiva.nome)}</span><span class="dmk-pas__d">${realce(g.passiva.desc || '')}</span></div>` : ''}
+    <div class="dm-kit__abs">${[['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']].map(linha).join('')}</div>
+    <div class="dm-kit__pe">${acao}</div>
+  </div></div>`;
+}
+function montadorTimeHTML(cfg){
+  const jogaveis = _montJogaveis(), lista = _montFiltrados(jogaveis);
+  const time = _montTime(cfg), v = cfg.validar(time), nvag = cfg.vagas.length;
+  const elemChips = ELEMS.map(e => `<button class="dm-orbe${montFiltroElem === e ? ' is-on' : ''}" data-elem="${e}" aria-label="${ELAB[e]}">${orbe(e, 30)}</button>`).join('');
+  const funcChips = FUNCOES_VOCAB.map(f => `<button class="dm-chip${montFiltroFunc === f ? ' is-on' : ''}" data-func="${f}">${H(f)}</button>`).join('');
+  const vagasHTML = cfg.vagas.map((vg, i) => _montVagaHTML(i, time[i], vg)).join('');
+  const cards = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
+  return `<div id="baselayer" class="dm2"><div id="dommontar">
+    <button class="dmb dmb--voltar" id="bvoltar" data-voltar="1">‹ VOLTAR</button>
+    <div class="dm-cabid"><h1 class="dm-titulo cin">${H(cfg.titulo)}</h1><span class="dm-sub">${H(cfg.sublinha)}</span></div>
+    <section class="dm-ctx">${cfg.contextoHTML}</section>
+    <section class="dm-time">
+      <h2 class="dm-time__t">SEU TIME</h2>
+      <div class="dm-time__lista">${vagasHTML}</div>
+    </section>
+    <section class="dm-dir">
+      <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
+        <div class="dm-filtros">
+          <button class="dm-chip dm-chip--todos${(!montFiltroElem && !montFiltroFunc) ? ' is-on' : ''}" data-todos="1">Todos</button>
+          <span class="dm-orbes">${elemChips}</span>
+          <span class="dm-funcs">${funcChips}</span>
+          <span class="dm-busca__w"><input class="dm-busca" id="dmbusca" placeholder="Buscar deus" value="${H(montBusca)}"></span>
+          <span class="dm-conta">${lista.length} deuses</span>
+        </div>
+      </div>
+      <div class="dm-grade" id="dmgrade">${cards}</div>
+    </section>
+    <div class="dm-rodape">
+      ${v.ok ? '' : `<span class="dm-motivo">ⓘ ${H(v.motivo)}</span>`}
+      <button class="dmb dmb--go dmb--comecar" id="bcomecar" ${v.ok ? '' : 'disabled'}>${H(cfg.textoBotao)}</button>
+    </div>
+    ${montDica ? `<div class="dm-dica" id="dmdica">Tire um deus para trocar</div>` : ''}
+    ${montKitAberto ? _montKitPanelHTML(montKitAberto, cfg) : ''}
+  </div></div>`;
+}
+function ligarMontadorTime(cfg){
+  const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
+  const freeN = _montFreeCount(cfg);
+  const bv = q('[data-voltar]'); if (bv) bv.onclick = () => cfg.aoVoltar();
+  // escolher/tirar pelo cartão (o "i" tem handler próprio e não propaga)
+  qq('.dm-card[data-pick]').forEach(b => b.onclick = () => {
+    const k = b.dataset.pick, j = cfg.pick.indexOf(k);
+    montDica = false;
+    if (j >= 0) cfg.pick.splice(j, 1);
+    else if (cfg.pick.length < freeN) cfg.pick.push(k);
+    else { montDica = true; }
+    render();
+  });
+  qq('.dm-card__i[data-info]').forEach(el => el.onclick = ev => { ev.stopPropagation(); montDica = false; montKitAberto = el.dataset.info; render(); });
+  qq('.dm-vaga__x[data-rem]').forEach(b => b.onclick = () => { const j = cfg.pick.indexOf(b.dataset.rem); if (j >= 0) cfg.pick.splice(j, 1); montDica = false; render(); });
+  // filtros (lembrados enquanto o app está aberto)
+  const bt = q('[data-todos]'); if (bt) bt.onclick = () => { montFiltroElem = null; montFiltroFunc = null; render(); };
+  qq('[data-elem]').forEach(b => b.onclick = () => { montFiltroElem = (montFiltroElem === b.dataset.elem) ? null : b.dataset.elem; render(); });
+  qq('[data-func]').forEach(b => b.onclick = () => { montFiltroFunc = (montFiltroFunc === b.dataset.func) ? null : b.dataset.func; render(); });
+  const bu = q('#dmbusca'); if (bu) bu.oninput = () => { montBusca = bu.value; const g = q('#dmgrade'); const lista = _montFiltrados(_montJogaveis());
+    if (g) g.innerHTML = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
+    const c = q('.dm-conta'); if (c) c.textContent = lista.length + ' deuses';
+    _montWireCards(cfg); };   // re-liga os cartões sem re-render (preserva o foco da busca)
+  // painel de kit
+  const kx = q('[data-kit-x]'); if (kx) kx.onclick = () => { montKitAberto = null; render(); };
+  const kit = q('#dmkit'); if (kit) kit.onclick = ev => { if (ev.target === kit) { montKitAberto = null; render(); } };
+  qq('[data-kit-toggle]').forEach(b => b.onclick = () => { const k = b.dataset.kitToggle, j = cfg.pick.indexOf(k);
+    if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k);
+    montKitAberto = null; montDica = false; render(); });
+  // começar
+  const time = _montTime(cfg), v = cfg.validar(time);
+  const bc = q('#bcomecar'); if (bc && v.ok) bc.onclick = () => cfg.aoComecar(_montTime(cfg));
+  fit();
+}
+// re-liga só os cartões (usado pela busca, que não re-renderiza a tela toda p/ não perder o foco do input)
+function _montWireCards(cfg){
+  const freeN = _montFreeCount(cfg);
+  [...stage.querySelectorAll('.dm-card[data-pick]')].forEach(b => b.onclick = () => {
+    const k = b.dataset.pick, j = cfg.pick.indexOf(k);
+    montDica = false;
+    if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k); else montDica = true;
+    render();
+  });
+  [...stage.querySelectorAll('.dm-card__i[data-info]')].forEach(el => el.onclick = ev => { ev.stopPropagation(); montKitAberto = el.dataset.info; render(); });
+}
+
+/* contexto do DOMÍNIO (bloco esquerdo): inimigos da cultura (≤4 + "+N"), chefe final, aviso de trava */
+function _domContextoHTML(lad){
+  const trio = lad.trio || [];
+  const culturaGods = ROSTER.filter(e => e.faccao === lad.cultura).map(e => e.key);
+  const inimigos = culturaGods.filter(k => !trio.includes(k));
+  const mostra = inimigos.slice(0, 4), resto = inimigos.length - mostra.length;
+  const mini = k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    return `<span class="dm-ini"><span class="dm-ini__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 18)}</span><span class="dm-ini__n">${H(g.nome)}</span></span>`; };
+  const chefe = k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    return `<span class="dm-chefe"><span class="dm-chefe__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span><span class="dm-chefe__n">${H(g.nome)}</span></span>`; };
+  return `<h2 class="dm-ctx__t cin">${H(lad.nome)}</h2>
+    <div class="dm-ctx__trava"><span class="dm-ctx__lock">🔒</span> O time fica travado durante a corrida.</div>
+    <div class="dm-ctx__rot">INIMIGOS DESTE DOMÍNIO</div>
+    <div class="dm-ctx__inis">${mostra.map(mini).join('')}${resto > 0 ? `<span class="dm-ini dm-ini--mais"><span class="dm-ini__p dm-ini__p--mais">+${resto}</span></span>` : ''}</div>
+    <div class="dm-ctx__rot">CHEFE FINAL</div>
+    <div class="dm-ctx__chefes">${trio.map(chefe).join('')}</div>`;
+}
+
+/* ---------- §325/§342: MONTAR TIME antes da corrida (rota 'dominiomontar', params.cultura) ----------
+   Monta 3 deuses SEUS (starters sempre possuídos → nenhuma corrida é impossível). O time TRAVA pela corrida.
+   §342: usa o montador de time genérico; só o Domínio o usa por ora. */
 function renderDominioMontarTime(){
   const c = String(((paramsAtuais() || {}).cultura) || '').toLowerCase();
   const lad = dominioPorCultura(c);
   if (!lad){ sairDominio(); ir('dominios', {}, { substituir: true }); render(); return; }
-  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
-  const tile = k => {
-    const g = HRM[k] || { nome: k, elem: 'Umbra' };
-    const on = domTimePick.includes(k);
-    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}">
-      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
-      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
-      ${on ? `<span class="ctile__mark">${domTimePick.indexOf(k) + 1}</span>` : ''}
-      <span class="ctile__n">${H(g.nome)}</span>
-    </button>`;
+  const total = domTotalNiveis(lad) || 40;
+  const cfg = {
+    id: 'dominio', cultura: c, pick: domTimePick,
+    titulo: 'MONTE SEU TIME',
+    sublinha: `DOMÍNIO · ${String(lad.cultura || '').toUpperCase()} · NÍVEL 1/${total}`,
+    contextoHTML: _domContextoHTML(lad),
+    vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
+    validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.`, porDeus: {} }; },
+    textoBotao: 'COMEÇAR CORRIDA',
+    aoComecar: (t) => iniciarCorridaDominio(c, t.slice()),
+    aoVoltar: () => { montKitAberto = null; ir('dominio', { cultura: c }, { substituir: true }); render(); },   // §325: Voltar → HUB
   };
-  const inimigoTrioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
-  const pronto = domTimePick.length === 3;
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-      <h1 class="tela__titulo">Monte seu time</h1>
-      <span class="tela__cont">${domTimePick.length}/3</span>
-    </header>
-    <div class="tela__rol">
-      <div class="ccap"><h2>${H(lad.nome)}</h2><p>Três deuses seus para descer a escada ${H(lad.cultura)}. O time trava pela corrida.</p></div>
-      <div class="domsec__rot">Chefe final do Domínio</div>
-      <div class="domtrio">${inimigoTrioHTML}</div>
-      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
-    </div>
-    <div class="cmontarpe">
-      <button class="b b--primary b--lg" id="bcomecar" ${pronto ? '' : 'disabled'}>Começar corrida${pronto ? '' : ` (${domTimePick.length}/3)`}</button>
-    </div>
-  </div>
-  </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { ir('dominio', { cultura: c }, { substituir: true }); render(); };   // §325: Voltar devolve ao HUB (montar substituiu o hub)
-  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
-    b.onclick = () => {
-      const k = b.dataset.pick, j = domTimePick.indexOf(k);
-      if (j >= 0) domTimePick.splice(j, 1); else if (domTimePick.length < 3) domTimePick.push(k);
-      render();
-    };
-  });
-  const bc = stage.querySelector('#bcomecar');
-  if (bc && pronto) bc.onclick = () => iniciarCorridaDominio(c, domTimePick.slice());
-  fit();
+  stage.innerHTML = montadorTimeHTML(cfg);
+  ligarMontadorTime(cfg);
 }
 
 function descerDominio(cultura){ iniciarNivelDominio(cultura); }

@@ -2,6 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §342 · MONTAR TIME do Domínio no modelo do dono + base reaproveitável
+- **BASE** (`montadorTimeHTML(cfg)`/`ligarMontadorTime(cfg)` em home.js): grade de SEUS DEUSES (temDeus&&temKitHome),
+  filtros+busca, 3 vagas, painel de kit, rodapé. O cfg define titulo/sublinha/contextoHTML/vagas/validar/textoBotao/
+  aoComecar/aoVoltar; `pick` é array mutado no lugar (no Domínio = `domTimePick`). Vagas preparadas p/ `travada`/
+  `emprestada` (Campanha futura); no Domínio as 3 são `livre`. Só o Domínio usa a base; PvP/Campanha/Composição/CPU não.
+- **TELA fixa 1846×852** escalada (fit() ganhou `dominiomontar`→`#dommontar`, classe `dm2`, `body.emmontar`; só a grade
+  rola). Cabeçalho (‹ VOLTAR, MONTE SEU TIME, "DOMÍNIO·CULTURA·NÍVEL 1/N"); esquerda: contexto (inimigos da faccao −trio,
+  ≤4+"+N"; chefe final = lad.trio; aviso de trava) + SEU TIME (3 vagas com nº/retrato/orbe§337/função/X); direita: SEUS
+  DEUSES (Todos+6 orbes+5 funções+busca+contagem, combinam; grade 5 col com selo Nv só >1, "i", vaga dourada); painel de
+  kit (passiva + 4 habilidades com custo/GRÁTIS§340/recarga/Nv/desc; ESCOLHER/TIRAR/Time cheio; X/fora/Android fecham);
+  rodapé COMEÇAR CORRIDA + motivo.
+- **Mínimos §339b:** botões ≥72, corpo ≥20, nome ≥22. Os filtros quebram em 2 linhas p/ caber (ref era 1 linha, fontes
+  menores). sublinha 20px. #build/#conta somem (body.emmontar).
+- **Não muda (§325):** domTimePick; COMEÇAR→iniciarCorridaDominio(cultura,time) na ordem; VOLTAR→hub; time trava.
+- **Provas:** `tests/dominio_montar.test.js` (jsdom completo + Chromium caixas tol 4px @1846 e @780 sem corte). `dominios`
+  e `mapa` migraram só o seletor (`.ctile`→`.dm-card`). Capturas `342-*`. Suíte + build verdes.
+
 ## ★ §340 · Habilidade GRÁTIS mostra "GRÁTIS" onde aparece o custo
 - Custo vazio (`cost:{}`) agora mostra o indicador **GRÁTIS** (verde-pronta #4BE38A, Rajdhani negrito, caixa alta) em
   TODO desenhador de custo, no mesmo lugar/formato das orbes: `campo.js btCustoPips` (botão de batalha, pílula, ≥16px),

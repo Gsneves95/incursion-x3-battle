@@ -263,6 +263,8 @@ function voltarNativo(){
   // §339: na tela DESAFIOS, o voltar do Android fecha primeiro o painel "?" e, depois, a confirmação de desistência.
   if(typeof desafioAjuda!=='undefined'&&desafioAjuda){ desafioAjuda=false; render(); return; }
   if(typeof desafioDesistindo!=='undefined'&&desafioDesistindo){ desafioDesistindo=null; render(); return; }
+  // §342: no MONTAR TIME, o voltar do Android fecha primeiro o painel de kit (não sai da tela).
+  if(typeof montKitAberto!=='undefined'&&montKitAberto){ montKitAberto=null; render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

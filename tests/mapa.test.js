@@ -224,7 +224,7 @@ console.log('== §326 e2e — da home à corrida: tocar Domínios → seleção 
   ok(!!$('#dentrar'), 'o hub do Olimpo tem o botão de começar (Montar time e começar)');
   toque($('#dentrar'));
   ok(w.eval('rotaAtual()') === 'dominiomontar', `o hub leva ao passo MONTAR TIME (foi para "${w.eval('rotaAtual()')}")`);
-  ok(!!$('.ctile[data-pick]'), 'o passo Montar time mostra a grade de deuses (componente reusado da campanha)');
+  ok(!!$('.dm-card[data-pick]'), 'o passo Montar time mostra a grade de deuses (§342: montador de time)');
   console.log('  home → Domínios(seleção, 5) → Olimpo(hub) → Montar time · voltar da seleção = home');
 }
 

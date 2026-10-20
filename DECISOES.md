@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §342 · MONTAR TIME do Domínio no modelo do dono + a BASE reaproveitável
+
+Primeira das 5 telas de montar time (Domínio, PvP, Campanha, Composição, Batalha CPU). Reconstruída no modelo
+aprovado como **TELA FIXA de 1846×852** escalada (mesmo sistema do §335/§339; `fit()` ganhou o ramo `dominiomontar`
+→ canvas `#dommontar`, classe `dm2`, `body.emmontar`). Só a grade de deuses rola.
+
+**PARTE 1 — a BASE (`montadorTimeHTML(cfg)` + `ligarMontadorTime(cfg)`).** Um montador de time genérico: a grade de
+SEUS DEUSES (só `temDeus(k) && temKitHome(k)`), os filtros + busca, as 3 vagas, o painel de kit e o rodapé com botão +
+motivo. O que muda por modo vem do `cfg`: `titulo`, `sublinha`, `contextoHTML`, `vagas` (preparadas para `travada` e
+`emprestada` que a Campanha usará; no Domínio as 3 são `livre`), `validar(time)→{ok,motivo,porDeus}`, `textoBotao`,
+`aoComecar(time)`, `aoVoltar()`. O `pick` é um array passado no cfg e mutado no lugar — no Domínio é o próprio
+`domTimePick`, então o comportamento do §325 não muda. Filtros/busca/painel são estado de módulo (`montFiltro*`,
+`montBusca`, `montKitAberto`), lembrados enquanto o app está aberto. **Só o Domínio usa a base agora**; Campanha,
+Composição, PvP e Batalha CPU não mudaram.
+
+**PARTE 2 — a tela do Domínio.** Cabeçalho (‹ VOLTAR x57–237, título "MONTE SEU TIME" x268, sublinha
+"DOMÍNIO · CULTURA · NÍVEL 1/N" com o nível em que a corrida vai começar). Coluna esquerda: bloco de CONTEXTO (nome do
+Domínio, aviso com cadeado, INIMIGOS DESTE DOMÍNIO = deuses da `faccao` da cultura menos o trio do chefe, até 4 + "+N",
+e CHEFE FINAL = `lad.trio` com moldura vermelha e nome) e bloco SEU TIME (3 vagas de 72px com número de ordem, retrato,
+nome, ORBE do elemento §337 + função, e X; vaga vazia = quadrado tracejado "+ Escolha um deus"). Área direita SEUS
+DEUSES: filtros (pílula Todos + 6 ORBES de elemento + 5 funções + busca sem acento/caixa + contagem "N deuses",
+combinando elemento E função E busca, selecionado em dourado) e grade de 5 colunas de cartões (retrato, degradê, nome,
+orbe, função, selo "Nv N" **só** quando alguma habilidade está acima do nível 1 — na referência aparecia em todos por
+engano —, botão "i", e, quando escolhido, moldura dourada + número da vaga). Toque escolhe (1ª vaga livre) / tira; com 3
+cheias, tocar num não-escolhido mostra a dica "Tire um deus para trocar"; o "i" abre o painel de kit sem escolher.
+Painel de kit (passiva + Básico/Habilidade/Milagre/Defesa, cada um com custo em orbes ou "GRÁTIS" §340, recarga, nível
+real e descrição do nível atual; ESCOLHER/TIRAR/Time cheio; fecha por X, toque fora e voltar do Android). Rodapé com
+COMEÇAR CORRIDA (dourado quando pronto, ≥72px) + o motivo "Escolha mais N deus(es)".
+
+**Tamanhos mínimos (§339b):** todo botão ≥72px, corpo ≥20px, nome dos cartões ≥22px, nada cortado. Para honrar isso em
+1846, os **filtros quebram em 2 linhas** (uma com Todos+orbes, outra com funções+busca+contagem) — a referência os põe
+numa linha só, mas com fontes menores que o mínimo; os mínimos de toque venceram. A sublinha ficou em 20px (a ref dizia
+"~18px", aproximado). `#build`/`#conta` somem nesta tela (`body.emmontar`, como no §339).
+
+**Não muda (§325):** `domTimePick`; iniciais sempre disponíveis; COMEÇAR → `iniciarCorridaDominio(cultura, time)` na
+ordem das vagas; VOLTAR → hub (`ir('dominio',{cultura})`); time trava pela corrida; regras/economia/servidor/outros modos.
+
+**Provas:** `tests/dominio_montar.test.js` (jsdom: escolher/tirar/X; 3 vagas bloqueiam o 4º + dica; filtros combinados
++ contagem; painel de kit com 4 habilidades/custo/GRÁTIS/Nv + ESCOLHER/X/voltar-Android; COMEÇAR só com 3 chama
+`iniciarCorridaDominio` na ordem; VOLTAR→hub; selo Nv só acima de 1; Chromium: caixas dos blocos tol 4px, @780 sem
+corte/sobreposição). `dominios.test.js` e `mapa.test.js` tiveram só o seletor do montador migrado (`.ctile`→`.dm-card`).
+Capturas `342-*`.
+
+---
+
 ## §340 · Habilidade GRÁTIS mostra "GRÁTIS" onde aparece o custo (em todo o jogo)
 
 Achado do dono: as habilidades de custo vazio (os 26 básicos grátis do §338 e qualquer outra com `cost:{}`) não
