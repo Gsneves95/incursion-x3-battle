@@ -2,6 +2,11 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ⏳ FILA · §343 · Plano de monetização (só documentação) → `docs/monetizacao.md`
+- Desenho registrado, **sem código/dado**: anúncios rewarded opcionais, Deus da Semana por anúncio (5 de 7 marcas),
+  outros 6 cenários rewarded, Loja (gemas/passe/cosméticos), e os pré-requisitos (§274 contas → desenho → tela da Loja →
+  app nativo com billing/AdMob/consentimento). Valores irão para `data/economia.json`; recompensas creditadas pelo servidor.
+
 ## ★ §346b · Coleção: filtros em 2 linhas + tela cheia (canvas fixo 1100×508 escalado)
 - **Pivô vs §346:** a Coleção deixou de ser `col2` fluido e virou TELA FIXA escalada (como batalha/desafios/montador). O
   design é **1100×508** (metade de 1846×852, mesma proporção 2.166), onde o CSS atual da Coleção cabe; `fit()` tem o ramo
