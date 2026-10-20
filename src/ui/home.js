@@ -3492,28 +3492,38 @@ function _montKitPanelHTML(k, cfg){
   const linha = ([sl, lab]) => {
     const a = sl === 'defesa' ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : (eg.ab || []).find(x => x.slot === sl);
     if (!a) return '';
-    const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);
+    const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);   // §342b: nível REAL da conta, sempre visível ao lado do tipo
     return `<div class="dmk-ab">
       <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
       <div class="dmk-ab__body">
-        <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span>${nv > 1 ? `<span class="dmk-ab__nv">Nv ${nv}</span>` : ''}</div>
-        <div class="dmk-ab__meta">${pipsDetalhe(a.cost || {})}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
+        <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span><span class="dmk-ab__nv">Nv ${nv}</span></div>
+        <div class="dmk-ab__meta">${_montCustoHTML(a.cost)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
         <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
       </div></div>`;
   };
   const acao = on ? `<button class="dmb dmb--go" data-kit-toggle="${k}">TIRAR DO TIME</button>`
     : cheio ? `<button class="dmb dmb--go" disabled>Time cheio</button>`
       : `<button class="dmb dmb--go" data-kit-toggle="${k}">ESCOLHER ${H((hg.nome || '').toUpperCase())}</button>`;
+  // §342b: cabeçalho e botão FIXOS; a lista de habilidades (+ passiva) rola por dentro → o painel inteiro cabe nos 852.
   return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
-    <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
     <div class="dm-kit__cab">
       <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
       <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+      <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
     </div>
-    ${g.passiva ? `<div class="dmk-pas"><span class="dmk-pas__t">PASSIVA · ${H(g.passiva.nome)}</span><span class="dmk-pas__d">${realce(g.passiva.desc || '')}</span></div>` : ''}
-    <div class="dm-kit__abs">${[['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']].map(linha).join('')}</div>
+    <div class="dm-kit__scroll">
+      ${g.passiva ? `<div class="dmk-pas"><span class="dmk-pas__t">PASSIVA · ${H(g.passiva.nome)}</span><span class="dmk-pas__d">${realce(g.passiva.desc || '')}</span></div>` : ''}
+      <div class="dm-kit__abs">${[['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']].map(linha).join('')}</div>
+    </div>
     <div class="dm-kit__pe">${acao}</div>
   </div></div>`;
+}
+// §342b: CUSTO do kit em ORBES (§337, ≥22px) ou "GRÁTIS" (§340) — como o painel da batalha, não os pontinhos.
+function _montCustoHTML(cost){
+  cost = cost || {}; const out = [];
+  for (const kk in cost) { if (kk === 'livre') continue; for (let i = 0; i < cost[kk]; i++) out.push(orbe(kk, 24)); }
+  for (let i = 0; i < (cost.livre || 0); i++) out.push(orbe('livre', 24));
+  return out.length ? `<span class="dmk-ab__orbs">${out.join('')}</span>` : `<span class="dmk-ab__gratis">GRÁTIS</span>`;
 }
 function montadorTimeHTML(cfg){
   const jogaveis = _montJogaveis(), lista = _montFiltrados(jogaveis);
@@ -3596,6 +3606,9 @@ function _montWireCards(cfg){
   [...stage.querySelectorAll('.dm-card__i[data-info]')].forEach(el => el.onclick = ev => { ev.stopPropagation(); montKitAberto = el.dataset.info; render(); });
 }
 
+// §342b: o nome CURTO do Domínio ("Domínio do Olimpo" → "Olimpo"; "de Asgard"→"Asgard"; "dos Céus"→"Céus").
+function _domNomeCurto(lad){ return String((lad && lad.nome) || '').replace(/^Dom[íi]nio\s+d[eoa]s?\s+/i, '') || String((lad && lad.cultura) || ''); }
+
 /* contexto do DOMÍNIO (bloco esquerdo): inimigos da cultura (≤4 + "+N"), chefe final, aviso de trava */
 function _domContextoHTML(lad){
   const trio = lad.trio || [];
@@ -3625,7 +3638,7 @@ function renderDominioMontarTime(){
   const cfg = {
     id: 'dominio', cultura: c, pick: domTimePick,
     titulo: 'MONTE SEU TIME',
-    sublinha: `DOMÍNIO · ${String(lad.cultura || '').toUpperCase()} · NÍVEL 1/${total}`,
+    sublinha: `DOMÍNIO · ${_domNomeCurto(lad).toUpperCase()} · NÍVEL 1/${total}`,   // §342b: o NOME do Domínio (Olimpo, Asgard, Duat…), não a cultura
     contextoHTML: _domContextoHTML(lad),
     vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
     validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.`, porDeus: {} }; },

@@ -121,6 +121,41 @@ console.log('\n== §342 o selo "Nv" aparece só para quem tem habilidade acima d
   ok(semNv && !$(`.dm-card[data-pick="${semNv}"] .dm-card__nv`), `um deus sem habilidade acima de 1 (${semNv}) NÃO tem o selo`);
 }
 
+console.log('\n== §342b sublinha usa o NOME do Domínio; cartão escolhido ganha moldura dourada ==');
+{ const { w, $, $$ } = sessao();
+  ok(/OLIMPO/.test($('.dm-sub').textContent) && !/GREGA/.test($('.dm-sub').textContent), 'a sublinha diz "DOMÍNIO · OLIMPO" (nome, não a cultura)');
+  $$('.dm-card[data-pick]')[0].dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  ok(!!$('.dm-card--sel'), 'o cartão escolhido recebe a classe da moldura dourada (dm-card--sel)');
+}
+
+console.log('\n== §342b painel de kit: CUSTO em ORBES (§337, ≥22px) ou GRÁTIS, sem os pontinhos; Nv em TODA linha ==');
+{ const { w, $, $$ } = sessao();
+  // zeus: básico pago → orbe (img); brigid: básico grátis → "GRÁTIS"
+  w.eval("montKitAberto='zeus'; render();");
+  ok(!$('.dm-kit__abs .cost__pip'), 'o kit NÃO usa mais os pontinhos (cost__pip)');
+  const orb = $('.dmk-ab__orbs img.orbe');
+  ok(!!orb && parseFloat(orb.getAttribute('width') || orb.style.width) >= 22, 'o custo pago usa a ORBE §337 (≥22px)');
+  ok($$('.dmk-ab .dmk-ab__nv').length === $$('.dmk-ab').length && $$('.dmk-ab').length === 4, 'TODA habilidade mostra o selo "Nv N" (4/4)');
+  w.eval("montKitAberto='brigid'; render();");
+  ok(!!$('.dmk-ab__gratis') && /GR[ÁA]TIS/.test($('.dmk-ab__gratis').textContent), 'o básico grátis mostra "GRÁTIS" (§340) no lugar das orbes');
+}
+
+console.log('\n== §342b o destaque de palavra-chave casa a PALAVRA INTEIRA (acentos/flexões), em todo o jogo ==');
+{ const { w } = sessao();
+  // "Invulnerável" (Defesa) vem inteiro, não "Invulner" + "ável"
+  const def = w.eval("realce(DEFESA.desc)");
+  ok(/kw[^>]*>Invulnerável<\/span>/.test(def), 'Defesa: "Invulnerável" é destacada INTEIRA');
+  // varredura: nenhuma descrição do jogo tem destaque começando/terminando no meio de uma palavra
+  const bad = w.eval(`(()=>{ const out=[]; const descs=[]; Object.keys(GODS).forEach(k=>{ const g=GODS[k];
+    if(g.passiva&&g.passiva.desc) descs.push([k+'.passiva',g.passiva.desc]);
+    (g.ab||[]).forEach(a=>{ if(a.desc) descs.push([k+'.'+a.slot,a.desc]); (a.niveis||[]).forEach((n,i)=>{ if(n&&n.desc) descs.push([k+'.'+a.slot+'.nv'+(i+2),n.desc]); }); }); });
+    descs.push(['DEFESA', DEFESA.desc]);
+    for(const [id,d] of descs){ const h=realce(d);
+      if(/[A-Za-zÀ-ÿ]<span class="kw/.test(h) || /<\\/span>[A-Za-zÀ-ÿ]/.test(h)) out.push(id); }
+    return out.slice(0,8); })()`);
+  ok(bad.length === 0, `nenhum destaque corta uma palavra em ${w.eval('Object.keys(GODS).length')} deuses (falhas: ${bad.join(', ') || 'nenhuma'})`);
+}
+
 // ---------- Chromium: caixas dos blocos (tol 4px) @1846 e nada corta @780 ----------
 (async () => {
   let chromium; try { chromium = require('playwright').chromium; } catch (e) { console.log('  (playwright ausente — pulo o layout)'); console.log(`\n== DOMINIO_MONTAR — ${passes} asserções, ${falhas} falha(s) ==`); process.exit(falhas ? 1 : 0); }
@@ -173,6 +208,26 @@ console.log('\n== §342 o selo "Nv" aparece só para quem tem habilidade acima d
     ok(m.minBtn >= 30, `@780×360: botões ≥30px (${m.minBtn})`);
     ok(m.minBody >= 8.4, `@780×360: corpo ≥8,4px (${m.minBody})`);
     await ctx.close(); }
+  // §342b-1: o painel de kit (com o botão) cabe nos 852 px, para o deus com as descrições mais longas, em 1846 e 780
+  { const ctxW = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
+    const pw = await ctxW.newPage(); await pw.goto('file://' + distAbs, { waitUntil: 'load' });
+    await pw.evaluate(`perfil.deuses={}; ROSTER.forEach(e=>perfil.deuses[e.key]={copias:1}); domTimePick=[]; ir('dominiomontar',{cultura:'grega'}); render();`);
+    const worst = await pw.evaluate(() => { let best = null, bl = 0; _montJogaveis().forEach(k => { const g = GODS[k]; if (!g) return; let L = (g.passiva && g.passiva.desc || '').length; (g.ab || []).forEach(a => L += (a.desc || '').length); if (L > bl) { bl = L; best = k; } }); return best; });
+    await ctxW.close();
+    for (const [W, H, dsf] of [[1846, 852, 1], [780, 360, 2]]) {
+      const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dsf });
+      const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+      await page.evaluate(`perfil.deuses={}; ROSTER.forEach(e=>perfil.deuses[e.key]={copias:1}); domTimePick=[]; montKitAberto=${JSON.stringify(worst)}; ir('dominiomontar',{cultura:'grega'}); render();`);
+      await page.waitForTimeout(150);
+      const m = await page.evaluate(() => { const card = document.querySelector('#dommontar .dm-kit__card').getBoundingClientRect();
+        const go = document.querySelector('#dommontar .dm-kit__pe .dmb--go').getBoundingClientRect();
+        return { cardTop: Math.round(card.top), cardBot: Math.round(card.bottom), goTop: Math.round(go.top), goBot: Math.round(go.bottom), goH: Math.round(go.height), vh: window.innerHeight }; });
+      console.log(`  @${W}×${H}: kit (${worst}) card ${m.cardTop}..${m.cardBot} · botão ${m.goTop}..${m.goBot} (viewport ${m.vh})`);
+      ok(m.cardTop >= -0.5 && m.cardBot <= m.vh + 0.5, `@${W}×${H}: o painel de kit cabe na tela (${m.cardTop}..${m.cardBot} ≤ ${m.vh})`);
+      ok(m.goTop >= -0.5 && m.goBot <= m.vh + 0.5, `@${W}×${H}: o botão do kit fica visível dentro da tela (${m.goBot} ≤ ${m.vh})`);
+      await ctx.close();
+    }
+  }
   await browser.close();
   console.log(`\n== DOMINIO_MONTAR — ${passes} asserções, ${falhas} falha(s) ==`);
   process.exit(falhas ? 1 : 0);

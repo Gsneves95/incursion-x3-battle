@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §342b · Ajustes no MONTAR TIME do Domínio
+- **Painel de kit** cabe nos 852: `.dm-kit__card` flex-column max-height 792; cabeçalho e botão FIXOS, lista de
+  habilidades (+passiva) rola (`.dm-kit__scroll`). Medido para o deus mais longo (odin): card/ botão dentro de 852 e de 360.
+- **Custo** do kit em ORBES §337 (`_montCustoHTML`, orbe 24px) ou "GRÁTIS" §340 — não mais os pontinhos (`cost__pip`).
+- **Nível** "Nv N" (real) em TODA linha do kit, ao lado do tipo (Defesa = Nv 1).
+- **Destaque** (`realce()` em base.js, compartilhado com a batalha): `\w` não pega acento → "Invulnerável" cortava.
+  Trocado por classe `[A-Za-zÀ-ÿ]` + lookarounds de limite de palavra. Varredura nos 100: nenhum destaque corta palavra.
+- **Sublinha** usa o nome do Domínio ("DOMÍNIO · OLIMPO", via `_domNomeCurto`), não a cultura.
+- **Moldura dourada** do cartão escolhido num `.dm-card--sel::after` (o box-shadow inset ficava sob o retrato).
+- Só CSS + montador/realce. Provas no `dominio_montar.test.js` (agora 55 asserções). Capturas `342b-*`. Suíte+build verdes.
+
 ## ★ §342 · MONTAR TIME do Domínio no modelo do dono + base reaproveitável
 - **BASE** (`montadorTimeHTML(cfg)`/`ligarMontadorTime(cfg)` em home.js): grade de SEUS DEUSES (temDeus&&temKitHome),
   filtros+busca, 3 vagas, painel de kit, rodapé. O cfg define titulo/sublinha/contextoHTML/vagas/validar/textoBotao/

@@ -104,11 +104,15 @@ const H = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;
 function U(n){ return 'calc(var(--u) * ' + (Math.round((+n||0)*1000)/1000) + ')'; }
 // realça palavras-chave por categoria no painel de descrição (estilo Naruto-Arena).
 // Vocabulários disjuntos entre categorias -> substituição sequencial não duplo-envolve.
+// §342b: `\w` do JS NÃO inclui letras acentuadas — "invulner\w*" parava em "invulner" e deixava "ável" sem cor.
+// Troca por uma classe de letras latinas (`_L`) para a flexão acentuada entrar no destaque, e por lookarounds de
+// LIMITE DE PALAVRA (`_B0`/`_B1`) para nenhum destaque começar ou terminar no meio de uma palavra.
+const _L='A-Za-zÀ-ÿ', _B0='(?<!['+_L+'])', _B1='(?!['+_L+'])';
 const KW=[
-  ['ctrl',/(atordoa\w*|atordoad\w*|adormec\w*|silencia\w*|silenciad\w*|provoca\w*|provocad\w*|submerg\w*|submers\w*|domina\w*|dominad\w*|petrifica\w*|selad\w*|\bselo\b|controle)/gi],
-  ['dot', /(queimadura|veneno|envenena\w*|podridão|encharcad\w*|dano contínuo|maldição|sangramento)/gi],
-  ['def', /(invulner\w*|inalvej\w*|redução de dano|redução|defesa destrutível|escudo|imune\w*|imunidade|regenera\w*|vida extra)/gi],
-  ['neg', /(não pode ser (?:contra-atacad[oa]|reflet\w+|intercept\w+|reduzid[oa]|absorvid[oa]|curad[oa]|revivid[oa]|evitad[oa]|atingid[oa])|ignora [\wçãéíó]+|dano puro|perfurante)/gi],
+  ['ctrl',new RegExp(_B0+'(atordoa['+_L+']*|adormec['+_L+']*|silencia['+_L+']*|silenciad['+_L+']*|provoca['+_L+']*|provocad['+_L+']*|submerg['+_L+']*|submers['+_L+']*|domina['+_L+']*|dominad['+_L+']*|petrifica['+_L+']*|selad['+_L+']*|selo|controle)'+_B1,'gi')],
+  ['dot', new RegExp(_B0+'(queimadura|veneno|envenena['+_L+']*|podridão|encharcad['+_L+']*|dano contínuo|maldição|sangramento)'+_B1,'gi')],
+  ['def', new RegExp(_B0+'(invulner['+_L+']*|inalvej['+_L+']*|redução de dano|redução|defesa destrutível|escudo|imune['+_L+']*|imunidade|regenera['+_L+']*|vida extra)'+_B1,'gi')],
+  ['neg', new RegExp(_B0+'(não pode ser (?:contra-atacad[oa]|reflet['+_L+']+|intercept['+_L+']+|reduzid[oa]|absorvid[oa]|curad[oa]|revivid[oa]|evitad[oa]|atingid[oa])|ignora ['+_L+']+|dano puro|perfurante)'+_B1,'gi')],
 ];
 function realce(s){ let t=H(s); KW.forEach(([c,re])=>{t=t.replace(re,m=>`<span class="kw kw--${c}">${m}</span>`);}); return t; }
 

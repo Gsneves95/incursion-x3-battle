@@ -6,6 +6,34 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §342b · Ajustes no MONTAR TIME do Domínio (painel de kit + tela principal)
+
+Seis ajustes vistos nas capturas do §342:
+
+1. **O botão ESCOLHER saía cortado** (o painel de kit era mais alto que os 852). Agora o `.dm-kit__card` é flex-column
+   com `max-height:792px`: **cabeçalho e botão ficam fixos**, só a **lista de habilidades (+ passiva) rola** por dentro.
+   Medido: o painel inteiro e o botão cabem nos 852 (1846×852) e nos 360 (780×360) para o deus de descrições mais longas
+   (odin): card 30..822 / botão 730..802 @1846; 13..347 / 308..339 @780.
+2. **CUSTO em orbes, não pontinhos.** O kit usava `pipsDetalhe` (bolinhas de ~9px). Novo `_montCustoHTML` usa a **ORBE do
+   §337** (`orbe(elem, 24)`, ≥22px) ou **"GRÁTIS"** (§340), no padrão do painel da batalha.
+3. **Nível em toda linha.** Cada habilidade mostra o selo **"Nv N"** com o nível REAL da conta ao lado do tipo
+   (antes só aparecia acima de 1 e, no capturado, nenhuma do Zeus estava acima de 1, então sumia). Defesa é universal → Nv 1.
+4. **Destaque de palavra-chave cortando a palavra.** `realce()` (base.js, compartilhado com o painel da batalha
+   §333b/§335) usava `\w*`, e o `\w` do JS **não inclui letras acentuadas** — "invulnerável" virava "invulner" colorido +
+   "ável" sem cor. Corrigido: a classe de letras passou a ser `[A-Za-zÀ-ÿ]` (a flexão acentuada entra no destaque) e cada
+   alternância ganhou **lookarounds de limite de palavra** (`(?<![A-Za-zÀ-ÿ])…(?![A-Za-zÀ-ÿ])`) — nenhum destaque começa
+   ou termina no meio de uma palavra. Varredura nos 100 deuses (básico/hab/milagre/passiva/níveis + Defesa): zero cortes.
+5. **Sublinha com o NOME do Domínio.** Era "DOMÍNIO · GREGA"; agora "DOMÍNIO · OLIMPO" (e Asgard/Duat/Céus/Takamagahara).
+   `_domNomeCurto(lad)` tira o "Domínio d* " do `lad.nome`.
+6. **Moldura dourada no cartão escolhido.** O `box-shadow:inset` ficava ESCONDIDO sob o retrato (que é `position:absolute;
+   inset:0`). Movido para um `.dm-card--sel::after` (anel dourado inset 3px, `z-index` acima da arte).
+
+Só CSS + o montador/realce; regras/economia/servidor/outros modos intactos. Provas somadas ao `dominio_montar.test.js`
+(sublinha OLIMPO; moldura dm-card--sel; kit sem cost__pip, com orbe ≥22px e GRÁTIS; Nv em 4/4; "Invulnerável" inteira +
+varredura dos 100; Chromium: painel+botão cabem nos 852 @1846 e @780). Capturas `342b-*`.
+
+---
+
 ## §342 · MONTAR TIME do Domínio no modelo do dono + a BASE reaproveitável
 
 Primeira das 5 telas de montar time (Domínio, PvP, Campanha, Composição, Batalha CPU). Reconstruída no modelo
