@@ -2645,7 +2645,7 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dm-ini{display:flex;flex-direction:column;align-items:center;gap:6px;width:80px}
 .dm-ini__p{width:80px;height:80px;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .dm-ini__p--mais{display:flex;align-items:center;justify-content:center;background:rgba(14,18,32,.9);color:#C9CED8;font-size:24px;font-weight:700}
-.dm-ini__n{font-size:20px;color:#C9CED8;max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.dm-ini__n{font-size:20px;color:#C9CED8;max-width:80px;text-align:center;line-height:1.05;overflow-wrap:anywhere;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}  /* §344: nomes de bestiário (longos) quebram em 2 linhas, sem cortar no meio da palavra */
 .dm-ctx__chefes{display:flex;gap:16px}
 .dm-chefe{display:flex;flex-direction:column;align-items:center;gap:6px;width:130px}
 .dm-chefe__p{width:130px;height:100px;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(224,84,91,.75)}
@@ -2732,6 +2732,44 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dmk-ab__desc{font-size:20px;color:#D5DAE4;line-height:1.3}
 .dm-kit__pe{flex:none;padding:16px 26px 20px;display:flex;justify-content:flex-end;border-top:1px solid rgba(201,164,76,.25)}
 .dm-kit__pe .dmb--go{min-width:260px;font-size:22px}
+/* ===== §344 — montador nos outros modos (Campanha, Composição, PvP) + seletor de troca ===== */
+.dm-ctx__dica{font-size:20px;color:#C9CED8;line-height:1.35;margin:0 0 10px}
+.dm-ctx__val{font-size:22px;font-weight:700;margin:6px 0 12px}.dm-ctx__val.ok{color:#4BE38A}.dm-ctx__val.nao{color:#E0545B}
+.dm-erro{font-size:20px;color:#F2B8C0;margin:10px 0 0}
+/* cartão que viola a regra (Composição): apagado, não selecionável, com o motivo */
+.dm-card--off{filter:grayscale(.85) brightness(.5);cursor:default}
+.dm-card__off{position:absolute;left:0;right:0;top:calc(50% - 14px);text-align:center;font-size:18px;font-weight:700;color:#F2B8C0;text-shadow:0 1px 4px rgba(0,0,0,.9);z-index:4;padding:0 6px}
+/* PvP — bloco de contexto */
+.dm-pvp__nick{font-size:20px;color:#C9CED8;margin-bottom:12px}.dm-pvp__nick b{color:#F0D79A}
+.dm-pvp__nicklab{display:block;font-size:20px;color:#9AA4B8;margin-bottom:6px}
+.dm-pvp__nickin{width:100%;box-sizing:border-box;height:72px;border:0;border-radius:10px;padding:0 18px;font-family:inherit;font-size:22px;color:#E8ECF4;background:rgba(10,13,22,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);outline:none}
+.dm-seg{display:flex;gap:0;border-radius:11px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(201,164,76,.5);margin-bottom:8px}
+.dm-seg__b{flex:1;height:72px;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:21px;letter-spacing:.04em;color:#C9CED8;background:rgba(12,16,30,.8)}
+.dm-seg__b.is-on{color:#2A1A04;background:linear-gradient(180deg,#F4D98A,#E9C25A)}
+.dm-pvp__modolinha{font-size:20px;color:#9AA4B8;margin:0 0 12px}
+.dm-pvp__ranque,.dm-pvp__rec{font-size:20px;color:#C9CED8;margin-bottom:6px}.dm-pvp__ranque b,.dm-pvp__rec b{color:#F0D79A}
+.dm-pvp__reveal{font-size:20px;color:#9AA4B8;margin:10px 0 0}
+/* "↺ Usar último time" acima das vagas */
+.dm-usarultimo{width:100%;box-sizing:border-box;height:72px;border:0;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:700;font-size:20px;color:#C9CED8;background:rgba(12,16,30,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);margin-bottom:10px}
+.dm-usarultimo[disabled]{color:#5c6276;cursor:default;box-shadow:inset 0 0 0 1px rgba(80,88,110,.4)}
+/* grade travada (PvP na fila) */
+.dm-grade--travada{filter:grayscale(.7) brightness(.5);pointer-events:none}
+/* PvP na fila — painel central */
+.dm-fila{position:absolute;inset:0;background:rgba(4,6,14,.78);display:flex;align-items:center;justify-content:center;z-index:30}
+.dm-fila__card{display:flex;flex-direction:column;align-items:center;gap:14px;padding:40px 56px;border-radius:16px;background:linear-gradient(180deg,#121a2c,#0a0e1a);box-shadow:inset 0 0 0 1px rgba(201,164,76,.6),0 20px 60px rgba(0,0,0,.6)}
+.dm-fila__ic{font-size:44px;color:#C9A44C;animation:dfspin 2.4s linear infinite}
+.dm-fila__t{margin:0;font-size:30px;color:#F0D79A;font-weight:900;letter-spacing:.04em}
+.dm-fila__modo{font-size:22px;color:#C9CED8;margin:0}
+.dmb--quietbig{height:72px;font-size:22px;padding:0 32px;background:rgba(10,13,22,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.5);color:#C9CED8;margin-top:8px}
+/* aviso (PvP sem servidor/sem conta) */
+.dm-aviso{position:absolute;left:57px;right:57px;top:180px;display:flex;align-items:flex-start;gap:18px;padding:28px 32px;border-radius:12px;background:rgba(14,18,32,.85);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
+.dm-aviso__ic{font-size:36px;color:#C9A44C;flex:none}
+.dm-aviso p{font-size:22px;line-height:1.4;color:#D5DAE4;margin:0}
+/* grade em LARGURA CHEIA (seletor de troca da campanha) */
+.dm-dir--full{left:57px;right:57px;top:170px;height:640px}
+/* seletor de troca — host no #viewport (fora do stage), escala própria a 1846 */
+.dm-troca-ov{position:fixed;inset:0;z-index:60;background:rgba(4,6,14,.78)}
+#dommontar.dm-troca{background:none}
 
 /* ======================= §335 — BATALHA (design do dono, tela fixa 1846×852) ======================= */
 /* A moldura (#stage) vira a canvas #03050B sem borda; o #batalha (1846×852) se escala via JS (fit). */

@@ -182,7 +182,7 @@ registrar('desafios',  { render: renderProvacoes });  // F4/§213: HUB de DESAFI
 registrar('colecao',   { render: renderColecao });    // F3.2: os 100 por panteão
 registrar('deus',      { render: renderDeusDetalhe }); // F3.2: FICHA do deus (kit + arte + maestria) — §319c restaurada
 registrar('niveis',    { render: renderNiveis });      // §319c: TELA DE NÍVEIS DE HABILIDADE (rota própria, params.key)
-registrar('campanha',  { render: renderCampanha });   // F3.3: capítulo 1 (ensina as regras)
+registrar('campanha',  { render: renderCampanha, aoSair: ()=>{ if(typeof campPicker!=='undefined')campPicker=null; if(typeof _campTrocaFechar==='function')_campTrocaFechar(); } });   // F3.3; §344: fecha o seletor de troca ao sair
 registrar('dominios',  { render: renderDominios });    // §274: a TELA DE SELEÇÃO dos cinco Domínios
 registrar('dominio',   { render: renderDominioHub });  // §274: o HUB/entrada de UM Domínio (params.cultura)
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
@@ -265,6 +265,8 @@ function voltarNativo(){
   if(typeof desafioDesistindo!=='undefined'&&desafioDesistindo){ desafioDesistindo=null; render(); return; }
   // §342: no MONTAR TIME, o voltar do Android fecha primeiro o painel de kit (não sai da tela).
   if(typeof montKitAberto!=='undefined'&&montKitAberto){ montKitAberto=null; render(); return; }
+  // §344: na campanha, o voltar do Android fecha o seletor de troca do emprestado antes de sair.
+  if(typeof campPicker!=='undefined'&&campPicker!=null){ campPicker=null; if(typeof _campTrocaFechar==='function')_campTrocaFechar(); render(); return; }
   // a) qualquer coisa ABERTA por cima fecha primeiro (menu ⋯, sobreposição, kit consultado, leitura)
   const temSobre = (typeof ov!=='undefined'&&ov) || (typeof menuAberto!=='undefined'&&menuAberto)
     || (typeof peekKit!=='undefined'&&peekKit) || (typeof detalhe!=='undefined'&&detalhe);

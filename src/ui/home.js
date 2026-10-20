@@ -651,9 +651,13 @@ function renderMissoes(){
 // jogador põe o apelido (uma vez), monta 3 deuses que POSSUI (o servidor valida a posse), e entra na
 // fila (amistoso ou ranqueado). O pareamento chega por PUSH e a batalha começa (view.js/aoPushGlobal). */
 let pvpTime = [], pvpEstado = 'idle', pvpMsg = '';   // idle | fila
-function pvpReset(){ pvpTime = []; pvpEstado = 'idle'; pvpMsg = ''; }
+let pvpRanqueado = false, pvpFilaInicio = 0, _pvpFilaTimer = 0;   // §344: modo escolhido (amistosa/ranqueada) + relógio da fila
+let pvpUltimoTime = [];   // §344: último time usado no PvP (persistido localmente)
+try { pvpUltimoTime = JSON.parse((typeof localStorage !== 'undefined' && localStorage.getItem('pvpUltimo')) || '[]') || []; } catch (e) { pvpUltimoTime = []; }
+function pvpReset(){ pvpTime = []; pvpEstado = 'idle'; pvpMsg = ''; if (_pvpFilaTimer) { try { clearInterval(_pvpFilaTimer); } catch (e) {} _pvpFilaTimer = 0; } }
 function pvpJogavel(k){ return temDeus(k) && typeof GODS !== 'undefined' && !!GODS[k]; }
 function pvpToggle(k){ const i = pvpTime.indexOf(k); if (i >= 0) pvpTime.splice(i, 1); else if (pvpTime.length < 3) pvpTime.push(k); }
+function _pvpUltimoOk(){ return pvpUltimoTime.length === 3 && pvpUltimoTime.every(pvpJogavel); }
 
 async function pvpEntrar(ranqueado){
   if (pvpEstado === 'fila') return;
@@ -662,7 +666,8 @@ async function pvpEntrar(ranqueado){
   const nick = temNick ? contaAtual.nick : (nickEl ? nickEl.value.trim() : '');
   if (!temNick && (!nick || nick.length < 3)) { pvpMsg = 'Escolha um apelido (ao menos 3 letras).'; render(); return; }
   if (pvpTime.length !== 3) { pvpMsg = 'Escolha 3 deuses para o seu time.'; render(); return; }
-  pvpEstado = 'fila'; pvpMsg = ''; render();
+  pvpUltimoTime = pvpTime.slice(); try { if (typeof localStorage !== 'undefined') localStorage.setItem('pvpUltimo', JSON.stringify(pvpUltimoTime)); } catch (e) {}   // §344: guarda o último time
+  pvpEstado = 'fila'; pvpMsg = ''; pvpFilaInicio = Date.now(); render();
   const fn = ranqueado ? (typeof iniciarRanqueado === 'function' ? iniciarRanqueado : null) : (typeof iniciarPvP === 'function' ? iniciarPvP : null);
   if (!fn) { pvpEstado = 'idle'; pvpMsg = 'PvP indisponível.'; render(); return; }
   const r = await fn(temNick ? null : nick, pvpTime.slice());
@@ -688,60 +693,67 @@ function pvpTileHTML(k){
     <span class="pvpt__n">${H(g.nome)}</span>${sel ? '<span class="pvpt__ck">✓</span>' : ''}</button>`;
 }
 
+function _pvpFmtFila(){ const s = Math.max(0, Math.round((Date.now() - (pvpFilaInicio || Date.now())) / 1000)); const m = Math.floor(s / 60); return (m ? m + 'min ' : '') + (s % 60) + 's'; }
+function _pvpContextoHTML(){
+  const temNick = !!(contaAtual && contaAtual.nick);
+  const nickBloco = temNick
+    ? `<div class="dm-pvp__nick">Apelido <b>${H(contaAtual.nick)}</b></div>`
+    : `<div class="dm-pvp__nick"><span class="dm-pvp__nicklab">Seu apelido</span><input id="pvpnick" class="dm-pvp__nickin" maxlength="16" placeholder="3 a 16 letras" autocomplete="off"></div>`;
+  const seg = `<div class="dm-seg">
+    <button class="dm-seg__b${!pvpRanqueado ? ' is-on' : ''}" data-pvpmodo="0">AMISTOSA</button>
+    <button class="dm-seg__b${pvpRanqueado ? ' is-on' : ''}" data-pvpmodo="1">RANQUEADA</button></div>
+    <p class="dm-pvp__modolinha">${pvpRanqueado ? 'Vale pontos de ranque.' : 'Treino: não mexe no ranque.'}</p>`;
+  const rq = contaAtual && contaAtual.ranque;
+  const ranqueHTML = (rq && typeof rq.pontos === 'number') ? `<div class="dm-pvp__ranque">Ranque <b>${rq.pontos}</b> pts</div>` : '';
+  return `<h2 class="dm-ctx__t cin">PVP ONLINE</h2>
+    ${nickBloco}${seg}${ranqueHTML}
+    <p class="dm-pvp__reveal">O oponente é revelado quando a partida começa.</p>
+    ${pvpMsg ? `<p class="dm-erro">⊘ ${H(pvpMsg)}</p>` : ''}`;
+}
 function renderPvP(){
   const online = !!(typeof contaTransporte !== 'undefined' && contaTransporte);
-  let corpo;
-  if (!online){
-    corpo = `<div class="tela__rol"><div class="moff">
-      <span class="moff__ic">◈</span>
-      <div><p class="moff__msg"><b>O PvP precisa do servidor.</b> Abra o jogo pelo <b>endereço da máquina</b> que roda o servidor — algo como <b>http://192.168.x.x:8788</b> — no navegador do celular, na <b>mesma rede Wi-Fi</b>.</p>
-      <p class="moff__msg" style="margin-top:6px">Quem roda o servidor vê o endereço exato ao ligá-lo.</p></div>
+  if (!online || !contaAtual){   // SEM SERVIDOR / SEM CONTA → tela mínima
+    const msg = !online
+      ? `<b>O PvP precisa do servidor.</b> Abra o jogo pelo endereço da máquina que roda o servidor (ex.: http://192.168.x.x:8788), na mesma rede Wi-Fi. Quem roda o servidor vê o endereço ao ligá-lo.`
+      : `Conta ainda não criada — reabra o aplicativo.`;
+    stage.innerHTML = `<div id="baselayer" class="dm2"><div id="dommontar">
+      <button class="dmb dmb--voltar" id="bvoltar" data-voltar="1">‹ VOLTAR</button>
+      <div class="dm-cabid"><h1 class="dm-titulo cin">PVP</h1><span class="dm-sub">PVP ONLINE</span></div>
+      <div class="dm-aviso"><span class="dm-aviso__ic">◈</span><p>${msg}</p></div>
     </div></div>`;
-  } else if (!contaAtual){
-    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">Conta ainda não criada — reabra o aplicativo.</p></div>`;
-  } else if (pvpEstado === 'fila'){
-    corpo = `<div class="tela__vazio"><span class="tela__vazioic pvpfila__ic">◈</span>
-      <p class="tela__vaziomsg"><b>Na fila…</b> aguardando um oponente entrar.<br>Deixe esta tela aberta; a batalha começa sozinha ao parear.</p>
-      <button class="b b--quiet b--md" id="pvpcancelar">Sair da fila</button></div>`;
-  } else {
-    const jogaveis = ROSTER.map(e => e.key).filter(pvpJogavel).sort((a, b) => nomeM(a).localeCompare(nomeM(b)));
-    const temNick = !!contaAtual.nick;
-    const nickBloco = temNick
-      ? `<div class="pvpnick pvpnick--fixo">apelido <b>${H(contaAtual.nick)}</b></div>`
-      : `<div class="pvpnick"><label>Seu apelido<input id="pvpnick" maxlength="16" placeholder="3 a 16 letras" autocomplete="off"></label></div>`;
-    const pronto = pvpTime.length === 3;
-    corpo = `<div class="tela__rol">
-      ${nickBloco}
-      <div class="pvpsel__cab"><h2>Seu time</h2><span class="msec__n">${pvpTime.length}/3</span></div>
-      <div class="pvpslots">${[0, 1, 2].map(pvpSlotHTML).join('')}</div>
-      ${pvpMsg ? `<p class="pvperro">${H(pvpMsg)}</p>` : ''}
-      <div class="pvpbtns">
-        <button class="b b--primary b--md" id="pvpamistoso" ${pronto ? '' : 'disabled'}>Entrar na fila</button>
-        <button class="b b--sec b--md" id="pvpranqueado" ${pronto ? '' : 'disabled'}>Ranqueado</button>
-      </div>
-      <div class="pvpsel__cab"><h2>Seus deuses</h2><span class="msec__n">${jogaveis.length}</span></div>
-      <div class="pvpgrid">${jogaveis.map(pvpTileHTML).join('')}</div>
-    </div>`;
+    const v = stage.querySelector('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+    fit(); return;
   }
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="stagemark">INCURSION</div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Início</button>
-      <h1 class="tela__titulo">PvP</h1>
-      <span class="tela__espaco"></span>
-    </header>
-    ${corpo}
-  </div>
-  </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  stage.querySelectorAll('[data-pvpsel]').forEach(b => b.onclick = () => { pvpToggle(b.dataset.pvpsel); pvpMsg = ''; render(); });
-  stage.querySelectorAll('[data-pvptira]').forEach(b => b.onclick = () => { pvpToggle(b.dataset.pvptira); render(); });
-  const ba = stage.querySelector('#pvpamistoso'); if (ba) ba.onclick = () => pvpEntrar(false);
-  const br = stage.querySelector('#pvpranqueado'); if (br) br.onclick = () => pvpEntrar(true);
-  const bc = stage.querySelector('#pvpcancelar'); if (bc) bc.onclick = () => { pvpReset(); ir('home', {}, { substituir: true }); render(); };
-  fit();
+  const naFila = pvpEstado === 'fila';
+  const cfg = {
+    id: 'pvp', pick: pvpTime,
+    titulo: 'MONTE SEU TIME',
+    sublinha: 'PVP ONLINE',
+    contextoHTML: _pvpContextoHTML(),
+    vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
+    acimaVagasHTML: `<button class="dm-usarultimo" id="pvpultimo" ${_pvpUltimoOk() ? '' : 'disabled'}>↺ Usar último time</button>`,
+    validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.` }; },
+    textoBotao: 'ENTRAR NA FILA',
+    aoComecar: () => pvpEntrar(pvpRanqueado),
+    aoVoltar: () => { montKitAberto = null; if (!voltar()) ir('home', {}, { substituir: true }); render(); },
+    gradeTravada: naFila, semRodape: naFila,
+    overlayHTML: naFila ? `<div class="dm-fila" id="dmfila"><div class="dm-fila__card">
+        <span class="dm-fila__ic">◈</span>
+        <h2 class="dm-fila__t">PROCURANDO OPONENTE…</h2>
+        <p class="dm-fila__modo">${pvpRanqueado ? 'Ranqueada' : 'Amistosa'} · <span id="pvpfilatempo">${_pvpFmtFila()}</span></p>
+        <button class="dmb dmb--quietbig" id="pvpsair">SAIR DA FILA</button>
+      </div></div>` : '',
+    aoLigar: ({ q, qq }) => {
+      qq('[data-pvpmodo]').forEach(b => b.onclick = () => { pvpRanqueado = b.dataset.pvpmodo === '1'; render(); });
+      const ul = q('#pvpultimo'); if (ul && _pvpUltimoOk()) ul.onclick = () => { pvpTime.length = 0; pvpUltimoTime.forEach(k => pvpTime.push(k)); pvpMsg = ''; render(); };
+      const sr = q('#pvpsair'); if (sr) sr.onclick = () => { pvpReset(); ir('home', {}, { substituir: true }); render(); };
+      if (naFila) { if (_pvpFilaTimer) { try { clearInterval(_pvpFilaTimer); } catch (e) {} }
+        _pvpFilaTimer = setInterval(() => { const el = document.getElementById('pvpfilatempo'); if (el) el.textContent = _pvpFmtFila(); else { try { clearInterval(_pvpFilaTimer); } catch (e) {} _pvpFilaTimer = 0; } }, 1000); }
+      else if (_pvpFilaTimer) { try { clearInterval(_pvpFilaTimer); } catch (e) {} _pvpFilaTimer = 0; }
+    },
+  };
+  stage.innerHTML = montadorTimeHTML(cfg);
+  ligarMontadorTime(cfg);
 }
 
 /* ---------- acervo dos PERGAMINHOS (F4/§212) ----------
@@ -2577,7 +2589,6 @@ function renderCampanha(){
       <div class="camp__nos">${nos}</div>
     </div>
   </div>
-  ${campPicker != null ? campPickerHTML() : ''}
   ${campKitRev != null ? campKitRevHTML(campKitRev) : ''}
   </div>`;
 
@@ -2596,26 +2607,36 @@ function renderCampanha(){
     else if (ehEscolha) avancarEscolha(cap, ato);
     else avancarHistoria();
   };
-  ligarCampPicker();
   fit();
+  if (campPicker != null) _campTrocaMontar(); else _campTrocaFechar();   // §344: o seletor de troca usa a grade do montador (painel por cima)
 }
 
 function numeroRomano(n){ return ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n); }
 
 // seletor de troca do slot emprestado: os deuses que o jogador TEM (com kit). Sem saída morta (§210):
 // se não tem nenhum, a mensagem explica e ele joga com o emprestado default.
-function campPickerHTML(){
-  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
-  const grid = jogaveis.length
-    ? jogaveis.map(k => { const g = HRM[k]; return `<button class="ctile ctile--tem" data-troca="${k}"><span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span><span class="ctile__el" style="background:${COR(g.elem)}"></span><span class="ctile__n">${H(g.nome)}</span></button>`; }).join('')
-    : `<p class="result__msg">Você ainda não tem deuses seus — jogará com o emprestado.</p>`;
-  return `<div class="ov" id="campickerov"><div class="ovbox"><div class="ov__cab"><h2>Trocar o deus emprestado</h2><button class="b b--quiet b--md" id="pickx">Fechar</button></div>
-    <div class="cgrid cgrid--pick">${grid}</div></div></div>`;
-}
-function ligarCampPicker(){
-  const ov = stage.querySelector('#campickerov'); if (!ov) return;
-  const x = stage.querySelector('#pickx'); if (x) x.onclick = () => { campPicker = null; render(); };
-  [...stage.querySelectorAll('.ctile[data-troca]')].forEach(b => { b.onclick = () => { campSwap[campPicker] = b.dataset.troca; campPicker = null; render(); }; });
+// §344: o seletor de TROCA do deus emprestado usa a MESMA grade do montador, num painel por cima da campanha.
+// Vive num host no #viewport (FORA do #stage, que é escalado para o design fluido da campanha) e se escala a 1846
+// por conta própria — reusa _montGradeSecHTML/_montLigarGrade. Fecha e grava campSwap[campPicker].
+function _campTrocaFechar(){ const h = document.getElementById('dmtroca-host'); if (h) h.remove(); try { document.body.classList.remove('emmontar'); } catch (e) {} }
+function _campTrocaMontar(){
+  const vp = document.getElementById('viewport') || document.body;
+  let host = document.getElementById('dmtroca-host');
+  if (!host) { host = document.createElement('div'); host.id = 'dmtroca-host'; vp.appendChild(host); }
+  const trocar = k => { campSwap[campPicker] = k; campPicker = null; montKitAberto = null; _campTrocaFechar(); render(); };
+  const gcfg = { pick: [], selNum: () => 0, _off: {}, gradeFull: true,
+    onTap: trocar, kitLabel: k => ({ txt: 'ESCOLHER ' + ((HRM[k] || {}).nome || '').toUpperCase() }), onKitAcao: trocar };
+  host.innerHTML = `<div class="dm-troca-ov" id="dmtrocaov"><div id="dommontar" class="dm-troca">
+    <button class="dmb dmb--voltar" id="dmtrocax" data-troca-x="1">‹ VOLTAR</button>
+    <div class="dm-cabid"><h1 class="dm-titulo cin">TROCAR O DEUS EMPRESTADO</h1><span class="dm-sub">Escolha um deus seu para esta vaga</span></div>
+    ${_montGradeSecHTML(gcfg)}
+    ${montKitAberto ? _montKitPanelHTML(montKitAberto, gcfg) : ''}
+  </div></div>`;
+  try { document.body.classList.add('emmontar'); } catch (e) {}
+  const inner = host.querySelector('#dommontar'); if (inner) { const s = Math.min((window.innerWidth || 1846) / 1846, (window.innerHeight || 852) / 852); inner.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+  _montLigarGrade(host, gcfg);
+  const x = host.querySelector('[data-troca-x]'); if (x) x.onclick = () => { campPicker = null; montKitAberto = null; _campTrocaFechar(); render(); };
+  const ov = host.querySelector('#dmtrocaov'); if (ov) ov.onclick = ev => { if (ev.target === ov) { campPicker = null; montKitAberto = null; _campTrocaFechar(); render(); } };
 }
 
 // entrada de uma batalha: monta o time (travado + emprestado resolvido) e reusa a máquina de Provação.
@@ -2689,49 +2710,33 @@ function iniciarEncontroComTime(enc, time){
 }
 
 /* ---------- montar time (o encontro "escolha de time") ---------- */
+// §344: contexto de ENCONTRO (nome + dica + inimigos em miniaturas) — Campanha e (variação) Composição.
+function _encContextoHTML(enc, rot){
+  const inim = enc.inimigos || [];
+  const mini = k => { const m = (typeof metaComb === 'function') ? metaComb(k) : (HRM[k] || { nome: k, elem: 'Umbra' });   // §344: bestiário usa o nome CURTO
+    return `<span class="dm-ini"><span class="dm-ini__p">${slot('god-' + k, ini(m.nome || k), COR(m.elem), 18)}</span><span class="dm-ini__n">${H(m.curto || m.nome || k)}</span></span>`; };
+  return `<h2 class="dm-ctx__t cin">${H(enc.nome || '')}</h2>
+    ${enc.ensina && enc.ensina.dica ? `<p class="dm-ctx__dica">${H(enc.ensina.dica)}</p>` : ''}
+    ${inim.length ? `<div class="dm-ctx__rot">${H(rot || 'INIMIGOS DO ENCONTRO')}</div>
+      <div class="dm-ctx__inis">${inim.slice(0, 4).map(mini).join('')}${inim.length > 4 ? `<span class="dm-ini dm-ini--mais"><span class="dm-ini__p dm-ini__p--mais">+${inim.length - 4}</span></span>` : ''}</div>` : ''}`;
+}
 function renderMontarTime(){
   const id = (paramsAtuais() || {}).id;
   const enc = campEncontros().find(e => e.id === id) || {};
-  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
-  const tile = k => {
-    const g = HRM[k] || { nome: k, elem: 'Umbra' };
-    const on = campTimePick.includes(k);
-    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}">
-      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
-      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
-      ${on ? `<span class="ctile__mark">${campTimePick.indexOf(k) + 1}</span>` : ''}
-      <span class="ctile__n">${H(g.nome)}</span>
-    </button>`;
+  const m = /c(\d+)e(\d+)/.exec(id || ''), cap = m ? +m[1] : 1, ato = m ? +m[2] : 1;
+  const cfg = {
+    id: 'campanha', pick: campTimePick,
+    titulo: 'MONTE SEU TIME',
+    sublinha: `CAMPANHA · CAP. ${cap} · ATO ${romanoCap(ato)}`,
+    contextoHTML: _encContextoHTML(enc),
+    vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
+    validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.` }; },
+    textoBotao: 'COMEÇAR',
+    aoComecar: (t) => { const enc2 = campEncontros().find(e => e.id === id); iniciarEncontroComTime(enc2, t.slice()); },
+    aoVoltar: () => { montKitAberto = null; if (!voltar()) ir('campanha', {}, { substituir: true }); render(); },
   };
-  const pronto = campTimePick.length === 3;
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-      <h1 class="tela__titulo">Monte seu time</h1>
-      <span class="tela__cont">${campTimePick.length}/3</span>
-    </header>
-    <div class="tela__rol">
-      <div class="ccap"><h2>${H(enc.nome || '')}</h2><p>${H((enc.ensina && enc.ensina.dica) || '')}</p></div>
-      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
-    </div>
-    <div class="cmontarpe">
-      <button class="b b--primary b--lg" id="bcomecar" ${pronto ? '' : 'disabled'}>Começar${pronto ? '' : ` (${campTimePick.length}/3)`}</button>
-    </div>
-  </div>
-  </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('campanha', {}, { substituir: true }); render(); };
-  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
-    b.onclick = () => {
-      const k = b.dataset.pick, j = campTimePick.indexOf(k);
-      if (j >= 0) campTimePick.splice(j, 1); else if (campTimePick.length < 3) campTimePick.push(k);
-      render();
-    };
-  });
-  const bc = stage.querySelector('#bcomecar');
-  if (bc && pronto) bc.onclick = () => { const enc2 = campEncontros().find(e => e.id === id); iniciarEncontroComTime(enc2, campTimePick.slice()); };
-  fit();
+  stage.innerHTML = montadorTimeHTML(cfg);
+  ligarMontadorTime(cfg);
 }
 
 /* ---------- HUD do encontro (a lição visível durante) ---------- */
@@ -3070,51 +3075,47 @@ function renderDesafios(){
   fit();
 }
 
-// montador COM validação AO VIVO da regra: Começar fica travado E DIZ POR QUÊ até o time servir.
+// §344: quais deuses VIOLAM a regra dado o pick atual → cartão apagado + motivo curto, não selecionável.
+function _regraPorDeus(regra, pick){
+  const off = {}; if (!pick.length || regra === 'livre') return off;
+  const ps = pick.map(k => HRM[k]).filter(Boolean);
+  const checa = {
+    monoElemento: g => g.elem !== ps[0].elem ? 'Outro elemento' : null,
+    mesmaFuncao: g => g.funcao !== ps[0].funcao ? 'Outra função' : null,
+    monoPanteao: g => g.faccao !== ps[0].faccao ? 'Outro panteão' : null,
+    funcoesDistintas: g => ps.some(p => p.funcao === g.funcao) ? 'Função repetida' : null,
+  }[regra];
+  if (!checa) return off;
+  _montJogaveis().forEach(k => { if (pick.includes(k)) return; const g = HRM[k]; if (!g) return; const mv = checa(g); if (mv) off[k] = mv; });
+  return off;
+}
+function _desafioContextoHTML(dsf){
+  const v = validarRegra(dsf.regra, desafioTimePick.filter(Boolean));
+  const inim = dsf.inimigos || [];
+  const mini = k => { const m = (typeof metaComb === 'function') ? metaComb(k) : (HRM[k] || { nome: k, elem: 'Umbra' });
+    return `<span class="dm-ini"><span class="dm-ini__p">${slot('god-' + k, ini(m.nome || k), COR(m.elem), 18)}</span><span class="dm-ini__n">${H(m.curto || m.nome || k)}</span></span>`; };
+  return `<h2 class="dm-ctx__t cin">${H(dsf.nome || '')}</h2>
+    <p class="dm-ctx__dica">${H(dsf.regraTexto || '')}</p>
+    <div class="dm-ctx__val ${v.ok ? 'ok' : 'nao'}">${v.ok ? '✓ Time válido' : '✕ ' + H(v.motivo || '')}</div>
+    ${inim.length ? `<div class="dm-ctx__rot">INIMIGOS</div><div class="dm-ctx__inis">${inim.slice(0, 4).map(mini).join('')}${inim.length > 4 ? `<span class="dm-ini dm-ini--mais"><span class="dm-ini__p dm-ini__p--mais">+${inim.length - 4}</span></span>` : ''}</div>` : ''}`;
+}
+// montador COM validação AO VIVO da regra: Começar travado e DIZ POR QUÊ; cartões que violam ficam apagados.
 function renderDesafioMontar(){
   const id = (paramsAtuais() || {}).id;
   const dsf = desafios().find(d => d.id === id) || {};
-  const jogaveis = ROSTER.map(e => e.key).filter(k => temDeus(k) && temKitHome(k));
-  const val = validarRegra(dsf.regra, desafioTimePick);
-  const tile = k => {
-    const g = HRM[k] || { nome: k, elem: 'Umbra' };
-    const on = desafioTimePick.includes(k);
-    return `<button class="ctile ctile--tem ${on ? 'ctile--sel' : ''}" data-pick="${k}" title="${H(g.nome)}">
-      <span class="ctile__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 20)}</span>
-      <span class="ctile__el" style="background:${COR(g.elem)}"></span>
-      ${on ? `<span class="ctile__mark">${desafioTimePick.indexOf(k) + 1}</span>` : ''}
-      <span class="ctile__n">${H(g.nome)}</span>
-    </button>`;
+  const cfg = {
+    id: 'composicao', pick: desafioTimePick,
+    titulo: dsf.nome || 'DESAFIO',
+    sublinha: 'COMPOSIÇÃO · ' + (dsf.regraTexto || ''),
+    contextoHTML: _desafioContextoHTML(dsf),
+    vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
+    validar: (t) => { const v = validarRegra(dsf.regra, t.filter(Boolean)); return { ok: v.ok, motivo: v.motivo || '', porDeus: _regraPorDeus(dsf.regra, desafioTimePick) }; },
+    textoBotao: 'COMEÇAR',
+    aoComecar: (t) => iniciarDesafio(dsf, t.slice()),
+    aoVoltar: () => { montKitAberto = null; if (!voltar()) ir('composicao', {}, { substituir: true }); render(); },
   };
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-      <h1 class="tela__titulo">${H(dsf.nome || '')}</h1>
-      <span class="tela__cont">${desafioTimePick.length}/3</span>
-    </header>
-    <div class="tela__rol">
-      <div class="ccap"><h2>${H(dsf.regraTexto || '')}</h2></div>
-      <div class="cgrid">${jogaveis.map(tile).join('')}</div>
-    </div>
-    <div class="cmontarpe">
-      <span class="cval ${val.ok ? 'ok' : 'nao'}">${val.ok ? '✓ time válido' : '✕ ' + H(val.motivo)}</span>
-      <button class="b b--primary b--lg" id="bcomecar" ${val.ok ? '' : 'disabled'}>Começar</button>
-    </div>
-  </div>
-  </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('composicao', {}, { substituir: true }); render(); };   // §213: volta à lista de composição
-  [...stage.querySelectorAll('.ctile[data-pick]')].forEach(b => {
-    b.onclick = () => {
-      const k = b.dataset.pick, j = desafioTimePick.indexOf(k);
-      if (j >= 0) desafioTimePick.splice(j, 1); else if (desafioTimePick.length < 3) desafioTimePick.push(k);
-      render();
-    };
-  });
-  const bc = stage.querySelector('#bcomecar');
-  if (bc && val.ok) bc.onclick = () => iniciarDesafio(dsf, desafioTimePick.slice());
-  fit();
+  stage.innerHTML = montadorTimeHTML(cfg);
+  ligarMontadorTime(cfg);
 }
 
 function iniciarDesafio(dsf, time){
@@ -3464,13 +3465,16 @@ function _montFreeCount(cfg){ return cfg.vagas.filter(v => v.tipo === 'livre').l
 
 function _montCardHTML(k, cfg){
   const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
-  const pos = cfg.pick.indexOf(k), on = pos >= 0, nvmax = _montNivelMax(k);
-  return `<button class="dm-card${on ? ' dm-card--sel' : ''}" data-pick="${k}">
+  const num = cfg.selNum ? cfg.selNum(k) : (cfg.pick.indexOf(k) + 1);   // §344: nº da vaga (0 = não escolhido)
+  const on = num > 0, nvmax = _montNivelMax(k);
+  const off = !on && cfg._off && cfg._off[k];   // §344 (Composição): viola a regra → apagado, não selecionável
+  return `<button class="dm-card${on ? ' dm-card--sel' : ''}${off ? ' dm-card--off' : ''}"${off ? '' : ` data-pick="${k}"`}>
     <span class="dm-card__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
     <span class="dm-card__grad"></span>
     ${nvmax > 1 ? `<span class="dm-card__nv">Nv ${nvmax}</span>` : ''}
     <span class="dm-card__i" data-info="${k}" role="button" aria-label="kit">i</span>
-    ${on ? `<span class="dm-card__vaga">${pos + 1}</span>` : ''}
+    ${on ? `<span class="dm-card__vaga">${num}</span>` : ''}
+    ${off ? `<span class="dm-card__off">${H(off)}</span>` : ''}
     <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 18)}<span class="dm-card__f">${H(g.funcao || '')}</span></span></span>
   </button>`;
 }
@@ -3484,11 +3488,17 @@ function _montVagaHTML(i, k, v){
     ${trav ? `<span class="dm-vaga__lock">🔒</span>` : `<button class="dm-vaga__x" data-rem="${k}" aria-label="remover">✕</button>`}
   </div>`;
 }
+// rótulo padrão do botão do kit (montador de 3 vagas): ESCOLHER / TIRAR DO TIME / Time cheio
+function _montKitLabelPadrao(k, cfg){
+  const on = cfg.pick.indexOf(k) >= 0, cheio = cfg.pick.length >= _montFreeCount(cfg) && !on;
+  if (on) return { txt: 'TIRAR DO TIME' };
+  if (cheio) return { txt: 'Time cheio', disabled: true };
+  return { txt: 'ESCOLHER ' + ((HRM[k] || {}).nome || '').toUpperCase() };
+}
 function _montKitPanelHTML(k, cfg){
   const g = (typeof GODS !== 'undefined' && GODS[k]) || null; if (!g) return '';
   const hg = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
-  const eg = deusKitEfetivo(k, g), pos = cfg.pick.indexOf(k), on = pos >= 0;
-  const cheio = cfg.pick.length >= _montFreeCount(cfg) && !on;
+  const eg = deusKitEfetivo(k, g);
   const linha = ([sl, lab]) => {
     const a = sl === 'defesa' ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : (eg.ab || []).find(x => x.slot === sl);
     if (!a) return '';
@@ -3501,9 +3511,9 @@ function _montKitPanelHTML(k, cfg){
         <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
       </div></div>`;
   };
-  const acao = on ? `<button class="dmb dmb--go" data-kit-toggle="${k}">TIRAR DO TIME</button>`
-    : cheio ? `<button class="dmb dmb--go" disabled>Time cheio</button>`
-      : `<button class="dmb dmb--go" data-kit-toggle="${k}">ESCOLHER ${H((hg.nome || '').toUpperCase())}</button>`;
+  const lbl = cfg.kitLabel ? cfg.kitLabel(k) : _montKitLabelPadrao(k, cfg);   // §344: o rótulo/ação do botão vem do cfg
+  const acao = lbl.disabled ? `<button class="dmb dmb--go" disabled>${H(lbl.txt)}</button>`
+    : `<button class="dmb dmb--go" data-kit-toggle="${k}">${H(lbl.txt)}</button>`;
   // §342b: cabeçalho e botão FIXOS; a lista de habilidades (+ passiva) rola por dentro → o painel inteiro cabe nos 852.
   return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
     <div class="dm-kit__cab">
@@ -3525,85 +3535,81 @@ function _montCustoHTML(cost){
   for (let i = 0; i < (cost.livre || 0); i++) out.push(orbe('livre', 24));
   return out.length ? `<span class="dmk-ab__orbs">${out.join('')}</span>` : `<span class="dmk-ab__gratis">GRÁTIS</span>`;
 }
-function montadorTimeHTML(cfg){
-  const jogaveis = _montJogaveis(), lista = _montFiltrados(jogaveis);
-  const time = _montTime(cfg), v = cfg.validar(time), nvag = cfg.vagas.length;
+// §344: a GRADE (filtros + busca + contagem + cartões) extraída — reusada pelo montador e pelo seletor de troca.
+function _montGradeSecHTML(cfg){
+  const lista = _montFiltrados(_montJogaveis());
   const elemChips = ELEMS.map(e => `<button class="dm-orbe${montFiltroElem === e ? ' is-on' : ''}" data-elem="${e}" aria-label="${ELAB[e]}">${orbe(e, 30)}</button>`).join('');
   const funcChips = FUNCOES_VOCAB.map(f => `<button class="dm-chip${montFiltroFunc === f ? ' is-on' : ''}" data-func="${f}">${H(f)}</button>`).join('');
-  const vagasHTML = cfg.vagas.map((vg, i) => _montVagaHTML(i, time[i], vg)).join('');
   const cards = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
+  return `<section class="dm-dir${cfg.gradeFull ? ' dm-dir--full' : ''}">
+    <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
+      <div class="dm-filtros">
+        <button class="dm-chip dm-chip--todos${(!montFiltroElem && !montFiltroFunc) ? ' is-on' : ''}" data-todos="1">Todos</button>
+        <span class="dm-orbes">${elemChips}</span>
+        <span class="dm-funcs">${funcChips}</span>
+        <span class="dm-busca__w"><input class="dm-busca" id="dmbusca" placeholder="Buscar deus" value="${H(montBusca)}"></span>
+        <span class="dm-conta">${lista.length} deuses</span>
+      </div>
+    </div>
+    <div class="dm-grade${cfg.gradeTravada ? ' dm-grade--travada' : ''}" id="dmgrade">${cards}</div>
+  </section>`;
+}
+// comportamento PADRÃO do toque/kit (montador de 3 vagas); o cfg pode sobrescrever (ex.: a troca do emprestado).
+function _montTapPadrao(cfg){ const freeN = _montFreeCount(cfg); return k => { const j = cfg.pick.indexOf(k); montDica = false;
+  if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k); else montDica = true; render(); }; }
+function _montKitAcaoPadrao(cfg){ const freeN = _montFreeCount(cfg); return k => { const j = cfg.pick.indexOf(k);
+  if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k); montKitAberto = null; montDica = false; render(); }; }
+// liga a GRADE dentro de `root` (stage no montador; o host no seletor de troca).
+function _montLigarGrade(root, cfg){
+  const q = s => root.querySelector(s), qq = s => [...root.querySelectorAll(s)];
+  const onTap = cfg.onTap || _montTapPadrao(cfg);
+  const wireCards = () => { if (!cfg.gradeTravada) [...root.querySelectorAll('.dm-card[data-pick]')].forEach(b => b.onclick = () => onTap(b.dataset.pick));
+    [...root.querySelectorAll('.dm-card__i[data-info]')].forEach(el => el.onclick = ev => { ev.stopPropagation(); montDica = false; montKitAberto = el.dataset.info; render(); }); };
+  wireCards();
+  const bt = q('[data-todos]'); if (bt) bt.onclick = () => { montFiltroElem = null; montFiltroFunc = null; render(); };
+  qq('[data-elem]').forEach(b => b.onclick = () => { montFiltroElem = (montFiltroElem === b.dataset.elem) ? null : b.dataset.elem; render(); });
+  qq('[data-func]').forEach(b => b.onclick = () => { montFiltroFunc = (montFiltroFunc === b.dataset.func) ? null : b.dataset.func; render(); });
+  const bu = q('#dmbusca'); if (bu) bu.oninput = () => { montBusca = bu.value; const g = q('#dmgrade'); const lista = _montFiltrados(_montJogaveis());
+    if (g) g.innerHTML = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
+    const c = q('.dm-conta'); if (c) c.textContent = lista.length + ' deuses'; wireCards(); };   // re-liga sem re-render (preserva o foco da busca)
+  // painel de kit
+  const kx = q('[data-kit-x]'); if (kx) kx.onclick = () => { montKitAberto = null; render(); };
+  const kit = q('#dmkit'); if (kit) kit.onclick = ev => { if (ev.target === kit) { montKitAberto = null; render(); } };
+  const onKit = cfg.onKitAcao || _montKitAcaoPadrao(cfg);
+  qq('[data-kit-toggle]').forEach(b => b.onclick = () => onKit(b.dataset.kitToggle));
+}
+function montadorTimeHTML(cfg){
+  const time = _montTime(cfg), v = cfg.validar(time);
+  cfg._off = v.porDeus || {};   // §344: cartões que violam a regra (Composição)
+  const vagasHTML = cfg.vagas.map((vg, i) => _montVagaHTML(i, time[i], vg)).join('');
   return `<div id="baselayer" class="dm2"><div id="dommontar">
     <button class="dmb dmb--voltar" id="bvoltar" data-voltar="1">‹ VOLTAR</button>
     <div class="dm-cabid"><h1 class="dm-titulo cin">${H(cfg.titulo)}</h1><span class="dm-sub">${H(cfg.sublinha)}</span></div>
     <section class="dm-ctx">${cfg.contextoHTML}</section>
     <section class="dm-time">
       <h2 class="dm-time__t">SEU TIME</h2>
+      ${cfg.acimaVagasHTML || ''}
       <div class="dm-time__lista">${vagasHTML}</div>
     </section>
-    <section class="dm-dir">
-      <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
-        <div class="dm-filtros">
-          <button class="dm-chip dm-chip--todos${(!montFiltroElem && !montFiltroFunc) ? ' is-on' : ''}" data-todos="1">Todos</button>
-          <span class="dm-orbes">${elemChips}</span>
-          <span class="dm-funcs">${funcChips}</span>
-          <span class="dm-busca__w"><input class="dm-busca" id="dmbusca" placeholder="Buscar deus" value="${H(montBusca)}"></span>
-          <span class="dm-conta">${lista.length} deuses</span>
-        </div>
-      </div>
-      <div class="dm-grade" id="dmgrade">${cards}</div>
-    </section>
-    <div class="dm-rodape">
+    ${_montGradeSecHTML(cfg)}
+    ${cfg.semRodape ? '' : `<div class="dm-rodape">
       ${v.ok ? '' : `<span class="dm-motivo">ⓘ ${H(v.motivo)}</span>`}
       <button class="dmb dmb--go dmb--comecar" id="bcomecar" ${v.ok ? '' : 'disabled'}>${H(cfg.textoBotao)}</button>
-    </div>
+    </div>`}
     ${montDica ? `<div class="dm-dica" id="dmdica">Tire um deus para trocar</div>` : ''}
+    ${cfg.overlayHTML || ''}
     ${montKitAberto ? _montKitPanelHTML(montKitAberto, cfg) : ''}
   </div></div>`;
 }
 function ligarMontadorTime(cfg){
   const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
-  const freeN = _montFreeCount(cfg);
   const bv = q('[data-voltar]'); if (bv) bv.onclick = () => cfg.aoVoltar();
-  // escolher/tirar pelo cartão (o "i" tem handler próprio e não propaga)
-  qq('.dm-card[data-pick]').forEach(b => b.onclick = () => {
-    const k = b.dataset.pick, j = cfg.pick.indexOf(k);
-    montDica = false;
-    if (j >= 0) cfg.pick.splice(j, 1);
-    else if (cfg.pick.length < freeN) cfg.pick.push(k);
-    else { montDica = true; }
-    render();
-  });
-  qq('.dm-card__i[data-info]').forEach(el => el.onclick = ev => { ev.stopPropagation(); montDica = false; montKitAberto = el.dataset.info; render(); });
   qq('.dm-vaga__x[data-rem]').forEach(b => b.onclick = () => { const j = cfg.pick.indexOf(b.dataset.rem); if (j >= 0) cfg.pick.splice(j, 1); montDica = false; render(); });
-  // filtros (lembrados enquanto o app está aberto)
-  const bt = q('[data-todos]'); if (bt) bt.onclick = () => { montFiltroElem = null; montFiltroFunc = null; render(); };
-  qq('[data-elem]').forEach(b => b.onclick = () => { montFiltroElem = (montFiltroElem === b.dataset.elem) ? null : b.dataset.elem; render(); });
-  qq('[data-func]').forEach(b => b.onclick = () => { montFiltroFunc = (montFiltroFunc === b.dataset.func) ? null : b.dataset.func; render(); });
-  const bu = q('#dmbusca'); if (bu) bu.oninput = () => { montBusca = bu.value; const g = q('#dmgrade'); const lista = _montFiltrados(_montJogaveis());
-    if (g) g.innerHTML = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
-    const c = q('.dm-conta'); if (c) c.textContent = lista.length + ' deuses';
-    _montWireCards(cfg); };   // re-liga os cartões sem re-render (preserva o foco da busca)
-  // painel de kit
-  const kx = q('[data-kit-x]'); if (kx) kx.onclick = () => { montKitAberto = null; render(); };
-  const kit = q('#dmkit'); if (kit) kit.onclick = ev => { if (ev.target === kit) { montKitAberto = null; render(); } };
-  qq('[data-kit-toggle]').forEach(b => b.onclick = () => { const k = b.dataset.kitToggle, j = cfg.pick.indexOf(k);
-    if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k);
-    montKitAberto = null; montDica = false; render(); });
-  // começar
+  _montLigarGrade(stage, cfg);
   const time = _montTime(cfg), v = cfg.validar(time);
   const bc = q('#bcomecar'); if (bc && v.ok) bc.onclick = () => cfg.aoComecar(_montTime(cfg));
+  if (cfg.aoLigar) cfg.aoLigar({ q, qq });   // §344: fiação extra por modo (segmentado, apelido, usar último, sair da fila)
   fit();
-}
-// re-liga só os cartões (usado pela busca, que não re-renderiza a tela toda p/ não perder o foco do input)
-function _montWireCards(cfg){
-  const freeN = _montFreeCount(cfg);
-  [...stage.querySelectorAll('.dm-card[data-pick]')].forEach(b => b.onclick = () => {
-    const k = b.dataset.pick, j = cfg.pick.indexOf(k);
-    montDica = false;
-    if (j >= 0) cfg.pick.splice(j, 1); else if (cfg.pick.length < freeN) cfg.pick.push(k); else montDica = true;
-    render();
-  });
-  [...stage.querySelectorAll('.dm-card__i[data-info]')].forEach(el => el.onclick = ev => { ev.stopPropagation(); montKitAberto = el.dataset.info; render(); });
 }
 
 // §342b: o nome CURTO do Domínio ("Domínio do Olimpo" → "Olimpo"; "de Asgard"→"Asgard"; "dos Céus"→"Céus").

@@ -40,7 +40,7 @@ console.log('== 2. validarRegra: a validação de time (mono-elemento, mesma fun
   ok(w.eval(`validarRegra('funcoesDistintas',${JSON.stringify(mesmoElem)}).ok`) !== undefined, 'funcoesDistintas avalia sem quebrar');
 }
 
-console.log('== 3. o montador VALIDA AO VIVO: Começar travado E DIZ POR QUÊ até o time servir ==');
+console.log('== 3. §344 o montador VALIDA AO VIVO: cartões que violam a regra ficam apagados; Começar travado E DIZ POR QUÊ ==');
 {
   const { w, $, $$ } = sessao();
   // possui um leque de deuses p/ montar
@@ -51,18 +51,22 @@ console.log('== 3. o montador VALIDA AO VIVO: Começar travado E DIZ POR QUÊ at
   b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval("rotaAtual()") === 'desafiomontar', 'abre o montador');
   ok($('#bcomecar').disabled, 'Começar começa travado (0 escolhidos)');
-  ok(/✕/.test($('.cval').textContent), 'a validação mostra que ainda não serve (com motivo)');
-  // monta um time que VIOLA a regra: 3 de elementos diferentes
-  const misto = w.eval("(function(){var seen={},out=[];for(var e of ROSTER.slice(0,20)){if(perfil.deuses[e.key]&&!seen[e.elem]){seen[e.elem]=1;out.push(e.key);}if(out.length===3)break;}return out;})()");
-  misto.forEach(k => $(`.ctile[data-pick="${k}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true })));
-  ok(w.eval('desafioTimePick.length') === 3 && $('#bcomecar').disabled, 'time inválido (3 escolhidos) mantém Começar TRAVADO');
-  ok(/elemento/i.test($('.cval').textContent), 'e DIZ por que não serve — antes de custar a partida');
-  // troca por um time VÁLIDO: 3 do mesmo elemento possuídos
-  const mesmo = w.eval("(function(){var byE={};ROSTER.slice(0,20).forEach(e=>{if(perfil.deuses[e.key])(byE[e.elem]=byE[e.elem]||[]).push(e.key);});var g=Object.values(byE).find(a=>a.length>=3);return g?g.slice(0,3):[];})()");
+  ok(/✕/.test($('.dm-ctx__val').textContent), 'a validação AO VIVO mostra que ainda não serve (✕ com motivo)');
+  // escolhe 1 → os de OUTRO elemento ficam APAGADOS (sem data-pick), não podem entrar (§344)
+  const byE = w.eval("(function(){var m={};ROSTER.slice(0,20).forEach(e=>{if(perfil.deuses[e.key])(m[e.elem]=m[e.elem]||[]).push(e.key);});return m;})()");
+  const elemCheio = Object.keys(byE).find(e => byE[e].length >= 3) || Object.keys(byE)[0];
+  const prim = byE[elemCheio][0];
+  $(`.dm-card[data-pick="${prim}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+  const outro = w.eval(`(function(){for(var e of ROSTER.slice(0,20))if(perfil.deuses[e.key]&&e.elem!==${JSON.stringify(elemCheio)})return e.key;})()`);
+  ok(!!outro && $(`.dm-card[data-pick="${outro}"]`) === null && !!$(`.dm-card--off[data-godcard="${outro}"], .dm-card--off`), 'um deus de OUTRO elemento fica apagado e SEM data-pick (não entra)');
+  ok(/elemento/i.test(($('.dm-card__off') || {}).textContent || '') || /elemento/i.test($('.dm-ctx__val').textContent), 'e DIZ por que — pela regra do elemento');
+  ok($('#bcomecar').disabled, 'com 1 escolhido o Começar segue travado');
+  // completa com 3 do MESMO elemento → libera
+  const mesmo = byE[elemCheio].slice(0, 3);
   if (mesmo.length === 3) {
     w.eval("desafioTimePick=[]; render();");
-    mesmo.forEach(k => $(`.ctile[data-pick="${k}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true })));
-    ok(!$('#bcomecar').disabled && /✓/.test($('.cval').textContent), 'time válido LIBERA o Começar com "válido"');
+    mesmo.forEach(k => $(`.dm-card[data-pick="${k}"]`).dispatchEvent(new w.MouseEvent('click', { bubbles: true })));
+    ok(!$('#bcomecar').disabled && /✓/.test($('.dm-ctx__val').textContent), 'time válido (3 do mesmo elemento) LIBERA o Começar com "válido"');
   } else { console.log('  (sem 3 do mesmo elemento nos 20 possuídos — pulei o caso positivo)'); }
 }
 

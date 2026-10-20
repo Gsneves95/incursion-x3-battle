@@ -2,6 +2,22 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §344 · Montador do §342 aplicado à Campanha, Composição e PvP
+- A base (`montadorTimeHTML`/`ligarMontadorTime`) foi generalizada; a GRADE saiu em `_montGradeSecHTML`/`_montLigarGrade`
+  (reusada pelo montador e pelo seletor de troca). Domínio inalterado. Novos hooks de cfg: `_off` (porDeus → cartão
+  apagado `dm-card--off` sem data-pick + motivo), `acimaVagasHTML`, `gradeTravada`, `gradeFull`, `semRodape`,
+  `overlayHTML`, `aoLigar`, `onTap`/`kitLabel`/`onKitAcao`. `fit()` trata montartime/desafiomontar/pvp como tela fixa 1846.
+- **Campanha (montartime):** título/sublinha "CAMPANHA · CAP. N · ATO romano"; contexto = nome+dica+inimigos (nomes de
+  bestiário via metaComb); COMEÇAR→iniciarEncontroComTime na ordem. **Troca do emprestado:** painel por cima da campanha,
+  grade nova, num host no `#viewport` (fora do transform da campanha), escala própria a 1846; grava `campSwap[campPicker]`.
+- **Composição (desafiomontar):** sublinha + regra ao vivo (✓/✕); `validar.porDeus` apaga quem viola (motivo no cartão),
+  não entra; COMEÇAR travado com motivo → iniciarDesafio.
+- **PvP:** contexto com apelido + segmentado AMISTOSA|RANQUEADA + ranque (só se vier da conta) + linha de revelação; "↺
+  Usar último time" (localStorage) acima das vagas; UM botão "ENTRAR NA FILA" → pvpEntrar(pvpRanqueado). Estados: sem
+  servidor/sem conta (aviso), na fila (grade travada + painel "Procurando" + tempo + Sair), erro (pvpMsg).
+- Não mudou: regras/servidor/pareamento/posse/fluxo do ato/rotas/handlers. Testes de campanha/composição/pvp/mapa migraram
+  só seletores. **Provas:** `tests/montar_modos.test.js` (39 asserções) + Chromium. Capturas `344-*`. Suíte+build verdes.
+
 ## ★ §342b · Ajustes no MONTAR TIME do Domínio
 - **Painel de kit** cabe nos 852: `.dm-kit__card` flex-column max-height 792; cabeçalho e botão FIXOS, lista de
   habilidades (+passiva) rola (`.dm-kit__scroll`). Medido para o deus mais longo (odin): card/ botão dentro de 852 e de 360.

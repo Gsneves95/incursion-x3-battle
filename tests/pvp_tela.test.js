@@ -26,7 +26,7 @@ console.log('\n== 1. sem servidor: como chegar ao servidor (endereço + mesma re
 err = null;
 w.eval("contaTransporte=null; ir('pvp',{},{substituir:true}); render();");
 ok(!err, 'a tela renderiza sem servidor sem quebrar');
-ok(/servidor/i.test(txt($('.moff__msg'))) && /(endereço|192\.168|rede)/i.test(txt($('#baselayer'))), 'diz para abrir pelo ENDEREÇO da máquina, na mesma REDE');
+ok(/servidor/i.test(txt($('.dm-aviso'))) && /(endereço|192\.168|rede)/i.test(txt($('#baselayer'))), 'diz para abrir pelo ENDEREÇO da máquina, na mesma REDE');
 
 // ---- 2. COM SERVIDOR: apelido + 3 slots + deuses possuídos; entrar só com 3 ----
 console.log('\n== 2. com servidor: apelido, time de 3 possuídos, entrar só com o time cheio ==');
@@ -34,27 +34,28 @@ err = null;
 w.eval("contaTransporte={pedir:async()=>({}),aoPush(){}}; contaAtual={nick:null,perfil:{deuses:{}},missoes:{}}; perfil.deuses={}; ['zeus','ogum','tyr','sobek','brigid','ganesha','cuca','fujin','nezha'].forEach(k=>{perfil.deuses[k]={copias:1};}); pvpTime=[]; pvpEstado='idle'; pvpMsg=''; ir('pvp',{},{substituir:true}); render();");
 ok(!err, 'a tela renderiza com servidor sem quebrar');
 ok($$('#pvpnick').length === 1, 'pede o apelido (conta sem nick ainda)');
-ok($$('.pvps').length === 3, 'três slots de time');
-ok($$('.pvpt').length === 9, 'mostra os 9 deuses possuídos (os iniciais) para escolher');
-ok($('#pvpamistoso').disabled && $('#pvpranqueado').disabled, '"Entrar na fila"/"Ranqueado" DESABILITADOS sem os 3');
+ok($$('.dm-vaga').length === 3, 'três vagas de time (§344)');
+ok($$('.dm-card').length === 9, 'mostra os 9 deuses possuídos para escolher (grade do montador)');
+ok($('#bcomecar').disabled, '"ENTRAR NA FILA" DESABILITADO sem os 3 (§344: um botão só)');
+ok($$('.dm-seg__b').length === 2, 'há a escolha segmentada AMISTOSA | RANQUEADA');
 // escolhe 3
 w.eval("['zeus','ogum','tyr'].forEach(k=>pvpToggle(k)); render();");
-ok($$('.pvps[data-pvptira]').length === 3, 'os 3 escolhidos preenchem os slots');
-ok(!$('#pvpamistoso').disabled && !$('#pvpranqueado').disabled, 'com o time cheio, os dois botões HABILITAM');
+ok($$('.dm-vaga__x[data-rem]').length === 3, 'os 3 escolhidos preenchem as vagas');
+ok(!$('#bcomecar').disabled, 'com o time cheio, ENTRAR NA FILA HABILITA');
 // tira um deus e o botão volta a travar
 w.eval("pvpToggle('zeus'); render();");
-ok($('#pvpamistoso').disabled, 'tirar um deus volta a desabilitar (exige 3)');
+ok($('#bcomecar').disabled, 'tirar um deus volta a desabilitar (exige 3)');
 
 // ---- 3. NA FILA: estado de espera honesto + sair ----
 console.log('\n== 3. na fila: espera honesta + sair ==');
 w.eval("pvpEstado='fila'; render();");
-ok(/na fila/i.test(txt($('#baselayer'))) && $$('#pvpcancelar').length === 1, 'mostra "Na fila…" e um botão para sair');
+ok(/procurando oponente/i.test(txt($('#baselayer'))) && $$('#pvpsair').length === 1, 'mostra "Procurando oponente…" e um botão para sair da fila');
 
-// ---- 4. toque ≥76px ----
-console.log('\n== 4. alvo de toque ≥76px ==');
-w.eval("pvpEstado='idle'; render();");
-ok(parseFloat(w.getComputedStyle($('.pvpt')).minHeight) >= 76, 'o tile de deus tem toque ≥76px (' + w.getComputedStyle($('.pvpt')).minHeight + ')');
-ok(parseFloat(w.getComputedStyle($('.pvps')).minHeight) >= 76, 'o slot de time tem toque ≥76px (' + w.getComputedStyle($('.pvps')).minHeight + ')');
+// ---- 4. alvo de toque (§339b: ≥72px) ----
+console.log('\n== 4. alvo de toque ≥72px ==');
+w.eval("pvpReset(); ir('pvp',{},{substituir:true}); render();");
+ok(parseFloat(w.getComputedStyle($('.dm-card')).height) >= 72, 'o cartão de deus tem toque ≥72px (' + w.getComputedStyle($('.dm-card')).height + ')');
+ok(parseFloat(w.getComputedStyle($('.dm-vaga')).height) >= 72, 'a vaga de time tem toque ≥72px (' + w.getComputedStyle($('.dm-vaga')).height + ')');
 
 // ---- 5. §264: o fim de partida RANQUEADA anuncia o resultado; amistosa não; o voltar do Android fecha o banner ----
 console.log('\n== 5. §264 banner de ranque: ranqueado anuncia (delta com sinal, faixa real), amistoso não, back fecha ==');

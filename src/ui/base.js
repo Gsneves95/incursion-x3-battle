@@ -190,8 +190,9 @@ function fit(){
   // §339: a tela DESAFIOS também é uma TELA FIXA de 1846×852 escalada (igual à batalha §335); só a grade de deuses rola
   // por dentro. `#desafios` é a canvas; o `#stage` vira a moldura (fundo #03050B nas sobras).
   const emDesafios = (typeof rotaAtual === 'function' && rotaAtual() === 'desafios') && document.getElementById('desafios');
-  // §342: MONTAR TIME do Domínio também é uma TELA FIXA de 1846×852 escalada (só a grade de deuses rola).
-  const emMontar = (typeof rotaAtual === 'function' && rotaAtual() === 'dominiomontar') && document.getElementById('dommontar');
+  // §342/§344: as telas de MONTAR TIME (Domínio, Campanha, Composição, PvP) são a mesma TELA FIXA de 1846×852 escalada.
+  const _rM = (typeof rotaAtual === 'function') && rotaAtual();
+  const emMontar = (_rM === 'dominiomontar' || _rM === 'montartime' || _rM === 'desafiomontar' || _rM === 'pvp') && document.getElementById('dommontar');
   const fixa = emBatalha || emDesafios || emMontar;
   try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar);
     document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); }catch(e){}   // §339/§342: carimbo build + botão conta somem destas telas (vivem na home/menu)

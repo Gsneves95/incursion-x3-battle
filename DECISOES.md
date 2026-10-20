@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §344 · O MONTADOR DE TIME (§342) aplicado à Campanha, à Composição e ao PvP
+
+O dono aprovou o montador do Domínio e quis o MESMO modelo nas outras telas de montar time. A base do §342
+(`montadorTimeHTML(cfg)`/`ligarMontadorTime(cfg)`) foi **generalizada** — o que muda por modo vem só do cfg — e a GRADE
+(filtros + busca + contagem + cartões + painel de kit) foi extraída em `_montGradeSecHTML`/`_montLigarGrade` para servir
+tanto o montador quanto o seletor de troca da campanha. O Domínio não mudou.
+
+**Extensões da base (defaults preservam o §342):** `cfg._off` (mapa de deuses que violam a regra → cartão apagado
+`dm-card--off`, sem `data-pick`, com o motivo), `cfg.selNum`, `cfg.acimaVagasHTML`, `cfg.gradeTravada`, `cfg.gradeFull`,
+`cfg.semRodape`, `cfg.overlayHTML`, `cfg.aoLigar({q,qq})`, `cfg.onTap`/`cfg.kitLabel`/`cfg.onKitAcao` (o toque e a ação do
+kit por modo). `fit()` passou a tratar `montartime`/`desafiomontar`/`pvp` como a mesma tela fixa 1846×852 (como
+`dominiomontar`); `body.emmontar` some com build/conta em todas.
+
+1. **Campanha (`montartime`).** cfg: título "MONTE SEU TIME", sublinha "CAMPANHA · CAP. N · ATO <romano>" (derivada do id
+   `c<N>e<M>`), contexto = nome + `ensina.dica` + inimigos do encontro em miniaturas (nomes de bestiário via `metaComb`,
+   curtos), 3 vagas livres, COMEÇAR → `iniciarEncontroComTime(enc, time)` na ordem, VOLTAR como antes.
+   **Troca do emprestado:** o `campPicker`/`[data-troca]` virou um painel por cima da campanha que usa a MESMA grade. Como
+   a tela da campanha é fluida (escalada ao design ~926, não 1846), o seletor vive num host no `#viewport` (FORA do
+   `#stage`, logo FORA do transform da campanha) e se escala a 1846 sozinho; tocar um deus grava `campSwap[campPicker]` e
+   volta ao ato. O fluxo do ato (vagas travadas/emprestadas) não mudou.
+2. **Composição (`desafiomontar`).** cfg: sublinha "COMPOSIÇÃO · <regra>", contexto = nome + `regraTexto` + validação ao
+   vivo ("✓ Time válido" / "✕ motivo") + inimigos; `validar` devolve `porDeus` (de `_regraPorDeus`) → um deus que viola a
+   regra fica **apagado, com o motivo curto, e não entra**; COMEÇAR travado com o motivo até o time servir → `iniciarDesafio`.
+3. **PvP (`pvp`).** Reconstruído no montador: contexto = apelido (fixo ou campo 3–16), segmentado **AMISTOSA | RANQUEADA**
+   (selecionado em dourado) + linha neutra, ranque da conta **só se vier** (`contaAtual.ranque.pontos`), e "O oponente é
+   revelado quando a partida começa."; acima das vagas, **"↺ Usar último time"** (guardado em localStorage; desabilitado
+   se não houver ou se algum deus saiu); rodapé com **UM** botão "ENTRAR NA FILA" → `pvpEntrar(pvpRanqueado)` (substitui os
+   dois de antes). Estados preservados no visual novo: **sem servidor** / **sem conta** (aviso), **na fila** (grade travada
+   + painel central "PROCURANDO OPONENTE…" com modo/tempo decorrido + "SAIR DA FILA" = `pvpReset`), **erro** (`pvpMsg`).
+
+**Não mudou:** regras de cada modo, servidor, pareamento, validação de posse, o fluxo do ato da campanha, as rotas e os
+handlers. Os testes de campanha/composição/PvP tiveram só os seletores migrados (`.ctile`→`.dm-card`, `.cval`→
+`.dm-ctx__val`, `.pvpt`/`.pvps`/`#pvpamistoso`→grade/vagas/`#bcomecar`), exceto a Composição, cujo caso "montar 3 que
+violam" deixou de existir por construção (o 2º/3º que violam ficam apagados) — o teste passou a provar o apagamento.
+
+**Provas:** `tests/montar_modos.test.js` (por modo: escolher/tirar/4º, filtros+busca, kit "i", handler na ordem, VOLTAR;
+Composição apaga o violador; Campanha grava `campSwap` e volta ao ato; PvP amistosa/ranqueada/usar-último/estados;
+Chromium @1846 e @780 sem corte/sobreposição). Capturas `344-*`.
+
+---
+
 ## §342b · Ajustes no MONTAR TIME do Domínio (painel de kit + tela principal)
 
 Seis ajustes vistos nas capturas do §342:
