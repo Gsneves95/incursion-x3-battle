@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §347 · As duas cenas largas do centro da batalha (artes do dono)
+- Entraram no repo: `web/cena/turno_meu.webp` (Nezha "Guerreira em Chamas", meu turno) e `web/cena/turno_oponente.webp`
+  (Ah Puch "Rei Esquelético sob a Lua de Sangue", turno do oponente) — webp 1600 px, ~274/255 kB. O build do §335 as
+  detecta: `CENA_ARTE={meu:1,oponente:1}`. O fallback de retrato do §335b não entra mais nesses dois turnos.
+- A cena é uma caixa fixa ~984×536 px (célula central), `object-fit:cover` + máscara horizontal; o recorte é idêntico em
+  20:9/16:9/780×360 (a canvas inteira escala uniforme). O anúncio começa em ~0,50 da altura; o rosto fica no terço de cima
+  → livre do anúncio. `object-position` por cena virou DADO: `campo.cena.objPosMeu`/`objPosOpo` em layout_batalha.json
+  (hoje `50% 50%`); `_cenaSrc` (campo.js) usa esse objPos na arte larga.
+- Provas em `batalha_faixa.test.js` (Chromium): src `cena/turno_meu.webp`/`cena/turno_oponente.webp` por turno (larga, sem
+  fallback) + anúncio em ≥0,45 da altura. Capturas `347-meu-turno`, `347-turno-oponente` (1846×852 e 780×360).
+
 ## ★ §345 · Batalha CPU / hot-seat na grade do montador (DOIS times)
 - `src/ui/selecao.js` (`renderPick`) foi reescrita sobre a base do §342/§344: a grade "SEUS DEUSES" (cartões `.dm-card`,
   orbes de elemento + chips de função inline, busca, contagem, kit "i") agora monta DOIS times. Tela fixa 1846×852 (rota

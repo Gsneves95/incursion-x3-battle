@@ -99,16 +99,23 @@ const CAIXAS=[
     const ctx=await browser.newContext({viewport:{width:1846,height:852},deviceScaleFactor:1});
     const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
     await page.evaluate(BOOT); await page.waitForTimeout(80);
-    const meu=await page.evaluate(()=>{ const bat=document.getElementById('batalha');
-      const img=bat.querySelector('.b5-art img'); const tit=[...bat.querySelectorAll('div')].map(d=>d.textContent).find(t=>/SEU TURNO/.test(t));
-      return { src:(img&&img.getAttribute('src'))||'', seuTurno:!!bat.textContent.match(/SEU TURNO/) }; });
-    ok(/nezha/i.test(meu.src), `meu turno: a cena é a da Nezha (src ${meu.src})`);
+    // §347: mede a cena (src larga) e a fração vertical onde o anúncio começa — o rosto (topo) tem de ficar livre dele
+    const medeCena = () => { const bat=document.getElementById('batalha');
+      const img=bat.querySelector('.b5-art img'); const cont=img.closest('.b5-art').parentElement; const cr=cont.getBoundingClientRect();
+      const anun=[...cont.children].find(c=>/TURNO/.test(c.textContent||'')); const frac=anun?((anun.getBoundingClientRect().top-cr.top)/cr.height):0;
+      const src=(img&&img.getAttribute('src'))||'';
+      return { src, larga:/^cena\//.test(src), anunFrac:+frac.toFixed(3), seuTurno:/SEU TURNO/.test(bat.textContent), opoTurno:/TURNO DO OPONENTE/.test(bat.textContent) }; };
+    const meu=await page.evaluate(medeCena);
+    ok(/cena\/turno_meu\.webp/.test(meu.src), `§347 meu turno: a cena LARGA da Nezha (src ${meu.src})`);
+    ok(meu.larga, '§347 meu turno: usa a arte larga (o fallback de retrato não entra)');
     ok(meu.seuTurno, 'meu turno: o anúncio diz "SEU TURNO"');
+    ok(meu.anunFrac>=0.45, `§347 meu turno: o anúncio começa na metade de baixo (frac ${meu.anunFrac}) → o rosto (topo) fica fora dele`);
     await page.evaluate(`st.ativo=1; armado=null;detalhe=null; render();`); await page.waitForTimeout(80);
-    const opo=await page.evaluate(()=>{ const bat=document.getElementById('batalha'); const img=bat.querySelector('.b5-art img');
-      return { src:(img&&img.getAttribute('src'))||'', opoTurno:/TURNO DO OPONENTE/.test(bat.textContent) }; });
-    ok(/ahpuch/i.test(opo.src), `turno do oponente: a cena é a do Ah Puch (src ${opo.src})`);
+    const opo=await page.evaluate(medeCena);
+    ok(/cena\/turno_oponente\.webp/.test(opo.src), `§347 turno do oponente: a cena LARGA do Ah Puch (src ${opo.src})`);
+    ok(opo.larga, '§347 turno do oponente: usa a arte larga (o fallback de retrato não entra)');
     ok(opo.opoTurno, 'turno do oponente: o anúncio diz "TURNO DO OPONENTE"');
+    ok(opo.anunFrac>=0.45, `§347 turno do oponente: o anúncio começa na metade de baixo (frac ${opo.anunFrac}) → o rosto (topo) fica fora dele`);
     await ctx.close();
   }
 
@@ -138,7 +145,7 @@ const CAIXAS=[
       const avMe=bat.querySelector('[data-prof="me"] img'); const avFoe=bat.querySelector('[data-prof="foe"] img');
       return { opY, artSrc, alpha, temMoldura, avMe:avMe?avMe.getAttribute('src'):'', avFoe:avFoe?avFoe.getAttribute('src'):'' };
     });
-    ok(/nezha/i.test(m.artSrc)&&m.opY<50, `§335b cena: fallback de retrato ancora no topo p/ mostrar o rosto (object-position Y=${m.opY}%)`);
+    ok(/^cena\/turno_meu\.webp/.test(m.artSrc), `§347: com a arte larga presente, a cena usa cena/turno_meu.webp (o fallback de retrato não entra; object-position Y=${m.opY}%)`);
     ok(m.alpha>0, `§335b pílula de tipo: fundo colorido (alpha ${m.alpha})`);
     ok(m.temMoldura, '§335b imagem do painel: moldura inset na cor do acento');
     ok(/hades/i.test(m.avMe), `§335b avatar do jogador: retrato do 1º deus (src ${m.avMe})`);

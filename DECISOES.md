@@ -6,6 +6,31 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §347 · As duas CENAS LARGAS do centro da batalha (artes do dono)
+
+O dono gerou as duas cenas do centro da batalha (§335): a NEZHA ("Guerreira em Chamas no Templo Celestial", meu turno) e
+o AH PUCH ("Rei Esquelético sob a Lua de Sangue", turno do oponente). São artes do dono → entraram no repositório, nos
+caminhos que o build do §335 já detecta: `web/cena/turno_meu.webp` (Nezha) e `web/cena/turno_oponente.webp` (Ah Puch).
+Convertidas para webp a 1600 px de largura (meu ~274 kB q88, oponente ~255 kB q90, na faixa 250–400 kB pedida).
+
+Com as duas cenas presentes, o `cenaArte` do build fica `{meu:1,oponente:1}` e o `_cenaSrc` (campo.js) serve a arte
+larga — o **fallback de retrato do §335b não entra mais** nesses dois turnos.
+
+**Enquadramento.** A cena ocupa uma caixa FIXA de ~984×536 px de design (a célula central do campo), em `object-fit:cover`
+com a máscara horizontal do §335; como toda a tela de batalha é a mesma canvas fixa escalada por `min(w/1846,h/852)`, o
+recorte é IDÊNTICO em 20:9, 16:9 e 780×360 (muda só a escala, não o enquadramento). O anúncio "SEU TURNO"/"TURNO DO
+OPONENTE" começa em `anuncioTop=266` (~0,50 da altura da cena); o rosto de cada personagem fica no terço de cima
+(~0,20) → bem acima do anúncio. O `object-position` por cena passou a ser DADO (`campo.cena.objPosMeu`/`objPosOpo` em
+`data/layout_batalha.json`, hoje `50% 50%` para as duas — o rosto já fica inteiro e livre; a chave existe para ajuste
+futuro sem tocar no código). `_cenaSrc` continua escolhendo a cena pelo turno; só o `object-position` da arte larga virou
+configurável.
+
+Provas (`batalha_faixa.test.js`, Chromium): o build detecta as duas cenas; no meu turno a cena é `cena/turno_meu.webp`
+(larga, sem fallback) e no do oponente `cena/turno_oponente.webp`; em ambos o anúncio começa em ≥0,45 da altura, deixando
+o rosto (topo) livre. Capturas `347-meu-turno` e `347-turno-oponente` (1846×852 e 780×360).
+
+---
+
 ## §345 · BATALHA CPU / HOT-SEAT na GRADE do montador (§342), com DOIS times
 
 A seleção da Batalha CPU/hot-seat (`src/ui/selecao.js`, `renderPick`) passou a usar a MESMA grade do montador

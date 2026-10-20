@@ -24,7 +24,7 @@
     "retrato": 140, "selo": 26, "seloFonte": 17, "vida": { "h": 20, "dy": 4, "fonte": 16 },
     "efeitos": { "size": 24, "gap": 8, "valor": 19, "max": 3 },
     "skill": { "size": 108, "gap": 14, "mtop": -28, "cdFonte": 46, "pipPill": 22, "pip": 14 },
-    "cena": { "left": -60, "right": -40, "mask": [14, 86], "anuncioTop": 266, "titulo": 48, "sub": 22, "ornato": [190, 92], "linha": 560 },
+    "cena": { "left": -60, "right": -40, "mask": [14, 86], "anuncioTop": 266, "titulo": 48, "sub": 22, "ornato": [190, 92], "linha": 560, "objPosMeu": "50% 50%", "objPosOpo": "50% 50%" },
     "mira": { "size": 54 }
   },
   "painel": {
