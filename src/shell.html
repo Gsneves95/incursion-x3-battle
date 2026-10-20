@@ -2778,6 +2778,69 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dm-troca-x{position:absolute;top:24px;right:57px;width:88px;height:88px;border:0;border-radius:14px;cursor:pointer;
   background:rgba(14,18,32,.94);box-shadow:inset 0 0 0 2px rgba(201,164,76,.6);color:#F0D79A;font-size:46px;font-weight:700;line-height:1;z-index:4}
 
+/* ======================= §345 — BATALHA CPU / HOT-SEAT (montador de DOIS times) ======================= */
+/* cartão do OPONENTE (lado 1): moldura e número VERMELHOS (J1 segue dourado do §342b) */
+.dm-card--sel2{box-shadow:0 0 16px rgba(224,84,91,.4)}
+.dm-card--sel2::after{box-shadow:inset 0 0 0 3px #E0545B}
+.dm-card--sel2 .dm-card__vaga{background:#E0545B;color:#fff}
+/* na visão "Todos": deus bloqueado/WIP não entra (sem data-pick) — marca e esmaece */
+.dm-card--trav{opacity:.62;cursor:default}
+.dm-card--trav .dm-card__p{filter:grayscale(.55) brightness(.8)}
+.dm-card__trav{position:absolute;top:6px;left:6px;min-width:34px;height:34px;padding:0 7px;border-radius:7px;background:rgba(8,11,20,.9);box-shadow:inset 0 0 0 1px rgba(154,164,184,.5);color:#C9CED8;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;z-index:3}
+/* coluna esquerda: dois blocos de time (J1 dourado / J2 vermelho) + opções */
+.dm--sel .sel-times{position:absolute;left:57px;top:95px;width:528px;display:flex;flex-direction:column;gap:11px}
+.sel-time{box-sizing:border-box;border-radius:12px;padding:11px 15px;background:linear-gradient(180deg,rgba(18,24,44,.92),rgba(10,14,26,.9));box-shadow:inset 0 0 0 1px rgba(201,164,76,.5);display:flex;flex-direction:column;gap:7px}
+.sel-time.is-vez{box-shadow:inset 0 0 0 2px #E9C25A,0 0 18px rgba(240,180,60,.3)}
+.sel-time--op{box-shadow:inset 0 0 0 1px rgba(224,84,91,.5)}
+.sel-time--op.is-vez{box-shadow:inset 0 0 0 2px #E0545B,0 0 18px rgba(224,84,91,.3)}
+.sel-time__cab{display:flex;align-items:center;gap:10px}
+.sel-time__t{margin:0;font-size:22px;color:#F0D79A;font-weight:900;letter-spacing:.04em}
+.sel-time--op .sel-time__t{color:#F2B6BA}
+.sel-time__who{font-size:15px;font-weight:700;letter-spacing:.05em;color:#C9CED8;background:rgba(10,13,22,.6);border-radius:6px;padding:2px 9px}
+.sel-time__c{margin-left:auto;font-size:18px;font-weight:700;color:#9AA4B8}
+.sel-time__lista{display:flex;flex-direction:column;gap:6px}
+.sel-vaga{height:56px;display:flex;align-items:center;gap:11px;padding:0 11px;border-radius:8px;background:rgba(10,13,22,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.35)}
+.sel-time--op .sel-vaga{box-shadow:inset 0 0 0 1px rgba(224,84,91,.3)}
+.sel-vaga__num{width:26px;flex:none;font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:#C9A44C;text-align:center}
+.sel-time--op .sel-vaga__num{color:#E0545B}
+.sel-vaga__p{width:44px;height:44px;flex:none;border-radius:6px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.sel-vaga__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.sel-vaga__n{font-size:19px;font-weight:700;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sel-vaga--vazia .sel-vaga__num{color:#6b7488}
+.sel-vaga__add{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(14,18,32,.6);color:#6b7488;font-size:28px;font-weight:700}
+.sel-vaga__txt{flex:1;font-size:18px;color:#6b7488;font-weight:600}
+.sel-vaga__meta{display:flex;align-items:center;gap:6px;font-size:16px;color:#C9CED8}
+.sel-vaga__f{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sel-vaga__x{width:46px;height:46px;flex:none;border:0;border-radius:7px;cursor:pointer;background:rgba(14,18,32,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);color:#C9CED8;font-size:20px}
+.sel-ops{box-sizing:border-box;display:flex;flex-direction:column;gap:9px;padding:12px 15px;border-radius:12px;background:linear-gradient(180deg,rgba(18,24,44,.9),rgba(10,14,26,.88));box-shadow:inset 0 0 0 1px rgba(154,164,184,.25)}
+.sel-seg{display:flex;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
+.sel-seg__b{flex:1;height:52px;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:17px;letter-spacing:.02em;color:#9AA4B8;background:rgba(10,13,22,.6)}
+.sel-seg__b.is-on{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F)}
+.sel-sortear{margin-top:0;width:100%;height:54px;font-size:19px;background:rgba(10,13,22,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.5);color:#E8ECF4}
+.sel-info{margin:0;font-size:16px;line-height:1.35;color:#C9CED8}
+.sel-info b{color:#F0D79A}
+/* pílula do estado (Liberados|Todos) + badge do "Mais filtros" */
+.sel-pill--todos{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F)}
+.sel-badge{margin-left:9px;min-width:26px;height:26px;padding:0 6px;border-radius:13px;background:#E9C25A;color:#2A1A04;font-size:16px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+/* rodapé: Invocar/Teste discretos à esquerda, COMEÇAR à direita */
+.sel-mini-wrap{margin-right:auto;display:flex;gap:10px}
+.sel-mini{height:48px;font-size:17px;padding:0 16px;background:rgba(10,13,22,.5);box-shadow:inset 0 0 0 1px rgba(154,164,184,.3);color:#9AA4B8}
+.sel-mini.is-on{color:#F0D79A;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6)}
+/* painel "MAIS FILTROS" — centrado na tela fixa, com o scrim por fora */
+.sel-fpanel{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(4,6,14,.78)}
+.sel-fbox{width:780px;max-width:92%;max-height:80%}
+#dommontar .sel-fbox{border-radius:14px}
+#dommontar .sel-fbox .fbox__h{padding:16px 22px}
+#dommontar .sel-fbox .fbox__h h2{font-size:26px}
+#dommontar .sel-fbox .fbox__n{font-size:19px}
+#dommontar .sel-fbox .fbox__n b{font-size:22px}
+#dommontar .sel-fbox .fbox__b{padding:16px 22px 20px}
+#dommontar .sel-fbox .fgrp{gap:16px;padding:12px 0}
+#dommontar .sel-fbox .fgrp__l{width:140px;font-size:17px;padding-top:8px}
+#dommontar .sel-fbox .fgrp__c{gap:9px}
+#dommontar .sel-fbox .chip2{font-size:19px;padding:10px 18px;border-radius:22px}
+#dommontar .sel-fbox .chip2__n{font-size:15px}
+
 /* ======================= §335 — BATALHA (design do dono, tela fixa 1846×852) ======================= */
 /* A moldura (#stage) vira a canvas #03050B sem borda; o #batalha (1846×852) se escala via JS (fit). */
 .stage.bt2{border:0;border-radius:0;box-shadow:none;background:#03050B}

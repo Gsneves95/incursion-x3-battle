@@ -1,326 +1,239 @@
-// ui/selecao.js — grade de coleção, filtro combinável, montagem de time, kit.
+// ui/selecao.js — BATALHA CPU / HOT-SEAT: monta DOIS times (J1 e J2) na GRADE do montador (§342/§344).
+// §345: reusa a base do montador (cartões `_montCardHTML`, painel de kit `_montKitPanelHTML`, classes `dm-*`) com
+// um cfg de DOIS lados — J1 (dourado) e J2 (vermelho). Tela fixa 1846×852 (como as telas de montar), sem conta/build.
 // F4: esta tela É o SANDBOX declarado (Batalha CPU). Recompensa/teto vêm de economia.json.
 const SB_ECON=(typeof ECONOMIA!=='undefined'&&ECONOMIA.sandbox)?ECONOMIA.sandbox:{};
 const SB_GEMA=(SB_ECON.recompensas&&SB_ECON.recompensas.vitoria&&SB_ECON.recompensas.vitoria.gema)||0;
 const SB_TETO=SB_ECON.tetoDia||0;
-const POR_PAG=30;
 const RMAP={}; ROSTER.forEach(e=>RMAP[e.key]=e);
 const temKit=k=>!!GODS[k];
-let pagina=0, filtro=0, tocado=null, vez=0, tudoLiberado=false;   // abre em LIBERADOS
-let focoPk=null;   // deus com o painel de kit aberto na seleção
+let tudoLiberado=false, vez=0;   // abre em LIBERADOS; vez = time que escolhe agora
+let focoPk=null;                 // deus com o painel de kit aberto
+let selBusca='';                 // §345: busca por nome na grade (como o montador)
 const FACCOES=['Grega','Nórdica','Egípcia','Japonesa','Chinesa','Hindu','Brasileira','Africana','Celta','Maia'];
-const FUNCOES=['Atacante','Guardião','Suporte','Controlador','Manipulador'];
 const CLASSES_G=['Físico','Mágico','Híbrido'];
-const ESTADOS=[['liberados','Liberados'],['todos','Todos'],['bloqueados','Bloqueados']];
+// §345: o estado vira uma PÍLULA "Liberados | Todos". Facção e Classe vão p/ "MAIS FILTROS". Elemento e Função
+// ficam inline na grade (orbes + chips, como o montador). Mantém-se o modelo de Sets (multi) já existente.
 let F={estado:'liberados',faccoes:new Set(),elems:new Set(),funcoes:new Set(),classes:new Set()};
-let painelFiltro=false;
-function eixosAtivos(){return F.faccoes.size+F.elems.size+F.funcoes.size+F.classes.size;}
+let painelFiltro=false;   // o painel "MAIS FILTROS" (facção + classe)
+const _selNorm=s=>(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function eixosExtras(){return F.faccoes.size+F.classes.size;}   // só facção/classe contam p/ o badge do "MAIS FILTROS"
 function limparFiltro(){F={estado:'liberados',faccoes:new Set(),elems:new Set(),funcoes:new Set(),classes:new Set()};}
 
 function liberado(k){return tudoLiberado?temKit(k):!!RMAP[k].inicial;}
 function jogavel(k){return liberado(k)&&temKit(k);}
 function listaFiltrada(){
+  const q=_selNorm(selBusca);
   return ROSTER.filter(e=>{
     if(F.estado==='liberados'&&!liberado(e.key))return false;
-    if(F.estado==='bloqueados'&&liberado(e.key))return false;
     if(F.faccoes.size&&!F.faccoes.has(e.faccao))return false;
     if(F.elems.size&&!F.elems.has(e.elem))return false;
     if(F.funcoes.size&&!F.funcoes.has(e.funcao))return false;
     if(F.classes.size&&!F.classes.has(e.classe))return false;
+    if(q&&!_selNorm(e.nome).includes(q))return false;
     return true;
   }).map(e=>e.key);
 }
 function donoDe(k){return pick[0].includes(k)?0:pick[1].includes(k)?1:null;}
 
-// \u00a7320 \u2014 indicador compacto de n\u00edveis nos deuses ESCOLHIDOS (sele\u00e7\u00e3o de time). L\u00ea os n\u00edveis da CONTA
-// (contaAtual.niveis \u2014 os MEUS; o oponente do PvP n\u00e3o entra nesta tela). Todo nv1 \u2192 nada. Mesmo visual
-// pequeno/dourado-apagado da batalha. slotTemEscada garante "sem escada \u2192 sem n\u00famero".
-function nivBadgeSelHTML(k){
-  const nv=(typeof contaAtual!=='undefined'&&contaAtual&&contaAtual.niveis&&contaAtual.niveis[k])||null;
-  if(!nv) return '';
-  const lv=s=> (typeof slotTemEscada==='function'&&!slotTemEscada(k,s))?1:Math.max(1,Math.min(4,nv[s]||1));
-  const b=lv('basico'),h=lv('habilidade'),m=lv('milagre');
-  if(!(b>1||h>1||m>1)) return '';
-  const cel=n=>`<span class="pkniv__c${n>1?' pkniv__c--up':''}">${n}</span>`;
-  return `<span class="pk__niv" aria-label="n\u00edveis de habilidade">${cel(b)}${cel(h)}${cel(m)}</span>`;
-}
-function tileHTML(k){
-  const g=RMAP[k], liv=liberado(k), kit=temKit(k), dono=donoDe(k);
-  const cls=['pk'];
-  if(k===focoPk)cls.push('foco');
-  if(liv&&kit)cls.push('livre'); else cls.push('trancado');
-  if(liv&&!kit)cls.push('semkit');
-  if(dono===0)cls.push('on'); if(dono===1)cls.push('on2');
-  return `<button class="${cls.join(' ')}" data-k="${k}" title="${H(g.nome)}">
-    <span class="pk__p">${slot('god-'+k,ini(g.nome),liv?COR(g.elem):'#8d84ad',24)}</span>
-    <span class="pk__el" style="background:${COR(g.elem)}"></span>
-    ${liv?(kit?'':'<span class="pk__wip">WIP</span>'):'<span class="pk__lock">\u26bf</span>'}
-    ${dono!==null?`<span class="pk__mark">${dono+1}</span>`:''}
-    ${dono!==null?nivBadgeSelHTML(k):''}
-    <span class="pk__n">${H(g.nome)}</span>
-  </button>`;
-}
-
-function infoHTML(){
-  if(!tocado)return F.estado==='liberados'&&!eixosAtivos()
-    ? `Seus ${ROSTER.map(e=>e.key).filter(liberado).length} deuses liberados. Abra o FILTRO e escolha "Todos" para ver os ${ROSTER.length} do roster \u2014 os bloqueados mostram como desbloquear.`
-    : `Toque num deus para ver quem é. Os apagados estão bloqueados \u2014 desbloqueie pela Provação ou por invocação.`;
-  const g=RMAP[tocado], liv=liberado(tocado), kit=temKit(tocado), dono=donoDe(tocado);
-  const base=`<b>${H(g.nome.toUpperCase())}</b> \u00b7 ${H(g.faccao)} \u00b7 ${H(ELAB[g.elem])} \u00b7 ${H(g.classe)} \u00b7 ${H(g.funcao)}`;
-  if(!liv){
-    const p=g.prov;
-    return base+` \u2014 <i>BLOQUEADO.</i> ${p?`Rito "${H(p.nome)}" (dificuldade ${p.dif}${p.req&&p.req!=='\u2014'?', requisito: '+H(p.req):''}): ${H(p.cond)}`:'Desbloqueie pela Provação dele ou por invocação.'}`;
-  }
-  if(!kit)return base+` \u2014 <i>kit ainda não implementado no protótipo.</i> ${GODS_FEITOS} de 100 prontos.`;
-  if(dono!==null&&dono!==vez)return base+` \u2014 <i>já escolhido ${modoPartida()==='hotseat'?'pelo Jogador '+(dono+1):(dono===0?'no seu time':'no time do oponente')}.</i>`;
-  return base+` \u2014 ${H(GODS[tocado].passiva.nome)}: ${H(GODS[tocado].passiva.desc)}`;
-}
-const GODS_FEITOS=Object.keys(GODS).length;
-
-function painelFiltroHTML(){
-  if(!painelFiltro)return '';
-  const n=listaFiltrada().length;
-  const grupo=(rot,chips)=>`<div class="fgrp"><span class="fgrp__l">${rot}</span>
-    <div class="fgrp__c">${chips}</div></div>`;
-  const chipEstado=ESTADOS.map(([v2,rot])=>{
-    const c=ROSTER.filter(e=>v2==='todos'||(v2==='liberados'?liberado(e.key):!liberado(e.key))).length;
-    return `<button class="chip2 ${F.estado===v2?'on':''}" data-fe="${v2}">${rot}
-      <span class="chip2__n">${c}</span></button>`;}).join('');
-  const chipSet=(campo,itens,cor)=>itens.map(it=>{
-    const c=ROSTER.filter(e=>e[campo==='faccoes'?'faccao':campo==='elems'?'elem':campo==='funcoes'?'funcao':'classe']===it).length;
-    return `<button class="chip2 ${F[campo].has(it)?'on':''}" data-fs="${campo}|${it}">
-      ${cor?`<span class="chip2__d" style="${orbeBg(it)}"></span>`:''}${H(it)}
-      <span class="chip2__n">${c}</span></button>`;}).join('');
-  return `<div class="fpanel" id="fpanel"><div class="fbox">
-    <div class="fbox__h"><h2>FILTRAR</h2>
-      <span class="fbox__n"><b>${n}</b> de ${ROSTER.length} deuses</span>
-      <span class="push">
-        <button class="b b--quiet b--md" id="flimpar">Limpar</button>
-        <button class="b b--primary b--md" id="ffechar">Pronto</button></span></div>
-    <div class="fbox__b">
-      ${grupo('ESTADO',chipEstado)}
-      ${grupo('PANTEÃO',chipSet('faccoes',FACCOES,false))}
-      ${grupo('ELEMENTO',chipSet('elems',ELEMS,true))}
-      ${grupo('FUNÇÃO',chipSet('funcoes',FUNCOES,false))}
-      ${grupo('CLASSE',chipSet('classes',CLASSES_G,false))}
-    </div></div></div>`;
-}
-
-/* ---- painel do kit (1 toque em qualquer deus, inclusive bloqueado) ---- */
-// §287: LÊ data/deuses (`GODS[k]`), a MESMA fonte da Coleção (home.js) e do motor — não mais o `kit.efeito`
-// do kits.json. Uma redação por habilidade no jogo inteiro. A CASCA é desta tela (classes `krow`): não reuso o
-// `kitLinhaHTML` do §284-ajuste2 porque ele solda as classes `col2k__` do home — reusá-lo importaria a casca do
-// home p/ cá, a inversão que o §284 alertou ("o que duplica é a LINHA, não a tela"). Então compartilho a FONTE
-// (os campos de data/deuses: nome/cost/cd/desc), não o markup; a babá (`pvp_tela`) trava que as duas telas
-// mostram a MESMA linha p/ o mesmo deus. custo/recarga saem do `a.cost`/`a.cd` (objeto do motor), não do texto.
-function painelKitHTML(){
-  if(!focoPk)return '';
-  const k=focoPk, g=RMAP[k], kdBase=(typeof GODS!=='undefined'&&GODS[k])||null, liv=liberado(k), jog=jogavel(k), dono=donoDe(k);
-  // §318: passa o kit exibido pelo kitEfetivo (nv do jogador, da conta). Sem níveis (FASE 0) = base.
-  const _nv=(typeof contaAtual!=='undefined'&&contaAtual&&contaAtual.niveis&&contaAtual.niveis[k])||null;
-  const kd=(kdBase&&kdBase.ab&&typeof kitEfetivo==='function')?kitEfetivo(kdBase,_nv):kdBase;
-  const ab={}; if(kd)(kd.ab||[]).forEach(a=>ab[a.slot]=a);
-  const rar=(typeof RARIDADE!=='undefined'&&RARIDADE[k])||'';
-  const linha=(rot,a)=>a?`<div class="krow"><div class="krow__h"><span class="krow__rot">${rot}</span><b>${H(a.nome)}</b>
-      <span class="krow__meta">${pipsDetalhe(a.cost||{})}${a.cd?`<span class="krow__cd">recarga ${a.cd}</span>`:''}</span></div>
-      <div class="krow__t">${H(a.desc)}</div></div>`:'';
-  let acao;
-  if(dono!==null) acao=`<button class="b b--danger b--md" id="kitdel">Remover (J${dono+1})</button>`;
-  else if(!liv) acao=`<button class="b b--quiet b--md" disabled>Bloqueado</button>`;
-  else if(!jog) acao=`<button class="b b--quiet b--md" disabled>Kit em produção</button>`;
-  else if(pick[0].length>=3&&pick[1].length>=3) acao=`<button class="b b--quiet b--md" disabled>Times cheios</button>`;
-  else acao=`<button class="b b--primary b--md" id="kitadd">Adicionar (J${(pick[vez].length<3?vez:1-vez)+1})</button>`;
-  return `<div class="kpanel" id="kpanel"><div class="kbox">
-    <div class="kbox__h">
-      <span class="kbox__p">${slot('god-'+k,ini(g.nome),liv?COR(g.elem):'#8d84ad',30)}</span>
-      <div class="kbox__id"><h2>${H(g.nome)}${rar?` <span class="kbox__rar">${H(rar)}</span>`:''}</h2>
-        <span class="kbox__sub">${H(g.faccao)} · ${H(ELAB[g.elem])} · ${H(g.classe)} · ${H(g.funcao)}</span></div>
-      <span class="push">${acao}<button class="b b--quiet b--md" id="kitclose">Fechar</button></span></div>
-    <div class="kbox__b">
-      ${kd?`${linha('BÁS',ab.basico)}${linha('HAB',ab.habilidade)}${linha('MIL',ab.milagre)}
-        ${kd.passiva?`<div class="krow krow--pas"><div class="krow__h"><span class="krow__rot">PAS</span><b>${H(kd.passiva.nome)}</b></div><div class="krow__t">${H(kd.passiva.desc)}</div></div>`:''}`
-      :`<div class="krow"><div class="krow__t">Kit em produção.</div></div>`}
-      ${!liv?`<div class="kbox__lock">⚿ Bloqueado — desbloqueie pela Provação ou por invocação. O kit é leitura pública mesmo assim.</div>`:''}
-    </div></div></div>`;
-}
+// ---- montagem dos dois times (lógica preservada do original) ----
 function adicionarPk(k){
   if(!jogavel(k)||donoDe(k)!==null)return false;
   if(pick[vez].length>=3){ if(pick[1-vez].length<3)vez=1-vez; else return false; }
   if(pick[vez].length<3)pick[vez].push(k);
-  if(pick[vez].length===3&&pick[1-vez].length<3)vez=1-vez;
+  if(pick[vez].length===3&&pick[1-vez].length<3)vez=1-vez;   // time completou → a vez passa sozinha ao outro
   return true;
 }
 function removerPk(k){ const p=donoDe(k); if(p===null)return false; pick[p]=pick[p].filter(x=>x!==k); vez=p; return true; }
-function commitPk(k){ tocado=k; if(donoDe(k)!==null)removerPk(k); else adicionarPk(k); focoPk=null; }
-function previewPk(k){ tocado=k; focoPk=k; }
-// timer para distinguir 1 toque (ler kit) de 2 toques (adicionar/remover)
-let _tapT=null,_tapK=null;
-function toqueDeus(k){
-  if(_tapK===k&&_tapT){ clearTimeout(_tapT);_tapT=null;_tapK=null; commitPk(k); renderPick(); return; }
-  if(_tapT)clearTimeout(_tapT);
-  _tapK=k; _tapT=setTimeout(()=>{ _tapT=null;_tapK=null; previewPk(k); renderPick(); },260);
-}
-// arrastar um deus até um slot de time o adiciona àquele jogador
-function ligarArraste(b,k){
-  let x0,y0,ghost=null,drag=false;
-  b.addEventListener('pointerdown',e=>{
-    if(!jogavel(k)||donoDe(k)!==null)return;   // só arrasta quem dá pra adicionar
-    x0=e.clientX;y0=e.clientY;drag=false;
-    b.setPointerCapture&&b.setPointerCapture(e.pointerId);
-    const mv=ev=>{
-      if(!drag&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>8){
-        drag=true;if(_tapT){clearTimeout(_tapT);_tapT=null;_tapK=null;}
-        ghost=document.createElement('div');ghost.className='pkghost';
-        ghost.innerHTML=slot('god-'+k,ini(RMAP[k].nome),COR(RMAP[k].elem),24);
-        stage.appendChild(ghost);
-        stage.querySelectorAll('.tslot').forEach(t=>t.classList.add('drop'));
-      }
-      if(drag&&ghost){const r=stage.getBoundingClientRect();
-        ghost.style.left=(ev.clientX-r.left)+'px';ghost.style.top=(ev.clientY-r.top)+'px';}
-    };
-    const up=ev=>{
-      b.removeEventListener('pointermove',mv);b.removeEventListener('pointerup',up);
-      if(drag){
-        b._arrastou=true;
-        if(ghost)ghost.remove();
-        const el=document.elementFromPoint(ev.clientX,ev.clientY);
-        const alvo=el&&el.closest?el.closest('.tslot'):null;
-        if(alvo&&alvo.dataset.p!==undefined){ const p=+alvo.dataset.p;
-          if(donoDe(k)===null&&pick[p].length<3)pick[p].push(k); }
-        renderPick();
-      }
-    };
-    b.addEventListener('pointermove',mv);b.addEventListener('pointerup',up);
-  });
+function commitPk(k){ if(donoDe(k)!==null)removerPk(k); else adicionarPk(k); focoPk=null; }   // toque no cartão = entra/sai
+function previewPk(k){ focoPk=k; }   // "i" = abre o kit
+
+// ---- cfg de DOIS lados para a base do montador ----
+function _cfgSel(){
+  return {
+    selNum:k=>{ const p=donoDe(k); return p===null?0:pick[p].indexOf(k)+1; },   // nº da vaga dentro do time
+    selLado:k=>donoDe(k),                                                        // 0 = J1 (dourado) · 1 = J2 (vermelho)
+    cardTravado:k=>{ if(donoDe(k)!==null)return null;                            // já escolhido → removível (não trava)
+      if(jogavel(k))return null;
+      if(!liberado(k))return {txt:'⚿',cinza:true};                          // bloqueado
+      return {txt:'WIP'};                                                        // liberado sem kit
+    },
+    kitLabel:k=>{ const dono=donoDe(k);
+      if(dono!==null)return {txt:'TIRAR'};
+      if(!liberado(k))return {txt:'Bloqueado',disabled:true};
+      if(!temKit(k))return {txt:'Kit em produção',disabled:true};
+      if(pick[0].length>=3&&pick[1].length>=3)return {txt:'Times cheios',disabled:true};
+      const destino=pick[vez].length<3?vez:1-vez;
+      return {txt:destino===0?'ADICIONAR AO SEU TIME':'ADICIONAR AO OPONENTE'};
+    },
+  };
 }
 
-/* ---------- tela de seleção: render + eventos ---------- */
-// aoEntrar da rota 'selecao': se veio pedindo recomeço (novo), zera a grade e os
-// times. Fica aqui (dono da seleção) em vez de o resultado da batalha mexer nisto.
+/* ---------- vagas da coluna esquerda (J1 e J2) ---------- */
+function vagaSelHTML(p,i){
+  const k=pick[p][i], n=i+1;
+  if(!k) return `<div class="sel-vaga sel-vaga--vazia"><span class="sel-vaga__num">${n}</span><span class="sel-vaga__add">+</span><span class="sel-vaga__txt">Escolha um deus</span></div>`;
+  const g=RMAP[k]||{nome:k,elem:'Umbra',funcao:''};
+  return `<div class="sel-vaga"><span class="sel-vaga__num">${n}</span>
+    <span class="sel-vaga__p">${slot('god-'+k,ini(g.nome),COR(g.elem),22)}</span>
+    <span class="sel-vaga__id"><b class="sel-vaga__n">${H(g.nome)}</b><span class="sel-vaga__meta">${orbe(g.elem,15)}<span class="sel-vaga__f">${H(g.funcao||'')}</span></span></span>
+    <button class="sel-vaga__x" data-rem="${p}|${k}" aria-label="remover">✕</button>
+  </div>`;
+}
+function timeBlocoHTML(p){
+  const tit=p===0?'SEU TIME':'OPONENTE';
+  const who=p===1?`<span class="sel-time__who">${vsCPU?'CPU':'JOGADOR 2'}</span>`:'';
+  return `<div class="sel-time${vez===p?' is-vez':''}${p===1?' sel-time--op':''}" data-lado="${p}">
+    <div class="sel-time__cab"><h2 class="sel-time__t">${tit}</h2>${who}<span class="sel-time__c">${pick[p].length}/3</span></div>
+    <div class="sel-time__lista">${[0,1,2].map(i=>vagaSelHTML(p,i)).join('')}</div>
+  </div>`;
+}
+function motivoSel(){
+  const f0=3-pick[0].length, f1=3-pick[1].length;
+  if(f0<=0&&f1<=0)return '';
+  if(vez===1&&f1>0)return `Escolha mais ${f1} para o oponente`;
+  if(vez===0&&f0>0)return `Escolha mais ${f0} para o seu time`;
+  return f1>0?`Escolha mais ${f1} para o oponente`:`Escolha mais ${f0} para o seu time`;
+}
+
+/* ---------- grade "SEUS DEUSES" (a mesma do montador) ---------- */
+function gradeSelHTML(cfg){
+  const lista=listaFiltrada();
+  const elemChips=ELEMS.map(e=>`<button class="dm-orbe${F.elems.has(e)?' is-on':''}" data-elem="${e}" aria-label="${ELAB[e]}">${orbe(e,30)}</button>`).join('');
+  const funcChips=FUNCOES_VOCAB.map(f=>`<button class="dm-chip${F.funcoes.has(f)?' is-on':''}" data-func="${f}">${H(f)}</button>`).join('');
+  const cards=lista.length?lista.map(k=>_montCardHTML(k,cfg)).join(''):'<p class="dm-vazio">Nenhum deus atende a esses critérios.</p>';
+  const estadoTxt=F.estado==='liberados'?'Liberados':'Todos';
+  return `<section class="dm-dir">
+    <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
+      <div class="dm-filtros">
+        <button class="dm-chip sel-pill${F.estado==='todos'?' sel-pill--todos':''}" id="bestado" data-estado="1">${estadoTxt}</button>
+        <span class="dm-orbes">${elemChips}</span>
+        <span class="dm-funcs">${funcChips}</span>
+        <span class="dm-busca__w"><input class="dm-busca" id="selbusca" placeholder="Buscar deus" value="${H(selBusca)}"></span>
+        <button class="dm-chip" id="bmaisf" data-maisf="1">Mais filtros${eixosExtras()?`<span class="sel-badge">${eixosExtras()}</span>`:''}</button>
+        <span class="dm-conta">${lista.length} deuses</span>
+      </div>
+    </div>
+    <div class="dm-grade" id="selgrade">${cards}</div>
+  </section>`;
+}
+function painelMaisFiltrosHTML(){
+  if(!painelFiltro)return '';
+  const n=listaFiltrada().length;
+  const grupo=(rot,chips)=>`<div class="fgrp"><span class="fgrp__l">${rot}</span><div class="fgrp__c">${chips}</div></div>`;
+  const chipSet=(campo,itens)=>itens.map(it=>{
+    const c=ROSTER.filter(e=>e[campo==='faccoes'?'faccao':'classe']===it).length;
+    return `<button class="chip2 ${F[campo].has(it)?'on':''}" data-fs="${campo}|${it}">${H(it)}<span class="chip2__n">${c}</span></button>`;}).join('');
+  return `<div class="sel-fpanel" id="fpanel"><div class="fbox sel-fbox">
+    <div class="fbox__h"><h2>MAIS FILTROS</h2>
+      <span class="fbox__n"><b>${n}</b> de ${ROSTER.length} deuses</span>
+      <span class="push">
+        <button class="dmb dmb--quietbig" id="flimpar">Limpar</button>
+        <button class="dmb dmb--go" id="ffechar">Pronto</button></span></div>
+    <div class="fbox__b">
+      ${grupo('PANTEÃO',chipSet('faccoes',FACCOES))}
+      ${grupo('CLASSE',chipSet('classes',CLASSES_G))}
+    </div></div></div>`;
+}
+
+// aoEntrar da rota 'selecao': se veio pedindo recomeço (novo), zera a grade e os times.
 function aoEntrarSelecao(params){
-  if(params&&params.novo){ pick=[[],[]];vez=0;pagina=0;tocado=null;painelFiltro=false;focoPk=null; }
+  if(params&&params.novo){ pick=[[],[]];vez=0;selBusca='';painelFiltro=false;focoPk=null;limparFiltro(); }
 }
 
 function renderPick(){
-  const lista=listaFiltrada();
-  const pags=Math.max(1,Math.ceil(lista.length/POR_PAG));
-  if(pagina>=pags)pagina=pags-1;
-  const fatia=lista.slice(pagina*POR_PAG,(pagina+1)*POR_PAG);
-  const totalLiv=ROSTER.map(e=>e.key).filter(liberado).length;
+  const cfg=_cfgSel();
   const pronto=pick[0].length===3&&pick[1].length===3;
-
-  const slotsTime=p=>`<div class="tslot ${p===1?'p2':''} ${vez===p?'act':''}" data-p="${p}">
-    <span class="tslot__l">J${p+1}</span>
-    ${[0,1,2].map(i=>{const k=pick[p][i];
-      return `<span class="tchip ${k?'full':''}" data-tira="${p}|${i}">${
-        k?slot('god-'+k,ini(GODS[k].nome),COR(GODS[k].elem),13):''}</span>`;}).join('')}
-  </div>`;
-
-  // painel COM SCRIM aberto (filtro ou kit)? base fica INERTE e o primário rebaixa —
-  // consequência do inert, não regra (INV 16). Os painéis são IRMÃOS da #baselayer.
-  const painelAberto = painelFiltro || !!focoPk;
-  stage.innerHTML=`<div id="baselayer"${painelAberto?' inert':''}><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="stagemark">INCURSION</div>
-  <div class="sel">
-    <div class="selhead">
-      <button class="b b--quiet b--md" id="binicio">‹ Início</button>
-      <span class="selbrand">INCURSION</span>
-      <span class="selturn">${pronto?'<b>TIMES PRONTOS</b>':(modoPartida()==='hotseat'
-        ? `JOGADOR <b>${vez+1}</b> escolhe · <b>${pick[vez].length}/3</b>`
-        : `<b>${vez===0?'Seu time':'Time do oponente'}</b> · <b>${pick[vez].length}/3</b>`)}</span>
-      <div class="teams">${slotsTime(0)}${slotsTime(1)}</div>
-      <button class="b ${painelAberto?'b--sec':'b--primary'} b--md" id="bgo" ${pronto?'':'disabled'}>Começar</button>
+  const sub=vsCPU?'BATALHA CPU · SANDBOX':'2 JOGADORES · MESMO APARELHO';
+  const info=vsCPU
+    ? `A vitória rende <b>${SB_GEMA}</b> 💎 · teto ${SB_TETO}/dia · não avança ranque`
+    : `Dois jogadores no mesmo aparelho · sem ranque`;
+  const mv=motivoSel();
+  stage.innerHTML=`<div id="baselayer" class="dm2"><div id="dommontar" class="dm--sel">
+    <button class="dmb dmb--voltar" id="binicio" data-voltar="1">‹ VOLTAR</button>
+    <div class="dm-cabid"><h1 class="dm-titulo cin">MONTE OS TIMES</h1><span class="dm-sub">${sub}</span></div>
+    <section class="sel-times">
+      ${timeBlocoHTML(0)}
+      ${timeBlocoHTML(1)}
+      <div class="sel-ops">
+        <div class="sel-seg" role="tablist">
+          <button class="sel-seg__b${vsCPU?' is-on':''}" id="bcpu" data-cpu="1">OPONENTE: CPU</button>
+          <button class="sel-seg__b${!vsCPU?' is-on':''}" data-cpu="0">2 JOGADORES</button>
+        </div>
+        <button class="dmb dmb--quietbig sel-sortear" id="brand">🎲 SORTEAR</button>
+        <p class="sel-info">${info}</p>
+      </div>
+    </section>
+    ${gradeSelHTML(cfg)}
+    <div class="dm-rodape sel-rodape">
+      <span class="sel-mini-wrap">
+        <button class="dmb sel-mini" id="binvocar">✦ Invocar</button>
+        <button class="dmb sel-mini${tudoLiberado?' is-on':''}" id="bteste">${tudoLiberado?'Teste: on':'Teste'}</button>
+      </span>
+      ${pronto?'':`<span class="dm-motivo">ⓘ ${H(mv)}</span>`}
+      <button class="dmb dmb--go dmb--comecar" id="bgo" ${pronto?'':'disabled'}>COMEÇAR</button>
     </div>
-    <div class="seltag">${vsCPU
-      ? `<b>Sandbox</b> · treine formações sem risco de ranque · a vitória rende ${SB_GEMA} 💎 (teto ${SB_TETO}/dia; não avança ranque)`
-      : `<b>Hot-seat</b> · dois jogadores no mesmo aparelho · sem ranque`}</div>
-    <div class="selbody">
-      <button class="b b--quiet arrow" id="bprev" ${pagina===0?'disabled':''}>‹</button>
-      <div class="grid">${fatia.length?fatia.map(tileHTML).join('')
-        :'<span style="grid-column:1/-1;text-align:center;color:var(--ink-mute);font-weight:600">Nenhum deus atende a esses critérios.</span>'}</div>
-      <button class="b b--quiet arrow" id="bnext" ${pagina>=pags-1?'disabled':''}>›</button>
-    </div>
-    <div class="selfoot">
-      <button class="b b--quiet b--sm" id="bfiltro">Filtro: ${H(ESTADOS.find(e=>e[0]===F.estado)[1])}${
-        eixosAtivos()?`<span class="fbtn__badge">${eixosAtivos()}</span>`:''}</button>
-      <button class="b b--quiet b--sm" id="brand">Sortear</button>
-      <span class="finfo">${infoHTML()}</span>
-      <span class="fpage">${totalLiv}/${ROSTER.length} LIBERADOS · PÁG ${pagina+1}/${pags}</span>
-      <button class="b ${vsCPU?'b--sec':'b--quiet'} b--sm" id="bcpu" title="quem controla o Jogador 2">${vsCPU?'Oponente: CPU':'Oponente: 2 jogadores'}</button>
-      <button class="b ${tudoLiberado?'b--sec':'b--quiet'} b--sm" id="bteste" title="afordância de protótipo">${tudoLiberado?'Teste: on':'Teste'}</button>
-      <button class="b b--quiet b--sm" id="binvocar" title="tela de invocação (gacha)">✦ Invocar</button>
-    </div>
-  </div>
-  </div>
-  ${painelFiltroHTML()}
-  ${painelKitHTML()}`;
-
-  ligarSelecao();
+    ${painelMaisFiltrosHTML()}
+    ${focoPk?_montKitPanelHTML(focoPk,cfg):''}
+  </div></div>`;
+  ligarSelecao(cfg);
   fit();
 }
 
-function ligarSelecao(){
+function ligarSelecao(cfg){
   const q=s=>stage.querySelector(s), qq=s=>[...stage.querySelectorAll(s)];
-  // 1 toque = ler o kit · 2 toques = adicionar/remover · arrastar = soltar no slot
-  qq('.pk').forEach(b=>{
-    b.onclick=()=>{ if(b._arrastou){b._arrastou=false;return;} toqueDeus(b.dataset.k); };
-    ligarArraste(b,b.dataset.k);
-  });
-  qq('[data-tira]').forEach(el=>el.onclick=()=>{
-    const [p,i]=el.dataset.tira.split('|').map(Number);
-    if(pick[p][i])toqueDeus(pick[p][i]);
-  });
-  // painel do kit
-  const kp=q('#kpanel');
-  if(kp){
-    kp.onclick=ev=>{ if(ev.target===kp){focoPk=null;renderPick();} };
-    const ka=q('#kitadd'); if(ka)ka.onclick=()=>{adicionarPk(focoPk);focoPk=null;renderPick();};
-    const kd=q('#kitdel'); if(kd)kd.onclick=()=>{removerPk(focoPk);focoPk=null;renderPick();};
-    q('#kitclose').onclick=()=>{focoPk=null;renderPick();};
-  }
-  q('#bprev').onclick=()=>{pagina--;renderPick();};
-  q('#bnext').onclick=()=>{pagina++;renderPick();};
-  q('#bfiltro').onclick=()=>{painelFiltro=true;renderPick();};
+  // cartões: toque entra/sai; o "i" abre o kit
+  qq('.dm-card[data-pick]').forEach(b=>b.onclick=()=>{ commitPk(b.dataset.pick); renderPick(); });
+  qq('.dm-card__i[data-info]').forEach(el=>el.onclick=ev=>{ ev.stopPropagation(); previewPk(el.dataset.info); renderPick(); });
+  // tocar num BLOCO passa a escolher para ele
+  qq('[data-lado]').forEach(b=>b.onclick=ev=>{ if(ev.target.closest('.sel-vaga__x'))return; vez=+b.dataset.lado; renderPick(); });
+  qq('.sel-vaga__x[data-rem]').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); const [p,k]=b.dataset.rem.split('|'); if(donoDe(k)!==null){removerPk(k);renderPick();} });
+  // filtros inline
+  const be=q('#bestado'); if(be)be.onclick=()=>{ F.estado=F.estado==='liberados'?'todos':'liberados'; renderPick(); };
+  qq('[data-elem]').forEach(b=>b.onclick=()=>{ const e=b.dataset.elem; F.elems.has(e)?F.elems.delete(e):F.elems.add(e); renderPick(); });
+  qq('[data-func]').forEach(b=>b.onclick=()=>{ const f=b.dataset.func; F.funcoes.has(f)?F.funcoes.delete(f):F.funcoes.add(f); renderPick(); });
+  const bu=q('#selbusca'); if(bu)bu.oninput=()=>{ selBusca=bu.value; const g=q('#selgrade'); const lista=listaFiltrada();
+    if(g)g.innerHTML=lista.length?lista.map(k=>_montCardHTML(k,cfg)).join(''):'<p class="dm-vazio">Nenhum deus atende a esses critérios.</p>';
+    const c=q('.dm-conta'); if(c)c.textContent=lista.length+' deuses';
+    g&&[...g.querySelectorAll('.dm-card[data-pick]')].forEach(b=>b.onclick=()=>{commitPk(b.dataset.pick);renderPick();});
+    g&&[...g.querySelectorAll('.dm-card__i[data-info]')].forEach(el=>el.onclick=ev=>{ev.stopPropagation();previewPk(el.dataset.info);renderPick();}); };
+  // "MAIS FILTROS" (facção + classe)
+  const bmf=q('#bmaisf'); if(bmf)bmf.onclick=()=>{ painelFiltro=true; renderPick(); };
   const fp=q('#fpanel');
   if(fp){
-    fp.onclick=ev=>{if(ev.target===fp){painelFiltro=false;renderPick();}};
-    qq('[data-fe]').forEach(b=>b.onclick=()=>{F.estado=b.dataset.fe;pagina=0;renderPick();});
-    qq('[data-fs]').forEach(b=>b.onclick=()=>{
-      const [campo,it]=b.dataset.fs.split('|');
-      F[campo].has(it)?F[campo].delete(it):F[campo].add(it);
-      pagina=0;renderPick();});
-    q('#flimpar').onclick=()=>{limparFiltro();pagina=0;renderPick();};
-    q('#ffechar').onclick=()=>{painelFiltro=false;renderPick();};
+    fp.onclick=ev=>{ if(ev.target===fp){painelFiltro=false;renderPick();} };
+    qq('[data-fs]').forEach(b=>b.onclick=()=>{ const [campo,it]=b.dataset.fs.split('|');
+      F[campo].has(it)?F[campo].delete(it):F[campo].add(it); renderPick(); });
+    q('#flimpar').onclick=()=>{ F.faccoes.clear();F.classes.clear();F.elems.clear();F.funcoes.clear(); renderPick(); };
+    q('#ffechar').onclick=()=>{ painelFiltro=false; renderPick(); };
   }
-  q('#bteste').onclick=()=>{tudoLiberado=!tudoLiberado;pagina=0;
-    if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
-    renderPick();};
-  q('#binvocar').onclick=()=>{ir('invocacao');render();};
-  // "‹ Início": a seleção era a raiz pré-F3.0 (nunca precisou de saída); o carrossel
-  // (§208) a religou pela home, então ela precisa voltar. Direto, sem confirmação —
-  // antes da batalha começar não há nada a perder (a partida ainda nem existe).
+  // painel do kit (reusa o do montador)
+  const kx=q('[data-kit-x]'); if(kx)kx.onclick=()=>{ focoPk=null; renderPick(); };
+  const kit=q('#dmkit'); if(kit)kit.onclick=ev=>{ if(ev.target===kit){focoPk=null;renderPick();} };
+  qq('[data-kit-toggle]').forEach(b=>b.onclick=()=>{ commitPk(b.dataset.kitToggle); renderPick(); });
+  // rodapé e opções
   { const bi=q('#binicio'); if(bi)bi.onclick=()=>{ if(!voltar())ir('home',{},{substituir:true}); render(); }; }
-  { const bc=q('#bcpu'); if(bc)bc.onclick=()=>{vsCPU=!vsCPU;renderPick();}; }
+  qq('[data-cpu]').forEach(b=>b.onclick=()=>{ vsCPU=(b.dataset.cpu==='1'); renderPick(); });
   q('#brand').onclick=()=>{
     const pool=ROSTER.map(e=>e.key).filter(jogavel);
     for(const p of[0,1]){const c=[...pool].filter(k=>!pick[1-p].includes(k));pick[p]=[];
       while(pick[p].length<3&&c.length)pick[p].push(c.splice(Math.floor(Math.random()*c.length),1)[0]);}
     vez=0;renderPick();};
+  q('#bteste').onclick=()=>{ tudoLiberado=!tudoLiberado;
+    if(!tudoLiberado)pick=pick.map(p=>p.filter(jogavel));
+    renderPick();};
+  q('#binvocar').onclick=()=>{ir('invocacao');render();};
   q('#bgo').onclick=()=>{
     if(!(pick[0].length===3&&pick[1].length===3))return;
     prova=null; campanha=null;   // batalha de seleção não é Provação nem encontro de campanha
     const _seed=Math.floor(Math.random()*1e6), _comeca=Math.floor(Math.random()*2);
-    // §323 P2: no sandbox vs CPU (PvE) os níveis do jogador valem no lado 0. Hot-seat (2 humanos) fica no
-    // base — aplicar nível só de um lado seria assimétrico. nv null → catálogo base (regressão zero).
+    // §323 P2: no sandbox vs CPU (PvE) os níveis do jogador valem no lado 0. Hot-seat (2 humanos) fica no base.
     const _nvSb=(vsCPU && typeof niveisTimeLocal==='function')?niveisTimeLocal(pick[0]):null;
     if(typeof definirNiveisBatalha==='function') definirNiveisBatalha(_nvSb);
     st=novoEstado(pick[0],pick[1],_seed,_comeca,
-      (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null, undefined, _nvSb?[_nvSb,{}]:null);   // regra de geração de energia (economia.json)
-    // §318 F2 E2: sandbox vs CPU é fonte de Gema (tetada no servidor) — grava o replay com a montagem exata (seed/comeca aleatórios).
+      (typeof ECONOMIA!=='undefined'&&ECONOMIA.energia)||null, undefined, _nvSb?[_nvSb,{}]:null);
+    // §318 F2 E2: sandbox vs CPU é fonte de Gema (tetada no servidor) — grava o replay com a montagem exata.
     if(typeof REPLAY!=='undefined'){ if(vsCPU) REPLAY.iniciar({modo:'sandbox',aliados:pick[0].slice(),inimigos:pick[1].slice(),seed:_seed,comeca:_comeca}); else REPLAY.descartar(); }
-    if(typeof definirIaVersao==='function') definirIaVersao(vsCPU?iaVersaoDeModo('sandbox'):1);   // §322 P3: sandbox vs CPU usa v2; hot-seat não tem IA
-    // batalha SUBSTITUI a seleção na pilha (não empilha): "voltar" não pode
-    // abandonar a partida. aoSair(selecao) limpa a sobreposição; aoEntrar(batalha)
-    // inicia o relógio — por isso não há mais limpeza nem iniciarRelogio aqui.
+    if(typeof definirIaVersao==='function') definirIaVersao(vsCPU?iaVersaoDeModo('sandbox'):1);   // §322 P3
     ir('batalha',{},{substituir:true});render();};
 }

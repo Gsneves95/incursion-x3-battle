@@ -45,15 +45,19 @@ console.log('\n== §340 fora da batalha — cada tela que desenha custo ==');
   ok(/cost__gratis/.test(w.eval("colVerDetalheHTML('brigid',GODS['brigid'],'basico')")), 'Ficha do deus: básico grátis → GRÁTIS');
   const fichaPay = w.eval("colVerDetalheHTML('hades',GODS['hades'],'basico')");
   ok(/cost__pip/.test(fichaPay) && !/cost__gratis/.test(fichaPay), 'Ficha do deus: básico pago → orbes, sem GRÁTIS');
-  // 3. Níveis (tela real) e 4. Seleção de kit (tela real)
-  for (const [nome, boot] of [
-    ['Níveis',         k => `ir('niveis',{key:'${k}'}); render();`],
-    ['Seleção de kit', k => `ir('selecao'); focoPk='${k}'; render();`],
-  ]) {
+  // 3. Níveis (tela real) — pips do custo (cost__gratis / cost__pip)
+  { const boot = k => `ir('niveis',{key:'${k}'}); render();`;
     w.eval(boot('brigid')); const hFree = d.getElementById('stage').innerHTML;
     w.eval(boot(PAGO));      const hPay = d.getElementById('stage').innerHTML;
-    ok(/cost__gratis/.test(hFree) && /cost__pip/.test(hFree), `${nome}: o básico grátis mostra GRÁTIS e as pagas, orbes`);
-    ok(!/cost__gratis/.test(hPay) && /cost__pip/.test(hPay), `${nome}: um deus todo pago (${PAGO}) mostra orbes e NENHUM GRÁTIS`);
+    ok(/cost__gratis/.test(hFree) && /cost__pip/.test(hFree), `Níveis: o básico grátis mostra GRÁTIS e as pagas, orbes`);
+    ok(!/cost__gratis/.test(hPay) && /cost__pip/.test(hPay), `Níveis: um deus todo pago (${PAGO}) mostra orbes e NENHUM GRÁTIS`);
+  }
+  // 4. Seleção de kit (§345: painel do montador) — GRÁTIS = dmk-ab__gratis; pago = orbes (<img class="orbe">)
+  { const boot = k => `ir('selecao'); focoPk='${k}'; render();`;
+    w.eval(boot('brigid')); const hFree = d.getElementById('stage').innerHTML;
+    w.eval(boot(PAGO));      const hPay = d.getElementById('stage').innerHTML;
+    ok(/dmk-ab__gratis/.test(hFree) && /class="orbe/.test(hFree), `Seleção de kit: o básico grátis mostra GRÁTIS e as pagas, orbes`);
+    ok(!/dmk-ab__gratis/.test(hPay) && /class="orbe/.test(hPay), `Seleção de kit: um deus todo pago (${PAGO}) mostra orbes e NENHUM GRÁTIS`);
   }
 }
 

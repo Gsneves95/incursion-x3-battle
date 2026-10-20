@@ -6,6 +6,38 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §345 · BATALHA CPU / HOT-SEAT na GRADE do montador (§342), com DOIS times
+
+A seleção da Batalha CPU/hot-seat (`src/ui/selecao.js`, `renderPick`) passou a usar a MESMA grade do montador
+(§342/§344) — cartões, filtros de elemento/função, busca, contagem e o painel de kit "i" — mas montando DOIS times
+(J1 e J2) em vez de um. É a mesma tela fixa 1846×852 escalada (a rota `selecao` entrou no `emMontar` do `fit()`), sem o
+carimbo build e sem o botão de conta (ambos somem via `body.emmontar`). Tudo o que o COMEÇAR fazia continua byte a byte
+igual (novoEstado, `niveisTimeLocal` do sandbox, REPLAY, IA, seed/começa).
+
+**Base compartilhada subiu para `src/ui/base.js`.** A checagem de direção da build proíbe um `ui/` chamar função
+definida em OUTRO `ui/`; como a seleção (selecao.js) agora reusa `_montCardHTML`/`_montKitPanelHTML` (que viviam em
+home.js), essas duas funções foram para `base.js` (a FUNDAÇÃO que qualquer `ui/` pode chamar). Elas dependem de helpers
+de conta (niveisDeExibicao/deusKitEfetivo/nlNivel, de home.js) — base.js é a origem isenta na checagem, então a ponte é
+legítima. O resto do montador (`_montGradeSecHTML`, `ligarMontadorTime`, …) segue em home.js (home→base é livre).
+
+**Extensões da base (defaults preservam o §342/§344):** `_montCardHTML` ganhou `cfg.selLado(k)` (lado 1 → cartão
+VERMELHO `dm-card--sel2`, J1 segue dourado) e `cfg.cardTravado(k)` (na visão "Todos", bloqueado/WIP vira `dm-card--trav`,
+sem `data-pick`); `_montKitPanelHTML` ganhou um fallback para deus sem kit (WIP) — o "i" abre só o cabeçalho + aviso.
+
+**O que mudou de UI na seleção (NADA de regra/economia/motor/IA):** a coluna esquerda tem DOIS blocos de time (SEU TIME
+dourado / OPONENTE vermelho, cada um com 3 vagas numeradas + retrato/nome/orbe/função/X), o bloco da `vez` destacado e
+tocável para trocar o lado; abaixo, as opções (segmentado CPU|2 JOGADORES, SORTEAR, a linha de recompensa do sandbox). O
+filtro de estado virou a pílula **Liberados|Todos**; facção e classe foram para um botão **MAIS FILTROS** (painel com os
+mesmos chips); elemento e função ficam inline (orbes + chips, como o montador); a paginação saiu — a grade rola. O cartão
+escolhido mostra o número da vaga e a cor do time; um deus não entra nos dois. O rodapé tem COMEÇAR (travado sem 6, com o
+motivo ao lado) e, discretos à esquerda, "✦ Invocar" e "Teste".
+
+Provas: `interface.test.js` (seção 1 reescrita para a nova grade + seção 16 para CPU|2JOG/Invocar/VOLTAR),
+`montar_modos.test.js` (layout Chromium @1846 e @780: nada fora, nada corta, a coluna esquerda não invade a grade),
+`niveis_batalha.test.js` e `gratis_custo.test.js` (seletores da nova grade/kit). Capturas `345-*`.
+
+---
+
 ## §344c · O painel de troca do emprestado em LARGURA CHEIA, com fundo opaco
 
 A captura `344b-campanha-troca` mostrou a grade "SEUS DEUSES" ainda na posição que ela tem no montador (área da

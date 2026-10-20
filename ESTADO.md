@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §345 · Batalha CPU / hot-seat na grade do montador (DOIS times)
+- `src/ui/selecao.js` (`renderPick`) foi reescrita sobre a base do §342/§344: a grade "SEUS DEUSES" (cartões `.dm-card`,
+  orbes de elemento + chips de função inline, busca, contagem, kit "i") agora monta DOIS times. Tela fixa 1846×852 (rota
+  `selecao` entrou no `emMontar` do `fit()`), sem conta/build. O COMEÇAR (#bgo) continua idêntico (novoEstado, níveis do
+  sandbox, REPLAY, IA, seed).
+- **Base subiu para `src/ui/base.js`:** `_montCardHTML` e `_montKitPanelHTML` saíram de home.js para base.js (a FUNDAÇÃO
+  que qualquer ui/ chama) — a direção ui→ui proíbe selecao.js chamar funções de home.js. O resto do montador segue em
+  home.js. `_montCardHTML` ganhou `cfg.selLado` (J2 vermelho `dm-card--sel2`) e `cfg.cardTravado` (bloqueado/WIP =
+  `dm-card--trav`, sem data-pick); `_montKitPanelHTML` ganhou fallback p/ deus sem kit (WIP).
+- **UI da seleção:** 2 blocos de time na esquerda (SEU TIME dourado / OPONENTE vermelho, 3 vagas cada com X), o da `vez`
+  destacado e tocável; opções (segmentado CPU|2 JOGADORES, SORTEAR, linha do sandbox). Filtro de estado = pílula
+  Liberados|Todos; facção+classe no botão MAIS FILTROS; elemento+função inline; sem paginação (a grade rola). Cartão
+  escolhido mostra nº da vaga + cor do time; um deus não entra nos dois. Rodapé: COMEÇAR (motivo ao lado) + Invocar/Teste.
+- IDs preservados: #binicio (VOLTAR), #bgo, #brand (SORTEAR), #bcpu, #bteste, #binvocar. `previewPk`/`commitPk`/
+  `adicionarPk`/`removerPk`/`donoDe`/`vez`/`pick`/`vsCPU`/`tudoLiberado` mantidos (só saíram paginação/arraste/duplo-toque).
+- Provas: `interface.test.js` (seção 1 reescrita + seção 16), `montar_modos.test.js` (layout Chromium @1846 e @780),
+  `niveis_batalha.test.js`, `gratis_custo.test.js` migrados. Capturas `345-j1cheio`, `345-doischeios` (1846 e 780),
+  `345-maisfiltros`, `345-kit`.
+
 ## ★ §344c · Painel de troca do emprestado em largura cheia + fundo opaco
 - A grade "SEUS DEUSES" da troca agora ocupa a tela toda: `.dm-dir--full` com `width:auto` (left:57+right:57 → x 57→1789;
   o `width:1190` da `.dm-dir` deixou de vencer), `top:116`/`height:699`, e `#dommontar.dm-troca .dm-grade` em `repeat(7,1fr)`

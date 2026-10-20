@@ -3463,21 +3463,7 @@ function _montFiltrados(ks){ const q = _montNorm(montBusca);
 function _montTime(cfg){ let pi = 0; return cfg.vagas.map(v => v.tipo === 'livre' ? (cfg.pick[pi++] || null) : (v.deus || null)); }
 function _montFreeCount(cfg){ return cfg.vagas.filter(v => v.tipo === 'livre').length; }
 
-function _montCardHTML(k, cfg){
-  const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
-  const num = cfg.selNum ? cfg.selNum(k) : (cfg.pick.indexOf(k) + 1);   // §344: nº da vaga (0 = não escolhido)
-  const on = num > 0, nvmax = _montNivelMax(k);
-  const off = !on && cfg._off && cfg._off[k];   // §344 (Composição): viola a regra → apagado, não selecionável
-  return `<button class="dm-card${on ? ' dm-card--sel' : ''}${off ? ' dm-card--off' : ''}"${off ? '' : ` data-pick="${k}"`}>
-    <span class="dm-card__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 34)}</span>
-    <span class="dm-card__grad"></span>
-    ${nvmax > 1 ? `<span class="dm-card__nv">Nv ${nvmax}</span>` : ''}
-    <span class="dm-card__i" data-info="${k}" role="button" aria-label="kit">i</span>
-    ${on ? `<span class="dm-card__vaga">${num}</span>` : ''}
-    ${off ? `<span class="dm-card__off">${H(off)}</span>` : ''}
-    <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 18)}<span class="dm-card__f">${H(g.funcao || '')}</span></span></span>
-  </button>`;
-}
+// §345: _montCardHTML e _montKitPanelHTML foram para src/ui/base.js (a FUNDAÇÃO), para a seleção (outro ui/) poder reusá-los.
 function _montVagaHTML(i, k, v){
   const n = i + 1;
   if (!k) return `<div class="dm-vaga dm-vaga--vazia"><span class="dm-vaga__num">${n}</span><span class="dm-vaga__add">+</span><span class="dm-vaga__txt">Escolha um deus</span></div>`;
@@ -3495,39 +3481,7 @@ function _montKitLabelPadrao(k, cfg){
   if (cheio) return { txt: 'Time cheio', disabled: true };
   return { txt: 'ESCOLHER ' + ((HRM[k] || {}).nome || '').toUpperCase() };
 }
-function _montKitPanelHTML(k, cfg){
-  const g = (typeof GODS !== 'undefined' && GODS[k]) || null; if (!g) return '';
-  const hg = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
-  const eg = deusKitEfetivo(k, g);
-  const linha = ([sl, lab]) => {
-    const a = sl === 'defesa' ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : (eg.ab || []).find(x => x.slot === sl);
-    if (!a) return '';
-    const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);   // §342b: nível REAL da conta, sempre visível ao lado do tipo
-    return `<div class="dmk-ab">
-      <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
-      <div class="dmk-ab__body">
-        <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span><span class="dmk-ab__nv">Nv ${nv}</span></div>
-        <div class="dmk-ab__meta">${_montCustoHTML(a.cost)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
-        <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
-      </div></div>`;
-  };
-  const lbl = cfg.kitLabel ? cfg.kitLabel(k) : _montKitLabelPadrao(k, cfg);   // §344: o rótulo/ação do botão vem do cfg
-  const acao = lbl.disabled ? `<button class="dmb dmb--go" disabled>${H(lbl.txt)}</button>`
-    : `<button class="dmb dmb--go" data-kit-toggle="${k}">${H(lbl.txt)}</button>`;
-  // §342b: cabeçalho e botão FIXOS; a lista de habilidades (+ passiva) rola por dentro → o painel inteiro cabe nos 852.
-  return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
-    <div class="dm-kit__cab">
-      <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
-      <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
-      <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
-    </div>
-    <div class="dm-kit__scroll">
-      ${g.passiva ? `<div class="dmk-pas"><span class="dmk-pas__t">PASSIVA · ${H(g.passiva.nome)}</span><span class="dmk-pas__d">${realce(g.passiva.desc || '')}</span></div>` : ''}
-      <div class="dm-kit__abs">${[['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']].map(linha).join('')}</div>
-    </div>
-    <div class="dm-kit__pe">${acao}</div>
-  </div></div>`;
-}
+// §345: _montKitPanelHTML foi para src/ui/base.js (a FUNDAÇÃO).
 // §342b: CUSTO do kit em ORBES (§337, ≥22px) ou "GRÁTIS" (§340) — como o painel da batalha, não os pontinhos.
 function _montCustoHTML(cost){
   cost = cost || {}; const out = [];

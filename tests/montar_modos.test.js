@@ -214,6 +214,25 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
     await ctx.close();
   }
 
+  // ---------- §345: a BATALHA CPU/hot-seat (seleção) cabe, sem corte, sem a coluna esquerda invadir a grade ----------
+  console.log('\n== §345 seleção (Batalha CPU/hot-seat): layout (Chromium) ==');
+  for (const [W, H, dsf] of [[1846, 852, 1], [780, 360, 2]]) {
+    const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dsf });
+    const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+    await page.evaluate(BASE + "vsCPU=true; ir('selecao',{novo:true}); render(); (function(){var ks=listaFiltrada().filter(jogavel); vez=0; for(var i=0;i<6&&i<ks.length;i++)commitPk(ks[i]); renderPick();})();");
+    await page.waitForTimeout(140);
+    const m = await page.evaluate(() => { const dm = document.getElementById('dommontar'); if (!dm) return { no: 1 }; const b = dm.getBoundingClientRect();
+      const fora = b.left < -0.5 || b.top < -0.5 || b.right > window.innerWidth + 0.5 || b.bottom > window.innerHeight + 0.5;
+      let clips = []; dm.querySelectorAll('.dm-card__n,.dm-card__f,.sel-vaga__n,.sel-vaga__f,.dm-titulo,.dm-sub,.sel-time__t,.sel-seg__b,.dm-conta,.sel-info,.dm-motivo,.dmb--comecar').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className); });
+      const dir = dm.querySelector('.dm-dir').getBoundingClientRect(), times = dm.querySelector('.sel-times').getBoundingClientRect(), ops = dm.querySelector('.sel-ops').getBoundingClientRect();
+      const overlapLR = times.right > dir.left + 0.5 || ops.right > dir.left + 0.5;
+      return { fora, clips: clips.slice(0, 5), overlapLR }; });
+    ok(!m.no && !m.fora, `seleção @${W}×${H}: a tela cabe (nada fora)`);
+    ok(!m.no && m.clips.length === 0, `seleção @${W}×${H}: nenhum texto corta (${m.clips && m.clips.length ? m.clips.join(',') : 'ok'})`);
+    ok(!m.no && !m.overlapLR, `seleção @${W}×${H}: a coluna esquerda (times/opções) não invade a grade`);
+    await ctx.close();
+  }
+
   await browser.close();
   console.log(`\n== MONTAR_MODOS — ${passes} asserções, ${falhas} falha(s) ==`);
   process.exit(falhas ? 1 : 0);

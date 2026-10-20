@@ -106,10 +106,11 @@ const html = fs.readFileSync(distAbs, 'utf8');
   w.eval(`contaAtual = { niveis: { '${selInfo.sel}': { basico: 2 } }, perfil:{} };
     ir('selecao', { novo: true }, { substituir: true }); render();
     pick = [['${selInfo.sel}'], []]; render();`);
-  const selTile = $(`.pk[data-k="${selInfo.sel}"] .pk__niv`);
-  ok(!!selTile && /^2/.test(txt(selTile)), 'o deus ESCOLHIDO mostra o indicador compacto (2·1·1) na seleção');
-  // um deus NÃO escolhido não mostra (mesmo que exista no pool): o indicador é dos escolhidos
-  ok(!!$(`.pk[data-k="${selInfo.outro}"]`) && !$(`.pk[data-k="${selInfo.outro}"] .pk__niv`), 'um deus NÃO escolhido (presente no pool) não mostra o indicador');
+  // §345: o cartão do montador mostra o nível real da conta (Nv N) via _montNivelMax
+  const selTile = $(`.dm-card[data-pick="${selInfo.sel}"] .dm-card__nv`);
+  ok(!!selTile && /Nv\s*2/.test(txt(selTile)), 'o deus com básico nv2 mostra "Nv 2" no cartão da seleção');
+  // um deus SEM níveis na conta não mostra o indicador
+  ok(!!$(`.dm-card[data-pick="${selInfo.outro}"]`) && !$(`.dm-card[data-pick="${selInfo.outro}"] .dm-card__nv`), 'um deus sem níveis na conta não mostra o indicador');
 
   // ---- F) §323 P2: o LANÇADOR de PvE monta com os níveis da CONTA e carimba o snapshot do replay ----
   console.log('\n== F) §323 P2: PvE monta com os níveis da conta + snapshot do replay (cliente) ==');

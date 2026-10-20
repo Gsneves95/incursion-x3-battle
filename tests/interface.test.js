@@ -26,160 +26,174 @@ console.log('== 0. arte dos 100 deuses ==');
   ok(w.eval('Object.keys(IMG).length') === 100, 'deveria haver arte para os 100');
   ok(w.eval('ROSTER.every(e=>!!IMG[e.key])'), 'todo deus do roster deveria ter imagem');
   ok(w.eval('Object.values(IMG).every(v=>v.startsWith("data:image/webp;base64,"))'), 'as imagens deveriam estar embutidas');
-  ok($$('.pk .slot img').length === $$('.pk').length && $$('.pk').length > 0,
-    'todo ladrilho da grade deveria mostrar a arte');
-  console.log(`  100 imagens embutidas \u00b7 ${$$('.pk .slot img').length}/${$$('.pk').length} ladrilhos com arte`);
+  ok($$('.dm-card .slot img').length === $$('.dm-card').length && $$('.dm-card').length > 0,
+    'todo cart\u00e3o da grade deveria mostrar a arte');
+  console.log(`  100 imagens embutidas \u00b7 ${$$('.dm-card .slot img').length}/${$$('.dm-card').length} cart\u00f5es com arte`);
   // a partir daqui as imagens saem: no jsdom, redesenhar 300 KB de base64 a cada
   // render torna a suíte impraticável. A lógica testada é a mesma.
   w.eval('for (const k in IMG) delete IMG[k];');
   w.eval('render()');
 }
 
-console.log('== 1. seleção: grade de coleção ==');
+console.log('== 1. seleção (§345): montador de DOIS times (CPU/hot-seat) ==');
 {
   const total = w.eval('ROSTER.length');
   ok(total === 100, `o roster da tela deveria ter os 100 deuses, tem ${total}`);
-  ok(/liberados/i.test($('#bfiltro').textContent), 'deveria abrir filtrado nos liberados');
-  ok(!$('#fpanel'), 'o painel de filtro deveria começar fechado');
-  ok($$('.pk').length === 9, `filtrado nos liberados deveria mostrar 9, mostra ${$$('.pk').length}`);
-  ok($$('.pk.livre').length === 9, 'os 9 deveriam estar em cor');
+  // §345: a grade é a do montador (cartões .dm-card), com a pílula Liberados|Todos
+  ok(/Liberados/.test($('#bestado').textContent), 'deveria abrir filtrado nos Liberados');
+  ok(!$('#fpanel'), 'MAIS FILTROS deveria começar fechado');
+  ok($$('.dm-card').length === 9, `Liberados deveria mostrar 9, mostra ${$$('.dm-card').length}`);
+  ok($$('.dm-card[data-pick]').length === 9, 'os 9 liberados deveriam ser selecionáveis');
+  // Todos: 100, com bloqueados/WIP travados; sem paginação (a grade rola)
+  tap($('#bestado'));
+  ok(/Todos/.test($('#bestado').textContent), 'a pílula alterna para Todos');
+  ok($$('.dm-card').length === 100, `Todos deveria mostrar os 100, há ${$$('.dm-card').length}`);
+  ok($$('.dm-card--trav').length > 0, 'em Todos deveria haver bloqueados/WIP travados (não selecionáveis)');
+  ok(!$('#bprev') && !$('#bnext'), 'sem paginação — a grade rola');
 
-  // TODOS: 30 por página, 4 páginas — agora via painel
-  tap($('#bfiltro'));
-  ok(!!$('#fpanel'), 'FILTRO deveria abrir o painel');
-  ok($$('.fgrp__l').length === 5, `5 eixos de filtro, há ${$$('.fgrp__l').length}`);
-  ok($$('.chip2').length === 3 + 10 + 6 + 5 + 3, `27 opções, há ${$$('.chip2').length}`);
-  ok(/9 de 100/.test($('.fbox__n').textContent), 'painel deveria mostrar quantos resultam');
-  tap($$('[data-fe]')[1]);
-  ok(/100 de 100/.test($('.fbox__n').textContent), 'ao escolher Todos deveria contar 100');
-  tap($('#ffechar'));
-  ok(!$('#fpanel'), 'PRONTO deveria fechar o painel');
-  ok(/todos/i.test($('#bfiltro').textContent), 'o botão deveria refletir o estado escolhido');
-  ok($$('.pk').length === 30, `30 por página, há ${$$('.pk').length}`);
-  ok(/PÁG 1\/4/.test($('.fpage').textContent), `4 páginas para 100, diz "${$('.fpage').textContent}"`);
-  ok($$('.pk.trancado').length > 0, 'deveria haver bloqueados na visão TODOS');
-  ok($('#bprev').disabled, 'seta anterior desabilitada na página 1');
-  tap($('#bnext')); tap($('#bnext')); tap($('#bnext'));
-  ok(/PÁG 4\/4/.test($('.fpage').textContent), 'deveria chegar à página 4');
-  ok($$('.pk').length === 10, `última página com 10, há ${$$('.pk').length}`);
-  ok($('#bnext').disabled, 'seta seguinte desabilitada na última');
-  while (!$('#bprev').disabled) tap($('#bprev'));
+  const travCard = $('.dm-card--trav');
+  const cs = w.getComputedStyle(travCard.querySelector('.dm-card__p'));
+  ok(/grayscale/.test(cs.filter), 'bloqueado/WIP deveria estar dessaturado');
+  ok(!!travCard.querySelector('.dm-card__n').textContent.trim(), 'o nome do bloqueado deveria aparecer');
+  ok(!travCard.hasAttribute('data-pick'), 'o travado não é selecionável (sem data-pick)');
 
-  const cs = w.getComputedStyle($('.pk.trancado .pk__p'));
-  ok(/grayscale/.test(cs.filter), 'bloqueado deveria estar dessaturado');
-  ok(parseFloat(cs.opacity) >= 0.4, `bloqueado deve continuar visível (opacidade ${cs.opacity})`);
-  ok(!!$('.pk.trancado .pk__n').textContent.trim(), 'o nome do bloqueado deveria aparecer');
-  ok(!!$('.pk.trancado .pk__lock'), 'deveria haver marca de cadeado');
-
-  // 1 TOQUE em QUALQUER deus (inclusive bloqueado) abre o painel do kit — não adiciona
-  const lk = $('.pk.trancado').dataset.k;
+  // o "i" abre o painel do kit (mesmo de um bloqueado, leitura pública) e NÃO adiciona
+  const lk = w.eval('(ROSTER.find(e=>!e.inicial && GODS[e.key])||{}).key');
   w.eval(`previewPk("${lk}");renderPick()`);
-  ok(!!$('#kpanel'), 'tocar num deus deveria abrir o painel do kit');
-  ok($$('#kpanel .krow').length >= 4, 'o painel deveria listar Básico/Habilidade/Milagre/Passiva');
-  ok(/BLOQUEADO/.test($('.finfo').textContent), 'deveria explicar que está bloqueado');
-  ok(/Rito|Provação|Ordália/.test($('.finfo').textContent), 'deveria citar a Provação/Ordália');
-  ok(/dificuldade \d/.test($('.finfo').textContent), 'deveria dizer a dificuldade');
-  ok(/Bloqueado/.test($('#kpanel').textContent), 'o kit é leitura pública mesmo bloqueado');
+  ok(!!$('#dmkit'), 'o "i" deveria abrir o painel do kit');
+  ok($$('#dmkit .dmk-ab').length >= 3, 'o painel deveria listar as habilidades (Básico/Habilidade/Milagre/Defesa)');
+  ok(/Bloqueado/.test(($('#dmkit .dm-kit__pe button') || {}).textContent || ''), 'num bloqueado o botão do kit diz "Bloqueado"');
   ok(w.eval('pick[0]').length === 0, 'abrir o kit de um bloqueado não adiciona');
-  tap($('#kitclose')); ok(!$('#kpanel'), 'Fechar deveria fechar o painel');
+  tap($('[data-kit-x]')); ok(!$('#dmkit'), 'o X fecha o painel');
 
-  // §287 — o painel da SELEÇÃO lê data/deuses (a MESMA fonte da Coleção), NÃO um catálogo à parte.
-  // §340 — tyr tem básico GRÁTIS: o painel mostra o indicador "GRÁTIS" no lugar do custo, e o "Grátis." saiu do texto.
+  // §287/§340 — o painel lê data/deuses (a MESMA fonte da Coleção) + indicador GRÁTIS
   {
     const alvo = 'tyr';
     w.eval(`previewPk("${alvo}");renderPick()`);
     const descBas = w.eval(`(GODS['${alvo}'].ab.find(a=>a.slot==='basico')||{}).desc`);
-    const linhas = $$('#kpanel .krow__t').map(e => e.textContent.trim());
+    const linhas = $$('#dmkit .dmk-ab__desc').map(e => e.textContent.trim());
     ok(linhas.includes(descBas), 'seleção: o básico mostra o deuses.desc (lê data/deuses)');
-    ok(/GRÁTIS/.test($('#kpanel').textContent) && !/^Grátis\./.test(descBas),
-      'seleção: o básico grátis mostra o indicador GRÁTIS (§340), sem "Grátis." no texto do efeito');
-    // a MESMA linha que a Coleção — a sobreposição (home.js, §288) abre no básico e lê o mesmo GODS[k].ab[].desc
+    ok(/GRÁTIS/.test($('#dmkit').textContent) && !/^Grátis\./.test(descBas),
+      'seleção: o básico grátis mostra o indicador GRÁTIS (§340), sem "Grátis." no texto');
     const ov = new w.DOMParser().parseFromString(w.eval(`colVerSel='basico'; colOverlayHTML("${alvo}")`), 'text/html');
     const efCol = ((ov.querySelector('.col2ov__deftxt') || {}).textContent || '').trim();
     ok(efCol === descBas, 'Coleção e Seleção mostram a MESMA linha para o mesmo deus');
-    // babá: muda a FONTE (data/deuses) e as DUAS telas mudam juntas
     const orig = descBas;
     w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc='SENTINELA287 zzz'`);
     w.eval(`previewPk("${alvo}");renderPick()`);
-    const selMudou = /SENTINELA287/.test($('#kpanel').textContent);
-    const colMudou = /SENTINELA287/.test(w.eval(`colOverlayHTML("${alvo}")`));
-    ok(selMudou && colMudou, 'uma fonte, duas telas: mudar o deuses.desc muda Seleção E Coleção juntas');
+    ok(/SENTINELA287/.test($('#dmkit').textContent) && /SENTINELA287/.test(w.eval(`colOverlayHTML("${alvo}")`)),
+      'uma fonte, duas telas: mudar o deuses.desc muda Seleção E Coleção');
     w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc=${JSON.stringify(orig)}`);
-    tap($('#kitclose'));
+    tap($('[data-kit-x]'));
   }
 
-  // volta ao filtro de liberados para montar time
-  tap($('#bfiltro')); tap($$('[data-fe]')[0]); tap($('#ffechar'));
-  ok(/liberados/i.test($('#bfiltro').textContent), 'deveria voltar ao estado Liberados');
-  ok($('#bgo').disabled, 'começar travado sem 3+3');
-  const keys9 = $$('.pk.livre').map(b => b.dataset.k);
+  // volta a Liberados para montar os dois times
+  tap($('#bestado'));
+  ok(/Liberados/.test($('#bestado').textContent), 'volta ao estado Liberados');
+  ok($('#bgo').disabled, 'COMEÇAR travado sem 3+3');
+  const keys9 = $$('.dm-card[data-pick]').map(b => b.dataset.pick);
   ok(keys9.length === 9, `deveria haver 9 liberados, há ${keys9.length}`);
-  const limpaTap = () => w.eval('if(_tapT){clearTimeout(_tapT);}_tapT=null;_tapK=null;');
-  const dtapK = k => { limpaTap(); const b = $(`.pk[data-k="${k}"]`); tap(b); tap(b); };   // 2 toques = commit
+  const tapCard = k => tap($(`.dm-card[data-pick="${k}"]`));
 
-  // 1 toque só NÃO adiciona (é leitura); 2 toques adicionam
-  limpaTap(); tap($(`.pk[data-k="${keys9[0]}"]`));
-  ok(w.eval('pick[0]').length === 0, 'um toque só não adiciona (abre o kit)');
-  dtapK(keys9[0]); dtapK(keys9[1]); dtapK(keys9[2]);
-  ok(w.eval('pick[0]').length === 3, `J1 deveria ter 3 por duplo-toque (tem ${w.eval('pick[0]').length})`);
-  ok(w.eval('vez') === 1, 'a vez deveria passar ao J2 automaticamente');
-  ok($$('.pk.on .pk__mark').length === 3, 'os escolhidos deveriam ter marcador do jogador');
-
-  // duplo-toque num deus JÁ no time o remove
-  dtapK(keys9[0]);
-  ok(w.eval('pick[0]').length === 2, `duplo-toque num escolhido deveria remover (tem ${w.eval('pick[0]').length})`);
-
-  // o botão Adicionar do painel também comita (caminho explícito/acessível)
+  // o "i" não adiciona; o toque no cartão adiciona (modelo do montador)
   w.eval(`previewPk("${keys9[0]}");renderPick()`);
-  tap($('#kitadd'));
-  ok(w.eval(`pick.flat().includes("${keys9[0]}")`), 'o botão Adicionar do painel deveria recolocar o deus');
-  ok(!$('#kpanel'), 'adicionar pelo painel fecha o painel');
-  limpaTap();
+  ok(!!$('#dmkit') && w.eval('pick[0]').length === 0, 'o "i" abre o kit sem adicionar');
+  tap($('[data-kit-x]'));
+  tapCard(keys9[0]); tapCard(keys9[1]); tapCard(keys9[2]);
+  ok(w.eval('pick[0]').length === 3, `J1 deveria encher com 3 (tem ${w.eval('pick[0]').length})`);
+  ok(w.eval('vez') === 1, 'a vez deveria passar ao J2 automaticamente');
+  ok($$('.dm-card--sel').length === 3, 'os escolhidos têm moldura de selecionado');
+  ok($$('.dm-card--sel .dm-card__vaga').length === 3, 'cada escolhido mostra o número da vaga');
 
-  // critérios combináveis: OU dentro do eixo, E entre eixos
-  tap($('#bfiltro'));
-  tap($$('[data-fe]')[1]);                      // estado: Todos
+  // escolher para o J2 — moldura VERMELHA (.dm-card--sel2)
+  const livre2 = $$('.dm-card[data-pick]').map(b => b.dataset.pick).find(k => w.eval(`donoDe("${k}")`) === null);
+  tapCard(livre2);
+  ok(w.eval('pick[1]').length === 1 && w.eval(`donoDe("${livre2}")`) === 1, 'o deus entra no J2 (a vez estava no J2)');
+  ok($$('.dm-card--sel2').length === 1, 'o cartão escolhido do J2 usa a marca VERMELHA');
+
+  // tocar num bloco passa a escolher para ele
+  tap($('[data-lado="0"]'));
+  ok(w.eval('vez') === 0, 'tocar no bloco do J1 passa a escolher para o J1');
+
+  // o X tira
+  const antes0 = w.eval('pick[0]').length;
+  tap($('[data-lado="0"] [data-rem]'));
+  ok(w.eval('pick[0]').length === antes0 - 1, 'o X deveria remover da vaga');
+
+  // um deus de um time NÃO pode entrar no outro
+  w.eval('pick=[[],[]]; vez=0; render();');
+  tapCard(keys9[0]);                              // J1
+  w.eval('vez=1');
+  const bloqueado = w.eval(`adicionarPk("${keys9[0]}")`);
+  ok(bloqueado === false && w.eval(`donoDe("${keys9[0]}")`) === 0, 'um deus já no J1 não entra também no J2');
+
+  // o kit adiciona ao time da VEZ (rótulo muda conforme o lado)
+  w.eval('pick=[[],[]]; vez=0; render();');
+  w.eval(`previewPk("${keys9[1]}");renderPick()`);
+  ok(/ADICIONAR AO SEU TIME/.test(($('[data-kit-toggle]') || {}).textContent || ''), 'na vez do J1 o kit diz ADICIONAR AO SEU TIME');
+  tap($('[data-kit-toggle]'));
+  ok(w.eval(`donoDe("${keys9[1]}")`) === 0 && !$('#dmkit'), 'o kit adiciona ao J1 e fecha');
+  w.eval('vez=1'); w.eval(`previewPk("${keys9[2]}");renderPick()`);
+  ok(/ADICIONAR AO OPONENTE/.test(($('[data-kit-toggle]') || {}).textContent || ''), 'na vez do J2 o kit diz ADICIONAR AO OPONENTE');
+  tap($('[data-kit-x]'));
+
+  // ---- filtros: inline (elemento, função), MAIS FILTROS (facção, classe), busca ----
   const chip = (c, i) => $$('[data-fs]').find(b => b.dataset.fs === c + '|' + i);
+  w.eval('pick=[[],[]]; vez=0; limparFiltro(); selBusca=""; render();'); tap($('#bestado'));   // Todos
+  // inline função
+  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
+  ok($$('.dm-card').length === w.eval(`ROSTER.filter(e=>e.funcao==='Controlador').length`), 'a FUNÇÃO (inline) filtra a grade');
+  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
+  // inline elemento
+  tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
+  ok($$('.dm-card').length === w.eval(`ROSTER.filter(e=>e.elem==='Umbra').length`), 'o ELEMENTO (inline) filtra a grade');
+  tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
+  // MAIS FILTROS: facção soma (OU), classe intersecta (E)
+  tap($('#bmaisf'));
+  ok(!!$('#fpanel') && $$('.fgrp__l').length === 2, 'MAIS FILTROS abre com PANTEÃO e CLASSE');
+  ok($$('.chip2').length === 10 + 3, `13 chips (10 panteões + 3 classes), há ${$$('.chip2').length}`);
   tap(chip('faccoes', 'Japonesa'));
   ok(/14 de 100/.test($('.fbox__n').textContent), `Japonesa tem 14, painel diz "${$('.fbox__n').textContent}"`);
   tap(chip('faccoes', 'Maia'));
-  ok(/18 de 100/.test($('.fbox__n').textContent), 'dois panteões deveriam SOMAR (OU dentro do eixo)');
+  ok(/18 de 100/.test($('.fbox__n').textContent), 'dois panteões SOMAM (OU dentro do eixo)');
   tap(chip('faccoes', 'Maia'));
-  tap(chip('elems', 'Umbra'));
-  ok(/4 de 100/.test($('.fbox__n').textContent), 'eixos diferentes deveriam INTERSECTAR (E entre eixos)');
-  tap(chip('funcoes', 'Controlador'));
-  ok(/2 de 100/.test($('.fbox__n').textContent), 'três eixos combinados deveriam reduzir a 2');
+  tap(chip('classes', 'Mágico'));
+  const nJM = w.eval(`ROSTER.filter(e=>e.faccao==='Japonesa'&&e.classe==='Mágico').length`);
+  ok($('.fbox__n').textContent.includes(nJM + ' de 100'), `facção ∩ classe = ${nJM} (E entre eixos)`);
+  tap($('#flimpar'));
+  ok(/100 de 100/.test($('.fbox__n').textContent), 'LIMPAR zera os critérios (Todos = 100)');
   tap($('#ffechar'));
-  ok($$('.pk').length === 2, 'a grade deveria refletir o filtro combinado');
-  const sobrou = $$('.pk .pk__n').map(e => e.textContent.trim()).sort();
+
+  // combinação facção(painel) ∩ elemento+função(inline) → Izanami/Tsukuyomi
+  tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
+  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
+  tap($('#bmaisf')); tap(chip('faccoes', 'Japonesa'));
+  ok(/2 de 100/.test($('.fbox__n').textContent), `facção+elemento+função = 2 (${$('.fbox__n').textContent})`);
+  tap($('#ffechar'));
+  const sobrou = $$('.dm-card__n').map(e => e.textContent.trim()).sort();
   ok(sobrou.join(',') === 'Izanami,Tsukuyomi', `esperado Izanami/Tsukuyomi, veio ${sobrou}`);
-  ok(/3/.test($('.fbtn__badge').textContent), 'o botão deveria mostrar quantos critérios extras estão ativos');
+  ok(/1/.test(($('.sel-badge') || {}).textContent || ''), 'o badge do MAIS FILTROS conta os extras de facção/classe ativos');
 
-  // combinação sem resultado avisa em vez de mostrar grade vazia
-  tap($('#bfiltro'));
-  tap(chip('faccoes', 'Japonesa')); tap(chip('elems', 'Umbra')); tap(chip('funcoes', 'Controlador'));
-  tap(chip('faccoes', 'Celta')); tap(chip('elems', 'Chama')); tap(chip('funcoes', 'Guardião'));
-  ok(/0 de 100/.test($('.fbox__n').textContent), 'combinação impossível deveria contar 0');
-  tap($('#ffechar'));
-  ok(/Nenhum deus atende/.test($('.grid').textContent), 'grade vazia deveria explicar');
+  // busca por nome
+  w.eval('limparFiltro(); selBusca=""; render();'); tap($('#bestado'));   // Todos
+  const sb = $('#selbusca'); sb.value = 'tsuku'; sb.dispatchEvent(new w.Event('input', { bubbles: true }));
+  const nb = $$('.dm-card__n').map(e => e.textContent.trim());
+  ok(nb.length === 1 && /Tsukuyomi/.test(nb[0]), `busca "tsuku" → Tsukuyomi (veio ${nb})`);
+  w.eval('selBusca="zzxx"; render();');
+  ok(/Nenhum deus atende/.test(($('#selgrade') || {}).textContent || ''), 'busca sem resultado deveria explicar');
+  w.eval('selBusca=""; limparFiltro(); render();');
 
-  // LIMPAR volta ao padrão
-  tap($('#bfiltro')); tap($('#flimpar'));
-  ok(/9 de 100/.test($('.fbox__n').textContent), 'LIMPAR deveria voltar a Liberados sem critérios');
-  tap($('#ffechar'));
-  ok(!$('.fbtn__badge'), 'sem critérios extras não deveria haver contador no botão');
-
+  // TESTE libera todos os kits prontos (sem paginação: a grade mostra todos)
   tap($('#bteste'));
-  // TESTE libera todos os kits prontos; a 1ª página mostra até POR_PAG (paginação — a lista cresce p/ 100).
-  const prontos = w.eval('Object.keys(GODS).length'), porPag = w.eval('POR_PAG');
-  ok($$('.pk').length === Math.min(prontos, porPag),
-    `1ª página deveria mostrar min(${prontos} prontos, ${porPag}/pág), mostrou ${$$('.pk').length}`);
+  const prontos = w.eval('Object.keys(GODS).length');
+  ok(w.eval('tudoLiberado') === true && $$('.dm-card').length === prontos,
+    `TESTE libera os ${prontos} kits prontos, a grade mostra ${$$('.dm-card').length}`);
   tap($('#brand'));
-  ok(!$('#bgo').disabled, 'sorteio deveria liberar COMEÇAR');
-  console.log(`  100 no roster \u00b7 30/página em 4 páginas \u00b7 9 em cor \u00b7 arte em todos \u00b7 filtro por facção`);
+  ok(!$('#bgo').disabled, 'SORTEAR deveria encher os dois times e liberar COMEÇAR');
+  ok(w.eval('pick[0]').length === 3 && w.eval('pick[1]').length === 3, 'SORTEAR enche J1 e J2');
+  console.log(`  §345: 2 times · Liberados|Todos · MAIS FILTROS (facção/classe) · elemento+função inline · busca · kit por lado`);
 
-  // times FIXOS para os testes seguintes: sorteio deixava as asserções instáveis
-  // (um time podia cair sem habilidade de dano com alvo inimigo, ou repetir elemento)
+  // times FIXOS para os testes seguintes (determinístico)
   w.eval("pick=[['zeus','ogum','brigid'],['cuca','sobek','ganesha']]; vez=0;");
   w.eval('render()');
   ok(!$('#bgo').disabled, 'times fixos deveriam liberar COMEÇAR');
@@ -337,7 +351,7 @@ console.log('== 13. partida completa só por toques ==');
   ok(S().fim, `a partida termina só por toques (guarda ${g})`);
   ok(!!$('.result h1'), 'o resultado aparece');
   console.log(`  ${S().fim ? S().fim.resultado || 'fim' : '—'} no turno ${S().turno} · ${cliques} toques`);
-  if ($('#bnew')) { tap($('#bnew')); ok($$('.pk').length > 0 && !!$('#bgo'), 'nova batalha volta à grade de seleção'); }
+  if ($('#bnew')) { tap($('#bnew')); ok($$('.dm-card').length > 0 && !!$('#bgo'), 'nova batalha volta à grade de seleção'); }
 }
 
 console.log('== 14. o fit APLICA o que a regra de enquadramento manda ==');
@@ -395,18 +409,42 @@ console.log('== 15. INV 16: no máximo um primário VISÍVEL E ACESSÍVEL (base 
   // §329: fechar restaura a base não-inerte; o encerrar volta a ser o estado+barra do topo (#bend2), não um .b--primary.
   ok(baseInert() === false && !!$('#bend2'), 'fechar restaura: base não-inerte e o ENCERRAR do topo (#bend2) volta');
 
-  // --- seleção: filtro e kit ---
+  // --- seleção (§345, montador): o CTA é o COMEÇAR (.dmb--go); as sobreposições têm scrim próprio (padrão do montador) ---
   w.eval("ir('selecao');painelFiltro=false;focoPk=null;render()");
-  ok(nprim() === 1 && baseInert() === false, `seleção base: 1 primário e não-inerte (prim ${nprim()}, inert ${baseInert()})`);
+  ok(nprim() === 0 && baseInert() === false && !!$('#bgo'), `seleção base: sem .b--primary (o CTA é o COMEÇAR .dmb--go), não-inerte (prim ${nprim()})`);
+  ok($('#bgo').classList.contains('dmb--go'), 'o COMEÇAR é o botão primário do montador (.dmb--go)');
   w.eval('painelFiltro=true;render()');
-  ok(nprim() === 1 && baseInert() === true && soltos('.fpanel') === 0, 'filtro: 1 primário (o #ffechar), base inerte, sem focável solto');
-  ok(!!$('#ffechar') && $('#ffechar').classList.contains('b--primary'), 'o primário do filtro é o #ffechar');
-  ok(!!$('#bgo') && !$('#bgo').classList.contains('b--primary'), 'o #bgo da base foi rebaixado');
+  ok(!!$('.sel-fpanel') && !!$('#ffechar'), 'MAIS FILTROS: painel com scrim próprio + Pronto');
+  ok(nprim() === 0, `o painel não introduz .b--primary concorrente (tem ${nprim()})`);
   w.eval('painelFiltro=false;focoPk=(typeof ROSTER!=="undefined"&&ROSTER[0]&&ROSTER[0].key)||null;render()');
-  ok(nprim() <= 1 && baseInert() === true && soltos('.kpanel') === 0, `kit: <=1 primário, base inerte, sem focável solto (prim ${nprim()})`);
+  ok(!!$('#dmkit') && !!$('.dm-kit'), 'kit: painel com scrim próprio (.dm-kit)');
   w.eval('focoPk=null;render()');
-  ok(baseInert() === false && !!$('#bgo') && $('#bgo').classList.contains('b--primary'), 'fechar kit restaura: base não-inerte e #bgo volta a primário');
-  console.log('  ≤1 primário em toda sobreposição; base inerte sob scrim; menu (sem scrim) não inerta; fechar restaura');
+  ok(baseInert() === false && !!$('#bgo'), 'fechar kit restaura a base com o COMEÇAR');
+  console.log('  ≤1 primário em toda sobreposição; base inerte sob scrim (batalha); montador usa scrim próprio; fechar restaura');
+}
+
+console.log('== 16. §345 seleção: CPU|2JOGADORES, Invocar, VOLTAR ==');
+{
+  // sessão FRESCA: a pilha de navegação acumulada pelas seções anteriores (várias entradas 'selecao')
+  // faria o VOLTAR (voltar()) cair numa seleção anterior — aqui a pilha começa limpa (só home→seleção).
+  const dd = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'https://x/' });
+  const w2 = dd.window, d2 = dd.window.document, $2 = s => d2.querySelector(s), $$2 = s => [...d2.querySelectorAll(s)];
+  const tap2 = el => el.dispatchEvent(new w2.MouseEvent('click', { bubbles: true }));
+  w2.eval("for (const k in IMG) delete IMG[k];");
+  w2.eval("ir('home'); render(); ir('selecao',{novo:true}); vsCPU=true; render();");
+  ok(/BATALHA CPU/.test($2('.dm-sub').textContent), 'vsCPU → sublinha "BATALHA CPU · SANDBOX"');
+  tap2($$2('[data-cpu]').find(b => b.dataset.cpu === '0'));
+  ok(w2.eval('vsCPU') === false && /2 JOGADORES/.test($2('.dm-sub').textContent), '2 JOGADORES alterna o modo (sublinha hot-seat)');
+  tap2($$2('[data-cpu]').find(b => b.dataset.cpu === '1'));
+  ok(w2.eval('vsCPU') === true, 'CPU volta a alternar');
+  tap2($2('#binvocar'));
+  ok(w2.eval("rotaAtual()") === 'invocacao', 'Invocar vai para a tela de invocação');
+  // VOLTAR sai da seleção (pilha limpa: home atrás → volta à home)
+  w2.eval("ir('home'); render(); ir('selecao',{novo:true}); render();");
+  tap2($2('#binicio'));
+  ok(w2.eval("rotaAtual()") === 'home', 'VOLTAR (‹ VOLTAR) sai da seleção para a home');
+  w2.close();
+  console.log('  §345: CPU|2JOGADORES alterna · Invocar · VOLTAR');
 }
 
 console.log('');

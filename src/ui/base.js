@@ -192,7 +192,7 @@ function fit(){
   const emDesafios = (typeof rotaAtual === 'function' && rotaAtual() === 'desafios') && document.getElementById('desafios');
   // §342/§344: as telas de MONTAR TIME (Domínio, Campanha, Composição, PvP) são a mesma TELA FIXA de 1846×852 escalada.
   const _rM = (typeof rotaAtual === 'function') && rotaAtual();
-  const emMontar = (_rM === 'dominiomontar' || _rM === 'montartime' || _rM === 'desafiomontar' || _rM === 'pvp') && document.getElementById('dommontar');
+  const emMontar = (_rM === 'dominiomontar' || _rM === 'montartime' || _rM === 'desafiomontar' || _rM === 'pvp' || _rM === 'selecao') && document.getElementById('dommontar');   // §345: a Batalha CPU/hot-seat usa o mesmo montador
   const fixa = emBatalha || emDesafios || emMontar;
   try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar);
     document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); }catch(e){}   // §339/§342: carimbo build + botão conta somem destas telas (vivem na home/menu)
@@ -401,3 +401,72 @@ function classesTxt(u,a){
 /* ---------- efeitos ---------- */
 const FX_MAX=5;
 function todas(){return st.lados.flatMap(l=>l.units);}
+
+/* ---------- §342/§344/§345 — base do montador (cartão + painel de kit) reusada por home.js e selecao.js ----------
+   Vive na FUNDAÇÃO (base.js) para os dois ui/ poderem chamá-la. Depende de helpers de conta (niveisDeExibicao,
+   deusKitEfetivo, nlNivel) definidos em home.js — base.js é a origem isenta na checagem de direção da build. */
+function _montCardHTML(k, cfg){
+  const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
+  const num = cfg.selNum ? cfg.selNum(k) : (cfg.pick.indexOf(k) + 1);   // §344: nº da vaga (0 = não escolhido)
+  const on = num > 0, nvmax = _montNivelMax(k);
+  const off = !on && cfg._off && cfg._off[k];   // §344 (Composição): viola a regra → apagado, não selecionável
+  const lado = (on && cfg.selLado) ? cfg.selLado(k) : 0;   // §345: lado 1 (oponente) = moldura/número VERMELHOS
+  const trav = cfg.cardTravado && cfg.cardTravado(k);   // §345: na visão "Todos", deus bloqueado/WIP não entra (cadeado/WIP)
+  const selCls = on ? (lado === 1 ? ' dm-card--sel dm-card--sel2' : ' dm-card--sel') : '';
+  const sel = !off && !trav;   // selecionável?
+  return `<button class="dm-card${selCls}${off ? ' dm-card--off' : ''}${trav ? ' dm-card--trav' : ''}"${sel ? ` data-pick="${k}"` : ''}>
+    <span class="dm-card__p">${slot('god-' + k, ini(g.nome), (trav && trav.cinza) ? '#8d84ad' : COR(g.elem), 34)}</span>
+    <span class="dm-card__grad"></span>
+    ${nvmax > 1 ? `<span class="dm-card__nv">Nv ${nvmax}</span>` : ''}
+    <span class="dm-card__i" data-info="${k}" role="button" aria-label="kit">i</span>
+    ${on ? `<span class="dm-card__vaga">${num}</span>` : ''}
+    ${off ? `<span class="dm-card__off">${H(off)}</span>` : ''}
+    ${trav && trav.txt ? `<span class="dm-card__trav">${H(trav.txt)}</span>` : ''}
+    <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 18)}<span class="dm-card__f">${H(g.funcao || '')}</span></span></span>
+  </button>`;
+}
+function _montKitPanelHTML(k, cfg){
+  const g = (typeof GODS !== 'undefined' && GODS[k]) || null;
+  const hg = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
+  if (!g) {   // §345: deus sem kit (WIP) — na seleção "Todos" o "i" ainda abre, mostrando só o cabeçalho + aviso
+    const lblw = cfg.kitLabel ? cfg.kitLabel(k) : { txt: 'Kit em produção', disabled: true };
+    return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
+      <div class="dm-kit__cab">
+        <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
+        <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+        <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
+      </div>
+      <div class="dm-kit__scroll"><div class="dmk-pas"><span class="dmk-pas__d">Kit em produção no protótipo.</span></div></div>
+      <div class="dm-kit__pe"><button class="dmb dmb--go" disabled>${H(lblw.txt)}</button></div>
+    </div></div>`;
+  }
+  const eg = deusKitEfetivo(k, g);
+  const linha = ([sl, lab]) => {
+    const a = sl === 'defesa' ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : (eg.ab || []).find(x => x.slot === sl);
+    if (!a) return '';
+    const nv = sl === 'defesa' ? 1 : nlNivel(k, sl);   // §342b: nível REAL da conta, sempre visível ao lado do tipo
+    return `<div class="dmk-ab">
+      <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
+      <div class="dmk-ab__body">
+        <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span><span class="dmk-ab__nv">Nv ${nv}</span></div>
+        <div class="dmk-ab__meta">${_montCustoHTML(a.cost)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
+        <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
+      </div></div>`;
+  };
+  const lbl = cfg.kitLabel ? cfg.kitLabel(k) : _montKitLabelPadrao(k, cfg);   // §344: o rótulo/ação do botão vem do cfg
+  const acao = lbl.disabled ? `<button class="dmb dmb--go" disabled>${H(lbl.txt)}</button>`
+    : `<button class="dmb dmb--go" data-kit-toggle="${k}">${H(lbl.txt)}</button>`;
+  // §342b: cabeçalho e botão FIXOS; a lista de habilidades (+ passiva) rola por dentro → o painel inteiro cabe nos 852.
+  return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
+    <div class="dm-kit__cab">
+      <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
+      <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+      <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
+    </div>
+    <div class="dm-kit__scroll">
+      ${g.passiva ? `<div class="dmk-pas"><span class="dmk-pas__t">PASSIVA · ${H(g.passiva.nome)}</span><span class="dmk-pas__d">${realce(g.passiva.desc || '')}</span></div>` : ''}
+      <div class="dm-kit__abs">${[['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']].map(linha).join('')}</div>
+    </div>
+    <div class="dm-kit__pe">${acao}</div>
+  </div></div>`;
+}
