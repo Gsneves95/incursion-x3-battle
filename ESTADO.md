@@ -2,6 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §344b · Três ajustes no §344 (vistos nas capturas 344-*)
+- **PvP, 3ª vaga cabe:** o "↺ Usar último time" saiu da linha própria acima das vagas e foi para a linha do título
+  "SEU TIME" (`.dm-time__cab`, à direita); o cfg `acimaVagasHTML` virou `timeAcaoHTML`. Só no PvP (`#dommontar.dm--pvp`) o
+  contexto encurta (360px) e o bloco SEU TIME sobe/alonga (top 470, h 340) → as 3 vagas ficam dentro do bloco e dos 852.
+- **Campanha, painel de troca:** o scrim `.dm-troca-ov` (fixed, inset:0, z-index:60, rgba ~0.78) cobre o viewport e
+  escurece a campanha (inerte atrás); o "‹ VOLTAR" virou um X claro `.dm-troca-x` (88px ≥ 72px) no topo direito, junto do
+  título "TROCAR O DEUS EMPRESTADO" + sublinha. Fecha por X / toque no fundo / voltar do Android, sem gravar `campSwap`.
+- **Nomes nunca partem no meio da palavra:** `.dm-ini__n` com `word-break:normal`/`overflow-wrap:normal` + `width:80px`;
+  `_montAjustarNomes(root)` (no fim de `ligarMontadorTime`) encolhe a fonte 20→16px numa linha e, só então, quebra entre
+  palavras (2 linhas). "Elemental" agora inteiro.
+- Provas em `montar_modos.test.js` (Chromium @1846 e @780): 3 vagas cabem; scrim cobre+escurece+inerte+X; nenhum nome
+  parte/corta/< 16px. Capturas `344b-pvp-3deuses`, `344b-campanha-troca`, `344b-campanha-2deuses` (1846×852 e 780×360).
+
 ## ★ §344 · Montador do §342 aplicado à Campanha, Composição e PvP
 - A base (`montadorTimeHTML`/`ligarMontadorTime`) foi generalizada; a GRADE saiu em `_montGradeSecHTML`/`_montLigarGrade`
   (reusada pelo montador e pelo seletor de troca). Domínio inalterado. Novos hooks de cfg: `_off` (porDeus → cartão

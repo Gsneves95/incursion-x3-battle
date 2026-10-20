@@ -145,6 +145,57 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
       await ctx.close();
     }
   }
+  // ---------- §344b-1: PvP — as 3 vagas cabem no bloco SEU TIME e nos 852px ----------
+  console.log('\n== §344b PvP: 3 vagas cabem (Chromium) ==');
+  for (const [W, H, dsf] of [[1846, 852, 1], [780, 360, 2]]) {
+    const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dsf });
+    const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+    await page.evaluate(BASE + "contaTransporte={}; contaAtual={nick:'Herói',perfil,ranque:{pontos:1206}}; pvpTime=[]; pvpEstado='idle'; pvpRanqueado=false; ir('pvp',{},{substituir:true}); render(); (function(){var ks=_montFiltrados(_montJogaveis()); pvpTime.push(ks[0],ks[1],ks[2]); render();})();");
+    await page.waitForTimeout(140);
+    const m = await page.evaluate(() => { const dm = document.getElementById('dommontar'); const bloco = dm.querySelector('.dm-time'); const vagas = [...dm.querySelectorAll('.dm-vaga')];
+      const dmr = dm.getBoundingClientRect(), rb = bloco.getBoundingClientRect(), last = vagas[vagas.length - 1].getBoundingClientRect(); const esc = dmr.width / 1846;
+      return { n: vagas.length, dentroBloco: last.bottom <= rb.bottom + 0.5, dentro852: (last.bottom - dmr.top) / esc <= 852.5 }; });
+    ok(m.n === 3 && m.dentroBloco && m.dentro852, `PvP @${W}×${H}: as 3 vagas cabem no bloco SEU TIME e nos 852px`);
+    await ctx.close();
+  }
+
+  // ---------- §344b-2: Campanha — o painel de troca escurece a tela inteira, campanha inerte, X claro ----------
+  console.log('\n== §344b Campanha: painel de troca (Chromium) ==');
+  for (const [W, H, dsf] of [[1846, 852, 1], [780, 360, 2]]) {
+    const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dsf });
+    const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+    await page.evaluate(BASE + "ir('campanha',{},{substituir:true}); render(); campPicker=0; render();");
+    await page.waitForTimeout(140);
+    const m = await page.evaluate(() => { const ov = document.querySelector('.dm-troca-ov'); if (!ov) return { no: true }; const r = ov.getBoundingClientRect();
+      const cobre = r.left <= 0.5 && r.top <= 0.5 && r.right >= window.innerWidth - 0.5 && r.bottom >= window.innerHeight - 0.5;
+      const x = document.querySelector('.dm-troca-x'); const el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+      const alpha = parseFloat((getComputedStyle(ov).backgroundColor.match(/[\d.]+\s*\)\s*$/) || ['1)'])[0]);
+      return { cobre, temX: !!x, dim: alpha >= 0.7, inerte: ov.contains(el) }; });
+    ok(!m.no && m.cobre && m.dim && m.inerte && m.temX, `troca @${W}×${H}: scrim escuro cobre o viewport + campanha inerte + X`);
+    await ctx.close();
+  }
+
+  // ---------- §344b-3: nenhum nome de inimigo parte palavra (todos os encontros e desafios) ----------
+  console.log('\n== §344b nomes nunca quebram no meio da palavra (Chromium) ==');
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
+    const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
+    await page.evaluate(BASE);
+    const bad = await page.evaluate(() => {
+      const ruins = [];
+      const checa = () => { document.querySelectorAll('.dm-ini__n').forEach(n => { const cs = getComputedStyle(n);
+        const quebraMeio = cs.wordBreak !== 'normal' || (cs.overflowWrap !== 'normal' && cs.overflowWrap !== 'initial');
+        const cortaH = n.scrollWidth > n.clientWidth + 1 && cs.whiteSpace !== 'normal';
+        const fontOk = parseFloat(cs.fontSize) >= 16;
+        if (quebraMeio || cortaH || !fontOk) ruins.push(n.textContent + ' [' + cs.fontSize + ' wb=' + cs.wordBreak + ' ow=' + cs.overflowWrap + ' corta=' + cortaH + ']'); }); };
+      try { (typeof campEncontros === 'function' ? campEncontros() : []).filter(e => e.aliados == null).forEach(e => { campTimePick = []; ir('montartime', { id: e.id }); render(); checa(); }); } catch (e) {}
+      try { (typeof desafios === 'function' ? desafios() : []).forEach(d => { desafioTimePick = []; ir('desafiomontar', { id: d.id }); render(); checa(); }); } catch (e) {}
+      return ruins.slice(0, 8);
+    });
+    ok(bad.length === 0, `nenhum nome de inimigo parte palavra / corta / < 16px (${bad.length ? bad.join(' | ') : 'ok'})`);
+    await ctx.close();
+  }
+
   await browser.close();
   console.log(`\n== MONTAR_MODOS — ${passes} asserções, ${falhas} falha(s) ==`);
   process.exit(falhas ? 1 : 0);

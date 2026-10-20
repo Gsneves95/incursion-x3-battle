@@ -726,12 +726,12 @@ function renderPvP(){
   }
   const naFila = pvpEstado === 'fila';
   const cfg = {
-    id: 'pvp', pick: pvpTime,
+    id: 'pvp', pick: pvpTime, klass: 'dm--pvp',
     titulo: 'MONTE SEU TIME',
     sublinha: 'PVP ONLINE',
     contextoHTML: _pvpContextoHTML(),
     vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
-    acimaVagasHTML: `<button class="dm-usarultimo" id="pvpultimo" ${_pvpUltimoOk() ? '' : 'disabled'}>↺ Usar último time</button>`,
+    timeAcaoHTML: `<button class="dm-usarultimo" id="pvpultimo" ${_pvpUltimoOk() ? '' : 'disabled'}>↺ Usar último time</button>`,
     validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.` }; },
     textoBotao: 'ENTRAR NA FILA',
     aoComecar: () => pvpEntrar(pvpRanqueado),
@@ -2627,7 +2627,7 @@ function _campTrocaMontar(){
   const gcfg = { pick: [], selNum: () => 0, _off: {}, gradeFull: true,
     onTap: trocar, kitLabel: k => ({ txt: 'ESCOLHER ' + ((HRM[k] || {}).nome || '').toUpperCase() }), onKitAcao: trocar };
   host.innerHTML = `<div class="dm-troca-ov" id="dmtrocaov"><div id="dommontar" class="dm-troca">
-    <button class="dmb dmb--voltar" id="dmtrocax" data-troca-x="1">‹ VOLTAR</button>
+    <button class="dm-troca-x" id="dmtrocax" data-troca-x="1" aria-label="Fechar sem trocar">✕</button>
     <div class="dm-cabid"><h1 class="dm-titulo cin">TROCAR O DEUS EMPRESTADO</h1><span class="dm-sub">Escolha um deus seu para esta vaga</span></div>
     ${_montGradeSecHTML(gcfg)}
     ${montKitAberto ? _montKitPanelHTML(montKitAberto, gcfg) : ''}
@@ -3578,17 +3578,29 @@ function _montLigarGrade(root, cfg){
   const onKit = cfg.onKitAcao || _montKitAcaoPadrao(cfg);
   qq('[data-kit-toggle]').forEach(b => b.onclick = () => onKit(b.dataset.kitToggle));
 }
+// §344b: nome da miniatura (inimigos do contexto) nunca quebra no MEIO da palavra. Com uma só linha,
+// encolhe a fonte de 20px até 16px; se ainda não couber, aí sim quebra — mas só entre palavras.
+function _montAjustarNomes(root){
+  const nodes = (root || document).querySelectorAll('.dm-ini__n');
+  nodes.forEach(n => {
+    n.style.whiteSpace = 'nowrap'; n.style.display = 'block'; n.style.webkitLineClamp = '';
+    let fs = 20; n.style.fontSize = fs + 'px';
+    while (n.scrollWidth > n.clientWidth && fs > 16) { fs -= 1; n.style.fontSize = fs + 'px'; }
+    if (n.scrollWidth > n.clientWidth) {   // nem a 16px coube numa linha → deixa quebrar entre palavras (2 linhas)
+      n.style.whiteSpace = 'normal'; n.style.display = '-webkit-box'; n.style.webkitLineClamp = '2';
+    }
+  });
+}
 function montadorTimeHTML(cfg){
   const time = _montTime(cfg), v = cfg.validar(time);
   cfg._off = v.porDeus || {};   // §344: cartões que violam a regra (Composição)
   const vagasHTML = cfg.vagas.map((vg, i) => _montVagaHTML(i, time[i], vg)).join('');
-  return `<div id="baselayer" class="dm2"><div id="dommontar">
+  return `<div id="baselayer" class="dm2"><div id="dommontar"${cfg.klass ? ` class="${cfg.klass}"` : ''}>
     <button class="dmb dmb--voltar" id="bvoltar" data-voltar="1">‹ VOLTAR</button>
     <div class="dm-cabid"><h1 class="dm-titulo cin">${H(cfg.titulo)}</h1><span class="dm-sub">${H(cfg.sublinha)}</span></div>
     <section class="dm-ctx">${cfg.contextoHTML}</section>
     <section class="dm-time">
-      <h2 class="dm-time__t">SEU TIME</h2>
-      ${cfg.acimaVagasHTML || ''}
+      <div class="dm-time__cab"><h2 class="dm-time__t">SEU TIME</h2>${cfg.timeAcaoHTML || ''}</div>
       <div class="dm-time__lista">${vagasHTML}</div>
     </section>
     ${_montGradeSecHTML(cfg)}
@@ -3610,6 +3622,7 @@ function ligarMontadorTime(cfg){
   const bc = q('#bcomecar'); if (bc && v.ok) bc.onclick = () => cfg.aoComecar(_montTime(cfg));
   if (cfg.aoLigar) cfg.aoLigar({ q, qq });   // §344: fiação extra por modo (segmentado, apelido, usar último, sair da fila)
   fit();
+  _montAjustarNomes(stage);   // §344b: ajusta os nomes das miniaturas (sem quebrar palavra)
 }
 
 // §342b: o nome CURTO do Domínio ("Domínio do Olimpo" → "Olimpo"; "de Asgard"→"Asgard"; "dos Céus"→"Céus").

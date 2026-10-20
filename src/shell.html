@@ -2645,16 +2645,20 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dm-ini{display:flex;flex-direction:column;align-items:center;gap:6px;width:80px}
 .dm-ini__p{width:80px;height:80px;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .dm-ini__p--mais{display:flex;align-items:center;justify-content:center;background:rgba(14,18,32,.9);color:#C9CED8;font-size:24px;font-weight:700}
-.dm-ini__n{font-size:20px;color:#C9CED8;max-width:80px;text-align:center;line-height:1.05;overflow-wrap:anywhere;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}  /* §344: nomes de bestiário (longos) quebram em 2 linhas, sem cortar no meio da palavra */
+.dm-ini__n{font-size:20px;color:#C9CED8;width:80px;text-align:center;line-height:1.05;word-break:normal;overflow-wrap:normal;hyphens:none;-webkit-hyphens:none;display:block;overflow:hidden;-webkit-box-orient:vertical}  /* §344b: NUNCA quebra no meio da palavra; a fonte encolhe (JS) até 16px e só então quebra entre palavras */
 .dm-ctx__chefes{display:flex;gap:16px}
 .dm-chefe{display:flex;flex-direction:column;align-items:center;gap:6px;width:130px}
 .dm-chefe__p{width:130px;height:100px;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(224,84,91,.75)}
 .dm-chefe__n{font-size:20px;color:#E8ECF4;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 /* bloco SEU TIME (esquerda, baixo) */
-.dm-time{position:absolute;left:57px;top:519px;width:528px;height:291px;box-sizing:border-box;border-radius:12px;padding:18px 20px;
-  background:linear-gradient(180deg,rgba(18,24,44,.92),rgba(10,14,26,.9));box-shadow:inset 0 0 0 1px rgba(201,164,76,.5);display:flex;flex-direction:column;gap:10px}
+.dm-time{position:absolute;left:57px;top:519px;width:528px;height:291px;box-sizing:border-box;border-radius:12px;padding:14px 20px;
+  background:linear-gradient(180deg,rgba(18,24,44,.92),rgba(10,14,26,.9));box-shadow:inset 0 0 0 1px rgba(201,164,76,.5);display:flex;flex-direction:column;gap:8px}
+.dm-time__cab{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dm-time__t{margin:0;font-size:24px;color:#F0D79A;font-weight:900;letter-spacing:.04em}
 .dm-time__lista{display:flex;flex-direction:column;gap:9px}
+/* §344b: o PvP tem o "↺ Usar último time" na linha do título → encurta o contexto e sobe/alonga o SEU TIME p/ as 3 vagas caberem */
+#dommontar.dm--pvp .dm-ctx{height:360px}
+#dommontar.dm--pvp .dm-time{top:470px;height:340px}
 .dm-vaga{height:72px;display:flex;align-items:center;gap:14px;padding:0 14px;border-radius:9px;background:rgba(10,13,22,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
 .dm-vaga__num{width:34px;flex:none;font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:#C9A44C;text-align:center}
 .dm-vaga__p{width:52px;height:52px;flex:none;border-radius:6px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
@@ -2750,7 +2754,7 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 .dm-pvp__ranque,.dm-pvp__rec{font-size:20px;color:#C9CED8;margin-bottom:6px}.dm-pvp__ranque b,.dm-pvp__rec b{color:#F0D79A}
 .dm-pvp__reveal{font-size:20px;color:#9AA4B8;margin:10px 0 0}
 /* "↺ Usar último time" acima das vagas */
-.dm-usarultimo{width:100%;box-sizing:border-box;height:72px;border:0;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:700;font-size:20px;color:#C9CED8;background:rgba(12,16,30,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);margin-bottom:10px}
+.dm-usarultimo{box-sizing:border-box;height:46px;border:0;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:18px;color:#C9CED8;background:rgba(12,16,30,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4);padding:0 14px;white-space:nowrap}
 .dm-usarultimo[disabled]{color:#5c6276;cursor:default;box-shadow:inset 0 0 0 1px rgba(80,88,110,.4)}
 /* grade travada (PvP na fila) */
 .dm-grade--travada{filter:grayscale(.7) brightness(.5);pointer-events:none}
@@ -2770,6 +2774,9 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 /* seletor de troca — host no #viewport (fora do stage), escala própria a 1846 */
 .dm-troca-ov{position:fixed;inset:0;z-index:60;background:rgba(4,6,14,.78)}
 #dommontar.dm-troca{background:none}
+/* §344b: X claro (≥72px) p/ fechar a troca sem gravar campSwap */
+.dm-troca-x{position:absolute;top:24px;right:57px;width:88px;height:88px;border:0;border-radius:14px;cursor:pointer;
+  background:rgba(14,18,32,.94);box-shadow:inset 0 0 0 2px rgba(201,164,76,.6);color:#F0D79A;font-size:46px;font-weight:700;line-height:1;z-index:4}
 
 /* ======================= §335 — BATALHA (design do dono, tela fixa 1846×852) ======================= */
 /* A moldura (#stage) vira a canvas #03050B sem borda; o #batalha (1846×852) se escala via JS (fit). */

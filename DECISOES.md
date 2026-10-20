@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §344b · Três ajustes no §344 (3ª vaga do PvP, painel de troca, nomes partidos)
+
+Capturas do §344 em 1846×852 mostraram três defeitos; o resto da tela ficou como estava.
+
+**1. PvP — a 3ª vaga passava da tela.** O "↺ Usar último time" era uma linha própria ACIMA das vagas e empurrava o bloco
+SEU TIME: a 3ª vaga saía dos 852. Decisão: o botão foi para a MESMA linha do título "SEU TIME" (à direita, num
+`.dm-time__cab` flex), e o cfg `acimaVagasHTML` virou `timeAcaoHTML` (ação na linha do título). Só no PvP, o contexto
+encurta (`.dm--pvp .dm-ctx` 360px) e o bloco SEU TIME sobe/alonga (`.dm--pvp .dm-time` top 470 / h 340) para as 3 vagas
+caberem. Recusado: diminuir as vagas (perderia toque ≥72px) ou rolar a lista (o dono quer as 3 à vista).
+
+**2. Campanha — o painel de troca não cobria a tela.** A campanha continuava visível e clicável atrás, sem X óbvio.
+Decisão: o scrim `.dm-troca-ov` (position:fixed; inset:0; z-index:60; rgba ~0.78) cobre o viewport inteiro e escurece a
+campanha; como está acima dela no empilhamento, nenhum toque passa. O "‹ VOLTAR" virou um **X claro** (`.dm-troca-x`, 88px
+no design ≥ 72px) no topo direito, ao lado do título "TROCAR O DEUS EMPRESTADO" + sublinha "Escolha um deus seu para esta
+vaga". Fecha por X, toque no fundo e voltar do Android — sempre sem gravar `campSwap`.
+
+**3. Nomes das miniaturas partiam no meio da palavra.** "Elemental" aparecia como "Elementa/l" (herança do
+`word-break:break-word` provisório do §344). Decisão: `.dm-ini__n` fica com `word-break:normal`/`overflow-wrap:normal`
+(nunca parte palavra) e `width:80px`; `_montAjustarNomes(root)` (chamado no fim de `ligarMontadorTime`) mede cada nome e,
+numa linha, **encolhe a fonte de 20px até 16px**; só se ainda não couber é que deixa quebrar — e aí só entre palavras
+(2 linhas). Vale para todos os inimigos de todos os encontros da campanha e dos desafios de composição.
+
+Provas (`montar_modos.test.js`, Chromium @1846 e @780): as 3 vagas do PvP cabem no bloco SEU TIME e nos 852; o scrim da
+troca cobre o viewport, escurece, é inerte à campanha e tem X; nenhum nome de inimigo parte palavra, corta ou fica < 16px.
+
+---
+
 ## §344 · O MONTADOR DE TIME (§342) aplicado à Campanha, à Composição e ao PvP
 
 O dono aprovou o montador do Domínio e quis o MESMO modelo nas outras telas de montar time. A base do §342
