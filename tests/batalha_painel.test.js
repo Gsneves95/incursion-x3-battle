@@ -65,19 +65,20 @@ const SIT={
   s=await sit(SIT['efeito']); ok(/TURNOS/.test(s.meio)&&/APLICADO POR/.test(s.meio), 'efeito: o meio mostra TURNOS | APLICADO POR'); ok(s.minis>0, 'efeito: minis do portador');
   s=await sit(SIT['resumo']); ok(/RESUMO/.test(s.txt), 'resumo: título RESUMO'); ok(s.minis>0, 'resumo: minis do último a agir');
 
-  // §334: nenhum botão em DISCO mostra pixel claro nos cantos (a arte foi recortada no círculo).
-  if(sharp){
+  // §353b: a forma DISCO foi APOSENTADA — toda arte de habilidade é CHEIA. Nenhum botão de habilidade recorta a arte
+  // em círculo (sem .slot__art--disco, sem clip-path:circle); os botões de habilidade usam a arte cheia.
+  {
     await page.evaluate(BOOT); await page.waitForTimeout(60);
-    const discos=await page.evaluate(()=>[...document.querySelectorAll('.bt-skill[data-sk]')].filter(b=>b.querySelector('.slot__art--disco'))
-      .map(b=>{const r=b.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}).filter(b=>b.w>8&&b.h>8));
-    ok(discos.length>0, '§334: há botões em DISCO para checar os cantos');
-    for(const b of discos.slice(0,10)){
-      const buf=await page.screenshot({clip:{x:b.x,y:b.y,width:b.w,height:b.h}});
-      const {data,info}=await sharp(buf).raw().toBuffer({resolveWithObject:true});
-      const W=info.width,H=info.height,chn=info.channels, L=(x,y)=>{const o=(y*W+x)*chn;return 0.299*data[o]+0.587*data[o+1]+0.114*data[o+2];};
-      const mm=3, cantos=[L(mm,mm),L(W-1-mm,mm),L(mm,H-1-mm),L(W-1-mm,H-1-mm)].map(v=>Math.round(v));
-      ok(!cantos.some(v=>v>150), `§334: botão DISCO sem pixel claro nos cantos (lumas ${cantos.join(',')})`);
-    }
+    const r=await page.evaluate(()=>{
+      const btns=[...document.querySelectorAll('.bt-skill[data-sk]')];
+      const discos=btns.filter(b=>b.querySelector('.slot__art--disco')).length;
+      const cheias=btns.filter(b=>b.querySelector('img.slot__art--cheia')).length;
+      const clip=btns.some(b=>{const a=b.querySelector('img.slot__art'); if(!a) return false; const cs=getComputedStyle(a); return /circle/i.test(cs.clipPath||cs.webkitClipPath||'');});
+      return {discos,cheias,clip,total:btns.length};
+    });
+    ok(r.discos===0, `§353b: nenhum botão de habilidade em DISCO (${r.discos})`);
+    ok(!r.clip, '§353b: nenhuma arte de habilidade com clip-path circular');
+    ok(r.cheias>0, `§353b: os botões de habilidade usam a arte CHEIA (${r.cheias}/${r.total})`);
   }
   await ctx.close(); await browser.close();
   console.log(falhas===0?'\n>>> BATALHA_PAINEL OK':`\n>>> ${falhas} FALHA(S)`);

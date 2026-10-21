@@ -6,6 +6,26 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §353b · Toda arte de habilidade é CHEIA — forma "disco" aposentada
+
+No §353, o classificador §332/§334 marcou 29 das 401 artes NOVAS como DISCO e as recortava num círculo (raio ~0.47–0.48).
+Mas TODAS as artes novas do dono são **quadradas e cheias**: as 29 só têm cantos claros/brilho (ares-habilidade,
+atena-passiva, babi-milagre/passiva, freyja-passiva…), e o recorte circular CORTAVA os cantos da própria arte.
+
+**Decisão: o padrão agora é arte QUADRADA CHEIA. A forma DISCO (arte redonda sobre fundo) não existe mais no acervo.**
+- `classificarArtesSkill` (tools/build.js) foi simplificada: varre `web/skills/*.webp` e marca tudo `{forma:'cheia'}`
+  (o mapa `SKILL_ARTE_FORMA` segue existindo p/ o render não precisar de caso especial). Saiu toda a leitura de pixels/
+  medição de raio (§332/§334).
+- `slot()` (src/ui/base.js): removido o recorte circular (clip-path por raio) e a classe `slot__art--disco`; a arte de
+  habilidade sempre entra como `slot__art--cheia`, preenchendo o botão com o arredondamento do PRÓPRIO botão
+  (object-fit cover). Build: **401 cheia / 0 disco**.
+
+Provas: `batalha_inspecao.test.js` (§8) reescrito p/ a regra nova (todas cheia; nenhum raio; render sem `slot__art--disco`
+nem `clip-path:circle`); `batalha_painel.test.js` (o antigo §334 que exigia botões disco) trocado por "nenhum botão de
+habilidade em disco/clip, todos cheia"; `artes_cheias.test.js` NOVO (Chromium): o canto interno do botão de uma arte de
+fundo claro (atena-passiva) mostra PIXELS DA ARTE (luma alta), não o fundo escuro, e nenhuma tela (batalha/montador/
+Coleção) aplica clip circular. Suíte + build verdes. Captura `353b-batalha-1846x852` (Ares e Atena no time, duas das 29).
+
 ## §353 · NOVAS ARTES DE HABILIDADE (todas as 401), do artes-256.zip do dono
 
 O dono refez TODAS as artes de habilidade no formato QUADRADO e cheio (401 JPG 256×256: 100 deuses ×

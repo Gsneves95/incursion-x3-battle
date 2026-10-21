@@ -392,55 +392,15 @@ const cenaArte = {
   oponente: fs.existsSync(path.join(raiz, 'web', 'cena', 'turno_oponente.webp')) ? 1 : 0
 };
 
-// §332/§334: CLASSIFICA cada arte de habilidade (web/skills/*.webp) no build, sem lista à mão — arte nova é
-// reclassificada sozinha no próximo build. CHEIA = quadrada, vai à borda. DISCO = redonda sobre um fundo, de dois tipos:
-//  (§332) fundo LISO: os 4 cantos têm a mesma cor; mede o raio pela diferença de cor ao fundo.
-//  (§334) fundo CLARO com brilho/degradê: os 4 MEIOS das bordas são claros (luma>190) mesmo que os cantos tenham
-//         vinheta e difiram entre si; mede o raio partindo da aresta clara e entrando até a transição para o disco.
-// O render usa isso: cheia preenche o botão; disco recorta no raio medido (sem anel, e os cantos some).
-async function classificarArtesSkill() {
+// §353b: TODA arte de habilidade é CHEIA (preenche o botão com o arredondamento do próprio botão). As artes novas do
+// dono (§353) são todas quadradas e cheias; a classificação disco/raio (§332/§334) foi APOSENTADA — recortar em círculo
+// cortava os cantos da arte. O mapa segue existindo (SKILL_ARTE_FORMA), com tudo 'cheia', para o render não precisar de
+// caso especial. Arte redonda sobre fundo não existe mais no acervo.
+function classificarArtesSkill() {
   const forma = {};
   const dir = path.join(raiz, 'web', 'skills');
   if (!fs.existsSync(dir)) return forma;
-  let sharp; try { sharp = require('sharp'); } catch (e) { console.warn('sharp ausente — artes de habilidade tratadas como CHEIA'); return forma; }
-  const N = 64, dist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
-  const luma = p => 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2];
-  for (const f of fs.readdirSync(dir).filter(x => /\.webp$/i.test(x))) {
-    const key = f.replace(/\.webp$/i, '');
-    try {
-      const { data, info } = await sharp(path.join(dir, f)).resize(N, N, { fit: 'fill' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-      const ch = info.channels, px = (x, y) => { const o = (y * N + x) * ch; return [data[o], data[o + 1], data[o + 2]]; };
-      const patch = (cx, cy) => { let r = 0, g = 0, b = 0, n = 0; for (let dx = 0; dx < 4; dx++) for (let dy = 0; dy < 4; dy++) { const p = px(cx + dx, cy + dy); r += p[0]; g += p[1]; b += p[2]; n++; } return [r / n, g / n, b / n]; };
-      const c = [patch(0, 0), patch(N - 4, 0), patch(0, N - 4), patch(N - 4, N - 4)];
-      let maxd = 0; for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) maxd = Math.max(maxd, dist(c[i], c[j]));
-      const cantosUnif = maxd <= 30;   // §332: fundo liso (4 cantos iguais)
-      // §334: fundo CLARO — o meio de cada borda é onde o disco mais se aproxima da aresta; ali aparece o brilho claro.
-      const mids = [patch(N / 2 - 2, 0), patch(N / 2 - 2, N - 4), patch(0, N / 2 - 2), patch(N - 4, N / 2 - 2)];
-      const midsClaros = mids.every(p => luma(p) > 190);
-      if (!cantosUnif && !midsClaros) { forma[key] = { forma: 'cheia' }; continue; }   // cantos diferentes e escuros → vai à borda
-      const cen = N / 2, raios = [];
-      if (cantosUnif) {
-        // §332: mede o raio pela diferença de cor ao fundo uniforme (centro → fora)
-        const bg = [0, 1, 2].map(k => (c[0][k] + c[1][k] + c[2][k] + c[3][k]) / 4);
-        for (let a = 0; a < 16; a++) { const ang = a * Math.PI / 8, dx = Math.cos(ang), dy = Math.sin(ang);
-          let last = 0; for (let r = 1; r < cen; r++) { const x = Math.round(cen + dx * r), y = Math.round(cen + dy * r); if (x < 0 || y < 0 || x >= N || y >= N) break; if (dist(px(x, y), bg) > 40) last = r; }
-          raios.push(last / N); }
-      } else {
-        // §334: fundo CLARO/brilho — por raio, parte da ARESTA (o brilho) e entra até a transição para o disco (moldura
-        // ou conteúdo que difere do brilho). Pula raios cuja aresta é escura (vinheta de canto), que não medem o disco.
-        for (let a = 0; a < 16; a++) { const ang = a * Math.PI / 8, dx = Math.cos(ang), dy = Math.sin(ang);
-          const ex = Math.round(cen + dx * (cen - 1)), ey = Math.round(cen + dy * (cen - 1));
-          if (ex < 0 || ey < 0 || ex >= N || ey >= N) continue;
-          const edge = px(ex, ey); if (luma(edge) < 170) continue;   // aresta escura (vinheta) — pula este raio
-          let discR = 0; for (let r = cen - 1; r >= 1; r--) { const x = Math.round(cen + dx * r), y = Math.round(cen + dy * r); if (x < 0 || y < 0 || x >= N || y >= N) continue; if (dist(px(x, y), edge) > 45) { discR = r; break; } }
-          if (discR > 0) raios.push(discR / N); }
-      }
-      if (!raios.length) { forma[key] = { forma: 'disco', raio: 0.46 }; continue; }   // claro sem leitura confiável
-      raios.sort((a, b) => a - b);
-      const raio = Math.min(0.5, Math.max(0.3, raios[Math.floor(raios.length / 2)]));   // mediana (robusta a um raio ruidoso)
-      forma[key] = { forma: 'disco', raio: +raio.toFixed(3) };
-    } catch (e) { forma[key] = { forma: 'cheia' }; }   // falha ao ler → preenche (nunca um anel)
-  }
+  for (const f of fs.readdirSync(dir).filter(x => /\.webp$/i.test(x))) forma[f.replace(/\.webp$/i, '')] = { forma: 'cheia' };
   return forma;
 }
 

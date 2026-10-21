@@ -2,6 +2,16 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §353b · Toda arte de habilidade é CHEIA — forma "disco" aposentada
+- No §353 o classificador marcava 29 artes como disco (cantos claros) e as recortava em círculo, cortando os cantos da
+  arte. Decisão: o padrão agora é ARTE QUADRADA CHEIA; disco não existe mais no acervo.
+- `classificarArtesSkill` (build.js) simplificada: marca tudo `{forma:'cheia'}` (sem leitura de pixel/raio). `slot()`
+  (base.js): removido o clip-path circular e a classe `slot__art--disco`; arte sempre `slot__art--cheia` (object-fit cover,
+  arredondamento do próprio botão). Build: **401 cheia / 0 disco**.
+- Provas: `batalha_inspecao §8` reescrito (todas cheia, sem raio, sem clip); `batalha_painel` trocado (nenhum botão disco/
+  clip, todos cheia); `artes_cheias.test.js` NOVO (Chromium: o canto interno de atena-passiva mostra pixels da arte, não o
+  fundo escuro; nenhuma tela recorta em círculo). Suíte + build verdes. Captura `353b-batalha-1846x852` (Ares + Atena).
+
 ## ★ §353 · NOVAS ARTES DE HABILIDADE (todas as 401) do artes-256.zip do dono
 - O dono refez TODAS as artes (401 JPG 256×256 quadradas/cheias) e subiu `artes-256.zip` na raiz. Um matcher associou
   cada arquivo a deus+slot (normalizando sem acento/maiúscula/pontuação; deus pelo nome/chave, candidato mais longo

@@ -348,13 +348,10 @@ function slot(chave,glifo,cor,tam,redondo){
   if(arteGod)inner=`<img src="${arteGod}" alt="">`;
   else if(bestKey)inner=`<img class="slot__art" src="bestiario/${H(bestKey)}.webp" alt="" loading="lazy" onerror="this.remove()">`+glifoHtml;
   else if(ehSkill){
-    // §332: arte CHEIA preenche o botão (object-fit cover, cantos do botão); arte DISCO recorta num círculo no raio
-    // MEDIDO no build (um pouco p/ dentro, sem anel) e os cantos mostram o fundo escuro. A forma vem de SKILL_ARTE_FORMA.
-    const fm=(typeof SKILL_ARTE_FORMA!=='undefined'&&SKILL_ARTE_FORMA&&SKILL_ARTE_FORMA[arq])||null;
-    const disco=fm&&fm.forma==='disco';
-    const R=disco?Math.max(28,(fm.raio*100-2)).toFixed(1):0;
-    const st=disco?` style="clip-path:circle(${R}% at 50% 50%);-webkit-clip-path:circle(${R}% at 50% 50%)"`:'';
-    inner=`<img class="slot__art ${disco?'slot__art--disco':'slot__art--cheia'}" src="skills/${H(arq)}.webp" alt="" loading="lazy" onerror="this.remove()"${st}>`;
+    // §353b: TODA arte de habilidade é CHEIA — preenche o botão (object-fit cover, no arredondamento do próprio botão).
+    // O recorte circular (disco, §332/§334) foi aposentado: as artes do dono são quadradas e cheias, e o clip cortava
+    // os cantos da arte. O monograma segue como reserva (o onerror remove o <img> e o `:has` do CSS o reexibe).
+    inner=`<img class="slot__art slot__art--cheia" src="skills/${H(arq)}.webp" alt="" loading="lazy" onerror="this.remove()">`;
   }
   else inner=glifoHtml;
   return `<div class="slot${redondo?' slot--round':''}" data-slot="${H(chave)}">`+inner+`</div>`;
