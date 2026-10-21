@@ -3401,6 +3401,81 @@ function abrirHistoricoDominios(){
 }
 
 /* ---------- HUB / ENTRADA de UM Domínio (rota 'dominio', params.cultura) ---------- */
+/* ===================== §348 — HUB DO DOMÍNIO (renderDominioHub) no modelo do dono =====================
+   Tela fixa 1846×852 escalada (§339/§342): cabeçalho + trilha de 40 degraus + 3 colunas (SEU TIME · o meio
+   por estado · recordes/chefe final). Estados: nova corrida · em andamento · chefe vencido · encerrada ·
+   conquistada. Alvos de toque ≥72px; corpo ≥20px; "build"/"conta" somem (classe emdomhub). */
+// inimigos de UM nível da escada da SEMANA (confere com o que a corrida de fato joga — domEscadaSemana/domDefNivel).
+function domInimigosNivel(lad, weekIdx, nivel){
+  const esc = domEscadaSemana(lad, weekIdx || 0);
+  const def = (esc.niveis || [])[nivel - 1];
+  return (def && def.inimigos) || [];
+}
+// uma UNIDADE do time (coluna esquerda): retrato + nome + orbe/função + barra de vida grande (verde/amarela/vermelha) ou CAÍDO.
+function _domHubUnHTML(k, vida){
+  const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' };
+  const max = (typeof GODS !== 'undefined' && GODS[k] && GODS[k].hp) || 120;
+  const vivo = vida ? !!vida.vivo : true;
+  const hp = vivo ? (vida ? Math.max(0, Math.round(vida.hp)) : max) : 0;
+  const frac = Math.max(0, Math.min(1, hp / max));
+  const cor = frac > 0.5 ? '#58D68D' : frac > 0.25 ? '#E9C25A' : '#E0545B';   // §348: verde >50% · amarela até 25% · vermelha abaixo
+  return `<div class="dh-un${vivo ? '' : ' dh-un--caido'}" data-un="${H(k)}">
+    <div class="dh-un__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 32, false)}</div>
+    <div class="dh-un__id">
+      <b class="dh-un__n">${H(g.nome)}</b>
+      <div class="dh-un__meta">${orbe(g.elem, 22)}<span class="dh-un__f">${H(g.funcao || '')}</span>
+        ${vivo ? `<span class="dh-un__hp">${hp}<span>/${max}</span></span>` : `<span class="dh-un__hp dh-un__hp--caido">CAÍDO</span>`}</div>
+      <div class="dh-un__bar"><i style="width:${Math.round(frac * 100)}%;background:${cor}"></i></div>
+    </div>
+  </div>`;
+}
+// trilha dourada de N degraus: vencidos cheios, ATUAL com marcador brilhante maior, futuros apagados; coroa nos chefes;
+// número só no 1, nos chefes e no atual.
+function _domHubTrilhaHTML(total, cleared, atual){
+  const nos = [];
+  for (let n = 1; n <= total; n++){
+    const chefe = (n % DOM_FAIXA === 0), done = n <= cleared, cur = (atual > 0 && n === atual);
+    const left = total > 1 ? ((n - 1) / (total - 1) * 100) : 50;
+    const mostraNum = (n === 1 || chefe || cur);
+    const cls = `dh-no${done ? ' is-done' : ''}${cur ? ' is-cur' : ''}${chefe ? ' dh-no--chefe' : ''}`;
+    nos.push(`<span class="${cls}" style="left:${left.toFixed(3)}%" data-no="${n}">${chefe ? '<i class="dh-no__coroa">♛</i>' : ''}<i class="dh-no__p"></i>${mostraNum ? `<i class="dh-no__n">${n}</i>` : ''}</span>`);
+  }
+  const goldTo = atual > 0 ? atual : cleared;
+  const goldFrac = total > 1 ? Math.max(0, (goldTo - 1) / (total - 1) * 100) : 0;
+  return `<div class="dh-rail"><i class="dh-rail__linha"></i><i class="dh-rail__on" style="width:${goldFrac.toFixed(3)}%"></i>${nos.join('')}</div>`;
+}
+// inimigo do próximo nível (coluna do meio): retrato + nome + orbe; se é chefe, rótulo CHEFE + moldura vermelha.
+function _domHubFoeHTML(k, chefe){
+  const g = HRM[k] || { nome: k, elem: 'Umbra' };
+  return `<div class="dh-foe${chefe ? ' dh-foe--chefe' : ''}" data-foe="${H(k)}">
+    <div class="dh-foe__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 28, false)}${chefe ? '<span class="dh-foe__tag">CHEFE</span>' : ''}</div>
+    <div class="dh-foe__n">${H(g.nome)}</div>
+    <div class="dh-foe__meta">${orbe(g.elem, 24)}</div>
+  </div>`;
+}
+// trilha do BÔNUS de dano (0% → +teto, marcas de +10%), com preenchimento até o bônus atual.
+function _domHubBonusHTML(bonus, teto){
+  const steps = Math.max(1, Math.round(teto / DOM_PASSO_BONUS));
+  const frac = teto > 0 ? Math.max(0, Math.min(1, bonus / teto)) : 0;
+  const marks = [];
+  for (let i = 0; i <= steps; i++){ const f = i / steps;
+    marks.push(`<span class="dh-bon__mk" style="left:${(f * 100).toFixed(2)}%"><i></i><em>${i === 0 ? '0%' : '+' + Math.round(f * teto * 100) + '%'}</em></span>`); }
+  return `<div class="dh-bon">
+    <div class="dh-bon__top"><span>Bônus de dano</span><b>+${Math.round(bonus * 100)}%</b></div>
+    <div class="dh-bon__rail"><i class="dh-bon__fill" style="width:${(frac * 100).toFixed(2)}%"></i><i class="dh-bon__knob" style="left:${(frac * 100).toFixed(2)}%"></i>${marks.join('')}</div>
+  </div>`;
+}
+// ícones em SVG dos prêmios (cruz de cura · asas com ankh · espada com seta p/ cima).
+function _domPremioIcon(tipo){
+  if (tipo === 'cura') return `<svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="22" fill="none" stroke="#58D68D" stroke-width="3"/><path d="M28 16v24 M16 28h24" stroke="#58D68D" stroke-width="5" stroke-linecap="round"/></svg>`;
+  if (tipo === 'reviver') return `<svg viewBox="0 0 56 56" aria-hidden="true"><g fill="none" stroke="#E9C25A" stroke-width="3" stroke-linecap="round"><ellipse cx="28" cy="18" rx="7" ry="9"/><path d="M28 27v20 M18 35h20"/><path d="M15 30c-7 2-11 6-12 12 7-1 11-4 14-8 M41 30c7 2 11 6 12 12-7-1-11-4-14-8"/></g></svg>`;
+  return `<svg viewBox="0 0 56 56" aria-hidden="true"><g fill="none" stroke="#E0545B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M28 10l6 9-6 4-6-4z" fill="#E0545B"/><path d="M28 23v21 M22 39h12"/></g><g fill="none" stroke="#E9C25A" stroke-width="3" stroke-linecap="round"><path d="M42 24v-8 M38 20l4-4 4 4"/></g></svg>`;
+}
+function _domHubPremioCard(tipo, titulo, sub){
+  return `<button class="dompremio dh-premio" data-premio="${tipo}"><span class="dh-premio__ic">${_domPremioIcon(tipo)}</span><span class="dh-premio__t">${H(titulo)}</span><span class="dh-premio__s">${H(sub)}</span></button>`;
+}
+function _domCoroaSVG(){ return `<svg viewBox="0 0 170 60" class="dh-crownsvg" aria-hidden="true"><g fill="none" stroke="#C9A44C" stroke-width="2.5" stroke-linecap="round"><path d="M40 50c-16-3-27-13-31-27 M130 50c16-3 27-13 31-27"/></g><g fill="#E9C25A"><path d="M55 44l-9-24 18 13 21-21 21 21 18-13-9 24z"/><circle cx="46" cy="18" r="4"/><circle cx="85" cy="9" r="5"/><circle cx="124" cy="18" r="4"/></g></svg>`; }
+
 function renderDominioHub(){
   const cultura = ((paramsAtuais() || {}).cultura) || (dominio && dominio.cultura);
   const lad = dominioPorCultura(cultura);
@@ -3412,75 +3487,122 @@ function renderDominioHub(){
   const c = String(lad.cultura).toLowerCase();
   const run = dominioRun(c), sem = semanaInfo(lad), total = domTotalNiveis(lad);
   const recSem = recSemanaDominio(c, sem.chave), recAnt = recSemanaDominio(c, sem.chaveAnt), melhor = dominioMelhor(c);
-  // §325: o TIME do jogador (travado pela corrida, regra B) mostra a vida que carrega; o trio ICÔNICO é o
-  // chefe final INIMIGO da cultura (mostrado como ameaça, sem vida do jogador).
-  const timeDaRun = (run && run.time && run.time.length === 3) ? run.time : null;
-  const timeTrioHTML = timeDaRun ? timeDaRun.map((k, i) => dominioFichaHTML(k, run.vida ? run.vida[i] : { hp: (GODS[k] && GODS[k].hp) || 120, vivo: true })).join('') : '';
-  const inimigoTrioHTML = lad.trio.map(k => dominioFichaHTML(k, null)).join('');
-  // bloco de recordes (semana · anterior a bater · melhor de sempre) — comum a vários estados
-  const recordesHTML = `<div class="domsec__linha"><span>Recorde desta semana</span><b>${recSem > 0 ? 'nível ' + recSem : '—'}</b></div>
-      <div class="domsec__linha"><span>Recorde anterior (a bater)</span><b>${recAnt > 0 ? 'nível ' + recAnt : '— 1ª semana'}</b></div>
-      <div class="domsec__linha"><span>Melhor de sempre</span><b>${melhor > 0 ? 'nível ' + melhor : '—'}</b></div>`;
+  const semNum = parseInt(String(sem.chave).split('W')[1] || '0', 10) || 0;
 
-  let corpo = '';
-  if (run && run.status === 'ativo' && run.aguardandoPremio){
-    const opc = domPremiosDisponiveis(run);
-    const caido = run.vida.findIndex(x => !x.vivo);
-    const bonusPct = Math.round((run.bonus || 0) * 100), tetoPct = Math.round(lad.tetoBonusDano * 100);
-    const cartao = (tipo, tit, sub) => `<button class="b b--md dompremio" data-premio="${tipo}"><span class="dompremio__t">${H(tit)}</span><span class="dompremio__s">${H(sub)}</span></button>`;
-    const cards = [];
-    if (opc.includes('cura')) cards.push(cartao('cura', 'Cura total', 'Todos os vivos voltam à vida cheia'));
-    if (opc.includes('reviver')) cards.push(cartao('reviver', 'Reviver', 'Traz ' + domNomeDeus(lad.trio[caido]) + ' de volta com ' + Math.min((GODS[lad.trio[caido]] && GODS[lad.trio[caido]].hp) || 120, DOM_HP_REVIVER) + ' de vida'));
-    if (opc.includes('bonus')) cards.push(cartao('bonus', 'Bônus de dano', '+' + Math.round(DOM_PASSO_BONUS * 100) + '% (agora +' + bonusPct + '%, teto +' + tetoPct + '%)'));
-    corpo = `<div class="domsec"><div class="domsec__sel">CHEFE VENCIDO — nível ${run.profundidade}</div>
-      <p class="domsec__msg">Escolha a recompensa da corrida antes de descer.</p>
-      <div class="dompremios">${cards.join('')}</div></div>`;
-  } else if (run && run.status === 'ativo'){
-    const bonusPct = Math.round((run.bonus || 0) * 100);
-    corpo = `<div class="domsec">
-      <div class="domsec__linha"><span>Nível atual</span><b>${run.nivel} / ${total}</b></div>
-      ${recordesHTML}
-      <div class="domsec__linha"><span>Bônus de dano</span><b>+${bonusPct}%</b></div>
-      <div class="domsec__rot">Seu time (travado nesta corrida)</div>
-      <div class="domtrio">${timeTrioHTML}</div>
-      <button class="b b--primary b--lg" id="ddescer">Descer ao nível ${run.nivel} ›</button>
-    </div>`;
-  } else if (run && run.status === 'morto'){
-    corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--morto">CORRIDA ENCERRADA</div>
-      <p class="domsec__msg">Seus deuses tombaram no <b>nível ${run.profundidade}</b>. A corrida zera — a vida, o bônus e a rede voltam do começo. O recorde fica.</p>
-      ${recordesHTML}
-      <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
-  } else if (run && run.status === 'completo'){
-    corpo = `<div class="domsec"><div class="domsec__sel domsec__sel--venceu">DOMÍNIO CONQUISTADO</div>
-      <p class="domsec__msg">Você desceu os ${total} níveis do ${H(lad.nome)} desta semana. Uma nova corrida recomeça do topo.</p>
-      ${recordesHTML}
-      <button class="b b--primary b--lg" id="dnova">Nova corrida</button></div>`;
+  // estado único da corrida → governa o cabeçalho, a trilha e a coluna do meio.
+  let estado;
+  if (run && run.status === 'ativo' && run.aguardandoPremio) estado = 'premio';
+  else if (run && run.status === 'ativo') estado = 'andamento';
+  else if (run && run.status === 'morto') estado = 'morto';
+  else if (run && run.status === 'completo') estado = 'completo';
+  else estado = 'nova';
+  const prof = run ? (run.profundidade || 0) : 0;
+
+  // ---- cabeçalho: sublinha por estado (SEM anotação interna — §348) ----
+  const subMap = {
+    nova: `NOVA CORRIDA · SEMANA ${semNum}`,
+    andamento: `CORRIDA EM ANDAMENTO · SEMANA ${semNum}`,
+    premio: `CORRIDA EM ANDAMENTO · SEMANA ${semNum}`,
+    morto: `CORRIDA ENCERRADA`,
+    completo: `DOMÍNIO CONQUISTADO`,
+  };
+  const artArq = domArteArquivo('dominio', lad.cultura);
+  const arteHTML = temArteDom(artArq) ? `<img class="dh-arte__img" src="banners/dominios/${artArq}.webp" alt="">` : '';
+
+  // ---- trilha: vencidos/atual por estado ----
+  let cleared = 0, atual = 0;
+  if (estado === 'completo'){ cleared = total; atual = 0; }
+  else if (estado === 'morto'){ cleared = prof; atual = 0; }
+  else if (estado === 'premio' || estado === 'andamento'){ cleared = prof; atual = run.nivel; }
+  else { cleared = 0; atual = 1; }   // nova
+  let cap;
+  if (estado === 'premio') cap = `Chefe vencido no nível ${prof} · escolha uma recompensa para a corrida.`;
+  else if (estado === 'andamento') cap = `Nível ${run.nivel} de ${total} · próximo chefe no nível ${Math.ceil(run.nivel / DOM_FAIXA) * DOM_FAIXA}`;
+  else if (estado === 'morto') cap = `Corrida encerrada no nível ${prof} de ${total}.`;
+  else if (estado === 'completo') cap = `Domínio conquistado · ${total} de ${total} níveis.`;
+  else cap = `Nível 1 de ${total} · próximo chefe no nível ${DOM_FAIXA}`;
+
+  // ---- coluna esquerda: SEU TIME ----
+  const mostraLock = (estado === 'andamento' || estado === 'premio');
+  let timeHTML;
+  if (estado === 'nova'){
+    timeHTML = [1, 2, 3].map(n => `<div class="dh-un dh-un--vazia"><div class="dh-un__p dh-un__p--vazia">+</div><div class="dh-un__id"><b class="dh-un__n">Vaga ${n}</b><span class="dh-un__hint">Você monta o time ao começar</span></div></div>`).join('');
   } else {
-    corpo = `<div class="domsec">
-      ${recordesHTML}
-      <p class="domsec__msg">Você <b>monta o seu time</b> e desce a <b>escada da semana</b>: cada nível é uma batalha 3×3 contra deuses ${H(lad.cultura)}, a <b>vida carrega</b> com cura parcial, e a cada 10 níveis um <b>chefe</b>. O time trava pela corrida. Bata o seu recorde da semana passada.</p>
-      <div class="domsec__rot">Chefe final do Domínio</div>
-      <div class="domtrio">${inimigoTrioHTML}</div>
-      <button class="b b--primary b--lg" id="dentrar">Montar time e começar ›</button></div>`;
+    timeHTML = (run.time || []).map((k, i) => _domHubUnHTML(k, run.vida ? run.vida[i] : null)).join('');
+  }
+  const bonusHTML = (estado === 'nova') ? '' : _domHubBonusHTML(run.bonus || 0, lad.tetoBonusDano || DOM_TETO_BONUS);
+
+  // ---- coluna do meio: por estado ----
+  let meio = '';
+  if (estado === 'andamento'){
+    const nivel = run.nivel, chefe = domEhChefe(nivel);
+    const foes = domInimigosNivel(lad, run.semanaIdx || 0, nivel).map(k => _domHubFoeHTML(k, chefe)).join('');
+    meio = `<h2 class="dh-meio__t cin">PRÓXIMO NÍVEL — ${nivel}</h2>
+      <div class="dh-foes">${foes}</div>
+      <div class="dh-meio__sep"></div>
+      <p class="dh-meio__nota">A vida carrega entre os níveis. A cada chefe vencido,<br>você escolhe uma recompensa.</p>
+      <button class="dhb dhb--go" id="ddescer">DESCER AO NÍVEL ${nivel} ›</button>`;
+  } else if (estado === 'premio'){
+    const opc = domPremiosDisponiveis(run), caido = run.vida.findIndex(x => !x.vivo);
+    const bonusPct = Math.round((run.bonus || 0) * 100), tetoPct = Math.round((lad.tetoBonusDano || DOM_TETO_BONUS) * 100);
+    const cards = [];
+    if (opc.includes('cura')) cards.push(_domHubPremioCard('cura', 'CURA TOTAL', 'Todos os deuses vivos voltam à vida cheia.'));
+    if (opc.includes('reviver')){ const rk = (run.time || [])[caido]; const rhp = Math.min((GODS[rk] && GODS[rk].hp) || 120, DOM_HP_REVIVER);
+      cards.push(_domHubPremioCard('reviver', 'REVIVER', `${domNomeDeus(rk)} volta com ${rhp} de vida.`)); }   // §348: run.time (TIME do jogador, §325), não lad.trio
+    if (opc.includes('bonus')) cards.push(_domHubPremioCard('bonus', 'BÔNUS DE DANO', `+${Math.round(DOM_PASSO_BONUS * 100)}% de dano (agora +${bonusPct}%, teto +${tetoPct}%).`));
+    meio = `<div class="dh-crown">${_domCoroaSVG()}</div>
+      <h2 class="dh-meio__t cin">CHEFE VENCIDO — NÍVEL ${prof}</h2>
+      <p class="dh-meio__sub">Escolha uma recompensa para a corrida.</p>
+      <div class="dh-premios">${cards.join('')}</div>`;
+  } else if (estado === 'nova'){
+    const foes = domInimigosNivel(lad, sem.idx, 1).map(k => _domHubFoeHTML(k, domEhChefe(1))).join('');
+    meio = `<h2 class="dh-meio__t cin">PRIMEIRO NÍVEL</h2>
+      <div class="dh-foes">${foes}</div>
+      <div class="dh-meio__sep"></div>
+      <p class="dh-meio__nota">A vida carrega entre os níveis. A cada chefe vencido,<br>você escolhe uma recompensa.</p>
+      <button class="dhb dhb--go" id="dentrar">MONTAR TIME E COMEÇAR ›</button>`;
+  } else if (estado === 'morto'){
+    meio = `<div class="dh-selo dh-selo--morto">CORRIDA ENCERRADA</div>
+      <p class="dh-meio__msg">Seus deuses tombaram no <b>nível ${prof}</b>. A corrida zera — a vida, o bônus e a rede voltam do começo. O recorde fica.</p>
+      <button class="dhb dhb--go" id="dnova">NOVA CORRIDA</button>`;
+  } else {
+    meio = `<div class="dh-selo dh-selo--venceu">DOMÍNIO CONQUISTADO</div>
+      <p class="dh-meio__msg">Você desceu os ${total} níveis do ${H(lad.nome)} desta semana. Uma nova corrida recomeça do topo.</p>
+      <button class="dhb dhb--go" id="dnova">NOVA CORRIDA</button>`;
   }
 
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-    <div class="tela">
-      <header class="tela__cab">
-        <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-        <h1 class="tela__titulo">${H(lad.nome)}</h1>
-        <span class="tela__espaco"></span>
-      </header>
-      <div class="tela__rol domhub">
-        <p class="domhub__sub">Domínio ${H(lad.cultura)} · ${total} níveis · a régua não calibra, a mão sim</p>
-        ${corpo}
-      </div>
-    </div></div>`;
+  // ---- coluna direita: recordes + chefe final ----
+  const recVal = (v, alt) => v > 0 ? `<small>nível</small> ${v}` : (alt || '—');
+  const recordesHTML = `<div class="dh-rec"><span class="dh-rec__l">Recorde desta semana</span><b class="dh-rec__v">${recVal(recSem)}</b></div>
+    <div class="dh-rec"><span class="dh-rec__l">Marca a bater (semana anterior)</span><b class="dh-rec__v">${recVal(recAnt, '— 1ª semana')}</b></div>
+    <div class="dh-rec"><span class="dh-rec__l">Melhor de sempre</span><b class="dh-rec__v">${recVal(melhor)}</b></div>`;
+  const chefeFinalHTML = lad.trio.map(k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
+    return `<div class="dh-cf" data-chefe="${H(k)}"><div class="dh-cf__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 26, false)}</div><div class="dh-cf__n">${H(g.nome)}</div><div class="dh-cf__meta">${orbe(g.elem, 22)}</div></div>`; }).join('');
+
+  stage.innerHTML = `<div id="baselayer" class="dh2"><div id="domhub" data-estado="${estado}">
+    <div class="dh-arte">${arteHTML}<div class="dh-arte__veu"></div></div>
+    <header class="dh-cab">
+      <button class="dhb dhb--voltar" id="bvoltar">‹ VOLTAR</button>
+      <div class="dh-tit"><h1 class="dh-titulo cin">${H(lad.nome)}</h1><span class="dh-sub">${H(subMap[estado])}</span></div>
+      <button class="dhb dh-ajuda" id="dajuda" aria-label="Ajuda">?</button>
+    </header>
+    <div class="dh-trilha">${_domHubTrilhaHTML(total, cleared, atual)}<div class="dh-trilha__cap">${H(cap)}</div></div>
+    <section class="dh-col dh-col--time">
+      <div class="dh-col__cab"><h2 class="dh-col__t cin">SEU TIME</h2>${mostraLock ? '<span class="dh-lock"><i>🔒</i>Travado nesta corrida</span>' : ''}</div>
+      <div class="dh-uns">${timeHTML}</div>
+      ${bonusHTML}
+    </section>
+    <section class="dh-col dh-col--meio"><div class="dh-meio dh-meio--${estado}">${meio}</div></section>
+    <section class="dh-col dh-col--dir">
+      <div class="dh-box"><h2 class="dh-box__t cin">SEUS RECORDES</h2>${recordesHTML}</div>
+      <div class="dh-box dh-box--cf"><h2 class="dh-box__t cin">CHEFE FINAL</h2><div class="dh-cfs">${chefeFinalHTML}</div></div>
+    </section>
+  </div></div>`;
 
   const q = s => stage.querySelector(s);
   const b = q('#bvoltar'); if (b) b.onclick = () => { if (!voltar()) ir('dominios', {}, { substituir: true }); render(); };
-  // §325: o passo MONTAR TIME é transitório (substitui o hub na pilha, como a batalha entrava no modo antigo) —
-  // mantém a pilha rasa (dominios → batalha) e o "voltar" do Android/§240 volta à SELEÇÃO sem hub duplicado.
+  const aj = q('#dajuda'); if (aj) aj.onclick = () => abrirAjudaDominios();
+  // §325: MONTAR TIME é transitório (substitui o hub na pilha) — o "voltar" do Android volta à SELEÇÃO sem hub duplicado.
   const en = q('#dentrar'); if (en) en.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const nv = q('#dnova'); if (nv) nv.onclick = () => { domTimePick = []; ir('dominiomontar', { cultura: c }, { substituir: true }); render(); };
   const de = q('#ddescer'); if (de) de.onclick = () => descerDominio(c);

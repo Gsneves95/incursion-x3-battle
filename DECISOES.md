@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §348 · HUB DO DOMÍNIO (renderDominioHub) no modelo do dono — tela fixa + 2 defeitos
+
+O dono aprovou 2 imagens (corrida em andamento; chefe vencido escolhendo recompensa) para o hub de um Domínio (a tela
+ao entrar no Olimpo). O hub antigo era uma coluna fluida de blocos; agora é a **tela fixa 1846×852 escalada** (como
+batalha §335 / desafios §339 / montador §342), com `fit()` ganhando o ramo `emDomHub` e a classe `dh2` (igual a
+`df2`/`dm2`). "build"/"conta" somem aqui (classe `emdomhub`). Alvos de toque ≥72px, corpo ≥20px.
+
+**Layout (3 colunas + trilha):** cabeçalho (‹ VOLTAR · "DOMÍNIO DO <NOME>" em Cinzel · sublinha de estado+semana · "?"
+de ajuda · a arte do Domínio esmaecida no topo direito); **trilha** dos N degraus (vencidos em dourado cheio, o ATUAL
+com marcador brilhante maior, futuros apagados; coroa nos chefes a cada 10; número só no 1, nos chefes e no atual; a
+linha dourada avança até o atual) + a legenda ("Nível 12 de 40 · próximo chefe no nível 20" / "Chefe vencido no nível 20
+· escolha uma recompensa…"); **esquerda SEU TIME** (cadeado "Travado nesta corrida", 3 unidades com retrato+nome+orbe+
+função+barra de vida grande verde/amarela/vermelha ou CAÍDO, e a trilha de Bônus de dano 0%→+teto em marcas de +10%);
+**meio por estado** (andamento: PRÓXIMO NÍVEL + 3 inimigos da escada + DESCER; prêmio: coroa + CHEFE VENCIDO + cartões
+CURA TOTAL/REVIVER/BÔNUS com ícone SVG; nova: PRIMEIRO NÍVEL + 3 inimigos do nível 1 + MONTAR TIME E COMEÇAR, e a
+esquerda mostra 3 vagas vazias; morto/completo: selo + mensagem + NOVA CORRIDA); **direita** SEUS RECORDES (semana ·
+marca a bater · melhor de sempre) + CHEFE FINAL (os 3 do `lad.trio` com moldura vermelha).
+
+**Dois defeitos corrigidos (pedido do §348):**
+1. A sublinha trazia "a régua não calibra, a mão sim" — **anotação interna, não texto de jogador**. Saiu; a sublinha
+   agora é só o estado + a semana ("CORRIDA EM ANDAMENTO · SEMANA 43", etc.).
+2. O prêmio **REVIVER** usava `lad.trio[caido]` (o trio INIMIGO da cultura) para o nome e o HP. Desde o §325 o time é o
+   do jogador: passou a usar **`run.time[caido]`** (nome e HP certos). Prova: com o 3º do time caído, o cartão REVIVER
+   nomeia ESSE deus.
+
+**Reaproveitado sem mudar:** as regras da corrida, a escada, as recompensas, a economia, o fluxo montar/descer/prêmio
+(`#dentrar`/`#ddescer`/`#dnova`/`.dompremio[data-premio]` seguem como antes, só reestilizados), a tela de seleção dos 5
+Domínios e o overlay de resultado (ainda usam `domficha`/`domtrio`). A semana exibida vem da chave ISO (`sem.chave`
+"AAAA-W43" → 43). Inimigos do meio por `domInimigosNivel` = `domEscadaSemana(...).niveis[n-1].inimigos` (batem com o que
+a corrida joga).
+
+Provas: `dominio_hub.test.js` (novo) — jsdom: cada estado mostra o meio/botão certo e chama o handler certo (montar/
+descer/prêmio/nova); inimigos do próximo nível batem com a escada; REVIVER usa `run.time`; a sublinha não tem texto
+interno; a trilha marca vencidos/atual/chefes. Chromium @1846 e @780: enche ≥98%, as 3 colunas não se sobrepõem, nada
+sai, nenhum texto corta. `dominios.test.js` migrado (seletor `.domhub`→`#domhub`; "Recorde anterior"→"Marca a bater").
+Capturas em `docs/telas/` (`348-andamento` com 1 caído, `348-chefe-vencido`, `348-nova-corrida`, `348-encerrada`,
+`348-conquistado` em 1846×852; `348-andamento` em 780×360).
+
+**Diferenças vs as 2 imagens de referência (e por quê):** os inimigos do meio (Zeus/Poseidon/Atena no nível 12; o nível
+1 abre com Atena/Hera/Zeus) saem da ESCADA REAL da semana — a referência desenhou Ares/Hera/Apolo como ilustração; o
+hub é dirigido por dado, então mostra os inimigos de fato. As duas imagens compartilham a mesma trilha (nível 12 no
+mockup) mesmo a de "chefe vencido no nível 20"; no jogo a trilha é consistente com o estado real (o marcador do chefe
+vencido fica no 20). O resto (cabeçalho, trilha, SEU TIME com barras e bônus, recordes, chefe final, cartões de prêmio
+com ícone dourado) segue as imagens.
+
 ## §346b · COLEÇÃO: filtros compactos (2 linhas) + TELA CHEIA (canvas fixo escalado)
 
 O §346 acertou cartão/filtros mas deixou dois defeitos de encaixe (vistos nas capturas 346-*): a 780×360 os filtros

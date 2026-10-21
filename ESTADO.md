@@ -2,6 +2,24 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §348 · HUB do Domínio (renderDominioHub) no modelo do dono — tela fixa 1846×852
+- O hub (rota `dominio`) virou TELA FIXA 1846×852 escalada (como batalha/desafios/montador): `fit()` tem o ramo
+  `emDomHub` + classe `dh2`; "build"/"conta" somem (classe `emdomhub`). Alvos ≥72px, corpo ≥20px.
+- Layout: cabeçalho (‹VOLTAR · "DOMÍNIO DO <NOME>" Cinzel · sublinha estado+semana · "?" `abrirAjudaDominios` · arte do
+  Domínio esmaecida no topo-dir) · TRILHA de N degraus (vencidos cheios, atual brilhante, coroa nos chefes/10, nº só no
+  1/chefes/atual) + legenda · ESQ "SEU TIME" (cadeado + 3 unidades com retrato/nome/orbe/função/barra verde-amarela-
+  vermelha ou CAÍDO + trilha Bônus de dano 0→+teto) · MEIO por estado · DIR "SEUS RECORDES" + "CHEFE FINAL" (`lad.trio`).
+- Estados do meio: **andamento** (PRÓXIMO NÍVEL + 3 inimigos da escada + `#ddescer`); **chefe vencido** (coroa + cartões
+  CURA/REVIVER/BÔNUS com ícone SVG + `.dompremio`); **nova** (PRIMEIRO NÍVEL + inimigos nv1 + `#dentrar`, esquerda com 3
+  vagas vazias); **morto/completo** (selo + msg + `#dnova`).
+- **2 defeitos corrigidos:** (1) a sublinha não traz mais "a régua não calibra, a mão sim" (anotação interna); (2) o
+  REVIVER usa `run.time[caido]` (deus do jogador, §325), não `lad.trio[caido]` (trio inimigo) — nome e HP certos.
+- NÃO mudou: regras/escada/recompensas/economia/fluxo montar-descer-prêmio, seleção dos 5 Domínios, overlay de resultado.
+  Handlers e ids iguais (`#dentrar`/`#ddescer`/`#dnova`/`.dompremio[data-premio]`), só reestilizados.
+- Provas: `dominio_hub.test.js` (jsdom: estados/botões/handlers; inimigos batem com a escada; REVIVER=run.time; sublinha
+  sem texto interno; trilha vencidos/atual/chefes) + Chromium @1846/@780 (enche ≥98%, 3 colunas sem sobrepor, nada corta).
+  `dominios.test.js` migrado (`.domhub`→`#domhub`; "Marca a bater"). Capturas `docs/telas/348-*`.
+
 ## ⏳ FILA · §343 · Plano de monetização (só documentação) → `docs/monetizacao.md`
 - Desenho registrado, **sem código/dado**: anúncios rewarded opcionais, Deus da Semana por anúncio (5 de 7 marcas),
   outros 6 cenários rewarded, Loja (gemas/passe/cosméticos), e os pré-requisitos (§274 contas → desenho → tela da Loja →

@@ -222,7 +222,7 @@ console.log('== 9) RECORDE ANTERIOR aparece e a SUPERAÇÃO é anunciada (o inst
   w.eval(`perfil=novoPerfil(0,0); perfil.dominios.porDominio["${c0}"]={run:null,melhorSempre:2,semanas:{"${prev}":2}};`);
   // o hub mostra o recorde anterior a bater
   w.eval(`ir("dominio",{cultura:"${c0}"},{substituir:true}); render();`);
-  ok(/Recorde anterior/.test(d.querySelector('.domhub').textContent) && /2/.test(d.querySelector('.domhub').textContent), 'o hub mostra o RECORDE ANTERIOR a bater (nível 2)');
+  ok(/Marca a bater/.test(d.querySelector('#domhub').textContent) && /2/.test(d.querySelector('#domhub').textContent), 'o hub mostra a MARCA a bater (semana anterior, nível 2)');   // §348: "Marca a bater (semana anterior)" no lugar de "Recorde anterior"
   // inicia a corrida (montar time) — a marca a bater viaja na run
   abrirCorrida(w, c0);
   ok(w.eval(`perfil.dominios.porDominio["${c0}"].run.marcaAnterior`) === 2, 'a corrida carrega a marca a bater (2)');
