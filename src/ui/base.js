@@ -202,13 +202,15 @@ function fit(){
   const emNiveis = (_rM === 'niveis') && document.getElementById('nlfix');
   // §351: a LISTA de DESAFIOS DE COMPOSIÇÃO ('composicao') também é a TELA FIXA de 1846×852 escalada (visual §339).
   const emCompos = (_rM === 'composicao') && document.getElementById('compfix');
+  // §352: a FOLHA DE COMPONENTES ('guia', dev) usa a mesma TELA FIXA de 1846×852 escalada.
+  const emGuia = (_rM === 'guia') && document.getElementById('guiafix');
   // §346b: a COLEÇÃO vira uma TELA FIXA escalada (como batalha/montador): enche a tela. O design é 1100×508 (MESMA
   // proporção 2.166 da batalha 1846×852), onde o CSS atual da Coleção já cabe — e escalado garante os filtros em 2
   // linhas e 2+ fileiras de cartões em qualquer tamanho (780 e 1846 têm a mesma proporção → escala uniforme).
   const emColecao = (_rM === 'colecao') && document.getElementById('colfix');
-  const fixa = emBatalha || emDesafios || emMontar || emDomHub || emProv || emDeus || emNiveis || emCompos;
-  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('col2fix', !!emColecao);
-    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351: carimbo build + botão conta somem destas telas (vivem na home/menu)
+  const fixa = emBatalha || emDesafios || emMontar || emDomHub || emProv || emDeus || emNiveis || emCompos || emGuia;
+  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('guia2', !!emGuia); stage.classList.toggle('col2fix', !!emColecao);
+    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emguia', !!emGuia); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351/§352: carimbo build + botão conta somem destas telas (vivem na home/menu)
   if(emColecao && !fixa){
     const CW = 1100, CH = 508, s = Math.min(u.w / CW, u.h / CH);
     ultimaEscala = s; ultimaLarguraDesign = CW;

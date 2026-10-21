@@ -6,6 +6,33 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §352 · GUIA VISUAL + FOLHA DE COMPONENTES
+
+As telas novas (§335–§351) formaram um padrão visual aprovado. Para que toda tela nova nasça igual, o padrão virou
+documento + folha viva — **sem mudar a aparência de nenhuma tela existente**.
+
+**`docs/guia-visual.md`** — tirado do CSS/funções REAIS, citando os seletores/variáveis de onde vem cada valor: CORES
+(fundo em camadas, o dourado `--gold*` como única cor de ação, neutros `--ink*`, os 6 elementos `--e-*` + livre via
+`COR()`, vermelho `--danger`/`--enemy` só p/ erro/inimigo, verde só p/ positivo discreto), TIPOGRAFIA (Cinzel títulos,
+Rajdhani corpo; tamanhos em uso; mínimos corpo ≥20px / toque ≥72px), a TELA FIXA 1846×852 (`fit()`, margens, "filhos
+≤830", esconder conta/build), os 16 COMPONENTES (cada um com quando usar + seletor/função de referência), os PRINCÍPIOS
+(uma cor de destaque; o estado aparece uma vez; separar por espaço; arte contida; ~3 tamanhos; sem "…" em nome; sem
+quebrar palavra; dados reais; prova por medição dos filhos; capturas commitadas) e o PROCESSO de uma tela nova.
+
+**Folha de componentes** — rota interna de DEV `guia` (`renderGuia`, `src/ui/home.js`; registrada em `view.js`; `fit()`
+ramo `emGuia`/`#guiafix`/`guia2`), NÃO ligada a nenhuma tela do jogo. Renderiza cada um dos 16 componentes com o **CSS e
+as funções REAIS** (orbe(), _montCardHTML, nlPainelHTML, maestriaDetalheHTML, _montCustoHTML, nlTopoPtsHTML,
+_pontoIcSVG, .dfb/.cmpb/.df-chip/.dsx-rar/.dsk__nv/.hp/.df-toast/.nlp__conf/.df-vazio…), em cada estado. Os seletores com
+escopo de tela valem via ancestrais `display:contents` (`#dommontar`/`#desafios`/`#compfix`/`#deusfix`/`#nlfix`) — assim
+o CSS real aplica sem recriar as telas. A lista canônica é a const `GUIA_COMPONENTES`; cada tile leva `data-comp="<id>"`.
+
+**Prova (`tests/guia_folha.test.js`):** extrai os ids do bloco "COMPONENTES" do documento e os `data-comp` da folha e
+exige que sejam **o mesmo conjunto** (o documento e a folha não podem divergir, nos dois sentidos), que `GUIA_COMPONENTES`
+bata com os tiles, que cada tile tenha demo real, e amostra que vieram das funções reais (.dm-card/.nlp/.nltop__ic/
+img.orbe/.nlp__conf). `render_sweep.test.js` ganhou a saída da rota `guia` (‹ VOLTAR → home). `texto_interno`: a folha não
+exibe "§<dígito>" (os rótulos citam só seletores). Suíte + build verdes. Capturas `352-guia-1846x852`,
+`352-guia-2-1846x852` (a folha rola; duas páginas).
+
 ## §351 · LISTA DE DESAFIOS DE COMPOSIÇÃO (renderDesafios, rota 'composicao') no visual da tela DESAFIOS (§339)
 
 A lista de Desafios de Composição (§213) era a última tela fluida (`.tela`/`.cenc`, cartões-linha). Passou ao **visual da

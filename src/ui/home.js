@@ -3244,6 +3244,84 @@ function renderDesafios(){
   fit();
 }
 
+// ===================================================================
+// §352 — GUIA VISUAL / FOLHA DE COMPONENTES (rota interna 'guia', NÃO ligada a nenhuma tela do jogo).
+// Renderiza cada componente do padrão (docs/guia-visual.md) com o CSS e as FUNÇÕES REAIS do jogo, em cada estado,
+// na tela fixa 1846×852. Página de desenvolvimento: existe para o documento e a folha não divergirem (prova §352).
+// Cada "tile" leva data-comp="<id>"; a prova confere que todo id listado no documento aparece aqui, e vice-versa.
+// Os seletores com escopo de tela (#dommontar/#desafios/#compfix/#deusfix/#nlfix) valem via ancestrais display:contents.
+// ===================================================================
+const GUIA_COMPONENTES = [
+  'botao-primario', 'botao-secundario', 'pilula', 'card-montador', 'painel', 'orbe', 'selo-raridade',
+  'selo-nivel', 'gratis', 'barra-progresso', 'barra-vida', 'aviso-toast', 'confirmacao-inline',
+  'estado-vazio', 'icone-pontos', 'trilha-niveis',
+];
+function _guiaTile(id, label, sel, demo, grande){
+  return `<section class="guia-tile${grande ? ' guia-tile--g' : ''}" data-comp="${id}">
+    <div class="guia-tile__h"><span class="guia-tile__lab">${H(label)}</span><code class="guia-tile__sel">${H(sel)}</code></div>
+    <div class="guia-tile__demo">${demo}</div>
+  </section>`;
+}
+function renderGuia(){
+  const G = (typeof GODS !== 'undefined' && GODS) || {};
+  const efz = (typeof deusKitEfetivo === 'function' && G.zeus) ? deusKitEfetivo('zeus', G.zeus) : (G.zeus || null);
+  const T = [];
+  T.push(_guiaTile('botao-primario', 'Botão primário (dourado)', '.cmpb--primary / .b--primary',
+    `<button class="cmpb cmpb--primary">JOGAR</button>`));
+  T.push(_guiaTile('botao-secundario', 'Botão secundário', '.cmpb--quiet / .b--sec',
+    `<button class="cmpb cmpb--quiet">JOGAR DE NOVO</button>`));
+  T.push(_guiaTile('pilula', 'Pílula / filtro (normal · selecionada)', '.df-chip · .df-chip.is-on',
+    `<span class="df-chip">Todas <b>6</b></span> <span class="df-chip is-on">Conquistadas <b>2</b></span>`));
+  T.push(_guiaTile('selo-raridade', 'Selo de raridade', '.dsx-rar.rar--SS|S|A',
+    `<span class="dsx-rar rar--SS">SS</span> <span class="dsx-rar rar--S">S</span> <span class="dsx-rar rar--A">A</span>`));
+  T.push(_guiaTile('selo-nivel', 'Selo de nível "Nv N"', '.dsk__nv (só habilidade com escada)',
+    `<span class="guia-dsk" style="position:relative;display:inline-block;width:120px;height:92px;border-radius:14px;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.3)"><span class="dsk__nv">Nv 3</span></span>`));
+  T.push(_guiaTile('gratis', 'Custo GRÁTIS', '.dmk-ab__gratis / .cost__gratis',
+    `<span class="ddet__cost">${(typeof _montCustoHTML === 'function') ? _montCustoHTML({}) : '<span class="dmk-ab__gratis">GRÁTIS</span>'}</span>`));
+  T.push(_guiaTile('orbe', 'Orbe de elemento (halo ≥14 · _min <14)', 'orbe(elem, px)',
+    (typeof orbe === 'function'
+      ? `<span class="guia-orbes">${['Chama', 'Tempestade', 'Verdejante', 'Aurora', 'Umbra', 'Maré', 'livre'].map(e => orbe(e, 40)).join('')}</span>
+         <span class="guia-orbes" style="margin-top:14px">${['Chama', 'Tempestade', 'Verdejante'].map(e => orbe(e, 12)).join('')} <small style="color:#7d78a0;font-size:18px">_min &lt;14px</small></span>`
+      : '')));
+  T.push(_guiaTile('icone-pontos', 'Ícone de pontos (selo dourado de cópia)', '_pontoIcSVG() · nltop__ic',
+    (typeof nlTopoPtsHTML === 'function') ? nlTopoPtsHTML('zeus', { nome: 'Zeus' }, true) : ''));
+  T.push(_guiaTile('barra-progresso', 'Barra de progresso', '.cmp-prog__bar / .dmaes__rail',
+    `<span class="cmp-prog__bar" style="width:320px"><i style="width:62%"></i></span>`));
+  T.push(_guiaTile('barra-vida', 'Barra de vida', '.hp / .hp__fill (verde ok · âmbar baixo)',
+    `<div class="hp" style="position:relative;width:240px;height:22px;border-radius:5px;overflow:hidden"><div class="hp__fill" style="width:62%"></div><div class="hp__label" style="font-size:14px">62/100</div></div>
+     <div class="hp hp--warn" style="position:relative;width:240px;height:22px;border-radius:5px;overflow:hidden;margin-top:12px"><div class="hp__fill" style="width:24%"></div><div class="hp__label" style="font-size:14px">24/100</div></div>`));
+  T.push(_guiaTile('aviso-toast', 'Aviso (toast)', 'toast() → .df-toast',
+    `<span class="df-toast" style="position:static;transform:none;display:inline-flex"><span class="df-toast__ic">!</span><span class="df-toast__msg">Sem conexão com o servidor.</span><button class="df-toast__x" aria-label="fechar">✕</button></span>`));
+  T.push(_guiaTile('estado-vazio', 'Estado vazio', '.df-vazio / .dm-vazio',
+    `<p class="df-vazio" style="position:static">Nenhum deus neste filtro.</p>`));
+  T.push(_guiaTile('painel', 'Painel / bloco (ex.: Maestria)', '.dmaes / bloco com rótulo',
+    (typeof maestriaDetalheHTML === 'function') ? maestriaDetalheHTML('zeus') : '', true));
+  T.push(_guiaTile('confirmacao-inline', 'Confirmação inline (no cartão)', '.nlp__conf',
+    `<div class="nlp__conf"><span class="nlp__confq">Subir para Nv 2 por 1 ponto?</span><span class="nlp__confb"><button class="nlb nlb--go">CONFIRMAR</button><button class="nlb nlb--quiet">CANCELAR</button></span></div>`, true));
+  T.push(_guiaTile('card-montador', 'Cartão de deus do montador (estados)', '_montCardHTML(k, cfg)',
+    (typeof _montCardHTML === 'function')
+      ? `<div class="guia-cards">${_montCardHTML('zeus', { pick: [] })}${_montCardHTML('ogum', { pick: ['ogum'], selNum: k => k === 'ogum' ? 1 : 0 })}${_montCardHTML('tyr', { pick: [], _off: { tyr: 'Outro elemento' } })}</div>`
+      : '', true));
+  T.push(_guiaTile('trilha-niveis', 'Trilha de níveis (cartão de habilidade)', 'nlPainelHTML(...) · .nlp',
+    (typeof nlPainelHTML === 'function' && efz) ? nlPainelHTML('zeus', G.zeus, efz, 'milagre', 'MILAGRE', true, true) : '', true));
+
+  stage.innerHTML = `<div id="baselayer" class="guia2"><div id="guiafix">
+    <header class="guia-cab">
+      <button class="cmpb cmpb--voltar" id="bvoltar">‹ VOLTAR</button>
+      <h1 class="guia-titulo cin">GUIA VISUAL · FOLHA DE COMPONENTES</h1>
+      <span class="guia-sub">componentes reais do INCURSION</span>
+    </header>
+    <div class="guia-grade" id="guiagrade">
+      <span id="dommontar" style="display:contents"><span id="desafios" style="display:contents"><span id="compfix" style="display:contents"><span id="deusfix" style="display:contents"><span id="nlfix" style="display:contents">
+        ${T.join('')}
+      </span></span></span></span></span>
+    </div>
+  </div></div>`;
+  const v = stage.querySelector('#bvoltar');
+  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  fit();
+}
+
 // §344: quais deuses VIOLAM a regra dado o pick atual → cartão apagado + motivo curto, não selecionável.
 function _regraPorDeus(regra, pick){
   const off = {}; if (!pick.length || regra === 'livre') return off;

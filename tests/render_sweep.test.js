@@ -182,6 +182,7 @@ console.log('== 6. TODA rota registrada tem saída que CHEGA à home (rota sem s
     dominiomontar:"ir('dominiomontar',{cultura:'grega'})",   // §325: MONTAR TIME — sai por ‹ Voltar ao HUB, e o hub à home (duas etapas)
     desafios:     "ir('desafios')",        // §213: hub de Desafios (pergaminhos+semanal+composição)
     composicao:   "ir('composicao')",      // §213: lista de composição (sub-tela do hub)
+    guia:         "ir('guia')",             // §352: folha de componentes (dev) — sai por ‹ VOLTAR → home
     desafiomontar:"ir('desafiomontar',{id:COMPOSICAO.desafios[0].id})",
     embreve:      "ir('embreve',{titulo:'Loja'})",
     selecao:      "ir('selecao',{novo:true})",

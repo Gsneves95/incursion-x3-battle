@@ -192,6 +192,7 @@ registrar('dominio',   { render: renderDominioHub });  // §274: o HUB/entrada d
 registrar('montartime',{ render: renderMontarTime }); // F3.3: escolha de time do encontro
 registrar('dominiomontar',{ render: renderDominioMontarTime }); // §325: MONTAR TIME antes de iniciar a corrida (time livre, empréstimo)
 registrar('composicao',{ render: renderDesafios });     // F3.6/§213: desafios de composição (sub-tela do hub)
+registrar('guia',      { render: renderGuia });         // §352: FOLHA DE COMPONENTES (dev; não ligada a nenhuma tela do jogo)
 registrar('desafiomontar',{ render: renderDesafioMontar });// F3.6: montador com validação de regra
 registrar('embreve',   { render: renderEmBreve });   // marcador (F3.0)
 registrar('selecao',   { render: renderPick,        aoEntrar: aoEntrarSelecao, aoSair: limparSobreposicao });

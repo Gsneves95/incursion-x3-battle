@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §352 · GUIA VISUAL + FOLHA DE COMPONENTES (padrão das telas §335–§351)
+- `docs/guia-visual.md`: padrão tirado do CSS/funções REAIS (cita seletores/variáveis) — CORES (fundo em camadas; dourado
+  `--gold*` única cor de ação; neutros `--ink*`; 6 elementos `--e-*`+livre via `COR()`; vermelho `--danger`/`--enemy` só
+  erro/inimigo; verde só positivo discreto), TIPOGRAFIA (Cinzel/Rajdhani; mínimos corpo ≥20 / toque ≥72), a TELA FIXA
+  1846×852 (`fit()`, margens, "filhos ≤830", esconder conta/build), os 16 COMPONENTES, os PRINCÍPIOS e o PROCESSO.
+- Folha viva: rota DEV `guia` (`renderGuia`, `view.js`; `fit()` ramo `emGuia`/`#guiafix`/`guia2`), NÃO ligada a nenhuma
+  tela. Renderiza os 16 componentes com CSS/funções REAIS (orbe/_montCardHTML/nlPainelHTML/maestriaDetalheHTML/
+  _montCustoHTML/nlTopoPtsHTML/_pontoIcSVG/.dfb/.cmpb/.df-chip/.dsx-rar/.dsk__nv/.hp/.df-toast/.nlp__conf/.df-vazio),
+  em cada estado; escopos de tela valem via ancestrais `display:contents`. Lista canônica = const `GUIA_COMPONENTES`;
+  cada tile `data-comp`.
+- Prova `guia_folha.test.js`: ids do bloco COMPONENTES do doc == `data-comp` da folha == `GUIA_COMPONENTES` (sem
+  divergência nos 2 sentidos); cada tile com demo real; amostra de funções reais. `render_sweep` ganhou a saída da rota
+  `guia`. Suíte + build verdes. Capturas `352-guia-1846x852`, `352-guia-2-1846x852` (folha rola; 2 páginas).
+- NÃO mudou nenhuma tela do jogo (só acrescentou doc + rota dev).
+
 ## ★ §351 · LISTA DE DESAFIOS DE COMPOSIÇÃO (renderDesafios, rota 'composicao') no visual da tela DESAFIOS
 - A lista (§213) virou TELA FIXA 1846×852 escalada no visual §339: `fit()` ramo `emCompos` (id `#compfix`, palco `cmp2`);
   "build"/"conta" somem (`emcompos`). Alvos ≥72px, corpo ≥20px.
