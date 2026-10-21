@@ -6,6 +6,45 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §348b · HUB DO DOMÍNIO: corte embaixo + o trio do chefe final como nível comum
+
+Dois defeitos do §348, corrigidos juntos.
+
+**1. Corte embaixo (CSS).** As 3 colunas terminavam em y=798 (de design), mas os FILHOS transbordavam: os nomes do
+CHEFE FINAL chegavam a y=861, a caixa do chefe final a y=912, e as marcas da régua de BÔNUS a y=839 — tudo abaixo da
+borda de 852. **Por que a prova do §348 não pegou:** ela media o `#domhub` (que tem `overflow:hidden` e RECORTA os
+filhos que vazam) para "nada fora", e só a largura dos textos para "nada corta"; **nunca mediu o fundo dos filhos**.
+Correção da prova: medir o y de DESIGN do fundo de cada caixa de coluna E dos filhos que vazavam (nomes do chefe final,
+régua do bônus, retratos), convertendo a coord de tela pela escala da tela fixa — e exigir ≤830. Correção do layout:
+trilha mais baixa e mais curta (top 138→132, altura 127→118), as 3 colunas descem (top 288→264) e vão até **y=830**
+(bottom 54→22); retratos menores (chefe final 150→106, inimigos 148→132, time 84→78); régua do bônus e linhas dos
+recordes mais compactas. Agora TODO filho (colunas, nomes do chefe final, régua do bônus) termina em **y≤830**, em
+1846×852 e 780×360, nos 5 estados. Os tamanhos mínimos de texto (corpo ≥20px) não mudaram.
+
+**2. O trio do chefe final aparecia como nível comum.** Em `data/dominios/grega.json` a composição EXATA do trio
+icônico (zeus/poseidon/atena = `lad.trio`) surgia como nível COMUM nas semanas 0 (nv12), 4 (nv6), 5 (nv12) e 7 (nv9);
+em `japonesa.json`, na semana 0 (nv19) — tirando o peso do nv40. **Causa:** `medirPool` punha em `comuns` todo trio
+com `base ≤ capComum`, inclusive o icônico (os chefes 10/20/30 já o excluíam via `chefeHard`). **Correção no gerador
+(`tools/gerar_dominios.js`):** `comuns` passa a excluir a chave EXATA do icônico (`chave(m.inimigos) !== iconKey`); os
+deuses seguem livres em OUTROS trios. Regerei as 5 culturas × 8 semanas com o MESMO método, régua e seeds. **PORTÃO NOVO
+no build (§348b, estrutural):** em nenhuma cultura/semana o trio exato do chefe final aparece antes do último nível, e
+o último nível É esse trio. P1–P5 seguem passando; a variedade (P5) segue 100% de cobertura e trio máx ≤12.
+
+**Antes → depois (níveis com o trio EXATO antes do nv40; e dif s1 nv1/10/20/30/40 — a forma da rampa é determinística,
+não muda):**
+- Grega: **4 → 0** · dif 0.02/0.23/0.50/0.60/0.71 → 0.02/0.23/0.50/0.60/0.71 (igual)
+- Japonesa: **1 → 0** · dif 0.04/0.19/0.44/0.48/0.67 → igual
+- Egípcia: 0 → 0 · dif 0.10/0.31/0.50/0.69/0.71 → igual
+- Nórdica: 0 → 0 · dif 0.04/0.25/0.48/0.54/0.67 → igual
+- Chinesa: 0 → 0 · dif 0.21/0.29/0.50/0.67/0.96 → igual
+- Variedade (P5) depois: comuns distintos Grega 141 / Nórdica 144 / Egípcia 128 / Japonesa 206 / Chinesa 54; **100%**
+  de cobertura em todas; trio máx 5/6/7/4/11× (≤12). A rampa é idêntica porque excluir só o icônico dos comuns não
+  muda o alvo de dificuldade de cada degrau — só troca o trio escolhido nos poucos níveis que caíam no icônico.
+
+Provas: o portão novo no build (`tools/build.js`); `dominio_hub.test.js` ganhou a medição dos FILHOS (≤830) em
+1846×852 e 780×360 nos 5 estados. Capturas `docs/telas/348b-*` (andamento com 1 caído, chefe vencido, nova corrida em
+1846×852; andamento em 780×360). Suíte + build verdes.
+
 ## §348 · HUB DO DOMÍNIO (renderDominioHub) no modelo do dono — tela fixa + 2 defeitos
 
 O dono aprovou 2 imagens (corrida em andamento; chefe vencido escolhendo recompensa) para o hub de um Domínio (a tela

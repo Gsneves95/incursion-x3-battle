@@ -128,7 +128,9 @@ function medirPool(CFG, refTimes) {
   if (!amostrados.some(t => chave(t) === iconKey)) amostrados.push(CFG.trio.slice());   // o icônico (nv40) tem de estar medido
   const medidos = amostrados.map(t => ({ inimigos: t, base: dificuldade(refTimes, t, 1.0, POOLSEEDS) }));
   medidos.sort((a, b) => a.base - b.base);
-  const comuns = medidos.filter(m => m.base <= CFG.capComum);   // §325 G: cap medido vs média dos refs
+  // §348b: a COMPOSIÇÃO EXATA do trio do chefe final (iconKey) NUNCA entra nos COMUNS — ela desvaloriza o nv40 ao
+  // aparecer antes. Os deuses seguem livres em OUTROS trios. Os chefes 10/20/30 já excluem o icon (chefeHard).
+  const comuns = medidos.filter(m => m.base <= CFG.capComum && chave(m.inimigos) !== iconKey);   // §325 G cap + §348b sem o trio icônico
   return { comuns, chefes: medidos.slice(), iconKey, totalTrios: todos.length };
 }
 

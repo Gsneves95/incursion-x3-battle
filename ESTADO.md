@@ -2,6 +2,21 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §348b · HUB do Domínio: corte embaixo + trio do chefe final como nível comum
+- **Corte embaixo (CSS):** os filhos das colunas transbordavam (nomes do chefe final a y861, régua do bônus a y839,
+  caixa do chefe a y912) e o `#domhub` (overflow:hidden) os recortava — por isso a prova do §348, que media o hub e não
+  os filhos, não pegou. Agora a trilha é mais baixa/curta e as 3 colunas descem e vão até **y=830** (bottom 54→22);
+  retratos menores (chefe final 150→106, inimigos 148→132, time 84→78), recordes/bônus mais compactos. Todo filho
+  termina em y≤830 (1846×852 e 780×360, 5 estados). Corpo ≥20px mantido.
+- **Prova corrigida:** `dominio_hub.test.js` agora mede o y de DESIGN do fundo das caixas de coluna E dos filhos que
+  vazavam (nomes do chefe final, régua do bônus, retratos) e exige ≤830.
+- **Trio do chefe final como comum:** em grega.json aparecia como nível comum (s0 nv12, s4 nv6, s5 nv12, s7 nv9) e em
+  japonesa.json (s0 nv19). O gerador (`tools/gerar_dominios.js`) passou a excluir a composição EXATA do icônico dos
+  COMUNS (os chefes 10/20/30 já excluíam); regerei as 5×8 com mesmo método/régua/seeds. **Portão novo no build:** o
+  trio exato do chefe final só pode aparecer no último nível. Antes→depois: Grega 4→0, Japonesa 1→0, resto 0; as
+  dificuldades nv1/10/20/30/40 não mudam (rampa determinística); P1–P5 verdes, cobertura 100%, trio máx ≤12.
+- Capturas `docs/telas/348b-*`. Suíte + build verdes.
+
 ## ★ §348 · HUB do Domínio (renderDominioHub) no modelo do dono — tela fixa 1846×852
 - O hub (rota `dominio`) virou TELA FIXA 1846×852 escalada (como batalha/desafios/montador): `fit()` tem o ramo
   `emDomHub` + classe `dh2`; "build"/"conta" somem (classe `emdomhub`). Alvos ≥72px, corpo ≥20px.

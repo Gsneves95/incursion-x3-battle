@@ -2681,7 +2681,7 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-sub{font-size:21px;letter-spacing:.14em;color:#9AA4B8;text-transform:uppercase}
 .dh-ajuda{position:absolute;right:0;top:4px;width:72px;height:72px;border-radius:14px;font-size:30px;font-weight:700;color:#F0D79A;background:rgba(14,18,32,.9);box-shadow:inset 0 0 0 1px rgba(201,164,76,.6)}
 /* trilha de progresso */
-.dh-trilha{position:absolute;left:54px;right:54px;top:138px;height:127px;z-index:1}
+.dh-trilha{position:absolute;left:54px;right:54px;top:132px;height:118px;z-index:1}  /* §348b: trilha mais baixa p/ as colunas descerem */
 .dh-rail{position:relative;height:52px;margin:30px 16px 0}
 .dh-rail__linha{position:absolute;left:0;right:0;top:24px;transform:translateY(-50%);height:4px;border-radius:2px;background:#2a3350}
 .dh-rail__on{position:absolute;left:0;top:24px;transform:translateY(-50%);height:4px;border-radius:2px;background:linear-gradient(90deg,#C9962F,#F0D79A);box-shadow:0 0 8px rgba(240,180,60,.5)}
@@ -2696,7 +2696,7 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-no.is-cur .dh-no__n{color:#F0D79A}
 .dh-trilha__cap{position:absolute;left:0;right:0;bottom:2px;text-align:center;font-size:21px;color:#C9CED8}
 /* colunas */
-.dh-col{position:absolute;top:288px;bottom:54px}
+.dh-col{position:absolute;top:264px;bottom:22px}  /* §348b: termina em y≤830, com tudo dentro */
 .dh-col--time{left:54px;width:592px;display:flex;flex-direction:column;padding:22px 24px;border-radius:14px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
 .dh-col--meio{left:660px;width:580px;display:flex}
 .dh-col--dir{left:1254px;width:538px;display:flex;flex-direction:column;gap:18px}
@@ -2707,7 +2707,7 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-lock i{font-style:normal}
 .dh-uns{display:flex;flex-direction:column;gap:14px}
 .dh-un{display:flex;align-items:center;gap:16px;padding:12px 14px;border-radius:10px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-.dh-un__p{width:84px;height:84px;flex:none;border-radius:8px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.dh-un__p{width:78px;height:78px;flex:none;border-radius:8px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
 .dh-un__p .slot{width:100%;height:100%}
 .dh-un__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
 .dh-un__n{font-family:'Cinzel',serif;font-size:24px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -2723,10 +2723,10 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-un__p--vazia{display:grid;place-items:center;font-size:46px;color:#5a6278;background:rgba(16,20,34,.6);box-shadow:inset 0 0 0 2px rgba(120,130,160,.35)}
 .dh-un__hint{font-size:20px;color:#8893a8}
 /* esquerda — bônus de dano */
-.dh-bon{margin-top:auto;padding-top:22px}
-.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:21px;color:#C9CED8;margin-bottom:18px}
+.dh-bon{margin-top:auto;padding-top:14px}
+.dh-bon__top{display:flex;align-items:center;justify-content:space-between;font-size:21px;color:#C9CED8;margin-bottom:14px}
 .dh-bon__top b{font-size:25px;color:#F0D79A}
-.dh-bon__rail{position:relative;height:6px;border-radius:3px;background:#1a1f30;margin:0 12px 28px}
+.dh-bon__rail{position:relative;height:6px;border-radius:3px;background:#1a1f30;margin:0 12px 22px}
 .dh-bon__fill{position:absolute;left:0;top:0;height:100%;border-radius:3px;background:linear-gradient(90deg,#C9962F,#F0D79A)}
 .dh-bon__knob{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#F4D98A;box-shadow:0 0 8px rgba(240,180,60,.7);transform:translate(-50%,-50%)}
 .dh-bon__mk{position:absolute;top:50%;transform:translateX(-50%)}
@@ -2737,12 +2737,12 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-meio--premio{border-radius:14px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.45);background:rgba(16,13,26,.5)}
 .dh-meio__t{font-size:34px;letter-spacing:.05em;color:#F0D79A;margin:0}
 .dh-foes{display:flex;gap:22px;justify-content:center}
-.dh-foe{width:148px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.dh-foe__p{position:relative;width:148px;height:148px;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px rgba(201,164,76,.5)}
+.dh-foe{width:132px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.dh-foe__p{position:relative;width:132px;height:132px;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px rgba(201,164,76,.5)}
 .dh-foe__p .slot{width:100%;height:100%}
 .dh-foe--chefe .dh-foe__p{box-shadow:inset 0 0 0 3px #E0545B,0 0 16px rgba(224,84,91,.4)}
 .dh-foe__tag{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-size:16px;font-weight:800;letter-spacing:.1em;color:#fff;background:rgba(179,22,30,.92);padding:3px 11px;border-radius:5px}
-.dh-foe__n{font-family:'Cinzel',serif;font-size:24px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:148px}
+.dh-foe__n{font-family:'Cinzel',serif;font-size:24px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:132px}
 .dh-foe__meta{display:flex;align-items:center}
 .dh-meio__sep{width:72%;height:1px;background:rgba(201,164,76,.3)}
 .dh-meio__nota{font-size:21px;line-height:1.5;color:#9AA4B8;margin:0}
@@ -2765,7 +2765,7 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 /* direita — recordes + chefe final */
 .dh-box{padding:22px 24px;border-radius:14px;background:rgba(10,13,24,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
 .dh-box__t{font-family:'Cinzel',serif;font-size:26px;letter-spacing:.12em;color:#F0D79A;margin:0 0 14px}
-.dh-rec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid rgba(201,164,76,.14)}
+.dh-rec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid rgba(201,164,76,.14)}
 .dh-rec:first-of-type{border-top:0}
 .dh-rec__l{font-size:21px;color:#C9CED8}
 .dh-rec__v{font-family:'Cinzel',serif;font-size:30px;color:#F0D79A;white-space:nowrap}
@@ -2773,7 +2773,7 @@ body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §3
 .dh-box--cf{flex:1;display:flex;flex-direction:column}
 .dh-cfs{display:flex;gap:14px;justify-content:space-between;margin-top:6px}
 .dh-cf{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px}
-.dh-cf__p{width:100%;height:150px;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px #E0545B}
+.dh-cf__p{width:100%;height:106px;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 2px #E0545B}
 .dh-cf__p .slot{width:100%;height:100%}
 .dh-cf__n{font-family:'Cinzel',serif;font-size:20px;color:#F0D79A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .dh-cf__meta{display:flex}

@@ -168,7 +168,14 @@ function acharChromium(){
       // texto cortado (largura natural > caixa) nos títulos/nomes/legendas
       let clips = [];
       hub.querySelectorAll('.dh-titulo,.dh-sub,.dh-trilha__cap,.dh-meio__t,.dh-un__n,.dh-foe__n,.dh-rec__l,.dh-rec__v,.dh-premio__t,.dh-box__t,.dh-col__t').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className.split(' ')[0] + ':' + el.textContent.trim().slice(0, 16)); });
-      return { fora, pw, ph, overlap, clips: clips.slice(0, 6) };
+      // §348b: o defeito que o §348 NÃO pegou — media #domhub (que tem overflow:hidden e RECORTA os filhos que
+      // transbordam) e nunca os FILHOS. Agora medimos o fundo (y de DESIGN) de cada caixa de coluna E dos filhos que
+      // transbordavam (nomes do chefe final, régua do bônus, retratos), convertendo a coord de tela em design pela escala.
+      const esc = hb.height / 852;   // escala da tela fixa (1 a 1846×852; ~0.42 a 780×360)
+      const designBot = el => Math.round((el.getBoundingClientRect().bottom - hb.top) / esc);
+      let botMax = 0, piorBot = '';
+      hub.querySelectorAll('.dh-col--time,.dh-col--meio,.dh-col--dir,.dh-cf__n,.dh-cf__p,.dh-bon__mk em,.dh-bon__rail,.dh-foe__n,.dh-premio__s,.dh-un__bar').forEach(el => { const b = designBot(el); if (b > botMax) { botMax = b; piorBot = el.className.split(' ')[0] + ':' + el.textContent.trim().slice(0, 12); } });
+      return { fora, pw, ph, overlap, clips: clips.slice(0, 6), botMax, piorBot };
     }, estado);
   }
 
@@ -182,6 +189,8 @@ function acharChromium(){
       ok(Math.min(m.pw, m.ph) >= 0.98, `§348 @${W}×${H} [${est}]: enche a tela (${(m.pw * 100).toFixed(1)}%×${(m.ph * 100).toFixed(1)}% ≥ 98%)`);
       ok(!m.overlap, `§348 @${W}×${H} [${est}]: as 3 colunas não se sobrepõem`);
       ok(m.clips.length === 0, `§348 @${W}×${H} [${est}]: nenhum texto corta (${m.clips.join(' | ') || 'ok'})`);
+      // §348b: NENHUM filho (caixa de coluna, nomes do chefe final, régua do bônus) passa de y=830 de design.
+      ok(m.botMax <= 830, `§348b @${W}×${H} [${est}]: o conteúdo (colunas, chefe final, bônus) termina em y≤830 (pior: ${m.botMax} em ${m.piorBot})`);
     }
   }
 

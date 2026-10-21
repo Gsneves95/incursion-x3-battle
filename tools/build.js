@@ -478,6 +478,16 @@ const dominiosObj = (() => {
   // §325b P5: variedade dos comuns (estrutural, barato) — roda antes do P3 (que simula).
   for (const k of Object.keys(mapa)) errosP5.push(...p5.validar(mapa[k], godsMapa));
   if (errosP5.length) { console.error('ERRO §325b P5 — Domínios (variedade dos comuns):\n  ' + errosP5.join('\n  ')); process.exit(1); }
+  // §348b — PORTÃO novo (estrutural): a COMPOSIÇÃO EXATA do trio do chefe final só pode aparecer no ÚLTIMO nível.
+  // Em nenhuma cultura e nenhuma semana o trio do chefe final surge antes do fim (tira o peso do nv40).
+  const errosIcon = []; const chaveTrio = t => [...t].sort().join('|');
+  for (const k of Object.keys(mapa)) { const lad = mapa[k], ik = chaveTrio(lad.trio || []);
+    for (let w = 0; w < (lad.semanas || []).length; w++) { const niveis = lad.semanas[w].niveis, N = niveis.length;
+      for (const l of niveis) if (chaveTrio(l.inimigos) === ik && l.n !== N) errosIcon.push(`${lad.cultura}/s${w + 1}/n${l.n}: trio do chefe final (${(lad.trio || []).join('/')}) aparece ANTES do último nível`);
+      if (N && chaveTrio(niveis[N - 1].inimigos) !== ik) errosIcon.push(`${lad.cultura}/s${w + 1}: o último nível (n${N}) NÃO é o trio do chefe final`);
+    }
+  }
+  if (errosIcon.length) { console.error('ERRO §348b — Domínios (trio do chefe final):\n  ' + errosIcon.join('\n  ')); process.exit(1); }
   // §325 P3: SÓ simula se o schema (P1/P2) passou — barato (nv1 × melhor trio de INICIAIS × 24 seeds × 5 culturas).
   for (const k of Object.keys(mapa)) errosP3.push(...p3.validar(mapa[k], 24));
   if (errosP3.length) { console.error('ERRO §325 P3 — Domínios (nv1 vencível pelo melhor trio de INICIAIS sob v2):\n  ' + errosP3.join('\n  ')); process.exit(1); }
