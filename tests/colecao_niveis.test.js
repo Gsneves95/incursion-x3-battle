@@ -43,7 +43,7 @@ const html = fs.readFileSync(distAbs, 'utf8');
   ok($('#col2ovsubir').classList.contains('b--primary'), 'o SUBIR fica DOURADO (há nível pagável, 9 pontos)');
   w.eval("document.querySelector('#col2ovsubir').click()");
   ok(w.eval("rotaAtual()") === rotaAntes && !!$('#col2ov'), 'A3: SUBIR não muda de rota e a sobreposição continua aberta');
-  ok(!!$('.col2ov__nivscroll') && $$('.col2ov__nivscroll .nlp').length === 3, 'A4: a visão de níveis traz os 3 painéis (lógica do §319)');
+  ok(!!$('.col2ov__nivscroll') && $$('.col2ov__nivscroll .nlp').length === 4, 'A4: a visão de níveis traz os 4 cartões (lógica do §350: +Defesa)');
   ok(/Pontos de/.test(txt($('.col2ov__nivscroll .nltop__ptn'))) && $$('.col2ov__nivscroll [data-subir]').length >= 1, 'A4: traz os pontos do deus + botões SUBIR por slot');
   ok(!!$('#col2ovkit'), 'há o "‹ Kit"');
   w.eval("document.querySelector('#col2ovkit').click()");
@@ -130,16 +130,16 @@ async function parte2(){
         let cut = 0; document.querySelectorAll('#col2ov *').forEach(el => { if (R(el).right > vw + 0.5) cut++; });
         // a altura de TOQUE em px de DESIGN (getComputedStyle) — o #stage tem transform:scale(fit), então o
         // rect encolhe junto com a tela toda; o piso de toque é a medida lógica, que escala com todo o app.
-        const btns = [...scroll.querySelectorAll('.nlp__acao .b, .nlp__confb .b, [data-subir]')].map(b => parseFloat(getComputedStyle(b).height) || R(b).height);
+        const btns = [...scroll.querySelectorAll('.nlp__pe .nlb, .nlp__confb .nlb, [data-subir]')].map(b => parseFloat(getComputedStyle(b).height) || R(b).height);
         const minBtn = btns.length ? Math.min(...btns) : 99;
         const paineis = scroll.querySelectorAll('.nlp').length;
         return { over: Math.round(over), cut, minBtn: Math.round(minBtn), paineis };
       }, { k });
-      ok(r.paineis === 3, `@${W}: a visão de níveis mostra os 3 painéis (${r.paineis})`);
+      ok(r.paineis === 4, `@${W}: a visão de níveis mostra os 4 cartões (${r.paineis})`);
       ok(r.over <= 1, `@${W}: nada da visão de níveis vaza o cartão na horizontal (over ${r.over})`);
       ok(r.cut === 0, `@${W}: nada da sobreposição corta na viewport (${r.cut})`);
       ok(r.minBtn >= 44, `@${W}: o toque dos botões de subir é >= 44px (menor ${r.minBtn})`);
-      console.log(`  @${W}: 3 painéis · over ${r.over} · corte ${r.cut} · menor toque ${r.minBtn}px`);
+      console.log(`  @${W}: 4 cartões · over ${r.over} · corte ${r.cut} · menor toque ${r.minBtn}px`);
     }
   } finally { try { await browser.close(); } catch (e) {} }
   fechar();

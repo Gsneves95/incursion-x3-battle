@@ -1,9 +1,11 @@
-// §319 FASE 4 — A TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono). §319c: é a rota PRÓPRIA 'niveis'
-// (o "‹" volta para a FICHA do deus): barra superior (‹ <Nome> · nome · pontos), COLUNA ESQUERDA (identidade + PASSIVA + rodapé
-// "X de Y") que NUNCA rola, e COLUNA DIREITA (3 painéis de habilidade) que PODE rolar. O servidor (subirNivel)
-// é AUTORITATIVO; isto é TELA — tudo deriva do data/deuses (escadas), do kitEfetivo (texto no nível) e da
-// economia.json (custo em pontos). GUARDAS §292/§295/§307/§308: estados × 4 larguras, nada cortado em silêncio,
-// esquerda nunca rola, direita nunca corta na horizontal, toque do SUBIR/CONFIRMAR/CANCELAR >= piso (§301).
+// §350 — A TELA DE NÍVEIS DE HABILIDADE (renderNiveis, rota 'niveis') no modelo do dono: TELA FIXA 1846×852
+// escalada. Cabeçalho (‹ <Nome> volta p/ a FICHA · "NÍVEIS DE HABILIDADE" · "Pontos de <Nome>: N" com ícone
+// próprio) · COLUNA ESQUERDA (retrato + nome + raridade + panteão·elemento + PASSIVA "não tem níveis") · COLUNA
+// DIREITA = 4 cartões 2×2 (Básico/Habilidade/Milagre/Defesa). Cada cartão: cabeçalho (ícone·tipo·nome·Nv N de TOPO
+// + bolinhas quando TEM escada) · AGORA | PRÓXIMO (só os números que mudam em dourado) · ação por estado. O servidor
+// (subirNivel) é AUTORITATIVO; isto é TELA — tudo deriva do data/deuses (escadas), do kitEfetivo (texto) e da
+// economia.json (custo em pontos). Prova os estados, o diff dourado, confirmar/cancelar, o voltar à ficha, e o
+// ENCAIXE no Chromium (1846×852 e 780×360): tudo dentro da tela, nada se sobrepõe, nada corta.
 const fs = require('fs');
 const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
@@ -20,6 +22,7 @@ const w = dom.window, d = w.document;
 const $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
 const txt = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
 const clk = el => el.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
+const tick = () => new Promise(r => setTimeout(r, 30));
 // monta uma conta ONLINE possuindo os deuses dados, com níveis/pontos à escolha, e abre a rota 'niveis'.
 function abrir(k, opts = {}) {
   const niveis = opts.niveis || {};
@@ -30,203 +33,177 @@ function abrir(k, opts = {}) {
     nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:${JSON.stringify(k)}},{substituir:true});render();`);
 }
 
-console.log('== §319 / TELA DOS NÍVEIS DE HABILIDADE ==');
-ok(w.eval("typeof subirNivelServidor==='function'"), 'o cliente tem subirNivelServidor (pede ao servidor autoritativo)');
-ok(w.eval("typeof ECONOMIA==='object' && ECONOMIA.invocacao && ECONOMIA.invocacao.custoNivel && ECONOMIA.invocacao.custoNivel['2']===1"), 'o custo em pontos vem do economia.json (nv2=1)');
+(async () => {
+  console.log('== §350 / TELA DE NÍVEIS DE HABILIDADE (tela fixa: cabeçalho + esquerda + 4 cartões) ==');
+  ok(w.eval("typeof subirNivelServidor==='function'"), 'o cliente tem subirNivelServidor (pede ao servidor autoritativo)');
+  ok(w.eval("typeof ECONOMIA==='object' && ECONOMIA.invocacao && ECONOMIA.invocacao.custoNivel && ECONOMIA.invocacao.custoNivel['2']===1"), 'o custo em pontos vem do economia.json (nv2=1)');
 
-// ---- 1. BARRA SUPERIOR + COLUNA ESQUERDA (identidade + passiva + rodapé) ----
-console.log('\n== 1. barra superior + coluna esquerda (identidade, passiva, rodapé "X de Y") ==');
-err = null;
-abrir('zeus', { pontos: { zeus: 3 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
-ok(!err, 'renderiza sem quebrar (' + (err || 'ok') + ')');
-ok(/‹ Zeus/.test(txt($('#bvoltar'))), 'o voltar diz "‹ <Nome do deus>" (§319c: volta para a FICHA)');
-w.eval("document.querySelector('#bvoltar').click()");
-ok(w.eval("rotaAtual()") === 'deus', 'o "‹" da tela de níveis volta para a FICHA do deus (rota deus)');
-abrir('zeus', { pontos: { zeus: 3 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
-ok(txt($('.nltop__nome')) === 'Zeus', 'a barra nomeia o deus (Cinzel)');
-ok(/Pontos de Zeus: 3/.test(txt($('.nltop__ptn'))), 'os pontos do deus vêm da conta (servidor)');
-ok(/4 pontos por cópia \(SS\)/.test(txt($('.nltop__cop'))), 'os pontos por cópia saem da raridade (pontosPorDuplicata, do dado)');
-ok(!!$('.nlesq .nlmed .slot'), 'medalhão redondo na esquerda');
-ok(/Grega · Tempestade/i.test(txt($('.nlid__sub'))), 'panteão · elemento (do data/deuses)');
-ok(!!$('.nlpas') && /PASSIVA/.test(txt($('.nlpas__rot'))) && txt($('.nlpas__nome')) === 'Soberano', 'a PASSIVA fica na esquerda com nome');
-ok(/não tem níveis/i.test(txt($('.nlpas__nota'))), 'a passiva diz que não tem níveis');
-ok(txt($('.nlfoot__num')) === '3 de 12', 'rodapé "X de Y" = 3 de 12 (3 slots nv1; topos 4+4+4)');
-ok(/Essência/.test(txt($('.nlfoot__nota'))), 'rodapé nota: cópias extras viram Essência');
-
-// ---- 2. COLUNA DIREITA: 3 painéis, marcadores, Atual, Próximo (SÓ o que muda) ----
-console.log('\n== 2. coluna direita: 3 painéis; marcadores; Atual; Próximo só o que muda ==');
-{
-  const P = $$('.nldir .nlp');
-  ok(P.length === 3, `3 painéis ativos (básico/habilidade/milagre), há ${P.length}`);
-  const p0 = P[0];
-  ok(/Cetro do Trovão/.test(txt(p0.querySelector('.nlp__nome'))) && txt(p0.querySelector('.nlp__tipo')) === 'BÁSICO', 'painel: nome (Cinzel) + tipo');
-  ok(!!p0.querySelector('.nlp__meta .cost') && /recarga|sem recarga/i.test(txt(p0.querySelector('.nlp__cd'))), 'painel: custo (orbes) + recarga (do kit efetivo)');
-  ok(p0.querySelectorAll('.nlpin').length === 4 && p0.querySelectorAll('.nlpin.on').length === 1, 'marcadores: 4 (topo) com 1 aceso (nv atual)');
-  ok(txt(p0.querySelector('.nlp__nv')) === 'Nível 1 de 4', '"Nível N de TOPO"');
-  ok(/Atual:/.test(txt(p0.querySelector('.nlp__atual'))) && /15 de dano/.test(txt(p0.querySelector('.nlp__atual'))), 'Atual: texto do nível atual (kit efetivo)');
-  const prox = txt(p0.querySelector('.nlp__prox'));
-  ok(/Próximo \(nível 2\)/.test(prox) && /15 → 16/.test(prox), 'Próximo: SÓ o número que muda (15 → 16)');
-  ok(!/de dano a 1 inimigo/.test(prox.replace(/Próximo[^:]*:/, '')), 'Próximo NÃO repete a frase inteira (só o que muda)');
-}
-
-// ---- 3. Próximo com SALTO: "Novo: <nova parte>" derivado do texto, não escrito à mão ----
-console.log('\n== 3. Próximo com SALTO → "Novo:" (derivado do desc do próximo nível) ==');
-{
-  abrir('zeus', { pontos: { zeus: 0 }, niveis: { zeus: { basico: 3, habilidade: 3, milagre: 4 } } });
-  const P = $$('.nldir .nlp');
-  ok(!!P[0].querySelector('.nlp__novo') && /Novo:/.test(txt(P[0].querySelector('.nlp__prox'))), 'básico nv3→nv4 (efeito novo): "Novo:" aparece');
-  ok(/menos de dano/.test(txt(P[0].querySelector('.nlp__novo'))), 'o "Novo:" cita a oração nova do desc (não inventada)');
-  ok(/2 turnos/.test(txt(P[1].querySelector('.nlp__prox'))), 'habilidade nv3→nv4 (duração): a nova redação aparece no Próximo');
-  ok(txt(P[2].querySelector('.nlp__max')) === 'NÍVEL MÁXIMO' && !P[2].querySelector('[data-subir]'), 'milagre nv4: "NÍVEL MÁXIMO", sem botão');
-  ok(P[2].querySelectorAll('.nlpin.on').length === 4, 'milagre no máximo: todos os marcadores acesos');
-}
-
-// ---- 4. BOTÃO SUBIR: custo em pontos; pode pagar (ouro) × faltam pontos (apagado) ----
-console.log('\n== 4. SUBIR: custo em pontos; pode pagar × faltam pontos ==');
-{
-  // pode pagar: 1 ponto → o básico (custo 1) vira botão de ouro
-  abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
-  const bt0 = $$('.nldir .nlp')[0].querySelector('[data-subir]');
-  ok(!!bt0 && /SUBIR · 1 ponto/.test(txt(bt0)) && bt0.classList.contains('b--primary'), 'básico (custo 1, tem 1): botão de ouro "SUBIR · 1 ponto"');
-  // faltam pontos: 0 pontos → o básico fica apagado + "Faltam 1 ponto", sem botão ativo
-  abrir('zeus', { pontos: { zeus: 0 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
-  const p0 = $$('.nldir .nlp')[0];
-  ok(!p0.querySelector('[data-subir]') && p0.querySelector('.nlp__acao .b').disabled, 'sem pontos: o botão fica apagado (sem SUBIR ativo)');
-  ok(/Falta 1 ponto/.test(txt(p0.querySelector('.nlp__nota'))), 'sem pontos: "Falta 1 ponto" (concordância singular)');
-}
-
-// ---- 5. SEM ESCADA (Aquiles básico): cópia genérica, sem marcadores, sem botão; nada técnico vaza ----
-console.log('\n== 5. sem escada: cópia genérica, sem marcadores/botão ==');
-{
-  abrir('aquiles', { pontos: { aquiles: 0 }, niveis: { aquiles: { basico: 1, habilidade: 1, milagre: 1 } } });
-  const P = $$('.nldir .nlp');
-  ok(!!P[0].querySelector('.nlp__sem'), 'o básico do Aquiles cai no estado SEM ESCADA');
-  ok(/não tem níveis/i.test(txt(P[0].querySelector('.nlp__semt'))), 'diz "Esta habilidade não tem níveis."');
-  ok(/desequilibraria/i.test(txt(P[0].querySelector('.nlp__sems'))), 'a linha menor explica sem número técnico');
-  ok(!P[0].querySelector('.nlpin') && !P[0].querySelector('[data-subir]') && !P[0].querySelector('.nlp__max'), 'sem marcadores, sem botão, sem selo de máximo');
-  ok(txt($('.nlfoot__num')) === '3 de 9', '"X de Y" conta o slot sem-escada como topo 1 (3 de 9)');
-}
-
-// ---- 6. ESCADA CURTA (Fujin básico/milagre): topo < 4, marcadores conforme os degraus ----
-console.log('\n== 6. escada curta: topo abaixo de 4 ==');
-{
-  abrir('fujin', { pontos: { fujin: 0 }, niveis: { fujin: { basico: 1, habilidade: 1, milagre: 1 } } });
-  const P = $$('.nldir .nlp');
-  ok(txt(P[0].querySelector('.nlp__nv')) === 'Nível 1 de 3' && P[0].querySelectorAll('.nlpin').length === 3, 'básico escada curta: "Nível 1 de 3", 3 marcadores');
-  ok(txt(P[2].querySelector('.nlp__nv')) === 'Nível 1 de 3', 'milagre escada curta: topo 3');
-  ok(txt($('.nlfoot__num')) === '3 de 10', '"X de Y" soma os topos reais das curtas (3 de 10)');
-}
-
-// ---- 7. CONFIRMAÇÃO INLINE (§245): SUBIR abre; CANCELAR fecha; CONFIRMAR chama o servidor e bloqueia o duplo ----
-console.log('\n== 7. confirmação inline (§245): abre, cancela, confirma (servidor autoritativo) ==');
-{
+  // ---- 1. CABEÇALHO + COLUNA ESQUERDA (identidade + passiva) ----
+  console.log('\n== 1. cabeçalho + coluna esquerda (identidade, passiva) ==');
+  err = null;
   abrir('zeus', { pontos: { zeus: 3 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
-  clk($('.nldir .nlp [data-subir]'));
-  ok(!!$('.nlp__conf') && /Não dá para desfazer/.test(txt($('.nlp__conf'))), 'SUBIR abre a confirmação inline no painel (sem modal)');
-  ok(!!$('[data-subir-ok]') && !!$('[data-subir-no]'), 'a confirmação tem CONFIRMAR e CANCELAR');
-  clk($('[data-subir-no]'));
-  ok(!$('.nlp__conf') && !!$('.nldir .nlp [data-subir]'), 'CANCELAR fecha e devolve o botão SUBIR');
-  // CONFIRMAR com servidor DUBLE (sucesso) → atualiza nível/pontos; a confirmação fecha.
-  w.eval("subirNivelServidor=async function(k,sl){ contaAtual.pontos[k]-=1; contaAtual.niveis[k][sl]=(contaAtual.niveis[k][sl]||1)+1; render(); return {ok:true,nivel:contaAtual.niveis[k][sl],pontos:contaAtual.pontos[k]}; };");
-  clk($('.nldir .nlp [data-subir]'));
-  clk($('[data-subir-ok]'));
-}
+  ok(!err, 'renderiza sem quebrar (' + (err || 'ok') + ')');
+  ok(!!$('#nlfix.nlfix2, .nlfix2 #nlfix'), 'monta na tela fixa (#nlfix dentro de .nlfix2)');
+  ok(/‹ Zeus/.test(txt($('#bvoltar'))), 'o voltar diz "‹ <Nome do deus>" (§319c: volta para a FICHA)');
+  ok(/NÍVEIS DE HABILIDADE/.test(txt($('.nlx-titulo'))), 'título "NÍVEIS DE HABILIDADE"');
+  ok(/Pontos de Zeus: 3/.test(txt($('.nltop__ptn'))), 'os pontos do deus vêm da conta (servidor)');
+  ok(!!$('.nltop__ic'), 'o topo tem o ÍCONE PRÓPRIO de pontos (gema azul, distinto da Essência)');
+  ok(/cópias repetidas viram pontos/.test(txt($('.nltop__cop'))), 'o topo explica "cópias repetidas viram pontos"');
+  ok(!!$('.nlx-esq .nlmed .slot'), 'retrato/medalhão na esquerda');
+  ok(txt($('.nlmed__nome')) === 'Zeus', 'o nome do deus na esquerda (Cinzel)');
+  ok(/Grega/.test(txt($('.nlid__sub'))) && /Tempestade/i.test(txt($('.nlid__sub'))), 'panteão · elemento (do data/deuses)');
+  ok(!!$('.nlpas') && /PASSIVA/.test(txt($('.nlpas__rot'))) && txt($('.nlpas__nome')) === 'Soberano', 'a PASSIVA fica na esquerda com nome');
+  ok(/não tem níveis/i.test(txt($('.nlpas__nota'))), 'a passiva diz que não tem níveis');
 
-// a resposta do servidor é assíncrona (Promise) — espera um tique antes de conferir o efeito.
-setTimeout(() => {
-  ok(txt($$('.nldir .nlp')[0].querySelector('.nlp__nv')) === 'Nível 2 de 4', 'após CONFIRMAR (servidor), o nível sobe (1 → 2)');
-  ok(/Pontos de Zeus: 2/.test(txt($('.nltop__ptn'))), 'os pontos baixam pelo custo (3 → 2)');
+  // ---- 2. COLUNA DIREITA: 4 cartões (Básico/Habilidade/Milagre/Defesa), na ordem ----
+  console.log('\n== 2. coluna direita: 4 cartões na ordem (básico/habilidade/milagre/defesa) ==');
+  {
+    const P = $$('.nlx-dir .nlp');
+    ok(P.length === 4, `4 cartões (básico/habilidade/milagre/defesa), há ${P.length}`);
+    ok(txt(P[0].querySelector('.nlp__tipo')) === 'BÁSICO' && /Cetro do Trovão/.test(txt(P[0].querySelector('.nlp__nome'))), 'cartão 1 = BÁSICO · Cetro do Trovão');
+    ok(txt(P[1].querySelector('.nlp__tipo')) === 'HABILIDADE', 'cartão 2 = HABILIDADE');
+    ok(txt(P[2].querySelector('.nlp__tipo')) === 'MILAGRE', 'cartão 3 = MILAGRE');
+    ok(txt(P[3].querySelector('.nlp__tipo')) === 'DEFESA', 'cartão 4 = DEFESA (universal, 4º)');
+    // cabeçalho do básico: "Nv 1 de 4" + 4 bolinhas, 1 acesa
+    ok(txt(P[0].querySelector('.nlp__nv')) === 'Nv 1 de 4', '"Nv N de TOPO" no básico (Nv 1 de 4)');
+    ok(P[0].querySelectorAll('.nlpin').length === 4 && P[0].querySelectorAll('.nlpin.on').length === 1, 'bolinhas: 4 (topo) com 1 acesa (nv atual)');
+    ok(/AGORA \(Nv 1\)/.test(txt(P[0].querySelector('.nlp__coll'))) && /15 de dano/.test(txt(P[0].querySelector('.nlp__cell .nlp__txt'))), 'AGORA (Nv 1): texto do nível atual (kit efetivo)');
+  }
+
+  // ---- 3. OS 4 ESTADOS numa só tela: faltam · máximo · pode subir (diff) · sem escada ----
+  console.log('\n== 3. estados: FALTAM · NÍVEL MÁXIMO · SUBIR (diff dourado) · sem escada ==');
+  abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 3, habilidade: 4, milagre: 1 } } });
+  {
+    const P = $$('.nlx-dir .nlp');
+    // básico nv3 de 4, custo p/ nv4 = 3, tem 1 ponto → FALTAM 2 PONTOS (botão apagado)
+    const a0 = P[0].querySelector('.nlp__pe .nlb');
+    ok(!P[0].querySelector('[data-subir]') && a0.disabled && /FALTAM 2 PONTOS/.test(txt(a0)), 'BÁSICO (custo 3, tem 1): "FALTAM 2 PONTOS" (apagado)');
+    // habilidade nv4 de 4 (topo) → NÍVEL MÁXIMO ALCANÇADO (laurel), sem botão
+    ok(!!P[1].querySelector('.nlp__maxbox') && /NÍVEL MÁXIMO/.test(txt(P[1].querySelector('.nlp__maxt'))) && /ALCAN/.test(txt(P[1].querySelector('.nlp__maxt'))), 'HABILIDADE no topo: caixa "NÍVEL MÁXIMO ALCANÇADO" (louros)');
+    ok(!P[1].querySelector('[data-subir]') && !P[1].querySelector('.nlp__cell--px'), 'no máximo: sem botão SUBIR e sem coluna PRÓXIMO');
+    ok(P[1].querySelectorAll('.nlpin.on').length === 4, 'no máximo: todas as bolinhas acesas');
+    // milagre nv1 de 4, custo p/ nv2 = 1, tem 1 ponto → SUBIR PARA NV 2 · 1 PONTOS (ouro)
+    const b2 = P[2].querySelector('[data-subir]');
+    ok(!!b2 && /SUBIR PARA NV 2 · 1 PONTOS/.test(txt(b2)) && b2.classList.contains('nlb--go'), 'MILAGRE (custo 1, tem 1): botão de ouro "SUBIR PARA NV 2 · 1 PONTOS"');
+    ok(!!P[2].querySelector('.nlp__cell--px') && /PRÓXIMO \(Nv 2\)/.test(txt(P[2].querySelector('.nlp__coll--px'))), 'MILAGRE tem a coluna PRÓXIMO (Nv 2)');
+    // DIFF dourado: só o número que muda (20 → 22) fica em .nl-hi, e NADA mais
+    const hi = P[2].querySelectorAll('.nlp__cell--px .nl-hi');
+    ok(hi.length === 1 && txt(hi[0]) === '22', `o PRÓXIMO destaca só o número que muda (22), e só ele (${hi.length} destaque(s))`);
+    ok(/20 de dano/.test(txt(P[2].querySelector('.nlp__cell:not(.nlp__cell--px) .nlp__txt'))), 'o AGORA do milagre ainda mostra 20 de dano');
+    // defesa: universal, sem escada
+    ok(P[3].classList.contains('nlp--sem'), 'DEFESA entra no estado SEM ESCADA');
+    ok(!P[3].querySelector('.nlpin') && !P[3].querySelector('.nlp__nvbox'), 'DEFESA: sem bolinhas e sem "Nv N de TOPO"');
+    const d3 = P[3].querySelector('.nlp__pe .nlb');
+    ok(d3.disabled && /não tem níveis/i.test(txt(d3)), 'DEFESA: "Esta habilidade não tem níveis."');
+  }
+
+  // ---- 4. CONFIRMAÇÃO: SUBIR abre; CANCELAR fecha; CONFIRMAR chama o servidor no SLOT certo ----
+  console.log('\n== 4. confirmação inline: abre · cancela · confirma (slot certo, servidor autoritativo) ==');
+  abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 3, habilidade: 4, milagre: 1 } } });
+  clk($$('.nlx-dir .nlp')[2].querySelector('[data-subir]'));
+  {
+    const P = $$('.nlx-dir .nlp');
+    ok(P[2].classList.contains('nlp--conf') && !!P[2].querySelector('.nlp__conf'), 'SUBIR abre a confirmação NO cartão do milagre (sem modal)');
+    ok(/Subir para Nv 2 por 1 pontos\?/.test(txt(P[2].querySelector('.nlp__confq'))), 'a pergunta cita o nível e o custo (Nv 2 · 1 pontos)');
+    ok(!!P[2].querySelector('[data-subir-ok]') && !!P[2].querySelector('[data-subir-no]'), 'a confirmação tem CONFIRMAR e CANCELAR');
+  }
+  clk($('[data-subir-no]'));
+  ok(!$('.nlp__conf') && !!$$('.nlx-dir .nlp')[2].querySelector('[data-subir]'), 'CANCELAR fecha e devolve o botão SUBIR');
+  // CONFIRMAR chama o servidor com (k, slot) corretos
+  w.eval("window.__got=null; subirNivelServidor=async function(k,sl){ window.__got={k:k,sl:sl}; contaAtual.pontos[k]-=1; contaAtual.niveis[k][sl]=(contaAtual.niveis[k][sl]||1)+1; return {ok:true,nivel:contaAtual.niveis[k][sl],pontos:contaAtual.pontos[k]}; };");
+  clk($$('.nlx-dir .nlp')[2].querySelector('[data-subir]'));
+  clk($('[data-subir-ok]'));
+  await tick();
+  ok(w.eval("window.__got && window.__got.k==='zeus' && window.__got.sl==='milagre'"), 'CONFIRMAR chama subirNivelServidor no SLOT certo (milagre)');
+  ok(txt($$('.nlx-dir .nlp')[2].querySelector('.nlp__nv')) === 'Nv 2 de 4', 'após CONFIRMAR o nível do milagre sobe (1 → 2)');
+  ok(/Pontos de Zeus: 0/.test(txt($('.nltop__ptn'))), 'os pontos baixam pelo custo (1 → 0)');
   ok(!$('.nlp__conf'), 'a confirmação fecha após a resposta');
 
-  // ---- 8. RECUSA do servidor → linha curta no painel ----
-  console.log('\n== 8. recusa do servidor → linha curta no painel ==');
-  w.eval("subirNivelServidor=async function(){ return {erro:'x',codigo:'pontos_insuficientes'}; }; nlConfirm=null;nlMsg=null;render();");
-  clk($('.nldir .nlp [data-subir]'));
+  // ---- 5. RECUSA do servidor → linha curta no cartão ----
+  console.log('\n== 5. recusa do servidor → linha curta no cartão ==');
+  abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
+  w.eval("subirNivelServidor=async function(){ return {erro:'x',codigo:'pontos_insuficientes'}; };");
+  clk($$('.nlx-dir .nlp')[0].querySelector('[data-subir]'));
   clk($('[data-subir-ok]'));
-  setTimeout(() => {
-    ok(/Pontos insuficientes/.test(txt($('.nlp__erro'))), 'recusa "pontos_insuficientes" → mensagem curta no painel');
+  await tick();
+  ok(/Pontos insuficientes/.test(txt($('.nlx-dir .nlp .nlp__erro'))), 'recusa "pontos_insuficientes" → mensagem curta no cartão');
 
-    // ---- 9. NÃO POSSUÍDO: aviso + escada só-leitura, sem botões ----
-    console.log('\n== 9. não possuído: aviso + escada só-leitura ==');
-    abrir('ahpuch', { possui: ['zeus'] });   // possui zeus, NÃO ahpuch
-    ok(/não tem este deus/i.test(txt($('.nltop__pts--falta'))), '"Você ainda não tem este deus" na barra');
-    ok(!!$('.nlmed__tag') && /NÃO POSSUI/.test(txt($('.nlmed__tag'))), 'tag no medalhão');
-    ok($$('[data-subir]').length === 0 && $$('[data-subir-ok]').length === 0, 'nenhum botão (escada só-leitura)');
-    ok($$('.nldir .nlp .nlp__esc').length >= 1, 'a escada continua legível');
+  // ---- 6. VOLTAR vai para a FICHA do MESMO deus ----
+  console.log('\n== 6. o "‹" volta para a FICHA do mesmo deus ==');
+  abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 1, habilidade: 1, milagre: 1 } } });
+  clk($('#bvoltar'));
+  ok(w.eval("rotaAtual()") === 'deus' && w.eval("(paramsAtuais()||{}).key") === 'zeus', 'o "‹" leva à FICHA (rota deus) do mesmo deus (zeus)');
 
-    // ---- 10. SEM CONEXÃO: botões apagados + aviso; nenhum SUBIR ativo ----
-    console.log('\n== 10. sem conexão: botões apagados + aviso ==');
-    w.eval("contaAtual=null;perfil.deuses={zeus:{copias:1,obtidoEm:0}};nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();");
-    const z0 = $$('.nldir .nlp')[0];
-    ok(!!z0.querySelector('.b--wait[disabled]') && /Sem conexão/.test(txt(z0.querySelector('.nlp__nota'))), 'offline: botão SUBIR apagado + "Sem conexão com o servidor"');
+  // ---- 7. NÃO POSSUÍDO: aviso + cartões só-leitura (sem subir) ----
+  console.log('\n== 7. não possuído: aviso + cartões só-leitura ==');
+  abrir('ahpuch', { possui: ['zeus'] });   // possui zeus, NÃO ahpuch
+  ok(/não tem este deus/i.test(txt($('.nltop__pts--falta'))), '"Você ainda não tem este deus" no topo');
+  ok(!!$('.nlmed__tag') && /NÃO POSSUI/.test(txt($('.nlmed__tag'))), 'tag "NÃO POSSUI" no medalhão');
+  ok($$('[data-subir]').length === 0, 'não possuído: nenhum botão SUBIR ativo');
+  ok(/precisa ter o deus/i.test(txt($$('.nlx-dir .nlp')[0].querySelector('.nlp__pe .nlb'))), 'cartão com escada: "Você precisa ter o deus"');
+
+  // ---- 8. SEM CONEXÃO: cartões apagados + aviso; nenhum SUBIR ativo ----
+  console.log('\n== 8. sem conexão: cartões apagados + aviso ==');
+  w.eval("contaAtual=null;perfil.deuses={zeus:{copias:1,obtidoEm:0}};nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();");
+  {
+    const esc = $$('.nlx-dir .nlp--esc')[0];
+    ok(!!esc.querySelector('.nlp__pe .nlb[disabled]') && /Sem conexão/.test(txt(esc.querySelector('.nlp__pe .nlb'))), 'offline: botão apagado + "Sem conexão com o servidor"');
     ok($$('[data-subir]').length === 0, 'offline: nenhum SUBIR ativo (o servidor é a verdade)');
+  }
 
-    console.log(`\n${falhas ? '✗ ' + falhas + ' FALHA(S)' : '✓ jsdom verde'} · ${passes} asserções`);
-    larguras();
-  }, 20);
-}, 20);
+  if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS (jsdom) ==`); process.exit(1); }
+  console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×852 e 780×360) ==`);
+  await larguras();
+})().catch(e => { console.error(e.stack || e.message || e); process.exit(1); });
 
-// ================= §292/§295/§307/§308 — LARGURA 780/893/1075/1200: esquerda nunca rola, direita nunca corta
-//                   na horizontal, nenhum nome de habilidade cortado por reticência, toque dos botões >= 44px =================
-function larguras() {
-  (async () => {
-    const { chromium } = require('playwright');
-    function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
-    const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
-    // o deus com o nome de habilidade mais longo (nowrap no painel) estressa a reticência.
-    const nomeLongo = (() => {
-      let best = { len: 0, k: 'zeus' };
-      for (const f of fs.readdirSync(path.resolve(__dirname, '..', 'data', 'deuses'))) {
-        const g = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'data', 'deuses', f)));
-        (g.ab || []).forEach(a => { if (a.nome && a.nome.length > best.len) best = { len: a.nome.length, k: g.key }; });
-      }
-      return best.k;
-    })();
-    // mocks (cada um retorna o eval que arma contaAtual + abre a rota 'niveis')
-    const C = (k, pontos, niveis, possui) => `perfil.deuses=${JSON.stringify((possui || [k]).reduce((o, x) => (o[x] = { copias: 1, obtidoEm: 0 }, o), {}))};contaAtual={nick:'T',ranque:{pontos:60},pontos:${JSON.stringify(pontos || {})},niveis:${JSON.stringify(niveis || {})},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:${JSON.stringify(k)}},{substituir:true});render();`;
-    const casos = {
-      'zeus meio':       C('zeus', { zeus: 5 }, { zeus: { basico: 2, habilidade: 1, milagre: 1 } }),
-      'zeus nv1':        C('zeus', { zeus: 0 }, { zeus: { basico: 1, habilidade: 1, milagre: 1 } }),
-      'zeus máximo':     C('zeus', { zeus: 0 }, { zeus: { basico: 4, habilidade: 4, milagre: 4 } }),
-      'aquiles s/escada':C('aquiles', { aquiles: 0 }, { aquiles: { basico: 1, habilidade: 1, milagre: 1 } }),
-      'fujin curta':     C('fujin', { fujin: 9 }, { fujin: { basico: 1, habilidade: 1, milagre: 1 } }),
-      'zeus s/pontos':   C('zeus', { zeus: 0 }, { zeus: { basico: 1, habilidade: 1, milagre: 1 } }),
-      'não possuído':    C('ahpuch', {}, {}, ['zeus']),
-      'nome longo':      C(nomeLongo, { [nomeLongo]: 9 }, {}),
-      'confirmação':     C('zeus', { zeus: 3 }, { zeus: { basico: 1, habilidade: 1, milagre: 1 } }) + "clk();",
-      'sem conexão':     `perfil.deuses={zeus:{copias:1,obtidoEm:0}};contaAtual=null;nlConfirm=null;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();`,
-    };
-    let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
-    const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
-    for (const W of [780, 893, 1075, 1200]) {
-      for (const [nome, mk] of Object.entries(casos)) {
-        const page = await (await browser.newContext({ viewport: { width: W, height: 428 }, deviceScaleFactor: 2 })).newPage();
-        await page.goto(distAbs, { waitUntil: 'load' });
-        await page.evaluate("window.clk=function(){var b=document.querySelector('.nldir .nlp [data-subir]');if(b)b.dispatchEvent(new MouseEvent('click',{bubbles:true}));};");
-        await page.evaluate(mk); await page.waitForTimeout(90);
-        const r = await page.evaluate(() => {
-          const esq = document.querySelector('.nlesq'); const dir = document.querySelector('.nldir');
-          const esqClip = esq ? (esq.scrollHeight - esq.clientHeight) : 0;
-          const rb = dir.getBoundingClientRect(); const cw = dir.clientWidth; let over = 0;
-          dir.querySelectorAll('*').forEach(el => { const o = el.getBoundingClientRect().right - rb.left - cw; if (o > over) over = o; });
-          // pior NOME de habilidade (nowrap): natural (clone) vs a caixa — nada por reticência.
-          let nameClip = 0;
-          document.querySelectorAll('.nlp__nome').forEach(el => { const cs = getComputedStyle(el); const c = document.createElement('span'); c.textContent = el.textContent; c.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + cs.font; document.body.appendChild(c); const nat = c.offsetWidth; c.remove(); const clip = nat - el.clientWidth; if (clip > nameClip) nameClip = clip; });
-          // toque dos botões de ação (SUBIR/CONFIRMAR/CANCELAR)
-          let btnMin = 99; document.querySelectorAll('.nlp__acao .b, .nlp__confb .b').forEach(b => { const h = b.getBoundingClientRect().height; if (h < btnMin) btnMin = h; });
-          if (btnMin === 99) btnMin = 44;   // estados sem botão (máximo/sem escada) não têm toque a medir
-          return { esqClip: Math.round(esqClip), over: Math.round(over), nameClip: Math.round(nameClip), btnMin: Math.round(btnMin) };
+// ================= §350 — ENCAIXE: a tela fixa enche o palco; cabeçalho/esquerda/cartões dentro (≤830),
+//                   esquerda e direita não se sobrepõem, nenhum texto corta. 1846×852 e 780×360. =================
+async function larguras() {
+  const { chromium } = require('playwright');
+  function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
+  const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
+  // estado rico: os 4 estados numa tela só (faltam · máximo · subir · sem escada) — o pior caso de conteúdo.
+  const RICO = `perfil.deuses={zeus:{copias:1,obtidoEm:0}};contaAtual={nick:'T',ranque:{pontos:60},pontos:{zeus:1},niveis:{zeus:{basico:3,habilidade:4,milagre:1}},perfil:{deuses:{zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}};nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();`;
+  const CONF = RICO + `document.querySelector('.nlx-dir .nlp [data-subir]').dispatchEvent(new MouseEvent('click',{bubbles:true}));`;
+  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
+  let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
+  for (const [W, H] of [[1846, 852], [780, 360]]) {
+    for (const [nome, mk] of [['estados', RICO], ['confirmando', CONF]]) {
+      const page = await (await browser.newContext({ viewport: { width: W, height: H } })).newPage();
+      await page.goto(distAbs, { waitUntil: 'load' });
+      const r = await page.evaluate((mk) => {
+        eval(mk); const g = document.getElementById('gsplash'); if (g) g.remove();
+        const fix = document.getElementById('nlfix'), fb = fix.getBoundingClientRect();
+        const esc = fb.height / 852;
+        const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
+        const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
+        // y de design dos containers E de cada cartão (medir os FILHOS: nada pode cair fora da tela)
+        let botMax = 0, pior = '';
+        const alvos = ['.nlx-cab', '.nlx-esq'];
+        fix.querySelectorAll('.nlx-dir .nlp').forEach((el, i) => alvos.push('.nlp#' + i));
+        [...fix.querySelectorAll('.nlx-cab,.nlx-esq'), ...fix.querySelectorAll('.nlx-dir .nlp')].forEach((el) => {
+          const b = designBot(el); if (b > botMax) { botMax = b; pior = el.className.split(' ')[0]; }
         });
-        ok2(r.esqClip <= 1, `${W} ${nome}: a coluna esquerda NÃO rola (clip ${r.esqClip})`);
-        ok2(r.over <= 1, `${W} ${nome}: a coluna direita não corta na horizontal (over ${r.over})`);
-        ok2(r.nameClip <= 1, `${W} ${nome}: nenhum nome de habilidade cortado por reticência (clip ${r.nameClip})`);
-        ok2(r.btnMin >= 44, `${W} ${nome}: toque dos botões >= 44px (menor ${r.btnMin})`);
-        await page.close();
-      }
+        // sobreposição esquerda × direita
+        const le = fix.querySelector('.nlx-esq').getBoundingClientRect(), di = fix.querySelector('.nlx-dir').getBoundingClientRect();
+        const overlap = le.right > di.left + 1;
+        // overflow horizontal da coluna direita
+        const dir = fix.querySelector('.nlx-dir'); const over = dir.scrollWidth - dir.clientWidth;
+        // texto cortado em títulos/nomes/rótulos
+        let clips = [];
+        fix.querySelectorAll('.nlx-titulo,.nltop__ptn,.nltop__cop,.nlmed__nome,.nlid__sub,.nlpas__nome,.nlp__tipo,.nlp__nome,.nlp__nv,.nlp__coll,.nlb,.nlp__confq,.nlp__maxt').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className.split(' ')[0]); });
+        return { pw, ph, botMax, pior, overlap, over, clips: [...new Set(clips)].slice(0, 6) };
+      }, mk);
+      ok2(Math.min(r.pw, r.ph) >= 0.98, `§350 níveis/${nome} @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
+      ok2(r.botMax <= 832, `§350 níveis/${nome} @${W}×${H}: cabeçalho/esquerda/cartões terminam em y≤830 (pior ${r.botMax} em ${r.pior})`);
+      ok2(!r.overlap, `§350 níveis/${nome} @${W}×${H}: esquerda e direita não se sobrepõem`);
+      ok2(r.over <= 2, `§350 níveis/${nome} @${W}×${H}: a coluna direita não corta na horizontal (over ${r.over})`);
+      ok2(r.clips.length === 0, `§350 níveis/${nome} @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
+      await page.close();
     }
-    await browser.close();
-    if (cf || falhas) { console.log(`\n== ${cf} falha(s) de largura + ${falhas} jsdom ==`); process.exit(1); }
-    console.log('\n== TELA DE NÍVEIS §319 OK (jsdom + 4 larguras) ==');
-    process.exit(0);
-  })().catch(e => { console.error(e.message || e); process.exit(1); });
+  }
+  await browser.close();
+  if (cf || falhas) { console.log(`\n== ${cf} falha(s) de encaixe + ${falhas} jsdom ==`); process.exit(1); }
+  console.log('\n== TELA DE NÍVEIS §350 OK (jsdom + Chromium) ==');
+  process.exit(0);
 }

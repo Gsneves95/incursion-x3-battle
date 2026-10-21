@@ -136,8 +136,10 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
   // posição imóvel entre turnos) não existe mais: retrato, vida, efeitos e habilidades viraram irmãos absolutos.
   // A ênfase por turno (turno-eu/turno-eles no #baselayer) PERMANECE e segue coberta em render_sweep.test.js.
 
-  // == §220: DETALHE do deus — arte quadrada (sem corte feio), nome não coberto, skill ≥76, texto sem rolar ==
-  console.log('== geometria (§220): detalhe do deus — arte, nome, toque das skills, texto ==');
+  // == §350: FICHA do deus (tela fixa 1846×852 escalada) — arte (painel-retrato à esquerda) com o nome dentro, 5
+  // habilidades com toque de design >= piso, e a MAIOR descrição cabe na tela (detalhe termina em y≤830). Medido em
+  // ESPAÇO DE DESIGN (desfaz a escala do #stage), pois a ficha agora é um palco fixo que encolhe inteiro.
+  console.log('== geometria (§350): FICHA do deus — arte, nome, toque das skills, texto ==');
   {
     await page.setViewportSize({ width: 926, height: 428 });
     const g = await page.evaluate(() => {
@@ -149,24 +151,25 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       }
       perfil.deuses[best.k] = perfil.deuses[best.k] || { obtidoEm: Date.now() };
       ir('deus', { key: best.k }, { substituir: true }); render(); deusSel = best.s; render();
+      const sp = document.getElementById('gsplash'); if (sp) sp.remove();
+      const fix = document.getElementById('deusfix'), fb = fix.getBoundingClientRect(), esc = fb.height / 852;
       const R = el => el.getBoundingClientRect();
-      const art = R(document.querySelector('.dart')), nome = R(document.querySelector('.dart__nome'));
-      const kit = R(document.querySelector('.dkit'));
-      const sk = [...document.querySelectorAll('.dsk')].map(R);
-      const txt = document.querySelector('.ddet');   // §284-ajuste2: a casca .ddet é o contêiner de rolagem do detalhe
+      const art = R(fix.querySelector('.dsx-art')), nome = R(fix.querySelector('.dsx-art__nome'));
+      const sk = [...fix.querySelectorAll('.dsx-hab__btns .dsk')].map(R);
+      const ddet = R(fix.querySelector('.ddet'));
       return {
-        artW: art.width, artH: art.height, artB: art.bottom,
-        nomeTop: nome.top, kitTop: kit.top,            // o nome (na arte, esq) não pode ser coberto pelo kit (col, dir)
+        artW: art.width / esc, artH: art.height / esc, n: sk.length,
         nomeDentroDaArte: nome.left >= art.left - 0.6 && nome.right <= art.right + 0.6,
-        skMin: Math.min(...sk.map(s => Math.min(s.width, s.height))),
-        txtScroll: txt.scrollHeight, txtClient: txt.clientHeight, len: best.len,
+        skMin: Math.min(...sk.map(s => Math.min(s.width, s.height))) / esc,
+        detalheBot: (ddet.bottom - fb.top) / esc, len: best.len,
       };
     });
-    ok(Math.abs(g.artW - g.artH) <= 3, `a arte é ~quadrada (não corta feio): ${Math.round(g.artW)}x${Math.round(g.artH)}`);
-    ok(g.nomeDentroDaArte, 'o nome fica dentro da arte (à esquerda), longe da coluna de chips/tag');
-    ok(g.skMin >= 76, `o toque de cada skill é >=76px (menor lado ${Math.round(g.skMin)})`);
-    ok(g.txtScroll <= g.txtClient + 1, `a maior descrição (${g.len} chars) cai no detalhe sem rolar (${g.txtScroll}/${g.txtClient})`);
-    console.log(`  arte ${Math.round(g.artW)}x${Math.round(g.artH)} · skill toque ${Math.round(g.skMin)}px · maior texto ${g.len} chars sem rolar`);
+    ok(g.n === 5, `a ficha mostra as 5 habilidades (${g.n})`);
+    ok(g.artW >= 700 && g.artH >= 800, `a arte é o grande painel-retrato à esquerda (${Math.round(g.artW)}x${Math.round(g.artH)} design)`);
+    ok(g.nomeDentroDaArte, 'o nome fica dentro da arte (à esquerda), longe da coluna de etiquetas');
+    ok(g.skMin >= 72, `o toque de cada habilidade é >=72px de design (menor lado ${Math.round(g.skMin)})`);
+    ok(g.detalheBot <= 832, `a maior descrição (${g.len} chars) cai na tela sem cortar (detalhe termina em y=${Math.round(g.detalheBot)}≤830)`);
+    console.log(`  arte ${Math.round(g.artW)}x${Math.round(g.artH)} · skill toque ${Math.round(g.skMin)}px (design) · maior texto ${g.len} chars, detalhe y≤${Math.round(g.detalheBot)}`);
     await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
   }
 

@@ -2,6 +2,32 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §350 · FICHA (renderDeusDetalhe) e NÍVEIS (renderNiveis) no modelo do dono — telas fixas 1846×852
+- Duas telas SEPARADAS (ficha → botão → níveis), ambas TELA FIXA 1846×852 escalada: `fit()` ramos `emDeus`/`emNiveis`
+  (palco `deusfix2`/`nlfix2`); "build"/"conta" somem (`emdeus`/`emniveis`). Alvos ≥72px, corpo ≥20px.
+- FICHA (rota `deus`): ARTE grande à esquerda (retrato cover 862×852 + véu + nome Cinzel; "VOCÊ NÃO POSSUI" se falta).
+  Cabeçalho ‹VOLTAR · raridade + "SUBIR HABILIDADES ›" (`data-irniveis`, acende `is-pag`+bolinha só com nível pagável,
+  `nlTemPagavel`). Coluna: etiquetas (panteão/elemento `orbe()`/classe/função); MAESTRIA (`maestriaDetalheHTML`:
+  posto·v/30 + barra marcas 5/15/30 + "Mestre aos 30…"; "Milagre ✓") ou COMO CONSEGUIR (`comoConseguirHTML`,
+  `data-vermissao`→Provação); HABILIDADES = 5 botões (Passiva/Básico/Habilidade/Milagre/Defesa; "Nv N" só nas ativas;
+  abre na PASSIVA); DETALHE (`deusDetalheHTML`, kit efetivo §318: título Cinzel + pílulas [tipo cor·classe·alvo·NV] +
+  custo ORBES/GRÁTIS + recarga + desc realçada).
+- NÍVEIS (rota `niveis`): cabeçalho (‹<NOME>→ficha · "NÍVEIS DE HABILIDADE" · "Pontos de <NOME>: N" `nlTopoPtsHTML` com
+  gema azul própria + "cópias repetidas viram pontos"). ESQUERDA = retrato+nome+raridade+"Panteão·Elemento"+PASSIVA
+  ("não tem níveis"). DIREITA = 4 cartões 2×2 (`nlPaineisHTML`: Básico/Habilidade/Milagre/Defesa). Cada cartão
+  (`nlPainelHTML`): cabeçalho (ícone·tipo·nome·"Nv N de TOPO"+bolinhas, só c/ escada) · AGORA|PRÓXIMO (só os números que
+  mudam em dourado, `_nlRealceDiff`) · AÇÃO por estado (subir "NV N+1 · X PONTOS" / "FALTAM X" / "NÍVEL MÁXIMO
+  ALCANÇADO"+louros / sem escada "não tem níveis" / confirmando [CONFIRMAR][CANCELAR] / "precisa ter o deus" / "Sem
+  conexão" / erro no cartão).
+- NÃO mudou: regras de nível/custo/pontos/servidor (`subirNivelServidor`/`_nlConfirmar`), maestria, nav ficha⇄níveis,
+  outras telas. `nlTopoPtsHTML`/`nlPaineisHTML`/`nlPainelHTML` são os MESMOS da sobreposição da Coleção (§321), agora com
+  4 cartões no novo visual (CSS `.nlp*`/`.nlb*`/`.nltop*`/`.nl-hi` globais).
+- §297: na ficha o `<img retratos/…>` virou irmão do slot dentro de `.dsx-art__mono` (opacity só no monograma) p/ a
+  guarda `retrato_grande` achar o arquivo grande no mesmo pai.
+- Provas: `niveis_tela.test.js` reescrito + `ficha_tela.test.js` novo (jsdom + Chromium @1846/@780: enche ≥98%, filhos
+  ≤830, sem sobrepor/cortar). Ajustados aquisicao/moldura/colecao_niveis/colecao_tela/maestria/gratis_custo/orbes_server.
+  Suíte + build verdes. Capturas `docs/telas/350-*`.
+
 ## ★ §349 · PROVAÇÕES (renderMissoes) no modelo do dono — tela fixa 1846×852 + grade + prévia
 - A tela (rota `provacoes`) virou TELA FIXA 1846×852 escalada: `fit()` ramo `emProv` + classe `pv2fix`; "build"/"conta"
   somem (`emprov`). Cabeçalho ‹INÍCIO · PROVAÇÕES · RANQUE (`ranqueHTML`).

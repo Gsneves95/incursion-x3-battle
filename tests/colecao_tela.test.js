@@ -318,7 +318,7 @@ console.log('\n== 10. §319b/§321: descoberta de níveis (posse+pontos, "X de Y
   ok(!!$('#col2ovsubir') && $('#col2ovsubir').classList.contains('b--primary'), '§321: na sobreposição, "SUBIR HABILIDADES" fica DOURADO quando pagável');
   w.eval("document.querySelector('#col2ovsubir').click()");
   ok(!!$('.col2ov__nivscroll') && w.eval("rotaAtual()") === 'colecao', '§321: SUBIR troca para a visão de níveis DENTRO da sobreposição (sem rota)');
-  ok($$('.col2ov__nivscroll .nlp').length === 3 && /Pontos de/.test(txt($('.col2ov__nivscroll .nltop__ptn'))), 'a visão de níveis traz os 3 painéis + os pontos do deus');
+  ok($$('.col2ov__nivscroll .nlp').length === 4 && /Pontos de/.test(txt($('.col2ov__nivscroll .nltop__ptn'))), 'a visão de níveis traz os 4 cartões + os pontos do deus');
   ok(!!$('#col2ovkit'), '§321: há o "‹ Kit" para voltar à visão do kit');
   w.eval("document.querySelector('#col2ovkit').click()");
   ok(!!$('.col2ov__sks') && !$('.col2ov__nivscroll'), '§321: "‹ Kit" volta à visão do kit, na mesma sobreposição');

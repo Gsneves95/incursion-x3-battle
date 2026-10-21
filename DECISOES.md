@@ -6,6 +6,51 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §350 · FICHA do deus (renderDeusDetalhe) e NÍVEIS (renderNiveis) no modelo do dono — telas fixas
+
+O dono aprovou duas imagens: a FICHA (ex.: Zeus) e os NÍVEIS DE HABILIDADE. As duas telas seguem **separadas** (a ficha
+leva aos níveis por um botão), e ambas viraram **tela fixa 1846×852 escalada** (como §339/§349): `fit()` ganhou os ramos
+`emDeus`/`emNiveis` (classes de palco `deusfix2`/`nlfix2`), e "build"/"conta" somem (`emdeus`/`emniveis`). Alvos ≥72px,
+corpo ≥20px.
+
+**FICHA (`renderDeusDetalhe`, rota 'deus'):** ARTE grande à esquerda (painel-retrato 862×852: `RETRATO_ARTE` em cover +
+véu + nome Cinzel dourado; "VOCÊ NÃO POSSUI" quando não tem). Cabeçalho: ‹ VOLTAR à esquerda; à direita o selo de
+raridade (`RAR_ROT`) + "SUBIR HABILIDADES ›" (`data-irniveis`, acende `is-pag` com bolinha de aviso só quando há nível
+PAGÁVEL agora — `nlTemPagavel`). Coluna à direita: ETIQUETAS (panteão/elemento com `orbe()` §337/classe/função); **MAESTRIA**
+(`maestriaDetalheHTML` reescrito: posto·v/30 + barra dourada com marcas 5/15/30 + "Mestre aos 30 = moldura dourada no
+retrato"; "Milagre ✓" quando cumprido) OU **COMO CONSEGUIR** (`comoConseguirHTML`, com `data-vermissao` → Provação);
+HABILIDADES = **5 botões** quadrados (Passiva/Básico/Habilidade/Milagre/Defesa, arte + nome; selo "Nv N" só nas ativas;
+abre na PASSIVA); DETALHE da selecionada (`deusDetalheHTML`, kit efetivo §318: ícone, título Cinzel, pílulas [tipo na cor
+da energia · classe · alvo · NV], custo em ORBES via `_montCustoHTML`/GRÁTIS §340 + recarga, desc com realce).
+
+**NÍVEIS (`renderNiveis`, rota 'niveis'):** cabeçalho (‹ <NOME> volta à FICHA; "NÍVEIS DE HABILIDADE"; à direita
+"Pontos de <NOME>: N" via `nlTopoPtsHTML` com ÍCONE PRÓPRIO — gema azul, distinta da pedra ◈ da Essência — + "cópias
+repetidas viram pontos"). ESQUERDA = retrato + nome + raridade + "Panteão · Elemento" + PASSIVA ("A passiva não tem
+níveis."). DIREITA = **4 cartões 2×2** (`nlPaineisHTML`: Básico/Habilidade/Milagre/**Defesa** universal como o 4º). Cada
+cartão (`nlPainelHTML`): cabeçalho (ícone·tipo Cinzel·nome real·"Nv N de TOPO" + bolinhas, só quando TEM escada) · AGORA
+| PRÓXIMO (só os números que mudam em dourado, via `_nlRealceDiff`) · AÇÃO por estado — pode subir ("SUBIR PARA NV N+1 ·
+X PONTOS"), faltam ("FALTAM X PONTOS"), máximo (caixa "NÍVEL MÁXIMO ALCANÇADO" com louros), sem escada ("Esta habilidade
+não tem níveis.", sem bolinhas/"Nv de"), confirmando ("Subir para Nv N+1 por X pontos?" [CONFIRMAR][CANCELAR], moldura
+dourada), não possui ("Você precisa ter o deus"), offline ("Sem conexão com o servidor"), erro (linha curta no cartão).
+
+**Reaproveitado sem mudar:** regras de nível/custo/pontos/servidor (`subirNivelServidor`/`_nlConfirmar`), maestria,
+navegação ficha⇄níveis, as outras telas. Os componentes `nlTopoPtsHTML`/`nlPaineisHTML`/`nlPainelHTML` são os MESMOS da
+sobreposição de níveis da Coleção (§321, `colNiveisCorpoHTML`), que passou a mostrar os **4 cartões** no novo visual (CSS
+`.nlp*`/`.nlb*`/`.nltop*`/`.nl-hi` globais p/ a sobreposição reusar).
+
+**Retrato grande (§297):** na ficha o `<img src="retratos/…">` virou IRMÃO do slot-monograma dentro de `.dsx-art__mono`
+(o monograma é que recebe `opacity:.5`, não o contêiner) — assim a guarda `retrato_grande.test.js` acha o arquivo grande
+no mesmo pai do slot e a arte de capa fica em opacidade cheia.
+
+Provas: `niveis_tela.test.js` reescrito (jsdom: cabeçalho/esquerda/passiva, 4 cartões na ordem, os 4 estados +
+diff dourado 20→22, confirmar no slot certo/cancelar, erro, voltar à ficha, não-possui, offline; Chromium @1846/@780:
+enche ≥98%, cartões ≤830, sem sobrepor, sem corte). `ficha_tela.test.js` novo (jsdom: 5 botões, passiva sem "Nv",
+selo nas ativas, custo ORBES/GRÁTIS, COMO CONSEGUIR→Provação, "SUBIR HABILIDADES" acende só pagável; Chromium: arte×coluna
+sem sobrepor, detalhe inteiro ≤830, sem corte). Ajustados: `aquisicao.test.js`/`moldura.test.js` (ficha nova),
+`colecao_niveis.test.js`/`colecao_tela.test.js` (3→4 cartões na sobreposição), `maestria.test.js` (bloco de maestria
+novo), `gratis_custo.test.js` (custo da ficha em `deusDetalheHTML`; níveis não desenha mais orbe), `orbes_server.test.js`
+(orbeBg fora da batalha agora no kit da Coleção). Capturas `docs/telas/350-*`.
+
 ## §349 · PROVAÇÕES (renderMissoes, rota 'provacoes') no modelo do dono — tela fixa + grade + prévia
 
 O dono aprovou uma imagem para a tela de Provações. A tela antiga era fluida (painel fixo à esquerda + LISTA de linhas

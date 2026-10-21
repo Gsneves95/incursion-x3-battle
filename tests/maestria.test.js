@@ -82,8 +82,12 @@ console.log('== 5. o detalhe mostra a maestria; o ladrilho mostra o nível ==');
   w.eval("perfil.deuses.ares={copias:1,favorito:false,obtidoEm:0}; perfil.maestria={ares:{vitorias:15,milagre:false}};");
   w.eval("ir('deus',{key:'ares'}); render();");
   ok(!!$('.dmaes') && /MAESTRIA/.test($('.dmaes').textContent), 'o detalhe traz o bloco de maestria');
-  ok(/Adepto/.test($('.dmaes').textContent), 'mostra o nível atual (Adepto)');
-  ok(/Mestre/.test($('.dmaes').textContent) && /Milagre/.test($('.dmaes').textContent), 'diz o que falta p/ o Mestre (vitórias + Milagre)');
+  ok(/Adepto/.test($('.dmaes').textContent) && /15\/30/.test($('.dmaes').textContent), 'mostra o posto atual e o progresso em vitórias (Adepto · 15/30)');
+  ok(/Mestre aos 30/.test($('.dmaes').textContent), '§350: diz a meta do Mestre ("Mestre aos 30 = moldura dourada no retrato")');
+  // o Milagre (a outra condição do Mestre) aparece marcado (✓) quando cumprido
+  w.eval("perfil.maestria.ares.milagre=true; ir('deus',{key:'ares'},{substituir:true}); render();");
+  ok(/Milagre/.test($('.dmaes').textContent), '§350: com o Milagre cumprido, o bloco marca "Milagre ✓"');
+  w.eval("perfil.maestria.ares.milagre=false;");
   // §282: a Coleção foi refeita (grade filtrável + painel-leitor). O pip de NÍVEL de maestria por cartão foi
   // retirado da grade — o nível de maestria vive no DETALHE do deus (asserido acima, .dmaes) e na tela de
   // DESAFIOS. A grade mostra o cartão do possuído; a moldura de MESTRE (nível 4) permanece no cartão.

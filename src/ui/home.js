@@ -2061,21 +2061,59 @@ function deusSkills(g){
     { slot: 'passiva',    tipo: 'PASSIVA',    a: g && g.passiva },
   ];
 }
-// chip de skill no kit (arte + nome + tipo, sem descrição — só isso de cara). A ARTE de skill e o SELETOR de
-// chips são a casca da rota (não é duplicação); ficam.
-function deusKitChipHTML(k, s, sel){
-  const nome = s.a ? s.a.nome : '—';
-  return `<button class="dsk ${s.slot === sel ? 'is-sel' : ''}" data-deussel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(nome)}">
-    <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
-    <span class="dsk__nome">${H(nome)}</span>
-    <span class="dsk__tipo">${s.tipo}</span>
+// §350 — as 5 skills da FICHA (Passiva + Básico/Habilidade/Milagre + Defesa universal). A Defesa (DEFESA, engine)
+// é universal; a Passiva vem de g.passiva. Usada pelos botões e pelo detalhe.
+const FICHA_ROT = { passiva: 'Passiva', basico: 'Básico', habilidade: 'Habilidade', milagre: 'Milagre', defesa: 'Defesa' };
+const FICHA_TIPO = { passiva: 'PASSIVA', basico: 'BÁSICO', habilidade: 'HABILIDADE', milagre: 'MILAGRE', defesa: 'DEFESA' };
+const FICHA_COR = { passiva: '#58d6c0', basico: '#6fb1ff', habilidade: '#b48ce0', milagre: '#F0D79A', defesa: '#9db4d8' };
+function _fichaSkills(gmEf){
+  const ab = {}; (gmEf && gmEf.ab || []).forEach(x => ab[x.slot] = x);
+  return [
+    { slot: 'passiva', a: gmEf && gmEf.passiva },
+    { slot: 'basico', a: ab.basico },
+    { slot: 'habilidade', a: ab.habilidade },
+    { slot: 'milagre', a: ab.milagre },
+    { slot: 'defesa', a: (typeof DEFESA !== 'undefined' ? DEFESA : null) },
+  ];
+}
+function _fichaNv(k, sl){ return sl === 'passiva' ? null : (sl === 'defesa' ? 1 : nlNivel(k, sl)); }
+function _fichaAlvo(a){
+  const M = { inimigo: 'Alvo único', '2inimigos': 'Dois inimigos', todosInimigos: 'Todos inimigos', aliado: 'Um aliado', '2aliados': 'Dois aliados', distribui: 'Distribui', auto: 'Em si', nenhum: 'Em si' };
+  return M[a.alvo] || '';
+}
+function _fichaBtnHTML(k, s, sel){
+  const nv = _fichaNv(k, s.slot);
+  return `<button class="dsk${s.slot === sel ? ' is-sel' : ''}" data-deussel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(FICHA_ROT[s.slot])}">
+    <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false)}</span>
+    ${nv != null ? `<span class="dsk__nv">Nv ${nv}</span>` : ''}
+    <span class="dsk__nome">${H(FICHA_ROT[s.slot])}</span>
   </button>`;
 }
-// DETALHE da skill selecionada — pelo RENDERIZADOR ÚNICO (kitLinhaHTML, data/deuses). A casca `.ddet` é da rota.
-function deusDetalheHTML(g, sel){
-  const s = deusSkills(g).find(x => x.slot === sel) || deusSkills(g).find(x => x.a);
-  if (!s || !s.a) return `<div class="ddet"><div class="col2k__row col2k__row--vazio">Kit em produção.</div></div>`;
-  return `<div class="ddet">${kitLinhaHTML(s.tipo, s.a, s.slot === 'passiva')}</div>`;
+// DETALHE da skill selecionada (§350): ícone + título Cinzel + pílulas (tipo na cor da energia · classe · alvo · NV) +
+// custo em orbes/GRÁTIS e recarga + descrição. Lê o kit efetivo (§318).
+function deusDetalheHTML(k, gmEf, sel){
+  const sks = _fichaSkills(gmEf);
+  const s = sks.find(x => x.slot === sel && x.a) || sks.find(x => x.a);
+  if (!s || !s.a) return `<div class="ddet ddet--vazio">Kit em produção.</div>`;
+  const a = s.a, pas = s.slot === 'passiva', g = (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {};
+  const nv = _fichaNv(k, s.slot);
+  const pills = [
+    `<span class="ddet__pill ddet__pill--tipo" style="--c:${FICHA_COR[s.slot]}">${FICHA_TIPO[s.slot]}</span>`,
+    g.classe ? `<span class="ddet__pill">${H(g.classe)}</span>` : '',
+    (!pas && _fichaAlvo(a)) ? `<span class="ddet__pill">${H(_fichaAlvo(a))}</span>` : '',
+    nv != null ? `<span class="ddet__pill">NV ${nv}</span>` : '',
+  ].filter(Boolean).join('');
+  const meta = pas
+    ? `<span class="ddet__pas">Passiva · não gasta a ação</span>`
+    : `<span class="ddet__cost">${_montCustoHTML(a.cost)}<span class="ddet__clab">Custo</span></span><span class="ddet__cd"><i>⟲</i> Recarga ${a.cd || 0}</span>`;
+  return `<div class="ddet">
+    <div class="ddet__head">
+      <span class="ddet__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false)}</span>
+      <div class="ddet__id"><h2 class="ddet__tit cin">${H(a.nome || '—')}</h2><div class="ddet__pills">${pills}</div></div>
+    </div>
+    <div class="ddet__meta">${meta}</div>
+    <p class="ddet__desc">${realce(a.desc || '')}</p>
+  </div>`;
 }
 // §319c — FICHA do deus RESTAURADA (rota 'deus', como era ANTES do §319): arte à esquerda + coluna de
 // identidade (chips), maestria (ou "como conseguir" se não possui), seletor de kit e detalhe da skill (abre na
@@ -2083,53 +2121,55 @@ function deusDetalheHTML(g, sel){
 // dourado CHEIO (b--primary) quando há um próximo nível PAGÁVEL agora, de CONTORNO (b--sec) quando não há — mas
 // abre do mesmo jeito (ver as escadas) — e PRESENTE também para deus não possuído (a tela de níveis mostra
 // "Você ainda não tem este deus"). Nada de leitor de moeda/conteúdo novo: a casca é a de antes + um elo.
+// §350 — ícones em SVG das etiquetas (panteão=louro, classe=losango mágico, função=espadas).
+function _fichaIc(tipo){
+  if (tipo === 'pant') return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 20C5 18 3 14 3 9M15 20c4-2 6-6 6-11"/><path d="M9 20c-2-1-3-4-3-7M15 20c2-1 3-4 3-7"/></svg>`;
+  if (tipo === 'classe') return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l3 6-3 6-3-6z" opacity=".9"/><path d="M12 15l2 3-2 3-2-3z"/></svg>`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l13 13M6 20L20 6"/><path d="M3 6l3-2M21 6l-3-2"/></svg>`;
+}
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
-  // §271: os METADADOS da ficha vêm do data/deuses (a fonte do MOTOR). O roster (HRM) segue para nome/retrato.
-  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // §284-ajuste2: o kit lê daqui (data/deuses)
-  const gmEf = deusKitEfetivo(k, gm);   // §318: o kit EXIBIDO passa pelo kitEfetivo (nv atual do jogador)
-  const tem = temDeus(k);
-  const rar = raridadeDe(k);
-  const pagavel = nlTemPagavel(k);      // §319c: só então o "Subir habilidades" acende dourado cheio
-  if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA (decisão do dono)
-  stage.innerHTML = `<div id="baselayer" class="deus ${tem ? '' : 'deus--falta'}">
-  <div class="stage__bg"></div><div class="stage__scrim"></div>
-  <header class="dtop">
-    <button class="b b--quiet b--md" id="bvoltar">‹ Voltar</button>
-    <button class="b b--md dtop__subir ${pagavel ? 'b--primary' : 'b--sec'}" data-irniveis="${H(k)}">SUBIR HABILIDADES ›</button>
-    <span class="dtop__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
-  </header>
-  <div class="dbody">
-    <div class="dart">
-      ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
-      ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dart__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
-      ${tem ? '' : '<span class="dart__tag">VOCÊ NÃO POSSUI</span>'}
-      <div class="dart__nome">${H(g.nome)}</div>
+  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;   // metadados/kit do data/deuses
+  const gmEf = deusKitEfetivo(k, gm);   // §318: kit EXIBIDO pelo kitEfetivo (nv atual)
+  const tem = temDeus(k), rar = raridadeDe(k), pagavel = nlTemPagavel(k);
+  if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA
+  const artImg = (typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dsx-art__img" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : '';
+  stage.innerHTML = `<div id="baselayer" class="deusfix2"><div id="deusfix" class="${tem ? '' : 'deusfix--falta'}">
+    <div class="dsx-art">
+      <span class="dsx-art__mono">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 72)}${artImg}</span>
+      <div class="dsx-art__veu"></div>
+      ${tem ? '' : '<span class="dsx-art__tag">VOCÊ NÃO POSSUI</span>'}
+      <div class="dsx-art__nome cin">${H(g.nome)}</div>
     </div>
-    <div class="dcol">
-      <div class="dchips">
-        <span class="dchip">${H(gm.faccao)}</span>
-        <span class="dchip dchip--el" style="--c:${COR(gm.elem)}">${H(ELAB[gm.elem] || gm.elem)}</span>
-        <span class="dchip">${H(gm.classe)}</span>
-        <span class="dchip">${H(gm.funcao)}</span>
+    <header class="dsx-cab">
+      <button class="dsxb dsxb--voltar" id="bvoltar">‹ VOLTAR</button>
+      <div class="dsx-cab__dir">
+        <span class="dsx-rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+        <button class="dsxb dsxb--subir${pagavel ? ' is-pag' : ''}" data-irniveis="${H(k)}">SUBIR HABILIDADES ›${pagavel ? '<i class="dsx-dot"></i>' : ''}</button>
+      </div>
+    </header>
+    <section class="dsx-col">
+      <div class="dsx-tags">
+        <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('pant')}</i>${H(gm.faccao)}</span>
+        <span class="dsx-tag">${orbe(gm.elem, 24)}${H(ELAB[gm.elem] || gm.elem)}</span>
+        <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('classe')}</i>${H(gm.classe)}</span>
+        <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('func')}</i>${H(gm.funcao)}</span>
       </div>
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
-      <div class="dkit">${deusSkills(gmEf).map(s => deusKitChipHTML(k, s, deusSel)).join('')}</div>
-      ${deusDetalheHTML(gmEf, deusSel)}
-    </div>
-  </div>
-  </div>`;
+      <div class="dsx-hab">
+        <span class="dsx-hab__rot">HABILIDADES</span>
+        <div class="dsx-hab__btns">${_fichaSkills(gmEf).map(s => _fichaBtnHTML(k, s, deusSel)).join('')}</div>
+      </div>
+      ${deusDetalheHTML(k, gmEf, deusSel)}
+    </section>
+  </div></div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
     b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
-  // §319c: o elo para a TELA DE NÍVEIS (rota própria), daquele deus.
-  const sb = stage.querySelector('[data-irniveis]');
-  if (sb) sb.onclick = () => { ir('niveis', { key: k }); render(); };
-  // ELO com a tela de Missões (§234): do detalhe do deus vai-se ao mapa das missões.
-  const vm = stage.querySelector('[data-vermissao]');
-  if (vm) vm.onclick = () => { ir('provacoes'); render(); };
+  const sb = stage.querySelector('[data-irniveis]'); if (sb) sb.onclick = () => { ir('niveis', { key: k }); render(); };
+  const vm = stage.querySelector('[data-vermissao]'); if (vm) vm.onclick = () => { ir('provacoes'); render(); };
   fit();
 }
 // ===================================================================
@@ -2227,58 +2267,49 @@ function nlMotivoTexto(cod){
   }
 }
 
-// um PAINEL de habilidade (coluna direita). sl = slot ('basico'|'habilidade'|'milagre'); tipo = rótulo.
+// §350: no PRÓXIMO, destaca em dourado só os NÚMEROS que mudam em relação ao AGORA (compara os dois textos).
+function _nlRealceDiff(agora, prox){
+  const agoraNums = new Set((String(agora).match(/\d+/g) || []));
+  return H(String(prox)).replace(/\d+/g, m => agoraNums.has(m) ? m : `<b class="nl-hi">${m}</b>`);
+}
+function _nlLaurelSVG(){ return `<svg viewBox="0 0 120 44" aria-hidden="true"><g fill="none" stroke="#E9C25A" stroke-width="2.5" stroke-linecap="round"><path d="M34 38C18 36 9 28 7 14M34 38c-10-3-16-10-18-20M34 38c-6-4-10-9-11-16"/><path d="M86 38c16-2 25-10 27-24M86 38c10-3 16-10 18-20M86 38c6-4 10-9 11-16"/></g></svg>`; }
+// um CARTÃO de habilidade (§350): cabeçalho (ícone·tipo·nome·Nv N de TOPO + bolinhas) · AGORA | PRÓXIMO · ação por estado.
 function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
-  const ab = nlAb(gm, sl), abEf = nlAb(gmEf, sl);
+  const ab = (sl === 'defesa') ? (typeof DEFESA !== 'undefined' ? DEFESA : null) : nlAb(gm, sl);
+  const abEf = (sl === 'defesa') ? ab : (nlAb(gmEf, sl) || ab);
   if (!ab) return '';
-  const cab = `<div class="nlp__cab">
-      <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, true)}</span>
-      <div class="nlp__id"><b class="nlp__nome">${H(ab.nome || '—')}</b><span class="nlp__tipo">${tipo}</span></div>
-    </div>
-    <div class="nlp__meta">${pipsDetalhe(abEf.cost || {})}<span class="nlp__cd">${abEf.cd ? 'recarga ' + abEf.cd : 'sem recarga'}</span></div>`;
-  // SEM ESCADA: troca os marcadores pela cópia genérica (sem o motivo técnico do dado), sem botão.
-  if (nlSemEscada(ab)){
-    return `<div class="nlp" data-slot="${sl}">${cab}
-      <div class="nlp__sem"><p class="nlp__semt">Esta habilidade não tem níveis.</p><p class="nlp__sems">Melhorá-la desequilibraria o deus.</p></div>
-      <p class="nlp__atual"><span class="nlp__rot">Atual:</span> ${realce(abEf.desc || '')}</p>
-    </div>`;
-  }
-  const topo = nlTopo(ab);
-  const cur = Math.min(nlNivel(k, sl), topo);
-  const alc = (tem && online) ? nlAlcance(k, ab, cur) : cur;
+  const sem = nlSemEscada(ab), topo = nlTopo(ab);
+  const cur = sem ? (sl === 'defesa' ? 1 : Math.min(nlNivel(k, sl), topo)) : Math.min(nlNivel(k, sl), topo);
+  // cabeçalho: tipo + nome + (Nv N de TOPO + bolinhas, só quando TEM escada — §350)
   let pins = '';
-  for (let i = 1; i <= topo; i++){ const cls = i <= cur ? 'on' : (i <= alc ? 'pode' : ''); pins += `<i class="nlpin ${cls}"></i>`; }
-  const esc = `<div class="nlp__esc"><div class="nlp__pins">${pins}</div><span class="nlp__nv">Nível ${cur} de ${topo}</span></div>`;
-  const atual = `<p class="nlp__atual"><span class="nlp__rot">Atual:</span> ${realce(abEf.desc || '')}</p>`;
-  let prox = '';
-  if (cur < topo){
-    const frags = nlProxFrags(gm, sl, cur);
-    const corpo = frags.length
-      ? frags.map(f => f.t === 'novo' ? `<span class="nlp__novo">${H(f.txt)}</span>` : `<b>${H(f.txt)}</b>`).join(' · ')
-      : '<span class="nlp__mut">afina o efeito</span>';
-    prox = `<p class="nlp__prox"><span class="nlp__rot">Próximo (nível ${cur + 1}):</span> ${corpo}</p>`;
-  }
-  // AÇÃO: não-possuído (sem botão) · máximo · confirmação inline · sem conexão · pode pagar · faltam pontos.
-  let acao = '';
-  if (!tem){
-    acao = '';
+  if (!sem){ const alc = (tem && online) ? nlAlcance(k, ab, cur) : cur;
+    for (let i = 1; i <= topo; i++){ const cls = i <= cur ? 'on' : (i <= alc ? 'pode' : ''); pins += `<i class="nlpin ${cls}"></i>`; } }
+  const nvbox = sem ? '' : `<div class="nlp__nvbox"><span class="nlp__nv">Nv ${cur} de ${topo}</span><span class="nlp__pins">${pins}</span></div>`;
+  const cab = `<div class="nlp__cab">
+      <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
+      <div class="nlp__id"><b class="nlp__tipo cin">${tipo}</b><span class="nlp__nome">${H(ab.nome || '—')}</span></div>${nvbox}
+    </div>`;
+  const agora = `<div class="nlp__cell"><span class="nlp__coll">AGORA (Nv ${cur})</span><p class="nlp__txt">${realce(abEf.desc || '')}</p></div>`;
+  let dir = '', acao = '';
+  if (sem){
+    acao = `<button class="nlb nlb--off" disabled>Esta habilidade não tem níveis.</button>`;
   } else if (cur >= topo){
-    acao = `<div class="nlp__max">NÍVEL MÁXIMO</div>`;
-  } else if (nlConfirm === sl){
-    const custo = nlCustoNivel(cur + 1);
-    acao = `<div class="nlp__conf"><span class="nlp__confq">Subir <b>${H(ab.nome)}</b> para o nível ${cur + 1} por <b>${custo} ${custo === 1 ? 'ponto' : 'pontos'}</b>? Não dá para desfazer.</span>
-      <span class="nlp__confb"><button class="b b--primary b--md" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button>
-      <button class="b b--sec b--md" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
-  } else if (!online){
-    acao = `<div class="nlp__acao"><button class="b b--wait b--md" disabled>SUBIR</button><span class="nlp__nota">Sem conexão com o servidor</span></div>`;
+    dir = `<div class="nlp__maxbox"><span class="nlp__maxic">${_nlLaurelSVG()}</span><span class="nlp__maxt">NÍVEL MÁXIMO<br>ALCANÇADO</span></div>`;
   } else {
+    const descProx = (nlAbEf(gm, sl, cur + 1) || {}).desc || '';
+    dir = `<div class="nlp__cell nlp__cell--px"><span class="nlp__coll nlp__coll--px">PRÓXIMO (Nv ${cur + 1})</span><p class="nlp__txt">${_nlRealceDiff(abEf.desc || '', descProx)}</p></div>`;
     const custo = nlCustoNivel(cur + 1), pts = nlPontos(k), falta = custo - pts;
-    acao = pts >= custo
-      ? `<div class="nlp__acao"><button class="b b--primary b--md nlp__subir" data-subir="${sl}">SUBIR · ${custo} ${custo === 1 ? 'ponto' : 'pontos'}</button></div>`
-      : `<div class="nlp__acao"><button class="b b--sec b--md" disabled>SUBIR · ${custo} ${custo === 1 ? 'ponto' : 'pontos'}</button><span class="nlp__nota">${falta === 1 ? 'Falta' : 'Faltam'} ${falta} ${falta === 1 ? 'ponto' : 'pontos'}</span></div>`;
+    if (!tem){ acao = `<button class="nlb nlb--off" disabled>Você precisa ter o deus</button>`; }
+    else if (nlConfirm === sl){
+      acao = `<div class="nlp__conf"><span class="nlp__confq">Subir para Nv ${cur + 1} por ${custo} pontos?</span><span class="nlp__confb"><button class="nlb nlb--go" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button><button class="nlb nlb--quiet" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
+    } else if (!online){ acao = `<button class="nlb nlb--off" disabled>Sem conexão com o servidor</button>`; }
+    else { acao = pts >= custo
+      ? `<button class="nlb nlb--go" data-subir="${sl}">SUBIR PARA NV ${cur + 1} · ${custo} PONTOS</button>`
+      : `<button class="nlb nlb--off" disabled>FALTAM ${falta} ${falta === 1 ? 'PONTO' : 'PONTOS'}</button>`; }
   }
   const msg = (nlMsg && nlMsg.slot === sl) ? `<p class="nlp__erro">${H(nlMsg.texto)}</p>` : '';
-  return `<div class="nlp" data-slot="${sl}">${cab}${esc}${atual}${prox}${acao}${msg}</div>`;
+  return `<div class="nlp nlp--${sem ? 'sem' : 'esc'}${nlConfirm === sl ? ' nlp--conf' : ''}" data-slot="${sl}">${cab}
+    <div class="nlp__cols">${agora}${dir}</div>${acao ? `<div class="nlp__pe">${acao}</div>` : ''}${msg}</div>`;
 }
 
 async function _nlConfirmar(k, sl){
@@ -2295,16 +2326,18 @@ async function _nlConfirmar(k, sl){
 // §321 — COMPONENTES reusáveis da visão de NÍVEIS. A tela §319 (rota 'niveis') E a sobreposição da Coleção
 // (§321) os usam — "extrair em componente, não duplicar". Cada um lê o MESMO estado (contaAtual.niveis/pontos).
 function nlTopoPtsHTML(k, g, tem){
-  const rar = raridadeDe(k), pts = nlPontos(k), porCopia = nlPontosPorCopia(rar);
+  const pts = nlPontos(k);
+  // §350: ÍCONE PRÓPRIO de pontos (gema azul), distinto da pedra ◈ da Essência.
+  const ic = `<svg class="nltop__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 7-8 13-8-13z" fill="#4f93e6" stroke="#bcd8ff" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
   return tem
-    ? `<div class="nltop__pts"><span class="nltop__cri" aria-hidden="true">◈</span>
-       <span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
-       <span class="nltop__cop">${porCopia} ${porCopia === 1 ? 'ponto' : 'pontos'} por cópia (${RAR_ROT[rar] || rar})</span></div>`
-    : `<div class="nltop__pts nltop__pts--falta"><span class="nltop__ptn">Você ainda não tem este deus</span></div>`;
+    ? `<div class="nltop__pts">${ic}<span class="nltop__id"><span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
+       <span class="nltop__cop">cópias repetidas viram pontos</span></span></div>`
+    : `<div class="nltop__pts nltop__pts--falta">${ic}<span class="nltop__ptn">Você ainda não tem este deus</span></div>`;
 }
 function nlPaineisHTML(k, gm, gmEf, tem, online){
-  return ['basico', 'habilidade', 'milagre']
-    .map((sl, i) => nlPainelHTML(k, gm, gmEf, sl, ['BÁSICO', 'HABILIDADE', 'MILAGRE'][i], tem, online)).join('');
+  // §350: 4 cartões em grade 2×2 — a Defesa (universal, sem escada) entra como o 4º.
+  return [['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']]
+    .map(([sl, tipo]) => nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online)).join('');
 }
 function nlRodapeHTML(k, gm){
   const res = nlResumo(k, gm);
@@ -2345,35 +2378,29 @@ function renderNiveis(){
   const passiva = gm.passiva || g.passiva || null;
   const topoInfo = nlTopoPtsHTML(k, g, tem);           // §321: componente compartilhado com a sobreposição
   const painel = nlPaineisHTML(k, gm, gmEf, tem, online);
-  stage.innerHTML = `<div id="baselayer" class="deus nl ${tem ? '' : 'deus--falta'}">
-  <div class="stage__bg"></div><div class="stage__scrim"></div>
-  <header class="dtop nltop">
-    <button class="b b--quiet b--md" id="bvoltar">‹ ${H(g.nome)}</button>
-    <h1 class="nltop__nome">${H(g.nome)}</h1>
-    ${topoInfo}
-  </header>
-  <div class="nlbody">
-    <aside class="nlesq">
-      <div class="nlmed">
-        ${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 64)}
-        ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="nlmed__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
-        ${tem ? '' : '<span class="nlmed__tag">NÃO POSSUI</span>'}
-      </div>
+  const artImg = (typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="nlmed__g" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : '';
+  stage.innerHTML = `<div id="baselayer" class="nlfix2"><div id="nlfix" class="${tem ? '' : 'nlfix--falta'}">
+    <header class="nlx-cab">
+      <button class="dsxb dsxb--voltar" id="bvoltar">‹ ${H(g.nome)}</button>
+      <h1 class="nlx-titulo cin">NÍVEIS DE HABILIDADE</h1>
+      <div class="nlx-pts">${topoInfo}</div>
+    </header>
+    <aside class="nlx-esq">
+      <div class="nlmed">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 72)}${artImg}${tem ? '' : '<span class="nlmed__tag">NÃO POSSUI</span>'}
+        <div class="nlmed__nome cin">${H(g.nome)}</div></div>
       <div class="nlid">
-        <div class="nlid__l1"><b class="nlid__nome">${H(g.nome)}</b><span class="nlid__rar rar--${rar}">${RAR_ROT[rar] || rar}</span></div>
-        <span class="nlid__sub">${H(gm.faccao)} · ${H(ELAB[gm.elem] || gm.elem)}</span>
+        <span class="nlid__rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
+        <span class="nlid__sub"><i class="nlid__ic">${_fichaIc('pant')}</i>${H(gm.faccao)} · ${orbe(gm.elem, 20)}${H(ELAB[gm.elem] || gm.elem)}</span>
       </div>
       ${passiva ? `<div class="nlpas">
         <span class="nlpas__rot">PASSIVA</span>
-        <b class="nlpas__nome">${H(passiva.nome || '—')}</b>
-        <p class="nlpas__txt">${realce(passiva.desc || '')}</p>
+        <div class="nlpas__row"><span class="nlpas__art">${slot('skill-' + k + '-passiva', '', null, 0, false)}</span>
+          <div class="nlpas__id"><b class="nlpas__nome">${H(passiva.nome || '—')}</b><p class="nlpas__txt">${realce(passiva.desc || '')}</p></div></div>
         <p class="nlpas__nota">A passiva não tem níveis.</p>
       </div>` : ''}
-      ${nlRodapeHTML(k, gm)}
     </aside>
-    <section class="nldir">${painel}</section>
-  </div>
-  </div>`;
+    <section class="nlx-dir">${painel}</section>
+  </div></div>`;
   const v = stage.querySelector('#bvoltar');
   // §319c: o "‹" volta SEMPRE para a FICHA do deus. Se a ficha já está logo abaixo na pilha (veio da ficha →
   // SUBIR), desempilha (voltar); se veio direto (Coleção → "Subir níveis"), SUBSTITUI o topo pela ficha — assim
@@ -3070,25 +3097,18 @@ function creditarMaestria(){
 }
 
 // bloco de maestria no detalhe do deus: os 4 níveis, o atual, progresso e a condição de kit.
+// §350 — MAESTRIA no visual do dono: posto · v/30, barra dourada com marcas em 5/15/30, nota "Mestre aos 30".
 function maestriaDetalheHTML(key){
   const m = maestriaDe(key), v = m.vitorias || 0, nv = nivelMaestria(key);
-  const trilha = [1, 2, 3, 4].map(n => {
-    const atingido = nv >= n;
-    return `<span class="mtier ${atingido ? 'on' : ''} ${nv === n ? 'cur' : ''}">${MAESTRIA_NOME[n]}</span>`;
-  }).join('<span class="mtier__sep">›</span>');
-  let prox = '';
-  if (nv === 0) prox = provacaoVencida(key) ? '' : 'Vença o Rito (ou 1 batalha) para o Iniciado.';
-  else if (nv === 1) prox = `Aprendiz em ${Math.max(0, MAESTRIA_LIMIAR.aprendiz - v)} vitória(s).`;
-  else if (nv === 2) prox = `Adepto em ${Math.max(0, MAESTRIA_LIMIAR.adepto - v)} vitória(s).`;
-  else if (nv === 3) prox = `Mestre: ${Math.max(0, MAESTRIA_LIMIAR.mestre - v)} vitória(s)${m.milagre ? '' : ' + vencer usando o Milagre dele'}.`;
-  else prox = 'Mestre — nível máximo.';
+  const alvo = MAESTRIA_LIMIAR.mestre;   // 30
+  const posto = (nv >= 1) ? MAESTRIA_NOME[nv] : 'Noviço';
+  const pct = Math.max(0, Math.min(100, Math.round(v / alvo * 100)));
+  const marcas = [MAESTRIA_LIMIAR.aprendiz, MAESTRIA_LIMIAR.adepto, MAESTRIA_LIMIAR.mestre]
+    .map(x => `<span class="dmaes__mk" style="left:${(x / alvo * 100).toFixed(2)}%"><i></i><em>${x}</em></span>`).join('');
   return `<div class="dmaes">
-    <span class="dmaes__rot">MAESTRIA</span>
-    <div class="dmaes__trilha">${trilha}</div>
-    <div class="dmaes__pe">
-      <span class="dmaes__v">${v} vitória${v === 1 ? '' : 's'}${m.milagre ? ' · Milagre ✓' : ''}</span>
-      <span class="dmaes__prox">${H(prox)}</span>
-    </div>
+    <div class="dmaes__top"><span class="dmaes__rot">MAESTRIA</span><span class="dmaes__hint">Mestre aos ${alvo} = moldura dourada no retrato</span></div>
+    <div class="dmaes__nv">${H(posto)} · <b>${Math.min(v, alvo)}/${alvo}</b>${m.milagre ? ' · Milagre ✓' : ''}</div>
+    <div class="dmaes__rail"><i class="dmaes__fill" style="width:${pct}%"></i>${marcas}</div>
   </div>`;
 }
 function pipMaestria(key){

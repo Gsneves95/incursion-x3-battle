@@ -93,28 +93,28 @@ console.log('== 5. §319c — a FICHA do deus restaurada (rota "deus"): arte à 
   const { w, $, $$ } = sessao();
   // POSSUINDO: garante o deus na coleção e abre a FICHA (rota 'deus', restaurada no §319c)
   w.eval("perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now()}; ir('deus',{key:'zeus'}); render();");
-  ok(($('.dart__nome').textContent || '').trim() === 'Zeus', 'o nome sobreposto na arte nomeia o deus');
-  ok(!$('.deus--falta') && !$('.dart__tag'), 'possuindo: sem tag de ausência');
-  ok($$('.dchips .dchip').length === 4, 'os 4 chips de identidade (facção/elemento/classe/função)');
+  ok(($('.dsx-art__nome').textContent || '').trim() === 'Zeus', 'o nome sobreposto na arte nomeia o deus');
+  ok(!$('.deusfix--falta') && !$('.dsx-art__tag'), 'possuindo: sem tag de ausência');
+  ok($$('.dsx-tags .dsx-tag').length === 4, 'as 4 etiquetas de identidade (panteão/elemento/classe/função)');
   ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como conseguir")');
-  // guarda permanente: as 4 skills sempre presentes e tocáveis
-  ok($$('.dkit .dsk').length === 4, `o kit tem as 4 skills (bás/hab/mil/pas), há ${$$('.dkit .dsk').length}`);
-  ok($$('.dkit .dsk:not([disabled])').length === 4, 'as 4 skills são tocáveis');
-  // decisão do dono: ao abrir, a PASSIVA já vem selecionada
-  ok(/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'a PASSIVA já vem selecionada ao abrir');
-  ok($('.ddet .col2k__ef').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
+  // §350: a FICHA tem 5 skills (Passiva + Básico/Habilidade/Milagre + Defesa universal), todas tocáveis
+  ok($$('.dsx-hab__btns .dsk').length === 5, `o kit tem as 5 skills (pas/bás/hab/mil/def), há ${$$('.dsx-hab__btns .dsk').length}`);
+  ok($$('.dsx-hab__btns .dsk:not([disabled])').length === 5, 'as 5 skills são tocáveis');
+  // decisão do dono: ao abrir, a PASSIVA já vem selecionada (botão + pílula de tipo no detalhe)
+  ok($('.dsk.is-sel').title === 'Passiva' && /PASSIVA/.test($('.ddet__pill--tipo').textContent), 'a PASSIVA já vem selecionada ao abrir');
+  ok($('.ddet__desc').textContent.length > 8, 'o detalhe mostra o texto completo da selecionada');
   // tocar outra skill troca o detalhe
   const outra = $$('.dsk[data-deussel]').find(b => !b.classList.contains('is-sel'));
   outra.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
-  ok(!/PASSIVA/.test($('.dsk.is-sel .dsk__tipo').textContent), 'tocar outra skill muda a seleção');
-  ok(!!$('.ddet .cost, .ddet .col2k__cd'), 'a skill mostra custo/recarga no detalhe');
+  ok(!/PASSIVA/.test($('.ddet__pill--tipo').textContent), 'tocar outra skill muda a seleção');
+  ok(!!$('.ddet__cost, .ddet__cd'), 'a skill mostra custo/recarga no detalhe');
 
   // NÃO POSSUINDO: tag + "como conseguir" no lugar da maestria, e o kit CONTINUA legível/tocável
   w.eval("delete perfil.deuses.ahpuch; ir('deus',{key:'ahpuch'}); render();");
-  ok(!!$('.deus--falta') && !!$('.dart__tag') && /NÃO POSSUI/.test($('.dart__tag').textContent), 'não-possuindo: tag "VOCÊ NÃO POSSUI" na arte');
+  ok(!!$('.deusfix--falta') && !!$('.dsx-art__tag') && /NÃO POSSUI/.test($('.dsx-art__tag').textContent), 'não-possuindo: tag "VOCÊ NÃO POSSUI" na arte');
   ok(!!$('.dcomo') && !$('.dmaes'), 'não-possuindo: "COMO CONSEGUIR" no lugar da maestria');
   ok(/Invoca/.test($('.dcomo').textContent), 'o "como conseguir" cita a Invocação');
-  ok($$('.dkit .dsk:not([disabled])').length === 4, 'não-possuindo: as 4 skills continuam legíveis e tocáveis');
+  ok($$('.dsx-hab__btns .dsk:not([disabled])').length === 5, 'não-possuindo: as 5 skills continuam legíveis e tocáveis');
 }
 
 console.log('== 5b. §319c — ficha: "SUBIR HABILIDADES ›" leva à rota "niveis"; dourado só com nível pagável (bite); aparece p/ não-possuído ==');
@@ -123,19 +123,19 @@ console.log('== 5b. §319c — ficha: "SUBIR HABILIDADES ›" leva à rota "nive
   const T = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
   // POSSUÍDO + PAGÁVEL (3 pontos, tudo nv1): o botão fica DOURADO CHEIO (b--primary) e leva à rota 'niveis'.
   w.eval("perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now()}; contaAtual={pontos:{zeus:3},niveis:{zeus:{basico:1,habilidade:1,milagre:1}},perfil:{deuses:{zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('deus',{key:'zeus'}); render();");
-  const b1 = $('.dtop__subir[data-irniveis="zeus"]');
+  const b1 = $('.dsxb--subir[data-irniveis="zeus"]');
   ok(!!b1 && /SUBIR HABILIDADES/.test(T(b1)), 'a ficha tem o botão "SUBIR HABILIDADES ›"');
-  ok(b1.classList.contains('b--primary') && !b1.classList.contains('b--sec'), 'pagável: o botão fica DOURADO CHEIO (b--primary)');
+  ok(b1.classList.contains('is-pag'), 'pagável: o botão acende dourado (is-pag, com a bolinha de aviso)');
   b1.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval("rotaAtual()") === 'niveis', 'o botão leva à TELA DE NÍVEIS (rota própria "niveis")');
-  // BITE: POSSUÍDO SEM pontos → o botão fica de CONTORNO (b--sec), nunca dourado cheio.
+  // BITE: POSSUÍDO SEM pontos → o botão NÃO acende (sem is-pag), mas continua presente e abre do mesmo jeito.
   w.eval("contaAtual={pontos:{zeus:0},niveis:{zeus:{basico:1,habilidade:1,milagre:1}},perfil:{deuses:{zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('deus',{key:'zeus'}); render();");
-  const b2 = $('.dtop__subir[data-irniveis="zeus"]');
-  ok(!!b2 && b2.classList.contains('b--sec') && !b2.classList.contains('b--primary'), 'bite: sem nível pagável, o botão fica de CONTORNO (b--sec), não dourado cheio');
-  // NÃO-POSSUÍDO: o botão aparece mesmo assim (de contorno) e abre a tela de níveis ("Você ainda não tem este deus").
+  const b2 = $('.dsxb--subir[data-irniveis="zeus"]');
+  ok(!!b2 && !b2.classList.contains('is-pag'), 'bite: sem nível pagável, o botão NÃO acende (sem is-pag)');
+  // NÃO-POSSUÍDO: o botão aparece mesmo assim (apagado) e abre a tela de níveis ("Você ainda não tem este deus").
   w.eval("delete perfil.deuses.ahpuch; contaAtual={pontos:{},niveis:{},perfil:{deuses:{}},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('deus',{key:'ahpuch'}); render();");
-  const b3 = $('.dtop__subir[data-irniveis="ahpuch"]');
-  ok(!!b3 && b3.classList.contains('b--sec'), 'não-possuído: o botão "SUBIR HABILIDADES ›" aparece (contorno)');
+  const b3 = $('.dsxb--subir[data-irniveis="ahpuch"]');
+  ok(!!b3 && !b3.classList.contains('is-pag'), 'não-possuído: o botão "SUBIR HABILIDADES ›" aparece (apagado)');
   b3.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval("rotaAtual()") === 'niveis' && /não tem este deus/i.test(T($('.nltop__pts--falta'))), 'não-possuído: abre a tela de níveis com "Você ainda não tem este deus"');
 }

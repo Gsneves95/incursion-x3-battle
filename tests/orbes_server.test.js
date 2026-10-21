@@ -60,8 +60,9 @@ function umPorExtensao(){
     return { n:imgs.length, todasOk, bgOk, bgUrl };
   });
   ok(r.todasOk, `toda <img.orbe> carregou pelo http (${r.n} imagens, naturalWidth>0)`);
-  // orbeBg: a tela de Níveis usa cost__pip/elemento com background de orbe — carrega a URL via Image()
-  await page.evaluate(()=>{ try{ir('niveis',{key:'hades'},{substituir:true});}catch(e){} try{render();}catch(e){} });
+  // orbeBg: §350 — os cartões de Níveis não desenham mais custo em orbe; o custo em cost__pip (background de orbe)
+  // vive no KIT da Coleção (col2ov__chip → pipsDetalhe). Abre essa visão e carrega a URL via Image().
+  await page.evaluate(()=>{ try{ perfil.deuses.zeus=perfil.deuses.zeus||{copias:1,obtidoEm:0}; ir('colecao',{},{substituir:true}); render(); colAbrirVer('zeus'); var b=document.querySelector('[data-versel="milagre"]'); if(b)b.dispatchEvent(new MouseEvent('click',{bubbles:true})); }catch(e){} });
   await page.waitForTimeout(300);
   const b=await page.evaluate(async ()=>{
     const el=[...document.querySelectorAll('*')].find(x=>/orbes\/orbe_/.test(getComputedStyle(x).backgroundImage||''));

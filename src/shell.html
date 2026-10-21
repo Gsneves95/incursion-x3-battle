@@ -2132,157 +2132,163 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .ctile__m{position:absolute;left:5px;bottom:24px;min-width:15px;height:15px;padding:0 3px;display:grid;place-items:center;
   font-family:'Cinzel',serif;font-weight:900;font-size:9px;line-height:1;color:#201604;background:#8d84ad;border-radius:8px}
 .ctile__m.m--1{background:#8d84ad} .ctile__m.m--2{background:#7fb0e0} .ctile__m.m--3{background:#b06cff;color:#fff} .ctile__m.m--4{background:var(--gold-text)}
-.dmaes{border:1px solid #2c2648;border-radius:10px;padding:10px 12px;margin:0 0 12px;background:rgba(20,16,38,.5)}
-.dmaes__rot{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.2em;color:var(--ink-mute)}
-.dmaes__trilha{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:7px 0 8px}
-.mtier{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--ink-mute);
-  border:1px solid #2c2648;border-radius:6px;padding:2px 9px}
-.mtier.on{color:var(--ink);border-color:var(--gold-soft)}
-.mtier.cur{color:#201604;background:var(--gold-text);border-color:var(--gold-text)}
-.mtier__sep{color:var(--ink-mute);font-size:11px}
-.dmaes__pe{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.dmaes__v{font-weight:700;font-size:12px;color:var(--gold-text)}
-.dmaes__prox{font-weight:600;font-size:11.5px;color:var(--ink-dim)}
-
-/* ===================== §220 — DETALHE do deus: arte GRANDE à ESQUERDA + coluna à direita ===================== */
-/* Mobile Legends invertido: a arte domina, mas à ESQUERDA porque o que se TOCA (skills) vai à direita (§214). */
-.deus{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;overflow:hidden}
-.dtop{flex:0 0 46px;position:relative;z-index:2;display:flex;align-items:center;gap:12px;padding:0 12px}
-.dtop__rar{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.06em}
-/* §319c — elo para a tela de NÍVEIS, no alto à direita (antes da raridade). b--primary (ouro cheio) quando há
-   nível pagável, b--sec (contorno) quando não há. Encolhe a régua no texto p/ caber nas 4 larguras sem cortar. */
-.dtop__subir{margin-left:auto;font-size:10.5px;letter-spacing:.05em;max-width:52%;overflow:hidden;text-overflow:ellipsis}
-.dtop__subir ~ .dtop__rar{margin-left:0}
-.dbody{flex:1 1 auto;min-height:0;position:relative;z-index:2;display:flex}   /* acima do scrim (senão a coluna some) */
-/* ARTE: quadrada (fonte 168², confirmado), preenche a altura do corpo; nome sobreposto na base */
-.dart{flex:0 0 382px;height:100%;position:relative;overflow:hidden;background:#0c0a18;border-right:1px solid rgba(216,178,90,.3)}
-.dart .slot{width:100%;height:100%}
-/* §297: o retrato GRANDE (retratos/<k>.webp, 512×590) cobre o slot embutido (168, upscale 2,27× na caixa 382×380 =
-   borrão — o mesmo defeito que o §289 achou na sobreposição). O embutido fica de reserva instantânea (sem branco);
-   ausente o arquivo, o onerror remove o <img> e o embutido reaparece. lazy, nunca base64 (§289: o bundle não cresce). */
-.dart__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;z-index:1}
-.deus--falta .dart__g{filter:grayscale(1) brightness(.72)}
-.deus--falta .dart .slot{filter:grayscale(1) brightness(.72)}   /* AUSÊNCIA (§216): cinza, não a régua do §211 */
-.dart__nome{position:absolute;left:0;right:0;bottom:0;padding:28px 16px 12px;z-index:2;
-  font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.02em;color:#fff;line-height:1.05;
-  text-shadow:0 2px 10px #000;background:linear-gradient(0deg,rgba(6,5,14,.94),rgba(6,5,14,.5) 55%,transparent)}
-.dart__tag{position:absolute;top:10px;left:10px;z-index:2;font-family:'Cinzel',serif;font-weight:800;
-  font-size:10px;letter-spacing:.12em;color:#e6dcf5;background:rgba(10,8,20,.85);border:1px solid #6a6390;border-radius:6px;padding:3px 8px}
-.dcol{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px;padding:10px 12px}
-.dchips{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px}
-.dchip{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--ink-dim);
-  background:rgba(20,16,38,.6);border:1px solid #2c2648;border-radius:6px;padding:3px 9px}
-.dchip--el{color:#fff;border-color:var(--c)}
-.dchip--el::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--c);margin-right:5px;vertical-align:middle}
-/* maestria e como-conseguir: zonas fixas, sem margem (o gap do flex cuida) */
-.deus .dmaes,.dcomo{flex:0 0 auto;margin:0}
-.dcomo{border:1px solid #2c2648;border-radius:10px;padding:8px 12px;background:rgba(20,16,38,.5)}
-.dcomo__rot{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.2em;color:var(--ink-mute)}
-.dcomo__vias{display:flex;gap:10px;margin-top:6px}
-.dcomo__via{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1px}
-.dcomo__via b{font-family:'Cinzel',serif;font-weight:700;font-size:12px;color:var(--gold-text)}
-.dcomo__via span{font-weight:600;font-size:10.5px;line-height:1.3;color:var(--ink-dim)}
-.dcomo__via--f5 b{color:var(--ink-mute)}
-/* o KIT: 4 skills tocáveis (arte + nome + tipo, sem descrição) */
-.dkit{flex:0 0 auto;display:flex;gap:8px}
-.dsk{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
-  padding:6px 4px;border:1px solid #2c2648;border-radius:9px;background:rgba(18,15,36,.5);color:var(--ink);font-family:'Rajdhani',sans-serif}
-.dsk.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.1);box-shadow:0 0 0 1px rgba(255,217,122,.25)}
-.dsk:disabled{opacity:.4;cursor:default}
-.dsk__art{width:52px;height:52px;flex:0 0 auto;border-radius:9px;overflow:hidden;border:1px solid #5a4560}
-.dsk__art .slot{width:52px;height:52px}
-.dsk__nome{font-weight:700;font-size:11px;color:var(--ink);text-align:center;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dsk__tipo{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.08em;color:var(--ink-mute)}
-/* o DETALHE da selecionada: preenche o resto — nome + custo (bolinhas) + recarga + texto completo */
-.ddet{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;border-top:1px solid #2c2648;padding-top:8px}
-.ddet__cab{display:flex;align-items:baseline;gap:8px;flex:0 0 auto}
-.ddet__nome{font-family:'Cinzel',serif;font-weight:700;font-size:16px;color:var(--ink)}
-.ddet__tipo{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.1em;color:var(--gold-soft)}
-.ddet__meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:0 0 auto}
-.ddet__cd{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.03em;color:var(--gold-text);text-transform:uppercase}
-.ddet__txt{flex:1 1 auto;min-height:0;overflow-y:auto;font-weight:600;font-size:13px;line-height:1.5;color:var(--ink)}
-.ddet__txt b{color:var(--gold-text)}
-
-/* ===================== §319 FASE 4 — TELA DOS NÍVEIS DE HABILIDADE (ref. aprovada pelo dono) =====================
-   Paisagem: barra superior (‹ Coleção · nome · pontos), COLUNA ESQUERDA (~32%) identidade+PASSIVA+rodapé "X de Y"
-   que NUNCA rola, e COLUNA DIREITA (~68%) com os 3 painéis de habilidade que PODE rolar. Painéis planos, 1px
-   ouro-fosco, fundo escuro; o brilho dourado fica só no botão SUBIR cheio e nos marcadores acesos. */
-.nl{overflow:hidden}
-.nltop{gap:12px}
-.nltop__nome{flex:0 1 auto;min-width:0;margin:0;font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.03em;color:var(--gold-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nltop__pts{margin-left:auto;display:grid;grid-template-columns:auto auto;column-gap:7px;align-items:center;justify-items:end}
-.nltop__cri{grid-row:1/3;grid-column:1;font-size:16px;color:var(--gold-text)}
-.nltop__ptn{grid-column:2;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;color:var(--ink);white-space:nowrap}
-.nltop__ptn b{color:var(--gold-text)}
-.nltop__cop{grid-column:2;font-weight:600;font-size:10.5px;letter-spacing:.02em;color:var(--ink-mute);white-space:nowrap}
-.nltop__pts--falta{display:block}
-.nltop__pts--falta .nltop__ptn{color:var(--ink-mute);font-style:italic}
-.nlbody{flex:1 1 auto;min-height:0;position:relative;z-index:2;display:flex;gap:14px;padding:10px 16px 12px}
-.nlesq{flex:0 0 32%;max-width:32%;min-height:0;display:flex;flex-direction:column;gap:10px;overflow:hidden}
-.nldir{flex:1 1 auto;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:6px;display:flex;flex-direction:column;gap:10px}
-.nldir::-webkit-scrollbar{width:6px}
-.nldir::-webkit-scrollbar-thumb{background:var(--gold-soft);border-radius:999px}
-.nldir::-webkit-scrollbar-track{background:transparent}
-/* --- coluna esquerda: medalhão redondo + identidade + passiva + rodapé --- */
-.nlmed{position:relative;flex:0 0 auto;width:92px;height:92px;align-self:center;border-radius:50%;overflow:hidden;border:1px solid var(--gold-soft);background:#0c0a18}
-.nlmed .slot{width:100%;height:100%}
-.nlmed__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
-.deus--falta .nlmed{filter:grayscale(1) brightness(.72)}
-.nlmed__tag{position:absolute;left:0;right:0;bottom:0;text-align:center;font-family:'Cinzel',serif;font-weight:800;font-size:7.5px;letter-spacing:.08em;color:#f0e6ff;background:rgba(8,6,20,.82);padding:2px 0}
-.nlid{flex:0 0 auto;text-align:center}
-.nlid__l1{display:flex;align-items:center;justify-content:center;gap:7px}
-.nlid__nome{font-family:'Cinzel',serif;font-weight:700;font-size:15px;color:var(--ink);line-height:1.1}
-.nlid__rar{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em}
-.nlid__sub{display:block;margin-top:2px;font-weight:600;font-size:11px;letter-spacing:.02em;color:var(--ink-dim)}
-.nlpas{flex:0 0 auto;border:1px solid #2c2648;border-radius:9px;padding:8px 10px;background:rgba(20,16,38,.5)}
-.nlpas__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase}
-.nlpas__nome{display:block;margin:2px 0 3px;font-weight:700;font-size:12.5px;color:var(--ink)}
-.nlpas__txt{margin:0;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-dim)}
-.nlpas__txt b{color:var(--gold-text)}
-.nlpas__nota{margin:4px 0 0;font-weight:600;font-size:10px;font-style:italic;color:var(--ink-mute)}
-.nlfoot{margin-top:auto;flex:0 0 auto}
+/* ======================= §350 — FICHA DO DEUS e NÍVEIS (telas fixas 1846×852) ======================= */
+.stage.deusfix2,.stage.nlfix2{border:0;border-radius:0;box-shadow:none;background:#03050B}
+#baselayer.deusfix2,#baselayer.nlfix2{position:absolute;inset:0;background:#03050B;overflow:hidden}
+#deusfix,#nlfix{position:absolute;left:50%;top:50%;width:1846px;height:852px;transform-origin:center;overflow:hidden;color:#E8ECF4;font-family:'Rajdhani',system-ui,sans-serif;font-weight:600}
+#deusfix{background:radial-gradient(120% 90% at 72% 0%,#141026,#0a0817 60%,#05040e)}
+#nlfix{background:radial-gradient(130% 90% at 50% 0%,#141026 0%,#0a0817 55%,#05040e)}
+#deusfix .cin,#nlfix .cin{font-family:'Cinzel',serif}
+#deusfix .dsxb,#nlfix .dsxb{border:0;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.04em;display:inline-flex;align-items:center;justify-content:center;line-height:1.1}
+#deusfix .dsxb--voltar,#nlfix .dsxb--voltar{height:72px;padding:0 26px;font-size:22px;color:#C9CED8;background:rgba(10,13,22,.72);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
+.rar--SS{} /* placeholder */
+#deusfix .rar--SS,#nlfix .rar--SS{color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,#E9C25A);border-color:#F0D79A}
+#deusfix .rar--S,#nlfix .rar--S{color:#F0D79A}
+#deusfix .rar--A,#nlfix .rar--A{color:#b48ce0}
+/* ---- FICHA ---- */
+#deusfix .dsx-art{position:absolute;left:0;top:0;width:862px;height:852px;overflow:hidden;background:#0A0E1C}
+#deusfix .dsx-art__mono{position:absolute;inset:0;display:grid;place-items:center}
+#deusfix .dsx-art__mono .slot{width:200px;height:200px;opacity:.5}
+#deusfix .dsx-art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
+#deusfix.deusfix--falta .dsx-art__img,#deusfix.deusfix--falta .dsx-art__mono{filter:grayscale(1) brightness(.5)}
+#deusfix .dsx-art__veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,4,14,0) 42%,rgba(5,4,14,.25) 66%,#05040e 100%),linear-gradient(90deg,rgba(5,4,14,0) 72%,rgba(5,4,14,.65))}
+#deusfix .dsx-art__nome{position:absolute;left:48px;bottom:40px;font-size:104px;font-weight:900;color:#F0D79A;letter-spacing:.02em;line-height:.92;text-shadow:0 4px 20px rgba(0,0,0,.85)}
+#deusfix .dsx-art__tag{position:absolute;left:48px;bottom:200px;font-weight:800;font-size:26px;letter-spacing:.08em;color:#E0545B;background:rgba(10,8,20,.72);padding:8px 16px;border-radius:8px}
+#deusfix .dsx-cab{position:absolute;left:0;right:0;top:18px;height:80px;display:flex;align-items:center;padding:0 32px;z-index:2}
+#deusfix .dsx-cab__dir{margin-left:auto;display:flex;align-items:center;gap:18px}
+#deusfix .dsx-rar{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:12px;font-family:'Cinzel',serif;font-weight:900;font-size:26px;border:2px solid currentColor}
+#deusfix .dsxb--subir{position:relative;height:72px;padding:0 40px;font-size:24px;letter-spacing:.05em;color:#8893a8;background:rgba(18,22,36,.9);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
+#deusfix .dsxb--subir.is-pag{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6),0 3px 12px rgba(0,0,0,.5)}
+#deusfix .dsx-dot{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#E0545B;box-shadow:0 0 8px rgba(224,84,91,.8)}
+#deusfix .dsx-col{position:absolute;left:898px;right:40px;top:110px;bottom:22px;display:flex;flex-direction:column;gap:16px}
+#deusfix .dsx-tags{display:flex;gap:14px;flex-wrap:wrap}
+#deusfix .dsx-tag{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 20px;border-radius:12px;font-size:22px;color:#E8ECF4;background:rgba(14,18,32,.8);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#deusfix .dsx-tag__ic{width:26px;height:26px;color:#C9A44C;display:inline-flex}#deusfix .dsx-tag__ic svg{width:100%;height:100%}
+#deusfix .dsx-tag .orbe{flex:none}
+#deusfix .dmaes,#deusfix .dcomo{padding:20px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#deusfix .dmaes__top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px}
+#deusfix .dmaes__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A}
+#deusfix .dmaes__hint{font-size:19px;color:var(--ink-mute)}
+#deusfix .dmaes__nv{font-size:22px;color:#E8ECF4;margin-bottom:16px}
+#deusfix .dmaes__nv b{color:#F0D79A}
+#deusfix .dmaes__rail{position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,.12);margin:0 6px 26px}
+#deusfix .dmaes__fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#C9962F,#F0D79A)}
+#deusfix .dmaes__mk{position:absolute;top:50%;transform:translateX(-50%)}
+#deusfix .dmaes__mk i{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#2a3350;box-shadow:0 0 0 4px #0a0817}
+#deusfix .dmaes__mk em{position:absolute;top:16px;left:0;transform:translateX(-50%);font-style:normal;font-size:18px;color:var(--ink-mute)}
+#deusfix .dcomo__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A}
+#deusfix .dcomo__vias{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+#deusfix .dcomo__via{display:flex;flex-direction:column;gap:3px;text-align:left;border:0;border-radius:10px;padding:14px 16px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);color:#C9CED8;font-family:inherit;cursor:default}
+#deusfix .dcomo__via--miss{cursor:pointer;box-shadow:inset 0 0 0 1px rgba(201,164,76,.5)}
+#deusfix .dcomo__via b{font-size:21px;color:#F0D79A}
+#deusfix .dcomo__via span{font-size:19px}
+#deusfix .dcomo__motivo{font-style:italic;color:var(--ink-mute)}
+#deusfix .dsx-hab__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A;display:block;margin-bottom:14px}
+#deusfix .dsx-hab__btns{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+#deusfix .dsk{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0;border:0;background:none;cursor:pointer;font-family:inherit}
+#deusfix .dsk__art{position:relative;width:100%;height:128px;border-radius:14px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.3)}
+#deusfix .dsk__art .slot{width:100%;height:100%}#deusfix .dsk__art .slot>img{object-fit:cover}
+#deusfix .dsk.is-sel .dsk__art{box-shadow:inset 0 0 0 3px #F0D79A,0 0 16px rgba(240,180,60,.35)}
+#deusfix .dsk__nv{position:absolute;top:7px;right:7px;font-size:16px;font-weight:800;color:#F7EEDC;background:rgba(10,13,22,.85);padding:2px 8px;border-radius:6px}
+#deusfix .dsk__nome{font-size:21px;color:#C9CED8}
+#deusfix .dsk.is-sel .dsk__nome{color:#F0D79A}
+#deusfix .dsk[disabled]{opacity:.5;cursor:default}
+#deusfix .ddet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:16px;padding:22px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow-y:auto}
+#deusfix .ddet--vazio{padding:22px 24px;font-size:22px;color:var(--ink-mute)}
+#deusfix .ddet__head{display:flex;gap:18px;align-items:center}
+#deusfix .ddet__art{width:84px;height:84px;flex:none;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
+#deusfix .ddet__art .slot{width:100%;height:100%}#deusfix .ddet__art .slot>img{object-fit:cover}
+#deusfix .ddet__id{flex:1;min-width:0}
+#deusfix .ddet__tit{font-size:30px;font-weight:900;color:#F0D79A;margin:0 0 12px;letter-spacing:.03em}
+#deusfix .ddet__pills{display:flex;gap:10px;flex-wrap:wrap}
+#deusfix .ddet__pill{font-weight:700;font-size:18px;padding:5px 14px;border-radius:16px;color:#C9CED8;background:rgba(16,20,34,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.3)}
+#deusfix .ddet__pill--tipo{color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
+#deusfix .ddet__meta{display:flex;align-items:center;gap:22px;font-size:22px;color:#C9CED8}
+#deusfix .ddet__cost{display:flex;align-items:center;gap:10px}
+#deusfix .ddet__cost .orbe{flex:none}
+#deusfix .ddet__cost .dmk-ab__orbs{display:inline-flex;gap:5px}
+#deusfix .ddet__cost .dmk-ab__gratis{font-weight:800;color:#58D68D}
+#deusfix .ddet__clab{color:var(--ink-mute)}
+#deusfix .ddet__cd{display:flex;align-items:center;gap:8px}
+#deusfix .ddet__cd i{font-style:normal;color:#C9A44C}
+#deusfix .ddet__pas{font-size:22px;color:var(--ink-mute)}
+#deusfix .ddet__desc{font-size:23px;line-height:1.5;color:#D5DAE4;margin:0}
+/* ---- NÍVEIS: layout fixo ---- */
+#nlfix .nlx-cab{position:absolute;left:32px;right:32px;top:18px;height:80px;display:flex;align-items:center;gap:24px;z-index:2}
+#nlfix .nlx-titulo{font-size:40px;font-weight:900;letter-spacing:.08em;color:#F0D79A;margin:0}
+#nlfix .nlx-pts{margin-left:auto}
+#nlfix .nltop__pts{display:flex;align-items:center;gap:12px}
+#nlfix .nltop__pts--falta{opacity:.8}
+#nlfix .nltop__ic{width:40px;height:40px;flex:none}
+#nlfix .nltop__id{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+#nlfix .nltop__ptn{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.04em;color:#F0D79A;text-transform:uppercase}
+#nlfix .nltop__ptn b{color:#fff}
+#nlfix .nltop__cop{font-size:18px;color:var(--ink-mute)}
+#nlfix .nlx-esq{position:absolute;left:32px;width:432px;top:120px;bottom:24px;display:flex;flex-direction:column;gap:16px;padding:22px;border-radius:16px;background:rgba(14,18,32,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#nlfix .nlmed{position:relative;width:100%;height:300px;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
+#nlfix .nlmed .slot{position:absolute;inset:0}#nlfix .nlmed .slot>*{width:100%;height:100%}
+#nlfix .nlmed__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 18%}
+#nlfix.nlfix--falta .nlmed__g{filter:grayscale(1) brightness(.5)}
+#nlfix .nlmed__nome{position:absolute;left:16px;bottom:12px;font-size:48px;font-weight:900;color:#F0D79A;line-height:.95;text-shadow:0 2px 12px rgba(0,0,0,.85)}
+#nlfix .nlmed__tag{position:absolute;top:10px;left:10px;font-weight:800;font-size:18px;color:#E0545B;background:rgba(10,8,20,.82);padding:4px 10px;border-radius:6px}
+#nlfix .nlid{display:flex;flex-direction:column;gap:10px}
+#nlfix .nlid__rar{align-self:flex-start;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:10px;font-family:'Cinzel',serif;font-weight:900;font-size:22px;border:2px solid currentColor}
+#nlfix .nlid__sub{display:flex;align-items:center;gap:8px;font-size:21px;color:var(--ink-mute)}
+#nlfix .nlid__ic{width:22px;height:22px;color:#C9A44C;display:inline-flex}#nlfix .nlid__ic svg{width:100%;height:100%}
+#nlfix .nlid__sub .orbe{flex:none}
+#nlfix .nlpas{margin-top:auto;padding:18px;border-radius:12px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2)}
+#nlfix .nlpas__rot{font-family:'Cinzel',serif;font-weight:800;font-size:20px;letter-spacing:.12em;color:#F0D79A}
+#nlfix .nlpas__row{display:flex;gap:12px;margin-top:12px}
+#nlfix .nlpas__art{width:58px;height:58px;flex:none;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#nlfix .nlpas__art .slot{width:100%;height:100%}
+#nlfix .nlpas__id{flex:1;min-width:0}
+#nlfix .nlpas__nome{font-size:21px;color:#F0D79A}
+#nlfix .nlpas__txt{font-size:19px;line-height:1.35;color:#C9CED8;margin:4px 0 0}
+#nlfix .nlpas__nota{font-size:18px;font-style:italic;color:var(--ink-mute);margin:12px 0 0}
+#nlfix .nlx-dir{position:absolute;left:480px;right:40px;top:120px;bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-content:start;overflow-y:auto}
+/* ---- NÍVEIS: cartão (GLOBAL — usado também pela sobreposição da Coleção §321) ---- */
+.nlp{display:flex;flex-direction:column;padding:18px 20px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow:hidden}
+.nlp--conf{box-shadow:inset 0 0 0 2px #F0D79A}
+.nlp__cab{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.nlp__art{width:64px;height:64px;flex:none;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
+.nlp__art .slot{width:100%;height:100%}.nlp__art .slot>img{object-fit:cover}
+.nlp__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nlp__tipo{font-family:'Cinzel',serif;font-weight:900;font-size:24px;color:#F0D79A;letter-spacing:.04em}
+.nlp__nome{font-size:20px;color:#C9CED8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nlp__nvbox{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.nlp__nv{font-size:20px;font-weight:700;color:#E8ECF4}
+.nlp__pins{display:inline-flex;gap:6px}
+.nlpin{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.16)}
+.nlpin.on{background:#F0D79A}
+.nlpin.pode{background:rgba(240,215,154,.42)}
+.nlp__cols{display:flex;gap:14px;align-items:stretch}
+.nlp__cell{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:10px;background:rgba(10,13,22,.55)}
+.nlp__cell--px{box-shadow:inset 0 0 0 1px rgba(201,164,76,.25)}
+.nlp__coll{font-size:17px;font-weight:700;letter-spacing:.04em;color:var(--ink-mute)}
+.nlp__coll--px{color:#C9A44C}
+.nlp__txt{font-size:20px;line-height:1.35;color:#D5DAE4;margin:0}
+.nl-hi{color:#F0D79A;font-weight:800}
+.nlp__maxbox{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.4);text-align:center;padding:12px}
+.nlp__maxic{width:120px;height:44px}.nlp__maxic svg{width:100%;height:100%}
+.nlp__maxt{font-family:'Cinzel',serif;font-weight:800;font-size:19px;letter-spacing:.06em;color:#F0D79A;line-height:1.2}
+.nlp__pe{margin-top:14px}
+.nlb{width:100%;height:72px;border:0;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;display:inline-flex;align-items:center;justify-content:center}
+.nlb--go{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6)}
+.nlb--off{color:#8893a8;background:rgba(18,22,36,.9);box-shadow:inset 0 0 0 1px rgba(90,98,120,.5);cursor:default}
+.nlb--quiet{color:#C9CED8;background:rgba(30,24,54,.7);box-shadow:inset 0 0 0 1px #342c54}
+.nlp__conf{display:flex;flex-direction:column;gap:10px}
+.nlp__confq{text-align:center;font-size:19px;color:#C9CED8}
+.nlp__confb{display:flex;gap:12px}
+.nlp__confb .nlb{flex:1;height:64px;font-size:19px}
+.nlp__erro{margin:10px 0 0;font-size:18px;color:#E0545B;text-align:center}
+/* rodapé "X de Y" (só na sobreposição da Coleção) */
+.nlfoot{margin-top:8px}
 .nlfoot__cab{display:flex;align-items:baseline;justify-content:space-between}
-.nlfoot__lab{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.12em;color:var(--gold-soft);text-transform:uppercase}
-.nlfoot__num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;color:var(--ink)}
-.nlfoot__bar{height:5px;margin:4px 0 5px;border:1px solid #2c2648;border-radius:999px;background:#120f24;overflow:hidden}
-.nlfoot__bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-soft),var(--gold-text))}
-.nlfoot__nota{margin:0;font-weight:600;font-size:10px;line-height:1.35;color:var(--ink-mute)}
-/* --- coluna direita: painel de habilidade --- */
-.nlp{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:rgba(20,16,38,.5);border:1px solid #2c2648;border-radius:10px}
-.nlp__cab{display:flex;align-items:center;gap:9px}
-.nlp__art{width:40px;height:40px;flex:0 0 auto;border-radius:8px;overflow:hidden;border:1px solid #5a4560}
-.nlp__art .slot{width:40px;height:40px}
-.nlp__id{min-width:0;display:flex;flex-direction:column}
-.nlp__nome{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:var(--gold-text);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nlp__tipo{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.1em;color:var(--ink-mute)}
-.nlp__meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-.nlp__cd{font-weight:700;font-size:9.5px;letter-spacing:.02em;color:#8b83b8;text-transform:uppercase}
-.nlp__esc{display:flex;align-items:center;gap:9px}
-.nlp__pins{display:flex;gap:5px}
-.nlpin{width:16px;height:7px;border-radius:2px;border:1px solid #403862;background:transparent}
-.nlpin.pode{border-color:var(--gold-soft)}
-.nlpin.on{background:var(--gold-text);border-color:var(--gold-text);box-shadow:0 0 5px rgba(255,217,122,.55)}
-.nlp__nv{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.03em;color:var(--ink-mute);text-transform:uppercase}
-.nlp__atual,.nlp__prox{margin:0;font-weight:600;font-size:11.5px;line-height:1.4;color:var(--ink-dim)}
-.nlp__atual b,.nlp__prox b{color:var(--gold-text)}
-.nlp__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.1em;color:var(--ink-mute);text-transform:uppercase;margin-right:4px}
-.nlp__prox b{font-weight:800}
-.nlp__novo{color:var(--gold-text);font-weight:700}
-.nlp__mut{color:var(--ink-mute)}
-.nlp__sem{padding:3px 0 1px}
-.nlp__semt{margin:0;font-weight:700;font-size:12px;color:var(--ink-dim)}
-.nlp__sems{margin:1px 0 0;font-weight:600;font-size:10.5px;color:var(--ink-mute)}
-.nlp__acao{display:flex;align-items:center;gap:10px;margin-top:1px}
-.nlp__acao .b{min-height:44px}
-.nlp__subir{box-shadow:0 0 10px rgba(255,217,122,.35)}
-.nlp__nota{font-weight:600;font-size:11px;color:var(--ink-mute)}
-.nlp__max{align-self:flex-start;font-family:'Cinzel',serif;font-weight:800;font-size:11px;letter-spacing:.08em;color:var(--gold-soft);border:1px solid var(--gold-soft);border-radius:6px;padding:5px 10px;text-transform:uppercase}
-.nlp__erro{margin:1px 0 0;font-weight:700;font-size:11px;color:#ff9db4}
-.nlp__conf{font-weight:600;font-size:11.5px;line-height:1.4;color:var(--ink-dim);display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.nlp__conf b{color:var(--gold-text)}
-.nlp__confq{flex:1 1 200px;min-width:0}
-.nlp__confb{display:inline-flex;gap:8px;margin-left:auto}
-.nlp__confb .b{min-height:44px}
+.nlfoot__lab{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(--gold-soft);text-transform:uppercase}
+.nlfoot__num{font-weight:700;font-size:18px;color:var(--ink)}
+.nlfoot__bar{height:7px;margin:6px 0;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.nlfoot__bar>i{display:block;height:100%;background:linear-gradient(90deg,#C9962F,#F0D79A)}
+.nlfoot__nota{margin:0;font-size:16px;color:var(--ink-mute)}
 
 /* ===================== F3.6 — Desafios de composição (entrada + validação de time ao vivo) ===================== */
 .pdesafios{display:flex;align-items:center;justify-content:space-between;width:100%;cursor:pointer;
@@ -2477,6 +2483,8 @@ body.emmontar #build, body.emmontar #conta-botao{display:none!important}  /* §3
 body.emcolecao #build, body.emcolecao #conta-botao{display:none!important}  /* §346b: idem na Coleção (tela cheia; seguem na home/menu) */
 body.emdomhub #build, body.emdomhub #conta-botao{display:none!important}  /* §348: idem no HUB do Domínio (tela cheia; seguem na home/menu) */
 body.emprov #build, body.emprov #conta-botao{display:none!important}  /* §349: idem na tela PROVAÇÕES (tela cheia; seguem na home/menu) */
+body.emdeus #build, body.emdeus #conta-botao{display:none!important}  /* §350: idem na FICHA do deus */
+body.emniveis #build, body.emniveis #conta-botao{display:none!important}  /* §350: idem nos NÍVEIS */
 .stage.col2fix{border:0;border-radius:0;box-shadow:none;background:#03050B}  /* §346b: Coleção em tela fixa 1846×852 escalada */
 #baselayer.col2fix{position:absolute;inset:0;background:#03050B;overflow:hidden}
 #colfix{position:absolute;left:50%;top:50%;width:1100px;height:508px;transform-origin:center;overflow:hidden}  /* §346b: canvas de design (metade de 1846×852, mesma proporção 2.166) — escalado uniforme por fit() */

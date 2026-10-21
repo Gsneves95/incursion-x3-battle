@@ -41,16 +41,16 @@ console.log('\n== §340 fora da batalha — cada tela que desenha custo ==');
   ok(/cost__gratis/.test(w.eval(`kitLinhaHTML('BÁS', ${bas('brigid')})`)), 'Coleção/kit (kitLinhaHTML): básico grátis → GRÁTIS');
   const colPay = w.eval(`kitLinhaHTML('HAB', ${pago('hades')})`);
   ok(/cost__pip/.test(colPay) && !/cost__gratis/.test(colPay), 'Coleção/kit: habilidade paga → orbes, sem GRÁTIS');
-  // 2. Ficha do deus (rota 'deus') — colVerDetalheHTML
-  ok(/cost__gratis/.test(w.eval("colVerDetalheHTML('brigid',GODS['brigid'],'basico')")), 'Ficha do deus: básico grátis → GRÁTIS');
-  const fichaPay = w.eval("colVerDetalheHTML('hades',GODS['hades'],'basico')");
-  ok(/cost__pip/.test(fichaPay) && !/cost__gratis/.test(fichaPay), 'Ficha do deus: básico pago → orbes, sem GRÁTIS');
-  // 3. Níveis (tela real) — pips do custo (cost__gratis / cost__pip)
-  { const boot = k => `ir('niveis',{key:'${k}'}); render();`;
-    w.eval(boot('brigid')); const hFree = d.getElementById('stage').innerHTML;
-    w.eval(boot(PAGO));      const hPay = d.getElementById('stage').innerHTML;
-    ok(/cost__gratis/.test(hFree) && /cost__pip/.test(hFree), `Níveis: o básico grátis mostra GRÁTIS e as pagas, orbes`);
-    ok(!/cost__gratis/.test(hPay) && /cost__pip/.test(hPay), `Níveis: um deus todo pago (${PAGO}) mostra orbes e NENHUM GRÁTIS`);
+  // 2. Sobreposição de kit da Coleção — colVerDetalheHTML (cost__gratis / cost__pip)
+  ok(/cost__gratis/.test(w.eval("colVerDetalheHTML('brigid',GODS['brigid'],'basico')")), 'Coleção/sobreposição: básico grátis → GRÁTIS');
+  const colPay2 = w.eval("colVerDetalheHTML('hades',GODS['hades'],'basico')");
+  ok(/cost__pip/.test(colPay2) && !/cost__gratis/.test(colPay2), 'Coleção/sobreposição: básico pago → orbes, sem GRÁTIS');
+  // 3. FICHA do deus (§350, rota 'deus') — deusDetalheHTML usa _montCustoHTML: GRÁTIS = dmk-ab__gratis; pago = <img class="orbe">
+  { const det = (k, sl) => w.eval(`deusDetalheHTML('${k}', deusKitEfetivo('${k}',GODS['${k}']), '${sl}')`);
+    const fFree = det('brigid', 'basico');
+    ok(/dmk-ab__gratis/.test(fFree) && !/class="orbe/.test(fFree), 'Ficha §350: básico grátis → GRÁTIS (sem orbes)');
+    const fPay = det('zeus', 'milagre');
+    ok(/class="orbe/.test(fPay) && !/dmk-ab__gratis/.test(fPay), 'Ficha §350: habilidade paga → orbes, sem GRÁTIS');
   }
   // 4. Seleção de kit (§345: painel do montador) — GRÁTIS = dmk-ab__gratis; pago = orbes (<img class="orbe">)
   { const boot = k => `ir('selecao'); focoPk='${k}'; render();`;
