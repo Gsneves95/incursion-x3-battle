@@ -44,13 +44,14 @@ ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como co
   ok(!!$('.ddet__pas') && !$('.ddet__cost'), 'a passiva NÃO mostra custo (é "não gasta a ação")');
 }
 
-// ---- 2. o SELO "Nv N" só nas ATIVAS (não na passiva), e o número vem da conta ----
-console.log('\n== 2. selo "Nv N" só nas ativas; vem da conta ==');
+// ---- 2. §350c: o SELO "Nv N" só nas habilidades COM escada; Passiva E Defesa (sem níveis) NÃO têm selo ----
+console.log('\n== 2. selo "Nv N" só nas habilidades com escada (Passiva/Defesa sem selo) ==');
 {
-  const btnBasico = $$('.dsk[data-deussel]').find(b => b.dataset.deussel === 'basico');
-  ok(!!btnBasico.querySelector('.dsk__nv') && /Nv 2/.test(txt(btnBasico.querySelector('.dsk__nv'))), 'o Básico tem "Nv 2" (do nível na conta)');
-  const btnDef = $$('.dsk[data-deussel]').find(b => b.dataset.deussel === 'defesa');
-  ok(!!btnDef.querySelector('.dsk__nv'), 'a Defesa também tem selo de nível (Nv 1)');
+  const btn = sl => $$('.dsk[data-deussel]').find(b => b.dataset.deussel === sl);
+  ok(!!btn('basico').querySelector('.dsk__nv') && /Nv 2/.test(txt(btn('basico').querySelector('.dsk__nv'))), 'o Básico tem "Nv 2" (do nível na conta)');
+  ok(!!btn('habilidade').querySelector('.dsk__nv') && !!btn('milagre').querySelector('.dsk__nv'), 'Habilidade e Milagre (com escada) têm selo de nível');
+  ok(!btn('passiva').querySelector('.dsk__nv'), '§350c: a PASSIVA não tem selo de nível');
+  ok(!btn('defesa').querySelector('.dsk__nv'), '§350c: a DEFESA (sem escada) não tem selo de nível');
 }
 
 // ---- 3. tocar uma ATIVA troca o detalhe: título + pílulas (tipo/classe/alvo/NV) + custo em ORBES + recarga ----
@@ -113,9 +114,10 @@ console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×85
   const { chromium } = require('playwright');
   function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
   const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
-  // possuído com uma ATIVA selecionada (detalhe cheio) + não possuído (COMO CONSEGUIR com 3 objetivos: o mais alto)
+  // possuído com uma ATIVA selecionada (detalhe cheio) + não possuído com o PIOR caso (missão de texto mais longo +
+  // a habilidade de maior descrição) — §350c: o COMO CONSEGUIR compacto tem de deixar o detalhe INTEIRO na tela.
   const TEM = `perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now(),copias:1};contaAtual={pontos:{zeus:1},niveis:{zeus:{basico:2,habilidade:1,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();document.querySelectorAll('.dsk[data-deussel]').forEach(b=>{if(b.dataset.deussel==='milagre')b.dispatchEvent(new MouseEvent('click',{bubbles:true}));});`;
-  const FALTA = `delete perfil.deuses.anubis;contaAtual={pontos:{},niveis:{},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};deusSelKey=null;ir('deus',{key:'anubis'},{substituir:true});render();`;
+  const FALTA = `(function(){var best={len:0,k:'anubis'};for(var kk in MISSOES.missoes){var t=reqMissaoTexto(kk)||'';if(t.length>best.len)best={len:t.length,k:kk};}var K=best.k;delete perfil.deuses[K];contaAtual={pontos:{},niveis:{},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};deusSelKey=null;ir('deus',{key:K},{substituir:true});render();var g=GODS[K],best2='basico',bl=0;(g.ab||[]).forEach(function(a){if((a.desc||'').length>bl){bl=a.desc.length;best2=a.slot;}});document.querySelectorAll('.dsk[data-deussel]').forEach(function(b){if(b.dataset.deussel===best2)b.dispatchEvent(new MouseEvent('click',{bubbles:true}));});})();`;
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
   let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
   for (const [W, H] of [[1846, 852], [780, 360]]) {
@@ -128,10 +130,11 @@ console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×85
         const esc = fb.height / 852;
         const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
         const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
-        // y de design do CONTEÚDO: cabeçalho + os FILHOS diretos da coluna (o detalhe é o fundo do mundo). A .dsx-art
-        // é o retrato full-bleed (862×852, fundo decorativo de propósito) — não é zona de conteúdo, fica de fora.
+        // §350c: y de design do CONTEÚDO — cabeçalho + os FILHOS diretos da coluna + os FILHOS do DETALHE (cabeçalho,
+        // meta, descrição): nada do detalhe pode cair fora da tela. A .dsx-art é o retrato full-bleed (862×852, fundo
+        // decorativo de propósito) — não é zona de conteúdo, fica de fora.
         let botMax = 0, pior = '';
-        const alvos = [fix.querySelector('.dsx-cab'), ...fix.querySelectorAll('.dsx-col > *')].filter(Boolean);
+        const alvos = [fix.querySelector('.dsx-cab'), ...fix.querySelectorAll('.dsx-col > *'), ...fix.querySelectorAll('.ddet > *')].filter(Boolean);
         alvos.forEach(el => { const b = designBot(el); if (b > botMax) { botMax = b; pior = el.className.split(' ')[0]; } });
         // sobreposição arte × coluna
         const art = fix.querySelector('.dsx-art').getBoundingClientRect(), col = fix.querySelector('.dsx-col').getBoundingClientRect();

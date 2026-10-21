@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §350c · Dois ajustes na FICHA (detalhe cortado em quem não possui; selo "Nv" na Defesa)
+- DETALHE cortado na ficha de NÃO-POSSUI: o COMO CONSEGUIR (mais alto que a MAESTRIA) empurrava o detalhe p/ fora.
+  Correções: COMO CONSEGUIR compacto (Invocação+Missão lado a lado — `.dcomo__vias` grade 2 col; requisito em 2 linhas
+  `.dcomo__mtxt` + atalho "ver Provação ›" `.dcomo__atalho`); botões menores só nesse estado (`#deusfix.deusfix--falta
+  .dsk__art` 128→94); e a descrição ROLA dentro do detalhe (`.ddet__desc{flex:1;min-height:0;overflow-y:auto}`,
+  `.ddet{overflow:hidden}`) — detalhe e filhos nunca passam de y≤830 (medido p/ todo o roster, possui e não-possui).
+- SELO "Nv" na DEFESA: `_fichaNv(k,sl,ab)` devolve null p/ qualquer slot SEM escada (nlSemEscada) além da Passiva —
+  só Básico/Habilidade/Milagre com degraus mostram nível; Passiva e Defesa ficam sem selo (botão e pílula "NV").
+- Provas: `ficha_tela.test.js` (jsdom: Passiva/Defesa sem selo; Chromium no pior caso = Izanagi, medindo `.ddet > *` ≤830,
+  @1846/@780). Suíte + build verdes. Capturas `350c-ficha-possui-{1846x852,780x360}`, `350c-ficha-naopossui-{1846x852,780x360}`.
+
 ## ★ §350b · Ajustes nos NÍVEIS (ícone de pontos, singular, diff por palavras, "EFEITO") + capturas da ficha
 - ÍCONE DE PONTOS: a gema azul (confundia com Essência) virou SELO DOURADO com símbolo de cópia (`_pontoIcSVG`),
   distinto de Essência (azul)/Gema (roxa). O mesmo no topo dos Níveis, na sobreposição da Coleção (`nlTopoPtsHTML`) e

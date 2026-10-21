@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §350c · Dois ajustes na FICHA do deus (detalhe cortado em quem não possui; selo "Nv" na Defesa)
+
+1. **Detalhe cortado na ficha de quem NÃO possui.** O bloco COMO CONSEGUIR é mais alto que o da MAESTRIA e empurrava o
+   DETALHE da habilidade p/ fora da tela (aparecia só o título, a descrição cortava embaixo). Correções:
+   - **COMO CONSEGUIR compacto**: Invocação e Missão **lado a lado** (`.dcomo__vias` virou grade 2 colunas); o requisito
+     da missão em **2 linhas no máximo** (`.dcomo__mtxt`, `-webkit-line-clamp:2`) + o atalho **"ver Provação ›"**
+     (`.dcomo__atalho`, `data-vermissao`). Padding menor.
+   - **Botões um pouco menores só nesse estado**: `#deusfix.deusfix--falta .dsk__art` 128→94px (nome 21→19, gap 16→12).
+   - **Rede de segurança**: a descrição é a área que ROLA dentro do detalhe (`.ddet__desc{flex:1;min-height:0;
+     overflow-y:auto}`, `.ddet{overflow:hidden}`) — o box do detalhe e os seus filhos (cabeçalho/meta/descrição) nunca
+     passam da tela; se o texto for maior que o espaço, ele rola ali, nunca corta.
+   - Medido em Chromium p/ TODO o roster (possuídos e não-possuídos, cada um com a habilidade de maior descrição): o
+     detalhe e cada filho dele terminam em y≤830 (pior caso 830).
+2. **Selo "Nv" na Defesa.** Na fileira de habilidades, a Defesa mostrava "Nv 1" sem ter níveis. `_fichaNv` agora devolve
+   `null` para qualquer slot SEM escada (`nlSemEscada === true`), além da Passiva — então só as habilidades com escada
+   (Básico/Habilidade/Milagre com degraus) mostram o nível real; Passiva e Defesa ficam sem selo (no botão e na pílula
+   "NV" do detalhe).
+
+Provas: `ficha_tela.test.js` — jsdom (Passiva e Defesa sem selo; Básico/Habilidade/Milagre com o nível real) + Chromium
+no PIOR caso (deus da missão de texto mais longo = Izanagi, com a habilidade de maior descrição), medindo também os
+FILHOS do detalhe (`.ddet > *`) ≤830, @1846×852 e @780×360. Suíte + build verdes. Capturas: `350c-ficha-possui-1846x852`,
+`350c-ficha-possui-780x360`, `350c-ficha-naopossui-1846x852`, `350c-ficha-naopossui-780x360`.
+
 ## §350b · Ajustes nos NÍVEIS (ícone de pontos, singular, diff por palavras, "EFEITO") + capturas da ficha
 
 Quatro ajustes finos sobre o §350, pedidos pelo dono, sem mexer em regra/servidor:

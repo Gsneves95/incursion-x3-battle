@@ -2003,13 +2003,15 @@ let nlConfirm = null, nlPendente = false, nlMsg = null, nlSelKey = null;   // §
 // (§220): daqui dá para VER a missão do deus — o botão leva ao mapa, e lá o deus leva de volta aqui.
 function comoConseguirHTML(k, rar){
   const m = (typeof MISSOES !== 'undefined' && MISSOES.missoes) ? MISSOES.missoes[k] : null;
+  // §350c: compacto — Invocação e Missão LADO A LADO; o requisito da missão em 2 linhas no máximo (clamp) + o atalho
+  // "ver Provação ›". Mais baixo que antes, p/ o DETALHE da habilidade caber inteiro mesmo neste estado.
   const missaoVia = m
-    ? `<button class="dcomo__via dcomo__via--miss" data-vermissao="1"><b>Missão</b><span>${H(reqMissaoTexto(k))}</span><span class="dcomo__motivo">${H(m.motivo)}</span></button>`
-    : `<div class="dcomo__via"><b>Missão</b><span>este deus não tem missão (inicial)</span></div>`;
+    ? `<button class="dcomo__via dcomo__via--miss" data-vermissao="1"><b>Missão</b><span class="dcomo__mtxt">${H(reqMissaoTexto(k))}</span><span class="dcomo__atalho">ver Provação ›</span></button>`
+    : `<div class="dcomo__via"><b>Missão</b><span class="dcomo__mtxt">este deus não tem missão (inicial)</span></div>`;
   return `<div class="dcomo">
     <span class="dcomo__rot">COMO CONSEGUIR</span>
     <div class="dcomo__vias">
-      <div class="dcomo__via"><b>Invocação</b><span>na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
+      <div class="dcomo__via"><b>Invocação</b><span class="dcomo__mtxt">na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
       ${missaoVia}
     </div>
   </div>`;
@@ -2076,13 +2078,15 @@ function _fichaSkills(gmEf){
     { slot: 'defesa', a: (typeof DEFESA !== 'undefined' ? DEFESA : null) },
   ];
 }
-function _fichaNv(k, sl){ return sl === 'passiva' ? null : (sl === 'defesa' ? 1 : nlNivel(k, sl)); }
+// §350c: o selo "Nv" só nas habilidades COM escada (nlSemEscada === false). Passiva e Defesa (e qualquer slot sem
+// degraus) não têm nível → sem selo.
+function _fichaNv(k, sl, ab){ if (sl === 'passiva' || nlSemEscada(ab)) return null; return nlNivel(k, sl); }
 function _fichaAlvo(a){
   const M = { inimigo: 'Alvo único', '2inimigos': 'Dois inimigos', todosInimigos: 'Todos inimigos', aliado: 'Um aliado', '2aliados': 'Dois aliados', distribui: 'Distribui', auto: 'Em si', nenhum: 'Em si' };
   return M[a.alvo] || '';
 }
 function _fichaBtnHTML(k, s, sel){
-  const nv = _fichaNv(k, s.slot);
+  const nv = _fichaNv(k, s.slot, s.a);
   return `<button class="dsk${s.slot === sel ? ' is-sel' : ''}" data-deussel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(FICHA_ROT[s.slot])}">
     <span class="dsk__art">${slot('skill-' + k + '-' + s.slot, '', null, 0, false)}</span>
     ${nv != null ? `<span class="dsk__nv">Nv ${nv}</span>` : ''}
@@ -2096,7 +2100,7 @@ function deusDetalheHTML(k, gmEf, sel){
   const s = sks.find(x => x.slot === sel && x.a) || sks.find(x => x.a);
   if (!s || !s.a) return `<div class="ddet ddet--vazio">Kit em produção.</div>`;
   const a = s.a, pas = s.slot === 'passiva', g = (typeof GODS !== 'undefined' && GODS[k]) || HRM[k] || {};
-  const nv = _fichaNv(k, s.slot);
+  const nv = _fichaNv(k, s.slot, s.a);
   const pills = [
     `<span class="ddet__pill ddet__pill--tipo" style="--c:${FICHA_COR[s.slot]}">${FICHA_TIPO[s.slot]}</span>`,
     g.classe ? `<span class="ddet__pill">${H(g.classe)}</span>` : '',

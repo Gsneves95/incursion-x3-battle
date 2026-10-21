@@ -2177,12 +2177,14 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #deusfix .dmaes__mk i{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#2a3350;box-shadow:0 0 0 4px #0a0817}
 #deusfix .dmaes__mk em{position:absolute;top:16px;left:0;transform:translateX(-50%);font-style:normal;font-size:18px;color:var(--ink-mute)}
 #deusfix .dcomo__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A}
-#deusfix .dcomo__vias{display:flex;flex-direction:column;gap:12px;margin-top:14px}
-#deusfix .dcomo__via{display:flex;flex-direction:column;gap:3px;text-align:left;border:0;border-radius:10px;padding:14px 16px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);color:#C9CED8;font-family:inherit;cursor:default}
+/* §350c: Invocação e Missão LADO A LADO (2 colunas) — bloco mais baixo p/ o detalhe caber */
+#deusfix .dcomo__vias{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+#deusfix .dcomo__via{display:flex;flex-direction:column;gap:5px;text-align:left;border:0;border-radius:10px;padding:12px 16px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);color:#C9CED8;font-family:inherit;cursor:default}
 #deusfix .dcomo__via--miss{cursor:pointer;box-shadow:inset 0 0 0 1px rgba(201,164,76,.5)}
 #deusfix .dcomo__via b{font-size:21px;color:#F0D79A}
 #deusfix .dcomo__via span{font-size:19px}
-#deusfix .dcomo__motivo{font-style:italic;color:var(--ink-mute)}
+#deusfix .dcomo__mtxt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#deusfix .dcomo__atalho{margin-top:auto;color:#F0D79A;font-weight:700}
 #deusfix .dsx-hab__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A;display:block;margin-bottom:14px}
 #deusfix .dsx-hab__btns{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 #deusfix .dsk{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0;border:0;background:none;cursor:pointer;font-family:inherit}
@@ -2193,7 +2195,11 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #deusfix .dsk__nome{font-size:21px;color:#C9CED8}
 #deusfix .dsk.is-sel .dsk__nome{color:#F0D79A}
 #deusfix .dsk[disabled]{opacity:.5;cursor:default}
-#deusfix .ddet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:16px;padding:22px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow-y:auto}
+/* §350c: sem o deus, o COMO CONSEGUIR ocupa mais espaço — encolhe um pouco os 5 botões só nesse estado p/ o detalhe caber */
+#deusfix.deusfix--falta .dsx-hab__btns{gap:12px}
+#deusfix.deusfix--falta .dsk__art{height:94px}
+#deusfix.deusfix--falta .dsk__nome{font-size:19px}
+#deusfix .ddet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:16px;padding:22px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow:hidden}
 #deusfix .ddet--vazio{padding:22px 24px;font-size:22px;color:var(--ink-mute)}
 #deusfix .ddet__head{display:flex;gap:18px;align-items:center}
 #deusfix .ddet__art{width:84px;height:84px;flex:none;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
@@ -2212,7 +2218,9 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 #deusfix .ddet__cd{display:flex;align-items:center;gap:8px}
 #deusfix .ddet__cd i{font-style:normal;color:#C9A44C}
 #deusfix .ddet__pas{font-size:22px;color:var(--ink-mute)}
-#deusfix .ddet__desc{font-size:23px;line-height:1.5;color:#D5DAE4;margin:0}
+/* §350c: a descrição é a área que ROLA dentro do detalhe (último recurso) — o cabeçalho/pílulas/custo ficam fixos e o
+   box do detalhe e dos seus filhos nunca passa da tela; se o texto for maior que o espaço, ele rola aqui, nunca corta */
+#deusfix .ddet__desc{flex:1;min-height:0;overflow-y:auto;font-size:23px;line-height:1.5;color:#D5DAE4;margin:0}
 /* ---- NÍVEIS: layout fixo ---- */
 #nlfix .nlx-cab{position:absolute;left:32px;right:32px;top:18px;height:80px;display:flex;align-items:center;gap:24px;z-index:2}
 #nlfix .nlx-titulo{font-size:40px;font-weight:900;letter-spacing:.08em;color:#F0D79A;margin:0}
