@@ -2267,10 +2267,38 @@ function nlMotivoTexto(cod){
   }
 }
 
-// §350: no PRÓXIMO, destaca em dourado só os NÚMEROS que mudam em relação ao AGORA (compara os dois textos).
+// §350b — ÍCONE PRÓPRIO dos PONTOS de deus: um SELO DOURADO com o símbolo de CÓPIA (dois quadros sobrepostos),
+// distinto das moedas (Essência = gema azul ◈, Gema = roxa). Diz "cópias repetidas viram pontos". O MESMO ícone no
+// topo dos Níveis, na sobreposição da Coleção e nos botões de subir.
+function _pontoIcSVG(cls, st){
+  return `<svg class="${cls || ''}"${st ? ` style="${st}"` : ''} viewBox="0 0 24 24" aria-hidden="true">`
+    + `<path d="M12 1.6l9.2 5.2v10.4L12 22.4 2.8 17.2V6.8z" fill="#E9C25A" stroke="#7a5a16" stroke-width="1.1" stroke-linejoin="round"/>`
+    + `<rect x="7" y="6.4" width="7.2" height="8.6" rx="1.4" fill="none" stroke="#5a3d0a" stroke-width="1.5"/>`
+    + `<rect x="9.8" y="9" width="7.2" height="8.6" rx="1.4" fill="#FBE29A" stroke="#5a3d0a" stroke-width="1.5"/></svg>`;
+}
+const _nlbPtIc = () => _pontoIcSVG('nlb__pt', 'width:1.05em;height:1.05em;vertical-align:-.16em;display:inline-block;margin-right:.1em');
+// §350b — concordância: "1 PONTO" / "N PONTOS" (e minúsculo p/ a frase da confirmação).
+function _ptLabel(n, baixa){ const w = (n === 1 ? 'ponto' : 'pontos'); return `${n} ${baixa ? w : w.toUpperCase()}`; }
+// §350b — no PRÓXIMO, destaca em dourado TODA palavra/número que MUDA em relação ao AGORA. A comparação é por
+// PALAVRAS, via LCS (maior subsequência comum): o que não está na subsequência comum (números trocados, trecho novo
+// inteiro) sai realçado; a pontuação de ponta é ignorada no casamento (ex.: "inimigo." = "inimigo;").
 function _nlRealceDiff(agora, prox){
-  const agoraNums = new Set((String(agora).match(/\d+/g) || []));
-  return H(String(prox)).replace(/\d+/g, m => agoraNums.has(m) ? m : `<b class="nl-hi">${m}</b>`);
+  const toks = s => String(s).match(/\s+|\S+/g) || [];              // palavras E espaços como tokens
+  const norm = t => t.toLowerCase().replace(/^[^0-9a-zà-ú]+|[^0-9a-zà-ú]+$/gi, '');  // tira pontuação das pontas
+  const A = toks(agora).filter(t => /\S/.test(t)).map(norm);        // palavras do AGORA
+  const Pt = toks(prox);                                            // PRÓXIMO (com espaços)
+  const Pw = Pt.filter(t => /\S/.test(t)).map(norm);               // palavras do PRÓXIMO
+  const n = A.length, m = Pw.length;
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+    dp[i][j] = (A[i] === Pw[j]) ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const keep = new Set(); let i = 0, j = 0;
+  while (i < n && j < m) {                                          // reconstrói o LCS: j's iguais NÃO realçam
+    if (A[i] === Pw[j]) { keep.add(j); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) i++; else j++;
+  }
+  let jj = -1;
+  return Pt.map(t => { if (!/\S/.test(t)) return t; jj++; return keep.has(jj) ? H(t) : `<b class="nl-hi">${H(t)}</b>`; }).join('');
 }
 function _nlLaurelSVG(){ return `<svg viewBox="0 0 120 44" aria-hidden="true"><g fill="none" stroke="#E9C25A" stroke-width="2.5" stroke-linecap="round"><path d="M34 38C18 36 9 28 7 14M34 38c-10-3-16-10-18-20M34 38c-6-4-10-9-11-16"/><path d="M86 38c16-2 25-10 27-24M86 38c10-3 16-10 18-20M86 38c6-4 10-9 11-16"/></g></svg>`; }
 // um CARTÃO de habilidade (§350): cabeçalho (ícone·tipo·nome·Nv N de TOPO + bolinhas) · AGORA | PRÓXIMO · ação por estado.
@@ -2289,7 +2317,8 @@ function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
       <span class="nlp__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
       <div class="nlp__id"><b class="nlp__tipo cin">${tipo}</b><span class="nlp__nome">${H(ab.nome || '—')}</span></div>${nvbox}
     </div>`;
-  const agora = `<div class="nlp__cell"><span class="nlp__coll">AGORA (Nv ${cur})</span><p class="nlp__txt">${realce(abEf.desc || '')}</p></div>`;
+  // §350b: a habilidade SEM níveis (ex.: Defesa) rotula "EFEITO", não "AGORA (Nv 1)".
+  const agora = `<div class="nlp__cell"><span class="nlp__coll">${sem ? 'EFEITO' : `AGORA (Nv ${cur})`}</span><p class="nlp__txt">${realce(abEf.desc || '')}</p></div>`;
   let dir = '', acao = '';
   if (sem){
     acao = `<button class="nlb nlb--off" disabled>Esta habilidade não tem níveis.</button>`;
@@ -2301,11 +2330,11 @@ function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
     const custo = nlCustoNivel(cur + 1), pts = nlPontos(k), falta = custo - pts;
     if (!tem){ acao = `<button class="nlb nlb--off" disabled>Você precisa ter o deus</button>`; }
     else if (nlConfirm === sl){
-      acao = `<div class="nlp__conf"><span class="nlp__confq">Subir para Nv ${cur + 1} por ${custo} pontos?</span><span class="nlp__confb"><button class="nlb nlb--go" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button><button class="nlb nlb--quiet" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
+      acao = `<div class="nlp__conf"><span class="nlp__confq">Subir para Nv ${cur + 1} por ${_ptLabel(custo, true)}?</span><span class="nlp__confb"><button class="nlb nlb--go" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button><button class="nlb nlb--quiet" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
     } else if (!online){ acao = `<button class="nlb nlb--off" disabled>Sem conexão com o servidor</button>`; }
     else { acao = pts >= custo
-      ? `<button class="nlb nlb--go" data-subir="${sl}">SUBIR PARA NV ${cur + 1} · ${custo} PONTOS</button>`
-      : `<button class="nlb nlb--off" disabled>FALTAM ${falta} ${falta === 1 ? 'PONTO' : 'PONTOS'}</button>`; }
+      ? `<button class="nlb nlb--go" data-subir="${sl}">SUBIR PARA NV ${cur + 1} · ${_nlbPtIc()}${_ptLabel(custo)}</button>`
+      : `<button class="nlb nlb--off" disabled>FALTAM ${_nlbPtIc()}${_ptLabel(falta)}</button>`; }
   }
   const msg = (nlMsg && nlMsg.slot === sl) ? `<p class="nlp__erro">${H(nlMsg.texto)}</p>` : '';
   return `<div class="nlp nlp--${sem ? 'sem' : 'esc'}${nlConfirm === sl ? ' nlp--conf' : ''}" data-slot="${sl}">${cab}
@@ -2327,8 +2356,8 @@ async function _nlConfirmar(k, sl){
 // (§321) os usam — "extrair em componente, não duplicar". Cada um lê o MESMO estado (contaAtual.niveis/pontos).
 function nlTopoPtsHTML(k, g, tem){
   const pts = nlPontos(k);
-  // §350: ÍCONE PRÓPRIO de pontos (gema azul), distinto da pedra ◈ da Essência.
-  const ic = `<svg class="nltop__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 7-8 13-8-13z" fill="#4f93e6" stroke="#bcd8ff" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+  // §350b: ÍCONE PRÓPRIO de pontos (selo dourado com símbolo de cópia), distinto da gema azul da Essência.
+  const ic = _pontoIcSVG('nltop__ic');
   return tem
     ? `<div class="nltop__pts">${ic}<span class="nltop__id"><span class="nltop__ptn">Pontos de ${H(g.nome)}: <b>${pts}</b></span>
        <span class="nltop__cop">cópias repetidas viram pontos</span></span></div>`

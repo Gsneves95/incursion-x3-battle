@@ -82,16 +82,22 @@ function abrir(k, opts = {}) {
     ok(!!P[1].querySelector('.nlp__maxbox') && /NÍVEL MÁXIMO/.test(txt(P[1].querySelector('.nlp__maxt'))) && /ALCAN/.test(txt(P[1].querySelector('.nlp__maxt'))), 'HABILIDADE no topo: caixa "NÍVEL MÁXIMO ALCANÇADO" (louros)');
     ok(!P[1].querySelector('[data-subir]') && !P[1].querySelector('.nlp__cell--px'), 'no máximo: sem botão SUBIR e sem coluna PRÓXIMO');
     ok(P[1].querySelectorAll('.nlpin.on').length === 4, 'no máximo: todas as bolinhas acesas');
-    // milagre nv1 de 4, custo p/ nv2 = 1, tem 1 ponto → SUBIR PARA NV 2 · 1 PONTOS (ouro)
+    // milagre nv1 de 4, custo p/ nv2 = 1, tem 1 ponto → SUBIR PARA NV 2 · 1 PONTO (ouro; §350b singular + ícone)
     const b2 = P[2].querySelector('[data-subir]');
-    ok(!!b2 && /SUBIR PARA NV 2 · 1 PONTOS/.test(txt(b2)) && b2.classList.contains('nlb--go'), 'MILAGRE (custo 1, tem 1): botão de ouro "SUBIR PARA NV 2 · 1 PONTOS"');
+    ok(!!b2 && /SUBIR PARA NV 2 · 1 PONTO\b/.test(txt(b2)) && !/PONTOS/.test(txt(b2)) && b2.classList.contains('nlb--go'), 'MILAGRE (custo 1): botão de ouro "SUBIR PARA NV 2 · 1 PONTO" (singular, §350b)');
+    ok(!!b2.querySelector('.nlb__pt'), '§350b: o botão de subir traz o ÍCONE PRÓPRIO de pontos (selo dourado)');
     ok(!!P[2].querySelector('.nlp__cell--px') && /PRÓXIMO \(Nv 2\)/.test(txt(P[2].querySelector('.nlp__coll--px'))), 'MILAGRE tem a coluna PRÓXIMO (Nv 2)');
-    // DIFF dourado: só o número que muda (20 → 22) fica em .nl-hi, e NADA mais
+    // DIFF por PALAVRAS: no milagre só o número que muda (20 → 22) fica em .nl-hi, e NADA mais
     const hi = P[2].querySelectorAll('.nlp__cell--px .nl-hi');
-    ok(hi.length === 1 && txt(hi[0]) === '22', `o PRÓXIMO destaca só o número que muda (22), e só ele (${hi.length} destaque(s))`);
+    ok(hi.length === 1 && txt(hi[0]) === '22', `MILAGRE Nv1→Nv2: o PRÓXIMO destaca só o número que muda (22), e só ele (${hi.length} destaque(s))`);
     ok(/20 de dano/.test(txt(P[2].querySelector('.nlp__cell:not(.nlp__cell--px) .nlp__txt'))), 'o AGORA do milagre ainda mostra 20 de dano');
-    // defesa: universal, sem escada
+    // §350b DIFF por PALAVRAS: no BÁSICO Nv3→Nv4 o TRECHO NOVO inteiro fica destacado (não só números)
+    const hiB = [...P[0].querySelectorAll('.nlp__cell--px .nl-hi')].map(txt).join(' ');
+    ok(/ele/.test(hiB) && /causa/.test(hiB) && /menos/.test(hiB) && /turno/.test(hiB), `BÁSICO Nv3→Nv4: o trecho novo "ele causa 3 menos de dano por 1 turno" sai destacado (veio "${hiB}")`);
+    ok(!/<b class="nl-hi">inimigo/.test(P[0].querySelector('.nlp__cell--px .nlp__txt').innerHTML), 'o que NÃO muda (ex.: "inimigo") NÃO fica destacado');
+    // defesa: universal, sem escada → rótulo "EFEITO" (§350b), sem bolinhas/Nv
     ok(P[3].classList.contains('nlp--sem'), 'DEFESA entra no estado SEM ESCADA');
+    ok(/^EFEITO$/.test(txt(P[3].querySelector('.nlp__coll'))) && !/AGORA/.test(txt(P[3].querySelector('.nlp__coll'))), '§350b: DEFESA (sem escada) rotula "EFEITO", não "AGORA (Nv 1)"');
     ok(!P[3].querySelector('.nlpin') && !P[3].querySelector('.nlp__nvbox'), 'DEFESA: sem bolinhas e sem "Nv N de TOPO"');
     const d3 = P[3].querySelector('.nlp__pe .nlb');
     ok(d3.disabled && /não tem níveis/i.test(txt(d3)), 'DEFESA: "Esta habilidade não tem níveis."');
@@ -104,7 +110,7 @@ function abrir(k, opts = {}) {
   {
     const P = $$('.nlx-dir .nlp');
     ok(P[2].classList.contains('nlp--conf') && !!P[2].querySelector('.nlp__conf'), 'SUBIR abre a confirmação NO cartão do milagre (sem modal)');
-    ok(/Subir para Nv 2 por 1 pontos\?/.test(txt(P[2].querySelector('.nlp__confq'))), 'a pergunta cita o nível e o custo (Nv 2 · 1 pontos)');
+    ok(/Subir para Nv 2 por 1 ponto\?/.test(txt(P[2].querySelector('.nlp__confq'))) && !/pontos/.test(txt(P[2].querySelector('.nlp__confq'))), 'a pergunta cita o nível e o custo no singular (Nv 2 · 1 ponto, §350b)');
     ok(!!P[2].querySelector('[data-subir-ok]') && !!P[2].querySelector('[data-subir-no]'), 'a confirmação tem CONFIRMAR e CANCELAR');
   }
   clk($('[data-subir-no]'));

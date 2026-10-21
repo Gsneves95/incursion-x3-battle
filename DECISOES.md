@@ -6,6 +6,29 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §350b · Ajustes nos NÍVEIS (ícone de pontos, singular, diff por palavras, "EFEITO") + capturas da ficha
+
+Quatro ajustes finos sobre o §350, pedidos pelo dono, sem mexer em regra/servidor:
+
+1. **Ícone dos pontos de deus.** O contador usava uma gema AZUL igual à da Essência (confundia com a moeda). Virou um
+   **selo DOURADO com o símbolo de cópia** (dois quadros sobrepostos, SVG — `_pontoIcSVG`), distinto da Essência (gema
+   azul ◈) e da Gema (roxa). O MESMO ícone no topo dos Níveis, na sobreposição da Coleção (ambos via `nlTopoPtsHTML`) e
+   agora também **dentro dos botões de subir** ("SUBIR PARA NV N+1 · 🜲 X PONTO(S)" e "FALTAM 🜲 X PONTO(S)", via `_nlbPtIc`).
+2. **Concordância singular/plural.** "1 PONTOS" → "1 PONTO" (e "FALTAM 1 PONTO", e "por 1 ponto?" na confirmação), via
+   `_ptLabel(n)`. A linha da Coleção ("N pontos") já concordava.
+3. **Destaque do que muda por PALAVRAS.** Antes só NÚMEROS diferentes ficavam dourados; quando o próximo nível
+   ACRESCENTA um trecho (ex.: Zeus básico Nv3→Nv4 ganha "ele causa 3 menos de dano por 1 turno"), o trecho não saía
+   realçado. `_nlRealceDiff` passou a comparar por **palavras via LCS** (maior subsequência comum, pontuação de ponta
+   ignorada no casamento p/ "inimigo." = "inimigo;"): toda palavra/número do PRÓXIMO fora da subsequência comum sai em
+   dourado. Agora o básico Nv3→Nv4 realça o trecho novo inteiro; o milagre Nv1→Nv2 realça só o "22".
+4. **Rótulo "EFEITO".** A habilidade SEM níveis (Defesa, ou qualquer uma sem escada) rotula o texto como **"EFEITO"**,
+   não "AGORA (Nv 1)".
+
+Provas: `niveis_tela.test.js` ampliado (ícone `.nlb__pt` no botão; "1 PONTO" singular na confirmação e no botão; diff do
+básico destaca "ele causa … turno" e NÃO "inimigo"; só "22" no milagre; Defesa rotula "EFEITO"). Suíte + build verdes.
+Capturas: `350b-ficha-possui-1846x852`, `350b-ficha-possui-780x360`, `350b-ficha-naopossui-1846x852`,
+`350b-ficha-naopossui-780x360`, `350b-niveis-estados-1846x852`, `350b-niveis-estados-780x360`.
+
 ## §350 · FICHA do deus (renderDeusDetalhe) e NÍVEIS (renderNiveis) no modelo do dono — telas fixas
 
 O dono aprovou duas imagens: a FICHA (ex.: Zeus) e os NÍVEIS DE HABILIDADE. As duas telas seguem **separadas** (a ficha

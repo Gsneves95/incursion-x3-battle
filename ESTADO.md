@@ -2,6 +2,17 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §350b · Ajustes nos NÍVEIS (ícone de pontos, singular, diff por palavras, "EFEITO") + capturas da ficha
+- ÍCONE DE PONTOS: a gema azul (confundia com Essência) virou SELO DOURADO com símbolo de cópia (`_pontoIcSVG`),
+  distinto de Essência (azul)/Gema (roxa). O mesmo no topo dos Níveis, na sobreposição da Coleção (`nlTopoPtsHTML`) e
+  DENTRO dos botões de subir ("SUBIR … · 🜲 X PONTO(S)" / "FALTAM 🜲 X PONTO(S)", `_nlbPtIc`).
+- SINGULAR: "1 PONTOS"→"1 PONTO" (botão, "FALTAM 1 PONTO", "por 1 ponto?" na confirmação), via `_ptLabel`.
+- DIFF POR PALAVRAS: `_nlRealceDiff` agora compara por palavras (LCS, pontuação de ponta ignorada): realça todo trecho
+  novo do PRÓXIMO, não só números. Básico Nv3→Nv4 realça "ele causa 3 menos de dano por 1 turno"; milagre Nv1→Nv2 só "22".
+- "EFEITO": a habilidade sem escada (Defesa) rotula o texto "EFEITO", não "AGORA (Nv 1)".
+- Provas: `niveis_tela.test.js` ampliado. Suíte + build verdes. Capturas `docs/telas/350b-ficha-possui-{1846x852,780x360}`,
+  `350b-ficha-naopossui-{1846x852,780x360}`, `350b-niveis-estados-{1846x852,780x360}`.
+
 ## ★ §350 · FICHA (renderDeusDetalhe) e NÍVEIS (renderNiveis) no modelo do dono — telas fixas 1846×852
 - Duas telas SEPARADAS (ficha → botão → níveis), ambas TELA FIXA 1846×852 escalada: `fit()` ramos `emDeus`/`emNiveis`
   (palco `deusfix2`/`nlfix2`); "build"/"conta" somem (`emdeus`/`emniveis`). Alvos ≥72px, corpo ≥20px.
