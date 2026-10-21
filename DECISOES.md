@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §353 · NOVAS ARTES DE HABILIDADE (todas as 401), do artes-256.zip do dono
+
+O dono refez TODAS as artes de habilidade no formato QUADRADO e cheio (401 JPG 256×256: 100 deuses ×
+básico/habilidade/milagre/passiva + a Defesa) e subiu `artes-256.zip` na raiz da branch (commit "Add files via upload").
+São artes do dono → entram no repositório.
+
+**Associação (deus + slot), 401 sem sobra.** Um matcher normaliza (sem acento, sem maiúscula, sem pontuação) e casa o
+DEUS pelo nome/chave (`data/deuses`, candidato mais longo primeiro p/ "Yamato Takeru"/"Ao Kuang"…), com apelidos de
+digitação (`cérbero`→cerberus, `oisedon`→poseidon, `sukuyomi`→tsukuyomi) e os casos sem separador ("afrodite …"/"apolo
+…"); o SLOT pelo nome ATUAL da habilidade no kit. 10 arquivos trazem o nome ANTIGO da habilidade e caíram no único slot
+sem arte daquele deus (Ao Kuang→passiva, Cernunnos→habilidade, Erínias→passiva, Exu→passiva, Fujin→passiva,
+Hermes→passiva, Jörmungandr→passiva, Khnum→habilidade, Oni→passiva, Yamato Takeru→passiva); "proteção" → a arte da
+DEFESA universal. Resultado: 401 atribuídos, 0 falha, 0 slot faltando/duplicado (se algo não encaixasse, a regra era
+PARAR e reportar — não aconteceu).
+
+**Conversão.** Cada JPG → `web/skills/skill-<deus>-<slot>.webp` (256×256, `sharp` qualidade 82), SUBSTITUINDO as antigas; a
+Defesa em `skill-defesa.webp`. As 401 artes foram todas trocadas (nenhuma antiga sobrando). O `artes-256.zip` foi
+APAGADO do repositório após converter (sem ZIP nem JPG soltos).
+
+**Classificação (§332/§334) reclassificou sozinha:** **372 cheia / 29 disco**. Como as novas são quadradas e cheias,
+quase todas saíram CHEIA; as 29 DISCO têm cantos claros/vinheta (recorte medido ~0.47–0.48, sem anel): `skill-ahpuch-
+basico`, `skill-ammit-milagre`, `skill-ares-habilidade`, `skill-atena-passiva`, `skill-babi-milagre`, `skill-babi-
+passiva`, `skill-baldur-habilidade`, `skill-bastet-habilidade`, `skill-bragi-habilidade`, `skill-brahma-milagre`,
+`skill-cerberus-habilidade`, `skill-cerberus-milagre`, `skill-cerberus-passiva`, `skill-cernunnos-habilidade`,
+`skill-cuca-habilidade`, `skill-cuca-passiva`, `skill-curupira-basico`, `skill-curupira-passiva`, `skill-exu-basico`,
+`skill-freyja-passiva`, `skill-ganesha-milagre`, `skill-hades-basico`, `skill-izanami-habilidade`, `skill-khonshu-
+milagre`, `skill-medusa-habilidade`, `skill-mulasemcabeca-milagre`, `skill-osiris-habilidade`, `skill-osiris-milagre`,
+`skill-xango-milagre`.
+
+Provas: build + suíte verdes; o teste da classificação (`batalha_inspecao.test.js §332/§334`) atualizado p/ as artes
+novas (Zeus=cheia; amostra de disco atual: cerberus/osiris; emite as duas formas, maioria cheia); as provas de layout
+(batalha/ficha/níveis/montadores) seguem verdes. Folha de conferência dos 10 por eliminação em
+`353-artes-conferencia.png` (cada um com "deus · slot · nome atual"); capturas `353-batalha-1846x852`,
+`353-ficha-1846x852` com as artes novas.
+
 ## §352 · GUIA VISUAL + FOLHA DE COMPONENTES
 
 As telas novas (§335–§351) formaram um padrão visual aprovado. Para que toda tela nova nasça igual, o padrão virou

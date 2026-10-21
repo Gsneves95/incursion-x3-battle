@@ -134,14 +134,15 @@ const html=fs.readFileSync(path.resolve(__dirname,'..','dist','incursion.html'),
   ok(w.eval("typeof SKILL_ARTE_FORMA==='object' && !!SKILL_ARTE_FORMA"), 'SKILL_ARTE_FORMA injetado pelo build');
   const forma = k => w.eval(`(SKILL_ARTE_FORMA['${k}']||{}).forma`);
   const raio  = k => w.eval(`(SKILL_ARTE_FORMA['${k}']||{}).raio`);
-  ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre'].forEach(k=>ok(forma(k)==='cheia', `${k} → CHEIA (${forma(k)})`));
-  ['skill-ares-basico','skill-ares-habilidade','skill-ares-milagre','skill-anubis-basico','skill-anubis-milagre'].forEach(k=>ok(forma(k)==='disco', `${k} → DISCO (${forma(k)})`));
-  ['skill-ares-basico','skill-anubis-basico'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `${k} tem raio medido (${raio(k)})`));
-  // §334: discos com FUNDO CLARO/brilho (cantos com vinheta, meios das bordas claros) agora são DISCO, não CHEIA.
-  ['skill-babi-habilidade','skill-babi-milagre','skill-babi-passiva'].forEach(k=>ok(forma(k)==='disco', `§334 ${k} → DISCO (${forma(k)})`));
-  ['skill-babi-habilidade','skill-babi-milagre'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `§334 ${k} tem raio medido (${raio(k)})`));
-  // e as artes QUADRADAS cheias de verdade (Zeus) continuam CHEIA (não viram disco por engano).
-  ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre','skill-zeus-passiva'].forEach(k=>ok(forma(k)==='cheia', `§334 ${k} segue CHEIA (${forma(k)})`));
+  // §353: artes NOVAS (quadradas e cheias) — as artes de Zeus ficam CHEIA (preenchem o botão).
+  ['skill-zeus-basico','skill-zeus-habilidade','skill-zeus-milagre','skill-zeus-passiva'].forEach(k=>ok(forma(k)==='cheia', `${k} → CHEIA (${forma(k)})`));
+  // §334/§353: as que têm cantos claros/vinheta saem DISCO, com RAIO medido (recorte, sem anel). Amostra das 29 atuais.
+  ['skill-cerberus-habilidade','skill-cerberus-milagre','skill-osiris-habilidade','skill-osiris-milagre'].forEach(k=>ok(forma(k)==='disco', `${k} → DISCO (${forma(k)})`));
+  ['skill-cerberus-habilidade','skill-osiris-milagre'].forEach(k=>ok(typeof raio(k)==='number' && raio(k)>0.3 && raio(k)<=0.5, `${k} tem raio medido (${raio(k)})`));
+  // o classificador §332/§334 emite as DUAS formas (não colapsou tudo numa só) — e a maioria é CHEIA.
+  const _formas = w.eval("Object.values(SKILL_ARTE_FORMA).map(f=>f.forma)");
+  ok(_formas.includes('cheia') && _formas.includes('disco'), '§334 o classificador emite cheia E disco');
+  ok(_formas.filter(f=>f==='cheia').length > _formas.filter(f=>f==='disco').length, '§353 a maioria das artes novas é CHEIA');
   // resumo com uma ação da CPU → o painel mostra o retrato de quem agiu, não um quadrado vazio; e sem "Turno N".
   w.eval(`st=montarProvacao({aliados:${JSON.stringify(ally)},inimigos:${JSON.stringify(enemy)},montar:{seed:3,comeca:0}});
     prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1; st.ativo=0; armado=null;detalhe=null; foco=null;

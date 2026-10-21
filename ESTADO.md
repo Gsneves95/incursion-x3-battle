@@ -2,6 +2,20 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §353 · NOVAS ARTES DE HABILIDADE (todas as 401) do artes-256.zip do dono
+- O dono refez TODAS as artes (401 JPG 256×256 quadradas/cheias) e subiu `artes-256.zip` na raiz. Um matcher associou
+  cada arquivo a deus+slot (normalizando sem acento/maiúscula/pontuação; deus pelo nome/chave, candidato mais longo
+  primeiro; apelidos cérbero/oisedon/sukuyomi; afrodite/apolo sem separador; slot pelo nome ATUAL; 10 pelo nome ANTIGO →
+  único slot vazio; "proteção"→Defesa). 401 atribuídos, 0 falha/faltando/duplicado.
+- Convertidas p/ `web/skills/skill-<deus>-<slot>.webp` (256×256, sharp q82), substituindo TODAS as antigas; Defesa em
+  `skill-defesa.webp`. `artes-256.zip` apagado do repo (sem ZIP nem JPG soltos).
+- Build reclassificou (§332/§334): **372 cheia / 29 disco** (as 29 têm cantos claros; recorte medido ~0.47–0.48). Lista
+  das disco no DECISOES §353.
+- Provas: build + suíte verdes; `batalha_inspecao.test.js §332/§334` atualizado p/ as artes novas (Zeus cheia; amostra
+  disco cerberus/osiris; emite as duas formas, maioria cheia); layouts batalha/ficha/níveis/montadores verdes. Capturas:
+  `353-artes-conferencia` (mosaico dos 10 por eliminação, deus·slot·nome atual), `353-batalha-1846x852`,
+  `353-ficha-1846x852`.
+
 ## ★ §352 · GUIA VISUAL + FOLHA DE COMPONENTES (padrão das telas §335–§351)
 - `docs/guia-visual.md`: padrão tirado do CSS/funções REAIS (cita seletores/variáveis) — CORES (fundo em camadas; dourado
   `--gold*` única cor de ação; neutros `--ink*`; 6 elementos `--e-*`+livre via `COR()`; vermelho `--danger`/`--enemy` só
