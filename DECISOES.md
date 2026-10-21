@@ -6,6 +6,32 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §351 · LISTA DE DESAFIOS DE COMPOSIÇÃO (renderDesafios, rota 'composicao') no visual da tela DESAFIOS (§339)
+
+A lista de Desafios de Composição (§213) era a última tela fluida (`.tela`/`.cenc`, cartões-linha). Passou ao **visual da
+tela DESAFIOS aprovada (§339/§339b)**: TELA FIXA 1846×852 escalada, fundo azul-marinho, dourado só na ação e nas
+conquistas. `fit()` ganhou o ramo `emCompos` (id `#compfix`, classe de palco `cmp2`); "build"/"conta" somem (`emcompos`).
+Alvos ≥72px, corpo ≥20px.
+
+**Layout:** cabeçalho (‹ DESAFIOS = o `#bvoltar` de hoje — `voltar()`, senão a rota 'desafios'; título "DESAFIOS DE
+COMPOSIÇÃO"; à direita "X de Y cumpridos" + barra dourada, de `desafios()`/`desafioFeito`). Uma linha de introdução
+discreta com o texto de hoje. A GRADE em 3 colunas (rola se precisar). Cada cartão (`cardDesafioHTML`): um ÍCONE SVG da
+regra (`_cmpIcSVG`: orbe=monoElemento, três iguais=mesmaFuncao, templo=monoPanteao, três formas=funcoesDistintas,
+estrela=livre); o NOME (Cinzel); a REGRA (`dsf.regraTexto`); os INIMIGOS em miniaturas com o nome do bestiário
+(`_cmpFoesHTML` via `metaComb`, nome curto, sem quebrar palavra — §344b; até 4 + "+N"); a RECOMPENSA (`recompensaDesafio`
+→ "N ✦"); e o ESTADO/AÇÃO — aberto → botão dourado "JOGAR"; vencido → selo ✓ + moldura dourada fina + "✓ Vencido" + o
+botão secundário "JOGAR DE NOVO" (rejogar segue permitido). Os dois carregam `data-desafio` e, no clique, zeram
+`desafioTimePick = []` e `ir('desafiomontar', {id})` — exatamente como antes.
+
+Nada mais mudou: as regras dos desafios, as recompensas, a validação, o montador (§344), a tela DESAFIOS e as outras
+telas seguem iguais (só a CASCA da lista trocou; os mesmos handlers/fluxo).
+
+Provas: `composicao_tela.test.js` novo — jsdom (contagem "X de Y" + barra; cada cartão com nome/regra/recompensa/
+inimigos e o botão certo pelo estado; JOGAR e JOGAR DE NOVO abrem o montador com o id certo e o time vazio; VOLTAR →
+'desafios') + Chromium @1846×852 e @780×360 (filhos — cabeçalho/intro/cartões — ≤830, sem sobrepor, sem corte).
+`composicao.test.js` ajustado (seletor do cartão `.cenc`→`[data-desafio]`). Suíte + build verdes. Capturas
+`351-composicao-1846x852`, `351-composicao-780x360` (com vencidos e abertos).
+
 ## §350c · Dois ajustes na FICHA do deus (detalhe cortado em quem não possui; selo "Nv" na Defesa)
 
 1. **Detalhe cortado na ficha de quem NÃO possui.** O bloco COMO CONSEGUIR é mais alto que o da MAESTRIA e empurrava o

@@ -46,7 +46,7 @@ console.log('== 3. §344 o montador VALIDA AO VIVO: cartões que violam a regra 
   // possui um leque de deuses p/ montar
   w.eval("ROSTER.slice(0,20).forEach(e=>{perfil.deuses[e.key]={copias:1,favorito:false,obtidoEm:0};});");
   w.eval("ir('composicao'); render();");
-  const b = $('.cenc[data-desafio="cx_elemento"]');
+  const b = $('[data-desafio="cx_elemento"]');
   ok(!!b, 'o desafio mono-elemento aparece na lista');
   b.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
   ok(w.eval("rotaAtual()") === 'desafiomontar', 'abre o montador');

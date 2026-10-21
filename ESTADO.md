@@ -2,6 +2,20 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §351 · LISTA DE DESAFIOS DE COMPOSIÇÃO (renderDesafios, rota 'composicao') no visual da tela DESAFIOS
+- A lista (§213) virou TELA FIXA 1846×852 escalada no visual §339: `fit()` ramo `emCompos` (id `#compfix`, palco `cmp2`);
+  "build"/"conta" somem (`emcompos`). Alvos ≥72px, corpo ≥20px.
+- Cabeçalho: ‹ DESAFIOS (`#bvoltar`: voltar()→senão 'desafios') · "DESAFIOS DE COMPOSIÇÃO" · "X de Y cumpridos" + barra
+  dourada. + linha de introdução discreta.
+- GRADE 3 col (rola): cartão (`cardDesafioHTML`) = ícone SVG da regra (`_cmpIcSVG`), nome Cinzel, regraTexto, inimigos em
+  miniaturas com nome do bestiário (`_cmpFoesHTML`/`metaComb`, curto, até 4 +"+N"), recompensa "N ✦", e estado/ação:
+  aberto→"JOGAR" (dourado); vencido→selo ✓ + moldura dourada fina + "✓ Vencido" + "JOGAR DE NOVO" (secundário). Ambos
+  `data-desafio` → `desafioTimePick=[]; ir('desafiomontar',{id})` (igual a antes).
+- NÃO mudou: regras/recompensas/validação/montador (§344), tela DESAFIOS, outras telas — só a casca da lista.
+- Provas: `composicao_tela.test.js` novo (jsdom contagem/barra/cartões/ações/voltar + Chromium @1846/@780 filhos ≤830,
+  sem sobrepor/cortar); `composicao.test.js` ajustado (`.cenc`→`[data-desafio]`). Suíte + build verdes. Capturas
+  `351-composicao-{1846x852,780x360}`.
+
 ## ★ §350c · Dois ajustes na FICHA (detalhe cortado em quem não possui; selo "Nv" na Defesa)
 - DETALHE cortado na ficha de NÃO-POSSUI: o COMO CONSEGUIR (mais alto que a MAESTRIA) empurrava o detalhe p/ fora.
   Correções: COMO CONSEGUIR compacto (Invocação+Missão lado a lado — `.dcomo__vias` grade 2 col; requisito em 2 linhas

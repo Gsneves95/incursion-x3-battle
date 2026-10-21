@@ -3180,41 +3180,65 @@ function validarRegra(regraId, keys){
   }
 }
 
+// §351 — ÍCONE da regra de composição (SVG simples, dourado): uma orbe (mesmo elemento), três iguais (mesma função),
+// um templo (mesmo panteão), três formas diferentes (funções distintas), uma estrela (livre).
+function _cmpIcSVG(regra){
+  const C = '#C9A44C';
+  switch (regra){
+    case 'monoElemento':    return `<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="12" fill="${C}" opacity=".85"/><circle cx="24" cy="24" r="12" fill="none" stroke="#F0D79A" stroke-width="2.4"/><circle cx="20" cy="20" r="3.5" fill="#FBE29A" opacity=".8"/></svg>`;
+    case 'mesmaFuncao':     return `<svg viewBox="0 0 48 48" fill="${C}" aria-hidden="true"><circle cx="12" cy="24" r="6.5"/><circle cx="24" cy="24" r="6.5"/><circle cx="36" cy="24" r="6.5"/></svg>`;
+    case 'monoPanteao':     return `<svg viewBox="0 0 48 48" fill="none" stroke="${C}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 18l16-9 16 9"/><path d="M12 18v18M24 18v18M36 18v18"/><path d="M7 38h34"/></svg>`;
+    case 'funcoesDistintas':return `<svg viewBox="0 0 48 48" fill="${C}" aria-hidden="true"><circle cx="11" cy="27" r="6.5"/><rect x="18" y="20.5" width="13" height="13" rx="1.5"/><path d="M40 18l6.5 15h-13z"/></svg>`;
+    default:                return `<svg viewBox="0 0 48 48" fill="none" stroke="${C}" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M24 7l5.2 11.2L41 19.6l-8.5 8.1L34.6 40 24 33.9 13.4 40l2.1-12.3L7 19.6l11.8-1.4z" fill="${C}" fill-opacity=".15"/></svg>`;
+  }
+}
+// §351 — miniaturas dos INIMIGOS (nomes do bestiário via metaComb, nome CURTO, sem quebrar palavra — §344b): até 4 + "+N".
+function _cmpFoesHTML(inim){
+  const list = inim || []; if (!list.length) return '';
+  const show = list.slice(0, 4), extra = list.length - show.length;
+  const minis = show.map(k => { const m = metaComb(k);
+    return `<span class="cmp-foe" title="${H(m.nome)}"><span class="cmp-foe__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cmp-foe__n">${H(m.curto || m.nome)}</span></span>`; }).join('');
+  const more = extra > 0 ? `<span class="cmp-foe cmp-foe--more">+${extra}</span>` : '';
+  return `<div class="cmp-card__foes"><span class="cmp-card__foeslab">Inimigos</span><span class="cmp-foes">${minis}${more}</span></div>`;
+}
 function cardDesafioHTML(dsf){
   const feito = desafioFeito(dsf.id);
   const r = recompensaDesafio(dsf.recompensa);
-  const rid = dsf.regra === 'livre' ? 'Time livre' : 'Regra de time';
-  return `<button class="cenc cenc--${feito ? 'feito' : 'aberto'}" data-desafio="${dsf.id}">
-    <span class="cenc__ic">${feito ? '✓' : '◆'}</span>
-    <span class="cenc__id">
-      <span class="cenc__nome">${H(dsf.nome)}</span>
-      <span class="cenc__ensina">${H(dsf.regraTexto)}</span>
-    </span>
-    <span class="cenc__pe">
-      <span class="cenc__rec">${r.essencia ? `${r.essencia} ✦` : ''}${feito ? ' <span class="cenc__feitosel">✓</span>' : ''}</span>
-      <span class="cenc__estado">${feito ? 'vencido' : rid}</span>
-    </span>
-  </button>`;
+  const acao = feito
+    ? `<button class="cmpb cmpb--quiet" data-desafio="${dsf.id}">JOGAR DE NOVO</button>`
+    : `<button class="cmpb cmpb--primary" data-desafio="${dsf.id}">JOGAR</button>`;
+  return `<div class="cmp-card${feito ? ' cmp-card--feito' : ''}" data-card="${dsf.id}">
+    ${feito ? '<span class="cmp-card__selo" aria-hidden="true">✓</span>' : ''}
+    <div class="cmp-card__top">
+      <span class="cmp-card__ic">${_cmpIcSVG(dsf.regra)}</span>
+      <div class="cmp-card__id"><b class="cmp-card__n cin">${H(dsf.nome)}</b><span class="cmp-card__regra">${H(dsf.regraTexto || '')}</span></div>
+    </div>
+    ${_cmpFoesHTML(dsf.inimigos)}
+    <div class="cmp-card__pe">
+      <span class="cmp-card__left">${r.essencia ? `<span class="cmp-card__rec">${r.essencia} ✦</span>` : ''}${feito ? '<span class="cmp-card__won">✓ Vencido</span>' : ''}</span>
+      ${acao}
+    </div>
+  </div>`;
 }
 function renderDesafios(){
   const lista = desafios();
   const feitos = lista.filter(d => desafioFeito(d.id)).length;
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="tela">
-    <header class="tela__cab">
-      <button class="b b--quiet b--md" id="bvoltar">‹ Desafios</button>
-      <h1 class="tela__titulo">Desafios de Composição</h1>
-      <span class="tela__cont">${feitos}/${lista.length}</span>
+  const pct = lista.length ? Math.round(feitos / lista.length * 100) : 0;
+  stage.innerHTML = `<div id="baselayer" class="cmp2"><div id="compfix">
+    <header class="cmp-cab">
+      <button class="cmpb cmpb--voltar" id="bvoltar">‹ DESAFIOS</button>
+      <h1 class="cmp-titulo cin">DESAFIOS DE COMPOSIÇÃO</h1>
+      <span class="cmp-prog">
+        <span class="cmp-prog__n">${feitos} de ${lista.length} cumpridos</span>
+        <span class="cmp-prog__bar"><i style="width:${pct}%"></i></span>
+      </span>
     </header>
-    <div class="tela__rol">
-      <div class="ccap"><h2>Você monta o time; o jogo testa se sabe montá-lo.</h2><p>Cada desafio impõe uma regra de composição. A recompensa é leve — o valor é o quebra-cabeça.</p></div>
-      <div class="clista">${lista.map(cardDesafioHTML).join('')}</div>
-    </div>
-  </div>
-  </div>`;
+    <p class="cmp-intro">Você monta o time; o jogo testa se sabe montá-lo. A recompensa é leve — o valor é o quebra-cabeça.</p>
+    <div class="cmp-grade" id="cmpgrade">${lista.map(cardDesafioHTML).join('')}</div>
+  </div></div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('desafios', {}, { substituir: true }); render(); };   // §213: volta ao hub
-  [...stage.querySelectorAll('.cenc[data-desafio]')].forEach(b => {
+  [...stage.querySelectorAll('[data-desafio]')].forEach(b => {
     b.onclick = () => { desafioTimePick = []; ir('desafiomontar', { id: b.dataset.desafio }); render(); };
   });
   fit();
