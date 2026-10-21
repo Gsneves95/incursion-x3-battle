@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §349 · PROVAÇÕES (renderMissoes, rota 'provacoes') no modelo do dono — tela fixa + grade + prévia
+
+O dono aprovou uma imagem para a tela de Provações. A tela antiga era fluida (painel fixo à esquerda + LISTA de linhas
+com ACORDEÃO à direita). Agora é a **tela fixa 1846×852 escalada** (como §339/§342/§348), `fit()` com o ramo `emProv` +
+classe `pv2fix`; "build"/"conta" somem (`emprov`). Alvos ≥72px (nav e ATIVAR do painel), corpo ≥20px.
+
+**Layout:** cabeçalho (‹ INÍCIO · "PROVAÇÕES" · à direita o RANQUE — elmo, faixa, barra "pontos/mínimo da próxima" ou
+"faixa máxima", via `ranqueHTML`). **Coluna esquerda = PAINEL** (`painelProvHTML`), em dois modos: (a) **PROVAÇÃO
+ATIVA** (retrato que abre a ficha, nome+selo, "Panteão · ranque Faixa", motivo, OBJETIVOS com marcação ✓ verde + barra
+atual/meta via `_obLinhaHTML` com a opção nova `check`, "Trocar Provação" + "N vaga ativa · mais vagas na Loja"); (b)
+**PRÉVIA** de um cartão tocado (mesmo conteúdo + rótulo "Prévia" + o botão do estado — ATIVAR/RETOMAR, ou nenhum se
+conquistada/travada — e "‹ Voltar à ativa"). A confirmação de troca é **inline no painel**: "Trocar? O progresso de
+<ativa> fica pausado. [SIM] [NÃO]". **Área direita "DEUSES PARA DESBLOQUEAR"**: pílulas (Todas/Disponíveis/Pausadas/
+Conquistadas com a contagem real), busca por nome (ignora acentos), "X de Y conquistados", e a GRADE de cartões no
+**visual do montador** (retrato cheio + degradê + NOME sempre visível + orbe do §337 + selo A/S/SS), agrupada por faixa
+(`MISSOES.faixas`): faixas ≤ a atual abertas; acima recolhidas com "(faltam N pontos)" e toque p/ espiar (`faixasEspiadas`),
+mostrando cartões TRAVADOS. Estados do cartão: DISPONÍVEL (ATIVAR), PAUSADA (selo "Pausada · %" + RETOMAR), ATIVA
+(moldura + "Ativa"), CONQUISTADA ("✓ Conquistado"), TRAVADA (cinza + cadeado + "Ranque <faixa>", só acima do ranque).
+
+**Mudança de interação (vs §316):** o ACORDEÃO de requisitos na linha deu lugar à **PRÉVIA no painel** (tocar o cartão
+abre a Provação à esquerda). A confirmação de troca saiu da linha e foi para o painel. Os handlers e o fluxo do servidor
+**não mudaram**: `data-ativar`/`data-troca`/`data-troca-ok`/`data-troca-no`/`data-abrir`/`data-fxespiar`/`#btrocar`/
+`#bvoltar` seguem; novos `data-carta` (prévia), `data-voltarativa`, `data-filtro`, `#provbusca`. Enquanto a ativação está
+no servidor (`provPendente`) o botão fica travado ("…"). O estado de exibição do cartão e do painel usa a MESMA função
+(`_dispEstadoProv`: travada só acima do ranque), para o botão do painel bater com o do cartão. Offline: o catálogo de
+hoje (`provacoesOfflineHTML`, `.mcat`) no mesmo estilo + o aviso de conectar. Sem dados: a mensagem de hoje.
+
+Reaproveitado sem mudar: as regras/objetivos/servidor/faixas/ranque/vagas (`estadoProv`, `provDisponivel`, `ranqueHTML`,
+`_obTexto`/`_obWidget`, `ativarProvacaoServidor`), a ficha do deus, as outras telas.
+
+Provas: `missoes_tela.test.js` reescrito p/ o novo modelo — jsdom: os 5 estados do cartão (nome sempre visível);
+ATIVAR sem ativa direto, com ativa pede confirmação, SIM/NÃO; RETOMAR; a PRÉVIA abre com os objetivos daquela Provação
+e "Voltar à ativa" volta; pílulas+busca com as contagens reais; faixa acima recolhida + espiar; o retrato abre a ficha;
+"Trocar Provação" leva às disponíveis; offline mostra o catálogo; a gramática da lista de nomes. Chromium @1846×852 e
+@780×360: enche ≥98%, as colunas terminam em y≤830 (mede os FILHOS, §348b), painel e grade não se sobrepõem, a grade não
+rola na horizontal, nenhum texto corta. Capturas `docs/telas/349-*` (ativa, prévia, confirmação de troca, faixa espiada
+com travados em 1846×852; ativa em 780×360).
+
+**Diferenças vs a imagem de referência:** os objetivos mostram os textos REAIS do dado (ex.: "8 vitórias com Zeus ou
+Ganesha", "6 vitórias com qualquer grego") no lugar dos textos-mock da referência ("Cause 300 de dano com Tempestade"),
+pois a tela é dirigida pelo dado das 91 Provações; as contagens das pílulas e "X de Y" também são reais. O resto
+(cabeçalho+ranque, painel com retrato/selo/motivo/objetivos/Trocar, grade por faixa com os 5 estados, cartão do
+montador) segue a imagem.
+
 ## §348c · Trilha do HUB do Domínio: o número do chefe ficava embaixo da legenda
 
 Na trilha (§348), a caixa da legenda ("Nível 12 de 40 · próximo chefe no nível 20") ficava na MESMA altura dos números

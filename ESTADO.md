@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §349 · PROVAÇÕES (renderMissoes) no modelo do dono — tela fixa 1846×852 + grade + prévia
+- A tela (rota `provacoes`) virou TELA FIXA 1846×852 escalada: `fit()` ramo `emProv` + classe `pv2fix`; "build"/"conta"
+  somem (`emprov`). Cabeçalho ‹INÍCIO · PROVAÇÕES · RANQUE (`ranqueHTML`).
+- ESQUERDA = PAINEL (`painelProvHTML`): ATIVA (retrato→ficha, nome+selo, panteão·ranque, motivo, OBJETIVOS com marcação
+  ✓ verde + barra atual/meta via `_obLinhaHTML({check})`, "Trocar Provação" + vagas) ou PRÉVIA (cartão tocado: rótulo
+  "Prévia" + botão de estado + "‹ Voltar à ativa"). Confirmação de troca INLINE no painel (SIM/NÃO).
+- DIREITA "DEUSES PARA DESBLOQUEAR": pílulas Todas/Disponíveis/Pausadas/Conquistadas (contagem real), busca (ignora
+  acentos), "X de Y conquistados", GRADE de cartões no visual do montador (retrato+degradê+NOME+orbe+selo A/S/SS)
+  agrupada por faixa (`MISSOES.faixas`): ≤atual abertas; acima recolhidas "(faltam N)" + espiar → cartões TRAVADOS.
+  Estados: disponivel(ATIVAR)/pausada(selo "%"+RETOMAR)/ativa(moldura+"Ativa")/conquistada("✓ Conquistado")/travada
+  (cinza+cadeado+"Ranque <faixa>"). Tocar o cartão → PRÉVIA.
+- Mudança vs §316: o ACORDEÃO virou PRÉVIA no painel; a confirmação saiu da linha p/ o painel. Handlers/fluxo do
+  servidor iguais (`data-ativar`/`-troca`/`-troca-ok`/`-troca-no`/`-abrir`/`-fxespiar`/`#btrocar`/`#bvoltar`); novos
+  `data-carta`/`data-voltarativa`/`data-filtro`/`#provbusca`. `_dispEstadoProv` unifica o estado de cartão e painel.
+- Offline: catálogo `provacoesOfflineHTML` (.mcat) + aviso. Sem dados: mensagem de hoje. Nada das regras/servidor mudou.
+- Provas: `missoes_tela.test.js` reescrito (jsdom: 5 estados, ativar/confirmar/cancelar, retomar, prévia+voltar,
+  pílulas/busca, espiar, ficha, trocar, offline, gramática) + Chromium @1846/@780 (enche ≥98%, colunas ≤830, sem
+  sobrepor, sem corte). Capturas `docs/telas/349-*`.
+
 ## ★ §348c · Trilha do HUB: número do chefe ficava embaixo da legenda
 - Na trilha, a caixa da legenda ("Nível 12 de 40 · próximo chefe no nível 20") ficava na mesma altura dos números
   (números y216–242, legenda y221–248) → o texto cobria o "20". Só CSS: dots/números sobem (rail margin 30→12, altura

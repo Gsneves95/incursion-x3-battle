@@ -195,13 +195,15 @@ function fit(){
   const emMontar = (_rM === 'dominiomontar' || _rM === 'montartime' || _rM === 'desafiomontar' || _rM === 'pvp' || _rM === 'selecao') && document.getElementById('dommontar');   // §345: a Batalha CPU/hot-seat usa o mesmo montador
   // §348: o HUB do Domínio é a mesma TELA FIXA de 1846×852 escalada (igual à batalha/desafios/montador).
   const emDomHub = (_rM === 'dominio') && document.getElementById('domhub');
+  // §349: a tela PROVAÇÕES também é a TELA FIXA de 1846×852 escalada.
+  const emProv = (_rM === 'provacoes') && document.getElementById('provfix');
   // §346b: a COLEÇÃO vira uma TELA FIXA escalada (como batalha/montador): enche a tela. O design é 1100×508 (MESMA
   // proporção 2.166 da batalha 1846×852), onde o CSS atual da Coleção já cabe — e escalado garante os filtros em 2
   // linhas e 2+ fileiras de cartões em qualquer tamanho (780 e 1846 têm a mesma proporção → escala uniforme).
   const emColecao = (_rM === 'colecao') && document.getElementById('colfix');
-  const fixa = emBatalha || emDesafios || emMontar || emDomHub;
-  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('col2fix', !!emColecao);
-    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348: carimbo build + botão conta somem destas telas (vivem na home/menu)
+  const fixa = emBatalha || emDesafios || emMontar || emDomHub || emProv;
+  try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('col2fix', !!emColecao);
+    document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348/§349: carimbo build + botão conta somem destas telas (vivem na home/menu)
   if(emColecao && !fixa){
     const CW = 1100, CH = 508, s = Math.min(u.w / CW, u.h / CH);
     ultimaEscala = s; ultimaLarguraDesign = CW;

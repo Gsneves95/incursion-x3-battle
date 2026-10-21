@@ -421,7 +421,10 @@ function _obLinhaHTML(k, o, i, opts){
   const conq = !!opts.conq;
   const e = _estadoObj(k, i);
   const dir = opts.meta ? `<span class="ob__meta">${_obMeta(o)}</span>` : `<span class="ob__p">${_obWidget(o, e, conq)}</span>`;
-  return `<div class="ob${opts.mini ? ' ob--mini' : ''}"><span class="ob__ic">${_obIc(o.tipo)}</span><span class="ob__t">${_obTexto(o, !!opts.mark)}</span>${dir}</div>`;
+  const done = _obDone(o, e, conq);
+  // §349: `check` → marcação (caixa ✓ verde quando cumprido), no lugar do ícone de tipo (painel de Provações).
+  const mark = opts.check ? `<span class="ob__ck${done ? ' is-on' : ''}">${done ? '✓' : ''}</span>` : `<span class="ob__ic">${_obIc(o.tipo)}</span>`;
+  return `<div class="ob${opts.mini ? ' ob--mini' : ''}${done ? ' ob--done' : ''}">${mark}<span class="ob__t">${_obTexto(o, !!opts.mark)}</span>${dir}</div>`;
 }
 // progresso MÉDIO de uma pausada (cada objetivo limitado à sua meta) — o "· 55%" da linha.
 function _pausadaPct(k){
@@ -435,20 +438,44 @@ function _pausadaPct(k){
 
 // ============================ §316 — PAINEL FIXO "PROVAÇÃO ATIVA" (o único com moldura acesa) ============================
 function _seloHTML(rar){ return `<span class="selo selo--${rar}">${rar}</span>`; }
-function painelAtivaHTML(){
-  const mm = (contaAtual && contaAtual.missoes) || {};
-  const k = mm.ativa;
-  if (!k){
-    return `<div class="pa pa--vazio">
-      <div class="pa__rot">Provação ativa</div>
-      <div class="pa__vazio"><span class="pa__med pa__med--off">${slot('vazio', '◈', '#4a4570', 40)}</span>
-      <p class="pa__vaziomsg">Nenhuma Provação ativa — <b>escolha uma na lista</b>.</p></div>
-    </div>`;
-  }
-  const m = MISSOES.missoes[k], g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k);
-  const objs = (m.objetivos || []).map((o, i) => _obLinhaHTML(k, o, i, {})).join('');
-  return `<div class="pa">
+// §349 — PAINEL ESQUERDO: PROVAÇÃO ATIVA (padrão) ou PRÉVIA (quando um cartão foi tocado). Mesmo conteúdo;
+// muda o rótulo, o rodapé (Trocar+vagas × botão de estado + "‹ Voltar à ativa") e a confirmação de troca inline.
+function _paVazioHTML(){
+  return `<div class="pa pa--vazio">
     <div class="pa__rot">Provação ativa</div>
+    <div class="pa__vazio"><span class="pa__med pa__med--off">${slot('vazio', '◈', '#4a4570', 40)}</span>
+    <p class="pa__vaziomsg">Nenhuma Provação ativa — <b>escolha uma na lista</b>.</p></div>
+  </div>`;
+}
+function painelProvHTML(){
+  const mm = (contaAtual && contaAtual.missoes) || {};
+  const ativa = mm.ativa;
+  const previa = (provPrevia && MISSOES.missoes[provPrevia]) ? provPrevia : null;
+  const k = previa || ativa;
+  if (!k) return _paVazioHTML();
+  const ehPrevia = !!previa;
+  // §349: o MESMO estado de exibição do cartão (travada só acima do ranque) → o botão do painel bate com o da grade.
+  const estado = _dispEstadoProv(k, MISSOES.missoes[k].faixaIndice, faixaAtualIdx());
+  const m = MISSOES.missoes[k], g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k);
+  const objs = (m.objetivos || []).map((o, i) => _obLinhaHTML(k, o, i, { check: true, conq: estado === 'conquistada' })).join('');
+  let foot;
+  if (ehPrevia){
+    const temOutra = ativa && ativa !== k, conf = provTrocaConfirm === k;
+    let botao = '';
+    if (provPendente === k) botao = `<button class="pvb pvb--go" disabled>…</button>`;
+    else if (!conf){
+      if (estado === 'disponivel') botao = `<button class="pvb pvb--go" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">ATIVAR</button>`;
+      else if (estado === 'pausada') botao = `<button class="pvb pvb--go" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">RETOMAR</button>`;
+    }
+    const voltar = ativa ? `<button class="pvb pvb--quiet" data-voltarativa="1">‹ Voltar à ativa</button>` : '';
+    const confBox = conf ? `<div class="pa__conf">Trocar? O progresso de <b>${H(nomeM(ativa))}</b> fica pausado.<span class="pa__confb"><button class="pvb pvb--go" data-troca-ok="${k}">SIM</button><button class="pvb pvb--quiet" data-troca-no="1">NÃO</button></span></div>` : '';
+    foot = `${confBox}<div class="pa__foot">${voltar}${botao}</div>`;
+  } else {
+    const n = MISSOES.slotsGratis || 1;
+    foot = `<div class="pa__foot"><button class="pvb pvb--quiet" id="btrocar">Trocar Provação</button><span class="pa__footdiv"></span><span class="pa__slot">${n} vaga${n > 1 ? 's' : ''} ativa${n > 1 ? 's' : ''} · mais vagas na Loja</span></div>`;
+  }
+  return `<div class="pa${ehPrevia ? ' pa--previa' : ''}" data-estado="${estado}" data-deus="${k}">
+    <div class="pa__rot">${ehPrevia ? 'Prévia' : 'Provação ativa'}</div>
     <div class="pa__head">
       <span class="pa__med" data-abrir="${k}">${slot('god-' + k, ini(g.nome), COR(g.elem), 46)}</span>
       <div class="pa__id">
@@ -458,8 +485,9 @@ function painelAtivaHTML(){
         <div class="pa__motivo">${H(m.motivo)}</div>
       </div>
     </div>
+    <div class="pa__objsrot">Objetivos</div>
     <div class="pa__objs">${objs}</div>
-    <div class="pa__foot"><button class="b b--quiet b--sm" id="btrocar">Trocar</button><span class="pa__footdiv"></span><span class="pa__slot">${(MISSOES.slotsGratis || 1)} slot${(MISSOES.slotsGratis || 1) > 1 ? 's' : ''}</span></div>
+    ${foot}
   </div>`;
 }
 
@@ -476,91 +504,82 @@ function ranqueHTML(){
   return `<span class="rq">${helm}<span class="rq__id"><span class="rq__f">${H(cur.nome)}</span><span class="rq__bar"><i style="width:${pct}%"></i></span><span class="rq__t">${pts}/${prox.min} até ${H(prox.nome)}</span></span></span>`;
 }
 
-// ============================ §316 — LISTA (coluna direita, rola): agrupada por faixa, linhas + acordeão ============================
-function _medalhaoHTML(k, estado){
-  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' };
-  const cls = estado === 'travada' ? 'med--trava' : (estado === 'conquistada' ? 'med--conq' : '');
-  return `<span class="med ${cls}">${slot('god-' + k, ini(g.nome), estado === 'travada' ? '#6a6390' : COR(g.elem), 30)}</span>`;
+// ============================ §349 — GRADE (coluna direita, rola): agrupada por faixa, cartões do montador ============================
+// o ESTADO de EXIBIÇÃO do cartão: travada só nas faixas ACIMA da atual; o resto conquistada/ativa/pausada/disponível.
+function _dispEstadoProv(k, fi, cur){
+  const mm = (contaAtual && contaAtual.missoes) || {};
+  if (_temDeus(k)) return 'conquistada';
+  if (mm.ativa === k) return 'ativa';
+  if (mm.progresso && mm.progresso[k]) return 'pausada';
+  return fi > cur ? 'travada' : 'disponivel';
 }
-// a AÇÃO da linha (Ativar/Retomar), o "…" pendente, ou nada quando a confirmação está aberta (vai abaixo).
-function _linhaAcaoHTML(k, estado){
-  if (provPendente === k) return `<button class="b b--primary b--sm" disabled>…</button>`;
-  if (provTrocaConfirm === k) return '';
-  const mm = (contaAtual && contaAtual.missoes) || {}; const temOutra = mm.ativa && mm.ativa !== k;
-  if (estado === 'disponivel') return `<button class="b b--primary b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">Ativar</button>`;
-  if (estado === 'pausada') return `<button class="b b--quiet b--sm" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">Retomar</button>`;
-  return '';
+function _provNorm(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+// contagens globais p/ as pílulas (reais, do dado) + conquistados/total.
+function _provContagens(){
+  const cur = faixaAtualIdx();
+  const c = { todas: 0, disponiveis: 0, pausadas: 0, conquistadas: 0, total: 0 };
+  for (const k in MISSOES.missoes){ c.total++;
+    const e = _dispEstadoProv(k, MISSOES.missoes[k].faixaIndice, cur);
+    if (e === 'conquistada') c.conquistadas++;
+    else if (e === 'pausada') c.pausadas++;
+    else if (e === 'disponivel') c.disponiveis++;
+    if (e !== 'travada') c.todas++;   // "Todas" = alcançáveis (as acima do ranque ficam travadas, fora da contagem)
+  }
+  return c;
 }
-function linhaHTML(k){
-  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k);
-  const estado = estadoProv(k);
-  const expansivel = (estado === 'pausada' || estado === 'disponivel' || estado === 'travada');
-  const aberta = provExpandida === k;
-  let stTxt = '';
-  if (estado === 'ativa') stTxt = 'ativa';
-  else if (estado === 'conquistada') stTxt = 'conquistada';
-  else if (estado === 'travada') stTxt = '<span class="lr__cad">🔒</span> travada';
-  else if (estado === 'pausada') stTxt = `pausada · ${_pausadaPct(k)}%`;
-  const seta = expansivel ? `<span class="lr__seta${aberta ? ' is-open' : ''}" aria-hidden="true">⌄</span>` : '';
-  const acao = _linhaAcaoHTML(k, estado);
-  const confirmando = provTrocaConfirm === k;
-  const mm = (contaAtual && contaAtual.missoes) || {}; const atual = mm.ativa ? nomeM(mm.ativa) : '';
-  return `<div class="lr lr--${estado}${aberta ? ' is-open' : ''}" data-deus="${k}">
-    <div class="lr__row">
-      <div class="lr__tap"${expansivel ? ` data-linha="${k}"` : ''}>
-        <span class="lr__art">${_medalhaoHTML(k, estado)}</span>
-        <span class="lr__nome">${H(g.nome)}</span>${_seloHTML(rar)}
-        <span class="lr__st">${stTxt}</span>
-        ${seta}
-      </div>
-      ${acao ? `<div class="lr__acao">${acao}</div>` : ''}
-    </div>
-    ${confirmando ? `<div class="lr__conf">Ativar <b>${H(nomeM(k))}</b>? <b>${H(atual)}</b> fica pausada, com o progresso guardado.<span class="lr__confb"><button class="b b--primary b--sm" data-troca-ok="${k}">Confirmar</button><button class="b b--quiet b--sm" data-troca-no="1">Cancelar</button></span></div>` : ''}
-    ${aberta ? `<div class="lr__exp">${expansaoHTML(k, estado)}</div>` : ''}
+function _provMatchFiltro(e){
+  if (provFiltro === 'todas') return true;
+  if (provFiltro === 'disponiveis') return e === 'disponivel';
+  if (provFiltro === 'pausadas') return e === 'pausada';
+  if (provFiltro === 'conquistadas') return e === 'conquistada';
+  return true;
+}
+// CARTÃO no visual do montador (retrato cheio + degradê + NOME + orbe + selo de raridade), com o estado da Provação.
+function provCardHTML(k, estado){
+  const g = HRM[k] || { nome: nomeM(k), elem: 'Umbra' }, rar = raridadeDe(k), trav = estado === 'travada';
+  const mm = (contaAtual && contaAtual.missoes) || {}, temOutra = mm.ativa && mm.ativa !== k;
+  let acao = '';
+  if (provPendente === k) acao = `<span class="pvc__btn pvc__btn--wait">…</span>`;
+  else if (estado === 'disponivel') acao = `<button class="pvc__btn" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">ATIVAR</button>`;
+  else if (estado === 'pausada') acao = `<button class="pvc__btn pvc__btn--quiet" data-ativar="${k}" data-troca="${temOutra ? 1 : 0}">RETOMAR</button>`;
+  else if (estado === 'ativa') acao = `<span class="pvc__flag pvc__flag--ativa">Ativa</span>`;
+  else if (estado === 'conquistada') acao = `<span class="pvc__flag pvc__flag--conq">✓ Conquistado</span>`;
+  else if (trav) acao = `<span class="pvc__rank">Ranque ${H(MISSOES.missoes[k].faixaNome)}</span>`;
+  return `<div class="pvc pvc--${estado}" data-deus="${k}">
+    <button class="pvc__tap" data-carta="${k}" aria-label="${H(g.nome)}"></button>
+    <span class="pvc__art">${slot('god-' + k, ini(g.nome), trav ? '#6a6390' : COR(g.elem), 40)}</span>
+    <span class="pvc__grad"></span>
+    <span class="selo pvc__selo selo--${rar}">${rar}</span>
+    ${estado === 'pausada' ? `<span class="pvc__pausa">Pausada · ${_pausadaPct(k)}%</span>` : ''}
+    ${trav ? `<span class="pvc__lock">🔒</span>` : ''}
+    <span class="pvc__foot"><b class="pvc__n">${H(g.nome)}</b><span class="pvc__meta">${orbe(g.elem, 18)}</span><span class="pvc__act">${acao}</span></span>
   </div>`;
 }
-// a EXPANSÃO (acordeão): motivo + os objetivos (meta / progresso guardado / travados com o que falta).
-function expansaoHTML(k, estado){
-  const m = MISSOES.missoes[k];
-  const objs = (m.objetivos || []).map((o, i) => {
-    if (estado === 'pausada') return _obLinhaHTML(k, o, i, { mini: true });
-    return _obLinhaHTML(k, o, i, { mini: true, meta: true, mark: estado === 'travada' });
-  }).join('');
-  let notas = '';
-  if (estado === 'travada'){
-    const d = provDisponivel(k); const linhas = [];
-    if (!d.rankOk) linhas.push(`<div class="exp__nota">Requer ranque <b>${H(m.faixaNome)}</b></div>`);
-    const faltamMand = [];
-    for (const o of m.objetivos){
-      if (o.tipo === 's'){ if (!_temDeus(o.alvo)) faltamMand.push(o.alvo); }
-      else if (o.tipo === 'j' || o.tipo === 'c'){ for (const g of o.lista) if (!_temDeus(g)) faltamMand.push(g); }
-      else if (o.tipo === 'v'){ if (!o.lista.some(g => _temDeus(g))) linhas.push(`<div class="exp__nota">você precisa de um destes: ${o.lista.map(g => H(nomeM(g))).join(', ')}</div>`); }
-    }
-    [...new Set(faltamMand)].forEach(g => linhas.push(`<div class="exp__nota">você ainda não tem <b>${H(nomeM(g))}</b></div>`));
-    notas = linhas.join('');
-  }
-  return `<div class="exp__motivo">${H(m.motivo)}</div><div class="exp__objs">${objs}</div>${notas}`;
-}
-function listaProvacoesHTML(){
+function gradeProvacoesHTML(){
   const pts = (contaAtual && contaAtual.ranque && typeof contaAtual.ranque.pontos === 'number') ? contaAtual.ranque.pontos : 0;
   const cur = faixaAtualIdx();
   const rarRank = { SS: 2, S: 1, A: 0 };
+  const q = _provNorm(provBusca.trim());
+  const expandeTudo = provFiltro !== 'todas' || q !== '';   // §349: filtrar/buscar abre todas as faixas (as acima ficam travadas)
   const porFaixa = {};
   for (const k in MISSOES.missoes){ const fi = MISSOES.missoes[k].faixaIndice; (porFaixa[fi] = porFaixa[fi] || []).push(k); }
   let html = '';
   (MISSOES.faixas || []).forEach((f, fi) => {
-    const ks = (porFaixa[fi] || []).sort((a, b) => ((rarRank[MISSOES.missoes[b].raridade] || 0) - (rarRank[MISSOES.missoes[a].raridade] || 0)) || nomeM(a).localeCompare(nomeM(b)));
-    if (fi <= cur){
-      html += `<div class="fx"><span class="fx__n">${H(f.nome)}</span><span class="fx__ln"></span></div>`;
-      html += ks.map(linhaHTML).join('');
+    const todos = (porFaixa[fi] || []).sort((a, b) => ((rarRank[MISSOES.missoes[b].raridade] || 0) - (rarRank[MISSOES.missoes[a].raridade] || 0)) || nomeM(a).localeCompare(nomeM(b)));
+    const vis = todos.filter(k => { const e = _dispEstadoProv(k, fi, cur); return _provMatchFiltro(e) && (!q || _provNorm(nomeM(k)).includes(q)); });
+    const grade = ks => `<div class="pv2-cards">${ks.map(k => provCardHTML(k, _dispEstadoProv(k, fi, cur))).join('')}</div>`;
+    if (expandeTudo){
+      if (!vis.length) return;
+      html += `<div class="pv2-fx"><span class="pv2-fx__n">${H(f.nome)}</span><span class="pv2-fx__c">(${vis.length})</span><span class="pv2-fx__ln"></span></div>` + grade(vis);
+    } else if (fi <= cur){
+      html += `<div class="pv2-fx"><span class="pv2-fx__n">${H(f.nome)}</span><span class="pv2-fx__c">(${todos.length})</span><span class="pv2-fx__ln"></span></div>` + grade(todos);
     } else {
-      const aberta = faixasEspiadas.has(fi);
-      const faltam = Math.max(0, (f.min || 0) - pts);
-      html += `<button class="fx fx--fechada${aberta ? ' is-open' : ''}" data-fxespiar="${fi}"><span class="fx__n">${H(f.nome)}</span><span class="fx__falta">· faltam ${faltam} pontos</span><span class="fx__seta${aberta ? ' is-open' : ''}" aria-hidden="true">⌄</span></button>`;
-      if (aberta) html += ks.map(linhaHTML).join('');
+      const aberta = faixasEspiadas.has(fi), faltam = Math.max(0, (f.min || 0) - pts);
+      html += `<button class="pv2-fx pv2-fx--fechada${aberta ? ' is-open' : ''}" data-fxespiar="${fi}"><span class="pv2-fx__n">${H(f.nome)}</span><span class="pv2-fx__falta">(faltam ${faltam} pontos)</span><span class="pv2-fx__seta${aberta ? ' is-open' : ''}" aria-hidden="true">⌄</span></button>`;
+      if (aberta) html += grade(todos);
     }
   });
-  return html;
+  return html || `<p class="pv2-vazio">Nenhuma Provação com esse filtro.</p>`;
 }
 
 // SEM SERVIDOR: o progresso vive no servidor (§228). Diz a verdade e deixa LER as histórias + os objetivos.
@@ -580,9 +599,11 @@ function provacoesOfflineHTML(){
   <div class="mcatgrid">${cat}</div>`;
 }
 
-let provTrocaConfirm = null;   // §314/§316: deus com a troca em confirmação inline (sem modal, como o §245)
-let provExpandida = null;      // §316: deus com a linha expandida (acordeão, só uma por vez)
+let provTrocaConfirm = null;   // §314/§316: deus com a troca em confirmação inline (sem modal)
+let provPrevia = null;         // §349: deus em PRÉVIA no painel esquerdo (null = mostra a ativa)
 let provPendente = null;       // §316: deus com a ativação em voo (botão "…", sem toque duplo)
+let provFiltro = 'todas';      // §349: pílula de filtro (todas/disponiveis/pausadas/conquistadas)
+let provBusca = '';            // §349: busca por nome (ignora acentos)
 const faixasEspiadas = new Set();   // §316: faixas ACIMA da atual abertas para espiar
 async function _pedirAtivar(k){
   if (provPendente) return;              // já há uma em voo — sem toque duplo
@@ -590,59 +611,75 @@ async function _pedirAtivar(k){
   try { if (typeof ativarProvacaoServidor === 'function'){ const r = await ativarProvacaoServidor(k); if (r && r.erro && typeof toast === 'function') toast(r.erro); } }
   finally { provPendente = null; render(); }
 }
+// §349: as pílulas de filtro (contagem real do dado).
+function _provPillsHTML(){
+  const c = _provContagens();
+  const pill = (f, rot, n) => `<button class="pv2-pill${provFiltro === f ? ' is-on' : ''}" data-filtro="${f}">${rot} <b>${n}</b></button>`;
+  return pill('todas', 'Todas', c.todas) + pill('disponiveis', 'Disponíveis', c.disponiveis) + pill('pausadas', 'Pausadas', c.pausadas) + pill('conquistadas', 'Conquistadas', c.conquistadas);
+}
 function renderMissoes(){
   const online = !!contaAtual;
+  const temDados = missoesDisponivel();
+  const ranque = online && temDados ? ranqueHTML() : '';
   let corpo;
-  if (!missoesDisponivel()){
-    corpo = `<div class="tela__vazio"><span class="tela__vazioic">◈</span><p class="tela__vaziomsg">O mapa das Provações chega com os dados.</p></div>`;
+  if (!temDados){
+    corpo = `<div class="pv2-vaziotela"><span class="pv2-vaziotela__ic">◈</span><p>O mapa das Provações chega com os dados.</p></div>`;
   } else if (!online){
-    corpo = `<div class="tela__rol pv__off">${provacoesOfflineHTML()}</div>`;
+    corpo = `<div class="pv2-off">${provacoesOfflineHTML()}</div>`;
   } else {
-    corpo = `<div class="pv__corpo">
-      <aside class="pv__esq">${painelAtivaHTML()}</aside>
-      <section class="pv__dir" id="pvlista">${listaProvacoesHTML()}</section>
-    </div>`;
+    const c = _provContagens();
+    corpo = `<aside class="pv2-esq">${painelProvHTML()}</aside>
+    <section class="pv2-dir">
+      <h2 class="pv2-dir__t cin">DEUSES PARA DESBLOQUEAR</h2>
+      <div class="pv2-filtros">
+        <div class="pv2-pills">${_provPillsHTML()}</div>
+        <label class="pv2-busca"><i>⌕</i><input id="provbusca" type="text" placeholder="Buscar deus" value="${H(provBusca)}" autocomplete="off"></label>
+        <span class="pv2-conta">${c.conquistadas} de ${c.total} conquistados</span>
+      </div>
+      <div class="pv2-grade" id="provgrade">${gradeProvacoesHTML()}</div>
+    </section>`;
   }
-  const ranque = online && missoesDisponivel() ? `<div class="pv__rq">${ranqueHTML()}</div>` : `<span class="tela__espaco"></span>`;
-  stage.innerHTML = `<div id="baselayer"><div class="stage__bg"></div><div class="stage__scrim"></div>
-  <div class="stagemark">INCURSION</div>
-  <div class="tela tela--prov">
-    <header class="pv__top">
-      <button class="pv__back" id="bvoltar">‹ Início</button>
-      <h1 class="pv__titulo">Provações</h1>
-      ${ranque}
+  stage.innerHTML = `<div id="baselayer" class="pv2"><div id="provfix">
+    <header class="pv2-cab">
+      <button class="pvb pvb--voltar" id="bvoltar">‹ INÍCIO</button>
+      <h1 class="pv2-titulo cin">PROVAÇÕES</h1>
+      <div class="pv2-rq">${ranque}</div>
     </header>
     ${corpo}
-  </div>
-  </div>`;
-  const v = stage.querySelector('#bvoltar');
-  if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
-  // ELO com o detalhe do deus (§220): o medalhão do PAINEL e o catálogo offline levam ao deus.
-  [...stage.querySelectorAll('[data-abrir]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); ir('deus', { key: b.dataset.abrir }); render(); }; });
-  // ACORDEÃO (§316): tocar na linha (ou seta) EXPANDE ali mesmo; só uma aberta por vez.
-  [...stage.querySelectorAll('[data-linha]')].forEach(b => { b.onclick = () => { const k = b.dataset.linha; provExpandida = (provExpandida === k) ? null : k; render(); }; });
-  // FAIXA fechada (acima da atual): TOCAR abre para espiar.
-  [...stage.querySelectorAll('[data-fxespiar]')].forEach(b => { b.onclick = () => { const fi = +b.dataset.fxespiar; if (faixasEspiadas.has(fi)) faixasEspiadas.delete(fi); else faixasEspiadas.add(fi); render(); }; });
-  // TROCAR (painel): rola a lista até a 1ª disponível/pausada e dá um pulso nos botões ATIVAR/RETOMAR.
-  const bt = stage.querySelector('#btrocar'); if (bt) bt.onclick = () => {
-    const alvo = stage.querySelector('.lr--disponivel, .lr--pausada');
-    if (alvo){ alvo.scrollIntoView({ block: 'center' }); [...stage.querySelectorAll('.lr--disponivel .b, .lr--pausada .b')].forEach(x => { x.classList.remove('pulso'); void x.offsetWidth; x.classList.add('pulso'); }); }
+  </div></div>`;
+  const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
+  const v = q('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  // ELO com o deus (§220): o retrato do painel e o catálogo offline abrem a ficha.
+  qq('[data-abrir]').forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); ir('deus', { key: b.dataset.abrir }); render(); }; });
+  // §349: tocar num cartão → PRÉVIA no painel (sem confirmar nada); "‹ Voltar à ativa" volta.
+  qq('[data-carta]').forEach(b => { b.onclick = () => { provPrevia = b.dataset.carta; provTrocaConfirm = null; render(); }; });
+  const va = q('[data-voltarativa]'); if (va) va.onclick = () => { provPrevia = null; provTrocaConfirm = null; render(); };
+  // FAIXA fechada (acima da atual): tocar espia (cartões travados).
+  qq('[data-fxespiar]').forEach(b => { b.onclick = () => { const fi = +b.dataset.fxespiar; if (faixasEspiadas.has(fi)) faixasEspiadas.delete(fi); else faixasEspiadas.add(fi); render(); }; });
+  // FILTROS + BUSCA.
+  qq('[data-filtro]').forEach(b => { b.onclick = () => { provFiltro = b.dataset.filtro; render(); }; });
+  const bu = q('#provbusca'); if (bu) bu.oninput = () => { provBusca = bu.value; const g = q('#provgrade'); if (g) g.innerHTML = gradeProvacoesHTML(); _ligarGradeProv(); };
+  // TROCAR PROVAÇÃO (painel ativa): leva às disponíveis — mostra a prévia da 1ª disponível/pausada.
+  const bt = q('#btrocar'); if (bt) bt.onclick = () => {
+    let alvo = null; const cur = faixaAtualIdx();
+    for (const k in MISSOES.missoes){ const e = _dispEstadoProv(k, MISSOES.missoes[k].faixaIndice, cur); if (e === 'disponivel'){ alvo = k; break; } }
+    if (!alvo) for (const k in MISSOES.missoes){ const e = _dispEstadoProv(k, MISSOES.missoes[k].faixaIndice, cur); if (e === 'pausada'){ alvo = k; break; } }
+    if (alvo){ provPrevia = alvo; render(); }
   };
-  // ATIVAR/RETOMAR: se há outra ativa, pede confirmação inline na linha; senão ativa direto.
-  [...stage.querySelectorAll('[data-ativar]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation();
-    if (provPendente) return;
-    const k = b.dataset.ativar;
-    if (b.dataset.troca === '1'){ provTrocaConfirm = k; render(); } else { _pedirAtivar(k); }
-  }; });
-  [...stage.querySelectorAll('[data-troca-ok]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); _pedirAtivar(b.dataset.trocaOk); }; });
-  [...stage.querySelectorAll('[data-troca-no]')].forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); provTrocaConfirm = null; render(); }; });
-  // §316: ao EXPANDIR (ou abrir a confirmação), rola a coluna para a área aberta ficar INTEIRA visível — o
-  // jogador não fica com o requisito abaixo da dobra. block:'nearest' mostra a linha+área por completo se cabe.
-  const _aberta = provExpandida ? stage.querySelector(`.lr[data-deus="${provExpandida}"]`) : (provTrocaConfirm ? stage.querySelector(`.lr[data-deus="${provTrocaConfirm}"]`) : null);
-  if (_aberta && typeof _aberta.scrollIntoView === 'function') { try { _aberta.scrollIntoView({ block: 'nearest' }); } catch (e) { try { _aberta.scrollIntoView(false); } catch (e2) {} } }
-  // AO VIVO: se online, re-busca a conta do servidor UMA vez ao abrir (progresso fresco), sem laço.
+  _ligarGradeProv();
   if (online && typeof refrescarConta === 'function') refrescarConta();
   fit();
+}
+// liga os botões de ATIVAR/RETOMAR e confirmação (grade + painel) — re-chamado quando só a grade re-renderiza (busca).
+function _ligarGradeProv(){
+  const qq = s => [...stage.querySelectorAll(s)];
+  qq('[data-ativar]').forEach(b => { b.onclick = (ev) => { ev.stopPropagation();
+    if (provPendente) return;
+    const k = b.dataset.ativar;
+    if (b.dataset.troca === '1'){ provPrevia = k; provTrocaConfirm = k; render(); } else { _pedirAtivar(k); }
+  }; });
+  qq('[data-troca-ok]').forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); _pedirAtivar(b.dataset.trocaOk); }; });
+  qq('[data-troca-no]').forEach(b => { b.onclick = (ev) => { ev.stopPropagation(); provTrocaConfirm = null; render(); }; });
 }
 
 /* ================= PvP — o LOBBY (F5.3/§236): apelido + time de 3 + entrar na fila ==================

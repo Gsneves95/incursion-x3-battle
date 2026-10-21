@@ -88,7 +88,7 @@ const html = fs.readFileSync(distAbs, 'utf8');
   ok(!/Provaç/.test(txt($('#baselayer'))), 'B: a composição (PvE) não mostra "Provação" (o "‹" diz Desafios)');
   // ESCOPO: a tela de DESBLOQUEIO continua "Provações" (o rename é só do PvE).
   w.eval(`contaAtual={nick:'T',ranque:{pontos:0},pontos:{},niveis:{},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('provacoes',{},{substituir:true}); render();`);
-  ok(/Provações/.test(txt($('#baselayer'))), 'B (escopo): a tela de DESBLOQUEIO segue "Provações"');
+  ok(/provaç/i.test(txt($('#baselayer'))), 'B (escopo): a tela de DESBLOQUEIO segue "Provações"');   // §349: título em CAIXA ALTA ("PROVAÇÕES")
 
   try { w.close(); } catch (e) {}
   await parte2();

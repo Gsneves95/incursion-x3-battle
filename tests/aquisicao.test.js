@@ -223,7 +223,7 @@ console.log('== 10. ROTAS separadas (§213/§234): Provações = mapa das Missõ
   // "Provações" → o MAPA DAS MISSÕES (§234). Sem servidor (a sessão é local), diz honestamente que as
   // missões contam no PvP e NÃO lista pergaminhos.
   w.eval("ir('provacoes'); render();");
-  ok(/Prova/i.test(($('.pv__titulo')||$('.tela__titulo')).textContent) && /prova/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre a tela de Provações (conta no PvP)');
+  ok(/Prova/i.test(($('.pv2-titulo')||$('.pv__titulo')||$('.tela__titulo')).textContent) && /prova/i.test($('#baselayer').textContent) && /pvp/i.test($('#baselayer').textContent), 'Provações abre a tela de Provações (conta no PvP)');   // §349: título .pv2-titulo
   ok($$('.prow[data-prova]').length === 0, 'a tela de Provações NÃO lista pergaminhos');
   // "Desafios" → o hub dos DESAFIOS POR DEUS (§245/§339): um cartão por deus possuído na grade
   w.eval("ir('desafios'); render();");
