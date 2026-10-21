@@ -6,6 +6,21 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §348c · Trilha do HUB do Domínio: o número do chefe ficava embaixo da legenda
+
+Na trilha (§348), a caixa da legenda ("Nível 12 de 40 · próximo chefe no nível 20") ficava na MESMA altura dos números
+dos degraus: medido, os números ocupavam y216–242 e a legenda y221–248 — sobreposição vertical. Como a legenda é
+centralizada na largura toda, o texto caía por cima do número "20" (o próximo chefe), fazendo-o parecer de outra altura.
+(Os números em si já estavam todos no mesmo topo; a aparência de "altura diferente" vinha da legenda cobrindo o 20.)
+
+**Correção (só CSS, trilha):** os dots e os números sobem (rail `margin-top` 30→12, `height` 52→36; a linha e os dots em
+`top` 24→18; o número com `translateY` 115%→90%), e a legenda deixa de ser ancorada no fundo (`bottom:2px`) para uma
+LINHA PRÓPRIA abaixo dos números (`top:88px`). Agora os números ficam em y185–211 e a legenda em y220–247 — 9px de folga,
+sem interseção, tudo dentro da faixa da trilha (≤250) e as colunas seguem terminando em y≤830 (§348b, intactas).
+
+Prova (em `dominio_hub.test.js`, Chromium, 5 estados, 1846×852 e 780×360): todos os números da trilha têm o mesmo topo
+(span ≤2px) e a caixa da legenda não intersecta nenhum número. Captura `docs/telas/348c-andamento` (1846×852 e 780×360).
+
 ## §348b · HUB DO DOMÍNIO: corte embaixo + o trio do chefe final como nível comum
 
 Dois defeitos do §348, corrigidos juntos.

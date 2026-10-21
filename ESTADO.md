@@ -2,6 +2,14 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §348c · Trilha do HUB: número do chefe ficava embaixo da legenda
+- Na trilha, a caixa da legenda ("Nível 12 de 40 · próximo chefe no nível 20") ficava na mesma altura dos números
+  (números y216–242, legenda y221–248) → o texto cobria o "20". Só CSS: dots/números sobem (rail margin 30→12, altura
+  52→36; linha/dots top 24→18; número translateY 115%→90%) e a legenda vira uma LINHA PRÓPRIA abaixo (`top:88px` em vez de
+  `bottom:2px`). Agora números y185–211, legenda y220–247 (folga 9px, sem interseção); trilha ≤250, colunas ≤830 (§348b).
+- Prova (dominio_hub.test.js, 5 estados, 1846×852 e 780×360): números no mesmo topo (span ≤2px) e a legenda não
+  intersecta nenhum número. Captura `docs/telas/348c-andamento` (1846×852 e 780×360).
+
 ## ★ §348b · HUB do Domínio: corte embaixo + trio do chefe final como nível comum
 - **Corte embaixo (CSS):** os filhos das colunas transbordavam (nomes do chefe final a y861, régua do bônus a y839,
   caixa do chefe a y912) e o `#domhub` (overflow:hidden) os recortava — por isso a prova do §348, que media o hub e não

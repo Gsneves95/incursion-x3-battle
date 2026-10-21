@@ -175,7 +175,14 @@ function acharChromium(){
       const designBot = el => Math.round((el.getBoundingClientRect().bottom - hb.top) / esc);
       let botMax = 0, piorBot = '';
       hub.querySelectorAll('.dh-col--time,.dh-col--meio,.dh-col--dir,.dh-cf__n,.dh-cf__p,.dh-bon__mk em,.dh-bon__rail,.dh-foe__n,.dh-premio__s,.dh-un__bar').forEach(el => { const b = designBot(el); if (b > botMax) { botMax = b; piorBot = el.className.split(' ')[0] + ':' + el.textContent.trim().slice(0, 12); } });
-      return { fora, pw, ph, overlap, clips: clips.slice(0, 6), botMax, piorBot };
+      // §348c: todos os números da trilha no MESMO topo; a legenda numa linha própria que NÃO intersecta nenhum número.
+      const nums = [...hub.querySelectorAll('.dh-no__n')].map(e => e.getBoundingClientRect());
+      const topos = nums.map(r => Math.round((r.top - hb.top) / esc));
+      const spanTopos = topos.length ? (Math.max(...topos) - Math.min(...topos)) : 0;
+      const cap = hub.querySelector('.dh-trilha__cap').getBoundingClientRect();
+      const inter = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      const capBateNum = nums.some(r => inter(cap, r));
+      return { fora, pw, ph, overlap, clips: clips.slice(0, 6), botMax, piorBot, spanTopos, capBateNum };
     }, estado);
   }
 
@@ -191,6 +198,9 @@ function acharChromium(){
       ok(m.clips.length === 0, `§348 @${W}×${H} [${est}]: nenhum texto corta (${m.clips.join(' | ') || 'ok'})`);
       // §348b: NENHUM filho (caixa de coluna, nomes do chefe final, régua do bônus) passa de y=830 de design.
       ok(m.botMax <= 830, `§348b @${W}×${H} [${est}]: o conteúdo (colunas, chefe final, bônus) termina em y≤830 (pior: ${m.botMax} em ${m.piorBot})`);
+      // §348c: os números da trilha no MESMO topo (tol 2px) e a legenda não intersecta nenhum número.
+      ok(m.spanTopos <= 2, `§348c @${W}×${H} [${est}]: todos os números da trilha no mesmo topo (span ${m.spanTopos}px ≤ 2)`);
+      ok(!m.capBateNum, `§348c @${W}×${H} [${est}]: a legenda não intersecta nenhum número da trilha`);
     }
   }
 
