@@ -2,6 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §356 · CAMPANHA — a CTA do ato (Jogar/Continuar) nunca mais some atrás da trilha
+- Problema do dono (Cap.1 ato VI, batalha): painel da direita mostrava citação/"Você jogará com"/"Enfrentará"/"Recompensas"
+  mas SEM botão — jogo travado, sem rolagem. CAUSA: `.camp__brief` tinha altura FIXA `290px` com o rodapé a ~2–4px da
+  trilha (`.camp__pe`, z-index maior). §269 já dera à **batalha** um miolo que rola (`.camp__briefrol`) com a CTA ancorada
+  fora; **escolha** e **história** ficaram sem o rol — conteúdo alto empurrava a CTA (`margin-top:auto`, painel
+  `overflow:hidden`) para fora do painel e ela era recortada atrás da trilha. (Mecanismo provado: escolha com conteúdo
+  alto → CTA em `gap=-843px`, `elementFromPoint` no centro = `null`.)
+- Correção (sem mudar mais nada): (1) painel ancorado pela BASE — `.camp__brief{top:61px;bottom:80px}` (73 da trilha + 7
+  de folga) no lugar de `height:290px`: fim do painel SEMPRE 7px acima da trilha em qualquer escala do enquadramento
+  fluido; (2) **todo** o miolo de escolha e história agora vai no `.camp__briefrol` (rola), CTA fora e ancorada — a ação
+  nunca se esconde; (3) rótulo da CTA de batalha corrigido: `Jogar`/`Rejogar`/`Escolha seu time (N/3)` (era sempre
+  "Continuar história").
+- Prova `tests/campanha_cta.test.js` (Chromium, rect real) — registrado no `npm test` e em `test:campanha_cta`: cada ato
+  (Prólogo + Cap.1), tipos batalha e escolha, estados (não jogado/vencido/vaga travada/vaga emprestada trocada), em
+  1846×852 e 780×360 → CTA existe, visível, inteira no viewport, inteira acima da trilha, e recebe o toque no centro.
+  Estresse (batalha/escolha/história sintética) com miolo inflado: CTA segue acima da trilha e clicável. FALHA no código
+  antigo (12 falhas), passa no corrigido. Suíte + build verdes.
+- Capturas: `docs/telas/356-campanha-ato6-1846x852.png` e `…-780x360.png` (ato VI com o botão **JOGAR** visível acima da
+  trilha). Só mexe em `src/shell.html` (CSS do painel) e `src/ui/home.js` (HTML dos 3 briefings + rótulo).
+
 ## ★ §354 · PERSISTÊNCIA das contas em PostgreSQL (Neon), portável
 - Problema: disco efêmero no Render → contas somem a cada deploy. Agora o estado do servidor vai para Postgres (Neon),
   endereço SECRETO só em `DATABASE_URL` (nunca em código/log/erro).

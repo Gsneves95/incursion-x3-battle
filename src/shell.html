@@ -1973,7 +1973,10 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .camp__prog{font-family:'Cinzel',serif;font-weight:700;font-size:19px;color:#FFF3C4;white-space:nowrap}
 .camp__progt{font-weight:400;font-size:12px;color:#6D7C96;margin-left:2px}
 /* --- PAINEL DE BRIEFING (direita) --- */
-.camp__brief{position:absolute;top:61px;height:290px;left:49.6%;right:2%;border-radius:4px;padding:15px;z-index:2;
+/* §356: o painel é ANCORADO pela base (bottom:80px = 73 da trilha + 7 de folga), não por uma altura
+   fixa (era height:290px). Assim o fim do painel fica SEMPRE 7px acima da trilha, em qualquer escala do
+   enquadramento fluido — a CTA (ancorada no rodapé do painel) nunca escorrega para trás da trilha. */
+.camp__brief{position:absolute;top:61px;bottom:80px;left:49.6%;right:2%;border-radius:4px;padding:15px;z-index:2;
   background:linear-gradient(180deg,rgba(12,21,45,.9) 0%,rgba(7,12,28,.94) 100%);
   box-shadow:inset 0 0 0 1px rgba(212,175,55,.34),0 17px 43px rgba(0,0,0,.55);
   display:flex;flex-direction:column;gap:9px;overflow:hidden}
@@ -2037,10 +2040,13 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .camp__cta:disabled{background:linear-gradient(180deg,#2a2740,#1e1c30);color:#7688a2;box-shadow:none;cursor:default}
 .camp__cta:disabled::after{box-shadow:inset 0 0 0 1px rgba(150,170,200,.25)}
 .camp__cta:disabled .camp__ctaseta{border-left-color:#7688a2}
-.camp__brief--hist{align-items:center;justify-content:center;text-align:center;gap:16px}
+/* §356: o miolo da história/escolha agora vive no .camp__briefrol (rola se transbordar); a CTA fica FORA
+   dele, ancorada no rodapé — idêntico ao briefing de batalha. A centralização da história é do rol. */
+.camp__brief--hist{align-items:center}
+.camp__brief--hist .camp__briefrol{align-items:center;justify-content:center;text-align:center;gap:16px}
 .camp__historn{font-size:34px;color:var(--gold-soft)}
 .camp__histnota{margin:0;font-size:11px;color:#78899F}
-.camp__brief--hist .camp__cta{margin-top:0;width:70%}
+.camp__brief--hist .camp__cta{margin-top:0;width:70%;align-self:center}
 /* §268 — TELA DA ESCOLHA (reusa o painel do ato): pergunta + opções (pista que não corta) + Confirmar. */
 .camp__brief--escolha{gap:10px}
 .camp__perg{font-family:'Cinzel',serif;font-weight:700;font-size:13px;line-height:1.28;letter-spacing:.02em;color:#F0DC9A}

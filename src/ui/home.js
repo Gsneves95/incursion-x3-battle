@@ -2682,7 +2682,7 @@ function renderCampanha(){
         <div class="camp__divisor"></div>
         ${mec}${rec}
       </div>
-      <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? 'Continuar história' : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
+      <button class="camp__cta" id="campcta" ${pronto ? '' : 'disabled'}><span class="camp__ctaseta"></span>${pronto ? (jaFeito ? 'Rejogar' : 'Jogar') : `Escolha seu time (${timeDoAto(ato).filter(Boolean).length}/3)`}</button>
     </div>`;
   } else if (ehEscolha) {
     // §268 — TELA DA ESCOLHA: pergunta + opções (retrato quando é personagem + pista que não corta).
@@ -2691,16 +2691,22 @@ function renderCampanha(){
     const feito = atoFeito(ato.id);
     const podeConfirmar = escolhido != null || campEscolhaSel != null;
     const ctaLabel = escolhido != null ? 'Continuar' : 'Confirmar escolha';
+    // §356: pergunta + opções no .camp__briefrol (rola se transbordar); a CTA fica FORA, ancorada embaixo.
     brief = `<div class="camp__brief camp__brief--escolha">
-      <div class="camp__perg">${H(ato.pergunta)}</div>
-      <div class="camp__opcoes">${(ato.opcoes || []).map(o => copcaoHTML(o, campEscolhaSel, escolhido)).join('')}</div>
+      <div class="camp__briefrol">
+        <div class="camp__perg">${H(ato.pergunta)}</div>
+        <div class="camp__opcoes">${(ato.opcoes || []).map(o => copcaoHTML(o, campEscolhaSel, escolhido)).join('')}</div>
+      </div>
       <button class="camp__cta" id="campcta" ${podeConfirmar ? '' : 'disabled'}><span class="camp__ctaseta"></span>${ctaLabel}</button>
     </div>`;
     void feito;
   } else {
+    // §356: miolo no .camp__briefrol (rola se transbordar); a CTA "Continuar" fica FORA, ancorada embaixo.
     brief = `<div class="camp__brief camp__brief--hist">
-      <div class="camp__historn">✦</div>
-      <p class="camp__histnota">Um trecho da história.</p>
+      <div class="camp__briefrol">
+        <div class="camp__historn">✦</div>
+        <p class="camp__histnota">Um trecho da história.</p>
+      </div>
       <button class="camp__cta" id="campcta"><span class="camp__ctaseta"></span>Continuar</button>
     </div>`;
   }

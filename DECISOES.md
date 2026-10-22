@@ -6,6 +6,40 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §356 · CAMPANHA — o botão de jogar/continuar do ato não pode mais sumir atrás da trilha
+
+O dono mostrou, no Capítulo 1 ato VI "O Caminho do Trovão", o painel da direita com a citação, "Você jogará com",
+"Enfrentará 3 vs 3" e "Recompensas", mas **sem botão** para jogar — o jogo travava ali, sem rolagem visível.
+
+**CAUSA (exata):** o painel de briefing (`.camp__brief`) tinha **altura fixa `290px`** cujo rodapé ficava a ~2–4px de
+design da trilha (`.camp__pe`, `z-index:3`, no rodapé do palco). Em §269 o painel de **batalha** ganhou um miolo que rola
+(`.camp__briefrol`, `flex:1 1 auto; min-height:0; overflow-y:auto`) com a CTA FORA dele, ancorada embaixo — então na
+batalha a CTA nunca saía de vista. Mas os painéis de **escolha** e **história** ficaram sem esse rol: o conteúdo era
+filho DIRETO do painel. Quando o conteúdo cresce (pergunta longa; ou, no enquadramento fluido da campanha, qualquer
+arredondamento/escala do aparelho do dono que aperte aqueles ~2px), a CTA — `margin-top:auto` dentro de um painel de
+altura fixa com `overflow:hidden` — é **empurrada para fora do painel e recortada**, caindo atrás da trilha (que desenha
+por cima). O jogador vê o briefing e nenhum botão. (Prova do mecanismo: injetando conteúdo alto no painel de escolha do
+código antigo, a CTA ia para `gap=-843px` e `elementFromPoint` no seu centro devolvia `null` — o toque não a alcançava.)
+
+**DECISÃO / correção (sem mudar mais nada):**
+1. **Painel ancorado pela BASE**, não por altura fixa: `.camp__brief{top:61px; bottom:80px}` (80 = 73 da trilha + 7 de
+   folga) no lugar de `height:290px`. O fim do painel fica SEMPRE 7px de design acima da trilha, em **qualquer escala** do
+   enquadramento — some a fragilidade dos ~2px. (Alternativa recusada: aumentar a folga fixa continuaria frágil ao
+   conteúdo; ancorar pela base resolve escala E conteúdo de uma vez.)
+2. **Todo o miolo no `.camp__briefrol`** também em **escolha** e **história** (antes só batalha tinha): o conteúdo rola se
+   faltar espaço e a **CTA fica FORA do rol, ancorada embaixo — nunca é recortada**. É o invariante do §356: se faltar
+   espaço, compacta/rola o conteúdo; **a ação nunca se esconde**.
+3. **Rótulo da CTA de batalha** corrigido para a AÇÃO real por estado: `Jogar` (não jogado) / `Rejogar` (vencido) /
+   `Escolha seu time (N/3)` (sem os 3, travado). Antes dizia sempre "Continuar história", que não é a ação de uma luta.
+   (Escolha segue `Confirmar escolha`/`Continuar`; história segue `Continuar`.)
+
+**Prova (`tests/campanha_cta.test.js`, Chromium, rect real):** para CADA ato (Prólogo + Capítulo 1), nos tipos batalha e
+escolha e nos estados (não jogado, vencido, vaga travada, vaga emprestada trocada), em **1846×852 e 780×360**: a CTA
+existe e é visível; está inteira dentro do viewport; está inteira **acima da trilha**; e **recebe o toque** no seu centro
+(`elementFromPoint`). Mais um caso de **estresse** (batalha, escolha e história sintética): inflando o miolo como o
+conteúdo real cresce, a CTA CONTINUA acima da trilha e clicável. O teste **FALHA** no código antigo (12 falhas: escolha e
+história com `gap` negativo e toque em `null`) e **passa** no corrigido — trava a regressão.
+
 ## §354 · PERSISTÊNCIA das contas em PostgreSQL (Neon), portável
 
 O servidor no Render (plano grátis) tem disco efêmero: a cada deploy as contas somem. O dono criou um PostgreSQL no Neon
