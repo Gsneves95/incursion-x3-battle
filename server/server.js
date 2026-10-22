@@ -35,9 +35,19 @@ function servirEstatico(req, res) {
   if (rel === '/ping') {
     const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': '*' };
     if (req.method === 'OPTIONS') { res.writeHead(204, cors); return res.end(); }
+    try { contas.acordarBanco(); } catch (e) {}   // §354: dispara o "acordar" do banco em 2º plano (o /ping responde sem esperar o banco)
     res.writeHead(200, Object.assign({ 'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }, cors));
     return res.end('ok');
+  }
+  // §354: VERIFICAÇÃO EM PRODUÇÃO — {armazenamento, banco, contas}, SEM nenhum segredo. Para o dono conferir pós-deploy.
+  if (rel === '/saude') {
+    const cors = { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache, no-store, must-revalidate' };
+    Promise.resolve().then(() => contas.saude()).then(s => {
+      res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors));
+      res.end(JSON.stringify({ armazenamento: s.armazenamento, banco: s.banco, contas: s.contas }));
+    }).catch(() => { res.writeHead(200, Object.assign({ 'Content-Type': 'application/json; charset=utf-8' }, cors)); res.end(JSON.stringify({ armazenamento: 'desconhecido', banco: 'fora', contas: null })); });
+    return;
   }
   if (rel === '/' || rel === '/index.html') return enviar(res, path.join(ROOT, 'dist', 'incursion.html'));
   rel = rel.replace(/^\/+/, '');
@@ -302,6 +312,9 @@ if (require.main === module) {
   // HOST=0.0.0.0 (padrão) escuta em TODAS as interfaces → acessível na REDE LOCAL (necessário para
   // testar em celulares, §236). Para travar só no próprio computador: HOST=127.0.0.1 npm run serve.
   const HOST = process.env.HOST || '0.0.0.0';
+  // §354: inicializa a camada de armazenamento ANTES de aceitar jogo (conecta/migra o banco, carrega o cadastro,
+  // importa 1× do arquivo se o banco estiver vazio). Se o banco estiver fora, não derruba o processo — o /saude dirá.
+  Promise.resolve().then(() => contas.inicializar()).then(r => { console.log(`[incursion] armazenamento: ${r && r.armazenamento}`); }).catch(e => { console.log('[incursion] armazenamento indisponível no boot (o servidor segue no ar; veja /saude)'); });
   server.listen(PORT, HOST, () => {
     const lan = enderecosLAN();
     console.log(`\n[incursion] servidor no ar · protocolo v${proto.PROTOCOL_VERSION} · motor autoritativo (src/engine.js)`);

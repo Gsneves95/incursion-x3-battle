@@ -13,3 +13,9 @@ services:
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
+    # §354: persistência em PostgreSQL. O endereço de conexão é SECRETO e fica SÓ no painel do Render (o dono o colou lá).
+    # sync:false = o Blueprint NUNCA apaga nem sobrescreve o valor que o dono pôs no painel. Sem DATABASE_URL o servidor
+    # cai no armazenamento de arquivo (efêmero no Render); por isso o banco é necessário em produção. Conferir em /saude.
+    envVars:
+      - key: DATABASE_URL
+        sync: false

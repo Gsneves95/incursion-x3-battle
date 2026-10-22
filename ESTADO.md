@@ -2,6 +2,25 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §354 · PERSISTÊNCIA das contas em PostgreSQL (Neon), portável
+- Problema: disco efêmero no Render → contas somem a cada deploy. Agora o estado do servidor vai para Postgres (Neon),
+  endereço SECRETO só em `DATABASE_URL` (nunca em código/log/erro).
+- Camada única `server/armazenamento.js`: POSTGRES (quando há `DATABASE_URL`) ou ARQUIVO (senão; dev/testes de sempre).
+  Driver `pg` padrão, SQL comum, SSL ligado, pool máx 5, retry no "acordar", timeout por consulta. NADA do Neon.
+  `contas.js` usa Map em memória como cache + write-through pela camada; boot assíncrono (`contas.inicializar`) conecta/
+  migra/carrega/importa-1×.
+- Esquema (idempotente, com `migracoes`): `contas(token PK, id UNIQUE, nick UNIQUE, dados jsonb, versao, atualizado)`
+  (1 doc JSONB por conta — perfil/moedas/ranque/missoes/niveis/pontos/pity/ledger pve), `recibos(chave PK)` (anti-dup de
+  prêmio). Economia atômica: `store.transacao` (BEGIN/SELECT FOR UPDATE/UPDATE versao+1/COMMIT) + mutex por token.
+- `/saude` → `{armazenamento, banco, contas}` sem segredo. `/ping` responde sem o banco e dispara "acordar" em 2º plano.
+  `render.yaml`: `DATABASE_URL` com `sync:false`. Backup: `tools/exportar_banco.js` + `docs/persistencia.md`.
+- Inventário do que persiste: contas/perfil, saldos, apelido(único), ranque/pontos PvP, níveis, pontos por deus, pity,
+  ledger (tetos/1ª-vez/1×semana/dedupe), Provações, desafios/recargas, recibos. Efêmero (não persiste): salas/fila ao
+  vivo; telemetria segue em arquivo.
+- Provas `tests/persistencia.test.js` (pg-mem + arquivo): sobrevive a reinício; 20 créditos simultâneos = 20×; recibo
+  paga 1×; apelido dup recusado pelo banco; import única não repete; /saude sem segredo; não cai com banco fora; nenhum
+  log/erro vaza o DATABASE_URL; contas.js ponta-a-ponta no Postgres. Suíte + build verdes.
+
 ## ★ §353b · Toda arte de habilidade é CHEIA — forma "disco" aposentada
 - No §353 o classificador marcava 29 artes como disco (cantos claros) e as recortava em círculo, cortando os cantos da
   arte. Decisão: o padrão agora é ARTE QUADRADA CHEIA; disco não existe mais no acervo.

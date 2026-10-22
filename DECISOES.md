@@ -6,6 +6,57 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §354 · PERSISTÊNCIA das contas em PostgreSQL (Neon), portável
+
+O servidor no Render (plano grátis) tem disco efêmero: a cada deploy as contas somem. O dono criou um PostgreSQL no Neon
+e pôs o endereço (SECRETO) na variável `DATABASE_URL` do Render. Agora todo o estado do servidor vai para o banco.
+
+**1) INVENTÁRIO — o que vivia em memória/arquivo e passa a ir ao banco** (tudo mora no documento JSONB da conta, exceto
+onde indicado): contas e perfil (`conta.perfil`: deuses possuídos + cópias, favoritos, times, campanha, domínios,
+sandbox, invocação local); saldos gema/Essência (`perfil.moedas`, autoritativos do servidor); apelido + **unicidade**
+(`conta.nick` → coluna `nick UNIQUE`); ranque e pontos do PvP (`conta.ranque`); níveis de habilidade (`conta.niveis`);
+pontos por deus (`conta.pontos`), pity da invocação (`conta.gacha`); o **ledger** da economia (`conta.pve`: tetos
+diários, 1ª-vez, 1×/semana, dedupe de replay por `idPartida`); Provações ativas/progresso/liberadas (`conta.missoes`);
+desafios por deus + recargas (dentro do perfil/ledger). **Unicidade/consulta em tabela própria:** `id`/`nick` (colunas
+UNIQUE em `contas`), **recibos** de prêmio (anti-duplicação). O que NÃO persiste (efêmero por natureza): partidas/salas/
+fila ao vivo (`server/salas.js`/`fila.js` — estado de combate em memória) e a telemetria (segue em arquivo, não é conta).
+
+**2) PORTÁVEL:** driver `pg` padrão + SQL comum; NADA do Neon (sem SDK/serverless/branching). Conexão só de
+`process.env.DATABASE_URL`, SSL ligado. Trocar de provedor = trocar a variável + `pg_dump`/`pg_restore`.
+
+**3) ARQUITETURA:** camada única `server/armazenamento.js` com duas implementações — **POSTGRES** (quando há
+`DATABASE_URL`) e **ARQUIVO** (quando não há; dev/testes de sempre). O resto do servidor só fala com ela; `contas.js` usa
+o Map em memória como cache de trabalho (leituras rápidas, atômicas — Node single-thread) e faz write-through pela camada.
+**Esquema** criado no boot, idempotente, com tabela de versões:
+```
+migracoes(versao int PK, aplicada timestamptz)                         -- versões de migração (1 = esquema; 2 = import feito)
+contas(token text PK, id text UNIQUE, nick text UNIQUE, dados jsonb,    -- 1 documento JSONB por conta
+       versao int, atualizado timestamptz)
+recibos(chave text PK, criado timestamptz)                             -- anti-duplicação de prêmio
+```
+**Integridade da economia:** `store.transacao(token, fn)` é atômica — `BEGIN; SELECT … FOR UPDATE; fn(dados); UPDATE
+versao+1; COMMIT` — e um mutex por token serializa no processo (o FOR UPDATE protege entre conexões). Recibo nunca paga
+2× (PK única em `recibos`; a 2ª inserção viola 23505 → devolve false). **Resiliência:** pool pequeno (máx 5), nova
+tentativa curta no "acordar" do Neon, tempo limite por consulta; banco fora → erro claro, sem cair, sem perder dados.
+**/ping** responde sem tocar o banco e dispara um "acordar" em 2º plano. **Importação única:** no boot, banco vazio +
+`server/dados/contas.json` local → importa 1× e registra (migração 2).
+
+**4) `/saude`** (sem segredo): `{"armazenamento":"postgres"|"arquivo","banco":"ok"|"fora","contas":N}`.
+**5) Render:** `render.yaml` declara `DATABASE_URL` com `sync: false` (o Blueprint nunca apaga/sobrescreve o valor do
+painel). **6) Backup/saída:** `tools/exportar_banco.js` (JSON legível) + `docs/persistencia.md` (pg_dump, troca de
+provedor, limites do Neon).
+
+**O segredo (`DATABASE_URL`) nunca aparece em código, repositório, log ou erro** — vem só de `process.env`.
+
+Provas: `tests/persistencia.test.js` roda contra pg-mem (Postgres em memória, SQL+transações) E contra o arquivo —
+conta sobrevive a reinício (novo processo, mesmo banco); 20 créditos simultâneos somam 20×; o mesmo recibo paga 1×;
+apelido duplicado é recusado pelo banco; importação única funciona e não repete; `/saude` sem segredo; servidor não cai
+com o banco fora; nenhum log/erro contém o `DATABASE_URL` (valor falso marcado). `contas.js` roda ponta-a-ponta sobre
+Postgres (hook de teste `_usarArmazenamentoTeste`). A suíte inteira (arquivo) segue verde.
+
+**Conferir em produção:** abrir `/saude` → deve dizer `postgres`/`ok`; criar algo no jogo (ex.: invocar); mandar um
+deploy manual no Render; reabrir o app → a conta/saldo continuam; `/saude` mostra a mesma contagem de contas.
+
 ## §353b · Toda arte de habilidade é CHEIA — forma "disco" aposentada
 
 No §353, o classificador §332/§334 marcou 29 das 401 artes NOVAS como DISCO e as recortava num círculo (raio ~0.47–0.48).

@@ -35,26 +35,38 @@ const NICK_MIN = 3, NICK_MAX = 16;
 // RANQUEADO (F5.5): tudo vem de data/ranqueado.json (versionado, do dono). Nenhum literal de ranque aqui.
 const RANQ = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'ranqueado.json'), 'utf8')); } catch (e) { return { faixas: [{ chave: 'suplicante', nome: 'Suplicante', min: 0 }], pontos: { vitoria: 0, derrota: 0, piso: 0 }, fila: { janelaBase: 0, janelaPorSegundo: 0 }, temporada: { compressao: 1 } }; } })();
 
-// ---- persistência simples em arquivo (dev, custo zero). Map em memória + write-through. ----
-// server/dados/ é gitignored: são dados de jogador, não código.
+// ---- §354: PERSISTÊNCIA pela CAMADA ÚNICA (server/armazenamento.js). Arquivo por padrão (dev/testes, custo zero);
+// Postgres quando há DATABASE_URL (produção, sobrevive a deploy). O Map em memória é o cache de trabalho DESTE processo
+// (leituras rápidas e atômicas — Node é single-thread); a durabilidade é write-through pela camada. contas.js só fala
+// com a camada, nunca com o fs direto para o cadastro. ----
+const armazenamento = require('./armazenamento.js');
+let _store = armazenamento.criar({ dir: DIR });
+const ehPg = () => _store.tipo === 'postgres';
+// §354 — TESTE: troca a camada (ex.: pg-mem) e recarrega o cadastro do banco (simula reinício do servidor no mesmo
+// banco). Só para a suíte rodar o servidor contra Postgres local sem tocar o Neon. Em produção, _store vem do boot.
+async function _usarArmazenamentoTeste(store) { _store = store; _contas = new Map(); _carregado = false; _idxNick = null; await inicializar(); }
 let _contas = new Map();   // token -> conta
 let _carregado = false;
 
-function _garantirDir() { try { fs.mkdirSync(DIR, { recursive: true }); } catch (e) { /* já existe */ } }
 function _carregar() {
   if (_carregado) return;
+  if (ehPg()) { _carregado = true; return; }   // Postgres: o Map é carregado no inicializar() assíncrono (boot)
   _carregado = true;
-  try {
-    const b = fs.readFileSync(ARQ, 'utf8');
-    const arr = JSON.parse(b);
-    if (Array.isArray(arr)) for (const c of arr) if (c && c.token) _contas.set(c.token, c);
-  } catch (e) { /* arquivo ainda não existe: cadastro vazio */ }
+  for (const c of _store.carregarContasSync()) if (c && c.token) _contas.set(c.token, c);   // arquivo: carga preguiçosa sync
 }
-function _persistir() {
-  _garantirDir();
-  const arr = Array.from(_contas.values());
-  fs.writeFileSync(ARQ, JSON.stringify(arr), 'utf8');
+// BOOT assíncrono — server.js chama ANTES de aceitar conexões: conecta/migra, carrega o cadastro do banco, importa 1× se vazio.
+async function inicializar() {
+  await _store.pronto();
+  if (ehPg()) { _contas = new Map(); for (const c of await _store.carregarContas()) if (c && c.token) _contas.set(c.token, c); }
+  _carregado = true;
+  return { armazenamento: _store.tipo };
 }
+async function drenar() { if (_store.drenar) await _store.drenar(); }
+function _persistirC(c) { if (!c || !c.token) return; if (ehPg()) _store.agendarSalvar(c); else _store.salvarContaSync(c); }
+// persiste UMA conta (quando `c` é dado) ou o conjunto inteiro (operação em lote). No arquivo, qualquer caso reescreve
+// o arquivo (comportamento de sempre); no Postgres, `_persistir(c)` faz upsert só da conta `c` (barato).
+function _persistir(c) { if (c) { _persistirC(c); return; } for (const x of _contas.values()) _persistirC(x); }
+function _remover(token) { _contas.delete(token); if (ehPg()) _store.agendarRemover(token); else _store.removerContaSync(token); }
 
 function _novoId() { return crypto.randomBytes(16).toString('hex'); }        // id público, opaco
 function _novoToken() { return crypto.randomBytes(32).toString('base64url'); } // segredo do aparelho
@@ -127,7 +139,7 @@ function definirNivel(token, deus, slot, nivel) {
   if (!possui(token, deus)) return { ok: false, codigo: 'deus_nao_possuido', erro: `você não possui: ${deus}` };
   const nv = _garantirNiveis(c);
   nv[deus] = Object.assign(_niveisDeDeus(c, deus), { [slot]: nivel });
-  _persistir();
+  _persistir(c);
   return { ok: true, niveis: nv[deus] };
 }
 
@@ -163,7 +175,7 @@ function aplicarResultadoRanqueado(vencedorId, perdedorId, motivo) {
   V.ranque.vitorias += 1; D.ranque.derrotas += 1;                          // ratio exibido
   V.ranque.pico = Math.max(V.ranque.pico || 0, V.ranque.pontos);           // pico da temporada (cosmético)
   D.ranque.pico = Math.max(D.ranque.pico || 0, D.ranque.pontos);
-  _persistir();
+  _persistir(V); _persistir(D);
   const proj = (c, antes) => ({ id: c.id, pontosAntes: antes, pontos: c.ranque.pontos, faixaAntes: faixaDe(antes), faixa: faixaDe(c.ranque.pontos), subiu: faixaDe(c.ranque.pontos).min > faixaDe(antes).min, desceu: faixaDe(c.ranque.pontos).min < faixaDe(antes).min });
   return { ok: true, motivo: motivo || null, vencedor: proj(V, antesV), perdedor: proj(D, antesD) };
 }
@@ -213,7 +225,7 @@ function criar({ faixaIdade, perfil, agora } = {}) {
     criadaEm: quando,
   };
   _contas.set(conta.token, conta);
-  _persistir();
+  _persistir(conta);
   return { ok: true, conta };
 }
 
@@ -243,8 +255,7 @@ function excluir(token) {
   if (!_contas.has(token)) return { ok: false, codigo: 'token_invalido', erro: 'token não corresponde a nenhuma conta' };
   const c = _contas.get(token);
   if (c && c.nick && _idxNick) _idxNick.delete(normalizarNick(c.nick));   // libera o nick para outra conta
-  _contas.delete(token);
-  _persistir();
+  _remover(token);
   return { ok: true, apagou: true };
 }
 
@@ -295,7 +306,7 @@ function definirNick(token, nick) {
   if (c.nick) _indice().delete(normalizarNick(c.nick));
   c.nick = String(nick).trim().replace(/\s+/g, ' ');   // guarda a forma de EXIBIÇÃO (com acento/maiúsculas)
   _indice().set(d.norm, c.id);
-  _persistir();
+  _persistir(c);
   return { ok: true, nick: c.nick };
 }
 
@@ -353,7 +364,7 @@ function salvarPerfil(token, perfil) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   c.perfil = _mesclarPerfilLocal(c.perfil, perfil);
-  _persistir();
+  _persistir(c);
   return { ok: true };
 }
 
@@ -369,7 +380,7 @@ function creditarPve(token, replays, agora) {
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const lote = Array.isArray(replays) ? replays : (replays ? [replays] : []);
   const r = _pve.creditarLote(c, lote, agora);
-  _persistir();
+  _persistir(c);
   return { ok: true, resultados: r.resultados, saldo: r.saldo, conta: paraDono(c) };
 }
 
@@ -381,7 +392,7 @@ function invocar(token, opts, agora) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const r = _invoc.invocar(c, opts || {}, agora);
-  if (r.ok) _persistir();
+  if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
 function subirNivel(token, deus, slot) {
@@ -389,7 +400,7 @@ function subirNivel(token, deus, slot) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const r = _invoc.subirNivel(c, deus, slot);
-  if (r.ok) _persistir();
+  if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
 function comprarPergaminho(token, deus) {
@@ -397,7 +408,7 @@ function comprarPergaminho(token, deus) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const r = _invoc.comprarPergaminho(c, deus, Date.now());
-  if (r.ok) _persistir();
+  if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
 // §318b-3 — encerrar a tentativa do desafio (cumpriu/desistiu) no servidor: zera o `ativo` (a recarga foi
@@ -407,7 +418,7 @@ function fecharDesafio(token, deus, cumpriu) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const r = _invoc.fecharDesafio(c, deus, cumpriu);
-  if (r.ok) _persistir();
+  if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
 // §318 F2 — RENDA DE GEMA por vitória de PvP. Chamado por server/salas.js no fim da partida (por ID de
@@ -417,7 +428,7 @@ function creditarPvPVitoria(idVenc, rodadas, agora) {
   const c = _contaPorId(idVenc);
   if (!c) return null;
   const r = _pve.creditarPvP(c, rodadas, agora);
-  _persistir();
+  _persistir(c);
   return Object.assign({ contaId: idVenc }, r);
 }
 function devCredito(token) {
@@ -425,7 +436,7 @@ function devCredito(token) {
   const c = _contas.get(token);
   if (!c) return { ok: false, codigo: 'token_invalido', erro: 'token inválido' };
   const r = _invoc.devCredito(c);
-  if (r.ok) _persistir();
+  if (r.ok) _persistir(c);
   return Object.assign({}, r, { conta: paraDono(c) });
 }
 // tabela de CHANCES da faixa atual do jogador (para a tela da invocação, §318 F2 E4). SÓ leitura.
@@ -453,7 +464,12 @@ function planoDoNick() {
 // ---- utilitários de teste/manutenção ----
 function _clone(x) { return JSON.parse(JSON.stringify(x)); }
 function _total() { _carregar(); return _contas.size; }
-function _resetParaTeste() { _contas = new Map(); _carregado = true; _idxNick = null; try { fs.rmSync(ARQ, { force: true }); } catch (e) {} }
+function _resetParaTeste() { _contas = new Map(); _carregado = true; _idxNick = null; if (_store._resetSync) _store._resetSync(); else try { fs.rmSync(ARQ, { force: true }); } catch (e) {} }
+// §354 — verificação em produção (sem segredo): {armazenamento, banco, contas}. Dispara o "acordar" do banco também.
+async function saude() { try { const s = await _store.saude(); return s; } catch (e) { return { armazenamento: _store.tipo, banco: 'fora', contas: null }; } }
+function acordarBanco() { try { if (_store.acordar) _store.acordar(); } catch (e) {} }
+// §354 — RECIBO de prêmio (anti-duplicação pelo banco): true só na 1ª vez. Guarda em memória/arquivo quando sem banco.
+async function reservarRecibo(chave) { return _store.reservarRecibo(chave); }
 function _existeToken(token) { _carregar(); return _contas.has(token); }
 // atalho de teste: dá um deus à conta (a posse importa no PvP; os testes montam times possuídos).
 function _darDeus(token, key) { _carregar(); const c = _contas.get(token); if (c) { c.perfil.deuses[key] = c.perfil.deuses[key] || { copias: 1 }; } }
@@ -468,5 +484,6 @@ module.exports = {
   faixaDe, ratioDe, ranquePublico, aplicarResultadoRanqueado, reiniciarTemporada, _contaPorId,
   _garantirMissoes, missoesPublicas, _salvar: _persistir,
   NIVEIS_SLOTS, _garantirNiveis, niveisDoTime, niveisPublicos, definirNivel,   // §318
+  inicializar, drenar, saude, acordarBanco, reservarRecibo, _usarArmazenamentoTeste,   // §354 persistência
   _total, _resetParaTeste, _existeToken, _darDeus, _setPontos,
 };
