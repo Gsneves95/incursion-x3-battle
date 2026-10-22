@@ -6,6 +6,47 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §360 · DESAFIOS + COMPOSIÇÃO acessíveis (as piores notas da auditoria) — canvas 780×360
+
+**O alvo:** na auditoria §357, a **rota 'desafios'** (= `renderProvacoes`, a grade de deuses do §339) tirou **3.3** e a
+**rota 'composicao'** (= `renderDesafios`, a lista de desafios de composição do §351) tirou **3.1** — as duas piores do
+jogo. Ambas estavam na tela fixa antiga **1846×852** (px minúsculos ao caber num S24 deitado). Agora entram no canvas
+**780×360** (px desenho = px real), grupo `fixaPeq` do §358 — o `fit()` escala p/ cima nas telas maiores. **Nota nova: 10
+e 10** (a=b=c=d=0 em todos os estados). O estilo visual do dono (molduras douradas, Cinzel nos títulos) fica.
+
+**DESAFIOS (grade de deuses) sem rolagem do topo:** header (Essência · Mestres), **Desafio da Semana** numa faixa baixa
+(h60: arte 48, objetivo, 3 inimigos SÓ-retrato — `.df-sem__foen{display:none}` no canvas estreito, recompensa, JOGAR),
+cartão de **Composição**, a **linha de regras virou ícones curtos** (`◈30✦ ⟲+3 ↻8h ∞grátis ⧉1/deus`) + o **"?"** (40×40) —
+tudo isso cabe nos 360 de altura, e a grade mostra **≥1 fileira inteira** de cartão abaixo (rola o resto). Decisão: as
+regras por extenso saem do corpo e vão para o painel do "?" (que cabe sem rolar) — era a única forma de manter toque ≥40 no
+"?" sem empurrar a grade para fora. Os **7 estados do §339** seguem, cada um legível/tocável: COMPRAR / sem Essência +
+"Onde ganhar" / comprando / em andamento (JOGAR+Desistir) / confirmando desistência (SIM/NÃO) / recarga / Mestre.
+
+**Cartão de deus horizontal — o botão não cobre mais a barra:** JOGAR+Desistir juntos (≈133px) estouravam a área de ação
+de 118px e, com `justify-content:flex-end`, vazavam **para a esquerda por cima da barra de maestria** (d6 pegava). A área
+(`.df-card__pe`) foi para **156px** — os dois botões cabem sem vazar. (Recusado empilhar vertical: faria o cartão crescer e
+cortaria fileira.) Os **chips de filtro** subiram p/ **13px**: a 12px mediam 11.99 no offline (a escala do canvas arredonda
+~0.999) e o eixo-a reprovava; 13px fica robusto à borda.
+
+**COMPOSIÇÃO (lista) — o JOGAR não cobre mais o nome:** a grade é `repeat(2,1fr)` numa altura fixa; um **cartão flex-column
+dentro de uma trilha de grid auto NÃO cresce até o conteúdo** (a trilha fica no `min-height` e o `.cmp-card__pe`, com
+`margin-top:auto`, transbordava por baixo, sobrepondo o nome). Em vez de brigar com o bug, fixei **`min-height:160px`**
+(mede: conteúdo do pior cartão — regra de 2 linhas — cabe em ~155): o pe volta para dentro, zero sobreposição. Dá **≥1
+fileira inteira** sem rolar (o resto rola — a grade é lista branca, rolagem permitida).
+
+**Detalhe de outra tela (Batalha-CPU, `selecao.js`):** o motivo do rodapé dizia "**Faltam 1** · oponente" — plural com 1.
+Agora `falta(n,onde)` usa **singular quando n===1** ("Falta 1 · oponente" / "Falta 1 · seu time"). Varri os outros motivos
+com número: só o botão **FALTAM** dos Níveis (home.js) tinha o mesmo erro — também virou "FALTA" no singular (§360). O
+"Faltam" do filtro da Coleção é rótulo de categoria (os que faltam), não conta — fica plural.
+
+**NADA DE FUNÇÃO SE PERDE:** `renderProvacoes`/`renderDesafios` e todos os handlers/estados §339/§339b/§351 intactos; só
+mudou CSS (shell.html) + 2 ajustes de texto. Testes migrados nos seletores/medidas: `desafios_tela` e `composicao_tela`
+agora medem **780×360** (toque ≥40, corpo ≥12, ≥1 fileira, escala p/ cima no 1846×852) no lugar das medidas antigas de
+1846×852 (≥72/≥20/≤830). `acessibilidade_telas` ganhou os 4 estados novos exigindo a=b=c=d=0: Desafios (estados), Desafios
+"?" aberto, Desafios sem conexão, Composição (1 cumprido + abertos).
+
+---
+
 ## §359 · MONTADORES de time acessíveis (6 telas numa base só) + o resto do §358b
 
 **0 — resto do §358b (ficha-falta):** o título "COMO CONSEGUIR" era uma coluna de largura fixa (58px) ao lado dos quadros;

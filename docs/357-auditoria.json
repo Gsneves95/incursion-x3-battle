@@ -2932,668 +2932,14 @@
   "nome": "Desafios (hub)",
   "file": "357-desafios-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ INÍCIO",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-ess__lab",
-     "txt": "Essência ✦",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-ess__v",
-     "txt": "—",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-ess__sem",
-     "txt": "⊘ Sem conexão",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-mestres__lab",
-     "txt": "★ Mestres",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "0/9",
-     "px": 11.83,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.df-sem__rot",
-     "txt": "DESAFIO DA SEMANA",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "#43",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__obj",
-     "txt": "Mantenha Ogum de pé em 15 turnos.",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__contra",
-     "txt": "Contra:",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__foen",
-     "txt": "Zeus",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__foen",
-     "txt": "Tanuki",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__foen",
-     "txt": "Ammit",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__reclab",
-     "txt": "RECOMPENSA",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-sem__recval",
-     "txt": "150 de Gema",
-     "px": 11.83,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.df-gem",
-     "txt": "◈",
-     "px": 11.83,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.df-sem__prazo",
-     "txt": "⌛ Termina em",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "3d 4h",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--jogar",
-     "txt": "JOGAR",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "DESAFIOS DE COMPOSIÇÃO",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "small",
-     "txt": "Complete formações específicas e ganhe r",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-compos__n",
-     "txt": "0 de 6 cumpridos",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "Custa 30 ✦ de Essência",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-gem",
-     "txt": "◈",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "⟲ +3 de maestria por vitória",
-     "px": 8.46,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "small",
-     "txt": "(Mestre aos 30 = moldura)",
-     "px": 8.46,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "↻ Recarga de 8 h após comprar",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "∞ Perdeu? Repete de graça",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "⧉ Um desafio por deus de cada vez",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-regras__q",
-     "txt": "?",
-     "px": 11.83,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "button.df-chip.is-on",
-     "txt": "Todos",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "(9)",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Disponíveis",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "(9)",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Em andamento",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "(0)",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Recarga",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "(0)",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Mestres",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "(0)",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.df-ordenar",
-     "txt": "Ordenar: ▾",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "Padrão",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Brigid",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Cuca",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Fujin",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Ganesha",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Nezha",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.df-card__n",
-     "txt": "Ogum",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__maes",
-     "txt": "— 0/30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__dot",
-     "txt": "◆",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "5",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "15",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "30",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.df-card__motivo",
-     "txt": "sem conexão com o servidor",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "px": 8.45,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ INÍCIO",
-     "w": 54.1,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--jogar",
-     "txt": "JOGAR",
-     "w": 62.9,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-compos",
-     "txt": "⚔ DESAFIOS DE COMPOSIÇÃOComple",
-     "w": 753,
-     "h": 33,
-     "min": 33
-    },
-    {
-     "sel": "button.df-regras__q",
-     "txt": "?",
-     "w": 30.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-chip.is-on",
-     "txt": "Todos (9)",
-     "w": 51,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Disponíveis (9)",
-     "w": 69.6,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Em andamento (0)",
-     "w": 83.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Recarga (0)",
-     "w": 58.8,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-chip",
-     "txt": "Mestres (0)",
-     "w": 58.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.df-ordenar",
-     "txt": "Ordenar: Padrão ▾",
-     "w": 77.5,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dfb.dfb--ghost",
-     "txt": "⌂ Onde ganhar Essência?",
-     "w": 98,
-     "h": 30.4,
-     "min": 30.4
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
-   "textTotal": 94,
-   "tapTotal": 17
+   "textTotal": 68,
+   "tapTotal": 15
   },
-  "nota": 3.3,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -3603,371 +2949,14 @@
   "nome": "Composição (desafios)",
   "file": "357-composicao-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ DESAFIOS",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-prog__n",
-     "txt": "0 de 6 cumpridos",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.cmp-intro",
-     "txt": "Você monta o time; o jogo testa se sabe ",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "Fúria de um Elemento",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Os três do MESMO elemento.",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Loki",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Cuca",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "Uma Só Vocação",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Os três da MESMA função.",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Cuca",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Boto",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "O Trio Equilibrado",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Três funções DIFERENTES — quem bate, que",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Loki",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Cuca",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "Sangue de um Panteão",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Os três do MESMO panteão.",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Loki",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Boto",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "Sem os Milagres",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Time livre — mas vença SEM lançar nenhum",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Loki",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Cuca",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.cmp-card__n.cin",
-     "txt": "A Linha Intacta",
-     "px": 11.82,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.cmp-card__regra",
-     "txt": "Time livre — mas não perca NENHUM aliado",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__foeslab",
-     "txt": "Inimigos",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Saci",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Cuca",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-foe__n",
-     "txt": "Boto",
-     "px": 7.6,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cmp-card__rec",
-     "txt": "20 ✦",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "px": 10.13,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ DESAFIOS",
-     "w": 68.8,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.cmpb.cmpb--primary",
-     "txt": "JOGAR",
-     "w": 55,
-     "h": 30.4,
-     "min": 30.4
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
-   "textTotal": 52,
-   "tapTotal": 7
+   "textTotal": 34,
+   "tapTotal": 5
   },
-  "nota": 3.1,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -5596,25 +4585,25 @@
     {
      "sel": "span.df-chip",
      "txt": "Todas",
-     "px": 8.44,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "6",
-     "px": 8.44,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "span.df-chip.is-on",
      "txt": "Conquistadas",
-     "px": 8.44,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "2",
-     "px": 8.44,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
@@ -5782,19 +4771,19 @@
     {
      "sel": "span.df-toast__ic",
      "txt": "!",
-     "px": 6.75,
+     "px": 5.06,
      "abaixoRotulo": true
     },
     {
      "sel": "span.df-toast__msg",
      "txt": "Sem conexão com o servidor.",
-     "px": 8.44,
+     "px": 5.06,
      "abaixoRotulo": true
     },
     {
      "sel": "button.df-toast__x",
      "txt": "✕",
-     "px": 8.44,
+     "px": 5.91,
      "abaixoRotulo": true
     },
     {
@@ -5812,7 +4801,7 @@
     {
      "sel": "p.df-vazio",
      "txt": "Nenhum deus neste filtro.",
-     "px": 8.44,
+     "px": 5.06,
      "abaixoRotulo": true
     },
     {
@@ -5901,9 +4890,9 @@
     {
      "sel": "button.df-toast__x",
      "txt": "✕",
-     "w": 12.2,
-     "h": 11.4,
-     "min": 11.4
+     "w": 10,
+     "h": 7.6,
+     "min": 7.6
     },
     {
      "sel": "button.nlb.nlb--go",
@@ -5922,16 +4911,16 @@
     {
      "sel": "span.df-chip",
      "txt": "Todas 6",
-     "w": 45.9,
-     "h": 30.4,
-     "min": 30.4
+     "w": 26.2,
+     "h": 16.9,
+     "min": 16.9
     },
     {
      "sel": "span.df-chip.is-on",
      "txt": "Conquistadas 2",
-     "w": 72.5,
-     "h": 30.4,
-     "min": 30.4
+     "w": 43.5,
+     "h": 16.9,
+     "min": 16.9
     }
    ],
    "c": [],
@@ -6064,7 +5053,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 19:34 UTC",
+     "txt": "build 2026-10-22 20:20 UTC",
      "px": 5.49,
      "abaixoRotulo": true
     }
@@ -6128,7 +5117,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 19:34 UTC",
+     "txt": "build 2026-10-22 20:20 UTC",
      "w": 148.7,
      "h": 6.8,
      "min": 6.8

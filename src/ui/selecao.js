@@ -90,12 +90,13 @@ function timeBlocoHTML(p){
   </div>`;
 }
 function motivoSel(){
-  // §359: curto (o rodapé da seleção é estreito no 780×360) — "Faltam N · oponente|seu time"
+  // §359/§360: curto (o rodapé da seleção é estreito no 780×360); §360: singular quando falta só 1 ("Falta 1 · …")
   const f0=3-pick[0].length, f1=3-pick[1].length;
+  const falta=(n,onde)=>`${n===1?'Falta':'Faltam'} ${n} · ${onde}`;
   if(f0<=0&&f1<=0)return '';
-  if(vez===1&&f1>0)return `Faltam ${f1} · oponente`;
-  if(vez===0&&f0>0)return `Faltam ${f0} · seu time`;
-  return f1>0?`Faltam ${f1} · oponente`:`Faltam ${f0} · seu time`;
+  if(vez===1&&f1>0)return falta(f1,'oponente');
+  if(vez===0&&f0>0)return falta(f0,'seu time');
+  return f1>0?falta(f1,'oponente'):falta(f0,'seu time');
 }
 
 /* ---------- grade "SEUS DEUSES" (a mesma do montador) ---------- */

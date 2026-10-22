@@ -94,7 +94,10 @@ console.log('\n== a TELA dos Desafios mostra o saldo do SERVIDOR (moedaServidor)
   const ess = $('[data-ess]');
   ok(!!ess && ess.textContent.trim() === '77', 'o cartão ESSÊNCIA mostra o saldo do servidor (77)');
   const regras = $('.df-regras');
-  ok(!!regras && new RegExp(CFG.custoEssencia + ' ✦').test(regras.textContent), `a linha de regras mostra "Custa ${CFG.custoEssencia} ✦"`);
+  // §360: a linha de regras virou ÍCONES CURTOS ("◈ 30✦"); o texto por extenso ("Custa 30 ✦") vai p/ o title e o painel "?"
+  const chipCusto = regras && [...regras.querySelectorAll('span[title]')].find(s => new RegExp(CFG.custoEssencia + '✦').test(s.textContent));
+  ok(!!regras && !!chipCusto && new RegExp('Custa ' + CFG.custoEssencia + ' ✦').test(chipCusto.getAttribute('title') || ''), `a linha de regras traz o custo "${CFG.custoEssencia}✦" (texto completo "Custa ${CFG.custoEssencia} ✦" no title/"?")`);
+  ok(!!regras && !!regras.querySelector('.df-regras__q[data-ajuda]'), 'a linha de regras tem o "?" que abre o texto completo das regras');
   // DESCONECTADO: "—" (nunca um saldo local fantasma)
   w.eval("contaAtual=null; perfil.moedas={gema:9,essencia:555};");
   w.eval("ir('desafios'); render();");

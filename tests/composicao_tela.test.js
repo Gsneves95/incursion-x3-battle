@@ -1,5 +1,5 @@
 // §351 — A LISTA DE DESAFIOS DE COMPOSIÇÃO (renderDesafios, rota 'composicao') no visual da tela DESAFIOS (§339):
-// TELA FIXA 1846×852 escalada. Cabeçalho (‹ DESAFIOS · "DESAFIOS DE COMPOSIÇÃO" · "X de Y cumpridos" + barra dourada)
+// CANVAS FIXO 780×360 escalado por fit(). Cabeçalho (‹ DESAFIOS · "DESAFIOS DE COMPOSIÇÃO" · "X de Y cumpridos" + barra dourada)
 // + linha de introdução + grade de cartões (ícone da regra, nome Cinzel, regraTexto, inimigos em miniaturas, recompensa
 // N ✦, estado/ação). Vencido = selo ✓ + moldura dourada fina + "JOGAR DE NOVO"; aberto = "JOGAR". Nada das regras/
 // recompensas/validação/montador (§344) muda. Prova a contagem/barra, cada cartão, as ações (abrem o montador com o id
@@ -95,31 +95,36 @@ ok(w.eval("rotaAtual()") === 'desafios', 'o "‹ DESAFIOS" volta para o hub de D
 if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS (jsdom) ==`); process.exit(1); }
 console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×852 e 780×360) ==`);
 
-// ================= §351 — ENCAIXE: a tela fixa enche o palco; cabeçalho/introdução/cartões dentro (≤830),
-//                   nada se sobrepõe, nenhum texto corta (mede os FILHOS). 1846×852 e 780×360. =================
+// ================= §351/§360 — ENCAIXE no canvas 780×360: a tela fixa enche o palco; cabeçalho + introdução +
+//                   barra cabem SEM rolar; a grade (branca, pode rolar) mostra ≥1 fileira de cartão inteira; os
+//                   cartões da mesma fileira não se sobrepõem; nenhum texto corta (menos a regra, clamp de 2 linhas).
+//                   Mede em 780×360 (px desenho = px real) e em 1846×852 (escala para cima via fit()). =================
 (async () => {
   const { chromium } = require('playwright');
   function acharChromium() { try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop(); const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } catch (e) {} return undefined; }
   const distAbs = 'file://' + path.resolve(__dirname, '..', 'dist', 'incursion.html');
   const MK = `perfil.provacoes=perfil.provacoes||{};perfil.provacoes['desafio:${IDS[0]}']={feito:true};perfil.provacoes['desafio:${IDS[1]}']={feito:true};ir('composicao',{},{substituir:true});render();`;
-  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
+  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
   let cf = 0; const ok2 = (c, m) => { if (!c) { cf++; console.log('  XX ' + m); } else console.log('  ok ' + m); };
-  for (const [W, H] of [[1846, 852], [780, 360]]) {
+  for (const [W, H] of [[780, 360], [1846, 852]]) {
     const page = await (await browser.newContext({ viewport: { width: W, height: H } })).newPage();
     await page.goto(distAbs, { waitUntil: 'load' });
     const r = await page.evaluate((MK) => {
       eval(MK); const g = document.getElementById('gsplash'); if (g) g.remove();
       const fix = document.getElementById('compfix'), fb = fix.getBoundingClientRect();
-      const esc = fb.height / 852;
+      const esc = fb.width / 780;
       const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
       const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
-      // FILHOS: cabeçalho + introdução + cada cartão (os 6 reais cabem em 2 fileiras, sem rolar)
-      let botMax = 0, pior = '';
-      [...fix.querySelectorAll('.cmp-cab,.cmp-intro'), ...fix.querySelectorAll('.cmp-grade .cmp-card')].forEach(el => {
-        const b = designBot(el); if (b > botMax) { botMax = b; pior = el.className.split(' ')[0]; }
+      // cabeçalho + introdução + a barra de progresso ficam DENTRO dos 360 de altura (visíveis sem rolar)
+      let topoBot = 0, pior = '';
+      [...fix.querySelectorAll('.cmp-cab,.cmp-intro,.cmp-prog__bar')].forEach(el => {
+        const b = designBot(el); if (b > topoBot) { topoBot = b; pior = el.className.split(' ')[0]; }
       });
-      // overflow horizontal da grade
-      const grade = fix.querySelector('.cmp-grade'); const over = grade.scrollWidth - grade.clientWidth;
+      // fileiras inteiras de cartão visíveis na grade (sem rolar a lista branca)
+      const grade = fix.querySelector('.cmp-grade'); const gr = grade.getBoundingClientRect(); const rows = {};
+      grade.querySelectorAll('.cmp-card').forEach(c => { const b = c.getBoundingClientRect(); if (b.bottom <= gr.bottom + 0.5 && b.top >= gr.top - 0.5) rows[Math.round(b.top)] = 1; });
+      const fileiras = Object.keys(rows).length;
+      const over = grade.scrollWidth - grade.clientWidth;   // overflow horizontal da grade
       // sobreposição entre cartões vizinhos (mesma fileira)
       const cards = [...fix.querySelectorAll('.cmp-card')].map(c => c.getBoundingClientRect());
       let overlap = false;
@@ -130,17 +135,18 @@ console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×85
       // texto cortado (ignora a regra, que é clamp proposital de 2 linhas)
       let clips = [];
       fix.querySelectorAll('.cmp-titulo,.cmp-prog__n,.cmp-card__n,.cmp-foe__n,.cmpb,.cmp-card__rec,.cmp-card__won').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className.split(' ')[0]); });
-      return { pw, ph, botMax, pior, over, overlap, clips: [...new Set(clips)].slice(0, 6) };
+      return { esc: Math.round(esc * 1000) / 1000, pw, ph, topoBot, pior, fileiras, over, overlap, clips: [...new Set(clips)].slice(0, 6) };
     }, MK);
-    ok2(Math.min(r.pw, r.ph) >= 0.98, `§351 @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
-    ok2(r.botMax <= 831, `§351 @${W}×${H}: cabeçalho/introdução/cartões terminam em y≤830 (pior ${r.botMax} em ${r.pior})`);
-    ok2(!r.overlap, `§351 @${W}×${H}: os cartões não se sobrepõem`);
-    ok2(r.over <= 2, `§351 @${W}×${H}: a grade não corta na horizontal (over ${r.over})`);
-    ok2(r.clips.length === 0, `§351 @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
+    ok2(Math.min(r.pw, r.ph) >= 0.98, `§360 @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
+    ok2(r.topoBot <= 361, `§360 @${W}×${H}: cabeçalho + introdução + barra cabem sem rolar (pior ${r.topoBot} em ${r.pior})`);
+    ok2(r.fileiras >= 1, `§360 @${W}×${H}: a grade mostra ≥1 fileira de cartão inteira (veio ${r.fileiras})`);
+    ok2(!r.overlap, `§360 @${W}×${H}: os cartões não se sobrepõem`);
+    ok2(r.over <= 2, `§360 @${W}×${H}: a grade não corta na horizontal (over ${r.over})`);
+    ok2(r.clips.length === 0, `§360 @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
     await page.close();
   }
   await browser.close();
   if (cf || falhas) { console.log(`\n== ${cf} falha(s) de encaixe + ${falhas} jsdom ==`); process.exit(1); }
-  console.log('\n== LISTA DE DESAFIOS DE COMPOSIÇÃO §351 OK (jsdom + Chromium) ==');
+  console.log('\n== LISTA DE DESAFIOS DE COMPOSIÇÃO §351/§360 OK (jsdom + Chromium) ==');
   process.exit(0);
 })().catch(e => { console.error(e.stack || e.message || e); process.exit(1); });

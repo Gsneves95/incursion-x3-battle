@@ -964,13 +964,13 @@ function renderProvacoes(){
     </section>`;
   }
 
-  // --- barra de regras (valores de DESAFIO_CFG, nunca fixos) ---
+  // --- barra de regras: §360 — ÍCONES CURTOS (valores de DESAFIO_CFG) + "?" p/ o texto completo (cabe numa linha no 780) ---
   const regras = `<div class="df-regras">
-    <span><span class="df-gem">◈</span> Custa ${cfg.custoEssencia} ✦ de Essência</span>
-    <span>⟲ +${cfg.maestriaPorVitoria} de maestria por vitória <small>(Mestre aos ${MAESTRIA_LIMIAR.mestre} = moldura)</small></span>
-    <span>↻ Recarga de ${cfg.recargaHoras} h após comprar</span>
-    <span>∞ Perdeu? Repete de graça</span>
-    <span>⧉ Um desafio por deus de cada vez</span>
+    <span title="Custa ${cfg.custoEssencia} ✦ de Essência"><span class="df-gem">◈</span> ${cfg.custoEssencia}✦</span>
+    <span title="+${cfg.maestriaPorVitoria} de maestria por vitória (Mestre aos ${MAESTRIA_LIMIAR.mestre})">⟲ +${cfg.maestriaPorVitoria}</span>
+    <span title="Recarga de ${cfg.recargaHoras} h após comprar">↻ ${cfg.recargaHoras}h</span>
+    <span title="Perdeu? Repete de graça">∞ grátis</span>
+    <span title="Um desafio por deus de cada vez">⧉ 1/deus</span>
     <button class="df-regras__q" data-ajuda="1" aria-label="ajuda">?</button>
   </div>`;
 
@@ -2014,7 +2014,7 @@ function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
     else { acao = pts >= custo
       // §358b: rótulo em 2 linhas centradas (não 4): "SUBIR P/ NV 3" + "◆ 2 pontos" (cabe no cartão estreito).
       ? `<button class="nlb nlb--go nlb--2l" data-subir="${sl}"><b>SUBIR P/ NV ${cur + 1}</b><span>${_nlbPtIc()}${_ptLabel(custo, true)}</span></button>`
-      : `<button class="nlb nlb--off nlb--2l" disabled><b>FALTAM</b><span>${_nlbPtIc()}${_ptLabel(falta, true)}</span></button>`; }
+      : `<button class="nlb nlb--off nlb--2l" disabled><b>${falta === 1 ? 'FALTA' : 'FALTAM'}</b><span>${_nlbPtIc()}${_ptLabel(falta, true)}</span></button>`; }   // §360: singular quando falta 1
   }
   const msg = (nlMsg && nlMsg.slot === sl) ? `<p class="nlp__erro">${H(nlMsg.texto)}</p>` : '';
   return `<div class="nlp nlp--${sem ? 'sem' : 'esc'}${nlConfirm === sl ? ' nlp--conf' : ''}" data-slot="${sl}">${cab}
@@ -2858,7 +2858,7 @@ function _cmpFoesHTML(inim){
   const list = inim || []; if (!list.length) return '';
   const show = list.slice(0, 4), extra = list.length - show.length;
   const minis = show.map(k => { const m = metaComb(k);
-    return `<span class="cmp-foe" title="${H(m.nome)}"><span class="cmp-foe__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cmp-foe__n">${H(m.curto || m.nome)}</span></span>`; }).join('');
+    return `<span class="cmp-foe" title="${H(m.nome)}"><span class="cmp-foe__p">${slot('god-' + k, ini(m.nome), COR(m.elem), 20)}</span><span class="cmp-foe__n" data-clamp="ok">${H(m.curto || m.nome)}</span></span>`; }).join('');
   const more = extra > 0 ? `<span class="cmp-foe cmp-foe--more">+${extra}</span>` : '';
   return `<div class="cmp-card__foes"><span class="cmp-card__foeslab">Inimigos</span><span class="cmp-foes">${minis}${more}</span></div>`;
 }

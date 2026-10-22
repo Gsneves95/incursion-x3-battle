@@ -2,7 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §359 · MONTADORES de time acessíveis (780×360) + resto do §358b
+## ★ §360 · DESAFIOS + COMPOSIÇÃO acessíveis (780×360) — as piores notas viraram 10
+- AS DUAS PIORES da auditoria §357 subiram para **nota 10** (a=b=c=d=0 em todo estado): rota **'desafios'**
+  (`renderProvacoes`, grade de deuses §339) **3.3 → 10**; rota **'composicao'** (`renderDesafios`, lista §351) **3.1 → 10**.
+  Saíram da tela fixa 1846×852 e entraram no canvas **780×360** (grupo `fixaPeq`; `fit()` escala p/ cima). Visual do dono fica.
+- DESAFIOS sem rolar o topo: header (Essência·Mestres) + Desafio da Semana (faixa baixa h60, inimigos só-retrato) + cartão
+  de Composição + **regras viraram ícones curtos** (`◈30✦ ⟲+3 ↻8h ∞grátis ⧉1/deus`) + **"?"** 40×40 — tudo nos 360, e a
+  grade mostra **≥1 fileira inteira** (rola o resto). O texto das regras por extenso vive no painel do "?" (cabe sem rolar).
+  Os **7 estados do §339** seguem legíveis/tocáveis.
+- 2 CONSERTOS de sobreposição: (a) no cartão de deus, JOGAR+Desistir estouravam a ação de 118px e vazavam por cima da barra
+  de maestria → área (`.df-card__pe`) foi a **156px**; (b) chips de filtro a 12px mediam 11.99 no offline → **13px**.
+- COMPOSIÇÃO: um cartão flex-column numa trilha de grid auto NÃO cresce até o conteúdo (fica no min-height e o JOGAR, com
+  `margin-top:auto`, transbordava sobre o nome) → **`min-height:160px`** (o pior cartão, regra de 2 linhas, cabe); o pe volta
+  p/ dentro, **≥1 fileira** sem rolar.
+- DETALHE (Batalha-CPU, selecao.js): "Faltam 1" → **singular "Falta 1"** quando n===1; mesmo erro no botão FALTAM dos Níveis
+  (home.js) corrigido. O "Faltam" do filtro da Coleção é rótulo de categoria, fica plural.
+- NADA SE PERDE: handlers/estados §339/§339b/§351 intactos (só CSS + 2 textos). Testes migrados: `desafios_tela` e
+  `composicao_tela` medem 780×360 (toque≥40/corpo≥12/≥1 fileira/escala no 1846×852); `acessibilidade_telas` ganhou 4 estados
+  exigindo a=b=c=d=0. Capturas `docs/telas/360-*` (780×360 e 1846×852). Suíte + build verdes.
+
+## §359 · MONTADORES de time acessíveis (780×360) + resto do §358b
 - RESTO §358b: ficha-falta "COMO CONSEGUIR" agora numa LINHA PRÓPRIA acima dos quadros (`.dcomo` virou coluna) — o
   quadro da Invocação não cobre mais o título. AUDITORIA ganhou o eixo **d6 ENCOBERTO**: o ponto central de cada PALAVRA
   do texto tem de ser o próprio elemento em `document.elementFromPoint` (senão outra caixa está por cima). pointer-events:

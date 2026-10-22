@@ -45,6 +45,13 @@ const ESTADOS = {
   'Seleção — dois times': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;vsCPU=true;ir('selecao',{novo:true});render();(function(){var ks=listaFiltrada().filter(jogavel);vez=0;for(var i=0;i<5&&i<ks.length;i++)commitPk(ks[i]);renderPick();})();`,
   'Seleção — Mais filtros aberto': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;vsCPU=true;ir('selecao',{novo:true});render();painelFiltro=true;renderPick();`,
   'Kit "i" (deus de maior descrição)': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;domTimePick=[];ir('dominiomontar',{cultura:'grega'});render();montKitAberto='odin';render();`,
+  // §360: DESAFIOS (grid de deuses) + COMPOSIÇÃO — canvas 780×360. Os 7 estados do §339 estão cobertos entre
+  // os dois primeiros renders: COMPRAR/comprando/em andamento/confirmando desistência/recarga/Mestre no estado
+  // "estados", e a trava "Onde ganhar Essência?" (sem Essência / sem conexão) no estado "sem conexão".
+  'Desafios — estados (comprar/comprando/andamento/desistir/recarga/Mestre)': `contaAtual={perfil:{moedas:{gema:0,essencia:1240},desafios:{poseidon:{ativo:true},demeter:{ativo:true},atena:{ativo:false,recargaAte:Date.now()+12000000}}}};perfil.deuses={hades:1,poseidon:1,demeter:1,atena:1,apolo:1,ares:1,hera:1,afrodite:1};perfil.maestria={hades:{vitorias:30,milagre:true},atena:{vitorias:15},poseidon:{vitorias:8},demeter:{vitorias:5},apolo:{vitorias:6},ares:{vitorias:0},hera:{vitorias:2},afrodite:{vitorias:12}};perfil.provacoes={};desafioFiltro='todos';desafioOrdem='padrao';desafioComprando='apolo';desafioDesistindo='poseidon';desafioAjuda=false;ir('desafios');render();`,
+  'Desafios — ajuda "?" aberta': `contaAtual={perfil:{moedas:{gema:0,essencia:1240},desafios:{}}};perfil.deuses={hades:1,poseidon:1,demeter:1,atena:1,apolo:1,ares:1,hera:1,afrodite:1};perfil.maestria={hades:{vitorias:30,milagre:true}};perfil.provacoes={};desafioFiltro='todos';desafioOrdem='padrao';desafioComprando=null;desafioDesistindo=null;desafioAjuda=true;ir('desafios');render();`,
+  'Desafios — sem conexão (trava "Onde ganhar")': `contaAtual=null;perfil.deuses={hades:1,poseidon:1,demeter:1,atena:1,apolo:1,ares:1,hera:1,afrodite:1};perfil.maestria={hades:{vitorias:30,milagre:true}};perfil.provacoes={};desafioFiltro='todos';desafioOrdem='padrao';desafioComprando=null;desafioDesistindo=null;desafioAjuda=false;ir('desafios');render();`,
+  'Composição — 1 cumprido + abertos': `perfil.deuses={zeus:1};perfil.provacoes={};var _ids=desafios().map(d=>d.id);perfil.provacoes['desafio:'+_ids[0]]={feito:true};ir('composicao');render();`,
 };
 
 (async () => {

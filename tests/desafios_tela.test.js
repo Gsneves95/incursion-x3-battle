@@ -1,4 +1,4 @@
-// desafios_tela.test.js (§339) — a TELA DESAFIOS no modelo do dono (tela fixa 1846×852 escalada). Comportamento:
+// desafios_tela.test.js (§339/§360) — a TELA DESAFIOS no modelo do dono (canvas fixo 780×360, escalado por fit()). Comportamento:
 // cada estado (a–g) renderiza a ação certa e o clique chama o handler certo; sem conexão trava tudo; filtros contam
 // e filtram; os 3 ordenamentos ordenam; "Termina em" bate com a virada da semana; e (Chromium) o layout cabe/escala.
 const fs = require('fs'), path = require('path');
@@ -160,72 +160,72 @@ console.log('\n== §339b "conta" e "build" não somem — só ficam ocultos na t
 }
 
 (async () => {
-  console.log('\n== §339 layout (Chromium) ==');
+  console.log('\n== §339/§360 layout (Chromium) — canvas 780×360 ==');
   let chromium; try { chromium = require('playwright').chromium; } catch (e) { console.log('  (playwright ausente — pulo o layout)'); console.log(`\n== DESAFIOS_TELA — ${passes} asserções, ${falhas} falha(s) ==`); process.exit(falhas ? 1 : 0); }
   function acha(){ try{ const b='/opt/pw-browsers'; const dd=fs.readdirSync(b).filter(x=>/^chromium-\d+$/.test(x)).sort().pop(); if(dd){ const p=path.join(b,dd,'chrome-linux','chrome'); if(fs.existsSync(p)) return p; } }catch(e){} return undefined; }
   const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
   const browser = await chromium.launch({ executablePath: acha(), headless: true, args: ['--no-sandbox'] });
   const BOOT = SETUP(1240, ATIVOS) + "ir('desafios'); render();";
-  // §339b: seletores de TODO botão tocável da tela + de todo texto de corpo protegido
+  // §360: TODO botão tocável da tela (≥40×40) + corpo/rótulos visíveis (≥12px). A df-sem__foen fica oculta no canvas
+  // pequeno (não entra na medição); os chips de regra viraram ícones curtos (.df-regras span).
   const BTN_SELS = ['[data-voltar]', '[data-semanal-jogar]', '.df-regras__q', '.df-chip', '.df-ordenar', '[data-comprar]', '[data-jogar]', '[data-desistir]'];
-  const BODY_SELS = ['.df-regras>span', '.df-regras small', '.df-card__maes', '.df-bar__lab', '.df-sem__foen', '.df-sem__prazo', '.df-sem__obj'];
-  // @1846×852: caixas dos blocos + alvos de toque (≥72) + corpo (≥20) + nome (≥26) + banner dentro da moldura
-  { const ctx = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
+  const BODY_SELS = ['.df-regras span', '.df-card__maes', '.df-bar__lab', '.df-sem__prazo', '.df-sem__obj'];
+  // §360 @780×360 (px desenho = px real, escala 1): os blocos cabem SEM rolagem (semana+composição+regras+filtros
+  // visíveis) e a grade mostra ≥1 fileira de cartão inteira; toque ≥40; corpo ≥12; nome do deus ≥12; nada corta.
+  { const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
     const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
     await page.evaluate(BOOT); await page.waitForTimeout(120);
     const m = await page.evaluate((args) => { const [btnSels, bodySels] = args; const df = document.getElementById('desafios'); const b = df.getBoundingClientRect();
-      const rel = sel => { const el = df.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - b.left, y: r.top - b.top, w: r.width, h: r.height, r: r.right - b.left }; };
-      const minH = sels => { let mn = 1e9, who = null; sels.forEach(s => df.querySelectorAll(s).forEach(el => { const h = el.getBoundingClientRect().height; if (h < mn) { mn = h; who = s; } })); return { mn: Math.round(mn * 10) / 10, who }; };
+      const rel = sel => { const el = df.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - b.left, y: r.top - b.top, w: r.width, h: r.height, r: r.right - b.left, bot: r.bottom - b.top }; };
+      const minH = sels => { let mn = 1e9, who = null; sels.forEach(s => df.querySelectorAll(s).forEach(el => { const r = el.getBoundingClientRect(); const h = Math.min(r.height, r.width); if (h < mn) { mn = h; who = s; } })); return { mn: Math.round(mn * 10) / 10, who }; };
       const minFs = sels => { let mn = 1e9, who = null; sels.forEach(s => df.querySelectorAll(s).forEach(el => { const f = parseFloat(getComputedStyle(el).fontSize); if (f < mn) { mn = f; who = s; } })); return { mn: Math.round(mn * 10) / 10, who }; };
-      const jog = rel('[data-semanal-jogar]');
+      // fileiras inteiras de cartão visíveis na grade (sem rolar)
+      const g = df.querySelector('.df-grade'); const gr = g.getBoundingClientRect(); const rows = {};
+      g.querySelectorAll('.df-card').forEach(c => { const r = c.getBoundingClientRect(); if (r.bottom <= gr.bottom + 0.5 && r.top >= gr.top - 0.5) rows[Math.round(r.top)] = 1; });
       let clips = []; df.querySelectorAll('*').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5 && getComputedStyle(el).overflowX !== 'visible') clips.push(el.className || el.tagName); });
       return { df: { w: b.width, h: b.height }, cab: rel('.df-cab'), sem: rel('.df-sem'), compos: rel('.df-compos'), regras: rel('.df-regras'), filtros: rel('.df-filtros'), grade: rel('.df-grade'),
-        btn: minH(btnSels), body: minFs(bodySels), nome: minFs(['.df-card__n']), jogR: jog && jog.r, clips: clips.slice(0, 6) }; }, [BTN_SELS, BODY_SELS]);
-    const perto = (a, b, t) => Math.abs(a - b) <= (t || 2);
-    ok(perto(m.df.w, 1846) && perto(m.df.h, 852), `#desafios é 1846×852 (veio ${Math.round(m.df.w)}×${Math.round(m.df.h)})`);
-    ok(m.sem && perto(m.sem.y, 98) && perto(m.sem.h, 190), `banner em top 98, h 190 (veio ${m.sem && Math.round(m.sem.y)}/${m.sem && Math.round(m.sem.h)})`);
-    ok(m.compos && perto(m.compos.y, 296), `composição em top 296 (veio ${m.compos && Math.round(m.compos.y)})`);
-    ok(m.regras && perto(m.regras.y, 382), `regras em top 382 (veio ${m.regras && Math.round(m.regras.y)})`);
-    ok(m.filtros && perto(m.filtros.y, 464), `filtros em top 464 (veio ${m.filtros && Math.round(m.filtros.y)})`);
-    ok(m.grade && perto(m.grade.y, 550) && perto(m.grade.x, 32), `grade em top 550/left 32 (veio ${m.grade && Math.round(m.grade.y)}/${m.grade && Math.round(m.grade.x)})`);
-    // §339b-1: o banner termina no mesmo alinhamento direito dos outros blocos (e dentro de 1846); o JOGAR fica dentro
-    ok(m.sem && m.compos && m.grade && perto(m.sem.r, m.compos.r) && perto(m.sem.r, m.grade.r) && m.sem.r <= 1814 + 2, `banner alinhado à direita com composição/grade (sem ${Math.round(m.sem.r)} · compos ${Math.round(m.compos.r)} · grade ${Math.round(m.grade.r)})`);
-    ok(m.jogR != null && m.jogR <= m.sem.r + 1, `o botão JOGAR da semana fica dentro do cartão (jogar ${Math.round(m.jogR)} ≤ banner ${Math.round(m.sem.r)})`);
-    // §339b-2: toque ≥72px, corpo ≥20px, nome ≥26px
-    console.log(`  @1846: menor botão ${m.btn.mn}px (${m.btn.who}) · menor corpo ${m.body.mn}px (${m.body.who}) · nome ${m.nome.mn}px`);
-    ok(m.btn.mn >= 71.5, `todo botão tocável tem ≥72px de altura (menor ${m.btn.mn} em ${m.btn.who})`);
-    ok(m.body.mn >= 19.5, `todo texto de corpo tem ≥20px (menor ${m.body.mn} em ${m.body.who})`);
-    ok(m.nome.mn >= 25.5, `o nome do deus tem ≥26px (veio ${m.nome.mn})`);
-    ok(m.clips.length === 0, `nada corta no desenho de 1846 (${m.clips.length ? m.clips.join(',') : 'ok'})`);
+        btn: minH(btnSels), body: minFs(bodySels), nome: minFs(['.df-card__n']), fileiras: Object.keys(rows).length, clips: clips.slice(0, 6) }; }, [BTN_SELS, BODY_SELS]);
+    const perto = (a, b, t) => Math.abs(a - b) <= (t || 3);
+    ok(perto(m.df.w, 780) && perto(m.df.h, 360), `#desafios é 780×360 (veio ${Math.round(m.df.w)}×${Math.round(m.df.h)})`);
+    // os cinco blocos de cima ficam TODOS dentro da viewport de 360 (nada precisa rolar p/ aparecer)
+    ok(m.sem && m.sem.y >= 44 && m.sem.bot <= 360, `banner da semana visível (top ${m.sem && Math.round(m.sem.y)}, bottom ${m.sem && Math.round(m.sem.bot)} ≤ 360)`);
+    ok(m.compos && m.compos.bot <= 360, `cartão de composição visível (bottom ${m.compos && Math.round(m.compos.bot)} ≤ 360)`);
+    ok(m.regras && m.regras.bot <= 360, `linha de regras visível (bottom ${m.regras && Math.round(m.regras.bot)} ≤ 360)`);
+    ok(m.filtros && m.filtros.bot <= 360, `filtros visíveis (bottom ${m.filtros && Math.round(m.filtros.bot)} ≤ 360)`);
+    ok(m.grade && m.grade.y <= 300, `a grade começa visível, abaixo dos blocos (top ${m.grade && Math.round(m.grade.y)})`);
+    ok(m.fileiras >= 1, `≥1 fileira de cartão inteira aparece sem rolar (veio ${m.fileiras})`);
+    console.log(`  @780×360: menor toque ${m.btn.mn}px (${m.btn.who}) · menor corpo ${m.body.mn}px (${m.body.who}) · nome ${m.nome.mn}px · fileiras ${m.fileiras}`);
+    ok(m.btn.mn >= 39.5, `todo botão tocável tem ≥40×40 (menor ${m.btn.mn} em ${m.btn.who})`);
+    ok(m.body.mn >= 11.5, `todo texto de corpo/rótulo tem ≥12px (menor ${m.body.mn} em ${m.body.who})`);
+    ok(m.nome.mn >= 11.5, `o nome do deus tem ≥12px (veio ${m.nome.mn})`);
+    ok(m.clips.length === 0, `nada corta no desenho de 780×360 (${m.clips.length ? m.clips.join(',') : 'ok'})`);
     await ctx.close(); }
-  // §339b: os botões que só aparecem noutros estados (SIM/NÃO da desistência; "Onde ganhar" offline) também ≥72
-  { const ctx = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
+  // §360: os botões que só aparecem noutros estados (SIM/NÃO da desistência; "Onde ganhar" offline) também ≥40×40
+  { const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
     const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
     await page.evaluate(SETUP(1240, ATIVOS) + "desafioDesistindo='poseidon'; ir('desafios'); render();"); await page.waitForTimeout(80);
-    const h1 = await page.evaluate(() => { const df = document.getElementById('desafios'); let mn = 1e9; ['[data-desiste-ok]', '[data-desiste-no]'].forEach(s => { const el = df.querySelector(s); if (el) mn = Math.min(mn, el.getBoundingClientRect().height); }); return Math.round(mn * 10) / 10; });
-    ok(h1 >= 71.5, `SIM/NÃO da desistência têm ≥72px (veio ${h1})`);
+    const h1 = await page.evaluate(() => { const df = document.getElementById('desafios'); let mn = 1e9; ['[data-desiste-ok]', '[data-desiste-no]'].forEach(s => { const el = df.querySelector(s); if (el) { const r = el.getBoundingClientRect(); mn = Math.min(mn, r.height, r.width); } }); return Math.round(mn * 10) / 10; });
+    ok(h1 >= 39.5, `SIM/NÃO da desistência têm ≥40×40 (veio ${h1})`);
     await page.evaluate("contaAtual=null; ir('desafios'); render();"); await page.waitForTimeout(80);
-    const h2 = await page.evaluate(() => { const el = document.querySelector('#desafios [data-ondeganhar]'); return el ? Math.round(el.getBoundingClientRect().height * 10) / 10 : null; });
-    ok(h2 != null && h2 >= 71.5, `"Onde ganhar Essência?" (offline) tem ≥72px (veio ${h2})`);
+    const h2 = await page.evaluate(() => { const el = document.querySelector('#desafios [data-ondeganhar]'); if (!el) return null; const r = el.getBoundingClientRect(); return Math.round(Math.min(r.height, r.width) * 10) / 10; });
+    ok(h2 != null && h2 >= 39.5, `"Onde ganhar Essência?" (offline) tem ≥40×40 (veio ${h2})`);
     await ctx.close(); }
-  // @780×360: cabe, nada corta, botões ≥30px, corpo ≥8.4px
-  { const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 2 });
+  // §360 @1846×852: a tela fixa escala para cima (fit) e cabe inteira sem cortar, ainda com ≥1 fileira
+  { const ctx = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
     const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
     await page.evaluate(BOOT); await page.waitForTimeout(120);
-    const m = await page.evaluate((args) => { const [btnSels, bodySels] = args; const esc = (typeof ultimaEscalaBatalha !== 'undefined' && ultimaEscalaBatalha) || 1; const df = document.getElementById('desafios'); const b = df.getBoundingClientRect();
+    const m = await page.evaluate(() => { const df = document.getElementById('desafios'); const b = df.getBoundingClientRect();
       const fora = b.left < -0.5 || b.top < -0.5 || b.right > window.innerWidth + 0.5 || b.bottom > window.innerHeight + 0.5;
-      const nome = df.querySelector('.df-card__n');
-      let minBtn = 1e9; btnSels.forEach(s => df.querySelectorAll(s).forEach(el => { minBtn = Math.min(minBtn, el.getBoundingClientRect().height); }));
-      let minBody = 1e9; bodySels.forEach(s => df.querySelectorAll(s).forEach(el => { minBody = Math.min(minBody, parseFloat(getComputedStyle(el).fontSize) * esc); }));
+      const esc = b.width / 780;
+      const g = df.querySelector('.df-grade'); const gr = g.getBoundingClientRect(); const rows = {};
+      g.querySelectorAll('.df-card').forEach(c => { const r = c.getBoundingClientRect(); if (r.bottom <= gr.bottom + 0.5 && r.top >= gr.top - 0.5) rows[Math.round(r.top)] = 1; });
       let clips = []; df.querySelectorAll('*').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5 && getComputedStyle(el).overflowX !== 'visible') clips.push(el.className || el.tagName); });
-      return { esc: Math.round(esc * 1000) / 1000, fora,
-        cardTxtPx: nome ? Math.round(parseFloat(getComputedStyle(nome).fontSize) * esc * 10) / 10 : null,
-        minBtn: Math.round(minBtn * 10) / 10, minBody: Math.round(minBody * 100) / 100, clips: clips.slice(0, 6) }; }, [BTN_SELS, BODY_SELS]);
-    console.log(`  @780×360: escala ${m.esc} · nome do cartão ${m.cardTxtPx}px · menor botão ${m.minBtn}px · menor corpo ${m.minBody}px`);
-    ok(!m.fora, '@780×360: a tela fixa cabe (nada sai da viewport)');
-    ok(m.minBtn >= 30, `@780×360: botões ≥30px de altura (veio ${m.minBtn})`);
-    ok(m.minBody >= 8.4, `@780×360: corpo ≥8,4px (veio ${m.minBody})`);
-    ok(m.clips.length === 0, `@780×360: nada corta (${m.clips.length ? m.clips.join(',') : 'ok'})`);
+      return { esc: Math.round(esc * 1000) / 1000, fora, fileiras: Object.keys(rows).length, clips: clips.slice(0, 6) }; });
+    console.log(`  @1846×852: escala ${m.esc} · fileiras ${m.fileiras}`);
+    ok(m.esc > 1.5, `a tela escala para cima (escala ${m.esc})`);
+    ok(!m.fora, '@1846×852: a tela fixa cabe (nada sai da viewport)');
+    ok(m.fileiras >= 1, `@1846×852: ≥1 fileira de cartão inteira (veio ${m.fileiras})`);
+    ok(m.clips.length === 0, `@1846×852: nada corta (${m.clips.length ? m.clips.join(',') : 'ok'})`);
     await ctx.close(); }
   await browser.close();
   console.log(`\n== DESAFIOS_TELA — ${passes} asserções, ${falhas} falha(s) ==`);

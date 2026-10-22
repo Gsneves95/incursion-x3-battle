@@ -19,36 +19,36 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 | 1 | Campanha — ato de batalha | 42 (40) | 5 | 1 | 8 | **2.5** | `357-campanha-batalha-780x360.png` |
 | 2 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
 | 3 | Batalha — menu | 11 (11) | 9 | 0 | 0 | **3** | `357-batalha-menu-780x360.png` |
-| 4 | Composição (desafios) | 51 (45) | 7 | 0 | 0 | **3.1** | `357-composicao-780x360.png` |
-| 5 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
-| 6 | Desafios (hub) | 90 (86) | 16 | 0 | 0 | **3.3** | `357-desafios-780x360.png` |
-| 7 | Batalha — meu turno | 39 (38) | 15 | 0 | 9 | **3.5** | `357-batalha-meu-turno-780x360.png` |
-| 8 | Batalha — turno do oponente | 41 (40) | 15 | 0 | 9 | **3.5** | `357-batalha-oponente-780x360.png` |
-| 9 | Batalha — inspeção da habilidade | 43 (42) | 15 | 0 | 9 | **3.5** | `357-batalha-inspecao-780x360.png` |
-| 10 | Batalha — habilidade armada | 43 (42) | 12 | 0 | 9 | **3.6** | `357-batalha-armada-780x360.png` |
-| 11 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
-| 12 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
-| 13 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 14 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
-| 15 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
-| 16 | Provações | 51 (51) | 1 | 0 | 0 | **5.1** | `357-provacoes-780x360.png` |
-| 17 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
-| 18 | Batalha — confirmação de sair | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-sair-780x360.png` |
-| 19 | Batalha — confirmação de desistir | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-desistir-780x360.png` |
-| 20 | Em breve (marcador) | 1 (1) | 1 | 0 | 3 | **6.7** | `357-embreve-780x360.png` |
-| 21 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 22 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 23 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 24 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 25 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 26 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 27 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 28 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 29 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 30 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 31 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 32 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 33 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 4 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
+| 5 | Batalha — meu turno | 39 (38) | 15 | 0 | 9 | **3.5** | `357-batalha-meu-turno-780x360.png` |
+| 6 | Batalha — turno do oponente | 41 (40) | 15 | 0 | 9 | **3.5** | `357-batalha-oponente-780x360.png` |
+| 7 | Batalha — inspeção da habilidade | 43 (42) | 15 | 0 | 9 | **3.5** | `357-batalha-inspecao-780x360.png` |
+| 8 | Batalha — habilidade armada | 43 (42) | 12 | 0 | 9 | **3.6** | `357-batalha-armada-780x360.png` |
+| 9 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
+| 10 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
+| 11 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
+| 12 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
+| 13 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
+| 14 | Provações | 51 (51) | 1 | 0 | 0 | **5.1** | `357-provacoes-780x360.png` |
+| 15 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
+| 16 | Batalha — confirmação de sair | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-sair-780x360.png` |
+| 17 | Batalha — confirmação de desistir | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-desistir-780x360.png` |
+| 18 | Em breve (marcador) | 1 (1) | 1 | 0 | 3 | **6.7** | `357-embreve-780x360.png` |
+| 19 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 20 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 21 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 22 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 23 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 24 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 25 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 26 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 27 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 28 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 29 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 30 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 31 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 32 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 33 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
 
 ## Detalhe por tela
 
@@ -140,7 +140,7 @@ Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0
 
 **a) 10 piores textos pequenos** (px real):
 
-- `#bmenubuild` — **5.49px** ⚠<11 — "build 2026-10-22 19:34 UTC"
+- `#bmenubuild` — **5.49px** ⚠<11 — "build 2026-10-22 20:20 UTC"
 - `#bcontinuar` — **8.45px** ⚠<11 — "CONTINUAR"
 - `span` — **8.45px** ⚠<11 — "🔊"
 - `span.cin` — **8.45px** ⚠<11 — "SOM"
@@ -154,7 +154,7 @@ Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0
 **b) 10 piores toques** (menor lado):
 
 - `input.b5-range` — **92.5×2.5** — ""
-- `#bmenubuild` — **148.7×6.8** — "build 2026-10-22 19:34 UTC"
+- `#bmenubuild` — **148.7×6.8** — "build 2026-10-22 20:20 UTC"
 - `#bcontinuar` — **148.7×24.5** — "CONTINUAR"
 - `#bhelp` — **148.7×24.5** — "COMO JOGAR"
 - `#blog` — **148.7×24.5** — "REGISTRO"
@@ -163,90 +163,33 @@ Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0
 - `#bsair` — **148.7×24.5** — "SAIR PARA O INÍCIO"
 - `#bsurr` — **148.7×24.5** — "RENDER-SE"
 
-### Composição (desafios) — nota 3.1
-
-Print: `docs/telas/357-composicao-780x360.png`. Contagens: a=51, b=7, c=0, d=0. (textos visíveis: 52; tocáveis: 7.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Saci"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Loki"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Cuca"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Saci"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Cuca"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Boto"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Loki"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Cuca"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Saci"
-- `span.cmp-foe__n` — **7.6px** ⚠<11 — "Saci"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **68.8×30.4** — "‹ DESAFIOS"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-- `button.cmpb.cmpb--primary` — **55×30.4** — "JOGAR"
-
 ### Guia (folha de componentes, dev) — nota 3.1
 
 Print: `docs/telas/357-guia-780x360.png`. Contagens: a=57, b=8, c=0, d=0. (textos visíveis: 58; tocáveis: 8.)
 
 **a) 10 piores textos pequenos** (px real):
 
+- `span.df-toast__ic` — **5.06px** ⚠<11 — "!"
+- `span.df-toast__msg` — **5.06px** ⚠<11 — "Sem conexão com o servidor."
+- `p.df-vazio` — **5.06px** ⚠<11 — "Nenhum deus neste filtro."
+- `span.df-chip` — **5.49px** ⚠<11 — "Todas"
+- `b` — **5.49px** ⚠<11 — "6"
+- `span.df-chip.is-on` — **5.49px** ⚠<11 — "Conquistadas"
+- `b` — **5.49px** ⚠<11 — "2"
 - `span.dsk__nv` — **5.49px** ⚠<11 — "Nv 3"
 - `span.nltop__ptn` — **5.49px** ⚠<11 — "Pontos de Zeus:"
 - `b` — **5.49px** ⚠<11 — "0"
-- `span.nltop__cop` — **5.49px** ⚠<11 — "cópias repetidas viram pontos"
-- `span.dmaes__rot` — **5.49px** ⚠<11 — "MAESTRIA"
-- `div.dmaes__nv` — **5.49px** ⚠<11 — "Noviço ·"
-- `b` — **5.49px** ⚠<11 — "0/30"
-- `span.nlp__confq` — **5.49px** ⚠<11 — "Subir para Nv 2 por 1 ponto?"
-- `button.nlb.nlb--go` — **5.49px** ⚠<11 — "CONFIRMAR"
-- `button.nlb.nlb--quiet` — **5.49px** ⚠<11 — "CANCELAR"
 
 **b) 10 piores toques** (menor lado):
 
-- `button.df-toast__x` — **12.2×11.4** — "✕"
+- `button.df-toast__x` — **10×7.6** — "✕"
 - `button.nlb.nlb--go` — **63.3×16.9** — "CONFIRMAR"
 - `button.nlb.nlb--quiet` — **63.3×16.9** — "CANCELAR"
+- `span.df-chip` — **26.2×16.9** — "Todas 6"
+- `span.df-chip.is-on` — **43.5×16.9** — "Conquistadas 2"
 - `#bvoltar` — **58.1×30.4** — "‹ VOLTAR"
 - `button.cmpb.cmpb--primary` — **51.6×30.4** — "JOGAR"
 - `button.cmpb.cmpb--quiet` — **86.3×30.4** — "JOGAR DE NOVO"
-- `span.df-chip` — **45.9×30.4** — "Todas 6"
-- `span.df-chip.is-on` — **72.5×30.4** — "Conquistadas 2"
-
-### Desafios (hub) — nota 3.3
-
-Print: `docs/telas/357-desafios-780x360.png`. Contagens: a=90, b=16, c=0, d=0. (textos visíveis: 94; tocáveis: 17.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `span.df-ess__lab` — **8.45px** ⚠<11 — "Essência ✦"
-- `span.df-ess__sem` — **8.45px** ⚠<11 — "⊘ Sem conexão"
-- `span.df-mestres__lab` — **8.45px** ⚠<11 — "★ Mestres"
-- `span.df-sem__rot` — **8.45px** ⚠<11 — "DESAFIO DA SEMANA"
-- `b` — **8.45px** ⚠<11 — "#43"
-- `span.df-sem__obj` — **8.45px** ⚠<11 — "Mantenha Ogum de pé em 15 turnos."
-- `span.df-sem__contra` — **8.45px** ⚠<11 — "Contra:"
-- `span.df-sem__foen` — **8.45px** ⚠<11 — "Zeus"
-- `span.df-sem__foen` — **8.45px** ⚠<11 — "Tanuki"
-- `span.df-sem__foen` — **8.45px** ⚠<11 — "Ammit"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **54.1×30.4** — "‹ INÍCIO"
-- `button.dfb.dfb--jogar` — **62.9×30.4** — "JOGAR"
-- `button.df-regras__q` — **30.4×30.4** — "?"
-- `button.df-chip.is-on` — **51×30.4** — "Todos (9)"
-- `button.df-chip` — **69.6×30.4** — "Disponíveis (9)"
-- `button.df-chip` — **83.4×30.4** — "Em andamento (0)"
-- `button.df-chip` — **58.8×30.4** — "Recarga (0)"
-- `button.df-chip` — **58.4×30.4** — "Mestres (0)"
-- `button.df-ordenar` — **77.5×30.4** — "Ordenar: Padrão ▾"
-- `button.dfb.dfb--ghost` — **98×30.4** — "⌂ Onde ganhar Essência?"
 
 ### Batalha — meu turno — nota 3.5
 
@@ -719,6 +662,18 @@ _Sem achados._
 ### Níveis de habilidade — nota 10
 
 Print: `docs/telas/357-niveis-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 52; tocáveis: 4.)
+
+_Sem achados._
+
+### Desafios (hub) — nota 10
+
+Print: `docs/telas/357-desafios-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 68; tocáveis: 15.)
+
+_Sem achados._
+
+### Composição (desafios) — nota 10
+
+Print: `docs/telas/357-composicao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 34; tocáveis: 5.)
 
 _Sem achados._
 
