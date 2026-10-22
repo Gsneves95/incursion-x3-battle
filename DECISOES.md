@@ -6,6 +6,37 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §357 · PADRÃO DE ACESSIBILIDADE novo + AUDITORIA de todas as telas (só o relatório; NÃO consertar ainda)
+
+Os mínimos antigos do guia (corpo ≥ 20px, toque ≥ 72px) foram medidos **no DESENHO de 1846×852**. Mas o jogo roda
+escalado: num S24 deitado (~780×360 px CSS) a escala é `min(780/1846,360/852) ≈ 0,4225`, então 20px de desenho viram
+~8,4px reais — ilegível para o dono. Havia também **rolagem dentro de cartões/painéis/sobreposições** (ex.: subir
+habilidade na sobreposição da Coleção), que o dono proíbe.
+
+**DECISÃO — padrão novo, medido em px CSS REAIS a 780×360** (substitui o anterior em `docs/guia-visual.md`): corpo ≥ 12px;
+rótulo/legenda/número pequeno ≥ 11px; título de bloco ≥ 15px; área de toque ≥ 40×40px (o visual pode ser menor se o alvo
+for ampliado com padding/pseudo); **sem rolagem** dentro de cartão/painel/janela/sobreposição — rolagem só em LISTAS, e a
+lista branca é explícita (grade de personagens Coleção+montadores, grade de Provações, Loja, lista de Desafios/Composição,
+resumo da CPU); nada cortado com "…" em nome/custo/efeito. O guia traz também os equivalentes no desenho (÷ 0,4225). Por
+que px reais e não desenho: o mínimo tem de valer **no aparelho do dono**, não numa régua que a escala encolhe.
+
+**FERRAMENTA `tools/auditoria_acessibilidade.js`** (Chromium, 780×360, `npm run audit:acessibilidade`): percorre **33
+telas/estados** (home; batalha meu-turno/oponente/armada/inspeção/menu/confirmações; campanha batalha/escolha/história;
+montadores de todos os modos; Coleção sem seleção/com seleção/sobreposição kit/níveis; ficha; níveis; Desafios;
+Composição; Provações; Domínios seleção/hub; Invocação tela/revelação; PvP lobby/fila; carregamento; guia; em breve).
+Mede em px REAIS **descontando o transform** do enquadramento (escala efetiva por elemento = rect/offset), e lista por
+tela: (a) textos < 12px — e, destacado, os < 11px; (b) toques < 40×40px (o topo de cada região clicável, sem contar o
+`cursor:pointer` herdado dos filhos); (c) contêineres que rolam fora da lista branca; (d) cortes (reticências em info
+importante / estouro do viewport). Escreve `docs/acessibilidade-auditoria.md` (tabela-resumo em ordem de conserto, 10
+piores de cada eixo por tela, nota 0–10 transparente) + `docs/357-auditoria.json` + um print `docs/telas/357-*-780x360.png`
+por tela.
+
+**O que a auditoria confirmou:** o problema é sistêmico — quase todo texto cai abaixo de 12px reais a 780×360 (ex.: Desafios
+90 textos < 12, 81 < 11) e muitos alvos ficam < 40px (72px de desenho × 0,42 ≈ 30px). Piores (conserto primeiro): Desafios
+(2,4), Coleção·níveis (2,8; rola dentro da sobreposição — a queixa do dono), Campanha·batalha (3,1; o `.camp__briefrol` do
+§356 rola dentro do painel), Composição (3,1), Guia (3,1), Níveis (3,2). **NÃO consertei nenhuma tela** (escopo do §357):
+só o padrão no guia, a ferramenta e o relatório. A folha `guia` (§352) segue passando no teste.
+
 ## §356 · CAMPANHA — o botão de jogar/continuar do ato não pode mais sumir atrás da trilha
 
 O dono mostrou, no Capítulo 1 ato VI "O Caminho do Trovão", o painel da direita com a citação, "Você jogará com",

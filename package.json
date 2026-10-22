@@ -65,7 +65,8 @@
     "gerar:pergaminhos": "node tools/gerar_pergaminhos.js",
     "test:dominios": "node tools/build.js && node tests/dominios.test.js",
     "test:persistencia": "node tests/persistencia.test.js",
-    "test:campanha_cta": "node tools/build.js && node tests/campanha_cta.test.js"
+    "test:campanha_cta": "node tools/build.js && node tests/campanha_cta.test.js",
+    "audit:acessibilidade": "node tools/build.js && node tools/auditoria_acessibilidade.js"
   },
   "engines": {
     "node": ">=18"

@@ -36,7 +36,40 @@ faltando `.skill__cost i.miss`, moldura do oponente `.dm-card--sel2`, "Desistir"
   bloco (`.df-titulo`, `.cmp-titulo`, `.dmaes__rot`, `.cmp-card__n`, `.ddet__tit`, `.nlp__tipo`).
 - **Rajdhani** (`body`, sans) → todo o resto: corpo, rótulos, números.
 - **Tamanhos em uso** (desenho 1846×852): título de tela 34–42px · título de bloco 22px · número grande 24–28px ·
-  corpo 20–23px · rótulo 18–20px. **Mínimos:** corpo **≥ 20px**; alvo de toque (botões) **≥ 72px** de altura.
+  corpo 20–23px · rótulo 18–20px. Os **mínimos que valem** estão abaixo (§357) — medidos no aparelho, não no desenho.
+
+## Padrão de acessibilidade (§357 — substitui os mínimos antigos)
+
+Os mínimos antigos (corpo ≥ 20px, toque ≥ 72px) eram medidos **no DESENHO de 1846×852**. Mas o jogo roda escalado: num
+**S24 deitado (~780×360 px CSS)** a escala é `min(780/1846, 360/852) ≈ 0,4225`, então 20px de desenho viram **~8,4px
+reais** — ilegível. Por isso o padrão agora é medido em **px CSS REAIS no viewport de referência 780×360** (o
+`tools/auditoria_acessibilidade.js` mede assim, descontando o transform do enquadramento).
+
+**Mínimos (px reais a 780×360):**
+
+| item | mínimo real (780×360) | equivalente no desenho (÷ 0,4225) |
+|------|:--:|:--:|
+| texto de **corpo** | **≥ 12px** | ≥ ~29px |
+| **rótulo**, número pequeno, legenda | **≥ 11px** | ≥ ~26px |
+| **título de bloco** | **≥ 15px** | ≥ ~36px |
+| **área de toque** | **≥ 40×40px** | ≥ ~95×95px |
+
+- A **área de toque** ≥ 40×40 pode ser maior que o VISUAL do botão: amplie o alvo com `padding` ou um pseudo-elemento
+  (`::before` esticado) — o botão tem o tamanho do **conteúdo**, nada de blocos enormes sem motivo.
+- **Nada de texto cortado com "…"** em informação importante: **nome, custo, efeito** aparecem inteiros.
+- **SEM rolagem dentro de cartões, painéis, janelas e sobreposições.** Se faltar espaço, **compacte** o conteúdo — não
+  role. Rolagem é permitida **SÓ em LISTAS**, e só nestas:
+  1. a **grade de personagens** — Coleção e montadores (`.col2__grade`, `.dm-grade`, `.cgrid--pick`);
+  2. a **grade de Provações** (`#provfix .pv2-grade`, `#provfix .pv2-off`);
+  3. a **Loja** (`.loja`/`#loja`, quando existir);
+  4. a **lista de Desafios/Composição** (`.df-grade`, `#compfix .cmp-grade`);
+  5. o **resumo da CPU** (o fecho do turno do oponente).
+
+  Qualquer outra rolagem (miolo de painel de batalha/campanha, corpo da sobreposição da Coleção, kit do montador, etc.)
+  é **violação** — some como achado na auditoria e entra na fila de conserto.
+
+> A medição que vale é a REAL (780×360). Para quem desenha na tela fixa, divida o mínimo real por **0,4225** (ou
+> multiplique por ~2,37) para achar o tamanho no desenho de 1846×852.
 
 ## A tela fixa (1846×852)
 

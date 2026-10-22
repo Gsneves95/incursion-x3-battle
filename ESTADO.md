@@ -2,6 +2,26 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §357 · Padrão de acessibilidade novo + auditoria de todas as telas (só relatório; NÃO consertou telas)
+- Problema: os mínimos antigos (corpo ≥ 20px, toque ≥ 72px) eram do DESENHO 1846×852; a 780×360 (S24 deitado) a escala é
+  ~0,4225, então 20px viram ~8,4px reais — ilegível. E havia rolagem dentro de cartões/painéis/sobreposições (proibida).
+- Padrão NOVO em `docs/guia-visual.md` (seção "Padrão de acessibilidade (§357)"), medido em **px CSS reais a 780×360**:
+  corpo ≥ 12px · rótulo/número pequeno/legenda ≥ 11px · título de bloco ≥ 15px · toque ≥ 40×40px (alvo pode ser ampliado
+  por padding/pseudo) · **sem rolagem** em cartão/painel/janela/sobreposição (só em LISTAS — lista branca explícita: grade
+  de personagens Coleção+montadores, grade de Provações, Loja, lista Desafios/Composição, resumo da CPU) · sem "…" em
+  nome/custo/efeito. Equivalentes no desenho = ÷ 0,4225 (corpo ~29px, rótulo ~26px, título ~36px, toque ~95px).
+- Ferramenta `tools/auditoria_acessibilidade.js` (Chromium 780×360; `npm run audit:acessibilidade`): 33 telas/estados;
+  mede px REAIS descontando o transform do enquadramento (escala efetiva por elemento); por tela conta (a) texto <12
+  (<11 destacado), (b) toque <40×40, (c) rolagem fora da lista branca, (d) corte (reticências importante/estouro). Gera
+  `docs/acessibilidade-auditoria.md` (resumo em ordem de conserto + 10 piores por eixo + nota 0–10 transparente),
+  `docs/357-auditoria.json` e um print `docs/telas/357-<slug>-780x360.png` por tela.
+- Achado: problema sistêmico (quase todo texto <12px reais; muitos toques <40px). Piores (conserto primeiro): Desafios
+  (2,4) · Coleção·níveis (2,8, rola na sobreposição = queixa do dono) · Campanha·batalha (3,1, `.camp__briefrol` do §356
+  rola no painel) · Composição (3,1) · Guia (3,1) · Níveis (3,2). Prints 357-* listados no fim do relatório.
+- NÃO consertou nenhuma tela (escopo). Folha `guia` (§352) segue passando no `guia_folha.test.js`. Suíte + build verdes.
+- Revelação da Invocação: offline (sem WS) as cartas não chegam; o print abre o esqueleto real `#iv-reveal` (moldura) e o
+  relatório anota a limitação. História da campanha é sintética (só há batalha/escolha no dado atual).
+
 ## ★ §356 · CAMPANHA — a CTA do ato (Jogar/Continuar) nunca mais some atrás da trilha
 - Problema do dono (Cap.1 ato VI, batalha): painel da direita mostrava citação/"Você jogará com"/"Enfrentará"/"Recompensas"
   mas SEM botão — jogo travado, sem rolagem. CAUSA: `.camp__brief` tinha altura FIXA `290px` com o rodapé a ~2–4px da
