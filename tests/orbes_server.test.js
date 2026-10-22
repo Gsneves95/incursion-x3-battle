@@ -60,18 +60,15 @@ function umPorExtensao(){
     return { n:imgs.length, todasOk, bgOk, bgUrl };
   });
   ok(r.todasOk, `toda <img.orbe> carregou pelo http (${r.n} imagens, naturalWidth>0)`);
-  // orbeBg: §350 — os cartões de Níveis não desenham mais custo em orbe; o custo em cost__pip (background de orbe)
-  // vive no KIT da Coleção (col2ov__chip → pipsDetalhe). Abre essa visão e carrega a URL via Image().
-  await page.evaluate(()=>{ try{ perfil.deuses.zeus=perfil.deuses.zeus||{copias:1,obtidoEm:0}; ir('colecao',{},{substituir:true}); render(); colAbrirVer('zeus'); var b=document.querySelector('[data-versel="milagre"]'); if(b)b.dispatchEvent(new MouseEvent('click',{bubbles:true})); }catch(e){} });
-  await page.waitForTimeout(300);
+  // orbeBg: a variante de FUNDO do orbe (orbes/orbe_<elem>_min.svg) — usada nos pips de energia/custo da batalha.
+  // §358: em vez de depender de uma tela que a renderize, resolve a URL pela função-fonte (orbeBg) e carrega via http.
   const b=await page.evaluate(async ()=>{
-    const el=[...document.querySelectorAll('*')].find(x=>/orbes\/orbe_/.test(getComputedStyle(x).backgroundImage||''));
-    if(!el) return { achou:false };
-    const m=/url\("?([^")]+)"?\)/.exec(getComputedStyle(el).backgroundImage);
+    const style = orbeBg('Chama');
+    const m=/url\("?([^")]+)"?\)/.exec(style); if(!m) return { achou:false };
     const okLoad=await new Promise(res=>{ const im=new Image(); im.onload=()=>res(im.naturalWidth>0); im.onerror=()=>res(false); im.src=m[1]; });
     return { achou:true, okLoad, url:m[1] };
   });
-  ok(b.achou && b.okLoad, `um elemento com orbeBg (fora da batalha) tem o fundo carregado (${b.url||'não achou'})`);
+  ok(b.achou && b.okLoad, `a URL de fundo do orbe (orbeBg) carrega pelo http (${b.url||'não achou'})`);
   await browser.close();
   server.close();
   console.log(falhas===0?'\n>>> ORBES_SERVER OK':`\n>>> ${falhas} FALHA(S)`);

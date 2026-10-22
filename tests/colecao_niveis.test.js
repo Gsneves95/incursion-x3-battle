@@ -1,6 +1,10 @@
-// §321 — A: a Coleção abre o KIT direto na sobreposição, com a VISÃO DE NÍVEIS embutida (SUBIR troca a visão
-// SEM rota; "‹ Kit" volta; setas mantêm a visão de níveis no vizinho; subir atualiza pontos/marcadores).
-// B: as Provações de PvE agora se chamam RITOS — nenhum texto visível de PvE usa "Provação".
+// §358 — "NADA SE PERDEU": a sobreposição da Coleção (kit + níveis) SAIU; tudo o que ela mostrava agora vive na FICHA
+// (rota 'deus') ou nos NÍVEIS (rota 'niveis'). Este teste (jsdom) prova o CAMINHO novo e a cobertura:
+//   1) tocar num cartão da Coleção abre a FICHA daquele deus;
+//   2) as setas ‹ › andam na lista FILTRADA de onde se veio (e na lista sem filtro quando se vem de fora);
+//   3) a SINERGIA aparece na ficha (aba) — a mesma lista que a sobreposição mostrava;
+//   4) cada item da antiga sobreposição tem um lar: Possuído·cópias, arquétipo, setas, SINERGIA, KIT, SUBIR.
+// (Parte B histórica: nenhum texto visível de PvE usa "Provação" — os RITOS.)
 const fs = require('fs');
 const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
@@ -10,141 +14,71 @@ const ok = (c, m) => { if (!c) { console.log('  ✗ FALHA: ' + m); falhas++; } e
 const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
 const html = fs.readFileSync(distAbs, 'utf8');
 
-// ================================ PARTE 1 — jsdom ================================
-(async function parte1(){
+(function parte1(){
   const vc = new VirtualConsole(); let err = null; vc.on('jsdomError', e => { err = (e.detail && e.detail.message) || e.message; });
   const w = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true, url: 'http://localhost/', virtualConsole: vc }).window;
   const d = w.document, $ = s => d.querySelector(s), $$ = s => [...d.querySelectorAll(s)];
   const txt = el => (el ? el.textContent : '').replace(/\s+/g, ' ').trim();
-  const tick = () => new Promise(r => setTimeout(r, 40));
+  const clk = el => el.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
 
-  console.log('== §321 A — Coleção: sobreposição do kit + visão de níveis embutida (jsdom) ==');
-  const pair = JSON.parse(w.eval(`(function(){
-    const pool=ROSTER.map(e=>e.key).filter(jogavel);
-    const comEsc=pool.filter(k=>(GODS[k].ab||[]).some(a=>a.slot==='basico'&&Array.isArray(a.niveis)&&a.niveis.length));
-    return JSON.stringify(comEsc.slice(0,2));
-  })()`));
-  const k0 = pair[0], k1 = pair[1];
-  w.eval(`perfil.deuses['${k0}']=perfil.deuses['${k0}']||{copias:1,obtidoEm:0}; perfil.deuses['${k1}']=perfil.deuses['${k1}']||{copias:1,obtidoEm:0};
-    contaAtual={pontos:{'${k0}':9,'${k1}':9},niveis:{'${k0}':{basico:1,habilidade:1,milagre:1},'${k1}':{basico:1,habilidade:1,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};
-    colF.busca='';colF.cultura='';colF.classe='';colF.funcao='';colF.status='';colF.raridade=''; lerToken=function(){return 'tok';};
+  console.log('== §358 — nada se perdeu: a sobreposição virou FICHA + NÍVEIS ==');
+  w.eval(`perfil.deuses={}; ROSTER.forEach(e=>perfil.deuses[e.key]={copias:2,obtidoEm:Date.now()});
+    contaAtual={perfil,niveis:{},pontos:{}};
+    colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'nome'};
     ir('colecao',{},{substituir:true}); render();`);
-  ok(!err, 'a Coleção renderiza sem quebrar (' + (err || 'ok') + ')');
+  ok(!err, 'render ok (' + (err || 'ok') + ')');
 
-  // A1 — tocar no cartão ABRE a sobreposição (bite: antes só selecionava).
-  ok(!$('#col2ov'), 'antes do toque: nenhuma sobreposição aberta');
-  w.eval(`document.querySelector('.col2c[data-deus="${k0}"]').click()`);
-  ok(!!$('#col2ov'), 'A1: tocar no cartão ABRE a sobreposição do kit (bite)');
-  ok(!!$('.col2ov__sks') && !!$('#col2ovsubir'), 'abre na visão do KIT, com o botão "SUBIR HABILIDADES"');
-  ok(w.eval(`colVer==='${k0}'`), 'a sobreposição é do deus tocado');
+  // 1) tocar num cartão abre a FICHA daquele deus
+  const lista = w.eval('colecaoFiltrada()');
+  const card = $('#col2grade .col2c[data-deus]');
+  const k0 = card.dataset.deus;
+  clk(card);
+  ok(w.eval("rotaAtual()") === 'deus' && w.eval("(paramsAtuais()||{}).key") === k0, '1) tocar no cartão abre a ficha do deus tocado');
+  ok(!$('#col2ov'), '1) nenhuma sobreposição foi aberta');
 
-  // A3 — SUBIR troca para a visão de níveis SEM mudar de rota; "‹ Kit" volta.
-  const rotaAntes = w.eval("rotaAtual()");
-  ok($('#col2ovsubir').classList.contains('b--primary'), 'o SUBIR fica DOURADO (há nível pagável, 9 pontos)');
-  w.eval("document.querySelector('#col2ovsubir').click()");
-  ok(w.eval("rotaAtual()") === rotaAntes && !!$('#col2ov'), 'A3: SUBIR não muda de rota e a sobreposição continua aberta');
-  ok(!!$('.col2ov__nivscroll') && $$('.col2ov__nivscroll .nlp').length === 4, 'A4: a visão de níveis traz os 4 cartões (lógica do §350: +Defesa)');
-  ok(/Pontos de/.test(txt($('.col2ov__nivscroll .nltop__ptn'))) && $$('.col2ov__nivscroll [data-subir]').length >= 1, 'A4: traz os pontos do deus + botões SUBIR por slot');
-  ok(!!$('#col2ovkit'), 'há o "‹ Kit"');
-  w.eval("document.querySelector('#col2ovkit').click()");
-  ok(!!$('.col2ov__sks') && !$('.col2ov__nivscroll'), 'A3: "‹ Kit" volta à visão do kit (mesma sobreposição)');
+  // 2) as setas ‹ › andam na lista FILTRADA (ordem 'nome'): o próximo é o vizinho na lista
+  {
+    const idx = lista.indexOf(k0);
+    ok(!$('#dsxprev') || $('#dsxprev').disabled, '2) no 1º da lista a seta ‹ fica desabilitada');
+    const nx = $('#dsxnext'); ok(!!nx && !nx.disabled, '2) a seta › existe e está ativa');
+    clk(nx);
+    ok(w.eval("(paramsAtuais()||{}).key") === lista[idx + 1], '2) › vai para o PRÓXIMO da lista filtrada (' + lista[idx + 1] + ')');
+    clk($('#dsxprev'));
+    ok(w.eval("(paramsAtuais()||{}).key") === lista[idx], '2) ‹ volta para o anterior (mesma lista)');
+  }
 
-  // A5 — a setinha, na visão de níveis, mantém a visão de níveis no vizinho.
-  w.eval("document.querySelector('#col2ovsubir').click()");   // volta p/ níveis
-  ok(!!$('.col2ov__nivscroll'), 'de volta à visão de níveis');
-  const seta = w.eval("(document.querySelector('#col2ovnext') && !document.querySelector('#col2ovnext').disabled) ? 'next' : 'prev'");
-  ok(w.eval(`!!document.querySelector('#col2ov${seta}') && !document.querySelector('#col2ov${seta}').disabled`), 'há uma setinha habilitada');
-  w.eval(`document.querySelector('#col2ov${seta}').click()`);
-  ok(!!$('.col2ov__nivscroll') && w.eval('colVer') !== k0, 'A5: a setinha passa ao vizinho JÁ na visão de níveis');
+  // 3) a SINERGIA aparece na ficha (aba) — para um deus COM parceiros, a lista; e troca de volta p/ habilidades
+  {
+    // acha um deus com parceiros
+    const comPar = w.eval("Object.keys(SINERGIA.fichas).find(k=>(SINERGIA.fichas[k].parceiros||[]).length>0)");
+    w.eval(`fichaAba='habilidades';deusSelKey=null;ir('deus',{key:${JSON.stringify(comPar)}},{substituir:true});render();`);
+    ok($$('.dsx-tab[data-ficha-aba]').length === 2 && /SINERGIA/.test(txt($('[data-ficha-aba="sinergia"]'))), '3) a ficha tem a aba SINERGIA');
+    clk($('[data-ficha-aba="sinergia"]'));
+    ok(!!$('.dsx-sin') && ($$('.dsx-sin__par').length > 0 || !!$('.dsx-sin__solo') || !!$('.dsx-sin__faixa')), '3) a aba SINERGIA mostra a lista/faixa de sinergia');
+    clk($('[data-ficha-aba="habilidades"]'));
+    ok(!!$('.dsx-hab__btns') && !$('.dsx-sin'), '3) voltar para HABILIDADES mostra o kit de novo');
+  }
 
-  // A8 — subir dentro da sobreposição atualiza pontos e marcadores (servidor mockado).
-  w.eval("colFecharVer(); colAbrirVer('" + k0 + "'); colVerVista='niveis'; colVerRefrescarCard(document.querySelector('#col2ov'), '" + k0 + "');");
-  w.eval(`contaTransporte={ pedir:function(msg){ var dz=msg.deus, sl=msg.slot;
-    var conta={ pontos:Object.assign({},contaAtual.pontos,{[dz]:8}),
-      niveis:Object.assign({},contaAtual.niveis,{[dz]:Object.assign({},contaAtual.niveis[dz],{[sl]:2})}),
-      perfil:contaAtual.perfil, missoes:contaAtual.missoes };
-    return Promise.resolve({ tipo:'nivelSubiu', deus:dz, slot:sl, nivel:2, pontos:8, conta:conta }); } };`);
-  w.eval("var b=document.querySelector('.col2ov__nivscroll [data-subir=\"basico\"]'); if(b)b.click();");
-  ok(!!$('.col2ov__nivscroll .nlp__conf') && !!$('.col2ov__nivscroll [data-subir-ok]'), 'A8: SUBIR abre a confirmação inline DENTRO da sobreposição');
-  w.eval("document.querySelector('.col2ov__nivscroll [data-subir-ok]').click()");
-  await tick();
-  ok(!!$('.col2ov__nivscroll'), 'após subir, a visão de níveis permanece');
-  ok(/:\s*8\b/.test(txt($('.col2ov__nivscroll .nltop__ptn'))), 'A8: os pontos do deus caíram para 8 (atualizou)');
-  const pins = $$('.col2ov__nivscroll .nlp[data-slot="basico"] .nlpin.on').length;
-  ok(pins >= 2, `A8: o marcador do básico subiu para nível 2 (pins acesos ${pins})`);
+  // 4) cobertura: cada coisa da antiga sobreposição tem um lar
+  {
+    w.eval("fichaAba='habilidades';deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();");
+    ok(/Possuído/.test(txt($('.dsx-art__posse'))) && /cópia/.test(txt($('.dsx-art__posse'))), '4) "Possuído · N cópias" → ficha (arte)');
+    ok(!!$('.dsx-art__arq'), '4) o arquétipo → ficha (arte)');
+    ok(!!$('#dsxprev') && !!$('#dsxnext'), '4) as setas ‹ › → ficha');
+    ok($$('.dsx-hab__btns .dsk').length === 5, '4) o KIT (5 habilidades) → ficha');
+    const sb = $('.dsxb--subir[data-irniveis="zeus"]'); ok(!!sb, '4) "SUBIR HABILIDADES" → ficha');
+    clk(sb);
+    ok(w.eval("rotaAtual()") === 'niveis' && $$('.nlx-dir .nlp').length === 4, '4) SUBIR leva aos NÍVEIS (os 4 cartões: +Defesa)');
+    ok(/Pontos de/.test(txt($('.nltop__ptn'))), '4) os pontos do deus seguem nos níveis');
+  }
 
-  // ---- PARTE B — "Rito" no PvE, nunca "Provação" ----
-  console.log('\n== §321 B — Provações de PvE viram RITOS (jsdom) ==');
-  w.eval("colFecharVer();");
-  w.eval(`prova={key:'${k0}',faixa:'Fácil',minimo:5,condicoes:[]}; provaFim={resultado:'vitoria',categoria:null,motivo:null,lances:6,minimo:5};`);
-  const resHTML = w.eval("provaResultadoOverlay()");
-  ok(/RITO VENCIDO/.test(resHTML) && /Rito ·/.test(resHTML), 'B: o resultado do PvE diz "RITO VENCIDO" e o selo "Rito ·"');
-  ok(!/Provaç/.test(resHTML) && !/PERGAMINHO|Pergaminho/.test(resHTML), 'B (bite): o resultado do PvE NÃO usa "Provação" nem "Pergaminho"');
-  const cond = w.eval("motivoHumano('condicao_desconhecida_xyz')");
-  ok(/Rito/.test(cond) && !/Provaç/.test(cond), 'B: a condição não cumprida fala em "Rito"');
-  w.eval("prova=null;provaFim=null; ir('desafios',{},{substituir:true}); render();");
-  ok(!/Provaç/.test(txt($('#baselayer'))), 'B: o hub de Desafios (PvE) não mostra "Provação"');
-  w.eval("ir('composicao',{},{substituir:true}); render();");
-  ok(!/Provaç/.test(txt($('#baselayer'))), 'B: a composição (PvE) não mostra "Provação" (o "‹" diz Desafios)');
-  // ESCOPO: a tela de DESBLOQUEIO continua "Provações" (o rename é só do PvE).
-  w.eval(`contaAtual={nick:'T',ranque:{pontos:0},pontos:{},niveis:{},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}}; ir('provacoes',{},{substituir:true}); render();`);
-  ok(/provaç/i.test(txt($('#baselayer'))), 'B (escopo): a tela de DESBLOQUEIO segue "Provações"');   // §349: título em CAIXA ALTA ("PROVAÇÕES")
+  // B) PvE não usa "Provação" no texto visível (RITOS) — guarda histórica
+  {
+    w.eval("ir('colecao',{},{substituir:true}); render();");
+    ok(!/Provaç|Provacao/i.test(txt($('#colfix')) || ''), 'B) a Coleção não escreve "Provação" (são RITOS no PvE)');
+  }
 
-  try { w.close(); } catch (e) {}
-  await parte2();
+  if (falhas) { console.log(`\n== ${passes} ok, ${falhas} FALHAS ==`); process.exit(1); }
+  console.log(`\n== §358 NADA SE PERDEU OK (${passes}) ==`);
+  process.exit(0);
 })();
-
-// ================================ PARTE 2 — Chromium (medir a sobreposição na visão de níveis) ============
-function acharChromium(){
-  if (process.env.INCURSION_CHROMIUM) return process.env.INCURSION_CHROMIUM;
-  try { const base = '/opt/pw-browsers'; const dir = fs.readdirSync(base).filter(x => /^chromium-\d+$/.test(x)).sort().pop();
-    if (dir) { const bin = path.join(base, dir, 'chrome-linux', 'chrome'); if (fs.existsSync(bin)) return bin; } } catch (e) {}
-  return undefined;
-}
-async function parte2(){
-  let chromium; try { chromium = require('playwright').chromium; } catch (e) { console.log('  (playwright ausente — pulando a medição Chromium)'); return fechar(); }
-  console.log('\n== §321 A — medição da sobreposição na visão de níveis (Chromium, 4 larguras) ==');
-  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
-  try {
-    const page = await (await browser.newContext()).newPage();
-    await page.goto('file://' + distAbs, { waitUntil: 'load' });
-    // o deus com a MAIOR descrição de habilidade (pior caso de texto) que seja jogável e tenha escada.
-    const k = await page.evaluate(() => {
-      let best = { len: -1, k: null };
-      for (const key in GODS) { if (!(GODS[key].ab || []).some(a => a.slot === 'basico' && Array.isArray(a.niveis) && a.niveis.length)) continue;
-        const L = Math.max(...(GODS[key].ab || []).map(a => (a.desc || '').length)); if (L > best.len) best = { len: L, k: key }; }
-      return best.k;
-    });
-    for (const W of [780, 893, 1075, 1200]) {
-      await page.setViewportSize({ width: W, height: 412 });
-      const r = await page.evaluate(({ k }) => {
-        perfil.deuses[k] = perfil.deuses[k] || { copias: 1, obtidoEm: 0 };
-        contaAtual = { pontos: { [k]: 9 }, niveis: { [k]: { basico: 1, habilidade: 1, milagre: 1 } }, perfil: { deuses: perfil.deuses }, missoes: { ativa: null, progresso: {}, liberados: [] } };
-        ir('colecao', {}, { substituir: true }); render();
-        colAbrirVer(k); colVerVista = 'niveis'; const ov = document.querySelector('#col2ov'); colVerRefrescarCard(ov, k);
-        const R = el => el.getBoundingClientRect();
-        const card = R(document.querySelector('.col2ov__card'));
-        const scroll = document.querySelector('.col2ov__nivscroll');
-        let over = 0; scroll.querySelectorAll('*').forEach(el => { const o = R(el).right - card.right; if (o > over) over = o; });
-        const vw = document.documentElement.clientWidth;
-        let cut = 0; document.querySelectorAll('#col2ov *').forEach(el => { if (R(el).right > vw + 0.5) cut++; });
-        // a altura de TOQUE em px de DESIGN (getComputedStyle) — o #stage tem transform:scale(fit), então o
-        // rect encolhe junto com a tela toda; o piso de toque é a medida lógica, que escala com todo o app.
-        const btns = [...scroll.querySelectorAll('.nlp__pe .nlb, .nlp__confb .nlb, [data-subir]')].map(b => parseFloat(getComputedStyle(b).height) || R(b).height);
-        const minBtn = btns.length ? Math.min(...btns) : 99;
-        const paineis = scroll.querySelectorAll('.nlp').length;
-        return { over: Math.round(over), cut, minBtn: Math.round(minBtn), paineis };
-      }, { k });
-      ok(r.paineis === 4, `@${W}: a visão de níveis mostra os 4 cartões (${r.paineis})`);
-      ok(r.over <= 1, `@${W}: nada da visão de níveis vaza o cartão na horizontal (over ${r.over})`);
-      ok(r.cut === 0, `@${W}: nada da sobreposição corta na viewport (${r.cut})`);
-      ok(r.minBtn >= 44, `@${W}: o toque dos botões de subir é >= 44px (menor ${r.minBtn})`);
-      console.log(`  @${W}: 4 cartões · over ${r.over} · corte ${r.cut} · menor toque ${r.minBtn}px`);
-    }
-  } finally { try { await browser.close(); } catch (e) {} }
-  fechar();
-}
-function fechar(){
-  console.log(`\n${falhas ? '✗ ' + falhas + ' FALHA(S)' : '✓ tudo verde'} · ${passes} asserções`);
-  process.exit(falhas ? 1 : 0);
-}

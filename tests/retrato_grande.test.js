@@ -52,8 +52,7 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
       }
       // telas alcançáveis sem partida viva
       ir('colecao', {}, { substituir: true }); render(); varrer('colecao-grade');
-      colSelecionar('odin'); varrer('colecao-painel');
-      colAbrirVer('odin'); varrer('colecao-sobrep'); colFecharVer();
+      // §358: o painel lateral e a sobreposição da Coleção saíram — o retrato grande agora é só a grade e a FICHA.
       ir('deus', { key: 'odin' }); render(); varrer('rota-deus');
       ir('selecao', {}, { substituir: true }); render(); varrer('selecao');
       ir('dominios', {}, { substituir: true }); render(); varrer('dominios');

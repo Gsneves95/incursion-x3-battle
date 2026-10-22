@@ -6,6 +6,54 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §358 · COLEÇÃO + FICHA + NÍVEIS acessíveis e sem rolagem (1º conserto da auditoria §357)
+
+Primeiro conserto da fila do §357 (as três piores depois dos casos já tratados). As queixas do dono (com prints):
+a Coleção dava destaque demais ao resumo de raridade e pouco à grade; a sobreposição do personagem (kit) não cabia e
+escondia o texto das habilidades; a sobreposição de "subir habilidade" era "uma das piores entregas" (tudo grande, rolava);
+e as letras mediam ~8px reais no 780×360.
+
+**CAUSA de raiz:** as três telas eram desenhadas num canvas GRANDE (ficha/níveis 1846×852; Coleção 1100×508) que o
+`fit()` encolhe para 780×360 — a 0,42/0,71 de escala, as fontes de desenho viravam ~8–12px reais. Consertar fonte a
+fonte no canvas grande seria interminável.
+
+**DECISÃO — as três telas passam a um canvas de 780×360 (= o celular).** Assim o px de DESENHO é o px REAL no viewport
+de referência e cumpre o §357 direto (corpo ≥12, rótulo ≥11, título ≥15, toque ≥40×40); nas telas maiores o `fit()`
+escala para CIMA (a arte é de alta resolução). Mudou só o `fit()` (grupo `fixaPeq` = colecao/deus/niveis a 780×360) e o
+CSS/HTML dessas telas; o estilo (cores, molduras, fontes do guia) ficou. (Alternativa recusada: manter o canvas grande e
+inflar cada fonte — mais frágil e sem fim.)
+
+**COLEÇÃO:** o painel da esquerda (identidade/maestria/sinergia/repouso) e as **sobreposições (kit e níveis) SAÍRAM**. O
+resumo de raridade virou **uma linha** no cabeçalho: "18/100 · SS 1/16 · S 4/31 · A 13/53". A **grade ocupa a tela toda**
+(mais colunas; filtros do §346b mantidos) e **tocar num cartão abre a FICHA** (rota `deus`) — um jeito só de ver um
+personagem. (A grade é LISTA — pode rolar, pela lista branca §357.)
+
+**O que a sobreposição mostrava → onde está agora (nada se perdeu):** "Possuído · N cópias (· N pontos)" → ficha (na
+arte); arquétipo → ficha (na arte); setas ‹ › anterior/próximo → ficha (andam na lista filtrada de onde se veio, ou na
+lista sem filtro); SINERGIA → ficha (aba HABILIDADES|SINERGIA — a mesma lista, faixa global + parceiros por prioridade;
+sem rolar, mostra os que cabem + "+N parceiros — agem no time, em batalha"); o KIT → ficha (5 habilidades + detalhe);
+subir habilidades → botão "SUBIR HABILIDADES" da ficha → rota `niveis`.
+
+**FICHA:** ganhou as setas ‹ ›, "Possuído · N cópias · N pontos" + arquétipo (na arte), o seletor **HABILIDADES | SINERGIA**
+acima das habilidades, e "SUBIR HABILIDADES" leva aos níveis. **Tudo visível sem rolar**, inclusive a descrição completa
+da habilidade selecionada (custo + recarga). O MESMO renderizador (`deusDetalheHTML`, lê `data/deuses`) serve a ficha e a
+seleção (`interface.test`).
+
+**NÍVEIS:** os **4 cartões + a passiva visíveis de uma vez, sem rolar**, com AGORA e PRÓXIMO inteiros (os cartões ficam em
+UMA fileira alta, com AGORA/PRÓXIMO empilhados — texto largo, poucas quebras); a arte da esquerda encolheu e o cabeçalho
+de cada cartão ficou compacto.
+
+**Provas (falham a suíte):** `tests/acessibilidade_telas.test.js` roda a MEDIÇÃO da ferramenta da auditoria (módulo
+compartilhado `tools/auditoria_medida.js`) nos estados pedidos — Coleção sem/ com filtro, ficha possuída, ficha não
+possuída (pior missão), ficha com SINERGIA, e NÍVEIS em 4 estados — e exige **a=0, b=0, c=0, d=0** em todos. jsdom:
+`colecao_tela` (grade cheia, tocar abre a ficha, filtros), `colecao_niveis` (nada se perdeu: cada item da sobreposição
+tem um lar; as setas andam na lista certa; a sinergia aparece), `ficha_tela`/`niveis_tela` (encaixe no canvas 780×360).
+As provas de layout existentes foram ajustadas a este canvas; as sobreposições foram removidas dos testes que as usavam
+(`interface`, `artes_cheias`, `orbes_server`, `colecao_sinergia`, `colecao_encaixe`, `retrato_grande`, `desafios`).
+
+**Auditoria re-rodada:** as três telas que estavam em **4,0 / 4,6 / 3,2** (Coleção/Ficha/Níveis no §357) agora dão **10 /
+10 / 10** (a=b=c=d=0). Capturas `docs/telas/358-{colecao,ficha,ficha-sinergia,ficha-falta,niveis}-{780x360,1846x852}.png`.
+
 ## §357 · PADRÃO DE ACESSIBILIDADE novo + AUDITORIA de todas as telas (só o relatório; NÃO consertar ainda)
 
 Os mínimos antigos do guia (corpo ≥ 20px, toque ≥ 72px) foram medidos **no DESENHO de 1846×852**. Mas o jogo roda

@@ -1510,391 +1510,97 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
 .dprov__feita{font-weight:700;font-size:12px;color:var(--e-Verdejante)}
 .dprov__aberta{font-weight:700;font-size:12px;color:var(--gold-text)}
 
-/* ===================== §282 — COLEÇÃO refeita: PAINEL-LEITOR-DE-KIT + GRADE filtrável =====================
-   Mockup 1560×720 → palco (fator .594). GEOMETRIA já convertida pelo dono: painel de detalhe 392×628 → 233×373;
-   cartão 177×236 → 105×140; grade repeat(6,105) cabe a ~951. Aqui a largura é FLUIDA (780..1200) → a grade usa
-   auto-fill de 105px e REFLUI sozinha (menos colunas no piso 780 — medido, não fixado). Altura fixa 428:
-   topo 44 + corpo 384. As TRÊS MENTIRAS do mockup (Nv/atributos/barra; contador /300; banda "B") não têm CSS —
-   não existem: o painel é leitor-de-kit, o contador é possuídos/100, a raridade só tem SS/S/A. */
-.col2{font-family:'Rajdhani',sans-serif;color:var(--ink);display:flex;flex-direction:column;
+/* ===================== §358 — COLEÇÃO: grade em tela cheia, acessível (px reais no 780×360) =====================
+   Canvas de design 780×360 (= o celular; fit() escala p/ cima nas telas maiores). Mínimos §357 medidos em px reais:
+   corpo ≥12 · rótulo ≥11 · título ≥15 · toque ≥40×40. SEM painel lateral e SEM sobreposição: o cartão abre a FICHA.
+   A GRADE é LISTA — pode rolar (lista branca §357). O resumo de raridade é UMA linha no cabeçalho. */
+.col2{font-family:'Rajdhani',sans-serif;color:var(--ink);display:flex;flex-direction:column;height:100%;gap:7px;padding:8px 12px 10px;
   background:radial-gradient(120% 90% at 30% -10%,rgba(52,40,92,.5),transparent 60%),linear-gradient(180deg,#120e24,#0a0817)}
-.col2__topo{flex:0 0 44px;display:flex;align-items:center;gap:10px;padding:0 14px;
-  background:linear-gradient(180deg,rgba(14,11,26,.92),rgba(10,8,20,.86));border-bottom:1px solid rgba(216,178,90,.22)}
-.col2__voltar{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;
-  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--gold-text)}
+.col2__topo{flex:0 0 auto;display:flex;align-items:center;gap:12px}
+.col2__voltar{flex:0 0 auto;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(16,13,30,.85);border:1px solid #342c54;border-radius:10px;color:var(--ink-dim)}
+.col2__voltar .dsel__seta{width:10px;height:10px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-left:3px}
 .col2__voltar:active{transform:translateY(1px) scale(.96)}
-.col2__tit{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;line-height:1.02}
-.col2__titulo{font-family:'Cinzel',serif;font-weight:900;font-size:17px;letter-spacing:.06em;color:var(--gold-text);margin:0}
-.col2__sub{font-weight:700;font-size:8.5px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase}
-.col2__moedas{flex:0 0 auto;display:flex;align-items:center;gap:9px}
-.col2__moeda{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:9px;
-  background:rgba(30,24,54,.6);border:1px solid #342c54;font-weight:800;font-size:12px}
-.col2__mic{font-style:normal;font-size:12px;line-height:1}
-.col2__mic--ess{color:#7fb0e0} .col2__mic--gem{color:#b06cff} .col2__mic--pos{color:var(--gold-text)}
-.col2__moeda--pos b span{font-weight:700;font-size:10px;color:var(--ink-mute)}
-.col2__corpo{flex:1 1 auto;min-height:0;display:flex;gap:12px;padding:11px 14px}
-
-/* PAINEL-LEITOR (esquerda) 233×373 — identidade que já existe no dado + posse + kit COMPLETO. Sem Nv/barra. */
-.col2__painel{flex:0 0 233px;width:233px;height:373px;align-self:flex-start}
-.col2p{position:relative;display:flex;flex-direction:column;height:100%;padding:10px 12px 9px;overflow:hidden;
-  border:1px solid var(--gold-soft);border-radius:12px;background:linear-gradient(180deg,rgba(26,21,48,.92),rgba(12,10,26,.94));
-  box-shadow:0 0 0 1px rgba(255,217,122,.10),0 6px 20px rgba(0,0,0,.4)}
-.col2p--falta{border-color:#39335a;border-style:dashed;background:rgba(11,9,20,.78)}
-/* §284 — × fecha o painel e volta ao REPOUSO */
-.col2p__fechar{position:absolute;top:8px;right:9px;width:22px;height:22px;z-index:3;cursor:pointer;
-  background:rgba(30,24,54,.6);border:1px solid #342c54;border-radius:7px;color:var(--ink-mute);font-size:14px;line-height:1;display:grid;place-items:center}
-.col2p__fechar:active{transform:translateY(1px)}
-/* PAINEL em REPOUSO (§284): progresso + quebra por raridade + convite — não um vazio. */
-.col2p--repouso{justify-content:flex-start}
-.col2r__prog{display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0 2px}
-.col2r__big{font-family:'Cinzel',serif;font-weight:900;font-size:34px;line-height:1;color:var(--gold-text)}
-.col2r__big span{font-size:18px;color:var(--ink-mute);font-weight:700}
-.col2r__leg{margin-top:5px;font-weight:700;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute)}
-.col2r__rars{display:flex;flex-direction:column;gap:9px;margin-top:16px}
-.col2r__rar{display:flex;align-items:center;gap:8px}
-.col2r__rlabel{flex:0 0 28px;text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:11px;padding:1px 0;border-radius:6px;border:1px solid currentColor}
-.col2r__rnum{flex:0 0 44px;font-weight:800;font-size:12px;color:var(--ink-dim)}
-.col2r__rnum b{color:var(--gold-text)}
-.col2r__rbar{flex:1 1 auto;height:6px;border-radius:3px;background:rgba(10,8,20,.7);overflow:hidden;box-shadow:inset 0 0 0 1px #2c2648}
-.col2r__rbar>i{display:block;height:100%;background:var(--ouro-grad);border-radius:3px}
-.col2r__dica{margin-top:auto;font-weight:600;font-size:11px;line-height:1.4;color:var(--ink-mute);text-align:center;padding-top:14px}
-.col2r__dica i{font-style:normal;color:var(--gold-text)}
-/* MAESTRIA no painel (§284) — posto + barra até o próximo (modelo real §245) */
-.col2m{flex:0 0 auto;margin-top:4px;border:1px solid #2c2648;border-radius:10px;padding:8px 10px;background:rgba(20,16,38,.5)}   /* §294: 10→7, abre folga p/ a seção SINERGIA no painel (medido: pior deus fecha no piso 428) */
-.col2m--mestre{border-color:var(--gold-soft);background:linear-gradient(180deg,rgba(216,178,90,.12),rgba(20,16,38,.5));
-  box-shadow:0 0 0 1px rgba(255,217,122,.16),0 0 12px rgba(255,190,90,.20)}
-/* §284-ajuste: vitórias cumpridas, só falta o Milagre — SEM barra, o requisito é a manchete (não perde p/ barra cheia) */
-.col2m--milagre{border-color:var(--gold-soft);background:linear-gradient(180deg,rgba(216,178,90,.08),rgba(20,16,38,.5))}
-.col2m__req{margin:3px 0 0;font-weight:700;font-size:11.5px;line-height:1.32;color:var(--gold-text)}
-.col2m__req b{color:#fff2cf}
-.col2m--falta{border-style:dashed;border-color:#39335a}
-.col2m__cab{display:flex;align-items:baseline;gap:8px}
-.col2m__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--ink-mute);flex:0 0 auto}
-.col2m__posto{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:var(--gold-text)}
-.col2m--falta .col2m__posto{color:var(--ink-mute)}
-.col2m__prox{margin-left:auto;font-weight:700;font-size:10px;color:var(--ink-dim);white-space:nowrap}
-.col2m__bar{height:6px;margin:4px 0 0;border-radius:4px;background:rgba(10,8,20,.7);overflow:hidden;box-shadow:inset 0 0 0 1px #2c2648}
-.col2m__bar>i{display:block;height:100%;border-radius:4px;background:var(--ouro-grad)}
-.col2m__nota{margin:3px 0 0;font-weight:600;font-size:9.5px;line-height:1.3;color:var(--ink-mute)}
-.col2m__nota b{color:var(--gold-text)}
-.col2p__cab{flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;position:relative;padding-right:24px}
-.col2p__art{width:64px;height:64px;border-radius:9px;overflow:hidden;border:1px solid var(--gold-soft)}
-.col2p__art .slot{width:64px;height:64px}
-.col2p--falta .col2p__art{border-color:#39335a}
-.col2p--falta .col2p__art .slot{filter:grayscale(1) brightness(.62)}
-.col2p__rar{margin-left:auto;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.04em;
-  padding:2px 9px;border-radius:8px;border:1px solid currentColor}
-.col2p__rar--SS{color:#e9c877} .col2p__rar--S{color:#b06cff} .col2p__rar--A{color:#56a8ef}
-.col2p__nome{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.01em;color:var(--ink);
-  margin:8px 0 0;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.col2p--falta .col2p__nome{color:var(--ink-dim)}
-/* §282(c) — ARQUÉTIPO: legenda de tela sob o nome (orienta a leitura das 4 habilidades). Uma linha,
-   caption: itálico dourado-suave. Se o mais longo dos 99 cortar, é reticência (medido; escolha do dono). */
-.col2p__arq{flex:0 0 auto;margin:2px 0 0;font-weight:600;font-style:italic;font-size:11px;letter-spacing:.01em;color:var(--gold-text);opacity:.82;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.col2p--falta .col2p__arq{color:var(--ink-mute);opacity:1}
-.col2p__ident{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 0}
-.col2p__tag{font-weight:700;font-size:9.5px;letter-spacing:.03em;padding:2px 7px;border-radius:7px;
-  border:1px solid #3a3360;color:var(--ink-dim);white-space:nowrap}
-.col2p__tag--cult{border-color:var(--gold-soft);color:var(--gold-text)}
-.col2p__posse{flex:0 0 auto;display:inline-block;margin:6px 0 1px;font-weight:800;font-size:10.5px;letter-spacing:.04em}
-.col2p__posse--tem{color:var(--e-Verdejante)} .col2p__posse--nao{color:var(--ink-mute)}
-/* linhas do kit (§284: só na SOBREPOSIÇÃO agora — o painel não traz kit) */
-.col2k__row{border:1px solid #2c2648;border-radius:9px;padding:6px 8px;background:rgba(20,16,38,.5)}
-.col2k__row--vazio{display:flex;justify-content:space-between;align-items:center;color:var(--ink-mute)}
-.col2k__top{display:flex;align-items:baseline;gap:7px}
-.col2k__rot{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.14em;color:var(--gold-text);flex:0 0 auto}
-/* nome da habilidade PODE quebrar linha: o painel é LEITOR-DE-KIT — esconder o nome com reticências negaria
-   sua razão de existir. Quatro nomes passavam de 1 linha a 233 (§282: "Só Dorme de Sete em Sete Anos" etc.). */
-.col2k__nome{font-weight:700;font-size:12px;color:var(--ink);line-height:1.12}
-.col2k__meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin:4px 0 3px}
-.col2k__cd{font-weight:700;font-size:9.5px;letter-spacing:.02em;color:#8b83b8}
-.col2k__ef{font-weight:500;font-size:10.5px;line-height:1.32;color:var(--ink-dim)}
-/* §319b — "Ver detalhes" é QUIETO (contorno); só vira DOURADO cheio quando há nível a pagar ("Subir níveis").
-   Assim o ouro vira sinal de "tem o que fazer aqui", não decoração constante. */
-.col2p__ver{flex:0 0 auto;margin-top:auto;width:100%;padding:7px 0;cursor:pointer;
-  font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.06em;
-  color:var(--gold-text);background:rgba(20,16,38,.55);border:1px solid var(--gold-soft);border-radius:9px}
-.col2p__ver:active{transform:translateY(1px)}
-.col2p__ver--subir{color:#1a1530;background:var(--ouro-grad);border:none;box-shadow:0 0 10px rgba(255,217,122,.35)}
-/* §319b — linha "Níveis X de Y" no painel (compacta, 1 linha): o jogador descobre que níveis existem e quanto
-   já subiu. A barra cheia vive na tela de níveis (§319); aqui o orçamento vertical é apertado (maestria+sinergia). */
-.col2p__niveis{flex:0 0 auto;margin:0;font-weight:700;font-size:10px;letter-spacing:.02em;color:var(--ink-dim)}
-.col2p__nivlab{font-family:'Cinzel',serif;font-weight:700;font-size:8px;letter-spacing:.12em;color:var(--gold-soft);text-transform:uppercase}
-.col2p__nivnum{color:var(--ink)}
-
-/* §294 — SINERGIA no painel lateral: cabeçalho + até 3 parceiros (retrato 30 + nome/mecânica em 2 linhas — a
-   mecânica curta cabe em 167px sem cortar, medido nas duas larguras), "+N ›" abre a lista completa como MODO da
-   sobreposição, a FAIXA GLOBAL (aura+suporte) numa linha, o solista diz a verdade. Compacto p/ caber no vão medido
-   entre a maestria e o "Ver detalhes" (§294: 3 parceiros + cabeçalho + faixa fecham no piso 428). */
-.col2s{flex:0 0 auto;margin-top:3px}
-.col2s__cab{display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.col2s__cab::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,rgba(216,178,90,.4),transparent)}
-.col2s__rot{font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.09em;color:var(--gold-soft)}
-.col2s__lista{display:flex;flex-direction:column;gap:3px}
-.col2s__par{display:flex;align-items:center;gap:7px;min-width:0;border-left:2px solid #3a3360;padding-left:6px}
-.col2s__par--laço{border-left-color:#e9c877}
-.col2s__par--combo{border-left-color:#b06cff}
-.col2s__par--facção{border-left-color:#56a8ef}
-.col2s__par--preparador{border-left-color:#e08a4a}
-.col2s__par--elemento,.col2s__par--fase{border-left-color:#5ec2a0}
-.col2s__par--anti{border-left-color:#c0566a}
-.col2s__art{flex:0 0 26px;width:26px;height:26px;border-radius:50%;overflow:hidden;display:block}
-.col2s__art svg,.col2s__art img{width:100%;height:100%;object-fit:cover;display:block}
-.col2s__txt{min-width:0;display:flex;flex-direction:column}
-.col2s__nome{font-weight:700;font-size:11px;line-height:1.12;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.col2s__mec{font-weight:500;font-size:9.5px;line-height:1.15;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.col2s__mais{margin-top:2px;width:100%;padding:2px 0;cursor:pointer;font-weight:700;font-size:9.5px;letter-spacing:.03em;
-  color:var(--gold-soft);background:rgba(216,178,90,.08);border:1px solid rgba(216,178,90,.3);border-radius:7px}
-.col2s__mais:active{transform:translateY(1px)}
-.col2s__sup,.col2s__solo{font-size:10.5px;line-height:1.3;color:var(--ink-dim);margin:3px 0 0}
-.col2s__solo{font-style:italic;color:var(--ink-mute)}
-.col2s__faixa{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:9.5px;line-height:1.22;color:#8ec9a6}
-.col2s__faixa i{font-style:normal;opacity:.85}
-
-/* §288 — SOBREPOSIÇÃO refeita (mockup): card LANDSCAPE, retrato à esquerda (sangra até a moldura), conteúdo à
-   direita com nome+epíteto+tags+posse, divisor HABILIDADES, seletor de 4 ícones + caixa de detalhe do slot.
-   Fundo desfocado; tocar no fundo fecha (o card intercepta). Geometria: palco 951×428, a altura é o gargalo →
-   o card preenche a largura (margem fina) preservando o split interno do mockup (retrato ~38% / conteúdo ~62%),
-   em vez de casar a proporção 1.8:1 da referência (que desperdiçaria metade da largura). */
-.col2ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;padding:6px;
-  background:rgba(6,5,14,.6);backdrop-filter:blur(6px) saturate(.9);-webkit-backdrop-filter:blur(6px) saturate(.9)}
-/* §291-ajuste: cartão 897→879 (−18px, −2%) p/ abrir a calha das setas a 36px/lado (seta de 30px + 3px de folga
-   — o patamar do col2__voltar). calc(100% - 48px): 100% = content-box do #col2ov (palco − 24 de padding); −48
-   reserva 24 de cada lado → com o padding, 36/lado. O split interno (retrato 38%/conteúdo 62%) é por flex, não muda. */
-/* §306: a caixa cresceu (padding do overlay 12→6, altura 408→420 / respiro 8→4) — o footprint de Cinzel do
-   MAPA da home tocava a renderização de fonte da Coleção e empurrava o pior caso (babi.milagre a 780) 1 linha
-   para fora da caixa de efeito, que estava a 0 de folga (§292). Crescer a caixa devolve folga a TODOS os deuses
-   (a caixa de efeito subiu de 117 p/ 134 no piso), sem apertar fonte nem texto. Guarda §292 (colecao_encaixe). */
-.col2ov__card{position:relative;display:flex;width:min(879px,calc(100% - 48px));height:min(420px,calc(100% - 4px));
-  overflow:hidden;border:1px solid var(--gold-soft);border-radius:14px;
-  background:linear-gradient(180deg,rgba(28,23,52,.98),rgba(12,10,26,.99));box-shadow:0 0 0 1px rgba(255,217,122,.12),0 18px 50px rgba(0,0,0,.6)}
-.col2ov--falta{border-color:#39335a;border-style:dashed}
-/* retrato à esquerda, sangrando; véu à direita p/ o texto respirar sobre a arte */
-.col2ov__retrato{flex:0 0 38%;position:relative;overflow:hidden;background:#0b0a18}
-.col2ov__retrato .slot,.col2ov__retrato .slot img{width:100%;height:100%}
-.col2ov__retrato .slot img{object-fit:cover;object-position:top center}
-.col2ov__retrato .slot__glyph{position:absolute;inset:0;display:grid;place-items:center}
-/* §289: o retrato GRANDE (web/retratos/<k>.webp, 512×590) cobre o pequeno embutido na MESMA caixa (object-fit
-   cover, mesma object-position) → sem tremida de layout: o pequeno abre a ficha cheia e nítida, o grande pinta
-   por cima ao chegar. Ausente/404 → onerror o remove e o pequeno permanece (§213). */
-.col2ov__retratog{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center}
-.col2ov--falta .col2ov__retratog{filter:grayscale(1) brightness(.6)}
-.col2ov__retrato::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,transparent 60%,rgba(12,10,26,.92) 100%)}
-.col2ov--falta .col2ov__retrato .slot{filter:grayscale(1) brightness(.6)}
-.col2ov__falta{position:absolute;left:10px;bottom:10px;z-index:1;font-family:'Cinzel',serif;font-weight:700;
-  font-size:10px;letter-spacing:.08em;color:#cbb98a;background:rgba(8,6,20,.82);border:1px solid #39335a;border-radius:7px;padding:3px 8px}
-/* conteúdo à direita */
-.col2ov__conteudo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;padding:16px 18px 14px;position:relative}   /* §294-ajuste: padding-top 16→11 compensa o line-height do nome (o bloco abaixo não desce; a caixa de detalhe §292 fica igual) */
-.col2ov__x{position:absolute;top:11px;right:12px;z-index:2;width:28px;height:28px;cursor:pointer;display:grid;place-items:center;
-  background:rgba(30,24,54,.7);border:1px solid #342c54;border-radius:8px;color:var(--ink-dim);font-size:17px;line-height:1}
-.col2ov__x:active{transform:translateY(1px)}
-/* §292: o selo de raridade sai de perto do × e vai p/ o CANTO SUPERIOR ESQUERDO do retrato, SOBRE a arte, como
-   marca do deus. Mantém a linguagem do §282 (SS/S/A + cores). Legibilidade sobre 100 artes (claras e escuras):
-   placa escura semiopaca (lê a cor sobre arte clara) + brilho e sombra na cor da raridade (§281: onde há brilho e
-   contorno o contraste cru é piso pessimista, não veredito — a placa+aura garantem a leitura). */
-.col2ov__rarart{position:absolute;top:11px;left:11px;z-index:2;font-size:14px;padding:3px 12px;
-  background:rgba(10,8,22,.72);box-shadow:0 0 13px -2px currentColor, 0 2px 7px rgba(0,0,0,.55);
-  text-shadow:0 1px 3px rgba(0,0,0,.85);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-.col2ov__nome{font-family:'Cinzel',serif;font-weight:900;font-size:30px;letter-spacing:.03em;color:var(--gold-text);
-  margin:2px 82px 0 0;line-height:1.05;white-space:nowrap;overflow:visible}   /* §294-ajuste: era overflow:hidden e a capitular do Cinzel 900 estourava a caixa por cima (corte ~4px que o scrollHeight não pega). Aqui a caixa é larga (0/100 colidem com o ×, medido) → overflow:visible some o corte sem crescer nada nem empurrar a caixa de detalhe (§292) */
-.col2ov__arq{margin:3px 0 0;font-weight:600;font-style:italic;font-size:14px;color:var(--ink-dim)}
-.col2ov__ident{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 0}
-.col2ov__tag{font-weight:700;font-size:11px;letter-spacing:.02em;padding:3px 11px;border-radius:8px;
-  border:1px solid #4a4368;color:var(--ink-dim);background:rgba(20,16,40,.5)}
-.col2ov__tag--el{border-color:var(--c);color:var(--c)}
-.col2ov__posse{display:inline-block;margin:10px 0 0;font-weight:800;font-size:12px;letter-spacing:.03em}
-.col2ov__posse--tem{color:var(--e-Verdejante)} .col2ov__posse--nao{color:var(--ink-mute)}
-.col2ov__div{display:flex;align-items:center;gap:10px;margin:2px 0 2px}   /* §292-conserto B: 21→4 p/ a caixa de efeito (folga no pior caso) */
-.col2ov__div::before,.col2ov__div::after{content:'';height:1px;flex:1 1 auto;background:linear-gradient(90deg,transparent,rgba(216,178,90,.45),transparent)}
-.col2ov__div span{font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.16em;color:var(--gold-text)}
-.col2ov__sks{flex:0 0 auto;display:flex;gap:9px}
-.col2ov__sk{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;
-  padding:7px 4px;border:1px solid transparent;border-radius:11px;background:transparent}
-.col2ov__sk.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.09);box-shadow:0 0 0 1px rgba(255,217,122,.25),0 0 14px rgba(255,200,90,.15)}
-.col2ov__sk:disabled{opacity:.4;cursor:default}
-.col2ov__skrot{font-family:'Cinzel',serif;font-weight:700;font-size:8.5px;letter-spacing:.1em;color:var(--gold-text)}
-.col2ov__skart{width:46px;height:46px;flex:0 0 auto;border-radius:10px;overflow:hidden;border:1px solid #5a4560}   /* §292-conserto D: 54→46 — o seletor era MAIOR que o que seleciona (chips 114 > caixa 96); encolher corrige a desproporção e abre ~8px */
-.col2ov__sk.is-sel .col2ov__skart{border-color:var(--gold-soft)}
-.col2ov__skart .slot{width:46px;height:46px}
-/* §288-ajuste: DUAS linhas RESERVADAS sempre (min-height fixo), não sob demanda — a fileira é elemento fixo, e
-   pulo ao trocar de deus é pior que espaço vazio. O card tem 394px e a caixa rola, então há folga p/ a linha
-   crescer (≠ §277, que estava no teto físico do cartão e por isso aceitou reticência). */
-.col2ov__sknome{font-weight:700;font-size:11px;color:var(--ink-dim);text-align:center;line-height:1.15;max-width:100%;
-  min-height:calc(2 * 1.15em);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.col2ov__det{flex:1 1 auto;min-height:0;display:flex;gap:12px;margin-top:1px;padding-top:4px;border-top:1px solid rgba(216,178,90,.2)}   /* §292-conserto C: respiro 22→7 p/ a caixa de efeito (folga no pior caso) */
-.col2ov__detart{flex:0 0 auto;width:66px;height:66px;border-radius:11px;overflow:hidden;border:1px solid var(--gold-soft)}
-.col2ov__detart .slot{width:66px;height:66px}
-.col2ov__detbody{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;gap:4px}
-.col2ov__detcab{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-.col2ov__detnome{font-family:'Cinzel',serif;font-weight:700;font-size:17px;color:var(--ink)}
-.col2ov__dettipo{font-family:'Cinzel',serif;font-weight:700;font-size:9px;letter-spacing:.1em;color:var(--gold-soft)}
-/* §288: SEM text-transform — as strings vêm com o CASE que JÁ EXISTE ("SEM CUSTO" do pipsDetalhe em maiúsculas,
-   "sem recarga" da linha de kit em minúsculas), exatamente como a referência escreve. Não criar vocabulário. */
-.col2ov__chip{display:inline-flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-weight:700;font-size:9.5px;letter-spacing:.05em;
-  color:var(--ink-dim);background:rgba(20,16,40,.7);border:1px solid #4a4368;border-radius:7px;padding:3px 9px}
-.col2ov__chip .cost{gap:3px} .col2ov__chip .cost__none{font-size:9.5px;color:var(--ink-dim)}
-.col2ov__chip .cost__gratis{color:#4BE38A}  /* §340: o GRÁTIS fica verde mesmo dentro do chip da ficha */
-.col2ov__chip--cd{color:var(--gold-text)}
-.col2ov__chip--pas{color:#b6a8dc;letter-spacing:.02em}
-.col2ov__deftxt{flex:1 1 auto;min-height:0;overflow-y:auto;font-weight:500;font-size:12.5px;line-height:1.42;color:var(--ink-dim);scrollbar-width:thin}
-.col2ov__deftxt::-webkit-scrollbar{width:6px} .col2ov__deftxt::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
-.col2ov__detvazio{color:var(--ink-mute);font-size:12px;padding:8px 0}
-/* §304b: .col2ov__cite REMOVIDO — a citação saiu da sobreposição da Coleção (a frase virou conteúdo do destaque,
-   só na tela de invocação; a sobreposição não tem orçamento, §292). CSS morto não fica dormente (lição §303). */
-/* §294 — MODOS da sobreposição: KIT (seletor+detalhe §288) | SINERGIA (lista completa, motivo INTEIRO, aqui há
-   largura). O corpo é a área flexível: em KIT a caixa de detalhe rola; em SINERGIA a lista rola. */
-.col2ov__modos{flex:0 0 auto;display:flex;gap:6px;margin:2px 0 2px}
-.col2ov__modo{flex:1;padding:2px 0;cursor:pointer;font-family:'Cinzel',serif;font-weight:700;font-size:10px;
-  letter-spacing:.06em;color:var(--ink-mute);background:rgba(20,16,38,.5);border:1px solid #2c2648;border-radius:8px}
-.col2ov__modo.is-on{color:#1a1530;background:var(--ouro-grad);border-color:transparent}
-/* §321 — botão SUBIR HABILIDADES na barra de modos (empurrado à direita) + a VISÃO DE NÍVEIS embutida */
-.col2ov__subir{flex:0 0 auto;margin-left:auto;font-size:9.5px;letter-spacing:.04em;padding:0 10px;min-height:24px}
-.col2ov__nivbar{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin:2px 0 2px}
-.col2ov__voltakit{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.04em;color:var(--gold-text);background:transparent;border:1px solid var(--gold-soft);border-radius:8px;padding:3px 12px;cursor:pointer}
-.col2ov__voltakit:active{transform:translateY(1px)}
-.col2ov__nivlab{font-family:'Cinzel',serif;font-weight:700;font-size:10px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase}
-.col2ov__corpo--niv{min-height:0}
-.col2ov__nivscroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:8px;padding-right:4px;scrollbar-width:thin}
-.col2ov__nivscroll::-webkit-scrollbar{width:6px} .col2ov__nivscroll::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
-.col2ov__nivpaineis{display:flex;flex-direction:column;gap:8px}
-/* na sobreposição os painéis de nível (§319 .nlp) ficam um tom mais compactos p/ caber na janela */
-.col2ov__nivscroll .nltop__pts{display:grid;grid-template-columns:auto 1fr;column-gap:7px;align-items:center;justify-items:start;margin-bottom:2px}
-.col2ov__nivscroll .nlp{padding:8px 10px;gap:5px}
-.col2ov__nivscroll .nlp__acao .b,.col2ov__nivscroll .nlp__confb .b{height:44px;min-height:44px}
-.col2ov__corpo{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-.col2ov__sinfaixa{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:4px 0 7px;font-size:11px;line-height:1.3;color:#8ec9a6}
-.col2ov__sinfaixa i{font-style:normal;opacity:.85}
-.col2ov__sinlista{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin}
-.col2ov__sinlista::-webkit-scrollbar{width:6px} .col2ov__sinlista::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
-.col2ov__sinpar{display:flex;gap:10px;align-items:flex-start;border-left:3px solid #3a3360;padding-left:9px}
-.col2ov__sinpar--laço{border-left-color:#e9c877}
-.col2ov__sinpar--combo{border-left-color:#b06cff}
-.col2ov__sinpar--facção{border-left-color:#56a8ef}
-.col2ov__sinpar--preparador{border-left-color:#e08a4a}
-.col2ov__sinpar--elemento,.col2ov__sinpar--fase{border-left-color:#5ec2a0}
-.col2ov__sinpar--anti{border-left-color:#c0566a}
-.col2ov__sinart{flex:0 0 40px;width:40px;height:40px;border-radius:50%;overflow:hidden;display:block}
-.col2ov__sinart svg,.col2ov__sinart img{width:100%;height:100%;object-fit:cover;display:block}
-.col2ov__sintxt{min-width:0;flex:1 1 auto}
-.col2ov__sinnome{font-weight:700;font-size:12.5px;color:var(--ink)}
-.col2ov__sinfam{margin-left:7px;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute)}
-.col2ov__sinmot{font-weight:500;font-size:11px;line-height:1.32;color:var(--ink-dim);margin:2px 0 0}
-.col2ov__sinsolo{flex:0 0 auto;font-style:italic;font-size:12px;color:var(--ink-mute)}
-/* §291: setas de navegação — POR FORA do cartão, sobre o fundo desfocado. O `left:0`/`right:0` ancora na borda do
-   palco (padding-box do #col2ov), então a seta ocupa a calha de ~27px entre a borda do palco e o cartão (897 em
-   951). É estreita (o dono decide se encolhe o cartão p/ um alvo maior — ver DECISOES §291); alta p/ compensar. */
-.col2ov__nav{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:140px;z-index:41;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:none;padding:0;color:var(--gold-text)}
-.col2ov__nav--prev{left:3px} .col2ov__nav--next{right:3px}
-.col2ov__nav:disabled{opacity:.22;cursor:default}
-.col2ov__navseta{display:block;width:13px;height:13px;border-top:2px solid currentColor;border-right:2px solid currentColor}
-.col2ov__nav--prev .col2ov__navseta{transform:rotate(-135deg);margin-left:5px}
-.col2ov__nav--next .col2ov__navseta{transform:rotate(45deg);margin-right:5px}
-.col2ov__nav:not(:disabled):active .col2ov__navseta{transform:scale(.85) rotate(-135deg)}
-.col2ov__nav--next:not(:disabled):active .col2ov__navseta{transform:scale(.85) rotate(45deg)}
-
-/* DIREITA: barra de filtros (busca + seletores) · abas de cultura · grade rolável */
-.col2__dir{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px}
-.col2__barra{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:7px}
-.col2__busca{flex:1 1 110px;min-width:108px;display:flex;align-items:center;gap:6px;padding:0 9px;height:30px;
-  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:9px}
-.col2__busca i{font-style:normal;font-size:14px;color:var(--ink-mute)}
-.col2__busca input{flex:1 1 auto;min-width:0;background:none;border:none;outline:none;color:var(--ink);
-  font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12.5px}
+.col2__titulo{flex:0 0 auto;font-family:'Cinzel',serif;font-weight:900;font-size:22px;letter-spacing:.04em;color:var(--gold-text);margin:0}
+.col2res{flex:1 1 auto;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;
+  font-weight:700;font-size:13px;color:var(--ink-dim)}
+.col2res__big{font-weight:800;font-size:15px;color:var(--ink)}
+.col2res__big b{color:var(--gold-text)}
+.col2res__r{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.col2res__rl{font-family:'Cinzel',serif;font-weight:800;font-size:13px;padding:1px 6px;border-radius:5px;border:1px solid currentColor}
+.col2__moedas{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.col2__moeda{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:9px;background:rgba(16,13,30,.8);box-shadow:inset 0 0 0 1px #2c2648;
+  font-weight:800;font-size:13px;color:var(--ink)}
+.col2__mic{font-style:normal;font-size:14px;line-height:1}
+.col2__mic--ess{color:#7fb0e0} .col2__mic--gem{color:#b06cff}
+/* --- filtros (modelo do montador) — toques ≥40 --- */
+.col2__filtros{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.col2forbes{display:inline-flex;gap:5px}
+.col2forbe{width:40px;height:40px;border:0;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(16,13,30,.8);box-shadow:inset 0 0 0 1px #342c54;padding:0}
+.col2forbe.is-on{box-shadow:inset 0 0 0 2px var(--gold-text),0 0 8px rgba(255,217,122,.5)}
+.col2ffuncs{display:inline-flex;flex-wrap:wrap;gap:5px}
+.col2fchip{cursor:pointer;height:40px;min-width:40px;padding:0 13px;border-radius:12px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;
+  color:var(--ink-dim);background:rgba(20,16,38,.7);border:1px solid #2c2648}
+.col2fchip.is-on{background:var(--ouro-grad);border-color:var(--gold);color:#1a1530}
+.col2__busca{flex:1 1 150px;min-width:140px;display:flex;align-items:center;gap:7px;padding:0 11px;height:44px;
+  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:11px}
+.col2__busca i{font-style:normal;font-size:15px;color:var(--ink-mute)}
+.col2__busca input{flex:1 1 auto;min-width:0;height:40px;background:none;border:none;outline:none;color:var(--ink);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px}
 .col2__busca input::placeholder{color:var(--ink-mute)}
-.col2__sel{position:relative;display:flex;flex-direction:column;justify-content:center}
-.col2__selrot{position:absolute;top:-6px;left:8px;font-weight:800;font-size:7px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink-mute);background:var(--bg);padding:0 3px;pointer-events:none}
-.col2__sel select{appearance:none;-webkit-appearance:none;height:30px;padding:0 22px 0 9px;cursor:pointer;
-  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:9px;color:var(--ink);
-  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;
+/* --- 2ª faixa: pílulas de estado/raridade + mais + ordenar + contador --- */
+.col2__pills{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.col2pill__grp{display:inline-flex;gap:0;border-radius:11px;overflow:hidden;box-shadow:inset 0 0 0 1px #342c54}
+.col2pill{cursor:pointer;height:40px;min-width:48px;padding:0 14px;border:0;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;
+  color:var(--ink-dim);background:rgba(16,13,30,.8)}
+.col2pill.is-on{background:var(--ouro-grad);color:#1a1530}
+.col2__sel{position:relative;display:flex;align-items:center}
+.col2__sel select{appearance:none;-webkit-appearance:none;height:40px;padding:0 28px 0 12px;cursor:pointer;
+  background:rgba(16,13,30,.8);border:1px solid #342c54;border-radius:11px;color:var(--ink);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;
   background-image:linear-gradient(45deg,transparent 50%,var(--ink-mute) 50%),linear-gradient(135deg,var(--ink-mute) 50%,transparent 50%);
-  background-position:calc(100% - 13px) 13px,calc(100% - 8px) 13px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
-/* §346b: as abas de cultura (.col2__tabs/.col2__tab) saíram da tela → foram p/ o painel "MAIS FILTROS" (CSS removido). */
+  background-position:calc(100% - 15px) 18px,calc(100% - 10px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.col2__conta{font-weight:700;font-size:13px;color:var(--ink-mute);white-space:nowrap;margin-left:auto;padding:0 2px}
+.col2mf__abre.is-on{background:var(--ouro-grad);border-color:var(--gold);color:#1a1530}
+/* --- GRADE (tela cheia, rola) --- */
 .col2__grade{flex:1 1 auto;min-height:0;overflow-y:auto;padding:2px 4px 4px 2px;
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));grid-auto-rows:150px;gap:9px;justify-content:start;
-  align-content:start;scrollbar-width:thin}
-.col2__grade::-webkit-scrollbar{width:6px} .col2__grade::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));grid-auto-rows:118px;gap:8px;justify-content:start;align-content:start;scrollbar-width:thin}
+.col2__grade::-webkit-scrollbar{width:7px} .col2__grade::-webkit-scrollbar-thumb{background:#3a3360;border-radius:3px}
 .col2__vazio{grid-column:1/-1;padding:24px 8px;text-align:center;font-weight:600;font-size:13px;color:var(--ink-mute)}
-
-/* CARTÃO 105×140 — canto chanfrado (octógono), faixa de raridade em HEXÁGONO, escudo de cultura, retrato, rodapé.
-   Possuído × não-possuído pelo tratamento do §216 (dourado × apagado). Selecionado ganha anel. */
-/* §346 — o cartão com o VISUAL do montador (dm-card): retrato cheio, degradê, nome + orbe + função no rodapé,
-   cantos arredondados, moldura dourada no possuído, realce no selecionado. As marcas da Coleção ficam por cima. */
-.col2c{position:relative;width:100%;height:150px;padding:0;cursor:pointer;overflow:hidden;color:var(--ink);
+/* --- CARTÃO (retrato cheio + rodapé) — abre a FICHA --- */
+.col2c{position:relative;width:100%;height:118px;padding:0;cursor:pointer;overflow:hidden;color:var(--ink);
   font-family:'Rajdhani',sans-serif;background:#0A0E1C;border:0;border-radius:10px;transition:transform .08s}
 .col2c:active{transform:translateY(1px) scale(.98)}
-.col2c::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;border-radius:10px;
-  box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.25)}
+.col2c::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;border-radius:10px;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.25)}
 .col2c--tem::after{box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.45)}
-/* §284: a moldura de Mestre saiu da GRADE (maestria só no painel). */
-.col2c.is-sel{box-shadow:0 0 16px rgba(240,180,60,.35)}
-.col2c.is-sel::after{box-shadow:inset 0 0 0 3px #E9C25A}
 .col2c__art{position:absolute;inset:0;z-index:0}
 .col2c__art .slot{width:100%;height:100%}
 .col2c__art .slot>img{border-radius:0;object-fit:cover}
 .col2c--falta .col2c__art .slot{filter:grayscale(1) brightness(.55)}
 .col2c--falta{background:rgba(11,9,20,.7)}
-.col2c__grad{position:absolute;left:0;right:0;bottom:0;height:70px;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(6,8,16,0),rgba(6,8,16,.92))}
+.col2c__grad{position:absolute;left:0;right:0;bottom:0;height:64px;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(6,8,16,0),rgba(6,8,16,.93))}
 .col2c--falta .col2c__grad{background:linear-gradient(180deg,rgba(6,8,16,.3),rgba(6,8,16,.95))}
-.col2c__rar{position:absolute;top:6px;right:6px;z-index:3;min-width:22px;height:22px;padding:0 5px;display:grid;place-items:center;
-  font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:0;color:#1a1530;border-radius:5px}
+.col2c__rar{position:absolute;top:5px;right:5px;z-index:3;min-width:20px;height:18px;padding:0 5px;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-weight:700;font-size:12px;color:#1a1530;border-radius:5px}
 .col2c__rar--SS{background:#e9c877} .col2c__rar--S{background:#c79bff;color:#241038} .col2c__rar--A{background:#7cc0f5;color:#0e2338}
 .col2c--falta .col2c__rar{opacity:.55}
-/* §303 — a COMPOSIÇÃO do §301 nos selos PEQUENOS foi REMOVIDA (não fica dormente). Motivo medido: a 17–35px
-   (nenhum selo in-page passa de 40px) a arte vira confete e a LETRA DE HOJE LÊ MELHOR — o dono recusou a arte
-   nos selos pequenos por LEITURA, não por gosto. O ornamento do dono vai SÓ para a REVELAÇÃO da invocação
-   (grande, cerimonial — ver invocacao.js), que é linguagem de MOMENTO, não de LISTA. Os selos pequenos (grade,
-   resumo, painel, sobreposição, seleção, rota-deus) seguem exatamente como acima, letra-só, MESMO com os 3
-   arquivos presentes. NÃO reintroduzir aqui uma regra `.selo-arte`: a troca não ficou pela metade, é decisão. */
-.col2c__cult{position:absolute;top:6px;left:6px;z-index:3;min-width:22px;height:22px;padding:0 5px;display:grid;place-items:center;
-  font-weight:800;font-size:11px;line-height:1;color:var(--gold-text);background:rgba(10,13,22,.85);border-radius:5px;
-  box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
+.col2c__cult{position:absolute;top:5px;left:5px;z-index:3;min-width:20px;height:18px;padding:0 5px;display:grid;place-items:center;
+  font-weight:800;font-size:12px;line-height:1;color:var(--gold-text);background:rgba(10,13,22,.85);border-radius:5px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.4)}
 .col2c--falta .col2c__cult{color:var(--ink-mute);box-shadow:inset 0 0 0 1px rgba(120,120,150,.35)}
-/* §319b — selo de NÍVEL PAGÁVEL: ▲ dourado num canto livre (abaixo do monograma). Só quando há nível a pagar. */
-.col2c__subir{position:absolute;top:34px;left:6px;z-index:3;width:22px;height:22px;display:grid;place-items:center;
-  font-size:11px;font-weight:900;line-height:1;color:#1a1530;background:var(--ouro-grad);border-radius:50%;
-  box-shadow:0 0 7px rgba(255,217,122,.6)}
-.col2c__foot{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:3px;
-  padding:0 10px 9px;text-align:left}
-.col2c__n{font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:.01em;color:#F7EEDC;line-height:1.1;
-  word-break:normal;overflow-wrap:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  text-shadow:0 1px 4px rgba(0,0,0,.9)}
+.col2c__subir{position:absolute;top:27px;left:5px;z-index:3;width:18px;height:18px;display:grid;place-items:center;
+  font-size:11px;font-weight:900;line-height:1;color:#1a1530;background:var(--ouro-grad);border-radius:50%;box-shadow:0 0 7px rgba(255,217,122,.6)}
+.col2c__foot{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:2px;padding:0 8px 7px;text-align:left}
+.col2c__n{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.01em;color:#F7EEDC;line-height:1.08;
+  word-break:normal;overflow-wrap:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 4px rgba(0,0,0,.9)}
 .col2c--falta .col2c__n{color:#C9CED8}
-.col2c__meta{display:flex;align-items:center;gap:6px;min-width:0}
+.col2c__meta{display:flex;align-items:center;gap:5px;min-width:0}
 .col2c__meta .orbe{flex:none}
-.col2c__f{font-weight:600;font-size:13px;letter-spacing:.02em;color:#D5DAE4;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* §346 — linha de FILTROS no modelo do montador (orbes de elemento + pílulas de função), na escala da Coleção */
-.col2__filtros{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:7px}
-.col2forbes{display:inline-flex;gap:4px}
-.col2forbe{width:30px;height:30px;border:0;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
-  background:rgba(16,13,30,.8);box-shadow:inset 0 0 0 1px #342c54;padding:0}  /* §346b: 34→30 p/ a linha 1 caber (Todos+orbes+funções+busca) */
-.col2forbe.is-on{box-shadow:inset 0 0 0 2px var(--gold-text),0 0 8px rgba(255,217,122,.5)}
-.col2ffuncs{display:inline-flex;flex-wrap:wrap;gap:4px}
-.col2fchip{cursor:pointer;height:30px;padding:0 10px;border-radius:16px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;
-  color:var(--ink-dim);background:rgba(20,16,38,.7);border:1px solid #2c2648}  /* §346b: pad/fonte menores p/ caber a linha 1 */
-.col2fchip.is-on{background:var(--ouro-grad);border-color:var(--gold);color:#1a1530}
-.col2__conta{font-weight:700;font-size:12px;color:var(--ink-mute);white-space:nowrap;margin-left:auto;padding:0 2px}
-.col2__pills{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.col2pill__grp{display:inline-flex;gap:0;border-radius:9px;overflow:hidden;box-shadow:inset 0 0 0 1px #342c54}
-.col2pill{cursor:pointer;height:28px;padding:0 11px;border:0;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11.5px;
-  color:var(--ink-dim);background:rgba(16,13,30,.8)}
-.col2pill.is-on{background:var(--ouro-grad);color:#1a1530}
-/* §346b — "MAIS FILTROS": PANTEÃO e CLASSE saem da barra e abrem num painel sobreposto ao canvas da Coleção
-   (mesmo painel de chips do §345: .fbox/.fgrp/.chip2). Fica DENTRO do #colfix → escala junto, não vaza da tela. */
-.col2mf__abre.is-on{background:var(--ouro-grad);border-color:var(--gold);color:#1a1530}
-.col2mf{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:18px;
-  background:rgba(4,5,11,.72);backdrop-filter:blur(2px)}
+.col2c__f{font-weight:600;font-size:12px;letter-spacing:.02em;color:#D5DAE4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* --- "MAIS FILTROS" (painel sobreposto; reusa .fbox/.fgrp/.chip2 do §345) --- */
+.col2mf{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(4,5,11,.72);backdrop-filter:blur(2px)}
 .col2mf__box{max-width:560px;max-height:100%}
-.col2mf__b{cursor:pointer;height:28px;padding:0 14px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:800;
-  font-size:11.5px;letter-spacing:.04em}
+.col2mf__b{cursor:pointer;height:40px;padding:0 16px;border-radius:9px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.04em}
 .col2mf__b--quiet{background:rgba(30,24,54,.7);border:1px solid #342c54;color:var(--ink-dim)}
 .col2mf__b--go{background:var(--ouro-grad);border:1px solid var(--gold);color:#1a1530}
-.col2pill__sp{display:inline-flex;gap:7px;align-items:center}
 
 /* ===================== F3.3 — Campanha (trilha de encontros + HUD de lição) ===================== */
 .ccap{margin:4px 2px 12px}
@@ -2139,170 +1845,187 @@ body{font-family:'Rajdhani',sans-serif;color:var(--ink);display:grid;place-items
   font-family:'Cinzel',serif;font-weight:900;font-size:9px;line-height:1;color:#201604;background:#8d84ad;border-radius:8px}
 .ctile__m.m--1{background:#8d84ad} .ctile__m.m--2{background:#7fb0e0} .ctile__m.m--3{background:#b06cff;color:#fff} .ctile__m.m--4{background:var(--gold-text)}
 /* ======================= §350 — FICHA DO DEUS e NÍVEIS (telas fixas 1846×852) ======================= */
+/* ===================== §358 — FICHA e NÍVEIS: canvas 780×360 (= o celular), px reais ≥ §357, SEM rolagem ===================== */
 .stage.deusfix2,.stage.nlfix2{border:0;border-radius:0;box-shadow:none;background:#03050B}
 #baselayer.deusfix2,#baselayer.nlfix2{position:absolute;inset:0;background:#03050B;overflow:hidden}
-#deusfix,#nlfix{position:absolute;left:50%;top:50%;width:1846px;height:852px;transform-origin:center;overflow:hidden;color:#E8ECF4;font-family:'Rajdhani',system-ui,sans-serif;font-weight:600}
+#deusfix,#nlfix{position:absolute;left:50%;top:50%;width:780px;height:360px;transform-origin:center;overflow:hidden;color:#E8ECF4;font-family:'Rajdhani',system-ui,sans-serif;font-weight:600}
 #deusfix{background:radial-gradient(120% 90% at 72% 0%,#141026,#0a0817 60%,#05040e)}
 #nlfix{background:radial-gradient(130% 90% at 50% 0%,#141026 0%,#0a0817 55%,#05040e)}
 #deusfix .cin,#nlfix .cin{font-family:'Cinzel',serif}
-#deusfix .dsxb,#nlfix .dsxb{border:0;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.04em;display:inline-flex;align-items:center;justify-content:center;line-height:1.1}
-#deusfix .dsxb--voltar,#nlfix .dsxb--voltar{height:72px;padding:0 26px;font-size:22px;color:#C9CED8;background:rgba(10,13,22,.72);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
-.rar--SS{} /* placeholder */
+#deusfix .dsxb,#nlfix .dsxb{border:0;border-radius:9px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.03em;display:inline-flex;align-items:center;justify-content:center;line-height:1.1}
 #deusfix .rar--SS,#nlfix .rar--SS{color:#0e0a1a;background:linear-gradient(180deg,#ffe9ad,#E9C25A);border-color:#F0D79A}
 #deusfix .rar--S,#nlfix .rar--S{color:#F0D79A}
 #deusfix .rar--A,#nlfix .rar--A{color:#b48ce0}
 /* ---- FICHA ---- */
-#deusfix .dsx-art{position:absolute;left:0;top:0;width:862px;height:852px;overflow:hidden;background:#0A0E1C}
+#deusfix .dsx-art{position:absolute;left:0;top:0;width:296px;height:360px;overflow:hidden;background:#0A0E1C}
 #deusfix .dsx-art__mono{position:absolute;inset:0;display:grid;place-items:center}
-#deusfix .dsx-art__mono .slot{width:200px;height:200px;opacity:.5}
-#deusfix .dsx-art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
+#deusfix .dsx-art__mono .slot{width:120px;height:120px;opacity:.5}
+#deusfix .dsx-art__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 16%}
 #deusfix.deusfix--falta .dsx-art__img,#deusfix.deusfix--falta .dsx-art__mono{filter:grayscale(1) brightness(.5)}
-#deusfix .dsx-art__veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,4,14,0) 42%,rgba(5,4,14,.25) 66%,#05040e 100%),linear-gradient(90deg,rgba(5,4,14,0) 72%,rgba(5,4,14,.65))}
-#deusfix .dsx-art__nome{position:absolute;left:48px;bottom:40px;font-size:104px;font-weight:900;color:#F0D79A;letter-spacing:.02em;line-height:.92;text-shadow:0 4px 20px rgba(0,0,0,.85)}
-#deusfix .dsx-art__tag{position:absolute;left:48px;bottom:200px;font-weight:800;font-size:26px;letter-spacing:.08em;color:#E0545B;background:rgba(10,8,20,.72);padding:8px 16px;border-radius:8px}
-#deusfix .dsx-cab{position:absolute;left:0;right:0;top:18px;height:80px;display:flex;align-items:center;padding:0 32px;z-index:2}
-#deusfix .dsx-cab__dir{margin-left:auto;display:flex;align-items:center;gap:18px}
-#deusfix .dsx-rar{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:12px;font-family:'Cinzel',serif;font-weight:900;font-size:26px;border:2px solid currentColor}
-#deusfix .dsxb--subir{position:relative;height:72px;padding:0 40px;font-size:24px;letter-spacing:.05em;color:#8893a8;background:rgba(18,22,36,.9);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
-#deusfix .dsxb--subir.is-pag{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6),0 3px 12px rgba(0,0,0,.5)}
-#deusfix .dsx-dot{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#E0545B;box-shadow:0 0 8px rgba(224,84,91,.8)}
-#deusfix .dsx-col{position:absolute;left:898px;right:40px;top:110px;bottom:22px;display:flex;flex-direction:column;gap:16px}
-#deusfix .dsx-tags{display:flex;gap:14px;flex-wrap:wrap}
-#deusfix .dsx-tag{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 20px;border-radius:12px;font-size:22px;color:#E8ECF4;background:rgba(14,18,32,.8);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
-#deusfix .dsx-tag__ic{width:26px;height:26px;color:#C9A44C;display:inline-flex}#deusfix .dsx-tag__ic svg{width:100%;height:100%}
+#deusfix .dsx-art__veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,4,14,0) 40%,rgba(5,4,14,.42) 64%,#05040e 100%),linear-gradient(90deg,rgba(5,4,14,0) 74%,rgba(5,4,14,.5))}
+#deusfix .dsxb--voltar{position:absolute;top:8px;left:8px;z-index:3;height:40px;padding:0 14px;font-size:14px;color:#E6EAF2;background:rgba(8,10,18,.82);box-shadow:inset 0 0 0 1px rgba(154,164,184,.42)}
+#deusfix .dsx-art__tag{position:absolute;left:14px;top:54px;z-index:2;font-weight:800;font-size:14px;letter-spacing:.06em;color:#E0545B;background:rgba(10,8,20,.78);padding:5px 12px;border-radius:8px}
+#deusfix .dsx-art__id{position:absolute;left:16px;right:12px;bottom:12px;z-index:2;display:flex;flex-direction:column;gap:3px}
+#deusfix .dsx-art__nome{font-size:34px;font-weight:900;color:#F0D79A;letter-spacing:.01em;line-height:.96;text-shadow:0 3px 14px rgba(0,0,0,.85);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#deusfix .dsx-art__posse{font-weight:800;font-size:13px;letter-spacing:.02em}
+#deusfix .dsx-art__posse--tem{color:#58D68D} #deusfix .dsx-art__posse--nao{color:#9AA4B8}
+#deusfix .dsx-art__arq{font-size:13px;font-style:italic;color:#C6B894;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#deusfix .dsx-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:104px;z-index:4;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(8,10,18,.55);border:0;color:#F0D79A;border-radius:8px}
+#deusfix .dsx-nav--prev{left:2px} #deusfix .dsx-nav--next{right:2px}
+#deusfix .dsx-nav:disabled{opacity:.25;cursor:default}
+#deusfix .dsx-nav i{width:12px;height:12px;border-top:2px solid currentColor;border-right:2px solid currentColor;display:block}
+#deusfix .dsx-nav--prev i{transform:rotate(-135deg);margin-left:4px} #deusfix .dsx-nav--next i{transform:rotate(45deg);margin-right:4px}
+#deusfix .dsx-col{position:absolute;left:304px;right:46px;top:0;bottom:0;display:flex;flex-direction:column;gap:5px;padding:7px 0 9px}
+#deusfix .dsx-cab{flex:0 0 auto;display:flex;align-items:center;gap:10px;height:40px}
+#deusfix .dsx-rar{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:9px;font-family:'Cinzel',serif;font-weight:900;font-size:15px;border:2px solid currentColor}
+#deusfix .dsxb--subir{margin-left:auto;position:relative;height:40px;padding:0 16px;font-size:14px;letter-spacing:.03em;color:#8893a8;background:rgba(18,22,36,.9);box-shadow:inset 0 0 0 1px rgba(154,164,184,.4)}
+#deusfix .dsxb--subir.is-pag{color:#1a1530;background:var(--ouro-grad);box-shadow:none}
+#deusfix .dsx-dot{width:7px;height:7px;border-radius:50%;background:#E0545B;margin-left:7px}
+#deusfix .dsx-tags{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px}
+#deusfix .dsx-tag{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:9px;font-size:13px;color:#E8ECF4;background:rgba(14,18,32,.8);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#deusfix .dsx-tag__ic{width:15px;height:15px;color:#C9A44C;display:inline-flex}
 #deusfix .dsx-tag .orbe{flex:none}
-#deusfix .dmaes,#deusfix .dcomo{padding:20px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
-#deusfix .dmaes__top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px}
-#deusfix .dmaes__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A}
-#deusfix .dmaes__hint{font-size:19px;color:var(--ink-mute)}
-#deusfix .dmaes__nv{font-size:22px;color:#E8ECF4;margin-bottom:16px}
+#deusfix .dsx-posse{flex:0 0 auto;font-weight:800;font-size:13px;letter-spacing:.02em}
+#deusfix .dsx-posse--tem{color:#58D68D} #deusfix .dsx-posse--nao{color:#9AA4B8}
+#deusfix .dmaes{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:11px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#deusfix .dcomo{flex:0 0 auto;display:flex;align-items:stretch;gap:8px;padding:5px 9px;border-radius:11px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#deusfix .dmaes__top{display:flex;align-items:baseline;gap:8px;flex:0 0 auto}
+#deusfix .dmaes__hint{display:none}
+#deusfix .dmaes__rot,#deusfix .dcomo__rot{font-family:'Cinzel',serif;font-weight:800;font-size:13px;letter-spacing:.09em;color:#F0D79A}
+
+#deusfix .dmaes__nv{font-size:13px;color:#E8ECF4;white-space:nowrap;flex:0 0 auto}
 #deusfix .dmaes__nv b{color:#F0D79A}
-#deusfix .dmaes__rail{position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,.12);margin:0 6px 26px}
+#deusfix .dmaes__rail{position:relative;flex:1 1 auto;height:7px;border-radius:999px;background:rgba(255,255,255,.12);margin:0}
 #deusfix .dmaes__fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#C9962F,#F0D79A)}
 #deusfix .dmaes__mk{position:absolute;top:50%;transform:translateX(-50%)}
-#deusfix .dmaes__mk i{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#2a3350;box-shadow:0 0 0 4px #0a0817}
-#deusfix .dmaes__mk em{position:absolute;top:16px;left:0;transform:translateX(-50%);font-style:normal;font-size:18px;color:var(--ink-mute)}
-#deusfix .dcomo__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A}
-/* §350c: Invocação e Missão LADO A LADO (2 colunas) — bloco mais baixo p/ o detalhe caber */
-#deusfix .dcomo__vias{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-#deusfix .dcomo__via{display:flex;flex-direction:column;gap:5px;text-align:left;border:0;border-radius:10px;padding:12px 16px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);color:#C9CED8;font-family:inherit;cursor:default}
+#deusfix .dmaes__mk i{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#2a3350;box-shadow:0 0 0 3px #0a0817}
+#deusfix .dmaes__mk em{display:none}
+#deusfix .dcomo__rot{align-self:center;flex:0 0 auto;max-width:66px;line-height:1.05}
+#deusfix .dcomo__vias{display:flex;gap:7px;flex:1 1 auto;min-width:0;margin:0}
+#deusfix .dcomo__via{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1px;text-align:left;border:0;border-radius:9px;padding:5px 8px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2);color:#C9CED8;font-family:inherit;cursor:default}
 #deusfix .dcomo__via--miss{cursor:pointer;box-shadow:inset 0 0 0 1px rgba(201,164,76,.5)}
-#deusfix .dcomo__via b{font-size:21px;color:#F0D79A}
-#deusfix .dcomo__via span{font-size:19px}
-#deusfix .dcomo__mtxt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#deusfix .dcomo__atalho{margin-top:auto;color:#F0D79A;font-weight:700}
-#deusfix .dsx-hab__rot{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.14em;color:#F0D79A;display:block;margin-bottom:14px}
-#deusfix .dsx-hab__btns{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-#deusfix .dsk{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0;border:0;background:none;cursor:pointer;font-family:inherit}
-#deusfix .dsk__art{position:relative;width:100%;height:128px;border-radius:14px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.3)}
+#deusfix .dcomo__via b{font-size:13px;color:#F0D79A}
+#deusfix .dcomo__via span{font-size:13px;line-height:1.25}
+#deusfix .dcomo__mtxt{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+#deusfix .dcomo__atalho{display:none}
+/* aba HABILIDADES | SINERGIA */
+#deusfix .dsx-tabs{flex:0 0 auto;display:flex;gap:8px}
+#deusfix .dsx-tab{flex:1;height:40px;border:0;border-radius:9px;cursor:pointer;font-family:'Cinzel',serif;font-weight:800;font-size:13px;letter-spacing:.09em;color:#9AA4B8;background:rgba(20,16,38,.6);box-shadow:inset 0 0 0 1px #2c2648}
+#deusfix .dsx-tab.is-on{color:#1a1530;background:var(--ouro-grad);box-shadow:none}
+#deusfix .dsx-corpo{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:6px}
+#deusfix .dsx-hab{flex:0 0 auto}
+#deusfix .dsx-hab__btns{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+#deusfix .dsk{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;height:52px;padding:4px 2px;cursor:pointer;border:1px solid transparent;border-radius:10px;background:rgba(16,20,34,.6);color:#C9CED8;font-family:inherit}
+#deusfix .dsk.is-sel{border-color:var(--gold-soft);background:rgba(255,217,122,.1);box-shadow:0 0 0 1px rgba(255,217,122,.3)}
+#deusfix .dsk:disabled{opacity:.4;cursor:default}
+#deusfix .dsk__art{width:34px;height:34px;flex:none;border-radius:8px;overflow:hidden;background:#0C1020}
 #deusfix .dsk__art .slot{width:100%;height:100%}#deusfix .dsk__art .slot>img{object-fit:cover}
-#deusfix .dsk.is-sel .dsk__art{box-shadow:inset 0 0 0 3px #F0D79A,0 0 16px rgba(240,180,60,.35)}
-#deusfix .dsk__nv{position:absolute;top:7px;right:7px;font-size:16px;font-weight:800;color:#F7EEDC;background:rgba(10,13,22,.85);padding:2px 8px;border-radius:6px}
-#deusfix .dsk__nome{font-size:21px;color:#C9CED8}
-#deusfix .dsk.is-sel .dsk__nome{color:#F0D79A}
-#deusfix .dsk[disabled]{opacity:.5;cursor:default}
-/* §350c: sem o deus, o COMO CONSEGUIR ocupa mais espaço — encolhe um pouco os 5 botões só nesse estado p/ o detalhe caber */
-#deusfix.deusfix--falta .dsx-hab__btns{gap:12px}
-#deusfix.deusfix--falta .dsk__art{height:94px}
-#deusfix.deusfix--falta .dsk__nome{font-size:19px}
-#deusfix .ddet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:16px;padding:22px 24px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow:hidden}
-#deusfix .ddet--vazio{padding:22px 24px;font-size:22px;color:var(--ink-mute)}
-#deusfix .ddet__head{display:flex;gap:18px;align-items:center}
-#deusfix .ddet__art{width:84px;height:84px;flex:none;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
+#deusfix .dsk__nv{position:absolute;top:3px;right:3px;font-weight:800;font-size:13px;color:#1a1530;background:var(--gold-text);border-radius:5px;padding:0 4px;line-height:1.4}
+#deusfix .dsk__nome{font-family:'Cinzel',serif;font-weight:700;font-size:12px;color:#D5DAE4;text-align:center;line-height:1}
+#deusfix .ddet{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:4px;padding:7px 10px;border-radius:11px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow:hidden}
+#deusfix .ddet--vazio{padding:12px;font-size:13px;color:#9AA4B8}
+#deusfix .ddet__head{display:flex;gap:9px;align-items:center}
+#deusfix .ddet__art{width:40px;height:40px;flex:none;border-radius:9px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
 #deusfix .ddet__art .slot{width:100%;height:100%}#deusfix .ddet__art .slot>img{object-fit:cover}
 #deusfix .ddet__id{flex:1;min-width:0}
-#deusfix .ddet__tit{font-size:30px;font-weight:900;color:#F0D79A;margin:0 0 12px;letter-spacing:.03em}
-#deusfix .ddet__pills{display:flex;gap:10px;flex-wrap:wrap}
-#deusfix .ddet__pill{font-weight:700;font-size:18px;padding:5px 14px;border-radius:16px;color:#C9CED8;background:rgba(16,20,34,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.3)}
+#deusfix .ddet__tit{font-size:16px;font-weight:900;color:#F0D79A;margin:0 0 4px;letter-spacing:.02em}
+#deusfix .ddet__pills{display:flex;gap:6px;flex-wrap:wrap}
+#deusfix .ddet__pill{font-weight:700;font-size:12px;padding:2px 9px;border-radius:12px;color:#C9CED8;background:rgba(16,20,34,.8);box-shadow:inset 0 0 0 1px rgba(154,164,184,.3)}
 #deusfix .ddet__pill--tipo{color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
-#deusfix .ddet__meta{display:flex;align-items:center;gap:22px;font-size:22px;color:#C9CED8}
-#deusfix .ddet__cost{display:flex;align-items:center;gap:10px}
+#deusfix .ddet__meta{display:flex;align-items:center;gap:14px;font-size:13px;color:#C9CED8}
+#deusfix .ddet__cost{display:flex;align-items:center;gap:7px}
 #deusfix .ddet__cost .orbe{flex:none}
-#deusfix .ddet__cost .dmk-ab__orbs{display:inline-flex;gap:5px}
+#deusfix .ddet__cost .dmk-ab__orbs{display:inline-flex;gap:4px}
 #deusfix .ddet__cost .dmk-ab__gratis{font-weight:800;color:#58D68D}
-#deusfix .ddet__clab{color:var(--ink-mute)}
-#deusfix .ddet__cd{display:flex;align-items:center;gap:8px}
-#deusfix .ddet__cd i{font-style:normal;color:#C9A44C}
-#deusfix .ddet__pas{font-size:22px;color:var(--ink-mute)}
-/* §350c: a descrição é a área que ROLA dentro do detalhe (último recurso) — o cabeçalho/pílulas/custo ficam fixos e o
-   box do detalhe e dos seus filhos nunca passa da tela; se o texto for maior que o espaço, ele rola aqui, nunca corta */
-#deusfix .ddet__desc{flex:1;min-height:0;overflow-y:auto;font-size:23px;line-height:1.5;color:#D5DAE4;margin:0}
-/* ---- NÍVEIS: layout fixo ---- */
-#nlfix .nlx-cab{position:absolute;left:32px;right:32px;top:18px;height:80px;display:flex;align-items:center;gap:24px;z-index:2}
-#nlfix .nlx-titulo{font-size:40px;font-weight:900;letter-spacing:.08em;color:#F0D79A;margin:0}
+#deusfix .ddet__clab{color:#9AA4B8}
+#deusfix .ddet__cd{display:flex;align-items:center;gap:6px}
+#deusfix .ddet__pas{font-size:13px;color:#b6a8dc}
+#deusfix .ddet__desc{flex:1 1 auto;min-height:0;font-size:13px;line-height:1.38;color:#D5DAE4;margin:0;overflow:hidden}
+/* ficha — SINERGIA (a lista que a sobreposição mostrava) */
+#deusfix .dsx-sin{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+#deusfix .dsx-sin__faixa{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0;font-size:13px;line-height:1.3;color:#8ec9a6}
+#deusfix .dsx-sin__faixa i{font-style:normal;opacity:.85}
+#deusfix .dsx-sin__lista{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+#deusfix .dsx-sin__par{display:flex;gap:9px;align-items:flex-start;border-left:3px solid #3a3360;padding-left:9px}
+#deusfix .dsx-sin__par--laço{border-left-color:#e9c877}
+#deusfix .dsx-sin__par--combo{border-left-color:#b06cff}
+#deusfix .dsx-sin__par--facção{border-left-color:#56a8ef}
+#deusfix .dsx-sin__par--preparador{border-left-color:#e08a4a}
+#deusfix .dsx-sin__par--elemento,#deusfix .dsx-sin__par--fase{border-left-color:#5ec2a0}
+#deusfix .dsx-sin__par--anti{border-left-color:#c0566a}
+#deusfix .dsx-sin__art{flex:0 0 34px;width:34px;height:34px;border-radius:50%;overflow:hidden;display:block}
+#deusfix .dsx-sin__art svg,#deusfix .dsx-sin__art img{width:100%;height:100%;object-fit:cover;display:block}
+#deusfix .dsx-sin__txt{min-width:0;flex:1 1 auto}
+#deusfix .dsx-sin__cab{display:flex;align-items:baseline;gap:7px}
+#deusfix .dsx-sin__nome{font-weight:700;font-size:13px;color:#E8ECF4}
+#deusfix .dsx-sin__fam{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#9AA4B8}
+#deusfix .dsx-sin__mot{font-weight:500;font-size:13px;line-height:1.28;color:#C9CED8;margin:1px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#deusfix .dsx-sin__solo{font-style:italic;font-size:13px;color:#9AA4B8;margin:0}
+#deusfix .dsx-sin__mais{font-weight:700;font-size:13px;color:#C9A44C;margin:2px 0 0}
+/* ---- NÍVEIS ---- */
+#nlfix .nlx-cab{position:absolute;left:0;right:0;top:0;height:40px;display:flex;align-items:center;gap:12px;padding:0 10px;z-index:2}
+#nlfix .dsxb--voltar{height:40px;padding:0 12px;font-size:14px;color:#E6EAF2;background:rgba(8,10,18,.82);box-shadow:inset 0 0 0 1px rgba(154,164,184,.42)}
+#nlfix .nlx-titulo{font-family:'Cinzel',serif;font-weight:900;font-size:16px;letter-spacing:.08em;color:#F0D79A;margin:0;white-space:nowrap}
 #nlfix .nlx-pts{margin-left:auto}
-#nlfix .nltop__pts{display:flex;align-items:center;gap:12px}
-#nlfix .nltop__pts--falta{opacity:.8}
-#nlfix .nltop__ic{width:40px;height:40px;flex:none}
-#nlfix .nltop__id{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
-#nlfix .nltop__ptn{font-family:'Cinzel',serif;font-weight:800;font-size:22px;letter-spacing:.04em;color:#F0D79A;text-transform:uppercase}
-#nlfix .nltop__ptn b{color:#fff}
-#nlfix .nltop__cop{font-size:18px;color:var(--ink-mute)}
-#nlfix .nlx-esq{position:absolute;left:32px;width:432px;top:120px;bottom:24px;display:flex;flex-direction:column;gap:16px;padding:22px;border-radius:16px;background:rgba(14,18,32,.6);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
-#nlfix .nlmed{position:relative;width:100%;height:300px;border-radius:12px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
-#nlfix .nlmed .slot{position:absolute;inset:0}#nlfix .nlmed .slot>*{width:100%;height:100%}
-#nlfix .nlmed__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 18%}
-#nlfix.nlfix--falta .nlmed__g{filter:grayscale(1) brightness(.5)}
-#nlfix .nlmed__nome{position:absolute;left:16px;bottom:12px;font-size:48px;font-weight:900;color:#F0D79A;line-height:.95;text-shadow:0 2px 12px rgba(0,0,0,.85)}
-#nlfix .nlmed__tag{position:absolute;top:10px;left:10px;font-weight:800;font-size:18px;color:#E0545B;background:rgba(10,8,20,.82);padding:4px 10px;border-radius:6px}
-#nlfix .nlid{display:flex;flex-direction:column;gap:10px}
-#nlfix .nlid__rar{align-self:flex-start;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:10px;font-family:'Cinzel',serif;font-weight:900;font-size:22px;border:2px solid currentColor}
-#nlfix .nlid__sub{display:flex;align-items:center;gap:8px;font-size:21px;color:var(--ink-mute)}
-#nlfix .nlid__ic{width:22px;height:22px;color:#C9A44C;display:inline-flex}#nlfix .nlid__ic svg{width:100%;height:100%}
-#nlfix .nlid__sub .orbe{flex:none}
-#nlfix .nlpas{margin-top:auto;padding:18px;border-radius:12px;background:rgba(16,20,34,.7);box-shadow:inset 0 0 0 1px rgba(154,164,184,.2)}
-#nlfix .nlpas__rot{font-family:'Cinzel',serif;font-weight:800;font-size:20px;letter-spacing:.12em;color:#F0D79A}
-#nlfix .nlpas__row{display:flex;gap:12px;margin-top:12px}
-#nlfix .nlpas__art{width:58px;height:58px;flex:none;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1px rgba(201,164,76,.3)}
+#nlfix .nltop__pts{display:flex;align-items:center;gap:8px}
+#nlfix .nltop__pts--falta{opacity:.85}
+#nlfix .nltop__ic{width:22px;height:22px;flex:none}
+#nlfix .nltop__id{display:flex;flex-direction:column;line-height:1.12}
+#nlfix .nltop__ptn{font-size:13px;color:#E8ECF4} #nlfix .nltop__ptn b{color:#F0D79A}
+#nlfix .nltop__cop{font-size:13px;color:#9AA4B8}
+#nlfix .nlx-esq{position:absolute;left:8px;top:46px;width:168px;bottom:8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+#nlfix .nlmed{position:relative;flex:0 0 76px;border-radius:10px;overflow:hidden;background:#0A0E1C}
+#nlfix .nlmed .slot{width:100%;height:100%}#nlfix .nlmed .slot>img{object-fit:cover}
+#nlfix .nlmed__g{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 16%}
+#nlfix.nlfix--falta .nlmed .slot,#nlfix.nlfix--falta .nlmed__g{filter:grayscale(1) brightness(.5)}
+#nlfix .nlmed__tag{position:absolute;left:6px;top:6px;font-weight:800;font-size:12px;color:#E0545B;background:rgba(10,8,20,.8);padding:3px 7px;border-radius:6px}
+#nlfix .nlmed__nome{position:absolute;left:8px;right:8px;bottom:5px;font-family:'Cinzel',serif;font-weight:900;font-size:20px;color:#F0D79A;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.8);white-space:nowrap;overflow:hidden;text-overflow:clip}
+#nlfix .nlid{flex:0 0 auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#nlfix .nlid__rar{display:inline-grid;place-items:center;min-width:34px;height:28px;padding:0 7px;border-radius:7px;font-family:'Cinzel',serif;font-weight:900;font-size:14px;border:2px solid currentColor}
+#nlfix .nlid__sub{display:flex;align-items:center;gap:5px;font-size:13px;color:#C9CED8}
+#nlfix .nlid__ic{width:15px;height:15px;color:#C9A44C;display:inline-flex}
+#nlfix .nlpas{flex:1 1 auto;min-height:0;padding:8px 10px;border-radius:10px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.25);overflow:hidden;display:flex;flex-direction:column;gap:4px}
+#nlfix .nlpas__rot{font-family:'Cinzel',serif;font-weight:800;font-size:13px;letter-spacing:.09em;color:#F0D79A}
+#nlfix .nlpas__row{display:flex;gap:8px}
+#nlfix .nlpas__art{width:40px;height:40px;flex:none;border-radius:8px;overflow:hidden;background:#0C1020}
 #nlfix .nlpas__art .slot{width:100%;height:100%}
-#nlfix .nlpas__id{flex:1;min-width:0}
-#nlfix .nlpas__nome{font-size:21px;color:#F0D79A}
-#nlfix .nlpas__txt{font-size:19px;line-height:1.35;color:#C9CED8;margin:4px 0 0}
-#nlfix .nlpas__nota{font-size:18px;font-style:italic;color:var(--ink-mute);margin:12px 0 0}
-#nlfix .nlx-dir{position:absolute;left:480px;right:40px;top:120px;bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-content:start;overflow-y:auto}
-/* ---- NÍVEIS: cartão (GLOBAL — usado também pela sobreposição da Coleção §321) ---- */
-.nlp{display:flex;flex-direction:column;padding:18px 20px;border-radius:14px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.3);overflow:hidden}
-.nlp--conf{box-shadow:inset 0 0 0 2px #F0D79A}
-.nlp__cab{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.nlp__art{width:64px;height:64px;flex:none;border-radius:10px;overflow:hidden;background:#0C1020;box-shadow:inset 0 0 0 1.5px rgba(201,164,76,.35)}
-.nlp__art .slot{width:100%;height:100%}.nlp__art .slot>img{object-fit:cover}
-.nlp__id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.nlp__tipo{font-family:'Cinzel',serif;font-weight:900;font-size:24px;color:#F0D79A;letter-spacing:.04em}
-.nlp__nome{font-size:20px;color:#C9CED8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nlp__nvbox{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
-.nlp__nv{font-size:20px;font-weight:700;color:#E8ECF4}
-.nlp__pins{display:inline-flex;gap:6px}
-.nlpin{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.16)}
-.nlpin.on{background:#F0D79A}
-.nlpin.pode{background:rgba(240,215,154,.42)}
-.nlp__cols{display:flex;gap:14px;align-items:stretch}
-.nlp__cell{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:10px;background:rgba(10,13,22,.55)}
-.nlp__cell--px{box-shadow:inset 0 0 0 1px rgba(201,164,76,.25)}
-.nlp__coll{font-size:17px;font-weight:700;letter-spacing:.04em;color:var(--ink-mute)}
-.nlp__coll--px{color:#C9A44C}
-.nlp__txt{font-size:20px;line-height:1.35;color:#D5DAE4;margin:0}
-.nl-hi{color:#F0D79A;font-weight:800}
-.nlp__maxbox{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(201,164,76,.4);text-align:center;padding:12px}
-.nlp__maxic{width:120px;height:44px}.nlp__maxic svg{width:100%;height:100%}
-.nlp__maxt{font-family:'Cinzel',serif;font-weight:800;font-size:19px;letter-spacing:.06em;color:#F0D79A;line-height:1.2}
-.nlp__pe{margin-top:14px}
-.nlb{width:100%;height:72px;border:0;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;display:inline-flex;align-items:center;justify-content:center}
-.nlb--go{color:#2A1A04;background:linear-gradient(180deg,#FBE29A,#E9C25A 45%,#C9962F);box-shadow:inset 0 1px 0 rgba(255,250,225,.6)}
-.nlb--off{color:#8893a8;background:rgba(18,22,36,.9);box-shadow:inset 0 0 0 1px rgba(90,98,120,.5);cursor:default}
-.nlb--quiet{color:#C9CED8;background:rgba(30,24,54,.7);box-shadow:inset 0 0 0 1px #342c54}
-.nlp__conf{display:flex;flex-direction:column;gap:10px}
-.nlp__confq{text-align:center;font-size:19px;color:#C9CED8}
-.nlp__confb{display:flex;gap:12px}
-.nlp__confb .nlb{flex:1;height:64px;font-size:19px}
-.nlp__erro{margin:10px 0 0;font-size:18px;color:#E0545B;text-align:center}
-/* rodapé "X de Y" (só na sobreposição da Coleção) */
-.nlfoot{margin-top:8px}
-.nlfoot__cab{display:flex;align-items:baseline;justify-content:space-between}
-.nlfoot__lab{font-family:'Cinzel',serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(--gold-soft);text-transform:uppercase}
-.nlfoot__num{font-weight:700;font-size:18px;color:var(--ink)}
-.nlfoot__bar{height:7px;margin:6px 0;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
-.nlfoot__bar>i{display:block;height:100%;background:linear-gradient(90deg,#C9962F,#F0D79A)}
-.nlfoot__nota{margin:0;font-size:16px;color:var(--ink-mute)}
+#nlfix .nlpas__id{min-width:0;flex:1}
+#nlfix .nlpas__nome{font-size:13px;color:#E8ECF4}
+#nlfix .nlpas__txt{font-size:13px;line-height:1.3;color:#C9CED8;margin:2px 0 0}
+#nlfix .nlpas__nota{font-size:13px;font-style:italic;color:#9AA4B8;margin:auto 0 0}
+#nlfix .nlx-dir{position:absolute;left:182px;right:8px;top:46px;bottom:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;overflow:hidden}
+#nlfix .nlp{display:flex;flex-direction:column;gap:5px;padding:7px 8px;border-radius:10px;background:rgba(14,18,32,.72);box-shadow:inset 0 0 0 1px rgba(201,164,76,.25);overflow:hidden;min-height:0}
+#nlfix .nlp__cab{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px}
+#nlfix .nlp__art{width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0C1020}
+#nlfix .nlp__art .slot{width:100%;height:100%}
+#nlfix .nlp__id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.05}
+#nlfix .nlp__tipo{font-family:'Cinzel',serif;font-weight:800;font-size:13px;letter-spacing:.06em;color:#F0D79A}
+#nlfix .nlp__nome{font-size:13px;color:#E8ECF4;line-height:1.1}
+#nlfix .nlp__nvbox{flex:1 0 100%;display:flex;align-items:center;justify-content:space-between;gap:6px}
+#nlfix .nlp__nv{font-size:13px;color:#C9CED8;white-space:nowrap}
+#nlfix .nlp__pins{display:flex;gap:3px}
+#nlfix .nlpin{width:7px;height:7px;border-radius:50%;background:#2a3350}
+#nlfix .nlpin.on{background:#F0D79A} #nlfix .nlpin.pode{background:#7a5a16}
+#nlfix .nlp__cols{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+#nlfix .nlp__cell{display:flex;flex-direction:column;gap:2px}
+#nlfix .nlp__coll{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:.05em;color:#9AA4B8}
+#nlfix .nlp__coll--px{color:#F0D79A}
+#nlfix .nlp__txt{font-size:13px;line-height:1.28;color:#D5DAE4;margin:0}
+#nlfix .nl-hi{color:#F0D79A;font-weight:800}
+#nlfix .nlp__pe{flex:none}
+#nlfix .nlb{width:100%;height:40px;border:0;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+#nlfix .nlb--go{background:var(--ouro-grad);color:#1a1530}
+#nlfix .nlb--off{background:rgba(18,22,36,.8);color:#7688a2;box-shadow:inset 0 0 0 1px rgba(154,164,184,.25);cursor:default}
+#nlfix .nlb--quiet{background:rgba(30,24,54,.7);color:#C9CED8;box-shadow:inset 0 0 0 1px #342c54}
+#nlfix .nlb__pt{width:1.05em;height:1.05em;vertical-align:-.16em}
+#nlfix .nlp__maxbox{display:flex;align-items:center;gap:8px}
+#nlfix .nlp__maxic svg{width:40px;height:15px}
+#nlfix .nlp__maxt{font-family:'Cinzel',serif;font-weight:800;font-size:13px;letter-spacing:.05em;color:#F0D79A;line-height:1.05}
+#nlfix .nlp__conf{display:flex;flex-direction:column;gap:5px}
+#nlfix .nlp__confq{font-size:13px;color:#E8ECF4;line-height:1.2}
+#nlfix .nlp__confb{display:flex;gap:6px}
+#nlfix .nlp__confb .nlb{height:40px}
+#nlfix .nlp__erro{font-size:13px;color:#E0545B;margin:3px 0 0}
 
 /* ===================== F3.6 — Desafios de composição (entrada + validação de time ao vivo) ===================== */
 .pdesafios{display:flex;align-items:center;justify-content:space-between;width:100%;cursor:pointer;
@@ -2567,7 +2290,7 @@ body.emguia #build, body.emguia #conta-botao{display:none!important}
 #guiafix .guia-cards .dm-card{width:168px}
 .stage.col2fix{border:0;border-radius:0;box-shadow:none;background:#03050B}  /* §346b: Coleção em tela fixa 1846×852 escalada */
 #baselayer.col2fix{position:absolute;inset:0;background:#03050B;overflow:hidden}
-#colfix{position:absolute;left:50%;top:50%;width:1100px;height:508px;transform-origin:center;overflow:hidden}  /* §346b: canvas de design (metade de 1846×852, mesma proporção 2.166) — escalado uniforme por fit() */
+#colfix{position:absolute;left:50%;top:50%;width:780px;height:360px;transform-origin:center;overflow:hidden}  /* §358: canvas = o celular (780×360); fit() escala p/ cima — px reais ≥ §357 */
 .menu__build{margin-top:3px;padding:4px 7px;font:8px/1.3 monospace;color:rgba(227,221,247,.42);letter-spacing:.03em;cursor:pointer;word-break:break-all;border-top:1px solid #2a2450}
 /* ETIQUETAS — nome SEMPRE escrito; cor da borda = categoria (verde/dourado bom · azul defesa · vermelho ruim · roxo controle) */
 .unit__portrait{position:relative;width:auto;min-width:58px}   /* §328: retrato 58 (menor p/ caber retrato + etiquetas na banda de 102px/linha) */

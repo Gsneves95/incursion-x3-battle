@@ -78,11 +78,11 @@ console.log('\n== a MAESTRIA (cosmética, local) ao cumprir + a moldura no MESTR
   w.eval("for(let i=0;i<10;i++){ cumprirDesafioDeus('zeus'); }");
   ok(w.eval("perfil.maestria.zeus.vitorias") === 30, '10 desafios = 30 de maestria');
   ok(w.eval("nivelMaestria('zeus')") === 4, 'zeus vira MESTRE (nível 4)');
-  // §284: a maestria mora SÓ no PAINEL (saiu da grade).
-  w.eval("ir('colecao'); render(); colSelecionar('zeus');");
-  const mae = $('#col2painel .col2m');
-  ok(!!mae && mae.classList.contains('col2m--mestre') && /Mestre/.test(mae.textContent), 'ao selecionar, o painel mostra ★ Mestre (col2m--mestre)');
-  ok(!$('.col2c--mestre'), 'a moldura de Mestre não fica mais na grade (maestria só no painel, §284)');
+  // §358: a maestria mora na FICHA (dmaes); tocar no cartão da Coleção abre a ficha.
+  w.eval("ir('deus',{key:'zeus'},{substituir:true}); render();");
+  const mae = $('.dmaes');
+  ok(!!mae && /Mestre/.test(mae.textContent), 'a ficha mostra o posto ★ Mestre na maestria');
+  ok(!$('.col2c--mestre'), 'a grade não tem moldura de Mestre (a maestria vive na ficha)');
 }
 
 console.log('\n== a TELA dos Desafios mostra o saldo do SERVIDOR (moedaServidor), "—" desconectado ==');

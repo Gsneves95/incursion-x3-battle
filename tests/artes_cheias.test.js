@@ -64,7 +64,7 @@ let falhas = 0; const ok = (c, m) => { if (!c) { falhas++; console.log('  ✗ FA
     prova = null; campanha = null; provaFim = null; campanhaFim = null; ir('batalha', {}, { substituir: true }); try { pararRelogio(); } catch (e) {} render();
     vis.batalha = varre();
     ir('selecao', { novo: true }, { substituir: true }); render(); vis.montador = varre();
-    ir('colecao', {}, { substituir: true }); render(); colAbrirVer('ares'); vis.colecao = varre();
+    ir('deus', { key: 'ares' }, { substituir: true }); render(); vis.colecao = varre();   // §358: a ficha mostra as artes (sobreposição saiu)
     return vis;
   });
   ok(!telas.batalha, 'batalha: nenhuma arte de habilidade recortada em círculo');

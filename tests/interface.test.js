@@ -75,14 +75,16 @@ console.log('== 1. seleção (§345): montador de DOIS times (CPU/hot-seat) ==')
     ok(linhas.includes(descBas), 'seleção: o básico mostra o deuses.desc (lê data/deuses)');
     ok(/GRÁTIS/.test($('#dmkit').textContent) && !/^Grátis\./.test(descBas),
       'seleção: o básico grátis mostra o indicador GRÁTIS (§340), sem "Grátis." no texto');
-    const ov = new w.DOMParser().parseFromString(w.eval(`colVerSel='basico'; colOverlayHTML("${alvo}")`), 'text/html');
-    const efCol = ((ov.querySelector('.col2ov__deftxt') || {}).textContent || '').trim();
-    ok(efCol === descBas, 'Coleção e Seleção mostram a MESMA linha para o mesmo deus');
+    // §358: a sobreposição da Coleção saiu — a FICHA mostra o kit pelo MESMO renderizador (deusDetalheHTML, lê data/deuses).
+    const fichaDet = k => `deusDetalheHTML(${JSON.stringify(k)}, deusKitEfetivo(${JSON.stringify(k)}, GODS[${JSON.stringify(k)}]), 'basico')`;
+    const ov = new w.DOMParser().parseFromString(w.eval(fichaDet(alvo)), 'text/html');
+    const efCol = ((ov.querySelector('.ddet__desc') || {}).textContent || '').trim();
+    ok(efCol === descBas, 'Ficha e Seleção mostram a MESMA linha para o mesmo deus');
     const orig = descBas;
     w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc='SENTINELA287 zzz'`);
     w.eval(`previewPk("${alvo}");renderPick()`);
-    ok(/SENTINELA287/.test($('#dmkit').textContent) && /SENTINELA287/.test(w.eval(`colOverlayHTML("${alvo}")`)),
-      'uma fonte, duas telas: mudar o deuses.desc muda Seleção E Coleção');
+    ok(/SENTINELA287/.test($('#dmkit').textContent) && /SENTINELA287/.test(w.eval(fichaDet(alvo))),
+      'uma fonte, duas telas: mudar o deuses.desc muda Seleção E Ficha');
     w.eval(`GODS['${alvo}'].ab.find(a=>a.slot==='basico').desc=${JSON.stringify(orig)}`);
     tap($('[data-kit-x]'));
   }

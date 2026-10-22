@@ -180,7 +180,7 @@ async function larguras() {
       const r = await page.evaluate((mk) => {
         eval(mk); const g = document.getElementById('gsplash'); if (g) g.remove();
         const fix = document.getElementById('nlfix'), fb = fix.getBoundingClientRect();
-        const esc = fb.height / 852;
+        const esc = fb.height / 360;   // §358: canvas 780×360
         const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
         const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
         // y de design dos containers E de cada cartão (medir os FILHOS: nada pode cair fora da tela)
@@ -201,7 +201,7 @@ async function larguras() {
         return { pw, ph, botMax, pior, overlap, over, clips: [...new Set(clips)].slice(0, 6) };
       }, mk);
       ok2(Math.min(r.pw, r.ph) >= 0.98, `§350 níveis/${nome} @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
-      ok2(r.botMax <= 832, `§350 níveis/${nome} @${W}×${H}: cabeçalho/esquerda/cartões terminam em y≤830 (pior ${r.botMax} em ${r.pior})`);
+      ok2(r.botMax <= 360, `§358 níveis/${nome} @${W}×${H}: cabeçalho/esquerda/cartões terminam dentro do canvas 360 (pior ${r.botMax} em ${r.pior})`);
       ok2(!r.overlap, `§350 níveis/${nome} @${W}×${H}: esquerda e direita não se sobrepõem`);
       ok2(r.over <= 2, `§350 níveis/${nome} @${W}×${H}: a coluna direita não corta na horizontal (over ${r.over})`);
       ok2(r.clips.length === 0, `§350 níveis/${nome} @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);

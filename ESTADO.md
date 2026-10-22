@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §358 · Coleção + Ficha + Níveis acessíveis e sem rolagem (1º conserto da auditoria §357)
+- As três telas passaram a um canvas de **780×360 (= o celular)**: o px de desenho é o px REAL no viewport de referência
+  e cumpre o §357 direto (corpo ≥12, rótulo ≥11, título ≥15, toque ≥40×40); o `fit()` escala p/ cima nas telas maiores.
+  Mudou o `fit()` (grupo `fixaPeq` = colecao/deus/niveis, `#colfix`/`#deusfix`/`#nlfix` 780×360) + o CSS/HTML dessas telas.
+- COLEÇÃO: painel da esquerda e **sobreposições (kit+níveis) REMOVIDOS**. Resumo de raridade = 1 linha no cabeçalho
+  ("N/100 · SS n/t · S n/t · A n/t"); **grade em tela cheia** (filtros §346b mantidos); **tocar no cartão abre a FICHA**
+  (rota `deus`). A grade é LISTA (pode rolar).
+- NADA SE PERDEU (sobreposição → ficha/níveis): posse "Possuído · N cópias · N pontos" → ficha(arte); arquétipo →
+  ficha(arte); setas ‹ › (lista filtrada de onde veio / sem filtro) → ficha; SINERGIA → ficha(aba HABILIDADES|SINERGIA,
+  faixa + parceiros por prioridade, sem rolar: os que cabem + "+N parceiros"); KIT (5 hab + detalhe) → ficha; SUBIR → níveis.
+- FICHA: setas ‹ ›, posse+arquétipo na arte, aba HABILIDADES|SINERGIA, detalhe completo (custo+recarga) — tudo sem rolar.
+  `deusDetalheHTML` (lê data/deuses) serve ficha E seleção (fonte única).
+- NÍVEIS: 4 cartões + passiva visíveis de uma vez, sem rolar; AGORA/PRÓXIMO inteiros (cartões numa fileira alta,
+  AGORA/PRÓXIMO empilhados); arte da esquerda menor; cabeçalho de cada cartão compacto.
+- Provas: `tests/acessibilidade_telas.test.js` (mede com `tools/auditoria_medida.js` — módulo compartilhado com a
+  ferramenta §357 — e exige a=0,b=0,c=0,d=0 em: Coleção sem/com filtro, ficha possuída, ficha não-possuída pior-missão,
+  ficha SINERGIA, níveis 4 estados). jsdom: `colecao_tela`, `colecao_niveis` (nada se perdeu + setas + sinergia),
+  `ficha_tela`/`niveis_tela` (encaixe no canvas 780×360). Testes que usavam a sobreposição foram ajustados
+  (interface/artes_cheias/orbes_server/colecao_sinergia/colecao_encaixe/retrato_grande/desafios). Suíte + build verdes.
+- Auditoria re-rodada: Coleção/Ficha/Níveis saíram de 4,0 / 4,6 / 3,2 (§357) para **10 / 10 / 10**. Capturas em
+  `docs/telas/358-{colecao,ficha,ficha-sinergia,ficha-falta,niveis}-{780x360,1846x852}.png`.
+
 ## ★ §357 · Padrão de acessibilidade novo + auditoria de todas as telas (só relatório; NÃO consertou telas)
 - Problema: os mínimos antigos (corpo ≥ 20px, toque ≥ 72px) eram do DESENHO 1846×852; a 780×360 (S24 deitado) a escala é
   ~0,4225, então 20px viram ~8,4px reais — ilegível. E havia rolagem dentro de cartões/painéis/sobreposições (proibida).

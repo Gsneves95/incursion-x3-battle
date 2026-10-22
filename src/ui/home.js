@@ -1400,10 +1400,9 @@ const COL_FUNCOES = ['Atacante', 'Suporte', 'Controlador', 'Guardião', 'Manipul
 // dois eixos que o mockup colapsou em "Classe": CLASSE (tipo de combate) e FUNÇÃO (papel). Apresentados
 // como DOIS seletores distintos e rotulados — não poluem porque cada um é curto e diz o que filtra.
 let colSel = null;   // deus selecionado no painel (null = repouso; §284: começa nulo, o jogador não escolheu)
-let colVer = null;   // deus com a SOBREPOSIÇÃO de kit aberta (null = fechada) — lido pelo voltar do Android (§240)
-let colVerSel = 'basico';   // §288: slot aberto na caixa de detalhe da sobreposição (abre no BÁSICO — decisão do dono)
-let colVerModo = 'kit';     // §294: modo da sobreposição — 'kit' (seletor+detalhe) ou 'sinergia' (lista completa)
-let colVerVista = 'kit';    // §321: VISÃO da sobreposição — 'kit' (kit/sinergia) ou 'niveis' (visão de níveis §319 embutida). Persiste na navegação pelas setas.
+let colVer = null;   // §358: a sobreposição da Coleção SAIU (view.js ainda lê colVer no voltar do Android; fica sempre null)
+let fichaLista = null;   // §358: a lista por onde as setas ‹ › da FICHA navegam (a grade filtrada de onde se veio; null = lista da Coleção sem filtro)
+let fichaAba = 'habilidades';   // §358: aba da ficha — 'habilidades' | 'sinergia'
 let colF = { busca: '', cultura: '', classe: '', funcao: '', elem: '', status: '', raridade: '', ordem: 'recentes' };   // §346: + filtro de ELEMENTO (grade do montador)
 let colMaisAberto = false;   // §346b: painel "MAIS FILTROS" (cultura + classe), fora da tela principal
 function colExtrasAtivos(){ return (colF.cultura ? 1 : 0) + (colF.classe ? 1 : 0); }   // §346b: filtros no "MAIS FILTROS"
@@ -1488,57 +1487,8 @@ function kitLinhaHTML(rot, a, passiva){
   </div>`;
 }
 
-// §284 — MAESTRIA no painel, do MODELO REAL (§245, cosmético, nunca combate). Postos: Iniciado(1) → Aprendiz(2,
-// ≥5 vit) → Adepto(3, ≥15) → Mestre(4, ≥30 E venceu com o Milagre). A barra é a progressão de VITÓRIAS até o
-// próximo limiar — nada inventado (limiares 5/15/30 são MAESTRIA_LIMIAR). Não-possuído não progride (posto —).
-function colMaestria(k){
-  const nv = nivelMaestria(k), m = maestriaDe(k), v = m.vitorias || 0;
-  if (nv === 4) return { nv, topo: true, posto: MAESTRIA_NOME[4] };
-  // §284-ajuste: VITÓRIAS já cumpridas (≥30) e só falta o Milagre → não há progressão NUMÉRICA a mostrar (a
-  // barra chegaria a 100% sem entregar o posto). A barra SAI e o REQUISITO vira manchete. `nivelMaestria`
-  // mantém 3 (Adepto) até o Milagre — o Mestre exige as duas coisas.
-  if (nv === 3 && v >= MAESTRIA_LIMIAR.mestre && !m.milagre) return { nv, posto: MAESTRIA_NOME[3], soMilagre: true };
-  const BASE = { 0: 0, 1: 0, 2: 5, 3: 15 }, PROX = { 0: 1, 1: 5, 2: 15, 3: 30 };
-  const base = BASE[nv], prox = PROX[nv];
-  return { nv, posto: MAESTRIA_NOME[nv], v, prox, frac: Math.max(0, Math.min(1, (v - base) / (prox - base))),
-    proxNome: MAESTRIA_NOME[nv + 1] };
-}
-function colMaestriaHTML(k){
-  const tem = temDeus(k), M = colMaestria(k);
-  if (!tem) return `<div class="col2m col2m--falta"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">—</b></div>
-    <p class="col2m__nota">Possua e jogue com este deus para ganhar postos.</p></div>`;
-  if (M.topo) return `<div class="col2m col2m--mestre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">★ Mestre</b></div>
-    <div class="col2m__bar col2m__bar--cheia"><i style="width:100%"></i></div>
-    <p class="col2m__nota">Posto máximo — moldura liberada.</p></div>`;
-  // vitórias cumpridas, só falta o Milagre: SEM barra — o requisito é a manchete (barra cheia perderia p/ a nota).
-  if (M.soMilagre) return `<div class="col2m col2m--milagre"><div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b></div>
-    <p class="col2m__req">Vitórias cumpridas. Falta vencer usando o <b>Milagre</b> para virar Mestre.</p></div>`;
-  return `<div class="col2m m--${M.nv}">
-    <div class="col2m__cab"><span class="col2m__rot">MAESTRIA</span><b class="col2m__posto">${H(M.posto)}</b><span class="col2m__prox">${M.v}/${M.prox} p/ ${H(M.proxNome)}</span></div>
-    <div class="col2m__bar"><i style="width:${Math.round(M.frac * 100)}%"></i></div>
-  </div>`;
-}
 
-// PAINEL em REPOUSO (nenhum deus escolhido): não um vazio — o progresso da coleção, a quebra por raridade
-// (possuídos/total em cada banda), e o convite. O ESPAÇO fica reservado (a grade não cresce — §284).
-function colRepousoHTML(){
-  const ks = ROSTER.map(e => e.key), donos = ks.filter(temDeus).length;
-  const porRar = { SS: { t: 0, n: 0 }, S: { t: 0, n: 0 }, A: { t: 0, n: 0 } };
-  ks.forEach(k => { const r = raridadeDe(k); if (porRar[r]) { porRar[r].t++; if (temDeus(k)) porRar[r].n++; } });
-  const linha = r => `<div class="col2r__rar"><span class="col2r__rlabel col2p__rar--${r}">${r}</span>
-    <span class="col2r__rnum"><b>${porRar[r].n}</b>/${porRar[r].t}</span>
-    <div class="col2r__rbar"><i style="width:${porRar[r].t ? Math.round(porRar[r].n / porRar[r].t * 100) : 0}%"></i></div></div>`;
-  return `<div class="col2p col2p--repouso">
-    <div class="col2r__prog"><span class="col2r__big">${donos}<span>/${ROSTER.length}</span></span><span class="col2r__leg">personagens na coleção</span></div>
-    <div class="col2r__rars">${linha('SS')}${linha('S')}${linha('A')}</div>
-    <div class="col2r__dica"><i>⬡</i> Toque num personagem para ver a maestria e abrir o kit.</div>
-  </div>`;
-}
-
-// ---------- SINERGIA (§294) — DERIVADA do fx (data/sinergia.json → SINERGIA), nunca da prosa. O painel mostra os
-// 3 primeiros parceiros (prioridade: laço muda comportamento, o resto soma número) em 2 linhas (nome + mecânica
-// curta que CABE em 167px, medido); o "+N ›" abre a lista inteira como MODO da sobreposição; o solista diz a verdade
-// ("funciona sozinho"); a FAIXA GLOBAL (aura + suporte) é uma linha, não par. ----------
+// §358 — SINERGIA (helpers de dado, reusados pela FICHA): derivados do fx (data/sinergia.json → SINERGIA).
 const SIN = (typeof SINERGIA !== 'undefined' && SINERGIA) ? SINERGIA : { fichas: {}, auraDoadores: [] };
 function sinFicha(k){ return (SIN.fichas && SIN.fichas[k]) || null; }
 function sinElem(k){ const g = colG(k); return g ? g.elem : null; }
@@ -1550,379 +1500,90 @@ function sinAuraTexto(k){
   const lista = nomes.length > 1 ? nomes.slice(0, -1).join(', ') + ' e ' + nomes[nomes.length - 1] : nomes[0];
   return lista + (nomes.length > 1 ? ' reforçam' : ' reforça') + ' o time';
 }
-// uma linha de parceiro no PAINEL: retrato 30 + nome (linha 1) + mecânica curta (linha 2)
-function sinLinhaPainel(p){
-  return `<div class="col2s__par col2s__par--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
-    <span class="col2s__art">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 30)}</span>
-    <span class="col2s__txt"><b class="col2s__nome">${H(p.nome)}</b><span class="col2s__mec">${H(p.curto)}</span></span>
-  </div>`;
-}
-// a SEÇÃO no painel lateral: cabeçalho + até 3 parceiros (ou suporte, ou solista) + "+N ›" + faixa
-function colSinergiaPainelHTML(k){
-  const f = sinFicha(k); if (!f) return '';
-  const aura = sinAuraTexto(k);
-  // 2 parceiros no painel, não 3 (medido §294): manter NOME e MOTIVO inteiros exige 2 linhas por parceiro (a mecânica
-  // curta cabe em 167px sem cortar, mas o nome pede a sua linha); 3 linhas de 2 linhas + "+N" + identidade estouram o
-  // piso 428 em 31px. O dono já decidira o critério: "prefiro 2 parceiros com motivo inteiro a 3 com motivo cortado".
-  const TETO = 2;
-  let corpo, mais = '';
-  if (f.parceiros.length) {
-    corpo = f.parceiros.slice(0, TETO).map(sinLinhaPainel).join('');
-    if (f.parceiros.length > TETO) mais = `<button class="col2s__mais" data-sinmais="${H(k)}">+${f.parceiros.length - TETO} mais ›</button>`;
-  } else if (f.suporte) {
-    corpo = `<p class="col2s__sup">Reforça o time — ${H(f.suporte)}.</p>`;
-  } else {
-    corpo = `<p class="col2s__solo">Sem sinergia específica — funciona sozinho.</p>`;
-  }
-  // FAIXA (aura) no painel só quando NÃO há parceiro par-a-par (solista/suporte) — ali sobra espaço e ela preenche o
-  // que seria mais vazio. Quem tem parceiro prioriza a lista específica; a faixa global fica a um toque, na
-  // sobreposição (o modo SINERGIA sempre a mostra). Medido §294: com parceiro + faixa, a identidade mais alta estoura.
-  const faixa = (aura && f.parceiros.length === 0) ? `<p class="col2s__faixa"><i>⬡</i>${H(aura)}</p>` : '';
-  return `<div class="col2s">
-    <div class="col2s__cab"><span class="col2s__rot">SINERGIA</span></div>
-    <div class="col2s__lista">${corpo}</div>
-    ${mais}${faixa}
-  </div>`;
-}
-
-// PAINEL com um deus: identidade (retrato, nome, arquétipo, cultura/elemento/classe/função) + posse (cópias) +
-// MAESTRIA. SEM kit (o kit foi para a sobreposição, §284). Fecha pelo × (volta ao repouso) ou tocando o cartão.
-function colPainelHTML(k){
-  if (!k) return colRepousoHTML();
-  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
-  // §319b — a posse deixa clara a economia de níveis: cópias + PONTOS acumulados do deus.
-  const pts = nlPontos(k), gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
-  const posse = tem
-    ? `<span class="col2p__posse col2p__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'} · ${pts} ponto${pts === 1 ? '' : 's'}</span>`
-    : `<span class="col2p__posse col2p__posse--nao">Não possuído</span>`;
-  // §319b — linha "Níveis X de Y" (a MESMA conta da tela de níveis, §319): o jogador descobre que níveis existem.
-  const res = nlResumo(k, gm);
-  const niveis = tem ? `<div class="col2p__niveis"><span class="col2p__nivlab">Níveis</span> <span class="col2p__nivnum">${res.x} de ${res.y}</span></div>` : '';
-  return `<div class="col2p ${tem ? '' : 'col2p--falta'}">
-    <button class="col2p__fechar" id="col2fechar" aria-label="Fechar painel">×</button>
-    <div class="col2p__cab">
-      <span class="col2p__art">${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 44)}</span>
-      <span class="col2p__rar col2p__rar--${rar}">${rar}</span>
-    </div>
-    <h2 class="col2p__nome">${H(colNome(k))}</h2>
-    ${g.arquetipo ? `<p class="col2p__arq">${H(g.arquetipo)}</p>` : ''}
-    <div class="col2p__ident">
-      <span class="col2p__tag col2p__tag--cult">${H(g.faccao || '')}</span>
-      <span class="col2p__tag" style="border-color:${COR(g.elem)};color:${COR(g.elem)}">${H(g.elem || '')}</span>
-      <span class="col2p__tag">${H(g.classe || '')}</span>
-      <span class="col2p__tag">${H(g.funcao || '')}</span>
-    </div>
-    ${posse}
-    ${niveis}
-    ${tem ? colMaestriaHTML(k) : ''}
-    ${colSinergiaPainelHTML(k)}
-    ${/* §321 — o botão do painel volta ao de ANTES do §319b: "VER DETALHES ›" reabre a SOBREPOSIÇÃO (com os
-         níveis dentro dela). A linha "Níveis X de Y" e o selo ▲ continuam (acima/na grade). */ ''}
-    <button class="col2p__ver" data-verdeus="${H(k)}">Ver detalhes ›</button>
-  </div>`;
-}
-
-// SOBREPOSIÇÃO (§284): o kit COMPLETO sobre a Coleção, fundo desfocado, tocar no fundo fecha. Não é rota —
-// é DOM irmão do #baselayer, inserido/removido cirurgicamente (a grade não re-renderiza → rolagem preservada).
-// §288 — a SOBREPOSIÇÃO refeita do mockup: retrato à esquerda (sangra), e à direita nome+epíteto+tags+posse,
-// divisor HABILIDADES, e um SELETOR de 4 ícones + a CAIXA de detalhe do slot escolhido (abre no BÁSICO). O texto
-// vem de data/deuses (§286/§287): `g.ab[].{nome,cost,cd,desc}` e `g.passiva.{nome,desc}` — nunca kits.json.
-function colVerChipHTML(k, s, sel){
-  const nome = s.a ? s.a.nome : '—';
-  return `<button class="col2ov__sk ${s.slot === sel ? 'is-sel' : ''}" data-versel="${s.slot}" ${s.a ? '' : 'disabled'} title="${H(nome)}">
-    <span class="col2ov__skrot">${s.tipo}</span>
-    <span class="col2ov__skart">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
-    <span class="col2ov__sknome">${H(nome)}</span>
-  </button>`;
-}
-function colVerDetalheHTML(k, g, sel){
-  const sks = deusSkills(g);
-  const s = sks.find(x => x.slot === sel && x.a) || sks.find(x => x.a);
-  if (!s || !s.a) return `<div class="col2ov__detvazio">Kit em produção.</div>`;
-  const a = s.a;
-  // custo/recarga com o vocabulário QUE JÁ EXISTE: `pipsDetalhe` diz GRÁTIS (§340); a linha do kit diz "sem recarga"
-  // (§288: seguir o que existe, não inventar). A passiva não gasta a ação → sem chip de custo/recarga.
-  const meta = s.slot === 'passiva'
-    ? `<span class="col2ov__chip col2ov__chip--pas">passiva · não gasta a ação</span>`
-    : `<span class="col2ov__chip">${pipsDetalhe(a.cost || {})}</span><span class="col2ov__chip col2ov__chip--cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span>`;
-  return `<span class="col2ov__detart">${slot('skill-' + k + '-' + s.slot, '', null, 0, true)}</span>
-    <div class="col2ov__detbody">
-      <div class="col2ov__detcab"><b class="col2ov__detnome">${H(a.nome)}</b><span class="col2ov__dettipo">${s.tipo}</span>${meta}</div>
-      <div class="col2ov__deftxt">${realce(a.desc || '')}</div>
-    </div>`;
-}
-// §291: o CARTÃO (retrato + conteúdo) — separado do fundo p/ a navegação trocar SÓ o cartão (sem repintar o
-// fundo desfocado → sem piscar). As setas de navegação vivem no fundo, POR FORA do cartão (colOverlayHTML).
-function colOverlayCardHTML(k){
-  const g = colG(k), tem = temDeus(k), rar = raridadeDe(k);
-  const sks = deusSkills(g);
-  const posse = tem
-    ? `<span class="col2ov__posse col2ov__posse--tem">Possuído · ${colCopias(k)} cópia${colCopias(k) === 1 ? '' : 's'}</span>`
-    : `<span class="col2ov__posse col2ov__posse--nao">Não possuído</span>`;
-  // §304b (§283 supera o §288): a CITAÇÃO NÃO mora mais na sobreposição da Coleção. A frase virou conteúdo do
-  // DESTAQUE (data/invocacao.json → só a tela de invocação), porque a sobreposição NÃO tem orçamento para ela
-  // (§292: uma cite corta a caixa de efeito). Aqui a linha não existe — nem com `frase` no dado, a Coleção a mostra.
-  return `<div class="col2ov__card ${tem ? '' : 'col2ov--falta'}">
-      <div class="col2ov__retrato">
-        ${slot('god-' + k, ini(colNome(k)), tem ? COR(g.elem) : '#6a6390', 72)}
-        ${(typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="col2ov__retratog" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : ''}
-        <span class="col2p__rar col2p__rar--${rar} col2ov__rarart">${rar}</span>
-        ${tem ? '' : '<span class="col2ov__falta">Você não possui</span>'}
-      </div>
-      <div class="col2ov__conteudo">
-        <button class="col2ov__x" id="col2ovx" aria-label="Fechar">×</button>
-        <h2 class="col2ov__nome">${H(colNome(k))}</h2>
-        ${g.arquetipo ? `<p class="col2ov__arq">${H(g.arquetipo)}</p>` : ''}
-        <div class="col2ov__ident">
-          <span class="col2ov__tag">${H(g.faccao || '')}</span>
-          <span class="col2ov__tag col2ov__tag--el" style="--c:${COR(g.elem)}">${H(g.elem || '')}</span>
-          <span class="col2ov__tag">${H(g.classe || '')}</span>
-          <span class="col2ov__tag">${H(g.funcao || '')}</span>
-        </div>
-        ${posse}
-        ${colVerVista === 'niveis'
-          ? `<div class="col2ov__nivbar"><button class="col2ov__voltakit" id="col2ovkit">‹ Kit</button><span class="col2ov__nivlab">SUBIR HABILIDADES</span></div>`
-          : `<div class="col2ov__modos">
-          <button class="col2ov__modo${colVerModo === 'sinergia' ? '' : ' is-on'}" data-modo="kit">KIT</button>
-          <button class="col2ov__modo${colVerModo === 'sinergia' ? ' is-on' : ''}" data-modo="sinergia">SINERGIA</button>
-          <button class="b b--sm col2ov__subir ${nlTemPagavel(k) ? 'b--primary' : 'b--sec'}" id="col2ovsubir">SUBIR HABILIDADES ›</button>
-        </div>`}
-        <div class="col2ov__corpo${colVerVista === 'niveis' ? ' col2ov__corpo--niv' : ''}" id="col2ovcorpo">${colVerVista === 'niveis' ? colNiveisCorpoHTML(k) : (colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g))}</div>
-      </div>
-    </div>`;
-}
-// §294: o corpo da sobreposição tem DOIS modos. KIT = o seletor de habilidades + a caixa de detalhe (§288). SINERGIA
-// = a lista COMPLETA de parceiros (todos, em ordem de prioridade), cada um com o motivo INTEIRO (aqui há largura),
-// mais a faixa global. O painel lateral mostra 3; o "+N ›" abre isto.
-function colVerKitHTML(k, g){
-  const sks = deusSkills(g);
-  // §294: o divisor "HABILIDADES" saiu — a barra de modos KIT|SINERGIA acima já rotula o modo (e devolve à caixa de
-  // detalhe o espaço que o §292 conquistou; a barra SUBSTITUI o divisor, não soma).
-  return `<div class="col2ov__sks">${sks.map(s => colVerChipHTML(k, s, colVerSel)).join('')}</div>
-    <div class="col2ov__det" id="col2ovdet">${colVerDetalheHTML(k, g, colVerSel)}</div>`;
-}
-function colVerSinergiaHTML(k, g){
+// §358 — a SINERGIA na FICHA (aba SINERGIA): a MESMA lista que a sobreposição mostrava (faixa global + parceiros
+// com motivo inteiro, ou solista/suporte). Sem rolagem: cabe na área do kit (os parceiros são poucos por deus).
+function fichaSinergiaHTML(k){
   const f = sinFicha(k), aura = sinAuraTexto(k);
   const supSelf = f && f.suporte ? `você ${f.suporte}` : '';
   const faixaTxt = [aura, supSelf].filter(Boolean).join(' · ');
-  const faixa = faixaTxt ? `<p class="col2ov__sinfaixa"><i>⬡</i>${H(faixaTxt)}</p>` : '';
+  const faixa = faixaTxt ? `<p class="dsx-sin__faixa"><i>⬡</i>${H(faixaTxt)}</p>` : '';
   let corpo;
-  if (f && f.parceiros.length) {
-    corpo = f.parceiros.map(p => `<div class="col2ov__sinpar col2ov__sinpar--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
-      <span class="col2ov__sinart">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 40)}</span>
-      <div class="col2ov__sintxt"><b class="col2ov__sinnome">${H(p.nome)}</b><span class="col2ov__sinfam">${H(p.familia)}</span><p class="col2ov__sinmot">${H(p.motivo)}</p></div>
+  if (f && f.parceiros && f.parceiros.length){
+    // §358: SEM rolar — mostra os parceiros de maior prioridade que cabem (motivo inteiro); o resto vira "+N mais".
+    // (A ordem já vem por prioridade: laço > combo > facção > …; cf. colecao_sinergia.) O time completo age na batalha.
+    const CAP = 2, mostra = f.parceiros.slice(0, CAP), resto = f.parceiros.length - mostra.length;
+    corpo = mostra.map(p => `<div class="dsx-sin__par dsx-sin__par--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
+      <span class="dsx-sin__art">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 34)}</span>
+      <div class="dsx-sin__txt"><div class="dsx-sin__cab"><b class="dsx-sin__nome">${H(p.nome)}</b><span class="dsx-sin__fam">${H(p.familia)}</span></div><p class="dsx-sin__mot">${H(p.motivo)}</p></div>
     </div>`).join('');
-  } else if (!f || f.solista) {
-    corpo = `<p class="col2ov__sinsolo">Sem sinergia específica — funciona sozinho.</p>`;
+    if (resto > 0) corpo += `<p class="dsx-sin__mais">+${resto} parceiro${resto === 1 ? '' : 's'} — agem no time, em batalha</p>`;
+  } else if (!f || f.solista){
+    corpo = `<p class="dsx-sin__solo">Sem sinergia específica — funciona sozinho.</p>`;
   } else {
-    corpo = '';   // sem parceiros mas com suporte: a faixa já diz tudo
+    corpo = '';   // só suporte/aura: a faixa já diz tudo
   }
-  return `${faixa}<div class="col2ov__sinlista">${corpo}</div>`;
-}
-// §291: posição na LISTA FILTRADA (a mesma da grade: filtro/busca/ordem) — as setas andam SÓ nela, nunca nos 100.
-function colVerNavEstado(){
-  const lista = colecaoFiltrada(), idx = lista.indexOf(colVer);
-  return { lista, idx, temPrev: idx > 0, temNext: idx >= 0 && idx < lista.length - 1 };
-}
-function colOverlayHTML(k){
-  const e = colVerNavEstado();   // colVer já é `k` quando isto é chamado (colAbrirVer/colVerIr o setam antes)
-  // as setas ficam POR FORA do cartão, sobre o fundo desfocado; nos extremos desabilitam (apagadas, sem dar a volta)
-  return `<div class="col2ov" id="col2ov">
-    <button class="col2ov__nav col2ov__nav--prev" id="col2ovprev" aria-label="Deus anterior" ${e.temPrev ? '' : 'disabled'}><i class="col2ov__navseta"></i></button>
-    ${colOverlayCardHTML(k)}
-    <button class="col2ov__nav col2ov__nav--next" id="col2ovnext" aria-label="Próximo deus" ${e.temNext ? '' : 'disabled'}><i class="col2ov__navseta"></i></button>
-  </div>`;
-}
-// abre/fecha a sobreposição por DOM (sem render → preserva seleção e rolagem da grade). O #baselayer fica
-// INERTE enquanto ela está aberta (INV 16 / §210). `colVer` guarda o estado para o voltar do Android (§240).
-function colAbrirVer(k, modo){
-  if (!k) return;
-  colVer = k; colVerSel = 'basico';   // §288: a caixa abre sempre no BÁSICO
-  colVerModo = (modo === 'sinergia') ? 'sinergia' : 'kit';   // §294: o "+N ›" abre direto na SINERGIA
-  colVerVista = (modo === 'niveis') ? 'niveis' : 'kit';      // §321: abre no KIT (ou direto nos NÍVEIS, se pedido)
-  colVerMontar();
-}
-function colVerMontar(){
-  const base = stage.querySelector('#baselayer'); if (base) base.setAttribute('inert', '');
-  const velho = stage.querySelector('#col2ov'); if (velho) velho.remove();
-  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayHTML(colVer);
-  const ov = wrap.firstElementChild; stage.appendChild(ov);
-  ov.onclick = ev => { if (ev.target === ov) colFecharVer(); };     // tocar no FUNDO fecha (setas têm target próprio)
-  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarCorpo(ov, colVer);
-  colVerLigarNav(ov);
-}
-// §294/§321: o corpo tem a VISTA (kit|niveis). No KIT liga os chips + o alternador KIT/SINERGIA + o botão SUBIR
-// HABILIDADES (vai para a visão de níveis, SEM rota). Na visão de NÍVEIS liga o "‹ Kit" + os botões de subir.
-function colVerLigarCorpo(ov, k){
-  const g = colG(k);
-  if (colVerVista === 'niveis') {
-    const kit = ov.querySelector('#col2ovkit');
-    if (kit) kit.onclick = () => { colVerVista = 'kit'; colVerRefrescarCard(ov, k); };
-    colNivLigar(ov, k);
-    return;
-  }
-  colVerLigarChips(ov, k);
-  const sub = ov.querySelector('#col2ovsubir');
-  if (sub) sub.onclick = () => { colVerVista = 'niveis'; colVerRefrescarCard(ov, k); };
-  [...ov.querySelectorAll('.col2ov__modo[data-modo]')].forEach(b => b.onclick = () => {
-    if (colVerModo === b.dataset.modo) return;
-    colVerModo = b.dataset.modo;
-    [...ov.querySelectorAll('.col2ov__modo')].forEach(c => c.classList.toggle('is-on', c === b));
-    const corpo = ov.querySelector('#col2ovcorpo');
-    if (corpo) { corpo.innerHTML = colVerModo === 'sinergia' ? colVerSinergiaHTML(k, g) : colVerKitHTML(k, g); }
-    colVerLigarChips(ov, k);   // re-fia os chips quando volta ao KIT
-  });
-}
-// §321 — re-desenha o CARTÃO inteiro da sobreposição (troca de VISTA kit↔niveis, ou de deus pelas setas) sem
-// re-renderizar a rota (o overlay é DOM à parte; render() mataria). Re-fia corpo + nav; o × continua fechando.
-function colVerRefrescarCard(ov, k){
-  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayCardHTML(k);
-  ov.querySelector('.col2ov__card').replaceWith(wrap.firstElementChild);
-  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarCorpo(ov, k);
-  colVerAtualizarNav(ov);
-}
-// §321 — liga os botões de SUBIR da visão de níveis DENTRO da sobreposição. Redesenha só o CORPO (sem render
-// global): toggle da confirmação inline e o pedido ao servidor. Ao subir, refaz o corpo (pontos/marcadores) e
-// refresca o painel/selo do baselayer (que fica atrás, inerte) sem tocar no overlay.
-function colNivLigar(ov, k){
-  ov.querySelectorAll('[data-subir]').forEach(b => b.onclick = () => { nlConfirm = b.dataset.subir; nlMsg = null; colNivRedesenhar(ov, k); });
-  ov.querySelectorAll('[data-subir-no]').forEach(b => b.onclick = () => { if (nlPendente) return; nlConfirm = null; colNivRedesenhar(ov, k); });
-  ov.querySelectorAll('[data-subir-ok]').forEach(b => b.onclick = () => _colNivConfirmar(ov, k, b.dataset.subirOk));
-}
-function colNivRedesenhar(ov, k){
-  const corpo = ov.querySelector('#col2ovcorpo'); if (!corpo) return;
-  corpo.innerHTML = colNiveisCorpoHTML(k);
-  colNivLigar(ov, k);
-  // o botão SUBIR do topo acende/apaga conforme ainda há nível pagável (atualiza após subir)
-  const sub = ov.querySelector('#col2ovsubir');
-  if (sub) { sub.classList.toggle('b--primary', nlTemPagavel(k)); sub.classList.toggle('b--sec', !nlTemPagavel(k)); }
-}
-async function _colNivConfirmar(ov, k, sl){
-  if (nlPendente) return;
-  nlPendente = true; nlMsg = null; colNivRedesenhar(ov, k);
-  let r = null;
-  try { r = (typeof subirNivelServidor === 'function') ? await subirNivelServidor(k, sl) : { codigo: 'sem_conexao' }; }
-  catch (e) { r = { codigo: 'sem_conexao' }; }
-  nlPendente = false; nlConfirm = null;
-  nlMsg = (r && r.ok) ? null : { slot: sl, texto: nlMotivoTexto(r && r.codigo) };
-  colNivRedesenhar(ov, k);
-  if (r && r.ok) { try { colAtualizarGrade(); } catch (e) {} try { colSelecionar(k); } catch (e) {} }   // §321: selo ▲ da grade + painel "Níveis X de Y" do baselayer acompanham (grade antes, p/ o is-sel reaplicar)
-}
-// §288: tocar num ícone troca SÓ a caixa de detalhe (e o realce do chip). Sem render → preserva grade/rolagem.
-function colVerLigarChips(ov, k){
-  const g = colG(k);
-  [...ov.querySelectorAll('.col2ov__sk[data-versel]')].forEach(b => b.onclick = () => {
-    if (b.disabled) return;
-    colVerSel = b.dataset.versel;
-    [...ov.querySelectorAll('.col2ov__sk')].forEach(c => c.classList.toggle('is-sel', c === b));
-    const det = ov.querySelector('#col2ovdet'); if (det) det.innerHTML = colVerDetalheHTML(k, g, colVerSel);
-  });
-}
-// §291: as setas navegam a lista filtrada; o SLOT permanece (fica ferramenta de comparação).
-function colVerLigarNav(ov){
-  const p = ov.querySelector('#col2ovprev'), n = ov.querySelector('#col2ovnext');
-  if (p) p.onclick = () => { if (!p.disabled) colVerIr(-1); };
-  if (n) n.onclick = () => { if (!n.disabled) colVerIr(1); };
-}
-function colVerIr(delta){
-  const e = colVerNavEstado(); if (e.idx < 0) return;
-  const alvo = e.lista[e.idx + delta]; if (!alvo) return;   // extremos: nada (a seta já está desabilitada)
-  // o SLOT permanece; cai no básico só se o próximo não tiver aquele slot (hoje não ocorre — os 100 têm os 4)
-  if (!deusSkills(colG(alvo)).some(s => s.slot === colVerSel && s.a)) colVerSel = 'basico';
-  colVer = alvo;
-  const ov = stage.querySelector('#col2ov'); if (!ov) return;
-  // troca SÓ o cartão (o fundo desfocado fica) → sem piscar; o retrato pequeno embutido cobre enquanto o grande
-  // (§289, arquivo sob demanda) ainda não chegou, sem branco nem tremida (mesma caixa 340×392).
-  const wrap = document.createElement('div'); wrap.innerHTML = colOverlayCardHTML(alvo);
-  ov.querySelector('.col2ov__card').replaceWith(wrap.firstElementChild);
-  const x = ov.querySelector('#col2ovx'); if (x) x.onclick = () => colFecharVer();
-  colVerLigarCorpo(ov, alvo);   // §294: re-fia o corpo (chips + alternador de modo); o MODO permanece na navegação
-  colVerAtualizarNav(ov);
-  // a SELEÇÃO do painel acompanha (§284: fechar preserva seleção) e a grade rola até o deus atual ficar visível
-  colSelecionar(alvo);
-  const cg = stage.querySelector('.col2c[data-deus="' + alvo + '"]');
-  if (cg && cg.scrollIntoView) cg.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-}
-function colVerAtualizarNav(ov){
-  const e = colVerNavEstado();
-  const p = ov.querySelector('#col2ovprev'), n = ov.querySelector('#col2ovnext');
-  if (p) p.disabled = !e.temPrev;
-  if (n) n.disabled = !e.temNext;
-}
-function colFecharVer(){
-  colVer = null;
-  const ov = stage.querySelector('#col2ov'); if (ov) ov.remove();
-  const base = stage.querySelector('#baselayer'); if (base) base.removeAttribute('inert');
+  return `<div class="dsx-sin">${faixa}<div class="dsx-sin__lista">${corpo}</div></div>`;
 }
 
-function colSelectHTML(id, rot, opcoes, val){
-  const ops = ['<option value="">' + rot + ': todas</option>'].concat(opcoes.map(o => `<option value="${H(o.v)}"${o.v === val ? ' selected' : ''}>${H(o.t)}</option>`));
-  return `<label class="col2__sel"><span class="col2__selrot">${rot}</span><select data-filtro="${id}">${ops.join('')}</select></label>`;
+// §358 — resumo de raridade do acervo (uma linha discreta no cabeçalho da Coleção).
+function colResumoRaridade(){
+  const ks = ROSTER.map(e => e.key), donos = ks.filter(temDeus).length;
+  const por = { SS: { t: 0, n: 0 }, S: { t: 0, n: 0 }, A: { t: 0, n: 0 } };
+  ks.forEach(k => { const r = raridadeDe(k); if (por[r]) { por[r].t++; if (temDeus(k)) por[r].n++; } });
+  return { donos, total: ROSTER.length, por };
 }
 
+// §358 — a Coleção: cabeçalho (título + resumo de raridade numa linha) + filtros (§346b) + GRADE em tela cheia.
+// SEM painel lateral e SEM sobreposição: tocar num cartão abre a FICHA (rota 'deus'). A grade é LISTA — pode rolar.
 function renderColecao(){
-  // §284: entra em REPOUSO — nenhum deus selecionado, nenhuma sobreposição. (renderColecao só roda na ENTRADA;
-  // a interação usa colSelecionar/colAtualizarGrade/colAbrirVer, cirúrgicos, que não passam por aqui.)
   colSel = null; colVer = null;
-  const donos = ROSTER.map(e => e.key).filter(temDeus).length;
-  const mo = moedaServidor();   // §318b-2: a barra da Coleção é do SERVIDOR ("—" desconectado), não o perfil fantasma
-  // §346: a linha de FILTROS vira a do montador — "Todos" + 6 orbes de ELEMENTO + 5 FUNÇÕES em pílulas + busca + contagem.
+  const R = colResumoRaridade();
+  const resumo = `<span class="col2res__big"><b>${R.donos}</b>/${R.total}</span>`
+    + ['SS', 'S', 'A'].map(r => `<span class="col2res__r"><span class="col2res__rl col2p__rar--${r}">${r}</span>${R.por[r].n}/${R.por[r].t}</span>`).join('');
+  const mo = moedaServidor();
   const semEF = !colF.elem && !colF.funcao;
-  const orbesEl = ELEMS.map(e => `<button class="col2forbe${colF.elem === e ? ' is-on' : ''}" data-colelem="${H(e)}" aria-label="${H((typeof ELAB !== 'undefined' && ELAB[e]) || e)}">${orbe(e, 24)}</button>`).join('');
+  const orbesEl = ELEMS.map(e => `<button class="col2forbe${colF.elem === e ? ' is-on' : ''}" data-colelem="${H(e)}" aria-label="${H((typeof ELAB !== 'undefined' && ELAB[e]) || e)}">${orbe(e, 26)}</button>`).join('');
   const chipsFn = COL_FUNCOES.map(f => `<button class="col2fchip${colF.funcao === f ? ' is-on' : ''}" data-colfunc="${H(f)}">${H(f)}</button>`).join('');
   const pill = (attr, val, atual, txt) => `<button class="col2pill${atual === val ? ' is-on' : ''}" data-${attr}="${H(val)}">${txt}</button>`;
-  const pillsStatus = pill('colstatus', '', colF.status, 'Todos') + pill('colstatus', 'tem', colF.status, 'Possuídos') + pill('colstatus', 'nao', colF.status, 'Não possuídos');
+  const pillsStatus = pill('colstatus', '', colF.status, 'Todos') + pill('colstatus', 'tem', colF.status, 'Tenho') + pill('colstatus', 'nao', colF.status, 'Faltam');
   const pillsRar = pill('colrar', '', colF.raridade, 'Todas') + pill('colrar', 'SS', colF.raridade, 'SS') + pill('colrar', 'S', colF.raridade, 'S') + pill('colrar', 'A', colF.raridade, 'A');
-  // §346b: CULTURA e CLASSE saem da tela e vão p/ o "MAIS FILTROS" (com contagem de ativos); ORDENAR segue compacto.
   const nExtra = colExtrasAtivos();
-  const btMais = `<button class="col2fchip col2mf__abre${nExtra ? ' is-on' : ''}" id="col2mfabre" data-colmfabre="1">Mais filtros${nExtra ? ' · ' + nExtra : ''}</button>`;
-  const compactos = btMais
-    + `<label class="col2__sel col2__sel--ord"><span class="col2__selrot">Ordenar</span><select data-filtro="ordem"><option value="recentes"${colF.ordem === 'recentes' ? ' selected' : ''}>Mais recentes</option><option value="nome"${colF.ordem === 'nome' ? ' selected' : ''}>Nome (A–Z)</option></select></label>`;
-  // §346b: TELA CHEIA — a Coleção vive num canvas fixo 1100×508 (mesma proporção 2.166 de 1846×852) que fit()
-  // escala uniforme p/ preencher qualquer tamanho; o conteúdo do painel esquerdo não muda, só a escala.
+  const btMais = `<button class="col2fchip col2mf__abre${nExtra ? ' is-on' : ''}" id="col2mfabre" data-colmfabre="1">Mais${nExtra ? ' · ' + nExtra : ''}</button>`;
+  const btOrd = `<label class="col2__sel col2__sel--ord"><select data-filtro="ordem" aria-label="Ordenar"><option value="recentes"${colF.ordem === 'recentes' ? ' selected' : ''}>Recentes</option><option value="nome"${colF.ordem === 'nome' ? ' selected' : ''}>Nome A–Z</option></select></label>`;
   stage.innerHTML = `<div id="baselayer" class="col2fix"><div id="colfix" class="col2">
     <header class="col2__topo">
       <button class="col2__voltar" id="bvoltar" aria-label="Voltar"><i class="dsel__seta"></i></button>
-      <div class="col2__tit"><h1 class="col2__titulo">Personagens</h1><span class="col2__sub">COLECIONE · LEIA O KIT · MONTE A LENDA</span></div>
+      <h1 class="col2__titulo cin">Personagens</h1>
+      <div class="col2res" id="col2res">${resumo}</div>
       <div class="col2__moedas">
         <span class="col2__moeda"><i class="col2__mic col2__mic--ess">◈</i><b>${fmtMoeda(mo.online, mo.essencia)}</b></span>
         <span class="col2__moeda"><i class="col2__mic col2__mic--gem">◆</i><b>${fmtMoeda(mo.online, mo.gema)}</b></span>
-        <span class="col2__moeda col2__moeda--pos"><i class="col2__mic col2__mic--pos">⬡</i><b>${donos}<span>/${ROSTER.length}</span></b></span>
       </div>
     </header>
-    <div class="col2__corpo">
-      <aside class="col2__painel" id="col2painel">${colPainelHTML(colSel)}</aside>
-      <section class="col2__dir">
-        <div class="col2__filtros">
-          <button class="col2fchip col2fchip--todos${semEF ? ' is-on' : ''}" data-coltodos="1">Todos</button>
-          <span class="col2forbes">${orbesEl}</span>
-          <span class="col2ffuncs">${chipsFn}</span>
-          <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar personagens…" value="${H(colF.busca)}" autocomplete="off"></label>
-        </div>
-        <div class="col2__pills">
-          <span class="col2pill__grp">${pillsStatus}</span>
-          <span class="col2pill__grp">${pillsRar}</span>
-          ${compactos}
-          <span class="col2__conta" id="col2conta"></span>
-        </div>
-        <div class="col2__grade" id="col2grade"></div>
-      </section>
+    <div class="col2__filtros">
+      <button class="col2fchip col2fchip--todos${semEF ? ' is-on' : ''}" data-coltodos="1">Todos</button>
+      <span class="col2forbes">${orbesEl}</span>
+      <span class="col2ffuncs">${chipsFn}</span>
+      <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar…" value="${H(colF.busca)}" autocomplete="off"></label>
     </div>
+    <div class="col2__pills">
+      <span class="col2pill__grp">${pillsStatus}</span>
+      <span class="col2pill__grp">${pillsRar}</span>
+      ${btMais}${btOrd}
+      <span class="col2__conta" id="col2conta"></span>
+    </div>
+    <div class="col2__grade" id="col2grade"></div>
     ${colMaisFiltrosHTML()}
   </div></div>`;
   const q = s => stage.querySelector(s), qq = s => [...stage.querySelectorAll(s)];
   const v = q('#bvoltar'); if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
   const busca = q('#col2busca'); if (busca) busca.oninput = () => { colF.busca = busca.value; colAtualizarGrade(); };
   qq('select[data-filtro]').forEach(s => s.onchange = () => { colF[s.dataset.filtro] = s.value; colAtualizarGrade(); });
-  // §346b: CULTURA e CLASSE pelo painel "MAIS FILTROS" (preserva a seleção do painel esquerdo via colReabrir).
   const abre = q('#col2mfabre'); if (abre) abre.onclick = () => { colMaisAberto = !colMaisAberto; colReabrir(); };
   const mfok = q('#col2mfok'); if (mfok) mfok.onclick = () => { colMaisAberto = false; colReabrir(); };
   const mfov = q('#col2mf'); if (mfov) mfov.onclick = ev => { if (ev.target === mfov) { colMaisAberto = false; colReabrir(); } };
   const mflimpar = q('#col2mflimpar'); if (mflimpar) mflimpar.onclick = () => { colF.cultura = ''; colF.classe = ''; colReabrir(); };
   qq('[data-colmf]').forEach(b => b.onclick = () => { const [campo, val] = b.dataset.colmf.split('|'); colF[campo] = (colF[campo] === val ? '' : val); colReabrir(); });
-  // §346: orbes de ELEMENTO + pílulas de FUNÇÃO (um ativo por eixo, toggle) + "Todos" (limpa elemento e função).
   const marcarTodos = () => { const bt = q('[data-coltodos]'); if (bt) bt.classList.toggle('is-on', !colF.elem && !colF.funcao); };
   qq('[data-colelem]').forEach(b => b.onclick = () => { const e = b.dataset.colelem; colF.elem = (colF.elem === e ? '' : e);
     qq('[data-colelem]').forEach(x => x.classList.toggle('is-on', !!colF.elem && x.dataset.colelem === colF.elem)); marcarTodos(); colAtualizarGrade(); });
@@ -1933,37 +1594,20 @@ function renderColecao(){
   qq('[data-colstatus]').forEach(b => b.onclick = () => { colF.status = b.dataset.colstatus; qq('[data-colstatus]').forEach(x => x.classList.toggle('is-on', x === b)); colAtualizarGrade(); });
   qq('[data-colrar]').forEach(b => b.onclick = () => { colF.raridade = b.dataset.colrar; qq('[data-colrar]').forEach(x => x.classList.toggle('is-on', x === b)); colAtualizarGrade(); });
   colAtualizarGrade();
-  colLigarPainel();
   fit();
 }
-// re-preenche SÓ a grade + contador (sem tocar na barra → a busca não perde o foco).
+// re-preenche SÓ a grade + contador (sem tocar na barra → a busca não perde o foco). §358: tocar abre a FICHA.
 function colAtualizarGrade(){
   const grade = stage.querySelector('#col2grade'); if (!grade) return;
   const ks = colecaoFiltrada();
   grade.innerHTML = ks.length ? ks.map(colCardHTML).join('') : '<p class="col2__vazio">Nenhum personagem com esses filtros.</p>';
-  const cont = stage.querySelector('#col2conta'); if (cont) cont.textContent = ks.length + ' deuses';   // §346: contagem (como no montador)
-  // tocar num cartão SELECIONA; tocar no já-selecionado DESSELECIONA (volta ao repouso). Sem re-render da grade.
-  // §321 — tocar num cartão ABRE DIRETO a sobreposição do kit (sem passar pelo "Ver detalhes"); o painel da
-  // esquerda acompanha (seleção), para quando a sobreposição fechar. (Antes só selecionava.)
-  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => { colSelecionar(b.dataset.deus); colAbrirVer(b.dataset.deus); });
+  const cont = stage.querySelector('#col2conta'); if (cont) cont.textContent = ks.length + ' deuses';
+  // §358: o cartão abre a FICHA do deus (rota 'deus'); as setas da ficha andam na lista FILTRADA de agora.
+  [...grade.querySelectorAll('.col2c[data-deus]')].forEach(b => b.onclick = () => { fichaLista = colecaoFiltrada(); ir('deus', { key: b.dataset.deus }); render(); });
 }
-// §346b: re-render da Coleção PRESERVANDO a seleção do painel (renderColecao entra em repouso; aqui restauramos).
-// Usado pelo "MAIS FILTROS" (cultura/classe) p/ a tela redesenhar com o painel aberto e sem perder o deus escolhido.
-function colReabrir(){ const s = colSel; renderColecao(); if (s) colSelecionar(s); }
-// troca só o painel (e o realce do cartão) — sem re-render da tela toda. k=null → repouso.
-function colSelecionar(k){
-  colSel = k;
-  const painel = stage.querySelector('#col2painel'); if (painel) painel.innerHTML = colPainelHTML(k);
-  [...stage.querySelectorAll('.col2c')].forEach(c => c.classList.toggle('is-sel', !!k && c.dataset.deus === k));
-  colLigarPainel();
-}
-function colLigarPainel(){
-  // §321: "VER DETALHES ›" reabre a SOBREPOSIÇÃO do kit (com a visão de níveis dentro dela) — volta ao de
-  // ANTES do §319b. O × fecha o painel (volta ao repouso).
-  const ver = stage.querySelector('.col2p__ver[data-verdeus]'); if (ver) ver.onclick = () => colAbrirVer(ver.dataset.verdeus);
-  const mais = stage.querySelector('.col2s__mais'); if (mais) mais.onclick = () => colAbrirVer(mais.dataset.sinmais, 'sinergia');   // §294: "+N ›" abre a lista completa
-  const fechar = stage.querySelector('#col2fechar'); if (fechar) fechar.onclick = () => colSelecionar(null);
-}
+// §346b: re-render da Coleção (os filtros de "MAIS FILTROS" redesenham a tela). §358: sem seleção de painel a restaurar.
+function colReabrir(){ renderColecao(); }
+
 
 /* ---------- detalhe do deus: kit + arte + estado da Provação, com o elo p/ jogá-la ---------- */
 // (§284-ajuste2: linhaKitHTML/deusDetalheHTML foram substituídos pelo renderizador único kitLinhaHTML, que lê
@@ -2131,6 +1775,18 @@ function _fichaIc(tipo){
   if (tipo === 'classe') return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l3 6-3 6-3-6z" opacity=".9"/><path d="M12 15l2 3-2 3-2-3z"/></svg>`;
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l13 13M6 20L20 6"/><path d="M3 6l3-2M21 6l-3-2"/></svg>`;
 }
+// §358 — estado de navegação das setas ‹ › da FICHA: andam na lista FILTRADA de onde se veio (a grade da Coleção),
+// ou — se veio de outro lugar — na lista da Coleção SEM filtro (a ordem canônica do ROSTER).
+function fichaNavEstado(k){
+  const lista = (fichaLista && fichaLista.indexOf(k) >= 0) ? fichaLista : ROSTER.map(e => e.key);
+  const idx = lista.indexOf(k);
+  return { lista, idx, temPrev: idx > 0, temNext: idx >= 0 && idx < lista.length - 1 };
+}
+function fichaIr(k, delta){
+  const e = fichaNavEstado(k); if (e.idx < 0) return;
+  const alvo = e.lista[e.idx + delta]; if (!alvo) return;
+  ir('deus', { key: alvo }, { substituir: true }); render();
+}
 function renderDeusDetalhe(){
   const k = (paramsAtuais() || {}).key;
   const g = HRM[k] || { nome: k, elem: 'Umbra', faccao: '', classe: '', funcao: '' };
@@ -2138,38 +1794,58 @@ function renderDeusDetalhe(){
   const gmEf = deusKitEfetivo(k, gm);   // §318: kit EXIBIDO pelo kitEfetivo (nv atual)
   const tem = temDeus(k), rar = raridadeDe(k), pagavel = nlTemPagavel(k);
   if (deusSelKey !== k) { deusSel = 'passiva'; deusSelKey = k; }   // abre na PASSIVA
+  const nav = fichaNavEstado(k);
+  const cop = colCopias(k), pts = nlPontos(k);
+  // §358: a posse ("Possuído · N cópias · N pontos") mora na ARTE (identidade), liberando a coluna direita p/ o detalhe.
+  const posse = tem
+    ? `<div class="dsx-art__posse dsx-art__posse--tem">Possuído · ${cop} cópia${cop === 1 ? '' : 's'} · ${pts} ponto${pts === 1 ? '' : 's'}</div>`
+    : `<div class="dsx-art__posse dsx-art__posse--nao">Não possuído</div>`;
   const artImg = (typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dsx-art__img" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : '';
+  const arq = gm.arquetipo ? `<div class="dsx-art__arq">${H(gm.arquetipo)}</div>` : '';
+  // §358: aba HABILIDADES | SINERGIA acima do bloco de habilidades (a sinergia mostra o que a sobreposição mostrava).
+  const corpo = fichaAba === 'sinergia'
+    ? fichaSinergiaHTML(k)
+    : `<div class="dsx-hab"><div class="dsx-hab__btns">${_fichaSkills(gmEf).map(s => _fichaBtnHTML(k, s, deusSel)).join('')}</div></div>
+       ${deusDetalheHTML(k, gmEf, deusSel)}`;
   stage.innerHTML = `<div id="baselayer" class="deusfix2"><div id="deusfix" class="${tem ? '' : 'deusfix--falta'}">
     <div class="dsx-art">
       <span class="dsx-art__mono">${slot('god-' + k, ini(g.nome), tem ? COR(g.elem) : '#6a6390', 72)}${artImg}</span>
       <div class="dsx-art__veu"></div>
+      <button class="dsxb dsxb--voltar" id="bvoltar">‹ Voltar</button>
       ${tem ? '' : '<span class="dsx-art__tag">VOCÊ NÃO POSSUI</span>'}
-      <div class="dsx-art__nome cin">${H(g.nome)}</div>
+      <div class="dsx-art__id">
+        <div class="dsx-art__nome cin">${H(g.nome)}</div>
+        ${posse}
+        ${arq}
+      </div>
     </div>
-    <header class="dsx-cab">
-      <button class="dsxb dsxb--voltar" id="bvoltar">‹ VOLTAR</button>
-      <div class="dsx-cab__dir">
+    <button class="dsx-nav dsx-nav--prev" id="dsxprev" aria-label="Anterior" ${nav.temPrev ? '' : 'disabled'}><i></i></button>
+    <button class="dsx-nav dsx-nav--next" id="dsxnext" aria-label="Próximo" ${nav.temNext ? '' : 'disabled'}><i></i></button>
+    <section class="dsx-col">
+      <header class="dsx-cab">
         <span class="dsx-rar rar--${rar}">${RAR_ROT[rar] || rar}</span>
         <button class="dsxb dsxb--subir${pagavel ? ' is-pag' : ''}" data-irniveis="${H(k)}">SUBIR HABILIDADES ›${pagavel ? '<i class="dsx-dot"></i>' : ''}</button>
-      </div>
-    </header>
-    <section class="dsx-col">
+      </header>
       <div class="dsx-tags">
         <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('pant')}</i>${H(gm.faccao)}</span>
-        <span class="dsx-tag">${orbe(gm.elem, 24)}${H(ELAB[gm.elem] || gm.elem)}</span>
+        <span class="dsx-tag">${orbe(gm.elem, 22)}${H(ELAB[gm.elem] || gm.elem)}</span>
         <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('classe')}</i>${H(gm.classe)}</span>
         <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('func')}</i>${H(gm.funcao)}</span>
       </div>
+      ${posse}
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
-      <div class="dsx-hab">
-        <span class="dsx-hab__rot">HABILIDADES</span>
-        <div class="dsx-hab__btns">${_fichaSkills(gmEf).map(s => _fichaBtnHTML(k, s, deusSel)).join('')}</div>
+      <div class="dsx-tabs">
+        <button class="dsx-tab${fichaAba === 'habilidades' ? ' is-on' : ''}" data-ficha-aba="habilidades">HABILIDADES</button>
+        <button class="dsx-tab${fichaAba === 'sinergia' ? ' is-on' : ''}" data-ficha-aba="sinergia">SINERGIA</button>
       </div>
-      ${deusDetalheHTML(k, gmEf, deusSel)}
+      <div class="dsx-corpo">${corpo}</div>
     </section>
   </div></div>`;
   const v = stage.querySelector('#bvoltar');
   if (v) v.onclick = () => { if (!voltar()) ir('home', {}, { substituir: true }); render(); };
+  const bp = stage.querySelector('#dsxprev'); if (bp && !bp.disabled) bp.onclick = () => fichaIr(k, -1);
+  const bn = stage.querySelector('#dsxnext'); if (bn && !bn.disabled) bn.onclick = () => fichaIr(k, 1);
+  stage.querySelectorAll('[data-ficha-aba]').forEach(b => b.onclick = () => { fichaAba = b.dataset.fichaAba; render(); });
   stage.querySelectorAll('[data-deussel]').forEach(b => { if (b.disabled) return;
     b.onclick = () => { deusSel = b.dataset.deussel; render(); }; });
   const sb = stage.querySelector('[data-irniveis]'); if (sb) sb.onclick = () => { ir('niveis', { key: k }); render(); };
@@ -2372,29 +2048,8 @@ function nlPaineisHTML(k, gm, gmEf, tem, online){
   return [['basico', 'BÁSICO'], ['habilidade', 'HABILIDADE'], ['milagre', 'MILAGRE'], ['defesa', 'DEFESA']]
     .map(([sl, tipo]) => nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online)).join('');
 }
-function nlRodapeHTML(k, gm){
-  const res = nlResumo(k, gm);
-  return `<div class="nlfoot">
-    <div class="nlfoot__cab"><span class="nlfoot__lab">Níveis</span><span class="nlfoot__num">${res.x} de ${res.y}</span></div>
-    <div class="nlfoot__bar"><i style="width:${res.y ? Math.round(res.x / res.y * 100) : 0}%"></i></div>
-    <p class="nlfoot__nota">Com tudo no máximo, as cópias extras viram Essência.</p>
-  </div>`;
-}
-// §321 — CORPO da VISÃO DE NÍVEIS dentro da sobreposição da Coleção (compacto: a identidade/retrato já estão no
-// cartão; aqui vão pontos + 3 painéis + rodapé). MESMA lógica do §319 (reusa nlPainelHTML/nlResumo/nlPontos…).
-function colNiveisCorpoHTML(k){
-  const g = colG(k);
-  const gm = (typeof GODS !== 'undefined' && GODS[k]) || g;
-  const gmEf = deusKitEfetivo(k, gm);
-  const tem = temDeus(k);
-  const online = (typeof contaAtual !== 'undefined' && !!contaAtual);
-  if (nlSelKey !== k) { nlSelKey = k; nlConfirm = null; nlPendente = false; nlMsg = null; }   // troca de deus: zera confirmação/erro
-  return `<div class="col2ov__nivscroll">
-    ${nlTopoPtsHTML(k, { nome: colNome(k) }, tem)}
-    <div class="col2ov__nivpaineis">${nlPaineisHTML(k, gm, gmEf, tem, online)}</div>
-    ${nlRodapeHTML(k, gm)}
-  </div>`;
-}
+// §358: nlRodapeHTML e colNiveisCorpoHTML (a visão de níveis DENTRO da sobreposição da Coleção) foram REMOVIDOS
+// junto com a sobreposição — a tela de NÍVEIS (renderNiveis) é o único lugar de subir habilidade.
 
 // §319c — a tela de NÍVEIS é ROTA PRÓPRIA ('niveis'); a rota 'deus' voltou a ser a FICHA (renderDeusDetalhe,
 // restaurada). O "‹" daqui volta para a FICHA do deus (‹ <Nome>), não para a Coleção.

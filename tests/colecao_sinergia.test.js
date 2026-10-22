@@ -43,147 +43,36 @@ const ok = (c, m) => { if (!c) { falhas++; console.log('  XX ' + m); } };
 })();
 
 (async () => {
+  // §358: a SINERGIA agora é a ABA da FICHA (a sobreposição saiu). Prova no navegador (780×360): o solista mostra a
+  // linha honesta; um deus com muitos parceiros mostra os que cabem + "+N parceiros" (SEM rolar); e NENHUMA ficha com
+  // a aba SINERGIA transborda o canvas 360, nos 100 deuses. (Os px de legibilidade/toque: acessibilidade_telas.)
   const distAbs = path.resolve(__dirname, '..', 'dist', 'incursion.html');
-  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true });
-  const page = await (await browser.newContext()).newPage();
+  const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
+  const page = await (await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 })).newPage();
   await page.goto('file://' + distAbs, { waitUntil: 'load' });
-
-  for (const W of [780, 951]) {
-    await page.setViewportSize({ width: W, height: 428 });
-    console.log(`\n== §294 tela @ ${W} ==`);
-
-    // (1)(2)(6) painel de um deus MISTO (mnevis: laço>fase>elemento, +anti no +N) e do pior caso (odin, 15)
-    const r = await page.evaluate(() => {
-      ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
-      ir('colecao', {}, { substituir: true }); render();
-      function painel(k) {
-        colSelecionar(k);
-        const pares = [...document.querySelectorAll('.col2p .col2s__par')];
-        const nomes = pares.map(p => p.querySelector('.col2s__nome').textContent);
-        const antiNoPainel = pares.some(p => p.className.includes('col2s__par--anti'));
-        const rot = document.querySelector('.col2p .col2s__rot');
-        const mais = document.querySelector('.col2p .col2s__mais');
-        const faixa = document.querySelector('.col2p .col2s__faixa');
-        const solo = document.querySelector('.col2p .col2s__solo');
-        const ver = document.querySelector('.col2p__ver');
-        return {
-          n: pares.length, nomes, antiNoPainel,
-          temRot: !!rot, rot: rot && rot.textContent,
-          maisTxt: mais ? mais.textContent : null,
-          temFaixa: !!faixa, solo: solo ? solo.textContent : null,
-          verBottom: ver ? Math.round(ver.getBoundingClientRect().bottom) : null,
-          verVisivel: ver ? (ver.getBoundingClientRect().bottom <= innerHeight + 1) : false,
-        };
-      }
-      return { mnevis: painel('mnevis'), odin: painel('odin'), zeus: painel('zeus'), ahpuch: painel('ahpuch') };
-    });
-    // TETO = 2 parceiros no painel (medido §294: 3 linhas de 2 linhas estouram 31px; 2 cabem com folga). mnevis tem
-    // 4 (laço>fase>elemento>anti) → painel mostra 2 + "+2 mais"; anti fica no +N; faixa migra p/ a sobreposição.
-    ok(r.mnevis.n === 2, `mnevis: ${r.mnevis.n} parceiros no painel (teto 2, o resto vai p/ o +N)`);
-    ok(r.mnevis.temRot && r.mnevis.rot === 'SINERGIA', 'mnevis: cabeçalho SINERGIA ausente');
-    ok(!r.mnevis.antiNoPainel, 'mnevis: anti-sinergia não devia aparecer no painel (só no +N)');
-    ok(r.mnevis.nomes[0] === S.fichas.mnevis.parceiros[0].nome, `mnevis: 1º do painel (${r.mnevis.nomes[0]}) ≠ 1º por prioridade`);
-    ok(/\+2 mais/.test(r.mnevis.maisTxt || ''), `mnevis: devia ter "+2 mais", tem ${r.mnevis.maisTxt}`);
-    ok(!r.mnevis.temFaixa, 'mnevis: com "+N" a faixa migra p/ a sobreposição (não no painel apertado)');
-    ok(r.odin.n === 2 && /\+13 mais/.test(r.odin.maisTxt || ''), `odin: painel devia ter 2 + "+13 mais", tem ${r.odin.n} / ${r.odin.maisTxt}`);
-    ok(r.odin.verVisivel, `odin (pior caso): "Ver detalhes" saiu da tela (base ${r.odin.verBottom} > 428)`);
-    ok(r.ahpuch.n === 2 && !r.ahpuch.maisTxt, `ahpuch (2 parceiros): mostra os 2 sem +N (tem ${r.ahpuch.n} / ${r.ahpuch.maisTxt})`);
-    ok(!r.ahpuch.temFaixa, 'ahpuch (com parceiros): a faixa fica na sobreposição, não no painel');
-    // (4) solista: linha honesta + a faixa global (ali sobra espaço)
-    ok(r.zeus.n === 0 && /funciona sozinho/.test(r.zeus.solo || ''), `zeus: solista devia mostrar a linha "funciona sozinho" (n=${r.zeus.n}, solo=${r.zeus.solo})`);
-    ok(r.zeus.temFaixa, 'zeus (solista): a faixa global (aura) devia estar no painel (há espaço)');
-
-    // (3) "+N" abre a lista COMPLETA como modo da sobreposição
-    const abre = await page.evaluate(() => {
-      colSelecionar('odin');
-      document.querySelector('.col2p .col2s__mais').click();
-      const ov = document.querySelector('#col2ov'); if (!ov) return { erro: 'sobreposição não abriu' };
-      const modoOn = ov.querySelector('.col2ov__modo.is-on');
-      const linhas = ov.querySelectorAll('.col2ov__sinpar').length;
-      const total = SINERGIA.fichas.odin.parceiros.length;
-      return { modo: modoOn && modoOn.dataset.modo, linhas, total };
-    });
-    ok(abre.modo === 'sinergia', `+N devia abrir no modo SINERGIA (abriu em ${abre.modo || abre.erro})`);
-    ok(abre.linhas === abre.total, `a lista completa devia ter os ${abre.total} parceiros do odin, tem ${abre.linhas}`);
-    await page.evaluate(() => { const x = document.querySelector('#col2ovx'); if (x) x.click(); });
-
-    // (§294-ajuste) o TÍTULO da sobreposição não corta no topo (o Cinzel 900 estourava a caixa; overflow:visible) e
-    // não colide com o × — nos 100. A métrica é a TINTA (Range), não scrollHeight (que só pega corte embaixo).
-    const titulo = await page.evaluate(() => {
-      const bad = [];
-      for (const e of ROSTER) {
-        colAbrirVer(e.key);
-        const nome = document.querySelector('.col2ov__nome'), card = document.querySelector('.col2ov__card'), x = document.querySelector('#col2ovx');
-        const rg = document.createRange(); rg.selectNodeContents(nome); const ink = rg.getBoundingClientRect();
-        const cr = card.getBoundingClientRect(), lim = x ? x.getBoundingClientRect().left : cr.right;
-        if (ink.top < cr.top + 0.5) bad.push(e.key + ' topo cortado ' + Math.round(cr.top - ink.top));
-        if (ink.right > lim - 1) bad.push(e.key + ' colide com o × ' + Math.round(ink.right - lim));
-        colFecharVer();
-      }
-      return bad;
-    });
-    ok(titulo.length === 0, `${titulo.length}/100 títulos cortam/colidem na sobreposição` + (titulo.length ? ' → ' + titulo.slice(0, 6).join(' · ') : ''));
-
-    // (5)(6) NENHUM nome/mecânica corta no painel, o "Ver detalhes" fica alcançável (§210) e a maestria só aparece no
-    // POSSUÍDO — nos 100 deuses E NOS DOIS ESTADOS DE POSSE. O §294 original mediu só possuído (semeava tudo) e por
-    // isso não pegou o corte do não-possuído (a caixa de maestria "falta" empurrava o botão): a MESMA falha de escopo
-    // do §291 (medir só um estado). Aqui varre possuído E não-possuído (§295).
-    async function varrer(possuir) {
-      return await page.evaluate((poss) => {
-        if (poss) ROSTER.forEach(e => { perfil.deuses[e.key] = perfil.deuses[e.key] || { obtidoEm: Date.now(), copias: 1 }; });
-        else perfil.deuses = {};   // ninguém possuído (nem os 9 iniciais) — o estado que o §294 nunca mediu
-        ir('colecao', {}, { substituir: true }); render();
-        const bad = []; let piorVer = 0, piorVerK = ''; let maestriaErrada = 0;
-        for (const e of ROSTER) {
-          colSelecionar(e.key);
-          for (const sel of ['.col2s__nome', '.col2s__mec']) {
-            for (const el of document.querySelectorAll('.col2p ' + sel)) {
-              if (el.scrollWidth > el.clientWidth + 1) bad.push(e.key + ' ' + sel + ' +' + (el.scrollWidth - el.clientWidth));
-            }
-          }
-          const ver = document.querySelector('.col2p__ver');
-          const vb = ver ? Math.round(ver.getBoundingClientRect().bottom) : 0;
-          if (vb > piorVer) { piorVer = vb; piorVerK = e.key; }
-          // §252: maestria só no possuído (não-possuído não tem posto — a caixa inteira sai, não encolhe)
-          const temMaestria = !!document.querySelector('.col2p .col2m');
-          if (temMaestria !== poss) maestriaErrada++;
-        }
-        return { bad, piorVer, piorVerK, maestriaErrada };
-      }, possuir);
+  const r = await page.evaluate(() => {
+    perfil.deuses = {}; ROSTER.forEach(e => perfil.deuses[e.key] = { obtidoEm: Date.now(), copias: 1 });
+    contaAtual = { perfil, niveis: {}, pontos: {} };
+    function sin(k) {
+      fichaAba = 'sinergia'; deusSelKey = null; ir('deus', { key: k }, { substituir: true }); render();
+      const g = document.getElementById('gsplash'); if (g) g.remove();
+      const fix = document.getElementById('deusfix'), fb = fix.getBoundingClientRect(), esc = fb.height / 360;
+      const bot = el => el ? Math.round((el.getBoundingClientRect().bottom - fb.top) / esc) : 0;
+      let botMax = 0;
+      [...fix.querySelectorAll('.dsx-col > *'), ...fix.querySelectorAll('.dsx-sin > *'), ...fix.querySelectorAll('.dsx-sin__lista > *')].forEach(el => { const b = bot(el); if (b > botMax) botMax = b; });
+      const mais = fix.querySelector('.dsx-sin__mais');
+      return { pars: fix.querySelectorAll('.dsx-sin__par').length, mais: mais ? mais.textContent : null, solo: !!fix.querySelector('.dsx-sin__solo'), faixa: !!fix.querySelector('.dsx-sin__faixa'), botMax };
     }
-    for (const poss of [true, false]) {
-      const v = await varrer(poss);
-      const rot = poss ? 'possuído' : 'NÃO possuído';
-      ok(v.bad.length === 0, `[${rot}] ${v.bad.length} nomes/mecânicas cortam no painel` + (v.bad.length ? ' → ' + v.bad.slice(0, 6).join(' · ') : ''));
-      ok(v.piorVer <= 428, `[${rot}] "Ver detalhes" saiu da tela no pior deus (${v.piorVerK}: base ${v.piorVer} > 428)`);
-      ok(v.maestriaErrada === 0, `[${rot}] maestria no estado errado em ${v.maestriaErrada} deuses (§252: só aparece no possuído)`);
-      console.log(`  @${W} [${rot}]: cortes ${v.bad.length}/100 · pior botão ${v.piorVer} (${v.piorVerK}) · maestria-errada ${v.maestriaErrada}`);
-    }
-    console.log(`  @${W}: mnevis ${r.mnevis.n}p · odin ${r.odin.n}+"${r.odin.maisTxt}" · zeus solista · lista completa ${abre.linhas}/${abre.total}`);
-
-    // (§295-cont) MAESTRIA por POSTO é dimensão de estado do painel possuído (Iniciado→★Mestre). As outras varreduras
-    // semeiam copias:1 sem vitórias → só o posto base. Aqui a dimensão é DECLARADA e percorrida: o odin (pior painel
-    // possuído, 2 parceiros + "+13 mais") é semeado em cada posto, com vitórias de verdade, e o "Ver detalhes" tem de
-    // caber. (Medido §295: a caixa de maestria é 51px constante — mas cobrir é o ponto, não confiar na sorte de altura.)
-    const postos = await page.evaluate(() => {
-      const casos = [['base', 0, false], ['Iniciado', 1, false], ['Aprendiz', 5, false], ['Adepto', 15, false], ['soMilagre', 30, false], ['Mestre', 30, true]];
-      const out = [];
-      for (const [nome, vit, mil] of casos) {
-        perfil.deuses = {}; perfil.deuses.odin = { obtidoEm: Date.now(), copias: 1 };
-        perfil.maestria = { odin: { vitorias: vit, milagre: mil } };   // a maestria mora em perfil.maestria[k], não em deuses[k] (§228)
-        ir('colecao', {}, { substituir: true }); render(); colSelecionar('odin');
-        const posto = (document.querySelector('.col2p .col2m__posto') || {}).textContent || '(sem)';
-        const ver = document.querySelector('.col2p__ver');
-        out.push({ nome, posto, verBot: ver ? Math.round(ver.getBoundingClientRect().bottom) : 0 });
-      }
-      return out;
-    });
-    const postosMal = postos.filter(p => p.verBot > 428);
-    ok(postosMal.length === 0, `[maestria] "Ver detalhes" corta em algum posto: ` + postosMal.map(p => `${p.nome} ${p.verBot}`).join(', '));
-    console.log(`  @${W} [maestria postos]: ` + postos.map(p => `${p.nome}(${p.posto.trim()})=${p.verBot}`).join(' · '));
-  }
-
+    const over = [];
+    ROSTER.forEach(e => { const s = sin(e.key); if (s.botMax > 360) over.push(e.key + ':' + s.botMax); });
+    return { zeus: sin('zeus'), odin: sin('odin'), over: over.slice(0, 8), overN: over.length };
+  });
+  ok(r.zeus.solo, 'zeus (solista): a aba SINERGIA mostra a linha "funciona sozinho"');
+  ok(r.zeus.faixa, 'zeus: a faixa global (aura "Mímir e Brigid reforçam o time") aparece');
+  ok(r.odin.pars > 0 && /\+\d+ parceiro/.test(r.odin.mais || ''), `odin (15 parceiros): mostra alguns + "+N parceiros" (tem ${r.odin.pars} + "${r.odin.mais}")`);
+  ok(r.overN === 0, `nenhuma ficha/SINERGIA transborda o canvas 360 nos 100 deuses (${r.overN}: ${r.over.join(', ')})`);
+  console.log(`  ficha/SINERGIA: zeus solista+faixa · odin ${r.odin.pars}+"${r.odin.mais}" · transbordos ${r.overN}/100`);
   await browser.close();
-  console.log(falhas === 0 ? '\n>>> COLEÇÃO-SINERGIA OK' : `\n>>> ${falhas} FALHA(S)`);
+  console.log(falhas === 0 ? '\n>>> COLEÇÃO-SINERGIA §358 OK' : `\n>>> ${falhas} FALHA(S)`);
   process.exit(falhas ? 1 : 0);
 })();

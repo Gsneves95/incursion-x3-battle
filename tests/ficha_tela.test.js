@@ -37,6 +37,10 @@ ok(!!$('#deusfix') && !$('.deusfix--falta'), 'monta na tela fixa (#deusfix), pos
 ok(txt($('.dsx-art__nome')) === 'Zeus', 'o nome na arte nomeia o deus');
 ok($$('.dsx-hab__btns .dsk').length === 5, 'HABILIDADES: 5 botões (Passiva + Básico/Habilidade/Milagre + Defesa)');
 ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como conseguir")');
+ok(!!$('.dsx-art__posse--tem') && /Possuído/.test(txt($('.dsx-art__posse'))), '§358: "Possuído · N cópias · N pontos" está na arte');
+ok($$('.dsx-tab[data-ficha-aba]').length === 2, '§358: abas HABILIDADES | SINERGIA acima das habilidades');
+ok(!!$('#dsxprev') && !!$('#dsxnext'), '§358: setas ‹ › de navegação na ficha');
+ok(!!(w.HRM.zeus.arquetipo ? $('.dsx-art__arq') : true), '§358: o arquétipo aparece na arte (quando há)');
 {
   const sel = $('.dsk.is-sel');
   ok(sel.title === 'Passiva' && !sel.querySelector('.dsk__nv'), 'abre na PASSIVA e a PASSIVA NÃO tem selo de nível');
@@ -127,7 +131,7 @@ console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×85
       const r = await page.evaluate((mk) => {
         eval(mk); const g = document.getElementById('gsplash'); if (g) g.remove();
         const fix = document.getElementById('deusfix'), fb = fix.getBoundingClientRect();
-        const esc = fb.height / 852;
+        const esc = fb.height / 360;   // §358: canvas 780×360 (= o celular)
         const pw = fb.width / innerWidth, ph = fb.height / innerHeight;
         const designBot = el => Math.round((el.getBoundingClientRect().bottom - fb.top) / esc);
         // §350c: y de design do CONTEÚDO — cabeçalho + os FILHOS diretos da coluna + os FILHOS do DETALHE (cabeçalho,
@@ -147,7 +151,7 @@ console.log(`\n== jsdom OK (${passes}) — agora o ENCAIXE no Chromium (1846×85
         return { pw, ph, botMax, pior, overlap, clips: [...new Set(clips)].slice(0, 6) };
       }, mk);
       ok2(Math.min(r.pw, r.ph) >= 0.98, `§350 ficha/${nome} @${W}×${H}: enche a tela (${(r.pw * 100).toFixed(1)}%×${(r.ph * 100).toFixed(1)}%)`);
-      ok2(r.botMax <= 832, `§350 ficha/${nome} @${W}×${H}: arte/cabeçalho/coluna (inclusive o detalhe) terminam em y≤830 (pior ${r.botMax} em ${r.pior})`);
+      ok2(r.botMax <= 360, `§358 ficha/${nome} @${W}×${H}: cabeçalho/coluna (inclusive o detalhe) terminam dentro do canvas 360 (pior ${r.botMax} em ${r.pior})`);
       ok2(!r.overlap, `§350 ficha/${nome} @${W}×${H}: a arte e a coluna não se sobrepõem`);
       ok2(r.clips.length === 0, `§350 ficha/${nome} @${W}×${H}: nenhum texto corta (${r.clips.join(',') || 'ok'})`);
       await page.close();

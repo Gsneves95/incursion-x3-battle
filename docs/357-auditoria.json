@@ -8,133 +8,133 @@
     {
      "sel": "b.mperfil__nick",
      "txt": "Jogador",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.mmoeda__ic.mmoeda__ic--gema",
      "txt": "💎",
-     "px": 10.08,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "—",
-     "px": 11.25,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.mmoeda__ic.mmoeda__ic--ess",
      "txt": "◈",
-     "px": 10.36,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "—",
-     "px": 11.25,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Campanha",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__camptxt",
-     "txt": "Cap. I · Grécia",
-     "px": 8.36,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__campnum",
-     "txt": "0/6",
-     "px": 8.59,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Provações",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "91",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Desafios",
-     "px": 10.97,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "100",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Invocação",
-     "px": 10.97,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "0/60",
-     "px": 8.24,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Coleção",
-     "px": 10.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "9/100",
-     "px": 8.42,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Domínios",
      "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
+     "txt": "Campanha",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__camptxt",
+     "txt": "Cap. I · Grécia",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__campnum",
+     "txt": "0/6",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Provações",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "91",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Desafios",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "100",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Invocação",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "0/60",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Coleção",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "9/100",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Domínios",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
      "txt": "Treino",
-     "px": 10.84,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
      "txt": "Loja",
-     "px": 10.77,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__breveTag",
      "txt": "· em breve",
-     "px": 8.46,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
      "txt": "PvP",
-     "px": 10.86,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -148,7 +148,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -173,133 +173,133 @@
     {
      "sel": "b.mperfil__nick",
      "txt": "Jogador",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.mmoeda__ic.mmoeda__ic--gema",
      "txt": "💎",
-     "px": 10.08,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "—",
-     "px": 11.25,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.mmoeda__ic.mmoeda__ic--ess",
      "txt": "◈",
-     "px": 10.36,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "—",
-     "px": 11.25,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Campanha",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__camptxt",
-     "txt": "Capítulo I · Grécia",
-     "px": 8.39,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__campnum",
-     "txt": "0/6",
-     "px": 8.59,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Provações",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "91",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Desafios",
-     "px": 10.97,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "100",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Invocação",
-     "px": 10.97,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "0/60",
-     "px": 8.24,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Coleção",
-     "px": 10.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__cont",
-     "txt": "9/100",
-     "px": 8.42,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ilha__nome",
-     "txt": "Domínios",
      "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
+     "txt": "Campanha",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__camptxt",
+     "txt": "Capítulo I · Grécia",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__campnum",
+     "txt": "0/6",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Provações",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "91",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Desafios",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "100",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Invocação",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "0/60",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Coleção",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__cont",
+     "txt": "9/100",
+     "px": 8.41,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
+     "txt": "Domínios",
+     "px": 10.93,
+     "abaixoRotulo": true
+    },
+    {
+     "sel": "span.ilha__nome",
      "txt": "Treino",
-     "px": 10.84,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
      "txt": "Loja",
-     "px": 10.77,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__breveTag",
      "txt": "· em breve",
-     "px": 8.46,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.ilha__nome",
      "txt": "PvP",
-     "px": 10.86,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -313,7 +313,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -344,43 +344,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x3",
-     "px": 8.82,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x4",
-     "px": 8.66,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -398,13 +398,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -446,7 +446,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -518,19 +518,19 @@
     {
      "sel": "div",
      "txt": "ALIADO",
-     "px": 8.01,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "CONTROLADOR",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "UMBRA",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -702,43 +702,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -756,13 +756,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -804,7 +804,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -876,19 +876,19 @@
     {
      "sel": "div",
      "txt": "INIMIGO",
-     "px": 8.05,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "ATACANTE",
-     "px": 8.05,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "MARÉ",
-     "px": 8.07,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -900,13 +900,13 @@
     {
      "sel": "span.kw.kw--dot",
      "txt": "Encharcados",
-     "px": 8.9,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.kw.kw--def",
      "txt": "redução de dano",
-     "px": 8.88,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
@@ -1072,43 +1072,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x3",
-     "px": 8.82,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x3",
-     "px": 8.82,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -1126,13 +1126,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -1180,7 +1180,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -1252,25 +1252,25 @@
     {
      "sel": "div",
      "txt": "HABILIDADE",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "MÁGICO",
-     "px": 8.06,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "ALVO ÚNICO",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "NV 1",
-     "px": 7.98,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -1282,13 +1282,13 @@
     {
      "sel": "span.kw.kw--ctrl",
      "txt": "Selado",
-     "px": 8.8,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.kw.kw--neg",
      "txt": "dano puro",
-     "px": 8.9,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
@@ -1318,7 +1318,7 @@
     {
      "sel": "span.cin",
      "txt": "CANCELAR",
-     "px": 9.75,
+     "px": 9.72,
      "abaixoRotulo": true
     }
    ],
@@ -1433,43 +1433,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -1487,13 +1487,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -1535,7 +1535,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -1607,25 +1607,25 @@
     {
      "sel": "div",
      "txt": "HABILIDADE",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "MÁGICO",
-     "px": 8.06,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "ALVO ÚNICO",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "NV 1",
-     "px": 7.98,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -1637,13 +1637,13 @@
     {
      "sel": "span.kw.kw--ctrl",
      "txt": "Selado",
-     "px": 8.8,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.kw.kw--neg",
      "txt": "dano puro",
-     "px": 8.9,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
@@ -1821,13 +1821,13 @@
     {
      "sel": "#bvoltar",
      "txt": "Início",
-     "px": 7.97,
+     "px": 7.98,
      "abaixoRotulo": true
     },
     {
      "sel": "span.camp__capeye",
      "txt": "CAPÍTULO I",
-     "px": 6.76,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
@@ -1839,7 +1839,7 @@
     {
      "sel": "span.camp__progt",
      "txt": "/ 06",
-     "px": 10.27,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
@@ -1863,37 +1863,37 @@
     {
      "sel": "span.cslot__badge.cslot__lock",
      "txt": "⚿",
-     "px": 6.73,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cslot__nome",
      "txt": "Zeus",
-     "px": 5.93,
+     "px": 5.9,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cslot__badge.cslot__swap",
      "txt": "⇄",
-     "px": 6.73,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cslot__nome",
      "txt": "Nezha",
-     "px": 5.93,
+     "px": 5.9,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cslot__badge.cslot__swap",
      "txt": "⇄",
-     "px": 6.73,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cslot__nome",
      "txt": "Hades",
-     "px": 5.93,
+     "px": 5.9,
      "abaixoRotulo": true
     },
     {
@@ -1905,25 +1905,25 @@
     {
      "sel": "span.camp__form",
      "txt": "3 VS 3",
-     "px": 5.94,
+     "px": 5.9,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cinim__nome",
      "txt": "Fenrir",
-     "px": 6.78,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cinim__nome",
      "txt": "Hel",
-     "px": 6.78,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cinim__nome",
      "txt": "Ceifador",
-     "px": 6.78,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
@@ -1941,7 +1941,7 @@
     {
      "sel": "span.camp__kitchipseta",
      "txt": "›",
-     "px": 11,
+     "px": 11.77,
      "abaixoRotulo": false
     },
     {
@@ -1959,7 +1959,7 @@
     {
      "sel": "span.camp__kitchipseta",
      "txt": "›",
-     "px": 11,
+     "px": 11.77,
      "abaixoRotulo": false
     },
     {
@@ -1971,13 +1971,13 @@
     {
      "sel": "b.crec__v",
      "txt": "120",
-     "px": 9.11,
+     "px": 9.25,
      "abaixoRotulo": true
     },
     {
      "sel": "span.crec__u",
      "txt": "GEMAS",
-     "px": 5.26,
+     "px": 5.3,
      "abaixoRotulo": true
     },
     {
@@ -1989,7 +1989,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "✓",
-     "px": 8.82,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2001,7 +2001,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "✓",
-     "px": 8.82,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2013,7 +2013,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "✓",
-     "px": 8.82,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2025,7 +2025,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "✓",
-     "px": 8.82,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2037,19 +2037,19 @@
     {
      "sel": "span.cnode__num",
      "txt": "✓",
-     "px": 8.82,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__nome",
      "txt": "O que Nezha viu",
-     "px": 6.72,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__num",
      "txt": "6",
-     "px": 9.54,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
@@ -2060,8 +2060,8 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -2103,7 +2103,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2154,13 +2154,13 @@
     {
      "sel": "#bvoltar",
      "txt": "Início",
-     "px": 7.97,
+     "px": 7.98,
      "abaixoRotulo": true
     },
     {
      "sel": "span.camp__capeye",
      "txt": "PRÓLOGO",
-     "px": 6.69,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
@@ -2172,7 +2172,7 @@
     {
      "sel": "span.camp__progt",
      "txt": "/ 07",
-     "px": 10.27,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
@@ -2202,13 +2202,13 @@
     {
      "sel": "span.copc__mark",
      "txt": "○",
-     "px": 10.45,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
      "sel": "span.copc__mono",
      "txt": "AS",
-     "px": 10.78,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
@@ -2226,13 +2226,13 @@
     {
      "sel": "span.copc__mark",
      "txt": "○",
-     "px": 10.45,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
      "sel": "span.copc__mono",
      "txt": "DU",
-     "px": 10.81,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
@@ -2250,14 +2250,14 @@
     {
      "sel": "span.copc__mark",
      "txt": "○",
-     "px": 10.45,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
      "sel": "span.copc__mono",
      "txt": "XI",
-     "px": 11.29,
-     "abaixoRotulo": false
+     "px": 10.93,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.copc__rot",
@@ -2274,7 +2274,7 @@
     {
      "sel": "span.copc__mark",
      "txt": "○",
-     "px": 10.45,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
@@ -2286,7 +2286,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "1",
-     "px": 9.53,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
@@ -2298,31 +2298,31 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__nome",
      "txt": "A Incursão",
-     "px": 6.75,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__nome",
      "txt": "A Criação do Eixo",
-     "px": 6.74,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2334,7 +2334,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2346,7 +2346,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2358,7 +2358,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2369,8 +2369,8 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -2419,7 +2419,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2456,13 +2456,13 @@
     {
      "sel": "#bvoltar",
      "txt": "Início",
-     "px": 7.97,
+     "px": 7.98,
      "abaixoRotulo": true
     },
     {
      "sel": "span.camp__capeye",
      "txt": "PRÓLOGO",
-     "px": 6.69,
+     "px": 6.74,
      "abaixoRotulo": true
     },
     {
@@ -2474,13 +2474,13 @@
     {
      "sel": "span.camp__progt",
      "txt": "/ 07",
-     "px": 10.27,
+     "px": 10.09,
      "abaixoRotulo": true
     },
     {
      "sel": "p.camp__histnota",
      "txt": "Um trecho da história.",
-     "px": 9.29,
+     "px": 9.25,
      "abaixoRotulo": true
     },
     {
@@ -2492,7 +2492,7 @@
     {
      "sel": "span.cnode__num",
      "txt": "1",
-     "px": 9.53,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
@@ -2504,31 +2504,31 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__nome",
      "txt": "A Incursão",
-     "px": 6.75,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__nome",
      "txt": "A Criação do Eixo",
-     "px": 6.74,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2540,7 +2540,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2552,7 +2552,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2564,7 +2564,7 @@
     {
      "sel": "span.cnode__lock",
      "txt": "⚿",
-     "px": 8.02,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
@@ -2575,8 +2575,8 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -2597,7 +2597,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2670,7 +2670,7 @@
     {
      "sel": "h2.dm-time__t",
      "txt": "SEU TIME",
-     "px": 10.12,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -2682,7 +2682,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Atacante",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2700,7 +2700,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Guardião",
-     "px": 8.39,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2718,7 +2718,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2730,43 +2730,43 @@
     {
      "sel": "button.dm-chip.dm-chip--todos",
      "txt": "Todos",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2790,7 +2790,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2814,7 +2814,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2832,7 +2832,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2850,7 +2850,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2868,7 +2868,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2886,7 +2886,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2904,7 +2904,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2922,7 +2922,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -2940,7 +2940,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3183,7 +3183,7 @@
     {
      "sel": "span.dm-ctx__lock",
      "txt": "🔒",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3231,25 +3231,25 @@
     {
      "sel": "span.dm-chefe__n",
      "txt": "Zeus",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-chefe__n",
      "txt": "Poseidon",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-chefe__n",
      "txt": "Atena",
-     "px": 8.52,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "h2.dm-time__t",
      "txt": "SEU TIME",
-     "px": 10.12,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -3261,7 +3261,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3273,7 +3273,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3285,7 +3285,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3297,43 +3297,43 @@
     {
      "sel": "button.dm-chip.dm-chip--todos",
      "txt": "Todos",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3351,7 +3351,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3369,7 +3369,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3387,7 +3387,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3405,7 +3405,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3423,7 +3423,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3441,7 +3441,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3459,7 +3459,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3477,7 +3477,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3495,7 +3495,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3754,7 +3754,7 @@
     {
      "sel": "h2.dm-time__t",
      "txt": "SEU TIME",
-     "px": 10.12,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -3766,7 +3766,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Atacante",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3784,7 +3784,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3796,7 +3796,7 @@
     {
      "sel": "span.dm-vaga__txt",
      "txt": "Escolha um deus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3808,43 +3808,43 @@
     {
      "sel": "button.dm-chip.dm-chip--todos",
      "txt": "Todos",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3868,7 +3868,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3892,7 +3892,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3916,7 +3916,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3934,7 +3934,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3958,7 +3958,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -3982,7 +3982,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4006,7 +4006,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4030,7 +4030,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4054,7 +4054,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4278,13 +4278,13 @@
     {
      "sel": "h2.sel-time__t",
      "txt": "SEU TIME",
-     "px": 9.27,
+     "px": 9.3,
      "abaixoRotulo": true
     },
     {
      "sel": "span.sel-time__c",
      "txt": "0/3",
-     "px": 7.66,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -4344,19 +4344,19 @@
     {
      "sel": "h2.sel-time__t",
      "txt": "OPONENTE",
-     "px": 9.26,
+     "px": 9.3,
      "abaixoRotulo": true
     },
     {
      "sel": "span.sel-time__who",
      "txt": "CPU",
-     "px": 6.29,
+     "px": 6.34,
      "abaixoRotulo": true
     },
     {
      "sel": "span.sel-time__c",
      "txt": "0/3",
-     "px": 7.66,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -4440,7 +4440,7 @@
     {
      "sel": "b",
      "txt": "20",
-     "px": 6.96,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -4452,37 +4452,37 @@
     {
      "sel": "#bestado",
      "txt": "Liberados",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4494,7 +4494,7 @@
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4512,7 +4512,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4530,7 +4530,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4548,7 +4548,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4566,7 +4566,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4584,7 +4584,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4602,7 +4602,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4620,7 +4620,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4638,7 +4638,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4656,7 +4656,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4939,7 +4939,7 @@
     {
      "sel": "b",
      "txt": "Herói",
-     "px": 8.35,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4969,7 +4969,7 @@
     {
      "sel": "b",
      "txt": "1206",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -4981,7 +4981,7 @@
     {
      "sel": "h2.dm-time__t",
      "txt": "SEU TIME",
-     "px": 10.12,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -4999,7 +4999,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Atacante",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5017,7 +5017,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Guardião",
-     "px": 8.39,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5035,7 +5035,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Guardião",
-     "px": 8.39,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5053,43 +5053,43 @@
     {
      "sel": "button.dm-chip.dm-chip--todos",
      "txt": "Todos",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5113,7 +5113,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5137,7 +5137,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5161,7 +5161,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5179,7 +5179,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5197,7 +5197,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5215,7 +5215,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5233,7 +5233,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5251,7 +5251,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5269,7 +5269,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5534,7 +5534,7 @@
     {
      "sel": "b",
      "txt": "Herói",
-     "px": 8.35,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5564,7 +5564,7 @@
     {
      "sel": "h2.dm-time__t",
      "txt": "SEU TIME",
-     "px": 10.12,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -5582,7 +5582,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Atacante",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5600,7 +5600,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Guardião",
-     "px": 8.39,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5618,7 +5618,7 @@
     {
      "sel": "span.dm-vaga__f",
      "txt": "Guardião",
-     "px": 8.39,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5636,43 +5636,43 @@
     {
      "sel": "button.dm-chip.dm-chip--todos",
      "txt": "Todos",
-     "px": 8.4,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Atacante",
-     "px": 8.42,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Guardião",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Suporte",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.dm-chip",
      "txt": "Manipulador",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dm-conta",
      "txt": "9 deuses",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5696,7 +5696,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5720,7 +5720,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5744,7 +5744,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Guardião",
-     "px": 8.5,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5762,7 +5762,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Manipulador",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5780,7 +5780,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5798,7 +5798,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5816,7 +5816,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Controlador",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5834,7 +5834,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Atacante",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5852,7 +5852,7 @@
     {
      "sel": "span.dm-card__f",
      "txt": "Suporte",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -5864,7 +5864,7 @@
     {
      "sel": "#pvpfilatempo",
      "txt": "1min 12s",
-     "px": 9.26,
+     "px": 9.28,
      "abaixoRotulo": true
     },
     {
@@ -6101,3090 +6101,65 @@
   "nome": "Coleção — sem seleção",
   "file": "357-colecao-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "span.col2__sub",
-     "txt": "COLECIONE · LEIA O KIT · MONTE A LENDA",
-     "px": 6.03,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--ess",
-     "txt": "◈",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--gem",
-     "txt": "◆",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--pos",
-     "txt": "⬡",
-     "px": 8.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "9",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "/100",
-     "px": 7.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__leg",
-     "txt": "personagens na coleção",
-     "px": 6.74,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--SS",
-     "txt": "SS",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/16",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/31",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/53",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "7",
-     "px": 8.82,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.col2r__dica",
-     "txt": "Toque num personagem para ver a maestria",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⬡",
-     "px": 7.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "px": 8.12,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⌕",
-     "px": 9.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "px": 8.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "px": 8.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "px": 8.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "px": 8.2,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2__selrot",
-     "txt": "Ordenar",
-     "px": 4.91,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2conta",
-     "txt": "100 deuses",
-     "px": 8.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Afrodite",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "MA",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ah Puch",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--SS",
-     "txt": "SS",
-     "px": 7.7,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "JP",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Amaterasu",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ammit",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Anúbis",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "CH",
-     "px": 7.89,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ao Kuang",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Apolo",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Aquiles",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ares",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Atena",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "NÓ",
-     "px": 7.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "BR",
-     "px": 7.84,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "w": 42.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "w": 55.8,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "w": 58.1,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2busca",
-     "txt": "",
-     "w": 110.5,
-     "h": 12.8,
-     "min": 12.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "w": 49.5,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "w": 64.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "w": 24.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "w": 20,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "w": 20.1,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "w": 53.5,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "select",
-     "txt": "Mais recentesNome (A–Z)",
-     "w": 70.2,
-     "h": 21.3,
-     "min": 21.3
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
-   "textTotal": 90,
-   "tapTotal": 38
+   "textTotal": 71,
+   "tapTotal": 37
   },
-  "nota": 4,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
  },
  {
-  "slug": "colecao-selecao",
-  "nome": "Coleção — com seleção",
-  "file": "357-colecao-selecao-780x360.png",
+  "slug": "colecao-filtro",
+  "nome": "Coleção — com filtro",
+  "file": "357-colecao-filtro-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "span.col2__sub",
-     "txt": "COLECIONE · LEIA O KIT · MONTE A LENDA",
-     "px": 6.03,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--ess",
-     "txt": "◈",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--gem",
-     "txt": "◆",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--pos",
-     "txt": "⬡",
-     "px": 8.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "9",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "/100",
-     "px": 7.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2fechar",
-     "txt": "×",
-     "px": 9.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__rar.col2p__rar--S",
-     "txt": "S",
-     "px": 8.64,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "h2.col2p__nome",
-     "txt": "Afrodite",
-     "px": 11.34,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "p.col2p__arq",
-     "txt": "Charmer",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__tag.col2p__tag--cult",
-     "txt": "Grega",
-     "px": 6.81,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__tag",
-     "txt": "Aurora",
-     "px": 6.79,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__tag",
-     "txt": "Mágico",
-     "px": 6.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__tag",
-     "txt": "Controlador",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2p__posse.col2p__posse--nao",
-     "txt": "Não possuído",
-     "px": 7.44,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2s__rot",
-     "txt": "SINERGIA",
-     "px": 6.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2s__nome",
-     "txt": "Amaterasu",
-     "px": 7.79,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2s__mec",
-     "txt": "Dia: +8 aos seus Aurora",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2s__nome",
-     "txt": "Rá",
-     "px": 7.81,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2s__mec",
-     "txt": "+5 aos seus Aurora",
-     "px": 6.74,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2s__mais",
-     "txt": "+1 mais ›",
-     "px": 6.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2p__ver",
-     "txt": "Ver detalhes ›",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "px": 8.12,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⌕",
-     "px": 9.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "px": 8.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "px": 8.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "px": 8.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "px": 8.2,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2__selrot",
-     "txt": "Ordenar",
-     "px": 4.91,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2conta",
-     "txt": "100 deuses",
-     "px": 8.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Afrodite",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "MA",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ah Puch",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--SS",
-     "txt": "SS",
-     "px": 7.7,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "JP",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Amaterasu",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ammit",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Anúbis",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "CH",
-     "px": 7.89,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ao Kuang",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Apolo",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Aquiles",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ares",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Atena",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "NÓ",
-     "px": 7.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "BR",
-     "px": 7.84,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2fechar",
-     "txt": "×",
-     "w": 15.6,
-     "h": 15.6,
-     "min": 15.6
-    },
-    {
-     "sel": "button.col2s__mais",
-     "txt": "+1 mais ›",
-     "w": 146.7,
-     "h": 12,
-     "min": 12
-    },
-    {
-     "sel": "button.col2p__ver",
-     "txt": "Ver detalhes ›",
-     "w": 146.7,
-     "h": 22,
-     "min": 22
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "w": 42.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "w": 55.8,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "w": 58.1,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2busca",
-     "txt": "",
-     "w": 110.5,
-     "h": 12.8,
-     "min": 12.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "w": 49.5,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "w": 64.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "w": 24.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "w": 20,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "w": 20.1,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "w": 53.5,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "select",
-     "txt": "Mais recentesNome (A–Z)",
-     "w": 70.2,
-     "h": 21.3,
-     "min": 21.3
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
-   "textTotal": 92,
-   "tapTotal": 41
+   "textTotal": 30,
+   "tapTotal": 23
   },
-  "nota": 3.8,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
  },
  {
-  "slug": "colecao-kit",
-  "nome": "Coleção — sobreposição de kit",
-  "file": "357-colecao-kit-780x360.png",
+  "slug": "ficha-sinergia",
+  "nome": "Ficha do deus — SINERGIA",
+  "file": "357-ficha-sinergia-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "span.col2__sub",
-     "txt": "COLECIONE · LEIA O KIT · MONTE A LENDA",
-     "px": 6.03,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--ess",
-     "txt": "◈",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--gem",
-     "txt": "◆",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--pos",
-     "txt": "⬡",
-     "px": 8.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "9",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "/100",
-     "px": 7.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__leg",
-     "txt": "personagens na coleção",
-     "px": 6.74,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--SS",
-     "txt": "SS",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/16",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/31",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/53",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "7",
-     "px": 8.82,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.col2r__dica",
-     "txt": "Toque num personagem para ver a maestria",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⬡",
-     "px": 7.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "px": 8.12,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⌕",
-     "px": 9.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "px": 8.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "px": 8.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "px": 8.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "px": 8.2,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2__selrot",
-     "txt": "Ordenar",
-     "px": 4.91,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2conta",
-     "txt": "100 deuses",
-     "px": 8.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Afrodite",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "MA",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ah Puch",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--SS",
-     "txt": "SS",
-     "px": 7.7,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "JP",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Amaterasu",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ammit",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Anúbis",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "CH",
-     "px": 7.89,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ao Kuang",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Apolo",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Aquiles",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ares",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Atena",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "NÓ",
-     "px": 7.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "BR",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Celta",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag.col2ov__tag--el",
-     "txt": "Chama",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Mágico",
-     "px": 10.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Suporte",
-     "px": 10.96,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2ov__modo.is-on",
-     "txt": "KIT",
-     "px": 10,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2ov__modo",
-     "txt": "SINERGIA",
-     "px": 10,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2ovsubir",
-     "txt": "SUBIR HABILIDADES ›",
-     "px": 9.51,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__skrot",
-     "txt": "BÁSICO",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__sknome",
-     "txt": "Fagulha da Forja",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__skrot",
-     "txt": "HABILIDADE",
-     "px": 8.56,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__sknome",
-     "txt": "Chama Sagrada",
-     "px": 11.02,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.col2ov__skrot",
-     "txt": "MILAGRE",
-     "px": 8.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__sknome",
-     "txt": "Poço de Cura",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__skrot",
-     "txt": "PASSIVA",
-     "px": 8.59,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__sknome",
-     "txt": "Ferreira Divina",
-     "px": 11.01,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.col2ov__dettipo",
-     "txt": "BÁSICO",
-     "px": 9.07,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.cost__none.cost__gratis",
-     "txt": "GRÁTIS",
-     "px": 9.47,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__chip.col2ov__chip--cd",
-     "txt": "sem recarga",
-     "px": 9.45,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "w": 42.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "w": 55.8,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "w": 58.1,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2busca",
-     "txt": "",
-     "w": 110.5,
-     "h": 12.8,
-     "min": 12.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "w": 49.5,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "w": 64.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "w": 24.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "w": 20,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "w": 20.1,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "w": 53.5,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "select",
-     "txt": "Mais recentesNome (A–Z)",
-     "w": 70.2,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2ovprev",
-     "txt": "",
-     "w": 30,
-     "h": 140,
-     "min": 30
-    },
-    {
-     "sel": "#col2ovx",
-     "txt": "×",
-     "w": 28,
-     "h": 28,
-     "min": 28
-    },
-    {
-     "sel": "button.col2ov__modo.is-on",
-     "txt": "KIT",
-     "w": 131,
-     "h": 30,
-     "min": 30
-    },
-    {
-     "sel": "button.col2ov__modo",
-     "txt": "SINERGIA",
-     "w": 131,
-     "h": 30,
-     "min": 30
-    },
-    {
-     "sel": "#col2ovsubir",
-     "txt": "SUBIR HABILIDADES ›",
-     "w": 135.1,
-     "h": 30,
-     "min": 30
-    },
-    {
-     "sel": "#col2ovnext",
-     "txt": "",
-     "w": 30,
-     "h": 140,
-     "min": 30
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
-   "textTotal": 115,
-   "tapTotal": 48
+   "textTotal": 28,
+   "tapTotal": 7
   },
-  "nota": 4.2,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
  },
  {
-  "slug": "colecao-niveis",
-  "nome": "Coleção — sobreposição de níveis",
-  "file": "357-colecao-niveis-780x360.png",
+  "slug": "ficha-falta",
+  "nome": "Ficha do deus — não possuída",
+  "file": "357-ficha-falta-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "span.col2__sub",
-     "txt": "COLECIONE · LEIA O KIT · MONTE A LENDA",
-     "px": 6.03,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--ess",
-     "txt": "◈",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--gem",
-     "txt": "◆",
-     "px": 8.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "—",
-     "px": 8.09,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i.col2__mic.col2__mic--pos",
-     "txt": "⬡",
-     "px": 8.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "9",
-     "px": 8.67,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span",
-     "txt": "/100",
-     "px": 7.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__leg",
-     "txt": "personagens na coleção",
-     "px": 6.74,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--SS",
-     "txt": "SS",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/16",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/31",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 8.54,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rlabel.col2p__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2r__rnum",
-     "txt": "/53",
-     "px": 8.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "7",
-     "px": 8.82,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.col2r__dica",
-     "txt": "Toque num personagem para ver a maestria",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⬡",
-     "px": 7.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "px": 8.12,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "i",
-     "txt": "⌕",
-     "px": 9.73,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "px": 8.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "px": 8.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "px": 8.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "px": 8.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "px": 8.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "px": 8.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "px": 8.2,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2__selrot",
-     "txt": "Ordenar",
-     "px": 4.91,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2conta",
-     "txt": "100 deuses",
-     "px": 8.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Afrodite",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "MA",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ah Puch",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--SS",
-     "txt": "SS",
-     "px": 7.7,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "JP",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Amaterasu",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ammit",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Anúbis",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "CH",
-     "px": 7.89,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ao Kuang",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Controlador",
-     "px": 9.21,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Apolo",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Aquiles",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Ares",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Atacante",
-     "px": 9.22,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "GR",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.col2c__n",
-     "txt": "Atena",
-     "px": 10.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__f",
-     "txt": "Suporte",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "NÓ",
-     "px": 7.63,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--A",
-     "txt": "A",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "EG",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__rar.col2c__rar--S",
-     "txt": "S",
-     "px": 7.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2c__cult",
-     "txt": "BR",
-     "px": 7.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Celta",
-     "px": 10.94,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag.col2ov__tag--el",
-     "txt": "Chama",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Mágico",
-     "px": 10.92,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.col2ov__tag",
-     "txt": "Suporte",
-     "px": 10.96,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "#col2ovkit",
-     "txt": "‹ Kit",
-     "px": 11.04,
-     "abaixoRotulo": false
-    },
-    {
-     "sel": "span.col2ov__nivlab",
-     "txt": "SUBIR HABILIDADES",
-     "px": 9.97,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip.col2fchip--todos",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2forbe",
-     "txt": "",
-     "w": 21.3,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Atacante",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Suporte",
-     "w": 42.4,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Controlador",
-     "w": 55.8,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Guardião",
-     "w": 46,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "button.col2fchip",
-     "txt": "Manipulador",
-     "w": 58.1,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2busca",
-     "txt": "",
-     "w": 110.5,
-     "h": 12.8,
-     "min": 12.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todos",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Possuídos",
-     "w": 49.5,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "Não possuídos",
-     "w": 64.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill.is-on",
-     "txt": "Todas",
-     "w": 35.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "SS",
-     "w": 24.4,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "S",
-     "w": 20,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "button.col2pill",
-     "txt": "A",
-     "w": 20.1,
-     "h": 19.8,
-     "min": 19.8
-    },
-    {
-     "sel": "#col2mfabre",
-     "txt": "Mais filtros",
-     "w": 53.5,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "select",
-     "txt": "Mais recentesNome (A–Z)",
-     "w": 70.2,
-     "h": 21.3,
-     "min": 21.3
-    },
-    {
-     "sel": "#col2ovprev",
-     "txt": "",
-     "w": 30,
-     "h": 140,
-     "min": 30
-    },
-    {
-     "sel": "#col2ovx",
-     "txt": "×",
-     "w": 28,
-     "h": 28,
-     "min": 28
-    },
-    {
-     "sel": "#col2ovkit",
-     "txt": "‹ Kit",
-     "w": 53.2,
-     "h": 23,
-     "min": 23
-    },
-    {
-     "sel": "#col2ovnext",
-     "txt": "",
-     "w": 30,
-     "h": 140,
-     "min": 30
-    }
-   ],
-   "c": [
-    {
-     "sel": "div.col2ov__nivscroll",
-     "eixo": "Y",
-     "over": 1342,
-     "txt": "Pontos de Brigid: 0 cópias rep"
-    }
-   ],
-   "d": [
-    {
-     "tipo": "estoura-viewport",
-     "sel": "p.nlp__txt",
-     "txt": "6 de dano + (4/turno por 2 turnos).",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span.kw.kw--dot",
-     "txt": "Queimadura",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "p.nlp__txt",
-     "txt": "de dano + Queimadura (4/turno por 2 turn",
-     "importante": false
-    }
-   ],
-   "textTotal": 113,
-   "tapTotal": 42
+   "a": [],
+   "b": [],
+   "c": [],
+   "d": [],
+   "textTotal": 32,
+   "tapTotal": 12
   },
-  "nota": 2.8,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -9194,192 +6169,14 @@
   "nome": "Ficha do deus",
   "file": "357-ficha-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ VOLTAR",
-     "px": 9.27,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-rar.rar--SS",
-     "txt": "SS",
-     "px": 10.99,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.dsxb.dsxb--subir",
-     "txt": "SUBIR HABILIDADES ›",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-tag",
-     "txt": "Grega",
-     "px": 9.28,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-tag",
-     "txt": "TEMPESTADE",
-     "px": 9.32,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-tag",
-     "txt": "Mágico",
-     "px": 9.33,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-tag",
-     "txt": "Atacante",
-     "px": 9.31,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dmaes__rot",
-     "txt": "MAESTRIA",
-     "px": 9.31,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dmaes__hint",
-     "txt": "Mestre aos 30 = moldura dourada no retra",
-     "px": 8.02,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "div.dmaes__nv",
-     "txt": "Noviço ·",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "0/30",
-     "px": 9.25,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "em",
-     "txt": "5",
-     "px": 7.57,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "em",
-     "txt": "15",
-     "px": 7.53,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "em",
-     "txt": "30",
-     "px": 7.44,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsx-hab__rot",
-     "txt": "HABILIDADES",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nome",
-     "txt": "Passiva",
-     "px": 8.9,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nv",
-     "txt": "Nv 2",
-     "px": 6.8,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nome",
-     "txt": "Básico",
-     "px": 8.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nv",
-     "txt": "Nv 4",
-     "px": 6.77,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nome",
-     "txt": "Habilidade",
-     "px": 8.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nv",
-     "txt": "Nv 1",
-     "px": 6.72,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nome",
-     "txt": "Milagre",
-     "px": 8.81,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dsk__nome",
-     "txt": "Defesa",
-     "px": 8.84,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ddet__pill.ddet__pill--tipo",
-     "txt": "PASSIVA",
-     "px": 7.62,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ddet__pill",
-     "txt": "Mágico",
-     "px": 7.58,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.ddet__pas",
-     "txt": "Passiva · não gasta a ação",
-     "px": 9.28,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.ddet__desc",
-     "txt": "Ao derrotar um inimigo, ganha 1 orbe de ",
-     "px": 9.72,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ VOLTAR",
-     "w": 58.1,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.dsxb.dsxb--subir",
-     "txt": "SUBIR HABILIDADES ›",
-     "w": 130,
-     "h": 30.4,
-     "min": 30.4
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
    "textTotal": 29,
-   "tapTotal": 7
+   "tapTotal": 11
   },
-  "nota": 4.8,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -9389,332 +6186,14 @@
   "nome": "Níveis de habilidade",
   "file": "357-niveis-780x360.png",
   "r": {
-   "a": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ Zeus",
-     "px": 9.28,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nltop__ptn",
-     "txt": "Pontos de Zeus:",
-     "px": 9.31,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b",
-     "txt": "1",
-     "px": 9.5,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nltop__cop",
-     "txt": "cópias repetidas viram pontos",
-     "px": 7.62,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlid__rar.rar--SS",
-     "txt": "SS",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlid__sub",
-     "txt": "Grega · TEMPESTADE",
-     "px": 8.87,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlpas__rot",
-     "txt": "PASSIVA",
-     "px": 8.48,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nlpas__nome",
-     "txt": "Soberano",
-     "px": 8.91,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlpas__txt",
-     "txt": "Ao derrotar um inimigo, ganha 1 orbe de ",
-     "px": 8.03,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlpas__nota",
-     "txt": "A passiva não tem níveis.",
-     "px": 7.61,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nlp__tipo.cin",
-     "txt": "BÁSICO",
-     "px": 10.15,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nome",
-     "txt": "Cetro do Trovão",
-     "px": 8.46,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nv",
-     "txt": "Nv 3 de 4",
-     "px": 8.41,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll",
-     "txt": "AGORA (Nv 3)",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "17 de dano a 1 inimigo.",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll.nlp__coll--px",
-     "txt": "PRÓXIMO (Nv 4)",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "17 de dano a 1 inimigo;",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "ele",
-     "px": 8.35,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "causa",
-     "px": 8.48,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "3",
-     "px": 8.61,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "menos",
-     "px": 8.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "de",
-     "px": 8.62,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "dano",
-     "px": 8.36,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "por",
-     "px": 8.36,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "1",
-     "px": 8.07,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "turno.",
-     "px": 8.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.nlb.nlb--off",
-     "txt": "FALTAM 2 PONTOS",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nlp__tipo.cin",
-     "txt": "HABILIDADE",
-     "px": 10.13,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nome",
-     "txt": "Julgamento do Trovão",
-     "px": 8.44,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nv",
-     "txt": "Nv 4 de 4",
-     "px": 8.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll",
-     "txt": "AGORA (Nv 4)",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "29 de dano; trava as habilidades Mágicas",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__maxt",
-     "txt": "NÍVEL MÁXIMOALCANÇADO",
-     "px": 8.01,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nlp__tipo.cin",
-     "txt": "MILAGRE",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nome",
-     "txt": "Ira Celestial",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nv",
-     "txt": "Nv 1 de 4",
-     "px": 8.47,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll",
-     "txt": "AGORA (Nv 1)",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "20 de dano a todos; eles causam 5 menos ",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll.nlp__coll--px",
-     "txt": "PRÓXIMO (Nv 2)",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "de dano a todos; eles causam 5 menos de ",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nl-hi",
-     "txt": "22",
-     "px": 8.34,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.nlb.nlb--go",
-     "txt": "SUBIR PARA NV 2 · 1 PONTO",
-     "px": 9.3,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "b.nlp__tipo.cin",
-     "txt": "DEFESA",
-     "px": 10.14,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__nome",
-     "txt": "Defesa",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.nlp__coll",
-     "txt": "EFEITO",
-     "px": 7.18,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "p.nlp__txt",
-     "txt": "Ação universal. por 1 turno (DoT já apli",
-     "px": 8.45,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.kw.kw--def",
-     "txt": "Invulnerável",
-     "px": 8.49,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "button.nlb.nlb--off",
-     "txt": "Esta habilidade não tem níveis.",
-     "px": 9.3,
-     "abaixoRotulo": true
-    }
-   ],
-   "b": [
-    {
-     "sel": "#bvoltar",
-     "txt": "‹ Zeus",
-     "w": 47.2,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.nlb.nlb--off",
-     "txt": "FALTAM 2 PONTOS",
-     "w": 259.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.nlb.nlb--go",
-     "txt": "SUBIR PARA NV 2 · 1 PONTO",
-     "w": 259.4,
-     "h": 30.4,
-     "min": 30.4
-    },
-    {
-     "sel": "button.nlb.nlb--off",
-     "txt": "Esta habilidade não tem níveis",
-     "w": 259.4,
-     "h": 30.4,
-     "min": 30.4
-    }
-   ],
+   "a": [],
+   "b": [],
    "c": [],
    "d": [],
    "textTotal": 50,
    "tapTotal": 4
   },
-  "nota": 3.2,
+  "nota": 10,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -9734,31 +6213,31 @@
     {
      "sel": "span.df-ess__lab",
      "txt": "Essência ✦",
-     "px": 8.48,
+     "px": 8.47,
      "abaixoRotulo": true
     },
     {
      "sel": "b.df-ess__v",
      "txt": "—",
-     "px": 11.02,
+     "px": 11.01,
      "abaixoRotulo": false
     },
     {
      "sel": "span.df-ess__sem",
      "txt": "⊘ Sem conexão",
-     "px": 8.48,
+     "px": 8.47,
      "abaixoRotulo": true
     },
     {
      "sel": "span.df-mestres__lab",
      "txt": "★ Mestres",
-     "px": 8.47,
+     "px": 8.44,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "0/9",
-     "px": 11.86,
+     "px": 11.82,
      "abaixoRotulo": false
     },
     {
@@ -9770,7 +6249,7 @@
     {
      "sel": "b",
      "txt": "#43",
-     "px": 8.49,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -9782,7 +6261,7 @@
     {
      "sel": "span.df-sem__contra",
      "txt": "Contra:",
-     "px": 8.48,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
@@ -9794,19 +6273,19 @@
     {
      "sel": "span.df-sem__foen",
      "txt": "Tanuki",
-     "px": 8.51,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
      "sel": "span.df-sem__foen",
      "txt": "Ammit",
-     "px": 8.47,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
      "sel": "span.df-sem__reclab",
      "txt": "RECOMPENSA",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -9818,19 +6297,19 @@
     {
      "sel": "span.df-gem",
      "txt": "◈",
-     "px": 11.59,
+     "px": 11.84,
      "abaixoRotulo": false
     },
     {
      "sel": "span.df-sem__prazo",
      "txt": "⌛ Termina em",
-     "px": 8.46,
+     "px": 8.47,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
-     "txt": "3d 9h",
-     "px": 8.46,
+     "txt": "3d 8h",
+     "px": 8.47,
      "abaixoRotulo": true
     },
     {
@@ -9854,7 +6333,7 @@
     {
      "sel": "span.df-compos__n",
      "txt": "0 de 6 cumpridos",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -9866,7 +6345,7 @@
     {
      "sel": "span.df-gem",
      "txt": "◈",
-     "px": 8.67,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
@@ -9908,13 +6387,13 @@
     {
      "sel": "button.df-chip.is-on",
      "txt": "Todos",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "(9)",
-     "px": 8.36,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -9926,7 +6405,7 @@
     {
      "sel": "b",
      "txt": "(9)",
-     "px": 8.36,
+     "px": 8.44,
      "abaixoRotulo": true
     },
     {
@@ -9938,31 +6417,31 @@
     {
      "sel": "b",
      "txt": "(0)",
-     "px": 8.44,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
      "sel": "button.df-chip",
      "txt": "Recarga",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "(0)",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "button.df-chip",
      "txt": "Mestres",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "(0)",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -9974,14 +6453,14 @@
     {
      "sel": "b",
      "txt": "Padrão",
-     "px": 8.45,
+     "px": 8.47,
      "abaixoRotulo": true
     },
     {
      "sel": "b.df-card__n",
      "txt": "Brigid",
-     "px": 11.04,
-     "abaixoRotulo": false
+     "px": 10.99,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.df-card__maes",
@@ -9992,25 +6471,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10028,8 +6507,8 @@
     {
      "sel": "b.df-card__n",
      "txt": "Cuca",
-     "px": 11.02,
-     "abaixoRotulo": false
+     "px": 10.99,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.df-card__maes",
@@ -10040,25 +6519,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10076,7 +6555,7 @@
     {
      "sel": "b.df-card__n",
      "txt": "Fujin",
-     "px": 10.96,
+     "px": 10.99,
      "abaixoRotulo": true
     },
     {
@@ -10088,25 +6567,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10124,7 +6603,7 @@
     {
      "sel": "b.df-card__n",
      "txt": "Ganesha",
-     "px": 10.96,
+     "px": 10.99,
      "abaixoRotulo": true
     },
     {
@@ -10136,25 +6615,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10172,8 +6651,8 @@
     {
      "sel": "b.df-card__n",
      "txt": "Nezha",
-     "px": 11.01,
-     "abaixoRotulo": false
+     "px": 10.99,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.df-card__maes",
@@ -10184,25 +6663,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10220,8 +6699,8 @@
     {
      "sel": "b.df-card__n",
      "txt": "Ogum",
-     "px": 11.05,
-     "abaixoRotulo": false
+     "px": 10.99,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.df-card__maes",
@@ -10232,25 +6711,25 @@
     {
      "sel": "span.df-card__dot",
      "txt": "◆",
-     "px": 8.67,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "5",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "15",
-     "px": 8.71,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "30",
-     "px": 8.31,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -10460,7 +6939,7 @@
     {
      "sel": "span.cmp-prog__n",
      "txt": "0 de 6 cumpridos",
-     "px": 9.32,
+     "px": 9.3,
      "abaixoRotulo": true
     },
     {
@@ -10484,37 +6963,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Loki",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Cuca",
-     "px": 7.51,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -10532,37 +7011,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Cuca",
-     "px": 7.51,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Boto",
-     "px": 7.7,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -10580,37 +7059,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Loki",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Cuca",
-     "px": 7.51,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -10628,37 +7107,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Loki",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Boto",
-     "px": 7.7,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -10676,37 +7155,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Loki",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Cuca",
-     "px": 7.51,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -10724,37 +7203,37 @@
     {
      "sel": "span.cmp-card__foeslab",
      "txt": "Inimigos",
-     "px": 8.04,
+     "px": 8.02,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Saci",
-     "px": 7.5,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Cuca",
-     "px": 7.51,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-foe__n",
      "txt": "Boto",
-     "px": 7.7,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cmp-card__rec",
      "txt": "20 ✦",
-     "px": 10.16,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     }
    ],
@@ -10828,7 +7307,7 @@
     {
      "sel": "#bvoltar",
      "txt": "‹ INÍCIO",
-     "px": 9.26,
+     "px": 9.3,
      "abaixoRotulo": true
     },
     {
@@ -10840,13 +7319,13 @@
     {
      "sel": "b",
      "txt": "PvP",
-     "px": 9.19,
+     "px": 9.29,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "Conecte",
-     "px": 9.31,
+     "px": 9.29,
      "abaixoRotulo": true
     },
     {
@@ -10858,7 +7337,7 @@
     {
      "sel": "span.msec__n",
      "txt": "91",
-     "px": 8.54,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -11191,31 +7670,31 @@
     {
      "sel": "span.dsel__hist-t",
      "txt": "Seu histórico",
-     "px": 10.89,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dsel__hist-s",
      "txt": "seus recordes por Domínio",
-     "px": 8.43,
+     "px": 8.41,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__cult",
      "txt": "Chinesa",
-     "px": 9.23,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "Domínio",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "dos Céus",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
@@ -11227,43 +7706,43 @@
     {
      "sel": "div.domcard__prog.domcard__prog--novo",
      "txt": "Não iniciado",
-     "px": 7.52,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Wukong",
-     "px": 6.66,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Nezha",
-     "px": 6.74,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Nüwa",
-     "px": 6.79,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__entrar",
      "txt": "ENTRAR",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "›",
-     "px": 11.45,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__embmono",
      "txt": "CE",
-     "px": 11.74,
+     "px": 11.78,
      "abaixoRotulo": false
     },
     {
@@ -11275,79 +7754,79 @@
     {
      "sel": "span",
      "txt": "Domínio",
-     "px": 10.97,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "de Duat",
-     "px": 10.97,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__frase",
      "txt": "A barca, a magia e o rei que volta.",
-     "px": 6.75,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "div.domcard__prog.domcard__prog--novo",
      "txt": "Não iniciado",
-     "px": 7.52,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Rá",
-     "px": 6.54,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Ísis",
-     "px": 6.87,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Osíris",
-     "px": 6.71,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__entrar",
      "txt": "ENTRAR",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "›",
-     "px": 11.45,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__embmono",
      "txt": "DU",
-     "px": 11.76,
+     "px": 11.78,
      "abaixoRotulo": false
     },
     {
      "sel": "span.dcard__cult",
      "txt": "Grega",
-     "px": 9.27,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "Domínio",
-     "px": 10.96,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "do Olimpo",
-     "px": 10.96,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
@@ -11359,73 +7838,73 @@
     {
      "sel": "div.domcard__prog.domcard__prog--novo",
      "txt": "Não iniciado",
-     "px": 7.52,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Zeus",
-     "px": 6.68,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Poseidon",
-     "px": 6.71,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Atena",
-     "px": 6.64,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__entrar",
      "txt": "ENTRAR",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "›",
-     "px": 11.45,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__embmono",
      "txt": "OL",
-     "px": 11.82,
+     "px": 11.78,
      "abaixoRotulo": false
     },
     {
      "sel": "span.dcard__cult",
      "txt": "Japonesa",
-     "px": 9.28,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "Domínio",
-     "px": 10.93,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "de Takamagahara",
-     "px": 10.93,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__frase",
      "txt": "O sol, a tempestade e a lua.",
-     "px": 6.75,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "div.domcard__prog.domcard__prog--novo",
      "txt": "Não iniciado",
-     "px": 7.52,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
@@ -11437,7 +7916,7 @@
     {
      "sel": "i",
      "txt": "Susanoo",
-     "px": 6.8,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
@@ -11449,85 +7928,85 @@
     {
      "sel": "span.dcard__entrar",
      "txt": "ENTRAR",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "›",
-     "px": 11.45,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__embmono",
      "txt": "TK",
-     "px": 11.69,
+     "px": 11.78,
      "abaixoRotulo": false
     },
     {
      "sel": "span.dcard__cult",
      "txt": "Nórdica",
-     "px": 9.3,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "Domínio",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "de Asgard",
-     "px": 10.99,
+     "px": 10.94,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__frase",
      "txt": "O corvo, o martelo e a mentira.",
-     "px": 6.71,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "div.domcard__prog.domcard__prog--novo",
      "txt": "Não iniciado",
-     "px": 7.52,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Odin",
-     "px": 6.77,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Thor",
-     "px": 6.71,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "i",
      "txt": "Loki",
-     "px": 6.58,
+     "px": 6.73,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__entrar",
      "txt": "ENTRAR",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "›",
-     "px": 11.45,
-     "abaixoRotulo": false
+     "px": 10.94,
+     "abaixoRotulo": true
     },
     {
      "sel": "span.dcard__embmono",
      "txt": "AS",
-     "px": 11.58,
+     "px": 11.78,
      "abaixoRotulo": false
     },
     {
@@ -11545,7 +8024,7 @@
     {
      "sel": "#dhistver",
      "txt": "Ver histórico",
-     "px": 8.38,
+     "px": 8.4,
      "abaixoRotulo": true
     },
     {
@@ -11562,8 +8041,8 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -11598,7 +8077,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -11648,55 +8127,55 @@
     {
      "sel": "i.dh-no__n",
      "txt": "1",
-     "px": 8.07,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__coroa",
      "txt": "♛",
-     "px": 9.54,
+     "px": 9.72,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__n",
      "txt": "10",
-     "px": 8.65,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__coroa",
      "txt": "♛",
-     "px": 9.54,
+     "px": 9.72,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__n",
      "txt": "20",
-     "px": 8.29,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__coroa",
      "txt": "♛",
-     "px": 9.54,
+     "px": 9.72,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__n",
      "txt": "30",
-     "px": 8.41,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__coroa",
      "txt": "♛",
-     "px": 9.54,
+     "px": 9.72,
      "abaixoRotulo": true
     },
     {
      "sel": "i.dh-no__n",
      "txt": "40",
-     "px": 8.28,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -11708,7 +8187,7 @@
     {
      "sel": "h2.dh-col__t.cin",
      "txt": "SEU TIME",
-     "px": 10.97,
+     "px": 10.99,
      "abaixoRotulo": true
     },
     {
@@ -11750,19 +8229,19 @@
     {
      "sel": "div.dh-foe__n",
      "txt": "Atena",
-     "px": 10.15,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "div.dh-foe__n",
      "txt": "Erínias",
-     "px": 10.18,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "div.dh-foe__n",
      "txt": "Zeus",
-     "px": 10.09,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
@@ -11798,7 +8277,7 @@
     {
      "sel": "span.dh-rec__l",
      "txt": "Melhor de sempre",
-     "px": 8.89,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
@@ -11810,19 +8289,19 @@
     {
      "sel": "div.dh-cf__n",
      "txt": "Zeus",
-     "px": 8.43,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "div.dh-cf__n",
      "txt": "Poseidon",
-     "px": 8.47,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "div.dh-cf__n",
      "txt": "Atena",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     }
    ],
@@ -11868,37 +8347,37 @@
     {
      "sel": "span.iv-c.iv-cess",
      "txt": "✦",
-     "px": 10.03,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "#iv-essencia",
      "txt": "—",
-     "px": 9.7,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-c",
      "txt": "💎",
-     "px": 10.04,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "#iv-gemas",
      "txt": "—",
-     "px": 9.7,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "button.iv-plus",
      "txt": "+",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-hero__tag",
      "txt": "RATE-UP",
-     "px": 8.47,
+     "px": 8.4,
      "abaixoRotulo": true
     },
     {
@@ -11910,13 +8389,13 @@
     {
      "sel": "button.iv-hero__det",
      "txt": "Ver detalhes",
-     "px": 9.26,
+     "px": 9.24,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-hero__lupa",
      "txt": "⌕",
-     "px": 10.57,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
@@ -11928,25 +8407,25 @@
     {
      "sel": "b",
      "txt": "Bênção do Iniciante",
-     "px": 8.38,
+     "px": 8.4,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-pity__lbl",
      "txt": "SS garantido",
-     "px": 9.29,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b.iv-pity__num",
      "txt": "0/60",
-     "px": 10.09,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "button.iv-pity__q",
      "txt": "?",
-     "px": 10.09,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
@@ -11958,7 +8437,7 @@
     {
      "sel": "span.iv-off",
      "txt": "10% OFF",
-     "px": 7.58,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
@@ -11969,8 +8448,8 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -12012,7 +8491,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -12037,37 +8516,37 @@
     {
      "sel": "span.iv-c.iv-cess",
      "txt": "✦",
-     "px": 10.03,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "#iv-essencia",
      "txt": "—",
-     "px": 9.7,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-c",
      "txt": "💎",
-     "px": 10.04,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "#iv-gemas",
      "txt": "—",
-     "px": 9.7,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "button.iv-plus",
      "txt": "+",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-hero__tag",
      "txt": "RATE-UP",
-     "px": 8.47,
+     "px": 8.4,
      "abaixoRotulo": true
     },
     {
@@ -12079,13 +8558,13 @@
     {
      "sel": "button.iv-hero__det",
      "txt": "Ver detalhes",
-     "px": 9.26,
+     "px": 9.24,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-hero__lupa",
      "txt": "⌕",
-     "px": 10.57,
+     "px": 10.93,
      "abaixoRotulo": true
     },
     {
@@ -12097,25 +8576,25 @@
     {
      "sel": "b",
      "txt": "Bênção do Iniciante",
-     "px": 8.38,
+     "px": 8.4,
      "abaixoRotulo": true
     },
     {
      "sel": "span.iv-pity__lbl",
      "txt": "SS garantido",
-     "px": 9.29,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "b.iv-pity__num",
      "txt": "0/60",
-     "px": 10.09,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
      "sel": "button.iv-pity__q",
      "txt": "?",
-     "px": 10.09,
+     "px": 10.1,
      "abaixoRotulo": true
     },
     {
@@ -12127,7 +8606,7 @@
     {
      "sel": "span.iv-off",
      "txt": "10% OFF",
-     "px": 7.58,
+     "px": 7.57,
      "abaixoRotulo": true
     },
     {
@@ -12145,13 +8624,13 @@
     {
      "sel": "div.iv-tip",
      "txt": "toque fora para voltar",
-     "px": 9.25,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -12207,7 +8686,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -12232,7 +8711,7 @@
     {
      "sel": "#bvoltar",
      "txt": "‹ VOLTAR",
-     "px": 9.27,
+     "px": 9.3,
      "abaixoRotulo": true
     },
     {
@@ -12256,7 +8735,7 @@
     {
      "sel": "button.cmpb.cmpb--primary",
      "txt": "JOGAR",
-     "px": 10.15,
+     "px": 10.13,
      "abaixoRotulo": true
     },
     {
@@ -12292,13 +8771,13 @@
     {
      "sel": "span.df-chip",
      "txt": "Todas",
-     "px": 8.42,
+     "px": 8.44,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "6",
-     "px": 8.07,
+     "px": 8.44,
      "abaixoRotulo": true
     },
     {
@@ -12310,7 +8789,7 @@
     {
      "sel": "b",
      "txt": "2",
-     "px": 8.35,
+     "px": 8.43,
      "abaixoRotulo": true
     },
     {
@@ -12328,19 +8807,19 @@
     {
      "sel": "span.dsx-rar.rar--SS",
      "txt": "SS",
-     "px": 10.99,
+     "px": 6.33,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dsx-rar.rar--S",
      "txt": "S",
-     "px": 10.99,
+     "px": 6.33,
      "abaixoRotulo": true
     },
     {
      "sel": "span.dsx-rar.rar--A",
      "txt": "A",
-     "px": 10.99,
+     "px": 6.33,
      "abaixoRotulo": true
     },
     {
@@ -12358,7 +8837,7 @@
     {
      "sel": "span.dsk__nv",
      "txt": "Nv 3",
-     "px": 6.69,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
@@ -12376,7 +8855,7 @@
     {
      "sel": "span.dmk-ab__gratis",
      "txt": "GRÁTIS",
-     "px": 6.79,
+     "px": 6.75,
      "abaixoRotulo": true
     },
     {
@@ -12394,7 +8873,7 @@
     {
      "sel": "small",
      "txt": "_min <14px",
-     "px": 7.63,
+     "px": 7.62,
      "abaixoRotulo": true
     },
     {
@@ -12412,19 +8891,19 @@
     {
      "sel": "span.nltop__ptn",
      "txt": "Pontos de Zeus:",
-     "px": 9.31,
+     "px": 5.48,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "0",
-     "px": 9.33,
+     "px": 5.48,
      "abaixoRotulo": true
     },
     {
      "sel": "span.nltop__cop",
      "txt": "cópias repetidas viram pontos",
-     "px": 7.62,
+     "px": 5.48,
      "abaixoRotulo": true
     },
     {
@@ -12490,7 +8969,7 @@
     {
      "sel": "button.df-toast__x",
      "txt": "✕",
-     "px": 8.38,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -12526,25 +9005,19 @@
     {
      "sel": "span.dmaes__rot",
      "txt": "MAESTRIA",
-     "px": 9.31,
-     "abaixoRotulo": true
-    },
-    {
-     "sel": "span.dmaes__hint",
-     "txt": "Mestre aos 30 = moldura dourada no retra",
-     "px": 8.02,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "div.dmaes__nv",
      "txt": "Noviço ·",
-     "px": 9.3,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
      "txt": "0/30",
-     "px": 9.25,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
@@ -12562,19 +9035,19 @@
     {
      "sel": "span.nlp__confq",
      "txt": "Subir para Nv 2 por 1 ponto?",
-     "px": 8.04,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "button.nlb.nlb--go",
      "txt": "CONFIRMAR",
-     "px": 8.06,
+     "px": 5.49,
      "abaixoRotulo": true
     },
     {
      "sel": "button.nlb.nlb--quiet",
      "txt": "CANCELAR",
-     "px": 8.02,
+     "px": 5.49,
      "abaixoRotulo": true
     }
    ],
@@ -12610,16 +9083,16 @@
     {
      "sel": "button.nlb.nlb--go",
      "txt": "CONFIRMAR",
-     "w": 46.2,
-     "h": 27,
-     "min": 27
+     "w": 32.3,
+     "h": 16.9,
+     "min": 16.9
     },
     {
      "sel": "button.nlb.nlb--quiet",
      "txt": "CANCELAR",
-     "w": 41.8,
-     "h": 27,
-     "min": 27
+     "w": 29.3,
+     "h": 16.9,
+     "min": 16.9
     },
     {
      "sel": "span.df-chip",
@@ -12638,7 +9111,7 @@
    ],
    "c": [],
    "d": [],
-   "textTotal": 59,
+   "textTotal": 58,
    "tapTotal": 8
   },
   "nota": 3.1,
@@ -12655,13 +9128,13 @@
     {
      "sel": "#bvoltar",
      "txt": "‹ Início",
-     "px": 9.2,
+     "px": 9.26,
      "abaixoRotulo": true
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
-     "px": 8.03,
+     "txt": "build 2026-10-22 15:08 UTC",
+     "px": 8,
      "abaixoRotulo": true
     }
    ],
@@ -12675,7 +9148,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -12706,43 +9179,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -12760,13 +9233,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -12784,13 +9257,13 @@
     {
      "sel": "span",
      "txt": "🔊",
-     "px": 8.44,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "SOM",
-     "px": 8.46,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -12831,7 +9304,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "px": 5.49,
      "abaixoRotulo": true
     },
@@ -12874,7 +9347,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -12946,19 +9419,19 @@
     {
      "sel": "div",
      "txt": "ALIADO",
-     "px": 8.01,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "CONTROLADOR",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "UMBRA",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -13134,7 +9607,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 13:54 UTC",
+     "txt": "build 2026-10-22 15:08 UTC",
      "w": 148.7,
      "h": 6.8,
      "min": 6.8
@@ -13193,43 +9666,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -13247,13 +9720,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -13295,7 +9768,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -13367,19 +9840,19 @@
     {
      "sel": "div",
      "txt": "ALIADO",
-     "px": 8.01,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "CONTROLADOR",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "UMBRA",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
@@ -13577,43 +10050,43 @@
     {
      "sel": "div.bt-name__sub",
      "txt": "SANDBOX",
-     "px": 7.6,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x0",
-     "px": 9.05,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span.cin",
      "txt": "Σ",
-     "px": 9.95,
+     "px": 10.14,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "x1",
-     "px": 8.97,
+     "px": 8.87,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "⇄",
-     "px": 8.33,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
      "sel": "span",
      "txt": "TROCAR",
-     "px": 8.48,
+     "px": 8.45,
      "abaixoRotulo": true
     },
     {
@@ -13631,13 +10104,13 @@
     {
      "sel": "div.cin.bt-name__nick",
      "txt": "CPU",
-     "px": 10.61,
+     "px": 10.56,
      "abaixoRotulo": true
     },
     {
      "sel": "div.bt-name__sub",
      "txt": "OPONENTE",
-     "px": 7.64,
+     "px": 7.61,
      "abaixoRotulo": true
     },
     {
@@ -13679,7 +10152,7 @@
     {
      "sel": "span",
      "txt": "GRÁTIS",
-     "px": 6.77,
+     "px": 6.76,
      "abaixoRotulo": true
     },
     {
@@ -13751,19 +10224,19 @@
     {
      "sel": "div",
      "txt": "ALIADO",
-     "px": 8.01,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "CONTROLADOR",
-     "px": 8,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {
      "sel": "div",
      "txt": "UMBRA",
-     "px": 8.04,
+     "px": 8.03,
      "abaixoRotulo": true
     },
     {

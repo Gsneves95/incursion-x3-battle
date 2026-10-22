@@ -16,11 +16,8 @@ function acharChromium(){ if(process.env.INCURSION_CHROMIUM) return process.env.
   return path.join(base, d, 'chrome-linux', 'chrome'); }
 
 const VW = 780, VH = 360, DSF = 2;           // 780×360 CSS (escala do desenho ~0,4225)
-const MIN_CORPO = 12, MIN_ROTULO = 11, MIN_TOQUE = 40;
-
-// ---- lista BRANCA de rolagem: SÓ listas podem rolar (grade de personagens, Provações, Loja, Desafios/Composição) ----
-const SCROLL_OK = ['.col2__grade', '.dm-grade', '.cgrid--pick', '#provfix .pv2-grade', '#provfix .pv2-off',
-  '.df-grade', '#compfix .cmp-grade', '.guia-grade', '.loja', '#loja', '.loja-grade'];
+// §358: a MEDIÇÃO e os mínimos vivem no módulo compartilhado (o teste §358 usa os MESMOS).
+const { medirNaPagina, nota, MIN_CORPO, MIN_ROTULO, MIN_TOQUE, SCROLL_OK } = require('./auditoria_medida.js');
 
 // splash (carregamento): o shell remove o #gsplash após iniciar; reinjetamos o MESMO markup para auditar a tela.
 const distHtml = fs.readFileSync(path.join(ROOT, 'dist', 'incursion.html'), 'utf8');
@@ -64,12 +61,12 @@ const SCREENS = [
 
  // COLEÇÃO (sem seleção, com seleção, sobreposição kit, sobreposição níveis)
  { slug:'colecao', nome:'Coleção — sem seleção', setup:`colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();` },
- { slug:'colecao-selecao', nome:'Coleção — com seleção', setup:`colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();(function(){try{colSelecionar(colecaoFiltrada()[0]);}catch(e){}})();` },
- { slug:'colecao-kit', nome:'Coleção — sobreposição de kit', setup:`colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();(function(){try{var k=colecaoFiltrada().find(x=>perfil.deuses&&perfil.deuses[x])||colecaoFiltrada()[0];colAbrirVer(k,'kit');}catch(e){}})();` },
- { slug:'colecao-niveis', nome:'Coleção — sobreposição de níveis', setup:`colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();(function(){try{var k=colecaoFiltrada().find(x=>perfil.deuses&&perfil.deuses[x])||colecaoFiltrada()[0];colAbrirVer(k,'niveis');}catch(e){}})();` },
+ { slug:'colecao-filtro', nome:'Coleção — com filtro', setup:`colF={busca:'',cultura:'',classe:'',funcao:'Controlador',elem:'Aurora',status:'tem',raridade:'',ordem:'nome'};ir('colecao',{},{substituir:true});render();` },
+ { slug:'ficha-sinergia', nome:'Ficha do deus — SINERGIA', setup:`fichaAba='sinergia';deusSelKey=null;ir('deus',{key:'odin'},{substituir:true});render();` },
+ { slug:'ficha-falta', nome:'Ficha do deus — não possuída', setup:`delete perfil.deuses.anubis;fichaAba='habilidades';deusSelKey=null;ir('deus',{key:'anubis'},{substituir:true});render();` },
 
  // FICHA / NÍVEIS
- { slug:'ficha', nome:'Ficha do deus', setup:`perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now(),copias:1};contaAtual={pontos:{zeus:1},niveis:{zeus:{basico:2,habilidade:4,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();` },
+ { slug:'ficha', nome:'Ficha do deus', setup:`perfil.deuses.zeus=perfil.deuses.zeus||{obtidoEm:Date.now(),copias:1};contaAtual={pontos:{zeus:1},niveis:{zeus:{basico:2,habilidade:4,milagre:1}},perfil:{deuses:perfil.deuses},missoes:{ativa:null,progresso:{},liberados:[]}};fichaAba='habilidades';deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();` },
  { slug:'niveis', nome:'Níveis de habilidade', setup:`perfil.deuses.zeus=perfil.deuses.zeus||{copias:1,obtidoEm:0};contaAtual={nick:'T',ranque:{pontos:60},pontos:{zeus:1},niveis:{zeus:{basico:3,habilidade:4,milagre:1}},perfil:{deuses:{zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}};nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();` },
 
  // HUBS / LISTAS
@@ -98,115 +95,6 @@ const NOTAS = {
   'invocacao-reveal': 'A revelação é autoritativa do SERVIDOR; no modo arquivo (sem WS) as cartas não chegam. Aqui a sobreposição é aberta com o esqueleto REAL (`#iv-reveal`) para auditar a moldura (dica + "Invocar mais"); as cartas (`.iv-card`) precisam do servidor vivo.',
   'campanha-historia': 'A campanha atual só tem atos de batalha e escolha; este caso força `tipo=\'historia\'` num ato real para auditar o caminho de render da história.',
 };
-
-// ---- função de medição, roda DENTRO da página ----
-function medirNaPagina(cfg){
-  const { MIN_CORPO, MIN_ROTULO, MIN_TOQUE, SCROLL_OK } = cfg;
-  const vw = window.innerWidth, vh = window.innerHeight;
-  const vis = el => {
-    const cs = getComputedStyle(el);
-    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false;
-    const r = el.getBoundingClientRect();
-    if (r.width < 0.5 || r.height < 0.5) return false;
-    if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) return false;   // fora do viewport
-    return true;
-  };
-  const escalaDe = el => {                 // escala efetiva (desconta o transform do enquadramento)
-    let n = el;
-    for (let i = 0; i < 6 && n; i++) { const ow = n.offsetWidth; if (ow > 0) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; }
-    return 1;
-  };
-  const sel = el => {
-    if (el.id) return '#' + el.id;
-    let s = el.tagName.toLowerCase();
-    const cls = (el.getAttribute('class') || '').trim().split(/\s+/).filter(Boolean).slice(0, 2);
-    if (cls.length) s += '.' + cls.join('.');
-    return s;
-  };
-  const txtDe = el => { let t = ''; el.childNodes.forEach(n => { if (n.nodeType === 3) t += n.textContent; }); return t.replace(/\s+/g, ' ').trim(); };
-  const IMPORT = /nome|name|titulo|tit|custo|cost|efeito|efei|rot|desc|label|nick|pts|ponto/i;
-
-  const todos = [...document.querySelectorAll('body *')].filter(e => !/^(SCRIPT|STYLE|NOSCRIPT|TITLE|svg|path|defs|g|use|DEFS)$/i.test(e.tagName));
-
-  // a) TEXTO pequeno
-  const a = [];
-  for (const el of todos) {
-    const t = txtDe(el); if (!t) continue; if (!vis(el)) continue;
-    const cs = getComputedStyle(el);
-    const fpx = parseFloat(cs.fontSize) || 0; if (!fpx) continue;
-    const real = +(fpx * escalaDe(el)).toFixed(2);
-    if (real < MIN_CORPO) a.push({ sel: sel(el), txt: t.slice(0, 40), px: real, abaixoRotulo: real < MIN_ROTULO });
-  }
-
-  // b) TOQUE pequeno. `cursor:pointer` é HERDADO — para não contar cada <span>/<i> dentro de um botão,
-  // só entram: os tags interativos reais E o TOPO de cada região clicável (pointer cujo pai NÃO é pointer).
-  const interativo = el => /^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(el.tagName) || el.hasAttribute('onclick') || el.getAttribute('role') === 'button';
-  const tapSet = new Set();
-  document.querySelectorAll('button,a,input,select,textarea,[role="button"],[onclick]').forEach(e => tapSet.add(e));
-  for (const el of todos) {
-    if (getComputedStyle(el).cursor !== 'pointer' || interativo(el)) continue;
-    const p = el.parentElement;
-    if (!p || getComputedStyle(p).cursor !== 'pointer') tapSet.add(el);   // topo da região clicável
-  }
-  const b = [];
-  for (const el of tapSet) {
-    if (!vis(el)) continue;
-    // não marcar um container que só é "pointer" por herança e contém outro tocável (evita duplo)
-    const r = el.getBoundingClientRect();
-    const w = +r.width.toFixed(1), h = +r.height.toFixed(1);
-    if (w < MIN_TOQUE || h < MIN_TOQUE) b.push({ sel: sel(el), txt: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 30), w, h, min: Math.min(w, h) });
-  }
-
-  // c) ROLAGEM proibida (fora da lista branca)
-  const okScroll = el => SCROLL_OK.some(s => { try { return el.matches(s) || el.closest(s) === el; } catch (e) { return false; } });
-  const c = [];
-  for (const el of todos) {
-    const cs = getComputedStyle(el);
-    const oy = cs.overflowY, ox = cs.overflowX;
-    const rolaY = (oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 2;
-    const rolaX = (ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth + 2;
-    if (!rolaY && !rolaX) continue;
-    if (!vis(el)) continue;
-    if (okScroll(el)) continue;
-    c.push({ sel: sel(el), eixo: rolaY ? 'Y' : 'X', over: rolaY ? (el.scrollHeight - el.clientHeight) : (el.scrollWidth - el.clientWidth), txt: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 30) });
-  }
-
-  // d) CORTE: reticências em texto importante OU elemento estourando o viewport
-  const d = [];
-  for (const el of todos) {
-    if (!vis(el)) continue;
-    const cs = getComputedStyle(el);
-    if (cs.textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1) {
-      const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
-      d.push({ tipo: 'ellipsis', sel: sel(el), txt: t.slice(0, 40), importante: IMPORT.test(el.className || '') });
-    }
-  }
-  for (const el of todos) {
-    const t = txtDe(el); if (!t) continue;
-    const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) continue;
-    const r = el.getBoundingClientRect(); if (r.width < 0.5 || r.height < 0.5) continue;
-    if (r.right > vw + 2 || r.left < -2 || r.bottom > vh + 2 || r.top < -2) {
-      if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) continue;   // totalmente fora não conta (não visível)
-      d.push({ tipo: 'estoura-viewport', sel: sel(el), txt: t.slice(0, 40), importante: IMPORT.test(el.className || '') });
-    }
-  }
-
-  // total de textos/tocáveis visíveis (para a nota)
-  let textTotal = 0; for (const el of todos) { if (txtDe(el) && vis(el)) textTotal++; }
-  let tapTotal = 0; for (const el of tapSet) { if (vis(el)) tapTotal++; }
-  return { a, b, c, d, textTotal, tapTotal };
-}
-
-// ---- nota 0..10 (transparente): texto 0,5 · toque 0,2 · rolagem 0,3 · corte penaliza ----
-function nota(r){
-  const aFrac = r.textTotal ? r.a.length / r.textTotal : 0;
-  const bFrac = r.tapTotal ? r.b.length / r.tapTotal : 0;
-  const textOK = 1 - aFrac, touchOK = 1 - bFrac;
-  const scrollOK = r.c.length ? 1 / (1 + r.c.length) : 1;
-  const clipPen = Math.min(2, 0.1 * r.d.length);
-  let n = 10 * (0.5 * textOK + 0.2 * touchOK + 0.3 * scrollOK) - clipPen;
-  return Math.max(0, Math.min(10, +n.toFixed(1)));
-}
 
 (async () => {
   const browser = await chromium.launch({ executablePath: acharChromium(), headless: true, args: ['--no-sandbox'] });
