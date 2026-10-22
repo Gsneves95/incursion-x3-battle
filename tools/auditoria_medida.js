@@ -21,6 +21,8 @@ function medirNaPagina(cfg){
     // §358: a escala é lida de um ANCESTRAL LARGO (offsetWidth ≥ 160) p/ o arredondamento inteiro do offsetWidth não
     // falsear a medição de fontes pequenas (um elemento de 24px erra ~2%; um de 400px erra ~0,1%).
     let n = el;
+    for (let i = 0; i < 16 && n; i++) { const ow = n.offsetWidth; if (ow >= 400) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; }
+    n = el;
     for (let i = 0; i < 16 && n; i++) { const ow = n.offsetWidth; if (ow >= 160) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; }
     n = el;
     for (let i = 0; i < 16 && n; i++) { const ow = n.offsetWidth; if (ow > 0) { const w = n.getBoundingClientRect().width; if (w > 0) return w / ow; } n = n.parentElement; }
@@ -36,7 +38,17 @@ function medirNaPagina(cfg){
   const txtDe = el => { let t = ''; el.childNodes.forEach(n => { if (n.nodeType === 3) t += n.textContent; }); return t.replace(/\s+/g, ' ').trim(); };
   const IMPORT = /nome|name|titulo|tit|custo|cost|efeito|efei|rot|desc|label|nick|pts|ponto/i;
 
-  const todos = [...document.querySelectorAll('body *')].filter(e => !/^(SCRIPT|STYLE|NOSCRIPT|TITLE|svg|path|defs|g|use|DEFS)$/i.test(e.tagName));
+  const _tagOK = e => !/^(SCRIPT|STYLE|NOSCRIPT|TITLE|svg|path|defs|g|use|DEFS)$/i.test(e.tagName);
+  // §359: se há uma CAMADA MODAL aberta (um scrim que cobre a tela com fundo semiopaco — painel de kit, fila do PvP,
+  // "MAIS FILTROS", troca da campanha), mede-se SÓ essa camada: o que está atrás está inerte e encoberto de propósito
+  // (senão o d6 acusaria todo o fundo como "encoberto" pelo scrim). O canvas base não conta (o fundo dele é um
+  // gradiente em background-image, não um background-color com alfa).
+  const _cobreTudo = el => { const r = el.getBoundingClientRect(); return r.width * r.height >= 0.9 * vw * vh && r.left <= 2 && r.top <= 2 && r.right >= vw - 2 && r.bottom >= vh - 2; };
+  const _bgAlpha = el => { const m = (getComputedStyle(el).backgroundColor || '').match(/rgba?\(([^)]+)\)/); if (!m) return 0; const p = m[1].split(',').map(s => parseFloat(s)); return p.length >= 4 ? p[3] : 1; };
+  let _modal = null;
+  for (const el of document.querySelectorAll('body *')) { if (_tagOK(el) && vis(el) && _cobreTudo(el) && _bgAlpha(el) >= 0.3) _modal = el; }   // o ÚLTIMO em ordem de DOM = o topo
+  const _raiz = _modal || document;
+  const todos = (_modal ? [_modal, ...(_modal.querySelectorAll('*'))] : [...document.querySelectorAll('body *')]).filter(_tagOK);
 
   // a) TEXTO pequeno
   const a = [];
@@ -52,7 +64,7 @@ function medirNaPagina(cfg){
   // só entram: os tags interativos reais E o TOPO de cada região clicável (pointer cujo pai NÃO é pointer).
   const interativo = el => /^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(el.tagName) || el.hasAttribute('onclick') || el.getAttribute('role') === 'button';
   const tapSet = new Set();
-  document.querySelectorAll('button,a,input,select,textarea,[role="button"],[onclick]').forEach(e => tapSet.add(e));
+  _raiz.querySelectorAll('button,a,input,select,textarea,[role="button"],[onclick]').forEach(e => tapSet.add(e));
   for (const el of todos) {
     if (getComputedStyle(el).cursor !== 'pointer' || interativo(el)) continue;
     const p = el.parentElement;
@@ -138,7 +150,8 @@ function medirNaPagina(cfg){
     const ox = Math.min(A.right, B.right) - Math.max(A.left, B.left);
     const oy = Math.min(A.bottom, B.bottom) - Math.max(A.top, B.top);
     if (ox > 2 && oy > 2 && !contem(A, B) && !contem(B, A)
-      && !folhas[i].el.contains(folhas[j].el) && !folhas[j].el.contains(folhas[i].el)) {
+      && !folhas[i].el.contains(folhas[j].el) && !folhas[j].el.contains(folhas[i].el)
+      && dentroScrollOk(folhas[i].el) === dentroScrollOk(folhas[j].el)) {   // §359: conteúdo de lista rolável recortado na borda não "sobrepõe" vizinhos de fora da lista
       d.push({ tipo: 'sobreposto', sel: sel(folhas[i].el) + ' × ' + sel(folhas[j].el), txt: folhas[i].t.slice(0, 18) + ' / ' + folhas[j].t.slice(0, 18), importante: true });
     }
   }
@@ -150,6 +163,40 @@ function medirNaPagina(cfg){
       if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) continue;
       d.push({ tipo: 'estoura-viewport', sel: sel(f.el), txt: f.t.slice(0, 40), importante: IMPORT.test(f.el.className || '') });
     }
+  }
+
+  // d6) TEXTO ENCOBERTO (§359): o PONTO CENTRAL de cada PALAVRA do texto não "pertence" ao próprio elemento (nem a um
+  // ancestral/descendente) em document.elementFromPoint — ou seja, OUTRA caixa está desenhada por cima (mesmo sem os
+  // TEXTOS se cruzarem; pega o título coberto pela borda do quadro vizinho, que o centro-da-LINHA deixava passar).
+  // Mede palavra a palavra com um Range sobre os nós de texto DIRETOS da folha. Scrims decorativos com
+  // pointer-events:none NÃO entram (elementFromPoint os ignora), de propósito: só caixa de verdade sobre o texto conta.
+  for (const f of folhas) {
+    if (clampOk(f.el) || dentroScrollOk(f.el)) continue;
+    let coberto = null;
+    for (const ch of f.el.childNodes) {
+      if (coberto) break;
+      if (ch.nodeType !== 3) continue;                   // só os nós de texto diretos (o resto é outra folha)
+      const s = ch.textContent; const re = /\S+/g; let m;
+      while ((m = re.exec(s))) {
+        const rg = document.createRange(); rg.setStart(ch, m.index); rg.setEnd(ch, m.index + m[0].length);
+        const qs = rg.getClientRects();
+        for (const rc of qs) {
+          if (rc.width < 2 || rc.height < 2) continue;
+          const cy = rc.top + rc.height / 2;
+          // amostra 3 pontos ao longo da palavra (incl. o CENTRO) — uma palavra longa coberta só numa ponta também conta.
+          for (const fx of [0.15, 0.5, 0.85]) {
+            const cx = rc.left + rc.width * fx;
+            if (cx < 1 || cy < 1 || cx > vw - 1 || cy > vh - 1) continue;
+            const top = document.elementFromPoint(cx, cy);
+            if (!top || top === f.el || f.el.contains(top) || top.contains(f.el)) continue;
+            coberto = top; break;
+          }
+          if (coberto) break;
+        }
+        if (coberto) break;
+      }
+    }
+    if (coberto) d.push({ tipo: 'encoberto', sel: sel(f.el), txt: f.t.slice(0, 40), importante: true, por: sel(coberto) });
   }
 
   // total de textos/tocáveis visíveis (para a nota)

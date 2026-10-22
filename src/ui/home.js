@@ -742,10 +742,11 @@ function _pvpContextoHTML(){
     <p class="dm-pvp__modolinha">${pvpRanqueado ? 'Vale pontos de ranque.' : 'Treino: não mexe no ranque.'}</p>`;
   const rq = contaAtual && contaAtual.ranque;
   const ranqueHTML = (rq && typeof rq.pontos === 'number') ? `<div class="dm-pvp__ranque">Ranque <b>${rq.pontos}</b> pts</div>` : '';
-  return `<h2 class="dm-ctx__t cin">PVP ONLINE</h2>
-    ${nickBloco}${seg}${ranqueHTML}
-    <p class="dm-pvp__reveal">O oponente é revelado quando a partida começa.</p>
-    ${pvpMsg ? `<p class="dm-erro">⊘ ${H(pvpMsg)}</p>` : ''}`;
+  // §359: sem o título (já está na sublinha do cabeçalho), reveal em 1 linha, e o "Usar último time" entra aqui
+  // (o bloco SEU TIME fica só com as 3 vagas, p/ tudo caber nos 360 do canvas).
+  return `${nickBloco}${seg}${ranqueHTML}
+    ${pvpMsg ? `<p class="dm-erro">⊘ ${H(pvpMsg)}</p>` : ''}
+    <button class="dm-usarultimo" id="pvpultimo" ${_pvpUltimoOk() ? '' : 'disabled'}>↺ Usar último time</button>`;
 }
 function renderPvP(){
   const online = !!(typeof contaTransporte !== 'undefined' && contaTransporte);
@@ -768,7 +769,6 @@ function renderPvP(){
     sublinha: 'PVP ONLINE',
     contextoHTML: _pvpContextoHTML(),
     vagas: [{ tipo: 'livre' }, { tipo: 'livre' }, { tipo: 'livre' }],
-    timeAcaoHTML: `<button class="dm-usarultimo" id="pvpultimo" ${_pvpUltimoOk() ? '' : 'disabled'}>↺ Usar último time</button>`,
     validar: (t) => { const n = t.filter(Boolean).length; return { ok: n === 3, motivo: n === 3 ? '' : `Escolha mais ${3 - n} deus${3 - n > 1 ? 'es' : ''}.` }; },
     textoBotao: 'ENTRAR NA FILA',
     aoComecar: () => pvpEntrar(pvpRanqueado),
@@ -2446,7 +2446,7 @@ function _campTrocaMontar(){
     ${montKitAberto ? _montKitPanelHTML(montKitAberto, gcfg) : ''}
   </div></div>`;
   try { document.body.classList.add('emmontar'); } catch (e) {}
-  const inner = host.querySelector('#dommontar'); if (inner) { const s = Math.min((window.innerWidth || 1846) / 1846, (window.innerHeight || 852) / 852); inner.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+  const inner = host.querySelector('#dommontar'); if (inner) { const s = Math.min((window.innerWidth || 780) / 780, (window.innerHeight || 360) / 360); inner.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }   // §359: canvas 780×360
   _montLigarGrade(host, gcfg);
   const x = host.querySelector('[data-troca-x]'); if (x) x.onclick = () => { campPicker = null; montKitAberto = null; _campTrocaFechar(); render(); };
   const ov = host.querySelector('#dmtrocaov'); if (ov) ov.onclick = ev => { if (ev.target === ov) { campPicker = null; montKitAberto = null; _campTrocaFechar(); render(); } };
@@ -3500,7 +3500,7 @@ function _montVagaHTML(i, k, v){
   const g = HRM[k] || { nome: k, elem: 'Umbra', funcao: '' }, trav = v.tipo === 'travada';
   return `<div class="dm-vaga"><span class="dm-vaga__num">${n}</span>
     <span class="dm-vaga__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 24)}</span>
-    <span class="dm-vaga__id"><b class="dm-vaga__n">${H(g.nome)}</b><span class="dm-vaga__meta">${orbe(g.elem, 16)}<span class="dm-vaga__f">${H(g.funcao || '')}</span></span></span>
+    <span class="dm-vaga__id"><b class="dm-vaga__n">${H(g.nome)}</b><span class="dm-vaga__meta">${orbe(g.elem, 16)}</span></span>
     ${trav ? `<span class="dm-vaga__lock">🔒</span>` : `<button class="dm-vaga__x" data-rem="${k}" aria-label="remover">✕</button>`}
   </div>`;
 }
@@ -3513,10 +3513,10 @@ function _montKitLabelPadrao(k, cfg){
 }
 // §345: _montKitPanelHTML foi para src/ui/base.js (a FUNDAÇÃO).
 // §342b: CUSTO do kit em ORBES (§337, ≥22px) ou "GRÁTIS" (§340) — como o painel da batalha, não os pontinhos.
-function _montCustoHTML(cost){
-  cost = cost || {}; const out = [];
-  for (const kk in cost) { if (kk === 'livre') continue; for (let i = 0; i < cost[kk]; i++) out.push(orbe(kk, 24)); }
-  for (let i = 0; i < (cost.livre || 0); i++) out.push(orbe('livre', 24));
+function _montCustoHTML(cost, px){
+  cost = cost || {}; px = px || 24; const out = [];
+  for (const kk in cost) { if (kk === 'livre') continue; for (let i = 0; i < cost[kk]; i++) out.push(orbe(kk, px)); }
+  for (let i = 0; i < (cost.livre || 0); i++) out.push(orbe('livre', px));
   return out.length ? `<span class="dmk-ab__orbs">${out.join('')}</span>` : `<span class="dmk-ab__gratis">GRÁTIS</span>`;
 }
 // §344: a GRADE (filtros + busca + contagem + cartões) extraída — reusada pelo montador e pelo seletor de troca.
@@ -3526,13 +3526,18 @@ function _montGradeSecHTML(cfg){
   const funcChips = FUNCOES_VOCAB.map(f => `<button class="dm-chip${montFiltroFunc === f ? ' is-on' : ''}" data-func="${f}">${H(f)}</button>`).join('');
   const cards = lista.length ? lista.map(k => _montCardHTML(k, cfg)).join('') : '<p class="dm-vazio">Nenhum deus neste filtro.</p>';
   return `<section class="dm-dir${cfg.gradeFull ? ' dm-dir--full' : ''}">
-    <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
+    <div class="dm-dir__cab">
       <div class="dm-filtros">
-        <button class="dm-chip dm-chip--todos${(!montFiltroElem && !montFiltroFunc) ? ' is-on' : ''}" data-todos="1">Todos</button>
-        <span class="dm-orbes">${elemChips}</span>
-        <span class="dm-funcs">${funcChips}</span>
-        <span class="dm-busca__w"><input class="dm-busca" id="dmbusca" placeholder="Buscar deus" value="${H(montBusca)}"></span>
-        <span class="dm-conta">${lista.length} deuses</span>
+        <div class="dm-filtros__l">
+          <h2 class="dm-dir__t">SEUS DEUSES</h2>
+          <button class="dm-chip dm-chip--todos${(!montFiltroElem && !montFiltroFunc) ? ' is-on' : ''}" data-todos="1">Todos</button>
+          <span class="dm-orbes">${elemChips}</span>
+          <span class="dm-conta">${lista.length} deuses</span>
+        </div>
+        <div class="dm-filtros__l">
+          <span class="dm-funcs">${funcChips}</span>
+          <span class="dm-busca__w"><input class="dm-busca" id="dmbusca" placeholder="Buscar" value="${H(montBusca)}"></span>
+        </div>
       </div>
     </div>
     <div class="dm-grade${cfg.gradeTravada ? ' dm-grade--travada' : ''}" id="dmgrade">${cards}</div>
@@ -3567,6 +3572,7 @@ function _montLigarGrade(root, cfg){
 function _montAjustarNomes(root){
   const nodes = (root || document).querySelectorAll('.dm-ini__n');
   nodes.forEach(n => {
+    if (getComputedStyle(n).display === 'none') return;   // §359: nome de inimigo oculto (miniatura só com retrato) — não reexibir
     n.style.whiteSpace = 'nowrap'; n.style.display = 'block'; n.style.webkitLineClamp = '';
     let fs = 20; n.style.fontSize = fs + 'px';
     while (n.scrollWidth > n.clientWidth && fs > 16) { fs -= 1; n.style.fontSize = fs + 'px'; }
@@ -3623,7 +3629,7 @@ function _domContextoHTML(lad){
   const chefe = k => { const g = HRM[k] || { nome: k, elem: 'Umbra' };
     return `<span class="dm-chefe"><span class="dm-chefe__p">${slot('god-' + k, ini(g.nome), COR(g.elem), 22)}</span><span class="dm-chefe__n">${H(g.nome)}</span></span>`; };
   return `<h2 class="dm-ctx__t cin">${H(lad.nome)}</h2>
-    <div class="dm-ctx__trava"><span class="dm-ctx__lock">🔒</span> O time fica travado durante a corrida.</div>
+    <div class="dm-ctx__trava"><span class="dm-ctx__lock">🔒</span> Time travado na corrida.</div>
     <div class="dm-ctx__rot">INIMIGOS DESTE DOMÍNIO</div>
     <div class="dm-ctx__inis">${mostra.map(mini).join('')}${resto > 0 ? `<span class="dm-ini dm-ini--mais"><span class="dm-ini__p dm-ini__p--mais">+${resto}</span></span>` : ''}</div>
     <div class="dm-ctx__rot">CHEFE FINAL</div>

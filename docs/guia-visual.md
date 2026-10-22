@@ -80,7 +80,13 @@ reticência (`text-overflow:ellipsis`):
   conteúdo (`scrollWidth/Height` > `clientWidth/Height`). A tolerância vertical é ~meia linha (um `line-height < 1` faz o
   ink-box passar do line-box por alguns px sem cortar glifo); a horizontal é estrita (1px);
 - **texto sobre texto** — duas folhas de texto visíveis se cruzam > 2px nos **dois** eixos, sem uma conter a outra;
-- **texto que estoura o viewport** (780×360).
+- **texto que estoura o viewport** (780×360);
+- **texto ENCOBERTO (§359, eixo d6)** — o ponto central de **cada palavra** do texto não é o próprio elemento (nem um
+  ancestral/descendente) em `document.elementFromPoint`: outra caixa está desenhada **por cima** (mesmo sem os TEXTOS se
+  cruzarem — pega, p.ex., um título coberto pela borda do quadro vizinho). Scrims com `pointer-events:none` NÃO entram (o
+  `elementFromPoint` os ignora, de propósito). Quando há uma **camada modal** aberta (um scrim cobrindo a tela com fundo
+  semiopaco — painel de kit, fila do PvP, "Mais filtros", troca da campanha), a medição é feita **só nessa camada**: o que
+  está atrás está inerte/encoberto de propósito.
 
 **Exceções (não contam como corte):**
 

@@ -153,9 +153,9 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
     await page.evaluate(BASE + "contaTransporte={}; contaAtual={nick:'Herói',perfil,ranque:{pontos:1206}}; pvpTime=[]; pvpEstado='idle'; pvpRanqueado=false; ir('pvp',{},{substituir:true}); render(); (function(){var ks=_montFiltrados(_montJogaveis()); pvpTime.push(ks[0],ks[1],ks[2]); render();})();");
     await page.waitForTimeout(140);
     const m = await page.evaluate(() => { const dm = document.getElementById('dommontar'); const bloco = dm.querySelector('.dm-time'); const vagas = [...dm.querySelectorAll('.dm-vaga')];
-      const dmr = dm.getBoundingClientRect(), rb = bloco.getBoundingClientRect(), last = vagas[vagas.length - 1].getBoundingClientRect(); const esc = dmr.width / 1846;
-      return { n: vagas.length, dentroBloco: last.bottom <= rb.bottom + 0.5, dentro852: (last.bottom - dmr.top) / esc <= 852.5 }; });
-    ok(m.n === 3 && m.dentroBloco && m.dentro852, `PvP @${W}×${H}: as 3 vagas cabem no bloco SEU TIME e nos 852px`);
+      const dmr = dm.getBoundingClientRect(), rb = bloco.getBoundingClientRect(), last = vagas[vagas.length - 1].getBoundingClientRect(); const esc = dmr.width / 780;   // §359: canvas 780×360
+      return { n: vagas.length, dentroBloco: last.bottom <= rb.bottom + 0.5, dentroTela: (last.bottom - dmr.top) / esc <= 360.5 }; });
+    ok(m.n === 3 && m.dentroBloco && m.dentroTela, `PvP @${W}×${H}: as 3 vagas cabem no bloco SEU TIME e nos 360px`);
     await ctx.close();
   }
 
@@ -183,12 +183,12 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
     await page.evaluate(BASE + "ir('campanha',{},{substituir:true}); render(); campPicker=0; render();");
     await page.waitForTimeout(140);
     const m = await page.evaluate(() => { const dm = document.getElementById('dommontar'); const dir = dm.querySelector('.dm-dir');
-      const dmr = dm.getBoundingClientRect(), d = dir.getBoundingClientRect(), esc = dmr.width / 1846;
+      const dmr = dm.getBoundingClientRect(), d = dir.getBoundingClientRect(), esc = dmr.width / 780;   // §359: canvas 780×360
       const left = (d.left - dmr.left) / esc, right = (d.right - dmr.left) / esc;
       const px = d.left + d.width * 0.25, py = d.top + d.height * 0.5;   // centro da metade esquerda do painel
       const el = document.elementFromPoint(px, py); const fundoPainel = dm.contains(el);
       return { left: Math.round(left), right: Math.round(right), fundoPainel }; });
-    ok(m.left <= 70 && m.right >= 1777, `troca @${W}×${H}: grade em largura cheia (x ${m.left}→${m.right}, esperado ≤70 e ≥1777)`);
+    ok(m.left <= 14 && m.right >= 766, `troca @${W}×${H}: grade em largura cheia (x ${m.left}→${m.right}, esperado ≤14 e ≥766)`);
     ok(m.fundoPainel, `troca @${W}×${H}: o centro da metade esquerda é o fundo do painel (campanha não aparece atrás)`);
     await ctx.close();
   }
@@ -202,6 +202,7 @@ console.log('\n== §344 PvP — segmentado, fila, usar último, estados; ENTRAR 
     const bad = await page.evaluate(() => {
       const ruins = [];
       const checa = () => { document.querySelectorAll('.dm-ini__n').forEach(n => { const cs = getComputedStyle(n);
+        if (cs.display === 'none') return;   // §359: nome de inimigo oculto (miniatura só com retrato no canvas 780×360)
         const quebraMeio = cs.wordBreak !== 'normal' || (cs.overflowWrap !== 'normal' && cs.overflowWrap !== 'initial');
         const cortaH = n.scrollWidth > n.clientWidth + 1 && cs.whiteSpace !== 'normal';
         const fontOk = parseFloat(cs.fontSize) >= 16;

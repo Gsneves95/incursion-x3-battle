@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §359 · MONTADORES de time acessíveis (6 telas numa base só) + o resto do §358b
+
+**0 — resto do §358b (ficha-falta):** o título "COMO CONSEGUIR" era uma coluna de largura fixa (58px) ao lado dos quadros;
+a palavra transbordava e o quadro da Invocação, desenhado por cima, cobria "CONSEGU". Agora o `.dcomo` é **coluna**: o
+título fica numa **linha própria acima** dos dois quadros (Invocação | Missão). E a auditoria ganhou o eixo **d6**
+(`tools/auditoria_medida.js`): um texto também conta como **ENCOBERTO** quando o ponto central de **cada palavra** dele
+não é o próprio elemento (nem ancestral/descendente) em `document.elementFromPoint` — ou seja, outra caixa está desenhada
+por cima (mesmo sem os TEXTOS se cruzarem). Scrims com `pointer-events:none` não entram (o elementFromPoint os ignora);
+e a medição passa a ser feita **só na camada MODAL** quando há um scrim cobrindo a tela (senão o fundo inerte acusaria
+"encoberto"). Provado: com o layout antigo (título coberto) o d6 pega; com o conserto, não.
+
+**MONTADORES no canvas 780×360 (mesma receita do §358).** `fit()` passou a tratar `dominiomontar`/`montartime`/
+`desafiomontar`/`pvp`/`selecao` como o **canvas PEQUENO de 780×360** (grupo `fixaPeq`, com Coleção/ficha/níveis), não mais
+1846×852 — o px de design é o px REAL e cumpre o §357 direto; nas telas maiores o `fit()` escala p/ cima. O host da TROCA
+da campanha (no `#viewport`) também passou a se escalar a 780×360. Reescrevi todo o CSS de `#dommontar` e filhos (base +
+kit + PvP + fila + aviso + troca + seleção + "Mais filtros") para 780×360 com os mínimos do §357.
+
+**Layout 780×360 (2 colunas):** cabeçalho (‹ VOLTAR + título + sublinha); **coluna esquerda 192px** = CONTEXTO do modo
+(inimigos em miniatura só-retrato, chefe, regra/validação, apelido+AMISTOSA|RANQUEADA+ranque+usar-último do PvP) + bloco
+SEU TIME (3 vagas); **coluna direita 564px** = SEUS DEUSES com filtros em **2 linhas** (l1: Todos/estado + 6 orbes +
+contagem; l2: 5 funções + busca) e a **grade com ≥2 fileiras inteiras** de cartões (80px) sem rolar; rodapé com o motivo +
+COMEÇAR. Toque ≥40 (botões, orbes, "i", vagas). **Prova (Chromium 780×360): ≥2 fileiras inteiras em cada montador.**
+
+**Decisões de compactação (o 780×360 não comporta tudo do desenho 1846; nada de função se perdeu):**
+- o **ícone do elemento** saiu de cima do nome do cartão (a auditoria §358b achava a sobreposição): nome embaixo,
+  largura cheia; o "i" (abrir kit) no canto, 40×40, livre do nome; o selo **Nv** foi p/ a linha de meta do cartão;
+- **nomes de inimigos** no contexto viram miniatura **só-retrato** (o nome não cabia em 12px ≥ e cortava);
+- a **vaga** do montador mostra retrato + nome + orbe do elemento (a função saiu — já está no cartão);
+- o **painel de kit** NÃO rola: passiva + 4 habilidades (texto completo, custo, recarga, nível) numa **grade 2×2** que cabe
+  nos 360 (provado p/ o deus de maior descrição, odin);
+- **Seleção (Batalha CPU):** os 2 times viram blocos empilhados de **3 chips** (retrato + nome) cada; a vaga inteira é o
+  alvo de remover (toque ≥40, sem o X apertado); a **FUNÇÃO** desceu p/ o "Mais filtros" (a largura não comporta orbes +
+  5 funções + busca + mais numa grade só) — filtro preservado, badge conta função/facção/classe;
+- **PvP:** "Usar último time" desceu do cabeçalho do SEU TIME p/ o contexto; reveal encurtado; tudo cabe.
+
+**Prova:** `acessibilidade_telas.test.js` mede agora **8 estados de montador** (dominio, campanha com a troca aberta,
+composição com cartão travado, pvp, pvp-fila, seleção com 2 times, seleção Mais-filtros, kit do odin) e exige
+**a=b=c=d=0** com o d6. Os testes do §342–§345 (montar_modos, dominio_montar, pvp_tela, interface) tiveram só os
+seletores/medidas migrados p/ 780×360 (coords novas, toque 72→40, função no painel, nomes de inimigo ocultos). Suíte +
+build verdes. Capturas `docs/telas/359-{montar-dominio,montar-campanha,montar-composicao,pvp,pvp-fila,selecao,
+selecao-maisfiltros,kit,troca,ficha-falta}-{780x360,1846x852}.png`.
+
+---
+
 ## §358b · Acabamento do §358 + a auditoria passa a pegar CORTE e SOBREPOSIÇÃO
 
 Acabamento das três telas do §358 (queixas do dono, com prints) + fortalecer o eixo **(d)** da auditoria, que só pegava

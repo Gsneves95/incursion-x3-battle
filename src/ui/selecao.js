@@ -12,12 +12,13 @@ let focoPk=null;                 // deus com o painel de kit aberto
 let selBusca='';                 // §345: busca por nome na grade (como o montador)
 const FACCOES=['Grega','Nórdica','Egípcia','Japonesa','Chinesa','Hindu','Brasileira','Africana','Celta','Maia'];
 const CLASSES_G=['Físico','Mágico','Híbrido'];
-// §345: o estado vira uma PÍLULA "Liberados | Todos". Facção e Classe vão p/ "MAIS FILTROS". Elemento e Função
-// ficam inline na grade (orbes + chips, como o montador). Mantém-se o modelo de Sets (multi) já existente.
+// §345/§359: o estado vira uma PÍLULA "Liberados | Todos". ELEMENTO fica inline (orbes). FUNÇÃO, Facção e Classe vão p/
+// "MAIS FILTROS" (§359: a largura do 780×360 não comporta orbes+5 funções+busca+mais numa só grade — a função desceu
+// p/ o painel, sem perder o filtro). Mantém-se o modelo de Sets (multi) já existente.
 let F={estado:'liberados',faccoes:new Set(),elems:new Set(),funcoes:new Set(),classes:new Set()};
-let painelFiltro=false;   // o painel "MAIS FILTROS" (facção + classe)
+let painelFiltro=false;   // o painel "MAIS FILTROS" (função + facção + classe)
 const _selNorm=s=>(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-function eixosExtras(){return F.faccoes.size+F.classes.size;}   // só facção/classe contam p/ o badge do "MAIS FILTROS"
+function eixosExtras(){return F.funcoes.size+F.faccoes.size+F.classes.size;}   // função/facção/classe contam p/ o badge do "MAIS FILTROS"
 function limparFiltro(){F={estado:'liberados',faccoes:new Set(),elems:new Set(),funcoes:new Set(),classes:new Set()};}
 
 function liberado(k){return tudoLiberado?temKit(k):!!RMAP[k].inicial;}
@@ -72,13 +73,13 @@ function _cfgSel(){
 /* ---------- vagas da coluna esquerda (J1 e J2) ---------- */
 function vagaSelHTML(p,i){
   const k=pick[p][i], n=i+1;
-  if(!k) return `<div class="sel-vaga sel-vaga--vazia"><span class="sel-vaga__num">${n}</span><span class="sel-vaga__add">+</span><span class="sel-vaga__txt">Escolha um deus</span></div>`;
+  if(!k) return `<div class="sel-vaga sel-vaga--vazia"><span class="sel-vaga__num">${n}</span><span class="sel-vaga__add">+</span></div>`;
   const g=RMAP[k]||{nome:k,elem:'Umbra',funcao:''};
-  return `<div class="sel-vaga"><span class="sel-vaga__num">${n}</span>
-    <span class="sel-vaga__p">${slot('god-'+k,ini(g.nome),COR(g.elem),22)}</span>
-    <span class="sel-vaga__id"><b class="sel-vaga__n">${H(g.nome)}</b><span class="sel-vaga__meta">${orbe(g.elem,15)}<span class="sel-vaga__f">${H(g.funcao||'')}</span></span></span>
-    <button class="sel-vaga__x" data-rem="${p}|${k}" aria-label="remover">✕</button>
-  </div>`;
+  // §359: cada vaga é um CHIP vertical (retrato + nome), 3 numa linha; a vaga inteira é o alvo de remover (toque ≥40×40).
+  return `<button class="sel-vaga" data-rem="${p}|${k}" aria-label="remover ${H(g.nome)}"><span class="sel-vaga__num">${n}</span>
+    <span class="sel-vaga__p">${slot('god-'+k,ini(g.nome),COR(g.elem),30)}</span>
+    <b class="sel-vaga__n">${H(g.nome)}</b>
+  </button>`;
 }
 function timeBlocoHTML(p){
   const tit=p===0?'SEU TIME':'OPONENTE';
@@ -89,11 +90,12 @@ function timeBlocoHTML(p){
   </div>`;
 }
 function motivoSel(){
+  // §359: curto (o rodapé da seleção é estreito no 780×360) — "Faltam N · oponente|seu time"
   const f0=3-pick[0].length, f1=3-pick[1].length;
   if(f0<=0&&f1<=0)return '';
-  if(vez===1&&f1>0)return `Escolha mais ${f1} para o oponente`;
-  if(vez===0&&f0>0)return `Escolha mais ${f0} para o seu time`;
-  return f1>0?`Escolha mais ${f1} para o oponente`:`Escolha mais ${f0} para o seu time`;
+  if(vez===1&&f1>0)return `Faltam ${f1} · oponente`;
+  if(vez===0&&f0>0)return `Faltam ${f0} · seu time`;
+  return f1>0?`Faltam ${f1} · oponente`:`Faltam ${f0} · seu time`;
 }
 
 /* ---------- grade "SEUS DEUSES" (a mesma do montador) ---------- */
@@ -104,14 +106,18 @@ function gradeSelHTML(cfg){
   const cards=lista.length?lista.map(k=>_montCardHTML(k,cfg)).join(''):'<p class="dm-vazio">Nenhum deus atende a esses critérios.</p>';
   const estadoTxt=F.estado==='liberados'?'Liberados':'Todos';
   return `<section class="dm-dir">
-    <div class="dm-dir__cab"><h2 class="dm-dir__t">SEUS DEUSES</h2>
+    <div class="dm-dir__cab">
       <div class="dm-filtros">
-        <button class="dm-chip sel-pill${F.estado==='todos'?' sel-pill--todos':''}" id="bestado" data-estado="1">${estadoTxt}</button>
-        <span class="dm-orbes">${elemChips}</span>
-        <span class="dm-funcs">${funcChips}</span>
-        <span class="dm-busca__w"><input class="dm-busca" id="selbusca" placeholder="Buscar deus" value="${H(selBusca)}"></span>
-        <button class="dm-chip" id="bmaisf" data-maisf="1">Mais filtros${eixosExtras()?`<span class="sel-badge">${eixosExtras()}</span>`:''}</button>
-        <span class="dm-conta">${lista.length} deuses</span>
+        <div class="dm-filtros__l">
+          <h2 class="dm-dir__t">SEUS DEUSES</h2>
+          <button class="dm-chip sel-pill${F.estado==='todos'?' sel-pill--todos':''}" id="bestado" data-estado="1">${estadoTxt}</button>
+          <span class="dm-orbes">${elemChips}</span>
+        </div>
+        <div class="dm-filtros__l">
+          <span class="dm-busca__w"><input class="dm-busca" id="selbusca" placeholder="Buscar deus" value="${H(selBusca)}"></span>
+          <button class="dm-chip" id="bmaisf" data-maisf="1">Mais filtros${eixosExtras()?`<span class="sel-badge">${eixosExtras()}</span>`:''}</button>
+          <span class="dm-conta">${lista.length} deuses</span>
+        </div>
       </div>
     </div>
     <div class="dm-grade" id="selgrade">${cards}</div>
@@ -121,8 +127,9 @@ function painelMaisFiltrosHTML(){
   if(!painelFiltro)return '';
   const n=listaFiltrada().length;
   const grupo=(rot,chips)=>`<div class="fgrp"><span class="fgrp__l">${rot}</span><div class="fgrp__c">${chips}</div></div>`;
+  const _ff={faccoes:'faccao',classes:'classe',funcoes:'funcao'};
   const chipSet=(campo,itens)=>itens.map(it=>{
-    const c=ROSTER.filter(e=>e[campo==='faccoes'?'faccao':'classe']===it).length;
+    const c=ROSTER.filter(e=>e[_ff[campo]]===it).length;
     return `<button class="chip2 ${F[campo].has(it)?'on':''}" data-fs="${campo}|${it}">${H(it)}<span class="chip2__n">${c}</span></button>`;}).join('');
   return `<div class="sel-fpanel" id="fpanel"><div class="fbox sel-fbox">
     <div class="fbox__h"><h2>MAIS FILTROS</h2>
@@ -131,6 +138,7 @@ function painelMaisFiltrosHTML(){
         <button class="dmb dmb--quietbig" id="flimpar">Limpar</button>
         <button class="dmb dmb--go" id="ffechar">Pronto</button></span></div>
     <div class="fbox__b">
+      ${grupo('FUNÇÃO',chipSet('funcoes',FUNCOES_VOCAB))}
       ${grupo('PANTEÃO',chipSet('faccoes',FACCOES))}
       ${grupo('CLASSE',chipSet('classes',CLASSES_G))}
     </div></div></div>`;
@@ -186,8 +194,8 @@ function ligarSelecao(cfg){
   qq('.dm-card[data-pick]').forEach(b=>b.onclick=()=>{ commitPk(b.dataset.pick); renderPick(); });
   qq('.dm-card__i[data-info]').forEach(el=>el.onclick=ev=>{ ev.stopPropagation(); previewPk(el.dataset.info); renderPick(); });
   // tocar num BLOCO passa a escolher para ele
-  qq('[data-lado]').forEach(b=>b.onclick=ev=>{ if(ev.target.closest('.sel-vaga__x'))return; vez=+b.dataset.lado; renderPick(); });
-  qq('.sel-vaga__x[data-rem]').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); const [p,k]=b.dataset.rem.split('|'); if(donoDe(k)!==null){removerPk(k);renderPick();} });
+  qq('[data-lado]').forEach(b=>b.onclick=ev=>{ if(ev.target.closest('.sel-vaga[data-rem]'))return; vez=+b.dataset.lado; renderPick(); });
+  qq('.sel-vaga[data-rem]').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); const [p,k]=b.dataset.rem.split('|'); if(donoDe(k)!==null){removerPk(k);renderPick();} });
   // filtros inline
   const be=q('#bestado'); if(be)be.onclick=()=>{ F.estado=F.estado==='liberados'?'todos':'liberados'; renderPick(); };
   qq('[data-elem]').forEach(b=>b.onclick=()=>{ const e=b.dataset.elem; F.elems.has(e)?F.elems.delete(e):F.elems.add(e); renderPick(); });

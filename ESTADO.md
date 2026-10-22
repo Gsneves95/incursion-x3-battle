@@ -2,6 +2,27 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §359 · MONTADORES de time acessíveis (780×360) + resto do §358b
+- RESTO §358b: ficha-falta "COMO CONSEGUIR" agora numa LINHA PRÓPRIA acima dos quadros (`.dcomo` virou coluna) — o
+  quadro da Invocação não cobre mais o título. AUDITORIA ganhou o eixo **d6 ENCOBERTO**: o ponto central de cada PALAVRA
+  do texto tem de ser o próprio elemento em `document.elementFromPoint` (senão outra caixa está por cima). pointer-events:
+  none não entra; e mede só a CAMADA MODAL quando há scrim (kit/fila/mais-filtros/troca) — senão o fundo inerte acusaria.
+- MONTADORES (Domínio/Campanha/Composição/PvP/Batalha-CPU) passaram ao canvas **780×360** (grupo `fixaPeq` do §358): o
+  `fit()` escala p/ cima nas telas maiores; o host da TROCA (no #viewport) também. Todo o CSS de `#dommontar`+filhos
+  (base/kit/pvp/fila/aviso/troca/seleção/mais-filtros) reescrito p/ 780×360 com os mínimos §357 (corpo≥12, rótulo≥12,
+  título≥15, toque≥40).
+- LAYOUT 2 colunas: esq 192px (CONTEXTO do modo + SEU TIME 3 vagas); dir 564px (SEUS DEUSES: filtros em 2 linhas +
+  **≥2 fileiras inteiras de cartões** de 80px sem rolar); rodapé motivo+COMEÇAR. Cartões: ícone do elemento NÃO fica sobre
+  o nome (nome embaixo largura cheia; "i" 40×40 no canto; Nv na meta). Inimigos do contexto = miniatura SÓ-retrato.
+- KIT "i" SEM ROLAGEM: passiva + 4 habilidades (texto completo/custo/recarga/nível) em grade 2×2 que cabe nos 360 (provado
+  no odin). SELEÇÃO: 2 times empilhados de 3 chips (retrato+nome), vaga inteira = remover (toque ≥40), FUNÇÃO no "Mais
+  filtros" (largura não comporta inline). PvP: "Usar último time" no contexto; reveal curto.
+- NADA DE FUNÇÃO SE PERDEU: handlers/estados/fluxos §342–§345 intactos; testes migrados só nos seletores/medidas
+  (coords 780×360, toque 72→40, função no painel, nomes de inimigo ocultos, vaga/sel-vaga sem X apertado = linha-remover).
+- PROVAS: `acessibilidade_telas` mede 8 estados de montador (dominio, campanha+troca, composição+cartão travado, pvp,
+  pvp-fila, seleção 2 times, seleção mais-filtros, kit odin) a=b=c=d=0 com o d6; Chromium ≥2 fileiras em cada. montar_modos
+  /dominio_montar/pvp_tela/interface migrados. Suíte + build verdes. Capturas `docs/telas/359-*-{780x360,1846x852}.png`.
+
 ## ★ §358b · Acabamento do §358 + auditoria pega CORTE e SOBREPOSIÇÃO
 - AUDITORIA (eixo d) FORTE em `tools/auditoria_medida.js` (módulo compartilhado com `acessibilidade_telas`): além da (d1)
   reticência e (d5) estouro-viewport, agora pega (d2) a própria caixa recorta (overflow hidden/clip + conteúdo excede),

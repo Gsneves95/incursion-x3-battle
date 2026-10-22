@@ -142,18 +142,18 @@ console.log('== 1. seleção (§345): montador de DOIS times (CPU/hot-seat) ==')
   // ---- filtros: inline (elemento, função), MAIS FILTROS (facção, classe), busca ----
   const chip = (c, i) => $$('[data-fs]').find(b => b.dataset.fs === c + '|' + i);
   w.eval('pick=[[],[]]; vez=0; limparFiltro(); selBusca=""; render();'); tap($('#bestado'));   // Todos
-  // inline função
-  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
-  ok($$('.dm-card').length === w.eval(`ROSTER.filter(e=>e.funcao==='Controlador').length`), 'a FUNÇÃO (inline) filtra a grade');
-  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
+  // §359: a FUNÇÃO desceu p/ o painel MAIS FILTROS (largura do 780×360); o ELEMENTO segue inline
+  tap($('#bmaisf')); tap(chip('funcoes', 'Controlador'));
+  ok($$('.dm-card').length === w.eval(`listaFiltrada().length`) && $$('.dm-card').length === w.eval(`ROSTER.filter(e=>e.funcao==='Controlador'&&temKit(e.key)).length`), 'a FUNÇÃO (painel) filtra a grade');
+  tap(chip('funcoes', 'Controlador')); tap($('#ffechar'));
   // inline elemento
   tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
   ok($$('.dm-card').length === w.eval(`ROSTER.filter(e=>e.elem==='Umbra').length`), 'o ELEMENTO (inline) filtra a grade');
   tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
-  // MAIS FILTROS: facção soma (OU), classe intersecta (E)
+  // MAIS FILTROS: função + facção soma (OU), classe intersecta (E)
   tap($('#bmaisf'));
-  ok(!!$('#fpanel') && $$('.fgrp__l').length === 2, 'MAIS FILTROS abre com PANTEÃO e CLASSE');
-  ok($$('.chip2').length === 10 + 3, `13 chips (10 panteões + 3 classes), há ${$$('.chip2').length}`);
+  ok(!!$('#fpanel') && $$('.fgrp__l').length === 3, 'MAIS FILTROS abre com FUNÇÃO, PANTEÃO e CLASSE');
+  ok($$('.chip2').length === 5 + 10 + 3, `18 chips (5 funções + 10 panteões + 3 classes), há ${$$('.chip2').length}`);
   tap(chip('faccoes', 'Japonesa'));
   ok(/14 de 100/.test($('.fbox__n').textContent), `Japonesa tem 14, painel diz "${$('.fbox__n').textContent}"`);
   tap(chip('faccoes', 'Maia'));
@@ -166,15 +166,14 @@ console.log('== 1. seleção (§345): montador de DOIS times (CPU/hot-seat) ==')
   ok(/100 de 100/.test($('.fbox__n').textContent), 'LIMPAR zera os critérios (Todos = 100)');
   tap($('#ffechar'));
 
-  // combinação facção(painel) ∩ elemento+função(inline) → Izanami/Tsukuyomi
+  // combinação elemento(inline) ∩ facção+função(painel) → Izanami/Tsukuyomi
   tap($$('[data-elem]').find(b => b.dataset.elem === 'Umbra'));
-  tap($$('[data-func]').find(b => b.dataset.func === 'Controlador'));
-  tap($('#bmaisf')); tap(chip('faccoes', 'Japonesa'));
+  tap($('#bmaisf')); tap(chip('funcoes', 'Controlador')); tap(chip('faccoes', 'Japonesa'));
   ok(/2 de 100/.test($('.fbox__n').textContent), `facção+elemento+função = 2 (${$('.fbox__n').textContent})`);
   tap($('#ffechar'));
   const sobrou = $$('.dm-card__n').map(e => e.textContent.trim()).sort();
   ok(sobrou.join(',') === 'Izanami,Tsukuyomi', `esperado Izanami/Tsukuyomi, veio ${sobrou}`);
-  ok(/1/.test(($('.sel-badge') || {}).textContent || ''), 'o badge do MAIS FILTROS conta os extras de facção/classe ativos');
+  ok(/2/.test(($('.sel-badge') || {}).textContent || ''), 'o badge do MAIS FILTROS conta os extras de função/facção/classe ativos');
 
   // busca por nome
   w.eval('limparFiltro(); selBusca=""; render();'); tap($('#bestado'));   // Todos

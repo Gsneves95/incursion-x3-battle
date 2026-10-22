@@ -36,6 +36,15 @@ const ESTADOS = {
   'Níveis — sem pontos (FALTAM)': `contaAtual.pontos={zeus:0};contaAtual.niveis={zeus:{basico:2,habilidade:2,milagre:1}};nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();`,
   'Níveis — confirmando': `contaAtual.pontos={zeus:9};contaAtual.niveis={zeus:{basico:2,habilidade:2,milagre:1}};nlSelKey='zeus';nlConfirm='basico';nlPendente=false;nlMsg=null;ir('niveis',{key:'zeus'},{substituir:true});render();`,
   'Níveis — sem conexão': `contaAtual=null;nlConfirm=null;nlPendente=false;nlMsg=null;nlSelKey=null;ir('niveis',{key:'zeus'},{substituir:true});render();`,
+  // §359: MONTADORES de time (6 telas na base só) — todos no canvas 780×360.
+  'Montar — Domínio': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;domTimePick=[];ir('dominiomontar',{cultura:'grega'});render();`,
+  'Montar — Campanha (troca aberta)': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;ir('campanha',{},{substituir:true});render();campPicker=0;render();`,
+  'Montar — Composição (cartão travado)': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;desafioTimePick=[];var ds=desafios()[0];ir('desafiomontar',{id:ds.id});render();(function(){var byE={};_montJogaveis().forEach(k=>{(byE[HRM[k].elem]=byE[HRM[k].elem]||[]).push(k);});var el=Object.keys(byE).find(e=>byE[e].length>=3)||Object.keys(byE)[0];desafioTimePick=[byE[el][0]];render();})();`,
+  'PvP — lobby': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;contaTransporte={};contaAtual={nick:'Herói',perfil,ranque:{pontos:1206},missoes:{ativa:null,progresso:{},liberados:[]}};pvpTime=[];pvpEstado='idle';pvpRanqueado=false;pvpMsg='';ir('pvp',{},{substituir:true});render();`,
+  'PvP — na fila': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;contaTransporte={};contaAtual={nick:'Herói',perfil,ranque:{pontos:1206},missoes:{ativa:null,progresso:{},liberados:[]}};pvpTime=_montJogaveis().slice(0,3);pvpEstado='fila';pvpRanqueado=true;pvpMsg='';ir('pvp',{},{substituir:true});render();`,
+  'Seleção — dois times': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;vsCPU=true;ir('selecao',{novo:true});render();(function(){var ks=listaFiltrada().filter(jogavel);vez=0;for(var i=0;i<5&&i<ks.length;i++)commitPk(ks[i]);renderPick();})();`,
+  'Seleção — Mais filtros aberto': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;vsCPU=true;ir('selecao',{novo:true});render();painelFiltro=true;renderPick();`,
+  'Kit "i" (deus de maior descrição)': `montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false;domTimePick=[];ir('dominiomontar',{cultura:'grega'});render();montKitAberto='odin';render();`,
 };
 
 (async () => {

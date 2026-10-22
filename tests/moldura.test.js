@@ -152,7 +152,7 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       perfil.deuses[best.k] = perfil.deuses[best.k] || { obtidoEm: Date.now() };
       ir('deus', { key: best.k }, { substituir: true }); render(); deusSel = best.s; render();
       const sp = document.getElementById('gsplash'); if (sp) sp.remove();
-      const fix = document.getElementById('deusfix'), fb = fix.getBoundingClientRect(), esc = fb.height / 852;
+      const fix = document.getElementById('deusfix'), fb = fix.getBoundingClientRect(), esc = fb.height / 360;   // §358/§359: a ficha é um canvas 780×360
       const R = el => el.getBoundingClientRect();
       const art = R(fix.querySelector('.dsx-art')), nome = R(fix.querySelector('.dsx-art__nome'));
       const sk = [...fix.querySelectorAll('.dsx-hab__btns .dsk')].map(R);
@@ -165,10 +165,10 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       };
     });
     ok(g.n === 5, `a ficha mostra as 5 habilidades (${g.n})`);
-    ok(g.artW >= 700 && g.artH >= 800, `a arte é o grande painel-retrato à esquerda (${Math.round(g.artW)}x${Math.round(g.artH)} design)`);
+    ok(g.artW >= 280 && g.artH >= 340, `a arte é o grande painel-retrato à esquerda (${Math.round(g.artW)}x${Math.round(g.artH)} design 780×360)`);
     ok(g.nomeDentroDaArte, 'o nome fica dentro da arte (à esquerda), longe da coluna de etiquetas');
-    ok(g.skMin >= 72, `o toque de cada habilidade é >=72px de design (menor lado ${Math.round(g.skMin)})`);
-    ok(g.detalheBot <= 832, `a maior descrição (${g.len} chars) cai na tela sem cortar (detalhe termina em y=${Math.round(g.detalheBot)}≤830)`);
+    ok(g.skMin >= 40, `o toque de cada habilidade é >=40px de design (menor lado ${Math.round(g.skMin)})`);
+    ok(g.detalheBot <= 360.5, `a maior descrição (${g.len} chars) cai na tela sem cortar (detalhe termina em y=${Math.round(g.detalheBot)}≤360)`);
     console.log(`  arte ${Math.round(g.artW)}x${Math.round(g.artH)} · skill toque ${Math.round(g.skMin)}px (design) · maior texto ${g.len} chars, detalhe y≤${Math.round(g.detalheBot)}`);
     await page.evaluate(() => { ir('home', {}, { substituir: true }); render(); });
   }

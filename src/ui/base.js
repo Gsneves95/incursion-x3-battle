@@ -210,12 +210,14 @@ function fit(){
   const emColecao = (_rM === 'colecao') && document.getElementById('colfix');
   // §358: Coleção, FICHA e NÍVEIS usam um canvas PEQUENO de 780×360 (= o celular) — assim os px de design SÃO os
   // px reais no 780×360 e cumprem o padrão §357 sem escala contra; nas telas maiores o fit() escala p/ cima.
-  const fixaPeq = emColecao || emDeus || emNiveis;
-  const fixa = emBatalha || emDesafios || emMontar || emDomHub || emProv || emCompos || emGuia;
+  // §359: os MONTADORES (Domínio/Campanha/Composição/PvP/Batalha CPU) passam ao canvas PEQUENO de 780×360 (como §358):
+  // o px de design é o px REAL no 780×360 e cumpre o §357 direto; nas telas maiores o fit() escala p/ cima.
+  const fixaPeq = emColecao || emDeus || emNiveis || emMontar;
+  const fixa = emBatalha || emDesafios || emDomHub || emProv || emCompos || emGuia;
   try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('guia2', !!emGuia); stage.classList.toggle('col2fix', !!emColecao);
     document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emguia', !!emGuia); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351/§352: carimbo build + botão conta somem destas telas (vivem na home/menu)
   if(fixaPeq && !fixa){
-    const alvo = emColecao || emDeus || emNiveis;
+    const alvo = emColecao || emDeus || emNiveis || emMontar;
     const CW = 780, CH = 360, s = Math.min(u.w / CW, u.h / CH);   // §358: canvas = o celular
     ultimaEscala = s; ultimaLarguraDesign = CW;
     stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';
@@ -442,12 +444,11 @@ function _montCardHTML(k, cfg){
   return `<button class="dm-card${selCls}${off ? ' dm-card--off' : ''}${trav ? ' dm-card--trav' : ''}"${sel ? ` data-pick="${k}"` : ''}>
     <span class="dm-card__p">${slot('god-' + k, ini(g.nome), (trav && trav.cinza) ? '#8d84ad' : COR(g.elem), 34)}</span>
     <span class="dm-card__grad"></span>
-    ${nvmax > 1 ? `<span class="dm-card__nv">Nv ${nvmax}</span>` : ''}
     <span class="dm-card__i" data-info="${k}" role="button" aria-label="kit">i</span>
     ${on ? `<span class="dm-card__vaga">${num}</span>` : ''}
     ${off ? `<span class="dm-card__off">${H(off)}</span>` : ''}
     ${trav && trav.txt ? `<span class="dm-card__trav">${H(trav.txt)}</span>` : ''}
-    <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 18)}<span class="dm-card__f">${H(g.funcao || '')}</span></span></span>
+    <span class="dm-card__id"><b class="dm-card__n">${H(g.nome)}</b><span class="dm-card__meta">${orbe(g.elem, 14)}<span class="dm-card__f">${H(g.funcao || '')}</span>${nvmax > 1 ? `<span class="dm-card__nv">· Nv ${nvmax}</span>` : ''}</span></span>
   </button>`;
 }
 function _montKitPanelHTML(k, cfg){
@@ -457,8 +458,8 @@ function _montKitPanelHTML(k, cfg){
     const lblw = cfg.kitLabel ? cfg.kitLabel(k) : { txt: 'Kit em produção', disabled: true };
     return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
       <div class="dm-kit__cab">
-        <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
-        <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+        <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 40)}</span>
+        <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 16)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
         <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
       </div>
       <div class="dm-kit__scroll"><div class="dmk-pas"><span class="dmk-pas__d">Kit em produção no protótipo.</span></div></div>
@@ -474,7 +475,7 @@ function _montKitPanelHTML(k, cfg){
       <span class="dmk-ab__art">${slot('skill-' + k + '-' + sl, '', null, 0, false)}</span>
       <div class="dmk-ab__body">
         <div class="dmk-ab__top"><b class="dmk-ab__n">${H(a.nome)}</b><span class="dmk-ab__tag">${lab}</span><span class="dmk-ab__nv">Nv ${nv}</span></div>
-        <div class="dmk-ab__meta">${_montCustoHTML(a.cost)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
+        <div class="dmk-ab__meta">${_montCustoHTML(a.cost, 16)}<span class="dmk-ab__cd">${a.cd ? 'recarga ' + a.cd : 'sem recarga'}</span></div>
         <div class="dmk-ab__desc">${realce(a.desc || '')}</div>
       </div></div>`;
   };
@@ -484,8 +485,8 @@ function _montKitPanelHTML(k, cfg){
   // §342b: cabeçalho e botão FIXOS; a lista de habilidades (+ passiva) rola por dentro → o painel inteiro cabe nos 852.
   return `<div class="dm-kit" id="dmkit"><div class="dm-kit__card">
     <div class="dm-kit__cab">
-      <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 44)}</span>
-      <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 26)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
+      <span class="dm-kit__p">${slot('god-' + k, ini(hg.nome), COR(hg.elem), 40)}</span>
+      <div class="dm-kit__id"><h2 class="cin dm-kit__nome">${H(hg.nome)}</h2><span class="dm-kit__meta">${orbe(hg.elem, 16)}<span class="dm-kit__f">${H(hg.funcao || '')}</span></span></div>
       <button class="dm-kit__x" data-kit-x="1" aria-label="Fechar">✕</button>
     </div>
     <div class="dm-kit__scroll">

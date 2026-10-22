@@ -51,11 +51,11 @@ console.log('\n== 3. na fila: espera honesta + sair ==');
 w.eval("pvpEstado='fila'; render();");
 ok(/procurando oponente/i.test(txt($('#baselayer'))) && $$('#pvpsair').length === 1, 'mostra "Procurando oponente…" e um botão para sair da fila');
 
-// ---- 4. alvo de toque (§339b: ≥72px) ----
-console.log('\n== 4. alvo de toque ≥72px ==');
+// ---- 4. alvo de toque (§357/§359: ≥40px no canvas 780×360) ----
+console.log('\n== 4. alvo de toque ≥40px ==');
 w.eval("pvpReset(); ir('pvp',{},{substituir:true}); render();");
-ok(parseFloat(w.getComputedStyle($('.dm-card')).height) >= 72, 'o cartão de deus tem toque ≥72px (' + w.getComputedStyle($('.dm-card')).height + ')');
-ok(parseFloat(w.getComputedStyle($('.dm-vaga')).height) >= 72, 'a vaga de time tem toque ≥72px (' + w.getComputedStyle($('.dm-vaga')).height + ')');
+ok(parseFloat(w.getComputedStyle($('.dm-card')).height) >= 40, 'o cartão de deus tem toque ≥40px (' + w.getComputedStyle($('.dm-card')).height + ')');
+ok(parseFloat(w.getComputedStyle($('.dm-vaga')).height) >= 40, 'a vaga de time tem toque ≥40px (' + w.getComputedStyle($('.dm-vaga')).height + ')');
 
 // ---- 5. §264: o fim de partida RANQUEADA anuncia o resultado; amistosa não; o voltar do Android fecha o banner ----
 console.log('\n== 5. §264 banner de ranque: ranqueado anuncia (delta com sinal, faixa real), amistoso não, back fecha ==');

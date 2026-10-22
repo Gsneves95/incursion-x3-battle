@@ -164,34 +164,34 @@ console.log('\n== §342b o destaque de palavra-chave casa a PALAVRA INTEIRA (ace
   const browser = await chromium.launch({ executablePath: acha(), headless: true, args: ['--no-sandbox'] });
   const BOOT = `perfil.deuses={}; ROSTER.slice(0,24).forEach(e=>perfil.deuses[e.key]={copias:1}); domTimePick=[]; montFiltroElem=null;montFiltroFunc=null;montBusca='';montKitAberto=null;montDica=false; ir('dominiomontar',{cultura:'grega'}); render();`;
   console.log('\n== §342 layout (Chromium) ==');
-  { const ctx = await browser.newContext({ viewport: { width: 1846, height: 852 }, deviceScaleFactor: 1 });
+  { const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });   // §359: canvas 780×360 (design = real)
     const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
     await page.evaluate(BOOT); await page.waitForTimeout(140);
     const m = await page.evaluate(() => { const df = document.getElementById('dommontar'); const b = df.getBoundingClientRect();
       const rel = sel => { const el = df.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - b.left, y: r.top - b.top, w: r.width, h: r.height, bot: r.bottom - b.top }; };
       const minH = sels => { let mn = 1e9, who = null; sels.forEach(s => df.querySelectorAll(s).forEach(el => { const h = el.getBoundingClientRect().height; if (h > 0 && h < mn) { mn = h; who = s; } })); return { mn: Math.round(mn * 10) / 10, who }; };
       const minFs = sels => { let mn = 1e9, who = null; sels.forEach(s => df.querySelectorAll(s).forEach(el => { const f = parseFloat(getComputedStyle(el).fontSize); if (f < mn) { mn = f; who = s; } })); return { mn: Math.round(mn * 10) / 10, who }; };
-      let clips = []; df.querySelectorAll('.dm-card__n,.dm-card__f,.dm-vaga__n,.dm-titulo,.dm-sub,.dm-ctx__t,.dm-ini__n,.dm-chefe__n').forEach(el => { if (el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className); });
+      let clips = []; df.querySelectorAll('.dm-card__n,.dm-card__f,.dm-vaga__n,.dm-titulo,.dm-sub,.dm-ctx__t,.dm-chefe__n').forEach(el => { if (getComputedStyle(el).display !== 'none' && el.scrollWidth > el.clientWidth + 1.5) clips.push(el.className); });
       return { df: { w: b.width, h: b.height }, voltar: rel('.dmb--voltar'), titulo: rel('.dm-titulo'), ctx: rel('.dm-ctx'), time: rel('.dm-time'), dir: rel('.dm-dir'), comecar: rel('#bcomecar'),
         btn: minH(['.dmb--voltar', '.dmb--comecar', '.dm-chip', '.dm-orbe']), body: minFs(['.dm-sub', '.dm-ctx__trava', '.dm-vaga__meta', '.dm-conta']), nome: minFs(['.dm-card__n']), clips: clips.slice(0, 6) }; });
     const perto = (a, b, t) => Math.abs(a - b) <= (t || 4);
-    ok(perto(m.df.w, 1846) && perto(m.df.h, 852), `#dommontar é 1846×852 (${Math.round(m.df.w)}×${Math.round(m.df.h)})`);
-    ok(m.voltar && perto(m.voltar.x, 57) && perto(m.voltar.w, 180) && m.voltar.h >= 71.5, `VOLTAR x57 w180 h≥72 (${Math.round(m.voltar.x)}/${Math.round(m.voltar.w)}/${Math.round(m.voltar.h)})`);
-    ok(m.titulo && perto(m.titulo.x, 268), `título em x268 (${m.titulo && Math.round(m.titulo.x)})`);
-    ok(m.ctx && perto(m.ctx.x, 57) && perto(m.ctx.y, 95) && perto(m.ctx.w, 528) && perto(m.ctx.h, 410), `contexto x57 y95 528×410 (${m.ctx && [m.ctx.x, m.ctx.y, m.ctx.w, m.ctx.h].map(Math.round).join('/')})`);
-    ok(m.time && perto(m.time.x, 57) && perto(m.time.y, 519) && perto(m.time.w, 528) && perto(m.time.h, 291), `seu time x57 y519 528×291 (${m.time && [m.time.x, m.time.y, m.time.w, m.time.h].map(Math.round).join('/')})`);
-    ok(m.dir && perto(m.dir.x, 600) && perto(m.dir.y, 95) && perto(m.dir.w, 1190) && perto(m.dir.h, 620), `seus deuses x600 y95 1190×620 (${m.dir && [m.dir.x, m.dir.y, m.dir.w, m.dir.h].map(Math.round).join('/')})`);
-    ok(m.comecar && m.comecar.h >= 71.5 && perto(m.comecar.y, 735, 6) && m.comecar.x > 1000, `COMEÇAR CORRIDA à direita, y≈735, h≥72 (y${Math.round(m.comecar.y)} h${Math.round(m.comecar.h)})`);
-    console.log(`  @1846: menor botão ${m.btn.mn}px (${m.btn.who}) · menor corpo ${m.body.mn}px (${m.body.who}) · nome ${m.nome.mn}px`);
-    ok(m.btn.mn >= 71.5, `botões ≥72px (menor ${m.btn.mn} em ${m.btn.who})`);
-    ok(m.body.mn >= 19.5, `corpo ≥20px (menor ${m.body.mn} em ${m.body.who})`);
-    ok(m.nome.mn >= 21.5, `nome dos cartões ≥22px (${m.nome.mn})`);
+    ok(perto(m.df.w, 780) && perto(m.df.h, 360), `#dommontar é 780×360 (${Math.round(m.df.w)}×${Math.round(m.df.h)})`);
+    ok(m.voltar && perto(m.voltar.x, 8) && perto(m.voltar.w, 80) && m.voltar.h >= 39.5, `VOLTAR x8 w80 h≥40 (${Math.round(m.voltar.x)}/${Math.round(m.voltar.w)}/${Math.round(m.voltar.h)})`);
+    ok(m.titulo && perto(m.titulo.x, 96), `título em x96 (${m.titulo && Math.round(m.titulo.x)})`);
+    ok(m.ctx && perto(m.ctx.x, 8) && perto(m.ctx.y, 48) && perto(m.ctx.w, 192) && perto(m.ctx.h, 154), `contexto x8 y48 192×154 (${m.ctx && [m.ctx.x, m.ctx.y, m.ctx.w, m.ctx.h].map(Math.round).join('/')})`);
+    ok(m.time && perto(m.time.x, 8) && perto(m.time.y, 204) && perto(m.time.w, 192) && perto(m.time.h, 152), `seu time x8 y204 192×152 (${m.time && [m.time.x, m.time.y, m.time.w, m.time.h].map(Math.round).join('/')})`);
+    ok(m.dir && perto(m.dir.x, 208) && perto(m.dir.y, 50) && perto(m.dir.w, 564) && perto(m.dir.h, 268), `seus deuses x208 y50 564×268 (${m.dir && [m.dir.x, m.dir.y, m.dir.w, m.dir.h].map(Math.round).join('/')})`);
+    ok(m.comecar && m.comecar.h >= 39.5 && perto(m.comecar.y, 320, 6) && m.comecar.x > 400, `COMEÇAR CORRIDA à direita, y≈320, h≥40 (y${Math.round(m.comecar.y)} h${Math.round(m.comecar.h)})`);
+    console.log(`  @780×360: menor botão ${m.btn.mn}px (${m.btn.who}) · menor corpo ${m.body.mn}px (${m.body.who}) · nome ${m.nome.mn}px`);
+    ok(m.btn.mn >= 39.5, `botões ≥40px (menor ${m.btn.mn} em ${m.btn.who})`);
+    ok(m.body.mn >= 11.5, `corpo ≥12px (menor ${m.body.mn} em ${m.body.who})`);
+    ok(m.nome.mn >= 12.5, `nome dos cartões ≥13px (${m.nome.mn})`);
     ok(m.clips.length === 0, `nenhum texto cortado (${m.clips.length ? m.clips.join(',') : 'ok'})`);
     await ctx.close(); }
   { const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 2 });
     const page = await ctx.newPage(); await page.goto('file://' + distAbs, { waitUntil: 'load' });
     await page.evaluate(BOOT); await page.waitForTimeout(140);
-    const m = await page.evaluate(() => { const esc = (typeof ultimaEscalaBatalha !== 'undefined' && ultimaEscalaBatalha) || 1; const df = document.getElementById('dommontar'); const b = df.getBoundingClientRect();
+    const m = await page.evaluate(() => { const esc = (typeof ultimaEscala !== 'undefined' && ultimaEscala) || 1; const df = document.getElementById('dommontar'); const b = df.getBoundingClientRect();
       const fora = b.left < -0.5 || b.top < -0.5 || b.right > window.innerWidth + 0.5 || b.bottom > window.innerHeight + 0.5;
       let minBtn = 1e9; ['.dmb--voltar', '.dmb--comecar', '.dm-chip', '.dm-orbe'].forEach(s => df.querySelectorAll(s).forEach(el => { const h = el.getBoundingClientRect().height; if (h > 0) minBtn = Math.min(minBtn, h); }));
       let minBody = 1e9; ['.dm-sub', '.dm-vaga__meta', '.dm-conta'].forEach(s => df.querySelectorAll(s).forEach(el => minBody = Math.min(minBody, parseFloat(getComputedStyle(el).fontSize) * esc)));
