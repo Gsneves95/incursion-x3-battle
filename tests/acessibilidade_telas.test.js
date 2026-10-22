@@ -26,6 +26,8 @@ const ESTADOS = {
   'Coleção — sem filtro': `colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();`,
   'Coleção — com filtro': `colF={busca:'',cultura:'',classe:'',funcao:'Controlador',elem:'Aurora',status:'tem',raridade:'',ordem:'nome'};ir('colecao',{},{substituir:true});render();`,
   'Ficha — possuída': `fichaAba='habilidades';deusSel='milagre';deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();`,
+  // §358b: a PASSIVA mostra o texto completo (não só "não gasta a ação") — deus com passiva longa (Anúbis, possuído).
+  'Ficha — passiva (texto completo)': `perfil.deuses.anubis={copias:1,obtidoEm:Date.now()};fichaAba='habilidades';deusSel='passiva';deusSelKey=null;ir('deus',{key:'anubis'},{substituir:true});render();`,
   'Ficha — SINERGIA aberta': `fichaAba='sinergia';deusSelKey=null;ir('deus',{key:'zeus'},{substituir:true});render();`,
   // pior caso de missão: o deus com o requisito de Provação mais longo, NÃO possuído.
   'Ficha — não possuída (pior missão)': `(function(){var best={len:0,k:'anubis'};try{for(var kk in MISSOES.missoes){var t=reqMissaoTexto(kk)||'';if(t.length>best.len)best={len:t.length,k:kk};}}catch(e){}delete perfil.deuses[best.k];fichaAba='habilidades';deusSelKey=null;ir('deus',{key:best.k},{substituir:true});render();})();`,

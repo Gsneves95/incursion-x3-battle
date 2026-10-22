@@ -1514,7 +1514,7 @@ function fichaSinergiaHTML(k){
     const CAP = 2, mostra = f.parceiros.slice(0, CAP), resto = f.parceiros.length - mostra.length;
     corpo = mostra.map(p => `<div class="dsx-sin__par dsx-sin__par--${p.familia === 'fase-anti' ? 'anti' : p.familia}">
       <span class="dsx-sin__art">${slot('god-' + p.para, ini(p.nome), COR(sinElem(p.para)), 34)}</span>
-      <div class="dsx-sin__txt"><div class="dsx-sin__cab"><b class="dsx-sin__nome">${H(p.nome)}</b><span class="dsx-sin__fam">${H(p.familia)}</span></div><p class="dsx-sin__mot">${H(p.motivo)}</p></div>
+      <div class="dsx-sin__txt"><div class="dsx-sin__cab"><b class="dsx-sin__nome">${H(p.nome)}</b><span class="dsx-sin__fam">${H(p.familia)}</span></div><p class="dsx-sin__mot" data-clamp="ok">${H(p.motivo)}</p></div>
     </div>`).join('');
     if (resto > 0) corpo += `<p class="dsx-sin__mais">+${resto} parceiro${resto === 1 ? '' : 's'} — agem no time, em batalha</p>`;
   } else if (!f || f.solista){
@@ -1564,9 +1564,9 @@ function renderColecao(){
       <button class="col2fchip col2fchip--todos${semEF ? ' is-on' : ''}" data-coltodos="1">Todos</button>
       <span class="col2forbes">${orbesEl}</span>
       <span class="col2ffuncs">${chipsFn}</span>
-      <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar…" value="${H(colF.busca)}" autocomplete="off"></label>
     </div>
     <div class="col2__pills">
+      <label class="col2__busca"><i>⌕</i><input type="text" id="col2busca" placeholder="Buscar…" value="${H(colF.busca)}" autocomplete="off"></label>
       <span class="col2pill__grp">${pillsStatus}</span>
       <span class="col2pill__grp">${pillsRar}</span>
       ${btMais}${btOrd}
@@ -1650,12 +1650,12 @@ function comoConseguirHTML(k, rar){
   // §350c: compacto — Invocação e Missão LADO A LADO; o requisito da missão em 2 linhas no máximo (clamp) + o atalho
   // "ver Provação ›". Mais baixo que antes, p/ o DETALHE da habilidade caber inteiro mesmo neste estado.
   const missaoVia = m
-    ? `<button class="dcomo__via dcomo__via--miss" data-vermissao="1"><b>Missão</b><span class="dcomo__mtxt">${H(reqMissaoTexto(k))}</span><span class="dcomo__atalho">ver Provação ›</span></button>`
-    : `<div class="dcomo__via"><b>Missão</b><span class="dcomo__mtxt">este deus não tem missão (inicial)</span></div>`;
+    ? `<button class="dcomo__via dcomo__via--miss" data-vermissao="1"><b>Missão</b><span class="dcomo__mtxt" data-clamp="ok">${H(reqMissaoTexto(k))}</span><span class="dcomo__atalho">ver Provação ›</span></button>`
+    : `<div class="dcomo__via"><b>Missão</b><span class="dcomo__mtxt" data-clamp="ok">este deus não tem missão (inicial)</span></div>`;
   return `<div class="dcomo">
     <span class="dcomo__rot">COMO CONSEGUIR</span>
     <div class="dcomo__vias">
-      <div class="dcomo__via"><b>Invocação</b><span class="dcomo__mtxt">na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
+      <div class="dcomo__via"><b>Invocação</b><span class="dcomo__mtxt" data-clamp="ok">na roleta · raridade ${H(RAR_ROT[rar] || rar)}</span></div>
       ${missaoVia}
     </div>
   </div>`;
@@ -1801,7 +1801,7 @@ function renderDeusDetalhe(){
     ? `<div class="dsx-art__posse dsx-art__posse--tem">Possuído · ${cop} cópia${cop === 1 ? '' : 's'} · ${pts} ponto${pts === 1 ? '' : 's'}</div>`
     : `<div class="dsx-art__posse dsx-art__posse--nao">Não possuído</div>`;
   const artImg = (typeof RETRATO_ARTE !== 'undefined' && RETRATO_ARTE[k]) ? `<img class="dsx-art__img" src="retratos/${H(k)}.webp" alt="" loading="lazy" onerror="this.remove()">` : '';
-  const arq = gm.arquetipo ? `<div class="dsx-art__arq">${H(gm.arquetipo)}</div>` : '';
+  const arq = gm.arquetipo ? `<div class="dsx-art__arq" data-clamp="ok">${H(gm.arquetipo)}</div>` : '';
   // §358: aba HABILIDADES | SINERGIA acima do bloco de habilidades (a sinergia mostra o que a sobreposição mostrava).
   const corpo = fichaAba === 'sinergia'
     ? fichaSinergiaHTML(k)
@@ -1832,7 +1832,6 @@ function renderDeusDetalhe(){
         <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('classe')}</i>${H(gm.classe)}</span>
         <span class="dsx-tag"><i class="dsx-tag__ic">${_fichaIc('func')}</i>${H(gm.funcao)}</span>
       </div>
-      ${posse}
       ${tem ? maestriaDetalheHTML(k) : comoConseguirHTML(k, rar)}
       <div class="dsx-tabs">
         <button class="dsx-tab${fichaAba === 'habilidades' ? ' is-on' : ''}" data-ficha-aba="habilidades">HABILIDADES</button>
@@ -2013,8 +2012,9 @@ function nlPainelHTML(k, gm, gmEf, sl, tipo, tem, online){
       acao = `<div class="nlp__conf"><span class="nlp__confq">Subir para Nv ${cur + 1} por ${_ptLabel(custo, true)}?</span><span class="nlp__confb"><button class="nlb nlb--go" data-subir-ok="${sl}" ${nlPendente ? 'disabled' : ''}>${nlPendente ? '…' : 'CONFIRMAR'}</button><button class="nlb nlb--quiet" data-subir-no="${sl}" ${nlPendente ? 'disabled' : ''}>CANCELAR</button></span></div>`;
     } else if (!online){ acao = `<button class="nlb nlb--off" disabled>Sem conexão com o servidor</button>`; }
     else { acao = pts >= custo
-      ? `<button class="nlb nlb--go" data-subir="${sl}">SUBIR PARA NV ${cur + 1} · ${_nlbPtIc()}${_ptLabel(custo)}</button>`
-      : `<button class="nlb nlb--off" disabled>FALTAM ${_nlbPtIc()}${_ptLabel(falta)}</button>`; }
+      // §358b: rótulo em 2 linhas centradas (não 4): "SUBIR P/ NV 3" + "◆ 2 pontos" (cabe no cartão estreito).
+      ? `<button class="nlb nlb--go nlb--2l" data-subir="${sl}"><b>SUBIR P/ NV ${cur + 1}</b><span>${_nlbPtIc()}${_ptLabel(custo, true)}</span></button>`
+      : `<button class="nlb nlb--off nlb--2l" disabled><b>FALTAM</b><span>${_nlbPtIc()}${_ptLabel(falta, true)}</span></button>`; }
   }
   const msg = (nlMsg && nlMsg.slot === sl) ? `<p class="nlp__erro">${H(nlMsg.texto)}</p>` : '';
   return `<div class="nlp nlp--${sem ? 'sem' : 'esc'}${nlConfirm === sl ? ' nlp--conf' : ''}" data-slot="${sl}">${cab}

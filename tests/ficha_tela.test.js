@@ -40,12 +40,14 @@ ok(!!$('.dmaes') && !$('.dcomo'), 'possuindo: mostra a MAESTRIA (não o "como co
 ok(!!$('.dsx-art__posse--tem') && /Possuído/.test(txt($('.dsx-art__posse'))), '§358: "Possuído · N cópias · N pontos" está na arte');
 ok($$('.dsx-tab[data-ficha-aba]').length === 2, '§358: abas HABILIDADES | SINERGIA acima das habilidades');
 ok(!!$('#dsxprev') && !!$('#dsxnext'), '§358: setas ‹ › de navegação na ficha');
-ok(!!(w.HRM.zeus.arquetipo ? $('.dsx-art__arq') : true), '§358: o arquétipo aparece na arte (quando há)');
+// HRM é const léxica do bundle (não vai p/ window) — lê via eval no escopo global da página.
+ok(!!(w.eval('!!(typeof HRM!=="undefined" && HRM.zeus && HRM.zeus.arquetipo)') ? $('.dsx-art__arq') : true), '§358: o arquétipo aparece na arte (quando há)');
 {
   const sel = $('.dsk.is-sel');
   ok(sel.title === 'Passiva' && !sel.querySelector('.dsk__nv'), 'abre na PASSIVA e a PASSIVA NÃO tem selo de nível');
   ok(/PASSIVA/.test(txt($('.ddet__pill--tipo'))), 'o detalhe abre na PASSIVA');
   ok(!!$('.ddet__pas') && !$('.ddet__cost'), 'a passiva NÃO mostra custo (é "não gasta a ação")');
+  ok($('.ddet__desc') && $('.ddet__desc').textContent.replace(/\s+/g, ' ').trim().length > 8, '§358b: a PASSIVA mostra o TEXTO completo (não só "não gasta a ação")');
 }
 
 // ---- 2. §350c: o SELO "Nv N" só nas habilidades COM escada; Passiva E Defesa (sem níveis) NÃO têm selo ----

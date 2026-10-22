@@ -71,6 +71,26 @@ reais** — ilegível. Por isso o padrão agora é medido em **px CSS REAIS no v
 > A medição que vale é a REAL (780×360). Para quem desenha na tela fixa, divida o mínimo real por **0,4225** (ou
 > multiplique por ~2,37) para achar o tamanho no desenho de 1846×852.
 
+### Eixo "corte/sobreposição" da auditoria (§358b)
+
+O eixo **(d)** do `tools/auditoria_medida.js` (usado pela auditoria **e** pelo teste `acessibilidade_telas`) pega, além da
+reticência (`text-overflow:ellipsis`):
+
+- **texto cortado SEM reticência** — a própria caixa do texto (ou um **ancestral** com `overflow:hidden/clip`) recorta o
+  conteúdo (`scrollWidth/Height` > `clientWidth/Height`). A tolerância vertical é ~meia linha (um `line-height < 1` faz o
+  ink-box passar do line-box por alguns px sem cortar glifo); a horizontal é estrita (1px);
+- **texto sobre texto** — duas folhas de texto visíveis se cruzam > 2px nos **dois** eixos, sem uma conter a outra;
+- **texto que estoura o viewport** (780×360).
+
+**Exceções (não contam como corte):**
+
+- **`data-clamp="ok"`** — um `line-clamp` **de propósito** em texto **secundário** (resumo que pode ser cortado em N
+  linhas sem perder informação essencial). Hoje marcam isso: `.dsx-art__arq` (arquétipo na arte da ficha),
+  `.dsx-sin__mot` (motivo da sinergia) e `.dcomo__mtxt` (texto do "como conseguir"). Ao marcar um novo, **registre aqui**.
+- **conteúdo de uma LISTA rolável da lista branca** (`SCROLL_OK`: `.col2__grade` etc.) — o que passa da dobra é **rolagem
+  esperada**, não corte; os eixos (d3) "sai da caixa do ancestral" e (d5) "estoura viewport" não valem para ele (mas o
+  corte do **próprio item** — nome/custo/efeito recortado — e a **sobreposição** continuam valendo).
+
 ## A tela fixa (1846×852)
 
 As telas novas são uma **canvas fixa de 1846×852** escalada por `min(w/1846, h/852)`, centrada, com `#03050B` nas sobras

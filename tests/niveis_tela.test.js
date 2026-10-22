@@ -75,16 +75,16 @@ function abrir(k, opts = {}) {
   abrir('zeus', { pontos: { zeus: 1 }, niveis: { zeus: { basico: 3, habilidade: 4, milagre: 1 } } });
   {
     const P = $$('.nlx-dir .nlp');
-    // básico nv3 de 4, custo p/ nv4 = 3, tem 1 ponto → FALTAM 2 PONTOS (botão apagado)
+    // básico nv3 de 4, custo p/ nv4 = 3, tem 1 ponto → "FALTAM" + "2 pontos" (botão apagado; §358b: 2 linhas)
     const a0 = P[0].querySelector('.nlp__pe .nlb');
-    ok(!P[0].querySelector('[data-subir]') && a0.disabled && /FALTAM 2 PONTOS/.test(txt(a0)), 'BÁSICO (custo 3, tem 1): "FALTAM 2 PONTOS" (apagado)');
+    ok(!P[0].querySelector('[data-subir]') && a0.disabled && /FALTAM/.test(txt(a0)) && /2 pontos/.test(txt(a0)), 'BÁSICO (custo 3, tem 1): "FALTAM" + "2 pontos" (apagado)');
     // habilidade nv4 de 4 (topo) → NÍVEL MÁXIMO ALCANÇADO (laurel), sem botão
     ok(!!P[1].querySelector('.nlp__maxbox') && /NÍVEL MÁXIMO/.test(txt(P[1].querySelector('.nlp__maxt'))) && /ALCAN/.test(txt(P[1].querySelector('.nlp__maxt'))), 'HABILIDADE no topo: caixa "NÍVEL MÁXIMO ALCANÇADO" (louros)');
     ok(!P[1].querySelector('[data-subir]') && !P[1].querySelector('.nlp__cell--px'), 'no máximo: sem botão SUBIR e sem coluna PRÓXIMO');
     ok(P[1].querySelectorAll('.nlpin.on').length === 4, 'no máximo: todas as bolinhas acesas');
-    // milagre nv1 de 4, custo p/ nv2 = 1, tem 1 ponto → SUBIR PARA NV 2 · 1 PONTO (ouro; §350b singular + ícone)
+    // milagre nv1 de 4, custo p/ nv2 = 1, tem 1 ponto → "SUBIR P/ NV 2" + "1 ponto" (ouro; §358b 2 linhas, §350b singular + ícone)
     const b2 = P[2].querySelector('[data-subir]');
-    ok(!!b2 && /SUBIR PARA NV 2 · 1 PONTO\b/.test(txt(b2)) && !/PONTOS/.test(txt(b2)) && b2.classList.contains('nlb--go'), 'MILAGRE (custo 1): botão de ouro "SUBIR PARA NV 2 · 1 PONTO" (singular, §350b)');
+    ok(!!b2 && /SUBIR P\/ NV 2/.test(txt(b2)) && /1 ponto/.test(txt(b2)) && !/pontos/i.test(txt(b2)) && b2.classList.contains('nlb--go'), 'MILAGRE (custo 1): botão de ouro "SUBIR P/ NV 2" + "1 ponto" (singular, §350b)');
     ok(!!b2.querySelector('.nlb__pt'), '§350b: o botão de subir traz o ÍCONE PRÓPRIO de pontos (selo dourado)');
     ok(!!P[2].querySelector('.nlp__cell--px') && /PRÓXIMO \(Nv 2\)/.test(txt(P[2].querySelector('.nlp__coll--px'))), 'MILAGRE tem a coluna PRÓXIMO (Nv 2)');
     // DIFF por PALAVRAS: no milagre só o número que muda (20 → 22) fica em .nl-hi, e NADA mais

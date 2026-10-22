@@ -41,10 +41,8 @@ console.log('\n== §340 fora da batalha — cada tela que desenha custo ==');
   ok(/cost__gratis/.test(w.eval(`kitLinhaHTML('BÁS', ${bas('brigid')})`)), 'Coleção/kit (kitLinhaHTML): básico grátis → GRÁTIS');
   const colPay = w.eval(`kitLinhaHTML('HAB', ${pago('hades')})`);
   ok(/cost__pip/.test(colPay) && !/cost__gratis/.test(colPay), 'Coleção/kit: habilidade paga → orbes, sem GRÁTIS');
-  // 2. Sobreposição de kit da Coleção — colVerDetalheHTML (cost__gratis / cost__pip)
-  ok(/cost__gratis/.test(w.eval("colVerDetalheHTML('brigid',GODS['brigid'],'basico')")), 'Coleção/sobreposição: básico grátis → GRÁTIS');
-  const colPay2 = w.eval("colVerDetalheHTML('hades',GODS['hades'],'basico')");
-  ok(/cost__pip/.test(colPay2) && !/cost__gratis/.test(colPay2), 'Coleção/sobreposição: básico pago → orbes, sem GRÁTIS');
+  // 2. (§358 removeu a sobreposição de kit da Coleção — `colVerDetalheHTML` não existe mais; tocar no cartão abre a FICHA,
+  //    coberta no item 3 abaixo e por `ficha_tela.test.js`.)
   // 3. FICHA do deus (§350, rota 'deus') — deusDetalheHTML usa _montCustoHTML: GRÁTIS = dmk-ab__gratis; pago = <img class="orbe">
   { const det = (k, sl) => w.eval(`deusDetalheHTML('${k}', deusKitEfetivo('${k}',GODS['${k}']), '${sl}')`);
     const fFree = det('brigid', 'basico');

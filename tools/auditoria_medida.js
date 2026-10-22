@@ -81,8 +81,21 @@ function medirNaPagina(cfg){
     c.push({ sel: sel(el), eixo: rolaY ? 'Y' : 'X', over: rolaY ? (el.scrollHeight - el.clientHeight) : (el.scrollWidth - el.clientWidth), txt: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 30) });
   }
 
-  // d) CORTE: reticências em texto importante OU elemento estourando o viewport
+  // d) CORTE / SOBREPOSIÇÃO. §358b: além da reticência, pega TEXTO CORTADO SEM reticência (a própria caixa ou um
+  // ancestral com overflow:hidden/clip recorta o conteúdo) e TEXTO SOBRE TEXTO (duas folhas de texto se cruzam).
+  // Exceção: line-clamp DE PROPÓSITO em texto secundário, marcado com data-clamp="ok" (lista no guia-visual §358b).
   const d = [];
+  // folhas de texto visíveis, com rect em cache (reusadas por vários checks)
+  const folhas = [];
+  for (const el of todos) { const t = txtDe(el); if (!t || !vis(el)) continue; folhas.push({ el, t, r: el.getBoundingClientRect() }); }
+  const clampOk = el => { let n = el; for (let i = 0; i < 5 && n && n.getAttribute; i++) { if (n.getAttribute('data-clamp') === 'ok') return true; n = n.parentElement; } return false; };
+  const temClip = cs => cs.overflowX === 'hidden' || cs.overflowX === 'clip' || cs.overflowY === 'hidden' || cs.overflowY === 'clip';
+  // §358b: conteúdo DENTRO de uma lista rolável da lista branca (SCROLL_OK) pode passar da dobra — é rolagem esperada,
+  // não corte. d3 (sai da caixa do ancestral) e d5 (estoura viewport) NÃO valem p/ ele; corte de item (d1/d2) e
+  // sobreposição (d4) continuam valendo. (Rolagem FORA da lista branca já cai no eixo c.)
+  const dentroScrollOk = el => SCROLL_OK.some(s => { try { return !!el.closest(s); } catch (e) { return false; } });
+
+  // d1) RETICÊNCIAS (mantido): text-overflow:ellipsis truncando
   for (const el of todos) {
     if (!vis(el)) continue;
     const cs = getComputedStyle(el);
@@ -91,13 +104,51 @@ function medirNaPagina(cfg){
       d.push({ tipo: 'ellipsis', sel: sel(el), txt: t.slice(0, 40), importante: IMPORT.test(el.className || '') });
     }
   }
-  for (const el of todos) {
-    const t = txtDe(el); if (!t) continue;
-    const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) continue;
-    const r = el.getBoundingClientRect(); if (r.width < 0.5 || r.height < 0.5) continue;
+  // d2) TEXTO CORTADO SEM reticência: a PRÓPRIA caixa recorta (overflow hidden/clip) e o conteúdo excede. A tolerância
+  // VERTICAL é ~meia linha (o ink-box de uma fonte com line-height < 1 excede o line-box por alguns px sem cortar
+  // glifo nenhum — só conta como corte quando some uma fração real de LINHA); a horizontal é estrita (1px).
+  for (const f of folhas) {
+    const el = f.el, cs = getComputedStyle(el);
+    if (cs.textOverflow === 'ellipsis') continue;            // já em d1
+    const lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize) * 1.2) || 16;
+    const tolY = Math.max(4, lh * 0.5);
+    const clipX = (cs.overflowX === 'hidden' || cs.overflowX === 'clip') && el.scrollWidth > el.clientWidth + 1;
+    const clipY = (cs.overflowY === 'hidden' || cs.overflowY === 'clip') && el.scrollHeight > el.clientHeight + tolY;
+    if ((clipX || clipY) && !clampOk(el)) d.push({ tipo: 'corte', sel: sel(el), txt: f.t.slice(0, 40), importante: true });
+  }
+  // d3) TEXTO que SAI da caixa do ANCESTRAL que o recorta (cortado por overflow do pai)
+  for (const f of folhas) {
+    if (clampOk(f.el) || dentroScrollOk(f.el)) continue;
+    let n = f.el.parentElement;
+    for (let i = 0; i < 12 && n && n !== document.body; i++) {
+      const cs = getComputedStyle(n);
+      if (temClip(cs)) {
+        const ar = n.getBoundingClientRect();
+        if (f.r.right > ar.right + 1 || f.r.left < ar.left - 1 || f.r.bottom > ar.bottom + 1 || f.r.top < ar.top - 1) {
+          d.push({ tipo: 'corte-ancestral', sel: sel(f.el), txt: f.t.slice(0, 40), importante: true, por: sel(n) }); break;
+        }
+      }
+      n = n.parentElement;
+    }
+  }
+  // d4) TEXTO SOBRE TEXTO: duas folhas de texto se cruzam > 2px nos DOIS eixos, sem uma conter a outra (nem ser ancestral)
+  const contem = (A, B) => A.left <= B.left + 1 && A.top <= B.top + 1 && A.right >= B.right - 1 && A.bottom >= B.bottom - 1;
+  for (let i = 0; i < folhas.length; i++) for (let j = i + 1; j < folhas.length; j++) {
+    const A = folhas[i].r, B = folhas[j].r;
+    const ox = Math.min(A.right, B.right) - Math.max(A.left, B.left);
+    const oy = Math.min(A.bottom, B.bottom) - Math.max(A.top, B.top);
+    if (ox > 2 && oy > 2 && !contem(A, B) && !contem(B, A)
+      && !folhas[i].el.contains(folhas[j].el) && !folhas[j].el.contains(folhas[i].el)) {
+      d.push({ tipo: 'sobreposto', sel: sel(folhas[i].el) + ' × ' + sel(folhas[j].el), txt: folhas[i].t.slice(0, 18) + ' / ' + folhas[j].t.slice(0, 18), importante: true });
+    }
+  }
+  // d5) ESTOURA-VIEWPORT (mantido): texto visível além da tela
+  for (const f of folhas) {
+    if (dentroScrollOk(f.el)) continue;
+    const r = f.r;
     if (r.right > vw + 2 || r.left < -2 || r.bottom > vh + 2 || r.top < -2) {
-      if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) continue;   // totalmente fora não conta (não visível)
-      d.push({ tipo: 'estoura-viewport', sel: sel(el), txt: t.slice(0, 40), importante: IMPORT.test(el.className || '') });
+      if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw) continue;
+      d.push({ tipo: 'estoura-viewport', sel: sel(f.el), txt: f.t.slice(0, 40), importante: IMPORT.test(f.el.className || '') });
     }
   }
 

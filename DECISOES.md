@@ -6,6 +6,50 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §358b · Acabamento do §358 + a auditoria passa a pegar CORTE e SOBREPOSIÇÃO
+
+Acabamento das três telas do §358 (queixas do dono, com prints) + fortalecer o eixo **(d)** da auditoria, que só pegava
+reticência.
+
+**AUDITORIA (eixo d) — agora pega corte SEM reticência e texto-sobre-texto.** `tools/auditoria_medida.js` (módulo
+compartilhado com o teste `acessibilidade_telas`) ganhou: (d2) a **própria caixa** recorta (`overflow:hidden/clip` e o
+conteúdo excede); (d3) o texto **sai da caixa do ANCESTRAL** que o recorta; (d4) **texto sobre texto** (duas folhas de
+texto se cruzam > 2px nos dois eixos, sem uma conter a outra); além da (d1) reticência e (d5) estouro do viewport.
+Tolerância VERTICAL de ~meia linha em d2 (um `line-height < 1` faz o ink-box passar do line-box por alguns px **sem**
+cortar glifo — não é corte). (Alternativa recusada: régua estrita nos dois eixos — acusava todo nome com line-height
+apertado.)
+
+**Duas exceções, para não gerar falso-positivo:** (1) `data-clamp="ok"` marca um `line-clamp` **de propósito** em texto
+**secundário** (hoje: `.dsx-art__arq`, `.dsx-sin__mot`, `.dcomo__mtxt` — registrado no guia §358b); (2) conteúdo **dentro
+de uma LISTA rolável da lista branca** (`SCROLL_OK`, ex.: `.col2__grade`) que passa da dobra é **rolagem esperada**, não
+corte — d3 e d5 não valem para ele (o corte do **próprio item** e a **sobreposição** continuam valendo). Isso alinha o
+eixo (d) ao eixo (c), que já libera essas listas. Efeito colateral bom: sumiram os falso-positivos que a régua crua antiga
+dava em listas roláveis (Desafios 9→0, Provações 3→0), e **apareceram cortes/sobreposições reais** que o modo-reticência
+não via (montadores, PvP, menu de batalha, campanha — entram na fila de conserto; NÃO são escopo do §358b).
+
+**COLEÇÃO — filtros em 2 linhas compactas, ≥2 fileiras inteiras de cartões.** A busca desceu para a 2ª linha de pílulas;
+pílulas em `nowrap` com padding/gaps menores (cabem numa linha só de ~40px); cartões menores (`.col2c` 118→90px,
+`grid-auto-rows` 90, `minmax` 92). Linha 1 = "Todos" + 6 orbes + 5 funções; linha 2 = busca + status + raridade + "Mais" +
+"Ordenar" + contagem. **Prova (Chromium 780×360): 2 fileiras INTEIRAS visíveis sem rolar** (`fileirasInteiras:2`,
+`filtrosH:40`, `pillsH:40`, `gradeH:208`).
+
+**FICHA —** (a) "Possuído · N cópias · N pontos" (e "Não possuído") aparece **uma vez só**, na arte (saiu da coluna da
+direita); (b) o "COMO CONSEGUIR" do não-possuído foi recompactado (rótulo em coluna de largura fixa) — nada se sobrepõe à
+caixa da Invocação; (c) a **PASSIVA mostra o texto completo** (como as outras habilidades) — ex.: Anúbis "Pesador de
+Almas: inimigos com Atadura não podem ser revividos…", não só "Passiva · não gasta a ação" (era corte a 0px de altura, a
+causa do §358); (d) os 5 nomes das habilidades ficam **abaixo** do ícone, nunca sobre a arte.
+
+**NÍVEIS —** (a) o botão "SUBIR" passou a **2 linhas centradas** — "SUBIR P/ NV 3" + "◆ 2 pontos" (com o ícone de pontos),
+no lugar das 4 linhas que quebravam no cartão estreito; idem o "FALTAM" ("FALTAM" + "◆ N pontos"); (b) "NÍVEL MÁXIMO
+ALCANÇADO" cabe (caixa em coluna centrada, louros em cima) — não corta mais em "ALCANÇAI".
+
+**Prova:** `acessibilidade_telas.test.js` segue exigindo **a=b=c=d=0** nas três telas (agora com o (d) forte); +asserção
+no `ficha_tela` (a passiva tem texto > 8 chars) e no `niveis_tela` (texto novo do botão em 2 linhas). Suíte + build verdes.
+Capturas em `docs/telas/358b-{colecao,ficha,ficha-falta,ficha-passiva,niveis}-{780x360,1846x852}.png`. **NÃO** se mexeu em
+mais nada além disso.
+
+---
+
 ## §358 · COLEÇÃO + FICHA + NÍVEIS acessíveis e sem rolagem (1º conserto da auditoria §357)
 
 Primeiro conserto da fila do §357 (as três piores depois dos casos já tratados). As queixas do dono (com prints):

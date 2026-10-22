@@ -133,7 +133,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -148,7 +148,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -298,7 +298,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -313,7 +313,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2060,7 +2060,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -2103,7 +2103,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2123,12 +2123,44 @@
      "sel": "span.camp__capep",
      "txt": "“A dispersão não foi aleatória. Foi o in",
      "importante": false
+    },
+    {
+     "tipo": "corte",
+     "sel": "span.cnode__nome",
+     "txt": "Alianças, conflitos e oportunidades",
+     "importante": true
+    },
+    {
+     "tipo": "corte-ancestral",
+     "sel": "b.crec__v",
+     "txt": "120",
+     "importante": true,
+     "por": "div.camp__brief"
+    },
+    {
+     "tipo": "corte-ancestral",
+     "sel": "span.crec__u",
+     "txt": "GEMAS",
+     "importante": true,
+     "por": "div.camp__brief"
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span × #campcta",
+     "txt": "Fenrir — ver as 4  / Jogar",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.camp__lbl.camp__lbl--rec × #campcta",
+     "txt": "Recompensas / Jogar",
+     "importante": true
     }
    ],
    "textTotal": 48,
    "tapTotal": 14
   },
-  "nota": 3.1,
+  "nota": 2.6,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -2369,7 +2401,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -2419,7 +2451,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -2575,7 +2607,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -2597,7 +2629,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -3141,11 +3173,66 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 60,
    "tapTotal": 35
   },
-  "nota": 3.8,
+  "nota": 2.9,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -3682,11 +3769,66 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 63,
    "tapTotal": 33
   },
-  "nota": 3.9,
+  "nota": 3,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -4248,11 +4390,108 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × span.dm-card__off",
+     "txt": "i / Outro elemento",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 66,
    "tapTotal": 34
   },
-  "nota": 3.8,
+  "nota": 2.2,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -4897,11 +5136,66 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 71,
    "tapTotal": 39
   },
-  "nota": 3.5,
+  "nota": 2.6,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -5492,11 +5786,66 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 65,
    "tapTotal": 39
   },
-  "nota": 3.8,
+  "nota": 2.9,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -6087,11 +6436,108 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "button.dm-chip × span.dm-fila__ic",
+     "txt": "Suporte / ◈",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Zeus",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × h2.dm-fila__t",
+     "txt": "i / PROCURANDO OPONENT",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Tyr",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × h2.dm-fila__t",
+     "txt": "i / PROCURANDO OPONENT",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "b.dm-card__n × p.dm-fila__modo",
+     "txt": "Tyr / Ranqueada ·",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "b.dm-card__n × #pvpfilatempo",
+     "txt": "Tyr / 1min 12s",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__f × p.dm-fila__modo",
+     "txt": "Guardião / Ranqueada ·",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__f × #pvpfilatempo",
+     "txt": "Guardião / 1min 12s",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Sobek",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Fujin",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Nezha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ganesha",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Cuca",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Ogum",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.dm-card__i × b.dm-card__n",
+     "txt": "i / Brigid",
+     "importante": true
+    }
+   ],
    "textTotal": 67,
    "tapTotal": 39
   },
-  "nota": 3.9,
+  "nota": 2.3,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -6105,8 +6551,8 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 71,
-   "tapTotal": 37
+   "textTotal": 99,
+   "tapTotal": 44
   },
   "nota": 10,
   "setupErr": null,
@@ -6139,7 +6585,7 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 28,
+   "textTotal": 27,
    "tapTotal": 7
   },
   "nota": 10,
@@ -6156,7 +6602,7 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 32,
+   "textTotal": 31,
    "tapTotal": 12
   },
   "nota": 10,
@@ -6173,7 +6619,7 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 29,
+   "textTotal": 28,
    "tapTotal": 11
   },
   "nota": 10,
@@ -6190,7 +6636,7 @@
    "b": [],
    "c": [],
    "d": [],
-   "textTotal": 50,
+   "textTotal": 52,
    "tapTotal": 4
   },
   "nota": 10,
@@ -6303,13 +6749,13 @@
     {
      "sel": "span.df-sem__prazo",
      "txt": "⌛ Termina em",
-     "px": 8.47,
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
      "sel": "b",
-     "txt": "3d 8h",
-     "px": 8.47,
+     "txt": "3d 7h",
+     "px": 8.46,
      "abaixoRotulo": true
     },
     {
@@ -6860,66 +7306,11 @@
     }
    ],
    "c": [],
-   "d": [
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "5",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "15",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "30",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "5",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "15",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "30",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "5",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "15",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span",
-     "txt": "30",
-     "importante": false
-    }
-   ],
+   "d": [],
    "textTotal": 94,
    "tapTotal": 17
   },
-  "nota": 2.4,
+  "nota": 3.3,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -7621,30 +8012,11 @@
     }
    ],
    "c": [],
-   "d": [
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span.mcat__m",
-     "txt": "A gata guarda a casa antes de o templo e",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span.mcat__m",
-     "txt": "A garça que renasce no fogo do sol.",
-     "importante": false
-    },
-    {
-     "tipo": "estoura-viewport",
-     "sel": "span.mcat__m",
-     "txt": "A cobra de fogo e o guardião protegem o ",
-     "importante": false
-    }
-   ],
+   "d": [],
    "textTotal": 53,
    "tapTotal": 16
   },
-  "nota": 4.8,
+  "nota": 5.1,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -8041,7 +8413,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -8077,7 +8449,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
@@ -8096,12 +8468,26 @@
      "sel": "i",
      "txt": "Tsukuyomi",
      "importante": false
+    },
+    {
+     "tipo": "corte-ancestral",
+     "sel": "i",
+     "txt": "Amaterasu",
+     "importante": true,
+     "por": "div.dcard__poster"
+    },
+    {
+     "tipo": "corte-ancestral",
+     "sel": "i",
+     "txt": "Tsukuyomi",
+     "importante": true,
+     "por": "div.dcard__poster"
     }
    ],
    "textTotal": 66,
    "tapTotal": 10
   },
-  "nota": 3.9,
+  "nota": 3.7,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -8448,7 +8834,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -8491,18 +8877,25 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "span.iv-off × span.iv-pb__t",
+     "txt": "10% OFF / Invocação ×10",
+     "importante": true
+    }
+   ],
    "textTotal": 23,
    "tapTotal": 8
   },
-  "nota": 4.6,
+  "nota": 4.5,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -8629,7 +9022,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -8686,18 +9079,31 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "button.iv-oferta × div.iv-tip",
+     "txt": "— 10× grátis, SS g / toque fora para vo",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "span.iv-off × span.iv-pb__t",
+     "txt": "10% OFF / Invocação ×10",
+     "importante": true
+    }
+   ],
    "textTotal": 25,
    "tapTotal": 11
   },
-  "nota": 4.5,
+  "nota": 4.3,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -9083,14 +9489,14 @@
     {
      "sel": "button.nlb.nlb--go",
      "txt": "CONFIRMAR",
-     "w": 32.3,
+     "w": 63.3,
      "h": 16.9,
      "min": 16.9
     },
     {
      "sel": "button.nlb.nlb--quiet",
      "txt": "CANCELAR",
-     "w": 29.3,
+     "w": 63.3,
      "h": 16.9,
      "min": 16.9
     },
@@ -9133,7 +9539,7 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 8,
      "abaixoRotulo": true
     }
@@ -9148,18 +9554,31 @@
     },
     {
      "sel": "#build",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 131.5,
      "h": 8,
      "min": 8
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "div.stagemark × #bvoltar",
+     "txt": "INCURSION / ‹ Início",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div.stagemark × h1.tela__titulo",
+     "txt": "INCURSION / Loja",
+     "importante": true
+    }
+   ],
    "textTotal": 6,
    "tapTotal": 2
   },
-  "nota": 6.3,
+  "nota": 6.1,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -9304,7 +9723,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "px": 5.49,
      "abaixoRotulo": true
     },
@@ -9607,7 +10026,7 @@
     },
     {
      "sel": "#bmenubuild",
-     "txt": "build 2026-10-22 15:08 UTC",
+     "txt": "build 2026-10-22 16:24 UTC",
      "w": 148.7,
      "h": 6.8,
      "min": 6.8
@@ -9642,11 +10061,54 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "#bfull × div.cin",
+     "txt": "TELA CHEIA / SEU TURNO",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bapagar × div",
+     "txt": "APAGAR DADOS / Escolha uma habili",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bsurr × div.cin.bt-panel__titulo",
+     "txt": "RENDER-SE / Hades",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bsurr × div",
+     "txt": "RENDER-SE / VIDA",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bsurr × div",
+     "txt": "RENDER-SE / 120/120",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bmenubuild × div.bt-panel__desc",
+     "txt": "build 2026-10-22 1 / Passiva — Ceifador",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "#bmenubuild × div.bt-panel__miratit",
+     "txt": "build 2026-10-22 1 / Toque uma habilida",
+     "importante": true
+    }
+   ],
    "textTotal": 53,
    "tapTotal": 42
   },
-  "nota": 4.1,
+  "nota": 3.4,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -10026,11 +10488,36 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "div.bt-hp__lab × p",
+     "txt": "120/120 / O PROGRESSO DESTA ",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div.cin × #bsairok",
+     "txt": "SEU TURNO / Sair para o início",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div × #bsairok",
+     "txt": "Escolha uma habili / Sair para o início",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div.bt-hp__lab × p",
+     "txt": "120/120 / O PROGRESSO DESTA ",
+     "importante": true
+    }
+   ],
    "textTotal": 46,
    "tapTotal": 35
   },
-  "nota": 4.6,
+  "nota": 4.2,
   "setupErr": null,
   "medErr": null,
   "erros": []
@@ -10410,11 +10897,36 @@
     }
    ],
    "c": [],
-   "d": [],
+   "d": [
+    {
+     "tipo": "sobreposto",
+     "sel": "div.bt-hp__lab × p",
+     "txt": "120/120 / VOCÊ PERDE A BATAL",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div.cin × #bsurrok",
+     "txt": "SEU TURNO / Confirmar rendição",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div × #bsurrok",
+     "txt": "Escolha uma habili / Confirmar rendição",
+     "importante": true
+    },
+    {
+     "tipo": "sobreposto",
+     "sel": "div.bt-hp__lab × p",
+     "txt": "120/120 / VOCÊ PERDE A BATAL",
+     "importante": true
+    }
+   ],
    "textTotal": 46,
    "tapTotal": 35
   },
-  "nota": 4.6,
+  "nota": 4.2,
   "setupErr": null,
   "medErr": null,
   "erros": []

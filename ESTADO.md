@@ -2,6 +2,28 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
+## ★ §358b · Acabamento do §358 + auditoria pega CORTE e SOBREPOSIÇÃO
+- AUDITORIA (eixo d) FORTE em `tools/auditoria_medida.js` (módulo compartilhado com `acessibilidade_telas`): além da (d1)
+  reticência e (d5) estouro-viewport, agora pega (d2) a própria caixa recorta (overflow hidden/clip + conteúdo excede),
+  (d3) texto que sai da caixa do ANCESTRAL que o recorta, (d4) TEXTO SOBRE TEXTO (2 folhas se cruzam >2px nos 2 eixos, sem
+  conter). Tolerância vertical ~½ linha em d2 (line-height<1 não é corte).
+- EXCEÇÕES p/ não dar falso-positivo: `data-clamp="ok"` (line-clamp de propósito em texto 2º: `.dsx-art__arq`,
+  `.dsx-sin__mot`, `.dcomo__mtxt` — no guia §358b); e conteúdo DENTRO de lista rolável da lista branca (SCROLL_OK) que
+  passa da dobra = rolagem esperada (d3/d5 não valem; corte do próprio item e sobreposição continuam valendo).
+- COLEÇÃO: filtros em 2 linhas compactas (busca na 2ª linha de pílulas; nowrap, cartões `.col2c` 118→90px, grade 90/92).
+  PROVA Chromium 780×360: **2 fileiras INTEIRAS** sem rolar (fileirasInteiras:2, filtrosH:40, pillsH:40, gradeH:208).
+- FICHA: posse ("Possuído · N cópias · N pontos" / "Não possuído") só 1 vez (na arte); "COMO CONSEGUIR" do não-possuído
+  recompactado (sem sobrepor a Invocação); **PASSIVA mostra o TEXTO completo** (era a causa do §358 — desc cortada a 0px);
+  nomes das 5 habilidades ABAIXO do ícone (nunca sobre a arte).
+- NÍVEIS: botão "SUBIR" em 2 linhas — "SUBIR P/ NV 3" + "◆ 2 pontos" (com ícone); idem "FALTAM" + "◆ N pontos"; "NÍVEL
+  MÁXIMO ALCANÇADO" cabe (caixa em coluna, louros em cima) — não corta mais.
+- Provas: `acessibilidade_telas` segue a=b=c=d=0 nas 3 telas (agora com (d) forte); +asserção no `ficha_tela` (passiva
+  texto>8) e `niveis_tela` (botão 2 linhas). Suíte + build verdes. Capturas `docs/telas/358b-{colecao,ficha,ficha-falta,
+  ficha-passiva,niveis}-{780x360,1846x852}.png`.
+- AUDITORIA re-rodada (eixo d forte, 33 telas): Coleção/Ficha/Níveis seguem **10/10/10** (a=b=c=d=0). O (d) forte LIMPOU
+  falso-positivos de listas roláveis (Desafios 9→0, Provações 3→0) e REVELOU cortes/sobreposições reais em outras telas
+  (montadores d=9–16, PvP d=9/16, menu de batalha d=7, campanha-batalha 1→6 etc.) — fila do próximo conserto, fora do §358b.
+
 ## ★ §358 · Coleção + Ficha + Níveis acessíveis e sem rolagem (1º conserto da auditoria §357)
 - As três telas passaram a um canvas de **780×360 (= o celular)**: o px de desenho é o px REAL no viewport de referência
   e cumpre o §357 direto (corpo ≥12, rótulo ≥11, título ≥15, toque ≥40×40); o `fit()` escala p/ cima nas telas maiores.
