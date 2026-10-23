@@ -6,6 +6,35 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §362d · BATALHA: a cena volta a ser larga, passando por baixo das colunas de efeitos
+
+No §362c a coluna de efeitos reservada (certo: nada pula) deixava, SEM efeitos (a maior parte da partida), duas faixas
+vazias ao lado da cena, e a cena virou um retângulo estreito (~180px) — perdeu a arte larga e o anúncio precisou encolher.
+Conserto:
+
+- **A CENA volta a ser LARGA.** Virou uma CAMADA ABSOLUTA (`.b5-cena` em `campo.js campoHTML`) que vai do fim das 4
+  habilidades dos aliados até o começo do retrato do inimigo, **passando POR BAIXO das duas colunas de efeitos**
+  (`left = aliados−effW`, `right = inimigos−effW`; `z-index:0`). O centro do grid virou um espaçador vazio — as colunas
+  (retratos/habilidades/efeitos) NÃO se mexem. A máscara de degradê lateral do §335 cobre a faixa sob as colunas de efeitos.
+- **As COLUNAS DE EFEITOS** continuam na mesma posição/largura do §362c, agora **DESENHADAS POR CIMA** da cena (`z-index:2`),
+  cada ícone sobre uma **plaquinha escura** (`rgba(6,9,16,.55)`) p/ ler sobre a arte. Sem efeitos, a coluna é transparente
+  e a cena aparece ali (a arte larga).
+- **O ANÚNCIO** (SEU TURNO / TURNO DO OPONENTE) voltou a crescer (`cena.titulo` 16→20, `ornato` [72,32]→[88,44]) e fica
+  **centrado na FAIXA CENTRAL LIVRE** (recuado por `g.effW` de cada lado dentro da camada da cena) — **nunca sob uma coluna
+  de efeitos**. O rosto (topo) segue livre (§347). (A largura do anúncio é limitada pela faixa livre entre as colunas; é o
+  teto honesto do "tamanho do §362b" com as colunas reservadas.)
+- A caixa da cena é **IDÊNTICA com e sem efeitos** (as colunas aliado/inimigo são fixas); retratos/habilidades não se mexem.
+- **Toque/d6:** a cena é `pointer-events:none` e fica ABAIXO (z0); os efeitos (z2, plaquinha) ficam por cima e seguem
+  tocáveis (≥40) sem serem "encobertos" pela cena na auditoria.
+- **Correção de montagem:** a raiz de `btCenaHTML` passou a `position:absolute;inset:0` (preenche a camada) — antes, com os
+  dois filhos absolutos, colapsava a 0 de altura e o anúncio subia p/ cima do header.
+
+PROVAS (`batalha_faixa`, 780×360 e 1846×852): a cena cobre **≥60%** do centro (mediu ~97%); as caixas de habilidade,
+retrato, COLUNA DE EFEITO e da CENA **idênticas com/sem 3 efeitos (±1px)**; o **anúncio não intersecta as colunas de
+efeitos**; os 3 efeitos sem "+N" e tocáveis ≥40; auditoria a=b=c=d=0; tamanhos do §362b mantidos. Capturas `docs/telas/362d-*`.
+
+---
+
 ## §362c · BATALHA: os efeitos não mexem no layout (coluna de efeitos sempre reservada)
 
 No §362b a tira de efeitos entrava ANTES das habilidades e só existia quando havia efeito: ao entrar/sair um efeito (a cada

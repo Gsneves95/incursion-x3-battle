@@ -2,7 +2,19 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §362c · BATALHA: os efeitos não mexem no layout (coluna de efeitos sempre reservada)
+## ★ §362d · BATALHA: a cena volta a ser larga, passando por baixo das colunas de efeitos
+- No §362c, sem efeitos, a coluna reservada deixava duas faixas vazias e a cena virava um retângulo estreito (~180px).
+  Agora a **CENA é uma CAMADA LARGA** (`.b5-cena`, absoluta, z-index 0) do fim das habilidades dos aliados ao começo do
+  retrato do inimigo, **passando POR BAIXO das colunas de efeitos**; o centro do grid é só um espaçador (nada se mexe). A
+  máscara do §335 cobre a faixa sob as colunas.
+- As **COLUNAS DE EFEITOS** ficam POR CIMA da cena (z-index 2), cada ícone sobre plaquinha escura (rgba .55); sem efeitos a
+  coluna é transparente e a arte aparece ali. O **ANÚNCIO** cresceu de novo (titulo 20) e fica centrado na FAIXA CENTRAL
+  LIVRE (recuado por effW), nunca sob uma coluna de efeitos; rosto visível (§347).
+- A cena é idêntica com/sem efeitos; retratos/habilidades não se mexem; tamanhos do §362b mantidos. PROVA (`batalha_faixa`):
+  cena ≥60% do centro (~97%); caixas de habilidade/retrato/coluna-de-efeito/CENA idênticas ±1px c/s 3 efeitos; anúncio não
+  intersecta as colunas; 3 efeitos sem "+N" e ≥40; auditoria da batalha a=b=c=d=0. Capturas `docs/telas/362d-*`. Suíte + build verdes.
+
+## §362c · BATALHA: os efeitos não mexem no layout (coluna de efeitos sempre reservada)
 - No §362b a tira de efeitos empurrava as habilidades e encolhia a cena quando um efeito entrava/saía (a cada turno a tela
   "pulava"). Agora há uma **COLUNA DE EFEITOS FIXA, reservada SEMPRE** (mesma largura com/sem efeito): **aliados** depois
   das 4 habilidades, **inimigos** à esquerda do retrato. Ícones 40×40 (ícone+número empilhados) em 1 linha — **3 cabem sem

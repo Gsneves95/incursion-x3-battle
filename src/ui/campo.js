@@ -92,12 +92,12 @@ function btEfeitos(u){
   const resto = tags.length - vis.length;
   const ic=Math.round(sz*0.52);   // chip visual menor que a área de toque
   const cel=(t,i)=>{ const fc=FX_COR[t.cat]||FX_COR.bom; const num = t.num || (t.dur!=null?String(t.dur):'');
-    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="width:${sz}px;height:${sz}px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:0;background:none;padding:0;cursor:pointer">
+    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="width:${sz}px;height:${sz}px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:0;background:rgba(6,9,16,.55);border-radius:6px;padding:0;cursor:pointer">
       <span style="display:flex;align-items:center;justify-content:center;width:${ic}px;height:${ic}px;flex:none;border-radius:4px;background:${fc.bg};box-shadow:inset 0 0 0 1px ${fc.ring};font-size:${Math.round(ic*0.6)}px">${t.icone}</span>
       ${num?`<span style="font-size:${valor}px;font-weight:600;line-height:1;color:#F2F4F8">${H(num)}</span>`:''}
     </button>`; };
   let cels=vis.map(cel).join('');
-  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="width:${sz}px;height:${sz}px;flex:none;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
+  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="width:${sz}px;height:${sz}px;flex:none;display:flex;align-items:center;justify-content:center;border:0;background:rgba(6,9,16,.55);border-radius:6px;font-size:${valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
   return cels;
 }
 /* §362c: a COLUNA de efeitos — SEMPRE presente, largura FIXA (g.effW), mesma em toda fileira e estado (vazia ou cheia),
@@ -214,9 +214,11 @@ function _cenaSrc(){
   if(typeof IMG!=='undefined'&&IMG[key]) return IMG[key];
   return '';
 }
-// §335: a CENA central (arte em cover sangrando p/ os lados, máscara horizontal) + o ANÚNCIO DE TURNO (sol + linhas).
-function btCenaHTML(){
-  const C=_C(), cor=_COR(), meu=ehMeuTurno();
+// §335/§362d: a CENA central LARGA (arte em cover, máscara horizontal) + o ANÚNCIO DE TURNO (sol + linhas). §362d: a arte
+// ocupa toda a faixa central (passa POR BAIXO das colunas de efeitos, z-index abaixo); o ANÚNCIO fica na FAIXA CENTRAL
+// LIVRE (recuado por g.effW de cada lado) p/ não ficar sob nenhuma coluna de efeitos.
+function btCenaHTML(g){
+  const C=_C(), cor=_COR(), meu=ehMeuTurno(); const ins=(g&&g.effW)||0;
   const cn=C.cena||{left:-60,right:-40,mask:[14,86],anuncioTop:266,titulo:48,sub:22,ornato:[190,92],linha:560};
   const acento = meu ? (cor.acentoMeu||'#E9B949') : (cor.acentoOpo||'#D8434A');
   const acentoTxt = meu ? (cor.acentoMeuTexto||'#F2BE48') : (cor.acentoOpoTexto||'#E8545B');
@@ -250,7 +252,7 @@ function btCenaHTML(){
   const ornato=`<div style="width:${ow}px;height:${oh}px;display:flex;align-items:flex-end;justify-content:center;overflow:visible"><div style="transform:scale(${(oh/92).toFixed(3)});transform-origin:center bottom">${ornatoInner}</div></div>`;
   const linha=(mt)=>`<div style="width:${lw}px;height:1px;margin-top:${mt}px;background:linear-gradient(90deg,rgba(0,0,0,0),${acento} 30%,${acento} 70%,rgba(0,0,0,0))"></div>`;
   // §362: âncora no FUNDO da cena (metade de baixo) — o rosto (topo) fica livre; cabe mesmo quando o painel cresce.
-  const anuncio=`<div style="position:absolute;left:0;right:0;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
+  const anuncio=`<div style="position:absolute;left:${ins}px;right:${ins}px;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
     ${ornato}
     ${linha(1)}
     <div class="cin" style="margin-top:4px;font-weight:700;font-size:${cn.titulo}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.9)">${titulo}</div>
@@ -258,7 +260,7 @@ function btCenaHTML(){
     ${linha(5)}
     <div style="width:8px;height:8px;margin-top:-4px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px ${acento};background:#070A14"></div>
   </div>`;
-  return `<div style="position:relative;overflow:hidden">${art}${anuncio}</div>`;
+  return `<div style="position:absolute;inset:0;overflow:hidden">${art}${anuncio}</div>`;
 }
 
 /* ---------- §362b: composição do campo (aliados | cena 1fr | inimigos) — larguras e tamanhos do btGeo.
@@ -267,8 +269,14 @@ function campoHTML(l,o,g){
   g=g||btGeoBatalha(); const meu=ehMeuTurno();
   const col1=`<div style="display:flex;flex-direction:column;justify-content:center;gap:${g.rowGap}px;padding-left:10px;position:relative;z-index:2">${[0,1,2].map(i=>l.units[i]?btUnidadeAliada(l.units[i],meu,g):'').join('')}</div>`;
   const col3=`<div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:${g.rowGap}px;padding-right:10px;position:relative;z-index:2">${[0,1,2].map(i=>o.units[i]?btUnidadeInimiga(o.units[i],g):'').join('')}</div>`;
-  return `<section class="b5-campo" style="flex:1 1 auto;min-height:0;box-sizing:border-box;display:grid;grid-template-columns:${Math.round(g.cols.aliados)}px minmax(0,1fr) ${Math.round(g.cols.inimigos)}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
-    ${col1}${btCenaHTML()}${col3}
+  // §362d: a CENA volta a ser LARGA — uma camada absoluta do fim das habilidades dos aliados até o começo do retrato do
+  // inimigo, PASSANDO POR BAIXO das duas colunas de efeitos (z-index 0). O centro do grid vira um espaçador vazio: as
+  // colunas (retratos/habilidades/efeitos) não se mexem; os efeitos (z-index 2) ficam por cima da arte, cada um na sua
+  // plaquinha escura. A máscara lateral do §335 cobre a faixa sob as colunas de efeitos.
+  const cenaL=Math.round(g.cols.aliados - g.effW), cenaR=Math.round(g.cols.inimigos - g.effW);
+  const cena=`<div class="b5-cena" style="position:absolute;left:${cenaL}px;right:${cenaR}px;top:0;bottom:0;z-index:0;overflow:hidden;border-radius:6px">${btCenaHTML(g)}</div>`;
+  return `<section class="b5-campo" style="position:relative;flex:1 1 auto;min-height:0;box-sizing:border-box;display:grid;grid-template-columns:${Math.round(g.cols.aliados)}px minmax(0,1fr) ${Math.round(g.cols.inimigos)}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
+    ${cena}${col1}<div aria-hidden="true"></div>${col3}
   </section>`;
 }
 

@@ -45,8 +45,11 @@ const CAIXAS=[
       const out={esc};
       out.header=(()=>{ const h=bat.querySelector('header'); return h?rel(h):null; })();
       CAIXAS.forEach(c=>{ if(c.nome==='header')return; const el=bat.querySelector(c.sel); out[c.nome]=el?rel(el):null; });
-      // colunas do campo (grid: aliados | cena | inimigos) e do painel (info | meio | resto)
-      const campo=bat.querySelector('.b5-campo'); out.campoCols=campo?[...campo.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
+      // §362d: colunas do GRID do campo (aliados | espaçador | inimigos) — a .b5-cena é camada ABSOLUTA larga (não é
+      // coluna do grid), então a excluímos aqui e medimos a cena larga à parte.
+      const campo=bat.querySelector('.b5-campo');
+      out.campoCols=campo?[...campo.children].filter(c=>!c.classList.contains('b5-cena')).map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
+      const cenaL=bat.querySelector('.b5-cena'); out.cenaLarga=cenaL?Math.round(cenaL.getBoundingClientRect().width/esc):0;
       const painel=bat.querySelector('.b5-painel'); out.painelCols=painel?[...painel.children].map(c=>Math.round(c.getBoundingClientRect().width/esc)):[];
       const retr=bat.querySelector('.bt-portrait--ally'); out.retrato=retr?rel(retr):null;
       const skill=bat.querySelector('.bt-skill[data-sk]'); out.skill=skill?rel(skill):null;
@@ -62,8 +65,8 @@ const CAIXAS=[
     // resto. Verificamos os INVARIANTES (quadrados, ≥ piso em repouso, colunas somam a largura, cena presente), não
     // números fixos (que variam com o conteúdo do painel).
     const somaCampo=m.campoCols.reduce((a,b)=>a+b,0), somaPainel=m.painelCols.reduce((a,b)=>a+b,0);
-    ok(Math.abs(somaCampo-764)<=3, `@1846 as 3 colunas do campo somam ~764 (veio ${JSON.stringify(m.campoCols)} = ${somaCampo})`);
-    ok(m.campoCols.length===3 && m.campoCols[1]>=180, `@1846 a CENA (coluna do meio) tem largura p/ o rosto (${m.campoCols[1]}≥180)`);
+    ok(Math.abs(somaCampo-764)<=3, `@1846 as 3 colunas do GRID do campo somam ~764 (veio ${JSON.stringify(m.campoCols)} = ${somaCampo})`);
+    ok(m.cenaLarga>=300, `§362d @1846 a CENA larga (camada sob as colunas de efeitos) cobre o centro (${m.cenaLarga}≥300)`);
     ok(Math.abs(somaPainel-764)<=3, `@1846 as 3 colunas do painel somam ~764 (veio ${JSON.stringify(m.painelCols)} = ${somaPainel})`);
     // (este roster tem foco com passiva longa → painel cresce; o piso universal é ≥46/≥44. O ≥56 em repouso curto é
     //  provado por acessibilidade_telas/min-size com roster de passiva curta.)
@@ -198,21 +201,25 @@ const CAIXAS=[
     }
   }
 
-  // ---- (6) §362c: os EFEITOS não mexem no layout — coluna de efeitos SEMPRE reservada ----
-  // Comparando o MEU TURNO sem efeitos com o mesmo + 3 efeitos num aliado e num inimigo: as caixas de cada botão de
-  // habilidade, de cada retrato e da CENA são IDÊNTICAS (±1px). Os 3 efeitos aparecem sem "+N" e tocáveis (≥40).
+  // ---- (6) §362c/§362d: os EFEITOS não mexem no layout + a CENA volta a ser LARGA (sob as colunas de efeitos) ----
+  // Comparando o MEU TURNO sem efeitos com o mesmo + 3 efeitos num aliado e num inimigo: as caixas de cada habilidade, de
+  // cada retrato, das colunas de efeito e da CENA são IDÊNTICAS (±1px); 3 efeitos sem "+N" e tocáveis (≥40). §362d: a cena
+  // (.b5-cena, camada larga) cobre ≥60% do centro (fim das habilidades → retrato inimigo) e o ANÚNCIO não intersecta as
+  // colunas de efeitos.
   const BOOT6=`st=montarProvacao({aliados:['hades','nuwa','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;ir('batalha',{},{substituir:true});render();`;
   const EFF6=`st.lados[0].units[0].efeitos=[{type:'vulneravel',v:6,dur:2},{type:'atordoado',dur:1},{type:'dmgDown',v:4,dur:2}];st.lados[1].units[0].efeitos=[{type:'medo',dur:2},{type:'silenceClass',dur:1},{type:'dmgUp',v:5,dur:3}];render();`;
+  const sobre=(a,c)=> Math.min(a[0]+a[2],c[0]+c[2])-Math.max(a[0],c[0])>1 && Math.min(a[1]+a[3],c[1]+c[3])-Math.max(a[1],c[1])>1;
   for(const E of [{w:780,h:360},{w:1846,h:852}]){
     const caixas=async(comEfeito)=>{
       const ctx=await browser.newContext({viewport:{width:E.w,height:E.h},deviceScaleFactor:1});
       const page=await ctx.newPage(); await page.goto('file://'+distAbs,{waitUntil:'load'});
       await page.evaluate(BOOT6); if(comEfeito) await page.evaluate(EFF6); await page.waitForTimeout(80);
       const m=await page.evaluate(()=>{ const R=el=>{const r=el.getBoundingClientRect();return [Math.round(r.x),Math.round(r.y),Math.round(r.width),Math.round(r.height)];};
-        const camp=document.querySelector('.b5-campo');
         const effs=[...document.querySelectorAll('.bt-eff')];
+        const an=[...document.querySelectorAll('.b5-cena .cin')].find(e=>/TURNO/.test(e.textContent));
         return { skills:[...document.querySelectorAll('.bt-skill')].map(R), allyP:[...document.querySelectorAll('.bt-portrait--ally')].map(R),
-          foeP:[...document.querySelectorAll('.bt-portrait--foe')].map(R), cena:R(camp.children[1]),
+          foeP:[...document.querySelectorAll('.bt-portrait--foe')].map(R), cena:R(document.querySelector('.b5-cena')),
+          effcol:[...document.querySelectorAll('.bt-effcol')].map(R), anun:an?R(an.parentElement):null,
           nEff:effs.length, nMais:document.querySelectorAll('.bt-eff--mais').length,
           effMin:effs.length?Math.min(...effs.map(e=>{const r=e.getBoundingClientRect();return Math.min(r.width,r.height);})):0 }; });
       await ctx.close(); return m;
@@ -222,9 +229,16 @@ const CAIXAS=[
     ok(eq(a.skills,b.skills), `§362c @${E.w}×${E.h}: as caixas das habilidades são idênticas com/sem efeitos`);
     ok(eq(a.allyP,b.allyP), `§362c @${E.w}×${E.h}: os retratos aliados são idênticos com/sem efeitos`);
     ok(eq(a.foeP,b.foeP), `§362c @${E.w}×${E.h}: os retratos inimigos são idênticos com/sem efeitos`);
-    ok(a.cena.every((n,i)=>Math.abs(n-b.cena[i])<=1), `§362c @${E.w}×${E.h}: a CENA é idêntica com/sem efeitos (${JSON.stringify(a.cena)} × ${JSON.stringify(b.cena)})`);
+    ok(eq([a.cena],[b.cena]), `§362d @${E.w}×${E.h}: a CENA é idêntica com/sem efeitos (${JSON.stringify(a.cena)} × ${JSON.stringify(b.cena)})`);
+    ok(eq(a.effcol,b.effcol), `§362c @${E.w}×${E.h}: as colunas de efeito são idênticas com/sem efeitos`);
     ok(b.nEff===6 && b.nMais===0, `§362c @${E.w}×${E.h}: 3 efeitos no aliado + 3 no inimigo aparecem sem "+N" (${b.nEff} ícones, +N ${b.nMais})`);
     ok(b.effMin>=40, `§362c @${E.w}×${E.h}: cada efeito é tocável ≥40 (menor ${b.effMin})`);
+    // §362d: a cena larga cobre ≥60% do centro (do fim das habilidades aliadas ao começo do retrato inimigo)
+    const skRight=Math.max(...a.skills.filter(s=>s[0]<a.foeP[0][0]).map(s=>s[0]+s[2]), ...a.allyP.map(p=>p[0]+p[2]));
+    const foeLeft=Math.min(...a.foeP.map(p=>p[0]));
+    ok(a.cena[2] >= 0.60*(foeLeft-skRight), `§362d @${E.w}×${E.h}: a CENA cobre ≥60% do centro (${a.cena[2]}px de ${Math.round(foeLeft-skRight)}px)`);
+    // §362d: o anúncio não intersecta nenhuma coluna de efeitos
+    ok(b.anun && !b.effcol.some(c=>sobre(b.anun,c)), `§362d @${E.w}×${E.h}: o anúncio não intersecta as colunas de efeitos`);
   }
 
   await browser.close();
