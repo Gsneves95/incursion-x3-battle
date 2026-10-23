@@ -114,8 +114,10 @@ function renderBatalha(){
   stage.innerHTML = `<div id="baselayer" class="bt2 ${cls.join(' ')}"${scrim?' inert':''}>
   <div id="batalha">
   ${topoHTML(_modoSub())}
+  <div class="b5-body" style="position:absolute;left:8px;right:8px;top:62px;bottom:6px;display:flex;flex-direction:column;gap:2px">
   ${campoHTML(l,o)}
   ${painelBaixoHTML()}
+  </div>
   </div></div>
   ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():(dominio&&dominioFim)?dominioResultadoOverlay():overlayHTML()}`;
 

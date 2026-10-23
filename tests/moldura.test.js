@@ -375,16 +375,16 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     const p1 = await gp.evaluate(() => {
       st = montarProvacao({ aliados: ['brigid', 'apolo', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; escolhidos = []; painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
-      // §329: o "P" é .bt-portrait__pas, no retrato aliado (.bt-portrait--ally) / inimigo (.bt-portrait--foe).
-      const ally = [...document.querySelectorAll('.bt-portrait--ally .bt-portrait__pas')].map(b => b.classList.contains('pas--on'));
-      const foe = [...document.querySelectorAll('.bt-portrait--foe .bt-portrait__pas')].map(b => b.classList.contains('pas--on'));
+      // §362: o "P" é .bt-portrait__pas--me (aliado) / --foe (inimigo), AO LADO do retrato (botão ≥40).
+      const ally = [...document.querySelectorAll('.bt-portrait__pas--me')].map(b => b.classList.contains('pas--on'));
+      const foe = [...document.querySelectorAll('.bt-portrait__pas--foe')].map(b => b.classList.contains('pas--on'));
       return { ally, foe };
     });
     ok(p1.ally.length === 3 && p1.ally.every(Boolean), `§266: sob a aura da Brígida os 3 P aliados ACENDEM (${JSON.stringify(p1.ally)})`);
     ok(p1.foe.every(x => !x), `§266: o P do inimigo (aura não o alcança) fica APAGADO — agindo é distinguível de parado (${JSON.stringify(p1.foe)})`);
 
     // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte (no painel §329).
-    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.bt-portrait--ally [data-pas]')]; if (ps[1]) ps[1].click();
+    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.bt-portrait__pas--me')]; if (ps[1]) ps[1].click();
       const t = document.querySelector('.bt-panel__desc') || document.querySelector('.bt-panel'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
     ok(/\+1/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +1 e a FONTE (Brígida, §324 P3): "${p2.slice(0, 60)}"`);
 
@@ -432,9 +432,9 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       armado = null; alvos = []; escolhidos = []; ir('batalha', {}, { substituir: true });
       const u = st.lados[0].units[0];
       armar(u.uid, 'basico'); render();
-      const onBasico = document.querySelector('.bt-portrait--foe .bt-portrait__pas').classList.contains('pas--on');
+      const onBasico = document.querySelector('.bt-portrait__pas--foe').classList.contains('pas--on');
       armado = null; alvos = []; armar(u.uid, 'habilidade'); render();
-      const onHab = document.querySelector('.bt-portrait--foe .bt-portrait__pas').classList.contains('pas--on');
+      const onHab = document.querySelector('.bt-portrait__pas--foe').classList.contains('pas--on');
       return { onBasico, onHab };
     });
     ok(p5.onBasico, '§267: sobek (contra=básico) ACENDE quando o atacante arma um BÁSICO (casa)');

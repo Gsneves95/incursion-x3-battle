@@ -120,7 +120,7 @@ function _modeloDetalhe(d){
     if(sub[1]) etq.push({txt:sub[1]});
     return { tipo:'deus', chave:d.chave, cor:aliado?'#C9A44C':'#C9343C', tituloCor:aliado?'#F0B43C':'#E8343C',
       titulo:(d.nome||''), donoUid:d.uid,
-      desc:(d.passivaNome?`Passiva — ${d.passivaNome}: ${d.passivaDesc}`:'Sem passiva.'), etiquetas:etq,
+      desc:(d.passivaNome?`${d.passivaNome}: ${d.passivaDesc}`:'Sem passiva.'), etiquetas:etq,
       meio:[{rotulo:'VIDA', valor:`${d.hp}/${d.maxHp}${d.shield?' ◧'+d.shield:''}`}, {rotulo:'ELEMENTO', valor:(sub[1]||'')}],
       inst:{title:'Toque uma habilidade', sub:aliado?'Escolha uma ação para este deus.':'Veja as habilidades ao lado.', color:'#F0B43C'},
       dir:{modo:'minis', selSlot:null} };
@@ -150,7 +150,7 @@ function _unidadeModeloFoco(){
   etq.push({txt:elem});
   return { tipo:'deus', chave:'god-'+u.key, cor:aliado?'#C9A44C':'#C9343C', tituloCor:aliado?'#F0B43C':'#E8343C',
     titulo:(u.nome||''), donoUid:u.uid,
-    desc:(g.passiva?`Passiva — ${g.passiva.nome}: ${g.passiva.desc}`:'Sem passiva.'), etiquetas:etq,
+    desc:(g.passiva?`${g.passiva.nome}: ${g.passiva.desc}`:'Sem passiva.'), etiquetas:etq,
     meio:[{rotulo:'VIDA', valor:`${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}`}, {rotulo:'ELEMENTO', valor:elem}],
     inst:{title:'Toque uma habilidade', sub:aliado?'Escolha uma ação para este deus.':'Veja as habilidades ao lado.', color:'#F0B43C'},
     dir:{modo:'minis', selSlot:null} };
@@ -159,65 +159,63 @@ function _unidadeModeloFoco(){
 /* ---------- RENDER (§335: px de design) ---------- */
 function _pilulasHTML(m, P){
   if(!m.etiquetas||!m.etiquetas.length) return '';
-  const h=P.pilulaH||32, fs=P.pilula||19;
-  // §335b: a 1ª pílula (tipo) vem no acento da energia — FUNDO na cor (acento ~20% alfa, = +33 do HTML), borda no acento,
-  // texto claro. Como COR() devolve var(--elem-…), usa color-mix p/ o alfa (append "33" num var() é CSS inválido = sem fundo).
+  const h=P.pilulaH||22, fs=P.pilula||12;
   const pil=e=>{ const st=e.cor?`background:color-mix(in srgb, ${e.cor} 20%, transparent);box-shadow:inset 0 0 0 1px ${e.cor};color:#F2ECFF`
     :`background:transparent;box-shadow:inset 0 0 0 1px rgba(201,164,76,.6);color:#E4E8F0`;
-    return `<div style="height:${h}px;padding:0 18px;display:flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.04em;white-space:nowrap">${H(e.txt)}</div>`; };
-  return `<div style="display:flex;gap:18px;flex-wrap:wrap">${m.etiquetas.map(pil).join('')}</div>`;
+    return `<div style="height:${h}px;padding:0 8px;display:flex;align-items:center;border-radius:3px;${st};font-size:${fs}px;font-weight:600;letter-spacing:.02em;white-space:nowrap">${H(e.txt)}</div>`; };
+  return `<div style="display:flex;gap:6px;flex-wrap:wrap">${m.etiquetas.map(pil).join('')}</div>`;
 }
-// COLUNA 1 — imagem + título + pílulas + descrição
+// COLUNA 1 — imagem + título + pílulas + descrição (§362: 780 — descrição COMPLETA, o painel cresce p/ cima)
 function _col1HTML(m, P){
-  const img=P.img||134, acc=m.cor||'#C9A44C';
+  const img=P.img||56, acc=m.cor||'#C9A44C';
   let imgInner;
   if(m.emoji) imgInner=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:${Math.round(img*0.5)}px">${m.emoji}</div>`;
   else imgInner=slot(m.chave||'detail','',acc,0,m.redondo);
-  return `<div style="display:flex;align-items:center;gap:24px;padding:0 24px 0 16px;min-width:0">
+  return `<div style="display:flex;align-items:flex-start;gap:8px;padding:8px;min-width:0">
     <div class="bt-panel__img" style="position:relative;width:${img}px;height:${img}px;flex:none;border-radius:4px;overflow:hidden;background:#0A0E1C;box-shadow:0 0 0 1px rgba(0,0,0,.6)">${imgInner}<div style="position:absolute;inset:0;border-radius:4px;box-shadow:inset 0 0 0 2px ${acc};pointer-events:none"></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
-      <div class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||27}px;line-height:1.1;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
+    <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+      <div class="cin bt-panel__titulo" style="font-weight:700;font-size:${P.titulo||16}px;line-height:1.1;letter-spacing:.02em;color:${m.tituloCor||'#F0B43C'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H(m.titulo||'')}</div>
       ${_pilulasHTML(m,P)}
-      <div class="bt-panel__desc" style="font-size:${P.desc||21}px;font-weight:500;line-height:1.3;color:#E4E8F0;max-width:610px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${realce(m.desc||'')}${m.motivo?`<span class="bt-panel__motivo" style="color:#ff9db4"> ⊘ ${H(m.motivo)}</span>`:''}</div>
+      <div class="bt-panel__desc" style="font-size:${P.desc||12}px;font-weight:500;line-height:1.3;color:#E4E8F0">${realce(m.desc||'')}${m.motivo?`<span class="bt-panel__motivo" style="color:#ff9db4"> ⊘ ${H(m.motivo)}</span>`:''}</div>
     </div></div>`;
 }
-// COLUNA 2 — células (CUSTO/RECARGA ou VIDA/ELEMENTO ...) + linha dourada + instrução com a mira
+// COLUNA 2 — células (CUSTO/RECARGA ou VIDA/ELEMENTO ...) + linha dourada + instrução com a mira (§362: flex, 780)
 function _col2HTML(m, P){
   const cells=m.meio||[];
   const cel=(c)=>{ let val;
-    if(c.pips) val=_custoPips(c.pips, P.pip||27);
-    else if(c.num!=null) val=`<div style="font-size:${P.recargaNum||30}px;font-weight:600;line-height:1.1;color:#C9CED8">${H(c.num)} <span style="color:${c.stateCor||'#C9CED8'}">${H(c.state||'')}</span></div>`;
-    else val=`<div style="font-size:${P.recargaNum||30}px;font-weight:600;color:#F2F4F8;line-height:1">${H(c.valor||'')}</div>`;
-    return `<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><div style="font-size:${P.rotulo||19}px;font-weight:600;letter-spacing:.06em;color:#C9CED8">${H(c.rotulo||'')}</div>${val}</div>`; };
-  const topo = cells.length ? `<div style="display:grid;grid-template-columns:216px minmax(0,1fr);height:76px">
-      <div style="padding-left:44px;padding-top:2px">${cel(cells[0])}</div>
-      <div style="padding-left:40px;padding-top:2px;border-left:1px solid rgba(201,164,76,.5);margin-bottom:6px">${cells[1]?cel(cells[1]):''}</div>
-    </div>` : `<div style="height:20px"></div>`;
-  const hr = cells.length ? `<div style="position:absolute;left:256px;right:42px;top:86px;height:1px;background:linear-gradient(90deg,rgba(201,164,76,.85),rgba(201,164,76,.35))"></div>` : '';
-  const inst=m.inst||{title:'',sub:'',color:'#F0B43C'}; const ic=inst.color||'#F0B43C'; const sz=P.instIcone||44;
+    if(c.pips) val=_custoPips(c.pips, P.pip||13);
+    else if(c.num!=null) val=`<div style="font-size:${P.recargaNum||16}px;font-weight:600;line-height:1.1;color:#C9CED8">${H(c.num)} <span style="color:${c.stateCor||'#C9CED8'}">${H(c.state||'')}</span></div>`;
+    else val=`<div style="font-size:${P.recargaNum||16}px;font-weight:600;color:#F2F4F8;line-height:1">${H(c.valor||'')}</div>`;
+    return `<div style="display:flex;flex-direction:column;gap:3px;min-width:0"><div style="font-size:${P.rotulo||12}px;font-weight:600;letter-spacing:.04em;color:#C9CED8">${H(c.rotulo||'')}</div>${val}</div>`; };
+  const topo = cells.length ? `<div style="display:flex;gap:14px">
+      <div style="min-width:0">${cel(cells[0])}</div>
+      ${cells[1]?`<div style="padding-left:14px;border-left:1px solid rgba(201,164,76,.5);min-width:0">${cel(cells[1])}</div>`:''}
+    </div>` : '';
+  const hr = cells.length ? `<div style="height:1px;margin:2px 0;background:linear-gradient(90deg,rgba(201,164,76,.85),rgba(201,164,76,.2))"></div>` : '';
+  const inst=m.inst||{title:'',sub:'',color:'#F0B43C'}; const ic=inst.color||'#F0B43C'; const sz=P.instIcone||28;
   const mira=`<div style="position:relative;width:${sz}px;height:${sz}px;flex:none">
-    <div style="position:absolute;inset:4px;border-radius:50%;box-shadow:inset 0 0 0 3px ${ic}"></div>
-    <span style="position:absolute;left:50%;top:0;width:3px;height:12px;margin-left:-1.5px;background:${ic}"></span>
-    <span style="position:absolute;left:50%;bottom:0;width:3px;height:12px;margin-left:-1.5px;background:${ic}"></span>
-    <span style="position:absolute;top:50%;left:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span>
-    <span style="position:absolute;top:50%;right:0;height:3px;width:12px;margin-top:-1.5px;background:${ic}"></span></div>`;
+    <div style="position:absolute;inset:3px;border-radius:50%;box-shadow:inset 0 0 0 2px ${ic}"></div>
+    <span style="position:absolute;left:50%;top:0;width:2px;height:8px;margin-left:-1px;background:${ic}"></span>
+    <span style="position:absolute;left:50%;bottom:0;width:2px;height:8px;margin-left:-1px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;left:0;height:2px;width:8px;margin-top:-1px;background:${ic}"></span>
+    <span style="position:absolute;top:50%;right:0;height:2px;width:8px;margin-top:-1px;background:${ic}"></span></div>`;
   const conf=m.prontoConfirmar?' id="bconf" role="button" tabindex="0"':'';
-  const instr=`<div class="bt-panel__mira"${conf} style="display:flex;align-items:center;gap:20px;padding-left:36px;padding-top:12px;${m.prontoConfirmar?'cursor:pointer':''}">
-    ${mira}<div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-      <div class="bt-panel__miratit" style="font-size:${P.instTit||22}px;font-weight:600;color:${ic}">${H(inst.title||'')}</div>
-      <div style="font-size:${P.instSub||18}px;font-weight:500;color:#D5DAE4">${H(inst.sub||'')}</div></div></div>`;
-  return `<div class="bt-panel__meio" style="position:relative;display:grid;grid-template-rows:76px minmax(0,1fr);border-left:1px solid rgba(201,164,76,.5);margin:16px 0">${topo}${hr}${instr}</div>`;
+  const instr=`<div class="bt-panel__mira"${conf} style="display:flex;align-items:center;gap:8px;${m.prontoConfirmar?'cursor:pointer':''}">
+    ${mira}<div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+      <div class="bt-panel__miratit" style="font-size:${P.instTit||13}px;font-weight:600;color:${ic}">${H(inst.title||'')}</div>
+      <div style="font-size:${P.instSub||12}px;font-weight:500;color:#D5DAE4">${H(inst.sub||'')}</div></div></div>`;
+  return `<div class="bt-panel__meio" style="display:flex;flex-direction:column;justify-content:center;gap:4px;border-left:1px solid rgba(201,164,76,.5);padding:8px 10px;min-width:0">${topo}${hr}${instr}</div>`;
 }
 // COLUNA 3 — CANCELAR (armada) ou OUTRAS HABILIDADES / HABILIDADES (miniaturas do dono)
 function _col3HTML(m, P){
-  if(!m.dir) return `<div style="border-left:1px solid rgba(201,164,76,.5);margin:16px 0"></div>`;
+  if(!m.dir) return `<div style="border-left:1px solid rgba(201,164,76,.5);margin:8px 0"></div>`;
   if(m.dir.modo==='cancelar'){
-    const w=P.cancelW||274, h=P.cancelH||80;
-    return `<div style="display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(201,164,76,.5);margin:16px 0">
-      <button class="b5-cancel bt-cancel" id="bcanc" style="width:${w}px;height:${h}px;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;cursor:pointer;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C,inset 0 0 0 4px rgba(0,0,0,.5)">
-        <span class="cin" style="font-weight:700;font-size:${P.cancelFonte||23}px;letter-spacing:.04em;color:#F4F1EA">CANCELAR</span></button></div>`;
+    const w=P.cancelW||120, h=P.cancelH||40;
+    return `<div style="display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(201,164,76,.5);margin:8px 0;padding:0 8px">
+      <button class="b5-cancel bt-cancel" id="bcanc" style="width:${w}px;height:${h}px;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;cursor:pointer;background:linear-gradient(180deg,#0C1020,#05070E);box-shadow:inset 0 0 0 2px #C9A44C,inset 0 0 0 3px rgba(0,0,0,.5)">
+        <span class="cin" style="font-weight:700;font-size:${P.cancelFonte||14}px;letter-spacing:.04em;color:#F4F1EA">CANCELAR</span></button></div>`;
   }
-  return `<div style="display:flex;align-items:center;border-left:1px solid rgba(201,164,76,.5);margin:16px 0">${_painelMinis(m,P)}</div>`;
+  return `<div style="display:flex;align-items:center;border-left:1px solid rgba(201,164,76,.5);margin:8px 0">${_painelMinis(m,P)}</div>`;
 }
 // miniaturas do DONO do conteúdo (donoUid, §333). A mostrada vem destacada (moldura dourada). ~70px p/ caber.
 function _painelMinis(m, P){
@@ -232,16 +230,16 @@ function _painelMinis(m, P){
     const sombra = sel?`inset 0 0 0 2px #FFE7A0,0 0 0 2px #C9A44C,0 0 14px rgba(240,180,60,.7)`:`inset 0 0 0 1.5px ${anel}`;
     return `<div class="b5-skill bt-mini ${sel?'is-sel':''}" data-look="${u.uid}|${a.slot}" title="${H(a.nome)}" style="position:relative;width:${sz}px;height:${sz}px;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra}">
       ${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}
-      <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
+      <span class="b5-mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:${anel};pointer-events:none">${H(mono(a))}</span></div>`;
   }).join('');
-  return `<div class="bt-panel__minis" style="display:flex;flex-direction:column;gap:10px;padding:0 16px;min-width:0">
-    <div class="cin bt-panel__minilab" style="font-size:${P.rotulo||18}px;font-weight:700;letter-spacing:.05em;color:#F0B43C">${H(lab)}</div>
-    <div style="display:flex;gap:12px">${minis}</div></div>`;
+  return `<div class="bt-panel__minis" style="display:flex;flex-direction:column;gap:4px;padding:0 8px;min-width:0">
+    <div class="cin bt-panel__minilab" style="font-size:${P.rotulo||12}px;font-weight:700;letter-spacing:.03em;color:#F0B43C">${H(lab)}</div>
+    <div style="display:flex;gap:6px">${minis}</div></div>`;
 }
 // o PAINEL de baixo (grade 840 | 564 | resto). view.js injeta nada — tudo em px de design.
 function painelBaixoHTML(){
   const m=_modeloPainel(), P=_P();
-  return `<section class="b5-painel bt-panel" style="position:absolute;left:${P.left||58}px;top:${P.top||640}px;width:${P.w||1732}px;height:${P.h||166}px;box-sizing:border-box;overflow:hidden;display:grid;grid-template-columns:${(P.cols&&P.cols.info)||840}px ${(P.cols&&P.cols.meio)||564}px minmax(0,1fr);grid-template-rows:${P.h||166}px;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
+  return `<section class="b5-painel bt-panel" style="flex:none;box-sizing:border-box;display:grid;grid-template-columns:${(P.cols&&P.cols.info)||300}px ${(P.cols&&P.cols.meio)||228}px minmax(0,1fr);align-items:stretch;border-radius:6px;background:linear-gradient(180deg,rgba(10,13,26,.96),rgba(5,7,15,.96));box-shadow:inset 0 0 0 1px rgba(201,164,76,.78),0 -6px 24px rgba(0,0,0,.5)">
     ${_col1HTML(m,P)}${_col2HTML(m,P)}${_col3HTML(m,P)}
   </section>`;
 }

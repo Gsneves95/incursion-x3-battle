@@ -18,37 +18,37 @@ Nota 0–10 (transparente): `10·(0,5·textoOK + 0,2·toqueOK + 0,3·rolagemOK) 
 |--:|------|--:|--:|--:|--:|:--:|------|
 | 1 | Campanha — ato de batalha | 42 (40) | 5 | 1 | 8 | **2.5** | `357-campanha-batalha-780x360.png` |
 | 2 | Invocação — revelação | 19 (19) | 7 | 0 | 24 | **2.6** | `357-invocacao-reveal-780x360.png` |
-| 3 | Batalha — menu | 11 (11) | 9 | 0 | 0 | **3** | `357-batalha-menu-780x360.png` |
-| 4 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
-| 5 | Batalha — meu turno | 39 (38) | 15 | 0 | 9 | **3.5** | `357-batalha-meu-turno-780x360.png` |
-| 6 | Batalha — turno do oponente | 41 (40) | 15 | 0 | 9 | **3.5** | `357-batalha-oponente-780x360.png` |
-| 7 | Batalha — inspeção da habilidade | 43 (42) | 15 | 0 | 9 | **3.5** | `357-batalha-inspecao-780x360.png` |
-| 8 | Batalha — habilidade armada | 43 (42) | 12 | 0 | 9 | **3.6** | `357-batalha-armada-780x360.png` |
-| 9 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
-| 10 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
-| 11 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
-| 12 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
-| 13 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
-| 14 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
-| 15 | Batalha — confirmação de sair | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-sair-780x360.png` |
-| 16 | Batalha — confirmação de desistir | 2 (0) | 2 | 0 | 0 | **5.5** | `357-batalha-confirmar-desistir-780x360.png` |
-| 17 | Em breve (marcador) | 1 (1) | 1 | 0 | 3 | **6.7** | `357-embreve-780x360.png` |
-| 18 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
-| 19 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
-| 20 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
-| 21 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
-| 22 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
-| 23 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
-| 24 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
-| 25 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
-| 26 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
-| 27 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
-| 28 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
-| 29 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
-| 30 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
-| 31 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
-| 32 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
-| 33 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
+| 3 | Guia (folha de componentes, dev) | 57 (57) | 8 | 0 | 0 | **3.1** | `357-guia-780x360.png` |
+| 4 | Domínios — seleção | 64 (58) | 4 | 0 | 4 | **3.8** | `357-dominios-780x360.png` |
+| 5 | Domínio — hub | 32 (32) | 3 | 0 | 0 | **4.1** | `357-dominio-hub-780x360.png` |
+| 6 | Invocação — tela | 17 (17) | 5 | 0 | 4 | **4.3** | `357-invocacao-780x360.png` |
+| 7 | Campanha — ato de escolha | 38 (38) | 6 | 0 | 0 | **4.6** | `357-campanha-escolha-780x360.png` |
+| 8 | Home | 21 (21) | 1 | 0 | 0 | **4.8** | `357-home-780x360.png` |
+| 9 | Campanha — ato de história (sintético) | 22 (22) | 2 | 0 | 1 | **5.4** | `357-campanha-historia-780x360.png` |
+| 10 | Em breve (marcador) | 1 (1) | 1 | 0 | 2 | **6.8** | `357-embreve-780x360.png` |
+| 11 | Carregamento (splash) | 0 (0) | 0 | 0 | 0 | **10** | `357-carregamento-780x360.png` |
+| 12 | Batalha — meu turno | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-meu-turno-780x360.png` |
+| 13 | Batalha — turno do oponente | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-oponente-780x360.png` |
+| 14 | Batalha — habilidade armada | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-armada-780x360.png` |
+| 15 | Batalha — inspeção da habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-inspecao-780x360.png` |
+| 16 | Montar time — encontro da campanha | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-campanha-780x360.png` |
+| 17 | Montar time — Domínio (corrida) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-dominio-780x360.png` |
+| 18 | Montar time — Desafio de composição | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-desafio-780x360.png` |
+| 19 | Seleção de time (Batalha CPU/hot-seat) | 0 (0) | 0 | 0 | 0 | **10** | `357-montar-selecao-780x360.png` |
+| 20 | PvP — lobby (time montado) | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-780x360.png` |
+| 21 | PvP — na fila | 0 (0) | 0 | 0 | 0 | **10** | `357-pvp-fila-780x360.png` |
+| 22 | Coleção — sem seleção | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-780x360.png` |
+| 23 | Coleção — com filtro | 0 (0) | 0 | 0 | 0 | **10** | `357-colecao-filtro-780x360.png` |
+| 24 | Ficha do deus — SINERGIA | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-sinergia-780x360.png` |
+| 25 | Ficha do deus — não possuída | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-falta-780x360.png` |
+| 26 | Ficha do deus | 0 (0) | 0 | 0 | 0 | **10** | `357-ficha-780x360.png` |
+| 27 | Níveis de habilidade | 0 (0) | 0 | 0 | 0 | **10** | `357-niveis-780x360.png` |
+| 28 | Desafios (hub) | 0 (0) | 0 | 0 | 0 | **10** | `357-desafios-780x360.png` |
+| 29 | Composição (desafios) | 0 (0) | 0 | 0 | 0 | **10** | `357-composicao-780x360.png` |
+| 30 | Provações | 0 (0) | 0 | 0 | 0 | **10** | `357-provacoes-780x360.png` |
+| 31 | Batalha — menu | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-menu-780x360.png` |
+| 32 | Batalha — confirmação de sair | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-sair-780x360.png` |
+| 33 | Batalha — confirmação de desistir | 0 (0) | 0 | 0 | 0 | **10** | `357-batalha-confirmar-desistir-780x360.png` |
 
 ## Detalhe por tela
 
@@ -134,35 +134,6 @@ Print: `docs/telas/357-invocacao-reveal-780x360.png`. Contagens: a=19, b=7, c=0,
 - [encoberto] **importante** `button.iv-plus` — "+"
 - [encoberto] **importante** `span.iv-hero__tag` — "RATE-UP"
 
-### Batalha — menu — nota 3
-
-Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=11, b=9, c=0, d=0. (textos visíveis: 11; tocáveis: 9.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `#bmenubuild` — **5.49px** ⚠<11 — "build 2026-10-23 12:34 UTC"
-- `#bcontinuar` — **8.45px** ⚠<11 — "CONTINUAR"
-- `span` — **8.45px** ⚠<11 — "🔊"
-- `span.cin` — **8.45px** ⚠<11 — "SOM"
-- `#bhelp` — **8.45px** ⚠<11 — "COMO JOGAR"
-- `#blog` — **8.45px** ⚠<11 — "REGISTRO"
-- `#bfull` — **8.45px** ⚠<11 — "TELA CHEIA"
-- `#bapagar` — **8.45px** ⚠<11 — "APAGAR DADOS"
-- `#bsair` — **8.45px** ⚠<11 — "SAIR PARA O INÍCIO"
-- `#bsurr` — **8.45px** ⚠<11 — "RENDER-SE"
-
-**b) 10 piores toques** (menor lado):
-
-- `input.b5-range` — **92.5×2.5** — ""
-- `#bmenubuild` — **148.7×6.8** — "build 2026-10-23 12:34 UTC"
-- `#bcontinuar` — **148.7×24.5** — "CONTINUAR"
-- `#bhelp` — **148.7×24.5** — "COMO JOGAR"
-- `#blog` — **148.7×24.5** — "REGISTRO"
-- `#bfull` — **148.7×24.5** — "TELA CHEIA"
-- `#bapagar` — **148.7×24.5** — "APAGAR DADOS"
-- `#bsair` — **148.7×24.5** — "SAIR PARA O INÍCIO"
-- `#bsurr` — **148.7×24.5** — "RENDER-SE"
-
 ### Guia (folha de componentes, dev) — nota 3.1
 
 Print: `docs/telas/357-guia-780x360.png`. Contagens: a=57, b=8, c=0, d=0. (textos visíveis: 58; tocáveis: 8.)
@@ -190,174 +161,6 @@ Print: `docs/telas/357-guia-780x360.png`. Contagens: a=57, b=8, c=0, d=0. (texto
 - `#bvoltar` — **58.1×30.4** — "‹ VOLTAR"
 - `button.cmpb.cmpb--primary` — **51.6×30.4** — "JOGAR"
 - `button.cmpb.cmpb--quiet` — **86.3×30.4** — "JOGAR DE NOVO"
-
-### Batalha — meu turno — nota 3.5
-
-Print: `docs/telas/357-batalha-meu-turno-780x360.png`. Contagens: a=39, b=15, c=0, d=9. (textos visíveis: 42; tocáveis: 33.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `span` — **6.76px** ⚠<11 — "GRÁTIS"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `#btrocar` — **57.9×14.4** — "⇄TROCAR"
-- `#bmenu` — **19.4×19.4** — ""
-- `#bend2` — **129.7×22** — "ENCERRAR TURNO"
-- `button.b5-hover` — **24.5×24.5** — ""
-
-**d) cortes:**
-
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `span` — "GRÁTIS"
-- [encoberto] **importante** `div.cin` — "SEU TURNO"
-- [encoberto] **importante** `div` — "Escolha uma habilidade e selecione um al"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-
-### Batalha — turno do oponente — nota 3.5
-
-Print: `docs/telas/357-batalha-oponente-780x360.png`. Contagens: a=41, b=15, c=0, d=9. (textos visíveis: 44; tocáveis: 33.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "99/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `span` — **6.76px** ⚠<11 — "GRÁTIS"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `#btrocar` — **57.9×14.4** — "⇄TROCAR"
-- `#bmenu` — **19.4×19.4** — ""
-- `#bend2` — **129.7×22** — "TURNO DO OPONENTE"
-- `button.b5-hover` — **24.5×24.5** — ""
-
-**d) cortes:**
-
-- [encoberto] **importante** `div.bt-hp__lab` — "99/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `span` — "GRÁTIS"
-- [encoberto] **importante** `div.cin` — "TURNO DO OPONENTE"
-- [encoberto] **importante** `div` — "Aguarde a ação do oponente."
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-
-### Batalha — inspeção da habilidade — nota 3.5
-
-Print: `docs/telas/357-batalha-inspecao-780x360.png`. Contagens: a=43, b=15, c=0, d=9. (textos visíveis: 46; tocáveis: 33.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `span` — **6.76px** ⚠<11 — "GRÁTIS"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `#btrocar` — **57.9×14.4** — "⇄TROCAR"
-- `#bmenu` — **19.4×19.4** — ""
-- `#bend2` — **129.7×22** — "ENCERRAR TURNO"
-- `button.b5-hover` — **24.5×24.5** — ""
-
-**d) cortes:**
-
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `span` — "GRÁTIS"
-- [encoberto] **importante** `div.cin` — "SEU TURNO"
-- [encoberto] **importante** `div` — "Escolha uma habilidade e selecione um al"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-
-### Batalha — habilidade armada — nota 3.6
-
-Print: `docs/telas/357-batalha-armada-780x360.png`. Contagens: a=43, b=12, c=0, d=9. (textos visíveis: 46; tocáveis: 30.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `span` — **6.76px** ⚠<11 — "GRÁTIS"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `div.bt-hp__lab` — **6.76px** ⚠<11 — "120/120"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-- `button.cin.bt-portrait__pas` — **7.18px** ⚠<11 — "P"
-
-**b) 10 piores toques** (menor lado):
-
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `button.cin.bt-portrait__pas` — **11×11** — "P"
-- `#btrocar` — **57.9×14.4** — "⇄TROCAR"
-- `#bmenu` — **19.4×19.4** — ""
-- `#bend2` — **129.7×22** — "ENCERRAR TURNO"
-- `button.b5-hover` — **24.5×24.5** — ""
-
-**d) cortes:**
-
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `span` — "GRÁTIS"
-- [encoberto] **importante** `div.cin` — "SEU TURNO"
-- [encoberto] **importante** `div` — "Escolha uma habilidade e selecione um al"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
-- [encoberto] **importante** `div.bt-hp__lab` — "120/120"
 
 ### Domínios — seleção — nota 3.8
 
@@ -520,55 +323,50 @@ Print: `docs/telas/357-campanha-historia-780x360.png`. Contagens: a=22, b=2, c=0
 
 - [encoberto] **importante** `span.cnode__nome` — "A Era dos Planos"
 
-### Batalha — confirmação de sair — nota 5.5
+### Em breve (marcador) — nota 6.8
 
-Print: `docs/telas/357-batalha-confirmar-sair-780x360.png`. Contagens: a=2, b=2, c=0, d=0. (textos visíveis: 4; tocáveis: 2.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `#bclose` — **11px** — "Continuar jogando"
-- `#bsairok` — **11px** — "Sair para o início"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bclose` — **189.5×34** — "Continuar jogando"
-- `#bsairok` — **170.7×34** — "Sair para o início"
-
-### Batalha — confirmação de desistir — nota 5.5
-
-Print: `docs/telas/357-batalha-confirmar-desistir-780x360.png`. Contagens: a=2, b=2, c=0, d=0. (textos visíveis: 4; tocáveis: 2.)
+Print: `docs/telas/357-embreve-780x360.png`. Contagens: a=1, b=1, c=0, d=2. (textos visíveis: 5; tocáveis: 1.)
 
 **a) 10 piores textos pequenos** (px real):
 
-- `#bclose` — **11px** — "Voltar"
-- `#bsurrok` — **11px** — "Confirmar rendição"
+- `#bvoltar` — **10.1px** ⚠<11 — "‹ Início"
 
 **b) 10 piores toques** (menor lado):
 
-- `#bclose` — **84×34** — "Voltar"
-- `#bsurrok` — **194.5×34** — "Confirmar rendição"
-
-### Em breve (marcador) — nota 6.7
-
-Print: `docs/telas/357-embreve-780x360.png`. Contagens: a=1, b=1, c=0, d=3. (textos visíveis: 5; tocáveis: 1.)
-
-**a) 10 piores textos pequenos** (px real):
-
-- `#bvoltar` — **9.26px** ⚠<11 — "‹ Início"
-
-**b) 10 piores toques** (menor lado):
-
-- `#bvoltar` — **73.6×28.6** — "‹ Início"
+- `#bvoltar` — **78×33.6** — "‹ Início"
 
 **d) cortes:**
 
 - [sobreposto] **importante** `div.stagemark × #bvoltar` — "INCURSION / ‹ Início"
-- [sobreposto] **importante** `div.stagemark × h1.tela__titulo` — "INCURSION / Loja"
 - [encoberto] **importante** `div.stagemark` — "INCURSION"
 
 ### Carregamento (splash) — nota 10
 
 Print: `docs/telas/357-carregamento-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 1; tocáveis: 0.)
+
+_Sem achados._
+
+### Batalha — meu turno — nota 10
+
+Print: `docs/telas/357-batalha-meu-turno-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 42; tocáveis: 36.)
+
+_Sem achados._
+
+### Batalha — turno do oponente — nota 10
+
+Print: `docs/telas/357-batalha-oponente-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 44; tocáveis: 36.)
+
+_Sem achados._
+
+### Batalha — habilidade armada — nota 10
+
+Print: `docs/telas/357-batalha-armada-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 46; tocáveis: 33.)
+
+_Sem achados._
+
+### Batalha — inspeção da habilidade — nota 10
+
+Print: `docs/telas/357-batalha-inspecao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 46; tocáveis: 36.)
 
 _Sem achados._
 
@@ -659,6 +457,24 @@ _Sem achados._
 ### Provações — nota 10
 
 Print: `docs/telas/357-provacoes-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 26; tocáveis: 7.)
+
+_Sem achados._
+
+### Batalha — menu — nota 10
+
+Print: `docs/telas/357-batalha-menu-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 11; tocáveis: 9.)
+
+_Sem achados._
+
+### Batalha — confirmação de sair — nota 10
+
+Print: `docs/telas/357-batalha-confirmar-sair-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 4; tocáveis: 2.)
+
+_Sem achados._
+
+### Batalha — confirmação de desistir — nota 10
+
+Print: `docs/telas/357-batalha-confirmar-desistir-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 4; tocáveis: 2.)
 
 _Sem achados._
 

@@ -79,30 +79,32 @@ function btNiv(u){
   let nv; try{ nv=niveisEmBatalha(st,u); }catch(e){ return ''; }
   if(!(nv.basico>1||nv.habilidade>1||nv.milagre>1)) return '';
   const c=(n)=>`<span style="color:${n>1?'#F0DC9A':'#8f88b0'}">${n}</span>`;
-  return `<div class="b5-niv bt-portrait__niv cin" style="position:absolute;left:5px;bottom:28px;display:flex;gap:3px;padding:1px 5px;border-radius:4px;background:rgba(6,5,16,.78);font-weight:800;font-size:15px;line-height:1.3;pointer-events:none">${c(nv.basico)}${c(nv.habilidade)}${c(nv.milagre)}</div>`;
+  return `<div class="b5-niv bt-portrait__niv cin" style="position:absolute;left:3px;top:3px;display:flex;gap:2px;padding:0 3px;border-radius:3px;background:rgba(6,5,16,.82);font-weight:800;font-size:12px;line-height:1.3;pointer-events:none">${c(nv.basico)}${c(nv.habilidade)}${c(nv.milagre)}</div>`;
 }
-/* ---------- ícones de efeito (design: box 24 na cor da categoria + número 19 ao lado; até 3, resto "+N") ---------- */
+/* ---------- §362: ícones de efeito — botão ≥40×40 (toque), chip colorido menor dentro + número; até 3, resto "+N".
+   Devolve '' quando não há efeitos (a FILEIRA de efeitos só aparece quando existe algum). ---------- */
 function btEfeitos(u){
-  const tags=u.vivo?tagsDe(u):[]; const C=_C(), ef=C.efeitos||{size:24,gap:8,valor:19,max:3};
-  if(!tags.length) return `<div style="height:${ef.size}px"></div>`;
+  const tags=u.vivo?tagsDe(u):[]; const C=_C(), ef=C.efeitos||{size:40,gap:4,valor:12,max:3};
+  if(!tags.length) return '';
   const vis = tags.length<=ef.max ? tags : tags.slice(0, ef.max-1);
   const resto = tags.length - vis.length;
+  const ic=Math.round(ef.size*0.55);   // chip visual menor que a área de toque
   const cel=(t,i)=>{ const fc=FX_COR[t.cat]||FX_COR.bom;
-    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="display:flex;align-items:center;gap:3px;border:0;background:none;padding:0;cursor:pointer">
-      <span style="display:flex;align-items:center;justify-content:center;width:${ef.size}px;height:${ef.size}px;border-radius:4px;background:${fc.bg};box-shadow:inset 0 0 0 1px ${fc.ring};font-size:${Math.round(ef.size*0.62)}px">${t.icone}</span>
+    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="height:${ef.size}px;min-width:${ef.size}px;display:flex;align-items:center;justify-content:center;gap:2px;border:0;background:none;padding:0 3px;cursor:pointer">
+      <span style="display:flex;align-items:center;justify-content:center;width:${ic}px;height:${ic}px;flex:none;border-radius:4px;background:${fc.bg};box-shadow:inset 0 0 0 1px ${fc.ring};font-size:${Math.round(ic*0.6)}px">${t.icone}</span>
       ${t.num?`<span style="font-size:${ef.valor}px;font-weight:600;color:#F2F4F8">${H(t.num)}</span>`:(t.dur!=null?`<span style="font-size:${ef.valor}px;font-weight:600;color:#F2F4F8">${t.dur}</span>`:'')}
     </button>`; };
   let cels=vis.map(cel).join('');
-  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="display:flex;align-items:center;justify-content:center;min-width:${ef.size}px;height:${ef.size}px;border:0;background:none;font-size:${ef.valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
+  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="min-width:${ef.size}px;height:${ef.size}px;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${ef.valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
   return `<div class="bt-eff-grid" style="height:${ef.size}px;display:flex;align-items:center;gap:${ef.gap}px">${cels}</div>`;
 }
-/* ---------- selo "P" dourado (aliado e inimigo) ---------- */
-function _seloP(u, g, lado){
-  const C=_C(), sz=C.selo||26, aceso=passivaAcesa(u);
-  const base=`position:absolute;${lado}:5px;top:5px;width:${sz}px;height:${sz}px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${C.seloFonte||17}px`;
-  const bg = aceso?'background:linear-gradient(180deg,#F6D985,#C99A35);color:#2A1A04;box-shadow:0 1px 3px rgba(0,0,0,.6),0 0 8px rgba(240,180,60,.8)'
-                 :'background:linear-gradient(180deg,#F6D985,#C99A35);color:#2A1A04;box-shadow:0 1px 3px rgba(0,0,0,.6)';
-  return `<button class="cin bt-portrait__pas ${aceso?'pas--on':''}" data-pas="${u.uid}" style="${base};${bg};border:0;cursor:pointer">P</button>`;
+/* ---------- §362: selo "P" dourado — botão ≥40×40 (toque) AO LADO do retrato (não mais sobre a arte, p/ não
+   encobrir o rosto nem brigar com o toque de alvo); chip "P" visual menor dentro da área de toque. ---------- */
+function _seloP(u, g, side){
+  const C=_C(), sz=C.selo||40, chip=Math.round((C.selo||40)*0.55), aceso=passivaAcesa(u);
+  const glow = aceso?',0 0 8px rgba(240,180,60,.85)':'';
+  return `<button class="cin bt-portrait__pas bt-portrait__pas--${side||'me'} ${aceso?'pas--on':''}" data-pas="${u.uid}" title="Passiva" style="flex:none;width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;border:0;background:none;cursor:pointer;padding:0">
+    <span style="width:${chip}px;height:${chip}px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${C.seloFonte||14}px;background:linear-gradient(180deg,#F6D985,#C99A35);color:#2A1A04;box-shadow:0 1px 3px rgba(0,0,0,.6)${glow}">P</span></button>`;
 }
 /* ---------- retrato do ALIADO + efeitos + 4 habilidades ---------- */
 function btUnidadeAliada(u, meu){
@@ -113,15 +115,16 @@ function btUnidadeAliada(u, meu){
   const sz=C.retrato||140;
   const x=(u.vivo?'':'filter:grayscale(1) brightness(.5);');
   const cls=['bt-portrait','bt-portrait--ally']; if(alvo)cls.push('is-target'); if(u.vivo&&!podeAgir(u))cls.push('acted');
-  const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
+  const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
-    ${g.passiva?_seloP(u,g,'right'):''}
     ${u.vivo?btNiv(u):''}
     ${btHp(u)}
   </div>`;
-  const col=`<div style="display:flex;flex-direction:column;gap:4px;width:${sz}px;flex:none">${portrait}${btEfeitos(u)}</div>`;
-  const skills=`<div style="display:flex;gap:${C.skill.gap}px;margin-top:${C.skill.mtop}px">${acoesDe(st,u).map(a=>btSkill(u,a,meu)).join('')}</div>`;
-  return `<div style="display:flex;align-items:center;gap:18px;height:${C.fileira.h}px">${col}${skills}</div>`;
+  const pseal=g.passiva?_seloP(u,g,'me'):'';
+  const skills=`<div style="display:flex;gap:${C.skill.gap}px;margin-top:${C.skill.mtop||0}px">${acoesDe(st,u).map(a=>btSkill(u,a,meu)).join('')}</div>`;
+  const linhaA=`<div style="display:flex;align-items:center;gap:6px">${pseal}${portrait}${skills}</div>`;
+  const fx=btEfeitos(u);
+  return `<div style="display:flex;flex-direction:column;gap:4px">${linhaA}${fx}</div>`;
 }
 /* ---------- bolinhas de CUSTO (pílula escura embaixo do botão; design: pips 14) ---------- */
 function btCustoPips(cost){
@@ -129,9 +132,9 @@ function btCustoPips(cost){
   const pips=[];
   if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(orbe(k,p)); }
     for(let i=0;i<(cost.livre||0);i++) pips.push(orbe('livre',p)); }
-  const pill=`position:absolute;left:50%;bottom:4px;transform:translateX(-50%);height:${C.skill.pipPill||22}px;padding:0 6px;display:flex;align-items:center;gap:4px;border-radius:11px;background:rgba(4,6,12,.85);pointer-events:none`;
-  // §340: custo vazio → "GRÁTIS" (verde-pronta, Rajdhani negrito, caixa alta, ≥16px) na MESMA pílula escura das orbes
-  if(!pips.length) return `<div style="${pill}"><span style="font-size:16px;font-weight:700;letter-spacing:.07em;color:#4BE38A">GRÁTIS</span></div>`;
+  const pill=`position:absolute;left:50%;bottom:3px;transform:translateX(-50%);height:${C.skill.pipPill||15}px;padding:0 4px;display:flex;align-items:center;gap:3px;border-radius:9px;background:rgba(4,6,12,.9);pointer-events:none`;
+  // §340/§362: custo vazio → "GRÁTIS" (verde-pronta, ≥12px) na MESMA pílula escura das orbes
+  if(!pips.length) return `<div style="${pill}"><span style="font-size:12px;font-weight:700;letter-spacing:.02em;color:#4BE38A">GRÁTIS</span></div>`;
   return `<div style="${pill}">${pips.join('')}</div>`;
 }
 /* ---------- botão de habilidade 108×108 (arte cheia/disco §332/§334; cd; usada; custo; ✓ armada) ---------- */
@@ -152,12 +155,12 @@ function btSkill(u, a, meu){
                : 'grayscale(.85) brightness(.55)';
   const nvSk=(typeof nivelSlotEmBatalha==='function')?nivelSlotEmBatalha(st,u,a.slot):1;
   const cdOv = cd>0 ? `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(50% 50% at 50% 46%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.4) 100%);pointer-events:none"><span class="cin bt-skill__cd" style="font-weight:700;font-size:${C.skill.cdFonte||46}px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.9)">${cd}</span></div>` : '';
-  const armSel = arm ? `<span class="cin bt-skill__sel" style="position:absolute;right:5px;top:5px;width:30px;height:30px;border-radius:50%;background:#C9A44C;color:#2A1A04;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:19px;box-shadow:0 1px 4px rgba(0,0,0,.6)">✓</span>` : '';
-  const nvBadge = nvSk>1 ? `<span class="b5-sknv bt-skill__nv cin" style="position:absolute;left:5px;top:5px;padding:0 6px;border-radius:4px;background:rgba(6,5,16,.82);color:#F0DC9A;font-weight:700;font-size:15px;line-height:1.4">Nv ${nvSk}</span>` : '';
+  const armSel = arm ? `<span class="cin bt-skill__sel" style="position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#C9A44C;color:#2A1A04;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.6)">✓</span>` : '';
+  const nvBadge = nvSk>1 ? `<span class="b5-sknv bt-skill__nv cin" style="position:absolute;left:3px;top:3px;padding:0 3px;border-radius:3px;background:rgba(6,5,16,.85);color:#F0DC9A;font-weight:700;font-size:12px;line-height:1.3">Nv ${nvSk}</span>` : '';
   const cls=['b5-skill','bt-skill']; if(clicavel)cls.push('is-ready'); if(cd>0)cls.push('is-cooldown'); if(!clicavel)cls.push('is-off'); if(arm)cls.push('is-armed');
   return `<div class="${cls.join(' ')}" data-sk="${u.uid}|${a.slot}" data-arma="${clicavel?1:0}"${meu?'':' data-dead="1"'} style="position:relative;width:${sz}px;height:${sz}px;border-radius:4px;overflow:hidden;cursor:pointer;background:#0A0E1C;box-shadow:${sombra};filter:${filtro}">
     <span class="bt-skill__disc" style="position:absolute;inset:0">${slot('skill-'+u.key+'-'+a.slot,'',null,0,false)}</span>
-    <span class="b5-mono bt-skill__mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;color:${anel};pointer-events:none">${H(mono(a))}</span>
+    <span class="b5-mono bt-skill__mono cin" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:${anel};pointer-events:none">${H(mono(a))}</span>
     ${cdOv}${btCustoPips(a.cost)}${armSel}${nvBadge}
   </div>`;
 }
@@ -180,15 +183,19 @@ function btUnidadeInimiga(u){
         <span style="position:absolute;top:50%;right:-8px;height:3px;width:16px;margin-top:-1.5px;background:#FF4A4A"></span>
       </div></div>` : '';
   const cls=['bt-portrait','bt-portrait--foe']; if(jaEsc||alvo)cls.push('is-target');
-  const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}" data-foe="1"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
+  const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}" data-foe="1"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
-    ${u.vivo?`<span data-inspect="${u.uid}" style="position:absolute;left:5px;top:5px;width:${C.selo||26}px;height:${C.selo||26}px;border-radius:3px;display:flex;align-items:center;justify-content:center;background:#05070E;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);font-size:19px;font-weight:700;color:#fff;cursor:pointer">?</span>`:''}
-    ${g.passiva?_seloP(u,g,'right'):''}
     ${u.vivo?btNiv(u):''}
     ${mira}
     ${btHp(u)}
   </div>`;
-  return `<div style="display:flex;flex-direction:column;gap:4px;width:${sz}px;height:${C.fileira.h}px">${portrait}${btEfeitos(u)}</div>`;
+  // §362: "?" (inspeciona) e "P" (passiva) viraram botões ≥40 AO LADO do retrato (não mais sobre a arte).
+  const tap=C.selo||40, chip=Math.round((C.selo||40)*0.55);
+  const inspBtn=u.vivo?`<button data-inspect="${u.uid}" title="Inspecionar" style="flex:none;width:${tap}px;height:${tap}px;display:flex;align-items:center;justify-content:center;border:0;background:none;cursor:pointer;padding:0"><span style="width:${chip}px;height:${chip}px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#05070E;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);font-size:${C.seloFonte||14}px;font-weight:700;color:#fff">?</span></button>`:'';
+  const pseal=g.passiva?_seloP(u,g,'foe'):'';
+  const linhaA=`<div style="display:flex;align-items:center;gap:4px">${inspBtn}${pseal}${portrait}</div>`;
+  const fx=btEfeitos(u);
+  return `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${linhaA}${fx}</div>`;
 }
 /* ---------- deus em foco (compat: usado por outros pontos) ---------- */
 function unidadeFoco(){
@@ -231,7 +238,8 @@ function btCenaHTML(){
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,14,.55) 0%,rgba(4,6,14,0) 16%,rgba(4,6,14,0) 70%,rgba(4,6,14,.6) 100%);pointer-events:none"></div>
     </div>` : '';
   const [ow,oh]=cn.ornato; const lw=cn.linha;
-  const ornato=`<div style="position:relative;width:${ow}px;height:${oh}px;filter:drop-shadow(0 0 10px ${glow})">
+  // §362: o ornato de sol do dono é desenhado no tamanho original (190×92) e ESCALADO p/ caber em `oh` (canvas 780).
+  const ornatoInner=`<div style="position:relative;width:190px;height:92px;filter:drop-shadow(0 0 8px ${glow})">
     <span style="position:absolute;left:94px;top:4px;width:2px;height:22px;border-radius:1px;background:${acento}"></span>
     <span style="position:absolute;left:73px;top:11px;width:2px;height:22px;border-radius:1px;background:${acento};transform:rotate(-22deg)"></span>
     <span style="position:absolute;left:115px;top:11px;width:2px;height:22px;border-radius:1px;background:${acento};transform:rotate(22deg)"></span>
@@ -243,16 +251,18 @@ function btCenaHTML(){
     <span style="position:absolute;left:132px;top:75px;width:52px;height:2px;background:${acento}"></span>
     <span style="position:absolute;left:20px;top:85px;width:150px;height:1.5px;background:${acento};opacity:.9"></span>
   </div>`;
+  const ornato=`<div style="width:${ow}px;height:${oh}px;display:flex;align-items:flex-end;justify-content:center;overflow:visible"><div style="transform:scale(${(oh/92).toFixed(3)});transform-origin:center bottom">${ornatoInner}</div></div>`;
   const linha=(mt)=>`<div style="width:${lw}px;height:1px;margin-top:${mt}px;background:linear-gradient(90deg,rgba(0,0,0,0),${acento} 30%,${acento} 70%,rgba(0,0,0,0))"></div>`;
-  const anuncio=`<div style="position:absolute;left:0;right:0;top:${cn.anuncioTop}px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
+  // §362: âncora no FUNDO da cena (metade de baixo) — o rosto (topo) fica livre; cabe mesmo quando o painel cresce.
+  const anuncio=`<div style="position:absolute;left:0;right:0;bottom:6px;display:flex;flex-direction:column;align-items:center;pointer-events:none">
     ${ornato}
-    ${linha(-4)}
-    <div class="cin" style="margin-top:14px;font-weight:700;font-size:${cn.titulo}px;line-height:1.1;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 3px 0 rgba(40,24,4,.85),0 6px 24px rgba(0,0,0,.9)">${titulo}</div>
-    <div style="margin-top:8px;font-size:${cn.sub}px;font-weight:600;color:#F2F4F8;text-shadow:0 2px 10px rgba(0,0,0,.95)">${sub}</div>
-    ${linha(22)}
-    <div style="width:10px;height:10px;margin-top:-5px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px ${acento};background:#070A14"></div>
+    ${linha(1)}
+    <div class="cin" style="margin-top:4px;font-weight:700;font-size:${cn.titulo}px;line-height:1.05;letter-spacing:.03em;color:${acentoTxt};text-shadow:0 2px 0 rgba(40,24,4,.85),0 4px 16px rgba(0,0,0,.9)">${titulo}</div>
+    <div style="margin-top:2px;font-size:${cn.sub}px;font-weight:600;color:#F2F4F8;text-shadow:0 2px 10px rgba(0,0,0,.95)">${sub}</div>
+    ${linha(5)}
+    <div style="width:8px;height:8px;margin-top:-4px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px ${acento};background:#070A14"></div>
   </div>`;
-  return `<div style="position:relative;overflow:visible">${art}${anuncio}</div>`;
+  return `<div style="position:relative;overflow:hidden">${art}${anuncio}</div>`;
 }
 
 /* ---------- composição do campo (grade 676 | 1fr | 172) ---------- */
@@ -260,7 +270,7 @@ function campoHTML(l,o){
   const meu=ehMeuTurno(), C=_C(), cor=_COR();
   const col1=`<div style="display:flex;flex-direction:column;justify-content:center;gap:${C.fileira.gap}px;padding-left:10px;position:relative;z-index:2">${[0,1,2].map(i=>l.units[i]?btUnidadeAliada(l.units[i],meu):'').join('')}</div>`;
   const col3=`<div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:${C.fileira.gap}px;padding-right:10px;position:relative;z-index:2">${[0,1,2].map(i=>o.units[i]?btUnidadeInimiga(o.units[i]):'').join('')}</div>`;
-  return `<section class="b5-campo" style="position:absolute;left:${C.left}px;top:${C.top}px;width:${C.w}px;height:${C.h}px;box-sizing:border-box;display:grid;grid-template-columns:${C.cols.aliados}px minmax(0,1fr) ${C.cols.inimigos}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
+  return `<section class="b5-campo" style="flex:1 1 auto;min-height:0;box-sizing:border-box;display:grid;grid-template-columns:${C.cols.aliados}px minmax(0,1fr) ${C.cols.inimigos}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
     ${col1}${btCenaHTML()}${col3}
   </section>`;
 }

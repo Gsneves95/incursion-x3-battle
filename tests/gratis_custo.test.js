@@ -114,7 +114,7 @@ console.log('\n== §340 textos — "Grátis." saiu do começo do efeito de tyr/g
       const g = sels[0]; if (!g) return { achou: false };
       const span = g.querySelector('span') || g;
       const clip = g.scrollWidth > g.clientWidth + 1 || span.scrollWidth > span.clientWidth + 1;
-      const fsDesign = Math.round(parseFloat(getComputedStyle(span).fontSize) * 10) / 10;       // px de design (esc=1 @1846)
+      const fsDesign = Math.round(parseFloat(getComputedStyle(span).fontSize) * 10) / 10;       // px de design (= real no canvas 780, esc=1)
       const fsReal = Math.round(parseFloat(getComputedStyle(span).fontSize) * esc * 10) / 10;   // px na tela
       return { achou: true, clip, fsDesign, fsReal, esc: Math.round(esc * 1000) / 1000 };
     });
@@ -122,7 +122,10 @@ console.log('\n== §340 textos — "Grátis." saiu do começo do efeito de tyr/g
     if (m.achou) {
       console.log(`  @${W}×${H}: escala ${m.esc} · fonte GRÁTIS ${m.fsDesign}px (design) / ${m.fsReal}px (tela) · corta=${m.clip}`);
       ok(!m.clip, `@${W}×${H}: o "GRÁTIS" cabe na pílula (não corta)`);
-      if (W === 1846) ok(m.fsDesign >= 16, `@1846: a fonte do GRÁTIS é ≥16px de design (veio ${m.fsDesign})`);
+      // §362: o canvas de design virou 780×360 (px design = px real); a GRÁTIS mede ≥12px (§357) no design e,
+      // a 1846, o fit() a escala p/ cima (≥16px reais). O antigo piso "≥16 de design @1846" era medida da tela fixa.
+      if (W === 780)  ok(m.fsDesign >= 12, `@780: a fonte do GRÁTIS é ≥12px de design (§357, veio ${m.fsDesign})`);
+      if (W === 1846) ok(m.fsReal   >= 16, `@1846: o fit() leva a GRÁTIS a ≥16px reais (veio ${m.fsReal})`);
     }
     await ctx.close();
   }

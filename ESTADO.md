@@ -2,7 +2,35 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §361 · PROVAÇÕES acessíveis (780×360) — queixas do dono + auditoria (5.1 → 10)
+## ★ §362 · BATALHA acessível no canvas 780×360 (mantendo o design do dono) — ~3.5 → 10
+- A TELA PRINCIPAL (`#batalha`: topo + campo + painel, §335) saiu da tela fixa 1846×852 e entrou no canvas **780×360**
+  (grupo `fixaPeq`; `fit()` escala p/ cima). **Auditoria: as 4 telas de batalha de ~3.5 → 10; menu e confirmações → 10**
+  (a=b=c=d=0 em 10 estados medidos: meu turno, turno do oponente, armada com a descrição mais longa, habilidade lida,
+  deus inspecionado, efeito, resumo da CPU, menu ☰, confirmar-encerrar-sem-agir, caixa de energia de 6 tipos).
+- O `data/layout_batalha.json` foi REESCRITO em 780×360 (mesma estrutura/cores/molduras/fontes do dono; mudam só as
+  proporções — quase tudo na batalha é estilo inline vindo desse JSON). O `#batalha{width/height}` e o gate do build
+  (`tools/build.js`, agora 780×360) acompanharam.
+- CAMPO: o "P" (passiva) e o "?" (inspecionar) saíram de cima do retrato e viraram **botões ≥40 AO LADO** (um chip menor
+  dentro do toque) — no 780 um alvo de 40 no canto cobriria o rosto e brigaria com o toque de ALVO; os ÍCONES DE EFEITO
+  viraram botões ≥40 numa fileira abaixo (só quando há efeito). Campo + painel viraram **coluna flex**: o painel cresce
+  PARA CIMA (altura automática, descrição completa sem clamp) e o campo encolhe — é assim que a descrição mais longa cabe
+  SEM rolar. As imagens da batalha são `pointer-events:none` (o DIV trata o toque; o texto por cima não fica "encoberto"
+  no `elementFromPoint` — eixo d6).
+- TOPO: header 60px; a caixa de energia (§336b) re-escalada (quadrados 16→13, xN ≥12) e o **⇄ TROCAR mostra o rótulo
+  quando cabe e só o ícone ⇄ (toque ≥40) quando aperta**; a sublinha do modo é capada em 92px p/ 6 tipos caberem. Os
+  contadores seguem no formato de leitura **"xN"** (§329 mantido).
+- PAINEL: colunas internas e fontes re-escaladas p/ 780; **tirado o "Passiva —" repetido** no começo da descrição do deus
+  (a pílula PASSIVA já identifica). MENU ☰ vira grade de 2 colunas (cabe nos 360); confirmação usa o overlay genérico
+  (`.b--md` subiu p/ 40px/12px).
+- NADA DE FUNÇÃO SE PERDE: armar/desarmar, 8 alvos (§336), inusável apagado, confirmar encerrar (§331), caixa que cresce
+  (§336b), orbes/GRÁTIS (§340), artes cheias (§353b), arte por turno (§347), menu ☰, painel por situação (§333b), turno
+  do oponente. Testes migrados SÓ nas medidas (`batalha_faixa` 780×360; `moldura` acha o P por `--me/--foe`;
+  `perspectiva`/`niveis_batalha` intactos); `acessibilidade_telas` +10 estados de batalha exigindo a=b=c=d=0. Capturas
+  `docs/telas/362-*` + `362-comparacao.png`. Suíte + build verdes.
+- DETALHE (item 0): o rodapé enigmático das Provações "1 vaga · Loja p/ +" virou **"1 vaga ativa · mais na Loja"**
+  (Provações seguem auditando 10).
+
+## §361 · PROVAÇÕES acessíveis (780×360) — queixas do dono + auditoria (5.1 → 10)
 - QUEIXAS DO DONO: fontes pequenas, botão ATIVAR grande demais, "dropbox" de nível minúsculos. A tela (`renderMissoes`,
   rota 'provacoes', §349) saiu da tela fixa 1846×852 e entrou no canvas **780×360** (grupo `fixaPeq`; `fit()` escala p/ cima).
   **Auditoria: nota 5.1 → 10** (a=b=c=d=0 em todos os 5 estados medidos).

@@ -213,14 +213,14 @@ function fit(){
   // §359: os MONTADORES (Domínio/Campanha/Composição/PvP/Batalha CPU) passam ao canvas PEQUENO de 780×360 (como §358):
   // o px de design é o px REAL no 780×360 e cumpre o §357 direto; nas telas maiores o fit() escala p/ cima.
   // §360: DESAFIOS (renderProvacoes) e COMPOSIÇÃO (renderDesafios) também passam ao canvas PEQUENO de 780×360.
-  const fixaPeq = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv;
-  const fixa = emBatalha || emDomHub || emGuia;
+  const fixaPeq = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha;
+  const fixa = emDomHub || emGuia;
   try{ stage.classList.toggle('bt2', !!emBatalha); stage.classList.toggle('df2', !!emDesafios); stage.classList.toggle('dm2', !!emMontar); stage.classList.toggle('dh2', !!emDomHub); stage.classList.toggle('pv2fix', !!emProv); stage.classList.toggle('deusfix2', !!emDeus); stage.classList.toggle('nlfix2', !!emNiveis); stage.classList.toggle('cmp2', !!emCompos); stage.classList.toggle('guia2', !!emGuia); stage.classList.toggle('col2fix', !!emColecao);
     document.body.classList.toggle('emdesafios', !!emDesafios); document.body.classList.toggle('emmontar', !!emMontar); document.body.classList.toggle('emdomhub', !!emDomHub); document.body.classList.toggle('emprov', !!emProv); document.body.classList.toggle('emdeus', !!emDeus); document.body.classList.toggle('emniveis', !!emNiveis); document.body.classList.toggle('emcompos', !!emCompos); document.body.classList.toggle('emguia', !!emGuia); document.body.classList.toggle('emcolecao', !!emColecao); }catch(e){}   // §339/§342/§346b/§348/§349/§350/§351/§352: carimbo build + botão conta somem destas telas (vivem na home/menu)
   if(fixaPeq && !fixa){
-    const alvo = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv;
+    const alvo = emColecao || emDeus || emNiveis || emMontar || emDesafios || emCompos || emProv || emBatalha;
     const CW = 780, CH = 360, s = Math.min(u.w / CW, u.h / CH);   // §358: canvas = o celular
-    ultimaEscala = s; ultimaLarguraDesign = CW;
+    ultimaEscala = s; ultimaLarguraDesign = CW; if(emBatalha) ultimaEscalaBatalha = s;   // §362: batalha no canvas 780×360
     stage.style.width = u.w + 'px'; stage.style.height = u.h + 'px';
     stage.style.transform = 'translate(-50%,-50%)';
     alvo.style.transform = 'translate(-50%,-50%) scale(' + s + ')';

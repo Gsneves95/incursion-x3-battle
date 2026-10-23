@@ -594,7 +594,7 @@ const layoutBatalhaObj = (() => {
   const erros = [];
   const precisa = ['canvas', 'cor', 'header', 'campo', 'painel', 'menu'];
   for (const k of precisa) if (!doc[k]) erros.push(`seção "${k}" ausente`);
-  if (doc.canvas && (doc.canvas.w !== 1846 || doc.canvas.h !== 852)) erros.push('canvas deve ser 1846×852 (design do dono)');
+  if (doc.canvas && (doc.canvas.w !== 780 || doc.canvas.h !== 360)) erros.push('canvas deve ser 780×360 (§362 — canvas acessível)');
   if (erros.length) { console.error('ERRO §335 — data/layout_batalha.json:\n  ' + erros.join('\n  ')); process.exit(1); }
   return doc;
 })();

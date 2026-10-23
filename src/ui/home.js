@@ -470,7 +470,7 @@ function painelProvHTML(){
     foot = `<div class="pa__foot">${voltar}${botao}</div>`;
   } else {
     const n = MISSOES.slotsGratis || 1;
-    foot = `<div class="pa__foot"><button class="pvb pvb--quiet" id="btrocar">Trocar Provação</button><span class="pa__footdiv"></span><span class="pa__slot">${n} vaga${n > 1 ? 's' : ''} · Loja p/ +</span></div>`;
+    foot = `<div class="pa__foot"><button class="pvb pvb--quiet" id="btrocar">Trocar Provação</button><span class="pa__footdiv"></span><span class="pa__slot">${n} vaga${n > 1 ? 's' : ''} ativa${n > 1 ? 's' : ''} · mais na Loja</span></div>`;
   }
   // §361: confirmando a troca → o bloco de objetivos dá lugar à confirmação (cabe sem rolar no 780×360).
   const confWrap = `<div class="pa__confwrap"><p class="pa__conf">Trocar? O progresso de <b>${H(nomeM(ativa))}</b> fica pausado.</p><div class="pa__confb"><button class="pvb pvb--go" data-troca-ok="${k}">SIM</button><button class="pvb pvb--quiet" data-troca-no="1">NÃO</button></div></div>`;

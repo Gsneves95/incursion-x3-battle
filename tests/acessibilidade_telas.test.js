@@ -22,6 +22,9 @@ const BASE = `try{
   contaAtual={nick:'Herói',perfil,niveis:{zeus:{basico:2,habilidade:4,milagre:1}},pontos:{zeus:9},ranque:{pontos:1200},missoes:{ativa:null,progresso:{},liberados:[]}};
 }catch(e){}`;
 
+// §362: BOOT da batalha (uma Provação sandbox: 3 aliados × 3 inimigos, meu turno, 6 tipos de energia).
+const BTBOOT = `st=montarProvacao({aliados:['hades','babi','zeus'],inimigos:['poseidon','hera','apolo'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null;menuAberto=false;ov=null;ir('batalha',{},{substituir:true});render();`;
+
 const ESTADOS = {
   'Coleção — sem filtro': `colF={busca:'',cultura:'',classe:'',funcao:'',elem:'',status:'',raridade:'',ordem:'recentes'};ir('colecao',{},{substituir:true});render();`,
   'Coleção — com filtro': `colF={busca:'',cultura:'',classe:'',funcao:'Controlador',elem:'Aurora',status:'tem',raridade:'',ordem:'nome'};ir('colecao',{},{substituir:true});render();`,
@@ -58,6 +61,17 @@ const ESTADOS = {
   'Provações — confirmação de troca': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:5000,faixa:{chave:'semideus',nome:'Semideus'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:'hades',progresso:{hades:{ativadaEm:0,obj:[{seq:1},{vol:5},{vol:3,seqA:4,seqB:2},{vol:2}]}},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();(function(){var c=document.querySelector('.pvc--disponivel[data-carta]');if(c){provPrevia=c.dataset.carta;provTrocaConfirm=c.dataset.carta;render();}})();`,
   'Provações — faixa acima espiada (aba)': `window.ativarProvacaoServidor=async()=>({ok:true});contaAtual={nick:'T',ranque:{pontos:60,faixa:{chave:'suplicante',nome:'Suplicante'}},perfil:{deuses:{cerberus:{copias:1},zeus:{copias:1}}},missoes:{ativa:null,progresso:{},liberados:[]}};provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();(function(){var c=faixaAtualIdx();var alvo=c+2;provFaixaAba=alvo;faixasEspiadas.add(alvo);render();})();`,
   'Provações — sem conexão': `contaAtual=null;provPrevia=null;provTrocaConfirm=null;provPendente=null;provFiltro='todas';provBusca='';provFaixaAba='todas';faixasEspiadas.clear();ir('provacoes',{},{substituir:true});render();`,
+  // §362: BATALHA — 10 estados no canvas 780×360 (design do dono).
+  'Batalha — meu turno': BTBOOT,
+  'Batalha — turno do oponente': BTBOOT + `st.ativo=1;IA_LADO=0;armado=null;detalhe=null;render();`,
+  'Batalha — habilidade armada (desc + longa)': BTBOOT + `armar(st.lados[0].units[1].uid,'milagre');`,
+  'Batalha — habilidade lida': BTBOOT + `lerHabilidade(st.lados[0].units[2].uid,'habilidade');`,
+  'Batalha — deus inspecionado': BTBOOT + `infoUnidade(st.lados[1].units[0].uid);`,
+  'Batalha — efeito': BTBOOT + `st.lados[0].units[1].efeitos=[{type:'vulneravel',v:6,dur:2,origem:st.lados[1].units[0].uid}];infoEfeito(st.lados[0].units[1].uid,0);`,
+  'Batalha — resumo da CPU': BTBOOT + `foco=null;resumoTurno=[{turno:st.turno,tipo:'acao',origem:'poseidon',slot:'milagre'},{turno:st.turno,tipo:'dano',origem:'poseidon',alvo:'hades',valor:14}];render();`,
+  'Batalha — menu ☰ aberto': BTBOOT + `menuAberto=true;render();`,
+  'Batalha — confirmar encerrar sem agir': BTBOOT + `ov='confirmEnc';render();`,
+  'Batalha — caixa de energia com 6 tipos': BTBOOT + `infoUnidade(st.lados[0].units[0].uid);`,
 };
 
 (async () => {

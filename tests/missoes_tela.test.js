@@ -69,7 +69,7 @@ console.log('\n== 4. painel ATIVA: retrato + nome + selo + panteão/ranque + mot
   ok(!!$('.pa__objs .ob--done .ob__ck.is-on'), 'objetivo cumprido fica marcado (verde)');
   w.eval(C_RICO);
   ok(!!pa.querySelector('#btrocar') && /Trocar Provação/i.test(txt(pa.querySelector('#btrocar'))), 'rodapé: "Trocar Provação"');
-  ok(/1 vaga · Loja/i.test(txt(pa.querySelector('.pa__slot'))), 'rodapé: "N vaga · Loja p/ +" (§361: compacto no 780×360)');
+  ok(/1 vaga ativa · mais na Loja/i.test(txt(pa.querySelector('.pa__slot'))), 'rodapé: "N vaga(s) ativa(s) · mais na Loja" (§362: texto claro)');
 }
 
 // ---- 5. PAINEL VAZIO ----

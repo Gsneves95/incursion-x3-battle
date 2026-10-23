@@ -1,6 +1,6 @@
 {
-  "_nota": "§335 — LAYOUT da tela de batalha reproduzindo o design do dono (Claude Design). DADO, não código. TELA FIXA de 1846×852 px escalada para caber (scale = min(w/1846, h/852)), centrada, com o fundo da canvas nas sobras. TODAS as medidas em PX DE DESIGN transcritas do HTML (substitui o sistema de 'u' do §329 só na batalha). A tela (view.js/ui/*.js) LÊ daqui.",
-  "canvas": { "w": 1846, "h": 852, "bg": "#03050B",
+  "_nota": "§335/§362 — LAYOUT da tela de batalha (design do dono, Claude Design). DADO, não código. CANVAS FIXO de 780×360 px (px de design = px real), escalado p/ caber (scale = min(w/780, h/360)) e crescendo p/ cima nas telas maiores, centrado. §362: migrado de 1846×852 p/ 780×360 mantendo a ESTRUTURA/cores/molduras/fontes do dono; mudam só as proporções (corpo ≥12, rótulos/números ≥12, toque ≥40). A tela (view.js/ui/*.js) LÊ daqui.",
+  "canvas": { "w": 780, "h": 360, "bg": "#03050B",
     "fundo": "radial-gradient(70% 60% at 50% 40%,#0B1226 0%,#060914 60%,#03050B 100%)" },
   "cor": {
     "gold": "#C9A44C", "goldSoft": "rgba(201,164,76,.6)", "goldText": "#F0B43C", "goldHi": "#E6C77A",
@@ -10,29 +10,29 @@
     "acentoOpo": "#D8434A", "acentoOpoTexto": "#E8545B", "acentoOpoGlow": "rgba(216,67,74,.55)"
   },
   "header": {
-    "h": 96,
-    "jogador": { "left": 66, "top": 19, "gap": 18, "avatar": 58, "nome": 25, "sub": 18 },
-    "energia": { "left": 590, "top": 26, "w": 388, "h": 50, "quad": 26, "xN": 21, "sigma": 24, "trocarH": 34 },
-    "turno": { "left": 1000, "top": 4, "w": 307, "btnH": 52, "btnFonte": 23, "barra": 9, "linha": 18 },
-    "menuBtn": { "left": 1328, "top": 18, "size": 46 },
-    "oponente": { "left": 1562, "top": 19, "gap": 16, "avatar": 58, "nome": 25, "sub": 18 }
+    "h": 60,
+    "jogador": { "left": 8, "top": 8, "gap": 6, "avatar": 40, "nome": 15, "sub": 12 },
+    "energia": { "left": 150, "top": 10, "w": 304, "h": 40, "quad": 16, "xN": 12, "sigma": 13, "trocarH": 40 },
+    "turno": { "left": 460, "top": 1, "w": 150, "btnH": 40, "btnFonte": 13, "barra": 3, "linha": 12 },
+    "menuBtn": { "left": 616, "top": 10, "size": 40 },
+    "oponente": { "left": 662, "top": 8, "gap": 6, "avatar": 40, "nome": 14, "sub": 12 }
   },
   "campo": {
-    "left": 58, "top": 98, "w": 1732, "h": 536,
-    "cols": { "aliados": 676, "inimigos": 172 },
-    "fileira": { "h": 168, "gap": 8 },
-    "retrato": 140, "selo": 26, "seloFonte": 17, "vida": { "h": 20, "dy": 4, "fonte": 16 },
-    "efeitos": { "size": 24, "gap": 8, "valor": 19, "max": 3 },
-    "skill": { "size": 108, "gap": 14, "mtop": -28, "cdFonte": 46, "pipPill": 22, "pip": 14 },
-    "cena": { "left": -60, "right": -40, "mask": [14, 86], "anuncioTop": 266, "titulo": 48, "sub": 22, "ornato": [190, 92], "linha": 560, "objPosMeu": "50% 50%", "objPosOpo": "50% 50%" },
-    "mira": { "size": 54 }
+    "left": 8, "top": 62, "w": 764, "h": 186,
+    "cols": { "aliados": 276, "inimigos": 100 },
+    "fileira": { "h": 44, "gap": 4 },
+    "retrato": 44, "selo": 40, "seloFonte": 14, "vida": { "h": 14, "dy": 3, "fonte": 12 },
+    "efeitos": { "size": 40, "gap": 4, "valor": 12, "max": 3 },
+    "skill": { "size": 40, "gap": 4, "mtop": 0, "cdFonte": 20, "pipPill": 15, "pip": 8 },
+    "cena": { "left": -16, "right": -16, "mask": [10, 90], "anuncioTop": 66, "titulo": 24, "sub": 12, "ornato": [96, 48], "linha": 250, "objPosMeu": "50% 45%", "objPosOpo": "50% 45%" },
+    "mira": { "size": 34 }
   },
   "painel": {
-    "left": 58, "top": 640, "w": 1732, "h": 166,
-    "cols": { "info": 840, "meio": 564 },
-    "img": 134, "titulo": 27, "pilulaH": 32, "pilula": 19, "desc": 21,
-    "rotulo": 19, "pip": 27, "recargaNum": 30, "instIcone": 44, "instTit": 22, "instSub": 18,
-    "cancelW": 274, "cancelH": 80, "cancelFonte": 23, "mini": 70
+    "left": 8, "top": 250, "w": 764, "h": 104,
+    "cols": { "info": 300, "meio": 228 },
+    "img": 56, "titulo": 16, "pilulaH": 22, "pilula": 12, "desc": 12,
+    "rotulo": 12, "pip": 13, "recargaNum": 16, "instIcone": 28, "instTit": 13, "instSub": 12,
+    "cancelW": 120, "cancelH": 40, "cancelFonte": 14, "mini": 44
   },
-  "menu": { "w": 420, "itemH": 58, "titulo": 26, "item": 20 }
+  "menu": { "w": 320, "itemH": 40, "titulo": 16, "item": 13 }
 }

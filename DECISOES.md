@@ -6,6 +6,52 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §362 · BATALHA acessível no canvas 780×360 (mantendo o design do dono)
+
+**A tela principal** (`#batalha`: topo + campo + painel, §335) saiu da tela fixa **1846×852** e entrou no canvas **780×360**
+(px de design = px real; `fit()` escala p/ cima — grupo `fixaPeq`). O `data/layout_batalha.json` foi REESCRITO em 780×360
+(a mesma estrutura/cores/molduras/fontes do dono; mudam só as proporções). **Auditoria: as 4 telas de batalha de ~3.5
+para 10; menu e confirmações 10.** Quase todo o tamanho da batalha é estilo INLINE vindo do JSON (as classes `bt-*` quase
+não têm CSS), então reescrever o JSON cobriu a maior parte; o `#batalha{width/height}` (shell.html) e o gate do build
+(`tools/build.js`, agora exige 780×360) acompanharam.
+
+**0 — detalhe das Provações (§361):** o rodapé enigmático "1 vaga · Loja p/ +" virou **"1 vaga ativa · mais na Loja"**
+(cabe sem cortar; a auditoria das Provações segue 10).
+
+**Campo (campo.js) — as peças pequenas ganharam toque ≥40 SEM engolir a arte nem o retrato:**
+- o "P" (passiva) e o "?" (inspecionar) saíram de cima do retrato e viraram **botões ≥40 AO LADO** dele (um chip visual
+  menor dentro da área de toque). Na arte minúscula do 780, um alvo de 40 no canto cobriria o rosto e brigaria com o toque
+  de ALVO; ao lado, o retrato inteiro segue tocável (inspeciona/escolhe alvo) e o P/"?" têm seu próprio alvo. Ganharam o
+  modificador `--me`/`--foe` (os testes os acham por lado).
+- os ÍCONES DE EFEITO viraram botões ≥40 numa FILEIRA abaixo do retrato (só aparece quando há efeito — a fileira não
+  reserva altura à toa).
+- a FILEIRA do campo (campo + painel) virou **coluna flex**: o painel cresce PARA CIMA (altura automática) e o campo
+  encolhe — é assim que a descrição mais longa do jogo cabe sem rolar, e quando o painel é curto sobra campo p/ os efeitos.
+- as imagens da batalha são `pointer-events:none` (a arte do retrato/cena, o disco do botão): o DIV trata o toque e o
+  texto por cima (vida, SEU TURNO, GRÁTIS) não fica "encoberto" pela própria arte no `elementFromPoint` (eixo d6).
+
+**Topo (topo.js):** header de 60px. A caixa de energia (§336b) foi re-escalada (quadrados 16→13, números ≥12) e o
+**⇄ TROCAR mostra o rótulo quando cabe e só o ícone ⇄ (toque ≥40) quando aperta**; p/ 6 tipos caberem ao lado do nome e do
+ENCERRAR no 780, o contador passou a mostrar só o número (sem o "x") e a sublinha do modo é capada em 92px. ENCERRAR +
+barra + "Turno N" empilham em 60px.
+
+**Painel (painel.js):** as colunas internas (info|meio|resto) e as fontes foram re-escaladas p/ 780; a descrição mostra o
+TEXTO COMPLETO (sem clamp) e o painel cresce p/ cima p/ ela caber. **Tirado o "Passiva —" repetido** no começo da descrição
+do deus (estava no backlog) — o nome da passiva já identifica.
+
+**Menu ☰:** no 780 as utilidades viram **grade de 2 colunas** (cabe nos 360 sem rolar); o slider de SOM tem 40 de altura.
+A confirmação de "encerrar sem agir" / render-se usa os overlays genéricos; o botão `.b--md` subiu p/ 40px/12px (≥ padrão
+§357).
+
+**NADA DE FUNÇÃO SE PERDE:** armar/desarmar, os 8 alvos (§336), inusável apagado, confirmar encerrar (§331), caixa de
+energia que cresce (§336b), orbes/GRÁTIS (§340), artes cheias (§353b), arte por turno (§347), menu ☰, painel por situação
+(§333b), turno do oponente — todos seguem. Testes migrados SÓ nas medidas: `batalha_faixa` mede 780×360 (coords/colunas/
+retrato 44/skill 40; âncora do anúncio no fundo da cena, frac≥0.33); `moldura` acha o P por `--me/--foe`; `niveis_batalha`
+intacto (restaurei "Nv N"). `acessibilidade_telas` ganhou os 10 estados de batalha exigindo a=b=c=d=0. Capturas
+`docs/telas/362-*` + `362-comparacao.png` (antes×depois lado a lado em 1846×852).
+
+---
+
 ## §361 · PROVAÇÕES acessíveis (queixas do dono + auditoria) — canvas 780×360
 
 **As queixas (print do celular):** "as fontes estão muito pequenas e o botão de ATIVAR está muito grande. Os dropbox de

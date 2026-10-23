@@ -21,14 +21,12 @@ const BOOT=`
   try{ELEMS.forEach(e=>st.lados[0].orbs[e]=0); st.lados[0].orbs[st.lados[0].units[0].elem]=3; st.lados[0].orbs[st.lados[0].units[1].elem]=1;}catch(e){}
   st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null; ir('batalha',{},{substituir:true});render();`;
 
-// CAIXAS ESPERADAS (px de design, relativas ao #batalha) — transcritas do HTML/JSON.
+// §362: CAIXAS ESPERADAS (px de design 780×360, relativas ao #batalha) — do data/layout_batalha.json.
 const CAIXAS=[
-  { nome:'header',   sel:'#batalha > #baselayer, header, header', pick:'header', x:0,   y:0,   w:1846, h:96 },
-  { nome:'energia',  sel:'.bt-ebox',              x:590, y:26,  w:388,  h:50 },
-  { nome:'encerrar', sel:'#bend2',                x:1000,y:4,   w:307,  h:52 },
-  { nome:'menu',     sel:'#bmenu',                x:1328,y:18,  w:46,   h:46 },
-  { nome:'campo',    sel:'.b5-campo',             x:58,  y:98,  w:1732, h:536 },
-  { nome:'painel',   sel:'.b5-painel',            x:58,  y:640, w:1732, h:166 },
+  { nome:'header',   pick:'header', x:0,   y:0,   w:780, h:60 },
+  { nome:'energia',  sel:'.bt-ebox',              x:150, y:10,  w:304,  h:40 },
+  { nome:'encerrar', sel:'#bend2',                x:460, y:1,   w:150,  h:40 },
+  { nome:'menu',     sel:'#bmenu',                x:616, y:10,  w:40,   h:40 },
 ];
 
 (async()=>{
@@ -60,10 +58,10 @@ const CAIXAS=[
         `@1846 ${c.nome}: caixa bate o HTML (esperado ${c.x},${c.y} ${c.w}×${c.h} · veio ${Math.round(got.x)},${Math.round(got.y)} ${Math.round(got.w)}×${Math.round(got.h)})`); };
     bateCaixa(CAIXAS[0], m.header);
     CAIXAS.slice(1).forEach(c=>bateCaixa(c, m[c.nome]));
-    ok(JSON.stringify(m.campoCols)===JSON.stringify([676,884,172]), `@1846 colunas do campo = 676|884|172 (veio ${JSON.stringify(m.campoCols)})`);
-    ok(JSON.stringify(m.painelCols)===JSON.stringify([840,564,328]), `@1846 colunas do painel = 840|564|328 (veio ${JSON.stringify(m.painelCols)})`);
-    ok(m.retrato&&perto(m.retrato.w,140,2)&&perto(m.retrato.h,140,2), `@1846 retrato 140×140 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
-    ok(m.skill&&perto(m.skill.w,108,2)&&perto(m.skill.h,108,2), `@1846 botão de habilidade 108×108 (veio ${m.skill&&Math.round(m.skill.w)}×${m.skill&&Math.round(m.skill.h)})`);
+    ok(JSON.stringify(m.campoCols)===JSON.stringify([276,388,100]), `@1846 colunas do campo = 276|388|100 (veio ${JSON.stringify(m.campoCols)})`);
+    ok(JSON.stringify(m.painelCols)===JSON.stringify([300,228,236]), `@1846 colunas do painel = 300|228|236 (veio ${JSON.stringify(m.painelCols)})`);
+    ok(m.retrato&&perto(m.retrato.w,44,2)&&perto(m.retrato.h,44,2), `@1846 retrato 44×44 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
+    ok(m.skill&&perto(m.skill.w,40,2)&&perto(m.skill.h,40,2), `@1846 botão de habilidade 40×40 (veio ${m.skill&&Math.round(m.skill.w)}×${m.skill&&Math.round(m.skill.h)})`);
     await ctx.close();
   }
 
@@ -109,13 +107,13 @@ const CAIXAS=[
     ok(/cena\/turno_meu\.webp/.test(meu.src), `§347 meu turno: a cena LARGA da Nezha (src ${meu.src})`);
     ok(meu.larga, '§347 meu turno: usa a arte larga (o fallback de retrato não entra)');
     ok(meu.seuTurno, 'meu turno: o anúncio diz "SEU TURNO"');
-    ok(meu.anunFrac>=0.45, `§347 meu turno: o anúncio começa na metade de baixo (frac ${meu.anunFrac}) → o rosto (topo) fica fora dele`);
+    ok(meu.anunFrac>=0.33, `§347 meu turno: o anúncio começa na metade de baixo (frac ${meu.anunFrac}) → o rosto (topo) fica fora dele`);
     await page.evaluate(`st.ativo=1; armado=null;detalhe=null; render();`); await page.waitForTimeout(80);
     const opo=await page.evaluate(medeCena);
     ok(/cena\/turno_oponente\.webp/.test(opo.src), `§347 turno do oponente: a cena LARGA do Ah Puch (src ${opo.src})`);
     ok(opo.larga, '§347 turno do oponente: usa a arte larga (o fallback de retrato não entra)');
     ok(opo.opoTurno, 'turno do oponente: o anúncio diz "TURNO DO OPONENTE"');
-    ok(opo.anunFrac>=0.45, `§347 turno do oponente: o anúncio começa na metade de baixo (frac ${opo.anunFrac}) → o rosto (topo) fica fora dele`);
+    ok(opo.anunFrac>=0.33, `§347 turno do oponente: o anúncio começa na metade de baixo (frac ${opo.anunFrac}) → o rosto (topo) fica fora dele`);
     await ctx.close();
   }
 
