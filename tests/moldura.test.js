@@ -370,21 +370,26 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
     await gp.goto('file://' + distAbs, { waitUntil: 'load' });
     for (let i = 0; i < 30; i++) { const on = await gp.evaluate(async () => { try { await document.fonts.load('900 26px Cinzel'); await document.fonts.ready; } catch (e) {} return document.fonts.check('900 26px Cinzel'); }); if (on) break; await gp.waitForTimeout(200); }
 
-    // GUARDA 1 — a passiva AGINDO (Brígida aura no time) acende o P dos AFETADOS; a INATIVA fica apagada.
-    console.log('== §266: P acende quando a passiva age (aura legível a partir do afetado) ==');
+    // GUARDA 1 — §362b: o "P" saiu; a passiva AGINDO (aura da Brígida no time) fica legível ao TOCAR o retrato — o
+    // painel do deus traz "AGINDO AGORA" p/ os AFETADOS e nada p/ quem a aura não alcança (agindo × parado distinguível).
+    console.log('== §266/§362b: a passiva agindo é legível ao tocar o retrato (sem o botão P) ==');
     const p1 = await gp.evaluate(() => {
       st = montarProvacao({ aliados: ['brigid', 'apolo', 'tyr'], inimigos: ['ghoul', 'silfo', 'quimera'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} armado = null; alvos = []; escolhidos = []; painelRecolhido = false; ir('batalha', {}, { substituir: true }); render();
-      // §362: o "P" é .bt-portrait__pas--me (aliado) / --foe (inimigo), AO LADO do retrato (botão ≥40).
-      const ally = [...document.querySelectorAll('.bt-portrait__pas--me')].map(b => b.classList.contains('pas--on'));
-      const foe = [...document.querySelectorAll('.bt-portrait__pas--foe')].map(b => b.classList.contains('pas--on'));
-      return { ally, foe };
+      // o motor (passivaAcesa = infoPassivaUI) diz se a passiva AGE agora — é o que o antigo P acendia.
+      const ally = st.lados[0].units.map(u => passivaAcesa(u));
+      const foe = st.lados[1].units.map(u => passivaAcesa(u));
+      // e o painel ao tocar um retrato aliado traz "AGINDO AGORA"
+      const el = document.querySelectorAll('.bt-portrait--ally[data-uid]')[0]; if (el) el.click();
+      const dAlly = (document.querySelector('.bt-panel__desc') || {}).textContent || '';
+      return { ally, foe, dAlly };
     });
-    ok(p1.ally.length === 3 && p1.ally.every(Boolean), `§266: sob a aura da Brígida os 3 P aliados ACENDEM (${JSON.stringify(p1.ally)})`);
-    ok(p1.foe.every(x => !x), `§266: o P do inimigo (aura não o alcança) fica APAGADO — agindo é distinguível de parado (${JSON.stringify(p1.foe)})`);
+    ok(p1.ally.length === 3 && p1.ally.every(Boolean), `§266: sob a aura da Brígida os 3 aliados AGEM (${JSON.stringify(p1.ally)})`);
+    ok(p1.foe.every(x => !x), `§266: a passiva do inimigo (aura não o alcança) fica PARADA — agindo é distinguível (${JSON.stringify(p1.foe)})`);
+    ok(/AGINDO AGORA/i.test(p1.dAlly), `§362b: tocar o retrato do aliado mostra "AGINDO AGORA" no painel`);
 
-    // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o P do aliado mostra o valor E a fonte (no painel §329).
-    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.bt-portrait__pas--me')]; if (ps[1]) ps[1].click();
+    // GUARDA 2 — a aura é legível a partir do deus AFETADO: tocar o retrato do aliado mostra o valor E a fonte (painel §329).
+    const p2 = await gp.evaluate(() => { const ps = [...document.querySelectorAll('.bt-portrait--ally[data-uid]')]; if (ps[1]) ps[1].click();
       const t = document.querySelector('.bt-panel__desc') || document.querySelector('.bt-panel'); return t ? t.textContent.replace(/\s+/g, ' ') : ''; });
     ok(/\+1/.test(p2) && /Brigid/i.test(p2), `§266: a leitura do aliado AFETADO traz o +1 e a FONTE (Brígida, §324 P3): "${p2.slice(0, 60)}"`);
 
@@ -430,15 +435,18 @@ function ok(cond, msg) { if (!cond) { falhas++; console.log('  XX ' + msg); } }
       st = montarProvacao({ aliados: ['zeus', 'tyr', 'ares'], inimigos: ['sobek', 'ghoul', 'silfo'], montar: { seed: 3, comeca: 0 } });
       prova = null; provaFim = null; campanha = null; vsCPU = true; try { pararRelogio(); } catch (e) {} ELEMS.forEach(e => st.lados[0].orbs[e] = 6);
       armado = null; alvos = []; escolhidos = []; ir('batalha', {}, { substituir: true });
+      // §362b: sem o P, a condição (§267) se lê pelo MOTOR (passivaAcesa = infoPassivaUI com o contexto do armado) —
+      // é o dado que o antigo P acendia e que o painel da passiva mostra ao tocar o retrato (fora do turno armado).
+      const sobek = st.lados[1].units[0];
       const u = st.lados[0].units[0];
       armar(u.uid, 'basico'); render();
-      const onBasico = document.querySelector('.bt-portrait__pas--foe').classList.contains('pas--on');
+      const onBasico = passivaAcesa(sobek);
       armado = null; alvos = []; armar(u.uid, 'habilidade'); render();
-      const onHab = document.querySelector('.bt-portrait__pas--foe').classList.contains('pas--on');
+      const onHab = passivaAcesa(sobek);
       return { onBasico, onHab };
     });
-    ok(p5.onBasico, '§267: sobek (contra=básico) ACENDE quando o atacante arma um BÁSICO (casa)');
-    ok(!p5.onHab, '§267: sobek NÃO acende quando o atacante arma uma HABILIDADE (não casa — o indicador não engana)');
+    ok(p5.onBasico, '§267: sobek (contra=básico) AGE quando o atacante arma um BÁSICO (casa)');
+    ok(!p5.onHab, '§267: sobek NÃO age quando o atacante arma uma HABILIDADE (não casa — a leitura não engana)');
     await g.close();
   }
 

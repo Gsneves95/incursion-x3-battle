@@ -2,7 +2,23 @@
 
 > Atualizado ao fim de cada sessão. Quem lê é uma sessão sem memória.
 
-## ★ §362 · BATALHA acessível no canvas 780×360 (mantendo o design do dono) — ~3.5 → 10
+## ★ §362b · BATALHA: retratos e habilidades MAIORES com o painel embaixo (opção A do dono)
+- Depois do §362 os retratos/habilidades tinham ~44px; o dono manteve o painel embaixo (**opção A**) e os aumentou:
+  em repouso o painel fica baixo e **retrato ≥56 / habilidade ≥52**; com a descrição MAIS LONGA armada o painel cresce
+  p/ cima e eles encolhem até **≥46 / ≥44** — tudo sem rolar. `view.js btGeoBatalha()` é a GEOMETRIA VIVA (o painel usa
+  a altura do conteúdo; o campo recebe o resto e dimensiona retrato = habilidade p/ 3 fileiras).
+- **Fora o "P" e o "?":** tocar o RETRATO (sem arma) mostra o deus com a passiva (§333b); a leitura VIVA da passiva
+  (§266, "AGINDO AGORA") foi levada p/ esse toque (`infoUnidade`/`_passivaAgora`). **A VIDA** saiu de cima da arte → barra
+  ABAIXO do retrato (120/120 ≥12px); o retrato fica inteiro. **EFEITOS** viraram tira ≥40 AO LADO das habilidades (não
+  roubam altura do retrato); conferido com 3 efeitos no aliado e no inimigo.
+- **Painel baixo:** colunas por modelo (deus/habilidade), instrução título+sub na MESMA linha, pílulas/orbes compactas,
+  `padV` 3 → painel ~66–70px em repouso. **Acento (item 6):** "Você" (e nick do oponente, "Sair p/ o início") em caso
+  natural, sem `text-transform` — a Cinzel em caixa alta perdia o Ê (como o Õ no §335).
+- NADA de função se perde. Testes migrados só em medidas/seletores (`interface`, `moldura` §266/§267 pelo motor,
+  `batalha_faixa` invariantes, `perspectiva` "Você"); `acessibilidade_telas` ganhou a prova de tamanhos mínimos e os 10
+  estados do §362 seguem a=b=c=d=0. Capturas `docs/telas/362b-*` + `362b-comparacao.png`. Suíte + build verdes.
+
+## §362 · BATALHA acessível no canvas 780×360 (mantendo o design do dono) — ~3.5 → 10
 - A TELA PRINCIPAL (`#batalha`: topo + campo + painel, §335) saiu da tela fixa 1846×852 e entrou no canvas **780×360**
   (grupo `fixaPeq`; `fit()` escala p/ cima). **Auditoria: as 4 telas de batalha de ~3.5 → 10; menu e confirmações → 10**
   (a=b=c=d=0 em 10 estados medidos: meu turno, turno do oponente, armada com a descrição mais longa, habilidade lida,

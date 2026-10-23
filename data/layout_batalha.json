@@ -21,18 +21,18 @@
     "left": 8, "top": 62, "w": 764, "h": 186,
     "cols": { "aliados": 276, "inimigos": 100 },
     "fileira": { "h": 44, "gap": 4 },
-    "retrato": 44, "selo": 40, "seloFonte": 14, "vida": { "h": 14, "dy": 3, "fonte": 12 },
+    "retrato": 56, "selo": 40, "seloFonte": 14, "vida": { "h": 14, "dy": 3, "fonte": 12 },
     "efeitos": { "size": 40, "gap": 4, "valor": 12, "max": 3 },
-    "skill": { "size": 40, "gap": 4, "mtop": 0, "cdFonte": 20, "pipPill": 15, "pip": 8 },
+    "skill": { "size": 52, "gap": 4, "mtop": 0, "cdFonte": 22, "pipPill": 15, "pip": 8 },
     "cena": { "left": -16, "right": -16, "mask": [10, 90], "anuncioTop": 66, "titulo": 24, "sub": 12, "ornato": [96, 48], "linha": 250, "objPosMeu": "50% 45%", "objPosOpo": "50% 45%" },
     "mira": { "size": 34 }
   },
   "painel": {
-    "left": 8, "top": 250, "w": 764, "h": 104,
-    "cols": { "info": 300, "meio": 228 },
-    "img": 56, "titulo": 16, "pilulaH": 22, "pilula": 12, "desc": 12,
-    "rotulo": 12, "pip": 13, "recargaNum": 16, "instIcone": 28, "instTit": 13, "instSub": 12,
-    "cancelW": 120, "cancelH": 40, "cancelFonte": 14, "mini": 44
+    "left": 8, "top": 250, "w": 764,
+    "img": 44, "titulo": 15, "pilulaH": 18, "pilula": 12, "desc": 12, "padV": 3,
+    "infoDeus": 322, "infoSkill": 296, "meioArm": 210, "minisCol": 186, "cancelCol": 132,
+    "rotulo": 12, "pip": 10, "recargaNum": 12, "instIcone": 20, "instTit": 12, "instSub": 12,
+    "cancelW": 116, "cancelH": 40, "cancelFonte": 14, "mini": 40
   },
   "menu": { "w": 320, "itemH": 40, "titulo": 16, "item": 13 }
 }

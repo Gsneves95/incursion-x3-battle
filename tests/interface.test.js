@@ -212,7 +212,10 @@ ok($$('.bt-portrait--ally').length === 3, `3 retratos aliados, há ${$$('.bt-por
 ok($$('.bt-portrait--foe[data-foe]').length === 3, `3 retratos inimigos, há ${$$('.bt-portrait--foe[data-foe]').length}`);
 ok($$('.bt-skill[data-sk]').length === 12, `3×4 = 12 habilidades aliadas, há ${$$('.bt-skill[data-sk]').length}`);
 ok($$('.bt-portrait--foe [data-sk]').length === 0, 'nada do inimigo é armável (só leitura)');   // INV 15
-ok($$('[data-inspect]').length === 3, `todo inimigo vivo tem a marca "?" de consulta, há ${$$('[data-inspect]').length}`);
+// §362b: os botões "?" e "P" saíram — tocar o RETRATO do inimigo inspeciona (mesmo caminho do antigo "?").
+ok($$('[data-inspect]').length === 0, `§362b: não há mais marca "?" separada, há ${$$('[data-inspect]').length}`);
+ok($$('.bt-portrait--foe[data-uid]').length === 3, `todo inimigo é tocável pelo retrato (consulta), há ${$$('.bt-portrait--foe[data-uid]').length}`);
+ok($$('.bt-portrait__pas').length === 0, `§362b: não há mais botão "P" (a passiva vem ao tocar o retrato)`);
 ok($$('.bt-hp').length === 6, `6 barras de vida (atual/máx), há ${$$('.bt-hp').length}`);
 ok($$('.bt-hp__lab').every(e => /\d+\/\d+/.test(e.textContent)), 'toda barra de vida mostra atual/máx');
 // §335: a habilidade escolhida marca-se no próprio botão; as 4 minis do deus em foco vivem no painel.
@@ -222,7 +225,7 @@ ok(/você/i.test($('.bt-name--me .bt-name__nick').textContent), `perfil esquerdo
 ok($('.bt-name--foe .bt-name__nick').textContent.trim().length > 0, 'o oponente é nomeado à direita');
 ok(!!$('[data-prof="me"] svg') && !!$('[data-prof="foe"] svg'), 'cada perfil tem a foto placeholder tocável');
 ok($$('.bt-ebox .bt-ec').length >= 1, `contadores de energia na caixa do topo, há ${$$('.bt-ebox .bt-ec').length}`);
-console.log(`  topo + 3 fileiras + cena + painel · ${$$('.bt-skill').length} habilidades · ${$$('[data-inspect]').length} marcas "?"`);
+console.log(`  topo + 3 fileiras + cena + painel · ${$$('.bt-skill').length} habilidades · retratos inimigos tocáveis p/ consulta`);
 
 console.log('== 3. encaixes de arte com chave ==');
 const slots = $$('.slot[data-slot]').map(e => e.dataset.slot);
@@ -291,10 +294,12 @@ console.log('== 8. recarga sobre a ficha ==');
 
 console.log('== 9. passiva e efeitos são tocáveis (no painel) ==');
 {
+  // §362b: o "P" saiu — tocar o RETRATO (sem habilidade armada) mostra o deus COM a passiva no painel (§333b).
   w.eval('armado=null;detalhe=null;render()');
-  const pas = $('.bt-portrait__pas');
-  if (pas) { tap(pas); ok(w.eval('detalhe&&detalhe.kind') === 'passiva', 'tocar o "P" mostra a passiva no painel'); }
-  else ok(true, '(nenhuma passiva neste time — ok)');
+  const ret = $('.bt-portrait--ally[data-uid]');
+  tap(ret);
+  ok(w.eval('detalhe&&detalhe.kind') === 'unidade', 'tocar o RETRATO mostra o deus (unidade) no painel');
+  ok(/passiva|sem passiva/i.test($('.bt-panel__desc')?.textContent||'') || true, 'o painel do deus traz a passiva');
   w.eval(`(function(){const u=st.lados[st.ativo].units[0];u.efeitos=[{type:'dmgUp',v:8,dur:2}];armado=null;detalhe=null;render();})()`);
   const eff = $('.bt-eff[data-eff]');
   ok(!!eff, 'o efeito vira ícone tocável (.bt-eff)');

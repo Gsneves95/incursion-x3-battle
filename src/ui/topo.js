@@ -111,7 +111,7 @@ function topoHTML(modoSub){
   const player=`<div class="bt-name bt-name--me" style="position:absolute;left:${jg.left}px;top:${jg.top}px;display:flex;align-items:center;gap:${jg.gap}px">
     <button class="b5-hover" data-prof="me" title="Perfil" style="width:${jg.avatar}px;height:${jg.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9A44C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer">${_avatarInner(l.units[0],AVATAR_SVG)}</button>
     <div style="display:flex;flex-direction:column;gap:2px">
-      <div class="cin bt-name__nick" style="font-weight:700;font-size:${jg.nome}px;line-height:1.1;color:#F0B43C;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">VOCÊ</div>
+      <div class="cin bt-name__nick" style="font-weight:700;font-size:${jg.nome}px;line-height:1.1;color:#F0B43C;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">Você</div>
       <div class="bt-name__sub" style="font-size:${jg.sub}px;font-weight:600;line-height:1.1;color:#E8ECF4;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92px">${H(_subJogador(modoSub))}</div>
     </div></div>`;
 
@@ -134,7 +134,7 @@ function topoHTML(modoSub){
   const opp=`<div class="bt-name bt-name--foe" style="position:absolute;left:${op.left}px;top:${op.top}px;display:flex;align-items:center;gap:${op.gap}px">
     <button class="b5-hover" data-prof="foe" title="Perfil" style="width:${op.avatar}px;height:${op.avatar}px;flex:none;border-radius:3px;overflow:hidden;border:0;padding:0;display:flex;align-items:center;justify-content:center;background:#0C1020;box-shadow:0 0 0 1.5px #C9343C,0 0 0 3px rgba(0,0,0,.6);cursor:pointer">${_avatarInner(o.units[0],'<svg viewBox="0 0 24 24" aria-hidden="true" style="width:72%;height:72%;color:#C9343C"><path fill="currentColor" d="M12 12.6a4.3 4.3 0 1 0 0-8.6 4.3 4.3 0 0 0 0 8.6Zm0 1.7c-3.7 0-7.4 1.9-7.4 4.6V21h14.8v-2.1c0-2.7-3.7-4.6-7.4-4.6Z"/></svg>')}</button>
     <div style="display:flex;flex-direction:column;gap:2px">
-      <div class="cin bt-name__nick" style="font-weight:700;font-size:${op.nome}px;line-height:1.1;color:#E8343C;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px">${H(rotuloLado(1-eu))}</div>
+      <div class="cin bt-name__nick" style="font-weight:700;font-size:${op.nome}px;line-height:1.1;color:#E8343C;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px">${H(rotuloLado(1-eu))}</div>
       <div class="bt-name__sub" style="font-size:${op.sub}px;font-weight:600;line-height:1.1;color:#E8ECF4;letter-spacing:.02em">${H(_subOponente())}</div>
     </div></div>`;
 
@@ -162,7 +162,7 @@ function menuOverlayHTML(){
         ${item('bfull',estaTelaCheia()?'SAIR TELA CHEIA':'TELA CHEIA')}
         ${temConta?item('bconta','SUA CONTA'):'<span></span>'}
         ${item('bapagar','APAGAR DADOS')}
-        ${item('bsair','SAIR P/ O INÍCIO')}
+        ${item('bsair','Sair p/ o início')}
       </div>
       ${item('bsurr','RENDER-SE','rgba(232,52,60,.7)','#FF8A8F')}
       <div id="bmenubuild" title="toque 3× para diagnóstico" style="min-height:40px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:#6b6480;cursor:pointer">${H(buildStr())}</div>

@@ -62,15 +62,15 @@ const FX_COR={ bom:{bg:'linear-gradient(180deg,#3CD873,#169447)',ring:'rgba(160,
   defesa:{bg:'linear-gradient(180deg,#3E8BFF,#1C56C8)',ring:'rgba(150,200,255,.8)'} };
 const HP_GRAD='linear-gradient(180deg,#5BEA8C,#22A855 60%,#1C8A47)';
 
-/* ---------- barra de vida DENTRO do retrato (design: left4 right4 bottom4 h20) ---------- */
-function btHp(u){
-  const C=_C(), v=C.vida||{h:20,dy:4,fonte:16};
+/* ---------- §362b: barra de vida ABAIXO do retrato (FORA da arte) — largura do retrato, texto ≥12 ---------- */
+function btHp(u, g){
+  const w=g.S, h=g.vida;
   const pct=Math.max(0,Math.min(100,u.hp/u.maxHp*100));
   const fill = u.vivo?`<div style="position:absolute;left:0;top:0;bottom:0;width:${pct}%;background:${HP_GRAD}"></div>`:'';
   const sh = u.shield?`<div style="position:absolute;top:0;right:0;height:100%;width:${Math.min(100,u.shield/u.maxHp*100)}%;background:#9fd8ff;opacity:.55"></div>`:'';
-  return `<div class="bt-hp" style="position:absolute;left:${v.dy}px;right:${v.dy}px;bottom:${v.dy}px;height:${v.h}px;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">
+  return `<div class="bt-hp" style="position:relative;width:${w}px;height:${h}px;flex:none;border-radius:3px;overflow:hidden;background:#0B1A10;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6);pointer-events:none">
     ${fill}${sh}
-    <div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${v.fonte}px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.8)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>
+    <div class="bt-hp__lab" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#F4FFF6;text-shadow:0 1px 2px rgba(0,0,0,.8)">${u.hp}/${u.maxHp}${u.shield?' ◧'+u.shield:''}</div>
   </div>`;
 }
 /* ---------- indicador de níveis (reusa o motor; §320) — discreto, no canto do retrato ---------- */
@@ -81,54 +81,46 @@ function btNiv(u){
   const c=(n)=>`<span style="color:${n>1?'#F0DC9A':'#8f88b0'}">${n}</span>`;
   return `<div class="b5-niv bt-portrait__niv cin" style="position:absolute;left:3px;top:3px;display:flex;gap:2px;padding:0 3px;border-radius:3px;background:rgba(6,5,16,.82);font-weight:800;font-size:12px;line-height:1.3;pointer-events:none">${c(nv.basico)}${c(nv.habilidade)}${c(nv.milagre)}</div>`;
 }
-/* ---------- §362: ícones de efeito — botão ≥40×40 (toque), chip colorido menor dentro + número; até 3, resto "+N".
-   Devolve '' quando não há efeitos (a FILEIRA de efeitos só aparece quando existe algum). ---------- */
-function btEfeitos(u){
-  const tags=u.vivo?tagsDe(u):[]; const C=_C(), ef=C.efeitos||{size:40,gap:4,valor:12,max:3};
-  if(!tags.length) return '';
-  const vis = tags.length<=ef.max ? tags : tags.slice(0, ef.max-1);
+/* ---------- §362b: ícones de efeito — TIRA ao lado das habilidades (não rouba altura do retrato). Cada efeito é um
+   botão ≥40×40 (toque), com o chip colorido menor + número; até 3 lado a lado, resto "+N". '' quando não há efeito. --- */
+function btEfeitos(u, g){
+  const tags=u.vivo?tagsDe(u):[]; if(!tags.length) return '';
+  const sz=(g&&g.eff)||40, valor=12, max=3;
+  const vis = tags.length<=max ? tags : tags.slice(0, max-1);
   const resto = tags.length - vis.length;
-  const ic=Math.round(ef.size*0.55);   // chip visual menor que a área de toque
+  const ic=Math.round(sz*0.55);   // chip visual menor que a área de toque
   const cel=(t,i)=>{ const fc=FX_COR[t.cat]||FX_COR.bom;
-    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="height:${ef.size}px;min-width:${ef.size}px;display:flex;align-items:center;justify-content:center;gap:2px;border:0;background:none;padding:0 3px;cursor:pointer">
+    return `<button class="bt-eff bt-eff--${t.cat}" data-eff="${u.uid}|${i}" title="${H(t.nome)}${t.num?' '+H(t.num):''}" style="height:${sz}px;min-width:${sz}px;display:flex;align-items:center;justify-content:center;gap:2px;border:0;background:none;padding:0 3px;cursor:pointer">
       <span style="display:flex;align-items:center;justify-content:center;width:${ic}px;height:${ic}px;flex:none;border-radius:4px;background:${fc.bg};box-shadow:inset 0 0 0 1px ${fc.ring};font-size:${Math.round(ic*0.6)}px">${t.icone}</span>
-      ${t.num?`<span style="font-size:${ef.valor}px;font-weight:600;color:#F2F4F8">${H(t.num)}</span>`:(t.dur!=null?`<span style="font-size:${ef.valor}px;font-weight:600;color:#F2F4F8">${t.dur}</span>`:'')}
+      ${t.num?`<span style="font-size:${valor}px;font-weight:600;color:#F2F4F8">${H(t.num)}</span>`:(t.dur!=null?`<span style="font-size:${valor}px;font-weight:600;color:#F2F4F8">${t.dur}</span>`:'')}
     </button>`; };
   let cels=vis.map(cel).join('');
-  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="min-width:${ef.size}px;height:${ef.size}px;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${ef.valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
-  return `<div class="bt-eff-grid" style="height:${ef.size}px;display:flex;align-items:center;gap:${ef.gap}px">${cels}</div>`;
+  if(resto>0) cels+=`<button class="bt-eff bt-eff--mais" data-eff="${u.uid}|0" style="min-width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;border:0;background:none;font-size:${valor}px;font-weight:700;color:#cfc8ea;cursor:pointer">+${resto}</button>`;
+  return `<div class="bt-eff-grid" style="display:flex;align-items:center;gap:4px">${cels}</div>`;
 }
-/* ---------- §362: selo "P" dourado — botão ≥40×40 (toque) AO LADO do retrato (não mais sobre a arte, p/ não
-   encobrir o rosto nem brigar com o toque de alvo); chip "P" visual menor dentro da área de toque. ---------- */
-function _seloP(u, g, side){
-  const C=_C(), sz=C.selo||40, chip=Math.round((C.selo||40)*0.55), aceso=passivaAcesa(u);
-  const glow = aceso?',0 0 8px rgba(240,180,60,.85)':'';
-  return `<button class="cin bt-portrait__pas bt-portrait__pas--${side||'me'} ${aceso?'pas--on':''}" data-pas="${u.uid}" title="Passiva" style="flex:none;width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;border:0;background:none;cursor:pointer;padding:0">
-    <span style="width:${chip}px;height:${chip}px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${C.seloFonte||14}px;background:linear-gradient(180deg,#F6D985,#C99A35);color:#2A1A04;box-shadow:0 1px 3px rgba(0,0,0,.6)${glow}">P</span></button>`;
-}
-/* ---------- retrato do ALIADO + efeitos + 4 habilidades ---------- */
-function btUnidadeAliada(u, meu){
-  const C=_C(), cor=_COR(), g=_catPartida()[u.key]||{};
+/* ---------- §362b: retrato do ALIADO (vida em barra ABAIXO) + tira de efeitos + 4 habilidades. SEM "P" (a passiva vem
+   ao tocar o retrato); retrato e habilidades MAIORES (btGeo). ---------- */
+function btUnidadeAliada(u, meu, g){
+  const cor=_COR();
   const alvo=alvos.some(x=>x.uid===u.uid);
   const insp = (typeof detalhe!=='undefined'&&detalhe&&detalhe.kind==='unidade'&&detalhe.uid===u.uid);
   const sombra = alvo ? '0 0 0 2px #7ff0a5,0 0 16px rgba(127,240,165,.5)' : insp ? '0 0 0 2px #F6D985,0 0 18px rgba(240,180,60,.55)' : '0 0 0 1.5px '+(cor.gold||'#C9A44C')+',0 0 0 3px rgba(0,0,0,.5)';
-  const sz=C.retrato||140;
+  const sz=g.S;
   const x=(u.vivo?'':'filter:grayscale(1) brightness(.5);');
   const cls=['bt-portrait','bt-portrait--ally']; if(alvo)cls.push('is-target'); if(u.vivo&&!podeAgir(u))cls.push('acted');
   const portrait=`<div class="${cls.join(' ')}" data-uid="${u.uid}"${alvo?' data-target="1"':''} style="position:relative;width:${sz}px;height:${sz}px;flex:none;border-radius:3px;overflow:hidden;cursor:pointer;background:#0C1020;box-shadow:${sombra};${x}">
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
-    ${btHp(u)}
   </div>`;
-  const pseal=g.passiva?_seloP(u,g,'me'):'';
-  const skills=`<div style="display:flex;gap:${C.skill.gap}px;margin-top:${C.skill.mtop||0}px">${acoesDe(st,u).map(a=>btSkill(u,a,meu)).join('')}</div>`;
-  const linhaA=`<div style="display:flex;align-items:center;gap:6px">${pseal}${portrait}${skills}</div>`;
-  const fx=btEfeitos(u);
-  return `<div style="display:flex;flex-direction:column;gap:4px">${linhaA}${fx}</div>`;
+  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const fx=btEfeitos(u,g);
+  const fxCol=fx?`<div style="display:flex;align-items:center;flex:none">${fx}</div>`:'';
+  const skills=`<div style="display:flex;gap:4px;flex:none">${acoesDe(st,u).map(a=>btSkill(u,a,meu,g)).join('')}</div>`;
+  return `<div style="display:flex;align-items:center;gap:${g.gap}px">${bloco}${fxCol}${skills}</div>`;
 }
-/* ---------- bolinhas de CUSTO (pílula escura embaixo do botão; design: pips 14) ---------- */
+/* ---------- bolinhas de CUSTO (pílula escura embaixo do botão) ---------- */
 function btCustoPips(cost){
-  const C=_C(), p=C.skill.pip||14;
+  const C=_C(), p=C.skill.pip||8;
   const pips=[];
   if(cost){ for(const k in cost){ if(k==='livre')continue; for(let i=0;i<cost[k];i++) pips.push(orbe(k,p)); }
     for(let i=0;i<(cost.livre||0);i++) pips.push(orbe('livre',p)); }
@@ -137,9 +129,9 @@ function btCustoPips(cost){
   if(!pips.length) return `<div style="${pill}"><span style="font-size:12px;font-weight:700;letter-spacing:.02em;color:#4BE38A">GRÁTIS</span></div>`;
   return `<div style="${pill}">${pips.join('')}</div>`;
 }
-/* ---------- botão de habilidade 108×108 (arte cheia/disco §332/§334; cd; usada; custo; ✓ armada) ---------- */
-function btSkill(u, a, meu){
-  const C=_C(), cor=_COR(), sz=C.skill.size||108;
+/* ---------- §362b: botão de habilidade (arte cheia/disco §332/§334; cd; usada; custo; ✓ armada) — tamanho do btGeo ---------- */
+function btSkill(u, a, meu, g){
+  const C=_C(), cor=_COR(), sz=(g&&g.skill)||C.skill.size||40;
   const cd=u.cd[a.slot]||0;
   const clicavel=a.disponivel&&meu&&podeAgir(u)&&ehMeuTurno();
   const arm=armado&&armado.uid===u.uid&&armado.slot===a.slot;
@@ -164,9 +156,10 @@ function btSkill(u, a, meu){
     ${cdOv}${btCustoPips(a.cost)}${armSel}${nvBadge}
   </div>`;
 }
-/* ---------- retrato do INIMIGO (? à esquerda, selo P à direita, mira quando alvo) + efeitos ---------- */
-function btUnidadeInimiga(u){
-  const C=_C(), cor=_COR(), g=_catPartida()[u.key]||{}, sz=C.retrato||140;
+/* ---------- §362b: retrato do INIMIGO (vida ABAIXO, mira quando alvo) + tira de efeitos. SEM "?" nem "P" — tocar o
+   retrato inspeciona (mostra o deus com a passiva no painel); retrato MAIOR (btGeo). ---------- */
+function btUnidadeInimiga(u, g){
+  const C=_C(), sz=g.S;
   const alvo=alvos.some(x=>x.uid===u.uid), jaEsc=escolhidos.includes(u.uid);
   const insp=(typeof detalhe!=='undefined'&&detalhe&&detalhe.kind==='unidade'&&detalhe.uid===u.uid);
   const temArmado=(typeof armado!=='undefined'&&armado);
@@ -175,8 +168,9 @@ function btUnidadeInimiga(u){
     : (temArmado&&alvo) ? '0 0 0 1.5px #E5384A,0 0 12px rgba(229,56,74,.5)'
     : '0 0 0 1.5px #C9343C,0 0 0 3px rgba(0,0,0,.5)';
   const x=(u.vivo?'':'filter:grayscale(1) brightness(.5);');
+  const ms=Math.round(sz*0.76);
   const mira = jaEsc ? `<div class="b5-mira" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(50% 50% at 50% 46%,rgba(224,52,60,.28),rgba(224,52,60,0) 70%);pointer-events:none">
-      <div style="position:relative;width:${C.mira.size||54}px;height:${C.mira.size||54}px;border-radius:50%;box-shadow:inset 0 0 0 3px #FF4A4A,0 0 14px rgba(255,74,74,.8)">
+      <div style="position:relative;width:${ms}px;height:${ms}px;border-radius:50%;box-shadow:inset 0 0 0 3px #FF4A4A,0 0 14px rgba(255,74,74,.8)">
         <span style="position:absolute;left:50%;top:-8px;width:3px;height:16px;margin-left:-1.5px;background:#FF4A4A"></span>
         <span style="position:absolute;left:50%;bottom:-8px;width:3px;height:16px;margin-left:-1.5px;background:#FF4A4A"></span>
         <span style="position:absolute;top:50%;left:-8px;height:3px;width:16px;margin-top:-1.5px;background:#FF4A4A"></span>
@@ -187,15 +181,11 @@ function btUnidadeInimiga(u){
     ${slot('god-'+u.key, ini(u.nome), COR(u.elem), 40)}
     ${u.vivo?btNiv(u):''}
     ${mira}
-    ${btHp(u)}
   </div>`;
-  // §362: "?" (inspeciona) e "P" (passiva) viraram botões ≥40 AO LADO do retrato (não mais sobre a arte).
-  const tap=C.selo||40, chip=Math.round((C.selo||40)*0.55);
-  const inspBtn=u.vivo?`<button data-inspect="${u.uid}" title="Inspecionar" style="flex:none;width:${tap}px;height:${tap}px;display:flex;align-items:center;justify-content:center;border:0;background:none;cursor:pointer;padding:0"><span style="width:${chip}px;height:${chip}px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#05070E;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);font-size:${C.seloFonte||14}px;font-weight:700;color:#fff">?</span></button>`:'';
-  const pseal=g.passiva?_seloP(u,g,'foe'):'';
-  const linhaA=`<div style="display:flex;align-items:center;gap:4px">${inspBtn}${pseal}${portrait}</div>`;
-  const fx=btEfeitos(u);
-  return `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${linhaA}${fx}</div>`;
+  const bloco=`<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:none">${portrait}${btHp(u,g)}</div>`;
+  const fx=btEfeitos(u,g);
+  const fxCol=fx?`<div style="display:flex;align-items:center;flex:none">${fx}</div>`:'';
+  return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:${g.gap}px">${fxCol}${bloco}</div>`;
 }
 /* ---------- deus em foco (compat: usado por outros pontos) ---------- */
 function unidadeFoco(){
@@ -265,12 +255,13 @@ function btCenaHTML(){
   return `<div style="position:relative;overflow:hidden">${art}${anuncio}</div>`;
 }
 
-/* ---------- composição do campo (grade 676 | 1fr | 172) ---------- */
-function campoHTML(l,o){
-  const meu=ehMeuTurno(), C=_C(), cor=_COR();
-  const col1=`<div style="display:flex;flex-direction:column;justify-content:center;gap:${C.fileira.gap}px;padding-left:10px;position:relative;z-index:2">${[0,1,2].map(i=>l.units[i]?btUnidadeAliada(l.units[i],meu):'').join('')}</div>`;
-  const col3=`<div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:${C.fileira.gap}px;padding-right:10px;position:relative;z-index:2">${[0,1,2].map(i=>o.units[i]?btUnidadeInimiga(o.units[i]):'').join('')}</div>`;
-  return `<section class="b5-campo" style="flex:1 1 auto;min-height:0;box-sizing:border-box;display:grid;grid-template-columns:${C.cols.aliados}px minmax(0,1fr) ${C.cols.inimigos}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
+/* ---------- §362b: composição do campo (aliados | cena 1fr | inimigos) — larguras e tamanhos do btGeo.
+   O espaço que sobra vai p/ os retratos/habilidades; a CENA (1fr) fica mais estreita (rosto visível, §347). ---------- */
+function campoHTML(l,o,g){
+  g=g||btGeoBatalha(); const meu=ehMeuTurno();
+  const col1=`<div style="display:flex;flex-direction:column;justify-content:center;gap:${g.rowGap}px;padding-left:10px;position:relative;z-index:2">${[0,1,2].map(i=>l.units[i]?btUnidadeAliada(l.units[i],meu,g):'').join('')}</div>`;
+  const col3=`<div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:${g.rowGap}px;padding-right:10px;position:relative;z-index:2">${[0,1,2].map(i=>o.units[i]?btUnidadeInimiga(o.units[i],g):'').join('')}</div>`;
+  return `<section class="b5-campo" style="flex:1 1 auto;min-height:0;box-sizing:border-box;display:grid;grid-template-columns:${Math.round(g.cols.aliados)}px minmax(0,1fr) ${Math.round(g.cols.inimigos)}px;border-radius:6px;background:rgba(6,9,18,.55);box-shadow:inset 0 0 0 1px rgba(201,164,76,.18)">
     ${col1}${btCenaHTML()}${col3}
   </section>`;
 }
@@ -297,14 +288,22 @@ function lerHabilidade(uid,slot){
     motivo: a.disponivel ? '' : motivoIndisponivel(u,a)};
   armado=null; alvos=[]; escolhidos=[]; render();
 }
-// §329: tocar um RETRATO (sem habilidade armada) → painel com nome, função·elemento, vida e passiva.
+// §329/§362b: tocar um RETRATO (sem habilidade armada) → painel com nome, função·elemento, vida e a passiva.
+// §362b: como o "P" saiu, a LEITURA VIVA da passiva (§266: o que ela modifica AGORA, com valor e fonte) passou p/ cá.
+function _passivaAgora(u){
+  const info=infoPassivaUI(u); const linhas=[];
+  for(const it of info.propria){ const r=rotuloPassivaItem(it); if(r) linhas.push(r); }
+  for(const it of info.recebidas){ const r=rotuloPassivaItem(it); if(r) linhas.push(r+' — de '+H(it.fonteNome)); }
+  return linhas.length ? ('AGINDO AGORA: '+linhas.join(' · ')) : '';
+}
 function infoUnidade(uid){
   const u=todas().find(x=>x.uid===uid); if(!u)return;
   const g=_catPartida()[u.key]||{};
   if(typeof foco!=='undefined') foco=uid;
+  const agora=g.passiva?_passivaAgora(u):'';
   detalhe={kind:'unidade', uid:u.uid, nome:u.nome, chave:'god-'+u.key, cor:COR(u.elem),
     sub:(u.funcao||g.funcao||'')+' · '+(ELAB[u.elem]||u.elem), hp:u.hp, maxHp:u.maxHp, shield:u.shield,
-    passivaNome:g.passiva?g.passiva.nome:'', passivaDesc:g.passiva?g.passiva.desc:'', inerte:g.passiva&&g.passiva.inerte};
+    passivaNome:g.passiva?g.passiva.nome:'', passivaDesc:g.passiva?g.passiva.desc:'', passivaAgora:agora, inerte:g.passiva&&g.passiva.inerte};
   armado=null; alvos=[]; escolhidos=[]; peekKit=null; render();
 }
 // §329: tocar um ÍCONE de efeito → painel com nome, descrição, turnos e (quando o motor souber) quem aplicou.
@@ -333,23 +332,11 @@ function ligarCampo(){
     el.onclick=ev=>{ ev.stopPropagation(); const uid=el.dataset.uid;
       if(armado && el.dataset.target){ alvo(uid); }
       else if(!armado){ infoUnidade(uid); } };});
-  // passiva: mostra o que ela faz agora (com valor e fonte) no painel.
-  stage.querySelectorAll('[data-pas]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
-    const u=todas().find(x=>x.uid===b.dataset.pas),g=_catPartida()[u.key]||{};
-    if(!g.passiva)return;
-    const info=infoPassivaUI(u); const linhas=[];
-    for(const it of info.propria) linhas.push(rotuloPassivaItem(it));
-    for(const it of info.recebidas) linhas.push(rotuloPassivaItem(it)+' — de '+H(it.fonteNome));
-    const agora = linhas.length ? ('AGINDO AGORA: '+linhas.join(' · ')) : 'PARADA AGORA (a condição não vale no momento)';
-    if(typeof foco!=='undefined') foco=u.uid;
-    detalhe={kind:'passiva', uid:u.uid, nome:g.passiva.nome, cor:COR(u.elem), chave:'god-'+u.key,
-      dono:u.nome, inerte:g.passiva.inerte, desc:agora+'\n'+g.passiva.desc};
-    armado=null;alvos=[];escolhidos=[];peekKit=null;render();});
+  // §362b: os botões "P" (passiva) e "?" (inspecionar) saíram — tocar o RETRATO já inspeciona (infoUnidade), e a
+  // LEITURA VIVA da passiva (§266) passou p/ o painel da inspeção. (handlers data-pas/data-inspect removidos.)
   // ícone de efeito: detalhe do efeito no painel.
   stage.querySelectorAll('[data-eff]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,idx]=b.dataset.eff.split('|'); infoEfeito(uid, +idx);});
-  // §335: o "?" do inimigo INSPECIONA (mesmo com habilidade armada).
-  stage.querySelectorAll('[data-inspect]').forEach(b=>b.onclick=ev=>{ev.stopPropagation(); infoUnidade(b.dataset.inspect);});
   // caixa de minis (deus em foco): LEITURA de habilidade (inclusive do oponente — nunca arma, §15).
   stage.querySelectorAll('[data-look]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
     const[uid,slot]=b.dataset.look.split('|'); lerHabilidade(uid,slot);});

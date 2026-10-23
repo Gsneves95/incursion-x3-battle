@@ -91,6 +91,71 @@ const ESTADOS = {
     ok(r.d.length === 0, `${nome}: sem corte (d=${r.d.length})` + (r.d.length ? ' → ' + det(r.d) : ''));
     await ctx.close();
   }
+
+  // §362b — TAMANHOS MÍNIMOS da batalha (opção A do dono): em repouso o painel fica baixo e os RETRATOS/HABILIDADES
+  // crescem (retrato ≥56, habilidade ≥52, aliados e inimigos); com a descrição MAIS LONGA armada o painel cresce p/ cima
+  // e eles encolhem até o piso (retrato ≥46, habilidade ≥44). A barra de vida fica ABAIXO do retrato (não intersecta a
+  // arte); não há mais botões "P"/"?"; tocar o retrato (sem arma) mostra o deus com a passiva no painel.
+  console.log('\n== §362b — retratos e habilidades MAIORES (painel embaixo, opção A) ==');
+  {
+    // roster de passiva CURTA p/ os estados de repouso (isis 1 linha); nuwa traz a descrição de habilidade mais longa.
+    // isis (passiva curta, 1 linha, sem buff recebido), ares/nuwa (passivas condicionais, paradas no turno 1 → sem
+    // "AGINDO AGORA" no isis); nuwa traz a descrição de habilidade mais longa do jogo p/ o caso do painel alto.
+    const B2 = `st=montarProvacao({aliados:['isis','ares','nuwa'],inimigos:['khnum','ganesha','ymir'],montar:{seed:3,comeca:0}});prova=null;campanha=null;dominio=null;vsCPU=true;IA_LADO=1;try{pararRelogio();}catch(e){}try{ELEMS.forEach(e=>st.lados[0].orbs[e]=9);}catch(e){}st.ativo=0;foco=st.lados[0].units[0].uid;armado=null;detalhe=null;resumoTurno=null;menuAberto=false;ov=null;ir('batalha',{},{substituir:true});render();{var g=document.getElementById('gsplash');if(g)g.remove();}`;
+    const medir = async (setup) => {
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+      const err = await page.evaluate(([b, s]) => { try { eval(b); eval(s); } catch (e) { return String(e && e.message || e); } return null; }, [BASE, setup]);
+      const r = err ? { err } : await page.evaluate(() => {
+        const H = el => Math.round(el.getBoundingClientRect().height);
+        const ally = [...document.querySelectorAll('.bt-portrait--ally')], foe = [...document.querySelectorAll('.bt-portrait--foe')];
+        const sk = [...document.querySelectorAll('.bt-skill')];
+        // a barra de vida fica ABAIXO do retrato: topo da vida ≥ base do retrato (sem interseção com a arte)
+        let hpIntersecta = 0;
+        document.querySelectorAll('.bt-portrait--ally').forEach((p, i) => {
+          const bloco = p.parentElement; const hp = bloco.querySelector('.bt-hp'); if (!hp) return;
+          if (hp.getBoundingClientRect().top < p.getBoundingClientRect().bottom - 0.5) hpIntersecta++;
+        });
+        return { retAlly: Math.min(...ally.map(H)), retFoe: Math.min(...foe.map(H)), skill: Math.min(...sk.map(H)),
+          hpIntersecta, nPas: document.querySelectorAll('[data-pas]').length, nIns: document.querySelectorAll('[data-inspect]').length };
+      });
+      await ctx.close(); return r;
+    };
+    // repouso: meu turno, deus inspecionado (isis), habilidade lida curta (isis básico)
+    for (const [nome, extra] of [['meu turno', ''], ['deus inspecionado', `infoUnidade(st.lados[0].units[0].uid);`], ['habilidade lida curta', `lerHabilidade(st.lados[0].units[0].uid,'basico');`]]) {
+      const r = await medir(B2 + extra);
+      if (r.err) { ok(false, `§362b repouso ${nome}: setup quebrou — ${r.err}`); continue; }
+      ok(r.retAlly >= 56 && r.retFoe >= 56, `§362b repouso ${nome}: retrato ≥56 (aliado ${r.retAlly}, inimigo ${r.retFoe})`);
+      ok(r.skill >= 52, `§362b repouso ${nome}: habilidade ≥52 (${r.skill})`);
+    }
+    // descrição MAIS LONGA armada (nuwa habilidade, 157 chars): piso ≥46 / ≥44
+    {
+      const r = await medir(B2 + `armar(st.lados[0].units[2].uid,'habilidade');`);
+      if (r.err) ok(false, `§362b armada-longa: setup quebrou — ${r.err}`);
+      else {
+        ok(r.retAlly >= 46 && r.retFoe >= 46, `§362b descrição mais longa armada: retrato ≥46 (aliado ${r.retAlly}, inimigo ${r.retFoe})`);
+        ok(r.skill >= 44, `§362b descrição mais longa armada: habilidade ≥44 (${r.skill})`);
+      }
+    }
+    // invariantes: vida abaixo do retrato (sem interseção), sem "P"/"?", tocar retrato mostra o deus com a passiva
+    {
+      const r = await medir(B2);
+      ok(r.hpIntersecta === 0, `§362b: a barra de vida não intersecta a arte do retrato (${r.hpIntersecta} interseções)`);
+      ok(r.nPas === 0 && r.nIns === 0, `§362b: não existem mais botões "P" nem "?" (P=${r.nPas}, ?=${r.nIns})`);
+    }
+    {
+      const ctx = await browser.newContext({ viewport: { width: 780, height: 360 }, deviceScaleFactor: 1 });
+      const page = await ctx.newPage(); await page.goto(distAbs, { waitUntil: 'load' });
+      const kind = await page.evaluate(([b, s]) => { eval(b); eval(s);
+        const el = document.querySelector('.bt-portrait--ally[data-uid]'); el && el.click();
+        const d = (document.querySelector('.bt-panel__desc') || {}).textContent || '';
+        return { kind: (typeof detalhe !== 'undefined' && detalhe && detalhe.kind), temPassiva: /secreto|imune|passiva/i.test(d) }; }, [BASE, B2]);
+      ok(kind.kind === 'unidade', `§362b: tocar o retrato (sem arma) mostra o deus no painel (kind=${kind.kind})`);
+      ok(kind.temPassiva, `§362b: o painel do deus traz a passiva`);
+      await ctx.close();
+    }
+  }
+
   await browser.close();
   if (falhas) { console.log(`\n>>> ${falhas} FALHA(S) de acessibilidade §358`); process.exit(1); }
   console.log('\n>>> ACESSIBILIDADE §358 OK — Coleção/Ficha/Níveis cumprem o padrão §357 em todos os estados.');

@@ -83,6 +83,64 @@ function _modoSub(){
     return 'DOMÍNIO'+(c?' · '+c:'')+prog; }
   return '';
 }
+// §362b — GEOMETRIA VIVA da batalha (opção A do dono: painel embaixo, retratos e habilidades MAIORES). Vive aqui (view
+// orquestra o ui): o painel usa SÓ a altura que o conteúdo pede (repouso curto → painel baixo); o campo recebe o resto e
+// dimensiona retrato = habilidade p/ caber 3 fileiras SEM rolar. Repouso → retrato grande (≥56, skill ≥52); descrição
+// longa armada → o painel cresce p/ cima e o retrato encolhe (≥46, skill ≥44). Colunas do painel adaptam: ao armar, a
+// descrição ganha largura (p/ caber em poucas linhas) + CANCELAR; em repouso/leitura, as miniaturas.
+function _estLinhasBat(txt, wPx, fPx){
+  if(!txt) return 1;
+  const cpl=Math.max(6, Math.floor(wPx/(fPx*0.5)));   // ~0.5em largura média (Rajdhani) — calibrado no harness
+  return String(txt).split('\n').reduce((n,seg)=>n+Math.max(1,Math.ceil((seg.length||1)/cpl)),0);
+}
+function btGeoBatalha(){
+  const P=(typeof LAYOUT_BATALHA!=='undefined'&&LAYOUT_BATALHA&&LAYOUT_BATALHA.painel)||{};
+  const m=_modeloPainel();
+  const W=(P.w||764), armado=!!m.armado;
+  // §362b: larguras das colunas por MODELO — ao armar a descrição é longa (info larga) + CANCELAR; em repouso/leitura a
+  // 3ª coluna são as miniaturas. O modelo de HABILIDADE tem pílulas + CUSTO (precisa de info); o de DEUS tem a passiva
+  // (precisa de mais info). Equilibramos p/ cada um caber em 1–poucas linhas (painel baixo → retratos grandes).
+  const temPips = (m.meio||[]).some(c=>c.pips);
+  let col3, meio, info;
+  if(armado){ col3=P.cancelCol||132; meio=P.meioArm||210; info=W-meio-col3; }
+  else { col3=P.minisCol||184; info = temPips ? (P.infoSkill||300) : (P.infoDeus||330); meio=W-col3-info; }
+  const img = P.img||44;
+  const descW = info - img - 8 - 16;                  // largura de texto da descrição (px)
+  // a descrição renderiza com o MOTIVO inline (⊘ …) quando a habilidade está indisponível — conta no nº de linhas.
+  const descFull = (m.desc||'') + (m.motivo ? (' ⊘ ' + m.motivo) : '');
+  const lines = _estLinhasBat(descFull, descW, P.desc||12);
+  const temPil = (m.etiquetas&&m.etiquetas.length)?1:0;
+  const lh = (P.desc||12)+3;
+  const pad = (P.padV!=null?P.padV:4)*2;
+  // COL1 (imagem | título + pílulas + descrição)
+  const col1H = (P.titulo||15) + 4 + (temPil?((P.pilulaH||18)+4):0) + lines*lh;
+  // COL2 (células CUSTO/RECARGA ou VIDA/ELEMENTO + linha + instrução com a mira)
+  const cells = m.meio||[];
+  const cellsH = cells.length ? ((P.rotulo||12)+2+(P.recargaNum||13)) : 0;
+  const hrH = cells.length ? 5 : 0;
+  const miw = meio - (P.instIcone||24) - 8 - 16;
+  const inst = m.inst||{};
+  // §362b: título + sub fluem na MESMA linha (quebram juntas quando longo); 1 linha em repouso.
+  const instTxt = (inst.title||'') + (inst.sub?(' '+inst.sub):'');
+  const instTxtH = _estLinhasBat(instTxt, miw, Math.max(P.instTit||12,P.instSub||12)) * (Math.max(P.instTit||12,P.instSub||12)+3);
+  const col2H = cellsH + hrH + Math.max(P.instIcone||24, instTxtH) + 6;   // +6: 2 gaps de 3 do flex
+  // COL3 (miniaturas do dono OU botão CANCELAR)
+  const col3H = armado ? (P.cancelH||40) : (m.donoUid ? ((P.rotulo||12)+4+(P.mini||40)) : 0);
+  const panelH = Math.max(img, col1H, col2H, col3H) + pad + 4;   // +4: folga p/ o estimado ≥ o real (nunca estourar)
+  const BODY_H=292, BODY_GAP=2;                        // b5-body = 360−62−6 = 292; gap de 2 entre campo e painel
+  const fieldH = BODY_H - BODY_GAP - panelH;
+  const rowGap=4, vida=14, hpGap=1;                    // barra de vida ABAIXO do retrato (texto ≥12 p/ a auditoria)
+  let S = Math.floor((fieldH - 2*rowGap)/3) - vida - hpGap;
+  S = Math.max(40, Math.min(64, S));
+  const skill=S, eff=40, gap=6;
+  const efAlly = st.lados[ladoExibido()].units.some(u=>u.vivo && tagsDe(u).length);
+  const efFoe  = st.lados[1-ladoExibido()].units.some(u=>u.vivo && tagsDe(u).length);
+  const skillsW = 4*skill + 3*4, effW = 3*eff + 2*4;
+  const aliados  = 10 + S + gap + skillsW + (efAlly?(gap+effW):0);
+  const inimigos = S + (efFoe?(gap+effW):0) + 10;
+  return { m, panelH, fieldH, S, skill, vida, rowGap, eff, gap,
+           cols:{ aliados, inimigos }, painel:{ info, meio, col3, img, lines, armado } };
+}
 function renderBatalha(){
   // §328: na batalha, o botão "conta" e o carimbo "build" do canto inferior esquerdo (fixos no body) são
   // ESCONDIDOS — eles atrapalhavam a dica de energia. O acesso à conta e ao build vive agora no menu ⋯.
@@ -115,8 +173,7 @@ function renderBatalha(){
   <div id="batalha">
   ${topoHTML(_modoSub())}
   <div class="b5-body" style="position:absolute;left:8px;right:8px;top:62px;bottom:6px;display:flex;flex-direction:column;gap:2px">
-  ${campoHTML(l,o)}
-  ${painelBaixoHTML()}
+  ${(()=>{ const g=btGeoBatalha(); return campoHTML(l,o,g)+painelBaixoHTML(g); })()}
   </div>
   </div></div>
   ${(prova&&provaFim)?provaResultadoOverlay():(campanha&&campanhaFim)?campanhaResultadoOverlay():(dominio&&dominioFim)?dominioResultadoOverlay():overlayHTML()}`;

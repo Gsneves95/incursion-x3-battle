@@ -58,10 +58,17 @@ const CAIXAS=[
         `@1846 ${c.nome}: caixa bate o HTML (esperado ${c.x},${c.y} ${c.w}×${c.h} · veio ${Math.round(got.x)},${Math.round(got.y)} ${Math.round(got.w)}×${Math.round(got.h)})`); };
     bateCaixa(CAIXAS[0], m.header);
     CAIXAS.slice(1).forEach(c=>bateCaixa(c, m[c.nome]));
-    ok(JSON.stringify(m.campoCols)===JSON.stringify([276,388,100]), `@1846 colunas do campo = 276|388|100 (veio ${JSON.stringify(m.campoCols)})`);
-    ok(JSON.stringify(m.painelCols)===JSON.stringify([300,228,236]), `@1846 colunas do painel = 300|228|236 (veio ${JSON.stringify(m.painelCols)})`);
-    ok(m.retrato&&perto(m.retrato.w,44,2)&&perto(m.retrato.h,44,2), `@1846 retrato 44×44 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
-    ok(m.skill&&perto(m.skill.w,40,2)&&perto(m.skill.h,40,2), `@1846 botão de habilidade 40×40 (veio ${m.skill&&Math.round(m.skill.w)}×${m.skill&&Math.round(m.skill.h)})`);
+    // §362b: retrato e habilidade MAIORES e DINÂMICOS (btGeo) — o painel usa a altura do conteúdo e o campo recebe o
+    // resto. Verificamos os INVARIANTES (quadrados, ≥ piso em repouso, colunas somam a largura, cena presente), não
+    // números fixos (que variam com o conteúdo do painel).
+    const somaCampo=m.campoCols.reduce((a,b)=>a+b,0), somaPainel=m.painelCols.reduce((a,b)=>a+b,0);
+    ok(Math.abs(somaCampo-764)<=3, `@1846 as 3 colunas do campo somam ~764 (veio ${JSON.stringify(m.campoCols)} = ${somaCampo})`);
+    ok(m.campoCols.length===3 && m.campoCols[1]>=180, `@1846 a CENA (coluna do meio) tem largura p/ o rosto (${m.campoCols[1]}≥180)`);
+    ok(Math.abs(somaPainel-764)<=3, `@1846 as 3 colunas do painel somam ~764 (veio ${JSON.stringify(m.painelCols)} = ${somaPainel})`);
+    // (este roster tem foco com passiva longa → painel cresce; o piso universal é ≥46/≥44. O ≥56 em repouso curto é
+    //  provado por acessibilidade_telas/min-size com roster de passiva curta.)
+    ok(m.retrato&&perto(m.retrato.w,m.retrato.h,2)&&m.retrato.h>=46, `@1846 retrato quadrado e ≥46 (veio ${m.retrato&&Math.round(m.retrato.w)}×${m.retrato&&Math.round(m.retrato.h)})`);
+    ok(m.skill&&perto(m.skill.w,m.skill.h,2)&&m.skill.h>=44, `@1846 habilidade quadrada e ≥44 (veio ${m.skill&&Math.round(m.skill.w)}×${m.skill&&Math.round(m.skill.h)})`);
     await ctx.close();
   }
 

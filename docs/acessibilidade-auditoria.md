@@ -348,25 +348,25 @@ _Sem achados._
 
 ### Batalha — meu turno — nota 10
 
-Print: `docs/telas/357-batalha-meu-turno-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 42; tocáveis: 36.)
+Print: `docs/telas/357-batalha-meu-turno-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 32; tocáveis: 27.)
 
 _Sem achados._
 
 ### Batalha — turno do oponente — nota 10
 
-Print: `docs/telas/357-batalha-oponente-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 44; tocáveis: 36.)
+Print: `docs/telas/357-batalha-oponente-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 34; tocáveis: 27.)
 
 _Sem achados._
 
 ### Batalha — habilidade armada — nota 10
 
-Print: `docs/telas/357-batalha-armada-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 46; tocáveis: 33.)
+Print: `docs/telas/357-batalha-armada-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 37; tocáveis: 24.)
 
 _Sem achados._
 
 ### Batalha — inspeção da habilidade — nota 10
 
-Print: `docs/telas/357-batalha-inspecao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 46; tocáveis: 36.)
+Print: `docs/telas/357-batalha-inspecao-780x360.png`. Contagens: a=0, b=0, c=0, d=0. (textos visíveis: 37; tocáveis: 27.)
 
 _Sem achados._
 

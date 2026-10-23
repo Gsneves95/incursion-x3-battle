@@ -6,6 +6,41 @@ O valor daqui é evitar que uma decisão seja desfeita por parecer arbitrária.
 
 ---
 
+## §362b · BATALHA: retratos e habilidades MAIORES com o painel embaixo (opção A do dono)
+
+Depois do §362, os retratos e botões de habilidade tinham encolhido p/ ~44px (no §330 o dono pediu que CRESCESSEM; chegaram
+a ~68). O dono escolheu MANTER o painel embaixo (**opção A**) e os aumentou de volta, com estes ajustes:
+
+- **Fora o "P" (passiva) e o "?" (inspecionar).** Faziam o mesmo que tocar no RETRATO sem habilidade armada (o painel mostra
+  o deus com a passiva, a vida e as miniaturas, §333b). A LEITURA VIVA da passiva (§266 — o que ela modifica AGORA, com
+  valor e fonte), que só existia no "P", foi levada p/ o toque no retrato (`infoUnidade` → `_passivaAgora`; o painel do deus
+  mostra "AGINDO AGORA: …" quando age). Os handlers `data-pas`/`data-inspect` saíram; os testes que tocavam neles tocam o
+  retrato. (`_passivaAgora` filtra rótulos vazios — imunidades sem número não acusam "AGINDO AGORA".)
+- **A VIDA saiu de cima da arte** e virou uma BARRA logo ABAIXO do retrato (texto 120/120 ≥12px, p/ a auditoria). O retrato
+  fica inteiro e visível; nada de texto sobre ele (só o selo de nível, minúsculo, no canto).
+- **O espaço foi p/ os RETRATOS e as HABILIDADES, não p/ a cena.** `view.js btGeoBatalha()` é a GEOMETRIA VIVA: o painel usa
+  SÓ a altura que o conteúdo pede (estima col1/col2/col3) e o campo recebe o resto, dimensionando **retrato = habilidade**
+  p/ caber 3 fileiras SEM rolar. Em repouso o painel fica baixo → **retrato ≥56, habilidade ≥52**; com a descrição MAIS
+  LONGA armada (nuwa, 157 ch) o painel cresce p/ cima e eles encolhem até o piso **≥46 / ≥44**. A CENA (coluna do meio, 1fr)
+  fica mais estreita, com o rosto visível (§347).
+- **Painel baixo em repouso:** colunas por MODELO (deus precisa de info p/ a passiva; habilidade precisa de info p/ as
+  pílulas + meio p/ a instrução); a INSTRUÇÃO (mira) passou a fluir título+sub NA MESMA linha (quebra só quando longo/
+  armado); pílulas e orbes do painel mais compactas; `padV` 3. Assim o painel repousa em ~66–70px e o retrato fecha em ~56.
+- **EFEITOS** continuam tocáveis (toque ≥40, ícone visual menor) numa TIRA AO LADO das habilidades (não roubam altura do
+  retrato); só aparecem quando há efeito. Conferido com 3 efeitos num aliado E num inimigo.
+- **ACENTO (item 6):** "VOCÊ" perdia o Ê na Cinzel em caixa alta (como o "Õ" no §335). Escrito no caso natural **"Você"**
+  SEM `text-transform:uppercase` (idem o nick do oponente e "Sair p/ o início" no menu — o Í).
+
+NADA DE FUNÇÃO SE PERDE (armar/8 alvos/confirmar/energia/orbes/GRÁTIS/artes/menu/painel por situação/turno do oponente).
+GEOMETRIA mora em `view.js` (orquestra o ui) — `campoHTML(l,o,g)`/`painelBaixoHTML(g)` recebem `g`. Testes migrados SÓ nas
+medidas/seletores: `interface` (sem "?"/"P", retrato inimigo tocável), `moldura` (§266/§267 pelo motor `passivaAcesa` +
+toque no retrato), `batalha_faixa` (invariantes: quadrado, ≥46/≥44, colunas somam 764, cena ≥180), `perspectiva` ("Você").
+`acessibilidade_telas` ganhou a prova de TAMANHOS MÍNIMOS (repouso ≥56/≥52; longa ≥46/≥44; vida não intersecta a arte; sem
+"P"/"?"; toque no retrato mostra o deus com a passiva) — e os 10 estados do §362 seguem a=b=c=d=0. Capturas `docs/telas/362b-*`
++ `362b-comparacao.png` (§362×§362b).
+
+---
+
 ## §362 · BATALHA acessível no canvas 780×360 (mantendo o design do dono)
 
 **A tela principal** (`#batalha`: topo + campo + painel, §335) saiu da tela fixa **1846×852** e entrou no canvas **780×360**
